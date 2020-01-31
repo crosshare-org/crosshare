@@ -38,5 +38,6 @@ def matching_words(pattern):
 
 
 if __name__ == "__main__":
+    print(_activebits(13123))
     print(matching_words("KSTON"))
     print(matching_words(" H "))

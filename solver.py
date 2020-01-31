@@ -190,7 +190,7 @@ class Solver(object):
 
         count = 0
         for word in matches:
-            if self.best_grid and count > 10:
+            if self.best_grid and count > 2:
                 return None
 
             if word in already_used:

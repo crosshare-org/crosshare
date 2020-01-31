@@ -25,7 +25,7 @@ class GenerateDB(object):
             self._clueblock = f.tell()
 
     def initialize_bitmaps(self):
-        self.words.sort(key=lambda w: w[1], reverse=True)
+        self.words.sort(key=lambda w: w[1])
         for w in self.words:
             self.words_by_length[len(w[0])].append([w[0],w[1]])
         for length, wordlist in self.words_by_length.items():
