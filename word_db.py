@@ -19,6 +19,10 @@ def _matching_bitmap(pattern):
             matches &= bitmap
     return matches
 
+def highest_score(pattern):
+    bitmap = _matching_bitmap(pattern)
+    return bitmap and _db.words_by_length[len(pattern)][bitmap.bit_length()-1]
+
 def num_matches(pattern):
     bitmap = _matching_bitmap(pattern)
     if bitmap is None:
@@ -34,5 +38,5 @@ def matching_words(pattern):
 
 
 if __name__ == "__main__":
-    print(matching_words("IREOUT"))
+    print(matching_words("KSTON"))
     print(matching_words(" H "))

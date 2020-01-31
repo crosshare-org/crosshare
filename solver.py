@@ -5,7 +5,6 @@ import itertools
 import random
 from typing import List
 
-import _db
 import word_db
 
 
@@ -50,6 +49,17 @@ class Entry:
         return crosses
 
 
+def weighted_shuffle(l):
+    weighted = []
+    weight_map = dict(l)
+    while len(weighted) < len(l):
+        choices, weights = zip(*weight_map.items())
+        choice = random.choices(choices, weights)[0]
+        weighted.append(choice)
+        weight_map[choice] = 0
+    return weighted
+
+
 class Grid(object):
 
     def grid_with_entry_replaced(self, entry, word):
@@ -89,7 +99,17 @@ class Grid(object):
     def words(self):
         return [e.pattern for e in self.entries if ' ' not in e.pattern]
 
-    def __init__(self, template, verify=True):
+    def cost(self):
+        cost = 0
+        for e in self.entries:
+            entry_cost = 5
+            match = word_db.highest_score(e.pattern)
+            if match:
+               entry_cost = 1 / match[1]
+            cost += entry_cost
+        return cost
+
+    def __init__(self, template, verify=False):
         rows = template.strip('\n').split('\n')
         self.height = len(rows)
         self.width = len(rows[0])
@@ -138,6 +158,9 @@ class Grid(object):
 
 class Solver(object):
 
+    best_grid = None
+    best_cost = 0
+
     def __init__(self, grid):
         self.initial_grid = Grid(grid)
 
@@ -146,8 +169,15 @@ class Solver(object):
         return sorted(entries_to_solve, key=lambda x: x[1])
 
     def _solve(self, grid):
+        if self.best_grid and grid.cost() > self.best_cost:
+            return None
+
         constraints = self.most_constrained(grid)
-        if not constraints: # solved
+        if not constraints: # new best soln
+            print(grid)
+            print(grid.cost())
+            self.best_grid = grid
+            self.best_cost = grid.cost()
             return grid
 
         entry_to_solve, options = constraints[0]
@@ -156,9 +186,13 @@ class Solver(object):
 
         already_used = grid.words()
         matches = word_db.matching_words(entry_to_solve.pattern)
-        random.seed(2)
-        random.shuffle(matches)
+        matches = weighted_shuffle(matches)
+
+        count = 0
         for word in matches:
+            if self.best_grid and count > 10:
+                return None
+
             if word in already_used:
                 continue
 
@@ -176,34 +210,53 @@ class Solver(object):
             if fail:
                 continue
 
+            count += 1
+
             new_grid = grid.grid_with_entry_replaced(entry_to_solve, word)
             soln = self._solve(new_grid)
-            if soln:
-                return soln
+#            if soln:
+#                return soln
 
         return None
 
     def solve(self):
-        soln = self._solve(self.initial_grid)
-        print(soln)
-        return soln
+        self._solve(self.initial_grid)
+        print(self.best_grid)
+        print(self.best_cost)
+        return self.best_grid
 
 if __name__ == "__main__":
     test_grid = '''    .    .     
     .    .     
     .    .     
-               
+VANBURENZOPIANO
 ...   ..   ....
-               
+WASHINGTONYHAWK
    ..   .      
      .   .     
       .   ..   
-               
+ROOSEVELTONJOHN
 ....   ..   ...
-               
+JEFFERSONNYBONO
      .    .    
      .    .    
      .    .    '''
+#     test_grid = '''CROC.CAPO.TACIT
+# COMA.UBER.ALERO
+# TWAS.RENO.XANAX
+# VANBURENZOPIANO
+# ...ABE..CIA....
+# WASHINGTONYHAWK
+# ADO..T  .KERNEL
+# GECKO.   .RHINE
+# ENIGMA.   ..MCI
+# ROOSEVELTONJOHN
+# ....LE ..   ...
+# JEFFERSONNYBONO
+# APOET.    .    
+# MERIT.    .    
+# BEANE.    .    '''
     solver = Solver(test_grid)
     import timeit
-    print(timeit.Timer(lambda: solver.solve()).autorange())
+    count, total = timeit.Timer(lambda: solver.solve()).autorange()
+    print(total/count)

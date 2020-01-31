@@ -21,22 +21,23 @@ class GenerateDB(object):
             for _ in range(numwords):
                 l = struct.unpack('<B', f.read(1))[0]
                 s = struct.unpack('<{}s'.format(l), f.read(l))[0].decode('ascii')
-                self.words.append(s)
+                self.words.append([s, 1])
             self._clueblock = f.tell()
 
     def initialize_bitmaps(self):
+        self.words.sort(key=lambda w: w[1], reverse=True)
         for w in self.words:
-            self.words_by_length[len(w)].append(w)
+            self.words_by_length[len(w[0])].append([w[0],w[1]])
         for length, wordlist in self.words_by_length.items():
             for letter in string.ascii_uppercase:
                 for idx in range(length):
                     bitmap = 0
                     for word_idx in range(len(wordlist)):
-                        if wordlist[word_idx][idx] == letter:
+                        if wordlist[word_idx][0][idx] == letter:
                             bitmap |= (1 << word_idx)
                     self.bitmaps_by_length[length][letter][idx] = bitmap
 
-    def initialize_clue_map(self):
+    def initialize_clue_map_and_scores(self):
         with open(self._cluedata, 'rb') as f:
             f.seek(self._clueblock)
             clues = []
@@ -60,7 +61,7 @@ class GenerateDB(object):
                 th = struct.unpack('<b', f.read(1))[0]
                 pnum = struct.unpack('<b', f.read(1))[0]
                 cnum = struct.unpack('<I', f.read(4))[0]
-                fill = self.words[n]
+                fill = self.words[n][0]
                 self.clue_map[fill].append({"num": num,
                                             "diff": diff,
                                             "yr": yr,
@@ -68,7 +69,17 @@ class GenerateDB(object):
                                             "th": th,
                                             "cnum": cnum,
                                             "text": clues[cnum],
-                                            "traps": [(t, self.words[t >> 1]) for t in clue_clues[cnum]]})
+                                            "traps": [(t, self.words[t >> 1][0]) for t in clue_clues[cnum]]})
+
+                # Update scoring
+                if not th:
+                    if pnum == 8: # nyt
+                        if fill == "TESTING":
+                            print(num, clues[cnum])
+                        self.words[n][1] += num * 5
+                    else:
+                        self.words[n][1] += num
+
                 try:
                     n = struct.unpack('<I', f.read(4))[0]
                 except (IndexError, struct.error):
@@ -95,6 +106,8 @@ class GenerateDB(object):
 if __name__ == "__main__":
     print("Initializing wordlist")
     cd = GenerateDB("cluedata")
+    print("Initializing clues")
+    cd.initialize_clue_map_and_scores()
     print("Initializing bitmaps")
     cd.initialize_bitmaps()
     print("Writing db")
