@@ -33,6 +33,9 @@ class Entry:
     pattern: str
     cells: List[Cell]
 
+    def __repr__(self):
+        return "E:{}".format(self.pattern)
+
     def pattern_with_replacement(self, cell_id, value):
         pattern = ""
         for cell in self.cells:
@@ -156,6 +159,16 @@ class Grid(object):
                     self.entries.append(entry)
 
 
+def _most_constrained_key(x):
+    matches = x[1]
+    l = len(matches)
+    scorediff = 0
+    if l > 1: # if all are > 1 we want to sort by score diff
+        l = 2
+        scorediff = 1 / matches[1][1] - 1 / matches[0][1]
+    return (2-l, scorediff)
+
+
 class Solver(object):
 
     best_grid = None
@@ -165,32 +178,37 @@ class Solver(object):
         self.initial_grid = Grid(grid)
 
     def most_constrained(self, grid):
-        entries_to_solve = [(e, word_db.num_matches(e.pattern)) for e in grid.entries if ' ' in e.pattern]
-        return sorted(entries_to_solve, key=lambda x: x[1])
+        """Most constrained is the largest difference between score of best word and score of second best word"""
+        entries_to_solve = [(e, word_db.matching_words(e.pattern)) for e in grid.entries if ' ' in e.pattern]
+        entries = sorted(entries_to_solve, key=_most_constrained_key, reverse=True)
+        if entries:
+            return entries[0]
+        return None
 
     def _solve(self, grid):
         if self.best_grid and grid.cost() > self.best_cost:
             return None
 
-        constraints = self.most_constrained(grid)
-        if not constraints: # new best soln
+        most_constrained = self.most_constrained(grid)
+        if not most_constrained: # new best soln
             print(grid)
             print(grid.cost())
             self.best_grid = grid
             self.best_cost = grid.cost()
             return grid
 
-        entry_to_solve, options = constraints[0]
+        entry_to_solve, options = most_constrained
         if not options: # we're f'ed
             return None
 
         already_used = grid.words()
         matches = word_db.matching_words(entry_to_solve.pattern)
-        matches = weighted_shuffle(matches)
+        # matches = weighted_shuffle(matches)
+        matches,_ = zip(*matches) # Ditch the scores
 
         count = 0
         for word in matches:
-            if self.best_grid and count > 2:
+            if self.best_grid and count > 1:
                 return None
 
             if word in already_used:
@@ -226,6 +244,21 @@ class Solver(object):
         return self.best_grid
 
 if __name__ == "__main__":
+#     test_grid = '''        ..     
+#         .      
+#         .      
+#    .      .    
+#       .   .   .
+# ...   .        
+#      .     .   
+#        .       
+#    .     .     
+#         .   ...
+# .   .   .      
+#     .      .   
+#       .        
+#       .        
+#      ..        '''
     test_grid = '''    .    .     
     .    .     
     .    .     
@@ -241,6 +274,7 @@ JEFFERSONNYBONO
      .    .    
      .    .    
      .    .    '''
+
 #     test_grid = '''CROC.CAPO.TACIT
 # COMA.UBER.ALERO
 # TWAS.RENO.XANAX

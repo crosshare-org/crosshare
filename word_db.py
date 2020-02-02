@@ -3,7 +3,7 @@ import _db
 
 def _activebits(a):
     s=bin(a)[2:][::-1]
-    return [i for i,d in enumerate(s) if d == '1']
+    return sorted([i for i,d in enumerate(s) if d == '1'], reverse=True)
 
 
 def _matching_bitmap(pattern):

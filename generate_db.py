@@ -3,6 +3,9 @@ import string
 import struct
 
 
+# See here for format info
+# https://github.com/mattginsberg/cluer/blob/master/cluer.cpp
+
 class GenerateDB(object):
 
     _cluedata = None
@@ -21,12 +24,12 @@ class GenerateDB(object):
             for _ in range(numwords):
                 l = struct.unpack('<B', f.read(1))[0]
                 s = struct.unpack('<{}s'.format(l), f.read(l))[0].decode('ascii')
-                self.words.append([s, 1])
+                self.words.append([s, 0])
             self._clueblock = f.tell()
 
     def initialize_bitmaps(self):
         self.words.sort(key=lambda w: w[1])
-        for w in self.words:
+        for w in filter(lambda w: w[1], self.words):
             self.words_by_length[len(w[0])].append([w[0],w[1]])
         for length, wordlist in self.words_by_length.items():
             for letter in string.ascii_uppercase:
