@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from collections import namedtuple
+import copy
 from dataclasses import (dataclass, field)
 import itertools
+import math
 import random
 from typing import List
 
@@ -10,46 +13,6 @@ import word_db
 
 DIR_ACROSS = 0
 DIR_DOWN = 1
-
-
-@dataclass
-class Cell:
-    grid: Grid
-    x: int
-    y: int
-    value: str
-    entries: List[Entry] = field(default_factory=list)
-
-    def add_entry(self, entry):
-        self.entries.append(entry)
-
-    def _id(self):
-        return self.y * self.grid.width + self.x
-
-
-@dataclass
-class Entry:
-    grid: Grid
-    pattern: str
-    cells: List[Cell]
-
-    def __repr__(self):
-        return "E:{}".format(self.pattern)
-
-    def pattern_with_replacement(self, cell_id, value):
-        pattern = ""
-        for cell in self.cells:
-            if cell._id() == cell_id:
-                pattern += value
-            else:
-                pattern += cell.value
-        return pattern
-
-    def crosses(self):
-        crosses = []
-        for c in self.cells:
-            crosses += [e for e in c.entries if e != self]
-        return crosses
 
 
 def weighted_shuffle(l):
@@ -63,110 +26,169 @@ def weighted_shuffle(l):
     return weighted
 
 
+# (direction, [cell_idx1,...], bitmap, is_complete)
+Entry = namedtuple('Entry', ['index', 'direction', 'cells', 'bitmap', 'is_complete', 'min_cost'])
+
+
+def min_cost(length, bitmap):
+    """Return the minimum cost of the words encoded by `bitmap`."""
+    match = word_db.highest_score(length, bitmap)
+    if match:
+        return 1 / match[1]
+    return 5
+
 class Grid(object):
 
-    def grid_with_entry_replaced(self, entry, word):
-        if len(word) != len(entry.cells):
-            raise Exception("botched", word, entry.pattern)
-        replacements = {}
+    def __init__(self, width, height, used_words, cells, entries_by_cell, entries):
+        self.width = width
+        self.height = height
+        self.used_words = used_words
+        self.cells = cells
+        self.entries_by_cell = entries_by_cell
+        self.entries = entries
+
+    def grid_with_entry_decided(self, entry_index, word):
+        new_grid = Grid(self.width, self.height, set(self.used_words),
+                        copy.deepcopy(self.cells),
+                        copy.deepcopy(self.entries_by_cell),
+                        copy.deepcopy(self.entries))
+
+        entry = new_grid.entries[entry_index]
+        new_grid.used_words.add(word)
+        crosses = new_grid.crosses(entry)
         for i in range(len(word)):
-            replacements[entry.cells[i]._id()] = word[i]
-        return Grid(self.to_string(replacements))
+            current_val = new_grid.cells[entry.cells[i]]
+            if current_val != ' ':
+                if current_val == word[i]:
+                    continue # This cell ain't changing
+                else:
+                    raise Exception("Cell has conflicting value", current_val, word, i)
 
-    def cell_id(self, x, y):
-        return y * self.width + x
+            # update cells
+            new_grid.cells[entry.cells[i]] = word[i]
 
-    def cell_at(self, x, y):
-        return self.cells[self.cell_id(x, y)]
+            # update crossing entries
+            cross = new_grid.entries[crosses[i][0]]
+            cross_word = ''
+            for cid in cross.cells:
+                cross_word += new_grid.cells[cid]
+            cross_bitmap = word_db.update_bitmap(len(cross.cells), cross.bitmap, crosses[i][1], word[i])
 
-    def val_at(self, x, y):
-        return self.cell_at(x, y).value
+            if not cross_bitmap: # empty bitmap means invalid grid
+                return None
 
-    def is_block(self, x, y):
-        return self.val_at(x, y) == '.'
+            cross_completed = False
+            if ' ' not in cross_word:
+                cross_completed = True
+                new_grid.used_words.add(cross_word)
+            new_grid.entries[crosses[i][0]] = Entry(index=cross.index,
+                                                    direction=cross.direction,
+                                                    cells=cross.cells,
+                                                    bitmap=cross_bitmap,
+                                                    is_complete=cross_completed,
+                                                    min_cost=min_cost(len(cross.cells), cross_bitmap))
 
-    def to_string(self, replacements=None):
+        # update entry itself
+        new_bitmap = word_db._matching_bitmap(word)
+        new_grid.entries[entry_index] = Entry(index=entry.index,
+                                              direction=entry.direction,
+                                              cells=entry.cells,
+                                              bitmap=new_bitmap,
+                                              is_complete=True,
+                                              min_cost=min_cost(len(word), new_bitmap))
+
+        return new_grid
+
+    def __str__(self):
         s = ""
         for y in range(self.height):
             for x in range(self.width):
-                if replacements and self.cell_id(x,y) in replacements:
-                    s += replacements[self.cell_id(x,y)]
-                else:
-                    s += self.val_at(x, y)
+                s += self.cells[y * self.width + x] + " "
             s += "\n"
         return s
 
-    def __str__(self):
-        return " " + " ".join(self.to_string())
-
-    def words(self):
-        return [e.pattern for e in self.entries if ' ' not in e.pattern]
-
-    def cost(self):
+    def min_cost(self):
+        """Get a lower bound on total cost of the grid as filled in."""
         cost = 0
         for e in self.entries:
-            entry_cost = 5
-            match = word_db.highest_score(e.pattern)
-            if match:
-               entry_cost = 1 / match[1]
-            cost += entry_cost
+            cost += e.min_cost
         return cost
 
-    def __init__(self, template, verify=False):
-        rows = template.strip('\n').split('\n')
-        self.height = len(rows)
-        self.width = len(rows[0])
-        self.cells = []
-        self.entries = []
+    def crosses(self, entry):
+        """Given an entry tuple, get the crossing entries.
 
-        for y in range(self.height):
-            for x in range(self.width):
-                self.cells.append(Cell(self, x, y, rows[y][x]))
+        Returns an array of (entry index, letter idx w/in that entry) of crosses."""
+        cross_dir = DIR_ACROSS
+        if entry.direction == DIR_ACROSS:
+            cross_dir = DIR_DOWN
+        crosses = []
+        for cell_idx in entry.cells:
+            crosses.append(self.entries_by_cell[cell_idx][cross_dir])
+        return crosses
+
+    @classmethod
+    def from_template(cls, template):
+        rows = template.strip('\n').split('\n')
+        height = len(rows)
+        width = len(rows[0])
+        used_words = set()
+        cells = list(template.upper().replace("\n", "").replace("#", "."))
+
+        # [(across_entry, char_idx), (down_entry, char_idx)] index into entries array for each cell
+        entries_by_cell = [[None, None] for _ in range(len(cells))]
+
+        entries = []
 
         for dir in (DIR_ACROSS, DIR_DOWN):
             xincr = (dir == DIR_ACROSS) and 1 or 0
             yincr = (dir == DIR_DOWN) and 1 or 0
+            iincr = xincr + yincr * width
 
-            for y in range(self.height):
-                for x in range(self.width):
+            i = 0
+            for y in range(height):
+                for x in range(width):
                     start_of_row = (dir == DIR_ACROSS and x == 0) or \
                                    (dir == DIR_DOWN and y == 0)
-                    start_of_entry = (not self.is_block(x, y) and \
-                                      (start_of_row or self.is_block(x-xincr, y-yincr)) and \
-                                      (x + xincr < self.width and \
-                                       y + yincr < self.height and \
-                                       not self.is_block(x+xincr, y+yincr)))
+                    start_of_entry = (cells[i] != '.' and \
+                                      (start_of_row or cells[i-iincr] == '.') and \
+                                      (x + xincr < width and \
+                                       y + yincr < height and \
+                                       cells[i+iincr] != '.'))
+                    i += 1
                     if not start_of_entry:
                         continue
 
                     entry_cells = []
                     entry_pattern = ""
+                    is_complete = True
                     xt = x
                     yt = y
-                    while xt < self.width and yt < self.height:
-                        if self.is_block(xt, yt):
+                    wordlen = 0
+                    while xt < width and yt < height:
+                        cell_id = yt * width + xt
+                        cell_val = cells[cell_id]
+                        entries_by_cell[cell_id][dir] = (len(entries), wordlen)
+                        if cell_val == '.':
                             break
-                        cell = self.cell_at(xt, yt)
-                        entry_cells.append(cell)
-                        entry_pattern += cell.value
+                        if cell_val == ' ':
+                            is_complete = False
+                        entry_cells.append(cell_id)
+                        entry_pattern += cell_val
                         xt += xincr
                         yt += yincr
-                    if verify and not word_db.num_matches(entry_pattern):
-                        raise Exception("Batched it", entry_pattern)
-                    entry = Entry(self, entry_pattern, entry_cells)
-                    for c in entry_cells:
-                        c.add_entry(entry)
-                    self.entries.append(entry)
+                        wordlen += 1
+                    entry_bitmap = word_db._matching_bitmap(entry_pattern)
+                    if is_complete:
+                        used_words.add(entry_pattern)
+                    entry = Entry(index=len(entries),
+                                  direction=dir,
+                                  cells=entry_cells,
+                                  bitmap=entry_bitmap,
+                                  is_complete=is_complete,
+                                  min_cost=min_cost(wordlen, entry_bitmap))
+                    entries.append(entry)
 
-
-def _most_constrained_key(x):
-    matches = x[1]
-    l = len(matches)
-    scorediff = 0
-    if l > 1: # if all are > 1 we want to sort by score diff
-        l = 2
-        scorediff = 1 / matches[1][1] - 1 / matches[0][1]
-    return (2-l, scorediff)
+        return cls(width, height, used_words, cells, entries_by_cell, entries)
 
 
 class Solver(object):
@@ -175,70 +197,74 @@ class Solver(object):
     best_cost = 0
 
     def __init__(self, grid):
-        self.initial_grid = Grid(grid)
+        self.initial_grid = Grid.from_template(grid)
 
-    def most_constrained(self, grid):
-        """Most constrained is the largest difference between score of best word and score of second best word"""
-        entries_to_solve = [(e, word_db.matching_words(e.pattern)) for e in grid.entries if ' ' in e.pattern]
-        entries = sorted(entries_to_solve, key=_most_constrained_key, reverse=True)
-        if entries:
-            return entries[0]
-        return None
-
-    def _solve(self, grid):
-        if self.best_grid and grid.cost() > self.best_cost:
+    def _solve(self, grid, descrep=0, pitched=None):
+        base_cost = grid.min_cost()
+        if self.best_grid and base_cost > self.best_cost:
             return None
 
-        most_constrained = self.most_constrained(grid)
-        if not most_constrained: # new best soln
+        entries_to_consider = [e for e in grid.entries if not e.is_complete]
+        if not entries_to_consider: # new best soln
             print(grid)
-            print(grid.cost())
+            print(base_cost)
             self.best_grid = grid
-            self.best_cost = grid.cost()
+            self.best_cost = base_cost
             return grid
 
-        entry_to_solve, options = most_constrained
-        if not options: # we're f'ed
-            return None
+        entries_to_consider.sort(key=lambda e: word_db.num_matches(len(e.cells), e.bitmap))
+        successor = None
+        successor_diff = None
+        for entry in entries_to_consider:
+            best_grid = None
+            best_cost = None
+            second_best_cost = None
 
-        already_used = grid.words()
-        matches = word_db.matching_words(entry_to_solve.pattern)
-        # matches = weighted_shuffle(matches)
-        matches,_ = zip(*matches) # Ditch the scores
+            skip_entry = False
+            for word in word_db.matching_words(len(entry.cells), entry.bitmap):
+                if word in grid.used_words:
+                    continue
 
-        count = 0
-        for word in matches:
-            if self.best_grid and count > 1:
+                newgrid = grid.grid_with_entry_decided(entry.index, word)
+                if not newgrid:
+                    continue
+
+                newcost = newgrid.min_cost()
+                if not best_grid:
+                    best_grid = newgrid
+                    best_cost = newcost
+                elif newcost < best_cost:
+                    best_grid = newgrid
+                    second_best_cost = best_cost
+                    best_cost = newcost
+                elif not second_best_cost or newcost < second_best_cost:
+                    second_best_cost = newcost
+                    if successor_diff and second_best_cost - base_cost < successor_diff:
+                        skip_entry = True
+                        break
+
+            if skip_entry:
+                break
+
+            if not best_grid: # No valid option for this entry, bad grid
                 return None
 
-            if word in already_used:
-                continue
+            if not second_best_cost: # No backup option, so this entry is forced
+                successor = best_grid
+                break
 
-            # Lookahead and only consider if crosses still have potential
-            crosses = entry_to_solve.crosses()
-            fail = False
-            for i in range(len(word)):
-                if entry_to_solve.pattern[i] == ' ':
-                    cross = crosses[i]
-                    pattern = cross.pattern_with_replacement(entry_to_solve.cells[i]._id(),
-                                                             word[i])
-                    if not word_db.matching_words(pattern):
-                        fail = True
-                        break
-            if fail:
-                continue
+            cost_diff = second_best_cost - best_cost
+            if not successor or cost_diff > successor_diff:
+                successor = best_grid
+                successor_diff = cost_diff
 
-            count += 1
+        print(successor, successor.min_cost())
+        return self._solve(successor)
 
-            new_grid = grid.grid_with_entry_replaced(entry_to_solve, word)
-            soln = self._solve(new_grid)
-#            if soln:
-#                return soln
-
-        return None
 
     def solve(self):
         self._solve(self.initial_grid)
+#        self._solve(self.initial_grid, discrep=1)
         print(self.best_grid)
         print(self.best_cost)
         return self.best_grid
@@ -281,15 +307,15 @@ JEFFERSONNYBONO
 # VANBURENZOPIANO
 # ...ABE..CIA....
 # WASHINGTONYHAWK
-# ADO..T  .KERNEL
-# GECKO.   .RHINE
-# ENIGMA.   ..MCI
+# ADO..TEA.KERNEL
+# GECKO.MMA.RHINE
+# ENIGMA.ILL..MCI
 # ROOSEVELTONJOHN
-# ....LE ..   ...
+# ....LED..  S...
 # JEFFERSONNYBONO
-# APOET.    .    
-# MERIT.    .    
-# BEANE.    .    '''
+# APOET.E   .A   
+# MERIT.L   .C   
+# BEANE.S   .H   '''
     solver = Solver(test_grid)
     import timeit
     count, total = timeit.Timer(lambda: solver.solve()).autorange()

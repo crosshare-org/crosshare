@@ -19,22 +19,30 @@ def _matching_bitmap(pattern):
             matches &= bitmap
     return matches
 
-def highest_score(pattern):
-    bitmap = _matching_bitmap(pattern)
-    return bitmap and _db.words_by_length[len(pattern)][bitmap.bit_length()-1]
 
-def num_matches(pattern):
-    bitmap = _matching_bitmap(pattern)
+def update_bitmap(length, bitmap, index, letter):
     if bitmap is None:
-        return len(_db.words_by_length[len(pattern)])
+        return _db.bitmaps_by_length[length][letter][index]
+    return bitmap & _db.bitmaps_by_length[length][letter][index]
+
+
+def num_matches(length, bitmap):
+    if bitmap is None:
+        return len(_db.words_by_length[length])
     return bin(bitmap).count('1')
 
-def matching_words(pattern):
-    bitmap = _matching_bitmap(pattern)
+
+def highest_score(length, bitmap):
     if bitmap is None:
-        return list(_db.words_by_length[len(pattern)])
+        return _db.words_by_length[length][-1]
+    return bitmap and _db.words_by_length[length][bitmap.bit_length()-1]
+
+
+def matching_words(length, bitmap):
+    if bitmap is None:
+        return [x[0] for x in _db.words_by_length[length]]
     activebits = _activebits(bitmap)
-    return [_db.words_by_length[len(pattern)][i] for i in activebits]
+    return [_db.words_by_length[length][i][0] for i in activebits]
 
 
 if __name__ == "__main__":
