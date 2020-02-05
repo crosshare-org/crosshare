@@ -193,23 +193,23 @@ class Grid(object):
 
 class Solver(object):
 
-    best_grid = None
-    best_cost = 0
+    soln_grid = None
+    soln_cost = 0
 
     def __init__(self, grid):
         self.initial_grid = Grid.from_template(grid)
 
     def _solve(self, grid, discrep=0, pitched=None):
         base_cost = grid.min_cost()
-        if self.best_grid and base_cost > self.best_cost:
+        if self.soln_grid and base_cost > self.soln_cost:
             return None
 
         entries_to_consider = [e for e in grid.entries if not e.is_complete]
         if not entries_to_consider: # new best soln
             print(grid)
             print(base_cost)
-            self.best_grid = grid
-            self.best_cost = base_cost
+            self.soln_grid = grid
+            self.soln_cost = base_cost
             return grid
 
         entries_to_consider.sort(key=lambda e: word_db.num_matches(len(e.cells), e.bitmap))
@@ -225,17 +225,15 @@ class Solver(object):
                 word = w[0]
                 score = w[1]
                 if pitched and (entry.index, word) in pitched:
-                    print("PITCHED", entry.index, word)
                     continue
                 if word in grid.used_words:
                     continue
 
-                # Fail fast if we're going to be worse than the current best for this entry
-                if best_cost and base_cost - entry.min_cost + 1 / score > best_cost:
-                    continue
-                # Fail fast if we're going to be wores than the current best all time
-                if self.best_cost and base_cost - entry.min_cost + 1 / score > self.best_cost:
-                    print("Fail fast 2")
+                # If we have a second_best_cost for this entry we know it's lower than existing soln cost
+                cost_to_beat = second_best_cost or self.soln_cost
+
+                # Fail fast based on score change due to this entry alone
+                if cost_to_beat and base_cost - entry.min_cost + 1 / score > cost_to_beat:
                     continue
 
                 newgrid = grid.grid_with_entry_decided(entry.index, word)
@@ -245,7 +243,7 @@ class Solver(object):
                 newcost = newgrid.min_cost()
 
                 # Check overall score
-                if self.best_grid and newcost > self.best_cost:
+                if cost_to_beat and newcost > cost_to_beat:
                     continue
 
                 if not best_grid:
@@ -276,7 +274,6 @@ class Solver(object):
                 successor = best_grid
                 successor_diff = cost_diff
 
-        print(successor[0], successor[0].min_cost())
         if not pitched:
             pitched = []
         self._solve(successor[0], discrep, pitched)
@@ -286,9 +283,9 @@ class Solver(object):
 
     def solve(self):
         self._solve(self.initial_grid, discrep=2)
-        print(self.best_grid)
-        print(self.best_cost)
-        return self.best_grid
+        print(self.soln_grid)
+        print(self.soln_cost)
+        return self.soln_grid
 
 if __name__ == "__main__":
 #     test_grid = '''        ..     
