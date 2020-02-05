@@ -199,7 +199,7 @@ class Solver(object):
     def __init__(self, grid):
         self.initial_grid = Grid.from_template(grid)
 
-    def _solve(self, grid, descrep=0, pitched=None):
+    def _solve(self, grid, discrep=0, pitched=None):
         base_cost = grid.min_cost()
         if self.best_grid and base_cost > self.best_cost:
             return None
@@ -221,8 +221,21 @@ class Solver(object):
             second_best_cost = None
 
             skip_entry = False
-            for word in word_db.matching_words(len(entry.cells), entry.bitmap):
+            for w in word_db.matching_words(len(entry.cells), entry.bitmap):
+                word = w[0]
+                score = w[1]
+                if pitched and (entry.index, word) in pitched:
+                    print("PITCHED", entry.index, word)
+                    continue
                 if word in grid.used_words:
+                    continue
+
+                # Fail fast if we're going to be worse than the current best for this entry
+                if best_cost and base_cost - entry.min_cost + 1 / score > best_cost:
+                    continue
+                # Fail fast if we're going to be wores than the current best all time
+                if self.best_cost and base_cost - entry.min_cost + 1 / score > self.best_cost:
+                    print("Fail fast 2")
                     continue
 
                 newgrid = grid.grid_with_entry_decided(entry.index, word)
@@ -230,11 +243,16 @@ class Solver(object):
                     continue
 
                 newcost = newgrid.min_cost()
+
+                # Check overall score
+                if self.best_grid and newcost > self.best_cost:
+                    continue
+
                 if not best_grid:
-                    best_grid = newgrid
+                    best_grid = (newgrid, entry.index, word)
                     best_cost = newcost
                 elif newcost < best_cost:
-                    best_grid = newgrid
+                    best_grid = (newgrid, entry.index, word)
                     second_best_cost = best_cost
                     best_cost = newcost
                 elif not second_best_cost or newcost < second_best_cost:
@@ -258,13 +276,16 @@ class Solver(object):
                 successor = best_grid
                 successor_diff = cost_diff
 
-        print(successor, successor.min_cost())
-        return self._solve(successor)
+        print(successor[0], successor[0].min_cost())
+        if not pitched:
+            pitched = []
+        self._solve(successor[0], discrep, pitched)
+        if discrep and len(pitched) < discrep:
+            self._solve(grid, discrep, list(pitched) + [(successor[1], successor[2])])
 
 
     def solve(self):
-        self._solve(self.initial_grid)
-#        self._solve(self.initial_grid, discrep=1)
+        self._solve(self.initial_grid, discrep=2)
         print(self.best_grid)
         print(self.best_cost)
         return self.best_grid
@@ -311,11 +332,11 @@ JEFFERSONNYBONO
 # GECKO.MMA.RHINE
 # ENIGMA.ILL..MCI
 # ROOSEVELTONJOHN
-# ....LED..  S...
+# ....LED..WAS...
 # JEFFERSONNYBONO
-# APOET.E   .A   
-# MERIT.L   .C   
-# BEANE.S   .H   '''
+# APOET.EVOO.AMEN
+# MERIT.LUST.COED
+# BEANE.SMEE.HORA'''
     solver = Solver(test_grid)
     import timeit
     count, total = timeit.Timer(lambda: solver.solve()).autorange()

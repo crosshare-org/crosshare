@@ -40,9 +40,9 @@ def highest_score(length, bitmap):
 
 def matching_words(length, bitmap):
     if bitmap is None:
-        return [x[0] for x in _db.words_by_length[length]]
+        return list(_db.words_by_length[length])
     activebits = _activebits(bitmap)
-    return [_db.words_by_length[length][i][0] for i in activebits]
+    return [_db.words_by_length[length][i] for i in activebits]
 
 
 if __name__ == "__main__":
