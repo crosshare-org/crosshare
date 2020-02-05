@@ -216,12 +216,15 @@ class Solver(object):
         successor = None
         successor_diff = None
         for entry in entries_to_consider:
+            length = len(entry.cells)
+            crosses = grid.crosses(entry)
             best_grid = None
             best_cost = None
             second_best_cost = None
+            untenable_letters = set()
 
             skip_entry = False
-            for w in word_db.matching_words(len(entry.cells), entry.bitmap):
+            for w in word_db.matching_words(length, entry.bitmap):
                 word = w[0]
                 score = w[1]
                 if pitched and (entry.index, word) in pitched:
@@ -229,11 +232,35 @@ class Solver(object):
                 if word in grid.used_words:
                     continue
 
+                # Fail fast when we know a letter in this word will create an untenable crossing
+                letters = set()
+                for i in range(length):
+                    letters.add((i, word[i]))
+                if letters & untenable_letters:
+                    continue
+
                 # If we have a second_best_cost for this entry we know it's lower than existing soln cost
                 cost_to_beat = second_best_cost or self.soln_cost
 
                 # Fail fast based on score change due to this entry alone
                 if cost_to_beat and base_cost - entry.min_cost + 1 / score > cost_to_beat:
+                    continue
+
+                # Fail fast based on score change due to any crosses
+                fail_fast=False
+                for i in range(length):
+                    cell = grid.cells[i]
+                    if cell != ' ': # Don't need to check cross
+                        continue
+                    cross = grid.entries[crosses[i][0]]
+                    cross_length = len(cross.cells)
+                    new_bitmap = word_db.update_bitmap(cross_length, cross.bitmap, crosses[i][1], word[i])
+                    new_cost = base_cost - cross.min_cost + min_cost(cross_length, new_bitmap)
+                    if cost_to_beat and new_cost > cost_to_beat:
+                        untenable_letters.add((i, word[i]))
+                        fail_fast = True
+                        break
+                if fail_fast:
                     continue
 
                 newgrid = grid.grid_with_entry_decided(entry.index, word)
