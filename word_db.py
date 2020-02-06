@@ -2,8 +2,12 @@ import _db
 
 
 def _activebits(a):
-    s=bin(a)[2:][::-1]
-    return sorted([i for i,d in enumerate(s) if d == '1'], reverse=True)
+    active = []
+    while a:
+        b = a.bit_length() - 1
+        active.append(b)
+        a -= 1 << b
+    return active
 
 
 def _matching_bitmap(pattern):
@@ -47,5 +51,8 @@ def matching_words(length, bitmap):
 
 if __name__ == "__main__":
     print(_activebits(13123))
+    import timeit
+    count, total = timeit.Timer(lambda: _activebits(13123)).autorange()
+    print(total/count)
     print(matching_words("KSTON"))
     print(matching_words(" H "))

@@ -49,9 +49,9 @@ class Grid(object):
 
     def grid_with_entry_decided(self, entry_index, word):
         new_grid = Grid(self.width, self.height, set(self.used_words),
-                        copy.deepcopy(self.cells),
-                        copy.deepcopy(self.entries_by_cell),
-                        copy.deepcopy(self.entries))
+                        list(self.cells),
+                        self.entries_by_cell,
+                        list(self.entries))
 
         entry = new_grid.entries[entry_index]
         new_grid.used_words.add(word)
@@ -309,7 +309,7 @@ class Solver(object):
 
 
     def solve(self):
-        self._solve(self.initial_grid, discrep=2)
+        self._solve(self.initial_grid, discrep=3)
         print(self.soln_grid)
         print(self.soln_cost)
         return self.soln_grid
@@ -362,6 +362,8 @@ JEFFERSONNYBONO
 # MERIT.LUST.COED
 # BEANE.SMEE.HORA'''
     solver = Solver(test_grid)
+#    import cProfile
+#    cProfile.run('solver.solve()')
     import timeit
     count, total = timeit.Timer(lambda: solver.solve()).autorange()
     print(total/count)
