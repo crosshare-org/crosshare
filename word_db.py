@@ -1,4 +1,5 @@
 import _db
+import functools
 
 
 def _activebits(a):
@@ -30,6 +31,7 @@ def update_bitmap(length, bitmap, index, letter):
     return bitmap & _db.bitmaps_by_length[length][letter][index]
 
 
+@functools.lru_cache(maxsize=None)
 def num_matches(length, bitmap):
     if bitmap is None:
         return len(_db.words_by_length[length])
@@ -42,6 +44,7 @@ def highest_score(length, bitmap):
     return bitmap and _db.words_by_length[length][bitmap.bit_length()-1]
 
 
+@functools.lru_cache(maxsize=None)
 def matching_words(length, bitmap):
     if bitmap is None:
         return list(_db.words_by_length[length])

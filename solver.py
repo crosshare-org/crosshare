@@ -221,7 +221,6 @@ class Solver(object):
             best_grid = None
             best_cost = None
             second_best_cost = None
-            untenable_letters = set()
 
             skip_entry = False
             for w in word_db.matching_words(length, entry.bitmap):
@@ -230,13 +229,6 @@ class Solver(object):
                 if pitched and (entry.index, word) in pitched:
                     continue
                 if word in grid.used_words:
-                    continue
-
-                # Fail fast when we know a letter in this word will create an untenable crossing
-                letters = set()
-                for i in range(length):
-                    letters.add((i, word[i]))
-                if letters & untenable_letters:
                     continue
 
                 # If we have a second_best_cost for this entry we know it's lower than existing soln cost
@@ -257,7 +249,6 @@ class Solver(object):
                     new_bitmap = word_db.update_bitmap(cross_length, cross.bitmap, crosses[i][1], word[i])
                     new_cost = base_cost - cross.min_cost + min_cost(cross_length, new_bitmap)
                     if cost_to_beat and new_cost > cost_to_beat:
-                        untenable_letters.add((i, word[i]))
                         fail_fast = True
                         break
                 if fail_fast:
@@ -315,21 +306,21 @@ class Solver(object):
         return self.soln_grid
 
 if __name__ == "__main__":
-#     test_grid = '''        ..     
-#         .      
-#         .      
-#    .      .    
-#       .   .   .
-# ...   .        
-#      .     .   
-#        .       
-#    .     .     
-#         .   ...
-# .   .   .      
-#     .      .   
-#       .        
-#       .        
-#      ..        '''
+    test_grid = '''        ..     
+        .      
+        .      
+   .      .    
+      .   .   .
+...   .        
+     .     .   
+       .       
+   .     .     
+        .   ...
+.   .   .      
+    .      .   
+      .        
+      .        
+     ..        '''
     test_grid = '''    .    .     
     .    .     
     .    .     
@@ -362,8 +353,9 @@ JEFFERSONNYBONO
 # MERIT.LUST.COED
 # BEANE.SMEE.HORA'''
     solver = Solver(test_grid)
+
 #    import cProfile
-#    cProfile.run('solver.solve()')
+#    cProfile.run('solver.solve()', sort="cumtime")
     import timeit
     count, total = timeit.Timer(lambda: solver.solve()).autorange()
     print(total/count)
