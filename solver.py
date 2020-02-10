@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import namedtuple
 import copy
 from dataclasses import (dataclass, field)
+import functools
 import itertools
 import math
 import random
@@ -107,6 +108,34 @@ class Grid(object):
             s += "\n"
         return s
 
+    def stable_subsets(self, prelim_subset=None):
+        open_entries = [e for e in self.entries if not e.is_complete]
+        if prelim_subset:
+            open_entries = [e for e in open_entries if e.index in prelim_subset]
+
+        assignments = {}
+
+        def add_subset(entry, num):
+            if entry.index in assignments:
+                return
+            if prelim_subset and entry.index not in prelim_subset:
+                raise Exception("Bad assignment", entry.index, prelim_subset)
+            assignments[entry.index] = num
+            for c in self.crosses(entry):
+                cross = self.entries[c[0]]
+                if self.cells[cross.cells[c[1]]] == ' ':
+                    add_subset(cross, num)
+
+        subset_number = 0
+        for e in open_entries:
+            add_subset(e, subset_number)
+            subset_number += 1
+
+        inv = {}
+        for key, val in assignments.items():
+            inv[val] = inv.get(val, []) + [key]
+        return list(inv.values())
+
     def min_cost(self):
         """Get a lower bound on total cost of the grid as filled in."""
         cost = 0
@@ -199,18 +228,32 @@ class Solver(object):
     def __init__(self, grid):
         self.initial_grid = Grid.from_template(grid)
 
-    def _solve(self, grid, discrep=0, pitched=None):
+    def _solve(self, grid, discrep=0, pitched=None, subset=None):
+        """Fill out a grid or a subset of grid."""
         base_cost = grid.min_cost()
         if self.soln_grid and base_cost > self.soln_cost:
             return None
 
         entries_to_consider = [e for e in grid.entries if not e.is_complete]
-        if not entries_to_consider: # new best soln
+        if not entries_to_consider: # New best soln
             print(grid)
             print(base_cost)
             self.soln_grid = grid
             self.soln_cost = base_cost
             return grid
+
+        if subset:
+            entries_to_consider = [e for e in entries_to_consider if e.index in subset]
+        if not entries_to_consider: # Done with subsection
+            return grid
+
+        subsets = grid.stable_subsets(subset)
+        if len(subsets) > 1:
+            subsets = sorted(subsets, key=lambda x: len(x))
+            subsolved = self._solve(grid, discrep, list(pitched), subsets[0])
+            if not subsolved:
+                return None
+            return self._solve(subsolved, discrep, list(pitched), subset)
 
         entries_to_consider.sort(key=lambda e: word_db.num_matches(len(e.cells), e.bitmap))
         successor = None
@@ -294,13 +337,19 @@ class Solver(object):
 
         if not pitched:
             pitched = []
-        self._solve(successor[0], discrep, pitched)
+        next_subset = None
+        if subset:
+            next_subset = [e for e in subset if e != successor[1]]
+        result = self._solve(successor[0], discrep, pitched, next_subset)
         if discrep and len(pitched) < discrep:
-            self._solve(grid, discrep, list(pitched) + [(successor[1], successor[2])])
+            res2 = self._solve(grid, discrep, list(pitched) + [(successor[1], successor[2])], subset)
+            if res2 and (not result or res2.min_cost() < result.min_cost()):
+                result = res2
+        return result
 
 
     def solve(self):
-        self._solve(self.initial_grid, discrep=3)
+        self._solve(self.initial_grid, discrep=4)
         print(self.soln_grid)
         print(self.soln_cost)
         return self.soln_grid
