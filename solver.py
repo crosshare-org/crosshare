@@ -349,7 +349,7 @@ class Solver(object):
 
 
     def solve(self):
-        self._solve(self.initial_grid, discrep=4)
+        self._solve(self.initial_grid, discrep=3)
         print(self.soln_grid)
         print(self.soln_cost)
         return self.soln_grid
@@ -396,15 +396,15 @@ JEFFERSONNYBONO
 # GECKO.MMA.RHINE
 # ENIGMA.ILL..MCI
 # ROOSEVELTONJOHN
-# ....LED..WAS...
+# ....LE ..WAS...
 # JEFFERSONNYBONO
-# APOET.EVOO.AMEN
-# MERIT.LUST.COED
-# BEANE.SMEE.HORA'''
+# APOET.    .AMEN
+# MERIT.    .COED
+# BEANE.    .HORA'''
     solver = Solver(test_grid)
 
-#    import cProfile
-#    cProfile.run('solver.solve()', sort="cumtime")
-    import timeit
-    count, total = timeit.Timer(lambda: solver.solve()).autorange()
-    print(total/count)
+    import cProfile
+    cProfile.run('solver.solve()', sort="cumtime")
+#    import timeit
+#    count, total = timeit.Timer(lambda: solver.solve()).autorange()
+#    print(total/count)
