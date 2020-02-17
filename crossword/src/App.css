@@ -36,3 +36,36 @@
     transform: rotate(360deg);
   }
 }
+.grid {
+  margin: 1em;
+}
+.grid-row {
+  display: flex;
+}
+.cell {
+  width: 2.2em;
+  height: 2.2em;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+.cell-top {
+  border-top: 1px solid black;
+}
+.cell-left {
+  border-left: 1px solid black;
+}
+.cell-block {
+  background-color: black;
+}
+.cell-active {
+  background-color: #e94;
+}
+.cell-highlight {
+  background-color: #ddd;
+}
+.cell-value {
+  line-height: 1.9em;
+  font-size: 1.3em;
+  text-align: center;
+  vertical-align: middle;
+}

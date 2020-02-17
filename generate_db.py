@@ -1,4 +1,5 @@
 from collections import defaultdict
+import json
 import string
 import struct
 
@@ -99,6 +100,10 @@ class GenerateDB(object):
                 return [ddict(x) for x in d]
             return d
 
+        with open("_db.json", "w") as dbjson:
+            json.dump({"words": self.words_by_length,
+                       "bitmaps": self.bitmaps_by_length},
+                       dbjson)
         with open("_db.py", "w") as db:
             content = ["words_by_length = {}\n".format(ddict(self.words_by_length)),
                        # "clue_map = {}".format(self.clue_map),
