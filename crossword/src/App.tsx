@@ -52,16 +52,18 @@ enum Direction {
   Down
 }
 
-function computeHighlights(cells:string, width:number, height:number, active:[number, number], direction:Direction) {
-  const colIncr = direction === Direction.Across ? 1 : 0;
+function Grid(props: GridProps) {
+  const cells = props.cellValues.toUpperCase().replace("\n", "");
+  const [active, setActive] = React.useState([props.width, props.height] as [number, number]);
+  const [direction, setDirection] = React.useState(Direction.Across);
   const rowIncr = direction === Direction.Down ? 1 : 0;
-  let highlights: Array<[number, number]> = [];
-
+  const colIncr = direction === Direction.Across ? 1 : 0;
   function valAt(row: number, col: number) {
-    return cells.charAt(row * width + col);
+    return cells.charAt(row * props.width + col);
   }
 
-  // Go backwords from active until block or grid edge
+  let highlights: Array<[number, number]> = [];
+  // Add highlights backwords
   let row = active[0];
   let col = active[1];
   while (true) {
@@ -75,14 +77,13 @@ function computeHighlights(cells:string, width:number, height:number, active:[nu
     }
     highlights.push([row, col]);
   }
-
-  // Now forwards
+  // And forwards
   row = active[0];
   col = active[1];
   while (true) {
     row += rowIncr;
     col += colIncr;
-    if (row >= height || col >= width) {
+    if (row >= props.height || col >= props.width) {
       break;
     }
     if (valAt(row, col) === BLOCK) {
@@ -90,14 +91,6 @@ function computeHighlights(cells:string, width:number, height:number, active:[nu
     }
     highlights.push([row, col]);
   }
-  return highlights;
-}
-
-function Grid(props: GridProps) {
-  const cells = props.cellValues.toUpperCase().replace("\n", "");
-  const [active, setActive] = React.useState([props.width, props.height] as [number, number]);
-  const [direction, setDirection] = React.useState(Direction.Across);
-  const highlights = computeHighlights(cells, props.width, props.height, active, direction);
 
   function changeDirection() {
     if (direction === Direction.Across) {
@@ -108,6 +101,9 @@ function Grid(props: GridProps) {
   }
 
   function clickHandler(row: number, column: number) {
+    if (valAt(row, column) === BLOCK) {
+      return;
+    }
     if (row === active[0] && column === active[1]) {
       changeDirection();
     } else {
