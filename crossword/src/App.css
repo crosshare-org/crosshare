@@ -43,10 +43,18 @@
   display: flex;
 }
 .cell {
+  position: relative;
   width: 2.2em;
   height: 2.2em;
   border-right: 1px solid black;
   border-bottom: 1px solid black;
+}
+.cell-label {
+  font-size: 0.6em;
+  position: absolute;
+  left: 0.1em;
+  top: 0px;
+  font-weight: bold;
 }
 .cell-top {
   border-top: 1px solid black;

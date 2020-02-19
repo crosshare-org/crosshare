@@ -14,15 +14,17 @@ type GridRowProps = {
   highlights: Array<Position>,
   cellValues: string,
   rowNumber: number,
-  clickHandler: (pos:Position) => void
+  clickHandler: (pos:Position) => void,
+  cellLabels: Map<string, number>
 }
 function GridRow(props: GridRowProps) {
   function cell(cellValue: string, index: number) {
+    const number = props.cellLabels.get(props.rowNumber + "-" + index);
     return <Cell
       active={props.active.row === props.rowNumber && props.active.col === index}
       highlight={props.highlights.some((p) => p.row === props.rowNumber && p.col === index)}
       key={index}
-      number=""
+      number={number ? number.toString() : ""}
       row={props.rowNumber}
       column={index}
       onClick={props.clickHandler}
@@ -75,7 +77,8 @@ class GridData {
     public readonly cells: string,
     public readonly usedWords: Set<string>,
     public readonly entriesByCell: Array<Array<[number, number]|null>>,
-    public readonly entries: Array<Entry>
+    public readonly entries: Array<Entry>,
+    public readonly cellLabels: Map<string, number>
   ) {}
 
   static fromCells(width:number, height:number, cells:string) {
@@ -84,24 +87,29 @@ class GridData {
     let entriesByCell:Array<Array<[number, number]|null>> = new Array(cells.length);
     let entries = [];
     let usedWords:Set<string> = new Set();
-    for (var dir of ([Direction.Across, Direction.Down])) {
-      const xincr = (dir === Direction.Across) ? 1 : 0;
-      const yincr = (dir === Direction.Down) ? 1 : 0;
-      const iincr = xincr + yincr * width;
+    let cellLabels = new Map<string, number>();
+    let currentCellLabel = 1;
+    for (var y = 0; y < height; y += 1) {
+      for (var x = 0; x < width; x += 1) {
+        const i = x + y * width;
+        for (var dir of ([Direction.Across, Direction.Down])) {
+          const xincr = (dir === Direction.Across) ? 1 : 0;
+          const yincr = (dir === Direction.Down) ? 1 : 0;
+          const iincr = xincr + yincr * width;
 
-      let i = 0;
-      for (var y = 0; y < height; y += 1) {
-        for (var x = 0; x < width; x += 1) {
           const isRowStart = (dir === Direction.Across && x === 0) ||
                              (dir === Direction.Down && y === 0);
           const isEntryStart = (cells.charAt(i) !== BLOCK &&
                                 (isRowStart || cells.charAt(i-iincr) === BLOCK) &&
                                 (x + xincr < width &&
                                  y + yincr < height &&
-                                 cells.charAt(i+iincr) !== '.'));
-          i += 1
+                                 cells.charAt(i+iincr) !== BLOCK));
           if (!isEntryStart) {
             continue
+          }
+          if (!cellLabels.has(y + "-" + x)) {
+            cellLabels.set(y + "-" + x, currentCellLabel);
+            currentCellLabel += 1;
           }
           let entryCells = [];
           let entryPattern = "";
@@ -135,7 +143,7 @@ class GridData {
         }
       }
     }
-    return new this(width, height, cells, usedWords, entriesByCell, entries);
+    return new this(width, height, cells, usedWords, entriesByCell, entries, cellLabels);
   }
 
   valAt(pos:Position) {
@@ -306,7 +314,7 @@ function Grid(props: GridProps) {
   }
 
   const gridRows = split(grid.cells, props.width).map((cells, idx) =>
-    <GridRow active={active} highlights={highlights} clickHandler={clickHandler} cellValues={cells} rowNumber={idx} key={idx}/>
+    <GridRow cellLabels={grid.cellLabels} active={active} highlights={highlights} clickHandler={clickHandler} cellValues={cells} rowNumber={idx} key={idx}/>
   );
 
   return (

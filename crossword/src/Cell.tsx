@@ -33,7 +33,7 @@ export default function Cell(props: CellProps) {
     <div className={classname} onClick={() => props.onClick({row: props.row, col: props.column})}>
       {!props.isBlock ?
         <>
-        <div className="cell-number">{props.number}</div>
+        <div className="cell-label">{props.number}</div>
         <div className="cell-value">{props.value}</div>
         </>
         : ""}
