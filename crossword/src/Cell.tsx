@@ -8,7 +8,7 @@ type CellProps = {
   number: string,
   row: number,
   column: number,
-  onClick: (row: number, column: number) => void
+  onClick: (pos:{row: number, col:number}) => void
 }
 
 export default function Cell(props: CellProps) {
@@ -30,7 +30,7 @@ export default function Cell(props: CellProps) {
   }
 
   return (
-    <div className={classname} onClick={() => props.onClick(props.row, props.column)}>
+    <div className={classname} onClick={() => props.onClick({row: props.row, col: props.column})}>
       {!props.isBlock ?
         <>
         <div className="cell-number">{props.number}</div>
