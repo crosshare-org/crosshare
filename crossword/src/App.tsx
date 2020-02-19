@@ -214,7 +214,7 @@ class GridData {
     return {...active, row: y};
   }
 
-  moveToNextEntry(pos: Position, dir: Direction): [Position, Direction] {
+  moveToNextEntry(pos: Position, dir: Direction, reverse = false): [Position, Direction] {
     const currentEntryIndex = this.entriesByCell[pos.row*this.width + pos.col][dir];
     if (!currentEntryIndex) {
       console.log("ERROR: No current entry index");
@@ -230,7 +230,11 @@ class GridData {
     }
 
     for (var offset = 0; offset < this.sortedEntries.length; offset += 1) {
-      const tryEntry = this.sortedEntries[(i + offset + 1) % this.sortedEntries.length];
+      var index = (i + offset + 1) % this.sortedEntries.length;
+      if (reverse) {
+        index = (i + this.sortedEntries.length - offset - 1) % this.sortedEntries.length;
+      }
+      const tryEntry = this.sortedEntries[index];
       if (!tryEntry.isComplete) {
         for (var cell of tryEntry.cells) {
           if (this.valAt(cell) === " ") {
@@ -292,12 +296,12 @@ function Grid(props: GridProps) {
       e.preventDefault();
     } else if (e.key === "Tab") {
       if (!e.shiftKey) {
-        const [pos, dir] = grid.moveToNextEntry(active, direction);
-        setActive(pos);
-        setDirection(dir);
+        var [pos, dir] = grid.moveToNextEntry(active, direction);
       } else {
-        //moveToPreviousEntry();
+        var [pos, dir] = grid.moveToNextEntry(active, direction, true);
       }
+      setActive(pos);
+      setDirection(dir);
       e.preventDefault();
     } else if (e.key === "ArrowRight") {
       if (direction === Direction.Down) {
