@@ -1,9 +1,9 @@
 import * as React from 'react';
 
+import axios from 'axios';
 import useEventListener from '@use-it/event-listener'
 
 import './App.css';
-import { DB } from './wordDB';
 import Cell from './Cell';
 
 
@@ -409,26 +409,45 @@ function Grid(props: GridProps) {
   )
 }
 
+interface Puzzle {
+  author: string,
+  title: string,
+  size: {rows: number, cols: number},
+  clues: {across: Array<string>, down: Array<string>},
+  grid: Array<string>
+}
+
 const App = () => {
-  new DB().sayHi();
+  const [puzzle, setPuzzle] = React.useState<Puzzle|null>(null);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await axios(
+          '/demos/presidential_appts.xw',
+        );
+        setPuzzle(result.data);
+      } catch (error) {
+        setIsError(true);
+      }
+      setIsLoaded(true);
+    };
+    fetchData();
+  }, []);
+
   return (
-    <div className="app">
-      <Grid width={15} height={15} cellValues={"    .ZZ  .     " +
-      "    .F   .     " +
-      "    .    .     " +
-      "VANBURENZOPIANO" +
-      "...   ..   ...." +
-      "WASHINGTONYHAWK" +
-      "   ..   .      " +
-      "     .   .     " +
-      "      .   ..   " +
-      "ROOSEVELTONJOHN" +
-      "....   ..   ..." +
-      "JEFFERSONNYBONO" +
-      "     .    .    " +
-      "     .    .    " +
-      "     .    .    "} />
-    </div>
+    <React.Fragment>
+    {isError && <div>Something went wrong ...</div>}
+    {isLoaded && puzzle ? (
+      <div className="app">
+        <Grid width={puzzle.size.cols} height={puzzle.size.rows} cellValues={puzzle.grid.join('')} />
+      </div>
+    ) : (
+      <div>Loading...</div>
+    )}
+    </React.Fragment>
   );
 }
 
