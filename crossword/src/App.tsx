@@ -214,21 +214,48 @@ class GridData {
     return {...active, row: y};
   }
 
-  moveToNextEntry(pos: Position, dir: Direction, reverse = false): [Position, Direction] {
+  retreatPosition(pos: Position, dir: Direction): Position {
+    const [entry, index] = this.entryAtPosition(pos, dir);
+    if (index > 0) {
+      return entry.cells[index - 1];
+    }
+    return pos;
+  }
+
+  advancePosition(pos: Position, dir: Direction): Position {
+    const [entry, index] = this.entryAtPosition(pos, dir);
+
+    for (var offset = 0; offset < entry.cells.length; offset += 1) {
+      var cell = entry.cells[(index + offset + 1) % entry.cells.length];
+      if (this.valAt(cell) === " ") {
+        return cell;
+      }
+    }
+    if (index + 1 < entry.cells.length) {
+      return entry.cells[index + 1];
+    }
+    return pos;
+  }
+
+  entryAtPosition(pos: Position, dir: Direction): [Entry, number] {
     const currentEntryIndex = this.entriesByCell[pos.row*this.width + pos.col][dir];
     if (!currentEntryIndex) {
-      console.log("ERROR: No current entry index");
-      return [pos, dir];
+      throw new Error("ERROR: No current entry index");
     }
-    const currentEntry = this.entries[currentEntryIndex[0]];
-    console.log("current Entry loc: " + currentEntry.cells[0].col + ", " + currentEntry.cells[0].row);
+    return [this.entries[currentEntryIndex[0]], currentEntryIndex[1]];
+  }
 
+  moveToNextEntry(pos: Position, dir: Direction, reverse = false): [Position, Direction] {
+    const [currentEntry, ] = this.entryAtPosition(pos, dir);
+
+    // Find position in the sorted array of entries
     for (var i = 0; i < this.sortedEntries.length; i += 1) {
       if (currentEntry.index === this.sortedEntries[i].index) {
         break;
       }
     }
 
+    // Now find the next entry in the sorted array that isn't complete
     for (var offset = 0; offset < this.sortedEntries.length; offset += 1) {
       var index = (i + offset + 1) % this.sortedEntries.length;
       if (reverse) {
@@ -282,23 +309,33 @@ class GridData {
     }
     return highlights;
   }
+
+  cellsWithNewChar(pos: Position, char: string): string {
+    if (this.valAt(pos) === BLOCK) {
+      return this.cells;
+    }
+    const index = pos.row * this.width + pos.col;
+    return this.cells.substr(0, index) + char + this.cells.substr(index + 1);
+  }
 }
 
 function Grid(props: GridProps) {
-  const [active, setActive] = React.useState({col: props.width, row: props.height} as Position);
+  const [active, setActive] = React.useState({col: 0, row: 0} as Position);
   const [direction, setDirection] = React.useState(Direction.Across);
+  const [cellValues, setCellValues] = React.useState(props.cellValues);
 
-  const grid = GridData.fromCells(props.width, props.height, props.cellValues);
+  const grid = GridData.fromCells(props.width, props.height, cellValues);
 
   function keyboardHandler(e:React.KeyboardEvent) {
     if (e.key === " ") {
       changeDirection();
       e.preventDefault();
     } else if (e.key === "Tab") {
+      var pos, dir;
       if (!e.shiftKey) {
-        var [pos, dir] = grid.moveToNextEntry(active, direction);
+        [pos, dir] = grid.moveToNextEntry(active, direction);
       } else {
-        var [pos, dir] = grid.moveToNextEntry(active, direction, true);
+        [pos, dir] = grid.moveToNextEntry(active, direction, true);
       }
       setActive(pos);
       setDirection(dir);
@@ -331,6 +368,13 @@ function Grid(props: GridProps) {
         setActive(grid.moveDown(active));
       }
       e.preventDefault();
+    } else if (e.key.match(/^\w$/)) {
+      const char = e.key.toUpperCase();
+      setCellValues(grid.cellsWithNewChar(active, char));
+      setActive(grid.advancePosition(active, direction));
+    } else if (e.key === "Backspace") {
+      setCellValues(grid.cellsWithNewChar(active, " "));
+      setActive(grid.retreatPosition(active, direction));
     }
   }
   useEventListener('keydown', keyboardHandler);
