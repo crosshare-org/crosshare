@@ -65,12 +65,13 @@ class Entry {
   constructor(
     public readonly index: number,
     public readonly direction: Direction,
-    public readonly cells: Array<number>,
+    public readonly cells: Array<Position>,
     public readonly isComplete: boolean
   ) {}
 }
 
 class GridData {
+  public readonly sortedEntries: Array<Entry>;
   constructor(
     public readonly width: number,
     public readonly height: number,
@@ -79,7 +80,14 @@ class GridData {
     public readonly entriesByCell: Array<Array<[number, number]|null>>,
     public readonly entries: Array<Entry>,
     public readonly cellLabels: Map<string, number>
-  ) {}
+  ) {
+    this.sortedEntries = [...entries].sort((a, b) => {
+      if (a.direction !== b.direction) {
+        return a.direction - b.direction;
+      }
+      return a.index - b.index;
+    })
+  }
 
   static fromCells(width:number, height:number, cells:string) {
     cells = cells.toUpperCase().replace("\n", "");
@@ -130,7 +138,7 @@ class GridData {
             if (cellVal === ' ') {
               isComplete = false;
             }
-            entryCells.push(cellId);
+            entryCells.push({row: yt, col: xt});
             entryPattern += cellVal;
             xt += xincr;
             yt += yincr;
@@ -206,6 +214,35 @@ class GridData {
     return {...active, row: y};
   }
 
+  moveToNextEntry(pos: Position, dir: Direction): [Position, Direction] {
+    const currentEntryIndex = this.entriesByCell[pos.row*this.width + pos.col][dir];
+    if (!currentEntryIndex) {
+      console.log("ERROR: No current entry index");
+      return [pos, dir];
+    }
+    const currentEntry = this.entries[currentEntryIndex[0]];
+    console.log("current Entry loc: " + currentEntry.cells[0].col + ", " + currentEntry.cells[0].row);
+
+    for (var i = 0; i < this.sortedEntries.length; i += 1) {
+      if (currentEntry.index === this.sortedEntries[i].index) {
+        break;
+      }
+    }
+
+    for (var offset = 0; offset < this.sortedEntries.length; offset += 1) {
+      const tryEntry = this.sortedEntries[(i + offset + 1) % this.sortedEntries.length];
+      if (!tryEntry.isComplete) {
+        for (var cell of tryEntry.cells) {
+          if (this.valAt(cell) === " ") {
+            return [cell, tryEntry.direction];
+          }
+        }
+      }
+    }
+
+    return [pos, dir];
+  }
+
   getHighlights(pos:Position, dir:Direction) {
     const rowIncr = dir === Direction.Down ? 1 : 0;
     const colIncr = dir === Direction.Across ? 1 : 0;
@@ -255,7 +292,9 @@ function Grid(props: GridProps) {
       e.preventDefault();
     } else if (e.key === "Tab") {
       if (!e.shiftKey) {
-        //moveToNextEntry();
+        const [pos, dir] = grid.moveToNextEntry(active, direction);
+        setActive(pos);
+        setDirection(dir);
       } else {
         //moveToPreviousEntry();
       }
@@ -326,8 +365,8 @@ const App = () => {
   new DB().sayHi();
   return (
     <div className="app">
-      <Grid width={15} height={15} cellValues={"    .    .     " +
-      "    .    .     " +
+      <Grid width={15} height={15} cellValues={"    .ZZ  .     " +
+      "    .F   .     " +
       "    .    .     " +
       "VANBURENZOPIANO" +
       "...   ..   ...." +
