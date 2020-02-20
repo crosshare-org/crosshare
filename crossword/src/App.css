@@ -36,8 +36,17 @@
     transform: rotate(360deg);
   }
 }
-.grid {
+.app {
   margin: 1em;
+}
+.current-clue {
+  margin-top: 1em;
+  padding: 1em;
+  background-color: #edf;
+}
+.clue-label {
+  font-weight: bold;
+  margin-right: 1em;
 }
 .grid-row {
   display: flex;

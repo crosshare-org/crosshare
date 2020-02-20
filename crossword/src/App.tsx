@@ -38,12 +38,6 @@ function GridRow(props: GridRowProps) {
   );
 }
 
-type GridProps = {
-  width: number,
-  height: number,
-  cellValues: Array<string>
-}
-
 enum Direction {
   Across,
   Down
@@ -57,6 +51,7 @@ interface Position {
 class Entry {
   constructor(
     public readonly index: number,
+    public readonly labelNumber: number,
     public readonly direction: Direction,
     public readonly cells: Array<Position>,
     public readonly isComplete: boolean
@@ -88,10 +83,10 @@ class GridData {
     let usedWords:Set<string> = new Set();
     let cellLabels = new Map<string, number>();
     let currentCellLabel = 1;
-    for (var y = 0; y < height; y += 1) {
-      for (var x = 0; x < width; x += 1) {
+    for (let y = 0; y < height; y += 1) {
+      for (let x = 0; x < width; x += 1) {
         const i = x + y * width;
-        for (var dir of ([Direction.Across, Direction.Down])) {
+        for (let dir of ([Direction.Across, Direction.Down])) {
           const xincr = (dir === Direction.Across) ? 1 : 0;
           const yincr = (dir === Direction.Down) ? 1 : 0;
           const iincr = xincr + yincr * width;
@@ -106,6 +101,7 @@ class GridData {
           if (!isEntryStart) {
             continue
           }
+          let entryLabel = cellLabels.get(y + "-" + x) || currentCellLabel;
           if (!cellLabels.has(y + "-" + x)) {
             cellLabels.set(y + "-" + x, currentCellLabel);
             currentCellLabel += 1;
@@ -138,7 +134,7 @@ class GridData {
           if (isComplete) {
             usedWords.add(entryPattern);
           }
-          entries.push(new Entry(entries.length, dir, entryCells, isComplete));
+          entries.push(new Entry(entries.length, entryLabel, dir, entryCells, isComplete));
         }
       }
     }
@@ -216,8 +212,8 @@ class GridData {
   advancePosition(pos: Position, dir: Direction): Position {
     const [entry, index] = this.entryAtPosition(pos, dir);
 
-    for (var offset = 0; offset < entry.cells.length; offset += 1) {
-      var cell = entry.cells[(index + offset + 1) % entry.cells.length];
+    for (let offset = 0; offset < entry.cells.length; offset += 1) {
+      let cell = entry.cells[(index + offset + 1) % entry.cells.length];
       if (this.valAt(cell) === " ") {
         return cell;
       }
@@ -240,21 +236,22 @@ class GridData {
     const [currentEntry, ] = this.entryAtPosition(pos, dir);
 
     // Find position in the sorted array of entries
-    for (var i = 0; i < this.sortedEntries.length; i += 1) {
+    let i = 0;
+    for (; i < this.sortedEntries.length; i += 1) {
       if (currentEntry.index === this.sortedEntries[i].index) {
         break;
       }
     }
 
     // Now find the next entry in the sorted array that isn't complete
-    for (var offset = 0; offset < this.sortedEntries.length; offset += 1) {
-      var index = (i + offset + 1) % this.sortedEntries.length;
+    for (let offset = 0; offset < this.sortedEntries.length; offset += 1) {
+      let index = (i + offset + 1) % this.sortedEntries.length;
       if (reverse) {
         index = (i + this.sortedEntries.length - offset - 1) % this.sortedEntries.length;
       }
       const tryEntry = this.sortedEntries[index];
       if (!tryEntry.isComplete) {
-        for (var cell of tryEntry.cells) {
+        for (let cell of tryEntry.cells) {
           if (this.valAt(cell) === " ") {
             return [cell, tryEntry.direction];
           }
@@ -306,25 +303,32 @@ class GridData {
       return this.cells;
     }
     const index = pos.row * this.width + pos.col;
-    var cells = [...this.cells];
+    let cells = [...this.cells];
     cells[index] = char;
     return cells;
   }
+
+  rows() {
+    return _.chunk(this.cells, this.width);
+  }
 }
 
-const Grid = (props: GridProps) => {
-  const [active, setActive] = React.useState({col: 0, row: 0} as Position);
-  const [direction, setDirection] = React.useState(Direction.Across);
-  const [cellValues, setCellValues] = React.useState(props.cellValues);
+type GridProps = {
+  grid: GridData,
+  setCellValues: React.Dispatch<React.SetStateAction<Array<string>>>,
+  active: Position,
+  setActive: React.Dispatch<React.SetStateAction<Position>>,
+  direction: Direction,
+  setDirection: React.Dispatch<React.SetStateAction<Direction>>
+}
 
-  const grid = GridData.fromCells(props.width, props.height, cellValues);
-
+const Grid = ({active, setActive, direction, setDirection, grid, setCellValues}: GridProps) => {
   function keyboardHandler(e:React.KeyboardEvent) {
     if (e.key === " ") {
       changeDirection();
       e.preventDefault();
     } else if (e.key === "Tab") {
-      var pos, dir;
+      let pos, dir;
       if (!e.shiftKey) {
         [pos, dir] = grid.moveToNextEntry(active, direction);
       } else {
@@ -393,7 +397,7 @@ const Grid = (props: GridProps) => {
     }
   }
 
-  const gridRows = _.chunk(grid.cells, props.width).map((cells, idx) =>
+  const gridRows = grid.rows().map((cells, idx) =>
     <GridRow cellLabels={grid.cellLabels} active={active} highlights={highlights} clickHandler={clickHandler} cellValues={cells} rowNumber={idx} key={idx}/>
   );
 
@@ -403,7 +407,46 @@ const Grid = (props: GridProps) => {
 }
 
 const Puzzle = (props: PuzzleJson) => {
-  return <Grid width={props.size.cols} height={props.size.rows} cellValues={props.grid} />
+  const answers = props.grid;
+  const [active, setActive] = React.useState({col: 0, row: 0} as Position);
+  const [direction, setDirection] = React.useState(Direction.Across);
+  const [input, setInput] = React.useState(answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>);
+
+  const grid = GridData.fromCells(props.size.cols, props.size.rows, input);
+
+  let clues = new Array<string>(grid.entries.length);
+  function setClues(jsonClueList: Array<string>, direction: Direction) {
+    for (let clue of jsonClueList) {
+      let match = clue.match(/^(\d+)\. (.+)$/);
+      if (!match || match.length < 3) {
+        throw new Error("Bad clue data: '" + clue + "'");
+      }
+      const number = +match[1];
+      const clueText = match[2];
+
+      for (let entry of grid.entries) {
+        if (entry.direction === direction && entry.labelNumber === number) {
+          clues[entry.index] = clueText;
+        }
+      }
+    }
+  }
+  setClues(props.clues.across, Direction.Across);
+  setClues(props.clues.down, Direction.Down);
+
+  const [entry, ] = grid.entryAtPosition(active, direction);
+  const clue = clues[entry.index];
+
+  return (
+    <div id="puzzle">
+      <Grid
+        grid={grid} setCellValues={setInput}
+        active={active} setActive={setActive}
+        direction={direction} setDirection={setDirection}
+      />
+      <div className="current-clue"><span className="clue-label">{ entry.labelNumber }{ entry.direction === Direction.Across ? "A" : "D"}</span>{ clue }</div>
+    </div>
+  )
 }
 
 interface PuzzleJson {
