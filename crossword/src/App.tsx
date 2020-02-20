@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import _ from 'lodash';
 import axios from 'axios';
 import useEventListener from '@use-it/event-listener'
 
@@ -12,7 +13,7 @@ const BLOCK = ".";
 type GridRowProps = {
   active: Position,
   highlights: Array<Position>,
-  cellValues: string,
+  cellValues: Array<string>,
   rowNumber: number,
   clickHandler: (pos:Position) => void,
   cellLabels: Map<string, number>
@@ -31,7 +32,7 @@ function GridRow(props: GridRowProps) {
       value={cellValue}
       isBlock={cellValue === BLOCK}/>
   }
-  const cells = props.cellValues.split("").map(cell);
+  const cells = props.cellValues.map(cell);
   return (
     <div className="grid-row">{cells}</div>
   );
@@ -40,15 +41,7 @@ function GridRow(props: GridRowProps) {
 type GridProps = {
   width: number,
   height: number,
-  cellValues: string
-}
-
-function split(str: string, len: number) {
-  var ret = [ ];
-  for (var offset = 0, strLen = str.length; offset < strLen; offset += len) {
-    ret.push(str.slice(offset, len + offset));
-  }
-  return ret;
+  cellValues: Array<string>
 }
 
 enum Direction {
@@ -75,7 +68,7 @@ class GridData {
   constructor(
     public readonly width: number,
     public readonly height: number,
-    public readonly cells: string,
+    public readonly cells: Array<string>,
     public readonly usedWords: Set<string>,
     public readonly entriesByCell: Array<Array<[number, number]|null>>,
     public readonly entries: Array<Entry>,
@@ -89,9 +82,7 @@ class GridData {
     })
   }
 
-  static fromCells(width:number, height:number, cells:string) {
-    cells = cells.toUpperCase().replace("\n", "");
-
+  static fromCells(width:number, height:number, cells:Array<string>) {
     let entriesByCell:Array<Array<[number, number]|null>> = new Array(cells.length);
     let entries = [];
     let usedWords:Set<string> = new Set();
@@ -107,11 +98,11 @@ class GridData {
 
           const isRowStart = (dir === Direction.Across && x === 0) ||
                              (dir === Direction.Down && y === 0);
-          const isEntryStart = (cells.charAt(i) !== BLOCK &&
-                                (isRowStart || cells.charAt(i-iincr) === BLOCK) &&
+          const isEntryStart = (cells[i] !== BLOCK &&
+                                (isRowStart || cells[i-iincr] === BLOCK) &&
                                 (x + xincr < width &&
                                  y + yincr < height &&
-                                 cells.charAt(i+iincr) !== BLOCK));
+                                 cells[i+iincr] !== BLOCK));
           if (!isEntryStart) {
             continue
           }
@@ -127,7 +118,7 @@ class GridData {
           let wordlen = 0;
           while (xt < width && yt < height) {
             let cellId = yt * width + xt;
-            let cellVal = cells.charAt(cellId);
+            let cellVal = cells[cellId];
             if (!entriesByCell[cellId]) {
               entriesByCell[cellId] = [null, null];
             }
@@ -155,7 +146,7 @@ class GridData {
   }
 
   valAt(pos:Position) {
-    return this.cells.charAt(pos.row * this.width + pos.col);
+    return this.cells[pos.row * this.width + pos.col];
   }
 
   moveLeft(active: Position): Position {
@@ -310,16 +301,18 @@ class GridData {
     return highlights;
   }
 
-  cellsWithNewChar(pos: Position, char: string): string {
+  cellsWithNewChar(pos: Position, char: string): Array<string> {
     if (this.valAt(pos) === BLOCK) {
       return this.cells;
     }
     const index = pos.row * this.width + pos.col;
-    return this.cells.substr(0, index) + char + this.cells.substr(index + 1);
+    var cells = [...this.cells];
+    cells[index] = char;
+    return cells;
   }
 }
 
-function Grid(props: GridProps) {
+const Grid = (props: GridProps) => {
   const [active, setActive] = React.useState({col: 0, row: 0} as Position);
   const [direction, setDirection] = React.useState(Direction.Across);
   const [cellValues, setCellValues] = React.useState(props.cellValues);
@@ -400,7 +393,7 @@ function Grid(props: GridProps) {
     }
   }
 
-  const gridRows = split(grid.cells, props.width).map((cells, idx) =>
+  const gridRows = _.chunk(grid.cells, props.width).map((cells, idx) =>
     <GridRow cellLabels={grid.cellLabels} active={active} highlights={highlights} clickHandler={clickHandler} cellValues={cells} rowNumber={idx} key={idx}/>
   );
 
@@ -409,7 +402,11 @@ function Grid(props: GridProps) {
   )
 }
 
-interface Puzzle {
+const Puzzle = (props: PuzzleJson) => {
+  return <Grid width={props.size.cols} height={props.size.rows} cellValues={props.grid} />
+}
+
+interface PuzzleJson {
   author: string,
   title: string,
   size: {rows: number, cols: number},
@@ -418,7 +415,7 @@ interface Puzzle {
 }
 
 const App = () => {
-  const [puzzle, setPuzzle] = React.useState<Puzzle|null>(null);
+  const [puzzle, setPuzzle] = React.useState<PuzzleJson|null>(null);
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
 
@@ -442,7 +439,7 @@ const App = () => {
     {isError && <div>Something went wrong ...</div>}
     {isLoaded && puzzle ? (
       <div className="app">
-        <Grid width={puzzle.size.cols} height={puzzle.size.rows} cellValues={puzzle.grid.join('')} />
+        <Puzzle {...puzzle}/>
       </div>
     ) : (
       <div>Loading...</div>
