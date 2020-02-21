@@ -3,6 +3,12 @@ import * as React from 'react';
 import _ from 'lodash';
 import axios from 'axios';
 import useEventListener from '@use-it/event-listener'
+import Container from 'react-bootstrap/Container'
+import Col from 'react-bootstrap/Col'
+import ListGroup from 'react-bootstrap/ListGroup'
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import Row from 'react-bootstrap/Row';
 
 import './App.css';
 import Cell from './Cell';
@@ -16,12 +22,14 @@ type GridRowProps = {
   cellValues: Array<string>,
   rowNumber: number,
   clickHandler: (pos:Position) => void,
-  cellLabels: Map<string, number>
+  cellLabels: Map<string, number>,
+  gridWidth: number
 }
 function GridRow(props: GridRowProps) {
   function cell(cellValue: string, index: number) {
     const number = props.cellLabels.get(props.rowNumber + "-" + index);
     return <Cell
+      gridWidth={props.gridWidth}
       active={props.active.row === props.rowNumber && props.active.col === index}
       highlight={props.highlights.some((p) => p.row === props.rowNumber && p.col === index)}
       key={index}
@@ -398,7 +406,7 @@ const Grid = ({active, setActive, direction, setDirection, grid, setCellValues}:
   }
 
   const gridRows = grid.rows().map((cells, idx) =>
-    <GridRow cellLabels={grid.cellLabels} active={active} highlights={highlights} clickHandler={clickHandler} cellValues={cells} rowNumber={idx} key={idx}/>
+    <GridRow gridWidth={grid.width} cellLabels={grid.cellLabels} active={active} highlights={highlights} clickHandler={clickHandler} cellValues={cells} rowNumber={idx} key={idx}/>
   );
 
   return (
@@ -437,15 +445,43 @@ const Puzzle = (props: PuzzleJson) => {
   const [entry, ] = grid.entryAtPosition(active, direction);
   const clue = clues[entry.index];
 
+  function filt(direction: Direction) {
+    return (_a:string, index: number) => {
+      return grid.entries[index].direction === direction;
+    }
+  }
+  const acrossClues = clues.filter(filt(Direction.Across)).map((clue, idx) =>
+    <ListGroup.Item key={idx}>{clue}</ListGroup.Item>
+  );
+  const downClues = clues.filter(filt(Direction.Down)).map((clue, idx) =>
+    <ListGroup.Item key={idx}>{clue}</ListGroup.Item>
+  );
+
   return (
-    <div id="puzzle">
-      <Grid
-        grid={grid} setCellValues={setInput}
-        active={active} setActive={setActive}
-        direction={direction} setDirection={setDirection}
-      />
+    <Container className="puzzle" fluid>
+      <Row>
+      <Col xs={12} sm={8} lg={6}>
       <div className="current-clue"><span className="clue-label">{ entry.labelNumber }{ entry.direction === Direction.Across ? "A" : "D"}</span>{ clue }</div>
-    </div>
+        <Grid
+          grid={grid} setCellValues={setInput}
+          active={active} setActive={setActive}
+          direction={direction} setDirection={setDirection}
+        />
+      </Col>
+      <Col xs={12} sm={4} lg={6}>
+        <Row>
+          <Col xs={12} lg={6}>
+            <h5>Across</h5>
+            <ListGroup className="clue-list">{acrossClues}</ListGroup>
+          </Col>
+          <Col xs={12} lg={6}>
+            <h5>Down</h5>
+            <ListGroup className="clue-list">{downClues}</ListGroup>
+          </Col>
+        </Row>
+      </Col>
+      </Row>
+    </Container>
   )
 }
 
@@ -466,7 +502,7 @@ const App = () => {
     const fetchData = async () => {
       try {
         const result = await axios(
-          '/demos/presidential_appts.xw',
+          process.env.PUBLIC_URL + '/demos/presidential_appts.xw',
         );
         setPuzzle(result.data);
       } catch (error) {
@@ -479,6 +515,16 @@ const App = () => {
 
   return (
     <React.Fragment>
+    <Navbar expand="sm" bg="primary">
+      <Navbar.Brand href="#home">CROSSHARE</Navbar.Brand>
+      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Navbar.Collapse id="basic-navbar-nav">
+        <Nav className="mr-auto">
+          <Nav.Link href="#home">Home</Nav.Link>
+          <Nav.Link href="#link">Link</Nav.Link>
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
     {isError && <div>Something went wrong ...</div>}
     {isLoaded && puzzle ? (
       <div className="app">

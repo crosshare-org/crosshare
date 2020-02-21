@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 type CellProps = {
+  gridWidth: number,
   isBlock: boolean,
   active: boolean,
   highlight: boolean,
@@ -29,14 +30,21 @@ export default function Cell(props: CellProps) {
     classname += " cell-highlight"
   }
 
+  const sideLength = (100 / props.gridWidth) + "%"
+  const style = {
+    width: sideLength,
+    paddingBottom: sideLength,
+  };
   return (
-    <div className={classname} onClick={() => props.onClick({row: props.row, col: props.column})}>
-      {!props.isBlock ?
-        <>
-        <div className="cell-label">{props.number}</div>
-        <div className="cell-value">{props.value}</div>
-        </>
-        : ""}
+    <div className="cell-container" style={style}>
+      <div className={classname} onClick={() => props.onClick({row: props.row, col: props.column})}>
+        {!props.isBlock ?
+          <>
+          <div className="cell-label">{props.number}</div>
+          <div className="cell-value">{props.value}</div>
+          </>
+          : ""}
+      </div>
     </div>
   );
 }
