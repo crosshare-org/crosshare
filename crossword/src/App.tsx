@@ -6,12 +6,14 @@ import useEventListener from '@use-it/event-listener'
 import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col'
 import ListGroup from 'react-bootstrap/ListGroup'
+import Image from 'react-bootstrap/Image'
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Row from 'react-bootstrap/Row';
 
 import './App.css';
 import Cell from './Cell';
+import logo from './crosshare.png';
 
 
 const BLOCK = ".";
@@ -240,6 +242,15 @@ class GridData {
     return [this.entries[currentEntryIndex[0]], currentEntryIndex[1]];
   }
 
+  entryAndCrossAtPosition(pos: Position, dir: Direction): [Entry, Entry] {
+    const currentEntryIndex = this.entriesByCell[pos.row*this.width + pos.col][dir];
+    const currentCrossIndex = this.entriesByCell[pos.row*this.width + pos.col][(dir + 1) % 2];
+    if (!currentEntryIndex || !currentCrossIndex) {
+      throw new Error("ERROR: No current entry index");
+    }
+    return [this.entries[currentEntryIndex[0]], this.entries[currentCrossIndex[0]]];
+  }
+
   moveToNextEntry(pos: Position, dir: Direction, reverse = false): [Position, Direction] {
     const [currentEntry, ] = this.entryAtPosition(pos, dir);
 
@@ -442,20 +453,38 @@ const Puzzle = (props: PuzzleJson) => {
   setClues(props.clues.across, Direction.Across);
   setClues(props.clues.down, Direction.Down);
 
-  const [entry, ] = grid.entryAtPosition(active, direction);
+  const [entry, cross] = grid.entryAndCrossAtPosition(active, direction);
   const clue = clues[entry.index];
 
   function filt(direction: Direction) {
-    return (_a:string, index: number) => {
+    return (_a:any, index: number) => {
       return grid.entries[index].direction === direction;
     }
   }
-  const acrossClues = clues.filter(filt(Direction.Across)).map((clue, idx) =>
-    <ListGroup.Item key={idx}>{clue}</ListGroup.Item>
-  );
-  const downClues = clues.filter(filt(Direction.Down)).map((clue, idx) =>
-    <ListGroup.Item key={idx}>{clue}</ListGroup.Item>
-  );
+  const listItems = clues.map((clue, idx) => {
+    function click(e: React.MouseEvent) {
+      e.preventDefault();
+      const clickedEntry = grid.entries[idx];
+      setDirection(clickedEntry.direction);
+      setActive(clickedEntry.cells[0]);
+      for (let cell of clickedEntry.cells) {
+        if (grid.valAt(cell) === " ") {
+          setActive(cell);
+          break
+        }
+      }
+    }
+    const number = grid.entries[idx].labelNumber;
+    if (entry.index == idx) {
+      return <ListGroup.Item variant="primary" key={idx}>{number}. {clue}</ListGroup.Item>
+    }
+    if (cross.index == idx) {
+      return <ListGroup.Item action onMouseDown={(e: React.MouseEvent) => e.preventDefault()} onClick={click} variant="secondary" key={idx}>{number}. {clue}</ListGroup.Item>
+    }
+    return <ListGroup.Item action onMouseDown={(e: React.MouseEvent) => e.preventDefault()} onClick={click} key={idx}>{number}. {clue}</ListGroup.Item>
+  });
+  const acrossClues = listItems.filter(filt(Direction.Across));
+  const downClues = listItems.filter(filt(Direction.Down));
 
   return (
     <Container className="puzzle" fluid>
@@ -471,12 +500,12 @@ const Puzzle = (props: PuzzleJson) => {
       <Col xs={12} sm={4} lg={6}>
         <Row>
           <Col xs={12} lg={6}>
-            <h5>Across</h5>
-            <ListGroup className="clue-list">{acrossClues}</ListGroup>
+            <h5 className="clue-list-header">Across</h5>
+            <ListGroup className="clue-list list-group-flush">{acrossClues}</ListGroup>
           </Col>
           <Col xs={12} lg={6}>
-            <h5>Down</h5>
-            <ListGroup className="clue-list">{downClues}</ListGroup>
+            <h5 className="clue-list-header">Down</h5>
+            <ListGroup className="clue-list list-group-flush">{downClues}</ListGroup>
           </Col>
         </Row>
       </Col>
@@ -516,7 +545,9 @@ const App = () => {
   return (
     <React.Fragment>
     <Navbar expand="sm" bg="primary">
-      <Navbar.Brand href="#home">CROSSHARE</Navbar.Brand>
+      <Navbar.Brand href="#home">
+      <Image fluid style={{height: "20px"}} src={logo} alt="logo"/> CROSSHARE
+      </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">

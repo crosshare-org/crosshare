@@ -1,5 +1,6 @@
 @import "~bootswatch/dist/cosmo/variables";
 $primary: $orange;
+$grid-gutter-width: 20px;
 @import "~bootstrap/scss/bootstrap";
 @import "~bootswatch/dist/cosmo/bootswatch";
 
@@ -7,19 +8,23 @@ html,body {
   height: 100%;
   min-height: 100%;
 }
-.puzzle {
-  margin-top: 1em;
-}
 .current-clue {
   float: left;
   width: 100%;
   margin-bottom: 1em;
+  margin-top: 1em;
   padding: 1em;
   background-color: #edf;
 }
 .clue-label {
   font-weight: bold;
   margin-right: 1em;
+}
+.clue-list-header {
+  margin-top: 1em;
+  font-weight: bold;
+  font-size: 1.2em;
+  border-bottom: 1px solid $gray-600;
 }
 .clue-list {
   max-height: calc(50vh - 4em);
