@@ -461,6 +461,25 @@ const Puzzle = (props: PuzzleJson) => {
       return grid.entries[index].direction === direction;
     }
   }
+  const refs = React.useRef(new Array<React.RefObject<any>>(grid.entries.length));
+  for (let i = 0; i < refs.current.length; i += 1) {
+    if (!refs.current[i]) {
+      refs.current[i] = React.createRef();
+    }
+  }
+  function scrollClueIntoView(e: Entry) {
+    const currentEntryClue = refs.current[e.index].current;
+    if (currentEntryClue) {
+      console.log("scrolling to " + e.index);
+      currentEntryClue.scrollIntoView({
+        behavior: 'auto',
+        block: 'center',
+      });
+    }
+  }
+  scrollClueIntoView(cross);
+  scrollClueIntoView(entry);
+
   const listItems = clues.map((clue, idx) => {
     function click(e: React.MouseEvent) {
       e.preventDefault();
@@ -475,13 +494,21 @@ const Puzzle = (props: PuzzleJson) => {
       }
     }
     const number = grid.entries[idx].labelNumber;
-    if (entry.index == idx) {
-      return <ListGroup.Item variant="primary" key={idx}>{number}. {clue}</ListGroup.Item>
+    if (entry.index === idx) {
+      return <ListGroup.Item className="clue-list-entry" ref={refs.current[idx]} variant="primary" key={idx}>{number}. {clue}</ListGroup.Item>
     }
-    if (cross.index == idx) {
-      return <ListGroup.Item action onMouseDown={(e: React.MouseEvent) => e.preventDefault()} onClick={click} variant="secondary" key={idx}>{number}. {clue}</ListGroup.Item>
+    if (cross.index === idx) {
+      return (
+        <ListGroup.Item className="clue-list-entry" ref={refs.current[idx]} action onMouseDown={(e: React.MouseEvent) => e.preventDefault()} onClick={click} variant="secondary" key={idx}>
+          {number}. {clue}
+        </ListGroup.Item>
+      );
     }
-    return <ListGroup.Item action onMouseDown={(e: React.MouseEvent) => e.preventDefault()} onClick={click} key={idx}>{number}. {clue}</ListGroup.Item>
+    return (
+      <ListGroup.Item className="clue-list-entry" ref={refs.current[idx]} action onMouseDown={(e: React.MouseEvent) => e.preventDefault()} onClick={click} key={idx}>
+        {number}. {clue}
+      </ListGroup.Item>
+    );
   });
   const acrossClues = listItems.filter(filt(Direction.Across));
   const downClues = listItems.filter(filt(Direction.Down));
@@ -490,12 +517,12 @@ const Puzzle = (props: PuzzleJson) => {
     <Container className="puzzle" fluid>
       <Row>
       <Col xs={12} sm={8} lg={6}>
-      <div className="current-clue"><span className="clue-label">{ entry.labelNumber }{ entry.direction === Direction.Across ? "A" : "D"}</span>{ clue }</div>
         <Grid
           grid={grid} setCellValues={setInput}
           active={active} setActive={setActive}
           direction={direction} setDirection={setDirection}
         />
+        <div className="current-clue"><span className="clue-label">{ entry.labelNumber }{ entry.direction === Direction.Across ? "A" : "D"}</span>{ clue }</div>
       </Col>
       <Col xs={12} sm={4} lg={6}>
         <Row>

@@ -11,10 +11,12 @@ html,body {
 .current-clue {
   float: left;
   width: 100%;
-  margin-bottom: 1em;
   margin-top: 1em;
   padding: 1em;
   background-color: #edf;
+}
+.grid {
+  margin-top: 1em;
 }
 .clue-label {
   font-weight: bold;
@@ -34,6 +36,9 @@ html,body {
   .clue-list {
     max-height: calc(100vh - 8em);
   }
+}
+.clue-list-entry {
+  flex-shrink: 0;
 }
 .cell-container {
   float:left;
