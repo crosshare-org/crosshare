@@ -1,8 +1,10 @@
 @import "~bootswatch/dist/cosmo/variables";
 $primary: $orange;
 $grid-gutter-width: 20px;
+$lightened: mix($primary, $white, 4 * 8%);
 @import "~bootstrap/scss/bootstrap";
 @import "~bootswatch/dist/cosmo/bootswatch";
+
 
 html,body {
   height: 100%;
@@ -13,7 +15,7 @@ html,body {
   width: 100%;
   margin-top: 1em;
   padding: 1em;
-  background-color: #edf;
+  background-color: $lightened;
 }
 .grid {
   margin-top: 1em;
@@ -86,7 +88,7 @@ html,body {
   background-color: black;
 }
 .cell-active {
-  background-color: $orange;
+  background-color: $primary;
 }
 .cell-highlight {
   background-color: #ddd;
