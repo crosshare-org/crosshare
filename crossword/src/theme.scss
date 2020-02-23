@@ -17,6 +17,10 @@ html,body {
   padding: 1em;
   background-color: $lightened;
 }
+.list-group-item-primary {
+  color: black;
+  background-color: $lightened;
+}
 .grid {
   margin-top: 1em;
 }
@@ -31,7 +35,7 @@ html,body {
   border-bottom: 1px solid $gray-600;
 }
 .clue-list {
-  max-height: calc(50vh - 4em);
+  max-height: calc(50vh - 5em);
   overflow-y: scroll;
 }
 @include media-breakpoint-up(lg) {
