@@ -1,58 +1,49 @@
 import * as React from 'react';
 
-import axios from 'axios';
 import Image from 'react-bootstrap/Image'
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import { Router, Link, RouteComponentProps } from "@reach/router";
 
 import './App.css';
 import logo from './crosshare.png';
-import {PuzzleJson} from './types';
-import {Puzzle} from './Puzzle';
+import {PuzzleLoader} from './Puzzle';
+
+const NotFound = (_: RouteComponentProps) => {
+  return <div>Page not found :(</div>;
+}
+
+const Home = (_: RouteComponentProps) => {
+  return <div>CROSSHARE is a not-for-profit community for crossword constructors and solvers.</div>;
+}
+
+const Construct = (_: RouteComponentProps) => {
+  return <div>This would be the link to the crossword builder.</div>
+}
 
 const App = () => {
-  const [puzzle, setPuzzle] = React.useState<PuzzleJson|null>(null);
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const [isError, setIsError] = React.useState(false);
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await axios(
-          process.env.PUBLIC_URL + '/demos/presidential_appts.xw',
-        );
-        setPuzzle(result.data);
-      } catch (error) {
-        setIsError(true);
-      }
-      setIsLoaded(true);
-    };
-    fetchData();
-  }, []);
-
   return (
-    <React.Fragment>
-    <Navbar expand="sm" bg="primary">
-      <Navbar.Brand href="#home">
-      <Image fluid style={{height: "20px"}} src={logo} alt="logo"/> CROSSHARE
-      </Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="mr-auto">
-          <Nav.Link href="#home">Home</Nav.Link>
-          <Nav.Link href="#link">Link</Nav.Link>
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
-    {isError && <div>Something went wrong ...</div>}
-    {isLoaded && puzzle ? (
-      <div className="app">
-        <Puzzle {...puzzle}/>
-      </div>
-    ) : (
-      <div>Loading...</div>
-    )}
-    </React.Fragment>
+    <div className="app">
+      <Navbar expand="sm" bg="primary">
+        <Navbar.Brand as={Link} to="/">
+          <Image fluid style={{height: "20px"}} src={logo} alt="logo"/> CROSSHARE
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mr-auto">
+            <Nav.Link as={Link} to="/">Home</Nav.Link>
+            <Nav.Link as={Link} to="/crosswords/presidential_appts">Puzzle</Nav.Link>
+            <Nav.Link as={Link} to="/construct">New Puzzle</Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+      <Router>
+        <Home path="/" />
+        <PuzzleLoader path="/crosswords/:crosswordId" />
+        <Construct path="/construct" />
+        <NotFound default />
+      </Router>
+    </div>
   );
 }
 

@@ -1,4 +1,6 @@
 import * as React from 'react';
+import axios from 'axios';
+import {RouteComponentProps} from '@reach/router';
 import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col'
 import ListGroup from 'react-bootstrap/ListGroup'
@@ -6,6 +8,39 @@ import Row from 'react-bootstrap/Row';
 
 import {Grid, Entry, GridData} from './Grid';
 import {Position, Direction, BLOCK, PuzzleJson} from './types';
+
+interface PuzzleProps extends RouteComponentProps {
+  crosswordId?: string
+}
+
+export const PuzzleLoader = ({crosswordId}: PuzzleProps) => {
+  const [puzzle, setPuzzle] = React.useState<PuzzleJson|null>(null);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await axios(
+          `${process.env.PUBLIC_URL}/demos/${crosswordId}.xw`
+        );
+        setPuzzle(result.data);
+      } catch (error) {
+        setIsError(true);
+      }
+      setIsLoaded(true);
+    };
+    fetchData();
+  }, []);
+
+  if (isError) {
+    return <div>Something went wrong while loading puzzle '{crosswordId}'</div>;
+  }
+  if (!isLoaded || !puzzle) {
+    return <div>Loading '{crosswordId}'...</div>
+  }
+  return <Puzzle {...puzzle} />
+}
 
 export const Puzzle = (props: PuzzleJson) => {
   const answers = props.grid;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import useEventListener from '@use-it/event-listener'
-import _ from 'lodash';
+import lodash from 'lodash';
 
 import {Position, Direction, BLOCK} from './types';
 import GridRow from './GridRow';
@@ -275,7 +275,7 @@ export class GridData {
   }
 
   rows() {
-    return _.chunk(this.cells, this.width);
+    return lodash.chunk(this.cells, this.width);
   }
 }
 
