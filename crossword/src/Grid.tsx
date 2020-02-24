@@ -24,7 +24,8 @@ export class GridData {
     public readonly usedWords: Set<string>,
     public readonly entriesByCell: Array<Array<[number, number]|null>>,
     public readonly entries: Array<Entry>,
-    public readonly cellLabels: Map<string, number>
+    public readonly cellLabels: Map<string, number>,
+    public readonly allowBlockEditing: boolean
   ) {
     this.sortedEntries = [...entries].sort((a, b) => {
       if (a.direction !== b.direction) {
@@ -34,7 +35,7 @@ export class GridData {
     })
   }
 
-  static fromCells(width:number, height:number, cells:Array<string>) {
+  static fromCells(width:number, height:number, cells:Array<string>, allowBlockEditing=false) {
     let entriesByCell:Array<Array<[number, number]|null>> = new Array(cells.length);
     let entries = [];
     let usedWords:Set<string> = new Set();
@@ -95,7 +96,7 @@ export class GridData {
         }
       }
     }
-    return new this(width, height, cells, usedWords, entriesByCell, entries, cellLabels);
+    return new this(width, height, cells, usedWords, entriesByCell, entries, cellLabels, allowBlockEditing);
   }
 
   valAt(pos:Position) {
@@ -106,7 +107,7 @@ export class GridData {
     let x = active.col;
     while (x >= 0) {
       x -= 1;
-      if (x >= 0 && this.valAt({...active, col: x}) !== BLOCK) {
+      if (x >= 0 && (this.allowBlockEditing || this.valAt({...active, col: x}) !== BLOCK)) {
         break;
       }
     }
@@ -120,7 +121,7 @@ export class GridData {
     let x = active.col;
     while (x < this.width) {
       x += 1;
-      if (x < this.width && this.valAt({...active, col: x}) !== BLOCK) {
+      if (x < this.width && (this.allowBlockEditing || this.valAt({...active, col: x}) !== BLOCK)) {
         break;
       }
     }
@@ -134,7 +135,7 @@ export class GridData {
     let y = active.row;
     while (y >= 0) {
       y -= 1;
-      if (y >= 0 && this.valAt({...active, row: y}) !== BLOCK) {
+      if (y >= 0 && (this.allowBlockEditing || this.valAt({...active, row: y}) !== BLOCK)) {
         break;
       }
     }
@@ -148,7 +149,7 @@ export class GridData {
     let y = active.row;
     while (y < this.height) {
       y += 1;
-      if (y < this.height && this.valAt({...active, row: y}) !== BLOCK) {
+      if (y < this.height && (this.allowBlockEditing || this.valAt({...active, row: y}) !== BLOCK)) {
         break;
       }
     }
@@ -266,11 +267,27 @@ export class GridData {
 
   cellsWithNewChar(pos: Position, char: string): Array<string> {
     if (this.valAt(pos) === BLOCK) {
-      return this.cells;
+      if (!this.allowBlockEditing) {
+        return this.cells;
+      }
+      throw new Error("Need to handle turning off symmetric block");
     }
     const index = pos.row * this.width + pos.col;
     let cells = [...this.cells];
     cells[index] = char;
+    return cells;
+  }
+
+  cellsWithBlockToggled(pos: Position): Array<string> {
+    let char = BLOCK;
+    if (this.valAt(pos) === BLOCK) {
+      char = ' ';
+    }
+    const index = pos.row * this.width + pos.col;
+    const flipped = (this.height - pos.row - 1) * this.width + (this.width - pos.col - 1);
+    let cells = [...this.cells];
+    cells[index] = char;
+    cells[flipped] = char;
     return cells;
   }
 
@@ -331,6 +348,8 @@ export const Grid = ({active, setActive, direction, setDirection, grid, setCellV
         setActive(grid.moveDown(active));
       }
       e.preventDefault();
+    } else if (e.key === '.' && grid.allowBlockEditing) {
+      setCellValues(grid.cellsWithBlockToggled(active));
     } else if (e.key.match(/^\w$/)) {
       const char = e.key.toUpperCase();
       setCellValues(grid.cellsWithNewChar(active, char));

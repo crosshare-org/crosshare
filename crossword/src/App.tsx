@@ -8,6 +8,7 @@ import { Router, Link, RouteComponentProps } from "@reach/router";
 import './App.css';
 import logo from './crosshare.png';
 import {PuzzleLoader} from './Puzzle';
+import {PuzzleBuilder} from './PuzzleBuilder';
 
 const NotFound = (_: RouteComponentProps) => {
   return <div>Page not found :(</div>;
@@ -17,16 +18,12 @@ const Home = (_: RouteComponentProps) => {
   return <div>CROSSHARE is a not-for-profit community for crossword constructors and solvers.</div>;
 }
 
-const Construct = (_: RouteComponentProps) => {
-  return <div>This would be the link to the crossword builder.</div>
-}
-
 const App = () => {
   return (
     <div className="app">
       <Navbar expand="sm" bg="primary">
         <Navbar.Brand as={Link} to="/">
-          <Image fluid style={{height: "20px"}} src={logo} alt="logo"/> CROSSHARE
+          <Image height={30} src={logo} alt=""/> CROSSHARE
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
@@ -40,7 +37,7 @@ const App = () => {
       <Router>
         <Home path="/" />
         <PuzzleLoader path="/crosswords/:crosswordId" />
-        <Construct path="/construct" />
+        <PuzzleBuilder path="/construct" />
         <NotFound default />
       </Router>
     </div>

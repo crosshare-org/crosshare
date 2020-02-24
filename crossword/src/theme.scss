@@ -94,6 +94,15 @@ html,body {
 .cell-active {
   background-color: $primary;
 }
+.cell-block.cell-active {
+  background: repeating-linear-gradient(
+  -45deg,
+  black,
+  black 10px,
+  $primary 10px,
+  $primary 20px,
+);
+}
 .cell-highlight {
   background-color: #ddd;
 }

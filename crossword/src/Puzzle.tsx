@@ -31,7 +31,7 @@ export const PuzzleLoader = ({crosswordId}: PuzzleProps) => {
       setIsLoaded(true);
     };
     fetchData();
-  }, []);
+  }, [crosswordId]);
 
   if (isError) {
     return <div>Something went wrong while loading puzzle '{crosswordId}'</div>;
