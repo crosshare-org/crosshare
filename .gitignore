@@ -3,3 +3,4 @@ _db.py
 __pycache__
 _db.json
 cluedata
+.DS*
