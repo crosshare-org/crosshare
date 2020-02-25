@@ -6,9 +6,10 @@ import Row from 'react-bootstrap/Row';
 
 import {Position, Direction} from './types';
 import {GridData, Grid} from './Grid';
+import {TopBar} from './TopBar';
 
 export const PuzzleBuilder = (_: RouteComponentProps) => {
-  const sideLength = 11;
+  const sideLength = 5;
   const [active, setActive] = React.useState({col: 0, row: 0} as Position);
   const [direction, setDirection] = React.useState(Direction.Across);
   let initInput = new Array<string>(sideLength * sideLength);
@@ -20,6 +21,8 @@ export const PuzzleBuilder = (_: RouteComponentProps) => {
   const grid = GridData.fromCells(sideLength, sideLength, input, true);
 
   return (
+    <React.Fragment>
+    <TopBar/>
     <Container className="builder" fluid>
       <Row>
       <Col xs={12} sm={8} lg={6}>
@@ -41,5 +44,6 @@ export const PuzzleBuilder = (_: RouteComponentProps) => {
       </Col>
       </Row>
     </Container>
+    </React.Fragment>
   );
 }

@@ -8,6 +8,8 @@ import Row from 'react-bootstrap/Row';
 
 import {Grid, Entry, GridData} from './Grid';
 import {Position, Direction, BLOCK, PuzzleJson} from './types';
+import {TopBar} from './TopBar';
+import {Page} from './Page';
 
 interface PuzzleProps extends RouteComponentProps {
   crosswordId?: string
@@ -34,10 +36,10 @@ export const PuzzleLoader = ({crosswordId}: PuzzleProps) => {
   }, [crosswordId]);
 
   if (isError) {
-    return <div>Something went wrong while loading puzzle '{crosswordId}'</div>;
+    return <Page>Something went wrong while loading puzzle '{crosswordId}'</Page>;
   }
   if (!isLoaded || !puzzle) {
-    return <div>Loading '{crosswordId}'...</div>
+    return <Page>Loading '{crosswordId}'...</Page>
   }
   return <Puzzle {...puzzle} />
 }
@@ -131,6 +133,8 @@ export const Puzzle = (props: PuzzleJson) => {
   const downClues = listItems.filter(filt(Direction.Down));
 
   return (
+    <React.Fragment>
+    <TopBar/>
     <Container className="puzzle" fluid>
       <Row>
       <Col xs={12} sm={8} lg={6}>
@@ -155,5 +159,6 @@ export const Puzzle = (props: PuzzleJson) => {
       </Col>
       </Row>
     </Container>
+    </React.Fragment>
   )
 }

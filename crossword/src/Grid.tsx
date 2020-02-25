@@ -372,7 +372,7 @@ export const Grid = ({active, setActive, direction, setDirection, grid, setCellV
   }
 
   function clickHandler(pos:Position) {
-    if (grid.valAt(pos) === BLOCK) {
+    if (grid.valAt(pos) === BLOCK && !grid.allowBlockEditing) {
       return;
     }
     if (pos.row === active.row && pos.col === active.col) {
