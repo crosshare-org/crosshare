@@ -18,6 +18,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
       display: 'flex',
       flexWrap: 'wrap',
       alignItems: 'end',
+      justifyContent: 'space-around',
     }}>
       <div css={{
         padding: '10px',
@@ -38,19 +39,21 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
         display: 'flex',
         flexWrap: 'wrap',
         alignItems: 'end',
+        flex: 'auto',
         width: '100vw',
         height: '40vh',
         '@media (min-width: 576px)': {
           width: '34vw',
-          height: 'calc(min(100vh - 84px, 66vw))',
+          height: 'calc(100vh - 84px)',
         },
         '@media (min-width: 992px)': {
           width: '50vw',
-          height: 'calc(min(100vh - 84px, 50vw))',
+          height: 'calc(100vh - 84px)',
 
         },
       }}>
         <div css={{
+          flex: 'auto',
           padding: '10px',
           width: '100%',
           height: '50%',
@@ -60,6 +63,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           },
         }}>{props.left}</div>
         <div css={{
+          flex: 'auto',
           padding: '10px',
           width: '100%',
           height: '50%',
