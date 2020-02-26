@@ -161,6 +161,9 @@ export class GridData {
 
   retreatPosition(pos: Position, dir: Direction): Position {
     const [entry, index] = this.entryAtPosition(pos, dir);
+    if (!entry) {
+      return pos;
+    }
     if (index > 0) {
       return entry.cells[index - 1];
     }
@@ -169,7 +172,9 @@ export class GridData {
 
   advancePosition(pos: Position, dir: Direction): Position {
     const [entry, index] = this.entryAtPosition(pos, dir);
-
+    if (!entry) {
+      return pos;
+    }
     for (let offset = 0; offset < entry.cells.length; offset += 1) {
       let cell = entry.cells[(index + offset + 1) % entry.cells.length];
       if (this.valAt(cell) === " ") {
@@ -182,10 +187,14 @@ export class GridData {
     return pos;
   }
 
-  entryAtPosition(pos: Position, dir: Direction): [Entry, number] {
-    const currentEntryIndex = this.entriesByCell[pos.row*this.width + pos.col][dir];
+  entryAtPosition(pos: Position, dir: Direction): [Entry|null, number] {
+    const entriesAtCell = this.entriesByCell[pos.row*this.width + pos.col];
+    if (!entriesAtCell) {
+      return [null, 0];
+    }
+    const currentEntryIndex = entriesAtCell[dir];
     if (!currentEntryIndex) {
-      throw new Error("ERROR: No current entry index");
+      return [null, 0];
     }
     return [this.entries[currentEntryIndex[0]], currentEntryIndex[1]];
   }
@@ -201,6 +210,9 @@ export class GridData {
 
   moveToNextEntry(pos: Position, dir: Direction, reverse = false): [Position, Direction] {
     const [currentEntry, ] = this.entryAtPosition(pos, dir);
+    if (!currentEntry) {
+      return [pos, dir];
+    }
 
     // Find position in the sorted array of entries
     let i = 0;
@@ -266,14 +278,17 @@ export class GridData {
   }
 
   cellsWithNewChar(pos: Position, char: string): Array<string> {
-    if (this.valAt(pos) === BLOCK) {
-      if (!this.allowBlockEditing) {
-        return this.cells;
-      }
-      throw new Error("Need to handle turning off symmetric block");
-    }
     const index = pos.row * this.width + pos.col;
     let cells = [...this.cells];
+    if (this.valAt(pos) === BLOCK) {
+      if (!this.allowBlockEditing) {
+        return cells;
+      }
+      const flipped = (this.height - pos.row - 1) * this.width + (this.width - pos.col - 1);
+      if (cells[flipped] === BLOCK) {
+        cells[flipped] = " ";
+      }
+    }
     cells[index] = char;
     return cells;
   }
@@ -323,30 +338,26 @@ export const Grid = ({active, setActive, direction, setDirection, grid, setCellV
     } else if (e.key === "ArrowRight") {
       if (direction === Direction.Down) {
         changeDirection();
-      } else {
-        setActive(grid.moveRight(active));
       }
+      setActive(grid.moveRight(active));
       e.preventDefault();
     } else if (e.key === "ArrowLeft") {
       if (direction === Direction.Down) {
         changeDirection();
-      } else {
-        setActive(grid.moveLeft(active));
       }
+      setActive(grid.moveLeft(active));
       e.preventDefault();
     } else if (e.key === "ArrowUp") {
       if (direction === Direction.Across) {
         changeDirection();
-      } else {
-        setActive(grid.moveUp(active));
       }
+      setActive(grid.moveUp(active));
       e.preventDefault();
     } else if (e.key === "ArrowDown") {
       if (direction === Direction.Across) {
         changeDirection();
-      } else {
-        setActive(grid.moveDown(active));
       }
+      setActive(grid.moveDown(active));
       e.preventDefault();
     } else if (e.key === '.' && grid.allowBlockEditing) {
       setCellValues(grid.cellsWithBlockToggled(active));

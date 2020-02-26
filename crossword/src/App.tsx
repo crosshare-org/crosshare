@@ -2,10 +2,9 @@ import * as React from 'react';
 
 import { Router, RouteComponentProps } from "@reach/router";
 
-import './App.css';
 import {PuzzleLoader} from './Puzzle';
 import {PuzzleBuilder} from './PuzzleBuilder';
-import {Page} from './Page';
+import {Page, SquareTest} from './Page';
 
 const NotFound = (_: RouteComponentProps) => {
   return <Page> not found :(</Page>;
@@ -17,14 +16,13 @@ const Home = (_: RouteComponentProps) => {
 
 const App = () => {
   return (
-    <div className="app">
-      <Router>
-        <Home path="/" />
-        <PuzzleLoader path="/crosswords/:crosswordId" />
-        <PuzzleBuilder path="/construct" />
-        <NotFound default />
-      </Router>
-    </div>
+  <Router>
+    <Home path="/" />
+    <PuzzleLoader path="/crosswords/:crosswordId" />
+    <PuzzleBuilder path="/construct" />
+    <SquareTest path="/square" />
+    <NotFound default />
+  </Router>
   );
 }
 

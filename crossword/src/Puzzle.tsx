@@ -1,22 +1,23 @@
+/** @jsx jsx */
+import { jsx } from '@emotion/core';
+
 import * as React from 'react';
 import axios from 'axios';
-import {RouteComponentProps} from '@reach/router';
-import Container from 'react-bootstrap/Container'
-import Col from 'react-bootstrap/Col'
+import { RouteComponentProps } from '@reach/router';
 import ListGroup from 'react-bootstrap/ListGroup'
-import Row from 'react-bootstrap/Row';
 
-import {Grid, Entry, GridData} from './Grid';
-import {Position, Direction, BLOCK, PuzzleJson} from './types';
-import {TopBar} from './TopBar';
-import {Page} from './Page';
+import { Grid, Entry, GridData } from './Grid';
+import { Position, Direction, BLOCK, PuzzleJson } from './types';
+import { TopBar } from './TopBar';
+import { Page, SquareAndCols } from './Page';
+import { Footer } from './Footer';
 
 interface PuzzleProps extends RouteComponentProps {
   crosswordId?: string
 }
 
-export const PuzzleLoader = ({crosswordId}: PuzzleProps) => {
-  const [puzzle, setPuzzle] = React.useState<PuzzleJson|null>(null);
+export const PuzzleLoader = ({ crosswordId }: PuzzleProps) => {
+  const [puzzle, setPuzzle] = React.useState<PuzzleJson | null>(null);
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
 
@@ -44,9 +45,35 @@ export const PuzzleLoader = ({crosswordId}: PuzzleProps) => {
   return <Puzzle {...puzzle} />
 }
 
+interface ClueListProps {
+  header: string,
+  clues: Array<JSX.Element>,
+}
+function ClueList(props: ClueListProps) {
+  return (
+    <div css={{
+      height: "100% !important",
+      position: 'relative',
+    }}>
+      <div css={{
+        fontWeight: 'bold',
+        borderBottom: '1px solid #AAA',
+        height: '1.5em',
+      }}>{props.header}</div>
+      <div css={{
+        maxHeight: 'calc(100% - 1.5em)',
+        overflowY: 'scroll',
+      }}>
+        <ListGroup className="list-group-flush">{props.clues}</ListGroup>
+      </div>
+    </div>
+  );
+
+}
+
 export const Puzzle = (props: PuzzleJson) => {
   const answers = props.grid;
-  const [active, setActive] = React.useState({col: 0, row: 0} as Position);
+  const [active, setActive] = React.useState({ col: 0, row: 0 } as Position);
   const [direction, setDirection] = React.useState(Direction.Across);
   const [input, setInput] = React.useState(answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>);
 
@@ -73,10 +100,9 @@ export const Puzzle = (props: PuzzleJson) => {
   setClues(props.clues.down, Direction.Down);
 
   const [entry, cross] = grid.entryAndCrossAtPosition(active, direction);
-  const clue = clues[entry.index];
 
   function filt(direction: Direction) {
-    return (_a:any, index: number) => {
+    return (_a: any, index: number) => {
       return grid.entries[index].direction === direction;
     }
   }
@@ -134,31 +160,19 @@ export const Puzzle = (props: PuzzleJson) => {
 
   return (
     <React.Fragment>
-    <TopBar/>
-    <Container className="puzzle" fluid>
-      <Row>
-      <Col xs={12} sm={8} lg={6}>
-        <Grid
-          grid={grid} setCellValues={setInput}
-          active={active} setActive={setActive}
-          direction={direction} setDirection={setDirection}
-        />
-        <div className="current-clue"><span className="clue-label">{ entry.labelNumber }{ entry.direction === Direction.Across ? "A" : "D"}</span>{ clue }</div>
-      </Col>
-      <Col xs={12} sm={4} lg={6}>
-        <Row>
-          <Col xs={12} lg={6}>
-            <h5 className="clue-list-header">Across</h5>
-            <ListGroup className="clue-list list-group-flush">{acrossClues}</ListGroup>
-          </Col>
-          <Col xs={12} lg={6}>
-            <h5 className="clue-list-header">Down</h5>
-            <ListGroup className="clue-list list-group-flush">{downClues}</ListGroup>
-          </Col>
-        </Row>
-      </Col>
-      </Row>
-    </Container>
+      <TopBar />
+      <SquareAndCols
+        square={
+          <Grid
+            grid={grid} setCellValues={setInput}
+            active={active} setActive={setActive}
+            direction={direction} setDirection={setDirection}
+          />
+        }
+        left={<ClueList header="Across" clues={acrossClues} />}
+        right={<ClueList header="Down" clues={downClues} />}
+      />
+      <Footer />
     </React.Fragment>
   )
 }

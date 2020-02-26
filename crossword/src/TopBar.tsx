@@ -1,4 +1,6 @@
-import * as React from 'react';
+/** @jsx jsx */
+import { jsx } from '@emotion/core';
+
 import { Link, RouteComponentProps } from "@reach/router";
 
 import Image from 'react-bootstrap/Image'
@@ -8,9 +10,11 @@ import Navbar from 'react-bootstrap/Navbar';
 import logo from './crosshare.png';
 
 export const TopBar = (_: RouteComponentProps) => {
-  return (<Navbar expand="sm" bg="primary">
+  return (
+    <header css={{height: "54px"}}>
+    <Navbar expand="sm" bg="primary">
     <Navbar.Brand as={Link} to="/">
-      <Image height={30} src={logo} alt=""/> CROSSHARE
+      <Image height={22} src={logo} alt=""/> CROSSHARE
     </Navbar.Brand>
     <Navbar.Toggle aria-controls="basic-navbar-nav" />
     <Navbar.Collapse id="basic-navbar-nav">
@@ -20,5 +24,6 @@ export const TopBar = (_: RouteComponentProps) => {
         <Nav.Link as={Link} to="/construct">New Puzzle</Nav.Link>
       </Nav>
     </Navbar.Collapse>
-  </Navbar>);
+  </Navbar>
+  </header>);
 }
