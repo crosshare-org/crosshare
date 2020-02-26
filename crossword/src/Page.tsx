@@ -6,6 +6,7 @@ import { RouteComponentProps } from "@reach/router";
 
 import { TopBar } from './TopBar';
 import { Footer } from './Footer';
+import {HEADER_FOOTER_HEIGHT} from './style';
 
 interface SquareAndColsProps {
   square: React.ReactNode,
@@ -22,15 +23,15 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
     }}>
       <div css={{
         padding: '10px',
-        height: 'calc(min(60vh - 84px, 100vw))',
-        width: 'calc(min(60vh - 84px, 100vw))',
+        height: 'calc(min(60vh - ' + HEADER_FOOTER_HEIGHT + ', 100vw))',
+        width: 'calc(min(60vh - ' + HEADER_FOOTER_HEIGHT + ', 100vw))',
         '@media (min-width: 576px)': {
-          height: 'calc(min(100vh - 84px, 66vw))',
-          width: 'calc(min(100vh - 84px, 66vw))',
+          height: 'calc(min(100vh - ' + HEADER_FOOTER_HEIGHT + ', 66vw))',
+          width: 'calc(min(100vh - ' + HEADER_FOOTER_HEIGHT + ', 66vw))',
         },
         '@media (min-width: 992px)': {
-          height: 'calc(min(100vh - 84px, 50vw))',
-          width: 'calc(min(100vh - 84px, 50vw))',
+          height: 'calc(min(100vh - ' + HEADER_FOOTER_HEIGHT + ', 50vw))',
+          width: 'calc(min(100vh - ' + HEADER_FOOTER_HEIGHT + ', 50vw))',
         },
       }}>
         {props.square}
@@ -44,11 +45,11 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
         height: '40vh',
         '@media (min-width: 576px)': {
           width: '34vw',
-          height: 'calc(100vh - 84px)',
+          height: 'calc(100vh - ' + HEADER_FOOTER_HEIGHT + ')',
         },
         '@media (min-width: 992px)': {
           width: '50vw',
-          height: 'calc(100vh - 84px)',
+          height: 'calc(100vh - ' + HEADER_FOOTER_HEIGHT + ')',
 
         },
       }}>
