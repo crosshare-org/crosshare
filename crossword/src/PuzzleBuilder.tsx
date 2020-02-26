@@ -5,7 +5,6 @@ import { SquareAndCols } from './Page';
 import { Position, Direction } from './types';
 import { GridData, Grid } from './Grid';
 import { TopBar } from './TopBar';
-import { Footer } from './Footer';
 
 export const PuzzleBuilder = (_: RouteComponentProps) => {
   const sideLength = 5;
@@ -37,7 +36,6 @@ export const PuzzleBuilder = (_: RouteComponentProps) => {
           <h5 className="clue-list-header">Down</h5>
         }
       />
-      <Footer/>
     </>
   );
 }

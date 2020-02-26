@@ -9,9 +9,6 @@ html {
   min-height: 100%;
   position: relative;
 }
-body {
-  margin-bottom: 20px;
-}
 .list-group-item-primary {
   color: black;
   background-color: $lightened;
@@ -22,79 +19,4 @@ body {
 }
 .clue-list-entry {
   flex-shrink: 0;
-}
-.cell-container {
-  float:left;
-  position: relative;
-  margin: 0px;
-  overflow:hidden;
-}
-.cell {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-right: 1px solid black;
-  border-bottom: 1px solid black;
-}
-.cell-label {
-  font-size: 1.6vw;
-  position: absolute;
-  left: 0.1vw;
-  top: 0px;
-  font-weight: bold;
-}
-@include media-breakpoint-up(sm) {
-  .cell-label {
-    font-size: 1.2vw;
-  }
-}
-@include media-breakpoint-up(lg) {
-  .cell-label {
-    font-size: 0.8vw;
-  }
-}
-.cell-top {
-  border-top: 1px solid black;
-}
-.cell-left {
-  border-left: 1px solid black;
-}
-.cell-block {
-  background-color: black;
-}
-.cell-active {
-  background-color: $primary;
-}
-.cell-block.cell-active {
-  background: repeating-linear-gradient(
-  -45deg,
-  black,
-  black 10px,
-  $primary 10px,
-  $primary 20px,
-);
-}
-.cell-highlight {
-  background-color: #ddd;
-}
-.cell-value {
-  font-size: 4vw;
-  text-align: center;
-  padding-top: 8%;
-}
-@include media-breakpoint-up(sm) {
-  .cell-value {
-    font-size: 3vw;
-  }
-}
-@include media-breakpoint-up(lg) {
-  .cell-value {
-    font-size: 2vw;
-  }
 }

@@ -10,7 +10,6 @@ import { Grid, Entry, GridData } from './Grid';
 import { Position, Direction, BLOCK, PuzzleJson } from './types';
 import { TopBar } from './TopBar';
 import { Page, SquareAndCols } from './Page';
-import { Footer } from './Footer';
 
 interface PuzzleProps extends RouteComponentProps {
   crosswordId?: string
@@ -172,7 +171,6 @@ export const Puzzle = (props: PuzzleJson) => {
         left={<ClueList header="Across" clues={acrossClues} />}
         right={<ClueList header="Down" clues={downClues} />}
       />
-      <Footer />
     </React.Fragment>
   )
 }

@@ -1,3 +1,6 @@
+/** @jsx jsx */
+import { jsx } from '@emotion/core';
+
 import * as React from 'react';
 import useEventListener from '@use-it/event-listener'
 import lodash from 'lodash';
@@ -398,6 +401,7 @@ export const Grid = ({active, setActive, direction, setDirection, grid, setCellV
   );
 
   return (
-    <div className="grid">{gridRows}</div>
+    <div css={{
+    }}>{gridRows}</div>
   )
 }
