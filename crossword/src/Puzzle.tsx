@@ -5,10 +5,12 @@ import * as React from 'react';
 import axios from 'axios';
 import { RouteComponentProps } from '@reach/router';
 import ListGroup from 'react-bootstrap/ListGroup'
+import { isMobile } from "react-device-detect";
+import { FaKeyboard } from 'react-icons/fa';
 
 import { Grid, Entry, GridData } from './Grid';
 import { Position, Direction, BLOCK, PuzzleJson } from './types';
-import { TopBar } from './TopBar';
+import { TopBar, TopBarLink } from './TopBar';
 import { Page, SquareAndCols } from './Page';
 
 interface PuzzleProps extends RouteComponentProps {
@@ -58,6 +60,7 @@ function ClueList(props: ClueListProps) {
         fontWeight: 'bold',
         borderBottom: '1px solid #AAA',
         height: '1.5em',
+        paddingLeft: '0.5em',
       }}>{props.header}</div>
       <div css={{
         maxHeight: 'calc(100% - 1.5em)',
@@ -75,6 +78,8 @@ export const Puzzle = (props: PuzzleJson) => {
   const [active, setActive] = React.useState({ col: 0, row: 0 } as Position);
   const [direction, setDirection] = React.useState(Direction.Across);
   const [input, setInput] = React.useState(answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>);
+  const [showKeyboard, setShowKeyboard] = React.useState(isMobile);
+  const toggleKeyboard = () => setShowKeyboard(!showKeyboard);
 
   const grid = GridData.fromCells(props.size.cols, props.size.rows, input);
 
@@ -159,10 +164,15 @@ export const Puzzle = (props: PuzzleJson) => {
 
   return (
     <React.Fragment>
-      <TopBar />
+      <TopBar>
+        <TopBarLink icon={<FaKeyboard/>} text="toggle keyboard" onClick={toggleKeyboard}/>
+      </TopBar>
       <SquareAndCols
+        showKeyboard={showKeyboard}
+        isTablet={false}
         square={
           <Grid
+            showingKeyboard={showKeyboard}
             grid={grid} setCellValues={setInput}
             active={active} setActive={setActive}
             direction={direction} setDirection={setDirection}

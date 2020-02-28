@@ -6,6 +6,7 @@ import * as React from 'react';
 import {notSelectable, PRIMARY, SECONDARY, HEADER_FOOTER_HEIGHT} from './style';
 
 type CellProps = {
+  showingKeyboard: boolean,
   gridWidth: number,
   isBlock: boolean,
   active: boolean,
@@ -28,6 +29,9 @@ export default function Cell(props: CellProps) {
   } else if (props.highlight) {
     bg = SECONDARY;
   }
+
+  const keyboardHeight = props.showingKeyboard ? 140 : 0;
+  const heightAdjust = keyboardHeight + HEADER_FOOTER_HEIGHT;
 
   return (
     <div className="cell-container" css={{
@@ -57,23 +61,23 @@ export default function Cell(props: CellProps) {
             top: 0,
             fontWeight: 'bold',
             lineHeight: '1em',
-            fontSize: 'calc(0.3 * min(60vh - ' + HEADER_FOOTER_HEIGHT + 'px, 100vw) / ' + props.gridWidth + ')',
+            fontSize: 'calc(0.3 * min(75vh - ' + heightAdjust + 'px, 100vw) / ' + props.gridWidth + ')',
             '@media (min-width: 576px)': {
-              fontSize: 'calc(0.3 * min(100vh - ' + HEADER_FOOTER_HEIGHT + 'px, 66vw) / ' + props.gridWidth + ')',
+              fontSize: 'calc(0.3 * min(100vh - ' + heightAdjust + 'px, 66vw) / ' + props.gridWidth + ')',
             },
             '@media (min-width: 992px)': {
-              fontSize: 'calc(0.3 * min(100vh - ' + HEADER_FOOTER_HEIGHT + 'px, 50vw) / ' + props.gridWidth + ')',
+              fontSize: 'calc(0.3 * min(100vh - ' + heightAdjust + 'px, 50vw) / ' + props.gridWidth + ')',
             },
           }}>{props.number}</div>
           <div css={{
             textAlign: 'center',
             lineHeight: '1.2em',
-            fontSize: 'calc(0.9 * min(60vh - ' + HEADER_FOOTER_HEIGHT + 'px, 100vw) / ' + props.gridWidth + ')',
+            fontSize: 'calc(0.9 * min(75vh - ' + heightAdjust + 'px, 100vw) / ' + props.gridWidth + ')',
             '@media (min-width: 576px)': {
-              fontSize: 'calc(0.9 * min(100vh - ' + HEADER_FOOTER_HEIGHT + 'px, 66vw) / ' + props.gridWidth + ')',
+              fontSize: 'calc(0.9 * min(100vh - ' + heightAdjust + 'px, 66vw) / ' + props.gridWidth + ')',
             },
             '@media (min-width: 992px)': {
-              fontSize: 'calc(0.9 * min(100vh - ' + HEADER_FOOTER_HEIGHT + 'px, 50vw) / ' + props.gridWidth + ')',
+              fontSize: 'calc(0.9 * min(100vh - ' + heightAdjust + 'px, 50vw) / ' + props.gridWidth + ')',
             },
           }}>{props.value}</div>
           </React.Fragment>

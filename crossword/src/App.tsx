@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Router, RouteComponentProps } from "@reach/router";
+import { Router, RouteComponentProps, Link } from "@reach/router";
 
 import {PuzzleLoader} from './Puzzle';
 import {PuzzleBuilder} from './PuzzleBuilder';
@@ -11,7 +11,7 @@ const NotFound = (_: RouteComponentProps) => {
 }
 
 const Home = (_: RouteComponentProps) => {
-  return <Page>CROSSHARE is a not-for-profit community for crossword constructors.</Page>;
+  return <Page>CROSSHARE is a not-for-profit community for crossword constructors. <Link to="/construct">Create a new crossword</Link></Page>;
 }
 
 const App = () => {

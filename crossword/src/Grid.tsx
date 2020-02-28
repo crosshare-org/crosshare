@@ -315,6 +315,7 @@ export class GridData {
 }
 
 type GridProps = {
+  showingKeyboard: boolean,
   grid: GridData,
   setCellValues: React.Dispatch<React.SetStateAction<Array<string>>>,
   active: Position,
@@ -323,7 +324,7 @@ type GridProps = {
   setDirection: React.Dispatch<React.SetStateAction<Direction>>
 }
 
-export const Grid = ({active, setActive, direction, setDirection, grid, setCellValues}: GridProps) => {
+export const Grid = ({showingKeyboard, active, setActive, direction, setDirection, grid, setCellValues}: GridProps) => {
   function keyboardHandler(e:React.KeyboardEvent) {
     if (e.key === " ") {
       changeDirection();
@@ -397,7 +398,7 @@ export const Grid = ({active, setActive, direction, setDirection, grid, setCellV
   }
 
   const gridRows = grid.rows().map((cells, idx) =>
-    <GridRow gridWidth={grid.width} cellLabels={grid.cellLabels} active={active} highlights={highlights} clickHandler={clickHandler} cellValues={cells} rowNumber={idx} key={idx}/>
+    <GridRow showingKeyboard={showingKeyboard} gridWidth={grid.width} cellLabels={grid.cellLabels} active={active} highlights={highlights} clickHandler={clickHandler} cellValues={cells} rowNumber={idx} key={idx}/>
   );
 
   return (
