@@ -3,7 +3,7 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 
-import {notSelectable, PRIMARY, SECONDARY, HEADER_FOOTER_HEIGHT} from './style';
+import {notSelectable, PRIMARY, SECONDARY, HEADER_FOOTER_HEIGHT, SMALL_AND_UP, LARGE_AND_UP} from './style';
 
 type CellProps = {
   showingKeyboard: boolean,
@@ -61,22 +61,22 @@ export default function Cell(props: CellProps) {
             top: 0,
             fontWeight: 'bold',
             lineHeight: '1em',
-            fontSize: 'calc(0.3 * min(75vh - ' + heightAdjust + 'px, 100vw) / ' + props.gridWidth + ')',
-            '@media (min-width: 576px)': {
+            fontSize: 'calc(0.3 * min(87vh - ' + heightAdjust + 'px, 100vw) / ' + props.gridWidth + ')',
+            [SMALL_AND_UP]: {
               fontSize: 'calc(0.3 * min(100vh - ' + heightAdjust + 'px, 66vw) / ' + props.gridWidth + ')',
             },
-            '@media (min-width: 992px)': {
+            [LARGE_AND_UP]: {
               fontSize: 'calc(0.3 * min(100vh - ' + heightAdjust + 'px, 50vw) / ' + props.gridWidth + ')',
             },
           }}>{props.number}</div>
           <div css={{
             textAlign: 'center',
             lineHeight: '1.2em',
-            fontSize: 'calc(0.9 * min(75vh - ' + heightAdjust + 'px, 100vw) / ' + props.gridWidth + ')',
-            '@media (min-width: 576px)': {
+            fontSize: 'calc(0.9 * min(87vh - ' + heightAdjust + 'px, 100vw) / ' + props.gridWidth + ')',
+            [SMALL_AND_UP]: {
               fontSize: 'calc(0.9 * min(100vh - ' + heightAdjust + 'px, 66vw) / ' + props.gridWidth + ')',
             },
-            '@media (min-width: 992px)': {
+            [LARGE_AND_UP]: {
               fontSize: 'calc(0.9 * min(100vh - ' + heightAdjust + 'px, 50vw) / ' + props.gridWidth + ')',
             },
           }}>{props.value}</div>

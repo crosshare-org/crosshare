@@ -365,7 +365,7 @@ export const Grid = ({showingKeyboard, active, setActive, direction, setDirectio
       e.preventDefault();
     } else if (e.key === '.' && grid.allowBlockEditing) {
       setCellValues(grid.cellsWithBlockToggled(active));
-    } else if (e.key.match(/^\w$/)) {
+    } else if (e.key.match(/^[A-Za-z0-9]$/)) {
       const char = e.key.toUpperCase();
       setCellValues(grid.cellsWithNewChar(active, char));
       setActive(grid.advancePosition(active, direction));

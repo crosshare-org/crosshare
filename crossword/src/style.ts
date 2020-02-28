@@ -14,3 +14,6 @@ export const notSelectable = css`
   -ms-user-select: none;
   user-select: none;
 `;
+
+export const SMALL_AND_UP = '@media (min-width: 576px)';
+export const LARGE_AND_UP = '@media (min-width: 992px)';

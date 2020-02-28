@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Link, RouteComponentProps } from "@reach/router";
 
 import logo from './crosshare.png';
-import {PRIMARY, HEADER_HEIGHT} from './style'
+import {PRIMARY, HEADER_HEIGHT, SMALL_AND_UP} from './style'
 
 interface TopBarProps extends RouteComponentProps {
   children?: React.ReactNode
@@ -29,7 +29,7 @@ export const TopBarLink = (props: {text: string, icon: React.ReactNode, onClick:
       verticalAlign: 'middle',
       display: 'none',
       fontSize: HEADER_HEIGHT - 20,
-      '@media (min-width: 576px)': {
+      [SMALL_AND_UP]: {
         display: 'inline-block',
       }
     }}>{props.text}</span>
@@ -63,7 +63,7 @@ export const TopBar = ({children}: TopBarProps) => {
       display: 'none',
       color: 'black',
       fontSize: HEADER_HEIGHT - 10,
-      '@media (min-width: 576px)': {
+      [SMALL_AND_UP]: {
         display: 'inline-block',
       }
     }}>CROSSHARE</span>

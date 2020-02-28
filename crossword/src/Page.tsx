@@ -9,7 +9,7 @@ import { FaKeyboard } from 'react-icons/fa';
 import { FaTabletAlt } from 'react-icons/fa';
 
 import { TopBar, TopBarLink } from './TopBar';
-import { HEADER_FOOTER_HEIGHT } from './style';
+import { HEADER_FOOTER_HEIGHT, SMALL_AND_UP, LARGE_AND_UP } from './style';
 
 interface SquareAndColsProps {
   square: React.ReactNode,
@@ -47,7 +47,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
       <div css={{
         display: 'flex',
         flexDirection: 'column',
-        '@media (min-width: 576px)': {
+        [SMALL_AND_UP]: {
           flexDirection: 'row',
           alignItems: 'start',
         },
@@ -60,12 +60,12 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           flexShrink: 0,
           height: 'calc(min(87vh - ' + heightAdjust + 'px, 100vw))',
           width: 'calc(min(87vh - ' + heightAdjust + 'px, 100vw))',
-          '@media (min-width: 576px)': {
+          [SMALL_AND_UP]: {
             padding: '5px',
             height: 'calc(min(100vh - ' + heightAdjust + 'px, 66vw))',
             width: 'calc(min(100vh - ' + heightAdjust + 'px, 66vw))',
           },
-          '@media (min-width: 992px)': {
+          [LARGE_AND_UP]: {
             height: 'calc(min(100vh - ' + heightAdjust + 'px, 50vw))',
             width: 'calc(min(100vh - ' + heightAdjust + 'px, 50vw))',
           },
@@ -76,7 +76,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           flex: '1 1 auto',
           width: '100vw',
           height: '13vh',
-          '@media (min-width: 576px)': {
+          [SMALL_AND_UP]: {
             display: 'none',
           }
         }}>
@@ -87,12 +87,12 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           flex: 'auto',
           flexWrap: 'wrap',
           alignItems: 'end',
-          '@media (min-width: 576px)': {
+          [SMALL_AND_UP]: {
             display: 'flex',
             width: '34vw',
             height: 'calc(100vh - ' + heightAdjust + 'px)',
           },
-          '@media (min-width: 992px)': {
+          [LARGE_AND_UP]: {
             width: '50vw',
             height: 'calc(100vh - ' + heightAdjust + 'px)',
 
@@ -103,10 +103,10 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
             padding: '0',
             width: '100%',
             height: '50%',
-            '@media (min-width: 576px)': {
+            [SMALL_AND_UP]: {
               padding: '5px 5px 0 0',
             },
-            '@media (min-width: 992px)': {
+            [LARGE_AND_UP]: {
               paddingBottom: 5,
               width: '50%',
               height: '100%',
@@ -117,10 +117,10 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
             padding: '0',
             width: '100%',
             height: '50%',
-            '@media (min-width: 576px)': {
+            [SMALL_AND_UP]: {
               padding: '0 5px 5px 0',
             },
-            '@media (min-width: 992px)': {
+            [LARGE_AND_UP]: {
               paddingTop: 5,
               width: '50%',
               height: '100%',
@@ -137,9 +137,9 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
               '{num} Z X C V B N M {bksp}',
             ],
             'extra': [
-              '1 2 3 4 5 6 7 8 9 0',
-              '! @ # $ % & * - =',
-              '{abc} + \' , . : / ? {rebus} {bksp}',
+              '1 2 3 4 5',
+              '6 7 8 9 0',
+              '{abc} {rebus} {bksp}',
             ],
             'defaultTablet': [
               'Q W E R T Y U I O P {bksp}',
@@ -147,9 +147,9 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
               '{prevEntry} Z X C V B N M {num} {rebus} {nextEntry}',
             ],
             'extraTablet': [
-              '1 2 3 4 5 6 7 8 9 0 {bksp}',
-              '{prev} ! @ # $ % & * - = {dir} {next}',
-              '{prevEntry} + \' , . : / ? {abc} {rebus} {nextEntry}',
+              '1 2 3 4 5 {bksp}',
+              '{prev} 6 7 8 9 0 {dir} {next}',
+              '{prevEntry} {abc} {rebus} {nextEntry}',
             ],
           }}
           layoutName={layoutName(showNumericKeyboard, props.isTablet)}
