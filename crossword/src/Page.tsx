@@ -49,11 +49,12 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
         flexDirection: 'column',
         '@media (min-width: 576px)': {
           flexDirection: 'row',
+          alignItems: 'start',
         },
         flexWrap: 'nowrap',
         alignItems: 'center',
-        minHeight: 'calc(100vh - ' + HEADER_FOOTER_HEIGHT + 'px)',
-        height: 'calc(100vh - ' + HEADER_FOOTER_HEIGHT + 'px)',
+        minHeight: 'calc(100vh - ' + heightAdjust + 'px)',
+        height: 'calc(100vh - ' + heightAdjust + 'px)',
       }}>
         <div css={{
           flexShrink: 0,
@@ -83,6 +84,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
         </div>
         <div css={{
           display: 'none',
+          flex: 'auto',
           flexWrap: 'wrap',
           alignItems: 'end',
           '@media (min-width: 576px)': {
@@ -125,12 +127,8 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
             },
           }}>{props.right}</div>
         </div>
+        </div>
       {props.showKeyboard ?
-        <div css={{
-          flexShrink: 0,
-          height: '140px',
-          width: '100%',
-        }}>
         <Keyboard
           layout={{
             'default': [
@@ -167,8 +165,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
             '{nextEntry}': '⇥',
           }}
           onKeyPress={handleKeypress}
-        /> </div>: " "}
-        </div>
+        />: " "}
     </React.Fragment>
   );
 }
