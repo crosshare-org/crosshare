@@ -365,13 +365,16 @@ export const Grid = ({ showingKeyboard, active, setActive, direction, setDirecti
       e.preventDefault();
     } else if (e.key === '.' && grid.allowBlockEditing) {
       setCellValues(grid.cellsWithBlockToggled(active));
+      e.preventDefault();
     } else if (e.key.match(/^[A-Za-z0-9]$/)) {
       const char = e.key.toUpperCase();
       setCellValues(grid.cellsWithNewChar(active, char));
       setActive(grid.advancePosition(active, direction));
+      e.preventDefault();
     } else if (e.key === "Backspace") {
       setCellValues(grid.cellsWithNewChar(active, " "));
       setActive(grid.retreatPosition(active, direction));
+      e.preventDefault();
     }
   }
   useEventListener('keydown', keyboardHandler);

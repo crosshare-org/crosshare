@@ -185,7 +185,7 @@ export const Puzzle = (props: PuzzleJson) => {
         flexWrap: 'nowrap',
         alignItems: 'center',
         width: '100%',
-      }} ref={refCallback} onMouseDown={(e: React.MouseEvent) => e.preventDefault()} onClick={click} key={idx}>
+      }} ref={refCallback} onClick={click} key={idx}>
         <div css={{
           flexShrink: 0,
           width: '3em',
