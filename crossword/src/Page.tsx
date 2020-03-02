@@ -7,9 +7,52 @@ import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import { FaKeyboard } from 'react-icons/fa';
 import { FaTabletAlt } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 import { TopBar, TopBarLink } from './TopBar';
 import { HEADER_FOOTER_HEIGHT, SMALL_AND_UP, LARGE_AND_UP } from './style';
+
+interface TinyNavProps {
+  children: React.ReactNode,
+  leftCallback: () => void,
+  rightCallback: () => void
+}
+export const TinyNav = ({children, leftCallback, rightCallback}: TinyNavProps) => {
+  return (
+    <div css={{
+      display: 'flex',
+      flexWrap: 'nowrap',
+      alignItems: 'stretch',
+      flexDirection: 'row',
+      width: '100%',
+      height: '100%',
+    }}>
+      <div css={{
+        width: '2em',
+        textAlign: 'center',
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }} onClick={leftCallback}>
+      <FaChevronLeft/>
+      </div>
+      <div css={{
+        flex: '1 1 auto',
+      }}>{children}</div>
+      <div css={{
+        width: '2em',
+        textAlign: 'center',
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }} onClick={rightCallback}>
+      <FaChevronRight/>
+      </div>
+    </div>
+  );
+}
 
 interface SquareAndColsProps {
   square: React.ReactNode,

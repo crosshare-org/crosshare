@@ -10,7 +10,7 @@ import { FaKeyboard } from 'react-icons/fa';
 import { Grid, Entry, GridData } from './Grid';
 import { Position, Direction, BLOCK, PuzzleJson } from './types';
 import { TopBar, TopBarLink } from './TopBar';
-import { Page, SquareAndCols } from './Page';
+import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style'
 
 interface PuzzleProps extends RouteComponentProps {
@@ -87,6 +87,17 @@ export const Puzzle = (props: PuzzleJson) => {
   const toggleKeyboard = () => setShowKeyboard(!showKeyboard);
 
   const grid = GridData.fromCells(props.size.cols, props.size.rows, input);
+
+  function nextEntry() {
+    const [pos, dir] = grid.moveToNextEntry(active, direction);
+    setActive(pos);
+    setDirection(dir);
+  }
+  function prevEntry() {
+    const [pos, dir] = grid.moveToNextEntry(active, direction, true);
+    setActive(pos);
+    setDirection(dir);
+  }
 
   let clues = new Array<string>(grid.entries.length);
   function setClues(jsonClueList: Array<string>, direction: Direction) {
@@ -216,7 +227,7 @@ export const Puzzle = (props: PuzzleJson) => {
         }
         left={<ClueList header="Across" clues={acrossClues} />}
         right={<ClueList header="Down" clues={downClues} />}
-        tinyColumn={<ClueList clues={acrossClues.concat(downClues)} />}
+        tinyColumn={<TinyNav leftCallback={prevEntry} rightCallback={nextEntry}><ClueList clues={acrossClues.concat(downClues)} /></TinyNav>}
       />
     </React.Fragment>
   )
