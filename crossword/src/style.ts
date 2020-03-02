@@ -4,7 +4,8 @@ export const FOOTER_HEIGHT = 20;
 export const HEADER_HEIGHT = 35;
 export const HEADER_FOOTER_HEIGHT = 35;
 export const PRIMARY = '#EB984E';
-export const SECONDARY = '#DDD';
+export const LIGHTER = '#EBBC94';
+export const SECONDARY = '#E2E2E2';
 
 export const notSelectable = css`
   -webkit-touch-callout: none;

@@ -32,14 +32,13 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
   }
 
   function layoutName(numeric: boolean, tablet: boolean) {
-    let base = "default";
     if (numeric) {
-      base = "extra";
+      return "extra";
     }
     if (tablet) {
-      return base + "Tablet";
+      return "defaultTablet";
     }
-    return base;
+    return 'default';
   }
 
   return (
@@ -134,22 +133,17 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
             'default': [
               'Q W E R T Y U I O P',
               'A S D F G H J K L',
-              '{num} Z X C V B N M {bksp}',
+              'Z X C V B N M {num} {bksp}',
             ],
             'extra': [
               '1 2 3 4 5',
               '6 7 8 9 0',
-              '{abc} {rebus} {bksp}',
+              '{rebus} {abc} {bksp}',
             ],
             'defaultTablet': [
               'Q W E R T Y U I O P {bksp}',
               '{prev} A S D F G H J K L {dir} {next}',
-              '{prevEntry} Z X C V B N M {num} {rebus} {nextEntry}',
-            ],
-            'extraTablet': [
-              '1 2 3 4 5 {bksp}',
-              '{prev} 6 7 8 9 0 {dir} {next}',
-              '{prevEntry} {abc} {rebus} {nextEntry}',
+              '{prevEntry} Z X C V B N M {num} {nextEntry}',
             ],
           }}
           layoutName={layoutName(showNumericKeyboard, props.isTablet)}
@@ -159,7 +153,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
             '{dir}': '↴',
             '{next}': '→',
             '{prevEntry}': '⇤',
-            '{num}': '123',
+            '{num}': 'More',
             '{abc}': 'ABC',
             '{rebus}': 'Rebus',
             '{nextEntry}': '⇥',
