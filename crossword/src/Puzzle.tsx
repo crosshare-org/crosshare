@@ -11,7 +11,7 @@ import { Grid, Entry, GridData } from './Grid';
 import { Position, Direction, BLOCK, PuzzleJson } from './types';
 import { TopBar, TopBarLink } from './TopBar';
 import { Page, SquareAndCols } from './Page';
-import { SECONDARY, LIGHTER } from './style'
+import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style'
 
 interface PuzzleProps extends RouteComponentProps {
   crosswordId?: string
@@ -124,7 +124,6 @@ export const Puzzle = (props: PuzzleJson) => {
   function scrollClueIntoView(e: Entry) {
     for (const currentEntryClue of refs.current[e.index]) {
       if (currentEntryClue) {
-        console.log("scrolling to " + e.index);
         currentEntryClue.scrollIntoView({
           behavior: 'auto',
           block: 'center',
@@ -169,9 +168,30 @@ export const Puzzle = (props: PuzzleJson) => {
         cursor: (idx === entry.index ? 'default' : 'pointer'),
         '&:hover': {
           backgroundColor: (idx === entry.index ? LIGHTER : (idx === cross.index ? '#DDD' : '#EEE')),
-        }
+        },
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'nowrap',
+        alignItems: 'center',
+        width: '100%',
       }} ref={refCallback} onMouseDown={(e: React.MouseEvent) => e.preventDefault()} onClick={click} key={idx}>
-        <span css={{ fontWeight: 'bold' }}>{number}{grid.entries[idx].direction === Direction.Across ? 'A' : 'D'}.</span> {clue}
+        <div css={{
+          flexShrink: 0,
+          width: '3em',
+          height: '100%',
+          fontWeight: 'bold',
+          textAlign: 'right',
+          padding: '0 0.5em',
+        }}>{number}<span css={{
+          [SMALL_AND_UP]: {
+            display: 'none',
+          },
+        }}>{grid.entries[idx].direction === Direction.Across ? 'A' : 'D'}</span>
+        </div>
+        <div css={{
+          flex: '1 1 auto',
+          height: '100%',
+        }}>{clue}</div>
       </li>
     );
   });
