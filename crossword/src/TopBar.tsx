@@ -13,13 +13,24 @@ interface TopBarProps extends RouteComponentProps {
 
 export const TopBarLink = (props: {text: string, icon: React.ReactNode, onClick: () => void}) => {
   return (
-    <a title={props.text} css={{
+    <button title={props.text} css={{
+      backgroundColor: 'transparent',
+      border: 'none',
+      cursor: 'pointer',
+      textDecoration: 'none',
+      display: 'inline',
+      margin: 0,
+      padding: 0,
       color: 'black',
       '&:hover': {
         color: 'black',
         textDecoration: 'none',
-      }
-    }} href="#" onClick={props.onClick}>
+      },
+      '&:focus': {
+        color: 'black',
+        textDecoration: 'none',
+      },
+    }} onClick={props.onClick}>
     <span css={{
       verticalAlign: 'middle',
       fontSize: HEADER_HEIGHT - 10,
@@ -33,7 +44,7 @@ export const TopBarLink = (props: {text: string, icon: React.ReactNode, onClick:
         display: 'inline-block',
       }
     }}>{props.text}</span>
-    </a>
+    </button>
   );
 }
 

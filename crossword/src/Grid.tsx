@@ -387,37 +387,34 @@ export const Grid = ({ showingKeyboard, active, setActive, direction, setDirecti
       }
     }, [direction, setDirection]);
 
-  const clickHandler = React.useCallback(
-    (pos: Position) => {
-      if (grid.valAt(pos) === BLOCK && !grid.allowBlockEditing) {
-        return;
-      }
-      if (pos.row === active.row && pos.col === active.col) {
-        changeDirection();
-      } else {
-        setActive(pos);
-      }
-    }, [active, grid, changeDirection, setActive]
-  );
+  const noOp = React.useCallback(() => undefined, []);
+  const changeActive = React.useCallback((pos) => setActive(pos), [setActive]);
 
   let cells = new Array<React.ReactNode>();
   let rows = grid.rows()
-  for (var row_idx = 0; row_idx < rows.length; row_idx += 1) {
+  for (let row_idx = 0; row_idx < rows.length; row_idx += 1) {
     const row = rows[row_idx];
-    for (var col_idx = 0; col_idx < row.length; col_idx += 1) {
+    for (let col_idx = 0; col_idx < row.length; col_idx += 1) {
       const cellValue = row[col_idx];
       const key = row_idx + "-" + col_idx
       const number = grid.cellLabels.get(key);
+      const isActive = active.row === row_idx && active.col === col_idx;
+      var onClick = changeActive;
+      if (cellValue === BLOCK) {
+        onClick = noOp;
+      } else if (isActive) {
+        onClick = changeDirection;
+      }
       cells.push(<Cell
         showingKeyboard={showingKeyboard}
         gridWidth={grid.width}
-        active={active.row === row_idx && active.col === col_idx}
+        active={isActive}
         highlight={highlights.some((p) => p.row === row_idx && p.col === col_idx)}
         key={key}
         number={number ? number.toString() : ""}
         row={row_idx}
         column={col_idx}
-        onClick={clickHandler}
+        onClick={onClick}
         value={cellValue}
         isBlock={cellValue === BLOCK}
       />);

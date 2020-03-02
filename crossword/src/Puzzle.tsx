@@ -129,7 +129,7 @@ export const Puzzle = (props: PuzzleJson) => {
   const refs = React.useRef(new Array<Array<HTMLLIElement>>(grid.entries.length));
   for (let i = 0; i < refs.current.length; i += 1) {
     if (!refs.current[i]) {
-      refs.current[i] = new Array();
+      refs.current[i] = [];
     }
   }
   function scrollClueIntoView(e: Entry) {
