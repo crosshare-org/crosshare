@@ -5,8 +5,8 @@ import * as React from 'react';
 import useEventListener from '@use-it/event-listener'
 import lodash from 'lodash';
 
-import {Position, Direction, BLOCK} from './types';
-import GridRow from './GridRow';
+import { Position, Direction, BLOCK } from './types';
+import { Cell } from './Cell';
 
 export class Entry {
   constructor(
@@ -15,7 +15,7 @@ export class Entry {
     public readonly direction: Direction,
     public readonly cells: Array<Position>,
     public readonly isComplete: boolean
-  ) {}
+  ) { }
 }
 
 export class GridData {
@@ -25,7 +25,7 @@ export class GridData {
     public readonly height: number,
     public readonly cells: Array<string>,
     public readonly usedWords: Set<string>,
-    public readonly entriesByCell: Array<Array<[number, number]|null>>,
+    public readonly entriesByCell: Array<Array<[number, number] | null>>,
     public readonly entries: Array<Entry>,
     public readonly cellLabels: Map<string, number>,
     public readonly allowBlockEditing: boolean
@@ -38,10 +38,10 @@ export class GridData {
     })
   }
 
-  static fromCells(width:number, height:number, cells:Array<string>, allowBlockEditing=false) {
-    let entriesByCell:Array<Array<[number, number]|null>> = new Array(cells.length);
+  static fromCells(width: number, height: number, cells: Array<string>, allowBlockEditing = false) {
+    let entriesByCell: Array<Array<[number, number] | null>> = new Array(cells.length);
     let entries = [];
-    let usedWords:Set<string> = new Set();
+    let usedWords: Set<string> = new Set();
     let cellLabels = new Map<string, number>();
     let currentCellLabel = 1;
     for (let y = 0; y < height; y += 1) {
@@ -53,12 +53,12 @@ export class GridData {
           const iincr = xincr + yincr * width;
 
           const isRowStart = (dir === Direction.Across && x === 0) ||
-                             (dir === Direction.Down && y === 0);
+            (dir === Direction.Down && y === 0);
           const isEntryStart = (cells[i] !== BLOCK &&
-                                (isRowStart || cells[i-iincr] === BLOCK) &&
-                                (x + xincr < width &&
-                                 y + yincr < height &&
-                                 cells[i+iincr] !== BLOCK));
+            (isRowStart || cells[i - iincr] === BLOCK) &&
+            (x + xincr < width &&
+              y + yincr < height &&
+              cells[i + iincr] !== BLOCK));
           if (!isEntryStart) {
             continue
           }
@@ -86,7 +86,7 @@ export class GridData {
             if (cellVal === ' ') {
               isComplete = false;
             }
-            entryCells.push({row: yt, col: xt});
+            entryCells.push({ row: yt, col: xt });
             entryPattern += cellVal;
             xt += xincr;
             yt += yincr;
@@ -102,7 +102,7 @@ export class GridData {
     return new this(width, height, cells, usedWords, entriesByCell, entries, cellLabels, allowBlockEditing);
   }
 
-  valAt(pos:Position) {
+  valAt(pos: Position) {
     return this.cells[pos.row * this.width + pos.col];
   }
 
@@ -110,56 +110,56 @@ export class GridData {
     let x = active.col;
     while (x >= 0) {
       x -= 1;
-      if (x >= 0 && (this.allowBlockEditing || this.valAt({...active, col: x}) !== BLOCK)) {
+      if (x >= 0 && (this.allowBlockEditing || this.valAt({ ...active, col: x }) !== BLOCK)) {
         break;
       }
     }
     if (x < 0) {
       return active;
     }
-    return {...active, col: x};
+    return { ...active, col: x };
   }
 
   moveRight(active: Position): Position {
     let x = active.col;
     while (x < this.width) {
       x += 1;
-      if (x < this.width && (this.allowBlockEditing || this.valAt({...active, col: x}) !== BLOCK)) {
+      if (x < this.width && (this.allowBlockEditing || this.valAt({ ...active, col: x }) !== BLOCK)) {
         break;
       }
     }
     if (x >= this.width) {
       return active;
     }
-    return {...active, col: x};
+    return { ...active, col: x };
   }
 
   moveUp(active: Position): Position {
     let y = active.row;
     while (y >= 0) {
       y -= 1;
-      if (y >= 0 && (this.allowBlockEditing || this.valAt({...active, row: y}) !== BLOCK)) {
+      if (y >= 0 && (this.allowBlockEditing || this.valAt({ ...active, row: y }) !== BLOCK)) {
         break;
       }
     }
     if (y < 0) {
       return active;
     }
-    return {...active, row: y};
+    return { ...active, row: y };
   }
 
   moveDown(active: Position): Position {
     let y = active.row;
     while (y < this.height) {
       y += 1;
-      if (y < this.height && (this.allowBlockEditing || this.valAt({...active, row: y}) !== BLOCK)) {
+      if (y < this.height && (this.allowBlockEditing || this.valAt({ ...active, row: y }) !== BLOCK)) {
         break;
       }
     }
     if (y >= this.height) {
       return active;
     }
-    return {...active, row: y};
+    return { ...active, row: y };
   }
 
   retreatPosition(pos: Position, dir: Direction): Position {
@@ -190,8 +190,8 @@ export class GridData {
     return pos;
   }
 
-  entryAtPosition(pos: Position, dir: Direction): [Entry|null, number] {
-    const entriesAtCell = this.entriesByCell[pos.row*this.width + pos.col];
+  entryAtPosition(pos: Position, dir: Direction): [Entry | null, number] {
+    const entriesAtCell = this.entriesByCell[pos.row * this.width + pos.col];
     if (!entriesAtCell) {
       return [null, 0];
     }
@@ -203,8 +203,8 @@ export class GridData {
   }
 
   entryAndCrossAtPosition(pos: Position, dir: Direction): [Entry, Entry] {
-    const currentEntryIndex = this.entriesByCell[pos.row*this.width + pos.col][dir];
-    const currentCrossIndex = this.entriesByCell[pos.row*this.width + pos.col][(dir + 1) % 2];
+    const currentEntryIndex = this.entriesByCell[pos.row * this.width + pos.col][dir];
+    const currentCrossIndex = this.entriesByCell[pos.row * this.width + pos.col][(dir + 1) % 2];
     if (!currentEntryIndex || !currentCrossIndex) {
       throw new Error("ERROR: No current entry index");
     }
@@ -212,7 +212,7 @@ export class GridData {
   }
 
   moveToNextEntry(pos: Position, dir: Direction, reverse = false): [Position, Direction] {
-    const [currentEntry, ] = this.entryAtPosition(pos, dir);
+    const [currentEntry,] = this.entryAtPosition(pos, dir);
     if (!currentEntry) {
       return [pos, dir];
     }
@@ -244,7 +244,7 @@ export class GridData {
     return [pos, dir];
   }
 
-  getHighlights(pos:Position, dir:Direction) {
+  getHighlights(pos: Position, dir: Direction) {
     const rowIncr = dir === Direction.Down ? 1 : 0;
     const colIncr = dir === Direction.Across ? 1 : 0;
 
@@ -258,10 +258,10 @@ export class GridData {
       if (row < 0 || col < 0) {
         break;
       }
-      if (this.valAt({row: row, col: col}) === BLOCK) {
+      if (this.valAt({ row: row, col: col }) === BLOCK) {
         break;
       }
-      highlights.push({row: row, col: col});
+      highlights.push({ row: row, col: col });
     }
     // And forwards
     row = pos.row;
@@ -272,10 +272,10 @@ export class GridData {
       if (row >= this.height || col >= this.width) {
         break;
       }
-      if (this.valAt({row: row, col: col}) === BLOCK) {
+      if (this.valAt({ row: row, col: col }) === BLOCK) {
         break;
       }
-      highlights.push({row: row, col: col});
+      highlights.push({ row: row, col: col });
     }
     return highlights;
   }
@@ -324,8 +324,8 @@ type GridProps = {
   setDirection: React.Dispatch<React.SetStateAction<Direction>>
 }
 
-export const Grid = ({showingKeyboard, active, setActive, direction, setDirection, grid, setCellValues}: GridProps) => {
-  function keyboardHandler(e:React.KeyboardEvent) {
+export const Grid = ({ showingKeyboard, active, setActive, direction, setDirection, grid, setCellValues }: GridProps) => {
+  function keyboardHandler(e: React.KeyboardEvent) {
     if (e.key === " ") {
       changeDirection();
       e.preventDefault();
@@ -378,31 +378,50 @@ export const Grid = ({showingKeyboard, active, setActive, direction, setDirectio
 
   const highlights = grid.getHighlights(active, direction);
 
-  function changeDirection() {
-    if (direction === Direction.Across) {
-      setDirection(Direction.Down);
-    } else {
-      setDirection(Direction.Across);
-    }
-  }
+  const changeDirection = React.useCallback(
+    () => {
+      if (direction === Direction.Across) {
+        setDirection(Direction.Down);
+      } else {
+        setDirection(Direction.Across);
+      }
+    }, [direction, setDirection]);
 
-  function clickHandler(pos:Position) {
-    if (grid.valAt(pos) === BLOCK && !grid.allowBlockEditing) {
-      return;
-    }
-    if (pos.row === active.row && pos.col === active.col) {
-      changeDirection();
-    } else {
-      setActive(pos);
-    }
-  }
-
-  const gridRows = grid.rows().map((cells, idx) =>
-    <GridRow showingKeyboard={showingKeyboard} gridWidth={grid.width} cellLabels={grid.cellLabels} active={active} highlights={highlights} clickHandler={clickHandler} cellValues={cells} rowNumber={idx} key={idx}/>
+  const clickHandler = React.useCallback(
+    (pos: Position) => {
+      if (grid.valAt(pos) === BLOCK && !grid.allowBlockEditing) {
+        return;
+      }
+      if (pos.row === active.row && pos.col === active.col) {
+        changeDirection();
+      } else {
+        setActive(pos);
+      }
+    }, [active, grid, changeDirection, setActive]
   );
 
-  return (
-    <div css={{
-    }}>{gridRows}</div>
-  )
+  let cells = new Array<React.ReactNode>();
+  let rows = grid.rows()
+  for (var row_idx = 0; row_idx < rows.length; row_idx += 1) {
+    const row = rows[row_idx];
+    for (var col_idx = 0; col_idx < row.length; col_idx += 1) {
+      const cellValue = row[col_idx];
+      const key = row_idx + "-" + col_idx
+      const number = grid.cellLabels.get(key);
+      cells.push(<Cell
+        showingKeyboard={showingKeyboard}
+        gridWidth={grid.width}
+        active={active.row === row_idx && active.col === col_idx}
+        highlight={highlights.some((p) => p.row === row_idx && p.col === col_idx)}
+        key={key}
+        number={number ? number.toString() : ""}
+        row={row_idx}
+        column={col_idx}
+        onClick={clickHandler}
+        value={cellValue}
+        isBlock={cellValue === BLOCK}
+      />);
+    }
+  }
+  return <React.Fragment>{cells}</React.Fragment>;
 }

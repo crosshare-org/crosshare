@@ -18,7 +18,7 @@ type CellProps = {
   onClick: (pos:{row: number, col:number}) => void
 }
 
-export default function Cell(props: CellProps) {
+export const Cell = React.memo((props: CellProps) => {
   let bg = "white";
   if (props.isBlock && props.active) {
     bg = "repeating-linear-gradient(-45deg,black,black 10px," + PRIMARY + " 10px," + PRIMARY + " 20px);"
@@ -85,4 +85,4 @@ export default function Cell(props: CellProps) {
       </div>
     </div>
   );
-}
+});
