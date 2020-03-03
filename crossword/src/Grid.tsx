@@ -6,7 +6,7 @@ import lodash from 'lodash';
 
 import { Position, Direction, PosAndDir, BLOCK } from './types';
 import { Cell } from './Cell';
-import { PuzzleAction } from './Puzzle';
+import { PuzzleAction, SetActiveAction } from './Puzzle';
 
 export class Entry {
   constructor(
@@ -331,7 +331,7 @@ export const Grid = ({ showingKeyboard, active, dispatch, grid }: GridProps) => 
   const highlights = grid.getHighlights(active);
 
   const noOp = React.useCallback(() => undefined, []);
-  const changeActive = React.useCallback((pos) => dispatch({type: "SETACTIVE", newActive: pos} as PuzzleAction), []);
+  const changeActive = React.useCallback((pos) => dispatch({type: "SETACTIVE", newActive: {...active, ...pos}} as SetActiveAction), []);
   const changeDirection = React.useCallback(() => dispatch({type: "CHANGEDIRECTION"} as PuzzleAction), []);
 
   let cells = new Array<React.ReactNode>();

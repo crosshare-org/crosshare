@@ -4,8 +4,8 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 import axios from 'axios';
 import { RouteComponentProps } from '@reach/router';
-import { isMobile } from "react-device-detect";
-import { FaKeyboard } from 'react-icons/fa';
+import { isMobile, isTablet } from "react-device-detect";
+import { FaTabletAlt, FaKeyboard } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener'
 
 import { Grid, Entry, GridData } from './Grid';
@@ -83,6 +83,7 @@ interface PuzzleState {
   active: PosAndDir,
   grid: GridData,
   showKeyboard: boolean,
+  isTablet: boolean,
   showExtraKeyLayout: boolean,
 }
 
@@ -98,7 +99,7 @@ function isKeypressAction(action: PuzzleAction): action is KeypressAction {
   return action.type === 'KEYPRESS'
 }
 
-interface SetActiveAction extends PuzzleAction {
+export interface SetActiveAction extends PuzzleAction {
   newActive: PosAndDir,
 }
 function isSetActiveAction(action: PuzzleAction): action is SetActiveAction {
@@ -111,6 +112,9 @@ function reducer(state: PuzzleState, action: PuzzleAction) {
   }
   if (action.type === "TOGGLEKEYBOARD") {
     return ({...state, showKeyboard: !state.showKeyboard});
+  }
+  if (action.type === "TOGGLETABLET") {
+    return ({...state, isTablet: !state.isTablet});
   }
   if (isSetActiveAction(action)) {
     return ({...state, active: action.newActive});
@@ -164,6 +168,7 @@ export const Puzzle = (props: PuzzleJson) => {
       (answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>)
     ),
     showKeyboard: isMobile,
+    isTablet: isTablet,
     showExtraKeyLayout: false,
   });
 
@@ -289,10 +294,6 @@ export const Puzzle = (props: PuzzleJson) => {
   const acrossClues = listItems.filter(filt(Direction.Across));
   const downClues = listItems.filter(filt(Direction.Down));
 
-  function dispatchToggleKeyboard() {
-    dispatch({type: "TOGGLEKEYBOARD"});
-  }
-
   function keyboardHandler(key: string) {
     dispatch({type: "KEYPRESS", key: key, shift: false} as KeypressAction);
   }
@@ -300,13 +301,14 @@ export const Puzzle = (props: PuzzleJson) => {
   return (
     <React.Fragment>
       <TopBar>
-        <TopBarLink icon={<FaKeyboard />} text="toggle keyboard" onClick={dispatchToggleKeyboard} />
+        <TopBarLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({type: "TOGGLEKEYBOARD"})} />
+        <TopBarLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({type: "TOGGLETABLET"})} />
       </TopBar>
       <SquareAndCols
         showKeyboard={state.showKeyboard}
         keyboardHandler={keyboardHandler}
         showExtraKeyLayout={state.showExtraKeyLayout}
-        isTablet={true}
+        isTablet={state.isTablet}
         square={
           <Grid
             showingKeyboard={state.showKeyboard}
