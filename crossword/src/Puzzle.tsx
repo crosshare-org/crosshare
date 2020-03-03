@@ -9,7 +9,7 @@ import { FaTabletAlt, FaKeyboard } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener'
 
 import { Grid, Entry, GridData } from './Grid';
-import { PosAndDir, Direction, BLOCK, PuzzleJson } from './types';
+import { PosAndDir, Position, Direction, BLOCK, PuzzleJson } from './types';
 import { TopBar, TopBarLink } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style'
@@ -99,14 +99,21 @@ function isKeypressAction(action: PuzzleAction): action is KeypressAction {
   return action.type === 'KEYPRESS'
 }
 
-export interface SetActiveAction extends PuzzleAction {
+interface SetActiveAction extends PuzzleAction {
   newActive: PosAndDir,
 }
 function isSetActiveAction(action: PuzzleAction): action is SetActiveAction {
   return action.type === 'SETACTIVE'
 }
 
-function reducer(state: PuzzleState, action: PuzzleAction) {
+export interface SetActivePositionAction extends PuzzleAction {
+  newActive: Position,
+}
+function isSetActivePositionAction(action: PuzzleAction): action is SetActivePositionAction {
+  return action.type === 'SETACTIVEPOSITION'
+}
+
+function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
   if (action.type === "CHANGEDIRECTION") {
     return ({...state, active: {...state.active, dir: (state.active.dir + 1) % 2}});
   }
@@ -119,6 +126,9 @@ function reducer(state: PuzzleState, action: PuzzleAction) {
   if (isSetActiveAction(action)) {
     return ({...state, active: action.newActive});
   }
+  if (isSetActivePositionAction(action)) {
+    return ({...state, active: {...action.newActive, dir: state.active.dir}});
+  }
   if (isKeypressAction(action)) {
     const key = action.key;
     const shift = action.shift;
@@ -126,6 +136,10 @@ function reducer(state: PuzzleState, action: PuzzleAction) {
       return ({...state, showExtraKeyLayout: !state.showExtraKeyLayout});
     } else if (key === " " || key === "{dir}") {
       return ({...state, active: {...state.active, dir: (state.active.dir + 1) % 2}});
+    } else if (key === "{prev}") {
+      return ({...state, active: state.grid.retreatPosition(state.active)});
+    } else if (key === "{next}") {
+      return ({...state, active: state.grid.advancePosition(state.active)});
     } else if ((key === "Tab" && !shift) || key === "{nextEntry}") {
       return ({...state, active: state.grid.moveToNextEntry(state.active)});
     } else if ((key === "Tab" && shift) || key === "{prevEntry}") {
