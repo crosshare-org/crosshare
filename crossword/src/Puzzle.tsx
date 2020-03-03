@@ -6,9 +6,10 @@ import axios from 'axios';
 import { RouteComponentProps } from '@reach/router';
 import { isMobile } from "react-device-detect";
 import { FaKeyboard } from 'react-icons/fa';
+import useEventListener from '@use-it/event-listener'
 
 import { Grid, Entry, GridData } from './Grid';
-import { Position, Direction, BLOCK, PuzzleJson } from './types';
+import { PosAndDir, Direction, BLOCK, PuzzleJson } from './types';
 import { TopBar, TopBarLink } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style'
@@ -78,28 +79,104 @@ function ClueList(props: ClueListProps) {
 
 }
 
+interface PuzzleState {
+  active: PosAndDir,
+  grid: GridData,
+  showKeyboard: boolean,
+  showExtraKeyLayout: boolean,
+}
+
+export interface PuzzleAction {
+  type: string,
+}
+
+export interface KeypressAction extends PuzzleAction {
+  key: string,
+  shift: boolean,
+}
+function isKeypressAction(action: PuzzleAction): action is KeypressAction {
+  return action.type === 'KEYPRESS'
+}
+
+interface SetActiveAction extends PuzzleAction {
+  newActive: PosAndDir,
+}
+function isSetActiveAction(action: PuzzleAction): action is SetActiveAction {
+  return action.type === 'SETACTIVE'
+}
+
+function reducer(state: PuzzleState, action: PuzzleAction) {
+  if (action.type === "CHANGEDIRECTION") {
+    return ({...state, active: {...state.active, dir: (state.active.dir + 1) % 2}});
+  }
+  if (action.type === "TOGGLEKEYBOARD") {
+    return ({...state, showKeyboard: !state.showKeyboard});
+  }
+  if (isSetActiveAction(action)) {
+    return ({...state, active: action.newActive});
+  }
+  if (isKeypressAction(action)) {
+    const key = action.key;
+    const shift = action.shift;
+    if (key === '{num}' || key === '{abc}') {
+      return ({...state, showExtraKeyLayout: !state.showExtraKeyLayout});
+    } else if (key === " " || key === "{dir}") {
+      return ({...state, active: {...state.active, dir: (state.active.dir + 1) % 2}});
+    } else if ((key === "Tab" && !shift) || key === "{nextEntry}") {
+      return ({...state, active: state.grid.moveToNextEntry(state.active)});
+    } else if ((key === "Tab" && shift) || key === "{prevEntry}") {
+      return ({...state, active: state.grid.moveToPrevEntry(state.active)});
+    } else if (key === "ArrowRight") {
+      return ({...state, active: {...state.grid.moveRight(state.active), dir: Direction.Across}});
+    } else if (key === "ArrowLeft") {
+      return ({...state, active: {...state.grid.moveLeft(state.active), dir: Direction.Across}});
+    } else if (key === "ArrowUp") {
+      return ({...state, active: {...state.grid.moveUp(state.active), dir: Direction.Down}});
+    } else if (key === "ArrowDown") {
+      return ({...state, active: {...state.grid.moveDown(state.active), dir: Direction.Down}});
+    } else if (key === '.' && state.grid.allowBlockEditing) {
+      return ({...state, grid: state.grid.gridWithBlockToggled(state.active)})
+    } else if (key.match(/^[A-Za-z0-9]$/)) {
+      const char = key.toUpperCase();
+      return ({
+        ...state,
+        grid: state.grid.gridWithNewChar(state.active, char),
+        active: state.grid.advancePosition(state.active),
+      });
+    } else if (key === "Backspace" || key === "{bksp}") {
+      return ({
+        ...state,
+        grid: state.grid.gridWithNewChar(state.active, " "),
+        active: state.grid.retreatPosition(state.active),
+      });
+    }
+  }
+  return state;
+}
+
 export const Puzzle = (props: PuzzleJson) => {
   const answers = props.grid;
-  const [active, setActive] = React.useState({ col: 0, row: 0 } as Position);
-  const [direction, setDirection] = React.useState(Direction.Across);
-  const [input, setInput] = React.useState(answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>);
-  const [showKeyboard, setShowKeyboard] = React.useState(isMobile);
-  const toggleKeyboard = () => setShowKeyboard(!showKeyboard);
+  const [state, dispatch] = React.useReducer(reducer, {
+    active: {col: 0, row: 0, dir: Direction.Across} as PosAndDir,
+    grid: GridData.fromCells(
+      props.size.cols,
+      props.size.rows,
+      (answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>)
+    ),
+    showKeyboard: isMobile,
+    showExtraKeyLayout: false,
+  });
 
-  const grid = GridData.fromCells(props.size.cols, props.size.rows, input);
-
-  function nextEntry() {
-    const [pos, dir] = grid.moveToNextEntry(active, direction);
-    setActive(pos);
-    setDirection(dir);
+  function physicalKeyboardHandler(e: React.KeyboardEvent) {
+    if (e.metaKey || e.altKey || e.ctrlKey) {
+      return;  // This way you can still do apple-R and such
+    }
+    dispatch({type: "KEYPRESS", key: e.key, shift: e.shiftKey} as KeypressAction);
+    e.preventDefault();
   }
-  function prevEntry() {
-    const [pos, dir] = grid.moveToNextEntry(active, direction, true);
-    setActive(pos);
-    setDirection(dir);
-  }
+  useEventListener('keydown', physicalKeyboardHandler);
 
-  let clues = new Array<string>(grid.entries.length);
+  let clues = new Array<string>(state.grid.entries.length);
   function setClues(jsonClueList: Array<string>, direction: Direction) {
     for (let clue of jsonClueList) {
       let match = clue.match(/^(\d+)\. (.+)$/);
@@ -109,7 +186,7 @@ export const Puzzle = (props: PuzzleJson) => {
       const number = +match[1];
       const clueText = match[2];
 
-      for (let entry of grid.entries) {
+      for (let entry of state.grid.entries) {
         if (entry.direction === direction && entry.labelNumber === number) {
           clues[entry.index] = clueText;
         }
@@ -119,14 +196,14 @@ export const Puzzle = (props: PuzzleJson) => {
   setClues(props.clues.across, Direction.Across);
   setClues(props.clues.down, Direction.Down);
 
-  const [entry, cross] = grid.entryAndCrossAtPosition(active, direction);
+  const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
 
   function filt(direction: Direction) {
     return (_a: any, index: number) => {
-      return grid.entries[index].direction === direction;
+      return state.grid.entries[index].direction === direction;
     }
   }
-  const refs = React.useRef(new Array<Array<HTMLLIElement>>(grid.entries.length));
+  const refs = React.useRef(new Array<Array<HTMLLIElement>>(state.grid.entries.length));
   for (let i = 0; i < refs.current.length; i += 1) {
     if (!refs.current[i]) {
       refs.current[i] = [];
@@ -151,18 +228,21 @@ export const Puzzle = (props: PuzzleJson) => {
       if (entry.index === idx) {
         return;
       }
-      const clickedEntry = grid.entries[idx];
-      setDirection(clickedEntry.direction);
-      setActive(clickedEntry.cells[0]);
+      const clickedEntry = state.grid.entries[idx];
+      let found = false;
       for (let cell of clickedEntry.cells) {
-        if (grid.valAt(cell) === " ") {
-          setActive(cell);
+        if (state.grid.valAt(cell) === " ") {
+          found = true;
+          dispatch({type: 'SETACTIVE', newActive: {...cell, dir: clickedEntry.direction}} as SetActiveAction)
           break
         }
       }
+      if (!found) {
+        dispatch({type: 'SETACTIVE', newActive: {...clickedEntry.cells[0], dir: clickedEntry.direction}} as SetActiveAction)
+      }
     }
 
-    function refCallback(item:HTMLLIElement) {
+    function refCallback(item: HTMLLIElement) {
       if (!item) {
         refs.current[idx] = new Array<HTMLLIElement>();
       } else {
@@ -170,7 +250,7 @@ export const Puzzle = (props: PuzzleJson) => {
       }
     }
 
-    const number = grid.entries[idx].labelNumber;
+    const number = state.grid.entries[idx].labelNumber;
     return (
       <li css={{
         padding: '0.5em',
@@ -197,7 +277,7 @@ export const Puzzle = (props: PuzzleJson) => {
           [SMALL_AND_UP]: {
             display: 'none',
           },
-        }}>{grid.entries[idx].direction === Direction.Across ? 'A' : 'D'}</span>
+        }}>{state.grid.entries[idx].direction === Direction.Across ? 'A' : 'D'}</span>
         </div>
         <div css={{
           flex: '1 1 auto',
@@ -209,25 +289,35 @@ export const Puzzle = (props: PuzzleJson) => {
   const acrossClues = listItems.filter(filt(Direction.Across));
   const downClues = listItems.filter(filt(Direction.Down));
 
+  function dispatchToggleKeyboard() {
+    dispatch({type: "TOGGLEKEYBOARD"});
+  }
+
+  function keyboardHandler(key: string) {
+    dispatch({type: "KEYPRESS", key: key, shift: false} as KeypressAction);
+  }
+
   return (
     <React.Fragment>
       <TopBar>
-        <TopBarLink icon={<FaKeyboard/>} text="toggle keyboard" onClick={toggleKeyboard}/>
+        <TopBarLink icon={<FaKeyboard />} text="toggle keyboard" onClick={dispatchToggleKeyboard} />
       </TopBar>
       <SquareAndCols
-        showKeyboard={showKeyboard}
-        isTablet={false}
+        showKeyboard={state.showKeyboard}
+        keyboardHandler={keyboardHandler}
+        showExtraKeyLayout={state.showExtraKeyLayout}
+        isTablet={true}
         square={
           <Grid
-            showingKeyboard={showKeyboard}
-            grid={grid} setCellValues={setInput}
-            active={active} setActive={setActive}
-            direction={direction} setDirection={setDirection}
+            showingKeyboard={state.showKeyboard}
+            grid={state.grid}
+            active={state.active}
+            dispatch={dispatch}
           />
         }
         left={<ClueList header="Across" clues={acrossClues} />}
         right={<ClueList header="Down" clues={downClues} />}
-        tinyColumn={<TinyNav leftCallback={prevEntry} rightCallback={nextEntry}><ClueList clues={acrossClues.concat(downClues)} /></TinyNav>}
+        tinyColumn={<TinyNav dispatch={dispatch}><ClueList clues={acrossClues.concat(downClues)} /></TinyNav>}
       />
     </React.Fragment>
   )

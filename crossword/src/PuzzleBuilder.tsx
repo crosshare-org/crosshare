@@ -1,4 +1,5 @@
-import * as React from 'react';
+export const dummy = 5;
+/* import * as React from 'react';
 import { RouteComponentProps } from '@reach/router';
 import { isMobile } from "react-device-detect";
 
@@ -15,11 +16,21 @@ export const PuzzleBuilder = (_: RouteComponentProps) => {
   const [showKeyboard, setShowKeyboard] = React.useState(isMobile);
   const toggleKeyboard = () => setShowKeyboard(!showKeyboard);
 
+  const changeDirection = React.useCallback(
+    () => {
+      if (direction === Direction.Across) {
+        setDirection(Direction.Down);
+      } else {
+        setDirection(Direction.Across);
+      }
+    }, [direction, setDirection]);
+
   let initInput = new Array<string>(sideLength * sideLength);
   for (let i = 0; i < initInput.length; i += 1) {
     initInput[i] = ' ';
   }
   const [input, setInput] = React.useState(initInput);
+  setInput(initInput);  // TODO remove this!
 
   const grid = GridData.fromCells(sideLength, sideLength, input, true);
 
@@ -30,13 +41,14 @@ export const PuzzleBuilder = (_: RouteComponentProps) => {
       </TopBar>
       <SquareAndCols
         showKeyboard={showKeyboard}
+        showExtraKeyLayout={false}
         isTablet={false}
         square={
           <Grid
             showingKeyboard={showKeyboard}
-            grid={grid} setCellValues={setInput}
+            grid={grid}
             active={active} setActive={setActive}
-            direction={direction} setDirection={setDirection}
+            direction={direction} changeDirection={changeDirection}
           />
         }
         left={
@@ -48,4 +60,4 @@ export const PuzzleBuilder = (_: RouteComponentProps) => {
       />
     </>
   );
-}
+}*/

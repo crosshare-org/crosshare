@@ -7,7 +7,11 @@ export enum Direction {
 
 export interface Position {
   row: number,
-  col: number
+  col: number,
+}
+
+export interface PosAndDir extends Position {
+  dir: Direction,
 }
 
 export interface PuzzleJson {

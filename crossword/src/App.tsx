@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Router, RouteComponentProps, Link } from "@reach/router";
 
 import {PuzzleLoader} from './Puzzle';
-import {PuzzleBuilder} from './PuzzleBuilder';
+// import {PuzzleBuilder} from './PuzzleBuilder';
 import {Page, SquareTest} from './Page';
 
 const NotFound = (_: RouteComponentProps) => {
@@ -19,7 +19,6 @@ const App = () => {
   <Router>
     <Home path="/" />
     <PuzzleLoader path="/crosswords/:crosswordId" />
-    <PuzzleBuilder path="/construct" />
     <SquareTest path="/square" />
     <NotFound default />
   </Router>

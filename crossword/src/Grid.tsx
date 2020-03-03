@@ -2,11 +2,11 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
-import useEventListener from '@use-it/event-listener'
 import lodash from 'lodash';
 
-import { Position, Direction, BLOCK } from './types';
+import { Position, Direction, PosAndDir, BLOCK } from './types';
 import { Cell } from './Cell';
+import { PuzzleAction } from './Puzzle';
 
 export class Entry {
   constructor(
@@ -162,59 +162,63 @@ export class GridData {
     return { ...active, row: y };
   }
 
-  retreatPosition(pos: Position, dir: Direction): Position {
-    const [entry, index] = this.entryAtPosition(pos, dir);
+  retreatPosition(pos: PosAndDir): PosAndDir {
+    const [entry, index] = this.entryAtPosition(pos);
     if (!entry) {
       return pos;
     }
     if (index > 0) {
-      return entry.cells[index - 1];
+      return {...entry.cells[index - 1], dir: pos.dir};
     }
     return pos;
   }
 
-  advancePosition(pos: Position, dir: Direction): Position {
-    const [entry, index] = this.entryAtPosition(pos, dir);
+  advancePosition(pos: PosAndDir): PosAndDir {
+    const [entry, index] = this.entryAtPosition(pos);
     if (!entry) {
       return pos;
     }
     for (let offset = 0; offset < entry.cells.length; offset += 1) {
       let cell = entry.cells[(index + offset + 1) % entry.cells.length];
       if (this.valAt(cell) === " ") {
-        return cell;
+        return {...cell, dir: pos.dir};
       }
     }
     if (index + 1 < entry.cells.length) {
-      return entry.cells[index + 1];
+      return {...entry.cells[index + 1], dir: pos.dir};
     }
     return pos;
   }
 
-  entryAtPosition(pos: Position, dir: Direction): [Entry | null, number] {
+  entryAtPosition(pos: PosAndDir): [Entry | null, number] {
     const entriesAtCell = this.entriesByCell[pos.row * this.width + pos.col];
     if (!entriesAtCell) {
       return [null, 0];
     }
-    const currentEntryIndex = entriesAtCell[dir];
+    const currentEntryIndex = entriesAtCell[pos.dir];
     if (!currentEntryIndex) {
       return [null, 0];
     }
     return [this.entries[currentEntryIndex[0]], currentEntryIndex[1]];
   }
 
-  entryAndCrossAtPosition(pos: Position, dir: Direction): [Entry, Entry] {
-    const currentEntryIndex = this.entriesByCell[pos.row * this.width + pos.col][dir];
-    const currentCrossIndex = this.entriesByCell[pos.row * this.width + pos.col][(dir + 1) % 2];
+  entryAndCrossAtPosition(pos: PosAndDir): [Entry, Entry] {
+    const currentEntryIndex = this.entriesByCell[pos.row * this.width + pos.col][pos.dir];
+    const currentCrossIndex = this.entriesByCell[pos.row * this.width + pos.col][(pos.dir + 1) % 2];
     if (!currentEntryIndex || !currentCrossIndex) {
       throw new Error("ERROR: No current entry index");
     }
     return [this.entries[currentEntryIndex[0]], this.entries[currentCrossIndex[0]]];
   }
 
-  moveToNextEntry(pos: Position, dir: Direction, reverse = false): [Position, Direction] {
-    const [currentEntry,] = this.entryAtPosition(pos, dir);
+  moveToPrevEntry(pos: PosAndDir): PosAndDir {
+    return this.moveToNextEntry(pos, true);
+  }
+
+  moveToNextEntry(pos: PosAndDir, reverse = false): PosAndDir {
+    const [currentEntry,] = this.entryAtPosition(pos);
     if (!currentEntry) {
-      return [pos, dir];
+      return pos;
     }
 
     // Find position in the sorted array of entries
@@ -235,18 +239,18 @@ export class GridData {
       if (!tryEntry.isComplete) {
         for (let cell of tryEntry.cells) {
           if (this.valAt(cell) === " ") {
-            return [cell, tryEntry.direction];
+            return {...cell, dir: tryEntry.direction};
           }
         }
       }
     }
 
-    return [pos, dir];
+    return pos;
   }
 
-  getHighlights(pos: Position, dir: Direction) {
-    const rowIncr = dir === Direction.Down ? 1 : 0;
-    const colIncr = dir === Direction.Across ? 1 : 0;
+  getHighlights(pos: PosAndDir) {
+    const rowIncr = pos.dir === Direction.Down ? 1 : 0;
+    const colIncr = pos.dir === Direction.Across ? 1 : 0;
 
     let highlights: Array<Position> = [];
     // Add highlights backwords
@@ -280,12 +284,12 @@ export class GridData {
     return highlights;
   }
 
-  cellsWithNewChar(pos: Position, char: string): Array<string> {
+  gridWithNewChar(pos: Position, char: string): GridData {
     const index = pos.row * this.width + pos.col;
     let cells = [...this.cells];
     if (this.valAt(pos) === BLOCK) {
       if (!this.allowBlockEditing) {
-        return cells;
+        return this;
       }
       const flipped = (this.height - pos.row - 1) * this.width + (this.width - pos.col - 1);
       if (cells[flipped] === BLOCK) {
@@ -293,10 +297,11 @@ export class GridData {
       }
     }
     cells[index] = char;
-    return cells;
+    // TODO - can we prevent some re-init here?
+    return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing);
   }
 
-  cellsWithBlockToggled(pos: Position): Array<string> {
+  gridWithBlockToggled(pos: Position): GridData {
     let char = BLOCK;
     if (this.valAt(pos) === BLOCK) {
       char = ' ';
@@ -306,7 +311,8 @@ export class GridData {
     let cells = [...this.cells];
     cells[index] = char;
     cells[flipped] = char;
-    return cells;
+    // TODO - can we prevent some re-init here?
+    return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing);
   }
 
   rows() {
@@ -317,81 +323,16 @@ export class GridData {
 type GridProps = {
   showingKeyboard: boolean,
   grid: GridData,
-  setCellValues: React.Dispatch<React.SetStateAction<Array<string>>>,
-  active: Position,
-  setActive: React.Dispatch<React.SetStateAction<Position>>,
-  direction: Direction,
-  setDirection: React.Dispatch<React.SetStateAction<Direction>>
+  active: PosAndDir,
+  dispatch: React.Dispatch<PuzzleAction>,
 }
 
-export const Grid = ({ showingKeyboard, active, setActive, direction, setDirection, grid, setCellValues }: GridProps) => {
-  function keyboardHandler(e: React.KeyboardEvent) {
-    if (e.key === " ") {
-      changeDirection();
-      e.preventDefault();
-    } else if (e.key === "Tab") {
-      let pos, dir;
-      if (!e.shiftKey) {
-        [pos, dir] = grid.moveToNextEntry(active, direction);
-      } else {
-        [pos, dir] = grid.moveToNextEntry(active, direction, true);
-      }
-      setActive(pos);
-      setDirection(dir);
-      e.preventDefault();
-    } else if (e.key === "ArrowRight") {
-      if (direction === Direction.Down) {
-        changeDirection();
-      }
-      setActive(grid.moveRight(active));
-      e.preventDefault();
-    } else if (e.key === "ArrowLeft") {
-      if (direction === Direction.Down) {
-        changeDirection();
-      }
-      setActive(grid.moveLeft(active));
-      e.preventDefault();
-    } else if (e.key === "ArrowUp") {
-      if (direction === Direction.Across) {
-        changeDirection();
-      }
-      setActive(grid.moveUp(active));
-      e.preventDefault();
-    } else if (e.key === "ArrowDown") {
-      if (direction === Direction.Across) {
-        changeDirection();
-      }
-      setActive(grid.moveDown(active));
-      e.preventDefault();
-    } else if (e.key === '.' && grid.allowBlockEditing) {
-      setCellValues(grid.cellsWithBlockToggled(active));
-      e.preventDefault();
-    } else if (e.key.match(/^[A-Za-z0-9]$/)) {
-      const char = e.key.toUpperCase();
-      setCellValues(grid.cellsWithNewChar(active, char));
-      setActive(grid.advancePosition(active, direction));
-      e.preventDefault();
-    } else if (e.key === "Backspace") {
-      setCellValues(grid.cellsWithNewChar(active, " "));
-      setActive(grid.retreatPosition(active, direction));
-      e.preventDefault();
-    }
-  }
-  useEventListener('keydown', keyboardHandler);
-
-  const highlights = grid.getHighlights(active, direction);
-
-  const changeDirection = React.useCallback(
-    () => {
-      if (direction === Direction.Across) {
-        setDirection(Direction.Down);
-      } else {
-        setDirection(Direction.Across);
-      }
-    }, [direction, setDirection]);
+export const Grid = ({ showingKeyboard, active, dispatch, grid }: GridProps) => {
+  const highlights = grid.getHighlights(active);
 
   const noOp = React.useCallback(() => undefined, []);
-  const changeActive = React.useCallback((pos) => setActive(pos), [setActive]);
+  const changeActive = React.useCallback((pos) => dispatch({type: "SETACTIVE", newActive: pos} as PuzzleAction), []);
+  const changeDirection = React.useCallback(() => dispatch({type: "CHANGEDIRECTION"} as PuzzleAction), []);
 
   let cells = new Array<React.ReactNode>();
   let rows = grid.rows()

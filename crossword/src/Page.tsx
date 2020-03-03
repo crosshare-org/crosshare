@@ -9,15 +9,15 @@ import { FaKeyboard } from 'react-icons/fa';
 import { FaTabletAlt } from 'react-icons/fa';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
+import { KeypressAction } from './Puzzle';
 import { TopBar, TopBarLink } from './TopBar';
 import { HEADER_FOOTER_HEIGHT, SMALL_AND_UP, LARGE_AND_UP } from './style';
 
 interface TinyNavProps {
   children: React.ReactNode,
-  leftCallback: () => void,
-  rightCallback: () => void
+  dispatch: React.Dispatch<KeypressAction>,
 }
-export const TinyNav = ({children, leftCallback, rightCallback}: TinyNavProps) => {
+export const TinyNav = ({children, dispatch}: TinyNavProps) => {
   return (
     <div css={{
       display: 'flex',
@@ -34,7 +34,7 @@ export const TinyNav = ({children, leftCallback, rightCallback}: TinyNavProps) =
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-      }} onClick={leftCallback}>
+      }} onClick={() => dispatch({type: "KEYPRESS", key: "{prevEntry}", shift: false})}>
       <FaChevronLeft/>
       </div>
       <div css={{
@@ -47,7 +47,7 @@ export const TinyNav = ({children, leftCallback, rightCallback}: TinyNavProps) =
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-      }} onClick={rightCallback}>
+      }} onClick={() => dispatch({type: "KEYPRESS", key: "{nextEntry}", shift: false})}>
       <FaChevronRight/>
       </div>
     </div>
@@ -60,19 +60,13 @@ interface SquareAndColsProps {
   right: React.ReactNode,
   tinyColumn?: React.ReactNode,
   showKeyboard: boolean,
+  keyboardHandler?: (key:string) => void,
+  showExtraKeyLayout: boolean,
   isTablet: boolean,
 }
 export const SquareAndCols = (props: SquareAndColsProps) => {
-  const [showNumericKeyboard, setShowNumericKeyboard] = React.useState(false);
-
   const keyboardHeight = props.showKeyboard ? 140 : 0;
   const heightAdjust = keyboardHeight + HEADER_FOOTER_HEIGHT;
-
-  function handleKeypress(key: string) {
-    if (key === '{num}' || key === '{abc}') {
-      setShowNumericKeyboard(!showNumericKeyboard);
-    }
-  }
 
   function layoutName(numeric: boolean, tablet: boolean) {
     if (numeric) {
@@ -189,7 +183,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
               '{prevEntry} Z X C V B N M {num} {nextEntry}',
             ],
           }}
-          layoutName={layoutName(showNumericKeyboard, props.isTablet)}
+          layoutName={layoutName(props.showExtraKeyLayout, props.isTablet)}
           display={{
             '{bksp}': '⌫',
             '{prev}': '←',
@@ -201,7 +195,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
             '{rebus}': 'Rebus',
             '{nextEntry}': '⇥',
           }}
-          onKeyPress={handleKeypress}
+          onKeyPress={props.keyboardHandler}
         />: " "}
     </React.Fragment>
   );
@@ -221,6 +215,7 @@ export const SquareTest = (_: RouteComponentProps) => {
     }>
       <SquareAndCols
         showKeyboard={showKeyboard}
+        showExtraKeyLayout={false}
         isTablet={isTablet}
         tinyColumn={<div css={{ border: '1px solid black', backgroundColor: 'red', height: '100%' }}>TINY</div>}
         square={<div css={{ border: '1px solid black', backgroundColor: 'blue', height: '100%' }}>a</div>}
