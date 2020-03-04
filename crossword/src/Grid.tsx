@@ -14,7 +14,8 @@ export class Entry {
     public readonly labelNumber: number,
     public readonly direction: Direction,
     public readonly cells: Array<Position>,
-    public readonly isComplete: boolean
+    public readonly isComplete: boolean,
+    public readonly clue: string,
   ) { }
 }
 
@@ -28,7 +29,9 @@ export class GridData {
     public readonly entriesByCell: Array<Array<[number, number] | null>>,
     public readonly entries: Array<Entry>,
     public readonly cellLabels: Map<string, number>,
-    public readonly allowBlockEditing: boolean
+    public readonly allowBlockEditing: boolean,
+    public readonly acrossClues: Array<string>,
+    public readonly downClues: Array<string>,
   ) {
     this.sortedEntries = [...entries].sort((a, b) => {
       if (a.direction !== b.direction) {
@@ -38,12 +41,28 @@ export class GridData {
     })
   }
 
-  static fromCells(width: number, height: number, cells: Array<string>, allowBlockEditing = false) {
+  static fromCells(width: number, height: number, cells: Array<string>, allowBlockEditing: boolean, acrossClues: Array<string>, downClues: Array<string>) {
     let entriesByCell: Array<Array<[number, number] | null>> = new Array(cells.length);
     let entries = [];
     let usedWords: Set<string> = new Set();
     let cellLabels = new Map<string, number>();
     let currentCellLabel = 1;
+
+    let clues = [new Map<number, string>(), new Map<number, string>()];
+    function setClues(jsonClueList: Array<string>, direction: Direction) {
+      for (let clue of jsonClueList) {
+        let match = clue.match(/^(\d+)\. (.+)$/);
+        if (!match || match.length < 3) {
+          throw new Error("Bad clue data: '" + clue + "'");
+        }
+        const number = +match[1];
+        const clueText = match[2];
+        clues[direction].set(number, clueText);
+      }
+    }
+    setClues(acrossClues, Direction.Across);
+    setClues(downClues, Direction.Down);
+
     for (let y = 0; y < height; y += 1) {
       for (let x = 0; x < width; x += 1) {
         const i = x + y * width;
@@ -66,6 +85,10 @@ export class GridData {
           if (!cellLabels.has(y + "-" + x)) {
             cellLabels.set(y + "-" + x, currentCellLabel);
             currentCellLabel += 1;
+          }
+          let entryClue = clues[dir].get(entryLabel);
+          if (!entryClue) {
+            throw new Error("Can't find clue for " + entryLabel + " " + dir);
           }
           let entryCells = [];
           let entryPattern = "";
@@ -95,11 +118,11 @@ export class GridData {
           if (isComplete) {
             usedWords.add(entryPattern);
           }
-          entries.push(new Entry(entries.length, entryLabel, dir, entryCells, isComplete));
+          entries.push(new Entry(entries.length, entryLabel, dir, entryCells, isComplete, entryClue));
         }
       }
     }
-    return new this(width, height, cells, usedWords, entriesByCell, entries, cellLabels, allowBlockEditing);
+    return new this(width, height, cells, usedWords, entriesByCell, entries, cellLabels, allowBlockEditing, acrossClues, downClues);
   }
 
   valAt(pos: Position) {
@@ -298,7 +321,7 @@ export class GridData {
     }
     cells[index] = char;
     // TODO - can we prevent some re-init here?
-    return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing);
+    return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing, this.acrossClues, this.downClues);
   }
 
   gridWithBlockToggled(pos: Position): GridData {
@@ -312,7 +335,7 @@ export class GridData {
     cells[index] = char;
     cells[flipped] = char;
     // TODO - can we prevent some re-init here?
-    return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing);
+    return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing, this.acrossClues, this.downClues);
   }
 
   rows() {

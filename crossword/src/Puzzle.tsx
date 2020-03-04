@@ -47,11 +47,88 @@ export const PuzzleLoader = ({ crosswordId }: PuzzleProps) => {
   return <Puzzle {...puzzle} />
 }
 
+interface ClueListItemProps {
+  labelNumber: number,
+  dispatch: React.Dispatch<ClickedEntryAction>,
+  entryIndex: number,
+  isActive: boolean,
+  isCross: boolean,
+  scrollToCross: boolean,
+  direction: Direction,
+  clue: string,
+}
+const ClueListItem = React.memo(({isActive, isCross, ...props}: ClueListItemProps) => {
+  const ref = React.useRef<HTMLLIElement>(null);
+  if (ref.current) {
+    if (isActive || (props.scrollToCross && isCross)) {
+      ref.current.scrollIntoView({ behavior: "auto", block: "center" });
+    }
+  }
+  function click(e: React.MouseEvent) {
+    e.preventDefault();
+    if (isActive) {
+      return;
+    }
+    props.dispatch({type: 'CLICKEDENTRY', entryIndex: props.entryIndex});
+  }
+  return (
+    <li css={{
+      padding: '0.5em',
+      backgroundColor: (isActive ? LIGHTER : (isCross ? SECONDARY : 'white')),
+      listStyleType: 'none',
+      cursor: (isActive ? 'default' : 'pointer'),
+      '&:hover': {
+        backgroundColor: (isActive ? LIGHTER : (isCross ? '#DDD' : '#EEE')),
+      },
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
+      alignItems: 'center',
+      width: '100%',
+    }} ref={ref} onClick={click} key={props.entryIndex}>
+      <div css={{
+        flexShrink: 0,
+        width: '3em',
+        height: '100%',
+        fontWeight: 'bold',
+        textAlign: 'right',
+        padding: '0 0.5em',
+      }}>{props.labelNumber}<span css={{
+        [SMALL_AND_UP]: {
+          display: 'none',
+        },
+      }}>{props.direction === Direction.Across ? 'A' : 'D'}</span>
+      </div>
+      <div css={{
+        flex: '1 1 auto',
+        height: '100%',
+      }}>{props.clue}</div>
+    </li>
+  );
+});
+
 interface ClueListProps {
   header?: string,
-  clues: Array<JSX.Element>,
+  current: number,
+  cross: number,
+  entries: Array<Entry>,
+  scrollToCross: boolean,
+  dispatch: React.Dispatch<ClickedEntryAction>,
 }
-function ClueList(props: ClueListProps) {
+const ClueList = (props: ClueListProps) => {
+  const clues = props.entries.map((entry) => {
+    return (<ClueListItem
+      key={entry.index}
+      scrollToCross={props.scrollToCross}
+      labelNumber={entry.labelNumber}
+      dispatch={props.dispatch}
+      entryIndex={entry.index}
+      isActive={props.current === entry.index}
+      isCross={props.cross === entry.index}
+      direction={entry.direction}
+      clue={entry.clue}
+    />)
+  });
   return (
     <div css={{
       height: "100% !important",
@@ -71,12 +148,11 @@ function ClueList(props: ClueListProps) {
           margin: 0,
           padding: 0,
         }}>
-          {props.clues}
+          {clues}
         </ol>
       </div>
     </div>
   );
-
 }
 
 interface PuzzleState {
@@ -106,6 +182,13 @@ function isSetActiveAction(action: PuzzleAction): action is SetActiveAction {
   return action.type === 'SETACTIVE'
 }
 
+interface ClickedEntryAction extends PuzzleAction {
+  entryIndex: number,
+}
+function isClickedEntryAction(action: PuzzleAction): action is ClickedEntryAction {
+  return action.type === 'CLICKEDENTRY'
+}
+
 export interface SetActivePositionAction extends PuzzleAction {
   newActive: Position,
 }
@@ -122,6 +205,15 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
   }
   if (action.type === "TOGGLETABLET") {
     return ({...state, isTablet: !state.isTablet});
+  }
+  if (isClickedEntryAction(action)) {
+    const clickedEntry = state.grid.entries[action.entryIndex];
+    for (let cell of clickedEntry.cells) {
+      if (state.grid.valAt(cell) === " ") {
+        return({...state, active: {...cell, dir: clickedEntry.direction}});
+      }
+    }
+    return({...state, active: {...clickedEntry.cells[0], dir: clickedEntry.direction}});
   }
   if (isSetActiveAction(action)) {
     return ({...state, active: action.newActive});
@@ -179,7 +271,10 @@ export const Puzzle = (props: PuzzleJson) => {
     grid: GridData.fromCells(
       props.size.cols,
       props.size.rows,
-      (answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>)
+      (answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>),
+      false,
+      props.clues.across,
+      props.clues.down,
     ),
     showKeyboard: isMobile,
     isTablet: isTablet,
@@ -195,118 +290,10 @@ export const Puzzle = (props: PuzzleJson) => {
   }
   useEventListener('keydown', physicalKeyboardHandler);
 
-  let clues = new Array<string>(state.grid.entries.length);
-  function setClues(jsonClueList: Array<string>, direction: Direction) {
-    for (let clue of jsonClueList) {
-      let match = clue.match(/^(\d+)\. (.+)$/);
-      if (!match || match.length < 3) {
-        throw new Error("Bad clue data: '" + clue + "'");
-      }
-      const number = +match[1];
-      const clueText = match[2];
-
-      for (let entry of state.grid.entries) {
-        if (entry.direction === direction && entry.labelNumber === number) {
-          clues[entry.index] = clueText;
-        }
-      }
-    }
-  }
-  setClues(props.clues.across, Direction.Across);
-  setClues(props.clues.down, Direction.Down);
-
   const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
 
-  function filt(direction: Direction) {
-    return (_a: any, index: number) => {
-      return state.grid.entries[index].direction === direction;
-    }
-  }
-  const refs = React.useRef(new Array<Array<HTMLLIElement>>(state.grid.entries.length));
-  for (let i = 0; i < refs.current.length; i += 1) {
-    if (!refs.current[i]) {
-      refs.current[i] = [];
-    }
-  }
-  function scrollClueIntoView(e: Entry) {
-    for (const currentEntryClue of refs.current[e.index]) {
-      if (currentEntryClue) {
-        currentEntryClue.scrollIntoView({
-          behavior: 'auto',
-          block: 'center',
-        });
-      }
-    }
-  }
-  scrollClueIntoView(cross);
-  scrollClueIntoView(entry);
-
-  const listItems = clues.map((clue, idx) => {
-    function click(e: React.MouseEvent) {
-      e.preventDefault();
-      if (entry.index === idx) {
-        return;
-      }
-      const clickedEntry = state.grid.entries[idx];
-      let found = false;
-      for (let cell of clickedEntry.cells) {
-        if (state.grid.valAt(cell) === " ") {
-          found = true;
-          dispatch({type: 'SETACTIVE', newActive: {...cell, dir: clickedEntry.direction}} as SetActiveAction)
-          break
-        }
-      }
-      if (!found) {
-        dispatch({type: 'SETACTIVE', newActive: {...clickedEntry.cells[0], dir: clickedEntry.direction}} as SetActiveAction)
-      }
-    }
-
-    function refCallback(item: HTMLLIElement) {
-      if (!item) {
-        refs.current[idx] = new Array<HTMLLIElement>();
-      } else {
-        refs.current[idx].push(item);
-      }
-    }
-
-    const number = state.grid.entries[idx].labelNumber;
-    return (
-      <li css={{
-        padding: '0.5em',
-        backgroundColor: (idx === entry.index ? LIGHTER : (idx === cross.index ? SECONDARY : 'white')),
-        listStyleType: 'none',
-        cursor: (idx === entry.index ? 'default' : 'pointer'),
-        '&:hover': {
-          backgroundColor: (idx === entry.index ? LIGHTER : (idx === cross.index ? '#DDD' : '#EEE')),
-        },
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'nowrap',
-        alignItems: 'center',
-        width: '100%',
-      }} ref={refCallback} onClick={click} key={idx}>
-        <div css={{
-          flexShrink: 0,
-          width: '3em',
-          height: '100%',
-          fontWeight: 'bold',
-          textAlign: 'right',
-          padding: '0 0.5em',
-        }}>{number}<span css={{
-          [SMALL_AND_UP]: {
-            display: 'none',
-          },
-        }}>{state.grid.entries[idx].direction === Direction.Across ? 'A' : 'D'}</span>
-        </div>
-        <div css={{
-          flex: '1 1 auto',
-          height: '100%',
-        }}>{clue}</div>
-      </li>
-    );
-  });
-  const acrossClues = listItems.filter(filt(Direction.Across));
-  const downClues = listItems.filter(filt(Direction.Down));
+  const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
+  const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
 
   function keyboardHandler(key: string) {
     dispatch({type: "KEYPRESS", key: key, shift: false} as KeypressAction);
@@ -331,9 +318,9 @@ export const Puzzle = (props: PuzzleJson) => {
             dispatch={dispatch}
           />
         }
-        left={<ClueList header="Across" clues={acrossClues} />}
-        right={<ClueList header="Down" clues={downClues} />}
-        tinyColumn={<TinyNav dispatch={dispatch}><ClueList clues={acrossClues.concat(downClues)} /></TinyNav>}
+        left={<ClueList header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch}/>}
+        right={<ClueList header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
+        tinyColumn={<TinyNav dispatch={dispatch}><ClueList entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
       />
     </React.Fragment>
   )
