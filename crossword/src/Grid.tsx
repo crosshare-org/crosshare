@@ -200,14 +200,14 @@ export class GridData {
     return pos;
   }
 
-  advancePosition(pos: PosAndDir): PosAndDir {
+  advancePosition(pos: PosAndDir, wrongCells: Set<number>): PosAndDir {
     const [entry, index] = this.entryAtPosition(pos);
     if (!entry) {
       return pos;
     }
     for (let offset = 0; offset < entry.cells.length; offset += 1) {
       let cell = entry.cells[(index + offset + 1) % entry.cells.length];
-      if (this.valAt(cell) === " ") {
+      if (this.valAt(cell) === " " || wrongCells.has(this.cellIndex(cell))) {
         return {...cell, dir: pos.dir};
       }
     }

@@ -290,7 +290,7 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
     } else if (key === "{prev}") {
       return ({...state, active: state.grid.retreatPosition(state.active)});
     } else if (key === "{next}") {
-      return ({...state, active: state.grid.advancePosition(state.active)});
+      return ({...state, active: state.grid.advancePosition(state.active, state.wrongCells)});
     } else if ((key === "Tab" && !shift) || key === "{nextEntry}") {
       return ({...state, active: state.grid.moveToNextEntry(state.active)});
     } else if ((key === "Tab" && shift) || key === "{prevEntry}") {
@@ -307,15 +307,23 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
       return ({...state, grid: state.grid.gridWithBlockToggled(state.active)})
     } else if (key.match(/^[A-Za-z0-9]$/)) {
       const char = key.toUpperCase();
+      const cellIndex = state.grid.cellIndex(state.active);
+      if (!state.verifiedCells.has(cellIndex)) {
+        state.grid = state.grid.gridWithNewChar(state.active, char);
+      }
+      state.wrongCells.delete(cellIndex);
       return ({
         ...state,
-        grid: state.grid.gridWithNewChar(state.active, char),
-        active: state.grid.advancePosition(state.active),
+        active: state.grid.advancePosition(state.active, state.wrongCells),
       });
     } else if (key === "Backspace" || key === "{bksp}") {
+      const cellIndex = state.grid.cellIndex(state.active);
+      if (!state.verifiedCells.has(cellIndex)) {
+        state.grid = state.grid.gridWithNewChar(state.active, " ");
+      }
+      state.wrongCells.delete(cellIndex);
       return ({
         ...state,
-        grid: state.grid.gridWithNewChar(state.active, " "),
         active: state.grid.retreatPosition(state.active),
       });
     }
