@@ -3,6 +3,8 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 
+import { FaSlash, FaEye } from 'react-icons/fa';
+
 import {notSelectable, PRIMARY, SECONDARY, HEADER_FOOTER_HEIGHT, SMALL_AND_UP, LARGE_AND_UP} from './style';
 
 type CellProps = {
@@ -15,7 +17,10 @@ type CellProps = {
   number: string,
   row: number,
   column: number,
-  onClick: (pos:{row: number, col:number}) => void
+  onClick: (pos:{row: number, col:number}) => void,
+  isVerified: boolean,
+  isWrong: boolean,
+  wasRevealed: boolean,
 }
 
 export const Cell = React.memo((props: CellProps) => {
@@ -68,8 +73,15 @@ export const Cell = React.memo((props: CellProps) => {
             [LARGE_AND_UP]: {
               fontSize: 'calc(0.3 * min(100vh - ' + heightAdjust + 'px, 50vw) / ' + props.gridWidth + ')',
             },
-          }}>{props.number}</div>
+          }}><div css={{
+            position: 'absolute',
+            left: '1.85em',
+            top: '-0.15em',
+            color: '#4e61eb',
+            display: props.wasRevealed ? 'block' : 'none',
+          }}><FaEye/></div>{props.number}</div>
           <div css={{
+            color: props.isVerified ? '#4e61eb' : 'black',
             textAlign: 'center',
             lineHeight: '1.2em',
             fontSize: 'calc(0.9 * min(87vh - ' + heightAdjust + 'px, 100vw) / ' + props.gridWidth + ')',
@@ -79,7 +91,14 @@ export const Cell = React.memo((props: CellProps) => {
             [LARGE_AND_UP]: {
               fontSize: 'calc(0.9 * min(100vh - ' + heightAdjust + 'px, 50vw) / ' + props.gridWidth + ')',
             },
-          }}>{props.value}</div>
+          }}><div css={{
+            position: 'absolute',
+            left: '0.03em',
+            top: '-0.1em',
+            color: '#e34eeb',
+            fontSize: '1em',
+            display: props.isWrong ? 'block' : 'none',
+          }}><FaSlash/></div>{props.value}</div>
           </React.Fragment>
           : ""}
       </div>

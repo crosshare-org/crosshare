@@ -5,12 +5,12 @@ import * as React from 'react';
 import axios from 'axios';
 import { RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
-import { FaTabletAlt, FaKeyboard } from 'react-icons/fa';
+import { FaTabletAlt, FaKeyboard, FaCog, FaEye, FaCheckDouble } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener'
 
 import { Grid, Entry, GridData } from './Grid';
 import { PosAndDir, Position, Direction, BLOCK, PuzzleJson } from './types';
-import { TopBar, TopBarLink } from './TopBar';
+import { TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style'
 
@@ -161,6 +161,10 @@ interface PuzzleState {
   showKeyboard: boolean,
   isTablet: boolean,
   showExtraKeyLayout: boolean,
+  answers: Array<string>,
+  verifiedCells: Set<number>,
+  wrongCells: Set<number>,
+  revealedCells: Set<number>,
 }
 
 export interface PuzzleAction {
@@ -196,7 +200,62 @@ function isSetActivePositionAction(action: PuzzleAction): action is SetActivePos
   return action.type === 'SETACTIVEPOSITION'
 }
 
+enum CheatUnit {
+  Square,
+  Entry,
+  Puzzle
+}
+export interface CheatAction extends PuzzleAction {
+  unit: CheatUnit,
+  isReveal?: boolean,
+}
+function isCheatAction(action: PuzzleAction): action is CheatAction {
+  return action.type === 'CHEAT'
+}
+
 function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
+  if (isCheatAction(action)) {
+    let cellsToCheck: Array<Position> = [];
+    if (action.unit === CheatUnit.Square) {
+      cellsToCheck = [state.active];
+    } else if (action.unit === CheatUnit.Entry) {
+      const entry = state.grid.entryAtPosition(state.active)[0];
+      if (!entry) { //block?
+        return state;
+      }
+      cellsToCheck = entry.cells;
+    } else if (action.unit === CheatUnit.Puzzle) {
+      for (let rowidx = 0; rowidx < state.grid.height; rowidx += 1) {
+        for (let colidx = 0; colidx < state.grid.width; colidx += 1) {
+          cellsToCheck.push({'row': rowidx, 'col': colidx});
+        }
+      }
+    }
+    const newRevealed = new Set(state.revealedCells);
+    const newVerified = new Set(state.verifiedCells);
+    const newWrong = new Set(state.wrongCells);
+    let grid = state.grid;
+
+    for (const cell of cellsToCheck) {
+      const cellIndex = state.grid.cellIndex(cell);
+      const shouldBe = state.answers[cellIndex];
+      if (shouldBe === BLOCK) {
+        continue;
+      }
+      const currentVal = state.grid.valAt(cell);
+      if (shouldBe === currentVal) {
+        newVerified.add(cellIndex);
+      } else if (action.isReveal) {
+        newRevealed.add(cellIndex);
+        newWrong.delete(cellIndex);
+        newVerified.add(cellIndex);
+        grid = grid.gridWithNewChar(cell, shouldBe);
+      } else if (currentVal.trim()) {
+        newWrong.add(cellIndex);
+      }
+    }
+    return ({...state, grid: grid, wrongCells: newWrong, revealedCells: newRevealed, verifiedCells: newVerified});
+  }
   if (action.type === "CHANGEDIRECTION") {
     return ({...state, active: {...state.active, dir: (state.active.dir + 1) % 2}});
   }
@@ -271,7 +330,7 @@ export const Puzzle = (props: PuzzleJson) => {
     grid: GridData.fromCells(
       props.size.cols,
       props.size.rows,
-      (answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>),
+      (["C","C","O"].concat((answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>).slice(3))),
       false,
       props.clues.across,
       props.clues.down,
@@ -279,6 +338,10 @@ export const Puzzle = (props: PuzzleJson) => {
     showKeyboard: isMobile,
     isTablet: isTablet,
     showExtraKeyLayout: false,
+    answers: answers,
+    verifiedCells: new Set<number>([0,2]),
+    wrongCells: new Set<number>([1]),
+    revealedCells: new Set<number>([2]),
   });
 
   function physicalKeyboardHandler(e: React.KeyboardEvent) {
@@ -302,8 +365,20 @@ export const Puzzle = (props: PuzzleJson) => {
   return (
     <React.Fragment>
       <TopBar>
-        <TopBarLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({type: "TOGGLEKEYBOARD"})} />
-        <TopBarLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({type: "TOGGLETABLET"})} />
+        <TopBarDropDown icon={<FaEye/>} text="Reveal">
+          <TopBarDropDownLink text="Reveal Square" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Square, isReveal: true} as CheatAction)} />
+          <TopBarDropDownLink text="Reveal Entry" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Entry, isReveal: true} as CheatAction)} />
+          <TopBarDropDownLink text="Reveal Puzzle" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true} as CheatAction)} />
+        </TopBarDropDown>
+        <TopBarDropDown icon={<FaCheckDouble/>} text="Check">
+          <TopBarDropDownLink text="Check Square" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Square} as CheatAction)} />
+          <TopBarDropDownLink text="Check Entry" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Entry} as CheatAction)} />
+          <TopBarDropDownLink text="Check Puzzle" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Puzzle} as CheatAction)} />
+        </TopBarDropDown>
+        <TopBarDropDown icon={<FaCog />} text="Settings">
+          <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({type: "TOGGLEKEYBOARD"})} />
+          <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({type: "TOGGLETABLET"})} />
+        </TopBarDropDown>
       </TopBar>
       <SquareAndCols
         showKeyboard={state.showKeyboard}
@@ -316,6 +391,9 @@ export const Puzzle = (props: PuzzleJson) => {
             grid={state.grid}
             active={state.active}
             dispatch={dispatch}
+            revealedCells={state.revealedCells}
+            verifiedCells={state.verifiedCells}
+            wrongCells={state.wrongCells}
           />
         }
         left={<ClueList header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch}/>}

@@ -125,8 +125,12 @@ export class GridData {
     return new this(width, height, cells, usedWords, entriesByCell, entries, cellLabels, allowBlockEditing, acrossClues, downClues);
   }
 
+  cellIndex(pos: Position) {
+    return pos.row * this.width + pos.col;
+  }
+
   valAt(pos: Position) {
-    return this.cells[pos.row * this.width + pos.col];
+    return this.cells[this.cellIndex(pos)];
   }
 
   moveLeft(active: Position): Position {
@@ -348,9 +352,12 @@ type GridProps = {
   grid: GridData,
   active: PosAndDir,
   dispatch: React.Dispatch<PuzzleAction>,
+  revealedCells: Set<number>,
+  verifiedCells: Set<number>,
+  wrongCells: Set<number>,
 }
 
-export const Grid = ({ showingKeyboard, active, dispatch, grid }: GridProps) => {
+export const Grid = ({ showingKeyboard, active, dispatch, grid, ...props}: GridProps) => {
   const highlights = grid.getHighlights(active);
 
   const noOp = React.useCallback(() => undefined, []);
@@ -362,6 +369,7 @@ export const Grid = ({ showingKeyboard, active, dispatch, grid }: GridProps) => 
   for (let row_idx = 0; row_idx < rows.length; row_idx += 1) {
     const row = rows[row_idx];
     for (let col_idx = 0; col_idx < row.length; col_idx += 1) {
+      const cellIndex = row_idx * grid.width + col_idx;
       const cellValue = row[col_idx];
       const key = row_idx + "-" + col_idx
       const number = grid.cellLabels.get(key);
@@ -384,6 +392,9 @@ export const Grid = ({ showingKeyboard, active, dispatch, grid }: GridProps) => 
         onClick={onClick}
         value={cellValue}
         isBlock={cellValue === BLOCK}
+        isVerified={props.verifiedCells.has(cellIndex)}
+        isWrong={props.wrongCells.has(cellIndex)}
+        wasRevealed={props.revealedCells.has(cellIndex)}
       />);
     }
   }
