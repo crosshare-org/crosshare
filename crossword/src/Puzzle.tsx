@@ -5,12 +5,13 @@ import * as React from 'react';
 import axios from 'axios';
 import { RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
-import { FaTabletAlt, FaKeyboard, FaCog, FaEye, FaCheckDouble } from 'react-icons/fa';
-import useEventListener from '@use-it/event-listener'
+import { FaPause, FaTabletAlt, FaKeyboard, FaCog, FaEye, FaCheckDouble } from 'react-icons/fa';
+import useEventListener from '@use-it/event-listener';
 
+import { useTimer } from './timer';
 import { Grid, Entry, GridData } from './Grid';
 import { PosAndDir, Position, Direction, BLOCK, PuzzleJson } from './types';
-import { TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
+import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style'
 
@@ -361,6 +362,13 @@ export const Puzzle = (props: PuzzleJson) => {
   }
   useEventListener('keydown', physicalKeyboardHandler);
 
+  const [elapsed, isPaused, pause, resume] = useTimer();
+  if (isPaused) {
+    return (<Page>
+      Your game is paused. <button onClick={resume}>Resume</button>
+    </Page>);
+  }
+
   const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
 
   const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
@@ -370,9 +378,19 @@ export const Puzzle = (props: PuzzleJson) => {
     dispatch({type: "KEYPRESS", key: key, shift: false} as KeypressAction);
   }
 
+  function timeString(elapsed: number): string {
+    const hours   = Math.floor(elapsed / 3600);
+    const minutes = Math.floor((elapsed - (hours * 3600)) / 60);
+    const seconds = Math.floor(elapsed - (hours * 3600) - (minutes * 60));
+    return hours + ':' +
+      (minutes < 10 ? "0" : "") + minutes + ':' +
+      (seconds < 10 ? "0" : "") + seconds;
+  }
+
   return (
     <React.Fragment>
       <TopBar>
+        <TopBarLink icon={<FaPause/>} text={timeString(elapsed)} onClick={pause} keepText={true} />
         <TopBarDropDown icon={<FaEye/>} text="Reveal">
           <TopBarDropDownLink text="Reveal Square" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Square, isReveal: true} as CheatAction)} />
           <TopBarDropDownLink text="Reveal Entry" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Entry, isReveal: true} as CheatAction)} />

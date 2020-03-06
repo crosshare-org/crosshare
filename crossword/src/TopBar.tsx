@@ -17,7 +17,7 @@ export const TopBarDropDown = (props: {text: string, icon: React.ReactNode, chil
       textDecoration: 'none',
       display: 'inline',
       margin: 0,
-      padding: '0 1em',
+      padding: '0 0.5em',
       color: 'black',
       '&:hover, &:focus': {
         color: 'black',
@@ -93,7 +93,7 @@ export const TopBarDropDownLink = (props: {text: string, icon?: React.ReactNode,
   );
 }
 
-export const TopBarLink = (props: {text: string, icon: React.ReactNode, onClick: () => void}) => {
+export const TopBarLink = (props: {text: string, keepText?: boolean, icon: React.ReactNode, onClick: () => void}) => {
   return (
     <button title={props.text} css={{
       backgroundColor: 'transparent',
@@ -102,7 +102,7 @@ export const TopBarLink = (props: {text: string, icon: React.ReactNode, onClick:
       textDecoration: 'none',
       display: 'inline',
       margin: 0,
-      padding: 0,
+      padding: '0 0.5em',
       color: 'black',
       '&:hover, &:focus': {
         color: 'black',
@@ -117,7 +117,7 @@ export const TopBarLink = (props: {text: string, icon: React.ReactNode, onClick:
     <span css={{
       marginLeft: '5px',
       verticalAlign: 'middle',
-      display: 'none',
+      display: props.keepText ? 'inline-block' : 'none',
       fontSize: HEADER_HEIGHT - 20,
       [SMALL_AND_UP]: {
         display: 'inline-block',
