@@ -93,9 +93,9 @@ export const TopBarDropDownLink = (props: {text: string, icon?: React.ReactNode,
   );
 }
 
-export const TopBarLink = (props: {text: string, keepText?: boolean, icon: React.ReactNode, onClick: () => void}) => {
+export const TopBarLink = (props: {text: string, hoverText?: string, keepText?: boolean, icon: React.ReactNode, onClick: () => void}) => {
   return (
-    <button title={props.text} css={{
+    <button title={props.hoverText || props.text} css={{
       backgroundColor: 'transparent',
       border: 'none',
       cursor: 'pointer',

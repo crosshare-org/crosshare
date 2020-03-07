@@ -364,9 +364,10 @@ export const Puzzle = (props: PuzzleJson) => {
 
   const [elapsed, isPaused, pause, resume] = useTimer();
   if (isPaused) {
-    return (<Page>
-      Your game is paused. <button onClick={resume}>Resume</button>
-    </Page>);
+    if (elapsed === 0) {
+      return <Page>Your crossword is loaded and ready to begin! <button onClick={resume}>Start Puzzle</button></Page>;
+    }
+    return <Page>Your game is paused. <button onClick={resume}>Resume</button></Page>;
   }
 
   const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
@@ -390,7 +391,7 @@ export const Puzzle = (props: PuzzleJson) => {
   return (
     <React.Fragment>
       <TopBar>
-        <TopBarLink icon={<FaPause/>} text={timeString(elapsed)} onClick={pause} keepText={true} />
+        <TopBarLink icon={<FaPause/>} hoverText={"Pause Game"} text={timeString(elapsed)} onClick={pause} keepText={true} />
         <TopBarDropDown icon={<FaEye/>} text="Reveal">
           <TopBarDropDownLink text="Reveal Square" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Square, isReveal: true} as CheatAction)} />
           <TopBarDropDownLink text="Reveal Entry" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Entry, isReveal: true} as CheatAction)} />
