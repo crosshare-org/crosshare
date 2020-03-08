@@ -74,13 +74,15 @@ export const Cell = React.memo((props: CellProps) => {
             [LARGE_AND_UP]: {
               fontSize: 'calc(0.3 * min(100vh - ' + heightAdjust + 'px, 50vw) / ' + props.gridWidth + ')',
             },
-          }}><div css={{
+          }}>
+          { props.wasRevealed ?
+          <div css={{
             position: 'absolute',
             left: '1.85em',
             top: '-0.15em',
             color: '#4e61eb',
-            display: props.wasRevealed ? 'block' : 'none',
-          }}><FaEye/></div>{props.number}</div>
+          }}><FaEye/></div> : "" }
+          {props.number}</div>
           <div css={{
             color: props.isVerified ? '#4e61eb' : 'black',
             textAlign: 'center',
@@ -93,6 +95,7 @@ export const Cell = React.memo((props: CellProps) => {
               fontSize: 'calc(0.9 * min(100vh - ' + heightAdjust + 'px, 50vw) / ' + props.gridWidth + ')',
             },
           }}>
+          { props.isWrong ?
           <div css={{
             position: 'absolute',
             zIndex: 2,
@@ -100,8 +103,8 @@ export const Cell = React.memo((props: CellProps) => {
             top: '-0.1em',
             color: '#e34eeb',
             fontSize: '1em',
-            display: props.isWrong ? 'block' : 'none',
-          }}><FaSlash/></div>
+          }}><FaSlash/></div> : "" }
+          {props.highlight === 'circle' ?
           <div css={{
             zIndex: 0,
             position: 'absolute',
@@ -111,8 +114,17 @@ export const Cell = React.memo((props: CellProps) => {
             bottom: 0,
             border: '1px solid black',
             borderRadius: '50%',
-            display: props.highlight === 'circle' ? 'block' : 'none',
-          }}></div>{props.value}</div>
+          }}></div> : ""}
+          {props.highlight === 'shade' ?
+          <div css={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.3)',
+          }}></div> : ""}
+          {props.value}</div>
           </React.Fragment>
           : ""}
       </div>
