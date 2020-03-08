@@ -343,6 +343,8 @@ export const Puzzle = (props: PuzzleJson) => {
       false,
       props.clues.across,
       props.clues.down,
+      new Set(props.highlighted),
+      props.highlight,
     ),
     showKeyboard: isMobile,
     isTablet: isTablet,

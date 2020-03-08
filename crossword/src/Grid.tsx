@@ -32,6 +32,8 @@ export class GridData {
     public readonly allowBlockEditing: boolean,
     public readonly acrossClues: Array<string>,
     public readonly downClues: Array<string>,
+    public readonly highlighted: Set<number>,
+    public readonly highlight: "circle" | "shade",
   ) {
     this.sortedEntries = [...entries].sort((a, b) => {
       if (a.direction !== b.direction) {
@@ -41,7 +43,7 @@ export class GridData {
     })
   }
 
-  static fromCells(width: number, height: number, cells: Array<string>, allowBlockEditing: boolean, acrossClues: Array<string>, downClues: Array<string>) {
+  static fromCells(width: number, height: number, cells: Array<string>, allowBlockEditing: boolean, acrossClues: Array<string>, downClues: Array<string>, highlighted: Set<number>, highlight: "circle" | "shade") {
     let entriesByCell: Array<Array<[number, number] | null>> = new Array(cells.length);
     let entries = [];
     let usedWords: Set<string> = new Set();
@@ -122,7 +124,7 @@ export class GridData {
         }
       }
     }
-    return new this(width, height, cells, usedWords, entriesByCell, entries, cellLabels, allowBlockEditing, acrossClues, downClues);
+    return new this(width, height, cells, usedWords, entriesByCell, entries, cellLabels, allowBlockEditing, acrossClues, downClues, highlighted, highlight);
   }
 
   cellIndex(pos: Position) {
@@ -275,7 +277,7 @@ export class GridData {
     return pos;
   }
 
-  getHighlights(pos: PosAndDir) {
+  getEntryCells(pos: PosAndDir) {
     const rowIncr = pos.dir === Direction.Down ? 1 : 0;
     const colIncr = pos.dir === Direction.Across ? 1 : 0;
 
@@ -325,7 +327,7 @@ export class GridData {
     }
     cells[index] = char;
     // TODO - can we prevent some re-init here?
-    return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing, this.acrossClues, this.downClues);
+    return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing, this.acrossClues, this.downClues, this.highlighted, this.highlight);
   }
 
   gridWithBlockToggled(pos: Position): GridData {
@@ -339,7 +341,7 @@ export class GridData {
     cells[index] = char;
     cells[flipped] = char;
     // TODO - can we prevent some re-init here?
-    return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing, this.acrossClues, this.downClues);
+    return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing, this.acrossClues, this.downClues, this.highlighted, this.highlight);
   }
 
   rows() {
@@ -358,7 +360,7 @@ type GridProps = {
 }
 
 export const Grid = ({ showingKeyboard, active, dispatch, grid, ...props}: GridProps) => {
-  const highlights = grid.getHighlights(active);
+  const entryCells = grid.getEntryCells(active);
 
   const noOp = React.useCallback(() => undefined, []);
   const changeActive = React.useCallback((pos) => dispatch({type: "SETACTIVEPOSITION", newActive: pos} as SetActivePositionAction), [dispatch]);
@@ -384,7 +386,7 @@ export const Grid = ({ showingKeyboard, active, dispatch, grid, ...props}: GridP
         showingKeyboard={showingKeyboard}
         gridWidth={grid.width}
         active={isActive}
-        highlight={highlights.some((p) => p.row === row_idx && p.col === col_idx)}
+        entryCell={entryCells.some((p) => p.row === row_idx && p.col === col_idx)}
         key={key}
         number={number ? number.toString() : ""}
         row={row_idx}
@@ -395,6 +397,7 @@ export const Grid = ({ showingKeyboard, active, dispatch, grid, ...props}: GridP
         isVerified={props.verifiedCells.has(cellIndex)}
         isWrong={props.wrongCells.has(cellIndex)}
         wasRevealed={props.revealedCells.has(cellIndex)}
+        highlight={grid.highlighted.has(cellIndex) ? grid.highlight : null}
       />);
     }
   }

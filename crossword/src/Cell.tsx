@@ -12,7 +12,8 @@ type CellProps = {
   gridWidth: number,
   isBlock: boolean,
   active: boolean,
-  highlight: boolean,
+  entryCell: boolean,
+  highlight: "circle" | "shade" | null,
   value: string,
   number: string,
   row: number,
@@ -31,7 +32,7 @@ export const Cell = React.memo((props: CellProps) => {
     bg = "black";
   } else if (props.active) {
     bg = PRIMARY;
-  } else if (props.highlight) {
+  } else if (props.entryCell) {
     bg = SECONDARY;
   }
 
@@ -91,14 +92,27 @@ export const Cell = React.memo((props: CellProps) => {
             [LARGE_AND_UP]: {
               fontSize: 'calc(0.9 * min(100vh - ' + heightAdjust + 'px, 50vw) / ' + props.gridWidth + ')',
             },
-          }}><div css={{
+          }}>
+          <div css={{
             position: 'absolute',
+            zIndex: 2,
             left: '0.03em',
             top: '-0.1em',
             color: '#e34eeb',
             fontSize: '1em',
             display: props.isWrong ? 'block' : 'none',
-          }}><FaSlash/></div>{props.value}</div>
+          }}><FaSlash/></div>
+          <div css={{
+            zIndex: 0,
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            border: '1px solid black',
+            borderRadius: '50%',
+            display: props.highlight === 'circle' ? 'block' : 'none',
+          }}></div>{props.value}</div>
           </React.Fragment>
           : ""}
       </div>

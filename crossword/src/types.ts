@@ -19,5 +19,7 @@ export interface PuzzleJson {
   title: string,
   size: {rows: number, cols: number},
   clues: {across: Array<string>, down: Array<string>},
-  grid: Array<string>
+  grid: Array<string>,
+  highlighted: Array<number>,
+  highlight: "circle" | "shade",
 }

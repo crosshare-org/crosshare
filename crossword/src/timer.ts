@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import useEventListener from '@use-it/event-listener';
+//import useEventListener from '@use-it/event-listener';
 
 export function useTimer():[number, boolean, ()=>void, ()=>void] {
   const [currentWindowStart, setCurrentWindowStart] = useState<number>(0);
   const [bankedSeconds, setBankedSeconds] = useState(0);
   const [totalSeconds, setTotalSeconds] = useState(0);
 
-  useEventListener('blur', pause);
+// TODO re-enable in prod!
+//  useEventListener('blur', pause);
 
   useEffect(() => {
     function tick() {
