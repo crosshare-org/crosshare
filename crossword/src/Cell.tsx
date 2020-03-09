@@ -79,7 +79,7 @@ export const Cell = React.memo((props: CellProps) => {
           <div css={{
             position: 'absolute',
             left: '1.85em',
-            top: '-0.15em',
+            top: '-0.1em',
             color: '#4e61eb',
           }}><FaEye/></div> : "" }
           {props.number}</div>
@@ -124,7 +124,10 @@ export const Cell = React.memo((props: CellProps) => {
             bottom: 0,
             backgroundColor: 'rgba(0,0,0,0.3)',
           }}></div> : ""}
-          {props.value}</div>
+          <div css={{
+            fontSize: 1.0 / Math.max(props.value.length - 0.5, 1) + 'em',
+          }}>{props.value}</div>
+          </div>
           </React.Fragment>
           : ""}
       </div>

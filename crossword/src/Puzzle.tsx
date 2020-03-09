@@ -339,7 +339,7 @@ export const Puzzle = (props: PuzzleJson) => {
     grid: GridData.fromCells(
       props.size.cols,
       props.size.rows,
-      (["C","C","O"].concat((answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>).slice(3))),
+      (["MMMM","MM","MMMMM", "M", ".", "MMM"].concat((answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>).slice(6))),
       false,
       props.clues.across,
       props.clues.down,

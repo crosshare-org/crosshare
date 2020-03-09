@@ -1,6 +1,4 @@
 ## TODO
-- Circle support
-- Shaded support
 - Rebus support
 - DB backend for puzzles, users, plays
 - .puz import

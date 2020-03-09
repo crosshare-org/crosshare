@@ -4,3 +4,4 @@ __pycache__
 _db.json
 cluedata
 .DS*
+.firebase
