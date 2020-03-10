@@ -339,7 +339,7 @@ export const Puzzle = (props: PuzzleJson) => {
     grid: GridData.fromCells(
       props.size.cols,
       props.size.rows,
-      (["MMMM","MM","MMMMM", "M", ".", "MMM"].concat((answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>).slice(6))),
+      (answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>),
       false,
       props.clues.across,
       props.clues.down,
@@ -350,9 +350,9 @@ export const Puzzle = (props: PuzzleJson) => {
     isTablet: isTablet,
     showExtraKeyLayout: false,
     answers: answers,
-    verifiedCells: new Set<number>([0,2]),
-    wrongCells: new Set<number>([1]),
-    revealedCells: new Set<number>([2]),
+    verifiedCells: new Set<number>(),
+    wrongCells: new Set<number>(),
+    revealedCells: new Set<number>(),
   });
 
   function physicalKeyboardHandler(e: React.KeyboardEvent) {
