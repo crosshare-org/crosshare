@@ -5,7 +5,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
-import { FaPause, FaTabletAlt, FaKeyboard, FaCog, FaEye, FaCheckDouble } from 'react-icons/fa';
+import { FaRegPlusSquare, FaPause, FaTabletAlt, FaKeyboard, FaEllipsisH, FaEye, FaCheckDouble } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 
 import { useTimer } from './timer';
@@ -58,7 +58,7 @@ interface ClueListItemProps {
   direction: Direction,
   clue: string,
 }
-const ClueListItem = React.memo(({isActive, isCross, ...props}: ClueListItemProps) => {
+const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemProps) => {
   const ref = React.useRef<HTMLLIElement>(null);
   if (ref.current) {
     if (isActive || (props.scrollToCross && isCross)) {
@@ -70,7 +70,7 @@ const ClueListItem = React.memo(({isActive, isCross, ...props}: ClueListItemProp
     if (isActive) {
       return;
     }
-    props.dispatch({type: 'CLICKEDENTRY', entryIndex: props.entryIndex});
+    props.dispatch({ type: 'CLICKEDENTRY', entryIndex: props.entryIndex });
   }
   return (
     <li css={{
@@ -108,42 +108,42 @@ const ClueListItem = React.memo(({isActive, isCross, ...props}: ClueListItemProp
   );
 });
 
-const RebusOverlay = (props: {showingKeyboard: boolean, value: string, dispatch: React.Dispatch<KeypressAction>}) => {
+const RebusOverlay = (props: { showingKeyboard: boolean, value: string, dispatch: React.Dispatch<KeypressAction> }) => {
   return (
     <div css={{
       position: 'fixed',
-    	backgroundColor: 'rgba(0,0,0,0.7)',
-    	top: 0,
-    	left: 0,
-    	width: '100%',
-    	height: props.showingKeyboard ? 'calc(100vh - ' + KEYBOARD_HEIGHT + 'px)' : '100%',
-    	zIndex: 10000,
+      backgroundColor: 'rgba(0,0,0,0.7)',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: props.showingKeyboard ? 'calc(100vh - ' + KEYBOARD_HEIGHT + 'px)' : '100%',
+      zIndex: 10000,
       textAlign: 'center'
     }}>
-    <div css={{
-      display: 'flex',
-      flexWrap: 'wrap',
-      alignContent: 'center',
-      alignItems: 'stretch',
-      flexDirection: 'row',
-      justifyContent: 'space-evenly',
-      width: '80%',
-      height: '10em',
-      backgroundColor: 'white',
-      margin: '10em auto',
-    }}>
       <div css={{
-        color: props.value ? 'black' : '#999',
-        padding: '0.5em',
-        fontSize: '2.5em',
-        lineHeight: '1em',
-        width: '100%',
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignContent: 'center',
+        alignItems: 'stretch',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        width: '80%',
+        height: '10em',
+        backgroundColor: 'white',
+        margin: '10em auto',
       }}>
-      {props.value ? props.value : 'Enter Rebus'}
+        <div css={{
+          color: props.value ? 'black' : '#999',
+          padding: '0.5em',
+          fontSize: '2.5em',
+          lineHeight: '1em',
+          width: '100%',
+        }}>
+          {props.value ? props.value : 'Enter Rebus'}
+        </div>
+        <button onClick={() => props.dispatch({ type: "KEYPRESS", key: 'Escape', shift: false })} css={{ marginBottom: '1em', width: '40%' }}>Cancel</button>
+        <button onClick={() => props.dispatch({ type: "KEYPRESS", key: 'Enter', shift: false })} css={{ marginBottom: '1em', width: '40%' }}>Enter Rebus</button>
       </div>
-      <button onClick={() => props.dispatch({type: "KEYPRESS", key: 'Escape', shift: false})} css={{ marginBottom: '1em', width: '40%' }}>Cancel</button>
-      <button onClick={() => props.dispatch({type: "KEYPRESS", key: 'Enter', shift: false})} css={{ marginBottom: '1em', width: '40%' }}>Enter Rebus</button>
-    </div>
     </div>
   );
 }
@@ -270,7 +270,7 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
     } else if (action.unit === CheatUnit.Puzzle) {
       for (let rowidx = 0; rowidx < state.grid.height; rowidx += 1) {
         for (let colidx = 0; colidx < state.grid.width; colidx += 1) {
-          cellsToCheck.push({'row': rowidx, 'col': colidx});
+          cellsToCheck.push({ 'row': rowidx, 'col': colidx });
         }
       }
     }
@@ -297,43 +297,43 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
         newWrong.add(cellIndex);
       }
     }
-    return ({...state, grid: grid, wrongCells: newWrong, revealedCells: newRevealed, verifiedCells: newVerified});
+    return ({ ...state, grid: grid, wrongCells: newWrong, revealedCells: newRevealed, verifiedCells: newVerified });
   }
   if (action.type === "CHANGEDIRECTION") {
-    return ({...state, active: {...state.active, dir: (state.active.dir + 1) % 2}});
+    return ({ ...state, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
   }
   if (action.type === "TOGGLEKEYBOARD") {
-    return ({...state, showKeyboard: !state.showKeyboard});
+    return ({ ...state, showKeyboard: !state.showKeyboard });
   }
   if (action.type === "TOGGLETABLET") {
-    return ({...state, isTablet: !state.isTablet});
+    return ({ ...state, isTablet: !state.isTablet });
   }
   if (isClickedEntryAction(action)) {
     const clickedEntry = state.grid.entries[action.entryIndex];
     for (let cell of clickedEntry.cells) {
       if (state.grid.valAt(cell) === " ") {
-        return({...state, active: {...cell, dir: clickedEntry.direction}});
+        return ({ ...state, active: { ...cell, dir: clickedEntry.direction } });
       }
     }
-    return({...state, active: {...clickedEntry.cells[0], dir: clickedEntry.direction}});
+    return ({ ...state, active: { ...clickedEntry.cells[0], dir: clickedEntry.direction } });
   }
   if (isSetActiveAction(action)) {
-    return ({...state, active: action.newActive});
+    return ({ ...state, active: action.newActive });
   }
   if (isSetActivePositionAction(action)) {
-    return ({...state, active: {...action.newActive, dir: state.active.dir}});
+    return ({ ...state, active: { ...action.newActive, dir: state.active.dir } });
   }
   if (isKeypressAction(action)) {
     const key = action.key;
     const shift = action.shift;
     if (key === '{num}' || key === '{abc}') {
-      return ({...state, showExtraKeyLayout: !state.showExtraKeyLayout});
+      return ({ ...state, showExtraKeyLayout: !state.showExtraKeyLayout });
     }
     if (state.isEnteringRebus) {
       if (key.match(/^[A-Za-z0-9]$/)) {
-        return ({...state, rebusValue: state.rebusValue + key.toUpperCase()});
+        return ({ ...state, rebusValue: state.rebusValue + key.toUpperCase() });
       } else if (key === "Backspace" || key === "{bksp}") {
-        return ({...state, rebusValue: state.rebusValue ? state.rebusValue.slice(0, -1) : ""});
+        return ({ ...state, rebusValue: state.rebusValue ? state.rebusValue.slice(0, -1) : "" });
       } else if (key === "Enter") {
         const cellIndex = state.grid.cellIndex(state.active);
         state.grid = state.grid.gridWithNewChar(state.active, state.rebusValue);
@@ -342,34 +342,35 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
         return ({
           ...state,
           active: state.grid.advancePosition(state.active, state.wrongCells),
-          isEnteringRebus: false, rebusValue: ''});
+          isEnteringRebus: false, rebusValue: ''
+        });
       } else if (key === "Escape") {
-        return ({...state, isEnteringRebus: false, rebusValue: ''});
+        return ({ ...state, isEnteringRebus: false, rebusValue: '' });
       }
       return state;
     }
     if (key === '{rebus}' || key === 'Escape') {
-      return ({...state, isEnteringRebus: true});
+      return ({ ...state, isEnteringRebus: true });
     } else if (key === " " || key === "{dir}") {
-      return ({...state, active: {...state.active, dir: (state.active.dir + 1) % 2}});
+      return ({ ...state, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
     } else if (key === "{prev}") {
-      return ({...state, active: state.grid.retreatPosition(state.active)});
+      return ({ ...state, active: state.grid.retreatPosition(state.active) });
     } else if (key === "{next}") {
-      return ({...state, active: state.grid.advancePosition(state.active, state.wrongCells)});
+      return ({ ...state, active: state.grid.advancePosition(state.active, state.wrongCells) });
     } else if ((key === "Tab" && !shift) || key === "{nextEntry}") {
-      return ({...state, active: state.grid.moveToNextEntry(state.active)});
+      return ({ ...state, active: state.grid.moveToNextEntry(state.active) });
     } else if ((key === "Tab" && shift) || key === "{prevEntry}") {
-      return ({...state, active: state.grid.moveToPrevEntry(state.active)});
+      return ({ ...state, active: state.grid.moveToPrevEntry(state.active) });
     } else if (key === "ArrowRight") {
-      return ({...state, active: {...state.grid.moveRight(state.active), dir: Direction.Across}});
+      return ({ ...state, active: { ...state.grid.moveRight(state.active), dir: Direction.Across } });
     } else if (key === "ArrowLeft") {
-      return ({...state, active: {...state.grid.moveLeft(state.active), dir: Direction.Across}});
+      return ({ ...state, active: { ...state.grid.moveLeft(state.active), dir: Direction.Across } });
     } else if (key === "ArrowUp") {
-      return ({...state, active: {...state.grid.moveUp(state.active), dir: Direction.Down}});
+      return ({ ...state, active: { ...state.grid.moveUp(state.active), dir: Direction.Down } });
     } else if (key === "ArrowDown") {
-      return ({...state, active: {...state.grid.moveDown(state.active), dir: Direction.Down}});
+      return ({ ...state, active: { ...state.grid.moveDown(state.active), dir: Direction.Down } });
     } else if (key === '.' && state.grid.allowBlockEditing) {
-      return ({...state, grid: state.grid.gridWithBlockToggled(state.active)})
+      return ({ ...state, grid: state.grid.gridWithBlockToggled(state.active) })
     } else if (key.match(/^[A-Za-z0-9]$/)) {
       const char = key.toUpperCase();
       const cellIndex = state.grid.cellIndex(state.active);
@@ -399,7 +400,7 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
 export const Puzzle = (props: PuzzleJson) => {
   const answers = props.grid;
   const [state, dispatch] = React.useReducer(reducer, {
-    active: {col: 0, row: 0, dir: Direction.Across} as PosAndDir,
+    active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
     grid: GridData.fromCells(
       props.size.cols,
       props.size.rows,
@@ -425,7 +426,7 @@ export const Puzzle = (props: PuzzleJson) => {
     if (e.metaKey || e.altKey || e.ctrlKey) {
       return;  // This way you can still do apple-R and such
     }
-    dispatch({type: "KEYPRESS", key: e.key, shift: e.shiftKey} as KeypressAction);
+    dispatch({ type: "KEYPRESS", key: e.key, shift: e.shiftKey } as KeypressAction);
     e.preventDefault();
   }
   useEventListener('keydown', physicalKeyboardHandler);
@@ -444,11 +445,11 @@ export const Puzzle = (props: PuzzleJson) => {
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
 
   function keyboardHandler(key: string) {
-    dispatch({type: "KEYPRESS", key: key, shift: false} as KeypressAction);
+    dispatch({ type: "KEYPRESS", key: key, shift: false } as KeypressAction);
   }
 
   function timeString(elapsed: number): string {
-    const hours   = Math.floor(elapsed / 3600);
+    const hours = Math.floor(elapsed / 3600);
     const minutes = Math.floor((elapsed - (hours * 3600)) / 60);
     const seconds = Math.floor(elapsed - (hours * 3600) - (minutes * 60));
     return hours + ':' +
@@ -459,24 +460,25 @@ export const Puzzle = (props: PuzzleJson) => {
   return (
     <React.Fragment>
       <TopBar>
-        <TopBarLink icon={<FaPause/>} hoverText={"Pause Game"} text={timeString(elapsed)} onClick={pause} keepText={true} />
-        <TopBarDropDown icon={<FaEye/>} text="Reveal">
-          <TopBarDropDownLink text="Reveal Square" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Square, isReveal: true} as CheatAction)} />
-          <TopBarDropDownLink text="Reveal Entry" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Entry, isReveal: true} as CheatAction)} />
-          <TopBarDropDownLink text="Reveal Puzzle" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true} as CheatAction)} />
+        <TopBarLink icon={<FaPause />} hoverText={"Pause Game"} text={timeString(elapsed)} onClick={pause} keepText={true} />
+        <TopBarDropDown icon={<FaEye />} text="Reveal">
+          <TopBarDropDownLink text="Reveal Square" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Square, isReveal: true } as CheatAction)} />
+          <TopBarDropDownLink text="Reveal Entry" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry, isReveal: true } as CheatAction)} />
+          <TopBarDropDownLink text="Reveal Puzzle" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true } as CheatAction)} />
         </TopBarDropDown>
-        <TopBarDropDown icon={<FaCheckDouble/>} text="Check">
-          <TopBarDropDownLink text="Check Square" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Square} as CheatAction)} />
-          <TopBarDropDownLink text="Check Entry" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Entry} as CheatAction)} />
-          <TopBarDropDownLink text="Check Puzzle" onClick={() => dispatch({type: "CHEAT", unit: CheatUnit.Puzzle} as CheatAction)} />
+        <TopBarDropDown icon={<FaCheckDouble />} text="Check">
+          <TopBarDropDownLink text="Check Square" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Square } as CheatAction)} />
+          <TopBarDropDownLink text="Check Entry" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry } as CheatAction)} />
+          <TopBarDropDownLink text="Check Puzzle" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Puzzle } as CheatAction)} />
         </TopBarDropDown>
-        <TopBarDropDown icon={<FaCog />} text="Settings">
-          <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({type: "TOGGLEKEYBOARD"})} />
-          <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({type: "TOGGLETABLET"})} />
+        <TopBarDropDown icon={<FaEllipsisH />} text="More">
+          <TopBarDropDownLink icon={<FaRegPlusSquare />} text="Enter Rebus (Esc)" onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
+          <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
+          <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
         </TopBarDropDown>
       </TopBar>
-      { state.isEnteringRebus ?
-        <RebusOverlay showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : "" }
+      {state.isEnteringRebus ?
+        <RebusOverlay showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
       <SquareAndCols
         showKeyboard={state.showKeyboard}
         keyboardHandler={keyboardHandler}
@@ -493,7 +495,7 @@ export const Puzzle = (props: PuzzleJson) => {
             wrongCells={state.wrongCells}
           />
         }
-        left={<ClueList header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch}/>}
+        left={<ClueList header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
         right={<ClueList header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
         tinyColumn={<TinyNav dispatch={dispatch}><ClueList entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
       />
