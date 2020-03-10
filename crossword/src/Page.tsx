@@ -11,7 +11,7 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 import { KeypressAction } from './Puzzle';
 import { TopBar, TopBarLink } from './TopBar';
-import { KEYBOARD_HEIGHT, HEADER_FOOTER_HEIGHT, SMALL_AND_UP, LARGE_AND_UP } from './style';
+import { heightAdjustment, SMALL_AND_UP, LARGE_AND_UP } from './style';
 
 interface TinyNavProps {
   children: React.ReactNode,
@@ -65,8 +65,8 @@ interface SquareAndColsProps {
   isTablet: boolean,
 }
 export const SquareAndCols = (props: SquareAndColsProps) => {
-  const keyboardHeight = props.showKeyboard ? KEYBOARD_HEIGHT : 0;
-  const heightAdjust = keyboardHeight + HEADER_FOOTER_HEIGHT;
+  const heightAdjust = heightAdjustment(props.showKeyboard, false);
+  const toolbarHeightAdjust = heightAdjustment(props.showKeyboard);
 
   function layoutName(numeric: boolean, tablet: boolean) {
     if (numeric) {
@@ -94,8 +94,8 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
       }}>
         <div css={{
           flexShrink: 0,
-          height: 'calc(min(87vh - ' + heightAdjust + 'px, 100vw))',
-          width: 'calc(min(87vh - ' + heightAdjust + 'px, 100vw))',
+          height: 'calc(min(87vh - ' + toolbarHeightAdjust + 'px, 100vw))',
+          width: 'calc(min(87vh - ' + toolbarHeightAdjust + 'px, 100vw))',
           [SMALL_AND_UP]: {
             padding: '5px',
             height: 'calc(min(100vh - ' + heightAdjust + 'px, 66vw))',

@@ -130,7 +130,7 @@ const RebusOverlay = (props: { showingKeyboard: boolean, value: string, dispatch
         width: '80%',
         height: '10em',
         backgroundColor: 'white',
-        margin: '10em auto',
+        margin: '5em auto',
       }}>
         <div css={{
           color: props.value ? 'black' : '#999',

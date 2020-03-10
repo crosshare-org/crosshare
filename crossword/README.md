@@ -5,7 +5,7 @@
 - DB backend for puzzles, users, plays
 - .puz import
 - Basic stats for a play and for constructors
-- Fix mobile safari bottom bar causing scrolls
+- Hide dropdown after click on element
 
 ## Available Scripts
 

@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import { FaSlash, FaEye } from 'react-icons/fa';
 
-import {notSelectable, PRIMARY, SECONDARY, HEADER_FOOTER_HEIGHT, SMALL_AND_UP, LARGE_AND_UP} from './style';
+import {heightAdjustment, notSelectable, PRIMARY, SECONDARY, SMALL_AND_UP, LARGE_AND_UP} from './style';
 
 type CellProps = {
   showingKeyboard: boolean,
@@ -36,8 +36,7 @@ export const Cell = React.memo((props: CellProps) => {
     bg = SECONDARY;
   }
 
-  const keyboardHeight = props.showingKeyboard ? 140 : 0;
-  const heightAdjust = keyboardHeight + HEADER_FOOTER_HEIGHT;
+  const heightAdjust = heightAdjustment(props.showingKeyboard);
 
   return (
     <div className="cell-container" css={{
