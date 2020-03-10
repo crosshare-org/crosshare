@@ -350,7 +350,7 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
       return state;
     }
     if (key === '{rebus}' || key === 'Escape') {
-      return ({ ...state, isEnteringRebus: true });
+      return ({ ...state, showExtraKeyLayout: false, isEnteringRebus: true });
     } else if (key === " " || key === "{dir}") {
       return ({ ...state, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
     } else if (key === "{prev}") {
