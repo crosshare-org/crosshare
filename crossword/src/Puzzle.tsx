@@ -116,7 +116,7 @@ const RebusOverlay = (props: { showingKeyboard: boolean, value: string, dispatch
       top: 0,
       left: 0,
       width: '100%',
-      height: props.showingKeyboard ? 'calc(100vh - ' + KEYBOARD_HEIGHT + 'px)' : '100%',
+      height: props.showingKeyboard ? 'calc(100% - ' + KEYBOARD_HEIGHT + 'px)' : '100%',
       zIndex: 10000,
       textAlign: 'center'
     }}>

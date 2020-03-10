@@ -1,4 +1,5 @@
-import * as React from 'react';
+/** @jsx jsx */
+import { jsx } from '@emotion/core';
 
 import { Router, RouteComponentProps, Link } from "@reach/router";
 
@@ -74,7 +75,7 @@ const Home = (_: RouteComponentProps) => {
 
 const App = () => {
   return (
-    <Router>
+    <Router css={{height: '100%', width: '100%',}}>
       <Home path="/" />
       <PuzzleLoader path="/crosswords/:crosswordId" />
       <SquareTest path="/square" />
