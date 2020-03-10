@@ -13,7 +13,7 @@ import { Grid, Entry, GridData } from './Grid';
 import { PosAndDir, Position, Direction, BLOCK, PuzzleJson } from './types';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
-import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style'
+import { SECONDARY, LIGHTER, SMALL_AND_UP, KEYBOARD_HEIGHT } from './style'
 
 interface PuzzleProps extends RouteComponentProps {
   crosswordId?: string
@@ -108,6 +108,46 @@ const ClueListItem = React.memo(({isActive, isCross, ...props}: ClueListItemProp
   );
 });
 
+const RebusOverlay = (props: {showingKeyboard: boolean, value: string, dispatch: React.Dispatch<KeypressAction>}) => {
+  return (
+    <div css={{
+      position: 'fixed',
+    	backgroundColor: 'rgba(0,0,0,0.7)',
+    	top: 0,
+    	left: 0,
+    	width: '100%',
+    	height: props.showingKeyboard ? 'calc(100vh - ' + KEYBOARD_HEIGHT + 'px)' : '100%',
+    	zIndex: 10000,
+      textAlign: 'center'
+    }}>
+    <div css={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignContent: 'center',
+      alignItems: 'stretch',
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      width: '80%',
+      height: '10em',
+      backgroundColor: 'white',
+      margin: '10em auto',
+    }}>
+      <div css={{
+        color: props.value ? 'black' : '#999',
+        padding: '0.5em',
+        fontSize: '2.5em',
+        lineHeight: '1em',
+        width: '100%',
+      }}>
+      {props.value ? props.value : 'Enter Rebus'}
+      </div>
+      <button onClick={() => props.dispatch({type: "KEYPRESS", key: 'Escape', shift: false})} css={{ marginBottom: '1em', width: '40%' }}>Cancel</button>
+      <button onClick={() => props.dispatch({type: "KEYPRESS", key: 'Enter', shift: false})} css={{ marginBottom: '1em', width: '40%' }}>Enter Rebus</button>
+    </div>
+    </div>
+  );
+}
+
 interface ClueListProps {
   header?: string,
   current: number,
@@ -166,6 +206,8 @@ interface PuzzleState {
   verifiedCells: Set<number>,
   wrongCells: Set<number>,
   revealedCells: Set<number>,
+  isEnteringRebus: boolean,
+  rebusValue: string,
 }
 
 export interface PuzzleAction {
@@ -286,6 +328,28 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
     const shift = action.shift;
     if (key === '{num}' || key === '{abc}') {
       return ({...state, showExtraKeyLayout: !state.showExtraKeyLayout});
+    }
+    if (state.isEnteringRebus) {
+      if (key.match(/^[A-Za-z0-9]$/)) {
+        return ({...state, rebusValue: state.rebusValue + key.toUpperCase()});
+      } else if (key === "Backspace" || key === "{bksp}") {
+        return ({...state, rebusValue: state.rebusValue ? state.rebusValue.slice(0, -1) : ""});
+      } else if (key === "Enter") {
+        const cellIndex = state.grid.cellIndex(state.active);
+        state.grid = state.grid.gridWithNewChar(state.active, state.rebusValue);
+        state.wrongCells.delete(cellIndex);
+
+        return ({
+          ...state,
+          active: state.grid.advancePosition(state.active, state.wrongCells),
+          isEnteringRebus: false, rebusValue: ''});
+      } else if (key === "Escape") {
+        return ({...state, isEnteringRebus: false, rebusValue: ''});
+      }
+      return state;
+    }
+    if (key === '{rebus}' || key === 'Escape') {
+      return ({...state, isEnteringRebus: true});
     } else if (key === " " || key === "{dir}") {
       return ({...state, active: {...state.active, dir: (state.active.dir + 1) % 2}});
     } else if (key === "{prev}") {
@@ -353,6 +417,8 @@ export const Puzzle = (props: PuzzleJson) => {
     verifiedCells: new Set<number>(),
     wrongCells: new Set<number>(),
     revealedCells: new Set<number>(),
+    isEnteringRebus: false,
+    rebusValue: '',
   });
 
   function physicalKeyboardHandler(e: React.KeyboardEvent) {
@@ -409,6 +475,8 @@ export const Puzzle = (props: PuzzleJson) => {
           <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({type: "TOGGLETABLET"})} />
         </TopBarDropDown>
       </TopBar>
+      { state.isEnteringRebus ?
+        <RebusOverlay showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : "" }
       <SquareAndCols
         showKeyboard={state.showKeyboard}
         keyboardHandler={keyboardHandler}

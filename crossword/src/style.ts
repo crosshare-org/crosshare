@@ -1,5 +1,6 @@
 import {css} from '@emotion/core';
 
+export const KEYBOARD_HEIGHT = 140;
 export const FOOTER_HEIGHT = 20;
 export const HEADER_HEIGHT = 35;
 export const HEADER_FOOTER_HEIGHT = 35;

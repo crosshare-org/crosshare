@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import useEventListener from '@use-it/event-listener';
 
 export function useTimer():[number, boolean, ()=>void, ()=>void] {
-  const [currentWindowStart, setCurrentWindowStart] = useState<number>(0);
+  // TODO should probably change this to always 0 so we can style the init page
+  const init = process.env.NODE_ENV === 'development' ? (new Date()).getTime() : 0;
+  const [currentWindowStart, setCurrentWindowStart] = useState<number>(init);
   const [bankedSeconds, setBankedSeconds] = useState(0);
   const [totalSeconds, setTotalSeconds] = useState(0);
   useEventListener('blur', prodPause);
 
   function prodPause() {
-    if (!process.env.NODE_ENV || process.env.NODE_ENV !== 'development') {
+    if (process.env.NODE_ENV !== 'development') {
       pause();
     }
   }

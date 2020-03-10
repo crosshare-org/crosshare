@@ -11,7 +11,7 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 import { KeypressAction } from './Puzzle';
 import { TopBar, TopBarLink } from './TopBar';
-import { HEADER_FOOTER_HEIGHT, SMALL_AND_UP, LARGE_AND_UP } from './style';
+import { KEYBOARD_HEIGHT, HEADER_FOOTER_HEIGHT, SMALL_AND_UP, LARGE_AND_UP } from './style';
 
 interface TinyNavProps {
   children: React.ReactNode,
@@ -65,7 +65,7 @@ interface SquareAndColsProps {
   isTablet: boolean,
 }
 export const SquareAndCols = (props: SquareAndColsProps) => {
-  const keyboardHeight = props.showKeyboard ? 140 : 0;
+  const keyboardHeight = props.showKeyboard ? KEYBOARD_HEIGHT : 0;
   const heightAdjust = keyboardHeight + HEADER_FOOTER_HEIGHT;
 
   function layoutName(numeric: boolean, tablet: boolean) {
