@@ -126,11 +126,11 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           [SMALL_AND_UP]: {
             display: 'flex',
             width: '34vw',
-            height: 'calc(100vh - ' + heightAdjust + 'px)',
+            height: 'calc(100vh - ' + toolbarHeightAdjust + 'px)',
           },
           [LARGE_AND_UP]: {
             width: '50vw',
-            height: 'calc(100vh - ' + heightAdjust + 'px)',
+            height: 'calc(100vh - ' + toolbarHeightAdjust + 'px)',
 
           },
         }}>
