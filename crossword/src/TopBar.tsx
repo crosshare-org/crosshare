@@ -10,6 +10,7 @@ import {PRIMARY, HEADER_HEIGHT, SMALL_AND_UP} from './style'
 export const TopBarDropDown = (props: {text: string, icon: React.ReactNode, children: React.ReactNode}) => {
   return (
     <div title={props.text} css={{
+      zIndex: 10,
       height: '100%',
       backgroundColor: 'transparent',
       border: 'none',
@@ -17,7 +18,7 @@ export const TopBarDropDown = (props: {text: string, icon: React.ReactNode, chil
       textDecoration: 'none',
       display: 'inline',
       margin: 0,
-      padding: '0 0.5em',
+      padding: '0 0.45em',
       color: 'black',
       '&:hover, &:focus': {
         color: 'black',

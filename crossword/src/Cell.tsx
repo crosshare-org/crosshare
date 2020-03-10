@@ -67,12 +67,12 @@ export const Cell = React.memo((props: CellProps) => {
             top: 0,
             fontWeight: 'bold',
             lineHeight: '1em',
-            fontSize: 'calc(0.3 * min(87vh - ' + heightAdjust + 'px, 100vw) / ' + props.gridWidth + ')',
+            fontSize: 'calc(0.25 * min(87vh - ' + heightAdjust + 'px, 100vw) / ' + props.gridWidth + ')',
             [SMALL_AND_UP]: {
-              fontSize: 'calc(0.3 * min(100vh - ' + heightAdjust + 'px, 66vw) / ' + props.gridWidth + ')',
+              fontSize: 'calc(0.25 * min(100vh - ' + heightAdjust + 'px, 66vw) / ' + props.gridWidth + ')',
             },
             [LARGE_AND_UP]: {
-              fontSize: 'calc(0.3 * min(100vh - ' + heightAdjust + 'px, 50vw) / ' + props.gridWidth + ')',
+              fontSize: 'calc(0.25 * min(100vh - ' + heightAdjust + 'px, 50vw) / ' + props.gridWidth + ')',
             },
           }}>
           { props.wasRevealed ?
@@ -80,6 +80,7 @@ export const Cell = React.memo((props: CellProps) => {
             position: 'absolute',
             left: '1.85em',
             top: '-0.1em',
+            fontSize: '1.2em',
             color: '#4e61eb',
           }}><FaEye/></div> : "" }
           {props.number}</div>
@@ -125,7 +126,7 @@ export const Cell = React.memo((props: CellProps) => {
             backgroundColor: 'rgba(0,0,0,0.3)',
           }}></div> : ""}
           <div css={{
-            fontSize: 1.0 / Math.max(props.value.length - 0.5, 1) + 'em',
+            fontSize: 1.0 / Math.max(props.value.length - 0.4, 1) + 'em',
           }}>{props.value}</div>
           </div>
           </React.Fragment>
