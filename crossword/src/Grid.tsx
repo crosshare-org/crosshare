@@ -131,6 +131,10 @@ export class GridData {
     return pos.row * this.width + pos.col;
   }
 
+  posForIndex(index: number) {
+    return {col: index % this.width, row: Math.floor(index / this.width) % this.height};
+  }
+
   valAt(pos: Position) {
     return this.cells[this.cellIndex(pos)];
   }
@@ -198,6 +202,16 @@ export class GridData {
     }
     if (index > 0) {
       return {...entry.cells[index - 1], dir: pos.dir};
+    }
+    return pos;
+  }
+
+  nextNonBlock(pos: Position) {
+    const index = this.cellIndex(pos);
+    for (let offset = 0; offset < this.cells.length; offset += 1) {
+      if (this.cells[(index + offset) % this.cells.length] !== BLOCK) {
+        return this.posForIndex(index + offset);
+      }
     }
     return pos;
   }

@@ -1,4 +1,5 @@
 ## TODO
+- Accounts
 - Store solve state in browser data
 - Style pause/init page
 - Style home page
@@ -6,6 +7,9 @@
 - .puz import
 - Basic stats for a play and for constructors
 - Hide dropdown after click on element
+- Victory music / popup
+- Autocheck
+- Comments
 
 ## Available Scripts
 

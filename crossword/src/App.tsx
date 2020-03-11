@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 
-import { Router, RouteComponentProps, Link } from "@reach/router";
+import { Router, RouteComponentProps } from "@reach/router";
 
 import { PuzzleLoader } from './Puzzle';
 // import {PuzzleBuilder} from './PuzzleBuilder';
@@ -59,7 +59,14 @@ const PrivacyPolicy = (_: RouteComponentProps) => {
 }
 
 const Home = (_: RouteComponentProps) => {
-  return <Page>CROSSHARE is a not-for-profit community for crossword constructors. <Link to="/construct">Create a new crossword</Link></Page>;
+  return (
+    <Page>
+      <div css={{ margin: '1em', }}>
+        <p>CROSSHARE is a not-for-profit community for crossword constructors.</p>
+        <p>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>.</p>
+      </div>
+    </Page>
+  );
 }
 
 /*const firebaseConfig = {

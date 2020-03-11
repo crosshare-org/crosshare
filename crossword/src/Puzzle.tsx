@@ -208,6 +208,8 @@ interface PuzzleState {
   revealedCells: Set<number>,
   isEnteringRebus: boolean,
   rebusValue: string,
+  success: boolean,
+  filled: boolean,
 }
 
 export interface PuzzleAction {
@@ -397,6 +399,11 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
   return state;
 }
 
+function initialize(initialState: PuzzleState) {
+  console.log("initializing");
+  return {...initialState, active: {...initialState.grid.nextNonBlock(initialState.active), dir: Direction.Across}};
+}
+
 export const Puzzle = (props: PuzzleJson) => {
   const answers = props.grid;
   const [state, dispatch] = React.useReducer(reducer, {
@@ -420,7 +427,10 @@ export const Puzzle = (props: PuzzleJson) => {
     revealedCells: new Set<number>(),
     isEnteringRebus: false,
     rebusValue: '',
-  });
+    success: false,
+    filled: false,
+  }, initialize);
+  console.log(state.active);
 
   function physicalKeyboardHandler(e: React.KeyboardEvent) {
     if (e.metaKey || e.altKey || e.ctrlKey) {
@@ -430,6 +440,12 @@ export const Puzzle = (props: PuzzleJson) => {
     e.preventDefault();
   }
   useEventListener('keydown', physicalKeyboardHandler);
+
+  const [playedAudio, setPlayedAudio] = React.useState(false);
+  if (state.success && !playedAudio) {
+    setPlayedAudio(true);
+    new Audio(`${process.env.PUBLIC_URL}/success.mp3`).play();
+  }
 
   const [elapsed, isPaused, pause, resume] = useTimer();
   if (isPaused) {
