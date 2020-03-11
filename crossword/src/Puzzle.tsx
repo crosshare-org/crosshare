@@ -5,7 +5,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
-import { FaRegPlusSquare, FaPause, FaTabletAlt, FaKeyboard, FaEllipsisH, FaEye, FaCheckDouble } from 'react-icons/fa';
+import { FaRegPlusSquare, FaPause, FaTabletAlt, FaKeyboard, FaEllipsisH, FaEye, FaCheck, FaCheckSquare } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 
 import { useTimer } from './timer';
@@ -210,6 +210,7 @@ interface PuzzleState {
   rebusValue: string,
   success: boolean,
   filled: boolean,
+  autocheck: boolean,
 }
 
 export interface PuzzleAction {
@@ -258,48 +259,60 @@ function isCheatAction(action: PuzzleAction): action is CheatAction {
   return action.type === 'CHEAT'
 }
 
+function cheatCells(state: PuzzleState, cellsToCheck: Array<Position>, isReveal: boolean) {
+  const newRevealed = new Set(state.revealedCells);
+  const newVerified = new Set(state.verifiedCells);
+  const newWrong = new Set(state.wrongCells);
+  let grid = state.grid;
+
+  for (const cell of cellsToCheck) {
+    const cellIndex = state.grid.cellIndex(cell);
+    const shouldBe = state.answers[cellIndex];
+    if (shouldBe === BLOCK) {
+      continue;
+    }
+    const currentVal = state.grid.valAt(cell);
+    if (shouldBe === currentVal) {
+      newVerified.add(cellIndex);
+    } else if (isReveal) {
+      newRevealed.add(cellIndex);
+      newWrong.delete(cellIndex);
+      newVerified.add(cellIndex);
+      grid = grid.gridWithNewChar(cell, shouldBe);
+    } else if (currentVal.trim()) {
+      newWrong.add(cellIndex);
+    }
+  }
+  return ({ ...state, grid: grid, wrongCells: newWrong, revealedCells: newRevealed, verifiedCells: newVerified });
+}
+
+function cheat(state: PuzzleState, cheatUnit: CheatUnit, isReveal: boolean) {
+  let cellsToCheck: Array<Position> = [];
+  if (cheatUnit === CheatUnit.Square) {
+    cellsToCheck = [state.active];
+  } else if (cheatUnit === CheatUnit.Entry) {
+    const entry = state.grid.entryAtPosition(state.active)[0];
+    if (!entry) { //block?
+      return state;
+    }
+    cellsToCheck = entry.cells;
+  } else if (cheatUnit === CheatUnit.Puzzle) {
+    for (let rowidx = 0; rowidx < state.grid.height; rowidx += 1) {
+      for (let colidx = 0; colidx < state.grid.width; colidx += 1) {
+        cellsToCheck.push({ 'row': rowidx, 'col': colidx });
+      }
+    }
+  }
+  return cheatCells(state, cellsToCheck, isReveal);
+}
+
 function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
   if (isCheatAction(action)) {
-    let cellsToCheck: Array<Position> = [];
-    if (action.unit === CheatUnit.Square) {
-      cellsToCheck = [state.active];
-    } else if (action.unit === CheatUnit.Entry) {
-      const entry = state.grid.entryAtPosition(state.active)[0];
-      if (!entry) { //block?
-        return state;
-      }
-      cellsToCheck = entry.cells;
-    } else if (action.unit === CheatUnit.Puzzle) {
-      for (let rowidx = 0; rowidx < state.grid.height; rowidx += 1) {
-        for (let colidx = 0; colidx < state.grid.width; colidx += 1) {
-          cellsToCheck.push({ 'row': rowidx, 'col': colidx });
-        }
-      }
-    }
-    const newRevealed = new Set(state.revealedCells);
-    const newVerified = new Set(state.verifiedCells);
-    const newWrong = new Set(state.wrongCells);
-    let grid = state.grid;
-
-    for (const cell of cellsToCheck) {
-      const cellIndex = state.grid.cellIndex(cell);
-      const shouldBe = state.answers[cellIndex];
-      if (shouldBe === BLOCK) {
-        continue;
-      }
-      const currentVal = state.grid.valAt(cell);
-      if (shouldBe === currentVal) {
-        newVerified.add(cellIndex);
-      } else if (action.isReveal) {
-        newRevealed.add(cellIndex);
-        newWrong.delete(cellIndex);
-        newVerified.add(cellIndex);
-        grid = grid.gridWithNewChar(cell, shouldBe);
-      } else if (currentVal.trim()) {
-        newWrong.add(cellIndex);
-      }
-    }
-    return ({ ...state, grid: grid, wrongCells: newWrong, revealedCells: newRevealed, verifiedCells: newVerified });
+    return cheat(state, action.unit, action.isReveal === true);
+  }
+  if (action.type === "TOGGLEAUTOCHECK") {
+    state = cheat(state, CheatUnit.Puzzle, false);
+    return ({ ...state, autocheck: !state.autocheck });
   }
   if (action.type === "CHANGEDIRECTION") {
     return ({ ...state, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
@@ -340,6 +353,9 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
         const cellIndex = state.grid.cellIndex(state.active);
         state.grid = state.grid.gridWithNewChar(state.active, state.rebusValue);
         state.wrongCells.delete(cellIndex);
+        if (state.autocheck) {
+          state = cheat(state, CheatUnit.Square, false);
+        }
 
         return ({
           ...state,
@@ -378,8 +394,11 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
       const cellIndex = state.grid.cellIndex(state.active);
       if (!state.verifiedCells.has(cellIndex)) {
         state.grid = state.grid.gridWithNewChar(state.active, char);
+        state.wrongCells.delete(cellIndex);
+        if (state.autocheck) {
+          state = cheat(state, CheatUnit.Square, false);
+        }
       }
-      state.wrongCells.delete(cellIndex);
       return ({
         ...state,
         active: state.grid.advancePosition(state.active, state.wrongCells),
@@ -400,7 +419,7 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
 }
 
 function initialize(initialState: PuzzleState) {
-  return {...initialState, active: {...initialState.grid.nextNonBlock(initialState.active), dir: Direction.Across}};
+  return { ...initialState, active: { ...initialState.grid.nextNonBlock(initialState.active), dir: Direction.Across } };
 }
 
 export const Puzzle = (props: PuzzleJson) => {
@@ -428,6 +447,7 @@ export const Puzzle = (props: PuzzleJson) => {
     rebusValue: '',
     success: false,
     filled: false,
+    autocheck: false,
   }, initialize);
 
   function physicalKeyboardHandler(e: React.KeyboardEvent) {
@@ -480,11 +500,17 @@ export const Puzzle = (props: PuzzleJson) => {
           <TopBarDropDownLink text="Reveal Entry" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry, isReveal: true } as CheatAction)} />
           <TopBarDropDownLink text="Reveal Puzzle" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true } as CheatAction)} />
         </TopBarDropDown>
-        <TopBarDropDown icon={<FaCheckDouble />} text="Check">
-          <TopBarDropDownLink text="Check Square" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Square } as CheatAction)} />
-          <TopBarDropDownLink text="Check Entry" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry } as CheatAction)} />
-          <TopBarDropDownLink text="Check Puzzle" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Puzzle } as CheatAction)} />
-        </TopBarDropDown>
+        {
+          !state.autocheck ?
+            (<TopBarDropDown icon={<FaCheck />} text="Check">
+              <TopBarDropDownLink text="Autocheck" onClick={() => dispatch({ type: "TOGGLEAUTOCHECK" })} />
+              <TopBarDropDownLink text="Check Square" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Square } as CheatAction)} />
+              <TopBarDropDownLink text="Check Entry" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry } as CheatAction)} />
+              <TopBarDropDownLink text="Check Puzzle" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Puzzle } as CheatAction)} />
+            </TopBarDropDown>)
+            :
+            <TopBarLink icon={<FaCheckSquare />} text="Autochecking" onClick={() => dispatch({ type: "TOGGLEAUTOCHECK" })} />
+        }
         <TopBarDropDown icon={<FaEllipsisH />} text="More">
           <TopBarDropDownLink icon={<FaRegPlusSquare />} text="Enter Rebus (Esc)" onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
           <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />

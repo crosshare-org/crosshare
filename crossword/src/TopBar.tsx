@@ -103,7 +103,7 @@ export const TopBarLink = (props: {text: string, hoverText?: string, keepText?: 
       textDecoration: 'none',
       display: 'inline',
       margin: 0,
-      padding: '0 0.5em',
+      padding: '0 0.45em',
       color: 'black',
       '&:hover, &:focus': {
         color: 'black',
