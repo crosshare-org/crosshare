@@ -8,7 +8,6 @@
 - Basic stats for a play and for constructors
 - Hide dropdown after click on element
 - Victory popup
-- Stop timer on victory
 - Mute toggle (local storage)
 - 'One or more errors' popup
 - Comments

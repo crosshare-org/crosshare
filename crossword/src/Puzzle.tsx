@@ -370,12 +370,14 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
         return ({ ...state, rebusValue: state.rebusValue ? state.rebusValue.slice(0, -1) : "" });
       } else if (key === "Enter") {
         const cellIndex = state.grid.cellIndex(state.active);
-        state.grid = state.grid.gridWithNewChar(state.active, state.rebusValue);
-        state.wrongCells.delete(cellIndex);
-        if (state.autocheck) {
-          state = cheat(state, CheatUnit.Square, false);
+        if (!state.verifiedCells.has(cellIndex) && !state.success) {
+          state.grid = state.grid.gridWithNewChar(state.active, state.rebusValue);
+          state.wrongCells.delete(cellIndex);
+          if (state.autocheck) {
+            state = cheat(state, CheatUnit.Square, false);
+          }
+          state = checkComplete(state);
         }
-        state = checkComplete(state);
         return ({
           ...state,
           active: state.grid.advancePosition(state.active, state.wrongCells),
@@ -411,7 +413,7 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
     } else if (key.match(/^[A-Za-z0-9]$/)) {
       const char = key.toUpperCase();
       const cellIndex = state.grid.cellIndex(state.active);
-      if (!state.verifiedCells.has(cellIndex)) {
+      if (!state.verifiedCells.has(cellIndex) && !state.success) {
         state.grid = state.grid.gridWithNewChar(state.active, char);
         state.wrongCells.delete(cellIndex);
         if (state.autocheck) {
@@ -425,10 +427,9 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
       });
     } else if (key === "Backspace" || key === "{bksp}") {
       const cellIndex = state.grid.cellIndex(state.active);
-      if (!state.verifiedCells.has(cellIndex)) {
+      if (!state.verifiedCells.has(cellIndex) && !state.success) {
         state.grid = state.grid.gridWithNewChar(state.active, " ");
         state.filled = false;
-        state.success = false;
       }
       state.wrongCells.delete(cellIndex);
       return ({
@@ -488,7 +489,12 @@ export const Puzzle = (props: PuzzleJson) => {
   }
 
   const [elapsed, isPaused, pause, resume] = useTimer();
-  if (isPaused) {
+  React.useEffect(() => {
+    if (state.success) {
+      pause();
+    }
+  }, [state.success, pause]);
+  if (isPaused && !state.success) {
     if (elapsed === 0) {
       return <Page>Your crossword is loaded and ready to begin! <button onClick={resume}>Start Puzzle</button></Page>;
     }
