@@ -227,10 +227,7 @@ export class GridData {
         return {...cell, dir: pos.dir};
       }
     }
-    if (index + 1 < entry.cells.length) {
-      return {...entry.cells[index + 1], dir: pos.dir};
-    }
-    return pos;
+    return this.moveToNextEntry(pos);
   }
 
   entryAtPosition(pos: PosAndDir): [Entry | null, number] {
