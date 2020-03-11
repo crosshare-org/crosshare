@@ -12,7 +12,6 @@
 - Mute toggle (local storage)
 - 'One or more errors' popup
 - Comments
-- Dim completed clues in clue list
 
 ## Available Scripts
 

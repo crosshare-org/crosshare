@@ -57,6 +57,7 @@ interface ClueListItemProps {
   scrollToCross: boolean,
   direction: Direction,
   clue: string,
+  isCompleted: boolean,
 }
 const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemProps) => {
   const ref = React.useRef<HTMLLIElement>(null);
@@ -103,6 +104,7 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
       <div css={{
         flex: '1 1 auto',
         height: '100%',
+        color: props.isCompleted ? "#999" : "black",
       }}>{props.clue}</div>
     </li>
   );
@@ -167,6 +169,7 @@ const ClueList = (props: ClueListProps) => {
       isActive={props.current === entry.index}
       isCross={props.cross === entry.index}
       direction={entry.direction}
+      isCompleted={entry.isComplete}
       clue={entry.clue}
     />)
   });
