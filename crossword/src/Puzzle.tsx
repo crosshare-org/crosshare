@@ -400,7 +400,6 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
 }
 
 function initialize(initialState: PuzzleState) {
-  console.log("initializing");
   return {...initialState, active: {...initialState.grid.nextNonBlock(initialState.active), dir: Direction.Across}};
 }
 
@@ -430,7 +429,6 @@ export const Puzzle = (props: PuzzleJson) => {
     success: false,
     filled: false,
   }, initialize);
-  console.log(state.active);
 
   function physicalKeyboardHandler(e: React.KeyboardEvent) {
     if (e.metaKey || e.altKey || e.ctrlKey) {
