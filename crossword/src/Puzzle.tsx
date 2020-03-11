@@ -283,7 +283,7 @@ function cheatCells(state: PuzzleState, cellsToCheck: Array<Position>, isReveal:
       newWrong.add(cellIndex);
     }
   }
-  return ({ ...state, grid: grid, wrongCells: newWrong, revealedCells: newRevealed, verifiedCells: newVerified });
+  return (checkComplete({ ...state, grid: grid, wrongCells: newWrong, revealedCells: newRevealed, verifiedCells: newVerified }));
 }
 
 function cheat(state: PuzzleState, cheatUnit: CheatUnit, isReveal: boolean) {
@@ -304,6 +304,22 @@ function cheat(state: PuzzleState, cheatUnit: CheatUnit, isReveal: boolean) {
     }
   }
   return cheatCells(state, cellsToCheck, isReveal);
+}
+
+function checkComplete(state: PuzzleState) {
+  state.filled = true;
+  state.success = true;
+  for (let i = 0; i < state.grid.cells.length; i += 1) {
+    if (state.grid.cells[i].trim() === '') {
+      state.filled = false;
+      state.success = false;
+      break;
+    }
+    if (state.grid.cells[i] !== state.answers[i]) {
+      state.success = false;
+    }
+  }
+  return state;
 }
 
 function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
@@ -356,7 +372,7 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
         if (state.autocheck) {
           state = cheat(state, CheatUnit.Square, false);
         }
-
+        state = checkComplete(state);
         return ({
           ...state,
           active: state.grid.advancePosition(state.active, state.wrongCells),
@@ -398,6 +414,7 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
         if (state.autocheck) {
           state = cheat(state, CheatUnit.Square, false);
         }
+        state = checkComplete(state);
       }
       return ({
         ...state,
@@ -407,6 +424,8 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
       const cellIndex = state.grid.cellIndex(state.active);
       if (!state.verifiedCells.has(cellIndex)) {
         state.grid = state.grid.gridWithNewChar(state.active, " ");
+        state.filled = false;
+        state.success = false;
       }
       state.wrongCells.delete(cellIndex);
       return ({

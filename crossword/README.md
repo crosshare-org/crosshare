@@ -7,9 +7,11 @@
 - .puz import
 - Basic stats for a play and for constructors
 - Hide dropdown after click on element
-- Victory music / popup
-- Autocheck
+- Victory popup
+- Mute toggle (local storage)
+- One or more errors popup
 - Comments
+- Dim completed clues in clue list
 
 ## Available Scripts
 
