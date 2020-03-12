@@ -5,7 +5,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
-import { FaRegPlusSquare, FaPause, FaTabletAlt, FaKeyboard, FaEllipsisH, FaEye, FaCheck, FaCheckSquare } from 'react-icons/fa';
+import { FaVolumeUp, FaVolumeMute, FaRegPlusSquare, FaPause, FaTabletAlt, FaKeyboard, FaEllipsisH, FaEye, FaCheck, FaCheckSquare } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 
 import { useTimer } from './timer';
@@ -197,6 +197,21 @@ const ClueList = (props: ClueListProps) => {
       </div>
     </div>
   );
+}
+
+function usePersistedBoolean(key:string, defaultValue: boolean) {
+  const [state, setState] = React.useState();
+
+  React.useEffect(() => {
+    const initialValue = localStorage.getItem(key);
+    setState(initialValue !== null ? initialValue === "true" : defaultValue);
+  }, []);
+
+  const setStateAndPersist = (newValue: boolean) => {
+    localStorage.setItem(key, newValue ? "true" : "false");
+    setState(newValue);
+  }
+  return [state, setStateAndPersist];
 }
 
 interface PuzzleState {
@@ -473,6 +488,8 @@ export const Puzzle = (props: PuzzleJson) => {
     autocheck: false,
   }, initialize);
 
+  const [muted, setMuted] = usePersistedBoolean("muted", true);
+
   function physicalKeyboardHandler(e: React.KeyboardEvent) {
     if (e.metaKey || e.altKey || e.ctrlKey) {
       return;  // This way you can still do apple-R and such
@@ -485,7 +502,9 @@ export const Puzzle = (props: PuzzleJson) => {
   const [playedAudio, setPlayedAudio] = React.useState(false);
   if (state.success && !playedAudio) {
     setPlayedAudio(true);
-    new Audio(`${process.env.PUBLIC_URL}/success.mp3`).play();
+    if (!muted) {
+      new Audio(`${process.env.PUBLIC_URL}/success.mp3`).play();
+    }
   }
 
   const [elapsed, isPaused, pause, resume] = useTimer();
@@ -519,6 +538,7 @@ export const Puzzle = (props: PuzzleJson) => {
       (seconds < 10 ? "0" : "") + seconds;
   }
 
+  const showingKeyboard = state.showKeyboard && !state.success;
   return (
     <React.Fragment>
       <TopBar>
@@ -541,20 +561,26 @@ export const Puzzle = (props: PuzzleJson) => {
         }
         <TopBarDropDown icon={<FaEllipsisH />} text="More">
           <TopBarDropDownLink icon={<FaRegPlusSquare />} text="Enter Rebus (Esc)" onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
+          {
+            muted ?
+            <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
+            :
+            <TopBarDropDownLink icon={<FaVolumeMute />} text="Mute" onClick={() => setMuted(true)} />
+          }
           <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
           <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
         </TopBarDropDown>
       </TopBar>
       {state.isEnteringRebus ?
-        <RebusOverlay showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
+        <RebusOverlay showingKeyboard={showingKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
       <SquareAndCols
-        showKeyboard={state.showKeyboard}
+        showKeyboard={showingKeyboard}
         keyboardHandler={keyboardHandler}
         showExtraKeyLayout={state.showExtraKeyLayout}
         isTablet={state.isTablet}
         square={
           <Grid
-            showingKeyboard={state.showKeyboard}
+            showingKeyboard={showingKeyboard}
             grid={state.grid}
             active={state.active}
             dispatch={dispatch}

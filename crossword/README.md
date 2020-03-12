@@ -6,11 +6,11 @@
 - DB backend for puzzles, users, plays
 - .puz import
 - Basic stats for a play and for constructors
-- Hide dropdown after click on element
 - Victory popup
-- Mute toggle (local storage)
 - 'One or more errors' popup
 - Comments
+- Use overlay for pause
+- Use overlay for dropdown menus
 
 ## Available Scripts
 
