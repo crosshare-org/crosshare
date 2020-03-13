@@ -2,7 +2,6 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
-import lodash from 'lodash';
 
 import { Position, Direction, PosAndDir, BLOCK } from './types';
 import { Cell } from './Cell';
@@ -28,7 +27,7 @@ export class GridData {
     public readonly usedWords: Set<string>,
     public readonly entriesByCell: Array<Array<[number, number] | null>>,
     public readonly entries: Array<Entry>,
-    public readonly cellLabels: Map<string, number>,
+    public readonly cellLabels: Map<number, number>,
     public readonly allowBlockEditing: boolean,
     public readonly acrossClues: Array<string>,
     public readonly downClues: Array<string>,
@@ -47,7 +46,7 @@ export class GridData {
     let entriesByCell: Array<Array<[number, number] | null>> = new Array(cells.length);
     let entries = [];
     let usedWords: Set<string> = new Set();
-    let cellLabels = new Map<string, number>();
+    let cellLabels = new Map<number, number>();
     let currentCellLabel = 1;
 
     let clues = [new Map<number, string>(), new Map<number, string>()];
@@ -83,9 +82,9 @@ export class GridData {
           if (!isEntryStart) {
             continue
           }
-          let entryLabel = cellLabels.get(y + "-" + x) || currentCellLabel;
-          if (!cellLabels.has(y + "-" + x)) {
-            cellLabels.set(y + "-" + x, currentCellLabel);
+          let entryLabel = cellLabels.get(i) || currentCellLabel;
+          if (!cellLabels.has(i)) {
+            cellLabels.set(i, currentCellLabel);
             currentCellLabel += 1;
           }
           let entryClue = clues[dir].get(entryLabel);
@@ -357,10 +356,6 @@ export class GridData {
     // TODO - can we prevent some re-init here?
     return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing, this.acrossClues, this.downClues, this.highlighted, this.highlight);
   }
-
-  rows() {
-    return lodash.chunk(this.cells, this.width);
-  }
 }
 
 type GridProps = {
@@ -381,39 +376,33 @@ export const Grid = ({ showingKeyboard, active, dispatch, grid, ...props}: GridP
   const changeDirection = React.useCallback(() => dispatch({type: "CHANGEDIRECTION"} as PuzzleAction), [dispatch]);
 
   let cells = new Array<React.ReactNode>();
-  let rows = grid.rows()
-  for (let row_idx = 0; row_idx < rows.length; row_idx += 1) {
-    const row = rows[row_idx];
-    for (let col_idx = 0; col_idx < row.length; col_idx += 1) {
-      const cellIndex = row_idx * grid.width + col_idx;
-      const cellValue = row[col_idx];
-      const key = row_idx + "-" + col_idx
-      const number = grid.cellLabels.get(key);
-      const isActive = active.row === row_idx && active.col === col_idx;
-      var onClick = changeActive;
-      if (cellValue === BLOCK) {
-        onClick = noOp;
-      } else if (isActive) {
-        onClick = changeDirection;
-      }
-      cells.push(<Cell
-        showingKeyboard={showingKeyboard}
-        gridWidth={grid.width}
-        active={isActive}
-        entryCell={entryCells.some((p) => p.row === row_idx && p.col === col_idx)}
-        key={key}
-        number={number ? number.toString() : ""}
-        row={row_idx}
-        column={col_idx}
-        onClick={onClick}
-        value={cellValue}
-        isBlock={cellValue === BLOCK}
-        isVerified={props.verifiedCells.has(cellIndex)}
-        isWrong={props.wrongCells.has(cellIndex)}
-        wasRevealed={props.revealedCells.has(cellIndex)}
-        highlight={grid.highlighted.has(cellIndex) ? grid.highlight : null}
-      />);
+  for (let cellIndex = 0; cellIndex < grid.cells.length; cellIndex += 1) {
+    const cellValue = grid.cells[cellIndex];
+    const number = grid.cellLabels.get(cellIndex);
+    const isActive = grid.cellIndex(active) === cellIndex;
+    var onClick = changeActive;
+    if (cellValue === BLOCK) {
+      onClick = noOp;
+    } else if (isActive) {
+      onClick = changeDirection;
     }
+    cells.push(<Cell
+      showingKeyboard={showingKeyboard}
+      gridWidth={grid.width}
+      active={isActive}
+      entryCell={entryCells.some((p) => grid.cellIndex(p) === cellIndex)}
+      key={cellIndex}
+      number={number ? number.toString() : ""}
+      row={Math.floor(cellIndex / grid.width)}
+      column={cellIndex % grid.width}
+      onClick={onClick}
+      value={cellValue}
+      isBlock={cellValue === BLOCK}
+      isVerified={props.verifiedCells.has(cellIndex)}
+      isWrong={props.wrongCells.has(cellIndex)}
+      wasRevealed={props.revealedCells.has(cellIndex)}
+      highlight={grid.highlighted.has(cellIndex) ? grid.highlight : null}
+    />);
   }
   return <React.Fragment>{cells}</React.Fragment>;
 }
