@@ -6,6 +6,7 @@ import axios from 'axios';
 import { RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
 import { FaVolumeUp, FaVolumeMute, FaRegPlusSquare, FaPause, FaTabletAlt, FaKeyboard, FaEllipsisH, FaEye, FaCheck, FaCheckSquare } from 'react-icons/fa';
+import { IoMdCloseCircleOutline, } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 
 import { useTimer } from './timer';
@@ -49,6 +50,7 @@ export const PuzzleLoader = ({ crosswordId }: PuzzleProps) => {
 }
 
 interface ClueListItemProps {
+  conceal: boolean,
   labelNumber: number,
   dispatch: React.Dispatch<ClickedEntryAction>,
   entryIndex: number,
@@ -104,36 +106,98 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
       <div css={{
         flex: '1 1 auto',
         height: '100%',
-        color: props.isCompleted ? "#999" : "black",
+        color: props.conceal ? 'transparent' : (props.isCompleted ? "#999" : "black"),
+        textShadow: props.conceal ? '0 0 1em rgba(0,0,0,0.8)' : '',
       }}>{props.clue}</div>
     </li>
   );
 });
 
+const Overlay = (props: {closeCallback: () => void, showingKeyboard: boolean, children: React.ReactNode}) => {
+  return (<div css={{
+    position: 'fixed',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: props.showingKeyboard ? 'calc(100% - ' + KEYBOARD_HEIGHT + 'px)' : '100%',
+    zIndex: 10000,
+    textAlign: 'center'
+  }}>
+  <div css={{
+    position: 'relative',
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignContent: 'center',
+    alignItems: 'stretch',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '80%',
+    height: '10em',
+    backgroundColor: 'white',
+    margin: '5em auto',
+  }}>
+  <button css={{
+    background: 'white',
+    border: 'none',
+    position: 'absolute',
+    padding: 0,
+    fontSize: '3em',
+    verticalAlign: 'text-top',
+    width: '1em',
+    height: '1em',
+    top: '0.1em',
+    right: '0.1em',
+  }} onClick={props.closeCallback}><IoMdCloseCircleOutline css={{position: 'absolute', top: 0, right: 0 }}/></button>
+  {props.children}
+  </div>
+  </div>);
+};
+
+const BeginPuzzleOverlay = (props: {dismiss: () => void}) => {
+  return (
+    <Overlay showingKeyboard={false} closeCallback={props.dismiss}>
+      <h4 css={{width: '100%'}}>Ready to get started?</h4>
+      <button onClick={props.dismiss}>Begin Puzzle</button>
+    </Overlay>
+  );
+}
+
+const PausedOverlay = (props: {dismiss: () => void}) => {
+  return (
+    <Overlay showingKeyboard={false} closeCallback={props.dismiss}>
+      <h4 css={{width: '100%'}}>Your puzzle is paused</h4>
+      <button onClick={props.dismiss}>Resume</button>
+    </Overlay>
+  );
+}
+
+const KeepTryingOverlay = ({dispatch}: {dispatch: React.Dispatch<PuzzleAction>}) => {
+  return (
+    <Overlay showingKeyboard={false} closeCallback={() => dispatch({type: "DISMISSKEEPTRYING"})}>
+    <div css={{position: 'relative'}}>
+    <h4 css={{width: '100%'}}>Almost there!</h4>
+    <p css={{width: '100%'}}>You've completed the puzzle, but there are one or more mistakes.</p>
+    <button onClick={() => dispatch({type: "DISMISSKEEPTRYING"})}>Keep Trying</button>
+    </div>
+    </Overlay>
+  );
+}
+
+const SuccessOverlay = (props: {solveTime: number, dispatch: React.Dispatch<PuzzleAction>}) => {
+  return (
+    <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({type: "DISMISSSUCCESS"})}>
+    <div css={{position: 'relative'}}>
+    <h4 css={{width: '100%'}}>Congratulations!</h4>
+    <p css={{width: '100%'}}>You solved the puzzle in <b>{timeString(props.solveTime)}</b></p>
+    </div>
+    </Overlay>
+  );
+}
+
 const RebusOverlay = (props: { showingKeyboard: boolean, value: string, dispatch: React.Dispatch<KeypressAction> }) => {
   return (
-    <div css={{
-      position: 'fixed',
-      backgroundColor: 'rgba(0,0,0,0.7)',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: props.showingKeyboard ? 'calc(100% - ' + KEYBOARD_HEIGHT + 'px)' : '100%',
-      zIndex: 10000,
-      textAlign: 'center'
-    }}>
-      <div css={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignContent: 'center',
-        alignItems: 'stretch',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        width: '80%',
-        height: '10em',
-        backgroundColor: 'white',
-        margin: '5em auto',
-      }}>
+    <Overlay showingKeyboard={props.showingKeyboard} closeCallback={() => props.dispatch({ type: "KEYPRESS", key: 'Escape', shift: false })}>
         <div css={{
           color: props.value ? 'black' : '#999',
           padding: '0.5em',
@@ -145,12 +209,12 @@ const RebusOverlay = (props: { showingKeyboard: boolean, value: string, dispatch
         </div>
         <button onClick={() => props.dispatch({ type: "KEYPRESS", key: 'Escape', shift: false })} css={{ marginBottom: '1em', width: '40%' }}>Cancel</button>
         <button onClick={() => props.dispatch({ type: "KEYPRESS", key: 'Enter', shift: false })} css={{ marginBottom: '1em', width: '40%' }}>Enter Rebus</button>
-      </div>
-    </div>
+    </Overlay>
   );
 }
 
 interface ClueListProps {
+  conceal: boolean,
   header?: string,
   current: number,
   cross: number,
@@ -161,6 +225,7 @@ interface ClueListProps {
 const ClueList = (props: ClueListProps) => {
   const clues = props.entries.map((entry) => {
     return (<ClueListItem
+      conceal={props.conceal}
       key={entry.index}
       scrollToCross={props.scrollToCross}
       labelNumber={entry.labelNumber}
@@ -229,6 +294,8 @@ interface PuzzleState {
   success: boolean,
   filled: boolean,
   autocheck: boolean,
+  dismissedKeepTrying: boolean,
+  dismissedSuccess: boolean,
 }
 
 export interface PuzzleAction {
@@ -357,6 +424,12 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
   if (action.type === "TOGGLETABLET") {
     return ({ ...state, isTablet: !state.isTablet });
   }
+  if (action.type === "DISMISSKEEPTRYING") {
+    return ({ ...state, dismissedKeepTrying: true });
+  }
+  if (action.type === "DISMISSSUCCESS") {
+    return ({ ...state, dismissedSuccess: true });
+  }
   if (isClickedEntryAction(action)) {
     const clickedEntry = state.grid.entries[action.entryIndex];
     for (let cell of clickedEntry.cells) {
@@ -460,6 +533,15 @@ function initialize(initialState: PuzzleState) {
   return { ...initialState, active: { ...initialState.grid.nextNonBlock(initialState.active), dir: Direction.Across } };
 }
 
+function timeString(elapsed: number): string {
+  const hours = Math.floor(elapsed / 3600);
+  const minutes = Math.floor((elapsed - (hours * 3600)) / 60);
+  const seconds = Math.floor(elapsed - (hours * 3600) - (minutes * 60));
+  return hours + ':' +
+    (minutes < 10 ? "0" : "") + minutes + ':' +
+    (seconds < 10 ? "0" : "") + seconds;
+}
+
 export const Puzzle = (props: PuzzleJson) => {
   const answers = props.grid;
   const [state, dispatch] = React.useReducer(reducer, {
@@ -486,6 +568,8 @@ export const Puzzle = (props: PuzzleJson) => {
     success: false,
     filled: false,
     autocheck: false,
+    dismissedKeepTrying: false,
+    dismissedSuccess: false,
   }, initialize);
 
   const [muted, setMuted] = usePersistedBoolean("muted", true);
@@ -513,12 +597,6 @@ export const Puzzle = (props: PuzzleJson) => {
       pause();
     }
   }, [state.success, pause]);
-  if (isPaused && !state.success) {
-    if (elapsed === 0) {
-      return <Page>Your crossword is loaded and ready to begin! <button onClick={resume}>Start Puzzle</button></Page>;
-    }
-    return <Page>Your game is paused. <button onClick={resume}>Resume</button></Page>;
-  }
 
   const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
 
@@ -527,15 +605,6 @@ export const Puzzle = (props: PuzzleJson) => {
 
   function keyboardHandler(key: string) {
     dispatch({ type: "KEYPRESS", key: key, shift: false } as KeypressAction);
-  }
-
-  function timeString(elapsed: number): string {
-    const hours = Math.floor(elapsed / 3600);
-    const minutes = Math.floor((elapsed - (hours * 3600)) / 60);
-    const seconds = Math.floor(elapsed - (hours * 3600) - (minutes * 60));
-    return hours + ':' +
-      (minutes < 10 ? "0" : "") + minutes + ':' +
-      (seconds < 10 ? "0" : "") + seconds;
   }
 
   const showingKeyboard = state.showKeyboard && !state.success;
@@ -573,6 +642,19 @@ export const Puzzle = (props: PuzzleJson) => {
       </TopBar>
       {state.isEnteringRebus ?
         <RebusOverlay showingKeyboard={showingKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
+      {state.filled && !state.success && !state.dismissedKeepTrying ?
+        <KeepTryingOverlay dispatch={dispatch}/>
+      :""}
+      {state.success && !state.dismissedSuccess ?
+        <SuccessOverlay solveTime={elapsed} dispatch={dispatch}/>
+      :""}
+      {isPaused && !state.success ?
+        (elapsed === 0 ?
+          <BeginPuzzleOverlay dismiss={resume}/>
+          :
+          <PausedOverlay dismiss={resume}/>
+        )
+      :""}
       <SquareAndCols
         showKeyboard={showingKeyboard}
         keyboardHandler={keyboardHandler}
@@ -589,9 +671,9 @@ export const Puzzle = (props: PuzzleJson) => {
             wrongCells={state.wrongCells}
           />
         }
-        left={<ClueList header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
-        right={<ClueList header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
-        tinyColumn={<TinyNav dispatch={dispatch}><ClueList entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
+        left={<ClueList conceal={isPaused && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
+        right={<ClueList conceal={isPaused && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
+        tinyColumn={<TinyNav dispatch={dispatch}><ClueList conceal={isPaused && !state.success} entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
       />
     </React.Fragment>
   )
