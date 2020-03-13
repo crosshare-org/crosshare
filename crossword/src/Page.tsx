@@ -81,6 +81,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
   return (
     <React.Fragment>
       <div css={{
+        touchAction: 'manipulation',
         display: 'flex',
         flexDirection: 'column',
         [SMALL_AND_UP]: {

@@ -1,7 +1,6 @@
 ## TODO
 - Accounts
 - Store solve state in browser data
-- Style home page
 - DB backend for puzzles, users, plays
 - .puz import
 - Basic stats for a play and for constructors
