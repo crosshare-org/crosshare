@@ -133,7 +133,7 @@ const Overlay = (props: {closeCallback: () => void, showingKeyboard: boolean, ch
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     width: '80%',
-    height: '10em',
+    padding: '3em 1em',
     backgroundColor: 'white',
     margin: '5em auto',
   }}>
@@ -146,8 +146,8 @@ const Overlay = (props: {closeCallback: () => void, showingKeyboard: boolean, ch
     verticalAlign: 'text-top',
     width: '1em',
     height: '1em',
-    top: '0.1em',
-    right: '0.1em',
+    top: 0,
+    right: 0,
   }} onClick={props.closeCallback}><IoMdCloseCircleOutline css={{position: 'absolute', top: 0, right: 0 }}/></button>
   {props.children}
   </div>
@@ -200,7 +200,8 @@ const RebusOverlay = (props: { showingKeyboard: boolean, value: string, dispatch
     <Overlay showingKeyboard={props.showingKeyboard} closeCallback={() => props.dispatch({ type: "KEYPRESS", key: 'Escape', shift: false })}>
         <div css={{
           color: props.value ? 'black' : '#999',
-          padding: '0.5em',
+          margin: '0.5em 0',
+
           fontSize: '2.5em',
           lineHeight: '1em',
           width: '100%',
