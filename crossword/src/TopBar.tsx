@@ -4,56 +4,19 @@ import * as React from 'react';
 
 import { Link, RouteComponentProps } from "@reach/router";
 
+import { Overlay } from './Overlay';
 import logo from './crosshare.png';
 import {PRIMARY, HEADER_HEIGHT, SMALL_AND_UP} from './style'
 
 export const TopBarDropDown = (props: {text: string, icon: React.ReactNode, children: React.ReactNode}) => {
+  const [dropped, setDropped] = React.useState(false);
   return (
-    <div title={props.text} css={{
-      zIndex: 10,
-      height: '100%',
-      backgroundColor: 'transparent',
-      border: 'none',
-      cursor: 'pointer',
-      textDecoration: 'none',
-      display: 'inline',
-      margin: 0,
-      padding: '0 0.45em',
-      color: 'black',
-      '&:hover, &:focus': {
-        color: 'black',
-        textDecoration: 'none',
-        backgroundColor: 'rgba(0,0,0,0.1)',
-      },
-      '&:hover div': {
-        display: 'block',
-      },
-    }}>
-    <span css={{
-      verticalAlign: 'middle',
-      fontSize: HEADER_HEIGHT - 10,
-    }}>{props.icon}</span>
-    <span css={{
-      marginLeft: '5px',
-      verticalAlign: 'middle',
-      display: 'none',
-      fontSize: HEADER_HEIGHT - 20,
-      [SMALL_AND_UP]: {
-        display: 'inline-block',
-      }
-    }}>{props.text}</span>
-    <div css={{
-      display: 'none',
-      position: 'absolute',
-      right: 0,
-      top: HEADER_HEIGHT,
-      backgroundColor: 'white',
-      minWidth: 160,
-      boxShadow: '0px 8px 16px 0px rgba(0,0,0,0.2)',
-      zIndex: 1,
-    }}>{props.children}
-    </div>
-    </div>
+    <React.Fragment>
+      <TopBarLink onClick={() => setDropped(!dropped)} text={props.text} icon={props.icon} />
+      <Overlay onClick={() => setDropped(false)} showingKeyboard={false} closeCallback={() => setDropped(false)} hidden={!dropped}>
+        {props.children}
+      </Overlay>
+    </React.Fragment>
   );
 }
 
@@ -77,7 +40,7 @@ export const TopBarDropDownLink = (props: {text: string, icon?: React.ReactNode,
     }} onClick={props.onClick}>
     { props.icon ?
       <span css={{
-        verticalAlign: 'middle',
+        verticalAlign: 'baseline',
         fontSize: HEADER_HEIGHT - 10,
       }}>{props.icon}</span>
       : ""
@@ -112,7 +75,7 @@ export const TopBarLink = (props: {text: string, hoverText?: string, keepText?: 
       },
     }} onClick={props.onClick}>
     <span css={{
-      verticalAlign: 'middle',
+      verticalAlign: 'baseline',
       fontSize: HEADER_HEIGHT - 10,
     }}>{props.icon}</span>
     <span css={{

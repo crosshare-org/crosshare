@@ -5,10 +5,8 @@
 - DB backend for puzzles, users, plays
 - .puz import
 - Basic stats for a play and for constructors
-- Victory popup
-- 'One or more errors' popup
 - Comments
-- Use overlay for dropdown menus
+- Pause for 'keep trying' popup?
 
 ## Available Scripts
 

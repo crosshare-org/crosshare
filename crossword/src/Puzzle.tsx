@@ -6,15 +6,15 @@ import axios from 'axios';
 import { RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
 import { FaVolumeUp, FaVolumeMute, FaRegPlusSquare, FaPause, FaTabletAlt, FaKeyboard, FaEllipsisH, FaEye, FaCheck, FaCheckSquare } from 'react-icons/fa';
-import { IoMdCloseCircleOutline, } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 
 import { useTimer } from './timer';
+import { Overlay } from './Overlay';
 import { Grid, Entry, GridData } from './Grid';
 import { PosAndDir, Position, Direction, BLOCK, PuzzleJson } from './types';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
-import { SECONDARY, LIGHTER, SMALL_AND_UP, KEYBOARD_HEIGHT } from './style'
+import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style'
 
 interface PuzzleProps extends RouteComponentProps {
   crosswordId?: string
@@ -112,47 +112,6 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
     </li>
   );
 });
-
-const Overlay = (props: {closeCallback: () => void, showingKeyboard: boolean, children: React.ReactNode}) => {
-  return (<div css={{
-    position: 'fixed',
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: props.showingKeyboard ? 'calc(100% - ' + KEYBOARD_HEIGHT + 'px)' : '100%',
-    zIndex: 10000,
-    textAlign: 'center'
-  }}>
-  <div css={{
-    position: 'relative',
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignContent: 'center',
-    alignItems: 'stretch',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    width: '80%',
-    padding: '3em 1em',
-    backgroundColor: 'white',
-    margin: '5em auto',
-  }}>
-  <button css={{
-    background: 'white',
-    border: 'none',
-    position: 'absolute',
-    padding: 0,
-    fontSize: '3em',
-    verticalAlign: 'text-top',
-    width: '1em',
-    height: '1em',
-    top: 0,
-    right: 0,
-  }} onClick={props.closeCallback}><IoMdCloseCircleOutline css={{position: 'absolute', top: 0, right: 0 }}/></button>
-  {props.children}
-  </div>
-  </div>);
-};
 
 const BeginPuzzleOverlay = (props: {dismiss: () => void}) => {
   return (
