@@ -175,22 +175,22 @@ const PausedOverlay = (props: {dismiss: () => void}) => {
 const KeepTryingOverlay = ({dispatch}: {dispatch: React.Dispatch<PuzzleAction>}) => {
   return (
     <Overlay showingKeyboard={false} closeCallback={() => dispatch({type: "DISMISSKEEPTRYING"})}>
-    <div css={{position: 'relative'}}>
     <h4 css={{width: '100%'}}>Almost there!</h4>
     <p css={{width: '100%'}}>You've completed the puzzle, but there are one or more mistakes.</p>
     <button onClick={() => dispatch({type: "DISMISSKEEPTRYING"})}>Keep Trying</button>
-    </div>
     </Overlay>
   );
 }
 
-const SuccessOverlay = (props: {solveTime: number, dispatch: React.Dispatch<PuzzleAction>}) => {
+const SuccessOverlay = (props: {isMuted: boolean, unMuteCallback: () => void, solveTime: number, dispatch: React.Dispatch<PuzzleAction>}) => {
   return (
     <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({type: "DISMISSSUCCESS"})}>
-    <div css={{position: 'relative'}}>
     <h4 css={{width: '100%'}}>Congratulations!</h4>
     <p css={{width: '100%'}}>You solved the puzzle in <b>{timeString(props.solveTime)}</b></p>
-    </div>
+    {props.isMuted?
+      <button onClick={props.unMuteCallback}><FaVolumeUp/> Unmute Success Music</button>
+      :""
+    }
     </Overlay>
   );
 }
@@ -584,10 +584,13 @@ export const Puzzle = (props: PuzzleJson) => {
   useEventListener('keydown', physicalKeyboardHandler);
 
   const [playedAudio, setPlayedAudio] = React.useState(false);
+  function playAudio() {
+    new Audio(`${process.env.PUBLIC_URL}/success.mp3`).play();
+  }
   if (state.success && !playedAudio) {
     setPlayedAudio(true);
     if (!muted) {
-      new Audio(`${process.env.PUBLIC_URL}/success.mp3`).play();
+      playAudio();
     }
   }
 
@@ -646,7 +649,7 @@ export const Puzzle = (props: PuzzleJson) => {
         <KeepTryingOverlay dispatch={dispatch}/>
       :""}
       {state.success && !state.dismissedSuccess ?
-        <SuccessOverlay solveTime={elapsed} dispatch={dispatch}/>
+        <SuccessOverlay isMuted={muted} unMuteCallback={() => {setMuted(false);setPlayedAudio(true);playAudio();}} solveTime={elapsed} dispatch={dispatch}/>
       :""}
       {isPaused && !state.success ?
         (elapsed === 0 ?

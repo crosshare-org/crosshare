@@ -1,7 +1,6 @@
 ## TODO
 - Accounts
 - Store solve state in browser data
-- Style pause/init page
 - Style home page
 - DB backend for puzzles, users, plays
 - .puz import
@@ -9,7 +8,6 @@
 - Victory popup
 - 'One or more errors' popup
 - Comments
-- Use overlay for pause
 - Use overlay for dropdown menus
 
 ## Available Scripts
