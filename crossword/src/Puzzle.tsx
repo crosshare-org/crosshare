@@ -14,7 +14,8 @@ import { Grid, Entry, GridData } from './Grid';
 import { PosAndDir, Position, Direction, BLOCK, PuzzleJson } from './types';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
-import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style'
+import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style';
+
 
 interface PuzzleProps extends RouteComponentProps {
   crosswordId?: string

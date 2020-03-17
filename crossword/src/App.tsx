@@ -6,6 +6,7 @@ import { Router, RouteComponentProps } from "@reach/router";
 import { PuzzleLoader } from './Puzzle';
 // import {PuzzleBuilder} from './PuzzleBuilder';
 import { Page, SquareTest } from './Page';
+import { AccountPage } from './AccountPage';
 
 const NotFound = (_: RouteComponentProps) => {
   return <Page> not found :(</Page>;
@@ -69,21 +70,11 @@ const Home = (_: RouteComponentProps) => {
   );
 }
 
-/*const firebaseConfig = {
-  apiKey: "AIzaSyBrmmBf91peVT5T_Z7N3z9oizsPH5u2pUc",
-  authDomain: "mdcrosshare.firebaseapp.com",
-  databaseURL: "https://mdcrosshare.firebaseio.com",
-  projectId: "mdcrosshare",
-  storageBucket: "mdcrosshare.appspot.com",
-  messagingSenderId: "603173482014",
-  appId: "1:603173482014:web:98d7d820731b7c5eaa080f",
-  measurementId: "G-LTLN7Z4XBS"
-};*/
-
 const App = () => {
   return (
     <Router css={{height: '100%', width: '100%',}}>
       <Home path="/" />
+      <AccountPage path="/account" />
       <PuzzleLoader path="/crosswords/:crosswordId" />
       <SquareTest path="/square" />
       <TermsOfService path="/tos" />
