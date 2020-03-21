@@ -5,3 +5,4 @@ _db.json
 cluedata
 .DS*
 .firebase
+serviceAccountKey.json

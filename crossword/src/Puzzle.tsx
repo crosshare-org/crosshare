@@ -8,6 +8,7 @@ import { isMobile, isTablet } from "react-device-detect";
 import { FaVolumeUp, FaVolumeMute, FaRegPlusSquare, FaPause, FaTabletAlt, FaKeyboard, FaEllipsisH, FaEye, FaCheck, FaCheckSquare } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 
+import { requiresAuth } from './App';
 import { useTimer } from './timer';
 import { Overlay } from './Overlay';
 import { Grid, Entry, GridData } from './Grid';
@@ -231,7 +232,7 @@ function usePersistedBoolean(key:string, defaultValue: boolean) {
   React.useEffect(() => {
     const initialValue = localStorage.getItem(key);
     setState(initialValue !== null ? initialValue === "true" : defaultValue);
-  }, []);
+  }, [defaultValue, key]);
 
   const setStateAndPersist = (newValue: boolean) => {
     localStorage.setItem(key, newValue ? "true" : "false");
@@ -503,7 +504,7 @@ function timeString(elapsed: number): string {
     (seconds < 10 ? "0" : "") + seconds;
 }
 
-export const Puzzle = (props: PuzzleJson) => {
+export const Puzzle = requiresAuth((props: PuzzleJson) => {
   const answers = props.grid;
   const [state, dispatch] = React.useReducer(reducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
@@ -641,4 +642,4 @@ export const Puzzle = (props: PuzzleJson) => {
       />
     </React.Fragment>
   )
-}
+});

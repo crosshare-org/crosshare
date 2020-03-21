@@ -1,12 +1,51 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
+import * as React from 'react';
 
 import { Router, RouteComponentProps } from "@reach/router";
+import { useAuthState } from 'react-firebase-hooks/auth';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import { firebaseConfig, firebaseUiConfig } from './config';
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
 import { PuzzleLoader } from './Puzzle';
 // import {PuzzleBuilder} from './PuzzleBuilder';
 import { Page, SquareTest } from './Page';
 import { AccountPage } from './AccountPage';
+
+
+interface AuthContextValue {
+  user: firebase.User | undefined,
+  loadingUser: boolean,
+  error: string | undefined
+}
+
+export const AuthContext = React.createContext({user:undefined,loadingUser:false,error:"using default context"} as AuthContextValue);
+firebase.initializeApp(firebaseConfig);
+
+export function requiresAuth<T>(WrappedComponent: React.ComponentType<T>) {
+  return (props: T) => {
+    const {user, loadingUser, error} = React.useContext(AuthContext);
+    if (loadingUser) {
+      return <Page>Loading user...</Page>;
+    }
+    if (error) {
+      return <Page>Error loading user: {error}</Page>;
+    }
+    if (user && user.email) {
+      return <WrappedComponent user={user} {...props}/>
+    };
+    return (
+      <Page>
+      <div css={{ margin: '1em', }}>
+      <p>Please sign-in to continue. We require a sign-in so that we can keep track of the puzzles you've solved and your stats.</p>
+      <StyledFirebaseAuth uiConfig={firebaseUiConfig} firebaseAuth={firebase.auth()}/>
+      </div>
+      </Page>
+    );
+  }
+}
 
 const NotFound = (_: RouteComponentProps) => {
   return <Page> not found :(</Page>;
@@ -71,7 +110,9 @@ const Home = (_: RouteComponentProps) => {
 }
 
 const App = () => {
+  const [user, loadingUser, error] = useAuthState(firebase.auth());
   return (
+    <AuthContext.Provider value={{user: user, loadingUser: loadingUser, error: error?.message}}>
     <Router css={{height: '100%', width: '100%',}}>
       <Home path="/" />
       <AccountPage path="/account" />
@@ -81,6 +122,7 @@ const App = () => {
       <PrivacyPolicy path="/privacy" />
       <NotFound default />
     </Router>
+    </AuthContext.Provider>
   );
 }
 
