@@ -13,6 +13,7 @@ import { PuzzleLoader } from './Puzzle';
 // import {PuzzleBuilder} from './PuzzleBuilder';
 import { Page, SquareTest } from './Page';
 import { AccountPage } from './AccountPage';
+import { Admin } from './Admin';
 
 
 interface AuthContextValue {
@@ -35,6 +36,46 @@ export function requiresAuth<T>(WrappedComponent: React.ComponentType<T>) {
     }
     if (user && user.email) {
       return <WrappedComponent user={user} {...props}/>
+    };
+    return (
+      <Page>
+      <div css={{ margin: '1em', }}>
+      <p>Please sign-in to continue. We require a sign-in so that we can keep track of the puzzles you've solved and your stats.</p>
+      <StyledFirebaseAuth uiConfig={firebaseUiConfig} firebaseAuth={firebase.auth()}/>
+      </div>
+      </Page>
+    );
+  }
+}
+
+export function requiresAdmin<T>(WrappedComponent: React.ComponentType<T>) {
+  return (props: T) => {
+    const [isAdmin, setIsAdmin] = React.useState(false);
+    const {user, loadingUser, error} = React.useContext(AuthContext);
+    if (loadingUser) {
+      return <Page>Loading user...</Page>;
+    }
+    if (error) {
+      return <Page>Error loading user: {error}</Page>;
+    }
+    if (user && user.email) {
+      user.getIdTokenResult()
+      .then((idTokenResult) => {
+        if (!!idTokenResult.claims.admin) {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+      })
+      .catch((error) => {
+        setIsAdmin(false);
+        console.log(error);
+      });
+      if (isAdmin) {
+        return <WrappedComponent user={user} {...props}/>;
+      } else {
+        return <Page>Must be an admin to view this page.</Page>;
+      }
     };
     return (
       <Page>
@@ -116,6 +157,7 @@ const App = () => {
     <Router css={{height: '100%', width: '100%',}}>
       <Home path="/" />
       <AccountPage path="/account" />
+      <Admin path="/admin" />
       <PuzzleLoader path="/crosswords/:crosswordId" />
       <SquareTest path="/square" />
       <TermsOfService path="/tos" />
