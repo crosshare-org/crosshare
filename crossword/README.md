@@ -8,7 +8,6 @@
 - Pause for 'keep trying' popup?
 - Daily mini
 - Play / discuss NYT
-- cache control for static dir https://create-react-app.dev/docs/production-build/#static-file-caching
 
 ## Available Scripts
 
