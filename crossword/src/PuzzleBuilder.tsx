@@ -4,14 +4,14 @@ import { RouteComponentProps } from '@reach/router';
 import { isMobile } from "react-device-detect";
 
 import { SquareAndCols } from './Page';
-import { Position, Direction } from './types';
+import { PosAndDir, Direction } from './types';
 import { GridData, Grid } from './Grid';
 import { TopBar, TopBarLink } from './TopBar';
 import { FaKeyboard } from 'react-icons/fa';
 
 export const PuzzleBuilder = (_: RouteComponentProps) => {
   const sideLength = 5;
-  const [active, setActive] = React.useState({ col: 0, row: 0 } as Position);
+  const [active, setActive] = React.useState({ col: 0, row: 0, dir: Direction.Across } as PosAndDir);
   const [direction, setDirection] = React.useState(Direction.Across);
   const [showKeyboard, setShowKeyboard] = React.useState(isMobile);
   const toggleKeyboard = () => setShowKeyboard(!showKeyboard);
@@ -30,9 +30,8 @@ export const PuzzleBuilder = (_: RouteComponentProps) => {
     initInput[i] = ' ';
   }
   const [input, setInput] = React.useState(initInput);
-  setInput(initInput);  // TODO remove this!
 
-  const grid = GridData.fromCells(sideLength, sideLength, input, true);
+  const grid = GridData.fromCells(sideLength, sideLength, input, true, [], [], new Set(), "circle");
 
   return (
     <>
@@ -47,8 +46,7 @@ export const PuzzleBuilder = (_: RouteComponentProps) => {
           <Grid
             showingKeyboard={showKeyboard}
             grid={grid}
-            active={active} setActive={setActive}
-            direction={direction} changeDirection={changeDirection}
+            active={active}
           />
         }
         left={
@@ -60,4 +58,4 @@ export const PuzzleBuilder = (_: RouteComponentProps) => {
       />
     </>
   );
-}*/
+} */

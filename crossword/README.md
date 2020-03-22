@@ -1,5 +1,4 @@
 ## TODO
-- Accounts
 - Store solve state in browser data
 - DB backend for puzzles, users, plays
 - .puz import
@@ -8,6 +7,7 @@
 - Pause for 'keep trying' popup?
 - Daily mini
 - Play / discuss NYT
+- Layout when ios is zoomed in (eric report)
 
 ## Available Scripts
 

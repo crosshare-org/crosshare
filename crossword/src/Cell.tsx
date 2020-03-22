@@ -13,7 +13,7 @@ type CellProps = {
   isBlock: boolean,
   active: boolean,
   entryCell: boolean,
-  highlight: "circle" | "shade" | null,
+  highlight: "circle" | "shade" | undefined,
   value: string,
   number: string,
   row: number,

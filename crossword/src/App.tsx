@@ -14,6 +14,7 @@ import { PuzzleLoader } from './Puzzle';
 import { Page, SquareTest } from './Page';
 import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
+import { Uploader } from './Uploader';
 
 
 interface AuthContextValue {
@@ -158,6 +159,7 @@ const App = () => {
       <Home path="/" />
       <AccountPage path="/account" />
       <Admin path="/admin" />
+      <Uploader path="/upload" />
       <PuzzleLoader path="/crosswords/:crosswordId" />
       <SquareTest path="/square" />
       <TermsOfService path="/tos" />

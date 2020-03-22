@@ -32,7 +32,7 @@ export class GridData {
     public readonly acrossClues: Array<string>,
     public readonly downClues: Array<string>,
     public readonly highlighted: Set<number>,
-    public readonly highlight: "circle" | "shade",
+    public readonly highlight: "circle" | "shade" | undefined,
   ) {
     this.sortedEntries = [...entries].sort((a, b) => {
       if (a.direction !== b.direction) {
@@ -42,7 +42,7 @@ export class GridData {
     })
   }
 
-  static fromCells(width: number, height: number, cells: Array<string>, allowBlockEditing: boolean, acrossClues: Array<string>, downClues: Array<string>, highlighted: Set<number>, highlight: "circle" | "shade") {
+  static fromCells(width: number, height: number, cells: Array<string>, allowBlockEditing: boolean, acrossClues: Array<string>, downClues: Array<string>, highlighted: Set<number>, highlight: "circle" | "shade" | undefined) {
     let entriesByCell: Array<Array<[number, number] | null>> = new Array(cells.length);
     let entries = [];
     let usedWords: Set<string> = new Set();
@@ -401,7 +401,7 @@ export const Grid = ({ showingKeyboard, active, dispatch, grid, ...props}: GridP
       isVerified={props.verifiedCells.has(cellIndex)}
       isWrong={props.wrongCells.has(cellIndex)}
       wasRevealed={props.revealedCells.has(cellIndex)}
-      highlight={grid.highlighted.has(cellIndex) ? grid.highlight : null}
+      highlight={grid.highlighted.has(cellIndex) ? grid.highlight : undefined}
     />);
   }
   return <React.Fragment>{cells}</React.Fragment>;
