@@ -9,8 +9,7 @@ import 'firebase/auth';
 import { firebaseConfig, firebaseUiConfig } from './config';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
-import { PuzzleLoader } from './Puzzle';
-// import {PuzzleBuilder} from './PuzzleBuilder';
+import { PuzzleLoader, PuzzleBuilder } from './Puzzle';
 import { Page, SquareTest } from './Page';
 import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
@@ -151,6 +150,28 @@ const Home = (_: RouteComponentProps) => {
   );
 }
 
+const Construct = (_: RouteComponentProps) => {
+  const size = 5;
+  const grid = new Array<string>();
+  for (let i = 0; i < size * size; i += 1) {
+    grid.push(" ");
+  }
+  const props = {
+    "title": "New Puzzle",
+    "size": {
+      "rows": size,
+      "cols": size
+    },
+    "clues": {
+      "across": [],
+      "down": []
+    },
+    "grid": grid
+  }
+
+  return <PuzzleBuilder {...props}/>;
+};
+
 const App = () => {
   const [user, loadingUser, error] = useAuthState(firebase.auth());
   return (
@@ -160,6 +181,7 @@ const App = () => {
       <AccountPage path="/account" />
       <Admin path="/admin" />
       <Uploader path="/upload" />
+      <Construct path="/construct" />
       <PuzzleLoader path="/crosswords/:crosswordId" />
       <SquareTest path="/square" />
       <TermsOfService path="/tos" />

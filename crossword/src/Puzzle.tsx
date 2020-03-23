@@ -18,11 +18,11 @@ import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style';
 
 
-interface PuzzleProps extends RouteComponentProps {
+interface PuzzleLoaderProps extends RouteComponentProps {
   crosswordId?: string
 }
 
-export const PuzzleLoader = ({ crosswordId }: PuzzleProps) => {
+export const PuzzleLoader = ({ crosswordId }: PuzzleLoaderProps) => {
   const [puzzle, setPuzzle] = React.useState<PuzzleJson | null>(null);
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
@@ -247,7 +247,7 @@ interface PuzzleState {
   showKeyboard: boolean,
   isTablet: boolean,
   showExtraKeyLayout: boolean,
-  answers: Array<string>,
+  answers?: Array<string>,
   verifiedCells: Set<number>,
   wrongCells: Set<number>,
   revealedCells: Set<number>,
@@ -307,6 +307,10 @@ function isCheatAction(action: PuzzleAction): action is CheatAction {
 }
 
 function cheatCells(state: PuzzleState, cellsToCheck: Array<Position>, isReveal: boolean) {
+  if (!state.answers) {
+    console.log("Warning: attempting to cheat but puzzle has no answers");
+    return state;
+  }
   const newRevealed = new Set(state.revealedCells);
   const newVerified = new Set(state.verifiedCells);
   const newWrong = new Set(state.wrongCells);
@@ -362,7 +366,7 @@ function checkComplete(state: PuzzleState) {
       state.success = false;
       break;
     }
-    if (state.grid.cells[i] !== state.answers[i]) {
+    if (state.answers && state.grid.cells[i] !== state.answers[i]) {
       state.success = false;
     }
   }
@@ -458,7 +462,7 @@ function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
       return ({ ...state, active: { ...state.grid.moveUp(state.active), dir: Direction.Down } });
     } else if (key === "ArrowDown") {
       return ({ ...state, active: { ...state.grid.moveDown(state.active), dir: Direction.Down } });
-    } else if (key === '.' && state.grid.allowBlockEditing) {
+    } else if ((key === '.' || key === '{block}') && state.grid.allowBlockEditing) {
       return ({ ...state, grid: state.grid.gridWithBlockToggled(state.active) })
     } else if (key.match(/^[A-Za-z0-9]$/)) {
       const char = key.toUpperCase();
@@ -506,12 +510,13 @@ function timeString(elapsed: number): string {
 
 export const Puzzle = requiresAuth((props: PuzzleJson) => {
   const answers = props.grid;
+  const initialData = (answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>);
   const [state, dispatch] = React.useReducer(reducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
     grid: GridData.fromCells(
       props.size.cols,
       props.size.rows,
-      (answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>),
+      initialData,
       false,
       props.clues.across,
       props.clues.down,
@@ -624,6 +629,7 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
         showKeyboard={showingKeyboard}
         keyboardHandler={keyboardHandler}
         showExtraKeyLayout={state.showExtraKeyLayout}
+        includeBlockKey={false}
         isTablet={state.isTablet}
         square={
           <Grid
@@ -639,6 +645,88 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
         left={<ClueList conceal={isPaused && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
         right={<ClueList conceal={isPaused && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
         tinyColumn={<TinyNav dispatch={dispatch}><ClueList conceal={isPaused && !state.success} entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
+      />
+    </React.Fragment>
+  )
+});
+
+export const PuzzleBuilder = requiresAuth((props: PuzzleJson) => {
+  const [state, dispatch] = React.useReducer(reducer, {
+    active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
+    grid: GridData.fromCells(
+      props.size.cols,
+      props.size.rows,
+      props.grid,
+      true,
+      props.clues.across,
+      props.clues.down,
+      new Set(props.highlighted),
+      props.highlight,
+    ),
+    showKeyboard: isMobile,
+    isTablet: isTablet,
+    showExtraKeyLayout: false,
+    verifiedCells: new Set<number>(),
+    wrongCells: new Set<number>(),
+    revealedCells: new Set<number>(),
+    isEnteringRebus: false,
+    rebusValue: '',
+    success: false,
+    filled: false,
+    autocheck: false,
+    dismissedKeepTrying: false,
+    dismissedSuccess: false,
+  }, initialize);
+
+
+  function physicalKeyboardHandler(e: React.KeyboardEvent) {
+    if (e.metaKey || e.altKey || e.ctrlKey) {
+      return;  // This way you can still do apple-R and such
+    }
+    dispatch({ type: "KEYPRESS", key: e.key, shift: e.shiftKey } as KeypressAction);
+    e.preventDefault();
+  }
+  useEventListener('keydown', physicalKeyboardHandler);
+
+//  const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
+
+//  const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
+//  const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
+
+  function keyboardHandler(key: string) {
+    dispatch({ type: "KEYPRESS", key: key, shift: false } as KeypressAction);
+  }
+
+  const showingKeyboard = state.showKeyboard && !state.success;
+  return (
+    <React.Fragment>
+      <TopBar>
+        <TopBarDropDown icon={<FaEllipsisH />} text="More">
+          <TopBarDropDownLink icon={<FaRegPlusSquare />} text="Enter Rebus (Esc)" onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
+          <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
+          <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
+        </TopBarDropDown>
+      </TopBar>
+      {state.isEnteringRebus ?
+        <RebusOverlay showingKeyboard={showingKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
+      <SquareAndCols
+        showKeyboard={showingKeyboard}
+        keyboardHandler={keyboardHandler}
+        showExtraKeyLayout={state.showExtraKeyLayout}
+        isTablet={state.isTablet}
+        includeBlockKey={true}
+        square={
+          <Grid
+            showingKeyboard={showingKeyboard}
+            grid={state.grid}
+            active={state.active}
+            dispatch={dispatch}
+            allowBlockEditing={true}
+          />
+        }
+        left={<p>left</p>}
+        right={<p>right</p>}
+        tinyColumn={<TinyNav dispatch={dispatch}>tiny</TinyNav>}
       />
     </React.Fragment>
   )

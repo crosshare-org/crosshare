@@ -62,6 +62,7 @@ interface SquareAndColsProps {
   showKeyboard: boolean,
   keyboardHandler?: (key:string) => void,
   showExtraKeyLayout: boolean,
+  includeBlockKey: boolean,
   isTablet: boolean,
 }
 export const SquareAndCols = (props: SquareAndColsProps) => {
@@ -69,13 +70,14 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
   const toolbarHeightAdjust = heightAdjustment(props.showKeyboard);
 
   function layoutName(numeric: boolean, tablet: boolean) {
+
     if (numeric) {
       return "extra";
     }
     if (tablet) {
-      return "defaultTablet";
+      return props.includeBlockKey ? "defaultTabletBlock" : "defaultTablet";
     }
-    return 'default';
+    return props.includeBlockKey ? 'defaultBlock' : 'default';
   }
 
   return (
@@ -173,6 +175,11 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
               'A S D F G H J K L',
               'Z X C V B N M {num} {bksp}',
             ],
+            'defaultBlock': [
+              'Q W E R T Y U I O P',
+              'A S D F G H J K L {block}',
+              'Z X C V B N M {num} {bksp}',
+            ],
             'extra': [
               '1 2 3 4 5',
               '6 7 8 9 0',
@@ -181,6 +188,11 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
             'defaultTablet': [
               'Q W E R T Y U I O P {bksp}',
               '{prev} A S D F G H J K L {dir} {next}',
+              '{prevEntry} Z X C V B N M {num} {nextEntry}',
+            ],
+            'defaultTabletBlock': [
+              'Q W E R T Y U I O P {bksp}',
+              '{prev} A S D F G H J K L {block} {dir} {next}',
               '{prevEntry} Z X C V B N M {num} {nextEntry}',
             ],
           }}
@@ -195,6 +207,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
             '{abc}': 'ABC',
             '{rebus}': 'Rebus',
             '{nextEntry}': '⇥',
+            '{block}': '■',
           }}
           onKeyPress={props.keyboardHandler}
         />: " "}
@@ -218,6 +231,7 @@ export const SquareTest = (_: RouteComponentProps) => {
         showKeyboard={showKeyboard}
         showExtraKeyLayout={false}
         isTablet={isTablet}
+        includeBlockKey={false}
         tinyColumn={<div css={{ border: '1px solid black', backgroundColor: 'red', height: '100%' }}>TINY</div>}
         square={<div css={{ border: '1px solid black', backgroundColor: 'blue', height: '100%' }}>a</div>}
         left={<div css={{ border: '1px solid black', backgroundColor: 'green', height: '100%' }}>b</div>}

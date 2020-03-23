@@ -89,7 +89,11 @@ export class GridData {
           }
           let entryClue = clues[dir].get(entryLabel);
           if (!entryClue) {
-            throw new Error("Can't find clue for " + entryLabel + " " + dir);
+            if (allowBlockEditing) {  // We're constructing a puzzle, so clues can be missing
+              entryClue = "";
+            } else {
+              throw new Error("Can't find clue for " + entryLabel + " " + dir);
+            }
           }
           let entryCells = [];
           let entryPattern = "";
@@ -363,9 +367,10 @@ type GridProps = {
   grid: GridData,
   active: PosAndDir,
   dispatch: React.Dispatch<PuzzleAction>,
-  revealedCells: Set<number>,
-  verifiedCells: Set<number>,
-  wrongCells: Set<number>,
+  revealedCells?: Set<number>,
+  verifiedCells?: Set<number>,
+  wrongCells?: Set<number>,
+  allowBlockEditing?: boolean,
 }
 
 export const Grid = ({ showingKeyboard, active, dispatch, grid, ...props}: GridProps) => {
@@ -381,7 +386,7 @@ export const Grid = ({ showingKeyboard, active, dispatch, grid, ...props}: GridP
     const number = grid.cellLabels.get(cellIndex);
     const isActive = grid.cellIndex(active) === cellIndex;
     var onClick = changeActive;
-    if (cellValue === BLOCK) {
+    if (cellValue === BLOCK && !props.allowBlockEditing) {
       onClick = noOp;
     } else if (isActive) {
       onClick = changeDirection;
@@ -398,9 +403,9 @@ export const Grid = ({ showingKeyboard, active, dispatch, grid, ...props}: GridP
       onClick={onClick}
       value={cellValue}
       isBlock={cellValue === BLOCK}
-      isVerified={props.verifiedCells.has(cellIndex)}
-      isWrong={props.wrongCells.has(cellIndex)}
-      wasRevealed={props.revealedCells.has(cellIndex)}
+      isVerified={props.verifiedCells?.has(cellIndex)}
+      isWrong={props.wrongCells?.has(cellIndex)}
+      wasRevealed={props.revealedCells?.has(cellIndex)}
       highlight={grid.highlighted.has(cellIndex) ? grid.highlight : undefined}
     />);
   }

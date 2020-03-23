@@ -9,7 +9,7 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import { requiresAdmin } from './App';
 import { Page } from './Page';
 import { PuzzleJson, PuzzleJsonV } from './types';
-import { Puzzle } from './Puzzle';
+import { PuzzleBuilder } from './Puzzle';
 
 export const Uploader = requiresAdmin((_: RouteComponentProps) => {
   const [puzzle, setPuzzle] = React.useState<PuzzleJson|null>(null);
@@ -38,7 +38,7 @@ export const Uploader = requiresAdmin((_: RouteComponentProps) => {
   }
 
   if (puzzle) {
-    return <Puzzle {...puzzle} />
+    return <PuzzleBuilder {...puzzle} />
   }
 
   return (

@@ -19,9 +19,9 @@ type CellProps = {
   row: number,
   column: number,
   onClick: (pos:{row: number, col:number}) => void,
-  isVerified: boolean,
-  isWrong: boolean,
-  wasRevealed: boolean,
+  isVerified: boolean|undefined,
+  isWrong: boolean|undefined,
+  wasRevealed: boolean|undefined,
 }
 
 export const Cell = React.memo((props: CellProps) => {
