@@ -5,14 +5,15 @@ import * as React from 'react';
 import axios from 'axios';
 import { RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
-import { FaVolumeUp, FaVolumeMute, FaRegPlusSquare, FaPause, FaTabletAlt, FaKeyboard, FaEllipsisH, FaEye, FaCheck, FaCheckSquare } from 'react-icons/fa';
+import { FaRegCheckCircle, FaRegCircle, FaVolumeUp, FaVolumeMute, FaRegPlusSquare, FaPause, FaTabletAlt, FaKeyboard, FaEllipsisH, FaEye, FaCheck, FaCheckSquare } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 
 import { requiresAuth } from './App';
 import { useTimer } from './timer';
 import { Overlay } from './Overlay';
 import { Grid, Entry, GridData } from './Grid';
-import { PosAndDir, Position, Direction, BLOCK, PuzzleJson } from './types';
+import { PosAndDir, Direction, BLOCK, PuzzleJson } from './types';
+import { cheat, checkComplete, puzzleReducer, builderReducer, validateGrid, advanceActiveToNonBlock, PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction } from './reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style';
@@ -241,264 +242,6 @@ function usePersistedBoolean(key:string, defaultValue: boolean) {
   return [state, setStateAndPersist];
 }
 
-interface PuzzleState {
-  active: PosAndDir,
-  grid: GridData,
-  showKeyboard: boolean,
-  isTablet: boolean,
-  showExtraKeyLayout: boolean,
-  answers?: Array<string>,
-  verifiedCells: Set<number>,
-  wrongCells: Set<number>,
-  revealedCells: Set<number>,
-  isEnteringRebus: boolean,
-  rebusValue: string,
-  success: boolean,
-  filled: boolean,
-  autocheck: boolean,
-  dismissedKeepTrying: boolean,
-  dismissedSuccess: boolean,
-}
-
-export interface PuzzleAction {
-  type: string,
-}
-
-export interface KeypressAction extends PuzzleAction {
-  key: string,
-  shift: boolean,
-}
-function isKeypressAction(action: PuzzleAction): action is KeypressAction {
-  return action.type === 'KEYPRESS'
-}
-
-interface SetActiveAction extends PuzzleAction {
-  newActive: PosAndDir,
-}
-function isSetActiveAction(action: PuzzleAction): action is SetActiveAction {
-  return action.type === 'SETACTIVE'
-}
-
-interface ClickedEntryAction extends PuzzleAction {
-  entryIndex: number,
-}
-function isClickedEntryAction(action: PuzzleAction): action is ClickedEntryAction {
-  return action.type === 'CLICKEDENTRY'
-}
-
-export interface SetActivePositionAction extends PuzzleAction {
-  newActive: Position,
-}
-function isSetActivePositionAction(action: PuzzleAction): action is SetActivePositionAction {
-  return action.type === 'SETACTIVEPOSITION'
-}
-
-enum CheatUnit {
-  Square,
-  Entry,
-  Puzzle
-}
-export interface CheatAction extends PuzzleAction {
-  unit: CheatUnit,
-  isReveal?: boolean,
-}
-function isCheatAction(action: PuzzleAction): action is CheatAction {
-  return action.type === 'CHEAT'
-}
-
-function cheatCells(state: PuzzleState, cellsToCheck: Array<Position>, isReveal: boolean) {
-  if (!state.answers) {
-    console.log("Warning: attempting to cheat but puzzle has no answers");
-    return state;
-  }
-  const newRevealed = new Set(state.revealedCells);
-  const newVerified = new Set(state.verifiedCells);
-  const newWrong = new Set(state.wrongCells);
-  let grid = state.grid;
-
-  for (const cell of cellsToCheck) {
-    const cellIndex = state.grid.cellIndex(cell);
-    const shouldBe = state.answers[cellIndex];
-    if (shouldBe === BLOCK) {
-      continue;
-    }
-    const currentVal = state.grid.valAt(cell);
-    if (shouldBe === currentVal) {
-      newVerified.add(cellIndex);
-    } else if (isReveal) {
-      newRevealed.add(cellIndex);
-      newWrong.delete(cellIndex);
-      newVerified.add(cellIndex);
-      grid = grid.gridWithNewChar(cell, shouldBe);
-    } else if (currentVal.trim()) {
-      newWrong.add(cellIndex);
-    }
-  }
-  return (checkComplete({ ...state, grid: grid, wrongCells: newWrong, revealedCells: newRevealed, verifiedCells: newVerified }));
-}
-
-function cheat(state: PuzzleState, cheatUnit: CheatUnit, isReveal: boolean) {
-  let cellsToCheck: Array<Position> = [];
-  if (cheatUnit === CheatUnit.Square) {
-    cellsToCheck = [state.active];
-  } else if (cheatUnit === CheatUnit.Entry) {
-    const entry = state.grid.entryAtPosition(state.active)[0];
-    if (!entry) { //block?
-      return state;
-    }
-    cellsToCheck = entry.cells;
-  } else if (cheatUnit === CheatUnit.Puzzle) {
-    for (let rowidx = 0; rowidx < state.grid.height; rowidx += 1) {
-      for (let colidx = 0; colidx < state.grid.width; colidx += 1) {
-        cellsToCheck.push({ 'row': rowidx, 'col': colidx });
-      }
-    }
-  }
-  return cheatCells(state, cellsToCheck, isReveal);
-}
-
-function checkComplete(state: PuzzleState) {
-  state.filled = true;
-  state.success = true;
-  for (let i = 0; i < state.grid.cells.length; i += 1) {
-    if (state.grid.cells[i].trim() === '') {
-      state.filled = false;
-      state.success = false;
-      break;
-    }
-    if (state.answers && state.grid.cells[i] !== state.answers[i]) {
-      state.success = false;
-    }
-  }
-  return state;
-}
-
-function reducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
-  if (isCheatAction(action)) {
-    return cheat(state, action.unit, action.isReveal === true);
-  }
-  if (action.type === "TOGGLEAUTOCHECK") {
-    state = cheat(state, CheatUnit.Puzzle, false);
-    return ({ ...state, autocheck: !state.autocheck });
-  }
-  if (action.type === "CHANGEDIRECTION") {
-    return ({ ...state, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
-  }
-  if (action.type === "TOGGLEKEYBOARD") {
-    return ({ ...state, showKeyboard: !state.showKeyboard });
-  }
-  if (action.type === "TOGGLETABLET") {
-    return ({ ...state, isTablet: !state.isTablet });
-  }
-  if (action.type === "DISMISSKEEPTRYING") {
-    return ({ ...state, dismissedKeepTrying: true });
-  }
-  if (action.type === "DISMISSSUCCESS") {
-    return ({ ...state, dismissedSuccess: true });
-  }
-  if (isClickedEntryAction(action)) {
-    const clickedEntry = state.grid.entries[action.entryIndex];
-    for (let cell of clickedEntry.cells) {
-      if (state.grid.valAt(cell) === " ") {
-        return ({ ...state, active: { ...cell, dir: clickedEntry.direction } });
-      }
-    }
-    return ({ ...state, active: { ...clickedEntry.cells[0], dir: clickedEntry.direction } });
-  }
-  if (isSetActiveAction(action)) {
-    return ({ ...state, active: action.newActive });
-  }
-  if (isSetActivePositionAction(action)) {
-    return ({ ...state, active: { ...action.newActive, dir: state.active.dir } });
-  }
-  if (isKeypressAction(action)) {
-    const key = action.key;
-    const shift = action.shift;
-    if (key === '{num}' || key === '{abc}') {
-      return ({ ...state, showExtraKeyLayout: !state.showExtraKeyLayout });
-    }
-    if (state.isEnteringRebus) {
-      if (key.match(/^[A-Za-z0-9]$/)) {
-        return ({ ...state, rebusValue: state.rebusValue + key.toUpperCase() });
-      } else if (key === "Backspace" || key === "{bksp}") {
-        return ({ ...state, rebusValue: state.rebusValue ? state.rebusValue.slice(0, -1) : "" });
-      } else if (key === "Enter") {
-        const cellIndex = state.grid.cellIndex(state.active);
-        if (!state.verifiedCells.has(cellIndex) && !state.success) {
-          state.grid = state.grid.gridWithNewChar(state.active, state.rebusValue);
-          state.wrongCells.delete(cellIndex);
-          if (state.autocheck) {
-            state = cheat(state, CheatUnit.Square, false);
-          }
-          state = checkComplete(state);
-        }
-        return ({
-          ...state,
-          active: state.grid.advancePosition(state.active, state.wrongCells),
-          isEnteringRebus: false, rebusValue: ''
-        });
-      } else if (key === "Escape") {
-        return ({ ...state, isEnteringRebus: false, rebusValue: '' });
-      }
-      return state;
-    }
-    if (key === '{rebus}' || key === 'Escape') {
-      return ({ ...state, showExtraKeyLayout: false, isEnteringRebus: true });
-    } else if (key === " " || key === "{dir}") {
-      return ({ ...state, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
-    } else if (key === "{prev}") {
-      return ({ ...state, active: state.grid.retreatPosition(state.active) });
-    } else if (key === "{next}") {
-      return ({ ...state, active: state.grid.advancePosition(state.active, state.wrongCells) });
-    } else if ((key === "Tab" && !shift) || key === "{nextEntry}") {
-      return ({ ...state, active: state.grid.moveToNextEntry(state.active) });
-    } else if ((key === "Tab" && shift) || key === "{prevEntry}") {
-      return ({ ...state, active: state.grid.moveToPrevEntry(state.active) });
-    } else if (key === "ArrowRight") {
-      return ({ ...state, active: { ...state.grid.moveRight(state.active), dir: Direction.Across } });
-    } else if (key === "ArrowLeft") {
-      return ({ ...state, active: { ...state.grid.moveLeft(state.active), dir: Direction.Across } });
-    } else if (key === "ArrowUp") {
-      return ({ ...state, active: { ...state.grid.moveUp(state.active), dir: Direction.Down } });
-    } else if (key === "ArrowDown") {
-      return ({ ...state, active: { ...state.grid.moveDown(state.active), dir: Direction.Down } });
-    } else if ((key === '.' || key === '{block}') && state.grid.allowBlockEditing) {
-      return ({ ...state, grid: state.grid.gridWithBlockToggled(state.active) })
-    } else if (key.match(/^[A-Za-z0-9]$/)) {
-      const char = key.toUpperCase();
-      const cellIndex = state.grid.cellIndex(state.active);
-      if (!state.verifiedCells.has(cellIndex) && !state.success) {
-        state.grid = state.grid.gridWithNewChar(state.active, char);
-        state.wrongCells.delete(cellIndex);
-        if (state.autocheck) {
-          state = cheat(state, CheatUnit.Square, false);
-        }
-        state = checkComplete(state);
-      }
-      return ({
-        ...state,
-        active: state.grid.advancePosition(state.active, state.wrongCells),
-      });
-    } else if (key === "Backspace" || key === "{bksp}") {
-      const cellIndex = state.grid.cellIndex(state.active);
-      if (!state.verifiedCells.has(cellIndex) && !state.success) {
-        state.grid = state.grid.gridWithNewChar(state.active, " ");
-        state.filled = false;
-      }
-      state.wrongCells.delete(cellIndex);
-      return ({
-        ...state,
-        active: state.grid.retreatPosition(state.active),
-      });
-    }
-  }
-  return state;
-}
-
-function initialize(initialState: PuzzleState) {
-  return { ...initialState, active: { ...initialState.grid.nextNonBlock(initialState.active), dir: Direction.Across } };
-}
-
 function timeString(elapsed: number): string {
   const hours = Math.floor(elapsed / 3600);
   const minutes = Math.floor((elapsed - (hours * 3600)) / 60);
@@ -508,15 +251,29 @@ function timeString(elapsed: number): string {
     (seconds < 10 ? "0" : "") + seconds;
 }
 
+function getKeyboardHandler(dispatch: React.Dispatch<PuzzleAction>) {
+  return (key: string) => {
+    dispatch({ type: "KEYPRESS", key: key, shift: false } as KeypressAction);
+  }
+}
+
+function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction>) {
+  return (e: React.KeyboardEvent) => {
+    if (e.metaKey || e.altKey || e.ctrlKey) {
+      return;  // This way you can still do apple-R and such
+    }
+    dispatch({ type: "KEYPRESS", key: e.key, shift: e.shiftKey } as KeypressAction);
+    e.preventDefault();
+  }
+}
+
 export const Puzzle = requiresAuth((props: PuzzleJson) => {
-  const answers = props.grid;
-  const initialData = (answers.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>);
-  const [state, dispatch] = React.useReducer(reducer, {
+  const [state, dispatch] = React.useReducer(puzzleReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
     grid: GridData.fromCells(
       props.size.cols,
       props.size.rows,
-      initialData,
+      (props.grid.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>),
       false,
       props.clues.across,
       props.clues.down,
@@ -526,7 +283,7 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
     showKeyboard: isMobile,
     isTablet: isTablet,
     showExtraKeyLayout: false,
-    answers: answers,
+    answers: props.grid,
     verifiedCells: new Set<number>(),
     wrongCells: new Set<number>(),
     revealedCells: new Set<number>(),
@@ -537,18 +294,20 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
     autocheck: false,
     dismissedKeepTrying: false,
     dismissedSuccess: false,
-  }, initialize);
+    isEditable(cellIndex) {return !this.verifiedCells.has(cellIndex) && !this.success},
+    postEdit(cellIndex) {
+      let state = this;
+      state.wrongCells.delete(cellIndex);
+      if (state.autocheck) {
+        state = cheat(state, CheatUnit.Square, false);
+      }
+      return checkComplete(state);
+    }
+  }, advanceActiveToNonBlock);
 
   const [muted, setMuted] = usePersistedBoolean("muted", true);
 
-  function physicalKeyboardHandler(e: React.KeyboardEvent) {
-    if (e.metaKey || e.altKey || e.ctrlKey) {
-      return;  // This way you can still do apple-R and such
-    }
-    dispatch({ type: "KEYPRESS", key: e.key, shift: e.shiftKey } as KeypressAction);
-    e.preventDefault();
-  }
-  useEventListener('keydown', physicalKeyboardHandler);
+  useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
 
   const [playedAudio, setPlayedAudio] = React.useState(false);
   function playAudio() {
@@ -572,10 +331,6 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
 
   const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
-
-  function keyboardHandler(key: string) {
-    dispatch({ type: "KEYPRESS", key: key, shift: false } as KeypressAction);
-  }
 
   const showingKeyboard = state.showKeyboard && !state.success;
   return (
@@ -627,7 +382,7 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
       :""}
       <SquareAndCols
         showKeyboard={showingKeyboard}
-        keyboardHandler={keyboardHandler}
+        keyboardHandler={getKeyboardHandler(dispatch)}
         showExtraKeyLayout={state.showExtraKeyLayout}
         includeBlockKey={false}
         isTablet={state.isTablet}
@@ -650,8 +405,8 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
   )
 });
 
-export const PuzzleBuilder = requiresAuth((props: PuzzleJson) => {
-  const [state, dispatch] = React.useReducer(reducer, {
+export const Builder = requiresAuth((props: PuzzleJson) => {
+  const [state, dispatch] = React.useReducer(builderReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
     grid: GridData.fromCells(
       props.size.cols,
@@ -666,38 +421,25 @@ export const PuzzleBuilder = requiresAuth((props: PuzzleJson) => {
     showKeyboard: isMobile,
     isTablet: isTablet,
     showExtraKeyLayout: false,
-    verifiedCells: new Set<number>(),
-    wrongCells: new Set<number>(),
-    revealedCells: new Set<number>(),
     isEnteringRebus: false,
     rebusValue: '',
-    success: false,
-    filled: false,
-    autocheck: false,
-    dismissedKeepTrying: false,
-    dismissedSuccess: false,
-  }, initialize);
-
-
-  function physicalKeyboardHandler(e: React.KeyboardEvent) {
-    if (e.metaKey || e.altKey || e.ctrlKey) {
-      return;  // This way you can still do apple-R and such
+    wrongCells: new Set<number>(),
+    gridIsComplete: false,
+    repeats: new Set<string>(),
+    hasNoShortWords: false,
+    isEditable: () => true,
+    postEdit(_cellIndex) {
+      return validateGrid(this);
     }
-    dispatch({ type: "KEYPRESS", key: e.key, shift: e.shiftKey } as KeypressAction);
-    e.preventDefault();
-  }
-  useEventListener('keydown', physicalKeyboardHandler);
+  }, validateGrid);
+
+  useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
 
 //  const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
 
 //  const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
 //  const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
 
-  function keyboardHandler(key: string) {
-    dispatch({ type: "KEYPRESS", key: key, shift: false } as KeypressAction);
-  }
-
-  const showingKeyboard = state.showKeyboard && !state.success;
   return (
     <React.Fragment>
       <TopBar>
@@ -708,23 +450,29 @@ export const PuzzleBuilder = requiresAuth((props: PuzzleJson) => {
         </TopBarDropDown>
       </TopBar>
       {state.isEnteringRebus ?
-        <RebusOverlay showingKeyboard={showingKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
+        <RebusOverlay showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
       <SquareAndCols
-        showKeyboard={showingKeyboard}
-        keyboardHandler={keyboardHandler}
+        showKeyboard={state.showKeyboard}
+        keyboardHandler={getKeyboardHandler(dispatch)}
         showExtraKeyLayout={state.showExtraKeyLayout}
         isTablet={state.isTablet}
         includeBlockKey={true}
         square={
           <Grid
-            showingKeyboard={showingKeyboard}
+            showingKeyboard={state.showKeyboard}
             grid={state.grid}
             active={state.active}
             dispatch={dispatch}
             allowBlockEditing={true}
           />
         }
-        left={<p>left</p>}
+        left={
+          <ul>
+          <li>All cells should be filled { state.gridIsComplete ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
+          <li>All entries should be at least three letters { state.hasNoShortWords ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
+          <li>No entries should be repeated { state.repeats.size > 0 ? <React.Fragment><FaRegCircle/> ({Array.from(state.repeats).sort().join(", ")})</React.Fragment>: <FaRegCheckCircle/> }</li>
+          </ul>
+        }
         right={<p>right</p>}
         tinyColumn={<TinyNav dispatch={dispatch}>tiny</TinyNav>}
       />

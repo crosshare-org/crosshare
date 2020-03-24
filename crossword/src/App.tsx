@@ -9,7 +9,7 @@ import 'firebase/auth';
 import { firebaseConfig, firebaseUiConfig } from './config';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
-import { PuzzleLoader, PuzzleBuilder } from './Puzzle';
+import { PuzzleLoader, Builder } from './Puzzle';
 import { Page, SquareTest } from './Page';
 import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
@@ -169,7 +169,7 @@ const Construct = (_: RouteComponentProps) => {
     "grid": grid
   }
 
-  return <PuzzleBuilder {...props}/>;
+  return <Builder {...props}/>;
 };
 
 const App = () => {

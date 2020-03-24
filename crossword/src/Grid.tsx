@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import { Position, Direction, PosAndDir, BLOCK } from './types';
 import { Cell } from './Cell';
-import { PuzzleAction, SetActivePositionAction } from './Puzzle';
+import { PuzzleAction, SetActivePositionAction } from './reducer';
 
 export class Entry {
   constructor(
@@ -40,6 +40,10 @@ export class GridData {
       }
       return a.index - b.index;
     })
+  }
+
+  entryWord(entryIndex: number) {
+    return this.entries[entryIndex].cells.map((pos) => this.valAt(pos)).join("");
   }
 
   static fromCells(width: number, height: number, cells: Array<string>, allowBlockEditing: boolean, acrossClues: Array<string>, downClues: Array<string>, highlighted: Set<number>, highlight: "circle" | "shade" | undefined) {

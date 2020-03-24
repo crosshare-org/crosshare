@@ -5,9 +5,10 @@
 - Basic stats for a play and for constructors
 - Comments
 - Pause for 'keep trying' popup?
-- Daily mini
 - Play / discuss NYT
 - Layout when ios is zoomed in (eric report)
+- Daily Fiver
+- Click ...More then hit Escape - should only show 1 modal
 
 ## Available Scripts
 

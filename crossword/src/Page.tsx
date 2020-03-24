@@ -9,7 +9,7 @@ import { FaKeyboard } from 'react-icons/fa';
 import { FaTabletAlt } from 'react-icons/fa';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
-import { KeypressAction } from './Puzzle';
+import { KeypressAction } from './reducer';
 import { TopBar, TopBarLink } from './TopBar';
 import { heightAdjustment, SMALL_AND_UP, LARGE_AND_UP } from './style';
 
