@@ -9,7 +9,8 @@ import 'firebase/auth';
 import { firebaseConfig, firebaseUiConfig } from './config';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
-import { PuzzleLoader, Builder } from './Puzzle';
+import { PuzzleLoader } from './Puzzle';
+import { Builder } from './Builder';
 import { Page, SquareTest } from './Page';
 import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';

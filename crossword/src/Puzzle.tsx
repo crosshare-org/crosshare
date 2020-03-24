@@ -5,7 +5,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
-import { FaRegCheckCircle, FaRegCircle, FaVolumeUp, FaVolumeMute, FaRegPlusSquare, FaPause, FaTabletAlt, FaKeyboard, FaEllipsisH, FaEye, FaCheck, FaCheckSquare } from 'react-icons/fa';
+import { FaVolumeUp, FaVolumeMute, FaRegPlusSquare, FaPause, FaTabletAlt, FaKeyboard, FaEllipsisH, FaEye, FaCheck, FaCheckSquare } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 
 import { requiresAuth } from './App';
@@ -13,7 +13,7 @@ import { useTimer } from './timer';
 import { Overlay } from './Overlay';
 import { Grid, Entry, GridData } from './Grid';
 import { PosAndDir, Direction, BLOCK, PuzzleJson } from './types';
-import { cheat, checkComplete, puzzleReducer, builderReducer, validateGrid, advanceActiveToNonBlock, PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction } from './reducer';
+import { cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock, PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction } from './reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style';
@@ -157,7 +157,7 @@ const SuccessOverlay = (props: {isMuted: boolean, unMuteCallback: () => void, so
   );
 }
 
-const RebusOverlay = (props: { showingKeyboard: boolean, value: string, dispatch: React.Dispatch<KeypressAction> }) => {
+export const RebusOverlay = (props: { showingKeyboard: boolean, value: string, dispatch: React.Dispatch<KeypressAction> }) => {
   return (
     <Overlay showingKeyboard={props.showingKeyboard} closeCallback={() => props.dispatch({ type: "KEYPRESS", key: 'Escape', shift: false })}>
         <div css={{
@@ -251,13 +251,13 @@ function timeString(elapsed: number): string {
     (seconds < 10 ? "0" : "") + seconds;
 }
 
-function getKeyboardHandler(dispatch: React.Dispatch<PuzzleAction>) {
+export function getKeyboardHandler(dispatch: React.Dispatch<PuzzleAction>) {
   return (key: string) => {
     dispatch({ type: "KEYPRESS", key: key, shift: false } as KeypressAction);
   }
 }
 
-function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction>) {
+export function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction>) {
   return (e: React.KeyboardEvent) => {
     if (e.metaKey || e.altKey || e.ctrlKey) {
       return;  // This way you can still do apple-R and such
@@ -400,81 +400,6 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
         left={<ClueList conceal={isPaused && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
         right={<ClueList conceal={isPaused && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
         tinyColumn={<TinyNav dispatch={dispatch}><ClueList conceal={isPaused && !state.success} entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
-      />
-    </React.Fragment>
-  )
-});
-
-export const Builder = requiresAuth((props: PuzzleJson) => {
-  const [state, dispatch] = React.useReducer(builderReducer, {
-    active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
-    grid: GridData.fromCells(
-      props.size.cols,
-      props.size.rows,
-      props.grid,
-      true,
-      props.clues.across,
-      props.clues.down,
-      new Set(props.highlighted),
-      props.highlight,
-    ),
-    showKeyboard: isMobile,
-    isTablet: isTablet,
-    showExtraKeyLayout: false,
-    isEnteringRebus: false,
-    rebusValue: '',
-    wrongCells: new Set<number>(),
-    gridIsComplete: false,
-    repeats: new Set<string>(),
-    hasNoShortWords: false,
-    isEditable: () => true,
-    postEdit(_cellIndex) {
-      return validateGrid(this);
-    }
-  }, validateGrid);
-
-  useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
-
-//  const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
-
-//  const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
-//  const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
-
-  return (
-    <React.Fragment>
-      <TopBar>
-        <TopBarDropDown icon={<FaEllipsisH />} text="More">
-          <TopBarDropDownLink icon={<FaRegPlusSquare />} text="Enter Rebus (Esc)" onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
-          <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
-          <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
-        </TopBarDropDown>
-      </TopBar>
-      {state.isEnteringRebus ?
-        <RebusOverlay showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
-      <SquareAndCols
-        showKeyboard={state.showKeyboard}
-        keyboardHandler={getKeyboardHandler(dispatch)}
-        showExtraKeyLayout={state.showExtraKeyLayout}
-        isTablet={state.isTablet}
-        includeBlockKey={true}
-        square={
-          <Grid
-            showingKeyboard={state.showKeyboard}
-            grid={state.grid}
-            active={state.active}
-            dispatch={dispatch}
-            allowBlockEditing={true}
-          />
-        }
-        left={
-          <ul>
-          <li>All cells should be filled { state.gridIsComplete ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
-          <li>All entries should be at least three letters { state.hasNoShortWords ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
-          <li>No entries should be repeated { state.repeats.size > 0 ? <React.Fragment><FaRegCircle/> ({Array.from(state.repeats).sort().join(", ")})</React.Fragment>: <FaRegCheckCircle/> }</li>
-          </ul>
-        }
-        right={<p>right</p>}
-        tinyColumn={<TinyNav dispatch={dispatch}>tiny</TinyNav>}
       />
     </React.Fragment>
   )
