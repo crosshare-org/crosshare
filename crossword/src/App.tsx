@@ -2,7 +2,7 @@
 import { jsx } from '@emotion/core';
 import * as React from 'react';
 
-import { Router, RouteComponentProps } from "@reach/router";
+import { Link, Router, RouteComponentProps } from "@reach/router";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -15,7 +15,8 @@ import { Page, SquareTest } from './Page';
 import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
 import { Uploader } from './Uploader';
-
+import { DBTest } from './DBTest';
+import { DBContextProvider } from './WordDB';
 
 interface AuthContextValue {
   user: firebase.User | undefined,
@@ -145,6 +146,7 @@ const Home = (_: RouteComponentProps) => {
     <Page>
       <div css={{ margin: '1em', }}>
         <p>CROSSHARE is a not-for-profit community for crossword constructors.</p>
+        <p>Go to <Link to="/dbtest">DBTest</Link></p>
         <p>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>.</p>
       </div>
     </Page>
@@ -176,6 +178,7 @@ const Construct = (_: RouteComponentProps) => {
 const App = () => {
   const [user, loadingUser, error] = useAuthState(firebase.auth());
   return (
+    <DBContextProvider>
     <AuthContext.Provider value={{user: user, loadingUser: loadingUser, error: error?.message}}>
     <Router css={{height: '100%', width: '100%',}}>
       <Home path="/" />
@@ -187,9 +190,11 @@ const App = () => {
       <SquareTest path="/square" />
       <TermsOfService path="/tos" />
       <PrivacyPolicy path="/privacy" />
+      <DBTest path="/dbtest" />
       <NotFound default />
     </Router>
     </AuthContext.Provider>
+    </DBContextProvider>
   );
 }
 

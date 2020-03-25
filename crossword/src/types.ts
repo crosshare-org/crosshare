@@ -35,3 +35,9 @@ const PuzzleJsonOptionalV = t.partial({
 export const PuzzleJsonV = t.intersection([PuzzleJsonMandatoryV, PuzzleJsonOptionalV]);
 
 export type PuzzleJson = t.TypeOf<typeof PuzzleJsonV>;
+
+export const WordDBV = t.type({
+  words: t.record(t.string, t.array(t.tuple([t.string, t.number]))),
+  bitmaps: t.record(t.string, t.record(t.string, t.record(t.string, t.number))),
+});
+export type WordDB = t.TypeOf<typeof WordDBV>;

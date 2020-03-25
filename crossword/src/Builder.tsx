@@ -15,7 +15,14 @@ import { TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav } from './Page';
 import { RebusOverlay, getKeyboardHandler, getPhysicalKeyboardHandler } from './Puzzle';
 
-export const Builder = requiresAdmin((props: PuzzleJson) => {
+export const BuilderDBLoader = requiresAdmin((props: PuzzleJson) => {
+  if (localStorage.getItem("db")) {
+    return <Builder {...props}/>;
+  }
+  return <Builder {...props}/>;
+});
+
+export const Builder = (props: PuzzleJson) => {
   const [state, dispatch] = React.useReducer(builderReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
     grid: GridData.fromCells(
@@ -88,4 +95,4 @@ export const Builder = requiresAdmin((props: PuzzleJson) => {
       />
     </React.Fragment>
   )
-});
+}
