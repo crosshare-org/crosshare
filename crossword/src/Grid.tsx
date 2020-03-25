@@ -375,6 +375,7 @@ type GridProps = {
   verifiedCells?: Set<number>,
   wrongCells?: Set<number>,
   allowBlockEditing?: boolean,
+  autofill?: Array<string>,
 }
 
 export const Grid = ({ showingKeyboard, active, dispatch, grid, ...props}: GridProps) => {
@@ -396,6 +397,7 @@ export const Grid = ({ showingKeyboard, active, dispatch, grid, ...props}: GridP
       onClick = changeDirection;
     }
     cells.push(<Cell
+      autofill={props.autofill ? props.autofill[cellIndex] : ''}
       showingKeyboard={showingKeyboard}
       gridWidth={grid.width}
       active={isActive}

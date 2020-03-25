@@ -285,7 +285,6 @@ export function validateGrid(state: BuilderState) {
       if (!state.grid.entries[i].isComplete) continue;
       if (i === j) continue;
       if (state.grid.entryWord(i) === state.grid.entryWord(j)) {
-        console.log("adding " + state.grid.entryWord(i));
         repeats.add(state.grid.entryWord(i))
       }
     }

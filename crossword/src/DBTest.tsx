@@ -13,8 +13,12 @@ export const DBTest = (_: RouteComponentProps) => {
   if (state.dbStatus === DBStatus.notPresent) {
     state.build();
   }
+
   if (state.dbStatus === DBStatus.present && state.db) {
-    return <Page>DB is loaded. Five letter words: {state.db.words["5"] && state.db.words["5"].length}</Page>
+    return (
+      <Page><p>DB is loaded. Five letter words: {state.db.words["5"] && state.db.words["5"].length}</p>
+      </Page>
+    );
   }
   return <Page>DB status: {state.dbStatus}</Page>
 }

@@ -8,6 +8,7 @@ import { FaSlash, FaEye } from 'react-icons/fa';
 import {heightAdjustment, notSelectable, PRIMARY, SECONDARY, SMALL_AND_UP, LARGE_AND_UP} from './style';
 
 type CellProps = {
+  autofill: string,
   showingKeyboard: boolean,
   gridWidth: number,
   isBlock: boolean,
@@ -35,6 +36,8 @@ export const Cell = React.memo((props: CellProps) => {
   } else if (props.entryCell) {
     bg = SECONDARY;
   }
+
+  const value = props.value.trim() ? props.value : props.autofill;
 
   const heightAdjust = heightAdjustment(props.showingKeyboard);
 
@@ -126,7 +129,8 @@ export const Cell = React.memo((props: CellProps) => {
           }}></div> : ""}
           <div css={{
             fontSize: 1.0 / Math.max(props.value.length - 0.4, 1) + 'em',
-          }}>{props.value}</div>
+            color: props.value.trim() ? 'black' : '#BBB',
+          }}>{value}</div>
           </div>
           </React.Fragment>
           : ""}

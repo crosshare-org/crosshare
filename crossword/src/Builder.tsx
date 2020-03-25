@@ -12,8 +12,12 @@ import { Grid, GridData } from './Grid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
 import { builderReducer, validateGrid, KeypressAction, } from './reducer';
 import { TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
-import { SquareAndCols, TinyNav } from './Page';
+import { SquareAndCols, TinyNav, Page } from './Page';
 import { RebusOverlay, getKeyboardHandler, getPhysicalKeyboardHandler } from './Puzzle';
+import AutofillWorker from 'worker-loader!./autofill.worker'; // eslint-disable-line import/no-webpack-loader-syntax
+import { DBContext, DBStatus } from './WordDB';
+
+let worker = new AutofillWorker();
 
 export const BuilderDBLoader = requiresAdmin((props: PuzzleJson) => {
   if (localStorage.getItem("db")) {
@@ -50,7 +54,29 @@ export const Builder = (props: PuzzleJson) => {
     }
   }, validateGrid);
 
+  const [autofill, setAutofill] = React.useState<string[]>([]);
+  const dbctx = React.useContext(DBContext);
+  dbctx.initialize();
+  if (dbctx.dbStatus === DBStatus.notPresent) {
+    dbctx.build();
+  }
+
+  React.useEffect(() => {
+    if (dbctx.dbStatus !== DBStatus.present || dbctx.db === undefined) {
+      return;
+    }
+    setAutofill([]);
+    worker.terminate();
+    worker = new AutofillWorker();
+    worker.addEventListener('message', e => setAutofill(e.data.grid), false);
+    worker.postMessage({db: dbctx.db, grid: state.grid.cells});
+  }, [state.grid.cells, dbctx.dbStatus]);
+
   useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
+
+  if (dbctx.dbStatus === DBStatus.building || dbctx.dbStatus === DBStatus.uninitialized) {
+    return <Page>Loading word database...</Page>
+  }
 
 //  const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
 
@@ -81,6 +107,7 @@ export const Builder = (props: PuzzleJson) => {
             active={state.active}
             dispatch={dispatch}
             allowBlockEditing={true}
+            autofill={autofill}
           />
         }
         left={
