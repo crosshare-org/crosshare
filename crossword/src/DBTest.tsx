@@ -1,24 +1,22 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import * as React from 'react';
 
 import { RouteComponentProps } from "@reach/router";
 
-import { DBContext, DBStatus } from './WordDB';
+import * as WordDB from './WordDB';
 import { Page } from './Page';
 
 export const DBTest = (_: RouteComponentProps) => {
-  const state = React.useContext(DBContext);
-  state.initialize();
-  if (state.dbStatus === DBStatus.notPresent) {
-    state.build();
+  WordDB.initialize();
+  if (WordDB.dbStatus === WordDB.DBStatus.notPresent) {
+    WordDB.build();
   }
 
-  if (state.dbStatus === DBStatus.present && state.db) {
+  if (WordDB.dbStatus === WordDB.DBStatus.present && WordDB.db) {
     return (
-      <Page><p>DB is loaded. Five letter words: {state.db.words["5"] && state.db.words["5"].length}</p>
+      <Page><p>DB is loaded. Five letter words: {WordDB.db.words["5"] && WordDB.db.words["5"].length}</p>
       </Page>
     );
   }
-  return <Page>DB status: {state.dbStatus}</Page>
+  return <Page>DB status: {WordDB.dbStatus}</Page>
 }

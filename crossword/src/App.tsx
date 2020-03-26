@@ -16,7 +16,6 @@ import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
 import { Uploader } from './Uploader';
 import { DBTest } from './DBTest';
-import { DBContextProvider } from './WordDB';
 
 interface AuthContextValue {
   user: firebase.User | undefined,
@@ -178,7 +177,6 @@ const Construct = (_: RouteComponentProps) => {
 const App = () => {
   const [user, loadingUser, error] = useAuthState(firebase.auth());
   return (
-    <DBContextProvider>
     <AuthContext.Provider value={{user: user, loadingUser: loadingUser, error: error?.message}}>
     <Router css={{height: '100%', width: '100%',}}>
       <Home path="/" />
@@ -194,7 +192,6 @@ const App = () => {
       <NotFound default />
     </Router>
     </AuthContext.Provider>
-    </DBContextProvider>
   );
 }
 
