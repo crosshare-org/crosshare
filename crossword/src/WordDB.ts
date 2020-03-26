@@ -4,7 +4,6 @@ import { isRight } from 'fp-ts/lib/Either'
 import { PathReporter } from "io-ts/lib/PathReporter";
 import localforage from 'localforage';
 
-
 const WordDBV = t.type({
   words: t.record(t.string, t.array(t.tuple([t.string, t.number]))),
   bitmaps: t.record(t.string, t.record(t.string, t.record(t.string, t.number))),

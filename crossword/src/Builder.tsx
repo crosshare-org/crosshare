@@ -14,10 +14,10 @@ import { builderReducer, validateGrid, KeypressAction, } from './reducer';
 import { TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav, Page } from './Page';
 import { RebusOverlay, getKeyboardHandler, getPhysicalKeyboardHandler } from './Puzzle';
-import AutofillWorker from 'worker-loader!./autofill.worker'; // eslint-disable-line import/no-webpack-loader-syntax
+import AutofillWorker from 'worker-loader!./autofill.worker.ts'; // eslint-disable-line import/no-webpack-loader-syntax
 import * as WordDB from './WordDB';
 
-let worker = new AutofillWorker();
+let worker: Worker;
 
 export const BuilderDBLoader = requiresAdmin((props: PuzzleJson) => {
   if (localStorage.getItem("db")) {
@@ -65,8 +65,12 @@ export const Builder = (props: PuzzleJson) => {
       return;
     }
     setAutofill([]);
+    if (!worker) {
+      console.log("initializing worker");
+      worker = new AutofillWorker();
+      worker.addEventListener('message', e => setAutofill(e.data.grid), false);
+    }
     console.log("posting to worker");
-    worker.addEventListener('message', e => setAutofill(e.data.grid), false);
     worker.postMessage({grid: state.grid.cells});
   }, [state.grid.cells]);
 

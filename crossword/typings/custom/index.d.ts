@@ -3,5 +3,5 @@ declare module "worker-loader!*" {
     constructor();
   }
 
-  export = WebpackWorker;
+  export default WebpackWorker;
 }
