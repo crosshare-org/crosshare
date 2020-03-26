@@ -1,10 +1,37 @@
 import * as t from "io-ts";
+import { WordDBT } from './WordDB';
 
 export const BLOCK = ".";
 
 export enum Direction {
   Across,
   Down
+}
+
+export interface WorkerMessage {
+  type: string,
+}
+export interface AutofillResultMessage extends WorkerMessage {
+  type: 'autofill-result',
+  input: string[],
+  result: string[]
+}
+export function isAutofillResultMessage(msg: WorkerMessage): msg is AutofillResultMessage {
+  return msg.type === 'autofill-result'
+}
+export interface LoadDBMessage extends WorkerMessage {
+  type: 'loaddb',
+  db: WordDBT,
+}
+export function isLoadDBMessage(msg: WorkerMessage): msg is LoadDBMessage {
+  return msg.type === 'loaddb'
+}
+export interface AutofillMessage extends WorkerMessage {
+  type: 'autofill',
+  grid: string[]
+}
+export function isAutofillMessage(msg: WorkerMessage): msg is AutofillMessage {
+  return msg.type === 'autofill'
 }
 
 export interface Position {
@@ -35,9 +62,3 @@ const PuzzleJsonOptionalV = t.partial({
 export const PuzzleJsonV = t.intersection([PuzzleJsonMandatoryV, PuzzleJsonOptionalV]);
 
 export type PuzzleJson = t.TypeOf<typeof PuzzleJsonV>;
-
-export const WordDBV = t.type({
-  words: t.record(t.string, t.array(t.tuple([t.string, t.number]))),
-  bitmaps: t.record(t.string, t.record(t.string, t.record(t.string, t.number))),
-});
-export type WordDB = t.TypeOf<typeof WordDBV>;

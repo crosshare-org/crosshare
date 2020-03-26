@@ -15,6 +15,7 @@ import { TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav, Page } from './Page';
 import { RebusOverlay, getKeyboardHandler, getPhysicalKeyboardHandler } from './Puzzle';
 import AutofillWorker from 'worker-loader!./autofill.worker.ts'; // eslint-disable-line import/no-webpack-loader-syntax
+import { isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from './types';
 import * as WordDB from './WordDB';
 
 let worker: Worker;
@@ -68,10 +69,19 @@ export const Builder = (props: PuzzleJson) => {
     if (!worker) {
       console.log("initializing worker");
       worker = new AutofillWorker();
-      worker.addEventListener('message', e => setAutofill(e.data.grid), false);
+      worker.onmessage = e => {
+        const data = e.data as WorkerMessage;
+        if (isAutofillResultMessage(data)) {
+          setAutofill(data.result);
+        } else {
+          console.error("unhandled msg in builder: " + e.data);
+        }
+      };
+      let loaddb: LoadDBMessage = {type: 'loaddb', db: WordDB.db};
+      worker.postMessage(loaddb);
     }
-    console.log("posting to worker");
-    worker.postMessage({grid: state.grid.cells});
+    let autofill: AutofillMessage = {type: 'autofill', grid: state.grid.cells};
+    worker.postMessage(autofill);
   }, [state.grid.cells]);
 
   useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
