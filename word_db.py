@@ -54,8 +54,7 @@ def matching_words(length, bitmap):
 
 if __name__ == "__main__":
     print(_activebits(13123))
-    import timeit
-    count, total = timeit.Timer(lambda: _activebits(13123)).autorange()
-    print(total/count)
-    print(matching_words("KSTON"))
-    print(matching_words(" H "))
+    bitmap = update_bitmap(15, None, 0, "M")
+    bitmap = update_bitmap(15, bitmap, 1, "O")
+    bitmap = update_bitmap(15, bitmap, 2, "D")
+    print(matching_words(15, bitmap))

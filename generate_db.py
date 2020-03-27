@@ -6,6 +6,21 @@ import struct
 
 # See here for format info
 # https://github.com/mattginsberg/cluer/blob/master/cluer.cpp
+import string
+digs = string.digits + string.ascii_letters
+def int2base(x, base):
+    if x == 0:
+        return digs[0]
+    digits = []
+    while x:
+        digits.append(digs[x % base])
+        x = x // base
+    digits.reverse()
+    return ''.join(digits)
+
+def inttob32(n):
+    return int2base(n, 32)
+
 
 class GenerateDB(object):
 
@@ -15,6 +30,7 @@ class GenerateDB(object):
     clue_map = defaultdict(list)
     words_by_length = defaultdict(list)
     bitmaps_by_length = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
+    b64_by_length = {}
 
     def __init__(self, cluedata_filename):
         self._cluedata = cluedata_filename
@@ -40,6 +56,7 @@ class GenerateDB(object):
                         if wordlist[word_idx][0][idx] == letter:
                             bitmap |= (1 << word_idx)
                     self.bitmaps_by_length[length][letter][idx] = bitmap
+                    self.b64_by_length[str(length)+letter+str(idx)] = inttob32(bitmap)
 
     def initialize_clue_map_and_scores(self):
         with open(self._cluedata, 'rb') as f:
@@ -102,7 +119,7 @@ class GenerateDB(object):
 
         with open("_db.json", "w") as dbjson:
             json.dump({"words": self.words_by_length,
-                       "bitmaps": self.bitmaps_by_length},
+                       "bitmaps": self.b64_by_length},
                        dbjson)
         with open("_db.py", "w") as db:
             content = ["words_by_length = {}\n".format(ddict(self.words_by_length)),

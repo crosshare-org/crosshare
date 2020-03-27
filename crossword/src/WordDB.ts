@@ -1,14 +1,41 @@
 import * as t from "io-ts";
 import LZString from 'lz-string';
-import { isRight } from 'fp-ts/lib/Either'
+import { either, isRight } from 'fp-ts/lib/Either'
 import { PathReporter } from "io-ts/lib/PathReporter";
 import localforage from 'localforage';
+import { BigInteger } from '@modern-dev/jsbn';
+
+
+const BigIntegerFromString = new t.Type<BigInteger, string, unknown>(
+  'BigIntegerFromString',
+  (input: unknown): input is BigInteger => input instanceof BigInteger,
+  (input, context) => either.chain(t.string.validate(input, context), n => {
+      return t.success(new BigInteger(n, 32))
+    }),//(typeof input === 'string' ? t.success(input) : t.failure(input, context)),
+  // `A` and `O` are the same, so `encode` is just the identity function
+  a => a.toString(10)
+)
 
 const WordDBV = t.type({
   words: t.record(t.string, t.array(t.tuple([t.string, t.number]))),
-  bitmaps: t.record(t.string, t.record(t.string, t.record(t.string, t.number))),
+  bitmaps: t.record(t.string, t.string),
 });
 export type WordDBT = t.TypeOf<typeof WordDBV>;
+
+const WordDBTransformedV = t.type({
+  words: t.record(t.string, t.array(t.tuple([t.string, t.number]))),
+  bitmaps: t.record(t.string, BigIntegerFromString),
+});
+export type WordDBTransformed = t.TypeOf<typeof WordDBTransformedV>;
+
+export function transformDb(db:WordDBT):WordDBTransformed {
+  const validationResult = WordDBTransformedV.decode(db);
+  if (isRight(validationResult)) {
+    return validationResult.right;
+  } else {
+    throw new Error(PathReporter.report(validationResult).join(","));
+  }
+}
 
 export enum DBStatus {
   uninitialized,
