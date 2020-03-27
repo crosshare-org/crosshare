@@ -63,7 +63,8 @@ export const initialize = () => {
   localforage.getItem("db").then((compressed) => {
     if (compressed) {
       console.log("loading db from storage");
-      db = parseJsonDB(LZString.decompress(compressed as string));
+      const decompressed = LZString.decompress(compressed as string);
+      db = parseJsonDB(decompressed);
       dbStatus = DBStatus.present;
     } else {
       dbStatus = DBStatus.notPresent;

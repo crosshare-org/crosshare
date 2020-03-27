@@ -14,7 +14,7 @@ interface Entry {
   index: number,
   direction: Direction,
   cells: number[],
-  bitmap: number,
+  bitmap: BigInteger|null,
   isComplete: boolean,
   minCost: number
 }
@@ -30,7 +30,7 @@ function highestScore(length: number, bitmap: BigInteger|null) {
 /**
  * Get minimum cost of the words encoded by `bitmap`.
  */
-function minCost(length: number, bitmap: BigInteger) {
+function minCost(length: number, bitmap: BigInteger|null) {
   const match = highestScore(length, bitmap);
   if (match) {
     return 1 / match[1]
@@ -63,6 +63,244 @@ function matchingWords(length:number, bitmap:BigInteger|null) {
   }
   const active = activebits(bitmap)
   return active.map((i) => db.words[length][i]);
+}
+
+function matchingBitmap(pattern:string) {
+  let matches = null;
+  for (let idx = 0; idx < pattern.length; idx += 1) {
+    const letter = pattern[idx];
+    if (letter === '?' || letter === ' ') {
+      continue;
+    }
+    const bitmap = db.bitmaps[pattern.length + letter + idx];
+    if (matches === null) {
+      matches = bitmap;
+    } else {
+      matches = matches.and(bitmap);
+    }
+  }
+  return matches;
+}
+
+// @ts-ignore TODO
+class Grid {
+  constructor(
+    public readonly width: number,
+    public readonly height: number,
+    public readonly usedWords: Set<string>,
+    public readonly cells: string[],
+    public readonly entriesByCell: Array<[[number,number], [number,number]]>,
+    public readonly entries: Entry[]
+  ) {}
+
+  /* Get a lower bound on total cost of the grid as filled in. */
+  minCost() {
+    let cost = 0;
+    this.entries.forEach((e) => cost += e.minCost);
+    return cost;
+  }
+
+  /**
+   * Given an entry, get the crossing entries.
+   *
+   * Returns an array of (entry index, letter idx w/in that entry) of crosses.
+   */
+  crosses(entry:Entry) {
+    const crossDir = (entry.direction === Direction.Across) ? Direction.Down : Direction.Across;
+    const crosses: Array<[number, number]> = [];
+    entry.cells.forEach((cellIndex) => {
+      crosses.push(this.entriesByCell[cellIndex][crossDir]);
+    })
+    return crosses;
+  }
+
+  gridWithEntryDecided(entryIndex: number, word: string) {
+    const newGrid = new Grid(
+      this.width, this.height,
+      new Set(this.usedWords),
+      this.cells.slice(),
+      this.entriesByCell,
+      this.entries.slice());
+
+    const entry = newGrid.entries[entryIndex];
+    newGrid.usedWords.add(word);
+    const crosses = newGrid.crosses(entry);
+    for (let i = 0; i < word.length; i += 1) {
+      const currentVal = newGrid.cells[entry.cells[i]];
+      if (currentVal !== ' ') {
+        if (currentVal === word[i]) {
+          continue;  // No change needed for this cell
+        } else {
+          throw new Error("Cell has conflicting value: " + currentVal + ',' + word + ',' + i);
+        }
+      }
+
+      // update cells
+      newGrid.cells[entry.cells[i]] = word[i];
+
+      // update crossing entries
+      const cross = newGrid.entries[crosses[i][0]];
+      let crossWord = '';
+      cross.cells.forEach((cid) => {
+        crossWord += newGrid.cells[cid];
+      });
+      const crossBitmap = updateBitmap(cross.cells.length, cross.bitmap, crosses[i][1], word[i]);
+
+      if (crossBitmap.equals(ZERO)) {  // empty bitmap means invalid grid
+        return null;
+      }
+
+      let crossCompleted = false;
+      if (crossWord.indexOf(' ') === -1) {
+        crossCompleted = true
+        newGrid.usedWords.add(crossWord);
+      }
+
+      newGrid.entries[crosses[i][0]] = {
+        index: cross.index,
+        direction: cross.direction,
+        cells: cross.cells,
+        bitmap: crossBitmap,
+        isComplete: crossCompleted,
+        minCost: minCost(cross.cells.length, crossBitmap)
+      };
+    }
+
+    // update entry itself
+    const newBitmap = matchingBitmap(word);
+    newGrid.entries[entryIndex] = {
+      index: entry.index,
+      direction: entry.direction,
+      cells: entry.cells,
+      bitmap: newBitmap,
+      isComplete: true,
+      minCost: minCost(word.length, newBitmap)
+    }
+
+    return newGrid;
+  }
+
+  stableSupsets(prelimSubset: Set<number>|null) {
+    let that = this;
+    let openEntries = this.entries.filter((e) => !e.isComplete);
+    if (prelimSubset !== null) {
+      openEntries = openEntries.filter((e) => prelimSubset.has(e.index))
+    }
+
+    const assignments = new Map<number, number>()
+
+    function addSubset(entry:Entry, num:number) {
+      if (assignments.has(entry.index)) {
+        return;
+      }
+      if (prelimSubset !== null && !prelimSubset.has(entry.index)) {
+        throw new Error("Bad assignment " + entry.index + ":" + prelimSubset);
+      }
+      assignments.set(entry.index, num);
+      that.crosses(entry).forEach((c) => {
+        const cross = that.entries[c[0]];
+        if (that.cells[cross.cells[c[1]]] === ' ') {
+          addSubset(cross, num);
+        }
+      });
+    }
+
+    let subsetNumber = 0;
+    openEntries.forEach((e) => {
+      addSubset(e, subsetNumber);
+      subsetNumber += 1;
+    });
+
+    const inv = new Map<number, Set<number>>();
+    assignments.forEach((val,key) => {
+      const newVal = inv.get(val) || new Set<number>();
+      newVal.add(key);
+      inv.set(val, newVal);
+    });
+    return Array.from(inv.values());
+  }
+
+  toString() {
+    let s = ""
+    for (let y = 0; y < this.height; y += 1) {
+      for (let x = 0; x < this.width; x += 1) {
+        s += this.cells[y * this.width + x] + " ";
+      }
+      s += "\n";
+    }
+    return s;
+  }
+
+  static fromTemplate(template: string[], width: number, height: number) {
+      const usedWords = new Set<string>();
+      const cells = template.map((c) => c.toUpperCase().replace("#", ".")) ;
+
+      // [(across_entry, char_idx), (down_entry, char_idx)] index into entries array for each cell
+      const entriesByCell: Array<[[number,number], [number,number]]> = [];
+      cells.forEach(() => {
+        entriesByCell.push([[0,0], [0,0]]);
+      })
+
+      const entries: Array<Entry> = [];
+
+      [Direction.Across, Direction.Down].forEach(dir => {
+        const xincr = (dir === Direction.Across) ? 1 : 0;
+        const yincr = (dir === Direction.Down) ? 1 : 0;
+        const iincr = xincr + yincr * width;
+        let i = 0;
+        for (let y = 0; y < height; y += 1) {
+          for (let x = 0; x < width; x += 1) {
+            const isStartOfRow = (dir === Direction.Across && x === 0) ||
+              (dir === Direction.Down && y === 0);
+            const isStartOfEntry = (cells[i] !== '.' &&
+              (isStartOfRow || cells[i-iincr] === '.') &&
+              (x + xincr < width && y + yincr < height && cells[i+iincr] !== '.'));
+
+            i += 1;
+            if (!isStartOfEntry) {
+              continue;
+            }
+
+            const entryCells: number[] = [];
+            let entryPattern = "";
+            let isComplete = true;
+            let xt = x;
+            let yt = y;
+            let wordlen = 0;
+            while (xt < width && yt < height) {
+              const cellId = yt * width + xt;
+              const cellVal = cells[cellId];
+              entriesByCell[cellId][dir] = [entries.length, wordlen];
+              if (cellVal === '.') {
+                break;
+              }
+              if (cellVal === ' ') {
+                isComplete = false;
+              }
+              entryCells.push(cellId);
+              entryPattern += cellVal;
+              xt += xincr;
+              yt += yincr;
+              wordlen += 1;
+            }
+            const entryBitmap = matchingBitmap(entryPattern);
+            if (isComplete) {
+              usedWords.add(entryPattern);
+            }
+            entries.push({
+              index: entries.length,
+              direction: dir,
+              cells: entryCells,
+              bitmap: entryBitmap,
+              isComplete: isComplete,
+              minCost: minCost(wordlen, entryBitmap)
+            });
+          }
+        }
+      });
+
+    return new this(width, height, usedWords, cells, entriesByCell, entries);
+  }
 }
 
 const memo:Record<string, string[]> = {}
