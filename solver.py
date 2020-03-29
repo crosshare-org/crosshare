@@ -285,7 +285,7 @@ class Solver(object):
                 # Fail fast based on score change due to any crosses
                 fail_fast=False
                 for i in range(length):
-                    cell = grid.cells[i]
+                    cell = grid.cells[entry.cells[i]]
                     if cell != ' ': # Don't need to check cross
                         continue
                     cross = grid.entries[crosses[i][0]]
