@@ -25,7 +25,7 @@ ctx.onmessage = (e) => {
   if (isLoadDBMessage(data)) {
     setDb(transformDb(data.db));
   } else if (isAutofillMessage(data)) {
-    current = new Autofiller(data.grid, onComplete);
+    current = new Autofiller(data.grid, data.width, data.height, onComplete);
     msgChannel.port1.postMessage('');
   } else {
     console.error("unhandled msg in autofill worker: " + e.data);

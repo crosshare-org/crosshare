@@ -80,7 +80,12 @@ export const Builder = (props: PuzzleJson) => {
       let loaddb: LoadDBMessage = {type: 'loaddb', db: WordDB.db};
       worker.postMessage(loaddb);
     }
-    let autofill: AutofillMessage = {type: 'autofill', grid: state.grid.cells};
+    let autofill: AutofillMessage = {
+      type: 'autofill',
+      grid: state.grid.cells,
+      width: state.grid.width,
+      height: state.grid.height
+    };
     worker.postMessage(autofill);
   }, [state.grid.cells]);
 

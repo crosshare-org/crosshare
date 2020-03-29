@@ -28,7 +28,9 @@ export function isLoadDBMessage(msg: WorkerMessage): msg is LoadDBMessage {
 }
 export interface AutofillMessage extends WorkerMessage {
   type: 'autofill',
-  grid: string[]
+  grid: string[],
+  width: number,
+  height: number
 }
 export function isAutofillMessage(msg: WorkerMessage): msg is AutofillMessage {
   return msg.type === 'autofill'

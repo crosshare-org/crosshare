@@ -309,7 +309,12 @@ export class Autofiller {
   public completed: boolean;
   public stringified: string;
 
-  constructor(public readonly grid: string[], public onComplete: (input: string[], result: string[]) => void) {
+  constructor(
+    public readonly grid: string[],
+    public readonly width: number,
+    public readonly height: number,
+    public onComplete: (input: string[], result: string[]) => void
+  ) {
     this.stringified = this.grid.join('|');
     this.currentIter = 0;
     this.completed = false;

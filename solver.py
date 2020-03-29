@@ -8,6 +8,7 @@ import itertools
 import math
 import random
 from typing import List
+import time
 
 import word_db
 
@@ -228,32 +229,32 @@ class Solver(object):
     def __init__(self, grid):
         self.initial_grid = Grid.from_template(grid)
 
-    def _solve(self, grid, discrep=0, pitched=None, subset=None):
+    def _solve(self, grid, discrep, pitched, subset, cont):
         """Fill out a grid or a subset of grid."""
         base_cost = grid.min_cost()
         if self.soln_grid and base_cost > self.soln_cost:
-            return None
+            return cont(None)
 
         entries_to_consider = [e for e in grid.entries if not e.is_complete]
         if not entries_to_consider: # New best soln
-            print(grid)
-            print(base_cost)
+#            print(grid)
+#            print(base_cost)
             self.soln_grid = grid
             self.soln_cost = base_cost
-            return grid
+            return cont(grid)
 
         if subset:
             entries_to_consider = [e for e in entries_to_consider if e.index in subset]
         if not entries_to_consider: # Done with subsection
-            return grid
+            return cont(grid)
 
         subsets = grid.stable_subsets(subset)
         if len(subsets) > 1:
             subsets = sorted(subsets, key=lambda x: len(x))
-            subsolved = self._solve(grid, discrep, list(pitched), subsets[0])
-            if not subsolved:
-                return None
-            return self._solve(subsolved, discrep, list(pitched), subset)
+            return lambda: self._solve(grid, discrep, list(pitched), subsets[0],
+                               lambda subsolved: subsolved and \
+                                  (lambda: self._solve(subsolved, discrep, list(pitched), subset, cont)) or \
+                                  cont(None))
 
         entries_to_consider.sort(key=lambda e: word_db.num_matches(len(e.cells), e.bitmap))
         successor = None
@@ -324,7 +325,7 @@ class Solver(object):
                 break
 
             if not best_grid: # No valid option for this entry, bad grid
-                return None
+                return cont(None)
 
             if not second_best_cost: # No backup option, so this entry is forced
                 successor = best_grid
@@ -340,51 +341,65 @@ class Solver(object):
         next_subset = None
         if subset:
             next_subset = [e for e in subset if e != successor[1]]
-        result = self._solve(successor[0], discrep, pitched, next_subset)
-        if discrep and len(pitched) < discrep:
-            res2 = self._solve(grid, discrep, list(pitched) + [(successor[1], successor[2])], subset)
-            if res2 and (not result or res2.min_cost() < result.min_cost()):
-                result = res2
-        return result
+
+        if not discrep or len(pitched) >= discrep:
+            return lambda: self._solve(successor[0], discrep, pitched, next_subset, cont)
+
+        return lambda: self._solve(successor[0], discrep, pitched, next_subset,
+            lambda result: (
+                lambda: self._solve(grid, discrep, list(pitched) + [(successor[1], successor[2])], subset,
+                    lambda res2: (
+                        cont((res2 and (not result or res2.min_cost() < result.min_cost())) and res2 or result)
+                    ))
+            ))
 
 
     def solve(self):
-        self._solve(self.initial_grid, discrep=3)
+        def trampoline(f, *args):
+            t = time.time()
+            v = f(*args)
+            while callable(v):
+                if time.time() - t > 1:
+                    print("tick")
+                    t = time.time()
+                v = v()
+            return v
+        trampoline(self._solve, self.initial_grid, 4, None, None, print)
         print(self.soln_grid)
         print(self.soln_cost)
         return self.soln_grid
 
 if __name__ == "__main__":
-    test_grid = '''        ..     
-        .      
-        .      
-   .      .    
+    test_grid = '''        ..
+        .
+        .
+   .      .
       .   .   .
-...   .        
-     .     .   
-       .       
-   .     .     
+...   .
+     .     .
+       .
+   .     .
         .   ...
-.   .   .      
-    .      .   
-      .        
-      .        
+.   .   .
+    .      .
+      .
+      .
      ..        '''
-    test_grid = '''    .    .     
-    .    .     
-    .    .     
-VANBURENZOPIANO
-...   ..   ....
-WASHINGTONYHAWK
-   ..   .      
-     .   .     
-      .   ..   
-ROOSEVELTONJOHN
-....   ..   ...
-JEFFERSONNYBONO
-     .    .    
-     .    .    
-     .    .    '''
+    test_grid = "    .    .     \n" + \
+"    .    .     \n" + \
+"    .    .     \n" + \
+"VANBURENZOPIANO\n" + \
+"...   ..   ....\n" + \
+"WASHINGTONYHAWK\n" + \
+"   ..   .      \n" + \
+"     .   .     \n" + \
+"      .   ..   \n" + \
+"ROOSEVELTONJOHN\n" + \
+"....   ..   ...\n" + \
+"JEFFERSONNYBONO\n" + \
+"     .    .    \n" + \
+"     .    .    \n" + \
+"     .    .    \n"
 
 #     test_grid = '''CROC.CAPO.TACIT
 # COMA.UBER.ALERO
@@ -403,8 +418,8 @@ JEFFERSONNYBONO
 # BEANE.    .HORA'''
     solver = Solver(test_grid)
 
-    import cProfile
-    cProfile.run('solver.solve()', sort="cumtime")
-#    import timeit
-#    count, total = timeit.Timer(lambda: solver.solve()).autorange()
-#    print(total/count)
+#    import cProfile
+#    cProfile.run('solver.solve()', sort="cumtime")
+    import timeit
+    count, total = timeit.Timer(lambda: solver.solve()).autorange()
+    print(total/count)
