@@ -372,7 +372,6 @@ export class Autofiller {
   public stringified: string;
   public solnGrid: Grid|null;
   public solnCost: number|null;
-  public count: number;
 
   constructor(
     public readonly grid: string[],
@@ -380,7 +379,6 @@ export class Autofiller {
     public readonly height: number,
     public onComplete: (input: string[], result: string[]) => void
   ) {
-    this.count = 0;
     this.initialGrid = Grid.fromTemplate(this.grid, this.width, this.height);
     this.stringified = this.grid.join('|');
     this.completed = false;
@@ -395,25 +393,17 @@ export class Autofiller {
   }
   /* Fill out a grid or a subset of a grid */
   _solve(grid: Grid, discrep: number, pitched: Set<string>, subset: Set<number>|null, cont: Cont): Result {
-    console.log(this.count);
-    console.log(grid.toString());
-    console.log(pitched);
-    console.log(subset);
-    this.count += 1;
     const baseCost = grid.minCost();
     if (this.solnCost && baseCost > this.solnCost) {
-      console.log("A");
       return cont(null);
     }
 
     let entriesToConsider = grid.entries.filter((e) => !e.isComplete);
-    if (!entriesToConsider) {  // New best soln
-      console.log("new best");
+    if (entriesToConsider.length === 0) {  // New best soln
       console.log(grid.toString());
       console.log(baseCost);
       this.solnGrid = grid
       this.solnCost = baseCost
-      console.log("B");
       return cont(grid)
     }
 
@@ -421,14 +411,12 @@ export class Autofiller {
       entriesToConsider = entriesToConsider.filter((e) => subset.has(e.index));
     }
     if (entriesToConsider.length === 0) {  // Done with this subsection
-      console.log("C");
       return cont(grid);
     }
 
     const subsets = grid.stableSubsets(subset);
     if (subsets.length > 1) {
       subsets.sort((a,b) => a.size - b.size);
-      console.log("D");
       return recur(grid, discrep, pitched, subsets[0], subsolved => {
         if (subsolved === null) {
           return cont(null);
@@ -519,7 +507,6 @@ export class Autofiller {
       }
 
       if (bestGrid === null || bestCost === null) {  // No valid option for this entry, bad grid
-        console.log("E");
         return cont(null);
       }
 
@@ -545,11 +532,9 @@ export class Autofiller {
     }
 
     if (!discrep || pitched.size >= discrep) {
-      console.log("F");
       return recur(successor[0], discrep, pitched, nextSubset, cont);
     }
 
-    console.log("G");
     return recur(successor[0], discrep, pitched, nextSubset,
       result => {
         const newPitched = new Set(pitched.values());
@@ -575,9 +560,9 @@ export class Autofiller {
     }
     if (this.solnGrid) {
       this.onComplete(this.grid, this.solnGrid.cells);
-      this.completed = true;
+    } else {
+      console.log("didnt find a solution :(");
     }
-    console.log("didnt finish")
     this.completed=true;
     return v.result;
   }
@@ -588,6 +573,8 @@ export class Autofiller {
       return;
     }
     console.log("Attempting solve");
+    const start = new Date().getTime();
     this.solve();
+    console.log("Took " + ((new Date().getTime() - start) / 1000).toPrecision(4));
   }
 }
