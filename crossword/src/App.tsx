@@ -154,10 +154,13 @@ const Home = (_: RouteComponentProps) => {
 
 const Construct = (_: RouteComponentProps) => {
   const size = 5;
-  const grid = new Array<string>();
-  for (let i = 0; i < size * size; i += 1) {
-    grid.push(" ");
-  }
+  const grid = [
+    " ", " ", " ", "T", " ",
+    " ", " ", " ", "R", " ",
+    " ", " ", " ", "U", " ",
+    "O", "B", "A", "M", "A",
+    " ", " ", " ", "P", " ",
+  ];
   const props = {
     "title": "New Puzzle",
     "size": {

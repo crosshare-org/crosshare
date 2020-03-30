@@ -87,7 +87,7 @@ export const Builder = (props: PuzzleJson) => {
       height: state.grid.height
     };
     worker.postMessage(autofill);
-  }, [state.grid.cells]);
+  }, [state.grid.cells, state.grid.width, state.grid.height]);
 
   useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
 

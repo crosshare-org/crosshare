@@ -225,32 +225,42 @@ class Solver(object):
 
     soln_grid = None
     soln_cost = 0
+    count = 0
 
     def __init__(self, grid):
         self.initial_grid = Grid.from_template(grid)
 
     def _solve(self, grid, discrep, pitched, subset, cont):
         """Fill out a grid or a subset of grid."""
+        print(self.count)
+        print(grid)
+        print(pitched)
+        print(subset)
+        self.count += 1
         base_cost = grid.min_cost()
         if self.soln_grid and base_cost > self.soln_cost:
+            print("A")
             return cont(None)
 
         entries_to_consider = [e for e in grid.entries if not e.is_complete]
         if not entries_to_consider: # New best soln
-#            print(grid)
-#            print(base_cost)
+            print(grid)
+            print(base_cost)
             self.soln_grid = grid
             self.soln_cost = base_cost
+            print("B")
             return cont(grid)
 
         if subset:
             entries_to_consider = [e for e in entries_to_consider if e.index in subset]
         if not entries_to_consider: # Done with subsection
+            print("C")
             return cont(grid)
 
         subsets = grid.stable_subsets(subset)
         if len(subsets) > 1:
             subsets = sorted(subsets, key=lambda x: len(x))
+            print("D")
             return lambda: self._solve(grid, discrep, list(pitched), subsets[0],
                                lambda subsolved: subsolved and \
                                   (lambda: self._solve(subsolved, discrep, list(pitched), subset, cont)) or \
@@ -325,6 +335,7 @@ class Solver(object):
                 break
 
             if not best_grid: # No valid option for this entry, bad grid
+                print("E")
                 return cont(None)
 
             if not second_best_cost: # No backup option, so this entry is forced
@@ -343,8 +354,10 @@ class Solver(object):
             next_subset = [e for e in subset if e != successor[1]]
 
         if not discrep or len(pitched) >= discrep:
+            print("F")
             return lambda: self._solve(successor[0], discrep, pitched, next_subset, cont)
 
+        print("G")
         return lambda: self._solve(successor[0], discrep, pitched, next_subset,
             lambda result: (
                 lambda: self._solve(grid, discrep, list(pitched) + [(successor[1], successor[2])], subset,
@@ -364,7 +377,7 @@ class Solver(object):
                     t = time.time()
                 v = v()
             return v
-        trampoline(self._solve, self.initial_grid, 4, None, None, print)
+        trampoline(self._solve, self.initial_grid, 2, None, None, print)
         print(self.soln_grid)
         print(self.soln_cost)
         return self.soln_grid
@@ -416,6 +429,7 @@ if __name__ == "__main__":
 # APOET.    .AMEN
 # MERIT.    .COED
 # BEANE.    .HORA'''
+    test_grid = '   T \n   R \n   U \nOBAMA\n   P ' ;
     solver = Solver(test_grid)
 
 #    import cProfile
