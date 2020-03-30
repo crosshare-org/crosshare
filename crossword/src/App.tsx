@@ -153,33 +153,33 @@ const Home = (_: RouteComponentProps) => {
 }
 
 const Construct = (_: RouteComponentProps) => {
-/*  const size = 5;
+  const size = 5;
   const grid = [
     " ", " ", " ", "T", " ",
     " ", " ", " ", "R", " ",
     " ", " ", " ", "U", " ",
     "O", "B", "A", "M", "A",
     " ", " ", " ", "P", " ",
-  ];*/
-  const size = 15;
-  let grid = [
-    "    .    .     ",
-    "    .    .     ",
-    "    .    .     ",
-    "VANBURENZOPIANO",
-    "...   ..   ....",
-    "WASHINGTONYHAWK",
-    "   ..   .      ",
-    "     .   .     ",
-    "      .   ..   ",
-    "ROOSEVELTONJOHN",
-    "....   ..   ...",
-    "JEFFERSONNYBONO",
-    "     .    .    ",
-    "     .    .    ",
-    "     .    .    "
   ];
-  grid = grid.map(s => s.split("")).flat();
+  // const size = 15;
+  // let grid = [
+  //   "    .    .     ",
+  //   "    .    .     ",
+  //   "    .    .     ",
+  //   "VANBURENZOPIANO",
+  //   "...   ..   ....",
+  //   "WASHINGTONYHAWK",
+  //   "   ..   .      ",
+  //   "     .   .     ",
+  //   "      .   ..   ",
+  //   "ROOSEVELTONJOHN",
+  //   "....   ..   ...",
+  //   "JEFFERSONNYBONO",
+  //   "     .    .    ",
+  //   "     .    .    ",
+  //   "     .    .    "
+  // ];
+  // grid = grid.map(s => s.split("")).flat();
   const props = {
     "title": "New Puzzle",
     "size": {

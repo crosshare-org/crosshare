@@ -95,7 +95,12 @@ function matchingWords(length:number, bitmap:BigInteger|null) {
   return rv;
 }
 
+const memoMatchingBitmap:Map<string, BigInteger|null> = new Map();
 function matchingBitmap(pattern:string) {
+  const memoed = memoMatchingBitmap.get(pattern);
+  if (memoed) {
+    return memoed;
+  }
   let matches = null;
   for (let idx = 0; idx < pattern.length; idx += 1) {
     const letter = pattern[idx];
@@ -109,6 +114,7 @@ function matchingBitmap(pattern:string) {
       matches = matches.and(bitmap);
     }
   }
+  memoMatchingBitmap.set(pattern, matches);
   return matches;
 }
 
