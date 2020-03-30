@@ -369,11 +369,11 @@ type Cont = (x: Grid|null) => Result;
 export class Autofiller {
   public initialGrid: Grid;
   public completed: boolean;
-  public stringified: string;
   public solnGrid: Grid|null;
   public solnCost: number|null;
   public nextStep: Result;
   public postedSoln: boolean;
+  public startTime: number;
 
   constructor(
     public readonly grid: string[],
@@ -382,13 +382,16 @@ export class Autofiller {
     public onComplete: (input: string[], result: string[]) => void
   ) {
     this.initialGrid = Grid.fromTemplate(this.grid, this.width, this.height);
-    this.stringified = this.grid.join('|');
     this.completed = false;
     this.solnCost = null;
     this.solnGrid = null;
     this.postedSoln = false;
+    this.startTime = new Date().getTime();
+
+    // Our initial step is a call to recur
     this.nextStep = recur(this.initialGrid, 2, new Set<string>(), null, (result) => {return value(result)});
   };
+
   step() {
     if (!db) {
       console.error("Worker has no db but attempting autofill");
@@ -399,6 +402,9 @@ export class Autofiller {
       console.log("Calling step but already completed");
       return;
     }
+
+    /* Take as many steps as we can w/in 50ms. After that we need to take a
+     * break so that we have a chance to get any new input from the user. */
     const start = new Date().getTime();
     while (isRecur(this.nextStep) && new Date().getTime() - start < 50) {
       this.nextStep = this._solve(
@@ -408,16 +414,21 @@ export class Autofiller {
         this.nextStep.subset,
         this.nextStep.cont);
     }
+
+    // If it's a "value" (not a "recur") we're done.
     if (isValue(this.nextStep)) {
-      console.log("Finished");
+      console.log("Finished: " + ((new Date().getTime() - this.startTime)/1000).toPrecision(4) + "s");
       this.completed = true;
     }
+
+    // If we have a solution that hasn't been posted yet, post it.
     if (this.solnGrid && !this.postedSoln) {
       console.log("Posting soln");
       this.postedSoln = true;
       this.onComplete(this.grid, this.solnGrid.cells);
     }
   };
+
   /* Fill out a grid or a subset of a grid */
   _solve(grid: Grid, discrep: number, pitched: Set<string>, subset: Set<number>|null, cont: Cont): Result {
     const baseCost = grid.minCost();
@@ -427,8 +438,6 @@ export class Autofiller {
 
     let entriesToConsider = grid.entries.filter((e) => !e.isComplete);
     if (entriesToConsider.length === 0) {  // New best soln
-      console.log(grid.toString());
-      console.log(baseCost);
       this.solnGrid = grid
       this.solnCost = baseCost
       this.postedSoln = false;
