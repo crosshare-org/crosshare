@@ -365,13 +365,15 @@ function value(x:Grid|null) {
 }
 
 type Cont = (x: Grid|null) => Result;
-const memo:Record<string, string[]> = {}
+
 export class Autofiller {
   public initialGrid: Grid;
   public completed: boolean;
   public stringified: string;
   public solnGrid: Grid|null;
   public solnCost: number|null;
+  public nextStep: Result;
+  public postedSoln: boolean;
 
   constructor(
     public readonly grid: string[],
@@ -384,13 +386,38 @@ export class Autofiller {
     this.completed = false;
     this.solnCost = null;
     this.solnGrid = null;
-    if (memo[this.stringified]) {
-      this.onComplete(this.grid, memo[this.stringified]);
-      this.solnGrid = this.initialGrid;
-      this.solnCost = this.initialGrid.minCost();
+    this.postedSoln = false;
+    this.nextStep = recur(this.initialGrid, 2, new Set<string>(), null, (result) => {return value(result)});
+  };
+  step() {
+    if (!db) {
+      console.error("Worker has no db but attempting autofill");
+      this.completed = true;
+      return;
+    }
+    if (this.completed) {
+      console.log("Calling step but already completed");
+      return;
+    }
+    const start = new Date().getTime();
+    while (isRecur(this.nextStep) && new Date().getTime() - start < 50) {
+      this.nextStep = this._solve(
+        this.nextStep.grid,
+        this.nextStep.discrep,
+        this.nextStep.pitched,
+        this.nextStep.subset,
+        this.nextStep.cont);
+    }
+    if (isValue(this.nextStep)) {
+      console.log("Finished");
       this.completed = true;
     }
-  }
+    if (this.solnGrid && !this.postedSoln) {
+      console.log("Posting soln");
+      this.postedSoln = true;
+      this.onComplete(this.grid, this.solnGrid.cells);
+    }
+  };
   /* Fill out a grid or a subset of a grid */
   _solve(grid: Grid, discrep: number, pitched: Set<string>, subset: Set<number>|null, cont: Cont): Result {
     const baseCost = grid.minCost();
@@ -404,6 +431,7 @@ export class Autofiller {
       console.log(baseCost);
       this.solnGrid = grid
       this.solnCost = baseCost
+      this.postedSoln = false;
       return cont(grid)
     }
 
@@ -546,35 +574,5 @@ export class Autofiller {
         );
       }
     )
-  }
-  solve() {
-    if (this.completed) {
-      return;
-    }
-    let v:Result = this._solve(this.initialGrid, 2, new Set<string>(), null, (result) => {return value(result)});
-    while (isRecur(v)) {
-      v = this._solve(v.grid, v.discrep, v.pitched, v.subset, v.cont);
-    }
-    if (!isValue(v)) {
-      throw new Error("finished solve but not a value")
-    }
-    if (this.solnGrid) {
-      this.onComplete(this.grid, this.solnGrid.cells);
-    } else {
-      console.log("didnt find a solution :(");
-    }
-    this.completed=true;
-    return v.result;
-  }
-  step() {
-    if (!db) {
-      console.error("Worker has no db but attempting autofill");
-      this.completed = true;
-      return;
-    }
-    console.log("Attempting solve");
-    const start = new Date().getTime();
-    this.solve();
-    console.log("Took " + ((new Date().getTime() - start) / 1000).toPrecision(4));
-  }
+  };
 }
