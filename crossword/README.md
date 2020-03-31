@@ -11,7 +11,6 @@
 - Click ...More then hit Escape - should only show 1 modal
 - Autofill w/ rebus
 - Autofill w/ 2-, 1- letter words
-- Autofill speed improvement for sparse grids
 
 ## Available Scripts
 

@@ -10,6 +10,8 @@ export function setDb(newdb:WordDBTransformed) {
 const ONE = new BigInteger('1', 10);
 const ZERO = new BigInteger('0', 10);
 
+const MAX_WORDS_TO_CONSIDER = 1000;
+
 interface Entry {
   index: number,
   direction: Direction,
@@ -38,21 +40,11 @@ function minCost(length: number, bitmap: BigInteger|null) {
   return 5
 }
 
-const memoNumMatches:Map<string, number> = new Map();
 function numMatches(length:number, bitmap:BigInteger|null) {
-  const key:string = length + ":" + (bitmap === null ? 'null' : bitmap.toString(32));
-  const memoed = memoNumMatches.get(key);
-  if (memoed) {
-    return memoed;
-  }
-  let rv;
   if (bitmap === null) {
-    rv = db.words[length].length;
-  } else {
-    rv = bitmap.bitCount();
+    return db.words[length].length;
   }
-  memoNumMatches.set(key, rv);
-  return rv;
+  return bitmap.bitCount();
 }
 
 function numMatchesForEntry(entry: Entry) {
@@ -86,10 +78,10 @@ function matchingWords(length:number, bitmap:BigInteger|null) {
   }
   let rv;
   if (bitmap === null) {
-    rv = db.words[length].slice();
+    rv = db.words[length].slice(0, MAX_WORDS_TO_CONSIDER);
   } else {
     const active = activebits(bitmap)
-    rv = active.map((i) => db.words[length][i]);
+    rv = active.slice(0, MAX_WORDS_TO_CONSIDER).map((i) => db.words[length][i]);
   }
   memoMatchingWords.set(key, rv);
   return rv;
