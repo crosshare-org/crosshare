@@ -7,12 +7,12 @@ import { isMobile, isTablet } from "react-device-detect";
 import { FaRegCircle, FaRegCheckCircle, FaTabletAlt, FaKeyboard, FaEllipsisH, } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 
-import { Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed } from './Icons';
+import { Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled } from './Icons';
 import { requiresAdmin } from './App';
 import { Grid, GridData } from './Grid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
 import { builderReducer, validateGrid, KeypressAction, } from './reducer';
-import { TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
+import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav, Page } from './Page';
 import { RebusOverlay, getKeyboardHandler, getPhysicalKeyboardHandler } from './Puzzle';
 import AutofillWorker from 'worker-loader!./autofill.worker.ts'; // eslint-disable-line import/no-webpack-loader-syntax
@@ -56,8 +56,11 @@ export const Builder = (props: PuzzleJson) => {
     }
   }, validateGrid);
 
-  const [autofill, setAutofill] = React.useState<string[]>([]);
-  const [autofilling, setAutofilling] = React.useState(false);
+  const [autofilledGrid, setAutofilledGrid] = React.useState<string[]>([]);
+  const [autofillInProgress, setAutofillInProgress] = React.useState(false);
+
+  // TODO should we actually disable autofill? Right now it just turns off display
+  const [autofillEnabled, setAutofillEnabled] = React.useState(true);
   WordDB.initialize();
   if (WordDB.dbStatus === WordDB.DBStatus.notPresent) {
     WordDB.build();
@@ -67,16 +70,16 @@ export const Builder = (props: PuzzleJson) => {
     if (!WordDB.db) {
       return;
     }
-    setAutofill([]);
+    setAutofilledGrid([]);
     if (!worker) {
       console.log("initializing worker");
       worker = new AutofillWorker();
       worker.onmessage = e => {
         const data = e.data as WorkerMessage;
         if (isAutofillResultMessage(data)) {
-          setAutofill(data.result);
+          setAutofilledGrid(data.result);
         } else if (isAutofillCompleteMessage(data)) {
-          setAutofilling(false);
+          setAutofillInProgress(false);
         } else {
           console.error("unhandled msg in builder: ", e.data);
         }
@@ -90,7 +93,7 @@ export const Builder = (props: PuzzleJson) => {
       width: state.grid.width,
       height: state.grid.height
     };
-    setAutofilling(true);
+    setAutofillInProgress(true);
     worker.postMessage(autofill);
   }, [state.grid.cells, state.grid.width, state.grid.height]);
 
@@ -100,14 +103,28 @@ export const Builder = (props: PuzzleJson) => {
     return <Page>Loading word database...</Page>
   }
 
-//  const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
+  function toggleAutofillEnabled() {
+    setAutofillEnabled(a => !a);
+  }
 
-//  const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
-//  const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
-
+  let autofillIcon = <SpinnerDisabled/>;
+  let autofillText = "Autofill disabled";
+  if (autofillEnabled) {
+    if (autofillInProgress) {
+      autofillIcon = <SpinnerWorking/>;
+      autofillText = "Autofill in progress";
+    } else if (autofilledGrid.length) {
+      autofillIcon = <SpinnerFinished/>;
+      autofillText = "Autofill complete";
+    } else {
+      autofillIcon = <SpinnerFailed/>;
+      autofillText = "Couldn't autofill this grid";
+    }
+  }
   return (
     <React.Fragment>
       <TopBar>
+        <TopBarLink icon={autofillIcon} hoverText={autofillText} onClick={toggleAutofillEnabled} />
         <TopBarDropDown icon={<FaEllipsisH />} text="More">
           <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus (Esc)" onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
           <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
@@ -129,22 +146,11 @@ export const Builder = (props: PuzzleJson) => {
             active={state.active}
             dispatch={dispatch}
             allowBlockEditing={true}
-            autofill={autofill}
+            autofill={autofillEnabled ? autofilledGrid : []}
           />
         }
         left={
           <ul>
-          <li>
-          { autofilling ?
-            <span><SpinnerWorking/> Autofilling</span>
-          :
-            (autofill.length ?
-              <span><SpinnerFinished/> Autofill complete</span>
-            :
-              <span><SpinnerFailed/> Couldn't autofill this grid</span>
-            )
-          }
-          </li>
           <li>All cells should be filled { state.gridIsComplete ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
           <li>All entries should be at least three letters { state.hasNoShortWords ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
           <li>No entries should be repeated { state.repeats.size > 0 ? <React.Fragment><FaRegCircle/> ({Array.from(state.repeats).sort().join(", ")})</React.Fragment>: <FaRegCheckCircle/> }</li>
