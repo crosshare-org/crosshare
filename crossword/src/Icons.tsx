@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FaEye, FaCheck } from 'react-icons/fa';
-import { CheatUnit } from './reducer';
+import { CheatUnit, Symmetry } from './reducer';
 
 const Square = (props: {cx:number, cy:number, beginMs:number, animate: boolean, filled: boolean}) => {
   let color = {
@@ -143,4 +143,32 @@ export const RevealEntry = () => {
 }
 export const RevealPuzzle = () => {
   return <CheckReveal unit={CheatUnit.Puzzle} reveal={true}/>;
+}
+
+export const SymmetryIcon = ({type}: {type: Symmetry}) => {
+  return (
+    <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#000">
+      <Square cx={15} cy={15} beginMs={0} animate={false} filled={true}/>
+      <Square cx={15} cy={85} beginMs={0} animate={false} filled={type === Symmetry.Horizontal}/>
+      <Square cx={85} cy={85} beginMs={0} animate={false} filled={type === Symmetry.Rotational}/>
+      <Square cx={85} cy={15} beginMs={0} animate={false} filled={type === Symmetry.Vertical}/>
+      <Square cx={15} cy={50} beginMs={0} animate={false} filled={type === Symmetry.Rotational || type === Symmetry.Vertical}/>
+      <Square cx={85} cy={50} beginMs={0} animate={false} filled={type === Symmetry.None || type === Symmetry.Rotational || type === Symmetry.Vertical}/>
+      <Square cx={50} cy={15} beginMs={0} animate={false} filled={type === Symmetry.Horizontal || type === Symmetry.None}/>
+      <Square cx={50} cy={85} beginMs={0} animate={false} filled={type === Symmetry.None || type === Symmetry.Horizontal}/>
+      <Square cx={50} cy={50} beginMs={0} animate={false} filled={false}/>
+    </svg>
+  );
+}
+export const SymmetryRotational = () => {
+  return <SymmetryIcon type={Symmetry.Rotational}/>;
+}
+export const SymmetryHorizontal = () => {
+  return <SymmetryIcon type={Symmetry.Horizontal}/>;
+}
+export const SymmetryVertical = () => {
+  return <SymmetryIcon type={Symmetry.Vertical}/>;
+}
+export const SymmetryNone = () => {
+  return <SymmetryIcon type={Symmetry.None}/>;
 }

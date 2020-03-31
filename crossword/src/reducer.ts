@@ -10,6 +10,7 @@ interface GridInterfaceState {
   isEnteringRebus: boolean,
   rebusValue: string,
   wrongCells: Set<number>,
+  symmetry: Symmetry,
   isEditable(cellIndex: number): boolean,
   postEdit(cellIndex: number): GridInterfaceState,
 }
@@ -43,6 +44,14 @@ function isKeypressAction(action: PuzzleAction): action is KeypressAction {
   return action.type === 'KEYPRESS'
 }
 
+export interface SymmetryAction extends PuzzleAction {
+  type: 'CHANGESYMMETRY',
+  symmetry: Symmetry,
+}
+export function isSymmetryAction(action: PuzzleAction): action is SymmetryAction {
+  return action.type === 'CHANGESYMMETRY'
+}
+
 interface SetActiveAction extends PuzzleAction {
   newActive: PosAndDir,
 }
@@ -62,6 +71,13 @@ export interface SetActivePositionAction extends PuzzleAction {
 }
 function isSetActivePositionAction(action: PuzzleAction): action is SetActivePositionAction {
   return action.type === 'SETACTIVEPOSITION'
+}
+
+export enum Symmetry {
+  Rotational,
+  Horizontal,
+  Vertical,
+  None
 }
 
 export enum CheatUnit {
@@ -96,7 +112,7 @@ function cheatCells(state: PuzzleState, cellsToCheck: Array<Position>, isReveal:
       newRevealed.add(cellIndex);
       newWrong.delete(cellIndex);
       newVerified.add(cellIndex);
-      grid = grid.gridWithNewChar(cell, shouldBe);
+      grid = grid.gridWithNewChar(cell, shouldBe, Symmetry.None);
     } else if (currentVal.trim()) {
       newWrong.add(cellIndex);
     }
@@ -179,7 +195,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       } else if (key === "Enter") {
         const cellIndex = state.grid.cellIndex(state.active);
         if (state.isEditable(cellIndex)) {
-          state.grid = state.grid.gridWithNewChar(state.active, state.rebusValue);
+          state.grid = state.grid.gridWithNewChar(state.active, state.rebusValue, state.symmetry);
           state = state.postEdit(cellIndex) as T; // TODO this is trash
         }
         return ({
@@ -214,13 +230,13 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       return ({ ...state, active: { ...state.grid.moveDown(state.active), dir: Direction.Down } });
     } else if ((key === '.' || key === '{block}') && state.grid.allowBlockEditing) {
       const cellIndex = state.grid.cellIndex(state.active);
-      state.grid = state.grid.gridWithBlockToggled(state.active);
+      state.grid = state.grid.gridWithBlockToggled(state.active, state.symmetry);
       return state.postEdit(cellIndex) as T; // TODO this is trash
     } else if (key.match(/^[A-Za-z0-9]$/)) {
       const char = key.toUpperCase();
       const cellIndex = state.grid.cellIndex(state.active);
       if (state.isEditable(cellIndex)) {
-        state.grid = state.grid.gridWithNewChar(state.active, char);
+        state.grid = state.grid.gridWithNewChar(state.active, char, state.symmetry);
         state = state.postEdit(cellIndex) as T; // TODO this is trash
       }
       return ({
@@ -230,7 +246,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
     } else if (key === "Backspace" || key === "{bksp}") {
       const cellIndex = state.grid.cellIndex(state.active);
       if (state.isEditable(cellIndex)) {
-        state.grid = state.grid.gridWithNewChar(state.active, " ");
+        state.grid = state.grid.gridWithNewChar(state.active, " ", state.symmetry);
         state = state.postEdit(cellIndex) as T; // TODO this is trash
       }
       return ({
@@ -244,6 +260,9 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
 
 export function builderReducer(state: BuilderState, action: PuzzleAction): BuilderState {
   state = gridInterfaceReducer(state, action);
+  if (isSymmetryAction(action)) {
+    return ({ ...state, symmetry: action.symmetry });
+  }
   return state;
 }
 

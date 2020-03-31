@@ -7,11 +7,14 @@ import { isMobile, isTablet } from "react-device-detect";
 import { FaRegCircle, FaRegCheckCircle, FaTabletAlt, FaKeyboard, FaEllipsisH, } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 
-import { Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled } from './Icons';
+import {
+  Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
+  SymmetryIcon, SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
+} from './Icons';
 import { requiresAdmin } from './App';
 import { Grid, GridData } from './Grid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
-import { builderReducer, validateGrid, KeypressAction, } from './reducer';
+import { Symmetry, builderReducer, validateGrid, KeypressAction, SymmetryAction } from './reducer';
 import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav, Page } from './Page';
 import { RebusOverlay, getKeyboardHandler, getPhysicalKeyboardHandler } from './Puzzle';
@@ -51,6 +54,7 @@ export const Builder = (props: PuzzleJson) => {
     repeats: new Set<string>(),
     hasNoShortWords: false,
     isEditable: () => true,
+    symmetry: Symmetry.Rotational,
     postEdit(_cellIndex) {
       return validateGrid(this);
     }
@@ -124,7 +128,13 @@ export const Builder = (props: PuzzleJson) => {
   return (
     <React.Fragment>
       <TopBar>
-        <TopBarLink icon={autofillIcon} hoverText={autofillText} onClick={toggleAutofillEnabled} />
+        <TopBarLink icon={autofillIcon} text="Autofill" hoverText={autofillText} onClick={toggleAutofillEnabled} />
+        <TopBarDropDown icon={<SymmetryIcon type={state.symmetry}/>} text="Symmetry">
+          <TopBarDropDownLink icon={<SymmetryRotational />} text="Rotational Symmetry" onClick={() => dispatch({ type: "CHANGESYMMETRY", symmetry: Symmetry.Rotational } as SymmetryAction)} />
+          <TopBarDropDownLink icon={<SymmetryHorizontal />} text="Horizontal Symmetry" onClick={() => dispatch({ type: "CHANGESYMMETRY", symmetry: Symmetry.Horizontal } as SymmetryAction)} />
+          <TopBarDropDownLink icon={<SymmetryVertical />} text="Vertical Symmetry" onClick={() => dispatch({ type: "CHANGESYMMETRY", symmetry: Symmetry.Vertical } as SymmetryAction)} />
+          <TopBarDropDownLink icon={<SymmetryNone />} text="No Symmetry" onClick={() => dispatch({ type: "CHANGESYMMETRY", symmetry: Symmetry.None } as SymmetryAction)} />
+        </TopBarDropDown>
         <TopBarDropDown icon={<FaEllipsisH />} text="More">
           <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus (Esc)" onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
           <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />

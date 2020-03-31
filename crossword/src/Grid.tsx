@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import { Position, Direction, PosAndDir, BLOCK } from './types';
 import { Cell } from './Cell';
-import { PuzzleAction, SetActivePositionAction } from './reducer';
+import { Symmetry, PuzzleAction, SetActivePositionAction } from './reducer';
 
 export class Entry {
   constructor(
@@ -334,16 +334,29 @@ export class GridData {
     return highlights;
   }
 
-  gridWithNewChar(pos: Position, char: string): GridData {
+  gridWithNewChar(pos: Position, char: string, sym: Symmetry): GridData {
     const index = pos.row * this.width + pos.col;
     let cells = [...this.cells];
     if (this.valAt(pos) === BLOCK) {
       if (!this.allowBlockEditing) {
         return this;
       }
-      const flipped = (this.height - pos.row - 1) * this.width + (this.width - pos.col - 1);
-      if (cells[flipped] === BLOCK) {
-        cells[flipped] = " ";
+
+      if (sym === Symmetry.Rotational) {
+        const flipped = (this.height - pos.row - 1) * this.width + (this.width - pos.col - 1);
+        if (cells[flipped] === BLOCK) {
+          cells[flipped] = " ";
+        }
+      } else if (sym === Symmetry.Horizontal) {
+        const flipped = (this.height - pos.row - 1) * this.width + pos.col;
+        if (cells[flipped] === BLOCK) {
+          cells[flipped] = " ";
+        }
+      } else if (sym === Symmetry.Vertical) {
+        const flipped = pos.row * this.width + (this.width - pos.col - 1);
+        if (cells[flipped] === BLOCK) {
+          cells[flipped] = " ";
+        }
       }
     }
     cells[index] = char;
@@ -351,16 +364,25 @@ export class GridData {
     return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing, this.acrossClues, this.downClues, this.highlighted, this.highlight);
   }
 
-  gridWithBlockToggled(pos: Position): GridData {
+  gridWithBlockToggled(pos: Position, sym: Symmetry): GridData {
     let char = BLOCK;
     if (this.valAt(pos) === BLOCK) {
       char = ' ';
     }
     const index = pos.row * this.width + pos.col;
-    const flipped = (this.height - pos.row - 1) * this.width + (this.width - pos.col - 1);
     let cells = [...this.cells];
     cells[index] = char;
-    cells[flipped] = char;
+
+    if (sym === Symmetry.Rotational) {
+      const flipped = (this.height - pos.row - 1) * this.width + (this.width - pos.col - 1);
+      cells[flipped] = char;
+    } else if (sym === Symmetry.Horizontal) {
+      const flipped = (this.height - pos.row - 1) * this.width + pos.col;
+      cells[flipped] = char;
+    } else if (sym === Symmetry.Vertical) {
+      const flipped = pos.row * this.width + (this.width - pos.col - 1);
+      cells[flipped] = char;
+    }
     // TODO - can we prevent some re-init here?
     return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing, this.acrossClues, this.downClues, this.highlighted, this.highlight);
   }

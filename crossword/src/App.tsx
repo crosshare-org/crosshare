@@ -16,7 +16,11 @@ import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
 import { Uploader } from './Uploader';
 import { DBTest } from './DBTest';
-import { CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle, Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled } from './Icons';
+import {
+  CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle,
+  Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
+  SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
+} from './Icons';
 
 interface AuthContextValue {
   user: firebase.User | undefined,
@@ -211,6 +215,10 @@ const IconsDemo = (_: RouteComponentProps) => {
       <p>Reveal Square: <RevealSquare/></p>
       <p>Reveal Entry: <RevealEntry/></p>
       <p>Reveal Puzzle: <RevealPuzzle/></p>
+      <p>Rotational: <SymmetryRotational/></p>
+      <p>Horizontal: <SymmetryHorizontal/></p>
+      <p>Vertical: <SymmetryVertical/></p>
+      <p>None: <SymmetryNone/></p>
     </div>
   </Page>;
 }

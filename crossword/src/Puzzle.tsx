@@ -14,7 +14,7 @@ import { useTimer } from './timer';
 import { Overlay } from './Overlay';
 import { Grid, Entry, GridData } from './Grid';
 import { PosAndDir, Direction, BLOCK, PuzzleJson } from './types';
-import { cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock, PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction } from './reducer';
+import { cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock, Symmetry, PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction } from './reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style';
@@ -295,6 +295,7 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
     autocheck: false,
     dismissedKeepTrying: false,
     dismissedSuccess: false,
+    symmetry: Symmetry.None,
     isEditable(cellIndex) {return !this.verifiedCells.has(cellIndex) && !this.success},
     postEdit(cellIndex) {
       let state = this;

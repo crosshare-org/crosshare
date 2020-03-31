@@ -9,7 +9,6 @@
 - Layout when ios is zoomed in (eric report)
 - Daily Fiver
 - Click ...More then hit Escape - should only show 1 modal
-- Autofill w/ 2-, 1- letter words
 - Increase discrep count iteratively until final conditions are met
 
 ## Available Scripts
