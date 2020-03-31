@@ -440,12 +440,15 @@ export class Autofiller {
   /* Fill out a grid or a subset of a grid */
   _solve(grid: Grid, discrep: number, pitched: Set<string>, subset: Set<number>|null, cont: Cont): Result {
     const baseCost = grid.minCost();
+
+    // We already have a solution that's better than this grid could possibly get
     if (this.solnCost && baseCost > this.solnCost) {
       return cont(null);
     }
 
     let entriesToConsider = grid.entries.filter((e) => !e.isComplete);
-    if (entriesToConsider.length === 0) {  // New best soln
+    // There are no entries left to consider, this grid must be a new best solution
+    if (entriesToConsider.length === 0) {
       this.solnGrid = grid
       this.solnCost = baseCost
       this.postedSoln = false;
@@ -455,22 +458,28 @@ export class Autofiller {
     if (subset !== null) {
       entriesToConsider = entriesToConsider.filter((e) => subset.has(e.index));
     }
-    if (entriesToConsider.length === 0) {  // Done with this subsection
+    // There are no entries left in this subset, so we're done with this subsection
+    if (entriesToConsider.length === 0) {
       return cont(grid);
     }
 
+    // See if there are any stable subsets  out of the entries we're considering
     const subsets = grid.stableSubsets(subset);
     if (subsets.length > 1) {
       subsets.sort((a,b) => a.size - b.size);
+      // Attempt to solve the smallest subset
       return recur(grid, discrep, pitched, subsets[0], subsolved => {
         if (subsolved === null) {
+          // The subset couldn't be solved, so this grid is a failure
           return cont(null);
         } else {
+          // Solve the rest of the grid
           return recur(subsolved, discrep, pitched, subset, cont);
         }
       });
     }
 
+    // Consider entries in order of possible matches
     entriesToConsider.sort((e1, e2) => numMatchesForEntry(e1) - numMatchesForEntry(e2));
     let successor: [Grid, number, string]|null = null;
     let successorDiff: number|null = null;

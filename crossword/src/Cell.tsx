@@ -87,7 +87,7 @@ export const Cell = React.memo((props: CellProps) => {
           }}><FaEye/></div> : "" }
           {props.number}</div>
           <div css={{
-            color: props.isVerified ? '#4e61eb' : 'black',
+            color: props.isVerified ? '#4e61eb' : (props.value.trim() ? 'black' : '#BBB'),
             textAlign: 'center',
             lineHeight: '1.2em',
             fontSize: 'calc(0.9 * min(87vh - ' + heightAdjust + 'px, 100vw) / ' + props.gridWidth + ')',
@@ -129,7 +129,6 @@ export const Cell = React.memo((props: CellProps) => {
           }}></div> : ""}
           <div css={{
             fontSize: 1.0 / Math.max(props.value.length - 0.4, 1) + 'em',
-            color: props.value.trim() ? 'black' : '#BBB',
           }}>{value}</div>
           </div>
           </React.Fragment>

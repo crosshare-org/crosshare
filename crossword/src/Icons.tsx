@@ -26,8 +26,8 @@ const Square = (props: {cx:number, cy:number, beginMs:number, animate: boolean, 
 const X = (props: {cx:number, cy:number}) => {
   return (
     <>
-      <line x1={props.cx - 15} x2={props.cx + 15} y1={props.cx - 15} y2={props.cx + 15} stroke="#000" stroke-width="10"/>
-      <line x1={props.cx - 15} x2={props.cx + 15} y1={props.cx + 15} y2={props.cx - 15} stroke="#000" stroke-width="10"/>
+      <line x1={props.cx - 15} x2={props.cx + 15} y1={props.cx - 15} y2={props.cx + 15} stroke="#000" strokeWidth="10"/>
+      <line x1={props.cx - 15} x2={props.cx + 15} y1={props.cx + 15} y2={props.cx - 15} stroke="#000" strokeWidth="10"/>
     </>
   );
 }
