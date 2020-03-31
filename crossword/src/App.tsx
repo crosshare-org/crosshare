@@ -16,6 +16,7 @@ import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
 import { Uploader } from './Uploader';
 import { DBTest } from './DBTest';
+import { Spinner, SpinnerState } from './Spinner';
 
 interface AuthContextValue {
   user: firebase.User | undefined,
@@ -196,6 +197,15 @@ const Construct = (_: RouteComponentProps) => {
   return <Builder {...props}/>;
 };
 
+const SpinDemo = (_: RouteComponentProps) => {
+  return <Page>
+    <p>Disabled: <Spinner size={30} state={SpinnerState.Disabled}/></p>
+    <p>Working: <Spinner size={30} state={SpinnerState.Working}/></p>
+    <p>Finished: <Spinner size={30} state={SpinnerState.Finished}/></p>
+    <p>Failed: <Spinner size={30} state={SpinnerState.Failed}/></p>
+  </Page>;
+}
+
 const App = () => {
   const [user, loadingUser, error] = useAuthState(firebase.auth());
   return (
@@ -204,6 +214,7 @@ const App = () => {
       <Home path="/" />
       <AccountPage path="/account" />
       <Admin path="/admin" />
+      <SpinDemo path="/spinner" />
       <Uploader path="/upload" />
       <Construct path="/construct" />
       <PuzzleLoader path="/crosswords/:crosswordId" />

@@ -17,14 +17,20 @@ export interface AutofillResultMessage extends WorkerMessage {
   result: string[]
 }
 export function isAutofillResultMessage(msg: WorkerMessage): msg is AutofillResultMessage {
-  return msg.type === 'autofill-result'
+  return msg.type === 'autofill-result';
+}
+export interface AutofillCompleteMessage extends WorkerMessage {
+  type: 'autofill-complete',
+}
+export function isAutofillCompleteMessage(msg: WorkerMessage): msg is AutofillCompleteMessage {
+  return msg.type === 'autofill-complete';
 }
 export interface LoadDBMessage extends WorkerMessage {
   type: 'loaddb',
   db: WordDBT,
 }
 export function isLoadDBMessage(msg: WorkerMessage): msg is LoadDBMessage {
-  return msg.type === 'loaddb'
+  return msg.type === 'loaddb';
 }
 export interface AutofillMessage extends WorkerMessage {
   type: 'autofill',

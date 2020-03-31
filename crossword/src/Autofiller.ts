@@ -62,7 +62,7 @@ function numMatchesForEntry(entry: Entry) {
 function updateBitmap(length:number, bitmap:BigInteger|null, index:number, letter:string) {
   const match = db.bitmaps[length + letter + index];
   if (bitmap === null) {
-    return match
+    return match;
   }
   return bitmap.and(match);
 }
@@ -385,7 +385,8 @@ export class Autofiller {
     public readonly grid: string[],
     public readonly width: number,
     public readonly height: number,
-    public onComplete: (input: string[], result: string[]) => void
+    public onResult: (input: string[], result: string[]) => void,
+    public onComplete: () => void
   ) {
     this.initialGrid = Grid.fromTemplate(this.grid, this.width, this.height);
     this.completed = false;
@@ -425,13 +426,14 @@ export class Autofiller {
     if (isValue(this.nextStep)) {
       console.log("Finished: " + ((new Date().getTime() - this.startTime)/1000).toPrecision(4) + "s");
       this.completed = true;
+      this.onComplete();
     }
 
     // If we have a solution that hasn't been posted yet, post it.
     if (this.solnGrid && !this.postedSoln) {
       console.log("Posting soln");
       this.postedSoln = true;
-      this.onComplete(this.grid, this.solnGrid.cells);
+      this.onResult(this.grid, this.solnGrid.cells);
     }
   };
 

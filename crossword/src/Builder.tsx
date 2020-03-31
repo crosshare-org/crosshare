@@ -7,6 +7,7 @@ import { isMobile, isTablet } from "react-device-detect";
 import { FaRegCircle, FaRegCheckCircle, FaRegPlusSquare, FaTabletAlt, FaKeyboard, FaEllipsisH, } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 
+import { Spinner, SpinnerState } from './Spinner';
 import { requiresAdmin } from './App';
 import { Grid, GridData } from './Grid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
@@ -15,7 +16,7 @@ import { TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav, Page } from './Page';
 import { RebusOverlay, getKeyboardHandler, getPhysicalKeyboardHandler } from './Puzzle';
 import AutofillWorker from 'worker-loader!./autofill.worker.ts'; // eslint-disable-line import/no-webpack-loader-syntax
-import { isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from './types';
+import { isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from './types';
 import * as WordDB from './WordDB';
 
 let worker: Worker;
@@ -56,6 +57,7 @@ export const Builder = (props: PuzzleJson) => {
   }, validateGrid);
 
   const [autofill, setAutofill] = React.useState<string[]>([]);
+  const [autofilling, setAutofilling] = React.useState(false);
   WordDB.initialize();
   if (WordDB.dbStatus === WordDB.DBStatus.notPresent) {
     WordDB.build();
@@ -73,8 +75,10 @@ export const Builder = (props: PuzzleJson) => {
         const data = e.data as WorkerMessage;
         if (isAutofillResultMessage(data)) {
           setAutofill(data.result);
+        } else if (isAutofillCompleteMessage(data)) {
+          setAutofilling(false);
         } else {
-          console.error("unhandled msg in builder: " + e.data);
+          console.error("unhandled msg in builder: ", e.data);
         }
       };
       let loaddb: LoadDBMessage = {type: 'loaddb', db: WordDB.db};
@@ -86,6 +90,7 @@ export const Builder = (props: PuzzleJson) => {
       width: state.grid.width,
       height: state.grid.height
     };
+    setAutofilling(true);
     worker.postMessage(autofill);
   }, [state.grid.cells, state.grid.width, state.grid.height]);
 
@@ -129,6 +134,7 @@ export const Builder = (props: PuzzleJson) => {
         }
         left={
           <ul>
+          <li>{ autofilling ? <span><Spinner size={15} state={SpinnerState.Working}/> Autofilling</span> : (autofill.length ? 'Autofill complete' : "Couldn't autofill this grid")}</li>
           <li>All cells should be filled { state.gridIsComplete ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
           <li>All entries should be at least three letters { state.hasNoShortWords ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
           <li>No entries should be repeated { state.repeats.size > 0 ? <React.Fragment><FaRegCircle/> ({Array.from(state.repeats).sort().join(", ")})</React.Fragment>: <FaRegCheckCircle/> }</li>
