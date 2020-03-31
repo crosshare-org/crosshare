@@ -7,7 +7,7 @@ import { isMobile, isTablet } from "react-device-detect";
 import { FaRegCircle, FaRegCheckCircle, FaRegPlusSquare, FaTabletAlt, FaKeyboard, FaEllipsisH, } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 
-import { Spinner, SpinnerState } from './Spinner';
+import { SpinnerWorking, SpinnerFinished, SpinnerFailed } from './Icons';
 import { requiresAdmin } from './App';
 import { Grid, GridData } from './Grid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
@@ -134,7 +134,17 @@ export const Builder = (props: PuzzleJson) => {
         }
         left={
           <ul>
-          <li>{ autofilling ? <span><Spinner size={15} state={SpinnerState.Working}/> Autofilling</span> : (autofill.length ? 'Autofill complete' : "Couldn't autofill this grid")}</li>
+          <li>
+          { autofilling ?
+            <span><SpinnerWorking/> Autofilling</span>
+          :
+            (autofill.length ?
+              <span><SpinnerFinished/> Autofill complete</span>
+            :
+              <span><SpinnerFailed/> Couldn't autofill this grid</span>
+            )
+          }
+          </li>
           <li>All cells should be filled { state.gridIsComplete ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
           <li>All entries should be at least three letters { state.hasNoShortWords ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
           <li>No entries should be repeated { state.repeats.size > 0 ? <React.Fragment><FaRegCircle/> ({Array.from(state.repeats).sort().join(", ")})</React.Fragment>: <FaRegCheckCircle/> }</li>

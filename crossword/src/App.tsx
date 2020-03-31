@@ -16,7 +16,7 @@ import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
 import { Uploader } from './Uploader';
 import { DBTest } from './DBTest';
-import { Spinner, SpinnerState } from './Spinner';
+import { SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled } from './Icons';
 
 interface AuthContextValue {
   user: firebase.User | undefined,
@@ -199,10 +199,10 @@ const Construct = (_: RouteComponentProps) => {
 
 const SpinDemo = (_: RouteComponentProps) => {
   return <Page>
-    <p>Disabled: <Spinner size={30} state={SpinnerState.Disabled}/></p>
-    <p>Working: <Spinner size={30} state={SpinnerState.Working}/></p>
-    <p>Finished: <Spinner size={30} state={SpinnerState.Finished}/></p>
-    <p>Failed: <Spinner size={30} state={SpinnerState.Failed}/></p>
+    <p title="Autofill disabled">Disabled: <SpinnerDisabled/></p>
+    <p>Working: <SpinnerWorking/></p>
+    <p>Finished: <SpinnerFinished/></p>
+    <p>Failed: <SpinnerFailed/></p>
   </Page>;
 }
 

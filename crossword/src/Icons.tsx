@@ -1,12 +1,5 @@
 import * as React from 'react';
 
-export enum SpinnerState {
-  Disabled,
-  Working,
-  Finished,
-  Failed
-}
-
 const Square = (props: {cx:number, cy:number, beginMs:number, animate: boolean, filled: boolean}) => {
   let color = {
     fillOpacity: '0.2',
@@ -17,7 +10,7 @@ const Square = (props: {cx:number, cy:number, beginMs:number, animate: boolean, 
     }
   }
   return (
-    <rect x={props.cx - 15} y={props.cy - 15} rx="7" ry="7" width="30" height="30" {...color}>
+    <rect x={props.cx - 14} y={props.cy - 14} rx="7" ry="7" width="28" height="28" {...color}>
     {props.animate ?
       <animate attributeName="fill-opacity"
         begin={props.beginMs + "ms"} dur="1s"
@@ -38,21 +31,19 @@ const X = (props: {cx:number, cy:number}) => {
 }
 
 interface SpinnerProps {
-  state: SpinnerState,
-  size: number
+  animate: boolean,
+  filled: boolean,
+  centerX: boolean
 }
 
-export const Spinner = (props: SpinnerProps) => {
-  let squareProps = {
-    animate: props.state === SpinnerState.Working,
-    filled: props.state !== SpinnerState.Disabled && props.state !== SpinnerState.Failed,
-  }
+const Spinner = ({animate, filled, centerX}: SpinnerProps) => {
+  let squareProps = {animate, filled};
   return (
-    <svg width={props.size} height={props.size} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#000">
+    <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#000">
       <Square cx={15} cy={15} beginMs={0} {...squareProps}/>
       <Square cx={15} cy={50} beginMs={100} {...squareProps}/>
       <Square cx={50} cy={15} beginMs={300} {...squareProps}/>
-      {props.state === SpinnerState.Failed ?
+      {centerX ?
         <X cx={50} cy={50}/>
       :
         <Square cx={50} cy={50} beginMs={600} {...squareProps}/>
@@ -64,4 +55,17 @@ export const Spinner = (props: SpinnerProps) => {
       <Square cx={85} cy={85} beginMs={200} {...squareProps}/>
     </svg>
   );
+}
+
+export const SpinnerWorking = () => {
+  return <Spinner animate={true} filled={true} centerX={false}/>;
+}
+export const SpinnerDisabled = () => {
+  return <Spinner animate={false} filled={false} centerX={false}/>;
+}
+export const SpinnerFailed = () => {
+  return <Spinner animate={false} filled={false} centerX={true}/>;
+}
+export const SpinnerFinished = () => {
+  return <Spinner animate={false} filled={true} centerX={false}/>;
 }
