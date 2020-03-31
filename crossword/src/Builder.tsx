@@ -4,10 +4,10 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 
 import { isMobile, isTablet } from "react-device-detect";
-import { FaRegCircle, FaRegCheckCircle, FaRegPlusSquare, FaTabletAlt, FaKeyboard, FaEllipsisH, } from 'react-icons/fa';
+import { FaRegCircle, FaRegCheckCircle, FaTabletAlt, FaKeyboard, FaEllipsisH, } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 
-import { SpinnerWorking, SpinnerFinished, SpinnerFailed } from './Icons';
+import { Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed } from './Icons';
 import { requiresAdmin } from './App';
 import { Grid, GridData } from './Grid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
@@ -109,7 +109,7 @@ export const Builder = (props: PuzzleJson) => {
     <React.Fragment>
       <TopBar>
         <TopBarDropDown icon={<FaEllipsisH />} text="More">
-          <TopBarDropDownLink icon={<FaRegPlusSquare />} text="Enter Rebus (Esc)" onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
+          <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus (Esc)" onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
           <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
           <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
         </TopBarDropDown>

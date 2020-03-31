@@ -20,7 +20,7 @@ export const TopBarDropDown = (props: {text: string, icon: React.ReactNode, chil
   );
 }
 
-export const TopBarDropDownLink = (props: {text: string, icon?: React.ReactNode, onClick: () => void}) => {
+export const TopBarDropDownLink = (props: {text: string, icon: React.ReactNode, onClick: () => void}) => {
   return (
     <button title={props.text} css={{
       backgroundColor: 'transparent',
@@ -38,21 +38,21 @@ export const TopBarDropDownLink = (props: {text: string, icon?: React.ReactNode,
         backgroundColor: 'rgba(0,0,0,0.1)',
       },
     }} onClick={props.onClick}>
-    { props.icon ?
-      <span css={{
-        verticalAlign: 'baseline',
-        fontSize: HEADER_HEIGHT - 10,
-      }}>{props.icon}</span>
-      : ""
-    }
-    <span css={{
-      'span + &': {
-        marginLeft: '5px',
-      },
-      verticalAlign: 'middle',
+    <div css={{
+      verticalAlign: 'baseline',
+      fontSize: HEADER_HEIGHT - 10,
+      display: 'inline-block',
+      width: '35%',
+      textAlign: 'right',
+      marginRight: '5%',
+    }}>{props.icon}</div>
+    <div css={{
+      verticalAlign: 'baseline',
       fontSize: HEADER_HEIGHT - 20,
       display: 'inline-block',
-    }}>{props.text}</span>
+      width: '60%',
+      textAlign: 'left',
+    }}>{props.text}</div>
     </button>
   );
 }

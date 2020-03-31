@@ -16,7 +16,7 @@ import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
 import { Uploader } from './Uploader';
 import { DBTest } from './DBTest';
-import { SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled } from './Icons';
+import { CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle, Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled } from './Icons';
 
 interface AuthContextValue {
   user: firebase.User | undefined,
@@ -197,12 +197,21 @@ const Construct = (_: RouteComponentProps) => {
   return <Builder {...props}/>;
 };
 
-const SpinDemo = (_: RouteComponentProps) => {
+const IconsDemo = (_: RouteComponentProps) => {
   return <Page>
-    <p title="Autofill disabled">Disabled: <SpinnerDisabled/></p>
-    <p>Working: <SpinnerWorking/></p>
-    <p>Finished: <SpinnerFinished/></p>
-    <p>Failed: <SpinnerFailed/></p>
+    <div css={{fontSize: 20}}>
+      <p title="Autofill disabled">Disabled: <SpinnerDisabled/></p>
+      <p>Working: <SpinnerWorking/></p>
+      <p>Finished: <SpinnerFinished/></p>
+      <p>Failed: <SpinnerFailed/></p>
+      <p>Rebus: <Rebus/></p>
+      <p>Check Square: <CheckSquare/></p>
+      <p>Check Entry: <CheckEntry/></p>
+      <p>Check Puzzle: <CheckPuzzle/></p>
+      <p>Reveal Square: <RevealSquare/></p>
+      <p>Reveal Entry: <RevealEntry/></p>
+      <p>Reveal Puzzle: <RevealPuzzle/></p>
+    </div>
   </Page>;
 }
 
@@ -214,7 +223,7 @@ const App = () => {
       <Home path="/" />
       <AccountPage path="/account" />
       <Admin path="/admin" />
-      <SpinDemo path="/spinner" />
+      <IconsDemo path="/icons" />
       <Uploader path="/upload" />
       <Construct path="/construct" />
       <PuzzleLoader path="/crosswords/:crosswordId" />

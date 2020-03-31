@@ -5,9 +5,10 @@ import * as React from 'react';
 import axios from 'axios';
 import { RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
-import { FaVolumeUp, FaVolumeMute, FaRegPlusSquare, FaPause, FaTabletAlt, FaKeyboard, FaEllipsisH, FaEye, FaCheck, FaCheckSquare } from 'react-icons/fa';
+import { FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt, FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 
+import { CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle, Rebus } from './Icons';
 import { requiresAuth } from './App';
 import { useTimer } from './timer';
 import { Overlay } from './Overlay';
@@ -338,23 +339,23 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
       <TopBar>
         <TopBarLink icon={<FaPause />} hoverText={"Pause Game"} text={timeString(elapsed)} onClick={pause} keepText={true} />
         <TopBarDropDown icon={<FaEye />} text="Reveal">
-          <TopBarDropDownLink text="Reveal Square" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Square, isReveal: true } as CheatAction)} />
-          <TopBarDropDownLink text="Reveal Entry" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry, isReveal: true } as CheatAction)} />
-          <TopBarDropDownLink text="Reveal Puzzle" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true } as CheatAction)} />
+          <TopBarDropDownLink icon={<RevealSquare/>} text="Reveal Square" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Square, isReveal: true } as CheatAction)} />
+          <TopBarDropDownLink icon={<RevealEntry/>} text="Reveal Entry" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry, isReveal: true } as CheatAction)} />
+          <TopBarDropDownLink icon={<RevealPuzzle/>} text="Reveal Puzzle" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true } as CheatAction)} />
         </TopBarDropDown>
         {
           !state.autocheck ?
             (<TopBarDropDown icon={<FaCheck />} text="Check">
-              <TopBarDropDownLink text="Autocheck" onClick={() => dispatch({ type: "TOGGLEAUTOCHECK" })} />
-              <TopBarDropDownLink text="Check Square" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Square } as CheatAction)} />
-              <TopBarDropDownLink text="Check Entry" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry } as CheatAction)} />
-              <TopBarDropDownLink text="Check Puzzle" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Puzzle } as CheatAction)} />
+              <TopBarDropDownLink icon={<FaCheckSquare/>} text="Autocheck" onClick={() => dispatch({ type: "TOGGLEAUTOCHECK" })} />
+              <TopBarDropDownLink icon={<CheckSquare/>} text="Check Square" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Square } as CheatAction)} />
+              <TopBarDropDownLink icon={<CheckEntry/>} text="Check Entry" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry } as CheatAction)} />
+              <TopBarDropDownLink icon={<CheckPuzzle/>} text="Check Puzzle" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Puzzle } as CheatAction)} />
             </TopBarDropDown>)
             :
             <TopBarLink icon={<FaCheckSquare />} text="Autochecking" onClick={() => dispatch({ type: "TOGGLEAUTOCHECK" })} />
         }
         <TopBarDropDown icon={<FaEllipsisH />} text="More">
-          <TopBarDropDownLink icon={<FaRegPlusSquare />} text="Enter Rebus (Esc)" onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
+          <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus (Esc)" onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
           {
             muted ?
             <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
