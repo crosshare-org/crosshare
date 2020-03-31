@@ -156,7 +156,7 @@ const Home = (_: RouteComponentProps) => {
 const Construct = (_: RouteComponentProps) => {
   const size = 5;
   const grid = [
-    " ", " ", " ", " ", " ",
+    "HI", " ", " ", " ", " ",
     " ", " ", " ", " ", " ",
     " ", " ", " ", " ", " ",
     " ", " ", " ", " ", " ",

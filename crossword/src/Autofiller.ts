@@ -23,6 +23,12 @@ interface Entry {
   minCost: number
 }
 
+interface Cross {
+  entryIndex: number,      // Entry index
+  cellIndex: number,  // Position of the crossing in the cells array
+  wordIndex: number   // Position of the crossing in the resultant string (could be different due to rebus)
+}
+
 function highestScore(length: number, bitmap: BigInteger|null) {
   const words = db.words[length];
   if (bitmap === null) {
@@ -118,7 +124,7 @@ class Grid {
     public readonly height: number,
     public readonly usedWords: Set<string>,
     public readonly cells: string[],
-    public readonly entriesByCell: Array<[[number,number], [number,number]]>,
+    public readonly entriesByCell: Array<[Cross, Cross]>,
     public readonly entries: Entry[]
   ) {}
 
@@ -134,9 +140,9 @@ class Grid {
    *
    * Returns an array of (entry index, letter idx w/in that entry) of crosses.
    */
-  crosses(entry:Entry) {
+  crosses(entry:Entry): Cross[] {
     const crossDir = (entry.direction === Direction.Across) ? Direction.Down : Direction.Across;
-    const crosses: Array<[number, number]> = [];
+    const crosses: Array<Cross> = [];
     entry.cells.forEach((cellIndex) => {
       crosses.push(this.entriesByCell[cellIndex][crossDir]);
     })
@@ -159,17 +165,10 @@ class Grid {
       j += 1;
       const currentVal = newGrid.cells[entry.cells[j]];
       if (currentVal !== ' ') {
-        if (currentVal.length > 1) {  // Check rebus
-          if (currentVal === word.slice(i, i + currentVal.length)) {
-            console.log("Rebus match", i);
-            i = i + currentVal.length - 1;
-            console.log("After", i);
-            continue
-          } else {
-            throw new Error("Rebus has conflicting value: " + currentVal + ',' + word + ',' + i);
-          }
-        } else if (currentVal === word[i]) {
-          continue;  // No change needed for this cell
+        if (currentVal === word.slice(i, i + currentVal.length)) {
+          // No change needed for this cell
+          i = i + currentVal.length - 1;
+          continue
         } else {
           throw new Error("Cell has conflicting value: " + currentVal + ',' + word + ',' + i);
         }
@@ -179,12 +178,12 @@ class Grid {
       newGrid.cells[entry.cells[j]] = word[i];
 
       // update crossing entries
-      const cross = newGrid.entries[crosses[j][0]];
+      const cross = newGrid.entries[crosses[j].entryIndex];
       let crossWord = '';
       cross.cells.forEach((cid) => {
         crossWord += newGrid.cells[cid];
       });
-      const crossBitmap = updateBitmap(cross.length, cross.bitmap, crosses[j][1], word[i]);
+      const crossBitmap = updateBitmap(cross.length, cross.bitmap, crosses[j].wordIndex, word[i]);
 
       if (crossBitmap.equals(ZERO)) {  // empty bitmap means invalid grid
         return null;
@@ -196,7 +195,7 @@ class Grid {
         newGrid.usedWords.add(crossWord);
       }
 
-      newGrid.entries[crosses[j][0]] = {
+      newGrid.entries[crosses[j].entryIndex] = {
         length: cross.length,
         index: cross.index,
         direction: cross.direction,
@@ -216,7 +215,7 @@ class Grid {
       cells: entry.cells,
       bitmap: newBitmap,
       isComplete: true,
-      minCost: minCost(word.length, newBitmap)
+      minCost: minCost(entry.length, newBitmap)
     }
 
     return newGrid;
@@ -240,8 +239,8 @@ class Grid {
       }
       assignments.set(entry.index, num);
       that.crosses(entry).forEach((c) => {
-        const cross = that.entries[c[0]];
-        if (that.cells[cross.cells[c[1]]] === ' ') {
+        const cross = that.entries[c.entryIndex];
+        if (that.cells[cross.cells[c.cellIndex]] === ' ') {
           addSubset(cross, num);
         }
       });
@@ -277,10 +276,9 @@ class Grid {
       const usedWords = new Set<string>();
       const cells = template.map((c) => c.toUpperCase().replace("#", ".")) ;
 
-      // [(across_entry, char_idx), (down_entry, char_idx)] index into entries array for each cell
-      const entriesByCell: Array<[[number,number], [number,number]]> = [];
+      const entriesByCell: Array<[Cross, Cross]> = [];
       cells.forEach(() => {
-        entriesByCell.push([[0,0], [0,0]]);
+        entriesByCell.push([{entryIndex:0,wordIndex:0,cellIndex:0}, {entryIndex:0,wordIndex:0,cellIndex:0}]);
       })
 
       const entries: Array<Entry> = [];
@@ -312,7 +310,7 @@ class Grid {
             while (xt < width && yt < height) {
               const cellId = yt * width + xt;
               const cellVal = cells[cellId];
-              entriesByCell[cellId][dir] = [entries.length, wordlen];
+              entriesByCell[cellId][dir] = {entryIndex: entries.length, wordIndex: entryPattern.length, cellIndex: wordlen};
               if (cellVal === '.') {
                 break;
               }
@@ -493,14 +491,13 @@ export class Autofiller {
     let successorDiff: number|null = null;
 
     for (const entry of entriesToConsider) {
-      const length = entry.length;
       const crosses = grid.crosses(entry)
       let bestGrid: [Grid, number, string]|null = null;
       let bestCost: number|null = null;
       let secondBestCost: number|null = null;
 
       let skipEntry = false;
-      for (const [word, score] of matchingWords(length, entry.bitmap)) {
+      for (const [word, score] of matchingWords(entry.length, entry.bitmap)) {
         if (pitched.has(entry.index + ":" + word)) {
           continue;
         }
@@ -518,14 +515,17 @@ export class Autofiller {
 
         // Fail fast based on score change due to any crosses
         let failFast = false;
-        for (let i = 0; i < length; i += 1) {
+        let j = -1;
+        for (let i = 0; i < entry.cells.length; i += 1) {
+          j += 1;
           const cell = grid.cells[entry.cells[i]];
           if (cell !== ' ') {  // Don't need to check cross
+            j += cell.length - 1;
             continue;
           }
-          const cross = grid.entries[crosses[i][0]];
+          const cross = grid.entries[crosses[i].entryIndex];
           const crossLength = cross.length;
-          const newBitmap = updateBitmap(crossLength, cross.bitmap, crosses[i][1], word[i]);
+          const newBitmap = updateBitmap(crossLength, cross.bitmap, crosses[i].wordIndex, word[j]);
           const newCost = baseCost - cross.minCost + minCost(crossLength, newBitmap);
           if (costToBeat !== null && newCost > costToBeat) {
             failFast = true;
