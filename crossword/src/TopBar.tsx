@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Link, RouteComponentProps } from "@reach/router";
 
 import { Overlay } from './Overlay';
-import logo from './crosshare.png';
+import { Logo } from './Icons';
 import {PRIMARY, HEADER_HEIGHT, SMALL_AND_UP} from './style'
 
 export const TopBarDropDown = (props: {text: string, icon: React.ReactNode, children: React.ReactNode}) => {
@@ -113,14 +113,13 @@ export const TopBar = ({children}: TopBarProps) => {
     }}>
     <Link css={{
       flexGrow: 1,
+      display: 'flex',
+      alignItems: 'center',
+      textDecoration: 'none !important',
     }} to="/" title="crosshare home">
-    <img src={logo} height={HEADER_HEIGHT - 4} width={HEADER_HEIGHT - 4} alt="Logo" css={{
-      display: 'inline-block',
-      verticalAlign: 'middle',
-    }}/>
+    <Logo width={HEADER_HEIGHT - 4} height={HEADER_HEIGHT - 4}/>
     <span css={{
       marginLeft: '5px',
-      verticalAlign: 'middle',
       display: 'none',
       color: 'black',
       fontSize: HEADER_HEIGHT - 10,

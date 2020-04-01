@@ -20,6 +20,7 @@ import {
   CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle,
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
   SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
+  Logo,
 } from './Icons';
 
 interface AuthContextValue {
@@ -160,7 +161,7 @@ const Home = (_: RouteComponentProps) => {
 const Construct = (_: RouteComponentProps) => {
   const size = 5;
   const grid = [
-    "HI", " ", " ", " ", " ",
+    " ", " ", " ", " ", " ",
     " ", " ", " ", " ", " ",
     " ", " ", " ", " ", " ",
     " ", " ", " ", " ", " ",
@@ -219,6 +220,7 @@ const IconsDemo = (_: RouteComponentProps) => {
       <p>Horizontal: <SymmetryHorizontal/></p>
       <p>Vertical: <SymmetryVertical/></p>
       <p>None: <SymmetryNone/></p>
+      <div css={{backgroundColor: 'orange', width: 100, height: 100, fontSize: 100, display: 'flex', alignItems: 'center'}}><Logo/></div>
     </div>
   </Page>;
 }

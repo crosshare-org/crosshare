@@ -5,6 +5,7 @@ import * as React from 'react';
 
 import { isMobile, isTablet } from "react-device-detect";
 import { FaRegCircle, FaRegCheckCircle, FaTabletAlt, FaKeyboard, FaEllipsisH, } from 'react-icons/fa';
+import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 
 import {
@@ -14,7 +15,9 @@ import {
 import { requiresAdmin } from './App';
 import { Grid, GridData } from './Grid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
-import { Symmetry, builderReducer, validateGrid, KeypressAction, SymmetryAction } from './reducer';
+import {
+  Symmetry, builderReducer, validateGrid,
+  KeypressAction, SymmetryAction } from './reducer';
 import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav, Page } from './Page';
 import { RebusOverlay, getKeyboardHandler, getPhysicalKeyboardHandler } from './Puzzle';
@@ -129,6 +132,14 @@ export const Builder = (props: PuzzleJson) => {
     <React.Fragment>
       <TopBar>
         <TopBarLink icon={autofillIcon} text="Autofill" hoverText={autofillText} onClick={toggleAutofillEnabled} />
+        <TopBarDropDown icon={<IoMdStats/>} text="Stats">
+          <h4 css={{width: '100%'}}>Grid status</h4>
+          <ul css={{textAlign: 'left'}}>
+            <li>All cells should be filled { state.gridIsComplete ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
+            <li>All entries should be at least three letters { state.hasNoShortWords ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
+            <li>No entries should be repeated { state.repeats.size > 0 ? <React.Fragment><FaRegCircle/> ({Array.from(state.repeats).sort().join(", ")})</React.Fragment>: <FaRegCheckCircle/> }</li>
+          </ul>
+        </TopBarDropDown>
         <TopBarDropDown icon={<SymmetryIcon type={state.symmetry}/>} text="Symmetry">
           <TopBarDropDownLink icon={<SymmetryRotational />} text="Rotational Symmetry" onClick={() => dispatch({ type: "CHANGESYMMETRY", symmetry: Symmetry.Rotational } as SymmetryAction)} />
           <TopBarDropDownLink icon={<SymmetryHorizontal />} text="Horizontal Symmetry" onClick={() => dispatch({ type: "CHANGESYMMETRY", symmetry: Symmetry.Horizontal } as SymmetryAction)} />
@@ -160,11 +171,7 @@ export const Builder = (props: PuzzleJson) => {
           />
         }
         left={
-          <ul>
-          <li>All cells should be filled { state.gridIsComplete ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
-          <li>All entries should be at least three letters { state.hasNoShortWords ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
-          <li>No entries should be repeated { state.repeats.size > 0 ? <React.Fragment><FaRegCircle/> ({Array.from(state.repeats).sort().join(", ")})</React.Fragment>: <FaRegCheckCircle/> }</li>
-          </ul>
+          <p>left</p>
         }
         right={<p>right</p>}
         tinyColumn={<TinyNav dispatch={dispatch}>tiny</TinyNav>}
