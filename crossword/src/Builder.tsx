@@ -183,12 +183,13 @@ export const Builder = (props: PuzzleJson) => {
     return <Page>Loading word database...</Page>
   }
 
-  const entryAndCross = state.grid.entryAndCrossAtPosition(state.active);
+  const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
   let left = <React.Fragment></React.Fragment>;
   let right = <React.Fragment></React.Fragment>;
-  if (entryAndCross !== null) {
-    const [entry, cross] = entryAndCross;
+  if (entry !== null) {
     left = <PotentialFillList header="Active" values={["test", "best"]} entryIndex={entry.index} dispatch={dispatch} />;
+  }
+  if (cross !== null) {
     right = <PotentialFillList header="Cross" values={["foo", "bar"]} entryIndex={cross.index} dispatch={dispatch} />;
   }
 

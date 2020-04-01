@@ -119,10 +119,10 @@ export class GridData {
           while (xt < width && yt < height) {
             let cellId = yt * width + xt;
             let cellVal = cells[cellId];
-            entriesByCell[cellId][dir] = {entryIndex: entries.length, wordIndex: entryPattern.length, cellIndex: wordlen};
             if (cellVal === BLOCK) {
               break;
             }
+            entriesByCell[cellId][dir] = {entryIndex: entries.length, wordIndex: entryPattern.length, cellIndex: wordlen};
             if (cellVal === ' ') {
               isComplete = false;
             }
@@ -264,18 +264,17 @@ export class GridData {
     return [this.entries[currentEntryIndex.entryIndex], currentEntryIndex.wordIndex];
   }
 
-  entryAndCrossAtPosition(pos: PosAndDir): [Entry, Entry]|null {
+  entryAndCrossAtPosition(pos: PosAndDir): [Entry|null, Entry|null] {
     const entries = this.entriesByCell(pos);
-    if (!entries || entries[0].entryIndex === -1 || entries[1].entryIndex === -1) {
-      return null;
+    if (!entries) {
+      return [null,null];
     }
-    console.log(entries);
-    const currentEntryIndex = entries[pos.dir];
-    const currentCrossIndex = entries[(pos.dir + 1) % 2];
-    if (!currentEntryIndex || !currentCrossIndex) {
-      throw new Error("ERROR: No current entry index");
-    }
-    return [this.entries[currentEntryIndex.entryIndex], this.entries[currentCrossIndex.entryIndex]];
+    const currentEntry = entries[pos.dir];
+    const currentCross = entries[(pos.dir + 1) % 2];
+    return [
+      currentEntry.entryIndex === -1 ? null : this.entries[currentEntry.entryIndex],
+      currentCross.entryIndex === -1 ? null : this.entries[currentCross.entryIndex]
+    ];
   }
 
   moveToPrevEntry(pos: PosAndDir): PosAndDir {
