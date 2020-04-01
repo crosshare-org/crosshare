@@ -7,15 +7,19 @@ import { Position, Direction, PosAndDir, BLOCK } from './types';
 import { Cell } from './Cell';
 import { Symmetry, PuzzleAction, SetActivePositionAction } from './reducer';
 
-export class Entry {
-  constructor(
-    public readonly index: number,
-    public readonly labelNumber: number,
-    public readonly direction: Direction,
-    public readonly cells: Array<Position>,
-    public readonly isComplete: boolean,
-    public readonly clue: string,
-  ) { }
+export interface Entry {
+  index: number,
+  labelNumber: number,
+  direction: Direction,
+  cells: Array<Position>,
+  isComplete: boolean,
+  clue: string,
+}
+
+interface Cross {
+  entryIndex: number, // Entry index
+  cellIndex: number,  // Position of the crossing in the entry.cells array
+  wordIndex: number   // Position of the crossing in the resultant string (could be different due to rebus)
 }
 
 export class GridData {
@@ -25,7 +29,7 @@ export class GridData {
     public readonly height: number,
     public readonly cells: Array<string>,
     public readonly usedWords: Set<string>,
-    public readonly entriesByCell: Array<Array<[number, number] | null>>,
+    public readonly _entriesByCell: Array<[Cross, Cross]>,
     public readonly entries: Array<Entry>,
     public readonly cellLabels: Map<number, number>,
     public readonly allowBlockEditing: boolean,
@@ -42,12 +46,19 @@ export class GridData {
     })
   }
 
+  entriesByCell(pos: Position) {
+    return this._entriesByCell[pos.row * this.width + pos.col];
+  }
+
   entryWord(entryIndex: number) {
     return this.entries[entryIndex].cells.map((pos) => this.valAt(pos)).join("");
   }
 
   static fromCells(width: number, height: number, cells: Array<string>, allowBlockEditing: boolean, acrossClues: Array<string>, downClues: Array<string>, highlighted: Set<number>, highlight: "circle" | "shade" | undefined) {
-    let entriesByCell: Array<Array<[number, number] | null>> = new Array(cells.length);
+    const entriesByCell: Array<[Cross, Cross]> = [];
+    cells.forEach(() => {
+      entriesByCell.push([{entryIndex:-1,wordIndex:0,cellIndex:0}, {entryIndex:-1,wordIndex:0,cellIndex:0}]);
+    });
     let entries = [];
     let usedWords: Set<string> = new Set();
     let cellLabels = new Map<number, number>();
@@ -108,10 +119,7 @@ export class GridData {
           while (xt < width && yt < height) {
             let cellId = yt * width + xt;
             let cellVal = cells[cellId];
-            if (!entriesByCell[cellId]) {
-              entriesByCell[cellId] = [null, null];
-            }
-            entriesByCell[cellId][dir] = [entries.length, wordlen];
+            entriesByCell[cellId][dir] = {entryIndex: entries.length, wordIndex: entryPattern.length, cellIndex: wordlen};
             if (cellVal === BLOCK) {
               break;
             }
@@ -127,7 +135,14 @@ export class GridData {
           if (isComplete) {
             usedWords.add(entryPattern);
           }
-          entries.push(new Entry(entries.length, entryLabel, dir, entryCells, isComplete, entryClue));
+          entries.push({
+            index: entries.length,
+            labelNumber: entryLabel,
+            direction: dir,
+            cells: entryCells,
+            isComplete: isComplete,
+            clue: entryClue,
+          });
         }
       }
     }
@@ -241,24 +256,26 @@ export class GridData {
   }
 
   entryAtPosition(pos: PosAndDir): [Entry | null, number] {
-    const entriesAtCell = this.entriesByCell[pos.row * this.width + pos.col];
-    if (!entriesAtCell) {
-      return [null, 0];
-    }
+    const entriesAtCell = this.entriesByCell(pos);
     const currentEntryIndex = entriesAtCell[pos.dir];
-    if (!currentEntryIndex) {
+    if (currentEntryIndex.entryIndex === -1) {
       return [null, 0];
     }
-    return [this.entries[currentEntryIndex[0]], currentEntryIndex[1]];
+    return [this.entries[currentEntryIndex.entryIndex], currentEntryIndex.wordIndex];
   }
 
-  entryAndCrossAtPosition(pos: PosAndDir): [Entry, Entry] {
-    const currentEntryIndex = this.entriesByCell[pos.row * this.width + pos.col][pos.dir];
-    const currentCrossIndex = this.entriesByCell[pos.row * this.width + pos.col][(pos.dir + 1) % 2];
+  entryAndCrossAtPosition(pos: PosAndDir): [Entry, Entry]|null {
+    const entries = this.entriesByCell(pos);
+    if (!entries || entries[0].entryIndex === -1 || entries[1].entryIndex === -1) {
+      return null;
+    }
+    console.log(entries);
+    const currentEntryIndex = entries[pos.dir];
+    const currentCrossIndex = entries[(pos.dir + 1) % 2];
     if (!currentEntryIndex || !currentCrossIndex) {
       throw new Error("ERROR: No current entry index");
     }
-    return [this.entries[currentEntryIndex[0]], this.entries[currentCrossIndex[0]]];
+    return [this.entries[currentEntryIndex.entryIndex], this.entries[currentCrossIndex.entryIndex]];
   }
 
   moveToPrevEntry(pos: PosAndDir): PosAndDir {

@@ -17,7 +17,7 @@ import { Grid, GridData } from './Grid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
 import {
   Symmetry, builderReducer, validateGrid,
-  KeypressAction, SymmetryAction } from './reducer';
+  KeypressAction, SymmetryAction, ClickedFillAction } from './reducer';
 import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav, Page } from './Page';
 import { RebusOverlay, getKeyboardHandler, getPhysicalKeyboardHandler } from './Puzzle';
@@ -33,6 +33,79 @@ export const BuilderDBLoader = requiresAdmin((props: PuzzleJson) => {
   }
   return <Builder {...props}/>;
 });
+
+interface PotentialFillItemProps {
+  entryIndex: number,
+  value: string,
+  dispatch: React.Dispatch<ClickedFillAction>,
+}
+const PotentialFillItem = (props: PotentialFillItemProps) => {
+  function click(e: React.MouseEvent) {
+    e.preventDefault();
+    props.dispatch({ type: 'CLICKEDFILL', entryIndex: props.entryIndex, value: props.value });
+  }
+  return (
+    <li css={{
+      padding: '0.5em',
+      listStyleType: 'none',
+      cursor: 'pointer',
+      '&:hover': {
+        backgroundColor: '#EEE',
+      },
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
+      alignItems: 'center',
+      width: '100%',
+    }} onClick={click}>
+      <div css={{
+        flex: '1 1 auto',
+        height: '100%',
+      }}>{props.value}</div>
+    </li>
+  );
+}
+
+interface PotentialFillListProps {
+  header?: string,
+  entryIndex: number,
+  values: Array<string>,
+  dispatch: React.Dispatch<ClickedFillAction>,
+}
+const PotentialFillList = (props: PotentialFillListProps) => {
+  const values = props.values.map((value,index) => {
+    return (<PotentialFillItem
+      key={index}
+      entryIndex={props.entryIndex}
+      dispatch={props.dispatch}
+      value={value}
+    />)
+  });
+  return (
+    <div css={{
+      height: "100% !important",
+      position: 'relative',
+    }}>{props.header ?
+      <div css={{
+        fontWeight: 'bold',
+        borderBottom: '1px solid #AAA',
+        height: '1.5em',
+        paddingLeft: '0.5em',
+      }}>{props.header}</div> : ""}
+      <div css={{
+        maxHeight: props.header ? 'calc(100% - 1.5em)' : '100%',
+        overflowY: 'scroll',
+      }}>
+        <ol css={{
+          margin: 0,
+          padding: 0,
+        }}>
+          {values}
+        </ol>
+      </div>
+    </div>
+  );
+}
 
 export const Builder = (props: PuzzleJson) => {
   const [state, dispatch] = React.useReducer(builderReducer, {
@@ -110,6 +183,15 @@ export const Builder = (props: PuzzleJson) => {
     return <Page>Loading word database...</Page>
   }
 
+  const entryAndCross = state.grid.entryAndCrossAtPosition(state.active);
+  let left = <React.Fragment></React.Fragment>;
+  let right = <React.Fragment></React.Fragment>;
+  if (entryAndCross !== null) {
+    const [entry, cross] = entryAndCross;
+    left = <PotentialFillList header="Active" values={["test", "best"]} entryIndex={entry.index} dispatch={dispatch} />;
+    right = <PotentialFillList header="Cross" values={["foo", "bar"]} entryIndex={cross.index} dispatch={dispatch} />;
+  }
+
   function toggleAutofillEnabled() {
     setAutofillEnabled(a => !a);
   }
@@ -134,11 +216,15 @@ export const Builder = (props: PuzzleJson) => {
         <TopBarLink icon={autofillIcon} text="Autofill" hoverText={autofillText} onClick={toggleAutofillEnabled} />
         <TopBarDropDown icon={<IoMdStats/>} text="Stats">
           <h4 css={{width: '100%'}}>Grid status</h4>
-          <ul css={{textAlign: 'left'}}>
-            <li>All cells should be filled { state.gridIsComplete ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
-            <li>All entries should be at least three letters { state.hasNoShortWords ? <FaRegCheckCircle/> : <FaRegCircle/> }</li>
-            <li>No entries should be repeated { state.repeats.size > 0 ? <React.Fragment><FaRegCircle/> ({Array.from(state.repeats).sort().join(", ")})</React.Fragment>: <FaRegCheckCircle/> }</li>
-          </ul>
+          <div css={{
+            width: '80%',
+            margin: 'auto',
+            textAlign: 'left',
+          }}>
+          <div>{ state.gridIsComplete ? <FaRegCheckCircle/> : <FaRegCircle/> } All cells should be filled</div>
+          <div>{ state.hasNoShortWords ? <FaRegCheckCircle/> : <FaRegCircle/> } All entries should be at least three letters</div>
+          <div>{ state.repeats.size > 0 ? <React.Fragment><FaRegCircle/> ({Array.from(state.repeats).sort().join(", ")})</React.Fragment>: <FaRegCheckCircle/> } No entries should be repeated</div>
+          </div>
         </TopBarDropDown>
         <TopBarDropDown icon={<SymmetryIcon type={state.symmetry}/>} text="Symmetry">
           <TopBarDropDownLink icon={<SymmetryRotational />} text="Rotational Symmetry" onClick={() => dispatch({ type: "CHANGESYMMETRY", symmetry: Symmetry.Rotational } as SymmetryAction)} />
@@ -170,10 +256,8 @@ export const Builder = (props: PuzzleJson) => {
             autofill={autofillEnabled ? autofilledGrid : []}
           />
         }
-        left={
-          <p>left</p>
-        }
-        right={<p>right</p>}
+        left={left}
+        right={right}
         tinyColumn={<TinyNav dispatch={dispatch}>tiny</TinyNav>}
       />
     </React.Fragment>

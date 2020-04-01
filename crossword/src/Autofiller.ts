@@ -1,6 +1,6 @@
 import { WordDBTransformed } from './WordDB';
 import { BigInteger } from '@modern-dev/jsbn';
-import { Direction } from './types';
+import { Position, Direction } from './types';
 
 let db: WordDBTransformed;
 export function setDb(newdb:WordDBTransformed) {
@@ -14,18 +14,18 @@ const MAX_WORDS_TO_CONSIDER = 1000;
 
 
 interface Entry {
-  length: number,
+  length: number, // Length in chars - might be different than cells.length due to rebus
   index: number,
   direction: Direction,
-  cells: number[],
+  cells: Array<Position>,
   bitmap: BigInteger|null,
   isComplete: boolean,
   minCost: number
 }
 
 interface Cross {
-  entryIndex: number,      // Entry index
-  cellIndex: number,  // Position of the crossing in the cells array
+  entryIndex: number, // Entry index
+  cellIndex: number,  // Position of the crossing in the entry.cells array
   wordIndex: number   // Position of the crossing in the resultant string (could be different due to rebus)
 }
 
@@ -124,7 +124,7 @@ class Grid {
     public readonly height: number,
     public readonly usedWords: Set<string>,
     public readonly cells: string[],
-    public readonly entriesByCell: Array<[Cross, Cross]>,
+    public readonly _entriesByCell: Array<[Cross, Cross]>,
     public readonly entries: Entry[]
   ) {}
 
@@ -144,9 +144,21 @@ class Grid {
     const crossDir = (entry.direction === Direction.Across) ? Direction.Down : Direction.Across;
     const crosses: Array<Cross> = [];
     entry.cells.forEach((cellIndex) => {
-      crosses.push(this.entriesByCell[cellIndex][crossDir]);
+      crosses.push(this.entriesByCell(cellIndex)[crossDir]);
     })
     return crosses;
+  }
+
+  entriesByCell(pos: Position) {
+    return this._entriesByCell[pos.row * this.width + pos.col];
+  }
+
+  valAt(pos: Position) {
+    return this.cells[pos.row * this.width + pos.col];
+  }
+
+  setVal(pos: Position, val: string) {
+    this.cells[pos.row * this.width + pos.col] = val;
   }
 
   gridWithEntryDecided(entryIndex: number, word: string) {
@@ -154,7 +166,7 @@ class Grid {
       this.width, this.height,
       new Set(this.usedWords),
       this.cells.slice(),
-      this.entriesByCell,
+      this._entriesByCell,
       this.entries.slice());
 
     const entry = newGrid.entries[entryIndex];
@@ -163,7 +175,7 @@ class Grid {
     let j = -1;
     for (let i = 0; i < word.length; i += 1) {
       j += 1;
-      const currentVal = newGrid.cells[entry.cells[j]];
+      const currentVal = newGrid.valAt(entry.cells[j]);
       if (currentVal !== ' ') {
         if (currentVal === word.slice(i, i + currentVal.length)) {
           // No change needed for this cell
@@ -175,13 +187,13 @@ class Grid {
       }
 
       // update cells
-      newGrid.cells[entry.cells[j]] = word[i];
+      newGrid.setVal(entry.cells[j], word[i]);
 
       // update crossing entries
       const cross = newGrid.entries[crosses[j].entryIndex];
       let crossWord = '';
       cross.cells.forEach((cid) => {
-        crossWord += newGrid.cells[cid];
+        crossWord += newGrid.valAt(cid);
       });
       const crossBitmap = updateBitmap(cross.length, cross.bitmap, crosses[j].wordIndex, word[i]);
 
@@ -240,7 +252,7 @@ class Grid {
       assignments.set(entry.index, num);
       that.crosses(entry).forEach((c) => {
         const cross = that.entries[c.entryIndex];
-        if (that.cells[cross.cells[c.cellIndex]] === ' ') {
+        if (that.valAt(cross.cells[c.cellIndex]) === ' ') {
           addSubset(cross, num);
         }
       });
@@ -301,7 +313,7 @@ class Grid {
               continue;
             }
 
-            const entryCells: number[] = [];
+            const entryCells: Position[] = [];
             let entryPattern = "";
             let isComplete = true;
             let xt = x;
@@ -317,7 +329,7 @@ class Grid {
               if (cellVal === ' ') {
                 isComplete = false;
               }
-              entryCells.push(cellId);
+              entryCells.push({row: yt, col: xt});
               entryPattern += cellVal;
               xt += xincr;
               yt += yincr;
@@ -518,7 +530,7 @@ export class Autofiller {
         let j = -1;
         for (let i = 0; i < entry.cells.length; i += 1) {
           j += 1;
-          const cell = grid.cells[entry.cells[i]];
+          const cell = grid.valAt(entry.cells[i]);
           if (cell !== ' ') {  // Don't need to check cross
             j += cell.length - 1;
             continue;

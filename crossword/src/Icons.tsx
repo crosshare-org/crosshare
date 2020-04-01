@@ -180,8 +180,8 @@ interface IconProps {
 export const Logo = (props: IconProps) => {
   return (
 <svg xmlns="http://www.w3.org/2000/svg" width={props.width || "1em"} height={props.height || "1em"} viewBox="0 0 16 16"><g fill="#fff"><path d="M1 10h14v5H1z"/><path d="M3 9h10v1H3zm0-7h5v3H3z"/><path d="M6 5h1v5H6zm4-2h2v6h-2z"/><path d="M12 1h2v3h-2z"/><path d="M14 1h1v1h-1z"/></g><path d="M13 0h3v1h-3zM4 1h3v1H4z"/><path d="M12 1h1v1h-1zm3 0h1v1h-1zM3 2h1v1H3zm3 0h2v1H6z"/><path d="M11 2h1v1h-1zm3 0h1v1h-1zM2 3h1v3H2zm3 0h1v6H5z"/><path d="M7 3h1v7H7zm3 0h1v1h-1zm3 0h1v1h-1zM4 4h1v1H4z"/><path d="M9 4h1v5H9zm3 0h1v1h-1z"/><path d="M3 5h1v1H3zm8 0h1v4h-1zM4 8h1v1H4z"/><path d="M3 9h1v1H3zm5 0h1v1H8z"/><path d="M12 9h1v1h-1zM1 10h2v1H1z"/><path d="M5 10h1v1H5zm8 0h2v1h-2z"/><path d="M0 11h1v3H0zm15 0h1v3h-1zm-9 0h1v1H6z"/><path d="M4 12h2v1H4z"/><path d="M5 13h2v1H5zm4 0h2v1H9zm-8 1h3v1H1zm11 0h3v1h-3z"/><path d="M4 15h8v1H4z"/>
-<rect x="10" y="10" width="1" height="1"><animate attributeName="width" dur="0.3s" id="a" begin="10;a.end+10" values="1;0" calcMode="discrete"/></rect>
-<rect x="9" y="11" width="1" height="1"><animate attributeName="width" dur="0.3s" id="b" begin="10;b.end+10" values="1;3" calcMode="discrete"/></rect>
-<rect x="10" y="12" width="2" height="1"><animate attributeName="width" dur="0.3s" id="c" begin="10;c.end+10" values="2;0" calcMode="discrete"/></rect></svg>
+<rect x="10" y="10" width="1" height="1"><animate attributeName="width" dur="0.5s" id="a" begin="10;a.end+10" values="1;0" calcMode="discrete"/></rect>
+<rect x="9" y="11" width="1" height="1"><animate attributeName="width" dur="0.5s" id="b" begin="10;b.end+10" values="1;3" calcMode="discrete"/></rect>
+<rect x="10" y="12" width="2" height="1"><animate attributeName="width" dur="0.5s" id="c" begin="10;c.end+10" values="2;0" calcMode="discrete"/></rect></svg>
   );
 }

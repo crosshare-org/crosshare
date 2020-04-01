@@ -329,7 +329,11 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
     }
   }, [state.success, pause]);
 
-  const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
+  const entryAndCross = state.grid.entryAndCrossAtPosition(state.active);
+  if (entryAndCross === null) {
+    throw new Error("Null entry/cross while playing puzzle!");
+  }
+  const [entry, cross] = entryAndCross;
 
   const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);

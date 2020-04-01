@@ -52,6 +52,15 @@ export function isSymmetryAction(action: PuzzleAction): action is SymmetryAction
   return action.type === 'CHANGESYMMETRY'
 }
 
+export interface ClickedFillAction extends PuzzleAction {
+  type: 'CLICKEDFILL',
+  entryIndex: number,
+  value: string,
+}
+export function isClickedFillAction(action: PuzzleAction): action is ClickedFillAction {
+  return action.type === 'CLICKEDFILL'
+}
+
 interface SetActiveAction extends PuzzleAction {
   newActive: PosAndDir,
 }
