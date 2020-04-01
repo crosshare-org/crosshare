@@ -150,7 +150,7 @@ const Home = (_: RouteComponentProps) => {
   return (
     <Page>
       <div css={{ margin: '1em', }}>
-        <p>CROSSHARE is a not-for-profit community for crossword constructors.</p>
+        <p>Crosshare is a not-for-profit community for crossword constructors.</p>
         <p>Go to <Link to="/dbtest">DBTest</Link></p>
         <p>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>.</p>
       </div>

@@ -132,23 +132,6 @@ export const TopBar = ({children}: TopBarProps) => {
     {children}
     </React.Fragment>
     </div>
-    </header>);
-    /*<Navbar expand="sm" bg="primary">
-    <Navbar.Brand as={Link} to="/">
-      <Image height={22} src={logo} alt=""/> CROSSHARE
-    </Navbar.Brand>
-    { children ?
-      <Nav>
-      {children}
-      </Nav> : " " }
-    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-    <Navbar.Collapse id="basic-navbar-nav">
-      <Nav className="mr-auto">
-        <Nav.Link as={Link} to="/">Home</Nav.Link>
-        <Nav.Link as={Link} to="/crosswords/presidential_appts">Puzzle</Nav.Link>
-        <Nav.Link as={Link} to="/construct">New Puzzle</Nav.Link>
-      </Nav>
-    </Navbar.Collapse>
-  </Navbar>
-  </header>);*/
+    </header>
+  );
 }
