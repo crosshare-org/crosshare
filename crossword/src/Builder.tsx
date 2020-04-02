@@ -13,7 +13,7 @@ import {
   SymmetryIcon, SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
 } from './Icons';
 import { requiresAdmin } from './App';
-import { Grid, GridData } from './Grid';
+import { GridView, GridData } from './Grid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
 import {
   Symmetry, builderReducer, validateGrid,
@@ -248,7 +248,7 @@ export const Builder = (props: PuzzleJson) => {
         isTablet={state.isTablet}
         includeBlockKey={true}
         square={
-          <Grid
+          <GridView
             showingKeyboard={state.showKeyboard}
             grid={state.grid}
             active={state.active}

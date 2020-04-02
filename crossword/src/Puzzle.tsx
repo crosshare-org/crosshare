@@ -12,7 +12,7 @@ import { CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, Reveal
 import { requiresAuth } from './App';
 import { useTimer } from './timer';
 import { Overlay } from './Overlay';
-import { Grid, Entry, GridData } from './Grid';
+import { GridView, ViewableEntry, GridData } from './Grid';
 import { PosAndDir, Direction, BLOCK, PuzzleJson } from './types';
 import { cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock, Symmetry, PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction } from './reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
@@ -182,7 +182,7 @@ interface ClueListProps {
   header?: string,
   current: number,
   cross: number,
-  entries: Array<Entry>,
+  entries: Array<ViewableEntry>,
   scrollToCross: boolean,
   dispatch: React.Dispatch<ClickedEntryAction>,
 }
@@ -392,7 +392,7 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
         includeBlockKey={false}
         isTablet={state.isTablet}
         square={
-          <Grid
+          <GridView
             showingKeyboard={showingKeyboard}
             grid={state.grid}
             active={state.active}

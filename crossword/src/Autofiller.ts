@@ -1,6 +1,7 @@
 import { WordDBTransformed } from './WordDB';
 import { BigInteger } from '@modern-dev/jsbn';
 import { Position, Direction } from './types';
+import { EntryBase, GridBase, Cross } from './Grid';
 
 let db: WordDBTransformed;
 export function setDb(newdb:WordDBTransformed) {
@@ -13,20 +14,10 @@ const ZERO = new BigInteger('0', 10);
 const MAX_WORDS_TO_CONSIDER = 1000;
 
 
-interface Entry {
+interface AutofillEntry extends EntryBase {
   length: number, // Length in chars - might be different than cells.length due to rebus
-  index: number,
-  direction: Direction,
-  cells: Array<Position>,
   bitmap: BigInteger|null,
-  isComplete: boolean,
   minCost: number
-}
-
-interface Cross {
-  entryIndex: number, // Entry index
-  cellIndex: number,  // Position of the crossing in the entry.cells array
-  wordIndex: number   // Position of the crossing in the resultant string (could be different due to rebus)
 }
 
 function highestScore(length: number, bitmap: BigInteger|null) {
@@ -55,7 +46,7 @@ function numMatches(length:number, bitmap:BigInteger|null) {
   return bitmap.bitCount();
 }
 
-function numMatchesForEntry(entry: Entry) {
+function numMatchesForEntry(entry: AutofillEntry) {
   return numMatches(entry.length, entry.bitmap);
 }
 
@@ -118,47 +109,23 @@ function matchingBitmap(pattern:string) {
   return matches;
 }
 
-class Grid {
+class Grid extends GridBase<AutofillEntry> {
   constructor(
     public readonly width: number,
     public readonly height: number,
     public readonly usedWords: Set<string>,
     public readonly cells: string[],
     public readonly _entriesByCell: Array<[Cross, Cross]>,
-    public readonly entries: Entry[]
-  ) {}
+    public readonly entries: AutofillEntry[]
+  ) {
+    super(width, height, cells, _entriesByCell, entries);
+  }
 
   /* Get a lower bound on total cost of the grid as filled in. */
   minCost() {
     let cost = 0;
     this.entries.forEach((e) => cost += e.minCost);
     return cost;
-  }
-
-  /**
-   * Given an entry, get the crossing entries.
-   *
-   * Returns an array of (entry index, letter idx w/in that entry) of crosses.
-   */
-  crosses(entry:Entry): Cross[] {
-    const crossDir = (entry.direction === Direction.Across) ? Direction.Down : Direction.Across;
-    const crosses: Array<Cross> = [];
-    entry.cells.forEach((cellIndex) => {
-      crosses.push(this.entriesByCell(cellIndex)[crossDir]);
-    })
-    return crosses;
-  }
-
-  entriesByCell(pos: Position) {
-    return this._entriesByCell[pos.row * this.width + pos.col];
-  }
-
-  valAt(pos: Position) {
-    return this.cells[pos.row * this.width + pos.col];
-  }
-
-  setVal(pos: Position, val: string) {
-    this.cells[pos.row * this.width + pos.col] = val;
   }
 
   gridWithEntryDecided(entryIndex: number, word: string) {
@@ -242,7 +209,7 @@ class Grid {
 
     const assignments = new Map<number, number>()
 
-    function addSubset(entry:Entry, num:number) {
+    function addSubset(entry:AutofillEntry, num:number) {
       if (assignments.has(entry.index)) {
         return;
       }
@@ -273,16 +240,6 @@ class Grid {
     return Array.from(inv.values());
   }
 
-  toString() {
-    let s = ""
-    for (let y = 0; y < this.height; y += 1) {
-      for (let x = 0; x < this.width; x += 1) {
-        s += this.cells[y * this.width + x] + " ";
-      }
-      s += "\n";
-    }
-    return s;
-  }
 
   static fromTemplate(template: string[], width: number, height: number) {
       const usedWords = new Set<string>();
@@ -290,10 +247,10 @@ class Grid {
 
       const entriesByCell: Array<[Cross, Cross]> = [];
       cells.forEach(() => {
-        entriesByCell.push([{entryIndex:0,wordIndex:0,cellIndex:0}, {entryIndex:0,wordIndex:0,cellIndex:0}]);
-      })
+        entriesByCell.push([{entryIndex:-1,wordIndex:0,cellIndex:0}, {entryIndex:-1,wordIndex:0,cellIndex:0}]);
+      });
 
-      const entries: Array<Entry> = [];
+      const entries: Array<AutofillEntry> = [];
 
       [Direction.Across, Direction.Down].forEach(dir => {
         const xincr = (dir === Direction.Across) ? 1 : 0;

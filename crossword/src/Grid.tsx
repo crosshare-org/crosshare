@@ -7,30 +7,123 @@ import { Position, Direction, PosAndDir, BLOCK } from './types';
 import { Cell } from './Cell';
 import { Symmetry, PuzzleAction, SetActivePositionAction } from './reducer';
 
-export interface Entry {
+
+export interface EntryBase {
   index: number,
-  labelNumber: number,
   direction: Direction,
   cells: Array<Position>,
   isComplete: boolean,
+}
+
+export interface ViewableEntry extends EntryBase {
+  labelNumber: number,
   clue: string,
 }
 
-interface Cross {
+export interface Cross {
   entryIndex: number, // Entry index
   cellIndex: number,  // Position of the crossing in the entry.cells array
   wordIndex: number   // Position of the crossing in the resultant string (could be different due to rebus)
 }
 
-export class GridData {
-  public readonly sortedEntries: Array<Entry>;
+export abstract class GridBase<Entry extends EntryBase> {
+  constructor(
+    public readonly width: number,
+    public readonly height: number,
+    public readonly cells: string[],
+    public readonly _entriesByCell: Array<[Cross, Cross]>,
+    public readonly entries: Entry[]
+  ) {}
+
+  entriesByCell(pos: Position) {
+    return this._entriesByCell[pos.row * this.width + pos.col];
+  }
+
+  /**
+   * Given an entry, get the crossing entries.
+   *
+   * Returns an array of (entry index, letter idx w/in that entry) of crosses.
+   */
+  crosses(entry:Entry): Cross[] {
+    const crossDir = (entry.direction === Direction.Across) ? Direction.Down : Direction.Across;
+    const crosses: Array<Cross> = [];
+    entry.cells.forEach((cellIndex) => {
+      crosses.push(this.entriesByCell(cellIndex)[crossDir]);
+    })
+    return crosses;
+  }
+
+  valAt(pos: Position) {
+    return this.cells[pos.row * this.width + pos.col];
+  }
+
+  entryWord(entryIndex: number) {
+    return this.entries[entryIndex].cells.map((pos) => this.valAt(pos)).join("");
+  }
+
+  setVal(pos: Position, val: string) {
+    this.cells[pos.row * this.width + pos.col] = val;
+  }
+
+  cellIndex(pos: Position) {
+    return pos.row * this.width + pos.col;
+  }
+
+  posForIndex(index: number) {
+    return {col: index % this.width, row: Math.floor(index / this.width) % this.height};
+  }
+
+  toString() {
+    let s = ""
+    for (let y = 0; y < this.height; y += 1) {
+      for (let x = 0; x < this.width; x += 1) {
+        s += this.cells[y * this.width + x] + " ";
+      }
+      s += "\n";
+    }
+    return s;
+  }
+
+  entryAtPosition(pos: PosAndDir): [Entry | null, number] {
+    const entriesAtCell = this.entriesByCell(pos);
+    const currentEntryIndex = entriesAtCell[pos.dir];
+    if (currentEntryIndex.entryIndex === -1) {
+      return [null, 0];
+    }
+    return [this.entries[currentEntryIndex.entryIndex], currentEntryIndex.wordIndex];
+  }
+
+  entryAndCrossAtPosition(pos: PosAndDir): [Entry | null, Entry | null] {
+    const entries = this.entriesByCell(pos);
+    if (!entries) {
+      return [null,null];
+    }
+    const currentEntry = entries[pos.dir];
+    const currentCross = entries[(pos.dir + 1) % 2];
+    return [
+      currentEntry.entryIndex === -1 ? null : this.entries[currentEntry.entryIndex],
+      currentCross.entryIndex === -1 ? null : this.entries[currentCross.entryIndex]
+    ];
+  }
+
+  getEntryCells(pos: PosAndDir) {
+    let highlights: Array<Position> = [];
+    const entry = this.entryAtPosition(pos);
+    if (entry[0] !== null) {
+      highlights = entry[0].cells;
+    }
+    return highlights;
+  }
+}
+
+export class GridData extends GridBase<ViewableEntry> {
+  public readonly sortedEntries: Array<ViewableEntry>;
   constructor(
     public readonly width: number,
     public readonly height: number,
     public readonly cells: Array<string>,
-    public readonly usedWords: Set<string>,
     public readonly _entriesByCell: Array<[Cross, Cross]>,
-    public readonly entries: Array<Entry>,
+    public readonly entries: Array<ViewableEntry>,
     public readonly cellLabels: Map<number, number>,
     public readonly allowBlockEditing: boolean,
     public readonly acrossClues: Array<string>,
@@ -38,20 +131,13 @@ export class GridData {
     public readonly highlighted: Set<number>,
     public readonly highlight: "circle" | "shade" | undefined,
   ) {
+    super(width, height, cells, _entriesByCell, entries);
     this.sortedEntries = [...entries].sort((a, b) => {
       if (a.direction !== b.direction) {
         return a.direction - b.direction;
       }
       return a.index - b.index;
     })
-  }
-
-  entriesByCell(pos: Position) {
-    return this._entriesByCell[pos.row * this.width + pos.col];
-  }
-
-  entryWord(entryIndex: number) {
-    return this.entries[entryIndex].cells.map((pos) => this.valAt(pos)).join("");
   }
 
   static fromCells(width: number, height: number, cells: Array<string>, allowBlockEditing: boolean, acrossClues: Array<string>, downClues: Array<string>, highlighted: Set<number>, highlight: "circle" | "shade" | undefined) {
@@ -146,19 +232,7 @@ export class GridData {
         }
       }
     }
-    return new this(width, height, cells, usedWords, entriesByCell, entries, cellLabels, allowBlockEditing, acrossClues, downClues, highlighted, highlight);
-  }
-
-  cellIndex(pos: Position) {
-    return pos.row * this.width + pos.col;
-  }
-
-  posForIndex(index: number) {
-    return {col: index % this.width, row: Math.floor(index / this.width) % this.height};
-  }
-
-  valAt(pos: Position) {
-    return this.cells[this.cellIndex(pos)];
+    return new this(width, height, cells, entriesByCell, entries, cellLabels, allowBlockEditing, acrossClues, downClues, highlighted, highlight);
   }
 
   moveLeft(active: Position): Position {
@@ -255,28 +329,6 @@ export class GridData {
     return {...entry.cells[index + 1], dir: pos.dir};
   }
 
-  entryAtPosition(pos: PosAndDir): [Entry | null, number] {
-    const entriesAtCell = this.entriesByCell(pos);
-    const currentEntryIndex = entriesAtCell[pos.dir];
-    if (currentEntryIndex.entryIndex === -1) {
-      return [null, 0];
-    }
-    return [this.entries[currentEntryIndex.entryIndex], currentEntryIndex.wordIndex];
-  }
-
-  entryAndCrossAtPosition(pos: PosAndDir): [Entry|null, Entry|null] {
-    const entries = this.entriesByCell(pos);
-    if (!entries) {
-      return [null,null];
-    }
-    const currentEntry = entries[pos.dir];
-    const currentCross = entries[(pos.dir + 1) % 2];
-    return [
-      currentEntry.entryIndex === -1 ? null : this.entries[currentEntry.entryIndex],
-      currentCross.entryIndex === -1 ? null : this.entries[currentCross.entryIndex]
-    ];
-  }
-
   moveToPrevEntry(pos: PosAndDir): PosAndDir {
     return this.moveToNextEntry(pos, true);
   }
@@ -284,7 +336,13 @@ export class GridData {
   moveToNextEntry(pos: PosAndDir, reverse = false): PosAndDir {
     const [currentEntry,] = this.entryAtPosition(pos);
     if (!currentEntry) {
-      return pos;
+      const xincr = (pos.dir === Direction.Across) ? 1 : 0;
+      const yincr = (pos.dir === Direction.Down) ? 1 : 0;
+      let iincr = xincr + yincr * this.width;
+      if (reverse) {
+        iincr *= -1;
+      }
+      return {...this.posForIndex((this.cellIndex(pos) + iincr) % (this.width * this.height)), dir: pos.dir};
     }
 
     // Find position in the sorted array of entries
@@ -312,42 +370,6 @@ export class GridData {
     }
 
     return pos;
-  }
-
-  getEntryCells(pos: PosAndDir) {
-    const rowIncr = pos.dir === Direction.Down ? 1 : 0;
-    const colIncr = pos.dir === Direction.Across ? 1 : 0;
-
-    let highlights: Array<Position> = [];
-    // Add highlights backwords
-    let row = pos.row;
-    let col = pos.col;
-    while (true) {
-      row -= rowIncr;
-      col -= colIncr;
-      if (row < 0 || col < 0) {
-        break;
-      }
-      if (this.valAt({ row: row, col: col }) === BLOCK) {
-        break;
-      }
-      highlights.push({ row: row, col: col });
-    }
-    // And forwards
-    row = pos.row;
-    col = pos.col;
-    while (true) {
-      row += rowIncr;
-      col += colIncr;
-      if (row >= this.height || col >= this.width) {
-        break;
-      }
-      if (this.valAt({ row: row, col: col }) === BLOCK) {
-        break;
-      }
-      highlights.push({ row: row, col: col });
-    }
-    return highlights;
   }
 
   gridWithNewChar(pos: Position, char: string, sym: Symmetry): GridData {
@@ -404,7 +426,7 @@ export class GridData {
   }
 }
 
-type GridProps = {
+type GridViewProps = {
   showingKeyboard: boolean,
   grid: GridData,
   active: PosAndDir,
@@ -416,7 +438,7 @@ type GridProps = {
   autofill?: Array<string>,
 }
 
-export const Grid = ({ showingKeyboard, active, dispatch, grid, ...props}: GridProps) => {
+export const GridView = ({ showingKeyboard, active, dispatch, grid, ...props}: GridViewProps) => {
   const entryCells = grid.getEntryCells(active);
 
   const noOp = React.useCallback(() => undefined, []);
