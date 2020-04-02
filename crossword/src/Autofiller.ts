@@ -1,6 +1,5 @@
 import { WordDBTransformed } from './WordDB';
 import { BigInteger } from '@modern-dev/jsbn';
-import { Position, Direction } from './types';
 import { EntryBase, GridBase, Cross } from './Grid';
 
 let db: WordDBTransformed;
@@ -175,6 +174,7 @@ class Grid extends GridBase<AutofillEntry> {
       }
 
       newGrid.entries[crosses[j].entryIndex] = {
+        pattern: cross.pattern,
         length: cross.length,
         index: cross.index,
         direction: cross.direction,
@@ -188,6 +188,7 @@ class Grid extends GridBase<AutofillEntry> {
     // update entry itself
     const newBitmap = matchingBitmap(word);
     newGrid.entries[entryIndex] = {
+      pattern: entry.pattern,
       length: entry.length,
       index: entry.index,
       direction: entry.direction,
@@ -242,72 +243,22 @@ class Grid extends GridBase<AutofillEntry> {
 
 
   static fromTemplate(template: string[], width: number, height: number) {
-      const usedWords = new Set<string>();
-      const cells = template.map((c) => c.toUpperCase().replace("#", ".")) ;
+    const cells = template.map((c) => c.toUpperCase().replace("#", ".")) ;
+    const usedWords = new Set<string>();
+    const [baseEntries, entriesByCell] = this.entriesFromCells(width, height, cells);
 
-      const entriesByCell: Array<[Cross, Cross]> = [];
-      cells.forEach(() => {
-        entriesByCell.push([{entryIndex:-1,wordIndex:0,cellIndex:0}, {entryIndex:-1,wordIndex:0,cellIndex:0}]);
-      });
-
-      const entries: Array<AutofillEntry> = [];
-
-      [Direction.Across, Direction.Down].forEach(dir => {
-        const xincr = (dir === Direction.Across) ? 1 : 0;
-        const yincr = (dir === Direction.Down) ? 1 : 0;
-        const iincr = xincr + yincr * width;
-        let i = 0;
-        for (let y = 0; y < height; y += 1) {
-          for (let x = 0; x < width; x += 1) {
-            const isStartOfRow = (dir === Direction.Across && x === 0) ||
-              (dir === Direction.Down && y === 0);
-            const isStartOfEntry = (cells[i] !== '.' &&
-              (isStartOfRow || cells[i-iincr] === '.') &&
-              (x + xincr < width && y + yincr < height && cells[i+iincr] !== '.'));
-
-            i += 1;
-            if (!isStartOfEntry) {
-              continue;
-            }
-
-            const entryCells: Position[] = [];
-            let entryPattern = "";
-            let isComplete = true;
-            let xt = x;
-            let yt = y;
-            let wordlen = 0;
-            while (xt < width && yt < height) {
-              const cellId = yt * width + xt;
-              const cellVal = cells[cellId];
-              entriesByCell[cellId][dir] = {entryIndex: entries.length, wordIndex: entryPattern.length, cellIndex: wordlen};
-              if (cellVal === '.') {
-                break;
-              }
-              if (cellVal === ' ') {
-                isComplete = false;
-              }
-              entryCells.push({row: yt, col: xt});
-              entryPattern += cellVal;
-              xt += xincr;
-              yt += yincr;
-              wordlen += 1;
-            }
-            const entryBitmap = matchingBitmap(entryPattern);
-            if (isComplete) {
-              usedWords.add(entryPattern);
-            }
-            entries.push({
-              length: entryPattern.length,
-              index: entries.length,
-              direction: dir,
-              cells: entryCells,
-              bitmap: entryBitmap,
-              isComplete: isComplete,
-              minCost: minCost(entryPattern.length, entryBitmap)
-            });
-          }
-        }
-      });
+    const entries = baseEntries.map(baseEntry => {
+      const entryBitmap = matchingBitmap(baseEntry.pattern);
+      if (baseEntry.isComplete) {
+        usedWords.add(baseEntry.pattern);
+      }
+      return {
+        ...baseEntry,
+        length: baseEntry.pattern.length,
+        bitmap: entryBitmap,
+        minCost: minCost(baseEntry.pattern.length, entryBitmap)
+      };
+    });
 
     return new this(width, height, usedWords, cells, entriesByCell, entries);
   }

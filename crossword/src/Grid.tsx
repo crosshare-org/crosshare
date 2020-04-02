@@ -13,6 +13,7 @@ export interface EntryBase {
   direction: Direction,
   cells: Array<Position>,
   isComplete: boolean,
+  pattern: string,
 }
 
 export interface ViewableEntry extends EntryBase {
@@ -114,6 +115,67 @@ export abstract class GridBase<Entry extends EntryBase> {
     }
     return highlights;
   }
+
+  static entriesFromCells(width: number, height: number, cells: Array<string>): [Array<EntryBase>, Array<[Cross, Cross]>] {
+
+    const entriesByCell: Array<[Cross, Cross]> = [];
+    cells.forEach(() => {
+      entriesByCell.push([{entryIndex:-1,wordIndex:0,cellIndex:0}, {entryIndex:-1,wordIndex:0,cellIndex:0}]);
+    });
+
+    const entries: Array<EntryBase> = [];
+
+    for (let y = 0; y < height; y += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const i = x + y * width;
+        for (let dir of ([Direction.Across, Direction.Down])) {
+          const xincr = (dir === Direction.Across) ? 1 : 0;
+          const yincr = (dir === Direction.Down) ? 1 : 0;
+          const iincr = xincr + yincr * width;
+          const isStartOfRow = (dir === Direction.Across && x === 0) ||
+            (dir === Direction.Down && y === 0);
+          const isStartOfEntry = (cells[i] !== '.' &&
+            (isStartOfRow || cells[i-iincr] === '.') &&
+            (x + xincr < width && y + yincr < height && cells[i+iincr] !== '.'));
+
+          if (!isStartOfEntry) {
+            continue;
+          }
+
+          const entryCells: Position[] = [];
+          let entryPattern = "";
+          let isComplete = true;
+          let xt = x;
+          let yt = y;
+          let wordlen = 0;
+          while (xt < width && yt < height) {
+            const cellId = yt * width + xt;
+            const cellVal = cells[cellId];
+            entriesByCell[cellId][dir] = {entryIndex: entries.length, wordIndex: entryPattern.length, cellIndex: wordlen};
+            if (cellVal === '.') {
+              break;
+            }
+            if (cellVal === ' ') {
+              isComplete = false;
+            }
+            entryCells.push({row: yt, col: xt});
+            entryPattern += cellVal;
+            xt += xincr;
+            yt += yincr;
+            wordlen += 1;
+          }
+          entries.push({
+            index: entries.length,
+            pattern: entryPattern,
+            direction: dir,
+            cells: entryCells,
+            isComplete: isComplete,
+          });
+        }
+      }
+    }
+    return [entries, entriesByCell];
+  }
 }
 
 export class GridData extends GridBase<ViewableEntry> {
@@ -141,14 +203,7 @@ export class GridData extends GridBase<ViewableEntry> {
   }
 
   static fromCells(width: number, height: number, cells: Array<string>, allowBlockEditing: boolean, acrossClues: Array<string>, downClues: Array<string>, highlighted: Set<number>, highlight: "circle" | "shade" | undefined) {
-    const entriesByCell: Array<[Cross, Cross]> = [];
-    cells.forEach(() => {
-      entriesByCell.push([{entryIndex:-1,wordIndex:0,cellIndex:0}, {entryIndex:-1,wordIndex:0,cellIndex:0}]);
-    });
-    let entries = [];
-    let usedWords: Set<string> = new Set();
-    let cellLabels = new Map<number, number>();
-    let currentCellLabel = 1;
+    const [baseEntries, entriesByCell] = this.entriesFromCells(width, height, cells);
 
     let clues = [new Map<number, string>(), new Map<number, string>()];
     function setClues(jsonClueList: Array<string>, direction: Direction) {
@@ -165,72 +220,30 @@ export class GridData extends GridBase<ViewableEntry> {
     setClues(acrossClues, Direction.Across);
     setClues(downClues, Direction.Down);
 
-    for (let y = 0; y < height; y += 1) {
-      for (let x = 0; x < width; x += 1) {
-        const i = x + y * width;
-        for (let dir of ([Direction.Across, Direction.Down])) {
-          const xincr = (dir === Direction.Across) ? 1 : 0;
-          const yincr = (dir === Direction.Down) ? 1 : 0;
-          const iincr = xincr + yincr * width;
-
-          const isRowStart = (dir === Direction.Across && x === 0) ||
-            (dir === Direction.Down && y === 0);
-          const isEntryStart = (cells[i] !== BLOCK &&
-            (isRowStart || cells[i - iincr] === BLOCK) &&
-            (x + xincr < width &&
-              y + yincr < height &&
-              cells[i + iincr] !== BLOCK));
-          if (!isEntryStart) {
-            continue
-          }
-          let entryLabel = cellLabels.get(i) || currentCellLabel;
-          if (!cellLabels.has(i)) {
-            cellLabels.set(i, currentCellLabel);
-            currentCellLabel += 1;
-          }
-          let entryClue = clues[dir].get(entryLabel);
-          if (!entryClue) {
-            if (allowBlockEditing) {  // We're constructing a puzzle, so clues can be missing
-              entryClue = "";
-            } else {
-              throw new Error("Can't find clue for " + entryLabel + " " + dir);
-            }
-          }
-          let entryCells = [];
-          let entryPattern = "";
-          let isComplete = true;
-          let xt = x;
-          let yt = y;
-          let wordlen = 0;
-          while (xt < width && yt < height) {
-            let cellId = yt * width + xt;
-            let cellVal = cells[cellId];
-            if (cellVal === BLOCK) {
-              break;
-            }
-            entriesByCell[cellId][dir] = {entryIndex: entries.length, wordIndex: entryPattern.length, cellIndex: wordlen};
-            if (cellVal === ' ') {
-              isComplete = false;
-            }
-            entryCells.push({ row: yt, col: xt });
-            entryPattern += cellVal;
-            xt += xincr;
-            yt += yincr;
-            wordlen += 1;
-          }
-          if (isComplete) {
-            usedWords.add(entryPattern);
-          }
-          entries.push({
-            index: entries.length,
-            labelNumber: entryLabel,
-            direction: dir,
-            cells: entryCells,
-            isComplete: isComplete,
-            clue: entryClue,
-          });
+    let cellLabels = new Map<number, number>();
+    let currentCellLabel = 1;
+    const entries: Array<ViewableEntry> = [];
+    for (const baseEntry of baseEntries) {
+      const startPos = baseEntry.cells[0];
+      const i = startPos.row * width + startPos.col;
+      let entryLabel = cellLabels.get(i) || currentCellLabel;
+      if (!cellLabels.has(i)) {
+        cellLabels.set(i, currentCellLabel);
+        currentCellLabel += 1;
+      }
+      let entryClue = clues[baseEntry.direction].get(entryLabel);
+      if (!entryClue) {
+        if (allowBlockEditing) {  // We're constructing a puzzle, so clues can be missing
+          entryClue = "";
+        } else {
+          throw new Error("Can't find clue for " + entryLabel + " " + baseEntry.direction);
         }
       }
+      entries.push({
+        ...baseEntry,
+        labelNumber: entryLabel,
+        clue: entryClue,
+      });
     }
     return new this(width, height, cells, entriesByCell, entries, cellLabels, allowBlockEditing, acrossClues, downClues, highlighted, highlight);
   }
