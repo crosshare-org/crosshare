@@ -108,7 +108,7 @@ function matchingBitmap(pattern:string) {
   return matches;
 }
 
-class Grid extends GridBase<AutofillEntry> {
+class AutofillGrid extends GridBase<AutofillEntry> {
   constructor(
     public readonly width: number,
     public readonly height: number,
@@ -128,7 +128,7 @@ class Grid extends GridBase<AutofillEntry> {
   }
 
   gridWithEntryDecided(entryIndex: number, word: string) {
-    const newGrid = new Grid(
+    const newGrid = new AutofillGrid(
       this.width, this.height,
       new Set(this.usedWords),
       this.cells.slice(),
@@ -155,8 +155,12 @@ class Grid extends GridBase<AutofillEntry> {
       // update cells
       newGrid.setVal(entry.cells[j], word[i]);
 
-      // update crossing entries
-      const cross = newGrid.entries[crosses[j].entryIndex];
+      // update crossing entry
+      const crossIndex = crosses[j].entryIndex;
+      if (crossIndex === null) {
+        continue;
+      }
+      const cross = newGrid.entries[crossIndex];
       let crossWord = '';
       cross.cells.forEach((cid) => {
         crossWord += newGrid.valAt(cid);
@@ -173,7 +177,7 @@ class Grid extends GridBase<AutofillEntry> {
         newGrid.usedWords.add(crossWord);
       }
 
-      newGrid.entries[crosses[j].entryIndex] = {
+      newGrid.entries[crossIndex] = {
         pattern: cross.pattern,
         length: cross.length,
         index: cross.index,
@@ -219,6 +223,9 @@ class Grid extends GridBase<AutofillEntry> {
       }
       assignments.set(entry.index, num);
       that.crosses(entry).forEach((c) => {
+        if (c.entryIndex === null) {
+          return;
+        }
         const cross = that.entries[c.entryIndex];
         if (that.valAt(cross.cells[c.cellIndex]) === ' ') {
           addSubset(cross, num);
@@ -240,7 +247,6 @@ class Grid extends GridBase<AutofillEntry> {
     });
     return Array.from(inv.values());
   }
-
 
   static fromTemplate(template: string[], width: number, height: number) {
     const cells = template.map((c) => c.toUpperCase().replace("#", ".")) ;
@@ -273,7 +279,7 @@ interface Result {
 }
 interface Recur extends Result {
   type: ResultTag.Recur,
-  grid: Grid,
+  grid: AutofillGrid,
   discrep: number,
   pitched: Set<string>,
   subset: Set<number>|null,
@@ -282,26 +288,26 @@ interface Recur extends Result {
 function isRecur(result: Result): result is Recur {
     return result.type === ResultTag.Recur;
 }
-function recur(grid:Grid, discrep:number, pitched:Set<string>, subset:Set<number>|null, cont:Cont): Recur {
+function recur(grid:AutofillGrid, discrep:number, pitched:Set<string>, subset:Set<number>|null, cont:Cont): Recur {
   return {type: ResultTag.Recur, grid, discrep, pitched, subset, cont};
 }
 interface Value extends Result {
   type: ResultTag.Value,
-  result: Grid|null
+  result: AutofillGrid|null
 }
 function isValue(result: Result): result is Value {
     return result.type === ResultTag.Value;
 }
-function value(x:Grid|null) {
+function value(x:AutofillGrid|null) {
   return {type: ResultTag.Value, result: x}
 }
 
-type Cont = (x: Grid|null) => Result;
+type Cont = (x: AutofillGrid|null) => Result;
 
 export class Autofiller {
-  public initialGrid: Grid;
+  public initialGrid: AutofillGrid;
   public completed: boolean;
-  public solnGrid: Grid|null;
+  public solnGrid: AutofillGrid|null;
   public solnCost: number|null;
   public nextStep: Result;
   public postedSoln: boolean;
@@ -314,7 +320,7 @@ export class Autofiller {
     public onResult: (input: string[], result: string[]) => void,
     public onComplete: () => void
   ) {
-    this.initialGrid = Grid.fromTemplate(this.grid, this.width, this.height);
+    this.initialGrid = AutofillGrid.fromTemplate(this.grid, this.width, this.height);
     this.completed = false;
     this.solnCost = null;
     this.solnGrid = null;
@@ -364,7 +370,7 @@ export class Autofiller {
   };
 
   /* Fill out a grid or a subset of a grid */
-  _solve(grid: Grid, discrep: number, pitched: Set<string>, subset: Set<number>|null, cont: Cont): Result {
+  _solve(grid: AutofillGrid, discrep: number, pitched: Set<string>, subset: Set<number>|null, cont: Cont): Result {
     const baseCost = grid.minCost();
 
     // We already have a solution that's better than this grid could possibly get
@@ -407,12 +413,12 @@ export class Autofiller {
 
     // Consider entries in order of possible matches
     entriesToConsider.sort((e1, e2) => numMatchesForEntry(e1) - numMatchesForEntry(e2));
-    let successor: [Grid, number, string]|null = null;
+    let successor: [AutofillGrid, number, string]|null = null;
     let successorDiff: number|null = null;
 
     for (const entry of entriesToConsider) {
       const crosses = grid.crosses(entry)
-      let bestGrid: [Grid, number, string]|null = null;
+      let bestGrid: [AutofillGrid, number, string]|null = null;
       let bestCost: number|null = null;
       let secondBestCost: number|null = null;
 
@@ -443,7 +449,11 @@ export class Autofiller {
             j += cell.length - 1;
             continue;
           }
-          const cross = grid.entries[crosses[i].entryIndex];
+          const crossIndex = crosses[i].entryIndex;
+          if (crossIndex === null) {
+            continue;
+          }
+          const cross = grid.entries[crossIndex];
           const crossLength = cross.length;
           const newBitmap = updateBitmap(crossLength, cross.bitmap, crosses[i].wordIndex, word[j]);
           const newCost = baseCost - cross.minCost + minCost(crossLength, newBitmap);

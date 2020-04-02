@@ -22,9 +22,9 @@ export interface ViewableEntry extends EntryBase {
 }
 
 export interface Cross {
-  entryIndex: number, // Entry index
-  cellIndex: number,  // Position of the crossing in the entry.cells array
-  wordIndex: number   // Position of the crossing in the resultant string (could be different due to rebus)
+  entryIndex: number|null, // Entry index
+  cellIndex: number,       // Position of the crossing in the entry.cells array
+  wordIndex: number        // Position of the crossing in the resultant string (could be different due to rebus)
 }
 
 export abstract class GridBase<Entry extends EntryBase> {
@@ -88,7 +88,7 @@ export abstract class GridBase<Entry extends EntryBase> {
   entryAtPosition(pos: PosAndDir): [Entry | null, number] {
     const entriesAtCell = this.entriesByCell(pos);
     const currentEntryIndex = entriesAtCell[pos.dir];
-    if (currentEntryIndex.entryIndex === -1) {
+    if (currentEntryIndex.entryIndex === null) {
       return [null, 0];
     }
     return [this.entries[currentEntryIndex.entryIndex], currentEntryIndex.wordIndex];
@@ -102,8 +102,8 @@ export abstract class GridBase<Entry extends EntryBase> {
     const currentEntry = entries[pos.dir];
     const currentCross = entries[(pos.dir + 1) % 2];
     return [
-      currentEntry.entryIndex === -1 ? null : this.entries[currentEntry.entryIndex],
-      currentCross.entryIndex === -1 ? null : this.entries[currentCross.entryIndex]
+      currentEntry.entryIndex === null ? null : this.entries[currentEntry.entryIndex],
+      currentCross.entryIndex === null ? null : this.entries[currentCross.entryIndex]
     ];
   }
 
@@ -120,7 +120,12 @@ export abstract class GridBase<Entry extends EntryBase> {
 
     const entriesByCell: Array<[Cross, Cross]> = [];
     cells.forEach(() => {
-      entriesByCell.push([{entryIndex:-1,wordIndex:0,cellIndex:0}, {entryIndex:-1,wordIndex:0,cellIndex:0}]);
+      entriesByCell.push(
+        [
+          {entryIndex: null, wordIndex: 0, cellIndex: 0},
+          {entryIndex: null, wordIndex: 0, cellIndex: 0}
+        ]
+      );
     });
 
     const entries: Array<EntryBase> = [];
@@ -178,7 +183,7 @@ export abstract class GridBase<Entry extends EntryBase> {
   }
 }
 
-export class GridData extends GridBase<ViewableEntry> {
+export class ViewableGrid extends GridBase<ViewableEntry> {
   public readonly sortedEntries: Array<ViewableEntry>;
   constructor(
     public readonly width: number,
@@ -385,7 +390,7 @@ export class GridData extends GridBase<ViewableEntry> {
     return pos;
   }
 
-  gridWithNewChar(pos: Position, char: string, sym: Symmetry): GridData {
+  gridWithNewChar(pos: Position, char: string, sym: Symmetry): ViewableGrid {
     const index = pos.row * this.width + pos.col;
     let cells = [...this.cells];
     if (this.valAt(pos) === BLOCK) {
@@ -412,10 +417,10 @@ export class GridData extends GridBase<ViewableEntry> {
     }
     cells[index] = char;
     // TODO - can we prevent some re-init here?
-    return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing, this.acrossClues, this.downClues, this.highlighted, this.highlight);
+    return ViewableGrid.fromCells(this.width, this.height, cells, this.allowBlockEditing, this.acrossClues, this.downClues, this.highlighted, this.highlight);
   }
 
-  gridWithBlockToggled(pos: Position, sym: Symmetry): GridData {
+  gridWithBlockToggled(pos: Position, sym: Symmetry): ViewableGrid {
     let char = BLOCK;
     if (this.valAt(pos) === BLOCK) {
       char = ' ';
@@ -435,13 +440,13 @@ export class GridData extends GridBase<ViewableEntry> {
       cells[flipped] = char;
     }
     // TODO - can we prevent some re-init here?
-    return GridData.fromCells(this.width, this.height, cells, this.allowBlockEditing, this.acrossClues, this.downClues, this.highlighted, this.highlight);
+    return ViewableGrid.fromCells(this.width, this.height, cells, this.allowBlockEditing, this.acrossClues, this.downClues, this.highlighted, this.highlight);
   }
 }
 
 type GridViewProps = {
   showingKeyboard: boolean,
-  grid: GridData,
+  grid: ViewableGrid,
   active: PosAndDir,
   dispatch: React.Dispatch<PuzzleAction>,
   revealedCells?: Set<number>,

@@ -1,9 +1,9 @@
 import { PosAndDir, Position, Direction, BLOCK } from './types';
-import { GridData } from './Grid';
+import { ViewableGrid } from './Grid';
 
 interface GridInterfaceState {
   active: PosAndDir,
-  grid: GridData,
+  grid: ViewableGrid,
   showKeyboard: boolean,
   isTablet: boolean,
   showExtraKeyLayout: boolean,

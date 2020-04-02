@@ -12,7 +12,7 @@ import { CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, Reveal
 import { requiresAuth } from './App';
 import { useTimer } from './timer';
 import { Overlay } from './Overlay';
-import { GridView, ViewableEntry, GridData } from './Grid';
+import { GridView, ViewableEntry, ViewableGrid } from './Grid';
 import { PosAndDir, Direction, BLOCK, PuzzleJson } from './types';
 import { cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock, Symmetry, PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction } from './reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
@@ -271,7 +271,7 @@ export function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction
 export const Puzzle = requiresAuth((props: PuzzleJson) => {
   const [state, dispatch] = React.useReducer(puzzleReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
-    grid: GridData.fromCells(
+    grid: ViewableGrid.fromCells(
       props.size.cols,
       props.size.rows,
       (props.grid.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>),

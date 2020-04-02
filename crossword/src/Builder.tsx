@@ -13,7 +13,7 @@ import {
   SymmetryIcon, SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
 } from './Icons';
 import { requiresAdmin } from './App';
-import { GridView, GridData } from './Grid';
+import { GridView, ViewableGrid } from './Grid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
 import {
   Symmetry, builderReducer, validateGrid,
@@ -110,7 +110,7 @@ const PotentialFillList = (props: PotentialFillListProps) => {
 export const Builder = (props: PuzzleJson) => {
   const [state, dispatch] = React.useReducer(builderReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
-    grid: GridData.fromCells(
+    grid: ViewableGrid.fromCells(
       props.size.cols,
       props.size.rows,
       props.grid,
