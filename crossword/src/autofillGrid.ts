@@ -12,7 +12,6 @@ export interface AutofillEntry extends EntryBase {
 
 export interface AutofillGrid<Entry extends AutofillEntry> extends GridBase<Entry> {
   usedWords: Set<string>,
-  mapper(entry: AutofillEntry): Entry
 }
 
 /* Get a lower bound on total cost of the grid as filled in. */
@@ -26,8 +25,86 @@ export function numMatchesForEntry(entry: AutofillEntry) {
   return numMatches(entry.length, entry.bitmap);
 }
 
-export function gridWithEntryDecided<Entry extends AutofillEntry>(grid: AutofillGrid<Entry>, entryIndex: number, word: string): AutofillGrid<Entry>|null {
-  const newGrid:AutofillGrid<Entry> = {
+/*
+ * Get a new grid with an entry filled out.
+ *
+ * This is for builder use.
+ *
+ * If you know the new fill doesn't conflict with the existing grid, use
+ * `gridWithEntryDecided` instead for better performance.
+ */
+export function gridWithEntrySet<Entry extends AutofillEntry, Grid extends AutofillGrid<Entry>>(grid: Grid, entryIndex: number, word: string): Grid {
+  const newGrid:Grid = {
+    ...grid,
+    cells: grid.cells.slice(),
+    entries: grid.entries.slice(),
+  };
+
+  const entry = newGrid.entries[entryIndex];
+  const crosses = getCrosses(newGrid, entry);
+  let j = -1;
+  for (let i = 0; i < word.length; i += 1) {
+    j += 1;
+    const currentVal = valAt(newGrid, entry.cells[j]);
+    if (currentVal !== ' ') {
+      if (currentVal === word.slice(i, i + currentVal.length)) {
+        // No change needed for this cell
+        i = i + currentVal.length - 1;
+        continue
+      }
+    }
+
+    // update cells
+    setVal(newGrid, entry.cells[j], word[i]);
+
+    // update crossing entry
+    const crossIndex = crosses[j].entryIndex;
+    if (crossIndex === null) {
+      continue;
+    }
+    const cross = newGrid.entries[crossIndex];
+    let crossWord = '';
+    cross.cells.forEach((cid) => {
+      crossWord += valAt(newGrid, cid);
+    });
+    const crossBitmap = matchingBitmap(crossWord);
+
+    let crossCompleted = false;
+    if (crossWord.indexOf(' ') === -1) {
+      crossCompleted = true
+      newGrid.usedWords.add(crossWord);
+    }
+
+    newGrid.entries[crossIndex] = {
+      ...cross,
+      bitmap: crossBitmap,
+      isComplete: crossCompleted,
+      minCost: minCost(cross.length, crossBitmap),
+      pattern: crossWord,
+    };
+  }
+  // update entry itself
+  const entryBitmap = matchingBitmap(word);
+  newGrid.entries[entryIndex] = {
+    ...entry,
+    bitmap: entryBitmap,
+    isComplete: true,
+    minCost: minCost(word.length, entryBitmap),
+    pattern: word,
+  };
+
+  return newGrid;
+}
+
+/*
+ * Get a new grid with an entry filled out.
+ *
+ * This is for autofilling purposes, so the values in the new fill cannot
+ * conflict with anything existing in the grid. If you need to overwrite
+ * existing fill, use `gridWithEntrySet`.
+ */
+export function gridWithEntryDecided<Entry extends AutofillEntry, Grid extends AutofillGrid<Entry>>(grid: Grid, entryIndex: number, word: string, score: number): Grid|null {
+  const newGrid:Grid = {
     ...grid,
     usedWords: new Set(grid.usedWords),
     cells: grid.cells.slice(),
@@ -76,30 +153,23 @@ export function gridWithEntryDecided<Entry extends AutofillEntry>(grid: Autofill
       newGrid.usedWords.add(crossWord);
     }
 
-    newGrid.entries[crossIndex] = grid.mapper({
-      pattern: cross.pattern,
-      length: cross.length,
-      index: cross.index,
-      direction: cross.direction,
-      cells: cross.cells,
+    newGrid.entries[crossIndex] = {
+      ...cross,
       bitmap: crossBitmap,
       isComplete: crossCompleted,
-      minCost: minCost(cross.length, crossBitmap)
-    });
+      minCost: minCost(cross.length, crossBitmap),
+      pattern: crossWord,
+    };
   }
 
   // update entry itself
-  const newBitmap = matchingBitmap(word);
-  newGrid.entries[entryIndex] = grid.mapper({
-    pattern: entry.pattern,
-    length: entry.length,
-    index: entry.index,
-    direction: entry.direction,
-    cells: entry.cells,
-    bitmap: newBitmap,
+  newGrid.entries[entryIndex] = {
+    ...entry,
+    bitmap: null,
     isComplete: true,
-    minCost: minCost(entry.length, newBitmap)
-  });
+    minCost: 1 / score,
+    pattern: word,
+  };
 
   return newGrid;
 }
@@ -157,7 +227,7 @@ export function addAutofillFieldsToEntry<Entry extends EntryBase>(baseEntry: Ent
 }
 
 export function fromTemplate<Entry extends AutofillEntry>(
-  mapper: (entry: AutofillEntry) => Entry,
+  autofillMapper: (entry: AutofillEntry) => Entry,
   template: string[], width: number, height: number
 ): AutofillGrid<Entry> {
   const cells = template.map((c) => c.toUpperCase().replace("#", ".")) ;
@@ -168,8 +238,8 @@ export function fromTemplate<Entry extends AutofillEntry>(
     if (baseEntry.isComplete) {
       usedWords.add(baseEntry.pattern);
     }
-    return mapper(addAutofillFieldsToEntry(baseEntry));
+    return autofillMapper(addAutofillFieldsToEntry(baseEntry));
   });
 
-  return { mapper, width, height, usedWords, cells, entriesByCell, entries };
+  return { width, height, usedWords, cells, entriesByCell, entries };
 }

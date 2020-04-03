@@ -201,7 +201,7 @@ export class Autofiller {
           continue;
         }
 
-        const newgrid = gridWithEntryDecided(grid, entry.index, word);
+        const newgrid = gridWithEntryDecided(grid, entry.index, word, score);
         if (newgrid === null) {
           continue;
         }

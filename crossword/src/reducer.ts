@@ -5,10 +5,8 @@ import {
   moveToNextEntry, moveToPrevEntry, moveUp, moveDown, moveLeft, moveRight,
   nextNonBlock,
 } from './viewableGrid';
-import { AutofillEntry } from './autofillGrid';
+import { AutofillGrid, AutofillEntry, gridWithEntrySet } from './autofillGrid';
 import { cellIndex, valAt, entryAtPosition, entryWord } from './gridBase';
-
-interface BuilderEntry extends AutofillEntry, ViewableEntry {};
 
 interface GridInterfaceState {
   active: PosAndDir,
@@ -35,8 +33,11 @@ interface PuzzleState extends GridInterfaceState {
   dismissedSuccess: boolean,
 }
 
+interface BuilderEntry extends AutofillEntry, ViewableEntry {};
+interface BuilderGrid extends ViewableGrid<BuilderEntry>, AutofillGrid<BuilderEntry> {};
+
 interface BuilderState extends GridInterfaceState {
-  grid: ViewableGrid<BuilderEntry>,
+  grid: BuilderGrid,
   gridIsComplete: boolean,
   repeats: Set<string>,
   hasNoShortWords: boolean,
@@ -281,6 +282,9 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   state = gridInterfaceReducer(state, action);
   if (isSymmetryAction(action)) {
     return ({ ...state, symmetry: action.symmetry });
+  }
+  if (isClickedFillAction(action)) {
+    return ({ ...state, grid: gridWithEntrySet(state.grid, action.entryIndex, action.value)})
   }
   return state;
 }

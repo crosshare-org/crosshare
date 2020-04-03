@@ -14,7 +14,7 @@ import {
 } from './Icons';
 import { requiresAdmin } from './App';
 import { GridView } from './Grid';
-import { entryAndCrossAtPosition } from './gridBase';
+import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
 import { fromCells } from './viewableGrid';
 import { addAutofillFieldsToEntry } from './autofillGrid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
@@ -115,17 +115,20 @@ const PotentialFillList = (props: PotentialFillListProps) => {
 export const Builder = (props: PuzzleJson) => {
   const [state, dispatch] = React.useReducer(builderReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
-    grid: fromCells(
-      addAutofillFieldsToEntry,
-      props.size.cols,
-      props.size.rows,
-      props.grid,
-      true,
-      props.clues.across,
-      props.clues.down,
-      new Set(props.highlighted),
-      props.highlight,
-    ),
+    grid: {
+      ...fromCells(
+        addAutofillFieldsToEntry,
+        props.size.cols,
+        props.size.rows,
+        props.grid,
+        true,
+        props.clues.across,
+        props.clues.down,
+        new Set(props.highlighted),
+        props.highlight,
+      ),
+      usedWords: new Set<string>()
+    },
     showKeyboard: isMobile,
     isTablet: isTablet,
     showExtraKeyLayout: false,
@@ -185,7 +188,25 @@ export const Builder = (props: PuzzleJson) => {
   let right = <React.Fragment></React.Fragment>;
   for (let entry of entryAndCrossAtPosition(state.grid, state.active)) {
     if (entry !== null) {
-      const matches = WordDB.matchingWords(entry.length, entry.bitmap).map(e => e[0]);
+      let matches: Array<string>;
+      if (entry.isComplete) {
+        // If complete, remove any cells whose crosses aren't complete and show that
+        let pattern = "";
+        let crosses = getCrosses(state.grid, entry);
+        entry.cells.forEach((cell, index) => {
+          const val = valAt(state.grid, cell);
+          const cross = crosses[index];
+          if (val.length === 1 && cross.entryIndex !== null && !state.grid.entries[cross.entryIndex].isComplete) {
+            pattern += " ";
+          } else {
+            pattern += val;
+          }
+        });
+        matches = WordDB.matchingWords(pattern.length, WordDB.matchingBitmap(pattern)).map(e => e[0]);
+      } else {
+        // If not complete show possible completions of given squares
+        matches = WordDB.matchingWords(entry.length, entry.bitmap).map(e => e[0]);
+      }
       if (entry.direction === Direction.Across) {
         left = <PotentialFillList header="Across" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
       } else {
