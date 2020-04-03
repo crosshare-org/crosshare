@@ -88,11 +88,13 @@ export function moveDown<Entry extends ViewableEntry>(grid: ViewableGrid<Entry>,
 
 export function retreatPosition<Entry extends ViewableEntry>(grid: ViewableGrid<Entry>, pos: PosAndDir): PosAndDir {
   const [entry, index] = entryAtPosition(grid, pos);
-  if (!entry) {
-    return pos;
-  }
-  if (index > 0) {
+  if (entry !== null && index > 0) {
     return {...entry.cells[index - 1], dir: pos.dir};
+  }
+  const xincr = (pos.dir === Direction.Across) ? -1 : 0;
+  const yincr = (pos.dir === Direction.Down) ? -1 : 0;
+  if (grid.allowBlockEditing && (pos.row + yincr >= 0) && (pos.col + xincr >= 0)) {
+    return {row: pos.row + yincr, col: pos.col + xincr, dir: pos.dir};
   }
   return pos;
 }
