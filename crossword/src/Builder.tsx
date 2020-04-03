@@ -41,13 +41,13 @@ export const BuilderDBLoader = requiresAdmin((props: PuzzleJson) => {
 
 interface PotentialFillItemProps {
   entryIndex: number,
-  value: string,
+  value: [string, number],
   dispatch: React.Dispatch<ClickedFillAction>,
 }
 const PotentialFillItem = (props: PotentialFillItemProps) => {
   function click(e: React.MouseEvent) {
     e.preventDefault();
-    props.dispatch({ type: 'CLICKEDFILL', entryIndex: props.entryIndex, value: props.value });
+    props.dispatch({ type: 'CLICKEDFILL', entryIndex: props.entryIndex, value: props.value[0] });
   }
   return (
     <li css={{
@@ -66,7 +66,7 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
       <div css={{
         flex: '1 1 auto',
         height: '100%',
-      }}>{props.value}</div>
+      }}>{props.value[0]}</div>
     </li>
   );
 }
@@ -74,7 +74,7 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
 interface PotentialFillListProps {
   header?: string,
   entryIndex: number,
-  values: Array<string>,
+  values: Array<[string, number]>,
   dispatch: React.Dispatch<ClickedFillAction>,
 }
 const PotentialFillList = (props: PotentialFillListProps) => {
@@ -86,6 +86,11 @@ const PotentialFillList = (props: PotentialFillListProps) => {
       value={value}
     />)
   });
+  const startRef = React.useRef<HTMLDivElement>(null);
+
+  if (startRef.current !== null) {
+    startRef.current.scrollIntoView({ behavior: "auto" })
+  }
   return (
     <div css={{
       height: "100% !important",
@@ -105,6 +110,7 @@ const PotentialFillList = (props: PotentialFillListProps) => {
           margin: 0,
           padding: 0,
         }}>
+          <div ref={startRef}/>
           {values}
         </ol>
       </div>
@@ -186,9 +192,10 @@ export const Builder = (props: PuzzleJson) => {
 
   let left = <React.Fragment></React.Fragment>;
   let right = <React.Fragment></React.Fragment>;
+  let tiny = <React.Fragment></React.Fragment>;
   for (let entry of entryAndCrossAtPosition(state.grid, state.active)) {
     if (entry !== null) {
-      let matches: Array<string>;
+      let matches: Array<[string, number]>;
       if (entry.isComplete) {
         // If complete, remove any cells whose crosses aren't complete and show that
         let pattern = "";
@@ -202,10 +209,13 @@ export const Builder = (props: PuzzleJson) => {
             pattern += val;
           }
         });
-        matches = WordDB.matchingWords(pattern.length, WordDB.matchingBitmap(pattern)).map(e => e[0]);
+        matches = WordDB.matchingWords(pattern.length, WordDB.matchingBitmap(pattern));
       } else {
         // If not complete show possible completions of given squares
-        matches = WordDB.matchingWords(entry.length, entry.bitmap).map(e => e[0]);
+        matches = WordDB.matchingWords(entry.length, entry.bitmap);
+      }
+      if (entry.direction === state.active.dir) {
+        tiny = <PotentialFillList values={matches} entryIndex={entry.index} dispatch={dispatch} />;
       }
       if (entry.direction === Direction.Across) {
         left = <PotentialFillList header="Across" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
@@ -281,7 +291,7 @@ export const Builder = (props: PuzzleJson) => {
         }
         left={left}
         right={right}
-        tinyColumn={<TinyNav dispatch={dispatch}>tiny</TinyNav>}
+        tinyColumn={<TinyNav largeButtons={true} dispatch={dispatch}>{tiny}</TinyNav>}
       />
     </React.Fragment>
   )

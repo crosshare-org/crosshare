@@ -14,10 +14,11 @@ import { TopBar, TopBarLink } from './TopBar';
 import { heightAdjustment, SMALL_AND_UP, LARGE_AND_UP } from './style';
 
 interface TinyNavProps {
+  largeButtons?: boolean
   children: React.ReactNode,
   dispatch: React.Dispatch<KeypressAction>,
 }
-export const TinyNav = ({children, dispatch}: TinyNavProps) => {
+export const TinyNav = ({children, dispatch, largeButtons}: TinyNavProps) => {
   return (
     <div css={{
       display: 'flex',
@@ -28,12 +29,13 @@ export const TinyNav = ({children, dispatch}: TinyNavProps) => {
       height: '100%',
     }}>
       <div css={{
-        width: '2em',
+        width: largeButtons ? '5em' : '2em',
         textAlign: 'center',
         flexShrink: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        borderRight: '1px solid #EEE',
       }} onClick={() => dispatch({type: "KEYPRESS", key: "{prevEntry}", shift: false})}>
       <FaChevronLeft/>
       </div>
@@ -41,12 +43,13 @@ export const TinyNav = ({children, dispatch}: TinyNavProps) => {
         flex: '1 1 auto',
       }}>{children}</div>
       <div css={{
-        width: '2em',
+        width: largeButtons ? '5em' : '2em',
         textAlign: 'center',
         flexShrink: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        borderLeft: '1px solid #EEE',
       }} onClick={() => dispatch({type: "KEYPRESS", key: "{nextEntry}", shift: false})}>
       <FaChevronRight/>
       </div>

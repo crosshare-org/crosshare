@@ -141,10 +141,10 @@ export function entriesFromCells(width: number, height: number, cells: Array<str
         while (xt < width && yt < height) {
           const cellId = yt * width + xt;
           const cellVal = cells[cellId];
-          entriesByCell[cellId][dir] = {entryIndex: entries.length, wordIndex: entryPattern.length, cellIndex: wordlen};
           if (cellVal === '.') {
             break;
           }
+          entriesByCell[cellId][dir] = {entryIndex: entries.length, wordIndex: entryPattern.length, cellIndex: wordlen};
           if (cellVal === ' ') {
             isComplete = false;
           }
