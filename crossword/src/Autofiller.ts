@@ -1,274 +1,9 @@
-import { WordDBTransformed } from './WordDB';
-import { BigInteger } from '@modern-dev/jsbn';
-import { EntryBase, GridBase, Cross } from './Grid';
-
-let db: WordDBTransformed;
-export function setDb(newdb:WordDBTransformed) {
-  db = newdb;
-}
-
-const ONE = new BigInteger('1', 10);
-const ZERO = new BigInteger('0', 10);
-
-const MAX_WORDS_TO_CONSIDER = 1000;
-
-
-interface AutofillEntry extends EntryBase {
-  length: number, // Length in chars - might be different than cells.length due to rebus
-  bitmap: BigInteger|null,
-  minCost: number
-}
-
-function highestScore(length: number, bitmap: BigInteger|null) {
-  const words = db.words[length];
-  if (bitmap === null) {
-    return words[words.length - 1];
-  }
-  return words[bitmap.bitLength() - 1];
-}
-
-/**
- * Get minimum cost of the words encoded by `bitmap`.
- */
-function minCost(length: number, bitmap: BigInteger|null) {
-  const match = highestScore(length, bitmap);
-  if (match) {
-    return 1 / match[1]
-  }
-  return 5
-}
-
-function numMatches(length:number, bitmap:BigInteger|null) {
-  if (bitmap === null) {
-    return db.words[length].length;
-  }
-  return bitmap.bitCount();
-}
-
-function numMatchesForEntry(entry: AutofillEntry) {
-  return numMatches(entry.length, entry.bitmap);
-}
-
-function updateBitmap(length:number, bitmap:BigInteger|null, index:number, letter:string) {
-  const match = db.bitmaps[length + letter + index] || ZERO;
-  if (bitmap === null) {
-    return match;
-  }
-  return bitmap.and(match);
-}
-
-function activebits(a:BigInteger) {
-  const active: number[] = [];
-  while (!a.equals(ZERO)) {
-    const b = a.bitLength() - 1
-    active.push(b)
-    a = a.subtract(ONE.shiftLeft(b));
-  }
-  return active
-}
-
-const memoMatchingWords:Map<string, [string, number][]> = new Map();
-function matchingWords(length:number, bitmap:BigInteger|null) {
-  const key:string = length + ":" + (bitmap === null ? 'null' : bitmap.toString(32));
-  const memoed = memoMatchingWords.get(key);
-  if (memoed) {
-    return memoed;
-  }
-  let rv;
-  if (bitmap === null) {
-    rv = db.words[length].slice(0, MAX_WORDS_TO_CONSIDER);
-  } else {
-    const active = activebits(bitmap)
-    rv = active.slice(0, MAX_WORDS_TO_CONSIDER).map((i) => db.words[length][i]);
-  }
-  memoMatchingWords.set(key, rv);
-  return rv;
-}
-
-const memoMatchingBitmap:Map<string, BigInteger|null> = new Map();
-function matchingBitmap(pattern:string) {
-  const memoed = memoMatchingBitmap.get(pattern);
-  if (memoed) {
-    return memoed;
-  }
-  let matches = null;
-  for (let idx = 0; idx < pattern.length; idx += 1) {
-    const letter = pattern[idx];
-    if (letter === '?' || letter === ' ') {
-      continue;
-    }
-    const bitmap = db.bitmaps[pattern.length + letter + idx] || ZERO;
-    if (matches === null) {
-      matches = bitmap;
-    } else {
-      matches = matches.and(bitmap);
-    }
-  }
-  memoMatchingBitmap.set(pattern, matches);
-  return matches;
-}
-
-class AutofillGrid extends GridBase<AutofillEntry> {
-  constructor(
-    public readonly width: number,
-    public readonly height: number,
-    public readonly usedWords: Set<string>,
-    public readonly cells: string[],
-    public readonly _entriesByCell: Array<[Cross, Cross]>,
-    public readonly entries: AutofillEntry[]
-  ) {
-    super(width, height, cells, _entriesByCell, entries);
-  }
-
-  /* Get a lower bound on total cost of the grid as filled in. */
-  minCost() {
-    let cost = 0;
-    this.entries.forEach((e) => cost += e.minCost);
-    return cost;
-  }
-
-  gridWithEntryDecided(entryIndex: number, word: string) {
-    const newGrid = new AutofillGrid(
-      this.width, this.height,
-      new Set(this.usedWords),
-      this.cells.slice(),
-      this._entriesByCell,
-      this.entries.slice());
-
-    const entry = newGrid.entries[entryIndex];
-    newGrid.usedWords.add(word);
-    const crosses = newGrid.crosses(entry);
-    let j = -1;
-    for (let i = 0; i < word.length; i += 1) {
-      j += 1;
-      const currentVal = newGrid.valAt(entry.cells[j]);
-      if (currentVal !== ' ') {
-        if (currentVal === word.slice(i, i + currentVal.length)) {
-          // No change needed for this cell
-          i = i + currentVal.length - 1;
-          continue
-        } else {
-          throw new Error("Cell has conflicting value: " + currentVal + ',' + word + ',' + i);
-        }
-      }
-
-      // update cells
-      newGrid.setVal(entry.cells[j], word[i]);
-
-      // update crossing entry
-      const crossIndex = crosses[j].entryIndex;
-      if (crossIndex === null) {
-        continue;
-      }
-      const cross = newGrid.entries[crossIndex];
-      let crossWord = '';
-      cross.cells.forEach((cid) => {
-        crossWord += newGrid.valAt(cid);
-      });
-      const crossBitmap = updateBitmap(cross.length, cross.bitmap, crosses[j].wordIndex, word[i]);
-
-      if (crossBitmap.equals(ZERO)) {  // empty bitmap means invalid grid
-        return null;
-      }
-
-      let crossCompleted = false;
-      if (crossWord.indexOf(' ') === -1) {
-        crossCompleted = true
-        newGrid.usedWords.add(crossWord);
-      }
-
-      newGrid.entries[crossIndex] = {
-        pattern: cross.pattern,
-        length: cross.length,
-        index: cross.index,
-        direction: cross.direction,
-        cells: cross.cells,
-        bitmap: crossBitmap,
-        isComplete: crossCompleted,
-        minCost: minCost(cross.length, crossBitmap)
-      };
-    }
-
-    // update entry itself
-    const newBitmap = matchingBitmap(word);
-    newGrid.entries[entryIndex] = {
-      pattern: entry.pattern,
-      length: entry.length,
-      index: entry.index,
-      direction: entry.direction,
-      cells: entry.cells,
-      bitmap: newBitmap,
-      isComplete: true,
-      minCost: minCost(entry.length, newBitmap)
-    }
-
-    return newGrid;
-  }
-
-  stableSubsets(prelimSubset: Set<number>|null) {
-    let that = this;
-    let openEntries = this.entries.filter((e) => !e.isComplete);
-    if (prelimSubset !== null) {
-      openEntries = openEntries.filter((e) => prelimSubset.has(e.index))
-    }
-
-    const assignments = new Map<number, number>()
-
-    function addSubset(entry:AutofillEntry, num:number) {
-      if (assignments.has(entry.index)) {
-        return;
-      }
-      if (prelimSubset !== null && !prelimSubset.has(entry.index)) {
-        throw new Error("Bad assignment " + entry.index + ":" + prelimSubset);
-      }
-      assignments.set(entry.index, num);
-      that.crosses(entry).forEach((c) => {
-        if (c.entryIndex === null) {
-          return;
-        }
-        const cross = that.entries[c.entryIndex];
-        if (that.valAt(cross.cells[c.cellIndex]) === ' ') {
-          addSubset(cross, num);
-        }
-      });
-    }
-
-    let subsetNumber = 0;
-    openEntries.forEach((e) => {
-      addSubset(e, subsetNumber);
-      subsetNumber += 1;
-    });
-
-    const inv = new Map<number, Set<number>>();
-    assignments.forEach((val,key) => {
-      const newVal = inv.get(val) || new Set<number>();
-      newVal.add(key);
-      inv.set(val, newVal);
-    });
-    return Array.from(inv.values());
-  }
-
-  static fromTemplate(template: string[], width: number, height: number) {
-    const cells = template.map((c) => c.toUpperCase().replace("#", ".")) ;
-    const usedWords = new Set<string>();
-    const [baseEntries, entriesByCell] = this.entriesFromCells(width, height, cells);
-
-    const entries = baseEntries.map(baseEntry => {
-      const entryBitmap = matchingBitmap(baseEntry.pattern);
-      if (baseEntry.isComplete) {
-        usedWords.add(baseEntry.pattern);
-      }
-      return {
-        ...baseEntry,
-        length: baseEntry.pattern.length,
-        bitmap: entryBitmap,
-        minCost: minCost(baseEntry.pattern.length, entryBitmap)
-      };
-    });
-
-    return new this(width, height, usedWords, cells, entriesByCell, entries);
-  }
-}
+import { valAt, getCrosses } from './gridBase';
+import {
+  AutofillGrid, AutofillEntry, fromTemplate, minGridCost, stableSubsets,
+  numMatchesForEntry, gridWithEntryDecided
+} from './autofillGrid';
+import * as WordDB from './WordDB';
 
 enum ResultTag {
   Recur,
@@ -279,7 +14,7 @@ interface Result {
 }
 interface Recur extends Result {
   type: ResultTag.Recur,
-  grid: AutofillGrid,
+  grid: AutofillGrid<AutofillEntry>,
   discrep: number,
   pitched: Set<string>,
   subset: Set<number>|null,
@@ -288,26 +23,26 @@ interface Recur extends Result {
 function isRecur(result: Result): result is Recur {
     return result.type === ResultTag.Recur;
 }
-function recur(grid:AutofillGrid, discrep:number, pitched:Set<string>, subset:Set<number>|null, cont:Cont): Recur {
+function recur(grid:AutofillGrid<AutofillEntry>, discrep:number, pitched:Set<string>, subset:Set<number>|null, cont:Cont): Recur {
   return {type: ResultTag.Recur, grid, discrep, pitched, subset, cont};
 }
 interface Value extends Result {
   type: ResultTag.Value,
-  result: AutofillGrid|null
+  result: AutofillGrid<AutofillEntry>|null
 }
 function isValue(result: Result): result is Value {
     return result.type === ResultTag.Value;
 }
-function value(x:AutofillGrid|null) {
+function value(x:AutofillGrid<AutofillEntry>|null) {
   return {type: ResultTag.Value, result: x}
 }
 
-type Cont = (x: AutofillGrid|null) => Result;
+type Cont = (x: AutofillGrid<AutofillEntry>|null) => Result;
 
 export class Autofiller {
-  public initialGrid: AutofillGrid;
+  public initialGrid: AutofillGrid<AutofillEntry>;
   public completed: boolean;
-  public solnGrid: AutofillGrid|null;
+  public solnGrid: AutofillGrid<AutofillEntry>|null;
   public solnCost: number|null;
   public nextStep: Result;
   public postedSoln: boolean;
@@ -320,7 +55,7 @@ export class Autofiller {
     public onResult: (input: string[], result: string[]) => void,
     public onComplete: () => void
   ) {
-    this.initialGrid = AutofillGrid.fromTemplate(this.grid, this.width, this.height);
+    this.initialGrid = fromTemplate((e) => e, this.grid, this.width, this.height);
     this.completed = false;
     this.solnCost = null;
     this.solnGrid = null;
@@ -332,7 +67,7 @@ export class Autofiller {
   };
 
   step() {
-    if (!db) {
+    if (!WordDB.dbTransformed) {
       console.error("Worker has no db but attempting autofill");
       this.completed = true;
       return;
@@ -370,8 +105,8 @@ export class Autofiller {
   };
 
   /* Fill out a grid or a subset of a grid */
-  _solve(grid: AutofillGrid, discrep: number, pitched: Set<string>, subset: Set<number>|null, cont: Cont): Result {
-    const baseCost = grid.minCost();
+  _solve(grid: AutofillGrid<AutofillEntry>, discrep: number, pitched: Set<string>, subset: Set<number>|null, cont: Cont): Result {
+    const baseCost = minGridCost(grid);
 
     // We already have a solution that's better than this grid could possibly get
     if (this.solnCost && baseCost > this.solnCost) {
@@ -396,7 +131,7 @@ export class Autofiller {
     }
 
     // See if there are any stable subsets  out of the entries we're considering
-    const subsets = grid.stableSubsets(subset);
+    const subsets = stableSubsets(grid, subset);
     if (subsets.length > 1) {
       subsets.sort((a,b) => a.size - b.size);
       // Attempt to solve the smallest subset
@@ -413,17 +148,17 @@ export class Autofiller {
 
     // Consider entries in order of possible matches
     entriesToConsider.sort((e1, e2) => numMatchesForEntry(e1) - numMatchesForEntry(e2));
-    let successor: [AutofillGrid, number, string]|null = null;
+    let successor: [AutofillGrid<AutofillEntry>, number, string]|null = null;
     let successorDiff: number|null = null;
 
     for (const entry of entriesToConsider) {
-      const crosses = grid.crosses(entry)
-      let bestGrid: [AutofillGrid, number, string]|null = null;
+      const crosses = getCrosses(grid, entry)
+      let bestGrid: [AutofillGrid<AutofillEntry>, number, string]|null = null;
       let bestCost: number|null = null;
       let secondBestCost: number|null = null;
 
       let skipEntry = false;
-      for (const [word, score] of matchingWords(entry.length, entry.bitmap)) {
+      for (const [word, score] of WordDB.matchingWords(entry.length, entry.bitmap)) {
         if (pitched.has(entry.index + ":" + word)) {
           continue;
         }
@@ -444,7 +179,7 @@ export class Autofiller {
         let j = -1;
         for (let i = 0; i < entry.cells.length; i += 1) {
           j += 1;
-          const cell = grid.valAt(entry.cells[i]);
+          const cell = valAt(grid, entry.cells[i]);
           if (cell !== ' ') {  // Don't need to check cross
             j += cell.length - 1;
             continue;
@@ -455,8 +190,8 @@ export class Autofiller {
           }
           const cross = grid.entries[crossIndex];
           const crossLength = cross.length;
-          const newBitmap = updateBitmap(crossLength, cross.bitmap, crosses[i].wordIndex, word[j]);
-          const newCost = baseCost - cross.minCost + minCost(crossLength, newBitmap);
+          const newBitmap = WordDB.updateBitmap(crossLength, cross.bitmap, crosses[i].wordIndex, word[j]);
+          const newCost = baseCost - cross.minCost + WordDB.minCost(crossLength, newBitmap);
           if (costToBeat !== null && newCost > costToBeat) {
             failFast = true;
             break;
@@ -466,12 +201,12 @@ export class Autofiller {
           continue;
         }
 
-        const newgrid = grid.gridWithEntryDecided(entry.index, word);
+        const newgrid = gridWithEntryDecided(grid, entry.index, word);
         if (newgrid === null) {
           continue;
         }
 
-        const newCost = newgrid.minCost();
+        const newCost = minGridCost(newgrid);
 
         // Check overall score
         if (costToBeat && newCost > costToBeat) {
@@ -533,7 +268,7 @@ export class Autofiller {
         newPitched.add(suc[1] + ":" + suc[2]);
         return recur(grid, discrep, newPitched, subset,
           res2 => {
-            return cont((res2 !== null && (result === null || res2.minCost() < result.minCost())) ? res2 : result);
+            return cont((res2 !== null && (result === null || minGridCost(res2) < minGridCost(result))) ? res2 : result);
           }
         );
       }

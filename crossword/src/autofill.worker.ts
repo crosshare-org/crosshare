@@ -1,6 +1,6 @@
 import { AutofillResultMessage, AutofillCompleteMessage, WorkerMessage, isLoadDBMessage, isAutofillMessage } from './types';
-import { Autofiller, setDb } from './Autofiller';
-import { transformDb } from './WordDB';
+import { Autofiller } from './Autofiller';
+import { transformDb, setDb } from './WordDB';
 
 const ctx: Worker = self as any;
 

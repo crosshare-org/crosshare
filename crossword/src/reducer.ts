@@ -1,9 +1,15 @@
 import { PosAndDir, Position, Direction, BLOCK } from './types';
-import { ViewableGrid } from './Grid';
+import {
+  ViewableGrid, ViewableEntry,
+  gridWithNewChar, gridWithBlockToggled, advancePosition, retreatPosition,
+  moveToNextEntry, moveToPrevEntry, moveUp, moveDown, moveLeft, moveRight,
+  nextNonBlock,
+} from './viewableGrid';
+import { cellIndex, valAt, entryAtPosition, entryWord } from './gridBase';
 
 interface GridInterfaceState {
   active: PosAndDir,
-  grid: ViewableGrid,
+  grid: ViewableGrid<ViewableEntry>,
   showKeyboard: boolean,
   isTablet: boolean,
   showExtraKeyLayout: boolean,
@@ -109,21 +115,21 @@ function cheatCells(state: PuzzleState, cellsToCheck: Array<Position>, isReveal:
   let grid = state.grid;
 
   for (const cell of cellsToCheck) {
-    const cellIndex = state.grid.cellIndex(cell);
-    const shouldBe = state.answers[cellIndex];
+    const ci = cellIndex(state.grid, cell);
+    const shouldBe = state.answers[ci];
     if (shouldBe === BLOCK) {
       continue;
     }
-    const currentVal = state.grid.valAt(cell);
+    const currentVal = valAt(state.grid, cell);
     if (shouldBe === currentVal) {
-      newVerified.add(cellIndex);
+      newVerified.add(ci);
     } else if (isReveal) {
-      newRevealed.add(cellIndex);
-      newWrong.delete(cellIndex);
-      newVerified.add(cellIndex);
-      grid = grid.gridWithNewChar(cell, shouldBe, Symmetry.None);
+      newRevealed.add(ci);
+      newWrong.delete(ci);
+      newVerified.add(ci);
+      grid = gridWithNewChar(grid, cell, shouldBe, Symmetry.None);
     } else if (currentVal.trim()) {
-      newWrong.add(cellIndex);
+      newWrong.add(ci);
     }
   }
   return (checkComplete({ ...state, grid: grid, wrongCells: newWrong, revealedCells: newRevealed, verifiedCells: newVerified }));
@@ -134,7 +140,7 @@ export function cheat(state: PuzzleState, cheatUnit: CheatUnit, isReveal: boolea
   if (cheatUnit === CheatUnit.Square) {
     cellsToCheck = [state.active];
   } else if (cheatUnit === CheatUnit.Entry) {
-    const entry = state.grid.entryAtPosition(state.active)[0];
+    const entry = entryAtPosition(state.grid, state.active)[0];
     if (!entry) { //block?
       return state;
     }
@@ -178,7 +184,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
   if (isClickedEntryAction(action)) {
     const clickedEntry = state.grid.entries[action.entryIndex];
     for (let cell of clickedEntry.cells) {
-      if (state.grid.valAt(cell) === " ") {
+      if (valAt(state.grid, cell) === " ") {
         return ({ ...state, active: { ...cell, dir: clickedEntry.direction } });
       }
     }
@@ -202,14 +208,14 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       } else if (key === "Backspace" || key === "{bksp}") {
         return ({ ...state, rebusValue: state.rebusValue ? state.rebusValue.slice(0, -1) : "" });
       } else if (key === "Enter") {
-        const cellIndex = state.grid.cellIndex(state.active);
-        if (state.isEditable(cellIndex)) {
-          state.grid = state.grid.gridWithNewChar(state.active, state.rebusValue, state.symmetry);
-          state = state.postEdit(cellIndex) as T; // TODO this is trash
+        const ci = cellIndex(state.grid, state.active);
+        if (state.isEditable(ci)) {
+          state.grid = gridWithNewChar(state.grid, state.active, state.rebusValue, state.symmetry);
+          state = state.postEdit(ci) as T; // TODO this is trash
         }
         return ({
           ...state,
-          active: state.grid.advancePosition(state.active, state.wrongCells),
+          active: advancePosition(state.grid, state.active, state.wrongCells),
           isEnteringRebus: false, rebusValue: ''
         });
       } else if (key === "Escape") {
@@ -222,45 +228,45 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
     } else if (key === " " || key === "{dir}") {
       return ({ ...state, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
     } else if (key === "{prev}") {
-      return ({ ...state, active: state.grid.retreatPosition(state.active) });
+      return ({ ...state, active: retreatPosition(state.grid, state.active) });
     } else if (key === "{next}") {
-      return ({ ...state, active: state.grid.advancePosition(state.active, state.wrongCells) });
+      return ({ ...state, active: advancePosition(state.grid, state.active, state.wrongCells) });
     } else if ((key === "Tab" && !shift) || key === "{nextEntry}") {
-      return ({ ...state, active: state.grid.moveToNextEntry(state.active) });
+      return ({ ...state, active: moveToNextEntry(state.grid, state.active) });
     } else if ((key === "Tab" && shift) || key === "{prevEntry}") {
-      return ({ ...state, active: state.grid.moveToPrevEntry(state.active) });
+      return ({ ...state, active: moveToPrevEntry(state.grid, state.active) });
     } else if (key === "ArrowRight") {
-      return ({ ...state, active: { ...state.grid.moveRight(state.active), dir: Direction.Across } });
+      return ({ ...state, active: { ...moveRight(state.grid, state.active), dir: Direction.Across } });
     } else if (key === "ArrowLeft") {
-      return ({ ...state, active: { ...state.grid.moveLeft(state.active), dir: Direction.Across } });
+      return ({ ...state, active: { ...moveLeft(state.grid, state.active), dir: Direction.Across } });
     } else if (key === "ArrowUp") {
-      return ({ ...state, active: { ...state.grid.moveUp(state.active), dir: Direction.Down } });
+      return ({ ...state, active: { ...moveUp(state.grid, state.active), dir: Direction.Down } });
     } else if (key === "ArrowDown") {
-      return ({ ...state, active: { ...state.grid.moveDown(state.active), dir: Direction.Down } });
+      return ({ ...state, active: { ...moveDown(state.grid, state.active), dir: Direction.Down } });
     } else if ((key === '.' || key === '{block}') && state.grid.allowBlockEditing) {
-      const cellIndex = state.grid.cellIndex(state.active);
-      state.grid = state.grid.gridWithBlockToggled(state.active, state.symmetry);
-      return state.postEdit(cellIndex) as T; // TODO this is trash
+      const ci = cellIndex(state.grid, state.active);
+      state.grid = gridWithBlockToggled(state.grid, state.active, state.symmetry);
+      return state.postEdit(ci) as T; // TODO this is trash
     } else if (key.match(/^[A-Za-z0-9]$/)) {
       const char = key.toUpperCase();
-      const cellIndex = state.grid.cellIndex(state.active);
-      if (state.isEditable(cellIndex)) {
-        state.grid = state.grid.gridWithNewChar(state.active, char, state.symmetry);
-        state = state.postEdit(cellIndex) as T; // TODO this is trash
+      const ci = cellIndex(state.grid, state.active);
+      if (state.isEditable(ci)) {
+        state.grid = gridWithNewChar(state.grid, state.active, char, state.symmetry);
+        state = state.postEdit(ci) as T; // TODO this is trash
       }
       return ({
         ...state,
-        active: state.grid.advancePosition(state.active, state.wrongCells),
+        active: advancePosition(state.grid, state.active, state.wrongCells),
       });
     } else if (key === "Backspace" || key === "{bksp}") {
-      const cellIndex = state.grid.cellIndex(state.active);
-      if (state.isEditable(cellIndex)) {
-        state.grid = state.grid.gridWithNewChar(state.active, " ", state.symmetry);
-        state = state.postEdit(cellIndex) as T; // TODO this is trash
+      const ci = cellIndex(state.grid, state.active);
+      if (state.isEditable(ci)) {
+        state.grid = gridWithNewChar(state.grid, state.active, " ", state.symmetry);
+        state = state.postEdit(ci) as T; // TODO this is trash
       }
       return ({
         ...state,
-        active: state.grid.retreatPosition(state.active),
+        active: retreatPosition(state.grid, state.active),
       });
     }
   }
@@ -312,8 +318,8 @@ export function validateGrid(state: BuilderState) {
     for (let j = 0; j < state.grid.entries.length; j += 1) {
       if (!state.grid.entries[i].isComplete) continue;
       if (i === j) continue;
-      if (state.grid.entryWord(i) === state.grid.entryWord(j)) {
-        repeats.add(state.grid.entryWord(i))
+      if (entryWord(state.grid, i) === entryWord(state.grid, j)) {
+        repeats.add(entryWord(state.grid, i))
       }
     }
   }
@@ -327,5 +333,5 @@ export function validateGrid(state: BuilderState) {
 }
 
 export function advanceActiveToNonBlock(state: PuzzleState) {
-  return { ...state, active: { ...state.grid.nextNonBlock(state.active), dir: Direction.Across } };
+  return { ...state, active: { ...nextNonBlock(state.grid, state.active), dir: Direction.Across } };
 }

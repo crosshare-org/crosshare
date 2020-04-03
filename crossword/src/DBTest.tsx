@@ -12,9 +12,9 @@ export const DBTest = (_: RouteComponentProps) => {
     WordDB.build();
   }
 
-  if (WordDB.dbStatus === WordDB.DBStatus.present && WordDB.db) {
+  if (WordDB.dbStatus === WordDB.DBStatus.present && WordDB.dbEncoded) {
     return (
-      <Page><p>DB is loaded. Five letter words: {WordDB.db.words["5"] && WordDB.db.words["5"].length}</p>
+      <Page><p>DB is loaded. Five letter words: {WordDB.dbEncoded.words["5"] && WordDB.dbEncoded.words["5"].length}</p>
       </Page>
     );
   }

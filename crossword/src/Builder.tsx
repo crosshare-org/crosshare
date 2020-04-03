@@ -13,7 +13,9 @@ import {
   SymmetryIcon, SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
 } from './Icons';
 import { requiresAdmin } from './App';
-import { GridView, ViewableGrid } from './Grid';
+import { GridView } from './Grid';
+import { entryAndCrossAtPosition } from './gridBase';
+import { fromCells } from './viewableGrid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
 import {
   Symmetry, builderReducer, validateGrid,
@@ -110,7 +112,8 @@ const PotentialFillList = (props: PotentialFillListProps) => {
 export const Builder = (props: PuzzleJson) => {
   const [state, dispatch] = React.useReducer(builderReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
-    grid: ViewableGrid.fromCells(
+    grid: fromCells(
+      (e) => e,
       props.size.cols,
       props.size.rows,
       props.grid,
@@ -147,7 +150,7 @@ export const Builder = (props: PuzzleJson) => {
   }
 
   React.useEffect(() => {
-    if (!WordDB.db) {
+    if (!WordDB.dbEncoded) {
       return;
     }
     setAutofilledGrid([]);
@@ -164,7 +167,7 @@ export const Builder = (props: PuzzleJson) => {
           console.error("unhandled msg in builder: ", e.data);
         }
       };
-      let loaddb: LoadDBMessage = {type: 'loaddb', db: WordDB.db};
+      let loaddb: LoadDBMessage = {type: 'loaddb', db: WordDB.dbEncoded};
       worker.postMessage(loaddb);
     }
     let autofill: AutofillMessage = {
@@ -183,7 +186,7 @@ export const Builder = (props: PuzzleJson) => {
     return <Page>Loading word database...</Page>
   }
 
-  const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
+  const [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
   let left = <React.Fragment></React.Fragment>;
   let right = <React.Fragment></React.Fragment>;
   if (entry !== null) {

@@ -12,7 +12,9 @@ import { CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, Reveal
 import { requiresAuth } from './App';
 import { useTimer } from './timer';
 import { Overlay } from './Overlay';
-import { GridView, ViewableEntry, ViewableGrid } from './Grid';
+import { GridView } from './Grid';
+import { ViewableEntry, fromCells } from './viewableGrid';
+import { entryAndCrossAtPosition } from './gridBase';
 import { PosAndDir, Direction, BLOCK, PuzzleJson } from './types';
 import { cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock, Symmetry, PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction } from './reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
@@ -271,7 +273,8 @@ export function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction
 export const Puzzle = requiresAuth((props: PuzzleJson) => {
   const [state, dispatch] = React.useReducer(puzzleReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
-    grid: ViewableGrid.fromCells(
+    grid: fromCells(
+      (e) => e,
       props.size.cols,
       props.size.rows,
       (props.grid.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>),
@@ -329,7 +332,7 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
     }
   }, [state.success, pause]);
 
-  const [entry, cross] = state.grid.entryAndCrossAtPosition(state.active);
+  const [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
   if (entry === null || cross === null) {
     throw new Error("Null entry/cross while playing puzzle!");
   }
