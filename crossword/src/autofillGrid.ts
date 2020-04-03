@@ -146,6 +146,16 @@ export function stableSubsets<Entry extends AutofillEntry>(grid: AutofillGrid<En
   return Array.from(inv.values());
 }
 
+export function addAutofillFieldsToEntry<Entry extends EntryBase>(baseEntry: Entry) {
+  const entryBitmap = matchingBitmap(baseEntry.pattern);
+  return {
+    ...baseEntry,
+    length: baseEntry.pattern.length,
+    bitmap: entryBitmap,
+    minCost: minCost(baseEntry.pattern.length, entryBitmap)
+  };
+}
+
 export function fromTemplate<Entry extends AutofillEntry>(
   mapper: (entry: AutofillEntry) => Entry,
   template: string[], width: number, height: number
@@ -155,16 +165,10 @@ export function fromTemplate<Entry extends AutofillEntry>(
   const [baseEntries, entriesByCell] = entriesFromCells(width, height, cells);
 
   const entries = baseEntries.map(baseEntry => {
-    const entryBitmap = matchingBitmap(baseEntry.pattern);
     if (baseEntry.isComplete) {
       usedWords.add(baseEntry.pattern);
     }
-    return mapper({
-      ...baseEntry,
-      length: baseEntry.pattern.length,
-      bitmap: entryBitmap,
-      minCost: minCost(baseEntry.pattern.length, entryBitmap)
-    });
+    return mapper(addAutofillFieldsToEntry(baseEntry));
   });
 
   return { mapper, width, height, usedWords, cells, entriesByCell, entries };

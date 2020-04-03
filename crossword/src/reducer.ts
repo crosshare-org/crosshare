@@ -5,7 +5,10 @@ import {
   moveToNextEntry, moveToPrevEntry, moveUp, moveDown, moveLeft, moveRight,
   nextNonBlock,
 } from './viewableGrid';
+import { AutofillEntry } from './autofillGrid';
 import { cellIndex, valAt, entryAtPosition, entryWord } from './gridBase';
+
+interface BuilderEntry extends AutofillEntry, ViewableEntry {};
 
 interface GridInterfaceState {
   active: PosAndDir,
@@ -33,6 +36,7 @@ interface PuzzleState extends GridInterfaceState {
 }
 
 interface BuilderState extends GridInterfaceState {
+  grid: ViewableGrid<BuilderEntry>,
   gridIsComplete: boolean,
   repeats: Set<string>,
   hasNoShortWords: boolean,

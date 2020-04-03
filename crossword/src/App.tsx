@@ -10,7 +10,7 @@ import { firebaseConfig, firebaseUiConfig } from './config';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
 import { PuzzleLoader } from './Puzzle';
-import { Builder } from './Builder';
+import { BuilderDBLoader } from './Builder';
 import { Page, SquareTest } from './Page';
 import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
@@ -199,7 +199,7 @@ const Construct = (_: RouteComponentProps) => {
     "grid": grid
   }
 
-  return <Builder {...props}/>;
+  return <BuilderDBLoader {...props}/>;
 };
 
 const IconsDemo = (_: RouteComponentProps) => {

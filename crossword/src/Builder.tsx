@@ -16,6 +16,7 @@ import { requiresAdmin } from './App';
 import { GridView } from './Grid';
 import { entryAndCrossAtPosition } from './gridBase';
 import { fromCells } from './viewableGrid';
+import { addAutofillFieldsToEntry } from './autofillGrid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
 import {
   Symmetry, builderReducer, validateGrid,
@@ -30,10 +31,12 @@ import * as WordDB from './WordDB';
 let worker: Worker;
 
 export const BuilderDBLoader = requiresAdmin((props: PuzzleJson) => {
-  if (localStorage.getItem("db")) {
+  const [ready, setReady] = React.useState(false);
+  WordDB.initializeOrBuild(setReady);
+  if (ready) {
     return <Builder {...props}/>;
   }
-  return <Builder {...props}/>;
+  return <Page>Loading word database...</Page>
 });
 
 interface PotentialFillItemProps {
@@ -113,7 +116,7 @@ export const Builder = (props: PuzzleJson) => {
   const [state, dispatch] = React.useReducer(builderReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
     grid: fromCells(
-      (e) => e,
+      addAutofillFieldsToEntry,
       props.size.cols,
       props.size.rows,
       props.grid,
@@ -144,14 +147,10 @@ export const Builder = (props: PuzzleJson) => {
 
   // TODO should we actually disable autofill? Right now it just turns off display
   const [autofillEnabled, setAutofillEnabled] = React.useState(true);
-  WordDB.initialize();
-  if (WordDB.dbStatus === WordDB.DBStatus.notPresent) {
-    WordDB.build();
-  }
 
   React.useEffect(() => {
     if (!WordDB.dbEncoded) {
-      return;
+      throw new Error("missing db!");
     }
     setAutofilledGrid([]);
     if (!worker) {
@@ -182,18 +181,17 @@ export const Builder = (props: PuzzleJson) => {
 
   useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
 
-  if (WordDB.dbStatus === WordDB.DBStatus.building || WordDB.dbStatus === WordDB.DBStatus.uninitialized) {
-    return <Page>Loading word database...</Page>
-  }
-
-  const [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
   let left = <React.Fragment></React.Fragment>;
   let right = <React.Fragment></React.Fragment>;
-  if (entry !== null) {
-    left = <PotentialFillList header="Active" values={["test", "best"]} entryIndex={entry.index} dispatch={dispatch} />;
-  }
-  if (cross !== null) {
-    right = <PotentialFillList header="Cross" values={["foo", "bar"]} entryIndex={cross.index} dispatch={dispatch} />;
+  for (let entry of entryAndCrossAtPosition(state.grid, state.active)) {
+    if (entry !== null) {
+      const matches = WordDB.matchingWords(entry.length, entry.bitmap).map(e => e[0]);
+      if (entry.direction === Direction.Across) {
+        left = <PotentialFillList header="Across" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
+      } else {
+        right = <PotentialFillList header="Down" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
+      }
+    }
   }
 
   function toggleAutofillEnabled() {

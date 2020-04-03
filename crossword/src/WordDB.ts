@@ -57,7 +57,7 @@ function parseJsonDB(data:string) {
 export let dbEncoded: WordDBT|undefined = undefined;
 export let dbStatus: DBStatus = DBStatus.uninitialized;
 
-export const initialize = () => {
+export const initialize = (callback: (present: boolean) => void) => {
   if (dbStatus !== DBStatus.uninitialized) return;
   dbStatus = DBStatus.building;
   localforage.getItem("db").then((compressed) => {
@@ -65,16 +65,20 @@ export const initialize = () => {
       console.log("loading db from storage");
       const decompressed = LZString.decompress(compressed as string);
       dbEncoded = parseJsonDB(decompressed);
+      setDb(transformDb(dbEncoded));
       dbStatus = DBStatus.present;
+      callback(true);
     } else {
       dbStatus = DBStatus.notPresent;
+      callback(false);
     }
-  }).catch((err) => console.log(err));
+  }).catch((err) => { console.log(err); callback(false); });
 }
 
-export const build = () => {
+export const build = (callback: (built: boolean) => void) => {
   // Only allow a build if state is notPresent or disabled
   if (dbStatus !== DBStatus.notPresent && dbStatus !== DBStatus.disabled) {
+    callback(false);
     return;
   }
   console.log("building db");
@@ -84,7 +88,19 @@ export const build = () => {
   .then((data) => {
     localforage.setItem("db", LZString.compress(data))
     dbEncoded = parseJsonDB(data);
+    setDb(transformDb(dbEncoded));
     dbStatus = DBStatus.present;
+    callback(true);
+  });
+}
+
+export const initializeOrBuild = (callback: (success: boolean) => void) => {
+  initialize((present) => {
+    if (present) {
+      callback(true);
+    } else {
+      build(callback);
+    }
   });
 }
 
@@ -96,7 +112,7 @@ export function setDb(newdb:WordDBTransformed) {
 const ONE = new BigInteger('1', 10);
 export const ZERO = new BigInteger('0', 10);
 
-const MAX_WORDS_TO_CONSIDER = 1000;
+const MAX_WORDS_TO_CONSIDER = 100;
 
 export function highestScore(length: number, bitmap: BigInteger|null) {
   const words = dbTransformed.words[length];
@@ -151,7 +167,7 @@ export function matchingWords(length:number, bitmap:BigInteger|null) {
   }
   let rv;
   if (bitmap === null) {
-    rv = dbTransformed.words[length].slice(0, MAX_WORDS_TO_CONSIDER);
+    rv = dbTransformed.words[length].slice(-MAX_WORDS_TO_CONSIDER).reverse();
   } else {
     const active = activebits(bitmap)
     rv = active.slice(0, MAX_WORDS_TO_CONSIDER).map((i) => dbTransformed.words[length][i]);
