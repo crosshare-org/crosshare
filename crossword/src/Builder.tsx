@@ -214,6 +214,7 @@ export const Builder = (props: PuzzleJson) => {
         // If not complete show possible completions of given squares
         matches = WordDB.matchingWords(entry.length, entry.bitmap);
       }
+      matches = matches.slice(0, 10);
       if (entry.direction === state.active.dir) {
         tiny = <PotentialFillList values={matches} entryIndex={entry.index} dispatch={dispatch} />;
       }
@@ -243,6 +244,10 @@ export const Builder = (props: PuzzleJson) => {
       autofillText = "Couldn't autofill this grid";
     }
   }
+  let totalLength = 0;
+  state.grid.entries.forEach((e) => totalLength += e.cells.length);
+  const numEntries = state.grid.entries.length;
+  const averageLength = totalLength / numEntries;
   return (
     <React.Fragment>
       <TopBar>
@@ -257,6 +262,9 @@ export const Builder = (props: PuzzleJson) => {
           <div>{ state.gridIsComplete ? <FaRegCheckCircle/> : <FaRegCircle/> } All cells should be filled</div>
           <div>{ state.hasNoShortWords ? <FaRegCheckCircle/> : <FaRegCircle/> } All entries should be at least three letters</div>
           <div>{ state.repeats.size > 0 ? <React.Fragment><FaRegCircle/> ({Array.from(state.repeats).sort().join(", ")})</React.Fragment>: <FaRegCheckCircle/> } No entries should be repeated</div>
+          <h4 css={{width: '100%'}}>Entries</h4>
+          <div>Number of entries: { numEntries }</div>
+          <div>Mean entry length: { averageLength.toPrecision(3) }</div>
           </div>
         </TopBarDropDown>
         <TopBarDropDown icon={<SymmetryIcon type={state.symmetry}/>} text="Symmetry">
