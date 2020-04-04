@@ -1,5 +1,5 @@
 import {
-  GridBase, EntryBase,
+  GridBase, EntryBase, EntryWithPattern,
   posForIndex, cellIndex, valAt, entryAtPosition, entriesFromCells
 } from './gridBase';
 import { Position, Direction, PosAndDir, BLOCK } from './types';
@@ -221,7 +221,7 @@ export function gridWithBlockToggled<Entry extends ViewableEntry>(grid: Viewable
 }
 
 export function fromCells<Entry extends ViewableEntry>(
-  mapper: (entry: ViewableEntry) => Entry,
+  mapper: (entry: ViewableEntry & EntryWithPattern) => Entry,
   width: number, height: number, cells: Array<string>,
   allowBlockEditing: boolean, acrossClues: Array<string>, downClues: Array<string>,
   highlighted: Set<number>, highlight: "circle" | "shade" | undefined

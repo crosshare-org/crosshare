@@ -1,6 +1,6 @@
 import { BigInteger } from '@modern-dev/jsbn';
 import {
-  GridBase, EntryBase, valAt, setVal, entriesFromCells, getCrosses
+  GridBase, EntryBase, EntryWithPattern, valAt, setVal, entriesFromCells, getCrosses
 } from './gridBase';
 import { matchingBitmap, minCost, updateBitmap, numMatches, ZERO } from './WordDB';
 
@@ -80,7 +80,6 @@ export function gridWithEntrySet<Entry extends AutofillEntry, Grid extends Autof
       bitmap: crossBitmap,
       isComplete: crossCompleted,
       minCost: minCost(cross.length, crossBitmap),
-      pattern: crossWord,
     };
   }
   // update entry itself
@@ -90,7 +89,6 @@ export function gridWithEntrySet<Entry extends AutofillEntry, Grid extends Autof
     bitmap: entryBitmap,
     isComplete: true,
     minCost: minCost(word.length, entryBitmap),
-    pattern: word,
   };
 
   return newGrid;
@@ -216,7 +214,7 @@ export function stableSubsets<Entry extends AutofillEntry>(grid: AutofillGrid<En
   return Array.from(inv.values());
 }
 
-export function addAutofillFieldsToEntry<Entry extends EntryBase>(baseEntry: Entry) {
+export function addAutofillFieldsToEntry<Entry extends EntryWithPattern>(baseEntry: Entry) {
   const entryBitmap = matchingBitmap(baseEntry.pattern);
   return {
     ...baseEntry,

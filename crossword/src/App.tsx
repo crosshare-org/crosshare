@@ -159,14 +159,14 @@ const Home = (_: RouteComponentProps) => {
 }
 
 const Construct = (_: RouteComponentProps) => {
-  // const size = 5;
-  // const grid = [
-  //   " ", " ", " ", " ", " ",
-  //   " ", " ", " ", " ", " ",
-  //   " ", " ", " ", " ", " ",
-  //   " ", " ", " ", " ", " ",
-  //   " ", " ", " ", " ", " ",
-  // ];
+  const size = 5;
+  const grid = [
+    " ", " ", " ", " ", " ",
+    " ", " ", " ", " ", " ",
+    " ", " ", " ", " ", " ",
+    " ", " ", " ", " ", " ",
+    " ", " ", " ", " ", " ",
+  ];
   // const size = 15;
   // const grid = [
   //   " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ",
@@ -185,25 +185,25 @@ const Construct = (_: RouteComponentProps) => {
   //   " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ",
   //   " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ",
   // ];
-  const size = 15;
-  let grid = [
-    "    .    .     ",
-    "    .    .     ",
-    "    .    .     ",
-    "VANBURENZOPIANO",
-    "...   ..   ....",
-    "WASHINGTONYHAWK",
-    "   ..   .      ",
-    "     .   .     ",
-    "      .   ..   ",
-    "ROOSEVELTONJOHN",
-    "....   ..   ...",
-    "JEFFERSONNYBONO",
-    "     .    .    ",
-    "     .    .    ",
-    "     .    .    "
-  ];
-  grid = grid.map(s => s.split("")).flat();
+  // const size = 15;
+  // let grid = [
+  //   "    .    .     ",
+  //   "    .    .     ",
+  //   "    .    .     ",
+  //   "VANBURENZOPIANO",
+  //   "...   ..   ....",
+  //   "WASHINGTONYHAWK",
+  //   "   ..   .      ",
+  //   "     .   .     ",
+  //   "      .   ..   ",
+  //   "ROOSEVELTONJOHN",
+  //   "....   ..   ...",
+  //   "JEFFERSONNYBONO",
+  //   "     .    .    ",
+  //   "     .    .    ",
+  //   "     .    .    "
+  // ];
+  // grid = grid.map(s => s.split("")).flat();
   const props = {
     "title": "New Puzzle",
     "size": {

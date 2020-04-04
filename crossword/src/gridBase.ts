@@ -5,6 +5,9 @@ export interface EntryBase {
   direction: Direction,
   cells: Array<Position>,
   isComplete: boolean,
+}
+
+export interface EntryWithPattern extends EntryBase {
   pattern: string,
 }
 
@@ -102,7 +105,7 @@ export function getEntryCells<Entry extends EntryBase>(grid: GridBase<Entry>, po
   return highlights;
 }
 
-export function entriesFromCells(width: number, height: number, cells: Array<string>): [Array<EntryBase>, Array<[Cross, Cross]>] {
+export function entriesFromCells(width: number, height: number, cells: Array<string>): [Array<EntryWithPattern>, Array<[Cross, Cross]>] {
   const entriesByCell: Array<[Cross, Cross]> = [];
   cells.forEach(() => {
     entriesByCell.push(
@@ -113,7 +116,7 @@ export function entriesFromCells(width: number, height: number, cells: Array<str
     );
   });
 
-  const entries: Array<EntryBase> = [];
+  const entries: Array<EntryWithPattern> = [];
 
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
