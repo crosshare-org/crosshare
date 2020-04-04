@@ -93,7 +93,6 @@ const PotentialFillList = (props: PotentialFillListProps) => {
       }}>{props.header}</div> : ""}
       <div css={{
         height:  props.header ? 'calc(100% - 1.5em)' : '100%',
-        overflowY: 'scroll',
       }}>
         <AutoSizer>
         {({ height, width }) => {
