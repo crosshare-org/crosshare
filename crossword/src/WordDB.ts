@@ -169,7 +169,7 @@ export function matchingWords(length:number, bitmap:BigInteger|null) {
   }
   let rv;
   if (bitmap === null) {
-    rv = [...dbTransformed.words[length]].reverse();
+    rv = dbTransformed.words[length].slice().reverse();
   } else {
     const active = activebits(bitmap)
     rv = active.map((i) => dbTransformed.words[length][i]);
