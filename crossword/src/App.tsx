@@ -21,7 +21,7 @@ import {
   CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle,
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
   SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
-  Logo,
+  Logo, EscapeKey
 } from './Icons';
 
 interface AuthContextValue {
@@ -160,8 +160,8 @@ const Home = (_: RouteComponentProps) => {
 }
 
 const Construct = (_: RouteComponentProps) => {
-  const size = 5;
-  const grid = [
+  let size = 5;
+  let grid = [
     " ", " ", " ", " ", " ",
     " ", " ", " ", " ", " ",
     " ", " ", " ", " ", " ",
@@ -186,25 +186,25 @@ const Construct = (_: RouteComponentProps) => {
   //   " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ",
   //   " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ",
   // ];
-  // const size = 15;
-  // let grid = [
-  //   "    .    .     ",
-  //   "    .    .     ",
-  //   "    .    .     ",
-  //   "VANBURENZOPIANO",
-  //   "...   ..   ....",
-  //   "WASHINGTONYHAWK",
-  //   "   ..   .      ",
-  //   "     .   .     ",
-  //   "      .   ..   ",
-  //   "ROOSEVELTONJOHN",
-  //   "....   ..   ...",
-  //   "JEFFERSONNYBONO",
-  //   "     .    .    ",
-  //   "     .    .    ",
-  //   "     .    .    "
-  // ];
-  // grid = grid.map(s => s.split("")).flat();
+  size = 15;
+  grid = [
+    "    .    .     ",
+    "    .    .     ",
+    "    .    .     ",
+    "VANBURENZOPIANO",
+    "...   ..   ....",
+    "WASHINGTONYHAWK",
+    "   ..   .      ",
+    "     .   .     ",
+    "      .   ..   ",
+    "ROOSEVELTONJOHN",
+    "....   ..   ...",
+    "JEFFERSONNYBONO",
+    "     .    .    ",
+    "     .    .    ",
+    "     .    .    "
+  ];
+  grid = grid.map(s => s.split("")).flat();
   const props = {
     "title": "New Puzzle",
     "size": {
@@ -225,6 +225,7 @@ const IconsDemo = (_: RouteComponentProps) => {
   return <Page title="Icons">
     <div css={{fontSize: 20}}>
       <p title="Autofill disabled">Disabled: <SpinnerDisabled/></p>
+      <p>Esc: <EscapeKey/></p>
       <p>Working: <SpinnerWorking/></p>
       <p>Finished: <SpinnerFinished/></p>
       <p>Failed: <SpinnerFailed/></p>

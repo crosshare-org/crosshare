@@ -98,7 +98,6 @@ export class Autofiller {
 
     // If we have a solution that hasn't been posted yet, post it.
     if (this.solnGrid && !this.postedSoln) {
-      console.log("Posting soln");
       this.postedSoln = true;
       this.onResult(this.grid, this.solnGrid.cells);
     }
@@ -158,7 +157,11 @@ export class Autofiller {
       let secondBestCost: number|null = null;
 
       let skipEntry = false;
+      let triedWordCount = 0;
       for (const [word, score] of WordDB.matchingWords(entry.length, entry.bitmap)) {
+        if (triedWordCount > 30) {
+          break;
+        }
         if (pitched.has(entry.index + ":" + word)) {
           continue;
         }
@@ -205,6 +208,8 @@ export class Autofiller {
         if (newgrid === null) {
           continue;
         }
+
+        triedWordCount += 1;
 
         const newCost = minGridCost(newgrid);
 

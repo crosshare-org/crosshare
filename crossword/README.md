@@ -11,6 +11,10 @@
 - Click ...More then hit Escape - should only show 1 modal
 - Increase discrep count iteratively until final conditions are met
 - Firefox grid is miniscule!
+- List all potentials instead of first 100
+- Use react-window for word suggestion lists
+- Highlight/prioritize words that have working crosses
+- Fix up overlay width weirdness
 
 ## Available Scripts
 

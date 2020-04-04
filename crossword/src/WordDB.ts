@@ -116,8 +116,6 @@ export function setDb(newdb:WordDBTransformed) {
 const ONE = new BigInteger('1', 10);
 export const ZERO = new BigInteger('0', 10);
 
-const MAX_WORDS_TO_CONSIDER = 100;
-
 export function highestScore(length: number, bitmap: BigInteger|null) {
   const words = dbTransformed.words[length];
   if (bitmap === null) {
@@ -171,10 +169,10 @@ export function matchingWords(length:number, bitmap:BigInteger|null) {
   }
   let rv;
   if (bitmap === null) {
-    rv = dbTransformed.words[length].slice(-MAX_WORDS_TO_CONSIDER).reverse();
+    rv = [...dbTransformed.words[length]].reverse();
   } else {
     const active = activebits(bitmap)
-    rv = active.slice(0, MAX_WORDS_TO_CONSIDER).map((i) => dbTransformed.words[length][i]);
+    rv = active.map((i) => dbTransformed.words[length][i]);
   }
   memoMatchingWords.set(key, rv);
   return rv;

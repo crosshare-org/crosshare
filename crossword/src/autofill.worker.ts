@@ -30,7 +30,6 @@ ctx.onmessage = (e) => {
   if (isLoadDBMessage(data)) {
     setDb(transformDb(data.db));
   } else if (isAutofillMessage(data)) {
-    console.log("Starting new");
     current = new Autofiller(data.grid, data.width, data.height, onResult, onComplete);
     msgChannel.port1.postMessage('');
   } else {

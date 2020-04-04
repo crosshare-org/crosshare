@@ -2,6 +2,7 @@
 import { jsx } from '@emotion/core';
 import * as React from 'react';
 
+import { isMobile } from "react-device-detect";
 import { Link, RouteComponentProps } from "@reach/router";
 
 import { Overlay } from './Overlay';
@@ -20,7 +21,7 @@ export const TopBarDropDown = (props: {text: string, icon: React.ReactNode, chil
   );
 }
 
-export const TopBarDropDownLink = (props: {text: string, icon: React.ReactNode, onClick: () => void}) => {
+export const TopBarDropDownLink = (props: {shortcutHint?: React.ReactNode, text: string, icon: React.ReactNode, onClick: () => void}) => {
   return (
     <button title={props.text} css={{
       backgroundColor: 'transparent',
@@ -52,7 +53,7 @@ export const TopBarDropDownLink = (props: {text: string, icon: React.ReactNode, 
       display: 'inline-block',
       width: '60%',
       textAlign: 'left',
-    }}>{props.text}</div>
+    }}>{props.text}{!isMobile && props.shortcutHint ? <span> ( <span css={{fontSize: HEADER_HEIGHT - 10}}>{props.shortcutHint}</span> )</span> : ""}</div>
     </button>
   );
 }
