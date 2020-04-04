@@ -8,6 +8,9 @@ import { FaRegCircle, FaRegCheckCircle, FaTabletAlt, FaKeyboard, FaEllipsisH, } 
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
+import { FixedSizeList as List } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
+
 
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
@@ -52,24 +55,17 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
     props.dispatch({ type: 'CLICKEDFILL', entryIndex: props.entryIndex, value: props.value[0] });
   }
   return (
-    <li css={{
-      padding: '0.5em',
-      listStyleType: 'none',
+    <div css={{
+      padding: '0.5em 1em',
       cursor: 'pointer',
       '&:hover': {
         backgroundColor: '#EEE',
       },
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'nowrap',
       alignItems: 'center',
-      width: '100%',
+      height: 35,
     }} onClick={click}>
-      <div css={{
-        flex: '1 1 auto',
-        height: '100%',
-      }}>{props.value[0]}</div>
-    </li>
+    {props.value[0]}
+    </div>
   );
 }
 
@@ -80,18 +76,9 @@ interface PotentialFillListProps {
   dispatch: React.Dispatch<ClickedFillAction>,
 }
 const PotentialFillList = (props: PotentialFillListProps) => {
-  const values = props.values.map((value,index) => {
-    return (<PotentialFillItem
-      key={index}
-      entryIndex={props.entryIndex}
-      dispatch={props.dispatch}
-      value={value}
-    />)
-  });
-  const startRef = React.useRef<HTMLDivElement>(null);
-
-  if (startRef.current !== null) {
-    startRef.current.scrollIntoView({ behavior: "auto" })
+  const listRef = React.useRef<List>(null);
+  if (listRef.current !== null) {
+    listRef.current.scrollToItem(0);
   }
   return (
     <div css={{
@@ -105,16 +92,30 @@ const PotentialFillList = (props: PotentialFillListProps) => {
         paddingLeft: '0.5em',
       }}>{props.header}</div> : ""}
       <div css={{
-        maxHeight: props.header ? 'calc(100% - 1.5em)' : '100%',
+        height:  props.header ? 'calc(100% - 1.5em)' : '100%',
         overflowY: 'scroll',
       }}>
-        <ol css={{
-          margin: 0,
-          padding: 0,
-        }}>
-          <div ref={startRef}/>
-          {values}
-        </ol>
+        <AutoSizer>
+        {({ height, width }) => {
+          return (<List
+            ref={listRef}
+            height={height}
+            itemCount={props.values.length}
+            itemSize={35}
+            width={width}
+            >
+            {({ index, style }) => (
+              <div style={style}>
+              <PotentialFillItem
+              key={index}
+              entryIndex={props.entryIndex}
+              dispatch={props.dispatch}
+              value={props.values[index]}
+              />
+              </div>
+            )}</List>)
+        }}
+        </AutoSizer>
       </div>
     </div>
   );
@@ -216,7 +217,6 @@ export const Builder = (props: PuzzleJson) => {
         // If not complete show possible completions of given squares
         matches = WordDB.matchingWords(entry.length, entry.bitmap);
       }
-      matches = matches.slice(0, 10);
       if (entry.direction === state.active.dir) {
         tiny = <PotentialFillList values={matches} entryIndex={entry.index} dispatch={dispatch} />;
       }
@@ -304,7 +304,7 @@ export const Builder = (props: PuzzleJson) => {
         }
         left={left}
         right={right}
-        tinyColumn={<TinyNav largeButtons={true} dispatch={dispatch}>{tiny}</TinyNav>}
+        tinyColumn={<TinyNav dispatch={dispatch}>{tiny}</TinyNav>}
       />
     </React.Fragment>
   )

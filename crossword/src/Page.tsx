@@ -15,11 +15,10 @@ import { TopBar, TopBarLink } from './TopBar';
 import { heightAdjustment, SMALL_AND_UP, LARGE_AND_UP } from './style';
 
 interface TinyNavProps {
-  largeButtons?: boolean
   children: React.ReactNode,
   dispatch: React.Dispatch<KeypressAction>,
 }
-export const TinyNav = ({children, dispatch, largeButtons}: TinyNavProps) => {
+export const TinyNav = ({children, dispatch}: TinyNavProps) => {
   return (
     <div css={{
       display: 'flex',
@@ -30,7 +29,7 @@ export const TinyNav = ({children, dispatch, largeButtons}: TinyNavProps) => {
       height: '100%',
     }}>
       <div css={{
-        width: largeButtons ? '5em' : '2em',
+        width: '2em',
         textAlign: 'center',
         flexShrink: 0,
         display: 'flex',
@@ -44,7 +43,7 @@ export const TinyNav = ({children, dispatch, largeButtons}: TinyNavProps) => {
         flex: '1 1 auto',
       }}>{children}</div>
       <div css={{
-        width: largeButtons ? '5em' : '2em',
+        width: '2em',
         textAlign: 'center',
         flexShrink: 0,
         display: 'flex',
