@@ -14,9 +14,10 @@ export const DBTest = (_: RouteComponentProps) => {
 
   if (status === WordDB.DBStatus.present && WordDB.dbEncoded) {
     return (
-      <Page><p>DB is loaded. Five letter words: {WordDB.dbEncoded.words["5"] && WordDB.dbEncoded.words["5"].length}</p>
+      <Page title="DB Status">
+        <p>DB is loaded. Five letter words: {WordDB.dbEncoded.words["5"] && WordDB.dbEncoded.words["5"].length}</p>
       </Page>
     );
   }
-  return <Page>DB status: {WordDB.dbStatus}</Page>
+  return <Page title="DB Status">DB status: {WordDB.dbStatus}</Page>
 }

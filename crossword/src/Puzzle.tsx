@@ -7,6 +7,7 @@ import { RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
 import { FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt, FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
+import { Helmet } from "react-helmet-async";
 
 import { CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle, Rebus } from './Icons';
 import { requiresAuth } from './App';
@@ -47,10 +48,10 @@ export const PuzzleLoader = ({ crosswordId }: PuzzleLoaderProps) => {
   }, [crosswordId]);
 
   if (isError) {
-    return <Page>Something went wrong while loading puzzle '{crosswordId}'</Page>;
+    return <Page title={null}>Something went wrong while loading puzzle '{crosswordId}'</Page>;
   }
   if (!isLoaded || !puzzle) {
-    return <Page>Loading '{crosswordId}'...</Page>
+    return <Page title={null}>Loading '{crosswordId}'...</Page>
   }
   return <Puzzle {...puzzle} />
 }
@@ -343,6 +344,9 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
   const showingKeyboard = state.showKeyboard && !state.success;
   return (
     <React.Fragment>
+      <Helmet>
+        <title>{props.title}</title>
+      </Helmet>
       <TopBar>
         <TopBarLink icon={<FaPause />} hoverText={"Pause Game"} text={timeString(elapsed)} onClick={pause} keepText={true} />
         <TopBarDropDown icon={<FaEye />} text="Reveal">

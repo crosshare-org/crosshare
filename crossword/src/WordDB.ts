@@ -64,6 +64,10 @@ export const initialize = (callback: (present: boolean) => void) => {
     if (compressed) {
       console.log("loading db from storage");
       const decompressed = LZString.decompress(compressed as string);
+      if (decompressed === null) {
+        console.error("Error decompressing db");
+        return callback(false);
+      }
       dbEncoded = parseJsonDB(decompressed);
       setDb(transformDb(dbEncoded));
       dbStatus = DBStatus.present;

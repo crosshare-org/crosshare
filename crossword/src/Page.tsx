@@ -8,6 +8,7 @@ import 'react-simple-keyboard/build/css/index.css';
 import { FaKeyboard } from 'react-icons/fa';
 import { FaTabletAlt } from 'react-icons/fa';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { Helmet } from "react-helmet-async";
 
 import { KeypressAction } from './reducer';
 import { TopBar, TopBarLink } from './TopBar';
@@ -224,7 +225,7 @@ export const SquareTest = (_: RouteComponentProps) => {
   const toggleKeyboard = () => setShowKeyboard(!showKeyboard);
   const toggleTablet = () => setIsTablet(!isTablet);
   return (
-    <Page topBarElements={
+    <Page title="Square Test" topBarElements={
       <React.Fragment>
         <TopBarLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={toggleKeyboard} />
         <TopBarLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={toggleTablet} />
@@ -246,12 +247,20 @@ export const SquareTest = (_: RouteComponentProps) => {
 
 interface PageProps extends RouteComponentProps {
   children: React.ReactNode,
+  title: string|null,
   topBarElements?: React.ReactNode,
 }
 
 export const Page = (props: PageProps) => {
   return (
     <React.Fragment>
+      {props.title !== null ?
+        <Helmet>
+          <title>{props.title}</title>
+        </Helmet>
+        :
+        ""
+      }
       <TopBar>{props.topBarElements}</TopBar>
       {props.children}
     </React.Fragment>

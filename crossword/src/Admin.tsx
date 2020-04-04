@@ -13,7 +13,7 @@ export const Admin = requiresAdmin((_: RouteComponentProps) => {
     throw new Error("bad user in context");
   }
   return (
-    <Page>
+    <Page title="Admin">
       <div css={{ margin: '1em', }}>
         <h4 css={{ borderBottom: '1px solid black' }}>Admin</h4>
         <p>You're logged in as <b>{user.email}</b>.</p>

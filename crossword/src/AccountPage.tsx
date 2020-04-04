@@ -47,7 +47,7 @@ export const AccountPage = requiresAuth((_: RouteComponentProps) => {
     throw new Error("bad user in context");
   }
   return (
-    <Page>
+    <Page title="Account">
       <div css={{ margin: '1em', }}>
         <h4 css={{ borderBottom: '1px solid black' }}>Account</h4>
         <p>You're logged in as <b>{user.email}</b>. <button onClick={() => firebase.auth().signOut()}>Log out</button></p>

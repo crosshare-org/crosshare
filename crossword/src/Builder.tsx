@@ -7,6 +7,7 @@ import { isMobile, isTablet } from "react-device-detect";
 import { FaRegCircle, FaRegCheckCircle, FaTabletAlt, FaKeyboard, FaEllipsisH, } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
+import { Helmet } from "react-helmet-async";
 
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
@@ -36,7 +37,7 @@ export const BuilderDBLoader = requiresAdmin((props: PuzzleJson) => {
   if (ready) {
     return <Builder {...props}/>;
   }
-  return <Page>Loading word database...</Page>
+  return <Page title={null}>Loading word database...</Page>
 });
 
 interface PotentialFillItemProps {
@@ -250,6 +251,9 @@ export const Builder = (props: PuzzleJson) => {
   const averageLength = totalLength / numEntries;
   return (
     <React.Fragment>
+      <Helmet>
+        <title>Constructor</title>
+      </Helmet>
       <TopBar>
         <TopBarLink icon={autofillIcon} text="Autofill" hoverText={autofillText} onClick={toggleAutofillEnabled} />
         <TopBarDropDown icon={<IoMdStats/>} text="Stats">

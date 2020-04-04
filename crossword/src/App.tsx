@@ -8,6 +8,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import { firebaseConfig, firebaseUiConfig } from './config';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 import { PuzzleLoader } from './Puzzle';
 import { BuilderDBLoader } from './Builder';
@@ -36,16 +37,16 @@ export function requiresAuth<T>(WrappedComponent: React.ComponentType<T>) {
   return (props: T) => {
     const {user, loadingUser, error} = React.useContext(AuthContext);
     if (loadingUser) {
-      return <Page>Loading user...</Page>;
+      return <Page title={null}>Loading user...</Page>;
     }
     if (error) {
-      return <Page>Error loading user: {error}</Page>;
+      return <Page title={null}>Error loading user: {error}</Page>;
     }
     if (user && user.email) {
       return <WrappedComponent user={user} {...props}/>
     };
     return (
-      <Page>
+      <Page title="Sign In">
       <div css={{ margin: '1em', }}>
       <p>Please sign-in to continue. We require a sign-in so that we can keep track of the puzzles you've solved and your stats.</p>
       <StyledFirebaseAuth uiConfig={firebaseUiConfig} firebaseAuth={firebase.auth()}/>
@@ -60,10 +61,10 @@ export function requiresAdmin<T>(WrappedComponent: React.ComponentType<T>) {
     const [isAdmin, setIsAdmin] = React.useState(false);
     const {user, loadingUser, error} = React.useContext(AuthContext);
     if (loadingUser) {
-      return <Page>Loading user...</Page>;
+      return <Page title={null}>Loading user...</Page>;
     }
     if (error) {
-      return <Page>Error loading user: {error}</Page>;
+      return <Page title={null}>Error loading user: {error}</Page>;
     }
     if (user && user.email) {
       user.getIdTokenResult()
@@ -81,11 +82,11 @@ export function requiresAdmin<T>(WrappedComponent: React.ComponentType<T>) {
       if (isAdmin) {
         return <WrappedComponent user={user} {...props}/>;
       } else {
-        return <Page>Must be an admin to view this page.</Page>;
+        return <Page title="Error">Must be an admin to view this page.</Page>;
       }
     };
     return (
-      <Page>
+      <Page title="Sign In">
       <div css={{ margin: '1em', }}>
       <p>Please sign-in to continue. We require a sign-in so that we can keep track of the puzzles you've solved and your stats.</p>
       <StyledFirebaseAuth uiConfig={firebaseUiConfig} firebaseAuth={firebase.auth()}/>
@@ -96,12 +97,12 @@ export function requiresAdmin<T>(WrappedComponent: React.ComponentType<T>) {
 }
 
 const NotFound = (_: RouteComponentProps) => {
-  return <Page> not found :(</Page>;
+  return <Page title="Not Found"> not found :(</Page>;
 }
 
 const TermsOfService = (_: RouteComponentProps) => {
   return (
-    <Page>
+    <Page title="Terms of Service">
       <h2>Crosshare Terms of Service</h2>
       <p>1. Terms</p>
       <p>By accessing the website at https://crosshare.org, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site. The materials contained in this website are protected by applicable copyright and trademark law.</p>
@@ -132,7 +133,7 @@ const TermsOfService = (_: RouteComponentProps) => {
 
 const PrivacyPolicy = (_: RouteComponentProps) => {
   return (
-    <Page>
+    <Page title="Privacy Policy">
       <h2>Privacy Policy</h2>
       <p>Your privacy is important to us. It is Crosshare's policy to respect your privacy regarding any information we may collect from you across our website, https://crosshare.org, and other sites we own and operate.</p>
       <p>We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used.</p>
@@ -148,7 +149,7 @@ const PrivacyPolicy = (_: RouteComponentProps) => {
 
 const Home = (_: RouteComponentProps) => {
   return (
-    <Page>
+    <Page title={null}>
       <div css={{ margin: '1em', }}>
         <p>Crosshare is a not-for-profit community for crossword constructors.</p>
         <p>Go to <Link to="/dbtest">DBTest</Link></p>
@@ -221,7 +222,7 @@ const Construct = (_: RouteComponentProps) => {
 };
 
 const IconsDemo = (_: RouteComponentProps) => {
-  return <Page>
+  return <Page title="Icons">
     <div css={{fontSize: 20}}>
       <p title="Autofill disabled">Disabled: <SpinnerDisabled/></p>
       <p>Working: <SpinnerWorking/></p>
@@ -246,8 +247,10 @@ const IconsDemo = (_: RouteComponentProps) => {
 const App = () => {
   const [user, loadingUser, error] = useAuthState(firebase.auth());
   return (
-    <AuthContext.Provider value={{user: user, loadingUser: loadingUser, error: error?.message}}>
-    <Router css={{height: '100%', width: '100%',}}>
+<HelmetProvider>
+  <AuthContext.Provider value={{ user: user, loadingUser: loadingUser, error: error ?.message}}>
+    <Helmet defaultTitle="Crosshare" titleTemplate="%s | Crosshare" />
+    <Router css={{ height: '100%', width: '100%', }}>
       <Home path="/" />
       <AccountPage path="/account" />
       <Admin path="/admin" />
@@ -261,7 +264,8 @@ const App = () => {
       <DBTest path="/dbtest" />
       <NotFound default />
     </Router>
-    </AuthContext.Provider>
+  </AuthContext.Provider>
+</HelmetProvider>
   );
 }
 
