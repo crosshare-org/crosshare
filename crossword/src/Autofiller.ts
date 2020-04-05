@@ -157,8 +157,8 @@ export class Autofiller {
       let secondBestCost: number|null = null;
 
       let skipEntry = false;
-      const failingLetters: Array<Set<string>> = [];
-      entry.cells.forEach(() => {failingLetters.push(new Set<string>())})
+      const failingLetters: Array<string> = [];
+      entry.cells.forEach(() => {failingLetters.push("")});
       for (const [word, score] of WordDB.matchingWords(entry.length, entry.bitmap)) {
         if (pitched.has(entry.index + ":" + word)) {
           continue;
@@ -189,7 +189,7 @@ export class Autofiller {
           if (crossIndex === null) {
             continue;
           }
-          if (failingLetters[i].has(word[j])) {
+          if (failingLetters[i].indexOf(word[j]) !== -1) {
             failFast = true;
             break;
           }
@@ -211,13 +211,13 @@ export class Autofiller {
             const crossLength = cross.length;
             const newBitmap = WordDB.updateBitmap(crossLength, cross.bitmap, crosses[i].wordIndex, word[j]);
             if (newBitmap.equals(WordDB.ZERO)) {
-              failingLetters[i].add(word[j]);
+              failingLetters[i] += word[j];
               failFast = true;
               break;
             }
             const newCost = baseCost - cross.minCost + WordDB.minCost(crossLength, newBitmap);
             if (costToBeat !== null && newCost > costToBeat) {
-              failingLetters[i].add(word[j]);
+              failingLetters[i] += word[j];
               failFast = true;
               break;
             }
