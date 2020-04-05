@@ -142,10 +142,17 @@ export function numMatches(length:number, bitmap:BigInteger|null) {
   return bitmap.bitCount();
 }
 
-export function updateBitmap(length:number, bitmap:BigInteger|null, index:number, letter:string) {
+export function updateBitmap(length:number, bitmap:BigInteger|null, index:number, letter:string, invert?:boolean) {
   const match = dbTransformed.bitmaps[length + letter + index] || ZERO;
+
   if (bitmap === null) {
-    return match;
+    if (!invert) {
+      return match;
+    }
+    bitmap = ONE.shiftLeft(dbTransformed.words[length].length).subtract(ONE);
+  }
+  if (invert) {
+    return bitmap.andNot(match);
   }
   return bitmap.and(match);
 }

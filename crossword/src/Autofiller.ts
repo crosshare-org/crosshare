@@ -1,7 +1,9 @@
+import { BigInteger } from '@modern-dev/jsbn';
+
 import { valAt, getCrosses } from './gridBase';
 import {
   AutofillGrid, fromTemplate, minGridCost, stableSubsets,
-  numMatchesForEntry, gridWithEntryDecided
+  numMatchesForEntry, gridWithEntryDecided,
 } from './autofillGrid';
 import * as WordDB from './WordDB';
 
@@ -155,7 +157,7 @@ export class Autofiller {
       let bestGrid: [AutofillGrid, number, string]|null = null;
       let bestCost: number|null = null;
       let secondBestCost: number|null = null;
-
+      let changedBitmap: BigInteger | null = null;
       let skipEntry = false;
       const failingLetters: Array<Set<string>> = [];
       entry.cells.forEach(() => {failingLetters.push(new Set<string>())})
@@ -197,6 +199,10 @@ export class Autofiller {
           const crossLength = cross.length;
           const newBitmap = WordDB.updateBitmap(crossLength, cross.bitmap, crosses[i].wordIndex, word[j]);
           if (newBitmap.equals(WordDB.ZERO)) {
+            if (changedBitmap === null) {
+              changedBitmap = entry.bitmap;
+            }
+            changedBitmap = WordDB.updateBitmap(entry.length, changedBitmap, i, word[j], true)
             failingLetters[i].add(word[j]);
             failFast = true;
             break;
@@ -238,6 +244,10 @@ export class Autofiller {
             break;
           }
         }
+      }
+
+      if (changedBitmap) {
+        grid.entries[entry.index] = {...entry, bitmap: changedBitmap};
       }
 
       if (skipEntry) {
