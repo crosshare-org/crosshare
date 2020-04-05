@@ -21,7 +21,6 @@ import { requiresAdmin } from './App';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
 import { fromCells } from './viewableGrid';
-import { addAutofillFieldsToEntry } from './autofillGrid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
 import {
   Symmetry, builderReducer, validateGrid,
@@ -123,20 +122,15 @@ const PotentialFillList = (props: PotentialFillListProps) => {
 export const Builder = (props: PuzzleJson) => {
   const [state, dispatch] = React.useReducer(builderReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
-    grid: {
-      ...fromCells(
-        addAutofillFieldsToEntry,
-        props.size.cols,
-        props.size.rows,
-        props.grid,
-        true,
-        props.clues.across,
-        props.clues.down,
-        new Set(props.highlighted),
-        props.highlight,
-      ),
-      usedWords: new Set<string>()
-    },
+    grid: fromCells({
+      mapper: (e) => e,
+      width: props.size.cols,
+      height: props.size.rows,
+      cells: props.grid,
+      allowBlockEditing: true,
+      highlighted: new Set(props.highlighted),
+      highlight: props.highlight,
+    }),
     showKeyboard: isMobile,
     isTablet: isTablet,
     showExtraKeyLayout: false,
@@ -198,24 +192,23 @@ export const Builder = (props: PuzzleJson) => {
   for (let entry of entryAndCrossAtPosition(state.grid, state.active)) {
     if (entry !== null) {
       let matches: Array<[string, number]>;
-      if (entry.isComplete) {
+      let pattern = "";
+      let crosses = getCrosses(state.grid, entry);
+      for (let index = 0; index < entry.cells.length; index += 1) {
+        const cell = entry.cells[index];
+        const val = valAt(state.grid, cell);
+        const cross = crosses[index];
         // If complete, remove any cells whose crosses aren't complete and show that
-        let pattern = "";
-        let crosses = getCrosses(state.grid, entry);
-        entry.cells.forEach((cell, index) => {
-          const val = valAt(state.grid, cell);
-          const cross = crosses[index];
-          if (val.length === 1 && cross.entryIndex !== null && !state.grid.entries[cross.entryIndex].isComplete) {
-            pattern += " ";
-          } else {
-            pattern += val;
-          }
-        });
-        matches = WordDB.matchingWords(pattern.length, WordDB.matchingBitmap(pattern));
-      } else {
-        // If not complete show possible completions of given squares
-        matches = WordDB.matchingWords(entry.length, entry.bitmap);
+        if (entry.isComplete &&
+            val.length === 1 &&
+            cross.entryIndex !== null &&
+            !state.grid.entries[cross.entryIndex].isComplete) {
+          pattern += " ";
+        } else {
+          pattern += val;
+        }
       }
+      matches = WordDB.matchingWords(pattern.length, WordDB.matchingBitmap(pattern));
       if (entry.direction === state.active.dir) {
         tiny = <PotentialFillList values={matches} entryIndex={entry.index} dispatch={dispatch} />;
       }

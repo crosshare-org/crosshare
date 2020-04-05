@@ -1,12 +1,11 @@
 import { PosAndDir, Position, Direction, BLOCK } from './types';
 import {
-  ViewableGrid, ViewableEntry,
+  ViewableGrid, ViewableEntry, CluedGrid,
   gridWithNewChar, gridWithBlockToggled, advancePosition, retreatPosition,
   moveToNextEntry, moveToPrevEntry, moveUp, moveDown, moveLeft, moveRight,
   nextNonBlock,
 } from './viewableGrid';
-import { AutofillGrid, AutofillEntry, gridWithEntrySet } from './autofillGrid';
-import { cellIndex, valAt, entryAtPosition, entryWord } from './gridBase';
+import { cellIndex, valAt, entryAtPosition, entryWord, gridWithEntrySet } from './gridBase';
 
 interface GridInterfaceState {
   active: PosAndDir,
@@ -23,6 +22,7 @@ interface GridInterfaceState {
 }
 
 interface PuzzleState extends GridInterfaceState {
+  grid: CluedGrid,
   answers: Array<string>,
   verifiedCells: Set<number>,
   revealedCells: Set<number>,
@@ -33,8 +33,8 @@ interface PuzzleState extends GridInterfaceState {
   dismissedSuccess: boolean,
 }
 
-interface BuilderEntry extends AutofillEntry, ViewableEntry {};
-interface BuilderGrid extends ViewableGrid<BuilderEntry>, AutofillGrid<BuilderEntry> {};
+interface BuilderEntry extends ViewableEntry {};
+interface BuilderGrid extends ViewableGrid<BuilderEntry> {};
 
 interface BuilderState extends GridInterfaceState {
   grid: BuilderGrid,

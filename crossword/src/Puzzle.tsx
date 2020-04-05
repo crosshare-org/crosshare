@@ -14,7 +14,7 @@ import { requiresAuth } from './App';
 import { useTimer } from './timer';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
-import { ViewableEntry, fromCells } from './viewableGrid';
+import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { entryAndCrossAtPosition } from './gridBase';
 import { PosAndDir, Direction, BLOCK, PuzzleJson } from './types';
 import { cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock, Symmetry, PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction } from './reducer';
@@ -185,7 +185,7 @@ interface ClueListProps {
   header?: string,
   current: number,
   cross: number,
-  entries: Array<ViewableEntry>,
+  entries: Array<CluedEntry>,
   scrollToCross: boolean,
   dispatch: React.Dispatch<ClickedEntryAction>,
 }
@@ -274,17 +274,15 @@ export function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction
 export const Puzzle = requiresAuth((props: PuzzleJson) => {
   const [state, dispatch] = React.useReducer(puzzleReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
-    grid: fromCells(
-      (e) => e,
-      props.size.cols,
-      props.size.rows,
-      (props.grid.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>),
-      false,
-      props.clues.across,
-      props.clues.down,
-      new Set(props.highlighted),
-      props.highlight,
-    ),
+    grid: addClues(fromCells({
+      mapper: (e) => e,
+      width: props.size.cols,
+      height: props.size.rows,
+      cells: (props.grid.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>),
+      allowBlockEditing: false,
+      highlighted: new Set(props.highlighted),
+      highlight: props.highlight,
+    }), props.clues.across, props.clues.down),
     showKeyboard: isMobile,
     isTablet: isTablet,
     showExtraKeyLayout: false,

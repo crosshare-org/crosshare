@@ -169,3 +169,56 @@ export function entriesFromCells(width: number, height: number, cells: Array<str
   }
   return [entries, entriesByCell];
 }
+
+/*
+ * Get a new grid with an entry filled out.
+ *
+ * This is for builder use.
+ *
+ * If you know the new fill doesn't conflict with the existing grid, use
+ * `gridWithEntryDecided` instead for better performance.
+ */
+export function gridWithEntrySet<Entry extends EntryBase, Grid extends GridBase<Entry>>(grid: Grid, entryIndex: number, word: string): Grid {
+  const newGrid:Grid = {
+    ...grid,
+    cells: grid.cells.slice(),
+    entries: grid.entries.slice(),
+  };
+
+  const entry = newGrid.entries[entryIndex];
+  const crosses = getCrosses(newGrid, entry);
+  let j = -1;
+  for (let i = 0; i < word.length; i += 1) {
+    j += 1;
+    const currentVal = valAt(newGrid, entry.cells[j]);
+    if (currentVal !== ' ') {
+      if (currentVal === word.slice(i, i + currentVal.length)) {
+        // No change needed for this cell
+        i = i + currentVal.length - 1;
+        continue
+      }
+    }
+
+    // update cells
+    setVal(newGrid, entry.cells[j], word[i]);
+
+    // update crossing entry
+    const crossIndex = crosses[j].entryIndex;
+    if (crossIndex === null) {
+      continue;
+    }
+    const cross = newGrid.entries[crossIndex];
+    let crossComplete = true;
+    for (const cid of cross.cells) {
+      if (valAt(grid, cid) === ' ') {
+        crossComplete = false;
+        break;
+      }
+    }
+    newGrid.entries[crossIndex].isComplete = crossComplete;
+  }
+  // update entry itself
+  newGrid.entries[entryIndex].isComplete = true;
+
+  return newGrid;
+}

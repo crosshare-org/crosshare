@@ -1,5 +1,5 @@
 import {
-  GridBase, EntryBase, EntryWithPattern,
+  GridBase, EntryBase,
   posForIndex, cellIndex, valAt, entryAtPosition, entriesFromCells
 } from './gridBase';
 import { Position, Direction, PosAndDir, BLOCK } from './types';
@@ -7,18 +7,24 @@ import { Symmetry } from './reducer';
 
 export interface ViewableEntry extends EntryBase {
   labelNumber: number,
+}
+
+export interface CluedEntry extends ViewableEntry {
   clue: string,
 }
 
 export interface ViewableGrid<Entry extends ViewableEntry> extends GridBase<Entry> {
-  sortedEntries: Array<Entry>;
+  sortedEntries: Array<number>;
   cellLabels: Map<number, number>,
   allowBlockEditing: boolean,
-  acrossClues: Array<string>,
-  downClues: Array<string>,
   highlighted: Set<number>,
   highlight: "circle" | "shade" | undefined,
   mapper(entry: ViewableEntry): Entry,
+}
+
+export interface CluedGrid extends ViewableGrid<CluedEntry> {
+  acrossClues: Array<string>,
+  downClues: Array<string>,
 }
 
 export function getSortedEntries<Entry extends EntryBase>(entries: Array<Entry>) {
@@ -27,7 +33,7 @@ export function getSortedEntries<Entry extends EntryBase>(entries: Array<Entry>)
       return a.direction - b.direction;
     }
     return a.index - b.index;
-  })
+  }).map(e => e.index);
 }
 
 export function moveLeft<Entry extends ViewableEntry>(grid: ViewableGrid<Entry>, active: Position): Position {
@@ -145,7 +151,7 @@ export function moveToNextEntry<Entry extends ViewableEntry>(grid: ViewableGrid<
   // Find position in the sorted array of entries
   let i = 0;
   for (; i < grid.sortedEntries.length; i += 1) {
-    if (currentEntry.index === grid.sortedEntries[i].index) {
+    if (currentEntry.index === grid.sortedEntries[i]) {
       break;
     }
   }
@@ -156,7 +162,7 @@ export function moveToNextEntry<Entry extends ViewableEntry>(grid: ViewableGrid<
     if (reverse) {
       index = (i + grid.sortedEntries.length - offset - 1) % grid.sortedEntries.length;
     }
-    const tryEntry = grid.sortedEntries[index];
+    const tryEntry = grid.entries[grid.sortedEntries[index]];
     if (!tryEntry.isComplete) {
       for (let cell of tryEntry.cells) {
         if (valAt(grid, cell) === " ") {
@@ -169,7 +175,8 @@ export function moveToNextEntry<Entry extends ViewableEntry>(grid: ViewableGrid<
   return pos;
 }
 
-export function gridWithNewChar<Entry extends ViewableEntry>(grid: ViewableGrid<Entry>, pos: Position, char: string, sym: Symmetry): ViewableGrid<Entry> {
+export function gridWithNewChar<Entry extends ViewableEntry,
+  Grid extends ViewableGrid<Entry>>(grid: Grid, pos: Position, char: string, sym: Symmetry): Grid {
   const index = pos.row * grid.width + pos.col;
   let cells = [...grid.cells];
   if (valAt(grid, pos) === BLOCK) {
@@ -195,10 +202,11 @@ export function gridWithNewChar<Entry extends ViewableEntry>(grid: ViewableGrid<
     }
   }
   cells[index] = char;
-  return fromCells(grid.mapper, grid.width, grid.height, cells, grid.allowBlockEditing, grid.acrossClues, grid.downClues, grid.highlighted, grid.highlight);
+  return fromCells({...grid, cells});
 }
 
-export function gridWithBlockToggled<Entry extends ViewableEntry>(grid: ViewableGrid<Entry>, pos: Position, sym: Symmetry): ViewableGrid<Entry> {
+export function gridWithBlockToggled<Entry extends ViewableEntry,
+  Grid extends ViewableGrid<Entry>>(grid: Grid, pos: Position, sym: Symmetry): Grid {
   let char = BLOCK;
   if (valAt(grid, pos) === BLOCK) {
     char = ' ';
@@ -217,18 +225,12 @@ export function gridWithBlockToggled<Entry extends ViewableEntry>(grid: Viewable
     const flipped = pos.row * grid.width + (grid.width - pos.col - 1);
     cells[flipped] = char;
   }
-  return fromCells(grid.mapper, grid.width, grid.height, cells, grid.allowBlockEditing, grid.acrossClues, grid.downClues, grid.highlighted, grid.highlight);
+  return fromCells({...grid, cells});
 }
 
-export function fromCells<Entry extends ViewableEntry>(
-  mapper: (entry: ViewableEntry & EntryWithPattern) => Entry,
-  width: number, height: number, cells: Array<string>,
-  allowBlockEditing: boolean, acrossClues: Array<string>, downClues: Array<string>,
-  highlighted: Set<number>, highlight: "circle" | "shade" | undefined
-): ViewableGrid<Entry> {
-
-  const [baseEntries, entriesByCell] = entriesFromCells(width, height, cells);
-
+export function addClues<Entry extends ViewableEntry,
+  Grid extends ViewableGrid<Entry>>(
+    grid: Grid, acrossClues: Array<string>, downClues: Array<string>): CluedGrid {
   let clues = [new Map<number, string>(), new Map<number, string>()];
   function setClues(jsonClueList: Array<string>, direction: Direction) {
     for (let clue of jsonClueList) {
@@ -244,44 +246,49 @@ export function fromCells<Entry extends ViewableEntry>(
   setClues(acrossClues, Direction.Across);
   setClues(downClues, Direction.Down);
 
+  function mapper(e: Entry): CluedEntry {
+    let clue = clues[e.direction].get(e.labelNumber);
+    if (!clue) {
+      throw new Error("Can't find clue for " + e.labelNumber + " " + e.direction);
+    }
+    return {...e, clue};
+  }
+
+  const entries: Array<CluedEntry> = [];
+  for (const entry of grid.entries) {
+    entries.push(mapper(entry));
+  }
+  return {...grid, mapper: (e) => mapper(grid.mapper(e)), acrossClues, downClues, entries};
+}
+
+export function fromCells<Entry extends ViewableEntry,
+                          Grid extends ViewableGrid<Entry>>(
+  input: Omit<Grid, "entries"|"entriesByCell"|"sortedEntries"|"cellLabels">
+): Grid {
+
+  const [baseEntries, entriesByCell] = entriesFromCells(input.width, input.height, input.cells);
+
   let cellLabels = new Map<number, number>();
   let currentCellLabel = 1;
   const entries: Array<Entry> = [];
   for (const baseEntry of baseEntries) {
     const startPos = baseEntry.cells[0];
-    const i = startPos.row * width + startPos.col;
+    const i = startPos.row * input.width + startPos.col;
     let entryLabel = cellLabels.get(i) || currentCellLabel;
     if (!cellLabels.has(i)) {
       cellLabels.set(i, currentCellLabel);
       currentCellLabel += 1;
     }
-    let entryClue = clues[baseEntry.direction].get(entryLabel);
-    if (!entryClue) {
-      if (allowBlockEditing) {  // We're constructing a puzzle, so clues can be missing
-        entryClue = "";
-      } else {
-        throw new Error("Can't find clue for " + entryLabel + " " + baseEntry.direction);
-      }
-    }
-    entries.push(mapper({
+    entries.push(input.mapper({
       ...baseEntry,
       labelNumber: entryLabel,
-      clue: entryClue,
     }));
   }
   return {
-    mapper,
+    ...input,
     sortedEntries: getSortedEntries(entries),
-    width,
-    height,
-    cells,
     entriesByCell,
     entries,
     cellLabels,
-    allowBlockEditing,
-    acrossClues,
-    downClues,
-    highlighted,
-    highlight
-  };
+  } as Grid; // TODO remove assertion after this is fixed: https://github.com/microsoft/TypeScript/issues/28884#issuecomment-448356158
 }

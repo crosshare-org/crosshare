@@ -1,6 +1,6 @@
 import { valAt, getCrosses } from './gridBase';
 import {
-  AutofillGrid, AutofillEntry, fromTemplate, minGridCost, stableSubsets,
+  AutofillGrid, fromTemplate, minGridCost, stableSubsets,
   numMatchesForEntry, gridWithEntryDecided
 } from './autofillGrid';
 import * as WordDB from './WordDB';
@@ -14,7 +14,7 @@ interface Result {
 }
 interface Recur extends Result {
   type: ResultTag.Recur,
-  grid: AutofillGrid<AutofillEntry>,
+  grid: AutofillGrid,
   discrep: number,
   pitched: Set<string>,
   subset: Set<number>|null,
@@ -23,26 +23,26 @@ interface Recur extends Result {
 function isRecur(result: Result): result is Recur {
     return result.type === ResultTag.Recur;
 }
-function recur(grid:AutofillGrid<AutofillEntry>, discrep:number, pitched:Set<string>, subset:Set<number>|null, cont:Cont): Recur {
+function recur(grid:AutofillGrid, discrep:number, pitched:Set<string>, subset:Set<number>|null, cont:Cont): Recur {
   return {type: ResultTag.Recur, grid, discrep, pitched, subset, cont};
 }
 interface Value extends Result {
   type: ResultTag.Value,
-  result: AutofillGrid<AutofillEntry>|null
+  result: AutofillGrid|null
 }
 function isValue(result: Result): result is Value {
     return result.type === ResultTag.Value;
 }
-function value(x:AutofillGrid<AutofillEntry>|null) {
+function value(x:AutofillGrid|null) {
   return {type: ResultTag.Value, result: x}
 }
 
-type Cont = (x: AutofillGrid<AutofillEntry>|null) => Result;
+type Cont = (x: AutofillGrid|null) => Result;
 
 export class Autofiller {
-  public initialGrid: AutofillGrid<AutofillEntry>;
+  public initialGrid: AutofillGrid;
   public completed: boolean;
-  public solnGrid: AutofillGrid<AutofillEntry>|null;
+  public solnGrid: AutofillGrid|null;
   public solnCost: number|null;
   public nextStep: Result;
   public postedSoln: boolean;
@@ -55,7 +55,7 @@ export class Autofiller {
     public onResult: (input: string[], result: string[]) => void,
     public onComplete: () => void
   ) {
-    this.initialGrid = fromTemplate((e) => e, this.grid, this.width, this.height);
+    this.initialGrid = fromTemplate(this.grid, this.width, this.height);
     this.completed = false;
     this.solnCost = null;
     this.solnGrid = null;
@@ -104,7 +104,7 @@ export class Autofiller {
   };
 
   /* Fill out a grid or a subset of a grid */
-  _solve(grid: AutofillGrid<AutofillEntry>, discrep: number, pitched: Set<string>, subset: Set<number>|null, cont: Cont): Result {
+  _solve(grid: AutofillGrid, discrep: number, pitched: Set<string>, subset: Set<number>|null, cont: Cont): Result {
     const baseCost = minGridCost(grid);
 
     // We already have a solution that's better than this grid could possibly get
@@ -147,12 +147,12 @@ export class Autofiller {
 
     // Consider entries in order of possible matches
     entriesToConsider.sort((e1, e2) => numMatchesForEntry(e1) - numMatchesForEntry(e2));
-    let successor: [AutofillGrid<AutofillEntry>, number, string]|null = null;
+    let successor: [AutofillGrid, number, string]|null = null;
     let successorDiff: number|null = null;
 
     for (const entry of entriesToConsider) {
       const crosses = getCrosses(grid, entry)
-      let bestGrid: [AutofillGrid<AutofillEntry>, number, string]|null = null;
+      let bestGrid: [AutofillGrid, number, string]|null = null;
       let bestCost: number|null = null;
       let secondBestCost: number|null = null;
 

@@ -14,6 +14,9 @@
 - Highlight/prioritize words that have working crosses
 - Fix up overlay width weirdness
 
+- Keep state in autofill showing invalid letters for each cell
+- Keep state in builder showing invalid letters for each cell by direction
+
 ## Available Scripts
 
 In the project directory, you can run:
