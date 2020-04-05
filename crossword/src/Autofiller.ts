@@ -193,19 +193,34 @@ export class Autofiller {
             failFast = true;
             break;
           }
-          const cross = grid.entries[crossIndex];
-          const crossLength = cross.length;
-          const newBitmap = WordDB.updateBitmap(crossLength, cross.bitmap, crosses[i].wordIndex, word[j]);
-          if (newBitmap.equals(WordDB.ZERO)) {
-            failingLetters[i].add(word[j]);
-            failFast = true;
-            break;
-          }
-          const newCost = baseCost - cross.minCost + WordDB.minCost(crossLength, newBitmap);
-          if (costToBeat !== null && newCost > costToBeat) {
-            failingLetters[i].add(word[j]);
-            failFast = true;
-            break;
+        }
+        if (!failFast) {
+          let j = -1;
+          for (let i = 0; i < entry.cells.length; i += 1) {
+            j += 1;
+            const cell = valAt(grid, entry.cells[i]);
+            if (cell !== ' ') {  // Don't need to check cross
+              j += cell.length - 1;
+              continue;
+            }
+            const crossIndex = crosses[i].entryIndex;
+            if (crossIndex === null) {
+              continue;
+            }
+            const cross = grid.entries[crossIndex];
+            const crossLength = cross.length;
+            const newBitmap = WordDB.updateBitmap(crossLength, cross.bitmap, crosses[i].wordIndex, word[j]);
+            if (newBitmap.equals(WordDB.ZERO)) {
+              failingLetters[i].add(word[j]);
+              failFast = true;
+              break;
+            }
+            const newCost = baseCost - cross.minCost + WordDB.minCost(crossLength, newBitmap);
+            if (costToBeat !== null && newCost > costToBeat) {
+              failingLetters[i].add(word[j]);
+              failFast = true;
+              break;
+            }
           }
         }
         if (failFast) {
