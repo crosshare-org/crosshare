@@ -80,7 +80,7 @@ export function entryAtPosition<Entry extends EntryBase>(grid: GridBase<Entry>, 
   if (currentEntryIndex.entryIndex === null) {
     return [null, 0];
   }
-  return [grid.entries[currentEntryIndex.entryIndex], currentEntryIndex.wordIndex];
+  return [grid.entries[currentEntryIndex.entryIndex], currentEntryIndex.cellIndex];
 }
 
 export function entryAndCrossAtPosition<Entry extends EntryBase>(grid: GridBase<Entry>, pos: PosAndDir): [Entry | null, Entry | null] {
