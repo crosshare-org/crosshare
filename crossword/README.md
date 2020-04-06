@@ -11,11 +11,13 @@
 - Click ...More then hit Escape - should only show 1 modal
 - Increase discrep count iteratively until final conditions are met
 - Firefox grid is miniscule!
-- Highlight/prioritize words that have working crosses
 - Fix up overlay width weirdness
-
-- Keep state in autofill showing invalid letters for each cell
+- Clue mode
+- Set title option
+- Highlight/prioritize words that have working crosses
+  - Try doing this in line as they get scrolled into view
 - Keep state in builder showing invalid letters for each cell by direction
+- Sentry
 
 ## Available Scripts
 

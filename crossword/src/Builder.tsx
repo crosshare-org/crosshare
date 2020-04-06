@@ -44,6 +44,7 @@ export const BuilderDBLoader = requiresAdmin((props: PuzzleJson) => {
 });
 
 interface PotentialFillItemProps {
+  isGoodSuggestion: (entryIndex: number, word: string) => boolean,
   entryIndex: number,
   value: [string, number],
   dispatch: React.Dispatch<ClickedFillAction>,
@@ -62,6 +63,7 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
       },
       alignItems: 'center',
       height: 35,
+      fontWeight: props.isGoodSuggestion(props.entryIndex, props.value[0]) ? 'bold' : 'normal',
     }} onClick={click}>
     {props.value[0]}
     </div>
@@ -69,6 +71,7 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
 }
 
 interface PotentialFillListProps {
+  isGoodSuggestion: (entryIndex: number, word: string) => boolean,
   header?: string,
   entryIndex: number,
   values: Array<[string, number]>,
@@ -106,6 +109,7 @@ const PotentialFillList = (props: PotentialFillListProps) => {
               <div style={style}>
               <PotentialFillItem
               key={index}
+              isGoodSuggestion={props.isGoodSuggestion}
               entryIndex={props.entryIndex}
               dispatch={props.dispatch}
               value={props.values[index]}
@@ -189,6 +193,64 @@ export const Builder = (props: PuzzleJson) => {
   let left = <React.Fragment></React.Fragment>;
   let right = <React.Fragment></React.Fragment>;
   let tiny = <React.Fragment></React.Fragment>;
+  let successFailureEntries = new Map<number, Map<number, [string,string]>>();
+  function doCrossesWork(entryIndex: number, word: string) {
+    const entry = state.grid.entries[entryIndex];
+    let successFailure = successFailureEntries.get(entryIndex);
+    if (successFailure === undefined) {
+      successFailure = new Map<number, [string,string]>();
+      successFailureEntries.set(entryIndex, successFailure);
+    }
+    const crosses = getCrosses(state.grid, entry)
+    let j = -1;
+    for (let i = 0; i < entry.cells.length; i += 1) {
+      j += 1;
+      const cell = valAt(state.grid, entry.cells[i]);
+      if (cell.length > 1) {
+        // Handle rebuses
+        j += cell.length - 1;
+        continue;
+      }
+      if (!entry.isComplete && cell !== ' ') {
+        continue;
+      }
+      const crossIndex = crosses[i].entryIndex;
+      if (crossIndex === null) {
+        continue;
+      }
+      const cross = state.grid.entries[crossIndex];
+      if (cross.isComplete) {
+        continue;
+      }
+      let crossSuccessFailure = successFailure.get(i);
+      if (crossSuccessFailure === undefined) {
+        crossSuccessFailure = ["", ""];
+      }
+      const [succeeding, failing] = crossSuccessFailure;
+      if (failing.indexOf(word[j]) !== -1) {
+        return false;
+      }
+      if (succeeding.indexOf(word[j]) !== -1) {
+        continue;
+      }
+      let crossPattern = '';
+      for (let crossCell of cross.cells) {
+        if (crossCell.row === entry.cells[i].row && crossCell.col === entry.cells[i].col) {
+          crossPattern += word[j];
+        } else {
+          crossPattern += valAt(state.grid, crossCell);
+        }
+      }
+      const newBitmap = WordDB.matchingBitmap(crossPattern);
+      if (newBitmap && newBitmap.equals(WordDB.ZERO)) {
+        successFailure.set(i, [succeeding, failing + word[j]]);
+        return false;
+      } else {
+        successFailure.set(i, [succeeding + word[j], failing]);
+      }
+    }
+    return true;
+  }
   for (let entry of entryAndCrossAtPosition(state.grid, state.active)) {
     if (entry !== null) {
       let matches: Array<[string, number]>;
@@ -210,12 +272,12 @@ export const Builder = (props: PuzzleJson) => {
       }
       matches = WordDB.matchingWords(pattern.length, WordDB.matchingBitmap(pattern));
       if (entry.direction === state.active.dir) {
-        tiny = <PotentialFillList values={matches} entryIndex={entry.index} dispatch={dispatch} />;
+        tiny = <PotentialFillList isGoodSuggestion={doCrossesWork} values={matches} entryIndex={entry.index} dispatch={dispatch} />;
       }
       if (entry.direction === Direction.Across) {
-        left = <PotentialFillList header="Across" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
+        left = <PotentialFillList isGoodSuggestion={doCrossesWork} header="Across" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
       } else {
-        right = <PotentialFillList header="Down" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
+        right = <PotentialFillList isGoodSuggestion={doCrossesWork} header="Down" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
       }
     }
   }
