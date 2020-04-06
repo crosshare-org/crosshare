@@ -159,6 +159,8 @@ export class Autofiller {
       let skipEntry = false;
       const failingLetters: Array<string> = [];
       entry.cells.forEach(() => {failingLetters.push("")});
+      const succeedingLetters: Array<string> = [];
+      entry.cells.forEach(() => {succeedingLetters.push("")});
       for (const [word, score] of WordDB.matchingWords(entry.length, entry.bitmap)) {
         if (pitched.has(entry.index + ":" + word)) {
           continue;
@@ -207,6 +209,9 @@ export class Autofiller {
             if (crossIndex === null) {
               continue;
             }
+            if (succeedingLetters[i].indexOf(word[j]) !== -1) {
+              continue;
+            }
             const cross = grid.entries[crossIndex];
             const crossLength = cross.length;
             const newBitmap = WordDB.updateBitmap(crossLength, cross.bitmap, crosses[i].wordIndex, word[j]);
@@ -221,6 +226,7 @@ export class Autofiller {
               failFast = true;
               break;
             }
+            succeedingLetters[i] += word[j];
           }
         }
         if (failFast) {
