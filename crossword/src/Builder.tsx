@@ -79,9 +79,11 @@ interface PotentialFillListProps {
 }
 const PotentialFillList = (props: PotentialFillListProps) => {
   const listRef = React.useRef<List>(null);
-  if (listRef.current !== null) {
-    listRef.current.scrollToItem(0);
-  }
+  React.useEffect(() => {
+    if (listRef.current !== null) {
+      listRef.current.scrollToItem(0);
+    }
+  }, [props.entryIndex, props.values]);
   return (
     <div css={{
       height: "100% !important",
