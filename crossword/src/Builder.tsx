@@ -24,6 +24,7 @@ import { PosAndDir, Direction, PuzzleJson } from './types';
 import {
   Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
   KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
+  SetTitleAction,
 } from './reducer';
 import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav, Page } from './Page';
@@ -142,6 +143,7 @@ const ClueRow = (props: {dispatch: React.Dispatch<PuzzleAction>, entry: BuilderE
 }
 
 interface ClueModeProps {
+  title: string,
   exitClueMode: () => void,
   completedEntries: Array<BuilderEntry>,
   clues: Map<string, string>,
@@ -157,6 +159,9 @@ const ClueMode = (props: ClueModeProps) => {
   return (
     <Page title="Constructor" topBarElements={topbar}>
       <div css={{ padding: '1em'}}>
+      <h4>Title</h4>
+      <input placeholder="Give your puzzle a title" value={props.title} onChange={(e) => props.dispatch({ type: "SETTITLE", value: e.target.value } as SetTitleAction)}/>
+      <h4>Clues</h4>
       {props.completedEntries.length ?
         <table css={{ margin: 'auto', }}>
         {clueRows}
@@ -183,6 +188,7 @@ export const Builder = (props: PuzzleJson) => {
     highlight: props.highlight,
   });
   const [state, dispatch] = React.useReducer(builderReducer, {
+    title: props.title,
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
     grid: initialGrid,
     showKeyboard: isMobile,
@@ -241,7 +247,7 @@ export const Builder = (props: PuzzleJson) => {
 
   const [clueMode, setClueMode] = React.useState(false);
   if (clueMode) {
-    return <ClueMode dispatch={dispatch} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={()=>setClueMode(false)}/>
+    return <ClueMode dispatch={dispatch} title={state.title} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={()=>setClueMode(false)}/>
   }
   return <GridMode autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode}/>
 }

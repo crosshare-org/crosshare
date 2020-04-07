@@ -37,6 +37,7 @@ export interface BuilderEntry extends ViewableEntry {};
 interface BuilderGrid extends ViewableGrid<BuilderEntry> {};
 
 export interface BuilderState extends GridInterfaceState {
+  title: string,
   grid: BuilderGrid,
   gridIsComplete: boolean,
   repeats: Set<string>,
@@ -69,8 +70,16 @@ export interface SetClueAction extends PuzzleAction {
   word: string,
   clue: string,
 }
-export function isSetClueAction(action: PuzzleAction): action is SetClueAction {
+function isSetClueAction(action: PuzzleAction): action is SetClueAction {
   return action.type === 'SETCLUE'
+}
+
+export interface SetTitleAction extends PuzzleAction {
+  type: 'SETTITLE',
+  value: string,
+}
+export function isSetTitleAction(action: PuzzleAction): action is SetTitleAction {
+  return action.type === 'SETTITLE'
 }
 
 export interface ClickedFillAction extends PuzzleAction {
@@ -295,6 +304,9 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   }
   if (isSetClueAction(action)) {
     return ({ ...state, clues: state.clues.set(action.word, action.clue)});
+  }
+  if (isSetTitleAction(action)) {
+    return ({ ...state, title: action.value});
   }
   if (isClickedFillAction(action)) {
     return ({ ...state, grid: gridWithEntrySet(state.grid, action.entryIndex, action.value)});
