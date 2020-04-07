@@ -161,6 +161,8 @@ const PrivacyPolicy = (_: RouteComponentProps) => {
 }
 
 const Home = (_: RouteComponentProps) => {
+  if (1)
+  throw new Error("test");
   return (
     <Page title={null}>
       <div css={{ margin: '1em', }}>
