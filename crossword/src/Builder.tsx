@@ -177,7 +177,7 @@ const ClueMode = (props: ClueModeProps) => {
   )
 }
 
-export const Builder = (props: PuzzleJson) => {
+export const Builder = (props: PuzzleJson & AuthProps) => {
   const initialGrid = fromCells({
     mapper: (e) => e,
     width: props.size.cols,
@@ -249,10 +249,11 @@ export const Builder = (props: PuzzleJson) => {
   if (clueMode) {
     return <ClueMode dispatch={dispatch} title={state.title} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={()=>setClueMode(false)}/>
   }
-  return <GridMode autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode}/>
+  return <GridMode isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode}/>
 }
 
 interface GridModeProps {
+  isAdmin: boolean,
   autofillEnabled: boolean,
   setAutofillEnabled: (val:boolean) => void,
   autofilledGrid: string[],
@@ -408,8 +409,15 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
         </TopBarDropDown>
         <TopBarDropDown icon={<FaEllipsisH />} text="More">
           <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey/>} onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
-          <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
-          <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
+          {
+            props.isAdmin ?
+            <React.Fragment>
+              <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
+              <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
+            </React.Fragment>
+            :
+            ""
+          }
         </TopBarDropDown>
       </TopBar>
       {state.isEnteringRebus ?

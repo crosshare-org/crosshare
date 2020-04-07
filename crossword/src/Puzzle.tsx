@@ -373,8 +373,15 @@ export const Puzzle = requiresAuth((props: PuzzleJson & AuthProps) => {
             :
             <TopBarDropDownLink icon={<FaVolumeMute />} text="Mute" onClick={() => setMuted(true)} />
           }
-          <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
-          <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
+          {
+            props.isAdmin ?
+            <React.Fragment>
+              <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
+              <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
+            </React.Fragment>
+            :
+            ""
+          }
         </TopBarDropDown>
       </TopBar>
       {state.isEnteringRebus ?
