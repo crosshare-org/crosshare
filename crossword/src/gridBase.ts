@@ -4,7 +4,7 @@ export interface EntryBase {
   index: number,
   direction: Direction,
   cells: Array<Position>,
-  isComplete: boolean,
+  completedWord: string|null,
 }
 
 export interface EntryWithPattern extends EntryBase {
@@ -162,7 +162,7 @@ export function entriesFromCells(width: number, height: number, cells: Array<str
           pattern: entryPattern,
           direction: dir,
           cells: entryCells,
-          isComplete: isComplete,
+          completedWord: isComplete ? entryPattern : null,
         });
       }
     }
@@ -208,17 +208,20 @@ export function gridWithEntrySet<Entry extends EntryBase, Grid extends GridBase<
       continue;
     }
     const cross = newGrid.entries[crossIndex];
-    let crossComplete = true;
+    let completedCross:string|null = '';
     for (const cid of cross.cells) {
-      if (valAt(grid, cid) === ' ') {
-        crossComplete = false;
+      const val = valAt(grid, cid)
+      if (val === ' ') {
+        completedCross = null;
         break;
+      } else {
+        completedCross += val;
       }
     }
-    newGrid.entries[crossIndex].isComplete = crossComplete;
+    newGrid.entries[crossIndex].completedWord = completedCross;
   }
   // update entry itself
-  newGrid.entries[entryIndex].isComplete = true;
+  newGrid.entries[entryIndex].completedWord = word;
 
   return newGrid;
 }

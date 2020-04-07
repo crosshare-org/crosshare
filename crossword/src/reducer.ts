@@ -33,14 +33,15 @@ interface PuzzleState extends GridInterfaceState {
   dismissedSuccess: boolean,
 }
 
-interface BuilderEntry extends ViewableEntry {};
+export interface BuilderEntry extends ViewableEntry {};
 interface BuilderGrid extends ViewableGrid<BuilderEntry> {};
 
-interface BuilderState extends GridInterfaceState {
+export interface BuilderState extends GridInterfaceState {
   grid: BuilderGrid,
   gridIsComplete: boolean,
   repeats: Set<string>,
   hasNoShortWords: boolean,
+  clues: Map<string, string>,
 }
 
 export interface PuzzleAction {
@@ -61,6 +62,15 @@ export interface SymmetryAction extends PuzzleAction {
 }
 export function isSymmetryAction(action: PuzzleAction): action is SymmetryAction {
   return action.type === 'CHANGESYMMETRY'
+}
+
+export interface SetClueAction extends PuzzleAction {
+  type: 'SETCLUE',
+  word: string,
+  clue: string,
+}
+export function isSetClueAction(action: PuzzleAction): action is SetClueAction {
+  return action.type === 'SETCLUE'
 }
 
 export interface ClickedFillAction extends PuzzleAction {
@@ -283,8 +293,11 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   if (isSymmetryAction(action)) {
     return ({ ...state, symmetry: action.symmetry });
   }
+  if (isSetClueAction(action)) {
+    return ({ ...state, clues: state.clues.set(action.word, action.clue)});
+  }
   if (isClickedFillAction(action)) {
-    return ({ ...state, grid: gridWithEntrySet(state.grid, action.entryIndex, action.value)})
+    return ({ ...state, grid: gridWithEntrySet(state.grid, action.entryIndex, action.value)});
   }
   return state;
 }
@@ -324,7 +337,7 @@ export function validateGrid(state: BuilderState) {
       hasNoShortWords = false;
     }
     for (let j = 0; j < state.grid.entries.length; j += 1) {
-      if (!state.grid.entries[i].isComplete) continue;
+      if (state.grid.entries[i].completedWord === null) continue;
       if (i === j) continue;
       if (entryWord(state.grid, i) === entryWord(state.grid, j)) {
         repeats.add(entryWord(state.grid, i))

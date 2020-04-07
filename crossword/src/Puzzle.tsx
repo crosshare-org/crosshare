@@ -201,7 +201,7 @@ const ClueList = (props: ClueListProps) => {
       isActive={props.current === entry.index}
       isCross={props.cross === entry.index}
       direction={entry.direction}
-      isCompleted={entry.isComplete}
+      isCompleted={entry.completedWord !== null}
       clue={entry.clue}
     />)
   });

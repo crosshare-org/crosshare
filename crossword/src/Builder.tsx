@@ -4,7 +4,7 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 
 import { isMobile, isTablet } from "react-device-detect";
-import { FaRegCircle, FaRegCheckCircle, FaTabletAlt, FaKeyboard, FaEllipsisH, } from 'react-icons/fa';
+import { FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt, FaKeyboard, FaEllipsisH, } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
@@ -20,11 +20,12 @@ import {
 import { requiresAdmin } from './App';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
-import { fromCells } from './viewableGrid';
+import { fromCells, getClueMap } from './viewableGrid';
 import { PosAndDir, Direction, PuzzleJson } from './types';
 import {
-  Symmetry, builderReducer, validateGrid,
-  KeypressAction, SymmetryAction, ClickedFillAction } from './reducer';
+  Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
+  KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
+} from './reducer';
 import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav, Page } from './Page';
 import { RebusOverlay, getKeyboardHandler, getPhysicalKeyboardHandler } from './Puzzle';
@@ -125,18 +126,66 @@ const PotentialFillList = (props: PotentialFillListProps) => {
   );
 }
 
+const ClueRow = (props: {dispatch: React.Dispatch<PuzzleAction>, entry: BuilderEntry, clues: Map<string,string>}) => {
+  if (props.entry.completedWord === null) {
+    throw new Error("shouldn't ever get here");
+  }
+  return (
+    <tr>
+    <td css={{
+      paddingRight: '1em',
+      paddingBottom: '1em',
+      textAlign: 'right',
+    }}>{props.entry.completedWord}</td>
+    <td css={{ paddingBottom: '1em'}}><input placeholder="Enter a clue" value={props.clues.get(props.entry.completedWord)||""} onChange={(e) => props.dispatch({ type: "SETCLUE", word: props.entry.completedWord, clue: e.target.value } as SetClueAction)}/></td>
+    </tr>
+  );
+}
+
+interface ClueModeProps {
+  exitClueMode: () => void,
+  completedEntries: Array<BuilderEntry>,
+  clues: Map<string, string>,
+  dispatch: React.Dispatch<PuzzleAction>,
+}
+const ClueMode = (props: ClueModeProps) => {
+  const topbar = (
+    <React.Fragment>
+      <TopBarLink icon={<SpinnerFinished/>} text="Back to Grid" onClick={props.exitClueMode}/>
+    </React.Fragment>
+  );
+  const clueRows = props.completedEntries.map(e => <ClueRow dispatch={props.dispatch} entry={e} clues={props.clues}/>);
+  return (
+    <Page title="Constructor" topBarElements={topbar}>
+      <div css={{ padding: '1em'}}>
+      {props.completedEntries.length ?
+        <table css={{ margin: 'auto', }}>
+        {clueRows}
+        </table>
+        :
+        <React.Fragment>
+          <p>This where you come to set clues for your puzzle, but you don't have any completed entries yet!</p>
+          <p>Go back to <a href="#" onClick={(e) => {props.exitClueMode(); e.preventDefault();}}>the grid</a> and fill in one or more entries completly. Then come back here and make some clues.</p>
+        </React.Fragment>
+      }
+      </div>
+    </Page>
+  )
+}
+
 export const Builder = (props: PuzzleJson) => {
+  const initialGrid = fromCells({
+    mapper: (e) => e,
+    width: props.size.cols,
+    height: props.size.rows,
+    cells: props.grid,
+    allowBlockEditing: true,
+    highlighted: new Set(props.highlighted),
+    highlight: props.highlight,
+  });
   const [state, dispatch] = React.useReducer(builderReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
-    grid: fromCells({
-      mapper: (e) => e,
-      width: props.size.cols,
-      height: props.size.rows,
-      cells: props.grid,
-      allowBlockEditing: true,
-      highlighted: new Set(props.highlighted),
-      highlight: props.highlight,
-    }),
+    grid: initialGrid,
     showKeyboard: isMobile,
     isTablet: isTablet,
     showExtraKeyLayout: false,
@@ -148,6 +197,7 @@ export const Builder = (props: PuzzleJson) => {
     hasNoShortWords: false,
     isEditable: () => true,
     symmetry: Symmetry.Rotational,
+    clues: getClueMap(initialGrid, props.clues.across, props.clues.down),
     postEdit(_cellIndex) {
       return validateGrid(this);
     }
@@ -190,8 +240,24 @@ export const Builder = (props: PuzzleJson) => {
     worker.postMessage(autofill);
   }, [state.grid.cells, state.grid.width, state.grid.height]);
 
-  useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
+  const [clueMode, setClueMode] = React.useState(false);
+  if (clueMode) {
+    return <ClueMode dispatch={dispatch} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={()=>setClueMode(false)}/>
+  }
+  return <GridMode autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode}/>
+}
 
+interface GridModeProps {
+  autofillEnabled: boolean,
+  setAutofillEnabled: (val:boolean) => void,
+  autofilledGrid: string[],
+  autofillInProgress: boolean,
+  state: BuilderState,
+  dispatch: React.Dispatch<PuzzleAction>,
+  setClueMode: (val: boolean) => void,
+}
+const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
+  useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
   let left = <React.Fragment></React.Fragment>;
   let right = <React.Fragment></React.Fragment>;
   let tiny = <React.Fragment></React.Fragment>;
@@ -213,7 +279,7 @@ export const Builder = (props: PuzzleJson) => {
         j += cell.length - 1;
         continue;
       }
-      if (!entry.isComplete && cell !== ' ') {
+      if (!entry.completedWord && cell !== ' ') {
         continue;
       }
       const crossIndex = crosses[i].entryIndex;
@@ -221,7 +287,7 @@ export const Builder = (props: PuzzleJson) => {
         continue;
       }
       const cross = state.grid.entries[crossIndex];
-      if (cross.isComplete) {
+      if (cross.completedWord) {
         continue;
       }
       let crossSuccessFailure = successFailure.get(i);
@@ -263,10 +329,10 @@ export const Builder = (props: PuzzleJson) => {
         const val = valAt(state.grid, cell);
         const cross = crosses[index];
         // If complete, remove any cells whose crosses aren't complete and show that
-        if (entry.isComplete &&
+        if (entry.completedWord &&
             val.length === 1 &&
             cross.entryIndex !== null &&
-            !state.grid.entries[cross.entryIndex].isComplete) {
+            !state.grid.entries[cross.entryIndex].completedWord) {
           pattern += " ";
         } else {
           pattern += val;
@@ -285,16 +351,16 @@ export const Builder = (props: PuzzleJson) => {
   }
 
   function toggleAutofillEnabled() {
-    setAutofillEnabled(a => !a);
+    props.setAutofillEnabled(!props.autofillEnabled);
   }
 
   let autofillIcon = <SpinnerDisabled/>;
   let autofillText = "Autofill disabled";
-  if (autofillEnabled) {
-    if (autofillInProgress) {
+  if (props.autofillEnabled) {
+    if (props.autofillInProgress) {
       autofillIcon = <SpinnerWorking/>;
       autofillText = "Autofill in progress";
-    } else if (autofilledGrid.length) {
+    } else if (props.autofilledGrid.length) {
       autofillIcon = <SpinnerFinished/>;
       autofillText = "Autofill complete";
     } else {
@@ -313,6 +379,7 @@ export const Builder = (props: PuzzleJson) => {
       </Helmet>
       <TopBar>
         <TopBarLink icon={autofillIcon} text="Autofill" hoverText={autofillText} onClick={toggleAutofillEnabled} />
+        <TopBarLink icon={<FaListOl/>} text="Clues" onClick={() => setClueMode(true)}/>
         <TopBarDropDown icon={<IoMdStats/>} text="Stats">
           <h4 css={{width: '100%'}}>Grid status</h4>
           <div css={{
@@ -355,7 +422,7 @@ export const Builder = (props: PuzzleJson) => {
             active={state.active}
             dispatch={dispatch}
             allowBlockEditing={true}
-            autofill={autofillEnabled ? autofilledGrid : []}
+            autofill={props.autofillEnabled ? props.autofilledGrid : []}
           />
         }
         left={left}

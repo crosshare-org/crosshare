@@ -163,7 +163,7 @@ export function moveToNextEntry<Entry extends ViewableEntry>(grid: ViewableGrid<
       index = (i + grid.sortedEntries.length - offset - 1) % grid.sortedEntries.length;
     }
     const tryEntry = grid.entries[grid.sortedEntries[index]];
-    if (!tryEntry.isComplete) {
+    if (tryEntry.completedWord === null) {
       for (let cell of tryEntry.cells) {
         if (valAt(grid, cell) === " ") {
           return {...cell, dir: tryEntry.direction};
@@ -228,9 +228,25 @@ export function gridWithBlockToggled<Entry extends ViewableEntry,
   return fromCells({...grid, cells});
 }
 
-export function addClues<Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>>(
-    grid: Grid, acrossClues: Array<string>, downClues: Array<string>): CluedGrid {
+export function getClueMap<Entry extends ViewableEntry,
+  Grid extends ViewableGrid<Entry>>(grid: Grid, acrossClues: Array<string>, downClues: Array<string>): Map<string, string> {
+  const result = new Map<string, string>();
+  const clues = cluesByDirection(acrossClues, downClues);
+
+  for (const entry of grid.entries) {
+    if (entry.completedWord === null) {
+      continue;
+    }
+    const clue = clues[entry.direction].get(entry.labelNumber);
+    if (!clue) {
+      continue;
+    }
+    result.set(entry.completedWord, clue);
+  }
+  return result;
+}
+
+function cluesByDirection(acrossClues: Array<string>, downClues: Array<string>) {
   let clues = [new Map<number, string>(), new Map<number, string>()];
   function setClues(jsonClueList: Array<string>, direction: Direction) {
     for (let clue of jsonClueList) {
@@ -245,6 +261,13 @@ export function addClues<Entry extends ViewableEntry,
   }
   setClues(acrossClues, Direction.Across);
   setClues(downClues, Direction.Down);
+  return clues;
+}
+
+export function addClues<Entry extends ViewableEntry,
+  Grid extends ViewableGrid<Entry>>(
+    grid: Grid, acrossClues: Array<string>, downClues: Array<string>): CluedGrid {
+  const clues = cluesByDirection(acrossClues, downClues);
 
   function mapper(e: Entry): CluedEntry {
     let clue = clues[e.direction].get(e.labelNumber);

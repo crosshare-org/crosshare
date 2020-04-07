@@ -1,23 +1,25 @@
 ## TODO
+- Set title option
 - Store solve state in browser data
 - DB backend for puzzles, users, plays
-- .puz import
 - Basic stats for a play and for constructors
 - Comments
-- Pause for 'keep trying' popup?
-- Play / discuss NYT
+- Hide toggle keyboard/tablet links
 - Layout when ios is zoomed in (eric report)
 - Daily Fiver
+- Suggestions from DB in clue mode
+- Sentry
 - Click ...More then hit Escape - should only show 1 modal
-- Increase discrep count iteratively until final conditions are met
 - Firefox grid is miniscule!
 - Fix up overlay width weirdness
-- Clue mode
-- Set title option
-- Highlight/prioritize words that have working crosses
-  - Try doing this in line as they get scrolled into view
-- Keep state in builder showing invalid letters for each cell by direction
-- Sentry
+- Ratings for players / puzzles https://www.freechess.org/Help/HelpFiles/glicko.html
+- Undo/Redo for clicking on a fill suggestion
+- Accept autofill suggestion per word/whole puzzle
+- Increase discrep count iteratively until final conditions are met https://arxiv.org/pdf/1401.4597.pdf
+- Load/Save/Open dialog
+- .puz import
+- Pause for 'keep trying' popup?
+- Play / discuss NYT
 
 ## Available Scripts
 

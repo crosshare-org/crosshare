@@ -112,7 +112,7 @@ export class Autofiller {
       return cont(null);
     }
 
-    let entriesToConsider = grid.entries.filter((e) => !e.isComplete);
+    let entriesToConsider = grid.entries.filter((e) => !e.completedWord);
     // There are no entries left to consider, this grid must be a new best solution
     if (entriesToConsider.length === 0) {
       this.solnGrid = grid

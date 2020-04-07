@@ -65,7 +65,7 @@ export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, wor
       continue;
     }
     const cross = newGrid.entries[crossIndex];
-    let crossWord = '';
+    let crossWord: string|null = '';
     cross.cells.forEach((cid) => {
       crossWord += valAt(newGrid, cid);
     });
@@ -75,16 +75,16 @@ export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, wor
       return null;
     }
 
-    let crossCompleted = false;
     if (crossWord.indexOf(' ') === -1) {
-      crossCompleted = true
       newGrid.usedWords.add(crossWord);
+    } else {
+      crossWord = null;
     }
 
     newGrid.entries[crossIndex] = {
       ...cross,
       bitmap: crossBitmap,
-      isComplete: crossCompleted,
+      completedWord: crossWord,
       minCost: minCost(cross.length, crossBitmap),
     };
   }
@@ -93,7 +93,7 @@ export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, wor
   newGrid.entries[entryIndex] = {
     ...entry,
     bitmap: null,
-    isComplete: true,
+    completedWord: word,
     minCost: 1 / score,
   };
 
@@ -101,7 +101,7 @@ export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, wor
 }
 
 export function stableSubsets(grid: AutofillGrid, prelimSubset: Set<number>|null) {
-  let openEntries = grid.entries.filter((e) => !e.isComplete);
+  let openEntries = grid.entries.filter((e) => !e.completedWord);
   if (prelimSubset !== null) {
     openEntries = openEntries.filter((e) => prelimSubset.has(e.index))
   }
@@ -160,8 +160,8 @@ export function fromTemplate(
   const [baseEntries, entriesByCell] = entriesFromCells(width, height, cells);
 
   const entries = baseEntries.map(baseEntry => {
-    if (baseEntry.isComplete) {
-      usedWords.add(baseEntry.pattern);
+    if (baseEntry.completedWord) {
+      usedWords.add(baseEntry.completedWord);
     }
     return addAutofillFieldsToEntry(baseEntry);
   });
