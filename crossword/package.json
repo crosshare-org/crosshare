@@ -1,6 +1,6 @@
 {
   "name": "crossword",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "@emotion/core": "^10.0.28",
@@ -30,7 +30,6 @@
     "minimalist": "^1.0.0",
     "node-sass": "^4.13.1",
     "react": "^16.13.1",
-    "react-app-rewired": "^2.1.5",
     "react-device-detect": "^1.11.14",
     "react-dom": "^16.13.1",
     "react-firebase-hooks": "^2.1.1",
@@ -38,7 +37,7 @@
     "react-helmet-async": "^1.0.4",
     "react-icons": "^3.9.0",
     "react-scripts": "3.3.1",
-    "react-simple-keyboard": "^2.2.61",
+    "react-simple-keyboard": "^2.2.65",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
     "source-map-explorer": "^2.4.2",
@@ -46,11 +45,11 @@
     "worker-loader": "^2.0.0"
   },
   "scripts": {
-    "analyze": "react-app-rewired build && source-map-explorer 'build/static/js/*.js'",
-    "start": "react-app-rewired start",
-    "build": "GENERATE_SOURCEMAP=false react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject"
+    "analyze": "react-scripts build && source-map-explorer 'build/static/js/*.js'",
+    "start": "react-scripts start",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
