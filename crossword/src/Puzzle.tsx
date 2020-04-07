@@ -120,18 +120,20 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
   );
 });
 
-const BeginPuzzleOverlay = (props: {dismiss: () => void}) => {
+const BeginPuzzleOverlay = (props: {title: string, dismiss: () => void}) => {
   return (
     <Overlay showingKeyboard={false} closeCallback={props.dismiss}>
+      <h3>{props.title}</h3>
       <h4 css={{width: '100%'}}>Ready to get started?</h4>
       <button onClick={props.dismiss}>Begin Puzzle</button>
     </Overlay>
   );
 }
 
-const PausedOverlay = (props: {dismiss: () => void}) => {
+const PausedOverlay = (props: {title: string, dismiss: () => void}) => {
   return (
     <Overlay showingKeyboard={false} closeCallback={props.dismiss}>
+      <h3>{props.title}</h3>
       <h4 css={{width: '100%'}}>Your puzzle is paused</h4>
       <button onClick={props.dismiss}>Resume</button>
     </Overlay>
@@ -385,9 +387,9 @@ export const Puzzle = requiresAuth((props: PuzzleJson) => {
       :""}
       {isPaused && !state.success ?
         (elapsed === 0 ?
-          <BeginPuzzleOverlay dismiss={resume}/>
+          <BeginPuzzleOverlay title={props.title} dismiss={resume}/>
           :
-          <PausedOverlay dismiss={resume}/>
+          <PausedOverlay title={props.title} dismiss={resume}/>
         )
       :""}
       <SquareAndCols
