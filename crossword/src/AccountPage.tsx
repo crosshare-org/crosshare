@@ -4,7 +4,7 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 import { RouteComponentProps } from "@reach/router";
 
-import { AuthContext, requiresAuth } from './App';
+import { requiresAuth, AuthProps } from './App';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
@@ -41,11 +41,7 @@ const DisplayNameForm = ({user}: {user: firebase.User}) => {
   );
 };
 
-export const AccountPage = requiresAuth((_: RouteComponentProps) => {
-  const {user} = React.useContext(AuthContext);
-  if (!user) {
-    throw new Error("bad user in context");
-  }
+export const AccountPage = requiresAuth(({user}: RouteComponentProps & AuthProps) => {
   return (
     <Page title="Account">
       <div css={{ margin: '1em', }}>

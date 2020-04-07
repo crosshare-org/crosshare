@@ -6,12 +6,12 @@ import { isRight } from 'fp-ts/lib/Either'
 import { RouteComponentProps } from "@reach/router";
 import { PathReporter } from "io-ts/lib/PathReporter";
 
-import { requiresAdmin } from './App';
+import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
 import { PuzzleJson, PuzzleJsonV } from './types';
 import { BuilderDBLoader } from './Builder';
 
-export const Uploader = requiresAdmin((_: RouteComponentProps) => {
+export const Uploader = requiresAdmin((_: RouteComponentProps & AuthProps) => {
   const [puzzle, setPuzzle] = React.useState<PuzzleJson|null>(null);
   const [error, setError] = React.useState<string|null>(null);
 

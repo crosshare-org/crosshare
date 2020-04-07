@@ -10,7 +10,7 @@ import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
 
 import { EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle, Rebus } from './Icons';
-import { requiresAuth } from './App';
+import { requiresAuth, AuthProps } from './App';
 import { useTimer } from './timer';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
@@ -273,7 +273,7 @@ export function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction
   }
 }
 
-export const Puzzle = requiresAuth((props: PuzzleJson) => {
+export const Puzzle = requiresAuth((props: PuzzleJson & AuthProps) => {
   const [state, dispatch] = React.useReducer(puzzleReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
     grid: addClues(fromCells({

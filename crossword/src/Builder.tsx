@@ -16,7 +16,7 @@ import {
   SymmetryIcon, SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
   EscapeKey,
 } from './Icons';
-import { requiresAdmin } from './App';
+import { requiresAdmin, AuthProps } from './App';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
 import { fromCells, getClueMap } from './viewableGrid';
@@ -35,7 +35,7 @@ import * as WordDB from './WordDB';
 
 let worker: Worker;
 
-export const BuilderDBLoader = requiresAdmin((props: PuzzleJson) => {
+export const BuilderDBLoader = requiresAdmin((props: PuzzleJson & AuthProps) => {
   const [ready, setReady] = React.useState(false);
   WordDB.initializeOrBuild(setReady);
   if (ready) {

@@ -1,17 +1,12 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 
-import * as React from 'react';
 import { RouteComponentProps } from "@reach/router";
 
-import { AuthContext, requiresAdmin } from './App';
+import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
 
-export const Admin = requiresAdmin((_: RouteComponentProps) => {
-  const {user} = React.useContext(AuthContext);
-  if (!user) {
-    throw new Error("bad user in context");
-  }
+export const Admin = requiresAdmin(({user}: RouteComponentProps & AuthProps) => {
   return (
     <Page title="Admin">
       <div css={{ margin: '1em', }}>

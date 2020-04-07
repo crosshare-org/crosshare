@@ -33,9 +33,36 @@ interface AuthContextValue {
 export const AuthContext = React.createContext({user:undefined,loadingUser:false,error:"using default context"} as AuthContextValue);
 firebase.initializeApp(firebaseConfig);
 
-export function requiresAuth<T>(WrappedComponent: React.ComponentType<T>) {
-  return (props: T) => {
-    const {user, loadingUser, error} = React.useContext(AuthContext);
+function useAuth(): [firebase.User|undefined, boolean, boolean, string|undefined] {
+  const [isAdmin, setIsAdmin] = React.useState(false);
+  const {user, loadingUser, error} = React.useContext(AuthContext);
+  if (user && user.email) {
+    user.getIdTokenResult()
+    .then((idTokenResult) => {
+      if (!!idTokenResult.claims.admin) {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    })
+    .catch((error) => {
+      setIsAdmin(false);
+      console.error(error);
+    });
+  }
+  return [user, isAdmin, loadingUser, error];
+}
+
+type Optionalize<T extends K, K> = Omit<T, keyof K>;
+
+export interface AuthProps {
+  isAdmin: boolean,
+  user: firebase.User,
+};
+
+export function requiresAuth<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
+  return (props: Optionalize<T, AuthProps>) => {
+    const [user, isAdmin, loadingUser, error] = useAuth();
     if (loadingUser) {
       return <Page title={null}>Loading user...</Page>;
     }
@@ -43,7 +70,7 @@ export function requiresAuth<T>(WrappedComponent: React.ComponentType<T>) {
       return <Page title={null}>Error loading user: {error}</Page>;
     }
     if (user && user.email) {
-      return <WrappedComponent user={user} {...props}/>
+      return <WrappedComponent isAdmin={isAdmin} user={user} {...(props as T)}/>
     };
     return (
       <Page title="Sign In">
@@ -56,10 +83,9 @@ export function requiresAuth<T>(WrappedComponent: React.ComponentType<T>) {
   }
 }
 
-export function requiresAdmin<T>(WrappedComponent: React.ComponentType<T>) {
-  return (props: T) => {
-    const [isAdmin, setIsAdmin] = React.useState(false);
-    const {user, loadingUser, error} = React.useContext(AuthContext);
+export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
+  return (props: Optionalize<T, AuthProps>) => {
+    const [user, isAdmin, loadingUser, error] = useAuth();
     if (loadingUser) {
       return <Page title={null}>Loading user...</Page>;
     }
@@ -67,24 +93,11 @@ export function requiresAdmin<T>(WrappedComponent: React.ComponentType<T>) {
       return <Page title={null}>Error loading user: {error}</Page>;
     }
     if (user && user.email) {
-      user.getIdTokenResult()
-      .then((idTokenResult) => {
-        if (!!idTokenResult.claims.admin) {
-          setIsAdmin(true);
-        } else {
-          setIsAdmin(false);
-        }
-      })
-      .catch((error) => {
-        setIsAdmin(false);
-        console.log(error);
-      });
-      if (isAdmin) {
-        return <WrappedComponent user={user} {...props}/>;
-      } else {
+      if (!isAdmin) {
         return <Page title="Error">Must be an admin to view this page.</Page>;
       }
-    };
+      return <WrappedComponent isAdmin={true} user={user} {...(props as T)}/>
+    }
     return (
       <Page title="Sign In">
       <div css={{ margin: '1em', }}>
