@@ -2,14 +2,16 @@
 import { jsx } from '@emotion/core';
 import * as React from 'react';
 
-import { Router, RouteComponentProps } from "@reach/router";
+import { navigate, Router, RouteComponentProps } from "@reach/router";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import { firebaseConfig, firebaseUiConfig } from './config';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { FaUser } from 'react-icons/fa';
 
+import { TopBarLink } from './TopBar';
 import { ErrorBoundary } from './ErrorBoundary';
 import { PuzzleLoader } from './Puzzle';
 import { BuilderDBLoader } from './Builder';
@@ -168,8 +170,13 @@ const PrivacyPolicy = (_: RouteComponentProps) => {
 }
 
 const Home = (_: RouteComponentProps) => {
+  const auth_result = useAuth();
+  let topbar = null;
+  if (auth_result[0]) {
+    topbar = <TopBarLink icon={<FaUser/>} text="Account" onClick={() => navigate('/account')}/>
+  }
   return (
-    <Page title={null}>
+    <Page title={null} topBarElements={topbar}>
       <div css={{ margin: '1em', }}>
         <p>Crosshare is a not-for-profit community for crossword constructors.</p>
         <p>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>.</p>
