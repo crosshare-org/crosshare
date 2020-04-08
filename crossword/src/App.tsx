@@ -10,6 +10,7 @@ import { firebaseConfig, firebaseUiConfig } from './config';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 
+import { ErrorBoundary } from './ErrorBoundary';
 import { PuzzleLoader } from './Puzzle';
 import { BuilderDBLoader } from './Builder';
 import { Page, SquareTest } from './Page';
@@ -266,6 +267,7 @@ const IconsDemo = (_: RouteComponentProps) => {
 const App = () => {
   const [user, loadingUser, error] = useAuthState(firebase.auth());
   return (
+<ErrorBoundary>
 <HelmetProvider>
   <AuthContext.Provider value={{ user: user, loadingUser: loadingUser, error: error ?.message}}>
     <Helmet defaultTitle="Crosshare" titleTemplate="%s | Crosshare" />
@@ -286,6 +288,7 @@ const App = () => {
     </Router>
   </AuthContext.Provider>
 </HelmetProvider>
+</ErrorBoundary>
   );
 }
 
