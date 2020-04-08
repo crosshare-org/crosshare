@@ -3,9 +3,9 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 import axios from 'axios';
-import { RouteComponentProps } from '@reach/router';
+import { navigate, RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
-import { FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt, FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare } from 'react-icons/fa';
+import { FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt, FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
 
@@ -382,6 +382,7 @@ export const Puzzle = requiresAuth((props: PuzzleJson & AuthProps) => {
             :
             ""
           }
+          <TopBarDropDownLink icon={<FaUser/>} text="Account" onClick={() => navigate('/account')}/>
         </TopBarDropDown>
       </TopBar>
       {state.isEnteringRebus ?

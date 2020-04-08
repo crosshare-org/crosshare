@@ -4,12 +4,13 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 
 import { isMobile, isTablet } from "react-device-detect";
-import { FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt, FaKeyboard, FaEllipsisH, } from 'react-icons/fa';
+import { FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt, FaKeyboard, FaEllipsisH, } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
 import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
+import { navigate } from '@reach/router';
 
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
@@ -425,6 +426,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
             :
             ""
           }
+          <TopBarDropDownLink icon={<FaUser/>} text="Account" onClick={() => navigate('/account')}/>
         </TopBarDropDown>
       </TopBar>
       {state.isEnteringRebus ?
