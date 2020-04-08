@@ -109,6 +109,12 @@ export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.Compo
   }
 }
 
+const ErrorTest = requiresAdmin((_: RouteComponentProps & AuthProps) => {
+  if (1)
+    throw new Error("testing");
+  return <div>error</div>;
+});
+
 const NotFound = (_: RouteComponentProps) => {
   return <Page title="Not Found"> not found :(</Page>;
 }
@@ -267,6 +273,7 @@ const App = () => {
       <Home path="/" />
       <AccountPage path="/account" />
       <Admin path="/admin" />
+      <ErrorTest path="/error" />
       <IconsDemo path="/icons" />
       <Uploader path="/upload" />
       <Construct path="/construct" />
