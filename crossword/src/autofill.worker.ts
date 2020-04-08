@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { AutofillResultMessage, AutofillCompleteMessage, WorkerMessage, isLoadDBMessage, isAutofillMessage } from './types';
 import { Autofiller } from './Autofiller';
 import { transformDb, setDb } from './WordDB';
