@@ -169,7 +169,14 @@ const ClueMode = (props: ClueModeProps) => {
         :
         <React.Fragment>
           <p>This where you come to set clues for your puzzle, but you don't have any completed entries yet!</p>
-          <p>Go back to <a href="#" onClick={(e) => {props.exitClueMode(); e.preventDefault();}}>the grid</a> and fill in one or more entries completly. Then come back here and make some clues.</p>
+          <p>Go back to <button css={{
+            background: 'none!important',
+            border: 'none',
+            padding: '0!important',
+            color: '#069',
+            textDecoration: 'underline',
+            cursor: 'pointer',
+          }} onClick={(e) => {props.exitClueMode(); e.preventDefault();}}>the grid</button> and fill in one or more entries completly. Then come back here and make some clues.</p>
         </React.Fragment>
       }
       </div>
