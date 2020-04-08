@@ -2,7 +2,7 @@
 import { jsx } from '@emotion/core';
 import * as React from 'react';
 
-import { Link, Router, RouteComponentProps } from "@reach/router";
+import { Router, RouteComponentProps } from "@reach/router";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -161,13 +161,10 @@ const PrivacyPolicy = (_: RouteComponentProps) => {
 }
 
 const Home = (_: RouteComponentProps) => {
-  if (1)
-  throw new Error("test");
   return (
     <Page title={null}>
       <div css={{ margin: '1em', }}>
         <p>Crosshare is a not-for-profit community for crossword constructors.</p>
-        <p>Go to <Link to="/dbtest">DBTest</Link></p>
         <p>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>.</p>
       </div>
     </Page>
