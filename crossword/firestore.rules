@@ -18,7 +18,7 @@ service cloud.firestore {
     }
     match /crosswords/{crosswordId} {
       allow get: if isAdmin() || isAuthor() || (request.auth != null && resource.data.moderated == true && isPublished());
-      allow list: if isAdmin();
+      allow list: if isAdmin() || isAuthor() || (resource.data.category != null && request.time >= resource.data.publishTime);
       allow update: if isAdmin();
       allow create: if isAdmin() && authorSetCorrectly() && request.resource.data.category == null && request.resource.data.publishTime == null && request.resource.data.moderated == false;
     }
