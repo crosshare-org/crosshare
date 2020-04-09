@@ -1,5 +1,6 @@
 import * as t from "io-ts";
 import { WordDBT } from './WordDB';
+import firebase from 'firebase/app';
 
 export const BLOCK = ".";
 
@@ -70,3 +71,34 @@ const PuzzleJsonOptionalV = t.partial({
 export const PuzzleJsonV = t.intersection([PuzzleJsonMandatoryV, PuzzleJsonOptionalV]);
 
 export type PuzzleJson = t.TypeOf<typeof PuzzleJsonV>;
+
+const isFirestoreTimestamp = (u: unknown): u is firebase.firestore.Timestamp =>
+  u ? u instanceof firebase.firestore.Timestamp : false;
+
+const timestamp = new t.Type<firebase.firestore.Timestamp>(
+  'Timestamp',
+  isFirestoreTimestamp,
+  (m, c) => (isFirestoreTimestamp(m) ? t.success(m) : t.failure(m, c)),
+  t.identity,
+);
+
+export const PuzzleV = t.type({
+  authorId: t.string,
+  moderated: t.boolean,
+  publishTime: t.union([timestamp, t.null]),
+  title: t.string,
+  size: t.type({
+    rows: t.number,
+    cols: t.number
+  }),
+  clues: t.array(t.type({
+    num: t.number,
+    dir: t.union([t.literal(0), t.literal(1)]),
+    clue: t.string,
+  })),
+  grid: t.array(t.string),
+  highlighted: t.array(t.number),
+  highlight: t.keyof({circle: null, shade: null})
+});
+
+export type PuzzleT = t.TypeOf<typeof PuzzleV>;

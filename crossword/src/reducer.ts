@@ -309,7 +309,7 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
     return ({ ...state, title: action.value});
   }
   if (isClickedFillAction(action)) {
-    return ({ ...state, grid: gridWithEntrySet(state.grid, action.entryIndex, action.value)});
+    return ({ ...state, grid: gridWithEntrySet(state.grid, action.entryIndex, action.value)}.postEdit(0) as BuilderState);
   }
   return state;
 }

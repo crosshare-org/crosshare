@@ -210,7 +210,7 @@ export function gridWithEntrySet<Entry extends EntryBase, Grid extends GridBase<
     const cross = newGrid.entries[crossIndex];
     let completedCross:string|null = '';
     for (const cid of cross.cells) {
-      const val = valAt(grid, cid)
+      const val = valAt(newGrid, cid)
       if (val === ' ') {
         completedCross = null;
         break;

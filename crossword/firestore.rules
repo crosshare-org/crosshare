@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function isAuthor() {
-      return request.auth.uid != null && resource.data.authorId == request.auth.uid;
+      return request.auth.uid != null && request.auth.uid == resource.data.authorId;
     }
     function authorSetCorrectly() {
       return request.auth.uid != null && request.auth.uid == request.resource.data.authorId;
@@ -10,16 +10,15 @@ service cloud.firestore {
     function isAdmin() {
       return request.auth.token.admin;
     }
+    function isPublished() {
+      return resource.data.publishTime == null || request.time > resource.data.publishTime;
+    }
     match /{document=**} {
       allow read, write: if false;
     }
     match /crosswords/{crosswordId} {
-      allow get: if request.auth != null && request.time > resource.data.publishTime;
-      allow create: if isAdmin();
-    }
-    match /unmoderated/{crosswordId} {
-      allow get: if isAuthor() || isAdmin();
-      allow create: if isAdmin() && authorSetCorrectly();
+      allow get: if isAdmin() || isAuthor() || (request.auth != null && resource.data.moderated == true && isPublished());
+      allow create: if isAdmin() && authorSetCorrectly() && request.resource.data.moderated == false;
     }
   }
 }

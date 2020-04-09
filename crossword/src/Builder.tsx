@@ -3,14 +3,21 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from "io-ts/lib/PathReporter";
 import { isMobile, isTablet } from "react-device-detect";
-import { FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt, FaKeyboard, FaEllipsisH, } from 'react-icons/fa';
+import {
+  FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt,
+  FaKeyboard, FaEllipsisH,
+} from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
 import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { navigate } from '@reach/router';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
@@ -21,7 +28,7 @@ import { requiresAdmin, AuthProps } from './App';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
 import { fromCells, getClueMap } from './viewableGrid';
-import { PosAndDir, Direction, PuzzleJson } from './types';
+import { PosAndDir, Direction, PuzzleJson, PuzzleV } from './types';
 import {
   Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
   KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
@@ -33,6 +40,7 @@ import { RebusOverlay, getKeyboardHandler, getPhysicalKeyboardHandler } from './
 import AutofillWorker from 'worker-loader!./autofill.worker.ts'; // eslint-disable-line import/no-webpack-loader-syntax
 import { isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from './types';
 import * as WordDB from './WordDB';
+import { Overlay } from './Overlay';
 
 let worker: Worker;
 
@@ -156,7 +164,7 @@ const ClueMode = (props: ClueModeProps) => {
       <TopBarLink icon={<SpinnerFinished/>} text="Back to Grid" onClick={props.exitClueMode}/>
     </React.Fragment>
   );
-  const clueRows = props.completedEntries.map(e => <ClueRow dispatch={props.dispatch} entry={e} clues={props.clues}/>);
+  const clueRows = props.completedEntries.map(e => <ClueRow key={e.completedWord||""} dispatch={props.dispatch} entry={e} clues={props.clues}/>);
   return (
     <Page title="Constructor" topBarElements={topbar}>
       <div css={{ padding: '1em'}}>
@@ -165,7 +173,9 @@ const ClueMode = (props: ClueModeProps) => {
       <h4>Clues</h4>
       {props.completedEntries.length ?
         <table css={{ margin: 'auto', }}>
+        <tbody>
         {clueRows}
+        </tbody>
         </table>
         :
         <React.Fragment>
@@ -257,10 +267,11 @@ export const Builder = (props: PuzzleJson & AuthProps) => {
   if (clueMode) {
     return <ClueMode dispatch={dispatch} title={state.title} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={()=>setClueMode(false)}/>
   }
-  return <GridMode isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode}/>
+  return <GridMode user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode}/>
 }
 
 interface GridModeProps {
+  user: firebase.User,
   isAdmin: boolean,
   autofillEnabled: boolean,
   setAutofillEnabled: (val:boolean) => void,
@@ -271,6 +282,7 @@ interface GridModeProps {
   setClueMode: (val: boolean) => void,
 }
 const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
+  const [publishErrors, setPublishErrors] = React.useState<React.ReactNode>(null);
   useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
   let left = <React.Fragment></React.Fragment>;
   let right = <React.Fragment></React.Fragment>;
@@ -386,6 +398,63 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
   state.grid.entries.forEach((e) => totalLength += e.cells.length);
   const numEntries = state.grid.entries.length;
   const averageLength = totalLength / numEntries;
+
+  function publish() {
+    let errors = [];
+    if (!state.gridIsComplete) {
+      errors.push(<li key="full">All squares in the grid must be filled in</li>);
+    }
+    if (state.repeats.size > 0) {
+      errors.push(<li key="repeat">No entries can be repeated ({Array.from(state.repeats).sort().join(", ")})</li>);
+    }
+    if (!state.title) {
+      errors.push(<li key="title">Puzzle must have a title set</li>);
+    }
+    const missingClues = state.grid.entries.filter((e) => !state.clues.has(e.completedWord || '')).map((e => e.completedWord || ""));
+    if (missingClues.length) {
+      errors.push(<li key="clues">All entries must have a clue set ({Array.from(new Set(missingClues)).sort().join(", ")})</li>);
+    }
+
+    if (errors.length) {
+      setPublishErrors(errors);
+      return;
+    }
+
+    const clues = state.grid.entries.map((e) => {
+      if (!e.completedWord) {
+        throw new Error("Publish unfinished grid");
+      }
+      return {
+        num: e.labelNumber,
+        dir: e.direction,
+        clue: state.clues.get(e.completedWord)
+      };
+    });
+    const validationResult = PuzzleV.decode({
+      title: state.title,
+      authorId: props.user.uid,
+      moderated: false,
+      publishTime: null,
+      size: {
+        rows: state.grid.height,
+        cols: state.grid.width
+      },
+      clues: clues,
+      grid: state.grid.cells,
+      highlighted: Array.from(state.grid.highlighted),
+      highlight: state.grid.highlight || "circle"
+    });
+    if (isRight(validationResult)) {
+      console.log("Puzzle passed validation, now uploading");
+      console.log(validationResult.right);
+      const db = firebase.firestore();
+      db.collection("crosswords").add(validationResult.right).then((ref) => {
+        console.log("Uploaded", ref.id);
+      });
+    } else {
+      console.error(PathReporter.report(validationResult).join(","));
+    }
+  }
   return (
     <React.Fragment>
       <Helmet>
@@ -416,6 +485,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
           <TopBarDropDownLink icon={<SymmetryNone />} text="No Symmetry" onClick={() => dispatch({ type: "CHANGESYMMETRY", symmetry: Symmetry.None } as SymmetryAction)} />
         </TopBarDropDown>
         <TopBarDropDown icon={<FaEllipsisH />} text="More">
+          <TopBarDropDownLink icon={<FaRegNewspaper/>} text="Publish Puzzle" onClick={publish} />
           <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey/>} onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
           {
             props.isAdmin ?
@@ -431,6 +501,15 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
       </TopBar>
       {state.isEnteringRebus ?
         <RebusOverlay showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
+      {publishErrors ?
+        <Overlay showingKeyboard={false} closeCallback={() => setPublishErrors(null)}>
+          <React.Fragment>
+          <div css={{width: '100%'}}>Please fix the following errors and try publishing again:</div>
+          <ul>
+          {publishErrors}
+          </ul>
+          </React.Fragment>
+        </Overlay> : ""}
       <SquareAndCols
         showKeyboard={state.showKeyboard}
         keyboardHandler={getKeyboardHandler(dispatch)}
