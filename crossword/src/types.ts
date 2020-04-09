@@ -106,3 +106,4 @@ export const PuzzleV = t.type({
 });
 
 export type PuzzleT = t.TypeOf<typeof PuzzleV>;
+export type PuzzleResult = PuzzleT & {id: string};

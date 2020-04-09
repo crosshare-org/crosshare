@@ -3,7 +3,7 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 
-import { Link, RouteComponentProps } from "@reach/router";
+import { RouteComponentProps } from "@reach/router";
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
@@ -11,15 +11,8 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
-import { PuzzleT, PuzzleV } from './types';
-
-type PuzzleResult = PuzzleT & {id: string};
-
-export const PuzzleListItem = (props: PuzzleResult) => {
-  return (
-    <li key={props.id}><Link to={"/crosswords/" + props.id}>{props.title}</Link> by {props.authorName}</li>
-  );
-}
+import { PuzzleResult, PuzzleV } from './types';
+import { PuzzleListItem } from './PuzzleList';
 
 export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
   const [unmoderated, setUnmoderated] = React.useState<Array<PuzzleResult>|null>(null);
@@ -64,7 +57,7 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
         { unmoderated.length === 0 ?
           <div>No puzzles are currently awaiting moderation.</div>
           :
-          unmoderated.map(PuzzleListItem)
+          <ul>{unmoderated.map(PuzzleListItem)}</ul>
         }
       </div>
     </Page>
