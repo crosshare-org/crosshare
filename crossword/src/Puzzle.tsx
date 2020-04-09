@@ -23,7 +23,7 @@ import { PosAndDir, Direction, BLOCK, PuzzleV, PuzzleT } from './types';
 import { cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock, Symmetry, PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction } from './reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
-import { SECONDARY, LIGHTER, SMALL_AND_UP } from './style';
+import { SECONDARY, LIGHTER, ERROR_COLOR, SMALL_AND_UP } from './style';
 
 
 interface PuzzleLoaderProps extends RouteComponentProps {
@@ -128,22 +128,44 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
   );
 });
 
-const BeginPuzzleOverlay = (props: {title: string, dismiss: () => void}) => {
-  return (
-    <Overlay showingKeyboard={false} closeCallback={props.dismiss}>
-      <h3>{props.title}</h3>
-      <h4 css={{width: '100%'}}>Ready to get started?</h4>
-      <button onClick={props.dismiss}>Begin Puzzle</button>
-    </Overlay>
-  );
+interface PauseBeginProps {
+  title: string,
+  dismiss: () => void,
+  message: string,
+  dismissMessage: string,
+  moderated: boolean,
+  publishTime: Date|undefined,
 }
 
-const PausedOverlay = (props: {title: string, dismiss: () => void}) => {
+const BeginPauseOverlay = (props: PauseBeginProps) => {
+  let warnings:Array<React.ReactNode> = [];
+  if (!props.moderated) {
+    warnings.push(<div key="moderation">The puzzle is awaiting moderation. We'll get to it ASAP! If you feel it's taking too long please message us on the google group.</div>);
+  }
+  if (props.publishTime && props.publishTime > new Date()) {
+    warnings.push(<div key="publishtime">The puzzle has been scheduled for publishing on {props.publishTime.toLocaleDateString()}</div>)
+  }
   return (
     <Overlay showingKeyboard={false} closeCallback={props.dismiss}>
+      {warnings.length?
+        <div css={{
+          width: '100%',
+          fontWeight: 'bold',
+          border: '1px solid ' + ERROR_COLOR,
+          borderRadius: '4px',
+          margin: '1em',
+          padding: '1em',
+          color: ERROR_COLOR
+        }}>
+        <div>Your puzzle isn't visible to others yet:</div>
+        {warnings}
+        </div>
+        :
+        ""
+      }
       <h3>{props.title}</h3>
-      <h4 css={{width: '100%'}}>Your puzzle is paused</h4>
-      <button onClick={props.dismiss}>Resume</button>
+      <h4 css={{width: '100%'}}>{props.message}</h4>
+      <button onClick={props.dismiss}>{props.dismissMessage}</button>
     </Overlay>
   );
 }
@@ -350,6 +372,7 @@ export const Puzzle = requiresAuth((props: PuzzleT & AuthProps) => {
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
 
   const showingKeyboard = state.showKeyboard && !state.success;
+  const beginPauseProps = {title: props.title, dismiss: resume, moderated: props.moderated, publishTime: props.publishTime?.toDate()};
   return (
     <React.Fragment>
       <Helmet>
@@ -403,9 +426,9 @@ export const Puzzle = requiresAuth((props: PuzzleT & AuthProps) => {
       :""}
       {isPaused && !state.success ?
         (elapsed === 0 ?
-          <BeginPuzzleOverlay title={props.title} dismiss={resume}/>
+          <BeginPauseOverlay dismissMessage="Begin Puzzle" message="Ready to get started?" {...beginPauseProps}/>
           :
-          <PausedOverlay title={props.title} dismiss={resume}/>
+          <BeginPauseOverlay dismissMessage="Resume" message="Your puzzle is paused" {...beginPauseProps}/>
         )
       :""}
       <SquareAndCols

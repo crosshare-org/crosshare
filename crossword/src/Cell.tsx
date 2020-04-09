@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import { FaSlash, FaEye } from 'react-icons/fa';
 
-import {heightAdjustment, notSelectable, PRIMARY, SECONDARY, SMALL_AND_UP, LARGE_AND_UP} from './style';
+import {heightAdjustment, notSelectable, PRIMARY, SECONDARY, ERROR_COLOR, SMALL_AND_UP, LARGE_AND_UP} from './style';
 
 type CellProps = {
   autofill: string,
@@ -104,7 +104,7 @@ export const Cell = React.memo((props: CellProps) => {
             zIndex: 2,
             left: '0.03em',
             top: '-0.1em',
-            color: '#e34eeb',
+            color: ERROR_COLOR,
             fontSize: '1em',
           }}><FaSlash/></div> : "" }
           {props.highlight === 'circle' ?

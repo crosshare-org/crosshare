@@ -8,6 +8,7 @@ export const HEADER_FOOTER_HEIGHT = 35;
 export const PRIMARY = '#EB984E';
 export const LIGHTER = '#EBBC94';
 export const SECONDARY = '#E2E2E2';
+export const ERROR_COLOR = '#e34eeb';
 
 export function heightAdjustment(includeKeyboard: boolean, includeToolbar=true) {
   const keyboardHeight = includeKeyboard ? KEYBOARD_HEIGHT : 0;
