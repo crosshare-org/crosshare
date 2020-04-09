@@ -4,13 +4,14 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 import { navigate, RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
-import { FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt, FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare } from 'react-icons/fa';
+import { FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt, FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
+import DatePicker from 'react-date-picker';
 
 import { EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle, Rebus } from './Icons';
 import { requiresAuth, AuthProps } from './App';
@@ -19,7 +20,7 @@ import { Overlay } from './Overlay';
 import { GridView } from './Grid';
 import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { entryAndCrossAtPosition } from './gridBase';
-import { PosAndDir, Direction, BLOCK, PuzzleV, PuzzleT } from './types';
+import { PosAndDir, Direction, BLOCK, PuzzleV, PuzzleResult } from './types';
 import { cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock, Symmetry, PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction } from './reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
@@ -31,15 +32,18 @@ interface PuzzleLoaderProps extends RouteComponentProps {
 }
 
 export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
-  const [puzzle, setPuzzle] = React.useState<PuzzleT | null>(null);
+  const [puzzle, setPuzzle] = React.useState<PuzzleResult | null>(null);
   const [isError, setIsError] = React.useState(false);
 
   React.useEffect(() => {
+    if (!crosswordId) {
+      throw new Error("missing id");
+    }
     if (props.location?.state) {
       const validationResult = PuzzleV.decode(props.location.state);
       if (isRight(validationResult)) {
         console.log("puzzle pre-loaded");
-        setPuzzle(validationResult.right);
+        setPuzzle({...validationResult.right, id: crosswordId});
         return;
       } else {
         console.log("tried to pre-load but failed:");
@@ -59,7 +63,7 @@ export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
       } else {
         const validationResult = PuzzleV.decode(data);
         if (isRight(validationResult)) {
-          setPuzzle(validationResult.right);
+          setPuzzle({...validationResult.right, id: crosswordId});
         } else {
           console.error(PathReporter.report(validationResult).join(","));
           setIsError(true);
@@ -183,6 +187,99 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
       <h3>{props.title} by {props.authorName}</h3>
       <h4 css={{width: '100%'}}>{props.message}</h4>
       <button onClick={props.dismiss}>{props.dismissMessage}</button>
+    </Overlay>
+  );
+}
+
+const ModeratingOverlay = ({dispatch, puzzle}: {puzzle: PuzzleResult, dispatch: React.Dispatch<PuzzleAction>}) => {
+  const db = firebase.firestore();
+  const [queued, setQueued] = React.useState<Array<Date>|null>(null);
+  const [error, setError] = React.useState(false);
+  const [date, setDate] = React.useState(puzzle.publishTime?.toDate());
+  function dateChanged(d: Date|Date[]) {
+    if (d instanceof Array) {
+      console.error("How'd we get here");
+      return;
+    }
+    setDate(d);
+  }
+  function schedule() {
+    if (!date) {
+      throw new Error("shouldn't be able to schedule w/o date");
+    }
+    db.collection('crosswords').doc(puzzle.id).update({
+      moderated: true,
+      publishTime: firebase.firestore.Timestamp.fromDate(date),
+    }).then(() => {
+      console.log("Scheduled mini");
+      dispatch({type: "TOGGLEMODERATING"});
+    })
+  }
+  const isMini = puzzle.size.rows === 5 && puzzle.size.cols === 5
+
+  React.useEffect(() => {
+    console.log("loading queued minis");
+    if (error) {
+      console.log("error set, skipping");
+      return;
+    }
+    if (!isMini) {
+      console.log("Size not 5x5, not loading queued minis");
+      setQueued([])
+      return;
+    }
+    db.collection('crosswords').where("category", "==", "dailymini").where("publishTime", ">", firebase.firestore.Timestamp.now()).get().then((value) => {
+      let results = new Array<Date>();
+      value.forEach(doc => {
+        const data = doc.data();
+        const validationResult = PuzzleV.decode(data);
+        if (isRight(validationResult)) {
+          const pt = validationResult.right.publishTime;
+          if (pt === null) {
+            console.error("No publish time", validationResult.right);
+            setError(true);
+            return;
+          }
+          results.push(pt.toDate());
+        } else {
+          console.error(PathReporter.report(validationResult).join(","));
+          setError(true);
+        }
+      });
+      setQueued(results);
+    }).catch(reason => {
+      console.error(reason);
+      setError(true);
+    });
+  }, [error, isMini, db]);
+
+  let content: React.ReactNode = null;
+  if (error) {
+    content = <div>Error loading moderation panel</div>;
+  } else if (queued === null) {
+    content = <div>Loading moderation...</div>;
+  } else {
+    const now = new Date()
+    const nextMonth = new Date();
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    content = (
+      <React.Fragment>
+      <h4 css={{width: '100%'}}>Moderate this Puzzle</h4>
+      {isMini ?
+        <div>
+          <div>Pick a date for this mini to appear:</div>
+          <DatePicker value={date} onChange={dateChanged} minDate={now} maxDate={nextMonth}/>
+          <button disabled={!date} onClick={schedule}>Schedule</button>
+        </div>
+        :
+        <div>Not supported for non-minis yet.</div>
+      }
+      </React.Fragment>
+    );
+  }
+  return (
+    <Overlay showingKeyboard={false} closeCallback={() => dispatch({type: "TOGGLEMODERATING"})}>
+    {content}
     </Overlay>
   );
 }
@@ -320,7 +417,7 @@ export function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction
   }
 }
 
-export const Puzzle = requiresAuth((props: PuzzleT & AuthProps) => {
+export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
   const [state, dispatch] = React.useReducer(puzzleReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
     grid: addClues(fromCells({
@@ -346,6 +443,7 @@ export const Puzzle = requiresAuth((props: PuzzleT & AuthProps) => {
     autocheck: false,
     dismissedKeepTrying: false,
     dismissedSuccess: false,
+    moderating: false,
     symmetry: Symmetry.None,
     isEditable(cellIndex) {return !this.verifiedCells.has(cellIndex) && !this.success},
     postEdit(cellIndex) {
@@ -426,9 +524,12 @@ export const Puzzle = requiresAuth((props: PuzzleT & AuthProps) => {
             <React.Fragment>
               <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
               <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
+              {props.moderated === false ?
+                <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: "TOGGLEMODERATING" })} />
+                :""
+              }
             </React.Fragment>
-            :
-            ""
+            :""
           }
           <TopBarDropDownLink icon={<FaUser/>} text="Account" onClick={() => navigate('/account')}/>
         </TopBarDropDown>
@@ -440,6 +541,9 @@ export const Puzzle = requiresAuth((props: PuzzleT & AuthProps) => {
       :""}
       {state.success && !state.dismissedSuccess ?
         <SuccessOverlay isMuted={muted} unMuteCallback={() => {setMuted(false);setPlayedAudio(true);playAudio();}} solveTime={elapsed} dispatch={dispatch}/>
+      :""}
+      {state.moderating ?
+        <ModeratingOverlay puzzle={props} dispatch={dispatch}/>
       :""}
       {isPaused && !state.success ?
         (elapsed === 0 ?

@@ -31,6 +31,7 @@ interface PuzzleState extends GridInterfaceState {
   autocheck: boolean,
   dismissedKeepTrying: boolean,
   dismissedSuccess: boolean,
+  moderating: boolean,
 }
 
 export interface BuilderEntry extends ViewableEntry {};
@@ -328,6 +329,9 @@ export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleS
   }
   if (action.type === "DISMISSSUCCESS") {
     return ({ ...state, dismissedSuccess: true });
+  }
+  if (action.type === "TOGGLEMODERATING") {
+    return ({ ...state, moderating: !state.moderating });
   }
   return state;
 }

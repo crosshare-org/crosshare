@@ -1,3 +1,19 @@
 {
-  "indexes": []
+  "indexes": [
+    {
+      "collectionGroup": "crosswords",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "category",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "publishTime",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
 }

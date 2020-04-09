@@ -28,6 +28,7 @@
     "localforage": "^1.7.3",
     "lz-string": "^1.4.4",
     "react": "^16.13.1",
+    "react-date-picker": "^8.0.1",
     "react-device-detect": "^1.11.14",
     "react-dom": "^16.13.1",
     "react-firebase-hooks": "^2.1.1",
