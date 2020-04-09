@@ -37,7 +37,7 @@ export interface BuilderEntry extends ViewableEntry {};
 interface BuilderGrid extends ViewableGrid<BuilderEntry> {};
 
 export interface BuilderState extends GridInterfaceState {
-  title: string,
+  title: string|null,
   grid: BuilderGrid,
   gridIsComplete: boolean,
   repeats: Set<string>,

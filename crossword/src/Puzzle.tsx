@@ -2,12 +2,15 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
-import axios from 'axios';
 import { navigate, RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
 import { FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt, FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle, Rebus } from './Icons';
 import { requiresAuth, AuthProps } from './App';
@@ -16,7 +19,7 @@ import { Overlay } from './Overlay';
 import { GridView } from './Grid';
 import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { entryAndCrossAtPosition } from './gridBase';
-import { PosAndDir, Direction, BLOCK, PuzzleJson } from './types';
+import { PosAndDir, Direction, BLOCK, PuzzleV, PuzzleT } from './types';
 import { cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock, Symmetry, PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction } from './reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
@@ -28,29 +31,34 @@ interface PuzzleLoaderProps extends RouteComponentProps {
 }
 
 export const PuzzleLoader = ({ crosswordId }: PuzzleLoaderProps) => {
-  const [puzzle, setPuzzle] = React.useState<PuzzleJson | null>(null);
-  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [puzzle, setPuzzle] = React.useState<PuzzleT | null>(null);
   const [isError, setIsError] = React.useState(false);
 
   React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await axios(
-          `${process.env.PUBLIC_URL}/demos/${crosswordId}.xw`
-        );
-        setPuzzle(result.data);
-      } catch (error) {
+    const db = firebase.firestore();
+    db.collection("crosswords").doc(crosswordId).get().then((value) => {
+      const data = value.data();
+      if (!data) {
         setIsError(true);
+      } else {
+        const validationResult = PuzzleV.decode(data);
+        if (isRight(validationResult)) {
+          setPuzzle(validationResult.right);
+        } else {
+          console.error(PathReporter.report(validationResult).join(","));
+          setIsError(true);
+        }
       }
-      setIsLoaded(true);
-    };
-    fetchData();
+    }).catch((reason) => {
+      console.error(reason);
+      setIsError(true);
+    })
   }, [crosswordId]);
 
   if (isError) {
     return <Page title={null}>Something went wrong while loading puzzle '{crosswordId}'</Page>;
   }
-  if (!isLoaded || !puzzle) {
+  if (puzzle === null) {
     return <Page title={null}>Loading '{crosswordId}'...</Page>
   }
   return <Puzzle {...puzzle} />
@@ -273,7 +281,7 @@ export function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction
   }
 }
 
-export const Puzzle = requiresAuth((props: PuzzleJson & AuthProps) => {
+export const Puzzle = requiresAuth((props: PuzzleT & AuthProps) => {
   const [state, dispatch] = React.useReducer(puzzleReducer, {
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
     grid: addClues(fromCells({
@@ -284,7 +292,7 @@ export const Puzzle = requiresAuth((props: PuzzleJson & AuthProps) => {
       allowBlockEditing: false,
       highlighted: new Set(props.highlighted),
       highlight: props.highlight,
-    }), props.clues.across, props.clues.down),
+    }), props.clues),
     showKeyboard: isMobile,
     isTablet: isTablet,
     showExtraKeyLayout: false,

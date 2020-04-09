@@ -2,7 +2,7 @@ import {
   GridBase, EntryBase,
   posForIndex, cellIndex, valAt, entryAtPosition, entriesFromCells
 } from './gridBase';
-import { Position, Direction, PosAndDir, BLOCK } from './types';
+import { ClueT, Position, Direction, PosAndDir, BLOCK } from './types';
 import { Symmetry } from './reducer';
 
 export interface ViewableEntry extends EntryBase {
@@ -18,13 +18,12 @@ export interface ViewableGrid<Entry extends ViewableEntry> extends GridBase<Entr
   cellLabels: Map<number, number>,
   allowBlockEditing: boolean,
   highlighted: Set<number>,
-  highlight: "circle" | "shade" | undefined,
+  highlight: "circle" | "shade",
   mapper(entry: ViewableEntry): Entry,
 }
 
 export interface CluedGrid extends ViewableGrid<CluedEntry> {
-  acrossClues: Array<string>,
-  downClues: Array<string>,
+  clues: Array<ClueT>,
 }
 
 export function getSortedEntries<Entry extends EntryBase>(entries: Array<Entry>) {
@@ -229,9 +228,9 @@ export function gridWithBlockToggled<Entry extends ViewableEntry,
 }
 
 export function getClueMap<Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>>(grid: Grid, acrossClues: Array<string>, downClues: Array<string>): Map<string, string> {
+  Grid extends ViewableGrid<Entry>>(grid: Grid, rawClues: Array<ClueT>): Map<string, string> {
   const result = new Map<string, string>();
-  const clues = cluesByDirection(acrossClues, downClues);
+  const clues = cluesByDirection(rawClues);
 
   for (const entry of grid.entries) {
     if (entry.completedWord === null) {
@@ -246,28 +245,18 @@ export function getClueMap<Entry extends ViewableEntry,
   return result;
 }
 
-function cluesByDirection(acrossClues: Array<string>, downClues: Array<string>) {
+function cluesByDirection(rawClues: Array<ClueT>) {
   let clues = [new Map<number, string>(), new Map<number, string>()];
-  function setClues(jsonClueList: Array<string>, direction: Direction) {
-    for (let clue of jsonClueList) {
-      let match = clue.match(/^(\d+)\. (.+)$/);
-      if (!match || match.length < 3) {
-        throw new Error("Bad clue data: '" + clue + "'");
-      }
-      const number = +match[1];
-      const clueText = match[2];
-      clues[direction].set(number, clueText);
-    }
+  for (let clue of rawClues) {
+    clues[clue.dir].set(clue.num, clue.clue);
   }
-  setClues(acrossClues, Direction.Across);
-  setClues(downClues, Direction.Down);
   return clues;
 }
 
 export function addClues<Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>>(
-    grid: Grid, acrossClues: Array<string>, downClues: Array<string>): CluedGrid {
-  const clues = cluesByDirection(acrossClues, downClues);
+    grid: Grid, rawClues: Array<ClueT>): CluedGrid {
+  const clues = cluesByDirection(rawClues);
 
   function mapper(e: Entry): CluedEntry {
     let clue = clues[e.direction].get(e.labelNumber);
@@ -281,7 +270,7 @@ export function addClues<Entry extends ViewableEntry,
   for (const entry of grid.entries) {
     entries.push(mapper(entry));
   }
-  return {...grid, mapper: (e) => mapper(grid.mapper(e)), acrossClues, downClues, entries};
+  return {...grid, mapper: (e) => mapper(grid.mapper(e)), clues: rawClues, entries};
 }
 
 export function fromCells<Entry extends ViewableEntry,

@@ -28,7 +28,7 @@ import { requiresAdmin, AuthProps } from './App';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
 import { fromCells, getClueMap } from './viewableGrid';
-import { PosAndDir, Direction, PuzzleJson, PuzzleV } from './types';
+import { PosAndDir, Direction, PuzzleT, PuzzleV } from './types';
 import {
   Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
   KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
@@ -44,7 +44,10 @@ import { Overlay } from './Overlay';
 
 let worker: Worker;
 
-export const BuilderDBLoader = requiresAdmin((props: PuzzleJson & AuthProps) => {
+type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+type BuilderProps = WithOptional<Omit<PuzzleT, "authorId"|"moderated"|"publishTime">, "clues"|"title"|"highlighted"|"highlight">
+
+export const BuilderDBLoader = requiresAdmin((props: BuilderProps & AuthProps) => {
   const [ready, setReady] = React.useState(false);
   WordDB.initializeOrBuild(setReady);
   if (ready) {
@@ -152,7 +155,7 @@ const ClueRow = (props: {dispatch: React.Dispatch<PuzzleAction>, entry: BuilderE
 }
 
 interface ClueModeProps {
-  title: string,
+  title: string|null,
   exitClueMode: () => void,
   completedEntries: Array<BuilderEntry>,
   clues: Map<string, string>,
@@ -169,7 +172,7 @@ const ClueMode = (props: ClueModeProps) => {
     <Page title="Constructor" topBarElements={topbar}>
       <div css={{ padding: '1em'}}>
       <h4>Title</h4>
-      <input placeholder="Give your puzzle a title" value={props.title} onChange={(e) => props.dispatch({ type: "SETTITLE", value: e.target.value } as SetTitleAction)}/>
+      <input placeholder="Give your puzzle a title" value={props.title || ""} onChange={(e) => props.dispatch({ type: "SETTITLE", value: e.target.value } as SetTitleAction)}/>
       <h4>Clues</h4>
       {props.completedEntries.length ?
         <table css={{ margin: 'auto', }}>
@@ -195,7 +198,7 @@ const ClueMode = (props: ClueModeProps) => {
   )
 }
 
-export const Builder = (props: PuzzleJson & AuthProps) => {
+export const Builder = (props: BuilderProps & AuthProps) => {
   const initialGrid = fromCells({
     mapper: (e) => e,
     width: props.size.cols,
@@ -203,10 +206,10 @@ export const Builder = (props: PuzzleJson & AuthProps) => {
     cells: props.grid,
     allowBlockEditing: true,
     highlighted: new Set(props.highlighted),
-    highlight: props.highlight,
+    highlight: props.highlight || "circle",
   });
   const [state, dispatch] = React.useReducer(builderReducer, {
-    title: props.title,
+    title: props.title || null,
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
     grid: initialGrid,
     showKeyboard: isMobile,
@@ -220,7 +223,7 @@ export const Builder = (props: PuzzleJson & AuthProps) => {
     hasNoShortWords: false,
     isEditable: () => true,
     symmetry: Symmetry.Rotational,
-    clues: getClueMap(initialGrid, props.clues.across, props.clues.down),
+    clues: getClueMap(initialGrid, props.clues || []),
     postEdit(_cellIndex) {
       return validateGrid(this);
     }

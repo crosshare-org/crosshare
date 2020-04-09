@@ -82,6 +82,13 @@ const timestamp = new t.Type<firebase.firestore.Timestamp>(
   t.identity,
 );
 
+const ClueV = t.type({
+  num: t.number,
+  dir: t.union([t.literal(0), t.literal(1)]),
+  clue: t.string,
+});
+export type ClueT = t.TypeOf<typeof ClueV>;
+
 export const PuzzleV = t.type({
   authorId: t.string,
   moderated: t.boolean,
@@ -91,11 +98,7 @@ export const PuzzleV = t.type({
     rows: t.number,
     cols: t.number
   }),
-  clues: t.array(t.type({
-    num: t.number,
-    dir: t.union([t.literal(0), t.literal(1)]),
-    clue: t.string,
-  })),
+  clues: t.array(ClueV),
   grid: t.array(t.string),
   highlighted: t.array(t.number),
   highlight: t.keyof({circle: null, shade: null})

@@ -232,14 +232,9 @@ const Construct = (_: RouteComponentProps) => {
   // ];
   // grid = grid.map(s => s.split("")).flat();
   const props = {
-    "title": "New Puzzle",
     "size": {
       "rows": size,
       "cols": size
-    },
-    "clues": {
-      "across": [],
-      "down": []
     },
     "grid": grid
   }

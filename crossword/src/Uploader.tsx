@@ -8,7 +8,7 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
-import { PuzzleJson, PuzzleJsonV } from './types';
+import { PuzzleJson, PuzzleJsonV, ClueT, Direction } from './types';
 import { BuilderDBLoader } from './Builder';
 
 export const Uploader = requiresAdmin((_: RouteComponentProps & AuthProps) => {
@@ -38,7 +38,21 @@ export const Uploader = requiresAdmin((_: RouteComponentProps & AuthProps) => {
   }
 
   if (puzzle) {
-    return <BuilderDBLoader {...puzzle} />
+    const clues: Array<ClueT> = [];
+    const inputs: Array<[Direction, string[]]> = [
+      [Direction.Across, puzzle.clues.across],
+      [Direction.Down, puzzle.clues.down]
+    ];
+    for (let [direction, cluesForDir] of inputs) {
+      cluesForDir.forEach(s => {
+        let match = s.match(/^(\d+)\. (.+)$/);
+        if (!match || match.length < 3) {
+          throw new Error("Bad clue data: '" + s + "'");
+        }
+        clues.push({num: +match[1], dir: direction, clue: match[2]});
+      });
+    }
+    return <BuilderDBLoader {...puzzle} clues={clues}/>
   }
 
   return (
