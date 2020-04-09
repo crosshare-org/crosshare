@@ -1,4 +1,5 @@
 import * as t from "io-ts";
+import { either } from 'fp-ts/lib/Either'
 import { WordDBT } from './WordDB';
 import firebase from 'firebase/app';
 
@@ -75,10 +76,20 @@ export type PuzzleJson = t.TypeOf<typeof PuzzleJsonV>;
 const isFirestoreTimestamp = (u: unknown): u is firebase.firestore.Timestamp =>
   u ? u instanceof firebase.firestore.Timestamp : false;
 
+const validateTimestamp: t.Validate<unknown, firebase.firestore.Timestamp> = (i, c) => {
+  if (isFirestoreTimestamp(i)) {
+    return t.success(i);
+  }
+  return either.chain(
+    t.type({seconds: t.number, nanoseconds: t.number}).validate(i, c),
+    obj => t.success(new firebase.firestore.Timestamp(obj.seconds, obj.nanoseconds))
+  );
+}
+
 const timestamp = new t.Type<firebase.firestore.Timestamp>(
   'Timestamp',
   isFirestoreTimestamp,
-  (m, c) => (isFirestoreTimestamp(m) ? t.success(m) : t.failure(m, c)),
+  validateTimestamp,
   t.identity,
 );
 
