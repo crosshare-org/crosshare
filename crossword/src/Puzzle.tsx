@@ -35,6 +35,11 @@ export const PuzzleLoader = ({ crosswordId }: PuzzleLoaderProps) => {
   const [isError, setIsError] = React.useState(false);
 
   React.useEffect(() => {
+    console.log("loading puzzle");
+    if (isError) {
+      console.log("error set, skipping");
+      return;
+    }
     const db = firebase.firestore();
     db.collection("crosswords").doc(crosswordId).get().then((value) => {
       const data = value.data();
@@ -53,7 +58,7 @@ export const PuzzleLoader = ({ crosswordId }: PuzzleLoaderProps) => {
       console.error(reason);
       setIsError(true);
     })
-  }, [crosswordId]);
+  }, [crosswordId, isError]);
 
   if (isError) {
     return <Page title={null}>Something went wrong while loading puzzle '{crosswordId}'</Page>;
@@ -130,6 +135,7 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
 
 interface PauseBeginProps {
   title: string,
+  authorName: string,
   dismiss: () => void,
   message: string,
   dismissMessage: string,
@@ -163,7 +169,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
         :
         ""
       }
-      <h3>{props.title}</h3>
+      <h3>{props.title} by {props.authorName}</h3>
       <h4 css={{width: '100%'}}>{props.message}</h4>
       <button onClick={props.dismiss}>{props.dismissMessage}</button>
     </Overlay>
@@ -372,7 +378,7 @@ export const Puzzle = requiresAuth((props: PuzzleT & AuthProps) => {
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
 
   const showingKeyboard = state.showKeyboard && !state.success;
-  const beginPauseProps = {title: props.title, dismiss: resume, moderated: props.moderated, publishTime: props.publishTime?.toDate()};
+  const beginPauseProps = {authorName: props.authorName, title: props.title, dismiss: resume, moderated: props.moderated, publishTime: props.publishTime?.toDate()};
   return (
     <React.Fragment>
       <Helmet>

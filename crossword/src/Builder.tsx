@@ -45,7 +45,7 @@ import { Overlay } from './Overlay';
 let worker: Worker;
 
 type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-type BuilderProps = WithOptional<Omit<PuzzleT, "authorId"|"moderated"|"publishTime">, "clues"|"title"|"highlighted"|"highlight">
+type BuilderProps = WithOptional<Omit<PuzzleT, "authorId"|"authorName"|"moderated"|"publishTime">, "clues"|"title"|"highlighted"|"highlight">
 
 export const BuilderDBLoader = requiresAdmin((props: BuilderProps & AuthProps) => {
   const [ready, setReady] = React.useState(false);
@@ -436,6 +436,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
     const validationResult = PuzzleV.decode({
       title: state.title,
       authorId: props.user.uid,
+      authorName: props.user.displayName,
       moderated: false,
       publishTime: null,
       size: {

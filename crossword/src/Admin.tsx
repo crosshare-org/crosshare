@@ -1,17 +1,71 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 
-import { RouteComponentProps } from "@reach/router";
+import * as React from 'react';
+
+import { Link, RouteComponentProps } from "@reach/router";
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
+import { PuzzleT, PuzzleV } from './types';
 
-export const Admin = requiresAdmin(({user}: RouteComponentProps & AuthProps) => {
+type PuzzleResult = PuzzleT & {id: string};
+
+export const PuzzleListItem = (props: PuzzleResult) => {
+  return (
+    <li key={props.id}><Link to={"/crosswords/" + props.id}>{props.title}</Link> by {props.authorName}</li>
+  );
+}
+
+export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
+  const [unmoderated, setUnmoderated] = React.useState<Array<PuzzleResult>|null>(null);
+  const [error, setError] = React.useState(false);
+
+  React.useEffect(() => {
+    console.log("loading admin content");
+    if (error) {
+      console.log("error set, skipping");
+      return;
+    }
+    const db = firebase.firestore();
+    db.collection('crosswords').where("moderated", "==", false).get().then((value) => {
+      let results: Array<PuzzleResult> = [];
+      value.forEach(doc => {
+        const data = doc.data();
+        const validationResult = PuzzleV.decode(data);
+        if (isRight(validationResult)) {
+          results.push({...validationResult.right, id: doc.id});
+        } else {
+          console.error(PathReporter.report(validationResult).join(","));
+          setError(true);
+        }
+      });
+      setUnmoderated(results);
+    }).catch(reason => {
+      console.error(reason);
+      setError(true);
+    });
+  }, [error]);
+
+  if (error) {
+    return <Page title={null}>Error loading admin content</Page>;
+  }
+  if (unmoderated === null) {
+    return <Page title={null}>Loading admin content...</Page>;
+  }
   return (
     <Page title="Admin">
       <div css={{ margin: '1em', }}>
-        <h4 css={{ borderBottom: '1px solid black' }}>Admin</h4>
-        <p>You're logged in as <b>{user.email}</b>.</p>
+        <h4 css={{ borderBottom: '1px solid black' }}>Unmoderated</h4>
+        { unmoderated.length === 0 ?
+          <div>No puzzles are currently awaiting moderation.</div>
+          :
+          unmoderated.map(PuzzleListItem)
+        }
       </div>
     </Page>
   );
