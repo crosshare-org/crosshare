@@ -2,16 +2,14 @@
 import { jsx } from '@emotion/core';
 import * as React from 'react';
 
-import { navigate, Router, RouteComponentProps } from "@reach/router";
+import { Router, RouteComponentProps } from "@reach/router";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import { firebaseConfig, firebaseUiConfig } from './config';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { FaUser } from 'react-icons/fa';
 
-import { TopBarLink } from './TopBar';
 import { ErrorBoundary } from './ErrorBoundary';
 import { PuzzleLoader } from './Puzzle';
 import { BuilderDBLoader } from './Builder';
@@ -24,8 +22,9 @@ import {
   CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle,
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
   SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
-  Logo, EscapeKey
+  Logo, EscapeKey, MiniPuzzle
 } from './Icons';
+import { Home } from './Home';
 
 interface AuthContextValue {
   user: firebase.User | undefined,
@@ -36,7 +35,7 @@ interface AuthContextValue {
 export const AuthContext = React.createContext({user:undefined,loadingUser:false,error:"using default context"} as AuthContextValue);
 firebase.initializeApp(firebaseConfig);
 
-function useAuth(): [firebase.User|undefined, boolean, boolean, string|undefined] {
+export function useAuth(): [firebase.User|undefined, boolean, boolean, string|undefined] {
   const [isAdmin, setIsAdmin] = React.useState(false);
   const {user, loadingUser, error} = React.useContext(AuthContext);
   if (user && user.email) {
@@ -169,22 +168,6 @@ const PrivacyPolicy = (_: RouteComponentProps) => {
   );
 }
 
-const Home = (_: RouteComponentProps) => {
-  const auth_result = useAuth();
-  let topbar = null;
-  if (auth_result[0]) {
-    topbar = <TopBarLink icon={<FaUser/>} text="Account" onClick={() => navigate('/account')}/>
-  }
-  return (
-    <Page title={null} topBarElements={topbar}>
-      <div css={{ margin: '1em', }}>
-        <p>Crosshare is a not-for-profit community for crossword constructors.</p>
-        <p>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>.</p>
-      </div>
-    </Page>
-  );
-}
-
 const Construct = (_: RouteComponentProps) => {
   let size = 5;
   let grid = [
@@ -245,6 +228,7 @@ const Construct = (_: RouteComponentProps) => {
 const IconsDemo = (_: RouteComponentProps) => {
   return <Page title="Icons">
     <div css={{fontSize: 20}}>
+      <p>Mini Puzzle: <MiniPuzzle width={100} height={100}/></p>
       <p title="Autofill disabled">Disabled: <SpinnerDisabled/></p>
       <p>Esc: <EscapeKey/></p>
       <p>Working: <SpinnerWorking/></p>

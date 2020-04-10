@@ -2,9 +2,9 @@ import * as React from 'react';
 import { FaEye, FaCheck } from 'react-icons/fa';
 import { CheatUnit, Symmetry } from './reducer';
 
-const Square = (props: {cx:number, cy:number, beginMs:number, animate: boolean, filled: boolean}) => {
+const Square = (props: {cx:number, cy:number, beginMs:number, animate: boolean, filled: boolean, mini?: boolean}) => {
   let color = {
-    fillOpacity: '0.2',
+    fillOpacity: props.mini ? '0' : "0.2",
   };
   if (props.filled) {
     color = {
@@ -12,11 +12,11 @@ const Square = (props: {cx:number, cy:number, beginMs:number, animate: boolean, 
     }
   }
   return (
-    <rect x={props.cx - 14} y={props.cy - 14} rx="7" ry="7" width="28" height="28" {...color}>
+    <rect x={props.cx - 14} y={props.cy - 14} stroke={props.mini ? "#000" : "none"} rx={props.mini ? 0 : 7} ry={props.mini ? 0 : 7} width="28" height="28" {...color}>
     {props.animate ?
       <animate attributeName="fill-opacity"
         begin={props.beginMs + "ms"} dur="1s"
-        values="1;.2;1" calcMode="linear"
+        values="1;0.2;1" calcMode="linear"
         repeatCount="indefinite" />
     :""}
     </rect>
@@ -154,9 +154,9 @@ export const RevealPuzzle = () => {
   return <CheckReveal unit={CheatUnit.Puzzle} reveal={true}/>;
 }
 
-export const SymmetryIcon = ({type}: {type: Symmetry}) => {
+export const SymmetryIcon = ({type, ...props}: IconProps & {type: Symmetry}) => {
   return (
-    <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#000">
+    <svg width={props.width || "1em"} height={props.height || "1em"} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#000">
       <Square cx={15} cy={15} beginMs={0} animate={false} filled={true}/>
       <Square cx={15} cy={85} beginMs={0} animate={false} filled={type === Symmetry.Horizontal}/>
       <Square cx={85} cy={85} beginMs={0} animate={false} filled={type === Symmetry.Rotational}/>
@@ -169,17 +169,17 @@ export const SymmetryIcon = ({type}: {type: Symmetry}) => {
     </svg>
   );
 }
-export const SymmetryRotational = () => {
-  return <SymmetryIcon type={Symmetry.Rotational}/>;
+export const SymmetryRotational = (props: IconProps) => {
+  return <SymmetryIcon type={Symmetry.Rotational} {...props}/>;
 }
-export const SymmetryHorizontal = () => {
-  return <SymmetryIcon type={Symmetry.Horizontal}/>;
+export const SymmetryHorizontal = (props: IconProps) => {
+  return <SymmetryIcon type={Symmetry.Horizontal} {...props}/>;
 }
-export const SymmetryVertical = () => {
-  return <SymmetryIcon type={Symmetry.Vertical}/>;
+export const SymmetryVertical = (props: IconProps) => {
+  return <SymmetryIcon type={Symmetry.Vertical} {...props}/>;
 }
-export const SymmetryNone = () => {
-  return <SymmetryIcon type={Symmetry.None}/>;
+export const SymmetryNone = (props: IconProps) => {
+  return <SymmetryIcon type={Symmetry.None} {...props}/>;
 }
 
 interface IconProps {
@@ -192,5 +192,21 @@ export const Logo = (props: IconProps) => {
 <rect x="10" y="10" width="1" height="1"><animate attributeName="width" dur="0.5s" id="a" begin="10;a.end+10" values="1;0" calcMode="discrete"/></rect>
 <rect x="9" y="11" width="1" height="1"><animate attributeName="width" dur="0.5s" id="b" begin="10;b.end+10" values="1;3" calcMode="discrete"/></rect>
 <rect x="10" y="12" width="2" height="1"><animate attributeName="width" dur="0.5s" id="c" begin="10;c.end+10" values="2;0" calcMode="discrete"/></rect></svg>
+  );
+}
+
+export const MiniPuzzle = (props: IconProps) => {
+  return (
+    <svg width={props.width || "1em"} height={props.height || "1em"} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#000">
+      <Square mini={true} cx={15} cy={15} beginMs={0} animate={false} filled={true}/>
+      <Square mini={true} cx={15} cy={85} beginMs={0} animate={false} filled={false}/>
+      <Square mini={true} cx={85} cy={85} beginMs={0} animate={false} filled={false}/>
+      <Square mini={true} cx={85} cy={15} beginMs={0} animate={false} filled={false}/>
+      <Square mini={true} cx={15} cy={50} beginMs={0} animate={false} filled={false}/>
+      <Square mini={true} cx={85} cy={50} beginMs={0} animate={false} filled={true}/>
+      <Square mini={true} cx={50} cy={15} beginMs={0} animate={false} filled={true}/>
+      <Square mini={true} cx={50} cy={85} beginMs={0} animate={false} filled={true}/>
+      <Square mini={true} cx={50} cy={50} beginMs={0} animate={false} filled={false}/>
+    </svg>
   );
 }
