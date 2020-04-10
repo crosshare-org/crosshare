@@ -25,6 +25,7 @@ import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar
 import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, ERROR_COLOR, SMALL_AND_UP } from './style';
 import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
+import { usePersistedBoolean } from './hooks';
 
 
 interface PuzzleLoaderProps extends RouteComponentProps {
@@ -320,21 +321,6 @@ const ClueList = (props: ClueListProps) => {
   );
 }
 
-function usePersistedBoolean(key:string, defaultValue: boolean) {
-  const [state, setState] = React.useState();
-
-  React.useEffect(() => {
-    const initialValue = localStorage.getItem(key);
-    setState(initialValue !== null ? initialValue === "true" : defaultValue);
-  }, [defaultValue, key]);
-
-  const setStateAndPersist = (newValue: boolean) => {
-    localStorage.setItem(key, newValue ? "true" : "false");
-    setState(newValue);
-  }
-  return [state, setStateAndPersist];
-}
-
 function timeString(elapsed: number): string {
   const hours = Math.floor(elapsed / 3600);
   const minutes = Math.floor((elapsed - (hours * 3600)) / 60);
@@ -493,6 +479,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
         )
       :""}
       <SquareAndCols
+        muted={muted}
         showKeyboard={showingKeyboard}
         keyboardHandler={getKeyboardHandler(dispatch)}
         showExtraKeyLayout={state.showExtraKeyLayout}

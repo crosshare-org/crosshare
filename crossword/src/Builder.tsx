@@ -8,7 +8,7 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import { isMobile, isTablet } from "react-device-detect";
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt,
-  FaKeyboard, FaEllipsisH,
+  FaKeyboard, FaEllipsisH, FaVolumeUp, FaVolumeMute
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
@@ -41,6 +41,7 @@ import AutofillWorker from 'worker-loader!./autofill.worker.ts'; // eslint-disab
 import { isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from './types';
 import * as WordDB from './WordDB';
 import { Overlay } from './Overlay';
+import { usePersistedBoolean } from './hooks';
 
 let worker: Worker;
 
@@ -286,6 +287,8 @@ interface GridModeProps {
 }
 const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
   const [publishErrors, setPublishErrors] = React.useState<React.ReactNode>(null);
+  const [muted, setMuted] = usePersistedBoolean("muted", true);
+
   useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
   let left = <React.Fragment></React.Fragment>;
   let right = <React.Fragment></React.Fragment>;
@@ -493,6 +496,12 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
           <TopBarDropDownLink icon={<FaRegNewspaper/>} text="Publish Puzzle" onClick={publish} />
           <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey/>} onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
           {
+            muted ?
+            <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
+            :
+            <TopBarDropDownLink icon={<FaVolumeMute />} text="Mute" onClick={() => setMuted(true)} />
+          }
+          {
             props.isAdmin ?
             <React.Fragment>
               <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
@@ -516,6 +525,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
           </React.Fragment>
         </Overlay> : ""}
       <SquareAndCols
+        muted={muted}
         showKeyboard={state.showKeyboard}
         keyboardHandler={getKeyboardHandler(dispatch)}
         showExtraKeyLayout={state.showExtraKeyLayout}

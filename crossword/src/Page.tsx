@@ -2,6 +2,7 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
+import axios from 'axios';
 import { RouteComponentProps } from "@reach/router";
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
@@ -58,6 +59,7 @@ export const TinyNav = ({children, dispatch}: TinyNavProps) => {
 }
 
 interface SquareAndColsProps {
+  muted: boolean,
   square: React.ReactNode,
   left: React.ReactNode,
   right: React.ReactNode,
@@ -68,9 +70,9 @@ interface SquareAndColsProps {
   includeBlockKey: boolean,
   isTablet: boolean,
 }
-export const SquareAndCols = (props: SquareAndColsProps) => {
-  const heightAdjust = heightAdjustment(props.showKeyboard, false);
-  const toolbarHeightAdjust = heightAdjustment(props.showKeyboard);
+export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: SquareAndColsProps) => {
+  const heightAdjust = heightAdjustment(showKeyboard, false);
+  const toolbarHeightAdjust = heightAdjustment(showKeyboard);
 
   function layoutName(numeric: boolean, tablet: boolean) {
 
@@ -81,6 +83,39 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
       return props.includeBlockKey ? "defaultTabletBlock" : "defaultTablet";
     }
     return props.includeBlockKey ? 'defaultBlock' : 'default';
+  }
+
+  const mutedRef = React.useRef(muted);
+  const audioSource = React.useRef<(() => void)|null>(null);
+
+  React.useEffect(() => {
+    mutedRef.current = muted;
+
+    if (!audioSource.current && !muted && showKeyboard) {
+      axios.get(`${process.env.PUBLIC_URL}/keypress.mp3`, {
+        responseType: 'arraybuffer',
+      }).then((response) => {
+        const constructor = window.AudioContext || (window as any).webkitAudioContext;
+        const audioContext = new constructor();
+        audioContext.decodeAudioData(response.data, (audioBuffer) => {
+          audioSource.current = () => {
+            const source = audioContext.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(audioContext.destination);
+            source.start();
+          }
+        });
+      });
+    }
+  }, [muted, showKeyboard]);
+
+  const keypress = (key:string) => {
+    if (!mutedRef.current && audioSource.current) {
+      audioSource.current();
+    }
+    if (keyboardHandler) {
+      keyboardHandler(key);
+    }
   }
 
   return (
@@ -170,7 +205,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           }}>{props.right}</div>
         </div>
         </div>
-      {props.showKeyboard ?
+      {showKeyboard ?
         <Keyboard
           layout={{
             'default': [
@@ -212,7 +247,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
             '{nextEntry}': '⇥',
             '{block}': '■',
           }}
-          onKeyPress={props.keyboardHandler}
+          onKeyPress={keypress}
         />: " "}
     </React.Fragment>
   );
@@ -231,6 +266,7 @@ export const SquareTest = (_: RouteComponentProps) => {
       </React.Fragment>
     }>
       <SquareAndCols
+        muted={false}
         showKeyboard={showKeyboard}
         showExtraKeyLayout={false}
         isTablet={isTablet}
