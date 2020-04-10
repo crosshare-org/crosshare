@@ -11,7 +11,6 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
-import DatePicker from 'react-date-picker';
 
 import { EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle, Rebus } from './Icons';
 import { requiresAuth, AuthProps } from './App';
@@ -25,6 +24,7 @@ import { cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock, Symmetry,
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, ERROR_COLOR, SMALL_AND_UP } from './style';
+import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 
 
 interface PuzzleLoaderProps extends RouteComponentProps {
@@ -193,16 +193,8 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
 
 const ModeratingOverlay = ({dispatch, puzzle}: {puzzle: PuzzleResult, dispatch: React.Dispatch<PuzzleAction>}) => {
   const db = firebase.firestore();
-  const [queued, setQueued] = React.useState<Array<Date>|null>(null);
-  const [error, setError] = React.useState(false);
   const [date, setDate] = React.useState(puzzle.publishTime?.toDate());
-  function dateChanged(d: Date|Date[]) {
-    if (d instanceof Array) {
-      console.error("How'd we get here");
-      return;
-    }
-    setDate(d);
-  }
+
   function schedule() {
     if (!date) {
       throw new Error("shouldn't be able to schedule w/o date");
@@ -210,76 +202,27 @@ const ModeratingOverlay = ({dispatch, puzzle}: {puzzle: PuzzleResult, dispatch: 
     db.collection('crosswords').doc(puzzle.id).update({
       moderated: true,
       publishTime: firebase.firestore.Timestamp.fromDate(date),
+      category: 'dailymini',
     }).then(() => {
       console.log("Scheduled mini");
-      dispatch({type: "TOGGLEMODERATING"});
+      navigate("", {state: undefined});
     })
   }
   const isMini = puzzle.size.rows === 5 && puzzle.size.cols === 5
 
-  React.useEffect(() => {
-    console.log("loading queued minis");
-    if (error) {
-      console.log("error set, skipping");
-      return;
-    }
-    if (!isMini) {
-      console.log("Size not 5x5, not loading queued minis");
-      setQueued([])
-      return;
-    }
-    db.collection('crosswords').where("category", "==", "dailymini").where("publishTime", ">", firebase.firestore.Timestamp.now()).get().then((value) => {
-      let results = new Array<Date>();
-      value.forEach(doc => {
-        const data = doc.data();
-        const validationResult = PuzzleV.decode(data);
-        if (isRight(validationResult)) {
-          const pt = validationResult.right.publishTime;
-          if (pt === null) {
-            console.error("No publish time", validationResult.right);
-            setError(true);
-            return;
-          }
-          results.push(pt.toDate());
-        } else {
-          console.error(PathReporter.report(validationResult).join(","));
-          setError(true);
-        }
-      });
-      setQueued(results);
-    }).catch(reason => {
-      console.error(reason);
-      setError(true);
-    });
-  }, [error, isMini, db]);
-
-  let content: React.ReactNode = null;
-  if (error) {
-    content = <div>Error loading moderation panel</div>;
-  } else if (queued === null) {
-    content = <div>Loading moderation...</div>;
-  } else {
-    const now = new Date()
-    const nextMonth = new Date();
-    nextMonth.setMonth(nextMonth.getMonth() + 1);
-    content = (
-      <React.Fragment>
-      <h4 css={{width: '100%'}}>Moderate this Puzzle</h4>
-      {isMini ?
-        <div>
-          <div>Pick a date for this mini to appear:</div>
-          <DatePicker value={date} onChange={dateChanged} minDate={now} maxDate={nextMonth}/>
-          <button disabled={!date} onClick={schedule}>Schedule</button>
-        </div>
-        :
-        <div>Not supported for non-minis yet.</div>
-      }
-      </React.Fragment>
-    );
-  }
   return (
     <Overlay showingKeyboard={false} closeCallback={() => dispatch({type: "TOGGLEMODERATING"})}>
-    {content}
+    <h4 css={{width: '100%'}}>Moderate this Puzzle</h4>
+    <div>{puzzle.moderated ? "Puzzle has been approved" : "Puzzle is not approved"}</div>
+    {isMini ?
+      <div>
+        <div>Pick a date for this mini to appear:</div>
+        <UpcomingMinisCalendar disableExisting={true} value={date} onChange={setDate} />
+        <div><button disabled={!date} onClick={schedule}>Schedule</button></div>
+      </div>
+      :
+      <div>Not supported for non-minis yet.</div>
+    }
     </Overlay>
   );
 }
@@ -524,10 +467,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
             <React.Fragment>
               <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
               <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
-              {props.moderated === false ?
-                <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: "TOGGLEMODERATING" })} />
-                :""
-              }
+              <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: "TOGGLEMODERATING" })} />
             </React.Fragment>
             :""
           }

@@ -102,6 +102,7 @@ export type ClueT = t.TypeOf<typeof ClueV>;
 
 export const PuzzleV = t.type({
   authorId: t.string,
+  category: t.union([t.string, t.null]),
   authorName: t.string,
   moderated: t.boolean,
   publishTime: t.union([timestamp, t.null]),
