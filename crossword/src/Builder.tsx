@@ -287,7 +287,7 @@ interface GridModeProps {
 }
 const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
   const [publishErrors, setPublishErrors] = React.useState<React.ReactNode>(null);
-  const [muted, setMuted] = usePersistedBoolean("muted", true);
+  const [muted, setMuted] = usePersistedBoolean("muted", false);
 
   useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
   let left = <React.Fragment></React.Fragment>;

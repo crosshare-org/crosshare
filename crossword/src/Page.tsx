@@ -87,18 +87,18 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
   }
 
   const mutedRef = React.useRef(muted);
-  const audioSource = React.useRef<(() => void)|null>(null);
+  const playKeystrokeSound = React.useRef<(() => void)|null>(null);
 
   React.useEffect(() => {
     mutedRef.current = muted;
 
-    if (!audioSource.current && !muted && showKeyboard) {
+    if (!playKeystrokeSound.current && !muted && showKeyboard) {
       axios.get(`${process.env.PUBLIC_URL}/keypress.mp3`, {
         responseType: 'arraybuffer',
       }).then((response) => {
         const audioContext = new AudioContext();
         audioContext.decodeAudioData(response.data, (audioBuffer) => {
-          audioSource.current = () => {
+          playKeystrokeSound.current = () => {
             const source = audioContext.createBufferSource();
             source.buffer = audioBuffer;
             source.connect(audioContext.destination);
@@ -110,8 +110,8 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
   }, [muted, showKeyboard]);
 
   const keypress = (key:string) => {
-    if (!mutedRef.current && audioSource.current) {
-      audioSource.current();
+    if (!mutedRef.current && playKeystrokeSound.current) {
+      playKeystrokeSound.current();
     }
     if (keyboardHandler) {
       keyboardHandler(key);

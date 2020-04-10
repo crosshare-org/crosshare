@@ -2,6 +2,7 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
+import axios from 'axios';
 import { navigate, RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
 import { FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt, FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare } from 'react-icons/fa';
@@ -11,6 +12,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
+import { AudioContext } from "standardized-audio-context";
 
 import { EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle, Rebus } from './Icons';
 import { requiresAuth, AuthProps } from './App';
@@ -238,15 +240,11 @@ const KeepTryingOverlay = ({dispatch}: {dispatch: React.Dispatch<PuzzleAction>})
   );
 }
 
-const SuccessOverlay = (props: {isMuted: boolean, unMuteCallback: () => void, solveTime: number, dispatch: React.Dispatch<PuzzleAction>}) => {
+const SuccessOverlay = (props: {isMuted: boolean, solveTime: number, dispatch: React.Dispatch<PuzzleAction>}) => {
   return (
     <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({type: "DISMISSSUCCESS"})}>
     <h4 css={{width: '100%'}}>Congratulations!</h4>
     <p css={{width: '100%'}}>You solved the puzzle in <b>{timeString(props.solveTime)}</b></p>
-    {props.isMuted?
-      <button onClick={props.unMuteCallback}><FaVolumeUp/> Unmute Success Music</button>
-      :""
-    }
     </Overlay>
   );
 }
@@ -385,7 +383,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
     }
   }, advanceActiveToNonBlock);
 
-  const [muted, setMuted] = usePersistedBoolean("muted", true);
+  const [muted, setMuted] = usePersistedBoolean("muted", false);
 
   let title = props.title;
   if (props.category === 'dailymini' && props.publishTime) {
@@ -394,14 +392,30 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
 
   useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
 
+  // Set up music player for success song
+  const playSuccess = React.useRef<(() => void)|null>(null);
+  React.useEffect(() => {
+    if (!playSuccess.current && !muted) {
+      axios.get(`${process.env.PUBLIC_URL}/success.mp3`, {
+        responseType: 'arraybuffer',
+      }).then((response) => {
+        const audioContext = new AudioContext();
+        audioContext.decodeAudioData(response.data, (audioBuffer) => {
+          playSuccess.current = () => {
+            const source = audioContext.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(audioContext.destination);
+            source.start();
+          }
+        });
+      });
+    }
+  }, [muted]);
   const [playedAudio, setPlayedAudio] = React.useState(false);
-  function playAudio() {
-    new Audio(`${process.env.PUBLIC_URL}/success.mp3`).play();
-  }
   if (state.success && !playedAudio) {
     setPlayedAudio(true);
-    if (!muted) {
-      playAudio();
+    if (!muted && playSuccess.current) {
+      playSuccess.current();
     }
   }
 
@@ -471,7 +485,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
         <KeepTryingOverlay dispatch={dispatch}/>
       :""}
       {state.success && !state.dismissedSuccess ?
-        <SuccessOverlay isMuted={muted} unMuteCallback={() => {setMuted(false);setPlayedAudio(true);playAudio();}} solveTime={elapsed} dispatch={dispatch}/>
+        <SuccessOverlay isMuted={muted} solveTime={elapsed} dispatch={dispatch}/>
       :""}
       {state.moderating ?
         <ModeratingOverlay puzzle={props} dispatch={dispatch}/>
