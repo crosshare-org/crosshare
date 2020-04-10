@@ -458,6 +458,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
       const db = firebase.firestore();
       db.collection("crosswords").add(validationResult.right).then((ref) => {
         console.log("Uploaded", ref.id);
+        navigate("/crosswords/" + ref.id, {state: {id: ref.id, ...validationResult.right}});
       });
     } else {
       console.error(PathReporter.report(validationResult).join(","));

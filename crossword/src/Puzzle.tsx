@@ -37,7 +37,6 @@ interface PuzzleLoaderProps extends RouteComponentProps {
 export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
   const [puzzle, setPuzzle] = React.useState<PuzzleResult | null>(null);
   const [isError, setIsError] = React.useState(false);
-
   React.useEffect(() => {
     if (!crosswordId) {
       throw new Error("missing id");
@@ -49,8 +48,7 @@ export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
         setPuzzle({...validationResult.right, id: crosswordId});
         return;
       } else {
-        console.log("tried to pre-load but failed:");
-        console.error(PathReporter.report(validationResult).join(","));
+        console.log("failed to pre-load");
       }
     }
     console.log("loading puzzle");

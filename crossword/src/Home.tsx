@@ -55,7 +55,7 @@ export const Home = (_: RouteComponentProps) => {
       <div css={{ margin: '1em', }}>
         <p css={{marginBottom: '2em'}}>Crosshare is a new community for crossword constructors.</p>
         { mini ?
-        <Link to={"/crosswords/" + mini.id} state={mini}><div css={{ width: 200, textAlign: 'center'}}><MiniPuzzle width={100} height={100}/><div css={{ color: 'black', fontWeight: 'bold', fontSize: '1.5em'}}>Daily Mini for {mini.publishTime && mini.publishTime.toDate().toLocaleDateString()}</div></div></Link>
+        <Link css={{textDecoration: 'none !important'}} to={"/crosswords/" + mini.id} state={mini}><div css={{ width: 200, textAlign: 'center'}}><MiniPuzzle width={100} height={100}/><div css={{ color: 'black', fontWeight: 'bold', fontSize: '1.5em'}}>Daily Mini for {mini.publishTime && mini.publishTime.toDate().toLocaleDateString()}</div></div></Link>
         : ""}
         <p css={{marginTop: '2em'}}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>.</p>
       </div>
