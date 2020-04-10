@@ -10,6 +10,7 @@ import { FaKeyboard } from 'react-icons/fa';
 import { FaTabletAlt } from 'react-icons/fa';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { Helmet } from "react-helmet-async";
+import { AudioContext } from "standardized-audio-context";
 
 import { KeypressAction } from './reducer';
 import { TopBar, TopBarLink } from './TopBar';
@@ -95,8 +96,7 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
       axios.get(`${process.env.PUBLIC_URL}/keypress.mp3`, {
         responseType: 'arraybuffer',
       }).then((response) => {
-        const constructor = window.AudioContext || (window as any).webkitAudioContext;
-        const audioContext = new constructor();
+        const audioContext = new AudioContext();
         audioContext.decodeAudioData(response.data, (audioBuffer) => {
           audioSource.current = () => {
             const source = audioContext.createBufferSource();
