@@ -387,6 +387,11 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
 
   const [muted, setMuted] = usePersistedBoolean("muted", true);
 
+  let title = props.title;
+  if (props.category === 'dailymini' && props.publishTime) {
+    title = "Daily Mini for " + props.publishTime.toDate().toLocaleDateString();
+  }
+
   useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
 
   const [playedAudio, setPlayedAudio] = React.useState(false);
@@ -416,11 +421,11 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
 
   const showingKeyboard = state.showKeyboard && !state.success;
-  const beginPauseProps = {authorName: props.authorName, title: props.title, dismiss: resume, moderated: props.moderated, publishTime: props.publishTime?.toDate()};
+  const beginPauseProps = {authorName: props.authorName, title: title, dismiss: resume, moderated: props.moderated, publishTime: props.publishTime?.toDate()};
   return (
     <React.Fragment>
       <Helmet>
-        <title>{props.title}</title>
+        <title>{title}</title>
       </Helmet>
       <TopBar>
         <TopBarLink icon={<FaPause />} hoverText={"Pause Game"} text={timeString(elapsed)} onClick={pause} keepText={true} />
