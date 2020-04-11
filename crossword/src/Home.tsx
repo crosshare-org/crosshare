@@ -3,8 +3,6 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 
 import { navigate, Link, RouteComponentProps } from "@reach/router";
-import firebase from 'firebase/app';
-import 'firebase/auth';
 import { FaUser } from 'react-icons/fa';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
@@ -14,6 +12,8 @@ import { TopBarLink } from './TopBar';
 import { Page } from './Page';
 import { PuzzleResult, PuzzleV } from './types';
 import { MiniPuzzle } from './Icons';
+
+declare var firebase: typeof import('firebase');
 
 export const Home = (_: RouteComponentProps) => {
   const {user} = React.useContext(AuthContext);

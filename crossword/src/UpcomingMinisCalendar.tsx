@@ -3,8 +3,6 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 
-import firebase from 'firebase/app';
-import 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 import Calendar from 'react-calendar';
@@ -12,6 +10,7 @@ import 'react-calendar/dist/Calendar.css';
 
 import { PuzzleResult, PuzzleV } from './types';
 
+declare var firebase: typeof import('firebase');
 
 function sameDay(d1: Date, d2: Date) {
   if (!d1) {

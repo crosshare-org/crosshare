@@ -74,7 +74,7 @@ interface SquareAndColsProps {
 export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: SquareAndColsProps) => {
   const heightAdjust = heightAdjustment(showKeyboard, false);
   const toolbarHeightAdjust = heightAdjustment(showKeyboard);
-  const audioContext = React.useContext(CrosshareAudioContext);
+  const [audioContext, initAudioContext] = React.useContext(CrosshareAudioContext);
 
   function layoutName(numeric: boolean, tablet: boolean) {
 
@@ -93,6 +93,10 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
   React.useEffect(() => {
     mutedRef.current = muted;
 
+    if (!audioContext) {
+      return initAudioContext();
+    }
+
     if (!playKeystrokeSound.current && !muted && showKeyboard && audioContext) {
       axios.get(`${process.env.PUBLIC_URL}/keypress.mp3`, {
         responseType: 'arraybuffer',
@@ -110,7 +114,7 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
         });
       });
     }
-  }, [muted, showKeyboard, audioContext]);
+  }, [muted, showKeyboard, audioContext, initAudioContext]);
 
   const keypress = (key:string) => {
     if (!mutedRef.current && playKeystrokeSound.current) {

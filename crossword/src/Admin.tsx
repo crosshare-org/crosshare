@@ -4,8 +4,6 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 
 import { navigate, RouteComponentProps } from "@reach/router";
-import firebase from 'firebase/app';
-import 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
@@ -14,6 +12,8 @@ import { Page } from './Page';
 import { PuzzleResult, PuzzleV } from './types';
 import { PuzzleListItem } from './PuzzleList';
 import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
+
+declare var firebase: typeof import('firebase');
 
 export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
   const [unmoderated, setUnmoderated] = React.useState<Array<PuzzleResult>|null>(null);

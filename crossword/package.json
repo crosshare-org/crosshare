@@ -11,11 +11,11 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.1.2",
-    "@types/jest": "^24.0.0",
+    "@types/jest": "^25.2.1",
     "@types/lz-string": "^1.3.34",
-    "@types/node": "^12.12.34",
+    "@types/node": "^13.11.1",
     "@types/reach__router": "^1.3.4",
-    "@types/react": "^16.9.32",
+    "@types/react": "^16.9.34",
     "@types/react-calendar": "^3.0.1",
     "@types/react-dom": "^16.9.6",
     "@types/react-virtualized-auto-sizer": "^1.0.0",
@@ -33,7 +33,6 @@
     "react-device-detect": "^1.11.14",
     "react-dom": "^16.13.1",
     "react-firebase-hooks": "^2.1.1",
-    "react-firebaseui": "^4.1.0",
     "react-helmet-async": "^1.0.4",
     "react-icons": "^3.9.0",
     "react-scripts": "^3.4.1",
@@ -42,12 +41,14 @@
     "react-window": "^1.8.5",
     "source-map-explorer": "^2.4.2",
     "standardized-audio-context": "^24.1.5",
-    "typescript": "~3.7.2",
+    "typescript": "^3.8.3",
     "worker-loader": "^2.0.0"
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "react-scripts start",
+    "start": "run-p --race dev:firebase dev:react",
+    "dev:firebase": "firebase serve -p 4000",
+    "dev:react": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -68,7 +69,9 @@
       "last 1 safari version"
     ]
   },
+  "proxy": "http://localhost:4000",
   "devDependencies": {
+    "npm-run-all": "^4.1.5",
     "react-devtools": "^4.6.0"
   }
 }

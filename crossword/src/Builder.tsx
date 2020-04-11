@@ -16,8 +16,6 @@ import { Helmet } from "react-helmet-async";
 import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { navigate } from '@reach/router';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
 
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
@@ -42,6 +40,8 @@ import { isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, Load
 import * as WordDB from './WordDB';
 import { Overlay } from './Overlay';
 import { usePersistedBoolean } from './hooks';
+
+declare var firebase: typeof import('firebase');
 
 let worker: Worker;
 

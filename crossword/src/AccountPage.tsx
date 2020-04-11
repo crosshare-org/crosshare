@@ -9,10 +9,10 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import { requiresAuth, AuthProps } from './App';
 import { PuzzleResult, PuzzleV } from './types';
 import { PuzzleListItem } from './PuzzleList';
-import firebase from 'firebase/app';
-import 'firebase/auth';
 
 import { Page } from './Page';
+
+declare var firebase: typeof import('firebase');
 
 const DisplayNameForm = ({user}: {user: firebase.User}) => {
   function sanitize(input:string) {

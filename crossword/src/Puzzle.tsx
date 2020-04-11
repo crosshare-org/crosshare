@@ -8,8 +8,6 @@ import { isMobile, isTablet } from "react-device-detect";
 import { FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt, FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare } from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
-import firebase from 'firebase/app';
-import 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
@@ -28,6 +26,7 @@ import { SECONDARY, LIGHTER, ERROR_COLOR, SMALL_AND_UP } from './style';
 import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 import { usePersistedBoolean } from './hooks';
 
+declare var firebase: typeof import('firebase');
 
 interface PuzzleLoaderProps extends RouteComponentProps {
   crosswordId?: string
@@ -390,9 +389,12 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
   useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
 
   // Set up music player for success song
-  const audioContext = React.useContext(CrosshareAudioContext);
+  const [audioContext, initAudioContext] = React.useContext(CrosshareAudioContext);
   const playSuccess = React.useRef<(() => void)|null>(null);
   React.useEffect(() => {
+    if (!audioContext) {
+      return initAudioContext();
+    }
     if (!playSuccess.current && !muted && audioContext) {
       axios.get(`${process.env.PUBLIC_URL}/success.mp3`, {
         responseType: 'arraybuffer',
@@ -407,7 +409,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
         });
       });
     }
-  }, [muted, audioContext]);
+  }, [muted, audioContext, initAudioContext]);
   const [playedAudio, setPlayedAudio] = React.useState(false);
   if (state.success && !playedAudio) {
     setPlayedAudio(true);

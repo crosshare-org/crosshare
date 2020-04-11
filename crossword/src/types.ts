@@ -1,7 +1,8 @@
 import * as t from "io-ts";
 import { either } from 'fp-ts/lib/Either'
 import { WordDBT } from './WordDB';
-import firebase from 'firebase/app';
+
+declare var firebase: typeof import('firebase');
 
 export const BLOCK = ".";
 

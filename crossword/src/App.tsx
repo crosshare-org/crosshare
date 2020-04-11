@@ -4,10 +4,6 @@ import * as React from 'react';
 
 import { Router, RouteComponentProps } from "@reach/router";
 import { useAuthState } from 'react-firebase-hooks/auth';
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import { firebaseConfig, firebaseUiConfig } from './config';
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { AudioContext } from "standardized-audio-context";
 
@@ -26,6 +22,9 @@ import {
   Logo, EscapeKey, MiniPuzzle
 } from './Icons';
 import { Home } from './Home';
+import googlesignin from './googlesignin.png';
+
+declare var firebase: typeof import('firebase');
 
 interface AuthContextValue {
   user: firebase.User | undefined,
@@ -35,10 +34,8 @@ interface AuthContextValue {
 }
 export const AuthContext = React.createContext({user:undefined,loadingUser:false,error:"using default context"} as AuthContextValue);
 
-type CrosshareAudioContextValue = AudioContext|undefined;
-export const CrosshareAudioContext = React.createContext(undefined as CrosshareAudioContextValue);
-
-firebase.initializeApp(firebaseConfig);
+type CrosshareAudioContextValue = [AudioContext|null, () => void];
+export const CrosshareAudioContext = React.createContext([null, () => {}] as CrosshareAudioContextValue);
 
 type Optionalize<T extends K, K> = Omit<T, keyof K>;
 
@@ -46,6 +43,16 @@ export interface AuthProps {
   isAdmin: boolean,
   user: firebase.User,
 };
+
+export const GoogleSignInButton = () => {
+  function signin() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+  }
+  return (
+    <button css={{border: 'none'}}><img width="191" height="46" src={googlesignin} alt="Sign in with Google" onClick={signin} /></button>
+  );
+}
 
 export function requiresAuth<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
   return (props: Optionalize<T, AuthProps>) => {
@@ -63,7 +70,7 @@ export function requiresAuth<T extends AuthProps>(WrappedComponent: React.Compon
       <Page title="Sign In">
       <div css={{ margin: '1em', }}>
       <p>Please sign-in to continue. We require a sign-in so that we can keep track of the puzzles you've solved and your stats.</p>
-      <StyledFirebaseAuth uiConfig={firebaseUiConfig} firebaseAuth={firebase.auth()}/>
+      <GoogleSignInButton/>
       </div>
       </Page>
     );
@@ -89,7 +96,7 @@ export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.Compo
       <Page title="Sign In">
       <div css={{ margin: '1em', }}>
       <p>Please sign-in to continue. We require a sign-in so that we can keep track of the puzzles you've solved and your stats.</p>
-      <StyledFirebaseAuth uiConfig={firebaseUiConfig} firebaseAuth={firebase.auth()}/>
+      <GoogleSignInButton/>
       </div>
       </Page>
     );
@@ -254,14 +261,16 @@ const App = () => {
       });
     }
   }, [user]);
-  const audioContext = React.useRef<AudioContext>();
-  React.useEffect(() => {
-    audioContext.current = new AudioContext();
-  }, [])
+  const [audioContext, setAudioContext] = React.useState<AudioContext|null>(null);
+  const initAudioContext = React.useCallback(() => {
+    if (!audioContext) {
+      setAudioContext(new AudioContext());
+    }
+  }, [audioContext, setAudioContext]);
   return (
 <ErrorBoundary>
 <HelmetProvider>
-  <CrosshareAudioContext.Provider value={audioContext.current}>
+  <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
   <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error?.message}}>
     <Helmet defaultTitle="Crosshare" titleTemplate="%s | Crosshare" />
     <Router css={{ height: '100%', width: '100%', }}>
