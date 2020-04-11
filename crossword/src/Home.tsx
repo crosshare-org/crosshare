@@ -9,16 +9,16 @@ import { FaUser } from 'react-icons/fa';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
-import { useAuth } from './App';
+import { AuthContext } from './App';
 import { TopBarLink } from './TopBar';
 import { Page } from './Page';
 import { PuzzleResult, PuzzleV } from './types';
 import { MiniPuzzle } from './Icons';
 
 export const Home = (_: RouteComponentProps) => {
-  const auth_result = useAuth();
+  const {user} = React.useContext(AuthContext);
   let topbar = null;
-  if (auth_result[0]) {
+  if (user) {
     topbar = <TopBarLink icon={<FaUser/>} text="Account" onClick={() => navigate('/account')}/>
   }
   const [error, setError] = React.useState(false);

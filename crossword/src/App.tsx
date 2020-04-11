@@ -28,32 +28,13 @@ import { Home } from './Home';
 
 interface AuthContextValue {
   user: firebase.User | undefined,
+  isAdmin: boolean,
   loadingUser: boolean,
   error: string | undefined
 }
 
 export const AuthContext = React.createContext({user:undefined,loadingUser:false,error:"using default context"} as AuthContextValue);
 firebase.initializeApp(firebaseConfig);
-
-export function useAuth(): [firebase.User|undefined, boolean, boolean, string|undefined] {
-  const [isAdmin, setIsAdmin] = React.useState(false);
-  const {user, loadingUser, error} = React.useContext(AuthContext);
-  if (user && user.email) {
-    user.getIdTokenResult()
-    .then((idTokenResult) => {
-      if (!!idTokenResult.claims.admin) {
-        setIsAdmin(true);
-      } else {
-        setIsAdmin(false);
-      }
-    })
-    .catch((error) => {
-      setIsAdmin(false);
-      console.error(error);
-    });
-  }
-  return [user, isAdmin, loadingUser, error];
-}
 
 type Optionalize<T extends K, K> = Omit<T, keyof K>;
 
@@ -64,7 +45,7 @@ export interface AuthProps {
 
 export function requiresAuth<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
   return (props: Optionalize<T, AuthProps>) => {
-    const [user, isAdmin, loadingUser, error] = useAuth();
+    const {user, isAdmin, loadingUser, error} = React.useContext(AuthContext);
     if (loadingUser) {
       return <Page title={null}>Loading user...</Page>;
     }
@@ -87,7 +68,7 @@ export function requiresAuth<T extends AuthProps>(WrappedComponent: React.Compon
 
 export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
   return (props: Optionalize<T, AuthProps>) => {
-    const [user, isAdmin, loadingUser, error] = useAuth();
+    const {user, isAdmin, loadingUser, error} = React.useContext(AuthContext);
     if (loadingUser) {
       return <Page title={null}>Loading user...</Page>;
     }
@@ -252,10 +233,27 @@ const IconsDemo = (_: RouteComponentProps) => {
 
 const App = () => {
   const [user, loadingUser, error] = useAuthState(firebase.auth());
+  const [isAdmin, setIsAdmin] = React.useState(false);
+  React.useEffect(() => {
+    if (user && user.email) {
+      user.getIdTokenResult()
+      .then((idTokenResult) => {
+        if (!!idTokenResult.claims.admin) {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+      })
+      .catch((error) => {
+        setIsAdmin(false);
+        console.error(error);
+      });
+    }
+  }, [user]);
   return (
 <ErrorBoundary>
 <HelmetProvider>
-  <AuthContext.Provider value={{ user: user, loadingUser: loadingUser, error: error ?.message}}>
+  <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error?.message}}>
     <Helmet defaultTitle="Crosshare" titleTemplate="%s | Crosshare" />
     <Router css={{ height: '100%', width: '100%', }}>
       <Home path="/" />
