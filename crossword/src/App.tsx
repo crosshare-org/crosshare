@@ -26,6 +26,7 @@ import googlesignin from './googlesignin.png';
 
 declare var firebase: typeof import('firebase');
 
+
 interface AuthContextValue {
   user: firebase.User | undefined,
   isAdmin: boolean,

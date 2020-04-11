@@ -12,7 +12,13 @@ if (process.env.NODE_ENV === 'production' && process.env.REACT_APP_SENTRY_RELEAS
   });
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+declare var firebase: typeof import('firebase');
+
+fetch('/__/firebase/init.json').then(async response => {
+  const res = await response.json();
+  firebase.initializeApp({...res, authDomain: "auth.crosshare.org"});
+  ReactDOM.render(<App />, document.getElementById('root'));
+});
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
