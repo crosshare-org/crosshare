@@ -97,11 +97,14 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
       axios.get(`${process.env.PUBLIC_URL}/keypress.mp3`, {
         responseType: 'arraybuffer',
       }).then((response) => {
+        var gainNode = audioContext.createGain()
+        gainNode.gain.value = 0.7;
+        gainNode.connect(audioContext.destination)
         audioContext.decodeAudioData(response.data, (audioBuffer) => {
           playKeystrokeSound.current = () => {
             const source = audioContext.createBufferSource();
             source.buffer = audioBuffer;
-            source.connect(audioContext.destination);
+            source.connect(gainNode);
             source.start();
           }
         });
