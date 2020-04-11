@@ -33,7 +33,7 @@ export const Home = (_: RouteComponentProps) => {
     const db = firebase.firestore();
     db.collection('crosswords').where("category", "==", "dailymini")
       .where("publishTime", "<=", firebase.firestore.Timestamp.now())
-      .limit(1).get().then((value) => {
+      .orderBy("publishTime", "desc").limit(1).get().then((value) => {
       value.forEach(doc => { // Should be only 1 - better way to do this?
         const data = doc.data();
         const validationResult = PuzzleV.decode(data);
