@@ -407,7 +407,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
         });
       });
     }
-  }, [muted]);
+  }, [muted, audioContext]);
   const [playedAudio, setPlayedAudio] = React.useState(false);
   if (state.success && !playedAudio) {
     setPlayedAudio(true);

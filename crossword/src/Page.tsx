@@ -110,7 +110,7 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
         });
       });
     }
-  }, [muted, showKeyboard]);
+  }, [muted, showKeyboard, audioContext]);
 
   const keypress = (key:string) => {
     if (!mutedRef.current && playKeystrokeSound.current) {
