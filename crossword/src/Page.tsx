@@ -10,8 +10,8 @@ import { FaKeyboard } from 'react-icons/fa';
 import { FaTabletAlt } from 'react-icons/fa';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { Helmet } from "react-helmet-async";
-import { AudioContext } from "standardized-audio-context";
 
+import { CrosshareAudioContext } from "./App";
 import { KeypressAction } from './reducer';
 import { TopBar, TopBarLink } from './TopBar';
 import { heightAdjustment, SMALL_AND_UP, LARGE_AND_UP } from './style';
@@ -74,6 +74,7 @@ interface SquareAndColsProps {
 export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: SquareAndColsProps) => {
   const heightAdjust = heightAdjustment(showKeyboard, false);
   const toolbarHeightAdjust = heightAdjustment(showKeyboard);
+  const audioContext = React.useContext(CrosshareAudioContext);
 
   function layoutName(numeric: boolean, tablet: boolean) {
 
@@ -92,11 +93,10 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
   React.useEffect(() => {
     mutedRef.current = muted;
 
-    if (!playKeystrokeSound.current && !muted && showKeyboard) {
+    if (!playKeystrokeSound.current && !muted && showKeyboard && audioContext) {
       axios.get(`${process.env.PUBLIC_URL}/keypress.mp3`, {
         responseType: 'arraybuffer',
       }).then((response) => {
-        const audioContext = new AudioContext();
         audioContext.decodeAudioData(response.data, (audioBuffer) => {
           playKeystrokeSound.current = () => {
             const source = audioContext.createBufferSource();

@@ -12,10 +12,9 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
-import { AudioContext } from "standardized-audio-context";
 
 import { EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle, Rebus } from './Icons';
-import { requiresAuth, AuthProps } from './App';
+import { requiresAuth, AuthProps, CrosshareAudioContext } from './App';
 import { useTimer } from './timer';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
@@ -391,13 +390,13 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
   useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
 
   // Set up music player for success song
+  const audioContext = React.useContext(CrosshareAudioContext);
   const playSuccess = React.useRef<(() => void)|null>(null);
   React.useEffect(() => {
-    if (!playSuccess.current && !muted) {
+    if (!playSuccess.current && !muted && audioContext) {
       axios.get(`${process.env.PUBLIC_URL}/success.mp3`, {
         responseType: 'arraybuffer',
       }).then((response) => {
-        const audioContext = new AudioContext();
         audioContext.decodeAudioData(response.data, (audioBuffer) => {
           playSuccess.current = () => {
             const source = audioContext.createBufferSource();

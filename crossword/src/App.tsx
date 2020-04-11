@@ -9,6 +9,7 @@ import 'firebase/auth';
 import { firebaseConfig, firebaseUiConfig } from './config';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { AudioContext } from "standardized-audio-context";
 
 import { ErrorBoundary } from './ErrorBoundary';
 import { PuzzleLoader } from './Puzzle';
@@ -32,8 +33,11 @@ interface AuthContextValue {
   loadingUser: boolean,
   error: string | undefined
 }
-
 export const AuthContext = React.createContext({user:undefined,loadingUser:false,error:"using default context"} as AuthContextValue);
+
+type CrosshareAudioContextValue = AudioContext|undefined;
+export const CrosshareAudioContext = React.createContext(undefined as CrosshareAudioContextValue);
+
 firebase.initializeApp(firebaseConfig);
 
 type Optionalize<T extends K, K> = Omit<T, keyof K>;
@@ -250,9 +254,14 @@ const App = () => {
       });
     }
   }, [user]);
+  const audioContext = React.useRef<AudioContext>();
+  React.useEffect(() => {
+    audioContext.current = new AudioContext();
+  }, [])
   return (
 <ErrorBoundary>
 <HelmetProvider>
+  <CrosshareAudioContext.Provider value={audioContext.current}>
   <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error?.message}}>
     <Helmet defaultTitle="Crosshare" titleTemplate="%s | Crosshare" />
     <Router css={{ height: '100%', width: '100%', }}>
@@ -271,6 +280,7 @@ const App = () => {
       <NotFound default />
     </Router>
   </AuthContext.Provider>
+  </CrosshareAudioContext.Provider>
 </HelmetProvider>
 </ErrorBoundary>
   );
