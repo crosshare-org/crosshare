@@ -26,7 +26,6 @@ import googlesignin from './googlesignin.png';
 
 declare var firebase: typeof import('firebase');
 
-
 interface AuthContextValue {
   user: firebase.User | undefined,
   isAdmin: boolean,
@@ -70,7 +69,7 @@ export function requiresAuth<T extends AuthProps>(WrappedComponent: React.Compon
     return (
       <Page title="Sign In">
       <div css={{ margin: '1em', }}>
-      <p>Please sign-in to continue. We require a sign-in so that we can keep track of the puzzles you've solved and your stats.</p>
+      <p>Please sign-in with your Google account to continue. We use your account to keep track of the puzzles you've played.</p>
       <GoogleSignInButton/>
       </div>
       </Page>
@@ -96,7 +95,7 @@ export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.Compo
     return (
       <Page title="Sign In">
       <div css={{ margin: '1em', }}>
-      <p>Please sign-in to continue. We require a sign-in so that we can keep track of the puzzles you've solved and your stats.</p>
+      <p>Please sign-in to continue. You must be an admin to view this page.</p>
       <GoogleSignInButton/>
       </div>
       </Page>
