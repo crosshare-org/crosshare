@@ -183,7 +183,7 @@ const ClueMode = (props: ClueModeProps) => {
         </table>
         :
         <React.Fragment>
-          <p>This where you come to set clues for your puzzle, but you don't have any completed entries yet!</p>
+          <p>This where you come to set clues for your puzzle, but you don't have any completed fill words yet!</p>
           <p>Go back to <button css={{
             background: 'none!important',
             border: 'none',
@@ -191,7 +191,7 @@ const ClueMode = (props: ClueModeProps) => {
             color: '#069',
             textDecoration: 'underline',
             cursor: 'pointer',
-          }} onClick={(e) => {props.exitClueMode(); e.preventDefault();}}>the grid</button> and fill in one or more entries completly. Then come back here and make some clues.</p>
+          }} onClick={(e) => {props.exitClueMode(); e.preventDefault();}}>the grid</button> and fill in one or more words completely. Then come back here and make some clues.</p>
         </React.Fragment>
       }
       </div>
@@ -411,14 +411,14 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
       errors.push(<li key="full">All squares in the grid must be filled in</li>);
     }
     if (state.repeats.size > 0) {
-      errors.push(<li key="repeat">No entries can be repeated ({Array.from(state.repeats).sort().join(", ")})</li>);
+      errors.push(<li key="repeat">No words can be repeated ({Array.from(state.repeats).sort().join(", ")})</li>);
     }
     if (!state.title) {
       errors.push(<li key="title">Puzzle must have a title set</li>);
     }
     const missingClues = state.grid.entries.filter((e) => !state.clues.has(e.completedWord || '')).map((e => e.completedWord || ""));
     if (missingClues.length) {
-      errors.push(<li key="clues">All entries must have a clue set ({Array.from(new Set(missingClues)).sort().join(", ")})</li>);
+      errors.push(<li key="clues">All words must have a clue set ({Array.from(new Set(missingClues)).sort().join(", ")})</li>);
     }
 
     if (errors.length) {
@@ -480,11 +480,11 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
             textAlign: 'left',
           }}>
           <div>{ state.gridIsComplete ? <FaRegCheckCircle/> : <FaRegCircle/> } All cells should be filled</div>
-          <div>{ state.hasNoShortWords ? <FaRegCheckCircle/> : <FaRegCircle/> } All entries should be at least three letters</div>
-          <div>{ state.repeats.size > 0 ? <React.Fragment><FaRegCircle/> ({Array.from(state.repeats).sort().join(", ")})</React.Fragment>: <FaRegCheckCircle/> } No entries should be repeated</div>
-          <h4 css={{width: '100%'}}>Entries</h4>
-          <div>Number of entries: { numEntries }</div>
-          <div>Mean entry length: { averageLength.toPrecision(3) }</div>
+          <div>{ state.hasNoShortWords ? <FaRegCheckCircle/> : <FaRegCircle/> } All words should be at least three letters</div>
+          <div>{ state.repeats.size > 0 ? <React.Fragment><FaRegCircle/> ({Array.from(state.repeats).sort().join(", ")})</React.Fragment>: <FaRegCheckCircle/> } No words should be repeated</div>
+          <h4 css={{width: '100%'}}>Fill</h4>
+          <div>Number of words: { numEntries }</div>
+          <div>Mean word length: { averageLength.toPrecision(3) }</div>
           </div>
         </TopBarDropDown>
         <TopBarDropDown icon={<SymmetryIcon type={state.symmetry}/>} text="Symmetry">

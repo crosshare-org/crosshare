@@ -444,7 +444,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
         <TopBarLink icon={<FaPause />} hoverText={"Pause Game"} text={timeString(elapsed)} onClick={pause} keepText={true} />
         <TopBarDropDown icon={<FaEye />} text="Reveal">
           <TopBarDropDownLink icon={<RevealSquare/>} text="Reveal Square" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Square, isReveal: true } as CheatAction)} />
-          <TopBarDropDownLink icon={<RevealEntry/>} text="Reveal Entry" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry, isReveal: true } as CheatAction)} />
+          <TopBarDropDownLink icon={<RevealEntry/>} text="Reveal Word" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry, isReveal: true } as CheatAction)} />
           <TopBarDropDownLink icon={<RevealPuzzle/>} text="Reveal Puzzle" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true } as CheatAction)} />
         </TopBarDropDown>
         {
@@ -452,7 +452,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
             (<TopBarDropDown icon={<FaCheck />} text="Check">
               <TopBarDropDownLink icon={<FaCheckSquare/>} text="Autocheck" onClick={() => dispatch({ type: "TOGGLEAUTOCHECK" })} />
               <TopBarDropDownLink icon={<CheckSquare/>} text="Check Square" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Square } as CheatAction)} />
-              <TopBarDropDownLink icon={<CheckEntry/>} text="Check Entry" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry } as CheatAction)} />
+              <TopBarDropDownLink icon={<CheckEntry/>} text="Check Word" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry } as CheatAction)} />
               <TopBarDropDownLink icon={<CheckPuzzle/>} text="Check Puzzle" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Puzzle } as CheatAction)} />
             </TopBarDropDown>)
             :
