@@ -50,7 +50,7 @@ export const GoogleSignInButton = () => {
     firebase.auth().signInWithPopup(provider)
   }
   return (
-    <button css={{border: 'none'}}><img width="191" height="46" src={googlesignin} alt="Sign in with Google" onClick={signin} /></button>
+    <button css={{background: 'none', border: 'none'}}><img width="191" height="46" src={googlesignin} alt="Sign in with Google" onClick={signin} /></button>
   );
 }
 
