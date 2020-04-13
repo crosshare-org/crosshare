@@ -5,7 +5,6 @@ import * as React from 'react';
 import { WindowLocation, Location, Router, RouteComponentProps } from "@reach/router";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { AudioContext } from "standardized-audio-context";
 
 import { ErrorBoundary } from './ErrorBoundary';
 import { PuzzleLoader } from './Puzzle';
@@ -273,7 +272,8 @@ const App = () => {
   const [audioContext, setAudioContext] = React.useState<AudioContext|null>(null);
   const initAudioContext = React.useCallback(() => {
     if (!audioContext) {
-      setAudioContext(new AudioContext());
+      const constructor = window.AudioContext || (window as any).webkitAudioContext;
+      setAudioContext(new constructor());
     }
   }, [audioContext, setAudioContext]);
   return (

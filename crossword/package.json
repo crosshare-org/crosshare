@@ -40,7 +40,6 @@
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
     "source-map-explorer": "^2.4.2",
-    "standardized-audio-context": "^24.1.5",
     "typescript": "^3.8.3",
     "worker-loader": "^2.0.0"
   },
