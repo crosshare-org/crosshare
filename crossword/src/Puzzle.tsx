@@ -23,7 +23,7 @@ import { cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock, Symmetry,
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, ERROR_COLOR, SMALL_AND_UP } from './style';
-import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
+import { navToLatestMini, UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 import { usePersistedBoolean } from './hooks';
 
 declare var firebase: typeof import('firebase');
@@ -236,11 +236,49 @@ const KeepTryingOverlay = ({dispatch}: {dispatch: React.Dispatch<PuzzleAction>})
   );
 }
 
-const SuccessOverlay = (props: {isMuted: boolean, solveTime: number, dispatch: React.Dispatch<PuzzleAction>}) => {
+const PrevDailyMiniLink = (props: {puzzle: PuzzleResult}) => {
+  const [error, setError] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [finished, setFinished] = React.useState(false);
+
+  function goToPrevious() {
+    if (!props.puzzle.publishTime) {
+      setError(true);
+      return;
+    }
+    setLoading(true);
+    navToLatestMini(props.puzzle.publishTime, ()=>{setError(true)}, ()=>{setFinished(true)});
+  }
+  if (error) {
+    return <React.Fragment>Something went wrong while loading</React.Fragment>;
+  }
+  if (finished) {
+    return <React.Fragment>End of the line, partner</React.Fragment>;
+  }
+  if (loading) {
+    return <React.Fragment>Loading previous daily mini...</React.Fragment>;
+  }
+  return (<button  css={{
+        background: 'none!important',
+        border: 'none',
+        padding: '0!important',
+        color: '#069',
+        fontWeight: 'bold',
+        textDecoration: 'underline',
+        cursor: 'pointer',
+      }} onClick={goToPrevious}>Play the previous daily mini crossword</button>);
+}
+
+const SuccessOverlay = (props: {puzzle: PuzzleResult, isMuted: boolean, solveTime: number, dispatch: React.Dispatch<PuzzleAction>}) => {
   return (
     <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({type: "DISMISSSUCCESS"})}>
     <h4 css={{width: '100%'}}>Congratulations!</h4>
     <p css={{width: '100%'}}>You solved the puzzle in <b>{timeString(props.solveTime)}</b></p>
+    { props.puzzle.category === 'dailymini' ?
+      <p css={{width: '100%'}}>
+        <PrevDailyMiniLink puzzle={props.puzzle} />
+      </p>
+    : ""}
     </Overlay>
   );
 }
@@ -484,7 +522,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
         <KeepTryingOverlay dispatch={dispatch}/>
       :""}
       {state.success && !state.dismissedSuccess ?
-        <SuccessOverlay isMuted={muted} solveTime={elapsed} dispatch={dispatch}/>
+        <SuccessOverlay puzzle={props} isMuted={muted} solveTime={elapsed} dispatch={dispatch}/>
       :""}
       {state.moderating ?
         <ModeratingOverlay puzzle={props} dispatch={dispatch}/>

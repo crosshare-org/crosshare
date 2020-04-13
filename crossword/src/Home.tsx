@@ -4,13 +4,11 @@ import * as React from 'react';
 
 import { navigate, RouteComponentProps } from "@reach/router";
 import { FaUser } from 'react-icons/fa';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { AuthContext } from './App';
 import { TopBarLink } from './TopBar';
 import { Page } from './Page';
-import { PuzzleV } from './types';
+import { navToLatestMini } from './UpcomingMinisCalendar';
 
 declare var firebase: typeof import('firebase');
 
@@ -25,24 +23,7 @@ export const Home = (_: RouteComponentProps) => {
 
   function goToDailyMini() {
     setLoading(true);
-    const db = firebase.firestore();
-    db.collection('crosswords').where("category", "==", "dailymini")
-      .where("publishTime", "<=", firebase.firestore.Timestamp.now())
-      .orderBy("publishTime", "desc").limit(1).get().then((value) => {
-      value.forEach(doc => { // Should be only 1 - better way to do this?
-        const data = doc.data();
-        const validationResult = PuzzleV.decode(data);
-        if (isRight(validationResult)) {
-          navigate("/crosswords/" + doc.id, {state: {...validationResult.right, id: doc.id}});
-        } else {
-          console.error(PathReporter.report(validationResult).join(","));
-          setError(true);
-        }
-      });
-    }).catch(reason => {
-      console.error(reason);
-      setError(true);
-    });
+    navToLatestMini(firebase.firestore.Timestamp.now(), ()=>{setError(true)});
   }
 
   return (

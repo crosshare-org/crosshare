@@ -3,6 +3,7 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 
+import { navigate } from "@reach/router";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 import Calendar from 'react-calendar';
@@ -96,4 +97,28 @@ export const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
   nextMonth.setMonth(nextMonth.getMonth() + 1);
 
   return <Calendar value={props.value} onChange={dateChanged} minDate={new Date()} maxDate={nextMonth} tileDisabled={tileDisabled} />
+}
+
+export function navToLatestMini(priorTo: firebase.firestore.Timestamp, onError: () => void, onMissing?: () => void) {
+  const db = firebase.firestore();
+  db.collection('crosswords').where("category", "==", "dailymini")
+    .where("publishTime", "<", priorTo)
+    .orderBy("publishTime", "desc").limit(1).get().then((value) => {
+    if (value.size === 0 && onMissing) {
+      onMissing();
+    }
+    value.forEach(doc => { // Should be only 1 - better way to do this?
+      const data = doc.data();
+      const validationResult = PuzzleV.decode(data);
+      if (isRight(validationResult)) {
+        navigate("/crosswords/" + doc.id, {state: {...validationResult.right, id: doc.id}});
+      } else {
+        console.error(PathReporter.report(validationResult).join(","));
+        onError();
+      }
+    });
+  }).catch(reason => {
+    console.error(reason);
+    onError();
+  });
 }
