@@ -29,4 +29,8 @@ export const notSelectable = css`
 `;
 
 export const SMALL_AND_UP = '@media (min-width: 576px)';
+export const SMALL_AND_UP_WIDE = '@media (min-width: 576px) and (min-aspect-ratio: 32/22)';
+export const SMALL_AND_UP_WIDE_KEYBOARD = '@media (min-width: 576px) and (min-aspect-ratio: 32/32)';
 export const LARGE_AND_UP = '@media (min-width: 992px)';
+export const LARGE_AND_UP_WIDE = '@media (min-width: 992px) and (min-aspect-ratio: 32/17)';
+export const LARGE_AND_UP_WIDE_KEYBOARD = '@media (min-width: 992px) and (min-aspect-ratio: 32/22)';

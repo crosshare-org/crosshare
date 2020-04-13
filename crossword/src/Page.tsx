@@ -14,7 +14,11 @@ import { Helmet } from "react-helmet-async";
 import { CrosshareAudioContext } from "./App";
 import { KeypressAction } from './reducer';
 import { TopBar, TopBarLink } from './TopBar';
-import { heightAdjustment, SMALL_AND_UP, LARGE_AND_UP } from './style';
+import {
+  heightAdjustment, SMALL_AND_UP, LARGE_AND_UP,
+  SMALL_AND_UP_WIDE, LARGE_AND_UP_WIDE,
+  SMALL_AND_UP_WIDE_KEYBOARD, LARGE_AND_UP_WIDE_KEYBOARD
+} from './style';
 
 interface TinyNavProps {
   children: React.ReactNode,
@@ -128,7 +132,6 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
   return (
     <React.Fragment>
       <div css={{
-        touchAction: 'manipulation',
         display: 'flex',
         flexDirection: 'column',
         [SMALL_AND_UP]: {
@@ -142,16 +145,28 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
       }}>
         <div css={{
           flexShrink: 0,
-          height: 'calc(min(87vh - ' + toolbarHeightAdjust + 'px, 100vw))',
-          width: 'calc(min(87vh - ' + toolbarHeightAdjust + 'px, 100vw))',
+          height: '100vw',
+          width: '100vw',
+          [showKeyboard ? '@media (min-aspect-ratio: 15/25)' : '@media (min-aspect-ratio: 15/19)']: {
+            height: 'calc(87vh - ' + toolbarHeightAdjust + 'px)',
+            width: 'calc(87vh - ' + toolbarHeightAdjust + 'px)',
+          },
           [SMALL_AND_UP]: {
             padding: '5px',
-            height: 'calc(min(100vh - ' + heightAdjust + 'px, 66vw))',
-            width: 'calc(min(100vh - ' + heightAdjust + 'px, 66vw))',
+            height: '66vw',
+            width: '66vw',
+          },
+          [showKeyboard ? SMALL_AND_UP_WIDE_KEYBOARD : SMALL_AND_UP_WIDE]: {
+            height: 'calc(100vh - ' + heightAdjust + 'px)',
+            width: 'calc(100vh - ' + heightAdjust + 'px)',
           },
           [LARGE_AND_UP]: {
-            height: 'calc(min(100vh - ' + heightAdjust + 'px, 50vw))',
-            width: 'calc(min(100vh - ' + heightAdjust + 'px, 50vw))',
+            height: '50vw',
+            width: '50vw',
+          },
+          [showKeyboard ? LARGE_AND_UP_WIDE_KEYBOARD : LARGE_AND_UP_WIDE]: {
+            height: 'calc(100vh - ' + heightAdjust + 'px)',
+            width: 'calc(100vh - ' + heightAdjust + 'px)',
           },
         }}>
           {props.square}

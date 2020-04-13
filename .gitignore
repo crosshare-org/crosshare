@@ -6,3 +6,4 @@ cluedata
 .DS*
 .firebase
 serviceAccountKey.json
+firebase-debug.log
