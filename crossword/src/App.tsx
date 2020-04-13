@@ -2,7 +2,7 @@
 import { jsx } from '@emotion/core';
 import * as React from 'react';
 
-import { Router, RouteComponentProps } from "@reach/router";
+import { WindowLocation, Location, Router, RouteComponentProps } from "@reach/router";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { AudioContext } from "standardized-audio-context";
@@ -47,7 +47,9 @@ export interface AuthProps {
 export const GoogleSignInButton = () => {
   function signin() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider)
+    firebase.auth().signInWithPopup(provider).then(() => {
+      firebase.analytics().logEvent("login", {method: 'google'});
+    })
   }
   return (
     <button css={{background: 'none', border: 'none'}}><img width="191" height="46" src={googlesignin} alt="Sign in with Google" onClick={signin} /></button>
@@ -242,6 +244,13 @@ const IconsDemo = (_: RouteComponentProps) => {
   </Page>;
 }
 
+const PageViewTracker = ({location}: {location: WindowLocation}) => {
+  React.useEffect(() => {
+    firebase.analytics().logEvent("screen_view", {app_name: 'react', screen_name: location.pathname});
+  }, [location]);
+  return <React.Fragment></React.Fragment>;
+}
+
 const App = () => {
   const [user, loadingUser, error] = useAuthState(firebase.auth());
   const [isAdmin, setIsAdmin] = React.useState(false);
@@ -273,6 +282,11 @@ const App = () => {
   <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
   <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error?.message}}>
     <Helmet defaultTitle="Crosshare" titleTemplate="%s | Crosshare" />
+    <Location>
+      {({ location }) => (
+        <PageViewTracker location={location}/>
+      )}
+    </Location>
     <Router css={{ height: '100%', width: '100%', }}>
       <Home path="/" />
       <AccountPage path="/account" />
