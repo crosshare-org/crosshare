@@ -5,7 +5,12 @@ import * as React from 'react';
 
 import { FaSlash, FaEye } from 'react-icons/fa';
 
-import {heightAdjustment, notSelectable, PRIMARY, SECONDARY, ERROR_COLOR, SMALL_AND_UP, LARGE_AND_UP} from './style';
+import {
+  heightAdjustment, notSelectable, PRIMARY, SECONDARY, ERROR_COLOR,
+  SMALL_AND_UP, LARGE_AND_UP,
+  SMALL_AND_UP_WIDE, LARGE_AND_UP_WIDE,
+  SMALL_AND_UP_WIDE_KEYBOARD, LARGE_AND_UP_WIDE_KEYBOARD
+} from './style';
 
 type CellProps = {
   autofill: string,
@@ -69,12 +74,22 @@ export const Cell = React.memo((props: CellProps) => {
             top: 0,
             fontWeight: 'bold',
             lineHeight: '1em',
-            fontSize: 'calc(0.25 * min(87vh - ' + heightAdjust + 'px, 100vw) / ' + props.gridWidth + ')',
+
+            fontSize: 'calc(0.25 * 100vw / ' + props.gridWidth + ')',
+            [props.showingKeyboard ? '@media (min-aspect-ratio: 15/25)' : '@media (min-aspect-ratio: 15/19)']: {
+              fontSize: 'calc(0.25 * (87vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
+            },
             [SMALL_AND_UP]: {
-              fontSize: 'calc(0.25 * min(100vh - ' + heightAdjust + 'px, 66vw) / ' + props.gridWidth + ')',
+              fontSize: 'calc(0.25 * 66vw / ' + props.gridWidth + ')',
+            },
+            [props.showingKeyboard ? SMALL_AND_UP_WIDE_KEYBOARD : SMALL_AND_UP_WIDE]: {
+              fontSize: 'calc(0.25 * (100vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
             },
             [LARGE_AND_UP]: {
-              fontSize: 'calc(0.25 * min(100vh - ' + heightAdjust + 'px, 50vw) / ' + props.gridWidth + ')',
+              fontSize: 'calc(0.25 * 50vw / ' + props.gridWidth + ')',
+            },
+            [props.showingKeyboard ? LARGE_AND_UP_WIDE_KEYBOARD : LARGE_AND_UP_WIDE]: {
+              fontSize: 'calc(0.25 * (100vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
             },
           }}>
           { props.wasRevealed ?
