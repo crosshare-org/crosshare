@@ -157,16 +157,16 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
             width: '66vw',
           },
           [showKeyboard ? SMALL_AND_UP_WIDE_KEYBOARD : SMALL_AND_UP_WIDE]: {
-            height: 'calc(100vh - ' + heightAdjust + 'px)',
-            width: 'calc(100vh - ' + heightAdjust + 'px)',
+            height: 'calc(100vh - ' + toolbarHeightAdjust + 'px)',
+            width: 'calc(100vh - ' + toolbarHeightAdjust + 'px)',
           },
           [LARGE_AND_UP]: {
             height: '50vw',
             width: '50vw',
           },
           [showKeyboard ? LARGE_AND_UP_WIDE_KEYBOARD : LARGE_AND_UP_WIDE]: {
-            height: 'calc(100vh - ' + heightAdjust + 'px)',
-            width: 'calc(100vh - ' + heightAdjust + 'px)',
+            height: 'calc(100vh - ' + toolbarHeightAdjust + 'px)',
+            width: 'calc(100vh - ' + toolbarHeightAdjust + 'px)',
           },
         }}>
           {props.square}
