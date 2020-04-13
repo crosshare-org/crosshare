@@ -18,7 +18,7 @@ import {
   CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle,
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
   SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
-  Logo, EscapeKey, MiniPuzzle
+  Logo, EscapeKey
 } from './Icons';
 import { Home } from './Home';
 import googlesignin from './googlesignin.png';
@@ -221,7 +221,6 @@ const Construct = (_: RouteComponentProps) => {
 const IconsDemo = (_: RouteComponentProps) => {
   return <Page title="Icons">
     <div css={{fontSize: 20}}>
-      <p>Mini Puzzle: <MiniPuzzle width={100} height={100}/></p>
       <p title="Autofill disabled">Disabled: <SpinnerDisabled/></p>
       <p>Esc: <EscapeKey/></p>
       <p>Working: <SpinnerWorking/></p>

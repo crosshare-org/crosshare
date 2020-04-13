@@ -2,9 +2,9 @@ import * as React from 'react';
 import { FaEye, FaCheck } from 'react-icons/fa';
 import { CheatUnit, Symmetry } from './reducer';
 
-const Square = (props: {cx:number, cy:number, beginMs:number, animate: boolean, filled: boolean, mini?: boolean}) => {
+const Square = (props: {cx:number, cy:number, beginMs:number, animate: boolean, filled: boolean}) => {
   let color = {
-    fillOpacity: props.mini ? '0' : "0.2",
+    fillOpacity: "0.2",
   };
   if (props.filled) {
     color = {
@@ -12,7 +12,7 @@ const Square = (props: {cx:number, cy:number, beginMs:number, animate: boolean, 
     }
   }
   return (
-    <rect x={props.cx - 14} y={props.cy - 14} stroke={props.mini ? "#000" : "none"} rx={props.mini ? 0 : 7} ry={props.mini ? 0 : 7} width="28" height="28" {...color}>
+    <rect x={props.cx - 14} y={props.cy - 14} rx="7" ry="7" width="28" height="28" {...color}>
     {props.animate ?
       <animate attributeName="fill-opacity"
         begin={props.beginMs + "ms"} dur="1s"
@@ -192,21 +192,5 @@ export const Logo = (props: IconProps) => {
 <rect x="10" y="10" width="1" height="1"><animate attributeName="width" dur="0.5s" id="a" begin="10;a.end+10" values="1;0" calcMode="discrete"/></rect>
 <rect x="9" y="11" width="1" height="1"><animate attributeName="width" dur="0.5s" id="b" begin="10;b.end+10" values="1;3" calcMode="discrete"/></rect>
 <rect x="10" y="12" width="2" height="1"><animate attributeName="width" dur="0.5s" id="c" begin="10;c.end+10" values="2;0" calcMode="discrete"/></rect></svg>
-  );
-}
-
-export const MiniPuzzle = (props: IconProps) => {
-  return (
-    <svg width={props.width || "1em"} height={props.height || "1em"} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#000">
-      <Square mini={true} cx={15} cy={15} beginMs={0} animate={false} filled={true}/>
-      <Square mini={true} cx={15} cy={85} beginMs={0} animate={false} filled={false}/>
-      <Square mini={true} cx={85} cy={85} beginMs={0} animate={false} filled={false}/>
-      <Square mini={true} cx={85} cy={15} beginMs={0} animate={false} filled={false}/>
-      <Square mini={true} cx={15} cy={50} beginMs={0} animate={false} filled={false}/>
-      <Square mini={true} cx={85} cy={50} beginMs={0} animate={false} filled={true}/>
-      <Square mini={true} cx={50} cy={15} beginMs={0} animate={false} filled={true}/>
-      <Square mini={true} cx={50} cy={85} beginMs={0} animate={false} filled={true}/>
-      <Square mini={true} cx={50} cy={50} beginMs={0} animate={false} filled={false}/>
-    </svg>
   );
 }
