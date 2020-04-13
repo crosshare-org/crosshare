@@ -105,12 +105,21 @@ export const Cell = React.memo((props: CellProps) => {
             color: props.isVerified ? '#4e61eb' : (props.value.trim() ? 'black' : '#BBB'),
             textAlign: 'center',
             lineHeight: '1.2em',
-            fontSize: 'calc(0.9 * min(87vh - ' + heightAdjust + 'px, 100vw) / ' + props.gridWidth + ')',
+            fontSize: 'calc(0.9 * 100vw / ' + props.gridWidth + ')',
+            [props.showingKeyboard ? '@media (min-aspect-ratio: 15/25)' : '@media (min-aspect-ratio: 15/19)']: {
+              fontSize: 'calc(0.9 * (87vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
+            },
             [SMALL_AND_UP]: {
-              fontSize: 'calc(0.9 * min(100vh - ' + heightAdjust + 'px, 66vw) / ' + props.gridWidth + ')',
+              fontSize: 'calc(0.9 * 66vw / ' + props.gridWidth + ')',
+            },
+            [props.showingKeyboard ? SMALL_AND_UP_WIDE_KEYBOARD : SMALL_AND_UP_WIDE]: {
+              fontSize: 'calc(0.9 * (100vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
             },
             [LARGE_AND_UP]: {
-              fontSize: 'calc(0.9 * min(100vh - ' + heightAdjust + 'px, 50vw) / ' + props.gridWidth + ')',
+              fontSize: 'calc(0.9 * 50vw / ' + props.gridWidth + ')',
+            },
+            [props.showingKeyboard ? LARGE_AND_UP_WIDE_KEYBOARD : LARGE_AND_UP_WIDE]: {
+              fontSize: 'calc(0.9 * (100vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
             },
           }}>
           { props.isWrong ?
