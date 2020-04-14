@@ -84,7 +84,7 @@ export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
   if (puzzle === null) {
     return <Page title={null}>Loading '{crosswordId}'...</Page>
   }
-  return <Puzzle {...puzzle} />
+  return <PuzzlePlayLoader {...puzzle} />
 }
 
 interface ClueListItemProps {
@@ -394,18 +394,58 @@ export function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction
   }
 }
 
-export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
-  const playData = localStorage.getItem("p/" + props.id + "-" + props.user.uid);
-  let play: PlayT|null = null;
-  if (playData) {
-    const validationResult = PlayV.decode(JSON.parse(playData));
-    if (isRight(validationResult)) {
-      play = validationResult.right;
+const PuzzlePlayLoader = requiresAuth((props: PuzzleResult & AuthProps) => {
+  const [play, setPlay] = React.useState<PlayT | null>(null);
+  const [isError, setIsError] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const playData = localStorage.getItem("p/" + props.id + "-" + props.user.uid);
+    if (playData) {
+      console.log("loading play state from local storage");
+      const validationResult = PlayV.decode(JSON.parse(playData));
+      if (isRight(validationResult)) {
+        setPlay(validationResult.right);
+      } else {
+        console.error(PathReporter.report(validationResult).join(","));
+        setIsError(true);
+      }
     } else {
-      console.error(PathReporter.report(validationResult).join(","));
+      console.log("trying load from db");
+      const db = firebase.firestore();
+      db.collection("p").doc(props.id + "-" + props.user.uid).get().then((value) => {
+        const data = value.data();
+        if (data) {
+          console.log("loaded play state from db");
+          const validationResult = PlayV.decode(data);
+          if (isRight(validationResult)) {
+            setPlay(validationResult.right);
+            localStorage.setItem("p/" + props.id + "-" + props.user.uid, JSON.stringify(validationResult.right));
+          } else {
+            console.error(PathReporter.report(validationResult).join(","));
+            setIsError(true);
+          }
+        } else {
+          setIsLoading(false);
+        }
+      });
     }
+  }, [props.id, props.user.uid]);
+
+  if (isError) {
+    return <Page title={null}>Something went wrong while loading play history</Page>;
+  }
+  if (isLoading && play === null) {
+    return <Page title={null}>Loading play history...</Page>
   }
 
+  return <Puzzle play={play} {...props}/>
+});
+
+interface PlayProps {
+  play: PlayT|null,
+}
+const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayProps) => {
   const [state, dispatch] = React.useReducer(puzzleReducer, {
     type: 'puzzle',
     active: { col: 0, row: 0, dir: Direction.Across },
@@ -499,7 +539,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
     throw new Error("Null entry/cross while playing puzzle!");
   }
 
-  const updatePlay = React.useCallback(() => {
+  const updatePlay = React.useCallback((sendToDB: boolean) => {
     const validationResult = PlayV.decode({
       c: props.id,
       u: props.user.uid,
@@ -516,12 +556,14 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
       f: state.success,
     });
     if (isRight(validationResult)) {
-      console.log("Play passed validation, writing to local storage");
       localStorage.setItem("p/" + props.id + "-" + props.user.uid, JSON.stringify(validationResult.right));
-//      const db = firebase.firestore();
-//      db.collection("p").doc(props.id + "-" + props.user.uid).set(validationResult.right).then(() => {
-//        console.log("Pushed update");
-//      });
+      if (sendToDB) {
+        console.log("Writing play to db");
+        const db = firebase.firestore();
+        db.collection("p").doc(props.id + "-" + props.user.uid).set(validationResult.right).then(() => {
+          console.log("Pushed update");
+        });
+      }
     } else {
       console.error(PathReporter.report(validationResult).join(","));
     }
@@ -530,9 +572,41 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
       state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
       state.wrongCells]);
 
+  const updatePlayRef = React.useRef(state.success ? null : updatePlay);
+  // Any time any of the things we save update, write to local storage
   React.useEffect(() => {
-    updatePlay();
-  }, [updatePlay]);
+    // Write through to firebase if first call after success
+    const writeThrough = state.success && (updatePlayRef.current !== null);
+    if (writeThrough) {
+      console.log("Writing through to DB");
+      updatePlay(true);
+    } else if (!state.success){
+      console.log("Writing to local storage");
+      updatePlay(false);
+    }
+    if (state.success) {
+      updatePlayRef.current = null;
+    } else {
+      updatePlayRef.current = updatePlay;
+    }
+  }, [updatePlay, state.success]);
+
+  React.useEffect(() => {
+    function handleBeforeUnload () {
+      console.log("Doing before unload");
+      if (updatePlayRef.current) {
+        updatePlayRef.current(true);
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      console.log("Doing unmount update");
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      if (updatePlayRef.current) {
+        updatePlayRef.current(true);
+      }
+    }
+  }, [updatePlayRef]);
 
   const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
