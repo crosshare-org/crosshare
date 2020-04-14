@@ -25,8 +25,11 @@ export const GridView = ({ showingKeyboard, active, dispatch, grid, ...props}: G
   const entryCells = getEntryCells(grid, active);
 
   const noOp = React.useCallback(() => undefined, []);
-  const changeActive = React.useCallback((pos) => dispatch({type: "SETACTIVEPOSITION", newActive: pos} as SetActivePositionAction), [dispatch]);
-  const changeDirection = React.useCallback(() => dispatch({type: "CHANGEDIRECTION"} as PuzzleAction), [dispatch]);
+  const changeActive = React.useCallback((pos) => {
+    const a: SetActivePositionAction = {type: "SETACTIVEPOSITION", newActive: pos};
+    dispatch(a);
+  }, [dispatch]);
+  const changeDirection = React.useCallback(() => dispatch({type: "CHANGEDIRECTION"}), [dispatch]);
 
   let cells = new Array<React.ReactNode>();
   for (let idx = 0; idx < grid.cells.length; idx += 1) {

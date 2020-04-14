@@ -26,7 +26,7 @@ import { requiresAdmin, AuthProps } from './App';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
 import { fromCells, getClueMap } from './viewableGrid';
-import { PosAndDir, Direction, PuzzleT, PuzzleV } from './types';
+import { Direction, PuzzleT, PuzzleV } from './types';
 import {
   Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
   KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
@@ -150,7 +150,10 @@ const ClueRow = (props: {dispatch: React.Dispatch<PuzzleAction>, entry: BuilderE
       paddingBottom: '1em',
       textAlign: 'right',
     }}>{props.entry.completedWord}</td>
-    <td css={{ paddingBottom: '1em'}}><input placeholder="Enter a clue" value={props.clues.get(props.entry.completedWord)||""} onChange={(e) => props.dispatch({ type: "SETCLUE", word: props.entry.completedWord, clue: e.target.value } as SetClueAction)}/></td>
+    <td css={{ paddingBottom: '1em'}}><input placeholder="Enter a clue" value={props.clues.get(props.entry.completedWord)||""} onChange={(e) => {
+      const sca: SetClueAction = { type: "SETCLUE", word: props.entry.completedWord||"", clue: e.target.value };
+      props.dispatch(sca);
+    }}/></td>
     </tr>
   );
 }
@@ -173,7 +176,10 @@ const ClueMode = (props: ClueModeProps) => {
     <Page title="Constructor" topBarElements={topbar}>
       <div css={{ padding: '1em'}}>
       <h4>Title</h4>
-      <input placeholder="Give your puzzle a title" value={props.title || ""} onChange={(e) => props.dispatch({ type: "SETTITLE", value: e.target.value } as SetTitleAction)}/>
+      <input placeholder="Give your puzzle a title" value={props.title || ""} onChange={(e) => {
+        const sta: SetTitleAction = { type: "SETTITLE", value: e.target.value };
+        props.dispatch(sta);
+      }}/>
       <h4>Clues</h4>
       {props.completedEntries.length ?
         <table css={{ margin: 'auto', }}>
@@ -212,7 +218,7 @@ export const Builder = (props: BuilderProps & AuthProps) => {
   const [state, dispatch] = React.useReducer(builderReducer, {
     type: 'builder',
     title: props.title || null,
-    active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
+    active: { col: 0, row: 0, dir: Direction.Across },
     grid: initialGrid,
     showKeyboard: isMobile,
     isTablet: isTablet,
@@ -488,14 +494,29 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
           </div>
         </TopBarDropDown>
         <TopBarDropDown icon={<SymmetryIcon type={state.symmetry}/>} text="Symmetry">
-          <TopBarDropDownLink icon={<SymmetryRotational />} text="Rotational Symmetry" onClick={() => dispatch({ type: "CHANGESYMMETRY", symmetry: Symmetry.Rotational } as SymmetryAction)} />
-          <TopBarDropDownLink icon={<SymmetryHorizontal />} text="Horizontal Symmetry" onClick={() => dispatch({ type: "CHANGESYMMETRY", symmetry: Symmetry.Horizontal } as SymmetryAction)} />
-          <TopBarDropDownLink icon={<SymmetryVertical />} text="Vertical Symmetry" onClick={() => dispatch({ type: "CHANGESYMMETRY", symmetry: Symmetry.Vertical } as SymmetryAction)} />
-          <TopBarDropDownLink icon={<SymmetryNone />} text="No Symmetry" onClick={() => dispatch({ type: "CHANGESYMMETRY", symmetry: Symmetry.None } as SymmetryAction)} />
+          <TopBarDropDownLink icon={<SymmetryRotational />} text="Rotational Symmetry" onClick={() => {
+            const a: SymmetryAction = { type: "CHANGESYMMETRY", symmetry: Symmetry.Rotational };
+            dispatch(a);
+          }} />
+          <TopBarDropDownLink icon={<SymmetryHorizontal />} text="Horizontal Symmetry" onClick={() => {
+            const a: SymmetryAction = { type: "CHANGESYMMETRY", symmetry: Symmetry.Horizontal };
+            dispatch(a);
+          }} />
+          <TopBarDropDownLink icon={<SymmetryVertical />} text="Vertical Symmetry" onClick={() => {
+            const a: SymmetryAction = { type: "CHANGESYMMETRY", symmetry: Symmetry.Vertical };
+            dispatch(a);
+          }} />
+          <TopBarDropDownLink icon={<SymmetryNone />} text="No Symmetry" onClick={() => {
+            const a: SymmetryAction = { type: "CHANGESYMMETRY", symmetry: Symmetry.None };
+            dispatch(a);
+          }} />
         </TopBarDropDown>
         <TopBarDropDown icon={<FaEllipsisH />} text="More">
           <TopBarDropDownLink icon={<FaRegNewspaper/>} text="Publish Puzzle" onClick={publish} />
-          <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey/>} onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
+          <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey/>} onClick={() => {
+            const a: KeypressAction = {elapsed: 0, type: "KEYPRESS", key: 'Escape', shift: false };
+            dispatch(a);
+          }} />
           {
             muted ?
             <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
