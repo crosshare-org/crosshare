@@ -29,5 +29,36 @@
       ]
     }
   ],
-  "fieldOverrides": []
+  "fieldOverrides": [
+    {
+      "collectionGroup": "crosswords",
+      "fieldPath": "grid",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "crosswords",
+      "fieldPath": "size",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "crosswords",
+      "fieldPath": "clues",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "crosswords",
+      "fieldPath": "highlighted",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "crosswords",
+      "fieldPath": "highlight",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "crosswords",
+      "fieldPath": "authorName",
+      "indexes": []
+    }
+  ]
 }
