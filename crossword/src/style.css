@@ -10,7 +10,7 @@ body {
   display: flex;
 }
 body * {
-  touch-action: none !important;
+  touch-action: manipulation !important;
 }
 #root {
   height: 100%;
