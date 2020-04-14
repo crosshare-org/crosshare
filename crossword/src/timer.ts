@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import useEventListener from '@use-it/event-listener';
 
-export function useTimer():[number, boolean, ()=>void, ()=>void] {
+export function useTimer():[number, boolean, ()=>void, ()=>void, ()=>number] {
   // TODO should probably change this to always 0 so we can style the init page
   const init = process.env.NODE_ENV === 'development' ? (new Date()).getTime() : 0;
   const [currentWindowStart, setCurrentWindowStart] = useState<number>(init);
@@ -29,6 +29,10 @@ export function useTimer():[number, boolean, ()=>void, ()=>void] {
     setCurrentWindowStart((new Date()).getTime());
   }
 
+  function getCurrentSeconds () {
+    return bankedSeconds + ((new Date()).getTime() - currentWindowStart) / 1000;
+  }
+
   function pause() {
     if (currentWindowStart) {
       setBankedSeconds(bankedSeconds + ((new Date()).getTime() - currentWindowStart) / 1000);
@@ -36,5 +40,5 @@ export function useTimer():[number, boolean, ()=>void, ()=>void] {
     }
   }
 
-  return [totalSeconds, currentWindowStart === 0, pause, resume];
+  return [totalSeconds, currentWindowStart === 0, pause, resume, getCurrentSeconds];
 }

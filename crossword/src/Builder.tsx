@@ -210,6 +210,7 @@ export const Builder = (props: BuilderProps & AuthProps) => {
     highlight: props.highlight || "circle",
   });
   const [state, dispatch] = React.useReducer(builderReducer, {
+    type: 'builder',
     title: props.title || null,
     active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
     grid: initialGrid,
@@ -218,7 +219,6 @@ export const Builder = (props: BuilderProps & AuthProps) => {
     showExtraKeyLayout: false,
     isEnteringRebus: false,
     rebusValue: '',
-    wrongCells: new Set<number>(),
     gridIsComplete: false,
     repeats: new Set<string>(),
     hasNoShortWords: false,
@@ -289,7 +289,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
   const [publishErrors, setPublishErrors] = React.useState<React.ReactNode>(null);
   const [muted, setMuted] = usePersistedBoolean("muted", false);
 
-  useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
+  useEventListener('keydown', getPhysicalKeyboardHandler(dispatch, ()=>0));
   let left = <React.Fragment></React.Fragment>;
   let right = <React.Fragment></React.Fragment>;
   let tiny = <React.Fragment></React.Fragment>;
@@ -515,7 +515,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
         </TopBarDropDown>
       </TopBar>
       {state.isEnteringRebus ?
-        <RebusOverlay showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
+        <RebusOverlay getCurrentTime={()=>0} showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
       {publishErrors ?
         <Overlay showingKeyboard={false} closeCallback={() => setPublishErrors(null)}>
           <React.Fragment>
@@ -528,7 +528,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
       <SquareAndCols
         muted={muted}
         showKeyboard={state.showKeyboard}
-        keyboardHandler={getKeyboardHandler(dispatch)}
+        keyboardHandler={getKeyboardHandler(dispatch, ()=>0)}
         showExtraKeyLayout={state.showExtraKeyLayout}
         isTablet={state.isTablet}
         includeBlockKey={true}

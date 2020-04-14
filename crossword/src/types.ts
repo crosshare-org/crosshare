@@ -120,3 +120,35 @@ export const PuzzleV = t.type({
 
 export type PuzzleT = t.TypeOf<typeof PuzzleV>;
 export type PuzzleResult = PuzzleT & {id: string};
+
+
+export const PlayV = t.type({
+  /** crossword id */
+  c: t.string,
+  /** user id */
+  u: t.string,
+  /** updated at */
+  ua: timestamp,
+  /** filled in grid */
+  g: t.array(t.string),
+  /** play time of last update to each cell, in fractional seconds */
+  ct: t.array(t.number),
+  /** update iteration count per cell */
+  uc: t.array(t.number),
+  /** list of (checked) correct cells */
+  vc: t.array(t.number),
+  /** list of (checked) wrong cells */
+  wc: t.array(t.number),
+  /** list of cells ever marked wrong */
+  we: t.array(t.number),
+  /** list of revealed cells */
+  rc: t.array(t.number),
+  /** total play time, in fractional seconds */
+  t: t.number,
+  /** did "cheat"? */
+  ch: t.boolean,
+  /** finished the puzzle? */
+  f: t.boolean,
+});
+
+export type PlayT = t.TypeOf<typeof PlayV>;

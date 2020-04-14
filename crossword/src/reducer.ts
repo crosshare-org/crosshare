@@ -8,6 +8,7 @@ import {
 import { cellIndex, valAt, entryAtPosition, entryWord, gridWithEntrySet } from './gridBase';
 
 interface GridInterfaceState {
+  type: string,
   active: PosAndDir,
   grid: ViewableGrid<ViewableEntry>,
   showKeyboard: boolean,
@@ -15,35 +16,47 @@ interface GridInterfaceState {
   showExtraKeyLayout: boolean,
   isEnteringRebus: boolean,
   rebusValue: string,
-  wrongCells: Set<number>,
-  symmetry: Symmetry,
   isEditable(cellIndex: number): boolean,
   postEdit(cellIndex: number): GridInterfaceState,
 }
 
 interface PuzzleState extends GridInterfaceState {
+  type: "puzzle",
   grid: CluedGrid,
   answers: Array<string>,
   verifiedCells: Set<number>,
   revealedCells: Set<number>,
+  wrongCells: Set<number>,
   success: boolean,
   filled: boolean,
   autocheck: boolean,
   dismissedKeepTrying: boolean,
   dismissedSuccess: boolean,
   moderating: boolean,
+  didCheat: boolean,
+  cellsUpdatedAt: Array<number>,
+  cellsIterationCount: Array<number>,
+  cellsEverMarkedWrong: Set<number>,
+}
+function isPuzzleState(state: GridInterfaceState): state is PuzzleState {
+  return state.type === 'puzzle';
 }
 
 export interface BuilderEntry extends ViewableEntry {};
 interface BuilderGrid extends ViewableGrid<BuilderEntry> {};
 
 export interface BuilderState extends GridInterfaceState {
+  type: "builder",
   title: string|null,
   grid: BuilderGrid,
   gridIsComplete: boolean,
   repeats: Set<string>,
   hasNoShortWords: boolean,
   clues: Map<string, string>,
+  symmetry: Symmetry,
+}
+function isBuilderState(state: GridInterfaceState): state is BuilderState {
+  return state.type === 'builder';
 }
 
 export interface PuzzleAction {
@@ -51,8 +64,10 @@ export interface PuzzleAction {
 }
 
 export interface KeypressAction extends PuzzleAction {
+  type: 'KEYPRESS',
   key: string,
   shift: boolean,
+  elapsed: number,
 }
 function isKeypressAction(action: PuzzleAction): action is KeypressAction {
   return action.type === 'KEYPRESS'
@@ -93,6 +108,7 @@ export function isClickedFillAction(action: PuzzleAction): action is ClickedFill
 }
 
 interface SetActiveAction extends PuzzleAction {
+  type: 'SETACTIVE',
   newActive: PosAndDir,
 }
 function isSetActiveAction(action: PuzzleAction): action is SetActiveAction {
@@ -100,6 +116,7 @@ function isSetActiveAction(action: PuzzleAction): action is SetActiveAction {
 }
 
 export interface ClickedEntryAction extends PuzzleAction {
+  type: 'CLICKEDENTRY',
   entryIndex: number,
 }
 function isClickedEntryAction(action: PuzzleAction): action is ClickedEntryAction {
@@ -107,6 +124,7 @@ function isClickedEntryAction(action: PuzzleAction): action is ClickedEntryActio
 }
 
 export interface SetActivePositionAction extends PuzzleAction {
+  type: 'SETACTIVEPOSITION',
   newActive: Position,
 }
 function isSetActivePositionAction(action: PuzzleAction): action is SetActivePositionAction {
@@ -126,17 +144,27 @@ export enum CheatUnit {
   Puzzle
 }
 export interface CheatAction extends PuzzleAction {
+  type: 'CHEAT',
+  elapsed: number,
   unit: CheatUnit,
   isReveal?: boolean,
 }
 function isCheatAction(action: PuzzleAction): action is CheatAction {
-  return action.type === 'CHEAT'
+  return action.type === 'CHEAT';
 }
 
-function cheatCells(state: PuzzleState, cellsToCheck: Array<Position>, isReveal: boolean) {
-  const newRevealed = new Set(state.revealedCells);
-  const newVerified = new Set(state.verifiedCells);
-  const newWrong = new Set(state.wrongCells);
+export interface ToggleAutocheckAction extends PuzzleAction {
+  type: 'TOGGLEAUTOCHECK',
+  elapsed: number,
+}
+function isToggleAutocheckAction(action: PuzzleAction): action is ToggleAutocheckAction {
+  return action.type === 'TOGGLEAUTOCHECK';
+}
+
+function cheatCells(elapsed: number, state: PuzzleState, cellsToCheck: Array<Position>, isReveal: boolean) {
+  const revealedCells = new Set(state.revealedCells);
+  const verifiedCells = new Set(state.verifiedCells);
+  const wrongCells = new Set(state.wrongCells);
   let grid = state.grid;
 
   for (const cell of cellsToCheck) {
@@ -147,20 +175,23 @@ function cheatCells(state: PuzzleState, cellsToCheck: Array<Position>, isReveal:
     }
     const currentVal = valAt(state.grid, cell);
     if (shouldBe === currentVal) {
-      newVerified.add(ci);
+      verifiedCells.add(ci);
     } else if (isReveal) {
-      newRevealed.add(ci);
-      newWrong.delete(ci);
-      newVerified.add(ci);
+      revealedCells.add(ci);
+      wrongCells.delete(ci);
+      verifiedCells.add(ci);
       grid = gridWithNewChar(grid, cell, shouldBe, Symmetry.None);
+      state.cellsUpdatedAt[ci] = elapsed;
+      state.cellsIterationCount[ci] += 1;
     } else if (currentVal.trim()) {
-      newWrong.add(ci);
+      wrongCells.add(ci);
+      state.cellsEverMarkedWrong.add(ci);
     }
   }
-  return (checkComplete({ ...state, grid: grid, wrongCells: newWrong, revealedCells: newRevealed, verifiedCells: newVerified }));
+  return (checkComplete({ ...state, grid, wrongCells, revealedCells, verifiedCells }));
 }
 
-export function cheat(state: PuzzleState, cheatUnit: CheatUnit, isReveal: boolean) {
+export function cheat(elapsed: number, state: PuzzleState, cheatUnit: CheatUnit, isReveal: boolean) {
   let cellsToCheck: Array<Position> = [];
   if (cheatUnit === CheatUnit.Square) {
     cellsToCheck = [state.active];
@@ -177,7 +208,8 @@ export function cheat(state: PuzzleState, cheatUnit: CheatUnit, isReveal: boolea
       }
     }
   }
-  return cheatCells(state, cellsToCheck, isReveal);
+  const newState = cheatCells(elapsed, state, cellsToCheck, isReveal);
+  return {...newState, didCheat: true};
 }
 
 export function checkComplete(state: PuzzleState) {
@@ -224,6 +256,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
   if (isKeypressAction(action)) {
     const key = action.key;
     const shift = action.shift;
+    const elapsed = action.elapsed;
     if (key === '{num}' || key === '{abc}') {
       return ({ ...state, showExtraKeyLayout: !state.showExtraKeyLayout });
     }
@@ -235,12 +268,17 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       } else if (key === "Enter") {
         const ci = cellIndex(state.grid, state.active);
         if (state.isEditable(ci)) {
-          state.grid = gridWithNewChar(state.grid, state.active, state.rebusValue, state.symmetry);
+          if (isPuzzleState(state)) {
+            state.cellsUpdatedAt[ci] = elapsed;
+            state.cellsIterationCount[ci] += 1;
+          }
+          const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
+          state.grid = gridWithNewChar(state.grid, state.active, state.rebusValue, symmetry);
           state = state.postEdit(ci) as T; // TODO this is trash
         }
         return ({
           ...state,
-          active: advancePosition(state.grid, state.active, state.wrongCells),
+          active: advancePosition(state.grid, state.active, isPuzzleState(state) ? state.wrongCells : new Set()),
           isEnteringRebus: false, rebusValue: ''
         });
       } else if (key === "Escape") {
@@ -255,7 +293,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
     } else if (key === "{prev}") {
       return ({ ...state, active: retreatPosition(state.grid, state.active) });
     } else if (key === "{next}") {
-      return ({ ...state, active: advancePosition(state.grid, state.active, state.wrongCells) });
+      return ({ ...state, active: advancePosition(state.grid, state.active, isPuzzleState(state) ? state.wrongCells : new Set()) });
     } else if ((key === "Tab" && !shift) || key === "{nextEntry}") {
       return ({ ...state, active: moveToNextEntry(state.grid, state.active) });
     } else if ((key === "Tab" && shift) || key === "{prevEntry}") {
@@ -270,23 +308,33 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       return ({ ...state, active: { ...moveDown(state.grid, state.active), dir: Direction.Down } });
     } else if ((key === '.' || key === '{block}') && state.grid.allowBlockEditing) {
       const ci = cellIndex(state.grid, state.active);
-      state.grid = gridWithBlockToggled(state.grid, state.active, state.symmetry);
+      const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
+      state.grid = gridWithBlockToggled(state.grid, state.active, symmetry);
       return state.postEdit(ci) as T; // TODO this is trash
     } else if (key.match(/^[A-Za-z0-9]$/)) {
       const char = key.toUpperCase();
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
-        state.grid = gridWithNewChar(state.grid, state.active, char, state.symmetry);
+        const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
+        if (isPuzzleState(state)) {
+          state.cellsUpdatedAt[ci] = elapsed;
+          state.cellsIterationCount[ci] += 1;
+        }
+        state.grid = gridWithNewChar(state.grid, state.active, char, symmetry);
         state = state.postEdit(ci) as T; // TODO this is trash
       }
       return ({
         ...state,
-        active: advancePosition(state.grid, state.active, state.wrongCells),
+        active: advancePosition(state.grid, state.active, isPuzzleState(state) ? state.wrongCells : new Set()),
       });
     } else if (key === "Backspace" || key === "{bksp}") {
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
-        state.grid = gridWithNewChar(state.grid, state.active, " ", state.symmetry);
+        const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
+        if (isPuzzleState(state)) {
+          state.cellsUpdatedAt[ci] = elapsed;
+        }
+        state.grid = gridWithNewChar(state.grid, state.active, " ", symmetry);
         state = state.postEdit(ci) as T; // TODO this is trash
       }
       return ({
@@ -318,10 +366,10 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
 export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
   state = gridInterfaceReducer(state, action);
   if (isCheatAction(action)) {
-    return cheat(state, action.unit, action.isReveal === true);
+    return cheat(action.elapsed, state, action.unit, action.isReveal === true);
   }
-  if (action.type === "TOGGLEAUTOCHECK") {
-    state = cheat(state, CheatUnit.Puzzle, false);
+  if (isToggleAutocheckAction(action)) {
+    state = cheat(action.elapsed, state, CheatUnit.Puzzle, false);
     return ({ ...state, autocheck: !state.autocheck });
   }
   if (action.type === "DISMISSKEEPTRYING") {

@@ -18,8 +18,12 @@ import { Overlay } from './Overlay';
 import { GridView } from './Grid';
 import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { entryAndCrossAtPosition } from './gridBase';
-import { PosAndDir, Direction, BLOCK, PuzzleV, PuzzleResult } from './types';
-import { cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock, Symmetry, PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction } from './reducer';
+import { Direction, BLOCK, PuzzleV, PuzzleResult } from './types';
+import {
+  cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
+  PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction,
+  ToggleAutocheckAction
+} from './reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, ERROR_COLOR, SMALL_AND_UP } from './style';
@@ -107,7 +111,8 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
     if (isActive) {
       return;
     }
-    props.dispatch({ type: 'CLICKEDENTRY', entryIndex: props.entryIndex });
+    const ca: ClickedEntryAction = { type: 'CLICKEDENTRY', entryIndex: props.entryIndex };
+    props.dispatch(ca);
   }
   return (
     <li css={{
@@ -283,9 +288,12 @@ const SuccessOverlay = (props: {puzzle: PuzzleResult, isMuted: boolean, solveTim
   );
 }
 
-export const RebusOverlay = (props: { showingKeyboard: boolean, value: string, dispatch: React.Dispatch<KeypressAction> }) => {
+export const RebusOverlay = (props: { getCurrentTime: ()=>number, showingKeyboard: boolean, value: string, dispatch: React.Dispatch<KeypressAction> }) => {
   return (
-    <Overlay showingKeyboard={props.showingKeyboard} closeCallback={() => props.dispatch({ type: "KEYPRESS", key: 'Escape', shift: false })}>
+    <Overlay showingKeyboard={props.showingKeyboard} closeCallback={() => {
+      const escape: KeypressAction = { elapsed: props.getCurrentTime(), type: "KEYPRESS", key: 'Escape', shift: false };
+      props.dispatch(escape)
+    }}>
         <div css={{
           color: props.value ? 'black' : '#999',
           margin: '0.5em 0',
@@ -296,8 +304,14 @@ export const RebusOverlay = (props: { showingKeyboard: boolean, value: string, d
         }}>
           {props.value ? props.value : 'Enter Rebus'}
         </div>
-        <button onClick={() => props.dispatch({ type: "KEYPRESS", key: 'Escape', shift: false })} css={{ marginBottom: '1em', width: '40%' }}>Cancel</button>
-        <button onClick={() => props.dispatch({ type: "KEYPRESS", key: 'Enter', shift: false })} css={{ marginBottom: '1em', width: '40%' }}>Enter Rebus</button>
+        <button onClick={() => {
+          const escape: KeypressAction = { elapsed: props.getCurrentTime(), type: "KEYPRESS", key: 'Escape', shift: false };
+          props.dispatch(escape);
+        }} css={{ marginBottom: '1em', width: '40%' }}>Cancel</button>
+        <button onClick={() => {
+          const enter: KeypressAction = { elapsed: props.getCurrentTime(), type: "KEYPRESS", key: 'Enter', shift: false };
+          props.dispatch(enter);
+        }} css={{ marginBottom: '1em', width: '40%' }}>Enter Rebus</button>
     </Overlay>
   );
 }
@@ -362,30 +376,33 @@ function timeString(elapsed: number): string {
     (seconds < 10 ? "0" : "") + seconds;
 }
 
-export function getKeyboardHandler(dispatch: React.Dispatch<PuzzleAction>) {
+export function getKeyboardHandler(dispatch: React.Dispatch<PuzzleAction>, getCurrentTime: ()=>number) {
   return (key: string) => {
-    dispatch({ type: "KEYPRESS", key: key, shift: false } as KeypressAction);
+    const kpa: KeypressAction = { elapsed: getCurrentTime(), type: "KEYPRESS", key: key, shift: false };
+    dispatch(kpa);
   }
 }
 
-export function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction>) {
+export function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction>, getCurrentTime: ()=>number) {
   return (e: React.KeyboardEvent) => {
     if (e.metaKey || e.altKey || e.ctrlKey) {
       return;  // This way you can still do apple-R and such
     }
-    dispatch({ type: "KEYPRESS", key: e.key, shift: e.shiftKey } as KeypressAction);
+    const kpa: KeypressAction = { elapsed: getCurrentTime(), type: "KEYPRESS", key: e.key, shift: e.shiftKey };
+    dispatch(kpa);
     e.preventDefault();
   }
 }
 
 export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
   const [state, dispatch] = React.useReducer(puzzleReducer, {
-    active: { col: 0, row: 0, dir: Direction.Across } as PosAndDir,
+    type: 'puzzle',
+    active: { col: 0, row: 0, dir: Direction.Across },
     grid: addClues(fromCells({
       mapper: (e) => e,
       width: props.size.cols,
       height: props.size.rows,
-      cells: (props.grid.map((s) => s === BLOCK ? BLOCK : " ") as Array<string>),
+      cells: props.grid.map((s) => s === BLOCK ? BLOCK : " "),
       allowBlockEditing: false,
       highlighted: new Set(props.highlighted),
       highlight: props.highlight,
@@ -405,13 +422,16 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
     dismissedKeepTrying: false,
     dismissedSuccess: false,
     moderating: false,
-    symmetry: Symmetry.None,
+    didCheat: false,
+    cellsUpdatedAt: props.grid.map(() => 0),
+    cellsIterationCount: props.grid.map(() => 0),
+    cellsEverMarkedWrong: new Set<number>(),
     isEditable(cellIndex) {return !this.verifiedCells.has(cellIndex) && !this.success},
     postEdit(cellIndex) {
       let state = this;
       state.wrongCells.delete(cellIndex);
       if (state.autocheck) {
-        state = cheat(state, CheatUnit.Square, false);
+        state = cheat(getCurrentTime(), state, CheatUnit.Square, false);
       }
       return checkComplete(state);
     }
@@ -423,8 +443,6 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
   if (props.category === 'dailymini' && props.publishTime) {
     title = "Daily Mini for " + props.publishTime.toDate().toLocaleDateString();
   }
-
-  useEventListener('keydown', getPhysicalKeyboardHandler(dispatch));
 
   // Set up music player for success song
   const [audioContext, initAudioContext] = React.useContext(CrosshareAudioContext);
@@ -456,12 +474,14 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
     }
   }
 
-  const [elapsed, isPaused, pause, resume] = useTimer();
+  const [elapsed, isPaused, pause, resume, getCurrentTime] = useTimer();
   React.useEffect(() => {
     if (state.success) {
       pause();
     }
   }, [state.success, pause]);
+
+  useEventListener('keydown', getPhysicalKeyboardHandler(dispatch, getCurrentTime));
 
   const [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
   if (entry === null || cross === null) {
@@ -481,23 +501,50 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
       <TopBar>
         <TopBarLink icon={<FaPause />} hoverText={"Pause Game"} text={timeString(elapsed)} onClick={pause} keepText={true} />
         <TopBarDropDown icon={<FaEye />} text="Reveal">
-          <TopBarDropDownLink icon={<RevealSquare/>} text="Reveal Square" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Square, isReveal: true } as CheatAction)} />
-          <TopBarDropDownLink icon={<RevealEntry/>} text="Reveal Word" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry, isReveal: true } as CheatAction)} />
-          <TopBarDropDownLink icon={<RevealPuzzle/>} text="Reveal Puzzle" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true } as CheatAction)} />
+          <TopBarDropDownLink icon={<RevealSquare/>} text="Reveal Square" onClick={() => {
+            const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Square, isReveal: true };
+            dispatch(ca);
+          }} />
+          <TopBarDropDownLink icon={<RevealEntry/>} text="Reveal Word" onClick={() => {
+            const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Entry, isReveal: true };
+            dispatch(ca);
+          }} />
+          <TopBarDropDownLink icon={<RevealPuzzle/>} text="Reveal Puzzle" onClick={() => {
+            const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true };
+            dispatch(ca);
+          }} />
         </TopBarDropDown>
         {
           !state.autocheck ?
             (<TopBarDropDown icon={<FaCheck />} text="Check">
-              <TopBarDropDownLink icon={<FaCheckSquare/>} text="Autocheck" onClick={() => dispatch({ type: "TOGGLEAUTOCHECK" })} />
-              <TopBarDropDownLink icon={<CheckSquare/>} text="Check Square" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Square } as CheatAction)} />
-              <TopBarDropDownLink icon={<CheckEntry/>} text="Check Word" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Entry } as CheatAction)} />
-              <TopBarDropDownLink icon={<CheckPuzzle/>} text="Check Puzzle" onClick={() => dispatch({ type: "CHEAT", unit: CheatUnit.Puzzle } as CheatAction)} />
+              <TopBarDropDownLink icon={<FaCheckSquare/>} text="Autocheck" onClick={() => {
+                const action: ToggleAutocheckAction = { elapsed: getCurrentTime(), type: "TOGGLEAUTOCHECK" };
+                dispatch(action);
+              }} />
+              <TopBarDropDownLink icon={<CheckSquare/>} text="Check Square" onClick={() => {
+                const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Square };
+                dispatch(ca);
+              }} />
+              <TopBarDropDownLink icon={<CheckEntry/>} text="Check Word" onClick={() => {
+                const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Entry };
+                dispatch(ca);
+              }} />
+              <TopBarDropDownLink icon={<CheckPuzzle/>} text="Check Puzzle" onClick={() => {
+                const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Puzzle };
+                dispatch(ca);
+              }} />
             </TopBarDropDown>)
             :
-            <TopBarLink icon={<FaCheckSquare />} text="Autochecking" onClick={() => dispatch({ type: "TOGGLEAUTOCHECK" })} />
+            <TopBarLink icon={<FaCheckSquare />} text="Autochecking" onClick={() => {
+              const action: ToggleAutocheckAction = { elapsed: getCurrentTime(), type: "TOGGLEAUTOCHECK" };
+              dispatch(action);
+            }} />
         }
         <TopBarDropDown icon={<FaEllipsisH />} text="More">
-          <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey/>} onClick={() => dispatch({ type: "KEYPRESS", key: 'Escape', shift: false } as KeypressAction)} />
+          <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey/>} onClick={() => {
+            const kpa: KeypressAction = { elapsed: getCurrentTime(), type: "KEYPRESS", key: 'Escape', shift: false };
+            dispatch(kpa);
+          }} />
           {
             muted ?
             <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
@@ -517,7 +564,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
         </TopBarDropDown>
       </TopBar>
       {state.isEnteringRebus ?
-        <RebusOverlay showingKeyboard={showingKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
+        <RebusOverlay getCurrentTime={getCurrentTime} showingKeyboard={showingKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
       {state.filled && !state.success && !state.dismissedKeepTrying ?
         <KeepTryingOverlay dispatch={dispatch}/>
       :""}
@@ -537,7 +584,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
       <SquareAndCols
         muted={muted}
         showKeyboard={showingKeyboard}
-        keyboardHandler={getKeyboardHandler(dispatch)}
+        keyboardHandler={getKeyboardHandler(dispatch, getCurrentTime)}
         showExtraKeyLayout={state.showExtraKeyLayout}
         includeBlockKey={false}
         isTablet={state.isTablet}

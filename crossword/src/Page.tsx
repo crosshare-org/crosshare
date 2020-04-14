@@ -42,7 +42,7 @@ export const TinyNav = ({children, dispatch}: TinyNavProps) => {
         alignItems: 'center',
         justifyContent: 'center',
         borderRight: '1px solid #EEE',
-      }} onClick={() => dispatch({type: "KEYPRESS", key: "{prevEntry}", shift: false})}>
+      }} onClick={() => dispatch({elapsed: 0, type: "KEYPRESS", key: "{prevEntry}", shift: false})}>
       <FaChevronLeft/>
       </div>
       <div css={{
@@ -56,7 +56,7 @@ export const TinyNav = ({children, dispatch}: TinyNavProps) => {
         alignItems: 'center',
         justifyContent: 'center',
         borderLeft: '1px solid #EEE',
-      }} onClick={() => dispatch({type: "KEYPRESS", key: "{nextEntry}", shift: false})}>
+      }} onClick={() => dispatch({elapsed: 0, type: "KEYPRESS", key: "{nextEntry}", shift: false})}>
       <FaChevronRight/>
       </div>
     </div>
