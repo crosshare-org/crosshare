@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import useEventListener from '@use-it/event-listener';
 
-export function useTimer():[number, boolean, ()=>void, ()=>void, ()=>number] {
+export function useTimer(initialSeconds: number):[number, boolean, ()=>void, ()=>void, ()=>number] {
   // TODO should probably change this to always 0 so we can style the init page
   const init = process.env.NODE_ENV === 'development' ? (new Date()).getTime() : 0;
   const [currentWindowStart, setCurrentWindowStart] = useState<number>(init);
-  const [bankedSeconds, setBankedSeconds] = useState(0);
-  const [totalSeconds, setTotalSeconds] = useState(0);
+  const [bankedSeconds, setBankedSeconds] = useState(initialSeconds);
+  const [totalSeconds, setTotalSeconds] = useState(initialSeconds);
   useEventListener('blur', prodPause);
 
   function prodPause() {
@@ -30,7 +30,10 @@ export function useTimer():[number, boolean, ()=>void, ()=>void, ()=>number] {
   }
 
   function getCurrentSeconds () {
-    return bankedSeconds + ((new Date()).getTime() - currentWindowStart) / 1000;
+    if (currentWindowStart) {
+      return bankedSeconds + ((new Date()).getTime() - currentWindowStart) / 1000;
+    }
+    return bankedSeconds;
   }
 
   function pause() {

@@ -22,5 +22,9 @@ service cloud.firestore {
       allow update: if isAdmin();
       allow create: if isAdmin() && authorSetCorrectly() && request.resource.data.category == null && request.resource.data.publishTime == null && request.resource.data.moderated == false;
     }
+    match /p/{playId} {
+      allow read: if request.auth.uid != null && request.auth.uid == resource.data.u;
+      allow write: if request.auth.uid != null && request.auth.uid == request.resource.data.u && playId == (request.resource.data.c + '-' + request.resource.data.u);
+    }
   }
 }

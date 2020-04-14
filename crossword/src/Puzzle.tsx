@@ -18,7 +18,7 @@ import { Overlay } from './Overlay';
 import { GridView } from './Grid';
 import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { entryAndCrossAtPosition } from './gridBase';
-import { Direction, BLOCK, PuzzleV, PuzzleResult } from './types';
+import { Direction, BLOCK, PuzzleV, PuzzleResult, PlayT, PlayV } from './types';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction,
@@ -395,6 +395,17 @@ export function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction
 }
 
 export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
+  const playData = localStorage.getItem("p/" + props.id + "-" + props.user.uid);
+  let play: PlayT|null = null;
+  if (playData) {
+    const validationResult = PlayV.decode(JSON.parse(playData));
+    if (isRight(validationResult)) {
+      play = validationResult.right;
+    } else {
+      console.error(PathReporter.report(validationResult).join(","));
+    }
+  }
+
   const [state, dispatch] = React.useReducer(puzzleReducer, {
     type: 'puzzle',
     active: { col: 0, row: 0, dir: Direction.Across },
@@ -402,7 +413,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
       mapper: (e) => e,
       width: props.size.cols,
       height: props.size.rows,
-      cells: props.grid.map((s) => s === BLOCK ? BLOCK : " "),
+      cells: play ? play.g : props.grid.map((s) => s === BLOCK ? BLOCK : " "),
       allowBlockEditing: false,
       highlighted: new Set(props.highlighted),
       highlight: props.highlight,
@@ -411,21 +422,21 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
     isTablet: isTablet,
     showExtraKeyLayout: false,
     answers: props.grid,
-    verifiedCells: new Set<number>(),
-    wrongCells: new Set<number>(),
-    revealedCells: new Set<number>(),
+    verifiedCells: new Set<number>(play ? play.vc : []),
+    wrongCells: new Set<number>(play ? play.wc : []),
+    revealedCells: new Set<number>(play ? play.rc : []),
     isEnteringRebus: false,
     rebusValue: '',
-    success: false,
+    success: play ? play.f : false,
     filled: false,
     autocheck: false,
     dismissedKeepTrying: false,
     dismissedSuccess: false,
     moderating: false,
-    didCheat: false,
-    cellsUpdatedAt: props.grid.map(() => 0),
-    cellsIterationCount: props.grid.map(() => 0),
-    cellsEverMarkedWrong: new Set<number>(),
+    didCheat: play ? play.ch : false,
+    cellsUpdatedAt: play ? play.ct : props.grid.map(() => 0),
+    cellsIterationCount: play ? play.uc : props.grid.map(() => 0),
+    cellsEverMarkedWrong: new Set<number>(play ? play.we : []),
     isEditable(cellIndex) {return !this.verifiedCells.has(cellIndex) && !this.success},
     postEdit(cellIndex) {
       let state = this;
@@ -474,7 +485,7 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
     }
   }
 
-  const [elapsed, isPaused, pause, resume, getCurrentTime] = useTimer();
+  const [elapsed, isPaused, pause, resume, getCurrentTime] = useTimer(play ? play.t : 0);
   React.useEffect(() => {
     if (state.success) {
       pause();
@@ -487,6 +498,41 @@ export const Puzzle = requiresAuth((props: PuzzleResult & AuthProps) => {
   if (entry === null || cross === null) {
     throw new Error("Null entry/cross while playing puzzle!");
   }
+
+  const updatePlay = React.useCallback(() => {
+    const validationResult = PlayV.decode({
+      c: props.id,
+      u: props.user.uid,
+      ua: firebase.firestore.Timestamp.now(),
+      g: state.grid.cells,
+      ct: state.cellsUpdatedAt,
+      uc: state.cellsIterationCount,
+      vc: Array.from(state.verifiedCells),
+      wc: Array.from(state.wrongCells),
+      we: Array.from(state.cellsEverMarkedWrong),
+      rc: Array.from(state.revealedCells),
+      t: getCurrentTime(),
+      ch: state.didCheat,
+      f: state.success,
+    });
+    if (isRight(validationResult)) {
+      console.log("Play passed validation, writing to local storage");
+      localStorage.setItem("p/" + props.id + "-" + props.user.uid, JSON.stringify(validationResult.right));
+//      const db = firebase.firestore();
+//      db.collection("p").doc(props.id + "-" + props.user.uid).set(validationResult.right).then(() => {
+//        console.log("Pushed update");
+//      });
+    } else {
+      console.error(PathReporter.report(validationResult).join(","));
+    }
+  }, [getCurrentTime, props.id, props.user.uid, state.cellsEverMarkedWrong,
+      state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
+      state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
+      state.wrongCells]);
+
+  React.useEffect(() => {
+    updatePlay();
+  }, [updatePlay]);
 
   const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
