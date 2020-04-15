@@ -477,19 +477,13 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
         <TopBarLink icon={autofillIcon} text="Autofill" hoverText={autofillText} onClick={toggleAutofillEnabled} />
         <TopBarLink icon={<FaListOl/>} text="Clues" onClick={() => setClueMode(true)}/>
         <TopBarDropDown icon={<IoMdStats/>} text="Stats">
-          <h4 css={{width: '100%'}}>Grid status</h4>
-          <div css={{
-            width: '80%',
-            margin: 'auto',
-            textAlign: 'left',
-          }}>
+          <h4>Grid status</h4>
           <div>{ state.gridIsComplete ? <FaRegCheckCircle/> : <FaRegCircle/> } All cells should be filled</div>
           <div>{ state.hasNoShortWords ? <FaRegCheckCircle/> : <FaRegCircle/> } All words should be at least three letters</div>
           <div>{ state.repeats.size > 0 ? <React.Fragment><FaRegCircle/> ({Array.from(state.repeats).sort().join(", ")})</React.Fragment>: <FaRegCheckCircle/> } No words should be repeated</div>
-          <h4 css={{width: '100%'}}>Fill</h4>
+          <h4>Fill</h4>
           <div>Number of words: { numEntries }</div>
           <div>Mean word length: { averageLength.toPrecision(3) }</div>
-          </div>
         </TopBarDropDown>
         <TopBarDropDown icon={<SymmetryIcon type={state.symmetry}/>} text="Symmetry">
           <TopBarDropDownLink icon={<SymmetryRotational />} text="Rotational Symmetry" onClick={() => {
@@ -546,7 +540,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
       {publishErrors ?
         <Overlay showingKeyboard={false} closeCallback={() => setPublishErrors(null)}>
           <React.Fragment>
-          <div css={{width: '100%'}}>Please fix the following errors and try publishing again:</div>
+          <div>Please fix the following errors and try publishing again:</div>
           <ul>
           {publishErrors}
           </ul>

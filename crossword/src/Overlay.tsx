@@ -13,20 +13,16 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
     top: 0,
     left: 0,
     width: '100%',
+    overflowY: 'scroll',
+    overscrollBehavior: 'contain',
     height: props.showingKeyboard ? 'calc(100% - ' + KEYBOARD_HEIGHT + 'px)' : '100%',
-    zIndex: 10000,
-    textAlign: 'center'
+    zIndex: 10000
   }}>
     <div css={{
       position: 'relative',
-      display: 'flex',
-      flexWrap: 'wrap',
-      alignContent: 'center',
-      alignItems: 'stretch',
-      flexDirection: 'row',
-      justifyContent: 'space-evenly',
-      width: '80%',
-      padding: '3em 1em',
+      width: '85%',
+      maxWidth: '650px',
+      padding: '3em',
       backgroundColor: 'white',
       margin: '5em auto',
     }}>

@@ -174,6 +174,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
   }
   return (
     <Overlay showingKeyboard={false} closeCallback={props.dismiss}>
+    <div css={{textAlign: 'center'}}>
       {warnings.length?
         <div css={{
           width: '100%',
@@ -191,8 +192,9 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
         ""
       }
       <h3>{props.title} by {props.authorName}</h3>
-      <h4 css={{width: '100%'}}>{props.message}</h4>
+      <h4>{props.message}</h4>
       <button onClick={props.dismiss}>{props.dismissMessage}</button>
+    </div>
     </Overlay>
   );
 }
@@ -218,13 +220,18 @@ const ModeratingOverlay = ({dispatch, puzzle}: {puzzle: PuzzleResult, dispatch: 
 
   return (
     <Overlay showingKeyboard={false} closeCallback={() => dispatch({type: "TOGGLEMODERATING"})}>
-    <h4 css={{width: '100%'}}>Moderate this Puzzle</h4>
+    <h4>Moderate this Puzzle</h4>
     <div>{puzzle.moderated ? "Puzzle has been approved" : "Puzzle is not approved"}</div>
     {isMini ?
       <div>
-        <div>Pick a date for this mini to appear:</div>
+        {puzzle.publishTime ?
+          <div>Scheduled for {puzzle.publishTime.toDate().toLocaleDateString()}</div>
+          :
+          ""
+        }
+        <div css={{marginTop: '1em'}}>Pick a date for this mini to appear:</div>
         <UpcomingMinisCalendar disableExisting={true} value={date} onChange={setDate} />
-        <div><button disabled={!date} onClick={schedule}>Schedule</button></div>
+        <div css={{marginTop: '1em'}}><button disabled={!date} onClick={schedule}>Schedule</button></div>
       </div>
       :
       <div>Not supported for non-minis yet.</div>
@@ -236,9 +243,9 @@ const ModeratingOverlay = ({dispatch, puzzle}: {puzzle: PuzzleResult, dispatch: 
 const KeepTryingOverlay = ({dispatch}: {dispatch: React.Dispatch<PuzzleAction>}) => {
   return (
     <Overlay showingKeyboard={false} closeCallback={() => dispatch({type: "DISMISSKEEPTRYING"})}>
-    <h4 css={{width: '100%'}}>Almost there!</h4>
-    <p css={{width: '100%'}}>You've completed the puzzle, but there are one or more mistakes.</p>
-    <button onClick={() => dispatch({type: "DISMISSKEEPTRYING"})}>Keep Trying</button>
+    <h4>Almost there!</h4>
+    <p>You've completed the puzzle, but there are one or more mistakes.</p>
+    <button css={{width: '100%'}} onClick={() => dispatch({type: "DISMISSKEEPTRYING"})}>Keep Trying</button>
     </Overlay>
   );
 }
@@ -279,13 +286,15 @@ const PrevDailyMiniLink = (props: {puzzle: PuzzleResult}) => {
 const SuccessOverlay = (props: {puzzle: PuzzleResult, isMuted: boolean, solveTime: number, dispatch: React.Dispatch<PuzzleAction>}) => {
   return (
     <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({type: "DISMISSSUCCESS"})}>
-    <h4 css={{width: '100%'}}>Congratulations!</h4>
-    <p css={{width: '100%'}}>You solved the puzzle in <b>{timeString(props.solveTime)}</b></p>
+    <div css={{textAlign: 'center'}}>
+    <h4>Congratulations!</h4>
+    <p>You solved the puzzle in <b>{timeString(props.solveTime)}</b></p>
     { props.puzzle.category === 'dailymini' ?
-      <p css={{width: '100%'}}>
+      <div>
         <PrevDailyMiniLink puzzle={props.puzzle} />
-      </p>
+      </div>
     : ""}
+    </div>
     </Overlay>
   );
 }
@@ -299,21 +308,20 @@ export const RebusOverlay = (props: { getCurrentTime: ()=>number, showingKeyboar
         <div css={{
           color: props.value ? 'black' : '#999',
           margin: '0.5em 0',
-
+          textAlign: 'center',
           fontSize: '2.5em',
           lineHeight: '1em',
-          width: '100%',
         }}>
           {props.value ? props.value : 'Enter Rebus'}
         </div>
         <button onClick={() => {
           const escape: KeypressAction = { elapsed: props.getCurrentTime(), type: "KEYPRESS", key: 'Escape', shift: false };
           props.dispatch(escape);
-        }} css={{ marginBottom: '1em', width: '40%' }}>Cancel</button>
+        }} css={{ marginRight: '10%', width: '45%' }}>Cancel</button>
         <button onClick={() => {
           const enter: KeypressAction = { elapsed: props.getCurrentTime(), type: "KEYPRESS", key: 'Enter', shift: false };
           props.dispatch(enter);
-        }} css={{ marginBottom: '1em', width: '40%' }}>Enter Rebus</button>
+        }} css={{ width: '45%' }}>Enter Rebus</button>
     </Overlay>
   );
 }
