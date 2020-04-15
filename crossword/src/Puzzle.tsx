@@ -91,7 +91,7 @@ export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
 interface ClueListItemProps {
   conceal: boolean,
   labelNumber: number,
-  dispatch: React.Dispatch<ClickedEntryAction>,
+  dispatch: React.Dispatch<PuzzleAction>,
   entryIndex: number,
   isActive: boolean,
   isCross: boolean,
@@ -110,6 +110,7 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
   function click(e: React.MouseEvent) {
     e.preventDefault();
     if (isActive) {
+      props.dispatch({type: "CHANGEDIRECTION"});
       return;
     }
     const ca: ClickedEntryAction = { type: 'CLICKEDENTRY', entryIndex: props.entryIndex };
@@ -120,7 +121,7 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
       padding: '0.5em',
       backgroundColor: (isActive ? LIGHTER : (isCross ? SECONDARY : 'white')),
       listStyleType: 'none',
-      cursor: (isActive ? 'default' : 'pointer'),
+      cursor: 'pointer',
       '&:hover': {
         backgroundColor: (isActive ? LIGHTER : (isCross ? '#DDD' : '#EEE')),
       },
@@ -324,7 +325,7 @@ interface ClueListProps {
   cross: number,
   entries: Array<CluedEntry>,
   scrollToCross: boolean,
-  dispatch: React.Dispatch<ClickedEntryAction>,
+  dispatch: React.Dispatch<PuzzleAction>,
 }
 const ClueList = (props: ClueListProps) => {
   const clues = props.entries.map((entry) => {
