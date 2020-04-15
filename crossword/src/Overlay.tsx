@@ -20,9 +20,9 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
   }}>
     <div css={{
       position: 'relative',
-      width: '85%',
+      width: '90%',
       maxWidth: '650px',
-      padding: '3em',
+      padding: '3em 1.5em',
       backgroundColor: 'white',
       margin: '5em auto',
     }}>

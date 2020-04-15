@@ -191,8 +191,9 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
         :
         ""
       }
-      <h3>{props.title} by {props.authorName}</h3>
-      <h4>{props.message}</h4>
+      <h3>{props.title}</h3>
+      <h4>by {props.authorName}</h4>
+      <div css={{marginBottom: '1em'}}>{props.message}</div>
       <button onClick={props.dismiss}>{props.dismissMessage}</button>
     </div>
     </Overlay>
