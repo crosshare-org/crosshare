@@ -73,6 +73,61 @@
       "collectionGroup": "crosswords",
       "fieldPath": "size",
       "indexes": []
+    },
+    {
+      "collectionGroup": "p",
+      "fieldPath": "ch",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "p",
+      "fieldPath": "ct",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "p",
+      "fieldPath": "f",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "p",
+      "fieldPath": "g",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "p",
+      "fieldPath": "n",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "p",
+      "fieldPath": "rc",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "p",
+      "fieldPath": "t",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "p",
+      "fieldPath": "uc",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "p",
+      "fieldPath": "vc",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "p",
+      "fieldPath": "wc",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "p",
+      "fieldPath": "we",
+      "indexes": []
     }
   ]
 }
