@@ -6,7 +6,7 @@ import * as React from 'react';
 import { isMobile, isTablet } from "react-device-detect";
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt,
-  FaKeyboard, FaEllipsisH, FaVolumeUp, FaVolumeMute
+  FaKeyboard, FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
@@ -18,7 +18,7 @@ import { navigate } from '@reach/router';
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
   SymmetryIcon, SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
-  EscapeKey,
+  EscapeKey, BacktickKey
 } from './Icons';
 import { requiresAdmin, AuthProps } from './App';
 import { GridView } from './Grid';
@@ -28,7 +28,7 @@ import { Direction, PuzzleT } from './types';
 import {
   Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
   KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
-  SetTitleAction,
+  SetTitleAction, SetHighlightAction
 } from './reducer';
 import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav, Page } from './Page';
@@ -513,6 +513,14 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
           <TopBarDropDownLink icon={<FaRegNewspaper/>} text="Publish Puzzle" onClick={publish} />
           <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey/>} onClick={() => {
             const a: KeypressAction = {elapsed: 0, type: "KEYPRESS", key: 'Escape', shift: false };
+            dispatch(a);
+          }} />
+          <TopBarDropDownLink icon={state.grid.highlight === "circle" ? <FaRegCircle /> : <FaFillDrip />} text="Toggle Square Highlight" shortcutHint={<BacktickKey/>} onClick={() => {
+            const a: KeypressAction = {elapsed: 0, type: "KEYPRESS", key: '`', shift: false };
+            dispatch(a);
+          }} />
+          <TopBarDropDownLink icon={state.grid.highlight === "circle" ? <FaFillDrip /> : <FaRegCircle />} text={state.grid.highlight === "circle" ? "Use Shade for Highlights" : "Use Circle for Highlights" } onClick={() => {
+            const a: SetHighlightAction = {type: "SETHIGHLIGHT", highlight: state.grid.highlight === "circle" ? "shade" : "circle" };
             dispatch(a);
           }} />
           {

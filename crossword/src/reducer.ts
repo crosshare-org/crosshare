@@ -94,8 +94,16 @@ export interface SetTitleAction extends PuzzleAction {
   type: 'SETTITLE',
   value: string,
 }
-export function isSetTitleAction(action: PuzzleAction): action is SetTitleAction {
+function isSetTitleAction(action: PuzzleAction): action is SetTitleAction {
   return action.type === 'SETTITLE'
+}
+
+export interface SetHighlightAction extends PuzzleAction {
+  type: 'SETHIGHLIGHT',
+  highlight: 'circle'|'shade',
+}
+function isSetHighlightAction(action: PuzzleAction): action is SetHighlightAction {
+  return action.type === 'SETHIGHLIGHT'
 }
 
 export interface ClickedFillAction extends PuzzleAction {
@@ -260,6 +268,15 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
     if (key === '{num}' || key === '{abc}') {
       return ({ ...state, showExtraKeyLayout: !state.showExtraKeyLayout });
     }
+    if (key === '`' && isBuilderState(state)) {
+      const ci = cellIndex(state.grid, state.active);
+      if (state.grid.highlighted.has(ci)) {
+        state.grid.highlighted.delete(ci);
+      } else {
+        state.grid.highlighted.add(ci);
+      }
+      return ({ ...state })
+    }
     if (state.isEnteringRebus) {
       if (key.match(/^[A-Za-z0-9]$/)) {
         return ({ ...state, rebusValue: state.rebusValue + key.toUpperCase() });
@@ -350,6 +367,10 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   state = gridInterfaceReducer(state, action);
   if (isSymmetryAction(action)) {
     return ({ ...state, symmetry: action.symmetry });
+  }
+  if (isSetHighlightAction(action)) {
+    state.grid.highlight = action.highlight ;
+    return ({ ...state });
   }
   if (isSetClueAction(action)) {
     return ({ ...state, clues: state.clues.set(action.word, action.clue)});

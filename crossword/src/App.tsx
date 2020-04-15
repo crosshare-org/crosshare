@@ -18,7 +18,7 @@ import {
   CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle,
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
   SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
-  Logo, EscapeKey
+  Logo, EscapeKey, BacktickKey
 } from './Icons';
 import { Home } from './Home';
 import googlesignin from './googlesignin.png';
@@ -223,6 +223,7 @@ const IconsDemo = (_: RouteComponentProps) => {
     <div css={{fontSize: 20}}>
       <p title="Autofill disabled">Disabled: <SpinnerDisabled/></p>
       <p>Esc: <EscapeKey/></p>
+      <p>Backtick: <BacktickKey/></p>
       <p>Working: <SpinnerWorking/></p>
       <p>Finished: <SpinnerFinished/></p>
       <p>Failed: <SpinnerFailed/></p>
