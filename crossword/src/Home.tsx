@@ -57,7 +57,7 @@ export const Home = (_: RouteComponentProps) => {
         </React.Fragment>
       )
       }
-        <p css={{marginTop: '1em'}}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>.</p>
+        <p css={{marginTop: '1em'}}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
       </div>
     </Page>
   );
