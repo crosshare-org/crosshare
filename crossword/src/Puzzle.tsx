@@ -29,6 +29,7 @@ import { Page, SquareAndCols, TinyNav } from './Page';
 import { SECONDARY, LIGHTER, ERROR_COLOR, SMALL_AND_UP } from './style';
 import { navToLatestMini, UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 import { usePersistedBoolean } from './hooks';
+import { timeString } from './utils';
 
 declare var firebase: typeof import('firebase');
 
@@ -367,15 +368,6 @@ const ClueList = (props: ClueListProps) => {
   );
 }
 
-function timeString(elapsed: number): string {
-  const hours = Math.floor(elapsed / 3600);
-  const minutes = Math.floor((elapsed - (hours * 3600)) / 60);
-  const seconds = Math.floor(elapsed - (hours * 3600) - (minutes * 60));
-  return hours + ':' +
-    (minutes < 10 ? "0" : "") + minutes + ':' +
-    (seconds < 10 ? "0" : "") + seconds;
-}
-
 export function getKeyboardHandler(dispatch: React.Dispatch<PuzzleAction>, getCurrentTime: ()=>number) {
   return (key: string) => {
     const kpa: KeypressAction = { elapsed: getCurrentTime(), type: "KEYPRESS", key: key, shift: false };
@@ -540,9 +532,10 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
   }
 
   const updatePlay = React.useCallback((sendToDB: boolean) => {
-    const validationResult = PlayV.decode({
+    const play: PlayT = {
       c: props.id,
       u: props.user.uid,
+      n: title,
       ua: firebase.firestore.Timestamp.now(),
       g: state.grid.cells,
       ct: state.cellsUpdatedAt,
@@ -554,23 +547,19 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
       t: getCurrentTime(),
       ch: state.didCheat,
       f: state.success,
-    });
-    if (isRight(validationResult)) {
-      localStorage.setItem("p/" + props.id + "-" + props.user.uid, JSON.stringify(validationResult.right));
-      if (sendToDB) {
-        console.log("Writing play to db");
-        const db = firebase.firestore();
-        db.collection("p").doc(props.id + "-" + props.user.uid).set(validationResult.right).then(() => {
-          console.log("Pushed update");
-        });
-      }
-    } else {
-      console.error(PathReporter.report(validationResult).join(","));
+    }
+    localStorage.setItem("p/" + props.id + "-" + props.user.uid, JSON.stringify(play));
+    if (sendToDB) {
+      console.log("Writing play to db");
+      const db = firebase.firestore();
+      db.collection("p").doc(props.id + "-" + props.user.uid).set(play).then(() => {
+        console.log("Pushed update");
+      });
     }
   }, [getCurrentTime, props.id, props.user.uid, state.cellsEverMarkedWrong,
       state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
       state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
-      state.wrongCells]);
+      state.wrongCells, title]);
 
   const updatePlayRef = React.useRef(state.success ? null : updatePlay);
   // Any time any of the things we save update, write to local storage

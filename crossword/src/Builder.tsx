@@ -3,8 +3,6 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from "io-ts/lib/PathReporter";
 import { isMobile, isTablet } from "react-device-detect";
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt,
@@ -26,7 +24,7 @@ import { requiresAdmin, AuthProps } from './App';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
 import { fromCells, getClueMap } from './viewableGrid';
-import { Direction, PuzzleT, PuzzleV } from './types';
+import { Direction, PuzzleT } from './types';
 import {
   Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
   KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
@@ -436,16 +434,20 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
       if (!e.completedWord) {
         throw new Error("Publish unfinished grid");
       }
+      const clue = state.clues.get(e.completedWord);
+      if (!clue) {
+        throw new Error("Bad clue for " + e.completedWord);
+      }
       return {
         num: e.labelNumber,
         dir: e.direction,
-        clue: state.clues.get(e.completedWord)
+        clue: clue
       };
     });
-    const validationResult = PuzzleV.decode({
-      title: state.title,
+    const puzzle:PuzzleT = {
+      title: state.title || "Anonymous Puzzle",
       authorId: props.user.uid,
-      authorName: props.user.displayName,
+      authorName: props.user.displayName || "Anonymous Author",
       moderated: false,
       publishTime: null,
       category: null,
@@ -457,18 +459,14 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
       grid: state.grid.cells,
       highlighted: Array.from(state.grid.highlighted),
       highlight: state.grid.highlight || "circle"
+    };
+    console.log("Uploading");
+    console.log(puzzle);
+    const db = firebase.firestore();
+    db.collection("crosswords").add(puzzle).then((ref) => {
+      console.log("Uploaded", ref.id);
+      navigate("/crosswords/" + ref.id, {state: {id: ref.id, ...puzzle}});
     });
-    if (isRight(validationResult)) {
-      console.log("Puzzle passed validation, now uploading");
-      console.log(validationResult.right);
-      const db = firebase.firestore();
-      db.collection("crosswords").add(validationResult.right).then((ref) => {
-        console.log("Uploaded", ref.id);
-        navigate("/crosswords/" + ref.id, {state: {id: ref.id, ...validationResult.right}});
-      });
-    } else {
-      console.error(PathReporter.report(validationResult).join(","));
-    }
   }
   return (
     <React.Fragment>

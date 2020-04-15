@@ -121,12 +121,26 @@ export const PuzzleV = t.type({
 export type PuzzleT = t.TypeOf<typeof PuzzleV>;
 export type PuzzleResult = PuzzleT & {id: string};
 
+// from https://github.com/gcanti/io-ts/blob/master/test/helpers.ts
+export function withDefault<T extends t.Mixed>(
+  type: T,
+  defaultValue: t.TypeOf<T>
+): t.Type<t.TypeOf<T>, t.TypeOf<T>, unknown> {
+  return new t.Type(
+    `withDefault(${type.name}, ${JSON.stringify(defaultValue)})`,
+    type.is,
+    (v) => type.decode(v != null ? v : defaultValue),
+    type.encode
+  )
+}
 
 export const PlayV = t.type({
   /** crossword id */
   c: t.string,
   /** user id */
   u: t.string,
+  /** crossword title */
+  n: withDefault(t.string, "Crossword"),
   /** updated at */
   ua: timestamp,
   /** filled in grid */

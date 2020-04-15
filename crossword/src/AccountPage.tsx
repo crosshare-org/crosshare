@@ -2,17 +2,24 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
-import { RouteComponentProps } from "@reach/router";
+import { Link, RouteComponentProps } from "@reach/router";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { requiresAuth, AuthProps } from './App';
-import { PuzzleResult, PuzzleV } from './types';
+import { PuzzleResult, PuzzleV, PlayT, PlayV } from './types';
 import { PuzzleListItem } from './PuzzleList';
+import { timeString } from './utils'
 
 import { Page } from './Page';
 
 declare var firebase: typeof import('firebase');
+
+export const PlayListItem = (props: PlayT) => {
+  return (
+    <li key={props.c}><Link to={"/crosswords/" + props.c}>{props.n}</Link> { props.f ? "completed " + (props.ch ? "with helpers" : "without helpers") : "unfinished"} {timeString(props.t)}</li>
+  );
+}
 
 const DisplayNameForm = ({user}: {user: firebase.User}) => {
   function sanitize(input:string) {
@@ -47,15 +54,17 @@ const DisplayNameForm = ({user}: {user: firebase.User}) => {
 
 export const AccountPage = requiresAuth(({user}: RouteComponentProps & AuthProps) => {
   const [authoredPuzzles, setAuthoredPuzzles] = React.useState<Array<PuzzleResult>|null>(null);
+  const [plays, setPlays] = React.useState<Array<PlayT>|null>(null);
   const [error, setError] = React.useState(false);
 
   React.useEffect(() => {
-    console.log("loading authored Puzzles");
+    console.log("loading authored puzzles and plays");
     if (error) {
       console.log("error set, skipping");
       return;
     }
     const db = firebase.firestore();
+    // TODO pagination on both of these
     db.collection('crosswords').where("authorId", "==", user.uid).get().then((value) => {
       let results: Array<PuzzleResult> = [];
       value.forEach(doc => {
@@ -73,10 +82,27 @@ export const AccountPage = requiresAuth(({user}: RouteComponentProps & AuthProps
       console.error(reason);
       setError(true);
     });
+    db.collection('p').where("u", "==", user.uid).orderBy("ua", "desc").limit(10).get().then((value) => {
+      let results: Array<PlayT> = [];
+      value.forEach(doc => {
+        const data = doc.data();
+        const validationResult = PlayV.decode(data);
+        if (isRight(validationResult)) {
+          results.push(validationResult.right);
+        } else {
+          console.error(PathReporter.report(validationResult).join(","));
+          setError(true);
+        }
+      });
+      setPlays(results);
+    }).catch(reason => {
+      console.error(reason);
+      setError(true);
+    });
   }, [error, user]);
 
   if (error) {
-    return <Page title={null}>Error loading authored puzzles</Page>;
+    return <Page title={null}>Error loading plays / authored puzzles</Page>;
   }
   return (
     <Page title="Account">
@@ -84,6 +110,14 @@ export const AccountPage = requiresAuth(({user}: RouteComponentProps & AuthProps
         <h4 css={{ borderBottom: '1px solid black' }}>Account</h4>
         <p>You're logged in as <b>{user.email}</b>. <button onClick={() => firebase.auth().signOut()}>Log out</button></p>
         <DisplayNameForm user={user}/>
+        { plays && plays.length ?
+          <React.Fragment>
+          <h4 css={{ borderBottom: '1px solid black' }}>Recent Plays</h4>
+          <ul>{plays.map(PlayListItem)}</ul>
+          </React.Fragment>
+          :
+          ""
+        }
         { authoredPuzzles && authoredPuzzles.length ?
           <React.Fragment>
           <h4 css={{ borderBottom: '1px solid black' }}>Authored Puzzles</h4>
