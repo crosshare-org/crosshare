@@ -27,17 +27,26 @@
           "order": "DESCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "p",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "u",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ua",
+          "order": "DESCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": [
     {
       "collectionGroup": "crosswords",
-      "fieldPath": "grid",
-      "indexes": []
-    },
-    {
-      "collectionGroup": "crosswords",
-      "fieldPath": "size",
+      "fieldPath": "authorName",
       "indexes": []
     },
     {
@@ -47,7 +56,7 @@
     },
     {
       "collectionGroup": "crosswords",
-      "fieldPath": "highlighted",
+      "fieldPath": "grid",
       "indexes": []
     },
     {
@@ -57,7 +66,12 @@
     },
     {
       "collectionGroup": "crosswords",
-      "fieldPath": "authorName",
+      "fieldPath": "highlighted",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "crosswords",
+      "fieldPath": "size",
       "indexes": []
     }
   ]
