@@ -18,7 +18,7 @@ import { Overlay } from './Overlay';
 import { GridView } from './Grid';
 import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { entryAndCrossAtPosition } from './gridBase';
-import { Direction, BLOCK, PuzzleV, PuzzleResult, PlayT, PlayV } from './types';
+import { Direction, BLOCK, PuzzleV, PuzzleResult, PlayT, PlayV, puzzleTitle } from './types';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction,
@@ -482,10 +482,7 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
 
   const [muted, setMuted] = usePersistedBoolean("muted", false);
 
-  let title = props.title;
-  if (props.category === 'dailymini' && props.publishTime) {
-    title = "Daily Mini for " + props.publishTime.toDate().toLocaleDateString();
-  }
+  let title = puzzleTitle(props);
 
   // Set up music player for success song
   const [audioContext, initAudioContext] = React.useContext(CrosshareAudioContext);

@@ -121,6 +121,14 @@ export const PuzzleV = t.type({
 export type PuzzleT = t.TypeOf<typeof PuzzleV>;
 export type PuzzleResult = PuzzleT & {id: string};
 
+export function puzzleTitle(puzzle: PuzzleT) {
+  let title = puzzle.title;
+  if (puzzle.category === 'dailymini' && puzzle.publishTime) {
+    title = "Daily Mini for " + puzzle.publishTime.toDate().toLocaleDateString();
+  }
+  return title;
+}
+
 // from https://github.com/gcanti/io-ts/blob/master/test/helpers.ts
 export function withDefault<T extends t.Mixed>(
   type: T,
