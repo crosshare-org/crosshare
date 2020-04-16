@@ -41,6 +41,8 @@ export const notSelectable = css`
   user-select: none;
 `;
 
+export const MOBILE_WIDE = '@media (min-aspect-ratio: 15/19)';
+export const MOBILE_WIDE_KEYBOARD = '@media (min-aspect-ratio: 15/30)';
 export const SMALL_AND_UP = '@media (min-width: 576px)';
 export const SMALL_AND_UP_WIDE = '@media (min-width: 576px) and (min-aspect-ratio: 32/22)';
 export const SMALL_AND_UP_WIDE_KEYBOARD = '@media (min-width: 576px) and (min-aspect-ratio: 32/32)';

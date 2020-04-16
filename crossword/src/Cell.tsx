@@ -9,7 +9,8 @@ import {
   heightAdjustment, notSelectable, PRIMARY, SECONDARY, ERROR_COLOR,
   SMALL_AND_UP, LARGE_AND_UP,
   SMALL_AND_UP_WIDE, LARGE_AND_UP_WIDE,
-  SMALL_AND_UP_WIDE_KEYBOARD, LARGE_AND_UP_WIDE_KEYBOARD
+  SMALL_AND_UP_WIDE_KEYBOARD, LARGE_AND_UP_WIDE_KEYBOARD,
+  MOBILE_WIDE_KEYBOARD, MOBILE_WIDE,
 } from './style';
 
 type CellProps = {
@@ -76,7 +77,7 @@ export const Cell = React.memo((props: CellProps) => {
             lineHeight: '1em',
 
             fontSize: 'calc(0.25 * 100vw / ' + props.gridWidth + ')',
-            [props.showingKeyboard ? '@media (min-aspect-ratio: 15/25)' : '@media (min-aspect-ratio: 15/19)']: {
+            [props.showingKeyboard ? MOBILE_WIDE_KEYBOARD : MOBILE_WIDE]: {
               fontSize: 'calc(0.25 * (87vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
             },
             [SMALL_AND_UP]: {
@@ -106,7 +107,7 @@ export const Cell = React.memo((props: CellProps) => {
             textAlign: 'center',
             lineHeight: '1.2em',
             fontSize: 'calc(0.9 * 100vw / ' + props.gridWidth + ')',
-            [props.showingKeyboard ? '@media (min-aspect-ratio: 15/25)' : '@media (min-aspect-ratio: 15/19)']: {
+            [props.showingKeyboard ? MOBILE_WIDE_KEYBOARD : MOBILE_WIDE]: {
               fontSize: 'calc(0.9 * (87vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
             },
             [SMALL_AND_UP]: {

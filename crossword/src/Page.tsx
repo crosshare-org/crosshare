@@ -17,7 +17,8 @@ import { TopBar, TopBarLink } from './TopBar';
 import {
   heightAdjustment, SMALL_AND_UP, LARGE_AND_UP,
   SMALL_AND_UP_WIDE, LARGE_AND_UP_WIDE,
-  SMALL_AND_UP_WIDE_KEYBOARD, LARGE_AND_UP_WIDE_KEYBOARD
+  SMALL_AND_UP_WIDE_KEYBOARD, LARGE_AND_UP_WIDE_KEYBOARD,
+  MOBILE_WIDE_KEYBOARD, MOBILE_WIDE,
 } from './style';
 
 interface TinyNavProps {
@@ -147,7 +148,7 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
           flexShrink: 0,
           height: '100vw',
           width: '100vw',
-          [showKeyboard ? '@media (min-aspect-ratio: 15/25)' : '@media (min-aspect-ratio: 15/19)']: {
+          [showKeyboard ? MOBILE_WIDE_KEYBOARD : MOBILE_WIDE]: {
             height: 'calc(87vh - ' + toolbarHeightAdjust + 'px)',
             width: 'calc(87vh - ' + toolbarHeightAdjust + 'px)',
           },
