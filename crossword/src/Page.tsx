@@ -41,7 +41,7 @@ export const TinyNav = ({children, dispatch}: TinyNavProps) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRight: '1px solid #EEE',
+        borderRight: '1px solid var(--clue-bg)',
       }} onClick={() => dispatch({elapsed: 0, type: "KEYPRESS", key: "{prevEntry}", shift: false})}>
       <FaChevronLeft/>
       </div>
@@ -55,7 +55,7 @@ export const TinyNav = ({children, dispatch}: TinyNavProps) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        borderLeft: '1px solid #EEE',
+        borderLeft: '1px solid var(--clue-bg)',
       }} onClick={() => dispatch({elapsed: 0, type: "KEYPRESS", key: "{nextEntry}", shift: false})}>
       <FaChevronRight/>
       </div>

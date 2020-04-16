@@ -94,7 +94,7 @@ export const BacktickKey = () => {
   return (
     <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
       <rect x="5" y="12" rx="10" ry="10" width="90" height="76" fill="transparent" stroke="currentColor" strokeWidth="5"/>
-      <text x="50" y="95" textAnchor="middle" fontSize="90" fontWeight="bold" lengthAdjust="onlySpacing" textLength="75">`</text>
+      <text x="50" y="95" textAnchor="middle" fontSize="90" fontWeight="bold" textLength="75">`</text>
     </svg>
   );
 }
