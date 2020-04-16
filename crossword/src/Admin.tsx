@@ -61,13 +61,13 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
   return (
     <Page title="Admin">
       <div css={{ margin: '1em', }}>
-        <h4 css={{ borderBottom: '1px solid black' }}>Unmoderated</h4>
+        <h4 css={{ borderBottom: '1px solid var(--black)' }}>Unmoderated</h4>
         { unmoderated.length === 0 ?
           <div>No puzzles are currently awaiting moderation.</div>
           :
           <ul>{unmoderated.map(PuzzleListItem)}</ul>
         }
-        <h4 css={{ borderBottom: '1px solid black' }}>Upcoming Minis</h4>
+        <h4 css={{ borderBottom: '1px solid var(--black)' }}>Upcoming Minis</h4>
         <UpcomingMinisCalendar disableExisting={false} onChange={goToPuzzle}/>
       </div>
     </Page>

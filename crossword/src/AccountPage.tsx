@@ -113,12 +113,12 @@ export const AccountPage = requiresAuth(({user}: RouteComponentProps & AuthProps
   return (
     <Page title="Account">
       <div css={{ margin: '1em', }}>
-        <h4 css={{ borderBottom: '1px solid black' }}>Account</h4>
+        <h4 css={{ borderBottom: '1px solid var(--black)' }}>Account</h4>
         <p>You're logged in as <b>{user.email}</b>. <button onClick={() => firebase.auth().signOut()}>Log out</button></p>
         <DisplayNameForm user={user}/>
         { plays && plays.length ?
           <React.Fragment>
-          <h4 css={{ borderBottom: '1px solid black' }}>Recent Plays</h4>
+          <h4 css={{ borderBottom: '1px solid var(--black)' }}>Recent Plays</h4>
           <ul>{plays.map(PlayListItem)}</ul>
           </React.Fragment>
           :
@@ -126,7 +126,7 @@ export const AccountPage = requiresAuth(({user}: RouteComponentProps & AuthProps
         }
         { authoredPuzzles && authoredPuzzles.length ?
           <React.Fragment>
-          <h4 css={{ borderBottom: '1px solid black' }}>Authored Puzzles</h4>
+          <h4 css={{ borderBottom: '1px solid var(--black)' }}>Authored Puzzles</h4>
           <ul>{authoredPuzzles.map(PuzzleListItem)}</ul>
           </React.Fragment>
           :

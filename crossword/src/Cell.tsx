@@ -31,11 +31,11 @@ type CellProps = {
 }
 
 export const Cell = React.memo((props: CellProps) => {
-  let bg = "white";
+  let bg = "var(--white)";
   if (props.isBlock && props.active) {
-    bg = "repeating-linear-gradient(-45deg,black,black 10px," + PRIMARY + " 10px," + PRIMARY + " 20px);"
+    bg = "repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px," + PRIMARY + " 10px," + PRIMARY + " 20px);"
   } else if (props.isBlock) {
-    bg = "black";
+    bg = "var(--cell-wall)";
   } else if (props.active) {
     bg = PRIMARY;
   } else if (props.entryCell) {
@@ -59,10 +59,10 @@ export const Cell = React.memo((props: CellProps) => {
           position: 'absolute',
           width: '100%',
           height: '100%',
-          borderRight: '1px solid black',
-          borderBottom: '1px solid black',
-          borderTop: (props.row === 0) ? '1px solid black' : 0,
-          borderLeft: (props.column === 0) ? '1px solid black' : 0,
+          borderRight: '1px solid var(--cell-wall)',
+          borderBottom: '1px solid var(--cell-wall)',
+          borderTop: (props.row === 0) ? '1px solid var(--cell-wall)' : 0,
+          borderLeft: (props.column === 0) ? '1px solid var(--cell-wall)' : 0,
           background: bg,
 
       }]}>
@@ -98,11 +98,11 @@ export const Cell = React.memo((props: CellProps) => {
             left: '1.85em',
             top: '-0.1em',
             fontSize: '1.2em',
-            color: '#4e61eb',
+            color: 'var(--verified)',
           }}><FaEye/></div> : "" }
           {props.number}</div>
           <div css={{
-            color: props.isVerified ? '#4e61eb' : (props.value.trim() ? 'black' : '#BBB'),
+            color: props.isVerified ? 'var(--verified)' : (props.value.trim() ? 'var(--black)' : 'var(--autofill)'),
             textAlign: 'center',
             lineHeight: '1.2em',
             fontSize: 'calc(0.9 * 100vw / ' + props.gridWidth + ')',
@@ -139,7 +139,7 @@ export const Cell = React.memo((props: CellProps) => {
             top: 0,
             right: 0,
             bottom: 0,
-            border: '1px solid black',
+            border: '1px solid var(--black)',
             borderRadius: '50%',
           }}></div> : ""}
           {props.highlight === 'shade' ?
@@ -149,7 +149,7 @@ export const Cell = React.memo((props: CellProps) => {
             top: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.3)',
+            backgroundColor: 'var(--shade-highlight)',
           }}></div> : ""}
           <div css={{
             fontSize: 1.0 / Math.max(props.value.length - 0.4, 1) + 'em',

@@ -57,7 +57,7 @@ export const Uploader = requiresAdmin((_: RouteComponentProps & AuthProps) => {
 
   return (
     <Page title="Upload Puzzle">
-      { error ? <p css={{ color: 'red' }}>{error}</p> : "" }
+      { error ? <p css={{ color: 'var(--error)' }}>{error}</p> : "" }
       <input type='file' accept='.xw' onChange={e => handleFile(e.target.files)}/>
     </Page>
   );

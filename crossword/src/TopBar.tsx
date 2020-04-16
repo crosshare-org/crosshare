@@ -32,11 +32,11 @@ export const TopBarDropDownLink = (props: {shortcutHint?: React.ReactNode, text:
       margin: 0,
       padding: '0.5em',
       width: '100%',
-      color: 'black',
+      color: 'var(--black)',
       '&:hover, &:focus': {
-        color: 'black',
+        color: 'var(--black)',
         textDecoration: 'none',
-        backgroundColor: 'rgba(0,0,0,0.1)',
+        backgroundColor: 'var(--top-bar-hover)',
       },
     }} onClick={props.onClick}>
     <div css={{
@@ -68,11 +68,11 @@ export const TopBarLink = (props: {text?: string, hoverText?: string, keepText?:
       display: 'inline',
       margin: 0,
       padding: '0 0.45em',
-      color: 'black',
+      color: 'var(--black)',
       '&:hover, &:focus': {
-        color: 'black',
+        color: 'var(--black)',
         textDecoration: 'none',
-        backgroundColor: 'rgba(0,0,0,0.1)',
+        backgroundColor: 'var(--top-bar-hover)',
       },
     }} onClick={props.onClick}>
     <span css={{
@@ -122,7 +122,7 @@ export const TopBar = ({children}: TopBarProps) => {
     <span css={{
       marginLeft: '5px',
       display: 'none',
-      color: 'black',
+      color: 'var(--black)',
       fontSize: HEADER_HEIGHT - 10,
       [SMALL_AND_UP]: {
         display: 'inline-block',

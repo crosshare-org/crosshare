@@ -26,7 +26,7 @@ import {
 } from './reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TinyNav } from './Page';
-import { SECONDARY, LIGHTER, ERROR_COLOR, SMALL_AND_UP } from './style';
+import { buttonAsLink, SECONDARY, LIGHTER, ERROR_COLOR, SMALL_AND_UP } from './style';
 import { navToLatestMini, UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 import { usePersistedBoolean } from './hooks';
 import { timeString } from './utils';
@@ -119,11 +119,11 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
   return (
     <li css={{
       padding: '0.5em',
-      backgroundColor: (isActive ? LIGHTER : (isCross ? SECONDARY : 'white')),
+      backgroundColor: (isActive ? LIGHTER : (isCross ? SECONDARY : 'none')),
       listStyleType: 'none',
       cursor: 'pointer',
       '&:hover': {
-        backgroundColor: (isActive ? LIGHTER : (isCross ? '#DDD' : '#EEE')),
+        backgroundColor: (isActive ? LIGHTER : (isCross ? 'var(--cross-clue-bg)' : 'var(--clue-bg)')),
       },
       display: 'flex',
       flexDirection: 'row',
@@ -147,8 +147,8 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
       <div css={{
         flex: '1 1 auto',
         height: '100%',
-        color: props.conceal ? 'transparent' : (props.isCompleted ? "#999" : "black"),
-        textShadow: props.conceal ? '0 0 1em rgba(0,0,0,0.8)' : '',
+        color: props.conceal ? 'transparent' : (props.isCompleted ? 'var(--default-text)' : "var(--black)"),
+        textShadow: props.conceal ? '0 0 1em var(--conceal-text)' : '',
       }}>{props.clue}</div>
     </li>
   );
@@ -273,15 +273,7 @@ const PrevDailyMiniLink = (props: {puzzle: PuzzleResult}) => {
   if (loading) {
     return <React.Fragment>Loading previous daily mini...</React.Fragment>;
   }
-  return (<button  css={{
-        background: 'none!important',
-        border: 'none',
-        padding: '0!important',
-        color: '#069',
-        fontWeight: 'bold',
-        textDecoration: 'underline',
-        cursor: 'pointer',
-      }} onClick={goToPrevious}>Play the previous daily mini crossword</button>);
+  return (<button  css={buttonAsLink} onClick={goToPrevious}>Play the previous daily mini crossword</button>);
 }
 
 const SuccessOverlay = (props: {puzzle: PuzzleResult, isMuted: boolean, solveTime: number, dispatch: React.Dispatch<PuzzleAction>}) => {
@@ -307,7 +299,7 @@ export const RebusOverlay = (props: { getCurrentTime: ()=>number, showingKeyboar
       props.dispatch(escape)
     }}>
         <div css={{
-          color: props.value ? 'black' : '#999',
+          color: props.value ? 'var(--black)' : 'var(--default-text)',
           margin: '0.5em 0',
           textAlign: 'center',
           fontSize: '2.5em',

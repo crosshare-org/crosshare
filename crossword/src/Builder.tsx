@@ -38,6 +38,7 @@ import { isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, Load
 import * as WordDB from './WordDB';
 import { Overlay } from './Overlay';
 import { usePersistedBoolean } from './hooks';
+import { buttonAsLink } from './style';
 
 declare var firebase: typeof import('firebase');
 
@@ -71,7 +72,7 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
       padding: '0.5em 1em',
       cursor: 'pointer',
       '&:hover': {
-        backgroundColor: '#EEE',
+        backgroundColor: 'var(--clue-bg)',
       },
       alignItems: 'center',
       height: 35,
@@ -188,14 +189,7 @@ const ClueMode = (props: ClueModeProps) => {
         :
         <React.Fragment>
           <p>This where you come to set clues for your puzzle, but you don't have any completed fill words yet!</p>
-          <p>Go back to <button css={{
-            background: 'none!important',
-            border: 'none',
-            padding: '0!important',
-            color: '#069',
-            textDecoration: 'underline',
-            cursor: 'pointer',
-          }} onClick={(e) => {props.exitClueMode(); e.preventDefault();}}>the grid</button> and fill in one or more words completely. Then come back here and make some clues.</p>
+          <p>Go back to <button css={buttonAsLink} onClick={(e) => {props.exitClueMode(); e.preventDefault();}}>the grid</button> and fill in one or more words completely. Then come back here and make some clues.</p>
         </React.Fragment>
       }
       </div>

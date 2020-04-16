@@ -9,7 +9,7 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
   return (<div onClick={props.onClick || (() => undefined) } css={{
     display: props.hidden ? 'none' : 'block',
     position: 'fixed',
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'var(--overlay-bg)',
     top: 0,
     left: 0,
     width: '100%',
@@ -23,11 +23,12 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
       width: '90%',
       maxWidth: '650px',
       padding: '3em 1.5em',
-      backgroundColor: 'white',
+      backgroundColor: 'var(--overlay-inner)',
       margin: '5em auto',
     }}>
       <button css={{
-        background: 'white',
+        background: 'var(--overlay-inner)',
+        color: 'var(--black)',
         border: 'none',
         position: 'absolute',
         padding: 0,

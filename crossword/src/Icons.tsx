@@ -26,8 +26,8 @@ const Square = (props: {cx:number, cy:number, beginMs:number, animate: boolean, 
 const X = (props: {cx:number, cy:number}) => {
   return (
     <>
-      <line x1={props.cx - 15} x2={props.cx + 15} y1={props.cx - 15} y2={props.cx + 15} stroke="#000" strokeWidth="10"/>
-      <line x1={props.cx - 15} x2={props.cx + 15} y1={props.cx + 15} y2={props.cx - 15} stroke="#000" strokeWidth="10"/>
+      <line x1={props.cx - 15} x2={props.cx + 15} y1={props.cx - 15} y2={props.cx + 15} stroke="currentColor" strokeWidth="10"/>
+      <line x1={props.cx - 15} x2={props.cx + 15} y1={props.cx + 15} y2={props.cx - 15} stroke="currentColor" strokeWidth="10"/>
     </>
   );
 }
@@ -41,7 +41,7 @@ interface SpinnerProps {
 const Spinner = ({animate, filled, centerX}: SpinnerProps) => {
   let squareProps = {animate, filled};
   return (
-    <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#000">
+    <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
       <Square cx={15} cy={15} beginMs={0} {...squareProps}/>
       <Square cx={15} cy={50} beginMs={100} {...squareProps}/>
       <Square cx={50} cy={15} beginMs={300} {...squareProps}/>
@@ -74,8 +74,8 @@ export const SpinnerFinished = () => {
 
 export const Rebus = () => {
   return (
-    <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#000">
-      <rect x="5" y="5" rx="7" ry="7" width="90" height="90" fill="transparent" stroke="#000" strokeWidth="10"/>
+    <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <rect x="5" y="5" rx="7" ry="7" width="90" height="90" fill="transparent" stroke="currentColor" strokeWidth="10"/>
       <text x="15" y="47" fontSize="40" fontWeight="bold" textLength="70" lengthAdjust="spacingAndGlyphs">RE</text>
       <text x="15" y="82" fontSize="40" fontWeight="bold" textLength="70" lengthAdjust="spacingAndGlyphs">BUS</text>
     </svg>
@@ -84,16 +84,16 @@ export const Rebus = () => {
 
 export const EscapeKey = () => {
   return (
-    <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#000">
-      <rect x="5" y="12" rx="10" ry="10" width="90" height="76" fill="transparent" stroke="#000" strokeWidth="5"/>
+    <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <rect x="5" y="12" rx="10" ry="10" width="90" height="76" fill="transparent" stroke="currentColor" strokeWidth="5"/>
       <text x="50" y="70" textAnchor="middle" fontSize="60" fontWeight="bold" lengthAdjust="spacingAndGlyphs" textLength="75">esc</text>
     </svg>
   );
 }
 export const BacktickKey = () => {
   return (
-    <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#000">
-      <rect x="5" y="12" rx="10" ry="10" width="90" height="76" fill="transparent" stroke="#000" strokeWidth="5"/>
+    <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <rect x="5" y="12" rx="10" ry="10" width="90" height="76" fill="transparent" stroke="currentColor" strokeWidth="5"/>
       <text x="50" y="95" textAnchor="middle" fontSize="90" fontWeight="bold" lengthAdjust="onlySpacing" textLength="75">`</text>
     </svg>
   );
@@ -101,14 +101,14 @@ export const BacktickKey = () => {
 
 const CheckOrReveal = ({x, y, reveal}: {x:number, y:number, reveal: boolean}) => {
   if (reveal) {
-    return <FaEye x={x} y={y} size={32} fill="#000" stroke="#000"/>;
+    return <FaEye x={x} y={y} size={32} fill="currentColor" stroke="currentColor"/>;
   }
-  return <FaCheck x={x} y={y} size={32} fill="#000" stroke="#000"/>;
+  return <FaCheck x={x} y={y} size={32} fill="currentColor" stroke="currentColor"/>;
 }
 
 const CheckReveal = ({unit, reveal}: {unit: CheatUnit, reveal: boolean}) => {
   return (
-    <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#000">
+    <svg width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
       { unit === CheatUnit.Puzzle ?
         <>
         <CheckOrReveal x={0} y={0} reveal={reveal}/>
@@ -164,7 +164,7 @@ export const RevealPuzzle = () => {
 
 export const SymmetryIcon = ({type, ...props}: IconProps & {type: Symmetry}) => {
   return (
-    <svg width={props.width || "1em"} height={props.height || "1em"} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#000">
+    <svg width={props.width || "1em"} height={props.height || "1em"} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
       <Square cx={15} cy={15} beginMs={0} animate={false} filled={true}/>
       <Square cx={15} cy={85} beginMs={0} animate={false} filled={type === Symmetry.Horizontal}/>
       <Square cx={85} cy={85} beginMs={0} animate={false} filled={type === Symmetry.Rotational}/>

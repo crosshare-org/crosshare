@@ -9,6 +9,7 @@ import { AuthContext } from './App';
 import { TopBarLink } from './TopBar';
 import { Page } from './Page';
 import { navToLatestMini } from './UpcomingMinisCalendar';
+import { buttonAsLink } from './style';
 
 declare var firebase: typeof import('firebase');
 
@@ -45,15 +46,7 @@ export const Home = (_: RouteComponentProps) => {
         Crosshare is a new community for crossword constructors.
         We are just getting started so please let us know if you have any issues or suggestions.
         </p>
-        <p><button  css={{
-          background: 'none!important',
-          border: 'none',
-          padding: '0!important',
-          color: '#069',
-          fontWeight: 'bold',
-          textDecoration: 'underline',
-          cursor: 'pointer',
-        }} onClick={goToDailyMini}>Play today's daily mini crossword</button></p>
+        <p><button css={buttonAsLink} onClick={goToDailyMini}>Play today's daily mini crossword</button></p>
         </React.Fragment>
       )
       }
