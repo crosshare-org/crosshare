@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import useEventListener from '@use-it/event-listener';
 
 export function useTimer(initialSeconds: number):[number, boolean, ()=>void, ()=>void, ()=>number] {
@@ -25,23 +25,23 @@ export function useTimer(initialSeconds: number):[number, boolean, ()=>void, ()=
     return () => clearInterval(id);
   }, [bankedSeconds, currentWindowStart]);
 
-  function resume() {
+  const resume = useCallback(() => {
     setCurrentWindowStart((new Date()).getTime());
-  }
+  }, [setCurrentWindowStart]);
 
-  function getCurrentSeconds () {
+  const getCurrentSeconds = useCallback(() => {
     if (currentWindowStart) {
       return bankedSeconds + ((new Date()).getTime() - currentWindowStart) / 1000;
     }
     return bankedSeconds;
-  }
+  }, [currentWindowStart, bankedSeconds]);
 
-  function pause() {
+  const pause = useCallback(() => {
     if (currentWindowStart) {
       setBankedSeconds(bankedSeconds + ((new Date()).getTime() - currentWindowStart) / 1000);
       setCurrentWindowStart(0);
     }
-  }
+  }, [currentWindowStart, bankedSeconds, setCurrentWindowStart, setBankedSeconds]);
 
   return [totalSeconds, currentWindowStart === 0, pause, resume, getCurrentSeconds];
 }
