@@ -234,27 +234,27 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
             'default': [
               'Q W E R T Y U I O P',
               'A S D F G H J K L',
-              'Z X C V B N M {num} {bksp}',
+              '{num} Z X C V B N M {bksp}',
             ],
             'defaultBlock': [
               'Q W E R T Y U I O P',
               'A S D F G H J K L {block}',
-              'Z X C V B N M {num} {bksp}',
+              '{num} Z X C V B N M {bksp}',
             ],
             'extra': [
               '1 2 3 4 5',
               '6 7 8 9 0',
-              '{rebus} {abc} {bksp}',
+              '{abc} {rebus} {bksp}',
             ],
             'defaultTablet': [
               'Q W E R T Y U I O P {bksp}',
               '{prev} A S D F G H J K L {dir} {next}',
-              '{prevEntry} Z X C V B N M {num} {nextEntry}',
+              '{prevEntry} Z X C V B N M {num} {rebus} {nextEntry}',
             ],
             'defaultTabletBlock': [
               'Q W E R T Y U I O P {bksp}',
               '{prev} A S D F G H J K L {block} {dir} {next}',
-              '{prevEntry} Z X C V B N M {num} {nextEntry}',
+              '{prevEntry} Z X C V B N M {num} {rebus} {nextEntry}',
             ],
           }}
           layoutName={layoutName(props.showExtraKeyLayout, props.isTablet)}
@@ -268,7 +268,7 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
             '{abc}': 'ABC',
             '{rebus}': 'Rebus',
             '{nextEntry}': '⇥',
-            '{block}': '■',
+            '{block}': ' ',
           }}
           onKeyPress={keypress}
         />: " "}
