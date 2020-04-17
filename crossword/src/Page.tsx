@@ -192,8 +192,8 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           alignItems: 'start',
         },
         flexWrap: 'nowrap',
-        minHeight: 'calc(100vh - ' + heightAdjust + 'px)',
-        height: 'calc(100vh - ' + heightAdjust + 'px)',
+        minHeight: 'calc(100% - ' + heightAdjust + 'px)',
+        height: 'calc(100% - ' + heightAdjust + 'px)',
       }}>
         <Square heightAdjust={heightAdjust} contents={props.square} />
         <div css={{
