@@ -32,7 +32,7 @@ import {
 } from './reducer';
 import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav, Page } from './Page';
-import { RebusOverlay, getKeyboardHandler, getPhysicalKeyboardHandler } from './Puzzle';
+import { RebusOverlay } from './Puzzle';
 import AutofillWorker from 'worker-loader!./autofill.worker.ts'; // eslint-disable-line import/no-webpack-loader-syntax
 import { isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from './types';
 import * as WordDB from './WordDB';
@@ -287,7 +287,16 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
   const [publishErrors, setPublishErrors] = React.useState<React.ReactNode>(null);
   const [muted, setMuted] = usePersistedBoolean("muted", false);
 
-  useEventListener('keydown', getPhysicalKeyboardHandler(dispatch, ()=>0));
+  const physicalKeyboardHandler = React.useCallback((e: React.KeyboardEvent) => {
+    if (e.metaKey || e.altKey || e.ctrlKey) {
+      return;  // This way you can still do apple-R and such
+    }
+    const kpa: KeypressAction = { elapsed: 0, type: "KEYPRESS", key: e.key, shift: e.shiftKey };
+    dispatch(kpa);
+    e.preventDefault();
+  }, [dispatch]);
+  useEventListener('keydown', physicalKeyboardHandler);
+
   let left = <React.Fragment></React.Fragment>;
   let right = <React.Fragment></React.Fragment>;
   let tiny = <React.Fragment></React.Fragment>;
@@ -462,6 +471,12 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
       navigate("/crosswords/" + ref.id, {state: {id: ref.id, ...puzzle}});
     });
   }
+
+  const keyboardHandler = React.useCallback((key: string) => {
+    const kpa: KeypressAction = { elapsed: 0, type: "KEYPRESS", key: key, shift: false };
+    dispatch(kpa);
+  }, [dispatch]);
+
   return (
     <React.Fragment>
       <Helmet>
@@ -543,7 +558,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
       <SquareAndCols
         muted={muted}
         showKeyboard={state.showKeyboard}
-        keyboardHandler={getKeyboardHandler(dispatch, ()=>0)}
+        keyboardHandler={keyboardHandler}
         showExtraKeyLayout={state.showExtraKeyLayout}
         isTablet={state.isTablet}
         includeBlockKey={true}

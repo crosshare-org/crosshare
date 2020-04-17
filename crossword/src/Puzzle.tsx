@@ -370,24 +370,6 @@ const ClueList = (props: ClueListProps) => {
   );
 }
 
-export function getKeyboardHandler(dispatch: React.Dispatch<PuzzleAction>, getCurrentTime: ()=>number) {
-  return (key: string) => {
-    const kpa: KeypressAction = { elapsed: getCurrentTime(), type: "KEYPRESS", key: key, shift: false };
-    dispatch(kpa);
-  }
-}
-
-export function getPhysicalKeyboardHandler(dispatch: React.Dispatch<PuzzleAction>, getCurrentTime: ()=>number) {
-  return (e: React.KeyboardEvent) => {
-    if (e.metaKey || e.altKey || e.ctrlKey) {
-      return;  // This way you can still do apple-R and such
-    }
-    const kpa: KeypressAction = { elapsed: getCurrentTime(), type: "KEYPRESS", key: e.key, shift: e.shiftKey };
-    dispatch(kpa);
-    e.preventDefault();
-  }
-}
-
 const PuzzlePlayLoader = requiresAuth((props: PuzzleResult & AuthProps) => {
   const [play, setPlay] = React.useState<PlayT | null>(null);
   const [isError, setIsError] = React.useState(false);
@@ -523,7 +505,15 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
     }
   }, [state.success, pause]);
 
-  useEventListener('keydown', getPhysicalKeyboardHandler(dispatch, getCurrentTime));
+  const physicalKeyboardHandler = React.useCallback((e: React.KeyboardEvent) => {
+    if (e.metaKey || e.altKey || e.ctrlKey) {
+      return;  // This way you can still do apple-R and such
+    }
+    const kpa: KeypressAction = { elapsed: getCurrentTime(), type: "KEYPRESS", key: e.key, shift: e.shiftKey };
+    dispatch(kpa);
+    e.preventDefault();
+  }, [getCurrentTime, dispatch]);
+  useEventListener('keydown', physicalKeyboardHandler);
 
   const [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
   if (entry === null || cross === null) {
@@ -595,6 +585,11 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
       }
     }
   }, [updatePlayRef]);
+
+  const keyboardHandler = React.useCallback((key: string) => {
+    const kpa: KeypressAction = { elapsed: getCurrentTime(), type: "KEYPRESS", key: key, shift: false };
+    dispatch(kpa);
+  }, [getCurrentTime, dispatch]);
 
   const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
@@ -692,7 +687,7 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
       <SquareAndCols
         muted={muted}
         showKeyboard={showingKeyboard}
-        keyboardHandler={getKeyboardHandler(dispatch, getCurrentTime)}
+        keyboardHandler={keyboardHandler}
         showExtraKeyLayout={state.showExtraKeyLayout}
         includeBlockKey={false}
         isTablet={state.isTablet}
