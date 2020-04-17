@@ -11,89 +11,28 @@ import { FaTabletAlt } from 'react-icons/fa';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { Helmet } from "react-helmet-async";
 
+import { Square } from './Square';
 import { CrosshareAudioContext } from "./App";
 import { KeypressAction } from './reducer';
 import { TopBar, TopBarLink } from './TopBar';
 import {
-  heightAdjustment, SMALL_AND_UP, LARGE_AND_UP,
-  SMALL_AND_UP_WIDE, LARGE_AND_UP_WIDE,
-  SMALL_AND_UP_WIDE_KEYBOARD, LARGE_AND_UP_WIDE_KEYBOARD,
-  MOBILE_WIDE_KEYBOARD, MOBILE_WIDE,
+  heightAdjustment,
+  SMALL_AND_UP, LARGE_AND_UP, TINY_COL_MIN_HEIGHT,
 } from './style';
 
-interface TinyNavProps {
-  children: React.ReactNode,
-  dispatch: React.Dispatch<KeypressAction>,
-}
-export const TinyNav = ({children, dispatch}: TinyNavProps) => {
-  return (
-    <div css={{
-      display: 'flex',
-      flexWrap: 'nowrap',
-      alignItems: 'stretch',
-      flexDirection: 'row',
-      width: '100%',
-      height: '100%',
-    }}>
-      <div css={{
-        width: '2em',
-        textAlign: 'center',
-        flexShrink: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRight: '1px solid var(--clue-bg)',
-      }} onClick={() => dispatch({elapsed: 0, type: "KEYPRESS", key: "{prevEntry}", shift: false})}>
-      <FaChevronLeft/>
-      </div>
-      <div css={{
-        flex: '1 1 auto',
-      }}>{children}</div>
-      <div css={{
-        width: '2em',
-        textAlign: 'center',
-        flexShrink: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderLeft: '1px solid var(--clue-bg)',
-      }} onClick={() => dispatch({elapsed: 0, type: "KEYPRESS", key: "{nextEntry}", shift: false})}>
-      <FaChevronRight/>
-      </div>
-    </div>
-  );
-}
-
-interface SquareAndColsProps {
+interface KeyboardProps {
   muted: boolean,
-  square: React.ReactNode,
-  left: React.ReactNode,
-  right: React.ReactNode,
-  tinyColumn?: React.ReactNode,
   showKeyboard: boolean,
-  keyboardHandler?: (key:string) => void,
+  keyboardHandler?: (key: string) => void,
   showExtraKeyLayout: boolean,
   includeBlockKey: boolean,
   isTablet: boolean,
 }
-export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: SquareAndColsProps) => {
-  const heightAdjust = heightAdjustment(showKeyboard, false);
-  const toolbarHeightAdjust = heightAdjustment(showKeyboard);
+
+export const OurKeyboard = ({ muted, showKeyboard, ...props }: KeyboardProps) => {
   const [audioContext, initAudioContext] = React.useContext(CrosshareAudioContext);
-
-  function layoutName(numeric: boolean, tablet: boolean) {
-
-    if (numeric) {
-      return "extra";
-    }
-    if (tablet) {
-      return props.includeBlockKey ? "defaultTabletBlock" : "defaultTablet";
-    }
-    return props.includeBlockKey ? 'defaultBlock' : 'default';
-  }
-
   const mutedRef = React.useRef(muted);
-  const playKeystrokeSound = React.useRef<(() => void)|null>(null);
+  const playKeystrokeSound = React.useRef<(() => void) | null>(null);
 
   React.useEffect(() => {
     mutedRef.current = muted;
@@ -120,158 +59,192 @@ export const SquareAndCols = ({muted, showKeyboard, keyboardHandler, ...props}: 
       });
     }
   }, [muted, showKeyboard, audioContext, initAudioContext]);
-
-  const keypress = (key:string) => {
+  function layoutName(numeric: boolean, tablet: boolean) {
+    if (numeric) {
+      return "extra";
+    }
+    if (tablet) {
+      return props.includeBlockKey ? "defaultTabletBlock" : "defaultTablet";
+    }
+    return props.includeBlockKey ? 'defaultBlock' : 'default';
+  }
+  const keypress = (key: string) => {
     if (!mutedRef.current && playKeystrokeSound.current) {
       playKeystrokeSound.current();
     }
-    if (keyboardHandler) {
-      keyboardHandler(key);
+    if (props.keyboardHandler) {
+      props.keyboardHandler(key);
     }
   }
+  return (
+    <Keyboard
+      layout={{
+        'default': [
+          'Q W E R T Y U I O P',
+          'A S D F G H J K L',
+          '{num} Z X C V B N M {bksp}',
+        ],
+        'defaultBlock': [
+          'Q W E R T Y U I O P',
+          'A S D F G H J K L {block}',
+          '{num} Z X C V B N M {bksp}',
+        ],
+        'extra': [
+          '1 2 3 4 5',
+          '6 7 8 9 0',
+          '{abc} {rebus} {bksp}',
+        ],
+        'defaultTablet': [
+          'Q W E R T Y U I O P {bksp}',
+          '{prev} A S D F G H J K L {dir} {next}',
+          '{prevEntry} Z X C V B N M {num} {rebus} {nextEntry}',
+        ],
+        'defaultTabletBlock': [
+          'Q W E R T Y U I O P {bksp}',
+          '{prev} A S D F G H J K L {block} {dir} {next}',
+          '{prevEntry} Z X C V B N M {num} {rebus} {nextEntry}',
+        ],
+      }}
+      layoutName={layoutName(props.showExtraKeyLayout, props.isTablet)}
+      display={{
+        '{bksp}': '⌫',
+        '{prev}': '←',
+        '{dir}': '↴',
+        '{next}': '→',
+        '{prevEntry}': '⇤',
+        '{num}': 'More',
+        '{abc}': 'ABC',
+        '{rebus}': 'Rebus',
+        '{nextEntry}': '⇥',
+        '{block}': ' ',
+      }}
+      onKeyPress={keypress}
+    />
+  );
+}
+
+interface TinyNavProps {
+  children: React.ReactNode,
+  dispatch: React.Dispatch<KeypressAction>,
+}
+export const TinyNav = ({ children, dispatch }: TinyNavProps) => {
+  return (
+    <div css={{
+      display: 'flex',
+      flexWrap: 'nowrap',
+      alignItems: 'stretch',
+      flexDirection: 'row',
+      width: '100%',
+      height: '100%',
+    }}>
+      <div css={{
+        width: '2em',
+        textAlign: 'center',
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRight: '1px solid var(--clue-bg)',
+      }} onClick={() => dispatch({ elapsed: 0, type: "KEYPRESS", key: "{prevEntry}", shift: false })}>
+        <FaChevronLeft />
+      </div>
+      <div css={{
+        flex: '1 1 auto',
+      }}>{children}</div>
+      <div css={{
+        width: '2em',
+        textAlign: 'center',
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderLeft: '1px solid var(--clue-bg)',
+      }} onClick={() => dispatch({ elapsed: 0, type: "KEYPRESS", key: "{nextEntry}", shift: false })}>
+        <FaChevronRight />
+      </div>
+    </div>
+  );
+}
+
+interface SquareAndColsProps {
+  muted: boolean,
+  square: (size:number) => React.ReactNode,
+  left: React.ReactNode,
+  right: React.ReactNode,
+  tinyColumn?: React.ReactNode,
+  showKeyboard: boolean,
+  keyboardHandler?: (key: string) => void,
+  showExtraKeyLayout: boolean,
+  includeBlockKey: boolean,
+  isTablet: boolean,
+}
+export const SquareAndCols = (props: SquareAndColsProps) => {
+  const heightAdjust = heightAdjustment(props.showKeyboard);
 
   return (
     <React.Fragment>
       <div css={{
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'center',
         [SMALL_AND_UP]: {
           flexDirection: 'row',
           alignItems: 'start',
         },
         flexWrap: 'nowrap',
-        alignItems: 'center',
-        minHeight: 'calc(100% - ' + heightAdjust + 'px)',
-        height: 'calc(100% - ' + heightAdjust + 'px)',
+        minHeight: 'calc(100vh - ' + heightAdjust + 'px)',
+        height: 'calc(100vh - ' + heightAdjust + 'px)',
       }}>
-        <div css={{
-          flexShrink: 0,
-          height: '100vw',
-          width: '100vw',
-          [showKeyboard ? MOBILE_WIDE_KEYBOARD : MOBILE_WIDE]: {
-            height: 'calc(87vh - ' + toolbarHeightAdjust + 'px)',
-            width: 'calc(87vh - ' + toolbarHeightAdjust + 'px)',
-          },
-          [SMALL_AND_UP]: {
-            padding: '5px',
-            height: '66vw',
-            width: '66vw',
-          },
-          [showKeyboard ? SMALL_AND_UP_WIDE_KEYBOARD : SMALL_AND_UP_WIDE]: {
-            height: 'calc(100vh - ' + toolbarHeightAdjust + 'px)',
-            width: 'calc(100vh - ' + toolbarHeightAdjust + 'px)',
-          },
-          [LARGE_AND_UP]: {
-            height: '50vw',
-            width: '50vw',
-          },
-          [showKeyboard ? LARGE_AND_UP_WIDE_KEYBOARD : LARGE_AND_UP_WIDE]: {
-            height: 'calc(100vh - ' + toolbarHeightAdjust + 'px)',
-            width: 'calc(100vh - ' + toolbarHeightAdjust + 'px)',
-          },
-        }}>
-          {props.square}
-        </div>
-        <div css={{
-          flex: '1 1 auto',
-          width: '100vw',
-          height: '13vh',
-          [SMALL_AND_UP]: {
-            display: 'none',
-          }
-        }}>
-          {props.tinyColumn}
-        </div>
+        <Square heightAdjust={heightAdjust} contents={props.square} />
         <div css={{
           display: 'none',
           flex: 'auto',
           flexWrap: 'wrap',
           alignItems: 'end',
+          height: '100%',
           [SMALL_AND_UP]: {
             display: 'flex',
             width: '34vw',
-            height: 'calc(100vh - ' + toolbarHeightAdjust + 'px)',
           },
           [LARGE_AND_UP]: {
             width: '50vw',
-            height: 'calc(100vh - ' + toolbarHeightAdjust + 'px)',
-
           },
         }}>
           <div css={{
             flex: 'auto',
-            padding: '0',
             width: '100%',
             height: '50%',
-            [SMALL_AND_UP]: {
-              padding: '5px 5px 0 0',
-            },
             [LARGE_AND_UP]: {
-              paddingBottom: 5,
+              paddingRight: 2,
               width: '50%',
               height: '100%',
             },
           }}>{props.left}</div>
           <div css={{
             flex: 'auto',
-            padding: '0',
             width: '100%',
             height: '50%',
-            [SMALL_AND_UP]: {
-              padding: '0 5px 5px 0',
-            },
             [LARGE_AND_UP]: {
-              paddingTop: 5,
+              paddingLeft: 2,
               width: '50%',
               height: '100%',
             },
           }}>{props.right}</div>
         </div>
+        <div css={{
+          flex: '1 0 auto',
+          width: '100vw',
+          height: TINY_COL_MIN_HEIGHT,
+          [SMALL_AND_UP]: {
+            display: 'none',
+          }
+        }}>
+          {props.tinyColumn}
         </div>
-      {showKeyboard ?
-        <Keyboard
-          layout={{
-            'default': [
-              'Q W E R T Y U I O P',
-              'A S D F G H J K L',
-              '{num} Z X C V B N M {bksp}',
-            ],
-            'defaultBlock': [
-              'Q W E R T Y U I O P',
-              'A S D F G H J K L {block}',
-              '{num} Z X C V B N M {bksp}',
-            ],
-            'extra': [
-              '1 2 3 4 5',
-              '6 7 8 9 0',
-              '{abc} {rebus} {bksp}',
-            ],
-            'defaultTablet': [
-              'Q W E R T Y U I O P {bksp}',
-              '{prev} A S D F G H J K L {dir} {next}',
-              '{prevEntry} Z X C V B N M {num} {rebus} {nextEntry}',
-            ],
-            'defaultTabletBlock': [
-              'Q W E R T Y U I O P {bksp}',
-              '{prev} A S D F G H J K L {block} {dir} {next}',
-              '{prevEntry} Z X C V B N M {num} {rebus} {nextEntry}',
-            ],
-          }}
-          layoutName={layoutName(props.showExtraKeyLayout, props.isTablet)}
-          display={{
-            '{bksp}': '⌫',
-            '{prev}': '←',
-            '{dir}': '↴',
-            '{next}': '→',
-            '{prevEntry}': '⇤',
-            '{num}': 'More',
-            '{abc}': 'ABC',
-            '{rebus}': 'Rebus',
-            '{nextEntry}': '⇥',
-            '{block}': ' ',
-          }}
-          onKeyPress={keypress}
-        />: " "}
+      </div>
+      {props.showKeyboard ?
+        <OurKeyboard {...props} />
+        : " "}
     </React.Fragment>
   );
 }
@@ -295,7 +268,7 @@ export const SquareTest = (_: RouteComponentProps) => {
         isTablet={isTablet}
         includeBlockKey={false}
         tinyColumn={<div css={{ border: '1px solid black', backgroundColor: 'red', height: '100%' }}>TINY</div>}
-        square={<div css={{ border: '1px solid black', backgroundColor: 'blue', height: '100%' }}>a</div>}
+        square={(size:number)=><div css={{ border: '1px solid black', backgroundColor: 'blue', height: '100%' }}>{size}</div>}
         left={<div css={{ border: '1px solid black', backgroundColor: 'green', height: '100%' }}>b</div>}
         right={<div css={{ border: '1px solid black', backgroundColor: 'yellow', height: '100%' }}>c</div>}
       />
@@ -305,7 +278,7 @@ export const SquareTest = (_: RouteComponentProps) => {
 
 interface PageProps extends RouteComponentProps {
   children: React.ReactNode,
-  title: string|null,
+  title: string | null,
   topBarElements?: React.ReactNode,
 }
 

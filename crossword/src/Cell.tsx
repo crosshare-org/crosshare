@@ -6,17 +6,14 @@ import * as React from 'react';
 import { FaSlash, FaEye } from 'react-icons/fa';
 
 import {
-  heightAdjustment, notSelectable, PRIMARY, SECONDARY, ERROR_COLOR,
-  SMALL_AND_UP, LARGE_AND_UP,
-  SMALL_AND_UP_WIDE, LARGE_AND_UP_WIDE,
-  SMALL_AND_UP_WIDE_KEYBOARD, LARGE_AND_UP_WIDE_KEYBOARD,
-  MOBILE_WIDE_KEYBOARD, MOBILE_WIDE,
+  notSelectable, PRIMARY, SECONDARY, ERROR_COLOR,
 } from './style';
 
 type CellProps = {
   autofill: string,
   showingKeyboard: boolean,
   gridWidth: number,
+  gridSize: number,
   isBlock: boolean,
   active: boolean,
   entryCell: boolean,
@@ -43,9 +40,8 @@ export const Cell = React.memo((props: CellProps) => {
     bg = SECONDARY;
   }
 
+  const cellSize = props.gridSize / props.gridWidth;
   const value = props.value.trim() ? props.value : props.autofill;
-
-  const heightAdjust = heightAdjustment(props.showingKeyboard);
 
   return (
     <div className="cell-container" css={{
@@ -76,22 +72,7 @@ export const Cell = React.memo((props: CellProps) => {
             fontWeight: 'bold',
             lineHeight: '1em',
 
-            fontSize: 'calc(0.25 * 100vw / ' + props.gridWidth + ')',
-            [props.showingKeyboard ? MOBILE_WIDE_KEYBOARD : MOBILE_WIDE]: {
-              fontSize: 'calc(0.25 * (87vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
-            },
-            [SMALL_AND_UP]: {
-              fontSize: 'calc(0.25 * 66vw / ' + props.gridWidth + ')',
-            },
-            [props.showingKeyboard ? SMALL_AND_UP_WIDE_KEYBOARD : SMALL_AND_UP_WIDE]: {
-              fontSize: 'calc(0.25 * (100vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
-            },
-            [LARGE_AND_UP]: {
-              fontSize: 'calc(0.25 * 50vw / ' + props.gridWidth + ')',
-            },
-            [props.showingKeyboard ? LARGE_AND_UP_WIDE_KEYBOARD : LARGE_AND_UP_WIDE]: {
-              fontSize: 'calc(0.25 * (100vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
-            },
+            fontSize: 0.25 * cellSize,
           }}>
           { props.wasRevealed ?
           <div css={{
@@ -106,22 +87,7 @@ export const Cell = React.memo((props: CellProps) => {
             color: props.isVerified ? 'var(--verified)' : (props.value.trim() ? 'var(--black)' : 'var(--autofill)'),
             textAlign: 'center',
             lineHeight: '1.2em',
-            fontSize: 'calc(0.9 * 100vw / ' + props.gridWidth + ')',
-            [props.showingKeyboard ? MOBILE_WIDE_KEYBOARD : MOBILE_WIDE]: {
-              fontSize: 'calc(0.9 * (87vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
-            },
-            [SMALL_AND_UP]: {
-              fontSize: 'calc(0.9 * 66vw / ' + props.gridWidth + ')',
-            },
-            [props.showingKeyboard ? SMALL_AND_UP_WIDE_KEYBOARD : SMALL_AND_UP_WIDE]: {
-              fontSize: 'calc(0.9 * (100vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
-            },
-            [LARGE_AND_UP]: {
-              fontSize: 'calc(0.9 * 50vw / ' + props.gridWidth + ')',
-            },
-            [props.showingKeyboard ? LARGE_AND_UP_WIDE_KEYBOARD : LARGE_AND_UP_WIDE]: {
-              fontSize: 'calc(0.9 * (100vh - ' + heightAdjust + 'px) / ' + props.gridWidth + ')',
-            },
+            fontSize: 0.9 * cellSize,
           }}>
           { props.isWrong ?
           <div css={{

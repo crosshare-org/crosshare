@@ -12,9 +12,9 @@ import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
 import { FixedSizeList as List } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
 import { navigate } from '@reach/router';
 
+import AutoSizer from "./AutoSizer";
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
   SymmetryIcon, SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
@@ -563,14 +563,17 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
         isTablet={state.isTablet}
         includeBlockKey={true}
         square={
-          <GridView
-            showingKeyboard={state.showKeyboard}
-            grid={state.grid}
-            active={state.active}
-            dispatch={dispatch}
-            allowBlockEditing={true}
-            autofill={props.autofillEnabled ? props.autofilledGrid : []}
-          />
+          (size:number) => {
+            return <GridView
+              squareSize={size}
+              showingKeyboard={state.showKeyboard}
+              grid={state.grid}
+              active={state.active}
+              dispatch={dispatch}
+              allowBlockEditing={true}
+              autofill={props.autofillEnabled ? props.autofilledGrid : []}
+            />
+          }
         }
         left={left}
         right={right}

@@ -692,15 +692,18 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
         includeBlockKey={false}
         isTablet={state.isTablet}
         square={
-          <GridView
-            showingKeyboard={showingKeyboard}
-            grid={state.grid}
-            active={state.active}
-            dispatch={dispatch}
-            revealedCells={state.revealedCells}
-            verifiedCells={state.verifiedCells}
-            wrongCells={state.wrongCells}
-          />
+          (size:number) => {
+            return <GridView
+              squareSize={size}
+              showingKeyboard={showingKeyboard}
+              grid={state.grid}
+              active={state.active}
+              dispatch={dispatch}
+              revealedCells={state.revealedCells}
+              verifiedCells={state.verifiedCells}
+              wrongCells={state.wrongCells}
+            />
+          }
         }
         left={<ClueList conceal={isPaused && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
         right={<ClueList conceal={isPaused && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}

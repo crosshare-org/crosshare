@@ -19,6 +19,7 @@ type GridViewProps = {
   wrongCells?: Set<number>,
   allowBlockEditing?: boolean,
   autofill?: Array<string>,
+  squareSize: number,
 }
 
 export const GridView = ({ showingKeyboard, active, dispatch, grid, ...props}: GridViewProps) => {
@@ -43,6 +44,7 @@ export const GridView = ({ showingKeyboard, active, dispatch, grid, ...props}: G
       onClick = changeDirection;
     }
     cells.push(<Cell
+      gridSize={props.squareSize}
       autofill={props.autofill ? props.autofill[idx] : ''}
       showingKeyboard={showingKeyboard}
       gridWidth={grid.width}
