@@ -188,7 +188,13 @@ export function moveToNextEntry<Entry extends ViewableEntry>(grid: ViewableGrid<
     }
   }
 
-  return pos;
+  // Now just return the start of the next/prev entry
+  let index = (i + 1) % grid.sortedEntries.length;
+  if (reverse) {
+    index = (i - 1) % grid.sortedEntries.length;
+  }
+  const nextEntry = grid.entries[grid.sortedEntries[index]];
+  return {...nextEntry.cells[0], dir: nextEntry.direction};
 }
 
 export function gridWithNewChar<Entry extends ViewableEntry,
