@@ -6,10 +6,12 @@ import axios from 'axios';
 import { RouteComponentProps } from "@reach/router";
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
-import { FaKeyboard } from 'react-icons/fa';
-import { FaTabletAlt } from 'react-icons/fa';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import {
+  FaBackspace, FaKeyboard, FaTabletAlt, FaSync,
+  FaAngleRight, FaAngleLeft, FaAngleDoubleRight, FaAngleDoubleLeft,
+} from 'react-icons/fa';
 import { Helmet } from "react-helmet-async";
+import ReactDOMServer from 'react-dom/server';
 
 import { Square } from './Square';
 import { CrosshareAudioContext } from "./App";
@@ -107,15 +109,15 @@ export const OurKeyboard = ({ muted, showKeyboard, ...props }: KeyboardProps) =>
       }}
       layoutName={layoutName(props.showExtraKeyLayout, props.isTablet)}
       display={{
-        '{bksp}': '⌫',
-        '{prev}': '←',
-        '{dir}': '↴',
-        '{next}': '→',
-        '{prevEntry}': '⇤',
+        '{bksp}': ReactDOMServer.renderToStaticMarkup(<FaBackspace/>),
+        '{prev}': ReactDOMServer.renderToStaticMarkup(<FaAngleLeft/>),
+        '{dir}': ReactDOMServer.renderToStaticMarkup(<FaSync/>),
+        '{next}': ReactDOMServer.renderToStaticMarkup(<FaAngleRight/>),
+        '{prevEntry}': ReactDOMServer.renderToStaticMarkup(<FaAngleDoubleLeft/>),
         '{num}': 'More',
         '{abc}': 'ABC',
         '{rebus}': 'Rebus',
-        '{nextEntry}': '⇥',
+        '{nextEntry}': ReactDOMServer.renderToStaticMarkup(<FaAngleDoubleRight/>),
         '{block}': ' ',
       }}
       onKeyPress={keypress}
@@ -146,7 +148,7 @@ export const TinyNav = ({ children, dispatch }: TinyNavProps) => {
         justifyContent: 'center',
         borderRight: '1px solid var(--clue-bg)',
       }} onClick={() => dispatch({ elapsed: 0, type: "KEYPRESS", key: "{prevEntry}", shift: false })}>
-        <FaChevronLeft />
+        <FaAngleDoubleLeft />
       </div>
       <div css={{
         flex: '1 1 auto',
@@ -160,7 +162,7 @@ export const TinyNav = ({ children, dispatch }: TinyNavProps) => {
         justifyContent: 'center',
         borderLeft: '1px solid var(--clue-bg)',
       }} onClick={() => dispatch({ elapsed: 0, type: "KEYPRESS", key: "{nextEntry}", shift: false })}>
-        <FaChevronRight />
+        <FaAngleDoubleRight />
       </div>
     </div>
   );
