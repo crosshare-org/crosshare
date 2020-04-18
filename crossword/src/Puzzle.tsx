@@ -159,6 +159,7 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
             return <span css={{
               display: 'inline-block',
               textAlign: 'center',
+              fontWeight: 'bold',
               minWidth: '1em',
               border: (a.row === props.active.row && a.col === props.active.col) ?
                 '1px solid var(--black)' : '1px solid transparent',
