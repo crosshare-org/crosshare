@@ -1,6 +1,6 @@
 import {css} from '@emotion/core';
 
-export const KEYBOARD_HEIGHT = 140;
+export const KEYBOARD_HEIGHT = 164;
 export const HEADER_HEIGHT = 35;
 export const PRIMARY = 'var(--primary)';
 export const LIGHTER = 'var(--lighter)';

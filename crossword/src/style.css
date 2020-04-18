@@ -51,17 +51,25 @@
     border-bottom: 1px solid black !important;
   }
 }
+.hg-theme-default {
+  padding: 4px !important;
+}
+.hg-row {
+  padding-top: 12px;
+  margin-bottom: 0 !important
+}
 .hg-button {
   flex: 1 0 0 !important;
+  padding: 0 !important;
 }
 .hg-layout-default .hg-button[data-skbtn="{num}"],
 .hg-layout-defaultBlock .hg-button[data-skbtn="{num}"] {
-  flex: 2 0 0 !important;
+  flex: 1.6 0 0 !important;
   font-size: 90%;
 }
 .hg-layout-default .hg-button[data-skbtn="{bksp}"],
 .hg-layout-defaultBlock .hg-button[data-skbtn="{bksp}"] {
-  flex: 2 0 0 !important;
+  flex: 1.6 0 0 !important;
 }
 .hg-button[data-skbtn="{prev}"], .hg-button[data-skbtn="{next}"],
 .hg-layout-defaultTabletBlock .hg-button[data-skbtn="{dir}"] {
