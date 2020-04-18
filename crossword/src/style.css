@@ -71,10 +71,6 @@
   background-color: var(--cell-wall) !important;
   flex: 0.5 0 0 !important;
 }
-.hg-layout-default .hg-row:nth-child(2){
-  margin-left: 5%;
-  margin-right: 5%;
-}
 .hg-layout-defaultBlock .hg-row:nth-child(2){
   margin-left: 5%;
 }

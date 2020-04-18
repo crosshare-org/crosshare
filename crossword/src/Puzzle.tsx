@@ -5,28 +5,35 @@ import * as React from 'react';
 import axios from 'axios';
 import { navigate, RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
-import { FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt, FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare } from 'react-icons/fa';
+import {
+  FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt,
+  FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare
+} from 'react-icons/fa';
 import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
-import { EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle, Rebus } from './Icons';
+import {
+  EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle,
+  RevealPuzzle, Rebus, SpinnerFinished
+} from './Icons';
 import { requiresAuth, AuthProps, CrosshareAudioContext } from './App';
 import { useTimer } from './timer';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
+import { Position } from './types';
 import { CluedEntry, fromCells, addClues } from './viewableGrid';
-import { entryAndCrossAtPosition } from './gridBase';
+import { valAt, entryAndCrossAtPosition } from './gridBase';
 import { Direction, BLOCK, PuzzleV, PuzzleResult, PlayT, PlayV, puzzleTitle } from './types';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction,
-  ToggleAutocheckAction
+  ToggleAutocheckAction, ToggleClueViewAction
 } from './reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
-import { Page, SquareAndCols, TinyNav } from './Page';
-import { buttonAsLink, SECONDARY, LIGHTER, ERROR_COLOR, SMALL_AND_UP } from './style';
+import { Page, SquareAndCols, TwoCol, TinyNav } from './Page';
+import { buttonAsLink, SECONDARY, LIGHTER, ERROR_COLOR } from './style';
 import { navToLatestMini, UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 import { usePersistedBoolean } from './hooks';
 import { timeString } from './utils';
@@ -44,11 +51,11 @@ export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
     if (!crosswordId) {
       throw new Error("missing id");
     }
-    if (props.location?.state) {
+    if (props.location ?.state) {
       const validationResult = PuzzleV.decode(props.location.state);
       if (isRight(validationResult)) {
         console.log("puzzle pre-loaded");
-        setPuzzle({...validationResult.right, id: crosswordId});
+        setPuzzle({ ...validationResult.right, id: crosswordId });
         return;
       } else {
         console.log("failed to pre-load");
@@ -67,7 +74,7 @@ export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
       } else {
         const validationResult = PuzzleV.decode(data);
         if (isRight(validationResult)) {
-          setPuzzle({...validationResult.right, id: crosswordId});
+          setPuzzle({ ...validationResult.right, id: crosswordId });
         } else {
           console.error(PathReporter.report(validationResult).join(","));
           setIsError(true);
@@ -89,16 +96,16 @@ export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
 }
 
 interface ClueListItemProps {
+  active: Position,
+  showDirection: boolean,
   conceal: boolean,
-  labelNumber: number,
+  entry: CluedEntry,
   dispatch: React.Dispatch<PuzzleAction>,
-  entryIndex: number,
   isActive: boolean,
   isCross: boolean,
   scrollToCross: boolean,
-  direction: Direction,
-  clue: string,
-  isCompleted: boolean,
+  showEntry: boolean,
+  valAt: (pos: Position) => string,
 }
 const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemProps) => {
   const ref = React.useRef<HTMLLIElement>(null);
@@ -110,10 +117,10 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
   function click(e: React.MouseEvent) {
     e.preventDefault();
     if (isActive) {
-      props.dispatch({type: "CHANGEDIRECTION"});
+      props.dispatch({ type: "CHANGEDIRECTION" });
       return;
     }
-    const ca: ClickedEntryAction = { type: 'CLICKEDENTRY', entryIndex: props.entryIndex };
+    const ca: ClickedEntryAction = { type: 'CLICKEDENTRY', entryIndex: props.entry.index };
     props.dispatch(ca);
   }
   return (
@@ -130,7 +137,7 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
       flexWrap: 'nowrap',
       alignItems: 'center',
       width: '100%',
-    }} ref={ref} onClick={click} key={props.entryIndex}>
+    }} ref={ref} onClick={click} key={props.entry.index}>
       <div css={{
         flexShrink: 0,
         width: '3em',
@@ -138,18 +145,27 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
         fontWeight: 'bold',
         textAlign: 'right',
         padding: '0 0.5em',
-      }}>{props.labelNumber}<span css={{
-        [SMALL_AND_UP]: {
-          display: 'none',
-        },
-      }}>{props.direction === Direction.Across ? 'A' : 'D'}</span>
+      }}>{props.entry.labelNumber}{props.showDirection ? (props.entry.direction === Direction.Across ? 'A' : 'D') : ""}
       </div>
       <div css={{
         flex: '1 1 auto',
         height: '100%',
-        color: props.conceal ? 'transparent' : (props.isCompleted ? 'var(--default-text)' : "var(--black)"),
+        color: props.conceal ? 'transparent' : (props.entry.completedWord ? 'var(--default-text)' : "var(--black)"),
         textShadow: props.conceal ? '0 0 1em var(--conceal-text)' : '',
-      }}>{props.clue}</div>
+      }}>
+        <div>{props.entry.clue}</div>
+        {props.showEntry ?
+          <div>{props.entry.cells.map(a => {
+            return <span css={{
+              display: 'inline-block',
+              textAlign: 'center',
+              minWidth: '1em',
+              border: (a.row === props.active.row && a.col === props.active.col) ?
+                '1px solid var(--black)' : '1px solid transparent',
+            }}>{props.valAt(a).trim() || "-"}</span>;
+          })}</div>
+        : ""}
+      </div>
     </li>
   );
 });
@@ -161,11 +177,11 @@ interface PauseBeginProps {
   message: string,
   dismissMessage: string,
   moderated: boolean,
-  publishTime: Date|undefined,
+  publishTime: Date | undefined,
 }
 
 const BeginPauseOverlay = (props: PauseBeginProps) => {
-  let warnings:Array<React.ReactNode> = [];
+  let warnings: Array<React.ReactNode> = [];
   if (!props.moderated) {
     warnings.push(<div key="moderation">The puzzle is awaiting moderation. We'll get to it ASAP! If you feel it's taking too long please message us on the google group.</div>);
   }
@@ -174,35 +190,35 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
   }
   return (
     <Overlay showingKeyboard={false} closeCallback={props.dismiss}>
-    <div css={{textAlign: 'center'}}>
-      {warnings.length?
-        <div css={{
-          width: '100%',
-          fontWeight: 'bold',
-          border: '1px solid ' + ERROR_COLOR,
-          borderRadius: '4px',
-          margin: '1em',
-          padding: '1em',
-          color: ERROR_COLOR
-        }}>
-        <div>Your puzzle isn't visible to others yet:</div>
-        {warnings}
-        </div>
-        :
-        ""
-      }
-      <h3>{props.title}</h3>
-      <h4>by {props.authorName}</h4>
-      <div css={{marginBottom: '1em'}}>{props.message}</div>
-      <button onClick={props.dismiss}>{props.dismissMessage}</button>
-    </div>
+      <div css={{ textAlign: 'center' }}>
+        {warnings.length ?
+          <div css={{
+            width: '100%',
+            fontWeight: 'bold',
+            border: '1px solid ' + ERROR_COLOR,
+            borderRadius: '4px',
+            margin: '1em',
+            padding: '1em',
+            color: ERROR_COLOR
+          }}>
+            <div>Your puzzle isn't visible to others yet:</div>
+            {warnings}
+          </div>
+          :
+          ""
+        }
+        <h3>{props.title}</h3>
+        <h4>by {props.authorName}</h4>
+        <div css={{ marginBottom: '1em' }}>{props.message}</div>
+        <button onClick={props.dismiss}>{props.dismissMessage}</button>
+      </div>
     </Overlay>
   );
 }
 
-const ModeratingOverlay = ({dispatch, puzzle}: {puzzle: PuzzleResult, dispatch: React.Dispatch<PuzzleAction>}) => {
+const ModeratingOverlay = ({ dispatch, puzzle }: { puzzle: PuzzleResult, dispatch: React.Dispatch<PuzzleAction> }) => {
   const db = firebase.firestore();
-  const [date, setDate] = React.useState(puzzle.publishTime?.toDate());
+  const [date, setDate] = React.useState(puzzle.publishTime ?.toDate());
 
   function schedule() {
     if (!date) {
@@ -214,44 +230,44 @@ const ModeratingOverlay = ({dispatch, puzzle}: {puzzle: PuzzleResult, dispatch: 
       category: 'dailymini',
     }).then(() => {
       console.log("Scheduled mini");
-      navigate("", {state: undefined});
+      navigate("", { state: undefined });
     })
   }
   const isMini = puzzle.size.rows === 5 && puzzle.size.cols === 5
 
   return (
-    <Overlay showingKeyboard={false} closeCallback={() => dispatch({type: "TOGGLEMODERATING"})}>
-    <h4>Moderate this Puzzle</h4>
-    <div>{puzzle.moderated ? "Puzzle has been approved" : "Puzzle is not approved"}</div>
-    {isMini ?
-      <div>
-        {puzzle.publishTime ?
-          <div>Scheduled for {puzzle.publishTime.toDate().toLocaleDateString()}</div>
-          :
-          ""
-        }
-        <div css={{marginTop: '1em'}}>Pick a date for this mini to appear:</div>
-        <UpcomingMinisCalendar disableExisting={true} value={date} onChange={setDate} />
-        <div css={{marginTop: '1em'}}><button disabled={!date} onClick={schedule}>Schedule</button></div>
-      </div>
-      :
-      <div>Not supported for non-minis yet.</div>
-    }
+    <Overlay showingKeyboard={false} closeCallback={() => dispatch({ type: "TOGGLEMODERATING" })}>
+      <h4>Moderate this Puzzle</h4>
+      <div>{puzzle.moderated ? "Puzzle has been approved" : "Puzzle is not approved"}</div>
+      {isMini ?
+        <div>
+          {puzzle.publishTime ?
+            <div>Scheduled for {puzzle.publishTime.toDate().toLocaleDateString()}</div>
+            :
+            ""
+          }
+          <div css={{ marginTop: '1em' }}>Pick a date for this mini to appear:</div>
+          <UpcomingMinisCalendar disableExisting={true} value={date} onChange={setDate} />
+          <div css={{ marginTop: '1em' }}><button disabled={!date} onClick={schedule}>Schedule</button></div>
+        </div>
+        :
+        <div>Not supported for non-minis yet.</div>
+      }
     </Overlay>
   );
 }
 
-const KeepTryingOverlay = ({dispatch}: {dispatch: React.Dispatch<PuzzleAction>}) => {
+const KeepTryingOverlay = ({ dispatch }: { dispatch: React.Dispatch<PuzzleAction> }) => {
   return (
-    <Overlay showingKeyboard={false} closeCallback={() => dispatch({type: "DISMISSKEEPTRYING"})}>
-    <h4>Almost there!</h4>
-    <p>You've completed the puzzle, but there are one or more mistakes.</p>
-    <button css={{width: '100%'}} onClick={() => dispatch({type: "DISMISSKEEPTRYING"})}>Keep Trying</button>
+    <Overlay showingKeyboard={false} closeCallback={() => dispatch({ type: "DISMISSKEEPTRYING" })}>
+      <h4>Almost there!</h4>
+      <p>You've completed the puzzle, but there are one or more mistakes.</p>
+      <button css={{ width: '100%' }} onClick={() => dispatch({ type: "DISMISSKEEPTRYING" })}>Keep Trying</button>
     </Overlay>
   );
 }
 
-const PrevDailyMiniLink = (props: {puzzle: PuzzleResult}) => {
+const PrevDailyMiniLink = (props: { puzzle: PuzzleResult }) => {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [finished, setFinished] = React.useState(false);
@@ -262,7 +278,7 @@ const PrevDailyMiniLink = (props: {puzzle: PuzzleResult}) => {
       return;
     }
     setLoading(true);
-    navToLatestMini(props.puzzle.publishTime, ()=>{setError(true)}, ()=>{setFinished(true)});
+    navToLatestMini(props.puzzle.publishTime, () => { setError(true) }, () => { setFinished(true) });
   }
   if (error) {
     return <React.Fragment>Something went wrong while loading</React.Fragment>;
@@ -273,48 +289,48 @@ const PrevDailyMiniLink = (props: {puzzle: PuzzleResult}) => {
   if (loading) {
     return <React.Fragment>Loading previous daily mini...</React.Fragment>;
   }
-  return (<button  css={buttonAsLink} onClick={goToPrevious}>Play the previous daily mini crossword</button>);
+  return (<button css={buttonAsLink} onClick={goToPrevious}>Play the previous daily mini crossword</button>);
 }
 
-const SuccessOverlay = (props: {puzzle: PuzzleResult, isMuted: boolean, solveTime: number, dispatch: React.Dispatch<PuzzleAction>}) => {
+const SuccessOverlay = (props: { puzzle: PuzzleResult, isMuted: boolean, solveTime: number, dispatch: React.Dispatch<PuzzleAction> }) => {
   return (
-    <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({type: "DISMISSSUCCESS"})}>
-    <div css={{textAlign: 'center'}}>
-    <h4>Congratulations!</h4>
-    <p>You solved the puzzle in <b>{timeString(props.solveTime)}</b></p>
-    { props.puzzle.category === 'dailymini' ?
-      <div>
-        <PrevDailyMiniLink puzzle={props.puzzle} />
+    <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({ type: "DISMISSSUCCESS" })}>
+      <div css={{ textAlign: 'center' }}>
+        <h4>Congratulations!</h4>
+        <p>You solved the puzzle in <b>{timeString(props.solveTime)}</b></p>
+        {props.puzzle.category === 'dailymini' ?
+          <div>
+            <PrevDailyMiniLink puzzle={props.puzzle} />
+          </div>
+          : ""}
       </div>
-    : ""}
-    </div>
     </Overlay>
   );
 }
 
-export const RebusOverlay = (props: { getCurrentTime: ()=>number, showingKeyboard: boolean, value: string, dispatch: React.Dispatch<KeypressAction> }) => {
+export const RebusOverlay = (props: { getCurrentTime: () => number, showingKeyboard: boolean, value: string, dispatch: React.Dispatch<KeypressAction> }) => {
   return (
     <Overlay showingKeyboard={props.showingKeyboard} closeCallback={() => {
       const escape: KeypressAction = { elapsed: props.getCurrentTime(), type: "KEYPRESS", key: 'Escape', shift: false };
       props.dispatch(escape)
     }}>
-        <div css={{
-          color: props.value ? 'var(--black)' : 'var(--default-text)',
-          margin: '0.5em 0',
-          textAlign: 'center',
-          fontSize: '2.5em',
-          lineHeight: '1em',
-        }}>
-          {props.value ? props.value : 'Enter Rebus'}
-        </div>
-        <button onClick={() => {
-          const escape: KeypressAction = { elapsed: props.getCurrentTime(), type: "KEYPRESS", key: 'Escape', shift: false };
-          props.dispatch(escape);
-        }} css={{ marginRight: '10%', width: '45%' }}>Cancel</button>
-        <button onClick={() => {
-          const enter: KeypressAction = { elapsed: props.getCurrentTime(), type: "KEYPRESS", key: 'Enter', shift: false };
-          props.dispatch(enter);
-        }} css={{ width: '45%' }}>Enter Rebus</button>
+      <div css={{
+        color: props.value ? 'var(--black)' : 'var(--default-text)',
+        margin: '0.5em 0',
+        textAlign: 'center',
+        fontSize: '2.5em',
+        lineHeight: '1em',
+      }}>
+        {props.value ? props.value : 'Enter Rebus'}
+      </div>
+      <button onClick={() => {
+        const escape: KeypressAction = { elapsed: props.getCurrentTime(), type: "KEYPRESS", key: 'Escape', shift: false };
+        props.dispatch(escape);
+      }} css={{ marginRight: '10%', width: '45%' }}>Cancel</button>
+      <button onClick={() => {
+        const enter: KeypressAction = { elapsed: props.getCurrentTime(), type: "KEYPRESS", key: 'Enter', shift: false };
+        props.dispatch(enter);
+      }} css={{ width: '45%' }}>Enter Rebus</button>
     </Overlay>
   );
 }
@@ -323,25 +339,28 @@ interface ClueListProps {
   conceal: boolean,
   header?: string,
   current: number,
+  active: Position,
   cross: number,
   entries: Array<CluedEntry>,
   scrollToCross: boolean,
   dispatch: React.Dispatch<PuzzleAction>,
+  showEntries: boolean,
+  valAt: (pos: Position) => string,
 }
 const ClueList = (props: ClueListProps) => {
   const clues = props.entries.map((entry) => {
     return (<ClueListItem
+      active={props.active}
+      valAt={props.valAt}
+      showDirection={props.header ? false : true}
+      showEntry={props.showEntries}
+      entry={entry}
       conceal={props.conceal}
       key={entry.index}
       scrollToCross={props.scrollToCross}
-      labelNumber={entry.labelNumber}
       dispatch={props.dispatch}
-      entryIndex={entry.index}
       isActive={props.current === entry.index}
       isCross={props.cross === entry.index}
-      direction={entry.direction}
-      isCompleted={entry.completedWord !== null}
-      clue={entry.clue}
     />)
   });
   return (
@@ -351,7 +370,7 @@ const ClueList = (props: ClueListProps) => {
     }}>{props.header ?
       <div css={{
         fontWeight: 'bold',
-        borderBottom: '1px solid #AAA',
+        borderBottom: '1px solid var(--autofill)',
         height: '1.5em',
         paddingLeft: '0.5em',
       }}>{props.header}</div> : ""}
@@ -415,13 +434,13 @@ const PuzzlePlayLoader = requiresAuth((props: PuzzleResult & AuthProps) => {
     return <Page title={null}>Loading play history...</Page>
   }
 
-  return <Puzzle play={play} {...props}/>
+  return <Puzzle play={play} {...props} />
 });
 
 interface PlayProps {
-  play: PlayT|null,
+  play: PlayT | null,
 }
-const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayProps) => {
+const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & PlayProps) => {
   const [state, dispatch] = React.useReducer(puzzleReducer, {
     type: 'puzzle',
     active: { col: 0, row: 0, dir: Direction.Across },
@@ -450,10 +469,11 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
     dismissedSuccess: false,
     moderating: false,
     didCheat: play ? play.ch : false,
+    clueView: false,
     cellsUpdatedAt: play ? play.ct : props.grid.map(() => 0),
     cellsIterationCount: play ? play.uc : props.grid.map(() => 0),
     cellsEverMarkedWrong: new Set<number>(play ? play.we : []),
-    isEditable(cellIndex) {return !this.verifiedCells.has(cellIndex) && !this.success},
+    isEditable(cellIndex) { return !this.verifiedCells.has(cellIndex) && !this.success },
     postEdit(cellIndex) {
       let state = this;
       state.wrongCells.delete(cellIndex);
@@ -470,7 +490,7 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
 
   // Set up music player for success song
   const [audioContext, initAudioContext] = React.useContext(CrosshareAudioContext);
-  const playSuccess = React.useRef<(() => void)|null>(null);
+  const playSuccess = React.useRef<(() => void) | null>(null);
   React.useEffect(() => {
     if (!audioContext) {
       return initAudioContext();
@@ -558,7 +578,7 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
     if (writeThrough) {
       console.log("Writing through to DB");
       updatePlay(true);
-    } else if (!state.success){
+    } else if (!state.success) {
       console.log("Writing to local storage");
       updatePlay(false);
     }
@@ -570,7 +590,7 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
   }, [updatePlay, state.success]);
 
   React.useEffect(() => {
-    function handleBeforeUnload () {
+    function handleBeforeUnload() {
       console.log("Doing before unload");
       if (updatePlayRef.current) {
         updatePlayRef.current(true);
@@ -595,7 +615,53 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
 
   const showingKeyboard = state.showKeyboard && !state.success;
-  const beginPauseProps = {authorName: props.authorName, title: title, dismiss: resume, moderated: props.moderated, publishTime: props.publishTime?.toDate()};
+  const beginPauseProps = { authorName: props.authorName, title: title, dismiss: resume, moderated: props.moderated, publishTime: props.publishTime ?.toDate()};
+
+  let puzzleView: React.ReactNode;
+
+  const ourValAt = React.useCallback((p: Position) => {
+    return valAt(state.grid, p);
+  }, [state.grid]);
+
+  if (state.clueView) {
+    puzzleView = <TwoCol
+      muted={muted}
+      showKeyboard={showingKeyboard}
+      keyboardHandler={keyboardHandler}
+      showExtraKeyLayout={state.showExtraKeyLayout}
+      includeBlockKey={false}
+      isTablet={state.isTablet}
+      left={<ClueList active={state.active} valAt={ourValAt} showEntries={true} conceal={isPaused && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} />}
+      right={<ClueList active={state.active} valAt={ourValAt} showEntries={true} conceal={isPaused && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} />}
+    />;
+  } else {
+    puzzleView = <SquareAndCols
+      muted={muted}
+      showKeyboard={showingKeyboard}
+      keyboardHandler={keyboardHandler}
+      showExtraKeyLayout={state.showExtraKeyLayout}
+      includeBlockKey={false}
+      isTablet={state.isTablet}
+      square={
+        (size: number) => {
+          return <GridView
+            squareSize={size}
+            showingKeyboard={showingKeyboard}
+            grid={state.grid}
+            active={state.active}
+            dispatch={dispatch}
+            revealedCells={state.revealedCells}
+            verifiedCells={state.verifiedCells}
+            wrongCells={state.wrongCells}
+          />
+        }
+      }
+      left={<ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={isPaused && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
+      right={<ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={isPaused && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
+      tinyColumn={<TinyNav dispatch={dispatch}><ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={isPaused && !state.success} entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
+    />;
+  }
+
   return (
     <React.Fragment>
       <Helmet>
@@ -603,16 +669,20 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
       </Helmet>
       <TopBar>
         <TopBarLink icon={<FaPause />} hoverText={"Pause Game"} text={timeString(elapsed)} onClick={pause} keepText={true} />
+        <TopBarLink icon={state.clueView ? <SpinnerFinished/> : <FaListOl />} text={state.clueView ? "Grid" : "Clues"} onClick={() => {
+          const a: ToggleClueViewAction = { type: "TOGGLECLUEVIEW" }
+          dispatch(a);
+        }} />
         <TopBarDropDown icon={<FaEye />} text="Reveal">
-          <TopBarDropDownLink icon={<RevealSquare/>} text="Reveal Square" onClick={() => {
+          <TopBarDropDownLink icon={<RevealSquare />} text="Reveal Square" onClick={() => {
             const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Square, isReveal: true };
             dispatch(ca);
           }} />
-          <TopBarDropDownLink icon={<RevealEntry/>} text="Reveal Word" onClick={() => {
+          <TopBarDropDownLink icon={<RevealEntry />} text="Reveal Word" onClick={() => {
             const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Entry, isReveal: true };
             dispatch(ca);
           }} />
-          <TopBarDropDownLink icon={<RevealPuzzle/>} text="Reveal Puzzle" onClick={() => {
+          <TopBarDropDownLink icon={<RevealPuzzle />} text="Reveal Puzzle" onClick={() => {
             const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true };
             dispatch(ca);
           }} />
@@ -620,19 +690,19 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
         {
           !state.autocheck ?
             (<TopBarDropDown icon={<FaCheck />} text="Check">
-              <TopBarDropDownLink icon={<FaCheckSquare/>} text="Autocheck" onClick={() => {
+              <TopBarDropDownLink icon={<FaCheckSquare />} text="Autocheck" onClick={() => {
                 const action: ToggleAutocheckAction = { elapsed: getCurrentTime(), type: "TOGGLEAUTOCHECK" };
                 dispatch(action);
               }} />
-              <TopBarDropDownLink icon={<CheckSquare/>} text="Check Square" onClick={() => {
+              <TopBarDropDownLink icon={<CheckSquare />} text="Check Square" onClick={() => {
                 const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Square };
                 dispatch(ca);
               }} />
-              <TopBarDropDownLink icon={<CheckEntry/>} text="Check Word" onClick={() => {
+              <TopBarDropDownLink icon={<CheckEntry />} text="Check Word" onClick={() => {
                 const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Entry };
                 dispatch(ca);
               }} />
-              <TopBarDropDownLink icon={<CheckPuzzle/>} text="Check Puzzle" onClick={() => {
+              <TopBarDropDownLink icon={<CheckPuzzle />} text="Check Puzzle" onClick={() => {
                 const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Puzzle };
                 dispatch(ca);
               }} />
@@ -644,71 +714,47 @@ const Puzzle = requiresAuth(({play, ...props}: PuzzleResult & AuthProps & PlayPr
             }} />
         }
         <TopBarDropDown icon={<FaEllipsisH />} text="More">
-          <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey/>} onClick={() => {
+          <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
             const kpa: KeypressAction = { elapsed: getCurrentTime(), type: "KEYPRESS", key: 'Escape', shift: false };
             dispatch(kpa);
           }} />
           {
             muted ?
-            <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
-            :
-            <TopBarDropDownLink icon={<FaVolumeMute />} text="Mute" onClick={() => setMuted(true)} />
+              <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
+              :
+              <TopBarDropDownLink icon={<FaVolumeMute />} text="Mute" onClick={() => setMuted(true)} />
           }
           {
             props.isAdmin ?
-            <React.Fragment>
-              <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
-              <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
-              <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: "TOGGLEMODERATING" })} />
-            </React.Fragment>
-            :""
+              <React.Fragment>
+                <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
+                <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
+                <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: "TOGGLEMODERATING" })} />
+              </React.Fragment>
+              : ""
           }
-          <TopBarDropDownLink icon={<FaUser/>} text="Account" onClick={() => navigate('/account')}/>
+          <TopBarDropDownLink icon={<FaUser />} text="Account" onClick={() => navigate('/account')} />
         </TopBarDropDown>
       </TopBar>
       {state.isEnteringRebus ?
         <RebusOverlay getCurrentTime={getCurrentTime} showingKeyboard={showingKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
       {state.filled && !state.success && !state.dismissedKeepTrying ?
-        <KeepTryingOverlay dispatch={dispatch}/>
-      :""}
+        <KeepTryingOverlay dispatch={dispatch} />
+        : ""}
       {state.success && !state.dismissedSuccess ?
-        <SuccessOverlay puzzle={props} isMuted={muted} solveTime={elapsed} dispatch={dispatch}/>
-      :""}
+        <SuccessOverlay puzzle={props} isMuted={muted} solveTime={elapsed} dispatch={dispatch} />
+        : ""}
       {state.moderating ?
-        <ModeratingOverlay puzzle={props} dispatch={dispatch}/>
-      :""}
+        <ModeratingOverlay puzzle={props} dispatch={dispatch} />
+        : ""}
       {isPaused && !state.success ?
         (elapsed === 0 ?
-          <BeginPauseOverlay dismissMessage="Begin Puzzle" message="Ready to get started?" {...beginPauseProps}/>
+          <BeginPauseOverlay dismissMessage="Begin Puzzle" message="Ready to get started?" {...beginPauseProps} />
           :
-          <BeginPauseOverlay dismissMessage="Resume" message="Your puzzle is paused" {...beginPauseProps}/>
+          <BeginPauseOverlay dismissMessage="Resume" message="Your puzzle is paused" {...beginPauseProps} />
         )
-      :""}
-      <SquareAndCols
-        muted={muted}
-        showKeyboard={showingKeyboard}
-        keyboardHandler={keyboardHandler}
-        showExtraKeyLayout={state.showExtraKeyLayout}
-        includeBlockKey={false}
-        isTablet={state.isTablet}
-        square={
-          (size:number) => {
-            return <GridView
-              squareSize={size}
-              showingKeyboard={showingKeyboard}
-              grid={state.grid}
-              active={state.active}
-              dispatch={dispatch}
-              revealedCells={state.revealedCells}
-              verifiedCells={state.verifiedCells}
-              wrongCells={state.wrongCells}
-            />
-          }
-        }
-        left={<ClueList conceal={isPaused && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
-        right={<ClueList conceal={isPaused && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
-        tinyColumn={<TinyNav dispatch={dispatch}><ClueList conceal={isPaused && !state.success} entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
-      />
+        : ""}
+      {puzzleView}
     </React.Fragment>
   )
 });

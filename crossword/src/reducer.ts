@@ -3,7 +3,7 @@ import {
   ViewableGrid, ViewableEntry, CluedGrid,
   gridWithNewChar, gridWithBlockToggled, advancePosition, retreatPosition,
   moveToNextEntry, moveToPrevEntry, moveUp, moveDown, moveLeft, moveRight,
-  nextNonBlock,
+  nextNonBlock, nextCell
 } from './viewableGrid';
 import { cellIndex, valAt, entryAtPosition, entryWord, gridWithEntrySet } from './gridBase';
 
@@ -34,6 +34,7 @@ interface PuzzleState extends GridInterfaceState {
   dismissedSuccess: boolean,
   moderating: boolean,
   didCheat: boolean,
+  clueView: boolean,
   cellsUpdatedAt: Array<number>,
   cellsIterationCount: Array<number>,
   cellsEverMarkedWrong: Set<number>,
@@ -167,6 +168,13 @@ export interface ToggleAutocheckAction extends PuzzleAction {
 }
 function isToggleAutocheckAction(action: PuzzleAction): action is ToggleAutocheckAction {
   return action.type === 'TOGGLEAUTOCHECK';
+}
+
+export interface ToggleClueViewAction extends PuzzleAction {
+  type: 'TOGGLECLUEVIEW',
+}
+function isToggleClueViewAction(action: PuzzleAction): action is ToggleClueViewAction {
+  return action.type === 'TOGGLECLUEVIEW';
 }
 
 function cheatCells(elapsed: number, state: PuzzleState, cellsToCheck: Array<Position>, isReveal: boolean) {
@@ -310,7 +318,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
     } else if (key === "{prev}") {
       return ({ ...state, active: retreatPosition(state.grid, state.active) });
     } else if (key === "{next}") {
-      return ({ ...state, active: advancePosition(state.grid, state.active, isPuzzleState(state) ? state.wrongCells : new Set()) });
+      return ({ ...state, active: nextCell(state.grid, state.active) });
     } else if ((key === "Tab" && !shift) || key === "{nextEntry}") {
       return ({ ...state, active: moveToNextEntry(state.grid, state.active) });
     } else if ((key === "Tab" && shift) || key === "{prevEntry}") {
@@ -388,6 +396,9 @@ export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleS
   state = gridInterfaceReducer(state, action);
   if (isCheatAction(action)) {
     return cheat(action.elapsed, state, action.unit, action.isReveal === true);
+  }
+  if (isToggleClueViewAction(action)) {
+    return ({...state, clueView: !state.clueView});
   }
   if (isToggleAutocheckAction(action)) {
     state = cheat(action.elapsed, state, CheatUnit.Puzzle, false);

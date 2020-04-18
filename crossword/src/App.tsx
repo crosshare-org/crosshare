@@ -9,7 +9,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { ErrorBoundary } from './ErrorBoundary';
 import { PuzzleLoader } from './Puzzle';
 import { BuilderDBLoader } from './Builder';
-import { Page, SquareTest } from './Page';
+import { Page, SquareTest, TwoColTest } from './Page';
 import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
 import { Uploader } from './Uploader';
@@ -297,6 +297,7 @@ const App = () => {
       <Construct path="/construct" />
       <PuzzleLoader path="/crosswords/:crosswordId" />
       <SquareTest path="/square" />
+      <TwoColTest path="/twocol" />
       <TermsOfService path="/tos" />
       <PrivacyPolicy path="/privacy" />
       <DBTest path="/dbtest" />

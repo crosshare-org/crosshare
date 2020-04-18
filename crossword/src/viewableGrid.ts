@@ -96,10 +96,27 @@ export function retreatPosition<Entry extends ViewableEntry>(grid: ViewableGrid<
   if (entry !== null && index > 0) {
     return {...entry.cells[index - 1], dir: pos.dir};
   }
-  const xincr = (pos.dir === Direction.Across) ? -1 : 0;
-  const yincr = (pos.dir === Direction.Down) ? -1 : 0;
-  if (grid.allowBlockEditing && (pos.row + yincr >= 0) && (pos.col + xincr >= 0)) {
-    return {row: pos.row + yincr, col: pos.col + xincr, dir: pos.dir};
+  if (grid.allowBlockEditing) {
+    const xincr = (pos.dir === Direction.Across) ? -1 : 0;
+    const yincr = (pos.dir === Direction.Down) ? -1 : 0;
+    if ((pos.row + yincr >= 0) && (pos.col + xincr >= 0)) {
+      return {row: pos.row + yincr, col: pos.col + xincr, dir: pos.dir};
+    }
+  }
+  return pos;
+}
+
+export function nextCell<Entry extends ViewableEntry>(grid: ViewableGrid<Entry>, pos: PosAndDir): PosAndDir {
+  const [entry, index] = entryAtPosition(grid, pos);
+  if (entry !== null && index < entry.cells.length-1) {
+    return {...entry.cells[index + 1], dir: pos.dir};
+  }
+  if (grid.allowBlockEditing) {
+    const xincr = (pos.dir === Direction.Across) ? 1 : 0;
+    const yincr = (pos.dir === Direction.Down) ? 1 : 0;
+    if ((pos.row + yincr < grid.height) && (pos.col + xincr < grid.width)) {
+      return {row: pos.row + yincr, col: pos.col + xincr, dir: pos.dir};
+    }
   }
   return pos;
 }

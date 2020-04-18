@@ -83,7 +83,7 @@ export const OurKeyboard = ({ muted, showKeyboard, ...props }: KeyboardProps) =>
       layout={{
         'default': [
           'Q W E R T Y U I O P',
-          'A S D F G H J K L',
+          '{prev} A S D F G H J K L {next}',
           '{num} Z X C V B N M {bksp}',
         ],
         'defaultBlock': [
@@ -109,15 +109,15 @@ export const OurKeyboard = ({ muted, showKeyboard, ...props }: KeyboardProps) =>
       }}
       layoutName={layoutName(props.showExtraKeyLayout, props.isTablet)}
       display={{
-        '{bksp}': ReactDOMServer.renderToStaticMarkup(<FaBackspace/>),
-        '{prev}': ReactDOMServer.renderToStaticMarkup(<FaAngleLeft/>),
-        '{dir}': ReactDOMServer.renderToStaticMarkup(<FaSync/>),
-        '{next}': ReactDOMServer.renderToStaticMarkup(<FaAngleRight/>),
-        '{prevEntry}': ReactDOMServer.renderToStaticMarkup(<FaAngleDoubleLeft/>),
+        '{bksp}': ReactDOMServer.renderToStaticMarkup(<FaBackspace />),
+        '{prev}': ReactDOMServer.renderToStaticMarkup(<FaAngleLeft />),
+        '{dir}': ReactDOMServer.renderToStaticMarkup(<FaSync />),
+        '{next}': ReactDOMServer.renderToStaticMarkup(<FaAngleRight />),
+        '{prevEntry}': ReactDOMServer.renderToStaticMarkup(<FaAngleDoubleLeft />),
         '{num}': 'More',
         '{abc}': 'ABC',
         '{rebus}': 'Rebus',
-        '{nextEntry}': ReactDOMServer.renderToStaticMarkup(<FaAngleDoubleRight/>),
+        '{nextEntry}': ReactDOMServer.renderToStaticMarkup(<FaAngleDoubleRight />),
         '{block}': ' ',
       }}
       onKeyPress={keypress}
@@ -170,7 +170,7 @@ export const TinyNav = ({ children, dispatch }: TinyNavProps) => {
 
 interface SquareAndColsProps {
   muted: boolean,
-  square: (size:number) => React.ReactNode,
+  square: (size: number) => React.ReactNode,
   left: React.ReactNode,
   right: React.ReactNode,
   tinyColumn?: React.ReactNode,
@@ -270,7 +270,76 @@ export const SquareTest = (_: RouteComponentProps) => {
         isTablet={isTablet}
         includeBlockKey={false}
         tinyColumn={<div css={{ border: '1px solid black', backgroundColor: 'red', height: '100%' }}>TINY</div>}
-        square={(size:number)=><div css={{ border: '1px solid black', backgroundColor: 'blue', height: '100%' }}>{size}</div>}
+        square={(size: number) => <div css={{ border: '1px solid black', backgroundColor: 'blue', height: '100%' }}>{size}</div>}
+        left={<div css={{ border: '1px solid black', backgroundColor: 'green', height: '100%' }}>b</div>}
+        right={<div css={{ border: '1px solid black', backgroundColor: 'yellow', height: '100%' }}>c</div>}
+      />
+    </Page>
+  );
+}
+
+interface TwoColProps {
+  muted: boolean,
+  left: React.ReactNode,
+  right: React.ReactNode,
+  showKeyboard: boolean,
+  keyboardHandler?: (key: string) => void,
+  showExtraKeyLayout: boolean,
+  includeBlockKey: boolean,
+  isTablet: boolean,
+}
+export const TwoCol = (props: TwoColProps) => {
+  const heightAdjust = heightAdjustment(props.showKeyboard);
+
+  return (
+    <React.Fragment>
+      <div css={{
+        display: 'block',
+        [SMALL_AND_UP]: {
+          display: 'flex',
+        },
+        minHeight: 'calc(100% - ' + heightAdjust + 'px)',
+        height: 'calc(100% - ' + heightAdjust + 'px)',
+        overflow: 'scroll',
+      }}>
+        <div css={{
+          [SMALL_AND_UP]: {
+            paddingRight: 2,
+            width: '50%',
+          },
+        }}>{props.left}</div>
+        <div css={{
+          [SMALL_AND_UP]: {
+            paddingLeft: 2,
+            width: '50%',
+          },
+        }}>{props.right}</div>
+      </div>
+      {props.showKeyboard ?
+        <OurKeyboard {...props} />
+        : " "}
+    </React.Fragment>
+  );
+}
+
+export const TwoColTest = (_: RouteComponentProps) => {
+  const [showKeyboard, setShowKeyboard] = React.useState(false);
+  const [isTablet, setIsTablet] = React.useState(false);
+  const toggleKeyboard = () => setShowKeyboard(!showKeyboard);
+  const toggleTablet = () => setIsTablet(!isTablet);
+  return (
+    <Page title="Two Col Test" topBarElements={
+      <React.Fragment>
+        <TopBarLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={toggleKeyboard} />
+        <TopBarLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={toggleTablet} />
+      </React.Fragment>
+    }>
+      <TwoCol
+        muted={false}
+        showKeyboard={showKeyboard}
+        showExtraKeyLayout={false}
+        isTablet={isTablet}
+        includeBlockKey={false}
         left={<div css={{ border: '1px solid black', backgroundColor: 'green', height: '100%' }}>b</div>}
         right={<div css={{ border: '1px solid black', backgroundColor: 'yellow', height: '100%' }}>c</div>}
       />
