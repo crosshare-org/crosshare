@@ -17,6 +17,7 @@ declare var firebase: typeof import('firebase');
 fetch('/__/firebase/init.json').then(async response => {
   const res = await response.json();
   firebase.initializeApp({...res, authDomain: "auth.crosshare.org"});
+  firebase.performance();
   ReactDOM.render(<App />, document.getElementById('root'));
 });
 
