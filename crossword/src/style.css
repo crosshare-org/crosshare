@@ -21,7 +21,9 @@
   --conceal-text: rgba(0,0,0,0.7);
   --cell-wall: black;
   --white: white;
+  --logo-white: white;
 }
+
 @media (prefers-color-scheme: dark) {
   :root {
     --primary: #6f3b0c;
@@ -42,6 +44,7 @@
     --conceal-text: white;
     --white: #4a4a4a;
     --overlay-inner: #333;
+    --logo-white: rgba(255,255,255,0.7);
   }
   .hg-theme-default {
     background-color: rgba(255,255,255,0.1) !important;
