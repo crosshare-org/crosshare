@@ -28,7 +28,7 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
     }}>
       <button css={{
         background: 'var(--overlay-inner)',
-        color: 'var(--black)',
+        color: 'var(--text)',
         border: 'none',
         position: 'absolute',
         padding: 0,
