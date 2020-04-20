@@ -68,7 +68,7 @@ interface SquareAndColsProps {
   right: React.ReactNode,
   tinyColumn?: React.ReactNode,
   showKeyboard: boolean,
-  keyboardHandler?: (key: string) => void,
+  keyboardHandler: (key: string) => void,
   showExtraKeyLayout: boolean,
   includeBlockKey: boolean,
   isTablet: boolean,
@@ -138,7 +138,14 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
         </div>
       </div>
       {props.showKeyboard ?
-        <Keyboard {...props} />
+        <Keyboard
+          keyboardHandler={props.keyboardHandler}
+          muted={props.muted}
+          showKeyboard={props.showKeyboard}
+          showExtraKeyLayout={props.showExtraKeyLayout}
+          includeBlockKey={props.includeBlockKey}
+          isTablet={props.isTablet}
+        />
         : " "}
     </React.Fragment>
   );
@@ -157,6 +164,7 @@ export const SquareTest = (_: RouteComponentProps) => {
       </React.Fragment>
     }>
       <SquareAndCols
+        keyboardHandler={(s) => {console.log(s)}}
         muted={false}
         showKeyboard={showKeyboard}
         showExtraKeyLayout={false}
@@ -176,7 +184,7 @@ interface TwoColProps {
   left: React.ReactNode,
   right: React.ReactNode,
   showKeyboard: boolean,
-  keyboardHandler?: (key: string) => void,
+  keyboardHandler: (key: string) => void,
   showExtraKeyLayout: boolean,
   includeBlockKey: boolean,
   isTablet: boolean,
@@ -209,7 +217,14 @@ export const TwoCol = (props: TwoColProps) => {
         }}>{props.right}</div>
       </div>
       {props.showKeyboard ?
-        <Keyboard {...props} />
+        <Keyboard
+          keyboardHandler={props.keyboardHandler}
+          muted={props.muted}
+          showKeyboard={props.showKeyboard}
+          showExtraKeyLayout={props.showExtraKeyLayout}
+          includeBlockKey={props.includeBlockKey}
+          isTablet={props.isTablet}
+        />
         : " "}
     </React.Fragment>
   );
@@ -228,6 +243,7 @@ export const TwoColTest = (_: RouteComponentProps) => {
       </React.Fragment>
     }>
       <TwoCol
+        keyboardHandler={(s) => {console.log(s)}}
         muted={false}
         showKeyboard={showKeyboard}
         showExtraKeyLayout={false}

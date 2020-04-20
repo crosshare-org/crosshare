@@ -74,12 +74,12 @@ export const Key = (props: KeyProps) => {
 interface KeyboardProps {
   muted: boolean,
   showKeyboard: boolean,
-  keyboardHandler?: (key: string) => void,
+  keyboardHandler: (key: string) => void,
   showExtraKeyLayout: boolean,
   includeBlockKey: boolean,
   isTablet: boolean,
 }
-export const Keyboard = ({ muted, showKeyboard, keyboardHandler, ...props }: KeyboardProps) => {
+export const Keyboard = React.memo(({ muted, showKeyboard, keyboardHandler, ...props }: KeyboardProps) => {
   const [audioContext, initAudioContext] = React.useContext(CrosshareAudioContext);
   const playKeystrokeSound = React.useRef<(() => void) | null>(null);
 
@@ -210,4 +210,4 @@ export const Keyboard = ({ muted, showKeyboard, keyboardHandler, ...props }: Key
       </KeyRow>
     </KeyRows>
   );
-}
+});
