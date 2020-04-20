@@ -7,7 +7,7 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { requiresAuth, AuthProps } from './App';
-import { PuzzleResult, PuzzleV, PlayT, PlayV } from './types';
+import { PuzzleResult, DBPuzzleV, puzzleFromDB, PlayT, PlayV } from './types';
 import { PuzzleListItem } from './PuzzleList';
 import { timeString } from './utils'
 
@@ -65,13 +65,13 @@ export const AccountPage = requiresAuth(({user}: RouteComponentProps & AuthProps
     }
     const db = firebase.firestore();
     // TODO pagination on both of these
-    db.collection('crosswords').where("authorId", "==", user.uid).get().then((value) => {
+    db.collection('c').where("a", "==", user.uid).get().then((value) => {
       let results: Array<PuzzleResult> = [];
       value.forEach(doc => {
         const data = doc.data();
-        const validationResult = PuzzleV.decode(data);
+        const validationResult = DBPuzzleV.decode(data);
         if (isRight(validationResult)) {
-          results.push({...validationResult.right, id: doc.id});
+          results.push({...puzzleFromDB(validationResult.right), id: doc.id});
         } else {
           console.error(PathReporter.report(validationResult).join(","));
           setError(true);

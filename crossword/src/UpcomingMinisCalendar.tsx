@@ -9,7 +9,7 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-import { PuzzleResult, PuzzleV } from './types';
+import { PuzzleResult, DBPuzzleV, puzzleFromDB } from './types';
 
 declare var firebase: typeof import('firebase');
 
@@ -53,16 +53,16 @@ export const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
     const db = firebase.firestore();
     const yesterday = new Date();
     yesterday.setUTCDate(yesterday.getUTCDay() - 1);
-    db.collection('crosswords').where("category", "==", "dailymini")
-      .where("publishTime", ">", firebase.firestore.Timestamp.fromDate(yesterday))
+    db.collection('c').where("c", "==", "dailymini")
+      .where("p", ">", firebase.firestore.Timestamp.fromDate(yesterday))
       .get().then((value) => {
 
       let results: Array<PuzzleResult> = [];
       value.forEach(doc => {
         const data = doc.data();
-        const validationResult = PuzzleV.decode(data);
+        const validationResult = DBPuzzleV.decode(data);
         if (isRight(validationResult)) {
-          results.push({...validationResult.right, id: doc.id});
+          results.push({...puzzleFromDB(validationResult.right), id: doc.id});
         } else {
           console.error(PathReporter.report(validationResult).join(","));
           setError(true);
@@ -101,17 +101,17 @@ export const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
 
 export function navToLatestMini(priorTo: firebase.firestore.Timestamp, onError: () => void, onMissing?: () => void) {
   const db = firebase.firestore();
-  db.collection('crosswords').where("category", "==", "dailymini")
-    .where("publishTime", "<", priorTo)
-    .orderBy("publishTime", "desc").limit(1).get().then((value) => {
+  db.collection('c').where("c", "==", "dailymini")
+    .where("p", "<", priorTo)
+    .orderBy("p", "desc").limit(1).get().then((value) => {
     if (value.size === 0 && onMissing) {
       onMissing();
     }
     value.forEach(doc => { // Should be only 1 - better way to do this?
       const data = doc.data();
-      const validationResult = PuzzleV.decode(data);
+      const validationResult = DBPuzzleV.decode(data);
       if (isRight(validationResult)) {
-        navigate("/crosswords/" + doc.id, {state: {...validationResult.right, id: doc.id}});
+        navigate("/crosswords/" + doc.id, {state: {...puzzleFromDB(validationResult.right), id: doc.id}});
       } else {
         console.error(PathReporter.report(validationResult).join(","));
         onError();

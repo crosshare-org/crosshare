@@ -171,7 +171,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     clues.push({dir: Direction.Across, clue: dbPuzzle.ac[i], num: dbPuzzle.an[i]});
   }
   for (let i = 0; i < dbPuzzle.dc.length; i += 1) {
-    clues.push({dir: Direction.Across, clue: dbPuzzle.dc[i], num: dbPuzzle.dn[i]});
+    clues.push({dir: Direction.Down, clue: dbPuzzle.dc[i], num: dbPuzzle.dn[i]});
   }
   return {
     authorId: dbPuzzle.a,

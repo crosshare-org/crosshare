@@ -25,7 +25,7 @@ import { GridView } from './Grid';
 import { Position } from './types';
 import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { valAt, entryAndCrossAtPosition } from './gridBase';
-import { Direction, BLOCK, PuzzleV, PuzzleResult, PlayT, PlayV, puzzleTitle } from './types';
+import { Direction, BLOCK, PuzzleV, DBPuzzleV, puzzleFromDB, PuzzleResult, PlayT, PlayV, puzzleTitle } from './types';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction,
@@ -67,14 +67,14 @@ export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
       return;
     }
     const db = firebase.firestore();
-    db.collection("crosswords").doc(crosswordId).get().then((value) => {
+    db.collection("c").doc(crosswordId).get().then((value) => {
       const data = value.data();
       if (!data) {
         setIsError(true);
       } else {
-        const validationResult = PuzzleV.decode(data);
+        const validationResult = DBPuzzleV.decode(data);
         if (isRight(validationResult)) {
-          setPuzzle({ ...validationResult.right, id: crosswordId });
+          setPuzzle({ ...puzzleFromDB(validationResult.right), id: crosswordId });
         } else {
           console.error(PathReporter.report(validationResult).join(","));
           setIsError(true);
@@ -225,10 +225,10 @@ const ModeratingOverlay = ({ dispatch, puzzle }: { puzzle: PuzzleResult, dispatc
     if (!date) {
       throw new Error("shouldn't be able to schedule w/o date");
     }
-    db.collection('crosswords').doc(puzzle.id).update({
-      moderated: true,
-      publishTime: firebase.firestore.Timestamp.fromDate(date),
-      category: 'dailymini',
+    db.collection('c').doc(puzzle.id).update({
+      m: true,
+      p: firebase.firestore.Timestamp.fromDate(date),
+      c: 'dailymini',
     }).then(() => {
       console.log("Scheduled mini");
       navigate("", { state: undefined });

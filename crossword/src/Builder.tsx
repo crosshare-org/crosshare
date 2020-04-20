@@ -24,7 +24,7 @@ import { requiresAdmin, AuthProps } from './App';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
 import { fromCells, getClueMap } from './viewableGrid';
-import { Direction, PuzzleT } from './types';
+import { Direction, PuzzleT, DBPuzzleT, puzzleFromDB } from './types';
 import {
   Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
   KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
@@ -433,7 +433,11 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
       return;
     }
 
-    const clues = state.grid.entries.map((e) => {
+    let ac:Array<string> = [];
+    let an:Array<number> = [];
+    let dc:Array<string> = [];
+    let dn:Array<number> = [];
+    state.grid.entries.forEach((e) => {
       if (!e.completedWord) {
         throw new Error("Publish unfinished grid");
       }
@@ -441,34 +445,38 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
       if (!clue) {
         throw new Error("Bad clue for " + e.completedWord);
       }
-      return {
-        num: e.labelNumber,
-        dir: e.direction,
-        clue: clue
-      };
+      if (e.direction === Direction.Across) {
+        ac.push(clue);
+        an.push(e.labelNumber);
+      } else {
+        dc.push(clue);
+        dn.push(e.labelNumber);
+      }
     });
-    const puzzle:PuzzleT = {
-      title: state.title || "Anonymous Puzzle",
-      authorId: props.user.uid,
-      authorName: props.user.displayName || "Anonymous Author",
-      moderated: false,
-      publishTime: null,
-      category: null,
-      size: {
-        rows: state.grid.height,
-        cols: state.grid.width
-      },
-      clues: clues,
-      grid: state.grid.cells,
-      highlighted: Array.from(state.grid.highlighted),
-      highlight: state.grid.highlight || "circle"
+    const puzzle:DBPuzzleT = {
+      t: state.title || "Anonymous",
+      a: props.user.uid,
+      n: props.user.displayName || "Anonymous",
+      m: false,
+      p: null,
+      c: null,
+      h: state.grid.height,
+      w: state.grid.width,
+      g: state.grid.cells,
+      ac,an,dc,dn
+    };
+    if (state.grid.highlighted.size) {
+      puzzle.hs = Array.from(state.grid.highlighted);
+      if (state.grid.highlight === "shade") {
+        puzzle.s = true;
+      }
     };
     console.log("Uploading");
     console.log(puzzle);
     const db = firebase.firestore();
-    db.collection("crosswords").add(puzzle).then((ref) => {
+    db.collection("c").add(puzzle).then((ref) => {
       console.log("Uploaded", ref.id);
-      navigate("/crosswords/" + ref.id, {state: {id: ref.id, ...puzzle}});
+      navigate("/crosswords/" + ref.id, {state: {id: ref.id, ...puzzleFromDB(puzzle)}});
     });
   }
 

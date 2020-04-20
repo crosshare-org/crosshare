@@ -9,7 +9,7 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
-import { PuzzleResult, PuzzleV } from './types';
+import { PuzzleResult, DBPuzzleV, puzzleFromDB } from './types';
 import { PuzzleListItem } from './PuzzleList';
 import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 
@@ -26,13 +26,13 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
       return;
     }
     const db = firebase.firestore();
-    db.collection('crosswords').where("moderated", "==", false).get().then((value) => {
+    db.collection('c').where("m", "==", false).get().then((value) => {
       let results: Array<PuzzleResult> = [];
       value.forEach(doc => {
         const data = doc.data();
-        const validationResult = PuzzleV.decode(data);
+        const validationResult = DBPuzzleV.decode(data);
         if (isRight(validationResult)) {
-          results.push({...validationResult.right, id: doc.id});
+          results.push({...puzzleFromDB(validationResult.right), id: doc.id});
         } else {
           console.error(PathReporter.report(validationResult).join(","));
           setError(true);
