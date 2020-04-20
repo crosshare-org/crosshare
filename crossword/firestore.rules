@@ -31,15 +31,33 @@ service cloud.firestore {
     function isPublishedNew() {
       return resource.data.p == null || request.time > resource.data.p;
     }
+    function validCrossword() {
+      return (request.resource.data.g.size() == (request.resource.data.w * request.resource.data.h))
+        && (request.resource.data.ac.size() == request.resource.data.an.size())
+        && (request.resource.data.dc.size() == request.resource.data.dn.size());
+    }
     match /c/{crosswordId} {
-      allow get: if isAdmin() || isAuthorNew() || (resource.data.m == true && isPublishedNew());
-      allow list: if isAdmin() || isAuthorNew() || (resource.data.c != null && request.time + duration.time(1, 0, 0, 0) >= resource.data.p);
+      allow get: if isAdmin() || isAuthorNew()
+        || (resource.data.m == true && isPublishedNew());
+
+      allow list: if isAdmin() || isAuthorNew()
+        || (resource.data.c != null && request.time + duration.time(1, 0, 0, 0) >= resource.data.p);
+
       allow update: if isAdmin();
-      allow create: if isAdmin() && authorSetCorrectlyNew() && request.resource.data.c == null && request.resource.data.p == null && request.resource.data.m == false;
+
+      allow create: if isAdmin() && authorSetCorrectlyNew()
+        && validCrossword()
+        && request.resource.data.c == null
+        && request.resource.data.p == null
+        && request.resource.data.m == false;
     }
     match /p/{playId} {
-      allow read: if request.auth.uid != null && (resource == null || request.auth.uid == resource.data.u);
-      allow write: if request.auth.uid != null && request.auth.uid == request.resource.data.u && playId == (request.resource.data.c + '-' + request.resource.data.u);
+      allow read: if request.auth.uid != null
+        && (resource == null || request.auth.uid == resource.data.u);
+
+      allow write: if request.auth.uid != null
+        && request.auth.uid == request.resource.data.u
+        && playId == (request.resource.data.c + '-' + request.resource.data.u);
     }
   }
 }

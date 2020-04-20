@@ -165,6 +165,32 @@ const DBPuzzleOptionalV = t.partial({
 export const DBPuzzleV = t.intersection([DBPuzzleMandatoryV, DBPuzzleOptionalV]);
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
 
+export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
+  let clues: Array<ClueT> = [];
+  for (let i = 0; i < dbPuzzle.ac.length; i += 1) {
+    clues.push({dir: Direction.Across, clue: dbPuzzle.ac[i], num: dbPuzzle.an[i]});
+  }
+  for (let i = 0; i < dbPuzzle.dc.length; i += 1) {
+    clues.push({dir: Direction.Across, clue: dbPuzzle.dc[i], num: dbPuzzle.dn[i]});
+  }
+  return {
+    authorId: dbPuzzle.a,
+    category: dbPuzzle.c,
+    authorName: dbPuzzle.n,
+    moderated: dbPuzzle.m,
+    publishTime: dbPuzzle.p,
+    title: dbPuzzle.t,
+    size: {
+      rows: dbPuzzle.h,
+      cols: dbPuzzle.w
+    },
+    clues: clues,
+    grid: dbPuzzle.g,
+    highlighted: dbPuzzle.hs || [],
+    highlight: dbPuzzle.s ? "shade" : "circle"
+  };
+}
+
 // from https://github.com/gcanti/io-ts/blob/master/test/helpers.ts
 function withDefault<T extends t.Mixed>(
   type: T,
