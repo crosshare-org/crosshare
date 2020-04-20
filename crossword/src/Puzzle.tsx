@@ -396,7 +396,7 @@ const PuzzlePlayLoader = requiresAuth((props: PuzzleResult & AuthProps) => {
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const playData = localStorage.getItem("p/" + props.id + "-" + props.user.uid);
+    const playData = sessionStorage.getItem("p/" + props.id + "-" + props.user.uid);
     if (playData) {
       console.log("loading play state from local storage");
       const validationResult = PlayV.decode(JSON.parse(playData));
@@ -416,7 +416,7 @@ const PuzzlePlayLoader = requiresAuth((props: PuzzleResult & AuthProps) => {
           const validationResult = PlayV.decode(data);
           if (isRight(validationResult)) {
             setPlay(validationResult.right);
-            localStorage.setItem("p/" + props.id + "-" + props.user.uid, JSON.stringify(validationResult.right));
+            sessionStorage.setItem("p/" + props.id + "-" + props.user.uid, JSON.stringify(validationResult.right));
           } else {
             console.error(PathReporter.report(validationResult).join(","));
             setIsError(true);
@@ -558,7 +558,7 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
       ch: state.didCheat,
       f: state.success,
     }
-    localStorage.setItem("p/" + props.id + "-" + props.user.uid, JSON.stringify(play));
+    sessionStorage.setItem("p/" + props.id + "-" + props.user.uid, JSON.stringify(play));
     if (sendToDB) {
       console.log("Writing play to db");
       const db = firebase.firestore();

@@ -91,9 +91,9 @@ export const AccountPage = requiresAuth(({user}: RouteComponentProps & AuthProps
           const play = validationResult.right;
           results.push(play);
           const key = "p/" + play.c + "-" + play.u;
-          if (localStorage.getItem(key) === null) {
+          if (sessionStorage.getItem(key) === null) {
             console.log("Caching play in local storage for " + play.n);
-            localStorage.setItem(key, JSON.stringify(play));
+            sessionStorage.setItem(key, JSON.stringify(play));
           }
         } else {
           console.error(PathReporter.report(validationResult).join(","));
