@@ -2,19 +2,14 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
-import axios from 'axios';
 import { RouteComponentProps } from "@reach/router";
-import Keyboard from 'react-simple-keyboard';
-import 'react-simple-keyboard/build/css/index.css';
 import {
-  FaBackspace, FaKeyboard, FaTabletAlt, FaSync,
-  FaAngleRight, FaAngleLeft, FaAngleDoubleRight, FaAngleDoubleLeft,
+  FaKeyboard, FaTabletAlt, FaAngleDoubleRight, FaAngleDoubleLeft,
 } from 'react-icons/fa';
 import { Helmet } from "react-helmet-async";
-import ReactDOMServer from 'react-dom/server';
 
+import { Keyboard } from './Keyboard';
 import { Square } from './Square';
-import { CrosshareAudioContext } from "./App";
 import { KeypressAction } from './reducer';
 import { TopBar, TopBarLink } from './TopBar';
 import {
@@ -22,108 +17,6 @@ import {
   SMALL_AND_UP, LARGE_AND_UP, TINY_COL_MIN_HEIGHT,
 } from './style';
 
-interface KeyboardProps {
-  muted: boolean,
-  showKeyboard: boolean,
-  keyboardHandler?: (key: string) => void,
-  showExtraKeyLayout: boolean,
-  includeBlockKey: boolean,
-  isTablet: boolean,
-}
-
-export const OurKeyboard = ({ muted, showKeyboard, ...props }: KeyboardProps) => {
-  const [audioContext, initAudioContext] = React.useContext(CrosshareAudioContext);
-  const mutedRef = React.useRef(muted);
-  const playKeystrokeSound = React.useRef<(() => void) | null>(null);
-
-  React.useEffect(() => {
-    mutedRef.current = muted;
-
-    if (!audioContext) {
-      return initAudioContext();
-    }
-
-    if (!playKeystrokeSound.current && !muted && showKeyboard && audioContext) {
-      axios.get(`${process.env.PUBLIC_URL}/keypress.mp3`, {
-        responseType: 'arraybuffer',
-      }).then((response) => {
-        var gainNode = audioContext.createGain()
-        gainNode.gain.value = 0.7;
-        gainNode.connect(audioContext.destination)
-        audioContext.decodeAudioData(response.data, (audioBuffer) => {
-          playKeystrokeSound.current = () => {
-            const source = audioContext.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(gainNode);
-            source.start();
-          }
-        });
-      });
-    }
-  }, [muted, showKeyboard, audioContext, initAudioContext]);
-  function layoutName(numeric: boolean, tablet: boolean) {
-    if (numeric) {
-      return "extra";
-    }
-    if (tablet) {
-      return props.includeBlockKey ? "defaultTabletBlock" : "defaultTablet";
-    }
-    return props.includeBlockKey ? 'defaultBlock' : 'default';
-  }
-  const keypress = (key: string) => {
-    if (!mutedRef.current && playKeystrokeSound.current) {
-      playKeystrokeSound.current();
-    }
-    if (props.keyboardHandler) {
-      props.keyboardHandler(key);
-    }
-  }
-  return (
-    <Keyboard
-      layout={{
-        'default': [
-          'Q W E R T Y U I O P',
-          '{prev} A S D F G H J K L {next}',
-          '{num} Z X C V B N M {bksp}',
-        ],
-        'defaultBlock': [
-          'Q W E R T Y U I O P',
-          'A S D F G H J K L {block}',
-          '{num} Z X C V B N M {bksp}',
-        ],
-        'extra': [
-          '1 2 3 4 5',
-          '6 7 8 9 0',
-          '{abc} {rebus} {bksp}',
-        ],
-        'defaultTablet': [
-          'Q W E R T Y U I O P {bksp}',
-          '{prev} A S D F G H J K L {dir} {next}',
-          '{prevEntry} Z X C V B N M {num} {rebus} {nextEntry}',
-        ],
-        'defaultTabletBlock': [
-          'Q W E R T Y U I O P {bksp}',
-          '{prev} A S D F G H J K L {block} {dir} {next}',
-          '{prevEntry} Z X C V B N M {num} {rebus} {nextEntry}',
-        ],
-      }}
-      layoutName={layoutName(props.showExtraKeyLayout, props.isTablet)}
-      display={{
-        '{bksp}': ReactDOMServer.renderToStaticMarkup(<FaBackspace />),
-        '{prev}': ReactDOMServer.renderToStaticMarkup(<FaAngleLeft />),
-        '{dir}': ReactDOMServer.renderToStaticMarkup(<FaSync />),
-        '{next}': ReactDOMServer.renderToStaticMarkup(<FaAngleRight />),
-        '{prevEntry}': ReactDOMServer.renderToStaticMarkup(<FaAngleDoubleLeft />),
-        '{num}': 'More',
-        '{abc}': 'ABC',
-        '{rebus}': 'Rebus',
-        '{nextEntry}': ReactDOMServer.renderToStaticMarkup(<FaAngleDoubleRight />),
-        '{block}': ' ',
-      }}
-      onKeyPress={keypress}
-    />
-  );
-}
 
 interface TinyNavProps {
   children: React.ReactNode,
@@ -245,7 +138,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
         </div>
       </div>
       {props.showKeyboard ?
-        <OurKeyboard {...props} />
+        <Keyboard {...props} />
         : " "}
     </React.Fragment>
   );
@@ -316,7 +209,7 @@ export const TwoCol = (props: TwoColProps) => {
         }}>{props.right}</div>
       </div>
       {props.showKeyboard ?
-        <OurKeyboard {...props} />
+        <Keyboard {...props} />
         : " "}
     </React.Fragment>
   );
