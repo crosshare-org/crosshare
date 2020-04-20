@@ -291,7 +291,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
     if (e.metaKey || e.altKey || e.ctrlKey) {
       return;  // This way you can still do apple-R and such
     }
-    const kpa: KeypressAction = { elapsed: 0, type: "KEYPRESS", key: e.key, shift: e.shiftKey };
+    const kpa: KeypressAction = { type: "KEYPRESS", key: e.key, shift: e.shiftKey };
     dispatch(kpa);
     e.preventDefault();
   }, [dispatch]);
@@ -481,7 +481,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
   }
 
   const keyboardHandler = React.useCallback((key: string) => {
-    const kpa: KeypressAction = { elapsed: 0, type: "KEYPRESS", key: key, shift: false };
+    const kpa: KeypressAction = { type: "KEYPRESS", key: key, shift: false };
     dispatch(kpa);
   }, [dispatch]);
 
@@ -523,11 +523,11 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
         <TopBarDropDown icon={<FaEllipsisH />} text="More">
           <TopBarDropDownLink icon={<FaRegNewspaper/>} text="Publish Puzzle" onClick={publish} />
           <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey/>} onClick={() => {
-            const a: KeypressAction = {elapsed: 0, type: "KEYPRESS", key: 'Escape', shift: false };
+            const a: KeypressAction = { type: "KEYPRESS", key: 'Escape', shift: false };
             dispatch(a);
           }} />
           <TopBarDropDownLink icon={state.grid.highlight === "circle" ? <FaRegCircle /> : <FaFillDrip />} text="Toggle Square Highlight" shortcutHint={<BacktickKey/>} onClick={() => {
-            const a: KeypressAction = {elapsed: 0, type: "KEYPRESS", key: '`', shift: false };
+            const a: KeypressAction = { type: "KEYPRESS", key: '`', shift: false };
             dispatch(a);
           }} />
           <TopBarDropDownLink icon={state.grid.highlight === "circle" ? <FaFillDrip /> : <FaRegCircle />} text={state.grid.highlight === "circle" ? "Use Shade for Highlights" : "Use Circle for Highlights" } onClick={() => {
@@ -553,7 +553,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
         </TopBarDropDown>
       </TopBar>
       {state.isEnteringRebus ?
-        <RebusOverlay getCurrentTime={()=>0} showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
+        <RebusOverlay showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
       {publishErrors ?
         <Overlay showingKeyboard={false} closeCallback={() => setPublishErrors(null)}>
           <React.Fragment>

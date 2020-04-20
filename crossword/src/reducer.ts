@@ -38,6 +38,9 @@ interface PuzzleState extends GridInterfaceState {
   cellsUpdatedAt: Array<number>,
   cellsIterationCount: Array<number>,
   cellsEverMarkedWrong: Set<number>,
+  displaySeconds: number,
+  bankedSeconds: number,
+  currentTimeWindowStart: number,
 }
 function isPuzzleState(state: GridInterfaceState): state is PuzzleState {
   return state.type === 'puzzle';
@@ -68,7 +71,6 @@ export interface KeypressAction extends PuzzleAction {
   type: 'KEYPRESS',
   key: string,
   shift: boolean,
-  elapsed: number,
 }
 function isKeypressAction(action: PuzzleAction): action is KeypressAction {
   return action.type === 'KEYPRESS'
@@ -154,7 +156,6 @@ export enum CheatUnit {
 }
 export interface CheatAction extends PuzzleAction {
   type: 'CHEAT',
-  elapsed: number,
   unit: CheatUnit,
   isReveal?: boolean,
 }
@@ -164,7 +165,6 @@ function isCheatAction(action: PuzzleAction): action is CheatAction {
 
 export interface ToggleAutocheckAction extends PuzzleAction {
   type: 'TOGGLEAUTOCHECK',
-  elapsed: number,
 }
 function isToggleAutocheckAction(action: PuzzleAction): action is ToggleAutocheckAction {
   return action.type === 'TOGGLEAUTOCHECK';
@@ -207,7 +207,8 @@ function cheatCells(elapsed: number, state: PuzzleState, cellsToCheck: Array<Pos
   return (checkComplete({ ...state, grid, wrongCells, revealedCells, verifiedCells }));
 }
 
-export function cheat(elapsed: number, state: PuzzleState, cheatUnit: CheatUnit, isReveal: boolean) {
+export function cheat(state: PuzzleState, cheatUnit: CheatUnit, isReveal: boolean) {
+  const elapsed = getCurrentTime(state);
   let cellsToCheck: Array<Position> = [];
   if (cheatUnit === CheatUnit.Square) {
     cellsToCheck = [state.active];
@@ -272,7 +273,6 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
   if (isKeypressAction(action)) {
     const key = action.key;
     const shift = action.shift;
-    const elapsed = action.elapsed;
     if (key === '{num}' || key === '{abc}') {
       return ({ ...state, showExtraKeyLayout: !state.showExtraKeyLayout });
     }
@@ -294,6 +294,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
         const ci = cellIndex(state.grid, state.active);
         if (state.isEditable(ci)) {
           if (isPuzzleState(state)) {
+            const elapsed = getCurrentTime(state);
             state.cellsUpdatedAt[ci] = elapsed;
             state.cellsIterationCount[ci] += 1;
           }
@@ -342,6 +343,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       if (state.isEditable(ci)) {
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
         if (isPuzzleState(state)) {
+          const elapsed = getCurrentTime(state);
           state.cellsUpdatedAt[ci] = elapsed;
           state.cellsIterationCount[ci] += 1;
         }
@@ -357,6 +359,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       if (state.isEditable(ci)) {
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
         if (isPuzzleState(state)) {
+          const elapsed = getCurrentTime(state);
           state.cellsUpdatedAt[ci] = elapsed;
         }
         state.grid = gridWithNewChar(state.grid, state.active, " ", symmetry);
@@ -392,17 +395,39 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   return state;
 }
 
+function getCurrentTime(state: PuzzleState) {
+  if (state.currentTimeWindowStart === 0) {
+    return state.bankedSeconds;
+  }
+  return state.bankedSeconds + ((new Date()).getTime() - state.currentTimeWindowStart) / 1000;
+}
+
 export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleState {
   state = gridInterfaceReducer(state, action);
   if (isCheatAction(action)) {
-    return cheat(action.elapsed, state, action.unit, action.isReveal === true);
+    return cheat(state, action.unit, action.isReveal === true);
   }
   if (isToggleClueViewAction(action)) {
     return ({...state, clueView: !state.clueView});
   }
   if (isToggleAutocheckAction(action)) {
-    state = cheat(action.elapsed, state, CheatUnit.Puzzle, false);
+    state = cheat(state, CheatUnit.Puzzle, false);
     return ({ ...state, autocheck: !state.autocheck });
+  }
+  if (action.type === "RESUMEACTION") {
+    if (state.currentTimeWindowStart !== 0) {
+      return state;
+    }
+    return ({ ...state, currentTimeWindowStart: (new Date()).getTime() });
+  }
+  if (action.type === "PAUSEACTION") {
+    if (state.currentTimeWindowStart === 0) {
+      return state;
+    }
+    return ({ ...state, bankedSeconds: getCurrentTime(state), currentTimeWindowStart: 0 });
+  }
+  if (action.type === "TICKACTION") {
+    return ({ ...state, displaySeconds: getCurrentTime(state) });
   }
   if (action.type === "DISMISSKEEPTRYING") {
     return ({ ...state, dismissedKeepTrying: true });

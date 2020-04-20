@@ -19,7 +19,6 @@ import {
   RevealPuzzle, Rebus, SpinnerFinished
 } from './Icons';
 import { requiresAuth, AuthProps, CrosshareAudioContext } from './App';
-import { useTimer } from './timer';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
 import { Position } from './types';
@@ -174,7 +173,7 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
 interface PauseBeginProps {
   title: string,
   authorName: string,
-  dismiss: () => void,
+  dispatch: React.Dispatch<PuzzleAction>,
   message: string,
   dismissMessage: string,
   moderated: boolean,
@@ -190,7 +189,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
     warnings.push(<div key="publishtime">The puzzle has been scheduled for publishing on {props.publishTime.toLocaleDateString()}</div>)
   }
   return (
-    <Overlay showingKeyboard={false} closeCallback={props.dismiss}>
+    <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({ type: "RESUMEACTION" })}>
       <div css={{ textAlign: 'center' }}>
         {warnings.length ?
           <div css={{
@@ -211,7 +210,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
         <h3>{props.title}</h3>
         <h4>by {props.authorName}</h4>
         <div css={{ marginBottom: '1em' }}>{props.message}</div>
-        <button onClick={props.dismiss}>{props.dismissMessage}</button>
+        <button onClick={() => props.dispatch({ type: "RESUMEACTION" })}>{props.dismissMessage}</button>
       </div>
     </Overlay>
   );
@@ -309,10 +308,10 @@ const SuccessOverlay = (props: { puzzle: PuzzleResult, isMuted: boolean, solveTi
   );
 }
 
-export const RebusOverlay = (props: { getCurrentTime: () => number, showingKeyboard: boolean, value: string, dispatch: React.Dispatch<KeypressAction> }) => {
+export const RebusOverlay = (props: { showingKeyboard: boolean, value: string, dispatch: React.Dispatch<KeypressAction> }) => {
   return (
     <Overlay showingKeyboard={props.showingKeyboard} closeCallback={() => {
-      const escape: KeypressAction = { elapsed: props.getCurrentTime(), type: "KEYPRESS", key: 'Escape', shift: false };
+      const escape: KeypressAction = { type: "KEYPRESS", key: 'Escape', shift: false };
       props.dispatch(escape)
     }}>
       <div css={{
@@ -325,11 +324,11 @@ export const RebusOverlay = (props: { getCurrentTime: () => number, showingKeybo
         {props.value ? props.value : 'Enter Rebus'}
       </div>
       <button onClick={() => {
-        const escape: KeypressAction = { elapsed: props.getCurrentTime(), type: "KEYPRESS", key: 'Escape', shift: false };
+        const escape: KeypressAction = { type: "KEYPRESS", key: 'Escape', shift: false };
         props.dispatch(escape);
       }} css={{ marginRight: '10%', width: '45%' }}>Cancel</button>
       <button onClick={() => {
-        const enter: KeypressAction = { elapsed: props.getCurrentTime(), type: "KEYPRESS", key: 'Enter', shift: false };
+        const enter: KeypressAction = { type: "KEYPRESS", key: 'Enter', shift: false };
         props.dispatch(enter);
       }} css={{ width: '45%' }}>Enter Rebus</button>
     </Overlay>
@@ -469,6 +468,9 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
     dismissedKeepTrying: false,
     dismissedSuccess: false,
     moderating: false,
+    displaySeconds: play ? play.t : 0,
+    bankedSeconds: play ? play.t : 0,
+    currentTimeWindowStart: 0,
     didCheat: play ? play.ch : false,
     clueView: false,
     cellsUpdatedAt: play ? play.ct : props.grid.map(() => 0),
@@ -479,11 +481,31 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
       let state = this;
       state.wrongCells.delete(cellIndex);
       if (state.autocheck) {
-        state = cheat(getCurrentTime(), state, CheatUnit.Square, false);
+        state = cheat(state, CheatUnit.Square, false);
       }
       return checkComplete(state);
     }
   }, advanceActiveToNonBlock);
+
+  // Every (unpaused) second dispatch a tick action which updates the display time
+  React.useEffect(() => {
+    function tick() {
+      if (state.currentTimeWindowStart) {
+        dispatch({type: "TICKACTION"});
+      }
+    }
+    let id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [state.currentTimeWindowStart, dispatch])
+
+  // Pause when page goes out of focus
+  function prodPause() {
+    if (process.env.NODE_ENV !== 'development') {
+      dispatch({type: "PAUSEACTION"});
+    }
+  }
+  useEventListener('blur', prodPause);
+
 
   const [muted, setMuted] = usePersistedBoolean("muted", false);
 
@@ -519,21 +541,21 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
     }
   }
 
-  const [elapsed, isPaused, pause, resume, getCurrentTime] = useTimer(play ? play.t : 0);
   React.useEffect(() => {
+    // TODO do this in the reducer when we set success
     if (state.success) {
-      pause();
+      dispatch({type: "PAUSEACTION"});
     }
-  }, [state.success, pause]);
+  }, [state.success, dispatch]);
 
   const physicalKeyboardHandler = React.useCallback((e: React.KeyboardEvent) => {
     if (e.metaKey || e.altKey || e.ctrlKey) {
       return;  // This way you can still do apple-R and such
     }
-    const kpa: KeypressAction = { elapsed: getCurrentTime(), type: "KEYPRESS", key: e.key, shift: e.shiftKey };
+    const kpa: KeypressAction = { type: "KEYPRESS", key: e.key, shift: e.shiftKey };
     dispatch(kpa);
     e.preventDefault();
-  }, [getCurrentTime, dispatch]);
+  }, [dispatch]);
   useEventListener('keydown', physicalKeyboardHandler);
 
   const [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
@@ -554,7 +576,7 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
       wc: Array.from(state.wrongCells),
       we: Array.from(state.cellsEverMarkedWrong),
       rc: Array.from(state.revealedCells),
-      t: getCurrentTime(),
+      t: (state.currentTimeWindowStart === 0) ? state.bankedSeconds : state.bankedSeconds + ((new Date()).getTime() - state.currentTimeWindowStart) / 1000,
       ch: state.didCheat,
       f: state.success,
     }
@@ -566,10 +588,10 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
         console.log("Pushed update");
       });
     }
-  }, [getCurrentTime, props.id, props.user.uid, state.cellsEverMarkedWrong,
+  }, [props.id, props.user.uid, state.cellsEverMarkedWrong,
       state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
       state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
-      state.wrongCells, title]);
+      state.wrongCells, title, state.bankedSeconds, state.currentTimeWindowStart]);
 
   const updatePlayRef = React.useRef(state.success ? null : updatePlay);
   // Any time any of the things we save update, write to local storage
@@ -608,15 +630,15 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
   }, [updatePlayRef]);
 
   const keyboardHandler = React.useCallback((key: string) => {
-    const kpa: KeypressAction = { elapsed: getCurrentTime(), type: "KEYPRESS", key: key, shift: false };
+    const kpa: KeypressAction = { type: "KEYPRESS", key: key, shift: false };
     dispatch(kpa);
-  }, [getCurrentTime, dispatch]);
+  }, [dispatch]);
 
   const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
 
   const showingKeyboard = state.showKeyboard && !state.success;
-  const beginPauseProps = { authorName: props.authorName, title: title, dismiss: resume, moderated: props.moderated, publishTime: props.publishTime ?.toDate()};
+  const beginPauseProps = { authorName: props.authorName, title: title, dispatch: dispatch, moderated: props.moderated, publishTime: props.publishTime ?.toDate()};
 
   let puzzleView: React.ReactNode;
 
@@ -632,8 +654,8 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
       showExtraKeyLayout={state.showExtraKeyLayout}
       includeBlockKey={false}
       isTablet={state.isTablet}
-      left={<ClueList active={state.active} valAt={ourValAt} showEntries={true} conceal={isPaused && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} />}
-      right={<ClueList active={state.active} valAt={ourValAt} showEntries={true} conceal={isPaused && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} />}
+      left={<ClueList active={state.active} valAt={ourValAt} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} />}
+      right={<ClueList active={state.active} valAt={ourValAt} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} />}
     />;
   } else {
     puzzleView = <SquareAndCols
@@ -657,9 +679,9 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
           />
         }
       }
-      left={<ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={isPaused && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
-      right={<ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={isPaused && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
-      tinyColumn={<TinyNav dispatch={dispatch}><ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={isPaused && !state.success} entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
+      left={<ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
+      right={<ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
+      tinyColumn={<TinyNav dispatch={dispatch}><ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
     />;
   }
 
@@ -669,22 +691,22 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
         <title>{title}</title>
       </Helmet>
       <TopBar>
-        <TopBarLink icon={<FaPause />} hoverText={"Pause Game"} text={timeString(elapsed)} onClick={pause} keepText={true} />
+        <TopBarLink icon={<FaPause />} hoverText={"Pause Game"} text={timeString(state.displaySeconds)} onClick={() => dispatch({ type: "PAUSEACTION" })} keepText={true} />
         <TopBarLink icon={state.clueView ? <SpinnerFinished/> : <FaListOl />} text={state.clueView ? "Grid" : "Clues"} onClick={() => {
           const a: ToggleClueViewAction = { type: "TOGGLECLUEVIEW" }
           dispatch(a);
         }} />
         <TopBarDropDown icon={<FaEye />} text="Reveal">
           <TopBarDropDownLink icon={<RevealSquare />} text="Reveal Square" onClick={() => {
-            const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Square, isReveal: true };
+            const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Square, isReveal: true };
             dispatch(ca);
           }} />
           <TopBarDropDownLink icon={<RevealEntry />} text="Reveal Word" onClick={() => {
-            const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Entry, isReveal: true };
+            const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Entry, isReveal: true };
             dispatch(ca);
           }} />
           <TopBarDropDownLink icon={<RevealPuzzle />} text="Reveal Puzzle" onClick={() => {
-            const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true };
+            const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true };
             dispatch(ca);
           }} />
         </TopBarDropDown>
@@ -692,31 +714,31 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
           !state.autocheck ?
             (<TopBarDropDown icon={<FaCheck />} text="Check">
               <TopBarDropDownLink icon={<FaCheckSquare />} text="Autocheck" onClick={() => {
-                const action: ToggleAutocheckAction = { elapsed: getCurrentTime(), type: "TOGGLEAUTOCHECK" };
+                const action: ToggleAutocheckAction = { type: "TOGGLEAUTOCHECK" };
                 dispatch(action);
               }} />
               <TopBarDropDownLink icon={<CheckSquare />} text="Check Square" onClick={() => {
-                const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Square };
+                const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Square };
                 dispatch(ca);
               }} />
               <TopBarDropDownLink icon={<CheckEntry />} text="Check Word" onClick={() => {
-                const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Entry };
+                const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Entry };
                 dispatch(ca);
               }} />
               <TopBarDropDownLink icon={<CheckPuzzle />} text="Check Puzzle" onClick={() => {
-                const ca: CheatAction = { elapsed: getCurrentTime(), type: "CHEAT", unit: CheatUnit.Puzzle };
+                const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Puzzle };
                 dispatch(ca);
               }} />
             </TopBarDropDown>)
             :
             <TopBarLink icon={<FaCheckSquare />} text="Autochecking" onClick={() => {
-              const action: ToggleAutocheckAction = { elapsed: getCurrentTime(), type: "TOGGLEAUTOCHECK" };
+              const action: ToggleAutocheckAction = { type: "TOGGLEAUTOCHECK" };
               dispatch(action);
             }} />
         }
         <TopBarDropDown icon={<FaEllipsisH />} text="More">
           <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
-            const kpa: KeypressAction = { elapsed: getCurrentTime(), type: "KEYPRESS", key: 'Escape', shift: false };
+            const kpa: KeypressAction = { type: "KEYPRESS", key: 'Escape', shift: false };
             dispatch(kpa);
           }} />
           {
@@ -738,18 +760,18 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
         </TopBarDropDown>
       </TopBar>
       {state.isEnteringRebus ?
-        <RebusOverlay getCurrentTime={getCurrentTime} showingKeyboard={showingKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
+        <RebusOverlay showingKeyboard={showingKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
       {state.filled && !state.success && !state.dismissedKeepTrying ?
         <KeepTryingOverlay dispatch={dispatch} />
         : ""}
       {state.success && !state.dismissedSuccess ?
-        <SuccessOverlay puzzle={props} isMuted={muted} solveTime={elapsed} dispatch={dispatch} />
+        <SuccessOverlay puzzle={props} isMuted={muted} solveTime={state.displaySeconds} dispatch={dispatch} />
         : ""}
       {state.moderating ?
         <ModeratingOverlay puzzle={props} dispatch={dispatch} />
         : ""}
-      {isPaused && !state.success ?
-        (elapsed === 0 ?
+      {state.currentTimeWindowStart === 0 && !state.success ?
+        (state.bankedSeconds === 0 ?
           <BeginPauseOverlay dismissMessage="Begin Puzzle" message="Ready to get started?" {...beginPauseProps} />
           :
           <BeginPauseOverlay dismissMessage="Resume" message="Your puzzle is paused" {...beginPauseProps} />
