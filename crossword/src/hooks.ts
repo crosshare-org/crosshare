@@ -9,9 +9,9 @@ export function usePersistedBoolean(key:string, defaultValue: boolean): [boolean
     setState(initialValue !== null ? initialValue === "true" : defaultValue);
   }, [defaultValue, key]);
 
-  const setStateAndPersist = (newValue: boolean) => {
+  const setStateAndPersist = React.useCallback((newValue: boolean) => {
     localStorage.setItem(key, newValue ? "true" : "false");
     setState(newValue);
-  }
+  }, [key, setState]);
   return [state, setStateAndPersist];
 }

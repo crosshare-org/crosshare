@@ -164,7 +164,7 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
                 '1px solid var(--black)' : '1px solid transparent',
             }}>{props.valAt(a).trim() || "-"}</span>;
           })}</div>
-        : ""}
+          : ""}
       </div>
     </li>
   );
@@ -491,7 +491,7 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
   React.useEffect(() => {
     function tick() {
       if (state.currentTimeWindowStart) {
-        dispatch({type: "TICKACTION"});
+        dispatch({ type: "TICKACTION" });
       }
     }
     let id = setInterval(tick, 1000);
@@ -501,7 +501,7 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
   // Pause when page goes out of focus
   function prodPause() {
     if (process.env.NODE_ENV !== 'development') {
-      dispatch({type: "PAUSEACTION"});
+      dispatch({ type: "PAUSEACTION" });
     }
   }
   useEventListener('blur', prodPause);
@@ -544,7 +544,7 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
   React.useEffect(() => {
     // TODO do this in the reducer when we set success
     if (state.success) {
-      dispatch({type: "PAUSEACTION"});
+      dispatch({ type: "PAUSEACTION" });
     }
   }, [state.success, dispatch]);
 
@@ -589,9 +589,9 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
       });
     }
   }, [props.id, props.user.uid, state.cellsEverMarkedWrong,
-      state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
-      state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
-      state.wrongCells, title, state.bankedSeconds, state.currentTimeWindowStart]);
+  state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
+  state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
+  state.wrongCells, title, state.bankedSeconds, state.currentTimeWindowStart]);
 
   const updatePlayRef = React.useRef(state.success ? null : updatePlay);
   // Any time any of the things we save update, write to local storage
@@ -685,6 +685,73 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
     />;
   }
 
+  var dropdownMenus = React.useMemo(() => (
+    <React.Fragment>
+      <TopBarDropDown icon={<FaEye />} text="Reveal">
+        <TopBarDropDownLink icon={<RevealSquare />} text="Reveal Square" onClick={() => {
+          const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Square, isReveal: true };
+          dispatch(ca);
+        }} />
+        <TopBarDropDownLink icon={<RevealEntry />} text="Reveal Word" onClick={() => {
+          const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Entry, isReveal: true };
+          dispatch(ca);
+        }} />
+        <TopBarDropDownLink icon={<RevealPuzzle />} text="Reveal Puzzle" onClick={() => {
+          const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true };
+          dispatch(ca);
+        }} />
+      </TopBarDropDown>
+      {
+        !state.autocheck ?
+          (<TopBarDropDown icon={<FaCheck />} text="Check">
+            <TopBarDropDownLink icon={<FaCheckSquare />} text="Autocheck" onClick={() => {
+              const action: ToggleAutocheckAction = { type: "TOGGLEAUTOCHECK" };
+              dispatch(action);
+            }} />
+            <TopBarDropDownLink icon={<CheckSquare />} text="Check Square" onClick={() => {
+              const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Square };
+              dispatch(ca);
+            }} />
+            <TopBarDropDownLink icon={<CheckEntry />} text="Check Word" onClick={() => {
+              const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Entry };
+              dispatch(ca);
+            }} />
+            <TopBarDropDownLink icon={<CheckPuzzle />} text="Check Puzzle" onClick={() => {
+              const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Puzzle };
+              dispatch(ca);
+            }} />
+          </TopBarDropDown>)
+          :
+          <TopBarLink icon={<FaCheckSquare />} text="Autochecking" onClick={() => {
+            const action: ToggleAutocheckAction = { type: "TOGGLEAUTOCHECK" };
+            dispatch(action);
+          }} />
+      }
+      <TopBarDropDown icon={<FaEllipsisH />} text="More">
+        <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
+          const kpa: KeypressAction = { type: "KEYPRESS", key: 'Escape', shift: false };
+          dispatch(kpa);
+        }} />
+        {
+          muted ?
+            <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
+            :
+            <TopBarDropDownLink icon={<FaVolumeMute />} text="Mute" onClick={() => setMuted(true)} />
+        }
+        {
+          props.isAdmin ?
+            <React.Fragment>
+              <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
+              <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
+              <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: "TOGGLEMODERATING" })} />
+            </React.Fragment>
+            : ""
+        }
+        <TopBarDropDownLink icon={<FaUser />} text="Account" onClick={() => navigate('/account')} />
+      </TopBarDropDown>
+    </React.Fragment>
+  ), [state.autocheck, muted, props.isAdmin, setMuted]);
+
   return (
     <React.Fragment>
       <Helmet>
@@ -692,72 +759,11 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
       </Helmet>
       <TopBar>
         <TopBarLink icon={<FaPause />} hoverText={"Pause Game"} text={timeString(state.displaySeconds)} onClick={() => dispatch({ type: "PAUSEACTION" })} keepText={true} />
-        <TopBarLink icon={state.clueView ? <SpinnerFinished/> : <FaListOl />} text={state.clueView ? "Grid" : "Clues"} onClick={() => {
+        <TopBarLink icon={state.clueView ? <SpinnerFinished /> : <FaListOl />} text={state.clueView ? "Grid" : "Clues"} onClick={() => {
           const a: ToggleClueViewAction = { type: "TOGGLECLUEVIEW" }
           dispatch(a);
         }} />
-        <TopBarDropDown icon={<FaEye />} text="Reveal">
-          <TopBarDropDownLink icon={<RevealSquare />} text="Reveal Square" onClick={() => {
-            const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Square, isReveal: true };
-            dispatch(ca);
-          }} />
-          <TopBarDropDownLink icon={<RevealEntry />} text="Reveal Word" onClick={() => {
-            const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Entry, isReveal: true };
-            dispatch(ca);
-          }} />
-          <TopBarDropDownLink icon={<RevealPuzzle />} text="Reveal Puzzle" onClick={() => {
-            const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true };
-            dispatch(ca);
-          }} />
-        </TopBarDropDown>
-        {
-          !state.autocheck ?
-            (<TopBarDropDown icon={<FaCheck />} text="Check">
-              <TopBarDropDownLink icon={<FaCheckSquare />} text="Autocheck" onClick={() => {
-                const action: ToggleAutocheckAction = { type: "TOGGLEAUTOCHECK" };
-                dispatch(action);
-              }} />
-              <TopBarDropDownLink icon={<CheckSquare />} text="Check Square" onClick={() => {
-                const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Square };
-                dispatch(ca);
-              }} />
-              <TopBarDropDownLink icon={<CheckEntry />} text="Check Word" onClick={() => {
-                const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Entry };
-                dispatch(ca);
-              }} />
-              <TopBarDropDownLink icon={<CheckPuzzle />} text="Check Puzzle" onClick={() => {
-                const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Puzzle };
-                dispatch(ca);
-              }} />
-            </TopBarDropDown>)
-            :
-            <TopBarLink icon={<FaCheckSquare />} text="Autochecking" onClick={() => {
-              const action: ToggleAutocheckAction = { type: "TOGGLEAUTOCHECK" };
-              dispatch(action);
-            }} />
-        }
-        <TopBarDropDown icon={<FaEllipsisH />} text="More">
-          <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
-            const kpa: KeypressAction = { type: "KEYPRESS", key: 'Escape', shift: false };
-            dispatch(kpa);
-          }} />
-          {
-            muted ?
-              <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
-              :
-              <TopBarDropDownLink icon={<FaVolumeMute />} text="Mute" onClick={() => setMuted(true)} />
-          }
-          {
-            props.isAdmin ?
-              <React.Fragment>
-                <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
-                <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
-                <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: "TOGGLEMODERATING" })} />
-              </React.Fragment>
-              : ""
-          }
-          <TopBarDropDownLink icon={<FaUser />} text="Account" onClick={() => navigate('/account')} />
-        </TopBarDropDown>
+        {dropdownMenus}
       </TopBar>
       {state.isEnteringRebus ?
         <RebusOverlay showingKeyboard={showingKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
