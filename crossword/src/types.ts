@@ -71,7 +71,6 @@ const PuzzleJsonOptionalV = t.partial({
   highlight: t.keyof({circle: null, shade: null})
 });
 export const PuzzleJsonV = t.intersection([PuzzleJsonMandatoryV, PuzzleJsonOptionalV]);
-
 export type PuzzleJson = t.TypeOf<typeof PuzzleJsonV>;
 
 const isFirestoreTimestamp = (u: unknown): u is firebase.firestore.Timestamp =>
@@ -129,8 +128,45 @@ export function puzzleTitle(puzzle: PuzzleT) {
   return title;
 }
 
+const DBPuzzleMandatoryV = t.type({
+  /** author's user id */
+  a: t.string,
+  /** author's display name */
+  n: t.string,
+  /** category */
+  c: t.union([t.string, t.null]),
+  /** is this puzzle moderated? */
+  m: t.boolean,
+  /** timestamp when the puzzle goes live */
+  p: t.union([timestamp, t.null]),
+  /** title */
+  t: t.string,
+  /** grid width / columns */
+  w: t.number,
+  /** grid height / rows */
+  h: t.number,
+  /** across clue strings */
+  ac: t.array(t.string),
+  /** across clue display numbers */
+  an: t.array(t.number),
+  /** down clue strings */
+  dc: t.array(t.string),
+  /** down clue display numbers */
+  dn: t.array(t.number),
+  /** grid (solution) */
+  g: t.array(t.string),
+});
+const DBPuzzleOptionalV = t.partial({
+  /** highlighted cell indexes */
+  hs: t.array(t.number),
+  /** use shade instead of circle for highlight? */
+  s: t.boolean,
+});
+export const DBPuzzleV = t.intersection([DBPuzzleMandatoryV, DBPuzzleOptionalV]);
+export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
+
 // from https://github.com/gcanti/io-ts/blob/master/test/helpers.ts
-export function withDefault<T extends t.Mixed>(
+function withDefault<T extends t.Mixed>(
   type: T,
   defaultValue: t.TypeOf<T>
 ): t.Type<t.TypeOf<T>, t.TypeOf<T>, unknown> {
@@ -147,7 +183,7 @@ export const PlayV = t.type({
   c: t.string,
   /** user id */
   u: t.string,
-  /** crossword title */
+  /** crossword title TODO remove this if we cache it w/ recent plays on user doc */
   n: withDefault(t.string, "Crossword"),
   /** updated at */
   ua: timestamp,

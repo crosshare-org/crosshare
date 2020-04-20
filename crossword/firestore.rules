@@ -22,6 +22,21 @@ service cloud.firestore {
       allow update: if isAdmin();
       allow create: if isAdmin() && authorSetCorrectly() && request.resource.data.category == null && request.resource.data.publishTime == null && request.resource.data.moderated == false;
     }
+    function isAuthorNew() {
+      return request.auth.uid != null && request.auth.uid == resource.data.a;
+    }
+    function authorSetCorrectlyNew() {
+      return request.auth.uid != null && request.auth.uid == request.resource.data.a;
+    }
+    function isPublishedNew() {
+      return resource.data.p == null || request.time > resource.data.p;
+    }
+    match /c/{crosswordId} {
+      allow get: if isAdmin() || isAuthorNew() || (resource.data.m == true && isPublishedNew());
+      allow list: if isAdmin() || isAuthorNew() || (resource.data.c != null && request.time + duration.time(1, 0, 0, 0) >= resource.data.p);
+      allow update: if isAdmin();
+      allow create: if isAdmin() && authorSetCorrectlyNew() && request.resource.data.c == null && request.resource.data.p == null && request.resource.data.m == false;
+    }
     match /p/{playId} {
       allow read: if request.auth.uid != null && (resource == null || request.auth.uid == resource.data.u);
       allow write: if request.auth.uid != null && request.auth.uid == request.resource.data.u && playId == (request.resource.data.c + '-' + request.resource.data.u);

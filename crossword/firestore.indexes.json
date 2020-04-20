@@ -1,6 +1,34 @@
 {
   "indexes": [
     {
+      "collectionGroup": "c",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "c",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "p",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "c",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "c",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "p",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "crosswords",
       "queryScope": "COLLECTION",
       "fields": [
@@ -44,6 +72,61 @@
     }
   ],
   "fieldOverrides": [
+    {
+      "collectionGroup": "c",
+      "fieldPath": "ac",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "c",
+      "fieldPath": "an",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "c",
+      "fieldPath": "dc",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "c",
+      "fieldPath": "dn",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "c",
+      "fieldPath": "g",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "c",
+      "fieldPath": "h",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "c",
+      "fieldPath": "hs",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "c",
+      "fieldPath": "n",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "c",
+      "fieldPath": "s",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "c",
+      "fieldPath": "t",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "c",
+      "fieldPath": "w",
+      "indexes": []
+    },
     {
       "collectionGroup": "crosswords",
       "fieldPath": "authorName",
