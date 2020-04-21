@@ -543,13 +543,6 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
     }
   }
 
-  React.useEffect(() => {
-    // TODO do this in the reducer when we set success
-    if (state.success) {
-      dispatch({ type: "PAUSEACTION" });
-    }
-  }, [state.success, dispatch]);
-
   const physicalKeyboardHandler = React.useCallback((e: React.KeyboardEvent) => {
     if (e.metaKey || e.altKey || e.ctrlKey) {
       return;  // This way you can still do apple-R and such
@@ -778,7 +771,7 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
       {state.moderating ?
         <ModeratingOverlay puzzle={props} dispatch={dispatch} />
         : ""}
-      {state.currentTimeWindowStart === 0 && !state.success ?
+      {state.currentTimeWindowStart === 0 && !state.success && !(state.filled && !state.dismissedKeepTrying) ?
         (state.bankedSeconds === 0 ?
           <BeginPauseOverlay dismissMessage="Begin Puzzle" message="Ready to get started?" {...beginPauseProps} />
           :

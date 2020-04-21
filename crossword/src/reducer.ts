@@ -46,12 +46,12 @@ function isPuzzleState(state: GridInterfaceState): state is PuzzleState {
   return state.type === 'puzzle';
 }
 
-export interface BuilderEntry extends ViewableEntry {};
-interface BuilderGrid extends ViewableGrid<BuilderEntry> {};
+export interface BuilderEntry extends ViewableEntry { };
+interface BuilderGrid extends ViewableGrid<BuilderEntry> { };
 
 export interface BuilderState extends GridInterfaceState {
   type: "builder",
-  title: string|null,
+  title: string | null,
   grid: BuilderGrid,
   gridIsComplete: boolean,
   repeats: Set<string>,
@@ -59,7 +59,7 @@ export interface BuilderState extends GridInterfaceState {
   clues: Map<string, string>,
   symmetry: Symmetry,
   publishErrors: Array<string>,
-  toPublish: DBPuzzleT|null,
+  toPublish: DBPuzzleT | null,
   authorId: string,
   authorName: string
 }
@@ -107,7 +107,7 @@ function isSetTitleAction(action: PuzzleAction): action is SetTitleAction {
 
 export interface SetHighlightAction extends PuzzleAction {
   type: 'SETHIGHLIGHT',
-  highlight: 'circle'|'shade',
+  highlight: 'circle' | 'shade',
 }
 function isSetHighlightAction(action: PuzzleAction): action is SetHighlightAction {
   return action.type === 'SETHIGHLIGHT'
@@ -230,21 +230,33 @@ export function cheat(state: PuzzleState, cheatUnit: CheatUnit, isReveal: boolea
     }
   }
   const newState = cheatCells(elapsed, state, cellsToCheck, isReveal);
-  return {...newState, didCheat: true};
+  return { ...newState, didCheat: true };
 }
 
 export function checkComplete(state: PuzzleState) {
-  state.filled = true;
-  state.success = true;
+  let filled = true;
+  let success = true;
   for (let i = 0; i < state.grid.cells.length; i += 1) {
     if (state.grid.cells[i].trim() === '') {
-      state.filled = false;
-      state.success = false;
+      filled = false;
+      success = false;
       break;
     }
     if (state.answers && state.grid.cells[i] !== state.answers[i]) {
-      state.success = false;
+      success = false;
     }
+  }
+  if (filled !== state.filled || success !== state.success) {
+    let currentTimeWindowStart = state.currentTimeWindowStart;
+    let dismissedKeepTrying = state.dismissedKeepTrying;
+    let bankedSeconds = state.bankedSeconds;
+    // Pause if success or newly filled
+    if (currentTimeWindowStart && (success || (filled && !state.filled))) {
+      bankedSeconds = getCurrentTime(state);
+      currentTimeWindowStart = 0;
+      dismissedKeepTrying = false;
+    }
+    return { ...state, filled, success, bankedSeconds, currentTimeWindowStart, dismissedKeepTrying }
   }
   return state;
 }
@@ -384,17 +396,17 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
     return ({ ...state, symmetry: action.symmetry });
   }
   if (isSetHighlightAction(action)) {
-    state.grid.highlight = action.highlight ;
+    state.grid.highlight = action.highlight;
     return ({ ...state });
   }
   if (isSetClueAction(action)) {
-    return ({ ...state, clues: state.clues.set(action.word, action.clue)});
+    return ({ ...state, clues: state.clues.set(action.word, action.clue) });
   }
   if (isSetTitleAction(action)) {
-    return ({ ...state, title: action.value});
+    return ({ ...state, title: action.value });
   }
   if (isClickedFillAction(action)) {
-    return ({ ...state, grid: gridWithEntrySet(state.grid, action.entryIndex, action.value)}.postEdit(0) as BuilderState);
+    return ({ ...state, grid: gridWithEntrySet(state.grid, action.entryIndex, action.value) }.postEdit(0) as BuilderState);
   }
   if (action.type === "CLEARPUBLISHERRORS") {
     return ({ ...state, publishErrors: [] });
@@ -419,10 +431,10 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
       return { ...state, publishErrors: errors };
     }
 
-    let ac:Array<string> = [];
-    let an:Array<number> = [];
-    let dc:Array<string> = [];
-    let dn:Array<number> = [];
+    let ac: Array<string> = [];
+    let an: Array<number> = [];
+    let dc: Array<string> = [];
+    let dn: Array<number> = [];
     state.grid.entries.forEach((e) => {
       if (!e.completedWord) {
         throw new Error("Publish unfinished grid");
@@ -439,7 +451,7 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
         dn.push(e.labelNumber);
       }
     });
-    const puzzle:DBPuzzleT = {
+    const puzzle: DBPuzzleT = {
       t: state.title || "Anonymous",
       a: state.authorId,
       n: state.authorName,
@@ -449,7 +461,7 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
       h: state.grid.height,
       w: state.grid.width,
       g: state.grid.cells,
-      ac,an,dc,dn
+      ac, an, dc, dn
     };
     if (state.grid.highlighted.size) {
       puzzle.hs = Array.from(state.grid.highlighted);
@@ -475,35 +487,36 @@ export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleS
     return cheat(state, action.unit, action.isReveal === true);
   }
   if (isToggleClueViewAction(action)) {
-    return ({...state, clueView: !state.clueView});
+    return { ...state, clueView: !state.clueView };
   }
   if (isToggleAutocheckAction(action)) {
     state = cheat(state, CheatUnit.Puzzle, false);
-    return ({ ...state, autocheck: !state.autocheck });
+    return { ...state, autocheck: !state.autocheck };
   }
   if (action.type === "RESUMEACTION") {
     if (state.currentTimeWindowStart !== 0) {
       return state;
     }
-    return ({ ...state, currentTimeWindowStart: (new Date()).getTime() });
+    return { ...state, currentTimeWindowStart: (new Date()).getTime() };
   }
   if (action.type === "PAUSEACTION") {
     if (state.currentTimeWindowStart === 0) {
       return state;
     }
-    return ({ ...state, bankedSeconds: getCurrentTime(state), currentTimeWindowStart: 0 });
+    return { ...state, bankedSeconds: getCurrentTime(state), currentTimeWindowStart: 0 };
   }
   if (action.type === "TICKACTION") {
-    return ({ ...state, displaySeconds: getCurrentTime(state) });
+    return { ...state, displaySeconds: getCurrentTime(state) };
   }
   if (action.type === "DISMISSKEEPTRYING") {
-    return ({ ...state, dismissedKeepTrying: true });
+    const currentTimeWindowStart = state.currentTimeWindowStart || (new Date()).getTime();
+    return { ...state, currentTimeWindowStart, dismissedKeepTrying: true };
   }
   if (action.type === "DISMISSSUCCESS") {
-    return ({ ...state, dismissedSuccess: true });
+    return { ...state, dismissedSuccess: true };
   }
   if (action.type === "TOGGLEMODERATING") {
-    return ({ ...state, moderating: !state.moderating });
+    return { ...state, moderating: !state.moderating };
   }
   return state;
 }
