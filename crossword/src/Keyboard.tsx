@@ -2,7 +2,6 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
-import axios from 'axios';
 import {
   FaBackspace, FaSync, FaAngleRight, FaAngleLeft, FaAngleDoubleRight, FaAngleDoubleLeft,
 } from 'react-icons/fa';
@@ -79,7 +78,7 @@ interface KeyboardProps {
   includeBlockKey: boolean,
   isTablet: boolean,
 }
-export const Keyboard = React.memo(function Keyboard ({ muted, showKeyboard, keyboardHandler, ...props }: KeyboardProps) {
+export const Keyboard = React.memo(function Keyboard({ muted, showKeyboard, keyboardHandler, ...props }: KeyboardProps) {
   const [audioContext, initAudioContext] = React.useContext(CrosshareAudioContext);
   const playKeystrokeSound = React.useRef<(() => void) | null>(null);
 
@@ -88,21 +87,21 @@ export const Keyboard = React.memo(function Keyboard ({ muted, showKeyboard, key
       return initAudioContext();
     }
     if (!playKeystrokeSound.current && !muted && showKeyboard && audioContext) {
-      axios.get(`${process.env.PUBLIC_URL}/keypress.mp3`, {
-        responseType: 'arraybuffer',
-      }).then((response) => {
-        var gainNode = audioContext.createGain()
-        gainNode.gain.value = 0.7;
-        gainNode.connect(audioContext.destination)
-        audioContext.decodeAudioData(response.data, (audioBuffer) => {
-          playKeystrokeSound.current = () => {
-            const source = audioContext.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(gainNode);
-            source.start();
-          }
+      fetch(`${process.env.PUBLIC_URL}/keypress.mp3`)
+        .then(response => response.arrayBuffer())
+        .then((buffer) => {
+          var gainNode = audioContext.createGain()
+          gainNode.gain.value = 0.7;
+          gainNode.connect(audioContext.destination)
+          audioContext.decodeAudioData(buffer, (audioBuffer) => {
+            playKeystrokeSound.current = () => {
+              const source = audioContext.createBufferSource();
+              source.buffer = audioBuffer;
+              source.connect(gainNode);
+              source.start();
+            }
+          });
         });
-      });
     }
   }, [muted, showKeyboard, audioContext, initAudioContext]);
 

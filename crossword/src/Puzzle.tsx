@@ -2,7 +2,6 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
-import axios from 'axios';
 import { navigate, RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
 import {
@@ -521,18 +520,18 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
       return initAudioContext();
     }
     if (!playSuccess.current && !muted && audioContext) {
-      axios.get(`${process.env.PUBLIC_URL}/success.mp3`, {
-        responseType: 'arraybuffer',
-      }).then((response) => {
-        audioContext.decodeAudioData(response.data, (audioBuffer) => {
-          playSuccess.current = () => {
-            const source = audioContext.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(audioContext.destination);
-            source.start();
-          }
+      fetch(`${process.env.PUBLIC_URL}/success.mp3`)
+        .then(response => response.arrayBuffer())
+        .then((buffer) => {
+          audioContext.decodeAudioData(buffer, (audioBuffer) => {
+            playSuccess.current = () => {
+              const source = audioContext.createBufferSource();
+              source.buffer = audioBuffer;
+              source.connect(audioContext.destination);
+              source.start();
+            }
+          });
         });
-      });
     }
   }, [muted, audioContext, initAudioContext]);
   const [playedAudio, setPlayedAudio] = React.useState(false);
