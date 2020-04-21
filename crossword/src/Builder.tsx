@@ -239,10 +239,13 @@ export const Builder = (props: BuilderProps & AuthProps) => {
   // TODO should we actually disable autofill? Right now it just turns off display
   const [autofillEnabled, setAutofillEnabled] = React.useState(true);
 
+  // We need a ref to the current grid so we can verify it in worker.onmessage
+  const currentCells = React.useRef(state.grid.cells);
   React.useEffect(() => {
     if (!WordDB.dbEncoded) {
       throw new Error("missing db!");
     }
+    currentCells.current = state.grid.cells;
     setAutofilledGrid([]);
     if (!worker) {
       console.log("initializing worker");
@@ -250,7 +253,9 @@ export const Builder = (props: BuilderProps & AuthProps) => {
       worker.onmessage = e => {
         const data = e.data as WorkerMessage;
         if (isAutofillResultMessage(data)) {
-          setAutofilledGrid(data.result);
+          if (currentCells.current.every((c, i) => c === data.input[i])) {
+            setAutofilledGrid(data.result);
+          }
         } else if (isAutofillCompleteMessage(data)) {
           setAutofillInProgress(false);
         } else {
