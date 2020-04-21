@@ -315,7 +315,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
             state.cellsIterationCount[ci] += 1;
           }
           const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-          state.grid = gridWithNewChar(state.grid, state.active, state.rebusValue, symmetry);
+          state.grid = gridWithNewChar(state.grid, state.active, state.rebusValue || " ", symmetry);
           state = state.postEdit(ci) as T; // TODO this is trash
         }
         return ({
