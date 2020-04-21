@@ -106,7 +106,7 @@ interface ClueListItemProps {
   showEntry: boolean,
   valAt: (pos: Position) => string,
 }
-const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemProps) => {
+const ClueListItem = React.memo(function ClueListItem ({ isActive, isCross, ...props }: ClueListItemProps) {
   const ref = React.useRef<HTMLLIElement>(null);
   if (ref.current) {
     if (isActive || (props.scrollToCross && isCross)) {

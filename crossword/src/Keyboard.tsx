@@ -79,7 +79,7 @@ interface KeyboardProps {
   includeBlockKey: boolean,
   isTablet: boolean,
 }
-export const Keyboard = React.memo(({ muted, showKeyboard, keyboardHandler, ...props }: KeyboardProps) => {
+export const Keyboard = React.memo(function Keyboard ({ muted, showKeyboard, keyboardHandler, ...props }: KeyboardProps) {
   const [audioContext, initAudioContext] = React.useContext(CrosshareAudioContext);
   const playKeystrokeSound = React.useRef<(() => void) | null>(null);
 

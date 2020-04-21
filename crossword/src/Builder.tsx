@@ -300,8 +300,8 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
   let left = <React.Fragment></React.Fragment>;
   let right = <React.Fragment></React.Fragment>;
   let tiny = <React.Fragment></React.Fragment>;
-  let successFailureEntries = new Map<number, Map<number, [string,string]>>();
-  function doCrossesWork(entryIndex: number, word: string) {
+  const doCrossesWork = React.useCallback((entryIndex: number, word: string) => {
+    let successFailureEntries = new Map<number, Map<number, [string,string]>>();
     const entry = state.grid.entries[entryIndex];
     let successFailure = successFailureEntries.get(entryIndex);
     if (successFailure === undefined) {
@@ -357,7 +357,7 @@ const GridMode = ({state, dispatch, setClueMode, ...props}: GridModeProps) => {
       }
     }
     return true;
-  }
+  }, [state.grid]);
   for (let entry of entryAndCrossAtPosition(state.grid, state.active)) {
     if (entry !== null) {
       let matches: Array<[string, number]>;

@@ -28,7 +28,7 @@ type CellProps = {
   wasRevealed: boolean|undefined,
 }
 
-export const Cell = React.memo((props: CellProps) => {
+export const Cell = React.memo(function Cell(props: CellProps) {
   let bg = "var(--white)";
   if (props.isBlock && props.active) {
     bg = "repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px," + PRIMARY + " 10px," + PRIMARY + " 20px);"
