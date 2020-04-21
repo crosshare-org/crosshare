@@ -8,7 +8,7 @@ import { RouteComponentProps } from "@reach/router";
 import * as WordDB from './WordDB';
 import { Page } from './Page';
 
-export const DBTest = (_: RouteComponentProps) => {
+const DBTest = (_: RouteComponentProps) => {
   const [status, setStatus] = React.useState(WordDB.DBStatus.uninitialized);
   WordDB.initializeOrBuild((_) => setStatus(WordDB.dbStatus));
 
@@ -21,3 +21,5 @@ export const DBTest = (_: RouteComponentProps) => {
   }
   return <Page title="DB Status">DB status: {WordDB.dbStatus}</Page>
 }
+
+export default DBTest;

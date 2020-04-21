@@ -1,6 +1,6 @@
 import * as t from "io-ts";
 import { either } from 'fp-ts/lib/Either'
-import { WordDBT } from './WordDB';
+import type { WordDBT } from './WordDB';
 
 declare var firebase: typeof import('firebase');
 
@@ -68,7 +68,7 @@ const PuzzleJsonMandatoryV = t.type({
 });
 const PuzzleJsonOptionalV = t.partial({
   highlighted: t.array(t.number),
-  highlight: t.keyof({circle: null, shade: null})
+  highlight: t.keyof({ circle: null, shade: null })
 });
 export const PuzzleJsonV = t.intersection([PuzzleJsonMandatoryV, PuzzleJsonOptionalV]);
 export type PuzzleJson = t.TypeOf<typeof PuzzleJsonV>;
@@ -81,7 +81,7 @@ const validateTimestamp: t.Validate<unknown, firebase.firestore.Timestamp> = (i,
     return t.success(i);
   }
   return either.chain(
-    t.type({seconds: t.number, nanoseconds: t.number}).validate(i, c),
+    t.type({ seconds: t.number, nanoseconds: t.number }).validate(i, c),
     obj => t.success(new firebase.firestore.Timestamp(obj.seconds, obj.nanoseconds))
   );
 }
@@ -114,11 +114,11 @@ export const PuzzleV = t.type({
   clues: t.array(ClueV),
   grid: t.array(t.string),
   highlighted: t.array(t.number),
-  highlight: t.keyof({circle: null, shade: null})
+  highlight: t.keyof({ circle: null, shade: null })
 });
 
 export type PuzzleT = t.TypeOf<typeof PuzzleV>;
-export type PuzzleResult = PuzzleT & {id: string};
+export type PuzzleResult = PuzzleT & { id: string };
 
 export function puzzleTitle(puzzle: PuzzleT) {
   let title = puzzle.title;
@@ -168,10 +168,10 @@ export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
 export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
   let clues: Array<ClueT> = [];
   for (let i = 0; i < dbPuzzle.ac.length; i += 1) {
-    clues.push({dir: Direction.Across, clue: dbPuzzle.ac[i], num: dbPuzzle.an[i]});
+    clues.push({ dir: Direction.Across, clue: dbPuzzle.ac[i], num: dbPuzzle.an[i] });
   }
   for (let i = 0; i < dbPuzzle.dc.length; i += 1) {
-    clues.push({dir: Direction.Down, clue: dbPuzzle.dc[i], num: dbPuzzle.dn[i]});
+    clues.push({ dir: Direction.Down, clue: dbPuzzle.dc[i], num: dbPuzzle.dn[i] });
   }
   return {
     authorId: dbPuzzle.a,

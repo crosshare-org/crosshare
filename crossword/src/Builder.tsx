@@ -47,7 +47,7 @@ let worker: Worker;
 type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 type BuilderProps = WithOptional<Omit<PuzzleT, "category" | "authorId" | "authorName" | "moderated" | "publishTime">, "clues" | "title" | "highlighted" | "highlight">
 
-export const BuilderDBLoader = requiresAdmin((props: BuilderProps & AuthProps) => {
+const BuilderDBLoader = requiresAdmin((props: BuilderProps & AuthProps) => {
   const [ready, setReady] = React.useState(false);
   WordDB.initializeOrBuild(setReady);
   if (ready) {
@@ -55,6 +55,7 @@ export const BuilderDBLoader = requiresAdmin((props: BuilderProps & AuthProps) =
   }
   return <Page title={null}>Loading word database...</Page>
 });
+export default BuilderDBLoader;
 
 interface PotentialFillItemProps {
   isGoodSuggestion: (entryIndex: number, word: string) => boolean,

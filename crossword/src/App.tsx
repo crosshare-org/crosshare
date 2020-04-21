@@ -8,14 +8,13 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 import { ErrorBoundary } from './ErrorBoundary';
 import { PuzzleLoader } from './Puzzle';
-import { BuilderDBLoader } from './Builder';
 import { Page, SquareTest, TwoColTest } from './Page';
 import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
-import { Uploader } from './Uploader';
-import { DBTest } from './DBTest';
 import { Home } from './Home';
 import googlesignin from './googlesignin.png';
+
+const BuilderDBLoader = React.lazy(() => import(/* webpackChunkName: "builder" */ "./Builder"));
 
 declare var firebase: typeof import('firebase');
 
@@ -262,14 +261,12 @@ const App = () => {
                 <AccountPage path="/account" />
                 <Admin path="/admin" />
                 <ErrorTest path="/error" />
-                <Uploader path="/upload" />
                 <Construct path="/construct" />
                 <PuzzleLoader path="/crosswords/:crosswordId" />
                 <SquareTest path="/square" />
                 <TwoColTest path="/twocol" />
                 <TermsOfService path="/tos" />
                 <PrivacyPolicy path="/privacy" />
-                <DBTest path="/dbtest" />
                 <NotFound default />
               </Router>
             </React.Suspense>

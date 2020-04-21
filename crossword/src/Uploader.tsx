@@ -9,20 +9,20 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
 import { PuzzleJson, PuzzleJsonV, ClueT, Direction } from './types';
-import { BuilderDBLoader } from './Builder';
+import BuilderDBLoader from './Builder';
 
-export const Uploader = requiresAdmin((_: RouteComponentProps & AuthProps) => {
-  const [puzzle, setPuzzle] = React.useState<PuzzleJson|null>(null);
-  const [error, setError] = React.useState<string|null>(null);
+const Uploader = requiresAdmin((_: RouteComponentProps & AuthProps) => {
+  const [puzzle, setPuzzle] = React.useState<PuzzleJson | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
-  function handleFile(f: FileList|null) {
+  function handleFile(f: FileList | null) {
     if (!f) {
       setError("No file selected");
       return;
     }
     const fileReader = new FileReader();
     fileReader.onloadend = () => {
-      if (typeof(fileReader.result) !== 'string') {
+      if (typeof (fileReader.result) !== 'string') {
         setError("Invalid .xw file, not string");
         return;
       }
@@ -49,16 +49,18 @@ export const Uploader = requiresAdmin((_: RouteComponentProps & AuthProps) => {
         if (!match || match.length < 3) {
           throw new Error("Bad clue data: '" + s + "'");
         }
-        clues.push({num: +match[1], dir: direction, clue: match[2]});
+        clues.push({ num: +match[1], dir: direction, clue: match[2] });
       });
     }
-    return <BuilderDBLoader {...puzzle} clues={clues}/>
+    return <BuilderDBLoader {...puzzle} clues={clues} />
   }
 
   return (
     <Page title="Upload Puzzle">
-      { error ? <p css={{ color: 'var(--error)' }}>{error}</p> : "" }
-      <input type='file' accept='.xw' onChange={e => handleFile(e.target.files)}/>
+      {error ? <p css={{ color: 'var(--error)' }}>{error}</p> : ""}
+      <input type='file' accept='.xw' onChange={e => handleFile(e.target.files)} />
     </Page>
   );
 });
+
+export default Uploader;
