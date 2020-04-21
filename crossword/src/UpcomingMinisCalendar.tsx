@@ -3,7 +3,6 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 
-import { navigate } from "@reach/router";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 import Calendar from 'react-calendar';
@@ -18,20 +17,20 @@ function sameDay(d1: Date, d2: Date) {
     return false;
   }
   return d1.getFullYear() === d2.getFullYear() &&
-         d1.getMonth() === d2.getMonth() &&
-         d1.getDate() === d2.getDate();
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
 }
 
-interface UpcomingMinisCalendarProps {
+export interface UpcomingMinisCalendarProps {
   value?: Date,
   disableExisting: boolean,
-  onChange: (date: Date, puzzle: PuzzleResult|null) => void
+  onChange: (date: Date, puzzle: PuzzleResult | null) => void
 }
 
-export const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
-  const [upcomingMinis, setUpcomingMinis] = React.useState<Array<PuzzleResult>|null>(null);
+const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
+  const [upcomingMinis, setUpcomingMinis] = React.useState<Array<PuzzleResult> | null>(null);
   const [error, setError] = React.useState(false);
-  const tileDisabled = React.useCallback(({date}: {date: Date}) => {
+  const tileDisabled = React.useCallback(({ date }: { date: Date }) => {
     if (!upcomingMinis) {
       return !props.disableExisting;
     }
@@ -57,30 +56,30 @@ export const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
       .where("p", ">", firebase.firestore.Timestamp.fromDate(yesterday))
       .get().then((value) => {
 
-      let results: Array<PuzzleResult> = [];
-      value.forEach(doc => {
-        const data = doc.data();
-        const validationResult = DBPuzzleV.decode(data);
-        if (isRight(validationResult)) {
-          results.push({...puzzleFromDB(validationResult.right), id: doc.id});
-        } else {
-          console.error(PathReporter.report(validationResult).join(","));
-          setError(true);
-        }
+        let results: Array<PuzzleResult> = [];
+        value.forEach(doc => {
+          const data = doc.data();
+          const validationResult = DBPuzzleV.decode(data);
+          if (isRight(validationResult)) {
+            results.push({ ...puzzleFromDB(validationResult.right), id: doc.id });
+          } else {
+            console.error(PathReporter.report(validationResult).join(","));
+            setError(true);
+          }
+        });
+        setUpcomingMinis(results);
+      }).catch(reason => {
+        console.error(reason);
+        setError(true);
       });
-      setUpcomingMinis(results);
-    }).catch(reason => {
-      console.error(reason);
-      setError(true);
-    });
   }, [error]);
 
-  const dateChanged = React.useCallback((d: Date|Date[]) => {
+  const dateChanged = React.useCallback((d: Date | Date[]) => {
     if (d instanceof Array) {
       console.error("How'd we get here");
       return;
     }
-    let miniForDate:PuzzleResult|null = null;
+    let miniForDate: PuzzleResult | null = null;
     if (upcomingMinis) {
       for (const mini of upcomingMinis) {
         if (mini.publishTime && sameDay(mini.publishTime.toDate(), d)) {
@@ -99,26 +98,4 @@ export const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
   return <Calendar value={props.value} onChange={dateChanged} minDate={new Date()} maxDate={nextMonth} tileDisabled={tileDisabled} />
 }
 
-export function navToLatestMini(priorTo: firebase.firestore.Timestamp, onError: () => void, onMissing?: () => void) {
-  const db = firebase.firestore();
-  db.collection('c').where("c", "==", "dailymini")
-    .where("p", "<", priorTo)
-    .orderBy("p", "desc").limit(1).get().then((value) => {
-    if (value.size === 0 && onMissing) {
-      onMissing();
-    }
-    value.forEach(doc => { // Should be only 1 - better way to do this?
-      const data = doc.data();
-      const validationResult = DBPuzzleV.decode(data);
-      if (isRight(validationResult)) {
-        navigate("/crosswords/" + doc.id, {state: {...puzzleFromDB(validationResult.right), id: doc.id}});
-      } else {
-        console.error(PathReporter.report(validationResult).join(","));
-        onError();
-      }
-    });
-  }).catch(reason => {
-    console.error(reason);
-    onError();
-  });
-}
+export default UpcomingMinisCalendar;

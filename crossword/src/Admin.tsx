@@ -11,12 +11,20 @@ import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
 import { PuzzleResult, DBPuzzleV, puzzleFromDB } from './types';
 import { PuzzleListItem } from './PuzzleList';
-import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
+import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
+
+const UpcomingMinisCalendar = React.lazy(() => import(/* webpackChunkName: "minisCal" */ './UpcomingMinisCalendar'));
 
 declare var firebase: typeof import('firebase');
 
+const LoadableCalendar = (props: UpcomingMinisCalendarProps) => (
+  <React.Suspense fallback={<div>Loading...</div>}>
+    <UpcomingMinisCalendar {...props} />
+  </React.Suspense>
+);
+
 export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
-  const [unmoderated, setUnmoderated] = React.useState<Array<PuzzleResult>|null>(null);
+  const [unmoderated, setUnmoderated] = React.useState<Array<PuzzleResult> | null>(null);
   const [error, setError] = React.useState(false);
 
   React.useEffect(() => {
@@ -32,7 +40,7 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
         const data = doc.data();
         const validationResult = DBPuzzleV.decode(data);
         if (isRight(validationResult)) {
-          results.push({...puzzleFromDB(validationResult.right), id: doc.id});
+          results.push({ ...puzzleFromDB(validationResult.right), id: doc.id });
         } else {
           console.error(PathReporter.report(validationResult).join(","));
           setError(true);
@@ -45,11 +53,11 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
     });
   }, [error]);
 
-  const goToPuzzle = React.useCallback((_date: Date, puzzle: PuzzleResult|null) => {
+  const goToPuzzle = React.useCallback((_date: Date, puzzle: PuzzleResult | null) => {
     if (puzzle) {
-      navigate("/crosswords/" + puzzle.id, {state: puzzle});
+      navigate("/crosswords/" + puzzle.id, { state: puzzle });
     }
-  },[]);
+  }, []);
 
   if (error) {
     return <Page title={null}>Error loading admin content</Page>;
@@ -62,13 +70,14 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
     <Page title="Admin">
       <div css={{ margin: '1em', }}>
         <h4 css={{ borderBottom: '1px solid var(--black)' }}>Unmoderated</h4>
-        { unmoderated.length === 0 ?
+        {unmoderated.length === 0 ?
           <div>No puzzles are currently awaiting moderation.</div>
           :
           <ul>{unmoderated.map(PuzzleListItem)}</ul>
         }
         <h4 css={{ borderBottom: '1px solid var(--black)' }}>Upcoming Minis</h4>
-        <UpcomingMinisCalendar disableExisting={false} onChange={goToPuzzle}/>
+
+        <LoadableCalendar disableExisting={false} onChange={goToPuzzle} />
       </div>
     </Page>
   );

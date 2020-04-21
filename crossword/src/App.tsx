@@ -14,12 +14,6 @@ import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
 import { Uploader } from './Uploader';
 import { DBTest } from './DBTest';
-import {
-  CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle, RevealPuzzle,
-  Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
-  SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
-  Logo, EscapeKey, BacktickKey
-} from './Icons';
 import { Home } from './Home';
 import googlesignin from './googlesignin.png';
 
@@ -31,10 +25,10 @@ interface AuthContextValue {
   loadingUser: boolean,
   error: string | undefined
 }
-export const AuthContext = React.createContext({user:undefined,loadingUser:false,error:"using default context"} as AuthContextValue);
+export const AuthContext = React.createContext({ user: undefined, loadingUser: false, error: "using default context" } as AuthContextValue);
 
-type CrosshareAudioContextValue = [AudioContext|null, () => void];
-export const CrosshareAudioContext = React.createContext([null, () => {}] as CrosshareAudioContextValue);
+type CrosshareAudioContextValue = [AudioContext | null, () => void];
+export const CrosshareAudioContext = React.createContext([null, () => { }] as CrosshareAudioContextValue);
 
 type Optionalize<T extends K, K> = Omit<T, keyof K>;
 
@@ -47,17 +41,17 @@ export const GoogleSignInButton = () => {
   function signin() {
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider).then(() => {
-      firebase.analytics().logEvent("login", {method: 'google'});
+      firebase.analytics().logEvent("login", { method: 'google' });
     })
   }
   return (
-    <button css={{background: 'none', border: 'none'}}><img width="191" height="46" src={googlesignin} alt="Sign in with Google" onClick={signin} /></button>
+    <button css={{ background: 'none', border: 'none' }}><img width="191" height="46" src={googlesignin} alt="Sign in with Google" onClick={signin} /></button>
   );
 }
 
 export function requiresAuth<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
   return (props: Optionalize<T, AuthProps>) => {
-    const {user, isAdmin, loadingUser, error} = React.useContext(AuthContext);
+    const { user, isAdmin, loadingUser, error } = React.useContext(AuthContext);
     if (loadingUser) {
       return <Page title={null}>Loading user...</Page>;
     }
@@ -65,14 +59,14 @@ export function requiresAuth<T extends AuthProps>(WrappedComponent: React.Compon
       return <Page title={null}>Error loading user: {error}</Page>;
     }
     if (user && user.email) {
-      return <WrappedComponent isAdmin={isAdmin} user={user} {...(props as T)}/>
+      return <WrappedComponent isAdmin={isAdmin} user={user} {...(props as T)} />
     };
     return (
       <Page title="Sign In">
-      <div css={{ margin: '1em', }}>
-      <p>Please sign-in with your Google account to continue. We use your account to keep track of the puzzles you've played.</p>
-      <GoogleSignInButton/>
-      </div>
+        <div css={{ margin: '1em', }}>
+          <p>Please sign-in with your Google account to continue. We use your account to keep track of the puzzles you've played.</p>
+          <GoogleSignInButton />
+        </div>
       </Page>
     );
   }
@@ -80,7 +74,7 @@ export function requiresAuth<T extends AuthProps>(WrappedComponent: React.Compon
 
 export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
   return (props: Optionalize<T, AuthProps>) => {
-    const {user, isAdmin, loadingUser, error} = React.useContext(AuthContext);
+    const { user, isAdmin, loadingUser, error } = React.useContext(AuthContext);
     if (loadingUser) {
       return <Page title={null}>Loading user...</Page>;
     }
@@ -91,14 +85,14 @@ export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.Compo
       if (!isAdmin) {
         return <Page title="Error">Must be an admin to view this page.</Page>;
       }
-      return <WrappedComponent isAdmin={true} user={user} {...(props as T)}/>
+      return <WrappedComponent isAdmin={true} user={user} {...(props as T)} />
     }
     return (
       <Page title="Sign In">
-      <div css={{ margin: '1em', }}>
-      <p>Please sign-in to continue. You must be an admin to view this page.</p>
-      <GoogleSignInButton/>
-      </div>
+        <div css={{ margin: '1em', }}>
+          <p>Please sign-in to continue. You must be an admin to view this page.</p>
+          <GoogleSignInButton />
+        </div>
       </Page>
     );
   }
@@ -215,37 +209,12 @@ const Construct = (_: RouteComponentProps) => {
     "grid": grid
   }
 
-  return <BuilderDBLoader {...props}/>;
+  return <BuilderDBLoader {...props} />;
 };
 
-const IconsDemo = (_: RouteComponentProps) => {
-  return <Page title="Icons">
-    <div css={{fontSize: 20}}>
-      <p title="Autofill disabled">Disabled: <SpinnerDisabled/></p>
-      <p>Esc: <EscapeKey/></p>
-      <p>Backtick: <BacktickKey/></p>
-      <p>Working: <SpinnerWorking/></p>
-      <p>Finished: <SpinnerFinished/></p>
-      <p>Failed: <SpinnerFailed/></p>
-      <p>Rebus: <Rebus/></p>
-      <p>Check Square: <CheckSquare/></p>
-      <p>Check Entry: <CheckEntry/></p>
-      <p>Check Puzzle: <CheckPuzzle/></p>
-      <p>Reveal Square: <RevealSquare/></p>
-      <p>Reveal Entry: <RevealEntry/></p>
-      <p>Reveal Puzzle: <RevealPuzzle/></p>
-      <p>Rotational: <SymmetryRotational/></p>
-      <p>Horizontal: <SymmetryHorizontal/></p>
-      <p>Vertical: <SymmetryVertical/></p>
-      <p>None: <SymmetryNone/></p>
-      <div css={{backgroundColor: 'orange', width: 100, height: 100, fontSize: 100, display: 'flex', alignItems: 'center'}}><Logo/></div>
-    </div>
-  </Page>;
-}
-
-const PageViewTracker = ({location}: {location: WindowLocation}) => {
+const PageViewTracker = ({ location }: { location: WindowLocation }) => {
   React.useEffect(() => {
-    firebase.analytics().logEvent("screen_view", {app_name: 'react', screen_name: location.pathname});
+    firebase.analytics().logEvent("screen_view", { app_name: 'react', screen_name: location.pathname });
   }, [location]);
   return <React.Fragment></React.Fragment>;
 }
@@ -256,20 +225,20 @@ const App = () => {
   React.useEffect(() => {
     if (user && user.email) {
       user.getIdTokenResult()
-      .then((idTokenResult) => {
-        if (!!idTokenResult.claims.admin) {
-          setIsAdmin(true);
-        } else {
+        .then((idTokenResult) => {
+          if (!!idTokenResult.claims.admin) {
+            setIsAdmin(true);
+          } else {
+            setIsAdmin(false);
+          }
+        })
+        .catch((error) => {
           setIsAdmin(false);
-        }
-      })
-      .catch((error) => {
-        setIsAdmin(false);
-        console.error(error);
-      });
+          console.error(error);
+        });
     }
   }, [user]);
-  const [audioContext, setAudioContext] = React.useState<AudioContext|null>(null);
+  const [audioContext, setAudioContext] = React.useState<AudioContext | null>(null);
   const initAudioContext = React.useCallback(() => {
     if (!audioContext) {
       const constructor = window.AudioContext || (window as any).webkitAudioContext;
@@ -277,36 +246,37 @@ const App = () => {
     }
   }, [audioContext, setAudioContext]);
   return (
-<ErrorBoundary>
-<HelmetProvider>
-  <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
-  <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error?.message}}>
-    <Helmet defaultTitle="Crosshare" titleTemplate="%s | Crosshare" />
-    <Location>
-      {({ location }) => (
-        <PageViewTracker location={location}/>
-      )}
-    </Location>
-    <Router css={{ height: '100%', width: '100%', }}>
-      <Home path="/" />
-      <AccountPage path="/account" />
-      <Admin path="/admin" />
-      <ErrorTest path="/error" />
-      <IconsDemo path="/icons" />
-      <Uploader path="/upload" />
-      <Construct path="/construct" />
-      <PuzzleLoader path="/crosswords/:crosswordId" />
-      <SquareTest path="/square" />
-      <TwoColTest path="/twocol" />
-      <TermsOfService path="/tos" />
-      <PrivacyPolicy path="/privacy" />
-      <DBTest path="/dbtest" />
-      <NotFound default />
-    </Router>
-  </AuthContext.Provider>
-  </CrosshareAudioContext.Provider>
-</HelmetProvider>
-</ErrorBoundary>
+    <ErrorBoundary>
+      <HelmetProvider>
+        <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
+          <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error ?.message}}>
+            <Helmet defaultTitle="Crosshare" titleTemplate="%s | Crosshare" />
+            <Location>
+              {({ location }) => (
+                <PageViewTracker location={location} />
+              )}
+            </Location>
+            <React.Suspense fallback={<div>Loading...</div>}>
+              <Router css={{ height: '100%', width: '100%', }}>
+                <Home path="/" />
+                <AccountPage path="/account" />
+                <Admin path="/admin" />
+                <ErrorTest path="/error" />
+                <Uploader path="/upload" />
+                <Construct path="/construct" />
+                <PuzzleLoader path="/crosswords/:crosswordId" />
+                <SquareTest path="/square" />
+                <TwoColTest path="/twocol" />
+                <TermsOfService path="/tos" />
+                <PrivacyPolicy path="/privacy" />
+                <DBTest path="/dbtest" />
+                <NotFound default />
+              </Router>
+            </React.Suspense>
+          </AuthContext.Provider>
+        </CrosshareAudioContext.Provider>
+      </HelmetProvider>
+    </ErrorBoundary>
   );
 }
 

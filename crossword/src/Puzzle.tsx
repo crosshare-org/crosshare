@@ -32,9 +32,11 @@ import {
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { Page, SquareAndCols, TwoCol, TinyNav } from './Page';
 import { buttonAsLink, SECONDARY, LIGHTER, ERROR_COLOR } from './style';
-import { navToLatestMini, UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 import { usePersistedBoolean } from './hooks';
-import { timeString } from './utils';
+import { navToLatestMini, timeString } from './utils';
+import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
+
+const UpcomingMinisCalendar = React.lazy(() => import(/* webpackChunkName: "minisCal" */ './UpcomingMinisCalendar'));
 
 declare var firebase: typeof import('firebase');
 
@@ -215,7 +217,13 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
   );
 }
 
-const ModeratingOverlay = ({ dispatch, puzzle }: { puzzle: PuzzleResult, dispatch: React.Dispatch<PuzzleAction> }) => {
+const LoadableCalendar = (props: UpcomingMinisCalendarProps) => (
+  <React.Suspense fallback={<div>Loading...</div>}>
+    <UpcomingMinisCalendar {...props} />
+  </React.Suspense>
+);
+
+const ModeratingOverlay = React.memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, dispatch: React.Dispatch<PuzzleAction> }) => {
   const db = firebase.firestore();
   const [date, setDate] = React.useState(puzzle.publishTime ?.toDate());
 
@@ -246,7 +254,7 @@ const ModeratingOverlay = ({ dispatch, puzzle }: { puzzle: PuzzleResult, dispatc
             ""
           }
           <div css={{ marginTop: '1em' }}>Pick a date for this mini to appear:</div>
-          <UpcomingMinisCalendar disableExisting={true} value={date} onChange={setDate} />
+          <LoadableCalendar disableExisting={true} value={date} onChange={setDate} />
           <div css={{ marginTop: '1em' }}><button disabled={!date} onClick={schedule}>Schedule</button></div>
         </div>
         :
@@ -254,7 +262,7 @@ const ModeratingOverlay = ({ dispatch, puzzle }: { puzzle: PuzzleResult, dispatc
       }
     </Overlay>
   );
-}
+});
 
 const KeepTryingOverlay = ({ dispatch }: { dispatch: React.Dispatch<PuzzleAction> }) => {
   return (
