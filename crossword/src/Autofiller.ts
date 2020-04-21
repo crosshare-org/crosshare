@@ -17,33 +17,33 @@ interface Recur extends Result {
   grid: AutofillGrid,
   discrep: number,
   pitched: Set<string>,
-  subset: Set<number>|null,
+  subset: Set<number> | null,
   cont: Cont
 }
 function isRecur(result: Result): result is Recur {
-    return result.type === ResultTag.Recur;
+  return result.type === ResultTag.Recur;
 }
-function recur(grid:AutofillGrid, discrep:number, pitched:Set<string>, subset:Set<number>|null, cont:Cont): Recur {
-  return {type: ResultTag.Recur, grid, discrep, pitched, subset, cont};
+function recur(grid: AutofillGrid, discrep: number, pitched: Set<string>, subset: Set<number> | null, cont: Cont): Recur {
+  return { type: ResultTag.Recur, grid, discrep, pitched, subset, cont };
 }
 interface Value extends Result {
   type: ResultTag.Value,
-  result: AutofillGrid|null
+  result: AutofillGrid | null
 }
 function isValue(result: Result): result is Value {
-    return result.type === ResultTag.Value;
+  return result.type === ResultTag.Value;
 }
-function value(x:AutofillGrid|null) {
-  return {type: ResultTag.Value, result: x}
+function value(x: AutofillGrid | null) {
+  return { type: ResultTag.Value, result: x }
 }
 
-type Cont = (x: AutofillGrid|null) => Result;
+type Cont = (x: AutofillGrid | null) => Result;
 
 export class Autofiller {
   public initialGrid: AutofillGrid;
   public completed: boolean;
-  public solnGrid: AutofillGrid|null;
-  public solnCost: number|null;
+  public solnGrid: AutofillGrid | null;
+  public solnCost: number | null;
   public nextStep: Result;
   public postedSoln: boolean;
   public startTime: number;
@@ -63,7 +63,7 @@ export class Autofiller {
     this.startTime = new Date().getTime();
 
     // Our initial step is a call to recur
-    this.nextStep = recur(this.initialGrid, 3, new Set<string>(), null, (result) => {return value(result)});
+    this.nextStep = recur(this.initialGrid, 3, new Set<string>(), null, (result) => { return value(result) });
   };
 
   step() {
@@ -91,7 +91,7 @@ export class Autofiller {
 
     // If it's a "value" (not a "recur") we're done.
     if (isValue(this.nextStep)) {
-      console.log("Finished: " + ((new Date().getTime() - this.startTime)/1000).toPrecision(4) + "s");
+      console.log("Finished: " + ((new Date().getTime() - this.startTime) / 1000).toPrecision(4) + "s");
       this.completed = true;
       this.onComplete();
     }
@@ -104,7 +104,7 @@ export class Autofiller {
   };
 
   /* Fill out a grid or a subset of a grid */
-  _solve(grid: AutofillGrid, discrep: number, pitched: Set<string>, subset: Set<number>|null, cont: Cont): Result {
+  _solve(grid: AutofillGrid, discrep: number, pitched: Set<string>, subset: Set<number> | null, cont: Cont): Result {
     const baseCost = minGridCost(grid);
 
     // We already have a solution that's better than this grid could possibly get
@@ -132,7 +132,7 @@ export class Autofiller {
     // See if there are any stable subsets  out of the entries we're considering
     const subsets = stableSubsets(grid, subset);
     if (subsets.length > 1) {
-      subsets.sort((a,b) => a.size - b.size);
+      subsets.sort((a, b) => a.size - b.size);
       // Attempt to solve the smallest subset
       return recur(grid, discrep, pitched, subsets[0], subsolved => {
         if (subsolved === null) {
@@ -147,20 +147,20 @@ export class Autofiller {
 
     // Consider entries in order of possible matches
     entriesToConsider.sort((e1, e2) => numMatchesForEntry(e1) - numMatchesForEntry(e2));
-    let successor: [AutofillGrid, number, string]|null = null;
-    let successorDiff: number|null = null;
+    let successor: [AutofillGrid, number, string] | null = null;
+    let successorDiff: number | null = null;
 
     for (const entry of entriesToConsider) {
       const crosses = getCrosses(grid, entry)
-      let bestGrid: [AutofillGrid, number, string]|null = null;
-      let bestCost: number|null = null;
-      let secondBestCost: number|null = null;
+      let bestGrid: [AutofillGrid, number, string] | null = null;
+      let bestCost: number | null = null;
+      let secondBestCost: number | null = null;
 
       let skipEntry = false;
       const failingLetters: Array<string> = [];
-      entry.cells.forEach(() => {failingLetters.push("")});
+      entry.cells.forEach(() => { failingLetters.push("") });
       const succeedingLetters: Array<string> = [];
-      entry.cells.forEach(() => {succeedingLetters.push("")});
+      entry.cells.forEach(() => { succeedingLetters.push("") });
       for (const [word, score] of WordDB.matchingWords(entry.length, entry.bitmap)) {
         if (pitched.has(entry.index + ":" + word)) {
           continue;
