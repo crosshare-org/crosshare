@@ -95,13 +95,13 @@ export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
 }
 
 interface ClueListItemProps {
-  active: Position,
   showDirection: boolean,
   conceal: boolean,
   entry: CluedEntry,
   dispatch: React.Dispatch<PuzzleAction>,
   isActive: boolean,
   isCross: boolean,
+  active: Position|null,
   scrollToCross: boolean,
   showEntry: boolean,
   valAt: (pos: Position) => string,
@@ -155,12 +155,12 @@ const ClueListItem = React.memo(({ isActive, isCross, ...props }: ClueListItemPr
         <div>{props.entry.clue}</div>
         {props.showEntry ?
           <div>{props.entry.cells.map(a => {
-            return <span css={{
+            return <span key={a.col+'-'+a.row} css={{
               display: 'inline-block',
               textAlign: 'center',
               fontWeight: 'bold',
               minWidth: '1em',
-              border: (a.row === props.active.row && a.col === props.active.col) ?
+              border: (props.active && a.row === props.active.row && a.col === props.active.col) ?
                 '1px solid var(--black)' : '1px solid transparent',
             }}>{props.valAt(a).trim() || "-"}</span>;
           })}</div>
@@ -349,8 +349,9 @@ interface ClueListProps {
 }
 const ClueList = (props: ClueListProps) => {
   const clues = props.entries.map((entry) => {
+    const isActive = props.current === entry.index;
+    const isCross = props.cross === entry.index;
     return (<ClueListItem
-      active={props.active}
       valAt={props.valAt}
       showDirection={props.header ? false : true}
       showEntry={props.showEntries}
@@ -359,8 +360,9 @@ const ClueList = (props: ClueListProps) => {
       key={entry.index}
       scrollToCross={props.scrollToCross}
       dispatch={props.dispatch}
-      isActive={props.current === entry.index}
-      isCross={props.cross === entry.index}
+      isActive={isActive}
+      isCross={isCross}
+      active={props.showEntries && (isActive || isCross) ? props.active : null}
     />)
   });
   return (
