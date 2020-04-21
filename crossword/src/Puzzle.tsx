@@ -101,12 +101,12 @@ interface ClueListItemProps {
   dispatch: React.Dispatch<PuzzleAction>,
   isActive: boolean,
   isCross: boolean,
-  active: Position|null,
+  active: Position | null,
   scrollToCross: boolean,
   showEntry: boolean,
   valAt: (pos: Position) => string,
 }
-const ClueListItem = React.memo(function ClueListItem ({ isActive, isCross, ...props }: ClueListItemProps) {
+const ClueListItem = React.memo(function ClueListItem({ isActive, isCross, ...props }: ClueListItemProps) {
   const ref = React.useRef<HTMLLIElement>(null);
   if (ref.current) {
     if (isActive || (props.scrollToCross && isCross)) {
@@ -155,7 +155,7 @@ const ClueListItem = React.memo(function ClueListItem ({ isActive, isCross, ...p
         <div>{props.entry.clue}</div>
         {props.showEntry ?
           <div>{props.entry.cells.map(a => {
-            return <span key={a.col+'-'+a.row} css={{
+            return <span key={a.col + '-' + a.row} css={{
               display: 'inline-block',
               textAlign: 'center',
               fontWeight: 'bold',

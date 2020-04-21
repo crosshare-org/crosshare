@@ -1,4 +1,4 @@
-import { PosAndDir, Position, Direction, BLOCK } from './types';
+import { PosAndDir, Position, Direction, BLOCK, DBPuzzleT } from './types';
 import {
   ViewableGrid, ViewableEntry, CluedGrid,
   gridWithNewChar, gridWithBlockToggled, advancePosition, retreatPosition,
@@ -58,6 +58,10 @@ export interface BuilderState extends GridInterfaceState {
   hasNoShortWords: boolean,
   clues: Map<string, string>,
   symmetry: Symmetry,
+  publishErrors: Array<string>,
+  toPublish: DBPuzzleT|null,
+  authorId: string,
+  authorName: string
 }
 function isBuilderState(state: GridInterfaceState): state is BuilderState {
   return state.type === 'builder';
@@ -391,6 +395,69 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   }
   if (isClickedFillAction(action)) {
     return ({ ...state, grid: gridWithEntrySet(state.grid, action.entryIndex, action.value)}.postEdit(0) as BuilderState);
+  }
+  if (action.type === "CLEARPUBLISHERRORS") {
+    return ({ ...state, publishErrors: [] });
+  }
+  if (action.type === "PUBLISH") {
+    let errors = [];
+    if (!state.gridIsComplete) {
+      errors.push("All squares in the grid must be filled in");
+    }
+    if (state.repeats.size > 0) {
+      errors.push('No words can be repeated (' + Array.from(state.repeats).sort().join(", ") + ')');
+    }
+    if (!state.title) {
+      errors.push('Puzzle must have a title set');
+    }
+    const missingClues = state.grid.entries.filter((e) => !state.clues.has(e.completedWord || '')).map((e => e.completedWord || ""));
+    if (missingClues.length) {
+      errors.push("All words must have a clue set (" + Array.from(new Set(missingClues)).sort().join(", ") + ")");
+    }
+
+    if (errors.length) {
+      return { ...state, publishErrors: errors };
+    }
+
+    let ac:Array<string> = [];
+    let an:Array<number> = [];
+    let dc:Array<string> = [];
+    let dn:Array<number> = [];
+    state.grid.entries.forEach((e) => {
+      if (!e.completedWord) {
+        throw new Error("Publish unfinished grid");
+      }
+      const clue = state.clues.get(e.completedWord);
+      if (!clue) {
+        throw new Error("Bad clue for " + e.completedWord);
+      }
+      if (e.direction === Direction.Across) {
+        ac.push(clue);
+        an.push(e.labelNumber);
+      } else {
+        dc.push(clue);
+        dn.push(e.labelNumber);
+      }
+    });
+    const puzzle:DBPuzzleT = {
+      t: state.title || "Anonymous",
+      a: state.authorId,
+      n: state.authorName,
+      m: false,
+      p: null,
+      c: null,
+      h: state.grid.height,
+      w: state.grid.width,
+      g: state.grid.cells,
+      ac,an,dc,dn
+    };
+    if (state.grid.highlighted.size) {
+      puzzle.hs = Array.from(state.grid.highlighted);
+      if (state.grid.highlight === "shade") {
+        puzzle.s = true;
+      }
+    };
+    return { ...state, toPublish: puzzle };
   }
   return state;
 }
