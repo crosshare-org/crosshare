@@ -1,34 +1,19 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isAuthor() {
-      return request.auth.uid != null && request.auth.uid == resource.data.authorId;
-    }
-    function authorSetCorrectly() {
-      return request.auth.uid != null && request.auth.uid == request.resource.data.authorId;
-    }
     function isAdmin() {
       return request.auth.token.admin;
-    }
-    function isPublished() {
-      return resource.data.publishTime == null || request.time > resource.data.publishTime;
     }
     match /{document=**} {
       allow read, write: if false;
     }
-    match /crosswords/{crosswordId} {
-      allow get: if isAdmin() || isAuthor() || (resource.data.moderated == true && isPublished());
-      allow list: if isAdmin() || isAuthor() || (resource.data.category != null && request.time + duration.time(1, 0, 0, 0) >= resource.data.publishTime);
-      allow update: if isAdmin();
-      allow create: if isAdmin() && authorSetCorrectly() && request.resource.data.category == null && request.resource.data.publishTime == null && request.resource.data.moderated == false;
-    }
-    function isAuthorNew() {
+    function isAuthor() {
       return request.auth.uid != null && request.auth.uid == resource.data.a;
     }
-    function authorSetCorrectlyNew() {
+    function authorSetCorrectly() {
       return request.auth.uid != null && request.auth.uid == request.resource.data.a;
     }
-    function isPublishedNew() {
+    function isPublished() {
       return resource.data.p == null || request.time > resource.data.p;
     }
     function validCrossword() {
@@ -37,15 +22,15 @@ service cloud.firestore {
         && (request.resource.data.dc.size() == request.resource.data.dn.size());
     }
     match /c/{crosswordId} {
-      allow get: if isAdmin() || isAuthorNew()
-        || (resource.data.m == true && isPublishedNew());
+      allow get: if isAdmin() || isAuthor()
+        || (resource.data.m == true && isPublished());
 
-      allow list: if isAdmin() || isAuthorNew()
+      allow list: if isAdmin() || isAuthor()
         || (resource.data.c != null && request.time + duration.time(1, 0, 0, 0) >= resource.data.p);
 
       allow update: if isAdmin();
 
-      allow create: if isAdmin() && authorSetCorrectlyNew()
+      allow create: if isAdmin() && authorSetCorrectly()
         && validCrossword()
         && request.resource.data.c == null
         && request.resource.data.p == null

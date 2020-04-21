@@ -29,34 +29,6 @@
       ]
     },
     {
-      "collectionGroup": "crosswords",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "category",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "publishTime",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "crosswords",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "category",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "publishTime",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
       "collectionGroup": "p",
       "queryScope": "COLLECTION",
       "fields": [
@@ -125,36 +97,6 @@
     {
       "collectionGroup": "c",
       "fieldPath": "w",
-      "indexes": []
-    },
-    {
-      "collectionGroup": "crosswords",
-      "fieldPath": "authorName",
-      "indexes": []
-    },
-    {
-      "collectionGroup": "crosswords",
-      "fieldPath": "clues",
-      "indexes": []
-    },
-    {
-      "collectionGroup": "crosswords",
-      "fieldPath": "grid",
-      "indexes": []
-    },
-    {
-      "collectionGroup": "crosswords",
-      "fieldPath": "highlight",
-      "indexes": []
-    },
-    {
-      "collectionGroup": "crosswords",
-      "fieldPath": "highlighted",
-      "indexes": []
-    },
-    {
-      "collectionGroup": "crosswords",
-      "fieldPath": "size",
       "indexes": []
     },
     {
