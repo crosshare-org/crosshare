@@ -2,12 +2,13 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
-import { navigate, RouteComponentProps } from '@reach/router';
+import { navigate, RouteComponentProps, WindowLocation } from '@reach/router';
 import { isMobile, isTablet } from "react-device-detect";
 import {
   FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt,
   FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare
 } from 'react-icons/fa';
+import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
 import { isRight } from 'fp-ts/lib/Either';
@@ -44,15 +45,17 @@ interface PuzzleLoaderProps extends RouteComponentProps {
   crosswordId?: string
 }
 
-export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
+export const usePuzzle = (crosswordId: string | undefined, location: WindowLocation | undefined): [PuzzleResult | null, string | null] => {
   const [puzzle, setPuzzle] = React.useState<PuzzleResult | null>(null);
-  const [isError, setIsError] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
   React.useEffect(() => {
     if (!crosswordId) {
-      throw new Error("missing id");
+      setError("Missing puzzle id");
+      return;
     }
-    if (props.location ?.state) {
-      const validationResult = PuzzleV.decode(props.location.state);
+    if (location ?.state) {
+      const validationResult = PuzzleV.decode(location.state);
       if (isRight(validationResult)) {
         console.log("puzzle pre-loaded");
         setPuzzle({ ...validationResult.right, id: crosswordId });
@@ -61,8 +64,8 @@ export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
         console.log("failed to pre-load");
       }
     }
-    console.log("loading puzzle");
-    if (isError) {
+    console.log("loading puzzle from db");
+    if (error) {
       console.log("error set, skipping");
       return;
     }
@@ -70,29 +73,35 @@ export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
     db.collection("c").doc(crosswordId).get().then((value) => {
       const data = value.data();
       if (!data) {
-        setIsError(true);
+        setError("No puzzle data found");
       } else {
         const validationResult = DBPuzzleV.decode(data);
         if (isRight(validationResult)) {
           setPuzzle({ ...puzzleFromDB(validationResult.right), id: crosswordId });
         } else {
           console.error(PathReporter.report(validationResult).join(","));
-          setIsError(true);
+          setError("Malformed puzzle data");
         }
       }
     }).catch((reason) => {
       console.error(reason);
-      setIsError(true);
+      setError("Error fetching puzzle");
     })
-  }, [crosswordId, isError, props.location]);
+  }, [crosswordId, error, location]);
 
-  if (isError) {
-    return <Page title={null}>Something went wrong while loading puzzle '{crosswordId}'</Page>;
+  return [puzzle, error]
+}
+
+export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
+  const [puzzle, error] = usePuzzle(crosswordId, props.location);
+
+  if (error) {
+    return <Page title={null}>Something went wrong while loading puzzle '{crosswordId}': {error}</Page>;
   }
   if (puzzle === null) {
     return <Page title={null}>Loading '{crosswordId}'...</Page>
   }
-  return <PuzzlePlayLoader {...puzzle} />
+  return <PuzzlePlayLoader puzzle={puzzle} />
 }
 
 interface ClueListItemProps {
@@ -398,13 +407,16 @@ const ClueList = (props: ClueListProps) => {
   );
 }
 
-const PuzzlePlayLoader = requiresAuth((props: PuzzleResult & AuthProps) => {
+interface PuzzlePlayLoaderProps {
+  puzzle: PuzzleResult,
+}
+const PuzzlePlayLoader = requiresAuth(({ puzzle, ...props }: PuzzlePlayLoaderProps & AuthProps) => {
   const [play, setPlay] = React.useState<PlayT | null>(null);
   const [isError, setIsError] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const playData = sessionStorage.getItem("p/" + props.id + "-" + props.user.uid);
+    const playData = sessionStorage.getItem("p/" + puzzle.id + "-" + props.user.uid);
     if (playData) {
       console.log("loading play state from local storage");
       const validationResult = PlayV.decode(JSON.parse(playData));
@@ -417,14 +429,14 @@ const PuzzlePlayLoader = requiresAuth((props: PuzzleResult & AuthProps) => {
     } else {
       console.log("trying load from db");
       const db = firebase.firestore();
-      db.collection("p").doc(props.id + "-" + props.user.uid).get().then((value) => {
+      db.collection("p").doc(puzzle.id + "-" + props.user.uid).get().then((value) => {
         const data = value.data();
         if (data) {
           console.log("loaded play state from db");
           const validationResult = PlayV.decode(data);
           if (isRight(validationResult)) {
             setPlay(validationResult.right);
-            sessionStorage.setItem("p/" + props.id + "-" + props.user.uid, JSON.stringify(validationResult.right));
+            sessionStorage.setItem("p/" + puzzle.id + "-" + props.user.uid, JSON.stringify(validationResult.right));
           } else {
             console.error(PathReporter.report(validationResult).join(","));
             setIsError(true);
@@ -434,7 +446,7 @@ const PuzzlePlayLoader = requiresAuth((props: PuzzleResult & AuthProps) => {
         }
       });
     }
-  }, [props.id, props.user.uid]);
+  }, [puzzle.id, props.user.uid]);
 
   if (isError) {
     return <Page title={null}>Something went wrong while loading play history</Page>;
@@ -443,29 +455,30 @@ const PuzzlePlayLoader = requiresAuth((props: PuzzleResult & AuthProps) => {
     return <Page title={null}>Loading play history...</Page>
   }
 
-  return <Puzzle play={play} {...props} />
+  return <Puzzle play={play} puzzle={puzzle} {...props} />
 });
 
-interface PlayProps {
+interface PuzzleProps {
+  puzzle: PuzzleResult,
   play: PlayT | null,
 }
-const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & PlayProps) => {
+const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps) => {
   const [state, dispatch] = React.useReducer(puzzleReducer, {
     type: 'puzzle',
     active: { col: 0, row: 0, dir: Direction.Across },
     grid: addClues(fromCells({
       mapper: (e) => e,
-      width: props.size.cols,
-      height: props.size.rows,
-      cells: play ? play.g : props.grid.map((s) => s === BLOCK ? BLOCK : " "),
+      width: puzzle.size.cols,
+      height: puzzle.size.rows,
+      cells: play ? play.g : puzzle.grid.map((s) => s === BLOCK ? BLOCK : " "),
       allowBlockEditing: false,
-      highlighted: new Set(props.highlighted),
-      highlight: props.highlight,
-    }), props.clues),
+      highlighted: new Set(puzzle.highlighted),
+      highlight: puzzle.highlight,
+    }), puzzle.clues),
     showKeyboard: isMobile,
     isTablet: isTablet,
     showExtraKeyLayout: false,
-    answers: props.grid,
+    answers: puzzle.grid,
     verifiedCells: new Set<number>(play ? play.vc : []),
     wrongCells: new Set<number>(play ? play.wc : []),
     revealedCells: new Set<number>(play ? play.rc : []),
@@ -482,8 +495,8 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
     currentTimeWindowStart: 0,
     didCheat: play ? play.ch : false,
     clueView: false,
-    cellsUpdatedAt: play ? play.ct : props.grid.map(() => 0),
-    cellsIterationCount: play ? play.uc : props.grid.map(() => 0),
+    cellsUpdatedAt: play ? play.ct : puzzle.grid.map(() => 0),
+    cellsIterationCount: play ? play.uc : puzzle.grid.map(() => 0),
     cellsEverMarkedWrong: new Set<number>(play ? play.we : []),
     isEditable(cellIndex) { return !this.verifiedCells.has(cellIndex) && !this.success },
     postEdit(cellIndex) {
@@ -518,7 +531,7 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
 
   const [muted, setMuted] = usePersistedBoolean("muted", false);
 
-  let title = puzzleTitle(props);
+  let title = puzzleTitle(puzzle);
 
   // Set up music player for success song
   const [audioContext, initAudioContext] = React.useContext(CrosshareAudioContext);
@@ -567,7 +580,7 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
 
   const updatePlay = React.useCallback((sendToDB: boolean) => {
     const play: PlayT = {
-      c: props.id,
+      c: puzzle.id,
       u: props.user.uid,
       n: title,
       ua: firebase.firestore.Timestamp.now(),
@@ -582,15 +595,15 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
       ch: state.didCheat,
       f: state.success,
     }
-    sessionStorage.setItem("p/" + props.id + "-" + props.user.uid, JSON.stringify(play));
+    sessionStorage.setItem("p/" + puzzle.id + "-" + props.user.uid, JSON.stringify(play));
     if (sendToDB) {
       console.log("Writing play to db");
       const db = firebase.firestore();
-      db.collection("p").doc(props.id + "-" + props.user.uid).set(play).then(() => {
+      db.collection("p").doc(puzzle.id + "-" + props.user.uid).set(play).then(() => {
         console.log("Pushed update");
       });
     }
-  }, [props.id, props.user.uid, state.cellsEverMarkedWrong,
+  }, [puzzle.id, props.user.uid, state.cellsEverMarkedWrong,
   state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
   state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
   state.wrongCells, title, state.bankedSeconds, state.currentTimeWindowStart]);
@@ -640,7 +653,7 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
 
   const showingKeyboard = state.showKeyboard && !state.success;
-  const beginPauseProps = { authorName: props.authorName, title: title, dispatch: dispatch, moderated: props.moderated, publishTime: props.publishTime ?.toDate()};
+  const beginPauseProps = { authorName: puzzle.authorName, title: title, dispatch: dispatch, moderated: puzzle.moderated, publishTime: puzzle.publishTime ?.toDate()};
 
   let puzzleView: React.ReactNode;
 
@@ -749,10 +762,15 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
             </React.Fragment>
             : ""
         }
+        {
+          props.isAdmin || props.user.uid === puzzle.authorId ?
+            <TopBarDropDownLink icon={<IoMdStats />} text="Stats" onClick={() => navigate('/crosswords/' + puzzle.id + '/stats', { state: puzzle })} />
+            : ""
+        }
         <TopBarDropDownLink icon={<FaUser />} text="Account" onClick={() => navigate('/account')} />
       </TopBarDropDown>
     </React.Fragment>
-  ), [state.autocheck, muted, props.isAdmin, setMuted]);
+  ), [state.autocheck, muted, props.isAdmin, props.user.uid, puzzle, setMuted]);
 
   return (
     <React.Fragment>
@@ -773,10 +791,10 @@ const Puzzle = requiresAuth(({ play, ...props }: PuzzleResult & AuthProps & Play
         <KeepTryingOverlay dispatch={dispatch} />
         : ""}
       {state.success && !state.dismissedSuccess ?
-        <SuccessOverlay puzzle={props} isMuted={muted} solveTime={state.displaySeconds} dispatch={dispatch} />
+        <SuccessOverlay puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} dispatch={dispatch} />
         : ""}
       {state.moderating ?
-        <ModeratingOverlay puzzle={props} dispatch={dispatch} />
+        <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />
         : ""}
       {state.currentTimeWindowStart === 0 && !state.success && !(state.filled && !state.dismissedKeepTrying) ?
         (state.bankedSeconds === 0 ?

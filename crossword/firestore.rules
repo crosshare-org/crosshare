@@ -40,6 +40,8 @@ service cloud.firestore {
       allow read: if request.auth.uid != null
         && (resource == null || request.auth.uid == resource.data.u);
 
+      allow list: if isAdmin();
+
       allow write: if request.auth.uid != null
         && request.auth.uid == request.resource.data.u
         && playId == (request.resource.data.c + '-' + request.resource.data.u);

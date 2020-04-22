@@ -3,8 +3,9 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 import {
-  FaBackspace, FaSync, FaAngleRight, FaAngleLeft, FaAngleDoubleRight, FaAngleDoubleLeft,
+  FaBackspace, FaAngleRight, FaAngleLeft, FaAngleDoubleRight, FaAngleDoubleLeft,
 } from 'react-icons/fa';
+import { AiOutlineEnter } from 'react-icons/ai';
 
 import { CrosshareAudioContext } from "./App";
 
@@ -176,7 +177,7 @@ export const Keyboard = React.memo(function Keyboard({ muted, showKeyboard, keyb
           : ""
         }
         {props.isTablet ?
-          <Key keyStroke='{dir}' smallSize={props.includeBlockKey} display={<FaSync />} onKeypress={keypress} />
+          <Key keyStroke='{dir}' smallSize={props.includeBlockKey} display={<AiOutlineEnter />} onKeypress={keypress} />
           : ""
         }
         {props.isTablet || !props.includeBlockKey ?

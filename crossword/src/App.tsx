@@ -8,6 +8,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 import { ErrorBoundary } from './ErrorBoundary';
 import { PuzzleLoader } from './Puzzle';
+import { PuzzleStats } from './PuzzleStats';
 import { Page, SquareTest, TwoColTest } from './Page';
 import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
@@ -263,6 +264,7 @@ const App = () => {
                 <ErrorTest path="/error" />
                 <Construct path="/construct" />
                 <PuzzleLoader path="/crosswords/:crosswordId" />
+                <PuzzleStats path="/crosswords/:crosswordId/stats" />
                 <SquareTest path="/square" />
                 <TwoColTest path="/twocol" />
                 <TermsOfService path="/tos" />
