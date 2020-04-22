@@ -50,8 +50,13 @@ export const usePuzzle = (crosswordId: string | undefined, location: WindowLocat
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
+    setPuzzle(null);
     if (!crosswordId) {
       setError("Missing puzzle id");
+      return;
+    }
+    if (error) {
+      console.log("error set, skipping");
       return;
     }
     if (location ?.state) {
@@ -65,10 +70,6 @@ export const usePuzzle = (crosswordId: string | undefined, location: WindowLocat
       }
     }
     console.log("loading puzzle from db");
-    if (error) {
-      console.log("error set, skipping");
-      return;
-    }
     const db = firebase.firestore();
     db.collection("c").doc(crosswordId).get().then((value) => {
       const data = value.data();
@@ -416,6 +417,9 @@ const PuzzlePlayLoader = requiresAuth(({ puzzle, ...props }: PuzzlePlayLoaderPro
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
+    setPlay(null);
+    setIsLoading(true);
+    setIsError(false);
     const playData = sessionStorage.getItem("p/" + puzzle.id + "-" + props.user.uid);
     if (playData) {
       console.log("loading play state from local storage");
@@ -451,7 +455,7 @@ const PuzzlePlayLoader = requiresAuth(({ puzzle, ...props }: PuzzlePlayLoaderPro
   if (isError) {
     return <Page title={null}>Something went wrong while loading play history</Page>;
   }
-  if (isLoading && play === null) {
+  if ((isLoading && play === null) || play ?.c !== puzzle.id) {
     return <Page title={null}>Loading play history...</Page>
   }
 
