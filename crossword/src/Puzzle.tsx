@@ -45,65 +45,114 @@ interface PuzzleLoaderProps extends RouteComponentProps {
   crosswordId?: string
 }
 
-export const usePuzzle = (crosswordId: string | undefined, location: WindowLocation | undefined): [PuzzleResult | null, string | null] => {
+export const usePuzzleAndPlay = (loadPlay: boolean, crosswordId: string | undefined, userId: string, location: WindowLocation | undefined): [PuzzleResult | null, string | null, PlayT | null, boolean] => {
   const [puzzle, setPuzzle] = React.useState<PuzzleResult | null>(null);
+  const [play, setPlay] = React.useState<PlayT | null>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const [isLoadingPlay, setIsLoadingPlay] = React.useState(true);
 
   React.useEffect(() => {
     setPuzzle(null);
+    setPlay(null);
+    setError(null);
+    setIsLoadingPlay(true);
+
     if (!crosswordId) {
       setError("Missing puzzle id");
       return;
     }
-    if (error) {
-      console.log("error set, skipping");
-      return;
-    }
+
+    let preLoaded = false;
+    const db = firebase.firestore();
+
     if (location ?.state) {
       const validationResult = PuzzleV.decode(location.state);
       if (isRight(validationResult)) {
         console.log("puzzle pre-loaded");
         setPuzzle({ ...validationResult.right, id: crosswordId });
-        return;
+        preLoaded = true;
       } else {
         console.log("failed to pre-load");
       }
     }
-    console.log("loading puzzle from db");
-    const db = firebase.firestore();
-    db.collection("c").doc(crosswordId).get().then((value) => {
-      const data = value.data();
-      if (!data) {
-        setError("No puzzle data found");
-      } else {
-        const validationResult = DBPuzzleV.decode(data);
+    if (!preLoaded) {
+      console.log("loading puzzle from db");
+      db.collection("c").doc(crosswordId).get().then((value) => {
+        const data = value.data();
+        if (!data) {
+          setError("No puzzle data found");
+          return;
+        } else {
+          const validationResult = DBPuzzleV.decode(data);
+          if (isRight(validationResult)) {
+            setPuzzle({ ...puzzleFromDB(validationResult.right), id: crosswordId });
+          } else {
+            console.error(PathReporter.report(validationResult).join(","));
+            setError("Malformed puzzle data");
+            return;
+          }
+        }
+      }).catch((reason) => {
+        console.error(reason);
+        setError("Error fetching puzzle");
+        return;
+      })
+    }
+
+    if (!loadPlay) {
+      setIsLoadingPlay(false);
+    } else {
+      const playData = sessionStorage.getItem("p/" + crosswordId + "-" + userId);
+      if (playData) {
+        console.log("loading play state from local storage");
+        const validationResult = PlayV.decode(JSON.parse(playData));
         if (isRight(validationResult)) {
-          setPuzzle({ ...puzzleFromDB(validationResult.right), id: crosswordId });
+          setPlay(validationResult.right);
+          setIsLoadingPlay(false);
         } else {
           console.error(PathReporter.report(validationResult).join(","));
-          setError("Malformed puzzle data");
+          setError("Failed to parse play from storage");
         }
+      } else {
+        console.log("trying load play from db");
+        db.collection("p").doc(crosswordId + "-" + userId).get().then((value) => {
+          const data = value.data();
+          if (data) {
+            console.log("loaded play state from db");
+            const validationResult = PlayV.decode(data);
+            if (isRight(validationResult)) {
+              setPlay(validationResult.right);
+              setIsLoadingPlay(false);
+              sessionStorage.setItem("p/" + crosswordId + "-" + userId, JSON.stringify(validationResult.right));
+            } else {
+              console.error(PathReporter.report(validationResult).join(","));
+              setError("Failed to parse play from db");
+            }
+          } else {
+            console.log("No previous play exists");
+            setIsLoadingPlay(false);
+          }
+        });
       }
-    }).catch((reason) => {
-      console.error(reason);
-      setError("Error fetching puzzle");
-    })
-  }, [crosswordId, error, location]);
+    }
+  }, [crosswordId, userId, location, loadPlay]);
 
-  return [puzzle, error]
+  return [puzzle, error, play, isLoadingPlay];
 }
 
-export const PuzzleLoader = ({ crosswordId, ...props }: PuzzleLoaderProps) => {
-  const [puzzle, error] = usePuzzle(crosswordId, props.location);
+export const PuzzleLoader = requiresAuth(({ crosswordId, ...props }: PuzzleLoaderProps & AuthProps) => {
+  const [puzzle, error, play, isLoadingPlay] = usePuzzleAndPlay(true, crosswordId, props.user.uid, props.location);
+
+  console.log("Here", puzzle ?.id, play ?.c);
 
   if (error) {
     return <Page title={null}>Something went wrong while loading puzzle '{crosswordId}': {error}</Page>;
   }
-  if (puzzle === null) {
+  if (isLoadingPlay || !puzzle) {
     return <Page title={null}>Loading '{crosswordId}'...</Page>
   }
-  return <PuzzlePlayLoader puzzle={puzzle} />
-}
+  return <Puzzle key={puzzle.id} puzzle={puzzle} play={play} {...props} />
+});
 
 interface ClueListItemProps {
   showDirection: boolean,
@@ -407,60 +456,6 @@ const ClueList = (props: ClueListProps) => {
     </div>
   );
 }
-
-interface PuzzlePlayLoaderProps {
-  puzzle: PuzzleResult,
-}
-const PuzzlePlayLoader = requiresAuth(({ puzzle, ...props }: PuzzlePlayLoaderProps & AuthProps) => {
-  const [play, setPlay] = React.useState<PlayT | null>(null);
-  const [isError, setIsError] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    setPlay(null);
-    setIsLoading(true);
-    setIsError(false);
-    const playData = sessionStorage.getItem("p/" + puzzle.id + "-" + props.user.uid);
-    if (playData) {
-      console.log("loading play state from local storage");
-      const validationResult = PlayV.decode(JSON.parse(playData));
-      if (isRight(validationResult)) {
-        setPlay(validationResult.right);
-      } else {
-        console.error(PathReporter.report(validationResult).join(","));
-        setIsError(true);
-      }
-    } else {
-      console.log("trying load from db");
-      const db = firebase.firestore();
-      db.collection("p").doc(puzzle.id + "-" + props.user.uid).get().then((value) => {
-        const data = value.data();
-        if (data) {
-          console.log("loaded play state from db");
-          const validationResult = PlayV.decode(data);
-          if (isRight(validationResult)) {
-            setPlay(validationResult.right);
-            sessionStorage.setItem("p/" + puzzle.id + "-" + props.user.uid, JSON.stringify(validationResult.right));
-          } else {
-            console.error(PathReporter.report(validationResult).join(","));
-            setIsError(true);
-          }
-        } else {
-          setIsLoading(false);
-        }
-      });
-    }
-  }, [puzzle.id, props.user.uid]);
-
-  if (isError) {
-    return <Page title={null}>Something went wrong while loading play history</Page>;
-  }
-  if ((isLoading && play === null) || play ?.c !== puzzle.id) {
-    return <Page title={null}>Loading play history...</Page>
-  }
-
-  return <Puzzle play={play} puzzle={puzzle} {...props} />
-});
 
 interface PuzzleProps {
   puzzle: PuzzleResult,

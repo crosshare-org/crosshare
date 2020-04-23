@@ -8,7 +8,7 @@ import * as t from "io-ts";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
-import { usePuzzle } from './Puzzle';
+import { usePuzzleAndPlay } from './Puzzle';
 import { Page } from './Page';
 import { puzzleTitle, PuzzleResult, PlayT, PlayV } from './types';
 import { timeString } from './utils';
@@ -20,7 +20,7 @@ interface PuzzleStatsProps extends RouteComponentProps, AuthProps {
 }
 
 export const PuzzleStats = requiresAuth((props: PuzzleStatsProps) => {
-  const [puzzle, error] = usePuzzle(props.crosswordId, props.location)
+  const [puzzle, error] = usePuzzleAndPlay(false, props.crosswordId, props.user.uid, props.location)
   if (error) {
     return <Page title={null}>Something went wrong while loading puzzle '{props.crosswordId}': {error}</Page>;
   }
@@ -108,6 +108,16 @@ const StatsPlaysLoader = ({ puzzle }: { puzzle: PuzzleResult } & AuthProps) => {
   plays.filter(p => p.u !== puzzle.authorId).forEach(p => {
     playCount += 1;
     if (p.f) {
+      p.g.forEach((v, i) => {
+        if (!v.trim()) {
+          console.error("Incomplete grid for finished play:", p);
+        }
+        if (v !== '.') {
+          if (p.ct[i] === 0) {
+            console.error("Bad updated times for finished play:", p);
+          }
+        }
+      })
       finishedCount += 1;
       totalFinishedTime += p.t;
       if (!p.ch) {
