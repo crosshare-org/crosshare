@@ -50,7 +50,7 @@ function withDefault<T extends t.Mixed>(
   return new t.Type(
     `withDefault(${type.name}, ${JSON.stringify(defaultValue)})`,
     type.is,
-    (v) => type.decode(v !== null ? v : defaultValue),
+    (v) => type.decode(v != null ? v : defaultValue),
     type.encode
   )
 }
