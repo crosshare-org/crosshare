@@ -33,6 +33,20 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
+          "fieldPath": "f",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ua",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "p",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
           "fieldPath": "u",
           "order": "ASCENDING"
         },
@@ -152,6 +166,26 @@
     {
       "collectionGroup": "p",
       "fieldPath": "we",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "s",
+      "fieldPath": "a",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "s",
+      "fieldPath": "ua",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "s",
+      "fieldPath": "ct",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "s",
+      "fieldPath": "uc",
       "indexes": []
     }
   ]
