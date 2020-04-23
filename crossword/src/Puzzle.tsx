@@ -143,8 +143,6 @@ export const usePuzzleAndPlay = (loadPlay: boolean, crosswordId: string | undefi
 export const PuzzleLoader = requiresAuth(({ crosswordId, ...props }: PuzzleLoaderProps & AuthProps) => {
   const [puzzle, error, play, isLoadingPlay] = usePuzzleAndPlay(true, crosswordId, props.user.uid, props.location);
 
-  console.log("Here", puzzle ?.id, play ?.c);
-
   if (error) {
     return <Page title={null}>Something went wrong while loading puzzle '{crosswordId}': {error}</Page>;
   }
