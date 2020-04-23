@@ -92,6 +92,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult } & AuthProps) => {
 
   return (
     <Page title={"Stats | " + puzzleTitle(puzzle)}>
+      <div>Stats for <b>{puzzleTitle(puzzle)}</b> as of {stats.ua.toDate().toLocaleTimeString()}</div>
       <div>Total Completions: {stats.n}</div>
       <div>Average Completion Time: {stats.n && timeString(stats.nt / stats.n)}</div>
       <div>Non-cheating Completions: {stats.s}</div>

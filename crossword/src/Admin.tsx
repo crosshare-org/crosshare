@@ -10,7 +10,7 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
 import { PuzzleResult, puzzleFromDB } from './types';
-import { DBPuzzleV } from './common/dbtypes';
+import { DailyStatsT, DailyStatsV, DBPuzzleV } from './common/dbtypes';
 import { PuzzleListItem } from './PuzzleList';
 import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
 
@@ -26,6 +26,7 @@ const LoadableCalendar = (props: UpcomingMinisCalendarProps) => (
 
 export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
   const [unmoderated, setUnmoderated] = React.useState<Array<PuzzleResult> | null>(null);
+  const [stats, setStats] = React.useState<DailyStatsT | null>(null);
   const [error, setError] = React.useState(false);
 
   React.useEffect(() => {
@@ -48,6 +49,46 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
         }
       });
       setUnmoderated(results);
+    }).catch(reason => {
+      console.error(reason);
+      setError(true);
+    });
+
+    const now = new Date();
+    const dateString = now.getUTCFullYear() + "-" + now.getUTCMonth() + "-" + now.getUTCDate()
+    const stats = localStorage.getItem("dailystats/" + dateString);
+    if (stats) {
+      const validationResult = DailyStatsV.decode(JSON.parse(stats));
+      if (isRight(validationResult)) {
+        const ttl = 1000 * 60 * 60; // 60min
+        if (now.getTime() < validationResult.right.ua.toDate().getTime() + ttl) {
+          console.log("loaded stats from local storage");
+          setStats(validationResult.right);
+          return;
+        } else {
+          console.log("stats in local storage have expired");
+        }
+      } else {
+        console.error("Couldn't parse stored stats");
+        console.error(PathReporter.report(validationResult).join(","));
+      }
+    }
+    console.log("loading stats from db");
+    db.collection("ds").doc(dateString).get().then((value) => {
+      if (!value.exists) {
+        console.error("No stats for today yet");
+        setError(true);
+        return;
+      }
+      const validationResult = DailyStatsV.decode(value.data());
+      if (isRight(validationResult)) {
+        console.log("loaded, and caching in local storage");
+        setStats(validationResult.right);
+        localStorage.setItem("dailystats/" + dateString, JSON.stringify(validationResult.right));
+      } else {
+        console.error(PathReporter.report(validationResult).join(","));
+        setError(true);
+      }
     }).catch(reason => {
       console.error(reason);
       setError(true);
@@ -76,6 +117,13 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
           :
           <ul>{unmoderated.map(PuzzleListItem)}</ul>
         }
+        {stats ?
+          <React.Fragment>
+            <h4 css={{ borderBottom: '1px solid var(--black)' }}>Today's Stats</h4>
+            <div>Total completions: {stats.n}</div>
+            <div>Users w/ completions: {stats.u.length}</div>
+          </React.Fragment>
+          : ""}
         <h4 css={{ borderBottom: '1px solid var(--black)' }}>Upcoming Minis</h4>
 
         <LoadableCalendar disableExisting={false} onChange={goToPuzzle} />
