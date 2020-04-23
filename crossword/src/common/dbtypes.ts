@@ -1,27 +1,9 @@
 import * as t from "io-ts";
-import { either } from 'fp-ts/lib/Either'
 
-declare var firebase: typeof import('firebase');
-
-const isFirestoreTimestamp = (u: unknown): u is firebase.firestore.Timestamp =>
-  u ? u instanceof firebase.firestore.Timestamp : false;
-
-const validateTimestamp: t.Validate<unknown, firebase.firestore.Timestamp> = (i, c) => {
-  if (isFirestoreTimestamp(i)) {
-    return t.success(i);
-  }
-  return either.chain(
-    t.type({ seconds: t.number, nanoseconds: t.number }).validate(i, c),
-    obj => t.success(new firebase.firestore.Timestamp(obj.seconds, obj.nanoseconds))
-  );
-}
-
-export const timestamp = new t.Type<firebase.firestore.Timestamp>(
-  'Timestamp',
-  isFirestoreTimestamp,
-  validateTimestamp,
-  t.identity,
-);
+// We import this instead of defining it here so that we can define it
+// differently for the main react app and the 'functions' subdirectory
+import { timestamp } from '../timestamp';
+export { timestamp } from '../timestamp';
 
 const DBPuzzleMandatoryV = t.type({
   /** author's user id */
@@ -68,7 +50,7 @@ function withDefault<T extends t.Mixed>(
   return new t.Type(
     `withDefault(${type.name}, ${JSON.stringify(defaultValue)})`,
     type.is,
-    (v) => type.decode(v != null ? v : defaultValue),
+    (v) => type.decode(v !== null ? v : defaultValue),
     type.encode
   )
 }
@@ -135,7 +117,7 @@ export const DailyStatsV = t.type({
   /** completions by puzzleId */
   c: t.record(t.string, t.number),
   /** completions by hour (as UTC 0-23) */
-  h: t.record(t.number, t.number),
+  h: t.array(t.number),
 });
 export type DailyStatsT = t.TypeOf<typeof DailyStatsV>;
 

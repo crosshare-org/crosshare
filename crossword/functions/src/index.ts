@@ -1,5 +1,4 @@
 import * as functions from 'firebase-functions';
-import * as firebase from 'firebase';
 import * as admin from 'firebase-admin';
 admin.initializeApp();
 
@@ -11,7 +10,7 @@ import {
   DBPuzzleV, CronStatusV, CronStatusT
 } from './common/dbtypes';
 
-async function runAnalytics(startTimestamp: firebase.firestore.Timestamp, endTimestamp: firebase.firestore.Timestamp) {
+async function runAnalytics(startTimestamp: admin.firestore.Timestamp, endTimestamp: admin.firestore.Timestamp) {
   console.log("Updating analytics btwn", startTimestamp.toDate().toLocaleString(), endTimestamp.toDate().toLocaleString());
   const db = admin.firestore()
   const value = await db.collection('p').where('f', '==', true)
@@ -23,7 +22,7 @@ async function runAnalytics(startTimestamp: firebase.firestore.Timestamp, endTim
   const puzzleStatsMap: Map<string, PuzzleStatsT> = new Map();
   const dailyStatsMap: Map<string, DailyStatsT> = new Map();
 
-  for (let doc of value.docs) {
+  for (const doc of value.docs) {
     const validationResult = PlayV.decode(doc.data());
     if (!isRight(validationResult)) {
       console.error(PathReporter.report(validationResult).join(","));
@@ -68,6 +67,12 @@ async function runAnalytics(startTimestamp: firebase.firestore.Timestamp, endTim
         puzzleStatsMap.set(play.c, puzzleStats);
       }
     }
+
+    // don't count the author's play in puzzle stats
+    if (puzzleStats.a === play.u) {
+      continue;
+    }
+
     puzzleStats.ua = endTimestamp;
     puzzleStats.n += 1;
     puzzleStats.nt += play.t;
@@ -77,7 +82,7 @@ async function runAnalytics(startTimestamp: firebase.firestore.Timestamp, endTim
     }
     for (let i = 0; i < play.ct.length; i += 1) {
       let updateTime = play.ct[i];
-      let updateIters = play.uc[i];
+      const updateIters = play.uc[i];
       if (play.rc.indexOf(i) !== -1 || play.we.indexOf(i) !== -1) {
         /* If a cell was revealed or checked & wrong, make it's update time the
          * end of the play. This way cheat cells always show as taking the
@@ -109,7 +114,7 @@ async function runAnalytics(startTimestamp: firebase.firestore.Timestamp, endTim
           n: 0,
           u: [],
           c: {},
-          h: [],
+          h: Array<number>(24).fill(0),
         }
         dailyStatsMap.set(dateString, dailyStats);
       }
@@ -124,7 +129,7 @@ async function runAnalytics(startTimestamp: firebase.firestore.Timestamp, endTim
     dailyStats.h[hour] = (dailyStats.h[hour] || 0) + 1;
   }
 
-  console.log("Done, writing " + puzzleStatsMap.size + "puzzle stats objects");
+  console.log("Done, writing " + puzzleStatsMap.size + " puzzle stats objects");
   for (const [crosswordId, puzzleStats] of puzzleStatsMap.entries()) {
     await db.collection('s').doc(crosswordId).set(puzzleStats);
   }
@@ -136,8 +141,8 @@ async function runAnalytics(startTimestamp: firebase.firestore.Timestamp, endTim
 
 export const analytics = functions.pubsub.schedule('every 1 hour').onRun(async (_context) => {
   const db = admin.firestore()
-  let startTimestamp = firebase.firestore.Timestamp.fromDate(new Date(2020, 0));
-  let endTimestamp = firebase.firestore.Timestamp.now();
+  let startTimestamp = admin.firestore.Timestamp.fromDate(new Date(2020, 0));
+  const endTimestamp = admin.firestore.Timestamp.now();
   const value = await db.collection("cron_status").doc('hourlyanalytics').get();
   const data = value.data();
   if (data) {
@@ -150,5 +155,6 @@ export const analytics = functions.pubsub.schedule('every 1 hour').onRun(async (
   }
   await runAnalytics(startTimestamp, endTimestamp);
   const status: CronStatusT = { ranAt: endTimestamp };
+  console.log("Done, logging analytics timestamp");
   return db.collection("cron_status").doc("hourlyanalytics").set(status);
 });
