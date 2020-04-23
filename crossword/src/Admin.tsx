@@ -9,7 +9,8 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
-import { PuzzleResult, DBPuzzleV, puzzleFromDB } from './types';
+import { PuzzleResult, puzzleFromDB } from './types';
+import { DBPuzzleV } from './common/dbtypes';
 import { PuzzleListItem } from './PuzzleList';
 import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
 

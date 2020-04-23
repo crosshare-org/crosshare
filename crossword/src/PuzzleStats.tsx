@@ -10,7 +10,8 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { usePuzzleAndPlay } from './Puzzle';
 import { Page } from './Page';
-import { puzzleTitle, PuzzleResult, PlayT, PlayV } from './types';
+import { puzzleTitle, PuzzleResult } from './types';
+import { PlayT, PlayV } from './common/dbtypes';
 import { timeString } from './utils';
 
 declare var firebase: typeof import('firebase');

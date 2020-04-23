@@ -7,7 +7,8 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { requiresAuth, AuthProps } from './App';
-import { PuzzleResult, DBPuzzleV, puzzleFromDB, PlayT, PlayV } from './types';
+import { PuzzleResult, puzzleFromDB } from './types';
+import { DBPuzzleV, PlayT, PlayV } from './common/dbtypes';
 import { PuzzleListItem } from './PuzzleList';
 import { timeString } from './utils'
 
@@ -17,12 +18,12 @@ declare var firebase: typeof import('firebase');
 
 export const PlayListItem = (props: PlayT) => {
   return (
-    <li key={props.c}><Link to={"/crosswords/" + props.c}>{props.n}</Link> { props.f ? "completed " + (props.ch ? "with helpers" : "without helpers") : "unfinished"} {timeString(props.t)}</li>
+    <li key={props.c}><Link to={"/crosswords/" + props.c}>{props.n}</Link> {props.f ? "completed " + (props.ch ? "with helpers" : "without helpers") : "unfinished"} {timeString(props.t)}</li>
   );
 }
 
-const DisplayNameForm = ({user}: {user: firebase.User}) => {
-  function sanitize(input:string) {
+const DisplayNameForm = ({ user }: { user: firebase.User }) => {
+  function sanitize(input: string) {
     return input.replace(/[^0-9a-zA-Z ]/g, '');
   }
   const [displayName, setDisplayName] = React.useState(user.displayName || "Anonymous Crossharer");
@@ -31,7 +32,7 @@ const DisplayNameForm = ({user}: {user: firebase.User}) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (newDisplayName.trim()) {
-      user.updateProfile({displayName: newDisplayName.trim()}).then(() => {
+      user.updateProfile({ displayName: newDisplayName.trim() }).then(() => {
         if (!user.displayName) {
           throw new Error("something went wrong");
         }
@@ -45,16 +46,16 @@ const DisplayNameForm = ({user}: {user: firebase.User}) => {
       <p>Your display name - <i>{displayName}</i> - is displayed next to any comments you make or puzzles you create.</p>
       <label>
         Update display name:
-        <input css={{margin: '0 0.5em',}} type="text" value={newDisplayName} onChange={e => setNewDisplayName(sanitize(e.target.value))}/>
+        <input css={{ margin: '0 0.5em', }} type="text" value={newDisplayName} onChange={e => setNewDisplayName(sanitize(e.target.value))} />
       </label>
       <input type="submit" value="Submit" />
     </form>
   );
 };
 
-export const AccountPage = requiresAuth(({user}: RouteComponentProps & AuthProps) => {
-  const [authoredPuzzles, setAuthoredPuzzles] = React.useState<Array<PuzzleResult>|null>(null);
-  const [plays, setPlays] = React.useState<Array<PlayT>|null>(null);
+export const AccountPage = requiresAuth(({ user }: RouteComponentProps & AuthProps) => {
+  const [authoredPuzzles, setAuthoredPuzzles] = React.useState<Array<PuzzleResult> | null>(null);
+  const [plays, setPlays] = React.useState<Array<PlayT> | null>(null);
   const [error, setError] = React.useState(false);
 
   React.useEffect(() => {
@@ -71,7 +72,7 @@ export const AccountPage = requiresAuth(({user}: RouteComponentProps & AuthProps
         const data = doc.data();
         const validationResult = DBPuzzleV.decode(data);
         if (isRight(validationResult)) {
-          results.push({...puzzleFromDB(validationResult.right), id: doc.id});
+          results.push({ ...puzzleFromDB(validationResult.right), id: doc.id });
         } else {
           console.error(PathReporter.report(validationResult).join(","));
           setError(true);
@@ -115,19 +116,19 @@ export const AccountPage = requiresAuth(({user}: RouteComponentProps & AuthProps
       <div css={{ margin: '1em', }}>
         <h4 css={{ borderBottom: '1px solid var(--black)' }}>Account</h4>
         <p>You're logged in as <b>{user.email}</b>. <button onClick={() => firebase.auth().signOut()}>Log out</button></p>
-        <DisplayNameForm user={user}/>
-        { plays && plays.length ?
+        <DisplayNameForm user={user} />
+        {plays && plays.length ?
           <React.Fragment>
-          <h4 css={{ borderBottom: '1px solid var(--black)' }}>Recent Plays</h4>
-          <ul>{plays.map(PlayListItem)}</ul>
+            <h4 css={{ borderBottom: '1px solid var(--black)' }}>Recent Plays</h4>
+            <ul>{plays.map(PlayListItem)}</ul>
           </React.Fragment>
           :
           ""
         }
-        { authoredPuzzles && authoredPuzzles.length ?
+        {authoredPuzzles && authoredPuzzles.length ?
           <React.Fragment>
-          <h4 css={{ borderBottom: '1px solid var(--black)' }}>Authored Puzzles</h4>
-          <ul>{authoredPuzzles.map(PuzzleListItem)}</ul>
+            <h4 css={{ borderBottom: '1px solid var(--black)' }}>Authored Puzzles</h4>
+            <ul>{authoredPuzzles.map(PuzzleListItem)}</ul>
           </React.Fragment>
           :
           ""

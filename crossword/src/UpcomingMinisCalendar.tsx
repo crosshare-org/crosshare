@@ -8,7 +8,8 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-import { PuzzleResult, DBPuzzleV, puzzleFromDB } from './types';
+import { PuzzleResult, puzzleFromDB } from './types';
+import { DBPuzzleV } from './common/dbtypes';
 
 declare var firebase: typeof import('firebase');
 

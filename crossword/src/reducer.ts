@@ -1,4 +1,5 @@
-import { PosAndDir, Position, Direction, BLOCK, DBPuzzleT } from './types';
+import { PosAndDir, Position, Direction, BLOCK } from './types';
+import { DBPuzzleT } from './common/dbtypes';
 import {
   ViewableGrid, ViewableEntry, CluedGrid,
   gridWithNewChar, gridWithBlockToggled, advancePosition, retreatPosition,

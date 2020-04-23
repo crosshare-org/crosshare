@@ -24,7 +24,8 @@ import { GridView } from './Grid';
 import { Position } from './types';
 import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { valAt, entryAndCrossAtPosition } from './gridBase';
-import { Direction, BLOCK, PuzzleV, DBPuzzleV, puzzleFromDB, PuzzleResult, PlayT, PlayV, puzzleTitle } from './types';
+import { Direction, BLOCK, PuzzleV, puzzleFromDB, PuzzleResult, puzzleTitle } from './types';
+import { DBPuzzleV, PlayT, PlayV } from './common/dbtypes';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction,

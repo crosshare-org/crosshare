@@ -2,7 +2,8 @@ import { navigate } from "@reach/router";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
-import { DBPuzzleV, puzzleFromDB } from './types';
+import { puzzleFromDB } from './types';
+import { DBPuzzleV } from './common/dbtypes';
 
 declare var firebase: typeof import('firebase');
 
