@@ -60,8 +60,9 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
     if (stats) {
       const validationResult = DailyStatsV.decode(JSON.parse(stats));
       if (isRight(validationResult)) {
-        const ttl = 1000 * 60 * 60; // 60min
-        if (now.getTime() < validationResult.right.ua.toDate().getTime() + ttl) {
+        const valid = validationResult.right;
+        const ttl = 1000 * 60 * 30; // 30min
+        if (valid.downloadedAt && now.getTime() < valid.downloadedAt.toDate().getTime() + ttl) {
           console.log("loaded stats from local storage");
           setStats(validationResult.right);
           return;
@@ -83,6 +84,7 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
       if (isRight(validationResult)) {
         console.log("loaded, and caching in local storage");
         setStats(validationResult.right);
+        validationResult.right.downloadedAt = firebase.firestore.Timestamp.now();
         localStorage.setItem("dailystats/" + dateString, JSON.stringify(validationResult.right));
       } else {
         console.error(PathReporter.report(validationResult).join(","));

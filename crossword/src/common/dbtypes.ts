@@ -87,7 +87,7 @@ export const PlayV = t.type({
 });
 export type PlayT = t.TypeOf<typeof PlayV>;
 
-export const PuzzleStatsV = t.type({
+const PuzzleStatsMandatory = t.type({
   /** author id, denormalized for security rules purposes. */
   a: t.string,
   /** updated at */
@@ -105,9 +105,13 @@ export const PuzzleStatsV = t.type({
   /** total update iteration count for each cell */
   uc: t.array(t.number),
 });
+const PuzzleStatsOptional = t.partial({
+  downloadedAt: timestamp,
+});
+export const PuzzleStatsV = t.intersection([PuzzleStatsMandatory, PuzzleStatsOptional]);
 export type PuzzleStatsT = t.TypeOf<typeof PuzzleStatsV>;
 
-export const DailyStatsV = t.type({
+const DailyStatsMandatory = t.type({
   /** updated at */
   ua: timestamp,
   /** total completions */
@@ -119,6 +123,10 @@ export const DailyStatsV = t.type({
   /** completions by hour (as UTC 0-23) */
   h: t.array(t.number),
 });
+const DailyStatsOptional = t.partial({
+  downloadedAt: timestamp,
+});
+export const DailyStatsV = t.intersection([DailyStatsMandatory, DailyStatsOptional]);
 export type DailyStatsT = t.TypeOf<typeof DailyStatsV>;
 
 export const CronStatusV = t.type({

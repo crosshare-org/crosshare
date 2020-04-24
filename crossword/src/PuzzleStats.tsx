@@ -43,8 +43,9 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult } & AuthProps) => {
     if (stats) {
       const validationResult = PuzzleStatsV.decode(JSON.parse(stats));
       if (isRight(validationResult)) {
-        const ttl = 1000 * 60 * 60; // 60min
-        if ((new Date()).getTime() < validationResult.right.ua.toDate().getTime() + ttl) {
+        const valid = validationResult.right;
+        const ttl = 1000 * 60 * 30; // 30min
+        if (valid.downloadedAt && (new Date()).getTime() < valid.downloadedAt.toDate().getTime() + ttl) {
           console.log("loaded stats from local storage");
           setStats(validationResult.right);
           return;
@@ -72,6 +73,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult } & AuthProps) => {
       if (isRight(validationResult)) {
         console.log("loaded, and caching in local storage");
         setStats(validationResult.right);
+        validationResult.right.downloadedAt = firebase.firestore.Timestamp.now();
         localStorage.setItem("stats/" + puzzle.id, JSON.stringify(validationResult.right));
       } else {
         console.error(PathReporter.report(validationResult).join(","));
