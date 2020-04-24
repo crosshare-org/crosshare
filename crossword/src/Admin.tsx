@@ -77,7 +77,6 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
     db.collection("ds").doc(dateString).get().then((value) => {
       if (!value.exists) {
         console.error("No stats for today yet");
-        setError(true);
         return;
       }
       const validationResult = DailyStatsV.decode(value.data());
