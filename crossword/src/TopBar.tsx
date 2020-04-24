@@ -2,14 +2,14 @@
 import { jsx } from '@emotion/core';
 import * as React from 'react';
 
-import { isMobile } from "react-device-detect";
+import { isMobile, isIPad13 } from "react-device-detect";
 import { Link, RouteComponentProps } from "@reach/router";
 
 import { Overlay } from './Overlay';
 import { Logo } from './Icons';
-import {PRIMARY, HEADER_HEIGHT, SMALL_AND_UP} from './style'
+import { PRIMARY, HEADER_HEIGHT, SMALL_AND_UP } from './style'
 
-export const TopBarDropDown = (props: {text: string, icon: React.ReactNode, children: React.ReactNode}) => {
+export const TopBarDropDown = (props: { text: string, icon: React.ReactNode, children: React.ReactNode }) => {
   const [dropped, setDropped] = React.useState(false);
   return (
     <React.Fragment>
@@ -21,7 +21,7 @@ export const TopBarDropDown = (props: {text: string, icon: React.ReactNode, chil
   );
 }
 
-export const TopBarDropDownLink = (props: {shortcutHint?: React.ReactNode, text: string, icon: React.ReactNode, onClick: () => void}) => {
+export const TopBarDropDownLink = (props: { shortcutHint?: React.ReactNode, text: string, icon: React.ReactNode, onClick: () => void }) => {
   return (
     <button title={props.text} css={{
       backgroundColor: 'transparent',
@@ -38,26 +38,26 @@ export const TopBarDropDownLink = (props: {shortcutHint?: React.ReactNode, text:
         backgroundColor: 'var(--top-bar-hover)',
       },
     }} onClick={props.onClick}>
-    <div css={{
-      verticalAlign: 'baseline',
-      fontSize: HEADER_HEIGHT - 10,
-      display: 'inline-block',
-      width: '35%',
-      textAlign: 'right',
-      marginRight: '5%',
-    }}>{props.icon}</div>
-    <div css={{
-      verticalAlign: 'baseline',
-      fontSize: HEADER_HEIGHT - 20,
-      display: 'inline-block',
-      width: '60%',
-      textAlign: 'left',
-    }}>{props.text}{!isMobile && props.shortcutHint ? <span> ( <span css={{fontSize: HEADER_HEIGHT - 10}}>{props.shortcutHint}</span> )</span> : ""}</div>
+      <div css={{
+        verticalAlign: 'baseline',
+        fontSize: HEADER_HEIGHT - 10,
+        display: 'inline-block',
+        width: '35%',
+        textAlign: 'right',
+        marginRight: '5%',
+      }}>{props.icon}</div>
+      <div css={{
+        verticalAlign: 'baseline',
+        fontSize: HEADER_HEIGHT - 20,
+        display: 'inline-block',
+        width: '60%',
+        textAlign: 'left',
+      }}>{props.text}{!isMobile && !isIPad13 && props.shortcutHint ? <span> ( <span css={{ fontSize: HEADER_HEIGHT - 10 }}>{props.shortcutHint}</span> )</span> : ""}</div>
     </button>
   );
 }
 
-export const TopBarLink = (props: {text?: string, hoverText?: string, keepText?: boolean, icon: React.ReactNode, onClick: () => void}) => {
+export const TopBarLink = (props: { text?: string, hoverText?: string, keepText?: boolean, icon: React.ReactNode, onClick: () => void }) => {
   return (
     <button title={props.hoverText || props.text} css={{
       backgroundColor: 'transparent',
@@ -73,21 +73,21 @@ export const TopBarLink = (props: {text?: string, hoverText?: string, keepText?:
         backgroundColor: 'var(--top-bar-hover)',
       },
     }} onClick={props.onClick}>
-    <span css={{
-      verticalAlign: 'baseline',
-      fontSize: HEADER_HEIGHT - 10,
-    }}>{props.icon}</span>
-    { props.text ?
-    <span css={{
-      marginLeft: '5px',
-      verticalAlign: 'middle',
-      display: props.keepText ? 'inline-block' : 'none',
-      fontSize: HEADER_HEIGHT - 20,
-      [SMALL_AND_UP]: {
-        display: 'inline-block',
-      }
-    }}>{props.text}</span>
-    : "" }
+      <span css={{
+        verticalAlign: 'baseline',
+        fontSize: HEADER_HEIGHT - 10,
+      }}>{props.icon}</span>
+      {props.text ?
+        <span css={{
+          marginLeft: '5px',
+          verticalAlign: 'middle',
+          display: props.keepText ? 'inline-block' : 'none',
+          fontSize: HEADER_HEIGHT - 20,
+          [SMALL_AND_UP]: {
+            display: 'inline-block',
+          }
+        }}>{props.text}</span>
+        : ""}
     </button>
   );
 }
@@ -96,41 +96,41 @@ interface TopBarProps extends RouteComponentProps {
   children?: React.ReactNode
 }
 
-export const TopBar = ({children}: TopBarProps) => {
+export const TopBar = ({ children }: TopBarProps) => {
   return (
     <header css={{
       height: HEADER_HEIGHT,
       backgroundColor: PRIMARY,
     }}>
-    <div css={{
-      padding: '0 10px',
-      height: '100%',
-      position: 'relative',
-      display: 'flex',
-      alignItems: 'center',
-      lineHeight: (HEADER_HEIGHT - 4) + 'px',
-    }}>
-    <Link css={{
-      flexGrow: 1,
-      display: 'flex',
-      alignItems: 'center',
-      textDecoration: 'none !important',
-    }} to="/" title="crosshare home">
-    <Logo width={HEADER_HEIGHT - 4} height={HEADER_HEIGHT - 4}/>
-    <span css={{
-      marginLeft: '5px',
-      display: 'none',
-      color: 'var(--text)',
-      fontSize: HEADER_HEIGHT - 10,
-      [SMALL_AND_UP]: {
-        display: 'inline-block',
-      }
-    }}>CROSSHARE</span>
-    </Link>
-    <React.Fragment>
-    {children}
-    </React.Fragment>
-    </div>
+      <div css={{
+        padding: '0 10px',
+        height: '100%',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        lineHeight: (HEADER_HEIGHT - 4) + 'px',
+      }}>
+        <Link css={{
+          flexGrow: 1,
+          display: 'flex',
+          alignItems: 'center',
+          textDecoration: 'none !important',
+        }} to="/" title="crosshare home">
+          <Logo width={HEADER_HEIGHT - 4} height={HEADER_HEIGHT - 4} />
+          <span css={{
+            marginLeft: '5px',
+            display: 'none',
+            color: 'var(--text)',
+            fontSize: HEADER_HEIGHT - 10,
+            [SMALL_AND_UP]: {
+              display: 'inline-block',
+            }
+          }}>CROSSHARE</span>
+        </Link>
+        <React.Fragment>
+          {children}
+        </React.Fragment>
+      </div>
     </header>
   );
 }

@@ -3,7 +3,7 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 import { navigate, RouteComponentProps, WindowLocation } from '@reach/router';
-import { isMobile, isTablet } from "react-device-detect";
+import { isMobile, isTablet, isIPad13 } from "react-device-detect";
 import {
   FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt,
   FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare
@@ -473,8 +473,8 @@ const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps
       highlighted: new Set(puzzle.highlighted),
       highlight: puzzle.highlight,
     }), puzzle.clues),
-    showKeyboard: isMobile,
-    isTablet: isTablet,
+    showKeyboard: isMobile || isIPad13,
+    isTablet: isTablet || isIPad13,
     showExtraKeyLayout: false,
     answers: puzzle.grid,
     verifiedCells: new Set<number>(play ? play.vc : []),

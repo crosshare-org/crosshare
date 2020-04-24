@@ -3,7 +3,7 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 
-import { isMobile, isTablet } from "react-device-detect";
+import { isMobile, isTablet, isIPad13 } from "react-device-detect";
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt,
   FaKeyboard, FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip
@@ -213,8 +213,8 @@ export const Builder = (props: BuilderProps & AuthProps) => {
     title: props.title || null,
     active: { col: 0, row: 0, dir: Direction.Across },
     grid: initialGrid,
-    showKeyboard: isMobile,
-    isTablet: isTablet,
+    showKeyboard: isMobile || isIPad13,
+    isTablet: isTablet || isIPad13,
     showExtraKeyLayout: false,
     isEnteringRebus: false,
     rebusValue: '',
