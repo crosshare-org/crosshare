@@ -87,7 +87,14 @@ export const PlayV = t.type({
 });
 export type PlayT = t.TypeOf<typeof PlayV>;
 
-const PuzzleStatsMandatory = t.type({
+export function downloadTimestamped<T extends t.Mixed>(type: T) {
+  return t.type({
+    downloadedAt: timestamp,
+    data: type,
+  });
+};
+
+export const PuzzleStatsV = t.type({
   /** author id, denormalized for security rules purposes. */
   a: t.string,
   /** updated at */
@@ -105,13 +112,9 @@ const PuzzleStatsMandatory = t.type({
   /** total update iteration count for each cell */
   uc: t.array(t.number),
 });
-const PuzzleStatsOptional = t.partial({
-  downloadedAt: timestamp,
-});
-export const PuzzleStatsV = t.intersection([PuzzleStatsMandatory, PuzzleStatsOptional]);
 export type PuzzleStatsT = t.TypeOf<typeof PuzzleStatsV>;
 
-const DailyStatsMandatory = t.type({
+export const DailyStatsV = t.type({
   /** updated at */
   ua: timestamp,
   /** total completions */
@@ -123,10 +126,6 @@ const DailyStatsMandatory = t.type({
   /** completions by hour (as UTC 0-23) */
   h: t.array(t.number),
 });
-const DailyStatsOptional = t.partial({
-  downloadedAt: timestamp,
-});
-export const DailyStatsV = t.intersection([DailyStatsMandatory, DailyStatsOptional]);
 export type DailyStatsT = t.TypeOf<typeof DailyStatsV>;
 
 export const CronStatusV = t.type({

@@ -5,13 +5,14 @@ import * as React from 'react';
 import { requiresAuth, AuthProps } from './App';
 import { RouteComponentProps } from '@reach/router';
 
+import * as t from "io-ts";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { usePuzzleAndPlay } from './Puzzle';
 import { Page } from './Page';
 import { puzzleTitle, PuzzleResult } from './types';
-import { PuzzleStatsT, PuzzleStatsV } from './common/dbtypes';
+import { downloadTimestamped, PuzzleStatsT, PuzzleStatsV } from './common/dbtypes';
 import { timeString } from './utils';
 
 declare var firebase: typeof import('firebase');
@@ -34,6 +35,9 @@ export const PuzzleStats = requiresAuth((props: PuzzleStatsProps) => {
   return <StatsLoader puzzle={puzzle} {...props} />
 });
 
+const TimestampedStatsV = downloadTimestamped(PuzzleStatsV);
+type TimestampedStatsT = t.TypeOf<typeof TimestampedStatsV>;
+
 const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult } & AuthProps) => {
   const [stats, setStats] = React.useState<PuzzleStatsT | null>(null);
   const [error, setError] = React.useState<string | null>(null);
@@ -41,13 +45,13 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult } & AuthProps) => {
   React.useEffect(() => {
     const stats = localStorage.getItem("stats/" + puzzle.id);
     if (stats) {
-      const validationResult = PuzzleStatsV.decode(JSON.parse(stats));
+      const validationResult = TimestampedStatsV.decode(JSON.parse(stats));
       if (isRight(validationResult)) {
         const valid = validationResult.right;
         const ttl = 1000 * 60 * 30; // 30min
-        if (valid.downloadedAt && (new Date()).getTime() < valid.downloadedAt.toDate().getTime() + ttl) {
+        if ((new Date()).getTime() < valid.downloadedAt.toDate().getTime() + ttl) {
           console.log("loaded stats from local storage");
-          setStats(validationResult.right);
+          setStats(valid.data);
           return;
         } else {
           console.log("stats in local storage have expired");
@@ -73,8 +77,11 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult } & AuthProps) => {
       if (isRight(validationResult)) {
         console.log("loaded, and caching in local storage");
         setStats(validationResult.right);
-        validationResult.right.downloadedAt = firebase.firestore.Timestamp.now();
-        localStorage.setItem("stats/" + puzzle.id, JSON.stringify(validationResult.right));
+        const forLS: TimestampedStatsT = {
+          downloadedAt: firebase.firestore.Timestamp.now(),
+          data: validationResult.right
+        };
+        localStorage.setItem("stats/" + puzzle.id, JSON.stringify(forLS));
       } else {
         console.error(PathReporter.report(validationResult).join(","));
         setError("Couldn't decode stats");

@@ -3,6 +3,7 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 
+import * as t from "io-ts";
 import { navigate, RouteComponentProps } from "@reach/router";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
@@ -10,7 +11,7 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
 import { PuzzleResult, puzzleFromDB } from './types';
-import { DailyStatsT, DailyStatsV, DBPuzzleV } from './common/dbtypes';
+import { downloadTimestamped, DailyStatsT, DailyStatsV, DBPuzzleV } from './common/dbtypes';
 import { PuzzleListItem } from './PuzzleList';
 import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
 
@@ -23,6 +24,9 @@ const LoadableCalendar = (props: UpcomingMinisCalendarProps) => (
     <UpcomingMinisCalendar {...props} />
   </React.Suspense>
 );
+
+const TimestampedStatsV = downloadTimestamped(DailyStatsV);
+type TimestampedStatsT = t.TypeOf<typeof TimestampedStatsV>;
 
 export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
   const [unmoderated, setUnmoderated] = React.useState<Array<PuzzleResult> | null>(null);
@@ -58,13 +62,13 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
     const dateString = now.getUTCFullYear() + "-" + now.getUTCMonth() + "-" + now.getUTCDate()
     const stats = localStorage.getItem("dailystats/" + dateString);
     if (stats) {
-      const validationResult = DailyStatsV.decode(JSON.parse(stats));
+      const validationResult = TimestampedStatsV.decode(JSON.parse(stats));
       if (isRight(validationResult)) {
         const valid = validationResult.right;
         const ttl = 1000 * 60 * 30; // 30min
-        if (valid.downloadedAt && now.getTime() < valid.downloadedAt.toDate().getTime() + ttl) {
+        if (now.getTime() < valid.downloadedAt.toDate().getTime() + ttl) {
           console.log("loaded stats from local storage");
-          setStats(validationResult.right);
+          setStats(valid.data);
           return;
         } else {
           console.log("stats in local storage have expired");
@@ -84,8 +88,11 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
       if (isRight(validationResult)) {
         console.log("loaded, and caching in local storage");
         setStats(validationResult.right);
-        validationResult.right.downloadedAt = firebase.firestore.Timestamp.now();
-        localStorage.setItem("dailystats/" + dateString, JSON.stringify(validationResult.right));
+        const forLS: TimestampedStatsT = {
+          downloadedAt: firebase.firestore.Timestamp.now(),
+          data: validationResult.right
+        };
+        localStorage.setItem("dailystats/" + dateString, JSON.stringify(forLS));
       } else {
         console.error(PathReporter.report(validationResult).join(","));
         setError(true);
