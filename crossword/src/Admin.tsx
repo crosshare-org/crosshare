@@ -60,7 +60,7 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
 
     const now = new Date();
     const dateString = getDateString(now)
-    const stats = localStorage.getItem("dailystats/" + dateString);
+    const stats = sessionStorage.getItem("dailystats/" + dateString);
     if (stats) {
       const validationResult = TimestampedStatsV.decode(JSON.parse(stats));
       if (isRight(validationResult)) {
@@ -92,7 +92,7 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
           downloadedAt: firebase.firestore.Timestamp.now(),
           data: validationResult.right
         };
-        localStorage.setItem("dailystats/" + dateString, JSON.stringify(forLS));
+        sessionStorage.setItem("dailystats/" + dateString, JSON.stringify(forLS));
       } else {
         console.error(PathReporter.report(validationResult).join(","));
         setError(true);

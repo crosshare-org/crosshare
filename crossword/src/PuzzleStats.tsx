@@ -43,7 +43,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult } & AuthProps) => {
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    const stats = localStorage.getItem("stats/" + puzzle.id);
+    const stats = sessionStorage.getItem("stats/" + puzzle.id);
     if (stats) {
       const validationResult = TimestampedStatsV.decode(JSON.parse(stats));
       if (isRight(validationResult)) {
@@ -81,7 +81,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult } & AuthProps) => {
           downloadedAt: firebase.firestore.Timestamp.now(),
           data: validationResult.right
         };
-        localStorage.setItem("stats/" + puzzle.id, JSON.stringify(forLS));
+        sessionStorage.setItem("stats/" + puzzle.id, JSON.stringify(forLS));
       } else {
         console.error(PathReporter.report(validationResult).join(","));
         setError("Couldn't decode stats");
