@@ -94,6 +94,10 @@ export function downloadTimestamped<T extends t.Mixed>(type: T) {
   });
 };
 
+export function getDateString(pd: Date) {
+  return pd.getUTCFullYear() + "-" + pd.getUTCMonth() + "-" + pd.getUTCDate();
+}
+
 export const PuzzleStatsV = t.type({
   /** author id, denormalized for security rules purposes. */
   a: t.string,

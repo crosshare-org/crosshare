@@ -7,7 +7,7 @@ import { isRight } from "fp-ts/lib/Either";
 
 import {
   PlayV, PuzzleStatsT, PuzzleStatsV, DailyStatsV, DailyStatsT,
-  DBPuzzleV, CronStatusV, CronStatusT
+  DBPuzzleV, CronStatusV, CronStatusT, getDateString,
 } from './common/dbtypes';
 
 async function runAnalytics(startTimestamp: admin.firestore.Timestamp, endTimestamp: admin.firestore.Timestamp) {
@@ -95,7 +95,7 @@ async function runAnalytics(startTimestamp: admin.firestore.Timestamp, endTimest
 
     // Next update daily stats for the relevant date
     const pd = play.ua.toDate();
-    const dateString = pd.getUTCFullYear() + "-" + pd.getUTCMonth() + "-" + pd.getUTCDate()
+    const dateString = getDateString(pd);
     let dailyStats = dailyStatsMap.get(dateString);
     if (!dailyStats) {
       // get daily stats from db or create a new stats object

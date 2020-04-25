@@ -11,7 +11,7 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
 import { PuzzleResult, puzzleFromDB } from './types';
-import { downloadTimestamped, DailyStatsT, DailyStatsV, DBPuzzleV } from './common/dbtypes';
+import { downloadTimestamped, DailyStatsT, DailyStatsV, DBPuzzleV, getDateString } from './common/dbtypes';
 import { PuzzleListItem } from './PuzzleList';
 import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
 
@@ -59,7 +59,7 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
     });
 
     const now = new Date();
-    const dateString = now.getUTCFullYear() + "-" + now.getUTCMonth() + "-" + now.getUTCDate()
+    const dateString = getDateString(now)
     const stats = localStorage.getItem("dailystats/" + dateString);
     if (stats) {
       const validationResult = TimestampedStatsV.decode(JSON.parse(stats));
@@ -103,9 +103,9 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
     });
   }, [error]);
 
-  const goToPuzzle = React.useCallback((_date: Date, puzzle: PuzzleResult | null) => {
+  const goToPuzzle = React.useCallback((_date: Date, puzzle: string | null) => {
     if (puzzle) {
-      navigate("/crosswords/" + puzzle.id, { state: puzzle });
+      navigate("/crosswords/" + puzzle);
     }
   }, []);
 

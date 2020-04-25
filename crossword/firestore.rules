@@ -52,5 +52,9 @@ service cloud.firestore {
     match /ds/{dateString} {
       allow read: if isAdmin();
     }
+    match /categories/{category} {
+      allow get: if true;
+      allow write: if isAdmin();
+    }
   }
 }

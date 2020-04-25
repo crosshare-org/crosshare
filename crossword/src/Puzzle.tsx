@@ -25,7 +25,7 @@ import { Position } from './types';
 import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { valAt, entryAndCrossAtPosition } from './gridBase';
 import { Direction, BLOCK, PuzzleV, puzzleFromDB, PuzzleResult, puzzleTitle } from './types';
-import { DBPuzzleV, PlayT, PlayV } from './common/dbtypes';
+import { DBPuzzleV, PlayT, PlayV, getDateString } from './common/dbtypes';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction,
@@ -289,6 +289,15 @@ const ModeratingOverlay = React.memo(({ dispatch, puzzle }: { puzzle: PuzzleResu
     if (!date) {
       throw new Error("shouldn't be able to schedule w/o date");
     }
+    const update: { [k: string]: string | firebase.firestore.FieldValue } = {
+      [getDateString(date)]: puzzle.id,
+    }
+    if (puzzle.publishTime) {
+      update[getDateString(puzzle.publishTime.toDate())] = firebase.firestore.FieldValue.delete();
+    }
+    db.collection('categories').doc('dailymini').update(update).then(() => {
+      console.log("Updated categories page");
+    })
     db.collection('c').doc(puzzle.id).update({
       m: true,
       p: firebase.firestore.Timestamp.fromDate(date),
