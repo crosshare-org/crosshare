@@ -214,7 +214,15 @@ const Construct = (_: RouteComponentProps) => {
 
 const PageViewTracker = ({ location }: { location: WindowLocation }) => {
   React.useEffect(() => {
-    firebase.analytics().logEvent("screen_view", { app_name: 'react', screen_name: location.pathname });
+    try {
+      firebase.analytics().logEvent("screen_view", { app_name: 'react', screen_name: location.pathname });
+    } catch (e) {
+      if (e instanceof TypeError) {
+        console.log("Got TypeError on analytics", e);
+      } else {
+        throw e;
+      }
+    }
   }, [location]);
   return <React.Fragment></React.Fragment>;
 }
