@@ -10,7 +10,7 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
-import { PuzzleResult, puzzleFromDB } from './types';
+import { PuzzleResult, TimestampedPuzzleT, puzzleFromDB } from './types';
 import { downloadTimestamped, DailyStatsT, DailyStatsV, DBPuzzleV, getDateString } from './common/dbtypes';
 import { PuzzleListItem } from './PuzzleList';
 import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
@@ -46,7 +46,10 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
         const data = doc.data();
         const validationResult = DBPuzzleV.decode(data);
         if (isRight(validationResult)) {
-          results.push({ ...puzzleFromDB(validationResult.right), id: doc.id });
+          const puzzle = puzzleFromDB(validationResult.right);
+          const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: puzzle }
+          sessionStorage.setItem('c/' + doc.id, JSON.stringify(forStorage));
+          results.push({ ...puzzle, id: doc.id });
         } else {
           console.error(PathReporter.report(validationResult).join(","));
           setError(true);
@@ -60,7 +63,7 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
 
     const now = new Date();
     const dateString = getDateString(now)
-    const stats = sessionStorage.getItem("dailystats/" + dateString);
+    const stats = sessionStorage.getItem("ds/" + dateString);
     if (stats) {
       const validationResult = TimestampedStatsV.decode(JSON.parse(stats));
       if (isRight(validationResult)) {
@@ -92,7 +95,7 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
           downloadedAt: firebase.firestore.Timestamp.now(),
           data: validationResult.right
         };
-        sessionStorage.setItem("dailystats/" + dateString, JSON.stringify(forLS));
+        sessionStorage.setItem("ds/" + dateString, JSON.stringify(forLS));
       } else {
         console.error(PathReporter.report(validationResult).join(","));
         setError(true);

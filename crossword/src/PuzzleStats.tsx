@@ -22,7 +22,7 @@ interface PuzzleStatsProps extends RouteComponentProps, AuthProps {
 }
 
 export const PuzzleStats = requiresAuth((props: PuzzleStatsProps) => {
-  const [puzzle, error] = usePuzzleAndPlay(false, props.crosswordId, props.user.uid, props.location)
+  const [puzzle, error] = usePuzzleAndPlay(false, props.crosswordId, props.user.uid);
   if (error) {
     return <Page title={null}>Something went wrong while loading puzzle '{props.crosswordId}': {error}</Page>;
   }
@@ -43,7 +43,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult } & AuthProps) => {
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    const stats = sessionStorage.getItem("stats/" + puzzle.id);
+    const stats = sessionStorage.getItem("s/" + puzzle.id);
     if (stats) {
       const validationResult = TimestampedStatsV.decode(JSON.parse(stats));
       if (isRight(validationResult)) {
@@ -81,7 +81,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult } & AuthProps) => {
           downloadedAt: firebase.firestore.Timestamp.now(),
           data: validationResult.right
         };
-        sessionStorage.setItem("stats/" + puzzle.id, JSON.stringify(forLS));
+        sessionStorage.setItem("s/" + puzzle.id, JSON.stringify(forLS));
       } else {
         console.error(PathReporter.report(validationResult).join(","));
         setError("Couldn't decode stats");

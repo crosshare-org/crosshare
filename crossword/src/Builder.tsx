@@ -24,7 +24,7 @@ import { requiresAdmin, AuthProps } from './App';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
 import { fromCells, getClueMap } from './viewableGrid';
-import { Direction, PuzzleT, puzzleFromDB } from './types';
+import { TimestampedPuzzleT, Direction, PuzzleT, puzzleFromDB } from './types';
 import {
   Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
   KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
@@ -414,14 +414,17 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
     if (state.toPublish === null || publishInProgress.current) {
       return;
     }
-    const puzzle = state.toPublish;
+    const dbpuzzle = state.toPublish;
     publishInProgress.current = true;
     console.log("Uploading");
-    console.log(puzzle);
+    console.log(dbpuzzle);
     const db = firebase.firestore();
-    db.collection("c").add(puzzle).then((ref) => {
+    db.collection("c").add(dbpuzzle).then((ref) => {
       console.log("Uploaded", ref.id);
-      navigate("/crosswords/" + ref.id, { state: { id: ref.id, ...puzzleFromDB(puzzle) } });
+      const puzzle = puzzleFromDB(dbpuzzle);
+      const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: puzzle }
+      sessionStorage.setItem('c/' + ref.id, JSON.stringify(forStorage));
+      navigate("/crosswords/" + ref.id);
     });
   }, [state.toPublish]);
 

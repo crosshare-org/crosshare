@@ -2,7 +2,7 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
-import { navigate, RouteComponentProps, WindowLocation } from '@reach/router';
+import { navigate, RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet, isIPad13 } from "react-device-detect";
 import {
   FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt,
@@ -24,7 +24,7 @@ import { GridView } from './Grid';
 import { Position } from './types';
 import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { valAt, entryAndCrossAtPosition } from './gridBase';
-import { Direction, BLOCK, PuzzleV, puzzleFromDB, PuzzleResult, puzzleTitle } from './types';
+import { Direction, BLOCK, TimestampedPuzzleV, TimestampedPuzzleT, puzzleFromDB, PuzzleResult, puzzleTitle } from './types';
 import { DBPuzzleV, PlayT, PlayV, getDateString } from './common/dbtypes';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
@@ -46,7 +46,7 @@ interface PuzzleLoaderProps extends RouteComponentProps {
   crosswordId?: string
 }
 
-export const usePuzzleAndPlay = (loadPlay: boolean, crosswordId: string | undefined, userId: string, location: WindowLocation | undefined): [PuzzleResult | null, string | null, PlayT | null, boolean] => {
+export const usePuzzleAndPlay = (loadPlay: boolean, crosswordId: string | undefined, userId: string): [PuzzleResult | null, string | null, PlayT | null, boolean] => {
   const [puzzle, setPuzzle] = React.useState<PuzzleResult | null>(null);
   const [play, setPlay] = React.useState<PlayT | null>(null);
   const [error, setError] = React.useState<string | null>(null);
@@ -66,11 +66,12 @@ export const usePuzzleAndPlay = (loadPlay: boolean, crosswordId: string | undefi
     let preLoaded = false;
     const db = firebase.firestore();
 
-    if (location ?.state) {
-      const validationResult = PuzzleV.decode(location.state);
+    const cached = sessionStorage.getItem("c/" + crosswordId);
+    if (cached) {
+      const validationResult = TimestampedPuzzleV.decode(JSON.parse(cached));
       if (isRight(validationResult)) {
         console.log("puzzle pre-loaded");
-        setPuzzle({ ...validationResult.right, id: crosswordId });
+        setPuzzle({ ...validationResult.right.data, id: crosswordId });
         preLoaded = true;
       } else {
         console.log("failed to pre-load");
@@ -86,7 +87,10 @@ export const usePuzzleAndPlay = (loadPlay: boolean, crosswordId: string | undefi
         } else {
           const validationResult = DBPuzzleV.decode(data);
           if (isRight(validationResult)) {
-            setPuzzle({ ...puzzleFromDB(validationResult.right), id: crosswordId });
+            const puzzle = puzzleFromDB(validationResult.right);
+            setPuzzle({ ...puzzle, id: crosswordId });
+            const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: puzzle }
+            sessionStorage.setItem('c/' + crosswordId, JSON.stringify(forStorage));
           } else {
             console.error(PathReporter.report(validationResult).join(","));
             setError("Malformed puzzle data");
@@ -136,13 +140,13 @@ export const usePuzzleAndPlay = (loadPlay: boolean, crosswordId: string | undefi
         });
       }
     }
-  }, [crosswordId, userId, location, loadPlay]);
+  }, [crosswordId, userId, loadPlay]);
 
   return [puzzle, error, play, isLoadingPlay];
 }
 
 export const PuzzleLoader = requiresAuth(({ crosswordId, ...props }: PuzzleLoaderProps & AuthProps) => {
-  const [puzzle, error, play, isLoadingPlay] = usePuzzleAndPlay(true, crosswordId, props.user.uid, props.location);
+  const [puzzle, error, play, isLoadingPlay] = usePuzzleAndPlay(true, crosswordId, props.user.uid);
 
   if (error) {
     return <Page title={null}>Something went wrong while loading puzzle '{crosswordId}': {error}</Page>;
@@ -304,7 +308,9 @@ const ModeratingOverlay = React.memo(({ dispatch, puzzle }: { puzzle: PuzzleResu
       c: 'dailymini',
     }).then(() => {
       console.log("Scheduled mini");
-      navigate("", { state: undefined });
+      // Dump it!
+      sessionStorage.removeItem('c/' + puzzle.id);
+      navigate('');
     })
   }
   const isMini = puzzle.size.rows === 5 && puzzle.size.cols === 5
@@ -771,7 +777,7 @@ const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps
         }
         {
           props.isAdmin || props.user.uid === puzzle.authorId ?
-            <TopBarDropDownLink icon={<IoMdStats />} text="Stats" onClick={() => navigate('/crosswords/' + puzzle.id + '/stats', { state: puzzle })} />
+            <TopBarDropDownLink icon={<IoMdStats />} text="Stats" onClick={() => navigate('/crosswords/' + puzzle.id + '/stats')} />
             : ""
         }
         <TopBarDropDownLink icon={<FaUser />} text="Account" onClick={() => navigate('/account')} />

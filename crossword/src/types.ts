@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 import type { WordDBT } from './WordDB';
 
-import { timestamp, DBPuzzleT } from './common/dbtypes';
+import { downloadTimestamped, timestamp, DBPuzzleT } from './common/dbtypes';
 
 export const BLOCK = ".";
 
@@ -41,7 +41,7 @@ export interface AutofillMessage extends WorkerMessage {
   height: number
 }
 export function isAutofillMessage(msg: WorkerMessage): msg is AutofillMessage {
-  return msg.type === 'autofill'
+  return msg.type === 'autofill';
 }
 
 export interface Position {
@@ -98,6 +98,9 @@ export const PuzzleV = t.type({
 
 export type PuzzleT = t.TypeOf<typeof PuzzleV>;
 export type PuzzleResult = PuzzleT & { id: string };
+
+export const TimestampedPuzzleV = downloadTimestamped(PuzzleV);
+export type TimestampedPuzzleT = t.TypeOf<typeof TimestampedPuzzleV>;
 
 export function puzzleTitle(puzzle: PuzzleT) {
   let title = puzzle.title;

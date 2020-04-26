@@ -2,7 +2,7 @@ import { navigate } from "@reach/router";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
-import { puzzleFromDB } from './types';
+import { puzzleFromDB, TimestampedPuzzleT } from './types';
 import { DBPuzzleV } from './common/dbtypes';
 
 declare var firebase: typeof import('firebase');
@@ -28,7 +28,10 @@ export function navToLatestMini(priorTo: firebase.firestore.Timestamp, onError: 
         const data = doc.data();
         const validationResult = DBPuzzleV.decode(data);
         if (isRight(validationResult)) {
-          navigate("/crosswords/" + doc.id, { state: { ...puzzleFromDB(validationResult.right), id: doc.id } });
+          const puzzle = puzzleFromDB(validationResult.right);
+          const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: puzzle }
+          sessionStorage.setItem('c/' + doc.id, JSON.stringify(forStorage));
+          navigate("/crosswords/" + doc.id);
         } else {
           console.error(PathReporter.report(validationResult).join(","));
           onError();
