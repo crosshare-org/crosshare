@@ -105,7 +105,9 @@ export type TimestampedPuzzleT = t.TypeOf<typeof TimestampedPuzzleV>;
 export function puzzleTitle(puzzle: PuzzleT) {
   let title = puzzle.title;
   if (puzzle.category === 'dailymini' && puzzle.publishTime) {
-    title = "Daily Mini for " + puzzle.publishTime.toDate().toLocaleDateString();
+    const d = puzzle.publishTime.toDate();
+    const ds = (d.getUTCMonth() + 1) + "/" + d.getUTCDate() + "/" + d.getUTCFullYear()
+    title = "Daily Mini for " + ds;
   }
   return title;
 }
