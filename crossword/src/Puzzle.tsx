@@ -310,7 +310,7 @@ const ModeratingOverlay = React.memo(({ dispatch, puzzle }: { puzzle: PuzzleResu
       console.log("Scheduled mini");
       // Dump it!
       sessionStorage.removeItem('c/' + puzzle.id);
-      navigate('');
+      window.location.reload();
     })
   }
   const isMini = puzzle.size.rows === 5 && puzzle.size.cols === 5
