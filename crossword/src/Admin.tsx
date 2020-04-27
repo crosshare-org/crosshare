@@ -138,6 +138,12 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
             <h4 css={{ borderBottom: '1px solid var(--black)' }}>Today's Stats</h4>
             <div>Total completions: {stats.n}</div>
             <div>Users w/ completions: {stats.u.length}</div>
+            <h5>Top Puzzles</h5>
+            <ul>
+              {Object.entries(stats.c).map(([crosswordId, count]) => {
+                return <li key={crosswordId}><Link to={"/crosswords/" + crosswordId}>{crosswordId}</Link>: {count}</li>
+              })}
+            </ul>
           </React.Fragment>
           : ""}
         <h4 css={{ borderBottom: '1px solid var(--black)' }}>Upcoming Minis</h4>
