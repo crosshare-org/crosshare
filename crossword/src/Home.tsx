@@ -3,7 +3,7 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 
 import { navigate, RouteComponentProps } from "@reach/router";
-import { FaUser } from 'react-icons/fa';
+import { FaUser, FaUserLock } from 'react-icons/fa';
 
 import { AuthContext } from './App';
 import { TopBarLink } from './TopBar';
@@ -14,10 +14,15 @@ import { buttonAsLink } from './style';
 declare var firebase: typeof import('firebase');
 
 export const Home = (_: RouteComponentProps) => {
-  const { user } = React.useContext(AuthContext);
-  let topbar = null;
+  const { user, isAdmin } = React.useContext(AuthContext);
+  let topbar: React.ReactNode = null;
   if (user) {
-    topbar = <TopBarLink icon={<FaUser />} text="Account" onClick={() => navigate('/account')} />
+    topbar = <React.Fragment>
+      {isAdmin ?
+        <TopBarLink icon={<FaUserLock />} text="Admin" onClick={() => navigate('/admin')} />
+        : ''}
+      <TopBarLink icon={<FaUser />} text="Account" onClick={() => navigate('/account')} />
+    </React.Fragment>
   }
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(false);

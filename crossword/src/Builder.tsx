@@ -6,7 +6,7 @@ import * as React from 'react';
 import { isMobile, isTablet, isIPad13 } from "react-device-detect";
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt,
-  FaKeyboard, FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip
+  FaKeyboard, FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip, FaUserLock
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
@@ -510,6 +510,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
             <React.Fragment>
               <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
               <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
+              <TopBarDropDownLink icon={<FaUserLock />} text="Admin" onClick={() => navigate('/admin')} />
             </React.Fragment>
             :
             ""

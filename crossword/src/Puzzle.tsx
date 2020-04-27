@@ -6,7 +6,7 @@ import { navigate, RouteComponentProps } from '@reach/router';
 import { isMobile, isTablet, isIPad13 } from "react-device-detect";
 import {
   FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt,
-  FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare
+  FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock,
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
@@ -781,6 +781,7 @@ const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps
               <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
               <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
               <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: "TOGGLEMODERATING" })} />
+              <TopBarDropDownLink icon={<FaUserLock />} text="Admin" onClick={() => navigate('/admin')} />
             </React.Fragment>
             : ""
         }
