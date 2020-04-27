@@ -233,6 +233,10 @@ const ClueListItem = React.memo(function ClueListItem({ isActive, isCross, ...pr
   );
 });
 
+const Emoji = (props: { symbol: React.ReactNode }) => (
+  <span role='img' aria-label='emoji'>{props.symbol}</span>
+);
+
 interface PauseBeginProps {
   title: string,
   authorName: string,
@@ -340,7 +344,7 @@ const ModeratingOverlay = React.memo(({ dispatch, puzzle }: { puzzle: PuzzleResu
 const KeepTryingOverlay = ({ dispatch }: { dispatch: React.Dispatch<PuzzleAction> }) => {
   return (
     <Overlay showingKeyboard={false} closeCallback={() => dispatch({ type: "DISMISSKEEPTRYING" })}>
-      <h4>Almost there!</h4>
+      <h4><Emoji symbol='🤔' /> Almost there!</h4>
       <p>You've completed the puzzle, but there are one or more mistakes.</p>
       <button css={{ width: '100%' }} onClick={() => dispatch({ type: "DISMISSKEEPTRYING" })}>Keep Trying</button>
     </Overlay>
@@ -376,7 +380,7 @@ const SuccessOverlay = (props: { puzzle: PuzzleResult, isMuted: boolean, solveTi
   return (
     <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({ type: "DISMISSSUCCESS" })}>
       <div css={{ textAlign: 'center' }}>
-        <h4>Congratulations!</h4>
+        <h4><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
         <p>You solved the puzzle in <b>{timeString(props.solveTime)}</b></p>
         {props.puzzle.category === 'dailymini' ?
           <div>
@@ -568,9 +572,9 @@ const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps
         });
     }
   }, [muted, audioContext, initAudioContext]);
-  const [playedAudio, setPlayedAudio] = React.useState(false);
-  if (state.success && !playedAudio) {
-    setPlayedAudio(true);
+  const [ranSuccessEffects, setRanSuccessEffects] = React.useState(state.success);
+  if (state.success && !ranSuccessEffects) {
+    setRanSuccessEffects(true);
     if (!muted && playSuccess.current) {
       playSuccess.current();
     }
