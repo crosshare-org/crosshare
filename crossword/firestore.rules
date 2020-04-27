@@ -36,6 +36,14 @@ service cloud.firestore {
         && request.resource.data.p == null
         && request.resource.data.m == false;
     }
+    match /uc/{userId} {
+      allow read: if request.auth.uid == userId;
+      allow write: if request.auth.uid == userId;
+    }
+    match /up/{userId} {
+      allow read: if request.auth.uid == userId;
+      allow write: if request.auth.uid == userId;
+    }
     match /p/{playId} {
       allow read: if request.auth.uid != null
         && (resource == null || request.auth.uid == resource.data.u);
@@ -44,11 +52,9 @@ service cloud.firestore {
         && request.auth.uid == request.resource.data.u
         && playId == (request.resource.data.c + '-' + request.resource.data.u);
     }
-
     match /s/{crosswordId} {
       allow read: if isAdmin() || request.auth.uid == resource.data.a;
     }
-
     match /ds/{dateString} {
       allow read: if isAdmin();
     }

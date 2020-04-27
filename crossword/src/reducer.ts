@@ -8,6 +8,8 @@ import {
 } from './viewableGrid';
 import { cellIndex, valAt, entryAtPosition, entryWord, gridWithEntrySet } from './gridBase';
 
+declare var firebase: typeof import('firebase');
+
 interface GridInterfaceState {
   type: string,
   active: PosAndDir,
@@ -453,6 +455,7 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
       }
     });
     const puzzle: DBPuzzleT = {
+      ca: firebase.firestore.Timestamp.now(),
       t: state.title || "Anonymous",
       a: state.authorId,
       n: state.authorName,

@@ -4,15 +4,14 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 
 import * as t from "io-ts";
-import { navigate, RouteComponentProps } from "@reach/router";
+import { navigate, Link, RouteComponentProps } from "@reach/router";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
-import { PuzzleResult, TimestampedPuzzleT, puzzleFromDB } from './types';
+import { PuzzleResult, TimestampedPuzzleT, puzzleFromDB, puzzleTitle } from './types';
 import { downloadTimestamped, DailyStatsT, DailyStatsV, DBPuzzleV, getDateString } from './common/dbtypes';
-import { PuzzleListItem } from './PuzzleList';
 import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
 
 const UpcomingMinisCalendar = React.lazy(() => import(/* webpackChunkName: "minisCal" */ './UpcomingMinisCalendar'));
@@ -24,6 +23,12 @@ const LoadableCalendar = (props: UpcomingMinisCalendarProps) => (
     <UpcomingMinisCalendar {...props} />
   </React.Suspense>
 );
+
+const PuzzleListItem = (props: PuzzleResult) => {
+  return (
+    <li key={props.id}><Link to={"/crosswords/" + props.id}>{puzzleTitle(props)}</Link> by {props.authorName}</li>
+  );
+}
 
 const TimestampedStatsV = downloadTimestamped(DailyStatsV);
 type TimestampedStatsT = t.TypeOf<typeof TimestampedStatsV>;

@@ -6,6 +6,8 @@ import { timestamp } from '../timestamp';
 export { timestamp } from '../timestamp';
 
 const DBPuzzleMandatoryV = t.type({
+  /** created at */
+  ca: timestamp,
   /** author's user id */
   a: t.string,
   /** author's display name */
@@ -42,26 +44,11 @@ const DBPuzzleOptionalV = t.partial({
 export const DBPuzzleV = t.intersection([DBPuzzleMandatoryV, DBPuzzleOptionalV]);
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
 
-// from https://github.com/gcanti/io-ts/blob/master/test/helpers.ts
-function withDefault<T extends t.Mixed>(
-  type: T,
-  defaultValue: t.TypeOf<T>
-): t.Type<t.TypeOf<T>, t.TypeOf<T>, unknown> {
-  return new t.Type(
-    `withDefault(${type.name}, ${JSON.stringify(defaultValue)})`,
-    type.is,
-    (v) => type.decode(v != null ? v : defaultValue), // tslint:disable-line
-    type.encode
-  )
-}
-
 export const PlayV = t.type({
   /** crossword id */
   c: t.string,
   /** user id */
   u: t.string,
-  /** crossword title TODO remove this if we cache it w/ recent plays on user doc */
-  n: withDefault(t.string, "Crossword"),
   /** updated at */
   ua: timestamp,
   /** filled in grid */
@@ -136,3 +123,17 @@ export const CronStatusV = t.type({
   ranAt: timestamp,
 });
 export type CronStatusT = t.TypeOf<typeof CronStatusV>;
+
+/** created at, title */
+const AuthoredPuzzleV = t.tuple([timestamp, t.string])
+export type AuthoredPuzzleT = t.TypeOf<typeof AuthoredPuzzleV>;
+
+/** keys are puzzle ids */
+export const AuthoredPuzzlesV = t.record(t.string, AuthoredPuzzleV);
+
+/** updated at, play time in fractional seconds, did cheat?, completed?, title */
+const UserPlayV = t.tuple([timestamp, t.number, t.boolean, t.boolean, t.string])
+export type UserPlayT = t.TypeOf<typeof UserPlayV>;
+
+/** keys are puzzle ids */
+export const UserPlaysV = t.record(t.string, UserPlayV);

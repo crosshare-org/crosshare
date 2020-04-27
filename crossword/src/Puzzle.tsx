@@ -25,7 +25,7 @@ import { Position } from './types';
 import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { valAt, entryAndCrossAtPosition } from './gridBase';
 import { Direction, BLOCK, TimestampedPuzzleV, TimestampedPuzzleT, puzzleFromDB, PuzzleResult, puzzleTitle } from './types';
-import { DBPuzzleV, PlayT, PlayV, getDateString } from './common/dbtypes';
+import { DBPuzzleV, PlayT, PlayV, getDateString, UserPlayT } from './common/dbtypes';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction,
@@ -592,11 +592,15 @@ const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps
   }
 
   const updatePlay = React.useCallback((sendToDB: boolean) => {
+    const updatedAt = firebase.firestore.Timestamp.now();
+    const playTime = (state.currentTimeWindowStart === 0) ?
+      state.bankedSeconds :
+      state.bankedSeconds + ((new Date()).getTime() - state.currentTimeWindowStart) / 1000;
+
     const play: PlayT = {
       c: puzzle.id,
       u: props.user.uid,
-      n: title,
-      ua: firebase.firestore.Timestamp.now(),
+      ua: updatedAt,
       g: state.grid.cells,
       ct: state.cellsUpdatedAt,
       uc: state.cellsIterationCount,
@@ -604,7 +608,7 @@ const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps
       wc: Array.from(state.wrongCells),
       we: Array.from(state.cellsEverMarkedWrong),
       rc: Array.from(state.revealedCells),
-      t: (state.currentTimeWindowStart === 0) ? state.bankedSeconds : state.bankedSeconds + ((new Date()).getTime() - state.currentTimeWindowStart) / 1000,
+      t: playTime,
       ch: state.didCheat,
       f: state.success,
     }
@@ -615,6 +619,11 @@ const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps
       db.collection("p").doc(puzzle.id + "-" + props.user.uid).set(play).then(() => {
         console.log("Pushed update");
       });
+      /* TODO don't add these for anonymous users */
+      const userPlay: UserPlayT = [updatedAt, playTime, state.didCheat, state.success, title];
+      db.collection("up").doc(props.user.uid).set({
+        [puzzle.id]: userPlay
+      }, { merge: true });
     }
   }, [puzzle.id, props.user.uid, state.cellsEverMarkedWrong,
   state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,

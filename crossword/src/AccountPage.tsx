@@ -7,18 +7,22 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { requiresAuth, AuthProps } from './App';
-import { PuzzleResult, puzzleFromDB } from './types';
-import { DBPuzzleV, PlayT, PlayV } from './common/dbtypes';
-import { PuzzleListItem } from './PuzzleList';
+import { UserPlaysV, AuthoredPuzzlesV } from './common/dbtypes';
 import { timeString } from './utils'
 
 import { Page } from './Page';
 
 declare var firebase: typeof import('firebase');
 
-export const PlayListItem = (props: PlayT) => {
+export const PlayListItem = (props: UserPlay) => {
   return (
-    <li key={props.c}><Link to={"/crosswords/" + props.c}>{props.n}</Link> {props.f ? "completed " + (props.ch ? "with helpers" : "without helpers") : "unfinished"} {timeString(props.t)}</li>
+    <li key={props.id}><Link to={"/crosswords/" + props.id}>{props.title}</Link> {props.didComplete ? "completed " + (props.didCheat ? "with helpers" : "without helpers") : "unfinished"} {timeString(props.playTime)}</li>
+  );
+}
+
+export const AuthoredListItem = (props: AuthoredPuzzle) => {
+  return (
+    <li key={props.id}><Link to={"/crosswords/" + props.id}>{props.title}</Link></li>
   );
 }
 
@@ -53,9 +57,24 @@ const DisplayNameForm = ({ user }: { user: firebase.User }) => {
   );
 };
 
+interface AuthoredPuzzle {
+  id: string,
+  createdAt: firebase.firestore.Timestamp,
+  title: string,
+}
+
+interface UserPlay {
+  id: string,
+  updatedAt: firebase.firestore.Timestamp,
+  playTime: number,
+  didCheat: boolean,
+  didComplete: boolean,
+  title: string,
+}
+
 export const AccountPage = requiresAuth(({ user }: RouteComponentProps & AuthProps) => {
-  const [authoredPuzzles, setAuthoredPuzzles] = React.useState<Array<PuzzleResult> | null>(null);
-  const [plays, setPlays] = React.useState<Array<PlayT> | null>(null);
+  const [authoredPuzzles, setAuthoredPuzzles] = React.useState<Array<AuthoredPuzzle> | null>(null);
+  const [plays, setPlays] = React.useState<Array<UserPlay> | null>(null);
   const [error, setError] = React.useState(false);
 
   React.useEffect(() => {
@@ -66,42 +85,47 @@ export const AccountPage = requiresAuth(({ user }: RouteComponentProps & AuthPro
     }
     const db = firebase.firestore();
     // TODO pagination on both of these
-    db.collection('c').where("a", "==", user.uid).get().then((value) => {
-      let results: Array<PuzzleResult> = [];
-      value.forEach(doc => {
-        const data = doc.data();
-        const validationResult = DBPuzzleV.decode(data);
-        if (isRight(validationResult)) {
-          results.push({ ...puzzleFromDB(validationResult.right), id: doc.id });
-        } else {
-          console.error(PathReporter.report(validationResult).join(","));
-          setError(true);
-        }
-      });
-      setAuthoredPuzzles(results);
+    db.collection('uc').doc(user.uid).get().then((value) => {
+      if (!value.exists) {
+        setAuthoredPuzzles([]);
+        return;
+      }
+      const validationResult = AuthoredPuzzlesV.decode(value.data());
+      if (isRight(validationResult)) {
+        const authored = Object.entries(validationResult.right).map(([id, val]) => {
+          const [createdAt, title] = val;
+          return { id, createdAt, title };
+        })
+        // Sort in reverse order by createdAt
+        authored.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
+        setAuthoredPuzzles(authored);
+      } else {
+        console.error(PathReporter.report(validationResult).join(","));
+        setError(true);
+      }
     }).catch(reason => {
       console.error(reason);
       setError(true);
     });
-    db.collection('p').where("u", "==", user.uid).orderBy("ua", "desc").limit(10).get().then((value) => {
-      let results: Array<PlayT> = [];
-      value.forEach(doc => {
-        const data = doc.data();
-        const validationResult = PlayV.decode(data);
-        if (isRight(validationResult)) {
-          const play = validationResult.right;
-          results.push(play);
-          const key = "p/" + play.c + "-" + play.u;
-          if (sessionStorage.getItem(key) === null) {
-            console.log("Caching play in local storage for " + play.n);
-            sessionStorage.setItem(key, JSON.stringify(play));
-          }
-        } else {
-          console.error(PathReporter.report(validationResult).join(","));
-          setError(true);
-        }
-      });
-      setPlays(results);
+    db.collection('up').doc(user.uid).get().then((value) => {
+      if (!value.exists) {
+        setPlays([]);
+        return;
+      }
+      const validationResult = UserPlaysV.decode(value.data());
+      if (isRight(validationResult)) {
+        const plays = Object.entries(validationResult.right).map(([id, val]) => {
+          const [updatedAt, playTime, didCheat, didComplete, title] = val;
+          return { id, updatedAt, playTime, didCheat, didComplete, title };
+        })
+        // Sort in reverse order by updatedAt
+        plays.sort((a, b) => b.updatedAt.toMillis() - a.updatedAt.toMillis());
+        setPlays(plays);
+
+      } else {
+        console.error(PathReporter.report(validationResult).join(","));
+        setError(true);
+      }
     }).catch(reason => {
       console.error(reason);
       setError(true);
@@ -128,7 +152,7 @@ export const AccountPage = requiresAuth(({ user }: RouteComponentProps & AuthPro
         {authoredPuzzles && authoredPuzzles.length ?
           <React.Fragment>
             <h4 css={{ borderBottom: '1px solid var(--black)' }}>Authored Puzzles</h4>
-            <ul>{authoredPuzzles.map(PuzzleListItem)}</ul>
+            <ul>{authoredPuzzles.map(AuthoredListItem)}</ul>
           </React.Fragment>
           :
           ""
