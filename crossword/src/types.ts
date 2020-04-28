@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 import type { WordDBT } from './WordDB';
 
-import { downloadTimestamped, timestamp, DBPuzzleT } from './common/dbtypes';
+import { timestamp, DBPuzzleT } from './common/dbtypes';
 
 export const BLOCK = ".";
 
@@ -98,9 +98,6 @@ export const PuzzleV = t.type({
 
 export type PuzzleT = t.TypeOf<typeof PuzzleV>;
 export type PuzzleResult = PuzzleT & { id: string };
-
-export const TimestampedPuzzleV = downloadTimestamped(PuzzleV);
-export type TimestampedPuzzleT = t.TypeOf<typeof TimestampedPuzzleV>;
 
 export function puzzleTitle(puzzle: PuzzleT) {
   let title = puzzle.title;

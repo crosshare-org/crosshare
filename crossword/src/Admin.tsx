@@ -3,15 +3,13 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 
-import * as t from "io-ts";
 import { navigate, Link, RouteComponentProps } from "@reach/router";
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
-import { PuzzleResult, TimestampedPuzzleT, puzzleFromDB, puzzleTitle } from './types';
-import { downloadTimestamped, DailyStatsT, DailyStatsV, DBPuzzleV, getDateString } from './common/dbtypes';
+import { PuzzleResult, puzzleFromDB, puzzleTitle } from './types';
+import { TimestampedPuzzleT, DailyStatsT, DailyStatsV, DBPuzzleV, getDateString } from './common/dbtypes';
+import { getFromSessionOrDB, mapEachResult } from './common/dbUtils';
 import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
 
 const UpcomingMinisCalendar = React.lazy(() => import(/* webpackChunkName: "minisCal" */ './UpcomingMinisCalendar'));
@@ -30,9 +28,6 @@ const PuzzleListItem = (props: PuzzleResult) => {
   );
 }
 
-const TimestampedStatsV = downloadTimestamped(DailyStatsV);
-type TimestampedStatsT = t.TypeOf<typeof TimestampedStatsV>;
-
 export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
   const [unmoderated, setUnmoderated] = React.useState<Array<PuzzleResult> | null>(null);
   const [stats, setStats] = React.useState<DailyStatsT | null>(null);
@@ -45,70 +40,26 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
       return;
     }
     const db = firebase.firestore();
-    db.collection('c').where("m", "==", false).get().then((value) => {
-      let results: Array<PuzzleResult> = [];
-      value.forEach(doc => {
-        const data = doc.data();
-        const validationResult = DBPuzzleV.decode(data);
-        if (isRight(validationResult)) {
-          const puzzle = puzzleFromDB(validationResult.right);
-          const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: puzzle }
-          sessionStorage.setItem('c/' + doc.id, JSON.stringify(forStorage));
-          results.push({ ...puzzle, id: doc.id });
-        } else {
-          console.error(PathReporter.report(validationResult).join(","));
-          setError(true);
-        }
+    mapEachResult(db.collection('c').where("m", "==", false), DBPuzzleV, (dbpuzz, docId) => {
+      const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: dbpuzz }
+      sessionStorage.setItem('c/' + docId, JSON.stringify(forStorage));
+      return { ...puzzleFromDB(dbpuzz), id: docId };
+    })
+      .then(setUnmoderated)
+      .catch(reason => {
+        console.error(reason);
+        setError(true);
       });
-      setUnmoderated(results);
-    }).catch(reason => {
-      console.error(reason);
-      setError(true);
-    });
 
     const now = new Date();
     const dateString = getDateString(now)
-    const stats = sessionStorage.getItem("ds/" + dateString);
-    if (stats) {
-      const validationResult = TimestampedStatsV.decode(JSON.parse(stats));
-      if (isRight(validationResult)) {
-        const valid = validationResult.right;
-        const ttl = 1000 * 60 * 30; // 30min
-        if (now.getTime() < valid.downloadedAt.toDate().getTime() + ttl) {
-          console.log("loaded stats from local storage");
-          setStats(valid.data);
-          return;
-        } else {
-          console.log("stats in local storage have expired");
-        }
-      } else {
-        console.error("Couldn't parse stored stats");
-        console.error(PathReporter.report(validationResult).join(","));
-      }
-    }
-    console.log("loading stats from db");
-    db.collection("ds").doc(dateString).get().then((value) => {
-      if (!value.exists) {
-        console.error("No stats for today yet");
-        return;
-      }
-      const validationResult = DailyStatsV.decode(value.data());
-      if (isRight(validationResult)) {
-        console.log("loaded, and caching in local storage");
-        setStats(validationResult.right);
-        const forLS: TimestampedStatsT = {
-          downloadedAt: firebase.firestore.Timestamp.now(),
-          data: validationResult.right
-        };
-        sessionStorage.setItem("ds/" + dateString, JSON.stringify(forLS));
-      } else {
-        console.error(PathReporter.report(validationResult).join(","));
+    const ttl = 1000 * 60 * 30; // 30min
+    getFromSessionOrDB('ds', dateString, DailyStatsV, ttl)
+      .then(setStats)
+      .catch(reason => {
+        console.error(reason);
         setError(true);
-      }
-    }).catch(reason => {
-      console.error(reason);
-      setError(true);
-    });
+      });
   }, [error]);
 
   const goToPuzzle = React.useCallback((_date: Date, puzzle: string | null) => {
@@ -141,7 +92,7 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
             <h5>Top Puzzles</h5>
             <ul>
               {Object.entries(stats.c).map(([crosswordId, count]) => {
-                return <li key={crosswordId}><Link to={"/crosswords/" + crosswordId}>{crosswordId}</Link>: {count}</li>
+                return <li key={crosswordId}><Link to={"/crosswords/" + crosswordId}>{crosswordId}</Link>: {count} (<Link to={'/crosswords/' + crosswordId + '/stats'}>stats</Link>)</li>
               })}
             </ul>
           </React.Fragment>

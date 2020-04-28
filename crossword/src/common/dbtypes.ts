@@ -44,6 +44,9 @@ const DBPuzzleOptionalV = t.partial({
 export const DBPuzzleV = t.intersection([DBPuzzleMandatoryV, DBPuzzleOptionalV]);
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
 
+export const TimestampedPuzzleV = downloadTimestamped(DBPuzzleV);
+export type TimestampedPuzzleT = t.TypeOf<typeof TimestampedPuzzleV>;
+
 export const PlayV = t.type({
   /** crossword id */
   c: t.string,
@@ -74,7 +77,7 @@ export const PlayV = t.type({
 });
 export type PlayT = t.TypeOf<typeof PlayV>;
 
-export function downloadTimestamped<T extends t.Mixed>(type: T) {
+export function downloadTimestamped<A>(type: t.Type<A>) {
   return t.type({
     downloadedAt: timestamp,
     data: type,

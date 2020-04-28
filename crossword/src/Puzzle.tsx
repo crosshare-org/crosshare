@@ -11,8 +11,6 @@ import {
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from "io-ts/lib/PathReporter";
 
 import {
   EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle,
@@ -24,8 +22,9 @@ import { GridView } from './Grid';
 import { Position } from './types';
 import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { valAt, entryAndCrossAtPosition } from './gridBase';
-import { Direction, BLOCK, TimestampedPuzzleV, TimestampedPuzzleT, puzzleFromDB, PuzzleResult, puzzleTitle } from './types';
+import { Direction, BLOCK, puzzleFromDB, PuzzleResult, puzzleTitle } from './types';
 import { DBPuzzleV, PlayT, PlayV, getDateString, UserPlayT } from './common/dbtypes';
+import { getFromSessionOrDB } from './common/dbUtils';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction,
@@ -63,83 +62,21 @@ export const usePuzzleAndPlay = (loadPlay: boolean, crosswordId: string | undefi
       return;
     }
 
-    let preLoaded = false;
-    const db = firebase.firestore();
-
-    const cached = sessionStorage.getItem("c/" + crosswordId);
-    if (cached) {
-      const validationResult = TimestampedPuzzleV.decode(JSON.parse(cached));
-      if (isRight(validationResult)) {
-        console.log("puzzle pre-loaded");
-        setPuzzle({ ...validationResult.right.data, id: crosswordId });
-        preLoaded = true;
-      } else {
-        console.log("failed to pre-load");
-      }
-    }
-    if (!preLoaded) {
-      console.log("loading puzzle from db");
-      db.collection("c").doc(crosswordId).get().then((value) => {
-        const data = value.data();
-        if (!data) {
-          setError("No puzzle data found");
-          return;
-        } else {
-          const validationResult = DBPuzzleV.decode(data);
-          if (isRight(validationResult)) {
-            const puzzle = puzzleFromDB(validationResult.right);
-            setPuzzle({ ...puzzle, id: crosswordId });
-            const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: puzzle }
-            sessionStorage.setItem('c/' + crosswordId, JSON.stringify(forStorage));
-          } else {
-            console.error(PathReporter.report(validationResult).join(","));
-            setError("Malformed puzzle data");
-            return;
-          }
+    getFromSessionOrDB('c', crosswordId, DBPuzzleV, -1)
+      .then(dbpuzz => {
+        if (dbpuzz === null) {
+          return Promise.reject('no puzzle found');
         }
-      }).catch((reason) => {
-        console.error(reason);
-        setError("Error fetching puzzle");
-        return;
+        setPuzzle({ ...puzzleFromDB(dbpuzz), id: crosswordId });
       })
-    }
+      .catch(setError);
 
-    if (!loadPlay) {
-      setIsLoadingPlay(false);
-    } else {
-      const playData = sessionStorage.getItem("p/" + crosswordId + "-" + userId);
-      if (playData) {
-        console.log("loading play state from local storage");
-        const validationResult = PlayV.decode(JSON.parse(playData));
-        if (isRight(validationResult)) {
-          setPlay(validationResult.right);
-          setIsLoadingPlay(false);
-        } else {
-          console.error(PathReporter.report(validationResult).join(","));
-          setError("Failed to parse play from storage");
-        }
-      } else {
-        console.log("trying load play from db");
-        db.collection("p").doc(crosswordId + "-" + userId).get().then((value) => {
-          const data = value.data();
-          if (data) {
-            console.log("loaded play state from db");
-            const validationResult = PlayV.decode(data);
-            if (isRight(validationResult)) {
-              setPlay(validationResult.right);
-              setIsLoadingPlay(false);
-              sessionStorage.setItem("p/" + crosswordId + "-" + userId, JSON.stringify(validationResult.right));
-            } else {
-              console.error(PathReporter.report(validationResult).join(","));
-              setError("Failed to parse play from db");
-            }
-          } else {
-            console.log("No previous play exists");
-            setIsLoadingPlay(false);
-          }
-        });
-      }
-    }
+    getFromSessionOrDB('p', crosswordId + "-" + userId, PlayV, -1)
+      .then(play => {
+        setPlay(play);
+        setIsLoadingPlay(false);
+      })
+      .catch(setError);
   }, [crosswordId, userId, loadPlay]);
 
   return [puzzle, error, play, isLoadingPlay];

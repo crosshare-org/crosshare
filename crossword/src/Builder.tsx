@@ -24,8 +24,8 @@ import { requiresAdmin, AuthProps } from './App';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
 import { fromCells, getClueMap } from './viewableGrid';
-import { AuthoredPuzzleT, } from './common/dbtypes'
-import { TimestampedPuzzleT, Direction, PuzzleT, puzzleFromDB } from './types';
+import { TimestampedPuzzleT, AuthoredPuzzleT, } from './common/dbtypes'
+import { Direction, PuzzleT } from './types';
 import {
   Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
   KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
@@ -428,8 +428,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         [ref.id]: authoredPuzzle
       }, { merge: true });
 
-      const puzzle = puzzleFromDB(dbpuzzle);
-      const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: puzzle }
+      const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: dbpuzzle }
       sessionStorage.setItem('c/' + ref.id, JSON.stringify(forStorage));
       navigate("/crosswords/" + ref.id);
     });

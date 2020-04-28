@@ -1,0 +1,75 @@
+import * as t from "io-ts";
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from "io-ts/lib/PathReporter";
+
+import { downloadTimestamped } from './dbtypes';
+
+declare var firebase: typeof import('firebase');
+
+export async function mapEachResult<N, A>(
+  query: firebase.firestore.Query<firebase.firestore.DocumentData>,
+  validator: t.Type<A>,
+  mapper: (val: A, docid: string) => N
+): Promise<Array<N>> {
+  const value = await query.get();
+  const results: Array<N> = [];
+  value.forEach(doc => {
+    const data = doc.data();
+    const validationResult = validator.decode(data);
+    if (isRight(validationResult)) {
+      results.push(mapper(validationResult.right, doc.id));
+    }
+    else {
+      console.error(PathReporter.report(validationResult).join(","));
+      return Promise.reject('Malformed content');
+    }
+  });
+  return results;
+}
+
+export async function getFromSessionOrDB<A>(
+  collection: string,
+  docId: string,
+  validator: t.Type<A>,
+  ttl: number,
+): Promise<A | null> {
+  const now = new Date();
+  const sessionKey = collection + "/" + docId;
+  const inSession = sessionStorage.getItem(sessionKey);
+  const TimestampedV = downloadTimestamped(validator);
+  if (inSession) {
+    const validationResult = TimestampedV.decode(JSON.parse(inSession));
+    if (isRight(validationResult)) {
+      const valid = validationResult.right;
+      if (ttl === -1 || (now.getTime() < valid.downloadedAt.toDate().getTime() + ttl)) {
+        console.log('loaded ' + sessionKey + ' from local storage');
+        return valid.data;
+      } else {
+        console.log("object in local storage has expired");
+      }
+    } else {
+      console.error("Couldn't parse object in local storage");
+      console.error(PathReporter.report(validationResult).join(","));
+    }
+  }
+  console.log('loading ' + sessionKey + ' from db');
+  const db = firebase.firestore();
+  const dbres = await db.collection(collection).doc(docId).get();
+  if (!dbres.exists) {
+    console.log(sessionKey + ' is non existent');
+    return null;
+  }
+  const validationResult = validator.decode(dbres.data());
+  if (isRight(validationResult)) {
+    console.log("loaded, and caching in storage");
+    const forLS: t.TypeOf<typeof TimestampedV> = {
+      downloadedAt: firebase.firestore.Timestamp.now(),
+      data: validationResult.right
+    };
+    sessionStorage.setItem(sessionKey, JSON.stringify(forLS));
+    return validationResult.right;
+  } else {
+    console.error(PathReporter.report(validationResult).join(","));
+    return Promise.reject('Malformed content');
+  }
+}
