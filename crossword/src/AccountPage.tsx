@@ -3,11 +3,10 @@ import { jsx } from '@emotion/core';
 
 import * as React from 'react';
 import { Link, RouteComponentProps } from "@reach/router";
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { requiresAuth, AuthProps } from './App';
 import { UserPlaysV, AuthoredPuzzlesV } from './common/dbtypes';
+import { getFromSessionOrDB } from './common/dbUtils';
 import { timeString } from './utils'
 
 import { Page } from './Page';
@@ -79,58 +78,40 @@ export const AccountPage = requiresAuth(({ user }: RouteComponentProps & AuthPro
 
   React.useEffect(() => {
     console.log("loading authored puzzles and plays");
-    if (error) {
-      console.log("error set, skipping");
-      return;
-    }
-    const db = firebase.firestore();
     // TODO pagination on both of these
-    db.collection('uc').doc(user.uid).get().then((value) => {
-      if (!value.exists) {
-        setAuthoredPuzzles([]);
-        return;
-      }
-      const validationResult = AuthoredPuzzlesV.decode(value.data());
-      if (isRight(validationResult)) {
-        const authored = Object.entries(validationResult.right).map(([id, val]) => {
-          const [createdAt, title] = val;
-          return { id, createdAt, title };
-        })
-        // Sort in reverse order by createdAt
-        authored.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
-        setAuthoredPuzzles(authored);
-      } else {
-        console.error(PathReporter.report(validationResult).join(","));
+    // TODO we need to update these in session storage when adding a play or puzzle
+    Promise.all([
+      getFromSessionOrDB('uc', user.uid, AuthoredPuzzlesV, -1),
+      getFromSessionOrDB('up', user.uid, UserPlaysV, -1)
+    ])
+      .then(([authoredResult, playsResult]) => {
+        if (authoredResult === null) {
+          setAuthoredPuzzles([]);
+        } else {
+          const authored = Object.entries(authoredResult).map(([id, val]) => {
+            const [createdAt, title] = val;
+            return { id, createdAt, title };
+          })
+          // Sort in reverse order by createdAt
+          authored.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
+          setAuthoredPuzzles(authored);
+        }
+        if (playsResult === null) {
+          setPlays([]);
+        } else {
+          const plays = Object.entries(playsResult).map(([id, val]) => {
+            const [updatedAt, playTime, didCheat, didComplete, title] = val;
+            return { id, updatedAt, playTime, didCheat, didComplete, title };
+          })
+          // Sort in reverse order by updatedAt
+          plays.sort((a, b) => b.updatedAt.toMillis() - a.updatedAt.toMillis());
+          setPlays(plays);
+        }
+      }).catch(reason => {
+        console.error(reason);
         setError(true);
-      }
-    }).catch(reason => {
-      console.error(reason);
-      setError(true);
-    });
-    db.collection('up').doc(user.uid).get().then((value) => {
-      if (!value.exists) {
-        setPlays([]);
-        return;
-      }
-      const validationResult = UserPlaysV.decode(value.data());
-      if (isRight(validationResult)) {
-        const plays = Object.entries(validationResult.right).map(([id, val]) => {
-          const [updatedAt, playTime, didCheat, didComplete, title] = val;
-          return { id, updatedAt, playTime, didCheat, didComplete, title };
-        })
-        // Sort in reverse order by updatedAt
-        plays.sort((a, b) => b.updatedAt.toMillis() - a.updatedAt.toMillis());
-        setPlays(plays);
-
-      } else {
-        console.error(PathReporter.report(validationResult).join(","));
-        setError(true);
-      }
-    }).catch(reason => {
-      console.error(reason);
-      setError(true);
-    });
-  }, [error, user]);
+      });
+  }, [user]);
 
   if (error) {
     return <Page title={null}>Error loading plays / authored puzzles</Page>;

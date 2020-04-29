@@ -6,9 +6,9 @@ import * as React from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-import { getDateString } from './common/dbtypes';
+import { getDateString, CategoryIndexT, CategoryIndexV } from './common/dbtypes';
+import { getFromSessionOrDB } from './common/dbUtils';
 
-declare var firebase: typeof import('firebase');
 
 export interface UpcomingMinisCalendarProps {
   value?: Date,
@@ -17,7 +17,7 @@ export interface UpcomingMinisCalendarProps {
 }
 
 const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
-  const [minis, setMinis] = React.useState<{ [k: string]: string } | null>(null);
+  const [minis, setMinis] = React.useState<CategoryIndexT | null>(null);
   const [error, setError] = React.useState(false);
   const tileDisabled = React.useCallback(({ date }: { date: Date }) => {
     if (!minis) {
@@ -30,24 +30,12 @@ const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
   }, [minis, props.disableExisting]);
 
   React.useEffect(() => {
-    console.log("loading minis");
-    if (error) {
-      console.log("error set, skipping");
-      return;
-    }
-    const db = firebase.firestore();
-    db.collection('categories').doc('dailymini').get().then((value) => {
-      const doc = value.data();
-      if (!doc) {
-        console.log("Missing daily minis doc");
+    getFromSessionOrDB('categories', 'dailymini', CategoryIndexV, 24 * 60 * 60 * 1000)
+      .then(setMinis)
+      .catch(reason => {
+        console.error(reason);
         setError(true);
-      } else {
-        setMinis(doc);
-      }
-    }).catch(reason => {
-      console.error(reason);
-      setError(true);
-    });
+      });
   }, [error]);
 
   const dateChanged = React.useCallback((d: Date | Date[]) => {

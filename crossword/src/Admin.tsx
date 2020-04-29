@@ -8,7 +8,10 @@ import { navigate, Link, RouteComponentProps } from "@reach/router";
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
 import { PuzzleResult, puzzleFromDB, puzzleTitle } from './types';
-import { TimestampedPuzzleT, DailyStatsT, DailyStatsV, DBPuzzleV, getDateString } from './common/dbtypes';
+import {
+  TimestampedPuzzleT, DailyStatsT, DailyStatsV, DBPuzzleV, getDateString,
+  CategoryIndexT, CategoryIndexV
+} from './common/dbtypes';
 import { getFromSessionOrDB, mapEachResult } from './common/dbUtils';
 import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
 
@@ -30,37 +33,34 @@ const PuzzleListItem = (props: PuzzleResult) => {
 
 export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
   const [unmoderated, setUnmoderated] = React.useState<Array<PuzzleResult> | null>(null);
+  const [minis, setMinis] = React.useState<CategoryIndexT | null>(null);
   const [stats, setStats] = React.useState<DailyStatsT | null>(null);
   const [error, setError] = React.useState(false);
 
   React.useEffect(() => {
     console.log("loading admin content");
-    if (error) {
-      console.log("error set, skipping");
-      return;
-    }
     const db = firebase.firestore();
-    mapEachResult(db.collection('c').where("m", "==", false), DBPuzzleV, (dbpuzz, docId) => {
-      const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: dbpuzz }
-      sessionStorage.setItem('c/' + docId, JSON.stringify(forStorage));
-      return { ...puzzleFromDB(dbpuzz), id: docId };
-    })
-      .then(setUnmoderated)
-      .catch(reason => {
-        console.error(reason);
-        setError(true);
-      });
-
     const now = new Date();
-    const dateString = getDateString(now)
-    const ttl = 1000 * 60 * 30; // 30min
-    getFromSessionOrDB('ds', dateString, DailyStatsV, ttl)
-      .then(setStats)
+    const dateString = getDateString(now);
+    Promise.all([
+      getFromSessionOrDB('ds', dateString, DailyStatsV, 1000 * 60 * 30),
+      getFromSessionOrDB('categories', 'dailymini', CategoryIndexV, 24 * 60 * 60 * 1000),
+      mapEachResult(db.collection('c').where("m", "==", false), DBPuzzleV, (dbpuzz, docId) => {
+        const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: dbpuzz }
+        sessionStorage.setItem('c/' + docId, JSON.stringify(forStorage));
+        return { ...puzzleFromDB(dbpuzz), id: docId };
+      })
+    ])
+      .then(([stats, minis, unmoderated]) => {
+        setStats(stats);
+        setMinis(minis);
+        setUnmoderated(unmoderated)
+      })
       .catch(reason => {
         console.error(reason);
         setError(true);
       });
-  }, [error]);
+  }, []);
 
   const goToPuzzle = React.useCallback((_date: Date, puzzle: string | null) => {
     if (puzzle) {
@@ -73,6 +73,16 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
   }
   if (unmoderated === null) {
     return <Page title={null}>Loading admin content...</Page>;
+  }
+
+  function titleForId(crosswordId: string): string {
+    if (minis) {
+      const dateString = Object.keys(minis).find(key => minis[key] === crosswordId);
+      if (dateString) {
+        return "Daily mini for " + dateString;
+      }
+    }
+    return crosswordId;
   }
 
   return (
@@ -92,7 +102,12 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
             <h5>Top Puzzles</h5>
             <ul>
               {Object.entries(stats.c).map(([crosswordId, count]) => {
-                return <li key={crosswordId}><Link to={"/crosswords/" + crosswordId}>{crosswordId}</Link>: {count} (<Link to={'/crosswords/' + crosswordId + '/stats'}>stats</Link>)</li>
+                return (
+                  <li key={crosswordId}>
+                    <Link to={"/crosswords/" + crosswordId}>{titleForId(crosswordId)}</Link>: {count}
+                    (<Link to={'/crosswords/' + crosswordId + '/stats'}>stats</Link>)
+                  </li>
+                );
               })}
             </ul>
           </React.Fragment>

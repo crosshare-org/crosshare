@@ -140,3 +140,7 @@ export type UserPlayT = t.TypeOf<typeof UserPlayV>;
 
 /** keys are puzzle ids */
 export const UserPlaysV = t.record(t.string, UserPlayV);
+
+/** date string -> puzzle id */
+export const CategoryIndexV = t.record(t.string, t.string);
+export type CategoryIndexT = t.TypeOf<typeof CategoryIndexV>;
