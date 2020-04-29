@@ -6,6 +6,60 @@ import { downloadTimestamped } from './dbtypes';
 
 declare var firebase: typeof import('firebase');
 
+export function setInCache<A>(
+  collection: string,
+  docId: string,
+  value: A,
+  validator: t.Type<A>,
+  sendToDB: boolean
+) {
+  const sessionKey = collection + "/" + docId;
+  const TimestampedV = downloadTimestamped(validator);
+  const forLS: t.TypeOf<typeof TimestampedV> = {
+    downloadedAt: firebase.firestore.Timestamp.now(),
+    data: value
+  };
+  sessionStorage.setItem(sessionKey, JSON.stringify(forLS));
+  if (sendToDB) {
+    const db = firebase.firestore();
+    db.collection(collection).doc(docId).set(value).then(() => {
+      console.log('Set new value for ' + collection + '/' + docId);
+    });
+  }
+}
+
+export function updateInCache<A>(
+  collection: string,
+  docId: string,
+  update: Partial<A>,
+  validator: t.Type<A>,
+  sendToDB: boolean
+) {
+  const sessionKey = collection + "/" + docId;
+  const inSession = sessionStorage.getItem(sessionKey);
+  const TimestampedV = downloadTimestamped(validator);
+  if (inSession) {
+    const validationResult = TimestampedV.decode(JSON.parse(inSession));
+    if (isRight(validationResult)) {
+      const updated = { ...validationResult.right.data, ...update };
+      const forLS: t.TypeOf<typeof TimestampedV> = {
+        downloadedAt: validationResult.right.downloadedAt,
+        data: updated,
+      };
+      sessionStorage.setItem(sessionKey, JSON.stringify(forLS));
+    } else {
+      console.error("Couldn't parse object in local storage");
+      console.error(PathReporter.report(validationResult).join(","));
+    }
+  }
+  if (sendToDB) {
+    const db = firebase.firestore();
+    db.collection(collection).doc(docId).set(update, { merge: true }).then(() => {
+      console.log('Updated for ' + collection + '/' + docId);
+    });
+  }
+}
+
 export async function mapEachResult<N, A>(
   query: firebase.firestore.Query<firebase.firestore.DocumentData>,
   validator: t.Type<A>,

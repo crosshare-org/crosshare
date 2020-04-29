@@ -23,8 +23,10 @@ import { Position } from './types';
 import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { valAt, entryAndCrossAtPosition } from './gridBase';
 import { Direction, BLOCK, puzzleFromDB, PuzzleResult, puzzleTitle } from './types';
-import { DBPuzzleV, PlayT, PlayV, getDateString, UserPlayT } from './common/dbtypes';
-import { getFromSessionOrDB } from './common/dbUtils';
+import {
+  DBPuzzleV, PlayT, PlayV, getDateString, UserPlayT, UserPlaysV
+} from './common/dbtypes';
+import { getFromSessionOrDB, setInCache, updateInCache } from './common/dbUtils';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction,
@@ -242,6 +244,8 @@ const ModeratingOverlay = React.memo(({ dispatch, puzzle }: { puzzle: PuzzleResu
     }
     db.collection('categories').doc('dailymini').update(update).then(() => {
       console.log("Updated categories page");
+      // Dump it!
+      sessionStorage.removeItem('categories/dailymini');
     })
     db.collection('c').doc(puzzle.id).update({
       m: true,
@@ -553,19 +557,11 @@ const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps
       ch: state.didCheat,
       f: state.success,
     }
-    sessionStorage.setItem("p/" + puzzle.id + "-" + props.user.uid, JSON.stringify(play));
-    if (sendToDB) {
-      console.log("Writing play to db");
-      const db = firebase.firestore();
-      db.collection("p").doc(puzzle.id + "-" + props.user.uid).set(play).then(() => {
-        console.log("Pushed update");
-      });
-      /* TODO don't add these for anonymous users */
-      const userPlay: UserPlayT = [updatedAt, playTime, state.didCheat, state.success, title];
-      db.collection("up").doc(props.user.uid).set({
-        [puzzle.id]: userPlay
-      }, { merge: true });
-    }
+
+    setInCache('p', puzzle.id + "-" + props.user.uid, play, PlayV, sendToDB);
+    const userPlay: UserPlayT = [updatedAt, playTime, state.didCheat, state.success, title];
+    /* TODO don't add these for anonymous users? */
+    updateInCache('up', props.user.uid, { [puzzle.id]: userPlay }, UserPlaysV, sendToDB);
   }, [puzzle.id, props.user.uid, state.cellsEverMarkedWrong,
   state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
   state.grid.cells, state.revealedCells, state.success, state.verifiedCells,

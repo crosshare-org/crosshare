@@ -24,7 +24,8 @@ import { requiresAdmin, AuthProps } from './App';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
 import { fromCells, getClueMap } from './viewableGrid';
-import { TimestampedPuzzleT, AuthoredPuzzleT, } from './common/dbtypes'
+import { TimestampedPuzzleT, AuthoredPuzzleT, AuthoredPuzzlesV } from './common/dbtypes'
+import { updateInCache } from './common/dbUtils';
 import { Direction, PuzzleT } from './types';
 import {
   Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
@@ -424,9 +425,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
       console.log("Uploaded", ref.id);
 
       const authoredPuzzle: AuthoredPuzzleT = [dbpuzzle.ca, dbpuzzle.t];
-      db.collection('uc').doc(props.user.uid).set({
-        [ref.id]: authoredPuzzle
-      }, { merge: true });
+      updateInCache('uc', props.user.uid, { [ref.id]: authoredPuzzle }, AuthoredPuzzlesV, true);
 
       const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: dbpuzzle }
       sessionStorage.setItem('c/' + ref.id, JSON.stringify(forStorage));

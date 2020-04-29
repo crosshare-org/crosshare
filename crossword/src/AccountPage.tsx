@@ -79,7 +79,6 @@ export const AccountPage = requiresAuth(({ user }: RouteComponentProps & AuthPro
   React.useEffect(() => {
     console.log("loading authored puzzles and plays");
     // TODO pagination on both of these
-    // TODO we need to update these in session storage when adding a play or puzzle
     Promise.all([
       getFromSessionOrDB('uc', user.uid, AuthoredPuzzlesV, -1),
       getFromSessionOrDB('up', user.uid, UserPlaysV, -1)
