@@ -11,6 +11,7 @@ import {
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { Helmet } from "react-helmet-async";
+import { toast } from 'react-toastify';
 
 import {
   EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle,
@@ -24,7 +25,7 @@ import { CluedEntry, fromCells, addClues } from './viewableGrid';
 import { valAt, entryAndCrossAtPosition } from './gridBase';
 import { Direction, BLOCK, puzzleFromDB, PuzzleResult, puzzleTitle } from './types';
 import {
-  DBPuzzleV, PlayT, PlayV, getDateString, UserPlayT, UserPlaysV
+  DBPuzzleV, PlayT, PlayV, getDateString, UserPlayT, UserPlaysV, CategoryIndexV
 } from './common/dbtypes';
 import { getFromSessionOrDB, setInCache, updateInCache } from './common/dbUtils';
 import {
@@ -516,6 +517,83 @@ const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps
   const [ranSuccessEffects, setRanSuccessEffects] = React.useState(state.success);
   if (state.success && !ranSuccessEffects) {
     setRanSuccessEffects(true);
+    if (puzzle.size.rows === 5 && puzzle.size.cols === 5 && state.bankedSeconds <= 60) {
+      toast(<div><Emoji symbol='🤓' /> You solved a mini puzzle in under a minute!</div>)
+    }
+    Promise.all([
+      getFromSessionOrDB('categories', 'dailymini', CategoryIndexV, 24 * 60 * 60 * 1000),
+      getFromSessionOrDB('up', props.user.uid, UserPlaysV, -1)
+    ])
+      .then(([minis, plays]) => {
+        // Check to see if we should show X daily minis in a row notification
+        let consecutiveDailyMinis = 0;
+        let dateToTest = new Date();
+        dateToTest.setHours(12);
+        let ds = getDateString(dateToTest);
+        if (puzzle.id === minis ?.[ds] && !state.didCheat) {
+          while (true) {
+            consecutiveDailyMinis += 1;
+            dateToTest.setDate(dateToTest.getDate() - 1);
+            ds = getDateString(dateToTest);
+            const play = plays ?.[minis[ds]]
+            if (!play) {
+              break;
+            }
+            const playDate = play[0].toDate();
+            playDate.setHours(12);
+            // cheated || didn't finish || played on wrong date
+            if (play[2] || !play[3] || getDateString(playDate) !== ds) {
+              break;
+            }
+          }
+        }
+        if (consecutiveDailyMinis === 1) {
+          toast(<div><Emoji symbol='🥇' /> Solved the daily mini without check/reveal! </div>)
+        } else if (consecutiveDailyMinis) {
+          toast(<div><Emoji symbol='🥇' /> Solved the daily mini without check/reveal <b>{consecutiveDailyMinis} days in a row!</b> <Emoji symbol='😻' /></div>)
+        }
+
+        // Check to see if this is the first puzzle solved today
+        let firstOfTheDay = true;
+        let consecutiveSolveDays = 0;
+        dateToTest = new Date();
+        dateToTest.setHours(12);
+        ds = getDateString(dateToTest);
+        if (plays) {
+          for (const [puzzleId, play] of Object.entries(plays)) {
+            if (puzzleId === puzzle.id) {
+              continue;
+            }
+            const playDate = play[0].toDate();
+            playDate.setHours(12);
+            if (play[3] && getDateString(playDate) === ds) {
+              firstOfTheDay = false;
+            }
+          }
+          if (firstOfTheDay) {
+            while (true) {
+              consecutiveSolveDays += 1;
+              dateToTest.setDate(dateToTest.getDate() - 1);
+              ds = getDateString(dateToTest);
+              let solvedOne = false;
+              for (const play of Object.values(plays)) {
+                const playDate = play[0].toDate();
+                playDate.setHours(12);
+                if (play[3] && getDateString(playDate) === ds) {
+                  solvedOne = true;
+                  break;
+                }
+              }
+              if (!solvedOne) {
+                break;
+              }
+            }
+          }
+        }
+        if (consecutiveSolveDays > 1) {
+          toast(<div><Emoji symbol='🔥' /> You finished a puzzle <b>{consecutiveSolveDays} days in a row!</b> Keep it up! <Emoji symbol='🔥' /></div>)
+        }
+      })
     if (!muted && playSuccess.current) {
       playSuccess.current();
     }

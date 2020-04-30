@@ -5,6 +5,8 @@ import * as React from 'react';
 import { WindowLocation, Location, Router, RouteComponentProps } from "@reach/router";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 import { ErrorBoundary } from './ErrorBoundary';
 import { PuzzleLoader } from './Puzzle';
@@ -13,6 +15,7 @@ import { Page, SquareTest, TwoColTest } from './Page';
 import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
 import { Home } from './Home';
+
 import googlesignin from './googlesignin.png';
 
 const BuilderDBLoader = React.lazy(() => import(/* webpackChunkName: "builder" */ "./Builder"));
@@ -265,6 +268,7 @@ const App = () => {
               )}
             </Location>
             <React.Suspense fallback={<div>Loading...</div>}>
+              <ToastContainer />
               <Router css={{ height: '100%', width: '100%', }}>
                 <Home path="/" />
                 <AccountPage path="/account" />
