@@ -1,3 +1,5 @@
+import { toast } from 'react-toastify';
+
 import { PosAndDir, Position, Direction, BLOCK } from './types';
 import { DBPuzzleT } from './common/dbtypes';
 import {
@@ -292,6 +294,10 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
   if (isKeypressAction(action)) {
     const key = action.key;
     const shift = action.shift;
+    if (key === '$') {
+      toast('🔥 This is an example pop up notification! 🔥')
+      return state;
+    }
     if (key === '{num}' || key === '{abc}') {
       return ({ ...state, showExtraKeyLayout: !state.showExtraKeyLayout });
     }
