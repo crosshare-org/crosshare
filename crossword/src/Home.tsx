@@ -2,7 +2,7 @@
 import { jsx } from '@emotion/core';
 import * as React from 'react';
 
-import { navigate, RouteComponentProps } from "@reach/router";
+import { Link, navigate, RouteComponentProps } from "@reach/router";
 import { FaUser, FaUserLock } from 'react-icons/fa';
 
 import { AuthContext } from './App';
@@ -50,8 +50,11 @@ export const Home = (_: RouteComponentProps) => {
               <p css={{ marginBottom: '1em' }}>
                 Crosshare is a new community for crossword constructors.
                 We are just getting started so please let us know if you have any issues or suggestions.
-        </p>
+              </p>
               <p><button css={buttonAsLink} onClick={goToDailyMini}>Play today's daily mini crossword</button></p>
+              {user ?
+                <p><Link to="/category/dailymini">Play previous daily minis</Link></p>
+                : ""}
             </React.Fragment>
           )
         }

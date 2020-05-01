@@ -15,6 +15,7 @@ import { Page, SquareTest, TwoColTest } from './Page';
 import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
 import { Home } from './Home';
+import { Category } from './Category';
 
 import googlesignin from './googlesignin.png';
 
@@ -275,6 +276,7 @@ const App = () => {
                 <Admin path="/admin" />
                 <ErrorTest path="/error" />
                 <Construct path="/construct" />
+                <Category path="/category/:categoryId" />
                 <PuzzleLoader path="/crosswords/:crosswordId" />
                 <PuzzleStats path="/crosswords/:crosswordId/stats" />
                 <SquareTest path="/square" />
