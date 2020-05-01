@@ -517,8 +517,10 @@ const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps
   const [ranSuccessEffects, setRanSuccessEffects] = React.useState(state.success);
   if (state.success && !ranSuccessEffects) {
     setRanSuccessEffects(true);
+    let delay = 0;
     if (puzzle.size.rows === 5 && puzzle.size.cols === 5 && state.bankedSeconds <= 60) {
       toast(<div><Emoji symbol='🤓' /> You solved a mini puzzle in under a minute!</div>)
+      delay += 500;
     }
     Promise.all([
       getFromSessionOrDB('categories', 'dailymini', CategoryIndexV, 24 * 60 * 60 * 1000),
@@ -548,9 +550,13 @@ const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps
           }
         }
         if (consecutiveDailyMinis === 1) {
-          toast(<div><Emoji symbol='🥇' /> Solved the daily mini without check/reveal! </div>)
+          toast(<div><Emoji symbol='🥇' /> Solved the daily mini without check/reveal! </div>,
+            { delay: delay });
+          delay += 500;
         } else if (consecutiveDailyMinis) {
-          toast(<div><Emoji symbol='🥇' /> Solved the daily mini without check/reveal <b>{consecutiveDailyMinis} days in a row!</b> <Emoji symbol='😻' /></div>)
+          toast(<div><Emoji symbol='🥇' /> Solved the daily mini without check/reveal <b>{consecutiveDailyMinis} days in a row!</b> <Emoji symbol='😻' /></div>,
+            { delay: delay });
+          delay += 500;
         }
 
         // Check to see if this is the first puzzle solved today
@@ -591,7 +597,8 @@ const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps
           }
         }
         if (consecutiveSolveDays > 1) {
-          toast(<div><Emoji symbol='🔥' /> You finished a puzzle <b>{consecutiveSolveDays} days in a row!</b> Keep it up! <Emoji symbol='🔥' /></div>)
+          toast(<div><Emoji symbol='🔥' /> You finished a puzzle <b>{consecutiveSolveDays} days in a row!</b> Keep it up! <Emoji symbol='🔥' /></div>,
+            { delay: delay });
         }
       })
     if (!muted && playSuccess.current) {
