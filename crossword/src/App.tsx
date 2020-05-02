@@ -16,6 +16,8 @@ import { AccountPage } from './AccountPage';
 import { Admin } from './Admin';
 import { Home } from './Home';
 import { Category } from './Category';
+import { PlayV, UserPlayT, UserPlaysV } from './common/dbtypes';
+import { getValidatedAndDelete, setInCache, updateInCache } from './common/dbUtils';
 
 import googlesignin from './googlesignin.png';
 
@@ -44,15 +46,79 @@ export interface AuthProps {
 export const GoogleSignInButton = () => {
   function signin() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider).then(() => {
-      firebase.analytics().logEvent("login", { method: 'google' });
-    })
+    firebase.auth().signInWithPopup(provider)
+      .then(() => {
+        firebase.analytics().logEvent("login", { method: 'google' });
+      })
   }
   return (
     <button css={{ background: 'none', border: 'none' }}><img width="191" height="46" src={googlesignin} alt="Sign in with Google" onClick={signin} /></button>
   );
 }
 
+export const GoogleLinkButton = ({ user }: { user: firebase.User }) => {
+  function signin() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    user.linkWithPopup(provider)
+      .then(() => {
+        console.log("linked w/o needing a merge")
+        firebase.analytics().logEvent("login", { method: 'google' });
+      })
+      .catch(async (error: any) => {
+        if (error.code !== 'auth/credential-already-in-use') {
+          console.log(error);
+          return;
+        }
+        // Get anonymous user plays
+        const db = firebase.firestore();
+        await db.collection('up').doc(user.uid).delete();
+        const plays = await getValidatedAndDelete(db.collection('p').where('u', '==', user.uid), PlayV);
+        return firebase.auth().signInWithCredential(error.credential).then(async (value: firebase.auth.UserCredential) => {
+          console.log("signed in as new user " + value.user ?.uid);
+          const newUser = value.user;
+          if (!newUser) {
+            throw new Error('missing new user after link');
+          }
+          await Promise.all(plays.map((play) => {
+            play.u = newUser.uid;
+            console.log("Updating play " + play.c + '-' + play.u)
+            const userPlay: UserPlayT = [play.ua, play.t, play.ch, play.f, 'Crossword'];
+            return Promise.all([
+              setInCache('p', play.c + "-" + newUser.uid, play, PlayV, true),
+              updateInCache('up', newUser.uid, { [play.c]: userPlay }, UserPlaysV, true)
+            ]);
+          }));
+          user.delete();
+          console.log("linked and merged plays");
+        });
+      });
+  }
+  return (
+    <button css={{ background: 'none', border: 'none' }}><img width="191" height="46" src={googlesignin} alt="Sign in with Google" onClick={signin} /></button>
+  );
+}
+
+/* Ensure we have at least an anonymous user */
+export function ensureUser<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
+  return (props: Optionalize<T, AuthProps>) => {
+    const { user, isAdmin, loadingUser, error } = React.useContext(AuthContext);
+    if (loadingUser) {
+      return <Page title={null}>Loading user...</Page>;
+    }
+    if (error) {
+      return <Page title={null}>Error loading user: {error}</Page>;
+    }
+    if (!user) {
+      firebase.auth().signInAnonymously().then(() => {
+        firebase.analytics().logEvent("login", { method: 'anonymous' });
+      })
+      return <Page title={null}>Loading user...</Page>;
+    };
+    return <WrappedComponent isAdmin={isAdmin} user={user} {...(props as T)} />
+  }
+}
+
+/* Ensure we have a non-anonymous user, upgrading an anonymous user if we have one. */
 export function requiresAuth<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
   return (props: Optionalize<T, AuthProps>) => {
     const { user, isAdmin, loadingUser, error } = React.useContext(AuthContext);
@@ -62,20 +128,31 @@ export function requiresAuth<T extends AuthProps>(WrappedComponent: React.Compon
     if (error) {
       return <Page title={null}>Error loading user: {error}</Page>;
     }
-    if (user && user.email) {
-      return <WrappedComponent isAdmin={isAdmin} user={user} {...(props as T)} />
-    };
-    return (
-      <Page title="Sign In">
-        <div css={{ margin: '1em', }}>
-          <p>Please sign-in with your Google account to continue. We use your account to keep track of the puzzles you've played.</p>
-          <GoogleSignInButton />
-        </div>
-      </Page>
-    );
+    if (!user) {
+      return (
+        <Page title="Sign In">
+          <div css={{ margin: '1em', }}>
+            <p>Please sign-in with your Google account to continue. We use your account to keep track of the puzzles you've played and your solve streaks.</p>
+            <GoogleSignInButton />
+          </div>
+        </Page>
+      );
+    }
+    if (user.isAnonymous) {
+      return (
+        <Page title="Sign In">
+          <div css={{ margin: '1em', }}>
+            <p>Please sign-in with your Google account to continue. We use your account to keep track of the puzzles you've played and your solve streaks.</p>
+            <GoogleLinkButton user={user} />
+          </div>
+        </Page>
+      );
+    }
+    return <WrappedComponent isAdmin={isAdmin} user={user} {...(props as T)} />
   }
 }
 
+/* Ensure we have an admin user, upgrading an anonymous user if we have one. */
 export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
   return (props: Optionalize<T, AuthProps>) => {
     const { user, isAdmin, loadingUser, error } = React.useContext(AuthContext);

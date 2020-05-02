@@ -81,6 +81,29 @@ export async function mapEachResult<N, A>(
   return results;
 }
 
+export async function getValidatedAndDelete<A>(
+  query: firebase.firestore.Query<firebase.firestore.DocumentData>,
+  validator: t.Type<A>,
+): Promise<Array<A>> {
+  const value = await query.get();
+  const results: Array<A> = [];
+  const deletes: Array<Promise<void>> = [];
+  value.forEach(doc => {
+    const data = doc.data();
+    const validationResult = validator.decode(data);
+    if (isRight(validationResult)) {
+      results.push(validationResult.right);
+      deletes.push(doc.ref.delete());
+    }
+    else {
+      console.error(PathReporter.report(validationResult).join(","));
+      return Promise.reject('Malformed content');
+    }
+  });
+  await Promise.all(deletes);
+  return results;
+}
+
 export async function getFromSessionOrDB<A>(
   collection: string,
   docId: string,

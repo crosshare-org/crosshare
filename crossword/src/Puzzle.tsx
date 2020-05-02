@@ -17,7 +17,7 @@ import {
   EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle,
   RevealPuzzle, Rebus, SpinnerFinished
 } from './Icons';
-import { requiresAuth, AuthProps, CrosshareAudioContext } from './App';
+import { ensureUser, GoogleLinkButton, AuthProps, CrosshareAudioContext } from './App';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
 import { Position } from './types';
@@ -85,7 +85,7 @@ export const usePuzzleAndPlay = (loadPlay: boolean, crosswordId: string | undefi
   return [puzzle, error, play, isLoadingPlay];
 }
 
-export const PuzzleLoader = requiresAuth(({ crosswordId, ...props }: PuzzleLoaderProps & AuthProps) => {
+export const PuzzleLoader = ensureUser(({ crosswordId, ...props }: PuzzleLoaderProps & AuthProps) => {
   const [puzzle, error, play, isLoadingPlay] = usePuzzleAndPlay(true, crosswordId, props.user.uid);
 
   if (error) {
@@ -318,17 +318,23 @@ const PrevDailyMiniLink = (props: { puzzle: PuzzleResult }) => {
   return (<button css={buttonAsLink} onClick={goToPrevious}>Play the previous daily mini crossword</button>);
 }
 
-const SuccessOverlay = (props: { puzzle: PuzzleResult, isMuted: boolean, solveTime: number, dispatch: React.Dispatch<PuzzleAction> }) => {
+const SuccessOverlay = (props: { user: firebase.User, puzzle: PuzzleResult, isMuted: boolean, solveTime: number, dispatch: React.Dispatch<PuzzleAction> }) => {
   return (
     <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({ type: "DISMISSSUCCESS" })}>
       <div css={{ textAlign: 'center' }}>
         <h4><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
         <p>You solved the puzzle in <b>{timeString(props.solveTime)}</b></p>
-        {props.puzzle.category === 'dailymini' ?
-          <div>
-            <PrevDailyMiniLink puzzle={props.puzzle} />
-          </div>
-          : ""}
+        {props.user.isAnonymous ?
+          <React.Fragment>
+            <p>Sign in with google to track your puzzle solving streak!</p>
+            <GoogleLinkButton user={props.user} />
+          </React.Fragment>
+          : (props.puzzle.category === 'dailymini' ?
+            <div>
+              <PrevDailyMiniLink puzzle={props.puzzle} />
+            </div>
+            : "")
+        }
       </div>
     </Overlay>
   );
@@ -421,7 +427,7 @@ interface PuzzleProps {
   puzzle: PuzzleResult,
   play: PlayT | null,
 }
-const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps) => {
+const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & AuthProps) => {
   const [state, dispatch] = React.useReducer(puzzleReducer, {
     type: 'puzzle',
     active: { col: 0, row: 0, dir: Direction.Across },
@@ -836,7 +842,7 @@ const Puzzle = requiresAuth(({ puzzle, play, ...props }: PuzzleProps & AuthProps
         <KeepTryingOverlay dispatch={dispatch} />
         : ""}
       {state.success && !state.dismissedSuccess ?
-        <SuccessOverlay puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} dispatch={dispatch} />
+        <SuccessOverlay user={props.user} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} dispatch={dispatch} />
         : ""}
       {state.moderating ?
         <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />

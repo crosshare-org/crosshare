@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { Link, RouteComponentProps } from "@reach/router";
 
-import { requiresAuth, AuthProps } from './App';
+import { ensureUser, AuthProps } from './App';
 import { Page } from './Page';
 import {
   CategoryIndexT, CategoryIndexV, UserPlaysT, UserPlaysV, getDateString
@@ -19,7 +19,7 @@ const CategoryNames: { [key: string]: string } = {
   dailymini: "Daily Mini"
 }
 
-export const Category = requiresAuth(({ user, categoryId }: CategoryProps) => {
+export const Category = ensureUser(({ user, categoryId }: CategoryProps) => {
   const [plays, setPlays] = React.useState<UserPlaysT | null>(null);
   const [puzzles, setPuzzles] = React.useState<CategoryIndexT | null>(null);
   const [error, setError] = React.useState(false);

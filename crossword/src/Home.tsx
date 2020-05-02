@@ -14,16 +14,13 @@ import { buttonAsLink } from './style';
 declare var firebase: typeof import('firebase');
 
 export const Home = (_: RouteComponentProps) => {
-  const { user, isAdmin } = React.useContext(AuthContext);
-  let topbar: React.ReactNode = null;
-  if (user) {
-    topbar = <React.Fragment>
-      {isAdmin ?
-        <TopBarLink icon={<FaUserLock />} text="Admin" onClick={() => navigate('/admin')} />
-        : ''}
-      <TopBarLink icon={<FaUser />} text="Account" onClick={() => navigate('/account')} />
-    </React.Fragment>
-  }
+  const { isAdmin } = React.useContext(AuthContext);
+  let topbar = <React.Fragment>
+    {isAdmin ?
+      <TopBarLink icon={<FaUserLock />} text="Admin" onClick={() => navigate('/admin')} />
+      : ''}
+    <TopBarLink icon={<FaUser />} text="Account" onClick={() => navigate('/account')} />
+  </React.Fragment>
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
@@ -52,9 +49,7 @@ export const Home = (_: RouteComponentProps) => {
                 We are just getting started so please let us know if you have any issues or suggestions.
               </p>
               <p><button css={buttonAsLink} onClick={goToDailyMini}>Play today's daily mini crossword</button></p>
-              {user ?
-                <p><Link to="/category/dailymini">Play previous daily minis</Link></p>
-                : ""}
+              <p><Link to="/category/dailymini">Play previous daily minis</Link></p>
             </React.Fragment>
           )
         }
