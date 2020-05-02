@@ -17,7 +17,7 @@ import { Admin } from './Admin';
 import { Home } from './Home';
 import { Category } from './Category';
 import { PlayV, UserPlayT, UserPlaysV } from './common/dbtypes';
-import { getValidatedAndDelete, setInCache, updateInCache } from './common/dbUtils';
+import { getValidatedAndDelete, setInCache, updateInCache } from './dbUtils';
 
 import googlesignin from './googlesignin.png';
 

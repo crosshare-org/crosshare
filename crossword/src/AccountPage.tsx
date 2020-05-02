@@ -6,7 +6,7 @@ import { Link, RouteComponentProps } from "@reach/router";
 
 import { requiresAuth, AuthProps } from './App';
 import { UserPlaysV, AuthoredPuzzlesV } from './common/dbtypes';
-import { getFromSessionOrDB } from './common/dbUtils';
+import { getFromSessionOrDB } from './dbUtils';
 import { timeString } from './utils'
 
 import { Page } from './Page';

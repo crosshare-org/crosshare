@@ -2,7 +2,7 @@ import * as t from "io-ts";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
-import { downloadTimestamped } from './dbtypes';
+import { downloadTimestamped } from './common/dbtypes';
 
 declare var firebase: typeof import('firebase');
 

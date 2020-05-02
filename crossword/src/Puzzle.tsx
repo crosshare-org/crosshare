@@ -27,7 +27,7 @@ import { Direction, BLOCK, puzzleFromDB, PuzzleResult, puzzleTitle } from './typ
 import {
   DBPuzzleV, PlayT, PlayV, getDateString, UserPlayT, UserPlaysV, CategoryIndexV
 } from './common/dbtypes';
-import { getFromSessionOrDB, setInCache, updateInCache } from './common/dbUtils';
+import { getFromSessionOrDB, setInCache, updateInCache } from './dbUtils';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction,

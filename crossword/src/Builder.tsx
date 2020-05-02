@@ -25,7 +25,7 @@ import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
 import { fromCells, getClueMap } from './viewableGrid';
 import { TimestampedPuzzleT, AuthoredPuzzleT, AuthoredPuzzlesV } from './common/dbtypes'
-import { updateInCache } from './common/dbUtils';
+import { updateInCache } from './dbUtils';
 import { Direction, PuzzleT } from './types';
 import {
   Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,

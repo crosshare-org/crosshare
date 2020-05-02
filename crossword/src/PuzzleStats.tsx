@@ -9,7 +9,7 @@ import { usePuzzleAndPlay } from './Puzzle';
 import { Page } from './Page';
 import { puzzleTitle, PuzzleResult } from './types';
 import { PuzzleStatsT, PuzzleStatsV } from './common/dbtypes';
-import { getFromSessionOrDB } from './common/dbUtils';
+import { getFromSessionOrDB } from './dbUtils';
 import { timeString } from './utils';
 
 interface PuzzleStatsProps extends RouteComponentProps, AuthProps {

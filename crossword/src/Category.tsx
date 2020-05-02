@@ -9,7 +9,7 @@ import { Page } from './Page';
 import {
   CategoryIndexT, CategoryIndexV, UserPlaysT, UserPlaysV, getDateString
 } from './common/dbtypes';
-import { getFromSessionOrDB } from './common/dbUtils';
+import { getFromSessionOrDB } from './dbUtils';
 
 interface CategoryProps extends RouteComponentProps, AuthProps {
   categoryId?: string

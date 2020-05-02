@@ -7,7 +7,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
 import { getDateString, CategoryIndexT, CategoryIndexV } from './common/dbtypes';
-import { getFromSessionOrDB } from './common/dbUtils';
+import { getFromSessionOrDB } from './dbUtils';
 
 
 export interface UpcomingMinisCalendarProps {

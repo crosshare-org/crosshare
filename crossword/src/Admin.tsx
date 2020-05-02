@@ -12,7 +12,7 @@ import {
   TimestampedPuzzleT, DailyStatsT, DailyStatsV, DBPuzzleV, getDateString,
   CategoryIndexT, CategoryIndexV
 } from './common/dbtypes';
-import { getFromSessionOrDB, mapEachResult } from './common/dbUtils';
+import { getFromSessionOrDB, mapEachResult } from './dbUtils';
 import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
 
 const UpcomingMinisCalendar = React.lazy(() => import(/* webpackChunkName: "minisCal" */ './UpcomingMinisCalendar'));
