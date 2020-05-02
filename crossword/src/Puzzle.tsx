@@ -72,14 +72,20 @@ export const usePuzzleAndPlay = (loadPlay: boolean, crosswordId: string | undefi
         }
         setPuzzle({ ...puzzleFromDB(dbpuzz), id: crosswordId });
       })
-      .catch((e) => setError(typeof e === 'string' ? e : 'error loading puzzle'));
+      .catch((e) => {
+        console.error(e);
+        setError(typeof e === 'string' ? e : 'error loading puzzle');
+      });
 
     getFromSessionOrDB('p', crosswordId + "-" + userId, PlayV, -1)
       .then(play => {
         setPlay(play);
         setIsLoadingPlay(false);
       })
-      .catch((e) => setError(typeof e === 'string' ? e : 'error loading play'));
+      .catch((e) => {
+        console.error(e);
+        setError(typeof e === 'string' ? e : 'error loading play');
+      });
   }, [crosswordId, userId, loadPlay]);
 
   return [puzzle, error, play, isLoadingPlay];
