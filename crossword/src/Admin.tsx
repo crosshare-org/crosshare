@@ -10,7 +10,7 @@ import { Page } from './Page';
 import { PuzzleResult, puzzleFromDB, puzzleTitle } from './types';
 import {
   TimestampedPuzzleT, DailyStatsT, DailyStatsV, DBPuzzleV, getDateString,
-  CategoryIndexT, CategoryIndexV
+  CategoryIndexT, CategoryIndexV, prettifyDateString
 } from './common/dbtypes';
 import { getFromSessionOrDB, mapEachResult } from './dbUtils';
 import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
@@ -79,7 +79,7 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
     if (minis) {
       const dateString = Object.keys(minis).find(key => minis[key] === crosswordId);
       if (dateString) {
-        return "Daily mini for " + dateString;
+        return "Daily mini for " + prettifyDateString(dateString);
       }
     }
     return crosswordId;

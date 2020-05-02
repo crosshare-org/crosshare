@@ -88,6 +88,14 @@ export function getDateString(pd: Date) {
   return pd.getUTCFullYear() + "-" + pd.getUTCMonth() + "-" + pd.getUTCDate();
 }
 
+export function prettifyDateString(dateString: string) {
+  const groups = dateString.match(/^(\d+)-(\d+)-(\d+)$/);
+  if (!groups) {
+    throw new Error("Bad date string: " + dateString);
+  }
+  return (parseInt(groups[2]) + 1) + '/' + parseInt(groups[3]) + '/' + groups[1];
+}
+
 export const PuzzleStatsV = t.type({
   /** author id, denormalized for security rules purposes. */
   a: t.string,

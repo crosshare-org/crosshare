@@ -7,7 +7,8 @@ import { Link, RouteComponentProps } from "@reach/router";
 import { ensureUser, AuthProps } from './App';
 import { Page } from './Page';
 import {
-  CategoryIndexT, CategoryIndexV, UserPlaysT, UserPlaysV, getDateString
+  CategoryIndexT, CategoryIndexV, UserPlaysT, UserPlaysV,
+  getDateString, prettifyDateString
 } from './common/dbtypes';
 import { getFromSessionOrDB } from './dbUtils';
 
@@ -54,14 +55,6 @@ export const Category = ensureUser(({ user, categoryId }: CategoryProps) => {
   const today = new Date()
   today.setHours(12);
   const ds = addZeros(getDateString(today));
-
-  function prettifyDateString(dateString: string) {
-    const groups = dateString.match(/^(\d+)-(\d+)-(\d+)$/);
-    if (!groups) {
-      throw new Error("Bad date string: " + dateString);
-    }
-    return (parseInt(groups[2]) + 1) + '/' + parseInt(groups[3]) + '/' + groups[1];
-  }
 
   function addZeros(dateString: string) {
     const groups = dateString.match(/^(\d+)-(\d+)-(\d+)$/);
