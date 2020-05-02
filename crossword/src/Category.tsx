@@ -53,14 +53,31 @@ export const Category = requiresAuth(({ user, categoryId }: CategoryProps) => {
 
   const today = new Date()
   today.setHours(12);
-  const ds = getDateString(today);
+  const ds = addZeros(getDateString(today));
 
   function prettifyDateString(dateString: string) {
     const groups = dateString.match(/^(\d+)-(\d+)-(\d+)$/);
     if (!groups) {
       throw new Error("Bad date string: " + dateString);
     }
-    return (parseInt(groups[2]) + 1) + '/' + groups[3] + '/' + groups[1];
+    return (parseInt(groups[2]) + 1) + '/' + parseInt(groups[3]) + '/' + groups[1];
+  }
+
+  function addZeros(dateString: string) {
+    const groups = dateString.match(/^(\d+)-(\d+)-(\d+)$/);
+    if (!groups) {
+      throw new Error("Bad date string: " + dateString);
+    }
+    const year = groups[1];
+    let month = groups[2];
+    if (month.length === 1) {
+      month = '0' + month;
+    }
+    let date = groups[3];
+    if (date.length === 1) {
+      date = '0' + date;
+    }
+    return year + '-' + month + '-' + date;
   }
 
   return (
@@ -70,7 +87,7 @@ export const Category = requiresAuth(({ user, categoryId }: CategoryProps) => {
         padding: 0,
         listStyleType: 'none',
       }}>
-        {Object.keys(puzzles).filter(k => k <= ds).sort().reverse().map((dateString) => {
+        {Object.keys(puzzles).map(addZeros).filter(k => k <= ds).sort().reverse().map((dateString) => {
           const play = plays && plays[puzzles[dateString]];
           return (<li key={dateString} css={{
             padding: '0.5em 0',
