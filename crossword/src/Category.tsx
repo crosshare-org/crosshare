@@ -87,16 +87,20 @@ export const Category = requiresAuth(({ user, categoryId }: CategoryProps) => {
         padding: 0,
         listStyleType: 'none',
       }}>
-        {Object.keys(puzzles).map(addZeros).filter(k => k <= ds).sort().reverse().map((dateString) => {
-          const play = plays && plays[puzzles[dateString]];
-          return (<li key={dateString} css={{
-            padding: '0.5em 0',
-            width: '100%',
-          }}>
-            <Link css={{ display: 'inline-block', width: '50%', textAlign: 'right', paddingRight: '1em', fontWeight: play ?.[3] ? 'normal' : 'bold' }} to={'/crosswords/' + puzzles[dateString]}>{CategoryNames[categoryId] + ' for ' + prettifyDateString(dateString)}</Link>
-            <div css={{ display: 'inline-block', width: '50%', paddingLeft: '1em' }}>{play ?.[3] ? 'completed ' + (play ?.[2] ? 'with helpers' : 'without helpers') : (play ? 'unfinished' : '')}</div>
-          </li>);
-        })}
+        {Object.entries(puzzles)
+          .map(([k, v]) => [addZeros(k), v])
+          .filter(([k, _v]) => k <= ds)
+          .sort((a, b) => a[0] > b[0] ? -1 : 1)
+          .map(([dateString, puzzleId]) => {
+            const play = plays && plays[puzzleId];
+            return (<li key={dateString} css={{
+              padding: '0.5em 0',
+              width: '100%',
+            }}>
+              <Link css={{ display: 'inline-block', width: '50%', textAlign: 'right', paddingRight: '1em', fontWeight: play ?.[3] ? 'normal' : 'bold' }} to={'/crosswords/' + puzzleId}>{CategoryNames[categoryId] + ' for ' + prettifyDateString(dateString)}</Link>
+              <div css={{ display: 'inline-block', width: '50%', paddingLeft: '1em' }}>{play ?.[3] ? 'completed ' + (play ?.[2] ? 'with helpers' : 'without helpers') : (play ? 'unfinished' : '')}</div>
+            </li>);
+          })}
       </ul>
     </Page>
   );
