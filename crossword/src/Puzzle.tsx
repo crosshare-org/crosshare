@@ -359,16 +359,18 @@ export const RebusOverlay = (props: { showingKeyboard: boolean, value: string, d
         fontSize: '2.5em',
         lineHeight: '1em',
       }}>
-        {props.value ? props.value : 'Enter Rebus'}
+        {props.value ? props.value : 'Type to enter rebus...'}
       </div>
       <button onClick={() => {
         const escape: KeypressAction = { type: "KEYPRESS", key: 'Escape', shift: false };
         props.dispatch(escape);
       }} css={{ marginRight: '10%', width: '45%' }}>Cancel</button>
-      <button onClick={() => {
-        const enter: KeypressAction = { type: "KEYPRESS", key: 'Enter', shift: false };
-        props.dispatch(enter);
-      }} css={{ width: '45%' }}>Enter Rebus</button>
+      <button
+        disabled={props.value.length === 0}
+        onClick={() => {
+          const enter: KeypressAction = { type: "KEYPRESS", key: 'Enter', shift: false };
+          props.dispatch(enter);
+        }} css={{ width: '45%' }}>Submit Rebus</button>
     </Overlay>
   );
 }
