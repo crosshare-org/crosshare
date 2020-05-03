@@ -32,7 +32,7 @@ export const KeyRow = (props: KeyRowProps) => {
     <div css={{
       marginLeft: props.addMarginLeft ? '5%' : 0,
       display: 'flex',
-      paddingTop: 12,
+      paddingTop: 10,
     }}>{props.children}</div>
   );
 }
