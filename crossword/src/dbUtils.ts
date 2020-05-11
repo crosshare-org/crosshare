@@ -1,10 +1,9 @@
 import * as t from "io-ts";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
+import { getFirebaseApp, getTimestampClass } from './firebase';
 
 import { downloadTimestamped } from './common/dbtypes';
-
-declare var firebase: typeof import('firebase');
 
 export function setInCache<A>(
   collection: string,
@@ -16,12 +15,12 @@ export function setInCache<A>(
   const sessionKey = collection + "/" + docId;
   const TimestampedV = downloadTimestamped(validator);
   const forLS: t.TypeOf<typeof TimestampedV> = {
-    downloadedAt: firebase.firestore.Timestamp.now(),
+    downloadedAt: getTimestampClass().now(),
     data: value
   };
   sessionStorage.setItem(sessionKey, JSON.stringify(forLS));
   if (sendToDB) {
-    const db = firebase.firestore();
+    const db = getFirebaseApp().firestore();
     db.collection(collection).doc(docId).set(value).then(() => {
       console.log('Set new value for ' + collection + '/' + docId);
     });
@@ -53,7 +52,7 @@ export function updateInCache<A>(
     }
   }
   if (sendToDB) {
-    const db = firebase.firestore();
+    const db = getFirebaseApp().firestore();
     db.collection(collection).doc(docId).set(update, { merge: true }).then(() => {
       console.log('Updated for ' + collection + '/' + docId);
     });
@@ -81,6 +80,7 @@ export async function mapEachResult<N, A>(
   return results;
 }
 
+// TODO WHERE ARE THESE firebase TYPES COMING FROM?
 export async function getValidatedAndDelete<A>(
   query: firebase.firestore.Query<firebase.firestore.DocumentData>,
   validator: t.Type<A>,
@@ -130,7 +130,7 @@ export async function getFromSessionOrDB<A>(
     }
   }
   console.log('loading ' + sessionKey + ' from db');
-  const db = firebase.firestore();
+  const db = getFirebaseApp().firestore();
   const dbres = await db.collection(collection).doc(docId).get();
   if (!dbres.exists) {
     console.log(sessionKey + ' is non existent');
@@ -140,7 +140,7 @@ export async function getFromSessionOrDB<A>(
   if (isRight(validationResult)) {
     console.log("loaded, and caching in storage");
     const forLS: t.TypeOf<typeof TimestampedV> = {
-      downloadedAt: firebase.firestore.Timestamp.now(),
+      downloadedAt: getTimestampClass().now(),
       data: validationResult.right
     };
     sessionStorage.setItem(sessionKey, JSON.stringify(forLS));

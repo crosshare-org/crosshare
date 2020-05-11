@@ -21,6 +21,7 @@ import {
   EscapeKey, BacktickKey
 } from './Icons';
 import { requiresAdmin, AuthProps } from './App';
+import { getFirebaseApp, getTimestampClass } from './firebase';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from './gridBase';
 import { fromCells, getClueMap } from './viewableGrid';
@@ -30,7 +31,7 @@ import { Direction, PuzzleT } from './types';
 import {
   Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
   KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
-  SetTitleAction, SetHighlightAction
+  SetTitleAction, SetHighlightAction, PublishAction
 } from './reducer';
 import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav, Page } from './Page';
@@ -41,8 +42,6 @@ import * as WordDB from './WordDB';
 import { Overlay } from './Overlay';
 import { usePersistedBoolean } from './hooks';
 import { buttonAsLink } from './style';
-
-declare var firebase: typeof import('firebase');
 
 let worker: Worker;
 
@@ -420,14 +419,14 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
     publishInProgress.current = true;
     console.log("Uploading");
     console.log(dbpuzzle);
-    const db = firebase.firestore();
+    const db = getFirebaseApp().firestore();
     db.collection("c").add(dbpuzzle).then((ref) => {
       console.log("Uploaded", ref.id);
 
       const authoredPuzzle: AuthoredPuzzleT = [dbpuzzle.ca, dbpuzzle.t];
       updateInCache('uc', props.user.uid, { [ref.id]: authoredPuzzle }, AuthoredPuzzlesV, true);
 
-      const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: dbpuzzle }
+      const forStorage: TimestampedPuzzleT = { downloadedAt: getTimestampClass().now(), data: dbpuzzle }
       sessionStorage.setItem('c/' + ref.id, JSON.stringify(forStorage));
       navigate("/crosswords/" + ref.id);
     });
@@ -484,7 +483,10 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         }} />
       </TopBarDropDown>
       <TopBarDropDown icon={<FaEllipsisH />} text="More">
-        <TopBarDropDownLink icon={<FaRegNewspaper />} text="Publish Puzzle" onClick={() => dispatch({ type: "PUBLISH" })} />
+        <TopBarDropDownLink icon={<FaRegNewspaper />} text="Publish Puzzle" onClick={() => {
+          const a: PublishAction = { type: 'PUBLISH', publishTimestamp: getTimestampClass().now() };
+          dispatch(a);
+        }} />
         <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
           const a: KeypressAction = { type: "KEYPRESS", key: 'Escape', shift: false };
           dispatch(a);

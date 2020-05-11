@@ -23,3 +23,4 @@ yarn-debug.log*
 yarn-error.log*
 dist
 .sentryclirc
+firestore-debug.log

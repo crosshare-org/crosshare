@@ -8,10 +8,9 @@ import { requiresAuth, AuthProps } from './App';
 import { UserPlaysV, AuthoredPuzzlesV } from './common/dbtypes';
 import { getFromSessionOrDB } from './dbUtils';
 import { timeString } from './utils'
+import { getFirebaseApp } from './firebase';
 
 import { Page } from './Page';
-
-declare var firebase: typeof import('firebase');
 
 export const PlayListItem = (props: UserPlay) => {
   return (
@@ -119,7 +118,7 @@ export const AccountPage = requiresAuth(({ user }: RouteComponentProps & AuthPro
     <Page title="Account">
       <div css={{ margin: '1em', }}>
         <h4 css={{ borderBottom: '1px solid var(--black)' }}>Account</h4>
-        <p>You're logged in as <b>{user.email}</b>. <button onClick={() => firebase.auth().signOut()}>Log out</button></p>
+        <p>You're logged in as <b>{user.email}</b>. <button onClick={() => getFirebaseApp().auth().signOut()}>Log out</button></p>
         <DisplayNameForm user={user} />
         {plays && plays.length ?
           <React.Fragment>

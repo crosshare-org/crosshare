@@ -39,10 +39,9 @@ import { buttonAsLink, SECONDARY, LIGHTER, ERROR_COLOR } from './style';
 import { usePersistedBoolean } from './hooks';
 import { navToLatestMini, timeString } from './utils';
 import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
+import { getFirebaseApp, getDeleteSentinal, getTimestampClass } from './firebase';
 
 const UpcomingMinisCalendar = React.lazy(() => import(/* webpackChunkName: "minisCal" */ './UpcomingMinisCalendar'));
-
-declare var firebase: typeof import('firebase');
 
 interface PuzzleLoaderProps extends RouteComponentProps {
   crosswordId?: string
@@ -236,7 +235,7 @@ const LoadableCalendar = (props: UpcomingMinisCalendarProps) => (
 );
 
 const ModeratingOverlay = React.memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, dispatch: React.Dispatch<PuzzleAction> }) => {
-  const db = firebase.firestore();
+  const db = getFirebaseApp().firestore();
   const [date, setDate] = React.useState(puzzle.publishTime ?.toDate());
 
   function schedule() {
@@ -247,7 +246,7 @@ const ModeratingOverlay = React.memo(({ dispatch, puzzle }: { puzzle: PuzzleResu
       [getDateString(date)]: puzzle.id,
     }
     if (puzzle.publishTime) {
-      update[getDateString(puzzle.publishTime.toDate())] = firebase.firestore.FieldValue.delete();
+      update[getDateString(puzzle.publishTime.toDate())] = getDeleteSentinal();
     }
     db.collection('categories').doc('dailymini').update(update).then(() => {
       console.log("Updated categories page");
@@ -256,7 +255,7 @@ const ModeratingOverlay = React.memo(({ dispatch, puzzle }: { puzzle: PuzzleResu
     })
     db.collection('c').doc(puzzle.id).update({
       m: true,
-      p: firebase.firestore.Timestamp.fromDate(date),
+      p: getTimestampClass().fromDate(date),
       c: 'dailymini',
     }).then(() => {
       console.log("Scheduled mini");
@@ -501,7 +500,6 @@ const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & AuthProps) 
   }
   useEventListener('blur', prodPause);
 
-
   const [muted, setMuted] = usePersistedBoolean("muted", false);
 
   let title = puzzleTitle(puzzle);
@@ -636,7 +634,7 @@ const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & AuthProps) 
   }
 
   const updatePlay = React.useCallback((sendToDB: boolean) => {
-    const updatedAt = firebase.firestore.Timestamp.now();
+    const updatedAt = getTimestampClass().now();
     const playTime = (state.currentTimeWindowStart === 0) ?
       state.bankedSeconds :
       state.bankedSeconds + ((new Date()).getTime() - state.currentTimeWindowStart) / 1000;

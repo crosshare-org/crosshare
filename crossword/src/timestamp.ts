@@ -3,10 +3,10 @@
 import * as t from "io-ts";
 import { either } from "fp-ts/lib/Either";
 
-declare var firebase: typeof import('firebase');
+import { getTimestampClass } from './firebase';
 
 const isFirestoreTimestamp = (u: unknown): u is firebase.firestore.Timestamp =>
-  u ? u instanceof firebase.firestore.Timestamp : false;
+  u ? u instanceof getTimestampClass() : false;
 
 const validateTimestamp: t.Validate<unknown, firebase.firestore.Timestamp> = (i, c) => {
   if (isFirestoreTimestamp(i)) {
@@ -14,7 +14,7 @@ const validateTimestamp: t.Validate<unknown, firebase.firestore.Timestamp> = (i,
   }
   return either.chain(
     t.type({ seconds: t.number, nanoseconds: t.number }).validate(i, c),
-    obj => t.success(new firebase.firestore.Timestamp(obj.seconds, obj.nanoseconds))
+    obj => t.success(new (getTimestampClass())(obj.seconds, obj.nanoseconds))
   );
 }
 

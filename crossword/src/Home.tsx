@@ -5,13 +5,12 @@ import * as React from 'react';
 import { Link, navigate, RouteComponentProps } from "@reach/router";
 import { FaUser, FaUserLock } from 'react-icons/fa';
 
+import { getTimestampClass } from './firebase';
 import { AuthContext } from './App';
 import { TopBarLink } from './TopBar';
 import { Page } from './Page';
 import { navToLatestMini } from './utils';
 import { buttonAsLink } from './style';
-
-declare var firebase: typeof import('firebase');
 
 export const Home = (_: RouteComponentProps) => {
   const { isAdmin } = React.useContext(AuthContext);
@@ -26,7 +25,7 @@ export const Home = (_: RouteComponentProps) => {
 
   function goToDailyMini() {
     setLoading(true);
-    navToLatestMini(firebase.firestore.Timestamp.now(), () => { setError(true) });
+    navToLatestMini(getTimestampClass().now(), () => { setError(true) });
   }
 
   return (

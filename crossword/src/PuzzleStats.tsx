@@ -2,9 +2,9 @@
 import { jsx } from '@emotion/core';
 
 import * as React from 'react';
-import { requiresAuth, AuthProps } from './App';
 import { RouteComponentProps } from '@reach/router';
 
+import { requiresAuth, AuthProps } from './App';
 import { usePuzzleAndPlay } from './Puzzle';
 import { Page } from './Page';
 import { puzzleTitle, PuzzleResult } from './types';

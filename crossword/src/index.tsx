@@ -4,6 +4,8 @@ import "./style.css";
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import * as Sentry from '@sentry/browser';
+import { initFirebase } from './firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 if (process.env.NODE_ENV === 'production' && process.env.REACT_APP_SENTRY_RELEASE) {
   Sentry.init({
@@ -16,10 +18,15 @@ declare var firebase: typeof import('firebase');
 
 fetch('/__/firebase/init.json').then(async response => {
   const res = await response.json();
-  firebase.initializeApp({ ...res, authDomain: "auth.crosshare.org" });
+  const firebaseApp = firebase.initializeApp({ ...res, authDomain: "auth.crosshare.org" });
   if (process.env.NODE_ENV === 'production') {
-    firebase.performance();
+    firebaseApp.performance();
   }
+  const provider = new firebase.auth.GoogleAuthProvider();
+  function useAuthStateCurried() {
+    return useAuthState(firebaseApp.auth());
+  }
+  initFirebase(firebaseApp, firebase.firestore.Timestamp, provider, firebase.firestore.FieldValue.delete(), useAuthStateCurried);
   ReactDOM.render(<App />, document.getElementById('root'));
 });
 

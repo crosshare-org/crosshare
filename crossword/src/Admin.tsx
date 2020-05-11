@@ -14,10 +14,9 @@ import {
 } from './common/dbtypes';
 import { getFromSessionOrDB, mapEachResult } from './dbUtils';
 import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
+import { getFirebaseApp, getTimestampClass } from './firebase';
 
 const UpcomingMinisCalendar = React.lazy(() => import(/* webpackChunkName: "minisCal" */ './UpcomingMinisCalendar'));
-
-declare var firebase: typeof import('firebase');
 
 const LoadableCalendar = (props: UpcomingMinisCalendarProps) => (
   <React.Suspense fallback={<div>Loading...</div>}>
@@ -39,14 +38,14 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
 
   React.useEffect(() => {
     console.log("loading admin content");
-    const db = firebase.firestore();
+    const db = getFirebaseApp().firestore();
     const now = new Date();
     const dateString = getDateString(now);
     Promise.all([
       getFromSessionOrDB('ds', dateString, DailyStatsV, 1000 * 60 * 30),
       getFromSessionOrDB('categories', 'dailymini', CategoryIndexV, 24 * 60 * 60 * 1000),
       mapEachResult(db.collection('c').where("m", "==", false), DBPuzzleV, (dbpuzz, docId) => {
-        const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: dbpuzz }
+        const forStorage: TimestampedPuzzleT = { downloadedAt: getTimestampClass().now(), data: dbpuzz }
         sessionStorage.setItem('c/' + docId, JSON.stringify(forStorage));
         return { ...puzzleFromDB(dbpuzz), id: docId };
       })

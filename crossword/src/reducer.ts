@@ -10,8 +10,6 @@ import {
 } from './viewableGrid';
 import { cellIndex, valAt, entryAtPosition, entryWord, gridWithEntrySet } from './gridBase';
 
-declare var firebase: typeof import('firebase');
-
 interface GridInterfaceState {
   type: string,
   active: PosAndDir,
@@ -125,6 +123,14 @@ export interface ClickedFillAction extends PuzzleAction {
 }
 export function isClickedFillAction(action: PuzzleAction): action is ClickedFillAction {
   return action.type === 'CLICKEDFILL'
+}
+
+export interface PublishAction extends PuzzleAction {
+  type: 'PUBLISH',
+  publishTimestamp: firebase.firestore.Timestamp
+}
+export function isPublishAction(action: PuzzleAction): action is PublishAction {
+  return action.type === 'PUBLISH'
 }
 
 interface SetActiveAction extends PuzzleAction {
@@ -420,7 +426,7 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   if (action.type === "CLEARPUBLISHERRORS") {
     return ({ ...state, publishErrors: [] });
   }
-  if (action.type === "PUBLISH") {
+  if (isPublishAction(action)) {
     let errors = [];
     if (!state.gridIsComplete) {
       errors.push("All squares in the grid must be filled in");
@@ -461,7 +467,7 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
       }
     });
     const puzzle: DBPuzzleT = {
-      ca: firebase.firestore.Timestamp.now(),
+      ca: action.publishTimestamp,
       t: state.title || "Anonymous",
       a: state.authorId,
       n: state.authorName,

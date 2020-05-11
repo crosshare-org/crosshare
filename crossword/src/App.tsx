@@ -2,8 +2,7 @@
 import { jsx } from '@emotion/core';
 import * as React from 'react';
 
-import { WindowLocation, Location, Router, RouteComponentProps } from "@reach/router";
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { Router, RouteComponentProps } from "@reach/router";
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
@@ -18,12 +17,11 @@ import { Home } from './Home';
 import { Category } from './Category';
 import { PlayV, UserPlayT, UserPlaysV } from './common/dbtypes';
 import { getValidatedAndDelete, setInCache, updateInCache } from './dbUtils';
+import { useAuthState, getFirebaseApp, getGoogleAuthProvider } from './firebase';
 
 import googlesignin from './googlesignin.png';
 
 const BuilderDBLoader = React.lazy(() => import(/* webpackChunkName: "builder" */ "./Builder"));
-
-declare var firebase: typeof import('firebase');
 
 interface AuthContextValue {
   user: firebase.User | undefined,
@@ -34,7 +32,7 @@ interface AuthContextValue {
 export const AuthContext = React.createContext({ user: undefined, loadingUser: false, error: "using default context" } as AuthContextValue);
 
 type CrosshareAudioContextValue = [AudioContext | null, () => void];
-export const CrosshareAudioContext = React.createContext([null, () => { }] as CrosshareAudioContextValue);
+export const CrosshareAudioContext = React.createContext<CrosshareAudioContextValue>([null, () => { }]);
 
 type Optionalize<T extends K, K> = Omit<T, keyof K>;
 
@@ -45,10 +43,9 @@ export interface AuthProps {
 
 export const GoogleSignInButton = () => {
   function signin() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider)
+    getFirebaseApp().auth().signInWithPopup(getGoogleAuthProvider())
       .then(() => {
-        firebase.analytics().logEvent("login", { method: 'google' });
+        getFirebaseApp().analytics().logEvent("login", { method: 'google' });
       })
   }
   return (
@@ -58,11 +55,10 @@ export const GoogleSignInButton = () => {
 
 export const GoogleLinkButton = ({ user }: { user: firebase.User }) => {
   function signin() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    user.linkWithPopup(provider)
+    user.linkWithPopup(getGoogleAuthProvider())
       .then(() => {
         console.log("linked w/o needing a merge")
-        firebase.analytics().logEvent("login", { method: 'google' });
+        getFirebaseApp().analytics().logEvent("login", { method: 'google' });
       })
       .catch(async (error: any) => {
         if (error.code !== 'auth/credential-already-in-use') {
@@ -70,10 +66,10 @@ export const GoogleLinkButton = ({ user }: { user: firebase.User }) => {
           return;
         }
         // Get anonymous user plays
-        const db = firebase.firestore();
+        const db = getFirebaseApp().firestore();
         await db.collection('up').doc(user.uid).delete();
         const plays = await getValidatedAndDelete(db.collection('p').where('u', '==', user.uid), PlayV);
-        return firebase.auth().signInWithCredential(error.credential).then(async (value: firebase.auth.UserCredential) => {
+        return getFirebaseApp().auth().signInWithCredential(error.credential).then(async (value: firebase.auth.UserCredential) => {
           console.log("signed in as new user " + value.user ?.uid);
           const newUser = value.user;
           if (!newUser) {
@@ -109,8 +105,8 @@ export function ensureUser<T extends AuthProps>(WrappedComponent: React.Componen
       return <Page title={null}>Error loading user: {error}</Page>;
     }
     if (!user) {
-      firebase.auth().signInAnonymously().then(() => {
-        firebase.analytics().logEvent("login", { method: 'anonymous' });
+      getFirebaseApp().auth().signInAnonymously().then(() => {
+        getFirebaseApp().analytics().logEvent("login", { method: 'anonymous' });
       })
       return <Page title={null}>Loading user...</Page>;
     };
@@ -294,7 +290,7 @@ const Construct = (_: RouteComponentProps) => {
 };
 
 const App = () => {
-  const [user, loadingUser, error] = useAuthState(firebase.auth());
+  const [user, loadingUser, error] = useAuthState();
   const [isAdmin, setIsAdmin] = React.useState(false);
   React.useEffect(() => {
     if (user && user.email) {
@@ -312,6 +308,7 @@ const App = () => {
         });
     }
   }, [user]);
+
   const [audioContext, setAudioContext] = React.useState<AudioContext | null>(null);
   const initAudioContext = React.useCallback(() => {
     if (!audioContext) {
@@ -325,11 +322,6 @@ const App = () => {
         <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
           <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error ?.message}}>
             <Helmet defaultTitle="Crosshare" titleTemplate="%s | Crosshare" />
-            <Location>
-              {({ location }) => (
-                <PageViewTracker location={location} />
-              )}
-            </Location>
             <React.Suspense fallback={<div>Loading...</div>}>
               <ToastContainer />
               <Router css={{ height: '100%', width: '100%', }}>

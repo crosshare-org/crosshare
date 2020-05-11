@@ -3,8 +3,7 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { DBPuzzleV, TimestampedPuzzleT } from './common/dbtypes';
-
-declare var firebase: typeof import('firebase');
+import { getTimestampClass, getFirebaseApp, FirebaseTimestamp } from './firebase';
 
 export function timeString(elapsed: number): string {
   const hours = Math.floor(elapsed / 3600);
@@ -15,8 +14,8 @@ export function timeString(elapsed: number): string {
     (seconds < 10 ? "0" : "") + seconds;
 }
 
-export function navToLatestMini(priorTo: firebase.firestore.Timestamp, onError: () => void, onMissing?: () => void) {
-  const db = firebase.firestore();
+export function navToLatestMini(priorTo: FirebaseTimestamp, onError: () => void, onMissing?: () => void) {
+  const db = getFirebaseApp().firestore();
   db.collection('c').where("c", "==", "dailymini")
     .where("p", "<", priorTo)
     .orderBy("p", "desc").limit(1).get().then((value) => {
@@ -27,7 +26,7 @@ export function navToLatestMini(priorTo: firebase.firestore.Timestamp, onError: 
         const data = doc.data();
         const validationResult = DBPuzzleV.decode(data);
         if (isRight(validationResult)) {
-          const forStorage: TimestampedPuzzleT = { downloadedAt: firebase.firestore.Timestamp.now(), data: validationResult.right }
+          const forStorage: TimestampedPuzzleT = { downloadedAt: getTimestampClass().now(), data: validationResult.right }
           sessionStorage.setItem('c/' + doc.id, JSON.stringify(forStorage));
           navigate("/crosswords/" + doc.id);
         } else {
