@@ -434,7 +434,7 @@ interface PuzzleProps {
   puzzle: PuzzleResult,
   play: PlayT | null,
 }
-const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & AuthProps) => {
+export const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & AuthProps) => {
   const [state, dispatch] = React.useReducer(puzzleReducer, {
     type: 'puzzle',
     active: { col: 0, row: 0, dir: Direction.Across },

@@ -8,7 +8,7 @@ import {
 } from './style';
 
 interface SquareProps {
-  contents: (size:number) => React.ReactNode,
+  contents: (size: number) => React.ReactNode,
   heightAdjust: number,
 }
 export const Square = (props: SquareProps) => {
@@ -55,6 +55,6 @@ export const Square = (props: SquareProps) => {
       flex: 'none',
       width: size,
       height: size
-    }}>{size !== 0 && props.contents(size)}</div>
+    }}>{props.contents(size || 1)}</div>
   );
 }
