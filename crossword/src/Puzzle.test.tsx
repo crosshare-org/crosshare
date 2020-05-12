@@ -37,12 +37,15 @@ test('clicking a clue sets slot to active', () => {
   const { getAllByText, getByLabelText } = render(<Puzzle puzzle={testPuzzle} play={null} />);
 
   const cell = getByLabelText('cell0x1');
-  expect(cell).not.toHaveFocus();
-  expect(cell).toHaveStyle('background: var(--white)');
+  expect(cell).toHaveStyleRule('background', 'var(--secondary)');
+
+  const cell2 = getByLabelText('cell1x1');
+  expect(cell2).toHaveStyleRule('background', 'var(--white)');
 
   const clue = getAllByText(/popeye's love/i)[0];
   expect(clue).toBeInTheDocument();
   fireEvent.click(clue);
 
-  expect(cell).toHaveStyle('background: var(--primary)');
+  expect(cell).toHaveStyleRule('background', 'var(--primary)');
+  expect(cell2).toHaveStyleRule('background', 'var(--secondary)');
 });

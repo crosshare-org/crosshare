@@ -42,11 +42,10 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "run-p --race dev:firebase dev:react",
     "dev:firebase": "firebase serve -p 4000",
     "dev:react": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts --trace-warnings test",
     "eject": "react-scripts eject",
     "release": "(export REACT_APP_SENTRY_RELEASE=$(git rev-parse --short HEAD); react-scripts build && node admin_scripts/sentryRelease.js)"
   },
@@ -68,6 +67,7 @@
   "proxy": "http://localhost:4000",
   "devDependencies": {
     "@firebase/testing": "^0.19.2",
+    "jest-emotion": "^10.0.32",
     "react-devtools": "^4.6.0"
   }
 }
