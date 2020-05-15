@@ -5,6 +5,70 @@ import * as t from "io-ts";
 import { timestamp } from '../timestamp';
 export { timestamp } from '../timestamp';
 
+export const CommentV = t.type({
+  /** comment text */
+  c: t.string,
+  /** author id */
+  a: t.string,
+  /** author display name */
+  n: t.string,
+  /** author solve time in fractional seconds */
+  t: t.number,
+  /** author did cheat? */
+  ch: t.boolean,
+  /** comment publish timestamp */
+  p: timestamp
+});
+export type CommentT = t.TypeOf<typeof CommentV>;
+
+export interface CommentWithRepliesT extends CommentT {
+  /** comment id */
+  i: string,
+  /** replies */
+  r?: Array<CommentWithRepliesT>
+}
+
+export interface CommentWithOrWithoutRepliesT extends CommentT {
+  /** comment id */
+  i?: string,
+  /** replies */
+  r?: Array<CommentWithOrWithoutRepliesT>
+}
+
+export const CommentWithRepliesV: t.Type<CommentWithRepliesT> = t.recursion('CommentWithReplies', () =>
+  t.intersection([
+    CommentV,
+    t.type({
+      /** comment id */
+      i: t.string,
+    }),
+    t.partial({
+      /** replies */
+      r: t.array(CommentWithRepliesV)
+    })
+  ])
+)
+
+export const CommentForModerationV = t.intersection([
+  CommentV,
+  t.type({
+    /** puzzle id */
+    pid: t.string,
+    /** id of the comment this is a reply to */
+    rt: t.union([t.string, t.null])
+  })
+])
+export type CommentForModerationT = t.TypeOf<typeof CommentForModerationV>;
+
+export const CommentForModerationWithIdV = t.intersection([
+  CommentForModerationV,
+  t.type({
+    /** comment id */
+    i: t.string,
+  })
+]);
+export type CommentForModerationWithIdT = t.TypeOf<typeof CommentForModerationWithIdV>;
+
 const DBPuzzleMandatoryV = t.type({
   /** created at */
   ca: timestamp,
@@ -40,6 +104,8 @@ const DBPuzzleOptionalV = t.partial({
   hs: t.array(t.number),
   /** use shade instead of circle for highlight? */
   s: t.boolean,
+  /** comments */
+  cs: t.array(CommentWithRepliesV),
 });
 export const DBPuzzleV = t.intersection([DBPuzzleMandatoryV, DBPuzzleOptionalV]);
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;

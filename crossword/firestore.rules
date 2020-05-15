@@ -4,6 +4,9 @@ service cloud.firestore {
     function isAdmin() {
       return request.auth.token.admin;
     }
+    function isNonAnonymous() {
+      return request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
     match /{document=**} {
       allow read, write: if false;
     }
@@ -64,6 +67,13 @@ service cloud.firestore {
     match /categories/{category} {
       allow get: if true;
       allow write: if isAdmin();
+    }
+    match /cfm/{commentId} {
+      allow write: if request.auth.uid != null
+        && isNonAnonymous()
+        && request.auth.uid == request.resource.data.a;
+      allow read: if isAdmin();
+      allow delete: if isAdmin();
     }
   }
 }

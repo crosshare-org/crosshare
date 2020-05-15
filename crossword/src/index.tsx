@@ -26,6 +26,13 @@ fetch('/__/firebase/init.json').then(async response => {
   function useAuthStateCurried() {
     return useAuthState(firebaseApp.auth());
   }
+  if (process.env.REACT_APP_USE_FIREBASE_EMULATOR) {
+    var db = firebaseApp.firestore();
+    db.settings({
+      host: "localhost:8080",
+      ssl: false
+    });
+  }
   initFirebase(firebaseApp, firebase.firestore.Timestamp, provider, firebase.firestore.FieldValue.delete(), useAuthStateCurried);
   ReactDOM.render(<App />, document.getElementById('root'));
 });

@@ -26,7 +26,8 @@ const testPuzzle: PuzzleResult = {
   grid: ["H", "O", "P", "E", ".", "A", "L", "O", "N", "E", "L", "I", "L", "A", "C", "E", "V", "I", "C", "T", ".", "E", "S", "T", "O"],
   highlighted: [],
   highlight: "circle",
-  id: "test-puzzle"
+  id: "test-puzzle",
+  comments: []
 }
 
 initFirebaseForTesting();

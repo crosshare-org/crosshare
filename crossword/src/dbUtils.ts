@@ -104,6 +104,25 @@ export async function getValidatedAndDelete<A>(
   return results;
 }
 
+export async function getFromDB<A>(
+  collection: string,
+  docId: string,
+  validator: t.Type<A>,
+): Promise<A> {
+  const db = getFirebaseApp().firestore();
+  const dbres = await db.collection(collection).doc(docId).get();
+  if (!dbres.exists) {
+    return Promise.reject('Missing doc');
+  }
+  const validationResult = validator.decode(dbres.data());
+  if (isRight(validationResult)) {
+    return validationResult.right;
+  } else {
+    console.error(PathReporter.report(validationResult).join(","));
+    return Promise.reject('Malformed content');
+  }
+}
+
 export async function getFromSessionOrDB<A>(
   collection: string,
   docId: string,

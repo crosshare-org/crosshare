@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 import type { WordDBT } from './WordDB';
 
-import { timestamp, DBPuzzleT } from './common/dbtypes';
+import { timestamp, DBPuzzleT, CommentWithRepliesV } from './common/dbtypes';
 
 export const BLOCK = ".";
 
@@ -67,7 +67,7 @@ const PuzzleJsonMandatoryV = t.type({
 });
 const PuzzleJsonOptionalV = t.partial({
   highlighted: t.array(t.number),
-  highlight: t.keyof({ circle: null, shade: null })
+  highlight: t.keyof({ circle: null, shade: null }),
 });
 export const PuzzleJsonV = t.intersection([PuzzleJsonMandatoryV, PuzzleJsonOptionalV]);
 export type PuzzleJson = t.TypeOf<typeof PuzzleJsonV>;
@@ -93,7 +93,8 @@ export const PuzzleV = t.type({
   clues: t.array(ClueV),
   grid: t.array(t.string),
   highlighted: t.array(t.number),
-  highlight: t.keyof({ circle: null, shade: null })
+  highlight: t.keyof({ circle: null, shade: null }),
+  comments: t.array(CommentWithRepliesV),
 });
 
 export type PuzzleT = t.TypeOf<typeof PuzzleV>;
@@ -131,6 +132,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     clues: clues,
     grid: dbPuzzle.g,
     highlighted: dbPuzzle.hs || [],
-    highlight: dbPuzzle.s ? "shade" : "circle"
+    highlight: dbPuzzle.s ? "shade" : "circle",
+    comments: dbPuzzle.cs || []
   };
 }

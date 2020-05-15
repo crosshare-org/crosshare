@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render, RenderOptions, RenderResult } from '@testing-library/react';
 import { HelmetProvider } from 'react-helmet-async';
-import { matchers } from 'jest-emotion';
+import { matchers, createSerializer } from 'jest-emotion';
 
 import { AuthContext } from './App';
 
@@ -11,6 +11,7 @@ import { initFirebase } from './firebase';
 
 // Add the custom matchers provided by 'jest-emotion'
 expect.extend(matchers);
+expect.addSnapshotSerializer(createSerializer());
 
 const anonymousUser = {
   uid: 'anonymous-user-id',

@@ -40,6 +40,8 @@ import { usePersistedBoolean } from './hooks';
 import { navToLatestMini, timeString } from './utils';
 import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
 import { getFirebaseApp, getDeleteSentinal, getTimestampClass } from './firebase';
+import { Emoji } from './Emoji';
+import { Comments } from './Comments';
 
 const UpcomingMinisCalendar = React.lazy(() => import(/* webpackChunkName: "minisCal" */ './UpcomingMinisCalendar'));
 
@@ -64,7 +66,7 @@ export const usePuzzleAndPlay = (loadPlay: boolean, crosswordId: string | undefi
       return;
     }
 
-    getFromSessionOrDB('c', crosswordId, DBPuzzleV, -1)
+    getFromSessionOrDB('c', crosswordId, DBPuzzleV, 10 * 60 * 1000)
       .then(dbpuzz => {
         if (dbpuzz === null) {
           return Promise.reject('no puzzle found');
@@ -177,10 +179,6 @@ const ClueListItem = React.memo(function ClueListItem({ isActive, isCross, ...pr
     </li>
   );
 });
-
-const Emoji = (props: { symbol: React.ReactNode }) => (
-  <span role='img' aria-label='emoji'>{props.symbol}</span>
-);
 
 interface PauseBeginProps {
   title: string,
@@ -323,12 +321,12 @@ const PrevDailyMiniLink = (props: { puzzle: PuzzleResult }) => {
   return (<button css={buttonAsLink} onClick={goToPrevious}>Play the previous daily mini crossword</button>);
 }
 
-const SuccessOverlay = (props: { user: firebase.User, puzzle: PuzzleResult, isMuted: boolean, solveTime: number, dispatch: React.Dispatch<PuzzleAction> }) => {
+const SuccessOverlay = (props: { user: firebase.User, puzzle: PuzzleResult, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: React.Dispatch<PuzzleAction> }) => {
   return (
     <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({ type: "DISMISSSUCCESS" })}>
       <div css={{ textAlign: 'center' }}>
         <h4><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
-        <p>You solved the puzzle in <b>{timeString(props.solveTime)}</b></p>
+        <p>You solved the puzzle in <b>{timeString(props.solveTime, false)}</b></p>
         {props.user.isAnonymous ?
           <React.Fragment>
             <p>Sign in with google to track your puzzle solving streak!</p>
@@ -341,6 +339,7 @@ const SuccessOverlay = (props: { user: firebase.User, puzzle: PuzzleResult, isMu
             : "")
         }
       </div>
+      <Comments user={props.user} solveTime={props.solveTime} didCheat={props.didCheat} puzzleId={props.puzzle.id} puzzleAuthorId={props.puzzle.authorId} comments={props.puzzle.comments} />
     </Overlay>
   );
 }
@@ -619,6 +618,10 @@ export const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & Auth
   }
 
   const physicalKeyboardHandler = React.useCallback((e: React.KeyboardEvent) => {
+    const tagName = (e.target as HTMLElement) ?.tagName ?.toLowerCase();
+    if (tagName === 'textarea' || tagName === 'input') {
+      return;
+    }
     if (e.metaKey || e.altKey || e.ctrlKey) {
       return;  // This way you can still do apple-R and such
     }
@@ -835,7 +838,7 @@ export const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & Auth
         <title>{title}</title>
       </Helmet>
       <TopBar>
-        <TopBarLink icon={<FaPause />} hoverText={"Pause Game"} text={timeString(state.displaySeconds)} onClick={() => dispatch({ type: "PAUSEACTION" })} keepText={true} />
+        <TopBarLink icon={<FaPause />} hoverText={"Pause Game"} text={timeString(state.displaySeconds, true)} onClick={() => dispatch({ type: "PAUSEACTION" })} keepText={true} />
         <TopBarLink icon={state.clueView ? <SpinnerFinished /> : <FaListOl />} text={state.clueView ? "Grid" : "Clues"} onClick={() => {
           const a: ToggleClueViewAction = { type: "TOGGLECLUEVIEW" }
           dispatch(a);
@@ -848,7 +851,7 @@ export const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & Auth
         <KeepTryingOverlay dispatch={dispatch} />
         : ""}
       {state.success && !state.dismissedSuccess ?
-        <SuccessOverlay user={props.user} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} dispatch={dispatch} />
+        <SuccessOverlay user={props.user} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
         : ""}
       {state.moderating ?
         <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />

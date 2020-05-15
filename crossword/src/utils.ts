@@ -5,10 +5,16 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import { DBPuzzleV, TimestampedPuzzleT } from './common/dbtypes';
 import { getTimestampClass, getFirebaseApp, FirebaseTimestamp } from './firebase';
 
-export function timeString(elapsed: number): string {
+export function timeString(elapsed: number, fixedSize: boolean): string {
   const hours = Math.floor(elapsed / 3600);
   const minutes = Math.floor((elapsed - (hours * 3600)) / 60);
   const seconds = Math.floor(elapsed - (hours * 3600) - (minutes * 60));
+  if (hours === 0 && minutes === 0 && !fixedSize) {
+    return seconds + 's';
+  }
+  if (hours === 0 && !fixedSize) {
+    return minutes + ':' + (seconds < 10 ? "0" : "") + seconds;
+  }
   return hours + ':' +
     (minutes < 10 ? "0" : "") + minutes + ':' +
     (seconds < 10 ? "0" : "") + seconds;

@@ -46,7 +46,7 @@ import { buttonAsLink } from './style';
 let worker: Worker;
 
 type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-type BuilderProps = WithOptional<Omit<PuzzleT, "category" | "authorId" | "authorName" | "moderated" | "publishTime">, "clues" | "title" | "highlighted" | "highlight">
+type BuilderProps = WithOptional<Omit<PuzzleT, "comments" | "category" | "authorId" | "authorName" | "moderated" | "publishTime">, "clues" | "title" | "highlighted" | "highlight">
 
 const BuilderDBLoader = requiresAdmin((props: BuilderProps & AuthProps) => {
   const [ready, setReady] = React.useState(false);
