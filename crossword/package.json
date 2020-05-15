@@ -70,6 +70,7 @@
     "@types/jest-in-case": "^1.0.2",
     "jest-emotion": "^10.0.32",
     "jest-in-case": "^1.0.2",
+    "prettier": "^2.0.5",
     "react-devtools": "^4.6.0"
   }
 }

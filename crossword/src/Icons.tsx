@@ -207,7 +207,6 @@ export const Logo = (props: IconProps) => {
 
 export const Identicon = ({ id }: { id: string }) => {
   const hash = fnv1a(id);
-  console.log(id, hash);
   // foreground is rightmost 17 bits as hue at 80% saturation, 50% brightness
   const hueNumBits = (1 << 17) - 1;
   const hue = (hash & hueNumBits) / hueNumBits;
@@ -215,22 +214,21 @@ export const Identicon = ({ id }: { id: string }) => {
 
   // leftmost 15 bits are which squares to show
   let squares: Array<React.ReactNode> = [];
-
   for (let i = 0; i < 15; i++) {
     if (((1 << (17 + i)) & hash) > 0) {
       if (i < 5) {
-        squares.push(<rect x='2' y={i} width='1' height='1' />);
+        squares.push(<rect key={i} x='2' y={i} width='1' height='1' />);
       } else if (i < 10) {
-        squares.push(<rect x='1' y={i - 5} width='1' height='1' />);
-        squares.push(<rect x='3' y={i - 5} width='1' height='1' />);
+        squares.push(<rect key={i + 'a'} x='1' y={i - 5} width='1' height='1' />);
+        squares.push(<rect key={i + 'b'} x='3' y={i - 5} width='1' height='1' />);
       } else {
-        squares.push(<rect x='0' y={i - 10} width='1' height='1' />);
-        squares.push(<rect x='4' y={i - 10} width='1' height='1' />);
+        squares.push(<rect key={i + 'a'} x='0' y={i - 10} width='1' height='1' />);
+        squares.push(<rect key={i + 'b'} x='4' y={i - 10} width='1' height='1' />);
       }
     }
   }
-  return <svg shape-rendering="crispEdges" width='1em' height='1em' viewBox="0 0 5 5" xmlns="http://www.w3.org/2000/svg" fill={'rgb(' + foreground.join(',') + ')'}>
-    <rect width="100%" height="100%" fill="rgba(0,0,0,0.05)" />
+  return <svg shapeRendering="crispEdges" width='1em' height='1em' viewBox="0 0 5 5" xmlns="http://www.w3.org/2000/svg" fill={'rgb(' + foreground.join(',') + ')'}>
+    <rect width="100%" height="100%" fill="rgba(140,140,140,0.2)" />
     {squares}
   </svg>;
 }
