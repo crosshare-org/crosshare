@@ -12,6 +12,7 @@ import { PuzzleLoader } from './Puzzle';
 import { PuzzleStats } from './PuzzleStats';
 import { Page, SquareTest, TwoColTest } from './Page';
 import { AccountPage } from './AccountPage';
+import { IconTestPage } from './Icons';
 import { Admin } from './Admin';
 import { Home } from './Home';
 import { Category } from './Category';
@@ -337,6 +338,7 @@ const App = () => {
                 <TwoColTest path="/twocol" />
                 <TermsOfService path="/tos" />
                 <PrivacyPolicy path="/privacy" />
+                <IconTestPage path='/icons' />
                 <NotFound default />
               </Router>
             </React.Suspense>

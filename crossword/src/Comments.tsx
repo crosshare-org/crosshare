@@ -5,6 +5,7 @@ import * as t from "io-ts";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
+import { Identicon } from './Icons';
 import { timeString } from './utils';
 import { Emoji } from './Emoji';
 import { buttonAsLink } from './style';
@@ -90,10 +91,11 @@ interface CommentFlairProps {
   puzzleAuthorId: string,
 }
 const CommentFlair = (props: CommentFlairProps) => {
-  if (props.userId === props.puzzleAuthorId) {
-    return (
-      <React.Fragment>
-        <i>{props.displayName} </i>
+  return (
+    <React.Fragment>
+      <span css={{ verticalAlign: 'text-bottom' }}><Identicon id={props.userId} /></span>
+      <i> {props.displayName} </i>
+      {(props.userId === props.puzzleAuthorId) ?
         <span css={{
           fontSize: '0.75em',
           backgroundColor: 'var(--primary)',
@@ -101,21 +103,19 @@ const CommentFlair = (props: CommentFlairProps) => {
           borderRadius: 5,
           padding: '0.1em 0.2em',
         }}>constructor</span>
-      </React.Fragment>
-    );
-  }
-  return (
-    <React.Fragment>
-      <i>{props.displayName} </i>
-      {props.didCheat ? <Emoji title='Used helpers' symbol='😏' /> : <Emoji title='Solved without helpers' symbol='🤓' />}
-      <span css={{
-        fontSize: '0.75em',
-        backgroundColor: 'var(--caption)',
-        color: 'white',
-        borderRadius: 5,
-        padding: '0.1em 0.2em',
-      }}>{timeString(props.solveTime, false)}</span>
-    </React.Fragment>
+        :
+        <React.Fragment>
+          {props.didCheat ? <Emoji title='Used helpers' symbol='😏' /> : <Emoji title='Solved without helpers' symbol='🤓' />}
+          < span css={{
+            fontSize: '0.75em',
+            backgroundColor: 'var(--caption)',
+            color: 'white',
+            borderRadius: 5,
+            padding: '0.1em 0.2em',
+          }}>{timeString(props.solveTime, false)}</span>
+        </React.Fragment>
+      }
+    </React.Fragment >
   );
 }
 
