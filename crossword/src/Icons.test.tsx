@@ -79,6 +79,18 @@ it("renders mike identicon correctly", () => {
         x="4"
         y="0"
       />
+      <rect
+        height="1"
+        width="1"
+        x="0"
+        y="4"
+      />
+      <rect
+        height="1"
+        width="1"
+        x="4"
+        y="4"
+      />
     </svg>
   `);
 });
@@ -182,6 +194,18 @@ it("renders Mike identicon correctly", () => {
         width="1"
         x="4"
         y="3"
+      />
+      <rect
+        height="1"
+        width="1"
+        x="0"
+        y="4"
+      />
+      <rect
+        height="1"
+        width="1"
+        x="4"
+        y="4"
       />
     </svg>
   `);

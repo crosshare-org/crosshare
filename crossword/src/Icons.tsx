@@ -215,7 +215,7 @@ export const Identicon = ({ id }: { id: string }) => {
   // leftmost 15 bits are which squares to show
   let squares: Array<React.ReactNode> = [];
   for (let i = 0; i < 15; i++) {
-    if (((1 << (17 + i)) & hash) > 0) {
+    if (((1 << (17 + i)) & hash) !== 0) {
       if (i < 5) {
         squares.push(<rect key={i} x='2' y={i} width='1' height='1' />);
       } else if (i < 10) {
