@@ -13,7 +13,7 @@ import { initFirebase } from './firebase';
 expect.extend(matchers);
 expect.addSnapshotSerializer(createSerializer());
 
-const anonymousUser = {
+export const anonymousUser = {
   uid: 'anonymous-user-id',
   isAnonymous: true
 } as firebaseTypes.User;
@@ -42,7 +42,11 @@ function wrappedRender(
 export function initFirebaseForTesting() {
   var app = firebase.initializeTestApp({
     projectId: "mdcrosshare",
-    auth: { uid: "anonymous-user-id", admin: false }
+    auth: {
+      uid: "anonymous-user-id", admin: false, firebase: {
+        sign_in_provider: "anonymous"
+      }
+    }
   });
 
   var db = app.firestore();
