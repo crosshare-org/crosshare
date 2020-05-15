@@ -67,7 +67,9 @@
   "proxy": "http://localhost:4000",
   "devDependencies": {
     "@firebase/testing": "^0.19.2",
+    "@types/jest-in-case": "^1.0.2",
     "jest-emotion": "^10.0.32",
+    "jest-in-case": "^1.0.2",
     "react-devtools": "^4.6.0"
   }
 }

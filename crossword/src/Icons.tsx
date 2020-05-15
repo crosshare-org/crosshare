@@ -2,6 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from "@reach/router";
 import { FaEye, FaCheck } from 'react-icons/fa';
 import { CheatUnit, Symmetry } from './reducer';
+import { fnv1a, hslToRgb } from './utils';
 
 const Square = (props: { cx: number, cy: number, beginMs: number, animate: boolean, filled: boolean }) => {
   let color = {
@@ -202,41 +203,6 @@ export const Logo = (props: IconProps) => {
       <rect x="9" y="11" width="1" height="1"><animate attributeName="width" dur="0.5s" id="b" begin="10;b.end+10" values="1;3" calcMode="discrete" /></rect>
       <rect x="10" y="12" width="2" height="1"><animate attributeName="width" dur="0.5s" id="c" begin="10;c.end+10" values="2;0" calcMode="discrete" /></rect></svg>
   );
-}
-
-function hslToRgb(h: number, s: number, l: number) {
-  var r, g, b;
-
-  if (s === 0) {
-    r = g = b = l; // achromatic
-  } else {
-    var hue2rgb = function hue2rgb(p: number, q: number, t: number) {
-      if (t < 0) t += 1;
-      if (t > 1) t -= 1;
-      if (t < 1 / 6) return p + (q - p) * 6 * t;
-      if (t < 1 / 2) return q;
-      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-      return p;
-    }
-
-    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    var p = 2 * l - q;
-    r = hue2rgb(p, q, h + 1 / 3);
-    g = hue2rgb(p, q, h);
-    b = hue2rgb(p, q, h - 1 / 3);
-  }
-
-  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
-}
-
-function fnv1a(input: string) {
-  let hash = 2166136261;
-  for (let i = 0; i < input.length; i++) {
-    let characterCode = input.charCodeAt(i);
-    hash ^= characterCode;
-    hash *= 16777619;
-  }
-  return hash;
 }
 
 export const Identicon = ({ id }: { id: string }) => {
