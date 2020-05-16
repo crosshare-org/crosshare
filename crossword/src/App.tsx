@@ -111,7 +111,7 @@ export function ensureUser<T extends AuthProps>(WrappedComponent: React.Componen
       })
       return <Page title={null}>Loading user...</Page>;
     };
-    return <WrappedComponent isAdmin={isAdmin} user={user} {...(props as T)} />
+    return <WrappedComponent {...(props as T)} isAdmin={isAdmin} user={user} />
   }
 }
 
@@ -145,7 +145,7 @@ export function requiresAuth<T extends AuthProps>(WrappedComponent: React.Compon
         </Page>
       );
     }
-    return <WrappedComponent isAdmin={isAdmin} user={user} {...(props as T)} />
+    return <WrappedComponent {...(props as T)} isAdmin={isAdmin} user={user} />
   }
 }
 
@@ -163,7 +163,7 @@ export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.Compo
       if (!isAdmin) {
         return <Page title="Error">Must be an admin to view this page.</Page>;
       }
-      return <WrappedComponent isAdmin={true} user={user} {...(props as T)} />
+      return <WrappedComponent {...(props as T)} isAdmin={true} user={user} />
     }
     return (
       <Page title="Sign In">
