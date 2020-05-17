@@ -215,7 +215,7 @@ export class Autofiller {
             const cross = grid.entries[crossIndex];
             const crossLength = cross.length;
             const newBitmap = WordDB.updateBitmap(crossLength, cross.bitmap, crosses[i].wordIndex, word[j]);
-            if (newBitmap.equals(WordDB.ZERO)) {
+            if (newBitmap.isZero()) {
               failingLetters[i] += word[j];
               failFast = true;
               break;

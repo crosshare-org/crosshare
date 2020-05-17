@@ -1,6 +1,6 @@
 import cases from 'jest-in-case';
 
-import { BitArray } from './bitmap';
+import { BitArray } from './bitArray';
 import { BigInteger } from '@modern-dev/jsbn';
 
 const B32 = '0123456789abcdefghijklmnopqrstuv';
@@ -12,14 +12,26 @@ function randomB32() {
   return result;
 }
 
-let testCases: Array<[string, BitArray, BigInteger, number, number, string, string]> = [];
+const ONE = new BigInteger('1', 10);
+const ZERO = new BigInteger('0', 10);
+function activebits(a: BigInteger) {
+  const active: number[] = [];
+  while (!a.equals(ZERO)) {
+    const b = a.bitLength() - 1
+    active.push(b)
+    a = a.subtract(ONE.shiftLeft(b));
+  }
+  return active
+}
+
+let testCases: Array<[string, BitArray, BigInteger, number, number, string, string, number[]]> = [];
 for (let i = 0; i < 1000; i += 1) {
   const a = randomB32()
   const b = BitArray.fromString(a, 32);
   const c = new BigInteger(a, 32);
   const d = randomB32()
   const and = b.and(BitArray.fromString(d, 32)).toString(32);
-  testCases.push([a, b, c, b.bitLength(), b.bitCount(), d, and]);
+  testCases.push([a, b, c, b.bitLength(), b.bitCount(), d, and, activebits(c)]);
 }
 
 test('test fromString/toString performance', () => {
@@ -80,6 +92,22 @@ test('test and performance', () => {
   const ourStart = performance.now();
   for (let i = 0; i < testCases.length; i += 1) {
     expect(testCases[i][1].and(BitArray.fromString(testCases[i][5], 32)).toString(32)).toEqual(testCases[i][6]);
+  }
+  const ourTotal = performance.now() - ourStart;
+
+  expect(ourTotal).toBeLessThanOrEqual(1.5 * theirTotal);
+});
+
+test('test activeBits performance', () => {
+  const theirStart = performance.now();
+  for (let i = 0; i < testCases.length; i += 1) {
+    expect(activebits(testCases[i][2])).toEqual(testCases[i][7]);
+  }
+  const theirTotal = performance.now() - theirStart;
+
+  const ourStart = performance.now();
+  for (let i = 0; i < testCases.length; i += 1) {
+    expect(testCases[i][1].activeBits()).toEqual(testCases[i][7]);
   }
   const ourTotal = performance.now() - ourStart;
 

@@ -359,7 +359,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         }
       }
       const newBitmap = WordDB.matchingBitmap(crossPattern);
-      if (newBitmap && newBitmap.equals(WordDB.ZERO)) {
+      if (newBitmap ?.isZero()) {
         successFailure.set(i, [succeeding, failing + word[j]]);
         return false;
       } else {

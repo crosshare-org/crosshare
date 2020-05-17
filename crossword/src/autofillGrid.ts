@@ -1,12 +1,12 @@
-import { BigInteger } from '@modern-dev/jsbn';
+import { BitArray } from './bitArray';
 import {
   GridBase, EntryBase, EntryWithPattern, valAt, setVal, entriesFromCells, getCrosses
 } from './gridBase';
-import { matchingBitmap, minCost, updateBitmap, numMatches, ZERO } from './WordDB';
+import { matchingBitmap, minCost, updateBitmap, numMatches } from './WordDB';
 
 export interface AutofillEntry extends EntryBase {
   length: number, // Length in chars - might be different than cells.length due to rebus
-  bitmap: BigInteger|null,
+  bitmap: BitArray | null,
   minCost: number
 }
 
@@ -31,8 +31,8 @@ export function numMatchesForEntry(entry: AutofillEntry) {
  * This is for autofilling purposes, so the values in the new fill cannot
  * conflict with anything existing in the grid.
  */
-export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, word: string, score: number): AutofillGrid|null {
-  const newGrid:AutofillGrid = {
+export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, word: string, score: number): AutofillGrid | null {
+  const newGrid: AutofillGrid = {
     ...grid,
     usedWords: new Set(grid.usedWords),
     cells: grid.cells.slice(),
@@ -65,13 +65,13 @@ export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, wor
       continue;
     }
     const cross = newGrid.entries[crossIndex];
-    let crossWord: string|null = '';
+    let crossWord: string | null = '';
     cross.cells.forEach((cid) => {
       crossWord += valAt(newGrid, cid);
     });
     const crossBitmap = updateBitmap(cross.length, cross.bitmap, crosses[j].wordIndex, word[i]);
 
-    if (crossBitmap.equals(ZERO)) {  // empty bitmap means invalid grid
+    if (crossBitmap.isZero()) {  // empty bitmap means invalid grid
       return null;
     }
 
@@ -100,7 +100,7 @@ export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, wor
   return newGrid;
 }
 
-export function stableSubsets(grid: AutofillGrid, prelimSubset: Set<number>|null) {
+export function stableSubsets(grid: AutofillGrid, prelimSubset: Set<number> | null) {
   let openEntries = grid.entries.filter((e) => !e.completedWord);
   if (prelimSubset !== null) {
     openEntries = openEntries.filter((e) => prelimSubset.has(e.index))
@@ -108,7 +108,7 @@ export function stableSubsets(grid: AutofillGrid, prelimSubset: Set<number>|null
 
   const assignments = new Map<number, number>()
 
-  function addSubset(entry:AutofillEntry, num:number) {
+  function addSubset(entry: AutofillEntry, num: number) {
     if (assignments.has(entry.index)) {
       return;
     }
@@ -134,7 +134,7 @@ export function stableSubsets(grid: AutofillGrid, prelimSubset: Set<number>|null
   });
 
   const inv = new Map<number, Set<number>>();
-  assignments.forEach((val,key) => {
+  assignments.forEach((val, key) => {
     const newVal = inv.get(val) || new Set<number>();
     newVal.add(key);
     inv.set(val, newVal);
@@ -155,7 +155,7 @@ export function addAutofillFieldsToEntry<Entry extends EntryWithPattern>(baseEnt
 export function fromTemplate(
   template: string[], width: number, height: number
 ): AutofillGrid {
-  const cells = template.map((c) => c.toUpperCase().replace("#", ".")) ;
+  const cells = template.map((c) => c.toUpperCase().replace("#", "."));
   const usedWords = new Set<string>();
   const [baseEntries, entriesByCell] = entriesFromCells(width, height, cells);
 

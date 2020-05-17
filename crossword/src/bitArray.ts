@@ -52,6 +52,10 @@ export class BitArray {
     return new this(nums, usedInts);
   }
 
+  isZero() {
+    return this.usedInts === 0 || (this.usedInts === 1 && this.nums[0] === 0);
+  }
+
   clamp() {
     while (this.usedInts > 0 && this.nums[this.usedInts - 1] === 0) {
       --this.usedInts;
@@ -103,5 +107,18 @@ export class BitArray {
     const res = new BitArray(nums, usedInts);
     res.clamp();
     return res;
+  }
+
+  activeBits(): Array<number> {
+    let ret = [];
+    for (let i = this.usedInts - 1; i >= 0; i--) {
+      var num = this.nums[i];
+      while (num !== 0) {
+        let t = 31 - Math.clz32(num);
+        num ^= 1 << t;
+        ret.push((i * 30) + t);
+      }
+    }
+    return ret;
   }
 }
