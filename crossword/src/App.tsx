@@ -2,7 +2,7 @@
 import { jsx } from '@emotion/core';
 import * as React from 'react';
 
-import { Router, RouteComponentProps } from "@reach/router";
+import { WindowLocation, Location, Router, RouteComponentProps } from "@reach/router";
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
@@ -292,7 +292,7 @@ const Construct = (_: RouteComponentProps) => {
 const PageViewTracker = ({ location }: { location: WindowLocation }) => {
   React.useEffect(() => {
     try {
-      firebase.analytics().logEvent("screen_view", { app_name: 'react', screen_name: location.pathname });
+      getFirebaseApp().analytics().logEvent("screen_view", { app_name: 'react', screen_name: location.pathname });
     } catch (e) {
       if (e instanceof TypeError) {
         console.log("Got TypeError on analytics", e);
@@ -337,6 +337,11 @@ const App = () => {
         <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
           <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error ?.message}}>
             <Helmet defaultTitle="Crosshare" titleTemplate="%s | Crosshare" />
+            <Location>
+              {({ location }) => (
+                <PageViewTracker location={location} />
+              )}
+            </Location>
             <React.Suspense fallback={<div>Loading...</div>}>
               <ToastContainer />
               <Router css={{ height: '100%', width: '100%', }}>
