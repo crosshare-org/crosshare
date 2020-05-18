@@ -19,10 +19,9 @@ import { Category } from './Category';
 import { PlayV, UserPlayT, UserPlaysV } from './common/dbtypes';
 import { getValidatedAndDelete, setInCache, updateInCache } from './dbUtils';
 import { useAuthState, getFirebaseApp, getGoogleAuthProvider } from './firebase';
+import { BuilderDBLoader } from './Builder';
 
 import googlesignin from './googlesignin.png';
-
-const BuilderDBLoader = React.lazy(() => import(/* webpackChunkName: "builder" */ "./Builder"));
 
 interface AuthContextValue {
   user: firebase.User | undefined,

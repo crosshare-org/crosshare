@@ -9,7 +9,7 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import { requiresAdmin, AuthProps } from './App';
 import { Page } from './Page';
 import { PuzzleJson, PuzzleJsonV, ClueT, Direction } from './types';
-import BuilderDBLoader from './Builder';
+import { BuilderDBLoader } from './Builder';
 
 const Uploader = requiresAdmin((_: RouteComponentProps & AuthProps) => {
   const [puzzle, setPuzzle] = React.useState<PuzzleJson | null>(null);
