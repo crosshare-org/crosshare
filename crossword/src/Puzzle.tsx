@@ -38,12 +38,10 @@ import { Page, SquareAndCols, TwoCol, TinyNav } from './Page';
 import { buttonAsLink, SECONDARY, LIGHTER, ERROR_COLOR } from './style';
 import { usePersistedBoolean } from './hooks';
 import { navToLatestMini, timeString } from './utils';
-import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
+import { UpcomingMinisCalendar } from "./UpcomingMinisCalendar";
 import { getFirebaseApp, getDeleteSentinal, getTimestampClass } from './firebase';
 import { Emoji } from './Emoji';
 import { Comments } from './Comments';
-
-const UpcomingMinisCalendar = React.lazy(() => import(/* webpackChunkName: "minisCal" */ './UpcomingMinisCalendar'));
 
 interface PuzzleLoaderProps extends RouteComponentProps {
   crosswordId?: string
@@ -226,12 +224,6 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
   );
 }
 
-const LoadableCalendar = (props: UpcomingMinisCalendarProps) => (
-  <React.Suspense fallback={<div>Loading...</div>}>
-    <UpcomingMinisCalendar {...props} />
-  </React.Suspense>
-);
-
 const ModeratingOverlay = React.memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, dispatch: React.Dispatch<PuzzleAction> }) => {
   const db = getFirebaseApp().firestore();
   const [date, setDate] = React.useState(puzzle.publishTime ?.toDate());
@@ -276,7 +268,7 @@ const ModeratingOverlay = React.memo(({ dispatch, puzzle }: { puzzle: PuzzleResu
             ""
           }
           <div css={{ marginTop: '1em' }}>Pick a date for this mini to appear:</div>
-          <LoadableCalendar disableExisting={true} value={date} onChange={setDate} />
+          <UpcomingMinisCalendar disableExisting={true} value={date} onChange={setDate} />
           <div css={{ marginTop: '1em' }}><button disabled={!date} onClick={schedule}>Schedule</button></div>
         </div>
         :

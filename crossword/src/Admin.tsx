@@ -14,16 +14,8 @@ import {
   CommentForModerationWithIdT, CommentForModerationV, CommentWithRepliesT
 } from './common/dbtypes';
 import { getFromDB, getFromSessionOrDB, mapEachResult } from './dbUtils';
-import type { UpcomingMinisCalendarProps } from "./UpcomingMinisCalendar";
 import { getFirebaseApp, getTimestampClass } from './firebase';
-
-const UpcomingMinisCalendar = React.lazy(() => import(/* webpackChunkName: "minisCal" */ './UpcomingMinisCalendar'));
-
-const LoadableCalendar = (props: UpcomingMinisCalendarProps) => (
-  <React.Suspense fallback={<div>Loading...</div>}>
-    <UpcomingMinisCalendar {...props} />
-  </React.Suspense>
-);
+import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 
 const PuzzleListItem = (props: PuzzleResult) => {
   return (
@@ -210,7 +202,7 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
           : ""}
         <h4 css={{ borderBottom: '1px solid var(--black)' }}>Upcoming Minis</h4>
 
-        <LoadableCalendar disableExisting={false} onChange={goToPuzzle} />
+        <UpcomingMinisCalendar disableExisting={false} onChange={goToPuzzle} />
       </div>
     </Page>
   );
