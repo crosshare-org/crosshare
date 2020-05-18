@@ -289,6 +289,21 @@ const Construct = (_: RouteComponentProps) => {
   return <BuilderDBLoader {...props} />;
 };
 
+const PageViewTracker = ({ location }: { location: WindowLocation }) => {
+  React.useEffect(() => {
+    try {
+      firebase.analytics().logEvent("screen_view", { app_name: 'react', screen_name: location.pathname });
+    } catch (e) {
+      if (e instanceof TypeError) {
+        console.log("Got TypeError on analytics", e);
+      } else {
+        throw e;
+      }
+    }
+  }, [location]);
+  return <React.Fragment></React.Fragment>;
+}
+
 const App = () => {
   const [user, loadingUser, error] = useAuthState();
   const [isAdmin, setIsAdmin] = React.useState(false);
