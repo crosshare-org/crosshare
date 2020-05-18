@@ -63,7 +63,7 @@ export class Autofiller {
     this.startTime = new Date().getTime();
 
     // Our initial step is a call to recur
-    this.nextStep = recur(this.initialGrid, 3, new Set<string>(), null, (result) => { return value(result) });
+    this.nextStep = recur(this.initialGrid, 5, new Set<string>(), null, (result) => { return value(result) });
   };
 
   step() {
