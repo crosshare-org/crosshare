@@ -634,9 +634,14 @@ export const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & Auth
   }, [dispatch]);
   useEventListener('keydown', physicalKeyboardHandler);
 
-  const [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
+  let [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
   if (entry === null) {
-    throw new Error("Null entry while playing puzzle!");
+    if (cross === null) {
+      throw new Error("Null entry and cross while playing puzzle!");
+    } else {
+      dispatch({ type: 'CHANGEDIRECTION' });
+      [entry, cross] = [cross, entry];
+    }
   }
 
   const updatePlay = React.useCallback((sendToDB: boolean) => {
