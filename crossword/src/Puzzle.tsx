@@ -256,6 +256,16 @@ const ModeratingOverlay = React.memo(({ dispatch, puzzle }: { puzzle: PuzzleResu
   }
   const isMini = puzzle.size.rows === 5 && puzzle.size.cols === 5
 
+  function setModerated() {
+    db.collection('c').doc(puzzle.id).update({
+      m: true
+    }).then(() => {
+      // Dump it!
+      sessionStorage.removeItem('c/' + puzzle.id);
+      window.location.reload();
+    });
+  }
+
   return (
     <Overlay showingKeyboard={false} closeCallback={() => dispatch({ type: "TOGGLEMODERATING" })}>
       <h4>Moderate this Puzzle</h4>
@@ -269,11 +279,12 @@ const ModeratingOverlay = React.memo(({ dispatch, puzzle }: { puzzle: PuzzleResu
           }
           <div css={{ marginTop: '1em' }}>Pick a date for this mini to appear:</div>
           <UpcomingMinisCalendar disableExisting={true} value={date} onChange={setDate} />
-          <div css={{ marginTop: '1em' }}><button disabled={!date} onClick={schedule}>Schedule</button></div>
+          <div css={{ marginTop: '1em' }}><button disabled={!date} onClick={schedule}>Schedule As Daily Mini</button></div>
         </div>
         :
-        <div>Not supported for non-minis yet.</div>
+        ''
       }
+      <button css={{ marginTop: '2em' }} disabled={puzzle.moderated} onClick={setModerated}>Approve Puzzle</button>
     </Overlay>
   );
 });
@@ -370,7 +381,7 @@ interface ClueListProps {
   header?: string,
   current: number,
   active: Position,
-  cross: number,
+  cross: number | undefined,
   entries: Array<CluedEntry>,
   scrollToCross: boolean,
   dispatch: React.Dispatch<PuzzleAction>,
@@ -624,8 +635,8 @@ export const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & Auth
   useEventListener('keydown', physicalKeyboardHandler);
 
   const [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
-  if (entry === null || cross === null) {
-    throw new Error("Null entry/cross while playing puzzle!");
+  if (entry === null) {
+    throw new Error("Null entry while playing puzzle!");
   }
 
   const updatePlay = React.useCallback((sendToDB: boolean) => {
@@ -720,8 +731,8 @@ export const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & Auth
       showExtraKeyLayout={state.showExtraKeyLayout}
       includeBlockKey={false}
       isTablet={state.isTablet}
-      left={<ClueList active={state.active} valAt={ourValAt} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} />}
-      right={<ClueList active={state.active} valAt={ourValAt} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} />}
+      left={<ClueList active={state.active} valAt={ourValAt} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} />}
+      right={<ClueList active={state.active} valAt={ourValAt} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} />}
     />;
   } else {
     puzzleView = <SquareAndCols
@@ -745,9 +756,9 @@ export const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & Auth
           />
         }
       }
-      left={<ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
-      right={<ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross.index} scrollToCross={true} dispatch={dispatch} />}
-      tinyColumn={<TinyNav dispatch={dispatch}><ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
+      left={<ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={true} dispatch={dispatch} />}
+      right={<ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={true} dispatch={dispatch} />}
+      tinyColumn={<TinyNav dispatch={dispatch}><ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
     />;
   }
 
