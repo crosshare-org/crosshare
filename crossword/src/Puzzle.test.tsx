@@ -50,3 +50,31 @@ test('clicking a clue sets slot to active', () => {
   expect(cell).toHaveStyleRule('background', 'var(--primary)');
   expect(cell2).toHaveStyleRule('background', 'var(--secondary)');
 });
+
+test('daily mini from 5/19/20', () => {
+  const p: PuzzleResult = { "authorId": "fSEwJorvqOMK5UhNMHa4mu48izl1", "category": "dailymini", "authorName": "Mike D", "moderated": true, "publishTime": null, "title": "Word of surrender", "size": { "rows": 5, "cols": 5 }, "clues": [{ "dir": 0, "clue": "Word with Cod or Canaveral", "num": 1 }, { "dir": 0, "clue": "Caustic compound", "num": 4 }, { "dir": 0, "clue": "Word of surrender", "num": 6 }, { "dir": 0, "clue": "Not feel well", "num": 8 }, { "dir": 0, "clue": "\"Whats gotten ___ you?\"", "num": 9 }, { "dir": 1, "clue": "Game with Miss Scarlet and Professor Plum", "num": 1 }, { "dir": 1, "clue": "Rand who wrote \"Atlas Shrugged\"", "num": 2 }, { "dir": 1, "clue": "Butter ___ (ice cream flavor)", "num": 3 }, { "dir": 1, "clue": "Former Knicks star Anthony, to fans", "num": 5 }, { "dir": 1, "clue": "Exciting, in modern lingo", "num": 7 }], "grid": ["C", "A", "P", "E", ".", "L", "Y", "E", ".", "M", "U", "N", "C", "L", "E", "E", ".", "A", "I", "L", ".", "I", "N", "T", "O"], "highlighted": [], "highlight": "circle", "comments": [], "id": "iMwPVXfePmv3bJC6KaQL" }
+  window.HTMLElement.prototype.scrollIntoView = function() { };
+
+  const { getByLabelText, getByText, queryByText, getAllByText, container } = render(<Puzzle puzzle={p} play={null} />);
+
+  fireEvent.click(getByText(/Begin Puzzle/i));
+  expect(queryByText(/Begin Puzzle/i)).toBeNull();
+
+  const clue = getAllByText(/professor plum/i)[0].parentElement ?.parentElement;
+  expect(clue).toHaveStyleRule('background-color', 'var(--secondary)');
+
+  // This puzzle has some cells w/ only a single entry (no cross) which were
+  // causing errors when tabbing through the puzzle
+  fireEvent.keyDown(container, { key: 'Tab', keyCode: 9 });
+  fireEvent.keyDown(container, { key: 'Tab', keyCode: 9 });
+  fireEvent.keyDown(container, { key: 'Tab', keyCode: 9 });
+  fireEvent.keyDown(container, { key: 'Tab', keyCode: 9 });
+  fireEvent.keyDown(container, { key: 'Tab', keyCode: 9 });
+
+  expect(clue).toHaveStyleRule('background-color', 'var(--lighter)');
+
+  // After a naive fix of the above issue we were still having problems on click
+  fireEvent.click(getByLabelText('cell0x3'));
+  const clueOne = getAllByText(/word with cod/i)[0].parentElement ?.parentElement;
+  expect(clueOne).toHaveStyleRule('background-color', 'var(--lighter)');
+})

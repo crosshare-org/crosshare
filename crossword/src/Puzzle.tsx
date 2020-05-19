@@ -381,7 +381,7 @@ interface ClueListProps {
   header?: string,
   current: number,
   active: Position,
-  cross: number | undefined,
+  cross?: number,
   entries: Array<CluedEntry>,
   scrollToCross: boolean,
   dispatch: React.Dispatch<PuzzleAction>,
