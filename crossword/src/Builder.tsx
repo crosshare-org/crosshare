@@ -419,11 +419,11 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
     console.log("Uploading");
     console.log(dbpuzzle);
     const db = getFirebaseApp().firestore();
-    db.collection("c").add(dbpuzzle).then((ref) => {
+    db.collection("c").add(dbpuzzle).then(async (ref) => {
       console.log("Uploaded", ref.id);
 
       const authoredPuzzle: AuthoredPuzzleT = [dbpuzzle.ca, dbpuzzle.t];
-      updateInCache('uc', props.user.uid, { [ref.id]: authoredPuzzle }, AuthoredPuzzlesV, true);
+      await updateInCache('uc', props.user.uid, { [ref.id]: authoredPuzzle }, AuthoredPuzzlesV, true);
 
       const forStorage: TimestampedPuzzleT = { downloadedAt: getTimestampClass().now(), data: dbpuzzle }
       sessionStorage.setItem('c/' + ref.id, JSON.stringify(forStorage));
