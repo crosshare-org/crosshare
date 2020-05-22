@@ -1,6 +1,3 @@
-/** @jsx jsx */
-import { jsx } from '@emotion/react';
-
 import { IoMdCloseCircleOutline, } from 'react-icons/io';
 
 import { KEYBOARD_HEIGHT } from '../helpers/style'

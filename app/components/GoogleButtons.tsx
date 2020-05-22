@@ -1,6 +1,3 @@
-/** @jsx jsx */
-import { jsx } from '@emotion/react';
-
 import { PlayV, UserPlayT, UserPlaysV } from '../helpers/dbtypes';
 import { getValidatedAndDelete, setInCache, updateInCache } from '../helpers/dbUtils';
 import { App, AuthProvider } from '../helpers/firebase';

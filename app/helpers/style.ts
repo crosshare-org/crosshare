@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/core';
 
 export const KEYBOARD_HEIGHT = 164;
 export const HEADER_HEIGHT = 35;
