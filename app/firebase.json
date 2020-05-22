@@ -1,0 +1,32 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "functions": {
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "firebase-debug.log",
+      "**/.*",
+      "**/node_modules/**",
+      "components/**",
+      "helpers/**",
+      "out/**",
+      "pages/**",
+      "public/**",
+      "scripts/**",
+      "firestore.rules"
+    ]
+  },
+  "hosting": {
+    "site": "next",
+    "public": "out",
+    "cleanUrls": true,
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "nextjs-server"
+      }
+    ]
+  }
+}
