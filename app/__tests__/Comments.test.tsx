@@ -3,7 +3,7 @@ import { anonymousUser, render } from "../lib/testingUtils";
 import { TimestampClass } from "../lib/firebaseWrapper";
 import * as firebaseTesting from "@firebase/testing";
 
-jest.mock('../lib/firebaseWrapper');
+jest.mock("../lib/firebaseWrapper");
 
 const testComments = [
   {
@@ -188,9 +188,9 @@ test("basic comment display", () => {
                 </svg>
               </span>
               <i>
-
+                 
                 Mike D
-
+                 
               </i>
               <span
                 aria-label="Solved without helpers"
@@ -208,8 +208,8 @@ test("basic comment display", () => {
             <div>
               my first comment
             </div>
-
-
+            
+            
           </div>
         </li>
       </ul>
