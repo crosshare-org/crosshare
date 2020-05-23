@@ -1,23 +1,21 @@
-import * as React from 'react';
-import { RouteComponentProps } from "@reach/router";
+import { Dispatch, ReactNode, useState } from 'react';
 import {
   FaKeyboard, FaTabletAlt, FaAngleDoubleRight, FaAngleDoubleLeft,
 } from 'react-icons/fa';
-import { Helmet } from "react-helmet-async";
 
 import { Keyboard } from './Keyboard';
 import { Square } from './Square';
-import { KeypressAction } from './reducer';
+import { KeypressAction } from '../reducers/reducer';
 import { TopBar, TopBarLink } from './TopBar';
 import {
   heightAdjustment,
   SMALL_AND_UP, LARGE_AND_UP, TINY_COL_MIN_HEIGHT,
-} from './style';
+} from '../lib/style';
 
 
 interface TinyNavProps {
-  children: React.ReactNode,
-  dispatch: React.Dispatch<KeypressAction>,
+  children: ReactNode,
+  dispatch: Dispatch<KeypressAction>,
 }
 export const TinyNav = ({ children, dispatch }: TinyNavProps) => {
   return (
@@ -60,10 +58,10 @@ export const TinyNav = ({ children, dispatch }: TinyNavProps) => {
 
 interface SquareAndColsProps {
   muted: boolean,
-  square: (size: number) => React.ReactNode,
-  left: React.ReactNode,
-  right: React.ReactNode,
-  tinyColumn?: React.ReactNode,
+  square: (size: number) => ReactNode,
+  left: ReactNode,
+  right: ReactNode,
+  tinyColumn?: ReactNode,
   showKeyboard: boolean,
   keyboardHandler: (key: string) => void,
   showExtraKeyLayout: boolean,
@@ -74,7 +72,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
   const heightAdjust = heightAdjustment(props.showKeyboard);
 
   return (
-    <React.Fragment>
+    <>
       <div css={{
         display: 'flex',
         flexDirection: 'column',
@@ -144,22 +142,21 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           isTablet={props.isTablet}
         />
         : " "}
-    </React.Fragment>
+    </>
   );
 }
 
 export const SquareTest = (_: RouteComponentProps) => {
-  const [showKeyboard, setShowKeyboard] = React.useState(false);
-  const [isTablet, setIsTablet] = React.useState(false);
+  const [showKeyboard, setShowKeyboard] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
   const toggleKeyboard = () => setShowKeyboard(!showKeyboard);
   const toggleTablet = () => setIsTablet(!isTablet);
   return (
-    <Page title="Square Test" topBarElements={
-      <React.Fragment>
+    <>
+      <TopBar>
         <TopBarLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={toggleKeyboard} />
         <TopBarLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={toggleTablet} />
-      </React.Fragment>
-    }>
+      </TopBar>
       <SquareAndCols
         keyboardHandler={(s) => { console.log(s) }}
         muted={false}
@@ -172,14 +169,14 @@ export const SquareTest = (_: RouteComponentProps) => {
         left={<div css={{ border: '1px solid black', backgroundColor: 'green', height: '100%' }}>b</div>}
         right={<div css={{ border: '1px solid black', backgroundColor: 'yellow', height: '100%' }}>c</div>}
       />
-    </Page>
+    </>
   );
 }
 
 interface TwoColProps {
   muted: boolean,
-  left: React.ReactNode,
-  right: React.ReactNode,
+  left: ReactNode,
+  right: ReactNode,
   showKeyboard: boolean,
   keyboardHandler: (key: string) => void,
   showExtraKeyLayout: boolean,
@@ -190,7 +187,7 @@ export const TwoCol = (props: TwoColProps) => {
   const heightAdjust = heightAdjustment(props.showKeyboard);
 
   return (
-    <React.Fragment>
+    <>
       <div css={{
         display: 'block',
         [SMALL_AND_UP]: {
@@ -223,22 +220,21 @@ export const TwoCol = (props: TwoColProps) => {
           isTablet={props.isTablet}
         />
         : " "}
-    </React.Fragment>
+    </>
   );
 }
 
 export const TwoColTest = (_: RouteComponentProps) => {
-  const [showKeyboard, setShowKeyboard] = React.useState(false);
-  const [isTablet, setIsTablet] = React.useState(false);
+  const [showKeyboard, setShowKeyboard] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
   const toggleKeyboard = () => setShowKeyboard(!showKeyboard);
   const toggleTablet = () => setIsTablet(!isTablet);
   return (
-    <Page title="Two Col Test" topBarElements={
-      <React.Fragment>
+    <>
+      <TopBar>
         <TopBarLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={toggleKeyboard} />
         <TopBarLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={toggleTablet} />
-      </React.Fragment>
-    }>
+      </TopBar>
       <TwoCol
         keyboardHandler={(s) => { console.log(s) }}
         muted={false}
@@ -249,28 +245,6 @@ export const TwoColTest = (_: RouteComponentProps) => {
         left={<div css={{ border: '1px solid black', backgroundColor: 'green', height: '100%' }}>b</div>}
         right={<div css={{ border: '1px solid black', backgroundColor: 'yellow', height: '100%' }}>c</div>}
       />
-    </Page>
-  );
-}
-
-interface PageProps extends RouteComponentProps {
-  children: React.ReactNode,
-  title: string | null,
-  topBarElements?: React.ReactNode,
-}
-
-export const Page = (props: PageProps) => {
-  return (
-    <React.Fragment>
-      {props.title !== null ?
-        <Helmet>
-          <title>{props.title}</title>
-        </Helmet>
-        :
-        ""
-      }
-      <TopBar>{props.topBarElements}</TopBar>
-      {props.children}
-    </React.Fragment>
+    </>
   );
 }

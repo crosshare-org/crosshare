@@ -1,7 +1,9 @@
 import React from 'react';
-import { render, fireEvent, initFirebaseForTesting } from './testUtils';
-import { Puzzle } from './Puzzle';
-import { PuzzleResult } from './types';
+import { render, fireEvent } from '../lib/testingUtils';
+import { Puzzle } from '../components/Puzzle';
+import { PuzzleResult } from '../lib/types';
+
+jest.mock("../lib/firebaseWrapper");
 
 const testPuzzle: PuzzleResult = {
   authorId: "test-author-id",
@@ -30,12 +32,11 @@ const testPuzzle: PuzzleResult = {
   comments: []
 }
 
-initFirebaseForTesting();
 
 test('clicking a clue sets slot to active', () => {
   window.HTMLElement.prototype.scrollIntoView = function() { };
 
-  const { getAllByText, getByLabelText } = render(<Puzzle puzzle={testPuzzle} play={null} />);
+  const { getAllByText, getByLabelText } = render(<Puzzle puzzle={testPuzzle} play={null} user={null} isAdmin={false} />);
 
   const cell = getByLabelText('cell0x1');
   expect(cell).toHaveStyleRule('background', 'var(--secondary)');
@@ -55,7 +56,7 @@ test('daily mini from 5/19/20', () => {
   const p: PuzzleResult = { "authorId": "fSEwJorvqOMK5UhNMHa4mu48izl1", "category": "dailymini", "authorName": "Mike D", "moderated": true, "publishTime": null, "title": "Word of surrender", "size": { "rows": 5, "cols": 5 }, "clues": [{ "dir": 0, "clue": "Word with Cod or Canaveral", "num": 1 }, { "dir": 0, "clue": "Caustic compound", "num": 4 }, { "dir": 0, "clue": "Word of surrender", "num": 6 }, { "dir": 0, "clue": "Not feel well", "num": 8 }, { "dir": 0, "clue": "\"Whats gotten ___ you?\"", "num": 9 }, { "dir": 1, "clue": "Game with Miss Scarlet and Professor Plum", "num": 1 }, { "dir": 1, "clue": "Rand who wrote \"Atlas Shrugged\"", "num": 2 }, { "dir": 1, "clue": "Butter ___ (ice cream flavor)", "num": 3 }, { "dir": 1, "clue": "Former Knicks star Anthony, to fans", "num": 5 }, { "dir": 1, "clue": "Exciting, in modern lingo", "num": 7 }], "grid": ["C", "A", "P", "E", ".", "L", "Y", "E", ".", "M", "U", "N", "C", "L", "E", "E", ".", "A", "I", "L", ".", "I", "N", "T", "O"], "highlighted": [], "highlight": "circle", "comments": [], "id": "iMwPVXfePmv3bJC6KaQL" }
   window.HTMLElement.prototype.scrollIntoView = function() { };
 
-  const { getByLabelText, getByText, queryByText, getAllByText, container } = render(<Puzzle puzzle={p} play={null} />);
+  const { getByLabelText, getByText, queryByText, getAllByText, container } = render(<Puzzle puzzle={p} play={null} user={null} isAdmin={false} />);
 
   fireEvent.click(getByText(/Begin Puzzle/i));
   expect(queryByText(/Begin Puzzle/i)).toBeNull();

@@ -37,7 +37,7 @@ import {
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TwoCol, TinyNav } from './Page';
 import { buttonAsLink, SECONDARY, LIGHTER, ERROR_COLOR } from '../lib/style';
-import { usePersistedBoolean } from './hooks';
+import { usePersistedBoolean } from '../lib/hooks';
 import { timeString } from '../lib/utils';
 import { UpcomingMinisCalendar } from "./UpcomingMinisCalendar";
 import { App, DeleteSentinal, TimestampClass } from '../lib/firebaseWrapper';
