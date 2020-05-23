@@ -10,9 +10,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "local": "firebase emulators:start",
     "predeploy": "npm run clean && next build && node ./scripts/export.js",
-    "deploy": "firebase deploy"
+    "deploy": "firebase deploy",
+    "emulator-dev": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 firebase emulators:exec 'next dev'",
+    "test": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 firebase emulators:exec 'jest --watch'"
   },
   "engines": {
     "node": "10"
@@ -40,9 +41,18 @@
     "worker-loader": "^2.0.0"
   },
   "devDependencies": {
+    "@firebase/testing": "^0.19.5",
+    "@modern-dev/jsbn": "^1.2.5",
     "@next/bundle-analyzer": "^9.4.2",
+    "@testing-library/jest-dom": "^5.8.0",
+    "@testing-library/react": "^10.0.4",
+    "@types/jest-in-case": "^1.0.2",
     "@types/react": "^16.9.35",
     "firebase-functions-test": "^0.2.1",
+    "jest": "^26.0.1",
+    "jest-emotion": "^10.0.32",
+    "jest-in-case": "^1.0.2",
+    "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
     "shelljs": "^0.8.4",
     "typescript": "^3.9.3"

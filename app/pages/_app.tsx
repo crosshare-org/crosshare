@@ -1,18 +1,19 @@
-import * as React from 'react';
+import { useCallback, useState, useEffect } from 'react';
 
 import { AppProps } from 'next/app';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-import { App } from '../helpers/firebase';
+import { App } from '../lib/firebase';
 import { AuthContext } from '../components/AuthContext';
+import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
 
-import '../helpers/style.css';
+import '../lib/style.css';
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const [user, loadingUser, error] = useAuthState(App.auth());
-  const [isAdmin, setIsAdmin] = React.useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (user && user.email) {
       user.getIdTokenResult()
         .then((idTokenResult) => {
@@ -29,9 +30,21 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     }
   }, [user]);
 
-  return <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error ?.message}}>
-    <Component {...pageProps} />
-  </AuthContext.Provider>;
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const initAudioContext = useCallback(() => {
+    if (!audioContext) {
+      const constructor = window.AudioContext || (window as any).webkitAudioContext;
+      setAudioContext(new constructor());
+    }
+  }, [audioContext, setAudioContext]);
+
+  return (
+    <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
+      <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error ?.message}}>
+        <Component {...pageProps} />
+      </AuthContext.Provider>;
+    </CrosshareAudioContext.Provider>
+  );
 }
 
 export default MyApp;

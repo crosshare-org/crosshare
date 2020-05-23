@@ -28,16 +28,17 @@ if (firebase.apps.length) {
       App.performance();
     }
   }
-  // TODO emulator:
-  //     if (process.env.REACT_APP_USE_FIREBASE_EMULATOR) {
-  //       var db = firebaseApp.firestore();
-  //       db.settings({
-  //         host: "localhost:8080",
-  //         ssl: false
-  //       });
-  //     }
+  if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR) {
+    var db = App.firestore();
+    db.settings({
+      host: "localhost:8080",
+      ssl: false
+    });
+  }
 }
 
 export const AuthProvider = new firebase.auth.GoogleAuthProvider();
+
+export const DeleteSentinal = firebase.firestore.FieldValue.delete();
 
 export const TimestampClass = firebase.firestore.Timestamp;

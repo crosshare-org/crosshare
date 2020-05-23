@@ -1,14 +1,14 @@
 import { toast } from 'react-toastify';
 
-import { PosAndDir, Position, Direction, BLOCK } from '../helpers/types';
-import { DBPuzzleT } from '../helpers/dbtypes';
+import { PosAndDir, Position, Direction, BLOCK } from '../lib/types';
+import { DBPuzzleT } from '../lib/dbtypes';
 import {
   ViewableGrid, ViewableEntry, CluedGrid,
   gridWithNewChar, gridWithBlockToggled, advancePosition, retreatPosition,
   moveToNextEntry, moveToPrevEntry, moveUp, moveDown, moveLeft, moveRight,
   nextNonBlock, nextCell
-} from '../helpers/viewableGrid';
-import { cellIndex, valAt, entryAtPosition, entryWord, gridWithEntrySet } from '../helpers/gridBase';
+} from '../lib/viewableGrid';
+import { cellIndex, valAt, entryAtPosition, entryWord, gridWithEntrySet } from '../lib/gridBase';
 import type firebase from 'firebase';
 
 interface GridInterfaceState {

@@ -1,25 +1,25 @@
-import * as React from 'react';
+import { ReactNode, useState, HTMLProps, forwardRef } from 'react';
 import Link from 'next/link';
 
 import { isMobile, isIPad13 } from "react-device-detect";
 
 import { Overlay } from './Overlay';
 import { Logo } from './Icons';
-import { PRIMARY, HEADER_HEIGHT, SMALL_AND_UP } from '../helpers/style';
+import { PRIMARY, HEADER_HEIGHT, SMALL_AND_UP } from '../lib/style';
 
-export const TopBarDropDown = (props: { text: string, icon: React.ReactNode, children: React.ReactNode }) => {
-  const [dropped, setDropped] = React.useState(false);
+export const TopBarDropDown = (props: { text: string, icon: ReactNode, children: ReactNode }) => {
+  const [dropped, setDropped] = useState(false);
   return (
-    <React.Fragment>
+    <>
       <TopBarLink onClick={() => setDropped(!dropped)} text={props.text} icon={props.icon} />
       <Overlay onClick={() => setDropped(false)} showingKeyboard={false} closeCallback={() => setDropped(false)} hidden={!dropped}>
         {props.children}
       </Overlay>
-    </React.Fragment>
+    </>
   );
 }
 
-export const TopBarDropDownLink = (props: { shortcutHint?: React.ReactNode, text: string, icon: React.ReactNode, onClick: () => void }) => {
+export const TopBarDropDownLink = (props: { shortcutHint?: ReactNode, text: string, icon: ReactNode, onClick: () => void }) => {
   return (
     <button title={props.text} css={{
       backgroundColor: 'transparent',
@@ -55,15 +55,15 @@ export const TopBarDropDownLink = (props: { shortcutHint?: React.ReactNode, text
   );
 }
 
-interface TopBarLinkProps extends React.HTMLProps<HTMLButtonElement> {
+interface TopBarLinkProps extends HTMLProps<HTMLButtonElement> {
   text?: string,
   hoverText?: string,
   keepText?: boolean,
-  icon: React.ReactNode,
+  icon: ReactNode,
   onClick?: () => void
 }
 
-export const TopBarLink = React.forwardRef<HTMLButtonElement, TopBarLinkProps>((props, ref) => {
+export const TopBarLink = forwardRef<HTMLButtonElement, TopBarLinkProps>((props, ref) => {
   return (
     <button ref={ref} title={props.hoverText || props.text} css={{
       backgroundColor: 'transparent',
@@ -99,7 +99,7 @@ export const TopBarLink = React.forwardRef<HTMLButtonElement, TopBarLinkProps>((
 });
 
 interface TopBarProps {
-  children?: React.ReactNode
+  children?: ReactNode
 }
 
 export const TopBar = ({ children }: TopBarProps) => {
@@ -136,9 +136,9 @@ export const TopBar = ({ children }: TopBarProps) => {
             }}>CROSSHARE</span>
           </a>
         </Link>
-        <React.Fragment>
+        <>
           {children}
-        </React.Fragment>
+        </>
       </div>
     </header>
   );

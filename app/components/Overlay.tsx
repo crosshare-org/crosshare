@@ -1,6 +1,6 @@
 import { IoMdCloseCircleOutline, } from 'react-icons/io';
 
-import { KEYBOARD_HEIGHT } from '../helpers/style'
+import { KEYBOARD_HEIGHT } from '../lib/style'
 
 export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCallback: () => void, showingKeyboard: boolean, children: React.ReactNode }) => {
   return (<div onClick={props.onClick || (() => undefined)} css={{

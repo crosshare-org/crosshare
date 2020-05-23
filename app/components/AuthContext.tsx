@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { createContext, useContext } from 'react';
 import Error from 'next/error'
 
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
@@ -11,6 +11,11 @@ export interface AuthProps {
   user: firebase.User,
 };
 
+export interface AuthPropsOptional {
+  isAdmin: boolean,
+  user: firebase.User | null,
+};
+
 function renderLoginIfNeeded({ user, loadingUser, error }: AuthContextValue): React.ReactNode | null {
   if (loadingUser) {
     return <div></div>;
@@ -20,24 +25,24 @@ function renderLoginIfNeeded({ user, loadingUser, error }: AuthContextValue): Re
   }
   if (!user) {
     return (
-      <React.Fragment>
+      <>
         <TopBar />
         <div css={{ margin: '1em', }}>
           <p>Please sign-in with your Google account to continue. We use your account to keep track of the puzzles you've played and your solve streaks.</p>
           <GoogleSignInButton />
         </div>
-      </React.Fragment>
+      </>
     );
   }
   if (user.isAnonymous) {
     return (
-      <React.Fragment>
+      <>
         <TopBar />
         <div css={{ margin: '1em', }}>
           <p>Please sign-in with your Google account to continue. We use your account to keep track of the puzzles you've played and your solve streaks.</p>
           <GoogleLinkButton user={user} />
         </div>
-      </React.Fragment>
+      </>
     );
   }
   return null;
@@ -46,7 +51,7 @@ function renderLoginIfNeeded({ user, loadingUser, error }: AuthContextValue): Re
 /* Ensure we have a non-anonymous user, upgrading an anonymous user if we have one. */
 export function requiresAuth<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
   return (props: Optionalize<T, AuthProps>) => {
-    const ctx = React.useContext(AuthContext);
+    const ctx = useContext(AuthContext);
     const login = renderLoginIfNeeded(ctx);
     if (login) {
       return login;
@@ -58,7 +63,7 @@ export function requiresAuth<T extends AuthProps>(WrappedComponent: React.Compon
 /* Ensure we have an admin user, upgrading an anonymous user if we have one. */
 export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
   return (props: Optionalize<T, AuthProps>) => {
-    const ctx = React.useContext(AuthContext);
+    const ctx = useContext(AuthContext);
     const login = renderLoginIfNeeded(ctx);
     if (login) {
       return login;
@@ -76,4 +81,4 @@ interface AuthContextValue {
   loadingUser: boolean,
   error: string | undefined
 }
-export const AuthContext = React.createContext({ user: undefined, loadingUser: false, error: "using default context" } as AuthContextValue);
+export const AuthContext = createContext({ user: undefined, loadingUser: false, error: "using default context" } as AuthContextValue);

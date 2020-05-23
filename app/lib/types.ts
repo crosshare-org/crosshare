@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 import type { WordDBT } from './WordDB';
 
-import { timestamp, DBPuzzleT, CommentWithRepliesV } from '../helpers/dbtypes';
+import { timestamp, DBPuzzleT, CommentWithRepliesV } from '../lib/dbtypes';
 
 export const BLOCK = ".";
 

@@ -1,7 +1,6 @@
-import { PlayV, UserPlayT, UserPlaysV } from '../helpers/dbtypes';
-import { getValidatedAndDelete, setInCache, updateInCache } from '../helpers/dbUtils';
-import { App, AuthProvider } from '../helpers/firebase';
-
+import { PlayV, UserPlayT, UserPlaysV } from '../lib/dbtypes';
+import { getValidatedAndDelete, setInCache, updateInCache } from '../lib/dbUtils';
+import { App, AuthProvider } from '../lib/firebase';
 
 export const GoogleSignInButton = () => {
   function signin() {

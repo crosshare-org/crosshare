@@ -1,7 +1,7 @@
-import * as React from 'react';
+import { ReactNode } from 'react';
 import { FaEye, FaCheck } from 'react-icons/fa';
 import { CheatUnit, Symmetry } from '../reducers/reducer';
-import { fnv1a, hslToRgb } from '../helpers/utils';
+import { fnv1a, hslToRgb } from '../lib/utils';
 
 const Square = (props: { cx: number, cy: number, beginMs: number, animate: boolean, filled: boolean }) => {
   let color = {
@@ -212,7 +212,7 @@ export const Identicon = ({ id }: { id: string }) => {
   const foreground = hslToRgb(hue, 0.8, 0.5);
 
   // leftmost 15 bits are which squares to show
-  let squares: Array<React.ReactNode> = [];
+  let squares: Array<ReactNode> = [];
   for (let i = 0; i < 15; i++) {
     if (((1 << (17 + i)) & hash) !== 0) {
       if (i < 5) {

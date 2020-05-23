@@ -7,8 +7,8 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { AuthContext } from '../components/AuthContext';
-import { DBPuzzleV } from '../helpers/dbtypes';
-import { App, TimestampClass } from '../helpers/firebase';
+import { DBPuzzleV } from '../lib/dbtypes';
+import { App, TimestampClass } from '../lib/firebase';
 import { TopBar, TopBarLink } from '../components/TopBar';
 
 type DailyMini = {
