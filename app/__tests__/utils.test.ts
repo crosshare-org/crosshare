@@ -1,6 +1,6 @@
 import cases from 'jest-in-case';
 
-import { fnv1a, hslToRgb } from './utils';
+import { fnv1a, hslToRgb } from '../lib/utils';
 
 
 cases('fnv1a hash function', opts => {

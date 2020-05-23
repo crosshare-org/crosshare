@@ -8,7 +8,7 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 
 import { AuthContext } from '../components/AuthContext';
 import { DBPuzzleV } from '../lib/dbtypes';
-import { App, TimestampClass } from '../lib/firebase';
+import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { TopBar, TopBarLink } from '../components/TopBar';
 
 type DailyMini = {

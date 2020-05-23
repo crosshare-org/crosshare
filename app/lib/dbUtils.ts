@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
-import { App, TimestampClass } from './firebase';
+import { App, TimestampClass } from './firebaseWrapper';
 
 import { downloadTimestamped } from './dbtypes';
 

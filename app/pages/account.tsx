@@ -7,7 +7,7 @@ import { requiresAuth, AuthProps } from '../components/AuthContext';
 import { UserPlaysV, AuthoredPuzzlesV } from '../lib/dbtypes';
 import { getFromSessionOrDB } from '../lib/dbUtils';
 import { timeString } from '../lib/utils'
-import { App } from '../lib/firebase';
+import { App } from '../lib/firebaseWrapper';
 import { TopBar } from '../components/TopBar';
 
 export const PlayListItem = (props: UserPlay) => {

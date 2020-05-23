@@ -40,7 +40,7 @@ import { buttonAsLink, SECONDARY, LIGHTER, ERROR_COLOR } from '../lib/style';
 import { usePersistedBoolean } from './hooks';
 import { timeString } from '../lib/utils';
 import { UpcomingMinisCalendar } from "./UpcomingMinisCalendar";
-import { App, DeleteSentinal, TimestampClass } from '../lib/firebase';
+import { App, DeleteSentinal, TimestampClass } from '../lib/firebaseWrapper';
 import { Emoji } from './Emoji';
 import { Comments } from './Comments';
 

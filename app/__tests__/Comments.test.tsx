@@ -1,10 +1,9 @@
-import React from "react";
-import { Comments } from "./Comments";
-import { anonymousUser, render, initFirebaseForTesting } from "./testUtils";
-import { getTimestampClass } from "./firebase";
-import * as firebase from "@firebase/testing";
+import { Comments } from "../components/Comments";
+import { anonymousUser, render } from "../lib/testingUtils";
+import { TimestampClass } from "../lib/firebaseWrapper";
+import * as firebaseTesting from "@firebase/testing";
 
-initFirebaseForTesting();
+jest.mock('../lib/firebaseWrapper');
 
 const testComments = [
   {
@@ -14,7 +13,7 @@ const testComments = [
     n: "Mike D",
     t: 55.4,
     ch: false,
-    p: getTimestampClass().now(),
+    p: TimestampClass.now(),
   },
 ];
 
@@ -189,9 +188,9 @@ test("basic comment display", () => {
                 </svg>
               </span>
               <i>
-                 
+
                 Mike D
-                 
+
               </i>
               <span
                 aria-label="Solved without helpers"
@@ -209,8 +208,8 @@ test("basic comment display", () => {
             <div>
               my first comment
             </div>
-            
-            
+
+
           </div>
         </li>
       </ul>
@@ -219,7 +218,7 @@ test("basic comment display", () => {
 });
 
 test("security rules should only allow commenting as onesself", async () => {
-  var app = firebase.initializeTestApp({
+  var app = firebaseTesting.initializeTestApp({
     projectId: "mdcrosshare",
     auth: {
       uid: "mike",
@@ -230,19 +229,19 @@ test("security rules should only allow commenting as onesself", async () => {
     },
   });
 
-  await firebase.assertFails(
+  await firebaseTesting.assertFails(
     app.firestore().collection("cfm").add({ c: "comment text" })
   );
-  await firebase.assertFails(
+  await firebaseTesting.assertFails(
     app.firestore().collection("cfm").add({ c: "comment text", a: "jared" })
   );
-  await firebase.assertSucceeds(
+  await firebaseTesting.assertSucceeds(
     app.firestore().collection("cfm").add({ c: "comment text", a: "mike" })
   );
 });
 
 test("security rules should only allow commenting if non-anonymous", async () => {
-  var app = firebase.initializeTestApp({
+  var app = firebaseTesting.initializeTestApp({
     projectId: "mdcrosshare",
     auth: {
       uid: "mike",
@@ -253,13 +252,13 @@ test("security rules should only allow commenting if non-anonymous", async () =>
     },
   });
 
-  await firebase.assertFails(
+  await firebaseTesting.assertFails(
     app.firestore().collection("cfm").add({ c: "comment text" })
   );
-  await firebase.assertFails(
+  await firebaseTesting.assertFails(
     app.firestore().collection("cfm").add({ c: "comment text", a: "jared" })
   );
-  await firebase.assertFails(
+  await firebaseTesting.assertFails(
     app.firestore().collection("cfm").add({ c: "comment text", a: "mike" })
   );
 });

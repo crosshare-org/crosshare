@@ -8,7 +8,7 @@ import { timeString } from '../lib/utils';
 import { Emoji } from './Emoji';
 import { buttonAsLink } from '../lib/style';
 import { DisplayNameForm, getDisplayName } from './DisplayNameForm';
-import { App, TimestampClass } from '../lib/firebase';
+import { App, TimestampClass } from '../lib/firebaseWrapper';
 import {
   CommentWithOrWithoutRepliesT, CommentForModerationT, CommentForModerationWithIdT, CommentWithRepliesT, CommentT,
   CommentForModerationWithIdV,

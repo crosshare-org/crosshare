@@ -1,6 +1,6 @@
 import cases from 'jest-in-case';
 
-import { BitArray } from './bitArray';
+import { BitArray } from '../lib/bitArray';
 import { BigInteger } from '@modern-dev/jsbn';
 
 const B32 = '0123456789abcdefghijklmnopqrstuv';

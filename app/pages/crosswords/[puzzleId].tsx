@@ -7,7 +7,7 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import { AuthContext } from '../../components/AuthContext';
 import { puzzleFromDB, PuzzleResult } from '../../lib/types';
 import { Puzzle } from '../../components/Puzzle';
-import { App } from '../../lib/firebase';
+import { App } from '../../lib/firebaseWrapper';
 import { DBPuzzleV, PlayT, PlayV } from '../../lib/dbtypes';
 import { getFromSessionOrDB } from '../../lib/dbUtils';
 

@@ -3,7 +3,7 @@
 import * as t from "io-ts";
 import { either } from "fp-ts/lib/Either";
 
-import { TimestampClass } from './firebase';
+import { TimestampClass } from './firebaseWrapper';
 
 const isFirestoreTimestamp = (u: unknown): u is firebase.firestore.Timestamp =>
   u ? u instanceof TimestampClass : false;

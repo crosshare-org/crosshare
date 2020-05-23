@@ -3,7 +3,7 @@ import { useCallback, useState, useEffect } from 'react';
 import { AppProps } from 'next/app';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-import { App } from '../lib/firebase';
+import { App } from '../lib/firebaseWrapper';
 import { AuthContext } from '../components/AuthContext';
 import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
 
