@@ -13,7 +13,7 @@
     "predeploy": "npm run clean && next build && node ./scripts/export.js",
     "deploy": "npx firebase deploy",
     "emulator-dev": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 npx firebase emulators:exec 'next dev'",
-    "test": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 npx firebase emulators:exec 'jest --watch'"
+    "test": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 npx firebase emulators:exec 'jest --watch --runInBand'"
   },
   "engines": {
     "node": "10"
@@ -54,6 +54,7 @@
     "jest": "^26.0.1",
     "jest-emotion": "^10.0.32",
     "jest-in-case": "^1.0.2",
+    "leaked-handles": "^5.2.0",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
     "shelljs": "^0.8.4",
@@ -63,8 +64,11 @@
     "moduleNameMapper": {
       "\\.worker.ts": "<rootDir>/__mocks__/workerMock.ts"
     },
-    "setupFilesAfterEnv": [
+    "setupFiles": [
       "<rootDir>/setupTests.ts"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/setupTestsAfterEnv.ts"
     ]
   }
 }

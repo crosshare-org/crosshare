@@ -24,9 +24,9 @@ import { GridView } from './Grid';
 import { Position } from '../lib/types';
 import { CluedEntry, fromCells, addClues } from '../lib/viewableGrid';
 import { valAt, entryAndCrossAtPosition } from '../lib/gridBase';
-import { Direction, BLOCK, puzzleFromDB, PuzzleResult, puzzleTitle } from '../lib/types';
+import { Direction, BLOCK, PuzzleResult, puzzleTitle } from '../lib/types';
 import {
-  DBPuzzleV, PlayT, PlayV, getDateString, UserPlayT, UserPlaysV, CategoryIndexV
+  PlayT, PlayV, getDateString, UserPlayT, UserPlaysV, CategoryIndexV
 } from '../lib/dbtypes';
 import { getFromSessionOrDB, setInCache, updateInCache } from '../lib/dbUtils';
 import {
@@ -43,49 +43,6 @@ import { UpcomingMinisCalendar } from "./UpcomingMinisCalendar";
 import { App, DeleteSentinal, TimestampClass } from '../lib/firebaseWrapper';
 import { Emoji } from './Emoji';
 import { Comments } from './Comments';
-
-export const usePuzzleAndPlay = (loadPlay: boolean, crosswordId: string | undefined, userId: string): [PuzzleResult | null, string | null, PlayT | null, boolean] => {
-  const [puzzle, setPuzzle] = useState<PuzzleResult | null>(null);
-  const [play, setPlay] = useState<PlayT | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoadingPlay, setIsLoadingPlay] = useState(true);
-
-  useEffect(() => {
-    setPuzzle(null);
-    setPlay(null);
-    setError(null);
-    setIsLoadingPlay(true);
-
-    if (!crosswordId) {
-      setError("Missing puzzle id");
-      return;
-    }
-
-    getFromSessionOrDB('c', crosswordId, DBPuzzleV, 10 * 60 * 1000)
-      .then(dbpuzz => {
-        if (dbpuzz === null) {
-          return Promise.reject('no puzzle found');
-        }
-        setPuzzle({ ...puzzleFromDB(dbpuzz), id: crosswordId });
-      })
-      .catch((e) => {
-        console.error(e);
-        setError(typeof e === 'string' ? e : 'error loading puzzle');
-      });
-
-    getFromSessionOrDB('p', crosswordId + "-" + userId, PlayV, -1)
-      .then(play => {
-        setPlay(play);
-        setIsLoadingPlay(false);
-      })
-      .catch((e) => {
-        console.error(e);
-        setError(typeof e === 'string' ? e : 'error loading play');
-      });
-  }, [crosswordId, userId, loadPlay]);
-
-  return [puzzle, error, play, isLoadingPlay];
-}
 
 interface ClueListItemProps {
   showDirection: boolean,

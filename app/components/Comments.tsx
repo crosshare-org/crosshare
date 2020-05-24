@@ -121,7 +121,7 @@ interface CommentFormProps {
   displayName: string,
   setDisplayName: (name: string) => void,
   puzzleAuthorId: string,
-  user: firebase.User,
+  user: firebase.User | null,
   solveTime: number,
   didCheat: boolean,
   puzzleId: string,
@@ -132,6 +132,10 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
   const [commentText, setCommentText] = useState('');
   const [editingDisplayName, setEditingDisplayName] = useState(false);
   const [submittedComment, setSubmittedComment] = useState<CommentT | null>(null);
+
+  if (props.user === null) {
+    throw new Error('displaying comment form w/ no user');
+  }
 
   function sanitize(input: string) {
     return input.substring(0, COMMENT_LENGTH_LIMIT);
@@ -212,7 +216,7 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
 }
 
 interface CommentsProps {
-  user: firebase.User,
+  user: firebase.User | null,
   solveTime: number,
   didCheat: boolean,
   puzzleId: string,
@@ -281,7 +285,7 @@ export const Comments = ({ comments, ...props }: CommentsProps) => {
   return (
     <div css={{ marginTop: '1em' }}>
       <h4 css={{ borderBottom: '1px solid var(--black)' }}>Comments</h4>
-      {props.user.isAnonymous ?
+      {props.user === null || props.user.isAnonymous ?
         <div>Sign in with google (above) to leave a comment of your own</div>
         :
         <CommentForm displayName={displayName} setDisplayName={setDisplayName} {...props} />

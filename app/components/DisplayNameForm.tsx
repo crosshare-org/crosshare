@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-export const getDisplayName = (user: firebase.User) => {
-  return user.displayName || "Anonymous Crossharer";
+export const getDisplayName = (user: firebase.User | null) => {
+  return user ?.displayName || "Anonymous Crossharer";
 }
 
 export const DisplayNameForm = ({ user, onChange, onCancel }: { user: firebase.User, onChange: (newName: string) => void, onCancel?: () => void }) => {
