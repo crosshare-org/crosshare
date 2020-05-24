@@ -1137,7 +1137,7 @@
     tslib "1.10.0"
     xmlhttprequest "1.8.0"
 
-"@firebase/app@0.6.4":
+"@firebase/app@0.6.4", "@firebase/app@^0.6.4":
   version "0.6.4"
   resolved "https://registry.yarnpkg.com/@firebase/app/-/app-0.6.4.tgz#5b857f2ba1cc286c88a3a7e1e6a1a7cc36308bee"
   integrity sha512-E1Zw6yeZYdYYFurMnklKPvE+q/xleHXs7bmcVgyhgAEg3Gv6/qXI4+4GdWh+iF7wmQ3Liesh51xqfdpvHBwAMQ==
@@ -5457,7 +5457,7 @@ firebase@7.4.0:
     "@firebase/storage" "0.3.19"
     "@firebase/util" "0.2.33"
 
-firebase@^7.14.2:
+firebase@^7.14.4:
   version "7.14.5"
   resolved "https://registry.yarnpkg.com/firebase/-/firebase-7.14.5.tgz#cf1be9c7f0603c6c2f45f65c7d817f6b22114a4b"
   integrity sha512-1vrC1UZIVhaT7owaElQoEseP81xqRt6tHQmxRJRojn0yI3JNXrdWCFsD+26xA1eQQCwodJuMsYJLzQSScgjHuQ==

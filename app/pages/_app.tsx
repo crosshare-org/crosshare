@@ -42,7 +42,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
       <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error ?.message}}>
         <Component {...pageProps} />
-      </AuthContext.Provider>;
+      </AuthContext.Provider>
     </CrosshareAudioContext.Provider>
   );
 }
