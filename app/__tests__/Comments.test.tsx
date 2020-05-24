@@ -238,6 +238,7 @@ test("security rules should only allow commenting as onesself", async () => {
   await firebaseTesting.assertSucceeds(
     app.firestore().collection("cfm").add({ c: "comment text", a: "mike" })
   );
+  app.delete();
 });
 
 test("security rules should only allow commenting if non-anonymous", async () => {
@@ -261,4 +262,5 @@ test("security rules should only allow commenting if non-anonymous", async () =>
   await firebaseTesting.assertFails(
     app.firestore().collection("cfm").add({ c: "comment text", a: "mike" })
   );
+  app.delete();
 });
