@@ -3,8 +3,7 @@ import Error from 'next/error'
 
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { TopBar } from './TopBar';
-
-type Optionalize<T extends K, K> = Omit<T, keyof K>;
+import { Optionalize } from '../lib/types';
 
 export interface AuthProps {
   isAdmin: boolean,

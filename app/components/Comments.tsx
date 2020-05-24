@@ -3,6 +3,7 @@ import * as t from "io-ts";
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from "io-ts/lib/PathReporter";
 
+import { PartialBy } from '../lib/types';
 import { Identicon } from './Icons';
 import { timeString } from '../lib/utils';
 import { Emoji } from './Emoji';
@@ -33,16 +34,16 @@ const Comment = (props: CommentProps) => {
   );
 }
 
-const CommentWithReplies = (props: CommentFormProps & { comment: CommentWithOrWithoutRepliesT }) => {
+const CommentWithReplies = (props: PartialBy<CommentFormProps, 'user'> & { comment: CommentWithOrWithoutRepliesT }) => {
   const [showingForm, setShowingForm] = useState(false);
   return (
     <Comment puzzleAuthorId={props.puzzleAuthorId} comment={props.comment}>
-      {(props.user.isAnonymous || props.comment.i === undefined) ?
+      {(!props.user || props.user.isAnonymous || props.comment.i === undefined) ?
         ''
         :
         (showingForm ?
           <div css={{ marginLeft: '2em' }}>
-            <CommentForm onCancel={() => setShowingForm(false)} replyToId={props.comment.i} {...props} />
+            <CommentForm {...props} onCancel={() => setShowingForm(false)} replyToId={props.comment.i} user={props.user} />
           </div>
           :
           <div><button css={buttonAsLink} onClick={() => setShowingForm(true)}>Reply</button></div>
@@ -121,7 +122,7 @@ interface CommentFormProps {
   displayName: string,
   setDisplayName: (name: string) => void,
   puzzleAuthorId: string,
-  user: firebase.User | null,
+  user: firebase.User,
   solveTime: number,
   didCheat: boolean,
   puzzleId: string,
@@ -216,7 +217,7 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
 }
 
 interface CommentsProps {
-  user: firebase.User | null,
+  user?: firebase.User,
   solveTime: number,
   didCheat: boolean,
   puzzleId: string,
@@ -285,10 +286,10 @@ export const Comments = ({ comments, ...props }: CommentsProps) => {
   return (
     <div css={{ marginTop: '1em' }}>
       <h4 css={{ borderBottom: '1px solid var(--black)' }}>Comments</h4>
-      {props.user === null || props.user.isAnonymous ?
+      {!props.user || props.user.isAnonymous ?
         <div>Sign in with google (above) to leave a comment of your own</div>
         :
-        <CommentForm displayName={displayName} setDisplayName={setDisplayName} {...props} />
+        <CommentForm {...props} displayName={displayName} setDisplayName={setDisplayName} user={props.user} />
       }
       <ul css={{
         listStyleType: 'none',

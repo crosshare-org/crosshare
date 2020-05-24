@@ -3,6 +3,9 @@ import type { WordDBT } from './WordDB';
 
 import { timestamp, DBPuzzleT, CommentWithRepliesV } from '../lib/dbtypes';
 
+export type Optionalize<T extends K, K> = Omit<T, keyof K>;
+export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+
 export const BLOCK = ".";
 
 export enum Direction {

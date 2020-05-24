@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export const getDisplayName = (user: firebase.User | null) => {
+export const getDisplayName = (user?: firebase.User) => {
   return user ?.displayName || "Anonymous Crossharer";
 }
 
