@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Identicon } from '../components/Icons';
 
-const IconTestPage = () => {
+export default () => {
   const [input, setInput] = useState('');
   return (
     <div>
@@ -13,5 +13,3 @@ const IconTestPage = () => {
     </div>
   );
 }
-
-export default IconTestPage

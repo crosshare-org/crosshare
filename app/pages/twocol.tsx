@@ -6,7 +6,7 @@ import {
 import { TwoCol } from '../components/Page';
 import { TopBar, TopBarLink } from '../components/TopBar';
 
-const TwoColTest = () => {
+export default () => {
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const toggleKeyboard = () => setShowKeyboard(!showKeyboard);
@@ -30,5 +30,3 @@ const TwoColTest = () => {
     </>
   );
 }
-
-export default TwoColTest;

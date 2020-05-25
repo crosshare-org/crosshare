@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async () =>
     });
 }
 
-const Home = ({ dailymini }: HomePageProps) => {
+export default ({ dailymini }: HomePageProps) => {
   const { isAdmin } = useContext(AuthContext);
   if (!dailymini) {
     return <div>Missing mini</div>;
@@ -83,5 +83,3 @@ const Home = ({ dailymini }: HomePageProps) => {
     </div>
   </>
 }
-
-export default Home;

@@ -12,7 +12,7 @@ export interface AuthProps {
 
 export interface AuthPropsOptional {
   isAdmin: boolean,
-  user: firebase.User | null,
+  user?: firebase.User,
 };
 
 function renderLoginIfNeeded({ user, loadingUser, error }: AuthContextValue): React.ReactNode | null {

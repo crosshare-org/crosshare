@@ -19,9 +19,10 @@ export const TopBarDropDown = (props: { text: string, icon: ReactNode, children:
   );
 }
 
-export const TopBarDropDownLink = (props: { shortcutHint?: ReactNode, text: string, icon: ReactNode, onClick: () => void }) => {
+interface TopBarDropDownLinkProps { shortcutHint?: ReactNode, text: string, icon: ReactNode, onClick?: () => void };
+export const TopBarDropDownLink = forwardRef<HTMLButtonElement, TopBarDropDownLinkProps>((props, ref) => {
   return (
-    <button title={props.text} css={{
+    <button ref={ref} title={props.text} css={{
       backgroundColor: 'transparent',
       border: 'none',
       cursor: 'pointer',
@@ -53,7 +54,7 @@ export const TopBarDropDownLink = (props: { shortcutHint?: ReactNode, text: stri
       }}>{props.text}{!isMobile && !isIPad13 && props.shortcutHint ? <span> ( <span css={{ fontSize: HEADER_HEIGHT - 10 }}>{props.shortcutHint}</span> )</span> : ""}</div>
     </button>
   );
-}
+});
 
 interface TopBarLinkProps extends HTMLProps<HTMLButtonElement> {
   text?: string,

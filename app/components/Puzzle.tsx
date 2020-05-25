@@ -3,6 +3,7 @@ import {
   KeyboardEvent, Dispatch, memo, MouseEvent, ReactNode
 } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { isMobile, isTablet, isIPad13 } from "react-device-detect";
 import {
   FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt,
@@ -36,13 +37,18 @@ import {
 } from '../reducers/reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TwoCol, TinyNav } from './Page';
-import { buttonAsLink, SECONDARY, LIGHTER, ERROR_COLOR } from '../lib/style';
+import { SECONDARY, LIGHTER, ERROR_COLOR } from '../lib/style';
 import { usePersistedBoolean } from '../lib/hooks';
 import { timeString } from '../lib/utils';
 import { UpcomingMinisCalendar } from "./UpcomingMinisCalendar";
 import { App, DeleteSentinal, TimestampClass } from '../lib/firebaseWrapper';
 import { Emoji } from './Emoji';
 import { Comments } from './Comments';
+
+export interface NextPuzzleLink {
+  puzzleId: string,
+  linkText: string
+}
 
 interface ClueListItemProps {
   showDirection: boolean,
@@ -168,7 +174,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
 
 const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, dispatch: Dispatch<PuzzleAction> }) => {
   const db = App.firestore();
-  const [date, setDate] = useState(puzzle.publishTime ?.toDate());
+  const [date, setDate] = useState(puzzle.publishTime ? new Date(puzzle.publishTime) : undefined);
 
   function schedule() {
     if (!date) {
@@ -178,7 +184,7 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
       [getDateString(date)]: puzzle.id,
     }
     if (puzzle.publishTime) {
-      update[getDateString(puzzle.publishTime.toDate())] = DeleteSentinal;
+      update[getDateString(new Date(puzzle.publishTime))] = DeleteSentinal;
     }
     db.collection('categories').doc('dailymini').update(update).then(() => {
       console.log("Updated categories page");
@@ -215,7 +221,7 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
       {isMini ?
         <div>
           {puzzle.publishTime ?
-            <div>Scheduled for {puzzle.publishTime.toDate().toLocaleDateString()}</div>
+            <div>Scheduled for {(new Date(puzzle.publishTime)).toLocaleDateString()}</div>
             :
             ""
           }
@@ -241,38 +247,20 @@ const KeepTryingOverlay = ({ dispatch }: { dispatch: Dispatch<PuzzleAction> }) =
   );
 }
 
-const PrevDailyMiniLink = (props: { puzzle: PuzzleResult }) => {
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [finished, setFinished] = useState(false);
-
-  function goToPrevious() {
-    if (!props.puzzle.publishTime) {
-      setError(true);
-      return;
-    }
-    setLoading(true);
-    navToLatestMini(props.puzzle.publishTime, () => { setError(true) }, () => { setFinished(true) });
-  }
-  if (error) {
-    return <>Something went wrong while loading</>;
-  }
-  if (finished) {
+const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
+  if (!nextPuzzle) {
     return <>End of the line, partner</>;
   }
-  if (loading) {
-    return <>Loading previous daily mini...</>;
-  }
-  return (<button css={buttonAsLink} onClick={goToPrevious}>Play the previous daily mini crossword</button>);
+  return (<Link href='/crosswords/[puzzleId]' as={`/crosswords/${nextPuzzle.puzzleId}`} passHref><a>Play {nextPuzzle.linkText}</a></Link>)
 }
 
-const SuccessOverlay = (props: { user: firebase.User | null, puzzle: PuzzleResult, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
+const SuccessOverlay = (props: { user?: firebase.User, puzzle: PuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
   return (
     <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({ type: "DISMISSSUCCESS" })}>
       <div css={{ textAlign: 'center' }}>
         <h4><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
         <p>You solved the puzzle in <b>{timeString(props.solveTime, false)}</b></p>
-        {props.user === null || props.user.isAnonymous ?
+        {!props.user || props.user.isAnonymous ?
           <>
             <p>Sign in with google to track your puzzle solving streak!</p>
             {props.user ?
@@ -283,7 +271,7 @@ const SuccessOverlay = (props: { user: firebase.User | null, puzzle: PuzzleResul
           </>
           : (props.puzzle.category === 'dailymini' ?
             <div>
-              <PrevDailyMiniLink puzzle={props.puzzle} />
+              <PrevDailyMiniLink nextPuzzle={props.nextPuzzle} />
             </div>
             : "")
         }
@@ -381,6 +369,7 @@ const ClueList = (props: ClueListProps) => {
 interface PuzzleProps {
   puzzle: PuzzleResult,
   play: PlayT | null,
+  nextPuzzle?: NextPuzzleLink
 }
 export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOptional) => {
   const [state, dispatch] = useReducer(puzzleReducer, {
@@ -482,85 +471,87 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
       toast(<div><Emoji symbol='🤓' /> You solved a mini puzzle in under a minute!</div>)
       delay += 500;
     }
-    Promise.all([
-      getFromSessionOrDB('categories', 'dailymini', CategoryIndexV, 24 * 60 * 60 * 1000),
-      getFromSessionOrDB('up', props.user.uid, UserPlaysV, -1)
-    ])
-      .then(([minis, plays]) => {
-        // Check to see if we should show X daily minis in a row notification
-        let consecutiveDailyMinis = 0;
-        let dateToTest = new Date();
-        dateToTest.setHours(12);
-        let ds = getDateString(dateToTest);
-        if (puzzle.id === minis ?.[ds] && !state.didCheat) {
-          while (true) {
-            consecutiveDailyMinis += 1;
-            dateToTest.setDate(dateToTest.getDate() - 1);
-            ds = getDateString(dateToTest);
-            const play = plays ?.[minis[ds]]
-            if (!play) {
-              break;
-            }
-            const playDate = play[0].toDate();
-            playDate.setHours(12);
-            // cheated || didn't finish || played on wrong date
-            if (play[2] || !play[3] || getDateString(playDate) !== ds) {
-              break;
-            }
-          }
-        }
-        if (consecutiveDailyMinis === 1) {
-          toast(<div><Emoji symbol='🥇' /> Solved the daily mini without check/reveal! </div>,
-            { delay: delay });
-          delay += 500;
-        } else if (consecutiveDailyMinis) {
-          toast(<div><Emoji symbol='🥇' /> Solved the daily mini without check/reveal <b>{consecutiveDailyMinis} days in a row!</b> <Emoji symbol='😻' /></div>,
-            { delay: delay });
-          delay += 500;
-        }
-
-        // Check to see if this is the first puzzle solved today
-        let firstOfTheDay = true;
-        let consecutiveSolveDays = 0;
-        dateToTest = new Date();
-        dateToTest.setHours(12);
-        ds = getDateString(dateToTest);
-        if (plays) {
-          for (const [puzzleId, play] of Object.entries(plays)) {
-            if (puzzleId === puzzle.id) {
-              continue;
-            }
-            const playDate = play[0].toDate();
-            playDate.setHours(12);
-            if (play[3] && getDateString(playDate) === ds) {
-              firstOfTheDay = false;
-            }
-          }
-          if (firstOfTheDay) {
+    if (props.user) {
+      Promise.all([
+        getFromSessionOrDB('categories', 'dailymini', CategoryIndexV, 24 * 60 * 60 * 1000),
+        getFromSessionOrDB('up', props.user.uid, UserPlaysV, -1)
+      ])
+        .then(([minis, plays]) => {
+          // Check to see if we should show X daily minis in a row notification
+          let consecutiveDailyMinis = 0;
+          let dateToTest = new Date();
+          dateToTest.setHours(12);
+          let ds = getDateString(dateToTest);
+          if (puzzle.id === minis ?.[ds] && !state.didCheat) {
             while (true) {
-              consecutiveSolveDays += 1;
+              consecutiveDailyMinis += 1;
               dateToTest.setDate(dateToTest.getDate() - 1);
               ds = getDateString(dateToTest);
-              let solvedOne = false;
-              for (const play of Object.values(plays)) {
-                const playDate = play[0].toDate();
-                playDate.setHours(12);
-                if (play[3] && getDateString(playDate) === ds) {
-                  solvedOne = true;
-                  break;
-                }
+              const play = plays ?.[minis[ds]]
+            if (!play) {
+                break;
               }
-              if (!solvedOne) {
+              const playDate = play[0].toDate();
+              playDate.setHours(12);
+              // cheated || didn't finish || played on wrong date
+              if (play[2] || !play[3] || getDateString(playDate) !== ds) {
                 break;
               }
             }
           }
-        }
-        if (consecutiveSolveDays > 1) {
-          toast(<div><Emoji symbol='🔥' /> You finished a puzzle <b>{consecutiveSolveDays} days in a row!</b> Keep it up! <Emoji symbol='🔥' /></div>,
-            { delay: delay });
-        }
-      })
+          if (consecutiveDailyMinis === 1) {
+            toast(<div><Emoji symbol='🥇' /> Solved the daily mini without check/reveal! </div>,
+              { delay: delay });
+            delay += 500;
+          } else if (consecutiveDailyMinis) {
+            toast(<div><Emoji symbol='🥇' /> Solved the daily mini without check/reveal <b>{consecutiveDailyMinis} days in a row!</b> <Emoji symbol='😻' /></div>,
+              { delay: delay });
+            delay += 500;
+          }
+
+          // Check to see if this is the first puzzle solved today
+          let firstOfTheDay = true;
+          let consecutiveSolveDays = 0;
+          dateToTest = new Date();
+          dateToTest.setHours(12);
+          ds = getDateString(dateToTest);
+          if (plays) {
+            for (const [puzzleId, play] of Object.entries(plays)) {
+              if (puzzleId === puzzle.id) {
+                continue;
+              }
+              const playDate = play[0].toDate();
+              playDate.setHours(12);
+              if (play[3] && getDateString(playDate) === ds) {
+                firstOfTheDay = false;
+              }
+            }
+            if (firstOfTheDay) {
+              while (true) {
+                consecutiveSolveDays += 1;
+                dateToTest.setDate(dateToTest.getDate() - 1);
+                ds = getDateString(dateToTest);
+                let solvedOne = false;
+                for (const play of Object.values(plays)) {
+                  const playDate = play[0].toDate();
+                  playDate.setHours(12);
+                  if (play[3] && getDateString(playDate) === ds) {
+                    solvedOne = true;
+                    break;
+                  }
+                }
+                if (!solvedOne) {
+                  break;
+                }
+              }
+            }
+          }
+          if (consecutiveSolveDays > 1) {
+            toast(<div><Emoji symbol='🔥' /> You finished a puzzle <b>{consecutiveSolveDays} days in a row!</b> Keep it up! <Emoji symbol='🔥' /></div>,
+              { delay: delay });
+          }
+        })
+    }
     if (!muted && playSuccess.current) {
       playSuccess.current();
     }
@@ -671,7 +662,7 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
 
   const showingKeyboard = state.showKeyboard && !state.success;
-  const beginPauseProps = { authorName: puzzle.authorName, title: title, dispatch: dispatch, moderated: puzzle.moderated, publishTime: puzzle.publishTime ?.toDate()};
+  const beginPauseProps = { authorName: puzzle.authorName, title: title, dispatch: dispatch, moderated: puzzle.moderated, publishTime: (puzzle.publishTime ? new Date(puzzle.publishTime) : undefined) };
 
   let puzzleView: ReactNode;
 
@@ -777,16 +768,18 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
               <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
               <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
               <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: "TOGGLEMODERATING" })} />
-              <TopBarDropDownLink icon={<FaUserLock />} text="Admin" onClick={() => navigate('/admin')} />
+              <Link href='/admin'><TopBarDropDownLink icon={<FaUserLock />} text="Admin" /></Link>
             </>
             : ""
         }
         {
           props.isAdmin || props.user ?.uid === puzzle.authorId ?
-            <TopBarDropDownLink icon={<IoMdStats />} text="Stats" onClick={() => navigate('/crosswords/' + puzzle.id + '/stats')} />
+            <Link href='/crosswords/[puzzleId]/stats' as={`/crosswords/${puzzle.id}/stats`} passHref>
+              <TopBarDropDownLink icon={<IoMdStats />} text="Stats" />
+            </Link>
             : ""
         }
-        <TopBarDropDownLink icon={<FaUser />} text="Account" onClick={() => navigate('/account')} />
+        <Link href='/account'><TopBarDropDownLink icon={<FaUser />} text="Account" /></Link>
       </TopBarDropDown>
     </>
   ), [state.autocheck, muted, props.isAdmin, props.user ?.uid, puzzle, setMuted]);
@@ -810,7 +803,7 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
         <KeepTryingOverlay dispatch={dispatch} />
         : ""}
       {state.success && !state.dismissedSuccess ?
-        <SuccessOverlay user={props.user} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
+        <SuccessOverlay user={props.user} nextPuzzle={props.nextPuzzle} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
         : ""}
       {state.moderating ?
         <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />

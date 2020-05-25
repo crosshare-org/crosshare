@@ -10,4 +10,5 @@ module.exports = withBundleAnalyzer({
   experimental: {
     sprFlushToDisk: false,
   },
+  poweredByHeader: false,
 });

@@ -1,1 +1,1 @@
-module.exports = Object.create(null);
+export { }

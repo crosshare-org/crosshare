@@ -6,7 +6,7 @@ import {
 import { SquareAndCols } from '../components/Page';
 import { TopBar, TopBarLink } from '../components/TopBar';
 
-const SquareTest = () => {
+export default () => {
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const toggleKeyboard = () => setShowKeyboard(!showKeyboard);
@@ -32,5 +32,3 @@ const SquareTest = () => {
     </>
   );
 }
-
-export default SquareTest;

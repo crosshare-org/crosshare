@@ -1,12 +1,11 @@
-import { Dispatch, ReactNode, useState } from 'react';
+import { Dispatch, ReactNode } from 'react';
 import {
-  FaKeyboard, FaTabletAlt, FaAngleDoubleRight, FaAngleDoubleLeft,
+  FaAngleDoubleRight, FaAngleDoubleLeft,
 } from 'react-icons/fa';
 
 import { Keyboard } from './Keyboard';
 import { Square } from './Square';
 import { KeypressAction } from '../reducers/reducer';
-import { TopBar, TopBarLink } from './TopBar';
 import {
   heightAdjustment,
   SMALL_AND_UP, LARGE_AND_UP, TINY_COL_MIN_HEIGHT,

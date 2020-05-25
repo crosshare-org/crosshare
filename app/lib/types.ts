@@ -1,10 +1,10 @@
 import * as t from "io-ts";
 import type { WordDBT } from './WordDB';
 
-import { timestamp, DBPuzzleT, CommentWithRepliesV } from '../lib/dbtypes';
+import { DBPuzzleT, CommentWithRepliesV } from '../lib/dbtypes';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
-export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 export const BLOCK = ".";
 
@@ -87,7 +87,7 @@ export const PuzzleV = t.type({
   category: t.union([t.string, t.null]),
   authorName: t.string,
   moderated: t.boolean,
-  publishTime: t.union([timestamp, t.null]),
+  publishTime: t.union([t.number, t.null]),
   title: t.string,
   size: t.type({
     rows: t.number,
@@ -106,7 +106,7 @@ export type PuzzleResult = PuzzleT & { id: string };
 export function puzzleTitle(puzzle: PuzzleT) {
   let title = puzzle.title;
   if (puzzle.category === 'dailymini' && puzzle.publishTime) {
-    const d = puzzle.publishTime.toDate();
+    const d = new Date(puzzle.publishTime);
     const ds = (d.getUTCMonth() + 1) + "/" + d.getUTCDate() + "/" + d.getUTCFullYear()
     title = "Daily Mini for " + ds;
   }
@@ -126,7 +126,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     category: dbPuzzle.c,
     authorName: dbPuzzle.n,
     moderated: dbPuzzle.m,
-    publishTime: dbPuzzle.p,
+    publishTime: dbPuzzle.p ? dbPuzzle.p.toMillis() : null,
     title: dbPuzzle.t,
     size: {
       rows: dbPuzzle.h,

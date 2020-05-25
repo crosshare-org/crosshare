@@ -37,7 +37,7 @@ interface UserPlay {
   title: string,
 }
 
-const AccountPage = requiresAuth(({ user }: AuthProps) => {
+export default requiresAuth(({ user }: AuthProps) => {
   const [authoredPuzzles, setAuthoredPuzzles] = useState<Array<AuthoredPuzzle> | null>(null);
   const [plays, setPlays] = useState<Array<UserPlay> | null>(null);
   const [error, setError] = useState(false);
@@ -113,5 +113,3 @@ const AccountPage = requiresAuth(({ user }: AuthProps) => {
     </>
   );
 });
-
-export default AccountPage;
