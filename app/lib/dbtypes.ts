@@ -5,7 +5,7 @@ import * as t from "io-ts";
 import { timestamp } from './timestamp';
 export { timestamp } from './timestamp';
 
-export const CommentV = t.type({
+const CommentV = t.type({
   /** comment text */
   c: t.string,
   /** author id */
@@ -19,7 +19,7 @@ export const CommentV = t.type({
   /** comment publish timestamp */
   p: timestamp
 });
-export type CommentT = t.TypeOf<typeof CommentV>;
+type CommentT = t.TypeOf<typeof CommentV>;
 
 export interface CommentWithRepliesT extends CommentT {
   /** comment id */
@@ -28,14 +28,7 @@ export interface CommentWithRepliesT extends CommentT {
   r?: Array<CommentWithRepliesT>
 }
 
-export interface CommentWithOrWithoutRepliesT extends CommentT {
-  /** comment id */
-  i?: string,
-  /** replies */
-  r?: Array<CommentWithOrWithoutRepliesT>
-}
-
-export const CommentWithRepliesV: t.Type<CommentWithRepliesT> = t.recursion('CommentWithReplies', () =>
+const CommentWithRepliesV: t.Type<CommentWithRepliesT> = t.recursion('CommentWithReplies', () =>
   t.intersection([
     CommentV,
     t.type({

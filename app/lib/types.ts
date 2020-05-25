@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 import type { WordDBT } from './WordDB';
 
-import { DBPuzzleT, CommentWithRepliesV } from '../lib/dbtypes';
+import { DBPuzzleT, CommentWithRepliesT } from '../lib/dbtypes';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -75,32 +75,49 @@ const PuzzleJsonOptionalV = t.partial({
 export const PuzzleJsonV = t.intersection([PuzzleJsonMandatoryV, PuzzleJsonOptionalV]);
 export type PuzzleJson = t.TypeOf<typeof PuzzleJsonV>;
 
-const ClueV = t.type({
-  num: t.number,
-  dir: t.union([t.literal(0), t.literal(1)]),
-  clue: t.string,
-});
-export type ClueT = t.TypeOf<typeof ClueV>;
+export interface ClueT {
+  num: number,
+  dir: 0 | 1,
+  clue: string,
+}
 
-export const PuzzleV = t.type({
-  authorId: t.string,
-  category: t.union([t.string, t.null]),
-  authorName: t.string,
-  moderated: t.boolean,
-  publishTime: t.union([t.number, t.null]),
-  title: t.string,
-  size: t.type({
-    rows: t.number,
-    cols: t.number
-  }),
-  clues: t.array(ClueV),
-  grid: t.array(t.string),
-  highlighted: t.array(t.number),
-  highlight: t.keyof({ circle: null, shade: null }),
-  comments: t.array(CommentWithRepliesV),
-});
+export interface Comment {
+  /** comment text */
+  commentText: string,
+  /** author id */
+  authorId: string,
+  /** author display name */
+  authorDisplayName: string,
+  /** author solve time in fractional seconds */
+  authorSolveTime: number,
+  /** author did cheat? */
+  authorCheated: boolean,
+  /** comment publish timestamp in millis since epoch*/
+  publishTime: number
+  /** comment id */
+  id: string,
+  /** replies */
+  replies?: Array<Comment>
+}
 
-export type PuzzleT = t.TypeOf<typeof PuzzleV>;
+export interface PuzzleT {
+  authorId: string,
+  category: string | null,
+  authorName: string,
+  moderated: boolean,
+  publishTime: number | null,
+  title: string
+  size: {
+    rows: number,
+    cols: number
+  },
+  clues: Array<ClueT>,
+  grid: Array<string>,
+  highlighted: Array<number>,
+  highlight: 'circle' | 'shade',
+  comments: Array<Comment>,
+}
+
 export type PuzzleResult = PuzzleT & { id: string };
 
 export function puzzleTitle(puzzle: PuzzleT) {
@@ -111,6 +128,21 @@ export function puzzleTitle(puzzle: PuzzleT) {
     title = "Daily Mini for " + ds;
   }
   return title;
+}
+
+function convertComments(comments: Array<CommentWithRepliesT>): Array<Comment> {
+  return comments.map(c => {
+    return {
+      commentText: c.c,
+      authorId: c.a,
+      authorDisplayName: c.n,
+      authorSolveTime: c.t,
+      authorCheated: c.ch,
+      publishTime: c.p.toMillis(),
+      id: c.i,
+      replies: convertComments(c.r || [])
+    }
+  })
 }
 
 export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
@@ -136,6 +168,6 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     grid: dbPuzzle.g,
     highlighted: dbPuzzle.hs || [],
     highlight: dbPuzzle.s ? "shade" : "circle",
-    comments: dbPuzzle.cs || []
+    comments: convertComments(dbPuzzle.cs || [])
   };
 }

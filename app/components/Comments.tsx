@@ -10,57 +10,65 @@ import { Emoji } from './Emoji';
 import { buttonAsLink } from '../lib/style';
 import { DisplayNameForm, getDisplayName } from './DisplayNameForm';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
+import { CommentForModerationT, CommentForModerationWithIdV, CommentForModerationWithIdT } from '../lib/dbtypes';
 import {
-  CommentWithOrWithoutRepliesT, CommentForModerationT, CommentForModerationWithIdT, CommentWithRepliesT, CommentT,
-  CommentForModerationWithIdV,
-} from '../lib/dbtypes';
+  Comment
+} from '../lib/types';
 
 const COMMENT_LENGTH_LIMIT = 140;
 
+type LocalComment = Omit<Comment, 'id' | 'replies'>;
+type CommentWithPossibleLocalReplies = Omit<Comment, 'replies'> & {
+  replies?: Array<CommentOrLocalComment>
+}
+type CommentOrLocalComment = CommentWithPossibleLocalReplies | LocalComment
+
 interface CommentProps {
   puzzleAuthorId: string,
-  comment: CommentWithOrWithoutRepliesT,
+  comment: CommentOrLocalComment,
   children?: ReactNode
 }
-const Comment = (props: CommentProps) => {
+const CommentView = (props: CommentProps) => {
   return (
     <div css={{
       marginTop: '1em',
     }}>
-      <div><CommentFlair displayName={props.comment.n} userId={props.comment.a} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.comment.t} didCheat={props.comment.ch} /></div>
-      <div>{props.comment.c}</div>
+      <div><CommentFlair displayName={props.comment.authorDisplayName} userId={props.comment.authorId} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.comment.authorSolveTime} didCheat={props.comment.authorCheated} /></div>
+      <div>{props.comment.commentText}</div>
       {props.children}
     </div>
   );
 }
 
-const CommentWithReplies = (props: PartialBy<CommentFormProps, 'user'> & { comment: CommentWithOrWithoutRepliesT }) => {
+const CommentWithReplies = (props: PartialBy<CommentFormProps, 'user'> & { comment: CommentOrLocalComment }) => {
   const [showingForm, setShowingForm] = useState(false);
+  const commentId = isComment(props.comment) ? props.comment.id : null;
+  const replies = isComment(props.comment) ? props.comment.replies : undefined;
   return (
-    <Comment puzzleAuthorId={props.puzzleAuthorId} comment={props.comment}>
-      {(!props.user || props.user.isAnonymous || props.comment.i === undefined) ?
+    <CommentView puzzleAuthorId={props.puzzleAuthorId} comment={props.comment}>
+      {(!props.user || props.user.isAnonymous || !commentId) ?
         ''
         :
         (showingForm ?
           <div css={{ marginLeft: '2em' }}>
-            <CommentForm {...props} onCancel={() => setShowingForm(false)} replyToId={props.comment.i} user={props.user} />
+            <CommentForm {...props} onCancel={() => setShowingForm(false)} replyToId={commentId} user={props.user} />
           </div>
           :
           <div><button css={buttonAsLink} onClick={() => setShowingForm(true)}>Reply</button></div>
         )
       }
-      {props.comment.r ?
+      {replies ?
         <ul css={{
           listStyleType: 'none',
           margin: '0 0 0 2em',
           padding: 0,
         }}>
-          {props.comment.r.map((a, i) => <li key={i}><CommentWithReplies {... { ...props, comment: a }} /></li>)}
+          {replies.map((a, i) => <li key={i}><CommentWithReplies {... { ...props, comment: a }} /></li>)}
         </ul>
         :
         ''
       }
-    </Comment>
+    </CommentView>
   )
 }
 
@@ -132,7 +140,7 @@ interface CommentFormProps {
 const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () => void }) => {
   const [commentText, setCommentText] = useState('');
   const [editingDisplayName, setEditingDisplayName] = useState(false);
-  const [submittedComment, setSubmittedComment] = useState<CommentT | null>(null);
+  const [submittedComment, setSubmittedComment] = useState<LocalComment | null>(null);
 
   if (props.user === null) {
     throw new Error('displaying comment form w/ no user');
@@ -165,7 +173,14 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
       console.log("Uploaded", ref.id);
 
       // Replace this form w/ the comment for the short term
-      setSubmittedComment(comment);
+      setSubmittedComment({
+        commentText: comment.c,
+        authorId: comment.a,
+        authorDisplayName: comment.n,
+        authorSolveTime: comment.t,
+        authorCheated: comment.ch,
+        publishTime: comment.p.toMillis(),
+      });
       // Add the comment to localStorage for the medium term
       const forSession = commentsFromStorage(props.puzzleId);
       forSession.push({ i: ref.id, ...comment });
@@ -174,7 +189,7 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
   }
 
   if (submittedComment) {
-    return <Comment puzzleAuthorId={props.puzzleAuthorId} comment={submittedComment} />
+    return <CommentView puzzleAuthorId={props.puzzleAuthorId} comment={submittedComment} />
   }
 
   return (
@@ -222,16 +237,23 @@ interface CommentsProps {
   didCheat: boolean,
   puzzleId: string,
   puzzleAuthorId: string,
-  comments: Array<CommentWithRepliesT>
+  comments: Array<Comment>
 };
 
-function findCommentById(comments: Array<CommentWithOrWithoutRepliesT>, id: string): CommentWithOrWithoutRepliesT | null {
+function isComment(comment: CommentOrLocalComment): comment is CommentWithPossibleLocalReplies {
+  return 'id' in comment;
+}
+
+function findCommentById(comments: Array<CommentOrLocalComment>, id: string): CommentWithPossibleLocalReplies | null {
   for (const comment of comments) {
-    if (comment.i === id) {
+    if (!isComment(comment)) {
+      continue;
+    }
+    if (comment.id === id) {
       return comment;
     }
-    if (comment.r !== undefined) {
-      const res = findCommentById(comment.r, id);
+    if (comment.replies !== undefined) {
+      const res = findCommentById(comment.replies, id);
       if (res !== null) {
         return res;
       }
@@ -241,11 +263,11 @@ function findCommentById(comments: Array<CommentWithOrWithoutRepliesT>, id: stri
 }
 
 export const Comments = ({ comments, ...props }: CommentsProps) => {
-  const [toShow, setToShow] = useState<Array<CommentWithOrWithoutRepliesT>>(comments);
+  const [toShow, setToShow] = useState<Array<CommentOrLocalComment>>(comments);
   const [displayName, setDisplayName] = useState(getDisplayName(props.user));
 
   useEffect(() => {
-    const rebuiltComments: Array<CommentWithOrWithoutRepliesT> = comments;
+    const rebuiltComments: Array<CommentOrLocalComment> = comments;
     const unmoderatedComments = commentsFromStorage(props.puzzleId);
     const toKeepInStorage: Array<CommentForModerationWithIdT> = [];
     for (const c of unmoderatedComments) {
@@ -258,18 +280,25 @@ export const Comments = ({ comments, ...props }: CommentsProps) => {
         continue;
       }
       toKeepInStorage.push(c);
-      const sansId = { ...c, i: undefined };
-      if (sansId.rt === null) {
-        rebuiltComments.push(sansId);
+      const localComment: LocalComment = {
+        commentText: c.c,
+        authorId: c.a,
+        authorDisplayName: c.n,
+        authorSolveTime: c.t,
+        authorCheated: c.ch,
+        publishTime: c.p.toMillis(),
+      };
+      if (c.rt === null) {
+        rebuiltComments.push(localComment);
       } else {
-        const parent = findCommentById(rebuiltComments, sansId.rt);
+        const parent = findCommentById(rebuiltComments, c.rt);
         if (parent === null) {
           throw new Error('parent comment not found');
         }
-        if (parent.r) {
-          parent.r.push(sansId);
+        if (parent.replies) {
+          parent.replies.push(localComment);
         } else {
-          parent.r = [sansId];
+          parent.replies = [localComment];
         }
       }
     }

@@ -1,19 +1,19 @@
 import { Comments } from "../components/Comments";
 import { anonymousUser, render } from "../lib/testingUtils";
-import { TimestampClass } from "../lib/firebaseWrapper";
+import { Comment } from "../lib/types";
 import * as firebaseTesting from "@firebase/testing";
 
 jest.mock("../lib/firebaseWrapper");
 
-const testComments = [
+const testComments: Array<Comment> = [
   {
-    i: "comment-id",
-    c: "my first comment",
-    a: "comment-author-id",
-    n: "Mike D",
-    t: 55.4,
-    ch: false,
-    p: TimestampClass.now(),
+    id: "comment-id",
+    commentText: "my first comment",
+    authorId: "comment-author-id",
+    authorDisplayName: "Mike D",
+    authorSolveTime: 55.4,
+    authorCheated: false,
+    publishTime: new Date().getTime(),
   },
 ];
 
