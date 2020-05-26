@@ -8,7 +8,7 @@ import { AuthContext } from '../../components/AuthContext';
 import { puzzleFromDB, PuzzleResult } from '../../lib/types';
 import { Puzzle, NextPuzzleLink } from '../../components/Puzzle';
 import { App, TimestampClass } from '../../lib/firebaseWrapper';
-import { DBPuzzleV, PlayT, PlayV } from '../../lib/dbtypes';
+import { DBPuzzleV, PlayWithoutUserT, PlayWithoutUserV } from '../../lib/dbtypes';
 import { getFromSessionOrDB } from '../../lib/dbUtils';
 
 
@@ -64,7 +64,7 @@ export default ({ puzzle, nextPuzzle }: PuzzlePageProps) => {
   if (!puzzle) {
     return <Error statusCode={404} title="No puzzle found" />;
   }
-  return <UserLoader puzzle={puzzle} nextPuzzle={nextPuzzle} />
+  return <UserLoader key={puzzle.id} puzzle={puzzle} nextPuzzle={nextPuzzle} />
 };
 
 const UserLoader = ({ puzzle, nextPuzzle }: { puzzle: PuzzleResult, nextPuzzle?: NextPuzzleLink }) => {
@@ -75,14 +75,15 @@ const UserLoader = ({ puzzle, nextPuzzle }: { puzzle: PuzzleResult, nextPuzzle?:
   if (error) {
     return <div>Error loading user: {error}</div>;
   }
+  console.log("HERE WE ARE", user);
   if (!user) {
     return <Puzzle key={puzzle.id} puzzle={puzzle} play={null} isAdmin={false} nextPuzzle={nextPuzzle} />
   }
-  return <PlayLoader puzzle={puzzle} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />
+  return <PlayLoader key={puzzle.id} puzzle={puzzle} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />
 }
 
 const PlayLoader = ({ puzzle, user, isAdmin, nextPuzzle }: { puzzle: PuzzleResult, user: firebase.User, isAdmin: boolean, nextPuzzle?: NextPuzzleLink }) => {
-  const [play, setPlay] = useState<PlayT | null>(null);
+  const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoadingPlay, setIsLoadingPlay] = useState(true);
 
@@ -91,7 +92,13 @@ const PlayLoader = ({ puzzle, user, isAdmin, nextPuzzle }: { puzzle: PuzzleResul
     setError(null);
     setIsLoadingPlay(true);
 
-    getFromSessionOrDB('p', puzzle.id + "-" + user.uid, PlayV, -1)
+    getFromSessionOrDB({
+      collection: 'p',
+      docId: puzzle.id + "-" + user.uid,
+      localDocId: puzzle.id,
+      validator: PlayWithoutUserV,
+      ttl: -1
+    })
       .then(play => {
         setPlay(play);
         setIsLoadingPlay(false);

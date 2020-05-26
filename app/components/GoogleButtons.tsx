@@ -41,8 +41,14 @@ export const GoogleLinkButton = ({ user }: { user: firebase.User }) => {
             console.log("Updating play " + play.c + '-' + play.u)
             const userPlay: UserPlayT = [play.ua, play.t, play.ch, play.f, 'Crossword'];
             return Promise.all([
-              setInCache('p', play.c + "-" + newUser.uid, play, PlayV, true),
-              updateInCache('up', newUser.uid, { [play.c]: userPlay }, UserPlaysV, true)
+              setInCache({
+                collection: 'p', docId: play.c + "-" + newUser.uid, localDocId: play.c,
+                value: play, validator: PlayV, sendToDB: true
+              }),
+              updateInCache({
+                collection: 'up', docId: newUser.uid, localDocId: '',
+                update: { [play.c]: userPlay }, validator: UserPlaysV, sendToDB: true
+              })
             ]);
           }));
           user.delete();

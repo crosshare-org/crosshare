@@ -1,6 +1,7 @@
 import { Comments } from "../components/Comments";
-import { anonymousUser, render } from "../lib/testingUtils";
+import { render } from "../lib/testingUtils";
 import { Comment } from "../lib/types";
+import { setApp } from "../lib/firebaseWrapper";
 import * as firebaseTesting from "@firebase/testing";
 
 jest.mock("../lib/firebaseWrapper");
@@ -18,15 +19,21 @@ const testComments: Array<Comment> = [
 ];
 
 test("basic comment display", () => {
+  setApp(
+    firebaseTesting.initializeTestApp({
+      projectId: "test1",
+    }) as firebase.app.App
+  );
   const { getByText, container } = render(
     <Comments
       solveTime={10}
       didCheat={false}
       puzzleId="puzz"
       puzzleAuthorId="puzzAuthor"
-      user={anonymousUser}
+      user={undefined}
       comments={testComments}
-    />
+    />,
+    {}
   );
   expect(getByText(/my first comment/i)).toBeVisible();
   expect(container.firstChild).toMatchInlineSnapshot(`

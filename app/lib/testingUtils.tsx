@@ -10,21 +10,27 @@ export const anonymousUser = {
   isAnonymous: true
 } as firebaseTypes.User;
 
-const WithAllProviders: ComponentType = ({ children }) => {
+const WithAllProviders: (opts: AuthOptions) => ComponentType = (opts: AuthOptions) => ({ children }) => {
   return (
-    <AuthContext.Provider value={{ user: anonymousUser, isAdmin: false, loadingUser: false, error: undefined }}>
+    <AuthContext.Provider value={{ user: opts.user, isAdmin: opts.isAdmin || false, loadingUser: false, error: undefined }}>
       {children}
     </AuthContext.Provider>
   )
 }
 
+interface AuthOptions {
+  user?: firebaseTypes.User,
+  isAdmin?: boolean,
+}
+
 function wrappedRender(
   ui: ReactElement,
+  auth: AuthOptions,
   options?: RenderOptions
 ): RenderResult {
 
   return render(ui, {
-    wrapper: WithAllProviders,
+    wrapper: WithAllProviders(auth),
     ...options,
   });
 }

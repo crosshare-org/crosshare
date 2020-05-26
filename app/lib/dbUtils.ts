@@ -5,14 +5,30 @@ import { App, TimestampClass } from './firebaseWrapper';
 
 import { downloadTimestamped } from './dbtypes';
 
-export async function setInCache<A>(
+interface CacheSetOptionsRequired<A> {
   collection: string,
-  docId: string,
   value: A,
   validator: t.Type<A>,
-  sendToDB: boolean
-) {
-  const sessionKey = collection + "/" + docId;
+}
+interface YesDB {
+  sendToDB: true,
+  docId: string,
+  localDocId?: string
+}
+interface NoDBButDocId {
+  sendToDB: false,
+  docId: string,
+  localDocId?: string
+}
+interface NoDBButLocalId {
+  sendToDB: false,
+  docId?: string,
+  localDocId: string
+}
+type CacheSetOptions<A> = CacheSetOptionsRequired<A> & (YesDB | NoDBButDocId | NoDBButLocalId);
+
+export async function setInCache<A>({ collection, docId, localDocId, value, validator, sendToDB }: CacheSetOptions<A>) {
+  const sessionKey = localDocId ? collection + "/" + localDocId : collection + '/' + docId;
   const TimestampedV = downloadTimestamped(validator);
   const forLS: t.TypeOf<typeof TimestampedV> = {
     downloadedAt: TimestampClass.now(),
@@ -27,14 +43,15 @@ export async function setInCache<A>(
   }
 }
 
-export async function updateInCache<A>(
+interface CacheUpdateOptionsRequired<A> {
   collection: string,
-  docId: string,
   update: Partial<A>,
   validator: t.Type<A>,
-  sendToDB: boolean
-) {
-  const sessionKey = collection + "/" + docId;
+}
+type CacheUpdateOptions<A> = CacheUpdateOptionsRequired<A> & (YesDB | NoDBButDocId | NoDBButLocalId);
+
+export async function updateInCache<A>({ collection, docId, localDocId, update, validator, sendToDB }: CacheUpdateOptions<A>) {
+  const sessionKey = localDocId ? collection + "/" + localDocId : collection + '/' + docId;
   const inSession = sessionStorage.getItem(sessionKey);
   const TimestampedV = downloadTimestamped(validator);
   if (inSession) {
@@ -123,14 +140,17 @@ export async function getFromDB<A>(
   }
 }
 
-export async function getFromSessionOrDB<A>(
+interface CacheGetOptions<A> {
   collection: string,
   docId: string,
+  localDocId?: string
   validator: t.Type<A>,
-  ttl: number,
-): Promise<A | null> {
+  ttl: number
+}
+
+export async function getFromSessionOrDB<A>({ collection, docId, localDocId, validator, ttl }: CacheGetOptions<A>): Promise<A | null> {
   const now = new Date();
-  const sessionKey = collection + "/" + docId;
+  const sessionKey = localDocId ? collection + "/" + localDocId : collection + '/' + docId;
   const inSession = sessionStorage.getItem(sessionKey);
   const TimestampedV = downloadTimestamped(validator);
   if (inSession) {

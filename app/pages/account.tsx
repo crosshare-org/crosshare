@@ -47,8 +47,8 @@ export default requiresAuth(({ user }: AuthProps) => {
     console.log("loading authored puzzles and plays");
     // TODO pagination on both of these
     Promise.all([
-      getFromSessionOrDB('uc', user.uid, AuthoredPuzzlesV, -1),
-      getFromSessionOrDB('up', user.uid, UserPlaysV, -1)
+      getFromSessionOrDB({ collection: 'uc', docId: user.uid, validator: AuthoredPuzzlesV, ttl: -1 }),
+      getFromSessionOrDB({ collection: 'up', docId: user.uid, localDocId: '', validator: UserPlaysV, ttl: -1 })
     ])
       .then(([authoredResult, playsResult]) => {
         if (authoredResult === null) {

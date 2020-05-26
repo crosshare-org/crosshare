@@ -1,6 +1,6 @@
 import {
   useReducer, useState, useEffect, useCallback, useMemo, useRef, useContext,
-  KeyboardEvent, Dispatch, memo, MouseEvent, ReactNode
+  KeyboardEvent, Dispatch, memo, ReactNode
 } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -13,6 +13,7 @@ import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { toast } from 'react-toastify';
 
+import { ClueList } from './ClueList';
 import {
   EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle,
   RevealPuzzle, Rebus, SpinnerFinished
@@ -23,21 +24,21 @@ import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
 import { Position } from '../lib/types';
-import { CluedEntry, fromCells, addClues } from '../lib/viewableGrid';
+import { fromCells, addClues } from '../lib/viewableGrid';
 import { valAt, entryAndCrossAtPosition } from '../lib/gridBase';
 import { Direction, BLOCK, PuzzleResult, puzzleTitle } from '../lib/types';
 import {
-  PlayT, PlayV, getDateString, UserPlayT, UserPlaysV, CategoryIndexV
+  PlayWithoutUserT, PlayWithoutUserV, getDateString, UserPlayT, UserPlaysV, CategoryIndexV
 } from '../lib/dbtypes';
 import { getFromSessionOrDB, setInCache, updateInCache } from '../lib/dbUtils';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
-  PuzzleAction, CheatUnit, CheatAction, KeypressAction, ClickedEntryAction,
+  PuzzleAction, CheatUnit, CheatAction, KeypressAction,
   ToggleAutocheckAction, ToggleClueViewAction
 } from '../reducers/reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TwoCol, TinyNav } from './Page';
-import { SECONDARY, LIGHTER, ERROR_COLOR } from '../lib/style';
+import { ERROR_COLOR } from '../lib/style';
 import { usePersistedBoolean } from '../lib/hooks';
 import { timeString } from '../lib/utils';
 import { UpcomingMinisCalendar } from "./UpcomingMinisCalendar";
@@ -49,82 +50,6 @@ export interface NextPuzzleLink {
   puzzleId: string,
   linkText: string
 }
-
-interface ClueListItemProps {
-  showDirection: boolean,
-  conceal: boolean,
-  entry: CluedEntry,
-  dispatch: Dispatch<PuzzleAction>,
-  isActive: boolean,
-  isCross: boolean,
-  active: Position | null,
-  scrollToCross: boolean,
-  showEntry: boolean,
-  valAt: (pos: Position) => string,
-}
-const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }: ClueListItemProps) {
-  const ref = useRef<HTMLLIElement>(null);
-  if (ref.current) {
-    if (isActive || (props.scrollToCross && isCross)) {
-      ref.current.scrollIntoView({ behavior: "auto", block: "center" });
-    }
-  }
-  function click(e: MouseEvent) {
-    e.preventDefault();
-    if (isActive) {
-      props.dispatch({ type: "CHANGEDIRECTION" });
-      return;
-    }
-    const ca: ClickedEntryAction = { type: 'CLICKEDENTRY', entryIndex: props.entry.index };
-    props.dispatch(ca);
-  }
-  return (
-    <li css={{
-      padding: '0.5em',
-      backgroundColor: (isActive ? LIGHTER : (isCross ? SECONDARY : 'none')),
-      listStyleType: 'none',
-      cursor: 'pointer',
-      '&:hover': {
-        backgroundColor: (isActive ? LIGHTER : (isCross ? 'var(--cross-clue-bg)' : 'var(--clue-bg)')),
-      },
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'nowrap',
-      alignItems: 'center',
-      width: '100%',
-    }} ref={ref} onClick={click} key={props.entry.index}>
-      <div css={{
-        flexShrink: 0,
-        width: '3em',
-        height: '100%',
-        fontWeight: 'bold',
-        textAlign: 'right',
-        padding: '0 0.5em',
-      }}>{props.entry.labelNumber}{props.showDirection ? (props.entry.direction === Direction.Across ? 'A' : 'D') : ""}
-      </div>
-      <div css={{
-        flex: '1 1 auto',
-        height: '100%',
-        color: props.conceal ? 'transparent' : (props.entry.completedWord ? 'var(--default-text)' : "var(--black)"),
-        textShadow: props.conceal ? '0 0 1em var(--conceal-text)' : '',
-      }}>
-        <div>{props.entry.clue}</div>
-        {props.showEntry ?
-          <div>{props.entry.cells.map(a => {
-            return <span key={a.col + '-' + a.row} css={{
-              display: 'inline-block',
-              textAlign: 'center',
-              fontWeight: 'bold',
-              minWidth: '1em',
-              border: (props.active && a.row === props.active.row && a.col === props.active.col) ?
-                '1px solid var(--black)' : '1px solid transparent',
-            }}>{props.valAt(a).trim() || "-"}</span>;
-          })}</div>
-          : ""}
-      </div>
-    </li>
-  );
-});
 
 interface PauseBeginProps {
   title: string,
@@ -310,65 +235,9 @@ export const RebusOverlay = (props: { showingKeyboard: boolean, value: string, d
   );
 }
 
-interface ClueListProps {
-  conceal: boolean,
-  header?: string,
-  current: number,
-  active: Position,
-  cross?: number,
-  entries: Array<CluedEntry>,
-  scrollToCross: boolean,
-  dispatch: Dispatch<PuzzleAction>,
-  showEntries: boolean,
-  valAt: (pos: Position) => string,
-}
-const ClueList = (props: ClueListProps) => {
-  const clues = props.entries.map((entry) => {
-    const isActive = props.current === entry.index;
-    const isCross = props.cross === entry.index;
-    return (<ClueListItem
-      valAt={props.valAt}
-      showDirection={props.header ? false : true}
-      showEntry={props.showEntries}
-      entry={entry}
-      conceal={props.conceal}
-      key={entry.index}
-      scrollToCross={props.scrollToCross}
-      dispatch={props.dispatch}
-      isActive={isActive}
-      isCross={isCross}
-      active={props.showEntries && (isActive || isCross) ? props.active : null}
-    />)
-  });
-  return (
-    <div css={{
-      height: "100% !important",
-      position: 'relative',
-    }}>{props.header ?
-      <div css={{
-        fontWeight: 'bold',
-        borderBottom: '1px solid var(--autofill)',
-        height: '1.5em',
-        paddingLeft: '0.5em',
-      }}>{props.header}</div> : ""}
-      <div css={{
-        maxHeight: props.header ? 'calc(100% - 1.5em)' : '100%',
-        overflowY: 'scroll',
-      }}>
-        <ol css={{
-          margin: 0,
-          padding: 0,
-        }}>
-          {clues}
-        </ol>
-      </div>
-    </div>
-  );
-}
-
 interface PuzzleProps {
   puzzle: PuzzleResult,
-  play: PlayT | null,
+  play: PlayWithoutUserT | null,
   nextPuzzle?: NextPuzzleLink
 }
 export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOptional) => {
@@ -473,8 +342,8 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
     }
     if (props.user) {
       Promise.all([
-        getFromSessionOrDB('categories', 'dailymini', CategoryIndexV, 24 * 60 * 60 * 1000),
-        getFromSessionOrDB('up', props.user.uid, UserPlaysV, -1)
+        getFromSessionOrDB({ collection: 'categories', docId: 'dailymini', validator: CategoryIndexV, ttl: 24 * 60 * 60 * 1000 }),
+        getFromSessionOrDB({ collection: 'up', docId: props.user.uid, localDocId: '', validator: UserPlaysV, ttl: -1 })
       ])
         .then(([minis, plays]) => {
           // Check to see if we should show X daily minis in a row notification
@@ -581,15 +450,15 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
     }
   }
 
-  const updatePlay = useCallback(async (sendToDB: boolean) => {
+  const currentPlayState: PlayWithoutUserT = useMemo(() => {
+    console.log('Memoizing next play state');
     const updatedAt = TimestampClass.now();
     const playTime = (state.currentTimeWindowStart === 0) ?
       state.bankedSeconds :
       state.bankedSeconds + ((new Date()).getTime() - state.currentTimeWindowStart) / 1000;
 
-    const play: PlayT = {
+    const play: PlayWithoutUserT = {
       c: puzzle.id,
-      u: props.user.uid,
       ua: updatedAt,
       g: state.grid.cells,
       ct: state.cellsUpdatedAt,
@@ -602,56 +471,73 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
       ch: state.didCheat,
       f: state.success,
     }
-
-    await setInCache('p', puzzle.id + "-" + props.user.uid, play, PlayV, sendToDB);
-    const userPlay: UserPlayT = [updatedAt, playTime, state.didCheat, state.success, title];
-    /* TODO don't add these for anonymous users? */
-    await updateInCache('up', props.user.uid, { [puzzle.id]: userPlay }, UserPlaysV, sendToDB);
-  }, [puzzle.id, props.user.uid, state.cellsEverMarkedWrong,
+    return play;
+  }, [puzzle.id, state.cellsEverMarkedWrong,
   state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
   state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
   state.wrongCells, title, state.bankedSeconds, state.currentTimeWindowStart]);
 
-  const updatePlayRef = useRef(state.success ? null : updatePlay);
-  // Any time any of the things we save update, write to local storage
+  const shouldUpdatePlays = useRef(state.success ? false : true);
+  const currentPlayCacheState = useRef<PlayWithoutUserT | null>(null);
   useEffect(() => {
-    // Write through to firebase if first call after success
-    (async () => {
-      const writeThrough = state.success && (updatePlayRef.current !== null);
-      if (writeThrough) {
-        console.log("Writing through to DB");
-        await updatePlay(true);
-      } else if (!state.success) {
-        console.log("Writing to local storage");
-        await updatePlay(false);
-      }
-    })();
-    if (state.success) {
-      updatePlayRef.current = null;
-    } else {
-      updatePlayRef.current = updatePlay;
+    if (!shouldUpdatePlays.current) {
+      return;
     }
-  }, [updatePlay, state.success]);
+    if (currentPlayState.f) {
+      // We've finished so we should do this update and then no more
+      shouldUpdatePlays.current = false;
+    }
+    if (currentPlayCacheState.current === currentPlayState) {
+      return;
+    }
+    console.log('Updating play state in cache');
+    const userPlay: UserPlayT = [
+      currentPlayState.ua,
+      currentPlayState.t,
+      currentPlayState.ch,
+      currentPlayState.f,
+      title];
+    Promise.all([
+      setInCache({
+        collection: 'p',
+        localDocId: puzzle.id,
+        value: currentPlayState,
+        validator: PlayWithoutUserV,
+        sendToDB: false
+      }),
+      updateInCache({
+        collection: 'up',
+        localDocId: '',
+        update: { [puzzle.id]: userPlay },
+        validator: UserPlaysV,
+        sendToDB: false
+      })
+    ]).then(() => {
+      console.log('Finished cache update');
+      currentPlayCacheState.current = currentPlayState;
+    })
+  }, [currentPlayState, title]);
 
-  useEffect(() => {
-    function handleBeforeUnload() {
-      console.log("Doing before unload");
-      if (updatePlayRef.current) {
-        const updateplay = updatePlayRef.current;
-        (async () => await updateplay(true))();
-      }
-    }
-    window.addEventListener('beforeunload', handleBeforeUnload);
 
-    return () => {
-      console.log("Doing unmount update");
-      window.removeEventListener('beforeunload', handleBeforeUnload)
-      if (updatePlayRef.current) {
-        const updateplay = updatePlayRef.current;
-        (async () => await updateplay(true))();
-      }
-    }
-  }, [updatePlayRef]);
+  // useEffect(() => {
+  //   function handleBeforeUnload() {
+  //     console.log("Doing before unload");
+  //     if (shouldUpdatePlays.current) {
+  //       const updateplay = updatePlayRef.current;
+  //       (async () => await updateplay(true))();
+  //     }
+  //   }
+  //   window.addEventListener('beforeunload', handleBeforeUnload);
+  //
+  //   return () => {
+  //     console.log("Doing unmount update");
+  //     window.removeEventListener('beforeunload', handleBeforeUnload)
+  //     if (updatePlayRef.current) {
+  //       const updateplay = updatePlayRef.current;
+  //       (async () => await updateplay(true))();
+  //     }
+  //   }
+  // }, [shouldUpdatePlays]);
 
   const keyboardHandler = useCallback((key: string) => {
     const kpa: KeypressAction = { type: "KEYPRESS", key: key, shift: false };

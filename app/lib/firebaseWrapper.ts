@@ -37,8 +37,11 @@ if (firebase.apps.length) {
   }
 }
 
+export const setApp = (app: firebase.app.App) => { App = app };
+
 export const AuthProvider = new firebase.auth.GoogleAuthProvider();
 
 export const DeleteSentinal = firebase.firestore.FieldValue.delete();
 
 export const TimestampClass = firebase.firestore.Timestamp;
+export type TimestampType = firebase.firestore.Timestamp;

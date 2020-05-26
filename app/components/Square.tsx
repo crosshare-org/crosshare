@@ -48,7 +48,7 @@ export const Square = (props: SquareProps) => {
   }, [props.heightAdjust]);
 
   return (
-    <div ref={squareElem} css={{
+    <div aria-label='grid' ref={squareElem} css={{
       flex: 'none',
       width: size,
       height: size

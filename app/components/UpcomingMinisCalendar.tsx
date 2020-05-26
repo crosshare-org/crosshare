@@ -24,7 +24,7 @@ export const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
   }, [minis, props.disableExisting]);
 
   useEffect(() => {
-    getFromSessionOrDB('categories', 'dailymini', CategoryIndexV, 24 * 60 * 60 * 1000)
+    getFromSessionOrDB({ collection: 'categories', docId: 'dailymini', validator: CategoryIndexV, ttl: 24 * 60 * 60 * 1000 })
       .then(setMinis)
       .catch(reason => {
         console.error(reason);

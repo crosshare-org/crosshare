@@ -106,11 +106,9 @@ export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
 export const TimestampedPuzzleV = downloadTimestamped(DBPuzzleV);
 export type TimestampedPuzzleT = t.TypeOf<typeof TimestampedPuzzleV>;
 
-export const PlayV = t.type({
+export const PlayWithoutUserV = t.type({
   /** crossword id */
   c: t.string,
-  /** user id */
-  u: t.string,
   /** updated at */
   ua: timestamp,
   /** filled in grid */
@@ -134,6 +132,12 @@ export const PlayV = t.type({
   /** finished the puzzle? */
   f: t.boolean,
 });
+export type PlayWithoutUserT = t.TypeOf<typeof PlayWithoutUserV>;
+
+export const PlayV = t.intersection([PlayWithoutUserV, t.type({
+  /** user id */
+  u: t.string,
+})]);
 export type PlayT = t.TypeOf<typeof PlayV>;
 
 export function downloadTimestamped<A>(type: t.Type<A>) {
