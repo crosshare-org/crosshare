@@ -9,7 +9,7 @@ import { puzzleFromDB, PuzzleResult } from '../../lib/types';
 import { Puzzle, NextPuzzleLink } from '../../components/Puzzle';
 import { App, TimestampClass } from '../../lib/firebaseWrapper';
 import { DBPuzzleV, PlayWithoutUserT, PlayWithoutUserV } from '../../lib/dbtypes';
-import { getFromSessionOrDB } from '../../lib/dbUtils';
+import { getFromSessionOrDB, getFromSession } from '../../lib/dbUtils';
 
 
 interface PuzzlePageProps {
@@ -75,9 +75,14 @@ const UserLoader = ({ puzzle, nextPuzzle }: { puzzle: PuzzleResult, nextPuzzle?:
   if (error) {
     return <div>Error loading user: {error}</div>;
   }
-  console.log("HERE WE ARE", user);
   if (!user) {
-    return <Puzzle key={puzzle.id} puzzle={puzzle} play={null} isAdmin={false} nextPuzzle={nextPuzzle} />
+    const play = getFromSession({
+      collection: 'p',
+      localDocId: puzzle.id,
+      validator: PlayWithoutUserV,
+      ttl: -1
+    })
+    return <Puzzle key={puzzle.id} puzzle={puzzle} play={play} isAdmin={false} nextPuzzle={nextPuzzle} />
   }
   return <PlayLoader key={puzzle.id} puzzle={puzzle} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />
 }

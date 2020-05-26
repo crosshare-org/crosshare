@@ -142,13 +142,43 @@ export async function getFromDB<A>(
 
 interface CacheGetOptions<A> {
   collection: string,
+  localDocId: string
+  validator: t.Type<A>,
+  ttl: number
+}
+
+export function getFromSession<A>({ collection, localDocId, validator, ttl }: CacheGetOptions<A>): A | null {
+  const now = new Date();
+  const sessionKey = collection + "/" + localDocId;
+  const inSession = sessionStorage.getItem(sessionKey);
+  const TimestampedV = downloadTimestamped(validator);
+  if (inSession) {
+    const validationResult = TimestampedV.decode(JSON.parse(inSession));
+    if (isRight(validationResult)) {
+      const valid = validationResult.right;
+      if (ttl === -1 || (now.getTime() < valid.downloadedAt.toDate().getTime() + ttl)) {
+        console.log('loaded ' + sessionKey + ' from local storage');
+        return valid.data;
+      } else {
+        console.log("object in local storage has expired");
+      }
+    } else {
+      console.error("Couldn't parse object in local storage");
+      console.error(PathReporter.report(validationResult).join(","));
+    }
+  }
+  return null;
+}
+
+interface CacheOrDBGetOptions<A> {
+  collection: string,
   docId: string,
   localDocId?: string
   validator: t.Type<A>,
   ttl: number
 }
 
-export async function getFromSessionOrDB<A>({ collection, docId, localDocId, validator, ttl }: CacheGetOptions<A>): Promise<A | null> {
+export async function getFromSessionOrDB<A>({ collection, docId, localDocId, validator, ttl }: CacheOrDBGetOptions<A>): Promise<A | null> {
   const now = new Date();
   const sessionKey = localDocId ? collection + "/" + localDocId : collection + '/' + docId;
   const inSession = sessionStorage.getItem(sessionKey);
