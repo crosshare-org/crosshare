@@ -1,5 +1,6 @@
 import React from "react";
 import { anonymousUser, cleanup, render, fireEvent } from "../lib/testingUtils";
+import waitForExpect from 'wait-for-expect';
 import { Puzzle } from "../components/Puzzle";
 import { PuzzleResult } from "../lib/types";
 import PuzzlePage from "../pages/crosswords/[puzzleId]";
@@ -125,9 +126,9 @@ test("nonuser progress should be cached in local storage but not db", async () =
   localStorage.clear();
   await firebaseTesting.clearFirestoreData({ projectId: "test1" })
 
-  const app = await firebaseTesting.initializeTestApp({ projectId: "test1" });
+  const app = firebaseTesting.initializeTestApp({ projectId: "test1" });
   setApp(app as firebase.app.App);
-  const admin = await firebaseTesting.initializeAdminApp({ projectId: "test1" });
+  const admin = firebaseTesting.initializeAdminApp({ projectId: "test1" });
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
   expect((await admin.firestore().collection('up').get()).size).toEqual(0);
@@ -181,10 +182,9 @@ test("nonuser progress should be cached in local storage but not db", async () =
 
   await admin.delete();
   await app.delete();
-
-  console.log('exiting test', firebaseTesting.apps().length);
 });
 
+// TODO this doesn't really work that well
 function flushPromises() {
   return new Promise(resolve => setImmediate(resolve));
 }
@@ -194,7 +194,7 @@ test("anonymous user progress should be cached in local storage and db", async (
   localStorage.clear();
   await firebaseTesting.clearFirestoreData({ projectId: "test1" })
 
-  const app = await firebaseTesting.initializeTestApp({
+  const app = firebaseTesting.initializeTestApp({
     projectId: "test1",
     auth: {
       uid: "anonymous-user-id", admin: false, firebase: {
@@ -203,7 +203,7 @@ test("anonymous user progress should be cached in local storage and db", async (
     }
   });
   setApp(app as firebase.app.App);
-  const admin = await firebaseTesting.initializeAdminApp({ projectId: "test1" });
+  const admin = firebaseTesting.initializeAdminApp({ projectId: "test1" });
 
   let { findByText, queryByText, getByLabelText, container } = render(
     <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
@@ -228,17 +228,8 @@ test("anonymous user progress should be cached in local storage and db", async (
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
   expect((await admin.firestore().collection('up').get()).size).toEqual(0);
   await cleanup();
-  await flushPromises();
-  await flushPromises();
-  await flushPromises();
-  await flushPromises();
-  await flushPromises();
-  await flushPromises();
-  await flushPromises();
-  await flushPromises();
-  await flushPromises();
-  expect((await admin.firestore().collection('p').get()).size).toEqual(1);
-  expect((await admin.firestore().collection('up').get()).size).toEqual(1);
+  await waitForExpect(async () => expect((await admin.firestore().collection('p').get()).size).toEqual(1));
+  await waitForExpect(async () => expect((await admin.firestore().collection('up').get()).size).toEqual(1));
 
   // Now try again!
   ({ findByText, queryByText, getByLabelText, container } = render(
@@ -256,8 +247,27 @@ test("anonymous user progress should be cached in local storage and db", async (
 
   await cleanup();
   await flushPromises();
-  await flushPromises();
-  await flushPromises();
+
+  expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  expect((await admin.firestore().collection('up').get()).size).toEqual(1);
+
+  // Now try again w/o Local storage!
+  sessionStorage.clear();
+  localStorage.clear();
+  ({ findByText, queryByText, getByLabelText, container } = render(
+    <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
+  ));
+
+  fireEvent.click(await findByText(/Resume/i));
+  expect(queryByText(/Resume/i)).toBeNull();
+
+  cell = getByLabelText("cell0x1");
+  expect(cell).toHaveTextContent('B');
+
+  cell2 = getByLabelText("cell0x2");
+  expect(cell2).toHaveTextContent('C');
+
+  await cleanup();
   await flushPromises();
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
@@ -265,6 +275,4 @@ test("anonymous user progress should be cached in local storage and db", async (
 
   await admin.delete();
   await app.delete();
-
-  console.log('exiting test', firebaseTesting.apps().length);
 });
