@@ -1,5 +1,5 @@
 import React from "react";
-import { cleanup, render, fireEvent } from "../lib/testingUtils";
+import { anonymousUser, cleanup, render, fireEvent } from "../lib/testingUtils";
 import { Puzzle } from "../components/Puzzle";
 import { PuzzleResult } from "../lib/types";
 import PuzzlePage from "../pages/crosswords/[puzzleId]";
@@ -31,31 +31,7 @@ const testPuzzle: PuzzleResult = {
     { dir: 1, clue: 'Prefix used in "Ghostbusters"', num: 6 },
   ],
   grid: [
-    "H",
-    "O",
-    "P",
-    "E",
-    ".",
-    "A",
-    "L",
-    "O",
-    "N",
-    "E",
-    "L",
-    "I",
-    "L",
-    "A",
-    "C",
-    "E",
-    "V",
-    "I",
-    "C",
-    "T",
-    ".",
-    "E",
-    "S",
-    "T",
-    "O",
+    "H", "O", "P", "E", ".", "A", "L", "O", "N", "E", "L", "I", "L", "A", "C", "E", "V", "I", "C", "T", ".", "E", "S", "T", "O",
   ],
   highlighted: [],
   highlight: "circle",
@@ -83,67 +59,43 @@ test("clicking a clue sets slot to active", () => {
   expect(cell2).toHaveStyleRule("background", "var(--secondary)");
 });
 
-test("daily mini from 5/19/20", () => {
-  const p: PuzzleResult = {
-    authorId: "fSEwJorvqOMK5UhNMHa4mu48izl1",
-    category: "dailymini",
-    authorName: "Mike D",
-    moderated: true,
-    publishTime: null,
-    title: "Word of surrender",
-    size: { rows: 5, cols: 5 },
-    clues: [
-      { dir: 0, clue: "Word with Cod or Canaveral", num: 1 },
-      { dir: 0, clue: "Caustic compound", num: 4 },
-      { dir: 0, clue: "Word of surrender", num: 6 },
-      { dir: 0, clue: "Not feel well", num: 8 },
-      { dir: 0, clue: '"Whats gotten ___ you?"', num: 9 },
-      { dir: 1, clue: "Game with Miss Scarlet and Professor Plum", num: 1 },
-      { dir: 1, clue: 'Rand who wrote "Atlas Shrugged"', num: 2 },
-      { dir: 1, clue: "Butter ___ (ice cream flavor)", num: 3 },
-      { dir: 1, clue: "Former Knicks star Anthony, to fans", num: 5 },
-      { dir: 1, clue: "Exciting, in modern lingo", num: 7 },
-    ],
-    grid: [
-      "C",
-      "A",
-      "P",
-      "E",
-      ".",
-      "L",
-      "Y",
-      "E",
-      ".",
-      "M",
-      "U",
-      "N",
-      "C",
-      "L",
-      "E",
-      "E",
-      ".",
-      "A",
-      "I",
-      "L",
-      ".",
-      "I",
-      "N",
-      "T",
-      "O",
-    ],
-    highlighted: [],
-    highlight: "circle",
-    comments: [],
-    id: "iMwPVXfePmv3bJC6KaQL",
-  };
+const dailymini_5_19: PuzzleResult = {
+  authorId: "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  category: "dailymini",
+  authorName: "Mike D",
+  moderated: true,
+  publishTime: null,
+  title: "Word of surrender",
+  size: { rows: 5, cols: 5 },
+  clues: [
+    { dir: 0, clue: "Word with Cod or Canaveral", num: 1 },
+    { dir: 0, clue: "Caustic compound", num: 4 },
+    { dir: 0, clue: "Word of surrender", num: 6 },
+    { dir: 0, clue: "Not feel well", num: 8 },
+    { dir: 0, clue: '"Whats gotten ___ you?"', num: 9 },
+    { dir: 1, clue: "Game with Miss Scarlet and Professor Plum", num: 1 },
+    { dir: 1, clue: 'Rand who wrote "Atlas Shrugged"', num: 2 },
+    { dir: 1, clue: "Butter ___ (ice cream flavor)", num: 3 },
+    { dir: 1, clue: "Former Knicks star Anthony, to fans", num: 5 },
+    { dir: 1, clue: "Exciting, in modern lingo", num: 7 },
+  ],
+  grid: [
+    "C", "A", "P", "E", ".", "L", "Y", "E", ".", "M", "U", "N", "C", "L", "E", "E", ".", "A", "I", "L", ".", "I", "N", "T", "O",
+  ],
+  highlighted: [],
+  highlight: "circle",
+  comments: [],
+  id: "iMwPVXfePmv3bJC6KaQL",
+};
 
+test("daily mini from 5/19/20", () => {
   const {
     getByLabelText,
     getByText,
     queryByText,
     getAllByText,
     container,
-  } = render(<Puzzle puzzle={p} play={null} isAdmin={false} />, {});
+  } = render(<Puzzle puzzle={dailymini_5_19} play={null} isAdmin={false} />, {});
 
   fireEvent.click(getByText(/Begin Puzzle/i));
   expect(queryByText(/Begin Puzzle/i)).toBeNull();
@@ -168,70 +120,20 @@ test("daily mini from 5/19/20", () => {
   expect(clueOne).toHaveStyleRule("background-color", "var(--lighter)");
 });
 
-test("anonymous user progress should be cached in local storage", async () => {
+test("nonuser progress should be cached in local storage but not db", async () => {
   sessionStorage.clear();
   localStorage.clear();
-  setApp(
-    firebaseTesting.initializeTestApp({
-      projectId: "test1",
-    }) as firebase.app.App
-  );
-  const p: PuzzleResult = {
-    authorId: "fSEwJorvqOMK5UhNMHa4mu48izl1",
-    category: "dailymini",
-    authorName: "Mike D",
-    moderated: true,
-    publishTime: null,
-    title: "Word of surrender",
-    size: { rows: 5, cols: 5 },
-    clues: [
-      { dir: 0, clue: "Word with Cod or Canaveral", num: 1 },
-      { dir: 0, clue: "Caustic compound", num: 4 },
-      { dir: 0, clue: "Word of surrender", num: 6 },
-      { dir: 0, clue: "Not feel well", num: 8 },
-      { dir: 0, clue: '"Whats gotten ___ you?"', num: 9 },
-      { dir: 1, clue: "Game with Miss Scarlet and Professor Plum", num: 1 },
-      { dir: 1, clue: 'Rand who wrote "Atlas Shrugged"', num: 2 },
-      { dir: 1, clue: "Butter ___ (ice cream flavor)", num: 3 },
-      { dir: 1, clue: "Former Knicks star Anthony, to fans", num: 5 },
-      { dir: 1, clue: "Exciting, in modern lingo", num: 7 },
-    ],
-    grid: [
-      "C",
-      "A",
-      "P",
-      "E",
-      ".",
-      "L",
-      "Y",
-      "E",
-      ".",
-      "M",
-      "U",
-      "N",
-      "C",
-      "L",
-      "E",
-      "E",
-      ".",
-      "A",
-      "I",
-      "L",
-      ".",
-      "I",
-      "N",
-      "T",
-      "O",
-    ],
-    highlighted: [],
-    highlight: "circle",
-    comments: [],
-    id: "iMwPVXfePmv3bJC6KaQL",
-  };
+  await firebaseTesting.clearFirestoreData({ projectId: "test1" })
+
+  const app = await firebaseTesting.initializeTestApp({ projectId: "test1" });
+  setApp(app as firebase.app.App);
+  const admin = await firebaseTesting.initializeAdminApp({ projectId: "test1" });
+
+  expect((await admin.firestore().collection('p').get()).size).toEqual(0);
+  expect((await admin.firestore().collection('up').get()).size).toEqual(0);
 
   let { getByText, queryByText, getByLabelText, container } = render(
-    <PuzzlePage puzzle={p} />,
-    {}
+    <PuzzlePage puzzle={dailymini_5_19} />, {}
   );
 
   fireEvent.click(getByText(/Begin Puzzle/i));
@@ -249,10 +151,17 @@ test("anonymous user progress should be cached in local storage", async () => {
 
   expect(getByLabelText("grid")).toMatchSnapshot();
 
-  // Now try again!
+  // Unmount doesn't cause us to write to the db
+  expect((await admin.firestore().collection('p').get()).size).toEqual(0);
+  expect((await admin.firestore().collection('up').get()).size).toEqual(0);
   await cleanup();
+  await flushPromises();
+  expect((await admin.firestore().collection('p').get()).size).toEqual(0);
+  expect((await admin.firestore().collection('up').get()).size).toEqual(0);
+
+  // Now try again!
   ({ getByText, queryByText, getByLabelText, container } = render(
-    <PuzzlePage puzzle={p} />, {}
+    <PuzzlePage puzzle={dailymini_5_19} />, {}
   ));
 
   fireEvent.click(getByText(/Resume/i));
@@ -263,4 +172,99 @@ test("anonymous user progress should be cached in local storage", async () => {
 
   cell2 = getByLabelText("cell0x2");
   expect(cell2).toHaveTextContent('C');
+
+  await cleanup();
+  await flushPromises();
+
+  expect((await admin.firestore().collection('p').get()).size).toEqual(0);
+  expect((await admin.firestore().collection('up').get()).size).toEqual(0);
+
+  await admin.delete();
+  await app.delete();
+
+  console.log('exiting test', firebaseTesting.apps().length);
+});
+
+function flushPromises() {
+  return new Promise(resolve => setImmediate(resolve));
+}
+
+test("anonymous user progress should be cached in local storage and db", async () => {
+  sessionStorage.clear();
+  localStorage.clear();
+  await firebaseTesting.clearFirestoreData({ projectId: "test1" })
+
+  const app = await firebaseTesting.initializeTestApp({
+    projectId: "test1",
+    auth: {
+      uid: "anonymous-user-id", admin: false, firebase: {
+        sign_in_provider: "anonymous"
+      }
+    }
+  });
+  setApp(app as firebase.app.App);
+  const admin = await firebaseTesting.initializeAdminApp({ projectId: "test1" });
+
+  let { findByText, queryByText, getByLabelText, container } = render(
+    <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
+  );
+
+  fireEvent.click(await findByText(/Begin Puzzle/i));
+  expect(queryByText(/Begin Puzzle/i)).toBeNull();
+
+  fireEvent.keyDown(container, { key: "A", keyCode: 65 });
+  fireEvent.keyDown(container, { key: "B", keyCode: 66 });
+  fireEvent.keyDown(container, { key: "C", keyCode: 67 });
+
+  let cell = getByLabelText("cell0x1");
+  expect(cell).toHaveTextContent('B');
+
+  let cell2 = getByLabelText("cell0x2");
+  expect(cell2).toHaveTextContent('C');
+
+  expect(getByLabelText("grid")).toMatchSnapshot();
+
+  // Unmount should cause us to write to the db
+  expect((await admin.firestore().collection('p').get()).size).toEqual(0);
+  expect((await admin.firestore().collection('up').get()).size).toEqual(0);
+  await cleanup();
+  await flushPromises();
+  await flushPromises();
+  await flushPromises();
+  await flushPromises();
+  await flushPromises();
+  await flushPromises();
+  await flushPromises();
+  await flushPromises();
+  await flushPromises();
+  expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  expect((await admin.firestore().collection('up').get()).size).toEqual(1);
+
+  // Now try again!
+  ({ findByText, queryByText, getByLabelText, container } = render(
+    <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
+  ));
+
+  fireEvent.click(await findByText(/Resume/i));
+  expect(queryByText(/Resume/i)).toBeNull();
+
+  cell = getByLabelText("cell0x1");
+  expect(cell).toHaveTextContent('B');
+
+  cell2 = getByLabelText("cell0x2");
+  expect(cell2).toHaveTextContent('C');
+
+  await cleanup();
+  await flushPromises();
+  await flushPromises();
+  await flushPromises();
+  await flushPromises();
+
+  expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  expect((await admin.firestore().collection('up').get()).size).toEqual(1);
+
+  await admin.delete();
+  await app.delete();
+
+  console.log('exiting test', firebaseTesting.apps().length);
 });

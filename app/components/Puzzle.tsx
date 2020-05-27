@@ -28,7 +28,7 @@ import { fromCells, addClues } from '../lib/viewableGrid';
 import { valAt, entryAndCrossAtPosition } from '../lib/gridBase';
 import { Direction, BLOCK, PuzzleResult, puzzleTitle } from '../lib/types';
 import {
-  PlayWithoutUserT, PlayWithoutUserV, getDateString, UserPlayT, UserPlaysV, CategoryIndexV
+  PlayWithoutUserT, PlayWithoutUserV, PlayV, getDateString, UserPlayT, UserPlaysV, CategoryIndexV
 } from '../lib/dbtypes';
 import { getFromSessionOrDB, setInCache, updateInCache } from '../lib/dbUtils';
 import {
@@ -241,6 +241,7 @@ interface PuzzleProps {
   nextPuzzle?: NextPuzzleLink
 }
 export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOptional) => {
+  console.log('initializing with play', play);
   const [state, dispatch] = useReducer(puzzleReducer, {
     type: 'puzzle',
     active: { col: 0, row: 0, dir: Direction.Across },
@@ -450,19 +451,20 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
     }
   }
 
-  const currentPlayState: PlayWithoutUserT = useMemo(() => {
+  const playState = useRef<PlayWithoutUserT>();
+  useEffect(() => {
     console.log('Memoizing next play state');
     const updatedAt = TimestampClass.now();
     const playTime = (state.currentTimeWindowStart === 0) ?
       state.bankedSeconds :
       state.bankedSeconds + ((new Date()).getTime() - state.currentTimeWindowStart) / 1000;
 
-    const play: PlayWithoutUserT = {
+    playState.current = {
       c: puzzle.id,
       ua: updatedAt,
-      g: state.grid.cells,
-      ct: state.cellsUpdatedAt,
-      uc: state.cellsIterationCount,
+      g: Array.from(state.grid.cells),
+      ct: Array.from(state.cellsUpdatedAt),
+      uc: Array.from(state.cellsIterationCount),
       vc: Array.from(state.verifiedCells),
       wc: Array.from(state.wrongCells),
       we: Array.from(state.cellsEverMarkedWrong),
@@ -471,26 +473,29 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
       ch: state.didCheat,
       f: state.success,
     }
-    return play;
   }, [puzzle.id, state.cellsEverMarkedWrong,
   state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
   state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
   state.wrongCells, title, state.bankedSeconds, state.currentTimeWindowStart]);
 
-  const shouldUpdatePlays = useRef(state.success ? false : true);
+  const shouldUpdatePlaysInCache = useRef(state.success ? false : true);
   const currentPlayCacheState = useRef<PlayWithoutUserT | null>(null);
   useEffect(() => {
-    if (!shouldUpdatePlays.current) {
+    if (!playState.current) {
+      return;
+    }
+    const currentPlayState = playState.current;
+    if (!shouldUpdatePlaysInCache.current) {
       return;
     }
     if (currentPlayState.f) {
       // We've finished so we should do this update and then no more
-      shouldUpdatePlays.current = false;
+      shouldUpdatePlaysInCache.current = false;
     }
     if (currentPlayCacheState.current === currentPlayState) {
       return;
     }
-    console.log('Updating play state in cache');
+    console.log('Updating play state in cache', currentPlayState);
     const userPlay: UserPlayT = [
       currentPlayState.ua,
       currentPlayState.t,
@@ -516,8 +521,62 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
       console.log('Finished cache update');
       currentPlayCacheState.current = currentPlayState;
     })
-  }, [currentPlayState, title]);
+  }, [playState.current, title]);
 
+  const shouldUpdatePlaysInDB = useRef(state.success ? false : true);
+  const currentPlayDBState = useRef<PlayWithoutUserT | null>(null);
+  const writePlayToDBIfNeeded = useCallback(async () => {
+    if (!playState.current) {
+      return;
+    }
+    const currentPlayState = playState.current;
+    if (!props.user) {
+      return;
+    }
+    if (!shouldUpdatePlaysInDB.current) {
+      return;
+    }
+    if (currentPlayState.f) {
+      // We've finished so we should do this update and then no more
+      shouldUpdatePlaysInDB.current = false;
+    }
+    if (currentPlayDBState.current === currentPlayState) {
+      return;
+    }
+    console.log('Updating play state in db', props.user, currentPlayState);
+    const userPlay: UserPlayT = [
+      currentPlayState.ua,
+      currentPlayState.t,
+      currentPlayState.ch,
+      currentPlayState.f,
+      title];
+    return Promise.all([
+      setInCache({
+        collection: 'p',
+        docId: puzzle.id + "-" + props.user.uid,
+        localDocId: puzzle.id,
+        value: { ...currentPlayState, u: props.user.uid },
+        validator: PlayV,
+        sendToDB: true
+      }),
+      updateInCache({
+        collection: 'up',
+        docId: props.user.uid,
+        localDocId: '',
+        update: { [puzzle.id]: userPlay },
+        validator: UserPlaysV,
+        sendToDB: true
+      })]);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      console.log("Unmounting puzzle");
+      if (props.user) {
+        writePlayToDBIfNeeded();
+      }
+    }
+  }, [])
 
   // useEffect(() => {
   //   function handleBeforeUnload() {

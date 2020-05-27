@@ -37,7 +37,7 @@ export async function setInCache<A>({ collection, docId, localDocId, value, vali
   sessionStorage.setItem(sessionKey, JSON.stringify(forLS));
   if (sendToDB) {
     const db = App.firestore();
-    await db.collection(collection).doc(docId).set(value).then(() => {
+    return db.collection(collection).doc(docId).set(value).then(() => {
       console.log('Set new value for ' + collection + '/' + docId);
     });
   }
@@ -70,7 +70,7 @@ export async function updateInCache<A>({ collection, docId, localDocId, update, 
   }
   if (sendToDB) {
     const db = App.firestore();
-    await db.collection(collection).doc(docId).set(update, { merge: true }).then(() => {
+    return db.collection(collection).doc(docId).set(update, { merge: true }).then(() => {
       console.log('Updated for ' + collection + '/' + docId);
     });
   }

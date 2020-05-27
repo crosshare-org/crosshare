@@ -1,13 +1,6 @@
 const firebaseTesting = jest.requireActual('@firebase/testing');
 
-export let App = firebaseTesting.initializeTestApp({
-  projectId: "crosshare-test",
-  auth: {
-    uid: "anonymous-user-id", admin: false, firebase: {
-      sign_in_provider: "anonymous"
-    }
-  }
-});
+export let App: firebase.app.App;
 
 export const setApp = (app: firebase.app.App) => { App = app };
 
