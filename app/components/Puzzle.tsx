@@ -241,7 +241,6 @@ interface PuzzleProps {
   nextPuzzle?: NextPuzzleLink
 }
 export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOptional) => {
-  console.log('initializing with play', play);
   const [state, dispatch] = useReducer(puzzleReducer, {
     type: 'puzzle',
     active: { col: 0, row: 0, dir: Direction.Across },
@@ -453,7 +452,6 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
 
   const playState = useRef<PlayWithoutUserT>();
   useEffect(() => {
-    console.log('Memoizing next play state');
     const updatedAt = TimestampClass.now();
     const playTime = (state.currentTimeWindowStart === 0) ?
       state.bankedSeconds :
@@ -495,7 +493,6 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
     if (currentPlayCacheState.current === currentPlayState) {
       return;
     }
-    console.log('Updating play state in cache', currentPlayState);
     const userPlay: UserPlayT = [
       currentPlayState.ua,
       currentPlayState.t,
@@ -518,7 +515,6 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
         sendToDB: false
       })
     ]).then(() => {
-      console.log('Finished cache update');
       currentPlayCacheState.current = currentPlayState;
     })
   }, [playState.current, title]);
@@ -543,7 +539,6 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
     if (currentPlayDBState.current === currentPlayState) {
       return;
     }
-    console.log('Updating play state in db', props.user, currentPlayState);
     const userPlay: UserPlayT = [
       currentPlayState.ua,
       currentPlayState.t,
@@ -566,12 +561,11 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
         update: { [puzzle.id]: userPlay },
         validator: UserPlaysV,
         sendToDB: true
-      })]);
+      })]).then(() => { console.log('Finished writing play state to db') });
   }, []);
 
   useEffect(() => {
     return () => {
-      console.log("Unmounting puzzle");
       if (props.user) {
         writePlayToDBIfNeeded();
       }
