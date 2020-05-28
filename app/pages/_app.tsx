@@ -10,8 +10,12 @@ import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
 import '../lib/style.css';
 
 export default ({ Component, pageProps }: AppProps) => {
-  const [user, loadingUser, error] = useAuthState(App.auth());
+  let [user, loadingUser, error] = useAuthState(App.auth());
   const [isAdmin, setIsAdmin] = useState(false);
+
+  if (typeof window === 'undefined') {
+    [user, loadingUser, error] = [undefined, true, undefined];
+  }
 
   useEffect(() => {
     if (user && user.email) {

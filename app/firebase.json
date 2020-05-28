@@ -9,12 +9,16 @@
       "firebase-debug.log",
       "**/.*",
       "**/node_modules/**",
+      "__mocks__/**",
+      "__tests__/**",
       "components/**",
-      "helpers/**",
+      "lib/**",
       "out/**",
       "pages/**",
       "public/**",
+      "reducers/**",
       "scripts/**",
+      "vendor/**",
       "firestore.rules"
     ]
   },

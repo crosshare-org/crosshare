@@ -8,9 +8,10 @@
   "scripts": {
     "clean": "rimraf nextjs/ out/",
     "dev": "next dev",
+    "analyze": "ANALYZE=true next build",
     "build": "next build",
     "start": "next start",
-    "predeploy": "npm run clean && next build && node ./scripts/export.js",
+    "predeploy": "yarn clean && next build && node ./scripts/export.js",
     "deploy": "npx firebase deploy",
     "emulator-dev": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 npx firebase emulators:exec 'next dev'",
     "test": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 npx firebase emulators:exec 'jest --watch'"

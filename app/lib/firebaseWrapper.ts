@@ -1,10 +1,10 @@
-declare var firebase: typeof import('firebase');
-
-// On the server we need to require firebase - on client it's done w/ script tags
-if (typeof window === "undefined") {
-  globalThis.firebase = require("firebase");
-  require("firebase/firestore");
-}
+// On client side we include firebase via script tags.
+// The 'externals' field in package.json tells it not to bundle these.
+import * as firebase from 'firebase/app';
+import 'firebase/firestore';
+import 'firebase/analytics';
+import 'firebase/performance';
+import 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBrmmBf91peVT5T_Z7N3z9oizsPH5u2pUc",

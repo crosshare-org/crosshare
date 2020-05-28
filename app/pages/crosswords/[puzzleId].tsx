@@ -76,12 +76,15 @@ const UserLoader = ({ puzzle, nextPuzzle }: { puzzle: PuzzleResult, nextPuzzle?:
     return <div>Error loading user: {error}</div>;
   }
   if (!user) {
-    const play = getFromSession({
-      collection: 'p',
-      localDocId: puzzle.id,
-      validator: PlayWithoutUserV,
-      ttl: -1
-    })
+    let play: PlayWithoutUserT | null = null;
+    if (typeof window !== 'undefined') {
+      play = getFromSession({
+        collection: 'p',
+        localDocId: puzzle.id,
+        validator: PlayWithoutUserV,
+        ttl: -1
+      });
+    }
     return <Puzzle key={puzzle.id} puzzle={puzzle} play={play} isAdmin={false} nextPuzzle={nextPuzzle} />
   }
   return <PlayLoader key={puzzle.id} puzzle={puzzle} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />
