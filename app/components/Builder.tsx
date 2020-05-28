@@ -166,15 +166,12 @@ interface ClueModeProps {
   dispatch: Dispatch<PuzzleAction>,
 }
 const ClueMode = (props: ClueModeProps) => {
-  const topbar = (
-    <>
-      <TopBarLink icon={<SpinnerFinished />} text="Back to Grid" onClick={props.exitClueMode} />
-    </>
-  );
   const clueRows = props.completedEntries.map(e => <ClueRow key={e.completedWord || ""} dispatch={props.dispatch} entry={e} clues={props.clues} />);
   return (
     <>
-      {topbar}
+      <TopBar>
+        <TopBarLink icon={<SpinnerFinished />} text="Back to Grid" onClick={props.exitClueMode} />
+      </TopBar>
       <div css={{ padding: '1em' }}>
         <h4>Title</h4>
         <input placeholder="Give your puzzle a title" value={props.title || ""} onChange={(e) => {
