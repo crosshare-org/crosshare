@@ -25,15 +25,6 @@ export const buttonAsLink = css`
   }
 `;
 
-export const notSelectable = css`
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-`;
-
 export const TINY_COL_MIN_HEIGHT = 75;
 export const SMALL_BREAKPOINT = 576;
 export const LARGE_BREAKPOINT = 992;

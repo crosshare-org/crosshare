@@ -3,7 +3,7 @@ import { memo } from 'react';
 import { FaSlash, FaEye } from 'react-icons/fa';
 
 import {
-  notSelectable, PRIMARY, SECONDARY, ERROR_COLOR,
+  PRIMARY, SECONDARY, ERROR_COLOR,
 } from '../lib/style';
 
 type CellProps = {
@@ -49,7 +49,8 @@ export const Cell = memo(function Cell(props: CellProps) {
       margin: 0,
       overflow: 'hidden',
     }}>
-      <div aria-label={'cell' + props.row + 'x' + props.column} onClick={() => props.onClick({ row: props.row, col: props.column })} css={[notSelectable, {
+      <div aria-label={'cell' + props.row + 'x' + props.column} onClick={() => props.onClick({ row: props.row, col: props.column })} css={{
+        userSelect: 'none',
         position: 'absolute',
         width: '100%',
         height: '100%',
@@ -59,7 +60,7 @@ export const Cell = memo(function Cell(props: CellProps) {
         borderLeft: (props.column === 0) ? '1px solid var(--cell-wall)' : 0,
         background: bg,
 
-      }]}>
+      }}>
         {!props.isBlock ?
           <>
             <div css={{
