@@ -9,7 +9,7 @@ import { Link } from '../components/Link';
 import { AuthContext } from '../components/AuthContext';
 import { DBPuzzleV } from '../lib/dbtypes';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
-import { TopBar, TopBarLink } from '../components/TopBar';
+import { TopBar, TopBarLinkA } from '../components/TopBar';
 
 type DailyMini = {
   id: string
@@ -64,13 +64,9 @@ export default ({ dailymini }: HomePageProps) => {
     </Head>
     <TopBar>
       {isAdmin ?
-        <Link href='/admin' passHref>
-          <TopBarLink icon={<FaUserLock />} text="Admin" />
-        </Link>
+        <TopBarLinkA href='/admin' icon={<FaUserLock />} text="Admin" />
         : ''}
-      <Link href='/account' passHref>
-        <TopBarLink icon={<FaUser />} text="Account" />
-      </Link>
+      <TopBarLinkA href='/account' icon={<FaUser />} text="Account" />
     </TopBar>
     <div css={{ margin: '1em', }}>
       <p css={{ marginBottom: '1em' }}>

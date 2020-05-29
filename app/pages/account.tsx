@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
 
+import { Link } from '../components/Link';
 import { getDisplayName, DisplayNameForm } from '../components/DisplayNameForm';
 import { requiresAuth, AuthProps } from '../components/AuthContext';
 import { UserPlaysV, AuthoredPuzzlesV } from '../lib/dbtypes';
@@ -12,13 +12,13 @@ import { TopBar } from '../components/TopBar';
 
 export const PlayListItem = (props: UserPlay) => {
   return (
-    <li key={props.id}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref><a>{props.title}</a></Link> {props.didComplete ? 'completed ' + (props.didCheat ? 'with helpers' : 'without helpers') : 'unfinished'} {timeString(props.playTime, false)}</li>
+    <li key={props.id}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>{props.title}</Link> {props.didComplete ? 'completed ' + (props.didCheat ? 'with helpers' : 'without helpers') : 'unfinished'} {timeString(props.playTime, false)}</li>
   );
 };
 
 export const AuthoredListItem = (props: AuthoredPuzzle) => {
   return (
-    <li key={props.id}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref><a>{props.title}</a></Link></li>
+    <li key={props.id}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>{props.title}</Link></li>
   );
 };
 

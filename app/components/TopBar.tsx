@@ -1,4 +1,4 @@
-import { ReactNode, useState, HTMLProps, forwardRef } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { Link } from './Link';
 import { Overlay } from './Overlay';
@@ -90,17 +90,40 @@ export const TopBarDropDownLinkA = (props: TopBarDropDownLinkAProps) => {
   );
 };
 
-interface TopBarLinkProps extends HTMLProps<HTMLButtonElement> {
+interface TopBarLinkCommonProps {
   text?: string,
   hoverText?: string,
   keepText?: boolean,
   icon: ReactNode,
   onClick?: () => void
 }
+const TopBarLinkContents = (props: TopBarLinkCommonProps) => {
+  return <>
+    <span css={{
+      verticalAlign: 'baseline',
+      fontSize: HEADER_HEIGHT - 10,
+    }}>{props.icon}</span>
+    {props.text ?
+      <span css={{
+        marginLeft: '5px',
+        verticalAlign: 'middle',
+        display: props.keepText ? 'inline-block' : 'none',
+        fontSize: HEADER_HEIGHT - 20,
+        [SMALL_AND_UP]: {
+          display: 'inline-block',
+        }
+      }}>{props.text}</span>
+      : ''}
+  </>;
+};
 
-export const TopBarLink = forwardRef<HTMLButtonElement, TopBarLinkProps>((props, ref) => {
+interface TopBarLinkProps extends TopBarLinkCommonProps {
+  onClick?: () => void
+}
+
+export const TopBarLink = (props: TopBarLinkProps) => {
   return (
-    <button ref={ref} title={props.hoverText || props.text} css={{
+    <button title={props.hoverText || props.text} css={{
       backgroundColor: 'transparent',
       border: 'none',
       cursor: 'pointer',
@@ -114,24 +137,37 @@ export const TopBarLink = forwardRef<HTMLButtonElement, TopBarLinkProps>((props,
         backgroundColor: 'var(--top-bar-hover)',
       },
     }} onClick={props.onClick}>
-      <span css={{
-        verticalAlign: 'baseline',
-        fontSize: HEADER_HEIGHT - 10,
-      }}>{props.icon}</span>
-      {props.text ?
-        <span css={{
-          marginLeft: '5px',
-          verticalAlign: 'middle',
-          display: props.keepText ? 'inline-block' : 'none',
-          fontSize: HEADER_HEIGHT - 20,
-          [SMALL_AND_UP]: {
-            display: 'inline-block',
-          }
-        }}>{props.text}</span>
-        : ''}
+      <TopBarLinkContents {...props} />
     </button>
   );
-});
+};
+
+interface TopBarLinkAProps extends TopBarLinkCommonProps {
+  href: string,
+  as?: string
+}
+
+export const TopBarLinkA = (props: TopBarLinkAProps) => {
+  return (
+    <Link href={props.href} as={props.as} passHref title={props.hoverText || props.text} css={{
+      backgroundColor: 'transparent',
+      border: 'none',
+      cursor: 'pointer',
+      textDecoration: 'none',
+      display: 'inline',
+      margin: 0,
+      padding: '0 0.45em',
+      color: 'var(--text)',
+      '&:hover, &:focus': {
+        color: 'var(--text)',
+        textDecoration: 'none',
+        backgroundColor: 'var(--top-bar-hover)',
+      },
+    }} onClick={props.onClick}>
+      <TopBarLinkContents {...props} />
+    </Link>
+  );
+};
 
 interface TopBarProps {
   children?: ReactNode

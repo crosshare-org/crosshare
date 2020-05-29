@@ -3,7 +3,6 @@ import {
   Dispatch, KeyboardEvent, MouseEvent
 } from 'react';
 
-import Link from 'next/link';
 import NextJSRouter from 'next/router';
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt,
@@ -32,7 +31,7 @@ import {
   KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
   SetTitleAction, SetHighlightAction, PublishAction
 } from '../reducers/reducer';
-import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
+import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav } from './Page';
 import { RebusOverlay } from './Puzzle';
 // eslint-disable-next-line import/no-unresolved
@@ -515,12 +514,12 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
             <>
               <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: 'TOGGLEKEYBOARD' })} />
               <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: 'TOGGLETABLET' })} />
-              <Link href='/admin'><TopBarDropDownLink icon={<FaUserLock />} text="Admin" /></Link>
+              <TopBarDropDownLinkA href='/admin' icon={<FaUserLock />} text="Admin" />
             </>
             :
             ''
         }
-        <Link href='/account'><TopBarDropDownLink icon={<FaUser />} text="Account" /></Link>
+        <TopBarDropDownLinkA href='/account' icon={<FaUser />} text="Account" />
       </TopBarDropDown>
     </TopBar>;
   }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, averageLength, dispatch, muted, numEntries, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled]);
