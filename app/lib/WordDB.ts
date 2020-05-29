@@ -1,7 +1,7 @@
-import * as t from "io-ts";
+import * as t from 'io-ts';
 import LZString from 'lz-string';
-import { either, isRight } from 'fp-ts/lib/Either'
-import { PathReporter } from "io-ts/lib/PathReporter";
+import { either, isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import localforage from 'localforage';
 
 import { BitArray } from './bitArray';
@@ -11,11 +11,11 @@ const BigIntegerFromString = new t.Type<BitArray, string, unknown>(
   'BigIntegerFromString',
   (input: unknown): input is BitArray => input instanceof BitArray,
   (input, context) => either.chain(t.string.validate(input, context), n => {
-    return t.success(BitArray.fromString(n, 32))
+    return t.success(BitArray.fromString(n, 32));
   }),//(typeof input === 'string' ? t.success(input) : t.failure(input, context)),
   // `A` and `O` are the same, so `encode` is just the identity function
   a => a.toString(32)
-)
+);
 
 const WordDBEncodedV = t.type({
   words: t.record(t.string, t.array(t.tuple([t.string, t.number]))),
@@ -34,7 +34,7 @@ export function transformDb(db: WordDBT): WordDBTransformed {
   if (isRight(validationResult)) {
     return validationResult.right;
   } else {
-    throw new Error(PathReporter.report(validationResult).join(","));
+    throw new Error(PathReporter.report(validationResult).join(','));
   }
 }
 
@@ -51,7 +51,7 @@ function parseJsonDB(data: string) {
   if (isRight(validationResult)) {
     return validationResult.right;
   } else {
-    throw new Error(PathReporter.report(validationResult).join(","));
+    throw new Error(PathReporter.report(validationResult).join(','));
   }
 }
 
@@ -61,12 +61,12 @@ export let dbStatus: DBStatus = DBStatus.uninitialized;
 export const initialize = (callback: (present: boolean) => void) => {
   if (dbStatus !== DBStatus.uninitialized) return;
   dbStatus = DBStatus.building;
-  localforage.getItem("db").then((compressed) => {
+  localforage.getItem('db').then((compressed) => {
     if (compressed) {
-      console.log("loading db from storage");
+      console.log('loading db from storage');
       const decompressed = LZString.decompress(compressed as string);
       if (decompressed === null) {
-        console.error("Error decompressing db");
+        console.error('Error decompressing db');
         return callback(false);
       }
       dbEncoded = parseJsonDB(decompressed);
@@ -78,7 +78,7 @@ export const initialize = (callback: (present: boolean) => void) => {
       callback(false);
     }
   }).catch((err) => { console.log(err); callback(false); });
-}
+};
 
 export const build = (callback: (built: boolean) => void) => {
   // Only allow a build if state is notPresent or disabled
@@ -86,18 +86,18 @@ export const build = (callback: (built: boolean) => void) => {
     callback(false);
     return;
   }
-  console.log("building db");
+  console.log('building db');
   dbStatus = DBStatus.building;
   fetch('_db.json')
     .then((r) => r.text())
     .then((data) => {
-      localforage.setItem("db", LZString.compress(data))
+      localforage.setItem('db', LZString.compress(data));
       dbEncoded = parseJsonDB(data);
       setDb(transformDb(dbEncoded));
       dbStatus = DBStatus.present;
       callback(true);
     });
-}
+};
 
 export const initializeOrBuild = (callback: (success: boolean) => void) => {
   initialize((present) => {
@@ -107,7 +107,7 @@ export const initializeOrBuild = (callback: (success: boolean) => void) => {
       build(callback);
     }
   });
-}
+};
 
 export let dbTransformed: WordDBTransformed;
 export function setDb(newdb: WordDBTransformed) {
@@ -130,9 +130,9 @@ export function highestScore(length: number, bitmap: BitArray | null) {
 export function minCost(length: number, bitmap: BitArray | null) {
   const match = highestScore(length, bitmap);
   if (match) {
-    return 1 / match[1]
+    return 1 / match[1];
   }
-  return 5
+  return 5;
 }
 
 export function numMatches(length: number, bitmap: BitArray | null) {
@@ -152,7 +152,7 @@ export function updateBitmap(length: number, bitmap: BitArray | null, index: num
 
 const memoMatchingWords: Map<string, [string, number][]> = new Map();
 export function matchingWords(length: number, bitmap: BitArray | null) {
-  const key: string = length + ":" + (bitmap === null ? 'null' : bitmap.toString(32));
+  const key: string = length + ':' + (bitmap === null ? 'null' : bitmap.toString(32));
   const memoed = memoMatchingWords.get(key);
   if (memoed) {
     return memoed;
@@ -161,7 +161,7 @@ export function matchingWords(length: number, bitmap: BitArray | null) {
   if (bitmap === null) {
     rv = dbTransformed.words[length].slice().reverse();
   } else {
-    const active = bitmap.activeBits()
+    const active = bitmap.activeBits();
     rv = active.map((i) => dbTransformed.words[length][i]);
   }
   memoMatchingWords.set(key, rv);

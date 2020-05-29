@@ -6,21 +6,21 @@ import { getDisplayName, DisplayNameForm } from '../components/DisplayNameForm';
 import { requiresAuth, AuthProps } from '../components/AuthContext';
 import { UserPlaysV, AuthoredPuzzlesV } from '../lib/dbtypes';
 import { getFromSessionOrDB } from '../lib/dbUtils';
-import { timeString } from '../lib/utils'
+import { timeString } from '../lib/utils';
 import { App } from '../lib/firebaseWrapper';
 import { TopBar } from '../components/TopBar';
 
 export const PlayListItem = (props: UserPlay) => {
   return (
-    <li key={props.id}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref><a>{props.title}</a></Link> {props.didComplete ? "completed " + (props.didCheat ? "with helpers" : "without helpers") : "unfinished"} {timeString(props.playTime, false)}</li>
+    <li key={props.id}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref><a>{props.title}</a></Link> {props.didComplete ? 'completed ' + (props.didCheat ? 'with helpers' : 'without helpers') : 'unfinished'} {timeString(props.playTime, false)}</li>
   );
-}
+};
 
 export const AuthoredListItem = (props: AuthoredPuzzle) => {
   return (
     <li key={props.id}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref><a>{props.title}</a></Link></li>
   );
-}
+};
 
 interface AuthoredPuzzle {
   id: string,
@@ -44,7 +44,7 @@ export default requiresAuth(({ user }: AuthProps) => {
   const [displayName, setDisplayName] = useState(getDisplayName(user));
 
   useEffect(() => {
-    console.log("loading authored puzzles and plays");
+    console.log('loading authored puzzles and plays');
     // TODO pagination on both of these
     Promise.all([
       getFromSessionOrDB({ collection: 'uc', docId: user.uid, validator: AuthoredPuzzlesV, ttl: -1 }),
@@ -57,7 +57,7 @@ export default requiresAuth(({ user }: AuthProps) => {
           const authored = Object.entries(authoredResult).map(([id, val]) => {
             const [createdAt, title] = val;
             return { id, createdAt, title };
-          })
+          });
           // Sort in reverse order by createdAt
           authored.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
           setAuthoredPuzzles(authored);
@@ -68,7 +68,7 @@ export default requiresAuth(({ user }: AuthProps) => {
           const plays = Object.entries(playsResult).map(([id, val]) => {
             const [updatedAt, playTime, didCheat, didComplete, title] = val;
             return { id, updatedAt, playTime, didCheat, didComplete, title };
-          })
+          });
           // Sort in reverse order by updatedAt
           plays.sort((a, b) => b.updatedAt.toMillis() - a.updatedAt.toMillis());
           setPlays(plays);
@@ -99,7 +99,7 @@ export default requiresAuth(({ user }: AuthProps) => {
             <ul>{plays.map(PlayListItem)}</ul>
           </>
           :
-          ""
+          ''
         }
         {authoredPuzzles && authoredPuzzles.length ?
           <>
@@ -107,7 +107,7 @@ export default requiresAuth(({ user }: AuthProps) => {
             <ul>{authoredPuzzles.map(AuthoredListItem)}</ul>
           </>
           :
-          ""
+          ''
         }
       </div>
     </>

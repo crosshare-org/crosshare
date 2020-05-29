@@ -4,7 +4,7 @@ import {
 } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { isMobile, isTablet, isIPad13 } from "react-device-detect";
+import { isMobile, isTablet, isIPad13 } from 'react-device-detect';
 import {
   FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt,
   FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock,
@@ -41,7 +41,7 @@ import { SquareAndCols, TwoCol, TinyNav } from './Page';
 import { ERROR_COLOR } from '../lib/style';
 import { usePersistedBoolean } from '../lib/hooks';
 import { timeString } from '../lib/utils';
-import { UpcomingMinisCalendar } from "./UpcomingMinisCalendar";
+import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 import { App, DeleteSentinal, TimestampClass } from '../lib/firebaseWrapper';
 import { Emoji } from './Emoji';
 import { Comments } from './Comments';
@@ -63,15 +63,15 @@ interface PauseBeginProps {
 }
 
 const BeginPauseOverlay = (props: PauseBeginProps) => {
-  let warnings: Array<ReactNode> = [];
+  const warnings: Array<ReactNode> = [];
   if (!props.moderated) {
     warnings.push(<div key="moderation">The puzzle is awaiting moderation. We'll get to it ASAP! If you feel it's taking too long please message us on the google group.</div>);
   }
   if (props.publishTime && props.publishTime > new Date()) {
-    warnings.push(<div key="publishtime">The puzzle has been scheduled for publishing on {props.publishTime.toLocaleDateString()}</div>)
+    warnings.push(<div key="publishtime">The puzzle has been scheduled for publishing on {props.publishTime.toLocaleDateString()}</div>);
   }
   return (
-    <Overlay showingKeyboard={false} closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: "RESUMEACTION" })}>
+    <Overlay showingKeyboard={false} closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: 'RESUMEACTION' })}>
       <div css={{ textAlign: 'center' }}>
         {warnings.length ?
           <div css={{
@@ -87,7 +87,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
             {warnings}
           </div>
           :
-          ""
+          ''
         }
         <h3>{props.title}</h3>
         <h4>by {props.authorName}</h4>
@@ -96,13 +96,13 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
           :
           <>
             <div css={{ marginBottom: '1em' }}>{props.message}</div>
-            <button onClick={() => props.dispatch({ type: "RESUMEACTION" })}>{props.dismissMessage}</button>
+            <button onClick={() => props.dispatch({ type: 'RESUMEACTION' })}>{props.dismissMessage}</button>
           </>
         }
       </div>
     </Overlay>
   );
-}
+};
 
 const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, dispatch: Dispatch<PuzzleAction> }) => {
   const db = App.firestore();
@@ -110,31 +110,31 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
 
   function schedule() {
     if (!date) {
-      throw new Error("shouldn't be able to schedule w/o date");
+      throw new Error('shouldn\'t be able to schedule w/o date');
     }
     const update: { [k: string]: string | firebase.firestore.FieldValue } = {
       [getDateString(date)]: puzzle.id,
-    }
+    };
     if (puzzle.publishTime) {
       update[getDateString(new Date(puzzle.publishTime))] = DeleteSentinal;
     }
     db.collection('categories').doc('dailymini').update(update).then(() => {
-      console.log("Updated categories page");
+      console.log('Updated categories page');
       // Dump it!
       sessionStorage.removeItem('categories/dailymini');
-    })
+    });
     db.collection('c').doc(puzzle.id).update({
       m: true,
       p: TimestampClass.fromDate(date),
       c: 'dailymini',
     }).then(() => {
-      console.log("Scheduled mini");
+      console.log('Scheduled mini');
       // Dump it!
       sessionStorage.removeItem('c/' + puzzle.id);
       window.location.reload();
-    })
+    });
   }
-  const isMini = puzzle.size.rows === 5 && puzzle.size.cols === 5
+  const isMini = puzzle.size.rows === 5 && puzzle.size.cols === 5;
 
   function setModerated() {
     db.collection('c').doc(puzzle.id).update({
@@ -147,15 +147,15 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
   }
 
   return (
-    <Overlay showingKeyboard={false} closeCallback={() => dispatch({ type: "TOGGLEMODERATING" })}>
+    <Overlay showingKeyboard={false} closeCallback={() => dispatch({ type: 'TOGGLEMODERATING' })}>
       <h4>Moderate this Puzzle</h4>
-      <div>{puzzle.moderated ? "Puzzle has been approved" : "Puzzle is not approved"}</div>
+      <div>{puzzle.moderated ? 'Puzzle has been approved' : 'Puzzle is not approved'}</div>
       {isMini ?
         <div>
           {puzzle.publishTime ?
             <div>Scheduled for {(new Date(puzzle.publishTime)).toLocaleDateString()}</div>
             :
-            ""
+            ''
           }
           <div css={{ marginTop: '1em' }}>Pick a date for this mini to appear:</div>
           <UpcomingMinisCalendar disableExisting={true} value={date} onChange={setDate} />
@@ -171,24 +171,24 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
 
 const KeepTryingOverlay = ({ dispatch }: { dispatch: Dispatch<PuzzleAction> }) => {
   return (
-    <Overlay showingKeyboard={false} closeCallback={() => dispatch({ type: "DISMISSKEEPTRYING" })}>
+    <Overlay showingKeyboard={false} closeCallback={() => dispatch({ type: 'DISMISSKEEPTRYING' })}>
       <h4><Emoji symbol='🤔' /> Almost there!</h4>
       <p>You've completed the puzzle, but there are one or more mistakes.</p>
-      <button css={{ width: '100%' }} onClick={() => dispatch({ type: "DISMISSKEEPTRYING" })}>Keep Trying</button>
+      <button css={{ width: '100%' }} onClick={() => dispatch({ type: 'DISMISSKEEPTRYING' })}>Keep Trying</button>
     </Overlay>
   );
-}
+};
 
 const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {
     return <>End of the line, partner</>;
   }
-  return (<Link href='/crosswords/[puzzleId]' as={`/crosswords/${nextPuzzle.puzzleId}`} passHref><a>Play {nextPuzzle.linkText}</a></Link>)
-}
+  return (<Link href='/crosswords/[puzzleId]' as={`/crosswords/${nextPuzzle.puzzleId}`} passHref><a>Play {nextPuzzle.linkText}</a></Link>);
+};
 
 const SuccessOverlay = (props: { user?: firebase.User, puzzle: PuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
   return (
-    <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({ type: "DISMISSSUCCESS" })}>
+    <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
       <div css={{ textAlign: 'center' }}>
         <h4><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
         <p>You solved the puzzle in <b>{timeString(props.solveTime, false)}</b></p>
@@ -205,19 +205,19 @@ const SuccessOverlay = (props: { user?: firebase.User, puzzle: PuzzleResult, nex
             <div>
               <PrevDailyMiniLink nextPuzzle={props.nextPuzzle} />
             </div>
-            : "")
+            : '')
         }
       </div>
       <Comments user={props.user} solveTime={props.solveTime} didCheat={props.didCheat} puzzleId={props.puzzle.id} puzzleAuthorId={props.puzzle.authorId} comments={props.puzzle.comments} />
     </Overlay>
   );
-}
+};
 
 export const RebusOverlay = (props: { showingKeyboard: boolean, value: string, dispatch: Dispatch<KeypressAction> }) => {
   return (
     <Overlay showingKeyboard={props.showingKeyboard} closeCallback={() => {
-      const escape: KeypressAction = { type: "KEYPRESS", key: 'Escape', shift: false };
-      props.dispatch(escape)
+      const escape: KeypressAction = { type: 'KEYPRESS', key: 'Escape', shift: false };
+      props.dispatch(escape);
     }}>
       <div css={{
         color: props.value ? 'var(--black)' : 'var(--default-text)',
@@ -229,18 +229,18 @@ export const RebusOverlay = (props: { showingKeyboard: boolean, value: string, d
         {props.value ? props.value : 'Type to enter rebus...'}
       </div>
       <button onClick={() => {
-        const escape: KeypressAction = { type: "KEYPRESS", key: 'Escape', shift: false };
+        const escape: KeypressAction = { type: 'KEYPRESS', key: 'Escape', shift: false };
         props.dispatch(escape);
       }} css={{ marginRight: '10%', width: '45%' }}>Cancel</button>
       <button
         disabled={props.value.length === 0}
         onClick={() => {
-          const enter: KeypressAction = { type: "KEYPRESS", key: 'Enter', shift: false };
+          const enter: KeypressAction = { type: 'KEYPRESS', key: 'Enter', shift: false };
           props.dispatch(enter);
         }} css={{ width: '45%' }}>Submit Rebus</button>
     </Overlay>
   );
-}
+};
 
 interface PuzzleProps {
   puzzle: PuzzleResult,
@@ -256,7 +256,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       mapper: (e) => e,
       width: puzzle.size.cols,
       height: puzzle.size.rows,
-      cells: play ? play.g : puzzle.grid.map((s) => s === BLOCK ? BLOCK : " "),
+      cells: play ? play.g : puzzle.grid.map((s) => s === BLOCK ? BLOCK : ' '),
       allowBlockEditing: false,
       highlighted: new Set(puzzle.highlighted),
       highlight: puzzle.highlight,
@@ -284,7 +284,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     cellsUpdatedAt: play ? play.ct : puzzle.grid.map(() => 0),
     cellsIterationCount: play ? play.uc : puzzle.grid.map(() => 0),
     cellsEverMarkedWrong: new Set<number>(play ? play.we : []),
-    isEditable(cellIndex) { return !this.verifiedCells.has(cellIndex) && !this.success },
+    isEditable(cellIndex) { return !this.verifiedCells.has(cellIndex) && !this.success; },
     postEdit(cellIndex) {
       let state = this;
       state.wrongCells.delete(cellIndex);
@@ -299,24 +299,24 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   useEffect(() => {
     function tick() {
       if (state.currentTimeWindowStart) {
-        dispatch({ type: "TICKACTION" });
+        dispatch({ type: 'TICKACTION' });
       }
     }
-    let id = setInterval(tick, 1000);
+    const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [state.currentTimeWindowStart, dispatch])
+  }, [state.currentTimeWindowStart, dispatch]);
 
   // Pause when page goes out of focus
   function prodPause() {
     if (process.env.NODE_ENV !== 'development') {
-      dispatch({ type: "PAUSEACTION" });
+      dispatch({ type: 'PAUSEACTION' });
     }
   }
   useEventListener('blur', prodPause);
 
-  const [muted, setMuted] = usePersistedBoolean("muted", false);
+  const [muted, setMuted] = usePersistedBoolean('muted', false);
 
-  let title = puzzleTitle(puzzle);
+  const title = puzzleTitle(puzzle);
 
   // Set up music player for success song
   const [audioContext, initAudioContext] = useContext(CrosshareAudioContext);
@@ -335,7 +335,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
               source.buffer = audioBuffer;
               source.connect(audioContext.destination);
               source.start();
-            }
+            };
           });
         });
     }
@@ -345,7 +345,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     setRanSuccessEffects(true);
     let delay = 0;
     if (puzzle.size.rows === 5 && puzzle.size.cols === 5 && state.bankedSeconds <= 60) {
-      toast(<div><Emoji symbol='🤓' /> You solved a mini puzzle in under a minute!</div>)
+      toast(<div><Emoji symbol='🤓' /> You solved a mini puzzle in under a minute!</div>);
       delay += 500;
     }
     if (props.user) {
@@ -364,8 +364,8 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
               consecutiveDailyMinis += 1;
               dateToTest.setDate(dateToTest.getDate() - 1);
               ds = getDateString(dateToTest);
-              const play = plays ?.[minis[ds]]
-            if (!play) {
+              const play = plays ?.[minis[ds]];
+              if (!play) {
                 break;
               }
               const playDate = play[0].toDate();
@@ -427,7 +427,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
             toast(<div><Emoji symbol='🔥' /> You finished a puzzle <b>{consecutiveSolveDays} days in a row!</b> Keep it up! <Emoji symbol='🔥' /></div>,
               { delay: delay });
           }
-        })
+        });
     }
     if (!muted && playSuccess.current) {
       playSuccess.current();
@@ -446,7 +446,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     if (e.metaKey || e.altKey || e.ctrlKey) {
       return;  // This way you can still do apple-R and such
     }
-    const kpa: KeypressAction = { type: "KEYPRESS", key: e.key, shift: e.shiftKey };
+    const kpa: KeypressAction = { type: 'KEYPRESS', key: e.key, shift: e.shiftKey };
     dispatch(kpa);
     e.preventDefault();
   }, [dispatch, loadingPlayState, state.currentTimeWindowStart]);
@@ -455,7 +455,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   let [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
   if (entry === null) {
     if (cross === null) {
-      throw new Error("Null entry and cross while playing puzzle!");
+      throw new Error('Null entry and cross while playing puzzle!');
     } else {
       dispatch({ type: 'CHANGEDIRECTION' });
       [entry, cross] = [cross, entry];
@@ -490,11 +490,11 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       t: playTime,
       ch: state.didCheat,
       f: state.success,
-    }
+    };
   }, [loadingPlayState, puzzle.id, state.cellsEverMarkedWrong,
-      state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
-      state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
-      state.wrongCells, title, state.bankedSeconds, state.currentTimeWindowStart]);
+    state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
+    state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
+    state.wrongCells, title, state.bankedSeconds, state.currentTimeWindowStart]);
 
   const shouldUpdatePlaysInCache = useRef(state.success ? false : true);
   const currentPlayCacheState = useRef<PlayWithoutUserT | null>(null);
@@ -536,7 +536,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       })
     ]).then(() => {
       currentPlayCacheState.current = currentPlayState;
-    })
+    });
   }, [playState.current, title]);
 
   const shouldUpdatePlaysInDB = useRef(state.success ? false : true);
@@ -568,7 +568,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     return Promise.all([
       setInCache({
         collection: 'p',
-        docId: puzzle.id + "-" + props.user.uid,
+        docId: puzzle.id + '-' + props.user.uid,
         localDocId: puzzle.id,
         value: { ...currentPlayState, u: props.user.uid },
         validator: PlayV,
@@ -581,7 +581,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         update: { [puzzle.id]: userPlay },
         validator: UserPlaysV,
         sendToDB: true
-      })]).then(() => { console.log('Finished writing play state to db') });
+      })]).then(() => { console.log('Finished writing play state to db'); });
   }, []);
 
   useEffect(() => {
@@ -589,8 +589,8 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       if (props.user) {
         writePlayToDBIfNeeded();
       }
-    }
-  }, [])
+    };
+  }, []);
 
   // useEffect(() => {
   //   function handleBeforeUnload() {
@@ -613,7 +613,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   // }, [shouldUpdatePlays]);
 
   const keyboardHandler = useCallback((key: string) => {
-    const kpa: KeypressAction = { type: "KEYPRESS", key: key, shift: false };
+    const kpa: KeypressAction = { type: 'KEYPRESS', key: key, shift: false };
     dispatch(kpa);
   }, [dispatch]);
 
@@ -659,7 +659,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
             revealedCells={state.revealedCells}
             verifiedCells={state.verifiedCells}
             wrongCells={state.wrongCells}
-          />
+          />;
         }
       }
       left={<ClueList active={state.active} valAt={ourValAt} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={true} dispatch={dispatch} />}
@@ -668,19 +668,19 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     />;
   }
 
-  var dropdownMenus = useMemo(() => (
+  const dropdownMenus = useMemo(() => (
     <>
       <TopBarDropDown icon={<FaEye />} text="Reveal">
         <TopBarDropDownLink icon={<RevealSquare />} text="Reveal Square" onClick={() => {
-          const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Square, isReveal: true };
+          const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Square, isReveal: true };
           dispatch(ca);
         }} />
         <TopBarDropDownLink icon={<RevealEntry />} text="Reveal Word" onClick={() => {
-          const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Entry, isReveal: true };
+          const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Entry, isReveal: true };
           dispatch(ca);
         }} />
         <TopBarDropDownLink icon={<RevealPuzzle />} text="Reveal Puzzle" onClick={() => {
-          const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Puzzle, isReveal: true };
+          const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Puzzle, isReveal: true };
           dispatch(ca);
         }} />
       </TopBarDropDown>
@@ -688,31 +688,31 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         !state.autocheck ?
           (<TopBarDropDown icon={<FaCheck />} text="Check">
             <TopBarDropDownLink icon={<FaCheckSquare />} text="Autocheck" onClick={() => {
-              const action: ToggleAutocheckAction = { type: "TOGGLEAUTOCHECK" };
+              const action: ToggleAutocheckAction = { type: 'TOGGLEAUTOCHECK' };
               dispatch(action);
             }} />
             <TopBarDropDownLink icon={<CheckSquare />} text="Check Square" onClick={() => {
-              const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Square };
+              const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Square };
               dispatch(ca);
             }} />
             <TopBarDropDownLink icon={<CheckEntry />} text="Check Word" onClick={() => {
-              const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Entry };
+              const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Entry };
               dispatch(ca);
             }} />
             <TopBarDropDownLink icon={<CheckPuzzle />} text="Check Puzzle" onClick={() => {
-              const ca: CheatAction = { type: "CHEAT", unit: CheatUnit.Puzzle };
+              const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Puzzle };
               dispatch(ca);
             }} />
           </TopBarDropDown>)
           :
           <TopBarLink icon={<FaCheckSquare />} text="Autochecking" onClick={() => {
-            const action: ToggleAutocheckAction = { type: "TOGGLEAUTOCHECK" };
+            const action: ToggleAutocheckAction = { type: 'TOGGLEAUTOCHECK' };
             dispatch(action);
           }} />
       }
       <TopBarDropDown icon={<FaEllipsisH />} text="More">
         <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
-          const kpa: KeypressAction = { type: "KEYPRESS", key: 'Escape', shift: false };
+          const kpa: KeypressAction = { type: 'KEYPRESS', key: 'Escape', shift: false };
           dispatch(kpa);
         }} />
         {
@@ -724,19 +724,19 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         {
           props.isAdmin ?
             <>
-              <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
-              <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
-              <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: "TOGGLEMODERATING" })} />
+              <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: 'TOGGLEKEYBOARD' })} />
+              <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: 'TOGGLETABLET' })} />
+              <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: 'TOGGLEMODERATING' })} />
               <Link href='/admin'><TopBarDropDownLink icon={<FaUserLock />} text="Admin" /></Link>
             </>
-            : ""
+            : ''
         }
         {
           props.isAdmin || props.user ?.uid === puzzle.authorId ?
             <Link href='/crosswords/[puzzleId]/stats' as={`/crosswords/${puzzle.id}/stats`} passHref>
               <TopBarDropDownLink icon={<IoMdStats />} text="Stats" />
             </Link>
-            : ""
+            : ''
         }
         <Link href='/account'><TopBarDropDownLink icon={<FaUser />} text="Account" /></Link>
       </TopBarDropDown>
@@ -749,32 +749,32 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         <title>{title}</title>
       </Head>
       <TopBar>
-        <TopBarLink icon={<FaPause />} hoverText={"Pause Game"} text={timeString(state.displaySeconds, true)} onClick={() => dispatch({ type: "PAUSEACTION" })} keepText={true} />
-        <TopBarLink icon={state.clueView ? <SpinnerFinished /> : <FaListOl />} text={state.clueView ? "Grid" : "Clues"} onClick={() => {
-          const a: ToggleClueViewAction = { type: "TOGGLECLUEVIEW" }
+        <TopBarLink icon={<FaPause />} hoverText={'Pause Game'} text={timeString(state.displaySeconds, true)} onClick={() => dispatch({ type: 'PAUSEACTION' })} keepText={true} />
+        <TopBarLink icon={state.clueView ? <SpinnerFinished /> : <FaListOl />} text={state.clueView ? 'Grid' : 'Clues'} onClick={() => {
+          const a: ToggleClueViewAction = { type: 'TOGGLECLUEVIEW' };
           dispatch(a);
         }} />
         {dropdownMenus}
       </TopBar>
       {state.isEnteringRebus ?
-        <RebusOverlay showingKeyboard={showingKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
+        <RebusOverlay showingKeyboard={showingKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ''}
       {state.filled && !state.success && !state.dismissedKeepTrying ?
         <KeepTryingOverlay dispatch={dispatch} />
-        : ""}
+        : ''}
       {state.success && !state.dismissedSuccess ?
         <SuccessOverlay user={props.user} nextPuzzle={props.nextPuzzle} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
-        : ""}
+        : ''}
       {state.moderating ?
         <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />
-        : ""}
+        : ''}
       {state.currentTimeWindowStart === 0 && !state.success && !(state.filled && !state.dismissedKeepTrying) ?
         (state.bankedSeconds === 0 ?
           <BeginPauseOverlay dismissMessage="Begin Puzzle" message="Ready to get started?" {...beginPauseProps} />
           :
           <BeginPauseOverlay dismissMessage="Resume" message="Your puzzle is paused" {...beginPauseProps} />
         )
-        : ""}
+        : ''}
       {puzzleView}
     </>
-  )
-}
+  );
+};

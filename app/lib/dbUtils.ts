@@ -1,6 +1,6 @@
-import * as t from "io-ts";
+import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from "io-ts/lib/PathReporter";
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import { App, TimestampClass } from './firebaseWrapper';
 
 import { downloadTimestamped } from './dbtypes';
@@ -28,7 +28,7 @@ interface NoDBButLocalId {
 type CacheSetOptions<A> = CacheSetOptionsRequired<A> & (YesDB | NoDBButDocId | NoDBButLocalId);
 
 export async function setInCache<A>({ collection, docId, localDocId, value, validator, sendToDB }: CacheSetOptions<A>) {
-  const sessionKey = localDocId ? collection + "/" + localDocId : collection + '/' + docId;
+  const sessionKey = localDocId ? collection + '/' + localDocId : collection + '/' + docId;
   const TimestampedV = downloadTimestamped(validator);
   const forLS: t.TypeOf<typeof TimestampedV> = {
     downloadedAt: TimestampClass.now(),
@@ -51,7 +51,7 @@ interface CacheUpdateOptionsRequired<A> {
 type CacheUpdateOptions<A> = CacheUpdateOptionsRequired<A> & (YesDB | NoDBButDocId | NoDBButLocalId);
 
 export async function updateInCache<A>({ collection, docId, localDocId, update, validator, sendToDB }: CacheUpdateOptions<A>) {
-  const sessionKey = localDocId ? collection + "/" + localDocId : collection + '/' + docId;
+  const sessionKey = localDocId ? collection + '/' + localDocId : collection + '/' + docId;
   const inSession = sessionStorage.getItem(sessionKey);
   const TimestampedV = downloadTimestamped(validator);
   if (inSession) {
@@ -64,8 +64,8 @@ export async function updateInCache<A>({ collection, docId, localDocId, update, 
       };
       sessionStorage.setItem(sessionKey, JSON.stringify(forLS));
     } else {
-      console.error("Couldn't parse object in local storage");
-      console.error(PathReporter.report(validationResult).join(","));
+      console.error('Couldn\'t parse object in local storage');
+      console.error(PathReporter.report(validationResult).join(','));
     }
   }
   if (sendToDB) {
@@ -90,7 +90,7 @@ export async function mapEachResult<N, A>(
       results.push(mapper(validationResult.right, doc.id));
     }
     else {
-      console.error(PathReporter.report(validationResult).join(","));
+      console.error(PathReporter.report(validationResult).join(','));
       return Promise.reject('Malformed content');
     }
   });
@@ -113,7 +113,7 @@ export async function getValidatedAndDelete<A>(
       deletes.push(doc.ref.delete());
     }
     else {
-      console.error(PathReporter.report(validationResult).join(","));
+      console.error(PathReporter.report(validationResult).join(','));
       return Promise.reject('Malformed content');
     }
   });
@@ -135,7 +135,7 @@ export async function getFromDB<A>(
   if (isRight(validationResult)) {
     return validationResult.right;
   } else {
-    console.error(PathReporter.report(validationResult).join(","));
+    console.error(PathReporter.report(validationResult).join(','));
     return Promise.reject('Malformed content');
   }
 }
@@ -149,7 +149,7 @@ interface CacheGetOptions<A> {
 
 export function getFromSession<A>({ collection, localDocId, validator, ttl }: CacheGetOptions<A>): A | null {
   const now = new Date();
-  const sessionKey = collection + "/" + localDocId;
+  const sessionKey = collection + '/' + localDocId;
   const inSession = sessionStorage.getItem(sessionKey);
   const TimestampedV = downloadTimestamped(validator);
   if (inSession) {
@@ -160,11 +160,11 @@ export function getFromSession<A>({ collection, localDocId, validator, ttl }: Ca
         console.log('loaded ' + sessionKey + ' from local storage');
         return valid.data;
       } else {
-        console.log("object in local storage has expired");
+        console.log('object in local storage has expired');
       }
     } else {
-      console.error("Couldn't parse object in local storage");
-      console.error(PathReporter.report(validationResult).join(","));
+      console.error('Couldn\'t parse object in local storage');
+      console.error(PathReporter.report(validationResult).join(','));
     }
   }
   return null;
@@ -180,7 +180,7 @@ interface CacheOrDBGetOptions<A> {
 
 export async function getFromSessionOrDB<A>({ collection, docId, localDocId, validator, ttl }: CacheOrDBGetOptions<A>): Promise<A | null> {
   const now = new Date();
-  const sessionKey = localDocId ? collection + "/" + localDocId : collection + '/' + docId;
+  const sessionKey = localDocId ? collection + '/' + localDocId : collection + '/' + docId;
   const inSession = sessionStorage.getItem(sessionKey);
   const TimestampedV = downloadTimestamped(validator);
   if (inSession) {
@@ -191,11 +191,11 @@ export async function getFromSessionOrDB<A>({ collection, docId, localDocId, val
         console.log('loaded ' + sessionKey + ' from local storage');
         return valid.data;
       } else {
-        console.log("object in local storage has expired");
+        console.log('object in local storage has expired');
       }
     } else {
-      console.error("Couldn't parse object in local storage");
-      console.error(PathReporter.report(validationResult).join(","));
+      console.error('Couldn\'t parse object in local storage');
+      console.error(PathReporter.report(validationResult).join(','));
     }
   }
   console.log('loading ' + sessionKey + ' from db');
@@ -207,7 +207,7 @@ export async function getFromSessionOrDB<A>({ collection, docId, localDocId, val
   }
   const validationResult = validator.decode(dbres.data());
   if (isRight(validationResult)) {
-    console.log("loaded, and caching in storage");
+    console.log('loaded, and caching in storage');
     const forLS: t.TypeOf<typeof TimestampedV> = {
       downloadedAt: TimestampClass.now(),
       data: validationResult.right
@@ -215,7 +215,7 @@ export async function getFromSessionOrDB<A>({ collection, docId, localDocId, val
     sessionStorage.setItem(sessionKey, JSON.stringify(forLS));
     return validationResult.right;
   } else {
-    console.error(PathReporter.report(validationResult).join(","));
+    console.error(PathReporter.report(validationResult).join(','));
     return Promise.reject('Malformed content');
   }
 }

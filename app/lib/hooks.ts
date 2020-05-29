@@ -5,11 +5,11 @@ export function usePersistedBoolean(key: string, defaultValue: boolean): [boolea
 
   useEffect(() => {
     const initialValue = localStorage.getItem(key);
-    setState(initialValue !== null ? initialValue === "true" : defaultValue);
+    setState(initialValue !== null ? initialValue === 'true' : defaultValue);
   }, [defaultValue, key]);
 
   const setStateAndPersist = useCallback((newValue: boolean) => {
-    localStorage.setItem(key, newValue ? "true" : "false");
+    localStorage.setItem(key, newValue ? 'true' : 'false');
     setState(newValue);
   }, [key, setState]);
   return [state, setStateAndPersist];

@@ -100,7 +100,7 @@ export class BitArray {
     const nums: Array<number> = [];
     const usedInts = Math.min(this.usedInts, other.usedInts);
 
-    for (var i = 0; i < usedInts; ++i) {
+    for (let i = 0; i < usedInts; ++i) {
       nums[i] = this.nums[i] & other.nums[i];
     }
 
@@ -110,11 +110,11 @@ export class BitArray {
   }
 
   activeBits(): Array<number> {
-    let ret = [];
+    const ret = [];
     for (let i = this.usedInts - 1; i >= 0; i--) {
-      var num = this.nums[i];
+      let num = this.nums[i];
       while (num !== 0) {
-        let t = 31 - Math.clz32(num);
+        const t = 31 - Math.clz32(num);
         num ^= 1 << t;
         ret.push((i * 30) + t);
       }

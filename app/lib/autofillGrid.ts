@@ -50,9 +50,9 @@ export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, wor
       if (currentVal === word.slice(i, i + currentVal.length)) {
         // No change needed for this cell
         i = i + currentVal.length - 1;
-        continue
+        continue;
       } else {
-        throw new Error("Cell has conflicting value: " + currentVal + ',' + word + ',' + i);
+        throw new Error('Cell has conflicting value: ' + currentVal + ',' + word + ',' + i);
       }
     }
 
@@ -103,17 +103,17 @@ export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, wor
 export function stableSubsets(grid: AutofillGrid, prelimSubset: Set<number> | null) {
   let openEntries = grid.entries.filter((e) => !e.completedWord);
   if (prelimSubset !== null) {
-    openEntries = openEntries.filter((e) => prelimSubset.has(e.index))
+    openEntries = openEntries.filter((e) => prelimSubset.has(e.index));
   }
 
-  const assignments = new Map<number, number>()
+  const assignments = new Map<number, number>();
 
   function addSubset(entry: AutofillEntry, num: number) {
     if (assignments.has(entry.index)) {
       return;
     }
     if (prelimSubset !== null && !prelimSubset.has(entry.index)) {
-      throw new Error("Bad assignment " + entry.index + ":" + prelimSubset);
+      throw new Error('Bad assignment ' + entry.index + ':' + prelimSubset);
     }
     assignments.set(entry.index, num);
     getCrosses(grid, entry).forEach((c) => {
@@ -155,7 +155,7 @@ export function addAutofillFieldsToEntry<Entry extends EntryWithPattern>(baseEnt
 export function fromTemplate(
   template: string[], width: number, height: number
 ): AutofillGrid {
-  const cells = template.map((c) => c.toUpperCase().replace("#", "."));
+  const cells = template.map((c) => c.toUpperCase().replace('#', '.'));
   const usedWords = new Set<string>();
   const [baseEntries, entriesByCell] = entriesFromCells(width, height, cells);
 

@@ -1,4 +1,4 @@
-import * as t from "io-ts";
+import * as t from 'io-ts';
 
 // We import this instead of defining it here so that we can define it
 // differently for the main react app and the 'functions' subdirectory
@@ -40,7 +40,7 @@ const CommentWithRepliesV: t.Type<CommentWithRepliesT> = t.recursion('CommentWit
       r: t.array(CommentWithRepliesV)
     })
   ])
-)
+);
 
 export const CommentForModerationV = t.intersection([
   CommentV,
@@ -50,7 +50,7 @@ export const CommentForModerationV = t.intersection([
     /** id of the comment this is a reply to */
     rt: t.union([t.string, t.null])
   })
-])
+]);
 export type CommentForModerationT = t.TypeOf<typeof CommentForModerationV>;
 
 export const CommentForModerationWithIdV = t.intersection([
@@ -145,16 +145,16 @@ export function downloadTimestamped<A>(type: t.Type<A>) {
     downloadedAt: timestamp,
     data: type,
   });
-};
+}
 
 export function getDateString(pd: Date) {
-  return pd.getUTCFullYear() + "-" + pd.getUTCMonth() + "-" + pd.getUTCDate();
+  return pd.getUTCFullYear() + '-' + pd.getUTCMonth() + '-' + pd.getUTCDate();
 }
 
 export function prettifyDateString(dateString: string) {
   const groups = dateString.match(/^(\d+)-(\d+)-(\d+)$/);
   if (!groups) {
-    throw new Error("Bad date string: " + dateString);
+    throw new Error('Bad date string: ' + dateString);
   }
   return (parseInt(groups[2]) + 1) + '/' + parseInt(groups[3]) + '/' + groups[1];
 }
@@ -199,14 +199,14 @@ export const CronStatusV = t.type({
 export type CronStatusT = t.TypeOf<typeof CronStatusV>;
 
 /** created at, title */
-const AuthoredPuzzleV = t.tuple([timestamp, t.string])
+const AuthoredPuzzleV = t.tuple([timestamp, t.string]);
 export type AuthoredPuzzleT = t.TypeOf<typeof AuthoredPuzzleV>;
 
 /** keys are puzzle ids */
 export const AuthoredPuzzlesV = t.record(t.string, AuthoredPuzzleV);
 
 /** updated at, play time in fractional seconds, did cheat?, completed?, title */
-const UserPlayV = t.tuple([timestamp, t.number, t.boolean, t.boolean, t.string])
+const UserPlayV = t.tuple([timestamp, t.number, t.boolean, t.boolean, t.string]);
 export type UserPlayT = t.TypeOf<typeof UserPlayV>;
 
 /** keys are puzzle ids */

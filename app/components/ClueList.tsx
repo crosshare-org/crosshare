@@ -23,13 +23,13 @@ const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }:
   const ref = useRef<HTMLLIElement>(null);
   if (ref.current) {
     if (isActive || (props.scrollToCross && isCross)) {
-      ref.current.scrollIntoView({ behavior: "auto", block: "center" });
+      ref.current.scrollIntoView({ behavior: 'auto', block: 'center' });
     }
   }
   function click(e: MouseEvent) {
     e.preventDefault();
     if (isActive) {
-      props.dispatch({ type: "CHANGEDIRECTION" });
+      props.dispatch({ type: 'CHANGEDIRECTION' });
       return;
     }
     const ca: ClickedEntryAction = { type: 'CLICKEDENTRY', entryIndex: props.entry.index };
@@ -57,12 +57,12 @@ const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }:
         fontWeight: 'bold',
         textAlign: 'right',
         padding: '0 0.5em',
-      }}>{props.entry.labelNumber}{props.showDirection ? (props.entry.direction === Direction.Across ? 'A' : 'D') : ""}
+      }}>{props.entry.labelNumber}{props.showDirection ? (props.entry.direction === Direction.Across ? 'A' : 'D') : ''}
       </div>
       <div css={{
         flex: '1 1 auto',
         height: '100%',
-        color: props.conceal ? 'transparent' : (props.entry.completedWord ? 'var(--default-text)' : "var(--black)"),
+        color: props.conceal ? 'transparent' : (props.entry.completedWord ? 'var(--default-text)' : 'var(--black)'),
         textShadow: props.conceal ? '0 0 1em var(--conceal-text)' : '',
       }}>
         <div>{props.entry.clue}</div>
@@ -75,9 +75,9 @@ const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }:
               minWidth: '1em',
               border: (props.active && a.row === props.active.row && a.col === props.active.col) ?
                 '1px solid var(--black)' : '1px solid transparent',
-            }}>{props.valAt(a).trim() || "-"}</span>;
+            }}>{props.valAt(a).trim() || '-'}</span>;
           })}</div>
-          : ""}
+          : ''}
       </div>
     </li>
   );
@@ -112,19 +112,19 @@ export const ClueList = (props: ClueListProps) => {
       isActive={isActive}
       isCross={isCross}
       active={props.showEntries && (isActive || isCross) ? props.active : null}
-    />)
+    />);
   });
   return (
     <div css={{
-      height: "100% !important",
+      height: '100% !important',
       position: 'relative',
     }}>{props.header ?
-      <div css={{
-        fontWeight: 'bold',
-        borderBottom: '1px solid var(--autofill)',
-        height: '1.5em',
-        paddingLeft: '0.5em',
-      }}>{props.header}</div> : ""}
+        <div css={{
+          fontWeight: 'bold',
+          borderBottom: '1px solid var(--autofill)',
+          height: '1.5em',
+          paddingLeft: '0.5em',
+        }}>{props.header}</div> : ''}
       <div css={{
         maxHeight: props.header ? 'calc(100% - 1.5em)' : '100%',
         overflowY: 'scroll',
@@ -138,4 +138,4 @@ export const ClueList = (props: ClueListProps) => {
       </div>
     </div>
   );
-}
+};

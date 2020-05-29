@@ -1,7 +1,7 @@
 import { ReactNode, useState, HTMLProps, forwardRef } from 'react';
 import Link from 'next/link';
 
-import { isMobile, isIPad13 } from "react-device-detect";
+import { isMobile, isIPad13 } from 'react-device-detect';
 
 import { Overlay } from './Overlay';
 import { Logo } from './Icons';
@@ -17,9 +17,9 @@ export const TopBarDropDown = (props: { text: string, icon: ReactNode, children:
       </Overlay>
     </>
   );
-}
+};
 
-interface TopBarDropDownLinkProps { shortcutHint?: ReactNode, text: string, icon: ReactNode, onClick?: () => void };
+interface TopBarDropDownLinkProps { shortcutHint?: ReactNode, text: string, icon: ReactNode, onClick?: () => void }
 export const TopBarDropDownLink = forwardRef<HTMLButtonElement, TopBarDropDownLinkProps>((props, ref) => {
   return (
     <button ref={ref} title={props.text} css={{
@@ -51,7 +51,7 @@ export const TopBarDropDownLink = forwardRef<HTMLButtonElement, TopBarDropDownLi
         display: 'inline-block',
         width: '60%',
         textAlign: 'left',
-      }}>{props.text}{!isMobile && !isIPad13 && props.shortcutHint ? <span> ( <span css={{ fontSize: HEADER_HEIGHT - 10 }}>{props.shortcutHint}</span> )</span> : ""}</div>
+      }}>{props.text}{!isMobile && !isIPad13 && props.shortcutHint ? <span> ( <span css={{ fontSize: HEADER_HEIGHT - 10 }}>{props.shortcutHint}</span> )</span> : ''}</div>
     </button>
   );
 });
@@ -94,7 +94,7 @@ export const TopBarLink = forwardRef<HTMLButtonElement, TopBarLinkProps>((props,
             display: 'inline-block',
           }
         }}>{props.text}</span>
-        : ""}
+        : ''}
     </button>
   );
 });
@@ -143,4 +143,4 @@ export const TopBar = ({ children }: TopBarProps) => {
       </div>
     </header>
   );
-}
+};

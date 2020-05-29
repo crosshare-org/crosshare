@@ -34,7 +34,7 @@ function isValue(result: Result): result is Value {
   return result.type === ResultTag.Value;
 }
 function value(x: AutofillGrid | null) {
-  return { type: ResultTag.Value, result: x }
+  return { type: ResultTag.Value, result: x };
 }
 
 type Cont = (x: AutofillGrid | null) => Result;
@@ -63,17 +63,17 @@ export class Autofiller {
     this.startTime = new Date().getTime();
 
     // Our initial step is a call to recur
-    this.nextStep = recur(this.initialGrid, 5, new Set<string>(), null, (result) => { return value(result) });
-  };
+    this.nextStep = recur(this.initialGrid, 5, new Set<string>(), null, (result) => { return value(result); });
+  }
 
   step() {
     if (!WordDB.dbTransformed) {
-      console.error("Worker has no db but attempting autofill");
+      console.error('Worker has no db but attempting autofill');
       this.completed = true;
       return;
     }
     if (this.completed) {
-      console.log("Calling step but already completed");
+      console.log('Calling step but already completed');
       return;
     }
 
@@ -91,7 +91,7 @@ export class Autofiller {
 
     // If it's a "value" (not a "recur") we're done.
     if (isValue(this.nextStep)) {
-      console.log("Finished: " + ((new Date().getTime() - this.startTime) / 1000).toPrecision(4) + "s");
+      console.log('Finished: ' + ((new Date().getTime() - this.startTime) / 1000).toPrecision(4) + 's');
       this.completed = true;
       this.onComplete();
     }
@@ -101,7 +101,7 @@ export class Autofiller {
       this.postedSoln = true;
       this.onResult(this.grid, this.solnGrid.cells);
     }
-  };
+  }
 
   /* Fill out a grid or a subset of a grid */
   _solve(grid: AutofillGrid, discrep: number, pitched: Set<string>, subset: Set<number> | null, cont: Cont): Result {
@@ -115,10 +115,10 @@ export class Autofiller {
     let entriesToConsider = grid.entries.filter((e) => !e.completedWord);
     // There are no entries left to consider, this grid must be a new best solution
     if (entriesToConsider.length === 0) {
-      this.solnGrid = grid
-      this.solnCost = baseCost
+      this.solnGrid = grid;
+      this.solnCost = baseCost;
       this.postedSoln = false;
-      return cont(grid)
+      return cont(grid);
     }
 
     if (subset !== null) {
@@ -151,18 +151,18 @@ export class Autofiller {
     let successorDiff: number | null = null;
 
     for (const entry of entriesToConsider) {
-      const crosses = getCrosses(grid, entry)
+      const crosses = getCrosses(grid, entry);
       let bestGrid: [AutofillGrid, number, string] | null = null;
       let bestCost: number | null = null;
       let secondBestCost: number | null = null;
 
       let skipEntry = false;
       const failingLetters: Array<string> = [];
-      entry.cells.forEach(() => { failingLetters.push("") });
+      entry.cells.forEach(() => { failingLetters.push(''); });
       const succeedingLetters: Array<string> = [];
-      entry.cells.forEach(() => { succeedingLetters.push("") });
+      entry.cells.forEach(() => { succeedingLetters.push(''); });
       for (const [word, score] of WordDB.matchingWords(entry.length, entry.bitmap)) {
-        if (pitched.has(entry.index + ":" + word)) {
+        if (pitched.has(entry.index + ':' + word)) {
           continue;
         }
         if (grid.usedWords.has(word)) {
@@ -282,12 +282,12 @@ export class Autofiller {
     }
 
     if (successor === null) {
-      throw new Error("successor was null");
+      throw new Error('successor was null');
     }
     const suc = successor; // weird hack around type system not realizing successor isn't null
     let nextSubset = null;
     if (subset !== null) {
-      nextSubset = new Set(Array.from(subset).filter(e => e !== suc[1]))
+      nextSubset = new Set(Array.from(subset).filter(e => e !== suc[1]));
     }
 
     if (!discrep || pitched.size >= discrep) {
@@ -297,13 +297,13 @@ export class Autofiller {
     return recur(successor[0], discrep, pitched, nextSubset,
       result => {
         const newPitched = new Set(pitched.values());
-        newPitched.add(suc[1] + ":" + suc[2]);
+        newPitched.add(suc[1] + ':' + suc[2]);
         return recur(grid, discrep, newPitched, subset,
           res2 => {
             return cont((res2 !== null && (result === null || minGridCost(res2) < minGridCost(result))) ? res2 : result);
           }
         );
       }
-    )
-  };
+    );
+  }
 }

@@ -2,7 +2,7 @@ import Error from 'next/error';
 import { useState, useEffect, useContext } from 'react';
 import { GetServerSideProps } from 'next';
 import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from "io-ts/lib/PathReporter";
+import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { AuthContext } from '../../components/AuthContext';
 import { puzzleFromDB, PuzzleResult } from '../../lib/types';
@@ -30,19 +30,19 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async (co
   }
   const validationResult = DBPuzzleV.decode(dbres.data());
   if (isRight(validationResult)) {
-    console.log("loaded puzzle from db");
+    console.log('loaded puzzle from db');
     puzzle = { ...puzzleFromDB(validationResult.right), id: dbres.id };
   } else {
-    console.error(PathReporter.report(validationResult).join(","));
+    console.error(PathReporter.report(validationResult).join(','));
     return { props: { puzzle: null } };
   }
 
   // Get puzzle to show as next link after this one is finished
   const priorTo = (puzzle.category === 'dailymini' && puzzle.publishTime) ?
     TimestampClass.fromMillis(puzzle.publishTime) : TimestampClass.now();
-  const prevMini = await db.collection('c').where("c", "==", "dailymini")
-    .where("p", "<", priorTo)
-    .orderBy("p", "desc").limit(1).get();
+  const prevMini = await db.collection('c').where('c', '==', 'dailymini')
+    .where('p', '<', priorTo)
+    .orderBy('p', 'desc').limit(1).get();
   if (prevMini.size === 0) {
     return { props: { puzzle: puzzle } };
   }
@@ -55,16 +55,16 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async (co
     return { props: { puzzle: puzzle, nextPuzzle: { puzzleId: prevMini.docs[0].id, linkText } } };
   } else {
     console.error('Error loading previous mini to show');
-    console.error(PathReporter.report(validationResult).join(","));
+    console.error(PathReporter.report(validationResult).join(','));
     return { props: { puzzle: puzzle } };
   }
-}
+};
 
 export default ({ puzzle, nextPuzzle }: PuzzlePageProps) => {
   if (!puzzle) {
     return <Error statusCode={404} title="No puzzle found" />;
   }
-  return <PlayLoader key={puzzle.id} puzzle={puzzle} nextPuzzle={nextPuzzle} />
+  return <PlayLoader key={puzzle.id} puzzle={puzzle} nextPuzzle={nextPuzzle} />;
 };
 
 const PlayLoader = ({ puzzle, nextPuzzle }: { puzzle: PuzzleResult, nextPuzzle?: NextPuzzleLink }) => {
@@ -95,7 +95,7 @@ const PlayLoader = ({ puzzle, nextPuzzle }: { puzzle: PuzzleResult, nextPuzzle?:
     } else {
       getFromSessionOrDB({
         collection: 'p',
-        docId: puzzle.id + "-" + user.uid,
+        docId: puzzle.id + '-' + user.uid,
         localDocId: puzzle.id,
         validator: PlayWithoutUserV,
         ttl: -1
@@ -118,5 +118,5 @@ const PlayLoader = ({ puzzle, nextPuzzle }: { puzzle: PuzzleResult, nextPuzzle?:
     return <><p>Error loading play: {playError}</p><p>Please refresh the page to try again.</p></>;
   }
 
-  return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={loadingUser || loadingPlay} play={play} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />
-}
+  return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={loadingUser || loadingPlay} play={play} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
+};

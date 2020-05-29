@@ -4,7 +4,7 @@ import {
 } from 'react-icons/fa';
 import { AiOutlineEnter } from 'react-icons/ai';
 
-import { CrosshareAudioContext } from "./CrosshareAudioContext";
+import { CrosshareAudioContext } from './CrosshareAudioContext';
 
 export const KeyRows = (props: KeyRowProps) => {
   return (
@@ -18,7 +18,7 @@ export const KeyRows = (props: KeyRowProps) => {
       background: 'var(--kb-bg)',
     }}>{props.children}</div>
   );
-}
+};
 
 interface KeyRowProps {
   addMarginLeft?: boolean,
@@ -32,7 +32,7 @@ export const KeyRow = (props: KeyRowProps) => {
       paddingTop: 10,
     }}>{props.children}</div>
   );
-}
+};
 
 interface KeyProps {
   keyStroke: string,
@@ -64,9 +64,9 @@ export const Key = (props: KeyProps) => {
       '&:active': {
         background: 'var(--key-bg-click)',
       },
-    }} onClick={() => { props.onKeypress(props.keyStroke) }}>{props.display || props.keyStroke}</div>
+    }} onClick={() => { props.onKeypress(props.keyStroke); }}>{props.display || props.keyStroke}</div>
   );
-}
+};
 
 interface KeyboardProps {
   muted: boolean,
@@ -88,16 +88,16 @@ export const Keyboard = memo(function Keyboard({ muted, showKeyboard, keyboardHa
       fetch(`${process.env.PUBLIC_URL}/keypress.mp3`)
         .then(response => response.arrayBuffer())
         .then((buffer) => {
-          var gainNode = audioContext.createGain()
+          const gainNode = audioContext.createGain();
           gainNode.gain.value = 0.7;
-          gainNode.connect(audioContext.destination)
+          gainNode.connect(audioContext.destination);
           audioContext.decodeAudioData(buffer, (audioBuffer) => {
             playKeystrokeSound.current = () => {
               const source = audioContext.createBufferSource();
               source.buffer = audioBuffer;
               source.connect(gainNode);
               source.start();
-            }
+            };
           });
         });
     }
@@ -152,13 +152,13 @@ export const Keyboard = memo(function Keyboard({ muted, showKeyboard, keyboardHa
         <Key keyStroke='P' onKeypress={keypress} />
         {props.isTablet ?
           <Key keyStroke='{bksp}' display={<FaBackspace />} onKeypress={keypress} />
-          : ""
+          : ''
         }
       </KeyRow>
       <KeyRow addMarginLeft={props.includeBlockKey && !props.isTablet}>
         {props.isTablet || !props.includeBlockKey ?
           <Key keyStroke='{prev}' smallSize={true} display={<FaAngleLeft />} onKeypress={keypress} />
-          : ""
+          : ''
         }
         <Key keyStroke='A' onKeypress={keypress} />
         <Key keyStroke='S' onKeypress={keypress} />
@@ -171,15 +171,15 @@ export const Keyboard = memo(function Keyboard({ muted, showKeyboard, keyboardHa
         <Key keyStroke='L' onKeypress={keypress} />
         {props.includeBlockKey ?
           <Key keyStroke='{block}' backgroundColor="var(--cell-wall)" smallSize={true} display=" " onKeypress={keypress} />
-          : ""
+          : ''
         }
         {props.isTablet ?
           <Key keyStroke='{dir}' smallSize={props.includeBlockKey} display={<AiOutlineEnter />} onKeypress={keypress} />
-          : ""
+          : ''
         }
         {props.isTablet || !props.includeBlockKey ?
           <Key keyStroke='{next}' smallSize={true} display={<FaAngleRight />} onKeypress={keypress} />
-          : ""
+          : ''
         }
       </KeyRow>
       <KeyRow>

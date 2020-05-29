@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import Error from 'next/error'
+import Error from 'next/error';
 
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { TopBar } from './TopBar';
@@ -8,12 +8,12 @@ import { Optionalize } from '../lib/types';
 export interface AuthProps {
   isAdmin: boolean,
   user: firebase.User,
-};
+}
 
 export interface AuthPropsOptional {
   isAdmin: boolean,
   user?: firebase.User,
-};
+}
 
 function renderLoginIfNeeded({ user, loadingUser, error }: AuthContextValue): React.ReactNode | null {
   if (loadingUser) {
@@ -55,8 +55,8 @@ export function requiresAuth<T extends AuthProps>(WrappedComponent: React.Compon
     if (login) {
       return login;
     }
-    return <WrappedComponent {...(props as T)} isAdmin={ctx.isAdmin} user={ctx.user} />
-  }
+    return <WrappedComponent {...(props as T)} isAdmin={ctx.isAdmin} user={ctx.user} />;
+  };
 }
 
 /* Ensure we have an admin user, upgrading an anonymous user if we have one. */
@@ -68,10 +68,10 @@ export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.Compo
       return login;
     }
     if (!ctx.isAdmin) {
-      return <Error statusCode={403} />
+      return <Error statusCode={403} />;
     }
-    return <WrappedComponent {...(props as T)} isAdmin={true} user={ctx.user} />
-  }
+    return <WrappedComponent {...(props as T)} isAdmin={true} user={ctx.user} />;
+  };
 }
 
 interface AuthContextValue {
@@ -80,4 +80,4 @@ interface AuthContextValue {
   loadingUser: boolean,
   error: string | undefined
 }
-export const AuthContext = createContext({ user: undefined, loadingUser: false, error: "using default context" } as AuthContextValue);
+export const AuthContext = createContext({ user: undefined, loadingUser: false, error: 'using default context' } as AuthContextValue);

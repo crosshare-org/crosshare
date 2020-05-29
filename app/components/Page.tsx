@@ -34,7 +34,7 @@ export const TinyNav = ({ children, dispatch }: TinyNavProps) => {
         alignItems: 'center',
         justifyContent: 'center',
         borderRight: '1px solid var(--clue-bg)',
-      }} onClick={() => dispatch({ type: "KEYPRESS", key: "{prevEntry}", shift: false })}>
+      }} onClick={() => dispatch({ type: 'KEYPRESS', key: '{prevEntry}', shift: false })}>
         <FaAngleDoubleLeft />
       </div>
       <div css={{
@@ -48,12 +48,12 @@ export const TinyNav = ({ children, dispatch }: TinyNavProps) => {
         alignItems: 'center',
         justifyContent: 'center',
         borderLeft: '1px solid var(--clue-bg)',
-      }} onClick={() => dispatch({ type: "KEYPRESS", key: "{nextEntry}", shift: false })}>
+      }} onClick={() => dispatch({ type: 'KEYPRESS', key: '{nextEntry}', shift: false })}>
         <FaAngleDoubleRight />
       </div>
     </div>
   );
-}
+};
 
 interface SquareAndColsProps {
   muted: boolean,
@@ -140,10 +140,10 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           includeBlockKey={props.includeBlockKey}
           isTablet={props.isTablet}
         />
-        : " "}
+        : ' '}
     </>
   );
-}
+};
 
 interface TwoColProps {
   muted: boolean,
@@ -191,7 +191,7 @@ export const TwoCol = (props: TwoColProps) => {
           includeBlockKey={props.includeBlockKey}
           isTablet={props.isTablet}
         />
-        : " "}
+        : ' '}
     </>
   );
-}
+};

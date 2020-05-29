@@ -39,5 +39,5 @@ export const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
   const nextMonth = new Date();
   nextMonth.setMonth(nextMonth.getMonth() + 1);
 
-  return <Calendar selected={props.value} onClick={dateChanged} dateIsDisabled={tileDisabled} />
-}
+  return <Calendar selected={props.value} onClick={dateChanged} dateIsDisabled={tileDisabled} />;
+};

@@ -1,7 +1,7 @@
 import { useState, useEffect, ReactNode, FormEvent } from 'react';
-import * as t from "io-ts";
+import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from "io-ts/lib/PathReporter";
+import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { PartialBy } from '../lib/types';
 import { Identicon } from './Icons';
@@ -38,7 +38,7 @@ const CommentView = (props: CommentProps) => {
       {props.children}
     </div>
   );
-}
+};
 
 const CommentWithReplies = (props: PartialBy<CommentFormProps, 'user'> & { comment: CommentOrLocalComment }) => {
   const [showingForm, setShowingForm] = useState(false);
@@ -69,8 +69,8 @@ const CommentWithReplies = (props: PartialBy<CommentFormProps, 'user'> & { comme
         ''
       }
     </CommentView>
-  )
-}
+  );
+};
 
 function commentsKey(puzzleId: string) {
   return 'comments/' + puzzleId;
@@ -83,8 +83,8 @@ function commentsFromStorage(puzzleId: string): Array<CommentForModerationWithId
     if (isRight(res)) {
       return res.right;
     } else {
-      console.error("Couldn't parse object in local storage");
-      console.error(PathReporter.report(res).join(","));
+      console.error('Couldn\'t parse object in local storage');
+      console.error(PathReporter.report(res).join(','));
     }
   }
   return [];
@@ -124,7 +124,7 @@ const CommentFlair = (props: CommentFlairProps) => {
       }
     </ >
   );
-}
+};
 
 interface CommentFormProps {
   displayName: string,
@@ -165,12 +165,12 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
       p: TimestampClass.now(),
       pid: props.puzzleId,
       rt: props.replyToId !== undefined ? props.replyToId : null
-    }
-    console.log("Submitting comment", comment);
+    };
+    console.log('Submitting comment', comment);
     const db = App.firestore();
     // Add to moderation queue for long term
     db.collection('cfm').add(comment).then((ref) => {
-      console.log("Uploaded", ref.id);
+      console.log('Uploaded', ref.id);
 
       // Replace this form w/ the comment for the short term
       setSubmittedComment({
@@ -189,7 +189,7 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
   }
 
   if (submittedComment) {
-    return <CommentView puzzleAuthorId={props.puzzleAuthorId} comment={submittedComment} />
+    return <CommentView puzzleAuthorId={props.puzzleAuthorId} comment={submittedComment} />;
   }
 
   return (
@@ -229,7 +229,7 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
       }
     </>
   );
-}
+};
 
 interface CommentsProps {
   user?: firebase.User,
@@ -238,7 +238,7 @@ interface CommentsProps {
   puzzleId: string,
   puzzleAuthorId: string,
   comments: Array<Comment>
-};
+}
 
 function isComment(comment: CommentOrLocalComment): comment is CommentWithPossibleLocalReplies {
   return 'id' in comment;

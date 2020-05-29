@@ -39,7 +39,7 @@ export function getCrosses<Entry extends EntryBase>(grid: GridBase<Entry>, entry
   const crosses: Array<Cross> = [];
   entry.cells.forEach((cellIndex) => {
     crosses.push(entriesByCell(grid, cellIndex)[crossDir]);
-  })
+  });
   return crosses;
 }
 
@@ -48,7 +48,7 @@ export function valAt<Entry extends EntryBase>(grid: GridBase<Entry>, pos: Posit
 }
 
 export function entryWord<Entry extends EntryBase>(grid: GridBase<Entry>, entryIndex: number) {
-  return grid.entries[entryIndex].cells.map((pos) => valAt(grid, pos)).join("");
+  return grid.entries[entryIndex].cells.map((pos) => valAt(grid, pos)).join('');
 }
 
 export function setVal<Entry extends EntryBase>(grid: GridBase<Entry>, pos: Position, val: string) {
@@ -64,12 +64,12 @@ export function posForIndex<Entry extends EntryBase>(grid: GridBase<Entry>, inde
 }
 
 export function toString<Entry extends EntryBase>(grid: GridBase<Entry>) {
-  let s = ""
+  let s = '';
   for (let y = 0; y < grid.height; y += 1) {
     for (let x = 0; x < grid.width; x += 1) {
-      s += grid.cells[y * grid.width + x] + " ";
+      s += grid.cells[y * grid.width + x] + ' ';
     }
-    s += "\n";
+    s += '\n';
   }
   return s;
 }
@@ -121,7 +121,7 @@ export function entriesFromCells(width: number, height: number, cells: Array<str
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
       const i = x + y * width;
-      for (let dir of ([Direction.Across, Direction.Down])) {
+      for (const dir of ([Direction.Across, Direction.Down])) {
         const xincr = (dir === Direction.Across) ? 1 : 0;
         const yincr = (dir === Direction.Down) ? 1 : 0;
         const iincr = xincr + yincr * width;
@@ -136,7 +136,7 @@ export function entriesFromCells(width: number, height: number, cells: Array<str
         }
 
         const entryCells: Position[] = [];
-        let entryPattern = "";
+        let entryPattern = '';
         let isComplete = true;
         let xt = x;
         let yt = y;
@@ -195,7 +195,7 @@ export function gridWithEntrySet<Entry extends EntryBase, Grid extends GridBase<
       if (currentVal === word.slice(i, i + currentVal.length)) {
         // No change needed for this cell
         i = i + currentVal.length - 1;
-        continue
+        continue;
       }
     }
 
@@ -210,7 +210,7 @@ export function gridWithEntrySet<Entry extends EntryBase, Grid extends GridBase<
     const cross = newGrid.entries[crossIndex];
     let completedCross:string|null = '';
     for (const cid of cross.cells) {
-      const val = valAt(newGrid, cid)
+      const val = valAt(newGrid, cid);
       if (val === ' ') {
         completedCross = null;
         break;

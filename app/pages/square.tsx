@@ -18,7 +18,7 @@ export default () => {
         <TopBarLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={toggleTablet} />
       </TopBar>
       <SquareAndCols
-        keyboardHandler={(s) => { console.log(s) }}
+        keyboardHandler={(s) => { console.log(s); }}
         muted={false}
         showKeyboard={showKeyboard}
         showExtraKeyLayout={false}
@@ -31,4 +31,4 @@ export default () => {
       />
     </>
   );
-}
+};

@@ -2,13 +2,13 @@ import { AuthProps, requiresAdmin } from '../components/AuthContext';
 import { BuilderDBLoader } from '../components/Builder';
 
 export default requiresAdmin((authProps: AuthProps) => {
-  let size = 5;
-  let grid = [
-    " ", " ", " ", " ", " ",
-    " ", " ", " ", " ", " ",
-    " ", " ", " ", " ", " ",
-    " ", " ", " ", " ", " ",
-    " ", " ", " ", " ", " ",
+  const size = 5;
+  const grid = [
+    ' ', ' ', ' ', ' ', ' ',
+    ' ', ' ', ' ', ' ', ' ',
+    ' ', ' ', ' ', ' ', ' ',
+    ' ', ' ', ' ', ' ', ' ',
+    ' ', ' ', ' ', ' ', ' ',
   ];
   // size = 15;
   // grid = [
@@ -48,12 +48,12 @@ export default requiresAdmin((authProps: AuthProps) => {
   // ];
   // grid = grid.map(s => s.split("")).flat();
   const props = {
-    "size": {
-      "rows": size,
-      "cols": size
+    'size': {
+      'rows': size,
+      'cols': size
     },
-    "grid": grid
-  }
+    'grid': grid
+  };
 
   return <BuilderDBLoader {...props} {...authProps} />;
 });

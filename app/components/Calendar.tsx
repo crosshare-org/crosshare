@@ -22,7 +22,7 @@ export function Calendar(props: CalendarProps) {
 
   function changeMonth(incr: number) {
     const changed = new Date(monthToShow);
-    changed.setUTCMonth(changed.getUTCMonth() + incr)
+    changed.setUTCMonth(changed.getUTCMonth() + incr);
     setMonthToShow(changed);
   }
 
@@ -98,10 +98,10 @@ export function Calendar(props: CalendarProps) {
             }}
           >
             {d.getDate()}
-          </div>
+          </div>;
         }
         )}
       </div>
     </div>
-  )
+  );
 }

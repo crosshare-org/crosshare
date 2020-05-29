@@ -5,16 +5,16 @@ import {
 
 import Link from 'next/link';
 import Router from 'next/router';
-import { isMobile, isTablet, isIPad13 } from "react-device-detect";
+import { isMobile, isTablet, isIPad13 } from 'react-device-detect';
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt,
   FaKeyboard, FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip, FaUserLock
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
-import { FixedSizeList as List } from "react-window";
+import { FixedSizeList as List } from 'react-window';
 
-import AutoSizer from "./AutoSizer";
+import AutoSizer from './AutoSizer';
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
   SymmetryIcon, SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
@@ -25,7 +25,7 @@ import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from '../lib/gridBase';
 import { fromCells, getClueMap } from '../lib/viewableGrid';
-import { TimestampedPuzzleT, AuthoredPuzzleT, AuthoredPuzzlesV } from '../lib/dbtypes'
+import { TimestampedPuzzleT, AuthoredPuzzleT, AuthoredPuzzlesV } from '../lib/dbtypes';
 import { updateInCache } from '../lib/dbUtils';
 import { Direction, PuzzleT } from '../lib/types';
 import {
@@ -46,7 +46,7 @@ import { buttonAsLink } from '../lib/style';
 let worker: Worker;
 
 type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-type BuilderProps = WithOptional<Omit<PuzzleT, "comments" | "category" | "authorId" | "authorName" | "moderated" | "publishTime">, "clues" | "title" | "highlighted" | "highlight">
+type BuilderProps = WithOptional<Omit<PuzzleT, 'comments' | 'category' | 'authorId' | 'authorName' | 'moderated' | 'publishTime'>, 'clues' | 'title' | 'highlighted' | 'highlight'>
 
 export const BuilderDBLoader = (props: BuilderProps & AuthProps) => {
   const [ready, setReady] = useState(false);
@@ -54,7 +54,7 @@ export const BuilderDBLoader = (props: BuilderProps & AuthProps) => {
   if (ready) {
     return <Builder {...props} />;
   }
-  return <div>Loading word database...</div>
+  return <div>Loading word database...</div>;
 };
 
 interface PotentialFillItemProps {
@@ -82,7 +82,7 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
       {props.value[0]}
     </div>
   );
-}
+};
 
 interface PotentialFillListProps {
   isGoodSuggestion: (entryIndex: number, word: string) => boolean,
@@ -100,15 +100,15 @@ const PotentialFillList = (props: PotentialFillListProps) => {
   }, [props.entryIndex, props.values]);
   return (
     <div css={{
-      height: "100% !important",
+      height: '100% !important',
       position: 'relative',
     }}>{props.header ?
-      <div css={{
-        fontWeight: 'bold',
-        borderBottom: '1px solid #AAA',
-        height: '1.5em',
-        paddingLeft: '0.5em',
-      }}>{props.header}</div> : ""}
+        <div css={{
+          fontWeight: 'bold',
+          borderBottom: '1px solid #AAA',
+          height: '1.5em',
+          paddingLeft: '0.5em',
+        }}>{props.header}</div> : ''}
       <div css={{
         height: props.header ? 'calc(100% - 1.5em)' : '100%',
       }}>
@@ -131,17 +131,17 @@ const PotentialFillList = (props: PotentialFillListProps) => {
                     value={props.values[index]}
                   />
                 </div>
-              )}</List>)
+              )}</List>);
           }}
         </AutoSizer>
       </div>
     </div>
   );
-}
+};
 
 const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry, clues: Map<string, string> }) => {
   if (props.entry.completedWord === null) {
-    throw new Error("shouldn't ever get here");
+    throw new Error('shouldn\'t ever get here');
   }
   return (
     <tr>
@@ -150,13 +150,13 @@ const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry,
         paddingBottom: '1em',
         textAlign: 'right',
       }}>{props.entry.completedWord}</td>
-      <td css={{ paddingBottom: '1em' }}><input placeholder="Enter a clue" value={props.clues.get(props.entry.completedWord) || ""} onChange={(e) => {
-        const sca: SetClueAction = { type: "SETCLUE", word: props.entry.completedWord || "", clue: e.target.value };
+      <td css={{ paddingBottom: '1em' }}><input placeholder="Enter a clue" value={props.clues.get(props.entry.completedWord) || ''} onChange={(e) => {
+        const sca: SetClueAction = { type: 'SETCLUE', word: props.entry.completedWord || '', clue: e.target.value };
         props.dispatch(sca);
       }} /></td>
     </tr>
   );
-}
+};
 
 interface ClueModeProps {
   title: string | null,
@@ -166,7 +166,7 @@ interface ClueModeProps {
   dispatch: Dispatch<PuzzleAction>,
 }
 const ClueMode = (props: ClueModeProps) => {
-  const clueRows = props.completedEntries.map(e => <ClueRow key={e.completedWord || ""} dispatch={props.dispatch} entry={e} clues={props.clues} />);
+  const clueRows = props.completedEntries.map(e => <ClueRow key={e.completedWord || ''} dispatch={props.dispatch} entry={e} clues={props.clues} />);
   return (
     <>
       <TopBar>
@@ -174,8 +174,8 @@ const ClueMode = (props: ClueModeProps) => {
       </TopBar>
       <div css={{ padding: '1em' }}>
         <h4>Title</h4>
-        <input placeholder="Give your puzzle a title" value={props.title || ""} onChange={(e) => {
-          const sta: SetTitleAction = { type: "SETTITLE", value: e.target.value };
+        <input placeholder="Give your puzzle a title" value={props.title || ''} onChange={(e) => {
+          const sta: SetTitleAction = { type: 'SETTITLE', value: e.target.value };
           props.dispatch(sta);
         }} />
         <h4>Clues</h4>
@@ -193,8 +193,8 @@ const ClueMode = (props: ClueModeProps) => {
         }
       </div>
     </>
-  )
-}
+  );
+};
 
 export const Builder = (props: BuilderProps & AuthProps) => {
   const initialGrid = fromCells({
@@ -204,7 +204,7 @@ export const Builder = (props: BuilderProps & AuthProps) => {
     cells: props.grid,
     allowBlockEditing: true,
     highlighted: new Set(props.highlighted),
-    highlight: props.highlight || "circle",
+    highlight: props.highlight || 'circle',
   });
   const [state, dispatch] = useReducer(builderReducer, {
     type: 'builder',
@@ -225,7 +225,7 @@ export const Builder = (props: BuilderProps & AuthProps) => {
     publishErrors: [],
     toPublish: null,
     authorId: props.user.uid,
-    authorName: props.user.displayName || "Anonymous",
+    authorName: props.user.displayName || 'Anonymous',
     postEdit(_cellIndex) {
       return validateGrid(this);
     }
@@ -241,12 +241,12 @@ export const Builder = (props: BuilderProps & AuthProps) => {
   const currentCells = useRef(state.grid.cells);
   useEffect(() => {
     if (!WordDB.dbEncoded) {
-      throw new Error("missing db!");
+      throw new Error('missing db!');
     }
     currentCells.current = state.grid.cells;
     setAutofilledGrid([]);
     if (!worker) {
-      console.log("initializing worker");
+      console.log('initializing worker');
       worker = new AutofillWorker();
       worker.onmessage = e => {
         const data = e.data as WorkerMessage;
@@ -257,13 +257,13 @@ export const Builder = (props: BuilderProps & AuthProps) => {
         } else if (isAutofillCompleteMessage(data)) {
           setAutofillInProgress(false);
         } else {
-          console.error("unhandled msg in builder: ", e.data);
+          console.error('unhandled msg in builder: ', e.data);
         }
       };
-      let loaddb: LoadDBMessage = { type: 'loaddb', db: WordDB.dbEncoded };
+      const loaddb: LoadDBMessage = { type: 'loaddb', db: WordDB.dbEncoded };
       worker.postMessage(loaddb);
     }
-    let autofill: AutofillMessage = {
+    const autofill: AutofillMessage = {
       type: 'autofill',
       grid: state.grid.cells,
       width: state.grid.width,
@@ -275,10 +275,10 @@ export const Builder = (props: BuilderProps & AuthProps) => {
 
   const [clueMode, setClueMode] = useState(false);
   if (clueMode) {
-    return <ClueMode dispatch={dispatch} title={state.title} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />
+    return <ClueMode dispatch={dispatch} title={state.title} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
   }
-  return <GridMode user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />
-}
+  return <GridMode user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
+};
 
 interface GridModeProps {
   user: firebase.User,
@@ -292,13 +292,13 @@ interface GridModeProps {
   setClueMode: (val: boolean) => void,
 }
 const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => {
-  const [muted, setMuted] = usePersistedBoolean("muted", false);
+  const [muted, setMuted] = usePersistedBoolean('muted', false);
 
   const physicalKeyboardHandler = useCallback((e: KeyboardEvent) => {
     if (e.metaKey || e.altKey || e.ctrlKey) {
       return;  // This way you can still do apple-R and such
     }
-    const kpa: KeypressAction = { type: "KEYPRESS", key: e.key, shift: e.shiftKey };
+    const kpa: KeypressAction = { type: 'KEYPRESS', key: e.key, shift: e.shiftKey };
     dispatch(kpa);
     e.preventDefault();
   }, [dispatch]);
@@ -308,14 +308,14 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
   let right = <></>;
   let tiny = <></>;
   const doCrossesWork = useCallback((entryIndex: number, word: string) => {
-    let successFailureEntries = new Map<number, Map<number, [string, string]>>();
+    const successFailureEntries = new Map<number, Map<number, [string, string]>>();
     const entry = state.grid.entries[entryIndex];
     let successFailure = successFailureEntries.get(entryIndex);
     if (successFailure === undefined) {
       successFailure = new Map<number, [string, string]>();
       successFailureEntries.set(entryIndex, successFailure);
     }
-    const crosses = getCrosses(state.grid, entry)
+    const crosses = getCrosses(state.grid, entry);
     let j = -1;
     for (let i = 0; i < entry.cells.length; i += 1) {
       j += 1;
@@ -338,7 +338,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
       }
       let crossSuccessFailure = successFailure.get(i);
       if (crossSuccessFailure === undefined) {
-        crossSuccessFailure = ["", ""];
+        crossSuccessFailure = ['', ''];
       }
       const [succeeding, failing] = crossSuccessFailure;
       if (failing.indexOf(word[j]) !== -1) {
@@ -348,7 +348,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         continue;
       }
       let crossPattern = '';
-      for (let crossCell of cross.cells) {
+      for (const crossCell of cross.cells) {
         if (crossCell.row === entry.cells[i].row && crossCell.col === entry.cells[i].col) {
           crossPattern += word[j];
         } else {
@@ -365,11 +365,11 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
     }
     return true;
   }, [state.grid]);
-  for (let entry of entryAndCrossAtPosition(state.grid, state.active)) {
+  for (const entry of entryAndCrossAtPosition(state.grid, state.active)) {
     if (entry !== null) {
       let matches: Array<[string, number]>;
-      let pattern = "";
-      let crosses = getCrosses(state.grid, entry);
+      let pattern = '';
+      const crosses = getCrosses(state.grid, entry);
       for (let index = 0; index < entry.cells.length; index += 1) {
         const cell = entry.cells[index];
         const val = valAt(state.grid, cell);
@@ -379,7 +379,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
           val.length === 1 &&
           cross.entryIndex !== null &&
           !state.grid.entries[cross.entryIndex].completedWord) {
-          pattern += " ";
+          pattern += ' ';
         } else {
           pattern += val;
         }
@@ -414,11 +414,11 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
     }
     const dbpuzzle = state.toPublish;
     publishInProgress.current = true;
-    console.log("Uploading");
+    console.log('Uploading');
     console.log(dbpuzzle);
     const db = App.firestore();
-    db.collection("c").add(dbpuzzle).then(async (ref) => {
-      console.log("Uploaded", ref.id);
+    db.collection('c').add(dbpuzzle).then(async (ref) => {
+      console.log('Uploaded', ref.id);
 
       const authoredPuzzle: AuthoredPuzzleT = [dbpuzzle.ca, dbpuzzle.t];
       await updateInCache({
@@ -429,30 +429,30 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         sendToDB: true
       });
 
-      const forStorage: TimestampedPuzzleT = { downloadedAt: TimestampClass.now(), data: dbpuzzle }
+      const forStorage: TimestampedPuzzleT = { downloadedAt: TimestampClass.now(), data: dbpuzzle };
       sessionStorage.setItem('c/' + ref.id, JSON.stringify(forStorage));
-      Router.push("/preview/" + ref.id);
+      Router.push('/preview/' + ref.id);
     });
   }, [state.toPublish, props.user.uid]);
 
   const keyboardHandler = useCallback((key: string) => {
-    const kpa: KeypressAction = { type: "KEYPRESS", key: key, shift: false };
+    const kpa: KeypressAction = { type: 'KEYPRESS', key: key, shift: false };
     dispatch(kpa);
   }, [dispatch]);
 
   const topBar = useMemo(() => {
     let autofillIcon = <SpinnerDisabled />;
-    let autofillText = "Autofill disabled";
+    let autofillText = 'Autofill disabled';
     if (props.autofillEnabled) {
       if (props.autofillInProgress) {
         autofillIcon = <SpinnerWorking />;
-        autofillText = "Autofill in progress";
+        autofillText = 'Autofill in progress';
       } else if (props.autofilledGrid.length) {
         autofillIcon = <SpinnerFinished />;
-        autofillText = "Autofill complete";
+        autofillText = 'Autofill complete';
       } else {
         autofillIcon = <SpinnerFailed />;
-        autofillText = "Couldn't autofill this grid";
+        autofillText = 'Couldn\'t autofill this grid';
       }
     }
     return <TopBar>
@@ -462,26 +462,26 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         <h4>Grid status</h4>
         <div>{state.gridIsComplete ? <FaRegCheckCircle /> : <FaRegCircle />} All cells should be filled</div>
         <div>{state.hasNoShortWords ? <FaRegCheckCircle /> : <FaRegCircle />} All words should be at least three letters</div>
-        <div>{state.repeats.size > 0 ? <><FaRegCircle /> ({Array.from(state.repeats).sort().join(", ")})</> : <FaRegCheckCircle />} No words should be repeated</div>
+        <div>{state.repeats.size > 0 ? <><FaRegCircle /> ({Array.from(state.repeats).sort().join(', ')})</> : <FaRegCheckCircle />} No words should be repeated</div>
         <h4>Fill</h4>
         <div>Number of words: {numEntries}</div>
         <div>Mean word length: {averageLength.toPrecision(3)}</div>
       </TopBarDropDown>
       <TopBarDropDown icon={<SymmetryIcon type={state.symmetry} />} text="Symmetry">
         <TopBarDropDownLink icon={<SymmetryRotational />} text="Rotational Symmetry" onClick={() => {
-          const a: SymmetryAction = { type: "CHANGESYMMETRY", symmetry: Symmetry.Rotational };
+          const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Rotational };
           dispatch(a);
         }} />
         <TopBarDropDownLink icon={<SymmetryHorizontal />} text="Horizontal Symmetry" onClick={() => {
-          const a: SymmetryAction = { type: "CHANGESYMMETRY", symmetry: Symmetry.Horizontal };
+          const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Horizontal };
           dispatch(a);
         }} />
         <TopBarDropDownLink icon={<SymmetryVertical />} text="Vertical Symmetry" onClick={() => {
-          const a: SymmetryAction = { type: "CHANGESYMMETRY", symmetry: Symmetry.Vertical };
+          const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Vertical };
           dispatch(a);
         }} />
         <TopBarDropDownLink icon={<SymmetryNone />} text="No Symmetry" onClick={() => {
-          const a: SymmetryAction = { type: "CHANGESYMMETRY", symmetry: Symmetry.None };
+          const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.None };
           dispatch(a);
         }} />
       </TopBarDropDown>
@@ -491,15 +491,15 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
           dispatch(a);
         }} />
         <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
-          const a: KeypressAction = { type: "KEYPRESS", key: 'Escape', shift: false };
+          const a: KeypressAction = { type: 'KEYPRESS', key: 'Escape', shift: false };
           dispatch(a);
         }} />
-        <TopBarDropDownLink icon={state.grid.highlight === "circle" ? <FaRegCircle /> : <FaFillDrip />} text="Toggle Square Highlight" shortcutHint={<BacktickKey />} onClick={() => {
-          const a: KeypressAction = { type: "KEYPRESS", key: '`', shift: false };
+        <TopBarDropDownLink icon={state.grid.highlight === 'circle' ? <FaRegCircle /> : <FaFillDrip />} text="Toggle Square Highlight" shortcutHint={<BacktickKey />} onClick={() => {
+          const a: KeypressAction = { type: 'KEYPRESS', key: '`', shift: false };
           dispatch(a);
         }} />
-        <TopBarDropDownLink icon={state.grid.highlight === "circle" ? <FaFillDrip /> : <FaRegCircle />} text={state.grid.highlight === "circle" ? "Use Shade for Highlights" : "Use Circle for Highlights"} onClick={() => {
-          const a: SetHighlightAction = { type: "SETHIGHLIGHT", highlight: state.grid.highlight === "circle" ? "shade" : "circle" };
+        <TopBarDropDownLink icon={state.grid.highlight === 'circle' ? <FaFillDrip /> : <FaRegCircle />} text={state.grid.highlight === 'circle' ? 'Use Shade for Highlights' : 'Use Circle for Highlights'} onClick={() => {
+          const a: SetHighlightAction = { type: 'SETHIGHLIGHT', highlight: state.grid.highlight === 'circle' ? 'shade' : 'circle' };
           dispatch(a);
         }} />
         {
@@ -511,16 +511,16 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         {
           props.isAdmin ?
             <>
-              <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: "TOGGLEKEYBOARD" })} />
-              <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: "TOGGLETABLET" })} />
+              <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: 'TOGGLEKEYBOARD' })} />
+              <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: 'TOGGLETABLET' })} />
               <Link href='/admin'><TopBarDropDownLink icon={<FaUserLock />} text="Admin" /></Link>
             </>
             :
-            ""
+            ''
         }
         <Link href='/account'><TopBarDropDownLink icon={<FaUser />} text="Account" /></Link>
       </TopBarDropDown>
-    </TopBar>
+    </TopBar>;
   }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, averageLength, dispatch, muted, numEntries, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled]);
 
   return (
@@ -528,16 +528,16 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
       {topBar}
 
       {state.isEnteringRebus ?
-        <RebusOverlay showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ""}
+        <RebusOverlay showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ''}
       {state.publishErrors.length ?
-        <Overlay showingKeyboard={false} closeCallback={() => dispatch({ type: "CLEARPUBLISHERRORS" })}>
+        <Overlay showingKeyboard={false} closeCallback={() => dispatch({ type: 'CLEARPUBLISHERRORS' })}>
           <>
             <div>Please fix the following errors and try publishing again:</div>
             <ul>
               {state.publishErrors.map((s, i) => <li key={i}>{s}</li>)}
             </ul>
           </>
-        </Overlay> : ""}
+        </Overlay> : ''}
       <SquareAndCols
         muted={muted}
         showKeyboard={state.showKeyboard}
@@ -555,7 +555,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
               dispatch={dispatch}
               allowBlockEditing={true}
               autofill={props.autofillEnabled ? props.autofilledGrid : []}
-            />
+            />;
           }
         }
         left={left}
@@ -563,5 +563,5 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         tinyColumn={<TinyNav dispatch={dispatch}>{tiny}</TinyNav>}
       />
     </>
-  )
-}
+  );
+};

@@ -21,7 +21,7 @@ export default ({ Component, pageProps }: AppProps) => {
     if (user && user.email) {
       user.getIdTokenResult()
         .then((idTokenResult) => {
-          if (!!idTokenResult.claims.admin) {
+          if (idTokenResult.claims.admin) {
             setIsAdmin(true);
           } else {
             setIsAdmin(false);
@@ -49,4 +49,4 @@ export default ({ Component, pageProps }: AppProps) => {
       </AuthContext.Provider>
     </CrosshareAudioContext.Provider>
   );
-}
+};

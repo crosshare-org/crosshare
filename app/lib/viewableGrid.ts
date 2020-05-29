@@ -18,7 +18,7 @@ export interface ViewableGrid<Entry extends ViewableEntry> extends GridBase<Entr
   cellLabels: Map<number, number>,
   allowBlockEditing: boolean,
   highlighted: Set<number>,
-  highlight: "circle" | "shade",
+  highlight: 'circle' | 'shade',
   mapper(entry: ViewableEntry): Entry,
 }
 
@@ -137,8 +137,8 @@ export function advancePosition<Entry extends ViewableEntry>(grid: ViewableGrid<
     return pos;
   }
   for (let offset = 0; offset < entry.cells.length; offset += 1) {
-    let cell = entry.cells[(index + offset + 1) % entry.cells.length];
-    if (valAt(grid, cell) === " " || wrongCells.has(cellIndex(grid, cell))) {
+    const cell = entry.cells[(index + offset + 1) % entry.cells.length];
+    if (valAt(grid, cell) === ' ' || wrongCells.has(cellIndex(grid, cell))) {
       return { ...cell, dir: pos.dir };
     }
   }
@@ -180,8 +180,8 @@ export function moveToNextEntry<Entry extends ViewableEntry>(grid: ViewableGrid<
     }
     const tryEntry = grid.entries[grid.sortedEntries[index]];
     if (tryEntry.completedWord === null) {
-      for (let cell of tryEntry.cells) {
-        if (valAt(grid, cell) === " ") {
+      for (const cell of tryEntry.cells) {
+        if (valAt(grid, cell) === ' ') {
           return { ...cell, dir: tryEntry.direction };
         }
       }
@@ -200,7 +200,7 @@ export function moveToNextEntry<Entry extends ViewableEntry>(grid: ViewableGrid<
 export function gridWithNewChar<Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>>(grid: Grid, pos: Position, char: string, sym: Symmetry): Grid {
   const index = pos.row * grid.width + pos.col;
-  let cells = [...grid.cells];
+  const cells = [...grid.cells];
   if (valAt(grid, pos) === BLOCK) {
     if (!grid.allowBlockEditing) {
       return grid;
@@ -209,17 +209,17 @@ export function gridWithNewChar<Entry extends ViewableEntry,
     if (sym === Symmetry.Rotational) {
       const flipped = (grid.height - pos.row - 1) * grid.width + (grid.width - pos.col - 1);
       if (cells[flipped] === BLOCK) {
-        cells[flipped] = " ";
+        cells[flipped] = ' ';
       }
     } else if (sym === Symmetry.Horizontal) {
       const flipped = (grid.height - pos.row - 1) * grid.width + pos.col;
       if (cells[flipped] === BLOCK) {
-        cells[flipped] = " ";
+        cells[flipped] = ' ';
       }
     } else if (sym === Symmetry.Vertical) {
       const flipped = pos.row * grid.width + (grid.width - pos.col - 1);
       if (cells[flipped] === BLOCK) {
-        cells[flipped] = " ";
+        cells[flipped] = ' ';
       }
     }
   }
@@ -234,7 +234,7 @@ export function gridWithBlockToggled<Entry extends ViewableEntry,
     char = ' ';
   }
   const index = pos.row * grid.width + pos.col;
-  let cells = [...grid.cells];
+  const cells = [...grid.cells];
   cells[index] = char;
 
   if (sym === Symmetry.Rotational) {
@@ -269,8 +269,8 @@ export function getClueMap<Entry extends ViewableEntry,
 }
 
 function cluesByDirection(rawClues: Array<ClueT>) {
-  let clues = [new Map<number, string>(), new Map<number, string>()];
-  for (let clue of rawClues) {
+  const clues = [new Map<number, string>(), new Map<number, string>()];
+  for (const clue of rawClues) {
     clues[clue.dir].set(clue.num, clue.clue);
   }
   return clues;
@@ -278,13 +278,13 @@ function cluesByDirection(rawClues: Array<ClueT>) {
 
 export function addClues<Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>>(
-    grid: Grid, rawClues: Array<ClueT>): CluedGrid {
+  grid: Grid, rawClues: Array<ClueT>): CluedGrid {
   const clues = cluesByDirection(rawClues);
 
   function mapper(e: Entry): CluedEntry {
-    let clue = clues[e.direction].get(e.labelNumber);
+    const clue = clues[e.direction].get(e.labelNumber);
     if (!clue) {
-      throw new Error("Can't find clue for " + e.labelNumber + " " + e.direction);
+      throw new Error('Can\'t find clue for ' + e.labelNumber + ' ' + e.direction);
     }
     return { ...e, clue };
   }
@@ -298,18 +298,18 @@ export function addClues<Entry extends ViewableEntry,
 
 export function fromCells<Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>>(
-    input: Omit<Grid, "entries" | "entriesByCell" | "sortedEntries" | "cellLabels">
-  ): Grid {
+  input: Omit<Grid, 'entries' | 'entriesByCell' | 'sortedEntries' | 'cellLabels'>
+): Grid {
 
   const [baseEntries, entriesByCell] = entriesFromCells(input.width, input.height, input.cells);
 
-  let cellLabels = new Map<number, number>();
+  const cellLabels = new Map<number, number>();
   let currentCellLabel = 1;
   const entries: Array<Entry> = [];
   for (const baseEntry of baseEntries) {
     const startPos = baseEntry.cells[0];
     const i = startPos.row * input.width + startPos.col;
-    let entryLabel = cellLabels.get(i) || currentCellLabel;
+    const entryLabel = cellLabels.get(i) || currentCellLabel;
     if (!cellLabels.has(i)) {
       cellLabels.set(i, currentCellLabel);
       currentCellLabel += 1;

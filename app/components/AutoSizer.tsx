@@ -10,7 +10,7 @@ declare global {
 interface Size {
   height: number,
   width: number,
-};
+}
 
 interface Props {
   /** Function responsible for rendering children. */
@@ -20,14 +20,14 @@ interface Props {
 interface State {
   height: number,
   width: number,
-};
+}
 
 type ResizeHandler = (element: HTMLElement, onResize: () => void) => void;
 
 interface DetectElementResize {
   addResizeListener: ResizeHandler,
   removeResizeListener: ResizeHandler,
-};
+}
 
 export default class AutoSizer extends PureComponent<Props, State> {
   static defaultProps = {
@@ -118,8 +118,8 @@ export default class AutoSizer extends PureComponent<Props, State> {
       const paddingTop = parseInt(style.paddingTop, 10) || 0;
       const paddingBottom = parseInt(style.paddingBottom, 10) || 0;
 
-      let newHeight = height - paddingTop - paddingBottom;
-      let newWidth = width - paddingLeft - paddingRight;
+      const newHeight = height - paddingTop - paddingBottom;
+      const newWidth = width - paddingLeft - paddingRight;
 
       if (
         (this.state.height !== newHeight) ||

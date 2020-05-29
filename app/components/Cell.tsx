@@ -14,7 +14,7 @@ type CellProps = {
   isBlock: boolean,
   active: boolean,
   entryCell: boolean,
-  highlight: "circle" | "shade" | undefined,
+  highlight: 'circle' | 'shade' | undefined,
   value: string,
   number: string,
   row: number,
@@ -26,11 +26,11 @@ type CellProps = {
 }
 
 export const Cell = memo(function Cell(props: CellProps) {
-  let bg = "var(--white)";
+  let bg = 'var(--white)';
   if (props.isBlock && props.active) {
-    bg = "repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px," + PRIMARY + " 10px," + PRIMARY + " 20px);"
+    bg = 'repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px,' + PRIMARY + ' 10px,' + PRIMARY + ' 20px);';
   } else if (props.isBlock) {
-    bg = "var(--cell-wall)";
+    bg = 'var(--cell-wall)';
   } else if (props.active) {
     bg = PRIMARY;
   } else if (props.entryCell) {
@@ -79,7 +79,7 @@ export const Cell = memo(function Cell(props: CellProps) {
                   top: '-0.1em',
                   fontSize: '1.2em',
                   color: 'var(--verified)',
-                }}><FaEye /></div> : ""}
+                }}><FaEye /></div> : ''}
               {props.number}</div>
             <div css={{
               color: props.isVerified ? 'var(--verified)' : (props.value.trim() ? 'var(--black)' : 'var(--autofill)'),
@@ -95,7 +95,7 @@ export const Cell = memo(function Cell(props: CellProps) {
                   top: '-0.1em',
                   color: ERROR_COLOR,
                   fontSize: '1em',
-                }}><FaSlash /></div> : ""}
+                }}><FaSlash /></div> : ''}
               {props.highlight === 'circle' ?
                 <div css={{
                   zIndex: 0,
@@ -106,7 +106,7 @@ export const Cell = memo(function Cell(props: CellProps) {
                   bottom: 0,
                   border: '1px solid var(--black)',
                   borderRadius: '50%',
-                }}></div> : ""}
+                }}></div> : ''}
               {props.highlight === 'shade' ?
                 <div css={{
                   position: 'absolute',
@@ -115,13 +115,13 @@ export const Cell = memo(function Cell(props: CellProps) {
                   right: 0,
                   bottom: 0,
                   backgroundColor: 'var(--shade-highlight)',
-                }}></div> : ""}
+                }}></div> : ''}
               <div css={{
                 fontSize: 1.0 / Math.max(props.value.length - 0.4, 1) + 'em',
               }}>{value}</div>
             </div>
           </>
-          : ""}
+          : ''}
       </div>
     </div>
   );

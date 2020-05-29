@@ -25,7 +25,7 @@ interface GridInterfaceState {
 }
 
 interface PuzzleState extends GridInterfaceState {
-  type: "puzzle",
+  type: 'puzzle',
   grid: CluedGrid,
   answers: Array<string>,
   verifiedCells: Set<number>,
@@ -50,11 +50,11 @@ function isPuzzleState(state: GridInterfaceState): state is PuzzleState {
   return state.type === 'puzzle';
 }
 
-export interface BuilderEntry extends ViewableEntry { };
-interface BuilderGrid extends ViewableGrid<BuilderEntry> { };
+export type BuilderEntry = ViewableEntry;
+type BuilderGrid = ViewableGrid<BuilderEntry>;
 
 export interface BuilderState extends GridInterfaceState {
-  type: "builder",
+  type: 'builder',
   title: string | null,
   grid: BuilderGrid,
   gridIsComplete: boolean,
@@ -81,7 +81,7 @@ export interface KeypressAction extends PuzzleAction {
   shift: boolean,
 }
 function isKeypressAction(action: PuzzleAction): action is KeypressAction {
-  return action.type === 'KEYPRESS'
+  return action.type === 'KEYPRESS';
 }
 
 export interface SymmetryAction extends PuzzleAction {
@@ -89,7 +89,7 @@ export interface SymmetryAction extends PuzzleAction {
   symmetry: Symmetry,
 }
 export function isSymmetryAction(action: PuzzleAction): action is SymmetryAction {
-  return action.type === 'CHANGESYMMETRY'
+  return action.type === 'CHANGESYMMETRY';
 }
 
 export interface SetClueAction extends PuzzleAction {
@@ -98,7 +98,7 @@ export interface SetClueAction extends PuzzleAction {
   clue: string,
 }
 function isSetClueAction(action: PuzzleAction): action is SetClueAction {
-  return action.type === 'SETCLUE'
+  return action.type === 'SETCLUE';
 }
 
 export interface SetTitleAction extends PuzzleAction {
@@ -106,7 +106,7 @@ export interface SetTitleAction extends PuzzleAction {
   value: string,
 }
 function isSetTitleAction(action: PuzzleAction): action is SetTitleAction {
-  return action.type === 'SETTITLE'
+  return action.type === 'SETTITLE';
 }
 
 export interface SetHighlightAction extends PuzzleAction {
@@ -114,7 +114,7 @@ export interface SetHighlightAction extends PuzzleAction {
   highlight: 'circle' | 'shade',
 }
 function isSetHighlightAction(action: PuzzleAction): action is SetHighlightAction {
-  return action.type === 'SETHIGHLIGHT'
+  return action.type === 'SETHIGHLIGHT';
 }
 
 export interface ClickedFillAction extends PuzzleAction {
@@ -123,7 +123,7 @@ export interface ClickedFillAction extends PuzzleAction {
   value: string,
 }
 export function isClickedFillAction(action: PuzzleAction): action is ClickedFillAction {
-  return action.type === 'CLICKEDFILL'
+  return action.type === 'CLICKEDFILL';
 }
 
 export interface PublishAction extends PuzzleAction {
@@ -131,7 +131,7 @@ export interface PublishAction extends PuzzleAction {
   publishTimestamp: firebase.firestore.Timestamp
 }
 export function isPublishAction(action: PuzzleAction): action is PublishAction {
-  return action.type === 'PUBLISH'
+  return action.type === 'PUBLISH';
 }
 
 interface SetActiveAction extends PuzzleAction {
@@ -139,7 +139,7 @@ interface SetActiveAction extends PuzzleAction {
   newActive: PosAndDir,
 }
 function isSetActiveAction(action: PuzzleAction): action is SetActiveAction {
-  return action.type === 'SETACTIVE'
+  return action.type === 'SETACTIVE';
 }
 
 export interface ClickedEntryAction extends PuzzleAction {
@@ -147,7 +147,7 @@ export interface ClickedEntryAction extends PuzzleAction {
   entryIndex: number,
 }
 function isClickedEntryAction(action: PuzzleAction): action is ClickedEntryAction {
-  return action.type === 'CLICKEDENTRY'
+  return action.type === 'CLICKEDENTRY';
 }
 
 export interface SetActivePositionAction extends PuzzleAction {
@@ -155,7 +155,7 @@ export interface SetActivePositionAction extends PuzzleAction {
   newActive: Position,
 }
 function isSetActivePositionAction(action: PuzzleAction): action is SetActivePositionAction {
-  return action.type === 'SETACTIVEPOSITION'
+  return action.type === 'SETACTIVEPOSITION';
 }
 
 export enum Symmetry {
@@ -268,25 +268,25 @@ export function checkComplete(state: PuzzleState) {
       currentTimeWindowStart = 0;
       dismissedKeepTrying = false;
     }
-    return { ...state, filled, success, bankedSeconds, currentTimeWindowStart, dismissedKeepTrying }
+    return { ...state, filled, success, bankedSeconds, currentTimeWindowStart, dismissedKeepTrying };
   }
   return state;
 }
 
 export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, action: PuzzleAction): T {
-  if (action.type === "CHANGEDIRECTION") {
+  if (action.type === 'CHANGEDIRECTION') {
     return ({ ...state, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
   }
-  if (action.type === "TOGGLEKEYBOARD") {
+  if (action.type === 'TOGGLEKEYBOARD') {
     return ({ ...state, showKeyboard: !state.showKeyboard });
   }
-  if (action.type === "TOGGLETABLET") {
+  if (action.type === 'TOGGLETABLET') {
     return ({ ...state, isTablet: !state.isTablet });
   }
   if (isClickedEntryAction(action)) {
     const clickedEntry = state.grid.entries[action.entryIndex];
-    for (let cell of clickedEntry.cells) {
-      if (valAt(state.grid, cell) === " ") {
+    for (const cell of clickedEntry.cells) {
+      if (valAt(state.grid, cell) === ' ') {
         return ({ ...state, active: { ...cell, dir: clickedEntry.direction } });
       }
     }
@@ -302,7 +302,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
     const key = action.key;
     const shift = action.shift;
     if (key === '$') {
-      toast('🔥 This is an example pop up notification! 🔥')
+      toast('🔥 This is an example pop up notification! 🔥');
       return state;
     }
     if (key === '{num}' || key === '{abc}') {
@@ -315,14 +315,14 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       } else {
         state.grid.highlighted.add(ci);
       }
-      return ({ ...state })
+      return ({ ...state });
     }
     if (state.isEnteringRebus) {
       if (key.match(/^[A-Za-z0-9]$/)) {
         return ({ ...state, rebusValue: state.rebusValue + key.toUpperCase() });
-      } else if (key === "Backspace" || key === "{bksp}") {
-        return ({ ...state, rebusValue: state.rebusValue ? state.rebusValue.slice(0, -1) : "" });
-      } else if (key === "Enter") {
+      } else if (key === 'Backspace' || key === '{bksp}') {
+        return ({ ...state, rebusValue: state.rebusValue ? state.rebusValue.slice(0, -1) : '' });
+      } else if (key === 'Enter') {
         const ci = cellIndex(state.grid, state.active);
         if (state.isEditable(ci)) {
           if (isPuzzleState(state)) {
@@ -331,7 +331,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
             state.cellsIterationCount[ci] += 1;
           }
           const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-          state.grid = gridWithNewChar(state.grid, state.active, state.rebusValue || " ", symmetry);
+          state.grid = gridWithNewChar(state.grid, state.active, state.rebusValue || ' ', symmetry);
           state = state.postEdit(ci) as T; // TODO this is trash
         }
         return ({
@@ -339,30 +339,30 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
           active: advancePosition(state.grid, state.active, isPuzzleState(state) ? state.wrongCells : new Set()),
           isEnteringRebus: false, rebusValue: ''
         });
-      } else if (key === "Escape") {
+      } else if (key === 'Escape') {
         return ({ ...state, isEnteringRebus: false, rebusValue: '' });
       }
       return state;
     }
     if (key === '{rebus}' || key === 'Escape') {
       return ({ ...state, showExtraKeyLayout: false, isEnteringRebus: true });
-    } else if (key === " " || key === "{dir}") {
+    } else if (key === ' ' || key === '{dir}') {
       return ({ ...state, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
-    } else if (key === "{prev}") {
+    } else if (key === '{prev}') {
       return ({ ...state, active: retreatPosition(state.grid, state.active) });
-    } else if (key === "{next}") {
+    } else if (key === '{next}') {
       return ({ ...state, active: nextCell(state.grid, state.active) });
-    } else if ((key === "Tab" && !shift) || key === "{nextEntry}") {
+    } else if ((key === 'Tab' && !shift) || key === '{nextEntry}') {
       return ({ ...state, active: moveToNextEntry(state.grid, state.active) });
-    } else if ((key === "Tab" && shift) || key === "{prevEntry}") {
+    } else if ((key === 'Tab' && shift) || key === '{prevEntry}') {
       return ({ ...state, active: moveToPrevEntry(state.grid, state.active) });
-    } else if (key === "ArrowRight") {
+    } else if (key === 'ArrowRight') {
       return ({ ...state, active: { ...moveRight(state.grid, state.active), dir: Direction.Across } });
-    } else if (key === "ArrowLeft") {
+    } else if (key === 'ArrowLeft') {
       return ({ ...state, active: { ...moveLeft(state.grid, state.active), dir: Direction.Across } });
-    } else if (key === "ArrowUp") {
+    } else if (key === 'ArrowUp') {
       return ({ ...state, active: { ...moveUp(state.grid, state.active), dir: Direction.Down } });
-    } else if (key === "ArrowDown") {
+    } else if (key === 'ArrowDown') {
       return ({ ...state, active: { ...moveDown(state.grid, state.active), dir: Direction.Down } });
     } else if ((key === '.' || key === '{block}') && state.grid.allowBlockEditing) {
       const ci = cellIndex(state.grid, state.active);
@@ -386,7 +386,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
         ...state,
         active: advancePosition(state.grid, state.active, isPuzzleState(state) ? state.wrongCells : new Set()),
       });
-    } else if (key === "Backspace" || key === "{bksp}") {
+    } else if (key === 'Backspace' || key === '{bksp}') {
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
@@ -394,7 +394,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
           const elapsed = getCurrentTime(state);
           state.cellsUpdatedAt[ci] = elapsed;
         }
-        state.grid = gridWithNewChar(state.grid, state.active, " ", symmetry);
+        state.grid = gridWithNewChar(state.grid, state.active, ' ', symmetry);
         state = state.postEdit(ci) as T; // TODO this is trash
       }
       return ({
@@ -424,40 +424,40 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   if (isClickedFillAction(action)) {
     return ({ ...state, grid: gridWithEntrySet(state.grid, action.entryIndex, action.value) }.postEdit(0) as BuilderState);
   }
-  if (action.type === "CLEARPUBLISHERRORS") {
+  if (action.type === 'CLEARPUBLISHERRORS') {
     return ({ ...state, publishErrors: [] });
   }
   if (isPublishAction(action)) {
-    let errors = [];
+    const errors = [];
     if (!state.gridIsComplete) {
-      errors.push("All squares in the grid must be filled in");
+      errors.push('All squares in the grid must be filled in');
     }
     if (state.repeats.size > 0) {
-      errors.push('No words can be repeated (' + Array.from(state.repeats).sort().join(", ") + ')');
+      errors.push('No words can be repeated (' + Array.from(state.repeats).sort().join(', ') + ')');
     }
     if (!state.title) {
       errors.push('Puzzle must have a title set');
     }
-    const missingClues = state.grid.entries.filter((e) => !state.clues.has(e.completedWord || '')).map((e => e.completedWord || ""));
+    const missingClues = state.grid.entries.filter((e) => !state.clues.has(e.completedWord || '')).map((e => e.completedWord || ''));
     if (missingClues.length) {
-      errors.push("All words must have a clue set (" + Array.from(new Set(missingClues)).sort().join(", ") + ")");
+      errors.push('All words must have a clue set (' + Array.from(new Set(missingClues)).sort().join(', ') + ')');
     }
 
     if (errors.length) {
       return { ...state, publishErrors: errors };
     }
 
-    let ac: Array<string> = [];
-    let an: Array<number> = [];
-    let dc: Array<string> = [];
-    let dn: Array<number> = [];
+    const ac: Array<string> = [];
+    const an: Array<number> = [];
+    const dc: Array<string> = [];
+    const dn: Array<number> = [];
     state.grid.entries.forEach((e) => {
       if (!e.completedWord) {
-        throw new Error("Publish unfinished grid");
+        throw new Error('Publish unfinished grid');
       }
       const clue = state.clues.get(e.completedWord);
       if (!clue) {
-        throw new Error("Bad clue for " + e.completedWord);
+        throw new Error('Bad clue for ' + e.completedWord);
       }
       if (e.direction === Direction.Across) {
         ac.push(clue);
@@ -469,7 +469,7 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
     });
     const puzzle: DBPuzzleT = {
       ca: action.publishTimestamp,
-      t: state.title || "Anonymous",
+      t: state.title || 'Anonymous',
       a: state.authorId,
       n: state.authorName,
       m: false,
@@ -482,10 +482,10 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
     };
     if (state.grid.highlighted.size) {
       puzzle.hs = Array.from(state.grid.highlighted);
-      if (state.grid.highlight === "shade") {
+      if (state.grid.highlight === 'shade') {
         puzzle.s = true;
       }
-    };
+    }
     return { ...state, toPublish: puzzle };
   }
   return state;
@@ -510,29 +510,29 @@ export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleS
     state = cheat(state, CheatUnit.Puzzle, false);
     return { ...state, autocheck: !state.autocheck };
   }
-  if (action.type === "RESUMEACTION") {
+  if (action.type === 'RESUMEACTION') {
     if (state.currentTimeWindowStart !== 0) {
       return state;
     }
     return { ...state, currentTimeWindowStart: (new Date()).getTime() };
   }
-  if (action.type === "PAUSEACTION") {
+  if (action.type === 'PAUSEACTION') {
     if (state.currentTimeWindowStart === 0) {
       return state;
     }
     return { ...state, bankedSeconds: getCurrentTime(state), currentTimeWindowStart: 0 };
   }
-  if (action.type === "TICKACTION") {
+  if (action.type === 'TICKACTION') {
     return { ...state, displaySeconds: getCurrentTime(state) };
   }
-  if (action.type === "DISMISSKEEPTRYING") {
+  if (action.type === 'DISMISSKEEPTRYING') {
     const currentTimeWindowStart = state.currentTimeWindowStart || (new Date()).getTime();
     return { ...state, currentTimeWindowStart, dismissedKeepTrying: true };
   }
-  if (action.type === "DISMISSSUCCESS") {
+  if (action.type === 'DISMISSSUCCESS') {
     return { ...state, dismissedSuccess: true };
   }
-  if (action.type === "TOGGLEMODERATING") {
+  if (action.type === 'TOGGLEMODERATING') {
     return { ...state, moderating: !state.moderating };
   }
   return state;
@@ -540,7 +540,7 @@ export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleS
 
 export function validateGrid(state: BuilderState) {
   let gridIsComplete = true;
-  let repeats = new Set<string>();
+  const repeats = new Set<string>();
   let hasNoShortWords = true;
 
   for (let i = 0; i < state.grid.cells.length; i += 1) {
@@ -558,7 +558,7 @@ export function validateGrid(state: BuilderState) {
       if (state.grid.entries[i].completedWord === null) continue;
       if (i === j) continue;
       if (entryWord(state.grid, i) === entryWord(state.grid, j)) {
-        repeats.add(entryWord(state.grid, i))
+        repeats.add(entryWord(state.grid, i));
       }
     }
   }

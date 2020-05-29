@@ -39,7 +39,7 @@ export const Square = (props: SquareProps) => {
           const newHeight = height - paddingTop - paddingBottom;
           const newWidth = width - paddingLeft - paddingRight;
           setSize(Math.min(newHeight, newWidth));
-        }
+        };
         onResize();
         detectElementResize.addResizeListener(parent, onResize);
         return () => detectElementResize.removeResizeListener(parent, onResize);
@@ -54,4 +54,4 @@ export const Square = (props: SquareProps) => {
       height: size
     }}>{props.contents(size || 1)}</div>
   );
-}
+};

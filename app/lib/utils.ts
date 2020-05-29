@@ -6,11 +6,11 @@ export function timeString(elapsed: number, fixedSize: boolean): string {
     return seconds + 's';
   }
   if (hours === 0 && !fixedSize) {
-    return minutes + ':' + (seconds < 10 ? "0" : "") + seconds;
+    return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
   }
   return hours + ':' +
-    (minutes < 10 ? "0" : "") + minutes + ':' +
-    (seconds < 10 ? "0" : "") + seconds;
+    (minutes < 10 ? '0' : '') + minutes + ':' +
+    (seconds < 10 ? '0' : '') + seconds;
 }
 
 export function hslToRgb(h: number, s: number, l: number) {
@@ -19,17 +19,17 @@ export function hslToRgb(h: number, s: number, l: number) {
   if (s === 0) {
     r = g = b = l; // achromatic
   } else {
-    var hue2rgb = function hue2rgb(p: number, q: number, t: number) {
+    const hue2rgb = function hue2rgb(p: number, q: number, t: number) {
       if (t < 0) t += 1;
       if (t > 1) t -= 1;
       if (t < 1 / 6) return p + (q - p) * 6 * t;
       if (t < 1 / 2) return q;
       if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
       return p;
-    }
+    };
 
-    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    var p = 2 * l - q;
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
     r = hue2rgb(p, q, h + 1 / 3);
     g = hue2rgb(p, q, h);
     b = hue2rgb(p, q, h - 1 / 3);
@@ -41,7 +41,7 @@ export function hslToRgb(h: number, s: number, l: number) {
 export function fnv1a(input: string) {
   let hash = 2166136261;
   for (let i = 0; i < input.length; i++) {
-    let characterCode = input.charCodeAt(i);
+    const characterCode = input.charCodeAt(i);
     hash ^= characterCode;
     hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
   }

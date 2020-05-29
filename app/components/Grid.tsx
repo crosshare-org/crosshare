@@ -24,17 +24,17 @@ export const GridView = ({ showingKeyboard, active, dispatch, grid, ...props }: 
 
   const noOp = useCallback(() => undefined, []);
   const changeActive = useCallback((pos) => {
-    const a: SetActivePositionAction = { type: "SETACTIVEPOSITION", newActive: pos };
+    const a: SetActivePositionAction = { type: 'SETACTIVEPOSITION', newActive: pos };
     dispatch(a);
   }, [dispatch]);
-  const changeDirection = useCallback(() => dispatch({ type: "CHANGEDIRECTION" }), [dispatch]);
+  const changeDirection = useCallback(() => dispatch({ type: 'CHANGEDIRECTION' }), [dispatch]);
 
-  let cells = new Array<ReactNode>();
+  const cells = new Array<ReactNode>();
   for (let idx = 0; idx < grid.cells.length; idx += 1) {
     const cellValue = grid.cells[idx];
     const number = grid.cellLabels.get(idx);
     const isActive = cellIndex(grid, active) === idx;
-    var onClick = changeActive;
+    let onClick = changeActive;
     if (cellValue === BLOCK && !props.allowBlockEditing) {
       onClick = noOp;
     } else if (isActive) {
@@ -48,7 +48,7 @@ export const GridView = ({ showingKeyboard, active, dispatch, grid, ...props }: 
       active={isActive}
       entryCell={entryCells.some((p) => cellIndex(grid, p) === idx)}
       key={idx}
-      number={number ? number.toString() : ""}
+      number={number ? number.toString() : ''}
       row={Math.floor(idx / grid.width)}
       column={idx % grid.width}
       onClick={onClick}
@@ -61,4 +61,4 @@ export const GridView = ({ showingKeyboard, active, dispatch, grid, ...props }: 
     />);
   }
   return <>{cells}</>;
-}
+};

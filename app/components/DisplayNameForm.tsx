@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 export const getDisplayName = (user?: firebase.User) => {
-  return user ?.displayName || "Anonymous Crossharer";
-}
+  return user ?.displayName || 'Anonymous Crossharer';
+};
 
 export const DisplayNameForm = ({ user, onChange, onCancel }: { user: firebase.User, onChange: (newName: string) => void, onCancel?: () => void }) => {
   function sanitize(input: string) {
@@ -15,18 +15,18 @@ export const DisplayNameForm = ({ user, onChange, onCancel }: { user: firebase.U
     if (newDisplayName.trim()) {
       user.updateProfile({ displayName: newDisplayName.trim() }).then(() => {
         if (!user.displayName) {
-          throw new Error("something went wrong");
+          throw new Error('something went wrong');
         }
         onChange(user.displayName);
       });
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit}>
       <label>
         Update display name:
-          <input css={{ margin: '0 0.5em', }} type="text" value={newDisplayName} onChange={e => setNewDisplayName(sanitize(e.target.value))} />
+        <input css={{ margin: '0 0.5em', }} type="text" value={newDisplayName} onChange={e => setNewDisplayName(sanitize(e.target.value))} />
       </label>
       <input type="submit" value="Save" />
       {onCancel ?

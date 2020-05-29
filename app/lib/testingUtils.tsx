@@ -15,8 +15,8 @@ const WithAllProviders: (opts: AuthOptions) => ComponentType = (opts: AuthOption
     <AuthContext.Provider value={{ user: opts.user, isAdmin: opts.isAdmin || false, loadingUser: false, error: undefined }}>
       {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
 
 interface AuthOptions {
   user?: firebaseTypes.User,

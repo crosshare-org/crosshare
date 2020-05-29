@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { GetServerSideProps } from 'next';
 import { FaUser, FaUserLock } from 'react-icons/fa';
 import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from "io-ts/lib/PathReporter";
+import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { AuthContext } from '../components/AuthContext';
 import { DBPuzzleV } from '../lib/dbtypes';
@@ -24,33 +24,33 @@ const TTL = 20 * 60 * 1000; // 20 min
 
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async () => {
   if (lastFetched.dailymini && lastFetched.timestamp && (Date.now() - lastFetched.timestamp) < TTL) {
-    console.log("got dailymini from cache");
+    console.log('got dailymini from cache');
     return { props: { dailymini: lastFetched.dailymini } };
   }
 
   const db = App.firestore();
   return db.collection('c').where('c', '==', 'dailymini')
-    .where("p", "<", TimestampClass.now())
-    .orderBy("p", "desc").limit(1).get().then((value) => {
+    .where('p', '<', TimestampClass.now())
+    .orderBy('p', 'desc').limit(1).get().then((value) => {
       if (!value.size) {
-        return { props: {} }
+        return { props: {} };
       }
       const data = value.docs[0].data();
       const validationResult = DBPuzzleV.decode(data);
       if (isRight(validationResult)) {
-        console.log("got dailymini from db");
+        console.log('got dailymini from db');
         const dm = { id: value.docs[0].id };
         lastFetched = { dailymini: dm, timestamp: Date.now() };
         return { props: { dailymini: dm } };
       } else {
-        console.error(PathReporter.report(validationResult).join(","));
+        console.error(PathReporter.report(validationResult).join(','));
         return { props: {} };
       }
     }).catch(reason => {
       console.error(reason);
       return { props: {} };
     });
-}
+};
 
 export default ({ dailymini }: HomePageProps) => {
   const { isAdmin } = useContext(AuthContext);
@@ -81,5 +81,5 @@ export default ({ dailymini }: HomePageProps) => {
       <p><Link href='/categories/[categoryId]' as='/categories/dailymini' passHref><a>Play previous daily minis</a></Link></p>
       <p css={{ marginTop: '1em' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
     </div>
-  </>
-}
+  </>;
+};

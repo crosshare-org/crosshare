@@ -1,4 +1,4 @@
-import * as t from "io-ts";
+import * as t from 'io-ts';
 import type { WordDBT } from './WordDB';
 
 import { DBPuzzleT, CommentWithRepliesT } from '../lib/dbtypes';
@@ -6,7 +6,7 @@ import { DBPuzzleT, CommentWithRepliesT } from '../lib/dbtypes';
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
-export const BLOCK = ".";
+export const BLOCK = '.';
 
 export enum Direction {
   Across,
@@ -124,8 +124,8 @@ export function puzzleTitle(puzzle: PuzzleT) {
   let title = puzzle.title;
   if (puzzle.category === 'dailymini' && puzzle.publishTime) {
     const d = new Date(puzzle.publishTime);
-    const ds = (d.getUTCMonth() + 1) + "/" + d.getUTCDate() + "/" + d.getUTCFullYear()
-    title = "Daily Mini for " + ds;
+    const ds = (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear();
+    title = 'Daily Mini for ' + ds;
   }
   return title;
 }
@@ -141,12 +141,12 @@ function convertComments(comments: Array<CommentWithRepliesT>): Array<Comment> {
       publishTime: c.p.toMillis(),
       id: c.i,
       replies: convertComments(c.r || [])
-    }
-  })
+    };
+  });
 }
 
 export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
-  let clues: Array<ClueT> = [];
+  const clues: Array<ClueT> = [];
   for (let i = 0; i < dbPuzzle.ac.length; i += 1) {
     clues.push({ dir: Direction.Across, clue: dbPuzzle.ac[i], num: dbPuzzle.an[i] });
   }
@@ -167,7 +167,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     clues: clues,
     grid: dbPuzzle.g,
     highlighted: dbPuzzle.hs || [],
-    highlight: dbPuzzle.s ? "shade" : "circle",
+    highlight: dbPuzzle.s ? 'shade' : 'circle',
     comments: convertComments(dbPuzzle.cs || [])
   };
 }
