@@ -1,28 +1,14 @@
-import { useState } from 'react';
-import {
-  FaKeyboard, FaTabletAlt
-} from 'react-icons/fa';
-
 import { SquareAndCols } from '../components/Page';
-import { TopBar, TopBarLink } from '../components/TopBar';
+import { TopBar } from '../components/TopBar';
 
 export default () => {
-  const [showKeyboard, setShowKeyboard] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
-  const toggleKeyboard = () => setShowKeyboard(!showKeyboard);
-  const toggleTablet = () => setIsTablet(!isTablet);
   return (
     <>
-      <TopBar>
-        <TopBarLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={toggleKeyboard} />
-        <TopBarLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={toggleTablet} />
-      </TopBar>
+      <TopBar />
       <SquareAndCols
         keyboardHandler={(s) => { console.log(s); }}
         muted={false}
-        showKeyboard={showKeyboard}
         showExtraKeyLayout={false}
-        isTablet={isTablet}
         includeBlockKey={false}
         tinyColumn={<div css={{ border: '1px solid black', backgroundColor: 'red', height: '100%' }}>TINY</div>}
         square={(size: number) => <div css={{ border: '1px solid black', backgroundColor: 'blue', height: '100%' }}>{size}</div>}

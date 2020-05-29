@@ -23,7 +23,7 @@ import { AuthPropsOptional } from './AuthContext';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
-import { Position , Direction, BLOCK, PuzzleResult, puzzleTitle } from '../lib/types';
+import { Position, Direction, BLOCK, PuzzleResult, puzzleTitle } from '../lib/types';
 import { fromCells, addClues } from '../lib/viewableGrid';
 import { valAt, entryAndCrossAtPosition } from '../lib/gridBase';
 
@@ -632,22 +632,18 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   if (state.clueView) {
     puzzleView = <TwoCol
       muted={muted}
-      showKeyboard={showingKeyboard}
       keyboardHandler={keyboardHandler}
       showExtraKeyLayout={state.showExtraKeyLayout}
       includeBlockKey={false}
-      isTablet={state.isTablet}
       left={<ClueList active={state.active} valAt={ourValAt} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} />}
       right={<ClueList active={state.active} valAt={ourValAt} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} />}
     />;
   } else {
     puzzleView = <SquareAndCols
       muted={muted}
-      showKeyboard={showingKeyboard}
       keyboardHandler={keyboardHandler}
       showExtraKeyLayout={state.showExtraKeyLayout}
       includeBlockKey={false}
-      isTablet={state.isTablet}
       square={
         (size: number) => {
           return <GridView

@@ -10,7 +10,7 @@ interface CalendarProps {
   dateIsDisabled: (d: Date) => boolean
 }
 
-export function Calendar(props: CalendarProps) {
+export function Calendar(props: CalendarProps): JSX.Element {
   const today = new Date();
   const selected = props.selected || today;
   const [monthToShow, setMonthToShow] = useState(selected);
@@ -45,21 +45,27 @@ export function Calendar(props: CalendarProps) {
         padding: '0.5em 0',
         textAlign: 'center',
       }}>
-        <div css={{
+        <button css={{
+          background: 'none',
+          border: 'none',
+          textDecoration: 'none',
           flexGrow: 1,
           cursor: 'pointer'
         }} onClick={() => changeMonth(-1)}>
           {'<'}
-        </div>
+        </button>
         <div css={{
           flexGrow: 2,
         }}>{monthLabels[month]} <span>{year}</span></div>
-        <div css={{
+        <button css={{
+          background: 'none',
+          border: 'none',
+          textDecoration: 'none',
           flexGrow: 1,
           cursor: 'pointer'
         }} onClick={() => changeMonth(1)}>
           {'>'}
-        </div>
+        </button>
       </div>
       <div css={{
         width: '100%',
@@ -78,18 +84,22 @@ export function Calendar(props: CalendarProps) {
           const isDisabled = props.dateIsDisabled(d);
           const isToday = sameDate(d, today);
           const isSelected = sameDate(d, selected);
-          return <div
+          return <button
             css={{
+              background: 'none',
+              border: 'none !important',
+              textDecoration: 'none',
               display: 'inline-block',
               width: '14%',
               textAlign: 'center',
-              cursor: isDisabled ? 'default' : 'pointer',
+              cursor: isDisabled ? 'default !important' : 'pointer',
               padding: '0.5em 0',
               backgroundColor: isSelected ? 'var(--primary)' : (isToday ? 'var(--lighter)' : (isDisabled ? 'var(--secondary)' : 'var(--bg)')),
               '&:hover': {
                 backgroundColor: isSelected ? 'var(--primary)' : (isToday ? 'var(--lighter)' : 'var(--secondary)'),
               }
             }}
+            disabled={isDisabled}
             key={i}
             onClick={() => {
               if (!isDisabled) {
@@ -98,7 +108,7 @@ export function Calendar(props: CalendarProps) {
             }}
           >
             {d.getDate()}
-          </div>;
+          </button>;
         }
         )}
       </div>

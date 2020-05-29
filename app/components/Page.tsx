@@ -7,7 +7,6 @@ import { Keyboard } from './Keyboard';
 import { Square } from './Square';
 import { KeypressAction } from '../reducers/reducer';
 import {
-  heightAdjustment,
   SMALL_AND_UP, LARGE_AND_UP, TINY_COL_MIN_HEIGHT,
 } from '../lib/style';
 
@@ -61,15 +60,11 @@ interface SquareAndColsProps {
   left: ReactNode,
   right: ReactNode,
   tinyColumn?: ReactNode,
-  showKeyboard: boolean,
   keyboardHandler: (key: string) => void,
   showExtraKeyLayout: boolean,
   includeBlockKey: boolean,
-  isTablet: boolean,
 }
 export const SquareAndCols = (props: SquareAndColsProps) => {
-  const heightAdjust = heightAdjustment(props.showKeyboard);
-
   return (
     <>
       <div css={{
@@ -81,10 +76,10 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           alignItems: 'start',
         },
         flexWrap: 'nowrap',
-        minHeight: 'calc(100% - ' + heightAdjust + 'px)',
-        height: 'calc(100% - ' + heightAdjust + 'px)',
+        minHeight: 'calc(100% - var(--height-adjustment))',
+        height: 'calc(100% - var(--height-adjustment))',
       }}>
-        <Square heightAdjust={heightAdjust} contents={props.square} />
+        <Square contents={props.square} />
         <div css={{
           display: 'none',
           flex: 'auto',
@@ -131,16 +126,12 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           {props.tinyColumn}
         </div>
       </div>
-      {props.showKeyboard ?
-        <Keyboard
-          keyboardHandler={props.keyboardHandler}
-          muted={props.muted}
-          showKeyboard={props.showKeyboard}
-          showExtraKeyLayout={props.showExtraKeyLayout}
-          includeBlockKey={props.includeBlockKey}
-          isTablet={props.isTablet}
-        />
-        : ' '}
+      <Keyboard
+        keyboardHandler={props.keyboardHandler}
+        muted={props.muted}
+        showExtraKeyLayout={props.showExtraKeyLayout}
+        includeBlockKey={props.includeBlockKey}
+      />
     </>
   );
 };
@@ -149,15 +140,11 @@ interface TwoColProps {
   muted: boolean,
   left: ReactNode,
   right: ReactNode,
-  showKeyboard: boolean,
   keyboardHandler: (key: string) => void,
   showExtraKeyLayout: boolean,
   includeBlockKey: boolean,
-  isTablet: boolean,
 }
 export const TwoCol = (props: TwoColProps) => {
-  const heightAdjust = heightAdjustment(props.showKeyboard);
-
   return (
     <>
       <div css={{
@@ -165,8 +152,8 @@ export const TwoCol = (props: TwoColProps) => {
         [SMALL_AND_UP]: {
           display: 'flex',
         },
-        minHeight: 'calc(100% - ' + heightAdjust + 'px)',
-        height: 'calc(100% - ' + heightAdjust + 'px)',
+        minHeight: 'calc(100% - var(--height-adjustment))',
+        height: 'calc(100% - var(--height-adjustment))',
         overflow: 'scroll',
       }}>
         <div css={{
@@ -182,16 +169,12 @@ export const TwoCol = (props: TwoColProps) => {
           },
         }}>{props.right}</div>
       </div>
-      {props.showKeyboard ?
-        <Keyboard
-          keyboardHandler={props.keyboardHandler}
-          muted={props.muted}
-          showKeyboard={props.showKeyboard}
-          showExtraKeyLayout={props.showExtraKeyLayout}
-          includeBlockKey={props.includeBlockKey}
-          isTablet={props.isTablet}
-        />
-        : ' '}
+      <Keyboard
+        keyboardHandler={props.keyboardHandler}
+        muted={props.muted}
+        showExtraKeyLayout={props.showExtraKeyLayout}
+        includeBlockKey={props.includeBlockKey}
+      />
     </>
   );
 };

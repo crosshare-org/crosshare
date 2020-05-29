@@ -1,6 +1,6 @@
 import { useRef, Dispatch, memo, MouseEvent } from 'react';
 
-import { Position , Direction } from '../lib/types';
+import { Position, Direction } from '../lib/types';
 import { CluedEntry } from '../lib/viewableGrid';
 
 import { PuzzleAction, ClickedEntryAction } from '../reducers/reducer';
@@ -36,7 +36,7 @@ const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }:
     props.dispatch(ca);
   }
   return (
-    <li css={{
+    <li css={{ /* eslint-disable-line */
       padding: '0.5em',
       backgroundColor: (isActive ? LIGHTER : (isCross ? SECONDARY : 'none')),
       listStyleType: 'none',
@@ -96,7 +96,7 @@ interface ClueListProps {
   valAt: (pos: Position) => string,
 }
 
-export const ClueList = (props: ClueListProps) => {
+export const ClueList = (props: ClueListProps): JSX.Element => {
   const clues = props.entries.map((entry) => {
     const isActive = props.current === entry.index;
     const isCross = props.cross === entry.index;

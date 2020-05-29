@@ -260,7 +260,7 @@ function findCommentById(comments: Array<CommentOrLocalComment>, id: string): Co
   return null;
 }
 
-export const Comments = ({ comments, ...props }: CommentsProps) => {
+export const Comments = ({ comments, ...props }: CommentsProps): JSX.Element => {
   const [toShow, setToShow] = useState<Array<CommentOrLocalComment>>(comments);
   const [displayName, setDisplayName] = useState(getDisplayName(props.user));
 

@@ -26,6 +26,13 @@
   --key-ul: #b5b5b5;
   --kb-bg: #ececec;
   --kb-bg-click: #ddd;
+  --height-adjustment: 199px; /* Keyboard height + Header height */
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :root {
+    --height-adjustment: 35px; /* Header height */
+  }
 }
 
 @media (prefers-color-scheme: dark) {

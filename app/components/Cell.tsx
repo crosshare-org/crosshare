@@ -49,6 +49,7 @@ export const Cell = memo(function Cell(props: CellProps) {
       margin: 0,
       overflow: 'hidden',
     }}>
+      {/* eslint-disable-next-line */}
       <div aria-label={'cell' + props.row + 'x' + props.column} onClick={() => props.onClick({ row: props.row, col: props.column })} css={{
         userSelect: 'none',
         position: 'absolute',

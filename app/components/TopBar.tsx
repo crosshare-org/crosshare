@@ -1,11 +1,9 @@
 import { ReactNode, useState, HTMLProps, forwardRef } from 'react';
 import Link from 'next/link';
 
-import { isMobile, isIPad13 } from 'react-device-detect';
-
 import { Overlay } from './Overlay';
 import { Logo } from './Icons';
-import { PRIMARY, HEADER_HEIGHT, SMALL_AND_UP } from '../lib/style';
+import { PRIMARY, HEADER_HEIGHT, SMALL_AND_UP, HAS_PHYSICAL_KEYBOARD } from '../lib/style';
 
 export const TopBarDropDown = (props: { text: string, icon: ReactNode, children: ReactNode }) => {
   const [dropped, setDropped] = useState(false);
@@ -51,7 +49,7 @@ export const TopBarDropDownLink = forwardRef<HTMLButtonElement, TopBarDropDownLi
         display: 'inline-block',
         width: '60%',
         textAlign: 'left',
-      }}>{props.text}{!isMobile && !isIPad13 && props.shortcutHint ? <span> ( <span css={{ fontSize: HEADER_HEIGHT - 10 }}>{props.shortcutHint}</span> )</span> : ''}</div>
+      }}>{props.text}{props.shortcutHint ? <span css={{ display: 'none', [HAS_PHYSICAL_KEYBOARD]: { display: 'inline' } }}> ( <span css={{ fontSize: HEADER_HEIGHT - 10 }}>{props.shortcutHint}</span> )</span> : ''}</div>
     </button>
   );
 });

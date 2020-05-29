@@ -15,8 +15,6 @@ interface GridInterfaceState {
   type: string,
   active: PosAndDir,
   grid: ViewableGrid<ViewableEntry>,
-  showKeyboard: boolean,
-  isTablet: boolean,
   showExtraKeyLayout: boolean,
   isEnteringRebus: boolean,
   rebusValue: string,
@@ -276,12 +274,6 @@ export function checkComplete(state: PuzzleState) {
 export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, action: PuzzleAction): T {
   if (action.type === 'CHANGEDIRECTION') {
     return ({ ...state, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
-  }
-  if (action.type === 'TOGGLEKEYBOARD') {
-    return ({ ...state, showKeyboard: !state.showKeyboard });
-  }
-  if (action.type === 'TOGGLETABLET') {
-    return ({ ...state, isTablet: !state.isTablet });
   }
   if (isClickedEntryAction(action)) {
     const clickedEntry = state.grid.entries[action.entryIndex];

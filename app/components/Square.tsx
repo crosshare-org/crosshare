@@ -6,12 +6,12 @@ import {
 
 interface SquareProps {
   contents: (size: number) => ReactNode,
-  heightAdjust: number,
 }
 export const Square = (props: SquareProps) => {
-  const [size, setSize] = useState(0);
+  const [size, setSize] = useState(200);
   const squareElem = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    const heightAdjust = parseInt(window.getComputedStyle(document.documentElement).getPropertyValue('--height-adjustment'));
     const detectElementResize = createDetectElementResize(null);
     if (squareElem.current) {
       const parent = squareElem.current.parentNode;
@@ -20,13 +20,13 @@ export const Square = (props: SquareProps) => {
           const winHeight = window.innerHeight;
           const winWidth = window.innerWidth;
           let width = parent.offsetWidth || 0;
-          let maxHeight = winHeight - TINY_COL_MIN_HEIGHT - props.heightAdjust;
+          let maxHeight = winHeight - TINY_COL_MIN_HEIGHT - heightAdjust;
           let maxWidth = winWidth;
           if (width >= LARGE_BREAKPOINT) {
-            maxHeight = winHeight - props.heightAdjust;
+            maxHeight = winHeight - heightAdjust;
             maxWidth = winWidth * 0.5;
           } else if (width >= SMALL_BREAKPOINT) {
-            maxHeight = winHeight - props.heightAdjust;
+            maxHeight = winHeight - heightAdjust;
             maxWidth = winWidth * 0.66;
           }
           width = Math.min(width, maxWidth);
@@ -45,13 +45,13 @@ export const Square = (props: SquareProps) => {
         return () => detectElementResize.removeResizeListener(parent, onResize);
       }
     }
-  }, [props.heightAdjust]);
+  }, []);
 
   return (
     <div aria-label='grid' ref={squareElem} css={{
       flex: 'none',
       width: size,
       height: size
-    }}>{props.contents(size || 1)}</div>
+    }}>{props.contents(size)}</div>
   );
 };

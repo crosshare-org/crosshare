@@ -10,7 +10,7 @@ export const GoogleSignInButton = () => {
       });
   }
   return (
-    <button css={{ background: 'none', border: 'none' }}><img width='191' height='46' src='/googlesignin.png' alt="Sign in with Google" onClick={signin} /></button>
+    <input type='image' width='191' height='46' src='/googlesignin.png' alt='Sign in with Google' onClick={signin} />
   );
 };
 
@@ -21,10 +21,13 @@ export const GoogleLinkButton = ({ user }: { user: firebase.User }) => {
         console.log('linked w/o needing a merge');
         App.analytics().logEvent('login', { method: 'google' });
       })
-      .catch(async (error: any) => {
+      .catch(async (error: firebase.auth.AuthError) => {
         if (error.code !== 'auth/credential-already-in-use') {
           console.log(error);
           return;
+        }
+        if (!error.credential) {
+          throw new Error('missing new user after link');
         }
         // Get anonymous user plays
         const db = App.firestore();
@@ -57,6 +60,6 @@ export const GoogleLinkButton = ({ user }: { user: firebase.User }) => {
       });
   }
   return (
-    <button css={{ background: 'none', border: 'none' }}><img width="191" height="46" src='/googlesignin.png' alt="Sign in with Google" onClick={signin} /></button>
+    <input type='image' width='191' height='46' src='/googlesignin.png' alt='Sign in with Google' onClick={signin} />
   );
 };

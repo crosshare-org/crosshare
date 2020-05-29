@@ -5,12 +5,17 @@ import {
 import { AiOutlineEnter } from 'react-icons/ai';
 
 import { CrosshareAudioContext } from './CrosshareAudioContext';
+import { KEYBOARD_HEIGHT, SMALL_AND_UP, HAS_PHYSICAL_KEYBOARD, HAS_PHYSICAL_KEYBOARD_RULES } from '../lib/style';
 
 export const KeyRows = (props: KeyRowProps) => {
   return (
     <div css={{
+      [HAS_PHYSICAL_KEYBOARD]: {
+        display: 'none'
+      },
       fontFamily: '"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif',
       width: '100%',
+      height: KEYBOARD_HEIGHT,
       overflow: 'hidden',
       padding: '4px',
       borderRadius: '5px',
@@ -28,6 +33,9 @@ export const KeyRow = (props: KeyRowProps) => {
   return (
     <div css={{
       marginLeft: props.addMarginLeft ? '5%' : 0,
+      [SMALL_AND_UP]: {
+        marginLeft: 0
+      },
       display: 'flex',
       paddingTop: 10,
     }}>{props.children}</div>
@@ -42,13 +50,17 @@ interface KeyProps {
   largeSize?: boolean,
   smallFont?: boolean,
   backgroundColor?: string,
+  onlyOnTablet?: boolean,
+  notOnTablet?: boolean
 }
 export const Key = (props: KeyProps) => {
   return (
-    <div css={{
+    <button css={{
+      padding: 0,
+      border: 'none',
       fontSize: props.smallFont ? '90%' : '100%',
       background: props.backgroundColor ? props.backgroundColor : 'var(--key-bg)',
-      flex: props.smallSize ? '0.5 0 0 ' : (props.largeSize ? '1.6 0 0 ' : '1 0 0'),
+      flex: props.smallSize ? '0.5 1 0 ' : (props.largeSize ? '1.6 1 0 ' : '1 1 0'),
       cursor: 'pointer',
       boxShadow: '0 0 3px -1px rgba(0,0,0,.3)',
       height: '40px',
@@ -56,7 +68,10 @@ export const Key = (props: KeyProps) => {
       borderBottom: '1px solid var(--key-ul)',
       justifyContent: 'center',
       alignItems: 'center',
-      display: 'flex',
+      display: props.onlyOnTablet ? 'none' : 'flex',
+      [SMALL_AND_UP]: {
+        display: props.notOnTablet ? 'none' : 'flex',
+      },
       '&:not(:last-child)': {
         marginRight: '5px'
       },
@@ -64,27 +79,27 @@ export const Key = (props: KeyProps) => {
       '&:active': {
         background: 'var(--key-bg-click)',
       },
-    }} onClick={() => { props.onKeypress(props.keyStroke); }}>{props.display || props.keyStroke}</div>
+    }} onClick={() => { props.onKeypress(props.keyStroke); }}>{props.display || props.keyStroke}</button>
   );
 };
 
 interface KeyboardProps {
   muted: boolean,
-  showKeyboard: boolean,
   keyboardHandler: (key: string) => void,
   showExtraKeyLayout: boolean,
   includeBlockKey: boolean,
-  isTablet: boolean,
 }
-export const Keyboard = memo(function Keyboard({ muted, showKeyboard, keyboardHandler, ...props }: KeyboardProps) {
+export const Keyboard = memo(function Keyboard({ muted, keyboardHandler, ...props }: KeyboardProps) {
   const [audioContext, initAudioContext] = useContext(CrosshareAudioContext);
   const playKeystrokeSound = useRef<(() => void) | null>(null);
 
   useEffect(() => {
+    const showingKeyboard = window.matchMedia(HAS_PHYSICAL_KEYBOARD_RULES).matches;
+
     if (!audioContext) {
       return initAudioContext();
     }
-    if (!playKeystrokeSound.current && !muted && showKeyboard && audioContext) {
+    if (!playKeystrokeSound.current && !muted && showingKeyboard && audioContext) {
       fetch(`${process.env.PUBLIC_URL}/keypress.mp3`)
         .then(response => response.arrayBuffer())
         .then((buffer) => {
@@ -101,7 +116,7 @@ export const Keyboard = memo(function Keyboard({ muted, showKeyboard, keyboardHa
           });
         });
     }
-  }, [muted, showKeyboard, audioContext, initAudioContext]);
+  }, [muted, audioContext, initAudioContext]);
 
   const keypress = useCallback((key: string) => {
     if (!muted && playKeystrokeSound.current) {
@@ -150,16 +165,11 @@ export const Keyboard = memo(function Keyboard({ muted, showKeyboard, keyboardHa
         <Key keyStroke='I' onKeypress={keypress} />
         <Key keyStroke='O' onKeypress={keypress} />
         <Key keyStroke='P' onKeypress={keypress} />
-        {props.isTablet ?
-          <Key keyStroke='{bksp}' display={<FaBackspace />} onKeypress={keypress} />
-          : ''
-        }
+        <Key onlyOnTablet keyStroke='{bksp}' display={<FaBackspace />} onKeypress={keypress} />
+
       </KeyRow>
-      <KeyRow addMarginLeft={props.includeBlockKey && !props.isTablet}>
-        {props.isTablet || !props.includeBlockKey ?
-          <Key keyStroke='{prev}' smallSize={true} display={<FaAngleLeft />} onKeypress={keypress} />
-          : ''
-        }
+      <KeyRow addMarginLeft={props.includeBlockKey}>
+        <Key onlyOnTablet={props.includeBlockKey} keyStroke='{prev}' smallSize={true} display={<FaAngleLeft />} onKeypress={keypress} />
         <Key keyStroke='A' onKeypress={keypress} />
         <Key keyStroke='S' onKeypress={keypress} />
         <Key keyStroke='D' onKeypress={keypress} />
@@ -173,21 +183,12 @@ export const Keyboard = memo(function Keyboard({ muted, showKeyboard, keyboardHa
           <Key keyStroke='{block}' backgroundColor="var(--cell-wall)" smallSize={true} display=" " onKeypress={keypress} />
           : ''
         }
-        {props.isTablet ?
-          <Key keyStroke='{dir}' smallSize={props.includeBlockKey} display={<AiOutlineEnter />} onKeypress={keypress} />
-          : ''
-        }
-        {props.isTablet || !props.includeBlockKey ?
-          <Key keyStroke='{next}' smallSize={true} display={<FaAngleRight />} onKeypress={keypress} />
-          : ''
-        }
+        <Key onlyOnTablet keyStroke='{dir}' smallSize={props.includeBlockKey} display={<AiOutlineEnter />} onKeypress={keypress} />
+        <Key onlyOnTablet={props.includeBlockKey} keyStroke='{next}' smallSize={true} display={<FaAngleRight />} onKeypress={keypress} />
       </KeyRow>
       <KeyRow>
-        {props.isTablet ?
-          <Key keyStroke='{prevEntry}' display={<FaAngleDoubleLeft />} onKeypress={keypress} />
-          :
-          <Key keyStroke='{num}' smallFont={true} largeSize={true} display="More" onKeypress={keypress} />
-        }
+        <Key onlyOnTablet keyStroke='{prevEntry}' display={<FaAngleDoubleLeft />} onKeypress={keypress} />
+        <Key notOnTablet keyStroke='{num}' smallFont={true} largeSize={true} display="More" onKeypress={keypress} />
         <Key keyStroke='Z' onKeypress={keypress} />
         <Key keyStroke='X' onKeypress={keypress} />
         <Key keyStroke='C' onKeypress={keypress} />
@@ -195,15 +196,10 @@ export const Keyboard = memo(function Keyboard({ muted, showKeyboard, keyboardHa
         <Key keyStroke='B' onKeypress={keypress} />
         <Key keyStroke='N' onKeypress={keypress} />
         <Key keyStroke='M' onKeypress={keypress} />
-        {props.isTablet ?
-          <>
-            <Key keyStroke='{num}' display="More" onKeypress={keypress} />
-            <Key keyStroke='{rebus}' display="Rebus" onKeypress={keypress} />
-            <Key keyStroke='{nextEntry}' display={<FaAngleDoubleRight />} onKeypress={keypress} />
-          </>
-          :
-          <Key keyStroke='{bksp}' largeSize={true} display={<FaBackspace />} onKeypress={keypress} />
-        }
+        <Key onlyOnTablet keyStroke='{num}' display="More" onKeypress={keypress} />
+        <Key onlyOnTablet keyStroke='{rebus}' display="Rebus" onKeypress={keypress} />
+        <Key onlyOnTablet keyStroke='{nextEntry}' display={<FaAngleDoubleRight />} onKeypress={keypress} />
+        <Key notOnTablet keyStroke='{bksp}' largeSize={true} display={<FaBackspace />} onKeypress={keypress} />
       </KeyRow>
     </KeyRows>
   );

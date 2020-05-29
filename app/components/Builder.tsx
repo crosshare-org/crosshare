@@ -545,10 +545,8 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         </Overlay> : ''}
       <SquareAndCols
         muted={muted}
-        showKeyboard={state.showKeyboard}
         keyboardHandler={keyboardHandler}
         showExtraKeyLayout={state.showExtraKeyLayout}
-        isTablet={state.isTablet}
         includeBlockKey={true}
         square={
           (size: number) => {

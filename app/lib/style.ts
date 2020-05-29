@@ -7,11 +7,6 @@ export const LIGHTER = 'var(--lighter)';
 export const SECONDARY = 'var(--secondary)';
 export const ERROR_COLOR = 'var(--error)';
 
-export function heightAdjustment(includeKeyboard: boolean): number {
-  const keyboardHeight = includeKeyboard ? KEYBOARD_HEIGHT : 0;
-  return keyboardHeight + HEADER_HEIGHT;
-}
-
 export const buttonAsLink = css`
   background: none!important;
   border: none;
@@ -30,3 +25,5 @@ export const SMALL_BREAKPOINT = 576;
 export const LARGE_BREAKPOINT = 992;
 export const SMALL_AND_UP = '@media (min-width: ' + SMALL_BREAKPOINT + 'px)';
 export const LARGE_AND_UP = '@media (min-width: ' + LARGE_BREAKPOINT + 'px)';
+export const HAS_PHYSICAL_KEYBOARD_RULES = '(hover: hover) and (pointer: fine)';
+export const HAS_PHYSICAL_KEYBOARD = '@media ' + HAS_PHYSICAL_KEYBOARD_RULES;
