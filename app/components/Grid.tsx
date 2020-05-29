@@ -7,7 +7,6 @@ import { ViewableGrid, ViewableEntry } from '../lib/viewableGrid';
 import { cellIndex, getEntryCells } from '../lib/gridBase';
 
 type GridViewProps = {
-  showingKeyboard: boolean,
   grid: ViewableGrid<ViewableEntry>,
   active: PosAndDir,
   dispatch: Dispatch<PuzzleAction>,
@@ -19,7 +18,7 @@ type GridViewProps = {
   squareSize: number,
 }
 
-export const GridView = ({ showingKeyboard, active, dispatch, grid, ...props }: GridViewProps) => {
+export const GridView = ({ active, dispatch, grid, ...props }: GridViewProps) => {
   const entryCells = getEntryCells(grid, active);
 
   const noOp = useCallback(() => undefined, []);
@@ -43,7 +42,6 @@ export const GridView = ({ showingKeyboard, active, dispatch, grid, ...props }: 
     cells.push(<Cell
       gridSize={props.squareSize}
       autofill={props.autofill ? props.autofill[idx] : ''}
-      showingKeyboard={showingKeyboard}
       gridWidth={grid.width}
       active={isActive}
       entryCell={entryCells.some((p) => cellIndex(grid, p) === idx)}

@@ -10,7 +10,7 @@ export const TopBarDropDown = (props: { text: string, icon: ReactNode, children:
   return (
     <>
       <TopBarLink onClick={() => setDropped(!dropped)} text={props.text} icon={props.icon} />
-      <Overlay onClick={() => setDropped(false)} showingKeyboard={false} closeCallback={() => setDropped(false)} hidden={!dropped}>
+      <Overlay onClick={() => setDropped(false)} closeCallback={() => setDropped(false)} hidden={!dropped}>
         {props.children}
       </Overlay>
     </>

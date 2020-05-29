@@ -5,7 +5,6 @@ import {
 
 import Link from 'next/link';
 import NextJSRouter from 'next/router';
-import { isMobile, isTablet, isIPad13 } from 'react-device-detect';
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt,
   FaKeyboard, FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip, FaUserLock
@@ -217,8 +216,6 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     title: props.title || null,
     active: { col: 0, row: 0, dir: Direction.Across },
     grid: initialGrid,
-    showKeyboard: isMobile || isIPad13,
-    isTablet: isTablet || isIPad13,
     showExtraKeyLayout: false,
     isEnteringRebus: false,
     rebusValue: '',
@@ -533,9 +530,9 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
       {topBar}
 
       {state.isEnteringRebus ?
-        <RebusOverlay showingKeyboard={state.showKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ''}
+        <RebusOverlay dispatch={dispatch} value={state.rebusValue} /> : ''}
       {state.publishErrors.length ?
-        <Overlay showingKeyboard={false} closeCallback={() => dispatch({ type: 'CLEARPUBLISHERRORS' })}>
+        <Overlay closeCallback={() => dispatch({ type: 'CLEARPUBLISHERRORS' })}>
           <>
             <div>Please fix the following errors and try publishing again:</div>
             <ul>
@@ -552,7 +549,6 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
           (size: number) => {
             return <GridView
               squareSize={size}
-              showingKeyboard={state.showKeyboard}
               grid={state.grid}
               active={state.active}
               dispatch={dispatch}

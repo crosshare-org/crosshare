@@ -2,7 +2,7 @@ import { IoMdCloseCircleOutline, } from 'react-icons/io';
 
 import { KEYBOARD_HEIGHT } from '../lib/style';
 
-export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCallback?: () => void, showingKeyboard: boolean, children: React.ReactNode }) => {
+export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCallback?: () => void, showKeyboard?: boolean, children: React.ReactNode }) => {
   return (<div onClick={props.onClick || (() => undefined)} css={{
     display: props.hidden ? 'none' : 'block',
     position: 'fixed',
@@ -12,7 +12,7 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
     width: '100%',
     overflowY: 'scroll',
     overscrollBehavior: 'contain',
-    height: props.showingKeyboard ? 'calc(100% - ' + KEYBOARD_HEIGHT + 'px)' : '100%',
+    height: props.showKeyboard ? 'calc(100% - ' + KEYBOARD_HEIGHT + 'px)' : '100%',
     zIndex: 10000
   }}>
     <div css={{

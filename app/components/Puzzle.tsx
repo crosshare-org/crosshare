@@ -4,7 +4,6 @@ import {
 } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { isMobile, isTablet, isIPad13 } from 'react-device-detect';
 import {
   FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt,
   FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock,
@@ -65,13 +64,13 @@ interface PauseBeginProps {
 const BeginPauseOverlay = (props: PauseBeginProps) => {
   const warnings: Array<ReactNode> = [];
   if (!props.moderated) {
-    warnings.push(<div key="moderation">The puzzle is awaiting moderation. We'll get to it ASAP! If you feel it's taking too long please message us on the google group.</div>);
+    warnings.push(<div key="moderation">The puzzle is awaiting moderation. We&apos;ll get to it ASAP! If you feel it&apos;s taking too long please message us on the google group.</div>);
   }
   if (props.publishTime && props.publishTime > new Date()) {
     warnings.push(<div key="publishtime">The puzzle has been scheduled for publishing on {props.publishTime.toLocaleDateString()}</div>);
   }
   return (
-    <Overlay showingKeyboard={false} closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: 'RESUMEACTION' })}>
+    <Overlay closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: 'RESUMEACTION' })}>
       <div css={{ textAlign: 'center' }}>
         {warnings.length ?
           <div css={{
@@ -83,7 +82,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
             padding: '1em',
             color: ERROR_COLOR
           }}>
-            <div>Your puzzle isn't visible to others yet:</div>
+            <div>Your puzzle isn&apos;t visible to others yet:</div>
             {warnings}
           </div>
           :
@@ -147,7 +146,7 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
   }
 
   return (
-    <Overlay showingKeyboard={false} closeCallback={() => dispatch({ type: 'TOGGLEMODERATING' })}>
+    <Overlay closeCallback={() => dispatch({ type: 'TOGGLEMODERATING' })}>
       <h4>Moderate this Puzzle</h4>
       <div>{puzzle.moderated ? 'Puzzle has been approved' : 'Puzzle is not approved'}</div>
       {isMini ?
@@ -171,9 +170,9 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
 
 const KeepTryingOverlay = ({ dispatch }: { dispatch: Dispatch<PuzzleAction> }) => {
   return (
-    <Overlay showingKeyboard={false} closeCallback={() => dispatch({ type: 'DISMISSKEEPTRYING' })}>
+    <Overlay closeCallback={() => dispatch({ type: 'DISMISSKEEPTRYING' })}>
       <h4><Emoji symbol='🤔' /> Almost there!</h4>
-      <p>You've completed the puzzle, but there are one or more mistakes.</p>
+      <p>You&apos;ve completed the puzzle, but there are one or more mistakes.</p>
       <button css={{ width: '100%' }} onClick={() => dispatch({ type: 'DISMISSKEEPTRYING' })}>Keep Trying</button>
     </Overlay>
   );
@@ -188,7 +187,7 @@ const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
 
 const SuccessOverlay = (props: { user?: firebase.User, puzzle: PuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
   return (
-    <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
+    <Overlay closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
       <div css={{ textAlign: 'center' }}>
         <h4><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
         <p>You solved the puzzle in <b>{timeString(props.solveTime, false)}</b></p>
@@ -213,9 +212,9 @@ const SuccessOverlay = (props: { user?: firebase.User, puzzle: PuzzleResult, nex
   );
 };
 
-export const RebusOverlay = (props: { showingKeyboard: boolean, value: string, dispatch: Dispatch<KeypressAction> }) => {
+export const RebusOverlay = (props: { value: string, dispatch: Dispatch<KeypressAction> }) => {
   return (
-    <Overlay showingKeyboard={props.showingKeyboard} closeCallback={() => {
+    <Overlay showKeyboard closeCallback={() => {
       const escape: KeypressAction = { type: 'KEYPRESS', key: 'Escape', shift: false };
       props.dispatch(escape);
     }}>
@@ -261,8 +260,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       highlighted: new Set(puzzle.highlighted),
       highlight: puzzle.highlight,
     }), puzzle.clues),
-    showKeyboard: isMobile || isIPad13,
-    isTablet: isTablet || isIPad13,
     showExtraKeyLayout: false,
     answers: puzzle.grid,
     verifiedCells: new Set<number>(play ? play.vc : []),
@@ -286,7 +283,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     cellsEverMarkedWrong: new Set<number>(play ? play.we : []),
     isEditable(cellIndex) { return !this.verifiedCells.has(cellIndex) && !this.success; },
     postEdit(cellIndex) {
-      let state = this;
+      let state = this; // eslint-disable-line @typescript-eslint/no-this-alias
       state.wrongCells.delete(cellIndex);
       if (state.autocheck) {
         state = cheat(state, CheatUnit.Square, false);
@@ -360,7 +357,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           dateToTest.setHours(12);
           let ds = getDateString(dateToTest);
           if (puzzle.id === minis ?.[ds] && !state.didCheat) {
-            while (true) {
+            for (; ;) {
               consecutiveDailyMinis += 1;
               dateToTest.setDate(dateToTest.getDate() - 1);
               ds = getDateString(dateToTest);
@@ -404,7 +401,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
               }
             }
             if (firstOfTheDay) {
-              while (true) {
+              for (; ;) {
                 consecutiveSolveDays += 1;
                 dateToTest.setDate(dateToTest.getDate() - 1);
                 ds = getDateString(dateToTest);
@@ -586,11 +583,9 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
 
   useEffect(() => {
     return () => {
-      if (props.user) {
-        writePlayToDBIfNeeded();
-      }
+      writePlayToDBIfNeeded();
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // useEffect(() => {
   //   function handleBeforeUnload() {
@@ -620,7 +615,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
 
-  const showingKeyboard = state.showKeyboard && !state.success;
   const beginPauseProps = { loadingPlayState: loadingPlayState, authorName: puzzle.authorName, title: title, dispatch: dispatch, moderated: puzzle.moderated, publishTime: (puzzle.publishTime ? new Date(puzzle.publishTime) : undefined) };
 
   let puzzleView: ReactNode;
@@ -648,7 +642,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         (size: number) => {
           return <GridView
             squareSize={size}
-            showingKeyboard={showingKeyboard}
             grid={state.grid}
             active={state.active}
             dispatch={dispatch}
@@ -753,7 +746,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         {dropdownMenus}
       </TopBar>
       {state.isEnteringRebus ?
-        <RebusOverlay showingKeyboard={showingKeyboard} dispatch={dispatch} value={state.rebusValue} /> : ''}
+        <RebusOverlay dispatch={dispatch} value={state.rebusValue} /> : ''}
       {state.filled && !state.success && !state.dismissedKeepTrying ?
         <KeepTryingOverlay dispatch={dispatch} />
         : ''}

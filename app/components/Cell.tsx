@@ -8,7 +8,6 @@ import {
 
 type CellProps = {
   autofill: string,
-  showingKeyboard: boolean,
   gridWidth: number,
   gridSize: number,
   isBlock: boolean,
