@@ -1,8 +1,9 @@
 import { IoMdCloseCircleOutline, } from 'react-icons/io';
 
-import { KEYBOARD_HEIGHT } from '../lib/style';
+import { HAS_PHYSICAL_KEYBOARD, KEYBOARD_HEIGHT } from '../lib/style';
 
 export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCallback?: () => void, showKeyboard?: boolean, children: React.ReactNode }) => {
+  // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
   return (<div onClick={props.onClick || (() => undefined)} css={{
     display: props.hidden ? 'none' : 'block',
     position: 'fixed',
@@ -13,6 +14,9 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
     overflowY: 'scroll',
     overscrollBehavior: 'contain',
     height: props.showKeyboard ? 'calc(100% - ' + KEYBOARD_HEIGHT + 'px)' : '100%',
+    [HAS_PHYSICAL_KEYBOARD]: {
+      height: '100%',
+    },
     zIndex: 10000
   }}>
     <div css={{
