@@ -488,7 +488,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       ch: state.didCheat,
       f: state.success,
     };
-  }, [loadingPlayState, puzzle.id, state.cellsEverMarkedWrong,
+  }, [loadingPlayState, play, puzzle.id, state.cellsEverMarkedWrong,
     state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
     state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
     state.wrongCells, title, state.bankedSeconds, state.currentTimeWindowStart]);
@@ -534,7 +534,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     ]).then(() => {
       currentPlayCacheState.current = currentPlayState;
     });
-  }, [playState.current, title]);
+  }, [puzzle.id, playState.current, title]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const shouldUpdatePlaysInDB = useRef(state.success ? false : true);
   const currentPlayDBState = useRef<PlayWithoutUserT | null>(null);
@@ -579,7 +579,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         validator: UserPlaysV,
         sendToDB: true
       })]).then(() => { console.log('Finished writing play state to db'); });
-  }, []);
+  }, [props.user, puzzle.id, title]);
 
   useEffect(() => {
     return () => {

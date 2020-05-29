@@ -2,6 +2,7 @@ import { AutofillResultMessage, AutofillCompleteMessage, WorkerMessage, isLoadDB
 import { Autofiller } from './Autofiller';
 import { transformDb, setDb } from './WordDB';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ctx: Worker = self as any;
 
 const msgChannel = new MessageChannel();
@@ -37,4 +38,5 @@ ctx.onmessage = (e) => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default null as any;

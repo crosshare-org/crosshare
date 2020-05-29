@@ -17,7 +17,7 @@ export const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
     if (!minis) {
       return !props.disableExisting;
     }
-    if (minis.hasOwnProperty(getDateString(ts))) {
+    if (Object.prototype.hasOwnProperty.call(minis, getDateString(ts))) {
       return props.disableExisting;
     }
     return !props.disableExisting;
