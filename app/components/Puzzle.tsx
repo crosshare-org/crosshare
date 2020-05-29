@@ -52,6 +52,7 @@ export interface NextPuzzleLink {
 }
 
 interface PauseBeginProps {
+  loadingPlayState: boolean,
   title: string,
   authorName: string,
   dispatch: Dispatch<PuzzleAction>,
@@ -70,7 +71,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
     warnings.push(<div key="publishtime">The puzzle has been scheduled for publishing on {props.publishTime.toLocaleDateString()}</div>)
   }
   return (
-    <Overlay showingKeyboard={false} closeCallback={() => props.dispatch({ type: "RESUMEACTION" })}>
+    <Overlay showingKeyboard={false} closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: "RESUMEACTION" })}>
       <div css={{ textAlign: 'center' }}>
         {warnings.length ?
           <div css={{
@@ -90,8 +91,14 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
         }
         <h3>{props.title}</h3>
         <h4>by {props.authorName}</h4>
-        <div css={{ marginBottom: '1em' }}>{props.message}</div>
-        <button onClick={() => props.dispatch({ type: "RESUMEACTION" })}>{props.dismissMessage}</button>
+        {props.loadingPlayState ?
+          <div>Checking for previous play data...</div>
+          :
+          <>
+            <div css={{ marginBottom: '1em' }}>{props.message}</div>
+            <button onClick={() => props.dispatch({ type: "RESUMEACTION" })}>{props.dismissMessage}</button>
+          </>
+        }
       </div>
     </Overlay>
   );
@@ -238,9 +245,10 @@ export const RebusOverlay = (props: { showingKeyboard: boolean, value: string, d
 interface PuzzleProps {
   puzzle: PuzzleResult,
   play: PlayWithoutUserT | null,
+  loadingPlayState: boolean,
   nextPuzzle?: NextPuzzleLink
 }
-export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOptional) => {
+export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps & AuthPropsOptional) => {
   const [state, dispatch] = useReducer(puzzleReducer, {
     type: 'puzzle',
     active: { col: 0, row: 0, dir: Direction.Across },
@@ -427,6 +435,10 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
   }
 
   const physicalKeyboardHandler = useCallback((e: KeyboardEvent) => {
+    // disable keyboard when paused / loading play
+    if (loadingPlayState || !state.currentTimeWindowStart) {
+      return;
+    }
     const tagName = (e.target as HTMLElement) ?.tagName ?.toLowerCase();
     if (tagName === 'textarea' || tagName === 'input') {
       return;
@@ -437,7 +449,7 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
     const kpa: KeypressAction = { type: "KEYPRESS", key: e.key, shift: e.shiftKey };
     dispatch(kpa);
     e.preventDefault();
-  }, [dispatch]);
+  }, [dispatch, loadingPlayState, state.currentTimeWindowStart]);
   useEventListener('keydown', physicalKeyboardHandler);
 
   let [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
@@ -452,6 +464,14 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
 
   const playState = useRef<PlayWithoutUserT>();
   useEffect(() => {
+    if (loadingPlayState) {
+      playState.current = undefined;
+      return;
+    }
+    if (!playState.current && play) {
+      playState.current = play;
+      return;
+    }
     const updatedAt = TimestampClass.now();
     const playTime = (state.currentTimeWindowStart === 0) ?
       state.bankedSeconds :
@@ -471,10 +491,10 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
       ch: state.didCheat,
       f: state.success,
     }
-  }, [puzzle.id, state.cellsEverMarkedWrong,
-  state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
-  state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
-  state.wrongCells, title, state.bankedSeconds, state.currentTimeWindowStart]);
+  }, [loadingPlayState, puzzle.id, state.cellsEverMarkedWrong,
+      state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
+      state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
+      state.wrongCells, title, state.bankedSeconds, state.currentTimeWindowStart]);
 
   const shouldUpdatePlaysInCache = useRef(state.success ? false : true);
   const currentPlayCacheState = useRef<PlayWithoutUserT | null>(null);
@@ -601,7 +621,7 @@ export const Puzzle = ({ puzzle, play, ...props }: PuzzleProps & AuthPropsOption
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
 
   const showingKeyboard = state.showKeyboard && !state.success;
-  const beginPauseProps = { authorName: puzzle.authorName, title: title, dispatch: dispatch, moderated: puzzle.moderated, publishTime: (puzzle.publishTime ? new Date(puzzle.publishTime) : undefined) };
+  const beginPauseProps = { loadingPlayState: loadingPlayState, authorName: puzzle.authorName, title: title, dispatch: dispatch, moderated: puzzle.moderated, publishTime: (puzzle.publishTime ? new Date(puzzle.publishTime) : undefined) };
 
   let puzzleView: ReactNode;
 

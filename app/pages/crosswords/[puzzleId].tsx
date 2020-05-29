@@ -64,66 +64,59 @@ export default ({ puzzle, nextPuzzle }: PuzzlePageProps) => {
   if (!puzzle) {
     return <Error statusCode={404} title="No puzzle found" />;
   }
-  return <UserLoader key={puzzle.id} puzzle={puzzle} nextPuzzle={nextPuzzle} />
+  return <PlayLoader key={puzzle.id} puzzle={puzzle} nextPuzzle={nextPuzzle} />
 };
 
-const UserLoader = ({ puzzle, nextPuzzle }: { puzzle: PuzzleResult, nextPuzzle?: NextPuzzleLink }) => {
+const PlayLoader = ({ puzzle, nextPuzzle }: { puzzle: PuzzleResult, nextPuzzle?: NextPuzzleLink }) => {
   const { user, isAdmin, loadingUser, error } = useContext(AuthContext);
-  if (loadingUser) {
-    return <div></div>;
-  }
-  if (error) {
-    return <div>Error loading user: {error}</div>;
-  }
-  if (!user) {
-    let play: PlayWithoutUserT | null = null;
-    if (typeof window !== 'undefined') {
+  const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
+  const [playError, setPlayError] = useState<string | null>(null);
+  const [loadingPlay, setLoadingPlay] = useState(true);
+
+  useEffect(() => {
+    setPlay(null);
+    setPlayError(null);
+    setLoadingPlay(true);
+
+    if (loadingUser || error) {
+      return;
+    }
+
+    if (!user) {
+      let play: PlayWithoutUserT | null = null;
       play = getFromSession({
         collection: 'p',
         localDocId: puzzle.id,
         validator: PlayWithoutUserV,
         ttl: -1
       });
-    }
-    return <Puzzle key={puzzle.id} puzzle={puzzle} play={play} isAdmin={false} nextPuzzle={nextPuzzle} />
-  }
-  return <PlayLoader key={puzzle.id} puzzle={puzzle} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />
-}
-
-const PlayLoader = ({ puzzle, user, isAdmin, nextPuzzle }: { puzzle: PuzzleResult, user: firebase.User, isAdmin: boolean, nextPuzzle?: NextPuzzleLink }) => {
-  const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoadingPlay, setIsLoadingPlay] = useState(true);
-
-  useEffect(() => {
-    setPlay(null);
-    setError(null);
-    setIsLoadingPlay(true);
-
-    getFromSessionOrDB({
-      collection: 'p',
-      docId: puzzle.id + "-" + user.uid,
-      localDocId: puzzle.id,
-      validator: PlayWithoutUserV,
-      ttl: -1
-    })
-      .then(play => {
-        setPlay(play);
-        setIsLoadingPlay(false);
+      setPlay(play);
+      setLoadingPlay(false);
+    } else {
+      getFromSessionOrDB({
+        collection: 'p',
+        docId: puzzle.id + "-" + user.uid,
+        localDocId: puzzle.id,
+        validator: PlayWithoutUserV,
+        ttl: -1
       })
-      .catch((e) => {
-        console.error(e);
-        setError(typeof e === 'string' ? e : 'error loading play');
-      });
-  }, [puzzle, user]);
+        .then(play => {
+          setPlay(play);
+          setLoadingPlay(false);
+        })
+        .catch((e) => {
+          console.error(e);
+          setPlayError(typeof e === 'string' ? e : 'error loading play');
+        });
+    }
+  }, [puzzle, user, loadingUser, error]);
 
   if (error) {
-    return <div>Something went wrong: {error}</div>
+    return <><p>Error loading user: {error}</p><p>Please refresh the page to try again.</p></>;
+  }
+  if (playError) {
+    return <><p>Error loading play: {playError}</p><p>Please refresh the page to try again.</p></>;
   }
 
-  if (isLoadingPlay) {
-    return <div></div>
-  }
-
-  return <Puzzle key={puzzle.id} puzzle={puzzle} play={play} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />
+  return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={loadingUser || loadingPlay} play={play} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />
 }

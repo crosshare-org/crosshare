@@ -42,7 +42,7 @@ const testPuzzle: PuzzleResult = {
 
 test("clicking a clue sets slot to active", () => {
   const { getAllByText, getByLabelText } = render(
-    <Puzzle puzzle={testPuzzle} play={null} isAdmin={false} />,
+    <Puzzle loadingPlayState={false} puzzle={testPuzzle} play={null} isAdmin={false} />,
     {}
   );
 
@@ -96,7 +96,7 @@ test("daily mini from 5/19/20", () => {
     queryByText,
     getAllByText,
     container,
-  } = render(<Puzzle puzzle={dailymini_5_19} play={null} isAdmin={false} />, {});
+  } = render(<Puzzle puzzle={dailymini_5_19} play={null} loadingPlayState={false} isAdmin={false} />, {});
 
   fireEvent.click(getByText(/Begin Puzzle/i));
   expect(queryByText(/Begin Puzzle/i)).toBeNull();

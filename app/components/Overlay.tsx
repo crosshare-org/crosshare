@@ -2,7 +2,7 @@ import { IoMdCloseCircleOutline, } from 'react-icons/io';
 
 import { KEYBOARD_HEIGHT } from '../lib/style'
 
-export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCallback: () => void, showingKeyboard: boolean, children: React.ReactNode }) => {
+export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCallback?: () => void, showingKeyboard: boolean, children: React.ReactNode }) => {
   return (<div onClick={props.onClick || (() => undefined)} css={{
     display: props.hidden ? 'none' : 'block',
     position: 'fixed',
@@ -23,19 +23,22 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
       backgroundColor: 'var(--overlay-inner)',
       margin: '5em auto',
     }}>
-      <button css={{
-        background: 'var(--overlay-inner)',
-        color: 'var(--text)',
-        border: 'none',
-        position: 'absolute',
-        padding: 0,
-        fontSize: '3em',
-        verticalAlign: 'text-top',
-        width: '1em',
-        height: '1em',
-        top: 0,
-        right: 0,
-      }} onClick={props.closeCallback}><IoMdCloseCircleOutline css={{ position: 'absolute', top: 0, right: 0 }} /></button>
+      {props.closeCallback ?
+        <button css={{
+          background: 'var(--overlay-inner)',
+          color: 'var(--text)',
+          border: 'none',
+          position: 'absolute',
+          padding: 0,
+          fontSize: '3em',
+          verticalAlign: 'text-top',
+          width: '1em',
+          height: '1em',
+          top: 0,
+          right: 0,
+        }} onClick={props.closeCallback}><IoMdCloseCircleOutline css={{ position: 'absolute', top: 0, right: 0 }} /></button>
+        :
+        ''}
       {props.children}
     </div>
   </div>);
