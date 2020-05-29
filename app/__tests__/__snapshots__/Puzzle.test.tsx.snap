@@ -39,11 +39,6 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
 }
 
 .emotion-8 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -59,11 +54,6 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
 }
 
 .emotion-20 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -79,11 +69,6 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
 }
 
 .emotion-25 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -99,11 +84,6 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
 }
 
 .emotion-30 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -119,11 +99,6 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
 }
 
 .emotion-91 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -139,11 +114,6 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
 }
 
 .emotion-18 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -159,11 +129,6 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
 }
 
 .emotion-37 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -179,11 +144,6 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
 }
 
 .emotion-3 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -814,11 +774,6 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
 }
 
 .emotion-8 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -834,11 +789,6 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
 }
 
 .emotion-20 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -854,11 +804,6 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
 }
 
 .emotion-25 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -874,11 +819,6 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
 }
 
 .emotion-30 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -894,11 +834,6 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
 }
 
 .emotion-91 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -914,11 +849,6 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
 }
 
 .emotion-18 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -934,11 +864,6 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
 }
 
 .emotion-37 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -954,11 +879,6 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
 }
 
 .emotion-3 {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
