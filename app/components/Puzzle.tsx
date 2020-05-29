@@ -23,10 +23,10 @@ import { AuthPropsOptional } from './AuthContext';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
-import { Position } from '../lib/types';
+import { Position , Direction, BLOCK, PuzzleResult, puzzleTitle } from '../lib/types';
 import { fromCells, addClues } from '../lib/viewableGrid';
 import { valAt, entryAndCrossAtPosition } from '../lib/gridBase';
-import { Direction, BLOCK, PuzzleResult, puzzleTitle } from '../lib/types';
+
 import {
   PlayWithoutUserT, PlayWithoutUserV, PlayV, getDateString, UserPlayT, UserPlaysV, CategoryIndexV
 } from '../lib/dbtypes';

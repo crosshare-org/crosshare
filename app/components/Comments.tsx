@@ -3,7 +3,7 @@ import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
-import { PartialBy } from '../lib/types';
+import { PartialBy, Comment } from '../lib/types';
 import { Identicon } from './Icons';
 import { timeString } from '../lib/utils';
 import { Emoji } from './Emoji';
@@ -11,9 +11,7 @@ import { buttonAsLink } from '../lib/style';
 import { DisplayNameForm, getDisplayName } from './DisplayNameForm';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { CommentForModerationT, CommentForModerationWithIdV, CommentForModerationWithIdT } from '../lib/dbtypes';
-import {
-  Comment
-} from '../lib/types';
+
 
 const COMMENT_LENGTH_LIMIT = 140;
 

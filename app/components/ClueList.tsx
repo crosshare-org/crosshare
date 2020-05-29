@@ -1,8 +1,8 @@
 import { useRef, Dispatch, memo, MouseEvent } from 'react';
 
-import { Position } from '../lib/types';
+import { Position , Direction } from '../lib/types';
 import { CluedEntry } from '../lib/viewableGrid';
-import { Direction } from '../lib/types';
+
 import { PuzzleAction, ClickedEntryAction } from '../reducers/reducer';
 import { SECONDARY, LIGHTER } from '../lib/style';
 
