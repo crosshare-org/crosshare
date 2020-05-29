@@ -33,6 +33,18 @@
     "@typescript-eslint"
   ],
   "rules": {
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        "components": ["Link"]
+      }
+    ],
+    "jsx-a11y/anchor-has-content": [
+      "error",
+      {
+        "components": ["Link"]
+      }
+    ],
     "react/display-name": "off",
     "react/react-in-jsx-scope": "off",
     "indent": [

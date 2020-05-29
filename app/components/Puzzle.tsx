@@ -3,7 +3,6 @@ import {
   KeyboardEvent, Dispatch, memo, ReactNode
 } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
 import {
   FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt,
   FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock,
@@ -12,6 +11,7 @@ import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { toast } from 'react-toastify';
 
+import { Link } from './Link';
 import { ClueList } from './ClueList';
 import {
   EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle,
@@ -35,7 +35,7 @@ import {
   PuzzleAction, CheatUnit, CheatAction, KeypressAction,
   ToggleAutocheckAction, ToggleClueViewAction
 } from '../reducers/reducer';
-import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDown } from './TopBar';
+import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TwoCol, TinyNav } from './Page';
 import { ERROR_COLOR } from '../lib/style';
 import { usePersistedBoolean } from '../lib/hooks';
@@ -182,7 +182,7 @@ const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {
     return <>End of the line, partner</>;
   }
-  return (<Link href='/crosswords/[puzzleId]' as={`/crosswords/${nextPuzzle.puzzleId}`} passHref><a>Play {nextPuzzle.linkText}</a></Link>);
+  return (<Link href='/crosswords/[puzzleId]' as={`/crosswords/${nextPuzzle.puzzleId}`} passHref>Play {nextPuzzle.linkText}</Link>);
 };
 
 const SuccessOverlay = (props: { user?: firebase.User, puzzle: PuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
@@ -716,18 +716,16 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
               <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: 'TOGGLEKEYBOARD' })} />
               <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: 'TOGGLETABLET' })} />
               <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: 'TOGGLEMODERATING' })} />
-              <Link href='/admin'><TopBarDropDownLink icon={<FaUserLock />} text="Admin" /></Link>
+              <TopBarDropDownLinkA href='/admin' icon={<FaUserLock />} text="Admin" />
             </>
             : ''
         }
         {
           props.isAdmin || props.user ?.uid === puzzle.authorId ?
-            <Link href='/crosswords/[puzzleId]/stats' as={`/crosswords/${puzzle.id}/stats`} passHref>
-              <TopBarDropDownLink icon={<IoMdStats />} text="Stats" />
-            </Link>
+            <TopBarDropDownLinkA href='/crosswords/[puzzleId]/stats' as={`/crosswords/${puzzle.id}/stats`} icon={<IoMdStats />} text="Stats" />
             : ''
         }
-        <Link href='/account'><TopBarDropDownLink icon={<FaUser />} text="Account" /></Link>
+        <TopBarDropDownLinkA href='/account' icon={<FaUser />} text="Account" />
       </TopBarDropDown>
     </>
   ), [state.autocheck, muted, props.isAdmin, props.user ?.uid, puzzle, setMuted]);

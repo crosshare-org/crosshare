@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
 import { GetServerSideProps } from 'next';
 import { FaUser, FaUserLock } from 'react-icons/fa';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
+import { Link } from '../components/Link';
 import { AuthContext } from '../components/AuthContext';
 import { DBPuzzleV } from '../lib/dbtypes';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
@@ -77,8 +77,8 @@ export default ({ dailymini }: HomePageProps) => {
         Crosshare is a new community for crossword constructors.
         We are just getting started so please let us know if you have any issues or suggestions.
       </p>
-      <p><Link href='/crosswords/[puzzleId]' as={`/crosswords/${dailymini.id}`} passHref><a>Play today's daily mini crossword</a></Link></p>
-      <p><Link href='/categories/[categoryId]' as='/categories/dailymini' passHref><a>Play previous daily minis</a></Link></p>
+      <p><Link href='/crosswords/[puzzleId]' as={`/crosswords/${dailymini.id}`} passHref>Play today&apos;s daily mini crossword</Link></p>
+      <p><Link href='/categories/[categoryId]' as='/categories/dailymini' passHref>Play previous daily minis</Link></p>
       <p css={{ marginTop: '1em' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
     </div>
   </>;
