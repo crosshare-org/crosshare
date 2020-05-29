@@ -31,7 +31,7 @@ interface DetectElementResize {
 
 export default class AutoSizer extends PureComponent<Props, State> {
   static defaultProps = {
-    onResize: () => { },
+    onResize: (): void => { /* noop */ },
     disableHeight: false,
     disableWidth: false,
     style: {},
@@ -46,7 +46,7 @@ export default class AutoSizer extends PureComponent<Props, State> {
   _autoSizer?: HTMLElement;
   _detectElementResize?: DetectElementResize;
 
-  componentDidMount() {
+  componentDidMount(): void {
     if (
       this._autoSizer &&
       this._autoSizer.parentNode &&
@@ -74,7 +74,7 @@ export default class AutoSizer extends PureComponent<Props, State> {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     if (this._detectElementResize && this._parentNode) {
       this._detectElementResize.removeResizeListener(
         this._parentNode,
@@ -83,7 +83,7 @@ export default class AutoSizer extends PureComponent<Props, State> {
     }
   }
 
-  render() {
+  render(): JSX.Element {
     const { height, width } = this.state;
 
     // Outer div should not force width/height since that may prevent containers from shrinking.
@@ -103,7 +103,7 @@ export default class AutoSizer extends PureComponent<Props, State> {
     );
   }
 
-  _onResize = () => {
+  _onResize = (): void => {
     if (this._parentNode) {
       // Guard against AutoSizer component being removed from the DOM immediately after being added.
       // This can result in invalid style values which can result in NaN values if we don't handle them.
@@ -133,7 +133,7 @@ export default class AutoSizer extends PureComponent<Props, State> {
     }
   };
 
-  _setRef = (autoSizer: HTMLDivElement) => {
+  _setRef = (autoSizer: HTMLDivElement): void => {
     this._autoSizer = autoSizer;
   };
 }

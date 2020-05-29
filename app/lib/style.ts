@@ -7,7 +7,7 @@ export const LIGHTER = 'var(--lighter)';
 export const SECONDARY = 'var(--secondary)';
 export const ERROR_COLOR = 'var(--error)';
 
-export function heightAdjustment(includeKeyboard: boolean) {
+export function heightAdjustment(includeKeyboard: boolean): number {
   const keyboardHeight = includeKeyboard ? KEYBOARD_HEIGHT : 0;
   return keyboardHeight + HEADER_HEIGHT;
 }

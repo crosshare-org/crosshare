@@ -9,7 +9,7 @@ import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
 
 import '../lib/style.css';
 
-export default ({ Component, pageProps }: AppProps) => {
+export default ({ Component, pageProps }: AppProps): JSX.Element => {
   let [user, loadingUser, error] = useAuthState(App.auth());
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -37,6 +37,7 @@ export default ({ Component, pageProps }: AppProps) => {
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const initAudioContext = useCallback(() => {
     if (!audioContext) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const constructor = window.AudioContext || (window as any).webkitAudioContext;
       setAudioContext(new constructor());
     }

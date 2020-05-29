@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { ReactNode, createContext, useContext } from 'react';
 import Error from 'next/error';
 
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
@@ -27,7 +27,7 @@ function renderLoginIfNeeded({ user, loadingUser, error }: AuthContextValue): Re
       <>
         <TopBar />
         <div css={{ margin: '1em', }}>
-          <p>Please sign-in with your Google account to continue. We use your account to keep track of the puzzles you've played and your solve streaks.</p>
+          <p>Please sign-in with your Google account to continue. We use your account to keep track of the puzzles you&apos;ve played and your solve streaks.</p>
           <GoogleSignInButton />
         </div>
       </>
@@ -38,7 +38,7 @@ function renderLoginIfNeeded({ user, loadingUser, error }: AuthContextValue): Re
       <>
         <TopBar />
         <div css={{ margin: '1em', }}>
-          <p>Please sign-in with your Google account to continue. We use your account to keep track of the puzzles you've played and your solve streaks.</p>
+          <p>Please sign-in with your Google account to continue. We use your account to keep track of the puzzles you&apos;ve played and your solve streaks.</p>
           <GoogleLinkButton user={user} />
         </div>
       </>
@@ -49,7 +49,7 @@ function renderLoginIfNeeded({ user, loadingUser, error }: AuthContextValue): Re
 
 /* Ensure we have a non-anonymous user, upgrading an anonymous user if we have one. */
 export function requiresAuth<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
-  return (props: Optionalize<T, AuthProps>) => {
+  return (props: Optionalize<T, AuthProps>): ReactNode => {
     const ctx = useContext(AuthContext);
     const login = renderLoginIfNeeded(ctx);
     if (login) {
@@ -61,7 +61,7 @@ export function requiresAuth<T extends AuthProps>(WrappedComponent: React.Compon
 
 /* Ensure we have an admin user, upgrading an anonymous user if we have one. */
 export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.ComponentType<T>) {
-  return (props: Optionalize<T, AuthProps>) => {
+  return (props: Optionalize<T, AuthProps>): ReactNode => {
     const ctx = useContext(AuthContext);
     const login = renderLoginIfNeeded(ctx);
     if (login) {

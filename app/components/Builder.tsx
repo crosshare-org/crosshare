@@ -4,7 +4,7 @@ import {
 } from 'react';
 
 import Link from 'next/link';
-import Router from 'next/router';
+import NextJSRouter from 'next/router';
 import { isMobile, isTablet, isIPad13 } from 'react-device-detect';
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt,
@@ -27,7 +27,7 @@ import { getCrosses, valAt, entryAndCrossAtPosition } from '../lib/gridBase';
 import { fromCells, getClueMap } from '../lib/viewableGrid';
 import { TimestampedPuzzleT, AuthoredPuzzleT, AuthoredPuzzlesV } from '../lib/dbtypes';
 import { updateInCache } from '../lib/dbUtils';
-import { Direction, PuzzleT } from '../lib/types';
+import { Direction, PuzzleT, isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from '../lib/types';
 import {
   Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
   KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
@@ -36,8 +36,9 @@ import {
 import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav } from './Page';
 import { RebusOverlay } from './Puzzle';
+// eslint-disable-next-line import/no-unresolved
 import AutofillWorker from 'worker-loader?name=static/[hash].worker.js!../lib/autofill.worker';
-import { isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from '../lib/types';
+
 import * as WordDB from '../lib/WordDB';
 import { Overlay } from './Overlay';
 import { usePersistedBoolean } from '../lib/hooks';
@@ -48,7 +49,7 @@ let worker: Worker;
 type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 type BuilderProps = WithOptional<Omit<PuzzleT, 'comments' | 'category' | 'authorId' | 'authorName' | 'moderated' | 'publishTime'>, 'clues' | 'title' | 'highlighted' | 'highlight'>
 
-export const BuilderDBLoader = (props: BuilderProps & AuthProps) => {
+export const BuilderDBLoader = (props: BuilderProps & AuthProps): JSX.Element => {
   const [ready, setReady] = useState(false);
   WordDB.initializeOrBuild(setReady);
   if (ready) {
@@ -69,7 +70,12 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
     props.dispatch({ type: 'CLICKEDFILL', entryIndex: props.entryIndex, value: props.value[0] });
   }
   return (
-    <div css={{
+    <button css={{
+      background: 'none',
+      border: 'none',
+      textDecoration: 'none',
+      color: 'var(--text)',
+      width: '100%',
       padding: '0.5em 1em',
       cursor: 'pointer',
       '&:hover': {
@@ -80,7 +86,7 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
       fontWeight: props.isGoodSuggestion(props.entryIndex, props.value[0]) ? 'bold' : 'normal',
     }} onClick={click}>
       {props.value[0]}
-    </div>
+    </button>
   );
 };
 
@@ -187,7 +193,7 @@ const ClueMode = (props: ClueModeProps) => {
           </table>
           :
           <>
-            <p>This where you come to set clues for your puzzle, but you don't have any completed fill words yet!</p>
+            <p>This where you come to set clues for your puzzle, but you don&apos;t have any completed fill words yet!</p>
             <p>Go back to <button css={buttonAsLink} onClick={(e) => { props.exitClueMode(); e.preventDefault(); }}>the grid</button> and fill in one or more words completely. Then come back here and make some clues.</p>
           </>
         }
@@ -196,7 +202,7 @@ const ClueMode = (props: ClueModeProps) => {
   );
 };
 
-export const Builder = (props: BuilderProps & AuthProps) => {
+export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   const initialGrid = fromCells({
     mapper: (e) => e,
     width: props.size.cols,
@@ -271,7 +277,7 @@ export const Builder = (props: BuilderProps & AuthProps) => {
     };
     setAutofillInProgress(true);
     worker.postMessage(autofill);
-  }, [state.grid.cells, state.grid.width, state.grid.height]);
+  }, [state.grid]);
 
   const [clueMode, setClueMode] = useState(false);
   if (clueMode) {
@@ -367,7 +373,6 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
   }, [state.grid]);
   for (const entry of entryAndCrossAtPosition(state.grid, state.active)) {
     if (entry !== null) {
-      let matches: Array<[string, number]>;
       let pattern = '';
       const crosses = getCrosses(state.grid, entry);
       for (let index = 0; index < entry.cells.length; index += 1) {
@@ -384,7 +389,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
           pattern += val;
         }
       }
-      matches = WordDB.matchingWords(pattern.length, WordDB.matchingBitmap(pattern));
+      const matches: Array<[string, number]> = WordDB.matchingWords(pattern.length, WordDB.matchingBitmap(pattern));
       if (entry.direction === state.active.dir) {
         tiny = <PotentialFillList isGoodSuggestion={doCrossesWork} values={matches} entryIndex={entry.index} dispatch={dispatch} />;
       }
@@ -431,7 +436,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
 
       const forStorage: TimestampedPuzzleT = { downloadedAt: TimestampClass.now(), data: dbpuzzle };
       sessionStorage.setItem('c/' + ref.id, JSON.stringify(forStorage));
-      Router.push('/preview/' + ref.id);
+      NextJSRouter.push('/preview/' + ref.id);
     });
   }, [state.toPublish, props.user.uid]);
 

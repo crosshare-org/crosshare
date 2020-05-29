@@ -5,6 +5,9 @@
     "node": true
   },
   "extends": [
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript",
     "plugin:jsx-a11y/recommended",
     "plugin:react-hooks/recommended",
     "eslint:recommended",
@@ -30,6 +33,7 @@
     "@typescript-eslint"
   ],
   "rules": {
+    "react/display-name": "off",
     "react/react-in-jsx-scope": "off",
     "indent": [
       "error",
@@ -46,6 +50,11 @@
     "semi": [
       "error",
       "always"
+    ],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_" }
     ]
   },
   "settings": {
