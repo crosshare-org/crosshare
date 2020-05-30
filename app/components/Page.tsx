@@ -10,6 +10,31 @@ import {
   SMALL_AND_UP, LARGE_AND_UP, TINY_COL_MIN_HEIGHT,
 } from '../lib/style';
 
+interface TinyNavButtonProps {
+  isLeft?: boolean,
+  dispatch: Dispatch<KeypressAction>,
+}
+const TinyNavButton = ({ isLeft, dispatch }: TinyNavButtonProps) => {
+  return <button css={{
+    background: 'none',
+    border: 'none',
+    padding: 'none',
+    width: '2em',
+    textAlign: 'center',
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRight: isLeft ? '1px solid var(--clue-bg)' : '',
+    borderLeft: isLeft ? '' : '1px solid var(--clue-bg)',
+  }} onClick={() => dispatch({ type: 'KEYPRESS', key: isLeft ? '{prevEntry}' : '{nextEntry}', shift: false })}>
+    {isLeft ?
+      <FaAngleDoubleLeft css={{ position: 'absolute' }} />
+      :
+      <FaAngleDoubleRight css={{ position: 'absolute' }} />
+    }
+  </button>;
+};
 
 interface TinyNavProps {
   children: ReactNode,
@@ -25,37 +50,11 @@ export const TinyNav = ({ children, dispatch }: TinyNavProps) => {
       width: '100%',
       height: '100%',
     }}>
-      <button css={{
-        background: 'none',
-        border: 'none',
-        padding: 'none',
-        width: '2em',
-        textAlign: 'center',
-        flexShrink: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRight: '1px solid var(--clue-bg)',
-      }} onClick={() => dispatch({ type: 'KEYPRESS', key: '{prevEntry}', shift: false })}>
-        <FaAngleDoubleLeft css={{ position: 'absolute' }} />
-      </button>
+      <TinyNavButton isLeft dispatch={dispatch} />
       <div css={{
         flex: '1 1 auto',
       }}>{children}</div>
-      <button css={{
-        background: 'none',
-        border: 'none',
-        padding: 'none',
-        width: '2em',
-        textAlign: 'center',
-        flexShrink: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderLeft: '1px solid var(--clue-bg)',
-      }} onClick={() => dispatch({ type: 'KEYPRESS', key: '{nextEntry}', shift: false })}>
-        <FaAngleDoubleRight css={{ position: 'absolute' }} />
-      </button>
+      <TinyNavButton dispatch={dispatch} />
     </div>
   );
 };
