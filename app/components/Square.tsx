@@ -1,7 +1,7 @@
 import { ReactNode, useState, useRef, useEffect } from 'react';
 import createDetectElementResize from '../vendor/detectElementResize';
 import {
-  TINY_COL_MIN_HEIGHT, SMALL_BREAKPOINT, LARGE_BREAKPOINT
+  TINY_COL_MIN_HEIGHT, SMALL_BREAKPOINT, LARGE_BREAKPOINT, HEADER_HEIGHT
 } from '../lib/style';
 
 interface SquareProps {
@@ -11,7 +11,7 @@ export const Square = (props: SquareProps) => {
   const [size, setSize] = useState(200);
   const squareElem = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const heightAdjust = parseInt(window.getComputedStyle(document.documentElement).getPropertyValue('--height-adjustment'));
+    const heightAdjust = parseInt(window.getComputedStyle(document.documentElement).getPropertyValue('--height-adjustment')) || HEADER_HEIGHT;
     const detectElementResize = createDetectElementResize(null);
     if (squareElem.current) {
       const parent = squareElem.current.parentNode;
@@ -52,6 +52,6 @@ export const Square = (props: SquareProps) => {
       flex: 'none',
       width: size,
       height: size
-    }}>{props.contents(size)}</div>
+    }}>{props.contents(size || 1)}</div>
   );
 };
