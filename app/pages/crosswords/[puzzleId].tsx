@@ -60,12 +60,12 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async (co
   }
 };
 
-export default ({ puzzle, nextPuzzle }: PuzzlePageProps) => {
+export default function PuzzlePage({ puzzle, nextPuzzle }: PuzzlePageProps) {
   if (!puzzle) {
     return <Error statusCode={404} title="No puzzle found" />;
   }
   return <PlayLoader key={puzzle.id} puzzle={puzzle} nextPuzzle={nextPuzzle} />;
-};
+}
 
 const PlayLoader = ({ puzzle, nextPuzzle }: { puzzle: PuzzleResult, nextPuzzle?: NextPuzzleLink }) => {
   const { user, isAdmin, loadingUser, error } = useContext(AuthContext);

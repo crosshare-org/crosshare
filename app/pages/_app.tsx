@@ -9,7 +9,7 @@ import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
 
 import '../lib/style.css';
 
-export default ({ Component, pageProps }: AppProps): JSX.Element => {
+export default function CrosshareApp({ Component, pageProps }: AppProps): JSX.Element {
   let [user, loadingUser, error] = useAuthState(App.auth());
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -50,4 +50,4 @@ export default ({ Component, pageProps }: AppProps): JSX.Element => {
       </AuthContext.Provider>
     </CrosshareAudioContext.Provider>
   );
-};
+}

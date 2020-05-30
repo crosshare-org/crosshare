@@ -5,6 +5,7 @@
     "node": true
   },
   "extends": [
+    "plugin:@next/next/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:import/typescript",
@@ -29,10 +30,13 @@
     "sourceType": "module"
   },
   "plugins": [
+    "@next/eslint-plugin-next",
     "react",
     "@typescript-eslint"
   ],
   "rules": {
+    "@next/next/no-html-link-for-pages": "off",
+    "import/no-anonymous-default-export": ["error"],
     "jsx-a11y/anchor-is-valid": [
       "error",
       {

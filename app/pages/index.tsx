@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async () =>
     });
 };
 
-export default ({ dailymini }: HomePageProps) => {
+export default function HomePage({ dailymini }: HomePageProps) {
   const { isAdmin } = useContext(AuthContext);
   if (!dailymini) {
     return <div>Missing mini</div>;
@@ -78,4 +78,4 @@ export default ({ dailymini }: HomePageProps) => {
       <p css={{ marginTop: '1em' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
     </div>
   </>;
-};
+}

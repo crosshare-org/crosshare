@@ -1,7 +1,7 @@
 import { TwoCol } from '../components/Page';
 import { TopBar } from '../components/TopBar';
 
-export default () => {
+export default function TwoColTestPage() {
   return (
     <>
       <TopBar />
@@ -15,4 +15,4 @@ export default () => {
       />
     </>
   );
-};
+}

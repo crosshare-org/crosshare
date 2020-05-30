@@ -1,7 +1,7 @@
 import { SquareAndCols } from '../components/Page';
 import { TopBar } from '../components/TopBar';
 
-export default () => {
+export default function SquareTestPage() {
   return (
     <>
       <TopBar />
@@ -17,4 +17,4 @@ export default () => {
       />
     </>
   );
-};
+}
