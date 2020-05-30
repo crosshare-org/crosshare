@@ -37,7 +37,7 @@ export const TinyNav = ({ children, dispatch }: TinyNavProps) => {
         justifyContent: 'center',
         borderRight: '1px solid var(--clue-bg)',
       }} onClick={() => dispatch({ type: 'KEYPRESS', key: '{prevEntry}', shift: false })}>
-        <FaAngleDoubleLeft />
+        <FaAngleDoubleLeft css={{ position: 'absolute' }} />
       </button>
       <div css={{
         flex: '1 1 auto',
@@ -54,7 +54,7 @@ export const TinyNav = ({ children, dispatch }: TinyNavProps) => {
         justifyContent: 'center',
         borderLeft: '1px solid var(--clue-bg)',
       }} onClick={() => dispatch({ type: 'KEYPRESS', key: '{nextEntry}', shift: false })}>
-        <FaAngleDoubleRight />
+        <FaAngleDoubleRight css={{ position: 'absolute' }} />
       </button>
     </div>
   );
