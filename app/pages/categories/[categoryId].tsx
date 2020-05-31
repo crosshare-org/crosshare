@@ -17,28 +17,33 @@ interface CategoryPageProps {
 }
 
 export const getServerSideProps: GetServerSideProps<CategoryPageProps> = async (context) => {
-  const db = App.firestore();
   const categoryId = context.params ?.categoryId;
   if (!categoryId || Array.isArray(categoryId)) {
     console.error('bad category param');
     return { props: { puzzles: null, categoryName: '' } };
   }
+  return { props: await propsForCategoryId(categoryId) };
+};
+
+// We export this so we can use it for testing
+export async function propsForCategoryId(categoryId: string): Promise<CategoryPageProps> {
+  const db = App.firestore();
   if (!Object.prototype.hasOwnProperty.call(CategoryNames, categoryId)) {
-    return { props: { puzzles: null, categoryName: '' } };
+    return { puzzles: null, categoryName: '' };
   }
   const dbres = await db.collection('categories').doc(categoryId).get();
   if (!dbres.exists) {
-    return { props: { puzzles: null, categoryName: '' } };
+    return { puzzles: null, categoryName: '' };
   }
   const validationResult = CategoryIndexV.decode(dbres.data());
   if (isRight(validationResult)) {
     console.log('loaded category index from db');
-    return { props: { puzzles: validationResult.right, categoryName: CategoryNames[categoryId] } };
+    return { puzzles: validationResult.right, categoryName: CategoryNames[categoryId] };
   } else {
     console.error(PathReporter.report(validationResult).join(','));
-    return { props: { puzzles: null, categoryName: '' } };
+    return { puzzles: null, categoryName: '' };
   }
-};
+}
 
 export default function CategoryPage(props: CategoryPageProps) {
   if (props.puzzles === null) {
