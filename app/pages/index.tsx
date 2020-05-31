@@ -1,15 +1,12 @@
-import { useContext } from 'react';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
-import { FaUser, FaUserLock } from 'react-icons/fa';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { Link } from '../components/Link';
-import { AuthContext } from '../components/AuthContext';
 import { DBPuzzleV } from '../lib/dbtypes';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
-import { TopBar, TopBarLinkA } from '../components/TopBar';
+import { DefaultTopBar } from '../components/TopBar';
 
 type DailyMini = {
   id: string
@@ -53,7 +50,6 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async () =>
 };
 
 export default function HomePage({ dailymini }: HomePageProps) {
-  const { isAdmin } = useContext(AuthContext);
   if (!dailymini) {
     return <div>Missing mini</div>;
   }
@@ -62,12 +58,9 @@ export default function HomePage({ dailymini }: HomePageProps) {
     <Head>
       <title>Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles</title>
     </Head>
-    <TopBar>
-      {isAdmin ?
-        <TopBarLinkA href='/admin' icon={<FaUserLock />} text="Admin" />
-        : ''}
-      <TopBarLinkA href='/account' icon={<FaUser />} text="Account" />
-    </TopBar>
+
+    <DefaultTopBar />
+
     <div css={{ margin: '1em', }}>
       <p css={{ marginBottom: '1em' }}>
         Crosshare is a new community for crossword constructors.

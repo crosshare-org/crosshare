@@ -1,10 +1,10 @@
 import { TwoCol } from '../components/Page';
-import { TopBar } from '../components/TopBar';
+import { DefaultTopBar } from '../components/TopBar';
 
 export default function TwoColTestPage() {
   return (
     <>
-      <TopBar />
+      <DefaultTopBar />
       <TwoCol
         keyboardHandler={(s) => { console.log(s); }}
         muted={false}

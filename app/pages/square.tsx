@@ -1,10 +1,10 @@
 import { SquareAndCols } from '../components/Page';
-import { TopBar } from '../components/TopBar';
+import { DefaultTopBar } from '../components/TopBar';
 
 export default function SquareTestPage() {
   return (
     <>
-      <TopBar />
+      <DefaultTopBar />
       <SquareAndCols
         keyboardHandler={(s) => { console.log(s); }}
         muted={false}

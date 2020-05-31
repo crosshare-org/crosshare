@@ -8,7 +8,7 @@ import { UserPlaysV, AuthoredPuzzlesV } from '../lib/dbtypes';
 import { getFromSessionOrDB } from '../lib/dbUtils';
 import { timeString } from '../lib/utils';
 import { App } from '../lib/firebaseWrapper';
-import { TopBar } from '../components/TopBar';
+import { DefaultTopBar } from '../components/TopBar';
 
 export const PlayListItem = (props: UserPlay) => {
   return (
@@ -87,7 +87,7 @@ export default requiresAuth(({ user }: AuthProps) => {
       <Head>
         <title>Account | Crosshare</title>
       </Head>
-      <TopBar />
+      <DefaultTopBar />
       <div css={{ margin: '1em', }}>
         <h4 css={{ borderBottom: '1px solid var(--black)' }}>Account</h4>
         <p>You&apos;re logged in as <b>{user.email}</b>. <button onClick={() => App.auth().signOut()}>Log out</button></p>

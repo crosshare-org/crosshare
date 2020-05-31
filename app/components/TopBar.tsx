@@ -1,5 +1,7 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useContext } from 'react';
+import { FaUser, FaUserLock } from 'react-icons/fa';
 
+import { AuthContext } from './AuthContext';
 import { Link } from './Link';
 import { Overlay } from './Overlay';
 import { Logo } from './Icons';
@@ -211,4 +213,15 @@ export const TopBar = ({ children }: TopBarProps) => {
       </div>
     </header>
   );
+};
+
+export const DefaultTopBar = () => {
+  const { isAdmin } = useContext(AuthContext);
+
+  return <TopBar>
+    {isAdmin ?
+      <TopBarLinkA href='/admin' icon={<FaUserLock />} text="Admin" />
+      : ''}
+    <TopBarLinkA href='/account' icon={<FaUser />} text="Account" />
+  </TopBar>;
 };
