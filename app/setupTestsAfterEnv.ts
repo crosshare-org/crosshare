@@ -5,6 +5,10 @@ import { matchers, createSerializer } from 'jest-emotion';
 expect.extend(matchers);
 expect.addSnapshotSerializer(createSerializer());
 
+// Give tests a blank slate
+sessionStorage.clear();
+localStorage.clear();
+
 // We need to add this mock since JSDOM doesn't support matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

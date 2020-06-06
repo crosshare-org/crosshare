@@ -5,10 +5,9 @@ import { Link } from './Link';
 import { AuthContext } from './AuthContext';
 import { DefaultTopBar } from './TopBar';
 import {
-  CategoryIndexT, UserPlaysT, UserPlaysV,
-  getDateString, prettifyDateString
+  CategoryIndexT, getDateString, prettifyDateString
 } from '../lib/dbtypes';
-import { getFromSessionOrDB } from '../lib/dbUtils';
+import { getPlays, PlayMapT } from '../lib/plays';
 
 interface CategoryProps {
   puzzles: CategoryIndexT,
@@ -17,17 +16,13 @@ interface CategoryProps {
 
 export const Category = ({ puzzles, categoryName }: CategoryProps) => {
   const { user } = useContext(AuthContext);
-  const [plays, setPlays] = useState<UserPlaysT | null>(null);
+  const [plays, setPlays] = useState<PlayMapT | null>(null);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (!user) {
-      return;
-    }
-    getFromSessionOrDB({ collection: 'up', docId: user.uid, validator: UserPlaysV, ttl: -1 })
-      .then(plays => {
-        setPlays(plays);
-      }).catch(reason => {
+    getPlays(user)
+      .then(pm => setPlays(pm))
+      .catch(reason => {
         console.error(reason);
         setError(true);
       });
@@ -76,10 +71,10 @@ export const Category = ({ puzzles, categoryName }: CategoryProps) => {
               padding: '0.5em 0',
               width: '100%',
             }}>
-              <Link css={{ display: 'inline-block', width: '50%', textAlign: 'right', paddingRight: '1em', fontWeight: play ?.[3] ? 'normal' : 'bold' }} href='/crosswords/[puzzleId]' as={`/crosswords/${puzzleId}`} passHref>
+              <Link css={{ display: 'inline-block', width: '50%', textAlign: 'right', paddingRight: '1em', fontWeight: play ?.f ? 'normal' : 'bold' }} href='/crosswords/[puzzleId]' as={`/crosswords/${puzzleId}`} passHref>
                 {categoryName + ' for ' + prettifyDateString(dateString)}
               </Link>
-              <div css={{ display: 'inline-block', width: '50%', paddingLeft: '1em' }}>{play ?.[3] ? 'completed ' + (play ?.[2] ? 'with helpers' : 'without helpers') : (play ? 'unfinished' : '')}</div>
+              <div css={{ display: 'inline-block', width: '50%', paddingLeft: '1em' }}>{play ?.f ? 'completed ' + (play ?.ch ? 'with helpers' : 'without helpers') : (play ? 'unfinished' : '')}</div>
             </li>);
           })}
       </ul>
