@@ -106,7 +106,7 @@ export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
 export const TimestampedPuzzleV = downloadTimestamped(DBPuzzleV);
 export type TimestampedPuzzleT = t.TypeOf<typeof TimestampedPuzzleV>;
 
-export const PlayWithoutUserV = t.type({
+const PlayBaseV = t.type({
   /** crossword id */
   c: t.string,
   /** updated at */
@@ -132,13 +132,40 @@ export const PlayWithoutUserV = t.type({
   /** finished the puzzle? */
   f: t.boolean,
 });
-export type PlayWithoutUserT = t.TypeOf<typeof PlayWithoutUserV>;
 
-export const PlayV = t.intersection([PlayWithoutUserV, t.type({
-  /** user id */
-  u: t.string,
-})]);
+export const LegacyPlayV = t.intersection([
+  PlayBaseV,
+  t.type({
+    /** user id */
+    u: t.string,
+  }),
+  t.partial({
+    /** puzzle title, optional for legacy plays in the db */
+    n: t.string,
+  })
+]);
+export type LegacyPlayT = t.TypeOf<typeof LegacyPlayV>;
+
+export const PlayV = t.intersection([
+  PlayBaseV,
+  t.type({
+    /** user id */
+    u: t.string,
+    /** puzzle title */
+    n: t.string,
+  })
+]);
 export type PlayT = t.TypeOf<typeof PlayV>;
+
+// We don't need a user id in local storage, but we do need a title
+export const PlayWithoutUserV = t.intersection([
+  PlayBaseV,
+  t.type({
+    /** puzzle title */
+    n: t.string,
+  })
+]);
+export type PlayWithoutUserT = t.TypeOf<typeof PlayWithoutUserV>;
 
 export function downloadTimestamped<A>(type: t.Type<A>) {
   return t.type({
@@ -204,14 +231,6 @@ export type AuthoredPuzzleT = t.TypeOf<typeof AuthoredPuzzleV>;
 
 /** keys are puzzle ids */
 export const AuthoredPuzzlesV = t.record(t.string, AuthoredPuzzleV);
-
-/** updated at, play time in fractional seconds, did cheat?, completed?, title */
-const UserPlayV = t.tuple([timestamp, t.number, t.boolean, t.boolean, t.string]);
-export type UserPlayT = t.TypeOf<typeof UserPlayV>;
-
-/** keys are puzzle ids */
-export const UserPlaysV = t.record(t.string, UserPlayV);
-export type UserPlaysT = t.TypeOf<typeof UserPlaysV>;
 
 /** date string -> puzzle id */
 export const CategoryIndexV = t.record(t.string, t.string);

@@ -3,9 +3,9 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { App, TimestampClass, TimestampType } from './firebaseWrapper';
-import { PlayV, downloadTimestamped } from './dbtypes';
+import { DBPuzzleV, PlayWithoutUserV, LegacyPlayV, downloadTimestamped } from './dbtypes';
 
-const PlayMapV = t.record(t.string, PlayV);
+const PlayMapV = t.record(t.string, PlayWithoutUserV);
 export type PlayMapT = t.TypeOf<typeof PlayMapV>;
 
 export const TimestampedPlayMapV = downloadTimestamped(PlayMapV);
@@ -46,17 +46,32 @@ export async function getPlays(user: firebase.User | undefined): Promise<PlayMap
   }
 
   return query.get()
-    .then(dbres => {
+    .then(async dbres => {
       console.log('loaded ' + dbres.size + ' plays from DB');
-      dbres.forEach(doc => {
-        const playResult = PlayV.decode(doc.data());
+      for (const doc of dbres.docs) {
+        const playResult = LegacyPlayV.decode(doc.data());
         if (isRight(playResult)) {
-          plays[playResult.right.c] = playResult.right;
+          const play = playResult.right;
+          let title = play.n;
+          if (!title) {
+            const puzzleRes = await db.collection('c').doc(play.c).get();
+            if (!puzzleRes.exists) {
+              return Promise.reject('Tried getting title for ' + play.c + ' but failed');
+            }
+            const validationResult = DBPuzzleV.decode(puzzleRes.data());
+            if (isRight(validationResult)) {
+              title = validationResult.right.t;
+            } else {
+              console.error(PathReporter.report(validationResult).join(','));
+              return Promise.reject('Malformed puzzle while getting title');
+            }
+          }
+          plays[play.c] = { ...play, n: title };
         } else {
-          console.error('Skipping update for play due to malformed result');
           console.error(PathReporter.report(playResult).join(','));
+          return Promise.reject('Malformed play');
         }
-      });
+      }
 
       const forLS: TimestampedPlayMapT = {
         downloadedAt: updateTo,

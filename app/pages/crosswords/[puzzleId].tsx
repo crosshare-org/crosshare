@@ -8,8 +8,8 @@ import { AuthContext } from '../../components/AuthContext';
 import { puzzleFromDB, PuzzleResult } from '../../lib/types';
 import { Puzzle, NextPuzzleLink } from '../../components/Puzzle';
 import { App, TimestampClass } from '../../lib/firebaseWrapper';
-import { DBPuzzleV, PlayWithoutUserT, PlayWithoutUserV } from '../../lib/dbtypes';
-import { getFromSessionOrDB, getFromSession } from '../../lib/dbUtils';
+import { DBPuzzleV, PlayWithoutUserT } from '../../lib/dbtypes';
+import { getPlays } from '../../lib/plays';
 
 
 interface PuzzlePageProps {
@@ -82,33 +82,15 @@ const PlayLoader = ({ puzzle, nextPuzzle }: { puzzle: PuzzleResult, nextPuzzle?:
       return;
     }
 
-    if (!user) {
-      let play: PlayWithoutUserT | null = null;
-      play = getFromSession({
-        collection: 'p',
-        localDocId: puzzle.id,
-        validator: PlayWithoutUserV,
-        ttl: -1
-      });
-      setPlay(play);
-      setLoadingPlay(false);
-    } else {
-      getFromSessionOrDB({
-        collection: 'p',
-        docId: puzzle.id + '-' + user.uid,
-        localDocId: puzzle.id,
-        validator: PlayWithoutUserV,
-        ttl: -1
+    getPlays(user)
+      .then(plays => {
+        setPlay(plays[puzzle.id] || null);
+        setLoadingPlay(false);
       })
-        .then(play => {
-          setPlay(play);
-          setLoadingPlay(false);
-        })
-        .catch((e) => {
-          console.error(e);
-          setPlayError(typeof e === 'string' ? e : 'error loading play');
-        });
-    }
+      .catch((e) => {
+        console.error(e);
+        setPlayError(typeof e === 'string' ? e : 'error loading play');
+      });
   }, [puzzle, user, loadingUser, error]);
 
   if (error) {

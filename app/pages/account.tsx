@@ -4,15 +4,16 @@ import Head from 'next/head';
 import { Link } from '../components/Link';
 import { getDisplayName, DisplayNameForm } from '../components/DisplayNameForm';
 import { requiresAuth, AuthProps } from '../components/AuthContext';
-import { UserPlaysV, AuthoredPuzzlesV } from '../lib/dbtypes';
+import { AuthoredPuzzlesV, PlayWithoutUserT } from '../lib/dbtypes';
 import { getFromSessionOrDB } from '../lib/dbUtils';
 import { timeString } from '../lib/utils';
 import { App } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
+import { getPlays } from '../lib/plays';
 
-export const PlayListItem = (props: UserPlay) => {
+export const PlayListItem = (props: PlayWithoutUserT) => {
   return (
-    <li key={props.id}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>{props.title}</Link> {props.didComplete ? 'completed ' + (props.didCheat ? 'with helpers' : 'without helpers') : 'unfinished'} {timeString(props.playTime, false)}</li>
+    <li key={props.c}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.c}`} passHref>{props.n}</Link> {props.f ? 'completed ' + (props.ch ? 'with helpers' : 'without helpers') : 'unfinished'} {timeString(props.t, false)}</li>
   );
 };
 
@@ -28,18 +29,9 @@ interface AuthoredPuzzle {
   title: string,
 }
 
-interface UserPlay {
-  id: string,
-  updatedAt: firebase.firestore.Timestamp,
-  playTime: number,
-  didCheat: boolean,
-  didComplete: boolean,
-  title: string,
-}
-
 export default requiresAuth(({ user }: AuthProps) => {
   const [authoredPuzzles, setAuthoredPuzzles] = useState<Array<AuthoredPuzzle> | null>(null);
-  const [plays, setPlays] = useState<Array<UserPlay> | null>(null);
+  const [plays, setPlays] = useState<Array<PlayWithoutUserT> | null>(null);
   const [error, setError] = useState(false);
   const [displayName, setDisplayName] = useState(getDisplayName(user));
 
@@ -48,7 +40,7 @@ export default requiresAuth(({ user }: AuthProps) => {
     // TODO pagination on both of these
     Promise.all([
       getFromSessionOrDB({ collection: 'uc', docId: user.uid, validator: AuthoredPuzzlesV, ttl: -1 }),
-      getFromSessionOrDB({ collection: 'up', docId: user.uid, localDocId: '', validator: UserPlaysV, ttl: -1 })
+      getPlays(user)
     ])
       .then(([authoredResult, playsResult]) => {
         if (authoredResult === null) {
@@ -65,12 +57,9 @@ export default requiresAuth(({ user }: AuthProps) => {
         if (playsResult === null) {
           setPlays([]);
         } else {
-          const plays = Object.entries(playsResult).map(([id, val]) => {
-            const [updatedAt, playTime, didCheat, didComplete, title] = val;
-            return { id, updatedAt, playTime, didCheat, didComplete, title };
-          });
+          const plays = Object.values(playsResult);
           // Sort in reverse order by updatedAt
-          plays.sort((a, b) => b.updatedAt.toMillis() - a.updatedAt.toMillis());
+          plays.sort((a, b) => b.ua.toMillis() - a.ua.toMillis());
           setPlays(plays);
         }
       }).catch(reason => {

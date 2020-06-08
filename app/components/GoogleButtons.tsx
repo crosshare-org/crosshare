@@ -1,5 +1,5 @@
-import { PlayV, UserPlayT, UserPlaysV } from '../lib/dbtypes';
-import { getValidatedAndDelete, setInCache, updateInCache } from '../lib/dbUtils';
+import { LegacyPlayV } from '../lib/dbtypes';
+import { getValidatedAndDelete, setInCache } from '../lib/dbUtils';
 import { App, AuthProvider } from '../lib/firebaseWrapper';
 
 export const GoogleSignInButton = () => {
@@ -31,8 +31,7 @@ export const GoogleLinkButton = ({ user }: { user: firebase.User }) => {
         }
         // Get anonymous user plays
         const db = App.firestore();
-        await db.collection('up').doc(user.uid).delete();
-        const plays = await getValidatedAndDelete(db.collection('p').where('u', '==', user.uid), PlayV);
+        const plays = await getValidatedAndDelete(db.collection('p').where('u', '==', user.uid), LegacyPlayV);
         return App.auth().signInWithCredential(error.credential).then(async (value: firebase.auth.UserCredential) => {
           console.log('signed in as new user ' + value.user ?.uid);
           const newUser = value.user;
@@ -42,17 +41,10 @@ export const GoogleLinkButton = ({ user }: { user: firebase.User }) => {
           await Promise.all(plays.map((play) => {
             play.u = newUser.uid;
             console.log('Updating play ' + play.c + '-' + play.u);
-            const userPlay: UserPlayT = [play.ua, play.t, play.ch, play.f, 'Crossword'];
-            return Promise.all([
-              setInCache({
-                collection: 'p', docId: play.c + '-' + newUser.uid, localDocId: play.c,
-                value: play, validator: PlayV, sendToDB: true
-              }),
-              updateInCache({
-                collection: 'up', docId: newUser.uid, localDocId: '',
-                update: { [play.c]: userPlay }, validator: UserPlaysV, sendToDB: true
-              })
-            ]);
+            return setInCache({
+              collection: 'p', docId: play.c + '-' + newUser.uid, localDocId: play.c,
+              value: play, validator: LegacyPlayV, sendToDB: true
+            });
           }));
           user.delete();
           console.log('linked and merged plays');

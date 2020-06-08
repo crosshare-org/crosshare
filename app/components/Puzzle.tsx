@@ -25,11 +25,11 @@ import { GridView } from './Grid';
 import { Position, Direction, BLOCK, PuzzleResult, puzzleTitle } from '../lib/types';
 import { fromCells, addClues } from '../lib/viewableGrid';
 import { valAt, entryAndCrossAtPosition } from '../lib/gridBase';
-
+import { getPlays } from '../lib/plays';
 import {
-  PlayWithoutUserT, PlayWithoutUserV, PlayV, getDateString, UserPlayT, UserPlaysV, CategoryIndexV
+  PlayWithoutUserT, PlayWithoutUserV, PlayV, getDateString, CategoryIndexV
 } from '../lib/dbtypes';
-import { getFromSessionOrDB, setInCache, updateInCache } from '../lib/dbUtils';
+import { getFromSessionOrDB, setInCache } from '../lib/dbUtils';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction,
@@ -348,7 +348,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     if (props.user) {
       Promise.all([
         getFromSessionOrDB({ collection: 'categories', docId: 'dailymini', validator: CategoryIndexV, ttl: 24 * 60 * 60 * 1000 }),
-        getFromSessionOrDB({ collection: 'up', docId: props.user.uid, localDocId: '', validator: UserPlaysV, ttl: -1 })
+        getPlays(props.user)
       ])
         .then(([minis, plays]) => {
           // Check to see if we should show X daily minis in a row notification
@@ -365,10 +365,10 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
               if (!play) {
                 break;
               }
-              const playDate = play[0].toDate();
+              const playDate = play.ua.toDate();
               playDate.setHours(12);
               // cheated || didn't finish || played on wrong date
-              if (play[2] || !play[3] || getDateString(playDate) !== ds) {
+              if (play.ch || !play.f || getDateString(playDate) !== ds) {
                 break;
               }
             }
@@ -394,9 +394,9 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
               if (puzzleId === puzzle.id) {
                 continue;
               }
-              const playDate = play[0].toDate();
+              const playDate = play.ua.toDate();
               playDate.setHours(12);
-              if (play[3] && getDateString(playDate) === ds) {
+              if (play.f && getDateString(playDate) === ds) {
                 firstOfTheDay = false;
               }
             }
@@ -407,9 +407,9 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
                 ds = getDateString(dateToTest);
                 let solvedOne = false;
                 for (const play of Object.values(plays)) {
-                  const playDate = play[0].toDate();
+                  const playDate = play.ua.toDate();
                   playDate.setHours(12);
-                  if (play[3] && getDateString(playDate) === ds) {
+                  if (play.f && getDateString(playDate) === ds) {
                     solvedOne = true;
                     break;
                   }
@@ -476,6 +476,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
 
     playState.current = {
       c: puzzle.id,
+      n: title,
       ua: updatedAt,
       g: Array.from(state.grid.cells),
       ct: Array.from(state.cellsUpdatedAt),
@@ -510,31 +511,16 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     if (currentPlayCacheState.current === currentPlayState) {
       return;
     }
-    const userPlay: UserPlayT = [
-      currentPlayState.ua,
-      currentPlayState.t,
-      currentPlayState.ch,
-      currentPlayState.f,
-      title];
-    Promise.all([
-      setInCache({
-        collection: 'p',
-        localDocId: puzzle.id,
-        value: currentPlayState,
-        validator: PlayWithoutUserV,
-        sendToDB: false
-      }),
-      updateInCache({
-        collection: 'up',
-        localDocId: '',
-        update: { [puzzle.id]: userPlay },
-        validator: UserPlaysV,
-        sendToDB: false
-      })
-    ]).then(() => {
+    setInCache({
+      collection: 'p',
+      localDocId: puzzle.id,
+      value: currentPlayState,
+      validator: PlayWithoutUserV,
+      sendToDB: false
+    }).then(() => {
       currentPlayCacheState.current = currentPlayState;
     });
-  }, [puzzle.id, playState.current, title]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [puzzle.id, playState.current]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const shouldUpdatePlaysInDB = useRef(state.success ? false : true);
   const currentPlayDBState = useRef<PlayWithoutUserT | null>(null);
@@ -556,30 +542,15 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     if (currentPlayDBState.current === currentPlayState) {
       return;
     }
-    const userPlay: UserPlayT = [
-      currentPlayState.ua,
-      currentPlayState.t,
-      currentPlayState.ch,
-      currentPlayState.f,
-      title];
-    return Promise.all([
-      setInCache({
-        collection: 'p',
-        docId: puzzle.id + '-' + props.user.uid,
-        localDocId: puzzle.id,
-        value: { ...currentPlayState, u: props.user.uid },
-        validator: PlayV,
-        sendToDB: true
-      }),
-      updateInCache({
-        collection: 'up',
-        docId: props.user.uid,
-        localDocId: '',
-        update: { [puzzle.id]: userPlay },
-        validator: UserPlaysV,
-        sendToDB: true
-      })]).then(() => { console.log('Finished writing play state to db'); });
-  }, [props.user, puzzle.id, title]);
+    return setInCache({
+      collection: 'p',
+      docId: puzzle.id + '-' + props.user.uid,
+      localDocId: puzzle.id,
+      value: { ...currentPlayState, u: props.user.uid },
+      validator: PlayV,
+      sendToDB: true
+    }).then(() => { console.log('Finished writing play state to db'); });
+  }, [props.user, puzzle.id]);
 
   useEffect(() => {
     return () => {
