@@ -41,6 +41,7 @@ export const GoogleLinkButton = ({ user }: { user: firebase.User }) => {
           await Promise.all(plays.map((play) => {
             play.u = newUser.uid;
             console.log('Updating play ' + play.c + '-' + play.u);
+            // TODO set this in DB and in the plays doc in cache. Update updated at in plays cache
             return setInCache({
               collection: 'p', docId: play.c + '-' + newUser.uid, localDocId: play.c,
               value: play, validator: LegacyPlayV, sendToDB: true

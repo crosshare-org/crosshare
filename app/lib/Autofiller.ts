@@ -161,13 +161,15 @@ export class Autofiller {
       entry.cells.forEach(() => { failingLetters.push(''); });
       const succeedingLetters: Array<string> = [];
       entry.cells.forEach(() => { succeedingLetters.push(''); });
-      for (const [word, score] of WordDB.matchingWords(entry.length, entry.bitmap)) {
+      for (const [word, preScore] of WordDB.matchingWords(entry.length, entry.bitmap)) {
         if (pitched.has(entry.index + ':' + word)) {
           continue;
         }
         if (grid.usedWords.has(word)) {
           continue;
         }
+
+        const score = (preScore > 100 ? 100 : preScore) + Math.random() * 30;
 
         // If we have a secondBestCost for this entry we know it's lower than existing soln cost
         const costToBeat = secondBestCost !== null ? secondBestCost : this.solnCost;
