@@ -44,7 +44,8 @@ beforeAll(async () => {
     rc: [],
     t: 70,
     ch: false,
-    f: true
+    f: true,
+    n: 'dummy puzzle title 1',
   };
   await adminApp.firestore().collection('p').doc('foobar-anonymous-user-id').set(play1);
 
@@ -61,7 +62,8 @@ beforeAll(async () => {
     rc: [],
     t: 44,
     ch: false,
-    f: false
+    f: false,
+    n: 'dummy puzzle title',
   };
   await adminApp.firestore().collection('p').doc('mike-anonymous-user-id').set(play2);
 });
