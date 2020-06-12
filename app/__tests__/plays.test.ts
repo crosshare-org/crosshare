@@ -1,7 +1,7 @@
 import { anonymousUser } from '../lib/testingUtils';
 import { setApp, TimestampClass } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/testing';
-import { PlayT } from '../lib/dbtypes';
+import { PlayT, LegacyPlayT, DBPuzzleT } from '../lib/dbtypes';
 import { getPlays, TimestampedPlayMapT } from '../lib/plays';
 
 let adminApp: firebase.app.App;
@@ -9,7 +9,7 @@ let app: firebase.app.App;
 let loggedInApp: firebase.app.App;
 
 let play1: PlayT;
-let play2: PlayT;
+let play2: LegacyPlayT;
 
 jest.mock('../lib/firebaseWrapper');
 
@@ -45,7 +45,8 @@ beforeAll(async () => {
     rc: [],
     t: 70,
     ch: false,
-    f: true
+    f: true,
+    n: 'Puzzle title'
   };
   await adminApp.firestore().collection('p').doc('foobar-anonymous-user-id').set(play1);
 
@@ -62,9 +63,73 @@ beforeAll(async () => {
     rc: [],
     t: 44,
     ch: false,
-    f: false
+    f: false,
   };
   await adminApp.firestore().collection('p').doc('mike-anonymous-user-id').set(play2);
+  // Since play2 is a LegacyPlayT, getPlays() will look up the puzzle to get a title
+  const puzzle: DBPuzzleT = {
+    c: 'dailymini',
+    m: true,
+    t: 'Raises, as young',
+    dn: [1, 2, 3, 4, 5],
+    ac:
+      [' Cobbler\'s forms',
+        'Absolutely perfect',
+        'Spike Lee\'s "She\'s ___ Have It"',
+        'English class assignment',
+        'Raises, as young'],
+    dc:
+      ['Hybrid whose father is a lion',
+        '___ of reality (wake-up call)',
+        '___ date (makes wedding plans)',
+        'Middle Ages invader',
+        'Has a great night at the comedy club'],
+    p: TimestampClass.fromDate(new Date('6/10/2020')),
+    a: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
+    ca: TimestampClass.now(),
+    an: [1, 6, 7, 8, 9],
+    g:
+      ['L',
+        'A',
+        'S',
+        'T',
+        'S',
+        'I',
+        'D',
+        'E',
+        'A',
+        'L',
+        'G',
+        'O',
+        'T',
+        'T',
+        'A',
+        'E',
+        'S',
+        'S',
+        'A',
+        'Y',
+        'R',
+        'E',
+        'A',
+        'R',
+        'S'],
+    h: 5,
+    w: 5,
+    cs:
+      [{
+        c:
+          'A couple of two-worders today which I don\'t love, but I hope you all got it anyway!',
+        i: 'LwgoVx0BAskM4wVJyoLj',
+        t: 36.009,
+        p: TimestampClass.now(),
+        a: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
+        n: 'Mike D',
+        ch: false,
+      }],
+    n: 'Mike D'
+  };
+  await adminApp.firestore().collection('c').doc('mike').set(puzzle);
 
   const play3 = {
     c: 'mike',
@@ -109,7 +174,7 @@ test('get plays for logged out', async () => {
 test('get 2 plays for logged in', async () => {
   setApp(loggedInApp);
 
-  expect(await getPlays(anonymousUser)).toEqual({ [play1.c]: play1, [play2.c]: play2 });
+  expect(await getPlays(anonymousUser)).toEqual({ [play1.c]: play1, [play2.c]: { ...play2, n: 'Daily Mini for 6/10/2020' } });
 });
 
 test('get 2 updated plays for logged in if past expiration', async () => {
@@ -123,7 +188,7 @@ test('get 2 updated plays for logged in if past expiration', async () => {
   };
   window.localStorage.setItem('plays/' + anonymousUser.uid, JSON.stringify(forLS));
 
-  expect(await getPlays(anonymousUser)).toEqual({ [play1.c]: play1, [play2.c]: play2 });
+  expect(await getPlays(anonymousUser)).toEqual({ [play1.c]: play1, [play2.c]: { ...play2, n: 'Daily Mini for 6/10/2020' } });
 });
 
 test('get 0 updated plays for logged in if results still valid', async () => {

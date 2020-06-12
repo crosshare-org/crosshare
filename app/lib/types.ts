@@ -120,10 +120,10 @@ export interface PuzzleT {
 
 export type PuzzleResult = PuzzleT & { id: string };
 
-export function puzzleTitle(puzzle: PuzzleT) {
-  let title = puzzle.title;
-  if (puzzle.category === 'dailymini' && puzzle.publishTime) {
-    const d = new Date(puzzle.publishTime);
+export function puzzleTitle(puzzle: DBPuzzleT) {
+  let title = puzzle.t;
+  if (puzzle.c === 'dailymini' && puzzle.p) {
+    const d = puzzle.p.toDate();
     const ds = (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear();
     title = 'Daily Mini for ' + ds;
   }
@@ -159,7 +159,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     authorName: dbPuzzle.n,
     moderated: dbPuzzle.m,
     publishTime: dbPuzzle.p ? dbPuzzle.p.toMillis() : null,
-    title: dbPuzzle.t,
+    title: puzzleTitle(dbPuzzle),
     size: {
       rows: dbPuzzle.h,
       cols: dbPuzzle.w

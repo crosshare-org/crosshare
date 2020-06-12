@@ -22,7 +22,7 @@ import { AuthPropsOptional } from './AuthContext';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
-import { Position, Direction, BLOCK, PuzzleResult, puzzleTitle } from '../lib/types';
+import { Position, Direction, BLOCK, PuzzleResult } from '../lib/types';
 import { fromCells, addClues } from '../lib/viewableGrid';
 import { valAt, entryAndCrossAtPosition } from '../lib/gridBase';
 import { getPlays } from '../lib/plays';
@@ -313,8 +313,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
 
   const [muted, setMuted] = usePersistedBoolean('muted', false);
 
-  const title = puzzleTitle(puzzle);
-
   // Set up music player for success song
   const [audioContext, initAudioContext] = useContext(CrosshareAudioContext);
   const playSuccess = useRef<(() => void) | null>(null);
@@ -476,7 +474,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
 
     playState.current = {
       c: puzzle.id,
-      n: title,
+      n: puzzle.title,
       ua: updatedAt,
       g: Array.from(state.grid.cells),
       ct: Array.from(state.cellsUpdatedAt),
@@ -492,7 +490,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   }, [loadingPlayState, play, puzzle.id, state.cellsEverMarkedWrong,
     state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
     state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
-    state.wrongCells, title, state.bankedSeconds, state.currentTimeWindowStart]);
+    state.wrongCells, puzzle.title, state.bankedSeconds, state.currentTimeWindowStart]);
 
   const shouldUpdatePlaysInCache = useRef(state.success ? false : true);
   const currentPlayCacheState = useRef<PlayWithoutUserT | null>(null);
@@ -586,7 +584,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   const acrossEntries = state.grid.entries.filter((e) => e.direction === Direction.Across);
   const downEntries = state.grid.entries.filter((e) => e.direction === Direction.Down);
 
-  const beginPauseProps = { loadingPlayState: loadingPlayState, authorName: puzzle.authorName, title: title, dispatch: dispatch, moderated: puzzle.moderated, publishTime: (puzzle.publishTime ? new Date(puzzle.publishTime) : undefined) };
+  const beginPauseProps = { loadingPlayState: loadingPlayState, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch, moderated: puzzle.moderated, publishTime: (puzzle.publishTime ? new Date(puzzle.publishTime) : undefined) };
 
   let puzzleView: ReactNode;
 
@@ -704,7 +702,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   return (
     <>
       <Head>
-        <title>{title}</title>
+        <title>{puzzle.title}</title>
       </Head>
       <TopBar>
         <TopBarLink icon={<FaPause />} hoverText={'Pause Game'} text={timeString(state.displaySeconds, true)} onClick={() => dispatch({ type: 'PAUSEACTION' })} keepText={true} />

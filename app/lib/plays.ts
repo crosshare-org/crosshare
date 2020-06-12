@@ -3,6 +3,7 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { App, TimestampClass, TimestampType } from './firebaseWrapper';
+import { puzzleTitle } from './types';
 import { DBPuzzleV, PlayWithoutUserV, LegacyPlayV, downloadTimestamped } from './dbtypes';
 
 const PlayMapV = t.record(t.string, PlayWithoutUserV);
@@ -60,7 +61,7 @@ export async function getPlays(user: firebase.User | undefined): Promise<PlayMap
             }
             const validationResult = DBPuzzleV.decode(puzzleRes.data());
             if (isRight(validationResult)) {
-              title = validationResult.right.t;
+              title = puzzleTitle(validationResult.right);
             } else {
               console.error(PathReporter.report(validationResult).join(','));
               return Promise.reject('Malformed puzzle while getting title');
