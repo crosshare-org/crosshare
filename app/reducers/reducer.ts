@@ -1,7 +1,7 @@
 import { toast } from 'react-toastify';
 
 import { PosAndDir, Position, Direction, BLOCK } from '../lib/types';
-import { DBPuzzleT } from '../lib/dbtypes';
+import { DBPuzzleT, PlayWithoutUserT } from '../lib/dbtypes';
 import {
   ViewableGrid, ViewableEntry, CluedGrid,
   gridWithNewChar, gridWithBlockToggled, advancePosition, retreatPosition,
@@ -189,6 +189,14 @@ export interface ToggleClueViewAction extends PuzzleAction {
 }
 function isToggleClueViewAction(action: PuzzleAction): action is ToggleClueViewAction {
   return action.type === 'TOGGLECLUEVIEW';
+}
+
+export interface LoadPlayAction extends PuzzleAction {
+  type: 'LOADPLAY',
+  play: PlayWithoutUserT,
+}
+function isLoadPlayAction(action: PuzzleAction): action is LoadPlayAction {
+  return action.type === 'LOADPLAY';
 }
 
 function cheatCells(elapsed: number, state: PuzzleState, cellsToCheck: Array<Position>, isReveal: boolean) {
@@ -494,6 +502,23 @@ export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleS
   state = gridInterfaceReducer(state, action);
   if (isCheatAction(action)) {
     return cheat(state, action.unit, action.isReveal === true);
+  }
+  if (isLoadPlayAction(action)) {
+    const play = action.play;
+    return {
+      ...state,
+      grid: { ...state.grid, cells: play.g },
+      verifiedCells: new Set<number>(play.vc),
+      wrongCells: new Set<number>(play.wc),
+      revealedCells: new Set<number>(play.rc),
+      success: play.f,
+      displaySeconds: play.t,
+      bankedSeconds: play.t,
+      didCheat: play.ch,
+      cellsUpdatedAt: play.ct,
+      cellsIterationCount: play.uc,
+      cellsEverMarkedWrong: new Set<number>(play.we)
+    };
   }
   if (isToggleClueViewAction(action)) {
     return { ...state, clueView: !state.clueView };

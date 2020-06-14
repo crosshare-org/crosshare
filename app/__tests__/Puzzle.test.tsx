@@ -131,13 +131,12 @@ test('nonuser progress should be cached in local storage but not db', async () =
   const admin = firebaseTesting.initializeAdminApp({ projectId: 'test1' });
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
-  expect((await admin.firestore().collection('up').get()).size).toEqual(0);
 
-  let { getByText, queryByText, getByLabelText, container } = render(
+  let { findByText, queryByText, getByLabelText, container } = render(
     <PuzzlePage puzzle={dailymini_5_19} />, {}
   );
 
-  fireEvent.click(getByText(/Begin Puzzle/i));
+  fireEvent.click(await findByText(/Begin Puzzle/i));
   expect(queryByText(/Begin Puzzle/i)).toBeNull();
 
   fireEvent.keyDown(container, { key: 'A', keyCode: 65 });
@@ -154,18 +153,16 @@ test('nonuser progress should be cached in local storage but not db', async () =
 
   // Unmount doesn't cause us to write to the db
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
-  expect((await admin.firestore().collection('up').get()).size).toEqual(0);
   await cleanup();
   await flushPromises();
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
-  expect((await admin.firestore().collection('up').get()).size).toEqual(0);
 
   // Now try again!
-  ({ getByText, queryByText, getByLabelText, container } = render(
+  ({ findByText, queryByText, getByLabelText, container } = render(
     <PuzzlePage puzzle={dailymini_5_19} />, {}
   ));
 
-  fireEvent.click(getByText(/Resume/i));
+  fireEvent.click(await findByText(/Resume/i));
   expect(queryByText(/Resume/i)).toBeNull();
 
   cell = getByLabelText('cell0x1');
@@ -178,7 +175,6 @@ test('nonuser progress should be cached in local storage but not db', async () =
   await flushPromises();
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
-  expect((await admin.firestore().collection('up').get()).size).toEqual(0);
 
   await admin.delete();
   await app.delete();
@@ -226,10 +222,8 @@ test('anonymous user progress should be cached in local storage and db', async (
 
   // Unmount should cause us to write to the db
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
-  expect((await admin.firestore().collection('up').get()).size).toEqual(0);
   await cleanup();
   await waitForExpect(async () => expect((await admin.firestore().collection('p').get()).size).toEqual(1));
-  await waitForExpect(async () => expect((await admin.firestore().collection('up').get()).size).toEqual(1));
 
   // Now try again!
   ({ findByText, queryByText, getByLabelText, container } = render(
@@ -249,7 +243,6 @@ test('anonymous user progress should be cached in local storage and db', async (
   await flushPromises();
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
-  expect((await admin.firestore().collection('up').get()).size).toEqual(1);
 
   // Now try again w/o Local storage!
   sessionStorage.clear();
@@ -271,7 +264,6 @@ test('anonymous user progress should be cached in local storage and db', async (
   await flushPromises();
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
-  expect((await admin.firestore().collection('up').get()).size).toEqual(1);
 
   await admin.delete();
   await app.delete();

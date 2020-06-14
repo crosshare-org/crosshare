@@ -25,15 +25,15 @@ import { GridView } from './Grid';
 import { Position, Direction, BLOCK, PuzzleResult } from '../lib/types';
 import { fromCells, addClues } from '../lib/viewableGrid';
 import { valAt, entryAndCrossAtPosition } from '../lib/gridBase';
-import { getPlays } from '../lib/plays';
+import { getPlays, cachePlay, writePlayToDB } from '../lib/plays';
 import {
-  PlayWithoutUserT, PlayWithoutUserV, PlayV, getDateString, CategoryIndexV
+  PlayWithoutUserT, getDateString, CategoryIndexV
 } from '../lib/dbtypes';
-import { getFromSessionOrDB, setInCache } from '../lib/dbUtils';
+import { getFromSessionOrDB } from '../lib/dbUtils';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction,
-  ToggleAutocheckAction, ToggleClueViewAction
+  ToggleAutocheckAction, ToggleClueViewAction, LoadPlayAction,
 } from '../reducers/reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TwoCol, TinyNav } from './Page';
@@ -248,6 +248,7 @@ interface PuzzleProps {
   nextPuzzle?: NextPuzzleLink
 }
 export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps & AuthPropsOptional) => {
+  const [playIsLoading, setPlayIsLoading] = useState(loadingPlayState);
   const [state, dispatch] = useReducer(puzzleReducer, {
     type: 'puzzle',
     active: { col: 0, row: 0, dir: Direction.Across },
@@ -291,6 +292,19 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       return checkComplete(state);
     }
   }, advanceActiveToNonBlock);
+
+  useEffect(() => {
+    if (!playIsLoading) {  // we already loaded
+      return;
+    }
+    if (loadingPlayState === false) {
+      setPlayIsLoading(false);
+      if (play) {
+        const action: LoadPlayAction = { type: 'LOADPLAY', play: play };
+        dispatch(action);
+      }
+    }
+  }, [loadingPlayState, play, playIsLoading]);
 
   // Every (unpaused) second dispatch a tick action which updates the display time
   useEffect(() => {
@@ -509,15 +523,8 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     if (currentPlayCacheState.current === currentPlayState) {
       return;
     }
-    setInCache({
-      collection: 'p',
-      localDocId: puzzle.id,
-      value: currentPlayState,
-      validator: PlayWithoutUserV,
-      sendToDB: false
-    }).then(() => {
-      currentPlayCacheState.current = currentPlayState;
-    });
+    cachePlay(props.user, currentPlayState);
+    currentPlayCacheState.current = currentPlayState;
   }, [puzzle.id, playState.current]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const shouldUpdatePlaysInDB = useRef(state.success ? false : true);
@@ -527,7 +534,8 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       return;
     }
     const currentPlayState = playState.current;
-    if (!props.user) {
+    const user = props.user;
+    if (!user) {
       return;
     }
     if (!shouldUpdatePlaysInDB.current) {
@@ -540,15 +548,10 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     if (currentPlayDBState.current === currentPlayState) {
       return;
     }
-    return setInCache({
-      collection: 'p',
-      docId: puzzle.id + '-' + props.user.uid,
-      localDocId: puzzle.id,
-      value: { ...currentPlayState, u: props.user.uid },
-      validator: PlayV,
-      sendToDB: true
-    }).then(() => { console.log('Finished writing play state to db'); });
-  }, [props.user, puzzle.id]);
+    cachePlay(user, currentPlayState);
+    writePlayToDB(user, currentPlayState)
+      .then(() => { console.log('Finished writing play state to db'); });
+  }, [props.user]);
 
   useEffect(() => {
     return () => {

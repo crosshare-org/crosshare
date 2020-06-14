@@ -4,12 +4,12 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { App, TimestampClass, TimestampType } from './firebaseWrapper';
 import { puzzleTitle } from './types';
-import { DBPuzzleV, PlayWithoutUserV, LegacyPlayV, downloadTimestamped } from './dbtypes';
+import { DBPuzzleV, PlayWithoutUserV, PlayWithoutUserT, PlayT, LegacyPlayV, downloadOptionallyTimestamped } from './dbtypes';
 
 const PlayMapV = t.record(t.string, PlayWithoutUserV);
 export type PlayMapT = t.TypeOf<typeof PlayMapV>;
 
-export const TimestampedPlayMapV = downloadTimestamped(PlayMapV);
+export const TimestampedPlayMapV = downloadOptionallyTimestamped(PlayMapV);
 export type TimestampedPlayMapT = t.TypeOf<typeof TimestampedPlayMapV>;
 const PlayTTL = 10 * 60 * 1000;
 
@@ -81,4 +81,40 @@ export async function getPlays(user: firebase.User | undefined): Promise<PlayMap
       localStorage.setItem(storageKey, JSON.stringify(forLS));
       return plays;
     });
+}
+
+export async function writePlayToDB(user: firebase.User, play: PlayWithoutUserT): Promise<void> {
+  const docId = play.c + '-' + user.uid;
+  const dbPlay: PlayT = { ...play, u: user.uid };
+  const db = App.firestore();
+
+  return db.collection('p').doc(docId).set(dbPlay);
+}
+
+export function cachePlay(user: firebase.User | undefined, play: PlayWithoutUserT): void {
+  const storageKey = user ? 'plays/' + user.uid : 'plays/logged-out';
+  const inStorage = localStorage.getItem(storageKey);
+  let plays: PlayMapT = {};
+  let lastUpdated: TimestampType | null = null;
+
+  if (inStorage) {
+    const validationResult = TimestampedPlayMapV.decode(JSON.parse(inStorage));
+    if (isRight(validationResult)) {
+      console.log('loaded ' + storageKey + ' from local storage');
+      const valid = validationResult.right;
+      plays = valid.data;
+      lastUpdated = valid.downloadedAt;
+    } else {
+      console.error(PathReporter.report(validationResult).join(','));
+      throw new Error('Couldn\'t parse object in local storage');
+    }
+  }
+
+  plays[play.c] = play;
+
+  const forLS: TimestampedPlayMapT = {
+    downloadedAt: lastUpdated,
+    data: plays
+  };
+  localStorage.setItem(storageKey, JSON.stringify(forLS));
 }

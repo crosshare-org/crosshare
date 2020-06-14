@@ -174,6 +174,13 @@ export function downloadTimestamped<A>(type: t.Type<A>) {
   });
 }
 
+export function downloadOptionallyTimestamped<A>(type: t.Type<A>) {
+  return t.type({
+    downloadedAt: t.union([timestamp, t.null]),
+    data: type,
+  });
+}
+
 export function getDateString(pd: Date) {
   return pd.getUTCFullYear() + '-' + pd.getUTCMonth() + '-' + pd.getUTCDate();
 }
