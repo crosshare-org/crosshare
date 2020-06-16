@@ -328,3 +328,54 @@ test('visiting a puzzle youve already solved should not write to db', async () =
   await admin.delete();
   await app.delete();
 });
+
+test('user finishing a puzzle causes write to db', async () => {
+  jest.spyOn(plays, 'writePlayToDB');
+  sessionStorage.clear();
+  localStorage.clear();
+  await firebaseTesting.clearFirestoreData({ projectId: 'test1' });
+
+  const app = firebaseTesting.initializeTestApp({
+    projectId: 'test1',
+    auth: {
+      uid: 'anonymous-user-id', admin: false, firebase: {
+        sign_in_provider: 'anonymous'
+      }
+    }
+  });
+  setApp(app as firebase.app.App);
+  const admin = firebaseTesting.initializeAdminApp({ projectId: 'test1' });
+
+  const r = render(
+    <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
+  );
+
+  fireEvent.click(await r.findByText(/Begin Puzzle/i));
+  expect(r.queryByText(/Begin Puzzle/i)).toBeNull();
+
+  fireEvent.keyDown(r.container, { key: 'A', keyCode: 65 });
+  fireEvent.keyDown(r.container, { key: 'B', keyCode: 66 });
+  fireEvent.keyDown(r.container, { key: 'C', keyCode: 67 });
+
+  fireEvent.click(r.getByText('Reveal'));
+  fireEvent.click(r.getByText(/Reveal Puzzle/i));
+
+  const cell = r.getByLabelText('cell0x1');
+  expect(cell).toHaveTextContent('A');
+
+  const cell2 = r.getByLabelText('cell0x2');
+  expect(cell2).toHaveTextContent('P');
+
+  // We've already written to the db when the puzzle was completed
+  await waitForExpect(async () => expect((await admin.firestore().collection('p').get()).size).toEqual(1));
+  expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
+
+  await cleanup();
+  expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
+
+  await admin.delete();
+  await app.delete();
+});
+
+test.todo('nonuser finishing a puzzle should cause creation of anonymous user and write to db');

@@ -347,9 +347,32 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         });
     }
   }, [muted, audioContext, initAudioContext]);
+
+  const writePlayToDBIfNeeded = useCallback(async () => {
+    if (!state.loadedPlayState) {
+      return;
+    }
+    if (state.ranSuccessEffects) {
+      return;
+    }
+    const user = props.user;
+    if (!user) {
+      return;
+    }
+    if (!isDirty(user, puzzle.id)) {
+      return;
+    }
+    writePlayToDB(user, puzzle.id)
+      .then(() => { console.log('Finished writing play state to db'); })
+      .catch((reason) => { console.error('Failed to write play: ', reason); });
+  }, [puzzle.id, props.user, state.ranSuccessEffects, state.loadedPlayState]);
+
   if (state.success && !state.ranSuccessEffects) {
     const action: RanSuccessEffectsAction = { type: 'RANSUCCESS' };
     dispatch(action);
+
+    writePlayToDBIfNeeded();
+
     let delay = 0;
     if (puzzle.size.rows === 5 && puzzle.size.cols === 5 && state.bankedSeconds <= 60) {
       toast(<div><Emoji symbol='🤓' /> You solved a mini puzzle in under a minute!</div>);
@@ -498,24 +521,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
     state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
     state.wrongCells, puzzle.title, state.bankedSeconds, state.currentTimeWindowStart]);
-
-  const writePlayToDBIfNeeded = useCallback(async () => {
-    if (!state.loadedPlayState) {
-      return;
-    }
-    if (state.ranSuccessEffects) {
-      return;
-    }
-    const user = props.user;
-    if (!user) {
-      return;
-    }
-    if (!isDirty(user, puzzle.id)) {
-      return;
-    }
-    writePlayToDB(user, puzzle.id)
-      .then(() => { console.log('Finished writing play state to db'); });
-  }, [puzzle.id, props.user, state.ranSuccessEffects, state.loadedPlayState]);
 
   useEffect(() => {
     return () => {

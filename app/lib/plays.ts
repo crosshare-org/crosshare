@@ -150,7 +150,6 @@ export function cachePlay(user: firebase.User | undefined, play: PlayWithoutUser
     if (equal(omitUa(plays[play.c]), omitUa(play))) {
       return;
     }
-    console.log('diff', omitUa(plays[play.c]), omitUa(play));
   }
 
   if (user) {
