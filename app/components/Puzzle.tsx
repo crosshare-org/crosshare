@@ -523,30 +523,13 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     state.wrongCells, puzzle.title, state.bankedSeconds, state.currentTimeWindowStart]);
 
   useEffect(() => {
+    window.addEventListener('beforeunload', writePlayToDBIfNeeded);
+
     return () => {
+      window.removeEventListener('beforeunload', writePlayToDBIfNeeded);
       writePlayToDBIfNeeded();
     };
   }, [writePlayToDBIfNeeded]);
-
-  // useEffect(() => {
-  //   function handleBeforeUnload() {
-  //     console.log("Doing before unload");
-  //     if (shouldUpdatePlays.current) {
-  //       const updateplay = updatePlayRef.current;
-  //       (async () => await updateplay(true))();
-  //     }
-  //   }
-  //   window.addEventListener('beforeunload', handleBeforeUnload);
-  //
-  //   return () => {
-  //     console.log("Doing unmount update");
-  //     window.removeEventListener('beforeunload', handleBeforeUnload)
-  //     if (updatePlayRef.current) {
-  //       const updateplay = updatePlayRef.current;
-  //       (async () => await updateplay(true))();
-  //     }
-  //   }
-  // }, [shouldUpdatePlays]);
 
   const keyboardHandler = useCallback((key: string) => {
     const kpa: KeypressAction = { type: 'KEYPRESS', key: key, shift: false };
