@@ -1,6 +1,7 @@
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
+import equal from 'fast-deep-equal';
 
 import { App, TimestampClass, TimestampType } from './firebaseWrapper';
 import { puzzleTitle } from './types';
@@ -12,6 +13,13 @@ export type PlayMapT = t.TypeOf<typeof PlayMapV>;
 export const TimestampedPlayMapV = downloadOptionallyTimestamped(PlayMapV);
 export type TimestampedPlayMapT = t.TypeOf<typeof TimestampedPlayMapV>;
 const PlayTTL = 10 * 60 * 1000;
+
+const dirtyPlays = new Set<string>();
+
+export function isDirty(user: firebase.User, puzzleId: string) {
+  const docId = puzzleId + '-' + user.uid;
+  return dirtyPlays.has(docId);
+}
 
 export async function getPlays(user: firebase.User | undefined): Promise<PlayMapT> {
   let plays: PlayMapT = {};
@@ -83,11 +91,34 @@ export async function getPlays(user: firebase.User | undefined): Promise<PlayMap
     });
 }
 
-export async function writePlayToDB(user: firebase.User, play: PlayWithoutUserT): Promise<void> {
-  const docId = play.c + '-' + user.uid;
+export async function writePlayToDB(user: firebase.User, puzzleId: string): Promise<void> {
+  if (!isDirty(user, puzzleId)) {
+    return Promise.reject('trying to write to db but play is clean');
+  }
+
+  const storageKey = 'plays/' + user.uid;
+  const inStorage = localStorage.getItem(storageKey);
+  let play: PlayWithoutUserT | undefined = undefined;
+
+  if (inStorage) {
+    const validationResult = TimestampedPlayMapV.decode(JSON.parse(inStorage));
+    if (isRight(validationResult)) {
+      const valid = validationResult.right;
+      play = valid.data[puzzleId];
+    } else {
+      console.error(PathReporter.report(validationResult).join(','));
+      return Promise.reject('could not parse plays in LS');
+    }
+  }
+
+  if (!play) {
+    return Promise.reject('no cached play!');
+  }
+
+  const docId = puzzleId + '-' + user.uid;
+  dirtyPlays.delete(docId);
   const dbPlay: PlayT = { ...play, u: user.uid };
   const db = App.firestore();
-
   return db.collection('p').doc(docId).set(dbPlay);
 }
 
@@ -110,6 +141,22 @@ export function cachePlay(user: firebase.User | undefined, play: PlayWithoutUser
     }
   }
 
+  function omitUa(p: PlayWithoutUserT) {
+    const { ua, ...rest } = p; // eslint-disable-line @typescript-eslint/no-unused-vars
+    return rest;
+  }
+
+  if (plays[play.c]) {
+    if (equal(omitUa(plays[play.c]), omitUa(play))) {
+      return;
+    }
+    console.log('diff', omitUa(plays[play.c]), omitUa(play));
+  }
+
+  if (user) {
+    const docId = play.c + '-' + user.uid;
+    dirtyPlays.add(docId);
+  }
   plays[play.c] = play;
 
   const forLS: TimestampedPlayMapT = {

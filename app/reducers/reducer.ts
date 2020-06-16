@@ -30,6 +30,7 @@ interface PuzzleState extends GridInterfaceState {
   revealedCells: Set<number>,
   wrongCells: Set<number>,
   success: boolean,
+  ranSuccessEffects: boolean,
   filled: boolean,
   autocheck: boolean,
   dismissedKeepTrying: boolean,
@@ -43,6 +44,7 @@ interface PuzzleState extends GridInterfaceState {
   displaySeconds: number,
   bankedSeconds: number,
   currentTimeWindowStart: number,
+  loadedPlayState: boolean,
 }
 function isPuzzleState(state: GridInterfaceState): state is PuzzleState {
   return state.type === 'puzzle';
@@ -191,9 +193,16 @@ function isToggleClueViewAction(action: PuzzleAction): action is ToggleClueViewA
   return action.type === 'TOGGLECLUEVIEW';
 }
 
+export interface RanSuccessEffectsAction extends PuzzleAction {
+  type: 'RANSUCCESS',
+}
+function isRanSuccessEffectsAction(action: PuzzleAction): action is RanSuccessEffectsAction {
+  return action.type === 'RANSUCCESS';
+}
+
 export interface LoadPlayAction extends PuzzleAction {
   type: 'LOADPLAY',
-  play: PlayWithoutUserT,
+  play: PlayWithoutUserT | null,
 }
 function isLoadPlayAction(action: PuzzleAction): action is LoadPlayAction {
   return action.type === 'LOADPLAY';
@@ -503,15 +512,23 @@ export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleS
   if (isCheatAction(action)) {
     return cheat(state, action.unit, action.isReveal === true);
   }
+  if (isRanSuccessEffectsAction(action)) {
+    return { ...state, ranSuccessEffects: true };
+  }
   if (isLoadPlayAction(action)) {
     const play = action.play;
+    if (play === null) {
+      return { ...state, loadedPlayState: true };
+    }
     return {
       ...state,
+      loadedPlayState: true,
       grid: { ...state.grid, cells: play.g },
       verifiedCells: new Set<number>(play.vc),
       wrongCells: new Set<number>(play.wc),
       revealedCells: new Set<number>(play.rc),
       success: play.f,
+      ranSuccessEffects: play.f,
       displaySeconds: play.t,
       bankedSeconds: play.t,
       didCheat: play.ch,

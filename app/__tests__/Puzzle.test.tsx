@@ -3,11 +3,17 @@ import { anonymousUser, cleanup, render, fireEvent } from '../lib/testingUtils';
 import waitForExpect from 'wait-for-expect';
 import { Puzzle } from '../components/Puzzle';
 import { PuzzleResult } from '../lib/types';
+import { PlayT } from '../lib/dbtypes';
+import * as plays from '../lib/plays';
 import PuzzlePage from '../pages/crosswords/[puzzleId]';
-import { setApp } from '../lib/firebaseWrapper';
+import { setApp, TimestampClass } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/testing';
 
 jest.mock('../lib/firebaseWrapper');
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
 window.HTMLElement.prototype.scrollIntoView = function() { return; };
 
@@ -122,6 +128,7 @@ test('daily mini from 5/19/20', () => {
 });
 
 test('nonuser progress should be cached in local storage but not db', async () => {
+  jest.spyOn(plays, 'writePlayToDB');
   sessionStorage.clear();
   localStorage.clear();
   await firebaseTesting.clearFirestoreData({ projectId: 'test1' });
@@ -175,6 +182,7 @@ test('nonuser progress should be cached in local storage but not db', async () =
   await flushPromises();
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
+  expect(plays.writePlayToDB).toHaveBeenCalledTimes(0);
 
   await admin.delete();
   await app.delete();
@@ -186,6 +194,7 @@ function flushPromises() {
 }
 
 test('anonymous user progress should be cached in local storage and db', async () => {
+  jest.spyOn(plays, 'writePlayToDB');
   sessionStorage.clear();
   localStorage.clear();
   await firebaseTesting.clearFirestoreData({ projectId: 'test1' });
@@ -221,17 +230,18 @@ test('anonymous user progress should be cached in local storage and db', async (
   expect(getByLabelText('grid')).toMatchSnapshot();
 
   // Unmount should cause us to write to the db
+  expect(plays.writePlayToDB).toHaveBeenCalledTimes(0);
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
   await cleanup();
   await waitForExpect(async () => expect((await admin.firestore().collection('p').get()).size).toEqual(1));
+  expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
   // Now try again!
   ({ findByText, queryByText, getByLabelText, container } = render(
     <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
   ));
 
-  fireEvent.click(await findByText(/Resume/i));
-  expect(queryByText(/Resume/i)).toBeNull();
+  await findByText(/Resume/i);
 
   cell = getByLabelText('cell0x1');
   expect(cell).toHaveTextContent('B');
@@ -243,6 +253,7 @@ test('anonymous user progress should be cached in local storage and db', async (
   await flushPromises();
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
   // Now try again w/o Local storage!
   sessionStorage.clear();
@@ -251,8 +262,7 @@ test('anonymous user progress should be cached in local storage and db', async (
     <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
   ));
 
-  fireEvent.click(await findByText(/Resume/i));
-  expect(queryByText(/Resume/i)).toBeNull();
+  await findByText(/Resume/i);
 
   cell = getByLabelText('cell0x1');
   expect(cell).toHaveTextContent('B');
@@ -264,6 +274,56 @@ test('anonymous user progress should be cached in local storage and db', async (
   await flushPromises();
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  expect(plays.writePlayToDB).toHaveBeenCalledTimes(2);
+
+  await admin.delete();
+  await app.delete();
+});
+
+test('visiting a puzzle youve already solved should not write to db', async () => {
+  jest.spyOn(plays, 'writePlayToDB');
+  sessionStorage.clear();
+  localStorage.clear();
+  await firebaseTesting.clearFirestoreData({ projectId: 'test1' });
+
+  const app = firebaseTesting.initializeTestApp({
+    projectId: 'test1',
+    auth: {
+      uid: 'anonymous-user-id', admin: false, firebase: {
+        sign_in_provider: 'anonymous'
+      }
+    }
+  });
+  setApp(app as firebase.app.App);
+  const admin = firebaseTesting.initializeAdminApp({ projectId: 'test1' });
+
+  const play: PlayT = {
+    c: dailymini_5_19.id,
+    u: 'anonymous-user-id',
+    ua: TimestampClass.now(),
+    g: [
+      'C', 'A', 'P', 'E', '.', 'L', 'Y', 'E', '.', 'M', 'U', 'N', 'C', 'L', 'E', 'E', '.', 'A', 'I', 'L', '.', 'I', 'N', 'T', 'O',
+    ],
+    ct: [],
+    uc: [],
+    vc: [],
+    wc: [],
+    we: [],
+    rc: [],
+    t: 70,
+    ch: false,
+    f: true,
+    n: 'Puzzle title'
+  };
+  await admin.firestore().collection('p').doc(dailymini_5_19.id + '-anonymous-user-id').set(play);
+
+  const { findByText } = render(
+    <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
+  );
+
+  await findByText(/You solved the puzzle in/i, { exact: false });
+  await cleanup();
+  expect(plays.writePlayToDB).toHaveBeenCalledTimes(0);
 
   await admin.delete();
   await app.delete();

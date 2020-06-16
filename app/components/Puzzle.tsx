@@ -25,7 +25,7 @@ import { GridView } from './Grid';
 import { Position, Direction, BLOCK, PuzzleResult } from '../lib/types';
 import { fromCells, addClues } from '../lib/viewableGrid';
 import { valAt, entryAndCrossAtPosition } from '../lib/gridBase';
-import { getPlays, cachePlay, writePlayToDB } from '../lib/plays';
+import { getPlays, cachePlay, writePlayToDB, isDirty } from '../lib/plays';
 import {
   PlayWithoutUserT, getDateString, CategoryIndexV
 } from '../lib/dbtypes';
@@ -33,7 +33,7 @@ import { getFromSessionOrDB } from '../lib/dbUtils';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction,
-  ToggleAutocheckAction, ToggleClueViewAction, LoadPlayAction,
+  ToggleAutocheckAction, ToggleClueViewAction, LoadPlayAction, RanSuccessEffectsAction
 } from '../reducers/reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TwoCol, TinyNav } from './Page';
@@ -248,7 +248,6 @@ interface PuzzleProps {
   nextPuzzle?: NextPuzzleLink
 }
 export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps & AuthPropsOptional) => {
-  const [playIsLoading, setPlayIsLoading] = useState(loadingPlayState);
   const [state, dispatch] = useReducer(puzzleReducer, {
     type: 'puzzle',
     active: { col: 0, row: 0, dir: Direction.Across },
@@ -269,6 +268,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     isEnteringRebus: false,
     rebusValue: '',
     success: play ? play.f : false,
+    ranSuccessEffects: play ? play.f : false,
     filled: false,
     autocheck: false,
     dismissedKeepTrying: false,
@@ -282,6 +282,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     cellsUpdatedAt: play ? play.ct : puzzle.grid.map(() => 0),
     cellsIterationCount: play ? play.uc : puzzle.grid.map(() => 0),
     cellsEverMarkedWrong: new Set<number>(play ? play.we : []),
+    loadedPlayState: !loadingPlayState,
     isEditable(cellIndex) { return !this.verifiedCells.has(cellIndex) && !this.success; },
     postEdit(cellIndex) {
       let state = this; // eslint-disable-line @typescript-eslint/no-this-alias
@@ -294,17 +295,14 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   }, advanceActiveToNonBlock);
 
   useEffect(() => {
-    if (!playIsLoading) {  // we already loaded
+    if (state.loadedPlayState) {  // we already loaded
       return;
     }
     if (loadingPlayState === false) {
-      setPlayIsLoading(false);
-      if (play) {
-        const action: LoadPlayAction = { type: 'LOADPLAY', play: play };
-        dispatch(action);
-      }
+      const action: LoadPlayAction = { type: 'LOADPLAY', play: play };
+      dispatch(action);
     }
-  }, [loadingPlayState, play, playIsLoading]);
+  }, [loadingPlayState, play, state.loadedPlayState]);
 
   // Every (unpaused) second dispatch a tick action which updates the display time
   useEffect(() => {
@@ -349,9 +347,9 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         });
     }
   }, [muted, audioContext, initAudioContext]);
-  const [ranSuccessEffects, setRanSuccessEffects] = useState(state.success);
-  if (state.success && !ranSuccessEffects) {
-    setRanSuccessEffects(true);
+  if (state.success && !state.ranSuccessEffects) {
+    const action: RanSuccessEffectsAction = { type: 'RANSUCCESS' };
+    dispatch(action);
     let delay = 0;
     if (puzzle.size.rows === 5 && puzzle.size.cols === 5 && state.bankedSeconds <= 60) {
       toast(<div><Emoji symbol='🤓' /> You solved a mini puzzle in under a minute!</div>);
@@ -471,14 +469,8 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     }
   }
 
-  const playState = useRef<PlayWithoutUserT>();
   useEffect(() => {
-    if (loadingPlayState) {
-      playState.current = undefined;
-      return;
-    }
-    if (!playState.current && play) {
-      playState.current = play;
+    if (!state.loadedPlayState) {
       return;
     }
     const updatedAt = TimestampClass.now();
@@ -486,7 +478,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       state.bankedSeconds :
       state.bankedSeconds + ((new Date()).getTime() - state.currentTimeWindowStart) / 1000;
 
-    playState.current = {
+    const play: PlayWithoutUserT = {
       c: puzzle.id,
       n: puzzle.title,
       ua: updatedAt,
@@ -501,63 +493,35 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       ch: state.didCheat,
       f: state.success,
     };
-  }, [loadingPlayState, play, puzzle.id, state.cellsEverMarkedWrong,
+    cachePlay(props.user, play);
+  }, [props.user, state.loadedPlayState, puzzle.id, state.cellsEverMarkedWrong,
     state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
     state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
     state.wrongCells, puzzle.title, state.bankedSeconds, state.currentTimeWindowStart]);
 
-  const shouldUpdatePlaysInCache = useRef(state.success ? false : true);
-  const currentPlayCacheState = useRef<PlayWithoutUserT | null>(null);
-  useEffect(() => {
-    if (!playState.current) {
-      return;
-    }
-    const currentPlayState = playState.current;
-    if (!shouldUpdatePlaysInCache.current) {
-      return;
-    }
-    if (currentPlayState.f) {
-      // We've finished so we should do this update and then no more
-      shouldUpdatePlaysInCache.current = false;
-    }
-    if (currentPlayCacheState.current === currentPlayState) {
-      return;
-    }
-    cachePlay(props.user, currentPlayState);
-    currentPlayCacheState.current = currentPlayState;
-  }, [puzzle.id, playState.current]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const shouldUpdatePlaysInDB = useRef(state.success ? false : true);
-  const currentPlayDBState = useRef<PlayWithoutUserT | null>(null);
   const writePlayToDBIfNeeded = useCallback(async () => {
-    if (!playState.current) {
+    if (!state.loadedPlayState) {
       return;
     }
-    const currentPlayState = playState.current;
+    if (state.ranSuccessEffects) {
+      return;
+    }
     const user = props.user;
     if (!user) {
       return;
     }
-    if (!shouldUpdatePlaysInDB.current) {
+    if (!isDirty(user, puzzle.id)) {
       return;
     }
-    if (currentPlayState.f) {
-      // We've finished so we should do this update and then no more
-      shouldUpdatePlaysInDB.current = false;
-    }
-    if (currentPlayDBState.current === currentPlayState) {
-      return;
-    }
-    cachePlay(user, currentPlayState);
-    writePlayToDB(user, currentPlayState)
+    writePlayToDB(user, puzzle.id)
       .then(() => { console.log('Finished writing play state to db'); });
-  }, [props.user]);
+  }, [puzzle.id, props.user, state.ranSuccessEffects, state.loadedPlayState]);
 
   useEffect(() => {
     return () => {
       writePlayToDBIfNeeded();
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [writePlayToDBIfNeeded]);
 
   // useEffect(() => {
   //   function handleBeforeUnload() {
