@@ -11,15 +11,24 @@ import { App } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import { getPlays } from '../lib/plays';
 
-export const PlayListItem = (props: PlayWithoutUserT) => {
+export const PlayListItem = ({ play, authoredPuzzles }: { play: PlayWithoutUserT, authoredPuzzles: Array<AuthoredPuzzle> | null }) => {
+  if (authoredPuzzles && authoredPuzzles.find(ap => ap.id === play.c)) {
+    // TODO We need to use /pending/ here since we don't know if the puzzle has
+    // been published yet or not
+    return (
+      <li><Link href='/pending/[puzzleId]' as={`/pending/${play.c}`} passHref>{play.n}</Link> {play.f ? 'completed ' + (play.ch ? 'with helpers' : 'without helpers') : 'unfinished'} {timeString(play.t, false)}</li>
+    );
+  }
   return (
-    <li key={props.c}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.c}`} passHref>{props.n}</Link> {props.f ? 'completed ' + (props.ch ? 'with helpers' : 'without helpers') : 'unfinished'} {timeString(props.t, false)}</li>
+    <li><Link href='/crosswords/[puzzleId]' as={`/crosswords/${play.c}`} passHref>{play.n}</Link> {play.f ? 'completed ' + (play.ch ? 'with helpers' : 'without helpers') : 'unfinished'} {timeString(play.t, false)}</li>
   );
 };
 
 export const AuthoredListItem = (props: AuthoredPuzzle) => {
+  // TODO We need to use /pending/ here since we don't know if a play is for a puzzle
+  // that hasn't been published yet. Any better way to do this?
   return (
-    <li key={props.id}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>{props.title}</Link></li>
+    <li key={props.id}><Link href='/pending/[puzzleId]' as={`/pending/${props.id}`} passHref>{props.title}</Link></li>
   );
 };
 
@@ -85,7 +94,7 @@ export default requiresAuth(({ user }: AuthProps) => {
         {plays && plays.length ?
           <>
             <h4 css={{ borderBottom: '1px solid var(--black)' }}>Recent Plays</h4>
-            <ul>{plays.map(PlayListItem)}</ul>
+            <ul>{plays.map((play) => <PlayListItem key={play.c} play={play} authoredPuzzles={authoredPuzzles} />)}</ul>
           </>
           :
           ''
