@@ -24,10 +24,13 @@ beforeAll(async () => {
   }) as firebase.app.App;
   setApp(app);
 
+  const now = new Date();
+  const futureDate = (now.getFullYear() + 1) + '-' + now.getUTCMonth() + '-' + now.getUTCDay();
   const dailymini: CategoryIndexT = {
     '2020-4-10': 'foobar',
     '2020-4-1': 'baz',
-    '2020-4-5': 'mike'
+    '2020-4-5': 'mike',
+    [futureDate]: 'baz'
   };
   await adminApp.firestore().collection('categories').doc('dailymini').set(dailymini);
 
