@@ -1,3 +1,5 @@
+import Head from 'next/head';
+
 import { AuthProps, requiresAdmin } from '../components/AuthContext';
 import { BuilderDBLoader } from '../components/Builder';
 
@@ -55,5 +57,10 @@ export default requiresAdmin((authProps: AuthProps) => {
     'grid': grid
   };
 
-  return <BuilderDBLoader {...props} {...authProps} />;
+  return <>
+    <Head>
+      <title>Constructor - Crosshare crossword puzzle builder</title>
+    </Head>
+    <BuilderDBLoader {...props} {...authProps} />;
+  </>;
 });

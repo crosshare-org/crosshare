@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import Error from 'next/error';
 import { GetServerSideProps } from 'next';
 import { isRight } from 'fp-ts/lib/Either';
@@ -49,5 +50,10 @@ export default function CategoryPage(props: CategoryPageProps) {
   if (props.puzzles === null) {
     return <Error statusCode={404} title="Invalid category" />;
   }
-  return <Category puzzles={props.puzzles} categoryName={props.categoryName} />;
+  return <>
+    <Head>
+      <title>{props.categoryName} Puzzles - Crosshare crosswords</title>
+    </Head>
+    <Category puzzles={props.puzzles} categoryName={props.categoryName} />
+  </>;
 }
