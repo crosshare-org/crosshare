@@ -4,14 +4,14 @@ import { useState, useEffect, useContext } from 'react';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
-import { AuthContext } from '../../components/AuthContext';
+import { AuthContext, requiresAuth } from '../../components/AuthContext';
 import { puzzleFromDB, PuzzleResult } from '../../lib/types';
 import { Puzzle, NextPuzzleLink } from '../../components/Puzzle';
 import { App, TimestampClass } from '../../lib/firebaseWrapper';
 import { DBPuzzleV, PlayWithoutUserT } from '../../lib/dbtypes';
 import { getPlays } from '../../lib/plays';
 
-export default function PuzzlePreviewPage() {
+export default requiresAuth(() => {
   const router = useRouter();
   const { pendingPuzzleId } = router.query;
   if (!pendingPuzzleId) {
@@ -21,7 +21,7 @@ export default function PuzzlePreviewPage() {
     return <Error statusCode={400} title="Bad pending puzzle id" />;
   }
   return <PuzzleLoader key={pendingPuzzleId} puzzleId={pendingPuzzleId} />;
-}
+});
 
 // We need to export this so we can import it in pending.test.jsx
 export const PuzzleLoader = ({ puzzleId }: { puzzleId: string }) => {

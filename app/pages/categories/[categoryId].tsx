@@ -52,7 +52,7 @@ export default function CategoryPage(props: CategoryPageProps) {
   }
   return <>
     <Head>
-      <title>{props.categoryName} Puzzles - Crosshare crosswords</title>
+      <title>{props.categoryName} Puzzles | Crosshare crosswords</title>
     </Head>
     <Category puzzles={props.puzzles} categoryName={props.categoryName} />
   </>;

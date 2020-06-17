@@ -59,7 +59,7 @@ export default requiresAdmin((authProps: AuthProps) => {
 
   return <>
     <Head>
-      <title>Constructor - Crosshare crossword puzzle builder</title>
+      <title>Constructor | Crosshare crossword puzzle builder</title>
     </Head>
     <BuilderDBLoader {...props} {...authProps} />;
   </>;

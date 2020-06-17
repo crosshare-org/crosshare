@@ -5,7 +5,7 @@ export default function TOSPage() {
   return (
     <>
       <Head>
-        <title>Terms of Service - Crosshare Crossword Constructor and Puzzles</title>
+        <title>Terms of Service | Crosshare Crossword Constructor and Puzzles</title>
       </Head>
       <DefaultTopBar />
       <h2>Crosshare Terms of Service</h2>
