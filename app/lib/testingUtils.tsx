@@ -5,10 +5,11 @@ import { AuthContext } from '../components/AuthContext';
 
 import type firebaseTypes from 'firebase';
 
-export const anonymousUser = {
-  uid: 'anonymous-user-id',
-  isAnonymous: true
-} as firebaseTypes.User;
+export const getUser = (uid: string, isAnonymous: boolean) => {
+  return { uid, isAnonymous } as firebaseTypes.User;
+};
+
+export const anonymousUser = getUser('anonymous-user-id', true);
 
 const WithAllProviders: (opts: AuthOptions) => ComponentType = (opts: AuthOptions) => ({ children }) => {
   return (

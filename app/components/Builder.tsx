@@ -432,7 +432,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
 
       const forStorage: TimestampedPuzzleT = { downloadedAt: TimestampClass.now(), data: dbpuzzle };
       sessionStorage.setItem('c/' + ref.id, JSON.stringify(forStorage));
-      NextJSRouter.push('/preview/' + ref.id);
+      NextJSRouter.push('/pending/' + ref.id);
     });
   }, [state.toPublish, props.user.uid]);
 
