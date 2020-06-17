@@ -39,6 +39,18 @@ if (firebase.apps.length) {
 
 export const setApp = (app: firebase.app.App) => { App = app; };
 
+export const setUpForSignInAnonymously = (_app: firebase.app.App, _user: firebase.User) => {
+  throw new Error('For testing only');
+};
+
+export const signInAnonymously = async () => {
+  const userCredential = await firebase.auth().signInAnonymously();
+  if (!userCredential.user) {
+    throw new Error('Logged in anonymously but no user in result');
+  }
+  return userCredential.user;
+};
+
 export const AuthProvider = new firebase.auth.GoogleAuthProvider();
 
 export const DeleteSentinal = firebase.firestore.FieldValue.delete();

@@ -6,7 +6,8 @@ import { PuzzleResult } from '../lib/types';
 import { PlayT } from '../lib/dbtypes';
 import * as plays from '../lib/plays';
 import PuzzlePage from '../pages/crosswords/[puzzleId]';
-import { setApp, TimestampClass } from '../lib/firebaseWrapper';
+import * as firebaseWrapper from '../lib/firebaseWrapper';
+import { setApp, setUpForSignInAnonymously, TimestampClass } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/testing';
 
 jest.mock('../lib/firebaseWrapper');
@@ -378,4 +379,61 @@ test('user finishing a puzzle causes write to db', async () => {
   await app.delete();
 });
 
-test.todo('nonuser finishing a puzzle should cause creation of anonymous user and write to db');
+test('nonuser finishing a puzzle should cause creation of anonymous user and write to db', async () => {
+  jest.spyOn(plays, 'writePlayToDB');
+  jest.spyOn(firebaseWrapper, 'signInAnonymously');
+  sessionStorage.clear();
+  localStorage.clear();
+  await firebaseTesting.clearFirestoreData({ projectId: 'test1' });
+
+  const anonApp = firebaseTesting.initializeTestApp({
+    projectId: 'test1',
+    auth: {
+      uid: 'anonymous-user-id', admin: false, firebase: {
+        sign_in_provider: 'anonymous'
+      }
+    }
+  });
+  const baseApp = firebaseTesting.initializeTestApp({
+    projectId: 'test1'
+  });
+  setApp(baseApp as firebase.app.App);
+  setUpForSignInAnonymously(anonApp as firebase.app.App, anonymousUser);
+
+  const admin = firebaseTesting.initializeAdminApp({ projectId: 'test1' });
+
+  const r = render(
+    <PuzzlePage puzzle={dailymini_5_19} />, {}
+  );
+
+  fireEvent.click(await r.findByText(/Begin Puzzle/i));
+  expect(r.queryByText(/Begin Puzzle/i)).toBeNull();
+
+  fireEvent.keyDown(r.container, { key: 'A', keyCode: 65 });
+  fireEvent.keyDown(r.container, { key: 'B', keyCode: 66 });
+  fireEvent.keyDown(r.container, { key: 'C', keyCode: 67 });
+
+  expect(firebaseWrapper.signInAnonymously).toHaveBeenCalledTimes(0);
+
+  fireEvent.click(r.getByText('Reveal'));
+  fireEvent.click(r.getByText(/Reveal Puzzle/i));
+
+  const cell = r.getByLabelText('cell0x1');
+  expect(cell).toHaveTextContent('A');
+
+  const cell2 = r.getByLabelText('cell0x2');
+  expect(cell2).toHaveTextContent('P');
+
+  // We've already written to the db when the puzzle was completed
+  await waitForExpect(async () => expect((await admin.firestore().collection('p').get()).size).toEqual(1));
+  expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
+  expect(firebaseWrapper.signInAnonymously).toHaveBeenCalledTimes(1);
+
+  await cleanup();
+  expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
+
+  await admin.delete();
+  await baseApp.delete();
+  await anonApp.delete();
+});

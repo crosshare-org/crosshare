@@ -41,7 +41,7 @@ import { ERROR_COLOR } from '../lib/style';
 import { usePersistedBoolean } from '../lib/hooks';
 import { timeString } from '../lib/utils';
 import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
-import { App, DeleteSentinal, TimestampClass } from '../lib/firebaseWrapper';
+import { App, DeleteSentinal, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
 import { Emoji } from './Emoji';
 import { Comments } from './Comments';
 
@@ -348,30 +348,82 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     }
   }, [muted, audioContext, initAudioContext]);
 
-  const writePlayToDBIfNeeded = useCallback(async () => {
+  const writePlayToDBIfNeeded = useCallback(async (user?: firebase.User) => {
     if (!state.loadedPlayState) {
       return;
     }
     if (state.ranSuccessEffects) {
       return;
     }
-    const user = props.user;
-    if (!user) {
+    const u = user || props.user;
+    if (!u) {
       return;
     }
-    if (!isDirty(user, puzzle.id)) {
+    if (!isDirty(u, puzzle.id)) {
       return;
     }
-    writePlayToDB(user, puzzle.id)
+    writePlayToDB(u, puzzle.id)
       .then(() => { console.log('Finished writing play state to db'); })
       .catch((reason) => { console.error('Failed to write play: ', reason); });
   }, [puzzle.id, props.user, state.ranSuccessEffects, state.loadedPlayState]);
+
+
+  const cachePlayForUser = useCallback((user: firebase.User | undefined) => {
+    if (!state.loadedPlayState) {
+      return;
+    }
+    const updatedAt = TimestampClass.now();
+    const playTime = (state.currentTimeWindowStart === 0) ?
+      state.bankedSeconds :
+      state.bankedSeconds + ((new Date()).getTime() - state.currentTimeWindowStart) / 1000;
+
+    const play: PlayWithoutUserT = {
+      c: puzzle.id,
+      n: puzzle.title,
+      ua: updatedAt,
+      g: Array.from(state.grid.cells),
+      ct: Array.from(state.cellsUpdatedAt),
+      uc: Array.from(state.cellsIterationCount),
+      vc: Array.from(state.verifiedCells),
+      wc: Array.from(state.wrongCells),
+      we: Array.from(state.cellsEverMarkedWrong),
+      rc: Array.from(state.revealedCells),
+      t: playTime,
+      ch: state.didCheat,
+      f: state.success,
+    };
+    cachePlay(user, play);
+  }, [state.loadedPlayState, puzzle.id, state.cellsEverMarkedWrong,
+    state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
+    state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
+    state.wrongCells, puzzle.title, state.bankedSeconds, state.currentTimeWindowStart]);
+
+  useEffect(() => {
+    cachePlayForUser(props.user);
+  }, [props.user, cachePlayForUser]);
+
+  useEffect(() => {
+    const listener = () => { writePlayToDBIfNeeded(); };
+    window.addEventListener('beforeunload', listener);
+
+    return () => {
+      window.removeEventListener('beforeunload', listener);
+      writePlayToDBIfNeeded();
+    };
+  }, [writePlayToDBIfNeeded]);
 
   if (state.success && !state.ranSuccessEffects) {
     const action: RanSuccessEffectsAction = { type: 'RANSUCCESS' };
     dispatch(action);
 
-    writePlayToDBIfNeeded();
+    if (props.user) {
+      writePlayToDBIfNeeded();
+    } else {
+      signInAnonymously().then(u => {
+        cachePlayForUser(u);
+        writePlayToDBIfNeeded(u);
+      });
+    }
 
     let delay = 0;
     if (puzzle.size.rows === 5 && puzzle.size.cols === 5 && state.bankedSeconds <= 60) {
@@ -491,45 +543,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       [entry, cross] = [cross, entry];
     }
   }
-
-  useEffect(() => {
-    if (!state.loadedPlayState) {
-      return;
-    }
-    const updatedAt = TimestampClass.now();
-    const playTime = (state.currentTimeWindowStart === 0) ?
-      state.bankedSeconds :
-      state.bankedSeconds + ((new Date()).getTime() - state.currentTimeWindowStart) / 1000;
-
-    const play: PlayWithoutUserT = {
-      c: puzzle.id,
-      n: puzzle.title,
-      ua: updatedAt,
-      g: Array.from(state.grid.cells),
-      ct: Array.from(state.cellsUpdatedAt),
-      uc: Array.from(state.cellsIterationCount),
-      vc: Array.from(state.verifiedCells),
-      wc: Array.from(state.wrongCells),
-      we: Array.from(state.cellsEverMarkedWrong),
-      rc: Array.from(state.revealedCells),
-      t: playTime,
-      ch: state.didCheat,
-      f: state.success,
-    };
-    cachePlay(props.user, play);
-  }, [props.user, state.loadedPlayState, puzzle.id, state.cellsEverMarkedWrong,
-    state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
-    state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
-    state.wrongCells, puzzle.title, state.bankedSeconds, state.currentTimeWindowStart]);
-
-  useEffect(() => {
-    window.addEventListener('beforeunload', writePlayToDBIfNeeded);
-
-    return () => {
-      window.removeEventListener('beforeunload', writePlayToDBIfNeeded);
-      writePlayToDBIfNeeded();
-    };
-  }, [writePlayToDBIfNeeded]);
 
   const keyboardHandler = useCallback((key: string) => {
     const kpa: KeypressAction = { type: 'KEYPRESS', key: key, shift: false };
