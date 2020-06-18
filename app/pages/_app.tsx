@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from 'react';
-
+import * as Sentry from '@sentry/node';
 import { AppProps } from 'next/app';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
@@ -9,7 +9,15 @@ import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
 
 import '../lib/style.css';
 
-export default function CrosshareApp({ Component, pageProps }: AppProps): JSX.Element {
+if (process.env.NODE_ENV === 'production') {
+  Sentry.init({
+    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    release: process.env.NEXT_PUBLIC_SENTRY_RELEASE,
+  });
+}
+
+// `err` is a workaround for https://github.com/vercel/next.js/issues/8592
+export default function CrosshareApp({ Component, pageProps, err }: AppProps & { err: Error }): JSX.Element {
   let [user, loadingUser, error] = useAuthState(App.auth());
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -46,7 +54,7 @@ export default function CrosshareApp({ Component, pageProps }: AppProps): JSX.El
   return (
     <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
       <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error ?.message}}>
-        <Component {...pageProps} />
+        <Component {...pageProps} err={err} />
       </AuthContext.Provider>
     </CrosshareAudioContext.Provider>
   );

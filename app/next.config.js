@@ -1,22 +1,49 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
-})
+});
 
-module.exports = withBundleAnalyzer({
-  distDir: 'nextjs',
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const withSourceMaps = require('@zeit/next-source-maps')({
+  devtool: 'hidden-source-map'
+});
+
+// Use the SentryWebpack plugin to upload the source maps during build step
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const SentryWebpackPlugin = require('@sentry/webpack-plugin');
+const {
+  NEXT_PUBLIC_SENTRY_DSN: SENTRY_DSN,
+  SENTRY_ORG,
+  SENTRY_PROJECT,
+  SENTRY_AUTH_TOKEN,
+  NODE_ENV,
+} = process.env;
+
+process.env.SENTRY_DSN = SENTRY_DSN;
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const nextBuildId = require('next-build-id');
+const latestGitHash = nextBuildId.sync({
+  dir: __dirname
+});
+
+const distDir = 'nextjs';
+
+module.exports = withSourceMaps(withBundleAnalyzer({
+  distDir: distDir,
   env: {
     FIREBASE_PROJECT_ID: 'mdcrosshare',
+    NEXT_PUBLIC_SENTRY_RELEASE: latestGitHash,
   },
   experimental: {
     sprFlushToDisk: false,
   },
+  generateBuildId: async () => {
+    return latestGitHash;
+  },
   poweredByHeader: false,
   webpack: (config, {
-    buildId,
-    dev,
     isServer,
-    defaultLoaders,
-    webpack
   }) => {
     // Note: we provide webpack above so you should not `require` it
     // Perform customizations to webpack config
@@ -24,13 +51,40 @@ module.exports = withBundleAnalyzer({
     if (!isServer) {
       config.externals = config.externals || [];
       config.externals.push(function(context, request, callback) {
+        // Ignore firebase/sentry imports on the client side - we're using a script tag
         if (/^firebase\/.*$/i.test(request)) {
           return callback(null, 'firebase');
+        }
+        if (/^@sentry\/.*$/i.test(request)) {
+          return callback(null, 'Sentry');
         }
         // Continue without externalizing the import
         callback();
       });
     }
-    return config
+
+    // When all the Sentry configuration env variables are available/configured
+    // The Sentry webpack plugin gets pushed to the webpack plugins to build
+    // and upload the source maps to sentry.
+    // This is an alternative to manually uploading the source maps
+    // Note: This is disabled in development mode.
+    if (
+      SENTRY_DSN &&
+      SENTRY_ORG &&
+      SENTRY_PROJECT &&
+      SENTRY_AUTH_TOKEN &&
+      NODE_ENV === 'production'
+    ) {
+      config.plugins.push(
+        new SentryWebpackPlugin({
+          include: distDir,
+          ignore: ['node_modules'],
+          urlPrefix: '~/_next',
+          release: latestGitHash,
+        })
+      );
+    }
+
+    return config;
   },
-});
+}));

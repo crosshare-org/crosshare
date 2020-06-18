@@ -8,6 +8,8 @@ export default class CrosshareDocument extends Document {
         <body>
           <Main />
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+          <script src="https://browser.sentry-cdn.com/5.17.0/bundle.min.js"></script>
+          {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-app.js"></script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-analytics.js"></script>
