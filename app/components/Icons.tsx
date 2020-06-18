@@ -192,8 +192,8 @@ export const SymmetryNone = (props: IconProps) => {
 };
 
 interface IconProps {
-  width?: number,
-  height?: number,
+  width?: string,
+  height?: string,
 }
 export const Logo = (props: IconProps) => {
   return (
