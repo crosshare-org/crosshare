@@ -23,7 +23,7 @@
     ]
   },
   "hosting": {
-    "site": "next",
+    "target": "next",
     "public": "out",
     "cleanUrls": true,
     "rewrites": [

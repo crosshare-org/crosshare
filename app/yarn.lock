@@ -1914,7 +1914,7 @@
   resolved "https://registry.yarnpkg.com/@modern-dev/jsbn/-/jsbn-1.2.5.tgz#6a48d3c6f388b5ff06e72a9a6fa92fc026adffd0"
   integrity sha512-IsUlwNRZTjj6eBNdtGxLwrPbIWIGbuTK+82j/a3KexskL3yPIe6wdXj4sTQe1xjZWb8nLvSuttOcOCUecjBEVQ==
 
-"@next/bundle-analyzer@^9.4.2":
+"@next/bundle-analyzer@^9.4.4":
   version "9.4.4"
   resolved "https://registry.yarnpkg.com/@next/bundle-analyzer/-/bundle-analyzer-9.4.4.tgz#09ac54a3a2c2a0275a36a502b335100f876997ac"
   integrity sha512-MRBk0SYyKvnTet3g6vzMbqTGtcGFIwge7XA+iUpZp45wdePYYPCIdSNz4xv1Dk4iPZRKTEMScLprsUPmtXGXnw==

@@ -1,6 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const admin = require('firebase-admin');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const functions = require('firebase-functions');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const next = require('next');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const config = require('./next.config');
 
 admin.initializeApp();
@@ -20,4 +24,6 @@ const server = functions.https.onRequest((request, response) => {
   return app.prepare().then(() => handle(request, response));
 });
 
-exports.nextjs = { server };
+exports.nextjs = {
+  server
+};
