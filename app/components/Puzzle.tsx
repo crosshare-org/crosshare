@@ -333,7 +333,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       return initAudioContext();
     }
     if (!playSuccess.current && !muted && audioContext) {
-      fetch(`${process.env.PUBLIC_URL}/success.mp3`)
+      fetch('/success.mp3')
         .then(response => response.arrayBuffer())
         .then((buffer) => {
           audioContext.decodeAudioData(buffer, (audioBuffer) => {

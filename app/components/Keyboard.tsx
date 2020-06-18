@@ -100,7 +100,7 @@ export const Keyboard = memo(function Keyboard({ muted, keyboardHandler, ...prop
       return initAudioContext();
     }
     if (!playKeystrokeSound.current && !muted && showingKeyboard && audioContext) {
-      fetch(`${process.env.PUBLIC_URL}/keypress.mp3`)
+      fetch('/keypress.mp3')
         .then(response => response.arrayBuffer())
         .then((buffer) => {
           const gainNode = audioContext.createGain();

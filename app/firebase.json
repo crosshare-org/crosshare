@@ -31,6 +31,13 @@
         "source": "**",
         "function": "nextjs-server"
       }
+    ],
+    "redirects": [
+      {
+        "source": "/category/dailymini",
+        "destination": "/categories/dailymini",
+        "type": 301
+      }
     ]
   }
 }
