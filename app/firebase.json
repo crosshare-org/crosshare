@@ -18,8 +18,10 @@
       "public/**",
       "reducers/**",
       "scripts/**",
+      "typings/**",
       "vendor/**",
-      "firestore.rules"
+      "firestore.rules",
+      "setupTestsAfterEnv.ts"
     ]
   },
   "hosting": {

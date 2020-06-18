@@ -20,7 +20,7 @@
     "build": "next build",
     "start": "next start",
     "predeploy": "yarn clean && next build && node ./scripts/export.js",
-    "deploy": "npx firebase deploy",
+    "deploy": "npx firebase deploy --only hosting:next,functions:nextjs",
     "emulator-dev": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 npx firebase emulators:exec 'next dev'",
     "test": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 npx firebase emulators:exec 'jest --watch'"
   },
