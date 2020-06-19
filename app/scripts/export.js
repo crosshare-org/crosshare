@@ -1,4 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 var shell = require('shelljs');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 var nextjsConfig = require('../next.config');
 var BUILD_ID = shell.cat(`${nextjsConfig.distDir}/BUILD_ID`);
 
@@ -10,7 +12,7 @@ function hoistPages(fileExt, outputPath) {
   var match = new RegExp('\\' + `${fileExt}`);
   var filesToHoist = shell
     .find(`${nextjsConfig.distDir}/server/static/${BUILD_ID}/pages/`)
-    .filter(function (file) {
+    .filter(function(file) {
       // ensure the file has the required extension and is not a dynamic route (/blog/[pid])
       return file.match(match) && file.match(/^((?!\[|\]).)*$/);
     });
@@ -27,7 +29,7 @@ function hoistPages(fileExt, outputPath) {
 }
 
 console.log(
-  "next export doesn't support getServerSideProps() so we perform our own copy of static assets to prepare our Firebase Hosting upload"
+  'next export doesn\'t support getServerSideProps() so we perform our own copy of static assets to prepare our Firebase Hosting upload'
 );
 console.log(
   'Hoist public/ Next.js runtime and optimised chunks, computed .html and .json data\n'

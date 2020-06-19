@@ -21,13 +21,23 @@ const {
 
 process.env.SENTRY_DSN = SENTRY_DSN;
 
+const distDir = 'nextjs';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const nextBuildId = require('next-build-id');
-const latestGitHash = nextBuildId.sync({
-  dir: __dirname
-});
-
-const distDir = 'nextjs';
+let latestGitHash;
+try {
+  // Try getting hash from git - this should work locally when we build
+  latestGitHash = nextBuildId.sync({
+    dir: __dirname
+  });
+} catch {
+  // If that fails then we deployed, get it from the pregenerated file
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const fs = require('fs');
+  latestGitHash = fs.readFileSync(distDir + '/BUILD_ID').toString();
+}
+console.log('Loading config for release: ' + latestGitHash);
 
 module.exports = withSourceMaps(withBundleAnalyzer({
   distDir: distDir,
