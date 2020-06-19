@@ -1,4 +1,3 @@
-import Error from 'next/error';
 import NextJSRouter, { useRouter } from 'next/router';
 import { useState, useEffect, useContext } from 'react';
 import { isRight } from 'fp-ts/lib/Either';
@@ -10,6 +9,7 @@ import { Puzzle, NextPuzzleLink } from '../../components/Puzzle';
 import { App, TimestampClass } from '../../lib/firebaseWrapper';
 import { DBPuzzleV, PlayWithoutUserT } from '../../lib/dbtypes';
 import { getPlays } from '../../lib/plays';
+import { ErrorPage } from '../../components/ErrorPage';
 
 export default requiresAuth(() => {
   const router = useRouter();
@@ -18,7 +18,7 @@ export default requiresAuth(() => {
     return <div />;
   }
   if (Array.isArray(pendingPuzzleId)) {
-    return <Error statusCode={400} title="Bad pending puzzle id" />;
+    return <ErrorPage title="Bad pending puzzle id" />;
   }
   return <PuzzleLoader key={pendingPuzzleId} puzzleId={pendingPuzzleId} />;
 });
@@ -55,7 +55,9 @@ export const PuzzleLoader = ({ puzzleId }: { puzzleId: string }) => {
       });
   }, [puzzleId]);
   if (error) {
-    return <Error statusCode={400} title={error} />;
+    return <ErrorPage title='Something Went Wrong'>
+      <p>{error}</p>
+    </ErrorPage>;
   }
   if (!puzzle) {
     return <div>Loading...</div>;

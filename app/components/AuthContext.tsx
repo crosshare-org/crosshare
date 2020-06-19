@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext } from 'react';
-import Error from 'next/error';
+import { ErrorPage } from '../components/ErrorPage';
 
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { TopBar } from './TopBar';
@@ -68,7 +68,11 @@ export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.Compo
       return login;
     }
     if (!ctx.isAdmin) {
-      return <Error statusCode={403} />;
+      return (
+        <ErrorPage title='Not Allowed'>
+          <p>You do not have permission to view this page</p>
+        </ErrorPage >
+      );
     }
     return <WrappedComponent {...(props as T)} isAdmin={true} user={ctx.user} />;
   };

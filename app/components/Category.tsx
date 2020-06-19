@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
-import ErrorPage from 'next/error';
 
+import { ErrorPage } from './ErrorPage';
 import { Link } from './Link';
 import { AuthContext } from './AuthContext';
 import { DefaultTopBar } from './TopBar';
@@ -29,7 +29,7 @@ export const Category = ({ puzzles, categoryName }: CategoryProps) => {
   }, [user]);
 
   if (error) {
-    return <ErrorPage statusCode={500} title="Error loading user plays" />;
+    return <ErrorPage title="Error loading plays" />;
   }
 
   const today = new Date();

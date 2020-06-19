@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Error from 'next/error';
 import Head from 'next/head';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -12,6 +11,7 @@ import { getFromSessionOrDB } from '../../../lib/dbUtils';
 import { timeString } from '../../../lib/utils';
 import { App } from '../../../lib/firebaseWrapper';
 import { DefaultTopBar } from '../../../components/TopBar';
+import { ErrorPage } from '../../../components/ErrorPage';
 
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();
@@ -20,7 +20,7 @@ export default requiresAuth((props: AuthProps) => {
     return <div />;
   }
   if (Array.isArray(puzzleId)) {
-    return <Error statusCode={400} title="Bad puzzle id" />;
+    return <ErrorPage title="Bad Puzzle Id" />;
   }
   return <PuzzleLoader key={puzzleId} puzzleId={puzzleId} auth={props} />;
 });
@@ -50,14 +50,18 @@ const PuzzleLoader = ({ puzzleId, auth }: { puzzleId: string, auth: AuthProps })
       });
   }, [puzzleId]);
   if (error) {
-    return <Error statusCode={400} title={error} />;
+    return <ErrorPage title='Something Went Wrong'>
+      <p>{error}</p>
+    </ErrorPage >;
   }
   if (!puzzle) {
     return <div>Loading...</div>;
   }
 
   if (!auth.isAdmin && auth.user.uid !== puzzle.authorId) {
-    return <Error statusCode={403} title={'Stats are only available for the puzzle author'} />;
+    return <ErrorPage title='Not Allowed'>
+      <p>You do not have permission to view this page</p>
+    </ErrorPage >;
   }
   return <StatsLoader puzzle={puzzle} />;
 };
@@ -78,7 +82,9 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
   }, [puzzle.id]);
 
   if (error) {
-    return <Error statusCode={400} title={'Error loading stats: ' + error} />;
+    return <ErrorPage title='Error Loading Stats'>
+      <p>{error}</p>
+    </ErrorPage>;
   }
   if (stats === null) {
     return <div>Loading stats...</div>;

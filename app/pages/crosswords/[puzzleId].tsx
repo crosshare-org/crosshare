@@ -1,4 +1,3 @@
-import Error from 'next/error';
 import { useState, useEffect, useContext } from 'react';
 import { GetServerSideProps } from 'next';
 import { isRight } from 'fp-ts/lib/Either';
@@ -10,7 +9,8 @@ import { Puzzle, NextPuzzleLink } from '../../components/Puzzle';
 import { App, TimestampClass } from '../../lib/firebaseWrapper';
 import { DBPuzzleV, PlayWithoutUserT } from '../../lib/dbtypes';
 import { getPlays } from '../../lib/plays';
-
+import { ErrorPage } from '../../components/ErrorPage';
+import { Link } from '../../components/Link';
 
 interface PuzzlePageProps {
   puzzle: PuzzleResult | null,
@@ -62,7 +62,10 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async (co
 
 export default function PuzzlePage({ puzzle, nextPuzzle }: PuzzlePageProps) {
   if (!puzzle) {
-    return <Error statusCode={404} title="No puzzle found" />;
+    return <ErrorPage title='Puzzle Not Found'>
+      <p>We&apos;re sorry, we couldn&apos;t find the puzzle you requested.</p>
+      <p>Try the <Link href="/" passHref>homepage</Link>.</p>
+    </ErrorPage>;
   }
   return <PlayLoader key={puzzle.id} puzzle={puzzle} nextPuzzle={nextPuzzle} />;
 }

@@ -1,9 +1,8 @@
 import NextErrorComponent, { ErrorProps } from 'next/error';
 import { NextPageContext } from 'next';
 import * as Sentry from '@sentry/node';
-import Head from 'next/head';
 
-import { Logo } from '../components/Icons';
+import { ErrorPage } from '../components/ErrorPage';
 
 const MyError = ({ title, statusCode, hasGetInitialPropsRun, err }: { title?: string, err: Error, statusCode: number, hasGetInitialPropsRun: boolean }) => {
   if (!hasGetInitialPropsRun && err) {
@@ -13,23 +12,12 @@ const MyError = ({ title, statusCode, hasGetInitialPropsRun, err }: { title?: st
     Sentry.captureException(err);
   }
 
-  return <>
-    <Head>
-      <title>Error | Crosshare</title>
-    </Head>
-    <div css={{
-      backgroundColor: 'var(--primary)',
-      width: '100%',
-      height: '100%',
-      textAlign: 'center',
-      paddingTop: '5em',
-    }}>
-      <Logo width='15em' height='15em' />
-      <h1 css={{ marginTop: '1em' }}>Something went wrong.</h1>
+  return (
+    <ErrorPage title='Something Went Wrong'>
       <p>Sorry! An error with Crosshare occurred - you can email us for help at crosshare@googlegroups.com.</p>
       <p>{statusCode} {title}</p>
-    </div>
-  </>;
+    </ErrorPage>
+  );
 };
 
 MyError.getInitialProps = async ({ res, err, asPath }: NextPageContext) => {

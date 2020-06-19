@@ -1,9 +1,10 @@
 import Head from 'next/head';
-import Error from 'next/error';
 import { GetServerSideProps } from 'next';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
+import { Link } from '../../components/Link';
+import { ErrorPage } from '../../components/ErrorPage';
 import { App } from '../../lib/firebaseWrapper';
 import { Category } from '../../components/Category';
 import { CategoryIndexT, CategoryIndexV } from '../../lib/dbtypes';
@@ -48,7 +49,10 @@ export async function propsForCategoryId(categoryId: string): Promise<CategoryPa
 
 export default function CategoryPage(props: CategoryPageProps) {
   if (props.puzzles === null) {
-    return <Error statusCode={404} title="Invalid category" />;
+    return <ErrorPage title='Category Not Found'>
+      <p>We&apos;re sorry, we couldn&apos;t find the category page you requested.</p>
+      <p>Try the <Link href="/" passHref>homepage</Link>.</p>
+    </ErrorPage>;
   }
   return <>
     <Head>
