@@ -94,6 +94,7 @@ export function Calendar(props: CalendarProps): JSX.Element {
               textAlign: 'center',
               cursor: isDisabled ? 'default !important' : 'pointer',
               padding: '0.5em 0',
+              color: (isDisabled ? 'var(--default-text)' : 'var(--text)'),
               backgroundColor: isSelected ? 'var(--primary)' : (isToday ? 'var(--lighter)' : (isDisabled ? 'var(--secondary)' : 'var(--bg)')),
               '&:hover': {
                 backgroundColor: isSelected ? 'var(--primary)' : (isToday ? 'var(--lighter)' : 'var(--secondary)'),
