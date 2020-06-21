@@ -104,5 +104,5 @@ test('category 404', async () => {
   const props = await propsForCategoryId('dailyfulllength');
   const { getByText } = render(<CategoryPage {...props} />, {});
 
-  expect(getByText(/invalid category/i)).toBeVisible();
+  expect(getByText(/Category Not Found/i)).toBeVisible();
 });

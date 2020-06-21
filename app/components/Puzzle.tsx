@@ -417,7 +417,8 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     dispatch(action);
 
     if (props.user) {
-      writePlayToDBIfNeeded();
+      cachePlayForUser(props.user);
+      writePlayToDBIfNeeded(props.user);
     } else {
       signInAnonymously().then(u => {
         cachePlayForUser(u);
