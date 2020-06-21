@@ -61,6 +61,6 @@ export default requiresAdmin((authProps: AuthProps) => {
     <Head>
       <title>Constructor | Crosshare crossword puzzle builder</title>
     </Head>
-    <BuilderDBLoader {...props} {...authProps} />;
+    <BuilderDBLoader {...props} {...authProps} />
   </>;
 });

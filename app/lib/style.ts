@@ -25,5 +25,4 @@ export const SMALL_BREAKPOINT = 576;
 export const LARGE_BREAKPOINT = 992;
 export const SMALL_AND_UP = '@media (min-width: ' + SMALL_BREAKPOINT + 'px)';
 export const LARGE_AND_UP = '@media (min-width: ' + LARGE_BREAKPOINT + 'px)';
-export const HAS_PHYSICAL_KEYBOARD_RULES = '(hover: hover) and (pointer: fine)';
-export const HAS_PHYSICAL_KEYBOARD = '@media ' + HAS_PHYSICAL_KEYBOARD_RULES;
+export const HAS_PHYSICAL_KEYBOARD = '@media (hover: hover) and (pointer: fine)';

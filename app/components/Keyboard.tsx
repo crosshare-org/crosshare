@@ -5,7 +5,7 @@ import {
 import { AiOutlineEnter } from 'react-icons/ai';
 
 import { CrosshareAudioContext } from './CrosshareAudioContext';
-import { KEYBOARD_HEIGHT, SMALL_AND_UP, HAS_PHYSICAL_KEYBOARD, HAS_PHYSICAL_KEYBOARD_RULES } from '../lib/style';
+import { KEYBOARD_HEIGHT, SMALL_AND_UP, HAS_PHYSICAL_KEYBOARD } from '../lib/style';
 
 export const KeyRows = (props: KeyRowProps) => {
   return (
@@ -94,12 +94,10 @@ export const Keyboard = memo(function Keyboard({ muted, keyboardHandler, ...prop
   const playKeystrokeSound = useRef<(() => void) | null>(null);
 
   useEffect(() => {
-    const showingKeyboard = window.matchMedia(HAS_PHYSICAL_KEYBOARD_RULES).matches;
-
     if (!audioContext) {
       return initAudioContext();
     }
-    if (!playKeystrokeSound.current && !muted && showingKeyboard && audioContext) {
+    if (!playKeystrokeSound.current && !muted && audioContext) {
       fetch('/keypress.mp3')
         .then(response => response.arrayBuffer())
         .then((buffer) => {
