@@ -2,7 +2,9 @@ import { useCallback, useState, useEffect } from 'react';
 import * as Sentry from '@sentry/node';
 import { AppProps } from 'next/app';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import NextJSRouter from 'next/router';
 
+import * as gtag from '../lib/gtag';
 import { App } from '../lib/firebaseWrapper';
 import { AuthContext } from '../components/AuthContext';
 import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
@@ -50,6 +52,16 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
       setAudioContext(new constructor());
     }
   }, [audioContext, setAudioContext]);
+
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      gtag.pageview(url);
+    };
+    NextJSRouter.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      NextJSRouter.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, []);
 
   return (
     <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
