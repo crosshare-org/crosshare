@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/node';
 import { AppProps } from 'next/app';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import NextJSRouter from 'next/router';
+import Head from 'next/head';
 
 import * as gtag from '../lib/gtag';
 import { App } from '../lib/firebaseWrapper';
@@ -64,10 +65,17 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
   }, []);
 
   return (
-    <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
-      <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error ?.message}}>
-        <Component {...pageProps} err={err} />
-      </AuthContext.Provider>
-    </CrosshareAudioContext.Provider>
+    <>
+      <Head>
+        <title>Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles</title>
+        <meta name="description" key="description" content="Crosshare is a community for crossword constructors and solvers. Each day we post a new mini crossword puzzle you can play for free." />
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0" />
+      </Head>
+      <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
+        <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error ?.message}}>
+          <Component {...pageProps} err={err} />
+        </AuthContext.Provider>
+      </CrosshareAudioContext.Provider>
+    </>
   );
 }

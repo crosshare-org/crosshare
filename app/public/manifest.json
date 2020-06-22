@@ -20,8 +20,8 @@
       "type": "image/x-icon"
     }
   ],
-  "start_url": "https://crosshare.org",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#EB984E",
-  "background_color": "#ffffff"
+  "background_color": "#EB984E"
 }

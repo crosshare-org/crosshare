@@ -1,12 +1,17 @@
 import { LegacyPlayV } from '../lib/dbtypes';
 import { getValidatedAndDelete, setInCache } from '../lib/dbUtils';
 import { App, AuthProvider } from '../lib/firebaseWrapper';
+import { event } from '../lib/gtag';
 
 export const GoogleSignInButton = () => {
   function signin() {
     App.auth().signInWithPopup(AuthProvider)
       .then(() => {
-        App.analytics().logEvent('login', { method: 'google' });
+        event({
+          action: 'login',
+          category: 'engagement',
+          label: 'google',
+        });
       });
   }
   return (
@@ -19,7 +24,11 @@ export const GoogleLinkButton = ({ user }: { user: firebase.User }) => {
     user.linkWithPopup(AuthProvider)
       .then(() => {
         console.log('linked w/o needing a merge');
-        App.analytics().logEvent('login', { method: 'google' });
+        event({
+          action: 'login',
+          category: 'engagement',
+          label: 'google',
+        });
       })
       .catch(async (error: firebase.auth.AuthError) => {
         if (error.code !== 'auth/credential-already-in-use') {
