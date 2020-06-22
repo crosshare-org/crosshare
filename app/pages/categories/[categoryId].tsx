@@ -54,9 +54,14 @@ export default function CategoryPage(props: CategoryPageProps) {
       <p>Try the <Link href="/" passHref>homepage</Link>.</p>
     </ErrorPage>;
   }
+  const description = 'This page is a list of all Crosshare ' + props.categoryName + ' puzzles';
   return <>
     <Head>
       <title>{props.categoryName} Puzzles | Crosshare crosswords</title>
+      <meta key="og:title" property="og:title" content={props.categoryName + ' Puzzles'} />
+      <meta key="description" name="description" content={description} />
+      <meta key="og:description" property="og:description" content={description} />
+
     </Head>
     <Category puzzles={props.puzzles} categoryName={props.categoryName} />
   </>;

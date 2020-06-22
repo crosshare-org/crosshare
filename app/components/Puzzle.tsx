@@ -668,10 +668,15 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     </>
   ), [state.autocheck, muted, props.isAdmin, props.user ?.uid, puzzle, setMuted]);
 
+  const description = puzzle.clues.map(c => c.clue).sort().slice(0, 10).join('; ');
+
   return (
     <>
       <Head>
-        <title>{puzzle.title}</title>
+        <title>{puzzle.title} | Crosshare crossword puzzle</title>
+        <meta key="og:title" property="og:title" content={puzzle.title} />
+        <meta key="og:description" property="og:description" content={description} />
+        <meta key="description" name="description" content={description} />
       </Head>
       <TopBar>
         <TopBarLink icon={<FaPause />} hoverText={'Pause Game'} text={timeString(state.displaySeconds, true)} onClick={() => dispatch({ type: 'PAUSEACTION' })} keepText={true} />

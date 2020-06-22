@@ -68,8 +68,14 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
     <>
       <Head>
         <title>Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles</title>
-        <meta name="description" key="description" content="Crosshare is a community for crossword constructors and solvers. Each day we post a new mini crossword puzzle you can play for free." />
+        <meta key="og:title" property="og:title" content="Crosshare Crosswords" />
+        <meta key="description" name="description" content="Crosshare is a community for crossword constructors and solvers. Each day we post a new mini crossword puzzle you can play for free." />
+        <meta key="og:description" property="og:description" content="Crosshare is a community for crossword constructors and solvers. Each day we post a new mini crossword puzzle you can play for free." />
         <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0" />
+        <meta property="fb:pages" content="100687178303443" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:site" content="@crosshareapp" />
+        <meta property="og:image" content="https://crosshare.org/manifest-icon-512.png" />
       </Head>
       <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
         <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error ?.message}}>
