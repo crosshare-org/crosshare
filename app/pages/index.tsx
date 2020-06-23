@@ -16,15 +16,7 @@ interface HomePageProps {
   dailymini?: DailyMini
 }
 
-let lastFetched: { dailymini?: DailyMini, timestamp?: number } = {};
-const TTL = 20 * 60 * 1000; // 20 min
-
-export const getServerSideProps: GetServerSideProps<HomePageProps> = async () => {
-  if (lastFetched.dailymini && lastFetched.timestamp && (Date.now() - lastFetched.timestamp) < TTL) {
-    console.log('got dailymini from cache');
-    return { props: { dailymini: lastFetched.dailymini } };
-  }
-
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ res }) => {
   const db = App.firestore();
   return db.collection('c').where('c', '==', 'dailymini')
     .where('p', '<', TimestampClass.now())
@@ -35,9 +27,8 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async () =>
       const data = value.docs[0].data();
       const validationResult = DBPuzzleV.decode(data);
       if (isRight(validationResult)) {
-        console.log('got dailymini from db');
+        res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
         const dm = { id: value.docs[0].id };
-        lastFetched = { dailymini: dm, timestamp: Date.now() };
         return { props: { dailymini: dm } };
       } else {
         console.error(PathReporter.report(validationResult).join(','));

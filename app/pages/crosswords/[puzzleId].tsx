@@ -17,20 +17,20 @@ interface PuzzlePageProps {
   nextPuzzle?: NextPuzzleLink,
 }
 
-export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async (context) => {
+export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ res, params }) => {
   const db = App.firestore();
   let puzzle: PuzzleResult | null = null;
-  if (!context.params ?.puzzleId || Array.isArray(context.params.puzzleId)) {
+  if (!params ?.puzzleId || Array.isArray(params.puzzleId)) {
     console.error('bad puzzle params');
     return { props: { puzzle: null } };
   }
-  const dbres = await db.collection('c').doc(context.params.puzzleId).get();
+  const dbres = await db.collection('c').doc(params.puzzleId).get();
   if (!dbres.exists) {
     return { props: { puzzle: null } };
   }
   const validationResult = DBPuzzleV.decode(dbres.data());
   if (isRight(validationResult)) {
-    console.log('loaded puzzle from db');
+    res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
     puzzle = { ...puzzleFromDB(validationResult.right), id: dbres.id };
   } else {
     console.error(PathReporter.report(validationResult).join(','));

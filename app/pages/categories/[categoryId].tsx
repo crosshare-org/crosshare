@@ -18,13 +18,17 @@ interface CategoryPageProps {
   categoryName: string,
 }
 
-export const getServerSideProps: GetServerSideProps<CategoryPageProps> = async (context) => {
-  const categoryId = context.params ?.categoryId;
+export const getServerSideProps: GetServerSideProps<CategoryPageProps> = async ({ res, params }) => {
+  const categoryId = params ?.categoryId;
   if (!categoryId || Array.isArray(categoryId)) {
     console.error('bad category param');
     return { props: { puzzles: null, categoryName: '' } };
   }
-  return { props: await propsForCategoryId(categoryId) };
+  const props = await propsForCategoryId(categoryId);
+  if (props.puzzles) {
+    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=7200');
+  }
+  return { props: props };
 };
 
 // We export this so we can use it for testing
