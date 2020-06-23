@@ -19,6 +19,9 @@ const app = next({
 const handle = app.getRequestHandler();
 
 const server = functions.https.onRequest((request, response) => {
+  if (request.originalUrl.endsWith('.map') || request.originalUrl.endsWith('.ts') || request.originalUrl.endswith('.tsx')) {
+    return response.status(404).send('Sorry, page cannot be found');
+  }
   // log the page.js file or resource being requested
   console.log('File: ' + request.originalUrl);
   return app.prepare().then(() => handle(request, response));

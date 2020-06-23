@@ -31,7 +31,9 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**",
-      "**/*.map"
+      "**/*.map",
+      "**/*.ts",
+      "**/*.tsx"
     ],
     "cleanUrls": true,
     "headers": [
