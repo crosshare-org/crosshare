@@ -153,8 +153,9 @@ const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry,
         paddingRight: '1em',
         paddingBottom: '1em',
         textAlign: 'right',
+        width: '1px'
       }}>{props.entry.completedWord}</td>
-      <td css={{ paddingBottom: '1em' }}><input placeholder="Enter a clue" value={props.clues.get(props.entry.completedWord) || ''} onChange={(e) => {
+      <td css={{ paddingBottom: '1em' }}><input css={{ width: '100%' }} placeholder="Enter a clue" value={props.clues.get(props.entry.completedWord) || ''} onChange={(e) => {
         const sca: SetClueAction = { type: 'SETCLUE', word: props.entry.completedWord || '', clue: e.target.value };
         props.dispatch(sca);
       }} /></td>
@@ -184,7 +185,7 @@ const ClueMode = (props: ClueModeProps) => {
         }} />
         <h4>Clues</h4>
         {props.completedEntries.length ?
-          <table css={{ margin: 'auto', }}>
+          <table css={{ width: '100%', }}>
             <tbody>
               {clueRows}
             </tbody>
