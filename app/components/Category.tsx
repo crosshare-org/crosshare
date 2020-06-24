@@ -1,13 +1,8 @@
-import { useState, useEffect, useContext } from 'react';
-
-import { ErrorPage } from './ErrorPage';
-import { Link } from './Link';
-import { AuthContext } from './AuthContext';
+import { PuzzleLink } from './PuzzleLink';
 import { DefaultTopBar } from './TopBar';
 import {
   CategoryIndexT, getDateString, prettifyDateString
 } from '../lib/dbtypes';
-import { getPlays, PlayMapT } from '../lib/plays';
 
 interface CategoryProps {
   puzzles: CategoryIndexT,
@@ -15,23 +10,6 @@ interface CategoryProps {
 }
 
 export const Category = ({ puzzles, categoryName }: CategoryProps) => {
-  const { user } = useContext(AuthContext);
-  const [plays, setPlays] = useState<PlayMapT | null>(null);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    getPlays(user)
-      .then(pm => setPlays(pm))
-      .catch(reason => {
-        console.error(reason);
-        setError(true);
-      });
-  }, [user]);
-
-  if (error) {
-    return <ErrorPage title="Error loading plays" />;
-  }
-
   const today = new Date();
   today.setHours(12);
   const ds = addZeros(getDateString(today));
@@ -56,28 +34,16 @@ export const Category = ({ puzzles, categoryName }: CategoryProps) => {
   return (
     <>
       <DefaultTopBar />
-      <ul css={{
-        margin: 0,
-        padding: 0,
-        listStyleType: 'none',
-      }}>
+      <div css={{ margin: '1em', }}>
+        <h2>Crosshare {categoryName} Puzzles</h2>
         {Object.entries(puzzles)
           .map(([k, v]) => [addZeros(k), v])
           .filter(([k, _v]) => k <= ds)
           .sort((a, b) => a[0] > b[0] ? -1 : 1)
           .map(([dateString, puzzleId]) => {
-            const play = plays && plays[puzzleId];
-            return (<li key={dateString} css={{
-              padding: '0.5em 0',
-              width: '100%',
-            }}>
-              <Link css={{ display: 'inline-block', width: '50%', textAlign: 'right', paddingRight: '1em', fontWeight: play ?.f ? 'normal' : 'bold' }} href='/crosswords/[puzzleId]' as={`/crosswords/${puzzleId}`} passHref>
-                {categoryName + ' for ' + prettifyDateString(dateString)}
-              </Link>
-              <div css={{ display: 'inline-block', width: '50%', paddingLeft: '1em' }}>{play ?.f ? 'completed ' + (play ?.ch ? 'with helpers' : 'without helpers') : (play ? 'unfinished' : '')}</div>
-            </li>);
+            return <PuzzleLink key={dateString} id={puzzleId} width={5} height={5} title={categoryName + ' for ' + prettifyDateString(dateString)} />;
           })}
-      </ul>
+      </div>
     </>
   );
 };

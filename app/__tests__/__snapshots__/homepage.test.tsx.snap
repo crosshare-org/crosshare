@@ -90,7 +90,7 @@ exports[`get home page 1`] = `
   }
 }
 
-.emotion-15 {
+.emotion-17 {
   margin: 1em;
 }
 
@@ -98,19 +98,28 @@ exports[`get home page 1`] = `
   margin-bottom: 1em;
 }
 
-.emotion-10 {
+.emotion-11 {
   overflow: auto;
   display: inline-block;
   width: 100%;
 }
 
 @media (min-width:576px) {
-  .emotion-10 {
+  .emotion-11 {
     width: 50%;
   }
 }
 
+.emotion-10 {
+  color: var(--link);
+}
+
+.emotion-10:hover {
+  color: var(--link-hover);
+}
+
 .emotion-9 {
+  position: relative;
   vertical-align: top !important;
   float: left;
   font-size: 4em;
@@ -121,7 +130,7 @@ exports[`get home page 1`] = `
   vertical-align: top;
 }
 
-.emotion-14 {
+.emotion-16 {
   margin-top: 1em;
 }
 
@@ -285,7 +294,7 @@ exports[`get home page 1`] = `
     </div>
   </header>
   <div
-    class="emotion-15"
+    class="emotion-17"
   >
     <p
       class="emotion-7"
@@ -296,9 +305,10 @@ exports[`get home page 1`] = `
       Daily Mini
     </h2>
     <div
-      class="emotion-10"
+      class="emotion-11"
     >
       <a
+        class="emotion-10"
         href="/crosswords/dailymini"
       >
         <div
@@ -360,9 +370,12 @@ exports[`get home page 1`] = `
               5
             </text>
           </svg>
+          
         </div>
         <h3>
           Today's daily mini crossword
+           
+          
         </h3>
       </a>
       <p>
@@ -377,9 +390,10 @@ exports[`get home page 1`] = `
       Recent Puzzles
     </h2>
     <div
-      class="emotion-10"
+      class="emotion-11"
     >
       <a
+        class="emotion-10"
         href="/crosswords/published-puzzle"
       >
         <div
@@ -441,9 +455,12 @@ exports[`get home page 1`] = `
               5
             </text>
           </svg>
+          
         </div>
         <h3>
           Raises, as young
+           
+          
         </h3>
         <p>
           By 
@@ -452,7 +469,7 @@ exports[`get home page 1`] = `
       </a>
     </div>
     <p
-      class="emotion-14"
+      class="emotion-16"
     >
       For questions and discussion, join the 
       <a

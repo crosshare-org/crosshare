@@ -83,7 +83,7 @@ test('basic category page test', async () => {
 
   const link = await findByText('Daily Mini for 5/10/2020');
   expect(link).toBeInTheDocument();
-  expect(link).toHaveAttribute('href', '/crosswords/foobar');
+  expect(link.parentElement).toHaveAttribute('href', '/crosswords/foobar');
   expect(container).toMatchSnapshot();
 });
 
@@ -91,11 +91,11 @@ test('category page when logged in with some plays', async () => {
   setApp(loggedInApp);
 
   const props = await propsForCategoryId('dailymini');
-  const { findByText, container } = render(<CategoryPage {...props} />, { user: anonymousUser });
+  const r = render(<CategoryPage {...props} />, { user: anonymousUser });
 
-  expect(await findByText(/completed without helpers/)).toBeInTheDocument();
-  expect(await findByText(/unfinished/)).toBeInTheDocument();
-  expect(container).toMatchSnapshot();
+  expect(await r.findByTitle('Solved without helpers')).toBeInTheDocument();
+  expect(await r.findByText(/unfinished/i)).toBeInTheDocument();
+  expect(r.container).toMatchSnapshot();
 
   setApp(app);
 });

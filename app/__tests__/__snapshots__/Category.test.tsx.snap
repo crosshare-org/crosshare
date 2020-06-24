@@ -90,29 +90,40 @@ exports[`basic category page test 1`] = `
   }
 }
 
-.emotion-16 {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
+.emotion-19 {
+  margin: 1em;
 }
 
-.emotion-9 {
-  padding: 0.5em 0;
+.emotion-10 {
+  overflow: auto;
+  display: inline-block;
   width: 100%;
 }
 
-.emotion-7 {
-  display: inline-block;
-  width: 50%;
-  text-align: right;
-  padding-right: 1em;
-  font-weight: bold;
+@media (min-width:576px) {
+  .emotion-10 {
+    width: 50%;
+  }
+}
+
+.emotion-9 {
+  color: var(--link);
+}
+
+.emotion-9:hover {
+  color: var(--link-hover);
 }
 
 .emotion-8 {
-  display: inline-block;
-  width: 50%;
-  padding-left: 1em;
+  position: relative;
+  vertical-align: top !important;
+  float: left;
+  font-size: 4em;
+  margin-right: 0.3em;
+}
+
+.emotion-7 {
+  vertical-align: top;
 }
 
 <div>
@@ -274,49 +285,240 @@ exports[`basic category page test 1`] = `
       </a>
     </div>
   </header>
-  <ul
-    class="emotion-16"
+  <div
+    class="emotion-19"
   >
-    <li
-      class="emotion-9"
+    <h2>
+      Crosshare 
+      Daily Mini
+       Puzzles
+    </h2>
+    <div
+      class="emotion-10"
     >
       <a
-        class="emotion-7"
+        class="emotion-9"
         href="/crosswords/foobar"
       >
-        Daily Mini for 5/10/2020
+        <div
+          class="emotion-8"
+        >
+          <svg
+            class="emotion-7"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 100 100"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="currentColor"
+              height="45"
+              width="45"
+              x="5"
+              y="50"
+            />
+            <rect
+              fill="transparent"
+              height="90"
+              rx="5"
+              ry="5"
+              stroke="currentColor"
+              stroke-width="5"
+              width="90"
+              x="5"
+              y="5"
+            />
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="28"
+              y="45"
+            >
+              5
+            </text>
+            <text
+              font-size="45"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="45"
+            >
+              x
+            </text>
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="87"
+            >
+              5
+            </text>
+          </svg>
+          
+        </div>
+        <h3>
+          Daily Mini for 5/10/2020
+           
+          
+        </h3>
       </a>
-      <div
-        class="emotion-8"
-      />
-    </li>
-    <li
-      class="emotion-9"
+    </div>
+    <div
+      class="emotion-10"
     >
       <a
-        class="emotion-7"
+        class="emotion-9"
         href="/crosswords/mike"
       >
-        Daily Mini for 5/5/2020
+        <div
+          class="emotion-8"
+        >
+          <svg
+            class="emotion-7"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 100 100"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="currentColor"
+              height="45"
+              width="45"
+              x="5"
+              y="50"
+            />
+            <rect
+              fill="transparent"
+              height="90"
+              rx="5"
+              ry="5"
+              stroke="currentColor"
+              stroke-width="5"
+              width="90"
+              x="5"
+              y="5"
+            />
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="28"
+              y="45"
+            >
+              5
+            </text>
+            <text
+              font-size="45"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="45"
+            >
+              x
+            </text>
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="87"
+            >
+              5
+            </text>
+          </svg>
+          
+        </div>
+        <h3>
+          Daily Mini for 5/5/2020
+           
+          
+        </h3>
       </a>
-      <div
-        class="emotion-8"
-      />
-    </li>
-    <li
-      class="emotion-9"
+    </div>
+    <div
+      class="emotion-10"
     >
       <a
-        class="emotion-7"
+        class="emotion-9"
         href="/crosswords/baz"
       >
-        Daily Mini for 5/1/2020
+        <div
+          class="emotion-8"
+        >
+          <svg
+            class="emotion-7"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 100 100"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="currentColor"
+              height="45"
+              width="45"
+              x="5"
+              y="50"
+            />
+            <rect
+              fill="transparent"
+              height="90"
+              rx="5"
+              ry="5"
+              stroke="currentColor"
+              stroke-width="5"
+              width="90"
+              x="5"
+              y="5"
+            />
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="28"
+              y="45"
+            >
+              5
+            </text>
+            <text
+              font-size="45"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="45"
+            >
+              x
+            </text>
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="87"
+            >
+              5
+            </text>
+          </svg>
+          
+        </div>
+        <h3>
+          Daily Mini for 5/1/2020
+           
+          
+        </h3>
       </a>
-      <div
-        class="emotion-8"
-      />
-    </li>
-  </ul>
+    </div>
+  </div>
 </div>
 `;
 
@@ -410,37 +612,64 @@ exports[`category page when logged in with some plays 1`] = `
   }
 }
 
-.emotion-16 {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
+.emotion-20 {
+  margin: 1em;
 }
 
-.emotion-9 {
-  padding: 0.5em 0;
+.emotion-11 {
+  overflow: auto;
+  display: inline-block;
   width: 100%;
 }
 
-.emotion-10 {
-  display: inline-block;
-  width: 50%;
-  text-align: right;
-  padding-right: 1em;
-  font-weight: bold;
+@media (min-width:576px) {
+  .emotion-11 {
+    width: 50%;
+  }
 }
 
-.emotion-8 {
-  display: inline-block;
-  width: 50%;
-  padding-left: 1em;
+.emotion-18 {
+  color: var(--link);
+}
+
+.emotion-18:hover {
+  color: var(--link-hover);
+}
+
+.emotion-9 {
+  position: relative;
+  vertical-align: top !important;
+  float: left;
+  font-size: 4em;
+  margin-right: 0.3em;
 }
 
 .emotion-7 {
-  display: inline-block;
-  width: 50%;
-  text-align: right;
-  padding-right: 1em;
-  font-weight: normal;
+  vertical-align: top;
+}
+
+.emotion-10 {
+  color: var(--text);
+}
+
+.emotion-10:hover {
+  color: var(--text);
+}
+
+.emotion-8 {
+  text-shadow: 2px 0 0 white,-2px 0 0 white,0 2px 0 white,0 -2px 0 white;
+  position: absolute;
+  top: 0.1em;
+  left: 0.35em;
+  font-size: 0.6em;
+}
+
+.emotion-14 {
+  color: var(--error);
+}
+
+.emotion-14:hover {
+  color: var(--error-hover);
 }
 
 <div>
@@ -602,52 +831,255 @@ exports[`category page when logged in with some plays 1`] = `
       </a>
     </div>
   </header>
-  <ul
-    class="emotion-16"
+  <div
+    class="emotion-20"
   >
-    <li
-      class="emotion-9"
+    <h2>
+      Crosshare 
+      Daily Mini
+       Puzzles
+    </h2>
+    <div
+      class="emotion-11"
     >
       <a
-        class="emotion-7"
+        class="emotion-10"
         href="/crosswords/foobar"
       >
-        Daily Mini for 5/10/2020
+        <div
+          class="emotion-9"
+        >
+          <svg
+            class="emotion-7"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 100 100"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="currentColor"
+              height="45"
+              width="45"
+              x="5"
+              y="50"
+            />
+            <rect
+              fill="transparent"
+              height="90"
+              rx="5"
+              ry="5"
+              stroke="currentColor"
+              stroke-width="5"
+              width="90"
+              x="5"
+              y="5"
+            />
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="28"
+              y="45"
+            >
+              5
+            </text>
+            <text
+              font-size="45"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="45"
+            >
+              x
+            </text>
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="87"
+            >
+              5
+            </text>
+          </svg>
+          <div
+            class="emotion-8"
+          >
+            <span
+              aria-label="Solved without helpers"
+              role="img"
+              title="Solved without helpers"
+            >
+              🤓
+            </span>
+          </div>
+        </div>
+        <h3>
+          Daily Mini for 5/10/2020
+           
+          <i>
+            (
+            1:10
+            )
+          </i>
+        </h3>
       </a>
-      <div
-        class="emotion-8"
-      >
-        completed without helpers
-      </div>
-    </li>
-    <li
-      class="emotion-9"
+    </div>
+    <div
+      class="emotion-11"
     >
       <a
-        class="emotion-10"
+        class="emotion-14"
         href="/crosswords/mike"
       >
-        Daily Mini for 5/5/2020
+        <div
+          class="emotion-9"
+        >
+          <svg
+            class="emotion-7"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 100 100"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="currentColor"
+              height="45"
+              width="45"
+              x="5"
+              y="50"
+            />
+            <rect
+              fill="transparent"
+              height="90"
+              rx="5"
+              ry="5"
+              stroke="currentColor"
+              stroke-width="5"
+              width="90"
+              x="5"
+              y="5"
+            />
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="28"
+              y="45"
+            >
+              5
+            </text>
+            <text
+              font-size="45"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="45"
+            >
+              x
+            </text>
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="87"
+            >
+              5
+            </text>
+          </svg>
+          
+        </div>
+        <h3>
+          Daily Mini for 5/5/2020
+           
+          <i>
+            (unfinished)
+          </i>
+        </h3>
       </a>
-      <div
-        class="emotion-8"
-      >
-        unfinished
-      </div>
-    </li>
-    <li
-      class="emotion-9"
+    </div>
+    <div
+      class="emotion-11"
     >
       <a
-        class="emotion-10"
+        class="emotion-18"
         href="/crosswords/baz"
       >
-        Daily Mini for 5/1/2020
+        <div
+          class="emotion-9"
+        >
+          <svg
+            class="emotion-7"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 100 100"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="currentColor"
+              height="45"
+              width="45"
+              x="5"
+              y="50"
+            />
+            <rect
+              fill="transparent"
+              height="90"
+              rx="5"
+              ry="5"
+              stroke="currentColor"
+              stroke-width="5"
+              width="90"
+              x="5"
+              y="5"
+            />
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="28"
+              y="45"
+            >
+              5
+            </text>
+            <text
+              font-size="45"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="45"
+            >
+              x
+            </text>
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="87"
+            >
+              5
+            </text>
+          </svg>
+          
+        </div>
+        <h3>
+          Daily Mini for 5/1/2020
+           
+          
+        </h3>
       </a>
-      <div
-        class="emotion-8"
-      />
-    </li>
-  </ul>
+    </div>
+  </div>
 </div>
 `;
