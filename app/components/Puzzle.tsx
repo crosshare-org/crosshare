@@ -137,7 +137,8 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
 
   function setModerated() {
     db.collection('c').doc(puzzle.id).update({
-      m: true
+      m: true,
+      p: TimestampClass.now(),
     }).then(() => {
       // Dump it!
       sessionStorage.removeItem('c/' + puzzle.id);

@@ -4,47 +4,60 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { Link } from '../components/Link';
+import { puzzleFromDB, PuzzleResult } from '../lib/types';
+import { SMALL_AND_UP } from '../lib/style';
 import { DBPuzzleV } from '../lib/dbtypes';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
+import { PuzzleSizeIcon } from '../components/Icons';
 
 type DailyMini = {
   id: string
 }
 
 interface HomePageProps {
-  dailymini?: DailyMini
+  dailymini: DailyMini,
+  recents: Array<PuzzleResult>
 }
 
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ res }) => {
   const db = App.firestore();
-  return db.collection('c').where('c', '==', 'dailymini')
+  const dailyminiQuery = db.collection('c').where('c', '==', 'dailymini')
     .where('p', '<', TimestampClass.now())
-    .orderBy('p', 'desc').limit(1).get().then((value) => {
-      if (!value.size) {
-        return { props: {} };
-      }
-      const data = value.docs[0].data();
-      const validationResult = DBPuzzleV.decode(data);
-      if (isRight(validationResult)) {
-        res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-        const dm = { id: value.docs[0].id };
-        return { props: { dailymini: dm } };
+    .orderBy('p', 'desc').limit(1).get();
+
+  const recentsQuery = db.collection('c').where('c', '==', null)
+    .where('m', '==', true)
+    .where('p', '<', TimestampClass.now())
+    .orderBy('p', 'desc').limit(20).get();
+
+  return Promise.all([dailyminiQuery, recentsQuery]).then(([dmResult, recentsResult]) => {
+    if (!dmResult.size) {
+      throw new Error('Missing daily mini');
+    }
+    const recents = recentsResult.docs.map((doc) => {
+      const res = DBPuzzleV.decode(doc.data());
+      if (isRight(res)) {
+        return { ...puzzleFromDB(res.right), id: doc.id };
       } else {
-        console.error(PathReporter.report(validationResult).join(','));
-        return { props: {} };
+        console.error(PathReporter.report(res).join(','));
+        throw new Error('Bad puzzle querying for recents');
       }
-    }).catch(reason => {
-      console.error(reason);
-      return { props: {} };
     });
+    const data = dmResult.docs[0].data();
+    const validationResult = DBPuzzleV.decode(data);
+    if (isRight(validationResult)) {
+      res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
+      const dm = { id: dmResult.docs[0].id };
+      return { props: { dailymini: dm, recents } };
+    } else {
+      console.error(PathReporter.report(validationResult).join(','));
+      throw new Error('Malformed daily mini');
+    }
+  });
 };
 
-export default function HomePage({ dailymini }: HomePageProps) {
-  if (!dailymini) {
-    return <div>Missing mini</div>;
-  }
-
+export default function HomePage({ dailymini, recents }: HomePageProps) {
   return <>
     <Head>
       <title>Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles</title>
@@ -54,11 +67,36 @@ export default function HomePage({ dailymini }: HomePageProps) {
 
     <div css={{ margin: '1em', }}>
       <p css={{ marginBottom: '1em' }}>
-        Crosshare is a new community for crossword constructors.
-        We are just getting started so please let us know if you have any issues or suggestions.
+        Crosshare is the best place to create, share and solve crossword puzzles.
       </p>
-      <p><Link href='/crosswords/[puzzleId]' as={`/crosswords/${dailymini.id}`} passHref>Play today&apos;s daily mini crossword</Link></p>
-      <p><Link href='/categories/[categoryId]' as='/categories/dailymini' passHref>Play previous daily minis</Link></p>
+      <h2>Daily Mini</h2>
+      <div css={{ overflow: 'auto' }}>
+        <Link href='/crosswords/[puzzleId]' as={`/crosswords/${dailymini.id}`} passHref>
+          <div css={{ verticalAlign: 'top !important', float: 'left', fontSize: '4em', marginRight: '0.3em' }} >
+            <PuzzleSizeIcon width={5} height={5} />
+          </div>
+          <h3>Today&apos;s daily mini crossword</h3>
+        </Link>
+        <p><Link href='/categories/[categoryId]' as='/categories/dailymini' passHref>Play previous daily minis</Link></p>
+      </div>
+      <h2>Recent Puzzles</h2>
+      {recents.map((p, i) => <div key={i} css={{
+        overflow: 'auto',
+        display: 'inline-block',
+        width: '100%',
+        [SMALL_AND_UP]: {
+          width: '50%',
+        }
+      }}>
+        <Link href='/crosswords/[puzzleId]' as={`/crosswords/${p.id}`} passHref>
+          <div css={{ verticalAlign: 'top !important', float: 'left', fontSize: '4em', marginRight: '0.3em' }} >
+            <PuzzleSizeIcon width={p.size.cols} height={p.size.rows} />
+          </div>
+          <h3>{p.title}</h3>
+          <p>By {p.authorName}</p>
+        </Link>
+      </div>
+      )}
       <p css={{ marginTop: '1em' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
     </div>
   </>;
