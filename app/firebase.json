@@ -25,7 +25,7 @@
     ]
   },
   "hosting": [ {
-    "target": "next",
+    "target": "prod",
     "public": "out",
     "ignore": [
       "firebase.json",
