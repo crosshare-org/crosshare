@@ -2,15 +2,13 @@ import Head from 'next/head';
 import { GetServerSideProps } from 'next';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { ReactNode } from 'react';
 
 import { Link } from '../components/Link';
 import { puzzleFromDB, PuzzleResult } from '../lib/types';
-import { SMALL_AND_UP } from '../lib/style';
 import { DBPuzzleV } from '../lib/dbtypes';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
-import { PuzzleSizeIcon } from '../components/Icons';
+import { PuzzleLink, PuzzleResultLink } from '../components/PuzzleLink';
 
 type DailyMini = {
   id: string
@@ -56,30 +54,6 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ re
       throw new Error('Malformed daily mini');
     }
   });
-};
-
-const PuzzleLink = (props: { id: string, width: number, height: number, title: string, byline?: ReactNode, children?: ReactNode }) => {
-  return <div css={{
-    overflow: 'auto',
-    display: 'inline-block',
-    width: '100%',
-    [SMALL_AND_UP]: {
-      width: '50%',
-    }
-  }}>
-    <Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>
-      <div css={{ verticalAlign: 'top !important', float: 'left', fontSize: '4em', marginRight: '0.3em' }} >
-        <PuzzleSizeIcon width={props.width} height={props.height} />
-      </div>
-      <h3>{props.title}</h3>
-      {props.byline}
-    </Link>
-    {props.children}
-  </div>;
-};
-
-const PuzzleResultLink = ({ puzzle }: { puzzle: PuzzleResult }) => {
-  return <PuzzleLink id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={puzzle.title} byline={<p>By {puzzle.authorName}</p>} />;
 };
 
 export default function HomePage({ dailymini, recents }: HomePageProps) {
