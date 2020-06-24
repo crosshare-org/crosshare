@@ -21,11 +21,30 @@ export function isDirty(user: firebase.User, puzzleId: string) {
   return dirtyPlays.has(docId);
 }
 
+const memoryStore: Record<string, TimestampedPlayMapT> = {};
+const currentQuery: Record<string, Promise<firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>>> = {};
+
 export async function getPlays(user: firebase.User | undefined): Promise<PlayMapT> {
+  const storageKey = user ? 'plays/' + user.uid : 'plays/logged-out';
+
+  if (currentQuery[storageKey]) {
+    // Wait for the current query to finish and then just snag the results from the memory store which will be updated
+    return currentQuery[storageKey].then(() => {
+      return memoryStore[storageKey].data;
+    });
+  }
+
   let plays: PlayMapT = {};
   let lastUpdated: TimestampType | null = null;
+  const now = new Date();
 
-  const storageKey = user ? 'plays/' + user.uid : 'plays/logged-out';
+  if (memoryStore[storageKey]) {
+    const inMemory = memoryStore[storageKey];
+    if (!user || (inMemory.downloadedAt && (now.getTime() < inMemory.downloadedAt.toDate().getTime() + PlayTTL))) {
+      return Promise.resolve(inMemory.data);
+    }
+  }
+
   const inStorage = localStorage.getItem(storageKey);
   if (inStorage) {
     const validationResult = TimestampedPlayMapV.decode(JSON.parse(inStorage));
@@ -34,13 +53,13 @@ export async function getPlays(user: firebase.User | undefined): Promise<PlayMap
       const valid = validationResult.right;
       plays = valid.data;
       lastUpdated = valid.downloadedAt;
+      memoryStore[storageKey] = valid;
     } else {
       console.error(PathReporter.report(validationResult).join(','));
       return Promise.reject('Couldn\'t parse object in local storage');
     }
   }
 
-  const now = new Date();
   if (!user || (lastUpdated && (now.getTime() < lastUpdated.toDate().getTime() + PlayTTL))) {
     // We either don't have a user or our cache is still valid - no need to go to db
     return Promise.resolve(plays);
@@ -54,7 +73,8 @@ export async function getPlays(user: firebase.User | undefined): Promise<PlayMap
     query = query.where('ua', '>', lastUpdated);
   }
 
-  return query.get()
+  currentQuery[storageKey] = query.get();
+  return currentQuery[storageKey]
     .then(async dbres => {
       console.log('loaded ' + dbres.size + ' plays from DB');
       for (const doc of dbres.docs) {
@@ -87,7 +107,11 @@ export async function getPlays(user: firebase.User | undefined): Promise<PlayMap
         data: plays
       };
       localStorage.setItem(storageKey, JSON.stringify(forLS));
+      memoryStore[storageKey] = forLS;
       return plays;
+    })
+    .finally(() => {
+      delete currentQuery[storageKey];
     });
 }
 
@@ -162,5 +186,6 @@ export function cachePlay(user: firebase.User | undefined, play: PlayWithoutUser
     downloadedAt: lastUpdated,
     data: plays
   };
+  memoryStore[storageKey] = forLS;
   localStorage.setItem(storageKey, JSON.stringify(forLS));
 }
