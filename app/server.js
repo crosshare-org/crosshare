@@ -30,3 +30,7 @@ const server = functions.https.onRequest((request, response) => {
 exports.nextjs = {
   server
 };
+
+exports.staging = {
+  server
+};

@@ -24,7 +24,7 @@
       "setupTestsAfterEnv.ts"
     ]
   },
-  "hosting": {
+  "hosting": [ {
     "target": "next",
     "public": "out",
     "ignore": [
@@ -60,5 +60,45 @@
         "type": 301
       }
     ]
-  }
+  }, {
+    "target": "staging",
+    "public": "out",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/*.map",
+      "**/*.ts",
+      "**/*.tsx"
+    ],
+    "cleanUrls": true,
+    "headers": [
+      {
+        "source": "**/static/**",
+        "headers" : [
+          {
+            "key" : "Cache-Control",
+            "value" : "max-age=365000000, immutable"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "/robots.txt",
+        "destination": "/staging.robots.txt"
+      },
+      {
+        "source": "**",
+        "function": "staging-server"
+      }
+    ],
+    "redirects": [
+      {
+        "source": "/category/dailymini",
+        "destination": "/categories/dailymini",
+        "type": 301
+      }
+    ]
+  }]
 }
