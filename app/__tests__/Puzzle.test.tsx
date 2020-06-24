@@ -132,6 +132,7 @@ test('nonuser progress should be cached in local storage but not db', async () =
   jest.spyOn(plays, 'writePlayToDB');
   sessionStorage.clear();
   localStorage.clear();
+  plays.resetMemoryStore();
   await firebaseTesting.clearFirestoreData({ projectId: 'test1' });
 
   const app = firebaseTesting.initializeTestApp({ projectId: 'test1' });
@@ -198,6 +199,7 @@ test('anonymous user progress should be cached in local storage and db', async (
   jest.spyOn(plays, 'writePlayToDB');
   sessionStorage.clear();
   localStorage.clear();
+  plays.resetMemoryStore();
   await firebaseTesting.clearFirestoreData({ projectId: 'test1' });
 
   const app = firebaseTesting.initializeTestApp({
@@ -259,6 +261,7 @@ test('anonymous user progress should be cached in local storage and db', async (
   // Now try again w/o Local storage!
   sessionStorage.clear();
   localStorage.clear();
+  plays.resetMemoryStore();
   ({ findByText, queryByText, getByLabelText, container } = render(
     <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
   ));
@@ -285,6 +288,7 @@ test('visiting a puzzle youve already solved should not write to db', async () =
   jest.spyOn(plays, 'writePlayToDB');
   sessionStorage.clear();
   localStorage.clear();
+  plays.resetMemoryStore();
   await firebaseTesting.clearFirestoreData({ projectId: 'test1' });
 
   const app = firebaseTesting.initializeTestApp({
@@ -334,6 +338,7 @@ test('user finishing a puzzle causes write to db', async () => {
   jest.spyOn(plays, 'writePlayToDB');
   sessionStorage.clear();
   localStorage.clear();
+  plays.resetMemoryStore();
   await firebaseTesting.clearFirestoreData({ projectId: 'test1' });
 
   const app = firebaseTesting.initializeTestApp({
@@ -384,6 +389,7 @@ test('nonuser finishing a puzzle should cause creation of anonymous user and wri
   jest.spyOn(firebaseWrapper, 'signInAnonymously');
   sessionStorage.clear();
   localStorage.clear();
+  plays.resetMemoryStore();
   await firebaseTesting.clearFirestoreData({ projectId: 'test1' });
 
   const anonApp = firebaseTesting.initializeTestApp({

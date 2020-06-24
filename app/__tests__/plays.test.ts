@@ -2,7 +2,7 @@ import { anonymousUser } from '../lib/testingUtils';
 import { setApp, TimestampClass } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/testing';
 import { PlayT, LegacyPlayT, DBPuzzleT } from '../lib/dbtypes';
-import { getPlays, TimestampedPlayMapT } from '../lib/plays';
+import { resetMemoryStore, getPlays, TimestampedPlayMapT } from '../lib/plays';
 
 let adminApp: firebase.app.App;
 let app: firebase.app.App;
@@ -158,6 +158,7 @@ afterAll(async () => {
 test('get plays for logged out', async () => {
   setApp(app);
 
+  resetMemoryStore();
   expect(await getPlays(undefined)).toEqual({});
 
   const fifteenAgo = new Date();
@@ -168,12 +169,14 @@ test('get plays for logged out', async () => {
   };
   window.localStorage.setItem('plays/logged-out', JSON.stringify(forLS));
 
+  resetMemoryStore();
   expect(await getPlays(undefined)).toHaveProperty(play1.c, play1);
 });
 
 test('get 2 plays for logged in', async () => {
   setApp(loggedInApp);
 
+  resetMemoryStore();
   expect(await getPlays(anonymousUser)).toEqual({ [play1.c]: play1, [play2.c]: { ...play2, n: 'Daily Mini for 6/10/2020' } });
 });
 
@@ -188,6 +191,7 @@ test('get 2 updated plays for logged in if past expiration', async () => {
   };
   window.localStorage.setItem('plays/' + anonymousUser.uid, JSON.stringify(forLS));
 
+  resetMemoryStore();
   expect(await getPlays(anonymousUser)).toEqual({ [play1.c]: play1, [play2.c]: { ...play2, n: 'Daily Mini for 6/10/2020' } });
 });
 
@@ -202,6 +206,7 @@ test('get 0 updated plays for logged in if results still valid', async () => {
   };
   window.localStorage.setItem('plays/' + anonymousUser.uid, JSON.stringify(forLS));
 
+  resetMemoryStore();
   expect(await getPlays(anonymousUser)).toEqual({});
 });
 
@@ -216,6 +221,7 @@ test('get 1 play for logged in', async () => {
   };
   window.localStorage.setItem('plays/' + anonymousUser.uid, JSON.stringify(forLS));
 
+  resetMemoryStore();
   expect(await getPlays(anonymousUser)).toEqual({ [play1.c]: play1 });
 });
 
@@ -230,6 +236,7 @@ test('get 0 plays for logged in', async () => {
   };
   window.localStorage.setItem('plays/' + anonymousUser.uid, JSON.stringify(forLS));
 
+  resetMemoryStore();
   expect(await getPlays(anonymousUser)).toEqual({});
 });
 
@@ -244,5 +251,6 @@ test('get merge plays for logged in', async () => {
   };
   window.localStorage.setItem('plays/' + anonymousUser.uid, JSON.stringify(forLS));
 
+  resetMemoryStore();
   expect(await getPlays(anonymousUser)).toEqual({ [play1.c]: play1 });
 });

@@ -4,6 +4,7 @@ import CategoryPage, { propsForCategoryId } from '../pages/categories/[categoryI
 import { setApp, TimestampClass } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/testing';
 import { PlayT, CategoryIndexT } from '../lib/dbtypes';
+import { resetMemoryStore } from '../lib/plays';
 
 let adminApp: firebase.app.App;
 let app: firebase.app.App;
@@ -79,6 +80,7 @@ afterAll(async () => {
 
 test('basic category page test', async () => {
   const props = await propsForCategoryId('dailymini');
+  resetMemoryStore();
   const { findByText, container } = render(<CategoryPage {...props} />, {});
 
   const link = await findByText('Daily Mini for 5/10/2020');
@@ -91,6 +93,7 @@ test('category page when logged in with some plays', async () => {
   setApp(loggedInApp);
 
   const props = await propsForCategoryId('dailymini');
+  resetMemoryStore();
   const r = render(<CategoryPage {...props} />, { user: anonymousUser });
 
   expect(await r.findByTitle('Solved without helpers')).toBeInTheDocument();

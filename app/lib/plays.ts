@@ -21,8 +21,12 @@ export function isDirty(user: firebase.User, puzzleId: string) {
   return dirtyPlays.has(docId);
 }
 
-const memoryStore: Record<string, TimestampedPlayMapT> = {};
+let memoryStore: Record<string, TimestampedPlayMapT> = {};
 const currentQuery: Record<string, Promise<firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>>> = {};
+
+export function resetMemoryStore() {
+  memoryStore = {};
+}
 
 export async function getPlays(user: firebase.User | undefined): Promise<PlayMapT> {
   const storageKey = user ? 'plays/' + user.uid : 'plays/logged-out';

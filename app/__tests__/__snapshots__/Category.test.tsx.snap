@@ -564,6 +564,14 @@ exports[`category page when logged in with some plays 1`] = `
   vertical-align: top;
 }
 
+.emotion-14 {
+  color: var(--error);
+}
+
+.emotion-14:hover {
+  color: var(--error-hover);
+}
+
 .emotion-10 {
   color: var(--text);
 }
@@ -578,14 +586,6 @@ exports[`category page when logged in with some plays 1`] = `
   top: 0.1em;
   left: 0.35em;
   font-size: 0.6em;
-}
-
-.emotion-14 {
-  color: var(--error);
-}
-
-.emotion-14:hover {
-  color: var(--error-hover);
 }
 
 <div>
