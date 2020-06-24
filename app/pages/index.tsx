@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { GetServerSideProps } from 'next';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
+import { ReactNode } from 'react';
 
 import { Link } from '../components/Link';
 import { puzzleFromDB, PuzzleResult } from '../lib/types';
@@ -57,6 +58,30 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ re
   });
 };
 
+const PuzzleLink = (props: { id: string, width: number, height: number, title: string, byline?: ReactNode, children?: ReactNode }) => {
+  return <div css={{
+    overflow: 'auto',
+    display: 'inline-block',
+    width: '100%',
+    [SMALL_AND_UP]: {
+      width: '50%',
+    }
+  }}>
+    <Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>
+      <div css={{ verticalAlign: 'top !important', float: 'left', fontSize: '4em', marginRight: '0.3em' }} >
+        <PuzzleSizeIcon width={props.width} height={props.height} />
+      </div>
+      <h3>{props.title}</h3>
+      {props.byline}
+    </Link>
+    {props.children}
+  </div>;
+};
+
+const PuzzleResultLink = ({ puzzle }: { puzzle: PuzzleResult }) => {
+  return <PuzzleLink id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={puzzle.title} byline={<p>By {puzzle.authorName}</p>} />;
+};
+
 export default function HomePage({ dailymini, recents }: HomePageProps) {
   return <>
     <Head>
@@ -70,33 +95,11 @@ export default function HomePage({ dailymini, recents }: HomePageProps) {
         Crosshare is the best place to create, share and solve crossword puzzles.
       </p>
       <h2>Daily Mini</h2>
-      <div css={{ overflow: 'auto' }}>
-        <Link href='/crosswords/[puzzleId]' as={`/crosswords/${dailymini.id}`} passHref>
-          <div css={{ verticalAlign: 'top !important', float: 'left', fontSize: '4em', marginRight: '0.3em' }} >
-            <PuzzleSizeIcon width={5} height={5} />
-          </div>
-          <h3>Today&apos;s daily mini crossword</h3>
-        </Link>
+      <PuzzleLink id={dailymini.id} width={5} height={5} title="Today's daily mini crossword">
         <p><Link href='/categories/[categoryId]' as='/categories/dailymini' passHref>Play previous daily minis</Link></p>
-      </div>
+      </PuzzleLink>
       <h2>Recent Puzzles</h2>
-      {recents.map((p, i) => <div key={i} css={{
-        overflow: 'auto',
-        display: 'inline-block',
-        width: '100%',
-        [SMALL_AND_UP]: {
-          width: '50%',
-        }
-      }}>
-        <Link href='/crosswords/[puzzleId]' as={`/crosswords/${p.id}`} passHref>
-          <div css={{ verticalAlign: 'top !important', float: 'left', fontSize: '4em', marginRight: '0.3em' }} >
-            <PuzzleSizeIcon width={p.size.cols} height={p.size.rows} />
-          </div>
-          <h3>{p.title}</h3>
-          <p>By {p.authorName}</p>
-        </Link>
-      </div>
-      )}
+      {recents.map((p, i) => <PuzzleResultLink key={i} puzzle={p} />)}
       <p css={{ marginTop: '1em' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
     </div>
   </>;

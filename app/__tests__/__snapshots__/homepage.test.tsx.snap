@@ -100,6 +100,14 @@ exports[`get home page 1`] = `
 
 .emotion-10 {
   overflow: auto;
+  display: inline-block;
+  width: 100%;
+}
+
+@media (min-width:576px) {
+  .emotion-10 {
+    width: 50%;
+  }
 }
 
 .emotion-9 {
@@ -111,25 +119,6 @@ exports[`get home page 1`] = `
 
 .emotion-8 {
   vertical-align: top;
-}
-
-.emotion-13 {
-  overflow: auto;
-  display: inline-block;
-  width: 100%;
-}
-
-@media (min-width:576px) {
-  .emotion-13 {
-    width: 50%;
-  }
-}
-
-.emotion-12 {
-  vertical-align: top !important;
-  float: left;
-  font-size: 4em;
-  margin-right: 0.3em;
 }
 
 .emotion-14 {
@@ -388,13 +377,13 @@ exports[`get home page 1`] = `
       Recent Puzzles
     </h2>
     <div
-      class="emotion-13"
+      class="emotion-10"
     >
       <a
         href="/crosswords/published-puzzle"
       >
         <div
-          class="emotion-12"
+          class="emotion-9"
         >
           <svg
             class="emotion-8"
