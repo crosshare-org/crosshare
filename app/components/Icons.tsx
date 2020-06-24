@@ -204,13 +204,19 @@ export const Logo = (props: IconProps) => {
   );
 };
 
-export const PuzzleSizeIcon = (props: { width: number, height: number }) => {
+export const PuzzleSizeIcon = (props: { width?: number, height?: number }) => {
   return <svg css={{ verticalAlign: 'top' }} width='1em' height='1em' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
     <rect x="5" y="50" width="45" height="45" fill="currentColor" />
     <rect x="5" y="5" rx="5" ry="5" width="90" height="90" fill="transparent" stroke="currentColor" strokeWidth="5" />
-    <text x="28" y="45" textAnchor="middle" fontSize="45" lengthAdjust="spacingAndGlyphs" textLength="40">{props.width}</text>
-    <text x="72" y="45" textAnchor="middle" fontSize="45" textLength="40">x</text>
-    <text x="72" y="87" textAnchor="middle" fontSize="45" lengthAdjust="spacingAndGlyphs" textLength="40">{props.height}</text>
+    {props.width && props.height ?
+      <>
+        <text x="28" y="45" textAnchor="middle" fontSize="45" lengthAdjust="spacingAndGlyphs" textLength="40">{props.width}</text>
+        <text x="72" y="45" textAnchor="middle" fontSize="45" textLength="40">x</text>
+        <text x="72" y="87" textAnchor="middle" fontSize="45" lengthAdjust="spacingAndGlyphs" textLength="40">{props.height}</text>
+      </>
+      :
+      ''
+    }
   </svg>;
 };
 

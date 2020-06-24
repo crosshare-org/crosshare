@@ -69,7 +69,7 @@ export default function HomePage({ dailymini, recents }: HomePageProps) {
         Crosshare is the best place to create, share and solve crossword puzzles.
       </p>
       <h2>Daily Mini</h2>
-      <PuzzleLink id={dailymini.id} width={5} height={5} title="Today's daily mini crossword">
+      <PuzzleLink id={dailymini.id} title="Today's daily mini crossword">
         <p><Link href='/categories/[categoryId]' as='/categories/dailymini' passHref>Play previous daily minis</Link></p>
       </PuzzleLink>
       <h2>Recent Puzzles</h2>

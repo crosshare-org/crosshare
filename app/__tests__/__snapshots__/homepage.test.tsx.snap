@@ -340,35 +340,7 @@ exports[`get home page 1`] = `
               x="5"
               y="5"
             />
-            <text
-              font-size="45"
-              lengthAdjust="spacingAndGlyphs"
-              text-anchor="middle"
-              textLength="40"
-              x="28"
-              y="45"
-            >
-              5
-            </text>
-            <text
-              font-size="45"
-              text-anchor="middle"
-              textLength="40"
-              x="72"
-              y="45"
-            >
-              x
-            </text>
-            <text
-              font-size="45"
-              lengthAdjust="spacingAndGlyphs"
-              text-anchor="middle"
-              textLength="40"
-              x="72"
-              y="87"
-            >
-              5
-            </text>
+            
           </svg>
           
         </div>

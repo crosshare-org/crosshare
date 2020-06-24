@@ -41,7 +41,7 @@ export const Category = ({ puzzles, categoryName }: CategoryProps) => {
           .filter(([k, _v]) => k <= ds)
           .sort((a, b) => a[0] > b[0] ? -1 : 1)
           .map(([dateString, puzzleId]) => {
-            return <PuzzleLink key={dateString} id={puzzleId} width={5} height={5} title={categoryName + ' for ' + prettifyDateString(dateString)} />;
+            return <PuzzleLink key={dateString} id={puzzleId} title={categoryName + ' for ' + prettifyDateString(dateString)} />;
           })}
       </div>
     </>
