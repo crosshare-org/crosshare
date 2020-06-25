@@ -1,6 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`anonymous user progress should be cached in local storage and db 1`] = `
+.emotion-113 {
+  -webkit-flex: none;
+  -ms-flex: none;
+  flex: none;
+  width: 200px;
+  height: 200px;
+}
+
 .emotion-4 {
   width: 20%;
   padding-bottom: 20%;
@@ -8,6 +16,22 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   position: relative;
   margin: 0;
   overflow: hidden;
+}
+
+.emotion-0 {
+  position: absolute;
+  left: 0.1em;
+  top: 0;
+  font-weight: bold;
+  line-height: 1em;
+  font-size: 10px;
+}
+
+.emotion-17 {
+  color: var(--autofill);
+  text-align: center;
+  line-height: 1.2em;
+  font-size: 36px;
 }
 
 .emotion-1 {
@@ -89,30 +113,6 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   background: var(--cell-wall);
 }
 
-.emotion-113 {
-  -webkit-flex: none;
-  -ms-flex: none;
-  flex: none;
-  width: 0;
-  height: 0;
-}
-
-.emotion-0 {
-  position: absolute;
-  left: 0.1em;
-  top: 0;
-  font-weight: bold;
-  line-height: 1em;
-  font-size: 0.05px;
-}
-
-.emotion-17 {
-  color: var(--autofill);
-  text-align: center;
-  line-height: 1.2em;
-  font-size: 0.18000000000000002px;
-}
-
 .emotion-18 {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -162,7 +162,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   color: var(--black);
   text-align: center;
   line-height: 1.2em;
-  font-size: 0.18000000000000002px;
+  font-size: 36px;
 }
 
 <div
@@ -736,6 +736,14 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
 `;
 
 exports[`nonuser progress should be cached in local storage but not db 1`] = `
+.emotion-113 {
+  -webkit-flex: none;
+  -ms-flex: none;
+  flex: none;
+  width: 200px;
+  height: 200px;
+}
+
 .emotion-4 {
   width: 20%;
   padding-bottom: 20%;
@@ -743,6 +751,22 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   position: relative;
   margin: 0;
   overflow: hidden;
+}
+
+.emotion-0 {
+  position: absolute;
+  left: 0.1em;
+  top: 0;
+  font-weight: bold;
+  line-height: 1em;
+  font-size: 10px;
+}
+
+.emotion-17 {
+  color: var(--autofill);
+  text-align: center;
+  line-height: 1.2em;
+  font-size: 36px;
 }
 
 .emotion-1 {
@@ -824,30 +848,6 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   background: var(--cell-wall);
 }
 
-.emotion-113 {
-  -webkit-flex: none;
-  -ms-flex: none;
-  flex: none;
-  width: 0;
-  height: 0;
-}
-
-.emotion-0 {
-  position: absolute;
-  left: 0.1em;
-  top: 0;
-  font-weight: bold;
-  line-height: 1em;
-  font-size: 0.05px;
-}
-
-.emotion-17 {
-  color: var(--autofill);
-  text-align: center;
-  line-height: 1.2em;
-  font-size: 0.18000000000000002px;
-}
-
 .emotion-18 {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -897,7 +897,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   color: var(--black);
   text-align: center;
   line-height: 1.2em;
-  font-size: 0.18000000000000002px;
+  font-size: 36px;
 }
 
 <div

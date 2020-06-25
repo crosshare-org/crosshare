@@ -38,6 +38,6 @@ export const Square = (props: SquareProps) => {
       flex: 'none',
       width: size,
       height: size
-    }}>{props.contents(size || 1)}</div>
+    }}>{props.contents(size)}</div>
   );
 };
