@@ -291,7 +291,12 @@ export const Comments = ({ comments, ...props }: CommentsProps): JSX.Element => 
       } else {
         const parent = findCommentById(rebuiltComments, c.rt);
         if (parent === null) {
-          throw new Error('parent comment not found');
+          /* TODO figure out better behaivior here?
+           * One possibility is that we saw the comment originally when
+           * loading the puzzle via client side link but are now loading via
+           * page refresh. If the content is cached at a different time the
+           * parent comment might not be here yet. */
+          continue;
         }
         if (parent.replies) {
           parent.replies.push(localComment);
