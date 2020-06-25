@@ -1,1 +1,85 @@
-../crossword/firestore.rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth.token.admin;
+    }
+    function isNonAnonymous() {
+      return request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    function isAuthor() {
+      return request.auth.uid != null && request.auth.uid == resource.data.a;
+    }
+    function authorSetCorrectly() {
+      return request.auth.uid != null && request.auth.uid == request.resource.data.a;
+    }
+    function isPublished() {
+      return resource.data.p == null || request.time > resource.data.p;
+    }
+    function validCrossword() {
+      return (request.resource.data.g.size() == (request.resource.data.w * request.resource.data.h))
+        && (request.resource.data.ac.size() == request.resource.data.an.size())
+        && (request.resource.data.dc.size() == request.resource.data.dn.size());
+    }
+    match /c/{crosswordId} {
+      allow get: if isAdmin() || isAuthor()
+        || (resource.data.m == true && isPublished());
+
+      // TODO figure out exactly what is using this query
+      allow list: if isAdmin() || isAuthor()
+        || (resource.data.c != null && request.time + duration.time(1, 0, 0, 0) >= resource.data.p);
+
+      // This supports the homepage 'recent puzzles' list
+      allow list: if resource.data.m
+        && request.query.limit <= 30
+        && request.time + duration.time(1, 0, 0, 0) >= resource.data.p;
+
+      allow update: if isAdmin();
+
+      allow create: if isAdmin() && authorSetCorrectly()
+        && validCrossword()
+        && request.resource.data.c == null
+        && request.resource.data.p == null
+        && request.resource.data.m == false;
+    }
+    match /uc/{userId} {
+      allow read: if request.auth.uid == userId;
+      allow write: if request.auth.uid == userId;
+    }
+    match /up/{userId} {
+      allow read: if request.auth.uid == userId;
+      allow write: if request.auth.uid == userId;
+    }
+    match /p/{playId} {
+      allow read: if request.auth.uid != null
+        && (resource == null || request.auth.uid == resource.data.u);
+
+      allow write: if request.auth.uid != null
+        && request.auth.uid == request.resource.data.u
+        && playId == (request.resource.data.c + '-' + request.resource.data.u);
+
+      allow delete: if request.auth.uid != null
+        && request.auth.uid == resource.data.u;
+    }
+    match /s/{crosswordId} {
+      allow read: if isAdmin() || request.auth.uid == resource.data.a;
+    }
+    match /ds/{dateString} {
+      allow read: if isAdmin();
+    }
+    match /categories/{category} {
+      allow get: if true;
+      allow write: if isAdmin();
+    }
+    match /cfm/{commentId} {
+      allow write: if request.auth.uid != null
+        && isNonAnonymous()
+        && request.auth.uid == request.resource.data.a;
+      allow read: if isAdmin();
+      allow delete: if isAdmin();
+    }
+  }
+}
