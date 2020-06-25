@@ -1,0 +1,105 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "functions": {
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "firebase-debug.log",
+      "**/.*",
+      "**/node_modules/**",
+      "__mocks__/**",
+      "__tests__/**",
+      "components/**",
+      "lib/**",
+      "out/**",
+      "pages/**",
+      "public/**",
+      "reducers/**",
+      "scripts/**",
+      "typings/**",
+      "vendor/**",
+      "firestore.rules",
+      "setupTestsAfterEnv.ts"
+    ]
+  },
+  "hosting": [ {
+    "target": "prod",
+    "public": "out",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/*.map",
+      "**/*.ts",
+      "**/*.tsx"
+    ],
+    "cleanUrls": true,
+    "headers": [
+      {
+        "source": "**/static/**",
+        "headers" : [
+          {
+            "key" : "Cache-Control",
+            "value" : "max-age=365000000, immutable"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "nextjs-server"
+      }
+    ],
+    "redirects": [
+      {
+        "source": "/category/dailymini",
+        "destination": "/categories/dailymini",
+        "type": 301
+      }
+    ]
+  }, {
+    "target": "staging",
+    "public": "out",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/*.map",
+      "**/*.ts",
+      "**/*.tsx"
+    ],
+    "cleanUrls": true,
+    "headers": [
+      {
+        "source": "**/static/**",
+        "headers" : [
+          {
+            "key" : "Cache-Control",
+            "value" : "max-age=365000000, immutable"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "staging-server"
+      }
+    ],
+    "redirects": [
+      {
+        "source": "/robots.txt",
+        "destination": "/staging.robots.txt",
+        "type": 301
+      },
+      {
+        "source": "/category/dailymini",
+        "destination": "/categories/dailymini",
+        "type": 301
+      }
+    ]
+  }]
+}

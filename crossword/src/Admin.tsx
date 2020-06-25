@@ -168,7 +168,7 @@ export const Admin = requiresAdmin((_: RouteComponentProps & AuthProps) => {
                     <input css={{
                       marginRight: '1em'
                     }} type='checkbox' checked={commentIdsForDeletion.has(cfm.i)} onChange={(e) => setCommentForDeletion(cfm.i, e.target.checked)} />
-                    <i>{cfm.n}</i> - {cfm.c}
+                    <Link to={'/crosswords/' + cfm.pid}>puzzle</Link> <i>{cfm.n}</i> - {cfm.c}
                   </label>
                 </li>
               )}

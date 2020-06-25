@@ -1,0 +1,466 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`get home page 1`] = `
+.emotion-6 {
+  height: 35px;
+  background-color: var(--primary);
+}
+
+.emotion-5 {
+  padding: 0 10px;
+  height: 100%;
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  line-height: 31px;
+}
+
+.emotion-1 {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-text-decoration: none !important;
+  text-decoration: none !important;
+  cursor: pointer;
+}
+
+.emotion-0 {
+  margin-left: 5px;
+  display: none;
+  color: var(--text);
+  font-size: 25px;
+}
+
+@media (min-width:576px) {
+  .emotion-0 {
+    display: inline-block;
+  }
+}
+
+.emotion-4 {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  display: inline;
+  margin: 0;
+  padding: 0 0.45em;
+  color: var(--text);
+}
+
+.emotion-4:hover,
+.emotion-4:focus {
+  color: var(--text);
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  background-color: var(--top-bar-hover);
+}
+
+.emotion-2 {
+  vertical-align: baseline;
+  font-size: 25px;
+}
+
+.emotion-3 {
+  margin-left: 5px;
+  vertical-align: middle;
+  display: none;
+  font-size: 15px;
+}
+
+@media (min-width:576px) {
+  .emotion-3 {
+    display: inline-block;
+  }
+}
+
+.emotion-17 {
+  margin: 1em;
+}
+
+.emotion-7 {
+  margin-bottom: 1em;
+}
+
+.emotion-11 {
+  overflow: auto;
+  display: inline-block;
+  width: 100%;
+}
+
+@media (min-width:576px) {
+  .emotion-11 {
+    width: 50%;
+  }
+}
+
+.emotion-10 {
+  color: var(--link);
+}
+
+.emotion-10:hover {
+  color: var(--link-hover);
+}
+
+.emotion-9 {
+  position: relative;
+  vertical-align: top !important;
+  float: left;
+  font-size: 4em;
+  margin-right: 0.3em;
+}
+
+.emotion-8 {
+  vertical-align: top;
+}
+
+.emotion-16 {
+  margin-top: 1em;
+}
+
+<div>
+  <header
+    class="emotion-6"
+  >
+    <div
+      class="emotion-5"
+    >
+      <a
+        class="emotion-1"
+        href="/"
+        title="Crosshare Home"
+      >
+        <svg
+          height="31"
+          viewBox="0 0 16 16"
+          width="31"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g
+            fill="var(--logo-white)"
+          >
+            <path
+              d="M1 10h14v5H1z"
+            />
+            <path
+              d="M3 9h10v1H3zm0-7h5v3H3z"
+            />
+            <path
+              d="M6 5h1v5H6zm4-2h2v6h-2z"
+            />
+            <path
+              d="M12 1h2v3h-2z"
+            />
+            <path
+              d="M14 1h1v1h-1z"
+            />
+          </g>
+          <path
+            d="M13 0h3v1h-3zM4 1h3v1H4z"
+          />
+          <path
+            d="M12 1h1v1h-1zm3 0h1v1h-1zM3 2h1v1H3zm3 0h2v1H6z"
+          />
+          <path
+            d="M11 2h1v1h-1zm3 0h1v1h-1zM2 3h1v3H2zm3 0h1v6H5z"
+          />
+          <path
+            d="M7 3h1v7H7zm3 0h1v1h-1zm3 0h1v1h-1zM4 4h1v1H4z"
+          />
+          <path
+            d="M9 4h1v5H9zm3 0h1v1h-1z"
+          />
+          <path
+            d="M3 5h1v1H3zm8 0h1v4h-1zM4 8h1v1H4z"
+          />
+          <path
+            d="M3 9h1v1H3zm5 0h1v1H8z"
+          />
+          <path
+            d="M12 9h1v1h-1zM1 10h2v1H1z"
+          />
+          <path
+            d="M5 10h1v1H5zm8 0h2v1h-2z"
+          />
+          <path
+            d="M0 11h1v3H0zm15 0h1v3h-1zm-9 0h1v1H6z"
+          />
+          <path
+            d="M4 12h2v1H4z"
+          />
+          <path
+            d="M5 13h2v1H5zm4 0h2v1H9zm-8 1h3v1H1zm11 0h3v1h-3z"
+          />
+          <path
+            d="M4 15h8v1H4z"
+          />
+          <rect
+            height="1"
+            width="1"
+            x="10"
+            y="10"
+          >
+            <animate
+              attributeName="width"
+              begin="10;a.end+10"
+              calcMode="discrete"
+              dur="0.5s"
+              id="a"
+              values="1;0"
+            />
+          </rect>
+          <rect
+            height="1"
+            width="1"
+            x="9"
+            y="11"
+          >
+            <animate
+              attributeName="width"
+              begin="10;b.end+10"
+              calcMode="discrete"
+              dur="0.5s"
+              id="b"
+              values="1;3"
+            />
+          </rect>
+          <rect
+            height="1"
+            width="2"
+            x="10"
+            y="12"
+          >
+            <animate
+              attributeName="width"
+              begin="10;c.end+10"
+              calcMode="discrete"
+              dur="0.5s"
+              id="c"
+              values="2;0"
+            />
+          </rect>
+        </svg>
+        <span
+          class="emotion-0"
+        >
+          CROSSHARE
+        </span>
+      </a>
+      
+      <a
+        class="emotion-4"
+        href="/account"
+        title="Account"
+      >
+        <span
+          class="emotion-2"
+        >
+          <svg
+            fill="currentColor"
+            height="1em"
+            stroke="currentColor"
+            stroke-width="0"
+            viewBox="0 0 448 512"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"
+            />
+          </svg>
+        </span>
+        <span
+          class="emotion-3"
+        >
+          Account
+        </span>
+      </a>
+    </div>
+  </header>
+  <div
+    class="emotion-17"
+  >
+    <p
+      class="emotion-7"
+    >
+      Crosshare is the best place to create, share and solve crossword puzzles.
+    </p>
+    <h2>
+      Daily Mini
+    </h2>
+    <div
+      class="emotion-11"
+    >
+      <a
+        class="emotion-10"
+        href="/crosswords/dailymini"
+      >
+        <div
+          class="emotion-9"
+        >
+          <svg
+            class="emotion-8"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 100 100"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="currentColor"
+              height="45"
+              width="45"
+              x="5"
+              y="50"
+            />
+            <rect
+              fill="transparent"
+              height="90"
+              rx="5"
+              ry="5"
+              stroke="currentColor"
+              stroke-width="5"
+              width="90"
+              x="5"
+              y="5"
+            />
+            
+          </svg>
+          
+        </div>
+        <h3>
+          Today's daily mini crossword
+           
+          
+        </h3>
+      </a>
+      <p>
+        <a
+          href="/categories/dailymini"
+        >
+          Play previous daily minis
+        </a>
+      </p>
+    </div>
+    <h2>
+      Recent Puzzles
+    </h2>
+    <div
+      class="emotion-11"
+    >
+      <a
+        class="emotion-10"
+        href="/crosswords/published-puzzle"
+      >
+        <div
+          class="emotion-9"
+        >
+          <svg
+            class="emotion-8"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 100 100"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="currentColor"
+              height="45"
+              width="45"
+              x="5"
+              y="50"
+            />
+            <rect
+              fill="transparent"
+              height="90"
+              rx="5"
+              ry="5"
+              stroke="currentColor"
+              stroke-width="5"
+              width="90"
+              x="5"
+              y="5"
+            />
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="28"
+              y="45"
+            >
+              5
+            </text>
+            <text
+              font-size="45"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="45"
+            >
+              x
+            </text>
+            <text
+              font-size="45"
+              lengthAdjust="spacingAndGlyphs"
+              text-anchor="middle"
+              textLength="40"
+              x="72"
+              y="87"
+            >
+              5
+            </text>
+          </svg>
+          
+        </div>
+        <h3>
+          Raises, as young
+           
+          
+        </h3>
+        <p>
+          By 
+          Mike D
+        </p>
+      </a>
+    </div>
+    <p
+      class="emotion-16"
+    >
+      For questions and discussion, join the 
+      <a
+        href="https://groups.google.com/forum/#!forum/crosshare"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Google Group
+      </a>
+      . Follow us on twitter 
+      <a
+        href="https://twitter.com/crosshareapp"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        @crosshareapp
+      </a>
+      .
+    </p>
+  </div>
+</div>
+`;

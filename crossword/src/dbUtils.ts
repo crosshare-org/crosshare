@@ -5,7 +5,7 @@ import { getFirebaseApp, getTimestampClass } from './firebase';
 
 import { downloadTimestamped } from './common/dbtypes';
 
-export function setInCache<A>(
+export async function setInCache<A>(
   collection: string,
   docId: string,
   value: A,
@@ -21,13 +21,13 @@ export function setInCache<A>(
   sessionStorage.setItem(sessionKey, JSON.stringify(forLS));
   if (sendToDB) {
     const db = getFirebaseApp().firestore();
-    db.collection(collection).doc(docId).set(value).then(() => {
+    await db.collection(collection).doc(docId).set(value).then(() => {
       console.log('Set new value for ' + collection + '/' + docId);
     });
   }
 }
 
-export function updateInCache<A>(
+export async function updateInCache<A>(
   collection: string,
   docId: string,
   update: Partial<A>,
@@ -53,7 +53,7 @@ export function updateInCache<A>(
   }
   if (sendToDB) {
     const db = getFirebaseApp().firestore();
-    db.collection(collection).doc(docId).set(update, { merge: true }).then(() => {
+    await db.collection(collection).doc(docId).set(update, { merge: true }).then(() => {
       console.log('Updated for ' + collection + '/' + docId);
     });
   }

@@ -1,0 +1,1471 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`anonymous user progress should be cached in local storage and db 1`] = `
+.emotion-113 {
+  -webkit-flex: none;
+  -ms-flex: none;
+  flex: none;
+  width: 200px;
+  height: 200px;
+}
+
+.emotion-4 {
+  width: 20%;
+  padding-bottom: 20%;
+  float: left;
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+}
+
+.emotion-0 {
+  position: absolute;
+  left: 0.1em;
+  top: 0;
+  font-weight: bold;
+  line-height: 1em;
+  font-size: 10px;
+}
+
+.emotion-17 {
+  color: var(--autofill);
+  text-align: center;
+  line-height: 1.2em;
+  font-size: 36px;
+}
+
+.emotion-1 {
+  font-size: 1em;
+}
+
+.emotion-8 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  border-left: 0;
+  background: var(--secondary);
+}
+
+.emotion-20 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  border-left: 0;
+  background: var(--cell-wall);
+}
+
+.emotion-25 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 0;
+  border-left: 1px solid var(--cell-wall);
+  background: var(--white);
+}
+
+.emotion-30 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 0;
+  border-left: 0;
+  background: var(--white);
+}
+
+.emotion-91 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 0;
+  border-left: 1px solid var(--cell-wall);
+  background: var(--cell-wall);
+}
+
+.emotion-18 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  border-left: 0;
+  background: var(--primary);
+}
+
+.emotion-37 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 0;
+  border-left: 0;
+  background: var(--cell-wall);
+}
+
+.emotion-3 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  border-left: 1px solid var(--cell-wall);
+  background: var(--secondary);
+}
+
+.emotion-2 {
+  color: var(--black);
+  text-align: center;
+  line-height: 1.2em;
+  font-size: 36px;
+}
+
+<div
+  aria-label="grid"
+  class="emotion-113"
+>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell0x0"
+      class="emotion-3"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        1
+      </div>
+      <div
+        class="emotion-2"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        >
+          A
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell0x1"
+      class="emotion-8"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        2
+      </div>
+      <div
+        class="emotion-2"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        >
+          B
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell0x2"
+      class="emotion-8"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        3
+      </div>
+      <div
+        class="emotion-2"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        >
+          C
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell0x3"
+      class="emotion-18"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell0x4"
+      class="emotion-20"
+    />
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell1x0"
+      class="emotion-25"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        4
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell1x1"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell1x2"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell1x3"
+      class="emotion-37"
+    />
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell1x4"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        5
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell2x0"
+      class="emotion-25"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        6
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell2x1"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell2x2"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell2x3"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        7
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell2x4"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell3x0"
+      class="emotion-25"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell3x1"
+      class="emotion-37"
+    />
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell3x2"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        8
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell3x3"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell3x4"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell4x0"
+      class="emotion-91"
+    />
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell4x1"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        9
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell4x2"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell4x3"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell4x4"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`nonuser progress should be cached in local storage but not db 1`] = `
+.emotion-113 {
+  -webkit-flex: none;
+  -ms-flex: none;
+  flex: none;
+  width: 200px;
+  height: 200px;
+}
+
+.emotion-4 {
+  width: 20%;
+  padding-bottom: 20%;
+  float: left;
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+}
+
+.emotion-0 {
+  position: absolute;
+  left: 0.1em;
+  top: 0;
+  font-weight: bold;
+  line-height: 1em;
+  font-size: 10px;
+}
+
+.emotion-17 {
+  color: var(--autofill);
+  text-align: center;
+  line-height: 1.2em;
+  font-size: 36px;
+}
+
+.emotion-1 {
+  font-size: 1em;
+}
+
+.emotion-8 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  border-left: 0;
+  background: var(--secondary);
+}
+
+.emotion-20 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  border-left: 0;
+  background: var(--cell-wall);
+}
+
+.emotion-25 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 0;
+  border-left: 1px solid var(--cell-wall);
+  background: var(--white);
+}
+
+.emotion-30 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 0;
+  border-left: 0;
+  background: var(--white);
+}
+
+.emotion-91 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 0;
+  border-left: 1px solid var(--cell-wall);
+  background: var(--cell-wall);
+}
+
+.emotion-18 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  border-left: 0;
+  background: var(--primary);
+}
+
+.emotion-37 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 0;
+  border-left: 0;
+  background: var(--cell-wall);
+}
+
+.emotion-3 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  border-left: 1px solid var(--cell-wall);
+  background: var(--secondary);
+}
+
+.emotion-2 {
+  color: var(--black);
+  text-align: center;
+  line-height: 1.2em;
+  font-size: 36px;
+}
+
+<div
+  aria-label="grid"
+  class="emotion-113"
+>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell0x0"
+      class="emotion-3"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        1
+      </div>
+      <div
+        class="emotion-2"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        >
+          A
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell0x1"
+      class="emotion-8"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        2
+      </div>
+      <div
+        class="emotion-2"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        >
+          B
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell0x2"
+      class="emotion-8"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        3
+      </div>
+      <div
+        class="emotion-2"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        >
+          C
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell0x3"
+      class="emotion-18"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell0x4"
+      class="emotion-20"
+    />
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell1x0"
+      class="emotion-25"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        4
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell1x1"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell1x2"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell1x3"
+      class="emotion-37"
+    />
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell1x4"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        5
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell2x0"
+      class="emotion-25"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        6
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell2x1"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell2x2"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell2x3"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        7
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell2x4"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell3x0"
+      class="emotion-25"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell3x1"
+      class="emotion-37"
+    />
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell3x2"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        8
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell3x3"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell3x4"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell4x0"
+      class="emotion-91"
+    />
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell4x1"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        9
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell4x2"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell4x3"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="emotion-4"
+  >
+    <div
+      aria-label="cell4x4"
+      class="emotion-30"
+    >
+      <div
+        class="emotion-0"
+      >
+        
+        
+      </div>
+      <div
+        class="emotion-17"
+      >
+        
+        
+        
+        <div
+          class="emotion-1"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

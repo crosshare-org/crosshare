@@ -644,7 +644,7 @@ export const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & Auth
     }
   }
 
-  const updatePlay = React.useCallback((sendToDB: boolean) => {
+  const updatePlay = React.useCallback(async (sendToDB: boolean) => {
     const updatedAt = getTimestampClass().now();
     const playTime = (state.currentTimeWindowStart === 0) ?
       state.bankedSeconds :
@@ -666,10 +666,10 @@ export const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & Auth
       f: state.success,
     }
 
-    setInCache('p', puzzle.id + "-" + props.user.uid, play, PlayV, sendToDB);
+    await setInCache('p', puzzle.id + "-" + props.user.uid, play, PlayV, sendToDB);
     const userPlay: UserPlayT = [updatedAt, playTime, state.didCheat, state.success, title];
     /* TODO don't add these for anonymous users? */
-    updateInCache('up', props.user.uid, { [puzzle.id]: userPlay }, UserPlaysV, sendToDB);
+    await updateInCache('up', props.user.uid, { [puzzle.id]: userPlay }, UserPlaysV, sendToDB);
   }, [puzzle.id, props.user.uid, state.cellsEverMarkedWrong,
   state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
   state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
@@ -679,14 +679,16 @@ export const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & Auth
   // Any time any of the things we save update, write to local storage
   React.useEffect(() => {
     // Write through to firebase if first call after success
-    const writeThrough = state.success && (updatePlayRef.current !== null);
-    if (writeThrough) {
-      console.log("Writing through to DB");
-      updatePlay(true);
-    } else if (!state.success) {
-      console.log("Writing to local storage");
-      updatePlay(false);
-    }
+    (async () => {
+      const writeThrough = state.success && (updatePlayRef.current !== null);
+      if (writeThrough) {
+        console.log("Writing through to DB");
+        await updatePlay(true);
+      } else if (!state.success) {
+        console.log("Writing to local storage");
+        await updatePlay(false);
+      }
+    })();
     if (state.success) {
       updatePlayRef.current = null;
     } else {
@@ -698,15 +700,18 @@ export const Puzzle = ensureUser(({ puzzle, play, ...props }: PuzzleProps & Auth
     function handleBeforeUnload() {
       console.log("Doing before unload");
       if (updatePlayRef.current) {
-        updatePlayRef.current(true);
+        const updateplay = updatePlayRef.current;
+        (async () => await updateplay(true))();
       }
     }
     window.addEventListener('beforeunload', handleBeforeUnload);
+
     return () => {
       console.log("Doing unmount update");
       window.removeEventListener('beforeunload', handleBeforeUnload)
       if (updatePlayRef.current) {
-        updatePlayRef.current(true);
+        const updateplay = updatePlayRef.current;
+        (async () => await updateplay(true))();
       }
     }
   }, [updatePlayRef]);

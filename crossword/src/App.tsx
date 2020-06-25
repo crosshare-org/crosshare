@@ -294,9 +294,7 @@ const PageViewTracker = ({ location }: { location: WindowLocation }) => {
     try {
       getFirebaseApp().analytics().logEvent("screen_view", { app_name: 'react', screen_name: location.pathname });
     } catch (e) {
-      if (e instanceof TypeError) {
-        console.log("Got TypeError on analytics", e);
-      } else {
+      if (!(e instanceof TypeError)) {
         throw e;
       }
     }
