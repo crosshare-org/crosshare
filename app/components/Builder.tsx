@@ -5,8 +5,8 @@ import {
 
 import NextJSRouter from 'next/router';
 import {
-  FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaTabletAlt,
-  FaKeyboard, FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip, FaUserLock
+  FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle,
+  FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip, FaUserLock
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
@@ -14,7 +14,7 @@ import { FixedSizeList as List } from 'react-window';
 
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
-  SymmetryIcon, SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
+  SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
   EscapeKey, BacktickKey
 } from './Icons';
 import { AuthProps } from './AuthContext';
@@ -26,20 +26,19 @@ import { TimestampedPuzzleT, AuthoredPuzzleT, AuthoredPuzzlesV } from '../lib/db
 import { updateInCache } from '../lib/dbUtils';
 import { Direction, PuzzleT, isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from '../lib/types';
 import {
-  Symmetry, BuilderState, BuilderEntry, builderReducer, validateGrid,
-  KeypressAction, SetClueAction, SymmetryAction, ClickedFillAction, PuzzleAction,
-  SetTitleAction, SetHighlightAction, PublishAction
+  Symmetry, BuilderState, builderReducer, validateGrid, KeypressAction,
+  SymmetryAction, ClickedFillAction, PuzzleAction, SetHighlightAction, PublishAction
 } from '../reducers/reducer';
 import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav } from './Page';
 import { RebusOverlay } from './Puzzle';
+import { ClueMode } from './ClueMode';
 // eslint-disable-next-line import/no-unresolved
 import AutofillWorker from 'worker-loader?name=static/[hash].worker.js!../lib/autofill.worker';
 
 import * as WordDB from '../lib/WordDB';
 import { Overlay } from './Overlay';
 import { usePersistedBoolean } from '../lib/hooks';
-import { buttonAsLink } from '../lib/style';
 
 import useResizeObserver from 'use-resize-observer';
 import { ResizeObserver as Polyfill } from '@juggle/resize-observer';
@@ -144,64 +143,6 @@ const PotentialFillList = (props: PotentialFillListProps) => {
           )}</List>
       </div>
     </div >
-  );
-};
-
-const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry, clues: Map<string, string> }) => {
-  if (props.entry.completedWord === null) {
-    throw new Error('shouldn\'t ever get here');
-  }
-  return (
-    <tr>
-      <td css={{
-        paddingRight: '1em',
-        paddingBottom: '1em',
-        textAlign: 'right',
-        width: '1px'
-      }}>{props.entry.completedWord}</td>
-      <td css={{ paddingBottom: '1em' }}><input css={{ width: '100%' }} placeholder="Enter a clue" value={props.clues.get(props.entry.completedWord) || ''} onChange={(e) => {
-        const sca: SetClueAction = { type: 'SETCLUE', word: props.entry.completedWord || '', clue: e.target.value };
-        props.dispatch(sca);
-      }} /></td>
-    </tr>
-  );
-};
-
-interface ClueModeProps {
-  title: string | null,
-  exitClueMode: () => void,
-  completedEntries: Array<BuilderEntry>,
-  clues: Map<string, string>,
-  dispatch: Dispatch<PuzzleAction>,
-}
-const ClueMode = (props: ClueModeProps) => {
-  const clueRows = props.completedEntries.map(e => <ClueRow key={e.completedWord || ''} dispatch={props.dispatch} entry={e} clues={props.clues} />);
-  return (
-    <>
-      <TopBar>
-        <TopBarLink icon={<SpinnerFinished />} text="Back to Grid" onClick={props.exitClueMode} />
-      </TopBar>
-      <div css={{ padding: '1em' }}>
-        <h4>Title</h4>
-        <input placeholder="Give your puzzle a title" value={props.title || ''} onChange={(e) => {
-          const sta: SetTitleAction = { type: 'SETTITLE', value: e.target.value };
-          props.dispatch(sta);
-        }} />
-        <h4>Clues</h4>
-        {props.completedEntries.length ?
-          <table css={{ width: '100%', }}>
-            <tbody>
-              {clueRows}
-            </tbody>
-          </table>
-          :
-          <>
-            <p>This where you come to set clues for your puzzle, but you don&apos;t have any completed fill words yet!</p>
-            <p>Go back to <button css={buttonAsLink} onClick={(e) => { props.exitClueMode(); e.preventDefault(); }}>the grid</button> and fill in one or more words completely. Then come back here and make some clues.</p>
-          </>
-        }
-      </div>
-    </>
   );
 };
 
@@ -462,7 +403,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
       }
     }
     return <TopBar>
-      <TopBarLink icon={autofillIcon} text="Autofill" hoverText={autofillText} onClick={toggleAutofillEnabled} />
+      <TopBarLink icon={autofillIcon} hoverText={autofillText} onClick={toggleAutofillEnabled} />
       <TopBarLink icon={<FaListOl />} text="Clues" onClick={() => setClueMode(true)} />
       <TopBarDropDown icon={<IoMdStats />} text="Stats">
         <h4>Grid status</h4>
@@ -473,29 +414,35 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         <div>Number of words: {numEntries}</div>
         <div>Mean word length: {averageLength.toPrecision(3)}</div>
       </TopBarDropDown>
-      <TopBarDropDown icon={<SymmetryIcon type={state.symmetry} />} text="Symmetry">
-        <TopBarDropDownLink icon={<SymmetryRotational />} text="Rotational Symmetry" onClick={() => {
-          const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Rotational };
-          dispatch(a);
-        }} />
-        <TopBarDropDownLink icon={<SymmetryHorizontal />} text="Horizontal Symmetry" onClick={() => {
-          const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Horizontal };
-          dispatch(a);
-        }} />
-        <TopBarDropDownLink icon={<SymmetryVertical />} text="Vertical Symmetry" onClick={() => {
-          const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Vertical };
-          dispatch(a);
-        }} />
-        <TopBarDropDownLink icon={<SymmetryNone />} text="No Symmetry" onClick={() => {
-          const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.None };
-          dispatch(a);
-        }} />
-      </TopBarDropDown>
+      <TopBarLink icon={<FaRegNewspaper />} text="Publish" onClick={() => {
+        const a: PublishAction = { type: 'PUBLISH', publishTimestamp: TimestampClass.now() };
+        dispatch(a);
+      }} />
       <TopBarDropDown icon={<FaEllipsisH />} text="More">
-        <TopBarDropDownLink icon={<FaRegNewspaper />} text="Publish Puzzle" onClick={() => {
-          const a: PublishAction = { type: 'PUBLISH', publishTimestamp: TimestampClass.now() };
-          dispatch(a);
-        }} />
+        {state.symmetry === Symmetry.Rotational ? '' :
+          <TopBarDropDownLink icon={<SymmetryRotational />} text="Use Rotational Symmetry" onClick={() => {
+            const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Rotational };
+            dispatch(a);
+          }} />
+        }
+        {state.symmetry === Symmetry.Horizontal ? '' :
+          <TopBarDropDownLink icon={<SymmetryHorizontal />} text="Use Horizontal Symmetry" onClick={() => {
+            const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Horizontal };
+            dispatch(a);
+          }} />
+        }
+        {state.symmetry === Symmetry.Vertical ? '' :
+          <TopBarDropDownLink icon={<SymmetryVertical />} text="Use Vertical Symmetry" onClick={() => {
+            const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Vertical };
+            dispatch(a);
+          }} />
+        }
+        {state.symmetry === Symmetry.None ? '' :
+          <TopBarDropDownLink icon={<SymmetryNone />} text="Use No Symmetry" onClick={() => {
+            const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.None };
+            dispatch(a);
+          }} />
+        }
         <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
           const a: KeypressAction = { type: 'KEYPRESS', key: 'Escape', shift: false };
           dispatch(a);
@@ -517,8 +464,6 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         {
           props.isAdmin ?
             <>
-              <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: 'TOGGLEKEYBOARD' })} />
-              <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: 'TOGGLETABLET' })} />
               <TopBarDropDownLinkA href='/admin' icon={<FaUserLock />} text="Admin" />
             </>
             :
@@ -526,7 +471,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         }
         <TopBarDropDownLinkA href='/account' icon={<FaUser />} text="Account" />
       </TopBarDropDown>
-    </TopBar>;
+    </TopBar >;
   }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, averageLength, dispatch, muted, numEntries, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled]);
 
   return (

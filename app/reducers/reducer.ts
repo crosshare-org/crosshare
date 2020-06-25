@@ -447,9 +447,9 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
     if (!state.title) {
       errors.push('Puzzle must have a title set');
     }
-    const missingClues = state.grid.entries.filter((e) => !state.clues.has(e.completedWord || '')).map((e => e.completedWord || ''));
+    const missingClues = state.grid.entries.filter((e) => e.completedWord && !state.clues.has(e.completedWord)).map((e => e.completedWord || ''));
     if (missingClues.length) {
-      errors.push('All words must have a clue set (' + Array.from(new Set(missingClues)).sort().join(', ') + ')');
+      errors.push('Some words are missing clues: ' + Array.from(new Set(missingClues)).sort().join(', '));
     }
 
     if (errors.length) {

@@ -4,8 +4,8 @@ import {
 } from 'react';
 import Head from 'next/head';
 import {
-  FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaTabletAlt,
-  FaKeyboard, FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock,
+  FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause,
+  FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock,
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
@@ -652,8 +652,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         {
           props.isAdmin ?
             <>
-              <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => dispatch({ type: 'TOGGLEKEYBOARD' })} />
-              <TopBarDropDownLink icon={<FaTabletAlt />} text="Toggle Tablet" onClick={() => dispatch({ type: 'TOGGLETABLET' })} />
               <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: 'TOGGLEMODERATING' })} />
               <TopBarDropDownLinkA href='/admin' icon={<FaUserLock />} text="Admin" />
             </>
