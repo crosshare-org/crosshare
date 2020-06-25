@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode } from 'react';
+import { Dispatch, ReactNode, useRef } from 'react';
 import {
   FaAngleDoubleRight, FaAngleDoubleLeft,
 } from 'react-icons/fa';
@@ -71,9 +71,10 @@ interface SquareAndColsProps {
   includeBlockKey: boolean,
 }
 export const SquareAndCols = (props: SquareAndColsProps) => {
+  const parentRef = useRef<HTMLDivElement>(null);
   return (
     <>
-      <div css={{
+      <div ref={parentRef} css={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -85,7 +86,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
         minHeight: 'calc(100% - var(--height-adjustment))',
         height: 'calc(100% - var(--height-adjustment))',
       }}>
-        <Square contents={props.square} />
+        <Square parentRef={parentRef} contents={props.square} />
         <div css={{
           display: 'none',
           flex: 'auto',

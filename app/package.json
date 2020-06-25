@@ -33,6 +33,7 @@
     "@emotion/babel-preset-css-prop": "^10.0.27",
     "@emotion/core": "^10.0.28",
     "@firebase/app": "^0.6.4",
+    "@juggle/resize-observer": "^3.2.0",
     "@next/bundle-analyzer": "^9.4.4",
     "@sentry/node": "^5.17.0",
     "@sentry/webpack-plugin": "1.11.1",
@@ -58,6 +59,7 @@
     "react-toastify": "^5.5.0",
     "react-window": "^1.8.5",
     "swr": "^0.2.0",
+    "use-resize-observer": "^6.1.0",
     "worker-loader": "^2.0.0"
   },
   "devDependencies": {

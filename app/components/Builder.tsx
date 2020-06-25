@@ -12,7 +12,6 @@ import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { FixedSizeList as List } from 'react-window';
 
-import AutoSizer from './AutoSizer';
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
   SymmetryIcon, SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
@@ -41,6 +40,13 @@ import * as WordDB from '../lib/WordDB';
 import { Overlay } from './Overlay';
 import { usePersistedBoolean } from '../lib/hooks';
 import { buttonAsLink } from '../lib/style';
+
+import useResizeObserver from 'use-resize-observer';
+import { ResizeObserver as Polyfill } from '@juggle/resize-observer';
+// TODO conditional import only when we need the polyfill?
+if (typeof window !== 'undefined') {
+  window.ResizeObserver = window.ResizeObserver || Polyfill;
+}
 
 let worker: Worker;
 
@@ -97,6 +103,8 @@ interface PotentialFillListProps {
 }
 const PotentialFillList = (props: PotentialFillListProps) => {
   const listRef = useRef<List>(null);
+  const listParent = useRef<HTMLDivElement>(null);
+  const { height = 200 } = useResizeObserver({ ref: listParent });
   useEffect(() => {
     if (listRef.current !== null) {
       listRef.current.scrollToItem(0);
@@ -113,33 +121,29 @@ const PotentialFillList = (props: PotentialFillListProps) => {
           height: '1.5em',
           paddingLeft: '0.5em',
         }}>{props.header}</div> : ''}
-      <div css={{
+      <div ref={listParent} css={{
         height: props.header ? 'calc(100% - 1.5em)' : '100%',
       }}>
-        <AutoSizer>
-          {({ height, width }) => {
-            return (<List
-              ref={listRef}
-              height={height}
-              itemCount={props.values.length}
-              itemSize={35}
-              width={width}
-            >
-              {({ index, style }) => (
-                <div style={style}>
-                  <PotentialFillItem
-                    key={index}
-                    isGoodSuggestion={props.isGoodSuggestion}
-                    entryIndex={props.entryIndex}
-                    dispatch={props.dispatch}
-                    value={props.values[index]}
-                  />
-                </div>
-              )}</List>);
-          }}
-        </AutoSizer>
+        <List
+          ref={listRef}
+          height={height}
+          itemCount={props.values.length}
+          itemSize={35}
+          width='100%'
+        >
+          {({ index, style }) => (
+            <div style={style}>
+              <PotentialFillItem
+                key={index}
+                isGoodSuggestion={props.isGoodSuggestion}
+                entryIndex={props.entryIndex}
+                dispatch={props.dispatch}
+                value={props.values[index]}
+              />
+            </div>
+          )}</List>
       </div>
-    </div>
+    </div >
   );
 };
 
