@@ -62,6 +62,7 @@ export const Key = (props: KeyProps) => {
       background: props.backgroundColor ? props.backgroundColor : 'var(--key-bg)',
       flex: props.smallSize ? '0.5 1 0 ' : (props.largeSize ? '1.6 1 0 ' : '1 1 0'),
       cursor: 'pointer',
+      color: 'var(--black)',
       boxShadow: '0 0 3px -1px rgba(0,0,0,.3)',
       height: '40px',
       borderRadius: '5px',
