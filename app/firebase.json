@@ -85,15 +85,16 @@
     ],
     "rewrites": [
       {
-        "source": "/robots.txt",
-        "destination": "/staging.robots.txt"
-      },
-      {
         "source": "**",
         "function": "staging-server"
       }
     ],
     "redirects": [
+      {
+        "source": "/robots.txt",
+        "destination": "/staging.robots.txt",
+        "type": 301
+      },
       {
         "source": "/category/dailymini",
         "destination": "/categories/dailymini",
