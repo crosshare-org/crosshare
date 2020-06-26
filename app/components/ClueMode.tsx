@@ -1,12 +1,12 @@
 import { Dispatch } from 'react';
 
 import { SpinnerFinished } from './Icons';
-import { BuilderEntry, SetClueAction, PuzzleAction } from '../reducers/reducer';
+import { BuilderEntry, SetClueAction, SetTitleAction, PuzzleAction } from '../reducers/reducer';
 import { TopBarLink, TopBar } from './TopBar';
 import { buttonAsLink } from '../lib/style';
 
-function sanitizeClue(input: string) {
-  return input.substring(0, 250);
+function sanitize(input: string) {
+  return input.substring(0, 140);
 }
 
 const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry, clues: Map<string, string> }) => {
@@ -23,7 +23,7 @@ const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry,
         width: '1px'
       }}>{props.entry.completedWord}</td>
       <td css={{ paddingBottom: '1em' }}><input css={{ width: '100%' }} placeholder="Enter a clue" value={props.clues.get(word) || ''} onChange={(e) => {
-        const sca: SetClueAction = { type: 'SETCLUE', word: word, clue: sanitizeClue(e.target.value) };
+        const sca: SetClueAction = { type: 'SETCLUE', word: word, clue: sanitize(e.target.value) };
         props.dispatch(sca);
       }} /></td>
     </tr>
@@ -45,6 +45,11 @@ export const ClueMode = (props: ClueModeProps) => {
         <TopBarLink icon={<SpinnerFinished />} text="Back to Grid" onClick={props.exitClueMode} />
       </TopBar>
       <div css={{ padding: '1em' }}>
+        <h2>Title</h2>
+        <input css={{ width: '100%', marginBottom: '1.5em' }} placeholder="Give your puzzle a title" value={props.title || ''} onChange={(e) => {
+          const sta: SetTitleAction = { type: 'SETTITLE', value: sanitize(e.target.value) };
+          props.dispatch(sta);
+        }} />
         <h2>Clues</h2>
         {props.completedEntries.length ?
           <table css={{ width: '100%', }}>
