@@ -5,9 +5,11 @@ import { IoMdCloseCircleOutline, } from 'react-icons/io';
 import { HAS_PHYSICAL_KEYBOARD, KEYBOARD_HEIGHT } from '../lib/style';
 
 export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCallback?: () => void, showKeyboard?: boolean, children: React.ReactNode }) => {
-  const modalRoot = document.getElementById('modal');
+  let modalRoot = document.getElementById('modal');
   if (!modalRoot) {
-    throw new Error('could not mount Overlay portal');
+    modalRoot = document.createElement('div');
+    modalRoot.setAttribute('id', 'modal');
+    document.body.appendChild(modalRoot);
   }
 
   // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
