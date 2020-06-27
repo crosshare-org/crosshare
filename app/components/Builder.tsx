@@ -24,7 +24,7 @@ import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from '../lib/gridBase';
 import { fromCells, getClueMap } from '../lib/viewableGrid';
-import { TimestampedPuzzleT, AuthoredPuzzleT, AuthoredPuzzlesV } from '../lib/dbtypes';
+import { AuthoredPuzzleT, AuthoredPuzzlesV } from '../lib/dbtypes';
 import { updateInCache } from '../lib/dbUtils';
 import { Direction, PuzzleT, isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from '../lib/types';
 import {
@@ -425,8 +425,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         sendToDB: true
       });
 
-      const forStorage: TimestampedPuzzleT = { downloadedAt: TimestampClass.now(), data: dbpuzzle };
-      sessionStorage.setItem('c/' + ref.id, JSON.stringify(forStorage));
+      localStorage.removeItem(STORAGE_KEY);
       NextJSRouter.push('/pending/' + ref.id);
     });
   }, [state.toPublish, props.user.uid]);

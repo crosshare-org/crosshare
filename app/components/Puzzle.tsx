@@ -128,8 +128,6 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
       c: 'dailymini',
     }).then(() => {
       console.log('Scheduled mini');
-      // Dump it!
-      sessionStorage.removeItem('c/' + puzzle.id);
       window.location.reload();
     });
   }
@@ -140,8 +138,6 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
       m: true,
       p: TimestampClass.now(),
     }).then(() => {
-      // Dump it!
-      sessionStorage.removeItem('c/' + puzzle.id);
       window.location.reload();
     });
   }

@@ -7,12 +7,12 @@ import { requiresAdmin } from '../components/AuthContext';
 import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleResult, puzzleFromDB } from '../lib/types';
 import {
-  TimestampedPuzzleT, DailyStatsT, DailyStatsV, DBPuzzleV, getDateString,
+  DailyStatsT, DailyStatsV, DBPuzzleV, getDateString,
   CategoryIndexT, CategoryIndexV, prettifyDateString, DBPuzzleT,
   CommentForModerationWithIdT, CommentForModerationV, CommentWithRepliesT
 } from '../lib/dbtypes';
 import { getFromDB, getFromSessionOrDB, mapEachResult } from '../lib/dbUtils';
-import { App, TimestampClass } from '../lib/firebaseWrapper';
+import { App } from '../lib/firebaseWrapper';
 import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
 
 const PuzzleListItem = (props: PuzzleResult) => {
@@ -38,8 +38,6 @@ export default requiresAdmin(() => {
       getFromSessionOrDB({ collection: 'ds', docId: dateString, validator: DailyStatsV, ttl: 1000 * 60 * 30 }),
       getFromSessionOrDB({ collection: 'categories', docId: 'dailymini', validator: CategoryIndexV, ttl: 24 * 60 * 60 * 1000 }),
       mapEachResult(db.collection('c').where('m', '==', false), DBPuzzleV, (dbpuzz, docId) => {
-        const forStorage: TimestampedPuzzleT = { downloadedAt: TimestampClass.now(), data: dbpuzz };
-        sessionStorage.setItem('c/' + docId, JSON.stringify(forStorage));
         return { ...puzzleFromDB(dbpuzz), id: docId };
       }),
       mapEachResult(db.collection('cfm'), CommentForModerationV, (cfm, docId) => {
