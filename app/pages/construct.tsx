@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { AuthProps, requiresAdmin } from '../components/AuthContext';
 import { BuilderDBLoader } from '../components/Builder';
 
-export default requiresAdmin((authProps: AuthProps) => {
+export const BuilderPage = (authProps: AuthProps) => {
   const size = 5;
   const grid = [
     ' ', ' ', ' ', ' ', ' ',
@@ -69,4 +69,6 @@ export default requiresAdmin((authProps: AuthProps) => {
     </Head>
     <BuilderDBLoader {...props} {...authProps} />
   </>;
-});
+};
+
+export default requiresAdmin(BuilderPage);

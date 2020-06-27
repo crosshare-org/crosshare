@@ -90,7 +90,7 @@
   },
   "jest": {
     "moduleNameMapper": {
-      "\\.worker.ts": "<rootDir>/__mocks__/workerMock.ts"
+      "autofill.worker": "<rootDir>/lib/__mocks__/autofill.worker.ts"
     },
     "setupFilesAfterEnv": [
       "<rootDir>/setupTestsAfterEnv.ts"

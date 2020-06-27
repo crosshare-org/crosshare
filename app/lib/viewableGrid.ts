@@ -251,8 +251,8 @@ export function gridWithBlockToggled<Entry extends ViewableEntry,
 }
 
 export function getClueMap<Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>>(grid: Grid, rawClues: Array<ClueT>): Map<string, string> {
-  const result = new Map<string, string>();
+  Grid extends ViewableGrid<Entry>>(grid: Grid, rawClues: Array<ClueT>): Record<string, string> {
+  const result: Record<string, string> = {};
   const clues = cluesByDirection(rawClues);
 
   for (const entry of grid.entries) {
@@ -263,7 +263,7 @@ export function getClueMap<Entry extends ViewableEntry,
     if (!clue) {
       continue;
     }
-    result.set(entry.completedWord, clue);
+    result[entry.completedWord] = clue;
   }
   return result;
 }

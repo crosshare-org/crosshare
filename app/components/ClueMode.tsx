@@ -9,7 +9,7 @@ function sanitize(input: string) {
   return input.substring(0, 140);
 }
 
-const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry, clues: Map<string, string> }) => {
+const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry, clues: Record<string, string> }) => {
   const word = props.entry.completedWord;
   if (word === null) {
     throw new Error('shouldn\'t ever get here');
@@ -22,7 +22,7 @@ const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry,
         textAlign: 'right',
         width: '1px'
       }}>{props.entry.completedWord}</td>
-      <td css={{ paddingBottom: '1em' }}><input css={{ width: '100%' }} placeholder="Enter a clue" value={props.clues.get(word) || ''} onChange={(e) => {
+      <td css={{ paddingBottom: '1em' }}><input css={{ width: '100%' }} placeholder="Enter a clue" value={props.clues[word] || ''} onChange={(e) => {
         const sca: SetClueAction = { type: 'SETCLUE', word: word, clue: sanitize(e.target.value) };
         props.dispatch(sca);
       }} /></td>
@@ -34,7 +34,7 @@ interface ClueModeProps {
   title: string | null,
   exitClueMode: () => void,
   completedEntries: Array<BuilderEntry>,
-  clues: Map<string, string>,
+  clues: Record<string, string>,
   dispatch: Dispatch<PuzzleAction>,
 }
 export const ClueMode = (props: ClueModeProps) => {

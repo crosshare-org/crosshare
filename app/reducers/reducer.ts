@@ -60,7 +60,7 @@ export interface BuilderState extends GridInterfaceState {
   gridIsComplete: boolean,
   repeats: Set<string>,
   hasNoShortWords: boolean,
-  clues: Map<string, string>,
+  clues: Record<string, string>,
   symmetry: Symmetry,
   publishErrors: Array<string>,
   toPublish: DBPuzzleT | null,
@@ -425,7 +425,7 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
     return ({ ...state });
   }
   if (isSetClueAction(action)) {
-    return ({ ...state, clues: state.clues.set(action.word, action.clue) });
+    return ({ ...state, clues: { ...state.clues, [action.word]: action.clue } });
   }
   if (isSetTitleAction(action)) {
     return ({ ...state, title: action.value });
@@ -447,7 +447,7 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
     if (!state.title) {
       errors.push('Puzzle must have a title set');
     }
-    const missingClues = state.grid.entries.filter((e) => e.completedWord && !state.clues.has(e.completedWord)).map((e => e.completedWord || ''));
+    const missingClues = state.grid.entries.filter((e) => e.completedWord && !state.clues[e.completedWord]).map((e => e.completedWord || ''));
     if (missingClues.length) {
       errors.push('Some words are missing clues: ' + Array.from(new Set(missingClues)).sort().join(', '));
     }
@@ -464,7 +464,7 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
       if (!e.completedWord) {
         throw new Error('Publish unfinished grid');
       }
-      const clue = state.clues.get(e.completedWord);
+      const clue = state.clues[e.completedWord];
       if (!clue) {
         throw new Error('Bad clue for ' + e.completedWord);
       }

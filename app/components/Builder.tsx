@@ -2,7 +2,9 @@ import {
   useState, useReducer, useRef, useEffect, useCallback, useMemo,
   Dispatch, KeyboardEvent, MouseEvent
 } from 'react';
-
+import * as t from 'io-ts';
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import NextJSRouter from 'next/router';
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle,
@@ -54,7 +56,9 @@ type BuilderProps = WithOptional<Omit<PuzzleT, 'comments' | 'category' | 'author
 
 export const BuilderDBLoader = (props: BuilderProps & AuthProps): JSX.Element => {
   const [ready, setReady] = useState(false);
-  WordDB.initializeOrBuild(setReady);
+  if (!ready) {
+    WordDB.initializeOrBuild(setReady);
+  }
   if (ready) {
     return <Builder {...props} />;
   }
@@ -146,19 +150,46 @@ const PotentialFillList = (props: PotentialFillListProps) => {
   );
 };
 
-export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
+const STORAGE_KEY = 'puzzleInProgress';
+
+const PuzzleInProgressV = t.type({
+  width: t.number,
+  height: t.number,
+  grid: t.array(t.string),
+  highlighted: t.array(t.number),
+  highlight: t.keyof({ circle: null, shade: null }),
+  title: t.union([t.string, t.null]),
+  clues: t.record(t.string, t.string)
+});
+type PuzzleInProgressT = t.TypeOf<typeof PuzzleInProgressV>;
+
+
+const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
+  const inStorage = localStorage.getItem(STORAGE_KEY);
+  let saved: PuzzleInProgressT | null = null;
+  if (inStorage) {
+    const validationResult = PuzzleInProgressV.decode(JSON.parse(inStorage));
+    if (isRight(validationResult)) {
+      console.log('loaded puzzle in progress from local storage');
+      saved = validationResult.right;
+    } else {
+      console.error('failed to load puzzle in progress!');
+      console.error(PathReporter.report(validationResult).join(','));
+    }
+  }
+
   const initialGrid = fromCells({
     mapper: (e) => e,
-    width: props.size.cols,
-    height: props.size.rows,
-    cells: props.grid,
+    width: saved ?.width || props.size.cols,
+    height: saved ?.height || props.size.rows,
+    cells: saved ?.grid || props.grid,
     allowBlockEditing: true,
-    highlighted: new Set(props.highlighted),
-    highlight: props.highlight || 'circle',
+    highlighted: new Set(saved ?.highlighted || props.highlighted),
+    highlight: saved ?.highlight || props.highlight || 'circle',
   });
-  const [state, dispatch] = useReducer(builderReducer, {
+  return validateGrid({
     type: 'builder',
-    title: props.title || null,
+    title: saved ?.title || props.title || null,
     active: { col: 0, row: 0, dir: Direction.Across },
     grid: initialGrid,
     showExtraKeyLayout: false,
@@ -169,7 +200,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     hasNoShortWords: false,
     isEditable: () => true,
     symmetry: Symmetry.Rotational,
-    clues: getClueMap(initialGrid, props.clues || []),
+    clues: saved ?.clues || getClueMap(initialGrid, props.clues || []),
     publishErrors: [],
     toPublish: null,
     authorId: props.user.uid,
@@ -177,7 +208,11 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     postEdit(_cellIndex) {
       return validateGrid(this);
     }
-  }, validateGrid);
+  });
+};
+
+export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
+  const [state, dispatch] = useReducer(builderReducer, props, initializeState);
 
   const [autofilledGrid, setAutofilledGrid] = useState<string[]>([]);
   const [autofillInProgress, setAutofillInProgress] = useState(false);
@@ -220,6 +255,20 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     setAutofillInProgress(true);
     worker.postMessage(autofill);
   }, [state.grid]);
+
+  useEffect(() => {
+    const inProgress: PuzzleInProgressT = {
+      width: state.grid.width,
+      height: state.grid.height,
+      grid: state.grid.cells,
+      highlight: state.grid.highlight,
+      highlighted: Array.from(state.grid.highlighted),
+      clues: state.clues,
+      title: state.title
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(inProgress));
+  }, [state.clues, state.grid.cells, state.grid.width, state.grid.height,
+    state.grid.highlight, state.grid.highlighted, state.title]);
 
   const [clueMode, setClueMode] = useState(false);
   if (clueMode) {
