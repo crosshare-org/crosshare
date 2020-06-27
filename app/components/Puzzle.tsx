@@ -595,38 +595,44 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   const dropdownMenus = useMemo(() => (
     <>
       <TopBarDropDown icon={<FaEye />} text="Reveal">
-        <TopBarDropDownLink icon={<RevealSquare />} text="Reveal Square" onClick={() => {
-          const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Square, isReveal: true };
-          dispatch(ca);
-        }} />
-        <TopBarDropDownLink icon={<RevealEntry />} text="Reveal Word" onClick={() => {
-          const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Entry, isReveal: true };
-          dispatch(ca);
-        }} />
-        <TopBarDropDownLink icon={<RevealPuzzle />} text="Reveal Puzzle" onClick={() => {
-          const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Puzzle, isReveal: true };
-          dispatch(ca);
-        }} />
+        {() => <>
+          <TopBarDropDownLink icon={<RevealSquare />} text="Reveal Square" onClick={() => {
+            const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Square, isReveal: true };
+            dispatch(ca);
+          }} />
+          <TopBarDropDownLink icon={<RevealEntry />} text="Reveal Word" onClick={() => {
+            const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Entry, isReveal: true };
+            dispatch(ca);
+          }} />
+          <TopBarDropDownLink icon={<RevealPuzzle />} text="Reveal Puzzle" onClick={() => {
+            const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Puzzle, isReveal: true };
+            dispatch(ca);
+          }} />
+        </>
+        }
       </TopBarDropDown>
       {
         !state.autocheck ?
           (<TopBarDropDown icon={<FaCheck />} text="Check">
-            <TopBarDropDownLink icon={<FaCheckSquare />} text="Autocheck" onClick={() => {
-              const action: ToggleAutocheckAction = { type: 'TOGGLEAUTOCHECK' };
-              dispatch(action);
-            }} />
-            <TopBarDropDownLink icon={<CheckSquare />} text="Check Square" onClick={() => {
-              const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Square };
-              dispatch(ca);
-            }} />
-            <TopBarDropDownLink icon={<CheckEntry />} text="Check Word" onClick={() => {
-              const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Entry };
-              dispatch(ca);
-            }} />
-            <TopBarDropDownLink icon={<CheckPuzzle />} text="Check Puzzle" onClick={() => {
-              const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Puzzle };
-              dispatch(ca);
-            }} />
+            {() => <>
+              <TopBarDropDownLink icon={<FaCheckSquare />} text="Autocheck" onClick={() => {
+                const action: ToggleAutocheckAction = { type: 'TOGGLEAUTOCHECK' };
+                dispatch(action);
+              }} />
+              <TopBarDropDownLink icon={<CheckSquare />} text="Check Square" onClick={() => {
+                const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Square };
+                dispatch(ca);
+              }} />
+              <TopBarDropDownLink icon={<CheckEntry />} text="Check Word" onClick={() => {
+                const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Entry };
+                dispatch(ca);
+              }} />
+              <TopBarDropDownLink icon={<CheckPuzzle />} text="Check Puzzle" onClick={() => {
+                const ca: CheatAction = { type: 'CHEAT', unit: CheatUnit.Puzzle };
+                dispatch(ca);
+              }} />
+            </>
+            }
           </TopBarDropDown>)
           :
           <TopBarLink icon={<FaCheckSquare />} text="Autochecking" onClick={() => {
@@ -635,30 +641,33 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           }} />
       }
       <TopBarDropDown icon={<FaEllipsisH />} text="More">
-        <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
-          const kpa: KeypressAction = { type: 'KEYPRESS', key: 'Escape', shift: false };
-          dispatch(kpa);
-        }} />
-        {
-          muted ?
-            <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
-            :
-            <TopBarDropDownLink icon={<FaVolumeMute />} text="Mute" onClick={() => setMuted(true)} />
+        {() => <>
+          <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
+            const kpa: KeypressAction = { type: 'KEYPRESS', key: 'Escape', shift: false };
+            dispatch(kpa);
+          }} />
+          {
+            muted ?
+              <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
+              :
+              <TopBarDropDownLink icon={<FaVolumeMute />} text="Mute" onClick={() => setMuted(true)} />
+          }
+          {
+            props.isAdmin ?
+              <>
+                <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: 'TOGGLEMODERATING' })} />
+                <TopBarDropDownLinkA href='/admin' icon={<FaUserLock />} text="Admin" />
+              </>
+              : ''
+          }
+          {
+            props.isAdmin || props.user ?.uid === puzzle.authorId ?
+              <TopBarDropDownLinkA href='/crosswords/[puzzleId]/stats' as={`/crosswords/${puzzle.id}/stats`} icon={<IoMdStats />} text="Stats" />
+              : ''
+          }
+          <TopBarDropDownLinkA href='/account' icon={<FaUser />} text="Account" />
+        </>
         }
-        {
-          props.isAdmin ?
-            <>
-              <TopBarDropDownLink icon={<FaGlasses />} text="Moderate" onClick={() => dispatch({ type: 'TOGGLEMODERATING' })} />
-              <TopBarDropDownLinkA href='/admin' icon={<FaUserLock />} text="Admin" />
-            </>
-            : ''
-        }
-        {
-          props.isAdmin || props.user ?.uid === puzzle.authorId ?
-            <TopBarDropDownLinkA href='/crosswords/[puzzleId]/stats' as={`/crosswords/${puzzle.id}/stats`} icon={<IoMdStats />} text="Stats" />
-            : ''
-        }
-        <TopBarDropDownLinkA href='/account' icon={<FaUser />} text="Account" />
       </TopBarDropDown>
     </>
   ), [state.autocheck, muted, props.isAdmin, props.user ?.uid, puzzle, setMuted]);

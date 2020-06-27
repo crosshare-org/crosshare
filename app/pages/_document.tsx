@@ -61,6 +61,7 @@ export default class CrosshareDocument extends Document {
         </Head>
         <body>
           <Main />
+          <div id="modal" />
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script src="https://browser.sentry-cdn.com/5.17.0/bundle.min.js"></script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}

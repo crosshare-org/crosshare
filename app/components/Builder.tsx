@@ -15,7 +15,7 @@ import useEventListener from '@use-it/event-listener';
 import { FixedSizeList as List } from 'react-window';
 
 import {
-  Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled,
+  Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled, SymmetryIcon,
   SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
   EscapeKey, BacktickKey
 } from './Icons';
@@ -31,7 +31,7 @@ import {
   Symmetry, BuilderState, builderReducer, validateGrid, KeypressAction,
   SymmetryAction, ClickedFillAction, PuzzleAction, SetHighlightAction, PublishAction
 } from '../reducers/reducer';
-import { TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
+import { NestedDropDown, TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav } from './Page';
 import { RebusOverlay } from './Puzzle';
 import { ClueMode } from './ClueMode';
@@ -454,70 +454,73 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
       <TopBarLink icon={autofillIcon} hoverText={autofillText} onClick={toggleAutofillEnabled} />
       <TopBarLink icon={<FaListOl />} text="Clues" onClick={() => setClueMode(true)} />
       <TopBarDropDown icon={<IoMdStats />} text="Stats">
-        <h4>Grid status</h4>
-        <div>{state.gridIsComplete ? <FaRegCheckCircle /> : <FaRegCircle />} All cells should be filled</div>
-        <div>{state.hasNoShortWords ? <FaRegCheckCircle /> : <FaRegCircle />} All words should be at least three letters</div>
-        <div>{state.repeats.size > 0 ? <><FaRegCircle /> ({Array.from(state.repeats).sort().join(', ')})</> : <FaRegCheckCircle />} No words should be repeated</div>
-        <h4>Fill</h4>
-        <div>Number of words: {numEntries}</div>
-        <div>Mean word length: {averageLength.toPrecision(3)}</div>
+        {() => <>
+          <h4>Grid status</h4>
+          <div>{state.gridIsComplete ? <FaRegCheckCircle /> : <FaRegCircle />} All cells should be filled</div>
+          <div>{state.hasNoShortWords ? <FaRegCheckCircle /> : <FaRegCircle />} All words should be at least three letters</div>
+          <div>{state.repeats.size > 0 ? <><FaRegCircle /> ({Array.from(state.repeats).sort().join(', ')})</> : <FaRegCheckCircle />} No words should be repeated</div>
+          <h4>Fill</h4>
+          <div>Number of words: {numEntries}</div>
+          <div>Mean word length: {averageLength.toPrecision(3)}</div>
+        </>
+        }
       </TopBarDropDown>
       <TopBarLink icon={<FaRegNewspaper />} text="Publish" onClick={() => {
         const a: PublishAction = { type: 'PUBLISH', publishTimestamp: TimestampClass.now() };
         dispatch(a);
       }} />
       <TopBarDropDown icon={<FaEllipsisH />} text="More">
-        {state.symmetry === Symmetry.Rotational ? '' :
-          <TopBarDropDownLink icon={<SymmetryRotational />} text="Use Rotational Symmetry" onClick={() => {
-            const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Rotational };
-            dispatch(a);
-          }} />
-        }
-        {state.symmetry === Symmetry.Horizontal ? '' :
-          <TopBarDropDownLink icon={<SymmetryHorizontal />} text="Use Horizontal Symmetry" onClick={() => {
-            const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Horizontal };
-            dispatch(a);
-          }} />
-        }
-        {state.symmetry === Symmetry.Vertical ? '' :
-          <TopBarDropDownLink icon={<SymmetryVertical />} text="Use Vertical Symmetry" onClick={() => {
-            const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Vertical };
-            dispatch(a);
-          }} />
-        }
-        {state.symmetry === Symmetry.None ? '' :
-          <TopBarDropDownLink icon={<SymmetryNone />} text="Use No Symmetry" onClick={() => {
-            const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.None };
-            dispatch(a);
-          }} />
-        }
-        <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
-          const a: KeypressAction = { type: 'KEYPRESS', key: 'Escape', shift: false };
-          dispatch(a);
-        }} />
-        <TopBarDropDownLink icon={state.grid.highlight === 'circle' ? <FaRegCircle /> : <FaFillDrip />} text="Toggle Square Highlight" shortcutHint={<BacktickKey />} onClick={() => {
-          const a: KeypressAction = { type: 'KEYPRESS', key: '`', shift: false };
-          dispatch(a);
-        }} />
-        <TopBarDropDownLink icon={state.grid.highlight === 'circle' ? <FaFillDrip /> : <FaRegCircle />} text={state.grid.highlight === 'circle' ? 'Use Shade for Highlights' : 'Use Circle for Highlights'} onClick={() => {
-          const a: SetHighlightAction = { type: 'SETHIGHLIGHT', highlight: state.grid.highlight === 'circle' ? 'shade' : 'circle' };
-          dispatch(a);
-        }} />
-        {
-          muted ?
-            <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
-            :
-            <TopBarDropDownLink icon={<FaVolumeMute />} text="Mute" onClick={() => setMuted(true)} />
-        }
-        {
-          props.isAdmin ?
-            <>
-              <TopBarDropDownLinkA href='/admin' icon={<FaUserLock />} text="Admin" />
+        {(closeDropdown) => <>
+          <NestedDropDown closeParent={closeDropdown} icon={<SymmetryIcon type={state.symmetry} />} text="Change Symmetry">
+            {() => <>
+              <TopBarDropDownLink icon={<SymmetryRotational />} text="Use Rotational Symmetry" onClick={() => {
+                const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Rotational };
+                dispatch(a);
+              }} />
+              <TopBarDropDownLink icon={<SymmetryHorizontal />} text="Use Horizontal Symmetry" onClick={() => {
+                const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Horizontal };
+                dispatch(a);
+              }} />
+              <TopBarDropDownLink icon={<SymmetryVertical />} text="Use Vertical Symmetry" onClick={() => {
+                const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Vertical };
+                dispatch(a);
+              }} />
+              <TopBarDropDownLink icon={<SymmetryNone />} text="Use No Symmetry" onClick={() => {
+                const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.None };
+                dispatch(a);
+              }} />
             </>
-            :
-            ''
+            }
+          </NestedDropDown>
+          <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
+            const a: KeypressAction = { type: 'KEYPRESS', key: 'Escape', shift: false };
+            dispatch(a);
+          }} />
+          <TopBarDropDownLink icon={state.grid.highlight === 'circle' ? <FaRegCircle /> : <FaFillDrip />} text="Toggle Square Highlight" shortcutHint={<BacktickKey />} onClick={() => {
+            const a: KeypressAction = { type: 'KEYPRESS', key: '`', shift: false };
+            dispatch(a);
+          }} />
+          <TopBarDropDownLink icon={state.grid.highlight === 'circle' ? <FaFillDrip /> : <FaRegCircle />} text={state.grid.highlight === 'circle' ? 'Use Shade for Highlights' : 'Use Circle for Highlights'} onClick={() => {
+            const a: SetHighlightAction = { type: 'SETHIGHLIGHT', highlight: state.grid.highlight === 'circle' ? 'shade' : 'circle' };
+            dispatch(a);
+          }} />
+          {
+            muted ?
+              <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
+              :
+              <TopBarDropDownLink icon={<FaVolumeMute />} text="Mute" onClick={() => setMuted(true)} />
+          }
+          {
+            props.isAdmin ?
+              <>
+                <TopBarDropDownLinkA href='/admin' icon={<FaUserLock />} text="Admin" />
+              </>
+              :
+              ''
+          }
+          <TopBarDropDownLinkA href='/account' icon={<FaUser />} text="Account" />
+        </>
         }
-        <TopBarDropDownLinkA href='/account' icon={<FaUser />} text="Account" />
       </TopBarDropDown>
     </TopBar >;
   }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, averageLength, dispatch, muted, numEntries, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled]);

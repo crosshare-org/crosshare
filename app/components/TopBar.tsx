@@ -7,13 +7,27 @@ import { Overlay } from './Overlay';
 import { Logo } from './Icons';
 import { PRIMARY, HEADER_HEIGHT, SMALL_AND_UP, HAS_PHYSICAL_KEYBOARD } from '../lib/style';
 
-export const TopBarDropDown = (props: { text: string, icon: ReactNode, children: ReactNode }) => {
+export const TopBarDropDown = (props: { text: string, icon: ReactNode, children: (close: () => void) => ReactNode }) => {
   const [dropped, setDropped] = useState(false);
+  const close = () => setDropped(false);
   return (
     <>
       <TopBarLink onClick={() => setDropped(!dropped)} text={props.text} icon={props.icon} />
-      <Overlay onClick={() => setDropped(false)} closeCallback={() => setDropped(false)} hidden={!dropped}>
-        {props.children}
+      <Overlay onClick={close} closeCallback={close} hidden={!dropped}>
+        {props.children(close)}
+      </Overlay>
+    </>
+  );
+};
+
+export const NestedDropDown = (props: { text: string, icon: ReactNode, closeParent: () => void, children: (close: () => void) => ReactNode }) => {
+  const [dropped, setDropped] = useState(false);
+  const close = () => setDropped(false);
+  return (
+    <>
+      <TopBarDropDownLink onClick={() => { props.closeParent(); setDropped(true); }} text={props.text} icon={props.icon} />
+      <Overlay onClick={close} closeCallback={close} hidden={!dropped}>
+        {props.children(close)}
       </Overlay>
     </>
   );

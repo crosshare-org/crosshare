@@ -1,10 +1,17 @@
+import { createPortal } from 'react-dom';
+
 import { IoMdCloseCircleOutline, } from 'react-icons/io';
 
 import { HAS_PHYSICAL_KEYBOARD, KEYBOARD_HEIGHT } from '../lib/style';
 
 export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCallback?: () => void, showKeyboard?: boolean, children: React.ReactNode }) => {
+  const modalRoot = document.getElementById('modal');
+  if (!modalRoot) {
+    throw new Error('could not mount Overlay portal');
+  }
+
   // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-  return (<div onClick={props.onClick || (() => undefined)} css={{
+  return createPortal(<div onClick={props.onClick || (() => undefined)} css={{
     display: props.hidden ? 'none' : 'block',
     position: 'fixed',
     backgroundColor: 'var(--overlay-bg)',
@@ -45,5 +52,5 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
         ''}
       {props.children}
     </div>
-  </div>);
+  </div>, modalRoot);
 };

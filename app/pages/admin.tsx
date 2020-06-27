@@ -189,7 +189,7 @@ export default requiresAdmin(() => {
             <div>Users w/ completions: {stats.u.length}</div>
             <h5>Top Puzzles</h5>
             <ul>
-              {Object.entries(stats.c).map(([crosswordId, count]) => {
+              {Object.entries(stats.c).sort((a, b) => b[1] - a[1]).map(([crosswordId, count]) => {
                 return (
                   <li key={crosswordId}>
                     <Link href='/crosswords/[puzzleId]' as={`/crosswords/${crosswordId}`} passHref>{titleForId(crosswordId)}</Link>: {count}
