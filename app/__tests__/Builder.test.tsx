@@ -30,11 +30,15 @@ test('puzzle in progress should be cached in local storage', async () => {
   let r = render(
     <BuilderPage isAdmin={false} user={anonymousUser} />, { user: anonymousUser }
   );
+
   await r.findByText(/Across/i);
 
-  fireEvent.keyDown(r.container, { key: 'A', keyCode: 65 });
-  fireEvent.keyDown(r.container, { key: 'B', keyCode: 66 });
-  fireEvent.keyDown(r.container, { key: 'C', keyCode: 67 });
+  // Need to click somewhere on the grid display to capture keyboard
+  const grid = r.getByLabelText('cell0x0').parentElement || window;
+
+  fireEvent.keyDown(grid, { key: 'A', keyCode: 65 });
+  fireEvent.keyDown(grid, { key: 'B', keyCode: 66 });
+  fireEvent.keyDown(grid, { key: 'C', keyCode: 67 });
 
   expect(r.getByLabelText('cell0x1')).toHaveTextContent('B');
   expect(r.getByLabelText('cell0x2')).toHaveTextContent('C');
