@@ -16,9 +16,6 @@ service cloud.firestore {
     function authorSetCorrectly() {
       return request.auth.uid != null && request.auth.uid == request.resource.data.a;
     }
-    function isPublished() {
-      return resource.data.p == null || request.time > resource.data.p;
-    }
     function validCrossword() {
       return (request.resource.data.g.size() == (request.resource.data.w * request.resource.data.h))
         && (request.resource.data.ac.size() == request.resource.data.an.size())
@@ -27,7 +24,7 @@ service cloud.firestore {
     }
     match /c/{crosswordId} {
       allow get: if isAdmin() || isAuthor()
-        || (resource.data.m == true && isPublished());
+        || (request.time > resource.data.p);
 
       // TODO figure out exactly what is using this query
       allow list: if isAdmin() || isAuthor()
@@ -42,9 +39,11 @@ service cloud.firestore {
 
       allow create: if isNonAnonymous() && authorSetCorrectly()
         && validCrossword()
-        && request.resource.data.c == null
-        && request.resource.data.p == null
-        && request.resource.data.m == false;
+        && request.resource.data.m == false
+        && (
+          (request.resource.data.c == 'dailymini' && request.resource.data.p == null)
+          ||
+          (request.resource.data.c == null && request.time >= request.resource.data.p));
     }
     match /uc/{userId} {
       allow read: if request.auth.uid == userId;

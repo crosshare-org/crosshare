@@ -5,7 +5,6 @@ import {
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import NextJSRouter from 'next/router';
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle,
   FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip, FaUserLock, FaRegPlusSquare
@@ -20,11 +19,10 @@ import {
   EscapeKey, BacktickKey, PuzzleSizeIcon
 } from './Icons';
 import { AuthProps } from './AuthContext';
-import { App, TimestampClass } from '../lib/firebaseWrapper';
+import { PublishOverlay } from './PublishOverlay';
+import { TimestampClass } from '../lib/firebaseWrapper';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from '../lib/gridBase';
-import { AuthoredPuzzleT, AuthoredPuzzlesV } from '../lib/dbtypes';
-import { updateInCache } from '../lib/dbUtils';
 import { Direction, PuzzleT, isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from '../lib/types';
 import {
   Symmetry, BuilderState, builderReducer, KeypressAction,
@@ -150,7 +148,7 @@ const PotentialFillList = (props: PotentialFillListProps) => {
   );
 };
 
-const STORAGE_KEY = 'puzzleInProgress';
+export const STORAGE_KEY = 'puzzleInProgress';
 
 const PuzzleInProgressV = t.type({
   width: t.number,
@@ -310,6 +308,8 @@ interface GridModeProps {
 const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => {
   const [muted, setMuted] = usePersistedBoolean('muted', false);
 
+  const gridRef = useRef<HTMLDivElement | null>(null);
+
   const physicalKeyboardHandler = useCallback((e: KeyboardEvent) => {
     if (e.metaKey || e.altKey || e.ctrlKey) {
       return;  // This way you can still do apple-R and such
@@ -318,7 +318,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
     dispatch(kpa);
     e.preventDefault();
   }, [dispatch]);
-  useEventListener('keydown', physicalKeyboardHandler);
+  useEventListener('keydown', physicalKeyboardHandler, gridRef.current || undefined);
 
   let left = <></>;
   let right = <></>;
@@ -422,33 +422,6 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
   const numEntries = state.grid.entries.length;
   const averageLength = totalLength / numEntries;
 
-  const publishInProgress = useRef<boolean>(false);
-  useEffect(() => {
-    if (state.toPublish === null || publishInProgress.current) {
-      return;
-    }
-    const dbpuzzle = state.toPublish;
-    publishInProgress.current = true;
-    console.log('Uploading');
-    console.log(dbpuzzle);
-    const db = App.firestore();
-    db.collection('c').add(dbpuzzle).then(async (ref) => {
-      console.log('Uploaded', ref.id);
-
-      const authoredPuzzle: AuthoredPuzzleT = [dbpuzzle.ca, dbpuzzle.t];
-      await updateInCache({
-        collection: 'uc',
-        docId: props.user.uid,
-        update: { [ref.id]: authoredPuzzle },
-        validator: AuthoredPuzzlesV,
-        sendToDB: true
-      });
-
-      localStorage.removeItem(STORAGE_KEY);
-      NextJSRouter.push('/pending/' + ref.id);
-    });
-  }, [state.toPublish, props.user.uid]);
-
   const keyboardHandler = useCallback((key: string) => {
     const kpa: KeypressAction = { type: 'KEYPRESS', key: key, shift: false };
     dispatch(kpa);
@@ -550,7 +523,8 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
   return (
     <>
       {topBar}
-
+      {state.toPublish ?
+        <PublishOverlay toPublish={state.toPublish} user={props.user} cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })} /> : ''}
       {state.isEnteringRebus ?
         <RebusOverlay dispatch={dispatch} value={state.rebusValue} /> : ''}
       {state.publishErrors.length ?
@@ -563,6 +537,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
           </>
         </Overlay> : ''}
       <SquareAndCols
+        ref={gridRef}
         muted={muted}
         keyboardHandler={keyboardHandler}
         showExtraKeyLayout={state.showExtraKeyLayout}

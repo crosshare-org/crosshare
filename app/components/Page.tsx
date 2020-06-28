@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, useRef } from 'react';
+import { Dispatch, ReactNode, useRef, forwardRef } from 'react';
 import {
   FaAngleDoubleRight, FaAngleDoubleLeft,
 } from 'react-icons/fa';
@@ -70,78 +70,87 @@ interface SquareAndColsProps {
   showExtraKeyLayout: boolean,
   includeBlockKey: boolean,
 }
-export const SquareAndCols = (props: SquareAndColsProps) => {
-  const parentRef = useRef<HTMLDivElement>(null);
-  return (
-    <>
-      <div ref={parentRef} css={{
+export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((props, fwdedRef) => {
+  const parentRef = useRef<HTMLDivElement | null>(null);
+  // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+  return (<><div tabIndex={0} ref={(instance) => {
+    parentRef.current = instance;
+    if (fwdedRef) {
+      if (typeof fwdedRef === 'function') {
+        fwdedRef(instance);
+      } else {
+        fwdedRef.current = instance;
+      }
+    }
+  }} css={{
+    outline: 'none',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    [SMALL_AND_UP]: {
+      flexDirection: 'row',
+      alignItems: 'start',
+    },
+    flexWrap: 'nowrap',
+    minHeight: 'calc(100% - var(--height-adjustment))',
+    height: 'calc(100% - var(--height-adjustment))',
+  }}>
+    <Square parentRef={parentRef} contents={props.square} />
+    <div css={{
+      display: 'none',
+      flex: 'auto',
+      flexWrap: 'wrap',
+      alignItems: 'end',
+      height: '100%',
+      [SMALL_AND_UP]: {
         display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        [SMALL_AND_UP]: {
-          flexDirection: 'row',
-          alignItems: 'start',
-        },
-        flexWrap: 'nowrap',
-        minHeight: 'calc(100% - var(--height-adjustment))',
-        height: 'calc(100% - var(--height-adjustment))',
-      }}>
-        <Square parentRef={parentRef} contents={props.square} />
-        <div css={{
-          display: 'none',
-          flex: 'auto',
-          flexWrap: 'wrap',
-          alignItems: 'end',
+        width: '34vw',
+      },
+      [LARGE_AND_UP]: {
+        width: '50vw',
+      },
+    }}>
+      <div css={{
+        flex: 'auto',
+        width: '100%',
+        height: '50%',
+        [LARGE_AND_UP]: {
+          paddingRight: 2,
+          width: '50%',
           height: '100%',
-          [SMALL_AND_UP]: {
-            display: 'flex',
-            width: '34vw',
-          },
-          [LARGE_AND_UP]: {
-            width: '50vw',
-          },
-        }}>
-          <div css={{
-            flex: 'auto',
-            width: '100%',
-            height: '50%',
-            [LARGE_AND_UP]: {
-              paddingRight: 2,
-              width: '50%',
-              height: '100%',
-            },
-          }}>{props.left}</div>
-          <div css={{
-            flex: 'auto',
-            width: '100%',
-            height: '50%',
-            [LARGE_AND_UP]: {
-              paddingLeft: 2,
-              width: '50%',
-              height: '100%',
-            },
-          }}>{props.right}</div>
-        </div>
-        <div css={{
-          flex: '1 0 auto',
-          width: '100vw',
-          height: TINY_COL_MIN_HEIGHT,
-          [SMALL_AND_UP]: {
-            display: 'none',
-          }
-        }}>
-          {props.tinyColumn}
-        </div>
-      </div>
-      <Keyboard
-        keyboardHandler={props.keyboardHandler}
-        muted={props.muted}
-        showExtraKeyLayout={props.showExtraKeyLayout}
-        includeBlockKey={props.includeBlockKey}
-      />
-    </>
+        },
+      }}>{props.left}</div>
+      <div css={{
+        flex: 'auto',
+        width: '100%',
+        height: '50%',
+        [LARGE_AND_UP]: {
+          paddingLeft: 2,
+          width: '50%',
+          height: '100%',
+        },
+      }}>{props.right}</div>
+    </div>
+    <div css={{
+      flex: '1 0 auto',
+      width: '100vw',
+      height: TINY_COL_MIN_HEIGHT,
+      [SMALL_AND_UP]: {
+        display: 'none',
+      }
+    }}>
+      {props.tinyColumn}
+    </div>
+  </div>
+  <Keyboard
+    keyboardHandler={props.keyboardHandler}
+    muted={props.muted}
+    showExtraKeyLayout={props.showExtraKeyLayout}
+    includeBlockKey={props.includeBlockKey}
+  />
+  </>
   );
-};
+});
 
 interface TwoColProps {
   muted: boolean,

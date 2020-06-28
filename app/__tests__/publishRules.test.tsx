@@ -21,7 +21,7 @@ const withComments: DBPuzzleT = {
       '___ date (makes wedding plans)',
       'Middle Ages invader',
       'Has a great night at the comedy club'],
-  p: null,
+  p: TimestampClass.now(),
   a: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
   ca: TimestampClass.now(),
   an: [1, 6, 7, 8, 9],
@@ -90,8 +90,19 @@ test('security rules should not allow publishing with restricted fields set', as
   await firebaseTesting.assertFails(
     app.firestore().collection('c').add({ ...puzzle, c: 'dailymini' })
   );
+  await firebaseTesting.assertFails(
+    app.firestore().collection('c').add({ ...puzzle, p: null })
+  );
+  const future = new Date();
+  future.setHours(future.getHours() + 1);
+  await firebaseTesting.assertFails(
+    app.firestore().collection('c').add({ ...puzzle, p: TimestampClass.fromDate(future) })
+  );
   await firebaseTesting.assertSucceeds(
     app.firestore().collection('c').add(puzzle)
+  );
+  await firebaseTesting.assertSucceeds(
+    app.firestore().collection('c').add({ ...puzzle, p: null, c: 'dailymini' })
   );
   app.delete();
 });

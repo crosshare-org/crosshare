@@ -180,6 +180,13 @@ export function isPublishAction(action: PuzzleAction): action is PublishAction {
   return action.type === 'PUBLISH';
 }
 
+export interface CancelPublishAction extends PuzzleAction {
+  type: 'CANCELPUBLISH',
+}
+export function isCancelPublishAction(action: PuzzleAction): action is CancelPublishAction {
+  return action.type === 'CANCELPUBLISH';
+}
+
 export interface NewPuzzleAction extends PuzzleAction {
   type: 'NEWPUZZLE',
   size: number
@@ -562,6 +569,9 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
       }
     }
     return { ...state, toPublish: puzzle };
+  }
+  if (isCancelPublishAction(action)) {
+    return { ...state, toPublish: null };
   }
   return state;
 }
