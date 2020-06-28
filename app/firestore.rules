@@ -22,7 +22,8 @@ service cloud.firestore {
     function validCrossword() {
       return (request.resource.data.g.size() == (request.resource.data.w * request.resource.data.h))
         && (request.resource.data.ac.size() == request.resource.data.an.size())
-        && (request.resource.data.dc.size() == request.resource.data.dn.size());
+        && (request.resource.data.dc.size() == request.resource.data.dn.size())
+        && (request.resource.data.cs.size() == 0);
     }
     match /c/{crosswordId} {
       allow get: if isAdmin() || isAuthor()
@@ -39,7 +40,7 @@ service cloud.firestore {
 
       allow update: if isAdmin();
 
-      allow create: if isAdmin() && authorSetCorrectly()
+      allow create: if isNonAnonymous() && authorSetCorrectly()
         && validCrossword()
         && request.resource.data.c == null
         && request.resource.data.p == null
