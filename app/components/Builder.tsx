@@ -453,24 +453,24 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
     return <TopBar>
       <TopBarLink icon={autofillIcon} hoverText={autofillText} onClick={toggleAutofillEnabled} />
       <TopBarLink icon={<FaListOl />} text="Clues" onClick={() => setClueMode(true)} />
-      <TopBarDropDown icon={<IoMdStats />} text="Stats">
-        {() => <>
-          <h4>Grid status</h4>
-          <div>{state.gridIsComplete ? <FaRegCheckCircle /> : <FaRegCircle />} All cells should be filled</div>
-          <div>{state.hasNoShortWords ? <FaRegCheckCircle /> : <FaRegCircle />} All words should be at least three letters</div>
-          <div>{state.repeats.size > 0 ? <><FaRegCircle /> ({Array.from(state.repeats).sort().join(', ')})</> : <FaRegCheckCircle />} No words should be repeated</div>
-          <h4>Fill</h4>
-          <div>Number of words: {numEntries}</div>
-          <div>Mean word length: {averageLength.toPrecision(3)}</div>
-        </>
-        }
-      </TopBarDropDown>
       <TopBarLink icon={<FaRegNewspaper />} text="Publish" onClick={() => {
         const a: PublishAction = { type: 'PUBLISH', publishTimestamp: TimestampClass.now() };
         dispatch(a);
       }} />
       <TopBarDropDown icon={<FaEllipsisH />} text="More">
         {(closeDropdown) => <>
+          <NestedDropDown closeParent={closeDropdown} icon={<IoMdStats />} text="Stats">
+            {() => <>
+              <h4>Grid</h4>
+              <div>{state.gridIsComplete ? <FaRegCheckCircle /> : <FaRegCircle />} All cells should be filled</div>
+              <div>{state.hasNoShortWords ? <FaRegCheckCircle /> : <FaRegCircle />} All words should be at least three letters</div>
+              <div>{state.repeats.size > 0 ? <><FaRegCircle /> ({Array.from(state.repeats).sort().join(', ')})</> : <FaRegCheckCircle />} No words should be repeated</div>
+              <h4 css={{ marginTop: '1.5em' }}>Fill</h4>
+              <div>Number of words: {numEntries}</div>
+              <div>Mean word length: {averageLength.toPrecision(3)}</div>
+            </>
+            }
+          </NestedDropDown>
           <NestedDropDown closeParent={closeDropdown} icon={<SymmetryIcon type={state.symmetry} />} text="Change Symmetry">
             {() => <>
               <TopBarDropDownLink icon={<SymmetryRotational />} text="Use Rotational Symmetry" onClick={() => {
