@@ -451,7 +451,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
       }
     }
     return <TopBar>
-      <TopBarLink icon={autofillIcon} hoverText={autofillText} onClick={toggleAutofillEnabled} />
+      <TopBarLink icon={autofillIcon} text="Autofill" hoverText={autofillText} onClick={toggleAutofillEnabled} />
       <TopBarLink icon={<FaListOl />} text="Clues" onClick={() => setClueMode(true)} />
       <TopBarLink icon={<FaRegNewspaper />} text="Publish" onClick={() => {
         const a: PublishAction = { type: 'PUBLISH', publishTimestamp: TimestampClass.now() };
