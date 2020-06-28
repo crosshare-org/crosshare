@@ -1,6 +1,6 @@
 import {
   useState, useReducer, useRef, useEffect, useCallback, useMemo,
-  Dispatch, KeyboardEvent, MouseEvent
+  Dispatch, KeyboardEvent, MouseEvent, FormEvent
 } from 'react';
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
@@ -8,7 +8,7 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import NextJSRouter from 'next/router';
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle,
-  FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip, FaUserLock
+  FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip, FaUserLock, FaRegPlusSquare
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
@@ -17,19 +17,19 @@ import { FixedSizeList as List } from 'react-window';
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled, SymmetryIcon,
   SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
-  EscapeKey, BacktickKey
+  EscapeKey, BacktickKey, PuzzleSizeIcon
 } from './Icons';
 import { AuthProps } from './AuthContext';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from '../lib/gridBase';
-import { fromCells, getClueMap } from '../lib/viewableGrid';
 import { AuthoredPuzzleT, AuthoredPuzzlesV } from '../lib/dbtypes';
 import { updateInCache } from '../lib/dbUtils';
 import { Direction, PuzzleT, isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from '../lib/types';
 import {
-  Symmetry, BuilderState, builderReducer, validateGrid, KeypressAction,
-  SymmetryAction, ClickedFillAction, PuzzleAction, SetHighlightAction, PublishAction
+  Symmetry, BuilderState, builderReducer, KeypressAction,
+  SymmetryAction, ClickedFillAction, PuzzleAction, SetHighlightAction, PublishAction,
+  NewPuzzleAction, initialBuilderState
 } from '../reducers/reducer';
 import { NestedDropDown, TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav } from './Page';
@@ -178,37 +178,56 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     }
   }
 
-  const initialGrid = fromCells({
-    mapper: (e) => e,
+  return initialBuilderState({
     width: saved ?.width || props.size.cols,
     height: saved ?.height || props.size.rows,
-    cells: saved ?.grid || props.grid,
-    allowBlockEditing: true,
-    highlighted: new Set(saved ?.highlighted || props.highlighted),
+    grid: saved ?.grid || props.grid,
+    highlighted: saved ?.highlighted || props.highlighted || [],
     highlight: saved ?.highlight || props.highlight || 'circle',
-  });
-  return validateGrid({
-    type: 'builder',
     title: saved ?.title || props.title || null,
-    active: { col: 0, row: 0, dir: Direction.Across },
-    grid: initialGrid,
-    showExtraKeyLayout: false,
-    isEnteringRebus: false,
-    rebusValue: '',
-    gridIsComplete: false,
-    repeats: new Set<string>(),
-    hasNoShortWords: false,
-    isEditable: () => true,
-    symmetry: Symmetry.Rotational,
-    clues: saved ?.clues || getClueMap(initialGrid, props.clues || []),
-    publishErrors: [],
-    toPublish: null,
+    clues: saved ?.clues || {},
     authorId: props.user.uid,
     authorName: props.user.displayName || 'Anonymous',
-    postEdit(_cellIndex) {
-      return validateGrid(this);
-    }
   });
+};
+
+const SizeSelectInput = (props: { size: number, currentSize: number, setSize: (s: number) => void, label: string }) => {
+  return <div css={{ fontSize: '1.5em' }}>
+    <label>
+      <input css={{ marginRight: '1em' }} type='radio' name='size' value={props.size} checked={props.currentSize === props.size} onChange={(e) => props.setSize(parseInt(e.currentTarget.value))} />
+      <span css={{ verticalAlign: 'top !important', fontSize: '2em', marginRight: '0.3em' }} >
+        <PuzzleSizeIcon width={props.size} height={props.size} />
+      </span>
+      {props.label}
+    </label>
+  </div>;
+};
+
+const NewPuzzleForm = (props: { dispatch: Dispatch<NewPuzzleAction> }) => {
+  const [size, setSize] = useState(5);
+
+  function startPuzzle(event: FormEvent) {
+    event.preventDefault();
+
+    // Clear current puzzle
+    localStorage.removeItem(STORAGE_KEY);
+
+    props.dispatch({ type: 'NEWPUZZLE', size: size });
+  }
+
+  return <>
+    <h2>Start a new puzzle</h2>
+    <p css={{ color: 'var(--error)' }}>WARNING: all progress on your current puzzle will be permanently lost. If you want to keep it, please publish the current puzzle first.</p>
+    <form onSubmit={startPuzzle}>
+      <div onClick={/* eslint-disable-line */ (e) => { e.stopPropagation(); }}>
+        <SizeSelectInput size={5} label='Mini' currentSize={size} setSize={setSize} />
+        <SizeSelectInput size={11} label='Midi' currentSize={size} setSize={setSize} />
+        <SizeSelectInput size={15} label='Full' currentSize={size} setSize={setSize} />
+        <SizeSelectInput size={23} label='XL' currentSize={size} setSize={setSize} />
+      </div>
+      <input type='submit' value='Create New Puzzle' />
+    </form>
+  </>;
 };
 
 export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
@@ -459,13 +478,16 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
       }} />
       <TopBarDropDown icon={<FaEllipsisH />} text="More">
         {(closeDropdown) => <>
+          <NestedDropDown closeParent={closeDropdown} icon={<FaRegPlusSquare />} text="New Puzzle">
+            {() => <NewPuzzleForm dispatch={dispatch} />}
+          </NestedDropDown>
           <NestedDropDown closeParent={closeDropdown} icon={<IoMdStats />} text="Stats">
             {() => <>
-              <h4>Grid</h4>
+              <h2>Grid</h2>
               <div>{state.gridIsComplete ? <FaRegCheckCircle /> : <FaRegCircle />} All cells should be filled</div>
               <div>{state.hasNoShortWords ? <FaRegCheckCircle /> : <FaRegCircle />} All words should be at least three letters</div>
               <div>{state.repeats.size > 0 ? <><FaRegCircle /> ({Array.from(state.repeats).sort().join(', ')})</> : <FaRegCheckCircle />} No words should be repeated</div>
-              <h4 css={{ marginTop: '1.5em' }}>Fill</h4>
+              <h2 css={{ marginTop: '1.5em' }}>Fill</h2>
               <div>Number of words: {numEntries}</div>
               <div>Mean word length: {averageLength.toPrecision(3)}</div>
             </>

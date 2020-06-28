@@ -6,7 +6,7 @@ import {
   ViewableGrid, ViewableEntry, CluedGrid,
   gridWithNewChar, gridWithBlockToggled, advancePosition, retreatPosition,
   moveToNextEntry, moveToPrevEntry, moveUp, moveDown, moveLeft, moveRight,
-  nextNonBlock, nextCell
+  nextNonBlock, nextCell, fromCells
 } from '../lib/viewableGrid';
 import { cellIndex, valAt, entryAtPosition, entryWord, gridWithEntrySet } from '../lib/gridBase';
 import type firebase from 'firebase';
@@ -71,6 +71,52 @@ function isBuilderState(state: GridInterfaceState): state is BuilderState {
   return state.type === 'builder';
 }
 
+export function initialBuilderState(
+  { width, height, grid, highlighted, highlight, title, clues, authorId, authorName }:
+    {
+      width: number,
+      height: number,
+      grid: Array<string>,
+      highlighted: Array<number>,
+      highlight: 'circle' | 'shade',
+      title: string | null,
+      clues: Record<string, string>,
+      authorId: string,
+      authorName: string
+    }) {
+  const initialGrid = fromCells({
+    mapper: (e) => e,
+    width: width,
+    height: height,
+    cells: grid,
+    allowBlockEditing: true,
+    highlighted: new Set(highlighted),
+    highlight: highlight
+  });
+  return validateGrid({
+    type: 'builder',
+    title: title,
+    active: { col: 0, row: 0, dir: Direction.Across },
+    grid: initialGrid,
+    showExtraKeyLayout: false,
+    isEnteringRebus: false,
+    rebusValue: '',
+    gridIsComplete: false,
+    repeats: new Set<string>(),
+    hasNoShortWords: false,
+    isEditable: () => true,
+    symmetry: Symmetry.Rotational,
+    clues: clues,
+    publishErrors: [],
+    toPublish: null,
+    authorId: authorId,
+    authorName: authorName,
+    postEdit(_cellIndex) {
+      return validateGrid(this);
+    }
+  });
+}
+
 export interface PuzzleAction {
   type: string,
 }
@@ -132,6 +178,14 @@ export interface PublishAction extends PuzzleAction {
 }
 export function isPublishAction(action: PuzzleAction): action is PublishAction {
   return action.type === 'PUBLISH';
+}
+
+export interface NewPuzzleAction extends PuzzleAction {
+  type: 'NEWPUZZLE',
+  size: number
+}
+export function isNewPuzzleAction(action: PuzzleAction): action is NewPuzzleAction {
+  return action.type === 'NEWPUZZLE';
 }
 
 interface SetActiveAction extends PuzzleAction {
@@ -435,6 +489,18 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   }
   if (action.type === 'CLEARPUBLISHERRORS') {
     return ({ ...state, publishErrors: [] });
+  }
+  if (isNewPuzzleAction(action)) {
+    return initialBuilderState({
+      width: action.size, height: action.size,
+      grid: Array(action.size * action.size).fill(' '),
+      title: null,
+      highlight: 'circle',
+      highlighted: [],
+      clues: {},
+      authorId: state.authorId,
+      authorName: state.authorName
+    });
   }
   if (isPublishAction(action)) {
     const errors = [];
