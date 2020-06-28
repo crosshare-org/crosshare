@@ -1,3 +1,4 @@
+import { useRef, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { IoMdCloseCircleOutline, } from 'react-icons/io';
@@ -5,15 +6,21 @@ import { IoMdCloseCircleOutline, } from 'react-icons/io';
 import { HAS_PHYSICAL_KEYBOARD, KEYBOARD_HEIGHT } from '../lib/style';
 
 export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCallback?: () => void, showKeyboard?: boolean, children: React.ReactNode }) => {
-  let modalRoot = document.getElementById('modal');
-  if (!modalRoot) {
-    modalRoot = document.createElement('div');
-    modalRoot.setAttribute('id', 'modal');
-    document.body.appendChild(modalRoot);
-  }
+  const ref = useRef<HTMLElement | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    ref.current = document.getElementById('modal');
+    if (!ref.current) {
+      ref.current = document.createElement('div');
+      ref.current.setAttribute('id', 'modal');
+      document.body.appendChild(ref.current);
+    }
+    setMounted(true);
+  }, []);
 
   // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-  return createPortal(<div onClick={props.onClick || (() => undefined)} css={{
+  const overlay = <div onClick={props.onClick || (() => undefined)} css={{
     display: props.hidden ? 'none' : 'block',
     position: 'fixed',
     backgroundColor: 'var(--overlay-bg)',
@@ -34,6 +41,7 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
       maxWidth: '650px',
       padding: '3em 1.5em',
       backgroundColor: 'var(--overlay-inner)',
+      border: '1px solid black',
       margin: '5em auto',
     }}>
       {props.closeCallback ?
@@ -54,5 +62,7 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
         ''}
       {props.children}
     </div>
-  </div>, modalRoot);
+  </div>;
+
+  return (mounted && ref.current) ? createPortal(overlay, ref.current) : overlay;
 };
