@@ -1,5 +1,5 @@
 import React from 'react';
-import { getByLabelText, getUser, cleanup, render, fireEvent } from '../lib/testingUtils';
+import { getByLabelText, getUser, cleanup, render, fireEvent, RenderResult } from '../lib/testingUtils';
 import { BuilderPage } from '../pages/construct';
 import { setApp } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/testing';
@@ -97,7 +97,7 @@ test('puzzle in progress should be cached in local storage', async () => {
   expect(r.getByLabelText('cell0x2')).toHaveTextContent('C');
 });
 
-async function publishPuzzle(submitType: RegExp) {
+async function publishPuzzle(submitType: RegExp, prePublish?: (r: RenderResult) => Promise<void>) {
   sessionStorage.clear();
   localStorage.clear();
 
@@ -145,6 +145,10 @@ async function publishPuzzle(submitType: RegExp) {
 
   const dmChoice = await (r.findByText(submitType));
   fireEvent.click(dmChoice);
+
+  if (prePublish) {
+    await prePublish(r);
+  }
 
   fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
   await (r.findByText(/Published Successfully/));
@@ -340,4 +344,38 @@ test('publish as default', async () => {
   expect(dailyMinis.data()).toEqual({});
 });
 
-test.todo('change author name in publish dialogue should publish w/ new name');
+test('change author name in publish dialogue should publish w/ new name', async () => {
+  await publishPuzzle(/Publish Immediately/i, async (r) => {
+    fireEvent.click(r.getByText('change name'));
+    fireEvent.change(r.getByLabelText('Update display name:'), { target: { value: 'M to tha D' } });
+    fireEvent.click(r.getByText('Save', { exact: true }));
+    await r.findByText(/M to tha D/i);
+  });
+
+  const puzzles = await admin.firestore().collection('c').get();
+  expect(puzzles.size).toEqual(1);
+  const puzzle = puzzles.docs[0].data();
+  const puzzleId = puzzles.docs[0].id;
+  expect(puzzle['m']).toEqual(false);
+  expect(puzzle['p']).not.toEqual(null);
+  expect(puzzle['c']).toEqual(null);
+  expect(puzzle['t']).toEqual('Our Title');
+  expect(puzzle['n']).toEqual('M to tha D');
+  await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
+  expect(NextJSRouter.push).toHaveBeenCalledWith('/pending/' + puzzles.docs[0].id);
+
+  await cleanup();
+
+  // The puzzle should be visible on the puzzle page, even to a rando
+  setApp(serverApp as firebase.app.App);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const props1 = await getServerSideProps({ params: { puzzleId }, res: { setHeader: jest.fn() } } as any);
+  setApp(randoApp as firebase.app.App);
+  const r5 = render(<PuzzlePage {...props1.props} />, { user: rando });
+  expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
+  expect(r5.queryByText(/Our Title/)).toBeInTheDocument();
+  expect(r5.queryByText(/by M to tha D/)).toBeInTheDocument();
+  expect(r5.queryByText(/Daily Mini/)).toBeNull();
+  await r5.findByText(/Enter Rebus/i);
+  expect(r5.queryByText(/Moderate/i)).toBeNull();
+});

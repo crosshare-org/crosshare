@@ -6,7 +6,11 @@ import { AuthContext } from '../components/AuthContext';
 import type firebaseTypes from 'firebase';
 
 export const getUser = (uid: string, isAnonymous: boolean) => {
-  return { uid, isAnonymous } as firebaseTypes.User;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const u = { uid, isAnonymous } as any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  u.updateProfile = (_profile: { displayName?: string }) => { u.displayName = _profile.displayName; return Promise.resolve(); };
+  return u as firebaseTypes.User;
 };
 
 export const anonymousUser = getUser('anonymous-user-id', true);
