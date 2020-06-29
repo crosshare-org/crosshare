@@ -24,7 +24,12 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ 
     console.error('bad puzzle params');
     return { props: { puzzle: null } };
   }
-  const dbres = await db.collection('c').doc(params.puzzleId).get();
+  let dbres;
+  try {
+    dbres = await db.collection('c').doc(params.puzzleId).get();
+  } catch {
+    return { props: { puzzle: null } };
+  }
   if (!dbres.exists) {
     return { props: { puzzle: null } };
   }
