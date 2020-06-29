@@ -63,10 +63,9 @@ interface PauseBeginProps {
 
 const BeginPauseOverlay = (props: PauseBeginProps) => {
   const warnings: Array<ReactNode> = [];
-  if (!props.moderated) {
-    warnings.push(<div key="moderation">The puzzle is awaiting moderation. We&apos;ll get to it ASAP! If you feel it&apos;s taking too long please message us on the google group.</div>);
-  }
-  if (props.publishTime && props.publishTime > new Date()) {
+  if (!props.publishTime) {
+    warnings.push(<div key="moderation">The puzzle is awaiting review. We&apos;ll get to it ASAP! If you feel it&apos;s taking too long please message us on the google group.</div>);
+  } else if (props.publishTime > new Date()) {
     warnings.push(<div key="publishtime">The puzzle has been scheduled for publishing on {props.publishTime.toLocaleDateString()}</div>);
   }
   return (
@@ -131,7 +130,6 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
       window.location.reload();
     });
   }
-  const isMini = puzzle.size.rows === 5 && puzzle.size.cols === 5;
 
   function setModerated() {
     const hourAgo = new Date();
@@ -149,7 +147,7 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
     <Overlay closeCallback={() => dispatch({ type: 'TOGGLEMODERATING' })}>
       <h4>Moderate this Puzzle</h4>
       <div>{puzzle.moderated ? 'Puzzle has been approved' : 'Puzzle is not approved'}</div>
-      {isMini ?
+      {puzzle.category === 'dailymini' ?
         <div>
           {puzzle.publishTime ?
             <div>Scheduled for {(new Date(puzzle.publishTime)).toLocaleDateString()}</div>

@@ -109,6 +109,9 @@ test('security rules should not allow publishing with restricted fields set', as
   await firebaseTesting.assertSucceeds(
     app.firestore().collection('c').add({ ...puzzle, p: null, c: 'dailymini' })
   );
+  await firebaseTesting.assertFails(
+    app.firestore().collection('c').add({ ...puzzle, w: 3, h: 3, g: puzzle.g.slice(0, 9), p: null, c: 'dailymini' })
+  );
   app.delete();
 });
 

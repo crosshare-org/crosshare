@@ -97,7 +97,7 @@ test('puzzle in progress should be cached in local storage', async () => {
   expect(r.getByLabelText('cell0x2')).toHaveTextContent('C');
 });
 
-async function submitAsDailyMini() {
+async function publishPuzzle(submitType: RegExp) {
   sessionStorage.clear();
   localStorage.clear();
 
@@ -143,7 +143,7 @@ async function submitAsDailyMini() {
   fireEvent.click(r.getByText('Back to Grid', { exact: true }));
   fireEvent.click(r.getByText('Publish', { exact: true }));
 
-  const dmChoice = await (r.findByText(/Submit as Daily Mini/i));
+  const dmChoice = await (r.findByText(submitType));
   fireEvent.click(dmChoice);
 
   fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
@@ -151,6 +151,10 @@ async function submitAsDailyMini() {
 
   const dailyMinis = await admin.firestore().collection('categories').doc('dailymini').get();
   expect(dailyMinis.data()).toEqual({});
+}
+
+async function publishAsDailyMini() {
+  await publishPuzzle(/Submit as Daily Mini/i);
 
   const puzzles = await admin.firestore().collection('c').get();
   expect(puzzles.size).toEqual(1);
@@ -195,7 +199,7 @@ async function submitAsDailyMini() {
 }
 
 test('publish as daily mini', async () => {
-  const puzzleId = await submitAsDailyMini();
+  const puzzleId = await publishAsDailyMini();
 
   // The puzzle should be visible to an admin on pending w/ moderation links
   setApp(adminUserApp as firebase.app.App);
@@ -244,7 +248,7 @@ test('publish as daily mini', async () => {
 });
 
 test('requested daily mini but approved as default', async () => {
-  const puzzleId = await submitAsDailyMini();
+  const puzzleId = await publishAsDailyMini();
 
   // The puzzle should be visible to an admin on pending w/ moderation links
   setApp(adminUserApp as firebase.app.App);
@@ -281,6 +285,58 @@ test('requested daily mini but approved as default', async () => {
   expect(r5.queryByText(/Daily Mini/)).toBeNull();
 });
 
-test.todo('publish as default');
+test('publish as default', async () => {
+  await publishPuzzle(/Publish Immediately/i);
+
+  const puzzles = await admin.firestore().collection('c').get();
+  expect(puzzles.size).toEqual(1);
+  const puzzle = puzzles.docs[0].data();
+  const puzzleId = puzzles.docs[0].id;
+  expect(puzzle['m']).toEqual(false);
+  expect(puzzle['p']).not.toEqual(null);
+  expect(puzzle['c']).toEqual(null);
+  expect(puzzle['t']).toEqual('Our Title');
+  await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
+  expect(NextJSRouter.push).toHaveBeenCalledWith('/pending/' + puzzles.docs[0].id);
+
+  await cleanup();
+
+  // The puzzle should be visible on the puzzle page, even to a rando
+  setApp(serverApp as firebase.app.App);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const props1 = await getServerSideProps({ params: { puzzleId }, res: { setHeader: jest.fn() } } as any);
+  setApp(randoApp as firebase.app.App);
+  const r5 = render(<PuzzlePage {...props1.props} />, { user: rando });
+  expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
+  expect(r5.queryByText(/Our Title/)).toBeInTheDocument();
+  expect(r5.queryByText(/Daily Mini/)).toBeNull();
+  await r5.findByText(/Enter Rebus/i);
+  expect(r5.queryByText(/Moderate/i)).toBeNull();
+
+  await cleanup();
+
+  // The puzzle should be visible to an admin w/ moderation links
+  setApp(adminUserApp as firebase.app.App);
+  const r4 = render(<PuzzlePage {...props1.props} />, { user: miked, isAdmin: true });
+  await r4.findByText(/Enter Rebus/i);
+  expect(r4.queryByText(/visible to others yet/i)).toBeNull();
+  fireEvent.click(r4.getByText(/Moderate/i));
+  expect(r4.queryByText(/Schedule As Daily Mini/i)).toBeNull();
+  const approveButton = await r4.findByText(/Approve Puzzle/i);
+  fireEvent.click(approveButton);
+
+  await waitForExpect(async () => expect((await admin.firestore().collection('c').where('m', '==', true).get()).size).toEqual(1));
+  const res = await admin.firestore().collection('c').get();
+  expect(res.size).toEqual(1);
+  const updated = res.docs[0].data();
+  expect(res.docs[0].id).toEqual(puzzleId);
+  expect(updated['m']).toEqual(true);
+  expect(updated['p']).not.toEqual(null);
+  expect(updated['c']).toEqual(null);
+  expect(updated['t']).toEqual('Our Title');
+
+  const dailyMinis = await admin.firestore().collection('categories').doc('dailymini').get();
+  expect(dailyMinis.data()).toEqual({});
+});
 
 test.todo('change author name in publish dialogue should publish w/ new name');
