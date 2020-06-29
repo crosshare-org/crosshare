@@ -20,7 +20,7 @@ service cloud.firestore {
       return (request.resource.data.g.size() == (request.resource.data.w * request.resource.data.h))
         && (request.resource.data.ac.size() == request.resource.data.an.size())
         && (request.resource.data.dc.size() == request.resource.data.dn.size())
-        && (request.resource.data.cs.size() == 0);
+        && (!request.resource.data.keys().hasAny(["cs"]) || request.resource.data.cs.size() == 0);
     }
     match /c/{crosswordId} {
       allow get: if isAdmin() || isAuthor()

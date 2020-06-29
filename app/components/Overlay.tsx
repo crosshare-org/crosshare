@@ -57,7 +57,7 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
           height: '1em',
           top: 0,
           right: 0,
-        }} onClick={props.closeCallback}><IoMdCloseCircleOutline css={{ position: 'absolute', top: 0, right: 0 }} /></button>
+        }} onClick={props.closeCallback}><IoMdCloseCircleOutline aria-label='close' css={{ position: 'absolute', top: 0, right: 0 }} /></button>
         :
         ''}
       {props.children}

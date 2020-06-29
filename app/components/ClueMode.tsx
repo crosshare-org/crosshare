@@ -21,8 +21,8 @@ const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry,
         paddingBottom: '1em',
         textAlign: 'right',
         width: '1px'
-      }}>{props.entry.completedWord}</td>
-      <td css={{ paddingBottom: '1em' }}><input type="text" css={{ width: '100%' }} placeholder="Enter a clue" value={props.clues[word] || ''} onChange={(e) => {
+      }}><label htmlFor={props.entry.completedWord + '-input'}>{props.entry.completedWord}</label></td>
+      <td css={{ paddingBottom: '1em' }}><input id={props.entry.completedWord + '-input'} type="text" css={{ width: '100%' }} placeholder="Enter a clue" value={props.clues[word] || ''} onChange={(e) => {
         const sca: SetClueAction = { type: 'SETCLUE', word: word, clue: sanitize(e.target.value) };
         props.dispatch(sca);
       }} /></td>
@@ -45,11 +45,13 @@ export const ClueMode = (props: ClueModeProps) => {
         <TopBarLink icon={<SpinnerFinished />} text="Back to Grid" onClick={props.exitClueMode} />
       </TopBar>
       <div css={{ padding: '1em' }}>
-        <h2>Title</h2>
-        <input type="text" css={{ width: '100%', marginBottom: '1.5em' }} placeholder="Give your puzzle a title" value={props.title || ''} onChange={(e) => {
-          const sta: SetTitleAction = { type: 'SETTITLE', value: sanitize(e.target.value) };
-          props.dispatch(sta);
-        }} />
+        <label>
+          <h2>Title</h2>
+          <input type="text" css={{ width: '100%', marginBottom: '1.5em' }} placeholder="Give your puzzle a title" value={props.title || ''} onChange={(e) => {
+            const sta: SetTitleAction = { type: 'SETTITLE', value: sanitize(e.target.value) };
+            props.dispatch(sta);
+          }} />
+        </label>
         <h2>Clues</h2>
         {props.completedEntries.length ?
           <table css={{ width: '100%', }}>
