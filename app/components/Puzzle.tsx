@@ -156,6 +156,7 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
           }
           <div css={{ marginTop: '1em' }}>Pick a date for this mini to appear:</div>
           <UpcomingMinisCalendar disableExisting={true} value={date} onChange={setDate} />
+          <div css={{ marginTop: '1em' }}>Be sure to email {puzzle.authorId}</div>
           <div css={{ marginTop: '1em' }}><button disabled={!date} onClick={schedule}>Schedule As Daily Mini</button></div>
         </div>
         :
