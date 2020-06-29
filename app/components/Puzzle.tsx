@@ -198,11 +198,10 @@ const SuccessOverlay = (props: { user?: firebase.User, puzzle: PuzzleResult, nex
               <GoogleSignInButton />
             }
           </>
-          : (props.puzzle.category === 'dailymini' ?
-            <div>
-              <PrevDailyMiniLink nextPuzzle={props.nextPuzzle} />
-            </div>
-            : '')
+          :
+          <div>
+            <PrevDailyMiniLink nextPuzzle={props.nextPuzzle} />
+          </div>
         }
       </div>
       <Comments user={props.user} solveTime={props.solveTime} didCheat={props.didCheat} puzzleId={props.puzzle.id} puzzleAuthorId={props.puzzle.authorId} comments={props.puzzle.comments} />
