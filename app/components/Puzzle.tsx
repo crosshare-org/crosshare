@@ -134,9 +134,12 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
   const isMini = puzzle.size.rows === 5 && puzzle.size.cols === 5;
 
   function setModerated() {
+    const hourAgo = new Date();
+    hourAgo.setHours(hourAgo.getHours() - 1);
     db.collection('c').doc(puzzle.id).update({
       m: true,
-      p: TimestampClass.now(),
+      c: null,
+      p: TimestampClass.fromDate(hourAgo),
     }).then(() => {
       window.location.reload();
     });

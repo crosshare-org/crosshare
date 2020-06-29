@@ -17,6 +17,45 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
+let serverApp: firebase.app.App, randoApp: firebase.app.App, adminUserApp: firebase.app.App, app: firebase.app.App, admin: firebase.app.App;
+
+beforeAll(async () => {
+  serverApp = firebaseTesting.initializeTestApp({ projectId }) as firebase.app.App;
+  randoApp = firebaseTesting.initializeTestApp({
+    projectId,
+    auth: {
+      uid: 'tom', admin: false, firebase: {
+        sign_in_provider: 'google'
+      }
+    }
+  }) as firebase.app.App;
+  adminUserApp = firebaseTesting.initializeTestApp({
+    projectId,
+    auth: {
+      uid: 'miked', admin: true, firebase: {
+        sign_in_provider: 'google'
+      }
+    }
+  }) as firebase.app.App;
+  app = firebaseTesting.initializeTestApp({
+    projectId,
+    auth: {
+      uid: 'mike', admin: false, firebase: {
+        sign_in_provider: 'google'
+      }
+    }
+  }) as firebase.app.App;
+  admin = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
+});
+
+afterAll(async () => {
+  await app.delete();
+  await admin.delete();
+  await serverApp.delete();
+  await randoApp.delete();
+  await adminUserApp.delete();
+});
+
 window.HTMLElement.prototype.scrollIntoView = function() { return; };
 
 const mike = getUser('mike', false);
@@ -28,14 +67,6 @@ test('puzzle in progress should be cached in local storage', async () => {
   sessionStorage.clear();
   localStorage.clear();
 
-  const app = firebaseTesting.initializeTestApp({
-    projectId,
-    auth: {
-      uid: 'mike', admin: false, firebase: {
-        sign_in_provider: 'google'
-      }
-    }
-  });
   setApp(app as firebase.app.App);
 
   let r = render(
@@ -64,43 +95,15 @@ test('puzzle in progress should be cached in local storage', async () => {
   await r.findByText(/Across/i);
   expect(r.getByLabelText('cell0x1')).toHaveTextContent('B');
   expect(r.getByLabelText('cell0x2')).toHaveTextContent('C');
-
-  await app.delete();
 });
 
-test('publish as daily mini', async () => {
+async function submitAsDailyMini() {
   sessionStorage.clear();
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
 
-  const serverApp = firebaseTesting.initializeTestApp({ projectId });
-  const randoApp = firebaseTesting.initializeTestApp({
-    projectId,
-    auth: {
-      uid: 'tom', admin: false, firebase: {
-        sign_in_provider: 'google'
-      }
-    }
-  });
-  const adminUserApp = firebaseTesting.initializeTestApp({
-    projectId,
-    auth: {
-      uid: 'miked', admin: true, firebase: {
-        sign_in_provider: 'google'
-      }
-    }
-  });
-  const app = firebaseTesting.initializeTestApp({
-    projectId,
-    auth: {
-      uid: 'mike', admin: false, firebase: {
-        sign_in_provider: 'google'
-      }
-    }
-  });
   setApp(app as firebase.app.App);
-  const admin = firebaseTesting.initializeAdminApp({ projectId });
 
   await admin.firestore().collection('categories').doc('dailymini').set({});
 
@@ -146,7 +149,7 @@ test('publish as daily mini', async () => {
   fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
   await (r.findByText(/Published Successfully/));
 
-  let dailyMinis = await admin.firestore().collection('categories').doc('dailymini').get();
+  const dailyMinis = await admin.firestore().collection('categories').doc('dailymini').get();
   expect(dailyMinis.data()).toEqual({});
 
   const puzzles = await admin.firestore().collection('c').get();
@@ -188,6 +191,12 @@ test('publish as daily mini', async () => {
 
   await cleanup();
 
+  return puzzleId;
+}
+
+test('publish as daily mini', async () => {
+  const puzzleId = await submitAsDailyMini();
+
   // The puzzle should be visible to an admin on pending w/ moderation links
   setApp(adminUserApp as firebase.app.App);
   const r4 = render(<PuzzleLoader puzzleId={puzzleId} />, { user: miked, isAdmin: true });
@@ -195,7 +204,13 @@ test('publish as daily mini', async () => {
   await r4.findByText(/Enter Rebus/i);
   fireEvent.click(r4.getByText(/Moderate/i));
   const scheduleButton = await r4.findByText(/Schedule As Daily Mini/i);
-  fireEvent.click(r4.getByText((new Date()).getDate().toString(10)), { exact: true });
+  const dateToClick = new Date().getDate();
+  // Make sure we are clicking on today if we are seeing other months too.
+  if (dateToClick < 15) {
+    fireEvent.click(r4.getAllByText(dateToClick.toString(10), { exact: true })[0]);
+  } else {
+    fireEvent.click(r4.getAllByText(dateToClick.toString(10), { exact: true }).slice(-1)[0]);
+  }
   fireEvent.click(scheduleButton);
 
   await waitForExpect(async () => expect((await admin.firestore().collection('c').where('m', '==', true).get()).size).toEqual(1));
@@ -208,7 +223,7 @@ test('publish as daily mini', async () => {
   expect(updated['c']).toEqual('dailymini');
   expect(updated['t']).toEqual('Our Title');
 
-  dailyMinis = await admin.firestore().collection('categories').doc('dailymini').get();
+  const dailyMinis = await admin.firestore().collection('categories').doc('dailymini').get();
   const dmData = dailyMinis.data();
   if (!dmData) {
     throw new Error('missing dms');
@@ -217,15 +232,55 @@ test('publish as daily mini', async () => {
 
   await cleanup();
 
-  await randoApp.delete();
-  await adminUserApp.delete();
-  await serverApp.delete();
-  await admin.delete();
-  await app.delete();
+  // The puzzle should be visible on the puzzle page, even to a rando
+  setApp(serverApp as firebase.app.App);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const props1 = await getServerSideProps({ params: { puzzleId }, res: { setHeader: jest.fn() } } as any);
+  setApp(randoApp as firebase.app.App);
+  const r5 = render(<PuzzlePage {...props1.props} />, { user: rando });
+  expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
+  expect(r5.queryByText(/Our Title/)).toBeNull();
+  expect(r5.queryByText(/Daily Mini/)).toBeInTheDocument();
+});
+
+test('requested daily mini but approved as default', async () => {
+  const puzzleId = await submitAsDailyMini();
+
+  // The puzzle should be visible to an admin on pending w/ moderation links
+  setApp(adminUserApp as firebase.app.App);
+  const r4 = render(<PuzzleLoader puzzleId={puzzleId} />, { user: miked, isAdmin: true });
+  await r4.findByText(/visible to others yet/i);
+  await r4.findByText(/Enter Rebus/i);
+  fireEvent.click(r4.getByText(/Moderate/i));
+  const approveButton = await r4.findByText(/Approve Puzzle/i);
+  fireEvent.click(approveButton);
+
+  await waitForExpect(async () => expect((await admin.firestore().collection('c').where('m', '==', true).get()).size).toEqual(1));
+  const res = await admin.firestore().collection('c').get();
+  expect(res.size).toEqual(1);
+  const updated = res.docs[0].data();
+  expect(res.docs[0].id).toEqual(puzzleId);
+  expect(updated['m']).toEqual(true);
+  expect(updated['p']).not.toEqual(null);
+  expect(updated['c']).toEqual(null);
+  expect(updated['t']).toEqual('Our Title');
+
+  const dailyMinis = await admin.firestore().collection('categories').doc('dailymini').get();
+  expect(dailyMinis.data()).toEqual({});
+
+  await cleanup();
+
+  // The puzzle should be visible on the puzzle page, even to a rando
+  setApp(serverApp as firebase.app.App);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const props1 = await getServerSideProps({ params: { puzzleId }, res: { setHeader: jest.fn() } } as any);
+  setApp(randoApp as firebase.app.App);
+  const r5 = render(<PuzzlePage {...props1.props} />, { user: rando });
+  expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
+  expect(r5.queryByText(/Our Title/)).toBeInTheDocument();
+  expect(r5.queryByText(/Daily Mini/)).toBeNull();
 });
 
 test.todo('publish as default');
-
-test.todo('requested daily mini but approved as default');
 
 test.todo('change author name in publish dialogue should publish w/ new name');
