@@ -79,18 +79,18 @@ export default requiresAuth(({ user }: AuthProps) => {
         <p>You&apos;re logged in as <b>{user.email}</b>. <button onClick={() => App.auth().signOut()}>Log out</button></p>
         <p>Your display name - <i>{displayName}</i> - is displayed next to any comments you make or puzzles you create.</p>
         <DisplayNameForm user={user} onChange={setDisplayName} />
-        {plays && plays.length ?
-          <>
-            <h2>Recent Plays</h2>
-            {plays.map((play) => <PlayListItem key={play.c} play={play} authoredPuzzles={authoredPuzzles} />)}
-          </>
-          :
-          ''
-        }
         {authoredPuzzles && authoredPuzzles.length ?
           <>
             <h2>Authored Puzzles</h2>
             {authoredPuzzles.map(AuthoredListItem)}
+          </>
+          :
+          ''
+        }
+        {plays && plays.length ?
+          <>
+            <h2>Recent Plays</h2>
+            {plays.map((play) => <PlayListItem key={play.c} play={play} authoredPuzzles={authoredPuzzles} />)}
           </>
           :
           ''
