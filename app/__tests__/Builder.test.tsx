@@ -111,7 +111,7 @@ async function publishPuzzle(submitType: RegExp, prePublish?: (r: RenderResult) 
     <BuilderPage isAdmin={false} user={mike} />, { user: mike }
   );
 
-  const grid = r.getByLabelText('cell0x0').parentElement || window;
+  const grid = (await r.findByLabelText('cell0x0')).parentElement || window;
 
   for (let i = 0; i < 25; i += 1) {
     fireEvent.keyDown(grid, { key: String.fromCharCode(65 + i), keyCode: 65 + i });
