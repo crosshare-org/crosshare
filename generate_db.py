@@ -95,8 +95,6 @@ class GenerateDB(object):
                 # Update scoring
                 if not th:
                     if pnum == 8: # nyt
-                        if fill == "TESTING":
-                            print(num, clues[cnum])
                         self.words[n][1] += num * 5
                     else:
                         self.words[n][1] += num
@@ -105,6 +103,10 @@ class GenerateDB(object):
                     n = struct.unpack('<I', f.read(4))[0]
                 except (IndexError, struct.error):
                     break
+
+    def write_wordlist(self):
+        with open("cluedata.txt", "w") as wordlist:
+            wordlist.writelines([w[0].upper() + ';' + str(w[1]) + '\n' for w in self.words if w[1]])
 
     def write_db(self):
         def ddict(d):
@@ -131,9 +133,11 @@ class GenerateDB(object):
 if __name__ == "__main__":
     print("Initializing wordlist")
     cd = GenerateDB("cluedata")
-    print("Initializing clues")
+    print("Initializing scores")
     cd.initialize_clue_map_and_scores()
-    print("Initializing bitmaps")
-    cd.initialize_bitmaps()
-    print("Writing db")
-    cd.write_db()
+    print("Writing wordlist")
+    cd.write_wordlist()
+    # print("Initializing bitmaps")
+    # cd.initialize_bitmaps()
+    # print("Writing db")
+    # cd.write_db()
