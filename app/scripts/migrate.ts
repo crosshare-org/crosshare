@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env ts-node-script
 
 import * as admin from 'firebase-admin';
 
@@ -33,5 +33,5 @@ async function runMigration() {
 }
 
 runMigration().then(() => {
-  console.log("Finished migration");
-})
+  console.log('Finished migration');
+});
