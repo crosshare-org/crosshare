@@ -43,6 +43,7 @@ test('test setBit', () => {
       bitmap.setBit(activeBits[j]);
     }
     expect(bitmap.toString(32)).toEqual(s32);
+    expect(bitmap.activeBits()).toEqual(activeBits);
   }
 });
 

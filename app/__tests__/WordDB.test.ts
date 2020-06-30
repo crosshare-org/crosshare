@@ -1,8 +1,7 @@
-import { build, matchingWords, matchingBitmap, dbEncoded } from '../lib/WordDB';
+import { build, matchingWords, matchingBitmap } from '../lib/WordDB';
 
 test('build word db', async () => {
   await build('TEST;50\n\rBEST;60\n\rTESTER;50');
-  console.log(dbEncoded);
 
   const good = matchingBitmap('TE  ');
   const good2 = matchingBitmap(' E  ');

@@ -11,10 +11,10 @@ const BigIntegerFromString = new t.Type<BitArray, string, unknown>(
   'BigIntegerFromString',
   (input: unknown): input is BitArray => input instanceof BitArray,
   (input, context) => either.chain(t.string.validate(input, context), n => {
-    return t.success(BitArray.fromString(n, 32));
+    return t.success(BitArray.fromString(n, 64));
   }),//(typeof input === 'string' ? t.success(input) : t.failure(input, context)),
   // `A` and `O` are the same, so `encode` is just the identity function
-  a => a.toString(32)
+  a => a.toString(64)
 );
 
 const WordDBEncodedV = t.type({
@@ -152,7 +152,7 @@ export function setDb(newdb: WordDBTransformed) {
   dbTransformed = newdb;
 }
 
-const ZERO = new BitArray([0], 1);
+const ZERO = BitArray.zero();
 
 export function highestScore(length: number, bitmap: BitArray | null) {
   const words = dbTransformed.words[length];

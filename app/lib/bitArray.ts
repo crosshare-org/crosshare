@@ -29,7 +29,7 @@ export class BitArray {
   constructor(private nums: Array<number>, private usedInts: number) { }
 
   static zero() {
-    return new this([], 0);
+    return new this([0], 1);
   }
 
   static fromString(input: string, base: 32 | 64) {
