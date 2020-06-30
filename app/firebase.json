@@ -20,6 +20,7 @@
       "scripts/**",
       "typings/**",
       "vendor/**",
+      "wordlist.txt",
       "firestore.rules",
       "setupTestsAfterEnv.ts"
     ]
