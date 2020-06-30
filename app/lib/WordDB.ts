@@ -162,13 +162,27 @@ export function highestScore(length: number, bitmap: BitArray | null) {
   return words[bitmap.bitLength() - 1];
 }
 
+export function scoreToCost(score: number) {
+  if (score === 0) {
+    return 10;
+  } else if (score === 1) {
+    return 1;
+  } else if (score === 2) {
+    return 0.1;
+  } else if (score === 3) {
+    return 0.01;
+  } else {
+    throw new Error('bad score! ' + score.toString());
+  }
+}
+
 /**
  * Get minimum cost of the words encoded by `bitmap`.
  */
 export function minCost(length: number, bitmap: BitArray | null) {
   const match = highestScore(length, bitmap);
   if (match) {
-    return 1 / match[1];
+    return scoreToCost(match[1]);
   }
   return 5;
 }

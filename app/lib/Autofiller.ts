@@ -169,13 +169,13 @@ export class Autofiller {
           continue;
         }
 
-        const score = (preScore > 100 ? 100 : preScore) + Math.random() * 30;
+        const cost = WordDB.scoreToCost(preScore) + Math.random() * 0.01;
 
         // If we have a secondBestCost for this entry we know it's lower than existing soln cost
         const costToBeat = secondBestCost !== null ? secondBestCost : this.solnCost;
 
         // Fail fast based on score change due to this entry alone
-        if (costToBeat !== null && ((baseCost - entry.minCost + 1 / score) > costToBeat)) {
+        if (costToBeat !== null && ((baseCost - entry.minCost + cost) > costToBeat)) {
           continue;
         }
 
@@ -235,7 +235,7 @@ export class Autofiller {
           continue;
         }
 
-        const newgrid = gridWithEntryDecided(grid, entry.index, word, score);
+        const newgrid = gridWithEntryDecided(grid, entry.index, word, cost);
         if (newgrid === null) {
           continue;
         }

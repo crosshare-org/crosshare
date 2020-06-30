@@ -31,7 +31,7 @@ export function numMatchesForEntry(entry: AutofillEntry) {
  * This is for autofilling purposes, so the values in the new fill cannot
  * conflict with anything existing in the grid.
  */
-export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, word: string, score: number): AutofillGrid | null {
+export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, word: string, cost: number): AutofillGrid | null {
   const newGrid: AutofillGrid = {
     ...grid,
     usedWords: new Set(grid.usedWords),
@@ -94,7 +94,7 @@ export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, wor
     ...entry,
     bitmap: null,
     completedWord: word,
-    minCost: 1 / score,
+    minCost: cost,
   };
 
   return newGrid;
