@@ -9,6 +9,7 @@ import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaSquare,
   FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip, FaUserLock, FaRegPlusSquare
 } from 'react-icons/fa';
+import { MdRefresh } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { FixedSizeList as List } from 'react-window';
@@ -16,7 +17,7 @@ import { FixedSizeList as List } from 'react-window';
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled, SymmetryIcon,
   SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
-  EscapeKey, BacktickKey, PeriodKey, PuzzleSizeIcon
+  EscapeKey, BacktickKey, PeriodKey, PuzzleSizeIcon, EnterKey
 } from './Icons';
 import { AuthProps } from './AuthContext';
 import { LoadButton } from './DBLoader';
@@ -263,7 +264,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
 
   // We need a ref to the current grid so we can verify it in worker.onmessage
   const currentCells = useRef(state.grid.cells);
-  useEffect(() => {
+  const runAutofill = useCallback(() => {
     if (!WordDB.dbEncoded) {
       throw new Error('missing db!');
     }
@@ -296,6 +297,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     setAutofillInProgress(true);
     worker.postMessage(autofill);
   }, [state.grid]);
+  useEffect(() => { runAutofill(); }, [runAutofill]);
 
   useEffect(() => {
     const inProgress: PuzzleInProgressT = {
@@ -315,12 +317,13 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   if (clueMode) {
     return <ClueMode dispatch={dispatch} title={state.title} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
   }
-  return <GridMode user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
+  return <GridMode runAutofill={runAutofill} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
 };
 
 interface GridModeProps {
   user: firebase.User,
   isAdmin: boolean,
+  runAutofill: () => void,
   autofillEnabled: boolean,
   setAutofillEnabled: (val: boolean) => void,
   autofilledGrid: string[],
@@ -329,7 +332,7 @@ interface GridModeProps {
   dispatch: Dispatch<PuzzleAction>,
   setClueMode: (val: boolean) => void,
 }
-const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => {
+const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridModeProps) => {
   const [muted, setMuted] = usePersistedBoolean('muted', false);
 
   const gridRef = useRef<HTMLDivElement | null>(null);
@@ -338,10 +341,14 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
     if (e.metaKey || e.altKey || e.ctrlKey) {
       return;  // This way you can still do apple-R and such
     }
+    if (e.key === 'Enter') {
+      runAutofill();
+      return;
+    }
     const kpa: KeypressAction = { type: 'KEYPRESS', key: e.key, shift: e.shiftKey };
     dispatch(kpa);
     e.preventDefault();
-  }, [dispatch]);
+  }, [dispatch, runAutofill]);
   useEventListener('keydown', physicalKeyboardHandler, gridRef.current || undefined);
 
   let left = <></>;
@@ -527,6 +534,9 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
             const a: SetHighlightAction = { type: 'SETHIGHLIGHT', highlight: state.grid.highlight === 'circle' ? 'shade' : 'circle' };
             dispatch(a);
           }} />
+          <TopBarDropDownLink icon={<MdRefresh />} text='Rerun Autofiller' shortcutHint={<EnterKey />} onClick={() => {
+            runAutofill();
+          }} />
           {
             muted ?
               <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
@@ -546,7 +556,7 @@ const GridMode = ({ state, dispatch, setClueMode, ...props }: GridModeProps) => 
         }
       </TopBarDropDown>
     </TopBar >;
-  }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, averageLength, dispatch, muted, numEntries, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled]);
+  }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, averageLength, dispatch, muted, numEntries, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, runAutofill]);
 
   return (
     <>
