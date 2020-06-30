@@ -1,6 +1,6 @@
 import {
   useState, useReducer, useRef, useEffect, useCallback, useMemo,
-  Dispatch, KeyboardEvent, MouseEvent, FormEvent
+  Dispatch, KeyboardEvent, MouseEvent, FormEvent, ReactNode
 } from 'react';
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
@@ -20,8 +20,9 @@ import {
 } from './Icons';
 import { AuthProps } from './AuthContext';
 import { PublishOverlay } from './PublishOverlay';
-import { TimestampClass } from '../lib/firebaseWrapper';
+import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { GridView } from './Grid';
+import { ProgressBar } from './ProgressBar';
 import { getCrosses, valAt, entryAndCrossAtPosition } from '../lib/gridBase';
 import { Direction, PuzzleT, isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from '../lib/types';
 import {
@@ -29,7 +30,7 @@ import {
   SymmetryAction, ClickedFillAction, PuzzleAction, SetHighlightAction, PublishAction,
   NewPuzzleAction, initialBuilderState
 } from '../reducers/reducer';
-import { NestedDropDown, TopBarLink, TopBar, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
+import { NestedDropDown, TopBarLink, TopBar, DefaultTopBar, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav } from './Page';
 import { RebusOverlay } from './Puzzle';
 import { ClueMode } from './ClueMode';
@@ -54,13 +55,71 @@ type BuilderProps = WithOptional<Omit<PuzzleT, 'comments' | 'category' | 'author
 
 export const BuilderDBLoader = (props: BuilderProps & AuthProps): JSX.Element => {
   const [ready, setReady] = useState(false);
-  if (!ready) {
-    WordDB.initializeOrBuild(setReady);
-  }
+  const [triedInit, setTriedInit] = useState(false);
+  const [dlProgress, setDlProgress] = useState<number | null>(null);
+  const [buildProgress, setBuildProgress] = useState<number | null>(null);
+  const [error, setError] = useState('');
+
+  const startBuild = () => {
+    setDlProgress(0);
+    const storage = App.storage();
+    const wordlistRef = storage.ref('wordlist.txt');
+    wordlistRef.getDownloadURL().then(function(url: string) {
+      const xhr = new XMLHttpRequest();
+      xhr.responseType = 'text';
+      xhr.addEventListener('progress', (e) => {
+        if (e.lengthComputable) {
+          setDlProgress(e.loaded / e.total);
+        } else {
+          setDlProgress(50);
+        }
+      });
+      xhr.onload = () => {
+        setDlProgress(null);
+        setBuildProgress(0);
+        const wordlist: string = xhr.response;
+        WordDB.build(wordlist, setBuildProgress).then(() => setReady(true));
+      };
+      xhr.open('GET', url);
+      xhr.send();
+    }).catch(function() {
+      setError('Error downloading word list, please try again');
+    });
+  };
+
+  useEffect(() => {
+    WordDB.initialize().then(succeeded => {
+      setTriedInit(true);
+      if (succeeded) {
+        setReady(true);
+      }
+    });
+  }, []);
+
   if (ready) {
     return <Builder {...props} />;
+  } else if (triedInit) {
+    let content: ReactNode;
+    content = <button onClick={startBuild}>Build Database</button>;
+    if (error) {
+      content = <p>Something went wrong: {error}</p>;
+    } else if (dlProgress !== null) {
+      content = <><p>Downloading:</p><ProgressBar percentDone={dlProgress} /></>;
+    } else if (buildProgress !== null) {
+      content = <><p>Building:</p><ProgressBar percentDone={buildProgress} /></>;
+    }
+    return <>
+      <DefaultTopBar />
+      <div css={{ margin: '1em' }}>
+        <h2>Crosshare Constructor</h2>
+        <p>The first time you use the constructor on a new browser Crosshare needs
+        to download and build a word database. This can take a minute or two,
+      especially if you&apos;re on a slow connection.</p>
+        {content}
+      </div>
+    </>;
   }
-  return <div>Loading word database...</div>;
+  return <div></div>;
 };
 
 interface PotentialFillItemProps {

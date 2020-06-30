@@ -72,6 +72,8 @@ export default class CrosshareDocument extends Document {
           <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-firestore.js"></script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-performance.js"></script>
+          {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+          <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-storage.js"></script>
           <NextScript />
         </body>
       </Html>

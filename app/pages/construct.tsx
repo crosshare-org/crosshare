@@ -1,6 +1,6 @@
 import Head from 'next/head';
 
-import { AuthProps, requiresAdmin } from '../components/AuthContext';
+import { AuthProps, requiresAuth } from '../components/AuthContext';
 import { BuilderDBLoader } from '../components/Builder';
 
 export const BuilderPage = (authProps: AuthProps) => {
@@ -28,4 +28,4 @@ export const BuilderPage = (authProps: AuthProps) => {
   </>;
 };
 
-export default requiresAdmin(BuilderPage);
+export default requiresAuth(BuilderPage);

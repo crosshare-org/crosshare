@@ -34,6 +34,18 @@ for (let i = 0; i < 1000; i += 1) {
   testCases.push([a, b, c, b.bitLength(), b.bitCount(), d, and, activebits(c)]);
 }
 
+test('test setBit', () => {
+  for (let i = 0; i < testCases.length; i += 1) {
+    const s32 = testCases[i][0];
+    const activeBits = testCases[i][7];
+    const bitmap = BitArray.zero();
+    for (let j = 0; j < activeBits.length; j += 1) {
+      bitmap.setBit(activeBits[j]);
+    }
+    expect(bitmap.toString(32)).toEqual(s32);
+  }
+});
+
 test('test fromString/toString performance', () => {
   const ourStart = performance.now();
   for (let i = 0; i < testCases.length; i += 1) {

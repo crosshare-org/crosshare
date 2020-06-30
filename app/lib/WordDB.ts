@@ -58,55 +58,93 @@ function parseJsonDB(data: string) {
 export let dbEncoded: WordDBT | undefined = undefined;
 export let dbStatus: DBStatus = DBStatus.uninitialized;
 
-export const initialize = (callback: (present: boolean) => void) => {
-  if (dbStatus !== DBStatus.uninitialized) return;
+const STORAGE_KEY = 'dbnew';
+
+export const initialize = async (): Promise<boolean> => {
+  if (dbStatus !== DBStatus.uninitialized) {
+    throw new Error('trying to initialize non-uninitialized worddb');
+  }
+
   dbStatus = DBStatus.building;
-  localforage.getItem('db').then((compressed) => {
-    if (compressed) {
-      console.log('loading db from storage');
-      const decompressed = LZString.decompress(compressed as string);
-      if (decompressed === null) {
-        console.error('Error decompressing db');
-        return callback(false);
-      }
-      dbEncoded = parseJsonDB(decompressed);
-      setDb(transformDb(dbEncoded));
-      dbStatus = DBStatus.present;
-      callback(true);
-    } else {
-      dbStatus = DBStatus.notPresent;
-      callback(false);
+  const compressed = await localforage.getItem(STORAGE_KEY);
+  if (compressed) {
+    console.log('loading db from storage');
+    const decompressed = LZString.decompress((compressed as string));
+    if (decompressed === null) {
+      console.error('Error decompressing db');
+      return false;
     }
-  }).catch((err) => { console.log(err); callback(false); });
+    dbEncoded = parseJsonDB(decompressed);
+    setDb(transformDb(dbEncoded));
+    dbStatus = DBStatus.present;
+    return true;
+  }
+  else {
+    dbStatus = DBStatus.notPresent;
+    return false;
+  }
 };
 
-export const build = (callback: (built: boolean) => void) => {
-  // Only allow a build if state is notPresent or disabled
-  if (dbStatus !== DBStatus.notPresent && dbStatus !== DBStatus.disabled) {
-    callback(false);
-    return;
-  }
+export const build = async (wordlist: string, updateProgress?: (percentDone: number) => void): Promise<void> => {
   console.log('building db');
   dbStatus = DBStatus.building;
-  fetch('_db.json')
-    .then((r) => r.text())
-    .then((data) => {
-      localforage.setItem('db', LZString.compress(data));
-      dbEncoded = parseJsonDB(data);
-      setDb(transformDb(dbEncoded));
-      dbStatus = DBStatus.present;
-      callback(true);
-    });
-};
+  const wordLines = wordlist.match(/[^\r\n]+/g);
+  if (!wordLines) {
+    throw new Error('malformed wordlist');
+  }
+  const words: Array<[string, number]> = wordLines
+    .map(s => s.toUpperCase().split(';'))
+    .filter(s => !/[^A-Z]/.test(s[0])) /* Filter any words w/ non-letters */
+    .map((s): [string, number] => [s[0], parseInt(s[1])])
+    .sort((s1, s2) => s1[1] - s2[1]);
 
-export const initializeOrBuild = (callback: (success: boolean) => void) => {
-  initialize((present) => {
-    if (present) {
-      callback(true);
-    } else {
-      build(callback);
+  if (updateProgress) {
+    updateProgress(10);
+  }
+  const count = words.length;
+
+  const wordsByLength: Record<number, Array<[string, number]>> = words.reduce(
+    (acc: Record<number, Array<[string, number]>>, [word, score]) => {
+      if (acc[word.length]) {
+        acc[word.length].push([word, score]);
+      } else {
+        acc[word.length] = [[word, score]];
+      }
+      return acc;
+    }, {});
+
+  if (updateProgress) {
+    updateProgress(25);
+  }
+
+  const bitmaps: Record<string, string> = {};
+
+  let wordsDone = 0;
+  Object.keys(wordsByLength).map(lengthStr => {
+    const length = parseInt(lengthStr);
+    const wordlist = wordsByLength[length];
+    for (let i = 0; i < 26; i += 1) {
+      const letter = String.fromCharCode(65 + i);
+      for (let idx = 0; idx < length; idx += 1) {
+        const bitmap = BitArray.zero();
+        wordlist.forEach((word, wordIdx) => {
+          if (word[0][idx] === letter) {
+            bitmap.setBit(wordIdx);
+          }
+        });
+        bitmaps[lengthStr + letter + idx.toString()] = bitmap.toString(64);
+      }
+    }
+    wordsDone += wordlist.length;
+    if (updateProgress) {
+      updateProgress(25 + 65 * wordsDone / count);
     }
   });
+
+  dbEncoded = { words: wordsByLength, bitmaps };
+  await localforage.setItem(STORAGE_KEY, LZString.compress(JSON.stringify(dbEncoded)));
+  setDb(transformDb(dbEncoded));
+  dbStatus = DBStatus.present;
 };
 
 export let dbTransformed: WordDBTransformed;

@@ -28,6 +28,10 @@ function popCount(v: number): number {
 export class BitArray {
   constructor(private nums: Array<number>, private usedInts: number) { }
 
+  static zero() {
+    return new this([], 0);
+  }
+
   static fromString(input: string, base: 32 | 64) {
     if (base === 32) {
       input = input.toLowerCase();
@@ -60,6 +64,16 @@ export class BitArray {
     while (this.usedInts > 0 && this.nums[this.usedInts - 1] === 0) {
       --this.usedInts;
     }
+  }
+
+  setBit(index: number) {
+    const numIndex = Math.floor(index / 30);
+    const rem = index % 30;
+    for (let i = this.usedInts; i < numIndex + 1; i += 1) {
+      this.usedInts += 1;
+      this.nums.push(0);
+    }
+    this.nums[numIndex] |= (1 << rem);
   }
 
   toString(base: 32 | 64) {
