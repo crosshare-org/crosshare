@@ -1,0 +1,8 @@
+Build cluedata.txt:
+Extract `cluedata` from Ginsberg's cluer.app. `cd ..; python generate_db.py`
+
+Build wordlist:
+`./scripts/buildWordlist.ts ~/Downloads/peter-broda-wordlist__scored.txt ../cluedata.txt wordlist.txt`
+
+Upload wordlist:
+`~/software/google-cloud-sdk/bin/gsutil cp -Z wordlist.txt gs://mdcrosshare.appspot.com/`
