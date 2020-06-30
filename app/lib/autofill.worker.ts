@@ -31,6 +31,21 @@ ctx.onmessage = (e) => {
   if (isLoadDBMessage(data)) {
     setDb(transformDb(data.db));
   } else if (isAutofillMessage(data)) {
+    let shouldError = true;
+    for (let i = 0; i < 25; i += 1) {
+      if (i >= data.grid.length) {
+        shouldError = false;
+        break;
+      }
+      if (data.grid[i] !== 'ERROR'[i % 5]) {
+        shouldError = false;
+        break;
+      }
+    }
+    if (shouldError) {
+      throw new Error('Autofill error test');
+    }
+
     current = new Autofiller(data.grid, data.width, data.height, onResult, onComplete);
     msgChannel.port1.postMessage('');
   } else {
