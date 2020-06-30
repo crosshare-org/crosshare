@@ -58,7 +58,7 @@ function parseJsonDB(data: string) {
 export let dbEncoded: WordDBT | undefined = undefined;
 export let dbStatus: DBStatus = DBStatus.uninitialized;
 
-const STORAGE_KEY = 'dbnew';
+const STORAGE_KEY = 'db';
 
 export const initialize = async (): Promise<boolean> => {
   if (dbStatus !== DBStatus.uninitialized) {
