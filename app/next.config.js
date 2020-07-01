@@ -83,7 +83,8 @@ module.exports = withSourceMaps(withBundleAnalyzer({
       SENTRY_ORG &&
       SENTRY_PROJECT &&
       SENTRY_AUTH_TOKEN &&
-      NODE_ENV === 'production'
+      NODE_ENV === 'production' &&
+      !process.env.NO_SENTRY
     ) {
       config.plugins.push(
         new SentryWebpackPlugin({
