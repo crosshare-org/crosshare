@@ -681,6 +681,10 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         <title>{puzzle.title} | Crosshare crossword puzzle</title>
         <meta key="og:title" property="og:title" content={puzzle.title} />
         <meta key="og:description" property="og:description" content={description} />
+        <meta key="og:image" property="og:image" content={'https://crosshare.org/api/ogimage/' + puzzle.id} />
+        <meta key="og:image:width" property="og:image:width" content="1200" />
+        <meta key="og:image:height" property="og:image:height" content="630" />
+        <meta key="og:image:alt" property="og:image:alt" content="An image of the puzzle grid" />
         <meta key="description" name="description" content={description} />
       </Head>
       <TopBar>

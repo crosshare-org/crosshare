@@ -75,7 +75,11 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
         <meta property="fb:pages" content="100687178303443" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:site" content="@crosshareapp" />
-        <meta property="og:image" content="https://crosshare.org/manifest-icon-512.png" />
+        <meta key="og:image" property="og:image" content="https://crosshare.org/apple-splash-1334-750.png" />
+        <meta property="og:image:type" content="image/png" />
+        <meta key="og:image:width" property="og:image:width" content="1334" />
+        <meta key="og:image:height" property="og:image:height" content="750" />
+        <meta key="og:image:alt" property="og:image:alt" content="The crosshare logo" />
       </Head>
       <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
         <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error ?.message}}>

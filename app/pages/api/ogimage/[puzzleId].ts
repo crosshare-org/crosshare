@@ -96,6 +96,7 @@ export default async function ogImage(req: NextApiRequest, res: NextApiResponse)
   if (!puzzle) {
     return res.status(404).json({ statusCode: 404, message: 'failed to get puzzle' });
   }
+  res.setHeader('Cache-Control', 'public, max-age=172800, s-maxage=172800');
   res.writeHead(200, { 'Content-Type': 'image/png' });
   const png = await getPng(puzzle);
   png.pipe(res);
