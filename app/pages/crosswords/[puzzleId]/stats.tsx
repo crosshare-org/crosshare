@@ -70,6 +70,7 @@ export const PuzzleLoader = ({ puzzleId, auth }: { puzzleId: string, auth: AuthP
 const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
   const [stats, setStats] = useState<PuzzleStatsT | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [didLoad, setDidLoad] = useState<boolean>(false);
 
   useEffect(() => {
     getFromSessionOrDB({
@@ -79,7 +80,8 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
       ttl: 30 * 60 * 1000
     })
       .then(setStats)
-      .catch(setError);
+      .catch(setError)
+      .finally(() => setDidLoad(true));
   }, [puzzle.id]);
 
   if (error) {
@@ -87,7 +89,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
       <p>Either something went wrong, or we don&apos;t have stats for this puzzle yet. Stats are updated once per hour, and won&apos; be available until after a non-author has solved the puzzle.</p>
     </ErrorPage>;
   }
-  if (stats === null) {
+  if (!didLoad) {
     return <div>Loading stats...</div>;
   }
 
@@ -97,11 +99,17 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
         <title>Stats | {puzzle.title} | Crosshare</title>
       </Head>
       <DefaultTopBar />
-      <div>Stats for <b>{puzzle.title}</b> as of {stats.ua.toDate().toLocaleTimeString()}</div>
-      <div>Total Completions: {stats.n}</div>
-      <div>Average Completion Time: {stats.n && timeString(stats.nt / stats.n, true)}</div>
-      <div>Non-cheating Completions: {stats.s}</div>
-      <div>Average Non-Cheating Completion Time: {stats.s && timeString(stats.st / stats.s, true)}</div>
+      {stats ?
+        <>
+          <div>Stats for <b>{puzzle.title}</b> as of {stats.ua.toDate().toLocaleTimeString()}</div>
+          <div>Total Completions: {stats.n}</div>
+          <div>Average Completion Time: {stats.n && timeString(stats.nt / stats.n, true)}</div>
+          <div>Non-cheating Completions: {stats.s}</div>
+          <div>Average Non-Cheating Completion Time: {stats.s && timeString(stats.st / stats.s, true)}</div>
+        </>
+        :
+        <p>We don&apos;t have stats for this puzzle yet. Stats are updated once per hour, and won&apos; be available until after a non-author has solved the puzzle.</p>
+      }
     </>
   );
 };
