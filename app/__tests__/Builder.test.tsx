@@ -6,6 +6,7 @@ import * as firebaseTesting from '@firebase/testing';
 import NextJSRouter from 'next/router';
 import PuzzlePage, { getServerSideProps } from '../pages/crosswords/[puzzleId]';
 import { PuzzleLoader } from '../pages/pending/[pendingPuzzleId]';
+import { PuzzleLoader as StatsPuzzleLoader } from '../pages/crosswords/[puzzleId]/stats';
 import waitForExpect from 'wait-for-expect';
 import { getDateString } from '../lib/dbtypes';
 
@@ -363,6 +364,12 @@ test('change author name in publish dialogue should publish w/ new name', async 
   expect(puzzle['n']).toEqual('M to tha D');
   await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
   expect(NextJSRouter.push).toHaveBeenCalledWith('/pending/' + puzzles.docs[0].id);
+
+  await cleanup();
+
+  // The stats page shouldn't error even though there aren't any yet
+  const stats = render(<StatsPuzzleLoader puzzleId={puzzleId} auth={{ user: mike, isAdmin: false }} />, { user: mike });
+  expect(await stats.findByText(/stats for this puzzle yet/)).toBeInTheDocument();
 
   await cleanup();
 

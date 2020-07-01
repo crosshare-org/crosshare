@@ -25,7 +25,8 @@ export default requiresAuth((props: AuthProps) => {
   return <PuzzleLoader key={puzzleId} puzzleId={puzzleId} auth={props} />;
 });
 
-const PuzzleLoader = ({ puzzleId, auth }: { puzzleId: string, auth: AuthProps }) => {
+// export for testing
+export const PuzzleLoader = ({ puzzleId, auth }: { puzzleId: string, auth: AuthProps }) => {
   const [puzzle, setPuzzle] = useState<PuzzleResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
@@ -83,7 +84,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
 
   if (error) {
     return <ErrorPage title='Error Loading Stats'>
-      <p>{error}</p>
+      <p>Either something went wrong, or we don&apos;t have stats for this puzzle yet. Stats are updated once per hour, and won&apos; be available until after a non-author has solved the puzzle.</p>
     </ErrorPage>;
   }
   if (stats === null) {

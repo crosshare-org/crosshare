@@ -83,7 +83,7 @@ export const BuilderDBLoader = (props: BuilderProps & AuthProps): JSX.Element =>
       <h2>Crosshare Constructor</h2>
       <p>The first time you use the constructor on a new browser Crosshare needs
       to download and build a word database. This can take a minute or two,
-      and might be too memory intensive for some mobile devices. Please let us
+      especially on mobile devices. Please let us
       know if you have any issues!</p>
       <LoadButton buttonText='Build Database' onComplete={() => setReady(true)} />
     </div>
