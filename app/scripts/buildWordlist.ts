@@ -56,8 +56,10 @@ function fileContentsToWords(contents: string): Array<[string, number]> {
 readFile(peters, 'utf8').then((pc: string) => {
   const peterWords = fileContentsToWords(pc);
   peterWords.forEach(([word, score]) => {
-    if (score >= 35) {
+    if (score >= 35 && word.length <= 15) {
       wordlist[word] = peterScoreMap(score);
+    } else {
+      console.log('skipping ' + word);
     }
   });
 
@@ -69,7 +71,11 @@ readFile(peters, 'utf8').then((pc: string) => {
         if (newScore > 1) {
           console.log('Adding ' + word);
         }
-        wordlist[word] = newScore;
+        if (word.length <= 15) {
+          wordlist[word] = newScore;
+        } else {
+          console.log('skipping ' + word);
+        }
       }
     });
 
