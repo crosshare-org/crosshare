@@ -189,7 +189,12 @@ cases('test bitCount()', opts => {
 );
 
 cases('test and()', opts => {
+  const first = BA.fromString(opts.a, 32);
+  BA.inPlaceAnd(first, BA.fromString(opts.b, 32));
+  expect(BA.toString(first, 32)).toEqual(opts.c);
+
   expect(BA.toString(BA.and(BA.fromString(opts.a, 32), BA.fromString(opts.b, 32)), 32)).toEqual(opts.c);
+
   expect(new BigInteger(opts.a, 32).and(new BigInteger(opts.b, 32)).toString(32)).toEqual(opts.c);
 },
 [
