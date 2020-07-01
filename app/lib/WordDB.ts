@@ -25,7 +25,7 @@ export let dbStatus: DBStatus = DBStatus.uninitialized;
 
 const STORAGE_KEY = 'db';
 
-export const initialize = async (): Promise<boolean> => {
+export const initialize = async (validate?: boolean): Promise<boolean> => {
   if (dbStatus !== DBStatus.uninitialized) {
     throw new Error('trying to initialize non-uninitialized worddb');
   }
@@ -35,14 +35,20 @@ export const initialize = async (): Promise<boolean> => {
   return get(STORAGE_KEY).then(db => {
     if (db) {
       console.log('loaded');
-      const validationResult = WordDBV.decode(db);
-      if (isRight(validationResult)) {
-        console.log('validated');
-        wordDB = validationResult.right;
+      if (validate) {
+        const validationResult = WordDBV.decode(db);
+        if (isRight(validationResult)) {
+          console.log('validated');
+          wordDB = validationResult.right;
+          dbStatus = DBStatus.present;
+          return true;
+        } else {
+          console.error(PathReporter.report(validationResult).join(','));
+        }
+      } else {
+        wordDB = db as WordDBT;
         dbStatus = DBStatus.present;
         return true;
-      } else {
-        console.error(PathReporter.report(validationResult).join(','));
       }
     }
     console.log('failed to load');

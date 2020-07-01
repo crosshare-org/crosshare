@@ -59,7 +59,7 @@ export const DBLoader = (): JSX.Element => {
 
   useEffect(() => {
     if (WordDB.dbStatus === WordDB.DBStatus.uninitialized) {
-      WordDB.initialize().then(succeeded => {
+      WordDB.initialize(true).then(succeeded => {
         if (succeeded) {
           setReady(true);
         }
@@ -74,7 +74,7 @@ export const DBLoader = (): JSX.Element => {
   }, []);
 
   if (!triedInit) {  // initial loading
-    return <div></div>;
+    return <div>Checking for / validating existing database, this can take a minute...</div>;
   }
   return <>
     <DefaultTopBar />
