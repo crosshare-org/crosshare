@@ -1,8 +1,7 @@
 import * as t from 'io-ts';
-import LZString from 'lz-string';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import localforage from 'localforage';
+import { set, get } from 'idb-keyval';
 
 import * as BA from './bitArray';
 
@@ -21,15 +20,6 @@ export enum DBStatus {
   disabled,
 }
 
-function parseJsonDB(data: string) {
-  const validationResult = WordDBV.decode(JSON.parse(data));
-  if (isRight(validationResult)) {
-    return validationResult.right;
-  } else {
-    throw new Error(PathReporter.report(validationResult).join(','));
-  }
-}
-
 export let wordDB: WordDBT | undefined = undefined;
 export let dbStatus: DBStatus = DBStatus.uninitialized;
 
@@ -41,22 +31,24 @@ export const initialize = async (): Promise<boolean> => {
   }
 
   dbStatus = DBStatus.building;
-  const compressed = await localforage.getItem(STORAGE_KEY);
-  if (compressed) {
-    console.log('loading db from storage: ' + (compressed as string).length);
-    const decompressed = LZString.decompress((compressed as string));
-    if (decompressed === null) {
-      console.error('Error decompressing db');
-      return false;
+  console.log('trying to load from idb');
+  return get(STORAGE_KEY).then(db => {
+    if (db) {
+      console.log('loaded');
+      const validationResult = WordDBV.decode(db);
+      if (isRight(validationResult)) {
+        console.log('validated');
+        wordDB = validationResult.right;
+        dbStatus = DBStatus.present;
+        return true;
+      } else {
+        console.error(PathReporter.report(validationResult).join(','));
+      }
     }
-    wordDB = parseJsonDB(decompressed);
-    dbStatus = DBStatus.present;
-    return true;
-  }
-  else {
+    console.log('failed to load');
     dbStatus = DBStatus.notPresent;
     return false;
-  }
+  });
 };
 
 export const build = async (wordlist: string, updateProgress?: (percentDone: number) => void): Promise<void> => {
@@ -70,7 +62,7 @@ export const build = async (wordlist: string, updateProgress?: (percentDone: num
     .map(s => s.toUpperCase().split(';'))
     .filter(s => !/[^A-Z]/.test(s[0])) /* Filter any words w/ non-letters */
     .map((s): [string, number] => [s[0], parseInt(s[1])])
-    .sort((s1, s2) => s1[1] - s2[1]);
+    .sort((s1, s2) => (s1[1] - s2[1]) || s2[0].localeCompare(s1[0]));
 
   if (updateProgress) {
     updateProgress(10);
@@ -119,7 +111,11 @@ export const build = async (wordlist: string, updateProgress?: (percentDone: num
 
   console.log('built, updating local storage');
   wordDB = { words: wordsByLength, bitmaps };
-  await localforage.setItem(STORAGE_KEY, LZString.compress(JSON.stringify(wordDB)));
+  try {
+    await set(STORAGE_KEY, wordDB);
+  } catch {
+    console.error('Could not write to indexeddb!');
+  }
   dbStatus = DBStatus.present;
   console.log('done');
 };

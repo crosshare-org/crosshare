@@ -44,7 +44,7 @@ export const LoadButton = (props: { buttonText: string, onClick?: () => void, on
   } else if (dlProgress !== null || buildProgress !== null) {
     return <>
       <p><b>Downloading and building...</b></p>
-      <p>Please be patient, this can take a while. Like, longer than you think.</p>
+      <p>Please be patient and keep this window open, this can take a while. Like, longer than you think.</p>
       <p>Maybe go make a cup of coffee.</p>
       <p>Soon there&apos;ll be a progress bar here!</p>
     </>;
