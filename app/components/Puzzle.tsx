@@ -179,7 +179,7 @@ const KeepTryingOverlay = ({ dispatch }: { dispatch: Dispatch<PuzzleAction> }) =
 
 const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {
-    return <>End of the line, partner</>;
+    return <></>;
   }
   return (<Link href='/crosswords/[puzzleId]' as={`/crosswords/${nextPuzzle.puzzleId}`} passHref>Play {nextPuzzle.linkText}</Link>);
 };
@@ -188,6 +188,8 @@ const SuccessOverlay = (props: { user?: firebase.User, puzzle: PuzzleResult, nex
   return (
     <Overlay closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
       <div css={{ textAlign: 'center' }}>
+        <h3>{props.puzzle.title}</h3>
+        <h4>by {props.puzzle.authorName}</h4>
         <h4><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
         <p>You solved the puzzle in <b>{timeString(props.solveTime, false)}</b></p>
         {!props.user || props.user.isAnonymous ?
