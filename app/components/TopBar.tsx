@@ -50,7 +50,7 @@ const TopBarDropDownLinkContents = (props: TopBarDropDownLinkCommonProps) => {
       display: 'inline-block',
       width: '60%',
       textAlign: 'left',
-    }}>{props.text}{props.shortcutHint ? <span css={{ display: 'none', [HAS_PHYSICAL_KEYBOARD]: { display: 'inline' } }}> ( <span css={{ fontSize: HEADER_HEIGHT - 10 }}>{props.shortcutHint}</span> )</span> : ''}</div>
+    }}>{props.text}{props.shortcutHint ? <span css={{ display: 'none', [HAS_PHYSICAL_KEYBOARD]: { display: 'inline' } }}> (hotkey: <span css={{ fontSize: HEADER_HEIGHT - 10 }}>{props.shortcutHint}</span> )</span> : ''}</div>
   </>;
 };
 
