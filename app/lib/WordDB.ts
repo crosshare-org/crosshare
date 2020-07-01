@@ -1,42 +1,17 @@
 import * as t from 'io-ts';
 import LZString from 'lz-string';
-import { either, isRight } from 'fp-ts/lib/Either';
+import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import localforage from 'localforage';
 
-import { BitArray } from './bitArray';
+import * as BA from './bitArray';
 
 
-const BigIntegerFromString = new t.Type<BitArray, string, unknown>(
-  'BigIntegerFromString',
-  (input: unknown): input is BitArray => input instanceof BitArray,
-  (input, context) => either.chain(t.string.validate(input, context), n => {
-    return t.success(BitArray.fromString(n, 64));
-  }),//(typeof input === 'string' ? t.success(input) : t.failure(input, context)),
-  // `A` and `O` are the same, so `encode` is just the identity function
-  a => a.toString(64)
-);
-
-const WordDBEncodedV = t.type({
+const WordDBV = t.type({
   words: t.record(t.string, t.array(t.tuple([t.string, t.number]))),
-  bitmaps: t.record(t.string, t.string),
+  bitmaps: t.record(t.string, t.array(t.number)),
 });
-export type WordDBT = t.TypeOf<typeof WordDBEncodedV>;
-
-const WordDBTransformedV = t.type({
-  words: t.record(t.string, t.array(t.tuple([t.string, t.number]))),
-  bitmaps: t.record(t.string, BigIntegerFromString),
-});
-export type WordDBTransformed = t.TypeOf<typeof WordDBTransformedV>;
-
-export function transformDb(db: WordDBT): WordDBTransformed {
-  const validationResult = WordDBTransformedV.decode(db);
-  if (isRight(validationResult)) {
-    return validationResult.right;
-  } else {
-    throw new Error(PathReporter.report(validationResult).join(','));
-  }
-}
+export type WordDBT = t.TypeOf<typeof WordDBV>;
 
 export enum DBStatus {
   uninitialized,
@@ -47,7 +22,7 @@ export enum DBStatus {
 }
 
 function parseJsonDB(data: string) {
-  const validationResult = WordDBEncodedV.decode(JSON.parse(data));
+  const validationResult = WordDBV.decode(JSON.parse(data));
   if (isRight(validationResult)) {
     return validationResult.right;
   } else {
@@ -55,7 +30,7 @@ function parseJsonDB(data: string) {
   }
 }
 
-export let dbEncoded: WordDBT | undefined = undefined;
+export let wordDB: WordDBT | undefined = undefined;
 export let dbStatus: DBStatus = DBStatus.uninitialized;
 
 const STORAGE_KEY = 'db';
@@ -68,14 +43,13 @@ export const initialize = async (): Promise<boolean> => {
   dbStatus = DBStatus.building;
   const compressed = await localforage.getItem(STORAGE_KEY);
   if (compressed) {
-    console.log('loading db from storage');
+    console.log('loading db from storage: ' + (compressed as string).length);
     const decompressed = LZString.decompress((compressed as string));
     if (decompressed === null) {
       console.error('Error decompressing db');
       return false;
     }
-    dbEncoded = parseJsonDB(decompressed);
-    setDb(transformDb(dbEncoded));
+    wordDB = parseJsonDB(decompressed);
     dbStatus = DBStatus.present;
     return true;
   }
@@ -103,6 +77,7 @@ export const build = async (wordlist: string, updateProgress?: (percentDone: num
   }
   const count = words.length;
 
+  console.log('building words by length');
   const wordsByLength: Record<number, Array<[string, number]>> = words.reduce(
     (acc: Record<number, Array<[string, number]>>, [word, score]) => {
       if (acc[word.length]) {
@@ -117,7 +92,8 @@ export const build = async (wordlist: string, updateProgress?: (percentDone: num
     updateProgress(25);
   }
 
-  const bitmaps: Record<string, string> = {};
+  const bitmaps: Record<string, BA.BitArray> = {};
+  console.log('building bitmaps');
 
   let wordsDone = 0;
   Object.keys(wordsByLength).map(lengthStr => {
@@ -126,13 +102,13 @@ export const build = async (wordlist: string, updateProgress?: (percentDone: num
     for (let i = 0; i < 26; i += 1) {
       const letter = String.fromCharCode(65 + i);
       for (let idx = 0; idx < length; idx += 1) {
-        const bitmap = BitArray.zero();
+        const bitmap = BA.zero();
         wordlist.forEach((word, wordIdx) => {
           if (word[0][idx] === letter) {
-            bitmap.setBit(wordIdx);
+            BA.setBit(bitmap, wordIdx);
           }
         });
-        bitmaps[lengthStr + letter + idx.toString()] = bitmap.toString(64);
+        bitmaps[lengthStr + letter + idx.toString()] = bitmap;
       }
     }
     wordsDone += wordlist.length;
@@ -141,25 +117,28 @@ export const build = async (wordlist: string, updateProgress?: (percentDone: num
     }
   });
 
-  dbEncoded = { words: wordsByLength, bitmaps };
-  await localforage.setItem(STORAGE_KEY, LZString.compress(JSON.stringify(dbEncoded)));
-  setDb(transformDb(dbEncoded));
+  console.log('built, updating local storage');
+  wordDB = { words: wordsByLength, bitmaps };
+  await localforage.setItem(STORAGE_KEY, LZString.compress(JSON.stringify(wordDB)));
   dbStatus = DBStatus.present;
+  console.log('done');
 };
 
-export let dbTransformed: WordDBTransformed;
-export function setDb(newdb: WordDBTransformed) {
-  dbTransformed = newdb;
+export function setDb(newdb: WordDBT) {
+  wordDB = newdb;
 }
 
-const ZERO = BitArray.zero();
+const ZERO = BA.zero();
 
-export function highestScore(length: number, bitmap: BitArray | null) {
-  const words = dbTransformed.words[length];
+export function highestScore(length: number, bitmap: BA.BitArray | null) {
+  if (!wordDB) {
+    throw new Error('uninitialized!');
+  }
+  const words = wordDB.words[length];
   if (bitmap === null) {
     return words[words.length - 1];
   }
-  return words[bitmap.bitLength() - 1];
+  return words[BA.bitLength(bitmap) - 1];
 }
 
 export function scoreToCost(score: number) {
@@ -179,7 +158,7 @@ export function scoreToCost(score: number) {
 /**
  * Get minimum cost of the words encoded by `bitmap`.
  */
-export function minCost(length: number, bitmap: BitArray | null) {
+export function minCost(length: number, bitmap: BA.BitArray | null) {
   const match = highestScore(length, bitmap);
   if (match) {
     return scoreToCost(match[1]);
@@ -187,44 +166,59 @@ export function minCost(length: number, bitmap: BitArray | null) {
   return 5;
 }
 
-export function numMatches(length: number, bitmap: BitArray | null) {
-  if (bitmap === null) {
-    return dbTransformed.words[length].length;
+export function numMatches(length: number, bitmap: BA.BitArray | null) {
+  if (!wordDB) {
+    throw new Error('uninitialized!');
   }
-  return bitmap.bitCount();
+  if (bitmap === null) {
+    return wordDB.words[length].length;
+  }
+  return BA.bitCount(bitmap);
 }
 
-export function updateBitmap(length: number, bitmap: BitArray | null, index: number, letter: string) {
-  const match = dbTransformed.bitmaps[length + letter + index] || ZERO;
+export function updateBitmap(length: number, bitmap: BA.BitArray | null, index: number, letter: string) {
+  if (!wordDB) {
+    throw new Error('uninitialized!');
+  }
+  const match = wordDB.bitmaps[length + letter + index] || ZERO;
   if (bitmap === null) {
     return match;
   }
-  return bitmap.and(match);
+  return BA.and(bitmap, match);
 }
 
 const memoMatchingWords: Map<string, [string, number][]> = new Map();
-export function matchingWords(length: number, bitmap: BitArray | null) {
-  const key: string = length + ':' + (bitmap === null ? 'null' : bitmap.toString(32));
+export function matchingWords(length: number, bitmap: BA.BitArray | null) {
+  const key: string = length + ':' + (bitmap === null ? 'null' : BA.toString(bitmap, 64));
   const memoed = memoMatchingWords.get(key);
   if (memoed) {
     return memoed;
   }
+  if (!wordDB) {
+    throw new Error('uninitialized!');
+  }
   let rv: [string, number][];
   if (bitmap === null) {
-    rv = dbTransformed.words[length].slice().reverse();
+    rv = wordDB.words[length].slice().reverse();
   } else {
-    const active = bitmap.activeBits();
-    rv = active.map((i) => dbTransformed.words[length][i]);
+    const active = BA.activeBits(bitmap);
+    rv = [];
+    for (const i of active) {
+      rv.push(wordDB.words[length][i]);
+    }
   }
   memoMatchingWords.set(key, rv);
   return rv;
 }
 
-const memoMatchingBitmap: Map<string, BitArray | null> = new Map();
+const memoMatchingBitmap: Map<string, BA.BitArray | null> = new Map();
 export function matchingBitmap(pattern: string) {
   const memoed = memoMatchingBitmap.get(pattern);
   if (memoed) {
     return memoed;
+  }
+  if (!wordDB) {
+    throw new Error('uninitialized!');
   }
   let matches = null;
   for (let idx = 0; idx < pattern.length; idx += 1) {
@@ -232,11 +226,11 @@ export function matchingBitmap(pattern: string) {
     if (letter === '?' || letter === ' ') {
       continue;
     }
-    const bitmap = dbTransformed.bitmaps[pattern.length + letter + idx] || ZERO;
+    const bitmap = wordDB.bitmaps[pattern.length + letter + idx] || ZERO;
     if (matches === null) {
-      matches = bitmap;
+      matches = [...bitmap];
     } else {
-      matches = matches.and(bitmap);
+      BA.inPlaceAnd(matches, bitmap);
     }
   }
   memoMatchingBitmap.set(pattern, matches);

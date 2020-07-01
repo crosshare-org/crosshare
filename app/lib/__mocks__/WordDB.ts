@@ -7,7 +7,7 @@ WordDB.initialize = (): Promise<boolean> => {
   return Promise.resolve(true);
 };
 
-WordDB.dbEncoded = true;
+WordDB.wordDB = true;
 
 WordDB.matchingWords = () => [];
 

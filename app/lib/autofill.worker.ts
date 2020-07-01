@@ -1,6 +1,6 @@
 import { AutofillResultMessage, AutofillCompleteMessage, WorkerMessage, isLoadDBMessage, isAutofillMessage } from './types';
 import { Autofiller } from './Autofiller';
-import { transformDb, setDb } from './WordDB';
+import { setDb } from './WordDB';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ctx: Worker = self as any;
@@ -29,7 +29,7 @@ function onComplete() {
 ctx.onmessage = (e) => {
   const data = e.data as WorkerMessage;
   if (isLoadDBMessage(data)) {
-    setDb(transformDb(data.db));
+    setDb(data.db);
   } else if (isAutofillMessage(data)) {
     let shouldError = true;
     for (let i = 0; i < 25; i += 1) {

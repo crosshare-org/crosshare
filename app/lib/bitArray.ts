@@ -25,114 +25,121 @@ function popCount(v: number): number {
   return (((v + (v >>> 4) & 0xF0F0F0F) * 0x1010101) >>> 24);
 }
 
-export class BitArray {
-  constructor(private nums: Array<number>, private usedInts: number) { }
+export type BitArray = Array<number>;
 
-  static zero() {
-    return new this([0], 1);
+export function zero() {
+  return [0];
+}
+
+export function fromString(input: string, base: 32 | 64): BitArray {
+  if (base === 32) {
+    input = input.toLowerCase();
   }
+  // We only use 30 bits out of 32 max but it keeps everything simple
+  const bitsPerChar = base === 32 ? 5 : 6;
+  const charsPerNum = base === 32 ? 6 : 5;
 
-  static fromString(input: string, base: 32 | 64) {
-    if (base === 32) {
-      input = input.toLowerCase();
+  const nums: Array<number> = [];
+  let usedInts = 0;
+
+  for (let i = 0; i < input.length; ++i) {
+    const index = input.length - i - 1;
+    const x = b64ToI[input.charCodeAt(index)];
+    const mod = i % charsPerNum;
+    if (mod === 0) {
+      nums[usedInts++] = x;
+    } else {
+      nums[usedInts - 1] |= (x << mod * bitsPerChar);
     }
-    // We only use 30 bits out of 32 max but it keeps everything simple
-    const bitsPerChar = base === 32 ? 5 : 6;
-    const charsPerNum = base === 32 ? 6 : 5;
+  }
+  return nums;
+}
 
-    const nums: Array<number> = [];
-    let usedInts = 0;
+export function isZero(ba: BitArray): boolean {
+  return ba.length === 0 || (ba.length === 1 && ba[0] === 0);
+}
 
-    for (let i = 0; i < input.length; ++i) {
-      const index = input.length - i - 1;
-      const x = b64ToI[input.charCodeAt(index)];
-      const mod = i % charsPerNum;
-      if (mod === 0) {
-        nums[usedInts++] = x;
-      } else {
-        nums[usedInts - 1] |= (x << mod * bitsPerChar);
+export function clamp(ba: BitArray) {
+  while (ba.length > 1 && ba[ba.length - 1] === 0) {
+    ba.pop();
+  }
+}
+
+export function setBit(ba: BitArray, index: number) {
+  const numIndex = Math.floor(index / 30);
+  const rem = index % 30;
+  for (let i = ba.length; i < numIndex + 1; i += 1) {
+    ba.push(0);
+  }
+  ba[numIndex] |= (1 << rem);
+}
+
+export function toString(ba: BitArray, base: 32 | 64) {
+  const bitsPerChar = base === 32 ? 5 : 6;
+  const charsPerNum = base === 32 ? 6 : 5;
+  const mask = (1 << bitsPerChar) - 1;
+  let s = '';
+  for (let i = ba.length - 1; i >= 0; --i) {
+    for (let j = charsPerNum - 1; j >= 0; --j) {
+      const char = iToB64[(ba[i] >> (j * bitsPerChar)) & mask];
+      if (s || char !== '0') {
+        s += char;
       }
     }
-    return new this(nums, usedInts);
   }
+  return s || '0';
+}
 
-  isZero() {
-    return this.usedInts === 0 || (this.usedInts === 1 && this.nums[0] === 0);
+export function bitLength(ba: BitArray): number {
+  if (!ba.length) {
+    return 0;
   }
+  return 30 * (ba.length - 1) + (32 - Math.clz32(ba[ba.length - 1]));
+}
 
-  clamp() {
-    while (this.usedInts > 0 && this.nums[this.usedInts - 1] === 0) {
-      --this.usedInts;
+/** TODO we can make a faster version if we expect bit array to be sparse */
+export function bitCount(ba: BitArray): number {
+  let sum = 0;
+  for (let i = 0; i < ba.length; i += 1) {
+    if (ba[i]) {
+      sum += popCount(ba[i]);
     }
   }
+  return sum;
+}
 
-  setBit(index: number) {
-    const numIndex = Math.floor(index / 30);
-    const rem = index % 30;
-    for (let i = this.usedInts; i < numIndex + 1; i += 1) {
-      this.usedInts += 1;
-      this.nums.push(0);
-    }
-    this.nums[numIndex] |= (1 << rem);
+export function and(ba: BitArray, other: BitArray) {
+  const nums: Array<number> = [];
+  const usedInts = Math.min(ba.length, other.length);
+
+  for (let i = 0; i < usedInts; ++i) {
+    nums[i] = ba[i] & other[i];
   }
 
-  toString(base: 32 | 64) {
-    const bitsPerChar = base === 32 ? 5 : 6;
-    const charsPerNum = base === 32 ? 6 : 5;
-    const mask = (1 << bitsPerChar) - 1;
-    let s = '';
-    for (let i = this.usedInts - 1; i >= 0; --i) {
-      for (let j = charsPerNum - 1; j >= 0; --j) {
-        const char = iToB64[(this.nums[i] >> (j * bitsPerChar)) & mask];
-        if (s || char !== '0') {
-          s += char;
-        }
-      }
+  clamp(nums);
+  return nums;
+}
+
+export function inPlaceAnd(ba: BitArray, other: BitArray) {
+  for (let i = 0; i < ba.length; ++i) {
+    if (i < other.length) {
+      ba[i] &= other[i];
+    } else {
+      ba[i] = 0;
     }
-    return s || '0';
   }
+  clamp(ba);
+}
 
-  bitLength(): number {
-    if (!this.usedInts) {
-      return 0;
+export function activeBits(ba: BitArray): Array<number> {
+  const ret = [];
+  for (let i = ba.length - 1; i >= 0; i--) {
+    let num = ba[i];
+    while (num !== 0) {
+      const t = 31 - Math.clz32(num);
+      num ^= 1 << t;
+      ret.push((i * 30) + t);
     }
-    return 30 * (this.usedInts - 1) + (32 - Math.clz32(this.nums[this.usedInts - 1]));
   }
-
-  /** TODO we can make a faster version if we expect bit array to be sparse */
-  bitCount(): number {
-    let sum = 0;
-    for (let i = 0; i < this.usedInts; i += 1) {
-      if (this.nums[i]) {
-        sum += popCount(this.nums[i]);
-      }
-    }
-    return sum;
-  }
-
-  and(other: BitArray) {
-    const nums: Array<number> = [];
-    const usedInts = Math.min(this.usedInts, other.usedInts);
-
-    for (let i = 0; i < usedInts; ++i) {
-      nums[i] = this.nums[i] & other.nums[i];
-    }
-
-    const res = new BitArray(nums, usedInts);
-    res.clamp();
-    return res;
-  }
-
-  activeBits(): Array<number> {
-    const ret = [];
-    for (let i = this.usedInts - 1; i >= 0; i--) {
-      let num = this.nums[i];
-      while (num !== 0) {
-        const t = 31 - Math.clz32(num);
-        num ^= 1 << t;
-        ret.push((i * 30) + t);
-      }
-    }
-    return ret;
-  }
+  return ret;
 }

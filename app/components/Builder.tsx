@@ -38,6 +38,7 @@ import { ClueMode } from './ClueMode';
 // eslint-disable-next-line import/no-unresolved
 import AutofillWorker from 'worker-loader?name=static/[hash].worker.js!../lib/autofill.worker';
 
+import * as BA from '../lib/bitArray';
 import * as WordDB from '../lib/WordDB';
 import { Overlay } from './Overlay';
 import { usePersistedBoolean } from '../lib/hooks';
@@ -82,7 +83,8 @@ export const BuilderDBLoader = (props: BuilderProps & AuthProps): JSX.Element =>
       <h2>Crosshare Constructor</h2>
       <p>The first time you use the constructor on a new browser Crosshare needs
       to download and build a word database. This can take a minute or two,
-  especially if you&apos;re on a slow connection.</p>
+      and might be too memory intensive for some mobile devices. Please let us
+      know if you have any issues!</p>
       <LoadButton buttonText='Build Database' onComplete={() => setReady(true)} />
     </div>
   </>;
@@ -265,7 +267,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   // We need a ref to the current grid so we can verify it in worker.onmessage
   const currentCells = useRef(state.grid.cells);
   const runAutofill = useCallback(() => {
-    if (!WordDB.dbEncoded) {
+    if (!WordDB.wordDB) {
       throw new Error('missing db!');
     }
     currentCells.current = state.grid.cells;
@@ -285,7 +287,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
           console.error('unhandled msg in builder: ', e.data);
         }
       };
-      const loaddb: LoadDBMessage = { type: 'loaddb', db: WordDB.dbEncoded };
+      const loaddb: LoadDBMessage = { type: 'loaddb', db: WordDB.wordDB };
       worker.postMessage(loaddb);
     }
     const autofill: AutofillMessage = {
@@ -403,7 +405,7 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
         }
       }
       const newBitmap = WordDB.matchingBitmap(crossPattern);
-      if (newBitmap ?.isZero()) {
+      if (!newBitmap || BA.isZero(newBitmap)) {
         successFailure.set(i, [succeeding, failing + word[j]]);
         return false;
       } else {

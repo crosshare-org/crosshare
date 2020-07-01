@@ -1,6 +1,6 @@
 import cases from 'jest-in-case';
 
-import { BitArray } from '../lib/bitArray';
+import * as BA from '../lib/bitArray';
 import { BigInteger } from '@modern-dev/jsbn';
 
 const B32 = '0123456789abcdefghijklmnopqrstuv';
@@ -24,33 +24,33 @@ function activebits(a: BigInteger) {
   return active;
 }
 
-const testCases: Array<[string, BitArray, BigInteger, number, number, string, string, number[]]> = [];
+const testCases: Array<[string, BA.BitArray, BigInteger, number, number, string, string, number[]]> = [];
 for (let i = 0; i < 1000; i += 1) {
   const a = randomB32();
-  const b = BitArray.fromString(a, 32);
+  const b = BA.fromString(a, 32);
   const c = new BigInteger(a, 32);
   const d = randomB32();
-  const and = b.and(BitArray.fromString(d, 32)).toString(32);
-  testCases.push([a, b, c, b.bitLength(), b.bitCount(), d, and, activebits(c)]);
+  const and = BA.toString(BA.and(b, BA.fromString(d, 32)), 32);
+  testCases.push([a, b, c, BA.bitLength(b), BA.bitCount(b), d, and, activebits(c)]);
 }
 
 test('test setBit', () => {
   for (let i = 0; i < testCases.length; i += 1) {
     const s32 = testCases[i][0];
     const activeBits = testCases[i][7];
-    const bitmap = BitArray.zero();
+    const bitmap = BA.zero();
     for (let j = 0; j < activeBits.length; j += 1) {
-      bitmap.setBit(activeBits[j]);
+      BA.setBit(bitmap, activeBits[j]);
     }
-    expect(bitmap.toString(32)).toEqual(s32);
-    expect(bitmap.activeBits()).toEqual(activeBits);
+    expect(BA.toString(bitmap, 32)).toEqual(s32);
+    expect(BA.activeBits(bitmap)).toEqual(activeBits);
   }
 });
 
 test('test fromString/toString performance', () => {
   const ourStart = performance.now();
   for (let i = 0; i < testCases.length; i += 1) {
-    expect(BitArray.fromString(testCases[i][0], 32).toString(32)).toEqual(testCases[i][0]);
+    expect(BA.toString(BA.fromString(testCases[i][0], 32), 32)).toEqual(testCases[i][0]);
   }
   const ourTotal = performance.now() - ourStart;
 
@@ -72,7 +72,7 @@ test('test bitLength performance', () => {
 
   const ourStart = performance.now();
   for (let i = 0; i < testCases.length; i += 1) {
-    expect(testCases[i][1].bitLength()).toEqual(testCases[i][3]);
+    expect(BA.bitLength(testCases[i][1])).toEqual(testCases[i][3]);
   }
   const ourTotal = performance.now() - ourStart;
 
@@ -88,7 +88,7 @@ test('test bitCount performance', () => {
 
   const ourStart = performance.now();
   for (let i = 0; i < testCases.length; i += 1) {
-    expect(testCases[i][1].bitCount()).toEqual(testCases[i][4]);
+    expect(BA.bitCount(testCases[i][1])).toEqual(testCases[i][4]);
   }
   const ourTotal = performance.now() - ourStart;
 
@@ -104,7 +104,7 @@ test('test and performance', () => {
 
   const ourStart = performance.now();
   for (let i = 0; i < testCases.length; i += 1) {
-    expect(testCases[i][1].and(BitArray.fromString(testCases[i][5], 32)).toString(32)).toEqual(testCases[i][6]);
+    expect(BA.toString(BA.and(testCases[i][1], BA.fromString(testCases[i][5], 32)), 32)).toEqual(testCases[i][6]);
   }
   const ourTotal = performance.now() - ourStart;
 
@@ -120,7 +120,7 @@ test('test activeBits performance', () => {
 
   const ourStart = performance.now();
   for (let i = 0; i < testCases.length; i += 1) {
-    expect(testCases[i][1].activeBits()).toEqual(testCases[i][7]);
+    expect(BA.activeBits(testCases[i][1])).toEqual(testCases[i][7]);
   }
   const ourTotal = performance.now() - ourStart;
 
@@ -128,8 +128,8 @@ test('test activeBits performance', () => {
 });
 
 cases('test fromString/toString round trip', opts => {
-  expect(BitArray.fromString(opts.name, 32).toString(32)).toEqual(opts.name.toLowerCase());
-  expect(BitArray.fromString(BitArray.fromString(opts.name, 32).toString(64), 64).toString(32)).toEqual(opts.name.toLowerCase());
+  expect(BA.toString(BA.fromString(opts.name, 32), 32)).toEqual(opts.name.toLowerCase());
+  expect(BA.toString(BA.fromString(BA.toString(BA.fromString(opts.name, 32), 64), 64), 32)).toEqual(opts.name.toLowerCase());
 },
 [
   { name: '0' },
@@ -143,7 +143,7 @@ cases('test fromString/toString round trip', opts => {
 );
 
 cases('test from b32 to b64', opts => {
-  expect(BitArray.fromString(opts.name, 32).toString(64)).toEqual(opts.b64);
+  expect(BA.toString(BA.fromString(opts.name, 32), 64)).toEqual(opts.b64);
 },
 [
   { name: '0', b64: '0' },
@@ -159,7 +159,7 @@ cases('test from b32 to b64', opts => {
 );
 
 cases('test bitLength()', opts => {
-  expect(BitArray.fromString(opts.name, 32).bitLength()).toEqual(opts.len);
+  expect(BA.bitLength(BA.fromString(opts.name, 32))).toEqual(opts.len);
   expect(new BigInteger(opts.name, 32).bitLength()).toEqual(opts.len);
 },
 [
@@ -173,7 +173,7 @@ cases('test bitLength()', opts => {
 );
 
 cases('test bitCount()', opts => {
-  expect(BitArray.fromString(opts.name, 32).bitCount()).toEqual(opts.len);
+  expect(BA.bitCount(BA.fromString(opts.name, 32))).toEqual(opts.len);
   expect(new BigInteger(opts.name, 32).bitCount()).toEqual(opts.len);
 },
 [
@@ -189,7 +189,7 @@ cases('test bitCount()', opts => {
 );
 
 cases('test and()', opts => {
-  expect(BitArray.fromString(opts.a, 32).and(BitArray.fromString(opts.b, 32)).toString(32)).toEqual(opts.c);
+  expect(BA.toString(BA.and(BA.fromString(opts.a, 32), BA.fromString(opts.b, 32)), 32)).toEqual(opts.c);
   expect(new BigInteger(opts.a, 32).and(new BigInteger(opts.b, 32)).toString(32)).toEqual(opts.c);
 },
 [

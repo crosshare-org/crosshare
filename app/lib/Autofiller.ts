@@ -4,6 +4,7 @@ import {
   numMatchesForEntry, gridWithEntryDecided
 } from './autofillGrid';
 import * as WordDB from './WordDB';
+import * as BA from './bitArray';
 
 enum ResultTag {
   Recur,
@@ -67,7 +68,7 @@ export class Autofiller {
   }
 
   step() {
-    if (!WordDB.dbTransformed) {
+    if (!WordDB.wordDB) {
       console.error('Worker has no db but attempting autofill');
       this.completed = true;
       return;
@@ -217,7 +218,7 @@ export class Autofiller {
             const cross = grid.entries[crossIndex];
             const crossLength = cross.length;
             const newBitmap = WordDB.updateBitmap(crossLength, cross.bitmap, crosses[i].wordIndex, word[j]);
-            if (newBitmap.isZero()) {
+            if (BA.isZero(newBitmap)) {
               failingLetters[i] += word[j];
               failFast = true;
               break;

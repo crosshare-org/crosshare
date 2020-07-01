@@ -8,12 +8,15 @@ import { DefaultTopBar } from './TopBar';
 
 import * as WordDB from '../lib/WordDB';
 
-export const LoadButton = (props: { buttonText: string, onComplete: () => void }): JSX.Element => {
+export const LoadButton = (props: { buttonText: string, onClick?: () => void, onComplete: () => void }): JSX.Element => {
   const [dlProgress, setDlProgress] = useState<number | null>(null);
   const [buildProgress, setBuildProgress] = useState<number | null>(null);
   const [error, setError] = useState('');
 
   const startBuild = () => {
+    if (props.onClick) {
+      props.onClick();
+    }
     setDlProgress(0);
     const storage = App.storage();
     const wordlistRef = storage.ref('wordlist.txt');
@@ -51,15 +54,19 @@ export const LoadButton = (props: { buttonText: string, onComplete: () => void }
 
 export const DBLoader = (): JSX.Element => {
   const [ready, setReady] = useState(false);
+  const [error, setError] = useState(false);
   const [triedInit, setTriedInit] = useState(false);
 
   useEffect(() => {
     if (WordDB.dbStatus === WordDB.DBStatus.uninitialized) {
       WordDB.initialize().then(succeeded => {
-        setTriedInit(true);
         if (succeeded) {
           setReady(true);
         }
+      }).catch(() => {
+        setError(true);
+      }).finally(() => {
+        setTriedInit(true);
       });
     } else if (WordDB.dbStatus === WordDB.DBStatus.present) {
       setReady(true);
@@ -73,12 +80,15 @@ export const DBLoader = (): JSX.Element => {
     <DefaultTopBar />
     <div css={{ margin: '1em' }}>
       <h2>Database Rebuilder</h2>
+      {error ?
+        <p>Error loading existing database.</p>
+        : ''}
       {ready ?
         <p>Found an existing database.</p>
         :
         <p>No existing database found.</p>
       }
-      <LoadButton buttonText={(ready ? 'Rebuild' : 'Build') + ' Database'} onComplete={() => setReady(true)} />
+      <LoadButton buttonText={'Build Database'} onClick={() => setError(false)} onComplete={() => setReady(true)} />
     </div>
   </>;
 };

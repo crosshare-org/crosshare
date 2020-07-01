@@ -1,4 +1,4 @@
-import { BitArray } from './bitArray';
+import * as BA from './bitArray';
 import {
   GridBase, EntryBase, EntryWithPattern, valAt, setVal, entriesFromCells, getCrosses
 } from './gridBase';
@@ -6,7 +6,7 @@ import { matchingBitmap, minCost, updateBitmap, numMatches } from './WordDB';
 
 export interface AutofillEntry extends EntryBase {
   length: number, // Length in chars - might be different than cells.length due to rebus
-  bitmap: BitArray | null,
+  bitmap: BA.BitArray | null,
   minCost: number
 }
 
@@ -71,7 +71,7 @@ export function gridWithEntryDecided(grid: AutofillGrid, entryIndex: number, wor
     });
     const crossBitmap = updateBitmap(cross.length, cross.bitmap, crosses[j].wordIndex, word[i]);
 
-    if (crossBitmap.isZero()) {  // empty bitmap means invalid grid
+    if (BA.isZero(crossBitmap)) {  // empty bitmap means invalid grid
       return null;
     }
 
