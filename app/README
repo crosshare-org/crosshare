@@ -2,6 +2,7 @@ Build cluedata.txt:
 Extract `cluedata` from Ginsberg's cluer.app. `cd ..; python generate_db.py`
 
 Build wordlist:
+Download peter's wordlist: https://peterbroda.me/crosswords/wordlist/
 `./scripts/buildWordlist.ts ~/Downloads/peter-broda-wordlist__scored.txt ../cluedata.txt wordlist.txt`
 
 Upload wordlist:
