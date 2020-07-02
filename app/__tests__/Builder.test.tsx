@@ -321,6 +321,14 @@ test('publish as default', async () => {
 
   await cleanup();
 
+  // Pending should redirect to puzzle page, even to a rando
+  expect(NextJSRouter.push).toHaveBeenCalledTimes(1);
+  render(<PuzzleLoader puzzleId={puzzleId} />, { user: rando });
+  await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(2));
+  expect(NextJSRouter.push).toHaveBeenCalledWith('/crosswords/' + puzzles.docs[0].id);
+
+  await cleanup();
+
   // The puzzle should be visible to an admin w/ moderation links
   setApp(adminUserApp as firebase.app.App);
   const r4 = render(<PuzzlePage {...props1.props} />, { user: miked, isAdmin: true });

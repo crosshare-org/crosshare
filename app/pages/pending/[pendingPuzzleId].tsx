@@ -36,9 +36,7 @@ export const PuzzleLoader = ({ puzzleId }: { puzzleId: string }) => {
         }
         const validationResult = DBPuzzleV.decode(dbres.data());
         if (isRight(validationResult)) {
-          if (validationResult.right.m && (
-            !validationResult.right.p || validationResult.right.p <= TimestampClass.now()
-          )) {
+          if (validationResult.right.p && validationResult.right.p <= TimestampClass.now()) {
             NextJSRouter.push('/crosswords/' + puzzleId);
             return;
           }
