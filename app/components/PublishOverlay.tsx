@@ -51,7 +51,7 @@ export function PublishOverlay(props: { toPublish: DBPuzzleT, user: firebase.Use
 
       localStorage.removeItem(STORAGE_KEY);
       setDone(true);
-      NextJSRouter.push('/pending/' + ref.id);
+      NextJSRouter.push(category ? '/pending/' + ref.id : '/crosswords/' + ref.id);
     });
   }, [category, inProgress, done, displayName, props.toPublish, props.user.uid]);
 

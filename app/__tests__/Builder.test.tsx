@@ -302,7 +302,7 @@ test('publish as default', async () => {
   expect(puzzle['c']).toEqual(null);
   expect(puzzle['t']).toEqual('Our Title');
   await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
-  expect(NextJSRouter.push).toHaveBeenCalledWith('/pending/' + puzzles.docs[0].id);
+  expect(NextJSRouter.push).toHaveBeenCalledWith('/crosswords/' + puzzles.docs[0].id);
 
   await cleanup();
 
@@ -371,7 +371,7 @@ test('change author name in publish dialogue should publish w/ new name', async 
   expect(puzzle['t']).toEqual('Our Title');
   expect(puzzle['n']).toEqual('M to tha D');
   await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
-  expect(NextJSRouter.push).toHaveBeenCalledWith('/pending/' + puzzles.docs[0].id);
+  expect(NextJSRouter.push).toHaveBeenCalledWith('/crosswords/' + puzzles.docs[0].id);
 
   await cleanup();
 
