@@ -41,8 +41,8 @@ function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
     if (puzzle.g[i] !== '.') {
       continue;
     }
-    const row = i % puzzle.w;
-    const col = Math.floor(i / puzzle.w);
+    const col = i % puzzle.w;
+    const row = Math.floor(i / puzzle.w);
 
     ctx.fillStyle = 'black';
     ctx.fillRect(300 + col * widthDivision, 15 + row * heightDivision, widthDivision, heightDivision);
