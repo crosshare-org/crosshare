@@ -13,6 +13,7 @@ import { MdRefresh } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { FixedSizeList as List } from 'react-window';
+import { toast, Slide } from 'react-toastify';
 
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled, SymmetryIcon,
@@ -446,6 +447,22 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
 
   const { autofillEnabled, setAutofillEnabled } = props;
   const toggleAutofillEnabled = useCallback(() => {
+    if (autofillEnabled) {
+      // Show toast for disabling
+      toast(<div>Autofill Disabled</div>,
+        {
+          className: 'snack-bar',
+          position: 'bottom-left',
+          autoClose: 4000,
+          closeButton: false,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          transition: Slide
+        });
+    }
     setAutofillEnabled(!autofillEnabled);
   }, [autofillEnabled, setAutofillEnabled]);
 

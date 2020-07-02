@@ -4,6 +4,8 @@ import { AppProps } from 'next/app';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import NextJSRouter from 'next/router';
 import Head from 'next/head';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 import * as gtag from '../lib/gtag';
 import { App } from '../lib/firebaseWrapper';
@@ -83,6 +85,7 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
       </Head>
       <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
         <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error ?.message}}>
+          <ToastContainer />
           <Component {...pageProps} err={err} />
         </AuthContext.Provider>
       </CrosshareAudioContext.Provider>
