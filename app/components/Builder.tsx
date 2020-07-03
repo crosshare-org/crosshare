@@ -107,7 +107,7 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
       background: 'none',
       border: 'none',
       textDecoration: 'none',
-      color: 'var(--text)',
+      color: props.isGoodSuggestion(props.entryIndex, props.value[0]) ? 'var(--text)' : 'var(--default-text)',
       width: '100%',
       padding: '0.5em 1em',
       cursor: 'pointer',
@@ -116,7 +116,6 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
       },
       alignItems: 'center',
       height: 35,
-      fontWeight: props.isGoodSuggestion(props.entryIndex, props.value[0]) ? 'bold' : 'normal',
     }} onClick={click}>
       {props.value[0]}
     </button>
