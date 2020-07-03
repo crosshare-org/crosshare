@@ -11,7 +11,8 @@ import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleLink, PuzzleResultLink } from '../components/PuzzleLink';
 
 type DailyMini = {
-  id: string
+  id: string,
+  authorName: string,
 }
 
 interface HomePageProps {
@@ -47,7 +48,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ re
     const validationResult = DBPuzzleV.decode(data);
     if (isRight(validationResult)) {
       res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-      const dm = { id: dmResult.docs[0].id };
+      const dm = { id: dmResult.docs[0].id, authorName: validationResult.right.n };
       return { props: { dailymini: dm, recents } };
     } else {
       console.error(PathReporter.report(validationResult).join(','));
@@ -70,11 +71,12 @@ export default function HomePage({ dailymini, recents }: HomePageProps) {
       </p>
       <h2>Daily Mini</h2>
       <PuzzleLink id={dailymini.id} title="Today's daily mini crossword">
+        <p>by {dailymini.authorName}</p>
         <p><Link href='/categories/[categoryId]' as='/categories/dailymini' passHref>Play previous daily minis</Link></p>
       </PuzzleLink>
       <h2>Recent Puzzles</h2>
       {recents.map((p, i) => <PuzzleResultLink key={i} puzzle={p} />)}
       <p css={{ marginTop: '1em' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
-    </div>
+    </div >
   </>;
 }
