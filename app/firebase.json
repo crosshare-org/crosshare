@@ -21,6 +21,7 @@
       "typings/**",
       "vendor/**",
       "wordlist.txt",
+      "worddb.json",
       "firestore.rules",
       "setupTestsAfterEnv.ts"
     ]

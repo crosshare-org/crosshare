@@ -57,23 +57,8 @@ export const initialize = async (validate?: boolean): Promise<boolean> => {
   });
 };
 
-export const build = async (wordlist: string, updateProgress?: (percentDone: number) => void): Promise<void> => {
-  console.log('building db');
-  dbStatus = DBStatus.building;
-  const wordLines = wordlist.match(/[^\r\n]+/g);
-  if (!wordLines) {
-    throw new Error('malformed wordlist');
-  }
-  const words: Array<[string, number]> = wordLines
-    .map(s => s.toUpperCase().split(';'))
-    .filter(s => !/[^A-Z]/.test(s[0])) /* Filter any words w/ non-letters */
-    .map((s): [string, number] => [s[0], parseInt(s[1])])
-    .sort((s1, s2) => (s1[1] - s2[1]) || s2[0].localeCompare(s1[0]));
-
-  if (updateProgress) {
-    updateProgress(10);
-  }
-  const count = words.length;
+export const rawBuild = (wordlist: Array<[string, number]>): WordDBT => {
+  const words = wordlist.sort((s1, s2) => (s1[1] - s2[1]) || s2[0].localeCompare(s1[0]));
 
   console.log('building words by length');
   const wordsByLength: Record<number, Array<[string, number]>> = words.reduce(
@@ -86,14 +71,9 @@ export const build = async (wordlist: string, updateProgress?: (percentDone: num
       return acc;
     }, {});
 
-  if (updateProgress) {
-    updateProgress(25);
-  }
-
   const bitmaps: Record<string, BA.BitArray> = {};
   console.log('building bitmaps');
 
-  let wordsDone = 0;
   Object.keys(wordsByLength).map(lengthStr => {
     const length = parseInt(lengthStr);
     const wordlist = wordsByLength[length];
@@ -109,14 +89,40 @@ export const build = async (wordlist: string, updateProgress?: (percentDone: num
         bitmaps[lengthStr + letter + idx.toString()] = bitmap;
       }
     }
-    wordsDone += wordlist.length;
-    if (updateProgress) {
-      updateProgress(25 + 65 * wordsDone / count);
-    }
   });
 
+  return { words: wordsByLength, bitmaps };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const validateAndSet = async (dled: any): Promise<void> => {
+  const validationResult = WordDBV.decode(dled);
+  if (isRight(validationResult)) {
+    console.log('validated');
+    wordDB = validationResult.right;
+    await set(STORAGE_KEY, wordDB);
+    dbStatus = DBStatus.present;
+  } else {
+    console.error(PathReporter.report(validationResult).join(','));
+    throw new Error('failed to validate');
+  }
+  console.log('done');
+};
+
+export const build = async (wordlist: string): Promise<void> => {
+  console.log('building db');
+  dbStatus = DBStatus.building;
+  const wordLines = wordlist.match(/[^\r\n]+/g);
+  if (!wordLines) {
+    throw new Error('malformed wordlist');
+  }
+  const words: Array<[string, number]> = wordLines
+    .map(s => s.toUpperCase().split(';'))
+    .filter(s => !/[^A-Z]/.test(s[0])) /* Filter any words w/ non-letters */
+    .map((s): [string, number] => [s[0], parseInt(s[1])]);
+
+  wordDB = rawBuild(words);
   console.log('built, updating local storage');
-  wordDB = { words: wordsByLength, bitmaps };
   try {
     await set(STORAGE_KEY, wordDB);
   } catch {

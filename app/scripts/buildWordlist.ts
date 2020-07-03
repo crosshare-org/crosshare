@@ -1,10 +1,12 @@
-#!/usr/bin/env ts-node-script
+#!/usr/bin/env ts-node-script --skip-project
 export { };
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const util = require('util');
+
+import { rawBuild } from '../lib/WordDB';
 
 const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);
@@ -79,7 +81,11 @@ readFile(peters, 'utf8').then((pc: string) => {
       }
     });
 
-    const outContent = Object.keys(wordlist).map(word => word + ';' + wordlist[word]).join('\n');
+    console.log('starting build');
+    const db = rawBuild(Object.keys(wordlist).map(word => [word, wordlist[word]]));
+    console.log('built');
+
+    const outContent = JSON.stringify(db);
     writeFile(out, outContent).then(() => {
       console.log('wrote result to ' + out);
     });

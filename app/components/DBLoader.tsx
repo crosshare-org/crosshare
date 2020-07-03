@@ -5,12 +5,16 @@ import {
 import { App } from '../lib/firebaseWrapper';
 
 import { DefaultTopBar } from './TopBar';
+import { ProgressBar } from './ProgressBar';
 
 import * as WordDB from '../lib/WordDB';
 
+// TODO this is jank but *shrug*
+const FILESIZE = 22000000;
+
 export const LoadButton = (props: { buttonText: string, onClick?: () => void, onComplete: () => void }): JSX.Element => {
   const [dlProgress, setDlProgress] = useState<number | null>(null);
-  const [buildProgress, setBuildProgress] = useState<number | null>(null);
+  const [validating, setValidating] = useState<boolean>(false);
   const [error, setError] = useState('');
 
   const startBuild = () => {
@@ -19,18 +23,17 @@ export const LoadButton = (props: { buttonText: string, onClick?: () => void, on
     }
     setDlProgress(0);
     const storage = App.storage();
-    const wordlistRef = storage.ref('wordlist.txt');
+    const wordlistRef = storage.ref('worddb.json');
     wordlistRef.getDownloadURL().then(function(url: string) {
       const xhr = new XMLHttpRequest();
-      xhr.responseType = 'text';
+      xhr.responseType = 'json';
       xhr.onprogress = (e) => {
-        setDlProgress(e.total ? e.loaded / e.total : 50);
+        setDlProgress(e.total ? e.loaded / e.total : e.loaded / FILESIZE);
       };
-      xhr.onload = () => {
+      xhr.onload = async () => {
         setDlProgress(null);
-        setBuildProgress(0);
-        const wordlist: string = xhr.response;
-        WordDB.build(wordlist, setBuildProgress).then(() => { setBuildProgress(null); props.onComplete(); });
+        setValidating(true);
+        return WordDB.validateAndSet(xhr.response).then(() => { setValidating(false); props.onComplete(); });
       };
       xhr.open('GET', url);
       xhr.send();
@@ -41,12 +44,14 @@ export const LoadButton = (props: { buttonText: string, onClick?: () => void, on
 
   if (error) {
     return <p>Something went wrong: {error}</p>;
-  } else if (dlProgress !== null || buildProgress !== null) {
+  } else if (dlProgress !== null || validating) {
     return <>
-      <p><b>Downloading and building...</b></p>
-      <p>Please be patient and keep this window open, this can take a while. Like, longer than you think.</p>
-      <p>Maybe go make a cup of coffee.</p>
-      <p>Soon there&apos;ll be a progress bar here!</p>
+      {dlProgress !== null ?
+        <ProgressBar percentDone={dlProgress} />
+        :
+        <p><b>Downloaded, validating database...</b></p>
+      }
+      <p>Please be patient and keep this window open, this can take a while.</p>
     </>;
   }
   return <button onClick={startBuild}>{props.buttonText}</button>;
