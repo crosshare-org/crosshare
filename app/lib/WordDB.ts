@@ -207,7 +207,7 @@ export function matchingWords(length: number, bitmap: BA.BitArray | null) {
   }
   let rv: [string, number][];
   if (bitmap === null) {
-    rv = wordDB.words[length].slice().reverse();
+    rv = (wordDB.words[length] || []).slice().reverse();
   } else {
     const active = BA.activeBits(bitmap);
     rv = [];
