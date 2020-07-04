@@ -475,13 +475,19 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
     const averageLength = totalLength / numEntries;
     const lettersHistogram: Array<number> = new Array(26).fill(0);
     const lettersHistogramNames = lettersHistogram.map((_, i) => String.fromCharCode(i + 65));
+    let numBlocks = 0;
+    const numTotal = state.grid.width * state.grid.height;
     state.grid.cells.forEach((s) => {
-      const index = lettersHistogramNames.indexOf(s);
-      if (index !== -1) {
-        lettersHistogram[index] += 1;
+      if (s === '.') {
+        numBlocks += 1;
+      } else {
+        const index = lettersHistogramNames.indexOf(s);
+        if (index !== -1) {
+          lettersHistogram[index] += 1;
+        }
       }
     });
-    return { lengthHistogram, lengthHistogramNames, numEntries, averageLength, lettersHistogram, lettersHistogramNames };
+    return { numBlocks, numTotal, lengthHistogram, lengthHistogramNames, numEntries, averageLength, lettersHistogram, lettersHistogramNames };
   }, [state.grid.entries, state.grid.height, state.grid.width, state.grid.cells]);
 
   const keyboardHandler = useCallback((key: string) => {
@@ -525,6 +531,7 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
               <h2 css={{ marginTop: '1.5em' }}>Fill</h2>
               <div>Number of words: {stats.numEntries}</div>
               <div>Mean word length: {stats.averageLength.toPrecision(3)}</div>
+              <div>Number of blocks: {stats.numBlocks} ({(100 * stats.numBlocks / stats.numTotal).toFixed(1)}%)</div>
               <div css={{ marginTop: '1em', textDecoration: 'underline', textAlign: 'center' }}>Word Lengths</div>
               <Histogram data={stats.lengthHistogram} names={stats.lengthHistogramNames} />
               <div css={{ marginTop: '1em', textDecoration: 'underline', textAlign: 'center' }}>Letter Counts</div>
