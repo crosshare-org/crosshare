@@ -22,6 +22,7 @@ import {
 } from './Icons';
 import { AuthProps } from './AuthContext';
 import { LoadButton } from './DBLoader';
+import { Histogram } from './Histogram';
 import { PublishOverlay } from './PublishOverlay';
 import { TimestampClass } from '../lib/firebaseWrapper';
 import { GridView } from './Grid';
@@ -466,7 +467,8 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
 
 
   let totalLength = 0;
-  state.grid.entries.forEach((e) => totalLength += e.cells.length);
+  const lengthHistogram: Array<number> = new Array(Math.max(state.grid.width, state.grid.height)).fill(0);
+  state.grid.entries.forEach((e) => { totalLength += e.cells.length; lengthHistogram[e.cells.length - 1] += 1; });
   const numEntries = state.grid.entries.length;
   const averageLength = totalLength / numEntries;
 
@@ -511,6 +513,8 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
               <h2 css={{ marginTop: '1.5em' }}>Fill</h2>
               <div>Number of words: {numEntries}</div>
               <div>Mean word length: {averageLength.toPrecision(3)}</div>
+              <div>Word lengths:</div>
+              <Histogram data={lengthHistogram} />
             </>
             }
           </NestedDropDown>
@@ -573,7 +577,7 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
         }
       </TopBarDropDown>
     </TopBar >;
-  }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, averageLength, dispatch, muted, numEntries, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, runAutofill]);
+  }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, averageLength, dispatch, muted, numEntries, lengthHistogram, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, runAutofill]);
 
   return (
     <>
