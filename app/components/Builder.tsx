@@ -465,12 +465,24 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
     setAutofillEnabled(!autofillEnabled);
   }, [autofillEnabled, setAutofillEnabled]);
 
+  const stats = useMemo(() => {
+    let totalLength = 0;
+    const lengthHistogram: Array<number> = new Array(Math.max(state.grid.width, state.grid.height) - 1).fill(0);
+    const lengthHistogramNames = lengthHistogram.map((_, i) => (i + 2).toString());
 
-  let totalLength = 0;
-  const lengthHistogram: Array<number> = new Array(Math.max(state.grid.width, state.grid.height)).fill(0);
-  state.grid.entries.forEach((e) => { totalLength += e.cells.length; lengthHistogram[e.cells.length - 1] += 1; });
-  const numEntries = state.grid.entries.length;
-  const averageLength = totalLength / numEntries;
+    state.grid.entries.forEach((e) => { totalLength += e.cells.length; lengthHistogram[e.cells.length - 2] += 1; });
+    const numEntries = state.grid.entries.length;
+    const averageLength = totalLength / numEntries;
+    const lettersHistogram: Array<number> = new Array(26).fill(0);
+    const lettersHistogramNames = lettersHistogram.map((_, i) => String.fromCharCode(i + 65));
+    state.grid.cells.forEach((s) => {
+      const index = lettersHistogramNames.indexOf(s);
+      if (index !== -1) {
+        lettersHistogram[index] += 1;
+      }
+    });
+    return { lengthHistogram, lengthHistogramNames, numEntries, averageLength, lettersHistogram, lettersHistogramNames };
+  }, [state.grid.entries, state.grid.height, state.grid.width, state.grid.cells]);
 
   const keyboardHandler = useCallback((key: string) => {
     const kpa: KeypressAction = { type: 'KEYPRESS', key: key, shift: false };
@@ -511,10 +523,12 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
               <div>{state.hasNoShortWords ? <FaRegCheckCircle /> : <FaRegCircle />} All words should be at least three letters</div>
               <div>{state.repeats.size > 0 ? <><FaRegCircle /> ({Array.from(state.repeats).sort().join(', ')})</> : <FaRegCheckCircle />} No words should be repeated</div>
               <h2 css={{ marginTop: '1.5em' }}>Fill</h2>
-              <div>Number of words: {numEntries}</div>
-              <div>Mean word length: {averageLength.toPrecision(3)}</div>
-              <div>Word lengths:</div>
-              <Histogram data={lengthHistogram} />
+              <div>Number of words: {stats.numEntries}</div>
+              <div>Mean word length: {stats.averageLength.toPrecision(3)}</div>
+              <div css={{ marginTop: '1em', textDecoration: 'underline', textAlign: 'center' }}>Word Lengths</div>
+              <Histogram data={stats.lengthHistogram} names={stats.lengthHistogramNames} />
+              <div css={{ marginTop: '1em', textDecoration: 'underline', textAlign: 'center' }}>Letter Counts</div>
+              <Histogram data={stats.lettersHistogram} names={stats.lettersHistogramNames} />
             </>
             }
           </NestedDropDown>
@@ -577,7 +591,7 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
         }
       </TopBarDropDown>
     </TopBar >;
-  }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, averageLength, dispatch, muted, numEntries, lengthHistogram, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, runAutofill]);
+  }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, stats, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, runAutofill, dispatch, muted]);
 
   return (
     <>
