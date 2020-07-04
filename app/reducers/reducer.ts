@@ -105,7 +105,7 @@ export function initialBuilderState(
     repeats: new Set<string>(),
     hasNoShortWords: false,
     isEditable: () => true,
-    symmetry: Symmetry.Rotational,
+    symmetry: (width === 5 && height === 5) ? Symmetry.None : Symmetry.Rotational,
     clues: clues,
     publishErrors: [],
     toPublish: null,
