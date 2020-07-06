@@ -351,6 +351,10 @@ exports[`get home page 1`] = `
         </h3>
       </a>
       <p>
+        by 
+        Mike D
+      </p>
+      <p>
         <a
           href="/categories/dailymini"
         >
