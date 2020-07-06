@@ -62,7 +62,8 @@ export const TinyNav = ({ children, dispatch }: TinyNavProps) => {
 
 interface SquareAndColsProps {
   muted: boolean,
-  square: (size: number) => ReactNode,
+  square: (width: number, height: number) => ReactNode,
+  aspectRatio?: number,
   left: ReactNode,
   right: ReactNode,
   tinyColumn?: ReactNode,
@@ -95,7 +96,7 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((pro
     minHeight: 'calc(100% - var(--height-adjustment))',
     height: 'calc(100% - var(--height-adjustment))',
   }}>
-    <Square parentRef={parentRef} contents={props.square} />
+    <Square parentRef={parentRef} aspectRatio={props.aspectRatio || 1} contents={props.square} />
     <div css={{
       display: 'none',
       flex: 'auto',

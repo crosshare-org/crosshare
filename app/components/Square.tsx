@@ -11,12 +11,14 @@ if (typeof window !== 'undefined') {
 }
 
 interface SquareProps {
-  contents: (size: number) => ReactNode,
+  aspectRatio: number,
+  contents: (width: number, height: number) => ReactNode,
   parentRef: RefObject<HTMLElement>
 }
 export const Square = (props: SquareProps) => {
   const { width, height } = useResizeObserver({ ref: props.parentRef });
-  const [size, setSize] = useState(200);
+  const [outWidth, setOutWidth] = useState(200);
+  const [outHeight, setOutHeight] = useState(200);
   useEffect(() => {
     if (!width || !height) {
       return;
@@ -30,14 +32,15 @@ export const Square = (props: SquareProps) => {
       newHeight = height;
       newWidth = width * 0.66;
     }
-    setSize(Math.min(newWidth, newHeight));
-  }, [width, height]);
+    setOutWidth(Math.min(newWidth, props.aspectRatio * newHeight));
+    setOutHeight(Math.min(newWidth / props.aspectRatio, newHeight));
+  }, [width, height, props.aspectRatio]);
 
   return (
     <div aria-label='grid' css={{
       flex: 'none',
-      width: size,
-      height: size
-    }}>{props.contents(size)}</div>
+      width: outWidth,
+      height: outHeight
+    }}>{props.contents(outWidth, outHeight)}</div>
   );
 };
