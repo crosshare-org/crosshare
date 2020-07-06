@@ -15,6 +15,7 @@ import useEventListener from '@use-it/event-listener';
 import { FixedSizeList as List } from 'react-window';
 import { toast, Slide } from 'react-toastify';
 
+import { ViewableEntry } from '../lib/viewableGrid';
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled, SymmetryIcon,
   SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
@@ -31,7 +32,7 @@ import { Direction, PuzzleT, isAutofillCompleteMessage, isAutofillResultMessage,
 import {
   Symmetry, BuilderState, builderReducer, KeypressAction,
   SymmetryAction, ClickedFillAction, PuzzleAction, SetHighlightAction, PublishAction,
-  NewPuzzleAction, initialBuilderState
+  NewPuzzleAction, initialBuilderState, BuilderGrid
 } from '../reducers/reducer';
 import { NestedDropDown, TopBarLink, TopBar, DefaultTopBar, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TinyNav } from './Page';
@@ -92,7 +93,6 @@ export const BuilderDBLoader = (props: BuilderProps & AuthProps): JSX.Element =>
 };
 
 interface PotentialFillItemProps {
-  isGoodSuggestion: (entryIndex: number, word: string) => boolean,
   entryIndex: number,
   value: [string, number],
   dispatch: Dispatch<ClickedFillAction>,
@@ -107,9 +107,9 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
       background: 'none',
       border: 'none',
       textDecoration: 'none',
-      color: props.isGoodSuggestion(props.entryIndex, props.value[0]) ? 'var(--text)' : 'var(--default-text)',
       width: '100%',
       padding: '0.5em 1em',
+      color: 'var(--text)',
       cursor: 'pointer',
       '&:hover': {
         backgroundColor: 'var(--clue-bg)',
@@ -123,7 +123,6 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
 };
 
 interface PotentialFillListProps {
-  isGoodSuggestion: (entryIndex: number, word: string) => boolean,
   header?: string,
   entryIndex: number,
   values: Array<[string, number]>,
@@ -163,7 +162,6 @@ const PotentialFillList = (props: PotentialFillListProps) => {
             <div style={style}>
               <PotentialFillItem
                 key={index}
-                isGoodSuggestion={props.isGoodSuggestion}
                 entryIndex={props.entryIndex}
                 dispatch={props.dispatch}
                 value={props.values[index]}
@@ -322,6 +320,77 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   return <GridMode runAutofill={runAutofill} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
 };
 
+const potentialFill = (entry: ViewableEntry, grid: BuilderGrid): Array<[string, number]> => {
+  let pattern = '';
+  const crosses = getCrosses(grid, entry);
+  for (let index = 0; index < entry.cells.length; index += 1) {
+    const cell = entry.cells[index];
+    const val = valAt(grid, cell);
+    const cross = crosses[index];
+    // If complete, remove any cells whose crosses aren't complete and show that
+    if (entry.completedWord &&
+      val.length === 1 &&
+      cross.entryIndex !== null &&
+      !grid.entries[cross.entryIndex].completedWord) {
+      pattern += ' ';
+    } else {
+      pattern += val;
+    }
+  }
+  const successLetters = new Array<string>(entry.cells.length).fill('');
+  const failLetters = new Array<string>(entry.cells.length).fill('');
+  const matches = WordDB.matchingWords(pattern.length, WordDB.matchingBitmap(pattern));
+  return matches.filter(([word]) => {
+    let j = -1;
+    for (let i = 0; i < entry.cells.length; i += 1) {
+      j += 1;
+      const cell = valAt(grid, entry.cells[i]);
+      if (cell.length > 1) {
+        // Handle rebuses
+        j += cell.length - 1;
+        continue;
+      }
+      if (!entry.completedWord && cell !== ' ') {
+        continue;
+      }
+      const letter = word[j];
+      if (successLetters[i].indexOf(letter) !== -1) {
+        continue;
+      }
+      if (failLetters[i].indexOf(letter) !== -1) {
+        return false;
+      }
+      const crossIndex = crosses[i].entryIndex;
+      if (crossIndex === null) {
+        successLetters[i] += letter;
+        continue;
+      }
+      const cross = grid.entries[crossIndex];
+      if (cross.completedWord) {
+        successLetters[i] += letter;
+        continue;
+      }
+
+      let crossPattern = '';
+      for (const crossCell of cross.cells) {
+        if (crossCell.row === entry.cells[i].row && crossCell.col === entry.cells[i].col) {
+          crossPattern += word[j];
+        } else {
+          crossPattern += valAt(grid, crossCell);
+        }
+      }
+      const newBitmap = WordDB.matchingBitmap(crossPattern);
+      if (!newBitmap || BA.isZero(newBitmap)) {
+        failLetters[i] += letter;
+        return false;
+      } else {
+        successLetters[i] += letter;
+      }
+    }
+    return true;
+  });
+};
+
 interface GridModeProps {
   user: firebase.User,
   isAdmin: boolean,
@@ -353,96 +422,30 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
   }, [dispatch, runAutofill]);
   useEventListener('keydown', physicalKeyboardHandler, gridRef.current || undefined);
 
-  let left = <></>;
-  let right = <></>;
-  let tiny = <></>;
-  const doCrossesWork = useCallback((entryIndex: number, word: string) => {
-    const successFailureEntries = new Map<number, Map<number, [string, string]>>();
-    const entry = state.grid.entries[entryIndex];
-    let successFailure = successFailureEntries.get(entryIndex);
-    if (successFailure === undefined) {
-      successFailure = new Map<number, [string, string]>();
-      successFailureEntries.set(entryIndex, successFailure);
-    }
-    const crosses = getCrosses(state.grid, entry);
-    let j = -1;
-    for (let i = 0; i < entry.cells.length; i += 1) {
-      j += 1;
-      const cell = valAt(state.grid, entry.cells[i]);
-      if (cell.length > 1) {
-        // Handle rebuses
-        j += cell.length - 1;
-        continue;
-      }
-      if (!entry.completedWord && cell !== ' ') {
-        continue;
-      }
-      const crossIndex = crosses[i].entryIndex;
-      if (crossIndex === null) {
-        continue;
-      }
-      const cross = state.grid.entries[crossIndex];
-      if (cross.completedWord) {
-        continue;
-      }
-      let crossSuccessFailure = successFailure.get(i);
-      if (crossSuccessFailure === undefined) {
-        crossSuccessFailure = ['', ''];
-      }
-      const [succeeding, failing] = crossSuccessFailure;
-      if (failing.indexOf(word[j]) !== -1) {
-        return false;
-      }
-      if (succeeding.indexOf(word[j]) !== -1) {
-        continue;
-      }
-      let crossPattern = '';
-      for (const crossCell of cross.cells) {
-        if (crossCell.row === entry.cells[i].row && crossCell.col === entry.cells[i].col) {
-          crossPattern += word[j];
-        } else {
-          crossPattern += valAt(state.grid, crossCell);
-        }
-      }
-      const newBitmap = WordDB.matchingBitmap(crossPattern);
-      if (!newBitmap || BA.isZero(newBitmap)) {
-        successFailure.set(i, [succeeding, failing + word[j]]);
-        return false;
+  const fillLists = useMemo(() => {
+    let left = <></>;
+    let right = <></>;
+    let tiny = <></>;
+    const [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
+    if (cross) {
+      const matches = potentialFill(cross, state.grid);
+      if (cross.direction === Direction.Across) {
+        left = <PotentialFillList header="Across" values={matches} entryIndex={cross.index} dispatch={dispatch} />;
       } else {
-        successFailure.set(i, [succeeding + word[j], failing]);
+        right = <PotentialFillList header="Down" values={matches} entryIndex={cross.index} dispatch={dispatch} />;
       }
     }
-    return true;
-  }, [state.grid]);
-  for (const entry of entryAndCrossAtPosition(state.grid, state.active)) {
-    if (entry !== null) {
-      let pattern = '';
-      const crosses = getCrosses(state.grid, entry);
-      for (let index = 0; index < entry.cells.length; index += 1) {
-        const cell = entry.cells[index];
-        const val = valAt(state.grid, cell);
-        const cross = crosses[index];
-        // If complete, remove any cells whose crosses aren't complete and show that
-        if (entry.completedWord &&
-          val.length === 1 &&
-          cross.entryIndex !== null &&
-          !state.grid.entries[cross.entryIndex].completedWord) {
-          pattern += ' ';
-        } else {
-          pattern += val;
-        }
-      }
-      const matches: Array<[string, number]> = WordDB.matchingWords(pattern.length, WordDB.matchingBitmap(pattern));
-      if (entry.direction === state.active.dir) {
-        tiny = <PotentialFillList isGoodSuggestion={doCrossesWork} values={matches} entryIndex={entry.index} dispatch={dispatch} />;
-      }
+    if (entry) {
+      const matches = potentialFill(entry, state.grid);
+      tiny = <PotentialFillList values={matches} entryIndex={entry.index} dispatch={dispatch} />;
       if (entry.direction === Direction.Across) {
-        left = <PotentialFillList isGoodSuggestion={doCrossesWork} header="Across" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
+        left = <PotentialFillList header="Across" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
       } else {
-        right = <PotentialFillList isGoodSuggestion={doCrossesWork} header="Down" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
+        right = <PotentialFillList header="Down" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
       }
     }
-  }
+    return { left, right, tiny };
+  }, [state.grid, state.active, dispatch]);
 
   const { autofillEnabled, setAutofillEnabled } = props;
   const toggleAutofillEnabled = useCallback(() => {
@@ -634,9 +637,9 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
             />;
           }
         }
-        left={left}
-        right={right}
-        tinyColumn={<TinyNav dispatch={dispatch}>{tiny}</TinyNav>}
+        left={fillLists.left}
+        right={fillLists.right}
+        tinyColumn={<TinyNav dispatch={dispatch}>{fillLists.tiny}</TinyNav>}
       />
     </>
   );

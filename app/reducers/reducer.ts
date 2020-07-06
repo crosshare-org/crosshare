@@ -51,7 +51,7 @@ function isPuzzleState(state: GridInterfaceState): state is PuzzleState {
 }
 
 export type BuilderEntry = ViewableEntry;
-type BuilderGrid = ViewableGrid<BuilderEntry>;
+export type BuilderGrid = ViewableGrid<BuilderEntry>;
 
 export interface BuilderState extends GridInterfaceState {
   type: 'builder',
