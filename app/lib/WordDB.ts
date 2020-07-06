@@ -143,6 +143,9 @@ export function highestScore(length: number, bitmap: BA.BitArray | null) {
     throw new Error('uninitialized!');
   }
   const words = wordDB.words[length];
+  if (!words) {
+    return null;
+  }
   if (bitmap === null) {
     return words[words.length - 1];
   }
@@ -179,7 +182,7 @@ export function numMatches(length: number, bitmap: BA.BitArray | null) {
     throw new Error('uninitialized!');
   }
   if (bitmap === null) {
-    return wordDB.words[length].length;
+    return wordDB.words[length] ?.length || 0;
   }
   return BA.bitCount(bitmap);
 }
