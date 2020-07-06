@@ -28,7 +28,7 @@ import { PublishOverlay } from './PublishOverlay';
 import { TimestampClass } from '../lib/firebaseWrapper';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from '../lib/gridBase';
-import { Direction, PuzzleT, isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from '../lib/types';
+import { Position, Direction, PuzzleT, isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from '../lib/types';
 import {
   Symmetry, BuilderState, builderReducer, KeypressAction,
   SymmetryAction, ClickedFillAction, PuzzleAction, SetHighlightAction, PublishAction,
@@ -320,6 +320,32 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   return <GridMode runAutofill={runAutofill} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
 };
 
+/* Returns the index within a word string of the start of the `active` cell,
+ * if that word were used as fill for `entry`. */
+const activeIndex = (grid: BuilderGrid, active: Position, entry: ViewableEntry): number => {
+  let j = -1;
+  for (let i = 0; i <= entry.cells.length; i += 1) {
+    j += 1;
+    if (active.row === entry.cells[i].row && active.col === entry.cells[i].col) {
+      return j;
+    }
+    // add extra for rebus:
+    j = j + valAt(grid, entry.cells[i]).length - 1;
+  }
+  console.error('active not in entry', active, entry);
+  throw new Error('active not in entry');
+};
+
+const lettersAtIndex = (fill: Array<[string, number]>, index: number): string => {
+  let seen = '';
+  for (const [word] of fill) {
+    if (seen.indexOf(word[index]) === -1) {
+      seen += word[index];
+    }
+  }
+  return seen;
+};
+
 const potentialFill = (entry: ViewableEntry, grid: BuilderGrid): Array<[string, number]> => {
   let pattern = '';
   const crosses = getCrosses(grid, entry);
@@ -427,21 +453,33 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
     let right = <></>;
     let tiny = <></>;
     const [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
-    if (cross) {
-      const matches = potentialFill(cross, state.grid);
+    let crossMatches = cross && potentialFill(cross, state.grid);
+    let entryMatches = entry && potentialFill(entry, state.grid);
+
+    if (crossMatches !== null && entryMatches !== null && entry !== null && cross !== null) {
+      /* If we have both entry + cross we now filter for only matches that'd work for both. */
+      const entryActiveIndex = activeIndex(state.grid, state.active, entry);
+      const crossActiveIndex = activeIndex(state.grid, state.active, cross);
+      const entryValidLetters = lettersAtIndex(entryMatches, entryActiveIndex);
+      const crossValidLetters = lettersAtIndex(crossMatches, crossActiveIndex);
+      const validLetters = (entryValidLetters.match(new RegExp('[' + crossValidLetters + ']', 'g')) || []).join('');
+      entryMatches = entryMatches.filter(([word]) => validLetters.indexOf(word[entryActiveIndex]) !== -1);
+      crossMatches = crossMatches.filter(([word]) => validLetters.indexOf(word[crossActiveIndex]) !== -1);
+    }
+
+    if (cross && crossMatches !== null) {
       if (cross.direction === Direction.Across) {
-        left = <PotentialFillList header="Across" values={matches} entryIndex={cross.index} dispatch={dispatch} />;
+        left = <PotentialFillList header="Across" values={crossMatches} entryIndex={cross.index} dispatch={dispatch} />;
       } else {
-        right = <PotentialFillList header="Down" values={matches} entryIndex={cross.index} dispatch={dispatch} />;
+        right = <PotentialFillList header="Down" values={crossMatches} entryIndex={cross.index} dispatch={dispatch} />;
       }
     }
-    if (entry) {
-      const matches = potentialFill(entry, state.grid);
-      tiny = <PotentialFillList values={matches} entryIndex={entry.index} dispatch={dispatch} />;
+    if (entry && entryMatches !== null) {
+      tiny = <PotentialFillList values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
       if (entry.direction === Direction.Across) {
-        left = <PotentialFillList header="Across" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
+        left = <PotentialFillList header="Across" values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
       } else {
-        right = <PotentialFillList header="Down" values={matches} entryIndex={entry.index} dispatch={dispatch} />;
+        right = <PotentialFillList header="Down" values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
       }
     }
     return { left, right, tiny };
