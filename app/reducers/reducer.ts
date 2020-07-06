@@ -223,7 +223,9 @@ export enum Symmetry {
   Rotational,
   Horizontal,
   Vertical,
-  None
+  None,
+  DiagonalNESW,
+  DiagonalNWSE,
 }
 
 export enum CheatUnit {
@@ -479,6 +481,11 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
 export function builderReducer(state: BuilderState, action: PuzzleAction): BuilderState {
   state = gridInterfaceReducer(state, action);
   if (isSymmetryAction(action)) {
+    if ((action.symmetry === Symmetry.DiagonalNESW || action.symmetry === Symmetry.DiagonalNWSE)
+      && (state.grid.width !== state.grid.height)) {
+      // Don't allow diagonal symmetry for rectangles
+      return state;
+    }
     return ({ ...state, symmetry: action.symmetry });
   }
   if (isSetHighlightAction(action)) {

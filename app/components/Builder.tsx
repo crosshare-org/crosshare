@@ -598,6 +598,18 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
                 const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.None };
                 dispatch(a);
               }} />
+              {state.grid.width === state.grid.height ?
+                <>
+                  <TopBarDropDownLink icon={<SymmetryIcon type={Symmetry.DiagonalNESW} />} text="Use NE/SW Diagonal Symmetry" onClick={() => {
+                    const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.DiagonalNESW };
+                    dispatch(a);
+                  }} />
+                  <TopBarDropDownLink icon={<SymmetryIcon type={Symmetry.DiagonalNWSE} />} text="Use NW/SE Diagonal Symmetry" onClick={() => {
+                    const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.DiagonalNWSE };
+                    dispatch(a);
+                  }} />
+                </>
+                : ''}
             </>
             }
           </NestedDropDown>
@@ -639,7 +651,7 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
         }
       </TopBarDropDown>
     </TopBar >;
-  }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, stats, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, runAutofill, dispatch, muted]);
+  }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, stats, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.grid.width, state.grid.height, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, runAutofill, dispatch, muted]);
 
   return (
     <>

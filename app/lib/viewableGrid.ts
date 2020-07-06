@@ -206,25 +206,31 @@ export function gridWithNewChar<Entry extends ViewableEntry,
       return grid;
     }
 
-    if (sym === Symmetry.Rotational) {
-      const flipped = (grid.height - pos.row - 1) * grid.width + (grid.width - pos.col - 1);
-      if (cells[flipped] === BLOCK) {
-        cells[flipped] = ' ';
-      }
-    } else if (sym === Symmetry.Horizontal) {
-      const flipped = (grid.height - pos.row - 1) * grid.width + pos.col;
-      if (cells[flipped] === BLOCK) {
-        cells[flipped] = ' ';
-      }
-    } else if (sym === Symmetry.Vertical) {
-      const flipped = pos.row * grid.width + (grid.width - pos.col - 1);
-      if (cells[flipped] === BLOCK) {
-        cells[flipped] = ' ';
-      }
+    const flippedCell = flipped(grid, pos, sym);
+    if (flippedCell !== null && cells[flippedCell] === BLOCK) {
+      cells[flippedCell] = ' ';
     }
   }
   cells[index] = char;
   return fromCells({ ...grid, cells });
+}
+
+function flipped<Entry extends ViewableEntry,
+  Grid extends ViewableGrid<Entry>>(grid: Grid, pos: Position, sym: Symmetry): number | null {
+  switch (sym) {
+  case Symmetry.None:
+    return null;
+  case Symmetry.Rotational:
+    return (grid.height - pos.row - 1) * grid.width + (grid.width - pos.col - 1);
+  case Symmetry.Horizontal:
+    return (grid.height - pos.row - 1) * grid.width + pos.col;
+  case Symmetry.Vertical:
+    return pos.row * grid.width + (grid.width - pos.col - 1);
+  case Symmetry.DiagonalNESW:
+    return (grid.height - pos.col - 1) * grid.width + (grid.width - pos.row - 1);
+  case Symmetry.DiagonalNWSE:
+    return pos.col * grid.width + pos.row;
+  }
 }
 
 export function gridWithBlockToggled<Entry extends ViewableEntry,
@@ -237,16 +243,11 @@ export function gridWithBlockToggled<Entry extends ViewableEntry,
   const cells = [...grid.cells];
   cells[index] = char;
 
-  if (sym === Symmetry.Rotational) {
-    const flipped = (grid.height - pos.row - 1) * grid.width + (grid.width - pos.col - 1);
-    cells[flipped] = char;
-  } else if (sym === Symmetry.Horizontal) {
-    const flipped = (grid.height - pos.row - 1) * grid.width + pos.col;
-    cells[flipped] = char;
-  } else if (sym === Symmetry.Vertical) {
-    const flipped = pos.row * grid.width + (grid.width - pos.col - 1);
-    cells[flipped] = char;
+  const flippedCell = flipped(grid, pos, sym);
+  if (flippedCell !== null) {
+    cells[flippedCell] = char;
   }
+
   return fromCells({ ...grid, cells });
 }
 

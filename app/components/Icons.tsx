@@ -185,14 +185,14 @@ export const RevealPuzzle = () => {
 export const SymmetryIcon = ({ type, ...props }: IconProps & { type: Symmetry }) => {
   return (
     <svg width={props.width || '1em'} height={props.height || '1em'} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-      <Square cx={15} cy={15} beginMs={0} animate={false} filled={true} />
-      <Square cx={15} cy={85} beginMs={0} animate={false} filled={type === Symmetry.Horizontal} />
-      <Square cx={85} cy={85} beginMs={0} animate={false} filled={type === Symmetry.Rotational} />
-      <Square cx={85} cy={15} beginMs={0} animate={false} filled={type === Symmetry.Vertical} />
+      <Square cx={15} cy={15} beginMs={0} animate={false} filled={type !== Symmetry.DiagonalNWSE} />
+      <Square cx={15} cy={85} beginMs={0} animate={false} filled={type === Symmetry.Horizontal || type === Symmetry.DiagonalNWSE} />
+      <Square cx={85} cy={85} beginMs={0} animate={false} filled={type === Symmetry.Rotational || type === Symmetry.DiagonalNESW} />
+      <Square cx={85} cy={15} beginMs={0} animate={false} filled={type === Symmetry.Vertical || type === Symmetry.DiagonalNWSE} />
       <Square cx={15} cy={50} beginMs={0} animate={false} filled={type === Symmetry.Rotational || type === Symmetry.Vertical} />
-      <Square cx={85} cy={50} beginMs={0} animate={false} filled={type === Symmetry.None || type === Symmetry.Rotational || type === Symmetry.Vertical} />
-      <Square cx={50} cy={15} beginMs={0} animate={false} filled={type === Symmetry.Horizontal || type === Symmetry.None} />
-      <Square cx={50} cy={85} beginMs={0} animate={false} filled={type === Symmetry.None || type === Symmetry.Horizontal} />
+      <Square cx={85} cy={50} beginMs={0} animate={false} filled={type === Symmetry.None || type === Symmetry.Rotational || type === Symmetry.Vertical || type === Symmetry.DiagonalNESW || type === Symmetry.DiagonalNWSE} />
+      <Square cx={50} cy={15} beginMs={0} animate={false} filled={type === Symmetry.Horizontal || type === Symmetry.None || type === Symmetry.DiagonalNESW} />
+      <Square cx={50} cy={85} beginMs={0} animate={false} filled={type === Symmetry.None || type === Symmetry.Horizontal || type === Symmetry.DiagonalNWSE} />
       <Square cx={50} cy={50} beginMs={0} animate={false} filled={false} />
     </svg>
   );
