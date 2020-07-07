@@ -251,6 +251,24 @@ export function gridWithBlockToggled<Entry extends ViewableEntry,
   return fromCells({ ...grid, cells });
 }
 
+export function getClueMap<Entry extends ViewableEntry,
+  Grid extends ViewableGrid<Entry>>(grid: Grid, rawClues: Array<ClueT>): Record<string, string> {
+  const result: Record<string, string> = {};
+  const clues = cluesByDirection(rawClues);
+
+  for (const entry of grid.entries) {
+    if (entry.completedWord === null) {
+      continue;
+    }
+    const clue = clues[entry.direction].get(entry.labelNumber);
+    if (!clue) {
+      continue;
+    }
+    result[entry.completedWord] = clue;
+  }
+  return result;
+}
+
 function cluesByDirection(rawClues: Array<ClueT>) {
   const clues = [new Map<number, string>(), new Map<number, string>()];
   for (const clue of rawClues) {
