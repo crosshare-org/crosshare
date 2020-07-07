@@ -4,13 +4,15 @@ import { fromCells, getClueMap } from './viewableGrid';
 const EXTENSION_HEADER_LENGTH = 8;
 const EXTENSION_NAME_LENGTH = 4;
 const CIRCLED = 0x80;
+const MAGIC = 'ACROSS&DOWN';
 
 function isPuz(bytes: Uint8Array) {
-  const magic = 'ACROSS&DOWN';
-  for (let i = 0; i < magic.length; i++) {
-    if (bytes[2 + i] != magic.charCodeAt(i)) return false;
-  }
-  return bytes[2 + magic.length] == 0;
+  return magicIndex(bytes) !== -1;
+}
+
+function magicIndex(bytes: Uint8Array) {
+  const initialChars = String.fromCodePoint.apply(null, Array.from(bytes.slice(0, 50)));
+  return initialChars.indexOf(MAGIC);
 }
 
 class PuzReader {
@@ -20,6 +22,7 @@ class PuzReader {
   public rebusKey: Record<number, string>;
 
   constructor(public buf: Uint8Array) {
+    this.buf = this.buf.slice(magicIndex(this.buf) - 2);
     this.ix = 0;
     this.highlighted = [];
     this.rebusMap = null;

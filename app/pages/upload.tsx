@@ -50,7 +50,7 @@ export const UploadPage = () => {
   const description = 'Import your existing puzzle to share it on Crosshare. Crosshare gives your solvers a first-class experience on any device, and gives you access to statistics about solves.';
   return <>
     <Head>
-      <title>Upload and Import Puzzles | Crosshare</title>
+      <title>Upload/Import Crossword Puzzles | Crosshare</title>
       <meta key="og:title" property="og:title" content='Crosshare Crossword Upload / Import' />
       <meta key="description" name="description" content={description} />
       <meta key="og:description" property="og:description" content={description} />
