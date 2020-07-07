@@ -396,3 +396,77 @@ test('change author name in publish dialogue should publish w/ new name', async 
   await r5.findByText(/Enter Rebus/i);
   expect(r5.queryByText(/Moderate/i)).toBeNull();
 });
+
+test('publish custom / non-rectangular size', async () => {
+  sessionStorage.clear();
+  localStorage.clear();
+
+  await firebaseTesting.clearFirestoreData({ projectId });
+
+  setApp(app as firebase.app.App);
+
+  const r = render(
+    <BuilderPage isAdmin={false} user={mike} />, { user: mike }
+  );
+
+  fireEvent.click(await (r.findByText('New Puzzle', { exact: true })));
+
+  const size = await (r.findByText('Custom', { exact: true }));
+  fireEvent.click(size);
+  fireEvent.change(await r.findByPlaceholderText('Rows'), { target: { value: '4' } });
+  fireEvent.change(r.getByPlaceholderText('Columns'), { target: { value: '5' } });
+  fireEvent.click(r.getByText('Create New Puzzle'));
+
+  const grid = (await r.findByLabelText('cell0x0')).parentElement || window;
+  expect(r.getByLabelText('grid')).toMatchSnapshot();
+
+  for (let i = 0; i < 20; i += 1) {
+    fireEvent.keyDown(grid, { key: String.fromCharCode(65 + i), keyCode: 65 + i });
+  }
+
+  fireEvent.click(r.getByText('Clues', { exact: true }));
+  fireEvent.change(r.getByLabelText('ABCDE'), { target: { value: 'Clue 1' } });
+  fireEvent.change(r.getByLabelText('FGHIJ'), { target: { value: 'Clue 7' } });
+  fireEvent.change(r.getByLabelText('KLMNO'), { target: { value: 'Clue 8' } });
+  fireEvent.change(r.getByLabelText('PQRST'), { target: { value: 'Clue 9' } });
+
+  fireEvent.change(r.getByLabelText('AFKP'), { target: { value: 'Clue 2' } });
+  fireEvent.change(r.getByLabelText('BGLQ'), { target: { value: 'Clue 3' } });
+  fireEvent.change(r.getByLabelText('CHMR'), { target: { value: 'Clue 4' } });
+  fireEvent.change(r.getByLabelText('DINS'), { target: { value: 'Clue 5' } });
+  fireEvent.change(r.getByLabelText('EJOT'), { target: { value: 'Clue 6' } });
+  fireEvent.change(r.getByLabelText('Title'), { target: { value: 'Our Title' } });
+
+  fireEvent.click(r.getByText('Back to Grid', { exact: true }));
+  fireEvent.click(r.getByText('Publish', { exact: true }));
+  fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
+  await (r.findByText(/Published Successfully/));
+
+  const puzzles = await admin.firestore().collection('c').get();
+  expect(puzzles.size).toEqual(1);
+  const puzzle = puzzles.docs[0].data();
+  const puzzleId = puzzles.docs[0].id;
+  expect(puzzle['m']).toEqual(false);
+  expect(puzzle['p']).not.toEqual(null);
+  expect(puzzle['c']).toEqual(null);
+  expect(puzzle['t']).toEqual('Our Title');
+  await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
+  expect(NextJSRouter.push).toHaveBeenCalledWith('/crosswords/' + puzzles.docs[0].id);
+
+  await cleanup();
+
+  // The puzzle should be visible on the puzzle page, even to a rando
+  setApp(serverApp as firebase.app.App);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const props1 = await getServerSideProps({ params: { puzzleId }, res: { setHeader: jest.fn() } } as any);
+  setApp(randoApp as firebase.app.App);
+  const r5 = render(<PuzzlePage {...props1.props} />, { user: rando });
+  expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
+  expect(r5.queryByText(/Our Title/)).toBeInTheDocument();
+  expect(r5.queryByText(/by M to tha D/)).toBeInTheDocument();
+  expect(r5.queryByText(/Daily Mini/)).toBeNull();
+  await r5.findByText(/Enter Rebus/i);
+  expect(r5.queryByText(/Moderate/i)).toBeNull();
+
+  expect(r5.getByLabelText('grid')).toMatchSnapshot();
+});
