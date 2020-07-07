@@ -106,12 +106,6 @@ class PuzReader {
     for (let i = 0; i < w * h; i++) {
       grid.push(String.fromCodePoint(this.buf[0x34 + i]));
     }
-    const viewableGrid = fromCells({
-      cells: grid, width: w, height: h,
-      allowBlockEditing: false,
-      highlighted: new Set<number>(), highlight: 'circle',
-      mapper: (e) => e
-    });
 
     this.ix = 0x34 + 2 * w * h;
     const title = this.readString();
@@ -148,6 +142,13 @@ class PuzReader {
         }
       }
     }
+
+    const viewableGrid = fromCells({
+      cells: grid, width: w, height: h,
+      allowBlockEditing: false,
+      highlighted: new Set<number>(), highlight: 'circle',
+      mapper: (e) => e
+    });
 
     return {
       width: w, height: h,
