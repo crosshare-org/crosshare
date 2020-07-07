@@ -189,7 +189,8 @@ export function isCancelPublishAction(action: PuzzleAction): action is CancelPub
 
 export interface NewPuzzleAction extends PuzzleAction {
   type: 'NEWPUZZLE',
-  size: number
+  rows: number,
+  cols: number
 }
 export function isNewPuzzleAction(action: PuzzleAction): action is NewPuzzleAction {
   return action.type === 'NEWPUZZLE';
@@ -506,8 +507,8 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   }
   if (isNewPuzzleAction(action)) {
     return initialBuilderState({
-      width: action.size, height: action.size,
-      grid: Array(action.size * action.size).fill(' '),
+      width: action.cols, height: action.rows,
+      grid: Array(action.cols * action.rows).fill(' '),
       title: null,
       highlight: 'circle',
       highlighted: [],

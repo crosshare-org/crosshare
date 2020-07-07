@@ -576,10 +576,11 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       keyboardHandler={keyboardHandler}
       showExtraKeyLayout={state.showExtraKeyLayout}
       includeBlockKey={false}
+      aspectRatio={state.grid.width / state.grid.height}
       square={
-        (size: number) => {
+        (width: number, _height: number) => {
           return <GridView
-            squareSize={size}
+            squareWidth={width}
             grid={state.grid}
             active={state.active}
             dispatch={dispatch}

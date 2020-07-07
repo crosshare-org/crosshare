@@ -214,20 +214,50 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
   });
 };
 
-const SizeSelectInput = (props: { size: number, currentSize: number, setSize: (s: number) => void, label: string }) => {
+interface SizeSelectProps {
+  cols: number | null,
+  rows: number | null,
+  current: string,
+  setCols: (s: number) => void,
+  setRows: (s: number) => void,
+  setCurrent: (s: string) => void,
+  label: string,
+}
+
+const SizeSelectInput = (props: SizeSelectProps) => {
   return <div css={{ fontSize: '1.5em' }}>
     <label>
-      <input css={{ marginRight: '1em' }} type='radio' name='size' value={props.size} checked={props.currentSize === props.size} onChange={(e) => props.setSize(parseInt(e.currentTarget.value))} />
+      <input css={{ marginRight: '1em' }} type='radio' name='size' value={props.label} checked={props.current === props.label} onChange={(e) => { if (e.currentTarget.value !== props.label) return; props.setCols(props.cols || 0); props.setRows(props.rows || 0); props.setCurrent(props.label); }} />
       <span css={{ verticalAlign: 'top !important', fontSize: '2em', marginRight: '0.3em' }} >
-        <PuzzleSizeIcon width={props.size} height={props.size} />
+        <PuzzleSizeIcon width={props.cols || undefined} height={props.rows || undefined} />
       </span>
       {props.label}
+      {props.label === 'Custom' && props.current === props.label ?
+        <>
+          <input type='text' css={{ fontSize: '0.75em', marginLeft: '1em', width: '5em' }} value={props.cols || ''} placeholder='Columns' onChange={(e) => props.setCols(parseInt(e.target.value))} />
+          <span css={{ marginLeft: '0.5em', marginRight: '0.5em' }}>x</span>
+          <input type='text' css={{ fontSize: '0.75em', width: '5em' }} width='3em' value={props.rows || ''} placeholder='Rows' onChange={(e) => props.setRows(parseInt(e.target.value))} />
+        </>
+        : ''}
     </label>
   </div>;
 };
 
 const NewPuzzleForm = (props: { dispatch: Dispatch<NewPuzzleAction> }) => {
-  const [size, setSize] = useState(5);
+  const [cols, setCols] = useState(5);
+  const [rows, setRows] = useState(5);
+  const [current, setCurrent] = useState('Mini');
+  const [customRows, setCustomRows] = useState<number | null>(null);
+  const [customCols, setCustomCols] = useState<number | null>(null);
+
+  let errorMsg = '';
+  if (!customRows || !customCols) {
+    errorMsg = 'Both a width and a height must be specified for custom sizes';
+  } else if (customRows < 4 || customCols < 4) {
+    errorMsg = 'Cannot have fewer than 4 rows or columns';
+  } else if (customRows > 25 || customCols > 25) {
+    errorMsg = 'Cannot have more than 25 rows or columns';
+  }
 
   function startPuzzle(event: FormEvent) {
     event.preventDefault();
@@ -235,7 +265,7 @@ const NewPuzzleForm = (props: { dispatch: Dispatch<NewPuzzleAction> }) => {
     // Clear current puzzle
     localStorage.removeItem(STORAGE_KEY);
 
-    props.dispatch({ type: 'NEWPUZZLE', size: size });
+    props.dispatch({ type: 'NEWPUZZLE', cols: cols, rows: rows });
   }
 
   return <>
@@ -243,12 +273,15 @@ const NewPuzzleForm = (props: { dispatch: Dispatch<NewPuzzleAction> }) => {
     <p css={{ color: 'var(--error)' }}>WARNING: all progress on your current puzzle will be permanently lost. If you want to keep it, please publish the current puzzle first.</p>
     <form onSubmit={startPuzzle}>
       <div onClick={/* eslint-disable-line */ (e) => { e.stopPropagation(); }}>
-        <SizeSelectInput size={5} label='Mini' currentSize={size} setSize={setSize} />
-        <SizeSelectInput size={11} label='Midi' currentSize={size} setSize={setSize} />
-        <SizeSelectInput size={15} label='Full' currentSize={size} setSize={setSize} />
-        <SizeSelectInput size={23} label='XL' currentSize={size} setSize={setSize} />
+        <SizeSelectInput cols={5} rows={5} label='Mini' current={current} setCols={setCols} setRows={setRows} setCurrent={setCurrent} />
+        <SizeSelectInput cols={11} rows={11} label='Midi' current={current} setCols={setCols} setRows={setRows} setCurrent={setCurrent} />
+        <SizeSelectInput cols={15} rows={15} label='Full' current={current} setCols={setCols} setRows={setRows} setCurrent={setCurrent} />
+        <SizeSelectInput cols={customCols} rows={customRows} label='Custom' current={current} setCols={(n) => { setCols(n); setCustomCols(n); }} setRows={(n) => { setRows(n); setCustomRows(n); }} setCurrent={setCurrent} />
       </div>
-      <input type='submit' value='Create New Puzzle' />
+      {current === 'Custom' && errorMsg ?
+        <p css={{ color: 'var(--error)' }}>{errorMsg}</p>
+        : ''}
+      <input type='submit' value='Create New Puzzle' disabled={current === 'Custom' && errorMsg !== ''} />
     </form>
   </>;
 };
@@ -675,10 +708,11 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
         keyboardHandler={keyboardHandler}
         showExtraKeyLayout={state.showExtraKeyLayout}
         includeBlockKey={true}
+        aspectRatio={state.grid.width / state.grid.height}
         square={
-          (size: number) => {
+          (width: number, _height: number) => {
             return <GridView
-              squareSize={size}
+              squareWidth={width}
               grid={state.grid}
               active={state.active}
               dispatch={dispatch}

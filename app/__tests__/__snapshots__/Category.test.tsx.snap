@@ -330,6 +330,8 @@ exports[`basic category page test 1`] = `
               y="5"
             />
             
+            
+            
           </svg>
           
         </div>
@@ -377,6 +379,8 @@ exports[`basic category page test 1`] = `
               y="5"
             />
             
+            
+            
           </svg>
           
         </div>
@@ -423,6 +427,8 @@ exports[`basic category page test 1`] = `
               x="5"
               y="5"
             />
+            
+            
             
           </svg>
           
@@ -792,6 +798,8 @@ exports[`category page when logged in with some plays 1`] = `
               y="5"
             />
             
+            
+            
           </svg>
           <div
             class="emotion-8"
@@ -853,6 +861,8 @@ exports[`category page when logged in with some plays 1`] = `
               y="5"
             />
             
+            
+            
           </svg>
           
         </div>
@@ -901,6 +911,8 @@ exports[`category page when logged in with some plays 1`] = `
               x="5"
               y="5"
             />
+            
+            
             
           </svg>
           

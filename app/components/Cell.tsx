@@ -9,7 +9,7 @@ import {
 type CellProps = {
   autofill: string,
   gridWidth: number,
-  gridSize: number,
+  squareWidth: number,
   isBlock: boolean,
   active: boolean,
   entryCell: boolean,
@@ -36,7 +36,7 @@ export const Cell = memo(function Cell(props: CellProps) {
     bg = SECONDARY;
   }
 
-  const cellSize = props.gridSize / props.gridWidth;
+  const cellSize = props.squareWidth / props.gridWidth;
   const value = props.value.trim() ? props.value : props.autofill;
 
   return (

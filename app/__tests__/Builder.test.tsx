@@ -237,7 +237,9 @@ test('publish as daily mini', async () => {
   if (!dmData) {
     throw new Error('missing dms');
   }
-  expect(dmData).toEqual({ [getDateString(new Date())]: puzzleId });
+  const now = new Date();
+  now.setHours(12);
+  expect(dmData).toEqual({ [getDateString(now)]: puzzleId });
 
   await cleanup();
 
