@@ -15,24 +15,39 @@ function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  let gridWidth = 600;
+  let gridHeight = 600;
+  let xOffset = 0;
+  let yOffset = 0;
+
+  if (puzzle.w !== puzzle.h) {
+    if (puzzle.w > puzzle.h) {
+      gridHeight = 600 * puzzle.h / puzzle.w;
+      yOffset = (600 - gridHeight) / 2;
+    } else {
+      gridWidth = 600 * puzzle.w / puzzle.h;
+      xOffset = (600 - gridWidth) / 2;
+    }
+  }
+
   // Puzzle outline
   ctx.strokeStyle = 'black';
   ctx.lineWidth = 3;
   ctx.lineJoin = 'round';
-  ctx.strokeRect(300, 15, 600, 600);
+  ctx.strokeRect(300 + xOffset, 15 + yOffset, gridWidth, gridHeight);
 
   // Grid lines
   ctx.lineWidth = 2;
-  const widthDivision = 600 / puzzle.w;
-  const heightDivision = 600 / puzzle.h;
+  const widthDivision = gridWidth / puzzle.w;
+  const heightDivision = gridHeight / puzzle.h;
   ctx.beginPath();
   for (let i = 1; i < puzzle.w; i += 1) {
-    ctx.moveTo(300 + i * widthDivision, 15);
-    ctx.lineTo(300 + i * widthDivision, 615);
+    ctx.moveTo(300 + i * widthDivision + xOffset, 15 + yOffset);
+    ctx.lineTo(300 + i * widthDivision + xOffset, 15 + gridHeight + yOffset);
   }
   for (let i = 1; i < puzzle.h; i += 1) {
-    ctx.moveTo(300, 15 + i * heightDivision);
-    ctx.lineTo(900, 15 + i * heightDivision);
+    ctx.moveTo(300 + xOffset, 15 + i * heightDivision + yOffset);
+    ctx.lineTo(300 + gridWidth + xOffset, 15 + i * heightDivision + yOffset);
   }
   ctx.stroke();
 
@@ -45,7 +60,7 @@ function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
     const row = Math.floor(i / puzzle.w);
 
     ctx.fillStyle = 'black';
-    ctx.fillRect(300 + col * widthDivision, 15 + row * heightDivision, widthDivision, heightDivision);
+    ctx.fillRect(300 + col * widthDivision + xOffset, 15 + row * heightDivision + yOffset, widthDivision, heightDivision);
   }
 
   // Center Logo
