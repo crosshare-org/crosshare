@@ -93,14 +93,14 @@ class PuzReader {
     const w = this.buf[0x2c];
     const h = this.buf[0x2d];
     if (w < 4 || h < 4) {
-      throw new Error('all grids must have at least 4 rows+cols for now');
+      throw new Error('All grids must have at least 4 rows+cols for now');
     }
     if (w > 25 || h > 25) {
-      throw new Error('all grids must have max of 25 rows+cols for now');
+      throw new Error('All grids must have max of 25 rows+cols for now');
     }
     const scrambled = this.readShort(0x32);
     if (scrambled & 0x0004) {
-      throw new Error('no support for scrambled .puz files yet');
+      throw new Error('Cannot import scrambled .puz files');
     }
     const grid = [];
     for (let i = 0; i < w * h; i++) {

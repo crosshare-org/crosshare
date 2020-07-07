@@ -14,8 +14,12 @@ cases('test .puz import', async opts => {
 },
 [
   { name: 'av110622' },
-  { name: 'wsj110624' },
+  { name: 'cs080904' },
+  { name: 'Feb0308_oddnumbering' },
+  { name: 'nyt_partlyfilled' },
   { name: 'nyt_rebus_with_notes_and_shape' },
   { name: 'nyt_with_shape' },
+  { name: 'washpost' },
+  { name: 'wsj110624' },
 ]
 );
