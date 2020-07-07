@@ -2,7 +2,6 @@ import {
   useState, useReducer, useRef, useEffect, useCallback, useMemo,
   Dispatch, KeyboardEvent, MouseEvent, FormEvent
 } from 'react';
-import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
@@ -28,13 +27,19 @@ import { PublishOverlay } from './PublishOverlay';
 import { TimestampClass } from '../lib/firebaseWrapper';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from '../lib/gridBase';
-import { Position, Direction, PuzzleT, isAutofillCompleteMessage, isAutofillResultMessage, WorkerMessage, LoadDBMessage, AutofillMessage } from '../lib/types';
+import {
+  Position, Direction, PuzzleT, isAutofillCompleteMessage, isAutofillResultMessage,
+  WorkerMessage, LoadDBMessage, AutofillMessage, PuzzleInProgressV, PuzzleInProgressT
+} from '../lib/types';
 import {
   Symmetry, BuilderState, builderReducer, KeypressAction,
   SymmetryAction, ClickedFillAction, PuzzleAction, SetHighlightAction, PublishAction,
   NewPuzzleAction, initialBuilderState, BuilderGrid
 } from '../reducers/reducer';
-import { NestedDropDown, TopBarLink, TopBar, DefaultTopBar, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
+import {
+  NestedDropDown, TopBarLink, TopBar, DefaultTopBar, TopBarDropDownLink,
+  TopBarDropDownLinkA, TopBarDropDown
+} from './TopBar';
 import { SquareAndCols, TinyNav } from './Page';
 import { RebusOverlay } from './Puzzle';
 import { ClueMode } from './ClueMode';
@@ -174,18 +179,6 @@ const PotentialFillList = (props: PotentialFillListProps) => {
 };
 
 export const STORAGE_KEY = 'puzzleInProgress';
-
-const PuzzleInProgressV = t.type({
-  width: t.number,
-  height: t.number,
-  grid: t.array(t.string),
-  highlighted: t.array(t.number),
-  highlight: t.keyof({ circle: null, shade: null }),
-  title: t.union([t.string, t.null]),
-  clues: t.record(t.string, t.string)
-});
-type PuzzleInProgressT = t.TypeOf<typeof PuzzleInProgressV>;
-
 
 const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
   const inStorage = localStorage.getItem(STORAGE_KEY);

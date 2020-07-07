@@ -171,3 +171,14 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     comments: convertComments(dbPuzzle.cs || [])
   };
 }
+
+export const PuzzleInProgressV = t.type({
+  width: t.number,
+  height: t.number,
+  grid: t.array(t.string),
+  highlighted: t.array(t.number),
+  highlight: t.keyof({ circle: null, shade: null }),
+  title: t.union([t.string, t.null]),
+  clues: t.record(t.string, t.string)
+});
+export type PuzzleInProgressT = t.TypeOf<typeof PuzzleInProgressV>;
