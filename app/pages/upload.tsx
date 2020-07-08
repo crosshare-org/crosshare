@@ -1,22 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
-import NextJSRouter from 'next/router';
 
+import { PuzzleInProgressT } from '../lib/types';
 import { importFile } from '../lib/converter';
-import { requiresAuth } from '../components/AuthContext';
-import { STORAGE_KEY } from '../components/Builder';
+import { requiresAuth, AuthProps } from '../components/AuthContext';
 import { DefaultTopBar } from '../components/TopBar';
+import { Preview } from '../components/Preview';
 
-export const UploadPage = () => {
-  const [warnExisting, setWarnExisting] = useState(false);
+export const UploadPage = (props: AuthProps) => {
+  const [puzzle, setPuzzle] = useState<PuzzleInProgressT | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const inStorage = localStorage.getItem(STORAGE_KEY);
-    if (inStorage) {
-      setWarnExisting(true);
-    }
-  }, []);
 
   function handleFile(f: FileList | null) {
     if (!f) {
@@ -35,8 +28,7 @@ export const UploadPage = () => {
           if (!puzzle) {
             setError('Failed to parse file');
           } else {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(puzzle));
-            NextJSRouter.push('/construct');
+            setPuzzle(puzzle);
           }
         } catch (error) {
           console.error(error);
@@ -45,6 +37,10 @@ export const UploadPage = () => {
       }
     };
     fileReader.readAsArrayBuffer(f[0]);
+  }
+
+  if (puzzle) {
+    return <Preview {...props} {...puzzle} />;
   }
 
   const description = 'Import your existing puzzle to share it on Crosshare. Crosshare gives your solvers a first-class experience on any device, and gives you access to statistics about solves.';
@@ -56,10 +52,7 @@ export const UploadPage = () => {
       <meta key="og:description" property="og:description" content={description} />
     </Head>
     <DefaultTopBar />
-    <div css={{ margin: '1em' }}>
-      {warnExisting ?
-        <p><span css={{ color: 'var(--error)' }}>WARNING:</span> You have an existing puzzle in progress at crosshare.org/construct - uploading will cause you to permanently lose all progress. Please finish and publish the current puzzle before uploading.</p>
-        : ''}
+    <div css={{ margin: '1em', width: '100%' }}>
       {error ?
         <>
           <p css={{ color: 'var(--error)' }}>{error}</p>

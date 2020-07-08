@@ -67,9 +67,9 @@ interface SquareAndColsProps {
   left: ReactNode,
   right: ReactNode,
   tinyColumn?: ReactNode,
-  keyboardHandler: (key: string) => void,
-  showExtraKeyLayout: boolean,
-  includeBlockKey: boolean,
+  keyboardHandler?: (key: string) => void,
+  showExtraKeyLayout?: boolean,
+  includeBlockKey?: boolean,
 }
 export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((props, fwdedRef) => {
   const parentRef = useRef<HTMLDivElement | null>(null);
@@ -93,8 +93,8 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((pro
       alignItems: 'start',
     },
     flexWrap: 'nowrap',
-    minHeight: 'calc(100% - var(--height-adjustment))',
-    height: 'calc(100% - var(--height-adjustment))',
+    minHeight: props.keyboardHandler ? 'calc(100% - var(--height-adjustment))' : 'calc(100% - var(--header-height))',
+    height: props.keyboardHandler ? 'calc(100% - var(--height-adjustment))' : 'calc(100% - var(--header-height))',
   }}>
     <Square parentRef={parentRef} aspectRatio={props.aspectRatio || 1} contents={props.square} />
     <div css={{
@@ -143,12 +143,14 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((pro
       {props.tinyColumn}
     </div>
   </div>
-  <Keyboard
-    keyboardHandler={props.keyboardHandler}
-    muted={props.muted}
-    showExtraKeyLayout={props.showExtraKeyLayout}
-    includeBlockKey={props.includeBlockKey}
-  />
+  {props.keyboardHandler ?
+    <Keyboard
+      keyboardHandler={props.keyboardHandler}
+      muted={props.muted}
+      showExtraKeyLayout={props.showExtraKeyLayout || false}
+      includeBlockKey={props.includeBlockKey || false}
+    />
+    : ''}
   </>
   );
 });

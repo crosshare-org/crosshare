@@ -2,11 +2,13 @@ import { useRef, Dispatch, memo, MouseEvent } from 'react';
 
 import { Position, Direction } from '../lib/types';
 import { CluedEntry } from '../lib/viewableGrid';
+import { GridBase, valAt, EntryBase } from '../lib/gridBase';
 
 import { PuzzleAction, ClickedEntryAction } from '../reducers/reducer';
 import { SECONDARY, LIGHTER } from '../lib/style';
 
 interface ClueListItemProps {
+  dimCompleted: boolean,
   showDirection: boolean,
   conceal: boolean,
   entry: CluedEntry,
@@ -16,7 +18,7 @@ interface ClueListItemProps {
   active: Position | null,
   scrollToCross: boolean,
   showEntry: boolean,
-  valAt: (pos: Position) => string,
+  grid: GridBase<EntryBase>,
 }
 
 const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }: ClueListItemProps) {
@@ -62,7 +64,7 @@ const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }:
       <div css={{
         flex: '1 1 auto',
         height: '100%',
-        color: props.conceal ? 'transparent' : (props.entry.completedWord ? 'var(--default-text)' : 'var(--black)'),
+        color: props.conceal ? 'transparent' : (props.entry.completedWord && props.dimCompleted ? 'var(--default-text)' : 'var(--black)'),
         textShadow: props.conceal ? '0 0 1em var(--conceal-text)' : '',
       }}>
         <div>{props.entry.clue}</div>
@@ -75,7 +77,7 @@ const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }:
               minWidth: '1em',
               border: (props.active && a.row === props.active.row && a.col === props.active.col) ?
                 '1px solid var(--black)' : '1px solid transparent',
-            }}>{props.valAt(a).trim() || '-'}</span>;
+            }}>{valAt(props.grid, a).trim() || '-'}</span>;
           })}</div>
           : ''}
       </div>
@@ -84,16 +86,17 @@ const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }:
 });
 
 interface ClueListProps {
+  dimCompleted: boolean,
   conceal: boolean,
   header?: string,
-  current: number,
+  current?: number,
   active: Position,
   cross?: number,
   entries: Array<CluedEntry>,
   scrollToCross: boolean,
   dispatch: Dispatch<PuzzleAction>,
   showEntries: boolean,
-  valAt: (pos: Position) => string,
+  grid: GridBase<EntryBase>,
 }
 
 export const ClueList = (props: ClueListProps): JSX.Element => {
@@ -101,7 +104,8 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
     const isActive = props.current === entry.index;
     const isCross = props.cross === entry.index;
     return (<ClueListItem
-      valAt={props.valAt}
+      dimCompleted={props.dimCompleted}
+      grid={props.grid}
       showDirection={props.header ? false : true}
       showEntry={props.showEntries}
       entry={entry}

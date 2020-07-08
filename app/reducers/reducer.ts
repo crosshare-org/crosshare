@@ -72,7 +72,7 @@ function isBuilderState(state: GridInterfaceState): state is BuilderState {
 }
 
 export function initialBuilderState(
-  { width, height, grid, highlighted, highlight, title, clues, authorId, authorName }:
+  { width, height, grid, highlighted, highlight, title, clues, authorId, authorName, editable }:
     {
       width: number,
       height: number,
@@ -82,7 +82,8 @@ export function initialBuilderState(
       title: string | null,
       clues: Record<string, string>,
       authorId: string,
-      authorName: string
+      authorName: string,
+      editable: boolean,
     }) {
   const initialGrid = fromCells({
     mapper: (e) => e,
@@ -104,7 +105,7 @@ export function initialBuilderState(
     gridIsComplete: false,
     repeats: new Set<string>(),
     hasNoShortWords: false,
-    isEditable: () => true,
+    isEditable: () => editable,
     symmetry: (width === 5 && height === 5) ? Symmetry.None : Symmetry.Rotational,
     clues: clues,
     publishErrors: [],
@@ -383,12 +384,14 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
     }
     if (key === '`' && isBuilderState(state)) {
       const ci = cellIndex(state.grid, state.active);
-      if (state.grid.highlighted.has(ci)) {
-        state.grid.highlighted.delete(ci);
-      } else {
-        state.grid.highlighted.add(ci);
+      if (state.isEditable(ci)) {
+        if (state.grid.highlighted.has(ci)) {
+          state.grid.highlighted.delete(ci);
+        } else {
+          state.grid.highlighted.add(ci);
+        }
       }
-      return ({ ...state });
+      return state;
     }
     if (state.isEnteringRebus) {
       if (key.match(/^[A-Za-z0-9]$/)) {
@@ -418,7 +421,11 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       return state;
     }
     if (key === '{rebus}' || key === 'Escape') {
-      return ({ ...state, showExtraKeyLayout: false, isEnteringRebus: true });
+      const ci = cellIndex(state.grid, state.active);
+      if (state.isEditable(ci)) {
+        return ({ ...state, showExtraKeyLayout: false, isEnteringRebus: true });
+      }
+      return state;
     } else if (key === ' ' || key === '{dir}') {
       return ({ ...state, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
     } else if (key === '{prev}') {
@@ -439,9 +446,12 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       return ({ ...state, active: { ...moveDown(state.grid, state.active), dir: Direction.Down } });
     } else if ((key === '.' || key === '{block}') && state.grid.allowBlockEditing) {
       const ci = cellIndex(state.grid, state.active);
-      const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-      state.grid = gridWithBlockToggled(state.grid, state.active, symmetry);
-      return state.postEdit(ci) as T; // TODO this is trash
+      if (state.isEditable(ci)) {
+        const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
+        state.grid = gridWithBlockToggled(state.grid, state.active, symmetry);
+        return state.postEdit(ci) as T; // TODO this is trash
+      }
+      return state;
     } else if (key.match(/^[A-Za-z0-9]$/)) {
       const char = key.toUpperCase();
       const ci = cellIndex(state.grid, state.active);
@@ -514,7 +524,8 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
       highlighted: [],
       clues: {},
       authorId: state.authorId,
-      authorName: state.authorName
+      authorName: state.authorName,
+      editable: true,
     });
   }
   if (isPublishAction(action)) {

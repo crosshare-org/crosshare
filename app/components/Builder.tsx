@@ -204,6 +204,7 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     clues: saved ?.clues || {},
     authorId: props.user.uid,
     authorName: props.user.displayName || 'Anonymous',
+    editable: true,
   });
 };
 
