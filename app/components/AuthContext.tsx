@@ -15,6 +15,22 @@ export interface AuthPropsOptional {
   user?: firebase.User,
 }
 
+export function renderLoginButtonIfNeeded({ user, loadingUser, error }: AuthContextValue): React.ReactNode | null {
+  if (loadingUser) {
+    return <div></div>;
+  }
+  if (error) {
+    return <div>Error loading user: {error}</div>;
+  }
+  if (!user) {
+    return <GoogleSignInButton />;
+  }
+  if (user.isAnonymous) {
+    return <GoogleLinkButton user={user} />;
+  }
+  return null;
+}
+
 function renderLoginIfNeeded({ user, loadingUser, error }: AuthContextValue): React.ReactNode | null {
   if (loadingUser) {
     return <div></div>;
