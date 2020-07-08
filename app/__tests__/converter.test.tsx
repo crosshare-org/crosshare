@@ -16,6 +16,10 @@ test('test error on locked', async () => {
   await expect(loadPuz('nyt_locked')).rejects.toThrowErrorMatchingSnapshot();
 });
 
+test('test error on copyright', async () => {
+  await expect(loadPuz('nyt_with_copyright')).rejects.toThrowErrorMatchingSnapshot();
+});
+
 cases('test .puz import', async opts => {
   expect(await loadPuz(opts.name)).toMatchSnapshot();
 },

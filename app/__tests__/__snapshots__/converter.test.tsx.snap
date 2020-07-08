@@ -6007,4 +6007,6 @@ Object {
 }
 `;
 
+exports[`test error on copyright 1`] = `"Cannot import copyrighted puzzles"`;
+
 exports[`test error on locked 1`] = `"Cannot import scrambled .puz files"`;

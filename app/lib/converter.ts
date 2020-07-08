@@ -113,7 +113,10 @@ class PuzReader {
     this.ix = 0x34 + 2 * w * h;
     const title = this.readString();
     this.readString(); // author
-    this.readString(); // copyright
+    const copyright = this.readString();
+    if (copyright.indexOf('New York Times') !== -1) {
+      throw new Error('Cannot import copyrighted puzzles');
+    }
 
     const clues: Array<ClueT> = [];
     let label = 1;
