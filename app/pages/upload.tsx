@@ -80,7 +80,7 @@ export default function UploadPage() {
         :
         <>
           <label>
-            Select a .puz file to upload. Additional file formats will be supported soon - please let us know if there&apos;s one you&apos;d like to see next!
+            <p>Select a .puz file to upload. Additional file formats will be supported soon - please let us know if there&apos;s one you&apos;d like to see next!</p>
             <input type='file' accept='.puz' onChange={e => handleFile(e.target.files)} />
           </label>
         </>
