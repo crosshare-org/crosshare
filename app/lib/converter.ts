@@ -47,7 +47,7 @@ class PuzReader {
       }
       const c = this.buf[this.ix++];
       count += 1;
-      if (c === 0) break; // null terminated
+      if (!c) break; // null terminated
       result.push(String.fromCodePoint(c));
     }
     return result.join('');
