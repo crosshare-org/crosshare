@@ -3400,3 +3400,5 @@ Object {
   "width": 21,
 }
 `;
+
+exports[`test error on locked 1`] = `"Cannot import scrambled .puz files"`;

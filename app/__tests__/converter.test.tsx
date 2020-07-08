@@ -7,10 +7,17 @@ import { importFile } from '../lib/converter';
 
 const readFile = util.promisify(fs.readFile);
 
+async function loadPuz(name: string) {
+  const puz = await readFile(path.resolve(__dirname, 'converter/puz/' + name + '.puz'));
+  return importFile(puz);
+}
+
+test('test error on locked', async () => {
+  await expect(loadPuz('nyt_locked')).rejects.toThrowErrorMatchingSnapshot();
+});
 
 cases('test .puz import', async opts => {
-  const puz = await readFile(path.resolve(__dirname, 'converter/puz/' + opts.name + '.puz'));
-  expect(importFile(puz)).toMatchSnapshot();
+  expect(await loadPuz(opts.name)).toMatchSnapshot();
 },
 [
   { name: 'av110622' },
