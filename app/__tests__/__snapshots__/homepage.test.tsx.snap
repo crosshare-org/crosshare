@@ -365,6 +365,16 @@ exports[`get home page 1`] = `
       </p>
     </div>
     <h2>
+      Share a Puzzle
+    </h2>
+    <p>
+      <a
+        href="/upload"
+      >
+        Upload a .puz to get a Crosshare link to share with solvers
+      </a>
+    </p>
+    <h2>
       Recent Puzzles
     </h2>
     <div

@@ -74,6 +74,8 @@ export default function HomePage({ dailymini, recents }: HomePageProps) {
         <p>by {dailymini.authorName}</p>
         <p><Link href='/categories/[categoryId]' as='/categories/dailymini' passHref>Play previous daily minis</Link></p>
       </PuzzleLink>
+      <h2>Share a Puzzle</h2>
+      <p><Link href='/upload' as='/upload' passHref>Upload a .puz to get a Crosshare link to share with solvers</Link></p>
       <h2>Recent Puzzles</h2>
       {recents.map((p, i) => <PuzzleResultLink key={i} puzzle={p} />)}
       <p css={{ marginTop: '1em' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
