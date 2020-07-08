@@ -1,5 +1,5 @@
 import {
-  useReducer, useCallback, useMemo, KeyboardEvent
+  useReducer, useCallback, useMemo, useState, KeyboardEvent
 } from 'react';
 import useEventListener from '@use-it/event-listener';
 import {
@@ -7,12 +7,14 @@ import {
 } from 'react-icons/fa';
 
 import { TimestampClass } from '../lib/firebaseWrapper';
+import { Emoji } from './Emoji';
 import {
   TopBarLink, TopBar, TopBarLinkA
 } from './TopBar';
 import { ClueList } from './ClueList';
 import { AuthProps } from './AuthContext';
 import { GridView } from './Grid';
+import { Overlay } from './Overlay';
 import { PublishOverlay } from './PublishOverlay';
 import { entryAndCrossAtPosition } from '../lib/gridBase';
 import { builderReducer, initialBuilderState, BuilderState, KeypressAction, PublishAction } from '../reducers/reducer';
@@ -36,6 +38,7 @@ const initializeState = (props: PuzzleInProgressT & AuthProps): BuilderState => 
 
 export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
   const [state, dispatch] = useReducer(builderReducer, props, initializeState);
+  const [dismissedIntro, setDismissedIntro] = useState(false);
 
   const physicalKeyboardHandler = useCallback((e: KeyboardEvent) => {
     const tagName = (e.target as HTMLElement) ?.tagName ?.toLowerCase();
@@ -85,6 +88,15 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
     </TopBar>
     {state.toPublish ?
       <PublishOverlay toPublish={state.toPublish} user={props.user} cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })} /> : ''}
+    {!dismissedIntro ?
+      <Overlay closeCallback={() => setDismissedIntro(true)}>
+        <h2><Emoji symbol='🎉' /> Successfully Imported {props.title ? <>&lsquo;{props.title}&rsquo;</> : ''}</h2>
+        <p>Please look over your grid and clues to make sure everything is correct.
+        If something didn&apos;t import correctly, get in touch with us via
+        the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a> or <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">Twitter</a>.</p>
+        <p>Once you&apos;ve looked it over, click &lsquo;Publish&rsquo; in the top bar to publish your puzzle!</p>
+      </Overlay>
+      : ''}
     <SquareAndCols
       muted={true}
       aspectRatio={state.grid.width / state.grid.height}
