@@ -16,6 +16,7 @@ type GridViewProps = {
   allowBlockEditing?: boolean,
   autofill?: Array<string>,
   squareWidth: number,
+  cellColors?: Array<number>,
 }
 
 export const GridView = ({ active, dispatch, grid, ...props }: GridViewProps) => {
@@ -56,6 +57,7 @@ export const GridView = ({ active, dispatch, grid, ...props }: GridViewProps) =>
       isWrong={props.wrongCells ?.has(idx)}
       wasRevealed={props.revealedCells ?.has(idx)}
       highlight={grid.highlighted.has(idx) ? grid.highlight : undefined}
+      cellColor={props.cellColors ?.[idx]}
     />);
   }
   return <>{cells}</>;

@@ -22,6 +22,7 @@ type CellProps = {
   isVerified: boolean | undefined,
   isWrong: boolean | undefined,
   wasRevealed: boolean | undefined,
+  cellColor?: number,
 }
 
 export const Cell = memo(function Cell(props: CellProps) {
@@ -30,6 +31,8 @@ export const Cell = memo(function Cell(props: CellProps) {
     bg = 'repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px,' + PRIMARY + ' 10px,' + PRIMARY + ' 20px);';
   } else if (props.isBlock) {
     bg = 'var(--cell-wall)';
+  } else if (props.cellColor) {
+    bg = 'rgba(241, 167, 45, ' + (props.cellColor) + ')';
   } else if (props.active) {
     bg = PRIMARY;
   } else if (props.entryCell) {
@@ -59,7 +62,7 @@ export const Cell = memo(function Cell(props: CellProps) {
         borderTop: (props.row === 0) ? '1px solid var(--cell-wall)' : 0,
         borderLeft: (props.column === 0) ? '1px solid var(--cell-wall)' : 0,
         background: bg,
-
+        boxShadow: (props.cellColor && props.active ? 'inset 0 0 4px var(--black)' : (props.cellColor && props.entryCell) ? 'inset 0 0 2px var(--black)' : 'none'),
       }}>
         {!props.isBlock ?
           <>

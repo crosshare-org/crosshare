@@ -12,6 +12,8 @@ import { timeString } from '../../../lib/utils';
 import { App } from '../../../lib/firebaseWrapper';
 import { DefaultTopBar } from '../../../components/TopBar';
 import { ErrorPage } from '../../../components/ErrorPage';
+import { PuzzleStats } from '../../../components/PuzzleStats';
+import { SMALL_AND_UP } from '../../../lib/style';
 
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();
@@ -98,18 +100,53 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
       <Head>
         <title>Stats | {puzzle.title} | Crosshare</title>
       </Head>
-      <DefaultTopBar />
-      {stats ?
-        <>
-          <div>Stats for <b>{puzzle.title}</b> as of {stats.ua.toDate().toLocaleTimeString()}</div>
-          <div>Total Completions: {stats.n}</div>
-          <div>Average Completion Time: {stats.n && timeString(stats.nt / stats.n, true)}</div>
-          <div>Non-cheating Completions: {stats.s}</div>
-          <div>Average Non-Cheating Completion Time: {stats.s && timeString(stats.st / stats.s, true)}</div>
-        </>
-        :
-        <p>We don&apos;t have stats for this puzzle yet. Stats are updated once per hour, and won&apos; be available until after a non-author has solved the puzzle.</p>
-      }
+      <div css={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div css={{ flex: 'none', }}>
+          <DefaultTopBar />
+        </div>
+        <div css={{
+          padding: '0.5em', flex: 'none',
+          borderBottom: '1px solid var(--default-text)',
+        }}>
+          {stats ?
+            <>
+              <h3 css={{ width: '100%' }}>Stats for <b>{puzzle.title}</b></h3>
+              <div css={{
+                [SMALL_AND_UP]: {
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }
+              }}>
+                <div css={{
+                  [SMALL_AND_UP]: {
+                    width: '45%',
+                  }
+                }}>
+                  <div>Total completions: {stats.n}</div>
+                  <div>Average completion time: {stats.n && timeString(stats.nt / stats.n, true)}</div>
+                </div>
+                <div css={{
+                  [SMALL_AND_UP]: {
+                    width: '45%',
+                  }
+                }}>
+                  <div>Completions without helpers: {stats.s}</div>
+                  <div>Average time without helpers: {stats.s && timeString(stats.st / stats.s, true)}</div>
+                </div>
+              </div>
+            </>
+            :
+            <p>We don&apos;t have stats for this puzzle yet. Stats are updated once per hour, and won&apos; be available until after a non-author has solved the puzzle.</p>
+          }
+        </div>
+        <div css={{ flex: 'auto', overflow: 'hidden' }}>
+          {stats ?
+            <PuzzleStats puzzle={puzzle} stats={stats} />
+            :
+            ''}
+        </div>
+      </div>
     </>
   );
 };

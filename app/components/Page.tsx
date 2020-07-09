@@ -70,6 +70,7 @@ interface SquareAndColsProps {
   keyboardHandler?: (key: string) => void,
   showExtraKeyLayout?: boolean,
   includeBlockKey?: boolean,
+  noHeightAdjust?: boolean,  // TODO we can get rid of this everywhere by doing what we do for puzzle stats page and flex'ing the layout
 }
 export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((props, fwdedRef) => {
   const parentRef = useRef<HTMLDivElement | null>(null);
@@ -93,8 +94,8 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((pro
       alignItems: 'start',
     },
     flexWrap: 'nowrap',
-    minHeight: props.keyboardHandler ? 'calc(100% - var(--height-adjustment))' : 'calc(100% - var(--header-height))',
-    height: props.keyboardHandler ? 'calc(100% - var(--height-adjustment))' : 'calc(100% - var(--header-height))',
+    minHeight: props.noHeightAdjust ? '100%' : (props.keyboardHandler ? 'calc(100% - var(--height-adjustment))' : 'calc(100% - var(--header-height))'),
+    height: props.noHeightAdjust ? '100%' : (props.keyboardHandler ? 'calc(100% - var(--height-adjustment))' : 'calc(100% - var(--header-height))'),
   }}>
     <Square parentRef={parentRef} aspectRatio={props.aspectRatio || 1} contents={props.square} />
     <div css={{
