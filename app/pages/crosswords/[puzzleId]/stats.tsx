@@ -12,8 +12,8 @@ import { timeString } from '../../../lib/utils';
 import { App } from '../../../lib/firebaseWrapper';
 import { DefaultTopBar } from '../../../components/TopBar';
 import { ErrorPage } from '../../../components/ErrorPage';
-import { PuzzleStats } from '../../../components/PuzzleStats';
-import { SMALL_AND_UP } from '../../../lib/style';
+import { PuzzleStats, StatsMode } from '../../../components/PuzzleStats';
+import { SMALL_AND_UP, buttonAsLink } from '../../../lib/style';
 
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();
@@ -73,6 +73,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
   const [stats, setStats] = useState<PuzzleStatsT | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [didLoad, setDidLoad] = useState<boolean>(false);
+  const [mode, setMode] = useState(StatsMode.AverageTime);
 
   useEffect(() => {
     getFromSessionOrDB({
@@ -106,7 +107,6 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
         </div>
         <div css={{
           padding: '0.5em', flex: 'none',
-          borderBottom: '1px solid var(--default-text)',
         }}>
           {stats ?
             <>
@@ -135,6 +135,10 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
                   <div>Average time without helpers: {stats.s && timeString(stats.st / stats.s, true)}</div>
                 </div>
               </div>
+              <div css={{ paddingTop: '1em', textAlign: 'center' }}>
+                <button css={[buttonAsLink, { marginRight: '1em' }]} disabled={mode === StatsMode.AverageTime} onClick={() => { setMode(StatsMode.AverageTime); }}>Time to Correct</button>
+                <button css={[buttonAsLink, { marginLeft: '1em' }]} disabled={mode === StatsMode.AverageEditCount} onClick={() => { setMode(StatsMode.AverageEditCount); }}>Number of Edits</button>
+              </div>
             </>
             :
             <p>We don&apos;t have stats for this puzzle yet. Stats are updated once per hour, and won&apos; be available until after a non-author has solved the puzzle.</p>
@@ -142,7 +146,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
         </div>
         <div css={{ flex: 'auto', overflow: 'hidden' }}>
           {stats ?
-            <PuzzleStats puzzle={puzzle} stats={stats} />
+            <PuzzleStats puzzle={puzzle} stats={stats} mode={mode} />
             :
             ''}
         </div>

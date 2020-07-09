@@ -18,6 +18,11 @@ export const buttonAsLink = css`
     text-decoration: underline;
     color: var(--link-hover);
   }
+  &:disabled {
+    text-decoration: none;
+    color: var(--default-text);
+    cursor: default;
+  }
 `;
 
 export const TINY_COL_MIN_HEIGHT = 75;

@@ -31,7 +31,7 @@ export const Cell = memo(function Cell(props: CellProps) {
     bg = 'repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px,' + PRIMARY + ' 10px,' + PRIMARY + ' 20px);';
   } else if (props.isBlock) {
     bg = 'var(--cell-wall)';
-  } else if (props.cellColor) {
+  } else if (props.cellColor !== undefined) {
     bg = 'rgba(241, 167, 45, ' + (props.cellColor) + ')';
   } else if (props.active) {
     bg = PRIMARY;

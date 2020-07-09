@@ -12,9 +12,15 @@ import { Direction, PuzzleResult } from '../lib/types';
 import { PuzzleStatsT } from '../lib/dbtypes';
 import { fromCells, getClueMap } from '../lib/viewableGrid';
 
+export enum StatsMode {
+  AverageTime,
+  AverageEditCount
+}
+
 interface PuzzleStatsProps {
   puzzle: PuzzleResult,
-  stats: PuzzleStatsT
+  stats: PuzzleStatsT,
+  mode: StatsMode
 }
 
 const initializeState = (props: PuzzleStatsProps): BuilderState => {
@@ -73,9 +79,10 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
   }, [state.grid.entries, state.clues]);
 
   const normalizedColors = useMemo(() => {
-    const max = Math.max(...props.stats.ct);
-    return props.stats.ct.map(v => v / max);
-  }, [props.stats.ct]);
+    const data = props.mode === StatsMode.AverageTime ? props.stats.ct : props.stats.uc.map(uc => props.stats.n ? (uc / props.stats.n - 1) : 0);
+    const max = Math.max(...data);
+    return data.map(v => max ? v / max : 0);
+  }, [props.stats.ct, props.stats.uc, props.stats.n, props.mode]);
 
   return <SquareAndCols
     muted={true}
