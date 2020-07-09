@@ -72,18 +72,23 @@ export default function UploadPage() {
           <p>If your puzzle isn&apos;t uploading correctly please message us on twitter or in the google group so we can help!</p>
         </>
         : ''}
-      {loginButton ?
-        <>
-          <p>To upload a puzzle, you need to log in with Google first. We use your sign in to keep track of the puzzles you&apos;ve uploaded.</p>
-          {loginButton}
-        </>
+      {ctx.loadingUser ?
+        <></>
         :
-        <>
-          <label>
-            <p>Select a .puz file to upload. Additional file formats will be supported soon - please let us know if there&apos;s one you&apos;d like to see next!</p>
-            <input css={{ width: '100%', overflow: 'none' }} type='file' accept='.puz' onChange={e => handleFile(e.target.files)} />
-          </label>
-        </>
+        (
+          loginButton ?
+            <>
+              < p > To upload a puzzle, you need to log in with Google first. We use your sign in to keep track of the puzzles you&apos;ve uploaded.</p>
+              {loginButton}
+            </>
+            :
+            <>
+              <label>
+                <p>Select a .puz file to upload. Additional file formats will be supported soon - please let us know if there&apos;s one you&apos;d like to see next!</p>
+                <input css={{ width: '100%', overflow: 'none' }} type='file' accept='.puz' onChange={e => handleFile(e.target.files)} />
+              </label>
+            </>
+        )
       }
       <div css={{
         marginTop: '1em',
@@ -106,6 +111,6 @@ export default function UploadPage() {
         </FeatureList>
       </div>
       <h2>Sharing puzzles on Crosshare is always free.</h2>
-    </div>
+    </div >
   </>;
 }
