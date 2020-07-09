@@ -1,5 +1,6 @@
 import { useState, useContext, ReactNode } from 'react';
 import Head from 'next/head';
+import { css } from '@emotion/core';
 
 import { PuzzleInProgressT } from '../lib/types';
 import { importFile } from '../lib/converter';
@@ -15,6 +16,15 @@ function FeatureList(props: { children: ReactNode }) {
     }
   }}>{props.children}</div>;
 }
+
+export const featureImage = css`
+  width: 100%;
+  height: auto;
+  margin: 0 auto 1em auto;
+  display: block;
+  border: 1px solid var(--default-text);
+  box-shadow: 2px 2px 2px var(--default-text);
+`;
 
 export default function UploadPage() {
   const ctx = useContext(AuthContext);
@@ -98,16 +108,19 @@ export default function UploadPage() {
         }
       }}>
         <FeatureList>
-          <h3>Playable Anywhere</h3>
+          <h3 css={{ textAlign: 'center' }}>Solve Anywhere</h3>
+          <img css={[featureImage, { width: '50%' }]} src="/phoneshot.png" alt="Crosshare on mobile phone" />
           <p>Crosshare&apos;s solving interface is mobile-first and makes solving your puzzle as smooth as possible on any device.</p>
         </FeatureList>
         <FeatureList>
-          <h3>Track Solves</h3>
-          <p>As a constructor, you get access to advanced analytics about your puzzle. Find out how many people solve your puzzle, how long it takes them, and which words they get stuck on.</p>
+          <h3 css={{ textAlign: 'center' }}>Share</h3>
+          <img css={featureImage} src="/tweet.png" alt="Crosshare tweet" />
+          <p>Crosshare puzzles are made to share. Our search engine optimization and social tags will get as many people solving your puzzle as possible.</p>
         </FeatureList>
         <FeatureList>
-          <h3>Share</h3>
-          <p>Crosshare puzzles are made to share. Our search engine optimization and social tags will get as many people solving your puzzle as possible.</p>
+          <h3 css={{ textAlign: 'center' }}>Track Solves</h3>
+          <img css={featureImage} src="/heatmap.png" alt="Crosshare heatmap" />
+          <p>As a constructor, you get access to advanced analytics about your puzzle. Find out how many people solve your puzzle, how long it takes them, and view heatmaps of exactly which cells they get stuck on.</p>
         </FeatureList>
       </div>
       <h2>Sharing puzzles on Crosshare is always free.</h2>
