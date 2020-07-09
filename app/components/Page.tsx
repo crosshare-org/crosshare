@@ -28,7 +28,7 @@ const TinyNavButton = ({ isLeft, dispatch }: TinyNavButtonProps) => {
     justifyContent: 'center',
     borderRight: isLeft ? '1px solid var(--clue-bg)' : '',
     borderLeft: isLeft ? '' : '1px solid var(--clue-bg)',
-  }} onClick={() => dispatch({ type: 'KEYPRESS', key: isLeft ? '{prevEntry}' : '{nextEntry}', shift: false })}>
+  }} aria-label={isLeft ? 'Previous Entry' : 'Next Entry'} onClick={() => dispatch({ type: 'KEYPRESS', key: isLeft ? '{prevEntry}' : '{nextEntry}', shift: false })}>
     {isLeft ?
       <FaAngleDoubleLeft css={{ position: 'absolute' }} />
       :

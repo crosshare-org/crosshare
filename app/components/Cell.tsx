@@ -59,10 +59,10 @@ export const Cell = memo(function Cell(props: CellProps) {
         height: '100%',
         borderRight: '1px solid var(--cell-wall)',
         borderBottom: '1px solid var(--cell-wall)',
-        borderTop: (props.row === 0) ? '1px solid var(--cell-wall)' : 0,
-        borderLeft: (props.column === 0) ? '1px solid var(--cell-wall)' : 0,
+        ...(props.row === 0) && { borderTop: '1px solid var(--cell-wall)' },
+        ...(props.column === 0) && { borderLeft: '1px solid var(--cell-wall)' },
         background: bg,
-        boxShadow: (props.cellColor && props.active ? 'inset 0 0 4px var(--black)' : (props.cellColor && props.entryCell) ? 'inset 0 0 2px var(--black)' : 'none'),
+        ...(props.cellColor !== undefined) && { boxShadow: props.active ? 'inset 0 0 4px var(--black)' : (props.entryCell ? 'inset 0 0 2px var(--black)' : 'none') },
       }}>
         {!props.isBlock ?
           <>

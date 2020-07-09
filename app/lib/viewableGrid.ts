@@ -176,7 +176,7 @@ export function moveToNextEntry<Entry extends ViewableEntry>(grid: ViewableGrid<
   for (let offset = 0; offset < grid.sortedEntries.length; offset += 1) {
     let index = (i + offset + 1) % grid.sortedEntries.length;
     if (reverse) {
-      index = (i + grid.sortedEntries.length - offset - 1) % grid.sortedEntries.length;
+      index = (i + 2 * grid.sortedEntries.length - offset - 1) % grid.sortedEntries.length;
     }
     const tryEntry = grid.entries[grid.sortedEntries[index]];
     if (tryEntry.completedWord === null) {
@@ -191,7 +191,7 @@ export function moveToNextEntry<Entry extends ViewableEntry>(grid: ViewableGrid<
   // Now just return the start of the next/prev entry
   let index = (i + 1) % grid.sortedEntries.length;
   if (reverse) {
-    index = (i - 1) % grid.sortedEntries.length;
+    index = (grid.sortedEntries.length + i - 1) % grid.sortedEntries.length;
   }
   const nextEntry = grid.entries[grid.sortedEntries[index]];
   return { ...nextEntry.cells[0], dir: nextEntry.direction };

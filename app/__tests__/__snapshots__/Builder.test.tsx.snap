@@ -64,7 +64,6 @@ exports[`publish custom / non-rectangular size 1`] = `
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
-  border-left: 0;
   background: var(--secondary);
 }
 
@@ -78,7 +77,6 @@ exports[`publish custom / non-rectangular size 1`] = `
   height: 100%;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
-  border-top: 0;
   border-left: 1px solid var(--cell-wall);
   background: var(--white);
 }
@@ -93,8 +91,6 @@ exports[`publish custom / non-rectangular size 1`] = `
   height: 100%;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
-  border-top: 0;
-  border-left: 0;
   background: var(--white);
 }
 
@@ -669,7 +665,6 @@ exports[`publish custom / non-rectangular size 2`] = `
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
-  border-left: 0;
   background: var(--secondary);
 }
 
@@ -683,7 +678,6 @@ exports[`publish custom / non-rectangular size 2`] = `
   height: 100%;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
-  border-top: 0;
   border-left: 1px solid var(--cell-wall);
   background: var(--white);
 }
@@ -698,8 +692,6 @@ exports[`publish custom / non-rectangular size 2`] = `
   height: 100%;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
-  border-top: 0;
-  border-left: 0;
   background: var(--white);
 }
 
@@ -1259,7 +1251,6 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
-  border-left: 0;
   background: var(--secondary);
 }
 
@@ -1273,7 +1264,6 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   height: 100%;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
-  border-top: 0;
   border-left: 1px solid var(--cell-wall);
   background: var(--white);
 }
@@ -1288,8 +1278,6 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   height: 100%;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
-  border-top: 0;
-  border-left: 0;
   background: var(--white);
 }
 
@@ -1326,7 +1314,6 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
-  border-left: 0;
   background: var(--primary);
 }
 

@@ -435,6 +435,11 @@ test('nonuser finishing a puzzle should cause creation of anonymous user and wri
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
   expect(firebaseWrapper.signInAnonymously).toHaveBeenCalledTimes(1);
 
+  // This was causing an error on completed puzzles.
+  fireEvent.click(r.getByLabelText('Previous Entry'));
+  fireEvent.click(r.getByLabelText('Previous Entry'));
+  fireEvent.click(r.getByLabelText('Previous Entry'));
+
   await cleanup();
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
