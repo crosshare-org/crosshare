@@ -5,7 +5,7 @@ import {
 import Head from 'next/head';
 import {
   FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause,
-  FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock,
+  FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock, FaComment,
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
@@ -596,7 +596,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     />;
   }
 
-  const dropdownMenus = useMemo(() => (
+  const checkRevealMenus = useMemo(() => (
     <>
       <TopBarDropDown icon={<FaEye />} text="Reveal">
         {() => <>
@@ -644,12 +644,18 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
             dispatch(action);
           }} />
       }
+    </>), [state.autocheck]);
+
+  const moreMenu = useMemo(() => (
+    <>
       <TopBarDropDown icon={<FaEllipsisH />} text="More">
         {() => <>
-          <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
-            const kpa: KeypressAction = { type: 'KEYPRESS', key: 'Escape', shift: false };
-            dispatch(kpa);
-          }} />
+          {!state.success ?
+            <TopBarDropDownLink icon={<Rebus />} text="Enter Rebus" shortcutHint={<EscapeKey />} onClick={() => {
+              const kpa: KeypressAction = { type: 'KEYPRESS', key: 'Escape', shift: false };
+              dispatch(kpa);
+            }} />
+            : ''}
           {
             muted ?
               <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
@@ -674,7 +680,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         }
       </TopBarDropDown>
     </>
-  ), [state.autocheck, muted, props.isAdmin, props.user ?.uid, puzzle, setMuted]);
+  ), [muted, props.isAdmin, props.user ?.uid, puzzle, setMuted, state.success]);
 
   const description = puzzle.clues.map(c => c.clue).sort().slice(0, 10).join('; ');
 
@@ -691,12 +697,22 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         <meta key="description" name="description" content={description} />
       </Head>
       <TopBar>
-        <TopBarLink icon={<FaPause />} hoverText={'Pause Game'} text={timeString(state.displaySeconds, true)} onClick={() => dispatch({ type: 'PAUSEACTION' })} keepText={true} />
-        <TopBarLink icon={state.clueView ? <SpinnerFinished /> : <FaListOl />} text={state.clueView ? 'Grid' : 'Clues'} onClick={() => {
-          const a: ToggleClueViewAction = { type: 'TOGGLECLUEVIEW' };
-          dispatch(a);
-        }} />
-        {dropdownMenus}
+        {!state.success ?
+          <>
+            <TopBarLink icon={<FaPause />} hoverText={'Pause Game'} text={timeString(state.displaySeconds, true)} onClick={() => dispatch({ type: 'PAUSEACTION' })} keepText={true} />
+            <TopBarLink icon={state.clueView ? <SpinnerFinished /> : <FaListOl />} text={state.clueView ? 'Grid' : 'Clues'} onClick={() => {
+              const a: ToggleClueViewAction = { type: 'TOGGLECLUEVIEW' };
+              dispatch(a);
+            }} />
+            {checkRevealMenus}
+            {moreMenu}
+          </>
+          :
+          <>
+            <TopBarLink icon={<FaComment />} text={'Show Comments'} onClick={() => dispatch({ type: 'UNDISMISSSUCCESS' })} />
+            {moreMenu}
+          </>
+        }
       </TopBar>
       {state.isEnteringRebus ?
         <RebusOverlay dispatch={dispatch} value={state.rebusValue} /> : ''}

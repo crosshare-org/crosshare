@@ -661,6 +661,9 @@ export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleS
   if (action.type === 'DISMISSSUCCESS') {
     return { ...state, dismissedSuccess: true };
   }
+  if (action.type === 'UNDISMISSSUCCESS') {
+    return { ...state, dismissedSuccess: false };
+  }
   if (action.type === 'TOGGLEMODERATING') {
     return { ...state, moderating: !state.moderating };
   }
