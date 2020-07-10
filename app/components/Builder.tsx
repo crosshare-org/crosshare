@@ -291,11 +291,36 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
 
   // We need a ref to the current grid so we can verify it in worker.onmessage
   const currentCells = useRef(state.grid.cells);
+  const priorSolves = useRef<Array<Array<string>>>([]);
+  const priorWidth = useRef(state.grid.width);
+  const priorHeight = useRef(state.grid.height);
   const runAutofill = useCallback(() => {
     if (!WordDB.wordDB) {
       throw new Error('missing db!');
     }
     currentCells.current = state.grid.cells;
+    if (priorWidth.current !== state.grid.width || priorHeight.current !== state.grid.height) {
+      priorWidth.current = state.grid.width;
+      priorHeight.current = state.grid.height;
+      priorSolves.current = [];
+    }
+    for (const priorSolve of priorSolves.current) {
+      let match = true;
+      for (let i = 0; i < state.grid.cells.length; i += 1) {
+        if (priorSolve[i] === '.' && state.grid.cells[i] !== '.') {
+          match = false;
+          break;
+        }
+        if (state.grid.cells[i].trim() && priorSolve[i] !== state.grid.cells[i]) {
+          match = false;
+          break;
+        }
+      }
+      if (match) {
+        setAutofilledGrid(priorSolve);
+        return;
+      }
+    }
     setAutofilledGrid([]);
     if (!worker) {
       console.log('initializing worker');
@@ -303,7 +328,9 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       worker.onmessage = e => {
         const data = e.data as WorkerMessage;
         if (isAutofillResultMessage(data)) {
-          if (currentCells.current.every((c, i) => c === data.input[i])) {
+          priorSolves.current.unshift(data.result);
+          if (currentCells.current.length === data.input.length &&
+            currentCells.current.every((c, i) => c === data.input[i])) {
             setAutofilledGrid(data.result);
           }
         } else if (isAutofillCompleteMessage(data)) {
@@ -344,7 +371,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   if (clueMode) {
     return <ClueMode dispatch={dispatch} title={state.title} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
   }
-  return <GridMode runAutofill={runAutofill} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
+  return <GridMode reRunAutofill={() => { priorSolves.current = []; runAutofill(); }} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
 };
 
 /* Returns the index within a word string of the start of the `active` cell,
@@ -447,7 +474,7 @@ const potentialFill = (entry: ViewableEntry, grid: BuilderGrid): Array<[string, 
 interface GridModeProps {
   user: firebase.User,
   isAdmin: boolean,
-  runAutofill: () => void,
+  reRunAutofill: () => void,
   autofillEnabled: boolean,
   setAutofillEnabled: (val: boolean) => void,
   autofilledGrid: string[],
@@ -456,7 +483,7 @@ interface GridModeProps {
   dispatch: Dispatch<PuzzleAction>,
   setClueMode: (val: boolean) => void,
 }
-const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridModeProps) => {
+const GridMode = ({ reRunAutofill, state, dispatch, setClueMode, ...props }: GridModeProps) => {
   const [muted, setMuted] = usePersistedBoolean('muted', false);
 
   const gridRef = useRef<HTMLDivElement | null>(null);
@@ -466,13 +493,13 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
       return;  // This way you can still do apple-R and such
     }
     if (e.key === 'Enter') {
-      runAutofill();
+      reRunAutofill();
       return;
     }
     const kpa: KeypressAction = { type: 'KEYPRESS', key: e.key, shift: e.shiftKey };
     dispatch(kpa);
     e.preventDefault();
-  }, [dispatch, runAutofill]);
+  }, [dispatch, reRunAutofill]);
   useEventListener('keydown', physicalKeyboardHandler, gridRef.current || undefined);
 
   const fillLists = useMemo(() => {
@@ -657,7 +684,7 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
             dispatch(a);
           }} />
           <TopBarDropDownLink icon={<MdRefresh />} text='Rerun Autofiller' shortcutHint={<EnterKey />} onClick={() => {
-            runAutofill();
+            reRunAutofill();
           }} />
           {
             muted ?
@@ -678,7 +705,7 @@ const GridMode = ({ runAutofill, state, dispatch, setClueMode, ...props }: GridM
         }
       </TopBarDropDown>
     </TopBar >;
-  }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, stats, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.grid.width, state.grid.height, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, runAutofill, dispatch, muted]);
+  }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, stats, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.grid.width, state.grid.height, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, reRunAutofill, dispatch, muted]);
 
   return (
     <>
