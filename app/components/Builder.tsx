@@ -29,7 +29,7 @@ import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from '../lib/gridBase';
 import {
   Position, Direction, PuzzleT, isAutofillCompleteMessage, isAutofillResultMessage,
-  WorkerMessage, LoadDBMessage, AutofillMessage, PuzzleInProgressV, PuzzleInProgressT
+  WorkerMessage, LoadDBMessage, AutofillMessage, CancelAutofillMessage, PuzzleInProgressV, PuzzleInProgressT
 } from '../lib/types';
 import {
   Symmetry, BuilderState, builderReducer, KeypressAction,
@@ -286,7 +286,6 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   const [autofilledGrid, setAutofilledGrid] = useState<string[]>([]);
   const [autofillInProgress, setAutofillInProgress] = useState(false);
 
-  // TODO should we actually disable autofill? Right now it just turns off display
   const [autofillEnabled, setAutofillEnabled] = useState(true);
 
   // We need a ref to the current grid so we can verify it in worker.onmessage
@@ -295,6 +294,14 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   const priorWidth = useRef(state.grid.width);
   const priorHeight = useRef(state.grid.height);
   const runAutofill = useCallback(() => {
+    if (!autofillEnabled) {
+      if (worker) {
+        const msg: CancelAutofillMessage = { type: 'cancel' };
+        setAutofillInProgress(false);
+        worker.postMessage(msg);
+      }
+      return;
+    }
     if (!WordDB.wordDB) {
       throw new Error('missing db!');
     }
@@ -317,6 +324,11 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
         }
       }
       if (match) {
+        if (worker) {
+          const msg: CancelAutofillMessage = { type: 'cancel' };
+          setAutofillInProgress(false);
+          worker.postMessage(msg);
+        }
         setAutofilledGrid(priorSolve);
         return;
       }
@@ -350,7 +362,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     };
     setAutofillInProgress(true);
     worker.postMessage(autofill);
-  }, [state.grid]);
+  }, [state.grid, autofillEnabled]);
   useEffect(() => { runAutofill(); }, [runAutofill]);
 
   useEffect(() => {

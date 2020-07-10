@@ -37,6 +37,12 @@ export interface LoadDBMessage extends WorkerMessage {
 export function isLoadDBMessage(msg: WorkerMessage): msg is LoadDBMessage {
   return msg.type === 'loaddb';
 }
+export interface CancelAutofillMessage extends WorkerMessage {
+  type: 'cancel'
+}
+export function isCancelAutofillMessage(msg: WorkerMessage): msg is CancelAutofillMessage {
+  return msg.type === 'cancel';
+}
 export interface AutofillMessage extends WorkerMessage {
   type: 'autofill',
   grid: string[],

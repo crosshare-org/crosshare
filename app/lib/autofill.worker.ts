@@ -1,4 +1,4 @@
-import { AutofillResultMessage, AutofillCompleteMessage, WorkerMessage, isLoadDBMessage, isAutofillMessage } from './types';
+import { AutofillResultMessage, AutofillCompleteMessage, WorkerMessage, isLoadDBMessage, isAutofillMessage, isCancelAutofillMessage } from './types';
 import { Autofiller } from './Autofiller';
 import { setDb } from './WordDB';
 
@@ -6,10 +6,10 @@ import { setDb } from './WordDB';
 const ctx: Worker = self as any;
 
 const msgChannel = new MessageChannel();
-let current: Autofiller;
+let current: Autofiller | null;
 
 msgChannel.port2.onmessage = _e => {
-  if (current.completed) {
+  if (current === null || current.completed) {
     return;
   }
   current.step();
@@ -48,6 +48,8 @@ ctx.onmessage = (e) => {
 
     current = new Autofiller(data.grid, data.width, data.height, onResult, onComplete);
     msgChannel.port1.postMessage('');
+  } else if (isCancelAutofillMessage(data)) {
+    current = null;
   } else {
     console.error('unhandled msg in autofill worker: ' + e.data);
   }
