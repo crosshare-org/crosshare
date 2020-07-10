@@ -263,7 +263,7 @@ test('requested daily mini but approved as default', async () => {
   await r4.findByText(/visible to others yet/i);
   await r4.findByText(/Enter Rebus/i);
   fireEvent.click(r4.getByText(/Moderate/i));
-  const approveButton = await r4.findByText(/Approve Puzzle/i);
+  const approveButton = await r4.findByText(/Mark as Moderated/i);
   fireEvent.click(approveButton);
 
   await waitForExpect(async () => expect((await admin.firestore().collection('c').where('m', '==', true).get()).size).toEqual(1));
@@ -272,6 +272,7 @@ test('requested daily mini but approved as default', async () => {
   const updated = res.docs[0].data();
   expect(res.docs[0].id).toEqual(puzzleId);
   expect(updated['m']).toEqual(true);
+  expect(updated['f']).toEqual(false);
   expect(updated['p']).not.toEqual(null);
   expect(updated['c']).toEqual(null);
   expect(updated['t']).toEqual('Our Title');
@@ -338,7 +339,7 @@ test('publish as default', async () => {
   expect(r4.queryByText(/visible to others yet/i)).toBeNull();
   fireEvent.click(r4.getByText(/Moderate/i));
   expect(r4.queryByText(/Schedule As Daily Mini/i)).toBeNull();
-  const approveButton = await r4.findByText(/Approve Puzzle/i);
+  const approveButton = await r4.findByText(/Set as Featured/i);
   fireEvent.click(approveButton);
 
   await waitForExpect(async () => expect((await admin.firestore().collection('c').where('m', '==', true).get()).size).toEqual(1));
@@ -347,6 +348,7 @@ test('publish as default', async () => {
   const updated = res.docs[0].data();
   expect(res.docs[0].id).toEqual(puzzleId);
   expect(updated['m']).toEqual(true);
+  expect(updated['f']).toEqual(true);
   expect(updated['p']).not.toEqual(null);
   expect(updated['c']).toEqual(null);
   expect(updated['t']).toEqual('Our Title');

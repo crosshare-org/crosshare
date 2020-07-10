@@ -17,7 +17,7 @@ type DailyMini = {
 
 interface HomePageProps {
   dailymini: DailyMini,
-  recents: Array<PuzzleResult>
+  featured: Array<PuzzleResult>
 }
 
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ res }) => {
@@ -26,22 +26,21 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ re
     .where('p', '<', TimestampClass.now())
     .orderBy('p', 'desc').limit(1).get();
 
-  const recentsQuery = db.collection('c').where('c', '==', null)
-    .where('m', '==', true)
+  const featuredQuery = db.collection('c').where('m', '==', true).where('f', '==', true)
     .where('p', '<', TimestampClass.now())
     .orderBy('p', 'desc').limit(20).get();
 
-  return Promise.all([dailyminiQuery, recentsQuery]).then(([dmResult, recentsResult]) => {
+  return Promise.all([dailyminiQuery, featuredQuery]).then(([dmResult, featuredResult]) => {
     if (!dmResult.size) {
       throw new Error('Missing daily mini');
     }
-    const recents = recentsResult.docs.map((doc) => {
+    const featured = featuredResult.docs.map((doc) => {
       const res = DBPuzzleV.decode(doc.data());
       if (isRight(res)) {
         return { ...puzzleFromDB(res.right), id: doc.id };
       } else {
         console.error(PathReporter.report(res).join(','));
-        throw new Error('Bad puzzle querying for recents');
+        throw new Error('Bad puzzle querying for featured');
       }
     });
     const data = dmResult.docs[0].data();
@@ -49,7 +48,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ re
     if (isRight(validationResult)) {
       res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
       const dm = { id: dmResult.docs[0].id, authorName: validationResult.right.n };
-      return { props: { dailymini: dm, recents } };
+      return { props: { dailymini: dm, featured } };
     } else {
       console.error(PathReporter.report(validationResult).join(','));
       throw new Error('Malformed daily mini');
@@ -57,7 +56,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ re
   });
 };
 
-export default function HomePage({ dailymini, recents }: HomePageProps) {
+export default function HomePage({ dailymini, featured }: HomePageProps) {
   return <>
     <Head>
       <title>Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles</title>
@@ -76,8 +75,8 @@ export default function HomePage({ dailymini, recents }: HomePageProps) {
       </PuzzleLink>
       <h2>Share a Puzzle</h2>
       <p><Link href='/upload' as='/upload' passHref>Upload a .puz to get a Crosshare link to share with solvers</Link></p>
-      <h2>Recent Puzzles</h2>
-      {recents.map((p, i) => <PuzzleResultLink key={i} puzzle={p} />)}
+      <h2>Featured Puzzles</h2>
+      {featured.map((p, i) => <PuzzleResultLink key={i} puzzle={p} />)}
       <p css={{ marginTop: '1em' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
     </div >
   </>;

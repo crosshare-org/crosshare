@@ -101,6 +101,9 @@ test('security rules should not allow publishing with restricted fields set', as
   await firebaseTesting.assertSucceeds(
     app.firestore().collection('c').add(puzzle)
   );
+  await firebaseTesting.assertFails(
+    app.firestore().collection('c').add({ ...puzzle, f: true })
+  );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { cs, ...withoutComments } = withComments;
   await firebaseTesting.assertSucceeds(

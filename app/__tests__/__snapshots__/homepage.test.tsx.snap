@@ -375,7 +375,7 @@ exports[`get home page 1`] = `
       </a>
     </p>
     <h2>
-      Recent Puzzles
+      Featured Puzzles
     </h2>
     <div
       class="emotion-11"

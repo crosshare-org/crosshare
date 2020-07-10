@@ -121,6 +121,7 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
       // Dump it!
       sessionStorage.removeItem('categories/dailymini');
     });
+    // TODO change title here
     db.collection('c').doc(puzzle.id).update({
       m: true,
       p: TimestampClass.fromDate(date),
@@ -131,16 +132,19 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
     });
   }
 
-  function setModerated() {
-    const hourAgo = new Date();
-    hourAgo.setHours(hourAgo.getHours() - 1);
-    db.collection('c').doc(puzzle.id).update({
-      m: true,
-      c: null,
-      p: TimestampClass.fromDate(hourAgo),
-    }).then(() => {
-      window.location.reload();
-    });
+  function markAsModerated(featured: boolean) {
+    const update = { m: true, c: null, f: featured };
+    if (puzzle.publishTime === null) {
+      const hourAgo = new Date();
+      hourAgo.setHours(hourAgo.getHours() - 1);
+      db.collection('c').doc(puzzle.id).update({ ...update, p: TimestampClass.fromDate(hourAgo) }).then(() => {
+        window.location.reload();
+      });
+    } else {
+      db.collection('c').doc(puzzle.id).update(update).then(() => {
+        window.location.reload();
+      });
+    }
   }
 
   return (
@@ -162,7 +166,8 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
         :
         ''
       }
-      <button css={{ marginTop: '2em' }} disabled={puzzle.moderated} onClick={setModerated}>Approve Puzzle</button>
+      <button css={{ marginTop: '2em' }} disabled={puzzle.moderated} onClick={() => markAsModerated(true)}>Set as Featured</button>
+      <button css={{ marginTop: '2em' }} disabled={puzzle.moderated} onClick={() => markAsModerated(false)}>Mark as Moderated</button>
     </Overlay>
   );
 });
