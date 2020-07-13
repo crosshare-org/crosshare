@@ -41,10 +41,8 @@ service cloud.firestore {
         && validCrossword()
         && request.resource.data.m == false
         && (!request.resource.data.keys().hasAny(["f"]) || request.resource.data.f == false)
-        && (
-          (request.resource.data.c == 'dailymini' && request.resource.data.p == null && request.resource.data.w == 5 && request.resource.data.h == 5)
-          ||
-          (request.resource.data.c == null && request.time >= request.resource.data.p));
+        && request.resource.data.c == null
+        && request.time >= request.resource.data.p;
     }
     match /uc/{userId} {
       allow read: if request.auth.uid == userId;
