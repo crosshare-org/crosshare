@@ -221,22 +221,6 @@ test('published page redirects for author', async () => {
   await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledWith('/crosswords/' + publishedId));
 });
 
-test('pending page errors for user but non-admin/author', async () => {
-  setApp(loggedInApp);
-
-  const r = render(<PuzzleLoader puzzleId={pendingId} />, { user: getUser('rando', false) });
-
-  await r.findByText(/error loading puzzle/i);
-});
-
-test('pending page errors for non user', async () => {
-  setApp(app);
-
-  const r = render(<PuzzleLoader puzzleId={pendingId} />, {});
-
-  await r.findByText(/error loading puzzle/i);
-});
-
 test('pending page displays puzzle for admin', async () => {
   setApp(loggedInAsAdminApp);
 

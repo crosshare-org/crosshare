@@ -202,6 +202,7 @@ Object {
   "height": 13,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "Joseph Crosswords, Jan 5, 2016",
   "width": 11,
 }
@@ -451,6 +452,7 @@ Object {
   "height": 13,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "Sheffer Crosswords, Jan 5, 2016",
   "width": 13,
 }
@@ -768,6 +770,7 @@ Object {
   "height": 15,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "MOVE ON",
   "width": 15,
 }
@@ -1083,6 +1086,7 @@ Object {
   "height": 15,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "GET YOUR FILL",
   "width": 15,
 }
@@ -1680,6 +1684,7 @@ Object {
   "height": 21,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "LA Times, Sun, Jan 31, 2016 - \\"Misaligned\\"",
   "width": 21,
 }
@@ -2275,6 +2280,7 @@ Object {
   "height": 21,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "REENACTMENTS: Real-people Oscar roles",
   "width": 21,
 }
@@ -2870,6 +2876,7 @@ Object {
   "height": 21,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "NY Times, Sun, Feb 03, 2008  JUST FOLLOW DIRECTIONS",
   "width": 21,
 }
@@ -3187,6 +3194,7 @@ Object {
   "height": 15,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "AV Club xword, 6 22 11",
   "width": 15,
 }
@@ -3504,6 +3512,7 @@ Object {
   "height": 15,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "September 4, 2008 - \\"CD Collection\\"",
   "width": 15,
 }
@@ -3821,6 +3830,7 @@ Object {
   "height": 15,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "NY Times, Mon, Mar 10, 2008",
   "width": 15,
 }
@@ -4142,6 +4152,8 @@ Object {
     168,
     177,
   ],
+  "notes": "TEEN PUZZLEMAKER WEEK
+All the daily crosswords this week, Monday through Saturday, have been contributed by puzzlemakers under the age of 20. Today's crossword is by Caleb Madison, 15, of New York City. He is a sophomore at Bard High School in Manhattan. This is his fourth puzzle for The Times.",
   "title": "NY Times, Thu, Sep 11, 2008  When this puzzle is done, connect the circled letters in alphabetical order, and then back to the start, to reveal something seen on the 32-Down 4-Down.",
   "width": 15,
 }
@@ -4766,6 +4778,7 @@ Object {
     390,
     394,
   ],
+  "notes": null,
   "title": "NY Times, Sun, Jul 20, 2008  ACROSS THE BOARD",
   "width": 21,
 }
@@ -5019,6 +5032,7 @@ Object {
   "height": 13,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "Fierce & Fabulous",
   "width": 13,
 }
@@ -5055,6 +5069,7 @@ Object {
   "height": 4,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "Reference PUZ File",
   "width": 5,
 }
@@ -5092,6 +5107,7 @@ Object {
   "height": 4,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "Reference PUZ File",
   "width": 5,
 }
@@ -5409,6 +5425,7 @@ Object {
   "height": 15,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "December 6, 2005 - \\"Split Pea Soup\\"",
   "width": 15,
 }
@@ -6002,6 +6019,7 @@ Object {
   "height": 21,
   "highlight": "circle",
   "highlighted": Array [],
+  "notes": null,
   "title": "June 24, 2011 - Good News, Bad News",
   "width": 21,
 }
