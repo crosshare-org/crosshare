@@ -61,7 +61,7 @@ if (typeof window !== 'undefined') {
 let worker: Worker;
 
 type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-type BuilderProps = WithOptional<Omit<PuzzleT, 'comments' | 'category' | 'authorId' | 'authorName' | 'moderated' | 'publishTime'>, 'clues' | 'title' | 'highlighted' | 'highlight'>
+type BuilderProps = WithOptional<Omit<PuzzleT, 'comments' | 'category' | 'authorId' | 'authorName' | 'moderated' | 'publishTime'>, 'clues' | 'title' | 'constructorNotes' | 'highlighted' | 'highlight'>
 
 export const BuilderDBLoader = (props: BuilderProps & AuthProps): JSX.Element => {
   const [ready, setReady] = useState(false);
@@ -201,6 +201,7 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     highlighted: saved ?.highlighted || props.highlighted || [],
     highlight: saved ?.highlight || props.highlight || 'circle',
     title: saved ?.title || props.title || null,
+    notes: saved ?.notes || props.constructorNotes || null,
     clues: saved ?.clues || {},
     authorId: props.user.uid,
     authorName: props.user.displayName || 'Anonymous',
@@ -373,15 +374,16 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       highlight: state.grid.highlight,
       highlighted: Array.from(state.grid.highlighted),
       clues: state.clues,
-      title: state.title
+      title: state.title,
+      notes: state.notes,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(inProgress));
   }, [state.clues, state.grid.cells, state.grid.width, state.grid.height,
-    state.grid.highlight, state.grid.highlighted, state.title]);
+    state.grid.highlight, state.grid.highlighted, state.title, state.notes]);
 
   const [clueMode, setClueMode] = useState(false);
   if (clueMode) {
-    return <ClueMode dispatch={dispatch} title={state.title} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
+    return <ClueMode dispatch={dispatch} title={state.title} notes={state.notes} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
   }
   return <GridMode reRunAutofill={() => { priorSolves.current = []; runAutofill(); }} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
 };

@@ -4,6 +4,7 @@ import NextJSRouter from 'next/router';
 import { DisplayNameForm, getDisplayName } from './DisplayNameForm';
 import { Overlay } from './Overlay';
 import { Emoji } from './Emoji';
+import { ConstructorNotes } from './ConstructorNotes';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
 import { DBPuzzleT, AuthoredPuzzleT, AuthoredPuzzlesV } from '../lib/dbtypes';
 import { updateInCache } from '../lib/dbUtils';
@@ -72,12 +73,10 @@ export function PublishOverlay(props: { toPublish: DBPuzzleT, user: firebase.Use
         :
         <h3>by <i>{displayName}</i> (<button css={buttonAsLink} onClick={() => setEditingDisplayName(true)}>change name</button>)</h3>
       }
+      {props.toPublish.cn ?
+        <ConstructorNotes notes={props.toPublish.cn} />
+        : ''}
       <p>Thanks for constructing a puzzle! <Emoji symbol='😎' /></p>
-      {props.toPublish.w === 5 && props.toPublish.h === 5 ?
-        <p>We will shoot you an email if your puzzle is selected to be a Crosshare daily mini.</p>
-        :
-        ''
-      }
       <p css={{ color: 'var(--error)' }}>All puzzles are reviewed and subject to removal at any time
     for any reason (e.g. if the content is deemed offensive or if it is found to be
      copyright infringement)</p>

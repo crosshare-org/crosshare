@@ -122,6 +122,7 @@ export interface PuzzleT {
   highlighted: Array<number>,
   highlight: 'circle' | 'shade',
   comments: Array<Comment>,
+  constructorNotes: string | null,
 }
 
 export type PuzzleResult = PuzzleT & { id: string };
@@ -174,7 +175,8 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     grid: dbPuzzle.g,
     highlighted: dbPuzzle.hs || [],
     highlight: dbPuzzle.s ? 'shade' : 'circle',
-    comments: convertComments(dbPuzzle.cs || [])
+    comments: convertComments(dbPuzzle.cs || []),
+    constructorNotes: dbPuzzle.cn || null,
   };
 }
 
@@ -185,6 +187,7 @@ export const PuzzleInProgressV = t.type({
   highlighted: t.array(t.number),
   highlight: t.keyof({ circle: null, shade: null }),
   title: t.union([t.string, t.null]),
-  clues: t.record(t.string, t.string)
+  clues: t.record(t.string, t.string),
+  notes: t.union([t.string, t.null])
 });
 export type PuzzleInProgressT = t.TypeOf<typeof PuzzleInProgressV>;

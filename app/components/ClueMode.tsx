@@ -1,7 +1,7 @@
 import { Dispatch } from 'react';
 
 import { SpinnerFinished } from './Icons';
-import { BuilderEntry, SetClueAction, SetTitleAction, PuzzleAction } from '../reducers/reducer';
+import { BuilderEntry, SetClueAction, SetTitleAction, SetNotesAction, PuzzleAction } from '../reducers/reducer';
 import { TopBarLink, TopBar } from './TopBar';
 import { buttonAsLink } from '../lib/style';
 import { Direction } from '../lib/types';
@@ -39,6 +39,7 @@ const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry,
 
 interface ClueModeProps {
   title: string | null,
+  notes: string | null,
   exitClueMode: () => void,
   completedEntries: Array<BuilderEntry>,
   clues: Record<string, string>,
@@ -59,6 +60,24 @@ export const ClueMode = (props: ClueModeProps) => {
             props.dispatch(sta);
           }} />
         </label>
+        {props.notes !== null ?
+          <>
+            <h2>Note</h2>
+            <input type="text" css={{ width: '100%', marginBottom: '1.5em' }} placeholder="Add a note" value={props.notes} onChange={(e) => {
+              const sta: SetNotesAction = { type: 'SETNOTES', value: e.target.value };
+              props.dispatch(sta);
+            }} />
+            <p><button css={buttonAsLink} onClick={() => {
+              const sna: SetNotesAction = { type: 'SETNOTES', value: null };
+              props.dispatch(sna);
+            }}>Remove note</button></p>
+          </>
+          :
+          <p><button css={buttonAsLink} onClick={() => {
+            const sna: SetNotesAction = { type: 'SETNOTES', value: '' };
+            props.dispatch(sna);
+          }}>Add a note</button> (notes are shown before a puzzle is started and can be used to explain something about the theme, etc.)</p>
+        }
         <h2>Clues</h2>
         {props.completedEntries.length ?
           <table css={{ width: '100%', }}>

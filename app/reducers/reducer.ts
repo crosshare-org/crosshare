@@ -56,6 +56,7 @@ export type BuilderGrid = ViewableGrid<BuilderEntry>;
 export interface BuilderState extends GridInterfaceState {
   type: 'builder',
   title: string | null,
+  notes: string | null,
   grid: BuilderGrid,
   gridIsComplete: boolean,
   repeats: Set<string>,
@@ -72,7 +73,7 @@ function isBuilderState(state: GridInterfaceState): state is BuilderState {
 }
 
 export function initialBuilderState(
-  { width, height, grid, highlighted, highlight, title, clues, authorId, authorName, editable }:
+  { width, height, grid, highlighted, highlight, title, notes, clues, authorId, authorName, editable }:
     {
       width: number,
       height: number,
@@ -80,6 +81,7 @@ export function initialBuilderState(
       highlighted: Array<number>,
       highlight: 'circle' | 'shade',
       title: string | null,
+      notes: string | null,
       clues: Record<string, string>,
       authorId: string,
       authorName: string,
@@ -97,6 +99,7 @@ export function initialBuilderState(
   return validateGrid({
     type: 'builder',
     title: title,
+    notes: notes,
     active: { col: 0, row: 0, dir: Direction.Across },
     grid: initialGrid,
     showExtraKeyLayout: false,
@@ -154,6 +157,14 @@ export interface SetTitleAction extends PuzzleAction {
 }
 function isSetTitleAction(action: PuzzleAction): action is SetTitleAction {
   return action.type === 'SETTITLE';
+}
+
+export interface SetNotesAction extends PuzzleAction {
+  type: 'SETNOTES',
+  value: string | null,
+}
+function isSetNotesAction(action: PuzzleAction): action is SetNotesAction {
+  return action.type === 'SETNOTES';
 }
 
 export interface SetHighlightAction extends PuzzleAction {
@@ -509,6 +520,9 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   if (isSetTitleAction(action)) {
     return ({ ...state, title: action.value });
   }
+  if (isSetNotesAction(action)) {
+    return ({ ...state, notes: action.value });
+  }
   if (isClickedFillAction(action)) {
     return ({ ...state, grid: gridWithEntrySet(state.grid, action.entryIndex, action.value) }.postEdit(0) as BuilderState);
   }
@@ -520,6 +534,7 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
       width: action.cols, height: action.rows,
       grid: Array(action.cols * action.rows).fill(' '),
       title: null,
+      notes: null,
       highlight: 'circle',
       highlighted: [],
       clues: {},
@@ -579,7 +594,8 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
       h: state.grid.height,
       w: state.grid.width,
       g: state.grid.cells,
-      ac, an, dc, dn
+      ac, an, dc, dn,
+      ...state.notes && { cn: state.notes }
     };
     if (state.grid.highlighted.size) {
       puzzle.hs = Array.from(state.grid.highlighted);

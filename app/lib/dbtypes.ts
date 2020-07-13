@@ -101,6 +101,8 @@ const DBPuzzleOptionalV = t.partial({
   cs: t.array(CommentWithRepliesV),
   /** is this puzzle featured (should appear on homepage) */
   f: t.boolean,
+  /** constructor notes */
+  cn: t.string,
 });
 export const DBPuzzleV = t.intersection([DBPuzzleMandatoryV, DBPuzzleOptionalV]);
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;

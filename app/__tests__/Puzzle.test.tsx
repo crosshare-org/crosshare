@@ -45,6 +45,7 @@ const testPuzzle: PuzzleResult = {
   highlight: 'circle',
   id: 'test-puzzle',
   comments: [],
+  constructorNotes: null,
 };
 
 test('clicking a clue sets slot to active', () => {
@@ -94,6 +95,7 @@ const dailymini_5_19: PuzzleResult = {
   highlight: 'circle',
   comments: [],
   id: 'iMwPVXfePmv3bJC6KaQL',
+  constructorNotes: null,
 };
 
 test('daily mini from 5/19/20', () => {

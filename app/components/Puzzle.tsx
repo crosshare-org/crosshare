@@ -44,6 +44,7 @@ import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 import { App, DeleteSentinal, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
 import { Emoji } from './Emoji';
 import { Comments } from './Comments';
+import { ConstructorNotes } from './ConstructorNotes';
 
 export interface NextPuzzleLink {
   puzzleId: string,
@@ -59,6 +60,7 @@ interface PauseBeginProps {
   dismissMessage: string,
   moderated: boolean,
   publishTime: Date | undefined,
+  notes: string | null,
 }
 
 const BeginPauseOverlay = (props: PauseBeginProps) => {
@@ -89,6 +91,9 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
         }
         <h3>{props.title}</h3>
         <h4>by {props.authorName}</h4>
+        {props.notes ?
+          <ConstructorNotes notes={props.notes} />
+          : ''}
         {props.loadingPlayState ?
           <div>Checking for previous play data...</div>
           :
@@ -150,7 +155,6 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
   return (
     <Overlay closeCallback={() => dispatch({ type: 'TOGGLEMODERATING' })}>
       <h4>Moderate this Puzzle</h4>
-      <div>{puzzle.moderated ? 'Puzzle has been approved' : 'Puzzle is not approved'}</div>
       {puzzle.category === 'dailymini' ?
         <div>
           {puzzle.publishTime ?
@@ -195,6 +199,9 @@ const SuccessOverlay = (props: { user?: firebase.User, puzzle: PuzzleResult, nex
       <div css={{ textAlign: 'center' }}>
         <h3>{props.puzzle.title}</h3>
         <h4>by {props.puzzle.authorName}</h4>
+        {props.puzzle.constructorNotes ?
+          <ConstructorNotes notes={props.puzzle.constructorNotes} />
+          : ''}
         <h4><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
         <p>You solved the puzzle in <b>{timeString(props.solveTime, false)}</b></p>
         {!props.user || props.user.isAnonymous ?
@@ -562,7 +569,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     };
   }, [state.grid.entries]);
 
-  const beginPauseProps = { loadingPlayState: loadingPlayState, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch, moderated: puzzle.moderated, publishTime: (puzzle.publishTime ? new Date(puzzle.publishTime) : undefined) };
+  const beginPauseProps = { loadingPlayState: loadingPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch, moderated: puzzle.moderated, publishTime: (puzzle.publishTime ? new Date(puzzle.publishTime) : undefined) };
 
   let puzzleView: ReactNode;
 

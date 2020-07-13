@@ -38,6 +38,7 @@ const initializeState = (props: PuzzleStatsProps): BuilderState => {
     highlighted: props.puzzle.highlighted,
     highlight: props.puzzle.highlight,
     title: props.puzzle.title,
+    notes: props.puzzle.constructorNotes,
     clues: getClueMap(viewableGrid, props.puzzle.clues),
     authorId: props.puzzle.authorId,
     authorName: props.puzzle.authorName,

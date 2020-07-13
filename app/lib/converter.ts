@@ -134,7 +134,7 @@ class PuzReader {
       label += inc;
     }
 
-    this.readString(); // notes
+    const notes = this.readString().trim() || null;
 
     let tryAnotherExtension = true;
     while (tryAnotherExtension) {
@@ -158,7 +158,7 @@ class PuzReader {
 
     return {
       width: w, height: h,
-      grid, title,
+      grid, title, notes,
       clues: getClueMap(viewableGrid, clues),
       highlighted: this.highlighted, highlight: 'circle'
     };

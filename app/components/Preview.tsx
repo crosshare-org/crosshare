@@ -13,6 +13,7 @@ import {
 } from './TopBar';
 import { ClueList } from './ClueList';
 import { AuthProps } from './AuthContext';
+import { ConstructorNotes } from './ConstructorNotes';
 import { GridView } from './Grid';
 import { Overlay } from './Overlay';
 import { PublishOverlay } from './PublishOverlay';
@@ -29,6 +30,7 @@ const initializeState = (props: PuzzleInProgressT & AuthProps): BuilderState => 
     highlighted: props.highlighted,
     highlight: props.highlight,
     title: props.title,
+    notes: props.notes,
     clues: props.clues,
     authorId: props.user.uid,
     authorName: props.user.displayName || 'Anonymous',
@@ -91,6 +93,9 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
     {!dismissedIntro ?
       <Overlay closeCallback={() => setDismissedIntro(true)}>
         <h2><Emoji symbol='🎉' /> Successfully Imported {props.title ? <>&lsquo;{props.title}&rsquo;</> : ''}</h2>
+        {props.notes ?
+          <ConstructorNotes notes={props.notes} />
+          : ''}
         <p>Please look over your grid and clues to make sure everything is correct.
         If something didn&apos;t import correctly, get in touch with us via
         the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a> or <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">Twitter</a>.</p>
