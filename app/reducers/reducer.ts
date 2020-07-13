@@ -402,7 +402,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
           state.grid.highlighted.add(ci);
         }
       }
-      return state;
+      return { ...state };
     }
     if (state.isEnteringRebus) {
       if (key.match(/^[A-Za-z0-9]$/)) {
