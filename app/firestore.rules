@@ -24,7 +24,7 @@ service cloud.firestore {
     }
     match /c/{crosswordId} {
       allow get: if isAdmin() || isAuthor()
-        || (resource.data.p != null && request.time > resource.data.p);
+        || (resource.data.p != null && request.time + duration.time(1, 0, 0, 0) >= resource.data.p);
 
       // TODO figure out exactly what is using this query
       allow list: if isAdmin() || isAuthor()

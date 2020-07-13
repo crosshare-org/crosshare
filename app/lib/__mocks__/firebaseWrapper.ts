@@ -8,6 +8,8 @@ export const AuthProvider = null;
 
 export const DeleteSentinal = firebaseTesting.firestore.FieldValue.delete();
 
+export const ServerTimestamp = firebaseTesting.firestore.FieldValue.serverTimestamp();
+
 export const TimestampClass = firebaseTesting.firestore.Timestamp;
 
 let anonApp: firebase.app.App;

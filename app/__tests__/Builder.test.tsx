@@ -8,7 +8,6 @@ import PuzzlePage, { getServerSideProps } from '../pages/crosswords/[puzzleId]';
 import { PuzzleLoader } from '../pages/pending/[pendingPuzzleId]';
 import { PuzzleLoader as StatsPuzzleLoader } from '../pages/crosswords/[puzzleId]/stats';
 import waitForExpect from 'wait-for-expect';
-import { getDateString } from '../lib/dbtypes';
 
 jest.mock('next/router', () => ({ push: jest.fn() }));
 jest.mock('../lib/firebaseWrapper');
@@ -98,7 +97,7 @@ test('puzzle in progress should be cached in local storage', async () => {
   expect(r.getByLabelText('cell0x2')).toHaveTextContent('C');
 });
 
-async function publishPuzzle(submitType: RegExp, prePublish?: (r: RenderResult) => Promise<void>) {
+async function publishPuzzle(prePublish?: (r: RenderResult) => Promise<void>) {
   sessionStorage.clear();
   localStorage.clear();
 
@@ -144,157 +143,21 @@ async function publishPuzzle(submitType: RegExp, prePublish?: (r: RenderResult) 
   fireEvent.click(r.getByText('Back to Grid', { exact: true }));
   fireEvent.click(r.getByText('Publish', { exact: true }));
 
-  const dmChoice = await (r.findByText(submitType));
-  fireEvent.click(dmChoice);
+  const publishButton = await r.findByText('Publish Puzzle', { exact: true });
 
   if (prePublish) {
     await prePublish(r);
   }
 
-  fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
+  fireEvent.click(publishButton);
   await (r.findByText(/Published Successfully/));
 
   const dailyMinis = await admin.firestore().collection('categories').doc('dailymini').get();
   expect(dailyMinis.data()).toEqual({});
 }
 
-async function publishAsDailyMini() {
-  await publishPuzzle(/Submit as Daily Mini/i);
-
-  const puzzles = await admin.firestore().collection('c').get();
-  expect(puzzles.size).toEqual(1);
-  const puzzle = puzzles.docs[0].data();
-  const puzzleId = puzzles.docs[0].id;
-  expect(puzzle['m']).toEqual(false);
-  expect(puzzle['p']).toEqual(null);
-  expect(puzzle['c']).toEqual('dailymini');
-  expect(puzzle['t']).toEqual('Our Title');
-  await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
-  expect(NextJSRouter.push).toHaveBeenCalledWith('/pending/' + puzzles.docs[0].id);
-
-  await cleanup();
-
-  // The puzzle should not be visible on the puzzle page, even to an author
-  setApp(serverApp as firebase.app.App);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const props = await getServerSideProps({ params: { puzzleId }, res: { setHeader: jest.fn() } } as any);
-  setApp(app as firebase.app.App);
-  const r1 = render(<PuzzlePage {...props.props} />, { user: mike });
-  expect(await r1.findByText('Puzzle Not Found')).toBeInTheDocument();
-
-  await cleanup();
-
-  // The puzzle should not be visible to a rando on pending
-  setApp(randoApp as firebase.app.App);
-  const r2 = render(<PuzzleLoader puzzleId={puzzleId} />, { user: rando });
-  await r2.findByText(/error loading puzzle/i);
-
-  await cleanup();
-
-  // The puzzle should be visible to the author on pending w/o redirecting
-  setApp(app as firebase.app.App);
-  const r3 = render(<PuzzleLoader puzzleId={puzzleId} />, { user: mike });
-  await r3.findByText(/visible to others yet/i);
-  await r3.findByText(/Enter Rebus/i);
-  expect(r3.queryByText(/Moderate/i)).toBeNull();
-
-  await cleanup();
-
-  return puzzleId;
-}
-
-test('publish as daily mini', async () => {
-  const puzzleId = await publishAsDailyMini();
-
-  // The puzzle should be visible to an admin on pending w/ moderation links
-  setApp(adminUserApp as firebase.app.App);
-  const r4 = render(<PuzzleLoader puzzleId={puzzleId} />, { user: miked, isAdmin: true });
-  await r4.findByText(/visible to others yet/i);
-  await r4.findByText(/Enter Rebus/i);
-  fireEvent.click(r4.getByText(/Moderate/i));
-  const scheduleButton = await r4.findByText(/Schedule As Daily Mini/i);
-  const dateToClick = new Date().getDate();
-  // Make sure we are clicking on today if we are seeing other months too.
-  if (dateToClick < 15) {
-    fireEvent.click(r4.getAllByText(dateToClick.toString(10), { exact: true })[0]);
-  } else {
-    fireEvent.click(r4.getAllByText(dateToClick.toString(10), { exact: true }).slice(-1)[0]);
-  }
-  fireEvent.click(scheduleButton);
-
-  await waitForExpect(async () => expect((await admin.firestore().collection('c').where('m', '==', true).get()).size).toEqual(1));
-  const res = await admin.firestore().collection('c').get();
-  expect(res.size).toEqual(1);
-  const updated = res.docs[0].data();
-  expect(res.docs[0].id).toEqual(puzzleId);
-  expect(updated['m']).toEqual(true);
-  expect(updated['p']).not.toEqual(null);
-  expect(updated['c']).toEqual('dailymini');
-  expect(updated['t']).toEqual('Our Title');
-
-  const dailyMinis = await admin.firestore().collection('categories').doc('dailymini').get();
-  const dmData = dailyMinis.data();
-  if (!dmData) {
-    throw new Error('missing dms');
-  }
-  const now = new Date();
-  now.setHours(12);
-  expect(dmData).toEqual({ [getDateString(now)]: puzzleId });
-
-  await cleanup();
-
-  // The puzzle should be visible on the puzzle page, even to a rando
-  setApp(serverApp as firebase.app.App);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const props1 = await getServerSideProps({ params: { puzzleId }, res: { setHeader: jest.fn() } } as any);
-  setApp(randoApp as firebase.app.App);
-  const r5 = render(<PuzzlePage {...props1.props} />, { user: rando });
-  expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
-  expect(r5.queryByText(/Our Title/)).toBeNull();
-  expect(r5.queryByText(/Daily Mini/)).toBeInTheDocument();
-});
-
-test('requested daily mini but approved as default', async () => {
-  const puzzleId = await publishAsDailyMini();
-
-  // The puzzle should be visible to an admin on pending w/ moderation links
-  setApp(adminUserApp as firebase.app.App);
-  const r4 = render(<PuzzleLoader puzzleId={puzzleId} />, { user: miked, isAdmin: true });
-  await r4.findByText(/visible to others yet/i);
-  await r4.findByText(/Enter Rebus/i);
-  fireEvent.click(r4.getByText(/Moderate/i));
-  const approveButton = await r4.findByText(/Mark as Moderated/i);
-  fireEvent.click(approveButton);
-
-  await waitForExpect(async () => expect((await admin.firestore().collection('c').where('m', '==', true).get()).size).toEqual(1));
-  const res = await admin.firestore().collection('c').get();
-  expect(res.size).toEqual(1);
-  const updated = res.docs[0].data();
-  expect(res.docs[0].id).toEqual(puzzleId);
-  expect(updated['m']).toEqual(true);
-  expect(updated['f']).toEqual(false);
-  expect(updated['p']).not.toEqual(null);
-  expect(updated['c']).toEqual(null);
-  expect(updated['t']).toEqual('Our Title');
-
-  const dailyMinis = await admin.firestore().collection('categories').doc('dailymini').get();
-  expect(dailyMinis.data()).toEqual({});
-
-  await cleanup();
-
-  // The puzzle should be visible on the puzzle page, even to a rando
-  setApp(serverApp as firebase.app.App);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const props1 = await getServerSideProps({ params: { puzzleId }, res: { setHeader: jest.fn() } } as any);
-  setApp(randoApp as firebase.app.App);
-  const r5 = render(<PuzzlePage {...props1.props} />, { user: rando });
-  expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
-  expect(r5.queryByText(/Our Title/)).toBeInTheDocument();
-  expect(r5.queryByText(/Daily Mini/)).toBeNull();
-});
-
 test('publish as default', async () => {
-  await publishPuzzle(/Publish Immediately/i);
+  await publishPuzzle();
 
   const puzzles = await admin.firestore().collection('c').get();
   expect(puzzles.size).toEqual(1);
@@ -358,7 +221,7 @@ test('publish as default', async () => {
 });
 
 test('change author name in publish dialogue should publish w/ new name', async () => {
-  await publishPuzzle(/Publish Immediately/i, async (r) => {
+  await publishPuzzle(async (r) => {
     fireEvent.click(r.getByText('change name'));
     fireEvent.change(r.getByLabelText('Update display name:'), { target: { value: 'M to tha D' } });
     fireEvent.click(r.getByText('Save', { exact: true }));
@@ -465,7 +328,6 @@ test('publish custom / non-rectangular size', async () => {
   const r5 = render(<PuzzlePage {...props1.props} />, { user: rando });
   expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
   expect(r5.queryByText(/Our Title/)).toBeInTheDocument();
-  expect(r5.queryByText(/by M to tha D/)).toBeInTheDocument();
   expect(r5.queryByText(/Daily Mini/)).toBeNull();
   await r5.findByText(/Enter Rebus/i);
   expect(r5.queryByText(/Moderate/i)).toBeNull();

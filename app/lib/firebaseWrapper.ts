@@ -55,5 +55,7 @@ export const AuthProvider = new firebase.auth.GoogleAuthProvider();
 
 export const DeleteSentinal = firebase.firestore.FieldValue.delete();
 
+export const ServerTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+
 export const TimestampClass = firebase.firestore.Timestamp;
 export type TimestampType = firebase.firestore.Timestamp;
