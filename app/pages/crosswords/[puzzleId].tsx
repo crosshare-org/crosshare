@@ -61,7 +61,7 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ 
       .map(([k, v]) => [addZeros(k), v])
       .filter(([k, _v]) => k < addZeros(miniDate))
       .sort((a, b) => a[0] > b[0] ? -1 : 1);
-    if (previous) {
+    if (previous.length) {
       return {
         props: {
           puzzle: puzzle, nextPuzzle: {
