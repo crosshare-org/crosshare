@@ -25,7 +25,11 @@ if (firebase.apps.length) {
   App = firebase.initializeApp(firebaseConfig);
   if (typeof window !== 'undefined') {
     if (process.env.NODE_ENV === 'production') {
-      App.performance();
+      try {
+        App.performance();
+      } catch {
+        console.error('failed to load firebase.performance');
+      }
     }
   }
   if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR) {
