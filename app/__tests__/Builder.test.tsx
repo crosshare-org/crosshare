@@ -201,7 +201,6 @@ test('publish as default', async () => {
   await r4.findByText(/Enter Rebus/i);
   expect(r4.queryByText(/visible to others yet/i)).toBeNull();
   fireEvent.click(r4.getByText(/Moderate/i));
-  expect(r4.queryByText(/Schedule As Daily Mini/i)).toBeNull();
   const approveButton = await r4.findByText(/Set as Featured/i);
   fireEvent.click(approveButton);
 

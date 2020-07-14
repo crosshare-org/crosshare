@@ -41,7 +41,7 @@ import { ERROR_COLOR } from '../lib/style';
 import { usePersistedBoolean } from '../lib/hooks';
 import { timeString } from '../lib/utils';
 import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
-import { App, DeleteSentinal, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
+import { App, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
 import { Emoji } from './Emoji';
 import { Comments } from './Comments';
 import { ConstructorNotes } from './ConstructorNotes';
@@ -109,7 +109,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
 
 const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, dispatch: Dispatch<PuzzleAction> }) => {
   const db = App.firestore();
-  const [date, setDate] = useState(puzzle.publishTime ? new Date(puzzle.publishTime) : undefined);
+  const [date, setDate] = useState<Date | undefined>();
 
   function schedule() {
     if (!date) {
@@ -118,20 +118,12 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
     const update: { [k: string]: string | firebase.firestore.FieldValue } = {
       [getDateString(date)]: puzzle.id,
     };
-    if (puzzle.publishTime) {
-      update[getDateString(new Date(puzzle.publishTime))] = DeleteSentinal;
-    }
-    db.collection('categories').doc('dailymini').update(update).then(() => {
-      console.log('Updated categories page');
-      // Dump it!
-      sessionStorage.removeItem('categories/dailymini');
-    });
-    db.collection('c').doc(puzzle.id).update({
-      m: true,
-      p: TimestampClass.fromDate(date),
-      c: 'dailymini',
-    }).then(() => {
+    Promise.all([
+      db.collection('categories').doc('dailymini').update(update),
+      db.collection('c').doc(puzzle.id).update({ m: true, c: 'dailymini' })
+    ]).then(() => {
       console.log('Scheduled mini');
+      sessionStorage.removeItem('categories/dailymini');
       window.location.reload();
     });
   }
@@ -154,23 +146,12 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
   return (
     <Overlay closeCallback={() => dispatch({ type: 'TOGGLEMODERATING' })}>
       <h4>Moderate this Puzzle</h4>
-      {puzzle.category === 'dailymini' ?
-        <div>
-          {puzzle.publishTime ?
-            <div>Scheduled for {(new Date(puzzle.publishTime)).toLocaleDateString()}</div>
-            :
-            ''
-          }
-          <div css={{ marginTop: '1em' }}>Pick a date for this mini to appear:</div>
-          <UpcomingMinisCalendar disableExisting={true} value={date} onChange={setDate} />
-          <div css={{ marginTop: '1em' }}>Be sure to email {puzzle.authorId}</div>
-          <div css={{ marginTop: '1em' }}><button disabled={!date} onClick={schedule}>Schedule As Daily Mini</button></div>
-        </div>
-        :
-        ''
-      }
-      <button css={{ marginTop: '2em' }} disabled={puzzle.moderated} onClick={() => markAsModerated(true)}>Set as Featured</button>
-      <button css={{ marginTop: '2em' }} disabled={puzzle.moderated} onClick={() => markAsModerated(false)}>Mark as Moderated</button>
+      <div css={{ marginTop: '1em' }}>Pick a date to appear as daily mini:</div>
+      <UpcomingMinisCalendar disableExisting={true} value={date} onChange={setDate} />
+      <div css={{ marginTop: '1em' }}>Be sure to email {puzzle.authorId}</div>
+      <div css={{ marginTop: '1em' }}><button disabled={!date || puzzle.moderated} onClick={schedule}>Schedule As Daily Mini</button></div>
+      <div css={{ marginTop: '1em' }}><button disabled={puzzle.moderated} onClick={() => markAsModerated(true)}>Set as Featured</button></div>
+      <div css={{ marginTop: '1em' }}><button disabled={puzzle.moderated} onClick={() => markAsModerated(false)}>Mark as Moderated</button></div>
     </Overlay>
   );
 });
@@ -451,7 +432,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           // Check to see if we should show X daily minis in a row notification
           let consecutiveDailyMinis = 0;
           let dateToTest = new Date();
-          dateToTest.setHours(12);
           let ds = getDateString(dateToTest);
           if (puzzle.id === minis ?.[ds] && !state.didCheat) {
             for (; ;) {
@@ -463,7 +443,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
                 break;
               }
               const playDate = play.ua.toDate();
-              playDate.setHours(12);
               // cheated || didn't finish || played on wrong date
               if (play.ch || !play.f || getDateString(playDate) !== ds) {
                 break;
@@ -484,7 +463,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           let firstOfTheDay = true;
           let consecutiveSolveDays = 0;
           dateToTest = new Date();
-          dateToTest.setHours(12);
           ds = getDateString(dateToTest);
           if (plays) {
             for (const [puzzleId, play] of Object.entries(plays)) {
@@ -492,7 +470,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
                 continue;
               }
               const playDate = play.ua.toDate();
-              playDate.setHours(12);
               if (play.f && getDateString(playDate) === ds) {
                 firstOfTheDay = false;
               }
@@ -505,7 +482,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
                 let solvedOne = false;
                 for (const play of Object.values(plays)) {
                   const playDate = play.ua.toDate();
-                  playDate.setHours(12);
                   if (play.f && getDateString(playDate) === ds) {
                     solvedOne = true;
                     break;
