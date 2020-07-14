@@ -3,11 +3,12 @@ import { GetServerSideProps } from 'next';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
+import { getDailyMinis } from '../../lib/dailyMinis';
 import { AuthContext } from '../../components/AuthContext';
 import { puzzleFromDB, PuzzleResult } from '../../lib/types';
 import { Puzzle, NextPuzzleLink } from '../../components/Puzzle';
-import { App, TimestampClass } from '../../lib/firebaseWrapper';
-import { DBPuzzleV, PlayWithoutUserT } from '../../lib/dbtypes';
+import { App } from '../../lib/firebaseWrapper';
+import { DBPuzzleV, PlayWithoutUserT, getDateString, addZeros } from '../../lib/dbtypes';
 import { getPlays } from '../../lib/plays';
 import { ErrorPage } from '../../components/ErrorPage';
 import { Link } from '../../components/Link';
@@ -43,26 +44,36 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ 
   }
 
   // Get puzzle to show as next link after this one is finished
-  const priorTo = (puzzle.category === 'dailymini' && puzzle.publishTime) ?
-    TimestampClass.fromMillis(puzzle.publishTime) : TimestampClass.now();
-  const prevMini = await db.collection('c').where('c', '==', 'dailymini')
-    .where('p', '<', priorTo)
-    .orderBy('p', 'desc').limit(1).get();
-  if (prevMini.size === 0) {
-    return { props: { puzzle: puzzle } };
+  const minis = await getDailyMinis();
+  const puzzleId = puzzle.id;
+  const miniDate = Object.keys(minis).find(key => minis[key] === puzzleId);
+  if (miniDate) {
+    const previous = Object.entries(minis)
+      .map(([k, v]) => [addZeros(k), v])
+      .filter(([k, _v]) => k < addZeros(miniDate))
+      .sort((a, b) => a[0] > b[0] ? -1 : 1);
+    if (previous) {
+      return {
+        props: {
+          puzzle: puzzle, nextPuzzle: {
+            puzzleId: previous[0][1],
+            linkText: 'the previous daily mini crossword'
+          }
+        }
+      };
+    }
   }
-  const data = prevMini.docs[0].data();
-  const vr = DBPuzzleV.decode(data);
-  if (isRight(vr)) {
-    const linkText = puzzle.category === 'dailymini' ?
-      'the previous daily mini crossword' :
-      'today\'s daily mini crossword';
-    return { props: { puzzle: puzzle, nextPuzzle: { puzzleId: prevMini.docs[0].id, linkText } } };
-  } else {
-    console.error('Error loading previous mini to show');
-    console.error(PathReporter.report(validationResult).join(','));
-    return { props: { puzzle: puzzle } };
-  }
+
+  // Didn't find a previous mini, link to today's
+  const today = getDateString(new Date());
+  return {
+    props: {
+      puzzle: puzzle, nextPuzzle: {
+        puzzleId: minis[today],
+        linkText: 'today\'s daily mini crossword'
+      }
+    }
+  };
 };
 
 export default function PuzzlePage({ puzzle, nextPuzzle }: PuzzlePageProps) {

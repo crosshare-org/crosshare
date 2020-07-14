@@ -1,7 +1,7 @@
 import { PuzzleLink } from './PuzzleLink';
 import { DefaultTopBar } from './TopBar';
 import {
-  CategoryIndexT, getDateString, prettifyDateString
+  CategoryIndexT, getDateString, prettifyDateString, addZeros
 } from '../lib/dbtypes';
 
 interface CategoryProps {
@@ -11,25 +11,7 @@ interface CategoryProps {
 
 export const Category = ({ puzzles, categoryName }: CategoryProps) => {
   const today = new Date();
-  today.setHours(12);
   const ds = addZeros(getDateString(today));
-
-  function addZeros(dateString: string) {
-    const groups = dateString.match(/^(\d+)-(\d+)-(\d+)$/);
-    if (!groups) {
-      throw new Error('Bad date string: ' + dateString);
-    }
-    const year = groups[1];
-    let month = groups[2];
-    if (month.length === 1) {
-      month = '0' + month;
-    }
-    let date = groups[3];
-    if (date.length === 1) {
-      date = '0' + date;
-    }
-    return year + '-' + month + '-' + date;
-  }
 
   return (
     <>

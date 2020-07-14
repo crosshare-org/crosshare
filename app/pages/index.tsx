@@ -3,9 +3,10 @@ import { GetServerSideProps } from 'next';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
+import { getDailyMinis } from '../lib/dailyMinis';
 import { Link } from '../components/Link';
 import { puzzleFromDB, PuzzleResult } from '../lib/types';
-import { DBPuzzleV } from '../lib/dbtypes';
+import { DBPuzzleV, getDateString } from '../lib/dbtypes';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleLink, PuzzleResultLink } from '../components/PuzzleLink';
@@ -22,18 +23,19 @@ interface HomePageProps {
 
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ res }) => {
   const db = App.firestore();
-  const dailyminiQuery = db.collection('c').where('c', '==', 'dailymini')
-    .where('p', '<', TimestampClass.now())
-    .orderBy('p', 'desc').limit(1).get();
+  const minis = await getDailyMinis();
+  const today = getDateString(new Date());
+  if (!minis[today]) {
+    throw new Error('no mini scheduled for today!');
+  }
+  // TODO if we start saving author name/id in category doc we no longer need this extra query
+  const dailyminiQuery = db.collection('c').doc(minis[today]).get();
 
   const featuredQuery = db.collection('c').where('m', '==', true).where('f', '==', true)
     .where('p', '<', TimestampClass.now())
     .orderBy('p', 'desc').limit(20).get();
 
   return Promise.all([dailyminiQuery, featuredQuery]).then(([dmResult, featuredResult]) => {
-    if (!dmResult.size) {
-      throw new Error('Missing daily mini');
-    }
     const featured = featuredResult.docs.map((doc) => {
       const res = DBPuzzleV.decode(doc.data());
       if (isRight(res)) {
@@ -43,11 +45,11 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ re
         throw new Error('Bad puzzle querying for featured');
       }
     });
-    const data = dmResult.docs[0].data();
+    const data = dmResult.data();
     const validationResult = DBPuzzleV.decode(data);
     if (isRight(validationResult)) {
       res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-      const dm = { id: dmResult.docs[0].id, authorName: validationResult.right.n };
+      const dm = { id: dmResult.id, authorName: validationResult.right.n };
       return { props: { dailymini: dm, featured } };
     } else {
       console.error(PathReporter.report(validationResult).join(','));
