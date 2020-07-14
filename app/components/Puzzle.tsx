@@ -126,7 +126,6 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
       // Dump it!
       sessionStorage.removeItem('categories/dailymini');
     });
-    // TODO change title here
     db.collection('c').doc(puzzle.id).update({
       m: true,
       p: TimestampClass.fromDate(date),

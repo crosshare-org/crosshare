@@ -8,7 +8,7 @@ import { AuthContext } from '../../components/AuthContext';
 import { puzzleFromDB, PuzzleResult } from '../../lib/types';
 import { Puzzle, NextPuzzleLink } from '../../components/Puzzle';
 import { App } from '../../lib/firebaseWrapper';
-import { DBPuzzleV, PlayWithoutUserT, getDateString, addZeros } from '../../lib/dbtypes';
+import { DBPuzzleV, PlayWithoutUserT, getDateString, addZeros, CategoryIndexT } from '../../lib/dbtypes';
 import { getPlays } from '../../lib/plays';
 import { ErrorPage } from '../../components/ErrorPage';
 import { Link } from '../../components/Link';
@@ -44,7 +44,16 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ 
   }
 
   // Get puzzle to show as next link after this one is finished
-  const minis = await getDailyMinis();
+  let minis: CategoryIndexT;
+  try {
+    minis = await getDailyMinis();
+  } catch {
+    return {
+      props: {
+        puzzle: puzzle
+      }
+    };
+  }
   const puzzleId = puzzle.id;
   const miniDate = Object.keys(minis).find(key => minis[key] === puzzleId);
   if (miniDate) {

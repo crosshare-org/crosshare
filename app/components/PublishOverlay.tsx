@@ -56,7 +56,7 @@ export function PublishOverlay(props: { toPublish: DBPuzzleT, user: firebase.Use
   let contents: ReactNode;
   if (done) {
     contents = <>
-      <h2>Published Successfully!</h2>
+      <h2>Published Successfully! Redirecting...</h2>
     </>;
   } else if (inProgress) {
     contents = <>

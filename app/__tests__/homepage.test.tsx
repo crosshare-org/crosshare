@@ -1,7 +1,7 @@
 import { render } from '../lib/testingUtils';
 import { setApp, TimestampClass } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/testing';
-import { DBPuzzleT } from '../lib/dbtypes';
+import { DBPuzzleT, getDateString } from '../lib/dbtypes';
 import HomePage, { getServerSideProps } from '../pages/index';
 
 jest.mock('next/router', () => ({ push: jest.fn() }));
@@ -92,6 +92,7 @@ beforeAll(async () => {
     n: 'Mike D'
   };
   await adminApp.firestore().collection('c').doc(dailyminiId).set(dailymini);
+  await adminApp.firestore().collection('categories').doc('dailymini').set({ [getDateString(new Date())]: dailyminiId });
 
   featuredPuzzle = {
     c: null,
