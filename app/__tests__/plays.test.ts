@@ -177,7 +177,7 @@ test('get 2 plays for logged in', async () => {
   setApp(loggedInApp);
 
   resetMemoryStore();
-  expect(await getPlays(anonymousUser)).toEqual({ [play1.c]: play1, [play2.c]: { ...play2, n: 'Daily Mini for 6/10/2020' } });
+  expect(await getPlays(anonymousUser)).toEqual({ [play1.c]: play1, [play2.c]: { ...play2, n: 'Raises, as young' } });
 });
 
 test('get 2 updated plays for logged in if past expiration', async () => {
@@ -192,7 +192,7 @@ test('get 2 updated plays for logged in if past expiration', async () => {
   window.localStorage.setItem('plays/' + anonymousUser.uid, JSON.stringify(forLS));
 
   resetMemoryStore();
-  expect(await getPlays(anonymousUser)).toEqual({ [play1.c]: play1, [play2.c]: { ...play2, n: 'Daily Mini for 6/10/2020' } });
+  expect(await getPlays(anonymousUser)).toEqual({ [play1.c]: play1, [play2.c]: { ...play2, n: 'Raises, as young' } });
 });
 
 test('get 0 updated plays for logged in if results still valid', async () => {
