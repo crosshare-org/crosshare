@@ -23,17 +23,14 @@ service cloud.firestore {
         && (!request.resource.data.keys().hasAny(["cs"]) || request.resource.data.cs.size() == 0);
     }
     match /c/{crosswordId} {
-      allow get: if isAdmin() || isAuthor()
-        || (resource.data.p != null && request.time + duration.time(1, 0, 0, 0) >= resource.data.p);
+      allow get: if true;
 
-      // TODO figure out exactly what is using this query
-      allow list: if isAdmin() || isAuthor()
-        || (resource.data.c != null && request.time + duration.time(1, 0, 0, 0) >= resource.data.p);
+      // Account page
+      allow list: if isAdmin() || isAuthor();
 
-      // This supports the homepage 'recent puzzles' list
+      // This supports the homepage 'featured puzzles' list
       allow list: if resource.data.m
-        && request.query.limit <= 30
-        && request.time + duration.time(1, 0, 0, 0) >= resource.data.p;
+        && request.query.limit <= 30;
 
       allow update: if isAdmin();
 
