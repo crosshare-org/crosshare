@@ -60,6 +60,11 @@
         "source": "/category/dailymini",
         "destination": "/categories/dailymini",
         "type": 301
+      },
+      {
+        "source": "/pending/:id",
+        "destination": "/crosswords/:id",
+        "type": 301
       }
     ]
   }, {

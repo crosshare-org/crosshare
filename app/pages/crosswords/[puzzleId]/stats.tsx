@@ -36,7 +36,7 @@ export const PuzzleLoader = ({ puzzleId, auth }: { puzzleId: string, auth: AuthP
     db.collection('c').doc(puzzleId).get()
       .then(dbres => {
         if (!dbres.exists) {
-          setError('No pending puzzle found');
+          setError('No puzzle found');
         }
         const validationResult = DBPuzzleV.decode(dbres.data());
         if (isRight(validationResult)) {
@@ -44,7 +44,7 @@ export const PuzzleLoader = ({ puzzleId, auth }: { puzzleId: string, auth: AuthP
           setPuzzle({ ...puzzleFromDB(validationResult.right), id: dbres.id });
         } else {
           console.error(PathReporter.report(validationResult).join(','));
-          setError('Malformed pending puzzle found');
+          setError('Malformed puzzle found');
         }
       })
       .catch((e) => {

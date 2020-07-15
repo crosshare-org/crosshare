@@ -10,14 +10,12 @@ import { DefaultTopBar } from '../components/TopBar';
 import { getPlays } from '../lib/plays';
 import { PuzzleLink } from '../components/PuzzleLink';
 
-export const PlayListItem = ({ play, authoredPuzzles }: { play: PlayWithoutUserT, authoredPuzzles: Array<AuthoredPuzzle> | null }) => {
-  return <PuzzleLink id={play.c} title={play.n} pending={authoredPuzzles ?.find(ap => ap.id === play.c) ? true : false} />;
+export const PlayListItem = ({ play }: { play: PlayWithoutUserT }) => {
+  return <PuzzleLink id={play.c} title={play.n} />;
 };
 
 export const AuthoredListItem = (props: AuthoredPuzzle) => {
-  // TODO We need to use /pending/ here since we don't know if a play is for a puzzle
-  // that hasn't been published yet. Any better way to do this?
-  return <PuzzleLink key={props.id} id={props.id} pending={true} title={props.title} />;
+  return <PuzzleLink key={props.id} id={props.id} title={props.title} />;
 };
 
 interface AuthoredPuzzle {
@@ -90,7 +88,7 @@ export default requiresAuth(({ user }: AuthProps) => {
         {plays && plays.length ?
           <>
             <h2>Recent Plays</h2>
-            {plays.map((play) => <PlayListItem key={play.c} play={play} authoredPuzzles={authoredPuzzles} />)}
+            {plays.map((play) => <PlayListItem key={play.c} play={play} />)}
           </>
           :
           ''

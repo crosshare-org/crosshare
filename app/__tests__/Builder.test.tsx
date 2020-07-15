@@ -5,7 +5,6 @@ import { setApp } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/testing';
 import NextJSRouter from 'next/router';
 import PuzzlePage, { getServerSideProps } from '../pages/crosswords/[puzzleId]';
-import { PuzzleLoader } from '../pages/pending/[pendingPuzzleId]';
 import { PuzzleLoader as StatsPuzzleLoader } from '../pages/crosswords/[puzzleId]/stats';
 import waitForExpect from 'wait-for-expect';
 
@@ -184,14 +183,6 @@ test('publish as default', async () => {
   expect(r5.queryByText(/Daily Mini/)).toBeNull();
   await r5.findByText(/Enter Rebus/i);
   expect(r5.queryByText(/Moderate/i)).toBeNull();
-
-  await cleanup();
-
-  // Pending should redirect to puzzle page, even to a rando
-  expect(NextJSRouter.push).toHaveBeenCalledTimes(1);
-  render(<PuzzleLoader puzzleId={puzzleId} />, { user: rando });
-  await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(2));
-  expect(NextJSRouter.push).toHaveBeenCalledWith('/crosswords/' + puzzles.docs[0].id);
 
   await cleanup();
 

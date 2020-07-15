@@ -9,7 +9,7 @@ import { PuzzleSizeIcon } from '../components/Icons';
 import { Emoji } from '../components/Emoji';
 import { timeString } from '../lib/utils';
 
-export const PuzzleLink = (props: { id: string, width?: number, height?: number, title: string, pending?: boolean, byline?: ReactNode, children?: ReactNode }) => {
+export const PuzzleLink = (props: { id: string, width?: number, height?: number, title: string, byline?: ReactNode, children?: ReactNode }) => {
   const { user } = useContext(AuthContext);
   const [plays, setPlays] = useState<PlayMapT | null>(null);
 
@@ -36,7 +36,7 @@ export const PuzzleLink = (props: { id: string, width?: number, height?: number,
       '&:hover': {
         color: (play && play.f) ? 'var(--text)' : (play ? 'var(--error-hover)' : 'var(--link-hover)'),
       }
-    }} href={props.pending ? '/pending/[puzzleId]' : '/crosswords/[puzzleId]'} as={props.pending ? `/pending/${props.id}` : `/crosswords/${props.id}`} passHref>
+    }} href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>
       <div css={{ position: 'relative', verticalAlign: 'top !important', float: 'left', fontSize: '4em', marginRight: '0.3em' }} >
         <PuzzleSizeIcon width={props.width} height={props.height} />
         {play && play.f ?

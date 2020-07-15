@@ -37,7 +37,6 @@ import {
 } from '../reducers/reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
 import { SquareAndCols, TwoCol, TinyNav } from './Page';
-import { ERROR_COLOR } from '../lib/style';
 import { usePersistedBoolean } from '../lib/hooks';
 import { timeString } from '../lib/utils';
 import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
@@ -58,37 +57,13 @@ interface PauseBeginProps {
   dispatch: Dispatch<PuzzleAction>,
   message: string,
   dismissMessage: string,
-  moderated: boolean,
-  publishTime: Date | undefined,
   notes: string | null,
 }
 
 const BeginPauseOverlay = (props: PauseBeginProps) => {
-  const warnings: Array<ReactNode> = [];
-  if (!props.publishTime) {
-    warnings.push(<div key="moderation">The puzzle is awaiting review. We&apos;ll get to it ASAP! If you feel it&apos;s taking too long please message us on the google group.</div>);
-  } else if (props.publishTime > new Date()) {
-    warnings.push(<div key="publishtime">The puzzle has been scheduled for publishing on {props.publishTime.toLocaleDateString()}</div>);
-  }
   return (
     <Overlay closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: 'RESUMEACTION' })}>
       <div css={{ textAlign: 'center' }}>
-        {warnings.length ?
-          <div css={{
-            width: '100%',
-            fontWeight: 'bold',
-            border: '1px solid ' + ERROR_COLOR,
-            borderRadius: '4px',
-            margin: '1em',
-            padding: '1em',
-            color: ERROR_COLOR
-          }}>
-            <div>Your puzzle isn&apos;t visible to others yet:</div>
-            {warnings}
-          </div>
-          :
-          ''
-        }
         <h3>{props.title}</h3>
         <h4>by {props.authorName}</h4>
         {props.notes ?
@@ -544,7 +519,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     };
   }, [state.grid.entries]);
 
-  const beginPauseProps = { loadingPlayState: loadingPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch, moderated: puzzle.moderated, publishTime: (puzzle.publishTime ? new Date(puzzle.publishTime) : undefined) };
+  const beginPauseProps = { loadingPlayState: loadingPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
 
   let puzzleView: ReactNode;
 
