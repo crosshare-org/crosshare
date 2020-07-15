@@ -105,17 +105,9 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, di
 
   function markAsModerated(featured: boolean) {
     const update = { m: true, c: null, f: featured };
-    if (puzzle.publishTime === null) {
-      const hourAgo = new Date();
-      hourAgo.setHours(hourAgo.getHours() - 1);
-      db.collection('c').doc(puzzle.id).update({ ...update, p: TimestampClass.fromDate(hourAgo) }).then(() => {
-        window.location.reload();
-      });
-    } else {
-      db.collection('c').doc(puzzle.id).update(update).then(() => {
-        window.location.reload();
-      });
-    }
+    db.collection('c').doc(puzzle.id).update(update).then(() => {
+      window.location.reload();
+    });
   }
 
   return (
