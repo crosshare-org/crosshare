@@ -26,11 +26,11 @@ async function runMigration() {
       console.error('Malformed puzzle: ' + doc.id);
       continue;
     }
-    const puzzle = res.right;
-    if (puzzle.ca.toMillis() !== puzzle.p ?.toMillis()) {
-      console.log('Updating puzzle ', doc.id);
-      await db.collection('c').doc(doc.id).update({ p: admin.firestore.Timestamp.fromMillis(puzzle.ca.toMillis()) });
-    }
+    /*    const puzzle = res.right;
+        if (puzzle.ca.toMillis() !== puzzle.p ?.toMillis()) {
+          console.log('Updating puzzle ', doc.id);
+          await db.collection('c').doc(doc.id).update({ p: admin.firestore.Timestamp.fromMillis(puzzle.ca.toMillis()) });
+        }*/
   }
 }
 

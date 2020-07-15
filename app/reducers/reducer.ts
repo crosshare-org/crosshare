@@ -584,12 +584,11 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
       }
     });
     const puzzle: DBPuzzleT = {
-      ca: action.publishTimestamp,
       t: state.title || 'Anonymous',
       a: state.authorId,
       n: state.authorName,
       m: false,
-      p: null,
+      p: action.publishTimestamp,
       c: null,
       h: state.grid.height,
       w: state.grid.width,

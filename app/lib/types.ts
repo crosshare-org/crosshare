@@ -111,7 +111,7 @@ export interface PuzzleT {
   category: string | null,
   authorName: string,
   moderated: boolean,
-  publishTime: number | null,
+  publishTime: number,
   title: string
   size: {
     rows: number,
@@ -155,7 +155,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     category: dbPuzzle.c,
     authorName: dbPuzzle.n,
     moderated: dbPuzzle.m,
-    publishTime: dbPuzzle.p ? dbPuzzle.p.toMillis() : null,
+    publishTime: dbPuzzle.p.toMillis(),
     title: dbPuzzle.t,
     size: {
       rows: dbPuzzle.h,

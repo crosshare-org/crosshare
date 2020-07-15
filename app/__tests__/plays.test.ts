@@ -86,7 +86,6 @@ beforeAll(async () => {
         'Has a great night at the comedy club'],
     p: TimestampClass.fromDate(new Date('6/10/2020')),
     a: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
-    ca: TimestampClass.now(),
     an: [1, 6, 7, 8, 9],
     g:
       ['L',

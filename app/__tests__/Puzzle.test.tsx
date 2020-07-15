@@ -23,7 +23,7 @@ const testPuzzle: PuzzleResult = {
   category: null,
   authorName: 'Mike D',
   moderated: true,
-  publishTime: null,
+  publishTime: 100000,
   title: 'Without company',
   size: { rows: 5, cols: 5 },
   clues: [
@@ -73,7 +73,7 @@ const dailymini_5_19: PuzzleResult = {
   category: 'dailymini',
   authorName: 'Mike D',
   moderated: true,
-  publishTime: null,
+  publishTime: 1000,
   title: 'Word of surrender',
   size: { rows: 5, cols: 5 },
   clues: [

@@ -38,7 +38,7 @@ export function PublishOverlay(props: { toPublish: DBPuzzleT, user: firebase.Use
 
     db.collection('c').add(toPublish).then(async (ref) => {
       console.log('Uploaded', ref.id);
-      const authoredPuzzle: AuthoredPuzzleT = [toPublish.ca, toPublish.t];
+      const authoredPuzzle: AuthoredPuzzleT = [props.toPublish.p, toPublish.t];
       await updateInCache({
         collection: 'uc',
         docId: props.user.uid,

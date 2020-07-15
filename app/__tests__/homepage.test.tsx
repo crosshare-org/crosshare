@@ -48,7 +48,6 @@ beforeAll(async () => {
         'Has a great night at the comedy club'],
     p: TimestampClass.fromDate(hourAgo),
     a: 'puzzleauthor',
-    ca: TimestampClass.now(),
     an: [1, 6, 7, 8, 9],
     g:
       ['L',
@@ -114,7 +113,6 @@ beforeAll(async () => {
         'Has a great night at the comedy club'],
     p: TimestampClass.fromDate(hourAgo),
     a: 'puzzleauthor',
-    ca: TimestampClass.now(),
     an: [1, 6, 7, 8, 9],
     g:
       ['L',
@@ -178,7 +176,6 @@ beforeAll(async () => {
         'Has a great night at the comedy club'],
     p: TimestampClass.fromDate(hourAgo),
     a: 'puzzleauthor',
-    ca: TimestampClass.now(),
     an: [1, 6, 7, 8, 9],
     g:
       ['L',

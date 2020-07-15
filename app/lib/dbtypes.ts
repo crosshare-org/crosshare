@@ -63,8 +63,6 @@ export const CommentForModerationWithIdV = t.intersection([
 export type CommentForModerationWithIdT = t.TypeOf<typeof CommentForModerationWithIdV>;
 
 const DBPuzzleMandatoryV = t.type({
-  /** created at */
-  ca: timestamp,
   /** author's user id */
   a: t.string,
   /** author's display name */
@@ -74,7 +72,7 @@ const DBPuzzleMandatoryV = t.type({
   /** is this puzzle moderated? */
   m: t.boolean,
   /** timestamp when the puzzle goes live */
-  p: t.union([timestamp, t.null]),
+  p: timestamp,
   /** title */
   t: t.string,
   /** grid width / columns */
