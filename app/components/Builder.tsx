@@ -298,7 +298,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
         [e, numMatchesForEntry(addAutofillFieldsToEntry({ ...e, pattern: e.cells.map(p => valAt(state.grid, p)).join('') }))]
       )
       .sort(([_a, aMatches], [_b, bMatches]) => aMatches - bMatches);
-    if (openEntries) {
+    if (openEntries.length) {
       return openEntries[0][0].index;
     }
     return null;

@@ -26,6 +26,7 @@ exports[`upload a puzzle 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
+  font-size: 13.333333333333334px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
@@ -39,7 +40,7 @@ exports[`upload a puzzle 1`] = `
   top: 0;
   font-weight: bold;
   line-height: 1em;
-  font-size: 3.3333333333333335px;
+  font-size: 0.25em;
 }
 
 .emotion-1 {
@@ -54,6 +55,7 @@ exports[`upload a puzzle 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
+  font-size: 13.333333333333334px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
@@ -68,6 +70,7 @@ exports[`upload a puzzle 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
+  font-size: 13.333333333333334px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
@@ -82,6 +85,7 @@ exports[`upload a puzzle 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
+  font-size: 13.333333333333334px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
@@ -96,6 +100,7 @@ exports[`upload a puzzle 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
+  font-size: 13.333333333333334px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
@@ -110,6 +115,7 @@ exports[`upload a puzzle 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
+  font-size: 13.333333333333334px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   background: var(--white);
@@ -123,6 +129,7 @@ exports[`upload a puzzle 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
+  font-size: 13.333333333333334px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   background: var(--cell-wall);
@@ -136,6 +143,7 @@ exports[`upload a puzzle 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
+  font-size: 13.333333333333334px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
@@ -146,7 +154,7 @@ exports[`upload a puzzle 1`] = `
   color: var(--autofill);
   text-align: center;
   line-height: 1.2em;
-  font-size: 12px;
+  font-size: 0.9em;
 }
 
 <div
