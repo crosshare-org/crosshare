@@ -1,4 +1,4 @@
-import { ReactNode, useState, useContext } from 'react';
+import { ReactNode, useState, useContext, memo } from 'react';
 import { FaUser, FaUserLock } from 'react-icons/fa';
 
 import { AuthContext } from './AuthContext';
@@ -189,7 +189,7 @@ interface TopBarProps {
   children?: ReactNode
 }
 
-export const TopBar = ({ children }: TopBarProps) => {
+export const TopBar = memo(function TopBar({ children }: TopBarProps) {
   return (
     <header css={{
       height: HEADER_HEIGHT,
@@ -227,7 +227,7 @@ export const TopBar = ({ children }: TopBarProps) => {
       </div>
     </header>
   );
-};
+});
 
 export const DefaultTopBar = () => {
   const { isAdmin } = useContext(AuthContext);

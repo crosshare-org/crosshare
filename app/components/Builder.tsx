@@ -398,11 +398,16 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   }, [state.clues, state.grid.cells, state.grid.width, state.grid.height,
     state.grid.highlight, state.grid.highlighted, state.title, state.notes]);
 
+  const reRunAutofill = useCallback(() => {
+    priorSolves.current = [];
+    runAutofill();
+  }, [runAutofill]);
+
   const [clueMode, setClueMode] = useState(false);
   if (clueMode) {
     return <ClueMode dispatch={dispatch} title={state.title} notes={state.notes} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
   }
-  return <GridMode mostConstrainedEntry={mostConstrainedEntry} reRunAutofill={() => { priorSolves.current = []; runAutofill(); }} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
+  return <GridMode mostConstrainedEntry={mostConstrainedEntry} reRunAutofill={reRunAutofill} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
 };
 
 /* Returns the index within a word string of the start of the `active` cell,
@@ -622,7 +627,7 @@ const GridMode = ({ reRunAutofill, state, dispatch, setClueMode, ...props }: Gri
     dispatch(kpa);
   }, [dispatch]);
 
-  const topBar = useMemo(() => {
+  const topBarChildren = useMemo(() => {
     let autofillIcon = <SpinnerDisabled />;
     let autofillText = 'Autofill disabled';
     if (props.autofillEnabled) {
@@ -637,7 +642,7 @@ const GridMode = ({ reRunAutofill, state, dispatch, setClueMode, ...props }: Gri
         autofillText = 'Couldn\'t autofill this grid';
       }
     }
-    return <TopBar>
+    return <>
       <TopBarLink icon={autofillIcon} text="Autofill" hoverText={autofillText} onClick={toggleAutofillEnabled} />
       <TopBarLink icon={<FaListOl />} text="Clues" onClick={() => setClueMode(true)} />
       <TopBarLink icon={<FaRegNewspaper />} text="Publish" onClick={() => {
@@ -736,12 +741,12 @@ const GridMode = ({ reRunAutofill, state, dispatch, setClueMode, ...props }: Gri
         </>
         }
       </TopBarDropDown>
-    </TopBar >;
+    </>;
   }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, stats, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.grid.width, state.grid.height, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, reRunAutofill, dispatch, muted]);
 
   return (
     <>
-      {topBar}
+      <TopBar>{topBarChildren}</TopBar>
       {state.toPublish ?
         <PublishOverlay toPublish={state.toPublish} user={props.user} cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })} /> : ''}
       {state.isEnteringRebus ?

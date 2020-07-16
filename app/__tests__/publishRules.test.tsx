@@ -23,7 +23,6 @@ const withComments: DBPuzzleT = {
       'Has a great night at the comedy club'],
   p: TimestampClass.now(),
   a: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
-  ca: TimestampClass.now(),
   an: [1, 6, 7, 8, 9],
   g:
     ['L',
