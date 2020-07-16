@@ -17,10 +17,12 @@ type GridViewProps = {
   autofill?: Array<string>,
   squareWidth: number,
   cellColors?: Array<number>,
+  highlightEntry?: number,
 }
 
 export const GridView = ({ active, dispatch, grid, ...props }: GridViewProps) => {
   const entryCells = getEntryCells(grid, active);
+  const highlightCells = props.highlightEntry !== undefined ? grid.entries[props.highlightEntry].cells : [];
 
   const noOp = useCallback(() => undefined, []);
   const changeActive = useCallback((pos) => {
@@ -46,6 +48,7 @@ export const GridView = ({ active, dispatch, grid, ...props }: GridViewProps) =>
       gridWidth={grid.width}
       active={isActive}
       entryCell={entryCells.some((p) => cellIndex(grid, p) === idx)}
+      highlightCell={highlightCells.some((p) => cellIndex(grid, p) === idx)}
       key={idx}
       number={number ? number.toString() : ''}
       row={Math.floor(idx / grid.width)}

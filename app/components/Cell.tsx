@@ -13,6 +13,7 @@ type CellProps = {
   isBlock: boolean,
   active: boolean,
   entryCell: boolean,
+  highlightCell: boolean,
   highlight: 'circle' | 'shade' | undefined,
   value: string,
   number: string,
@@ -42,6 +43,17 @@ export const Cell = memo(function Cell(props: CellProps) {
   const cellSize = props.squareWidth / props.gridWidth;
   const value = props.value.trim() ? props.value : props.autofill;
 
+  let boxShadow = '';
+  if (props.highlightCell) {
+    boxShadow = 'inset 1px 1px var(--black), inset -1px -1px var(--black)';
+  } else if (props.cellColor !== undefined) {
+    if (props.active) {
+      boxShadow = 'inset 3px 3px var(--black), inset -3px -3px var(--black)';
+    } else if (props.entryCell) {
+      boxShadow = 'inset 1px 1px var(--black), inset -1px -1px var(--black)';
+    }
+  }
+
   return (
     <div css={{
       width: (100 / props.gridWidth) + '%',
@@ -62,7 +74,7 @@ export const Cell = memo(function Cell(props: CellProps) {
         ...(props.row === 0) && { borderTop: '1px solid var(--cell-wall)' },
         ...(props.column === 0) && { borderLeft: '1px solid var(--cell-wall)' },
         background: bg,
-        ...(props.cellColor !== undefined) && { boxShadow: props.active ? 'inset 0 0 4px var(--black)' : (props.entryCell ? 'inset 0 0 2px var(--black)' : 'none') },
+        ...(boxShadow) && { boxShadow },
       }}>
         {!props.isBlock ?
           <>

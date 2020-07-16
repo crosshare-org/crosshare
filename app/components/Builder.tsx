@@ -14,6 +14,7 @@ import useEventListener from '@use-it/event-listener';
 import { FixedSizeList as List } from 'react-window';
 import { toast, Slide } from 'react-toastify';
 
+import { addAutofillFieldsToEntry, numMatchesForEntry } from '../lib/autofillGrid';
 import { ViewableEntry } from '../lib/viewableGrid';
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled, SymmetryIcon,
@@ -287,6 +288,22 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   const [autofilledGrid, setAutofilledGrid] = useState<string[]>([]);
   const [autofillInProgress, setAutofillInProgress] = useState(false);
 
+  const mostConstrainedEntry: number | null = useMemo(() => {
+    if (!WordDB.wordDB) {
+      throw new Error('missing db!');
+    }
+    const openEntries = state.grid.entries
+      .filter(e => e.completedWord === null)
+      .map((e): [ViewableEntry, number] =>
+        [e, numMatchesForEntry(addAutofillFieldsToEntry({ ...e, pattern: e.cells.map(p => valAt(state.grid, p)).join('') }))]
+      )
+      .sort(([_a, aMatches], [_b, bMatches]) => aMatches - bMatches);
+    if (openEntries) {
+      return openEntries[0][0].index;
+    }
+    return null;
+  }, [state.grid]);
+
   const [autofillEnabled, setAutofillEnabled] = useState(true);
 
   // We need a ref to the current grid so we can verify it in worker.onmessage
@@ -385,7 +402,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   if (clueMode) {
     return <ClueMode dispatch={dispatch} title={state.title} notes={state.notes} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
   }
-  return <GridMode reRunAutofill={() => { priorSolves.current = []; runAutofill(); }} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
+  return <GridMode mostConstrainedEntry={mostConstrainedEntry} reRunAutofill={() => { priorSolves.current = []; runAutofill(); }} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
 };
 
 /* Returns the index within a word string of the start of the `active` cell,
@@ -496,6 +513,7 @@ interface GridModeProps {
   state: BuilderState,
   dispatch: Dispatch<PuzzleAction>,
   setClueMode: (val: boolean) => void,
+  mostConstrainedEntry: number | null,
 }
 const GridMode = ({ reRunAutofill, state, dispatch, setClueMode, ...props }: GridModeProps) => {
   const [muted, setMuted] = usePersistedBoolean('muted', false);
@@ -747,6 +765,7 @@ const GridMode = ({ reRunAutofill, state, dispatch, setClueMode, ...props }: Gri
         square={
           (width: number, _height: number) => {
             return <GridView
+              highlightEntry={props.mostConstrainedEntry !== null ? props.mostConstrainedEntry : undefined}
               squareWidth={width}
               grid={state.grid}
               active={state.active}
