@@ -45,12 +45,12 @@ export const Cell = memo(function Cell(props: CellProps) {
 
   let boxShadow = '';
   if (props.highlightCell) {
-    boxShadow = 'inset 1px 1px var(--black), inset -1px -1px var(--black)';
+    boxShadow = 'inset 0 0 0 0.02em var(--black)';
   } else if (props.cellColor !== undefined) {
     if (props.active) {
-      boxShadow = 'inset 3px 3px var(--black), inset -3px -3px var(--black)';
+      boxShadow = 'inset 0 0 0 0.05em var(--black)';
     } else if (props.entryCell) {
-      boxShadow = 'inset 1px 1px var(--black), inset -1px -1px var(--black)';
+      boxShadow = 'inset 0 0 0 0.02em var(--black)';
     }
   }
 
@@ -69,6 +69,7 @@ export const Cell = memo(function Cell(props: CellProps) {
         position: 'absolute',
         width: '100%',
         height: '100%',
+        fontSize: cellSize,
         borderRight: '1px solid var(--cell-wall)',
         borderBottom: '1px solid var(--cell-wall)',
         ...(props.row === 0) && { borderTop: '1px solid var(--cell-wall)' },
@@ -85,7 +86,7 @@ export const Cell = memo(function Cell(props: CellProps) {
               fontWeight: 'bold',
               lineHeight: '1em',
 
-              fontSize: 0.25 * cellSize,
+              fontSize: '0.25em',
             }}>
               {props.wasRevealed ?
                 <div css={{
@@ -100,7 +101,7 @@ export const Cell = memo(function Cell(props: CellProps) {
               color: props.isVerified ? 'var(--verified)' : (props.value.trim() ? 'var(--black)' : 'var(--autofill)'),
               textAlign: 'center',
               lineHeight: '1.2em',
-              fontSize: 0.9 * cellSize,
+              fontSize: '0.9em',
             }}>
               {props.isWrong ?
                 <div css={{
