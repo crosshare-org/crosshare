@@ -7,12 +7,12 @@ import { Overlay } from './Overlay';
 import { Logo } from './Icons';
 import { PRIMARY, HEADER_HEIGHT, SMALL_AND_UP, HAS_PHYSICAL_KEYBOARD } from '../lib/style';
 
-export const TopBarDropDown = (props: { text: string, icon: ReactNode, children: (close: () => void) => ReactNode }) => {
+export const TopBarDropDown = (props: { text: string, icon: ReactNode, hoverText?: string, children: (close: () => void) => ReactNode }) => {
   const [dropped, setDropped] = useState(false);
   const close = () => setDropped(false);
   return (
     <>
-      <TopBarLink onClick={() => setDropped(!dropped)} text={props.text} icon={props.icon} />
+      <TopBarLink onClick={() => setDropped(!dropped)} text={props.text} icon={props.icon} hoverText={props.hoverText} />
       <Overlay onClick={close} closeCallback={close} hidden={!dropped}>
         {props.children(close)}
       </Overlay>

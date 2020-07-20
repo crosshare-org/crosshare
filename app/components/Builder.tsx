@@ -6,7 +6,8 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaSquare,
-  FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip, FaUserLock, FaRegPlusSquare
+  FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip, FaUserLock, FaRegPlusSquare,
+  FaSignInAlt,
 } from 'react-icons/fa';
 import { MdRefresh } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
@@ -19,7 +20,7 @@ import { ViewableEntry } from '../lib/viewableGrid';
 import {
   Rebus, SpinnerWorking, SpinnerFinished, SpinnerFailed, SpinnerDisabled, SymmetryIcon,
   SymmetryRotational, SymmetryVertical, SymmetryHorizontal, SymmetryNone,
-  EscapeKey, BacktickKey, PeriodKey, PuzzleSizeIcon, EnterKey
+  EscapeKey, BacktickKey, PeriodKey, PuzzleSizeIcon, EnterKey, ExclamationKey
 } from './Icons';
 import { AuthProps } from './AuthContext';
 import { LoadButton } from './DBLoader';
@@ -35,7 +36,7 @@ import {
 import {
   Symmetry, BuilderState, builderReducer, KeypressAction,
   SymmetryAction, ClickedFillAction, PuzzleAction, SetHighlightAction, PublishAction,
-  NewPuzzleAction, initialBuilderState, BuilderGrid
+  NewPuzzleAction, initialBuilderState, BuilderGrid, ClickedEntryAction
 } from '../reducers/reducer';
 import {
   NestedDropDown, TopBarLink, TopBar, DefaultTopBar, TopBarDropDownLink,
@@ -288,7 +289,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   const [autofilledGrid, setAutofilledGrid] = useState<string[]>([]);
   const [autofillInProgress, setAutofillInProgress] = useState(false);
 
-  const mostConstrainedEntry: number | null = useMemo(() => {
+  const getMostConstrainedEntry = useCallback(() => {
     if (!WordDB.wordDB) {
       throw new Error('missing db!');
     }
@@ -407,7 +408,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   if (clueMode) {
     return <ClueMode dispatch={dispatch} title={state.title} notes={state.notes} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
   }
-  return <GridMode mostConstrainedEntry={mostConstrainedEntry} reRunAutofill={reRunAutofill} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
+  return <GridMode getMostConstrainedEntry={getMostConstrainedEntry} reRunAutofill={reRunAutofill} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
 };
 
 /* Returns the index within a word string of the start of the `active` cell,
@@ -518,9 +519,9 @@ interface GridModeProps {
   state: BuilderState,
   dispatch: Dispatch<PuzzleAction>,
   setClueMode: (val: boolean) => void,
-  mostConstrainedEntry: number | null,
+  getMostConstrainedEntry: () => number | null,
 }
-const GridMode = ({ reRunAutofill, state, dispatch, setClueMode, ...props }: GridModeProps) => {
+const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, setClueMode, ...props }: GridModeProps) => {
   const [muted, setMuted] = usePersistedBoolean('muted', false);
 
   const gridRef = useRef<HTMLDivElement | null>(null);
@@ -533,10 +534,17 @@ const GridMode = ({ reRunAutofill, state, dispatch, setClueMode, ...props }: Gri
       reRunAutofill();
       return;
     }
+    if (e.key === '!') {
+      const entry = getMostConstrainedEntry();
+      if (entry !== null) {
+        const ca: ClickedEntryAction = { type: 'CLICKEDENTRY', entryIndex: entry };
+        dispatch(ca);
+      }
+    }
     const kpa: KeypressAction = { type: 'KEYPRESS', key: e.key, shift: e.shiftKey };
     dispatch(kpa);
     e.preventDefault();
-  }, [dispatch, reRunAutofill]);
+  }, [dispatch, reRunAutofill, getMostConstrainedEntry]);
   useEventListener('keydown', physicalKeyboardHandler, gridRef.current || undefined);
 
   const fillLists = useMemo(() => {
@@ -629,8 +637,12 @@ const GridMode = ({ reRunAutofill, state, dispatch, setClueMode, ...props }: Gri
 
   const topBarChildren = useMemo(() => {
     let autofillIcon = <SpinnerDisabled />;
+    let autofillReverseIcon = <SpinnerWorking />;
+    let autofillReverseText = 'Enable Autofill';
     let autofillText = 'Autofill disabled';
     if (props.autofillEnabled) {
+      autofillReverseIcon = <SpinnerDisabled />;
+      autofillReverseText = 'Disable Autofill';
       if (props.autofillInProgress) {
         autofillIcon = <SpinnerWorking />;
         autofillText = 'Autofill in progress';
@@ -643,7 +655,21 @@ const GridMode = ({ reRunAutofill, state, dispatch, setClueMode, ...props }: Gri
       }
     }
     return <>
-      <TopBarLink icon={autofillIcon} text="Autofill" hoverText={autofillText} onClick={toggleAutofillEnabled} />
+      <TopBarDropDown icon={autofillIcon} text="Autofill" hoverText={autofillText}>
+        {() => <>
+          <TopBarDropDownLink icon={autofillReverseIcon} text={autofillReverseText} onClick={toggleAutofillEnabled} />
+          <TopBarDropDownLink icon={<FaSignInAlt />} text="Jump to Most Constrained" shortcutHint={<ExclamationKey />} onClick={() => {
+            const entry = getMostConstrainedEntry();
+            if (entry !== null) {
+              const ca: ClickedEntryAction = { type: 'CLICKEDENTRY', entryIndex: entry };
+              dispatch(ca);
+            }
+          }} />
+          <TopBarDropDownLink icon={<MdRefresh />} text='Rerun Autofiller' shortcutHint={<EnterKey />} onClick={() => {
+            reRunAutofill();
+          }} />
+        </>}
+      </TopBarDropDown>
       <TopBarLink icon={<FaListOl />} text="Clues" onClick={() => setClueMode(true)} />
       <TopBarLink icon={<FaRegNewspaper />} text="Publish" onClick={() => {
         const a: PublishAction = { type: 'PUBLISH', publishTimestamp: TimestampClass.now() };
@@ -720,9 +746,6 @@ const GridMode = ({ reRunAutofill, state, dispatch, setClueMode, ...props }: Gri
             const a: SetHighlightAction = { type: 'SETHIGHLIGHT', highlight: state.grid.highlight === 'circle' ? 'shade' : 'circle' };
             dispatch(a);
           }} />
-          <TopBarDropDownLink icon={<MdRefresh />} text='Rerun Autofiller' shortcutHint={<EnterKey />} onClick={() => {
-            reRunAutofill();
-          }} />
           {
             muted ?
               <TopBarDropDownLink icon={<FaVolumeUp />} text="Unmute" onClick={() => setMuted(false)} />
@@ -742,7 +765,7 @@ const GridMode = ({ reRunAutofill, state, dispatch, setClueMode, ...props }: Gri
         }
       </TopBarDropDown>
     </>;
-  }, [props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, stats, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.grid.width, state.grid.height, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, reRunAutofill, dispatch, muted]);
+  }, [getMostConstrainedEntry, props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, stats, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.grid.width, state.grid.height, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, reRunAutofill, dispatch, muted]);
 
   return (
     <>
@@ -770,7 +793,6 @@ const GridMode = ({ reRunAutofill, state, dispatch, setClueMode, ...props }: Gri
         square={
           (width: number, _height: number) => {
             return <GridView
-              highlightEntry={props.mostConstrainedEntry !== null ? props.mostConstrainedEntry : undefined}
               squareWidth={width}
               grid={state.grid}
               active={state.active}
