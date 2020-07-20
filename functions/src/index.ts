@@ -8,7 +8,10 @@ import { isRight } from "fp-ts/lib/Either";
 import {
   PlayV, PuzzleStatsT, PuzzleStatsV, DailyStatsV, DailyStatsT,
   DBPuzzleV, CronStatusV, CronStatusT, getDateString,
-} from './common/dbtypes';
+} from '../../app/lib/dbtypes';
+
+import * as wrapper from '../../app/lib/firebaseWrapper';
+wrapper.setTimestampClass(admin.firestore.Timestamp);
 
 async function runAnalytics(startTimestamp: admin.firestore.Timestamp, endTimestamp: admin.firestore.Timestamp) {
   console.log("Updating analytics btwn", startTimestamp.toDate().toLocaleString(), endTimestamp.toDate().toLocaleString());
