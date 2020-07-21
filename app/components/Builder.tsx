@@ -1,6 +1,6 @@
 import {
   useState, useReducer, useRef, useEffect, useCallback, useMemo,
-  Dispatch, KeyboardEvent, MouseEvent, FormEvent
+  Dispatch, KeyboardEvent, MouseEvent, FormEvent, MutableRefObject
 } from 'react';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -103,11 +103,15 @@ interface PotentialFillItemProps {
   entryIndex: number,
   value: [string, number],
   dispatch: Dispatch<ClickedFillAction>,
+  gridRef: MutableRefObject<HTMLDivElement | null>,
 }
 const PotentialFillItem = (props: PotentialFillItemProps) => {
   function click(e: MouseEvent) {
     e.preventDefault();
     props.dispatch({ type: 'CLICKEDFILL', entryIndex: props.entryIndex, value: props.value[0] });
+    if (props.gridRef.current) {
+      props.gridRef.current.focus();
+    }
   }
   return (
     <button css={{
@@ -134,6 +138,7 @@ interface PotentialFillListProps {
   entryIndex: number,
   values: Array<[string, number]>,
   dispatch: Dispatch<ClickedFillAction>,
+  gridRef: MutableRefObject<HTMLDivElement | null>,
 }
 const PotentialFillList = (props: PotentialFillListProps) => {
   const listRef = useRef<List>(null);
@@ -168,6 +173,7 @@ const PotentialFillList = (props: PotentialFillListProps) => {
           {({ index, style }) => (
             <div style={style}>
               <PotentialFillItem
+                gridRef={props.gridRef}
                 key={index}
                 entryIndex={props.entryIndex}
                 dispatch={props.dispatch}
@@ -526,6 +532,12 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
 
   const gridRef = useRef<HTMLDivElement | null>(null);
 
+  const focusGrid = useCallback(() => {
+    if (gridRef.current) {
+      gridRef.current.focus();
+    }
+  }, []);
+
   const physicalKeyboardHandler = useCallback((e: KeyboardEvent) => {
     if (e.metaKey || e.altKey || e.ctrlKey) {
       return;  // This way you can still do apple-R and such
@@ -568,17 +580,17 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
 
     if (cross && crossMatches !== null) {
       if (cross.direction === Direction.Across) {
-        left = <PotentialFillList header="Across" values={crossMatches} entryIndex={cross.index} dispatch={dispatch} />;
+        left = <PotentialFillList gridRef={gridRef} header="Across" values={crossMatches} entryIndex={cross.index} dispatch={dispatch} />;
       } else {
-        right = <PotentialFillList header="Down" values={crossMatches} entryIndex={cross.index} dispatch={dispatch} />;
+        right = <PotentialFillList gridRef={gridRef} header="Down" values={crossMatches} entryIndex={cross.index} dispatch={dispatch} />;
       }
     }
     if (entry && entryMatches !== null) {
-      tiny = <PotentialFillList values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
+      tiny = <PotentialFillList gridRef={gridRef} values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
       if (entry.direction === Direction.Across) {
-        left = <PotentialFillList header="Across" values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
+        left = <PotentialFillList gridRef={gridRef} header="Across" values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
       } else {
-        right = <PotentialFillList header="Down" values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
+        right = <PotentialFillList gridRef={gridRef} header="Down" values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
       }
     }
     return { left, right, tiny };
@@ -655,7 +667,7 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
       }
     }
     return <>
-      <TopBarDropDown icon={autofillIcon} text="Autofill" hoverText={autofillText}>
+      <TopBarDropDown onClose={focusGrid} icon={autofillIcon} text="Autofill" hoverText={autofillText}>
         {() => <>
           <TopBarDropDownLink icon={autofillReverseIcon} text={autofillReverseText} onClick={toggleAutofillEnabled} />
           <TopBarDropDownLink icon={<FaSignInAlt />} text="Jump to Most Constrained" shortcutHint={<ExclamationKey />} onClick={() => {
@@ -675,12 +687,12 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
         const a: PublishAction = { type: 'PUBLISH', publishTimestamp: TimestampClass.now() };
         dispatch(a);
       }} />
-      <TopBarDropDown icon={<FaEllipsisH />} text="More">
+      <TopBarDropDown onClose={focusGrid} icon={<FaEllipsisH />} text="More">
         {(closeDropdown) => <>
-          <NestedDropDown closeParent={closeDropdown} icon={<FaRegPlusSquare />} text="New Puzzle">
+          <NestedDropDown onClose={focusGrid} closeParent={closeDropdown} icon={<FaRegPlusSquare />} text="New Puzzle">
             {() => <NewPuzzleForm dispatch={dispatch} />}
           </NestedDropDown>
-          <NestedDropDown closeParent={closeDropdown} icon={<IoMdStats />} text="Stats">
+          <NestedDropDown onClose={focusGrid} closeParent={closeDropdown} icon={<IoMdStats />} text="Stats">
             {() => <>
               <h2>Grid</h2>
               <div>{state.gridIsComplete ? <FaRegCheckCircle /> : <FaRegCircle />} All cells should be filled</div>
@@ -697,7 +709,7 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
             </>
             }
           </NestedDropDown>
-          <NestedDropDown closeParent={closeDropdown} icon={<SymmetryIcon type={state.symmetry} />} text="Change Symmetry">
+          <NestedDropDown onClose={focusGrid} closeParent={closeDropdown} icon={<SymmetryIcon type={state.symmetry} />} text="Change Symmetry">
             {() => <>
               <TopBarDropDownLink icon={<SymmetryRotational />} text="Use Rotational Symmetry" onClick={() => {
                 const a: SymmetryAction = { type: 'CHANGESYMMETRY', symmetry: Symmetry.Rotational };
@@ -765,7 +777,7 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
         }
       </TopBarDropDown>
     </>;
-  }, [getMostConstrainedEntry, props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, stats, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.grid.width, state.grid.height, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, reRunAutofill, dispatch, muted]);
+  }, [focusGrid, getMostConstrainedEntry, props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, stats, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.grid.width, state.grid.height, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, reRunAutofill, dispatch, muted]);
 
   return (
     <>
