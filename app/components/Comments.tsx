@@ -21,6 +21,36 @@ type CommentWithPossibleLocalReplies = Omit<Comment, 'replies'> & {
 }
 type CommentOrLocalComment = CommentWithPossibleLocalReplies | LocalComment
 
+const SpoilerText = ({ text }: CommentTextProps) => {
+  return <span css={{
+    backgroundColor: 'var(--text)',
+    '&:hover': {
+      backgroundColor: 'var(--bg)',
+    }
+  }}>{text}</span>;
+};
+
+interface CommentTextProps {
+  text: string
+}
+const CommentText = ({ text }: CommentTextProps) => {
+  const pieces: Array<ReactNode> = [];
+  const tagFinder = /(?<item>(?<tag_begin>>!)(?<content>.+?)(?<tag_end>!<))/gm;
+  let lastMatchedPosition = 0;
+  let i = 0;
+  function breaker(match: string, _item: string, _tag_begin: string, content: string, _tag_end: string, offset: number, string: string) {
+    if (lastMatchedPosition < offset) {
+      pieces.push(<span key={i++}>{string.substring(lastMatchedPosition, offset)}</span>);
+    }
+    pieces.push(<SpoilerText key={i++} text={content} />);
+    lastMatchedPosition = offset + match.length;
+    return match;
+  }
+  text.replace(tagFinder, breaker);
+  pieces.push(<span key={i++}>{text.substring(lastMatchedPosition)}</span>);
+  return <div>{pieces}</div>;
+};
+
 interface CommentProps {
   puzzleAuthorId: string,
   comment: CommentOrLocalComment,
@@ -32,7 +62,7 @@ const CommentView = (props: CommentProps) => {
       marginTop: '1em',
     }}>
       <div><CommentFlair displayName={props.comment.authorDisplayName} userId={props.comment.authorId} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.comment.authorSolveTime} didCheat={props.comment.authorCheated} /></div>
-      <div>{props.comment.commentText}</div>
+      <CommentText text={props.comment.commentText} />
       {props.children}
     </div>
   );
