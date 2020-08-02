@@ -149,8 +149,14 @@ const SuccessOverlay = (props: { user?: firebase.User, puzzle: PuzzleResult, nex
         {props.puzzle.constructorNotes ?
           <ConstructorNotes notes={props.puzzle.constructorNotes} />
           : ''}
-        <h4><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
-        <p>You solved the puzzle in <b>{timeString(props.solveTime, false)}</b></p>
+        {props.user ?.uid === props.puzzle.authorId ?
+          <p>Your puzzle is live! Copy the link to share with solvers. Comments posted below will be visible to anyone who finishes solving the puzzle.</p>
+          :
+          <>
+            <h4><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
+            <p>You solved the puzzle in <b>{timeString(props.solveTime, false)}</b></p>
+          </>
+        }
         {!props.user || props.user.isAnonymous ?
           <>
             <p>Sign in with google to track your puzzle solving streak!</p>
@@ -258,10 +264,10 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       return;
     }
     if (loadingPlayState === false) {
-      const action: LoadPlayAction = { type: 'LOADPLAY', play: play };
+      const action: LoadPlayAction = { type: 'LOADPLAY', play: play, isAuthor: props.user ? props.user.uid === puzzle.authorId : false };
       dispatch(action);
     }
-  }, [loadingPlayState, play, state.loadedPlayState]);
+  }, [loadingPlayState, play, state.loadedPlayState, props.user, puzzle.authorId]);
 
   // Every (unpaused) second dispatch a tick action which updates the display time
   useEffect(() => {

@@ -279,6 +279,7 @@ function isRanSuccessEffectsAction(action: PuzzleAction): action is RanSuccessEf
 export interface LoadPlayAction extends PuzzleAction {
   type: 'LOADPLAY',
   play: PlayWithoutUserT | null,
+  isAuthor: boolean,
 }
 function isLoadPlayAction(action: PuzzleAction): action is LoadPlayAction {
   return action.type === 'LOADPLAY';
@@ -626,6 +627,9 @@ export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleS
     return { ...state, ranSuccessEffects: true };
   }
   if (isLoadPlayAction(action)) {
+    if (action.isAuthor) {
+      return { ...state, success: true, ranSuccessEffects: true, grid: { ...state.grid, cells: state.answers } };
+    }
     const play = action.play;
     if (play === null) {
       return { ...state, loadedPlayState: true };
