@@ -177,12 +177,92 @@ exports[`basic comment display 1`] = `
           </span>
         </div>
         <div>
-          my first comment
+          <span>
+            my first comment
+          </span>
         </div>
         
         
       </div>
     </li>
   </ul>
+</div>
+`;
+
+exports[`spoiler text rendering 1`] = `
+<div>
+  <div>
+    <span>
+      foo bar &gt;!baz
+    </span>
+  </div>
+</div>
+`;
+
+exports[`spoiler text rendering 2`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <div>
+    <span>
+      foo bar 
+    </span>
+    <span
+      class="emotion-0"
+    >
+      baz
+    </span>
+    <span />
+  </div>
+</div>
+`;
+
+exports[`spoiler text rendering 3`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <div>
+    <span
+      class="emotion-0"
+    >
+      baz foo bam ! &gt;&gt; fooey
+    </span>
+    <span />
+  </div>
+</div>
+`;
+
+exports[`spoiler text rendering 4`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <div>
+    <span
+      class="emotion-0"
+    >
+      baz foo bam ! &gt;&gt; fooey
+    </span>
+    <span>
+       with after text
+    </span>
+  </div>
 </div>
 `;

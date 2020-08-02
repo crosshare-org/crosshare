@@ -1,4 +1,4 @@
-import { Comments } from '../components/Comments';
+import { Comments, CommentText } from '../components/Comments';
 import { render } from '../lib/testingUtils';
 import { Comment } from '../lib/types';
 import { setApp } from '../lib/firebaseWrapper';
@@ -37,6 +37,20 @@ test('basic comment display', () => {
   );
   expect(getByText(/my first comment/i)).toBeVisible();
   expect(container.firstChild).toMatchSnapshot();
+});
+
+test('spoiler text rendering', () => {
+  const r = render(<CommentText text='foo bar >!baz' />, {});
+  expect(r.container).toMatchSnapshot();
+
+  const r1 = render(<CommentText text='foo bar >!baz!<' />, {});
+  expect(r1.container).toMatchSnapshot();
+
+  const r2 = render(<CommentText text='>!baz foo bam ! >> fooey!<' />, {});
+  expect(r2.container).toMatchSnapshot();
+
+  const r3 = render(<CommentText text='>!baz foo bam ! >> fooey!< with after text' />, {});
+  expect(r3.container).toMatchSnapshot();
 });
 
 test('security rules should only allow commenting as onesself', async () => {

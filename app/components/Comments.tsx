@@ -33,7 +33,7 @@ const SpoilerText = ({ text }: CommentTextProps) => {
 interface CommentTextProps {
   text: string
 }
-const CommentText = ({ text }: CommentTextProps) => {
+export const CommentText = ({ text }: CommentTextProps) => {
   const pieces: Array<ReactNode> = [];
   const tagFinder = /(?<item>(?<tag_begin>>!)(?<content>.+?)(?<tag_end>!<))/gm;
   let lastMatchedPosition = 0;
