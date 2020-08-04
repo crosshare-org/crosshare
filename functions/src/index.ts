@@ -164,7 +164,7 @@ export const analytics = functions.pubsub.schedule('every 1 hours').onRun(async 
 });
 
 const client = new admin.firestore.v1.FirestoreAdminClient();
-export const scheduledFirestoreExport = functions.pubsub.schedule('every day 03:00').onRun((_context) => {
+export const scheduledFirestoreExport = functions.pubsub.schedule('every day 00:00').onRun((_context) => {
   const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT;
   const databaseName = client.databasePath(projectId, '(default)');
 
