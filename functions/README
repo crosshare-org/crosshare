@@ -1,0 +1,5 @@
+Deploy import/export:
+$ npx firebase deploy --only functions:scheduledFirestoreExport
+
+Deploy analytics:
+$ npx firebase deploy --only functions:analytics
