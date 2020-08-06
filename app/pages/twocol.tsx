@@ -6,6 +6,7 @@ export default function TwoColTestPage() {
     <>
       <DefaultTopBar />
       <TwoCol
+        toggleKeyboard={false}
         keyboardHandler={(s) => { console.log(s); }}
         muted={false}
         showExtraKeyLayout={false}

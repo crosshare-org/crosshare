@@ -10,6 +10,7 @@ export default function SquareTestPage() {
     <>
       <DefaultTopBar />
       <SquareAndCols
+        toggleKeyboard={false}
         keyboardHandler={(s) => { console.log(s); }}
         muted={false}
         showExtraKeyLayout={false}

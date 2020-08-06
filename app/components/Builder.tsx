@@ -1,13 +1,13 @@
 import {
   useState, useReducer, useRef, useEffect, useCallback, useMemo,
-  Dispatch, KeyboardEvent, MouseEvent, FormEvent, MutableRefObject
+  Dispatch, MouseEvent, FormEvent, MutableRefObject
 } from 'react';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   FaRegNewspaper, FaUser, FaListOl, FaRegCircle, FaRegCheckCircle, FaSquare,
   FaEllipsisH, FaVolumeUp, FaVolumeMute, FaFillDrip, FaUserLock, FaRegPlusSquare,
-  FaSignInAlt,
+  FaSignInAlt, FaKeyboard
 } from 'react-icons/fa';
 import { MdRefresh } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
@@ -529,6 +529,7 @@ interface GridModeProps {
 }
 const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, setClueMode, ...props }: GridModeProps) => {
   const [muted, setMuted] = usePersistedBoolean('muted', false);
+  const [toggleKeyboard, setToggleKeyboard] = usePersistedBoolean('keyboard', false);
 
   const gridRef = useRef<HTMLDivElement | null>(null);
 
@@ -764,6 +765,7 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
               :
               <TopBarDropDownLink icon={<FaVolumeMute />} text="Mute" onClick={() => setMuted(true)} />
           }
+          <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => setToggleKeyboard(!toggleKeyboard)} />
           {
             props.isAdmin ?
               <>
@@ -777,7 +779,7 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
         }
       </TopBarDropDown>
     </>;
-  }, [focusGrid, getMostConstrainedEntry, props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, stats, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.grid.width, state.grid.height, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, reRunAutofill, dispatch, muted]);
+  }, [focusGrid, getMostConstrainedEntry, props.autofillEnabled, props.autofillInProgress, props.autofilledGrid.length, stats, props.isAdmin, setClueMode, setMuted, state.grid.highlight, state.grid.width, state.grid.height, state.gridIsComplete, state.hasNoShortWords, state.repeats, state.symmetry, toggleAutofillEnabled, reRunAutofill, dispatch, muted, toggleKeyboard, setToggleKeyboard]);
 
   return (
     <>
@@ -797,6 +799,7 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
         </Overlay> : ''}
       <SquareAndCols
         ref={gridRef}
+        toggleKeyboard={toggleKeyboard}
         muted={muted}
         keyboardHandler={keyboardHandler}
         showExtraKeyLayout={state.showExtraKeyLayout}

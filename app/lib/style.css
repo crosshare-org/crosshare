@@ -27,18 +27,10 @@
   --key-ul: #b5b5b5;
   --kb-bg: #ececec;
   --kb-bg-click: #ddd;
-  --height-adjustment: 199px; /* Keyboard height + Header height */
-  --header-height: 35px; /* Header height */
   --text-input-bg: #F5F5F5;
   --text-input-border: #777;
   --snackbar-bg: #121212;
   --snackbar-text: #DDD;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  :root {
-    --height-adjustment: 35px; /* Header height */
-  }
 }
 
 @media (prefers-color-scheme: dark) {

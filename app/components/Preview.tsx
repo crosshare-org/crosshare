@@ -1,5 +1,5 @@
 import {
-  useReducer, useCallback, useMemo, useState, KeyboardEvent
+  useReducer, useCallback, useMemo, useState
 } from 'react';
 import useEventListener from '@use-it/event-listener';
 import {
@@ -103,6 +103,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
       </Overlay>
       : ''}
     <SquareAndCols
+      toggleKeyboard={false}
       muted={true}
       aspectRatio={state.grid.width / state.grid.height}
       square={

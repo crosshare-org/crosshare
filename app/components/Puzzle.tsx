@@ -1,10 +1,10 @@
 import {
   useReducer, useState, useEffect, useCallback, useMemo, useRef, useContext,
-  KeyboardEvent, Dispatch, memo, ReactNode
+  Dispatch, memo, ReactNode
 } from 'react';
 import Head from 'next/head';
 import {
-  FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause,
+  FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaKeyboard,
   FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock, FaComment,
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
@@ -289,6 +289,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   useEventListener('blur', prodPause);
 
   const [muted, setMuted] = usePersistedBoolean('muted', false);
+  const [toggleKeyboard, setToggleKeyboard] = usePersistedBoolean('keyboard', false);
 
   // Set up music player for success song
   const [audioContext, initAudioContext] = useContext(CrosshareAudioContext);
@@ -523,6 +524,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
 
   if (state.clueView) {
     puzzleView = <TwoCol
+      toggleKeyboard={toggleKeyboard}
       muted={muted}
       keyboardHandler={keyboardHandler}
       showExtraKeyLayout={state.showExtraKeyLayout}
@@ -532,6 +534,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     />;
   } else {
     puzzleView = <SquareAndCols
+      toggleKeyboard={toggleKeyboard}
       muted={muted}
       keyboardHandler={keyboardHandler}
       showExtraKeyLayout={state.showExtraKeyLayout}
@@ -622,6 +625,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
               :
               <TopBarDropDownLink icon={<FaVolumeMute />} text="Mute" onClick={() => setMuted(true)} />
           }
+          <TopBarDropDownLink icon={<FaKeyboard />} text="Toggle Keyboard" onClick={() => setToggleKeyboard(!toggleKeyboard)} />
           {
             props.isAdmin ?
               <>
@@ -640,7 +644,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         }
       </TopBarDropDown>
     </>
-  ), [muted, props.isAdmin, props.user ?.uid, puzzle, setMuted, state.success]);
+  ), [muted, props.isAdmin, props.user ?.uid, puzzle, setMuted, state.success, toggleKeyboard, setToggleKeyboard]);
 
   const description = puzzle.clues.map(c => c.clue).sort().slice(0, 10).join('; ');
 

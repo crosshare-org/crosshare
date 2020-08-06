@@ -1,5 +1,5 @@
 import {
-  useReducer, useCallback, useMemo, KeyboardEvent
+  useReducer, useCallback, useMemo
 } from 'react';
 import useEventListener from '@use-it/event-listener';
 
@@ -89,6 +89,7 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
     muted={true}
     aspectRatio={state.grid.width / state.grid.height}
     noHeightAdjust={true}
+    toggleKeyboard={false}
     square={
       (width: number, _height: number) => {
         return <GridView

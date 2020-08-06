@@ -7,11 +7,17 @@ import { AiOutlineEnter } from 'react-icons/ai';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { KEYBOARD_HEIGHT, SMALL_AND_UP, HAS_PHYSICAL_KEYBOARD } from '../lib/style';
 
-export const KeyRows = (props: KeyRowProps) => {
+interface KeyRowsProps {
+  children: ReactNode,
+  toggleKeyboard: boolean,
+}
+
+export const KeyRows = (props: KeyRowsProps) => {
   return (
     <div css={{
+      display: props.toggleKeyboard ? 'none' : 'block',
       [HAS_PHYSICAL_KEYBOARD]: {
-        display: 'none'
+        display: props.toggleKeyboard ? 'block' : 'none',
       },
       fontFamily: '"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif',
       width: '100%',
@@ -27,7 +33,7 @@ export const KeyRows = (props: KeyRowProps) => {
 
 interface KeyRowProps {
   addMarginLeft?: boolean,
-  children: ReactNode
+  children: ReactNode,
 }
 export const KeyRow = (props: KeyRowProps) => {
   return (
@@ -89,6 +95,7 @@ interface KeyboardProps {
   keyboardHandler: (key: string) => void,
   showExtraKeyLayout: boolean,
   includeBlockKey: boolean,
+  toggleKeyboard: boolean,
 }
 export const Keyboard = memo(function Keyboard({ muted, keyboardHandler, ...props }: KeyboardProps) {
   const [audioContext, initAudioContext] = useContext(CrosshareAudioContext);
@@ -128,7 +135,7 @@ export const Keyboard = memo(function Keyboard({ muted, keyboardHandler, ...prop
 
   if (props.showExtraKeyLayout) {
     return (
-      <KeyRows>
+      <KeyRows toggleKeyboard={props.toggleKeyboard}>
         <KeyRow>
           <Key keyStroke='1' onKeypress={keypress} />
           <Key keyStroke='2' onKeypress={keypress} />
@@ -152,7 +159,7 @@ export const Keyboard = memo(function Keyboard({ muted, keyboardHandler, ...prop
     );
   }
   return (
-    <KeyRows>
+    <KeyRows toggleKeyboard={props.toggleKeyboard}>
       <KeyRow>
         <Key keyStroke='Q' onKeypress={keypress} />
         <Key keyStroke='W' onKeypress={keypress} />
