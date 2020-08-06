@@ -13,7 +13,6 @@
       "__tests__/**",
       "components/**",
       "lib/**",
-      "out/**",
       "pages/**",
       "public/**",
       "reducers/**",
@@ -28,7 +27,7 @@
   },
   "hosting": [ {
     "target": "prod",
-    "public": "out",
+    "public": "public/",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -69,7 +68,7 @@
     ]
   }, {
     "target": "staging",
-    "public": "out",
+    "public": "public/",
     "ignore": [
       "firebase.json",
       "**/.*",
