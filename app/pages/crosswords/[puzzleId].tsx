@@ -55,8 +55,9 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ 
     };
   }
   const puzzleId = puzzle.id;
+  const today = getDateString(new Date());
   const miniDate = Object.keys(minis).find(key => minis[key] === puzzleId);
-  if (miniDate) {
+  if (miniDate && (addZeros(miniDate) <= addZeros(today))) {
     const previous = Object.entries(minis)
       .map(([k, v]) => [addZeros(k), v])
       .filter(([k, _v]) => k < addZeros(miniDate))
@@ -74,7 +75,6 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ 
   }
 
   // Didn't find a previous mini, link to today's
-  const today = getDateString(new Date());
   return {
     props: {
       puzzle: puzzle, nextPuzzle: {
