@@ -266,3 +266,123 @@ exports[`spoiler text rendering 4`] = `
   </div>
 </div>
 `;
+
+exports[`spoiler text rendering 5`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <div>
+    <span>
+      before 
+    </span>
+    <span
+      class="emotion-0"
+    >
+      baz foo bam &gt;! fooey
+    </span>
+    <span>
+       with after text
+    </span>
+  </div>
+</div>
+`;
+
+exports[`spoiler text rendering 6`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <div>
+    <span>
+      before 
+    </span>
+    <span
+      class="emotion-0"
+    >
+      baz foo bam || fooey
+    </span>
+    <span>
+       with after text
+    </span>
+  </div>
+</div>
+`;
+
+exports[`spoiler text rendering 7`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <div>
+    <span>
+      before 
+    </span>
+    <span
+      class="emotion-0"
+    >
+      baz foo bam || fooey
+    </span>
+    <span>
+       with 
+    </span>
+    <span
+      class="emotion-0"
+    >
+      after
+    </span>
+    <span>
+       text
+    </span>
+  </div>
+</div>
+`;
+
+exports[`spoiler text rendering 8`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <div>
+    <span>
+      before 
+    </span>
+    <span
+      class="emotion-0"
+    >
+      baz foo bam &gt;! not! !&lt; fooey
+    </span>
+    <span>
+       with 
+    </span>
+    <span
+      class="emotion-0"
+    >
+      after
+    </span>
+    <span>
+       text
+    </span>
+  </div>
+</div>
+`;

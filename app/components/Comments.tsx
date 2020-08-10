@@ -35,10 +35,11 @@ interface CommentTextProps {
 }
 export const CommentText = ({ text }: CommentTextProps) => {
   const pieces: Array<ReactNode> = [];
-  const tagFinder = /(?<item>(?<tag_begin>>!)(?<content>.+?)(?<tag_end>!<))/gm;
+  const tagFinder = /(>!(?<contentReddit>.+?)!<)|(\|\|(?<contentDiscord>.+?)\|\|)/gm;
   let lastMatchedPosition = 0;
   let i = 0;
-  function breaker(match: string, _item: string, _tag_begin: string, content: string, _tag_end: string, offset: number, string: string) {
+  function breaker(match: string, _redditItem: string, contentReddit: string, _discordItem: string, contentDiscord: string, offset: number, string: string) {
+    const content = contentReddit || contentDiscord;
     if (lastMatchedPosition < offset) {
       pieces.push(<span key={i++}>{string.substring(lastMatchedPosition, offset)}</span>);
     }

@@ -40,17 +40,29 @@ test('basic comment display', () => {
 });
 
 test('spoiler text rendering', () => {
-  const r = render(<CommentText text='foo bar >!baz' />, {});
+  let r = render(<CommentText text='foo bar >!baz' />, {});
   expect(r.container).toMatchSnapshot();
 
-  const r1 = render(<CommentText text='foo bar >!baz!<' />, {});
-  expect(r1.container).toMatchSnapshot();
+  r = render(<CommentText text='foo bar >!baz!<' />, {});
+  expect(r.container).toMatchSnapshot();
 
-  const r2 = render(<CommentText text='>!baz foo bam ! >> fooey!<' />, {});
-  expect(r2.container).toMatchSnapshot();
+  r = render(<CommentText text='>!baz foo bam ! >> fooey!<' />, {});
+  expect(r.container).toMatchSnapshot();
 
-  const r3 = render(<CommentText text='>!baz foo bam ! >> fooey!< with after text' />, {});
-  expect(r3.container).toMatchSnapshot();
+  r = render(<CommentText text='>!baz foo bam ! >> fooey!< with after text' />, {});
+  expect(r.container).toMatchSnapshot();
+
+  r = render(<CommentText text='before ||baz foo bam >! fooey|| with after text' />, {});
+  expect(r.container).toMatchSnapshot();
+
+  r = render(<CommentText text='before >!baz foo bam || fooey!< with after text' />, {});
+  expect(r.container).toMatchSnapshot();
+
+  r = render(<CommentText text='before >!baz foo bam || fooey!< with ||after|| text' />, {});
+  expect(r.container).toMatchSnapshot();
+
+  r = render(<CommentText text='before ||baz foo bam >! not! !< fooey|| with >!after!< text' />, {});
+  expect(r.container).toMatchSnapshot();
 });
 
 test('security rules should only allow commenting as onesself', async () => {
