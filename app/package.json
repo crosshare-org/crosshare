@@ -84,7 +84,6 @@
     "leaked-handles": "^5.2.0",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
-    "shelljs": "^0.8.4",
     "typescript": "^3.9.3",
     "wait-for-expect": "^3.0.2"
   },
