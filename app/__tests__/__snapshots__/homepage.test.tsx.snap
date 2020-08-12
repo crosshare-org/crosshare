@@ -353,7 +353,7 @@ exports[`get home page 1`] = `
         </h3>
       </a>
       <p>
-        by 
+        By 
         Mike D
       </p>
       <p>
@@ -450,11 +450,11 @@ exports[`get home page 1`] = `
            
           
         </h3>
-        <p>
-          By 
-          Mike D
-        </p>
       </a>
+      <p>
+        By 
+        Mike D
+      </p>
     </div>
     <p
       class="emotion-16"

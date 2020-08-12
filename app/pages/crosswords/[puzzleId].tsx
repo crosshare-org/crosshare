@@ -5,22 +5,23 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { getDailyMinis } from '../../lib/dailyMinis';
 import { AuthContext } from '../../components/AuthContext';
-import { puzzleFromDB, PuzzleResult } from '../../lib/types';
+import { puzzleFromDB, ServerPuzzleResult } from '../../lib/types';
 import { Puzzle, NextPuzzleLink } from '../../components/Puzzle';
 import { App } from '../../lib/firebaseWrapper';
 import { DBPuzzleV, PlayWithoutUserT, getDateString, addZeros, CategoryIndexT } from '../../lib/dbtypes';
 import { getPlays } from '../../lib/plays';
 import { ErrorPage } from '../../components/ErrorPage';
 import { Link } from '../../components/Link';
+import { userIdToPage } from '../../lib/constructorPage';
 
 interface PuzzlePageProps {
-  puzzle: PuzzleResult | null,
+  puzzle: ServerPuzzleResult | null,
   nextPuzzle?: NextPuzzleLink,
 }
 
 export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ res, params }) => {
   const db = App.firestore();
-  let puzzle: PuzzleResult | null = null;
+  let puzzle: ServerPuzzleResult | null = null;
   if (!params ?.puzzleId || Array.isArray(params.puzzleId)) {
     console.error('bad puzzle params');
     return { props: { puzzle: null } };
@@ -37,7 +38,7 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ 
   const validationResult = DBPuzzleV.decode(dbres.data());
   if (isRight(validationResult)) {
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-    puzzle = { ...puzzleFromDB(validationResult.right), id: dbres.id };
+    puzzle = { ...puzzleFromDB(validationResult.right), id: dbres.id, constructorPage: await userIdToPage(validationResult.right.a) };
   } else {
     console.error(PathReporter.report(validationResult).join(','));
     return { props: { puzzle: null } };
@@ -95,7 +96,7 @@ export default function PuzzlePage({ puzzle, nextPuzzle }: PuzzlePageProps) {
   return <PlayLoader key={puzzle.id} puzzle={puzzle} nextPuzzle={nextPuzzle} />;
 }
 
-const PlayLoader = ({ puzzle, nextPuzzle }: { puzzle: PuzzleResult, nextPuzzle?: NextPuzzleLink }) => {
+const PlayLoader = ({ puzzle, nextPuzzle }: { puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink }) => {
   const { user, isAdmin, loadingUser, error } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
   const [playError, setPlayError] = useState<string | null>(null);

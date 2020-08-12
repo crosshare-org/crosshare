@@ -22,7 +22,7 @@ import { AuthPropsOptional } from './AuthContext';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
-import { Direction, BLOCK, PuzzleResult } from '../lib/types';
+import { Direction, BLOCK, ServerPuzzleResult } from '../lib/types';
 import { fromCells, addClues } from '../lib/viewableGrid';
 import { entryAndCrossAtPosition } from '../lib/gridBase';
 import { getPlays, cachePlay, writePlayToDB, isDirty } from '../lib/plays';
@@ -44,6 +44,8 @@ import { App, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
 import { Emoji } from './Emoji';
 import { Comments } from './Comments';
 import { ConstructorNotes } from './ConstructorNotes';
+import { ConstructorPageT } from '../lib/constructorPage';
+import { AuthorLink } from './PuzzleLink';
 
 export interface NextPuzzleLink {
   puzzleId: string,
@@ -54,6 +56,7 @@ interface PauseBeginProps {
   loadingPlayState: boolean,
   title: string,
   authorName: string,
+  constructorPage: ConstructorPageT | null,
   dispatch: Dispatch<PuzzleAction>,
   message: string,
   dismissMessage: string,
@@ -65,7 +68,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
     <Overlay closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: 'RESUMEACTION' })}>
       <div css={{ textAlign: 'center' }}>
         <h3>{props.title}</h3>
-        <h4>by {props.authorName}</h4>
+        <AuthorLink authorName={props.authorName} constructorPage={props.constructorPage} />
         {props.notes ?
           <ConstructorNotes notes={props.notes} />
           : ''}
@@ -82,7 +85,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
   );
 };
 
-const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: PuzzleResult, dispatch: Dispatch<PuzzleAction> }) => {
+const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: ServerPuzzleResult, dispatch: Dispatch<PuzzleAction> }) => {
   const db = App.firestore();
   const [date, setDate] = useState<Date | undefined>();
 
@@ -140,12 +143,12 @@ const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   return (<Link href='/crosswords/[puzzleId]' as={`/crosswords/${nextPuzzle.puzzleId}`} passHref>Play {nextPuzzle.linkText}</Link>);
 };
 
-const SuccessOverlay = (props: { user?: firebase.User, puzzle: PuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
+const SuccessOverlay = (props: { user?: firebase.User, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
   return (
     <Overlay closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
       <div css={{ textAlign: 'center' }}>
         <h3>{props.puzzle.title}</h3>
-        <h4>by {props.puzzle.authorName}</h4>
+        <AuthorLink authorName={props.puzzle.authorName} constructorPage={props.puzzle.constructorPage} />
         {props.puzzle.constructorNotes ?
           <ConstructorNotes notes={props.puzzle.constructorNotes} />
           : ''}
@@ -207,7 +210,7 @@ export const RebusOverlay = (props: { value: string, dispatch: Dispatch<Keypress
 };
 
 interface PuzzleProps {
-  puzzle: PuzzleResult,
+  puzzle: ServerPuzzleResult,
   play: PlayWithoutUserT | null,
   loadingPlayState: boolean,
   nextPuzzle?: NextPuzzleLink
@@ -518,7 +521,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     };
   }, [state.grid.entries]);
 
-  const beginPauseProps = { loadingPlayState: loadingPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
+  const beginPauseProps = { constructorPage: puzzle.constructorPage, loadingPlayState: loadingPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
 
   let puzzleView: ReactNode;
 

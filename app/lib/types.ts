@@ -2,6 +2,7 @@ import * as t from 'io-ts';
 import type { WordDBT } from './WordDB';
 
 import { DBPuzzleT, CommentWithRepliesT } from '../lib/dbtypes';
+import { ConstructorPageT } from '../lib/constructorPage';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -125,7 +126,14 @@ export interface PuzzleT {
   constructorNotes: string | null,
 }
 
-export type PuzzleResult = PuzzleT & { id: string };
+export interface PuzzleResult extends PuzzleT {
+  id: string
+}
+
+// This is kind of a hack but it helps us to ensure we only query for constructorPages on server side
+export interface ServerPuzzleResult extends PuzzleResult {
+  constructorPage: ConstructorPageT | null
+}
 
 function convertComments(comments: Array<CommentWithRepliesT>): Array<Comment> {
   return comments.map(c => {

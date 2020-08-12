@@ -48,6 +48,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
     const puzzles = await mapEachResult(q, DBPuzzleV, (dbpuzz, docId) => {
       return { ...puzzleFromDB(dbpuzz), id: docId };
     });
+    res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
     return { props: { constructorPage: cp, puzzles: puzzles.slice(0, PAGESIZE), hasMore: puzzles.length === PAGESIZE + 1 } };
   } catch (e) {
     console.error(e);

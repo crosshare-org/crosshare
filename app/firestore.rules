@@ -24,6 +24,7 @@ service cloud.firestore {
     }
     match /cp/{username} {
       allow get: if true;
+      allow list: if true;
     }
     match /c/{crosswordId} {
       allow get: if true;

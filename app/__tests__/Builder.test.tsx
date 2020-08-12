@@ -179,7 +179,7 @@ test('publish as default', async () => {
   const r5 = render(<PuzzlePage {...props1.props} />, { user: rando });
   expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
   expect(r5.queryByText(/Our Title/)).toBeInTheDocument();
-  expect(r5.queryByText(/by Anonymous Crossharer/)).toBeInTheDocument();
+  expect(r5.queryByText(/By Anonymous Crossharer/)).toBeInTheDocument();
   expect(r5.queryByText(/Daily Mini/)).toBeNull();
   await r5.findByText(/Enter Rebus/i);
   expect(r5.queryByText(/Moderate/i)).toBeNull();
@@ -246,7 +246,7 @@ test('change author name in publish dialogue should publish w/ new name', async 
   const r5 = render(<PuzzlePage {...props1.props} />, { user: rando });
   expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
   expect(r5.queryByText(/Our Title/)).toBeInTheDocument();
-  expect(r5.queryByText(/by M to tha D/)).toBeInTheDocument();
+  expect(r5.queryByText(/By M to tha D/)).toBeInTheDocument();
   expect(r5.queryByText(/Daily Mini/)).toBeNull();
   await r5.findByText(/Enter Rebus/i);
   expect(r5.queryByText(/Moderate/i)).toBeNull();

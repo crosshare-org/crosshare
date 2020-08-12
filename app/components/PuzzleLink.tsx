@@ -10,8 +10,9 @@ import { Emoji } from '../components/Emoji';
 import { timeString } from '../lib/utils';
 import { getFromSessionOrDB } from '../lib/dbUtils';
 import { AuthoredPuzzlesV } from '../lib/dbtypes';
+import { ConstructorPageT } from '../lib/constructorPage';
 
-export const PuzzleLink = (props: { id: string, width?: number, height?: number, title: string, byline?: ReactNode, children?: ReactNode }) => {
+export const PuzzleLink = (props: { id: string, width?: number, height?: number, title: string, children?: ReactNode }) => {
   const { user } = useContext(AuthContext);
   const [plays, setPlays] = useState<PlayMapT | null>(null);
   const [authored, setAuthored] = useState(false);
@@ -67,12 +68,20 @@ export const PuzzleLink = (props: { id: string, width?: number, height?: number,
         }
       </div>
       <h3>{props.title} {!authored && play ? (play.f ? <i>({timeString(play.t, false)})</i> : <i>(unfinished)</i>) : ''}</h3>
-      {props.byline}
     </Link>
     {props.children}
   </div>;
 };
 
-export const PuzzleResultLink = ({ puzzle }: { puzzle: PuzzleResult }) => {
-  return <PuzzleLink id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={puzzle.title} byline={<p>By {puzzle.authorName}</p>} />;
+export const AuthorLink = ({ authorName, constructorPage }: { authorName: string, constructorPage: ConstructorPageT | null }) => {
+  if (constructorPage) {
+    return <p>By <Link href='/[...slug]' as={'/' + constructorPage.id} passHref>{constructorPage.n}</Link></p>;
+  }
+  return <p>By {authorName}</p>;
+};
+
+export const PuzzleResultLink = ({ puzzle, showAuthor, constructorPage }: { puzzle: PuzzleResult, showAuthor: boolean, constructorPage?: ConstructorPageT | null }) => {
+  return <PuzzleLink id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={puzzle.title}>
+    {showAuthor ? <AuthorLink authorName={puzzle.authorName} constructorPage={constructorPage || null} /> : undefined}
+  </PuzzleLink>;
 };

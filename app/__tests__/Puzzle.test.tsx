@@ -2,7 +2,7 @@ import React from 'react';
 import { anonymousUser, cleanup, render, fireEvent } from '../lib/testingUtils';
 import waitForExpect from 'wait-for-expect';
 import { Puzzle } from '../components/Puzzle';
-import { PuzzleResult } from '../lib/types';
+import { ServerPuzzleResult } from '../lib/types';
 import { PlayT } from '../lib/dbtypes';
 import * as plays from '../lib/plays';
 import PuzzlePage from '../pages/crosswords/[puzzleId]';
@@ -18,7 +18,7 @@ afterEach(() => {
 
 window.HTMLElement.prototype.scrollIntoView = function() { return; };
 
-const testPuzzle: PuzzleResult = {
+const testPuzzle: ServerPuzzleResult = {
   authorId: 'test-author-id',
   category: null,
   authorName: 'Mike D',
@@ -46,6 +46,7 @@ const testPuzzle: PuzzleResult = {
   id: 'test-puzzle',
   comments: [],
   constructorNotes: null,
+  constructorPage: null,
 };
 
 test('clicking a clue sets slot to active', () => {
@@ -68,7 +69,8 @@ test('clicking a clue sets slot to active', () => {
   expect(cell2).toHaveStyleRule('background', 'var(--secondary)');
 });
 
-const dailymini_5_19: PuzzleResult = {
+const dailymini_5_19: ServerPuzzleResult = {
+  constructorPage: null,
   authorId: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
   category: 'dailymini',
   authorName: 'Mike D',

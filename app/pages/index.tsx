@@ -5,20 +5,22 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { getDailyMinis } from '../lib/dailyMinis';
 import { Link } from '../components/Link';
-import { puzzleFromDB, PuzzleResult } from '../lib/types';
+import { puzzleFromDB, ServerPuzzleResult } from '../lib/types';
 import { DBPuzzleV, getDateString } from '../lib/dbtypes';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
-import { PuzzleLink, PuzzleResultLink } from '../components/PuzzleLink';
+import { AuthorLink, PuzzleLink, PuzzleResultLink } from '../components/PuzzleLink';
+import { userIdToPage, ConstructorPageT } from '../lib/constructorPage';
 
 type DailyMini = {
   id: string,
   authorName: string,
+  authorPage: ConstructorPageT | null,
 }
 
 interface HomePageProps {
   dailymini: DailyMini,
-  featured: Array<PuzzleResult>
+  featured: Array<ServerPuzzleResult>
 }
 
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ res }) => {
@@ -35,21 +37,21 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ re
     .where('p', '<', TimestampClass.now())
     .orderBy('p', 'desc').limit(20).get();
 
-  return Promise.all([dailyminiQuery, featuredQuery]).then(([dmResult, featuredResult]) => {
-    const featured = featuredResult.docs.map((doc) => {
+  return Promise.all([dailyminiQuery, featuredQuery]).then(async ([dmResult, featuredResult]) => {
+    const featured = await Promise.all(featuredResult.docs.map(async (doc) => {
       const res = DBPuzzleV.decode(doc.data());
       if (isRight(res)) {
-        return { ...puzzleFromDB(res.right), id: doc.id };
+        return { ...puzzleFromDB(res.right), id: doc.id, constructorPage: await userIdToPage(res.right.a) };
       } else {
         console.error(PathReporter.report(res).join(','));
         throw new Error('Bad puzzle querying for featured');
       }
-    });
+    }));
     const data = dmResult.data();
     const validationResult = DBPuzzleV.decode(data);
     if (isRight(validationResult)) {
       res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-      const dm = { id: dmResult.id, authorName: validationResult.right.n };
+      const dm = { id: dmResult.id, authorName: validationResult.right.n, authorPage: await userIdToPage(validationResult.right.a) };
       return { props: { dailymini: dm, featured } };
     } else {
       console.error(PathReporter.report(validationResult).join(','));
@@ -72,13 +74,13 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
       </p>
       <h2>Daily Mini</h2>
       <PuzzleLink id={dailymini.id} title="Today's daily mini crossword">
-        <p>by {dailymini.authorName}</p>
+        <AuthorLink authorName={dailymini.authorName} constructorPage={dailymini.authorPage} />
         <p><Link href='/categories/[categoryId]' as='/categories/dailymini' passHref>Play previous daily minis</Link></p>
       </PuzzleLink>
       <h2>Share a Puzzle</h2>
       <p><Link href='/upload' as='/upload' passHref>Upload a .puz to get a Crosshare link to share with solvers</Link></p>
       <h2>Featured Puzzles</h2>
-      {featured.map((p, i) => <PuzzleResultLink key={i} puzzle={p} />)}
+      {featured.map((p, i) => <PuzzleResultLink key={i} puzzle={p} constructorPage={p.constructorPage} showAuthor={true} />)}
       <p css={{ marginTop: '1em' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
     </div >
   </>;
