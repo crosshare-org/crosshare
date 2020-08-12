@@ -22,15 +22,17 @@ service cloud.firestore {
         && (request.resource.data.dc.size() == request.resource.data.dn.size())
         && (!request.resource.data.keys().hasAny(["cs"]) || request.resource.data.cs.size() == 0);
     }
+    match /cp/{username} {
+      allow get: if true;
+    }
     match /c/{crosswordId} {
       allow get: if true;
 
       // Account page
       allow list: if isAdmin() || isAuthor();
 
-      // This supports the homepage 'featured puzzles' list
-      allow list: if resource.data.m
-        && request.query.limit <= 30;
+      // This supports the homepage 'featured puzzles' list and author pages
+      allow list: if request.query.limit <= 30;
 
       allow update: if isAdmin();
 

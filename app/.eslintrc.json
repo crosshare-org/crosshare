@@ -35,6 +35,7 @@
     "@typescript-eslint"
   ],
   "rules": {
+    "react/prop-types": 0,
     "@next/next/no-html-link-for-pages": "off",
     "import/no-anonymous-default-export": ["error"],
     "jsx-a11y/anchor-is-valid": [
