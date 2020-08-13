@@ -13,9 +13,17 @@ export interface ConstructorPageProps {
 }
 
 export const ConstructorPage = (props: ConstructorPageProps) => {
+  const description = 'The latest crossword puzzles from ' + props.constructorPage.n + ' (@' + props.constructorPage.id + '). ' + props.constructorPage.b;
+  const title = props.constructorPage.n + ' (@' + props.constructorPage.id + ') | Crosshare Crossword Puzzles';
   return <>
     <Head>
-      <title>{props.constructorPage.n} (@{props.constructorPage.id}) | Crosshare Crossword Puzzles</title>
+      <title>{title}</title>
+      <meta key="og:title" property="og:title" content={title} />
+      <meta key="og:description" property="og:description" content={description} />
+      <meta key="description" name="description" content={description} />
+      {props.hasMore ?
+        <link rel='next' href={'/' + props.constructorPage.id + '/' + props.puzzles[props.puzzles.length - 1].publishTime} />
+        : ''}
     </Head>
     <DefaultTopBar />
     <div css={{
