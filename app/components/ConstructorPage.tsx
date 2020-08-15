@@ -16,7 +16,6 @@ export interface ConstructorPageProps {
 export const ConstructorPage = (props: ConstructorPageProps) => {
   const description = 'The latest crossword puzzles from ' + props.constructorPage.n + ' (@' + props.constructorPage.id + '). ' + props.constructorPage.b;
   const title = props.constructorPage.n + ' (@' + props.constructorPage.id + ') | Crosshare Crossword Puzzles';
-  console.log(props.constructorPage.b);
   return <>
     <Head>
       <title>{title}</title>
