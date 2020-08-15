@@ -1,0 +1,231 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`spoiler text rendering 1`] = `
+<div>
+  <p>
+    foo bar &gt;!baz
+  </p>
+</div>
+`;
+
+exports[`spoiler text rendering 2`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <p>
+    foo bar 
+    <span
+      class="emotion-0"
+    >
+      baz
+    </span>
+  </p>
+</div>
+`;
+
+exports[`spoiler text rendering 3`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <p>
+    <span
+      class="emotion-0"
+    >
+      baz foo bam ! &gt;&gt; fooey
+    </span>
+  </p>
+</div>
+`;
+
+exports[`spoiler text rendering 4`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <p>
+    <span
+      class="emotion-0"
+    >
+      baz foo bam ! &gt;&gt; fooey
+    </span>
+     with after text
+  </p>
+</div>
+`;
+
+exports[`spoiler text rendering 5`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <p>
+    before 
+    <span
+      class="emotion-0"
+    >
+      baz foo bam &gt;! fooey
+    </span>
+     with after text
+  </p>
+</div>
+`;
+
+exports[`spoiler text rendering 6`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <p>
+    before 
+    <span
+      class="emotion-0"
+    >
+      baz foo bam || fooey
+    </span>
+     with after text
+  </p>
+</div>
+`;
+
+exports[`spoiler text rendering 7`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <p>
+    before 
+    <span
+      class="emotion-0"
+    >
+      baz foo bam || fooey
+    </span>
+     with 
+    <span
+      class="emotion-0"
+    >
+      after
+    </span>
+     text
+  </p>
+</div>
+`;
+
+exports[`spoiler text rendering 8`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <p>
+    before 
+    <span
+      class="emotion-0"
+    >
+      baz foo bam &gt;! not! !&lt; fooey
+    </span>
+     with 
+    <span
+      class="emotion-0"
+    >
+      after
+    </span>
+     text
+  </p>
+</div>
+`;
+
+exports[`spoiler text rendering 9`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <p>
+    before ||baz foo bam 
+  </p>
+  <p>
+    <span
+      class="emotion-0"
+    >
+       not! 
+    </span>
+     fooey|| with 
+    <span
+      class="emotion-0"
+    >
+      after
+    </span>
+     text
+  </p>
+</div>
+`;
+
+exports[`spoiler text rendering 10`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+.emotion-0:hover {
+  background-color: var(--bg);
+}
+
+<div>
+  <p>
+    before baz foo bam 
+  </p>
+  <p>
+    <span
+      class="emotion-0"
+    >
+       not! 
+    </span>
+     fooey|| with 
+    <span
+      class="emotion-0"
+    >
+      after
+    </span>
+     text
+  </p>
+</div>
+`;

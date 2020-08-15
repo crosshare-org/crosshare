@@ -11,46 +11,15 @@ import { buttonAsLink } from '../lib/style';
 import { DisplayNameForm, getDisplayName } from './DisplayNameForm';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { CommentForModerationT, CommentForModerationWithIdV, CommentForModerationWithIdT } from '../lib/dbtypes';
+import { Markdown } from './Markdown';
 
-
-const COMMENT_LENGTH_LIMIT = 140;
+const COMMENT_LENGTH_LIMIT = 280;
 
 type LocalComment = Omit<Comment, 'id' | 'replies'>;
 type CommentWithPossibleLocalReplies = Omit<Comment, 'replies'> & {
   replies?: Array<CommentOrLocalComment>
 }
 type CommentOrLocalComment = CommentWithPossibleLocalReplies | LocalComment
-
-const SpoilerText = ({ text }: CommentTextProps) => {
-  return <span css={{
-    backgroundColor: 'var(--text)',
-    '&:hover': {
-      backgroundColor: 'var(--bg)',
-    }
-  }}>{text}</span>;
-};
-
-interface CommentTextProps {
-  text: string
-}
-export const CommentText = ({ text }: CommentTextProps) => {
-  const pieces: Array<ReactNode> = [];
-  const tagFinder = /(>!(?<contentReddit>.+?)!<)|(\|\|(?<contentDiscord>.+?)\|\|)/gm;
-  let lastMatchedPosition = 0;
-  let i = 0;
-  function breaker(match: string, _redditItem: string, contentReddit: string, _discordItem: string, contentDiscord: string, offset: number, string: string) {
-    const content = contentReddit || contentDiscord;
-    if (lastMatchedPosition < offset) {
-      pieces.push(<span key={i++}>{string.substring(lastMatchedPosition, offset)}</span>);
-    }
-    pieces.push(<SpoilerText key={i++} text={content} />);
-    lastMatchedPosition = offset + match.length;
-    return match;
-  }
-  text.replace(tagFinder, breaker);
-  pieces.push(<span key={i++}>{text.substring(lastMatchedPosition)}</span>);
-  return <div>{pieces}</div>;
-};
 
 interface CommentProps {
   puzzleAuthorId: string,
@@ -63,7 +32,7 @@ const CommentView = (props: CommentProps) => {
       marginTop: '1em',
     }}>
       <div><CommentFlair displayName={props.comment.authorDisplayName} userId={props.comment.authorId} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.comment.authorSolveTime} didCheat={props.comment.authorCheated} /></div>
-      <CommentText text={props.comment.commentText} />
+      <Markdown text={props.comment.commentText} />
       {props.children}
     </div>
   );

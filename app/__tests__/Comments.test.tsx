@@ -1,4 +1,4 @@
-import { Comments, CommentText } from '../components/Comments';
+import { Comments } from '../components/Comments';
 import { render } from '../lib/testingUtils';
 import { Comment } from '../lib/types';
 import { setApp } from '../lib/firebaseWrapper';
@@ -37,32 +37,6 @@ test('basic comment display', () => {
   );
   expect(getByText(/my first comment/i)).toBeVisible();
   expect(container.firstChild).toMatchSnapshot();
-});
-
-test('spoiler text rendering', () => {
-  let r = render(<CommentText text='foo bar >!baz' />, {});
-  expect(r.container).toMatchSnapshot();
-
-  r = render(<CommentText text='foo bar >!baz!<' />, {});
-  expect(r.container).toMatchSnapshot();
-
-  r = render(<CommentText text='>!baz foo bam ! >> fooey!<' />, {});
-  expect(r.container).toMatchSnapshot();
-
-  r = render(<CommentText text='>!baz foo bam ! >> fooey!< with after text' />, {});
-  expect(r.container).toMatchSnapshot();
-
-  r = render(<CommentText text='before ||baz foo bam >! fooey|| with after text' />, {});
-  expect(r.container).toMatchSnapshot();
-
-  r = render(<CommentText text='before >!baz foo bam || fooey!< with after text' />, {});
-  expect(r.container).toMatchSnapshot();
-
-  r = render(<CommentText text='before >!baz foo bam || fooey!< with ||after|| text' />, {});
-  expect(r.container).toMatchSnapshot();
-
-  r = render(<CommentText text='before ||baz foo bam >! not! !< fooey|| with >!after!< text' />, {});
-  expect(r.container).toMatchSnapshot();
 });
 
 test('security rules should only allow commenting as onesself', async () => {

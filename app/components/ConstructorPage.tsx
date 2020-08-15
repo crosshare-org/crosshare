@@ -1,10 +1,11 @@
 import Head from 'next/head';
 
-import { DefaultTopBar } from '../components/TopBar';
+import { DefaultTopBar } from './TopBar';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { PuzzleResult } from '../lib/types';
-import { PuzzleResultLink } from '../components/PuzzleLink';
-import { Link } from '../components/Link';
+import { PuzzleResultLink } from './PuzzleLink';
+import { Link } from './Link';
+import { Markdown } from './Markdown';
 
 export interface ConstructorPageProps {
   constructorPage: ConstructorPageT,
@@ -15,6 +16,7 @@ export interface ConstructorPageProps {
 export const ConstructorPage = (props: ConstructorPageProps) => {
   const description = 'The latest crossword puzzles from ' + props.constructorPage.n + ' (@' + props.constructorPage.id + '). ' + props.constructorPage.b;
   const title = props.constructorPage.n + ' (@' + props.constructorPage.id + ') | Crosshare Crossword Puzzles';
+  console.log(props.constructorPage.b);
   return <>
     <Head>
       <title>{title}</title>
@@ -31,7 +33,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
     }}>
       <h2 css={{ marginBottom: 0 }}>{props.constructorPage.n}</h2>
       <h4><Link href='/[...slug]' as={'/' + props.constructorPage.id} passHref>@{props.constructorPage.id}</Link></h4>
-      <p>{props.constructorPage.b}</p>
+      <Markdown text={props.constructorPage.b} />
       {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showAuthor={false} />)}
       {props.hasMore ?
         <p css={{ textAlign: 'center' }}>
