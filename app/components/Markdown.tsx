@@ -15,6 +15,22 @@ const rules: SimpleMarkdown.Rules<SimpleMarkdown.ReactOutputRule> = {
       return <p key={state.key}>{recurseOutput(node.content, state)}</p>;
     }
   },
+  link: {
+    ...SimpleMarkdown.defaultRules.link,
+    react(node: any, output: any, state: any) {
+      return SimpleMarkdown.reactElement(
+        'a',
+        state.key,
+        {
+          href: SimpleMarkdown.sanitizeUrl(node.target),
+          target: '_blank',
+          rel: 'nofollow ugc',
+          title: node.title,
+          children: output(node.content, state)
+        }
+      );
+    },
+  },
   spoiler: {
     order: SimpleMarkdown.defaultRules.em.order - 0.5,
     match(source: any, state: any) {
