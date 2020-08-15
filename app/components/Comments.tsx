@@ -213,6 +213,13 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
               <button css={buttonAsLink} onClick={() => setEditingDisplayName(true)}>change name</button>)
             </>
         }
+        {commentText.trim() ?
+          <div css={{ backgroundColor: 'var(--secondary)', borderRadius: '0.5em', padding: '1em', marginTop: '1em' }}>
+            <h4>Live Preview:</h4>
+            <Markdown text={commentText} />
+          </div>
+          : ''
+        }
       </form>
       {editingDisplayName ?
         <>
