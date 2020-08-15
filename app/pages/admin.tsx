@@ -2,6 +2,7 @@ import { FormEvent, useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import NextJSRouter from 'next/router';
 
+import { Markdown } from '../components/Markdown';
 import { Link } from '../components/Link';
 import { requiresAdmin } from '../components/AuthContext';
 import { DefaultTopBar } from '../components/TopBar';
@@ -160,19 +161,18 @@ export default requiresAdmin(() => {
           <div>No comments are currently awaiting moderation.</div>
           :
           <form onSubmit={moderateComments}>
-            <p>Check comments to disallow them</p>
-            <ul>
-              {commentsForModeration.map((cfm) =>
-                <li key={cfm.i}>
-                  <label>
-                    <input css={{
-                      marginRight: '1em'
-                    }} type='checkbox' checked={commentIdsForDeletion.has(cfm.i)} onChange={(e) => setCommentForDeletion(cfm.i, e.target.checked)} />
-                    <Link href='/crosswords/[puzzleId]' as={`/crosswords/${cfm.pid}`} passHref>puzzle</Link> <i>{cfm.n}</i> - {cfm.c}
-                  </label>
-                </li>
-              )}
-            </ul>
+            <p>Check comments to disallow them:</p>
+            {commentsForModeration.map((cfm) =>
+              <div key={cfm.i}>
+                <label>
+                  <input css={{
+                    marginRight: '1em'
+                  }} type='checkbox' checked={commentIdsForDeletion.has(cfm.i)} onChange={(e) => setCommentForDeletion(cfm.i, e.target.checked)} />
+                  <Link href='/crosswords/[puzzleId]' as={`/crosswords/${cfm.pid}`} passHref>puzzle</Link> {cfm.n}:
+                  <Markdown text={cfm.c} />
+                </label>
+              </div>
+            )}
             <input type='submit' value='Moderate' />
           </form>
         }
