@@ -19,6 +19,10 @@ exports[`basic comment display 1`] = `
   margin-top: 1em;
 }
 
+.emotion-3 p:last-of-type {
+  margin-bottom: 0;
+}
+
 .emotion-1 {
   vertical-align: text-bottom;
 }
