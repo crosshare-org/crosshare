@@ -11,6 +11,7 @@ export interface ConstructorPageProps {
   constructorPage: ConstructorPageT,
   puzzles: Array<PuzzleResult>,
   hasMore: boolean,
+  currentIndex: number | null,
 }
 
 export const ConstructorPage = (props: ConstructorPageProps) => {
@@ -23,8 +24,9 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
       <meta key="og:title" property="og:title" content={title} />
       <meta key="og:description" property="og:description" content={description} />
       <meta key="description" name="description" content={description} />
+      <link rel="canonical" href={'https://crosshare.org/' + username + (props.currentIndex !== null ? '/' + props.currentIndex : '')} />
       {props.hasMore ?
-        <link rel='next' href={'/' + username + '/' + props.puzzles[props.puzzles.length - 1].publishTime} />
+        <link rel='next' href={'https://crosshare.org/' + username + '/' + props.puzzles[props.puzzles.length - 1].publishTime} />
         : ''}
     </Head>
     <DefaultTopBar />

@@ -8,9 +8,10 @@ import { mapEachResult, } from '../lib/dbUtils';
 import { ErrorPage } from '../components/ErrorPage';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
 
-interface PageProps extends Partial<ConstructorPageProps> {
-  error?: string,
+interface ErrorProps {
+  error: string
 }
+type PageProps = ConstructorPageProps | ErrorProps;
 
 const PAGESIZE = 10;
 
@@ -41,27 +42,35 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
 
   try {
     let q = db.collection('c').where('a', '==', cp.u).orderBy('p', 'desc').limit(PAGESIZE + 1);
+    let startTs: number | null = null;
     if (params.slug.length > 1) {
-      const startTs = parseInt(params.slug[1]);
+      startTs = parseInt(params.slug[1]);
       q = q.startAfter(TimestampClass.fromMillis(startTs));
     }
     const puzzles = await mapEachResult(q, DBPuzzleV, (dbpuzz, docId) => {
       return { ...puzzleFromDB(dbpuzz), id: docId };
     });
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-    return { props: { constructorPage: cp, puzzles: puzzles.slice(0, PAGESIZE), hasMore: puzzles.length === PAGESIZE + 1 } };
+    return {
+      props: {
+        constructorPage: cp,
+        puzzles: puzzles.slice(0, PAGESIZE),
+        hasMore: puzzles.length === PAGESIZE + 1,
+        currentIndex: startTs,
+      }
+    };
   } catch (e) {
     console.error(e);
     return { props: { error: 'Error loading puzzles' } };
   }
 };
 
-export default function ConstructorPageHandler({ error, constructorPage, puzzles, hasMore }: PageProps) {
-  if (error || constructorPage === undefined || puzzles === undefined || hasMore === undefined) {
+export default function ConstructorPageHandler(props: PageProps) {
+  if ('error' in props) {
     return <ErrorPage title='Something Went Wrong'>
       <p>Sorry! Something went wrong while loading that page.</p>
-      {error ? <p>{error}</p> : ''}
+      {props.error ? <p>{props.error}</p> : ''}
     </ErrorPage>;
   }
-  return <ConstructorPage constructorPage={constructorPage} puzzles={puzzles} hasMore={hasMore} />;
+  return <ConstructorPage {...props} />;
 }
