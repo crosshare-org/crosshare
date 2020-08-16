@@ -75,7 +75,8 @@ export const PuzzleLink = (props: { id: string, width?: number, height?: number,
 
 export const AuthorLink = ({ authorName, constructorPage }: { authorName: string, constructorPage: ConstructorPageT | null }) => {
   if (constructorPage) {
-    return <p>By <Link href='/[...slug]' as={'/' + constructorPage.id} passHref>{constructorPage.n}</Link></p>;
+    const username = constructorPage.i || constructorPage.id;
+    return <p>By <Link href='/[...slug]' as={'/' + username} passHref>{constructorPage.n}</Link></p>;
   }
   return <p>By {authorName}</p>;
 };

@@ -9,6 +9,8 @@ import { mapEachResult } from './dbUtils';
 export const CONSTRUCTOR_PAGE_COLLECTION = 'cp';
 
 const ConstructorPageV = t.type({
+  /** username (w/ desired capitalization) */
+  i: t.string,
   /** user id */
   u: t.string,
   /** display name */

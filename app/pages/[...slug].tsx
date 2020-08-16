@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
     return { props: { error: 'Bad username' } };
   }
 
-  const username = params.slug[0];
+  const username = params.slug[0].toLowerCase();
 
   const db = App.firestore();
   let dbres;

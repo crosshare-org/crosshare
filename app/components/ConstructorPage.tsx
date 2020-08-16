@@ -14,8 +14,9 @@ export interface ConstructorPageProps {
 }
 
 export const ConstructorPage = (props: ConstructorPageProps) => {
-  const description = 'The latest crossword puzzles from ' + props.constructorPage.n + ' (@' + props.constructorPage.id + '). ' + props.constructorPage.b;
-  const title = props.constructorPage.n + ' (@' + props.constructorPage.id + ') | Crosshare Crossword Puzzles';
+  const username = props.constructorPage.i || props.constructorPage.id;
+  const description = 'The latest crossword puzzles from ' + props.constructorPage.n + ' (@' + username + '). ' + props.constructorPage.b;
+  const title = props.constructorPage.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
   return <>
     <Head>
       <title>{title}</title>
@@ -23,7 +24,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
       <meta key="og:description" property="og:description" content={description} />
       <meta key="description" name="description" content={description} />
       {props.hasMore ?
-        <link rel='next' href={'/' + props.constructorPage.id + '/' + props.puzzles[props.puzzles.length - 1].publishTime} />
+        <link rel='next' href={'/' + username + '/' + props.puzzles[props.puzzles.length - 1].publishTime} />
         : ''}
     </Head>
     <DefaultTopBar />
@@ -31,12 +32,12 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
       margin: '1em',
     }}>
       <h2 css={{ marginBottom: 0 }}>{props.constructorPage.n}</h2>
-      <h4><Link href='/[...slug]' as={'/' + props.constructorPage.id} passHref>@{props.constructorPage.id}</Link></h4>
+      <h4><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h4>
       <Markdown text={props.constructorPage.b} />
       {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showAuthor={false} />)}
       {props.hasMore ?
         <p css={{ textAlign: 'center' }}>
-          <Link href='/[...slug]' as={'/' + props.constructorPage.id + '/' + props.puzzles[props.puzzles.length - 1].publishTime} passHref>More</Link>
+          <Link href='/[...slug]' as={'/' + username + '/' + props.puzzles[props.puzzles.length - 1].publishTime} passHref>More</Link>
         </p>
         : ''}
     </div>
