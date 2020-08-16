@@ -30,6 +30,9 @@ const CommentView = (props: CommentProps) => {
   return (
     <div css={{
       marginTop: '1em',
+      ['p:last-of-type']: {
+        marginBottom: 0,
+      }
     }}>
       <div><CommentFlair displayName={props.comment.authorDisplayName} userId={props.comment.authorId} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.comment.authorSolveTime} didCheat={props.comment.authorCheated} /></div>
       <Markdown text={props.comment.commentText} />
