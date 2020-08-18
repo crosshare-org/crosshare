@@ -153,6 +153,7 @@ export default requiresAdmin(() => {
     <>
       <Head>
         <title>Admin | Crosshare</title>
+        <meta name="robots" content="noindex" />
       </Head>
       <DefaultTopBar />
       <div css={{ margin: '1em', }}>

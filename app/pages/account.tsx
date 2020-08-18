@@ -70,6 +70,7 @@ export default requiresAuth(({ user }: AuthProps) => {
     <>
       <Head>
         <title>Account | Crosshare</title>
+        <meta name="robots" content="noindex" />
       </Head>
       <DefaultTopBar />
       <div css={{ margin: '1em', }}>
