@@ -17,7 +17,7 @@ export const anonymousUser = getUser('anonymous-user-id', true);
 
 const WithAllProviders: (opts: AuthOptions) => ComponentType = (opts: AuthOptions) => ({ children }) => {
   return (
-    <AuthContext.Provider value={{ user: opts.user, isAdmin: opts.isAdmin || false, loadingUser: false, error: undefined }}>
+    <AuthContext.Provider value={{ user: opts.user, isAdmin: opts.isAdmin || false, loading: false, error: undefined }}>
       {children}
     </AuthContext.Provider>
   );

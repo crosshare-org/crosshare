@@ -82,7 +82,7 @@ export default function UploadPage() {
           <p>If your puzzle isn&apos;t uploading correctly please message us on twitter or in the google group so we can help!</p>
         </>
         : ''}
-      {ctx.loadingUser ?
+      {ctx.loading ?
         <></>
         :
         (

@@ -1,14 +1,13 @@
 import { useCallback, useState, useEffect } from 'react';
 import * as Sentry from '@sentry/node';
 import { AppProps } from 'next/app';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import NextJSRouter from 'next/router';
 import Head from 'next/head';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 import * as gtag from '../lib/gtag';
-import { App } from '../lib/firebaseWrapper';
+import { useAuth } from '../lib/hooks';
 import { AuthContext } from '../components/AuthContext';
 import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
 
@@ -23,29 +22,11 @@ if (process.env.NODE_ENV === 'production') {
 
 // `err` is a workaround for https://github.com/vercel/next.js/issues/8592
 export default function CrosshareApp({ Component, pageProps, err }: AppProps & { err: Error }): JSX.Element {
-  let [user, loadingUser, error] = useAuthState(App.auth());
-  const [isAdmin, setIsAdmin] = useState(false);
+  let authStatus = useAuth();
 
   if (typeof window === 'undefined') {
-    [user, loadingUser, error] = [undefined, true, undefined];
+    authStatus = { loading: true, isAdmin: false, user: undefined, constructorPage: undefined, error: undefined };
   }
-
-  useEffect(() => {
-    if (user && user.email) {
-      user.getIdTokenResult()
-        .then((idTokenResult) => {
-          if (idTokenResult.claims.admin) {
-            setIsAdmin(true);
-          } else {
-            setIsAdmin(false);
-          }
-        })
-        .catch((error) => {
-          setIsAdmin(false);
-          console.error(error);
-        });
-    }
-  }, [user]);
 
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const initAudioContext = useCallback(() => {
@@ -84,7 +65,7 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
         <meta key="og:image:alt" property="og:image:alt" content="The crosshare logo" />
       </Head>
       <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
-        <AuthContext.Provider value={{ user, isAdmin, loadingUser, error: error ?.message}}>
+        <AuthContext.Provider value={authStatus}>
           <ToastContainer />
           <Component {...pageProps} err={err} />
         </AuthContext.Provider>

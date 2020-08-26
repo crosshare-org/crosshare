@@ -120,8 +120,8 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: ServerPuzzleResu
       <UpcomingMinisCalendar disableExisting={true} value={date} onChange={setDate} />
       <div css={{ marginTop: '1em' }}>Be sure to email {puzzle.authorId}</div>
       <div css={{ marginTop: '1em' }}><button disabled={!date || puzzle.moderated} onClick={schedule}>Schedule As Daily Mini</button></div>
-      <div css={{ marginTop: '1em' }}><button disabled={puzzle.moderated} onClick={() => markAsModerated(true)}>Set as Featured</button></div>
-      <div css={{ marginTop: '1em' }}><button disabled={puzzle.moderated} onClick={() => markAsModerated(false)}>Mark as Moderated</button></div>
+      <div css={{ marginTop: '1em' }}><button onClick={() => markAsModerated(true)}>Set as Featured</button></div>
+      <div css={{ marginTop: '1em' }}><button onClick={() => markAsModerated(false)}>Mark as Moderated</button></div>
     </Overlay>
   );
 });

@@ -4,19 +4,22 @@ import { ErrorPage } from '../components/ErrorPage';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { TopBar } from './TopBar';
 import { Optionalize } from '../lib/types';
+import { ConstructorPageT } from '../lib/constructorPage';
 
 export interface AuthProps {
   isAdmin: boolean,
   user: firebase.User,
+  constructorPage?: ConstructorPageT
 }
 
 export interface AuthPropsOptional {
   isAdmin: boolean,
   user?: firebase.User,
+  constructorPage?: ConstructorPageT
 }
 
-export function renderLoginButtonIfNeeded({ user, loadingUser, error }: AuthContextValue): React.ReactNode | null {
-  if (loadingUser) {
+export function renderLoginButtonIfNeeded({ user, loading, error }: AuthContextValue): React.ReactNode | null {
+  if (loading) {
     return <div></div>;
   }
   if (error) {
@@ -31,8 +34,8 @@ export function renderLoginButtonIfNeeded({ user, loadingUser, error }: AuthCont
   return null;
 }
 
-function renderLoginIfNeeded({ user, loadingUser, error }: AuthContextValue): React.ReactNode | null {
-  if (loadingUser) {
+function renderLoginIfNeeded({ user, loading, error }: AuthContextValue): React.ReactNode | null {
+  if (loading) {
     return <div></div>;
   }
   if (error) {
@@ -71,7 +74,7 @@ export function requiresAuth<T extends AuthProps>(WrappedComponent: React.Compon
     if (login) {
       return login;
     }
-    return <WrappedComponent {...(props as T)} isAdmin={ctx.isAdmin} user={ctx.user} />;
+    return <WrappedComponent {...(props as T)} isAdmin={ctx.isAdmin} user={ctx.user} constructorPage={ctx.constructorPage} />;
   };
 }
 
@@ -90,14 +93,15 @@ export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.Compo
         </ErrorPage >
       );
     }
-    return <WrappedComponent {...(props as T)} isAdmin={true} user={ctx.user} />;
+    return <WrappedComponent {...(props as T)} isAdmin={true} user={ctx.user} constructorPage={ctx.constructorPage} />;
   };
 }
 
 interface AuthContextValue {
-  user: firebase.User | undefined,
+  user?: firebase.User,
   isAdmin: boolean,
-  loadingUser: boolean,
-  error: string | undefined
+  loading: boolean,
+  error?: string,
+  constructorPage?: ConstructorPageT
 }
-export const AuthContext = createContext({ user: undefined, loadingUser: false, error: 'using default context' } as AuthContextValue);
+export const AuthContext = createContext({ user: undefined, loading: false, error: 'using default context', constructorPage: undefined } as AuthContextValue);

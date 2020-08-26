@@ -97,7 +97,7 @@ export default function PuzzlePage({ puzzle, nextPuzzle }: PuzzlePageProps) {
 }
 
 const PlayLoader = ({ puzzle, nextPuzzle }: { puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink }) => {
-  const { user, isAdmin, loadingUser, error } = useContext(AuthContext);
+  const { user, isAdmin, loading, error } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
   const [playError, setPlayError] = useState<string | null>(null);
   const [loadingPlay, setLoadingPlay] = useState(true);
@@ -107,7 +107,7 @@ const PlayLoader = ({ puzzle, nextPuzzle }: { puzzle: ServerPuzzleResult, nextPu
     setPlayError(null);
     setLoadingPlay(true);
 
-    if (loadingUser || error) {
+    if (loading || error) {
       return;
     }
 
@@ -120,7 +120,7 @@ const PlayLoader = ({ puzzle, nextPuzzle }: { puzzle: ServerPuzzleResult, nextPu
         console.error(e);
         setPlayError(typeof e === 'string' ? e : 'error loading play');
       });
-  }, [puzzle, user, loadingUser, error]);
+  }, [puzzle, user, loading, error]);
 
   if (error) {
     return <><p>Error loading user: {error}</p><p>Please refresh the page to try again.</p></>;
@@ -129,5 +129,5 @@ const PlayLoader = ({ puzzle, nextPuzzle }: { puzzle: ServerPuzzleResult, nextPu
     return <><p>Error loading play: {playError}</p><p>Please refresh the page to try again.</p></>;
   }
 
-  return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={loadingUser || loadingPlay} play={play} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
+  return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={loading || loadingPlay} play={play} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
 };

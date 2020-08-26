@@ -1,6 +1,7 @@
-import { useState, useCallback, FormEvent, ReactNode } from 'react';
+import { useState, useCallback, useContext, FormEvent, ReactNode } from 'react';
 import NextJSRouter from 'next/router';
 
+import { AuthContext } from './AuthContext';
 import { DisplayNameForm, getDisplayName } from './DisplayNameForm';
 import { Overlay } from './Overlay';
 import { Emoji } from './Emoji';
@@ -12,10 +13,11 @@ import { STORAGE_KEY } from './Builder';
 import { buttonAsLink } from '../lib/style';
 
 export function PublishOverlay(props: { toPublish: DBPuzzleT, user: firebase.User, cancelPublish: () => void }) {
+  const { constructorPage } = useContext(AuthContext);
   const [inProgress, setInProgress] = useState(false);
   const [done, setDone] = useState(false);
   const [editingDisplayName, setEditingDisplayName] = useState(false);
-  const [displayName, setDisplayName] = useState(getDisplayName(props.user));
+  const [displayName, setDisplayName] = useState(getDisplayName(props.user, constructorPage));
 
   const doPublish = useCallback((event: FormEvent) => {
     event.preventDefault();

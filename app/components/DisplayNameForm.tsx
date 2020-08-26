@@ -1,14 +1,25 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 
-export const getDisplayName = (user?: firebase.User) => {
-  return user ?.displayName || 'Anonymous Crossharer';
+import { AuthContext } from './AuthContext';
+import { ConstructorPageT } from '../lib/constructorPage';
+
+export const getDisplayName = (user: firebase.User | undefined, constructorPage: ConstructorPageT | undefined) => {
+  return constructorPage ?.n || user ?.displayName || 'Anonymous Crossharer';
 };
 
-export const DisplayNameForm = ({ user, onChange, onCancel }: { user: firebase.User, onChange: (newName: string) => void, onCancel?: () => void }) => {
+interface DisplayNameFormProps {
+  user: firebase.User,
+  onChange: (newName: string) => void,
+  onCancel?: () => void
+}
+
+export const DisplayNameForm = ({ user, onChange, onCancel }: DisplayNameFormProps) => {
+  const ctx = useContext(AuthContext);
+
   function sanitize(input: string) {
     return input.replace(/[^0-9a-zA-Z ]/g, '');
   }
-  const [newDisplayName, setNewDisplayName] = useState(sanitize(getDisplayName(user)));
+  const [newDisplayName, setNewDisplayName] = useState(sanitize(getDisplayName(user, ctx.constructorPage)));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

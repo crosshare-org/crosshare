@@ -1,8 +1,9 @@
-import { useState, useEffect, ReactNode, FormEvent } from 'react';
+import { useState, useEffect, useContext, ReactNode, FormEvent } from 'react';
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
+import { AuthContext } from './AuthContext';
 import { PartialBy, Comment } from '../lib/types';
 import { Identicon } from './Icons';
 import { timeString } from '../lib/utils';
@@ -240,7 +241,6 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
 };
 
 interface CommentsProps {
-  user?: firebase.User,
   solveTime: number,
   didCheat: boolean,
   puzzleId: string,
@@ -271,8 +271,9 @@ function findCommentById(comments: Array<CommentOrLocalComment>, id: string): Co
 }
 
 export const Comments = ({ comments, ...props }: CommentsProps): JSX.Element => {
+  const authContext = useContext(AuthContext);
   const [toShow, setToShow] = useState<Array<CommentOrLocalComment>>(comments);
-  const [displayName, setDisplayName] = useState(getDisplayName(props.user));
+  const [displayName, setDisplayName] = useState(getDisplayName(authContext.user, authContext.constructorPage));
 
   useEffect(() => {
     const rebuiltComments: Array<CommentOrLocalComment> = comments;
@@ -328,10 +329,10 @@ export const Comments = ({ comments, ...props }: CommentsProps): JSX.Element => 
   return (
     <div css={{ marginTop: '1em' }}>
       <h4 css={{ borderBottom: '1px solid var(--black)' }}>Comments</h4>
-      {!props.user || props.user.isAnonymous ?
+      {!authContext.user || authContext.user.isAnonymous ?
         <div>Sign in with google (above) to leave a comment of your own</div>
         :
-        <CommentForm {...props} displayName={displayName} setDisplayName={setDisplayName} user={props.user} />
+        <CommentForm {...props} displayName={displayName} setDisplayName={setDisplayName} user={authContext.user} />
       }
       <ul css={{
         listStyleType: 'none',

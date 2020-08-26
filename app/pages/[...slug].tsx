@@ -1,5 +1,7 @@
 import { GetServerSideProps } from 'next';
+import { useContext } from 'react';
 
+import { AuthContext } from '../components/AuthContext';
 import { ConstructorPage, ConstructorPageProps } from '../components/ConstructorPage';
 import { validate, CONSTRUCTOR_PAGE_COLLECTION } from '../lib/constructorPage';
 import { puzzleFromDB } from '../lib/types';
@@ -66,11 +68,13 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
 };
 
 export default function ConstructorPageHandler(props: PageProps) {
+  const authProps = useContext(AuthContext);
+
   if ('error' in props) {
     return <ErrorPage title='Something Went Wrong'>
       <p>Sorry! Something went wrong while loading that page.</p>
       {props.error ? <p>{props.error}</p> : ''}
     </ErrorPage>;
   }
-  return <ConstructorPage {...props} />;
+  return <ConstructorPage {...props} {...authProps} />;
 }

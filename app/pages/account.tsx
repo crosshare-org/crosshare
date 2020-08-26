@@ -24,11 +24,11 @@ interface AuthoredPuzzle {
   title: string,
 }
 
-export default requiresAuth(({ user }: AuthProps) => {
+export default requiresAuth(({ user, constructorPage }: AuthProps) => {
   const [authoredPuzzles, setAuthoredPuzzles] = useState<Array<AuthoredPuzzle> | null>(null);
   const [plays, setPlays] = useState<Array<PlayWithoutUserT> | null>(null);
   const [error, setError] = useState(false);
-  const [displayName, setDisplayName] = useState(getDisplayName(user));
+  const [displayName, setDisplayName] = useState(getDisplayName(user, constructorPage));
 
   useEffect(() => {
     console.log('loading authored puzzles and plays');
@@ -77,7 +77,7 @@ export default requiresAuth(({ user }: AuthProps) => {
         <h2>Account</h2>
         <p>You&apos;re logged in as <b>{user.email}</b>. <button onClick={() => App.auth().signOut()}>Log out</button></p>
         <p>Your display name - <i>{displayName}</i> - is displayed next to any comments you make or puzzles you create.</p>
-        <DisplayNameForm user={user} onChange={setDisplayName} />
+        <DisplayNameForm user={user} constructorPage={constructorPage} onChange={setDisplayName} />
         {authoredPuzzles && authoredPuzzles.length ?
           <>
             <h2>Authored Puzzles</h2>
