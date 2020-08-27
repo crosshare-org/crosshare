@@ -80,10 +80,10 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
   }, [state.grid.entries, state.clues]);
 
   const normalizedColors = useMemo(() => {
-    const data = props.mode === StatsMode.AverageTime ? props.stats.ct : props.stats.uc.map(uc => props.stats.n ? (uc / props.stats.n - 1) : 0);
+    const data = props.mode === StatsMode.AverageTime ? props.stats.ct : props.stats.uc;
     const max = Math.max(...data);
     return data.map(v => max ? v / max : 0);
-  }, [props.stats.ct, props.stats.uc, props.stats.n, props.mode]);
+  }, [props.stats.ct, props.stats.uc, props.mode]);
 
   return <SquareAndCols
     muted={true}
