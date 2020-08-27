@@ -89,7 +89,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
 
   if (error) {
     return <ErrorPage title='Error Loading Stats'>
-      <p>Either something went wrong, or we don&apos;t have stats for this puzzle yet. Stats are updated once per hour, and won&apos; be available until after a non-author has solved the puzzle.</p>
+      <p>Either something went wrong, or we don&apos;t have stats for this puzzle yet. Stats are updated once per hour, and won&apos;t be available until after a non-author has solved the puzzle.</p>
     </ErrorPage>;
   }
   if (!didLoad) {

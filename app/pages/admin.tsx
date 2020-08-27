@@ -70,12 +70,15 @@ export default requiresAdmin(() => {
     return <div>Loading admin content...</div>;
   }
 
-  function titleForId(crosswordId: string): string {
+  function titleForId(stats: DailyStatsT, crosswordId: string): string {
     if (minis) {
       const dateString = Object.keys(minis).find(key => minis[key] === crosswordId);
       if (dateString) {
         return 'Daily mini for ' + prettifyDateString(dateString);
       }
+    }
+    if (stats.i ?.[crosswordId]) {
+      return stats.i[crosswordId][0] + ' by ' + stats.i[crosswordId][1];
     }
     return crosswordId;
   }
@@ -193,7 +196,7 @@ export default requiresAdmin(() => {
               {Object.entries(stats.c).sort((a, b) => b[1] - a[1]).map(([crosswordId, count]) => {
                 return (
                   <li key={crosswordId}>
-                    <Link href='/crosswords/[puzzleId]' as={`/crosswords/${crosswordId}`} passHref>{titleForId(crosswordId)}</Link>: {count}
+                    <Link href='/crosswords/[puzzleId]' as={`/crosswords/${crosswordId}`} passHref>{titleForId(stats, crosswordId)}</Link>: {count}
                     (<Link href='/crosswords/[puzzleId]/stats' as={`/crosswords/${crosswordId}/stats`} passHref>stats</Link>)
                   </li>
                 );
