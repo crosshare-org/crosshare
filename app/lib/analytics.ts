@@ -24,6 +24,25 @@ export async function runAnalytics(db: firebase.firestore.Firestore, startTimest
   const puzzleStatsMap: Map<string, PuzzleStatsT> = new Map();
   const dailyStatsMap: Map<string, DailyStatsT> = new Map();
 
+  // Get puzzle obj from cache or db
+  async function getPuzzle(puzzleId: string): Promise<DBPuzzleT> {
+    const puzzle = puzzleMap.get(puzzleId);
+    if (puzzle) {
+      return puzzle;
+    }
+    const puzzleRes = await db.collection('c').doc(puzzleId).get();
+    if (!puzzleRes.exists) {
+      throw new Error('Missing puzzle but have play: ' + puzzleId);
+    }
+    const dbpuzzle = DBPuzzleV.decode(puzzleRes.data());
+    if (!isRight(dbpuzzle)) {
+      console.error(PathReporter.report(dbpuzzle).join(','));
+      throw new Error('Malformed puzzle');
+    }
+    puzzleMap.set(puzzleId, dbpuzzle.right);
+    return dbpuzzle.right;
+  }
+
   for (const doc of value.docs) {
     const validationResult = LegacyPlayV.decode(doc.data());
     if (!isRight(validationResult)) {
@@ -31,22 +50,6 @@ export async function runAnalytics(db: firebase.firestore.Firestore, startTimest
       throw new Error('Malformed play');
     }
     const play = validationResult.right;
-
-    // Make sure we have a puzzle obj in the cache for the relevant puzzle
-    let puzzle = puzzleMap.get(play.c);
-    if (!puzzle) {
-      const puzzleRes = await db.collection('c').doc(play.c).get();
-      if (!puzzleRes.exists) {
-        throw new Error('Missing puzzle but have play: ' + play.c);
-      }
-      const dbpuzzle = DBPuzzleV.decode(puzzleRes.data());
-      if (!isRight(dbpuzzle)) {
-        console.error(PathReporter.report(dbpuzzle).join(','));
-        throw new Error('Malformed puzzle');
-      }
-      puzzle = dbpuzzle.right;
-      puzzleMap.set(play.c, puzzle);
-    }
 
     // Make sure we have a puzzle stats obj in the cache for the relevant puzzle
     let puzzleStats = puzzleStatsMap.get(play.c);
@@ -62,6 +65,7 @@ export async function runAnalytics(db: firebase.firestore.Firestore, startTimest
         puzzleStats = result.right;
         puzzleStatsMap.set(play.c, puzzleStats);
       } else {
+        const puzzle = await getPuzzle(play.c);
         puzzleStats = {
           a: puzzle.a,
           ua: endTimestamp,
@@ -135,6 +139,7 @@ export async function runAnalytics(db: firebase.firestore.Firestore, startTimest
     }
     dailyStats.c[play.c] = (dailyStats.c[play.c] || 0) + 1;
     if (dailyStats.i && !dailyStats.i[play.c]) {
+      const puzzle = await getPuzzle(play.c);
       dailyStats.i[play.c] = [puzzle.t, puzzle.n, puzzle.a];
     }
     const hour = pd.getUTCHours();
