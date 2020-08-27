@@ -92,6 +92,8 @@ export async function runAnalytics(db: firebase.firestore.Firestore, startTimest
       puzzleStats.s += 1;
       puzzleStats.st += play.t;
     }
+    const maxTime = Math.max(...play.ct);
+    const maxCount = Math.max(...play.uc);
     for (let i = 0; i < play.ct.length; i += 1) {
       let updateTime = play.ct[i];
       const updateIters = play.uc[i];
@@ -101,8 +103,8 @@ export async function runAnalytics(db: firebase.firestore.Firestore, startTimest
          * longest for the user in question. */
         updateTime = play.t;
       }
-      puzzleStats.ct[i] = (puzzleStats.ct[i] || 0) + updateTime;
-      puzzleStats.uc[i] = (puzzleStats.uc[i] || 0) + updateIters;
+      puzzleStats.ct[i] = (puzzleStats.ct[i] || 0) + updateTime / maxTime;
+      puzzleStats.uc[i] = (puzzleStats.uc[i] || 0) + updateIters / maxCount;
     }
 
     // Next update daily stats for the relevant date
