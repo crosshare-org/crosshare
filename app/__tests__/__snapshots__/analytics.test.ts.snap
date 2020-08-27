@@ -5,6 +5,13 @@ Object {
   "c": Object {
     "mike": 3,
   },
+  "i": Object {
+    "mike": Array [
+      "Raises, as young",
+      "Mike D",
+      "fSEwJorvqOMK5UhNMHa4mu48izl1",
+    ],
+  },
   "n": 3,
   "u": Array [
     "anonymous-user-id",
@@ -83,6 +90,13 @@ Object {
   "c": Object {
     "mike": 2,
   },
+  "i": Object {
+    "mike": Array [
+      "Raises, as young",
+      "Mike D",
+      "fSEwJorvqOMK5UhNMHa4mu48izl1",
+    ],
+  },
   "n": 2,
   "u": Array [
     "blah",
@@ -159,6 +173,13 @@ exports[`run w/ initial state 1`] = `
 Object {
   "c": Object {
     "mike": 6,
+  },
+  "i": Object {
+    "mike": Array [
+      "Raises, as young",
+      "Mike D",
+      "fSEwJorvqOMK5UhNMHa4mu48izl1",
+    ],
   },
   "n": 6,
   "u": Array [
