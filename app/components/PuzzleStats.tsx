@@ -82,7 +82,9 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
   const normalizedColors = useMemo(() => {
     const data = props.mode === StatsMode.AverageTime ? props.stats.ct : props.stats.uc;
     const max = Math.max(...data);
-    return data.map(v => max ? v / max : 0);
+    const min = Math.min(...data.filter(v => v));
+
+    return data.map(v => (max - min) ? (v - min) / (max - min) : 0);
   }, [props.stats.ct, props.stats.uc, props.mode]);
 
   return <SquareAndCols
