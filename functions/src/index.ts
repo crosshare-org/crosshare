@@ -10,6 +10,9 @@ import { runAnalytics } from '../../app/lib/analytics';
 
 import { CronStatusV, CronStatusT } from '../../app/lib/dbtypes';
 
+import * as wrapper from '../../app/lib/firebaseWrapper';
+wrapper.setTimestampClass(admin.firestore.Timestamp);
+
 export const analytics = functions.pubsub.schedule('every 1 hours').onRun(async (_context) => {
   const db = admin.firestore()
   let startTimestamp = admin.firestore.Timestamp.fromDate(new Date(2020, 0));
