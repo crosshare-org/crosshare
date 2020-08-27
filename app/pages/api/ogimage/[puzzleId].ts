@@ -6,7 +6,7 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { App } from '../../../lib/firebaseWrapper';
 import { DBPuzzleV, DBPuzzleT } from '../../../lib/dbtypes';
 
-function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
+async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
   console.log('Generating png for ' + puzzle.t);
 
   const canvas = createCanvas(1200, 630);
@@ -76,10 +76,9 @@ function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
   ctx.fillStyle = '#EB984E';
   ctx.fill();
 
-  return loadImage('./public/logo.svg').then((img) => {
-    ctx.drawImage(img, 500, 215);
-    return canvas.createPNGStream();
-  });
+  const img = await loadImage('./public/logo.svg');
+  ctx.drawImage(img, 500, 215);
+  return canvas.createPNGStream();
 }
 
 async function getPuzzle(puzzleId: string): Promise<DBPuzzleT | null> {
