@@ -154,3 +154,81 @@ Object {
   ],
 }
 `;
+
+exports[`run w/ initial state 1`] = `
+Object {
+  "c": Object {
+    "mike": 6,
+  },
+  "n": 6,
+  "u": Array [
+    "anonymous-user-id",
+    "blah",
+    "other-user-id",
+  ],
+}
+`;
+
+exports[`run w/ initial state 2`] = `
+Object {
+  "a": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  "ct": Array [
+    2,
+    4,
+    8,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+  ],
+  "n": 6,
+  "nt": 316,
+  "s": 4,
+  "st": 176,
+  "uc": Array [
+    10,
+    4,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+  ],
+}
+`;

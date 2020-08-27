@@ -232,18 +232,32 @@ export const PuzzleStatsV = t.type({
 });
 export type PuzzleStatsT = t.TypeOf<typeof PuzzleStatsV>;
 
-export const DailyStatsV = t.type({
-  /** updated at */
-  ua: timestamp,
-  /** total completions */
-  n: t.number,
-  /** user ids with completions */
-  u: t.array(t.string),
-  /** completions by puzzleId */
-  c: t.record(t.string, t.number),
-  /** completions by hour (as UTC 0-23) */
-  h: t.array(t.number),
-});
+const PuzzleInfoV = t.tuple([
+  /** title */
+  t.string,
+  /** author name */
+  t.string,
+  /** author id */
+  t.string
+]);
+export const DailyStatsV = t.intersection([
+  t.type({
+    /** updated at */
+    ua: timestamp,
+    /** total completions */
+    n: t.number,
+    /** user ids with completions */
+    u: t.array(t.string),
+    /** completions by puzzleId */
+    c: t.record(t.string, t.number),
+    /** completions by hour (as UTC 0-23) */
+    h: t.array(t.number),
+  }),
+  t.partial({
+    /** puzzle title, authorName, authorId by puzzleId */
+    i: t.record(t.string, PuzzleInfoV),
+  })
+]);
 export type DailyStatsT = t.TypeOf<typeof DailyStatsV>;
 
 export const CronStatusV = t.type({

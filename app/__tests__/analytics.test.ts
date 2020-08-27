@@ -192,3 +192,29 @@ test('run for more recent w/o initial state', async () => {
   expect(pua).not.toBeFalsy();
   expect(pToSnapshot).toMatchSnapshot();
 });
+
+test('run w/ initial state', async () => {
+  const hourAgo = new Date();
+  hourAgo.setMinutes(hourAgo.getMinutes() - 60);
+
+  // Just run twice in a row w/ same timestamp so we read each play twice.
+  await runAnalytics(adminApp.firestore(), TimestampClass.fromDate(hourAgo), TimestampClass.fromDate(new Date()));
+  await runAnalytics(adminApp.firestore(), TimestampClass.fromDate(hourAgo), TimestampClass.fromDate(new Date()));
+
+  const res = await adminApp.firestore().collection('ds').get();
+  expect(res.size).toEqual(1);
+  // Can't snapshot updatedAt or playcount by hour
+  const { ua, h, ...toSnapshot } = res.docs[0].data();
+  expect(ua).not.toBeFalsy();
+  expect(h.length).toEqual(24);
+  expect(toSnapshot).toMatchSnapshot();
+
+  const pres = await adminApp.firestore().collection('s').doc('mike').get();
+  const data = pres.data();
+  if (data === undefined) {
+    throw new Error('botch');
+  }
+  const { ua: pua, ...pToSnapshot } = data;
+  expect(pua).not.toBeFalsy();
+  expect(pToSnapshot).toMatchSnapshot();
+});
