@@ -62,6 +62,40 @@ test('security rules should only allow commenting as onesself', async () => {
   app.delete();
 });
 
+test('security rules should only allow commenting with username if it matches your account', async () => {
+  const adminApp = firebaseTesting.initializeAdminApp({ projectId: 'mdcrosshare' }) as firebase.app.App;
+  await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
+  await adminApp.firestore().collection('cp').doc('rando').set({ u: 'rando' });
+  adminApp.delete();
+
+  const app = firebaseTesting.initializeTestApp({
+    projectId: 'mdcrosshare',
+    auth: {
+      uid: 'mike',
+      admin: false,
+      firebase: {
+        sign_in_provider: 'google.com',
+      },
+    },
+  });
+
+
+
+  await firebaseTesting.assertSucceeds(
+    app.firestore().collection('cfm').add({ c: 'comment text', a: 'mike' })
+  );
+  await firebaseTesting.assertSucceeds(
+    app.firestore().collection('cfm').add({ c: 'comment text', a: 'mike', un: 'miked' })
+  );
+  await firebaseTesting.assertFails(
+    app.firestore().collection('cfm').add({ c: 'comment text', a: 'mike', un: 'rando' })
+  );
+  await firebaseTesting.assertFails(
+    app.firestore().collection('cfm').add({ c: 'comment text', a: 'mike', un: 'totalblast' })
+  );
+  app.delete();
+});
+
 test('security rules should only allow commenting if non-anonymous', async () => {
   const app = firebaseTesting.initializeTestApp({
     projectId: 'mdcrosshare',

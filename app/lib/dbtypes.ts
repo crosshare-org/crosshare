@@ -5,20 +5,26 @@ import * as t from 'io-ts';
 import { timestamp } from './timestamp';
 export { timestamp } from './timestamp';
 
-const CommentV = t.type({
-  /** comment text */
-  c: t.string,
-  /** author id */
-  a: t.string,
-  /** author display name */
-  n: t.string,
-  /** author solve time in fractional seconds */
-  t: t.number,
-  /** author did cheat? */
-  ch: t.boolean,
-  /** comment publish timestamp */
-  p: timestamp
-});
+const CommentV = t.intersection([
+  t.type({
+    /** comment text */
+    c: t.string,
+    /** author id */
+    a: t.string,
+    /** author display name */
+    n: t.string,
+    /** author solve time in fractional seconds */
+    t: t.number,
+    /** author did cheat? */
+    ch: t.boolean,
+    /** comment publish timestamp */
+    p: timestamp
+  }),
+  t.partial({
+    /** author username */
+    un: t.string,
+  })
+]);
 type CommentT = t.TypeOf<typeof CommentV>;
 
 export interface CommentWithRepliesT extends CommentT {

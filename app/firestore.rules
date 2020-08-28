@@ -77,7 +77,11 @@ service cloud.firestore {
     match /cfm/{commentId} {
       allow write: if request.auth.uid != null
         && isNonAnonymous()
-        && request.auth.uid == request.resource.data.a;
+        && request.auth.uid == request.resource.data.a
+        && (
+          !request.resource.data.keys().hasAny(["un"]) ||
+          get(/databases/$(database)/documents/cp/$(request.resource.data.un)).data.u == request.auth.uid
+        );
       allow read: if isAdmin();
       allow delete: if isAdmin();
     }
