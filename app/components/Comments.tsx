@@ -14,6 +14,7 @@ import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { CommentForModerationT, CommentForModerationWithIdV, CommentForModerationWithIdT } from '../lib/dbtypes';
 import { Markdown } from './Markdown';
 import { ConstructorPageT } from '../lib/constructorPage';
+import { Link } from './Link';
 
 const COMMENT_LENGTH_LIMIT = 280;
 
@@ -36,7 +37,7 @@ const CommentView = (props: CommentProps) => {
         marginBottom: 0,
       }
     }}>
-      <div><CommentFlair displayName={props.comment.authorDisplayName} userId={props.comment.authorId} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.comment.authorSolveTime} didCheat={props.comment.authorCheated} /></div>
+      <div><CommentFlair displayName={props.comment.authorDisplayName} username={props.comment.authorUsername} userId={props.comment.authorId} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.comment.authorSolveTime} didCheat={props.comment.authorCheated} /></div>
       <Markdown text={props.comment.commentText} />
       {props.children}
     </div>
@@ -93,18 +94,26 @@ function commentsFromStorage(puzzleId: string): Array<CommentForModerationWithId
   return [];
 }
 
+const CommentAuthor = (props: { username?: string, displayName: string }) => {
+  if (props.username) {
+    return <Link href='/[...slug]' as={'/' + props.username} passHref>{props.displayName}</Link>;
+  }
+  return <>{props.displayName}</>;
+};
+
 interface CommentFlairProps {
   solveTime: number,
   didCheat: boolean,
   displayName: string,
   userId: string,
+  username?: string,
   puzzleAuthorId: string,
 }
 const CommentFlair = (props: CommentFlairProps) => {
   return (
     <>
       <span css={{ verticalAlign: 'text-bottom' }}><Identicon id={props.userId} /></span>
-      <i> {props.displayName} </i>
+      <i> <CommentAuthor displayName={props.displayName} username={props.username} /> </i>
       {(props.userId === props.puzzleAuthorId) ?
         <span css={{
           fontSize: '0.75em',
@@ -115,7 +124,7 @@ const CommentFlair = (props: CommentFlairProps) => {
         }}>constructor</span>
         :
         <>
-          {props.didCheat ? <Emoji title='Used helpers' symbol='😏' /> : <Emoji title='Solved without helpers' symbol='🤓' />}
+          {props.didCheat ? '' : <Emoji title='Solved without helpers' symbol='🤓' />}
           < span css={{
             fontSize: '0.75em',
             backgroundColor: 'var(--caption)',
@@ -299,6 +308,7 @@ export const Comments = ({ comments, ...props }: CommentsProps): JSX.Element => 
         commentText: c.c,
         authorId: c.a,
         authorDisplayName: c.n,
+        authorUsername: c.un,
         authorSolveTime: c.t,
         authorCheated: c.ch,
         publishTime: c.p.toMillis(),

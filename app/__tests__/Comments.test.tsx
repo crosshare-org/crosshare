@@ -6,17 +6,15 @@ import * as firebaseTesting from '@firebase/testing';
 
 jest.mock('../lib/firebaseWrapper');
 
-const testComments: Array<Comment> = [
-  {
-    id: 'comment-id',
-    commentText: 'my first comment',
-    authorId: 'comment-author-id',
-    authorDisplayName: 'Mike D',
-    authorSolveTime: 55.4,
-    authorCheated: false,
-    publishTime: new Date().getTime(),
-  },
-];
+const testComment: Comment = {
+  id: 'comment-id',
+  commentText: 'my first comment',
+  authorId: 'comment-author-id',
+  authorDisplayName: 'Mike D',
+  authorSolveTime: 55.4,
+  authorCheated: false,
+  publishTime: new Date().getTime(),
+};
 
 test('basic comment display', () => {
   setApp(
@@ -30,7 +28,27 @@ test('basic comment display', () => {
       didCheat={false}
       puzzleId="puzz"
       puzzleAuthorId="puzzAuthor"
-      comments={testComments}
+      comments={[testComment]}
+    />,
+    {}
+  );
+  expect(getByText(/my first comment/i)).toBeVisible();
+  expect(container.firstChild).toMatchSnapshot();
+});
+
+test('comment with username display', () => {
+  setApp(
+    firebaseTesting.initializeTestApp({
+      projectId: 'test1',
+    }) as firebase.app.App
+  );
+  const { getByText, container } = render(
+    <Comments
+      solveTime={10}
+      didCheat={false}
+      puzzleId="puzz"
+      puzzleAuthorId="puzzAuthor"
+      comments={[{ authorUsername: 'MikeD', ...testComment }]}
     />,
     {}
   );
