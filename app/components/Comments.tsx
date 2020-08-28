@@ -13,6 +13,7 @@ import { DisplayNameForm, getDisplayName } from './DisplayNameForm';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { CommentForModerationT, CommentForModerationWithIdV, CommentForModerationWithIdT } from '../lib/dbtypes';
 import { Markdown } from './Markdown';
+import { ConstructorPageT } from '../lib/constructorPage';
 
 const COMMENT_LENGTH_LIMIT = 280;
 
@@ -42,7 +43,7 @@ const CommentView = (props: CommentProps) => {
   );
 };
 
-const CommentWithReplies = (props: PartialBy<CommentFormProps, 'user'> & { comment: CommentOrLocalComment }) => {
+const CommentWithReplies = (props: PartialBy<CommentFormProps, 'user'> & { comment: CommentOrLocalComment, constructorPage: ConstructorPageT | undefined }) => {
   const [showingForm, setShowingForm] = useState(false);
   const commentId = isComment(props.comment) ? props.comment.id : null;
   const replies = isComment(props.comment) ? props.comment.replies : undefined;
@@ -53,7 +54,7 @@ const CommentWithReplies = (props: PartialBy<CommentFormProps, 'user'> & { comme
         :
         (showingForm ?
           <div css={{ marginLeft: '2em' }}>
-            <CommentForm {...props} onCancel={() => setShowingForm(false)} replyToId={commentId} user={props.user} />
+            <CommentForm {...props} username={props.constructorPage ?.i} onCancel={() => setShowingForm(false)} replyToId={commentId} user={props.user} />
           </div>
           :
           <div><button css={buttonAsLink} onClick={() => setShowingForm(true)}>Reply</button></div>
@@ -131,6 +132,7 @@ const CommentFlair = (props: CommentFlairProps) => {
 interface CommentFormProps {
   displayName: string,
   setDisplayName: (name: string) => void,
+  username?: string,
   puzzleAuthorId: string,
   user: firebase.User,
   solveTime: number,
@@ -168,6 +170,9 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
       pid: props.puzzleId,
       rt: props.replyToId !== undefined ? props.replyToId : null
     };
+    if (props.username) {
+      comment.un = props.username;
+    }
     console.log('Submitting comment', comment);
     const db = App.firestore();
     // Add to moderation queue for long term
@@ -178,6 +183,7 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
       setSubmittedComment({
         commentText: comment.c,
         authorId: comment.a,
+        authorUsername: comment.un,
         authorDisplayName: comment.n,
         authorSolveTime: comment.t,
         authorCheated: comment.ch,
@@ -332,14 +338,14 @@ export const Comments = ({ comments, ...props }: CommentsProps): JSX.Element => 
       {!authContext.user || authContext.user.isAnonymous ?
         <div>Sign in with google (above) to leave a comment of your own</div>
         :
-        <CommentForm {...props} displayName={displayName} setDisplayName={setDisplayName} user={authContext.user} />
+        <CommentForm {...props} username={authContext.constructorPage ?.i} displayName={displayName} setDisplayName={setDisplayName} user={authContext.user} />
       }
       <ul css={{
         listStyleType: 'none',
         margin: '2em 0 0 0',
         padding: 0,
       }}>
-        {toShow.map((a, i) => <li key={i}><CommentWithReplies displayName={displayName} setDisplayName={setDisplayName} comment={a} {...props} /></li>)}
+        {toShow.map((a, i) => <li key={i}><CommentWithReplies constructorPage={authContext.constructorPage} displayName={displayName} setDisplayName={setDisplayName} comment={a} {...props} /></li>)}
       </ul>
     </div>
   );

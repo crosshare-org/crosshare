@@ -95,6 +95,8 @@ export interface Comment {
   authorId: string,
   /** author display name */
   authorDisplayName: string,
+  /** author username */
+  authorUsername?: string,
   /** author solve time in fractional seconds */
   authorSolveTime: number,
   /** author did cheat? */
@@ -141,6 +143,7 @@ function convertComments(comments: Array<CommentWithRepliesT>): Array<Comment> {
       commentText: c.c,
       authorId: c.a,
       authorDisplayName: c.n,
+      authorUsername: c.un,
       authorSolveTime: c.t,
       authorCheated: c.ch,
       publishTime: c.p.toMillis(),
