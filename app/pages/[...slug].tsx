@@ -55,7 +55,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
     return {
       props: {
-        constructorPage: cp,
+        constructor: cp,
         puzzles: puzzles.slice(0, PAGESIZE),
         hasMore: puzzles.length === PAGESIZE + 1,
         currentIndex: startTs,

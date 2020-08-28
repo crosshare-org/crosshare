@@ -70,16 +70,16 @@ const BioEditor = (props: BioEditorProps) => {
 };
 
 export interface ConstructorPageProps {
-  constructorPage: ConstructorPageT,
+  constructor: ConstructorPageT,
   puzzles: Array<PuzzleResult>,
   hasMore: boolean,
   currentIndex: number | null,
 }
 
 export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional) => {
-  const username = props.constructorPage.i || props.constructorPage.id;
-  const description = 'The latest crossword puzzles from ' + props.constructorPage.n + ' (@' + username + '). ' + props.constructorPage.b;
-  const title = props.constructorPage.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
+  const username = props.constructor.i || props.constructor.id;
+  const description = 'The latest crossword puzzles from ' + props.constructor.n + ' (@' + username + '). ' + props.constructor.b;
+  const title = props.constructor.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
   return <>
     <Head>
       <title>{title}</title>
@@ -95,12 +95,12 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
     <div css={{
       margin: '1em',
     }}>
-      <h2 css={{ marginBottom: 0 }}>{props.constructorPage.n}</h2>
+      <h2 css={{ marginBottom: 0 }}>{props.constructor.n}</h2>
       <h4><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h4>
       {props.isAdmin ?
-        <BioEditor text={props.constructorPage.b} userId={props.constructorPage.id} />
+        <BioEditor text={props.constructor.b} userId={props.constructor.id} />
         :
-        <Markdown text={props.constructorPage.b} />
+        <Markdown text={props.constructor.b} />
       }
       {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showAuthor={false} />)}
       {props.hasMore ?

@@ -175,7 +175,7 @@ const SuccessOverlay = (props: { user?: firebase.User, puzzle: ServerPuzzleResul
           </div>
         }
       </div>
-      <Comments user={props.user} solveTime={props.solveTime} didCheat={props.didCheat} puzzleId={props.puzzle.id} puzzleAuthorId={props.puzzle.authorId} comments={props.puzzle.comments} />
+      <Comments solveTime={props.solveTime} didCheat={props.didCheat} puzzleId={props.puzzle.id} puzzleAuthorId={props.puzzle.authorId} comments={props.puzzle.comments} />
     </Overlay>
   );
 };

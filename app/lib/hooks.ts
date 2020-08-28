@@ -47,7 +47,10 @@ export function useAuth() {
   }, [user]);
 
   // Constructor page
-  const docRef = user ? App.firestore().collection('cp').where('u', '==', user.uid) : null;
+  const docRef = useMemo(
+    () => user ? App.firestore().collection('cp').where('u', '==', user.uid) : null,
+    [user]
+  );
   const [cpSnapshot, loadingCP, cpError] = useCollection(docRef);
   const [constructorPage, cpDecodeError] = useMemo(() => {
     if (cpSnapshot === undefined || cpSnapshot.empty) {
@@ -56,7 +59,7 @@ export function useAuth() {
     if (cpSnapshot.size !== 1) {
       return [undefined, 'Multiple matching constructor pages'];
     }
-    const validationResult = ConstructorPageV.decode(cpSnapshot.docs[0].data());
+    const validationResult = ConstructorPageV.decode(cpSnapshot.docs[0].data({ serverTimestamps: 'previous' }));
     if (isRight(validationResult)) {
       return [{ ...validationResult.right, id: cpSnapshot.docs[0].id }, undefined];
     } else {

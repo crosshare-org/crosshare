@@ -70,16 +70,26 @@ export const BuilderDBLoader = (props: BuilderProps & AuthProps): JSX.Element =>
   const [triedInit, setTriedInit] = useState(false);
 
   useEffect(() => {
-    if (WordDB.dbStatus === WordDB.DBStatus.uninitialized) {
-      WordDB.initialize().then(succeeded => {
-        setTriedInit(true);
-        if (succeeded) {
-          setReady(true);
-        }
-      });
-    } else if (WordDB.dbStatus === WordDB.DBStatus.present) {
-      setReady(true);
+    let ignore = false;
+
+    async function fetchData() {
+      if (WordDB.dbStatus === WordDB.DBStatus.uninitialized) {
+        WordDB.initialize().then(succeeded => {
+          if (ignore) {
+            return;
+          }
+          setTriedInit(true);
+          if (succeeded) {
+            setReady(true);
+          }
+        });
+      } else if (WordDB.dbStatus === WordDB.DBStatus.present) {
+        setReady(true);
+      }
     }
+
+    fetchData();
+    return () => { ignore = true; };
   }, []);
 
   if (ready) {

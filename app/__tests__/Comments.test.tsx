@@ -30,7 +30,6 @@ test('basic comment display', () => {
       didCheat={false}
       puzzleId="puzz"
       puzzleAuthorId="puzzAuthor"
-      user={undefined}
       comments={testComments}
     />,
     {}
