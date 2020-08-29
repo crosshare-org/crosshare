@@ -48,7 +48,7 @@ export function useAuth() {
 
   // Constructor page
   const docRef = useMemo(
-    () => user ? App.firestore().collection('cp').where('u', '==', user.uid) : null,
+    () => (user && user.email && !user.isAnonymous) ? App.firestore().collection('cp').where('u', '==', user.uid) : null,
     [user]
   );
   const [cpSnapshot, loadingCP, cpError] = useCollection(docRef);
