@@ -97,8 +97,6 @@ test('security rules should only allow commenting with username if it matches yo
     },
   });
 
-
-
   await firebaseTesting.assertSucceeds(
     app.firestore().collection('cfm').add({ c: 'comment text', a: 'mike' })
   );
