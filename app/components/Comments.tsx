@@ -228,7 +228,7 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
               {onCancel ?
                 <button type="button" css={{ marginRight: '0.5em' }} onClick={onCancel}>Cancel</button>
                 : ''}
-              commenting as <CommentFlair displayName={props.displayName} userId={props.user.uid} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.solveTime} didCheat={props.didCheat} /> (
+              commenting as <CommentFlair username={props.username} displayName={props.displayName} userId={props.user.uid} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.solveTime} didCheat={props.didCheat} /> (
               <button css={buttonAsLink} onClick={() => setEditingDisplayName(true)}>change name</button>)
             </>
         }
@@ -355,7 +355,7 @@ export const Comments = ({ comments, ...props }: CommentsProps): JSX.Element => 
         margin: '2em 0 0 0',
         padding: 0,
       }}>
-        {toShow.map((a, i) => <li key={i}><CommentWithReplies constructorPage={authContext.constructorPage} displayName={displayName} setDisplayName={setDisplayName} comment={a} {...props} /></li>)}
+        {toShow.map((a, i) => <li key={i}><CommentWithReplies user={authContext.user} constructorPage={authContext.constructorPage} displayName={displayName} setDisplayName={setDisplayName} comment={a} {...props} /></li>)}
       </ul>
     </div>
   );
