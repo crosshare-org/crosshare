@@ -26,6 +26,16 @@ service cloud.firestore {
       allow get: if true;
       allow list: if true;
       allow update: if isAdmin();
+      allow create: if isNonAnonymous()
+        && request.resource.data.i.lower() == username
+        && username.size() >= 3
+        && username.size() <= 15
+        && !username.matches('.*admin.*')
+        && !username.matches('.*crosshare.*')
+        && username.matches('\\w+')
+        && request.auth.uid != null && request.auth.uid == request.resource.data.u
+        && request.resource.data.n is string && request.resource.data.n.size() > 0
+        && request.resource.data.t == request.time;
     }
     match /c/{crosswordId} {
       allow get: if true;
