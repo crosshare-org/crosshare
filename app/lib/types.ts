@@ -143,12 +143,12 @@ function convertComments(comments: Array<CommentWithRepliesT>): Array<Comment> {
       commentText: c.c,
       authorId: c.a,
       authorDisplayName: c.n,
-      authorUsername: c.un,
       authorSolveTime: c.t,
       authorCheated: c.ch,
       publishTime: c.p.toMillis(),
       id: c.i,
-      replies: convertComments(c.r || [])
+      replies: convertComments(c.r || []),
+      ...c.un && { authorUsername: c.un },
     };
   });
 }
