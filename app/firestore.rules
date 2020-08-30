@@ -25,7 +25,12 @@ service cloud.firestore {
     match /cp/{username} {
       allow get: if true;
       allow list: if true;
-      allow update: if isAdmin();
+      allow update: if (isAdmin() || (isNonAnonymous()
+        && request.auth.uid != null && request.auth.uid == request.resource.data.u))
+        && request.resource.data.i.lower() == username
+        && request.resource.data.u == resource.data.u
+        && request.resource.data.n is string && request.resource.data.n.size() > 0
+        && request.resource.data.t == request.time;
       allow create: if isNonAnonymous()
         && request.resource.data.i.lower() == username
         && username.size() >= 3
