@@ -145,3 +145,111 @@ test('security rules for constructor page creation', async () => {
 
   app.delete();
 });
+
+test('security rules for constructor page updates', async () => {
+  await firebaseTesting.clearFirestoreData({ projectId });
+  const adminApp = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
+  await adminApp.firestore().collection('cp').doc('miked').set({
+    i: 'miked',
+    u: 'foobar',
+    n: 'Alt Name',
+    b: 'Some random bio text',
+    t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+  });
+
+  const app = firebaseTesting.initializeTestApp({
+    projectId,
+    auth: {
+      uid: 'mikeuserid',
+      admin: false,
+      firebase: {
+        sign_in_provider: 'google.com',
+      },
+    },
+  });
+
+  // SUCCEEDS!
+  await firebaseTesting.assertSucceeds(
+    app.firestore().collection('cp').doc('mytestusername').set({
+      i: 'MyTestUsername',
+      u: 'mikeuserid',
+      n: 'Mike D',
+      b: 'Some random bio text',
+      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+    })
+  );
+
+  // Can update bio text
+  await firebaseTesting.assertSucceeds(
+    app.firestore().collection('cp').doc('mytestusername').set({
+      b: 'Some new bio text',
+      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true })
+  );
+
+  // Can't update bio text w/o timestamp
+  await firebaseTesting.assertFails(
+    app.firestore().collection('cp').doc('mytestusername').set({
+      b: 'Some new bio text',
+    }, { merge: true })
+  );
+
+  // Can't update bio text for different user
+  await firebaseTesting.assertFails(
+    app.firestore().collection('cp').doc('miked').set({
+      b: 'Some new bio text',
+      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true })
+  );
+
+  // Can't update userid for different user
+  await firebaseTesting.assertFails(
+    app.firestore().collection('cp').doc('miked').set({
+      u: 'mikeuserid',
+      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true })
+  );
+
+  // Can't change username
+  await firebaseTesting.assertFails(
+    app.firestore().collection('cp').doc('mytestusername').set({
+      i: 'mytestuser',
+      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true })
+  );
+
+  // Can change case though
+  await firebaseTesting.assertSucceeds(
+    app.firestore().collection('cp').doc('mytestusername').set({
+      i: 'MYTESTUSERNAME',
+      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true })
+  );
+
+  // Can't delete name
+  await firebaseTesting.assertFails(
+    app.firestore().collection('cp').doc('mytestusername').set({
+      n: '',
+      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true })
+  );
+
+  // Can change name though
+  await firebaseTesting.assertSucceeds(
+    app.firestore().collection('cp').doc('mytestusername').set({
+      n: 'New Display Name',
+      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true })
+  );
+
+  const data = (await adminApp.firestore().collection('cp').doc('mytestusername').get()).data();
+  if (data === undefined) {
+    throw new Error('botch');
+  }
+  const { t, ...toSnapshot } = data;
+  expect(t).not.toBeFalsy();
+  expect(toSnapshot).toMatchSnapshot();
+
+  adminApp.delete();
+  app.delete();
+});
