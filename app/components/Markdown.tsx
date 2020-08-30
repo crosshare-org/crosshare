@@ -24,7 +24,7 @@ const rules: SimpleMarkdown.Rules<SimpleMarkdown.ReactOutputRule> = {
         {
           href: SimpleMarkdown.sanitizeUrl(node.target),
           target: '_blank',
-          rel: 'nofollow ugc',
+          rel: 'nofollow ugc noopener noreferrer',
           title: node.title,
           children: output(node.content, state)
         }
