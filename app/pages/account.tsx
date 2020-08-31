@@ -3,65 +3,76 @@ import Head from 'next/head';
 
 import { getDisplayName, DisplayNameForm } from '../components/DisplayNameForm';
 import { requiresAuth, AuthProps } from '../components/AuthContext';
-import { AuthoredPuzzlesV, PlayWithoutUserT } from '../lib/dbtypes';
-import { getFromSessionOrDB } from '../lib/dbUtils';
+import { PlayWithoutUserT, LegacyPlayV } from '../lib/dbtypes';
 import { App } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
-import { getPlays } from '../lib/plays';
 import { PuzzleLink } from '../components/PuzzleLink';
+import { Link } from '../components/Link';
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
+import { getPuzzle } from '../lib/puzzleCache';
 
-export const PlayListItem = ({ play }: { play: PlayWithoutUserT }) => {
+const PlayListItem = ({ play }: { play: PlayWithoutUserT }) => {
   return <PuzzleLink id={play.c} title={play.n} />;
 };
 
-export const AuthoredListItem = (props: AuthoredPuzzle) => {
-  return <PuzzleLink key={props.id} id={props.id} title={props.title} />;
-};
-
-interface AuthoredPuzzle {
-  id: string,
-  createdAt: firebase.firestore.Timestamp,
-  title: string,
-}
-
 export default requiresAuth(({ user, constructorPage }: AuthProps) => {
-  const [authoredPuzzles, setAuthoredPuzzles] = useState<Array<AuthoredPuzzle> | null>(null);
-  const [plays, setPlays] = useState<Array<PlayWithoutUserT> | null>(null);
+  const [hasAuthoredPuzzle, setHasAuthoredPuzzle] = useState(false);
+  const [unfinishedPlays, setUnfinishedPlays] = useState<Array<PlayWithoutUserT> | null>(null);
   const [error, setError] = useState(false);
   const [displayName, setDisplayName] = useState(getDisplayName(user, constructorPage));
 
   useEffect(() => {
-    console.log('loading authored puzzles and plays');
+    console.log('loading authored puzzle and plays');
     let ignore = false;
 
     async function fetchData() {
-      // TODO pagination on both of these
-      return Promise.all([
-        getFromSessionOrDB({ collection: 'uc', docId: user.uid, validator: AuthoredPuzzlesV, ttl: -1 }),
-        getPlays(user)
-      ])
-        .then(([authoredResult, playsResult]) => {
+      const db = App.firestore();
+
+      if (constructorPage) {
+        setHasAuthoredPuzzle(true);
+      } else {
+        db.collection('c').where('a', '==', user.uid).limit(1).get()
+          .then(res => {
+            if (ignore) {
+              return;
+            }
+            setHasAuthoredPuzzle(res.size > 0);
+          }).catch(reason => {
+            console.error(reason);
+            if (ignore) {
+              return;
+            }
+            setError(true);
+          });
+      }
+
+      db.collection('p').where('u', '==', user.uid).where('f', '==', false).limit(10).get()
+        .then(async playsResult => {
+          const plays = [];
           if (ignore) {
             return;
           }
-          if (authoredResult === null) {
-            setAuthoredPuzzles([]);
-          } else {
-            const authored = Object.entries(authoredResult).map(([id, val]) => {
-              const [createdAt, title] = val;
-              return { id, createdAt, title };
-            });
-            // Sort in reverse order by createdAt
-            authored.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
-            setAuthoredPuzzles(authored);
-          }
           if (playsResult === null) {
-            setPlays([]);
+            setUnfinishedPlays([]);
           } else {
-            const plays = Object.values(playsResult);
-            // Sort in reverse order by updatedAt
-            plays.sort((a, b) => b.ua.toMillis() - a.ua.toMillis());
-            setPlays(plays);
+            for (const doc of playsResult.docs) {
+              const playResult = LegacyPlayV.decode(doc.data());
+              if (isRight(playResult)) {
+                const puzzleId = playResult.right.c;
+                const puzzle = await getPuzzle(puzzleId);
+                if (!puzzle || puzzle.a === user.uid) {
+                  console.log('deleting invalid play');
+                  db.collection('p').doc(`${puzzleId}-${user.uid}`).delete();
+                } else {
+                  plays.push({ ...playResult.right, n: puzzle.t });
+                }
+              } else {
+                console.error(PathReporter.report(playResult).join(','));
+                return Promise.reject('Malformed play');
+              }
+            }
+            setUnfinishedPlays(plays);
           }
         }).catch(reason => {
           console.error(reason);
@@ -74,10 +85,10 @@ export default requiresAuth(({ user, constructorPage }: AuthProps) => {
 
     fetchData();
     return () => { ignore = true; };
-  }, [user]);
+  }, [user, constructorPage]);
 
   if (error) {
-    return <div>Error loading plays / authored puzzles</div>;
+    return <div>Error loading plays / authored puzzles. Please try again.</div>;
   }
   return (
     <>
@@ -91,18 +102,25 @@ export default requiresAuth(({ user, constructorPage }: AuthProps) => {
         <p>You&apos;re logged in as <b>{user.email}</b>. <button onClick={() => App.auth().signOut()}>Log out</button></p>
         <p>Your display name - <i>{displayName}</i> - is displayed next to any comments you make or puzzles you create.</p>
         <DisplayNameForm user={user} onChange={setDisplayName} />
-        {authoredPuzzles && authoredPuzzles.length ?
+        <h2>Crossword Blog</h2>
+        {constructorPage ?
           <>
-            <h2>Authored Puzzles</h2>
-            {authoredPuzzles.map(AuthoredListItem)}
+            <p>Your blog is live at <Link href='/[...slug]' as={'/' + constructorPage.i} passHref>https://crosshare.org/{constructorPage.i}</Link></p>
+            <p>Visit your blog page to edit your bio or view your constructed puzzles.</p>
           </>
           :
-          ''
+          (hasAuthoredPuzzle ?
+            <>
+              <p>Create a constructor blog to keep all your puzzles on one page:</p>
+            </>
+            :
+            <p>Start sharing your own puzzles by <Link href='/upload' as='/upload' passHref>uploading a .puz file.</Link></p>
+          )
         }
-        {plays && plays.length ?
+        {unfinishedPlays && unfinishedPlays.length ?
           <>
-            <h2>Recent Plays</h2>
-            {plays.map((play) => <PlayListItem key={play.c} play={play} />)}
+            <h2>Unfinished Solves</h2>
+            {unfinishedPlays.map((play) => <PlayListItem key={play.c} play={play} />)}
           </>
           :
           ''
