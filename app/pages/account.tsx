@@ -17,7 +17,7 @@ const PlayListItem = ({ play }: { play: PlayWithoutUserT }) => {
   return <PuzzleLink id={play.c} title={play.n} />;
 };
 
-export default requiresAuth(({ user, constructorPage }: AuthProps) => {
+export const AccountPage = ({ user, constructorPage }: AuthProps) => {
   const [hasAuthoredPuzzle, setHasAuthoredPuzzle] = useState(false);
   const [unfinishedPlays, setUnfinishedPlays] = useState<Array<PlayWithoutUserT> | null>(null);
   const [error, setError] = useState(false);
@@ -132,4 +132,6 @@ export default requiresAuth(({ user, constructorPage }: AuthProps) => {
       </div>
     </>
   );
-});
+};
+
+export default requiresAuth(AccountPage);
