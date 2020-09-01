@@ -106,7 +106,7 @@ test('upload a puzzle', async () => {
   expect(await r.findByText('Across')).toBeInTheDocument();
   fireEvent.click(r.getByText('Publish', { exact: true }));
   fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
-  await (r.findByText(/Published Successfully/));
+  await (r.findByText(/Published Successfully/, undefined, { timeout: 2000 }));
 
   const puzzles = await admin.firestore().collection('c').get();
   expect(puzzles.size).toEqual(1);
