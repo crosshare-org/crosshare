@@ -63,11 +63,12 @@ function SharingButton({ network, path, text }: SharingButtonProps) {
     margin: '0 0.5em',
     padding: '0 0.5em',
     borderRadius: '0.3em',
-    color: 'var(--white)',
+    color: 'var(--social-text)',
+    textShadow: '1px 1px 1px #333',
     backgroundColor: colors(network)[0],
     ['&:hover, &:active']: {
       backgroundColor: colors(network)[1],
-      color: 'var(--white)',
+      color: 'var(--social-text)',
       textDecoration: 'none',
     }
   }} href={url(network, path, text)} target='_blank' rel='noopener noreferrer' aria-label={linkName(network)}>
