@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useContext } from 'react';
 
 import { DefaultTopBar } from './TopBar';
 import { ConstructorPageT } from '../lib/constructorPage';
@@ -7,9 +7,113 @@ import { PuzzleResult } from '../lib/types';
 import { PuzzleResultLink } from './PuzzleLink';
 import { Link } from './Link';
 import { Markdown } from './Markdown';
-import { AuthPropsOptional } from './AuthContext';
+import { AuthPropsOptional, AuthContext } from './AuthContext';
 import { buttonAsLink } from '../lib/style';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
+
+
+const BANNED_USERNAMES = {
+  api: 1,
+  categories: 1,
+  category: 1,
+  crosswords: 1,
+  crossword: 1,
+  puzzle: 1,
+  app: 1,
+  blog: 1,
+  404: 1,
+  account: 1,
+  user: 1,
+  admin: 1,
+  construct: 1,
+  constructor: 1,
+  icons: 1,
+  privacy: 1,
+  tos: 1,
+  square: 1,
+  rebuild: 1,
+  words: 1,
+  word: 1,
+  entry: 1,
+  grid: 1,
+  wordlist: 1,
+  upload: 1,
+  ios: 1,
+  test: 1,
+  testing: 1,
+  android: 1,
+  help: 1
+};
+
+export const CreatePageForm = () => {
+  const ctx = useContext(AuthContext);
+  const [username, setUsername] = useState('');
+  const [showError, setShowError] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  function sanitize(input: string): string {
+    const res = input.match(/^([a-zA-Z]\w*)/);
+    if (res) {
+      return res[0];
+    }
+    return '';
+  }
+
+  function isInvalid(u: string) {
+    if (u.length < 3 || u.length > 15) {
+      return true;
+    }
+    return false;
+  }
+
+  function createPage(event: FormEvent) {
+    event.preventDefault();
+    const user = ctx.user;
+    if (!user) {
+      return;
+    }
+    const lower = username.toLowerCase();
+    if (lower.includes('admin') || lower.includes('crosshare') ||
+      Object.prototype.hasOwnProperty.call(BANNED_USERNAMES, lower)) {
+      setShowError(true);
+      return;
+    }
+    setSubmitting(true);
+
+    const cp = {
+      i: username,
+      u: user.uid,
+      n: user.displayName || 'Anonymous Crossharer',
+      b: '',
+      t: ServerTimestamp
+    };
+    App.firestore().collection('cp').doc(lower).set(cp)
+      .catch((e) => {
+        console.log(e);
+        setShowError(true);
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
+  }
+
+  return <>
+    <form onSubmit={createPage}>
+      <label css={{ width: '100%', margin: 0 }}>
+        <p>Create a constructor blog to keep all of your puzzles on one page.</p>
+        <p>Your blog&apos;s url (choose carefully, you can&apos;t change this later):</p>
+        <p><span css={{ fontWeight: 'bold', marginRight: '0.15em' }}>https://crosshare.org/</span><input type='text' value={username} placeholder='username' onChange={e => { setShowError(false); setUsername(sanitize(e.target.value)); }} /></p>
+      </label>
+      <p>
+        <input type="submit" disabled={isInvalid(username) || submitting} value="Create" />
+        {showError ?
+          <span css={{ color: 'var(--error)', marginLeft: '1em' }}>That username is unavailable. Please try something different.</span>
+          : ''
+        }
+      </p>
+    </form>
+  </>;
+};
 
 interface BioEditorProps {
   text: string,
@@ -97,7 +201,7 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
     }}>
       <h2 css={{ marginBottom: 0 }}>{props.constructor.n}</h2>
       <h4><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h4>
-      {props.isAdmin ?
+      {props.isAdmin || props.user ?.uid === props.constructor.u ?
         <BioEditor text={props.constructor.b} userId={props.constructor.id} />
         :
         <Markdown text={props.constructor.b} />

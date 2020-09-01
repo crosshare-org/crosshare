@@ -11,6 +11,7 @@ import { Link } from '../components/Link';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { getPuzzle } from '../lib/puzzleCache';
+import { CreatePageForm } from '../components/ConstructorPage';
 
 const PlayListItem = ({ play }: { play: PlayWithoutUserT }) => {
   return <PuzzleLink id={play.c} title={play.n} />;
@@ -61,6 +62,9 @@ export default requiresAuth(({ user, constructorPage }: AuthProps) => {
               if (isRight(playResult)) {
                 const puzzleId = playResult.right.c;
                 const puzzle = await getPuzzle(puzzleId);
+                if (ignore) {
+                  return;
+                }
                 if (!puzzle || puzzle.a === user.uid) {
                   console.log('deleting invalid play');
                   db.collection('p').doc(`${puzzleId}-${user.uid}`).delete();
@@ -111,10 +115,10 @@ export default requiresAuth(({ user, constructorPage }: AuthProps) => {
           :
           (hasAuthoredPuzzle ?
             <>
-              <p>Create a constructor blog to keep all your puzzles on one page:</p>
+              <CreatePageForm />
             </>
             :
-            <p>Start sharing your own puzzles by <Link href='/upload' as='/upload' passHref>uploading a .puz file.</Link></p>
+            <p>Start sharing your own puzzles by <Link href='/construct' as='/construct' passHref>creating one with the Crosshare constructor (beta)</Link> or <Link href='/upload' as='/upload' passHref>uploading a .puz file.</Link></p>
           )
         }
         {unfinishedPlays && unfinishedPlays.length ?

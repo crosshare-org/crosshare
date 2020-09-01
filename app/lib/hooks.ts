@@ -63,8 +63,8 @@ export function useAuth() {
     if (isRight(validationResult)) {
       return [{ ...validationResult.right, id: cpSnapshot.docs[0].id }, undefined];
     } else {
-      console.error(PathReporter.report(validationResult).join(','));
-      return [undefined, 'Invalid constructor page'];
+      console.log(PathReporter.report(validationResult).join(','));
+      return [undefined, undefined];
     }
   }, [cpSnapshot]);
 
