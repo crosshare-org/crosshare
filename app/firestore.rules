@@ -25,10 +25,12 @@ service cloud.firestore {
     match /cp/{username} {
       allow get: if true;
       allow list: if true;
-      allow update: if (isAdmin() || (isNonAnonymous()
-        && request.auth.uid != null && request.auth.uid == request.resource.data.u))
+      allow update: if isAdmin();
+      allow update: if isNonAnonymous()
+        && request.auth.uid != null && request.auth.uid == request.resource.data.u
         && request.resource.data.i.lower() == username
         && request.resource.data.u == resource.data.u
+        && request.resource.data.m == true
         && request.resource.data.n is string && request.resource.data.n.size() > 0
         && request.resource.data.t == request.time;
       allow create: if isNonAnonymous()
@@ -39,6 +41,7 @@ service cloud.firestore {
         && !username.matches('.*crosshare.*')
         && username.matches('\\w+')
         && request.auth.uid != null && request.auth.uid == request.resource.data.u
+        && request.resource.data.m == true
         && request.resource.data.n is string && request.resource.data.n.size() > 0
         && request.resource.data.t == request.time;
     }

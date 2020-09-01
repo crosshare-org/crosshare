@@ -31,7 +31,7 @@ export const DisplayNameForm = ({ user, onChange, onCancel }: DisplayNameFormPro
     if (toSubmit) {
       const updates = [user.updateProfile({ displayName: toSubmit })];
       if (ctx.constructorPage) {
-        updates.push(db.collection('cp').doc(ctx.constructorPage.id).update({ n: toSubmit, t: ServerTimestamp }));
+        updates.push(db.collection('cp').doc(ctx.constructorPage.id).update({ m: true, n: toSubmit, t: ServerTimestamp }));
       }
       Promise.all(updates).then(() => {
         setSubmitting(false);

@@ -85,6 +85,7 @@ export const CreatePageForm = () => {
       u: user.uid,
       n: user.displayName || 'Anonymous Crossharer',
       b: '',
+      m: true,
       t: ServerTimestamp
     };
     App.firestore().collection('cp').doc(lower).set(cp)
@@ -146,7 +147,7 @@ const BioEditor = (props: BioEditorProps) => {
     }
     console.log('Submitting bio');
     const db = App.firestore();
-    db.collection('cp').doc(props.userId).update({ b: text, t: ServerTimestamp }).then(() => {
+    db.collection('cp').doc(props.userId).update({ b: text, m: true, t: ServerTimestamp }).then(() => {
       console.log('Updated');
       setIsOpen(false);
     });

@@ -19,6 +19,17 @@ test('security rules for constructor page creation', async () => {
     },
   });
 
+  // Fails if missing moderation flag
+  await firebaseTesting.assertFails(
+    app.firestore().collection('cp').doc('mytestusername').set({
+      i: 'MyTestUsername',
+      u: 'mikeuserid',
+      n: 'Mike D',
+      b: 'Some random bio text',
+      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+    })
+  );
+
   // Fails if username doesn't match docid
   await firebaseTesting.assertFails(
     app.firestore().collection('cp').doc('mytestusername').set({
@@ -26,6 +37,7 @@ test('security rules for constructor page creation', async () => {
       u: 'mikeuserid',
       n: 'Mike D',
       b: 'Some random bio text',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     })
   );
@@ -37,6 +49,7 @@ test('security rules for constructor page creation', async () => {
       u: 'mikeuserid',
       n: 'Mike D',
       b: 'Some random bio text',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     })
   );
@@ -48,6 +61,7 @@ test('security rules for constructor page creation', async () => {
       u: 'mikeuserid',
       n: 'Mike D',
       b: 'Some random bio text',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     })
   );
@@ -59,6 +73,7 @@ test('security rules for constructor page creation', async () => {
       u: 'mikeuserid',
       n: 'Mike D',
       b: 'Some random bio text',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     })
   );
@@ -70,6 +85,7 @@ test('security rules for constructor page creation', async () => {
       u: 'mikeuserid',
       n: 'Mike D',
       b: 'Some random bio text',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     })
   );
@@ -81,6 +97,7 @@ test('security rules for constructor page creation', async () => {
       u: 'mikeuserid',
       n: 'Mike D',
       b: 'Some random bio text',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     })
   );
@@ -92,6 +109,7 @@ test('security rules for constructor page creation', async () => {
       u: 'foobar',
       n: 'Mike D',
       b: 'Some random bio text',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     })
   );
@@ -103,6 +121,7 @@ test('security rules for constructor page creation', async () => {
       u: 'mikeuserid',
       n: '',
       b: 'Some random bio text',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     })
   );
@@ -114,6 +133,7 @@ test('security rules for constructor page creation', async () => {
       u: 'mikeuserid',
       n: 'Mike D',
       b: 'Some random bio text',
+      m: true,
       t: firebaseTesting.firestore.Timestamp.fromDate(new Date('2020-01-01'))
     })
   );
@@ -125,6 +145,7 @@ test('security rules for constructor page creation', async () => {
       u: 'mikeuserid',
       n: 'Mike D',
       b: 'Some random bio text',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     })
   );
@@ -139,6 +160,7 @@ test('security rules for constructor page creation', async () => {
       u: 'mikeuserid',
       n: 'Mike D',
       b: 'Some random bio text',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     })
   ); */
@@ -175,6 +197,7 @@ test('security rules for constructor page updates', async () => {
       u: 'mikeuserid',
       n: 'Mike D',
       b: 'Some random bio text',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     })
   );
@@ -183,6 +206,7 @@ test('security rules for constructor page updates', async () => {
   await firebaseTesting.assertSucceeds(
     app.firestore().collection('cp').doc('mytestusername').set({
       b: 'Some new bio text',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     }, { merge: true })
   );
@@ -191,6 +215,16 @@ test('security rules for constructor page updates', async () => {
   await firebaseTesting.assertFails(
     app.firestore().collection('cp').doc('mytestusername').set({
       b: 'Some new bio text',
+      m: true,
+    }, { merge: true })
+  );
+
+  // Can't update bio text w/o moderation flag
+  await firebaseTesting.assertFails(
+    app.firestore().collection('cp').doc('mytestusername').set({
+      b: 'Some new bio text',
+      m: false,
+      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     }, { merge: true })
   );
 
@@ -198,6 +232,7 @@ test('security rules for constructor page updates', async () => {
   await firebaseTesting.assertFails(
     app.firestore().collection('cp').doc('miked').set({
       b: 'Some new bio text',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     }, { merge: true })
   );
@@ -206,6 +241,7 @@ test('security rules for constructor page updates', async () => {
   await firebaseTesting.assertFails(
     app.firestore().collection('cp').doc('miked').set({
       u: 'mikeuserid',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     }, { merge: true })
   );
@@ -214,6 +250,7 @@ test('security rules for constructor page updates', async () => {
   await firebaseTesting.assertFails(
     app.firestore().collection('cp').doc('mytestusername').set({
       i: 'mytestuser',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     }, { merge: true })
   );
@@ -222,6 +259,7 @@ test('security rules for constructor page updates', async () => {
   await firebaseTesting.assertSucceeds(
     app.firestore().collection('cp').doc('mytestusername').set({
       i: 'MYTESTUSERNAME',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     }, { merge: true })
   );
@@ -230,6 +268,7 @@ test('security rules for constructor page updates', async () => {
   await firebaseTesting.assertFails(
     app.firestore().collection('cp').doc('mytestusername').set({
       n: '',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     }, { merge: true })
   );
@@ -238,6 +277,7 @@ test('security rules for constructor page updates', async () => {
   await firebaseTesting.assertSucceeds(
     app.firestore().collection('cp').doc('mytestusername').set({
       n: 'New Display Name',
+      m: true,
       t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
     }, { merge: true })
   );

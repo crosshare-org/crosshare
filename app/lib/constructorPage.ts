@@ -8,18 +8,24 @@ import { mapEachResult } from './dbUtils';
 
 export const CONSTRUCTOR_PAGE_COLLECTION = 'cp';
 
-export const ConstructorPageV = t.type({
-  /** username (w/ desired capitalization) */
-  i: t.string,
-  /** user id */
-  u: t.string,
-  /** display name */
-  n: t.string,
-  /** author bio */
-  b: t.string,
-  /** timestamp when last updated */
-  t: timestamp,
-});
+export const ConstructorPageV = t.intersection([
+  t.type({
+    /** username (w/ desired capitalization) */
+    i: t.string,
+    /** user id */
+    u: t.string,
+    /** display name */
+    n: t.string,
+    /** author bio */
+    b: t.string,
+    /** timestamp when last updated */
+    t: timestamp,
+  }),
+  t.partial({
+    /** needs moderation */
+    m: t.boolean,
+  })
+]);
 export interface ConstructorPageT extends Omit<t.TypeOf<typeof ConstructorPageV>, 't'> {
   id: string,
 }

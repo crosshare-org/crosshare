@@ -15,6 +15,7 @@ import {
 import { getFromDB, getFromSessionOrDB, mapEachResult } from '../lib/dbUtils';
 import { App } from '../lib/firebaseWrapper';
 import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
+import { ConstructorPageV, ConstructorPageT } from '../lib/constructorPage';
 
 const PuzzleListItem = (props: PuzzleResult) => {
   return (
@@ -29,6 +30,7 @@ export default requiresAdmin(() => {
   const [stats, setStats] = useState<DailyStatsT | null>(null);
   const [error, setError] = useState(false);
   const [commentIdsForDeletion, setCommentIdsForDeletion] = useState<Set<string>>(new Set());
+  const [pagesForModeration, setPagesForModeration] = useState<Array<ConstructorPageT> | null>(null);
 
   useEffect(() => {
     console.log('loading admin content');
@@ -43,13 +45,17 @@ export default requiresAdmin(() => {
       }),
       mapEachResult(db.collection('cfm'), CommentForModerationV, (cfm, docId) => {
         return { ...cfm, i: docId };
+      }),
+      mapEachResult(db.collection('cp').where('m', '==', true), ConstructorPageV, (cp, docId) => {
+        return { ...cp, id: docId };
       })
     ])
-      .then(([stats, minis, unmoderated, cfm]) => {
+      .then(([stats, minis, unmoderated, cfm, cps]) => {
         setStats(stats);
         setMinis(minis);
         setUnmoderated(unmoderated);
         setCommentsForModeration(cfm);
+        setPagesForModeration(cps);
       })
       .catch(reason => {
         console.error(reason);
@@ -66,7 +72,7 @@ export default requiresAdmin(() => {
   if (error) {
     return <div>Error loading admin content</div>;
   }
-  if (unmoderated === null || commentsForModeration === null) {
+  if (unmoderated === null || commentsForModeration === null || pagesForModeration === null) {
     return <div>Loading admin content...</div>;
   }
 
@@ -96,6 +102,17 @@ export default requiresAdmin(() => {
       }
     }
     return null;
+  }
+
+  async function moderatePages(e: FormEvent) {
+    e.preventDefault();
+    const db = App.firestore();
+    if (pagesForModeration) {
+      for (const cp of pagesForModeration) {
+        await db.collection('cp').doc(cp.id).set({ m: false }, { merge: true });
+      }
+    }
+    setPagesForModeration([]);
   }
 
   async function moderateComments(e: FormEvent) {
@@ -178,6 +195,20 @@ export default requiresAdmin(() => {
               </div>
             )}
             <input type='submit' value='Moderate' />
+          </form>
+        }
+        <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>Page Moderation</h4>
+        {pagesForModeration.length === 0 ?
+          <div>No pages need moderation.</div>
+          :
+          <form onSubmit={moderatePages}>
+            {pagesForModeration.map((cp) =>
+              <div key={cp.id}>
+                <p>{cp.n} - @{cp.i}</p>
+                <Markdown text={cp.b} />
+              </div>
+            )}
+            <input type='submit' value='Mark as moderated' />
           </form>
         }
         <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>Unmoderated</h4>
