@@ -4,7 +4,7 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { AuthContext } from './AuthContext';
-import { PartialBy, Comment } from '../lib/types';
+import { PartialBy, Comment, Direction } from '../lib/types';
 import { Identicon } from './Icons';
 import { timeString } from '../lib/utils';
 import { Emoji } from './Emoji';
@@ -28,6 +28,7 @@ interface CommentProps {
   puzzleAuthorId: string,
   comment: CommentOrLocalComment,
   children?: ReactNode
+  clueMap: Map<string, [number, Direction, string]>
 }
 const CommentView = (props: CommentProps) => {
   return (
@@ -38,7 +39,7 @@ const CommentView = (props: CommentProps) => {
       }
     }}>
       <div><CommentFlair displayName={props.comment.authorDisplayName} username={props.comment.authorUsername} userId={props.comment.authorId} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.comment.authorSolveTime} didCheat={props.comment.authorCheated} /></div>
-      <Markdown text={props.comment.commentText} />
+      <Markdown text={props.comment.commentText} clueMap={props.clueMap} />
       {props.children}
     </div>
   );
@@ -49,7 +50,7 @@ const CommentWithReplies = (props: PartialBy<CommentFormProps, 'user'> & { comme
   const commentId = isComment(props.comment) ? props.comment.id : null;
   const replies = isComment(props.comment) ? props.comment.replies : undefined;
   return (
-    <CommentView puzzleAuthorId={props.puzzleAuthorId} comment={props.comment}>
+    <CommentView clueMap={props.clueMap} puzzleAuthorId={props.puzzleAuthorId} comment={props.comment}>
       {(!props.user || props.user.isAnonymous || !commentId) ?
         ''
         :
@@ -148,6 +149,7 @@ interface CommentFormProps {
   didCheat: boolean,
   puzzleId: string,
   replyToId?: string,
+  clueMap: Map<string, [number, Direction, string]>,
 }
 
 const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () => void }) => {
@@ -206,7 +208,7 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
   }
 
   if (submittedComment) {
-    return <CommentView puzzleAuthorId={props.puzzleAuthorId} comment={submittedComment} />;
+    return <CommentView clueMap={props.clueMap} puzzleAuthorId={props.puzzleAuthorId} comment={submittedComment} />;
   }
 
   return (
@@ -235,7 +237,7 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
         {commentText.trim() ?
           <div css={{ backgroundColor: 'var(--secondary)', borderRadius: '0.5em', padding: '1em', marginTop: '1em' }}>
             <h4>Live Preview:</h4>
-            <Markdown text={commentText} />
+            <Markdown text={commentText} clueMap={props.clueMap} />
           </div>
           : ''
         }
@@ -260,7 +262,8 @@ interface CommentsProps {
   didCheat: boolean,
   puzzleId: string,
   puzzleAuthorId: string,
-  comments: Array<Comment>
+  comments: Array<Comment>,
+  clueMap: Map<string, [number, Direction, string]>,
 }
 
 function isComment(comment: CommentOrLocalComment): comment is CommentWithPossibleLocalReplies {

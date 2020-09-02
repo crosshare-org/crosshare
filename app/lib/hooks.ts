@@ -70,3 +70,23 @@ export function useAuth() {
 
   return { user, isAdmin, constructorPage, loading: loadingUser || loadingCP, error: authError ?.message || cpError ?.message || cpDecodeError };
 }
+
+export function useHover(): [
+  boolean,
+  {
+    onMouseEnter: (e: React.MouseEvent) => void;
+    onMouseLeave: (e: React.MouseEvent) => void;
+  }
+  ] {
+  const [isHovered, setHovered] = useState(false);
+
+  const bind = useMemo(
+    () => ({
+      onMouseEnter: () => setHovered(true),
+      onMouseLeave: () => setHovered(false),
+    }),
+    []
+  );
+
+  return [isHovered, bind];
+}

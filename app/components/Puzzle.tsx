@@ -24,7 +24,7 @@ import { Overlay } from './Overlay';
 import { GridView } from './Grid';
 import { Direction, BLOCK, ServerPuzzleResult } from '../lib/types';
 import { fromCells, addClues } from '../lib/viewableGrid';
-import { entryAndCrossAtPosition } from '../lib/gridBase';
+import { entryAndCrossAtPosition, cellIndex } from '../lib/gridBase';
 import { getPlays, cachePlay, writePlayToDB, isDirty } from '../lib/plays';
 import {
   PlayWithoutUserT, getDateString, CategoryIndexV
@@ -144,7 +144,7 @@ const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   return (<Link href='/crosswords/[puzzleId]' as={`/crosswords/${nextPuzzle.puzzleId}`} passHref>Play {nextPuzzle.linkText}</Link>);
 };
 
-const SuccessOverlay = (props: { user?: firebase.User, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
+const SuccessOverlay = (props: { clueMap: Map<string, [number, Direction, string]>, user?: firebase.User, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
   return (
     <Overlay closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
       <div css={{ textAlign: 'center' }}>
@@ -180,7 +180,7 @@ const SuccessOverlay = (props: { user?: firebase.User, puzzle: ServerPuzzleResul
           </div>
         }
       </div>
-      <Comments solveTime={props.solveTime} didCheat={props.didCheat} puzzleId={props.puzzle.id} puzzleAuthorId={props.puzzle.authorId} comments={props.puzzle.comments} />
+      <Comments clueMap={props.clueMap} solveTime={props.solveTime} didCheat={props.didCheat} puzzleId={props.puzzle.id} puzzleAuthorId={props.puzzle.authorId} comments={props.puzzle.comments} />
     </Overlay>
   );
 };
@@ -617,6 +617,16 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       }
     </>), [state.autocheck]);
 
+  const clueMap = useMemo(() => {
+    const asList: Array<[string, [number, Direction, string]]> = state.grid.entries.map(e => {
+      return [
+        e.cells.map(p => state.answers[cellIndex(state.grid, p)]).join(''),
+        [e.labelNumber, e.direction, e.clue]
+      ];
+    });
+    return new Map(asList);
+  }, [state.answers, state.grid]);
+
   const moreMenu = useMemo(() => (
     <>
       <TopBarDropDown icon={<FaEllipsisH />} text="More">
@@ -692,7 +702,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         <KeepTryingOverlay dispatch={dispatch} />
         : ''}
       {state.success && !state.dismissedSuccess ?
-        <SuccessOverlay user={props.user} nextPuzzle={props.nextPuzzle} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
+        <SuccessOverlay clueMap={clueMap} user={props.user} nextPuzzle={props.nextPuzzle} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
         : ''}
       {state.moderating ?
         <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />

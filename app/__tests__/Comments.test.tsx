@@ -24,6 +24,7 @@ test('basic comment display', () => {
   );
   const { getByText, container } = render(
     <Comments
+      clueMap={new Map()}
       solveTime={10}
       didCheat={false}
       puzzleId="puzz"
@@ -44,6 +45,7 @@ test('comment with username display', () => {
   );
   const { getByText, container } = render(
     <Comments
+      clueMap={new Map()}
       solveTime={10}
       didCheat={false}
       puzzleId="puzz"

@@ -45,7 +45,7 @@
     --text: #D0D0D0;
     --default-text: #777;
     --bg: #121212;
-    --black: rgba(255,255,255,0.8);
+    --black: #DDD;
     --verified: #a7b1f5;
     --autofill: #666;
     --clue-bg: #222;
@@ -86,6 +86,9 @@ input[type=text], textarea {
   border-radius: 5px;
   border: 1px solid var(--text-input-border);
   padding: 0.25em;
+}
+div.paragraph {
+  margin-bottom: 1em
 }
 #__next {
   height: 100%;
