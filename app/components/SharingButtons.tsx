@@ -82,9 +82,9 @@ interface SharingButtonsProps {
 }
 
 export function SharingButtons(props: SharingButtonsProps) {
-  return <div css={{ maxHeight: '1.5em', overflow: 'hidden' }}>
+  return <div css={{ maxHeight: '1.5em', overflow: 'hidden', marginBottom: '1em' }}>
     <SharingButton network={Network.Facebook} {...props} />
     <SharingButton network={Network.Twitter} {...props} />
     <SharingButton network={Network.Email} {...props} />
-  </div>;
+  </div >;
 }

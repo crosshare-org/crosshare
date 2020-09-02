@@ -156,13 +156,13 @@ const SuccessOverlay = (props: { clueMap: Map<string, [number, Direction, string
         {props.user ?.uid === props.puzzle.authorId ?
           <>
             <p>Your puzzle is live! Copy the link to share with solvers. Comments posted below will be visible to anyone who finishes solving the puzzle.</p>
-            <p><SharingButtons text={`Check out the crossword puzzle I made: "${props.puzzle.title}"`} path={`/crosswords/${props.puzzle.id}`} /></p>
+            <SharingButtons text={`Check out the crossword puzzle I made: "${props.puzzle.title}"`} path={`/crosswords/${props.puzzle.id}`} />
           </>
           :
           <>
             <h4><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
-            <p>You solved the puzzle in <b>{timeString(props.solveTime, false)}</b> - challenge your friends:
-              <SharingButtons text={`I solved "${props.puzzle.title}" in ${timeString(props.solveTime, false)} - how fast can you solve it?`} path={`/crosswords/${props.puzzle.id}`} /></p>
+            <p css={{ marginBottom: 0 }}>You solved the puzzle in <b>{timeString(props.solveTime, false)}</b> - challenge your friends:</p>
+            <SharingButtons text={`I solved "${props.puzzle.title}" in ${timeString(props.solveTime, false)} - how fast can you solve it?`} path={`/crosswords/${props.puzzle.id}`} />
           </>
         }
         {!props.user || props.user.isAnonymous ?
