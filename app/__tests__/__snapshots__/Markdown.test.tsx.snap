@@ -78,34 +78,33 @@ exports[`clueMap rendering 2`] = `
     class="paragraph"
   >
     before 
-    ||baz BOOM foo 
-    <span
-      class="emotion-0"
-    >
-      BAM
-    </span>
-    <div
-      class="emotion-3"
-      style="position: absolute; left: 0px; top: 0px;"
-    >
-      <b
-        class="emotion-1"
-      >
-        2
-        D
-      </b>
-      here is the clue?
-      <div
-        class="emotion-2"
-      />
-    </div>
-     
     <span
       class="emotion-4"
     >
-       not! 
+      baz BOOM foo 
+      <span
+        class="emotion-0"
+      >
+        BAM
+      </span>
+      <div
+        class="emotion-3"
+        style="position: absolute; left: 0px; top: 0px;"
+      >
+        <b
+          class="emotion-1"
+        >
+          2
+          D
+        </b>
+        here is the clue?
+        <div
+          class="emotion-2"
+        />
+      </div>
+       &gt;! not! !&lt; fooey
     </span>
-     fooey|| with 
+     with 
     <span
       class="emotion-4"
     >
@@ -204,6 +203,168 @@ exports[`clueMap rendering 3`] = `
         class="emotion-2"
       />
     </div>
+  </div>
+</div>
+`;
+
+exports[`clueMap rendering 4`] = `
+.emotion-4 {
+  background-color: var(--text);
+}
+
+.emotion-0 {
+  border-bottom: 1px dotted;
+}
+
+.emotion-3 {
+  border-radius: 5px;
+  background-color: var(--black);
+  color: var(--white);
+  text-align: center;
+  padding: 10px;
+  visibility: hidden;
+}
+
+.emotion-1 {
+  margin-right: 0.5em;
+}
+
+.emotion-2 {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+}
+
+[data-popper-placement^="bottom"] .emotion-2 {
+  top: -5px;
+}
+
+[data-popper-placement^="top"] .emotion-2 {
+  bottom: -5px;
+}
+
+.emotion-2::after {
+  content: " ";
+  position: absolute;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background-color: var(--black);
+}
+
+<div>
+  <div
+    class="paragraph"
+  >
+    <span
+      class="emotion-4"
+    >
+      <span
+        class="emotion-0"
+      >
+        BAM
+      </span>
+      <div
+        class="emotion-3"
+        style="position: absolute; left: 0px; top: 0px;"
+      >
+        <b
+          class="emotion-1"
+        >
+          2
+          D
+        </b>
+        here is the clue?
+        <div
+          class="emotion-2"
+        />
+      </div>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`clueMap rendering 5`] = `
+.emotion-4 {
+  background-color: var(--text);
+}
+
+.emotion-0 {
+  border-bottom: 1px dotted;
+}
+
+.emotion-3 {
+  border-radius: 5px;
+  background-color: var(--black);
+  color: var(--white);
+  text-align: center;
+  padding: 10px;
+  visibility: hidden;
+}
+
+.emotion-1 {
+  margin-right: 0.5em;
+}
+
+.emotion-2 {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+}
+
+[data-popper-placement^="bottom"] .emotion-2 {
+  top: -5px;
+}
+
+[data-popper-placement^="top"] .emotion-2 {
+  bottom: -5px;
+}
+
+.emotion-2::after {
+  content: " ";
+  position: absolute;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background-color: var(--black);
+}
+
+<div>
+  <div
+    class="paragraph"
+  >
+    You got it!! Glad the clues pointed you in the right direction. That's what they're there for. Also, it was Brian's suggestion to include 
+    <span
+      class="emotion-4"
+    >
+       
+      <span
+        class="emotion-0"
+      >
+        BAM
+      </span>
+      <div
+        class="emotion-3"
+        style="position: absolute; left: 0px; top: 0px;"
+      >
+        <b
+          class="emotion-1"
+        >
+          2
+          D
+        </b>
+        here is the clue?
+        <div
+          class="emotion-2"
+        />
+      </div>
+       
+    </span>
+     which I think is such an awesome addition. Cheers!
   </div>
 </div>
 `;

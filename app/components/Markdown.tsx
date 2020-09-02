@@ -116,7 +116,7 @@ export const Markdown = ({ text, clueMap }: { text: string, clueMap?: Map<string
     const newRules = {
       ...rules,
       cluedWord: {
-        order: SimpleMarkdown.defaultRules.em.order - 0.6,
+        order: SimpleMarkdown.defaultRules.em.order - 0.3,
         match(source: any) {
           return re.exec(source);
         },

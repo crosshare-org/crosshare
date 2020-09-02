@@ -49,4 +49,10 @@ test('clueMap rendering', () => {
 
   r = render(<Markdown clueMap={clueMap} text='12ACLUE1 BAM' />, {});
   expect(r.container).toMatchSnapshot();
+
+  r = render(<Markdown clueMap={clueMap} text='||BAM||' />, {});
+  expect(r.container).toMatchSnapshot();
+
+  r = render(<Markdown clueMap={clueMap} text={'You got it!! Glad the clues pointed you in the right direction. That\'s what they\'re there for. Also, it was Brian\'s suggestion to include >! BAM !< which I think is such an awesome addition. Cheers!'} />, {});
+  expect(r.container).toMatchSnapshot();
 });
