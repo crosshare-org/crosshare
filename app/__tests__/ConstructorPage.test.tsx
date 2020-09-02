@@ -154,10 +154,10 @@ test('security rules for constructor page creation', async () => {
     })
   );
 
-  // Fails if username is longer than 15 chars
+  // Fails if username is longer than 20 chars
   await firebaseTesting.assertFails(
     app.firestore().collection('cp').doc('mytestusernameaa').set({
-      i: 'MyTestUsernameaa',
+      i: 'MyTestUsernameaaaaaaa',
       u: 'mikeuserid',
       n: 'Mike D',
       b: 'Some random bio text',

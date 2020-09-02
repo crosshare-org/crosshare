@@ -36,7 +36,7 @@ service cloud.firestore {
       allow create: if isNonAnonymous()
         && request.resource.data.i.lower() == username
         && username.size() >= 3
-        && username.size() <= 15
+        && username.size() <= 20
         && !username.matches('.*admin.*')
         && !username.matches('.*crosshare.*')
         && username.matches('\\w+')

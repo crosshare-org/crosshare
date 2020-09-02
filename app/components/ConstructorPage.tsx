@@ -60,7 +60,7 @@ export const CreatePageForm = () => {
   }
 
   function isInvalid(u: string) {
-    if (u.length < 3 || u.length > 15) {
+    if (u.length < 3 || u.length > 20) {
       return true;
     }
     return false;
