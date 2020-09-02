@@ -60,7 +60,7 @@ interface SharingButtonProps extends SharingButtonsProps {
 function SharingButton({ network, path, text }: SharingButtonProps) {
   return <a css={{
     display: 'inline-block',
-    margin: '0 0.5em',
+    margin: '0 0.2em',
     padding: '0 0.5em',
     borderRadius: '0.3em',
     color: 'var(--social-text)',
@@ -72,7 +72,7 @@ function SharingButton({ network, path, text }: SharingButtonProps) {
       textDecoration: 'none',
     }
   }} href={url(network, path, text)} target='_blank' rel='noopener noreferrer' aria-label={linkName(network)}>
-    {icon(network)}<span css={{ marginLeft: '0.5em' }}>{linkName(network)}</span>
+    {icon(network)}<span css={{ marginLeft: '0.3em' }}>{linkName(network)}</span>
   </a>;
 }
 
@@ -82,9 +82,9 @@ interface SharingButtonsProps {
 }
 
 export function SharingButtons(props: SharingButtonsProps) {
-  return <>
+  return <div css={{ maxHeight: '1.5em', overflow: 'hidden' }}>
     <SharingButton network={Network.Facebook} {...props} />
     <SharingButton network={Network.Twitter} {...props} />
     <SharingButton network={Network.Email} {...props} />
-  </>;
+  </div>;
 }

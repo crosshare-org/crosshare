@@ -156,13 +156,13 @@ const SuccessOverlay = (props: { user?: firebase.User, puzzle: ServerPuzzleResul
         {props.user ?.uid === props.puzzle.authorId ?
           <>
             <p>Your puzzle is live! Copy the link to share with solvers. Comments posted below will be visible to anyone who finishes solving the puzzle.</p>
-            <p>Share: <SharingButtons text={`Check out the crossword puzzle I made: "${props.puzzle.title}"`} path={`/crosswords/${props.puzzle.id}`} /></p>
+            <p><SharingButtons text={`Check out the crossword puzzle I made: "${props.puzzle.title}"`} path={`/crosswords/${props.puzzle.id}`} /></p>
           </>
           :
           <>
             <h4><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
-            <p>You solved the puzzle in <b>{timeString(props.solveTime, false)}</b></p>
-            <p>Challenge your friends: <SharingButtons text={`I solved "${props.puzzle.title}" in ${timeString(props.solveTime, false)} - how fast can you solve it?`} path={`/crosswords/${props.puzzle.id}`} /></p>
+            <p>You solved the puzzle in <b>{timeString(props.solveTime, false)}</b> - challenge your friends:
+              <SharingButtons text={`I solved "${props.puzzle.title}" in ${timeString(props.solveTime, false)} - how fast can you solve it?`} path={`/crosswords/${props.puzzle.id}`} /></p>
           </>
         }
         {!props.user || props.user.isAnonymous ?
