@@ -87,8 +87,8 @@ input[type=text], textarea {
   border: 1px solid var(--text-input-border);
   padding: 0.25em;
 }
-div.paragraph {
-  margin-bottom: 1em
+div.paragraph + div.paragraph {
+  margin-top: 1em;
 }
 #__next {
   height: 100%;
