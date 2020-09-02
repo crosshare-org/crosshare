@@ -180,9 +180,11 @@ exports[`basic comment display 1`] = `
             55s
           </span>
         </div>
-        <p>
+        <div
+          class="paragraph"
+        >
           my first comment
-        </p>
+        </div>
         
         
       </div>
@@ -375,9 +377,11 @@ exports[`comment with username display 1`] = `
             55s
           </span>
         </div>
-        <p>
+        <div
+          class="paragraph"
+        >
           my first comment
-        </p>
+        </div>
         
         
       </div>
