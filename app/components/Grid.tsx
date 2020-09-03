@@ -1,10 +1,10 @@
 import { Dispatch, ReactNode, useCallback } from 'react';
 
-import { PosAndDir, BLOCK } from '../lib/types';
+import { PosAndDir, Position, BLOCK } from '../lib/types';
 import { Cell } from './Cell';
 import { PuzzleAction, SetActivePositionAction } from '../reducers/reducer';
 import { ViewableGrid, ViewableEntry } from '../lib/viewableGrid';
-import { cellIndex, getEntryCells } from '../lib/gridBase';
+import { cellIndex, getEntryCells, entryIndexAtPosition } from '../lib/gridBase';
 
 type GridViewProps = {
   grid: ViewableGrid<ViewableEntry>,
@@ -18,11 +18,27 @@ type GridViewProps = {
   squareWidth: number,
   cellColors?: Array<number>,
   highlightEntry?: number,
+  entryRefs?: Array<Set<[number, 0 | 1]>>,
 }
 
 export const GridView = ({ active, dispatch, grid, ...props }: GridViewProps) => {
   const entryCells = getEntryCells(grid, active);
+  const entryIdx = entryIndexAtPosition(grid, active);
   const highlightCells = props.highlightEntry !== undefined ? grid.entries[props.highlightEntry].cells : [];
+  let refedCells: Array<Position> = [];
+  if (entryIdx !== null) {
+    const refedCellsSet = new Set(entryCells);
+    if (props.entryRefs && props.entryRefs[entryIdx]) {
+      props.entryRefs[entryIdx].forEach(([labelNumber, dir]) => {
+        for (const e of grid.entries) {
+          if (e.direction === dir && e.labelNumber === labelNumber) {
+            e.cells.forEach(p => refedCellsSet.add(p));
+          }
+        }
+      });
+    }
+    refedCells = [...refedCellsSet];
+  }
 
   const noOp = useCallback(() => undefined, []);
   const changeActive = useCallback((pos) => {
@@ -48,6 +64,7 @@ export const GridView = ({ active, dispatch, grid, ...props }: GridViewProps) =>
       gridWidth={grid.width}
       active={isActive}
       entryCell={entryCells.some((p) => cellIndex(grid, p) === idx)}
+      refedCell={refedCells.some((p) => cellIndex(grid, p) === idx)}
       highlightCell={highlightCells.some((p) => cellIndex(grid, p) === idx)}
       key={idx}
       number={number ? number.toString() : ''}

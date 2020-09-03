@@ -4,7 +4,7 @@ export interface EntryBase {
   index: number,
   direction: Direction,
   cells: Array<Position>,
-  completedWord: string|null,
+  completedWord: string | null,
 }
 
 export interface EntryWithPattern extends EntryBase {
@@ -12,7 +12,7 @@ export interface EntryWithPattern extends EntryBase {
 }
 
 export interface Cross {
-  entryIndex: number|null, // Entry index
+  entryIndex: number | null, // Entry index
   cellIndex: number,       // Position of the crossing in the entry.cells array
   wordIndex: number        // Position of the crossing in the resultant string (could be different due to rebus)
 }
@@ -34,7 +34,7 @@ export function entriesByCell<Entry extends EntryBase>(grid: GridBase<Entry>, po
  *
  * Returns an array of (entry index, letter idx w/in that entry) of crosses.
  */
-export function getCrosses<Entry extends EntryBase>(grid: GridBase<Entry>, entry:Entry): Array<Cross> {
+export function getCrosses<Entry extends EntryBase>(grid: GridBase<Entry>, entry: Entry): Array<Cross> {
   const crossDir = (entry.direction === Direction.Across) ? Direction.Down : Direction.Across;
   const crosses: Array<Cross> = [];
   entry.cells.forEach((cellIndex) => {
@@ -60,7 +60,7 @@ export function cellIndex<Entry extends EntryBase>(grid: GridBase<Entry>, pos: P
 }
 
 export function posForIndex<Entry extends EntryBase>(grid: GridBase<Entry>, index: number) {
-  return {col: index % grid.width, row: Math.floor(index / grid.width) % grid.height};
+  return { col: index % grid.width, row: Math.floor(index / grid.width) % grid.height };
 }
 
 export function toString<Entry extends EntryBase>(grid: GridBase<Entry>) {
@@ -72,6 +72,12 @@ export function toString<Entry extends EntryBase>(grid: GridBase<Entry>) {
     s += '\n';
   }
   return s;
+}
+
+export function entryIndexAtPosition<Entry extends EntryBase>(grid: GridBase<Entry>, pos: PosAndDir): number | null {
+  const entriesAtCell = entriesByCell(grid, pos);
+  const currentEntryIndex = entriesAtCell[pos.dir];
+  return currentEntryIndex.entryIndex;
 }
 
 export function entryAtPosition<Entry extends EntryBase>(grid: GridBase<Entry>, pos: PosAndDir): [Entry | null, number] {
@@ -86,7 +92,7 @@ export function entryAtPosition<Entry extends EntryBase>(grid: GridBase<Entry>, 
 export function entryAndCrossAtPosition<Entry extends EntryBase>(grid: GridBase<Entry>, pos: PosAndDir): [Entry | null, Entry | null] {
   const entries = entriesByCell(grid, pos);
   if (!entries) {
-    return [null,null];
+    return [null, null];
   }
   const currentEntry = entries[pos.dir];
   const currentCross = entries[(pos.dir + 1) % 2];
@@ -110,8 +116,8 @@ export function entriesFromCells(width: number, height: number, cells: Array<str
   cells.forEach(() => {
     entriesByCell.push(
       [
-        {entryIndex: null, wordIndex: 0, cellIndex: 0},
-        {entryIndex: null, wordIndex: 0, cellIndex: 0}
+        { entryIndex: null, wordIndex: 0, cellIndex: 0 },
+        { entryIndex: null, wordIndex: 0, cellIndex: 0 }
       ]
     );
   });
@@ -128,8 +134,8 @@ export function entriesFromCells(width: number, height: number, cells: Array<str
         const isStartOfRow = (dir === Direction.Across && x === 0) ||
           (dir === Direction.Down && y === 0);
         const isStartOfEntry = (cells[i] !== '.' &&
-          (isStartOfRow || cells[i-iincr] === '.') &&
-          (x + xincr < width && y + yincr < height && cells[i+iincr] !== '.'));
+          (isStartOfRow || cells[i - iincr] === '.') &&
+          (x + xincr < width && y + yincr < height && cells[i + iincr] !== '.'));
 
         if (!isStartOfEntry) {
           continue;
@@ -147,11 +153,11 @@ export function entriesFromCells(width: number, height: number, cells: Array<str
           if (cellVal === '.') {
             break;
           }
-          entriesByCell[cellId][dir] = {entryIndex: entries.length, wordIndex: entryPattern.length, cellIndex: wordlen};
+          entriesByCell[cellId][dir] = { entryIndex: entries.length, wordIndex: entryPattern.length, cellIndex: wordlen };
           if (cellVal === ' ') {
             isComplete = false;
           }
-          entryCells.push({row: yt, col: xt});
+          entryCells.push({ row: yt, col: xt });
           entryPattern += cellVal;
           xt += xincr;
           yt += yincr;
@@ -179,7 +185,7 @@ export function entriesFromCells(width: number, height: number, cells: Array<str
  * `gridWithEntryDecided` instead for better performance.
  */
 export function gridWithEntrySet<Entry extends EntryBase, Grid extends GridBase<Entry>>(grid: Grid, entryIndex: number, word: string): Grid {
-  const newGrid:Grid = {
+  const newGrid: Grid = {
     ...grid,
     cells: grid.cells.slice(),
     entries: grid.entries.slice(),
@@ -208,7 +214,7 @@ export function gridWithEntrySet<Entry extends EntryBase, Grid extends GridBase<
       continue;
     }
     const cross = newGrid.entries[crossIndex];
-    let completedCross:string|null = '';
+    let completedCross: string | null = '';
     for (const cid of cross.cells) {
       const val = valAt(newGrid, cid);
       if (val === ' ') {

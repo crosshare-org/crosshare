@@ -528,6 +528,43 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
 
   const beginPauseProps = { constructorPage: puzzle.constructorPage, loadingPlayState: loadingPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
 
+  const [clueMap, refs] = useMemo(() => {
+    const asList: Array<[string, [number, Direction, string]]> = state.grid.entries.map(e => {
+      return [
+        e.cells.map(p => state.answers[cellIndex(state.grid, p)]).join(''),
+        [e.labelNumber, e.direction, e.clue]
+      ];
+    });
+
+    const refsList = [];
+
+    for (const e of state.grid.entries) {
+      const refs = new Set<[number, 0 | 1]>();
+      let match;
+      const re = /(?<numSection>(,? ?(and)? ?\b\d+[- ]?)+)(?<dir>across|down)\b/gi;
+      while ((match = re.exec(e.clue)) !== null) {
+        const dirString = match.groups ?.dir ?.toLowerCase();
+        if (!dirString) {
+          throw new Error('missing dir string');
+        }
+        const dir = dirString === 'across' ? Direction.Across : Direction.Down;
+        const numSection = match.groups ?.numSection;
+        if (!numSection) {
+          throw new Error('missing numSection');
+        }
+        let numMatch;
+        const numRe = /\d+/g;
+        while ((numMatch = numRe.exec(numSection)) !== null) {
+          refs.add([parseInt(numMatch[0]), dir]);
+        }
+      }
+      console.log(e.clue, refs);
+      refsList.push(refs);
+    }
+
+    return [new Map(asList), refsList];
+  }, [state.answers, state.grid]);
+
   let puzzleView: ReactNode;
 
   if (state.clueView) {
@@ -554,6 +591,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
             squareWidth={width}
             grid={state.grid}
             active={state.active}
+            entryRefs={refs}
             dispatch={dispatch}
             revealedCells={state.revealedCells}
             verifiedCells={state.verifiedCells}
@@ -616,16 +654,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           }} />
       }
     </>), [state.autocheck]);
-
-  const clueMap = useMemo(() => {
-    const asList: Array<[string, [number, Direction, string]]> = state.grid.entries.map(e => {
-      return [
-        e.cells.map(p => state.answers[cellIndex(state.grid, p)]).join(''),
-        [e.labelNumber, e.direction, e.clue]
-      ];
-    });
-    return new Map(asList);
-  }, [state.answers, state.grid]);
 
   const moreMenu = useMemo(() => (
     <>

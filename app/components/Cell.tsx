@@ -13,6 +13,7 @@ type CellProps = {
   isBlock: boolean,
   active: boolean,
   entryCell: boolean,
+  refedCell: boolean,
   highlightCell: boolean,
   highlight: 'circle' | 'shade' | undefined,
   value: string,
@@ -38,6 +39,8 @@ export const Cell = memo(function Cell(props: CellProps) {
     bg = PRIMARY;
   } else if (props.entryCell) {
     bg = SECONDARY;
+  } else if (props.refedCell) {
+    bg = 'var(--vlighter)';
   }
 
   const cellSize = props.squareWidth / props.gridWidth;
