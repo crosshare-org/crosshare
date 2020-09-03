@@ -536,7 +536,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       ];
     });
 
-    const refsList = [];
+    const refsList: Array<Set<[number, 0 | 1]>> = [];
 
     for (const e of state.grid.entries) {
       const refs = new Set<[number, 0 | 1]>();
@@ -561,6 +561,22 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       console.log(e.clue, refs);
       refsList.push(refs);
     }
+
+    // Now do backrefs
+    refsList.forEach((refs, idx) => {
+      const e1 = state.grid.entries[idx];
+      refsList.forEach((refs2, idx2) => {
+        if (idx2 === idx) {
+          return;
+        }
+        const e2 = state.grid.entries[idx2];
+        refs2.forEach(([labelNumber, dir]) => {
+          if (labelNumber === e1.labelNumber && dir === e1.direction) {
+            refs.add([e2.labelNumber, e2.direction]);
+          }
+        });
+      });
+    });
 
     return [new Map(asList), refsList];
   }, [state.answers, state.grid]);
