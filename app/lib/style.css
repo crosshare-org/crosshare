@@ -1,7 +1,7 @@
 :root {
   --primary: #EB984E;
   --lighter: #EBBC94;
-  --vlighter: #f7d7bb;
+  --vlighter: #fcefe3;
   --secondary: #E2E2E2;
   --error: #e34eeb;
   --error-hover: #860f8c;
@@ -39,7 +39,7 @@
   :root {
     --primary: #6f3b0c;
     --lighter: #87470f;
-    --vlighter: #523c28;
+    --vlighter: #514439;
     --secondary: #333;
     --error: #f1a7f5;
     --link: #7fbdff;
