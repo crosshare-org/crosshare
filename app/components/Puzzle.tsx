@@ -558,7 +558,6 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           refs.add([parseInt(numMatch[0]), dir]);
         }
       }
-      console.log(e.clue, refs);
       refsList.push(refs);
     }
 
