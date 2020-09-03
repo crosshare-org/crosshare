@@ -15,6 +15,7 @@ interface ClueListItemProps {
   dispatch: Dispatch<PuzzleAction>,
   isActive: boolean,
   isCross: boolean,
+  isRefed: boolean,
   active: Position | null,
   scrollToCross: boolean,
   showEntry: boolean,
@@ -40,11 +41,11 @@ const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }:
   return (
     <li css={{ /* eslint-disable-line */
       padding: '0.5em',
-      backgroundColor: (isActive ? LIGHTER : (isCross ? SECONDARY : 'none')),
+      backgroundColor: (isActive ? LIGHTER : (isCross ? SECONDARY : (props.isRefed ? 'var(--vlighter)' : 'none'))),
       listStyleType: 'none',
       cursor: 'pointer',
       '&:hover': {
-        backgroundColor: (isActive ? LIGHTER : (isCross ? 'var(--cross-clue-bg)' : 'var(--clue-bg)')),
+        backgroundColor: (isActive ? LIGHTER : (isCross ? 'var(--cross-clue-bg)' : (props.isRefed ? 'var(--vvlighter)' : 'var(--clue-bg)'))),
       },
       display: 'flex',
       flexDirection: 'row',
@@ -92,6 +93,7 @@ interface ClueListProps {
   current?: number,
   active: Position,
   cross?: number,
+  refed?: Array<number>,
   entries: Array<CluedEntry>,
   scrollToCross: boolean,
   dispatch: Dispatch<PuzzleAction>,
@@ -103,6 +105,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
   const clues = props.entries.map((entry) => {
     const isActive = props.current === entry.index;
     const isCross = props.cross === entry.index;
+    const isRefed = props.refed ?.find(n => n === entry.index) !== undefined;
     return (<ClueListItem
       dimCompleted={props.dimCompleted}
       grid={props.grid}
@@ -115,6 +118,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
       dispatch={props.dispatch}
       isActive={isActive}
       isCross={isCross}
+      isRefed={isRefed}
       active={props.showEntries && (isActive || isCross) ? props.active : null}
     />);
   });

@@ -2,6 +2,7 @@
   --primary: #EB984E;
   --lighter: #EBBC94;
   --vlighter: #fcefe3;
+  --vvlighter: #fbeada;
   --secondary: #E2E2E2;
   --error: #e34eeb;
   --error-hover: #860f8c;
@@ -40,6 +41,7 @@
     --primary: #6f3b0c;
     --lighter: #87470f;
     --vlighter: #514439;
+    --vvlighter: #5c4e42;
     --secondary: #333;
     --error: #f1a7f5;
     --link: #7fbdff;

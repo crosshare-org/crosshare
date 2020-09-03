@@ -24,7 +24,7 @@ import { Overlay } from './Overlay';
 import { GridView } from './Grid';
 import { Direction, BLOCK, ServerPuzzleResult } from '../lib/types';
 import { fromCells, addClues } from '../lib/viewableGrid';
-import { entryAndCrossAtPosition, cellIndex } from '../lib/gridBase';
+import { entryAndCrossAtPosition, cellIndex, entryIndexAtPosition } from '../lib/gridBase';
 import { getPlays, cachePlay, writePlayToDB, isDirty } from '../lib/plays';
 import {
   PlayWithoutUserT, getDateString, CategoryIndexV
@@ -582,6 +582,12 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
 
   let puzzleView: ReactNode;
 
+  const entryIdx = entryIndexAtPosition(state.grid, state.active);
+  let refed: Array<number> = [];
+  if (entryIdx !== null) {
+    refed = [...refs[entryIdx]].map(([labelNumber, direction]) => state.grid.entries.findIndex(e => e.labelNumber === labelNumber && e.direction === direction));
+  }
+
   if (state.clueView) {
     puzzleView = <TwoCol
       toggleKeyboard={toggleKeyboard}
@@ -589,8 +595,8 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       keyboardHandler={keyboardHandler}
       showExtraKeyLayout={state.showExtraKeyLayout}
       includeBlockKey={false}
-      left={<ClueList dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} />}
-      right={<ClueList dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} />}
+      left={<ClueList refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} />}
+      right={<ClueList refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} />}
     />;
   } else {
     puzzleView = <SquareAndCols
@@ -614,9 +620,9 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           />;
         }
       }
-      left={<ClueList dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={true} dispatch={dispatch} />}
-      right={<ClueList dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={true} dispatch={dispatch} />}
-      tinyColumn={<TinyNav dispatch={dispatch}><ClueList dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
+      left={<ClueList refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={true} dispatch={dispatch} />}
+      right={<ClueList refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={true} dispatch={dispatch} />}
+      tinyColumn={<TinyNav dispatch={dispatch}><ClueList refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
     />;
   }
 
