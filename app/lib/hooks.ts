@@ -74,7 +74,7 @@ export function useAuth() {
 export function useHover(): [
   boolean,
   {
-    onMouseEnter: (e: React.MouseEvent) => void;
+    onMouseMove: (e: React.MouseEvent) => void;
     onMouseLeave: (e: React.MouseEvent) => void;
   }
   ] {
@@ -82,7 +82,7 @@ export function useHover(): [
 
   const bind = useMemo(
     () => ({
-      onMouseEnter: () => setHovered(true),
+      onMouseMove: () => setHovered(true),
       onMouseLeave: () => setHovered(false),
     }),
     []
