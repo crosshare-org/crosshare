@@ -33,15 +33,21 @@ exports[`clueMap rendering 2`] = `
 
 .emotion-0 {
   border-bottom: 1px dotted;
+  white-space: nowrap;
 }
 
 .emotion-3 {
+  z-index: 100000;
   border-radius: 5px;
   background-color: var(--black);
   color: var(--white);
   text-align: center;
   padding: 10px;
   visibility: hidden;
+}
+
+.emotion-3[data-popper-reference-hidden=true] {
+  display: none;
 }
 
 .emotion-1 {
@@ -118,15 +124,21 @@ exports[`clueMap rendering 2`] = `
 exports[`clueMap rendering 3`] = `
 .emotion-0 {
   border-bottom: 1px dotted;
+  white-space: nowrap;
 }
 
 .emotion-3 {
+  z-index: 100000;
   border-radius: 5px;
   background-color: var(--black);
   color: var(--white);
   text-align: center;
   padding: 10px;
   visibility: hidden;
+}
+
+.emotion-3[data-popper-reference-hidden=true] {
+  display: none;
 }
 
 .emotion-1 {
@@ -214,15 +226,21 @@ exports[`clueMap rendering 4`] = `
 
 .emotion-0 {
   border-bottom: 1px dotted;
+  white-space: nowrap;
 }
 
 .emotion-3 {
+  z-index: 100000;
   border-radius: 5px;
   background-color: var(--black);
   color: var(--white);
   text-align: center;
   padding: 10px;
   visibility: hidden;
+}
+
+.emotion-3[data-popper-reference-hidden=true] {
+  display: none;
 }
 
 .emotion-1 {
@@ -293,15 +311,21 @@ exports[`clueMap rendering 5`] = `
 
 .emotion-0 {
   border-bottom: 1px dotted;
+  white-space: nowrap;
 }
 
 .emotion-3 {
+  z-index: 100000;
   border-radius: 5px;
   background-color: var(--black);
   color: var(--white);
   text-align: center;
   padding: 10px;
   visibility: hidden;
+}
+
+.emotion-3[data-popper-reference-hidden=true] {
+  display: none;
 }
 
 .emotion-1 {
