@@ -141,7 +141,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
               </div>
             </>
             :
-            <p>We don&apos;t have stats for this puzzle yet. Stats are updated once per hour, and won&apos; be available until after a non-author has solved the puzzle.</p>
+            <p>We don&apos;t have stats for this puzzle yet. Stats are updated once per hour, and won&apos;t be available until after a non-author has solved the puzzle.</p>
           }
         </div>
         <div css={{ flex: 'auto', overflow: 'hidden' }}>
