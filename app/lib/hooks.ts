@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, MouseEvent } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
 
@@ -74,15 +74,17 @@ export function useAuth() {
 export function useHover(): [
   boolean,
   {
-    onMouseMove: (e: React.MouseEvent) => void;
-    onMouseLeave: (e: React.MouseEvent) => void;
+    onClick: (e: MouseEvent) => void;
+    onMouseMove: (e: MouseEvent) => void;
+    onMouseLeave: (e: MouseEvent) => void;
   }
   ] {
   const [isHovered, setHovered] = useState(false);
 
   const bind = useMemo(
     () => ({
-      onMouseMove: () => setHovered(true),
+      onClick: (e: MouseEvent) => { e.stopPropagation(); },
+      onMouseMove: () => { setHovered(true); },
       onMouseLeave: () => setHovered(false),
     }),
     []

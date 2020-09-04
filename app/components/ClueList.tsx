@@ -1,4 +1,4 @@
-import { useRef, Dispatch, memo, MouseEvent } from 'react';
+import { useRef, Dispatch, memo, MouseEvent, ReactNode, Fragment } from 'react';
 
 import { Position, Direction } from '../lib/types';
 import { CluedEntry } from '../lib/viewableGrid';
@@ -6,6 +6,58 @@ import { GridBase, valAt, EntryBase } from '../lib/gridBase';
 
 import { PuzzleAction, ClickedEntryAction } from '../reducers/reducer';
 import { SECONDARY, LIGHTER } from '../lib/style';
+import { ToolTipText } from './ToolTipText';
+
+interface ClueTextProps {
+  text: string,
+  allEntries: Array<CluedEntry>,
+  grid: GridBase<EntryBase>,
+}
+const ClueText = (props: ClueTextProps) => {
+  let text = props.text;
+  const parts: Array<ReactNode> = [];
+  const re = /^(?<all>(?<num>\d+)(?<others>[, \d-]*?((and|&)[\d -]+)?)(?<dir>across|down))\b/i;
+  const digit = /\d/;
+  const oppo = /^(?<text>.+?)\b\d/;
+  let i = 0;
+  while (text) {
+    const match = text.match(re);
+    if (match && match.groups && match.groups.num && match.groups.dir) {
+      const num = parseInt(match.groups.num);
+      const dir = match.groups.dir.toLowerCase() === 'across' ? Direction.Across : Direction.Down;
+      let matchLength = match.groups.all.length;
+      if (match.groups.others.match(digit)) {
+        // There are more numbers, so only link on the digits themselves
+        matchLength = match.groups.num.length;
+      }
+      const e = props.allEntries.find((v) => v.labelNumber === num && v.direction === dir);
+      if (!e) {
+        parts.push(<Fragment key={i++}>{text.slice(0, matchLength)}</Fragment>);
+      } else {
+        parts.push(<ToolTipText key={i++} text={text.slice(0, matchLength)} tooltip={
+          <>
+            {e.clue}
+            <b css={{
+              marginLeft: '0.5em',
+              whiteSpace: 'nowrap',
+            }}>[{e.cells.map(a => valAt(props.grid, a).trim() || '-')}]</b>
+          </>
+        } />);
+      }
+      text = text.slice(matchLength);
+    } else {
+      const chaff = text.match(oppo);
+      if (chaff && chaff.groups && chaff.groups.text) {
+        parts.push(<Fragment key={i++}>{chaff.groups.text}</Fragment>);
+        text = text.slice(chaff.groups.text.length);
+      } else {
+        parts.push(<Fragment key={i++}>{text}</Fragment>);
+        text = '';
+      }
+    }
+  }
+  return <div>{parts}</div>;
+};
 
 interface ClueListItemProps {
   dimCompleted: boolean,
@@ -19,6 +71,7 @@ interface ClueListItemProps {
   active: Position | null,
   scrollToCross: boolean,
   showEntry: boolean,
+  allEntries?: Array<CluedEntry>,
   grid: GridBase<EntryBase>,
 }
 
@@ -68,7 +121,11 @@ const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }:
         color: props.conceal ? 'transparent' : (props.entry.completedWord && props.dimCompleted ? 'var(--default-text)' : 'var(--black)'),
         textShadow: props.conceal ? '0 0 1em var(--conceal-text)' : '',
       }}>
-        <div>{props.entry.clue}</div>
+        {props.allEntries ?
+          <ClueText text={props.entry.clue} allEntries={props.allEntries} grid={props.grid} />
+          :
+          <div>{props.entry.clue}</div>
+        }
         {props.showEntry ?
           <div>{props.entry.cells.map(a => {
             return <span key={a.col + '-' + a.row} css={{
@@ -95,6 +152,7 @@ interface ClueListProps {
   cross?: number,
   refed?: Array<number>,
   entries: Array<CluedEntry>,
+  allEntries?: Array<CluedEntry>,
   scrollToCross: boolean,
   dispatch: Dispatch<PuzzleAction>,
   showEntries: boolean,
@@ -111,6 +169,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
       grid={props.grid}
       showDirection={props.header ? false : true}
       showEntry={props.showEntries}
+      allEntries={props.allEntries}
       entry={entry}
       conceal={props.conceal}
       key={entry.index}
