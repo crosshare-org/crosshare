@@ -528,6 +528,11 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
 
   const beginPauseProps = { constructorPage: puzzle.constructorPage, loadingPlayState: loadingPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
 
+  /* `clueMap` is a map from ENTRYWORD => '5D: This is the clue' - we use this
+   *    for comment clue tooltips.
+   * `refs` is a set of referenced '5D's for each entry in the grid - we use this
+   *    for grid highlights when an entry is selected.
+   */
   const [clueMap, refs] = useMemo(() => {
     const asList: Array<[string, [number, Direction, string]]> = state.grid.entries.map(e => {
       return [
