@@ -55,6 +55,7 @@ import { usePersistedBoolean } from '../lib/hooks';
 
 import useResizeObserver from 'use-resize-observer';
 import { ResizeObserver as Polyfill } from '@juggle/resize-observer';
+import { useWordDB } from '../lib/WordDB';
 // TODO conditional import only when we need the polyfill?
 if (typeof window !== 'undefined') {
   window.ResizeObserver = window.ResizeObserver || Polyfill;
@@ -66,36 +67,15 @@ type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 type BuilderProps = WithOptional<Omit<PuzzleT, 'comments' | 'category' | 'authorId' | 'authorName' | 'moderated' | 'publishTime'>, 'clues' | 'title' | 'constructorNotes' | 'highlighted' | 'highlight'>
 
 export const BuilderDBLoader = (props: BuilderProps & AuthProps): JSX.Element => {
-  const [ready, setReady] = useState(false);
-  const [triedInit, setTriedInit] = useState(false);
-
-  useEffect(() => {
-    let ignore = false;
-
-    async function fetchData() {
-      if (WordDB.dbStatus === WordDB.DBStatus.uninitialized) {
-        WordDB.initialize().then(succeeded => {
-          if (ignore) {
-            return;
-          }
-          setTriedInit(true);
-          if (succeeded) {
-            setReady(true);
-          }
-        });
-      } else if (WordDB.dbStatus === WordDB.DBStatus.present) {
-        setReady(true);
-      }
-    }
-
-    fetchData();
-    return () => { ignore = true; };
-  }, []);
+  const [ready, error, loading, setLoaded] = useWordDB();
 
   if (ready) {
     return <Builder {...props} />;
-  } else if (!triedInit) {
+  } else if (loading) {
     return <div></div>;
+  }
+  if (error) {
+    console.error(error);
   }
   return <>
     <DefaultTopBar />
@@ -104,7 +84,7 @@ export const BuilderDBLoader = (props: BuilderProps & AuthProps): JSX.Element =>
       <p>The first time you use the constructor on a new browser Crosshare needs
       to download and build a word database. This can take a minute. Please let us
       know if you have any issues!</p>
-      <LoadButton buttonText='Build Database' onComplete={() => setReady(true)} />
+      <LoadButton buttonText='Build Database' onComplete={() => setLoaded()} />
     </div>
   </>;
 };

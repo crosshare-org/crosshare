@@ -1,5 +1,5 @@
 import {
-  useState, useEffect
+  useState
 } from 'react';
 
 import { App } from '../lib/firebaseWrapper';
@@ -8,6 +8,7 @@ import { DefaultTopBar } from './TopBar';
 import { ProgressBar } from './ProgressBar';
 
 import * as WordDB from '../lib/WordDB';
+import { useWordDB } from '../lib/WordDB';
 
 // TODO this is jank but *shrug*
 const FILESIZE = 22000000;
@@ -58,29 +59,12 @@ export const LoadButton = (props: { buttonText: string, onClick?: () => void, on
 };
 
 export const DBLoader = (): JSX.Element => {
-  const [ready, setReady] = useState(false);
-  const [error, setError] = useState(false);
-  const [triedInit, setTriedInit] = useState(false);
+  const [ready, error, loading, setLoaded] = useWordDB();
 
-  useEffect(() => {
-    if (WordDB.dbStatus === WordDB.DBStatus.uninitialized) {
-      WordDB.initialize(true).then(succeeded => {
-        if (succeeded) {
-          setReady(true);
-        }
-      }).catch(() => {
-        setError(true);
-      }).finally(() => {
-        setTriedInit(true);
-      });
-    } else if (WordDB.dbStatus === WordDB.DBStatus.present) {
-      setReady(true);
-    }
-  }, []);
-
-  if (!triedInit) {  // initial loading
+  if (loading) {  // initial loading
     return <div>Checking for / validating existing database, this can take a minute...</div>;
   }
+
   return <>
     <DefaultTopBar />
     <div css={{ margin: '1em' }}>
@@ -93,7 +77,7 @@ export const DBLoader = (): JSX.Element => {
         :
         <p>No existing database found.</p>
       }
-      <LoadButton buttonText={'Build Database'} onClick={() => setError(false)} onComplete={() => setReady(true)} />
+      <LoadButton buttonText={'Build Database'} onComplete={() => setLoaded()} />
     </div>
   </>;
 };

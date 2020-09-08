@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/node';
 import { ErrorPage } from '../components/ErrorPage';
 
 const MyError = ({ title, statusCode, hasGetInitialPropsRun, err }: { title?: string, err: Error, statusCode: number, hasGetInitialPropsRun: boolean }) => {
-  if (!hasGetInitialPropsRun && err) {
+  if (!hasGetInitialPropsRun && err && typeof Sentry !== 'undefined') {
     // getInitialProps is not called in case of
     // https://github.com/vercel/next.js/issues/8592. As a workaround, we pass
     // err via _app.js so it can be captured
@@ -40,7 +40,7 @@ MyError.getInitialProps = async ({ res, err, asPath }: NextPageContext) => {
     // Opinionated: do not record an exception in Sentry for 404
     return { statusCode: 404 };
   }
-  if (err) {
+  if (err && typeof Sentry !== 'undefined') {
     Sentry.captureException(err);
     return { ...errorInitialProps, hasGetInitialPropsRun: true };
   }
@@ -48,9 +48,11 @@ MyError.getInitialProps = async ({ res, err, asPath }: NextPageContext) => {
   // If this point is reached, getInitialProps was called without any
   // information about what the error might be. This is unexpected and may
   // indicate a bug introduced in Next.js, so record it in Sentry
-  Sentry.captureException(
-    new Error(`_error.js getInitialProps missing data at path: ${asPath}`)
-  );
+  if (typeof Sentry !== 'undefined') {
+    Sentry.captureException(
+      new Error(`_error.js getInitialProps missing data at path: ${asPath}`)
+    );
+  }
 
   return { ...errorInitialProps, hasGetInitialPropsRun: true };
 };

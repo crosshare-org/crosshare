@@ -4,6 +4,7 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { set, get } from 'idb-keyval';
 
 import * as BA from './bitArray';
+import { useEffect, useState } from 'react';
 
 
 const WordDBV = t.type({
@@ -17,7 +18,6 @@ export enum DBStatus {
   building,
   notPresent,
   present,
-  disabled,
 }
 
 export let wordDB: WordDBT | undefined = undefined;
@@ -25,36 +25,67 @@ export let dbStatus: DBStatus = DBStatus.uninitialized;
 
 const STORAGE_KEY = 'db';
 
-export const initialize = async (validate?: boolean): Promise<boolean> => {
-  if (dbStatus !== DBStatus.uninitialized) {
-    throw new Error('trying to initialize non-uninitialized worddb');
+export const useWordDB = (validate?: boolean): [boolean, string, boolean, () => void] => {
+  const [present, setPresent] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  function setLoaded() {
+    setPresent(true);
+    setError('');
+    setLoading(false);
   }
 
-  dbStatus = DBStatus.building;
-  console.log('trying to load from idb');
-  return get(STORAGE_KEY).then(db => {
-    if (db) {
-      console.log('loaded');
-      if (validate) {
-        const validationResult = WordDBV.decode(db);
-        if (isRight(validationResult)) {
-          console.log('validated');
-          wordDB = validationResult.right;
-          dbStatus = DBStatus.present;
-          return true;
-        } else {
-          console.error(PathReporter.report(validationResult).join(','));
-        }
-      } else {
-        wordDB = db as WordDBT;
-        dbStatus = DBStatus.present;
-        return true;
+  useEffect(() => {
+    let didCancel = false;
+
+    const fetchData = async () => {
+      if (dbStatus === DBStatus.present) {
+        setPresent(true);
+        setLoading(false);
+        return;
+      } else if (dbStatus === DBStatus.notPresent) {
+        setLoading(false);
+        return;
       }
-    }
-    console.log('failed to load');
-    dbStatus = DBStatus.notPresent;
-    return false;
-  });
+      dbStatus = DBStatus.building;
+      console.log('trying to load from idb');
+      return get(STORAGE_KEY).then(db => {
+        if (didCancel) {
+          return;
+        }
+        if (db) {
+          console.log('loaded');
+          if (validate) {
+            const validationResult = WordDBV.decode(db);
+            if (isRight(validationResult)) {
+              console.log('validated');
+              wordDB = validationResult.right;
+              dbStatus = DBStatus.present;
+              setPresent(true);
+            } else {
+              setError('could not validate');
+              console.error(PathReporter.report(validationResult).join(','));
+            }
+          } else {
+            wordDB = db as WordDBT;
+            dbStatus = DBStatus.present;
+            setPresent(true);
+          }
+        } else {
+          console.log('failed to load');
+          dbStatus = DBStatus.notPresent;
+        }
+        setLoading(false);
+      });
+    };
+    fetchData();
+    return () => {
+      didCancel = true;
+    };
+  }, [validate]);
+
+  return [present, error, loading, setLoaded];
 };
 
 export const rawBuild = (wordlist: Array<[string, number]>): WordDBT => {
