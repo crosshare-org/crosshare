@@ -5,7 +5,7 @@ import { CluedEntry } from '../lib/viewableGrid';
 import { GridBase, valAt, EntryBase } from '../lib/gridBase';
 
 import { PuzzleAction, ClickedEntryAction } from '../reducers/reducer';
-import { SECONDARY, LIGHTER } from '../lib/style';
+import { SECONDARY, LIGHTER, SMALL_AND_UP } from '../lib/style';
 import { ToolTipText } from './ToolTipText';
 
 interface ClueTextProps {
@@ -61,7 +61,6 @@ const ClueText = (props: ClueTextProps) => {
 
 interface ClueListItemProps {
   dimCompleted: boolean,
-  showDirection: boolean,
   conceal: boolean,
   entry: CluedEntry,
   dispatch: Dispatch<PuzzleAction>,
@@ -69,10 +68,10 @@ interface ClueListItemProps {
   isCross: boolean,
   isRefed: boolean,
   active: Position | null,
-  scrollToCross: boolean,
   showEntry: boolean,
   allEntries?: Array<CluedEntry>,
   grid: GridBase<EntryBase>,
+  scrollToCross: boolean,
 }
 
 const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }: ClueListItemProps) {
@@ -113,7 +112,9 @@ const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }:
         fontWeight: 'bold',
         textAlign: 'right',
         padding: '0 0.5em',
-      }}>{props.entry.labelNumber}{props.showDirection ? (props.entry.direction === Direction.Across ? 'A' : 'D') : ''}
+      }}>{props.entry.labelNumber}<span css={{
+          [SMALL_AND_UP]: { display: 'none' }
+        }}>{props.entry.direction === Direction.Across ? 'A' : 'D'}</span>
       </div>
       <div css={{
         flex: '1 1 auto',
@@ -146,17 +147,17 @@ const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }:
 interface ClueListProps {
   dimCompleted: boolean,
   conceal: boolean,
-  header?: string,
+  header: string,
   current?: number,
   active: Position,
   cross?: number,
   refed?: Array<number>,
   entries: Array<CluedEntry>,
   allEntries?: Array<CluedEntry>,
-  scrollToCross: boolean,
   dispatch: Dispatch<PuzzleAction>,
   showEntries: boolean,
   grid: GridBase<EntryBase>,
+  scrollToCross: boolean,
 }
 
 export const ClueList = (props: ClueListProps): JSX.Element => {
@@ -165,15 +166,14 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
     const isCross = props.cross === entry.index;
     const isRefed = props.refed ?.find(n => n === entry.index) !== undefined;
     return (<ClueListItem
+      scrollToCross={props.scrollToCross}
       dimCompleted={props.dimCompleted}
       grid={props.grid}
-      showDirection={props.header ? false : true}
       showEntry={props.showEntries}
       allEntries={props.allEntries}
       entry={entry}
       conceal={props.conceal}
       key={entry.index}
-      scrollToCross={props.scrollToCross}
       dispatch={props.dispatch}
       isActive={isActive}
       isCross={isCross}
@@ -185,15 +185,24 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
     <div css={{
       height: '100% !important',
       position: 'relative',
-    }}>{props.header ?
-        <div css={{
-          fontWeight: 'bold',
-          borderBottom: '1px solid var(--autofill)',
-          height: '1.5em',
-          paddingLeft: '0.5em',
-        }}>{props.header}</div> : ''}
+    }}>
       <div css={{
-        maxHeight: props.header ? 'calc(100% - 1.5em)' : '100%',
+        display: 'none',
+        [SMALL_AND_UP]: {
+          display: 'block',
+        },
+        fontWeight: 'bold',
+        borderBottom: '1px solid var(--autofill)',
+        height: '1.5em',
+        paddingLeft: '0.5em',
+      }}>
+        {props.header}
+      </div>
+      <div css={{
+        maxHeight: '100%',
+        [SMALL_AND_UP]: {
+          maxHeight: 'calc(100% - 1.5em)',
+        },
         overflowY: 'scroll',
       }}>
         <ol css={{

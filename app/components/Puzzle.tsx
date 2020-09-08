@@ -36,8 +36,8 @@ import {
   ToggleAutocheckAction, ToggleClueViewAction, LoadPlayAction, RanSuccessEffectsAction
 } from '../reducers/reducer';
 import { TopBar, TopBarLink, TopBarDropDownLink, TopBarDropDownLinkA, TopBarDropDown } from './TopBar';
-import { SquareAndCols, TwoCol, TinyNav } from './Page';
-import { usePersistedBoolean } from '../lib/hooks';
+import { SquareAndCols, TwoCol } from './Page';
+import { usePersistedBoolean, useMatchMedia } from '../lib/hooks';
 import { timeString } from '../lib/utils';
 import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 import { App, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
@@ -47,6 +47,7 @@ import { ConstructorNotes } from './ConstructorNotes';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { AuthorLink } from './PuzzleLink';
 import { SharingButtons } from './SharingButtons';
+import { SMALL_AND_UP_RULES } from '../lib/style';
 
 export interface NextPuzzleLink {
   puzzleId: string,
@@ -585,6 +586,8 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     return [new Map(asList), refsList];
   }, [state.answers, state.grid]);
 
+  const scrollToCross = useMatchMedia(SMALL_AND_UP_RULES);
+
   let puzzleView: ReactNode;
 
   const entryIdx = entryIndexAtPosition(state.grid, state.active);
@@ -605,6 +608,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     />;
   } else {
     puzzleView = <SquareAndCols
+      dispatch={dispatch}
       toggleKeyboard={toggleKeyboard}
       muted={muted}
       keyboardHandler={keyboardHandler}
@@ -625,9 +629,8 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           />;
         }
       }
-      left={<ClueList allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={true} dispatch={dispatch} />}
-      right={<ClueList allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={true} dispatch={dispatch} />}
-      tinyColumn={<TinyNav dispatch={dispatch}><ClueList allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} entries={acrossEntries.concat(downEntries)} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
+      left={<ClueList scrollToCross={scrollToCross} allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} dispatch={dispatch} />}
+      right={<ClueList scrollToCross={scrollToCross} allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} dispatch={dispatch} />}
     />;
   }
 

@@ -28,6 +28,9 @@ const TinyNavButton = ({ isLeft, dispatch }: TinyNavButtonProps) => {
     justifyContent: 'center',
     borderRight: isLeft ? '1px solid var(--clue-bg)' : '',
     borderLeft: isLeft ? '' : '1px solid var(--clue-bg)',
+    [SMALL_AND_UP]: {
+      display: 'none',
+    }
   }} aria-label={isLeft ? 'Previous Entry' : 'Next Entry'} onClick={() => dispatch({ type: 'KEYPRESS', key: isLeft ? '{prevEntry}' : '{nextEntry}', shift: false })}>
     {isLeft ?
       <FaAngleDoubleLeft css={{ position: 'absolute' }} />
@@ -66,25 +69,22 @@ interface SquareAndColsProps {
   aspectRatio?: number,
   left: ReactNode,
   right: ReactNode,
-  tinyColumn?: ReactNode,
   keyboardHandler?: (key: string) => void,
   toggleKeyboard: boolean,
   showExtraKeyLayout?: boolean,
   includeBlockKey?: boolean,
-  noHeightAdjust?: boolean,  // TODO we can get rid of this everywhere by doing what we do for puzzle stats page and flex'ing the layout
+  dispatch: Dispatch<KeypressAction>,
 }
 export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((props: SquareAndColsProps, fwdedRef) => {
   const parentRef = useRef<HTMLDivElement | null>(null);
   let heightVirtual = '100%';
   let heightPhysical = '100%';
-  if (!props.noHeightAdjust) {
-    if (props.keyboardHandler) {
-      heightVirtual = 'calc(100% - 199px)';
-      heightPhysical = 'calc(100% - 35px)';
-    } else {
-      heightVirtual = 'calc(100% - 35px)';
-      heightPhysical = 'calc(100% - 35px)';
-    }
+  if (props.keyboardHandler) {
+    heightVirtual = 'calc(100% - 199px)';
+    heightPhysical = 'calc(100% - 35px)';
+  } else {
+    heightVirtual = 'calc(100% - 35px)';
+    heightPhysical = 'calc(100% - 35px)';
   }
 
   if (props.toggleKeyboard) {
@@ -122,60 +122,69 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((pro
   }}>
     <Square parentRef={parentRef} aspectRatio={props.aspectRatio || 1} contents={props.square} />
     <div css={{
-      display: 'none',
-      flex: 'auto',
-      flexWrap: 'wrap',
-      alignItems: 'end',
-      height: '100%',
+      display: 'flex',
+      flex: '1 0 auto',
+      width: '100vw',
+      height: TINY_COL_MIN_HEIGHT,
+      flexWrap: 'nowrap',
+      alignItems: 'stretch',
+      flexDirection: 'row',
       [SMALL_AND_UP]: {
-        display: 'flex',
+        height: '100%',
         width: '34vw',
       },
       [LARGE_AND_UP]: {
         width: '50vw',
       },
     }}>
+      <TinyNavButton isLeft dispatch={props.dispatch} />
       <div css={{
-        flex: 'auto',
-        width: '100%',
-        height: '50%',
-        [LARGE_AND_UP]: {
-          paddingRight: 2,
-          width: '50%',
-          height: '100%',
-        },
-      }}>{props.left}</div>
-      <div css={{
-        flex: 'auto',
-        width: '100%',
-        height: '50%',
-        [LARGE_AND_UP]: {
-          paddingLeft: 2,
-          width: '50%',
-          height: '100%',
-        },
-      }}>{props.right}</div>
-    </div>
-    <div css={{
-      flex: '1 0 auto',
-      width: '100vw',
-      height: TINY_COL_MIN_HEIGHT,
-      [SMALL_AND_UP]: {
-        display: 'none',
-      }
-    }}>
-      {props.tinyColumn}
+        display: 'flex',
+        flex: '1 1 auto',
+        flexWrap: 'wrap',
+        overflowY: 'scroll',
+      }}>
+        <div css={{
+          flex: 'auto',
+          width: '100%',
+          [SMALL_AND_UP]: {
+            height: '50%',
+            overflowY: 'scroll',
+          },
+          [LARGE_AND_UP]: {
+            paddingRight: 2,
+            width: '50%',
+            height: '100%',
+          },
+        }}>{props.left}</div>
+        <div css={{
+          flex: 'auto',
+          width: '100%',
+          [SMALL_AND_UP]: {
+            height: '50%',
+            overflowY: 'scroll',
+          },
+          [LARGE_AND_UP]: {
+            paddingLeft: 2,
+            width: '50%',
+            height: '100%',
+          },
+        }}>{props.right}</div>
+      </div>
+      <TinyNavButton dispatch={props.dispatch} />
     </div>
   </div>
-  {props.keyboardHandler ?
-    <Keyboard
-      toggleKeyboard={props.toggleKeyboard}
-      keyboardHandler={props.keyboardHandler}
-      muted={props.muted}
-      showExtraKeyLayout={props.showExtraKeyLayout || false}
-      includeBlockKey={props.includeBlockKey || false}
-    />
-    : ''}
+  {
+    props.keyboardHandler ?
+      <Keyboard
+        toggleKeyboard={props.toggleKeyboard}
+        keyboardHandler={props.keyboardHandler}
+        muted={props.muted}
+        showExtraKeyLayout={props.showExtraKeyLayout || false}
+        includeBlockKey={props.includeBlockKey || false}
+      />
+      : ''
+  }
   </>
   );
 });
