@@ -8,6 +8,7 @@ export const ToolTipText = (props: { text: string, tooltip: ReactNode }) => {
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
   const [isHovered, hoverBind] = useHover();
   const { styles, attributes, update } = usePopper(referenceElement, popperElement, {
+    strategy: 'fixed',
     modifiers: [
       { name: 'hide' },
       { name: 'arrow', options: { element: arrowElement } },
@@ -37,7 +38,7 @@ export const ToolTipText = (props: { text: string, tooltip: ReactNode }) => {
       padding: '10px',
       visibility: isHovered ? 'visible' : 'hidden',
       '&[data-popper-reference-hidden=true]': {
-        display: 'none'
+        visibility: 'hidden'
       },
     }} ref={setPopperElement} style={styles.popper} {...attributes.popper}>
       {props.tooltip}
