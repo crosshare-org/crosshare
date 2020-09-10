@@ -42,7 +42,7 @@ import {
   NestedDropDown, TopBarLink, TopBar, DefaultTopBar, TopBarDropDownLink,
   TopBarDropDownLinkA, TopBarDropDown
 } from './TopBar';
-import { SquareAndCols, TinyNav } from './Page';
+import { SquareAndCols } from './Page';
 import { RebusOverlay } from './Puzzle';
 import { ClueMode } from './ClueMode';
 // eslint-disable-next-line import/no-unresolved
@@ -56,6 +56,8 @@ import { usePersistedBoolean } from '../lib/hooks';
 import useResizeObserver from 'use-resize-observer';
 import { ResizeObserver as Polyfill } from '@juggle/resize-observer';
 import { useWordDB } from '../lib/WordDB';
+import { Keyboard } from './Keyboard';
+import { SMALL_AND_UP } from '../lib/style';
 // TODO conditional import only when we need the polyfill?
 if (typeof window !== 'undefined') {
   window.ResizeObserver = window.ResizeObserver || Polyfill;
@@ -124,8 +126,9 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
 };
 
 interface PotentialFillListProps {
-  header?: string,
+  header: string,
   entryIndex: number,
+  selected: boolean,
   values: Array<[string, number]>,
   dispatch: Dispatch<ClickedFillAction>,
   gridRef: MutableRefObject<HTMLDivElement | null>,
@@ -143,15 +146,28 @@ const PotentialFillList = (props: PotentialFillListProps) => {
     <div css={{
       height: '100% !important',
       position: 'relative',
-    }}>{props.header ?
-        <div css={{
-          fontWeight: 'bold',
-          borderBottom: '1px solid #AAA',
-          height: '1.5em',
-          paddingLeft: '0.5em',
-        }}>{props.header}</div> : ''}
+      display: props.selected ? 'block' : 'none',
+      [SMALL_AND_UP]: {
+        display: 'block',
+      }
+    }}>
+      <div css={{
+        fontWeight: 'bold',
+        borderBottom: '1px solid #AAA',
+        height: '1.5em',
+        paddingLeft: '0.5em',
+        display: 'none',
+        [SMALL_AND_UP]: {
+          display: 'block'
+        }
+      }}>
+        {props.header}
+      </div>
       <div ref={listParent} css={{
-        height: props.header ? 'calc(100% - 1.5em)' : '100%',
+        height: '100%',
+        [SMALL_AND_UP]: {
+          height: 'calc(100% - 1.5em)'
+        }
       }}>
         <List
           ref={listRef}
@@ -553,7 +569,6 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
   const fillLists = useMemo(() => {
     let left = <></>;
     let right = <></>;
-    let tiny = <></>;
     const [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
     let crossMatches = cross && potentialFill(cross, state.grid);
     let entryMatches = entry && potentialFill(entry, state.grid);
@@ -571,20 +586,19 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
 
     if (cross && crossMatches !== null) {
       if (cross.direction === Direction.Across) {
-        left = <PotentialFillList gridRef={gridRef} header="Across" values={crossMatches} entryIndex={cross.index} dispatch={dispatch} />;
+        left = <PotentialFillList selected={false} gridRef={gridRef} header="Across" values={crossMatches} entryIndex={cross.index} dispatch={dispatch} />;
       } else {
-        right = <PotentialFillList gridRef={gridRef} header="Down" values={crossMatches} entryIndex={cross.index} dispatch={dispatch} />;
+        right = <PotentialFillList selected={false} gridRef={gridRef} header="Down" values={crossMatches} entryIndex={cross.index} dispatch={dispatch} />;
       }
     }
     if (entry && entryMatches !== null) {
-      tiny = <PotentialFillList gridRef={gridRef} values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
       if (entry.direction === Direction.Across) {
-        left = <PotentialFillList gridRef={gridRef} header="Across" values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
+        left = <PotentialFillList selected={true} gridRef={gridRef} header="Across" values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
       } else {
-        right = <PotentialFillList gridRef={gridRef} header="Down" values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
+        right = <PotentialFillList selected={true} gridRef={gridRef} header="Down" values={entryMatches} entryIndex={entry.index} dispatch={dispatch} />;
       }
     }
-    return { left, right, tiny };
+    return { left, right };
   }, [state.grid, state.active, dispatch]);
 
   const { autofillEnabled, setAutofillEnabled } = props;
@@ -773,44 +787,57 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
 
   return (
     <>
-      <TopBar>{topBarChildren}</TopBar>
-      {state.toPublish ?
-        <PublishOverlay toPublish={state.toPublish} user={props.user} cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })} /> : ''}
-      {state.isEnteringRebus ?
-        <RebusOverlay dispatch={dispatch} value={state.rebusValue} /> : ''}
-      {state.publishErrors.length ?
-        <Overlay closeCallback={() => dispatch({ type: 'CLEARPUBLISHERRORS' })}>
-          <>
-            <div>Please fix the following errors and try publishing again:</div>
-            <ul>
-              {state.publishErrors.map((s, i) => <li key={i}>{s}</li>)}
-            </ul>
-          </>
-        </Overlay> : ''}
-      <SquareAndCols
-        ref={gridRef}
-        toggleKeyboard={toggleKeyboard}
-        muted={muted}
-        keyboardHandler={keyboardHandler}
-        showExtraKeyLayout={state.showExtraKeyLayout}
-        includeBlockKey={true}
-        aspectRatio={state.grid.width / state.grid.height}
-        square={
-          (width: number, _height: number) => {
-            return <GridView
-              squareWidth={width}
-              grid={state.grid}
-              active={state.active}
-              dispatch={dispatch}
-              allowBlockEditing={true}
-              autofill={props.autofillEnabled ? props.autofilledGrid : []}
-            />;
-          }
-        }
-        left={fillLists.left}
-        right={fillLists.right}
-        tinyColumn={<TinyNav dispatch={dispatch}>{fillLists.tiny}</TinyNav>}
-      />
+      <div css={{
+        display: 'flex', flexDirection: 'column', height: '100%'
+      }}>
+        <div css={{ flex: 'none', }}>
+          <TopBar>{topBarChildren}</TopBar>
+        </div>
+        {state.toPublish ?
+          <PublishOverlay toPublish={state.toPublish} user={props.user} cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })} /> : ''}
+        {state.isEnteringRebus ?
+          <RebusOverlay dispatch={dispatch} value={state.rebusValue} /> : ''}
+        {state.publishErrors.length ?
+          <Overlay closeCallback={() => dispatch({ type: 'CLEARPUBLISHERRORS' })}>
+            <>
+              <div>Please fix the following errors and try publishing again:</div>
+              <ul>
+                {state.publishErrors.map((s, i) => <li key={i}>{s}</li>)}
+              </ul>
+            </>
+          </Overlay> : ''}
+        <div css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}>
+
+          <SquareAndCols
+            ref={gridRef}
+            aspectRatio={state.grid.width / state.grid.height}
+            square={
+              (width: number, _height: number) => {
+                return <GridView
+                  squareWidth={width}
+                  grid={state.grid}
+                  active={state.active}
+                  dispatch={dispatch}
+                  allowBlockEditing={true}
+                  autofill={props.autofillEnabled ? props.autofilledGrid : []}
+                />;
+              }
+            }
+            left={fillLists.left}
+            right={fillLists.right}
+            dispatch={dispatch}
+          />
+        </div>
+        <div css={{ flex: 'none', width: '100%' }}>
+          <Keyboard
+            toggleKeyboard={toggleKeyboard}
+            keyboardHandler={keyboardHandler}
+            muted={muted}
+            showExtraKeyLayout={state.showExtraKeyLayout}
+            includeBlockKey={false}
+          />
+        </div>
+      </div>
     </>
   );
 };

@@ -19,8 +19,10 @@ import { Overlay } from './Overlay';
 import { PublishOverlay } from './PublishOverlay';
 import { entryAndCrossAtPosition } from '../lib/gridBase';
 import { builderReducer, initialBuilderState, BuilderState, KeypressAction, PublishAction } from '../reducers/reducer';
-import { SquareAndCols, TinyNav } from './Page';
+import { SquareAndCols } from './Page';
 import { PuzzleInProgressT, Direction } from '../lib/types';
+import { useMatchMedia } from '../lib/hooks';
+import { SMALL_AND_UP_RULES } from '../lib/style';
 
 const initializeState = (props: PuzzleInProgressT & AuthProps): BuilderState => {
   return initialBuilderState({
@@ -71,55 +73,63 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
       downEntries: cluedEntries.filter((e) => e.direction === Direction.Down)
     };
   }, [state.grid.entries, state.clues]);
+  const scrollToCross = useMatchMedia(SMALL_AND_UP_RULES);
 
   return <>
-    <TopBar>
-      <TopBarLink icon={<FaRegNewspaper />} text="Publish" onClick={() => {
-        const a: PublishAction = { type: 'PUBLISH', publishTimestamp: TimestampClass.now() };
-        dispatch(a);
-      }} />
-      {
-        props.isAdmin ?
-          <>
-            <TopBarLinkA href='/admin' icon={<FaUserLock />} text="Admin" />
-          </>
-          :
-          ''
-      }
-      <TopBarLinkA href='/account' icon={<FaUser />} text="Account" />
-    </TopBar>
-    {state.toPublish ?
-      <PublishOverlay toPublish={state.toPublish} user={props.user} cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })} /> : ''}
-    {!dismissedIntro ?
-      <Overlay closeCallback={() => setDismissedIntro(true)}>
-        <h2><Emoji symbol='🎉' /> Successfully Imported {props.title ? <>&lsquo;{props.title}&rsquo;</> : ''}</h2>
-        {props.notes ?
-          <ConstructorNotes notes={props.notes} />
-          : ''}
-        <p>Please look over your grid and clues to make sure everything is correct.
-        If something didn&apos;t import correctly, get in touch with us via
+    <div css={{
+      display: 'flex', flexDirection: 'column', height: '100%'
+    }}>
+      <div css={{ flex: 'none', }}>
+        <TopBar>
+          <TopBarLink icon={<FaRegNewspaper />} text="Publish" onClick={() => {
+            const a: PublishAction = { type: 'PUBLISH', publishTimestamp: TimestampClass.now() };
+            dispatch(a);
+          }} />
+          {
+            props.isAdmin ?
+              <>
+                <TopBarLinkA href='/admin' icon={<FaUserLock />} text="Admin" />
+              </>
+              :
+              ''
+          }
+          <TopBarLinkA href='/account' icon={<FaUser />} text="Account" />
+        </TopBar>
+      </div>
+      {state.toPublish ?
+        <PublishOverlay toPublish={state.toPublish} user={props.user} cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })} /> : ''}
+      {!dismissedIntro ?
+        <Overlay closeCallback={() => setDismissedIntro(true)}>
+          <h2><Emoji symbol='🎉' /> Successfully Imported {props.title ? <>&lsquo;{props.title}&rsquo;</> : ''}</h2>
+          {props.notes ?
+            <ConstructorNotes notes={props.notes} />
+            : ''}
+          <p>Please look over your grid and clues to make sure everything is correct.
+          If something didn&apos;t import correctly, get in touch with us via
         the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a> or <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">Twitter</a>.</p>
-        <p>Once you&apos;ve looked it over, click &lsquo;Publish&rsquo; in the top bar to publish your puzzle!</p>
-      </Overlay>
-      : ''}
-    <SquareAndCols
-      toggleKeyboard={false}
-      muted={true}
-      aspectRatio={state.grid.width / state.grid.height}
-      square={
-        (width: number, _height: number) => {
-          return <GridView
-            squareWidth={width}
-            grid={state.grid}
-            active={state.active}
-            dispatch={dispatch}
-            allowBlockEditing={true}
-          />;
-        }
-      }
-      left={<ClueList dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} header="Across" entries={acrossEntries} current={entry ?.index} cross={cross ?.index} scrollToCross={true} dispatch={dispatch} />}
-      right={<ClueList dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} header="Down" entries={downEntries} current={entry ?.index} cross={cross ?.index} scrollToCross={true} dispatch={dispatch} />}
-      tinyColumn={<TinyNav dispatch={dispatch}><ClueList dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} entries={acrossEntries.concat(downEntries)} current={entry ?.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
-    />
+          <p>Once you&apos;ve looked it over, click &lsquo;Publish&rsquo; in the top bar to publish your puzzle!</p>
+        </Overlay>
+        : ''}
+      <div css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}>
+
+        <SquareAndCols
+          dispatch={dispatch}
+          aspectRatio={state.grid.width / state.grid.height}
+          square={
+            (width: number, _height: number) => {
+              return <GridView
+                squareWidth={width}
+                grid={state.grid}
+                active={state.active}
+                dispatch={dispatch}
+                allowBlockEditing={true}
+              />;
+            }
+          }
+          left={<ClueList dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} header="Across" entries={acrossEntries} current={entry ?.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
+          right={<ClueList dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} header="Down" entries={downEntries} current={entry ?.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
+        />
+      </div>
+    </div>
   </>;
 };

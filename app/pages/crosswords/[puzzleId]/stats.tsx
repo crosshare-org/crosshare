@@ -101,12 +101,14 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
       <Head>
         <title>Stats | {puzzle.title} | Crosshare</title>
       </Head>
-      <div css={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <div css={{
+        display: 'flex', flexDirection: 'column', height: '100%'
+      }}>
         <div css={{ flex: 'none', }}>
           <DefaultTopBar />
         </div>
         <div css={{
-          padding: '0.5em', flex: 'none',
+          paddingTop: '0.5em', flex: 'none',
         }}>
           {stats ?
             <>
@@ -144,7 +146,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
             <p>We don&apos;t have stats for this puzzle yet. Stats are updated once per hour, and won&apos;t be available until after a non-author has solved the puzzle.</p>
           }
         </div>
-        <div css={{ flex: 'auto', overflow: 'hidden' }}>
+        <div css={{ flex: '1 1 auto', overflow: 'hidden', position: 'relative' }}>
           {stats ?
             <PuzzleStats puzzle={puzzle} stats={stats} mode={mode} />
             :

@@ -3,11 +3,10 @@ import {
   FaAngleDoubleRight, FaAngleDoubleLeft,
 } from 'react-icons/fa';
 
-import { Keyboard } from './Keyboard';
 import { Square } from './Square';
 import { KeypressAction } from '../reducers/reducer';
 import {
-  SMALL_AND_UP, LARGE_AND_UP, TINY_COL_MIN_HEIGHT, HAS_PHYSICAL_KEYBOARD
+  SMALL_AND_UP, LARGE_AND_UP, TINY_COL_MIN_HEIGHT
 } from '../lib/style';
 
 interface TinyNavButtonProps {
@@ -40,58 +39,15 @@ const TinyNavButton = ({ isLeft, dispatch }: TinyNavButtonProps) => {
   </button>;
 };
 
-interface TinyNavProps {
-  children: ReactNode,
-  dispatch: Dispatch<KeypressAction>,
-}
-export const TinyNav = ({ children, dispatch }: TinyNavProps) => {
-  return (
-    <div css={{
-      display: 'flex',
-      flexWrap: 'nowrap',
-      alignItems: 'stretch',
-      flexDirection: 'row',
-      width: '100%',
-      height: '100%',
-    }}>
-      <TinyNavButton isLeft dispatch={dispatch} />
-      <div css={{
-        flex: '1 1 auto',
-      }}>{children}</div>
-      <TinyNavButton dispatch={dispatch} />
-    </div>
-  );
-};
-
 interface SquareAndColsProps {
-  muted: boolean,
   square: (width: number, height: number) => ReactNode,
   aspectRatio?: number,
   left: ReactNode,
   right: ReactNode,
-  keyboardHandler?: (key: string) => void,
-  toggleKeyboard: boolean,
-  showExtraKeyLayout?: boolean,
-  includeBlockKey?: boolean,
   dispatch: Dispatch<KeypressAction>,
 }
 export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((props: SquareAndColsProps, fwdedRef) => {
   const parentRef = useRef<HTMLDivElement | null>(null);
-  let heightVirtual = '100%';
-  let heightPhysical = '100%';
-  if (props.keyboardHandler) {
-    heightVirtual = 'calc(100% - 199px)';
-    heightPhysical = 'calc(100% - 35px)';
-  } else {
-    heightVirtual = 'calc(100% - 35px)';
-    heightPhysical = 'calc(100% - 35px)';
-  }
-
-  if (props.toggleKeyboard) {
-    const swap = heightVirtual;
-    heightVirtual = heightPhysical;
-    heightPhysical = swap;
-  }
 
   // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
   return (<><div tabIndex={0} ref={(instance) => {
@@ -106,19 +62,17 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((pro
   }} css={{
     outline: 'none',
     display: 'flex',
+    flex: '1 1 auto',
     flexDirection: 'column',
     alignItems: 'center',
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
     [SMALL_AND_UP]: {
       flexDirection: 'row',
       alignItems: 'start',
     },
     flexWrap: 'nowrap',
-    minHeight: heightVirtual,
-    height: heightVirtual,
-    [HAS_PHYSICAL_KEYBOARD]: {
-      minHeight: heightPhysical,
-      height: heightPhysical,
-    }
   }}>
     <Square parentRef={parentRef} aspectRatio={props.aspectRatio || 1} contents={props.square} />
     <div css={{
@@ -174,39 +128,15 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((pro
       <TinyNavButton dispatch={props.dispatch} />
     </div>
   </div>
-  {
-    props.keyboardHandler ?
-      <Keyboard
-        toggleKeyboard={props.toggleKeyboard}
-        keyboardHandler={props.keyboardHandler}
-        muted={props.muted}
-        showExtraKeyLayout={props.showExtraKeyLayout || false}
-        includeBlockKey={props.includeBlockKey || false}
-      />
-      : ''
-  }
   </>
   );
 });
 
 interface TwoColProps {
-  muted: boolean,
   left: ReactNode,
   right: ReactNode,
-  keyboardHandler: (key: string) => void,
-  showExtraKeyLayout: boolean,
-  includeBlockKey: boolean,
-  toggleKeyboard: boolean,
 }
 export const TwoCol = (props: TwoColProps) => {
-  let heightVirtual = 'calc(100% - 199px)';
-  let heightPhysical = 'calc(100% - 35px)';
-  if (props.toggleKeyboard) {
-    const swap = heightVirtual;
-    heightVirtual = heightPhysical;
-    heightPhysical = swap;
-  }
-
   return (
     <>
       <div css={{
@@ -214,13 +144,9 @@ export const TwoCol = (props: TwoColProps) => {
         [SMALL_AND_UP]: {
           display: 'flex',
         },
-        minHeight: heightVirtual,
-        height: heightVirtual,
-        [HAS_PHYSICAL_KEYBOARD]: {
-          minHeight: heightPhysical,
-          height: heightPhysical,
-        },
         overflow: 'scroll',
+        height: '100%',
+        width: '100%',
       }}>
         <div css={{
           [SMALL_AND_UP]: {
@@ -235,13 +161,6 @@ export const TwoCol = (props: TwoColProps) => {
           },
         }}>{props.right}</div>
       </div>
-      <Keyboard
-        toggleKeyboard={props.toggleKeyboard}
-        keyboardHandler={props.keyboardHandler}
-        muted={props.muted}
-        showExtraKeyLayout={props.showExtraKeyLayout}
-        includeBlockKey={props.includeBlockKey}
-      />
     </>
   );
 };

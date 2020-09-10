@@ -7,10 +7,12 @@ import { ClueList } from './ClueList';
 import { GridView } from './Grid';
 import { entryAndCrossAtPosition } from '../lib/gridBase';
 import { builderReducer, initialBuilderState, BuilderState, KeypressAction } from '../reducers/reducer';
-import { SquareAndCols, TinyNav } from './Page';
+import { SquareAndCols } from './Page';
 import { Direction, PuzzleResult } from '../lib/types';
 import { PuzzleStatsT } from '../lib/dbtypes';
 import { fromCells, getClueMap } from '../lib/viewableGrid';
+import { useMatchMedia } from '../lib/hooks';
+import { SMALL_AND_UP_RULES } from '../lib/style';
 
 export enum StatsMode {
   AverageTime,
@@ -87,11 +89,11 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
     return data.map(v => (max - min) ? (v - min) / (max - min) : 0);
   }, [props.stats.ct, props.stats.uc, props.mode]);
 
+  const scrollToCross = useMatchMedia(SMALL_AND_UP_RULES);
+
   return <SquareAndCols
-    muted={true}
     aspectRatio={state.grid.width / state.grid.height}
-    noHeightAdjust={true}
-    toggleKeyboard={false}
+    dispatch={dispatch}
     square={
       (width: number, _height: number) => {
         return <GridView
@@ -104,8 +106,7 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
         />;
       }
     }
-    left={<ClueList dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} header="Across" entries={acrossEntries} current={entry ?.index} cross={cross ?.index} scrollToCross={true} dispatch={dispatch} />}
-    right={<ClueList dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} header="Down" entries={downEntries} current={entry ?.index} cross={cross ?.index} scrollToCross={true} dispatch={dispatch} />}
-    tinyColumn={<TinyNav dispatch={dispatch}><ClueList dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} entries={acrossEntries.concat(downEntries)} current={entry ?.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} /></TinyNav>}
+    left={<ClueList dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} header="Across" entries={acrossEntries} current={entry ?.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
+    right={<ClueList dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} header="Down" entries={downEntries} current={entry ?.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
   />;
 };

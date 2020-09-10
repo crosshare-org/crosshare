@@ -48,6 +48,7 @@ import { ConstructorPageT } from '../lib/constructorPage';
 import { AuthorLink } from './PuzzleLink';
 import { SharingButtons } from './SharingButtons';
 import { SMALL_AND_UP_RULES } from '../lib/style';
+import { Keyboard } from './Keyboard';
 
 export interface NextPuzzleLink {
   puzzleId: string,
@@ -598,22 +599,12 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
 
   if (state.clueView) {
     puzzleView = <TwoCol
-      toggleKeyboard={toggleKeyboard}
-      muted={muted}
-      keyboardHandler={keyboardHandler}
-      showExtraKeyLayout={state.showExtraKeyLayout}
-      includeBlockKey={false}
-      left={<ClueList allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} />}
-      right={<ClueList allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={false} dispatch={dispatch} />}
+      left={<ClueList allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
+      right={<ClueList allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
     />;
   } else {
     puzzleView = <SquareAndCols
       dispatch={dispatch}
-      toggleKeyboard={toggleKeyboard}
-      muted={muted}
-      keyboardHandler={keyboardHandler}
-      showExtraKeyLayout={state.showExtraKeyLayout}
-      includeBlockKey={false}
       aspectRatio={state.grid.width / state.grid.height}
       square={
         (width: number, _height: number) => {
@@ -735,43 +726,60 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
         <meta key="og:image:alt" property="og:image:alt" content="An image of the puzzle grid" />
         <meta key="description" name="description" content={description} />
       </Head>
-      <TopBar>
-        {!state.success ?
-          <>
-            <TopBarLink icon={<FaPause />} hoverText={'Pause Game'} text={timeString(state.displaySeconds, true)} onClick={() => dispatch({ type: 'PAUSEACTION' })} keepText={true} />
-            <TopBarLink icon={state.clueView ? <SpinnerFinished /> : <FaListOl />} text={state.clueView ? 'Grid' : 'Clues'} onClick={() => {
-              const a: ToggleClueViewAction = { type: 'TOGGLECLUEVIEW' };
-              dispatch(a);
-            }} />
-            {checkRevealMenus}
-            {moreMenu}
-          </>
-          :
-          <>
-            <TopBarLink icon={<FaComment />} text={'Show Comments'} onClick={() => dispatch({ type: 'UNDISMISSSUCCESS' })} />
-            {moreMenu}
-          </>
-        }
-      </TopBar>
-      {state.isEnteringRebus ?
-        <RebusOverlay dispatch={dispatch} value={state.rebusValue} /> : ''}
-      {state.filled && !state.success && !state.dismissedKeepTrying ?
-        <KeepTryingOverlay dispatch={dispatch} />
-        : ''}
-      {state.success && !state.dismissedSuccess ?
-        <SuccessOverlay clueMap={clueMap} user={props.user} nextPuzzle={props.nextPuzzle} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
-        : ''}
-      {state.moderating ?
-        <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />
-        : ''}
-      {state.currentTimeWindowStart === 0 && !state.success && !(state.filled && !state.dismissedKeepTrying) ?
-        (state.bankedSeconds === 0 ?
-          <BeginPauseOverlay dismissMessage="Begin Puzzle" message="Ready to get started?" {...beginPauseProps} />
-          :
-          <BeginPauseOverlay dismissMessage="Resume" message="Your puzzle is paused" {...beginPauseProps} />
-        )
-        : ''}
-      {puzzleView}
+      <div css={{
+        display: 'flex', flexDirection: 'column', height: '100%'
+      }}>
+        <div css={{ flex: 'none', }}>
+          <TopBar>
+            {!state.success ?
+              <>
+                <TopBarLink icon={<FaPause />} hoverText={'Pause Game'} text={timeString(state.displaySeconds, true)} onClick={() => dispatch({ type: 'PAUSEACTION' })} keepText={true} />
+                <TopBarLink icon={state.clueView ? <SpinnerFinished /> : <FaListOl />} text={state.clueView ? 'Grid' : 'Clues'} onClick={() => {
+                  const a: ToggleClueViewAction = { type: 'TOGGLECLUEVIEW' };
+                  dispatch(a);
+                }} />
+                {checkRevealMenus}
+                {moreMenu}
+              </>
+              :
+              <>
+                <TopBarLink icon={<FaComment />} text={'Show Comments'} onClick={() => dispatch({ type: 'UNDISMISSSUCCESS' })} />
+                {moreMenu}
+              </>
+            }
+          </TopBar>
+        </div>
+        {state.isEnteringRebus ?
+          <RebusOverlay dispatch={dispatch} value={state.rebusValue} /> : ''}
+        {state.filled && !state.success && !state.dismissedKeepTrying ?
+          <KeepTryingOverlay dispatch={dispatch} />
+          : ''}
+        {state.success && !state.dismissedSuccess ?
+          <SuccessOverlay clueMap={clueMap} user={props.user} nextPuzzle={props.nextPuzzle} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
+          : ''}
+        {state.moderating ?
+          <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />
+          : ''}
+        {state.currentTimeWindowStart === 0 && !state.success && !(state.filled && !state.dismissedKeepTrying) ?
+          (state.bankedSeconds === 0 ?
+            <BeginPauseOverlay dismissMessage="Begin Puzzle" message="Ready to get started?" {...beginPauseProps} />
+            :
+            <BeginPauseOverlay dismissMessage="Resume" message="Your puzzle is paused" {...beginPauseProps} />
+          )
+          : ''}
+        <div css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}>
+          {puzzleView}
+        </div>
+        <div css={{ flex: 'none', width: '100%' }}>
+          <Keyboard
+            toggleKeyboard={toggleKeyboard}
+            keyboardHandler={keyboardHandler}
+            muted={muted}
+            showExtraKeyLayout={state.showExtraKeyLayout}
+            includeBlockKey={false}
+          />
+        </div>
+      </div>
     </>
   );
 };
