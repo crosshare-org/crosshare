@@ -47,7 +47,7 @@ exports[`clueMap rendering 2`] = `
 }
 
 .emotion-3[data-popper-reference-hidden=true] {
-  display: none;
+  visibility: hidden;
 }
 
 .emotion-1 {
@@ -95,7 +95,7 @@ exports[`clueMap rendering 2`] = `
       </span>
       <div
         class="emotion-3"
-        style="position: absolute; left: 0px; top: 0px;"
+        style="position: fixed; left: 0px; top: 0px;"
       >
         <b
           class="emotion-1"
@@ -138,7 +138,7 @@ exports[`clueMap rendering 3`] = `
 }
 
 .emotion-3[data-popper-reference-hidden=true] {
-  display: none;
+  visibility: hidden;
 }
 
 .emotion-1 {
@@ -181,7 +181,7 @@ exports[`clueMap rendering 3`] = `
     </span>
     <div
       class="emotion-3"
-      style="position: absolute; left: 0px; top: 0px;"
+      style="position: fixed; left: 0px; top: 0px;"
     >
       <b
         class="emotion-1"
@@ -202,7 +202,7 @@ exports[`clueMap rendering 3`] = `
     </span>
     <div
       class="emotion-3"
-      style="position: absolute; left: 0px; top: 0px;"
+      style="position: fixed; left: 0px; top: 0px;"
     >
       <b
         class="emotion-1"
@@ -240,7 +240,7 @@ exports[`clueMap rendering 4`] = `
 }
 
 .emotion-3[data-popper-reference-hidden=true] {
-  display: none;
+  visibility: hidden;
 }
 
 .emotion-1 {
@@ -286,7 +286,7 @@ exports[`clueMap rendering 4`] = `
       </span>
       <div
         class="emotion-3"
-        style="position: absolute; left: 0px; top: 0px;"
+        style="position: fixed; left: 0px; top: 0px;"
       >
         <b
           class="emotion-1"
@@ -325,7 +325,7 @@ exports[`clueMap rendering 5`] = `
 }
 
 .emotion-3[data-popper-reference-hidden=true] {
-  display: none;
+  visibility: hidden;
 }
 
 .emotion-1 {
@@ -373,7 +373,7 @@ exports[`clueMap rendering 5`] = `
       </span>
       <div
         class="emotion-3"
-        style="position: absolute; left: 0px; top: 0px;"
+        style="position: fixed; left: 0px; top: 0px;"
       >
         <b
           class="emotion-1"
