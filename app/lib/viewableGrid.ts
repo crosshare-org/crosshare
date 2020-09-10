@@ -161,7 +161,7 @@ export function moveToNextEntry<Entry extends ViewableEntry>(grid: ViewableGrid<
     if (reverse) {
       iincr *= -1;
     }
-    return { ...posForIndex(grid, (cellIndex(grid, pos) + iincr) % (grid.width * grid.height)), dir: pos.dir };
+    return { ...posForIndex(grid, (cellIndex(grid, pos) + (grid.width * grid.height) + iincr) % (grid.width * grid.height)), dir: pos.dir };
   }
 
   // Find position in the sorted array of entries
