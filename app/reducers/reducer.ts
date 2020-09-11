@@ -461,7 +461,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       if (state.isEditable(ci)) {
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
         state.grid = gridWithBlockToggled(state.grid, state.active, symmetry);
-        return state.postEdit(ci) as T; // TODO this is trash
+        return { ...state.postEdit(ci) as T, active: nextCell(state.grid, state.active) }; // TODO postEdit typecast this is trash
       }
       return state;
     } else if (key.match(/^[A-Za-z0-9]$/)) {
