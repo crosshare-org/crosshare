@@ -31,26 +31,41 @@ export default requiresAuth((props: AuthProps) => {
 export const PuzzleLoader = ({ puzzleId, auth }: { puzzleId: string, auth: AuthProps }) => {
   const [puzzle, setPuzzle] = useState<PuzzleResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    const db = App.firestore();
-    db.collection('c').doc(puzzleId).get()
-      .then(dbres => {
-        if (!dbres.exists) {
-          setError('No puzzle found');
-        }
-        const validationResult = DBPuzzleV.decode(dbres.data());
-        if (isRight(validationResult)) {
-          console.log('loaded puzzle from db');
-          setPuzzle({ ...puzzleFromDB(validationResult.right), id: dbres.id });
-        } else {
-          console.error(PathReporter.report(validationResult).join(','));
-          setError('Malformed puzzle found');
-        }
-      })
-      .catch((e) => {
-        console.error(e);
-        setError(typeof e === 'string' ? e : 'error loading puzzle');
-      });
+    let didCancel = false;
+
+    const fetchData = async () => {
+      const db = App.firestore();
+      db.collection('c').doc(puzzleId).get()
+        .then(dbres => {
+          if (didCancel) {
+            return;
+          }
+          if (!dbres.exists) {
+            setError('No puzzle found');
+          }
+          const validationResult = DBPuzzleV.decode(dbres.data());
+          if (isRight(validationResult)) {
+            console.log('loaded puzzle from db');
+            setPuzzle({ ...puzzleFromDB(validationResult.right), id: dbres.id });
+          } else {
+            console.error(PathReporter.report(validationResult).join(','));
+            setError('Malformed puzzle found');
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+          if (didCancel) {
+            return;
+          }
+          setError(typeof e === 'string' ? e : 'error loading puzzle');
+        });
+    };
+    fetchData();
+    return () => {
+      didCancel = true;
+    };
   }, [puzzleId]);
   if (error) {
     return <ErrorPage title='Something Went Wrong'>
@@ -76,15 +91,34 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
   const [mode, setMode] = useState(StatsMode.AverageTime);
 
   useEffect(() => {
-    getFromSessionOrDB({
-      collection: 's',
-      docId: puzzle.id,
-      validator: PuzzleStatsV,
-      ttl: 30 * 60 * 1000
-    })
-      .then(setStats)
-      .catch(setError)
-      .finally(() => setDidLoad(true));
+    let didCancel = false;
+
+    const fetchData = async () => {
+      getFromSessionOrDB({
+        collection: 's',
+        docId: puzzle.id,
+        validator: PuzzleStatsV,
+        ttl: 30 * 60 * 1000
+      })
+        .then((s) => {
+          if (didCancel) {
+            return;
+          }
+          setStats(s);
+          setDidLoad(true);
+        })
+        .catch((e) => {
+          if (didCancel) {
+            return;
+          }
+          setError(e);
+          setDidLoad(true);
+        });
+    };
+    fetchData();
+    return () => {
+      didCancel = true;
+    };
   }, [puzzle.id]);
 
   if (error) {
