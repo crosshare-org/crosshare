@@ -6,8 +6,11 @@ import { useHover } from '../lib/hooks';
 import { Direction } from '../lib/types';
 import { ToolTipText } from './ToolTipText';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const { image, refimage, ...baseRules } = { ...SimpleMarkdown.defaultRules };
+
 const rules: SimpleMarkdown.Rules<SimpleMarkdown.ReactOutputRule> = {
-  ...SimpleMarkdown.defaultRules,
+  ...baseRules,
   blockQuote: {
     ...SimpleMarkdown.defaultRules.blockQuote,
     match: SimpleMarkdown.blockRegex(/^( *>[^!\n]+(\n[^\n]+)*\n*)+\n{2,}/),

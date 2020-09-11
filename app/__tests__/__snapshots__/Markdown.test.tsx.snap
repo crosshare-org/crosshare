@@ -393,6 +393,45 @@ exports[`clueMap rendering 5`] = `
 </div>
 `;
 
+exports[`images should not be allowed 1`] = `
+<div>
+  <div
+    class="paragraph"
+  >
+    !
+    <a
+      href="http://example.com/test.png"
+      rel="nofollow ugc noopener noreferrer"
+      target="_blank"
+    />
+  </div>
+</div>
+`;
+
+exports[`images should not be allowed 2`] = `
+<div>
+  <div
+    class="paragraph"
+  >
+    !
+    <a
+      rel="nofollow ugc noopener noreferrer"
+      target="_blank"
+    >
+      aaalt
+    </a>
+    \\n\\n[1]: 
+    <a
+      href="http://example.com/test.gif\\\\n\\\\n"
+      rel="nofollow ugc noopener noreferrer"
+      target="_blank"
+    >
+      http://example.com/test.gif\\n\\n
+    </a>
+  </div>
+</div>
+`;
+
 exports[`spoiler text rendering 1`] = `
 <div>
   <div

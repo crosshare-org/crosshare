@@ -35,6 +35,14 @@ test('spoiler text rendering', () => {
   expect(r.container).toMatchSnapshot();
 });
 
+test('images should not be allowed', () => {
+  let r = render(<Markdown text='![](http://example.com/test.png)' />, {});
+  expect(r.container).toMatchSnapshot();
+
+  r = render(<Markdown text='![aaalt][1]\n\n[1]: http://example.com/test.gif\n\n' />, {});
+  expect(r.container).toMatchSnapshot();
+});
+
 test('clueMap rendering', () => {
   const clueMap = new Map<string, [number, Direction, string]>([
     ['BAM', [2, 1, 'here is the clue?']],
