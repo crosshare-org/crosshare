@@ -80,8 +80,9 @@ html {
 body {
   height: 100%;
   display: flex;
+  touch-action: manipulation !important;
 }
-body * {
+* {
   touch-action: manipulation !important;
 }
 input[type=text], textarea {

@@ -74,7 +74,7 @@ export const BuilderDBLoader = (props: BuilderProps & AuthProps): JSX.Element =>
   if (ready) {
     return <Builder {...props} />;
   } else if (loading) {
-    return <div></div>;
+    return <div>Loading, this can take a minute...</div>;
   }
   if (error) {
     console.error(error);

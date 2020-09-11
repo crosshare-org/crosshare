@@ -86,7 +86,7 @@ export const Key = (props: KeyProps) => {
       '&:active': {
         background: 'var(--key-bg-click)',
       },
-    }} onClick={() => { props.onKeypress(props.keyStroke); }}>{props.display || props.keyStroke}</button>
+    }} onClick={(e) => { props.onKeypress(props.keyStroke); e.preventDefault(); }}>{props.display || props.keyStroke}</button>
   );
 };
 
