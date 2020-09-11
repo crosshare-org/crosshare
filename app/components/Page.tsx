@@ -140,24 +140,32 @@ export const TwoCol = (props: TwoColProps) => {
   return (
     <>
       <div css={{
+        position: 'absolute',
+        height: '100%',
+        flex: '1 1 auto',
         display: 'block',
+        overflow: 'scroll',
         [SMALL_AND_UP]: {
           display: 'flex',
         },
-        overflow: 'scroll',
-        height: '100%',
         width: '100%',
       }}>
         <div css={{
           [SMALL_AND_UP]: {
             paddingRight: 2,
             width: '50%',
+            overflow: 'scroll',
+            flex: '1 1 auto',
+
           },
         }}>{props.left}</div>
         <div css={{
           [SMALL_AND_UP]: {
             paddingLeft: 2,
             width: '50%',
+            overflow: 'scroll',
+            flex: '1 1 auto',
+
           },
         }}>{props.right}</div>
       </div>
