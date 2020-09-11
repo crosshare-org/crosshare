@@ -30,7 +30,7 @@ const TinyNavButton = ({ isLeft, dispatch }: TinyNavButtonProps) => {
     [SMALL_AND_UP]: {
       display: 'none',
     }
-  }} aria-label={isLeft ? 'Previous Entry' : 'Next Entry'} onClick={() => dispatch({ type: 'KEYPRESS', key: isLeft ? '{prevEntry}' : '{nextEntry}', shift: false })}>
+  }} aria-label={isLeft ? 'Previous Entry' : 'Next Entry'} onClick={(e) => { e.preventDefault(); dispatch({ type: 'KEYPRESS', key: isLeft ? '{prevEntry}' : '{nextEntry}', shift: false }); }}>
     {isLeft ?
       <FaAngleDoubleLeft css={{ position: 'absolute' }} />
       :

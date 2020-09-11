@@ -834,7 +834,7 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
             keyboardHandler={keyboardHandler}
             muted={muted}
             showExtraKeyLayout={state.showExtraKeyLayout}
-            includeBlockKey={false}
+            includeBlockKey={true}
           />
         </div>
       </div>
