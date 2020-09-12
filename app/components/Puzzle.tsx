@@ -25,11 +25,10 @@ import { GridView } from './Grid';
 import { Direction, BLOCK, ServerPuzzleResult } from '../lib/types';
 import { fromCells, addClues } from '../lib/viewableGrid';
 import { entryAndCrossAtPosition, cellIndex, entryIndexAtPosition } from '../lib/gridBase';
-import { getPlays, cachePlay, writePlayToDB, isDirty } from '../lib/plays';
+import { cachePlay, writePlayToDB, isDirty } from '../lib/plays';
 import {
-  PlayWithoutUserT, getDateString, CategoryIndexV
+  PlayWithoutUserT, getDateString
 } from '../lib/dbtypes';
-import { getFromSessionOrDB } from '../lib/dbUtils';
 import {
   cheat, checkComplete, puzzleReducer, advanceActiveToNonBlock,
   PuzzleAction, CheatUnit, CheatAction, KeypressAction,
@@ -49,6 +48,7 @@ import { AuthorLink } from './PuzzleLink';
 import { SharingButtons } from './SharingButtons';
 import { SMALL_AND_UP_RULES } from '../lib/style';
 import { Keyboard } from './Keyboard';
+import { useRouter } from 'next/router';
 
 export interface NextPuzzleLink {
   puzzleId: string,
@@ -270,14 +270,11 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   }, advanceActiveToNonBlock);
 
   useEffect(() => {
-    if (state.loadedPlayState) {  // we already loaded
-      return;
-    }
     if (loadingPlayState === false) {
       const action: LoadPlayAction = { type: 'LOADPLAY', play: play, isAuthor: props.user ? props.user.uid === puzzle.authorId : false };
       dispatch(action);
     }
-  }, [loadingPlayState, play, state.loadedPlayState, props.user, puzzle.authorId]);
+  }, [loadingPlayState, play, props.user, puzzle.authorId]);
 
   // Every (unpaused) second dispatch a tick action which updates the display time
   useEffect(() => {
@@ -368,7 +365,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       ch: state.didCheat,
       f: state.success,
     };
-    cachePlay(user, play);
+    cachePlay(user, puzzle.id, play);
   }, [state.loadedPlayState, puzzle.id, state.cellsEverMarkedWrong,
     state.cellsIterationCount, state.cellsUpdatedAt, state.didCheat,
     state.grid.cells, state.revealedCells, state.success, state.verifiedCells,
@@ -378,15 +375,17 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     cachePlayForUser(props.user);
   }, [props.user, cachePlayForUser]);
 
+  const router = useRouter();
   useEffect(() => {
-    const listener = () => { writePlayToDBIfNeeded(); };
+    const listener = () => { console.log('doing write play'); writePlayToDBIfNeeded(); };
     window.addEventListener('beforeunload', listener);
+    router.events.on('routeChangeStart', listener);
 
     return () => {
       window.removeEventListener('beforeunload', listener);
-      writePlayToDBIfNeeded();
+      router.events.off('routeChangeStart', listener);
     };
-  }, [writePlayToDBIfNeeded]);
+  }, [writePlayToDBIfNeeded, router]);
 
   if (state.success && !state.ranSuccessEffects) {
     const action: RanSuccessEffectsAction = { type: 'RANSUCCESS' };
@@ -403,85 +402,14 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     }
 
     let delay = 0;
-    if (puzzle.size.rows === 5 && puzzle.size.cols === 5 && state.bankedSeconds <= 60) {
-      toast(<div><Emoji symbol='🤓' /> You solved a mini puzzle in under a minute!</div>);
+    if (state.bankedSeconds <= 60) {
+      toast(<div><Emoji symbol='🥇' /> Solved in under a minute!</div>);
       delay += 500;
     }
-    if (props.user) {
-      Promise.all([
-        getFromSessionOrDB({ collection: 'categories', docId: 'dailymini', validator: CategoryIndexV, ttl: 24 * 60 * 60 * 1000 }),
-        getPlays(props.user)
-      ])
-        .then(([minis, plays]) => {
-          // Check to see if we should show X daily minis in a row notification
-          let consecutiveDailyMinis = 0;
-          let dateToTest = new Date();
-          let ds = getDateString(dateToTest);
-          if (puzzle.id === minis ?.[ds] && !state.didCheat) {
-            for (; ;) {
-              consecutiveDailyMinis += 1;
-              dateToTest.setDate(dateToTest.getDate() - 1);
-              ds = getDateString(dateToTest);
-              const play = plays ?.[minis[ds]];
-              if (!play) {
-                break;
-              }
-              const playDate = play.ua.toDate();
-              // cheated || didn't finish || played on wrong date
-              if (play.ch || !play.f || getDateString(playDate) !== ds) {
-                break;
-              }
-            }
-          }
-          if (consecutiveDailyMinis === 1) {
-            toast(<div><Emoji symbol='🥇' /> Solved the daily mini without check/reveal! </div>,
-              { delay: delay });
-            delay += 500;
-          } else if (consecutiveDailyMinis) {
-            toast(<div><Emoji symbol='🥇' /> Solved the daily mini without check/reveal <b>{consecutiveDailyMinis} days in a row!</b> <Emoji symbol='😻' /></div>,
-              { delay: delay });
-            delay += 500;
-          }
-
-          // Check to see if this is the first puzzle solved today
-          let firstOfTheDay = true;
-          let consecutiveSolveDays = 0;
-          dateToTest = new Date();
-          ds = getDateString(dateToTest);
-          if (plays) {
-            for (const [puzzleId, play] of Object.entries(plays)) {
-              if (puzzleId === puzzle.id) {
-                continue;
-              }
-              const playDate = play.ua.toDate();
-              if (play.f && getDateString(playDate) === ds) {
-                firstOfTheDay = false;
-              }
-            }
-            if (firstOfTheDay) {
-              for (; ;) {
-                consecutiveSolveDays += 1;
-                dateToTest.setDate(dateToTest.getDate() - 1);
-                ds = getDateString(dateToTest);
-                let solvedOne = false;
-                for (const play of Object.values(plays)) {
-                  const playDate = play.ua.toDate();
-                  if (play.f && getDateString(playDate) === ds) {
-                    solvedOne = true;
-                    break;
-                  }
-                }
-                if (!solvedOne) {
-                  break;
-                }
-              }
-            }
-          }
-          if (consecutiveSolveDays > 1) {
-            toast(<div><Emoji symbol='🔥' /> You finished a puzzle <b>{consecutiveSolveDays} days in a row!</b> Keep it up! <Emoji symbol='🔥' /></div>,
-              { delay: delay });
-          }
-        });
+    if (!state.didCheat) {
+      toast(<div><Emoji symbol='🤓' /> Solved without check/reveal! </div>,
+        { delay: delay });
+      delay += 500;
     }
     if (!muted && playSuccess.current) {
       playSuccess.current();
@@ -528,7 +456,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     };
   }, [state.grid.entries]);
 
-  const beginPauseProps = { constructorPage: puzzle.constructorPage, loadingPlayState: loadingPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
+  const beginPauseProps = { constructorPage: puzzle.constructorPage, loadingPlayState: loadingPlayState || !state.loadedPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
 
   /* `clueMap` is a map from ENTRYWORD => '5D: This is the clue' - we use this
    *    for comment clue tooltips.

@@ -2,19 +2,19 @@ import { useState, useEffect, useContext, ReactNode } from 'react';
 
 import { Link } from './Link';
 import { AuthContext } from './AuthContext';
-import { getPlays, PlayMapT } from '../lib/plays';
+import { getPossiblyStalePlay, } from '../lib/plays';
 import { PuzzleResult } from '../lib/types';
 import { SMALL_AND_UP } from '../lib/style';
 import { PuzzleSizeIcon } from '../components/Icons';
 import { Emoji } from '../components/Emoji';
 import { timeString } from '../lib/utils';
 import { getFromSessionOrDB } from '../lib/dbUtils';
-import { AuthoredPuzzlesV } from '../lib/dbtypes';
+import { AuthoredPuzzlesV, PlayWithoutUserT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
 
 export const PuzzleLink = (props: { id: string, width?: number, height?: number, title: string, children?: ReactNode }) => {
   const { user } = useContext(AuthContext);
-  const [plays, setPlays] = useState<PlayMapT | null>(null);
+  const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
   const [authored, setAuthored] = useState(false);
 
   useEffect(() => {
@@ -30,14 +30,12 @@ export const PuzzleLink = (props: { id: string, width?: number, height?: number,
         });
     }
 
-    getPlays(user)
-      .then(pm => setPlays(pm))
+    getPossiblyStalePlay(user, props.id)
+      .then(p => setPlay(p))
       .catch(reason => {
         console.error(reason);
       });
   }, [user, props.id]);
-
-  const play = plays && plays[props.id];
 
   return <div css={{
     overflow: 'auto',

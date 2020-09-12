@@ -3,15 +3,14 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import equal from 'fast-deep-equal';
 
-import { App, TimestampClass, TimestampType } from './firebaseWrapper';
-import { DBPuzzleV, PlayWithoutUserV, PlayWithoutUserT, PlayT, LegacyPlayV, downloadOptionallyTimestamped } from './dbtypes';
+import { App } from './firebaseWrapper';
+import { PlayWithoutUserT, PlayWithoutUserV, LegacyPlayV, downloadOptionallyTimestamped, PlayT } from './dbtypes';
 
-const PlayMapV = t.record(t.string, PlayWithoutUserV);
+const PlayMapV = t.record(t.string, t.union([PlayWithoutUserV, t.null]));
 export type PlayMapT = t.TypeOf<typeof PlayMapV>;
 
 export const TimestampedPlayMapV = downloadOptionallyTimestamped(PlayMapV);
 export type TimestampedPlayMapT = t.TypeOf<typeof TimestampedPlayMapV>;
-const PlayTTL = 10 * 60 * 1000;
 
 const dirtyPlays = new Set<string>();
 
@@ -21,101 +20,71 @@ export function isDirty(user: firebase.User, puzzleId: string) {
 }
 
 let memoryStore: Record<string, TimestampedPlayMapT> = {};
-const currentQuery: Record<string, Promise<firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>>> = {};
 
 export function resetMemoryStore() {
   memoryStore = {};
 }
 
-export async function getPlays(user: firebase.User | undefined): Promise<PlayMapT> {
-  const storageKey = user ? 'plays/' + user.uid : 'plays/logged-out';
+function getStorageKey(user: firebase.User | undefined) {
+  return user ? 'plays/' + user.uid : 'plays/logged-out';
+}
 
-  if (currentQuery[storageKey]) {
-    // Wait for the current query to finish and then just snag the results from the memory store which will be updated
-    return currentQuery[storageKey].then(() => {
-      return memoryStore[storageKey].data;
-    });
-  }
-
-  let plays: PlayMapT = {};
-  let lastUpdated: TimestampType | null = null;
-  const now = new Date();
-
+function getStore(storageKey: string): PlayMapT {
   if (memoryStore[storageKey]) {
-    const inMemory = memoryStore[storageKey];
-    if (!user || (inMemory.downloadedAt && (now.getTime() < inMemory.downloadedAt.toDate().getTime() + PlayTTL))) {
-      return Promise.resolve(inMemory.data);
-    }
+    return memoryStore[storageKey].data;
   }
-
   const inStorage = localStorage.getItem(storageKey);
   if (inStorage) {
     const validationResult = TimestampedPlayMapV.decode(JSON.parse(inStorage));
     if (isRight(validationResult)) {
       console.log('loaded ' + storageKey + ' from local storage');
       const valid = validationResult.right;
-      plays = valid.data;
-      lastUpdated = valid.downloadedAt;
       memoryStore[storageKey] = valid;
+      return valid.data;
     } else {
       console.error(PathReporter.report(validationResult).join(','));
-      return Promise.reject('Couldn\'t parse object in local storage');
+      throw new Error('Couldn\'t parse object in local storage');
     }
   }
+  return {};
+}
 
-  if (!user || (lastUpdated && (now.getTime() < lastUpdated.toDate().getTime() + PlayTTL))) {
-    // We either don't have a user or our cache is still valid - no need to go to db
-    return Promise.resolve(plays);
+export function getPlayFromCache(user: firebase.User | undefined, puzzleId: string): PlayWithoutUserT | null | undefined {
+  const storageKey = getStorageKey(user);
+  const store = getStore(storageKey);
+  return store[puzzleId];
+}
+
+export async function getPossiblyStalePlay(user: firebase.User | undefined, puzzleId: string): Promise<PlayWithoutUserT | null> {
+  const cached = getPlayFromCache(user, puzzleId);
+  if (cached !== undefined) {
+    return cached;
   }
+  if (!user) {
+    return cached || null;
+  }
+  return getPlayFromDB(user, puzzleId);
+}
 
-  console.log('updating ' + storageKey + ' from db');
+export async function getPlayFromDB(user: firebase.User, puzzleId: string): Promise<PlayWithoutUserT | null> {
+  console.log(`getting play for ${puzzleId} from db`);
   const db = App.firestore();
-  const updateTo = TimestampClass.now();
-  let query = db.collection('p').where('u', '==', user.uid).where('ua', '<=', updateTo);
-  if (lastUpdated) {
-    query = query.where('ua', '>', lastUpdated);
+  const dbres = await db.doc(`p/${puzzleId}-${user.uid}`).get();
+
+  if (!dbres.exists) {
+    cachePlay(user, puzzleId, null, true);
+    return null;
   }
 
-  currentQuery[storageKey] = query.get();
-  return currentQuery[storageKey]
-    .then(async dbres => {
-      console.log('loaded ' + dbres.size + ' plays from DB');
-      for (const doc of dbres.docs) {
-        const playResult = LegacyPlayV.decode(doc.data());
-        if (isRight(playResult)) {
-          const play = playResult.right;
-          let title = play.n;
-          if (!title) {
-            const puzzleRes = await db.collection('c').doc(play.c).get();
-            if (!puzzleRes.exists) {
-              return Promise.reject('Tried getting title for ' + play.c + ' but failed');
-            }
-            const validationResult = DBPuzzleV.decode(puzzleRes.data());
-            if (isRight(validationResult)) {
-              title = validationResult.right.t;
-            } else {
-              console.error(PathReporter.report(validationResult).join(','));
-              return Promise.reject('Malformed puzzle while getting title');
-            }
-          }
-          plays[play.c] = { ...play, n: title };
-        } else {
-          console.error(PathReporter.report(playResult).join(','));
-          return Promise.reject('Malformed play');
-        }
-      }
-
-      const forLS: TimestampedPlayMapT = {
-        downloadedAt: updateTo,
-        data: plays
-      };
-      localStorage.setItem(storageKey, JSON.stringify(forLS));
-      memoryStore[storageKey] = forLS;
-      return plays;
-    })
-    .finally(() => {
-      delete currentQuery[storageKey];
-    });
+  const playResult = LegacyPlayV.decode(dbres.data());
+  if (isRight(playResult)) {
+    const play = { ...playResult.right, n: playResult.right.n || 'Title unknown' };
+    cachePlay(user, puzzleId, play, true);
+    return play;
+  } else {
+    console.error(PathReporter.report(playResult).join(','));
+    return Promise.reject('Malformed play');
+  }
 }
 
 export async function writePlayToDB(user: firebase.User, puzzleId: string): Promise<void> {
@@ -123,21 +92,9 @@ export async function writePlayToDB(user: firebase.User, puzzleId: string): Prom
     return Promise.reject('trying to write to db but play is clean');
   }
 
-  const storageKey = 'plays/' + user.uid;
-  const inStorage = localStorage.getItem(storageKey);
-  let play: PlayWithoutUserT | undefined = undefined;
-
-  if (inStorage) {
-    const validationResult = TimestampedPlayMapV.decode(JSON.parse(inStorage));
-    if (isRight(validationResult)) {
-      const valid = validationResult.right;
-      play = valid.data[puzzleId];
-    } else {
-      console.error(PathReporter.report(validationResult).join(','));
-      return Promise.reject('could not parse plays in LS');
-    }
-  }
-
+  const storageKey = getStorageKey(user);
+  const store = getStore(storageKey);
+  const play: PlayWithoutUserT | null | undefined = store[puzzleId];
   if (!play) {
     return Promise.reject('no cached play!');
   }
@@ -149,46 +106,31 @@ export async function writePlayToDB(user: firebase.User, puzzleId: string): Prom
   return db.collection('p').doc(docId).set(dbPlay);
 }
 
-export function cachePlay(user: firebase.User | undefined, play: PlayWithoutUserT): void {
-  const storageKey = user ? 'plays/' + user.uid : 'plays/logged-out';
-  const inStorage = localStorage.getItem(storageKey);
-  let plays: PlayMapT = {};
-  let lastUpdated: TimestampType | null = null;
+export function cachePlay(user: firebase.User | undefined, puzzleId: string, play: PlayWithoutUserT | null, isClean?: boolean): void {
+  const storageKey = getStorageKey(user);
+  const store = getStore(storageKey);
 
-  if (inStorage) {
-    const validationResult = TimestampedPlayMapV.decode(JSON.parse(inStorage));
-    if (isRight(validationResult)) {
-      console.log('loaded ' + storageKey + ' from local storage');
-      const valid = validationResult.right;
-      plays = valid.data;
-      lastUpdated = valid.downloadedAt;
-    } else {
-      console.error(PathReporter.report(validationResult).join(','));
-      throw new Error('Couldn\'t parse object in local storage');
+  function omitUa(p: PlayWithoutUserT | null) {
+    if (!p) {
+      return null;
     }
-  }
-
-  function omitUa(p: PlayWithoutUserT) {
     const { ua, ...rest } = p; // eslint-disable-line @typescript-eslint/no-unused-vars
     return rest;
   }
-
-  if (plays[play.c]) {
-    if (equal(omitUa(plays[play.c]), omitUa(play))) {
-      return;
-    }
+  if (store[puzzleId] && equal(omitUa(store[puzzleId]), omitUa(play))) {
+    return;
   }
 
-  if (user) {
-    const docId = play.c + '-' + user.uid;
+  store[puzzleId] = play;
+  const forLS: TimestampedPlayMapT = {
+    downloadedAt: null,
+    data: store
+  };
+  localStorage.setItem(storageKey, JSON.stringify(forLS));
+  memoryStore[storageKey] = forLS;
+
+  if (user && play && !isClean) {
+    const docId = puzzleId + '-' + user.uid;
     dirtyPlays.add(docId);
   }
-  plays[play.c] = play;
-
-  const forLS: TimestampedPlayMapT = {
-    downloadedAt: lastUpdated,
-    data: plays
-  };
-  memoryStore[storageKey] = forLS;
-  localStorage.setItem(storageKey, JSON.stringify(forLS));
 }

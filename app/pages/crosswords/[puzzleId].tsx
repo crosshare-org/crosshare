@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import { GetServerSideProps } from 'next';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -8,11 +8,14 @@ import { AuthContext } from '../../components/AuthContext';
 import { puzzleFromDB, ServerPuzzleResult } from '../../lib/types';
 import { Puzzle, NextPuzzleLink } from '../../components/Puzzle';
 import { App } from '../../lib/firebaseWrapper';
-import { DBPuzzleV, PlayWithoutUserT, getDateString, addZeros, CategoryIndexT } from '../../lib/dbtypes';
-import { getPlays } from '../../lib/plays';
+import {
+  DBPuzzleV, PlayWithoutUserV, PlayWithoutUserT, getDateString, addZeros, CategoryIndexT
+} from '../../lib/dbtypes';
+import { getPlayFromCache, cachePlay } from '../../lib/plays';
 import { ErrorPage } from '../../components/ErrorPage';
 import { Link } from '../../components/Link';
 import { userIdToPage } from '../../lib/constructorPage';
+import { useDocument } from 'react-firebase-hooks/firestore';
 
 interface PuzzlePageProps {
   puzzle: ServerPuzzleResult | null,
@@ -93,41 +96,66 @@ export default function PuzzlePage({ puzzle, nextPuzzle }: PuzzlePageProps) {
       <p>Try the <Link href="/" passHref>homepage</Link>.</p>
     </ErrorPage>;
   }
-  return <PlayLoader key={puzzle.id} puzzle={puzzle} nextPuzzle={nextPuzzle} />;
+  return <CachePlayLoader key={puzzle.id} puzzle={puzzle} nextPuzzle={nextPuzzle} />;
 }
 
-const PlayLoader = ({ puzzle, nextPuzzle }: { puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink }) => {
+const CachePlayLoader = ({ puzzle, nextPuzzle }: { puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink }) => {
   const { user, isAdmin, loading, error } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
-  const [playError, setPlayError] = useState<string | null>(null);
   const [loadingPlay, setLoadingPlay] = useState(true);
 
   useEffect(() => {
-    setPlay(null);
-    setPlayError(null);
-    setLoadingPlay(true);
-
     if (loading || error) {
       return;
     }
 
-    getPlays(user)
-      .then(plays => {
-        setPlay(plays[puzzle.id] || null);
-        setLoadingPlay(false);
-      })
-      .catch((e) => {
-        console.error(e);
-        setPlayError(typeof e === 'string' ? e : 'error loading play');
-      });
+    const cachedPlay = getPlayFromCache(user, puzzle.id);
+    if (cachedPlay ?.f) {
+      setPlay(cachedPlay);
+    }
+    setLoadingPlay(false);
   }, [puzzle, user, loading, error]);
 
   if (error) {
     return <><p>Error loading user: {error}</p><p>Please refresh the page to try again.</p></>;
   }
-  if (playError) {
-    return <><p>Error loading play: {playError}</p><p>Please refresh the page to try again.</p></>;
+  if (loading || loadingPlay) {
+    return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={true} play={play} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
   }
+  if (play || !user || puzzle.authorId === user.uid) {
+    return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={false} play={play} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
+  }
+  return <DBPlayLoader key={puzzle.id} puzzle={puzzle} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
+};
 
-  return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={loading || loadingPlay} play={play} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
+const DBPlayLoader = ({ user, puzzle, isAdmin, nextPuzzle }: { user: firebase.User, isAdmin: boolean, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink }) => {
+  // Load from db
+  const [doc, loading, error] = useDocument(App.firestore().doc(`p/${puzzle.id}-${user.uid}`));
+  const [play, playDecodeError] = useMemo(() => {
+    if (doc === undefined) {
+      return [undefined, undefined];
+    }
+    if (!doc.exists) {
+      return [null, undefined];
+    }
+    const validationResult = PlayWithoutUserV.decode(doc.data({ serverTimestamps: 'previous' }));
+    if (isRight(validationResult)) {
+      cachePlay(user, validationResult.right.c, validationResult.right, true);
+      return [validationResult.right, undefined];
+    } else {
+      console.log(PathReporter.report(validationResult).join(','));
+      return [undefined, 'failed to decode play'];
+    }
+  }, [doc, user]);
+
+  if (error) {
+    return <><p>Error loading user: {error}</p><p>Please refresh the page to try again.</p></>;
+  }
+  if (playDecodeError) {
+    return <><p>Error loading play: {playDecodeError}</p><p>Please refresh the page to try again.</p></>;
+  }
+  if (loading || play === undefined) {
+    return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={true} play={null} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
+  }
+  return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={false} play={play} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
 };

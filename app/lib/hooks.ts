@@ -82,7 +82,7 @@ export function useAuth() {
       return [{ ...validationResult.right, id: cpSnapshot.docs[0].id }, undefined];
     } else {
       console.log(PathReporter.report(validationResult).join(','));
-      return [undefined, undefined];
+      return [undefined, 'Failed to decode constructor page'];
     }
   }, [cpSnapshot]);
 
