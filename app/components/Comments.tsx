@@ -18,7 +18,9 @@ import { Link } from './Link';
 
 const COMMENT_LENGTH_LIMIT = 280;
 
-type LocalComment = Omit<Comment, 'id' | 'replies'>;
+interface LocalComment extends Omit<Comment, 'replies'> {
+  isLocal: true
+}
 type CommentWithPossibleLocalReplies = Omit<Comment, 'replies'> & {
   replies?: Array<CommentOrLocalComment>
 }
@@ -192,6 +194,8 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
 
       // Replace this form w/ the comment for the short term
       setSubmittedComment({
+        isLocal: true,
+        id: ref.id,
         commentText: comment.c,
         authorId: comment.a,
         authorUsername: comment.un,
@@ -267,16 +271,16 @@ interface CommentsProps {
 }
 
 function isComment(comment: CommentOrLocalComment): comment is CommentWithPossibleLocalReplies {
-  return 'id' in comment;
+  return !('isLocal' in comment);
 }
 
 function findCommentById(comments: Array<CommentOrLocalComment>, id: string): CommentWithPossibleLocalReplies | null {
   for (const comment of comments) {
-    if (!isComment(comment)) {
-      continue;
-    }
     if (comment.id === id) {
       return comment;
+    }
+    if (!isComment(comment)) {
+      continue;
     }
     if (comment.replies !== undefined) {
       const res = findCommentById(comment.replies, id);
@@ -304,10 +308,16 @@ export const Comments = ({ comments, ...props }: CommentsProps): JSX.Element => 
       // will also remove from LS
       if (moderatedVersion !== null) {
         console.log('found existing version, skipping one from LS');
+        if (!isComment(moderatedVersion)) {
+          toKeepInStorage.push(c);
+        }
         continue;
       }
+
       toKeepInStorage.push(c);
       const localComment: LocalComment = {
+        isLocal: true,
+        id: c.i,
         commentText: c.c,
         authorId: c.a,
         authorDisplayName: c.n,
