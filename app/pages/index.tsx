@@ -9,17 +9,11 @@ import { puzzleFromDB, ServerPuzzleResult } from '../lib/types';
 import { DBPuzzleV, getDateString } from '../lib/dbtypes';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
-import { AuthorLink, PuzzleLink, PuzzleResultLink } from '../components/PuzzleLink';
-import { userIdToPage, ConstructorPageT } from '../lib/constructorPage';
-
-type DailyMini = {
-  id: string,
-  authorName: string,
-  authorPage: ConstructorPageT | null,
-}
+import { PuzzleResultLink } from '../components/PuzzleLink';
+import { userIdToPage } from '../lib/constructorPage';
 
 interface HomePageProps {
-  dailymini: DailyMini,
+  dailymini: ServerPuzzleResult,
   featured: Array<ServerPuzzleResult>
 }
 
@@ -51,7 +45,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ re
     const validationResult = DBPuzzleV.decode(data);
     if (isRight(validationResult)) {
       res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-      const dm = { id: dmResult.id, authorName: validationResult.right.n, authorPage: await userIdToPage(validationResult.right.a) };
+      const dm = { ...puzzleFromDB(validationResult.right), id: dmResult.id, constructorPage: await userIdToPage(validationResult.right.a) };
       return { props: { dailymini: dm, featured } };
     } else {
       console.error(PathReporter.report(validationResult).join(','));
@@ -74,10 +68,8 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
         Crosshare is the best place to create, share and solve crossword puzzles.
       </p>
       <h2>Daily Mini</h2>
-      <PuzzleLink id={dailymini.id} title="Today's daily mini crossword">
-        <AuthorLink authorName={dailymini.authorName} constructorPage={dailymini.authorPage} />
-        <p><Link href='/dailyminis/[[...slug]]' as={`/dailyminis/${today.getUTCFullYear()}/${today.getUTCMonth() + 1}`} passHref>Play previous daily minis</Link></p>
-      </PuzzleLink>
+      <PuzzleResultLink puzzle={dailymini} showAuthor={true} constructorPage={dailymini.constructorPage} title={'Today\'s daily mini crossword'} />
+      <p><Link href='/dailyminis/[[...slug]]' as={`/dailyminis/${today.getUTCFullYear()}/${today.getUTCMonth() + 1}`} passHref>Play previous daily minis</Link></p>
       <h2>Share a Puzzle</h2>
       <p><Link href='/upload' as='/upload' passHref>Upload a .puz to get a Crosshare link to share with solvers</Link></p>
       <h2>Featured Puzzles</h2>

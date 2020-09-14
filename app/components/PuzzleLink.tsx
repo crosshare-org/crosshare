@@ -8,33 +8,26 @@ import { SMALL_AND_UP } from '../lib/style';
 import { PuzzleSizeIcon } from '../components/Icons';
 import { Emoji } from '../components/Emoji';
 import { timeString } from '../lib/utils';
-import { getFromSessionOrDB } from '../lib/dbUtils';
-import { AuthoredPuzzlesV, PlayWithoutUserT } from '../lib/dbtypes';
+import { PlayWithoutUserT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
 
-export const PuzzleLink = (props: { id: string, width?: number, height?: number, title: string, subTitle?: string, children?: ReactNode }) => {
+const PuzzleLink = (props: { id: string, authorId: string, width?: number, height?: number, title: string, subTitle?: string, children?: ReactNode }) => {
   const { user } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
-  const [authored, setAuthored] = useState(false);
+  const authored = user ?.uid === props.authorId;
 
   useEffect(() => {
-    if (user) {
-      getFromSessionOrDB({ collection: 'uc', docId: user.uid, validator: AuthoredPuzzlesV, ttl: 5 * 60 * 1000 })
-        .then(aps => {
-          if (aps !== null) {
-            setAuthored(Object.prototype.hasOwnProperty.call(aps, props.id));
-          }
-        })
-        .catch(reason => {
-          console.error(reason);
-        });
-    }
+    let ignore = false;
 
-    getPossiblyStalePlay(user, props.id)
-      .then(p => setPlay(p))
-      .catch(reason => {
-        console.error(reason);
-      });
+    async function fetchData() {
+      const p = await getPossiblyStalePlay(user, props.id);
+      if (ignore) {
+        return;
+      }
+      setPlay(p);
+    }
+    fetchData();
+    return () => { ignore = true; };
   }, [user, props.id]);
 
   return <div css={{
@@ -88,7 +81,7 @@ export const AuthorLink = ({ authorName, constructorPage }: { authorName: string
 };
 
 export const PuzzleResultLink = ({ puzzle, showAuthor, constructorPage, title }: { puzzle: PuzzleResult, showAuthor: boolean, title?: string, constructorPage?: ConstructorPageT | null }) => {
-  return <PuzzleLink id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={title || puzzle.title} subTitle={title ? puzzle.title : undefined}>
+  return <PuzzleLink authorId={puzzle.authorId} id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={title || puzzle.title} subTitle={title ? puzzle.title : undefined}>
     {showAuthor ? <AuthorLink authorName={puzzle.authorName} constructorPage={constructorPage || null} /> : undefined}
   </PuzzleLink>;
 };
