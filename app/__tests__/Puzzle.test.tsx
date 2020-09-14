@@ -145,7 +145,7 @@ test('nonuser progress should be cached in local storage but not db', async () =
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
 
-  let { findByText, queryByText, getByLabelText, container } = render(
+  let { findByText, findByTitle, queryByText, getByLabelText, container } = render(
     <PuzzlePage puzzle={dailymini_5_19} />, {}
   );
 
@@ -164,6 +164,9 @@ test('nonuser progress should be cached in local storage but not db', async () =
 
   expect(getByLabelText('grid')).toMatchSnapshot();
 
+  // Pause doesn't cause us to write to db
+  fireEvent.click(await findByTitle(/Pause Game/i));
+
   // Unmount doesn't cause us to write to the db
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
   await cleanup();
@@ -171,11 +174,11 @@ test('nonuser progress should be cached in local storage but not db', async () =
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
 
   // Now try again!
-  ({ findByText, queryByText, getByLabelText, container } = render(
+  ({ findByTitle, findByText, queryByText, getByLabelText, container } = render(
     <PuzzlePage puzzle={dailymini_5_19} />, {}
   ));
 
-  fireEvent.click(await findByText(/Resume/i));
+  fireEvent.click(await findByText(/Resume/i, undefined, { timeout: 3000 }));
   expect(queryByText(/Resume/i)).toBeNull();
 
   cell = getByLabelText('cell0x1');
@@ -217,7 +220,7 @@ test('anonymous user progress should be cached in local storage and db', async (
   setApp(app as firebase.app.App);
   const admin = firebaseTesting.initializeAdminApp({ projectId: 'test1' });
 
-  let { findByText, queryByText, getByLabelText, container } = render(
+  let { findByTitle, findByText, queryByText, getByLabelText, container } = render(
     <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
   );
 
@@ -236,19 +239,21 @@ test('anonymous user progress should be cached in local storage and db', async (
 
   expect(getByLabelText('grid')).toMatchSnapshot();
 
-  // Unmount should cause us to write to the db
+  // Pause should cause us to write to the db
+
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(0);
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
+  fireEvent.click(await findByTitle(/Pause Game/i));
   await cleanup();
   await waitForExpect(async () => expect((await admin.firestore().collection('p').get()).size).toEqual(1));
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
   // Now try again!
-  ({ findByText, queryByText, getByLabelText, container } = render(
+  ({ findByTitle, findByText, queryByText, getByLabelText, container } = render(
     <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
   ));
 
-  await findByText(/Resume/i);
+  await findByText(/Resume/i, undefined, { timeout: 3000 });
 
   cell = getByLabelText('cell0x1');
   expect(cell).toHaveTextContent('B');
@@ -266,17 +271,18 @@ test('anonymous user progress should be cached in local storage and db', async (
   sessionStorage.clear();
   localStorage.clear();
   plays.resetMemoryStore();
-  ({ findByText, queryByText, getByLabelText, container } = render(
+  ({ findByTitle, findByText, queryByText, getByLabelText, container } = render(
     <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
   ));
 
-  await findByText(/Resume/i);
+  await findByText(/Resume/i, undefined, { timeout: 3000 });
 
   cell = getByLabelText('cell0x1');
   expect(cell).toHaveTextContent('B');
 
   cell2 = getByLabelText('cell0x2');
   expect(cell2).toHaveTextContent('C');
+  fireEvent.click(await findByTitle(/Pause Game/i));
 
   await cleanup();
   await flushPromises();

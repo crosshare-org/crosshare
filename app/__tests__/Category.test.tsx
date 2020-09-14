@@ -91,6 +91,7 @@ test('basic category page test', async () => {
 
 test('category page when logged in with some plays', async () => {
   setApp(loggedInApp);
+  resetMemoryStore();
 
   const props = await propsForCategoryId('dailymini');
   resetMemoryStore();

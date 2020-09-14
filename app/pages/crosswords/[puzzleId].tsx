@@ -110,8 +110,8 @@ const CachePlayLoader = ({ puzzle, nextPuzzle }: { puzzle: ServerPuzzleResult, n
     }
 
     const cachedPlay = getPlayFromCache(user, puzzle.id);
-    if (cachedPlay ?.f) {
-      setPlay(cachedPlay);
+    if (cachedPlay ?.f || !user) {
+      setPlay(cachedPlay || null);
     }
     setLoadingPlay(false);
   }, [puzzle, user, loading, error]);

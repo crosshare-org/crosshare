@@ -67,7 +67,7 @@ export async function getPossiblyStalePlay(user: firebase.User | undefined, puzz
 }
 
 export async function getPlayFromDB(user: firebase.User, puzzleId: string): Promise<PlayWithoutUserT | null> {
-  console.log(`getting play for ${puzzleId} from db`);
+  console.log(`getting play p/${puzzleId}-${user.uid} from db`);
   const db = App.firestore();
   const dbres = await db.doc(`p/${puzzleId}-${user.uid}`).get();
 

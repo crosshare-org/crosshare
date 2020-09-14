@@ -13,8 +13,6 @@ import waitForExpect from 'wait-for-expect';
 
 const readFile = util.promisify(fs.readFile);
 
-
-jest.mock('next/router', () => ({ push: jest.fn() }));
 jest.mock('../lib/firebaseWrapper');
 jest.mock('../lib/WordDB');
 
@@ -106,7 +104,7 @@ test('upload a puzzle', async () => {
   expect(await r.findByText('Across')).toBeInTheDocument();
   fireEvent.click(r.getByText('Publish', { exact: true }));
   fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
-  await (r.findByText(/Published Successfully/, undefined, { timeout: 2000 }));
+  await (r.findByText(/Published Successfully/, undefined, { timeout: 3000 }));
 
   const puzzles = await admin.firestore().collection('c').get();
   expect(puzzles.size).toEqual(1);
@@ -127,7 +125,7 @@ test('upload a puzzle', async () => {
   const props1 = await getServerSideProps({ params: { puzzleId }, res: { setHeader: jest.fn() } } as any);
   setApp(randoApp as firebase.app.App);
   const r5 = render(<PuzzlePage {...props1.props} />, { user: rando });
-  expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
+  expect(await r5.findByText('Begin Puzzle', undefined, { timeout: 3000 })).toBeInTheDocument();
   expect(r5.queryByText(/AV Club xword/)).toBeInTheDocument();
   expect(r5.queryByText(/Daily Mini/)).toBeNull();
   await r5.findByText(/Enter Rebus/i);

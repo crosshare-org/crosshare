@@ -4,8 +4,6 @@ import * as firebaseTesting from '@firebase/testing';
 import { DBPuzzleT, getDateString } from '../lib/dbtypes';
 import HomePage, { getServerSideProps } from '../pages/index';
 
-jest.mock('next/router', () => ({ push: jest.fn() }));
-
 let adminApp: firebase.app.App;
 let app: firebase.app.App;
 

@@ -8,7 +8,6 @@ import PuzzlePage, { getServerSideProps } from '../pages/crosswords/[puzzleId]';
 import { PuzzleLoader as StatsPuzzleLoader } from '../pages/crosswords/[puzzleId]/stats';
 import waitForExpect from 'wait-for-expect';
 
-jest.mock('next/router', () => ({ push: jest.fn() }));
 jest.mock('../lib/firebaseWrapper');
 jest.mock('../lib/WordDB');
 
