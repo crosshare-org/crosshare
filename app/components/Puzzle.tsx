@@ -291,6 +291,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   function prodPause() {
     if (process.env.NODE_ENV !== 'development') {
       dispatch({ type: 'PAUSEACTION' });
+      writePlayToDBIfNeeded();
     }
   }
   useEventListener('blur', prodPause);
@@ -322,6 +323,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   }, [muted, audioContext, initAudioContext]);
 
   const writePlayToDBIfNeeded = useCallback(async (user?: firebase.User) => {
+    console.log('doing write play');
     if (!state.loadedPlayState) {
       return;
     }
@@ -377,7 +379,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
 
   const router = useRouter();
   useEffect(() => {
-    const listener = () => { console.log('doing write play'); writePlayToDBIfNeeded(); };
+    const listener = () => { writePlayToDBIfNeeded(); };
     window.addEventListener('beforeunload', listener);
     router.events.on('routeChangeStart', listener);
 
@@ -661,7 +663,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           <TopBar>
             {!state.success ?
               <>
-                <TopBarLink icon={<FaPause />} hoverText={'Pause Game'} text={timeString(state.displaySeconds, true)} onClick={() => dispatch({ type: 'PAUSEACTION' })} keepText={true} />
+                <TopBarLink icon={<FaPause />} hoverText={'Pause Game'} text={timeString(state.displaySeconds, true)} onClick={() => { dispatch({ type: 'PAUSEACTION' }); writePlayToDBIfNeeded(); }} keepText={true} />
                 <TopBarLink icon={state.clueView ? <SpinnerFinished /> : <FaListOl />} text={state.clueView ? 'Grid' : 'Clues'} onClick={() => {
                   const a: ToggleClueViewAction = { type: 'TOGGLECLUEVIEW' };
                   dispatch(a);
