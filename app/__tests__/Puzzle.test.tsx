@@ -224,7 +224,7 @@ test('anonymous user progress should be cached in local storage and db', async (
     <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
   );
 
-  fireEvent.click(await findByText(/Begin Puzzle/i));
+  fireEvent.click(await findByText(/Begin Puzzle/i, undefined, { timeout: 3000 }));
   expect(queryByText(/Begin Puzzle/i)).toBeNull();
 
   fireEvent.keyDown(container, { key: 'A', keyCode: 65 });

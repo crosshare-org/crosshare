@@ -57,7 +57,12 @@
     "redirects": [
       {
         "source": "/category/dailymini",
-        "destination": "/categories/dailymini",
+        "destination": "/dailyminis",
+        "type": 301
+      },
+      {
+        "source": "/categories/dailymini",
+        "destination": "/dailyminis",
         "type": 301
       },
       {
@@ -103,7 +108,12 @@
       },
       {
         "source": "/category/dailymini",
-        "destination": "/categories/dailymini",
+        "destination": "/dailyminis",
+        "type": 301
+      },
+      {
+        "source": "/categories/dailymini",
+        "destination": "/dailyminis",
         "type": 301
       }
     ]

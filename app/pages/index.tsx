@@ -61,6 +61,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ re
 };
 
 export default function HomePage({ dailymini, featured }: HomePageProps) {
+  const today = new Date();
   return <>
     <Head>
       <title>Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles</title>
@@ -75,13 +76,13 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
       <h2>Daily Mini</h2>
       <PuzzleLink id={dailymini.id} title="Today's daily mini crossword">
         <AuthorLink authorName={dailymini.authorName} constructorPage={dailymini.authorPage} />
-        <p><Link href='/categories/[categoryId]' as='/categories/dailymini' passHref>Play previous daily minis</Link></p>
+        <p><Link href='/dailyminis/[[...slug]]' as={`/dailyminis/${today.getUTCFullYear()}/${today.getUTCMonth() + 1}`} passHref>Play previous daily minis</Link></p>
       </PuzzleLink>
       <h2>Share a Puzzle</h2>
       <p><Link href='/upload' as='/upload' passHref>Upload a .puz to get a Crosshare link to share with solvers</Link></p>
       <h2>Featured Puzzles</h2>
       {featured.map((p, i) => <PuzzleResultLink key={i} puzzle={p} constructorPage={p.constructorPage} showAuthor={true} />)}
-      <p css={{ marginTop: '1em' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
+      <p css={{ marginTop: '1em', paddingBottom: '1em' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
     </div >
   </>;
 }

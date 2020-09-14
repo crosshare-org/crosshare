@@ -12,7 +12,7 @@ import { getFromSessionOrDB } from '../lib/dbUtils';
 import { AuthoredPuzzlesV, PlayWithoutUserT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
 
-export const PuzzleLink = (props: { id: string, width?: number, height?: number, title: string, children?: ReactNode }) => {
+export const PuzzleLink = (props: { id: string, width?: number, height?: number, title: string, subTitle?: string, children?: ReactNode }) => {
   const { user } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
   const [authored, setAuthored] = useState(false);
@@ -65,7 +65,15 @@ export const PuzzleLink = (props: { id: string, width?: number, height?: number,
           ''
         }
       </div>
-      <h3>{props.title} {!authored && play ? (play.f ? <i>({timeString(play.t, false)})</i> : <i>(unfinished)</i>) : ''}</h3>
+      <h3 css={{
+        marginBottom: 0,
+      }}>{props.title} {!authored && play ? (play.f ? <i>({timeString(play.t, false)})</i> : <i>(unfinished)</i>) : ''}</h3>
+      {props.subTitle ?
+        <h4 css={{
+          marginBottom: 0,
+        }}>{props.subTitle}</h4>
+        : ''
+      }
     </Link>
     {props.children}
   </div>;
@@ -79,8 +87,8 @@ export const AuthorLink = ({ authorName, constructorPage }: { authorName: string
   return <p>By {authorName}</p>;
 };
 
-export const PuzzleResultLink = ({ puzzle, showAuthor, constructorPage }: { puzzle: PuzzleResult, showAuthor: boolean, constructorPage?: ConstructorPageT | null }) => {
-  return <PuzzleLink id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={puzzle.title}>
+export const PuzzleResultLink = ({ puzzle, showAuthor, constructorPage, title }: { puzzle: PuzzleResult, showAuthor: boolean, title?: string, constructorPage?: ConstructorPageT | null }) => {
+  return <PuzzleLink id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={title || puzzle.title} subTitle={title ? puzzle.title : undefined}>
     {showAuthor ? <AuthorLink authorName={puzzle.authorName} constructorPage={constructorPage || null} /> : undefined}
   </PuzzleLink>;
 };
