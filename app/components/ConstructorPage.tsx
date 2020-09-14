@@ -42,7 +42,11 @@ const BANNED_USERNAMES = {
   test: 1,
   testing: 1,
   android: 1,
-  help: 1
+  help: 1,
+  mini: 1,
+  dailymini: 1,
+  featured: 1,
+  daily: 1,
 };
 
 export const CreatePageForm = () => {
