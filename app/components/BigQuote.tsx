@@ -1,4 +1,4 @@
-import { SECONDARY } from '../lib/style';
+import { SECONDARY, SMALL_AND_UP } from '../lib/style';
 import { ReactNode } from 'react';
 
 export function BigQuote(props: { quote: string, attribution: ReactNode }) {
@@ -20,9 +20,20 @@ export function BigQuote(props: { quote: string, attribution: ReactNode }) {
         verticalAlign: '-0.4em',
       }
     }}>
-      <span css={{ fontFamily: 'Georgia, serif', fontSize: 30, fontStyle: 'italic' }}>{props.quote}</span>
+      <span css={{
+        fontFamily: 'Georgia, serif',
+        fontSize: 20,
+        [SMALL_AND_UP]: {
+          fontSize: 30,
+        },
+        fontStyle: 'italic'
+      }}>{props.quote}</span>
       <br />
-      <span css={{ fontSize: 20 }}>&mdash; {props.attribution}</span>
+      <span css={{
+        [SMALL_AND_UP]: {
+          fontSize: 20,
+        },
+      }}>&mdash; {props.attribution}</span>
     </div>
   </div>;
 }

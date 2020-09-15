@@ -6,13 +6,12 @@ import { LoadButton } from '../components/DBLoader';
 import { useWordDB } from '../lib/WordDB';
 import { useContext } from 'react';
 import { FeatureList, FeatureListItem } from '../components/FeatureList';
-import { PRIMARY, SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
 import { Link } from '../components/Link';
-import { Logo } from '../components/Icons';
 import { MdMoneyOff } from 'react-icons/md';
 import { IoMdResize, IoMdPhonePortrait } from 'react-icons/io';
 import { FaShareSquare, FaChartBar, FaComment, FaMagic, FaBicycle } from 'react-icons/fa';
 import { BigQuote } from '../components/BigQuote';
+import { Hero } from '../components/Hero';
 
 export default function BuilderPage() {
   const [ready, error, loading, setLoaded] = useWordDB();
@@ -46,27 +45,7 @@ export default function BuilderPage() {
       <meta key="description" name="description" content={description} />
       <meta key="og:description" property="og:description" content={description} />
     </Head>
-    <header css={{
-      padding: '0 0.5em',
-      backgroundColor: PRIMARY,
-      textAlign: 'center',
-      color: 'var(--text)',
-      paddingTop: '1em',
-      minHeight: 400,
-      [SMALL_AND_UP]: {
-        minHeight: 350,
-      },
-      [LARGE_AND_UP]: {
-        minHeight: 300,
-      }
-    }}>
-      <Link href="/" passHref css={{
-        textDecoration: 'none !important',
-        cursor: 'pointer',
-      }} title="Crosshare Home">
-        <Logo width={50} height={50} />
-      </Link>
-      <h2 css={{ fontSize: 40 }}>Construct crossword puzzles in a flash</h2>
+    <Hero text="Construct crossword puzzles in a flash">
       {ctx.loading ?
         <p>Checking if you have an exisiting account...</p>
         :
@@ -89,7 +68,7 @@ export default function BuilderPage() {
             )
         )
       }
-    </header>
+    </Hero>
     <BigQuote
       quote="The Crosshare constructor helps me build better puzzles faster. The interface is more intuitive than Crossfire's and the autofill feature works far more efficiently."
       attribution={<>Will of <Link href='/[...slug]' as={'/WWMC'} passHref>Will&apos;s Weekly Meta Crossword</Link></>}

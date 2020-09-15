@@ -5,8 +5,6 @@ import { PuzzleInProgressT } from '../lib/types';
 import { importFile } from '../lib/converter';
 import { AuthContext, renderLoginButtonIfNeeded } from '../components/AuthContext';
 import { Preview } from '../components/Preview';
-import { SMALL_AND_UP, PRIMARY, LARGE_AND_UP } from '../lib/style';
-import { Logo } from '../components/Icons';
 import { Link } from '../components/Link';
 import { MdMoneyOff } from 'react-icons/md';
 import { FaShareSquare, FaChartBar, FaComment } from 'react-icons/fa';
@@ -14,6 +12,7 @@ import { IoMdPhonePortrait, IoMdResize } from 'react-icons/io';
 import { RiPagesLine } from 'react-icons/ri';
 import { FeatureList, FeatureListItem } from '../components/FeatureList';
 import { BigQuote } from '../components/BigQuote';
+import { Hero } from '../components/Hero';
 
 export default function UploadPage() {
   const ctx = useContext(AuthContext);
@@ -63,30 +62,10 @@ export default function UploadPage() {
       <meta key="description" name="description" content={description} />
       <meta key="og:description" property="og:description" content={description} />
     </Head>
-    <header css={{
-      padding: '0 0.5em',
-      backgroundColor: PRIMARY,
-      textAlign: 'center',
-      color: 'var(--text)',
-      paddingTop: '1em',
-      minHeight: 400,
-      [SMALL_AND_UP]: {
-        minHeight: 350,
-      },
-      [LARGE_AND_UP]: {
-        minHeight: 300,
-      }
-    }}>
-      <Link href="/" passHref css={{
-        textDecoration: 'none !important',
-        cursor: 'pointer',
-      }} title="Crosshare Home">
-        <Logo width={50} height={50} />
-      </Link>
-      <h2 css={{ fontSize: 40 }}>Your crossword puzzles deserve to get shared</h2>
+    <Hero text="Your crossword puzzles deserve to get shared">
       {error ?
         <>
-          <p css={{ color: 'var(--error)' }}>{error}</p>
+          <p>Error: {error}</p>
           <p>If your puzzle isn&apos;t uploading correctly please message us on twitter or in the google group so we can help!</p>
         </>
         : ''}
@@ -110,7 +89,7 @@ export default function UploadPage() {
             </>
         )
       }
-    </header>
+    </Hero>
     <BigQuote
       quote="Crosshare changed the way I share my puzzles. The analytics allow me to better understand which parts of my grids are most difficult for solvers. It's a big part of why WWMC started and is still running today."
       attribution={<>Will of <Link href='/[...slug]' as={'/WWMC'} passHref>Will&apos;s Weekly Meta Crossword</Link></>}
