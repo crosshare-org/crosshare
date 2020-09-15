@@ -1,4 +1,4 @@
-import { useState, useContext, ReactNode } from 'react';
+import { useState, useContext } from 'react';
 import Head from 'next/head';
 
 import { PuzzleInProgressT } from '../lib/types';
@@ -12,35 +12,8 @@ import { MdMoneyOff } from 'react-icons/md';
 import { FaShareSquare, FaChartBar, FaComment } from 'react-icons/fa';
 import { IoMdPhonePortrait, IoMdResize } from 'react-icons/io';
 import { RiPagesLine } from 'react-icons/ri';
-
-function FeatureList(props: { children: ReactNode }) {
-  return <div css={{
-    margin: '1em',
-    ['@media (min-width: 1240px)']: {
-      maxWidth: '1200px',
-      margin: '1em auto',
-    },
-    columns: '3 300px',
-    columnGap: '1em',
-  }}>{props.children}</div>;
-}
-
-function FeatureListItem(props: { icon: ReactNode, heading: string, text: string }) {
-  return <div css={{
-    display: 'inline-block',
-    margin: '0 0 1em',
-    width: '100%',
-  }}>
-    <h3 css={{ textAlign: 'center' }}>{props.heading}</h3>
-    <div css={{
-      display: 'flex',
-      alignItems: 'flex-start',
-    }}>
-      <div css={{ marginRight: '0.5em', fontSize: '200%' }}>{props.icon}</div>
-      <p css={{ flex: 1 }}>{props.text}</p>
-    </div>
-  </div>;
-}
+import { FeatureList, FeatureListItem } from '../components/FeatureList';
+import { BigQuote } from '../components/BigQuote';
 
 export default function UploadPage() {
   const ctx = useContext(AuthContext);
@@ -138,6 +111,10 @@ export default function UploadPage() {
         )
       }
     </header>
+    <BigQuote
+      quote="Crosshare changed the way I share my puzzles. The analytics allow me to better understand which parts of my grids are most difficult for solvers. It's a big part of why WWMC started and is still running today."
+      attribution={<>Will of <Link href='/[...slug]' as={'/WWMC'} passHref>Will&apos;s Weekly Meta Crossword</Link></>}
+    />
     <FeatureList>
       <FeatureListItem icon={<MdMoneyOff />} heading="It's 100% free" text="Sharing puzzles on Crosshare is always free. You can publish as many puzzles as you'd like and share with them with as many solvers as you can find." />
       <FeatureListItem icon={<RiPagesLine />} heading="Make your .puz files interactive" text="If you're only publishing .puz and .pdf files, you're missing out on a bunch of potential solvers. Crosshare instantly gives your puzzle a home on the web and expands your audience." />

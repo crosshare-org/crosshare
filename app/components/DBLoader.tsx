@@ -5,16 +5,12 @@ import {
 import { App } from '../lib/firebaseWrapper';
 
 import { DefaultTopBar } from './TopBar';
-import { ProgressBar } from './ProgressBar';
 
 import * as WordDB from '../lib/WordDB';
 import { useWordDB } from '../lib/WordDB';
 
-// TODO this is jank but *shrug*
-const FILESIZE = 22000000;
-
 export const LoadButton = (props: { buttonText: string, onClick?: () => void, onComplete: () => void }): JSX.Element => {
-  const [dlProgress, setDlProgress] = useState<number | null>(null);
+  const [dlInProgress, setDlInProgress] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
   const [error, setError] = useState('');
 
@@ -22,17 +18,14 @@ export const LoadButton = (props: { buttonText: string, onClick?: () => void, on
     if (props.onClick) {
       props.onClick();
     }
-    setDlProgress(0);
+    setDlInProgress(true);
     const storage = App.storage();
     const wordlistRef = storage.ref('worddb.json');
     wordlistRef.getDownloadURL().then(function(url: string) {
       const xhr = new XMLHttpRequest();
       xhr.responseType = 'json';
-      xhr.onprogress = (e) => {
-        setDlProgress(e.total ? e.loaded / e.total : e.loaded / FILESIZE);
-      };
       xhr.onload = async () => {
-        setDlProgress(null);
+        setDlInProgress(false);
         setValidating(true);
         return WordDB.validateAndSet(xhr.response).then(() => { setValidating(false); props.onComplete(); });
       };
@@ -45,12 +38,12 @@ export const LoadButton = (props: { buttonText: string, onClick?: () => void, on
 
   if (error) {
     return <p>Something went wrong: {error}</p>;
-  } else if (dlProgress !== null || validating) {
+  } else if (dlInProgress || validating) {
     return <>
-      {dlProgress !== null ?
-        <ProgressBar percentDone={dlProgress} />
+      {dlInProgress ?
+        <p>Downloading word database...</p>
         :
-        <p><b>Downloaded, validating database...</b></p>
+        <p>Downloaded, validating database...</p>
       }
       <p>Please be patient and keep this window open, this can take a while.</p>
     </>;

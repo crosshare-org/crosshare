@@ -23,7 +23,6 @@ import {
   EscapeKey, BacktickKey, PeriodKey, PuzzleSizeIcon, EnterKey, ExclamationKey
 } from './Icons';
 import { AuthProps } from './AuthContext';
-import { LoadButton } from './DBLoader';
 import { Histogram } from './Histogram';
 import { PublishOverlay } from './PublishOverlay';
 import { TimestampClass } from '../lib/firebaseWrapper';
@@ -39,7 +38,7 @@ import {
   NewPuzzleAction, initialBuilderState, BuilderGrid, ClickedEntryAction
 } from '../reducers/reducer';
 import {
-  NestedDropDown, TopBarLink, TopBar, DefaultTopBar, TopBarDropDownLink,
+  NestedDropDown, TopBarLink, TopBar, TopBarDropDownLink,
   TopBarDropDownLinkA, TopBarDropDown
 } from './TopBar';
 import { SquareAndCols } from './Page';
@@ -55,7 +54,6 @@ import { usePersistedBoolean } from '../lib/hooks';
 
 import useResizeObserver from 'use-resize-observer';
 import { ResizeObserver as Polyfill } from '@juggle/resize-observer';
-import { useWordDB } from '../lib/WordDB';
 import { Keyboard } from './Keyboard';
 import { SMALL_AND_UP } from '../lib/style';
 // TODO conditional import only when we need the polyfill?
@@ -66,30 +64,7 @@ if (typeof window !== 'undefined') {
 let worker: Worker;
 
 type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-type BuilderProps = WithOptional<Omit<PuzzleT, 'comments' | 'category' | 'authorId' | 'authorName' | 'moderated' | 'publishTime'>, 'clues' | 'title' | 'constructorNotes' | 'highlighted' | 'highlight'>
-
-export const BuilderDBLoader = (props: BuilderProps & AuthProps): JSX.Element => {
-  const [ready, error, loading, setLoaded] = useWordDB();
-
-  if (ready) {
-    return <Builder {...props} />;
-  } else if (loading) {
-    return <div>Loading, this can take a minute...</div>;
-  }
-  if (error) {
-    console.error(error);
-  }
-  return <>
-    <DefaultTopBar />
-    <div css={{ margin: '1em' }}>
-      <h2>Crosshare Constructor</h2>
-      <p>The first time you use the constructor on a new browser Crosshare needs
-      to download and build a word database. This can take a minute. Please let us
-      know if you have any issues!</p>
-      <LoadButton buttonText='Build Database' onComplete={() => setLoaded()} />
-    </div>
-  </>;
-};
+export type BuilderProps = WithOptional<Omit<PuzzleT, 'comments' | 'category' | 'authorId' | 'authorName' | 'moderated' | 'publishTime'>, 'clues' | 'title' | 'constructorNotes' | 'highlighted' | 'highlight'>
 
 interface PotentialFillItemProps {
   entryIndex: number,

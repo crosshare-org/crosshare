@@ -1,6 +1,6 @@
 import React from 'react';
 import { getByLabelText, getUser, cleanup, render, fireEvent, RenderResult } from '../lib/testingUtils';
-import { BuilderPage } from '../pages/construct';
+import BuilderPage from '../pages/construct';
 import { setApp } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/testing';
 import NextJSRouter from 'next/router';
@@ -68,7 +68,7 @@ test('puzzle in progress should be cached in local storage', async () => {
   setApp(app as firebase.app.App);
 
   let r = render(
-    <BuilderPage isAdmin={false} user={mike} />, { user: mike }
+    <BuilderPage />, { user: mike }
   );
 
   await r.findByText(/Across/i);
@@ -88,7 +88,7 @@ test('puzzle in progress should be cached in local storage', async () => {
 
   // Now try again!
   r = render(
-    <BuilderPage isAdmin={false} user={mike} />, { user: mike }
+    <BuilderPage />, { user: mike }
   );
   await r.findByText(/Across/i);
   expect(r.getByLabelText('cell0x1')).toHaveTextContent('B');
@@ -106,7 +106,7 @@ async function publishPuzzle(prePublish?: (r: RenderResult) => Promise<void>) {
   await admin.firestore().collection('categories').doc('dailymini').set({});
 
   const r = render(
-    <BuilderPage isAdmin={false} user={mike} />, { user: mike }
+    <BuilderPage />, { user: mike }
   );
 
   const grid = (await r.findByLabelText('cell0x0')).parentElement || window;
@@ -260,7 +260,7 @@ test('publish custom / non-rectangular size', async () => {
   setApp(app as firebase.app.App);
 
   const r = render(
-    <BuilderPage isAdmin={false} user={mike} />, { user: mike }
+    <BuilderPage />, { user: mike }
   );
 
   fireEvent.click(await (r.findByText('New Puzzle', { exact: true })));
