@@ -83,7 +83,7 @@ export default function BuilderPage() {
                 :
                 <>
                   <p>The first time you use the constructor on a new browser Crosshare needs
-              to download and build a word database. This can take a minute, please be patient!</p>
+              to download and build a word database.</p>
                   <LoadButton buttonText='Build Database' onComplete={() => setLoaded()} />
                 </>
             )
