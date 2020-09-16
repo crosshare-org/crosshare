@@ -13,6 +13,8 @@ import { FaShareSquare, FaChartBar, FaComment, FaMagic, FaBicycle } from 'react-
 import { BigQuote } from '../components/BigQuote';
 import { Hero } from '../components/Hero';
 import { Button } from '../components/Buttons';
+import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
+import { Emoji } from '../components/Emoji';
 
 export default function BuilderPage() {
   const [ready, error, loading, setLoaded] = useWordDB();
@@ -90,5 +92,81 @@ export default function BuilderPage() {
       <FeatureListItem icon={<FaChartBar />} heading="Advanced analytics" text="As a constructor, you get access to advanced analytics about your puzzle. Find out how many people solve your puzzle, how long it takes them, and view heatmaps of exactly which cells they get stuck on." />
       <FeatureListItem icon={<FaComment />} heading="An instant crossword blog" text="After constructing your first puzzle you can reserve your own URL and instantly create a crossword blog. You get a centralized page to share and talk about all of your puzzles. Commenting is enabled from the start and Crosshare is the only place where comments feature solve times, clue tooltips, and other crossword specific features." />
     </FeatureList>
+    <div css={{
+      padding: '0 0.5em',
+      backgroundColor: 'var(--primary)',
+      textAlign: 'center',
+      color: 'var(--text)',
+      paddingTop: '1em',
+      minHeight: 225,
+      [SMALL_AND_UP]: {
+        minHeight: 175,
+      },
+      [LARGE_AND_UP]: {
+        minHeight: 125,
+      }
+    }}>
+      {heroContent}
+    </div>
+    <div css={{
+      display: 'flex',
+      margin: '1em',
+      flexWrap: 'wrap',
+    }}>
+      <div css={{
+        width: '100%',
+        flex: 'none',
+        [LARGE_AND_UP]: {
+          flex: '1 1 0',
+          marginRight: '1em',
+        }
+      }}>
+        <h2 css={{ textAlign: 'center' }}>New to making crosswords?</h2>
+        <p>Don’t be intimidated! Constructing great crosswords takes a lot of practice, but it’s easy to get started. When you first launch the constructor, Crosshare defaults you to a 5x5 mini grid (to create a different sized puzzle click on “More” in the top bar and then click “New Puzzle”). Mini puzzles are a great way to get started because you don’t need to worry so much about the grid layout - you just need to focus on getting fill you like and coming up with fun clues.</p>
+        <h3>Filling the grid</h3>
+        <p>After launching the constructor, click anywhere in the grid and start typing your first fill entry. As you type you’ll notice the Crosshare autofiller magically fills in the rest of the grid. You shouldn’t rely exclusively on the autofiller - the wordlist(s) beside the grid give you other options for the currently selected entry. You can also use any other word you like even if it’s not in the list - it’s all COVFEFE.</p>
+        <h3>Using black squares</h3>
+        <p>You can create a black square by typing the ‘.’ key on your keyboard or hitting the all black key on the keyboard if you’re on a mobile device. Select the square and hit ‘.’ or type any letter to toggle it back. Placing black squares is an art form for larger grids. This <a target="_blank" rel="noopener noreferrer" href="https://www.nytimes.com/2018/05/11/crosswords/how-to-make-crossword-puzzle-grid.html">nytimes article</a> does a pretty good job of introducing some of the ideas behind where they should go.</p>
+        <h3>Finalizing the grid</h3>
+        <p>It can take a lot of tweaking to get a grid that you’re happy with. Maybe you really want to work a specific word in but every time you try it makes for poor (or no!) choices elsewhere. The best thing to do is to try to stay flexible and keep playing with different options until it all clicks. The Crosshare autofiller can help this along by showing you different candidate fills - every time you press the ‘Enter’ key (or click ‘Rerun Autofill’ in the top bar) you’ll get a slightly different fill.</p>
+        <h3>Adding clues</h3>
+        <p>Once your grid is filled in click the “Clues” button in the top bar to go to the clue view. You’ll see every word in your grid with an input next to it for your clue. Try to come up with your own interesting clue for each word. It’s important to have some easier clues (especially on mini puzzles!) so that solvers have a place to start. This <a target="_blank" rel="noopener noreferrer" href="https://www.nytimes.com/2018/07/11/crosswords/how-to-make-a-crossword-puzzle-4.html">nytimes article</a> talks about cluing and might be a good read for a beginner. It can also help to look up words in a clue database like <a target="_blank" rel="noopener noreferrer" href="https://crosswordtracker.com/">crosswordtracker</a> to see how other constructors have clued them. The only way to get better at cluing, though, is to force yourself to come up with some of your own!</p>
+        <h3>Publishing</h3>
+        <p>After all of your clues are filled in, come up with a title for your puzzle. This gets entered at the top of the clue view. Now click “Back to Grid”, give it one more look, and hit “Publish”. After publishing, Crosshare will redirect you to your puzzle's new home. You might want to add a comment (solvers will see it they finish solving). When you’re ready, copy the link and share it with as many solvers as you can find! As the author, you’ll be able to view solve stats for your puzzle - click “More” and then “Stats” from the puzzle page.</p>
+        <p>That’s all there is to it! If you’re looking for more info about constructing your first puzzle, <a target="_blank" rel="noopener noreferrer" href="https://medium.com/@that314guy/creating-and-publishing-my-first-crossword-154bc93ff298">this article</a> has a lot of good information.</p>
+      </div>
+      <div css={{
+        width: '100%',
+        flex: 'none',
+        [LARGE_AND_UP]: {
+          flex: '1 1 0',
+          marginLeft: '1em',
+        }
+      }}>
+        <h2 css={{ textAlign: 'center' }}>FAQ</h2>
+        <h3>Does Crosshare support reb es?</h3>
+        <p>Yup, both the constructor and the solver support entering rebuses - hit ‘Escape’ (or ‘Rebus’ on your mobile device keyboard) to enter a rebus. The autofiller supports filling around them, too <Emoji symbol='😉' />.</p>
+        <h3>What about circled / shaded squares?</h3>
+        <p>Yup, and yup!</p>
+        <h3>Where does the wordlist come from?</h3>
+        <p>Crosshare uses a custom wordlist that’s mostly based off of <a target="_blank" rel="noopener noreferrer" href="https://peterbroda.me/crosswords/wordlist/">Peter Broda’s list</a> with some additional words that have frequently appeared in NYT puzzles.</p>
+        <h3>Can I use my own wordlist?</h3>
+        <p>Custom wordlists / wordlist editing will be released soon, but will be a “pro” feature. I expect Crosshare Pro to be more affordable than existing construction software (but I need to support this project somehow <Emoji symbol='😛' />).</p>
+        <h3>Can I create rectangular grids?</h3>
+        <p>Yup, you can use any dimensions you want. Better yet, both the constructor and solver interfaces optimize around whatever size grid you use - to maximize usability on smaller screens.</p>
+        <h3>Does the constructor work on (iPad / iPhone / Android / Windows / OS X / Linux)?</h3>
+        <p>The Crosshare constructor should work on any modern browser, and is optimized for mobile devices. For the first time you can have a first class constructing experience on your iPad. If you have any issues on any device, please get in touch and let me know!</p>
+        <h3>How come I can only work on one puzzle at a time?</h3>
+        <p>Saving and loading multiple puzzles is coming soon.</p>
+        <h3>Will Crosshare ever have an offline mode?</h3>
+        <p>I know I’m sounding like a broken record, but this is coming soon too!</p>
+        <h3>Can I export my puzzle as a PDF or .puz file?</h3>
+        <p>Exporting is also coming soon, but will be a Crosshare Pro feature along with custom wordlists. I might add a nice print option for published puzzles for the free version, though.</p>
+        <h3>What types of grid symmetry are supported?</h3>
+        <p>ALL OF THEM.</p>
+        <h3>What if I have a different question?</h3>
+        <p>Please get in touch via <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">twitter</a> or (better yet!) the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. I’ll answer it ASAP and maybe even add it to this page.</p>
+      </div>
+    </div>
   </>;
 }
