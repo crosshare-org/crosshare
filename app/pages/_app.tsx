@@ -63,7 +63,7 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
         <meta key="og:title" property="og:title" content="Crosshare Crosswords" />
         <meta key="description" name="description" content="Crosshare is a community for crossword constructors and solvers. Each day we post a new mini crossword puzzle you can play for free." />
         <meta key="og:description" property="og:description" content="Crosshare is a community for crossword constructors and solvers. Each day we post a new mini crossword puzzle you can play for free." />
-        <meta name="viewport" content="minimum-scale=1, initial-scale=1, maximum-scale=1, user-scalable=0, width=device-width, height=device-height" />
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, height=device-height" />
         <meta property="fb:pages" content="100687178303443" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:site" content="@crosshareapp" />
