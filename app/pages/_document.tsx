@@ -7,6 +7,7 @@ export default class CrosshareDocument extends Document {
     return (
       <Html lang='en'>
         <Head>
+          <meta charSet="utf-8" />
           <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
           <meta name="theme-color" content="#EB984E" />
           <link rel="manifest" href="/manifest.json" />
