@@ -42,6 +42,7 @@ export function usePersistedBoolean(key: string, defaultValue: boolean): [boolea
 
 export function useAuth() {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Current user
   const [user, loadingUser, authError] = useAuthState(App.auth());
@@ -71,9 +72,14 @@ export function useAuth() {
   );
   const [cpSnapshot, loadingCP, cpError] = useCollection(docRef);
   const [constructorPage, cpDecodeError] = useMemo(() => {
-    if (cpSnapshot === undefined || cpSnapshot.empty) {
+    if (cpSnapshot ?.empty) {
+      setIsLoading(false);
       return [undefined, undefined];
     }
+    if (cpSnapshot === undefined) {
+      return [undefined, undefined];
+    }
+    setIsLoading(false);
     if (cpSnapshot.size !== 1) {
       return [undefined, 'Multiple matching constructor pages'];
     }
@@ -86,7 +92,7 @@ export function useAuth() {
     }
   }, [cpSnapshot]);
 
-  return { user, isAdmin, constructorPage, loading: loadingUser || loadingCP, error: authError ?.message || cpError ?.message || cpDecodeError };
+  return { user, isAdmin, constructorPage, loading: isLoading || loadingUser || loadingCP, error: authError ?.message || cpError ?.message || cpDecodeError };
 }
 
 export function useHover(): [
