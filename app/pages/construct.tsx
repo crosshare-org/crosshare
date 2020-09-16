@@ -144,7 +144,7 @@ export default function BuilderPage() {
         }
       }}>
         <h2 css={{ textAlign: 'center' }}>FAQ</h2>
-        <h3>Does Crosshare support reb es?</h3>
+        <h3>Does Crosshare support rebuses?</h3>
         <p>Yup, both the constructor and the solver support entering rebuses - hit ‘Escape’ (or ‘Rebus’ on your mobile device keyboard) to enter a rebus. The autofiller supports filling around them, too <Emoji symbol='😉' />.</p>
         <h3>What about circled / shaded squares?</h3>
         <p>Yup, and yup!</p>
