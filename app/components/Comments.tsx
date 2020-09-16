@@ -14,7 +14,7 @@ import { CommentForModerationT, CommentForModerationWithIdV, CommentForModeratio
 import { Markdown } from './Markdown';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { Link } from './Link';
-import { ButtonAsLink } from './Buttons';
+import { ButtonAsLink, Button } from './Buttons';
 
 const COMMENT_LENGTH_LIMIT = 280;
 
@@ -230,9 +230,9 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
             ''
             :
             <>
-              <input css={{ marginRight: '0.5em', }} type="submit" disabled={commentText.length === 0} value="Save" />
+              <Button type='submit' css={{ marginRight: '0.5em' }} disabled={commentText.length === 0} text='Save' />
               {onCancel ?
-                <button type="button" css={{ marginRight: '0.5em' }} onClick={onCancel}>Cancel</button>
+                <Button boring={true} css={{ marginRight: '0.5em' }} onClick={onCancel} text='Cancel' />
                 : ''}
               commenting as <CommentFlair username={props.username} displayName={props.displayName} userId={props.user.uid} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.solveTime} didCheat={props.didCheat} /> (
               <ButtonAsLink onClick={() => setEditingDisplayName(true)} text="change name" />)

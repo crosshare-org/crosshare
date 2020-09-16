@@ -49,6 +49,7 @@ import { SharingButtons } from './SharingButtons';
 import { SMALL_AND_UP_RULES } from '../lib/style';
 import { Keyboard } from './Keyboard';
 import { useRouter } from 'next/router';
+import { Button } from './Buttons';
 
 export interface NextPuzzleLink {
   puzzleId: string,
@@ -80,7 +81,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
           :
           <>
             <div css={{ marginBottom: '1em' }}>{props.message}</div>
-            <button onClick={() => props.dispatch({ type: 'RESUMEACTION' })}>{props.dismissMessage}</button>
+            <Button onClick={() => props.dispatch({ type: 'RESUMEACTION' })} text={props.dismissMessage} />
           </>
         }
       </div>
@@ -134,7 +135,7 @@ const KeepTryingOverlay = ({ dispatch }: { dispatch: Dispatch<PuzzleAction> }) =
     <Overlay closeCallback={() => dispatch({ type: 'DISMISSKEEPTRYING' })}>
       <h4><Emoji symbol='🤔' /> Almost there!</h4>
       <p>You&apos;ve completed the puzzle, but there are one or more mistakes.</p>
-      <button css={{ width: '100%' }} onClick={() => dispatch({ type: 'DISMISSKEEPTRYING' })}>Keep Trying</button>
+      <Button css={{ width: '100%' }} onClick={() => dispatch({ type: 'DISMISSKEEPTRYING' })} text="Keep Trying" />
     </Overlay>
   );
 };
@@ -202,16 +203,16 @@ export const RebusOverlay = (props: { value: string, dispatch: Dispatch<Keypress
       }}>
         {props.value ? props.value : 'Type to enter rebus...'}
       </div>
-      <button onClick={() => {
+      <Button boring={true} onClick={() => {
         const escape: KeypressAction = { type: 'KEYPRESS', key: 'Escape', shift: false };
         props.dispatch(escape);
-      }} css={{ marginRight: '10%', width: '45%' }}>Cancel</button>
-      <button
+      }} css={{ marginRight: '10%', width: '45%' }} text="Cancel" />
+      <Button
         disabled={props.value.length === 0}
         onClick={() => {
           const enter: KeypressAction = { type: 'KEYPRESS', key: 'Enter', shift: false };
           props.dispatch(enter);
-        }} css={{ width: '45%' }}>Submit Rebus</button>
+        }} css={{ width: '45%' }} text="Submit Rebus" />
     </Overlay>
   );
 };

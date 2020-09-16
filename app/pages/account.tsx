@@ -13,6 +13,7 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { getPuzzle } from '../lib/puzzleCache';
 import { CreatePageForm } from '../components/ConstructorPage';
 import { PuzzleResult, puzzleFromDB } from '../lib/types';
+import { Button } from '../components/Buttons';
 
 export const AccountPage = ({ user, constructorPage }: AuthProps) => {
   const [hasAuthoredPuzzle, setHasAuthoredPuzzle] = useState(false);
@@ -102,7 +103,7 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
       <DefaultTopBar />
       <div css={{ margin: '1em', }}>
         <h2>Account</h2>
-        <p>You&apos;re logged in as <b>{user.email}</b>. <button onClick={() => App.auth().signOut()}>Log out</button></p>
+        <p>You&apos;re logged in as <b>{user.email}</b>. <Button onClick={() => App.auth().signOut()} text="Log out" /></p>
         <p>Your display name - <i>{displayName}</i> - is displayed next to any comments you make or puzzles you create.</p>
         <DisplayNameForm user={user} onChange={setDisplayName} />
         <h2>Crossword Blog</h2>

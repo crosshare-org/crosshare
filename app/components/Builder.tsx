@@ -56,6 +56,7 @@ import useResizeObserver from 'use-resize-observer';
 import { ResizeObserver as Polyfill } from '@juggle/resize-observer';
 import { Keyboard } from './Keyboard';
 import { SMALL_AND_UP } from '../lib/style';
+import { ButtonReset } from './Buttons';
 // TODO conditional import only when we need the polyfill?
 if (typeof window !== 'undefined') {
   window.ResizeObserver = window.ResizeObserver || Polyfill;
@@ -81,22 +82,16 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
     }
   }
   return (
-    <button css={{
-      background: 'none',
-      border: 'none',
-      textDecoration: 'none',
+    <ButtonReset css={{
       width: '100%',
       padding: '0.5em 1em',
       color: 'var(--text)',
-      cursor: 'pointer',
       '&:hover': {
         backgroundColor: 'var(--clue-bg)',
       },
       alignItems: 'center',
       height: 35,
-    }} onClick={click}>
-      {props.value[0]}
-    </button>
+    }} onClick={click} text={props.value[0]} />
   );
 };
 

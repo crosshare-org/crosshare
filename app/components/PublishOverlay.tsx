@@ -82,7 +82,7 @@ export function PublishOverlay(props: { toPublish: DBPuzzleT, user: firebase.Use
       <p css={{ color: 'var(--error)' }}>All puzzles are reviewed and subject to removal at any time
     for any reason (e.g. if the content is deemed offensive or if it is found to be
      copyright infringement)</p>
-      <button onClick={doPublish} disabled={editingDisplayName}>Publish Puzzle</button>
+      <Button onClick={doPublish} disabled={editingDisplayName} text="Publish Puzzle" />
     </>;
   }
   return <Overlay closeCallback={props.cancelPublish}>

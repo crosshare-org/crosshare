@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ButtonReset } from './Buttons';
 
 const daysToDisplay = 42;
 const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
@@ -45,27 +46,15 @@ export function Calendar(props: CalendarProps): JSX.Element {
         padding: '0.5em 0',
         textAlign: 'center',
       }}>
-        <button css={{
-          background: 'none',
-          border: 'none',
-          textDecoration: 'none',
+        <ButtonReset css={{
           flexGrow: 1,
-          cursor: 'pointer'
-        }} onClick={() => changeMonth(-1)}>
-          {'<'}
-        </button>
+        }} onClick={() => changeMonth(-1)} text={'<'} />
         <div css={{
           flexGrow: 2,
         }}>{monthLabels[month]} <span>{year}</span></div>
-        <button css={{
-          background: 'none',
-          border: 'none',
-          textDecoration: 'none',
+        <ButtonReset css={{
           flexGrow: 1,
-          cursor: 'pointer'
-        }} onClick={() => changeMonth(1)}>
-          {'>'}
-        </button>
+        }} onClick={() => changeMonth(1)} text={'>'} />
       </div>
       <div css={{
         width: '100%',
@@ -84,15 +73,11 @@ export function Calendar(props: CalendarProps): JSX.Element {
           const isDisabled = props.dateIsDisabled(d);
           const isToday = sameDate(d, today);
           const isSelected = sameDate(d, selected);
-          return <button
+          return <ButtonReset
             css={{
-              background: 'none',
-              border: 'none !important',
-              textDecoration: 'none',
               display: 'inline-block',
               width: '14%',
               textAlign: 'center',
-              cursor: isDisabled ? 'default !important' : 'pointer',
               padding: '0.5em 0',
               color: (isDisabled ? 'var(--default-text)' : 'var(--text)'),
               backgroundColor: isSelected ? 'var(--primary)' : (isToday ? 'var(--lighter)' : (isDisabled ? 'var(--secondary)' : 'var(--bg)')),
@@ -107,9 +92,8 @@ export function Calendar(props: CalendarProps): JSX.Element {
                 props.onClick(d);
               }
             }}
-          >
-            {d.getDate()}
-          </button>;
+            text={d.getDate().toString()}
+          />;
         }
         )}
       </div>

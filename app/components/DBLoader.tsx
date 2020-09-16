@@ -8,6 +8,7 @@ import { DefaultTopBar } from './TopBar';
 
 import * as WordDB from '../lib/WordDB';
 import { useWordDB } from '../lib/WordDB';
+import { Button } from './Buttons';
 
 export const LoadButton = (props: { buttonText: string, onClick?: () => void, onComplete: () => void }): JSX.Element => {
   const [dlInProgress, setDlInProgress] = useState<boolean>(false);
@@ -48,7 +49,7 @@ export const LoadButton = (props: { buttonText: string, onClick?: () => void, on
       <p>Please be patient and keep this window open, this can take a while.</p>
     </>;
   }
-  return <button onClick={startBuild}>{props.buttonText}</button>;
+  return <Button css={{ fontSize: '1.5em', }} onClick={startBuild} text={props.buttonText} />;
 };
 
 export const DBLoader = (): JSX.Element => {

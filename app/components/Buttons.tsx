@@ -1,11 +1,17 @@
 import { MouseEvent } from 'react';
 
-interface ButtonProps {
+interface ButtonBaseProps {
   text: string,
-  onClick: (e: MouseEvent) => void,
   disabled?: boolean,
   className?: string
 }
+interface SubmitProps extends ButtonBaseProps {
+  type: 'submit'
+}
+interface OnClickProps extends ButtonBaseProps {
+  onClick: (e: MouseEvent) => void,
+}
+type ButtonProps = SubmitProps | OnClickProps;
 
 export function ButtonReset({ text, ...props }: ButtonProps) {
   return <button type="button" css={{
@@ -19,6 +25,10 @@ export function ButtonReset({ text, ...props }: ButtonProps) {
     '@media screen and (-ms-high-contrast: active)': {
       border: '2px solid currentcolor',
     },
+    '&:disabled': {
+      cursor: 'default',
+      color: 'var(--default-text)',
+    }
   }} {...props}>{text}</button>;
 }
 
@@ -31,8 +41,6 @@ export function ButtonAsLink(props: ButtonProps) {
     },
     '&:disabled': {
       textDecoration: 'none',
-      color: 'var(--default-text)',
-      cursor: 'default',
     }
   }} {...props} />;
 }
@@ -49,6 +57,10 @@ export function Button(props: ButtonProps & { boring?: boolean }) {
     backgroundColor: props.boring ? 'var(--boring-bg)' : 'var(--link)',
     lineHeight: 1.1,
     boxShadow: '0 3px 5px rgba(0, 0, 0, 0.18)',
+    '&:disabled': {
+      borderColor: 'var(--default-text)',
+      backgroundColor: 'transparent',
+    },
     '&:active': {
       transform: 'translateY(1px)',
     },

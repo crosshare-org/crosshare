@@ -3,6 +3,7 @@ import { useState, useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
+import { Button } from './Buttons';
 
 export const getDisplayName = (user: firebase.User | undefined, constructorPage: ConstructorPageT | undefined) => {
   return constructorPage ?.n || user ?.displayName || 'Anonymous Crossharer';
@@ -49,9 +50,9 @@ export const DisplayNameForm = ({ user, onChange, onCancel }: DisplayNameFormPro
         Update display name:
         <input css={{ margin: '0 0.5em', }} type="text" value={newDisplayName} onChange={e => setNewDisplayName(sanitize(e.target.value))} />
       </label>
-      <input type="submit" value="Save" disabled={submitting} />
+      <Button type="submit" text="Save" disabled={submitting} />
       {onCancel ?
-        <button type="button" css={{ marginLeft: '0.5em' }} onClick={onCancel}>Cancel</button>
+        <Button boring={true} css={{ marginLeft: '0.5em' }} onClick={onCancel} text="Cancel" />
         : ''}
     </form>
   );
