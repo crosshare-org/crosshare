@@ -204,8 +204,8 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
     <div css={{
       margin: '1em',
     }}>
-      <h2 css={{ marginBottom: 0 }}>{props.constructor.n}</h2>
-      <h4><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h4>
+      <h1 css={{ marginBottom: 0 }}>{props.constructor.n}</h1>
+      <h2><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h2>
       <div css={{ marginBottom: '1.5em' }}>
         {props.user ?.uid === props.constructor.u ?
           <BioEditor text={props.constructor.b} userId={props.constructor.id} />
