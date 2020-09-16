@@ -10,7 +10,7 @@ import { App, ServerTimestamp } from '../lib/firebaseWrapper';
 import { DBPuzzleT, AuthoredPuzzleT, AuthoredPuzzlesV } from '../lib/dbtypes';
 import { updateInCache } from '../lib/dbUtils';
 import { STORAGE_KEY } from './Builder';
-import { ButtonAsLink } from './Buttons';
+import { ButtonAsLink, Button } from './Buttons';
 
 export function PublishOverlay(props: { toPublish: DBPuzzleT, user: firebase.User, cancelPublish: () => void }) {
   const { constructorPage } = useContext(AuthContext);

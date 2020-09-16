@@ -184,9 +184,12 @@ const SuccessOverlay = (props: { clueMap: Map<string, [number, Direction, string
         }
       </div>
       <Comments clueMap={props.clueMap} solveTime={props.solveTime} didCheat={props.didCheat} puzzleId={props.puzzle.id} puzzleAuthorId={props.puzzle.authorId} comments={props.puzzle.comments} />
-      <div css={{ marginTop: '2em', textAlign: 'center' }}>
-        <LinkButton href='/construct' as='/construct' passHref>Make your own puzzle with the Crosshare constructor</LinkButton>
-      </div>
+      {props.user ?.uid !== props.puzzle.authorId ?
+        <div css={{ marginTop: '2em', textAlign: 'center' }}>
+          <LinkButton href='/construct' as='/construct' passHref>Make your own puzzle with the Crosshare constructor</LinkButton>
+        </div>
+        : ''
+      }
     </Overlay>
   );
 };
