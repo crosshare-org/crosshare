@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect } from 'react';
 import * as Sentry from '@sentry/node';
-import { AppProps } from 'next/app';
+import { AppProps, NextWebVitalsMetric } from 'next/app';
 import NextJSRouter from 'next/router';
 import Head from 'next/head';
 import { ToastContainer } from 'react-toastify';
@@ -23,6 +23,10 @@ if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
       'A mutation operation was attempted on a database that did not allow mutations'
     ]
   });
+}
+
+export function reportWebVitals(metric: NextWebVitalsMetric) {
+  console.log(metric);
 }
 
 // `err` is a workaround for https://github.com/vercel/next.js/issues/8592
@@ -68,20 +72,6 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
         <meta key="og:image:width" property="og:image:width" content="1334" />
         <meta key="og:image:height" property="og:image:height" content="750" />
         <meta key="og:image:alt" property="og:image:alt" content="The crosshare logo" />
-        {process.env.NODE_ENV !== 'production' ?
-          <>
-            <script defer src="https://unpkg.com/web-vitals@0.2.4/dist/web-vitals.es5.umd.min.js"></script>
-            <script dangerouslySetInnerHTML={{
-              __html: `
-              addEventListener('DOMContentLoaded', function() {
-                webVitals.getCLS(console.log);
-                webVitals.getFID(console.log);
-                webVitals.getLCP(console.log);
-              });
-              `}}
-            />
-          </>
-          : ''}
       </Head>
       <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
         <AuthContext.Provider value={authStatus}>
