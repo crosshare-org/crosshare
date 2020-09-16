@@ -68,6 +68,20 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
         <meta key="og:image:width" property="og:image:width" content="1334" />
         <meta key="og:image:height" property="og:image:height" content="750" />
         <meta key="og:image:alt" property="og:image:alt" content="The crosshare logo" />
+        {process.env.NODE_ENV !== 'production' ?
+          <>
+            <script defer src="https://unpkg.com/web-vitals@0.2.4/dist/web-vitals.es5.umd.min.js"></script>
+            <script dangerouslySetInnerHTML={{
+              __html: `
+              addEventListener('DOMContentLoaded', function() {
+                webVitals.getCLS(console.log);
+                webVitals.getFID(console.log);
+                webVitals.getLCP(console.log);
+              });
+              `}}
+            />
+          </>
+          : ''}
       </Head>
       <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
         <AuthContext.Provider value={authStatus}>
