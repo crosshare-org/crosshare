@@ -70,7 +70,8 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
       <h2>Daily Mini</h2>
       <PuzzleResultLink puzzle={dailymini} showAuthor={true} constructorPage={dailymini.constructorPage} title={'Today\'s daily mini crossword'} />
       <p><Link href='/dailyminis/[[...slug]]' as={`/dailyminis/${today.getUTCFullYear()}/${today.getUTCMonth() + 1}`} passHref>Play previous daily minis</Link></p>
-      <h2>Share a Puzzle</h2>
+      <h2>Create or Share a Puzzle</h2>
+      <p><Link href='/construct' as='/construct' passHref>Construct a new puzzle with the Crosshare constructor</Link></p>
       <p><Link href='/upload' as='/upload' passHref>Upload a .puz to get a Crosshare link to share with solvers</Link></p>
       <h2>Featured Puzzles</h2>
       {featured.map((p, i) => <PuzzleResultLink key={i} puzzle={p} constructorPage={p.constructorPage} showAuthor={true} />)}

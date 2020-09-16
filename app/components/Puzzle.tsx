@@ -5,13 +5,13 @@ import {
 import Head from 'next/head';
 import {
   FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaKeyboard,
-  FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock, FaComment,
+  FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock, FaComment, FaHammer,
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { toast } from 'react-toastify';
 
-import { Link } from './Link';
+import { Link, LinkButton } from './Link';
 import { ClueList } from './ClueList';
 import {
   EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle,
@@ -184,6 +184,9 @@ const SuccessOverlay = (props: { clueMap: Map<string, [number, Direction, string
         }
       </div>
       <Comments clueMap={props.clueMap} solveTime={props.solveTime} didCheat={props.didCheat} puzzleId={props.puzzle.id} puzzleAuthorId={props.puzzle.authorId} comments={props.puzzle.comments} />
+      <div css={{ marginTop: '2em', textAlign: 'center' }}>
+        <LinkButton href='/construct' as='/construct' passHref>Make your own puzzle with the Crosshare constructor</LinkButton>
+      </div>
     </Overlay>
   );
 };
@@ -637,6 +640,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
               : ''
           }
           <TopBarDropDownLinkA href='/account' icon={<FaUser />} text="Account" />
+          <TopBarDropDownLinkA href='/construct' icon={<FaHammer />} text="Construct a Puzzle" />
         </>
         }
       </TopBarDropDown>
