@@ -3,8 +3,8 @@ import { Dispatch } from 'react';
 import { SpinnerFinished } from './Icons';
 import { BuilderEntry, SetClueAction, SetTitleAction, SetNotesAction, PuzzleAction } from '../reducers/reducer';
 import { TopBarLink, TopBar } from './TopBar';
-import { buttonAsLink } from '../lib/style';
 import { Direction } from '../lib/types';
+import { ButtonAsLink } from './Buttons';
 
 function sanitize(input: string) {
   return input.substring(0, 140);
@@ -67,16 +67,16 @@ export const ClueMode = (props: ClueModeProps) => {
               const sta: SetNotesAction = { type: 'SETNOTES', value: e.target.value };
               props.dispatch(sta);
             }} />
-            <p><button css={buttonAsLink} onClick={() => {
+            <p><ButtonAsLink text="Remove note" onClick={() => {
               const sna: SetNotesAction = { type: 'SETNOTES', value: null };
               props.dispatch(sna);
-            }}>Remove note</button></p>
+            }} /></p>
           </>
           :
-          <p><button css={buttonAsLink} onClick={() => {
+          <p><ButtonAsLink text="Add a note" onClick={() => {
             const sna: SetNotesAction = { type: 'SETNOTES', value: '' };
             props.dispatch(sna);
-          }}>Add a note</button> (notes are shown before a puzzle is started and can be used to explain something about the theme, etc.)</p>
+          }} /> (notes are shown before a puzzle is started and can be used to explain something about the theme, etc.)</p>
         }
         <h2>Clues</h2>
         {props.completedEntries.length ?
@@ -88,7 +88,7 @@ export const ClueMode = (props: ClueModeProps) => {
           :
           <>
             <p>This where you come to set clues for your puzzle, but you don&apos;t have any completed fill words yet!</p>
-            <p>Go back to <button css={buttonAsLink} onClick={(e) => { props.exitClueMode(); e.preventDefault(); }}>the grid</button> and fill in one or more words completely. Then come back here and make some clues.</p>
+            <p>Go back to <ButtonAsLink text="the grid" onClick={(e) => { props.exitClueMode(); e.preventDefault(); }} /> and fill in one or more words completely. Then come back here and make some clues.</p>
           </>
         }
       </div>

@@ -20,7 +20,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "types": ["@emotion/core"]
   },
   "exclude": [
     "node_modules"

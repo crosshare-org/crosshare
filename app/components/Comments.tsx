@@ -8,13 +8,13 @@ import { PartialBy, Comment, Direction } from '../lib/types';
 import { Identicon } from './Icons';
 import { timeString } from '../lib/utils';
 import { Emoji } from './Emoji';
-import { buttonAsLink } from '../lib/style';
 import { DisplayNameForm, getDisplayName } from './DisplayNameForm';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
 import { CommentForModerationT, CommentForModerationWithIdV, CommentForModerationWithIdT } from '../lib/dbtypes';
 import { Markdown } from './Markdown';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { Link } from './Link';
+import { ButtonAsLink } from './Buttons';
 
 const COMMENT_LENGTH_LIMIT = 280;
 
@@ -61,7 +61,7 @@ const CommentWithReplies = (props: PartialBy<CommentFormProps, 'user'> & { comme
             <CommentForm {...props} username={props.constructorPage ?.i} onCancel={() => setShowingForm(false)} replyToId={commentId} user={props.user} />
           </div>
           :
-          <div><button css={buttonAsLink} onClick={() => setShowingForm(true)}>Reply</button></div>
+          <div><ButtonAsLink onClick={() => setShowingForm(true)} text="Reply" /></div>
         )
       }
       {replies ?
@@ -235,7 +235,7 @@ const CommentForm = ({ onCancel, ...props }: CommentFormProps & { onCancel?: () 
                 <button type="button" css={{ marginRight: '0.5em' }} onClick={onCancel}>Cancel</button>
                 : ''}
               commenting as <CommentFlair username={props.username} displayName={props.displayName} userId={props.user.uid} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.solveTime} didCheat={props.didCheat} /> (
-              <button css={buttonAsLink} onClick={() => setEditingDisplayName(true)}>change name</button>)
+              <ButtonAsLink onClick={() => setEditingDisplayName(true)} text="change name" />)
             </>
         }
         {commentText.trim() ?

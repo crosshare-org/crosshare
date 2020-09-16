@@ -8,8 +8,8 @@ import { PuzzleResultLink } from './PuzzleLink';
 import { Link } from './Link';
 import { Markdown } from './Markdown';
 import { AuthPropsOptional, AuthContext } from './AuthContext';
-import { buttonAsLink } from '../lib/style';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
+import { ButtonAsLink } from './Buttons';
 
 
 const BANNED_USERNAMES = {
@@ -139,7 +139,7 @@ const BioEditor = (props: BioEditorProps) => {
       }
     }} >
       <Markdown text={text} />
-      <button css={buttonAsLink} onClick={() => setIsOpen(true)}>edit bio</button>
+      <ButtonAsLink onClick={() => setIsOpen(true)} text="edit bio" />
     </div>;
   }
 

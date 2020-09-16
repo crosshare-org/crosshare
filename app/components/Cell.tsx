@@ -2,10 +2,6 @@ import { memo } from 'react';
 
 import { FaSlash, FaEye } from 'react-icons/fa';
 
-import {
-  PRIMARY, SECONDARY, ERROR_COLOR,
-} from '../lib/style';
-
 type CellProps = {
   autofill: string,
   gridWidth: number,
@@ -28,17 +24,17 @@ type CellProps = {
 }
 
 export const Cell = memo(function Cell(props: CellProps) {
-  let bg = 'var(--white)';
+  let bg = 'var(--cell-bg)';
   if (props.isBlock && props.active) {
-    bg = 'repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px,' + PRIMARY + ' 10px,' + PRIMARY + ' 20px);';
+    bg = 'repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px,var(--primary) 10px,var(--primary) 20px);';
   } else if (props.isBlock) {
     bg = 'var(--cell-wall)';
   } else if (props.cellColor !== undefined) {
     bg = 'rgba(241, 167, 45, ' + (props.cellColor) + ')';
   } else if (props.active) {
-    bg = PRIMARY;
+    bg = 'var(--primary)';
   } else if (props.entryCell) {
-    bg = SECONDARY;
+    bg = 'var(--secondary)';
   } else if (props.refedCell) {
     bg = 'var(--vlighter)';
   }
@@ -112,7 +108,7 @@ export const Cell = memo(function Cell(props: CellProps) {
                   zIndex: 2,
                   left: '0.03em',
                   top: '-0.1em',
-                  color: ERROR_COLOR,
+                  color: 'var(--error)',
                   fontSize: '1em',
                 }}><FaSlash /></div> : ''}
               {props.highlight === 'circle' ?

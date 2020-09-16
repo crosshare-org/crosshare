@@ -1,10 +1,10 @@
-import { SECONDARY, SMALL_AND_UP } from '../lib/style';
+import { SMALL_AND_UP } from '../lib/style';
 import { ReactNode } from 'react';
 
 export function BigQuote(props: { quote: string, attribution: ReactNode }) {
   return <div css={{
     padding: '2em',
-    backgroundColor: SECONDARY,
+    backgroundColor: 'var(--secondary)',
     textAlign: 'center',
     color: 'var(--text)',
   }}>

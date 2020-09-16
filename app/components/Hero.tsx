@@ -1,4 +1,4 @@
-import { PRIMARY, SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
+import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
 import { Link } from './Link';
 import { Logo } from './Icons';
 import { ReactNode } from 'react';
@@ -6,7 +6,7 @@ import { ReactNode } from 'react';
 export function Hero(props: { text: string, children?: ReactNode }) {
   return <header css={{
     padding: '0 0.5em',
-    backgroundColor: PRIMARY,
+    backgroundColor: 'var(--primary)',
     textAlign: 'center',
     color: 'var(--text)',
     paddingTop: '1em',

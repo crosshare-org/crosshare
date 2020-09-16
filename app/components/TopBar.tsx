@@ -5,7 +5,7 @@ import { AuthContext } from './AuthContext';
 import { Link } from './Link';
 import { Overlay } from './Overlay';
 import { Logo } from './Icons';
-import { PRIMARY, HEADER_HEIGHT, SMALL_AND_UP, HAS_PHYSICAL_KEYBOARD } from '../lib/style';
+import { HEADER_HEIGHT, SMALL_AND_UP, HAS_PHYSICAL_KEYBOARD } from '../lib/style';
 
 export const TopBarDropDown = (props: { onClose?: () => void, text: string, icon: ReactNode, hoverText?: string, children: (close: () => void) => ReactNode }) => {
   const [dropped, setDropped] = useState(false);
@@ -193,7 +193,7 @@ export const TopBar = memo(function TopBar({ children }: TopBarProps) {
   return (
     <header css={{
       height: HEADER_HEIGHT,
-      backgroundColor: PRIMARY,
+      backgroundColor: 'var(--primary)',
     }}>
       <div css={{
         padding: '0 10px',

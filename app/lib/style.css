@@ -4,6 +4,8 @@
   --vlighter: #fcefe3;
   --vvlighter: #fbeada;
   --secondary: #E2E2E2;
+  --boring-bg: #555;
+  --boring-bg-hover: #5F5F5F;
   --error: #e34eeb;
   --error-hover: #860f8c;
   --link: #2874A6;
@@ -22,6 +24,7 @@
   --overlay-bg: rgba(0,0,0,0.85);
   --overlay-inner: white;
   --conceal-text: rgba(0,0,0,0.7);
+  --cell-bg: white;
   --cell-wall: black;
   --white: white;
   --logo-white: white;
@@ -43,6 +46,8 @@
     --vlighter: #514439;
     --vvlighter: #5c4e42;
     --secondary: #333;
+    --boring-bg: #B5B5B5;
+    --boring-bg-hover: #BBB;
     --error: #f1a7f5;
     --link: #7fbdff;
     --link-hover: #8dc4ff;
@@ -56,9 +61,10 @@
     --cross-clue-bg: #444;
     --shade-highlight: rgba(255,255,255,0.3);
     --conceal-text: white;
-    --white: #4a4a4a;
+    --cell-bg: #4a4a4a;
+    --white: #000;
     --overlay-inner: #151515;
-    --logo-white: #E2D8D0;
+    --logo-white: #D0D0D0;
     --key-bg: rgba(255,255,255,0.15);
     --kb-bg: rgba(255,255,255,0.1);
     --kb-bg-click: black;

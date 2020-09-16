@@ -10,7 +10,7 @@ import { App, ServerTimestamp } from '../lib/firebaseWrapper';
 import { DBPuzzleT, AuthoredPuzzleT, AuthoredPuzzlesV } from '../lib/dbtypes';
 import { updateInCache } from '../lib/dbUtils';
 import { STORAGE_KEY } from './Builder';
-import { buttonAsLink } from '../lib/style';
+import { ButtonAsLink } from './Buttons';
 
 export function PublishOverlay(props: { toPublish: DBPuzzleT, user: firebase.User, cancelPublish: () => void }) {
   const { constructorPage } = useContext(AuthContext);
@@ -73,7 +73,7 @@ export function PublishOverlay(props: { toPublish: DBPuzzleT, user: firebase.Use
           onCancel={() => setEditingDisplayName(false)}
         />
         :
-        <h3>by <i>{displayName}</i> (<button css={buttonAsLink} onClick={() => setEditingDisplayName(true)}>change name</button>)</h3>
+        <h3>by <i>{displayName}</i> (<ButtonAsLink onClick={() => setEditingDisplayName(true)} text="change name" />)</h3>
       }
       {props.toPublish.cn ?
         <ConstructorNotes notes={props.toPublish.cn} />

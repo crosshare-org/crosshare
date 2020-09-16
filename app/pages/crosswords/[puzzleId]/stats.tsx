@@ -13,7 +13,8 @@ import { App } from '../../../lib/firebaseWrapper';
 import { DefaultTopBar } from '../../../components/TopBar';
 import { ErrorPage } from '../../../components/ErrorPage';
 import { PuzzleStats, StatsMode } from '../../../components/PuzzleStats';
-import { SMALL_AND_UP, buttonAsLink } from '../../../lib/style';
+import { SMALL_AND_UP } from '../../../lib/style';
+import { ButtonAsLink } from '../../../components/Buttons';
 
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();
@@ -172,8 +173,8 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
                 </div>
               </div>
               <div css={{ paddingTop: '1em', textAlign: 'center' }}>
-                <button css={[buttonAsLink, { marginRight: '1em' }]} disabled={mode === StatsMode.AverageTime} onClick={() => { setMode(StatsMode.AverageTime); }}>Time to Correct</button>
-                <button css={[buttonAsLink, { marginLeft: '1em' }]} disabled={mode === StatsMode.AverageEditCount} onClick={() => { setMode(StatsMode.AverageEditCount); }}>Number of Edits</button>
+                <ButtonAsLink css={{ marginRight: '1em' }} disabled={mode === StatsMode.AverageTime} onClick={() => { setMode(StatsMode.AverageTime); }} text="Time to Correct" />
+                <ButtonAsLink css={{ marginLeft: '1em' }} disabled={mode === StatsMode.AverageEditCount} onClick={() => { setMode(StatsMode.AverageEditCount); }} text="Number of Edits" />
               </div>
             </>
             :

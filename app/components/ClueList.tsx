@@ -5,7 +5,7 @@ import { CluedEntry } from '../lib/viewableGrid';
 import { GridBase, valAt, EntryBase } from '../lib/gridBase';
 
 import { PuzzleAction, ClickedEntryAction } from '../reducers/reducer';
-import { SECONDARY, LIGHTER, SMALL_AND_UP } from '../lib/style';
+import { SMALL_AND_UP } from '../lib/style';
 import { ToolTipText } from './ToolTipText';
 
 interface ClueTextProps {
@@ -93,11 +93,11 @@ const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }:
   return (
     <li css={{ /* eslint-disable-line */
       padding: '0.5em',
-      backgroundColor: (isActive ? LIGHTER : (isCross ? SECONDARY : (props.isRefed ? 'var(--vlighter)' : 'none'))),
+      backgroundColor: (isActive ? 'var(--lighter)' : (isCross ? 'var(--secondary)' : (props.isRefed ? 'var(--vlighter)' : 'none'))),
       listStyleType: 'none',
       cursor: 'pointer',
       '&:hover': {
-        backgroundColor: (isActive ? LIGHTER : (isCross ? 'var(--cross-clue-bg)' : (props.isRefed ? 'var(--vvlighter)' : 'var(--clue-bg)'))),
+        backgroundColor: (isActive ? 'var(--lighter)' : (isCross ? 'var(--cross-clue-bg)' : (props.isRefed ? 'var(--vvlighter)' : 'var(--clue-bg)'))),
       },
       display: 'flex',
       flexDirection: 'row',

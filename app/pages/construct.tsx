@@ -4,7 +4,7 @@ import { AuthContext, renderLoginButtonIfNeeded } from '../components/AuthContex
 import { Builder } from '../components/Builder';
 import { LoadButton } from '../components/DBLoader';
 import { useWordDB } from '../lib/WordDB';
-import { useContext } from 'react';
+import { useContext, useState, ReactNode } from 'react';
 import { FeatureList, FeatureListItem } from '../components/FeatureList';
 import { Link } from '../components/Link';
 import { MdMoneyOff } from 'react-icons/md';
@@ -12,9 +12,11 @@ import { IoMdResize, IoMdPhonePortrait } from 'react-icons/io';
 import { FaShareSquare, FaChartBar, FaComment, FaMagic, FaBicycle } from 'react-icons/fa';
 import { BigQuote } from '../components/BigQuote';
 import { Hero } from '../components/Hero';
+import { Button } from '../components/Buttons';
 
 export default function BuilderPage() {
   const [ready, error, loading, setLoaded] = useWordDB();
+  const [showBuilder, setShowBuilder] = useState(false);
   const ctx = useContext(AuthContext);
   const loginButton = renderLoginButtonIfNeeded(ctx);
 
@@ -28,16 +30,42 @@ export default function BuilderPage() {
     'grid': grid
   };
 
-  if (ready && ctx.user) {
+  if (ready && ctx.user && showBuilder) {
     return <Builder {...props} user={ctx.user} isAdmin={ctx.isAdmin} />;
   }
   if (error) {
     console.error(error);
   }
 
+  let heroContent: ReactNode;
+  if (ctx.loading) {
+    heroContent = <p>Checking if you have an existing account...</p>;
+  } else if (loginButton) {
+    heroContent = <>
+      <p>To construct a puzzle, you need to log in with Google first. We use your sign in to keep track of the puzzles you&apos;ve created.</p>
+      {loginButton}
+    </>;
+  } else if (loading) {
+    heroContent = <p>Checking for existing word database...</p>;
+  } else if (!ready) {
+    heroContent = <>
+      <p>The first time you use the constructor on a new browser Crosshare needs
+  to download and build a word database.</p>
+      <LoadButton buttonText='Build Database' onComplete={() => setLoaded()} />
+    </>;
+  } else {
+    heroContent = <>
+      <p><Button css={{
+        fontSize: '1.5em',
+        marginTop: '0.75em'
+      }} onClick={() => setShowBuilder(true)} text="Launch Constructor" /></p>
+    </>;
+  }
+
   const description = `Build your own crossword puzzles for free with the Crosshare constructor.
     Autofill makes grid construction a breeze. Once you finish you can publish your
     puzzle to share with your friends or the world.`;
+
   return <>
     <Head>
       <title>Constructor | Crosshare | crossword puzzle builder</title>
@@ -46,32 +74,11 @@ export default function BuilderPage() {
       <meta key="og:description" property="og:description" content={description} />
     </Head>
     <Hero text="Construct crossword puzzles in a flash">
-      {ctx.loading ?
-        <p>Checking if you have an exisiting account...</p>
-        :
-        (
-          loginButton ?
-            <>
-              <p>To construct a puzzle, you need to log in with Google first. We use your sign in to keep track of the puzzles you&apos;ve created.</p>
-              {loginButton}
-            </>
-            :
-            (
-              loading ?
-                <p>Checking for existing word database...</p>
-                :
-                <>
-                  <p>The first time you use the constructor on a new browser Crosshare needs
-              to download and build a word database.</p>
-                  <LoadButton buttonText='Build Database' onComplete={() => setLoaded()} />
-                </>
-            )
-        )
-      }
+      {heroContent}
     </Hero>
     <BigQuote
       quote="The Crosshare constructor helps me build better puzzles faster. The interface is more intuitive than Crossfire's and the autofill feature works far more efficiently."
-      attribution={<>Will of <Link href='/[...slug]' as={'/WWMC'} passHref>Will&apos;s Weekly Meta Crossword</Link></>}
+      attribution={<>Will Pfadenhauer of <Link href='/[...slug]' as={'/WWMC'} passHref>Will&apos;s Weekly Meta Crossword</Link></>}
     />
     <FeatureList>
       <FeatureListItem icon={<MdMoneyOff />} heading="It's 100% free" text="Constructing puzzles on Crosshare is always free. You can publish as many puzzles as you'd like and share with them with as many solvers as you can find." />

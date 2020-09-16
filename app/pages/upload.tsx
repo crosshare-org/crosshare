@@ -92,7 +92,7 @@ export default function UploadPage() {
     </Hero>
     <BigQuote
       quote="Crosshare changed the way I share my puzzles. The analytics allow me to better understand which parts of my grids are most difficult for solvers. It's a big part of why WWMC started and is still running today."
-      attribution={<>Will of <Link href='/[...slug]' as={'/WWMC'} passHref>Will&apos;s Weekly Meta Crossword</Link></>}
+      attribution={<>Will Pfadenhauer of <Link href='/[...slug]' as={'/WWMC'} passHref>Will&apos;s Weekly Meta Crossword</Link></>}
     />
     <FeatureList>
       <FeatureListItem icon={<MdMoneyOff />} heading="It's 100% free" text="Sharing puzzles on Crosshare is always free. You can publish as many puzzles as you'd like and share with them with as many solvers as you can find." />
