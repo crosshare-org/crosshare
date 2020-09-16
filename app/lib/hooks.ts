@@ -67,19 +67,25 @@ export function useAuth() {
 
   // Constructor page
   const docRef = useMemo(
-    () => (user && user.email && !user.isAnonymous) ? App.firestore().collection('cp').where('u', '==', user.uid) : null,
+    () => {
+      if (user && user.email && !user.isAnonymous) {
+        setIsLoading(true);
+        return App.firestore().collection('cp').where('u', '==', user.uid);
+      }
+      setIsLoading(false);
+      return null;
+    },
     [user]
   );
   const [cpSnapshot, loadingCP, cpError] = useCollection(docRef);
   const [constructorPage, cpDecodeError] = useMemo(() => {
-    if (cpSnapshot ?.empty) {
-      setIsLoading(false);
-      return [undefined, undefined];
-    }
     if (cpSnapshot === undefined) {
       return [undefined, undefined];
     }
     setIsLoading(false);
+    if (cpSnapshot ?.empty) {
+      return [undefined, undefined];
+    }
     if (cpSnapshot.size !== 1) {
       return [undefined, 'Multiple matching constructor pages'];
     }
