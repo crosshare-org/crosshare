@@ -30,21 +30,29 @@ const PuzzleLink = (props: { id: string, authorId: string, width?: number, heigh
     return () => { ignore = true; };
   }, [user, props.id]);
 
+  const linkCss = {
+    color: (authored || (play && play.f)) ? 'var(--text)' : (play ? 'var(--error)' : 'var(--link)'),
+    '&:hover': {
+      color: (authored || (play && play.f)) ? 'var(--text)' : (play ? 'var(--error-hover)' : 'var(--link-hover)'),
+    }
+  };
+
   return <div css={{
-    overflow: 'auto',
-    display: 'inline-block',
+    display: 'inline-flex',
+    alignItems: 'flex-start',
     width: '100%',
     [SMALL_AND_UP]: {
       width: '50%',
     },
   }}>
-    <Link css={{
-      color: (authored || (play && play.f)) ? 'var(--text)' : (play ? 'var(--error)' : 'var(--link)'),
-      '&:hover': {
-        color: (authored || (play && play.f)) ? 'var(--text)' : (play ? 'var(--error-hover)' : 'var(--link-hover)'),
+    <Link css={[
+      linkCss,
+      {
+        marginRight: '0.3em',
+        fontSize: '4em',
       }
-    }} href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>
-      <div css={{ position: 'relative', verticalAlign: 'top !important', float: 'left', fontSize: '4em', marginRight: '0.3em' }} >
+    ]} href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>
+      <div css={{ position: 'relative' }}>
         <PuzzleSizeIcon width={props.width} height={props.height} />
         {authored || (play && play.f) ?
           <div css={{ textShadow: '2px 0 0 white, -2px 0 0 white, 0 2px 0 white, 0 -2px 0 white', position: 'absolute', top: '0.1em', left: '0.35em', fontSize: '0.6em' }}>
@@ -58,17 +66,21 @@ const PuzzleLink = (props: { id: string, authorId: string, width?: number, heigh
           ''
         }
       </div>
-      <h3 css={{
-        marginBottom: 0,
-      }}>{props.title} {!authored && play ? (play.f ? <i>({timeString(play.t, false)})</i> : <i>(unfinished)</i>) : ''}</h3>
-      {props.subTitle ?
-        <h4 css={{
-          marginBottom: 0,
-        }}>{props.subTitle}</h4>
-        : ''
-      }
     </Link>
-    {props.children}
+    <div css={{ flex: 1 }}>
+      <Link css={linkCss} href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>
+        <h3 css={{
+          marginBottom: 0,
+        }}>{props.title} {!authored && play ? (play.f ? <i>({timeString(play.t, false)})</i> : <i>(unfinished)</i>) : ''}</h3>
+        {props.subTitle ?
+          <h4 css={{
+            marginBottom: 0,
+          }}>{props.subTitle}</h4>
+          : ''
+        }
+      </Link>
+      {props.children}
+    </div >
   </div>;
 };
 
