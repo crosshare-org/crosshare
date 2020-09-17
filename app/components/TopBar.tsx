@@ -106,6 +106,29 @@ export const TopBarDropDownLinkA = (props: TopBarDropDownLinkAProps) => {
   );
 };
 
+export const TopBarDropDownLinkSimpleA = (props: TopBarDropDownLinkAProps) => {
+  return (
+    <a href={props.href} title={props.text} css={{
+      backgroundColor: 'transparent',
+      border: 'none',
+      cursor: 'pointer',
+      textDecoration: 'none',
+      display: 'inline-block',
+      margin: 0,
+      padding: '0.5em',
+      width: '100%',
+      color: 'var(--text)',
+      '&:hover, &:focus': {
+        color: 'var(--text)',
+        textDecoration: 'none',
+        backgroundColor: 'var(--top-bar-hover)',
+      },
+    }}>
+      <TopBarDropDownLinkContents {...props} />
+    </a>
+  );
+};
+
 interface TopBarLinkCommonProps {
   text?: string,
   hoverText?: string,
