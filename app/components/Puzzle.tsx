@@ -642,7 +642,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
               <TopBarDropDownLinkA href='/crosswords/[puzzleId]/stats' as={`/crosswords/${puzzle.id}/stats`} icon={<IoMdStats />} text="Stats" />
               : ''
           }
-          <TopBarDropDownLinkA href={'/api/pdf/' + puzzle.id} icon={<FaPrint />} text="Print puzzle" />
+          <TopBarDropDownLinkA href={'/api/pdf/' + puzzle.id} icon={<FaPrint />} text="Print Puzzle" />
           <TopBarDropDownLinkA href='/account' icon={<FaUser />} text="Account" />
           <TopBarDropDownLinkA href='/construct' icon={<FaHammer />} text="Construct a Puzzle" />
         </>
