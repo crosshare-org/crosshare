@@ -5,7 +5,7 @@ import { PuzzleInProgressT } from '../lib/types';
 import { importFile } from '../lib/converter';
 import { AuthContext, renderLoginButtonIfNeeded } from '../components/AuthContext';
 import { Preview } from '../components/Preview';
-import { Link } from '../components/Link';
+import { Link, LinkButton } from '../components/Link';
 import { MdMoneyOff } from 'react-icons/md';
 import { FaShareSquare, FaChartBar, FaComment } from 'react-icons/fa';
 import { IoMdPhonePortrait, IoMdResize } from 'react-icons/io';
@@ -103,5 +103,9 @@ export default function UploadPage() {
       <FeatureListItem icon={<FaChartBar />} heading="Advanced analytics" text="As a constructor, you get access to advanced analytics about your puzzle. Find out how many people solve your puzzle, how long it takes them, and view heatmaps of exactly which cells they get stuck on." />
       <FeatureListItem icon={<FaComment />} heading="An instant crossword blog" text="After publishing a puzzle you can reserve your own URL and instantly create a crossword blog. You get a centralized page to share and talk about all of your puzzles. Commenting is enabled from the start and Crosshare is the only place where comments feature solve times, clue tooltips, and other crossword specific features." />
     </FeatureList>
+    <div css={{ textAlign: 'center', marginBottom: '2em' }}>
+      <p>Don’t have a .puz file to upload?</p>
+      <LinkButton href='/construct' as='/construct' passHref>Make your own puzzle with the Crosshare constructor</LinkButton>
+    </div>
   </>;
 }
