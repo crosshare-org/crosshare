@@ -30,7 +30,7 @@ function layoutPDFClues(doc: jsPDF, puzzle: PuzzleT, grid: ViewableGrid<Viewable
   doc.setFont(format.font);
   doc.setFontSize(format.fontSize);
   let x = format.marginLeft;
-  let y = marginTop(x);
+  let y = marginTop(x, false);
   let addedPage = false;
   const acrossTitle = [{ 'label': 'ACROSS', 'clue': ' ' }];
   const downTitle = [{ 'label': ' ', 'clue': ' ' }, { 'label': 'DOWN', 'clue': ' ' }];

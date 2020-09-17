@@ -161,7 +161,7 @@ export default function BuilderPage() {
         <h3>Will Crosshare ever have an offline mode?</h3>
         <p>I know I’m sounding like a broken record, but this is coming soon too!</p>
         <h3>Can I export my puzzle as a PDF or .puz file?</h3>
-        <p>Exporting is also coming soon, but will be a Crosshare Pro feature along with custom wordlists. I might add a nice print option for published puzzles for the free version, though.</p>
+        <p>After publishing a puzzle solvers can get a nicely formatted PDF for printing: click “More” and then “Print puzzle”. Exporting to .puz is also coming soon, but will be a Crosshare Pro feature along with custom wordlists.</p>
         <h3>What types of grid symmetry are supported?</h3>
         <p>ALL OF THEM.</p>
         <h3>What if I have a different question?</h3>
