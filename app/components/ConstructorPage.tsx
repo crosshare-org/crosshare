@@ -10,6 +10,8 @@ import { Markdown } from './Markdown';
 import { AuthPropsOptional, AuthContext } from './AuthContext';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
 import { ButtonAsLink, Button } from './Buttons';
+import { SMALL_AND_UP } from '../lib/style';
+import { ImageCropper } from './ImageCropper';
 
 
 const BANNED_USERNAMES = {
@@ -186,6 +188,7 @@ export interface ConstructorPageProps {
 }
 
 export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional) => {
+  const [showCropper, setShowCropper] = useState(false);
   const username = props.constructor.i || props.constructor.id;
   const description = 'The latest crossword puzzles from ' + props.constructor.n + ' (@' + username + '). ' + props.constructor.b;
   const title = props.constructor.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
@@ -204,14 +207,59 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
     <div css={{
       margin: '1em',
     }}>
-      <h1 css={{ marginBottom: 0 }}>{props.constructor.n}</h1>
-      <h2><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h2>
-      <div css={{ marginBottom: '1.5em' }}>
+      <div css={{
+        marginBottom: '1.5em',
+        display: 'flex',
+        alignItems: 'flex-start',
+      }}>
         {props.user ?.uid === props.constructor.u ?
-          <BioEditor text={props.constructor.b} userId={props.constructor.id} />
-          :
-          <Markdown text={props.constructor.b} />
-        }
+          <div css={{ marginRight: '1em' }}>
+            <div css={{
+              width: 50,
+              height: 50,
+              position: 'relative',
+              overflow: 'hidden',
+              [SMALL_AND_UP]: {
+                width: 100,
+                height: 100
+              },
+              marginTop: '1em',
+              border: '1px solid var(--black)',
+              borderRadius: '50%',
+              '&:before,&:after': {
+                content: '" "',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+              },
+              cursor: 'pointer',
+              '&:hover': {
+                '&:before': {
+                  width: '15%',
+                  margin: '20% auto',
+                  backgroundColor: 'var(--default-text)',
+                },
+                '&:after': {
+                  height: '15%',
+                  margin: 'auto 20%',
+                  backgroundColor: 'var(--default-text)',
+                }
+              }
+            }} role="button" tabIndex={0} onClick={() => setShowCropper(true)} onKeyDown={() => setShowCropper(true)}>
+            </div>
+          </div>
+          : ''}
+        <div css={{ flex: '1' }}>
+          <h1 css={{ marginBottom: 0 }}>{props.constructor.n}</h1>
+          <h2><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h2>
+          {props.user ?.uid === props.constructor.u ?
+            <BioEditor text={props.constructor.b} userId={props.constructor.id} />
+            :
+            <Markdown text={props.constructor.b} />
+          }
+        </div>
       </div>
       {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showAuthor={false} />)}
       {props.hasMore ?
@@ -220,5 +268,8 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
         </p>
         : ''}
     </div>
+    {showCropper && props.user ?
+      <ImageCropper userId={props.user.uid} cancelCrop={() => setShowCropper(false)} />
+      : ''}
   </>;
 };

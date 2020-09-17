@@ -5,6 +5,7 @@ import NextJSRouter from 'next/router';
 import Head from 'next/head';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
+import 'react-image-crop/dist/ReactCrop.css';
 
 import * as gtag from '../lib/gtag';
 import { useAuth } from '../lib/hooks';

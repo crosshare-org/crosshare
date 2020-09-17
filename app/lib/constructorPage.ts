@@ -24,6 +24,8 @@ export const ConstructorPageV = t.intersection([
   t.partial({
     /** needs moderation */
     m: t.boolean,
+    /** has profile photo */
+    p: t.boolean,
   })
 ]);
 export interface ConstructorPageT extends Omit<t.TypeOf<typeof ConstructorPageV>, 't'> {

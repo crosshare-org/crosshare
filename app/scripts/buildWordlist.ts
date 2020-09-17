@@ -1,10 +1,8 @@
 #!/usr/bin/env ts-node-script --skip-project
 export { };
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const fs = require('fs');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const util = require('util');
+import fs from 'fs';
+import util from 'util';
 
 import { rawBuild } from '../lib/WordDB';
 
