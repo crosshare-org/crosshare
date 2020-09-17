@@ -32,6 +32,7 @@ export function reportWebVitals(metric: NextWebVitalsMetric) {
 // `err` is a workaround for https://github.com/vercel/next.js/issues/8592
 export default function CrosshareApp({ Component, pageProps, err }: AppProps & { err: Error }): JSX.Element {
   let authStatus = useAuth();
+  const [loading, setLoading] = useState(false);
 
   if (typeof window === 'undefined') {
     authStatus = { loading: true, isAdmin: false, user: undefined, constructorPage: undefined, error: undefined };
@@ -47,12 +48,24 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
   }, [audioContext, setAudioContext]);
 
   useEffect(() => {
+    const handleStart = () => {
+      setLoading(true);
+    };
+    const handleError = () => {
+      setLoading(false);
+    };
     const handleRouteChange = (url: string) => {
+      setLoading(false);
       gtag.pageview(url);
     };
+    NextJSRouter.events.on('routeChangeStart', handleStart);
     NextJSRouter.events.on('routeChangeComplete', handleRouteChange);
+    NextJSRouter.events.on('routeChangeError', handleError);
+
     return () => {
+      NextJSRouter.events.off('routeChangeStart', handleStart);
       NextJSRouter.events.off('routeChangeComplete', handleRouteChange);
+      NextJSRouter.events.off('routeChangeError', handleError);
     };
   }, []);
 
@@ -79,6 +92,13 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
           <Component {...pageProps} err={err} />
         </AuthContext.Provider>
       </CrosshareAudioContext.Provider>
+      {loading ?
+        <div css={{
+          position: 'fixed',
+          bottom: '1em',
+          left: '1em',
+        }} className='snack-bar Toastify__toast'>Loading...</div>
+        : ''}
     </>
   );
 }

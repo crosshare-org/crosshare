@@ -71,7 +71,7 @@
     --key-ul: black;
     --text-input-bg: #333;
     --text-input-border: #000;
-    --snackbar-bg: #999;
+    --snackbar-bg: #DDD;
     --snackbar-text: black;
     --social-text: #DDD;
   }
@@ -121,6 +121,7 @@ div.paragraph + div.paragraph {
 }
 .snack-bar {
   padding: 0.5em !important;
+  border-radius: 3px;
   min-height: 32px;
   background-color: var(--snackbar-bg) !important;
   color: var(--snackbar-text) !important;
