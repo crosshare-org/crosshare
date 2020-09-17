@@ -81,7 +81,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
-  background: var(--white);
+  background: var(--cell-bg);
 }
 
 .emotion-33 {
@@ -95,7 +95,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   font-size: 40px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
-  background: var(--white);
+  background: var(--cell-bg);
 }
 
 <div
@@ -686,7 +686,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
-  background: var(--white);
+  background: var(--cell-bg);
 }
 
 .emotion-33 {
@@ -700,7 +700,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   font-size: 40px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
-  background: var(--white);
+  background: var(--cell-bg);
 }
 
 <div
@@ -1275,7 +1275,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
-  background: var(--white);
+  background: var(--cell-bg);
 }
 
 .emotion-33 {
@@ -1289,7 +1289,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   font-size: 40px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
-  background: var(--white);
+  background: var(--cell-bg);
 }
 
 .emotion-3 {

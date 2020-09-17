@@ -89,7 +89,7 @@ exports[`upload a puzzle 1`] = `
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
-  background: var(--white);
+  background: var(--cell-bg);
 }
 
 .emotion-72 {
@@ -104,7 +104,7 @@ exports[`upload a puzzle 1`] = `
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
-  background: var(--white);
+  background: var(--cell-bg);
 }
 
 .emotion-77 {
@@ -118,7 +118,7 @@ exports[`upload a puzzle 1`] = `
   font-size: 13.333333333333334px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
-  background: var(--white);
+  background: var(--cell-bg);
 }
 
 .emotion-94 {

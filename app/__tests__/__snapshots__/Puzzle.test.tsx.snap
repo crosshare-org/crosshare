@@ -80,7 +80,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
-  background: var(--white);
+  background: var(--cell-bg);
 }
 
 .emotion-30 {
@@ -94,7 +94,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   font-size: 40px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
-  background: var(--white);
+  background: var(--cell-bg);
 }
 
 .emotion-91 {
@@ -814,7 +814,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
-  background: var(--white);
+  background: var(--cell-bg);
 }
 
 .emotion-30 {
@@ -828,7 +828,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   font-size: 40px;
   border-right: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
-  background: var(--white);
+  background: var(--cell-bg);
 }
 
 .emotion-91 {

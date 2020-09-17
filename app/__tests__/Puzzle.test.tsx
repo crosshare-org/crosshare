@@ -59,7 +59,7 @@ test('clicking a clue sets slot to active', () => {
   expect(cell).toHaveStyleRule('background', 'var(--secondary)');
 
   const cell2 = getByLabelText('cell1x1');
-  expect(cell2).toHaveStyleRule('background', 'var(--white)');
+  expect(cell2).toHaveStyleRule('background', 'var(--cell-bg)');
 
   const clue = getAllByText(/popeye's love/i)[0];
   expect(clue).toBeInTheDocument();

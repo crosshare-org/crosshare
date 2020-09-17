@@ -70,6 +70,7 @@ test('puzzle in progress should be cached in local storage', async () => {
   let r = render(
     <BuilderPage />, { user: mike }
   );
+  fireEvent.click((await r.findAllByText('Launch Constructor'))[0]);
 
   await r.findByText(/Across/i);
 
@@ -90,6 +91,8 @@ test('puzzle in progress should be cached in local storage', async () => {
   r = render(
     <BuilderPage />, { user: mike }
   );
+  fireEvent.click((await r.findAllByText('Launch Constructor'))[0]);
+
   await r.findByText(/Across/i);
   expect(r.getByLabelText('cell0x1')).toHaveTextContent('B');
   expect(r.getByLabelText('cell0x2')).toHaveTextContent('C');
@@ -108,6 +111,7 @@ async function publishPuzzle(prePublish?: (r: RenderResult) => Promise<void>) {
   const r = render(
     <BuilderPage />, { user: mike }
   );
+  fireEvent.click((await r.findAllByText('Launch Constructor'))[0]);
 
   const grid = (await r.findByLabelText('cell0x0')).parentElement || window;
 
@@ -262,6 +266,7 @@ test('publish custom / non-rectangular size', async () => {
   const r = render(
     <BuilderPage />, { user: mike }
   );
+  fireEvent.click((await r.findAllByText('Launch Constructor'))[0]);
 
   fireEvent.click(await (r.findByText('New Puzzle', { exact: true })));
 
