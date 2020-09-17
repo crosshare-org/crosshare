@@ -145,7 +145,7 @@ export default function BuilderPage() {
       }}>
         <h2 css={{ textAlign: 'center' }}>FAQ</h2>
         <h3>What if I have an existing puzzle I’d like to upload?</h3>
-        <p>Crosshare supports .puz uploading <Link href='/upload' as='/upload' passHref>here</Link></p>
+        <p>Crosshare supports .puz uploading <Link href='/upload' as='/upload' passHref>here</Link>.</p>
         <h3>Does Crosshare support rebuses?</h3>
         <p>Yup, both the constructor and the solver support entering rebuses - hit ‘Escape’ (or ‘Rebus’ on your mobile device keyboard) to enter a rebus. The autofiller supports filling around them, too <Emoji symbol='😉' />.</p>
         <h3>What about circled / shaded squares?</h3>
