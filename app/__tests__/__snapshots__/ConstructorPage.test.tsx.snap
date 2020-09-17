@@ -6,6 +6,7 @@ Object {
   "i": "MYTESTUSERNAME",
   "m": true,
   "n": "New Display Name",
+  "p": true,
   "u": "mikeuserid",
 }
 `;
