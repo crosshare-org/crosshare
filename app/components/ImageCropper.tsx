@@ -121,7 +121,7 @@ function upload(userId: string, image: HTMLImageElement | null, crop: ReactCrop.
       }
       App.storage().ref().child(`/users/${userId}/profile.png`).put(blob).then(() => {
         onComplete();
-        toast(<div>Pic updated. It may take a little while to appear on the site.</div>,
+        toast(<div>Pic updated. It can take up to several hours to appear on the site.</div>,
           {
             className: 'snack-bar',
             position: 'bottom-left',

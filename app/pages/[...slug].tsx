@@ -43,7 +43,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
   }
 
   let dlUrl: string | null = null;
-  const profilePic = AdminApp.storage().bucket().file(`users/${cp.u}/profile.png`);
+  const profilePicPath = `users/${cp.u}/profile.png`;
+  const profilePic = AdminApp.storage().bucket().file(profilePicPath);
   if ((await profilePic.exists())[0]) {
     try {
       dlUrl = (await profilePic.getSignedUrl({
@@ -51,8 +52,10 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
         expires: '03-09-2491'
       }))[0];
     } catch (e) {
-      console.log('error getting profile pic', e);
+      console.log('error getting profile pic', profilePicPath, e);
     }
+  } else {
+    console.log('pic doesnt exist', profilePicPath);
   }
 
   try {
