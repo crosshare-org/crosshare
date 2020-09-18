@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { createCanvas, loadImage, PNGStream } from 'canvas';
+import { createCanvas, loadImage, PNGStream, Image } from 'canvas';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
-import { App } from '../../../lib/firebaseWrapper';
+import { AdminApp } from '../../../lib/firebaseWrapper';
 import { DBPuzzleV, DBPuzzleT } from '../../../lib/dbtypes';
 
 async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
@@ -63,26 +63,51 @@ async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
     ctx.fillRect(300 + col * widthDivision + xOffset, 15 + row * heightDivision + yOffset, widthDivision, heightDivision);
   }
 
-  // Center Logo
+  // Center Logo - try loading constructor's profile pic
+  let img: Image | null = null;
+  const profilePic = AdminApp.storage().bucket().file(`users/${puzzle.a}/profile.png`);
+  if ((await profilePic.exists())[0]) {
+    try {
+      img = await loadImage((await profilePic.download())[0]);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  // Logo border:
   ctx.beginPath();
-  ctx.arc(600, 315, 150, 0, 2 * Math.PI);
+  ctx.arc(600, 315, 105, 0, 2 * Math.PI);
   ctx.fillStyle = 'white';
   ctx.strokeStyle = 'black';
   ctx.lineWidth = 1;
   ctx.fill();
   ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(600, 315, 145, 0, 2 * Math.PI);
-  ctx.fillStyle = '#EB984E';
-  ctx.fill();
 
-  const img = await loadImage('./public/logo.svg');
-  ctx.drawImage(img, 500, 215);
+  if (img) {
+    const scratchCanvas = createCanvas(200, 200);
+    const scratchCtx = scratchCanvas.getContext('2d');
+    scratchCtx.drawImage(img, 0, 0);
+    scratchCtx.fillStyle = '#fff'; //color doesn't matter, but we want full opacity
+    scratchCtx.globalCompositeOperation = 'destination-in';
+    scratchCtx.beginPath();
+    scratchCtx.arc(100, 100, 100, 0, 2 * Math.PI);
+    scratchCtx.closePath();
+    scratchCtx.fill();
+    ctx.drawImage(scratchCanvas, 500, 215, 200, 200);
+  } else {
+    ctx.beginPath();
+    ctx.arc(600, 315, 100, 0, 2 * Math.PI);
+    ctx.fillStyle = '#EB984E';
+    ctx.fill();
+
+    img = await loadImage('./public/logo.svg');
+    ctx.drawImage(img, 535, 250, 130, 130);
+  }
   return canvas.createPNGStream();
 }
 
 async function getPuzzle(puzzleId: string): Promise<DBPuzzleT | null> {
-  const db = App.firestore();
+  const db = AdminApp.firestore();
   let dbres;
   try {
     dbres = await db.collection('c').doc(puzzleId).get();

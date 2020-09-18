@@ -46,7 +46,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
   const profilePic = AdminApp.storage().bucket().file(`users/${cp.u}/profile.png`);
   if ((await profilePic.exists())[0]) {
     try {
-      dlUrl = (await AdminApp.storage().bucket().file(`users/${cp.u}/profile.png`).getSignedUrl({
+      dlUrl = (await profilePic.getSignedUrl({
         action: 'read',
         expires: '03-09-2491'
       }))[0];
