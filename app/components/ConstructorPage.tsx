@@ -10,7 +10,7 @@ import { Markdown } from './Markdown';
 import { AuthPropsOptional, AuthContext } from './AuthContext';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
 import { ButtonAsLink, Button } from './Buttons';
-import { SMALL_AND_UP, HUGE_AND_UP, MAX_WIDTH, PROFILE_PIC, COVER_PIC } from '../lib/style';
+import { SMALL_AND_UP, HUGE_AND_UP, MAX_WIDTH, PROFILE_PIC, COVER_PIC, LARGE_AND_UP } from '../lib/style';
 import { ImageCropper } from './ImageCropper';
 
 
@@ -143,9 +143,9 @@ const BioEditor = (props: BioEditorProps) => {
       }
     }} >
       <Markdown text={text} />
-      <ButtonAsLink css={{ marginRight: '1em' }} onClick={() => setIsOpen(true)} text="edit bio" />
-      <ButtonAsLink css={{ marginRight: '1em' }} onClick={props.addProfilePic} text="add / edit profile pic" />
-      <ButtonAsLink onClick={props.addCoverPic} text="add / edit cover pic" />
+      <ButtonAsLink css={{ marginRight: '1.5em' }} onClick={() => setIsOpen(true)} text="edit bio" />
+      <ButtonAsLink css={{ marginRight: '1.5em' }} onClick={props.addProfilePic} text="edit profile pic" />
+      <ButtonAsLink onClick={props.addCoverPic} text="edit cover pic" />
     </div>;
   }
 
@@ -194,7 +194,8 @@ export const ProfilePic = (props: { profilePicture: string }) => {
       width: 100,
       height: 100
     },
-    border: '1px solid var(--black)',
+    boxSizing: 'content-box',
+    border: '4px solid var(--bg)',
     borderRadius: '50%',
   }}>
     <img css={{
@@ -208,9 +209,24 @@ export const ProfilePic = (props: { profilePicture: string }) => {
   </div>;
 };
 
+export const CoverPic = (props: { coverPicture: string }) => {
+  return <img width={COVER_PIC[0]} height={COVER_PIC[1]} css={{
+    width: '100%',
+    maxHeight: '150px',
+    [SMALL_AND_UP]: {
+      maxHeight: '225px',
+    },
+    [LARGE_AND_UP]: {
+      maxHeight: '300px',
+    },
+    objectFit: 'cover',
+  }} src={props.coverPicture} alt="Cover" />;
+};
+
 export interface ConstructorPageProps {
   constructor: ConstructorPageT,
   profilePicture: string | null,
+  coverPicture: string | null,
   puzzles: Array<PuzzleResult>,
   hasMore: boolean,
   currentIndex: number | null,
@@ -219,6 +235,8 @@ export interface ConstructorPageProps {
 export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional) => {
   const [settingProfilePic, setSettingProfilePic] = useState(false);
   const [settingCoverPic, setSettingCoverPic] = useState(false);
+  const coverPic = props.coverPicture;
+  const profilePic = props.profilePicture;
   const username = props.constructor.i || props.constructor.id;
   const description = 'The latest crossword puzzles from ' + props.constructor.n + ' (@' + username + '). ' + props.constructor.b;
   const title = props.constructor.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
@@ -227,6 +245,13 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
       <title>{title}</title>
       <meta key="og:title" property="og:title" content={title} />
       <meta key="og:description" property="og:description" content={description} />
+      {profilePic ?
+        <>
+          <meta key="og:image" property="og:image" content={profilePic} />
+          <meta key="og:image:width" property="og:image:width" content="200" />
+          <meta key="og:image:height" property="og:image:height" content="200" />
+        </>
+        : ''}
       <meta key="description" name="description" content={description} />
       <link rel="canonical" href={'https://crosshare.org/' + username + (props.currentIndex !== null ? '/' + props.currentIndex : '')} />
       {props.hasMore ?
@@ -234,6 +259,9 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
         : ''}
     </Head>
     <DefaultTopBar />
+    {coverPic ?
+      <CoverPic coverPicture={coverPic} />
+      : ''}
     <div css={{
       margin: '1em',
       [HUGE_AND_UP]: {
@@ -241,28 +269,21 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
         margin: '1em auto',
       },
     }}>
-      <div css={{
-        marginBottom: '1.5em',
-        display: 'flex',
-        alignItems: 'flex-start',
-      }}>
-        {props.profilePicture ?
-          <div css={{
-            marginRight: '1em',
-            marginTop: '1em',
-          }}>
-            <ProfilePic profilePicture={props.profilePicture} />
-          </div>
-          : ''}
-        <div css={{ flex: '1' }}>
-          <h1 css={{ marginBottom: 0 }}>{props.constructor.n}</h1>
-          <h2><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h2>
-          {props.user ?.uid === props.constructor.u ?
-            <BioEditor text={props.constructor.b} userId={props.constructor.id} addProfilePic={() => setSettingProfilePic(true)} addCoverPic={() => setSettingCoverPic(true)} />
-            :
-            <Markdown text={props.constructor.b} />
-          }
+      {profilePic ?
+        <div css={{
+          marginTop: coverPic ? '-4em' : 0,
+        }}>
+          <ProfilePic profilePicture={profilePic} />
         </div>
+        : ''}
+      <h1 css={{ fontSize: '1.4em', marginBottom: 0 }}>{props.constructor.n}</h1>
+      <h2 css={{ fontSize: '1em', fontWeight: 'normal' }}><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h2>
+      <div css={{ marginBottom: '1.5em' }}>
+        {props.user ?.uid === props.constructor.u ?
+          <BioEditor text={props.constructor.b} userId={props.constructor.id} addProfilePic={() => setSettingProfilePic(true)} addCoverPic={() => setSettingCoverPic(true)} />
+          :
+          <Markdown text={props.constructor.b} />
+        }
       </div>
       {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showAuthor={false} />)}
       {props.hasMore ?

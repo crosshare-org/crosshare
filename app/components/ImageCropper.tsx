@@ -198,7 +198,7 @@ export function ImageCropper(props: { isCircle: boolean, targetSize: [number, nu
             setUploading(true);
             upload(props.storageKey, imgRef.current, props.targetSize, completedCrop, props.cancelCrop);
           }}
-          text="Upload new profile image"
+          text="Upload Image"
         />
       }
     </Overlay>

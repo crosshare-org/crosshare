@@ -8,7 +8,8 @@ import { puzzleFromDB } from '../lib/types';
 import { DBPuzzleV } from '../lib/dbtypes';
 import { mapEachResult, } from '../lib/dbUtils';
 import { ErrorPage } from '../components/ErrorPage';
-import { AdminApp, App, TimestampClass } from '../lib/firebaseWrapper';
+import { App, TimestampClass } from '../lib/firebaseWrapper';
+import { getStorageUrl } from '../lib/serverOnly';
 
 interface ErrorProps {
   error: string
@@ -42,21 +43,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
     return { props: { error: 'Invalid constructor page' } };
   }
 
-  let dlUrl: string | null = null;
-  const profilePicPath = `users/${cp.u}/profile.png`;
-  const profilePic = AdminApp.storage().bucket().file(profilePicPath);
-  if ((await profilePic.exists())[0]) {
-    try {
-      dlUrl = (await profilePic.getSignedUrl({
-        action: 'read',
-        expires: '03-09-2491'
-      }))[0];
-    } catch (e) {
-      console.log('error getting profile pic', profilePicPath, e);
-    }
-  } else {
-    console.log('pic doesnt exist', profilePicPath);
-  }
+  const profilePicture = await getStorageUrl(`users/${cp.u}/profile.png`);
+  const coverPicture = await getStorageUrl(`users/${cp.u}/cover.png`);
 
   try {
     let q = db.collection('c').where('a', '==', cp.u).orderBy('p', 'desc').limit(PAGESIZE + 1);
@@ -72,7 +60,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
     return {
       props: {
         constructor: cp,
-        profilePicture: dlUrl,
+        profilePicture,
+        coverPicture,
         puzzles: puzzles.slice(0, PAGESIZE),
         hasMore: puzzles.length === PAGESIZE + 1,
         currentIndex: startTs,
