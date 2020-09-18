@@ -8,7 +8,7 @@ import { puzzleFromDB } from '../lib/types';
 import { DBPuzzleV } from '../lib/dbtypes';
 import { mapEachResult, } from '../lib/dbUtils';
 import { ErrorPage } from '../components/ErrorPage';
-import { App, TimestampClass } from '../lib/firebaseWrapper';
+import { AdminApp, App, TimestampClass } from '../lib/firebaseWrapper';
 
 interface ErrorProps {
   error: string
@@ -42,6 +42,19 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
     return { props: { error: 'Invalid constructor page' } };
   }
 
+  let dlUrl: string | null = null;
+  const profilePic = AdminApp.storage().bucket().file(`users/${cp.u}/profile.png`);
+  if ((await profilePic.exists())[0]) {
+    try {
+      dlUrl = (await AdminApp.storage().bucket().file(`users/${cp.u}/profile.png`).getSignedUrl({
+        action: 'read',
+        expires: '03-09-2491'
+      }))[0];
+    } catch (e) {
+      dlUrl = null;
+    }
+  }
+
   try {
     let q = db.collection('c').where('a', '==', cp.u).orderBy('p', 'desc').limit(PAGESIZE + 1);
     let startTs: number | null = null;
@@ -56,6 +69,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
     return {
       props: {
         constructor: cp,
+        profilePicture: dlUrl,
         puzzles: puzzles.slice(0, PAGESIZE),
         hasMore: puzzles.length === PAGESIZE + 1,
         currentIndex: startTs,

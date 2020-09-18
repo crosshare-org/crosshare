@@ -3,6 +3,7 @@ import ReactCrop from 'react-image-crop';
 import { Overlay } from './Overlay';
 import { Button } from './Buttons';
 import { App } from '../lib/firebaseWrapper';
+import { toast, Slide } from 'react-toastify';
 
 function downsample(image: HTMLImageElement, crop: ReactCrop.Crop) {
   if (!crop || !crop.width || !crop.height) {
@@ -120,6 +121,19 @@ function upload(userId: string, image: HTMLImageElement | null, crop: ReactCrop.
       }
       App.storage().ref().child(`/users/${userId}/profile.png`).put(blob).then(() => {
         onComplete();
+        toast(<div>Pic updated. It may take a little while to appear on the site.</div>,
+          {
+            className: 'snack-bar',
+            position: 'bottom-left',
+            autoClose: 4000,
+            closeButton: false,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+            transition: Slide
+          });
       });
     },
     'image/png',

@@ -6,6 +6,8 @@ import 'firebase/performance';
 import 'firebase/auth';
 import 'firebase/storage';
 
+import type firebaseAdminType from 'firebase-admin';
+
 const firebaseConfig = {
   apiKey: 'AIzaSyBrmmBf91peVT5T_Z7N3z9oizsPH5u2pUc',
   authDomain: 'auth.crosshare.org',
@@ -19,6 +21,20 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export let App: firebase.app.App;
+export let AdminApp: firebaseAdminType.app.App;
+
+if (typeof window === 'undefined') {
+  const firebaseAdmin: typeof firebaseAdminType = require('firebase-admin'); // eslint-disable-line @typescript-eslint/no-var-requires
+  if (firebaseAdmin.apps.length && firebaseAdmin.apps[0]) {
+    AdminApp = firebaseAdmin.apps[0];
+  } else {
+    AdminApp = firebaseAdmin.initializeApp({
+      ...firebaseConfig,
+      credential: firebaseAdmin.credential.applicationDefault(),
+    });
+  }
+}
+
 if (firebase.apps.length) {
   App = firebase.apps[0];
 } else {

@@ -412,12 +412,18 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
 
     let delay = 0;
     if (state.bankedSeconds <= 60) {
-      toast(<div><Emoji symbol='🥇' /> Solved in under a minute!</div>);
+      toast(<div><Emoji symbol='🥇' /> Solved in under a minute!</div>,
+        {
+          closeOnClick: true,
+        });
       delay += 500;
     }
     if (!state.didCheat) {
       toast(<div><Emoji symbol='🤓' /> Solved without check/reveal! </div>,
-        { delay: delay });
+        {
+          delay: delay,
+          closeOnClick: true,
+        });
       delay += 500;
     }
     if (!muted && playSuccess.current) {

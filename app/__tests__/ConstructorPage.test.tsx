@@ -266,19 +266,6 @@ test('security rules for constructor page updates', async () => {
     })
   );
 
-  // SUCCEEDS!
-  await firebaseTesting.assertSucceeds(
-    app.firestore().collection('cp').doc('mytestusername').set({
-      i: 'MyTestUsername',
-      u: 'mikeuserid',
-      n: 'Mike D',
-      b: 'Some random bio text',
-      m: true,
-      p: true,
-      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
-    })
-  );
-
   // Can update bio text
   await firebaseTesting.assertSucceeds(
     app.firestore().collection('cp').doc('mytestusername').set({

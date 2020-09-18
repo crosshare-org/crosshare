@@ -1,10 +1,11 @@
 import { ReactNode } from 'react';
+import { MAX_WIDTH, HUGE_AND_UP } from '../lib/style';
 
 export function FeatureList(props: { children: ReactNode }) {
   return <div css={{
     margin: '1em',
-    ['@media (min-width: 1240px)']: {
-      maxWidth: '1200px',
+    [HUGE_AND_UP]: {
+      maxWidth: MAX_WIDTH,
       margin: '1em auto',
     },
     columns: '3 300px',

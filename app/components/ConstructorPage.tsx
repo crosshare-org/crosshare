@@ -10,7 +10,7 @@ import { Markdown } from './Markdown';
 import { AuthPropsOptional, AuthContext } from './AuthContext';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
 import { ButtonAsLink, Button } from './Buttons';
-import { SMALL_AND_UP } from '../lib/style';
+import { SMALL_AND_UP, HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
 import { ImageCropper } from './ImageCropper';
 
 
@@ -124,7 +124,8 @@ export const CreatePageForm = () => {
 
 interface BioEditorProps {
   text: string,
-  userId: string
+  userId: string,
+  addProfilePic: () => void,
 }
 
 const BIO_LENGTH_LIMIT = 1500;
@@ -141,7 +142,8 @@ const BioEditor = (props: BioEditorProps) => {
       }
     }} >
       <Markdown text={text} />
-      <ButtonAsLink onClick={() => setIsOpen(true)} text="edit bio" />
+      <ButtonAsLink css={{ marginRight: '2em' }} onClick={() => setIsOpen(true)} text="edit bio" />
+      <ButtonAsLink onClick={props.addProfilePic} text="add / edit profile pic" />
     </div>;
   }
 
@@ -180,8 +182,33 @@ const BioEditor = (props: BioEditorProps) => {
   </>;
 };
 
+export const ProfilePic = (props: { profilePicture: string }) => {
+  return <div css={{
+    width: 75,
+    height: 75,
+    position: 'relative',
+    overflow: 'hidden',
+    [SMALL_AND_UP]: {
+      width: 100,
+      height: 100
+    },
+    border: '1px solid var(--black)',
+    borderRadius: '50%',
+  }}>
+    <img css={{
+      width: 75,
+      height: 75,
+      [SMALL_AND_UP]: {
+        width: 100,
+        height: 100
+      },
+    }} src={props.profilePicture} alt="Profile" />
+  </div>;
+};
+
 export interface ConstructorPageProps {
   constructor: ConstructorPageT,
+  profilePicture: string | null,
   puzzles: Array<PuzzleResult>,
   hasMore: boolean,
   currentIndex: number | null,
@@ -206,56 +233,29 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
     <DefaultTopBar />
     <div css={{
       margin: '1em',
+      [HUGE_AND_UP]: {
+        maxWidth: MAX_WIDTH,
+        margin: '1em auto',
+      },
     }}>
       <div css={{
         marginBottom: '1.5em',
         display: 'flex',
         alignItems: 'flex-start',
       }}>
-        {props.user ?.uid === props.constructor.u ?
-          <div css={{ marginRight: '1em' }}>
-            <div css={{
-              width: 50,
-              height: 50,
-              position: 'relative',
-              overflow: 'hidden',
-              [SMALL_AND_UP]: {
-                width: 100,
-                height: 100
-              },
-              marginTop: '1em',
-              border: '1px solid var(--black)',
-              borderRadius: '50%',
-              '&:before,&:after': {
-                content: '" "',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-              },
-              cursor: 'pointer',
-              '&:hover': {
-                '&:before': {
-                  width: '15%',
-                  margin: '20% auto',
-                  backgroundColor: 'var(--default-text)',
-                },
-                '&:after': {
-                  height: '15%',
-                  margin: 'auto 20%',
-                  backgroundColor: 'var(--default-text)',
-                }
-              }
-            }} role="button" tabIndex={0} onClick={() => setShowCropper(true)} onKeyDown={() => setShowCropper(true)}>
-            </div>
+        {props.profilePicture ?
+          <div css={{
+            marginRight: '1em',
+            marginTop: '1em',
+          }}>
+            <ProfilePic profilePicture={props.profilePicture} />
           </div>
           : ''}
         <div css={{ flex: '1' }}>
           <h1 css={{ marginBottom: 0 }}>{props.constructor.n}</h1>
           <h2><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h2>
           {props.user ?.uid === props.constructor.u ?
-            <BioEditor text={props.constructor.b} userId={props.constructor.id} />
+            <BioEditor text={props.constructor.b} userId={props.constructor.id} addProfilePic={() => setShowCropper(true)} />
             :
             <Markdown text={props.constructor.b} />
           }

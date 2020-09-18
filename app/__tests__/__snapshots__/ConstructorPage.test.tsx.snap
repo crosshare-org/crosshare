@@ -1,12 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`security rules for constructor page updates 1`] = `
+exports['security rules for constructor page updates 1'] = `
 Object {
   "b": "Some new bio text",
   "i": "MYTESTUSERNAME",
   "m": true,
   "n": "New Display Name",
-  "p": true,
   "u": "mikeuserid",
 }
 `;

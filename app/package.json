@@ -15,7 +15,7 @@
   "scripts": {
     "eslint": "npx eslint __mocks__ __tests__ components lib pages reducers",
     "clean": "rimraf nextjs/",
-    "dev": "next dev",
+    "dev": "GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json next dev",
     "analyze": "ANALYZE=true NO_SENTRY=true next build",
     "build": "NO_SENTRY=true next build",
     "start": "next start",
