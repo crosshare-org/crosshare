@@ -5,7 +5,7 @@ import { Button } from './Buttons';
 import { App } from '../lib/firebaseWrapper';
 import { toast, Slide } from 'react-toastify';
 
-function downsample(image: HTMLImageElement, crop: ReactCrop.Crop) {
+function downsample(image: HTMLImageElement, targetSize: [number, number], crop: ReactCrop.Crop) {
   if (!crop || !crop.width || !crop.height) {
     return null;
   }
@@ -35,8 +35,8 @@ function downsample(image: HTMLImageElement, crop: ReactCrop.Crop) {
 
   const width_source = canvas.width;
   const height_source = canvas.height;
-  const width = 200;
-  const height = 200;
+  const width = targetSize[0];
+  const height = targetSize[1];
 
   const ratio_w = width_source / width;
   const ratio_h = height_source / height;
@@ -102,12 +102,12 @@ function downsample(image: HTMLImageElement, crop: ReactCrop.Crop) {
   return canvas;
 }
 
-function upload(userId: string, image: HTMLImageElement | null, crop: ReactCrop.Crop | null, onComplete: () => void) {
+function upload(storageKey: string, image: HTMLImageElement | null, targetSize: [number, number], crop: ReactCrop.Crop | null, onComplete: () => void) {
   if (!image || !crop || !crop.width || !crop.height) {
     return;
   }
 
-  const canvas = downsample(image, crop);
+  const canvas = downsample(image, targetSize, crop);
   if (!canvas) {
     return;
   }
@@ -119,7 +119,7 @@ function upload(userId: string, image: HTMLImageElement | null, crop: ReactCrop.
         onComplete();
         return;
       }
-      App.storage().ref().child(`/users/${userId}/profile.png`).put(blob).then(() => {
+      App.storage().ref().child(storageKey).put(blob).then(() => {
         onComplete();
         toast(<div>Pic updated. It can take up to several hours to appear on the site.</div>,
           {
@@ -141,12 +141,12 @@ function upload(userId: string, image: HTMLImageElement | null, crop: ReactCrop.
   );
 }
 
-export function ImageCropper(props: { userId: string, cancelCrop: () => void }) {
+export function ImageCropper(props: { isCircle: boolean, targetSize: [number, number], storageKey: string, cancelCrop: () => void }) {
   const [upImg, setUpImg] = useState<string>();
   const imgRef = useRef<HTMLImageElement | null>(null);
-  const [crop, setCrop] = useState<ReactCrop.Crop>({ unit: 'px', width: 200, aspect: 1 });
+  const [crop, setCrop] = useState<ReactCrop.Crop>({ unit: 'px', width: props.targetSize[0], aspect: props.targetSize[0] / props.targetSize[1] });
   const [completedCrop, setCompletedCrop] = useState<ReactCrop.Crop | null>(null);
-  const [minWidth, setMinWidth] = useState(200);
+  const [minWidth, setMinWidth] = useState(props.targetSize[0]);
   const [disabled, setDisabled] = useState(true);
   const [uploading, setUploading] = useState(false);
 
@@ -159,15 +159,16 @@ export function ImageCropper(props: { userId: string, cancelCrop: () => void }) 
   };
 
   const onLoad = useCallback((img: HTMLImageElement) => {
-    if (img.naturalWidth < 200 || img.naturalHeight < 200) {
+    if (img.naturalWidth < props.targetSize[0] || img.naturalHeight < props.targetSize[1]) {
       setDisabled(true);
-      alert('Please use an image at least 200x200');
+      alert(`Please use an image at least ${props.targetSize[0]}x${props.targetSize[1]}`);
+      setUpImg(undefined);
       return;
     }
     setDisabled(false);
     imgRef.current = img;
-    setMinWidth(200 * img.width / img.naturalWidth);
-  }, []);
+    setMinWidth(props.targetSize[0] * img.width / img.naturalWidth);
+  }, [props.targetSize]);
 
   return (
     <Overlay closeCallback={props.cancelCrop}>
@@ -178,8 +179,9 @@ export function ImageCropper(props: { userId: string, cancelCrop: () => void }) 
         {upImg ?
           <ReactCrop
             minWidth={minWidth}
-            circularCrop={true}
+            circularCrop={props.isCircle}
             src={upImg}
+            keepSelection={true}
             onImageLoaded={onLoad}
             crop={crop}
             onChange={c => setCrop(c)}
@@ -194,7 +196,7 @@ export function ImageCropper(props: { userId: string, cancelCrop: () => void }) 
           disabled={uploading || disabled || !completedCrop ?.width || !completedCrop ?.height}
           onClick={() => {
             setUploading(true);
-            upload(props.userId, imgRef.current, completedCrop, props.cancelCrop);
+            upload(props.storageKey, imgRef.current, props.targetSize, completedCrop, props.cancelCrop);
           }}
           text="Upload new profile image"
         />

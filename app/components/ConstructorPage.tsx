@@ -10,7 +10,7 @@ import { Markdown } from './Markdown';
 import { AuthPropsOptional, AuthContext } from './AuthContext';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
 import { ButtonAsLink, Button } from './Buttons';
-import { SMALL_AND_UP, HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
+import { SMALL_AND_UP, HUGE_AND_UP, MAX_WIDTH, PROFILE_PIC, COVER_PIC } from '../lib/style';
 import { ImageCropper } from './ImageCropper';
 
 
@@ -126,6 +126,7 @@ interface BioEditorProps {
   text: string,
   userId: string,
   addProfilePic: () => void,
+  addCoverPic: () => void,
 }
 
 const BIO_LENGTH_LIMIT = 1500;
@@ -142,8 +143,9 @@ const BioEditor = (props: BioEditorProps) => {
       }
     }} >
       <Markdown text={text} />
-      <ButtonAsLink css={{ marginRight: '2em' }} onClick={() => setIsOpen(true)} text="edit bio" />
-      <ButtonAsLink onClick={props.addProfilePic} text="add / edit profile pic" />
+      <ButtonAsLink css={{ marginRight: '1em' }} onClick={() => setIsOpen(true)} text="edit bio" />
+      <ButtonAsLink css={{ marginRight: '1em' }} onClick={props.addProfilePic} text="add / edit profile pic" />
+      <ButtonAsLink onClick={props.addCoverPic} text="add / edit cover pic" />
     </div>;
   }
 
@@ -215,7 +217,8 @@ export interface ConstructorPageProps {
 }
 
 export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional) => {
-  const [showCropper, setShowCropper] = useState(false);
+  const [settingProfilePic, setSettingProfilePic] = useState(false);
+  const [settingCoverPic, setSettingCoverPic] = useState(false);
   const username = props.constructor.i || props.constructor.id;
   const description = 'The latest crossword puzzles from ' + props.constructor.n + ' (@' + username + '). ' + props.constructor.b;
   const title = props.constructor.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
@@ -255,7 +258,7 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
           <h1 css={{ marginBottom: 0 }}>{props.constructor.n}</h1>
           <h2><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h2>
           {props.user ?.uid === props.constructor.u ?
-            <BioEditor text={props.constructor.b} userId={props.constructor.id} addProfilePic={() => setShowCropper(true)} />
+            <BioEditor text={props.constructor.b} userId={props.constructor.id} addProfilePic={() => setSettingProfilePic(true)} addCoverPic={() => setSettingCoverPic(true)} />
             :
             <Markdown text={props.constructor.b} />
           }
@@ -268,8 +271,11 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
         </p>
         : ''}
     </div>
-    {showCropper && props.user ?
-      <ImageCropper userId={props.user.uid} cancelCrop={() => setShowCropper(false)} />
+    {settingProfilePic && props.user ?
+      <ImageCropper targetSize={PROFILE_PIC} isCircle={true} storageKey={`/users/${props.user.uid}/profile.png`} cancelCrop={() => setSettingProfilePic(false)} />
+      : ''}
+    {settingCoverPic && props.user ?
+      <ImageCropper targetSize={COVER_PIC} isCircle={false} storageKey={`/users/${props.user.uid}/cover.png`} cancelCrop={() => setSettingCoverPic(false)} />
       : ''}
   </>;
 };
