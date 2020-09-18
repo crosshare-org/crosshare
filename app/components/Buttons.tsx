@@ -47,6 +47,10 @@ export function ButtonAsLink(props: ButtonProps) {
 
 export function Button(props: ButtonProps & { boring?: boolean }) {
   return <ButtonReset css={{
+    overflow: 'hidden',
+    textOverflow: 'ellipses',
+    whiteSpace: 'nowrap',
+    maxWidth: '100%',
     /* create a small space when buttons wrap on 2 lines */
     margin: '2px 0',
     /* invisible border (will be colored on hover/focus) */

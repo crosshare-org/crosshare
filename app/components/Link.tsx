@@ -6,9 +6,15 @@ export interface LinkProps
   Omit<ComponentProps<'a'>, keyof NextLinkProps> { }
 
 export function LinkButton(props: LinkProps) {
-  {/* href is passed by NextLink */ }
-  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/anchor-has-content */ }
+  /* TODO share these styles w/ button class */
+  /* href is passed by NextLink */
+  /* eslint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/anchor-has-content */
   return <Link css={{
+    display: 'inline-block',
+    maxWidth: '100%',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
     /* create a small space when buttons wrap on 2 lines */
     margin: '2px 0',
     /* invisible border (will be colored on hover/focus) */
