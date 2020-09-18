@@ -51,7 +51,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
         expires: '03-09-2491'
       }))[0];
     } catch (e) {
-      dlUrl = null;
+      console.log('error getting profile pic', e);
     }
   }
 
