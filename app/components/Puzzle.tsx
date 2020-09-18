@@ -50,6 +50,7 @@ import { SMALL_AND_UP_RULES } from '../lib/style';
 import { Keyboard } from './Keyboard';
 import { useRouter } from 'next/router';
 import { Button } from './Buttons';
+import { ProfilePic } from './Images';
 
 export interface NextPuzzleLink {
   puzzleId: string,
@@ -65,14 +66,29 @@ interface PauseBeginProps {
   message: string,
   dismissMessage: string,
   notes: string | null,
+  profilePicture?: string | null
 }
 
 const BeginPauseOverlay = (props: PauseBeginProps) => {
+  const profilePic = props.profilePicture;
   return (
     <Overlay closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: 'RESUMEACTION' })}>
+      <div css={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+      }}>
+        {profilePic ?
+          <div css={{ flex: '1', textAlign: 'right' }}>
+            <ProfilePic css={{ display: 'inline-block', marginTop: '-1.5em', marginRight: '1em' }} profilePicture={profilePic} />
+          </div>
+          : ''}
+        <div css={{ flex: '1', textAlign: profilePic ? 'left' : 'center' }}>
+          <h3>{props.title}</h3>
+          <AuthorLink authorName={props.authorName} constructorPage={props.constructorPage} />
+        </div>
+      </div>
       <div css={{ textAlign: 'center' }}>
-        <h3>{props.title}</h3>
-        <AuthorLink authorName={props.authorName} constructorPage={props.constructorPage} />
         {props.notes ?
           <ConstructorNotes notes={props.notes} />
           : ''}
@@ -147,12 +163,26 @@ const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   return (<Link href='/crosswords/[puzzleId]' as={`/crosswords/${nextPuzzle.puzzleId}`} passHref>Play {nextPuzzle.linkText}</Link>);
 };
 
-const SuccessOverlay = (props: { clueMap: Map<string, [number, Direction, string]>, user?: firebase.User, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
+const SuccessOverlay = (props: { profilePicture?: string | null, clueMap: Map<string, [number, Direction, string]>, user?: firebase.User, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
+  const profilePic = props.profilePicture;
   return (
     <Overlay closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
+      <div css={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+      }}>
+        {profilePic ?
+          <div css={{ flex: '1', textAlign: 'right' }}>
+            <ProfilePic css={{ display: 'inline-block', marginTop: '-1.5em', marginRight: '1em' }} profilePicture={profilePic} />
+          </div>
+          : ''}
+        <div css={{ flex: '1', textAlign: profilePic ? 'left' : 'center' }}>
+          <h3>{props.puzzle.title}</h3>
+          <AuthorLink authorName={props.puzzle.authorName} constructorPage={props.puzzle.constructorPage} />
+        </div>
+      </div>
       <div css={{ textAlign: 'center' }}>
-        <h3>{props.puzzle.title}</h3>
-        <AuthorLink authorName={props.puzzle.authorName} constructorPage={props.puzzle.constructorPage} />
         {props.puzzle.constructorNotes ?
           <ConstructorNotes notes={props.puzzle.constructorNotes} />
           : ''}
@@ -227,7 +257,8 @@ interface PuzzleProps {
   puzzle: ServerPuzzleResult,
   play: PlayWithoutUserT | null,
   loadingPlayState: boolean,
-  nextPuzzle?: NextPuzzleLink
+  nextPuzzle?: NextPuzzleLink,
+  profilePicture?: string | null,
 }
 export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps & AuthPropsOptional) => {
   const [state, dispatch] = useReducer(puzzleReducer, {
@@ -471,7 +502,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     };
   }, [state.grid.entries]);
 
-  const beginPauseProps = { constructorPage: puzzle.constructorPage, loadingPlayState: loadingPlayState || !state.loadedPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
+  const beginPauseProps = { constructorPage: puzzle.constructorPage, profilePicture: props.profilePicture, loadingPlayState: loadingPlayState || !state.loadedPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
 
   /* `clueMap` is a map from ENTRYWORD => '5D: This is the clue' - we use this
    *    for comment clue tooltips.
@@ -700,7 +731,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           <KeepTryingOverlay dispatch={dispatch} />
           : ''}
         {state.success && !state.dismissedSuccess ?
-          <SuccessOverlay clueMap={clueMap} user={props.user} nextPuzzle={props.nextPuzzle} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
+          <SuccessOverlay profilePicture={props.profilePicture} clueMap={clueMap} user={props.user} nextPuzzle={props.nextPuzzle} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
           : ''}
         {state.moderating ?
           <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />

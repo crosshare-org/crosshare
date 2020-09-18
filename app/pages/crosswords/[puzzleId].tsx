@@ -16,27 +16,35 @@ import { ErrorPage } from '../../components/ErrorPage';
 import { Link } from '../../components/Link';
 import { userIdToPage } from '../../lib/constructorPage';
 import { useDocument } from 'react-firebase-hooks/firestore';
+import { getStorageUrl } from '../../lib/serverOnly';
+
+interface ErrorProps {
+  error: string
+}
 
 interface PuzzlePageProps {
-  puzzle: ServerPuzzleResult | null,
+  puzzle: ServerPuzzleResult,
+  profilePicture?: string | null,
   nextPuzzle?: NextPuzzleLink,
 }
 
-export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ res, params }) => {
+type PageProps = PuzzlePageProps | ErrorProps;
+
+
+export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, params }) => {
   const db = App.firestore();
   let puzzle: ServerPuzzleResult | null = null;
   if (!params ?.puzzleId || Array.isArray(params.puzzleId)) {
-    console.error('bad puzzle params');
-    return { props: { puzzle: null } };
+    return { props: { error: 'bad puzzle params' } };
   }
   let dbres;
   try {
     dbres = await db.collection('c').doc(params.puzzleId).get();
   } catch {
-    return { props: { puzzle: null } };
+    return { props: { error: 'error getting puzzle' } };
   }
   if (!dbres.exists) {
-    return { props: { puzzle: null } };
+    return { props: { error: 'puzzle doesnt exist' } };
   }
   const validationResult = DBPuzzleV.decode(dbres.data());
   if (isRight(validationResult)) {
@@ -44,7 +52,12 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ 
     puzzle = { ...puzzleFromDB(validationResult.right), id: dbres.id, constructorPage: await userIdToPage(validationResult.right.a) };
   } else {
     console.error(PathReporter.report(validationResult).join(','));
-    return { props: { puzzle: null } };
+    return { props: { error: 'invalid puzzle' } };
+  }
+
+  let profilePicture: string | null = null;
+  if (puzzle.constructorPage ?.u) {
+    profilePicture = await getStorageUrl(`users/${puzzle.constructorPage.u}/profile.png`);
   }
 
   // Get puzzle to show as next link after this one is finished
@@ -54,7 +67,7 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ 
   } catch {
     return {
       props: {
-        puzzle: puzzle
+        puzzle, profilePicture
       }
     };
   }
@@ -69,7 +82,7 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ 
     if (previous.length) {
       return {
         props: {
-          puzzle: puzzle, nextPuzzle: {
+          puzzle, profilePicture, nextPuzzle: {
             puzzleId: previous[0][1],
             linkText: 'the previous daily mini crossword'
           }
@@ -81,7 +94,7 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ 
   // Didn't find a previous mini, link to today's
   return {
     props: {
-      puzzle: puzzle, nextPuzzle: {
+      puzzle, profilePicture, nextPuzzle: {
         puzzleId: minis[today],
         linkText: 'today\'s daily mini crossword'
       }
@@ -89,17 +102,18 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({ 
   };
 };
 
-export default function PuzzlePage({ puzzle, nextPuzzle }: PuzzlePageProps) {
-  if (!puzzle) {
+export default function PuzzlePage(props: PageProps) {
+  if ('error' in props) {
     return <ErrorPage title='Puzzle Not Found'>
       <p>We&apos;re sorry, we couldn&apos;t find the puzzle you requested.</p>
+      <p>{props.error}</p>
       <p>Try the <Link href="/" passHref>homepage</Link>.</p>
     </ErrorPage>;
   }
-  return <CachePlayLoader key={puzzle.id} puzzle={puzzle} nextPuzzle={nextPuzzle} />;
+  return <CachePlayLoader key={props.puzzle.id} {...props} />;
 }
 
-const CachePlayLoader = ({ puzzle, nextPuzzle }: { puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink }) => {
+const CachePlayLoader = (props: PuzzlePageProps) => {
   const { user, isAdmin, loading, error } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
   const [loadingPlay, setLoadingPlay] = useState(true);
@@ -109,28 +123,28 @@ const CachePlayLoader = ({ puzzle, nextPuzzle }: { puzzle: ServerPuzzleResult, n
       return;
     }
 
-    const cachedPlay = getPlayFromCache(user, puzzle.id);
+    const cachedPlay = getPlayFromCache(user, props.puzzle.id);
     if (cachedPlay ?.f || !user) {
       setPlay(cachedPlay || null);
     }
     setLoadingPlay(false);
-  }, [puzzle, user, loading, error]);
+  }, [props.puzzle, user, loading, error]);
 
   if (error) {
     return <><p>Error loading user: {error}</p><p>Please refresh the page to try again.</p></>;
   }
   if (loading || loadingPlay) {
-    return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={true} play={play} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
+    return <Puzzle key={props.puzzle.id} {...props} loadingPlayState={true} play={play} user={user} isAdmin={isAdmin} />;
   }
-  if (play || !user || puzzle.authorId === user.uid) {
-    return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={false} play={play} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
+  if (play || !user || props.puzzle.authorId === user.uid) {
+    return <Puzzle key={props.puzzle.id} {...props} loadingPlayState={false} play={play} user={user} isAdmin={isAdmin} />;
   }
-  return <DBPlayLoader key={puzzle.id} puzzle={puzzle} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
+  return <DBPlayLoader key={props.puzzle.id} {...props} user={user} isAdmin={isAdmin} />;
 };
 
-const DBPlayLoader = ({ user, puzzle, isAdmin, nextPuzzle }: { user: firebase.User, isAdmin: boolean, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink }) => {
+const DBPlayLoader = (props: { user: firebase.User, isAdmin: boolean } & PuzzlePageProps) => {
   // Load from db
-  const [doc, loading, error] = useDocument(App.firestore().doc(`p/${puzzle.id}-${user.uid}`));
+  const [doc, loading, error] = useDocument(App.firestore().doc(`p/${props.puzzle.id}-${props.user.uid}`));
   const [play, playDecodeError] = useMemo(() => {
     if (doc === undefined) {
       return [undefined, undefined];
@@ -140,13 +154,13 @@ const DBPlayLoader = ({ user, puzzle, isAdmin, nextPuzzle }: { user: firebase.Us
     }
     const validationResult = PlayWithoutUserV.decode(doc.data({ serverTimestamps: 'previous' }));
     if (isRight(validationResult)) {
-      cachePlay(user, validationResult.right.c, validationResult.right, true);
+      cachePlay(props.user, validationResult.right.c, validationResult.right, true);
       return [validationResult.right, undefined];
     } else {
       console.log(PathReporter.report(validationResult).join(','));
       return [undefined, 'failed to decode play'];
     }
-  }, [doc, user]);
+  }, [doc, props.user]);
 
   if (error) {
     return <><p>Error loading user: {error}</p><p>Please refresh the page to try again.</p></>;
@@ -155,7 +169,7 @@ const DBPlayLoader = ({ user, puzzle, isAdmin, nextPuzzle }: { user: firebase.Us
     return <><p>Error loading play: {playDecodeError}</p><p>Please refresh the page to try again.</p></>;
   }
   if (loading || play === undefined) {
-    return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={true} play={null} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
+    return <Puzzle key={props.puzzle.id} {...props} loadingPlayState={true} play={null} />;
   }
-  return <Puzzle key={puzzle.id} puzzle={puzzle} loadingPlayState={false} play={play} user={user} isAdmin={isAdmin} nextPuzzle={nextPuzzle} />;
+  return <Puzzle key={props.puzzle.id} {...props} loadingPlayState={false} play={play} />;
 };

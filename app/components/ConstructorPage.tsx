@@ -10,8 +10,9 @@ import { Markdown } from './Markdown';
 import { AuthPropsOptional, AuthContext } from './AuthContext';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
 import { ButtonAsLink, Button } from './Buttons';
-import { SMALL_AND_UP, HUGE_AND_UP, MAX_WIDTH, PROFILE_PIC, COVER_PIC, LARGE_AND_UP } from '../lib/style';
+import { HUGE_AND_UP, MAX_WIDTH, PROFILE_PIC, COVER_PIC } from '../lib/style';
 import { ImageCropper } from './ImageCropper';
+import { ProfilePic, CoverPic } from './Images';
 
 
 const BANNED_USERNAMES = {
@@ -182,45 +183,6 @@ const BioEditor = (props: BioEditorProps) => {
       <Button boring={true} css={{ marginRight: '0.5em' }} onClick={() => { setText(props.text); setIsOpen(false); }} text='Cancel' />
     </form>
   </>;
-};
-
-export const ProfilePic = (props: { profilePicture: string }) => {
-  return <div css={{
-    width: 75,
-    height: 75,
-    position: 'relative',
-    overflow: 'hidden',
-    [SMALL_AND_UP]: {
-      width: 100,
-      height: 100
-    },
-    boxSizing: 'content-box',
-    border: '4px solid var(--bg)',
-    borderRadius: '50%',
-  }}>
-    <img css={{
-      width: 75,
-      height: 75,
-      [SMALL_AND_UP]: {
-        width: 100,
-        height: 100
-      },
-    }} src={props.profilePicture} alt="Profile" />
-  </div>;
-};
-
-export const CoverPic = (props: { coverPicture: string }) => {
-  return <img width={COVER_PIC[0]} height={COVER_PIC[1]} css={{
-    width: '100%',
-    maxHeight: '150px',
-    [SMALL_AND_UP]: {
-      maxHeight: '225px',
-    },
-    [LARGE_AND_UP]: {
-      maxHeight: '300px',
-    },
-    objectFit: 'cover',
-  }} src={props.coverPicture} alt="Cover" />;
 };
 
 export interface ConstructorPageProps {
