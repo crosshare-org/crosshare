@@ -118,7 +118,7 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
               <CreatePageForm />
             </>
             :
-            <p>Start sharing your own puzzles by <Link href='/construct' as='/construct' passHref>creating one with the Crosshare constructor (beta)</Link> or <Link href='/upload' as='/upload' passHref>uploading a .puz file.</Link></p>
+            <p>Start sharing your own puzzles by creating one with the <Link href='/construct' as='/construct' passHref>Crosshare constructor</Link> or <Link href='/upload' as='/upload' passHref>uploading a .puz file.</Link></p>
           )
         }
         {unfinishedPuzzles && unfinishedPuzzles.length ?

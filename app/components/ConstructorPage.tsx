@@ -255,10 +255,10 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
         : ''}
     </div>
     {settingProfilePic && props.user ?
-      <ImageCropper targetSize={PROFILE_PIC} isCircle={true} storageKey={`/users/${props.user.uid}/profile.png`} cancelCrop={() => setSettingProfilePic(false)} />
+      <ImageCropper targetSize={PROFILE_PIC} isCircle={true} storageKey={`/users/${props.user.uid}/profile.jpg`} cancelCrop={() => setSettingProfilePic(false)} />
       : ''}
     {settingCoverPic && props.user ?
-      <ImageCropper targetSize={COVER_PIC} isCircle={false} storageKey={`/users/${props.user.uid}/cover.png`} cancelCrop={() => setSettingCoverPic(false)} />
+      <ImageCropper targetSize={COVER_PIC} isCircle={false} storageKey={`/users/${props.user.uid}/cover.jpg`} cancelCrop={() => setSettingCoverPic(false)} />
       : ''}
   </>;
 };

@@ -57,7 +57,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
 
   let profilePicture: string | null = null;
   if (puzzle.constructorPage ?.u) {
-    profilePicture = await getStorageUrl(`users/${puzzle.constructorPage.u}/profile.png`);
+    profilePicture = await getStorageUrl(`users/${puzzle.constructorPage.u}/profile.jpg`);
   }
 
   // Get puzzle to show as next link after this one is finished

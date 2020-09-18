@@ -136,8 +136,8 @@ function upload(storageKey: string, image: HTMLImageElement | null, targetSize: 
           });
       });
     },
-    'image/png',
-    1
+    'image/jpeg',
+    0.85
   );
 }
 

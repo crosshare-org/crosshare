@@ -43,8 +43,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
     return { props: { error: 'Invalid constructor page' } };
   }
 
-  const profilePicture = await getStorageUrl(`users/${cp.u}/profile.png`);
-  const coverPicture = await getStorageUrl(`users/${cp.u}/cover.png`);
+  const profilePicture = await getStorageUrl(`users/${cp.u}/profile.jpg`);
+  const coverPicture = await getStorageUrl(`users/${cp.u}/cover.jpg`);
 
   try {
     let q = db.collection('c').where('a', '==', cp.u).orderBy('p', 'desc').limit(PAGESIZE + 1);

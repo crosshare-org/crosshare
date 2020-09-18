@@ -65,7 +65,7 @@ async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
 
   // Center Logo - try loading constructor's profile pic
   let img: Image | null = null;
-  const profilePic = AdminApp.storage().bucket().file(`users/${puzzle.a}/profile.png`);
+  const profilePic = AdminApp.storage().bucket().file(`users/${puzzle.a}/profile.jpg`);
   if ((await profilePic.exists())[0]) {
     try {
       img = await loadImage((await profilePic.download())[0]);
