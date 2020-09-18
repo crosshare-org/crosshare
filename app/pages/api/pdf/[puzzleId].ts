@@ -9,7 +9,7 @@ function layoutPDFClues(doc: jsPDF, puzzle: PuzzleT, grid: ViewableGrid<Viewable
   const clued = addClues(grid, puzzle.clues);
   const acrossEntries = clued.entries.filter((e) => e.direction === Direction.Across);
   const acrossClues = acrossEntries.map(e => ({ label: e.labelNumber.toString(), clue: e.clue }));
-  const downEntries = clued.entries.filter((e) => e.direction === Direction.Across);
+  const downEntries = clued.entries.filter((e) => e.direction === Direction.Down);
   const downClues = downEntries.map(e => ({ label: e.labelNumber.toString(), clue: e.clue }));
   function marginTop(x: number, addedPage: boolean) {
     if (addedPage || x > (squareSize * puzzle.size.cols + 10)) {
