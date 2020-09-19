@@ -1,5 +1,5 @@
 import { GetServerSideProps } from 'next';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { AuthContext } from '../components/AuthContext';
 import { ConstructorPage, ConstructorPageProps } from '../components/ConstructorPage';
@@ -7,6 +7,7 @@ import { validate, CONSTRUCTOR_PAGE_COLLECTION } from '../lib/constructorPage';
 import { ErrorPage } from '../components/ErrorPage';
 import { App } from '../lib/firebaseWrapper';
 import { getStorageUrl, getPuzzlesForPage, PAGE_LENGTH } from '../lib/serverOnly';
+import { useRouter } from 'next/router';
 
 interface ErrorProps {
   error: string
@@ -63,11 +64,24 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
 export default function ConstructorPageHandler(props: PageProps) {
   const authProps = useContext(AuthContext);
 
+  const router = useRouter();
+  useEffect(() => {
+    if ('error' in props) {
+      return;
+    }
+    const desiredRoute = props.currentPage ? `/${props.constructor.i}/page/${props.currentPage}` : `/${props.constructor.i}`;
+    if (router.asPath !== desiredRoute) {
+      console.log('auto changing route');
+      router.replace(desiredRoute, undefined, { shallow: true });
+    }
+  }, [router, props]);
+
   if ('error' in props) {
     return <ErrorPage title='Something Went Wrong'>
       <p>Sorry! Something went wrong while loading that page.</p>
       {props.error ? <p>{props.error}</p> : ''}
     </ErrorPage>;
   }
+
   return <ConstructorPage {...props} {...authProps} />;
 }
