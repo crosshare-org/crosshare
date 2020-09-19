@@ -1,4 +1,12 @@
-import { AdminApp } from '../lib/firebaseWrapper';
+import { AdminApp, AdminTimestamp } from '../lib/firebaseWrapper';
+import { PuzzleResult, puzzleFromDB } from './types';
+
+import * as t from 'io-ts';
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
+import { DBPuzzleV, DBPuzzleT } from './dbtypes';
+import { adminTimestamp } from './adminTimestamp';
+import { mapEachResult } from './dbUtils';
 
 export async function getStorageUrl(storageKey: string): Promise<string | null> {
   const profilePic = AdminApp.storage().bucket().file(storageKey);
@@ -15,4 +23,81 @@ export async function getStorageUrl(storageKey: string): Promise<string | null> 
     console.log('pic doesnt exist', storageKey);
   }
   return null;
+}
+
+const PuzzleIndexV = t.type({
+  /** array of puzzle timestamps */
+  t: t.array(adminTimestamp),
+  /** array of puzzle ids */
+  i: t.array(t.string)
+});
+type PuzzleIndexT = t.TypeOf<typeof PuzzleIndexV>;
+
+export const PAGE_LENGTH = 10;
+
+export async function getPuzzlesForPage(userId: string, page: number): Promise<[Array<PuzzleResult>, PuzzleIndexT]> {
+  const db = AdminApp.firestore();
+  const indexDoc = await db.collection('i').doc(userId).get();
+  let index: PuzzleIndexT | null = null;
+  if (indexDoc.exists) {
+    const validationResult = PuzzleIndexV.decode(indexDoc.data());
+    if (isRight(validationResult)) {
+      index = validationResult.right;
+    } else {
+      console.error(PathReporter.report(validationResult).join(','));
+      throw new Error('failed to validate index for ' + userId);
+    }
+  }
+  if (index === null) {
+    console.log('No index, initializing', userId);
+    index = { t: [], i: [] };
+  }
+
+  let q = db.collection('c').where('a', '==', userId).orderBy('p', 'desc');
+  if (index.i.length) {
+    const mostRecentTimestamp = index.t[0];
+    if (mostRecentTimestamp) {
+      q = q.endBefore(mostRecentTimestamp);
+    }
+  }
+  const newPuzzles: Array<DBPuzzleT & { id: string }> = await mapEachResult(q, DBPuzzleV, (dbpuzz, docId) => {
+    return { ...dbpuzz, id: docId };
+  });
+
+  if (newPuzzles.length) {
+    console.log(`Adding ${newPuzzles.length} to index for ${userId}`);
+    // Add new puzzles to the beginning
+    for (const p of newPuzzles.reverse()) {
+      index.t.unshift(AdminTimestamp.fromMillis(p.p.toMillis()));
+      index.i.unshift(p.id);
+    }
+    await db.collection('i').doc(userId).set(index);
+  }
+  const start = page * PAGE_LENGTH;
+  const entriesForPage = index.i.slice(start, start + PAGE_LENGTH);
+
+  const puzzles: Array<PuzzleResult> = [];
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  for (const puzzleId of entriesForPage) {
+    const alreadyHave = newPuzzles.find(x => x.id === puzzleId);
+    if (alreadyHave) {
+      puzzles.push({ ...puzzleFromDB(alreadyHave), id: alreadyHave.id });
+      continue;
+    }
+
+    const dbres = await db.collection('c').doc(puzzleId).get();
+    if (!dbres.exists) {
+      console.warn('Puzzle id in index but no puzzle exists ', puzzleId);
+      continue;
+    }
+    const validationResult = DBPuzzleV.decode(dbres.data());
+    if (isRight(validationResult)) {
+      puzzles.push({ ...puzzleFromDB(validationResult.right), id: dbres.id });
+    } else {
+      console.error('Puzzle id in index but invalid puzzle', puzzleId);
+      console.error(PathReporter.report(validationResult).join(','));
+    }
+  }
+  return [puzzles, index];
 }

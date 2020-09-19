@@ -190,8 +190,9 @@ export interface ConstructorPageProps {
   profilePicture: string | null,
   coverPicture: string | null,
   puzzles: Array<PuzzleResult>,
-  hasMore: boolean,
-  currentIndex: number | null,
+  nextPage: number | null,
+  currentPage: number,
+  prevPage: number | null,
 }
 
 export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional) => {
@@ -215,9 +216,15 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
         </>
         : ''}
       <meta key="description" name="description" content={description} />
-      <link rel="canonical" href={'https://crosshare.org/' + username + (props.currentIndex !== null ? '/' + props.currentIndex : '')} />
-      {props.hasMore ?
-        <link rel='next' href={'https://crosshare.org/' + username + '/' + props.puzzles[props.puzzles.length - 1].publishTime} />
+      <link rel="canonical" href={'https://crosshare.org/' + username + (props.currentPage !== 0 ? '/page/' + props.currentPage : '')} />
+      {props.prevPage === 0 ?
+        <link rel='prev' href={'https://crosshare.org/' + username} />
+        : ''}
+      {props.prevPage ?
+        <link rel='prev' href={'https://crosshare.org/' + username + '/page/' + props.prevPage} />
+        : ''}
+      {props.nextPage !== null ?
+        <link rel='next' href={'https://crosshare.org/' + username + '/page/' + props.nextPage} />
         : ''}
     </Head>
     <DefaultTopBar />
@@ -248,9 +255,17 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
         }
       </div>
       {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showAuthor={false} />)}
-      {props.hasMore ?
+      {props.nextPage || props.prevPage !== null ?
         <p css={{ textAlign: 'center' }}>
-          <Link href='/[...slug]' as={'/' + username + '/' + props.puzzles[props.puzzles.length - 1].publishTime} passHref>More</Link>
+          {props.prevPage === 0 ?
+            <Link css={{ marginRight: '2em' }} href='/[...slug]' as={'/' + username} passHref>← Newer Puzzles</Link>
+            : ''}
+          {props.prevPage ?
+            <Link css={{ marginRight: '2em' }} href='/[...slug]' as={'/' + username + '/page/' + props.prevPage} passHref>← Newer Puzzles</Link>
+            : ''}
+          {props.nextPage !== null ?
+            <Link href='/[...slug]' as={'/' + username + '/page/' + props.nextPage} passHref>Older Puzzles →</Link>
+            : ''}
         </p>
         : ''}
     </div>

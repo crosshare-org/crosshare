@@ -4,19 +4,14 @@ import { useContext } from 'react';
 import { AuthContext } from '../components/AuthContext';
 import { ConstructorPage, ConstructorPageProps } from '../components/ConstructorPage';
 import { validate, CONSTRUCTOR_PAGE_COLLECTION } from '../lib/constructorPage';
-import { puzzleFromDB } from '../lib/types';
-import { DBPuzzleV } from '../lib/dbtypes';
-import { mapEachResult, } from '../lib/dbUtils';
 import { ErrorPage } from '../components/ErrorPage';
-import { App, TimestampClass } from '../lib/firebaseWrapper';
-import { getStorageUrl } from '../lib/serverOnly';
+import { App } from '../lib/firebaseWrapper';
+import { getStorageUrl, getPuzzlesForPage, PAGE_LENGTH } from '../lib/serverOnly';
 
 interface ErrorProps {
   error: string
 }
 type PageProps = ConstructorPageProps | ErrorProps;
-
-const PAGESIZE = 10;
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, params }) => {
   if (!params || !Array.isArray(params.slug)) {
@@ -46,31 +41,23 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
   const profilePicture = await getStorageUrl(`users/${cp.u}/profile.jpg`);
   const coverPicture = await getStorageUrl(`users/${cp.u}/cover.jpg`);
 
-  try {
-    let q = db.collection('c').where('a', '==', cp.u).orderBy('p', 'desc').limit(PAGESIZE + 1);
-    let startTs: number | null = null;
-    if (params.slug.length > 1) {
-      startTs = parseInt(params.slug[1]);
-      q = q.startAfter(TimestampClass.fromMillis(startTs));
-    }
-    const puzzles = await mapEachResult(q, DBPuzzleV, (dbpuzz, docId) => {
-      return { ...puzzleFromDB(dbpuzz), id: docId };
-    });
-    res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-    return {
-      props: {
-        constructor: cp,
-        profilePicture,
-        coverPicture,
-        puzzles: puzzles.slice(0, PAGESIZE),
-        hasMore: puzzles.length === PAGESIZE + 1,
-        currentIndex: startTs,
-      }
-    };
-  } catch (e) {
-    console.error(e);
-    return { props: { error: 'Error loading puzzles' } };
+  let page = 0;
+  if (params.slug.length === 3 && params.slug[1] === 'page') {
+    page = parseInt(params.slug[2]);
   }
+  const [puzzles, index] = await getPuzzlesForPage(cp.u, page);
+  res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
+  return {
+    props: {
+      constructor: cp,
+      profilePicture,
+      coverPicture,
+      puzzles,
+      currentPage: page,
+      prevPage: page > 0 ? page - 1 : null,
+      nextPage: index.i.length > (page + 1) * PAGE_LENGTH ? page + 1 : null,
+    }
+  };
 };
 
 export default function ConstructorPageHandler(props: PageProps) {

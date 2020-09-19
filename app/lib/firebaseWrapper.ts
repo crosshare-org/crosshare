@@ -22,9 +22,11 @@ const firebaseConfig = {
 // Initialize Firebase
 export let App: firebase.app.App;
 export let AdminApp: firebaseAdminType.app.App;
+export let AdminTimestamp: typeof firebaseAdminType.firestore.Timestamp;
 
 if (typeof window === 'undefined') {
   const firebaseAdmin: typeof firebaseAdminType = require('firebase-admin'); // eslint-disable-line @typescript-eslint/no-var-requires
+  AdminTimestamp = firebaseAdmin.firestore.Timestamp;
   if (firebaseAdmin.apps.length && firebaseAdmin.apps[0]) {
     AdminApp = firebaseAdmin.apps[0];
   } else {

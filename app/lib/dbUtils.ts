@@ -76,8 +76,21 @@ export async function updateInCache<A>({ collection, docId, localDocId, update, 
   }
 }
 
+interface docSnapshot {
+  id: string,
+  data: () => any // eslint-disable-line @typescript-eslint/no-explicit-any
+}
+
+interface queryResult {
+  forEach: (d: (x: docSnapshot) => void) => void
+}
+
+interface firebaseQuery {
+  get: () => Promise<queryResult>
+}
+
 export async function mapEachResult<N, A>(
-  query: firebase.firestore.Query<firebase.firestore.DocumentData>,
+  query: firebaseQuery,
   validator: t.Type<A>,
   mapper: (val: A, docid: string) => N
 ): Promise<Array<N>> {
