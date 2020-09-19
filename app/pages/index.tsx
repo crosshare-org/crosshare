@@ -7,10 +7,12 @@ import { getDailyMinis } from '../lib/dailyMinis';
 import { Link } from '../components/Link';
 import { puzzleFromDB, ServerPuzzleResult } from '../lib/types';
 import { DBPuzzleV, getDateString } from '../lib/dbtypes';
-import { App, TimestampClass } from '../lib/firebaseWrapper';
+import { App } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleResultLink } from '../components/PuzzleLink';
 import { userIdToPage } from '../lib/constructorPage';
+import { getPuzzlesForFeatured } from '../lib/serverOnly';
+import { PAGE_SIZE } from './featured/[pageNumber]';
 
 interface HomePageProps {
   dailymini: ServerPuzzleResult,
@@ -24,23 +26,11 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ re
   if (!minis[today]) {
     throw new Error('no mini scheduled for today!');
   }
-  // TODO if we start saving author name/id in category doc we no longer need this extra query
-  const dailyminiQuery = db.collection('c').doc(minis[today]).get();
 
-  const featuredQuery = db.collection('c').where('m', '==', true).where('f', '==', true)
-    .where('p', '<', TimestampClass.now())
-    .orderBy('p', 'desc').limit(20).get();
+  const [puzzlesWithoutConstructor] = await getPuzzlesForFeatured(0, PAGE_SIZE);
+  const featured = await Promise.all(puzzlesWithoutConstructor.map(async p => ({ ...p, constructorPage: await userIdToPage(p.authorId) })));
 
-  return Promise.all([dailyminiQuery, featuredQuery]).then(async ([dmResult, featuredResult]) => {
-    const featured = await Promise.all(featuredResult.docs.map(async (doc) => {
-      const res = DBPuzzleV.decode(doc.data());
-      if (isRight(res)) {
-        return { ...puzzleFromDB(res.right), id: doc.id, constructorPage: await userIdToPage(res.right.a) };
-      } else {
-        console.error(PathReporter.report(res).join(','));
-        throw new Error('Bad puzzle querying for featured');
-      }
-    }));
+  return db.collection('c').doc(minis[today]).get().then(async dmResult => {
     const data = dmResult.data();
     const validationResult = DBPuzzleV.decode(data);
     if (isRight(validationResult)) {
@@ -75,6 +65,7 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
       <p><Link href='/upload' as='/upload' passHref>Upload a .puz to get a Crosshare link to share with solvers</Link></p>
       <h2>Featured Puzzles</h2>
       {featured.map((p, i) => <PuzzleResultLink key={i} puzzle={p} constructorPage={p.constructorPage} showAuthor={true} />)}
+      <p css={{ textAlign: 'center' }}><Link href='/featured/[pageNumber]' as='/featured/1' passHref>Previous Featured Puzzles</Link></p>
       <p css={{ marginTop: '1em', paddingBottom: '1em' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
     </div >
   </>;

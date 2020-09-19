@@ -33,11 +33,9 @@ const PuzzleIndexV = t.type({
 });
 type PuzzleIndexT = t.TypeOf<typeof PuzzleIndexV>;
 
-export const PAGE_LENGTH = 10;
-
-export async function getPuzzlesForPage(userId: string, page: number): Promise<[Array<PuzzleResult>, PuzzleIndexT]> {
+async function getPuzzlesForPage(indexDocId: string, queryField: string, queryValue: string | boolean, page: number, page_size: number): Promise<[Array<PuzzleResult>, PuzzleIndexT]> {
   const db = AdminApp.firestore();
-  const indexDoc = await db.collection('i').doc(userId).get();
+  const indexDoc = await db.collection('i').doc(indexDocId).get();
   let index: PuzzleIndexT | null = null;
   if (indexDoc.exists) {
     const validationResult = PuzzleIndexV.decode(indexDoc.data());
@@ -45,15 +43,15 @@ export async function getPuzzlesForPage(userId: string, page: number): Promise<[
       index = validationResult.right;
     } else {
       console.error(PathReporter.report(validationResult).join(','));
-      throw new Error('failed to validate index for ' + userId);
+      throw new Error('failed to validate index for ' + indexDocId);
     }
   }
   if (index === null) {
-    console.log('No index, initializing', userId);
+    console.log('No index, initializing', indexDocId);
     index = { t: [], i: [] };
   }
 
-  let q = db.collection('c').where('a', '==', userId).orderBy('p', 'desc');
+  let q = db.collection('c').where(queryField, '==', queryValue).orderBy('p', 'desc');
   if (index.i.length) {
     const mostRecentTimestamp = index.t[0];
     if (mostRecentTimestamp) {
@@ -65,16 +63,16 @@ export async function getPuzzlesForPage(userId: string, page: number): Promise<[
   });
 
   if (newPuzzles.length) {
-    console.log(`Adding ${newPuzzles.length} to index for ${userId}`);
+    console.log(`Adding ${newPuzzles.length} to index for ${indexDocId}`);
     // Add new puzzles to the beginning
     for (const p of newPuzzles.reverse()) {
       index.t.unshift(AdminTimestamp.fromMillis(p.p.toMillis()));
       index.i.unshift(p.id);
     }
-    await db.collection('i').doc(userId).set(index);
+    await db.collection('i').doc(indexDocId).set(index);
   }
-  const start = page * PAGE_LENGTH;
-  const entriesForPage = index.i.slice(start, start + PAGE_LENGTH);
+  const start = page * page_size;
+  const entriesForPage = index.i.slice(start, start + page_size);
 
   const puzzles: Array<PuzzleResult> = [];
 
@@ -100,4 +98,12 @@ export async function getPuzzlesForPage(userId: string, page: number): Promise<[
     }
   }
   return [puzzles, index];
+}
+
+export async function getPuzzlesForConstructorPage(userId: string, page: number, page_size: number): Promise<[Array<PuzzleResult>, PuzzleIndexT]> {
+  return getPuzzlesForPage(userId, 'a', userId, page, page_size);
+}
+
+export async function getPuzzlesForFeatured(page: number, page_size: number): Promise<[Array<PuzzleResult>, PuzzleIndexT]> {
+  return getPuzzlesForPage('featured', 'f', true, page, page_size);
 }

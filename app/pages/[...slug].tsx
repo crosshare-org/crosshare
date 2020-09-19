@@ -6,13 +6,15 @@ import { ConstructorPage, ConstructorPageProps } from '../components/Constructor
 import { validate, CONSTRUCTOR_PAGE_COLLECTION } from '../lib/constructorPage';
 import { ErrorPage } from '../components/ErrorPage';
 import { App } from '../lib/firebaseWrapper';
-import { getStorageUrl, getPuzzlesForPage, PAGE_LENGTH } from '../lib/serverOnly';
+import { getStorageUrl, getPuzzlesForConstructorPage } from '../lib/serverOnly';
 import { useRouter } from 'next/router';
 
 interface ErrorProps {
   error: string
 }
 type PageProps = ConstructorPageProps | ErrorProps;
+
+const PAGE_SIZE = 10;
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, params }) => {
   if (!params || !Array.isArray(params.slug)) {
@@ -44,9 +46,9 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
 
   let page = 0;
   if (params.slug.length === 3 && params.slug[1] === 'page') {
-    page = parseInt(params.slug[2]);
+    page = parseInt(params.slug[2]) || 0;
   }
-  const [puzzles, index] = await getPuzzlesForPage(cp.u, page);
+  const [puzzles, index] = await getPuzzlesForConstructorPage(cp.u, page, PAGE_SIZE);
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
   return {
     props: {
@@ -56,7 +58,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
       puzzles,
       currentPage: page,
       prevPage: page > 0 ? page - 1 : null,
-      nextPage: index.i.length > (page + 1) * PAGE_LENGTH ? page + 1 : null,
+      nextPage: index.i.length > (page + 1) * PAGE_SIZE ? page + 1 : null,
     }
   };
 };
