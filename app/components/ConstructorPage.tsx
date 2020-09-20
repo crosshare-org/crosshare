@@ -5,7 +5,7 @@ import { DefaultTopBar } from './TopBar';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { PuzzleResult } from '../lib/types';
 import { PuzzleResultLink } from './PuzzleLink';
-import { Link } from './Link';
+import { Link, LinkButtonSimpleA } from './Link';
 import { Markdown } from './Markdown';
 import { AuthPropsOptional, AuthContext } from './AuthContext';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
@@ -253,6 +253,9 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
           :
           <Markdown text={props.constructor.b} />
         }
+        {props.constructor.pp ?
+          <div><LinkButtonSimpleA href={`https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=${encodeURIComponent(props.constructor.pp)}&item_name=${`Support ${props.constructor.n}'s Puzzles (via crosshare)`}&currency_code=USD&source=url`} text={`Donate to ${props.constructor.n} (PayPal)`} /></div>
+          : ''}
       </div>
       {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showAuthor={false} />)}
       {props.nextPage || props.prevPage !== null ?

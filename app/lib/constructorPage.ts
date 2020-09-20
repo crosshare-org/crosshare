@@ -24,8 +24,8 @@ export const ConstructorPageV = t.intersection([
   t.partial({
     /** needs moderation */
     m: t.boolean,
-    /** has profile photo */
-    p: t.boolean,
+    /** paypal email address */
+    pp: t.string,
   })
 ]);
 export interface ConstructorPageT extends Omit<t.TypeOf<typeof ConstructorPageV>, 't'> {

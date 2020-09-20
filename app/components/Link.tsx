@@ -1,39 +1,23 @@
 import NextLink, { LinkProps as NextLinkProps } from 'next/link';
 import { ComponentProps } from 'react';
+import { ButtonResetCSS, ButtonCSS } from './Buttons';
 
 export interface LinkProps
   extends NextLinkProps,
   Omit<ComponentProps<'a'>, keyof NextLinkProps> { }
 
 export function LinkButton(props: LinkProps) {
-  /* TODO share these styles w/ button class */
   /* href is passed by NextLink */
   /* eslint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/anchor-has-content */
-  return <Link css={{
+  return <Link css={[ButtonResetCSS, ButtonCSS, {
     display: 'inline-block',
-    maxWidth: '100%',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    /* create a small space when buttons wrap on 2 lines */
-    margin: '2px 0',
-    /* invisible border (will be colored on hover/focus) */
-    border: 'solid 1px transparent',
-    borderRadius: 4,
-    padding: '0.5em 1em',
-    color: 'var(--white)',
-    backgroundColor: 'var(--link)',
-    lineHeight: 1.1,
-    boxShadow: '0 3px 5px rgba(0, 0, 0, 0.18)',
-    '&:active': {
-      transform: 'translateY(1px)',
-    },
-    '&:hover': {
-      backgroundColor: 'var(--link-hover)',
-      textDecoration: 'none',
-      color: 'var(--white)',
-    },
-  }} {...props} />;
+  }]} {...props} />;
+}
+
+export function LinkButtonSimpleA(props: { text: string, href: string }) {
+  return <a css={[ButtonResetCSS, ButtonCSS, {
+    display: 'inline-block',
+  }]} target="_blank" rel="noopener noreferrer" href={props.href}>{props.text}</a>;
 }
 
 export const Link = ({
