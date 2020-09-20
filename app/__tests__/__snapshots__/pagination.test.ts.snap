@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`try it with a few puzzles 1`] = `
+Array [
+  "featured3",
+  "featured2",
+  "featured1",
+]
+`;
+
+exports[`try it with a few puzzles 2`] = `
+Array [
+  "featured5",
+  "featured4",
+  "featured3",
+  "featured2",
+  "featured1",
+]
+`;

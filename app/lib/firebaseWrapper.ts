@@ -60,6 +60,7 @@ if (firebase.apps.length) {
 }
 
 export const setApp = (app: firebase.app.App) => { App = app; };
+export const setAdminApp = (app: firebaseAdminType.app.App) => { AdminApp = app; };
 
 export const setUpForSignInAnonymously = (_app: firebase.app.App, _user: firebase.User) => {
   throw new Error('For testing only');
