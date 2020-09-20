@@ -152,7 +152,7 @@ async function publishPuzzle(prePublish?: (r: RenderResult) => Promise<void>) {
   }
 
   fireEvent.click(publishButton);
-  await (r.findByText(/Published Successfully/));
+  await (r.findByText(/Published Successfully/, undefined, { timeout: 3000 }));
 
   const dailyMinis = await admin.firestore().collection('categories').doc('dailymini').get();
   expect(dailyMinis.data()).toEqual({});
