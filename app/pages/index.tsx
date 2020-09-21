@@ -10,8 +10,7 @@ import { DBPuzzleV, getDateString } from '../lib/dbtypes';
 import { App } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleResultLink } from '../components/PuzzleLink';
-import { userIdToPage } from '../lib/constructorPage';
-import { getPuzzlesForFeatured } from '../lib/serverOnly';
+import { getPuzzlesForFeatured, userIdToPage } from '../lib/serverOnly';
 import { PAGE_SIZE } from './featured/[pageNumber]';
 
 interface HomePageProps {

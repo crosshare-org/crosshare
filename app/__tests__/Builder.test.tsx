@@ -1,7 +1,8 @@
 import React from 'react';
 import { getByLabelText, getUser, cleanup, render, fireEvent, RenderResult } from '../lib/testingUtils';
 import BuilderPage from '../pages/construct';
-import { setApp } from '../lib/firebaseWrapper';
+import { setApp, setAdminApp } from '../lib/firebaseWrapper';
+import type firebaseAdminType from 'firebase-admin';
 import * as firebaseTesting from '@firebase/testing';
 import NextJSRouter from 'next/router';
 import PuzzlePage, { getServerSideProps } from '../pages/crosswords/[puzzleId]';
@@ -44,6 +45,7 @@ beforeAll(async () => {
     }
   }) as firebase.app.App;
   admin = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
+  setAdminApp(admin as unknown as firebaseAdminType.app.App);
 });
 
 afterAll(async () => {

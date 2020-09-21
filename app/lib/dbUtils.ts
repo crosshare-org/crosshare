@@ -76,13 +76,18 @@ export async function updateInCache<A>({ collection, docId, localDocId, update, 
   }
 }
 
+interface docRef {
+  delete: () => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+}
+
 interface docSnapshot {
   id: string,
+  ref: docRef,
   data: () => any // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 interface queryResult {
-  forEach: (d: (x: docSnapshot) => void) => void
+  docs: Array<docSnapshot>
 }
 
 interface firebaseQuery {
@@ -96,7 +101,7 @@ export async function mapEachResult<N, A>(
 ): Promise<Array<N>> {
   const value = await query.get();
   const results: Array<N> = [];
-  value.forEach(doc => {
+  for (const doc of value.docs) {
     const data = doc.data();
     const validationResult = validator.decode(data);
     if (isRight(validationResult)) {
@@ -106,19 +111,19 @@ export async function mapEachResult<N, A>(
       console.error(PathReporter.report(validationResult).join(','));
       return Promise.reject('Malformed content');
     }
-  });
+  }
   return results;
 }
 
 // TODO WHERE ARE THESE firebase TYPES COMING FROM?
 export async function getValidatedAndDelete<A>(
-  query: firebase.firestore.Query<firebase.firestore.DocumentData>,
+  query: firebaseQuery,
   validator: t.Type<A>,
 ): Promise<Array<A>> {
   const value = await query.get();
   const results: Array<A> = [];
   const deletes: Array<Promise<void>> = [];
-  value.forEach(doc => {
+  for (const doc of value.docs) {
     const data = doc.data();
     const validationResult = validator.decode(data);
     if (isRight(validationResult)) {
@@ -129,7 +134,7 @@ export async function getValidatedAndDelete<A>(
       console.error(PathReporter.report(validationResult).join(','));
       return Promise.reject('Malformed content');
     }
-  });
+  }
   await Promise.all(deletes);
   return results;
 }

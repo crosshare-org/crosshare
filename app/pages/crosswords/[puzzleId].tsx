@@ -14,9 +14,8 @@ import {
 import { getPlayFromCache, cachePlay } from '../../lib/plays';
 import { ErrorPage } from '../../components/ErrorPage';
 import { Link } from '../../components/Link';
-import { userIdToPage } from '../../lib/constructorPage';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { getStorageUrl } from '../../lib/serverOnly';
+import { getStorageUrl, userIdToPage } from '../../lib/serverOnly';
 
 interface ErrorProps {
   error: string

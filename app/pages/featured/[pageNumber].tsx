@@ -1,9 +1,8 @@
 import { GetServerSideProps } from 'next';
 
 import { ErrorPage } from '../../components/ErrorPage';
-import { getPuzzlesForFeatured } from '../../lib/serverOnly';
+import { getPuzzlesForFeatured, userIdToPage } from '../../lib/serverOnly';
 import { ServerPuzzleResult } from '../../lib/types';
-import { userIdToPage } from '../../lib/constructorPage';
 import Head from 'next/head';
 import { DefaultTopBar } from '../../components/TopBar';
 import { HUGE_AND_UP, MAX_WIDTH } from '../../lib/style';

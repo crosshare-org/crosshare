@@ -78,9 +78,9 @@ export const ButtonCSS: Interpolation<undefined> = {
   },
 };
 
-export function Button(props: ButtonProps & { boring?: boolean }) {
+export function Button({ boring, ...props }: ButtonProps & { boring?: boolean }) {
   return <ButtonReset css={[ButtonCSS, {
-    ...props.boring && {
+    ...boring && {
       backgroundColor: 'var(--boring-bg)',
       '&:hover:enabled': {
         backgroundColor: 'var(--boring-bg-hover)',

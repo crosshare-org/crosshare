@@ -3,7 +3,7 @@ import { useContext, useEffect } from 'react';
 
 import { AuthContext } from '../components/AuthContext';
 import { ConstructorPage, ConstructorPageProps } from '../components/ConstructorPage';
-import { validate, CONSTRUCTOR_PAGE_COLLECTION } from '../lib/constructorPage';
+import { validate } from '../lib/constructorPage';
 import { ErrorPage } from '../components/ErrorPage';
 import { App } from '../lib/firebaseWrapper';
 import { getStorageUrl, getPuzzlesForConstructorPage } from '../lib/serverOnly';
@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
   const db = App.firestore();
   let dbres;
   try {
-    dbres = await db.collection(CONSTRUCTOR_PAGE_COLLECTION).doc(username).get();
+    dbres = await db.collection('cp').doc(username).get();
   } catch {
     return { props: { error: 'Error loading constructor page' } };
   }

@@ -8,11 +8,12 @@ import { ErrorPage } from '../../components/ErrorPage';
 import { App } from '../../lib/firebaseWrapper';
 import { CategoryIndexV, CategoryIndexT, addZeros, getDateString, prettifyDateString } from '../../lib/dbtypes';
 import { PuzzleResult, puzzleFromDB } from '../../lib/types';
-import { ConstructorPageT, userIdToPage } from '../../lib/constructorPage';
+import { ConstructorPageT } from '../../lib/constructorPage';
 import { getPuzzle } from '../../lib/puzzleCache';
 import { Markdown } from '../../components/Markdown';
 import { DefaultTopBar } from '../../components/TopBar';
 import { PuzzleResultLink } from '../../components/PuzzleLink';
+import { userIdToPage } from '../../lib/serverOnly';
 
 export interface DailyMiniProps {
   puzzles: Array<[string, PuzzleResult, ConstructorPageT | null]>,

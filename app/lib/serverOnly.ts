@@ -1,5 +1,6 @@
 import { AdminApp, AdminTimestamp } from '../lib/firebaseWrapper';
 import { PuzzleResult, puzzleFromDB } from './types';
+import type firebaseAdminType from 'firebase-admin';
 
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
@@ -7,6 +8,7 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { DBPuzzleV, DBPuzzleT } from './dbtypes';
 import { adminTimestamp } from './adminTimestamp';
 import { mapEachResult } from './dbUtils';
+import { ConstructorPageT, ConstructorPageV } from './constructorPage';
 
 export async function getStorageUrl(storageKey: string): Promise<string | null> {
   const profilePic = AdminApp.storage().bucket().file(storageKey);
@@ -106,4 +108,32 @@ export async function getPuzzlesForConstructorPage(userId: string, page: number,
 
 export async function getPuzzlesForFeatured(page: number, page_size: number): Promise<[Array<PuzzleResult>, PuzzleIndexT]> {
   return getPuzzlesForPage('featured', 'f', true, page, page_size);
+}
+
+const usernameMap: Record<string, ConstructorPageT> = {};
+let usernamesUpdated: number | null = null;
+const usernamesTTL = 1000 * 60 * 10;
+
+export async function userIdToPage(userId: string): Promise<ConstructorPageT | null> {
+  const now = Date.now();
+  if (usernamesUpdated === null || now - usernamesUpdated > usernamesTTL) {
+    const db = AdminApp.firestore();
+    let query: firebaseAdminType.firestore.Query = db.collection('cp');
+    if (usernamesUpdated) {
+      query = query.where('t', '>=', AdminTimestamp.fromMillis(usernamesUpdated));
+    }
+    try {
+      await mapEachResult(query,
+        ConstructorPageV, (cp, docId) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { t, ...partial } = cp;
+          usernameMap[cp.u] = { ...partial, id: docId };
+        });
+      usernamesUpdated = now;
+    } catch (e) {
+      console.error('error updating constructor pages');
+      console.error(e);
+    }
+  }
+  return usernameMap[userId] || null;
 }

@@ -1,13 +1,25 @@
 import * as firebaseTesting from '@firebase/testing';
 
-import { setApp } from '../lib/firebaseWrapper';
+import { setApp, setAdminApp } from '../lib/firebaseWrapper';
 import { getUser, render, cleanup, fireEvent } from '../lib/testingUtils';
 import { AccountPage } from '../pages/account';
 import waitForExpect from 'wait-for-expect';
+jest.mock('../lib/firebaseWrapper');
+
+import { userIdToPage } from '../lib/serverOnly';
+import type firebaseAdminType from 'firebase-admin';
 
 const projectId = 'constructorpagetests';
 
-jest.mock('../lib/firebaseWrapper');
+test('invalid constructor page', async () => {
+  await firebaseTesting.clearFirestoreData({ projectId });
+  const adminApp = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
+  await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
+  setAdminApp(adminApp as unknown as firebaseAdminType.app.App);
+
+  const page = await userIdToPage('miked');
+  expect(page).toBeNull();
+});
 
 test('create constructor page', async () => {
   const mike = getUser('mikeuserid', false);
