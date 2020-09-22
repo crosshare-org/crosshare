@@ -61,7 +61,7 @@ const SpoilerText = ({ children }: { children: ReactNode }) => {
   }} {...hoverBind}>{children}</span>;
 };
 
-export const Markdown = ({ text, clueMap }: { text: string, clueMap?: Map<string, [number, Direction, string]> }) => {
+export const Markdown = ({ text, clueMap, inline }: { text: string, clueMap?: Map<string, [number, Direction, string]>, inline?: boolean }) => {
   if (clueMap && clueMap.size) {
     const regex = '^([^0-9A-Za-z\\s\\u00c0-\\uffff]*[0-9A-Za-z\\s\\u00c0-\\uffff]*)\\b(' + Array.from(clueMap.keys()).join('|') + ')\\b';
     const re = new RegExp(regex);
@@ -95,7 +95,7 @@ export const Markdown = ({ text, clueMap }: { text: string, clueMap?: Map<string
         },
       }
     };
-    return SimpleMarkdown.outputFor(newRules, 'react')(SimpleMarkdown.parserFor(newRules)(text + '\n\n'));
+    return SimpleMarkdown.outputFor(newRules, 'react')(SimpleMarkdown.parserFor(newRules)(text + '\n\n', { inline }));
   }
-  return output(parser(text + '\n\n'));
+  return output(parser(text + '\n\n', { inline }));
 };

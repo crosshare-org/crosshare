@@ -233,7 +233,7 @@ export const BioEditor = (props: BioEditorProps) => {
     return <>
       <div css={{ backgroundColor: 'var(--secondary)', borderRadius: '0.5em', padding: '1em', marginTop: '1em' }}>
         <h4>Live Preview:</h4>
-        <Markdown text={sigText} />
+        <Markdown inline={true} text={sigText} />
       </div>
       <form css={{ margin: '1em 0' }} onSubmit={submitSigEdit}>
         <label css={{ width: '100%', margin: 0 }}>

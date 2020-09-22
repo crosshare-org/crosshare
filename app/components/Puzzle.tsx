@@ -169,7 +169,7 @@ const PuzzleHeading = (props: { showTip: boolean, constructorNotes: string | nul
       : ''}
     {props.constructorPage ?.sig ?
       <div css={{ margin: '1em 0' }}>
-        <Markdown css={{ textAlign: 'left' }} text={props.constructorPage.sig} />
+        <Markdown inline={true} css={{ textAlign: 'left' }} text={props.constructorPage.sig} />
       </div>
       : ''}
 
