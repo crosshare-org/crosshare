@@ -22,6 +22,8 @@ export const ConstructorPageV = t.intersection([
     m: t.boolean,
     /** paypal email address */
     pp: t.string,
+    /** paypal text */
+    pt: t.string,
   })
 ]);
 export interface ConstructorPageT extends Omit<t.TypeOf<typeof ConstructorPageV>, 't'> {

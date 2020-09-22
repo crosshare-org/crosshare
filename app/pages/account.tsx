@@ -11,11 +11,15 @@ import { Link } from '../components/Link';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { getPuzzle } from '../lib/puzzleCache';
-import { CreatePageForm } from '../components/ConstructorPage';
+import { CreatePageForm, BioEditor } from '../components/ConstructorPage';
 import { PuzzleResult, puzzleFromDB } from '../lib/types';
 import { Button } from '../components/Buttons';
+import { ImageCropper } from '../components/ImageCropper';
+import { PROFILE_PIC, COVER_PIC } from '../lib/style';
 
 export const AccountPage = ({ user, constructorPage }: AuthProps) => {
+  const [settingProfilePic, setSettingProfilePic] = useState(false);
+  const [settingCoverPic, setSettingCoverPic] = useState(false);
   const [hasAuthoredPuzzle, setHasAuthoredPuzzle] = useState(false);
   const [unfinishedPuzzles, setUnfinishedPuzzles] = useState<Array<PuzzleResult> | null>(null);
   const [error, setError] = useState(false);
@@ -110,7 +114,8 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
         {constructorPage ?
           <>
             <p>Your blog is live at <Link href='/[...slug]' as={'/' + constructorPage.i} passHref>https://crosshare.org/{constructorPage.i}</Link></p>
-            <p>Visit your blog page to edit your bio or view your constructed puzzles.</p>
+            <p>Edit your blog settings below (changes may take up to an hour to appear on the site - we cache pages to keep Crosshare fast!):</p>
+            <BioEditor constructorPage={constructorPage} addProfilePic={() => setSettingProfilePic(true)} addCoverPic={() => setSettingCoverPic(true)} />
           </>
           :
           (hasAuthoredPuzzle ?
@@ -130,6 +135,12 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
           ''
         }
       </div>
+      {settingProfilePic ?
+        <ImageCropper targetSize={PROFILE_PIC} isCircle={true} storageKey={`/users/${user.uid}/profile.jpg`} cancelCrop={() => setSettingProfilePic(false)} />
+        : ''}
+      {settingCoverPic ?
+        <ImageCropper targetSize={COVER_PIC} isCircle={false} storageKey={`/users/${user.uid}/cover.jpg`} cancelCrop={() => setSettingCoverPic(false)} />
+        : ''}
     </>
   );
 };

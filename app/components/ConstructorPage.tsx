@@ -8,11 +8,13 @@ import { PuzzleResultLink } from './PuzzleLink';
 import { Link, LinkButtonSimpleA } from './Link';
 import { Markdown } from './Markdown';
 import { AuthPropsOptional, AuthContext } from './AuthContext';
-import { App, ServerTimestamp } from '../lib/firebaseWrapper';
+import { App, ServerTimestamp, DeleteSentinal } from '../lib/firebaseWrapper';
 import { ButtonAsLink, Button } from './Buttons';
-import { HUGE_AND_UP, MAX_WIDTH, PROFILE_PIC, COVER_PIC } from '../lib/style';
-import { ImageCropper } from './ImageCropper';
+import { HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
 import { ProfilePic, CoverPic } from './Images';
+import { ToolTipText } from './ToolTipText';
+import { FaInfoCircle } from 'react-icons/fa';
+import { Overlay } from './Overlay';
 
 
 const BANNED_USERNAMES = {
@@ -124,17 +126,45 @@ export const CreatePageForm = () => {
 };
 
 interface BioEditorProps {
-  text: string,
-  userId: string,
+  constructorPage: ConstructorPageT,
   addProfilePic: () => void,
   addCoverPic: () => void,
 }
 
 const BIO_LENGTH_LIMIT = 1500;
+const PAYPAL_LENGTH_LIMIT = 140;
 
-const BioEditor = (props: BioEditorProps) => {
+export const BioEditor = (props: BioEditorProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [text, setText] = useState(props.text);
+  const [showPaypalEditor, setShowPaypalEditor] = useState(false);
+  const [text, setText] = useState(props.constructorPage.b);
+  const [paypalEmail, setPaypalEmail] = useState(props.constructorPage.pp || '');
+  const [paypalText, setPaypalText] = useState(props.constructorPage.pt || '');
+  const [submitting, setSubmitting] = useState(false);
+
+  function deleteTipButton() {
+    console.log('Removing tip button');
+    const db = App.firestore();
+    db.collection('cp').doc(props.constructorPage.id).update({ pp: DeleteSentinal, pt: DeleteSentinal, m: true, t: ServerTimestamp }).then(() => {
+      console.log('Updated');
+      setIsOpen(false);
+    });
+  }
+
+  function submitPaypalInfo(event: FormEvent) {
+    event.preventDefault();
+    if (!paypalText.trim() || !paypalEmail || !paypalEmail.includes('@')) {
+      return;
+    }
+    setSubmitting(true);
+    console.log('Submitting new paypal info');
+    const db = App.firestore();
+    db.collection('cp').doc(props.constructorPage.id).update({ pp: paypalEmail, pt: paypalText.trim(), m: true, t: ServerTimestamp }).then(() => {
+      console.log('Updated');
+      setShowPaypalEditor(false);
+      setSubmitting(false);
+    });
+  }
 
   if (!isOpen) {
     return <div css={{
@@ -143,10 +173,40 @@ const BioEditor = (props: BioEditorProps) => {
         marginBottom: '0.25em',
       }
     }} >
-      <Markdown text={text} />
       <ButtonAsLink css={{ marginRight: '1.5em' }} onClick={() => setIsOpen(true)} text="edit bio" />
       <ButtonAsLink css={{ marginRight: '1.5em' }} onClick={props.addProfilePic} text="edit profile pic" />
-      <ButtonAsLink onClick={props.addCoverPic} text="edit cover pic" />
+      <ButtonAsLink css={{ marginRight: '1.5em' }} onClick={props.addCoverPic} text="edit cover pic" />
+      {props.constructorPage.pp && props.constructorPage.pt ?
+        <>
+          <ButtonAsLink css={{ marginRight: '1.5em' }} onClick={() => setShowPaypalEditor(true)} text="edit tip button" />
+          <ButtonAsLink onClick={deleteTipButton} text="delete tip button" />
+        </>
+        :
+        <ButtonAsLink onClick={() => setShowPaypalEditor(true)} text="add tip button" />
+      }
+      {showPaypalEditor ?
+        <Overlay closeCallback={() => setShowPaypalEditor(false)}>
+          <form onSubmit={submitPaypalInfo}>
+            <div>
+              <label>
+                <p>Paypal email address:</p>
+                <input type="text" value={paypalEmail} onChange={e => setPaypalEmail(e.target.value.trim())} />
+              </label>
+            </div>
+            <div css={{ marginTop: '2em' }}>
+              <label css={{ width: '100%', }} >
+                <p>Message to show in paypal dialogue:</p>
+                <input css={{ width: '100%', }} type="text" value={paypalText} onChange={e => setPaypalText(e.target.value.substring(0, PAYPAL_LENGTH_LIMIT))} />
+                <div css={{
+                  textAlign: 'right',
+                  color: (PAYPAL_LENGTH_LIMIT - paypalText.length) > 10 ? 'var(--default-text)' : 'var(--error)',
+                }}>{paypalText.length}/{PAYPAL_LENGTH_LIMIT}</div>
+              </label>
+            </div>
+            <Button type="submit" text="Save" disabled={submitting} />
+          </form>
+        </Overlay>
+        : ''}
     </div>;
   }
 
@@ -158,7 +218,7 @@ const BioEditor = (props: BioEditorProps) => {
     }
     console.log('Submitting bio');
     const db = App.firestore();
-    db.collection('cp').doc(props.userId).update({ b: text, m: true, t: ServerTimestamp }).then(() => {
+    db.collection('cp').doc(props.constructorPage.id).update({ b: text, m: true, t: ServerTimestamp }).then(() => {
       console.log('Updated');
       setIsOpen(false);
     });
@@ -170,7 +230,7 @@ const BioEditor = (props: BioEditorProps) => {
 
   return <>
     <Markdown text={text} />
-    <form css={{ marginBottom: '1em' }} onSubmit={submitEdit}>
+    <form css={{ margin: '1em 0' }} onSubmit={submitEdit}>
       <label css={{ width: '100%', margin: 0 }}>
         Enter new bio text:
         <textarea css={{ width: '100%', display: 'block', height: '5em' }} value={text} onChange={e => setText(sanitize(e.target.value))} />
@@ -180,7 +240,7 @@ const BioEditor = (props: BioEditorProps) => {
         color: (BIO_LENGTH_LIMIT - text.length) > 10 ? 'var(--default-text)' : 'var(--error)',
       }}>{text.length}/{BIO_LENGTH_LIMIT}</div>
       <Button type="submit" css={{ marginRight: '0.5em', }} disabled={text.trim().length === 0} text="Save" />
-      <Button boring={true} css={{ marginRight: '0.5em' }} onClick={() => { setText(props.text); setIsOpen(false); }} text='Cancel' />
+      <Button boring={true} css={{ marginRight: '0.5em' }} onClick={() => { setText(props.constructorPage.b); setIsOpen(false); }} text='Cancel' />
     </form>
   </>;
 };
@@ -196,13 +256,14 @@ export interface ConstructorPageProps {
 }
 
 export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional) => {
-  const [settingProfilePic, setSettingProfilePic] = useState(false);
-  const [settingCoverPic, setSettingCoverPic] = useState(false);
+
   const coverPic = props.coverPicture;
   const profilePic = props.profilePicture;
   const username = props.constructor.i || props.constructor.id;
   const description = 'The latest crossword puzzles from ' + props.constructor.n + ' (@' + username + '). ' + props.constructor.b;
   const title = props.constructor.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
+  const paypalEmail = props.constructor.pp;
+  const paypalText = props.constructor.pt;
   return <>
     <Head>
       <title>{title}</title>
@@ -248,13 +309,12 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
       <h1 css={{ fontSize: '1.4em', marginBottom: 0 }}>{props.constructor.n}</h1>
       <h2 css={{ fontSize: '1em', fontWeight: 'normal' }}><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h2>
       <div css={{ marginBottom: '1.5em' }}>
-        {props.user ?.uid === props.constructor.u ?
-          <BioEditor text={props.constructor.b} userId={props.constructor.id} addProfilePic={() => setSettingProfilePic(true)} addCoverPic={() => setSettingCoverPic(true)} />
-          :
-          <Markdown text={props.constructor.b} />
-        }
-        {props.constructor.pp ?
-          <div><LinkButtonSimpleA href={`https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=${encodeURIComponent(props.constructor.pp)}&item_name=${`Support ${props.constructor.n}'s Puzzles (via crosshare)`}&currency_code=USD&source=url`} text={`Tip ${props.constructor.n} (PayPal)`} /></div>
+        <Markdown text={props.constructor.b} />
+        {paypalEmail && paypalText ?
+          <div>
+            <LinkButtonSimpleA css={{ marginRight: '0.5em' }} href={`https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=${encodeURIComponent(paypalEmail)}&item_name=${encodeURIComponent(paypalText)}&currency_code=USD&source=url`} text={`Tip ${props.constructor.n}`} />
+            <ToolTipText text={<FaInfoCircle />} tooltip='All donations go directly to the constructor via PayPal' />
+          </div>
           : ''}
       </div>
       {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showAuthor={false} />)}
@@ -272,11 +332,5 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
         </p>
         : ''}
     </div>
-    {settingProfilePic && props.user ?
-      <ImageCropper targetSize={PROFILE_PIC} isCircle={true} storageKey={`/users/${props.user.uid}/profile.jpg`} cancelCrop={() => setSettingProfilePic(false)} />
-      : ''}
-    {settingCoverPic && props.user ?
-      <ImageCropper targetSize={COVER_PIC} isCircle={false} storageKey={`/users/${props.user.uid}/cover.jpg`} cancelCrop={() => setSettingCoverPic(false)} />
-      : ''}
   </>;
 };

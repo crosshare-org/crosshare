@@ -2,7 +2,7 @@ import { ReactNode, useState, useEffect } from 'react';
 import { useHover } from '../lib/hooks';
 import { usePopper } from 'react-popper';
 
-export const ToolTipText = (props: { text: string, tooltip: ReactNode }) => {
+export const ToolTipText = (props: { text: ReactNode, tooltip: ReactNode }) => {
   const [referenceElement, setReferenceElement] = useState<HTMLSpanElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
@@ -24,7 +24,7 @@ export const ToolTipText = (props: { text: string, tooltip: ReactNode }) => {
 
   return <>
     <span css={{
-      borderBottom: '1px dotted',
+      ...(typeof props.text === 'string') && { borderBottom: '1px dotted' },
       whiteSpace: 'nowrap',
     }} ref={setReferenceElement} {...hoverBind}>
       {props.text}

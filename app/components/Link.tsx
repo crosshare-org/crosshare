@@ -14,8 +14,8 @@ export function LinkButton(props: LinkProps) {
   }]} {...props} />;
 }
 
-export function LinkButtonSimpleA(props: { text: string, href: string }) {
-  return <a css={[ButtonResetCSS, ButtonCSS, {
+export function LinkButtonSimpleA(props: { text: string, href: string, className?: string }) {
+  return <a className={props.className} css={[ButtonResetCSS, ButtonCSS, {
     display: 'inline-block',
   }]} target="_blank" rel="noopener noreferrer" href={props.href}>{props.text}</a>;
 }
