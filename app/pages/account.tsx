@@ -114,7 +114,8 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
         {constructorPage ?
           <>
             <p>Your blog is live at <Link href='/[...slug]' as={'/' + constructorPage.i} passHref>https://crosshare.org/{constructorPage.i}</Link></p>
-            <p>Edit your blog settings below (changes may take up to an hour to appear on the site - we cache pages to keep Crosshare fast!):</p>
+            <h3>Blog settings</h3>
+            <p>Note: changes may take up to an hour to appear on the site - we cache pages to keep Crosshare fast!</p>
             <BioEditor constructorPage={constructorPage} addProfilePic={() => setSettingProfilePic(true)} addCoverPic={() => setSettingCoverPic(true)} />
           </>
           :

@@ -5,13 +5,13 @@ import {
 import Head from 'next/head';
 import {
   FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaKeyboard,
-  FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock, FaComment, FaHammer, FaPrint,
+  FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock, FaComment, FaHammer, FaPrint, FaInfoCircle,
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { toast } from 'react-toastify';
 
-import { Link, LinkButton } from './Link';
+import { Link, LinkButton, LinkButtonSimpleA } from './Link';
 import { ClueList } from './ClueList';
 import {
   EscapeKey, CheckSquare, RevealSquare, CheckEntry, RevealEntry, CheckPuzzle,
@@ -51,6 +51,8 @@ import { Keyboard } from './Keyboard';
 import { useRouter } from 'next/router';
 import { Button } from './Buttons';
 import { ProfilePic } from './Images';
+import { Markdown } from './Markdown';
+import { ToolTipText } from './ToolTipText';
 
 export interface NextPuzzleLink {
   puzzleId: string,
@@ -72,11 +74,8 @@ interface PauseBeginProps {
 const BeginPauseOverlay = (props: PauseBeginProps) => {
   return (
     <Overlay closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: 'RESUMEACTION' })}>
-      <PuzzleHeading profilePic={props.profilePicture} title={props.title} authorName={props.authorName} constructorPage={props.constructorPage} />
+      <PuzzleHeading showTip={false} constructorNotes={props.notes} profilePic={props.profilePicture} title={props.title} authorName={props.authorName} constructorPage={props.constructorPage} />
       <div css={{ textAlign: 'center' }}>
-        {props.notes ?
-          <ConstructorNotes notes={props.notes} />
-          : ''}
         {props.loadingPlayState ?
           <div>Checking for previous play data...</div>
           :
@@ -148,30 +147,46 @@ const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   return (<Link href='/crosswords/[puzzleId]' as={`/crosswords/${nextPuzzle.puzzleId}`} passHref>Play {nextPuzzle.linkText}</Link>);
 };
 
-const PuzzleHeading = (props: { profilePic: string | null | undefined, title: string, authorName: string, constructorPage: ConstructorPageT | null }) => {
-  return <div css={{
-    display: 'flex',
-  }}>
-    {props.profilePic ?
-      <div css={{ flex: '1 1 auto', textAlign: 'right' }}>
-        <ProfilePic css={{ display: 'inline-block', marginTop: '-0.5em', marginRight: '1em', [SMALL_AND_UP]: { marginTop: '-1.5em' } }} profilePicture={props.profilePic} />
+const PuzzleHeading = (props: { showTip: boolean, constructorNotes: string | null, profilePic: string | null | undefined, title: string, authorName: string, constructorPage: ConstructorPageT | null }) => {
+  return <>
+    <div css={{
+      display: 'flex',
+    }}>
+      {props.profilePic ?
+        <div css={{ flex: '1 1 auto', textAlign: 'right' }}>
+          <ProfilePic css={{ display: 'inline-block', marginTop: '-0.5em', marginRight: '1em', [SMALL_AND_UP]: { marginTop: '-1.5em' } }} profilePicture={props.profilePic} />
+        </div>
+        : ''}
+      <div css={{ flex: '1 1 auto', textAlign: props.profilePic ? 'left' : 'center' }}>
+        <h3>{props.title}</h3>
+        <AuthorLink authorName={props.authorName} constructorPage={props.constructorPage} />
+      </div>
+    </div>
+    {props.constructorNotes ?
+      <div css={{ textAlign: 'center' }}>
+        <ConstructorNotes notes={props.constructorNotes} />
       </div>
       : ''}
-    <div css={{ flex: '1 1 auto', textAlign: props.profilePic ? 'left' : 'center' }}>
-      <h3>{props.title}</h3>
-      <AuthorLink authorName={props.authorName} constructorPage={props.constructorPage} />
-    </div>
-  </div>;
+    {props.constructorPage ?.sig ?
+      <div css={{ margin: '1em 0' }}>
+        <Markdown css={{ textAlign: 'left' }} text={props.constructorPage.sig} />
+      </div>
+      : ''}
+
+    {props.showTip && props.constructorPage ?.pp && props.constructorPage.pt ?
+      <div css={{ textAlign: 'center' }}>
+        <LinkButtonSimpleA css={{ marginRight: '0.5em' }} href={`https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=${encodeURIComponent(props.constructorPage.pp)}&item_name=${encodeURIComponent(props.constructorPage.pt)}&currency_code=USD&source=url`} text={`Tip ${props.constructorPage.n}`} />
+        <ToolTipText text={<FaInfoCircle />} tooltip='All donations go directly to the constructor via PayPal' />
+      </div>
+      : ''}
+  </>;
 };
 
 const SuccessOverlay = (props: { profilePicture?: string | null, clueMap: Map<string, [number, Direction, string]>, user?: firebase.User, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
   return (
     <Overlay closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
-      <PuzzleHeading profilePic={props.profilePicture} title={props.puzzle.title} authorName={props.puzzle.authorName} constructorPage={props.puzzle.constructorPage} />
+      <PuzzleHeading showTip={true} constructorNotes={props.puzzle.constructorNotes} profilePic={props.profilePicture} title={props.puzzle.title} authorName={props.puzzle.authorName} constructorPage={props.puzzle.constructorPage} />
       <div css={{ textAlign: 'center' }}>
-        {props.puzzle.constructorNotes ?
-          <ConstructorNotes notes={props.puzzle.constructorNotes} />
-          : ''}
         {props.user ?.uid === props.puzzle.authorId ?
           <>
             <p>Your puzzle is live! Copy the link to share with solvers. Comments posted below will be visible to anyone who finishes solving the puzzle.</p>
@@ -179,7 +194,7 @@ const SuccessOverlay = (props: { profilePicture?: string | null, clueMap: Map<st
           </>
           :
           <>
-            <h4><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
+            <h4 css={{ marginTop: '1.5em' }}><Emoji symbol='🎉' /> Congratulations! <Emoji symbol='🎊' /></h4>
             <p css={{ marginBottom: 0 }}>You solved the puzzle in <b>{timeString(props.solveTime, false)}</b> - challenge your friends:</p>
             <SharingButtons text={`I solved "${props.puzzle.title}" in ${timeString(props.solveTime, false)} - how fast can you solve it?`} path={`/crosswords/${props.puzzle.id}`} />
           </>
