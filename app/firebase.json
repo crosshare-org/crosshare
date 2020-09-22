@@ -56,6 +56,11 @@
     ],
     "redirects": [
       {
+        "regex": "/(?i:WWMC)(/(?P<rest>.*))?",
+        "destination": "/PBWMC/:rest",
+        "type": 301
+      },
+      {
         "source": "/category/dailymini",
         "destination": "/dailyminis",
         "type": 301
@@ -104,6 +109,11 @@
       {
         "source": "/robots.txt",
         "destination": "/staging.robots.txt",
+        "type": 301
+      },
+      {
+        "regex": "/(?i:WWMC)(/(?P<rest>.*))?",
+        "destination": "/PBWMC/:rest",
         "type": 301
       },
       {
