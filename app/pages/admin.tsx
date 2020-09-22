@@ -204,7 +204,7 @@ export default requiresAdmin(() => {
           <form onSubmit={moderatePages}>
             {pagesForModeration.map((cp) =>
               <div key={cp.id}>
-                <p>{cp.n} - @{cp.i}</p>
+                <p>{cp.n} - <Link href='/[...slug]' as={`/${cp.i}`} passHref>@{cp.i}</Link></p>
                 <Markdown text={cp.b} />
               </div>
             )}
