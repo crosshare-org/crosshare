@@ -63,6 +63,7 @@ export const ButtonCSS: Interpolation<undefined> = {
   textAlign: 'center',
   boxShadow: '0 3px 5px rgba(0, 0, 0, 0.18)',
   '&:disabled': {
+    color: 'var(--default-text)',
     borderColor: 'var(--default-text)',
     backgroundColor: 'transparent',
   },
@@ -72,9 +73,12 @@ export const ButtonCSS: Interpolation<undefined> = {
   '&:hover': {
     textDecoration: 'none',
     color: 'var(--white)',
-  },
-  '&:hover:enabled': {
     backgroundColor: 'var(--link-hover)',
+  },
+  '&:hover:disabled': {
+    color: 'var(--default-text)',
+    borderColor: 'var(--default-text)',
+    backgroundColor: 'transparent',
   },
 };
 
