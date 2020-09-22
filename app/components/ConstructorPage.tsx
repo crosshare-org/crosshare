@@ -52,6 +52,7 @@ const BANNED_USERNAMES = {
   dailymini: 1,
   featured: 1,
   daily: 1,
+  wwmc: 1,
 };
 
 export const CreatePageForm = () => {
