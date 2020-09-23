@@ -136,6 +136,7 @@ export default async function pdf(req: NextApiRequest, res: NextApiResponse) {
     return res.status(404).json({ statusCode: 404, message: 'failed to get puzzle' });
   }
   const fromDB = puzzleFromDB(puzzle);
+  res.setHeader('X-Robots-Tag', 'noindex');
   res.setHeader('Cache-Control', 'public, max-age=172800, s-maxage=172800');
   res.setHeader('Content-Disposition', 'inline; filename="' + puzzle.t.replace(/[^\w ]/g, '') + '.pdf"');
   res.writeHead(200, { 'Content-Type': 'application/pdf' });
