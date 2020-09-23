@@ -207,49 +207,6 @@ export const BioEditor = (props: BioEditorProps) => {
     });
   }
 
-  if (isOpen) {
-    return <>
-      <div css={{ backgroundColor: 'var(--secondary)', borderRadius: '0.5em', padding: '1em', marginTop: '1em' }}>
-        <h4>Live Preview:</h4>
-        <Markdown text={bioText} />
-      </div>
-      <form css={{ margin: '1em 0' }} onSubmit={submitEdit}>
-        <label css={{ width: '100%', margin: 0 }}>
-          Enter new bio text:
-          <textarea css={{ width: '100%', display: 'block', height: '5em' }} value={bioText} onChange={e => setBioText(e.target.value.substring(0, BIO_LENGTH_LIMIT))} />
-        </label>
-        <div css={{
-          textAlign: 'right',
-          color: (BIO_LENGTH_LIMIT - bioText.length) > 10 ? 'var(--default-text)' : 'var(--error)',
-        }}>{bioText.length}/{BIO_LENGTH_LIMIT}</div>
-        <Button type="submit" css={{ marginRight: '0.5em', }} disabled={bioText.trim().length === 0} text="Save" />
-        <Button boring={true} css={{ marginRight: '0.5em' }} onClick={() => { setIsOpen(false); }} text='Cancel' />
-      </form>
-    </>;
-  }
-
-  if (isSigOpen) {
-    /* Todo share this w/ above */
-    return <>
-      <div css={{ backgroundColor: 'var(--secondary)', borderRadius: '0.5em', padding: '1em', marginTop: '1em' }}>
-        <h4>Live Preview:</h4>
-        <Markdown inline={true} text={sigText} />
-      </div>
-      <form css={{ margin: '1em 0' }} onSubmit={submitSigEdit}>
-        <label css={{ width: '100%', margin: 0 }}>
-          Enter new signature:
-          <textarea css={{ width: '100%', display: 'block', height: '5em' }} value={sigText} onChange={e => setSigText(e.target.value.substring(0, SIG_LENGTH_LIMIT))} />
-        </label>
-        <div css={{
-          textAlign: 'right',
-          color: (SIG_LENGTH_LIMIT - sigText.length) > 10 ? 'var(--default-text)' : 'var(--error)',
-        }}>{sigText.length}/{SIG_LENGTH_LIMIT}</div>
-        <Button type="submit" css={{ marginRight: '0.5em', }} disabled={sigText.trim().length === 0} text="Save" />
-        <Button boring={true} css={{ marginRight: '0.5em' }} onClick={() => { setIsSigOpen(false); }} text='Cancel' />
-      </form>
-    </>;
-  }
-
   return <div css={{
     marginBottom: '1em',
     ['p:last-of-type']: {
@@ -260,11 +217,34 @@ export const BioEditor = (props: BioEditorProps) => {
     }
   }} >
     <h4>Bio</h4>
-    <p>Your bio appears on the top of your blog page - use it to introduce yourself to solvers!</p>
-    {props.constructorPage.b ?
-      <Button onClick={() => setIsOpen(true)} text="Edit bio" />
+    {isOpen ?
+      <>
+        <div css={{ backgroundColor: 'var(--secondary)', borderRadius: '0.5em', padding: '1em' }}>
+          <h4>Live Preview:</h4>
+          <Markdown text={bioText} />
+        </div>
+        <form css={{ margin: '1em 0' }} onSubmit={submitEdit}>
+          <label css={{ width: '100%', margin: 0 }}>
+            Enter new bio text:
+            <textarea css={{ width: '100%', display: 'block', height: '5em' }} value={bioText} onChange={e => setBioText(e.target.value.substring(0, BIO_LENGTH_LIMIT))} />
+          </label>
+          <div css={{
+            textAlign: 'right',
+            color: (BIO_LENGTH_LIMIT - bioText.length) > 10 ? 'var(--default-text)' : 'var(--error)',
+          }}>{bioText.length}/{BIO_LENGTH_LIMIT}</div>
+          <Button type="submit" css={{ marginRight: '0.5em', }} disabled={bioText.trim().length === 0} text="Save" />
+          <Button boring={true} css={{ marginRight: '0.5em' }} onClick={() => { setIsOpen(false); }} text='Cancel' />
+        </form>
+      </>
       :
-      <Button onClick={() => setIsOpen(true)} text="Add bio" />
+      <>
+        <p>Your bio appears on the top of your blog page - use it to introduce yourself to solvers!</p>
+        {props.constructorPage.b ?
+          <Button onClick={() => setIsOpen(true)} text="Edit bio" />
+          :
+          <Button onClick={() => setIsOpen(true)} text="Add bio" />
+        }
+      </>
     }
 
     <h4>Pics</h4>
@@ -284,14 +264,37 @@ export const BioEditor = (props: BioEditorProps) => {
     }
 
     <h4>Signature</h4>
-    <p>A sig appears on each of your puzzle pages. You can use it to link to your social media accounts or give other important information about yourself.</p>
-    {props.constructorPage.sig ?
+    {isSigOpen ?
+      /* Todo share this w/ bio editor above */
       <>
-        <Button css={{ marginRight: '1.5em' }} onClick={() => setIsSigOpen(true)} text="Edit sig" />
-        <Button boring={true} onClick={deleteSig} text="Delete sig" />
+        <div css={{ backgroundColor: 'var(--secondary)', borderRadius: '0.5em', padding: '1em', marginTop: '1em' }}>
+          <h4>Live Preview:</h4>
+          <Markdown inline={true} text={sigText} />
+        </div>
+        <form css={{ margin: '1em 0' }} onSubmit={submitSigEdit}>
+          <label css={{ width: '100%', margin: 0 }}>
+            Enter new signature:
+            <textarea css={{ width: '100%', display: 'block', height: '5em' }} value={sigText} onChange={e => setSigText(e.target.value.substring(0, SIG_LENGTH_LIMIT))} />
+          </label>
+          <div css={{
+            textAlign: 'right',
+            color: (SIG_LENGTH_LIMIT - sigText.length) > 10 ? 'var(--default-text)' : 'var(--error)',
+          }}>{sigText.length}/{SIG_LENGTH_LIMIT}</div>
+          <Button type="submit" css={{ marginRight: '0.5em', }} disabled={sigText.trim().length === 0} text="Save" />
+          <Button boring={true} css={{ marginRight: '0.5em' }} onClick={() => { setIsSigOpen(false); }} text='Cancel' />
+        </form>
+      </> :
+      <>
+        <p>A sig appears on each of your puzzle pages. You can use it to link to your social media accounts or give other important information about your puzzles.</p>
+        {props.constructorPage.sig ?
+          <>
+            <Button css={{ marginRight: '1.5em' }} onClick={() => setIsSigOpen(true)} text="Edit sig" />
+            <Button boring={true} onClick={deleteSig} text="Delete sig" />
+          </>
+          :
+          <Button onClick={() => setIsSigOpen(true)} text="Add sig" />
+        }
       </>
-      :
-      <Button onClick={() => setIsSigOpen(true)} text="Add sig" />
     }
     {showPaypalEditor ?
       <Overlay closeCallback={() => setShowPaypalEditor(false)}>
