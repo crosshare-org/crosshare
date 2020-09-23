@@ -13,14 +13,15 @@ if (typeof window !== 'undefined') {
 interface SquareProps {
   aspectRatio: number,
   contents: (width: number, height: number) => ReactNode,
-  parentRef: RefObject<HTMLElement>
+  parentRef: RefObject<HTMLElement>,
+  waitToResize?: boolean,
 }
 export const Square = (props: SquareProps) => {
   const { width, height } = useResizeObserver({ ref: props.parentRef });
   const [outWidth, setOutWidth] = useState(200);
   const [outHeight, setOutHeight] = useState(200);
   useEffect(() => {
-    if (!width || !height) {
+    if (!width || !height || props.waitToResize) {
       return;
     }
     let newHeight = height - TINY_COL_MIN_HEIGHT;
@@ -34,7 +35,7 @@ export const Square = (props: SquareProps) => {
     }
     setOutWidth(Math.min(newWidth, props.aspectRatio * newHeight));
     setOutHeight(Math.min(newWidth / props.aspectRatio, newHeight));
-  }, [width, height, props.aspectRatio]);
+  }, [width, height, props.aspectRatio, props.waitToResize]);
 
   return (
     <div aria-label='grid' css={{

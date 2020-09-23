@@ -45,6 +45,7 @@ interface SquareAndColsProps {
   left: ReactNode,
   right: ReactNode,
   dispatch: Dispatch<KeypressAction>,
+  waitToResize?: boolean,
 }
 export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((props: SquareAndColsProps, fwdedRef) => {
   const parentRef = useRef<HTMLDivElement | null>(null);
@@ -74,7 +75,7 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>((pro
     },
     flexWrap: 'nowrap',
   }}>
-    <Square parentRef={parentRef} aspectRatio={props.aspectRatio || 1} contents={props.square} />
+    <Square waitToResize={props.waitToResize} parentRef={parentRef} aspectRatio={props.aspectRatio || 1} contents={props.square} />
     <div css={{
       display: 'flex',
       flex: '1 0 auto',

@@ -297,6 +297,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     cellsIterationCount: play ? play.uc : puzzle.grid.map(() => 0),
     cellsEverMarkedWrong: new Set<number>(play ? play.we : []),
     loadedPlayState: !loadingPlayState,
+    waitToResize: true,
     isEditable(cellIndex) { return !this.verifiedCells.has(cellIndex) && !this.success; },
     postEdit(cellIndex) {
       let state = this; // eslint-disable-line @typescript-eslint/no-this-alias
@@ -572,13 +573,15 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     refed = [...refs[entryIdx]].map(([labelNumber, direction]) => state.grid.entries.findIndex(e => e.labelNumber === labelNumber && e.direction === direction));
   }
 
+  const shouldConceal = state.currentTimeWindowStart === 0 && !(state.success && state.dismissedSuccess);
   if (state.clueView) {
     puzzleView = <TwoCol
-      left={<ClueList allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
-      right={<ClueList allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
+      left={<ClueList allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={shouldConceal} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
+      right={<ClueList allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={shouldConceal} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
     />;
   } else {
     puzzleView = <SquareAndCols
+      waitToResize={state.waitToResize}
       dispatch={dispatch}
       aspectRatio={state.grid.width / state.grid.height}
       square={
@@ -595,8 +598,8 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           />;
         }
       }
-      left={<ClueList scrollToCross={scrollToCross} allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} dispatch={dispatch} />}
-      right={<ClueList scrollToCross={scrollToCross} allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={state.currentTimeWindowStart === 0 && !state.success} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} dispatch={dispatch} />}
+      left={<ClueList scrollToCross={scrollToCross} allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={shouldConceal} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} dispatch={dispatch} />}
+      right={<ClueList scrollToCross={scrollToCross} allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={shouldConceal} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} dispatch={dispatch} />}
     />;
   }
 
@@ -708,22 +711,24 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       }}>
         <div css={{ flex: 'none', }}>
           <TopBar>
-            {!state.success ?
-              <>
-                <TopBarLink icon={<FaPause />} hoverText={'Pause Game'} text={timeString(state.displaySeconds, true)} onClick={() => { dispatch({ type: 'PAUSEACTION' }); writePlayToDBIfNeeded(); }} keepText={true} />
-                <TopBarLink icon={state.clueView ? <SpinnerFinished /> : <FaListOl />} text={state.clueView ? 'Grid' : 'Clues'} onClick={() => {
-                  const a: ToggleClueViewAction = { type: 'TOGGLECLUEVIEW' };
-                  dispatch(a);
-                }} />
-                {checkRevealMenus}
-                {moreMenu}
-              </>
-              :
-              <>
-                <TopBarLink icon={<FaComment />} text={'Show Comments'} onClick={() => dispatch({ type: 'UNDISMISSSUCCESS' })} />
-                {moreMenu}
-              </>
-            }
+            {!loadingPlayState ?
+              (!state.success ?
+                <>
+                  <TopBarLink icon={<FaPause />} hoverText={'Pause Game'} text={timeString(state.displaySeconds, true)} onClick={() => { dispatch({ type: 'PAUSEACTION' }); writePlayToDBIfNeeded(); }} keepText={true} />
+                  <TopBarLink icon={state.clueView ? <SpinnerFinished /> : <FaListOl />} text={state.clueView ? 'Grid' : 'Clues'} onClick={() => {
+                    const a: ToggleClueViewAction = { type: 'TOGGLECLUEVIEW' };
+                    dispatch(a);
+                  }} />
+                  {checkRevealMenus}
+                  {moreMenu}
+                </>
+                :
+                <>
+                  <TopBarLink icon={<FaComment />} text={'Show Comments'} onClick={() => dispatch({ type: 'UNDISMISSSUCCESS' })} />
+                  {moreMenu}
+                </>
+              )
+              : ''}
           </TopBar>
         </div>
         {state.isEnteringRebus ?

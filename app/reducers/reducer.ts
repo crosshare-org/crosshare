@@ -45,6 +45,7 @@ interface PuzzleState extends GridInterfaceState {
   bankedSeconds: number,
   currentTimeWindowStart: number,
   loadedPlayState: boolean,
+  waitToResize: boolean,
 }
 function isPuzzleState(state: GridInterfaceState): state is PuzzleState {
   return state.type === 'puzzle';
@@ -662,7 +663,7 @@ export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleS
     if (state.currentTimeWindowStart !== 0) {
       return state;
     }
-    return { ...state, currentTimeWindowStart: (new Date()).getTime() };
+    return { ...state, waitToResize: false, currentTimeWindowStart: (new Date()).getTime() };
   }
   if (action.type === 'PAUSEACTION') {
     if (state.currentTimeWindowStart === 0) {
@@ -675,10 +676,10 @@ export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleS
   }
   if (action.type === 'DISMISSKEEPTRYING') {
     const currentTimeWindowStart = state.currentTimeWindowStart || (new Date()).getTime();
-    return { ...state, currentTimeWindowStart, dismissedKeepTrying: true };
+    return { ...state, waitToResize: false, currentTimeWindowStart, dismissedKeepTrying: true };
   }
   if (action.type === 'DISMISSSUCCESS') {
-    return { ...state, dismissedSuccess: true };
+    return { ...state, waitToResize: false, dismissedSuccess: true };
   }
   if (action.type === 'UNDISMISSSUCCESS') {
     return { ...state, dismissedSuccess: false };

@@ -44,7 +44,10 @@ export function ButtonAsLink(props: ButtonProps) {
     },
     '&:disabled': {
       textDecoration: 'none',
-    }
+    },
+    '&:hover:disabled': {
+      color: 'var(--default-text)',
+    },
   }} {...props} />;
 }
 

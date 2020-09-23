@@ -28,6 +28,9 @@ if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
 
 export function reportWebVitals(metric: NextWebVitalsMetric) {
   console.log(metric);
+  if (process.env.NODE_ENV !== 'production' && metric.name === 'CLS' && metric.value) {
+    console.error('NONZERO CLS ', metric.value);
+  }
 }
 
 // `err` is a workaround for https://github.com/vercel/next.js/issues/8592

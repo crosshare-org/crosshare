@@ -38,7 +38,7 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
     <div css={{
       position: 'relative',
       width: '90%',
-      maxWidth: '650px',
+      maxWidth: '1200px',
       padding: '3em 1.5em',
       backgroundColor: 'var(--overlay-inner)',
       border: '1px solid black',
