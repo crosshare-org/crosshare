@@ -80,7 +80,7 @@ export default function BuilderPage() {
     </Hero>
     <BigQuote
       quote="The Crosshare constructor helps me build better puzzles faster. The interface is more intuitive than Crossfire's and the autofill feature works far more efficiently."
-      attribution={<>Will Pfadenhauer of <Link href='/[...slug]' as={'/WWMC'} passHref>Will&apos;s Weekly Meta Crossword</Link></>}
+      attribution={<>Will Pfadenhauer of <Link href='/[...slug]' as={'/PBWMC'} passHref>Pandora&apos;s Blocks Weekly Meta Crossword</Link></>}
     />
     <FeatureList>
       <FeatureListItem icon={<MdMoneyOff />} heading="It's 100% free" text="Constructing puzzles on Crosshare is always free. You can publish as many puzzles as you'd like and share with them with as many solvers as you can find." />
