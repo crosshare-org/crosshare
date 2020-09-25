@@ -15,7 +15,7 @@ export const ConstructorPageV = t.intersection([
     /** author bio */
     b: t.string,
     /** timestamp when last updated */
-    t: timestamp,
+    t: t.union([timestamp, t.null]),
   }),
   t.partial({
     /** needs moderation */
