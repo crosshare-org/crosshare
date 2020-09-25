@@ -33,6 +33,7 @@ cases('test .puz import', async opts => {
   { name: 'av110622' },
   { name: 'cs080904' },
   { name: 'Feb0308_oddnumbering' },
+  { name: 'hobbyistspam' },
   { name: 'nyt_partlyfilled' },
   { name: 'nyt_rebus_with_notes_and_shape' },
   { name: 'nyt_with_shape' },

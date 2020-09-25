@@ -134,7 +134,10 @@ class PuzReader {
       label += inc;
     }
 
-    const notes = this.readString().trim() || null;
+    let notes = this.readString().trim() || null;
+    if (notes ?.match(/created (on|with) \w+\.com/i)) {
+      notes = null;
+    }
 
     let tryAnotherExtension = true;
     while (tryAnotherExtension) {
