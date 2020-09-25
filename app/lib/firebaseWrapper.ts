@@ -6,7 +6,7 @@ import 'firebase/performance';
 import 'firebase/auth';
 import 'firebase/storage';
 
-import type firebaseAdminType from 'firebase-admin';
+import type * as firebaseAdminType from 'firebase-admin';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBrmmBf91peVT5T_Z7N3z9oizsPH5u2pUc',
