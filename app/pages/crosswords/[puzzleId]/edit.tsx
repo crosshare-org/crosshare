@@ -114,20 +114,20 @@ const ClueRow = (props: { puzzleId: string, ac: Array<string>, an: Array<number>
   return (
     <tr>
       <td css={{
-        paddingRight: '1em',
+        paddingRight: '0.5em',
         paddingBottom: '1em',
         textAlign: 'right',
         width: '1px',
       }}>{props.entry.labelNumber}{props.entry.direction === Direction.Down ? 'D' : 'A'}</td>
       <td css={{
-        paddingRight: '1em',
+        paddingRight: '0.5em',
         paddingBottom: '1em',
         textAlign: 'right',
         width: '1px',
       }}><label css={{ marginBottom: 0 }} htmlFor={word + '-input'}>{word}</label></td>
       <td css={{ paddingBottom: '1em' }}>{editing ?
-        <form onSubmit={handleSubmit}>
-          <input id={word + '-input'} type="text" css={{ margin: '0 0.5em' }} placeholder="Enter a clue" value={value} onChange={(e) => {
+        <form css={{ display: 'flex', flexWrap: 'wrap' }} onSubmit={handleSubmit}>
+          <input id={word + '-input'} type="text" css={{ marginRight: '0.5em', flex: '1 1 auto' }} placeholder="Enter a clue" value={value} onChange={(e) => {
             setValue(sanitizeClue(e.target.value));
           }} />
           <Button type="submit" text="Save" disabled={submitting || !value.trim()} />
