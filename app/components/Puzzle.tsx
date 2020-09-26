@@ -5,7 +5,7 @@ import {
 import Head from 'next/head';
 import {
   FaListOl, FaGlasses, FaUser, FaVolumeUp, FaVolumeMute, FaPause, FaKeyboard,
-  FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock, FaComment, FaHammer, FaPrint, FaInfoCircle,
+  FaCheck, FaEye, FaEllipsisH, FaCheckSquare, FaUserLock, FaComment, FaHammer, FaPrint, FaInfoCircle, FaEdit,
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
@@ -680,7 +680,10 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           }
           {
             props.isAdmin || props.user ?.uid === puzzle.authorId ?
-              <TopBarDropDownLinkA href='/crosswords/[puzzleId]/stats' as={`/crosswords/${puzzle.id}/stats`} icon={<IoMdStats />} text="Stats" />
+              <>
+                <TopBarDropDownLinkA href='/crosswords/[puzzleId]/stats' as={`/crosswords/${puzzle.id}/stats`} icon={<IoMdStats />} text="Stats" />
+                <TopBarDropDownLinkA href='/crosswords/[puzzleId]/edit' as={`/crosswords/${puzzle.id}/edit`} icon={<FaEdit />} text="Edit" />
+              </>
               : ''
           }
           <TopBarDropDownLinkSimpleA href={'/api/pdf/' + puzzle.id} icon={<FaPrint />} text="Print Puzzle" />
