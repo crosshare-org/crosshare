@@ -6,7 +6,10 @@ import { TopBarLink, TopBar } from './TopBar';
 import { Direction } from '../lib/types';
 import { ButtonAsLink } from './Buttons';
 
-function sanitize(input: string) {
+export function sanitizeClue(input: string) {
+  return input.substring(0, 140);
+}
+export function sanitizeTitle(input: string) {
   return input.substring(0, 140);
 }
 
@@ -30,7 +33,7 @@ const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry,
         width: '1px',
       }}><label css={{ marginBottom: 0 }} htmlFor={props.entry.completedWord + '-input'}>{props.entry.completedWord}</label></td>
       <td css={{ paddingBottom: '1em' }}><input id={props.entry.completedWord + '-input'} type="text" css={{ width: '100%' }} placeholder="Enter a clue" value={props.clues[word] || ''} onChange={(e) => {
-        const sca: SetClueAction = { type: 'SETCLUE', word: word, clue: sanitize(e.target.value) };
+        const sca: SetClueAction = { type: 'SETCLUE', word: word, clue: sanitizeClue(e.target.value) };
         props.dispatch(sca);
       }} /></td>
     </tr>
@@ -56,7 +59,7 @@ export const ClueMode = (props: ClueModeProps) => {
         <label css={{ width: '100%' }}>
           <h2>Title</h2>
           <input type="text" css={{ width: '100%', marginBottom: '1.5em' }} placeholder="Give your puzzle a title" value={props.title || ''} onChange={(e) => {
-            const sta: SetTitleAction = { type: 'SETTITLE', value: sanitize(e.target.value) };
+            const sta: SetTitleAction = { type: 'SETTITLE', value: sanitizeTitle(e.target.value) };
             props.dispatch(sta);
           }} />
         </label>

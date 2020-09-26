@@ -19,8 +19,7 @@ service cloud.firestore {
     function validCrossword() {
       return (request.resource.data.g.size() == (request.resource.data.w * request.resource.data.h))
         && (request.resource.data.ac.size() == request.resource.data.an.size())
-        && (request.resource.data.dc.size() == request.resource.data.dn.size())
-        && (!request.resource.data.keys().hasAny(["cs"]) || request.resource.data.cs.size() == 0);
+        && (request.resource.data.dc.size() == request.resource.data.dn.size());
     }
     match /cp/{username} {
       allow get: if true;
@@ -56,8 +55,23 @@ service cloud.firestore {
 
       allow update: if isAdmin();
 
+      allow update: if isNonAnonymous() && authorSetCorrectly()
+        && validCrossword()
+        && request.resource.data.a == resource.data.a
+        && request.resource.data.c == resource.data.c
+        && request.resource.data.m == resource.data.m
+        && request.resource.data.p == resource.data.p
+        && request.resource.data.w == resource.data.w
+        && request.resource.data.h == resource.data.h
+        && (!request.resource.data.keys().hasAny(["cs"]) || request.resource.data.cs == resource.data.cs)
+        && (!request.resource.data.keys().hasAny(["f"]) || request.resource.data.f == resource.data.f)
+        && (!request.resource.data.keys().hasAny(["hs"]) || request.resource.data.hs == resource.data.hs)
+        && (!request.resource.data.keys().hasAny(["s"]) || request.resource.data.s == resource.data.s)
+        && request.resource.data.g == resource.data.g;
+
       allow create: if isNonAnonymous() && authorSetCorrectly()
         && validCrossword()
+        && (!request.resource.data.keys().hasAny(["cs"]) || request.resource.data.cs.size() == 0)
         && request.resource.data.m == false
         && (!request.resource.data.keys().hasAny(["f"]) || request.resource.data.f == false)
         && request.resource.data.c == null
