@@ -123,11 +123,11 @@ class PuzReader {
     for (let i = 0; i < w * h; i++) {
       if (grid[i] == '.') continue;
       let inc = 0;
-      if (i % w == 0 || grid[i - 1] == '.') {
+      if ((i % w === 0 || grid[i - 1] === '.') && (i + 1) % w !== 0 && grid[i + 1] !== '.') {
         clues.push({ num: label, clue: this.readString(), dir: 0 });
         inc = 1;
       }
-      if (i < w || grid[i - w] == '.') {
+      if ((i < w || grid[i - w] === '.') && i + w < grid.length && grid[i + w] !== '.') {
         clues.push({ num: label, clue: this.readString(), dir: 1 });
         inc = 1;
       }
