@@ -114,6 +114,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
           <p>Please look over your grid and clues to make sure everything is correct.
           If something didn&apos;t import correctly, get in touch with us via
         the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a> or <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">Twitter</a>.</p>
+          <p>You can edit your title, clues, etc. by clicking &lsquo;Edit&rsquo; in the top bar.</p>
           <p>Once you&apos;ve looked it over, click &lsquo;Publish&rsquo; in the top bar to publish your puzzle!</p>
         </Overlay>
         : ''}
