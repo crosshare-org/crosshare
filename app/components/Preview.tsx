@@ -3,7 +3,7 @@ import {
 } from 'react';
 import useEventListener from '@use-it/event-listener';
 import {
-  FaRegNewspaper, FaUser, FaUserLock
+  FaRegNewspaper, FaUser, FaUserLock, FaListOl
 } from 'react-icons/fa';
 
 import { TimestampClass } from '../lib/firebaseWrapper';
@@ -23,6 +23,7 @@ import { SquareAndCols } from './Page';
 import { PuzzleInProgressT, Direction } from '../lib/types';
 import { useMatchMedia } from '../lib/hooks';
 import { SMALL_AND_UP_RULES } from '../lib/style';
+import { ClueMode } from './ClueMode';
 
 const initializeState = (props: PuzzleInProgressT & AuthProps): BuilderState => {
   return initialBuilderState({
@@ -75,6 +76,11 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
   }, [state.grid.entries, state.clues]);
   const scrollToCross = useMatchMedia(SMALL_AND_UP_RULES);
 
+  const [clueMode, setClueMode] = useState(false);
+  if (clueMode) {
+    return <ClueMode dispatch={dispatch} title={state.title} notes={state.notes} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
+  }
+
   return <>
     <div css={{
       display: 'flex', flexDirection: 'column', height: '100%'
@@ -85,6 +91,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
             const a: PublishAction = { type: 'PUBLISH', publishTimestamp: TimestampClass.now() };
             dispatch(a);
           }} />
+          <TopBarLink icon={<FaListOl />} text="Edit" onClick={() => setClueMode(true)} />
           {
             props.isAdmin ?
               <>

@@ -135,3 +135,46 @@ test('upload a puzzle', async () => {
 
   expect(r5.getByLabelText('grid')).toMatchSnapshot();
 });
+
+test('upload after editing', async () => {
+  sessionStorage.clear();
+  localStorage.clear();
+
+  await firebaseTesting.clearFirestoreData({ projectId });
+
+  setApp(app as firebase.app.App);
+
+  const r = render(
+    <UploadPage />, { user: mike }
+  );
+
+  const input = await r.findByLabelText('Select a .puz file', { exact: false });
+  const puz = await readFile(path.resolve(__dirname, 'converter/puz/av110622.puz'));
+
+  const file = new File([puz], 'blah.puz', {
+    type: 'text/puz',
+  });
+  fireEvent.change(input, { target: { files: [file] } });
+
+  expect(await r.findByText('Across')).toBeInTheDocument();
+
+  fireEvent.click(r.getByText('Edit', { exact: true }));
+  fireEvent.change(r.getByLabelText('BAJA'), { target: { value: 'Low, south of the border' } });
+  fireEvent.change(r.getByLabelText('Title'), { target: { value: 'Our new Title' } });
+  fireEvent.click(r.getByText('Add a note'));
+  fireEvent.change(r.getByPlaceholderText('Add a note'), { target: { value: 'Here we added a constructor note' } });
+
+  fireEvent.click(r.getByText('Back to Grid', { exact: true }));
+  fireEvent.click(r.getByText('Publish', { exact: true }));
+  fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
+  await (r.findByText(/Published Successfully/, undefined, { timeout: 3000 }));
+
+  const puzzles = await admin.firestore().collection('c').get();
+  expect(puzzles.size).toEqual(1);
+  const resData = puzzles.docs[0].data();
+  if (!resData) {
+    throw new Error('botch');
+  }
+  delete resData['p'];
+  expect(resData).toMatchSnapshot();
+});
