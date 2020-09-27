@@ -12,6 +12,9 @@ export function sanitizeClue(input: string) {
 export function sanitizeTitle(input: string) {
   return input.substring(0, 140);
 }
+export function sanitizeConstructorNotes(input: string) {
+  return input.substring(0, 200);
+}
 
 const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry, clues: Record<string, string> }) => {
   const word = props.entry.completedWord;
@@ -67,7 +70,7 @@ export const ClueMode = (props: ClueModeProps) => {
           <>
             <h2>Note</h2>
             <input type="text" css={{ width: '100%', marginBottom: '1.5em' }} placeholder="Add a note" value={props.notes} onChange={(e) => {
-              const sta: SetNotesAction = { type: 'SETNOTES', value: e.target.value };
+              const sta: SetNotesAction = { type: 'SETNOTES', value: sanitizeConstructorNotes(e.target.value) };
               props.dispatch(sta);
             }} />
             <p><ButtonAsLink text="Remove note" onClick={() => {

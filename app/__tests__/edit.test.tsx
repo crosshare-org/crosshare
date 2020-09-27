@@ -76,12 +76,44 @@ test('basic edit', async () => {
   );
 
   expect(await r.findByText('changes may take up to an hour', { exact: false })).toBeInTheDocument();
-  fireEvent.click((await r.findAllByText('edit'))[3]);
+  fireEvent.click(r.getByTitle('Edit ESSAY'));
   fireEvent.change(r.getByLabelText('ESSAY'), { target: { value: 'A new clue for essay' } });
   fireEvent.click(r.getByText('Save'));
 
   expect(await r.findByText('A new clue for essay')).toBeInTheDocument();
-  const res = await admin.firestore().collection('c').doc(PUZZLEID).get();
+  await checkSnapshot(PUZZLEID);
+
+  fireEvent.click(r.getByTitle('Edit SETSA'));
+  fireEvent.change(r.getByLabelText('SETSA'), { target: { value: 'A new clue for wedding' } });
+  fireEvent.click(r.getByText('Save'));
+  expect(await r.findByText('A new clue for wedding')).toBeInTheDocument();
+  await checkSnapshot(PUZZLEID);
+});
+
+test('edit title', async () => {
+  sessionStorage.clear();
+  localStorage.clear();
+
+  await firebaseTesting.clearFirestoreData({ projectId });
+  await admin.firestore().collection('c').doc(PUZZLEID).set(getMockedPuzzle({ a: 'mike' }));
+
+  setApp(app);
+
+  const r = render(
+    <PuzzleLoader puzzleId={PUZZLEID} auth={{ user: mike, isAdmin: false }} />, { user: mike }
+  );
+
+  expect(await r.findByText('changes may take up to an hour', { exact: false })).toBeInTheDocument();
+  fireEvent.click(r.getByTitle('Edit Title'));
+  fireEvent.change(r.getByPlaceholderText('Enter Title'), { target: { value: 'Well we got a new title' } });
+  fireEvent.click(r.getByText('Save'));
+
+  expect(await r.findByText('Well we got a new title')).toBeInTheDocument();
+  await checkSnapshot(PUZZLEID);
+});
+
+async function checkSnapshot(puzzleId: string) {
+  const res = await admin.firestore().collection('c').doc(puzzleId).get();
   const resData = res.data();
   if (!resData) {
     throw new Error('botch');
@@ -89,20 +121,40 @@ test('basic edit', async () => {
   delete resData['p'];
   delete resData['cs'][0]['p'];
   expect(resData).toMatchSnapshot();
+}
 
-  fireEvent.click((await r.findAllByText('edit'))[7]);
-  fireEvent.change(r.getByLabelText('SETSA'), { target: { value: 'A new clue for wedding' } });
+test('edit constructor note', async () => {
+  sessionStorage.clear();
+  localStorage.clear();
+
+  await firebaseTesting.clearFirestoreData({ projectId });
+  await admin.firestore().collection('c').doc(PUZZLEID).set(getMockedPuzzle({ a: 'mike' }));
+
+  setApp(app);
+
+  const r = render(
+    <PuzzleLoader puzzleId={PUZZLEID} auth={{ user: mike, isAdmin: false }} />, { user: mike }
+  );
+
+  expect(await r.findByText('changes may take up to an hour', { exact: false })).toBeInTheDocument();
+  fireEvent.click(r.getByTitle('Add Constructor Note'));
+  fireEvent.change(r.getByPlaceholderText('Enter Constructor Note'), { target: { value: 'Here is our note' } });
   fireEvent.click(r.getByText('Save'));
-  expect(await r.findByText('A new clue for wedding')).toBeInTheDocument();
 
-  const res2 = await admin.firestore().collection('c').doc(PUZZLEID).get();
-  const resData2 = res2.data();
-  if (!resData2) {
-    throw new Error('botch');
-  }
-  delete resData2['p'];
-  delete resData2['cs'][0]['p'];
-  expect(resData2).toMatchSnapshot();
+  expect(await r.findByText('Here is our note')).toBeInTheDocument();
+  await checkSnapshot(PUZZLEID);
+
+  fireEvent.click(r.getByTitle('Edit Constructor Note'));
+  fireEvent.change(r.getByPlaceholderText('Enter Constructor Note'), { target: { value: 'Here is our new note' } });
+  fireEvent.click(r.getByText('Save'));
+
+  expect(await r.findByText('Here is our new note')).toBeInTheDocument();
+  expect(r.queryByTitle('Add Constructor Note')).toBeNull();
+  await checkSnapshot(PUZZLEID);
+
+  fireEvent.click(r.getByTitle('Delete Constructor Note'));
+  await checkSnapshot(PUZZLEID);
+  expect(await r.findByTitle('Add Constructor Note')).toBeInTheDocument();
 });
 
 test('security rules for puzzle edits', async () => {

@@ -7,12 +7,12 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { requiresAuth, AuthProps } from '../../../components/AuthContext';
 import { PuzzleResult, puzzleFromDB, Direction } from '../../../lib/types';
 import { DBPuzzleV, DBPuzzleT } from '../../../lib/dbtypes';
-import { App } from '../../../lib/firebaseWrapper';
+import { App, DeleteSentinal } from '../../../lib/firebaseWrapper';
 import { DefaultTopBar } from '../../../components/TopBar';
 import { ErrorPage } from '../../../components/ErrorPage';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { fromCells, CluedEntry, addClues } from '../../../lib/viewableGrid';
-import { sanitizeClue } from '../../../components/ClueMode';
+import { sanitizeClue, sanitizeTitle, sanitizeConstructorNotes } from '../../../components/ClueMode';
 import { Button, ButtonAsLink } from '../../../components/Buttons';
 
 export default requiresAuth((props: AuthProps) => {
@@ -136,11 +136,63 @@ const ClueRow = (props: { puzzleId: string, ac: Array<string>, an: Array<number>
         :
         <>
           <span>{props.entry.clue}</span>
-          <ButtonAsLink css={{ marginLeft: '1em' }} text='edit' onClick={() => { setEditing(true); }} />
+          <ButtonAsLink css={{ marginLeft: '1em' }} text='edit' title={`Edit ${word}`} onClick={() => { setEditing(true); }} />
         </>
       }</td>
     </tr>
   );
+};
+
+interface EditableTextPropsBase {
+  title: string,
+  sanitize: (input: string) => string,
+  handleSubmit: (value: string) => Promise<void>,
+  className?: string
+}
+interface EditableTextProps extends EditableTextPropsBase {
+  deletable?: false,
+  text: string,
+}
+interface DeletableEditableTextProps extends EditableTextPropsBase {
+  deletable: true,
+  text: string | null,
+  handleDelete: () => Promise<void>,
+}
+const EditableText = (props: EditableTextProps | DeletableEditableTextProps) => {
+  const [editing, setEditing] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [value, setValue] = useState(props.text || '');
+
+  if (editing) {
+    return <form className={props.className} css={{ display: 'flex', flexWrap: 'wrap' }} onSubmit={(e: React.FormEvent) => {
+      setSubmitting(true);
+      e.preventDefault();
+      props.handleSubmit(value.trim()).then(() => {
+        setSubmitting(false);
+        setEditing(false);
+      });
+    }}>
+      <input type="text" css={{ marginRight: '0.5em', flex: '1 1 auto' }} placeholder={`Enter ${props.title}`} value={value} onChange={(e) => {
+        setValue(props.sanitize(e.target.value));
+      }} />
+      <Button type="submit" text="Save" disabled={submitting || !value.trim()} />
+      <Button boring={true} css={{ marginLeft: '0.5em' }} onClick={() => { setEditing(false); setValue(props.text || ''); }} text="Cancel" />
+    </form>;
+  }
+
+  return <div className={props.className}>
+    {!props.text ?
+      <Button text='Add' title={`Add ${props.title}`} onClick={() => { setEditing(true); }} />
+      :
+      <>
+        <span>{props.text}</span>
+        <ButtonAsLink css={{ marginLeft: '1em' }} text='edit' title={`Edit ${props.title}`} onClick={() => { setEditing(true); }} />
+        {props.deletable ?
+          <ButtonAsLink css={{ marginLeft: '1em' }} text='delete' title={`Delete ${props.title}`} onClick={props.handleDelete} />
+          : ''}
+      </>
+    }
+  </div>;
 };
 
 const PuzzleEditor = ({ puzzle, dbPuzzle }: { puzzle: PuzzleResult, dbPuzzle: DBPuzzleT }) => {
@@ -165,12 +217,23 @@ const PuzzleEditor = ({ puzzle, dbPuzzle }: { puzzle: PuzzleResult, dbPuzzle: DB
       <DefaultTopBar />
       <div css={{ margin: '1em', }}>
         <p>Note: changes may take up to an hour to appear on the site - we cache pages to keep Crosshare fast!</p>
+        <h3>Title</h3>
+        <EditableText title='Title' css={{ marginBottom: '1em' }} text={puzzle.title} sanitize={sanitizeTitle} handleSubmit={newTitle =>
+          App.firestore().doc(`c/${puzzle.id}`).update({ t: newTitle })
+        } />
         <h3>Clues</h3>
         <table css={{ width: '100%', }}>
           <tbody>
             {clueRows}
           </tbody>
         </table>
+        <h3>Post</h3>
+        <h4>Constructor&apos;s Note</h4>
+        <EditableText title='Constructor Note' deletable={true} css={{ marginBottom: '1em' }} text={puzzle.constructorNotes} sanitize={sanitizeConstructorNotes} handleSubmit={notes =>
+          App.firestore().doc(`c/${puzzle.id}`).update({ cn: notes })
+        } handleDelete={() =>
+          App.firestore().doc(`c/${puzzle.id}`).update({ cn: DeleteSentinal })
+        } />
       </div>
     </>
   );

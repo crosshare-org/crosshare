@@ -3,6 +3,7 @@ import { Interpolation } from '@emotion/core';
 
 interface ButtonBaseProps {
   text: string,
+  title?: string,
   disabled?: boolean,
   className?: string
 }
