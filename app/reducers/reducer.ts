@@ -388,6 +388,11 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
   if (isKeypressAction(action)) {
     const key = action.key;
     const shift = action.shift;
+    if (!key) {
+      // This seems dumb to check for but at least once we've had key == undefined here
+      // https://sentry.io/organizations/m-d/issues/1915351332/
+      return state;
+    }
     if (key === '$') {
       toast('🔥 This is an example pop up notification! 🔥');
       return state;
