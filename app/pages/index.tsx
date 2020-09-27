@@ -12,6 +12,9 @@ import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleResultLink } from '../components/PuzzleLink';
 import { getPuzzlesForFeatured, userIdToPage } from '../lib/serverOnly';
 import { PAGE_SIZE } from './featured/[pageNumber]';
+import { useContext } from 'react';
+import { AuthContext } from '../components/AuthContext';
+import { Button } from '../components/Buttons';
 
 interface HomePageProps {
   dailymini: ServerPuzzleResult,
@@ -45,6 +48,8 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ re
 
 export default function HomePage({ dailymini, featured }: HomePageProps) {
   const today = new Date();
+  const { user, loading } = useContext(AuthContext);
+
   return <>
     <Head>
       <title>Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles</title>
@@ -65,7 +70,17 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
       <h2>Featured Puzzles</h2>
       {featured.map((p, i) => <PuzzleResultLink key={i} puzzle={p} constructorPage={p.constructorPage} showAuthor={true} />)}
       <p css={{ textAlign: 'center' }}><Link href='/featured/[pageNumber]' as='/featured/1' passHref>Previous Featured Puzzles</Link></p>
-      <p css={{ marginTop: '1em', paddingBottom: '1em' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
+      <p css={{ marginTop: '1em', textAlign: 'center' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
+      {!loading && !user ?.email ?
+        <form css={{ textAlign: 'center' }} action="https://crosshare.us2.list-manage.com/subscribe/post?u=00ed30fa1e63ee37b6baf232c&amp;id=de9a6d6b7a" method="post" target="_blank">
+          <label>
+            <p>Subscribe to get a once-per-week email listing the best new puzzles and constructors on Crosshare:</p>
+            <input type="email" placeholder='Your email address' name="EMAIL" />
+            <Button css={{ marginLeft: '1em' }} type="submit" text="Subscribe" />
+          </label>
+          <div style={{ position: 'absolute', left: '-5000px' }} aria-hidden="true"><input type="text" name="b_00ed30fa1e63ee37b6baf232c_de9a6d6b7a" tabIndex={-1} /></div>
+        </form>
+        : ''}
     </div >
   </>;
 }
