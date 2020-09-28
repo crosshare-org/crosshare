@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ReactNode, Fragment } from 'react';
-import SimpleMarkdown from 'simple-markdown';
+import SimpleMarkdown, { SingleASTNode, ASTNode } from 'simple-markdown';
 import { useHover } from '../lib/hooks';
 import { Direction } from '../lib/types';
 import { ToolTipText } from './ToolTipText';
@@ -61,7 +61,48 @@ const SpoilerText = ({ children }: { children: ReactNode }) => {
   }} {...hoverBind}>{children}</span>;
 };
 
-export const Markdown = ({ text, clueMap, inline }: { text: string, clueMap?: Map<string, [number, Direction, string]>, inline?: boolean }) => {
+function chopSingle(ast: SingleASTNode, max: number): [SingleASTNode, number] {
+  if (!ast.content) {
+    return [ast, max];
+  }
+  if (Array.isArray(ast.content)) {
+    const [newContent, remaining] = chop(ast.content, max);
+    return [{ ...ast, content: newContent }, remaining];
+  }
+  if (typeof ast.content === 'string') {
+    let newContent = ast.content.slice(0, max);
+    const newContentLength = newContent.length;
+    if (newContentLength !== ast.content.length) {
+      newContent += '...';
+    }
+    return [{ ...ast, content: newContent }, max - newContentLength];
+  }
+  return [ast, max];
+}
+
+function chop(ast: Array<SingleASTNode>, max: number): [Array<SingleASTNode>, number] {
+  const out: Array<SingleASTNode> = [];
+  let remaining = max;
+  let res: ASTNode;
+  for (const node of ast) {
+    [res, remaining] = chopSingle(node, remaining);
+    out.push(res);
+    if (remaining <= 0) {
+      break;
+    }
+  }
+  return [out, remaining];
+}
+
+function chopTo(ast: Array<SingleASTNode>, chars?: number): Array<SingleASTNode> {
+  if (!chars) {
+    return ast;
+  }
+  const [out] = chop(ast, chars);
+  return out;
+}
+
+export const Markdown = ({ text, clueMap, inline, preview }: { text: string, clueMap?: Map<string, [number, Direction, string]>, preview?: number, inline?: boolean }) => {
   if (clueMap && clueMap.size) {
     const regex = '^([^0-9A-Za-z\\s\\u00c0-\\uffff]*[0-9A-Za-z\\s\\u00c0-\\uffff]*)\\b(' + Array.from(clueMap.keys()).join('|') + ')\\b';
     const re = new RegExp(regex);
@@ -95,7 +136,7 @@ export const Markdown = ({ text, clueMap, inline }: { text: string, clueMap?: Ma
         },
       }
     };
-    return SimpleMarkdown.outputFor(newRules, 'react')(SimpleMarkdown.parserFor(newRules)(text + '\n\n', { inline }));
+    return SimpleMarkdown.outputFor(newRules, 'react')(chopTo(SimpleMarkdown.parserFor(newRules)(text + '\n\n', { inline }), preview));
   }
-  return output(parser(text + '\n\n', { inline }));
+  return output(chopTo(parser(text + '\n\n', { inline }), preview));
 };

@@ -452,6 +452,57 @@ exports[`images should not be allowed 2`] = `
 </div>
 `;
 
+exports[`markdown preview mode 1`] = `
+<div>
+  <div
+    class="paragraph"
+  >
+    foo bar &gt;!baz
+  </div>
+</div>
+`;
+
+exports[`markdown preview mode 2`] = `
+<div>
+  <div
+    class="paragraph"
+  >
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tellus ante, dictum feugiat luctus quis, gravida id nibh. Sed tortor sem, pulvinar ut lacus nec, ornare consectetur ligula. Nam suscipit posuere vulputate. Proin ultricies dictum viverra. Cras tincidunt nec nulla non convallis. Nullam eget arcu mattis sapien ultricies varius nec ac mi. Duis dictum justo est, id tempus mi vestibulum eget. Nam posuere, nibh quis pharetra condimentum, leo ante tempor nibh, vitae facilisis sem elit at tellus. Etiam in tellus sagittis, lacinia enim ut, maximus ipsum. Ut sit amet mi tellus. Nulla a aliquam quam, vitae ultricies metus.
+  </div>
+  <div
+    class="paragraph"
+  >
+    Mauris elit metus, scelerisque in sollicitudin et, bibendum in nulla. Praesent ex sem, tempus quis diam id, lobortis tempor ante. Ut sit amet bibendum purus. Vestibulum vulputate commodo faucibus. Donec dictum id ex eu mattis. Praesent id neque quis purus varius scelerisque. Cras hendrerit metus sed faucibus vestibulum. Ut in elementum mauris. Aenean faucibus tem...
+  </div>
+</div>
+`;
+
+exports[`markdown preview mode 3`] = `
+.emotion-0 {
+  background-color: var(--text);
+}
+
+<div>
+  <div
+    class="paragraph"
+  >
+    <span
+      class="emotion-0"
+    >
+      Lorem 
+      <strong>
+        ipsum
+      </strong>
+       dolor sit amet, consectetur 
+      <em>
+        adipiscing
+      </em>
+       elit. Phasellus tellus ante, dictum feugiat luctu...
+    </span>
+  </div>
+</div>
+`;
+
 exports[`spoiler text rendering 1`] = `
 <div>
   <div
