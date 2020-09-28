@@ -204,11 +204,25 @@ const EditableText = (props: EditableTextProps | DeletableEditableTextProps) => 
       <Button text='Add' title={`Add ${props.title}`} onClick={() => { setEditing(true); }} />
       :
       <>
-        <span>{props.text}</span>
-        <ButtonAsLink css={{ marginLeft: '1em' }} text='edit' title={`Edit ${props.title}`} onClick={() => { setEditing(true); }} />
-        {props.deletable ?
-          <ButtonAsLink css={{ marginLeft: '1em' }} text='delete' title={`Delete ${props.title}`} onClick={props.handleDelete} />
-          : ''}
+        {props.textarea ?
+          <>
+            <div css={{ backgroundColor: 'var(--secondary)', borderRadius: '0.5em', padding: '1em', margin: '1em 0' }}>
+              <Markdown text={props.text} />
+            </div>
+            <Button text='edit' title={`Edit ${props.title}`} onClick={() => { setEditing(true); }} />
+            {props.deletable ?
+              <Button css={{ marginLeft: '1em' }} text='delete' title={`Delete ${props.title}`} onClick={props.handleDelete} />
+              : ''}
+          </>
+          :
+          <>
+            <span>{props.text}</span>
+            <ButtonAsLink css={{ marginLeft: '1em' }} text='edit' title={`Edit ${props.title}`} onClick={() => { setEditing(true); }} />
+            {props.deletable ?
+              <ButtonAsLink css={{ marginLeft: '1em' }} text='delete' title={`Delete ${props.title}`} onClick={props.handleDelete} />
+              : ''}
+          </>
+        }
       </>
     }
   </div>;

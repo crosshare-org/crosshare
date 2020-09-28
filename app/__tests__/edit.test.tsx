@@ -1,7 +1,7 @@
 import * as firebaseTesting from '@firebase/testing';
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
 import type * as firebaseAdminType from 'firebase-admin';
-import { getUser, render, getMockedPuzzle, fireEvent } from '../lib/testingUtils';
+import { getUser, screen, render, getMockedPuzzle, fireEvent, waitForElementToBeRemoved } from '../lib/testingUtils';
 import { PuzzleLoader } from '../pages/crosswords/[puzzleId]/edit';
 
 jest.mock('../lib/firebaseWrapper');
@@ -79,14 +79,17 @@ test('basic edit', async () => {
   fireEvent.click(r.getByTitle('Edit ESSAY'));
   fireEvent.change(r.getByLabelText('ESSAY'), { target: { value: 'A new clue for essay' } });
   fireEvent.click(r.getByText('Save'));
+  await waitForElementToBeRemoved(() => screen.getByText('Save'));
 
-  expect(await r.findByText('A new clue for essay')).toBeInTheDocument();
+  expect(r.getByText('A new clue for essay')).toBeInTheDocument();
   await checkSnapshot(PUZZLEID);
 
   fireEvent.click(r.getByTitle('Edit SETSA'));
   fireEvent.change(r.getByLabelText('SETSA'), { target: { value: 'A new clue for wedding' } });
   fireEvent.click(r.getByText('Save'));
-  expect(await r.findByText('A new clue for wedding')).toBeInTheDocument();
+  await waitForElementToBeRemoved(() => screen.getByText('Save'));
+
+  expect(r.getByText('A new clue for wedding')).toBeInTheDocument();
   await checkSnapshot(PUZZLEID);
 });
 
@@ -107,8 +110,9 @@ test('edit title', async () => {
   fireEvent.click(r.getByTitle('Edit Title'));
   fireEvent.change(r.getByPlaceholderText('Enter Title'), { target: { value: 'Well we got a new title' } });
   fireEvent.click(r.getByText('Save'));
+  await waitForElementToBeRemoved(() => screen.getByText('Save'));
 
-  expect(await r.findByText('Well we got a new title')).toBeInTheDocument();
+  expect(r.getByText('Well we got a new title')).toBeInTheDocument();
   await checkSnapshot(PUZZLEID);
 });
 
@@ -140,21 +144,63 @@ test('edit constructor note', async () => {
   fireEvent.click(r.getByTitle('Add Constructor Note'));
   fireEvent.change(r.getByPlaceholderText('Enter Constructor Note'), { target: { value: 'Here is our note' } });
   fireEvent.click(r.getByText('Save'));
+  await waitForElementToBeRemoved(() => screen.getByText('Save'));
 
-  expect(await r.findByText('Here is our note')).toBeInTheDocument();
+  expect(r.getByText('Here is our note')).toBeInTheDocument();
   await checkSnapshot(PUZZLEID);
 
   fireEvent.click(r.getByTitle('Edit Constructor Note'));
   fireEvent.change(r.getByPlaceholderText('Enter Constructor Note'), { target: { value: 'Here is our new note' } });
   fireEvent.click(r.getByText('Save'));
+  await waitForElementToBeRemoved(() => screen.getByText('Save'));
 
-  expect(await r.findByText('Here is our new note')).toBeInTheDocument();
+  expect(r.getByText('Here is our new note')).toBeInTheDocument();
   expect(r.queryByTitle('Add Constructor Note')).toBeNull();
   await checkSnapshot(PUZZLEID);
 
   fireEvent.click(r.getByTitle('Delete Constructor Note'));
+  await waitForElementToBeRemoved(() => screen.getByTitle('Delete Constructor Note'));
+
   await checkSnapshot(PUZZLEID);
-  expect(await r.findByTitle('Add Constructor Note')).toBeInTheDocument();
+  expect(r.getByTitle('Add Constructor Note')).toBeInTheDocument();
+});
+
+test('edit blog post', async () => {
+  sessionStorage.clear();
+  localStorage.clear();
+
+  await firebaseTesting.clearFirestoreData({ projectId });
+  await admin.firestore().collection('c').doc(PUZZLEID).set(getMockedPuzzle({ a: 'mike' }));
+
+  setApp(app);
+
+  const r = render(
+    <PuzzleLoader puzzleId={PUZZLEID} auth={{ user: mike, isAdmin: false }} />, { user: mike }
+  );
+
+  expect(await r.findByText('changes may take up to an hour', { exact: false })).toBeInTheDocument();
+  fireEvent.click(r.getByTitle('Add Blog Post'));
+  fireEvent.change(r.getByPlaceholderText('Enter Blog Post (markdown formatted)'), { target: { value: 'Here is our new blog post' } });
+  fireEvent.click(r.getByText('Save'));
+  await waitForElementToBeRemoved(() => screen.getByText('Save'));
+
+  expect(r.getByTitle('Edit Blog Post')).toBeInTheDocument();
+  expect(r.getByText('Here is our new blog post')).toBeInTheDocument();
+  await checkSnapshot(PUZZLEID);
+
+  fireEvent.click(r.getByTitle('Edit Blog Post'));
+  fireEvent.change(r.getByPlaceholderText('Enter Blog Post (markdown formatted)'), { target: { value: 'Here is our new post' } });
+  fireEvent.click(r.getByText('Save'));
+  await waitForElementToBeRemoved(() => screen.getByText('Save'));
+
+  expect(r.getByText('Here is our new post')).toBeInTheDocument();
+  expect(r.queryByTitle('Add Blog Post')).toBeNull();
+  await checkSnapshot(PUZZLEID);
+
+  fireEvent.click(r.getByTitle('Delete Blog Post'));
+  await waitForElementToBeRemoved(() => screen.getByTitle('Delete Blog Post'));
+  expect(await r.findByTitle('Add Blog Post')).toBeInTheDocument();
+  await checkSnapshot(PUZZLEID);
 });
 
 test('security rules for puzzle edits', async () => {
