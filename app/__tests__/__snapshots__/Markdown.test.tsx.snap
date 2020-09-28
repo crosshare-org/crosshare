@@ -95,7 +95,10 @@ exports[`clueMap rendering 2`] = `
       </span>
       <div
         class="emotion-3"
-        style="position: fixed; left: 0px; top: 0px;"
+        data-popper-escaped="true"
+        data-popper-placement="bottom"
+        data-popper-reference-hidden="true"
+        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
         <b
           class="emotion-1"
@@ -106,6 +109,7 @@ exports[`clueMap rendering 2`] = `
         here is the clue?
         <div
           class="emotion-2"
+          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
        &gt;! not! !&lt; fooey
@@ -181,7 +185,10 @@ exports[`clueMap rendering 3`] = `
     </span>
     <div
       class="emotion-3"
-      style="position: fixed; left: 0px; top: 0px;"
+      data-popper-escaped="true"
+      data-popper-placement="bottom"
+      data-popper-reference-hidden="true"
+      style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
     >
       <b
         class="emotion-1"
@@ -192,6 +199,7 @@ exports[`clueMap rendering 3`] = `
       Well now
       <div
         class="emotion-2"
+        style="position: absolute; left: 0px; transform: translate(0px, 0px);"
       />
     </div>
      
@@ -202,7 +210,10 @@ exports[`clueMap rendering 3`] = `
     </span>
     <div
       class="emotion-3"
-      style="position: fixed; left: 0px; top: 0px;"
+      data-popper-escaped="true"
+      data-popper-placement="bottom"
+      data-popper-reference-hidden="true"
+      style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
     >
       <b
         class="emotion-1"
@@ -213,6 +224,7 @@ exports[`clueMap rendering 3`] = `
       here is the clue?
       <div
         class="emotion-2"
+        style="position: absolute; left: 0px; transform: translate(0px, 0px);"
       />
     </div>
   </div>
@@ -286,7 +298,10 @@ exports[`clueMap rendering 4`] = `
       </span>
       <div
         class="emotion-3"
-        style="position: fixed; left: 0px; top: 0px;"
+        data-popper-escaped="true"
+        data-popper-placement="bottom"
+        data-popper-reference-hidden="true"
+        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
         <b
           class="emotion-1"
@@ -297,6 +312,7 @@ exports[`clueMap rendering 4`] = `
         here is the clue?
         <div
           class="emotion-2"
+          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
     </span>
@@ -373,7 +389,10 @@ exports[`clueMap rendering 5`] = `
       </span>
       <div
         class="emotion-3"
-        style="position: fixed; left: 0px; top: 0px;"
+        data-popper-escaped="true"
+        data-popper-placement="bottom"
+        data-popper-reference-hidden="true"
+        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
         <b
           class="emotion-1"
@@ -384,6 +403,7 @@ exports[`clueMap rendering 5`] = `
         here is the clue?
         <div
           class="emotion-2"
+          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
        
