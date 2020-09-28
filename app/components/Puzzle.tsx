@@ -68,13 +68,14 @@ interface PauseBeginProps {
   message: string,
   dismissMessage: string,
   notes: string | null,
+  blogPost: string | null,
   profilePicture?: string | null
 }
 
 const BeginPauseOverlay = (props: PauseBeginProps) => {
   return (
     <Overlay closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: 'RESUMEACTION' })}>
-      <PuzzleHeading showTip={false} constructorNotes={props.notes} profilePic={props.profilePicture} title={props.title} authorName={props.authorName} constructorPage={props.constructorPage} />
+      <PuzzleHeading showTip={false} blogPost={props.blogPost} constructorNotes={props.notes} profilePic={props.profilePicture} title={props.title} authorName={props.authorName} constructorPage={props.constructorPage} />
       <div css={{ textAlign: 'center' }}>
         {props.loadingPlayState ?
           <div>Checking for previous play data...</div>
@@ -147,7 +148,7 @@ const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   return (<Link href='/crosswords/[puzzleId]' as={`/crosswords/${nextPuzzle.puzzleId}`} passHref>Play {nextPuzzle.linkText}</Link>);
 };
 
-const PuzzleHeading = (props: { showTip: boolean, constructorNotes: string | null, profilePic: string | null | undefined, title: string, authorName: string, constructorPage: ConstructorPageT | null }) => {
+const PuzzleHeading = (props: { showTip: boolean, constructorNotes: string | null, profilePic: string | null | undefined, title: string, authorName: string, constructorPage: ConstructorPageT | null, blogPost: string | null }) => {
   return <>
     <div css={{
       display: 'flex',
@@ -165,6 +166,11 @@ const PuzzleHeading = (props: { showTip: boolean, constructorNotes: string | nul
     {props.constructorNotes ?
       <div css={{ textAlign: 'center' }}>
         <ConstructorNotes notes={props.constructorNotes} />
+      </div>
+      : ''}
+    {props.blogPost ?
+      <div css={{ margin: '1em 0' }}>
+        <Markdown css={{ textAlign: 'left' }} text={props.blogPost} />
       </div>
       : ''}
     {props.constructorPage ?.sig ?
@@ -185,7 +191,7 @@ const PuzzleHeading = (props: { showTip: boolean, constructorNotes: string | nul
 const SuccessOverlay = (props: { profilePicture?: string | null, clueMap: Map<string, [number, Direction, string]>, user?: firebase.User, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
   return (
     <Overlay closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
-      <PuzzleHeading showTip={true} constructorNotes={props.puzzle.constructorNotes} profilePic={props.profilePicture} title={props.puzzle.title} authorName={props.puzzle.authorName} constructorPage={props.puzzle.constructorPage} />
+      <PuzzleHeading showTip={true} blogPost={props.puzzle.blogPost} constructorNotes={props.puzzle.constructorNotes} profilePic={props.profilePicture} title={props.puzzle.title} authorName={props.puzzle.authorName} constructorPage={props.puzzle.constructorPage} />
       <div css={{ textAlign: 'center' }}>
         {props.user ?.uid === props.puzzle.authorId ?
           <>
@@ -504,7 +510,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     };
   }, [state.grid.entries]);
 
-  const beginPauseProps = { constructorPage: puzzle.constructorPage, profilePicture: props.profilePicture, loadingPlayState: loadingPlayState || !state.loadedPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
+  const beginPauseProps = { blogPost: puzzle.blogPost, constructorPage: puzzle.constructorPage, profilePicture: props.profilePicture, loadingPlayState: loadingPlayState || !state.loadedPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
 
   /* `clueMap` is a map from ENTRYWORD => '5D: This is the clue' - we use this
    *    for comment clue tooltips.
