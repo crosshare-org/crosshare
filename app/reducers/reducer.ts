@@ -58,6 +58,7 @@ export interface BuilderState extends GridInterfaceState {
   type: 'builder',
   title: string | null,
   notes: string | null,
+  blogPost: string | null,
   grid: BuilderGrid,
   gridIsComplete: boolean,
   repeats: Set<string>,
@@ -101,6 +102,7 @@ export function initialBuilderState(
     type: 'builder',
     title: title,
     notes: notes,
+    blogPost: null,
     active: { col: 0, row: 0, dir: Direction.Across },
     grid: initialGrid,
     showExtraKeyLayout: false,
@@ -158,6 +160,14 @@ export interface SetTitleAction extends PuzzleAction {
 }
 function isSetTitleAction(action: PuzzleAction): action is SetTitleAction {
   return action.type === 'SETTITLE';
+}
+
+export interface SetBlogPostAction extends PuzzleAction {
+  type: 'SETBLOGPOST',
+  value: string | null,
+}
+function isSetBlogPostAction(action: PuzzleAction): action is SetBlogPostAction {
+  return action.type === 'SETBLOGPOST';
 }
 
 export interface SetNotesAction extends PuzzleAction {
@@ -526,6 +536,9 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   }
   if (isSetTitleAction(action)) {
     return ({ ...state, title: action.value });
+  }
+  if (isSetBlogPostAction(action)) {
+    return ({ ...state, blogPost: action.value });
   }
   if (isSetNotesAction(action)) {
     return ({ ...state, notes: action.value });

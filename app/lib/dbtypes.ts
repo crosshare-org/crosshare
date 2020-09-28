@@ -107,6 +107,8 @@ const DBPuzzleOptionalV = t.partial({
   f: t.boolean,
   /** constructor notes */
   cn: t.string,
+  /** blog post */
+  bp: t.string,
 });
 export const DBPuzzleV = t.intersection([DBPuzzleMandatoryV, DBPuzzleOptionalV]);
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;

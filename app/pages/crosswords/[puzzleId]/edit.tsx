@@ -229,6 +229,14 @@ const PuzzleEditor = ({ puzzle, dbPuzzle }: { puzzle: PuzzleResult, dbPuzzle: DB
         </table>
         <h3>Post</h3>
         <h4>Constructor&apos;s Note</h4>
+        <p>Notes are shown before a puzzle is started and should be used if you need a short explainer of the theme or how the puzzle works</p>
+        <EditableText title='Constructor Note' deletable={true} css={{ marginBottom: '1em' }} text={puzzle.constructorNotes} sanitize={sanitizeConstructorNotes} handleSubmit={notes =>
+          App.firestore().doc(`c/${puzzle.id}`).update({ cn: notes })
+        } handleDelete={() =>
+          App.firestore().doc(`c/${puzzle.id}`).update({ cn: DeleteSentinal })
+        } />
+        <h4>Blog Post</h4>
+        <p>Blog posts are shown before solvers are finished with your puzzle - describe how you came up with the puzzle, talk about your day, whatever you want! If you include spoilers you can hide them <code>||like this||</code>.</p>
         <EditableText title='Constructor Note' deletable={true} css={{ marginBottom: '1em' }} text={puzzle.constructorNotes} sanitize={sanitizeConstructorNotes} handleSubmit={notes =>
           App.firestore().doc(`c/${puzzle.id}`).update({ cn: notes })
         } handleDelete={() =>

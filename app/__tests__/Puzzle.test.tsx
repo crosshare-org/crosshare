@@ -47,6 +47,7 @@ const testPuzzle: ServerPuzzleResult = {
   comments: [],
   constructorNotes: null,
   constructorPage: null,
+  blogPost: null,
 };
 
 test('clicking a clue sets slot to active', () => {
@@ -71,6 +72,7 @@ test('clicking a clue sets slot to active', () => {
 
 const dailymini_5_19: ServerPuzzleResult = {
   constructorPage: null,
+  blogPost: null,
   authorId: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
   category: 'dailymini',
   authorName: 'Mike D',

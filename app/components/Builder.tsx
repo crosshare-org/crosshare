@@ -65,7 +65,7 @@ if (typeof window !== 'undefined') {
 let worker: Worker;
 
 type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-export type BuilderProps = WithOptional<Omit<PuzzleT, 'comments' | 'category' | 'authorId' | 'authorName' | 'moderated' | 'publishTime'>, 'clues' | 'title' | 'constructorNotes' | 'highlighted' | 'highlight'>
+export type BuilderProps = WithOptional<Omit<PuzzleT, 'comments' | 'category' | 'authorId' | 'authorName' | 'moderated' | 'publishTime'>, 'clues' | 'title' | 'constructorNotes' | 'blogPost' | 'highlighted' | 'highlight'>
 
 interface PotentialFillItemProps {
   entryIndex: number,
@@ -388,7 +388,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
 
   const [clueMode, setClueMode] = useState(false);
   if (clueMode) {
-    return <ClueMode dispatch={dispatch} title={state.title} notes={state.notes} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
+    return <ClueMode dispatch={dispatch} blogPost={state.blogPost} title={state.title} notes={state.notes} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
   }
   return <GridMode getMostConstrainedEntry={getMostConstrainedEntry} reRunAutofill={reRunAutofill} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
 };

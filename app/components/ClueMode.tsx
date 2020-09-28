@@ -1,10 +1,12 @@
-import { Dispatch } from 'react';
+import { Dispatch, useState } from 'react';
 
 import { SpinnerFinished } from './Icons';
-import { BuilderEntry, SetClueAction, SetTitleAction, SetNotesAction, PuzzleAction } from '../reducers/reducer';
+import { BuilderEntry, SetClueAction, SetTitleAction, SetNotesAction, PuzzleAction, SetBlogPostAction } from '../reducers/reducer';
 import { TopBarLink, TopBar } from './TopBar';
 import { Direction } from '../lib/types';
 import { ButtonAsLink } from './Buttons';
+import { Overlay } from './Overlay';
+import { Markdown } from './Markdown';
 
 export function sanitizeClue(input: string) {
   return input.substring(0, 140);
@@ -14,6 +16,9 @@ export function sanitizeTitle(input: string) {
 }
 export function sanitizeConstructorNotes(input: string) {
   return input.substring(0, 200);
+}
+export function sanitizeBlogPost(input: string) {
+  return input.substring(0, 20000);
 }
 
 const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry, clues: Record<string, string> }) => {
@@ -46,12 +51,15 @@ const ClueRow = (props: { dispatch: Dispatch<PuzzleAction>, entry: BuilderEntry,
 interface ClueModeProps {
   title: string | null,
   notes: string | null,
+  blogPost: string | null,
   exitClueMode: () => void,
   completedEntries: Array<BuilderEntry>,
   clues: Record<string, string>,
   dispatch: Dispatch<PuzzleAction>,
 }
 export const ClueMode = (props: ClueModeProps) => {
+  const [showPostPreview, setShowPostPreview] = useState(false);
+
   const clueRows = props.completedEntries.sort((e1, e2) => e1.direction === e2.direction ? e1.labelNumber - e2.labelNumber : e1.direction - e2.direction).map(e => <ClueRow key={e.completedWord || ''} dispatch={props.dispatch} entry={e} clues={props.clues} />);
   return (
     <>
@@ -82,7 +90,30 @@ export const ClueMode = (props: ClueModeProps) => {
           <p><ButtonAsLink text="Add a note" onClick={() => {
             const sna: SetNotesAction = { type: 'SETNOTES', value: '' };
             props.dispatch(sna);
-          }} /> (notes are shown before a puzzle is started and can be used to explain something about the theme, etc.)</p>
+          }} /> (notes are shown before a puzzle is started and should be used if you need a short explainer of the theme or how the puzzle works)</p>
+        }
+        {props.blogPost !== null ?
+          <>
+            <h2>Blog Post</h2>
+            <p>Blog posts are shown before solvers are finished with your puzzle. If you include spoilers you can hide them <code>||like this||</code>.</p>
+            <textarea css={{ width: '100%', display: 'block', marginBottom: '1em' }} placeholder='Your post text (markdown format)' value={props.blogPost} onChange={(e) => {
+              const sta: SetBlogPostAction = { type: 'SETBLOGPOST', value: sanitizeBlogPost(e.target.value) };
+              props.dispatch(sta);
+            }} />
+            <p>
+              {props.blogPost ?
+                <ButtonAsLink css={{ marginRight: '1em' }} text="Preview" onClick={() => setShowPostPreview(true)} />
+                : ''}
+              <ButtonAsLink text="Remove blog post" onClick={() => {
+                const sna: SetBlogPostAction = { type: 'SETBLOGPOST', value: null };
+                props.dispatch(sna);
+              }} /></p>
+          </>
+          :
+          <p><ButtonAsLink text="Add a blog post" onClick={() => {
+            const sna: SetBlogPostAction = { type: 'SETBLOGPOST', value: '' };
+            props.dispatch(sna);
+          }} /> (blog posts are shown before and after the puzzle is solved - describe how you came up with the puzzle, talk about your day, whatever you want!)</p>
         }
         <h2>Clues</h2>
         {props.completedEntries.length ?
@@ -98,6 +129,11 @@ export const ClueMode = (props: ClueModeProps) => {
           </>
         }
       </div>
+      {showPostPreview && props.blogPost ?
+        <Overlay closeCallback={() => setShowPostPreview(false)}>
+          <Markdown text={props.blogPost} />
+        </Overlay>
+        : ''}
     </>
   );
 };

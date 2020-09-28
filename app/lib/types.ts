@@ -126,6 +126,7 @@ export interface PuzzleT {
   highlight: 'circle' | 'shade',
   comments: Array<Comment>,
   constructorNotes: string | null,
+  blogPost: string | null,
 }
 
 export interface PuzzleResult extends PuzzleT {
@@ -178,6 +179,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     highlight: dbPuzzle.s ? 'shade' : 'circle',
     comments: convertComments(dbPuzzle.cs || []),
     constructorNotes: dbPuzzle.cn || null,
+    blogPost: dbPuzzle.bp || null,
   };
 }
 
