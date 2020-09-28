@@ -12,8 +12,10 @@ import { DefaultTopBar } from '../../../components/TopBar';
 import { ErrorPage } from '../../../components/ErrorPage';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { fromCells, CluedEntry, addClues } from '../../../lib/viewableGrid';
-import { sanitizeClue, sanitizeTitle, sanitizeConstructorNotes } from '../../../components/ClueMode';
+import { sanitizeClue, sanitizeTitle, sanitizeConstructorNotes, sanitizeBlogPost } from '../../../components/ClueMode';
 import { Button, ButtonAsLink } from '../../../components/Buttons';
+import { Markdown } from '../../../components/Markdown';
+import { Overlay } from '../../../components/Overlay';
 
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();
@@ -145,6 +147,7 @@ const ClueRow = (props: { puzzleId: string, ac: Array<string>, an: Array<number>
 
 interface EditableTextPropsBase {
   title: string,
+  textarea?: boolean,
   sanitize: (input: string) => string,
   handleSubmit: (value: string) => Promise<void>,
   className?: string
@@ -162,6 +165,7 @@ const EditableText = (props: EditableTextProps | DeletableEditableTextProps) => 
   const [editing, setEditing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [value, setValue] = useState(props.text || '');
+  const [showPreview, setShowPreview] = useState(false);
 
   if (editing) {
     return <form className={props.className} css={{ display: 'flex', flexWrap: 'wrap' }} onSubmit={(e: React.FormEvent) => {
@@ -172,9 +176,24 @@ const EditableText = (props: EditableTextProps | DeletableEditableTextProps) => 
         setEditing(false);
       });
     }}>
-      <input type="text" css={{ marginRight: '0.5em', flex: '1 1 auto' }} placeholder={`Enter ${props.title}`} value={value} onChange={(e) => {
-        setValue(props.sanitize(e.target.value));
-      }} />
+      {props.textarea ?
+        <>
+          {showPreview && value.trim() ?
+            <Overlay closeCallback={() => setShowPreview(false)}>
+              <Markdown text={value} />
+            </Overlay>
+            : ''
+          }
+          <textarea css={{ width: '100%', display: 'block', marginBottom: '0.5em' }} placeholder={`Enter ${props.title} (markdown formatted)`} value={value} onChange={(e) => {
+            setValue(props.sanitize(e.target.value));
+          }} />
+          <Button css={{ marginRight: '0.5em' }} text="Preview" disabled={!value.trim()} onClick={() => setShowPreview(true)} />
+        </>
+        :
+        <input type="text" css={{ marginRight: '0.5em', flex: '1 1 auto' }} placeholder={`Enter ${props.title}`} value={value} onChange={(e) => {
+          setValue(props.sanitize(e.target.value));
+        }} />
+      }
       <Button type="submit" text="Save" disabled={submitting || !value.trim()} />
       <Button boring={true} css={{ marginLeft: '0.5em' }} onClick={() => { setEditing(false); setValue(props.text || ''); }} text="Cancel" />
     </form>;
@@ -237,10 +256,10 @@ const PuzzleEditor = ({ puzzle, dbPuzzle }: { puzzle: PuzzleResult, dbPuzzle: DB
         } />
         <h4>Blog Post</h4>
         <p>Blog posts are shown before solvers are finished with your puzzle - describe how you came up with the puzzle, talk about your day, whatever you want! If you include spoilers you can hide them <code>||like this||</code>.</p>
-        <EditableText title='Constructor Note' deletable={true} css={{ marginBottom: '1em' }} text={puzzle.constructorNotes} sanitize={sanitizeConstructorNotes} handleSubmit={notes =>
-          App.firestore().doc(`c/${puzzle.id}`).update({ cn: notes })
+        <EditableText textarea={true} title='Blog Post' deletable={true} css={{ marginBottom: '1em' }} text={puzzle.blogPost} sanitize={sanitizeBlogPost} handleSubmit={post =>
+          App.firestore().doc(`c/${puzzle.id}`).update({ bp: post })
         } handleDelete={() =>
-          App.firestore().doc(`c/${puzzle.id}`).update({ cn: DeleteSentinal })
+          App.firestore().doc(`c/${puzzle.id}`).update({ bp: DeleteSentinal })
         } />
       </div>
     </>
