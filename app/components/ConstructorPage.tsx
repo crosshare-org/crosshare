@@ -219,7 +219,7 @@ export const BioEditor = (props: BioEditorProps) => {
     <h4>Bio</h4>
     {isOpen ?
       <>
-        <div css={{ backgroundColor: 'var(--secondary)', borderRadius: '0.5em', padding: '1em' }}>
+        <div css={{ backgroundColor: 'var(--secondary)', borderRadius: '0.5em', padding: '1em', marginTop: '1em' }}>
           <h4>Live Preview:</h4>
           <Markdown text={bioText} />
         </div>
@@ -394,7 +394,7 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
           </div>
           : ''}
       </div>
-      {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showAuthor={false} />)}
+      {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showBlogPost={true} showAuthor={false} />)}
       {props.nextPage || props.prevPage !== null ?
         <p css={{ textAlign: 'center' }}>
           {props.prevPage === 0 ?

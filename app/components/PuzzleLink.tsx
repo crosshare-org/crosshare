@@ -10,8 +10,9 @@ import { Emoji } from '../components/Emoji';
 import { timeString } from '../lib/utils';
 import { PlayWithoutUserT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
+import { Markdown } from './Markdown';
 
-const PuzzleLink = (props: { id: string, authorId: string, width?: number, height?: number, title: string, subTitle?: string, children?: ReactNode }) => {
+const PuzzleLink = (props: { id: string, authorId: string, fullWidth?: boolean, width?: number, height?: number, title: string, subTitle?: string, children?: ReactNode }) => {
   const { user } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
   const authored = user ?.uid === props.authorId;
@@ -42,7 +43,7 @@ const PuzzleLink = (props: { id: string, authorId: string, width?: number, heigh
     alignItems: 'flex-start',
     width: '100%',
     [SMALL_AND_UP]: {
-      width: '50%',
+      width: props.fullWidth ? '100%' : '50%',
     },
   }}>
     <Link css={[
@@ -92,8 +93,9 @@ export const AuthorLink = ({ authorName, constructorPage }: { authorName: string
   return <p>By {authorName}</p>;
 };
 
-export const PuzzleResultLink = ({ puzzle, showAuthor, constructorPage, title }: { puzzle: PuzzleResult, showAuthor: boolean, title?: string, constructorPage?: ConstructorPageT | null }) => {
-  return <PuzzleLink authorId={puzzle.authorId} id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={title || puzzle.title} subTitle={title ? puzzle.title : undefined}>
+export const PuzzleResultLink = ({ puzzle, showBlogPost, showAuthor, constructorPage, title }: { puzzle: PuzzleResult, showBlogPost?: boolean, showAuthor: boolean, title?: string, constructorPage?: ConstructorPageT | null }) => {
+  return <PuzzleLink fullWidth={showBlogPost && (puzzle.blogPost !== null)} authorId={puzzle.authorId} id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={title || puzzle.title} subTitle={title ? puzzle.title : undefined}>
     {showAuthor ? <AuthorLink authorName={puzzle.authorName} constructorPage={constructorPage || null} /> : undefined}
+    {showBlogPost && puzzle.blogPost ? <Markdown text={puzzle.blogPost} preview={250} /> : ''}
   </PuzzleLink>;
 };
