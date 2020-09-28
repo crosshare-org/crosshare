@@ -701,7 +701,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     </>
   ), [muted, props.isAdmin, props.user ?.uid, puzzle, setMuted, state.success, toggleKeyboard, setToggleKeyboard]);
 
-  const description = puzzle.clues.map(c => c.clue).sort().slice(0, 10).join('; ');
+  const description = puzzle.blogPost ? puzzle.blogPost.slice(0, 160) + '...' : puzzle.clues.map(c => c.clue).sort().slice(0, 10).join('; ');
 
   return (
     <>
