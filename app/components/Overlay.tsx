@@ -51,26 +51,26 @@ export const Overlay = (props: { coverImage?: string | null, onClick?: () => voi
       {props.coverImage ?
         <CoverPic coverPicture={props.coverImage} />
         : ''}
-      {props.closeCallback ?
-        <button css={{
-          background: 'transparent',
-          color: 'var(--text)',
-          ...props.coverImage && { color: 'var(--social-text)' },
-          border: 'none',
-          position: 'absolute',
-          padding: 0,
-          fontSize: '3em',
-          verticalAlign: 'text-top',
-          width: '1em',
-          height: '1em',
-          top: 0,
-          right: 0,
-        }} onClick={props.closeCallback}><IoMdCloseCircleOutline aria-label='close' css={{ position: 'absolute', top: 0, right: 0 }} /></button>
-        :
-        ''}
       <div css={{
         padding: '3em 1.5em',
       }}>
+        {props.closeCallback ?
+          <button css={{
+            background: 'transparent',
+            color: 'var(--text)',
+            ...props.coverImage && { color: 'var(--social-text)' },
+            border: 'none',
+            position: 'absolute',
+            padding: 0,
+            fontSize: '3em',
+            verticalAlign: 'text-top',
+            width: '1em',
+            height: '1em',
+            top: 0,
+            right: 0,
+          }} onClick={props.closeCallback}><IoMdCloseCircleOutline aria-label='close' css={{ position: 'absolute', top: 0, right: 0 }} /></button>
+          :
+          ''}
         {props.children}
       </div>
     </div>

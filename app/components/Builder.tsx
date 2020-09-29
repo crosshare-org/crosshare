@@ -369,6 +369,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
 
   useEffect(() => {
     const inProgress: PuzzleInProgressT = {
+      id: state.id,
       width: state.grid.width,
       height: state.grid.height,
       grid: state.grid.cells,
@@ -379,7 +380,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       notes: state.notes,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(inProgress));
-  }, [state.clues, state.grid.cells, state.grid.width, state.grid.height,
+  }, [state.id, state.clues, state.grid.cells, state.grid.width, state.grid.height,
     state.grid.highlight, state.grid.highlighted, state.title, state.notes]);
 
   const reRunAutofill = useCallback(() => {
@@ -389,7 +390,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
 
   const [clueMode, setClueMode] = useState(false);
   if (clueMode) {
-    return <ClueMode dispatch={dispatch} blogPost={state.blogPost} title={state.title} notes={state.notes} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
+    return <ClueMode puzzleId={state.id} authorId={state.authorId} dispatch={dispatch} blogPost={state.blogPost} title={state.title} notes={state.notes} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
   }
   return <GridMode getMostConstrainedEntry={getMostConstrainedEntry} reRunAutofill={reRunAutofill} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
 };

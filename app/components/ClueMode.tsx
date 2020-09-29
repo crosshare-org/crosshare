@@ -7,6 +7,8 @@ import { Direction } from '../lib/types';
 import { ButtonAsLink } from './Buttons';
 import { Overlay } from './Overlay';
 import { Markdown } from './Markdown';
+import { ImageCropper } from './ImageCropper';
+import { COVER_PIC } from '../lib/style';
 
 export function sanitizeClue(input: string) {
   return input.substring(0, 140);
@@ -53,12 +55,15 @@ interface ClueModeProps {
   notes: string | null,
   blogPost: string | null,
   exitClueMode: () => void,
+  authorId: string,
+  puzzleId: string,
   completedEntries: Array<BuilderEntry>,
   clues: Record<string, string>,
   dispatch: Dispatch<PuzzleAction>,
 }
 export const ClueMode = (props: ClueModeProps) => {
   const [showPostPreview, setShowPostPreview] = useState(false);
+  const [settingCoverPic, setSettingCoverPic] = useState(false);
 
   const clueRows = props.completedEntries.sort((e1, e2) => e1.direction === e2.direction ? e1.labelNumber - e2.labelNumber : e1.direction - e2.direction).map(e => <ClueRow key={e.completedWord || ''} dispatch={props.dispatch} entry={e} clues={props.clues} />);
   return (
@@ -74,6 +79,10 @@ export const ClueMode = (props: ClueModeProps) => {
             props.dispatch(sta);
           }} />
         </label>
+        <p><ButtonAsLink onClick={() => setSettingCoverPic(true)} text="Add/edit cover pic" /></p>
+        {settingCoverPic ?
+          <ImageCropper targetSize={COVER_PIC} isCircle={false} storageKey={`/users/${props.authorId}/${props.puzzleId}/cover.jpg`} cancelCrop={() => setSettingCoverPic(false)} />
+          : ''}
         {props.notes !== null ?
           <>
             <h2>Note</h2>
