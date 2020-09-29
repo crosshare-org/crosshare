@@ -27,6 +27,7 @@ import { ClueMode } from './ClueMode';
 
 const initializeState = (props: PuzzleInProgressT & AuthProps): BuilderState => {
   return initialBuilderState({
+    id: null,
     width: props.width,
     height: props.height,
     grid: props.grid,
@@ -104,7 +105,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
         </TopBar>
       </div>
       {state.toPublish ?
-        <PublishOverlay toPublish={state.toPublish} user={props.user} cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })} /> : ''}
+        <PublishOverlay id={state.id} toPublish={state.toPublish} user={props.user} cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })} /> : ''}
       {!dismissedIntro ?
         <Overlay closeCallback={() => setDismissedIntro(true)}>
           <h2><Emoji symbol='🎉' /> Successfully Imported {props.title ? <>&lsquo;{props.title}&rsquo;</> : ''}</h2>

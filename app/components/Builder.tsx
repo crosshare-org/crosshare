@@ -179,6 +179,7 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
   }
 
   return initialBuilderState({
+    id: saved ?.id || null,
     width: saved ?.width || props.size.cols,
     height: saved ?.height || props.size.rows,
     grid: saved ?.grid || props.grid,
@@ -764,7 +765,7 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
           <TopBar>{topBarChildren}</TopBar>
         </div>
         {state.toPublish ?
-          <PublishOverlay toPublish={state.toPublish} user={props.user} cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })} /> : ''}
+          <PublishOverlay id={state.id} toPublish={state.toPublish} user={props.user} cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })} /> : ''}
         {state.isEnteringRebus ?
           <RebusOverlay dispatch={dispatch} value={state.rebusValue} /> : ''}
         {state.publishErrors.length ?

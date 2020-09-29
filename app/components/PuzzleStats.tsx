@@ -34,6 +34,7 @@ const initializeState = (props: PuzzleStatsProps): BuilderState => {
   });
 
   return initialBuilderState({
+    id: props.puzzle.id,
     width: props.puzzle.size.cols,
     height: props.puzzle.size.rows,
     grid: props.puzzle.grid,

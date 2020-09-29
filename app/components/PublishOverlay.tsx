@@ -7,12 +7,11 @@ import { Overlay } from './Overlay';
 import { Emoji } from './Emoji';
 import { ConstructorNotes } from './ConstructorNotes';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
-import { DBPuzzleT, AuthoredPuzzleT, AuthoredPuzzlesV } from '../lib/dbtypes';
-import { updateInCache } from '../lib/dbUtils';
+import { DBPuzzleT } from '../lib/dbtypes';
 import { STORAGE_KEY } from './Builder';
 import { ButtonAsLink, Button } from './Buttons';
 
-export function PublishOverlay(props: { toPublish: DBPuzzleT, user: firebase.User, cancelPublish: () => void }) {
+export function PublishOverlay(props: { id: string, toPublish: DBPuzzleT, user: firebase.User, cancelPublish: () => void }) {
   const { constructorPage } = useContext(AuthContext);
   const [inProgress, setInProgress] = useState(false);
   const [done, setDone] = useState(false);
@@ -38,22 +37,13 @@ export function PublishOverlay(props: { toPublish: DBPuzzleT, user: firebase.Use
       p: ServerTimestamp,
     };
 
-    db.collection('c').add(toPublish).then(async (ref) => {
-      console.log('Uploaded', ref.id);
-      const authoredPuzzle: AuthoredPuzzleT = [props.toPublish.p, toPublish.t];
-      await updateInCache({
-        collection: 'uc',
-        docId: props.user.uid,
-        update: { [ref.id]: authoredPuzzle },
-        validator: AuthoredPuzzlesV,
-        sendToDB: true
-      });
-
+    db.collection('c').doc(props.id).set(toPublish).then(async () => {
+      console.log('Uploaded', props.id);
       localStorage.removeItem(STORAGE_KEY);
       setDone(true);
-      NextJSRouter.push('/crosswords/' + ref.id);
+      NextJSRouter.push('/crosswords/' + props.id);
     });
-  }, [inProgress, done, displayName, props.toPublish, props.user.uid]);
+  }, [props.id, inProgress, done, displayName, props.toPublish]);
 
   let contents: ReactNode;
   if (done) {

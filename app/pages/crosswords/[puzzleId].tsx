@@ -24,6 +24,7 @@ interface ErrorProps {
 interface PuzzlePageProps {
   puzzle: ServerPuzzleResult,
   profilePicture?: string | null,
+  coverImage?: string | null,
   nextPuzzle?: NextPuzzleLink,
 }
 
@@ -55,8 +56,10 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
   }
 
   let profilePicture: string | null = null;
+  let coverImage: string | null = null;
   if (puzzle.constructorPage ?.u) {
     profilePicture = await getStorageUrl(`users/${puzzle.constructorPage.u}/profile.jpg`);
+    coverImage = await getStorageUrl(`users/${puzzle.constructorPage.u}/${puzzle.id}/cover.jpg`);
   }
 
   // Get puzzle to show as next link after this one is finished
@@ -66,7 +69,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
   } catch {
     return {
       props: {
-        puzzle, profilePicture
+        puzzle, profilePicture, coverImage
       }
     };
   }
@@ -81,7 +84,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
     if (previous.length) {
       return {
         props: {
-          puzzle, profilePicture, nextPuzzle: {
+          puzzle, profilePicture, coverImage, nextPuzzle: {
             puzzleId: previous[0][1],
             linkText: 'the previous daily mini crossword'
           }
@@ -93,7 +96,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
   // Didn't find a previous mini, link to today's
   return {
     props: {
-      puzzle, profilePicture, nextPuzzle: {
+      puzzle, profilePicture, coverImage, nextPuzzle: {
         puzzleId: minis[today],
         linkText: 'today\'s daily mini crossword'
       }

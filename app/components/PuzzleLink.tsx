@@ -96,6 +96,6 @@ export const AuthorLink = ({ authorName, constructorPage }: { authorName: string
 export const PuzzleResultLink = ({ puzzle, showBlogPost, showAuthor, constructorPage, title }: { puzzle: PuzzleResult, showBlogPost?: boolean, showAuthor: boolean, title?: string, constructorPage?: ConstructorPageT | null }) => {
   return <PuzzleLink fullWidth={showBlogPost && (puzzle.blogPost !== null)} authorId={puzzle.authorId} id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={title || puzzle.title} subTitle={title ? puzzle.title : undefined}>
     {showAuthor ? <AuthorLink authorName={puzzle.authorName} constructorPage={constructorPage || null} /> : undefined}
-    {showBlogPost && puzzle.blogPost ? <Markdown text={puzzle.blogPost} preview={250} /> : ''}
+    {showBlogPost && puzzle.blogPost ? <div css={{ marginBottom: '1.5em' }} ><Markdown text={puzzle.blogPost} preview={250} /></div> : ''}
   </PuzzleLink>;
 };

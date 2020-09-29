@@ -16,6 +16,8 @@ import { sanitizeClue, sanitizeTitle, sanitizeConstructorNotes, sanitizeBlogPost
 import { Button, ButtonAsLink } from '../../../components/Buttons';
 import { Markdown } from '../../../components/Markdown';
 import { Overlay } from '../../../components/Overlay';
+import { ImageCropper } from '../../../components/ImageCropper';
+import { COVER_PIC } from '../../../lib/style';
 
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();
@@ -241,6 +243,7 @@ const PuzzleEditor = ({ puzzle, dbPuzzle }: { puzzle: PuzzleResult, dbPuzzle: DB
     }), puzzle.clues);
   }, [puzzle]);
   const clueRows = grid.entries.sort((e1, e2) => e1.direction === e2.direction ? e1.labelNumber - e2.labelNumber : e1.direction - e2.direction).map(e => <ClueRow puzzleId={puzzle.id} key={e.completedWord || ''} entry={e} ac={dbPuzzle.ac} an={dbPuzzle.an} dc={dbPuzzle.dc} dn={dbPuzzle.dn} />);
+  const [settingCoverPic, setSettingCoverPic] = useState(false);
 
   return (
     <>
@@ -275,6 +278,11 @@ const PuzzleEditor = ({ puzzle, dbPuzzle }: { puzzle: PuzzleResult, dbPuzzle: DB
         } handleDelete={() =>
           App.firestore().doc(`c/${puzzle.id}`).update({ bp: DeleteSentinal })
         } />
+        <h4>Cover Image</h4>
+        <Button onClick={() => setSettingCoverPic(true)} text="Add/edit cover pic" />
+        {settingCoverPic ?
+          <ImageCropper targetSize={COVER_PIC} isCircle={false} storageKey={`/users/${puzzle.authorId}/${puzzle.id}/cover.jpg`} cancelCrop={() => setSettingCoverPic(false)} />
+          : ''}
       </div>
     </>
   );

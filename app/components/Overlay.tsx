@@ -3,9 +3,10 @@ import { createPortal } from 'react-dom';
 
 import { IoMdCloseCircleOutline, } from 'react-icons/io';
 
-import { HAS_PHYSICAL_KEYBOARD, KEYBOARD_HEIGHT } from '../lib/style';
+import { HAS_PHYSICAL_KEYBOARD, KEYBOARD_HEIGHT, SMALL_AND_UP } from '../lib/style';
+import { CoverPic } from './Images';
 
-export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCallback?: () => void, showKeyboard?: boolean, children: React.ReactNode }) => {
+export const Overlay = (props: { coverImage?: string | null, onClick?: () => void, hidden?: boolean, closeCallback?: () => void, showKeyboard?: boolean, children: React.ReactNode }) => {
   const ref = useRef<HTMLElement | null>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -37,17 +38,27 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
   }}>
     <div css={{
       position: 'relative',
-      width: '90%',
+      width: '95%',
+      margin: '1em auto',
+      [SMALL_AND_UP]: {
+        width: '90%',
+        margin: '2em auto',
+      },
       maxWidth: '1200px',
-      padding: '3em 1.5em',
       backgroundColor: 'var(--overlay-inner)',
       border: '1px solid black',
-      margin: '5em auto',
     }}>
+      {props.coverImage ?
+        <CoverPic coverPicture={props.coverImage} />
+        : ''}
       {props.closeCallback ?
         <button css={{
-          background: 'var(--overlay-inner)',
+          background: 'transparent',
           color: 'var(--text)',
+          ...props.coverImage && {
+            color: 'white',
+            mixBlendMode: 'difference',
+          },
           border: 'none',
           position: 'absolute',
           padding: 0,
@@ -60,7 +71,11 @@ export const Overlay = (props: { onClick?: () => void, hidden?: boolean, closeCa
         }} onClick={props.closeCallback}><IoMdCloseCircleOutline aria-label='close' css={{ position: 'absolute', top: 0, right: 0 }} /></button>
         :
         ''}
-      {props.children}
+      <div css={{
+        padding: '3em 1.5em',
+      }}>
+        {props.children}
+      </div>
     </div>
   </div>;
 

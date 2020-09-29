@@ -69,12 +69,13 @@ interface PauseBeginProps {
   dismissMessage: string,
   notes: string | null,
   blogPost: string | null,
-  profilePicture?: string | null
+  profilePicture?: string | null,
+  coverImage?: string | null
 }
 
 const BeginPauseOverlay = (props: PauseBeginProps) => {
   return (
-    <Overlay closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: 'RESUMEACTION' })}>
+    <Overlay coverImage={props.coverImage} closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: 'RESUMEACTION' })}>
       <PuzzleHeading showTip={false} blogPost={props.blogPost} constructorNotes={props.notes} profilePic={props.profilePicture} title={props.title} authorName={props.authorName} constructorPage={props.constructorPage} />
       <div css={{ textAlign: 'center' }}>
         {props.loadingPlayState ?
@@ -188,9 +189,9 @@ const PuzzleHeading = (props: { showTip: boolean, constructorNotes: string | nul
   </>;
 };
 
-const SuccessOverlay = (props: { profilePicture?: string | null, clueMap: Map<string, [number, Direction, string]>, user?: firebase.User, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
+const SuccessOverlay = (props: { coverImage?: string | null, profilePicture?: string | null, clueMap: Map<string, [number, Direction, string]>, user?: firebase.User, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
   return (
-    <Overlay closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
+    <Overlay coverImage={props.coverImage} closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
       <PuzzleHeading showTip={true} blogPost={props.puzzle.blogPost} constructorNotes={props.puzzle.constructorNotes} profilePic={props.profilePicture} title={props.puzzle.title} authorName={props.puzzle.authorName} constructorPage={props.puzzle.constructorPage} />
       <div css={{ textAlign: 'center' }}>
         {props.user ?.uid === props.puzzle.authorId ?
@@ -266,6 +267,7 @@ interface PuzzleProps {
   loadingPlayState: boolean,
   nextPuzzle?: NextPuzzleLink,
   profilePicture?: string | null,
+  coverImage?: string | null,
 }
 export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps & AuthPropsOptional) => {
   const [state, dispatch] = useReducer(puzzleReducer, {
@@ -510,7 +512,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     };
   }, [state.grid.entries]);
 
-  const beginPauseProps = { blogPost: puzzle.blogPost, constructorPage: puzzle.constructorPage, profilePicture: props.profilePicture, loadingPlayState: loadingPlayState || !state.loadedPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
+  const beginPauseProps = { coverImage: props.coverImage, blogPost: puzzle.blogPost, constructorPage: puzzle.constructorPage, profilePicture: props.profilePicture, loadingPlayState: loadingPlayState || !state.loadedPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
 
   /* `clueMap` is a map from ENTRYWORD => '5D: This is the clue' - we use this
    *    for comment clue tooltips.
@@ -746,7 +748,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           <KeepTryingOverlay dispatch={dispatch} />
           : ''}
         {state.success && !state.dismissedSuccess ?
-          <SuccessOverlay profilePicture={props.profilePicture} clueMap={clueMap} user={props.user} nextPuzzle={props.nextPuzzle} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
+          <SuccessOverlay coverImage={props.coverImage} profilePicture={props.profilePicture} clueMap={clueMap} user={props.user} nextPuzzle={props.nextPuzzle} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
           : ''}
         {state.moderating ?
           <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />

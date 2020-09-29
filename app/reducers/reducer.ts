@@ -10,6 +10,7 @@ import {
 } from '../lib/viewableGrid';
 import { cellIndex, valAt, entryAtPosition, entryWord, gridWithEntrySet } from '../lib/gridBase';
 import type firebase from 'firebase';
+import { App } from '../lib/firebaseWrapper';
 
 interface GridInterfaceState {
   type: string,
@@ -55,6 +56,7 @@ export type BuilderEntry = ViewableEntry;
 export type BuilderGrid = ViewableGrid<BuilderEntry>;
 
 export interface BuilderState extends GridInterfaceState {
+  id: string,
   type: 'builder',
   title: string | null,
   notes: string | null,
@@ -75,8 +77,9 @@ function isBuilderState(state: GridInterfaceState): state is BuilderState {
 }
 
 export function initialBuilderState(
-  { width, height, grid, highlighted, highlight, title, notes, clues, authorId, authorName, editable }:
+  { id, width, height, grid, highlighted, highlight, title, notes, clues, authorId, authorName, editable }:
     {
+      id: string | null,
       width: number,
       height: number,
       grid: Array<string>,
@@ -99,6 +102,7 @@ export function initialBuilderState(
     highlight: highlight
   });
   return validateGrid({
+    id: id || App.firestore().collection('c').doc().id,
     type: 'builder',
     title: title,
     notes: notes,
@@ -551,6 +555,7 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   }
   if (isNewPuzzleAction(action)) {
     return initialBuilderState({
+      id: null,
       width: action.cols, height: action.rows,
       grid: Array(action.cols * action.rows).fill(' '),
       title: null,

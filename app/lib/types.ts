@@ -183,14 +183,19 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
   };
 }
 
-export const PuzzleInProgressV = t.type({
-  width: t.number,
-  height: t.number,
-  grid: t.array(t.string),
-  highlighted: t.array(t.number),
-  highlight: t.keyof({ circle: null, shade: null }),
-  title: t.union([t.string, t.null]),
-  clues: t.record(t.string, t.string),
-  notes: t.union([t.string, t.null])
-});
+export const PuzzleInProgressV = t.intersection([
+  t.type({
+    width: t.number,
+    height: t.number,
+    grid: t.array(t.string),
+    highlighted: t.array(t.number),
+    highlight: t.keyof({ circle: null, shade: null }),
+    title: t.union([t.string, t.null]),
+    clues: t.record(t.string, t.string),
+    notes: t.union([t.string, t.null])
+  }),
+  t.partial({
+    id: t.string
+  })
+]);
 export type PuzzleInProgressT = t.TypeOf<typeof PuzzleInProgressV>;
