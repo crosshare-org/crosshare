@@ -55,10 +55,7 @@ export const Overlay = (props: { coverImage?: string | null, onClick?: () => voi
         <button css={{
           background: 'transparent',
           color: 'var(--text)',
-          ...props.coverImage && {
-            color: 'white',
-            mixBlendMode: 'difference',
-          },
+          ...props.coverImage && { color: 'var(--social-text)' },
           border: 'none',
           position: 'absolute',
           padding: 0,

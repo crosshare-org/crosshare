@@ -1,4 +1,5 @@
-import { SMALL_AND_UP, COVER_PIC, LARGE_AND_UP } from '../lib/style';
+import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
+import { ReactNode } from 'react';
 
 export const ProfilePic = (props: { profilePicture: string, className?: string }) => {
   return <div className={props.className} css={{
@@ -26,15 +27,40 @@ export const ProfilePic = (props: { profilePicture: string, className?: string }
 };
 
 export const CoverPic = (props: { coverPicture: string }) => {
-  return <img width={COVER_PIC[0]} height={COVER_PIC[1]} css={{
+  return <div css={{
     width: '100%',
-    maxHeight: '150px',
+    height: '150px',
     [SMALL_AND_UP]: {
-      maxHeight: '225px',
+      height: '225px',
     },
     [LARGE_AND_UP]: {
-      maxHeight: '300px',
+      height: '300px',
     },
-    objectFit: 'cover',
-  }} src={props.coverPicture} alt="Cover" />;
+    backgroundImage: `linear-gradient(to top, black, rgba(0, 0, 0, 0.8) 2em, transparent 40%, transparent 75%, rgba(0, 0, 0, 0.5)),
+    url('${props.coverPicture}')`,
+    backgroundSize: 'cover',
+  }} />;
+};
+
+export const ProfilePicAndName = (props: { bonusMargin?: number, coverImage: string | null | undefined, profilePic: string | null | undefined, topLine: string, byLine: ReactNode }) => {
+  return <div css={{
+    display: 'flex',
+    ...props.coverImage && { marginTop: `${-4.5 - (props.bonusMargin || 0)}em` },
+  }}>
+    {props.profilePic ?
+      <div css={{ flex: '1 1 auto', textAlign: 'right' }}>
+        <ProfilePic css={{ display: 'inline-block', marginTop: '-0.5em', marginRight: '1em', [SMALL_AND_UP]: { marginTop: '-1.5em' } }} profilePicture={props.profilePic} />
+      </div>
+      : ''}
+    <div css={{ flex: '1 1 auto', textAlign: props.profilePic ? 'left' : 'center' }}>
+      <h1 css={{
+        fontSize: '1.5em',
+        ...props.coverImage && {
+          color: 'white',
+          mixBlendMode: 'difference',
+        }
+      }}>{props.topLine}</h1>
+      {props.byLine}
+    </div>
+  </div>;
 };

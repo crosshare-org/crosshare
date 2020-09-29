@@ -44,15 +44,15 @@ import { Emoji } from './Emoji';
 import { Comments } from './Comments';
 import { ConstructorNotes } from './ConstructorNotes';
 import { ConstructorPageT } from '../lib/constructorPage';
-import { AuthorLink } from './PuzzleLink';
 import { SharingButtons } from './SharingButtons';
-import { SMALL_AND_UP_RULES, SMALL_AND_UP } from '../lib/style';
+import { SMALL_AND_UP_RULES } from '../lib/style';
 import { Keyboard } from './Keyboard';
 import { useRouter } from 'next/router';
 import { Button } from './Buttons';
-import { ProfilePic } from './Images';
+import { ProfilePicAndName } from './Images';
 import { Markdown } from './Markdown';
 import { ToolTipText } from './ToolTipText';
+import { AuthorLink } from './PuzzleLink';
 
 export interface NextPuzzleLink {
   puzzleId: string,
@@ -76,7 +76,7 @@ interface PauseBeginProps {
 const BeginPauseOverlay = (props: PauseBeginProps) => {
   return (
     <Overlay coverImage={props.coverImage} closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: 'RESUMEACTION' })}>
-      <PuzzleHeading showTip={false} blogPost={props.blogPost} constructorNotes={props.notes} profilePic={props.profilePicture} title={props.title} authorName={props.authorName} constructorPage={props.constructorPage} />
+      <PuzzleHeading showTip={false} coverImage={props.coverImage} blogPost={props.blogPost} constructorNotes={props.notes} profilePic={props.profilePicture} title={props.title} authorName={props.authorName} constructorPage={props.constructorPage} />
       <div css={{ textAlign: 'center' }}>
         {props.loadingPlayState ?
           <div>Checking for previous play data...</div>
@@ -149,21 +149,9 @@ const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   return (<Link href='/crosswords/[puzzleId]' as={`/crosswords/${nextPuzzle.puzzleId}`} passHref>Play {nextPuzzle.linkText}</Link>);
 };
 
-const PuzzleHeading = (props: { showTip: boolean, constructorNotes: string | null, profilePic: string | null | undefined, title: string, authorName: string, constructorPage: ConstructorPageT | null, blogPost: string | null }) => {
+const PuzzleHeading = (props: { showTip: boolean, constructorNotes: string | null, coverImage: string | null | undefined, profilePic: string | null | undefined, title: string, authorName: string, constructorPage: ConstructorPageT | null, blogPost: string | null }) => {
   return <>
-    <div css={{
-      display: 'flex',
-    }}>
-      {props.profilePic ?
-        <div css={{ flex: '1 1 auto', textAlign: 'right' }}>
-          <ProfilePic css={{ display: 'inline-block', marginTop: '-0.5em', marginRight: '1em', [SMALL_AND_UP]: { marginTop: '-1.5em' } }} profilePicture={props.profilePic} />
-        </div>
-        : ''}
-      <div css={{ flex: '1 1 auto', textAlign: props.profilePic ? 'left' : 'center' }}>
-        <h3>{props.title}</h3>
-        <AuthorLink authorName={props.authorName} constructorPage={props.constructorPage} />
-      </div>
-    </div>
+    <ProfilePicAndName {...props} bonusMargin={1} topLine={props.title} byLine={<AuthorLink authorName={props.authorName} constructorPage={props.constructorPage} />} />
     {props.constructorNotes ?
       <div css={{ textAlign: 'center' }}>
         <ConstructorNotes notes={props.constructorNotes} />
@@ -192,7 +180,7 @@ const PuzzleHeading = (props: { showTip: boolean, constructorNotes: string | nul
 const SuccessOverlay = (props: { coverImage?: string | null, profilePicture?: string | null, clueMap: Map<string, [number, Direction, string]>, user?: firebase.User, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
   return (
     <Overlay coverImage={props.coverImage} closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
-      <PuzzleHeading showTip={true} blogPost={props.puzzle.blogPost} constructorNotes={props.puzzle.constructorNotes} profilePic={props.profilePicture} title={props.puzzle.title} authorName={props.puzzle.authorName} constructorPage={props.puzzle.constructorPage} />
+      <PuzzleHeading showTip={true} coverImage={props.coverImage} blogPost={props.puzzle.blogPost} constructorNotes={props.puzzle.constructorNotes} profilePic={props.profilePicture} title={props.puzzle.title} authorName={props.puzzle.authorName} constructorPage={props.puzzle.constructorPage} />
       <div css={{ textAlign: 'center' }}>
         {props.user ?.uid === props.puzzle.authorId ?
           <>

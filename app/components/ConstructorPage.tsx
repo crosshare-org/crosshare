@@ -11,7 +11,7 @@ import { AuthPropsOptional, AuthContext } from './AuthContext';
 import { App, ServerTimestamp, DeleteSentinal } from '../lib/firebaseWrapper';
 import { Button } from './Buttons';
 import { HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
-import { ProfilePic, CoverPic } from './Images';
+import { CoverPic, ProfilePicAndName } from './Images';
 import { ToolTipText } from './ToolTipText';
 import { FaInfoCircle } from 'react-icons/fa';
 import { Overlay } from './Overlay';
@@ -370,21 +370,13 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
       <CoverPic coverPicture={coverPic} />
       : ''}
     <div css={{
-      margin: '1em',
+      margin: '2em 1em',
       [HUGE_AND_UP]: {
         maxWidth: MAX_WIDTH,
-        margin: '1em auto',
+        margin: '2em auto',
       },
     }}>
-      {profilePic ?
-        <div css={{
-          marginTop: coverPic ? '-4em' : 0,
-        }}>
-          <ProfilePic profilePicture={profilePic} />
-        </div>
-        : ''}
-      <h1 css={{ fontSize: '1.4em', marginBottom: 0 }}>{props.constructor.n}</h1>
-      <h2 css={{ fontSize: '1em', fontWeight: 'normal' }}><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h2>
+      <ProfilePicAndName coverImage={coverPic} profilePic={profilePic} topLine={props.constructor.n} byLine={<h2 css={{ fontSize: '1em', fontWeight: 'normal' }}><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h2>} />
       <div css={{ marginBottom: '1.5em' }}>
         <Markdown text={props.constructor.b} />
         {paypalEmail && paypalText ?

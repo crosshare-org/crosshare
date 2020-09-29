@@ -12,10 +12,3 @@ export const SMALL_AND_UP = '@media ' + SMALL_AND_UP_RULES;
 export const LARGE_AND_UP = '@media (min-width: ' + LARGE_BREAKPOINT + 'px)';
 export const HUGE_AND_UP = '@media (min-width: 1240px)';
 export const HAS_PHYSICAL_KEYBOARD = '@media (hover: hover) and (pointer: fine)';
-
-export const TEXT_OVER_IMAGE = {
-  background: 'inherit',
-  backgroundClip: 'text',
-  color: 'transparent',
-  filter: 'invert(1)',
-};
