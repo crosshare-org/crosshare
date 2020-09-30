@@ -464,7 +464,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       return ({ ...state, active: retreatPosition(state.grid, state.active) });
     } else if (key === '{next}') {
       return ({ ...state, active: nextCell(state.grid, state.active) });
-    } else if ((key === 'Tab' && !shift) || key === '{nextEntry}') {
+    } else if ((key === 'Tab' && !shift) || key === '{nextEntry}' || key === 'Enter') {
       return ({ ...state, active: moveToNextEntry(state.grid, state.active) });
     } else if ((key === 'Tab' && shift) || key === '{prevEntry}') {
       return ({ ...state, active: moveToPrevEntry(state.grid, state.active) });
