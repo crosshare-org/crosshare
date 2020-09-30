@@ -33,7 +33,6 @@ async function topPuzzlesForWeek(): Promise<Array<[string, string]>> {
   const allIs: Record<string, [string, string, string]> = {};
   const d = new Date();
   for (let i = 0; i < 7; i += 1) {
-    d.setDate(d.getDate() - 1);
     const dateString = getDateString(d);
     console.log(dateString);
     const dbres = await db.collection('ds').doc(dateString).get();
@@ -47,6 +46,7 @@ async function topPuzzlesForWeek(): Promise<Array<[string, string]>> {
     } else {
       console.error(PathReporter.report(validationResult).join(','));
     }
+    d.setDate(d.getDate() - 1);
   }
   return Object.entries(totalC).sort((a, b) => b[1] - a[1]).slice(0, 5).filter(([id]) => allIs[id]).map(([id]): [string, string] =>
     ['https://crosshare.org/crosswords/' + id, allIs[id][0] + ' by ' + allIs[id][1]]
