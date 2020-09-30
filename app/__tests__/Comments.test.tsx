@@ -13,8 +13,25 @@ const testComment: Comment = {
   authorDisplayName: 'Mike D',
   authorSolveTime: 55.4,
   authorCheated: false,
-  publishTime: new Date().getTime(),
+  publishTime: new Date('2020-8-1').getTime(),
 };
+
+const realDate = Date;
+
+beforeAll(() => {
+  const mockDate = new Date('2020-9-2');
+  (global as any).Date = class extends realDate {
+    constructor() {
+      super();
+      return mockDate;
+    }
+  };
+});
+
+
+afterAll(() => {
+  global.Date = realDate;
+});
 
 test('basic comment display', () => {
   setApp(
