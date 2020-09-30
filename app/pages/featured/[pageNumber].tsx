@@ -82,7 +82,7 @@ export default function FeaturedPageHandler(props: PageProps) {
     }}>
       <h1 css={{ fontSize: '1.4em', marginBottom: 0 }}>Crosshare Featured Puzzles</h1>
       <p>Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!</p>
-      {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} constructorPage={p.constructorPage} showAuthor={true} />)}
+      {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showDate={true} constructorPage={p.constructorPage} showAuthor={true} />)}
       {props.nextPage || props.prevPage !== null ?
         <p css={{ textAlign: 'center' }}>
           {props.prevPage === 0 ?

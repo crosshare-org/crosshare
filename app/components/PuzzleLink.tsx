@@ -11,8 +11,10 @@ import { timeString } from '../lib/utils';
 import { PlayWithoutUserT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { Markdown } from './Markdown';
+import formatISO from 'date-fns/formatISO';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
-const PuzzleLink = (props: { id: string, authorId: string, fullWidth?: boolean, width?: number, height?: number, title: string, subTitle?: string, children?: ReactNode }) => {
+const PuzzleLink = (props: { noMargin: boolean, id: string, authorId: string, width?: number, height?: number, title: string, subTitle?: string, children?: ReactNode }) => {
   const { user } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
   const authored = user ?.uid === props.authorId;
@@ -39,11 +41,12 @@ const PuzzleLink = (props: { id: string, authorId: string, fullWidth?: boolean, 
   };
 
   return <div css={{
+    marginBottom: props.noMargin ? 0 : '1.5em',
     display: 'inline-flex',
     alignItems: 'flex-start',
     width: '100%',
     [SMALL_AND_UP]: {
-      width: props.fullWidth ? '100%' : '50%',
+      width: '50%',
     },
   }}>
     <Link css={[
@@ -51,6 +54,7 @@ const PuzzleLink = (props: { id: string, authorId: string, fullWidth?: boolean, 
       {
         marginRight: '0.3em',
         fontSize: '4em',
+        lineHeight: '1em',
       }
     ]} href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>
       <div css={{ position: 'relative' }}>
@@ -88,14 +92,27 @@ const PuzzleLink = (props: { id: string, authorId: string, fullWidth?: boolean, 
 export const AuthorLink = ({ authorName, constructorPage }: { authorName: string, constructorPage: ConstructorPageT | null }) => {
   if (constructorPage) {
     const username = constructorPage.i || constructorPage.id;
-    return <p>By <Link href='/[...slug]' as={'/' + username} passHref>{constructorPage.n}</Link></p>;
+    return <>By <Link href='/[...slug]' as={'/' + username} passHref>{constructorPage.n}</Link></>;
   }
-  return <p>By {authorName}</p>;
+  return <>By {authorName}</>;
 };
 
-export const PuzzleResultLink = ({ puzzle, showBlogPost, showAuthor, constructorPage, title }: { puzzle: PuzzleResult, showBlogPost?: boolean, showAuthor: boolean, title?: string, constructorPage?: ConstructorPageT | null }) => {
-  return <PuzzleLink fullWidth={showBlogPost && (puzzle.blogPost !== null)} authorId={puzzle.authorId} id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={title || puzzle.title} subTitle={title ? puzzle.title : undefined}>
-    {showAuthor ? <AuthorLink authorName={puzzle.authorName} constructorPage={constructorPage || null} /> : undefined}
-    {showBlogPost && puzzle.blogPost ? <div css={{ marginBottom: '1.5em' }} ><Markdown text={puzzle.blogPost} preview={250} /></div> : ''}
-  </PuzzleLink>;
+export const PuzzleResultLink = ({ puzzle, showDate, showBlogPost, showAuthor, constructorPage, title }: { puzzle: PuzzleResult, showDate?: boolean, showBlogPost?: boolean, showAuthor: boolean, title?: string, constructorPage?: ConstructorPageT | null }) => {
+  const authorLink = <AuthorLink authorName={puzzle.authorName} constructorPage={constructorPage || null} />;
+  const publishDate = new Date(puzzle.publishTime);
+  const date = <span title={formatISO(publishDate)}>Published {formatDistanceToNow(publishDate)} ago</span>;
+  let contents: ReactNode = null;
+  if (showDate && showAuthor) {
+    contents = <p>{authorLink} · {date}</p>;
+  } else if (showDate) {
+    contents = <p>{date}</p>;
+  } else if (showAuthor) {
+    contents = <p>{authorLink}</p>;
+  }
+  return <>
+    <PuzzleLink noMargin={showBlogPost && puzzle.blogPost ? true : false} authorId={puzzle.authorId} id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={title || puzzle.title} subTitle={title ? puzzle.title : undefined}>
+      {contents}
+    </PuzzleLink>
+    {showBlogPost && puzzle.blogPost ? <div css={{ width: '100%', marginBottom: '2em' }} ><Markdown text={puzzle.blogPost} preview={250} /></div> : ''}
+  </>;
 };

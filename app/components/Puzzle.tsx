@@ -10,6 +10,7 @@ import {
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { toast } from 'react-toastify';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 import { Link, LinkButton, LinkButtonSimpleA } from './Link';
 import { ClueList } from './ClueList';
@@ -53,6 +54,7 @@ import { ProfilePicAndName } from './Images';
 import { Markdown } from './Markdown';
 import { ToolTipText } from './ToolTipText';
 import { AuthorLink } from './PuzzleLink';
+import formatISO from 'date-fns/formatISO';
 
 export interface NextPuzzleLink {
   puzzleId: string,
@@ -61,6 +63,7 @@ export interface NextPuzzleLink {
 
 interface PauseBeginProps {
   loadingPlayState: boolean,
+  publishTime: number,
   title: string,
   authorName: string,
   constructorPage: ConstructorPageT | null,
@@ -76,7 +79,7 @@ interface PauseBeginProps {
 const BeginPauseOverlay = (props: PauseBeginProps) => {
   return (
     <Overlay coverImage={props.coverImage} closeCallback={props.loadingPlayState ? undefined : () => props.dispatch({ type: 'RESUMEACTION' })}>
-      <PuzzleHeading showTip={false} coverImage={props.coverImage} blogPost={props.blogPost} constructorNotes={props.notes} profilePic={props.profilePicture} title={props.title} authorName={props.authorName} constructorPage={props.constructorPage} />
+      <PuzzleHeading publishTime={props.publishTime} showTip={false} coverImage={props.coverImage} blogPost={props.blogPost} constructorNotes={props.notes} profilePic={props.profilePicture} title={props.title} authorName={props.authorName} constructorPage={props.constructorPage} />
       <div css={{ textAlign: 'center' }}>
         {props.loadingPlayState ?
           <div>Checking for previous play data...</div>
@@ -149,9 +152,14 @@ const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   return (<Link href='/crosswords/[puzzleId]' as={`/crosswords/${nextPuzzle.puzzleId}`} passHref>Play {nextPuzzle.linkText}</Link>);
 };
 
-const PuzzleHeading = (props: { showTip: boolean, constructorNotes: string | null, coverImage: string | null | undefined, profilePic: string | null | undefined, title: string, authorName: string, constructorPage: ConstructorPageT | null, blogPost: string | null }) => {
+const PuzzleHeading = (props: { publishTime: number, showTip: boolean, constructorNotes: string | null, coverImage: string | null | undefined, profilePic: string | null | undefined, title: string, authorName: string, constructorPage: ConstructorPageT | null, blogPost: string | null }) => {
+  const publishDate = new Date(props.publishTime);
   return <>
-    <ProfilePicAndName {...props} bonusMargin={1} topLine={props.title} byLine={<AuthorLink authorName={props.authorName} constructorPage={props.constructorPage} />} />
+    <ProfilePicAndName {...props} bonusMargin={1} topLine={props.title} byLine={
+      <p>
+        <AuthorLink authorName={props.authorName} constructorPage={props.constructorPage} /> · <span title={formatISO(publishDate)}>Published {formatDistanceToNow(publishDate)} ago</span>
+      </p>
+    } />
     {props.constructorNotes ?
       <div css={{ textAlign: 'center' }}>
         <ConstructorNotes notes={props.constructorNotes} />
@@ -177,10 +185,10 @@ const PuzzleHeading = (props: { showTip: boolean, constructorNotes: string | nul
   </>;
 };
 
-const SuccessOverlay = (props: { coverImage?: string | null, profilePicture?: string | null, clueMap: Map<string, [number, Direction, string]>, user?: firebase.User, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
+const SuccessOverlay = (props: { publishTime: number, coverImage?: string | null, profilePicture?: string | null, clueMap: Map<string, [number, Direction, string]>, user?: firebase.User, puzzle: ServerPuzzleResult, nextPuzzle?: NextPuzzleLink, isMuted: boolean, solveTime: number, didCheat: boolean, dispatch: Dispatch<PuzzleAction> }) => {
   return (
     <Overlay coverImage={props.coverImage} closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
-      <PuzzleHeading showTip={true} coverImage={props.coverImage} blogPost={props.puzzle.blogPost} constructorNotes={props.puzzle.constructorNotes} profilePic={props.profilePicture} title={props.puzzle.title} authorName={props.puzzle.authorName} constructorPage={props.puzzle.constructorPage} />
+      <PuzzleHeading publishTime={props.publishTime} showTip={true} coverImage={props.coverImage} blogPost={props.puzzle.blogPost} constructorNotes={props.puzzle.constructorNotes} profilePic={props.profilePicture} title={props.puzzle.title} authorName={props.puzzle.authorName} constructorPage={props.puzzle.constructorPage} />
       <div css={{ textAlign: 'center' }}>
         {props.user ?.uid === props.puzzle.authorId ?
           <>
@@ -500,7 +508,18 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     };
   }, [state.grid.entries]);
 
-  const beginPauseProps = { coverImage: props.coverImage, blogPost: puzzle.blogPost, constructorPage: puzzle.constructorPage, profilePicture: props.profilePicture, loadingPlayState: loadingPlayState || !state.loadedPlayState, notes: puzzle.constructorNotes, authorName: puzzle.authorName, title: puzzle.title, dispatch: dispatch };
+  const beginPauseProps = {
+    coverImage: props.coverImage,
+    publishTime: puzzle.publishTime,
+    blogPost: puzzle.blogPost,
+    constructorPage: puzzle.constructorPage,
+    profilePicture: props.profilePicture,
+    loadingPlayState: loadingPlayState || !state.loadedPlayState,
+    notes: puzzle.constructorNotes,
+    authorName: puzzle.authorName,
+    title: puzzle.title,
+    dispatch: dispatch
+  };
 
   /* `clueMap` is a map from ENTRYWORD => '5D: This is the clue' - we use this
    *    for comment clue tooltips.
@@ -736,7 +755,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           <KeepTryingOverlay dispatch={dispatch} />
           : ''}
         {state.success && !state.dismissedSuccess ?
-          <SuccessOverlay coverImage={props.coverImage} profilePicture={props.profilePicture} clueMap={clueMap} user={props.user} nextPuzzle={props.nextPuzzle} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
+          <SuccessOverlay publishTime={puzzle.publishTime} coverImage={props.coverImage} profilePicture={props.profilePicture} clueMap={clueMap} user={props.user} nextPuzzle={props.nextPuzzle} puzzle={puzzle} isMuted={muted} solveTime={state.displaySeconds} didCheat={state.didCheat} dispatch={dispatch} />
           : ''}
         {state.moderating ?
           <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />

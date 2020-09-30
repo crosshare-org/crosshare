@@ -15,6 +15,8 @@ import { Markdown } from './Markdown';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { Link } from './Link';
 import { ButtonAsLink, Button } from './Buttons';
+import formatISO from 'date-fns/formatISO';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 const COMMENT_LENGTH_LIMIT = 280;
 
@@ -40,7 +42,7 @@ const CommentView = (props: CommentProps) => {
         marginBottom: 0,
       }
     }}>
-      <div><CommentFlair displayName={props.comment.authorDisplayName} username={props.comment.authorUsername} userId={props.comment.authorId} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.comment.authorSolveTime} didCheat={props.comment.authorCheated} /></div>
+      <div><CommentFlair publishTime={props.comment.publishTime} displayName={props.comment.authorDisplayName} username={props.comment.authorUsername} userId={props.comment.authorId} puzzleAuthorId={props.puzzleAuthorId} solveTime={props.comment.authorSolveTime} didCheat={props.comment.authorCheated} /></div>
       <Markdown text={props.comment.commentText} clueMap={props.clueMap} />
       {props.children}
     </div>
@@ -105,6 +107,7 @@ const CommentAuthor = (props: { username?: string, displayName: string }) => {
 };
 
 interface CommentFlairProps {
+  publishTime?: number,
   solveTime: number,
   didCheat: boolean,
   displayName: string,
@@ -113,6 +116,7 @@ interface CommentFlairProps {
   puzzleAuthorId: string,
 }
 const CommentFlair = (props: CommentFlairProps) => {
+  const publishDate = props.publishTime !== undefined && new Date(props.publishTime);
   return (
     <>
       <span css={{ verticalAlign: 'text-bottom' }}><Identicon id={props.userId} /></span>
@@ -128,7 +132,7 @@ const CommentFlair = (props: CommentFlairProps) => {
         :
         <>
           {props.didCheat ? '' : <Emoji title='Solved without helpers' symbol='🤓' />}
-          < span css={{
+          <span css={{
             fontSize: '0.75em',
             backgroundColor: 'var(--caption)',
             color: 'white',
@@ -137,6 +141,11 @@ const CommentFlair = (props: CommentFlairProps) => {
           }}>{timeString(props.solveTime, false)}</span>
         </>
       }
+      {publishDate ?
+        <>
+          &nbsp;·&nbsp;<span title={formatISO(publishDate)}>{formatDistanceToNow(publishDate)} ago</span>
+        </>
+        : ''}
     </ >
   );
 };

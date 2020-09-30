@@ -386,7 +386,7 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
           </div>
           : ''}
       </div>
-      {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showBlogPost={true} showAuthor={false} />)}
+      {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showDate={true} showBlogPost={true} showAuthor={false} />)}
       {props.nextPage || props.prevPage !== null ?
         <p css={{ textAlign: 'center' }}>
           {props.prevPage === 0 ?

@@ -68,7 +68,7 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
       <p><Link href='/construct' as='/construct' passHref>Construct a new puzzle with the Crosshare constructor</Link></p>
       <p><Link href='/upload' as='/upload' passHref>Upload a .puz to get a Crosshare link to share with solvers</Link></p>
       <h2>Featured Puzzles</h2>
-      {featured.map((p, i) => <PuzzleResultLink key={i} puzzle={p} constructorPage={p.constructorPage} showAuthor={true} />)}
+      {featured.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showDate={true} constructorPage={p.constructorPage} showAuthor={true} />)}
       <p css={{ textAlign: 'center' }}><Link href='/featured/[pageNumber]' as='/featured/1' passHref>Previous Featured Puzzles</Link></p>
       <p css={{ marginTop: '1em', textAlign: 'center' }}>For questions and discussion, join the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/forum/#!forum/crosshare">Google Group</a>. Follow us on twitter <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/crosshareapp">@crosshareapp</a>.</p>
       {!loading && !user ?.email ?
