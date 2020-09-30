@@ -21,7 +21,8 @@ if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
     ignoreErrors: [
       'ResizeObserver loop completed with undelivered notifications',
       'ResizeObserver loop limit exceeded',
-      'A mutation operation was attempted on a database that did not allow mutations'
+      'A mutation operation was attempted on a database that did not allow mutations',
+      'is not a valid value for enumeration ScrollLogicalPosition',
     ]
   });
 }
