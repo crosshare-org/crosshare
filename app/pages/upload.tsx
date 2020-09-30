@@ -23,7 +23,7 @@ export default function UploadPage() {
   const loginButton = renderLoginButtonIfNeeded(ctx);
 
   function handleFile(f: FileList | null) {
-    if (!f) {
+    if (!f || !f[0]) {
       setError('No file selected');
       return;
     }
