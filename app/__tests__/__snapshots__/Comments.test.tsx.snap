@@ -179,6 +179,13 @@ exports[`basic comment display 1`] = `
           >
             55s
           </span>
+           · 
+          <span
+            title="2020-09-30T09:26:13-04:00"
+          >
+            less than a minute
+             ago
+          </span>
         </div>
         <div
           class="paragraph"
@@ -375,6 +382,13 @@ exports[`comment with username display 1`] = `
             class="emotion-2"
           >
             55s
+          </span>
+           · 
+          <span
+            title="2020-09-30T09:26:13-04:00"
+          >
+            less than a minute
+             ago
           </span>
         </div>
         <div
