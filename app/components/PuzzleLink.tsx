@@ -14,7 +14,7 @@ import { Markdown } from './Markdown';
 import formatISO from 'date-fns/formatISO';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
-const PuzzleLink = (props: { noMargin: boolean, id: string, authorId: string, width?: number, height?: number, title: string, subTitle?: string, children?: ReactNode }) => {
+const PuzzleLink = (props: { showingBlog: boolean, id: string, authorId: string, width?: number, height?: number, title: string, subTitle?: string, children?: ReactNode }) => {
   const { user } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
   const authored = user ?.uid === props.authorId;
@@ -41,12 +41,12 @@ const PuzzleLink = (props: { noMargin: boolean, id: string, authorId: string, wi
   };
 
   return <div css={{
-    marginBottom: props.noMargin ? 0 : '1.5em',
+    marginBottom: props.showingBlog ? 0 : '1.5em',
     display: 'inline-flex',
     alignItems: 'flex-start',
     width: '100%',
     [SMALL_AND_UP]: {
-      width: '50%',
+      width: props.showingBlog ? '100%' : '50%',
     },
   }}>
     <Link css={[
@@ -110,7 +110,7 @@ export const PuzzleResultLink = ({ puzzle, showDate, showBlogPost, showAuthor, c
     contents = <p>{authorLink}</p>;
   }
   return <>
-    <PuzzleLink noMargin={showBlogPost && puzzle.blogPost ? true : false} authorId={puzzle.authorId} id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={title || puzzle.title} subTitle={title ? puzzle.title : undefined}>
+    <PuzzleLink showingBlog={showBlogPost && puzzle.blogPost ? true : false} authorId={puzzle.authorId} id={puzzle.id} width={puzzle.size.cols} height={puzzle.size.rows} title={title || puzzle.title} subTitle={title ? puzzle.title : undefined}>
       {contents}
     </PuzzleLink>
     {showBlogPost && puzzle.blogPost ? <div css={{ width: '100%', marginBottom: '2em' }} ><Markdown text={puzzle.blogPost} preview={250} /></div> : ''}
