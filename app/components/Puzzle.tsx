@@ -746,7 +746,7 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
                   {moreMenu}
                 </>
               )
-              : ''}
+              : moreMenu}
           </TopBar>
         </div>
         {state.isEnteringRebus ?

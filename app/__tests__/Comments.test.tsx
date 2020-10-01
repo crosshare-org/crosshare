@@ -20,6 +20,7 @@ const realDate = Date;
 
 beforeAll(() => {
   const mockDate = new Date('2020-9-2');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (global as any).Date = class extends realDate {
     constructor() {
       super();
