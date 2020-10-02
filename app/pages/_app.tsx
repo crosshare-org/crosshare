@@ -23,6 +23,7 @@ if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
       'ResizeObserver loop limit exceeded',
       'A mutation operation was attempted on a database that did not allow mutations',
       'is not a valid value for enumeration ScrollLogicalPosition',
+      'Extension context invalidated',
     ]
   });
 }
