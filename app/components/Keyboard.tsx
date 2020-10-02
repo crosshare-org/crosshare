@@ -12,7 +12,7 @@ interface KeyRowsProps {
   toggleKeyboard: boolean,
 }
 
-export const KeyRows = (props: KeyRowsProps) => {
+const KeyRows = (props: KeyRowsProps) => {
   return (
     <div css={{
       display: props.toggleKeyboard ? 'none' : 'block',
@@ -35,7 +35,7 @@ interface KeyRowProps {
   addMarginLeft?: boolean,
   children: ReactNode,
 }
-export const KeyRow = (props: KeyRowProps) => {
+const KeyRow = (props: KeyRowProps) => {
   return (
     <div css={{
       marginLeft: props.addMarginLeft ? '5%' : 0,
@@ -59,7 +59,7 @@ interface KeyProps {
   onlyOnTablet?: boolean,
   notOnTablet?: boolean
 }
-export const Key = (props: KeyProps) => {
+const Key = (props: KeyProps) => {
   return (
     <button css={{
       padding: 0,

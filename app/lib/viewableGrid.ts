@@ -26,7 +26,7 @@ export interface CluedGrid extends ViewableGrid<CluedEntry> {
   clues: Array<ClueT>,
 }
 
-export function getSortedEntries<Entry extends EntryBase>(entries: Array<Entry>) {
+function getSortedEntries<Entry extends EntryBase>(entries: Array<Entry>) {
   return [...entries].sort((a, b) => {
     if (a.direction !== b.direction) {
       return a.direction - b.direction;

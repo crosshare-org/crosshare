@@ -3,7 +3,6 @@ import * as t from 'io-ts';
 // We import this instead of defining it here so that we can define it
 // differently for the main react app and the 'functions' subdirectory
 import { timestamp } from './timestamp';
-export { timestamp } from './timestamp';
 
 const CommentV = t.intersection([
   t.type({
@@ -113,9 +112,6 @@ const DBPuzzleOptionalV = t.partial({
 export const DBPuzzleV = t.intersection([DBPuzzleMandatoryV, DBPuzzleOptionalV]);
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
 
-export const TimestampedPuzzleV = downloadTimestamped(DBPuzzleV);
-export type TimestampedPuzzleT = t.TypeOf<typeof TimestampedPuzzleV>;
-
 const PlayBaseV = t.type({
   /** crossword id */
   c: t.string,
@@ -156,7 +152,7 @@ export const LegacyPlayV = t.intersection([
 ]);
 export type LegacyPlayT = t.TypeOf<typeof LegacyPlayV>;
 
-export const PlayV = t.intersection([
+const PlayV = t.intersection([
   PlayBaseV,
   t.type({
     /** user id */
@@ -272,13 +268,6 @@ export const CronStatusV = t.type({
   ranAt: timestamp,
 });
 export type CronStatusT = t.TypeOf<typeof CronStatusV>;
-
-/** created at, title */
-const AuthoredPuzzleV = t.tuple([timestamp, t.string]);
-export type AuthoredPuzzleT = t.TypeOf<typeof AuthoredPuzzleV>;
-
-/** keys are puzzle ids */
-export const AuthoredPuzzlesV = t.record(t.string, AuthoredPuzzleV);
 
 /** date string -> puzzle id */
 export const CategoryIndexV = t.record(t.string, t.string);

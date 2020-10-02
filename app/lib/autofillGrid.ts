@@ -4,7 +4,7 @@ import {
 } from './gridBase';
 import { matchingBitmap, minCost, updateBitmap, numMatches } from './WordDB';
 
-export interface AutofillEntry extends EntryBase {
+interface AutofillEntry extends EntryBase {
   length: number, // Length in chars - might be different than cells.length due to rebus
   bitmap: BA.BitArray | null,
   minCost: number

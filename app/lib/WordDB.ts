@@ -13,7 +13,7 @@ const WordDBV = t.type({
 });
 export type WordDBT = t.TypeOf<typeof WordDBV>;
 
-export enum DBStatus {
+enum DBStatus {
   uninitialized,
   building,
   notPresent,
@@ -21,7 +21,7 @@ export enum DBStatus {
 }
 
 export let wordDB: WordDBT | undefined = undefined;
-export let dbStatus: DBStatus = DBStatus.uninitialized;
+let dbStatus: DBStatus = DBStatus.uninitialized;
 
 const STORAGE_KEY = 'db';
 
@@ -169,7 +169,7 @@ export function setDb(newdb: WordDBT) {
 
 const ZERO = BA.zero();
 
-export function highestScore(length: number, bitmap: BA.BitArray | null) {
+function highestScore(length: number, bitmap: BA.BitArray | null) {
   if (!wordDB) {
     throw new Error('uninitialized!');
   }

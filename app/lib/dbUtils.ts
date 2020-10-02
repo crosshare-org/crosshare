@@ -43,39 +43,6 @@ export async function setInCache<A>({ collection, docId, localDocId, value, vali
   }
 }
 
-interface CacheUpdateOptionsRequired<A> {
-  collection: string,
-  update: Partial<A>,
-  validator: t.Type<A>,
-}
-type CacheUpdateOptions<A> = CacheUpdateOptionsRequired<A> & (YesDB | NoDBButDocId | NoDBButLocalId);
-
-export async function updateInCache<A>({ collection, docId, localDocId, update, validator, sendToDB }: CacheUpdateOptions<A>) {
-  const sessionKey = localDocId ? collection + '/' + localDocId : collection + '/' + docId;
-  const inSession = sessionStorage.getItem(sessionKey);
-  const TimestampedV = downloadTimestamped(validator);
-  if (inSession) {
-    const validationResult = TimestampedV.decode(JSON.parse(inSession));
-    if (isRight(validationResult)) {
-      const updated = { ...validationResult.right.data, ...update };
-      const forLS: t.TypeOf<typeof TimestampedV> = {
-        downloadedAt: validationResult.right.downloadedAt,
-        data: updated,
-      };
-      sessionStorage.setItem(sessionKey, JSON.stringify(forLS));
-    } else {
-      console.error('Couldn\'t parse object in local storage');
-      console.error(PathReporter.report(validationResult).join(','));
-    }
-  }
-  if (sendToDB) {
-    const db = App.firestore();
-    return db.collection(collection).doc(docId).set(update, { merge: true }).then(() => {
-      console.log('Updated for ' + collection + '/' + docId);
-    });
-  }
-}
-
 interface docRef {
   delete: () => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
@@ -156,36 +123,6 @@ export async function getFromDB<A>(
     console.error(PathReporter.report(validationResult).join(','));
     return Promise.reject('Malformed content');
   }
-}
-
-interface CacheGetOptions<A> {
-  collection: string,
-  localDocId: string
-  validator: t.Type<A>,
-  ttl: number
-}
-
-export function getFromSession<A>({ collection, localDocId, validator, ttl }: CacheGetOptions<A>): A | null {
-  const now = new Date();
-  const sessionKey = collection + '/' + localDocId;
-  const inSession = sessionStorage.getItem(sessionKey);
-  const TimestampedV = downloadTimestamped(validator);
-  if (inSession) {
-    const validationResult = TimestampedV.decode(JSON.parse(inSession));
-    if (isRight(validationResult)) {
-      const valid = validationResult.right;
-      if (ttl === -1 || (now.getTime() < valid.downloadedAt.toDate().getTime() + ttl)) {
-        console.log('loaded ' + sessionKey + ' from local storage');
-        return valid.data;
-      } else {
-        console.log('object in local storage has expired');
-      }
-    } else {
-      console.error('Couldn\'t parse object in local storage');
-      console.error(PathReporter.report(validationResult).join(','));
-    }
-  }
-  return null;
 }
 
 interface CacheOrDBGetOptions<A> {

@@ -2,7 +2,7 @@ import NextLink, { LinkProps as NextLinkProps } from 'next/link';
 import { ComponentProps } from 'react';
 import { ButtonResetCSS, ButtonCSS } from './Buttons';
 
-export interface LinkProps
+interface LinkProps
   extends NextLinkProps,
   Omit<ComponentProps<'a'>, keyof NextLinkProps> { }
 

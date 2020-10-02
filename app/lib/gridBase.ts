@@ -11,7 +11,7 @@ export interface EntryWithPattern extends EntryBase {
   pattern: string,
 }
 
-export interface Cross {
+interface Cross {
   entryIndex: number | null, // Entry index
   cellIndex: number,       // Position of the crossing in the entry.cells array
   wordIndex: number        // Position of the crossing in the resultant string (could be different due to rebus)
@@ -25,7 +25,7 @@ export interface GridBase<Entry extends EntryBase> {
   entries: Entry[]
 }
 
-export function entriesByCell<Entry extends EntryBase>(grid: GridBase<Entry>, pos: Position) {
+function entriesByCell<Entry extends EntryBase>(grid: GridBase<Entry>, pos: Position) {
   return grid.entriesByCell[pos.row * grid.width + pos.col];
 }
 
@@ -61,17 +61,6 @@ export function cellIndex<Entry extends EntryBase>(grid: GridBase<Entry>, pos: P
 
 export function posForIndex<Entry extends EntryBase>(grid: GridBase<Entry>, index: number) {
   return { col: index % grid.width, row: Math.floor(index / grid.width) % grid.height };
-}
-
-export function toString<Entry extends EntryBase>(grid: GridBase<Entry>) {
-  let s = '';
-  for (let y = 0; y < grid.height; y += 1) {
-    for (let x = 0; x < grid.width; x += 1) {
-      s += grid.cells[y * grid.width + x] + ' ';
-    }
-    s += '\n';
-  }
-  return s;
 }
 
 export function entryIndexAtPosition<Entry extends EntryBase>(grid: GridBase<Entry>, pos: PosAndDir): number | null {

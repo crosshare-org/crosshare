@@ -1,7 +1,7 @@
 import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
 import { ReactNode } from 'react';
 
-export const ProfilePic = (props: { profilePicture: string, className?: string }) => {
+const ProfilePic = (props: { profilePicture: string, className?: string }) => {
   return <div className={props.className} css={{
     width: 75,
     height: 75,

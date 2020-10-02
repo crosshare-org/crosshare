@@ -59,7 +59,7 @@ export function isZero(ba: BitArray): boolean {
   return ba.length === 0 || (ba.length === 1 && ba[0] === 0);
 }
 
-export function clamp(ba: BitArray) {
+function clamp(ba: BitArray) {
   while (ba.length > 1 && ba[ba.length - 1] === 0) {
     ba.pop();
   }
