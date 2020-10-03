@@ -143,7 +143,7 @@ const CommentFlair = (props: CommentFlairProps) => {
       }
       {publishDate ?
         <>
-          &nbsp;·&nbsp;<span title={formatISO(publishDate)}>{formatDistanceToNow(publishDate)} ago</span>
+          &nbsp;·&nbsp;<span css={{ fontStyle: 'italic' }} title={formatISO(publishDate)}>{formatDistanceToNow(publishDate)} ago</span>
         </>
         : ''}
     </ >
