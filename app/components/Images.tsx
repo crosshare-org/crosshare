@@ -39,6 +39,7 @@ export const CoverPic = (props: { coverPicture: string }) => {
     backgroundImage: `linear-gradient(to top, black, rgba(0, 0, 0, 0.8) 2em, transparent 40%, transparent 75%, rgba(0, 0, 0, 0.5)),
     url('${props.coverPicture}')`,
     backgroundSize: 'cover',
+    backgroundPosition: 'center',
   }} />;
 };
 
