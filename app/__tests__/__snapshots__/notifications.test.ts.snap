@@ -5,7 +5,7 @@ Array [
   Object {
     "c": "bam",
     "cn": "BLAST",
-    "id": "comment-bam",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-bam",
     "k": "comment",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",
@@ -15,7 +15,7 @@ Array [
   Object {
     "c": "whamo",
     "cn": "Mike D",
-    "id": "reply-whamo",
+    "id": "rando-reply-whamo",
     "k": "reply",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",
@@ -25,7 +25,7 @@ Array [
   Object {
     "c": "test",
     "cn": "Mike D",
-    "id": "comment-test",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-test",
     "k": "comment",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",
@@ -35,7 +35,7 @@ Array [
   Object {
     "c": "test",
     "cn": "Mike D",
-    "id": "reply-test",
+    "id": "rando-reply-test",
     "k": "reply",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",
@@ -45,8 +45,8 @@ Array [
   Object {
     "c": "foobar",
     "cn": "Mike D",
-    "id": "comment-foobar",
-    "k": "comment",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-reply-foobar",
+    "k": "reply",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",
     "r": false,
@@ -60,7 +60,7 @@ Array [
   Object {
     "c": "baz",
     "cn": "Mike D",
-    "id": "comment-baz",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-baz",
     "k": "comment",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",
@@ -70,7 +70,7 @@ Array [
   Object {
     "c": "baz",
     "cn": "Mike D",
-    "id": "reply-baz",
+    "id": "dummy-author-id-reply-baz",
     "k": "reply",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",
@@ -85,7 +85,7 @@ Array [
   Object {
     "c": "baz",
     "cn": "Mike D",
-    "id": "reply-baz",
+    "id": "dummy-author-id-reply-baz",
     "k": "reply",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",
@@ -100,7 +100,7 @@ Array [
   Object {
     "c": "LwgoVx0BAskM4wVJyoLj",
     "cn": "Mike D",
-    "id": "comment-LwgoVx0BAskM4wVJyoLj",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
     "k": "comment",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",
@@ -115,8 +115,8 @@ Array [
   Object {
     "c": "bar",
     "cn": "Jim",
-    "id": "comment-bar",
-    "k": "comment",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-reply-bar",
+    "k": "reply",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",
     "r": false,
@@ -130,7 +130,7 @@ Array [
   Object {
     "c": "bar",
     "cn": "Jim",
-    "id": "comment-bar",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-bar",
     "k": "comment",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",
@@ -140,7 +140,7 @@ Array [
   Object {
     "c": "bam",
     "cn": "Tom",
-    "id": "comment-bam",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-bam",
     "k": "comment",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",

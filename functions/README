@@ -3,3 +3,6 @@ $ npx firebase deploy --only functions:scheduledFirestoreExport
 
 Deploy analytics:
 $ npx firebase deploy --only functions:analytics
+
+Deploy puzzle update trigger:
+$ npx firebase deploy --only functions:puzzleUpdate

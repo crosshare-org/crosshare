@@ -7,6 +7,7 @@ import { PathReporter } from "io-ts/lib/PathReporter";
 import { isRight } from "fp-ts/lib/Either";
 
 import { runAnalytics } from '../../app/lib/analytics';
+import { notificationsForPuzzleChange } from '../../app/lib/notifications';
 
 import { CronStatusV, CronStatusT } from '../../app/lib/dbtypes';
 
@@ -55,3 +56,16 @@ export const scheduledFirestoreExport = functions.pubsub.schedule('every day 00:
       throw new Error('Export operation failed');
     });
 });
+
+
+export const puzzleUpdate = functions.firestore
+  .document('c/{puzzleId}')
+  .onUpdate((change) => {
+    const db = admin.firestore();
+    const newValue = change.after.data();
+    const previousValue = change.before.data();
+    const notifications = notificationsForPuzzleChange(previousValue, newValue, change.after.id);
+    for (const notification of notifications) {
+      db.doc(`n/${notification.id}`).set(notification);
+    }
+  });

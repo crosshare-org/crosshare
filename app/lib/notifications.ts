@@ -66,7 +66,7 @@ type PuzzleWithID = DBPuzzleT & { id: string };
 const COMMENT_DELAY = { hours: 1 };
 function commentNotification(comment: CommentWithRepliesT, puzzle: PuzzleWithID): NotificationT {
   return {
-    id: `comment-${comment.i}`,
+    id: `${puzzle.a}-comment-${comment.i}`,
     u: puzzle.a,
     t: AdminTimestamp.fromDate(add(new Date(), COMMENT_DELAY)),
     r: false,
@@ -80,7 +80,7 @@ function commentNotification(comment: CommentWithRepliesT, puzzle: PuzzleWithID)
 
 function replyNotification(comment: CommentWithRepliesT, parent: CommentWithRepliesT, puzzle: PuzzleWithID): NotificationT {
   return {
-    id: `reply-${comment.i}`,
+    id: `${parent.a}-reply-${comment.i}`,
     u: parent.a,
     t: AdminTimestamp.fromDate(add(new Date(), COMMENT_DELAY)),
     r: false,
@@ -97,13 +97,11 @@ function checkComments(after: Array<CommentWithRepliesT>, before: Array<CommentW
   for (const comment of after) {
     const beforeComment = before ?.find(beforeComment => beforeComment.i === comment.i);
     if (!beforeComment) {
-      // Don't notify on your own comment
-      if (comment.a !== puzzle.a) {
+      // Don't notify on your own comment or on a reply to you (which will get notified as a reply)
+      if (comment.a !== puzzle.a && parent ?.a !== puzzle.a) {
         notifications.push(commentNotification(comment, puzzle));
       }
-      // Add a reply notification if it's not going to the puzzle's author (who is already getting the one above)
-      // But don't notify on a reply to yourself
-      if (parent && parent.a !== puzzle.a && comment.a !== parent.a) {
+      if (parent && comment.a !== parent.a) {
         notifications.push(replyNotification(comment, parent, puzzle));
       }
     } else if (comment.r) {
