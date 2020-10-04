@@ -137,3 +137,11 @@ export async function userIdToPage(userId: string): Promise<ConstructorPageT | n
   }
   return usernameMap[userId] || null;
 }
+
+export async function sendEmail(toAddress: string, subject: string, text: string, html: string) {
+  const db = AdminApp.firestore();
+  return db.collection('mail').add({
+    to: [toAddress],
+    message: { subject, text, html }
+  });
+}
