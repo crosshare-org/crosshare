@@ -1,4 +1,4 @@
-import { ReactNode, useState, useContext, memo } from 'react';
+import { ReactNode, useState, useContext, useMemo } from 'react';
 import { FaUser, FaUserLock } from 'react-icons/fa';
 
 import { AuthContext } from './AuthContext';
@@ -212,9 +212,11 @@ interface TopBarProps {
   children?: ReactNode
 }
 
-export const TopBar = memo(function TopBar({ children }: TopBarProps) {
-  return (
-    <header css={{
+export const TopBar = ({ children }: TopBarProps) => {
+  const { notifications } = useContext(AuthContext);
+  console.log('here', notifications);
+  return useMemo(() => {
+    return <header css={{
       height: HEADER_HEIGHT,
       backgroundColor: 'var(--primary)',
     }}>
@@ -233,7 +235,7 @@ export const TopBar = memo(function TopBar({ children }: TopBarProps) {
           textDecoration: 'none !important',
           cursor: 'pointer',
         }} title="Crosshare Home">
-          <Logo width={HEADER_HEIGHT - 4} height={HEADER_HEIGHT - 4} />
+          <Logo notificationCount={notifications ?.length || 0} width={HEADER_HEIGHT - 4} height={HEADER_HEIGHT - 4} />
           <span css={{
             marginLeft: '5px',
             display: 'none',
@@ -248,9 +250,9 @@ export const TopBar = memo(function TopBar({ children }: TopBarProps) {
           {children}
         </>
       </div>
-    </header>
-  );
-});
+    </header>;
+  }, [children, notifications]);
+};
 
 export const DefaultTopBar = () => {
   const { isAdmin } = useContext(AuthContext);

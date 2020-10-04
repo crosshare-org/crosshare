@@ -22,7 +22,7 @@ export function Hero(props: { text: string, children?: ReactNode }) {
       textDecoration: 'none !important',
       cursor: 'pointer',
     }} title="Crosshare Home">
-      <Logo width={50} height={50} />
+      <Logo notificationCount={0} width={50} height={50} />
     </Link>
     <h2 css={{
       fontSize: 30,

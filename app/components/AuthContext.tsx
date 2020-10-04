@@ -5,6 +5,7 @@ import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { TopBar } from './TopBar';
 import { Optionalize } from '../lib/types';
 import { ConstructorPageT } from '../lib/constructorPage';
+import { NotificationT } from '../lib/notifications';
 
 export interface AuthProps {
   isAdmin: boolean,
@@ -99,6 +100,7 @@ export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.Compo
 
 interface AuthContextValue {
   user?: firebase.User,
+  notifications?: Array<NotificationT>,
   isAdmin: boolean,
   loading: boolean,
   error?: string,

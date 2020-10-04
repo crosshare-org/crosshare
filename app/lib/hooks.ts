@@ -6,6 +6,7 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { App } from './firebaseWrapper';
 import { ConstructorPageV, } from './constructorPage';
+import { NotificationV, NotificationT } from './notifications';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {
@@ -65,25 +66,38 @@ export function useAuth() {
     }
   }, [user]);
 
-  // Constructor page
-  const docRef = useMemo(
+  // Constructor page + notifications
+  const [cpDocRef, notificationsDocRef] = useMemo(
     () => {
       if (user && user.email && !user.isAnonymous) {
         setIsLoading(true);
-        return App.firestore().collection('cp').where('u', '==', user.uid);
+        return [
+          App.firestore().collection('cp').where('u', '==', user.uid),
+          App.firestore().collection('n').where('u', '==', user.uid).where('r', '==', false)
+        ];
       }
       setIsLoading(false);
-      return null;
+      return [null, null];
     },
     [user]
   );
-  const [cpSnapshot, loadingCP, cpError] = useCollection(docRef);
+  const [notificationsSnapshot, , notificationError] = useCollection(notificationsDocRef);
+  if (notificationError) {
+    console.log(notificationError);
+  }
+  const notifications: Array<NotificationT> = useMemo(() => {
+    if (notificationsSnapshot === undefined || notificationsSnapshot.empty) {
+      return [];
+    }
+    return notificationsSnapshot.docs.map(d => NotificationV.decode(d.data())).filter(isRight).map(r => r.right);
+  }, [notificationsSnapshot]);
+  const [cpSnapshot, loadingCP, cpError] = useCollection(cpDocRef);
   const [constructorPage, cpDecodeError] = useMemo(() => {
     if (cpSnapshot === undefined) {
       return [undefined, undefined];
     }
     setIsLoading(false);
-    if (cpSnapshot ?.empty) {
+    if (cpSnapshot.empty) {
       return [undefined, undefined];
     }
     if (cpSnapshot.size !== 1) {
@@ -98,7 +112,7 @@ export function useAuth() {
     }
   }, [cpSnapshot]);
 
-  return { user, isAdmin, constructorPage, loading: isLoading || loadingUser || loadingCP, error: authError ?.message || cpError ?.message || cpDecodeError };
+  return { user, isAdmin, constructorPage, notifications, loading: isLoading || loadingUser || loadingCP, error: authError ?.message || cpError ?.message || cpDecodeError };
 }
 
 export function useHover(): [

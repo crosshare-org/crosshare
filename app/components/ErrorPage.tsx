@@ -15,7 +15,7 @@ export const ErrorPage = (props: { title: string, children?: ReactNode }) => {
       textAlign: 'center',
       paddingTop: '5em',
     }}>
-      <Logo width='15em' height='15em' />
+      <Logo notificationCount={0} width='15em' height='15em' />
       <h1 css={{ marginTop: '1em' }}>{props.title}</h1>
       {props.children}
     </div>

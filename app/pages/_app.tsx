@@ -41,7 +41,7 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
   const [loading, setLoading] = useState(false);
 
   if (typeof window === 'undefined') {
-    authStatus = { loading: true, isAdmin: false, user: undefined, constructorPage: undefined, error: undefined };
+    authStatus = { loading: true, isAdmin: false, user: undefined, constructorPage: undefined, notifications: [], error: undefined };
   }
 
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);

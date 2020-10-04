@@ -99,6 +99,9 @@ service cloud.firestore {
     match /s/{crosswordId} {
       allow read: if isAdmin() || request.auth.uid == resource.data.a;
     }
+    match /n/{notificationId} {
+      allow read: if isAdmin() || request.auth.uid == resource.data.u;
+    }
     match /ds/{dateString} {
       allow read: if isAdmin();
     }
