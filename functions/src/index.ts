@@ -60,12 +60,14 @@ export const scheduledFirestoreExport = functions.pubsub.schedule('every day 00:
 
 export const puzzleUpdate = functions.firestore
   .document('c/{puzzleId}')
-  .onUpdate((change) => {
+  .onUpdate(async (change) => {
+    console.log('Puzzle updated, checking for notifications');
     const db = admin.firestore();
     const newValue = change.after.data();
     const previousValue = change.before.data();
     const notifications = notificationsForPuzzleChange(previousValue, newValue, change.after.id);
     for (const notification of notifications) {
-      db.doc(`n/${notification.id}`).set(notification);
+      await db.doc(`n/${notification.id}`).set(notification);
     }
+    console.log(`Created ${notifications.length} notifications`);
   });
