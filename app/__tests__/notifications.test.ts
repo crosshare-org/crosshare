@@ -1,3 +1,5 @@
+import * as firebaseTesting from '@firebase/testing';
+
 import { getMockedPuzzle } from '../lib/testingUtils';
 import { notificationsForPuzzleChange } from '../lib/notifications';
 import { CommentWithRepliesT } from '../lib/dbtypes';
@@ -29,6 +31,59 @@ test('shouldnt notify at all if comment is on own puzzle', () => {
   };
   const notifications = notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
   expect(notifications.length).toEqual(0);
+});
+
+const projectId = 'notificationstests';
+
+test('security rules for updating notifications', async () => {
+  const puzzleWithComments = {
+    ...basePuzzle,
+    cs: [getComment({ a: 'dummy-author-id' })]
+  };
+  const notifications = notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
+  expect(notifications.length).toEqual(1);
+
+  await firebaseTesting.clearFirestoreData({ projectId });
+  const adminApp = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
+  await adminApp.firestore().collection('n').doc(notifications[0].id).set(notifications[0]);
+
+  const ownerApp = firebaseTesting.initializeTestApp({
+    projectId,
+    auth: {
+      uid: notifications[0].u,
+      admin: false,
+      firebase: {
+        sign_in_provider: 'google.com',
+      },
+    },
+  });
+  const otherApp = firebaseTesting.initializeTestApp({
+    projectId,
+    auth: {
+      uid: 'randouserid',
+      admin: false,
+      firebase: {
+        sign_in_provider: 'google.com',
+      },
+    },
+  });
+
+  // other user can't change read status
+  await firebaseTesting.assertFails(
+    otherApp.firestore().collection('n').doc(notifications[0].id).update({ r: true })
+  );
+  // owner can't change anything other than read status
+  await firebaseTesting.assertFails(
+    ownerApp.firestore().collection('n').doc(notifications[0].id).update({ c: 'some new comment id' })
+  );
+  // owner can change read status
+  await firebaseTesting.assertSucceeds(
+    ownerApp.firestore().collection('n').doc(notifications[0].id).update({ r: true })
+  );
+
+  adminApp.delete();
+  ownerApp.delete();
+  otherApp.delete();
 });
 
 test('should notify for a new comment by somebody else', () => {

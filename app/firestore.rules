@@ -100,6 +100,9 @@ service cloud.firestore {
       allow read: if isAdmin() || request.auth.uid == resource.data.a;
     }
     match /n/{notificationId} {
+      allow update: if request.auth.uid == resource.data.u
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['r']);
+
       allow read: if isAdmin() || request.auth.uid == resource.data.u;
     }
     match /ds/{dateString} {
