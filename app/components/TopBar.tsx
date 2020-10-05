@@ -1,11 +1,13 @@
 import { ReactNode, useState, useContext, useMemo } from 'react';
-import { FaUser, FaUserLock } from 'react-icons/fa';
+import { FaUser, FaUserLock, FaHome } from 'react-icons/fa';
 
 import { AuthContext } from './AuthContext';
 import { Link } from './Link';
 import { Overlay } from './Overlay';
 import { Logo } from './Icons';
 import { HEADER_HEIGHT, SMALL_AND_UP, HAS_PHYSICAL_KEYBOARD } from '../lib/style';
+import { ButtonResetCSS } from './Buttons';
+import { NotificationT } from '../lib/notifications';
 
 export const TopBarDropDown = (props: { onClose?: () => void, text: string, icon: ReactNode, hoverText?: string, children: (close: () => void) => ReactNode }) => {
   const [dropped, setDropped] = useState(false);
@@ -214,44 +216,94 @@ interface TopBarProps {
 
 export const TopBar = ({ children }: TopBarProps) => {
   const { notifications } = useContext(AuthContext);
-  console.log('here', notifications);
+  const [showingNotifications, setShowingNotifications] = useState(false);
   return useMemo(() => {
-    return <header css={{
-      height: HEADER_HEIGHT,
-      backgroundColor: 'var(--primary)',
-    }}>
-      <div css={{
-        padding: '0 10px',
-        height: '100%',
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'center',
-        lineHeight: (HEADER_HEIGHT - 4) + 'px',
+    return <>
+      <header css={{
+        height: HEADER_HEIGHT,
+        backgroundColor: 'var(--primary)',
       }}>
-        <Link href="/" passHref css={{
-          flexGrow: 1,
+        <div css={{
+          padding: '0 10px',
+          height: '100%',
+          position: 'relative',
           display: 'flex',
           alignItems: 'center',
-          textDecoration: 'none !important',
-          cursor: 'pointer',
-        }} title="Crosshare Home">
-          <Logo notificationCount={notifications ?.length || 0} width={HEADER_HEIGHT - 4} height={HEADER_HEIGHT - 4} />
-          <span css={{
-            marginLeft: '5px',
-            display: 'none',
-            color: 'var(--text)',
-            fontSize: HEADER_HEIGHT - 10,
-            [SMALL_AND_UP]: {
-              display: 'inline-block',
-            }
-          }}>CROSSHARE</span>
-        </Link>
-        <>
-          {children}
-        </>
-      </div>
-    </header>;
-  }, [children, notifications]);
+          lineHeight: (HEADER_HEIGHT - 4) + 'px',
+        }}>
+          {notifications ?.length ?
+            <button type="button" onClick={() => setShowingNotifications(true)} css={[ButtonResetCSS,
+              {
+                flexGrow: 1,
+                display: 'flex',
+                alignItems: 'center',
+              }
+            ]} title="View Notifications">
+              <Logo notificationCount={notifications.length} width={HEADER_HEIGHT - 4} height={HEADER_HEIGHT - 4} />
+              <span css={{
+                marginLeft: '5px',
+                display: 'none',
+                color: 'var(--text)',
+                fontSize: HEADER_HEIGHT - 10,
+                [SMALL_AND_UP]: {
+                  display: 'inline-block',
+                }
+              }}>CROSSHARE</span>
+            </button>
+            :
+            <Link href="/" passHref css={{
+              flexGrow: 1,
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none !important',
+              cursor: 'pointer',
+            }} title="Crosshare Home">
+              <Logo notificationCount={0} width={HEADER_HEIGHT - 4} height={HEADER_HEIGHT - 4} />
+              <span css={{
+                marginLeft: '5px',
+                display: 'none',
+                color: 'var(--text)',
+                fontSize: HEADER_HEIGHT - 10,
+                [SMALL_AND_UP]: {
+                  display: 'inline-block',
+                }
+              }}>CROSSHARE</span>
+            </Link>
+          }
+          <>
+            {children}
+          </>
+        </div>
+      </header>
+      {notifications ?.length && showingNotifications ?
+        <Overlay closeCallback={() => setShowingNotifications(false)}>
+          <TopBarDropDownLinkA icon={<FaHome />} href="/" text="Crosshare Home" />
+          <h3 css={{ fontWeight: 'normal', textDecoration: 'underline' }}>Notifications</h3>
+          {notifications.map(n => <NotificationLink key={n.id} notification={n} />)}
+        </Overlay>
+        : ''}
+    </>;
+  }, [children, notifications, showingNotifications, setShowingNotifications]);
+};
+
+const NotificationLinkCSS = {
+  display: 'block',
+  color: 'var(--text)',
+  padding: '1em',
+  '&:hover, &:focus': {
+    color: 'var(--text)',
+    textDecoration: 'none',
+    backgroundColor: 'var(--top-bar-hover)',
+  },
+};
+
+const NotificationLink = ({ notification: n }: { notification: NotificationT }) => {
+  switch (n.k) {
+  case 'comment':
+    return <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>{`• ${n.cn} commented on ${n.pn}`}</Link>;
+  case 'reply':
+    return <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>{`• ${n.cn} replied to your comment on ${n.pn}`}</Link>;
+  }
 };
 
 export const DefaultTopBar = () => {

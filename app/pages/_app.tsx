@@ -100,6 +100,7 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
       </CrosshareAudioContext.Provider>
       {loading ?
         <div css={{
+          zIndex: 10000000,
           position: 'fixed',
           bottom: '1em',
           left: '1em',
