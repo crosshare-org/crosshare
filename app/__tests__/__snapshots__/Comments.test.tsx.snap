@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`basic comment display 1`] = `
-.emotion-5 {
+.emotion-6 {
   margin-top: 1em;
 }
 
@@ -9,17 +9,17 @@ exports[`basic comment display 1`] = `
   border-bottom: 1px solid var(--black);
 }
 
-.emotion-4 {
+.emotion-5 {
   list-style-type: none;
   margin: 2em 0 0 0;
   padding: 0;
 }
 
-.emotion-3 {
+.emotion-4 {
   margin-top: 1em;
 }
 
-.emotion-3 p:last-of-type {
+.emotion-4 p:last-of-type {
   margin-bottom: 0;
 }
 
@@ -35,8 +35,12 @@ exports[`basic comment display 1`] = `
   padding: 0.1em 0.2em;
 }
 
+.emotion-3 {
+  font-style: italic;
+}
+
 <div
-  class="emotion-5"
+  class="emotion-6"
 >
   <h4
     class="emotion-0"
@@ -47,11 +51,11 @@ exports[`basic comment display 1`] = `
     Sign in with google (above) to leave a comment of your own
   </div>
   <ul
-    class="emotion-4"
+    class="emotion-5"
   >
     <li>
       <div
-        class="emotion-3"
+        class="emotion-4"
       >
         <div>
           <span
@@ -181,6 +185,7 @@ exports[`basic comment display 1`] = `
           </span>
            · 
           <span
+            class="emotion-3"
             title="2020-09-02T00:00:00-04:00"
           >
             less than a minute
@@ -201,7 +206,7 @@ exports[`basic comment display 1`] = `
 `;
 
 exports[`comment with username display 1`] = `
-.emotion-5 {
+.emotion-6 {
   margin-top: 1em;
 }
 
@@ -209,17 +214,17 @@ exports[`comment with username display 1`] = `
   border-bottom: 1px solid var(--black);
 }
 
-.emotion-4 {
+.emotion-5 {
   list-style-type: none;
   margin: 2em 0 0 0;
   padding: 0;
 }
 
-.emotion-3 {
+.emotion-4 {
   margin-top: 1em;
 }
 
-.emotion-3 p:last-of-type {
+.emotion-4 p:last-of-type {
   margin-bottom: 0;
 }
 
@@ -235,8 +240,12 @@ exports[`comment with username display 1`] = `
   padding: 0.1em 0.2em;
 }
 
+.emotion-3 {
+  font-style: italic;
+}
+
 <div
-  class="emotion-5"
+  class="emotion-6"
 >
   <h4
     class="emotion-0"
@@ -247,11 +256,11 @@ exports[`comment with username display 1`] = `
     Sign in with google (above) to leave a comment of your own
   </div>
   <ul
-    class="emotion-4"
+    class="emotion-5"
   >
     <li>
       <div
-        class="emotion-3"
+        class="emotion-4"
       >
         <div>
           <span
@@ -385,6 +394,7 @@ exports[`comment with username display 1`] = `
           </span>
            · 
           <span
+            class="emotion-3"
             title="2020-09-02T00:00:00-04:00"
           >
             less than a minute
