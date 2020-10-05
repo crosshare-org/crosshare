@@ -21,14 +21,51 @@ import { PROFILE_PIC, COVER_PIC } from '../lib/style';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { Slide, toast } from 'react-toastify';
 
+const Flags = {
+  all: null,  // unsubscribe from all notification emails
+  comments: null,  // comments on your puzzles or replies to your comments
+  featured: null,  // one of your puzzles is featured or set as daily mini
+  newpuzzles: null,  // one of your followed authors published a new puzzle
+};
+
 const AccountPrefsV = t.partial({
   /** user id receiving the notification */
-  unsubs: t.array(t.keyof({
-    comments: null,  // comments on your puzzles or replies to your comments
-    featured: null,  // one of your puzzles is featured or set as daily mini
-    newpuzzles: null,  // one of your followed authors published a new puzzle
-  })),
+  unsubs: t.array(t.keyof(Flags)),
 });
+
+interface PrefSettingProps {
+  prefs: t.TypeOf<typeof AccountPrefsV> | undefined,
+  userId: string,
+  flag: keyof (typeof Flags),
+  text: string,
+  invert?: boolean,
+  neverDisable?: boolean
+}
+
+const PrefSetting = (props: PrefSettingProps) => {
+  const unsubbed = props.prefs ?.unsubs ?.includes(props.flag);
+  const unsubbedAll = props.prefs ?.unsubs ?.includes('all');
+  return <label>
+    <input css={{ marginRight: '1em' }} type='checkbox' disabled={!props.neverDisable && unsubbedAll} checked={props.invert ? unsubbed : !unsubbed && !unsubbedAll} onChange={e =>
+      App.firestore().doc(`prefs/${props.userId}`).set({ unsubs: e.target.checked !== !!props.invert ? FieldValue.arrayRemove(props.flag) : FieldValue.arrayUnion(props.flag) }, { merge: true }).then(() => {
+        toast(<div>Email Preferences Updated</div>,
+          {
+            className: 'snack-bar',
+            position: 'bottom-left',
+            autoClose: 4000,
+            closeButton: false,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+            transition: Slide
+          });
+      })
+    } />
+    {props.text}
+  </label>;
+};
 
 export const AccountPage = ({ user, constructorPage }: AuthProps) => {
   const [settingProfilePic, setSettingProfilePic] = useState(false);
@@ -148,26 +185,14 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
             :
             <>
               <p>Email me ({user.email}) when:</p>
-              <label>
-                <input css={{ marginRight: '1em' }} type='checkbox' checked={!(accountPrefs ?.unsubs ?.includes('comments'))} onChange={e =>
-                  App.firestore().doc(`prefs/${user.uid}`).set({ unsubs: e.target.checked ? FieldValue.arrayRemove('comments') : FieldValue.arrayUnion('comments') }, { merge: true }).then(() => {
-                    toast(<div>Email Preferences Updated</div>,
-                      {
-                        className: 'snack-bar',
-                        position: 'bottom-left',
-                        autoClose: 4000,
-                        closeButton: false,
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: false,
-                        draggable: true,
-                        progress: undefined,
-                        transition: Slide
-                      });
-                  })
-                } />
-                I have unseen comments on my puzzles or replies to my comments
-              </label>
+              <ul css={{ listStyleType: 'none' }}>
+                <li>
+                  <PrefSetting prefs={accountPrefs} userId={user.uid} flag='comments' text='I have unseen comments on my puzzles or replies to my comments' />
+                </li>
+                <li>
+                  <PrefSetting prefs={accountPrefs} userId={user.uid} flag='all' invert neverDisable text='Never notify me by email' />
+                </li>
+              </ul>
             </>
           )
         }
