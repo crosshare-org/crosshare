@@ -216,6 +216,8 @@ interface TopBarProps {
 
 export const TopBar = ({ children }: TopBarProps) => {
   const { notifications } = useContext(AuthContext);
+  const now = new Date();
+  const filtered = notifications ?.filter(n => n.t.toDate() <= now);
   const [showingNotifications, setShowingNotifications] = useState(false);
   return useMemo(() => {
     return <>
@@ -231,7 +233,7 @@ export const TopBar = ({ children }: TopBarProps) => {
           alignItems: 'center',
           lineHeight: (HEADER_HEIGHT - 4) + 'px',
         }}>
-          {notifications ?.length ?
+          {filtered ?.length ?
             <button type="button" onClick={() => setShowingNotifications(true)} css={[ButtonResetCSS,
               {
                 flexGrow: 1,
@@ -239,7 +241,7 @@ export const TopBar = ({ children }: TopBarProps) => {
                 alignItems: 'center',
               }
             ]} title="View Notifications">
-              <Logo notificationCount={notifications.length} width={HEADER_HEIGHT - 4} height={HEADER_HEIGHT - 4} />
+              <Logo notificationCount={filtered.length} width={HEADER_HEIGHT - 4} height={HEADER_HEIGHT - 4} />
               <span css={{
                 marginLeft: '5px',
                 display: 'none',
@@ -275,15 +277,15 @@ export const TopBar = ({ children }: TopBarProps) => {
           </>
         </div>
       </header>
-      {notifications ?.length && showingNotifications ?
+      {filtered ?.length && showingNotifications ?
         <Overlay closeCallback={() => setShowingNotifications(false)}>
           <TopBarDropDownLinkA icon={<FaHome />} href="/" text="Crosshare Home" />
           <h3 css={{ marginTop: '1.5em', textAlign: 'center', fontWeight: 'normal', textDecoration: 'underline' }}>Notifications</h3>
-          {notifications.map(n => <NotificationLink key={n.id} notification={n} />)}
+          {filtered.map(n => <NotificationLink key={n.id} notification={n} />)}
         </Overlay>
         : ''}
     </>;
-  }, [children, notifications, showingNotifications, setShowingNotifications]);
+  }, [children, filtered, showingNotifications, setShowingNotifications]);
 };
 
 const NotificationLinkCSS = {
@@ -300,9 +302,9 @@ const NotificationLinkCSS = {
 const NotificationLink = ({ notification: n }: { notification: NotificationT }) => {
   switch (n.k) {
   case 'comment':
-    return <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>{`• ${n.cn} commented on ${n.pn}`}</Link>;
+    return <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>• {n.cn} commented on <i>{n.pn}</i></Link>;
   case 'reply':
-    return <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>{`• ${n.cn} replied to your comment on ${n.pn}`}</Link>;
+    return <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>• {n.cn} replied to your comment on <i>{n.pn}</i></Link>;
   }
 };
 
