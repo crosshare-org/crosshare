@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import * as t from 'io-ts';
+
+import { useState, useEffect, useMemo } from 'react';
 import Head from 'next/head';
 
 import { getDisplayName, DisplayNameForm } from '../components/DisplayNameForm';
 import { requiresAuth, AuthProps } from '../components/AuthContext';
 import { LegacyPlayV } from '../lib/dbtypes';
-import { App } from '../lib/firebaseWrapper';
+import { App, FieldValue } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleResultLink } from '../components/PuzzleLink';
 import { Link } from '../components/Link';
@@ -16,6 +18,17 @@ import { PuzzleResult, puzzleFromDB } from '../lib/types';
 import { Button } from '../components/Buttons';
 import { ImageCropper } from '../components/ImageCropper';
 import { PROFILE_PIC, COVER_PIC } from '../lib/style';
+import { useDocument } from 'react-firebase-hooks/firestore';
+import { Slide, toast } from 'react-toastify';
+
+const AccountPrefsV = t.partial({
+  /** user id receiving the notification */
+  unsubs: t.array(t.keyof({
+    comments: null,  // comments on your puzzles or replies to your comments
+    featured: null,  // one of your puzzles is featured or set as daily mini
+    newpuzzles: null,  // one of your followed authors published a new puzzle
+  })),
+});
 
 export const AccountPage = ({ user, constructorPage }: AuthProps) => {
   const [settingProfilePic, setSettingProfilePic] = useState(false);
@@ -24,6 +37,22 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
   const [unfinishedPuzzles, setUnfinishedPuzzles] = useState<Array<PuzzleResult> | null>(null);
   const [error, setError] = useState(false);
   const [displayName, setDisplayName] = useState(getDisplayName(user, constructorPage));
+
+  // Account preferences
+  const [accountPrefsDoc, loadingAccountPrefs, accountPrefsDBError] = useDocument(App.firestore().doc(`prefs/${user.uid}`));
+  const [accountPrefs, accountPrefsDecodeError] = useMemo(() => {
+    if (!accountPrefsDoc ?.exists) {
+      return [undefined, undefined];
+    }
+    const validationResult = AccountPrefsV.decode(accountPrefsDoc.data());
+    if (isRight(validationResult)) {
+      return [validationResult.right, undefined];
+    } else {
+      console.log(PathReporter.report(validationResult).join(','));
+      return [undefined, 'failed to decode account prefs'];
+    }
+  }, [accountPrefsDoc]);
+  const accountPrefsError = accountPrefsDBError ?.message || accountPrefsDecodeError;
 
   useEffect(() => {
     console.log('loading authored puzzle and plays');
@@ -110,6 +139,38 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
         <p>You&apos;re logged in as <b>{user.email}</b>. <Button onClick={() => App.auth().signOut()} text="Log out" /></p>
         <p>Your display name - <i>{displayName}</i> - is displayed next to any comments you make or puzzles you create.</p>
         <DisplayNameForm user={user} onChange={setDisplayName} />
+        <h3>Notification Settings</h3>
+        {accountPrefsError ?
+          <p>Error loading account preferences, please try again: {accountPrefsError}</p>
+          :
+          (loadingAccountPrefs ?
+            <p>Loading your account preferences...</p>
+            :
+            <>
+              <p>Email me ({user.email}) when:</p>
+              <label>
+                <input css={{ marginRight: '1em' }} type='checkbox' checked={!(accountPrefs ?.unsubs ?.includes('comments'))} onChange={e =>
+                  App.firestore().doc(`prefs/${user.uid}`).set({ unsubs: e.target.checked ? FieldValue.arrayRemove('comments') : FieldValue.arrayUnion('comments') }, { merge: true }).then(() => {
+                    toast(<div>Email Preferences Updated</div>,
+                      {
+                        className: 'snack-bar',
+                        position: 'bottom-left',
+                        autoClose: 4000,
+                        closeButton: false,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: true,
+                        progress: undefined,
+                        transition: Slide
+                      });
+                  })
+                } />
+                I have unseen comments on my puzzles or replies to my comments
+              </label>
+            </>
+          )
+        }
         <h2>Crossword Blog</h2>
         {constructorPage ?
           <>
