@@ -307,6 +307,23 @@ export const Comments = ({ comments, ...props }: CommentsProps): JSX.Element => 
   const [displayName, setDisplayName] = useState(getDisplayName(authContext.user, authContext.constructorPage));
 
   useEffect(() => {
+    if (!authContext.notifications ?.length) {
+      return;
+    }
+    for (const notification of authContext.notifications) {
+      if (notification.r) {  // shouldn't be possible but be defensive
+        continue;
+      }
+      if (notification.k !== 'comment' && notification.k !== 'reply') {
+        continue;
+      }
+      if (findCommentById(comments, notification.c)) {
+        App.firestore().collection('n').doc(notification.id).update({ r: true });
+      }
+    }
+  }, [comments, authContext.notifications]);
+
+  useEffect(() => {
     const rebuiltComments: Array<CommentOrLocalComment> = comments;
     const unmoderatedComments = commentsFromStorage(props.puzzleId);
     const toKeepInStorage: Array<CommentForModerationWithIdT> = [];

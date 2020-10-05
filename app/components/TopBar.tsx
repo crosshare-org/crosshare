@@ -278,7 +278,7 @@ export const TopBar = ({ children }: TopBarProps) => {
       {notifications ?.length && showingNotifications ?
         <Overlay closeCallback={() => setShowingNotifications(false)}>
           <TopBarDropDownLinkA icon={<FaHome />} href="/" text="Crosshare Home" />
-          <h3 css={{ fontWeight: 'normal', textDecoration: 'underline' }}>Notifications</h3>
+          <h3 css={{ marginTop: '1.5em', textAlign: 'center', fontWeight: 'normal', textDecoration: 'underline' }}>Notifications</h3>
           {notifications.map(n => <NotificationLink key={n.id} notification={n} />)}
         </Overlay>
         : ''}
