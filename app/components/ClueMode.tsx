@@ -1,7 +1,7 @@
 import { Dispatch, useState } from 'react';
 
 import { SpinnerFinished } from './Icons';
-import { BuilderEntry, SetClueAction, SetTitleAction, SetNotesAction, PuzzleAction, SetBlogPostAction } from '../reducers/reducer';
+import { BuilderEntry, SetClueAction, SetTitleAction, SetNotesAction, PuzzleAction, SetBlogPostAction, BuilderState, SetPrivateAction } from '../reducers/reducer';
 import { TopBarLink, TopBar } from './TopBar';
 import { Direction } from '../lib/types';
 import { ButtonAsLink } from './Buttons';
@@ -9,6 +9,9 @@ import { Overlay } from './Overlay';
 import { Markdown } from './Markdown';
 import { ImageCropper } from './ImageCropper';
 import { COVER_PIC } from '../lib/style';
+import { TimestampClass } from '../lib/firebaseWrapper';
+import { ToolTipText } from './ToolTipText';
+import { FaInfoCircle } from 'react-icons/fa';
 
 export function sanitizeClue(input: string) {
   return input.substring(0, 140);
@@ -59,6 +62,7 @@ interface ClueModeProps {
   puzzleId: string,
   completedEntries: Array<BuilderEntry>,
   clues: Record<string, string>,
+  state: BuilderState,
   dispatch: Dispatch<PuzzleAction>,
 }
 export const ClueMode = (props: ClueModeProps) => {
@@ -79,13 +83,32 @@ export const ClueMode = (props: ClueModeProps) => {
             props.dispatch(sta);
           }} />
         </label>
+        <h2>Metadata</h2>
+        <div>
+          <label>
+            <input css={{ marginRight: '1em' }} type='checkbox' checked={props.state.isPrivate} onChange={e => {
+              const spa: SetPrivateAction = { type: 'SETPRIVATE', value: e.target.checked };
+              props.dispatch(spa);
+            }} /> This puzzle is private
+            <ToolTipText css={{ marginLeft: '0.5em' }} text={<FaInfoCircle />} tooltip="Private puzzles are still visible to anybody you share the link with. They do not appear on your constructor blog, they aren't eligible to be featured on the Crosshare homepage, and your followers won't be notified when they are published." />
+          </label>
+        </div>
+        <div>
+          <label>
+            <input css={{ marginRight: '1em' }} type='checkbox' checked={props.state.isPrivateUntil !== null} onChange={e => {
+              const spa: SetPrivateAction = { type: 'SETPRIVATE', value: e.target.checked && TimestampClass.now() };
+              props.dispatch(spa);
+            }} /> This puzzle should be hidden until a specified date/time
+            <ToolTipText css={{ marginLeft: '0.5em' }} text={<FaInfoCircle />} tooltip="The puzzle won't appear on your constructor blog and your followers won't be notified until after the specified time." />
+          </label>
+        </div>
         <p><ButtonAsLink onClick={() => setSettingCoverPic(true)} text="Add/edit cover pic" /></p>
         {settingCoverPic ?
           <ImageCropper targetSize={COVER_PIC} isCircle={false} storageKey={`/users/${props.authorId}/${props.puzzleId}/cover.jpg`} cancelCrop={() => setSettingCoverPic(false)} />
           : ''}
         {props.notes !== null ?
           <>
-            <h2>Note</h2>
+            <h3>Note:</h3>
             <input type="text" css={{ width: '100%', marginBottom: '1.5em' }} placeholder="Add a note" value={props.notes} onChange={(e) => {
               const sta: SetNotesAction = { type: 'SETNOTES', value: sanitizeConstructorNotes(e.target.value) };
               props.dispatch(sta);
@@ -99,11 +122,13 @@ export const ClueMode = (props: ClueModeProps) => {
           <p><ButtonAsLink text="Add a note" onClick={() => {
             const sna: SetNotesAction = { type: 'SETNOTES', value: '' };
             props.dispatch(sna);
-          }} /> (notes are shown before a puzzle is started and should be used if you need a short explainer of the theme or how the puzzle works)</p>
+          }} />
+          <ToolTipText css={{ marginLeft: '0.5em' }} text={<FaInfoCircle />} tooltip="Notes are shown before a puzzle is started and should be used if you need a short explainer of the theme or how the puzzle works" />
+          </p>
         }
         {props.blogPost !== null ?
           <>
-            <h2>Blog Post</h2>
+            <h3>Blog Post:</h3>
             <p>Blog posts are shown before solvers are finished with your puzzle. If you include spoilers you can hide them <code>||like this||</code>.</p>
             <textarea css={{ width: '100%', display: 'block', marginBottom: '1em' }} placeholder='Your post text (markdown format)' value={props.blogPost} onChange={(e) => {
               const sta: SetBlogPostAction = { type: 'SETBLOGPOST', value: sanitizeBlogPost(e.target.value) };
@@ -122,7 +147,9 @@ export const ClueMode = (props: ClueModeProps) => {
           <p><ButtonAsLink text="Add a blog post" onClick={() => {
             const sna: SetBlogPostAction = { type: 'SETBLOGPOST', value: '' };
             props.dispatch(sna);
-          }} /> (blog posts are shown before and after the puzzle is solved - describe how you came up with the puzzle, talk about your day, whatever you want!)</p>
+          }} />
+          <ToolTipText css={{ marginLeft: '0.5em' }} text={<FaInfoCircle />} tooltip="Blog posts are shown before and after the puzzle is solved - describe how you came up with the puzzle, talk about your day, whatever you want!" />
+          </p>
         }
         <h2>Clues</h2>
         {props.completedEntries.length ?

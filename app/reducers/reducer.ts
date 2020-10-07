@@ -10,7 +10,7 @@ import {
 } from '../lib/viewableGrid';
 import { cellIndex, valAt, entryAtPosition, entryWord, gridWithEntrySet } from '../lib/gridBase';
 import type firebase from 'firebase';
-import { App } from '../lib/firebaseWrapper';
+import { App, TimestampType } from '../lib/firebaseWrapper';
 
 interface GridInterfaceState {
   type: string,
@@ -70,7 +70,9 @@ export interface BuilderState extends GridInterfaceState {
   publishErrors: Array<string>,
   toPublish: DBPuzzleT | null,
   authorId: string,
-  authorName: string
+  authorName: string,
+  isPrivate: boolean,
+  isPrivateUntil: TimestampType | null
 }
 function isBuilderState(state: GridInterfaceState): state is BuilderState {
   return state.type === 'builder';
@@ -122,6 +124,8 @@ export function initialBuilderState(
     toPublish: null,
     authorId: authorId,
     authorName: authorName,
+    isPrivate: false,
+    isPrivateUntil: null,
     postEdit(_cellIndex) {
       return validateGrid(this);
     }
@@ -164,6 +168,14 @@ export interface SetTitleAction extends PuzzleAction {
 }
 function isSetTitleAction(action: PuzzleAction): action is SetTitleAction {
   return action.type === 'SETTITLE';
+}
+
+export interface SetPrivateAction extends PuzzleAction {
+  type: 'SETPRIVATE',
+  value: boolean | TimestampType,
+}
+function isSetPrivateAction(action: PuzzleAction): action is SetPrivateAction {
+  return action.type === 'SETPRIVATE';
 }
 
 export interface SetBlogPostAction extends PuzzleAction {
@@ -540,6 +552,12 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
   }
   if (isSetTitleAction(action)) {
     return ({ ...state, title: action.value });
+  }
+  if (isSetPrivateAction(action)) {
+    if (typeof action.value === 'boolean') {
+      return ({ ...state, isPrivate: action.value, isPrivateUntil: null });
+    }
+    return ({ ...state, isPrivate: false, isPrivateUntil: action.value });
   }
   if (isSetBlogPostAction(action)) {
     return ({ ...state, blogPost: action.value });

@@ -390,7 +390,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
 
   const [clueMode, setClueMode] = useState(false);
   if (clueMode) {
-    return <ClueMode puzzleId={state.id} authorId={state.authorId} dispatch={dispatch} blogPost={state.blogPost} title={state.title} notes={state.notes} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
+    return <ClueMode state={state} puzzleId={state.id} authorId={state.authorId} dispatch={dispatch} blogPost={state.blogPost} title={state.title} notes={state.notes} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
   }
   return <GridMode getMostConstrainedEntry={getMostConstrainedEntry} reRunAutofill={reRunAutofill} user={props.user} isAdmin={props.isAdmin} autofillEnabled={autofillEnabled} setAutofillEnabled={setAutofillEnabled} autofilledGrid={autofilledGrid} autofillInProgress={autofillInProgress} state={state} dispatch={dispatch} setClueMode={setClueMode} />;
 };

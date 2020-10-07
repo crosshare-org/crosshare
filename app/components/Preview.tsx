@@ -79,7 +79,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
 
   const [clueMode, setClueMode] = useState(false);
   if (clueMode) {
-    return <ClueMode puzzleId={state.id} authorId={state.authorId} dispatch={dispatch} blogPost={state.blogPost} title={state.title} notes={state.notes} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
+    return <ClueMode state={state} puzzleId={state.id} authorId={state.authorId} dispatch={dispatch} blogPost={state.blogPost} title={state.title} notes={state.notes} clues={state.clues} completedEntries={state.grid.entries.filter(e => e.completedWord)} exitClueMode={() => setClueMode(false)} />;
   }
 
   return <>
