@@ -160,8 +160,10 @@ const joinStringsWithAnd = (vals: Array<string>) => {
   }
 };
 
-const puzzleLink = (puzzleId: string) =>
-  `https://crosshare.org/crosswords/${puzzleId}#utm_source=crosshare&utm_medium=email&utm_campaign=notifications`;
+const emailLink = (linkTo: string) =>
+  `https://crosshare.org/${linkTo}#utm_source=crosshare&utm_medium=email&utm_campaign=notifications`;
+
+const puzzleLink = (puzzleId: string) => emailLink(`crosswords/${puzzleId}`);
 
 const tagsToReplace: Record<string, string> = {
   '&': '&amp;',
@@ -209,7 +211,7 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
       return rv;
     }, {});
     if (comments.length) {
-      subject = 'New comments on ' + joinStringsWithAnd(Object.values(commentsByPuzzle).map(a => a[0].pn).slice(0, 3));
+      subject = 'Crosshare: new comments on ' + joinStringsWithAnd(Object.values(commentsByPuzzle).map(a => a[0].pn).slice(0, 3));
       markdown += '### Comments on your puzzles:\n\n';
       Object.entries(commentsByPuzzle).forEach(([puzzleId, commentNotifications]) => {
         const nameDisplay = joinStringsWithAnd(commentNotifications.map(n => n.cn));
@@ -225,12 +227,12 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
     }, {});
     if (replies.length) {
       if (!subject) {
-        subject = 'Replies to your comments on ' + joinStringsWithAnd(Object.values(repliesByPuzzle).map(a => a[0].pn).slice(0, 3));
+        subject = 'Crosshare: new replies to your comments on ' + joinStringsWithAnd(Object.values(repliesByPuzzle).map(a => a[0].pn).slice(0, 3));
       }
       markdown += '### Replies to your comments:\n\n';
       Object.entries(repliesByPuzzle).forEach(([puzzleId, commentNotifications]) => {
         const nameDisplay = joinStringsWithAnd(commentNotifications.map(n => n.cn));
-        markdown += `* ${nameDisplay} replied to your comment(s) on [${commentNotifications[0].pn}](${puzzleLink(puzzleId)})\n`;
+        markdown += `* ${nameDisplay} replied to your comments on [${commentNotifications[0].pn}](${puzzleLink(puzzleId)})\n`;
       });
       markdown += '\n\n';
     }
@@ -240,15 +242,19 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
     return;
   }
 
+  markdown += `---
+
+Crosshare notifications are sent at most once per day. To manage your notification preferences visit [your Account page](${emailLink('account')})`;
+
   return sendEmail({
     toAddress,
-    subject: subject || 'Notifications from Crosshare',
+    subject: subject || 'Crosshare Notifications',
     text: markdown,
     html: `<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
-<title>${safeForHtml(subject || 'Notifications from Crosshare')}</title>
+<title>${safeForHtml(subject || 'Crosshare Notifications')}</title>
 </head>
 <body>
 ${SimpleMarkdown.defaultHtmlOutput(SimpleMarkdown.defaultBlockParse(markdown))}
