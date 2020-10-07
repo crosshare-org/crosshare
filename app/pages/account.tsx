@@ -1,5 +1,3 @@
-import * as t from 'io-ts';
-
 import { useState, useEffect, useMemo } from 'react';
 import Head from 'next/head';
 
@@ -18,25 +16,14 @@ import { PuzzleResult, puzzleFromDB } from '../lib/types';
 import { Button } from '../components/Buttons';
 import { ImageCropper } from '../components/ImageCropper';
 import { PROFILE_PIC, COVER_PIC } from '../lib/style';
+import { AccountPrefsV, UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { Slide, toast } from 'react-toastify';
 
-const Flags = {
-  all: null,  // unsubscribe from all notification emails
-  comments: null,  // comments on your puzzles or replies to your comments
-  featured: null,  // one of your puzzles is featured or set as daily mini
-  newpuzzles: null,  // one of your followed authors published a new puzzle
-};
-
-const AccountPrefsV = t.partial({
-  /** user id receiving the notification */
-  unsubs: t.array(t.keyof(Flags)),
-});
-
 interface PrefSettingProps {
-  prefs: t.TypeOf<typeof AccountPrefsV> | undefined,
+  prefs: AccountPrefsT | undefined,
   userId: string,
-  flag: keyof (typeof Flags),
+  flag: keyof (typeof UnsubscribeFlags),
   text: string,
   invert?: boolean,
   neverDisable?: boolean

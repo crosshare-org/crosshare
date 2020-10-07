@@ -11,6 +11,7 @@ import { mapEachResult } from './dbUtils';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
 import { NotificationV, NotificationT } from './notifications';
 import SimpleMarkdown from 'simple-markdown';
+import { AccountPrefsV, AccountPrefsT } from './prefs';
 
 export async function getStorageUrl(storageKey: string): Promise<string | null> {
   const profilePic = AdminApp.storage().bucket().file(storageKey);
@@ -162,7 +163,20 @@ const puzzleLink = (puzzleId: string) =>
   `https://crosshare.org/crosswords/${puzzleId}#utm_source=crosshare&utm_medium=email&utm_campaign=notifications`;
 
 async function queueEmailForUser(userId: string, notifications: Array<NotificationT>) {
+  const db = AdminApp.firestore();
   const sorted = notifications.sort((n1, n2) => n1.id.localeCompare(n2.id));
+  const prefsRes = await db.doc(`prefs/${userId}`).get();
+  let prefs: AccountPrefsT | null = null;
+  if (prefsRes.exists) {
+    const validationResult = AccountPrefsV.decode(prefsRes.data());
+    if (isRight(validationResult)) {
+      prefs = validationResult.right;
+      if (prefs.unsubs ?.includes('all')) {
+        return;
+      }
+    }
+  }
+
   const user = await getUser(userId);
   const toAddress = user.email;
   if (!toAddress) {
@@ -172,47 +186,51 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
 
   let markdown = '';
   let subject: string | null = null;
-  const comments = sorted.filter(n => n.k === 'comment');
-  const commentsByPuzzle = comments.reduce((rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
-    (rv[x.p] = rv[x.p] || []).push(x);
-    return rv;
-  }, {});
-  if (comments.length) {
-    subject = 'New comments on ' + joinStringsWithAnd(Object.values(commentsByPuzzle).map(a => a[0].pn).slice(0, 3));
-    markdown += '### Comments on your puzzles:\n\n';
-    Object.entries(commentsByPuzzle).forEach(([puzzleId, commentNotifications]) => {
-      const nameDisplay = joinStringsWithAnd(commentNotifications.map(n => n.cn));
-      markdown += `* ${nameDisplay} commented on [${commentNotifications[0].pn}](${puzzleLink(puzzleId)})\n`;
-    });
-    markdown += '\n\n';
-  }
 
-  const replies = sorted.filter(n => n.k === 'reply');
-  const repliesByPuzzle = replies.reduce((rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
-    (rv[x.p] = rv[x.p] || []).push(x);
-    return rv;
-  }, {});
-  if (replies.length) {
-    if (!subject) {
-      subject = 'Replies to your comment on ' + joinStringsWithAnd(Object.values(commentsByPuzzle).map(a => a[0].pn).slice(0, 3));
+  if (!prefs ?.unsubs ?.includes('comments')) {
+    const comments = sorted.filter(n => n.k === 'comment');
+    const commentsByPuzzle = comments.reduce((rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
+      (rv[x.p] = rv[x.p] || []).push(x);
+      return rv;
+    }, {});
+    if (comments.length) {
+      subject = 'New comments on ' + joinStringsWithAnd(Object.values(commentsByPuzzle).map(a => a[0].pn).slice(0, 3));
+      markdown += '### Comments on your puzzles:\n\n';
+      Object.entries(commentsByPuzzle).forEach(([puzzleId, commentNotifications]) => {
+        const nameDisplay = joinStringsWithAnd(commentNotifications.map(n => n.cn));
+        markdown += `* ${nameDisplay} commented on [${commentNotifications[0].pn}](${puzzleLink(puzzleId)})\n`;
+      });
+      markdown += '\n\n';
     }
-    markdown += '### Replies to your comments:\n\n';
-    Object.entries(repliesByPuzzle).forEach(([puzzleId, commentNotifications]) => {
-      const nameDisplay = joinStringsWithAnd(commentNotifications.map(n => n.cn));
-      markdown += `* ${nameDisplay} replied to your comment(s) on [${commentNotifications[0].pn}](${puzzleLink(puzzleId)})\n`;
-    });
-    markdown += '\n\n';
+
+    const replies = sorted.filter(n => n.k === 'reply');
+    const repliesByPuzzle = replies.reduce((rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
+      (rv[x.p] = rv[x.p] || []).push(x);
+      return rv;
+    }, {});
+    if (replies.length) {
+      if (!subject) {
+        subject = 'Replies to your comment on ' + joinStringsWithAnd(Object.values(commentsByPuzzle).map(a => a[0].pn).slice(0, 3));
+      }
+      markdown += '### Replies to your comments:\n\n';
+      Object.entries(repliesByPuzzle).forEach(([puzzleId, commentNotifications]) => {
+        const nameDisplay = joinStringsWithAnd(commentNotifications.map(n => n.cn));
+        markdown += `* ${nameDisplay} replied to your comment(s) on [${commentNotifications[0].pn}](${puzzleLink(puzzleId)})\n`;
+      });
+      markdown += '\n\n';
+    }
   }
 
-  const db = AdminApp.firestore();
+  if (!markdown) {
+    return;
+  }
+
   return sendEmail({
     toAddress,
     subject: subject || 'Notifications from Crosshare',
     text: markdown,
     html: SimpleMarkdown.defaultHtmlOutput(SimpleMarkdown.defaultBlockParse(markdown))
-  }).then(() =>
-    Promise.all(notifications.map(n => db.doc(`n/${n.id}`).update({ r: true })))
-  );
+  });
 }
 
 export async function queueEmails() {
@@ -226,5 +244,7 @@ export async function queueEmails() {
     return rv;
   }, {});
   console.log('attempting to queue for ', Object.keys(unreadsByUserId).length);
-  return Promise.all(Object.entries(unreadsByUserId).map(e => queueEmailForUser(...e)));
+  return Promise.all(Object.entries(unreadsByUserId).map(e => queueEmailForUser(...e).then(
+    () => Promise.all(e[1].map(n => db.doc(`n/${n.id}`).update({ r: true })))
+  )));
 }

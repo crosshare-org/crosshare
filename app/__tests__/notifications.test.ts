@@ -188,61 +188,106 @@ test('should handle a combination of multiple new comments and nested replies', 
   expect(notifications).toMatchSnapshot();
 });
 
-test('email queuing', async () => {
-  const startingPoint = {
-    ...basePuzzle,
-    cs: [getComment({ r: [getComment({ a: 'rando', i: 'baz' })] })]
-  };
-  const withReplies = {
-    ...basePuzzle,
-    cs: [
-      getComment({ a: 'blaster', i: 'bam', n: 'BLAST' }),
-      getComment({
-        r: [
-          getComment({
-            a: 'rando', i: 'baz', r: [
-              getComment({ i: 'whamo' }),
-              getComment({ a: 'blaster', i: 'test' })
-            ]
-          }),
-          getComment({ a: 'another-rando', i: 'foobar' })
-        ]
-      })
-    ]
-  };
-  const notifications = notificationsForPuzzleChange(startingPoint, withReplies, 'puzzle-id-here');
-  expect(notifications.length).toEqual(5);
-  const adminApp = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
-  setAdminApp(adminApp as unknown as firebaseAdminType.app.App);
-  for (const notification of notifications) {
-    await adminApp.firestore().collection('n').doc(notification.id).set(notification);
-  }
-  setUserMap({ rando: { email: 'rando@example.com' } as firebase.User, [basePuzzle.a]: { email: 'mike@example.com' } as firebase.User });
-
-  // Nothing gets sent until at least an hour later
-  await queueEmails();
-  const mail = await adminApp.firestore().collection('mail').get();
-  expect(mail.docs.map(d => d.data())).toMatchSnapshot();
-
+describe('email queueing', () => {
+  let adminApp: firebaseAdminType.app.App;
   const realDate = Date;
 
-  const mockDate = add(new Date(), { hours: 2 });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (global as any).Date = class extends realDate {
-    constructor() {
-      super();
-      return mockDate;
+  beforeEach(async () => {
+    const startingPoint = {
+      ...basePuzzle,
+      cs: [getComment({ r: [getComment({ a: 'rando', i: 'baz' })] })]
+    };
+    const withReplies = {
+      ...basePuzzle,
+      cs: [
+        getComment({ a: 'blaster', i: 'bam', n: 'BLAST' }),
+        getComment({
+          r: [
+            getComment({
+              a: 'rando', i: 'baz', r: [
+                getComment({ i: 'whamo' }),
+                getComment({ a: 'blaster', i: 'test' })
+              ]
+            }),
+            getComment({ a: 'another-rando', i: 'foobar' })
+          ]
+        })
+      ]
+    };
+    const notifications = notificationsForPuzzleChange(startingPoint, withReplies, 'puzzle-id-here');
+    expect(notifications.length).toEqual(5);
+    await firebaseTesting.clearFirestoreData({ projectId });
+    adminApp = firebaseTesting.initializeAdminApp({ projectId }) as unknown as firebaseAdminType.app.App;
+    setAdminApp(adminApp);
+    for (const notification of notifications) {
+      await adminApp.firestore().collection('n').doc(notification.id).set(notification);
     }
-  };
+    setUserMap({ rando: { email: 'rando@example.com' } as firebase.User, [basePuzzle.a]: { email: 'mike@example.com' } as firebase.User });
+  });
 
-  await queueEmails();
-  // we can do it again immediately and we shouldn't double send due to marking as read
-  await queueEmails();
+  afterEach(async () => {
+    await adminApp.delete();
+  });
 
-  const mail2 = await adminApp.firestore().collection('mail').get();
-  expect(mail2.docs.map(d => d.data()).sort((a, b) => a.to[0].localeCompare(b.to[0]))).toMatchSnapshot();
+  async function withMockedDate(work: () => Promise<void>) {
+    const mockDate = add(new Date(), { hours: 2 });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (global as any).Date = class extends realDate {
+      constructor() {
+        super();
+        return mockDate;
+      }
+    };
+    await work();
 
-  global.Date = realDate;
+    global.Date = realDate;
+  }
 
-  adminApp.delete();
+  test('nothing sends until an hour after comments are posted', async () => {
+    await queueEmails();
+    const mail = await adminApp.firestore().collection('mail').get();
+    expect(mail.size).toEqual(0);
+  });
+
+  test('emails send after an hour, but dont double send', async () => {
+    return withMockedDate(async () => {
+      await queueEmails();
+      // we can do it again immediately and we shouldn't double send due to marking as read
+      await queueEmails();
+
+      const mail2 = await adminApp.firestore().collection('mail').get();
+      expect(mail2.size).toEqual(2);
+      expect(mail2.docs.map(d => d.data()).sort((a, b) => a.to[0].localeCompare(b.to[0]))).toMatchSnapshot();
+    });
+  });
+
+  test('dont send if unsubscribed to all', async () => {
+    return withMockedDate(async () => {
+      await adminApp.firestore().collection('prefs').doc('rando').set({ unsubs: ['all'] }, { merge: true });
+
+      await queueEmails();
+
+      // We should still have marked everything as read
+      expect((await adminApp.firestore().collection('n').where('r', '==', false).get()).size).toEqual(0);
+
+      const mail2 = await adminApp.firestore().collection('mail').get();
+      expect(mail2.size).toEqual(1);
+      expect(mail2.docs[0].data()).toMatchSnapshot();
+    });
+  });
+
+  test('dont send if unsubscribed to comments and thats all we have', async () => {
+    return withMockedDate(async () => {
+      await adminApp.firestore().collection('prefs').doc(basePuzzle.a).set({ unsubs: ['comments'] }, { merge: true });
+
+      await queueEmails();
+
+      // We should still have marked everything as read
+      expect((await adminApp.firestore().collection('n').where('r', '==', false).get()).size).toEqual(0);
+
+      const mail2 = await adminApp.firestore().collection('mail').get();
+      expect(mail2.size).toEqual(1);
+      expect(mail2.docs[0].data()).toMatchSnapshot();
+    });
+  });
 });
