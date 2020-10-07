@@ -8,6 +8,7 @@ import { isRight } from "fp-ts/lib/Either";
 
 import { runAnalytics } from '../../app/lib/analytics';
 import { notificationsForPuzzleChange } from '../../app/lib/notifications';
+import { queueEmails } from '../../app/lib/serverOnly';
 
 import { CronStatusV, CronStatusT } from '../../app/lib/dbtypes';
 
@@ -57,6 +58,11 @@ export const scheduledFirestoreExport = functions.pubsub.schedule('every day 00:
     });
 });
 
+export const notificationsSend = functions.pubsub.schedule('every day 16:00').onRun(async () => {
+  console.log('queuing emails');
+  await queueEmails();
+  console.log('queued');
+});
 
 export const puzzleUpdate = functions.firestore
   .document('c/{puzzleId}')
