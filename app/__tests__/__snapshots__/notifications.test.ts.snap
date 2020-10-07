@@ -1,5 +1,47 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`email queuing 1`] = `Array []`;
+
+exports[`email queuing 2`] = `
+Array [
+  Object {
+    "message": Object {
+      "html": "<h3>Comments on your puzzles:</h3><ul><li>BLAST and Mike D commented on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul><h3>Replies to your comments:</h3><ul><li>Mike D replied to your comment(s) on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul>",
+      "subject": "New comments on Raises, as young",
+      "text": "### Comments on your puzzles:
+
+* BLAST and Mike D commented on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+
+
+### Replies to your comments:
+
+* Mike D replied to your comment(s) on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+
+
+",
+    },
+    "to": Array [
+      "mike@example.com",
+    ],
+  },
+  Object {
+    "message": Object {
+      "html": "<h3>Replies to your comments:</h3><ul><li>Mike D and Mike D replied to your comment(s) on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul>",
+      "subject": "Replies to your comment on  and ",
+      "text": "### Replies to your comments:
+
+* Mike D and Mike D replied to your comment(s) on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+
+
+",
+    },
+    "to": Array [
+      "rando@example.com",
+    ],
+  },
+]
+`;
+
 exports[`should handle a combination of multiple new comments and nested replies 1`] = `
 Array [
   Object {

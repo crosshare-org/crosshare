@@ -6,6 +6,9 @@ export let AdminApp: firebaseAdminType.app.App;
 
 export const setApp = (app: firebase.app.App) => { App = app; };
 export const setAdminApp = (app: firebaseAdminType.app.App) => { AdminApp = app; };
+let userMap: Record<string, firebase.User> = {};
+export const setUserMap = (_map: Record<string, firebase.User>) => { userMap = _map; };
+export const getUser = (userId: string) => userMap[userId];
 
 export const AuthProvider = null;
 

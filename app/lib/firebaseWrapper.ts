@@ -74,6 +74,9 @@ export const signInAnonymously = async () => {
   return userCredential.user;
 };
 
+export const setUserMap = (_map: Record<string, firebase.User>) => {/* noop */ };
+export const getUser = (userId: string) => AdminApp.auth().getUser(userId);
+
 export const AuthProvider = new firebase.auth.GoogleAuthProvider();
 
 export const DeleteSentinal = firebase.firestore.FieldValue.delete();

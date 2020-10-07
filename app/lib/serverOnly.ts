@@ -1,4 +1,4 @@
-import { AdminApp, AdminTimestamp } from '../lib/firebaseWrapper';
+import { AdminApp, AdminTimestamp, getUser } from '../lib/firebaseWrapper';
 import { PuzzleResult, puzzleFromDB } from './types';
 import type firebaseAdminType from 'firebase-admin';
 
@@ -9,6 +9,8 @@ import { DBPuzzleV, DBPuzzleT } from './dbtypes';
 import { adminTimestamp } from './adminTimestamp';
 import { mapEachResult } from './dbUtils';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
+import { NotificationV, NotificationT } from './notifications';
+import SimpleMarkdown from 'simple-markdown';
 
 export async function getStorageUrl(storageKey: string): Promise<string | null> {
   const profilePic = AdminApp.storage().bucket().file(storageKey);
@@ -138,10 +140,90 @@ export async function userIdToPage(userId: string): Promise<ConstructorPageT | n
   return usernameMap[userId] || null;
 }
 
-export async function sendEmail(toAddress: string, subject: string, text: string, html: string) {
+export async function sendEmail({ toAddress, subject, text, html }: { toAddress: string, subject: string, text: string, html: string }) {
   const db = AdminApp.firestore();
   return db.collection('mail').add({
     to: [toAddress],
     message: { subject, text, html }
   });
+}
+
+const joinStringsWithAnd = (vals: Array<string>) => {
+  if (vals.length === 1) {
+    return vals[0];
+  } else if (vals.length === 2) {
+    return `${vals[0]} and ${vals[1]}`;
+  } else {
+    return vals.slice(0, -1).join(', ') + ' and ' + vals.slice(-1);
+  }
+};
+
+const puzzleLink = (puzzleId: string) =>
+  `https://crosshare.org/crosswords/${puzzleId}#utm_source=crosshare&utm_medium=email&utm_campaign=notifications`;
+
+async function queueEmailForUser(userId: string, notifications: Array<NotificationT>) {
+  const user = await getUser(userId);
+  const toAddress = user.email;
+  if (!toAddress) {
+    console.error('no to address', userId);
+    return;
+  }
+
+  let markdown = '';
+  let subject: string | null = null;
+  const comments = notifications.filter(n => n.k === 'comment');
+  const commentsByPuzzle = comments.reduce((rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
+    (rv[x.p] = rv[x.p] || []).push(x);
+    return rv;
+  }, {});
+  if (comments.length) {
+    subject = 'New comments on ' + joinStringsWithAnd(Object.values(commentsByPuzzle).map(a => a[0].pn).slice(0, 3));
+    markdown += '### Comments on your puzzles:\n\n';
+    Object.entries(commentsByPuzzle).forEach(([puzzleId, commentNotifications]) => {
+      const nameDisplay = joinStringsWithAnd(commentNotifications.map(n => n.cn));
+      markdown += `* ${nameDisplay} commented on [${commentNotifications[0].pn}](${puzzleLink(puzzleId)})\n`;
+    });
+    markdown += '\n\n';
+  }
+
+  const replies = notifications.filter(n => n.k === 'reply');
+  const repliesByPuzzle = replies.reduce((rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
+    (rv[x.p] = rv[x.p] || []).push(x);
+    return rv;
+  }, {});
+  if (replies.length) {
+    if (!subject) {
+      subject = 'Replies to your comment on ' + joinStringsWithAnd(Object.values(commentsByPuzzle).map(a => a[0].pn).slice(0, 3));
+    }
+    markdown += '### Replies to your comments:\n\n';
+    Object.entries(repliesByPuzzle).forEach(([puzzleId, commentNotifications]) => {
+      const nameDisplay = joinStringsWithAnd(commentNotifications.map(n => n.cn));
+      markdown += `* ${nameDisplay} replied to your comment(s) on [${commentNotifications[0].pn}](${puzzleLink(puzzleId)})\n`;
+    });
+    markdown += '\n\n';
+  }
+
+  const db = AdminApp.firestore();
+  return sendEmail({
+    toAddress,
+    subject: subject || 'Notifications from Crosshare',
+    text: markdown,
+    html: SimpleMarkdown.defaultHtmlOutput(SimpleMarkdown.defaultBlockParse(markdown))
+  }).then(() =>
+    Promise.all(notifications.map(n => db.doc(`n/${n.id}`).update({ r: true })))
+  );
+}
+
+export async function queueEmails() {
+  const db = AdminApp.firestore();
+  const unread = await mapEachResult(
+    db.collection('n').where('r', '==', false).where('t', '<=', AdminTimestamp.fromDate(new Date())),
+    NotificationV, (n) => n);
+  console.log('unread: ', unread.length);
+  const unreadsByUserId = unread.reduce((rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
+    (rv[x.u] = rv[x.u] || []).push(x);
+    return rv;
+  }, {});
+  console.log('attempting to queue for ', Object.keys(unreadsByUserId).length);
+  return Promise.all(Object.entries(unreadsByUserId).sort((a, b) => a[0].localeCompare(b[0])).map(e => queueEmailForUser(...e)));
 }
