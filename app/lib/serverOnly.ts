@@ -150,12 +150,13 @@ export async function sendEmail({ toAddress, subject, text, html }: { toAddress:
 }
 
 const joinStringsWithAnd = (vals: Array<string>) => {
-  if (vals.length === 1) {
-    return vals[0];
-  } else if (vals.length === 2) {
-    return `${vals[0]} and ${vals[1]}`;
+  const dedup = Array.from(new Set(vals)).sort();
+  if (dedup.length === 1) {
+    return dedup[0];
+  } else if (dedup.length === 2) {
+    return `${dedup[0]} and ${dedup[1]}`;
   } else {
-    return vals.slice(0, -1).join(', ') + ' and ' + vals.slice(-1);
+    return dedup.slice(0, -1).join(', ') + ' and ' + dedup.slice(-1);
   }
 };
 
@@ -210,7 +211,7 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
     }, {});
     if (replies.length) {
       if (!subject) {
-        subject = 'Replies to your comment on ' + joinStringsWithAnd(Object.values(commentsByPuzzle).map(a => a[0].pn).slice(0, 3));
+        subject = 'Replies to your comments on ' + joinStringsWithAnd(Object.values(repliesByPuzzle).map(a => a[0].pn).slice(0, 3));
       }
       markdown += '### Replies to your comments:\n\n';
       Object.entries(repliesByPuzzle).forEach(([puzzleId, commentNotifications]) => {

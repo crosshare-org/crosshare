@@ -3,11 +3,11 @@
 exports[`email queueing dont send if unsubscribed to all 1`] = `
 Object {
   "message": Object {
-    "html": "<h3>Comments on your puzzles:</h3><ul><li>BLAST, Mike D and Mike D commented on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul>",
+    "html": "<h3>Comments on your puzzles:</h3><ul><li>BLAST and Mike D commented on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul>",
     "subject": "New comments on Raises, as young",
     "text": "### Comments on your puzzles:
 
-* BLAST, Mike D and Mike D commented on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+* BLAST and Mike D commented on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
 
 
 ",
@@ -21,11 +21,11 @@ Object {
 exports[`email queueing dont send if unsubscribed to comments and thats all we have 1`] = `
 Object {
   "message": Object {
-    "html": "<h3>Replies to your comments:</h3><ul><li>Mike D and Mike D replied to your comment(s) on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul>",
-    "subject": "Replies to your comment on  and ",
+    "html": "<h3>Replies to your comments:</h3><ul><li>Mike D replied to your comment(s) on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul>",
+    "subject": "Replies to your comments on Raises, as young",
     "text": "### Replies to your comments:
 
-* Mike D and Mike D replied to your comment(s) on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+* Mike D replied to your comment(s) on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
 
 
 ",
@@ -40,11 +40,11 @@ exports[`email queueing emails send after an hour, but dont double send 1`] = `
 Array [
   Object {
     "message": Object {
-      "html": "<h3>Comments on your puzzles:</h3><ul><li>BLAST, Mike D and Mike D commented on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul>",
+      "html": "<h3>Comments on your puzzles:</h3><ul><li>BLAST and Mike D commented on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul>",
       "subject": "New comments on Raises, as young",
       "text": "### Comments on your puzzles:
 
-* BLAST, Mike D and Mike D commented on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+* BLAST and Mike D commented on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
 
 
 ",
@@ -55,11 +55,11 @@ Array [
   },
   Object {
     "message": Object {
-      "html": "<h3>Replies to your comments:</h3><ul><li>Mike D and Mike D replied to your comment(s) on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul>",
-      "subject": "Replies to your comment on  and ",
+      "html": "<h3>Replies to your comments:</h3><ul><li>Mike D replied to your comment(s) on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul>",
+      "subject": "Replies to your comments on Raises, as young",
       "text": "### Replies to your comments:
 
-* Mike D and Mike D replied to your comment(s) on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+* Mike D replied to your comment(s) on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
 
 
 ",
