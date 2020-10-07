@@ -191,6 +191,8 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     authorId: props.user.uid,
     authorName: props.user.displayName || 'Anonymous',
     editable: true,
+    isPrivate: saved ?.isPrivate || false,
+    isPrivateUntil: saved ?.isPrivateUntil || null,
   });
 };
 
@@ -378,10 +380,12 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       clues: state.clues,
       title: state.title,
       notes: state.notes,
+      isPrivate: state.isPrivate,
+      isPrivateUntil: state.isPrivateUntil ?.toMillis()
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(inProgress));
   }, [state.id, state.clues, state.grid.cells, state.grid.width, state.grid.height,
-    state.grid.highlight, state.grid.highlighted, state.title, state.notes]);
+    state.grid.highlight, state.grid.highlighted, state.title, state.notes, state.isPrivate, state.isPrivateUntil]);
 
   const reRunAutofill = useCallback(() => {
     priorSolves.current = [];

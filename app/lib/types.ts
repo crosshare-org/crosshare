@@ -176,7 +176,9 @@ export const PuzzleInProgressV = t.intersection([
     notes: t.union([t.string, t.null])
   }),
   t.partial({
-    id: t.string
+    id: t.string,
+    isPrivate: t.boolean,
+    isPrivateUntil: t.union([t.number, t.null]),
   })
 ]);
 export type PuzzleInProgressT = t.TypeOf<typeof PuzzleInProgressV>;

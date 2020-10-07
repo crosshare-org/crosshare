@@ -10,7 +10,7 @@ import {
 } from '../lib/viewableGrid';
 import { cellIndex, valAt, entryAtPosition, entryWord, gridWithEntrySet } from '../lib/gridBase';
 import type firebase from 'firebase';
-import { App, TimestampType } from '../lib/firebaseWrapper';
+import { App, TimestampType, TimestampClass } from '../lib/firebaseWrapper';
 
 interface GridInterfaceState {
   type: string,
@@ -79,7 +79,7 @@ function isBuilderState(state: GridInterfaceState): state is BuilderState {
 }
 
 export function initialBuilderState(
-  { id, width, height, grid, highlighted, highlight, title, notes, clues, authorId, authorName, editable }:
+  { id, width, height, grid, highlighted, highlight, title, notes, clues, authorId, authorName, editable, isPrivate, isPrivateUntil }:
     {
       id: string | null,
       width: number,
@@ -93,6 +93,8 @@ export function initialBuilderState(
       authorId: string,
       authorName: string,
       editable: boolean,
+      isPrivate: boolean,
+      isPrivateUntil: number | null,
     }) {
   const initialGrid = fromCells({
     mapper: (e) => e,
@@ -124,8 +126,8 @@ export function initialBuilderState(
     toPublish: null,
     authorId: authorId,
     authorName: authorName,
-    isPrivate: false,
-    isPrivateUntil: null,
+    isPrivate: isPrivate,
+    isPrivateUntil: isPrivateUntil !== null ? TimestampClass.fromMillis(isPrivateUntil) : null,
     postEdit(_cellIndex) {
       return validateGrid(this);
     }
@@ -584,6 +586,8 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
       authorId: state.authorId,
       authorName: state.authorName,
       editable: true,
+      isPrivate: false,
+      isPrivateUntil: null,
     });
   }
   if (isPublishAction(action)) {

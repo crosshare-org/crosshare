@@ -12,6 +12,9 @@ import { COVER_PIC } from '../lib/style';
 import { TimestampClass } from '../lib/firebaseWrapper';
 import { ToolTipText } from './ToolTipText';
 import { FaInfoCircle } from 'react-icons/fa';
+import formatRelative from 'date-fns/formatRelative';
+import lightFormat from 'date-fns/lightFormat';
+import set from 'date-fns/set';
 
 export function sanitizeClue(input: string) {
   return input.substring(0, 140);
@@ -68,6 +71,7 @@ interface ClueModeProps {
 export const ClueMode = (props: ClueModeProps) => {
   const [showPostPreview, setShowPostPreview] = useState(false);
   const [settingCoverPic, setSettingCoverPic] = useState(false);
+  const privateUntil = props.state.isPrivateUntil ?.toDate();
 
   const clueRows = props.completedEntries.sort((e1, e2) => e1.direction === e2.direction ? e1.labelNumber - e2.labelNumber : e1.direction - e2.direction).map(e => <ClueRow key={e.completedWord || ''} dispatch={props.dispatch} entry={e} clues={props.clues} />);
   return (
@@ -98,9 +102,57 @@ export const ClueMode = (props: ClueModeProps) => {
             <input css={{ marginRight: '1em' }} type='checkbox' checked={props.state.isPrivateUntil !== null} onChange={e => {
               const spa: SetPrivateAction = { type: 'SETPRIVATE', value: e.target.checked && TimestampClass.now() };
               props.dispatch(spa);
-            }} /> This puzzle should be hidden until a specified date/time
+            }} /> This puzzle should be private until a specified date/time
             <ToolTipText css={{ marginLeft: '0.5em' }} text={<FaInfoCircle />} tooltip="The puzzle won't appear on your constructor blog and your followers won't be notified until after the specified time." />
           </label>
+          {privateUntil ?
+            <p>
+              Visible after {formatRelative(privateUntil, new Date())}:
+              <input css={{
+                marginLeft: '0.5em',
+                '&:invalid': {
+                  borderColor: 'var(--error)'
+                }
+              }} type="date"
+              defaultValue={lightFormat(privateUntil, 'yyyy-MM-dd')}
+              required pattern="\d{4}-\d{1,2}-\d{1,2}"
+              onBlur={e => {
+                if (!e.target.checkValidity()) {
+                  return;
+                }
+                const split = e.target.value.split('-');
+                const newDate = set(
+                  privateUntil,
+                  {
+                    year: parseInt(split[0]),
+                    month: parseInt(split[1]) - 1,
+                    date: parseInt(split[2]),
+                  }
+                );
+                const spa: SetPrivateAction = { type: 'SETPRIVATE', value: TimestampClass.fromDate(newDate) };
+                props.dispatch(spa);
+              }} />
+              <input css={{ marginLeft: '0.5em' }} type="time"
+                defaultValue={lightFormat(privateUntil, 'HH:mm')}
+                required pattern="[0-9]{1,2}:[0-9]{2}"
+                onBlur={e => {
+                  if (!e.target.checkValidity()) {
+                    return;
+                  }
+                  const split = e.target.value.split(':');
+                  const newDate = set(
+                    privateUntil,
+                    {
+                      hours: parseInt(split[0]),
+                      minutes: parseInt(split[1])
+                    }
+                  );
+                  const spa: SetPrivateAction = { type: 'SETPRIVATE', value: TimestampClass.fromDate(newDate) };
+                  props.dispatch(spa);
+                }} />
+            </p>
+            : ''
+          }
         </div>
         <p><ButtonAsLink onClick={() => setSettingCoverPic(true)} text="Add/edit cover pic" /></p>
         {settingCoverPic ?

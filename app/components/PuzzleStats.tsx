@@ -46,6 +46,8 @@ const initializeState = (props: PuzzleStatsProps): BuilderState => {
     authorId: props.puzzle.authorId,
     authorName: props.puzzle.authorName,
     editable: false,
+    isPrivate: false,
+    isPrivateUntil: null,
   });
 };
 

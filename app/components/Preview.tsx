@@ -39,6 +39,8 @@ const initializeState = (props: PuzzleInProgressT & AuthProps): BuilderState => 
     authorId: props.user.uid,
     authorName: props.user.displayName || 'Anonymous',
     editable: false,
+    isPrivate: false,
+    isPrivateUntil: null,
   });
 };
 
