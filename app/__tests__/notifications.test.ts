@@ -290,4 +290,29 @@ describe('email queueing', () => {
       expect(mail2.docs[0].data()).toMatchSnapshot();
     });
   });
+
+  test('emails work w/ multiple puzzles and w/ html in title', async () => {
+    const puzzleWithComment = getMockedPuzzle({
+      t: 'Our Second <span> Title',
+      cs: [getComment({ a: 'rando' })]
+    });
+    const withReplies = {
+      ...puzzleWithComment,
+      cs: [getComment({ a: 'rando', r: [getComment({ a: 'anotherAuthor', n: 'Commenter <div> Foo', i: 'baz' })] })]
+    };
+    const notifications = notificationsForPuzzleChange(puzzleWithComment, withReplies, 'second-puzzle');
+    expect(notifications.length).toEqual(2);
+    for (const notification of notifications) {
+      await adminApp.firestore().collection('n').doc(notification.id).set(notification);
+    }
+
+    return withMockedDate(async () => {
+
+      await queueEmails();
+
+      const mail2 = await adminApp.firestore().collection('mail').get();
+      expect(mail2.size).toEqual(2);
+      expect(mail2.docs.map(d => d.data()).sort((a, b) => a.to[0].localeCompare(b.to[0]))).toMatchSnapshot();
+    });
+  });
 });

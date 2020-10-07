@@ -163,6 +163,20 @@ const joinStringsWithAnd = (vals: Array<string>) => {
 const puzzleLink = (puzzleId: string) =>
   `https://crosshare.org/crosswords/${puzzleId}#utm_source=crosshare&utm_medium=email&utm_campaign=notifications`;
 
+const tagsToReplace: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;'
+};
+
+function replaceTag(tag: string) {
+  return tagsToReplace[tag] || tag;
+}
+
+function safeForHtml(str: string) {
+  return str.replace(/[&<>]/g, replaceTag);
+}
+
 async function queueEmailForUser(userId: string, notifications: Array<NotificationT>) {
   const db = AdminApp.firestore();
   const sorted = notifications.sort((n1, n2) => n1.id.localeCompare(n2.id));
@@ -230,7 +244,16 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
     toAddress,
     subject: subject || 'Notifications from Crosshare',
     text: markdown,
-    html: SimpleMarkdown.defaultHtmlOutput(SimpleMarkdown.defaultBlockParse(markdown))
+    html: `<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
+<title>${safeForHtml(subject || 'Notifications from Crosshare')}</title>
+</head>
+<body>
+${SimpleMarkdown.defaultHtmlOutput(SimpleMarkdown.defaultBlockParse(markdown))}
+</body>
+</html>`
   });
 }
 
