@@ -16,14 +16,15 @@
   "dependencies": {
     "@firebase/app": "^0.6.8",
     "date-fns": "^2.16.1",
-    "simple-markdown": "^0.7.2",
     "firebase": "^7.16.1",
     "firebase-admin": "^8.10.0",
     "firebase-functions": "^3.6.0",
     "fp-ts": "^2.5.3",
-    "io-ts": "^2.2.1"
+    "io-ts": "^2.2.1",
+    "simple-markdown": "^0.7.2"
   },
   "devDependencies": {
+    "@types/react": "^16.9.51",
     "firebase-functions-test": "^0.2.0",
     "firebase-tools": "^8.11.2",
     "tslint": "^5.12.0",
