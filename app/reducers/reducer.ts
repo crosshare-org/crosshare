@@ -641,7 +641,10 @@ export function builderReducer(state: BuilderState, action: PuzzleAction): Build
       w: state.grid.width,
       g: state.grid.cells,
       ac, an, dc, dn,
-      ...state.notes && { cn: state.notes }
+      ...state.notes && { cn: state.notes },
+      ...state.blogPost && { bp: state.blogPost },
+      ...state.isPrivate && { pv: true },
+      ...state.isPrivateUntil && { pvu: state.isPrivateUntil }
     };
     if (state.grid.highlighted.size) {
       puzzle.hs = Array.from(state.grid.highlighted);

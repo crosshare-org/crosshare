@@ -100,7 +100,10 @@ test('puzzle in progress should be cached in local storage', async () => {
   expect(r.getByLabelText('cell0x2')).toHaveTextContent('C');
 });
 
-async function publishPuzzle(prePublish?: (r: RenderResult) => Promise<void>) {
+async function publishPuzzle(
+  prePublish?: (r: RenderResult) => Promise<void>,
+  clueMode?: (r: RenderResult) => Promise<void>
+) {
   sessionStorage.clear();
   localStorage.clear();
 
@@ -143,6 +146,9 @@ async function publishPuzzle(prePublish?: (r: RenderResult) => Promise<void>) {
   fireEvent.change(r.getByLabelText('PQRST'), { target: { value: 'Clue 9' } });
   fireEvent.change(r.getByLabelText('UVWXY'), { target: { value: 'Clue 10' } });
   fireEvent.change(r.getByLabelText('Title'), { target: { value: 'Our Title' } });
+  if (clueMode) {
+    await clueMode(r);
+  }
 
   fireEvent.click(r.getByText('Back to Grid', { exact: true }));
   fireEvent.click(r.getByText('Publish', { exact: true }));
@@ -221,6 +227,9 @@ test('change author name in publish dialogue should publish w/ new name', async 
     fireEvent.change(r.getByLabelText('Update display name:'), { target: { value: 'M to tha D' } });
     fireEvent.click(r.getByText('Save', { exact: true }));
     await r.findByText(/M to tha D/i);
+  },
+  async (r) => {
+    fireEvent.click(r.getByText('This puzzle is private', { exact: true }));
   });
 
   const puzzles = await admin.firestore().collection('c').get();
@@ -232,6 +241,8 @@ test('change author name in publish dialogue should publish w/ new name', async 
   expect(puzzle['c']).toEqual(null);
   expect(puzzle['t']).toEqual('Our Title');
   expect(puzzle['n']).toEqual('M to tha D');
+  expect(puzzle['pv']).toEqual(true);
+  expect(puzzle['pvu']).toBeUndefined();
   await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
   expect(NextJSRouter.push).toHaveBeenCalledWith('/crosswords/' + puzzles.docs[0].id);
 
@@ -298,6 +309,9 @@ test('publish custom / non-rectangular size', async () => {
   fireEvent.change(r.getByLabelText('EJOT'), { target: { value: 'Clue 6' } });
   fireEvent.change(r.getByLabelText('Title'), { target: { value: 'Our Title' } });
 
+  fireEvent.click(r.getByText('Add a blog post'));
+  fireEvent.change(r.getByPlaceholderText('Your post text (markdown format)'), { target: { value: 'Here is our new blog post' } });
+
   fireEvent.click(r.getByText('Back to Grid', { exact: true }));
   fireEvent.click(r.getByText('Publish', { exact: true }));
   fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
@@ -311,6 +325,10 @@ test('publish custom / non-rectangular size', async () => {
   expect(puzzle['p']).not.toEqual(null);
   expect(puzzle['c']).toEqual(null);
   expect(puzzle['t']).toEqual('Our Title');
+  expect(puzzle['bp']).toEqual('Here is our new blog post');
+  expect(puzzle['pv']).toBeUndefined();
+  expect(puzzle['pvu']).toBeUndefined();
+
   await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
   expect(NextJSRouter.push).toHaveBeenCalledWith('/crosswords/' + puzzles.docs[0].id);
 
@@ -324,6 +342,7 @@ test('publish custom / non-rectangular size', async () => {
   const r5 = render(<PuzzlePage {...props1.props} />, { user: rando });
   expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
   expect(r5.queryByText(/Our Title/)).toBeInTheDocument();
+  expect(r5.queryByText(/Here is our new blog post/)).toBeInTheDocument();
   expect(r5.queryByText(/Daily Mini/)).toBeNull();
   await r5.findByText(/Enter Rebus/i);
   expect(r5.queryByText(/Moderate/i)).toBeNull();

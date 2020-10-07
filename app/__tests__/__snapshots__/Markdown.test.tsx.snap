@@ -42,6 +42,7 @@ exports[`clueMap rendering 2`] = `
   background-color: var(--black);
   color: var(--white);
   text-align: center;
+  max-width: 30em;
   padding: 10px;
   visibility: hidden;
 }
@@ -137,6 +138,7 @@ exports[`clueMap rendering 3`] = `
   background-color: var(--black);
   color: var(--white);
   text-align: center;
+  max-width: 30em;
   padding: 10px;
   visibility: hidden;
 }
@@ -247,6 +249,7 @@ exports[`clueMap rendering 4`] = `
   background-color: var(--black);
   color: var(--white);
   text-align: center;
+  max-width: 30em;
   padding: 10px;
   visibility: hidden;
 }
@@ -336,6 +339,7 @@ exports[`clueMap rendering 5`] = `
   background-color: var(--black);
   color: var(--white);
   text-align: center;
+  max-width: 30em;
   padding: 10px;
   visibility: hidden;
 }
