@@ -240,7 +240,7 @@ test('email queuing', async () => {
   await queueEmails();
 
   const mail2 = await adminApp.firestore().collection('mail').get();
-  expect(mail2.docs.map(d => d.data())).toMatchSnapshot();
+  expect(mail2.docs.map(d => d.data()).sort((a, b) => a.to[0].localeCompare(b.to[0]))).toMatchSnapshot();
 
   global.Date = realDate;
 

@@ -6,16 +6,11 @@ exports[`email queuing 2`] = `
 Array [
   Object {
     "message": Object {
-      "html": "<h3>Comments on your puzzles:</h3><ul><li>BLAST and Mike D commented on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul><h3>Replies to your comments:</h3><ul><li>Mike D replied to your comment(s) on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul>",
+      "html": "<h3>Comments on your puzzles:</h3><ul><li>BLAST, Mike D and Mike D commented on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul>",
       "subject": "New comments on Raises, as young",
       "text": "### Comments on your puzzles:
 
-* BLAST and Mike D commented on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
-
-
-### Replies to your comments:
-
-* Mike D replied to your comment(s) on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+* BLAST, Mike D and Mike D commented on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
 
 
 ",
@@ -87,8 +82,8 @@ Array [
   Object {
     "c": "foobar",
     "cn": "Mike D",
-    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-reply-foobar",
-    "k": "reply",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-foobar",
+    "k": "comment",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",
     "r": false,
@@ -157,8 +152,8 @@ Array [
   Object {
     "c": "bar",
     "cn": "Jim",
-    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-reply-bar",
-    "k": "reply",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-bar",
+    "k": "comment",
     "p": "puzzle-id-here",
     "pn": "Raises, as young",
     "r": false,

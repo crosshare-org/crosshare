@@ -162,6 +162,7 @@ const puzzleLink = (puzzleId: string) =>
   `https://crosshare.org/crosswords/${puzzleId}#utm_source=crosshare&utm_medium=email&utm_campaign=notifications`;
 
 async function queueEmailForUser(userId: string, notifications: Array<NotificationT>) {
+  const sorted = notifications.sort((n1, n2) => n1.id.localeCompare(n2.id));
   const user = await getUser(userId);
   const toAddress = user.email;
   if (!toAddress) {
@@ -171,7 +172,7 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
 
   let markdown = '';
   let subject: string | null = null;
-  const comments = notifications.filter(n => n.k === 'comment');
+  const comments = sorted.filter(n => n.k === 'comment');
   const commentsByPuzzle = comments.reduce((rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
     (rv[x.p] = rv[x.p] || []).push(x);
     return rv;
@@ -186,7 +187,7 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
     markdown += '\n\n';
   }
 
-  const replies = notifications.filter(n => n.k === 'reply');
+  const replies = sorted.filter(n => n.k === 'reply');
   const repliesByPuzzle = replies.reduce((rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
     (rv[x.p] = rv[x.p] || []).push(x);
     return rv;
@@ -225,5 +226,5 @@ export async function queueEmails() {
     return rv;
   }, {});
   console.log('attempting to queue for ', Object.keys(unreadsByUserId).length);
-  return Promise.all(Object.entries(unreadsByUserId).sort((a, b) => a[0].localeCompare(b[0])).map(e => queueEmailForUser(...e)));
+  return Promise.all(Object.entries(unreadsByUserId).map(e => queueEmailForUser(...e)));
 }

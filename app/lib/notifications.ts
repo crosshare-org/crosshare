@@ -97,11 +97,12 @@ function checkComments(after: Array<CommentWithRepliesT>, before: Array<CommentW
   for (const comment of after) {
     const beforeComment = before ?.find(beforeComment => beforeComment.i === comment.i);
     if (!beforeComment) {
-      // Don't notify on your own comment or on a reply to you (which will get notified as a reply)
-      if (comment.a !== puzzle.a && parent ?.a !== puzzle.a) {
+      // Don't notify on your own comment
+      if (comment.a !== puzzle.a) {
         notifications.push(commentNotification(comment, puzzle));
       }
-      if (parent && comment.a !== parent.a) {
+      // If it's your puzzle we already notified as a comment (not reply) above
+      if (parent && comment.a !== parent.a && parent.a !== puzzle.a) {
         notifications.push(replyNotification(comment, parent, puzzle));
       }
     } else if (comment.r) {
