@@ -107,6 +107,69 @@ Array [
 ]
 `;
 
+exports[`email queueing emails work w/ multiple categories of comments 1`] = `
+Array [
+  Object {
+    "message": Object {
+      "html": "<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv=\\"Content-Type\\" content=\\"text/html charset=UTF-8\\" />
+<title>New comments on Raises, as young</title>
+</head>
+<body>
+<h3>Comments on your puzzles:</h3><ul><li>BLAST and Mike D commented on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul><h3>Replies to your comments:</h3><ul><li>Foo Bar replied to your comment(s) on <a href=\\"https://crosshare.org/crosswords/second-puzzle#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Our Second Title</a></li></ul>
+</body>
+</html>",
+      "subject": "New comments on Raises, as young",
+      "text": "### Comments on your puzzles:
+
+* BLAST and Mike D commented on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+
+
+### Replies to your comments:
+
+* Foo Bar replied to your comment(s) on [Our Second Title](https://crosshare.org/crosswords/second-puzzle#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+
+
+",
+    },
+    "to": Array [
+      "mike@example.com",
+    ],
+  },
+  Object {
+    "message": Object {
+      "html": "<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv=\\"Content-Type\\" content=\\"text/html charset=UTF-8\\" />
+<title>New comments on Our Second Title</title>
+</head>
+<body>
+<h3>Comments on your puzzles:</h3><ul><li>Foo Bar commented on <a href=\\"https://crosshare.org/crosswords/second-puzzle#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Our Second Title</a></li></ul><h3>Replies to your comments:</h3><ul><li>Mike D replied to your comment(s) on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul>
+</body>
+</html>",
+      "subject": "New comments on Our Second Title",
+      "text": "### Comments on your puzzles:
+
+* Foo Bar commented on [Our Second Title](https://crosshare.org/crosswords/second-puzzle#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+
+
+### Replies to your comments:
+
+* Mike D replied to your comment(s) on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+
+
+",
+    },
+    "to": Array [
+      "rando@example.com",
+    ],
+  },
+]
+`;
+
 exports[`email queueing emails work w/ multiple puzzles and w/ html in title 1`] = `
 Array [
   Object {

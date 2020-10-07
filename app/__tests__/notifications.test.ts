@@ -315,4 +315,30 @@ describe('email queueing', () => {
       expect(mail2.docs.map(d => d.data()).sort((a, b) => a.to[0].localeCompare(b.to[0]))).toMatchSnapshot();
     });
   });
+
+  test('emails work w/ multiple categories of comments', async () => {
+    const puzzleWithComment = getMockedPuzzle({
+      a: 'rando',
+      t: 'Our Second Title',
+      cs: [getComment({ a: basePuzzle.a })]
+    });
+    const withReplies = {
+      ...puzzleWithComment,
+      cs: [getComment({ a: basePuzzle.a, r: [getComment({ a: 'anotherAuthor', n: 'Foo Bar', i: 'baz' })] })]
+    };
+    const notifications = notificationsForPuzzleChange(puzzleWithComment, withReplies, 'second-puzzle');
+    expect(notifications.length).toEqual(2);
+    for (const notification of notifications) {
+      await adminApp.firestore().collection('n').doc(notification.id).set(notification);
+    }
+
+    return withMockedDate(async () => {
+
+      await queueEmails();
+
+      const mail2 = await adminApp.firestore().collection('mail').get();
+      expect(mail2.size).toEqual(2);
+      expect(mail2.docs.map(d => d.data()).sort((a, b) => a.to[0].localeCompare(b.to[0]))).toMatchSnapshot();
+    });
+  });
 });
