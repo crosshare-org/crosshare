@@ -125,6 +125,12 @@ const ModeratingOverlay = memo(({ dispatch, puzzle }: { puzzle: ServerPuzzleResu
   return (
     <Overlay closeCallback={() => dispatch({ type: 'TOGGLEMODERATING' })}>
       <h4>Moderate this Puzzle</h4>
+      {puzzle.isPrivate ?
+        <h4 css={{ color: 'var(--error)' }}>This puzzle is private</h4>
+        : ''}
+      {puzzle.isPrivateUntil ?
+        <h4 css={{ color: 'var(--error)' }}>This puzzle is private until {(new Date(puzzle.isPrivateUntil)).toISOString()}</h4>
+        : ''}
       <div css={{ marginTop: '1em' }}>Pick a date to appear as daily mini:</div>
       <UpcomingMinisCalendar disableExisting={true} value={date} onChange={setDate} />
       <div css={{ marginTop: '1em' }}>Be sure to email {puzzle.authorId}</div>

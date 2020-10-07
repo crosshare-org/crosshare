@@ -167,7 +167,11 @@ async function publishPuzzle(
 }
 
 test('publish as default', async () => {
-  await publishPuzzle();
+  await publishPuzzle(undefined,
+    async (r) => {
+      fireEvent.click(r.getByText('This puzzle should be private until a specified date/time', { exact: true }));
+    }
+  );
 
   const puzzles = await admin.firestore().collection('c').get();
   expect(puzzles.size).toEqual(1);
@@ -177,6 +181,7 @@ test('publish as default', async () => {
   expect(puzzle['p']).not.toEqual(null);
   expect(puzzle['c']).toEqual(null);
   expect(puzzle['t']).toEqual('Our Title');
+  expect(puzzle['pvu']).not.toBeNull();
   await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
   expect(NextJSRouter.push).toHaveBeenCalledWith('/crosswords/' + puzzles.docs[0].id);
 
@@ -203,6 +208,7 @@ test('publish as default', async () => {
   await r4.findByText(/Enter Rebus/i);
   expect(r4.queryByText(/visible to others yet/i)).toBeNull();
   fireEvent.click(r4.getByText(/Moderate/i));
+  expect(r4.queryByText(/private until/i)).not.toBeNull();
   const approveButton = await r4.findByText(/Set as Featured/i);
   fireEvent.click(approveButton);
 
