@@ -108,6 +108,8 @@ export interface PuzzleT {
   comments: Array<Comment>,
   constructorNotes: string | null,
   blogPost: string | null,
+  isPrivate: boolean,
+  isPrivateUntil: number | null,
 }
 
 export interface PuzzleResult extends PuzzleT {
@@ -161,6 +163,8 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     comments: convertComments(dbPuzzle.cs || []),
     constructorNotes: dbPuzzle.cn || null,
     blogPost: dbPuzzle.bp || null,
+    isPrivate: dbPuzzle.pv || false,
+    isPrivateUntil: dbPuzzle.pvu ? dbPuzzle.pvu.toMillis() : null
   };
 }
 

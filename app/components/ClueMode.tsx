@@ -154,7 +154,7 @@ export const ClueMode = (props: ClueModeProps) => {
             : ''
           }
         </div>
-        <p><ButtonAsLink onClick={() => setSettingCoverPic(true)} text="Add/edit cover pic" /></p>
+        <div><ButtonAsLink onClick={() => setSettingCoverPic(true)} text="Add/edit cover pic" /></div>
         {settingCoverPic ?
           <ImageCropper targetSize={COVER_PIC} isCircle={false} storageKey={`/users/${props.authorId}/${props.puzzleId}/cover.jpg`} cancelCrop={() => setSettingCoverPic(false)} />
           : ''}
@@ -171,12 +171,12 @@ export const ClueMode = (props: ClueModeProps) => {
             }} /></p>
           </>
           :
-          <p><ButtonAsLink text="Add a note" onClick={() => {
+          <div><ButtonAsLink text="Add a note" onClick={() => {
             const sna: SetNotesAction = { type: 'SETNOTES', value: '' };
             props.dispatch(sna);
           }} />
           <ToolTipText css={{ marginLeft: '0.5em' }} text={<FaInfoCircle />} tooltip="Notes are shown before a puzzle is started and should be used if you need a short explainer of the theme or how the puzzle works" />
-          </p>
+          </div>
         }
         {props.blogPost !== null ?
           <>
@@ -196,12 +196,12 @@ export const ClueMode = (props: ClueModeProps) => {
               }} /></p>
           </>
           :
-          <p><ButtonAsLink text="Add a blog post" onClick={() => {
+          <div><ButtonAsLink text="Add a blog post" onClick={() => {
             const sna: SetBlogPostAction = { type: 'SETBLOGPOST', value: '' };
             props.dispatch(sna);
           }} />
           <ToolTipText css={{ marginLeft: '0.5em' }} text={<FaInfoCircle />} tooltip="Blog posts are shown before and after the puzzle is solved - describe how you came up with the puzzle, talk about your day, whatever you want!" />
-          </p>
+          </div>
         }
         <h2>Clues</h2>
         {props.completedEntries.length ?

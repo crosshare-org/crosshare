@@ -65,7 +65,7 @@ if (typeof window !== 'undefined') {
 let worker: Worker;
 
 type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-type BuilderProps = WithOptional<Omit<PuzzleT, 'comments' | 'category' | 'authorId' | 'authorName' | 'moderated' | 'publishTime'>, 'clues' | 'title' | 'constructorNotes' | 'blogPost' | 'highlighted' | 'highlight'>
+type BuilderProps = WithOptional<Omit<PuzzleT, 'comments' | 'category' | 'authorId' | 'authorName' | 'moderated' | 'publishTime'>, 'clues' | 'title' | 'constructorNotes' | 'blogPost' | 'isPrivate' | 'isPrivateUntil' | 'highlighted' | 'highlight'>
 
 interface PotentialFillItemProps {
   entryIndex: number,

@@ -108,6 +108,10 @@ const DBPuzzleOptionalV = t.partial({
   cn: t.string,
   /** blog post */
   bp: t.string,
+  /** isPrivate */
+  pv: t.boolean,
+  /** isPrivateUntil */
+  pvu: timestamp,
 });
 export const DBPuzzleV = t.intersection([DBPuzzleMandatoryV, DBPuzzleOptionalV]);
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;

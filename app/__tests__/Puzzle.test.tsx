@@ -20,6 +20,8 @@ window.HTMLElement.prototype.scrollIntoView = function() { return; };
 
 const testPuzzle: ServerPuzzleResult = {
   authorId: 'test-author-id',
+  isPrivate: false,
+  isPrivateUntil: null,
   category: null,
   authorName: 'Mike D',
   moderated: true,
@@ -72,6 +74,8 @@ test('clicking a clue sets slot to active', () => {
 
 const dailymini_5_19: ServerPuzzleResult = {
   constructorPage: null,
+  isPrivate: false,
+  isPrivateUntil: null,
   blogPost: null,
   authorId: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
   category: 'dailymini',
