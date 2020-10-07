@@ -171,13 +171,13 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
             <p>Loading your account preferences...</p>
             :
             <>
-              <p>Email me ({user.email}) when:</p>
+              <p>Email me (to {user.email}, at most once per day) when:</p>
               <ul css={{ listStyleType: 'none' }}>
                 <li>
                   <PrefSetting prefs={accountPrefs} userId={user.uid} flag='comments' text='I have unseen comments on my puzzles or replies to my comments' />
                 </li>
                 <li>
-                  <PrefSetting prefs={accountPrefs} userId={user.uid} flag='all' invert neverDisable text='Never notify me by email' />
+                  <PrefSetting prefs={accountPrefs} userId={user.uid} flag='all' invert neverDisable text='Never notify me by email (even for any future notification types)' />
                 </li>
               </ul>
             </>
