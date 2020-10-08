@@ -48,7 +48,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
   if (params.slug.length === 3 && params.slug[1] === 'page') {
     page = parseInt(params.slug[2]) || 0;
   }
-  const [puzzles, index] = await getPuzzlesForConstructorPage(cp.u, page, PAGE_SIZE);
+  const [puzzles, totalCount] = await getPuzzlesForConstructorPage(cp.u, page, PAGE_SIZE);
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
   return {
     props: {
@@ -58,7 +58,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
       puzzles,
       currentPage: page,
       prevPage: page > 0 ? page - 1 : null,
-      nextPage: index.i.length > (page + 1) * PAGE_SIZE ? page + 1 : null,
+      nextPage: totalCount > (page + 1) * PAGE_SIZE ? page + 1 : null,
     }
   };
 };

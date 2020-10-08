@@ -1,5 +1,39 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`try constructor page with some puzzles private or private until 1`] = `
+Array [
+  "featured3",
+  "featured2",
+  "hidden",
+  "featured1",
+]
+`;
+
+exports[`try constructor page with some puzzles private or private until 2`] = `
+Array [
+  "featured5",
+  "nonfeatured2",
+  "featured4",
+  "featured3",
+  "featured2",
+  "hidden",
+  "featured1",
+]
+`;
+
+exports[`try constructor page with some puzzles private or private until 3`] = `
+Array [
+  "hidden",
+]
+`;
+
+exports[`try constructor page with some puzzles private or private until 4`] = `
+Array [
+  "nonfeatured2",
+  "featured4",
+]
+`;
+
 exports[`try it with a few puzzles 1`] = `
 Array [
   "featured3",

@@ -30,15 +30,25 @@ export async function getStorageUrl(storageKey: string): Promise<string | null> 
   return null;
 }
 
-const PuzzleIndexV = t.type({
-  /** array of puzzle timestamps */
-  t: t.array(adminTimestamp),
-  /** array of puzzle ids */
-  i: t.array(t.string)
-});
+const PuzzleIndexV = t.intersection([
+  t.type({
+    /** array of puzzle timestamps */
+    t: t.array(adminTimestamp),
+    /** array of puzzle ids */
+    i: t.array(t.string)
+  }),
+  t.partial({
+    /** array of private puzzle ids */
+    pv: t.array(t.string),
+    /** array of puzzle ids that are private until a timestamp */
+    pvui: t.array(t.string),
+    /** array of timestamps that the above puzzles become public */
+    pvut: t.array(adminTimestamp),
+  })
+]);
 type PuzzleIndexT = t.TypeOf<typeof PuzzleIndexV>;
 
-async function getPuzzlesForPage(indexDocId: string, queryField: string, queryValue: string | boolean, page: number, page_size: number): Promise<[Array<PuzzleResult>, PuzzleIndexT]> {
+async function getPuzzlesForPage(indexDocId: string, queryField: string, queryValue: string | boolean, page: number, page_size: number): Promise<[Array<PuzzleResult>, number]> {
   const db = AdminApp.firestore();
   const indexDoc = await db.collection('i').doc(indexDocId).get();
   let index: PuzzleIndexT | null = null;
@@ -73,9 +83,36 @@ async function getPuzzlesForPage(indexDocId: string, queryField: string, queryVa
     for (const p of newPuzzles.reverse()) {
       index.t.unshift(AdminTimestamp.fromMillis(p.p.toMillis()));
       index.i.unshift(p.id);
+      if (p.pv) {
+        index.pv = index.pv || [];
+        index.pv.push(p.id);
+      }
+      if (p.pvu) {
+        index.pvui = index.pvui || [];
+        index.pvut = index.pvut || [];
+        index.pvut.unshift(AdminTimestamp.fromMillis(p.pvu.toMillis()));
+        index.pvui.unshift(p.id);
+      }
     }
     await db.collection('i').doc(indexDocId).set(index);
   }
+
+  // Filter out any private puzzles
+  for (let i = index.i.length; i >= 0; i--) {
+    const pid = index.i[i];
+    if (index.pv ?.includes(pid)) {
+      index.i.splice(i, 1);
+      index.t.splice(i, 1);
+    } else if (index.pvui ?.includes(pid) && index.pvut) {
+      const pvidx = index.pvui.indexOf(pid);
+      const goLiveTime = index.pvut[pvidx];
+      if (goLiveTime > AdminTimestamp.now()) {
+        index.i.splice(i, 1);
+        index.t.splice(i, 1);
+      }
+    }
+  }
+
   const start = page * page_size;
   const entriesForPage = index.i.slice(start, start + page_size);
 
@@ -102,14 +139,14 @@ async function getPuzzlesForPage(indexDocId: string, queryField: string, queryVa
       console.error(PathReporter.report(validationResult).join(','));
     }
   }
-  return [puzzles, index];
+  return [puzzles, index.i.length];
 }
 
-export async function getPuzzlesForConstructorPage(userId: string, page: number, page_size: number): Promise<[Array<PuzzleResult>, PuzzleIndexT]> {
+export async function getPuzzlesForConstructorPage(userId: string, page: number, page_size: number): Promise<[Array<PuzzleResult>, number]> {
   return getPuzzlesForPage(userId, 'a', userId, page, page_size);
 }
 
-export async function getPuzzlesForFeatured(page: number, page_size: number): Promise<[Array<PuzzleResult>, PuzzleIndexT]> {
+export async function getPuzzlesForFeatured(page: number, page_size: number): Promise<[Array<PuzzleResult>, number]> {
   return getPuzzlesForPage('featured', 'f', true, page, page_size);
 }
 

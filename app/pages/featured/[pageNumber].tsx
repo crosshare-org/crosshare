@@ -31,7 +31,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
   if (page < 1 || page.toString() !== params.pageNumber) {
     return { props: { error: 'Bad page number' } };
   }
-  const [puzzlesWithoutConstructor, index] = await getPuzzlesForFeatured(page, PAGE_SIZE);
+  const [puzzlesWithoutConstructor, totalCount] = await getPuzzlesForFeatured(page, PAGE_SIZE);
   const puzzles = await Promise.all(puzzlesWithoutConstructor.map(async p => ({ ...p, constructorPage: await userIdToPage(p.authorId) })));
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
   return {
@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
       puzzles,
       currentPage: page,
       prevPage: page > 0 ? page - 1 : null,
-      nextPage: index.i.length > (page + 1) * PAGE_SIZE ? page + 1 : null,
+      nextPage: totalCount > (page + 1) * PAGE_SIZE ? page + 1 : null,
     }
   };
 };
