@@ -193,7 +193,7 @@ test('publish as default', async () => {
   const props1 = await getServerSideProps({ params: { puzzleId }, res: { setHeader: jest.fn() } } as any);
   setApp(randoApp as firebase.app.App);
   const r5 = render(<PuzzlePage {...props1.props} />, { user: rando });
-  expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
+  expect(await r5.findByText('Begin Puzzle', undefined, { timeout: 3000 })).toBeInTheDocument();
   expect(r5.queryByText(/Our Title/)).toBeInTheDocument();
   expect(r5.queryByText(/By Anonymous Crossharer/)).toBeInTheDocument();
   expect(r5.queryByText(/Daily Mini/)).toBeNull();
