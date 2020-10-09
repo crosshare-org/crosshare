@@ -1,5 +1,5 @@
-import { TimestampClass } from '../lib/firebaseWrapper';
-import * as firebaseTesting from '@firebase/testing';
+import { AdminTimestamp } from '../lib/firebaseWrapper';
+import * as firebaseTesting from '@firebase/rules-unit-testing';
 import { PlayT, LegacyPlayT, DBPuzzleT } from '../lib/dbtypes';
 import { runAnalytics } from '../lib/analytics';
 
@@ -17,6 +17,8 @@ beforeAll(async () => {
   adminApp = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
 });
 
+afterAll(async () => Promise.all(firebaseTesting.apps().map(app => app.delete())));
+
 beforeEach(async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
 
@@ -28,7 +30,7 @@ beforeEach(async () => {
   play1 = {
     c: 'mike',
     u: 'blah',
-    ua: TimestampClass.fromDate(twentyAgo),
+    ua: AdminTimestamp.fromDate(twentyAgo),
     g: [],
     ct: [1, 2, 4, 100, 100].concat(new Array(20).fill(100)),
     uc: [5, 2].concat(new Array(23).fill(1)),
@@ -46,7 +48,7 @@ beforeEach(async () => {
   play2 = {
     c: 'mike',
     u: 'anonymous-user-id',
-    ua: TimestampClass.fromDate(thirtyAgo),
+    ua: AdminTimestamp.fromDate(thirtyAgo),
     g: [],
     ct: [],
     uc: [],
@@ -77,7 +79,7 @@ beforeEach(async () => {
         '___ date (makes wedding plans)',
         'Middle Ages invader',
         'Has a great night at the comedy club'],
-    p: TimestampClass.fromDate(new Date('6/10/2020')),
+    p: AdminTimestamp.fromDate(new Date('6/10/2020')),
     a: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
     an: [1, 6, 7, 8, 9],
     g:
@@ -114,7 +116,7 @@ beforeEach(async () => {
           'A couple of two-worders today which I don\'t love, but I hope you all got it anyway!',
         i: 'LwgoVx0BAskM4wVJyoLj',
         t: 36.009,
-        p: TimestampClass.now(),
+        p: AdminTimestamp.now(),
         a: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
         n: 'Mike D',
         ch: false,
@@ -126,7 +128,7 @@ beforeEach(async () => {
   play3 = {
     c: 'mike',
     u: 'other-user-id',
-    ua: TimestampClass.fromDate(twentyAgo),
+    ua: AdminTimestamp.fromDate(twentyAgo),
     g: [],
     ct: [],
     uc: [],
@@ -141,15 +143,11 @@ beforeEach(async () => {
   await adminApp.firestore().collection('p').doc('mike-other-user-id').set(play3);
 });
 
-afterAll(async () => {
-  await adminApp.delete();
-});
-
 test('run for all time w/o initial state', async () => {
   const hourAgo = new Date();
   hourAgo.setMinutes(hourAgo.getMinutes() - 60);
 
-  await runAnalytics(adminApp.firestore(), TimestampClass.fromDate(hourAgo), TimestampClass.fromDate(new Date()));
+  await runAnalytics(adminApp.firestore(), AdminTimestamp.fromDate(hourAgo), AdminTimestamp.fromDate(new Date()));
 
   const res = await adminApp.firestore().collection('ds').get();
   expect(res.size).toEqual(1);
@@ -173,7 +171,7 @@ test('run for more recent w/o initial state', async () => {
   const twentyFive = new Date();
   twentyFive.setMinutes(twentyFive.getMinutes() - 25);
 
-  await runAnalytics(adminApp.firestore(), TimestampClass.fromDate(twentyFive), TimestampClass.fromDate(new Date()));
+  await runAnalytics(adminApp.firestore(), AdminTimestamp.fromDate(twentyFive), AdminTimestamp.fromDate(new Date()));
 
   const res = await adminApp.firestore().collection('ds').get();
   expect(res.size).toEqual(1);
@@ -198,8 +196,8 @@ test('run w/ initial state', async () => {
   hourAgo.setMinutes(hourAgo.getMinutes() - 60);
 
   // Just run twice in a row w/ same timestamp so we read each play twice.
-  await runAnalytics(adminApp.firestore(), TimestampClass.fromDate(hourAgo), TimestampClass.fromDate(new Date()));
-  await runAnalytics(adminApp.firestore(), TimestampClass.fromDate(hourAgo), TimestampClass.fromDate(new Date()));
+  await runAnalytics(adminApp.firestore(), AdminTimestamp.fromDate(hourAgo), AdminTimestamp.fromDate(new Date()));
+  await runAnalytics(adminApp.firestore(), AdminTimestamp.fromDate(hourAgo), AdminTimestamp.fromDate(new Date()));
 
   const res = await adminApp.firestore().collection('ds').get();
   expect(res.size).toEqual(1);

@@ -1,7 +1,7 @@
-import * as firebaseTesting from '@firebase/testing';
+import * as firebaseTesting from '@firebase/rules-unit-testing';
 import type firebaseAdminType from 'firebase-admin';
 
-import { setAdminApp, TimestampClass } from '../lib/firebaseWrapper';
+import { setAdminApp, AdminTimestamp } from '../lib/firebaseWrapper';
 //import { getUser, render, cleanup, fireEvent } from '../lib/testingUtils';
 
 const projectId = 'paginationtests';
@@ -89,8 +89,8 @@ test('try constructor page with some puzzles private or private until', async ()
   const hourFromNow = new Date();
   hourFromNow.setHours(hourFromNow.getHours() + 1);
 
-  await adminApp.firestore().collection('c').doc('featured4').set(getMockedPuzzle({ pvu: TimestampClass.fromDate(hourAgo) }));
-  await adminApp.firestore().collection('c').doc('nonfeatured2').set(getMockedPuzzle({ pvu: TimestampClass.fromDate(hourFromNow) }));
+  await adminApp.firestore().collection('c').doc('featured4').set(getMockedPuzzle({ pvu: AdminTimestamp.fromDate(hourAgo) }));
+  await adminApp.firestore().collection('c').doc('nonfeatured2').set(getMockedPuzzle({ pvu: AdminTimestamp.fromDate(hourFromNow) }));
   await adminApp.firestore().collection('c').doc('featured5').set(getMockedPuzzle());
 
   [page1, total] = await getPuzzlesForConstructorPage(uid, 0, 2);

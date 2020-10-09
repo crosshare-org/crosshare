@@ -2,7 +2,7 @@ import { ReactElement, ComponentType } from 'react';
 import { render, RenderOptions, RenderResult } from '@testing-library/react';
 
 import { AuthContext } from '../components/AuthContext';
-import { TimestampClass } from '../lib/firebaseWrapper';
+import { AdminTimestamp } from '../lib/firebaseWrapper';
 
 import type firebaseTypes from 'firebase';
 import { DBPuzzleT } from './dbtypes';
@@ -49,7 +49,7 @@ export function getMockedPuzzle(fields?: Partial<DBPuzzleT>): DBPuzzleT {
           '___ date (makes wedding plans)',
           'Middle Ages invader',
           'Has a great night at the comedy club'],
-      p: TimestampClass.now(),
+      p: AdminTimestamp.now(),
       a: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
       an: [1, 6, 7, 8, 9],
       g:
@@ -86,7 +86,7 @@ export function getMockedPuzzle(fields?: Partial<DBPuzzleT>): DBPuzzleT {
             'A couple of two-worders today which I don\'t love, but I hope you all got it anyway!',
           i: 'LwgoVx0BAskM4wVJyoLj',
           t: 36.009,
-          p: TimestampClass.now(),
+          p: AdminTimestamp.now(),
           a: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
           n: 'Mike D',
           ch: false,

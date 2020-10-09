@@ -1,11 +1,11 @@
-const firebaseTesting = jest.requireActual('@firebase/testing');
-import type firebaseAdminType from 'firebase-admin';
+const firebaseTesting = jest.requireActual('@firebase/rules-unit-testing');
+import firebaseAdmin from 'firebase-admin';
 
 export let App: firebase.app.App;
-export let AdminApp: firebaseAdminType.app.App;
+export let AdminApp: firebaseAdmin.app.App;
 
 export const setApp = (app: firebase.app.App) => { App = app; };
-export const setAdminApp = (app: firebaseAdminType.app.App) => { AdminApp = app; };
+export const setAdminApp = (app: firebaseAdmin.app.App) => { AdminApp = app; };
 let userMap: Record<string, firebase.User> = {};
 export const setUserMap = (_map: Record<string, firebase.User>) => { userMap = _map; };
 export const getUser = (userId: string) => userMap[userId];
@@ -17,7 +17,7 @@ export const DeleteSentinal = firebaseTesting.firestore.FieldValue.delete();
 export const ServerTimestamp = firebaseTesting.firestore.FieldValue.serverTimestamp();
 
 export const TimestampClass = firebaseTesting.firestore.Timestamp;
-export const AdminTimestamp = firebaseTesting.firestore.Timestamp;
+export const AdminTimestamp = firebaseAdmin.firestore.Timestamp;
 
 let anonApp: firebase.app.App;
 let anonUser: firebase.User;

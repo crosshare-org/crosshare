@@ -2,9 +2,25 @@ import { Comments } from '../components/Comments';
 import { render } from '../lib/testingUtils';
 import { Comment } from '../lib/types';
 import { setApp } from '../lib/firebaseWrapper';
-import * as firebaseTesting from '@firebase/testing';
+import * as firebaseTesting from '@firebase/rules-unit-testing';
+import MockDate from 'mockdate';
 
 jest.mock('../lib/firebaseWrapper');
+
+const projectId = 'comments-test';
+const adminApp = firebaseTesting.initializeAdminApp({ projectId });
+const app = firebaseTesting.initializeTestApp({ projectId });
+
+beforeAll(() => {
+  MockDate.set(new Date('2020-8-2'));
+});
+beforeEach(async () => {
+  await firebaseTesting.clearFirestoreData({ projectId });
+});
+afterAll(async () => {
+  MockDate.reset();
+  await Promise.all(firebaseTesting.apps().map(app => app.delete()));
+});
 
 const testComment: Comment = {
   id: 'comment-id',
@@ -16,30 +32,8 @@ const testComment: Comment = {
   publishTime: new Date('2020-8-1').getTime(),
 };
 
-const realDate = Date;
-
-beforeAll(() => {
-  const mockDate = new Date('2020-9-2');
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (global as any).Date = class extends realDate {
-    constructor() {
-      super();
-      return mockDate;
-    }
-  };
-});
-
-
-afterAll(() => {
-  global.Date = realDate;
-});
-
 test('basic comment display', () => {
-  setApp(
-    firebaseTesting.initializeTestApp({
-      projectId: 'test1',
-    }) as firebase.app.App
-  );
+  setApp(app);
   const { getByText, container } = render(
     <Comments
       clueMap={new Map()}
@@ -56,11 +50,7 @@ test('basic comment display', () => {
 });
 
 test('comment with username display', () => {
-  setApp(
-    firebaseTesting.initializeTestApp({
-      projectId: 'test1',
-    }) as firebase.app.App
-  );
+  setApp(app);
   const { getByText, container } = render(
     <Comments
       clueMap={new Map()}
@@ -78,10 +68,9 @@ test('comment with username display', () => {
 
 test('security rules should only allow commenting as onesself', async () => {
   const app = firebaseTesting.initializeTestApp({
-    projectId: 'mdcrosshare',
+    projectId,
     auth: {
       uid: 'mike',
-      admin: false,
       firebase: {
         sign_in_provider: 'google.com',
       },
@@ -97,20 +86,16 @@ test('security rules should only allow commenting as onesself', async () => {
   await firebaseTesting.assertSucceeds(
     app.firestore().collection('cfm').add({ c: 'comment text', a: 'mike' })
   );
-  app.delete();
 });
 
 test('security rules should only allow commenting with username if it matches your account', async () => {
-  const adminApp = firebaseTesting.initializeAdminApp({ projectId: 'mdcrosshare' }) as firebase.app.App;
   await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
   await adminApp.firestore().collection('cp').doc('rando').set({ u: 'rando' });
-  adminApp.delete();
 
   const app = firebaseTesting.initializeTestApp({
-    projectId: 'mdcrosshare',
+    projectId,
     auth: {
       uid: 'mike',
-      admin: false,
       firebase: {
         sign_in_provider: 'google.com',
       },
@@ -132,15 +117,13 @@ test('security rules should only allow commenting with username if it matches yo
   await firebaseTesting.assertFails(
     app.firestore().collection('cfm').add({ c: 'comment text', a: 'mike', un: 'totalblast' })
   );
-  app.delete();
 });
 
 test('security rules should only allow commenting if non-anonymous', async () => {
   const app = firebaseTesting.initializeTestApp({
-    projectId: 'mdcrosshare',
+    projectId,
     auth: {
       uid: 'mike',
-      admin: false,
       firebase: {
         sign_in_provider: 'anonymous',
       },
@@ -156,5 +139,4 @@ test('security rules should only allow commenting if non-anonymous', async () =>
   await firebaseTesting.assertFails(
     app.firestore().collection('cfm').add({ c: 'comment text', a: 'mike' })
   );
-  app.delete();
 });

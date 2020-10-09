@@ -1,4 +1,4 @@
-import * as firebaseTesting from '@firebase/testing';
+import * as firebaseTesting from '@firebase/rules-unit-testing';
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
 import type * as firebaseAdminType from 'firebase-admin';
 import { getUser, screen, render, getMockedPuzzle, fireEvent, waitForElementToBeRemoved } from '../lib/testingUtils';
