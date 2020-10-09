@@ -1,22 +1,21 @@
 import { DBPuzzleT } from '../lib/dbtypes';
-import * as firebaseTesting from '@firebase/testing';
+import * as firebaseTesting from '@firebase/rules-unit-testing';
 import { TimestampClass } from '../lib/firebaseWrapper';
 import { getMockedPuzzle } from '../lib/testingUtils';
 
 jest.mock('../lib/firebaseWrapper');
 
-const withComments: DBPuzzleT = getMockedPuzzle();
+const withComments: DBPuzzleT = getMockedPuzzle({}, TimestampClass);
 
-const puzzle = getMockedPuzzle({ cs: [] });
+const puzzle = getMockedPuzzle({ cs: [] }, TimestampClass);
 
 test('security rules should not allow publishing with restricted fields set', async () => {
   const app = firebaseTesting.initializeTestApp({
     projectId: 'mdcrosshare',
     auth: {
       uid: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
-      admin: false,
       firebase: {
-        sign_in_provider: 'google',
+        sign_in_provider: 'google.com',
       },
     },
   });
@@ -63,9 +62,8 @@ test('security rules should not allow publishing if fake author-id', async () =>
     projectId: 'mdcrosshare',
     auth: {
       uid: 'mike',
-      admin: false,
       firebase: {
-        sign_in_provider: 'google',
+        sign_in_provider: 'google.com',
       },
     },
   });
@@ -81,7 +79,6 @@ test('security rules should not allow publishing if anonymous', async () => {
     projectId: 'mdcrosshare',
     auth: {
       uid: 'mike',
-      admin: false,
       firebase: {
         sign_in_provider: 'anonymous',
       },

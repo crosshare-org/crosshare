@@ -7,7 +7,7 @@ import type firebaseAdminType from 'firebase-admin';
 import { getUser, cleanup, render, fireEvent } from '../lib/testingUtils';
 import UploadPage from '../pages/upload';
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
-import * as firebaseTesting from '@firebase/testing';
+import * as firebaseTesting from '@firebase/rules-unit-testing';
 import NextJSRouter from 'next/router';
 import PuzzlePage, { getServerSideProps } from '../pages/crosswords/[puzzleId]';
 import waitForExpect from 'wait-for-expect';
@@ -21,31 +21,23 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-let serverApp: firebase.app.App, randoApp: firebase.app.App, adminUserApp: firebase.app.App, app: firebase.app.App, admin: firebase.app.App;
+let serverApp: firebase.app.App, randoApp: firebase.app.App, app: firebase.app.App, admin: firebase.app.App;
 
 beforeAll(async () => {
   serverApp = firebaseTesting.initializeTestApp({ projectId }) as firebase.app.App;
   randoApp = firebaseTesting.initializeTestApp({
     projectId,
     auth: {
-      uid: 'tom', admin: false, firebase: {
-        sign_in_provider: 'google'
-      }
-    }
-  }) as firebase.app.App;
-  adminUserApp = firebaseTesting.initializeTestApp({
-    projectId,
-    auth: {
-      uid: 'miked', admin: true, firebase: {
-        sign_in_provider: 'google'
+      uid: 'tom', firebase: {
+        sign_in_provider: 'google.com'
       }
     }
   }) as firebase.app.App;
   app = firebaseTesting.initializeTestApp({
     projectId,
     auth: {
-      uid: 'mike', admin: false, firebase: {
-        sign_in_provider: 'google'
+      uid: 'mike', firebase: {
+        sign_in_provider: 'google.com'
       }
     }
   }) as firebase.app.App;
@@ -54,11 +46,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await app.delete();
-  await admin.delete();
-  await serverApp.delete();
-  await randoApp.delete();
-  await adminUserApp.delete();
+  await Promise.all(firebaseTesting.apps().map(app => app.delete()));
 });
 
 window.HTMLElement.prototype.scrollIntoView = function() { return; };
@@ -119,7 +107,7 @@ test('upload a puzzle', async () => {
   await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
   expect(NextJSRouter.push).toHaveBeenCalledWith('/crosswords/' + puzzles.docs[0].id);
 
-  await cleanup();
+  cleanup();
 
   // The puzzle should be visible on the puzzle page, even to a rando
   setApp(serverApp as firebase.app.App);

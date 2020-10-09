@@ -30,7 +30,7 @@ interface AuthOptions {
   isAdmin?: boolean,
 }
 
-export function getMockedPuzzle(fields?: Partial<DBPuzzleT>): DBPuzzleT {
+export function getMockedPuzzle(fields?: Partial<DBPuzzleT>, timestampClass?: typeof AdminTimestamp): DBPuzzleT {
   return {
     ...{
       c: null,
@@ -49,7 +49,7 @@ export function getMockedPuzzle(fields?: Partial<DBPuzzleT>): DBPuzzleT {
           '___ date (makes wedding plans)',
           'Middle Ages invader',
           'Has a great night at the comedy club'],
-      p: AdminTimestamp.now(),
+      p: (timestampClass || AdminTimestamp).now(),
       a: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
       an: [1, 6, 7, 8, 9],
       g:
@@ -86,7 +86,7 @@ export function getMockedPuzzle(fields?: Partial<DBPuzzleT>): DBPuzzleT {
             'A couple of two-worders today which I don\'t love, but I hope you all got it anyway!',
           i: 'LwgoVx0BAskM4wVJyoLj',
           t: 36.009,
-          p: AdminTimestamp.now(),
+          p: (timestampClass || AdminTimestamp).now(),
           a: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
           n: 'Mike D',
           ch: false,

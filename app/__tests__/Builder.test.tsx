@@ -3,7 +3,7 @@ import { getByLabelText, getUser, cleanup, render, fireEvent, RenderResult } fro
 import BuilderPage from '../pages/construct';
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
 import type firebaseAdminType from 'firebase-admin';
-import * as firebaseTesting from '@firebase/testing';
+import * as firebaseTesting from '@firebase/rules-unit-testing';
 import NextJSRouter from 'next/router';
 import PuzzlePage, { getServerSideProps } from '../pages/crosswords/[puzzleId]';
 import { PuzzleLoader as StatsPuzzleLoader } from '../pages/crosswords/[puzzleId]/stats';
@@ -23,8 +23,8 @@ beforeAll(async () => {
   randoApp = firebaseTesting.initializeTestApp({
     projectId,
     auth: {
-      uid: 'tom', admin: false, firebase: {
-        sign_in_provider: 'google'
+      uid: 'tom', firebase: {
+        sign_in_provider: 'google.com'
       }
     }
   }) as firebase.app.App;
@@ -32,15 +32,15 @@ beforeAll(async () => {
     projectId,
     auth: {
       uid: 'miked', admin: true, firebase: {
-        sign_in_provider: 'google'
+        sign_in_provider: 'google.com'
       }
-    }
+    } as any // eslint-disable-line
   }) as firebase.app.App;
   app = firebaseTesting.initializeTestApp({
     projectId,
     auth: {
-      uid: 'mike', admin: false, firebase: {
-        sign_in_provider: 'google'
+      uid: 'mike', firebase: {
+        sign_in_provider: 'google.com'
       }
     }
   }) as firebase.app.App;
@@ -49,11 +49,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await app.delete();
-  await admin.delete();
-  await serverApp.delete();
-  await randoApp.delete();
-  await adminUserApp.delete();
+  await Promise.all(firebaseTesting.apps().map(app => app.delete()));
 });
 
 window.HTMLElement.prototype.scrollIntoView = function() { return; };
@@ -87,7 +83,7 @@ test('puzzle in progress should be cached in local storage', async () => {
   expect(r.getByLabelText('cell0x2')).toHaveTextContent('C');
   expect(r.getByLabelText('grid')).toMatchSnapshot();
 
-  await cleanup();
+  cleanup();
 
   // Now try again!
   r = render(
@@ -185,7 +181,7 @@ test('publish as default', async () => {
   await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
   expect(NextJSRouter.push).toHaveBeenCalledWith('/crosswords/' + puzzles.docs[0].id);
 
-  await cleanup();
+  cleanup();
 
   // The puzzle should be visible on the puzzle page, even to a rando
   setApp(serverApp as firebase.app.App);
@@ -203,7 +199,7 @@ test('publish as default', async () => {
   await r5.findByText(/Enter Rebus/i);
   expect(r5.queryByText(/Moderate/i)).toBeNull();
 
-  await cleanup();
+  cleanup();
 
   // The puzzle should be visible to an admin w/ moderation links
   setApp(adminUserApp as firebase.app.App);
@@ -255,13 +251,13 @@ test('change author name in publish dialogue should publish w/ new name', async 
   await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
   expect(NextJSRouter.push).toHaveBeenCalledWith('/crosswords/' + puzzles.docs[0].id);
 
-  await cleanup();
+  cleanup();
 
   // The stats page shouldn't error even though there aren't any yet
   const stats = render(<StatsPuzzleLoader puzzleId={puzzleId} auth={{ user: mike, isAdmin: false }} />, { user: mike });
   expect(await stats.findByText(/stats for this puzzle yet/)).toBeInTheDocument();
 
-  await cleanup();
+  cleanup();
 
   // The puzzle should be visible on the puzzle page, even to a rando
   setApp(serverApp as firebase.app.App);
@@ -344,7 +340,7 @@ test('publish custom / non-rectangular size', async () => {
   await waitForExpect(async () => expect(NextJSRouter.push).toHaveBeenCalledTimes(1));
   expect(NextJSRouter.push).toHaveBeenCalledWith('/crosswords/' + puzzles.docs[0].id);
 
-  await cleanup();
+  cleanup();
 
   // The puzzle should be visible on the puzzle page, even to a rando
   setApp(serverApp as firebase.app.App);

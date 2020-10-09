@@ -7,8 +7,8 @@ import { PlayT } from '../lib/dbtypes';
 import * as plays from '../lib/plays';
 import PuzzlePage from '../pages/crosswords/[puzzleId]';
 import * as firebaseWrapper from '../lib/firebaseWrapper';
-import { setApp, setUpForSignInAnonymously, TimestampClass } from '../lib/firebaseWrapper';
-import * as firebaseTesting from '@firebase/testing';
+import { setApp, setUpForSignInAnonymously, AdminTimestamp } from '../lib/firebaseWrapper';
+import * as firebaseTesting from '@firebase/rules-unit-testing';
 
 jest.mock('../lib/firebaseWrapper');
 
@@ -175,7 +175,7 @@ test('nonuser progress should be cached in local storage but not db', async () =
 
   // Unmount doesn't cause us to write to the db
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
-  await cleanup();
+  cleanup();
   await flushPromises();
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
 
@@ -193,7 +193,7 @@ test('nonuser progress should be cached in local storage but not db', async () =
   cell2 = getByLabelText('cell0x2');
   expect(cell2).toHaveTextContent('C');
 
-  await cleanup();
+  cleanup();
   await flushPromises();
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
@@ -218,7 +218,7 @@ test('anonymous user progress should be cached in local storage and db', async (
   const app = firebaseTesting.initializeTestApp({
     projectId: 'test1',
     auth: {
-      uid: 'anonymous-user-id', admin: false, firebase: {
+      uid: 'anonymous-user-id', firebase: {
         sign_in_provider: 'anonymous'
       }
     }
@@ -250,7 +250,7 @@ test('anonymous user progress should be cached in local storage and db', async (
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(0);
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
   fireEvent.click(await findByTitle(/Pause Game/i));
-  await cleanup();
+  cleanup();
   await waitForExpect(async () => expect((await admin.firestore().collection('p').get()).size).toEqual(1));
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
@@ -267,7 +267,7 @@ test('anonymous user progress should be cached in local storage and db', async (
   cell2 = getByLabelText('cell0x2');
   expect(cell2).toHaveTextContent('C');
 
-  await cleanup();
+  cleanup();
   await flushPromises();
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
@@ -290,7 +290,7 @@ test('anonymous user progress should be cached in local storage and db', async (
   expect(cell2).toHaveTextContent('C');
   fireEvent.click(await findByTitle(/Pause Game/i));
 
-  await cleanup();
+  cleanup();
   await flushPromises();
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
@@ -310,7 +310,7 @@ test('visiting a puzzle youve already solved should not write to db', async () =
   const app = firebaseTesting.initializeTestApp({
     projectId: 'test1',
     auth: {
-      uid: 'anonymous-user-id', admin: false, firebase: {
+      uid: 'anonymous-user-id', firebase: {
         sign_in_provider: 'anonymous'
       }
     }
@@ -321,7 +321,7 @@ test('visiting a puzzle youve already solved should not write to db', async () =
   const play: PlayT = {
     c: dailymini_5_19.id,
     u: 'anonymous-user-id',
-    ua: TimestampClass.now(),
+    ua: AdminTimestamp.now(),
     g: [
       'C', 'A', 'P', 'E', '.', 'L', 'Y', 'E', '.', 'M', 'U', 'N', 'C', 'L', 'E', 'E', '.', 'A', 'I', 'L', '.', 'I', 'N', 'T', 'O',
     ],
@@ -343,7 +343,7 @@ test('visiting a puzzle youve already solved should not write to db', async () =
   );
 
   await findByText(/You solved the puzzle in/i, { exact: false });
-  await cleanup();
+  cleanup();
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(0);
 
   await admin.delete();
@@ -360,7 +360,7 @@ test('user finishing a puzzle causes write to db', async () => {
   const app = firebaseTesting.initializeTestApp({
     projectId: 'test1',
     auth: {
-      uid: 'anonymous-user-id', admin: false, firebase: {
+      uid: 'anonymous-user-id', firebase: {
         sign_in_provider: 'anonymous'
       }
     }
@@ -392,7 +392,7 @@ test('user finishing a puzzle causes write to db', async () => {
   await waitForExpect(async () => expect((await admin.firestore().collection('p').get()).size).toEqual(1));
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
-  await cleanup();
+  cleanup();
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
@@ -411,7 +411,7 @@ test('nonuser finishing a puzzle should cause creation of anonymous user and wri
   const anonApp = firebaseTesting.initializeTestApp({
     projectId: 'test1',
     auth: {
-      uid: 'anonymous-user-id', admin: false, firebase: {
+      uid: 'anonymous-user-id', firebase: {
         sign_in_provider: 'anonymous'
       }
     }
@@ -456,7 +456,7 @@ test('nonuser finishing a puzzle should cause creation of anonymous user and wri
   fireEvent.click(r.getByLabelText('Previous Entry'));
   fireEvent.click(r.getByLabelText('Previous Entry'));
 
-  await cleanup();
+  cleanup();
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 

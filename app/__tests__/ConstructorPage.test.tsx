@@ -1,4 +1,4 @@
-import * as firebaseTesting from '@firebase/testing';
+import * as firebaseTesting from '@firebase/rules-unit-testing';
 
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
 import { getUser, render, cleanup, fireEvent } from '../lib/testingUtils';
@@ -7,7 +7,7 @@ import waitForExpect from 'wait-for-expect';
 jest.mock('../lib/firebaseWrapper');
 
 import { userIdToPage } from '../lib/serverOnly';
-import type firebaseAdminType from 'firebase-admin';
+import firebaseAdmin from 'firebase-admin';
 
 const projectId = 'constructorpagetests';
 
@@ -15,7 +15,7 @@ test('invalid constructor page', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
   const adminApp = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
   await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
-  setAdminApp(adminApp as unknown as firebaseAdminType.app.App);
+  setAdminApp(adminApp as unknown as firebaseAdmin.app.App);
 
   const page = await userIdToPage('miked');
   expect(page).toBeNull();
@@ -32,7 +32,6 @@ test('create constructor page', async () => {
     projectId,
     auth: {
       uid: 'mikeuserid',
-      admin: false,
       firebase: {
         sign_in_provider: 'google.com',
       },
@@ -47,7 +46,7 @@ test('create constructor page', async () => {
   expect(await r.findByText(/Start sharing your own puzzles/i)).toBeVisible();
   expect(r.queryByPlaceholderText(/username/i)).toBeNull();
 
-  await cleanup();
+  cleanup();
   // Just add a dummy constructed puzzle for this user
   await adminApp.firestore().collection('c').add({ a: 'mikeuserid' });
   r = render(
@@ -58,14 +57,14 @@ test('create constructor page', async () => {
 
   fireEvent.change(r.getByPlaceholderText('username'), { target: { value: 'MikeD' } });
   fireEvent.click(r.getByText('Create', { exact: true }));
-  expect(await r.findByText(/username is unavailable/i)).toBeVisible();
+  expect(await r.findByText(/username is unavailable/i, undefined, { timeout: 3000 })).toBeVisible();
 
   fireEvent.change(r.getByPlaceholderText('username'), { target: { value: 'TheREALMikeD' } });
   fireEvent.click(r.getByText('Create', { exact: true }));
 
   await waitForExpect(async () => expect((await adminApp.firestore().collection('cp').doc('therealmiked').get()).data() ?.u).toEqual('mikeuserid'));
 
-  await cleanup();
+  cleanup();
 
   const s = render(
     <AccountPage isAdmin={false} user={mike} constructorPage={{ id: 'MIKE', i: 'mike', b: 'My Bio', n: 'Mike D', u: 'mikeuserid' }} />, { user: mike }
@@ -88,7 +87,6 @@ test('security rules for constructor page creation', async () => {
     projectId,
     auth: {
       uid: 'mikeuserid',
-      admin: false,
       firebase: {
         sign_in_provider: 'google.com',
       },
@@ -252,14 +250,13 @@ test('security rules for constructor page updates', async () => {
     u: 'foobar',
     n: 'Alt Name',
     b: 'Some random bio text',
-    t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+    t: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
   });
 
   const app = firebaseTesting.initializeTestApp({
     projectId,
     auth: {
       uid: 'mikeuserid',
-      admin: false,
       firebase: {
         sign_in_provider: 'google.com',
       },

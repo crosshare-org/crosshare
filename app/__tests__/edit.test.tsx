@@ -19,16 +19,16 @@ beforeAll(async () => {
   randoApp = firebaseTesting.initializeTestApp({
     projectId,
     auth: {
-      uid: 'tom', admin: false, firebase: {
-        sign_in_provider: 'google'
+      uid: 'tom', firebase: {
+        sign_in_provider: 'google.com'
       }
     }
   }) as firebase.app.App;
   app = firebaseTesting.initializeTestApp({
     projectId,
     auth: {
-      uid: 'mike', admin: false, firebase: {
-        sign_in_provider: 'google'
+      uid: 'mike', firebase: {
+        sign_in_provider: 'google.com'
       }
     }
   }) as firebase.app.App;
