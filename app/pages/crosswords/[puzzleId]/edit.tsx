@@ -16,8 +16,14 @@ import { sanitizeClue, sanitizeTitle, sanitizeConstructorNotes, sanitizeBlogPost
 import { Button, ButtonAsLink } from '../../../components/Buttons';
 import { Markdown } from '../../../components/Markdown';
 import { Overlay } from '../../../components/Overlay';
-import { ImageCropper } from '../../../components/ImageCropper';
 import { COVER_PIC } from '../../../lib/style';
+
+import dynamic from 'next/dynamic';
+import type { ImageCropper as ImageCropperType } from '../../../components/ImageCropper';
+const ImageCropper = dynamic(
+  () => import('../../../components/ImageCropper').then((mod) => mod.ImageCropper as any),  // eslint-disable-line @typescript-eslint/no-explicit-any
+  { ssr: false }
+) as typeof ImageCropperType;
 
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();

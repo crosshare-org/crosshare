@@ -14,11 +14,17 @@ import { getPuzzle } from '../lib/puzzleCache';
 import { CreatePageForm, BioEditor } from '../components/ConstructorPage';
 import { PuzzleResult, puzzleFromDB } from '../lib/types';
 import { Button } from '../components/Buttons';
-import { ImageCropper } from '../components/ImageCropper';
 import { PROFILE_PIC, COVER_PIC } from '../lib/style';
 import { AccountPrefsV, UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { Slide, toast } from 'react-toastify';
+
+import dynamic from 'next/dynamic';
+import type { ImageCropper as ImageCropperType } from '../components/ImageCropper';
+const ImageCropper = dynamic(
+  () => import('../components/ImageCropper').then((mod) => mod.ImageCropper as any),  // eslint-disable-line @typescript-eslint/no-explicit-any
+  { ssr: false }
+) as typeof ImageCropperType;
 
 interface PrefSettingProps {
   prefs: AccountPrefsT | undefined,

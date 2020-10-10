@@ -7,14 +7,19 @@ import { Direction } from '../lib/types';
 import { ButtonAsLink } from './Buttons';
 import { Overlay } from './Overlay';
 import { Markdown } from './Markdown';
-import { ImageCropper } from './ImageCropper';
 import { COVER_PIC } from '../lib/style';
 import { TimestampClass } from '../lib/firebaseWrapper';
 import { ToolTipText } from './ToolTipText';
 import { FaInfoCircle } from 'react-icons/fa';
-import formatRelative from 'date-fns/formatRelative';
 import lightFormat from 'date-fns/lightFormat';
 import set from 'date-fns/set';
+
+import dynamic from 'next/dynamic';
+import type { ImageCropper as ImageCropperType } from './ImageCropper';
+const ImageCropper = dynamic(
+  () => import('./ImageCropper').then((mod) => mod.ImageCropper as any),  // eslint-disable-line @typescript-eslint/no-explicit-any
+  { ssr: false }
+) as typeof ImageCropperType;
 
 export function sanitizeClue(input: string) {
   return input.substring(0, 140);
@@ -107,7 +112,7 @@ export const ClueMode = (props: ClueModeProps) => {
           </label>
           {privateUntil ?
             <p>
-              Visible after {formatRelative(privateUntil, new Date())}:
+              Visible after {lightFormat(privateUntil, 'M/d/y\' at \'h:mma')}:
               <input css={{
                 marginLeft: '0.5em',
                 '&:invalid': {
