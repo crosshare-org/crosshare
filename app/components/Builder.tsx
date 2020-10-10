@@ -45,7 +45,7 @@ import { SquareAndCols } from './Page';
 import { RebusOverlay } from './Puzzle';
 import { ClueMode } from './ClueMode';
 // eslint-disable-next-line import/no-unresolved
-import AutofillWorker from 'worker-loader?name=static/[hash].worker.js!../lib/autofill.worker';
+import AutofillWorker from 'worker-loader?filename=static/[hash].worker.js!../lib/autofill.worker';
 
 import * as BA from '../lib/bitArray';
 import * as WordDB from '../lib/WordDB';
