@@ -3,8 +3,6 @@ import * as firebaseTesting from '@firebase/rules-unit-testing';
 import { PlayT, LegacyPlayT, DBPuzzleT } from '../lib/dbtypes';
 import { runAnalytics } from '../lib/analytics';
 
-let adminApp: firebase.app.App;
-
 let play1: PlayT;
 let play2: LegacyPlayT;
 let play3: LegacyPlayT;
@@ -12,11 +10,10 @@ let play3: LegacyPlayT;
 jest.mock('../lib/firebaseWrapper');
 
 const projectId = 'analyticstest';
-
+let adminApp: firebase.app.App;
 beforeAll(async () => {
-  adminApp = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
+  adminApp = firebaseTesting.initializeAdminApp({ projectId });
 });
-
 afterAll(async () => Promise.all(firebaseTesting.apps().map(app => app.delete())));
 
 beforeEach(async () => {

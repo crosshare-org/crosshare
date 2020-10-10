@@ -1,7 +1,7 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 
 import { getMockedPuzzle } from '../lib/testingUtils';
-import { notificationsForPuzzleChange } from '../lib/notifications';
+import { notificationsForPuzzleChange, NotificationT } from '../lib/notifications';
 import { CommentWithRepliesT } from '../lib/dbtypes';
 import { TimestampClass, setAdminApp, setUserMap } from '../lib/firebaseWrapper';
 import { queueEmails } from '../lib/serverOnly';
@@ -88,6 +88,11 @@ test('security rules for updating notifications', async () => {
   await otherApp.delete();
 });
 
+const removeTimestamp = (n: NotificationT) => {
+  const { t, ...rest } = n;  // eslint-disable-line @typescript-eslint/no-unused-vars
+  return rest;
+};
+
 test('should notify for a new comment by somebody else', () => {
   const puzzleWithComments = {
     ...basePuzzle,
@@ -95,8 +100,7 @@ test('should notify for a new comment by somebody else', () => {
   };
   const notifications = notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
   expect(notifications.length).toEqual(1);
-  notifications.forEach(n => { delete n.t; });
-  expect(notifications).toMatchSnapshot();
+  expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
 test('should notify for multiple comments by somebody else', () => {
@@ -110,8 +114,7 @@ test('should notify for multiple comments by somebody else', () => {
   };
   const notifications = notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
   expect(notifications.length).toEqual(2);
-  notifications.forEach(n => { delete n.t; });
-  expect(notifications).toMatchSnapshot();
+  expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
 test('should notify for a reply to own comment on own puzzle', () => {
@@ -125,8 +128,7 @@ test('should notify for a reply to own comment on own puzzle', () => {
   };
   const notifications = notificationsForPuzzleChange(puzzleWithOwn, puzzleWithComments, 'puzzle-id-here');
   expect(notifications.length).toEqual(1);
-  notifications.forEach(n => { delete n.t; });
-  expect(notifications).toMatchSnapshot();
+  expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
 test('should notify comment author only when puzzle author replies', () => {
@@ -140,8 +142,7 @@ test('should notify comment author only when puzzle author replies', () => {
   };
   const notifications = notificationsForPuzzleChange(puzzleWithComment, authorReplies, 'puzzle-id-here');
   expect(notifications.length).toEqual(1);
-  notifications.forEach(n => { delete n.t; });
-  expect(notifications).toMatchSnapshot();
+  expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
 test('should notify comment author and puzzle author when third party replies', () => {
@@ -155,8 +156,7 @@ test('should notify comment author and puzzle author when third party replies', 
   };
   const notifications = notificationsForPuzzleChange(puzzleWithComment, authorReplies, 'puzzle-id-here');
   expect(notifications.length).toEqual(2);
-  notifications.forEach(n => { delete n.t; });
-  expect(notifications).toMatchSnapshot();
+  expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
 test('should handle a combination of multiple new comments and nested replies', () => {
@@ -183,8 +183,7 @@ test('should handle a combination of multiple new comments and nested replies', 
   };
   const notifications = notificationsForPuzzleChange(startingPoint, withReplies, 'puzzle-id-here');
   expect(notifications.length).toEqual(5);
-  notifications.forEach(n => { delete n.t; });
-  expect(notifications).toMatchSnapshot();
+  expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
 describe('email queueing', () => {

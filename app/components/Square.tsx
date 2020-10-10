@@ -4,11 +4,15 @@ import {
   TINY_COL_MIN_HEIGHT, SMALL_BREAKPOINT, LARGE_BREAKPOINT
 } from '../lib/style';
 
-import { ResizeObserver as Polyfill } from '@juggle/resize-observer';
-// TODO conditional import only when we need the polyfill?
-if (typeof window !== 'undefined') {
-  window.ResizeObserver = window.ResizeObserver || Polyfill;
-}
+(async () => {
+  if (typeof window !== 'undefined') {
+    if ('ResizeObserver' in window === false) {
+      // Loads polyfill asynchronously, only if required.
+      const module = await import('@juggle/resize-observer');
+      window.ResizeObserver = module.ResizeObserver as unknown as typeof ResizeObserver;
+    }
+  }
+})();
 
 interface SquareProps {
   aspectRatio: number,

@@ -2,7 +2,6 @@ import * as firebaseTesting from '@firebase/rules-unit-testing';
 import type firebaseAdminType from 'firebase-admin';
 
 import { setAdminApp, AdminTimestamp } from '../lib/firebaseWrapper';
-//import { getUser, render, cleanup, fireEvent } from '../lib/testingUtils';
 
 const projectId = 'paginationtests';
 

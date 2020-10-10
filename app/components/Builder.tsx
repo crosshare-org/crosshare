@@ -53,14 +53,19 @@ import { Overlay } from './Overlay';
 import { usePersistedBoolean } from '../lib/hooks';
 
 import useResizeObserver from 'use-resize-observer';
-import { ResizeObserver as Polyfill } from '@juggle/resize-observer';
 import { Keyboard } from './Keyboard';
 import { SMALL_AND_UP } from '../lib/style';
 import { ButtonReset } from './Buttons';
-// TODO conditional import only when we need the polyfill?
-if (typeof window !== 'undefined') {
-  window.ResizeObserver = window.ResizeObserver || Polyfill;
-}
+
+(async () => {
+  if (typeof window !== 'undefined') {
+    if ('ResizeObserver' in window === false) {
+      // Loads polyfill asynchronously, only if required.
+      const module = await import('@juggle/resize-observer');
+      window.ResizeObserver = module.ResizeObserver as unknown as typeof ResizeObserver;
+    }
+  }
+})();
 
 let worker: Worker;
 
