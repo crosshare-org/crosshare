@@ -5,6 +5,7 @@ import { FaSlash, FaEye } from 'react-icons/fa';
 type CellProps = {
   autofill: string,
   gridWidth: number,
+  gridHeight: number,
   squareWidth: number,
   isBlock: boolean,
   active: boolean,
@@ -69,10 +70,10 @@ export const Cell = memo(function Cell(props: CellProps) {
         width: '100%',
         height: '100%',
         fontSize: cellSize,
-        borderRight: '1px solid var(--cell-wall)',
-        borderBottom: '1px solid var(--cell-wall)',
-        ...(props.row === 0) && { borderTop: '1px solid var(--cell-wall)' },
-        ...(props.column === 0) && { borderLeft: '1px solid var(--cell-wall)' },
+        borderLeft: '1px solid var(--cell-wall)',
+        borderTop: '1px solid var(--cell-wall)',
+        ...(props.row === props.gridHeight - 1) && { borderBottom: '1px solid var(--cell-wall)' },
+        ...(props.column === props.gridWidth - 1) && { borderRight: '1px solid var(--cell-wall)' },
         background: bg,
         ...(boxShadow) && { boxShadow },
       }}>

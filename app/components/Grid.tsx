@@ -62,6 +62,7 @@ export const GridView = ({ active, dispatch, grid, ...props }: GridViewProps) =>
       squareWidth={props.squareWidth}
       autofill={props.autofill ? props.autofill[idx] : ''}
       gridWidth={grid.width}
+      gridHeight={grid.height}
       active={isActive}
       entryCell={entryCells.some((p) => cellIndex(grid, p) === idx)}
       refedCell={refedCells.some((p) => cellIndex(grid, p) === idx)}
