@@ -44,6 +44,9 @@ service cloud.firestore {
         && request.resource.data.n is string && request.resource.data.n.size() > 0
         && request.resource.data.t == request.time;
     }
+    match /mail/{messageId} {
+      allow read: if isAdmin();
+    }
     match /c/{crosswordId} {
       allow get: if true;
 

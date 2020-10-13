@@ -29,6 +29,7 @@ export default requiresAdmin(() => {
   const [minis, setMinis] = useState<CategoryIndexT | null>(null);
   const [stats, setStats] = useState<DailyStatsT | null>(null);
   const [error, setError] = useState(false);
+  const [mailErrors, setMailErrors] = useState(0);
   const [commentIdsForDeletion, setCommentIdsForDeletion] = useState<Set<string>>(new Set());
   const [pagesForModeration, setPagesForModeration] = useState<Array<ConstructorPageT> | null>(null);
 
@@ -38,6 +39,7 @@ export default requiresAdmin(() => {
     const now = new Date();
     const dateString = getDateString(now);
     Promise.all([
+      db.collection('mail').where('delivery.error', '!=', null).get(),
       getFromSessionOrDB({ collection: 'ds', docId: dateString, validator: DailyStatsV, ttl: 1000 * 60 * 30 }),
       getFromSessionOrDB({ collection: 'categories', docId: 'dailymini', validator: CategoryIndexV, ttl: 24 * 60 * 60 * 1000 }),
       mapEachResult(db.collection('c').where('m', '==', false), DBPuzzleV, (dbpuzz, docId) => {
@@ -50,7 +52,8 @@ export default requiresAdmin(() => {
         return { ...cp, id: docId };
       })
     ])
-      .then(([stats, minis, unmoderated, cfm, cps]) => {
+      .then(([mailErrors, stats, minis, unmoderated, cfm, cps]) => {
+        setMailErrors(mailErrors.size);
         setStats(stats);
         setMinis(minis);
         setUnmoderated(unmoderated);
@@ -177,6 +180,11 @@ export default requiresAdmin(() => {
       </Head>
       <DefaultTopBar />
       <div css={{ margin: '1em', }}>
+        {mailErrors ?
+          <h4>There are {mailErrors} mail errors!</h4>
+          :
+          ''
+        }
         <h4 css={{ borderBottom: '1px solid var(--black)' }}>Comment Moderation</h4>
         {commentsForModeration.length === 0 ?
           <div>No comments are currently awaiting moderation.</div>
