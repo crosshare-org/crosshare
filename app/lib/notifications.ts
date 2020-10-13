@@ -18,6 +18,8 @@ export const NotificationV = t.intersection([
     t: timestamp,
     /** has the notification been seen (or emailed) */
     r: t.boolean,
+    /** has the notification been considered for an email (maybe not sent due to unsub) */
+    e: t.boolean,
   }),
   t.union([
     // Comment on a puzzle you authored
@@ -70,6 +72,7 @@ function commentNotification(comment: CommentWithRepliesT, puzzle: PuzzleWithID)
     u: puzzle.a,
     t: AdminTimestamp.fromDate(add(new Date(), COMMENT_DELAY)),
     r: false,
+    e: false,
     k: 'comment',
     p: puzzle.id,
     pn: puzzle.t,
@@ -84,6 +87,7 @@ function replyNotification(comment: CommentWithRepliesT, parent: CommentWithRepl
     u: parent.a,
     t: AdminTimestamp.fromDate(add(new Date(), COMMENT_DELAY)),
     r: false,
+    e: false,
     k: 'reply',
     p: puzzle.id,
     pn: puzzle.t,

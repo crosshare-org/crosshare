@@ -240,6 +240,7 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
 
   let markdown = '';
   let subject: string | null = null;
+  const read: Array<NotificationT> = [];
 
   if (!prefs ?.unsubs ?.includes('comments')) {
     const comments = sorted.filter(n => n.k === 'comment');
@@ -251,6 +252,7 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
       subject = 'Crosshare: new comments on ' + joinStringsWithAnd(Object.values(commentsByPuzzle).map(a => a[0].pn).slice(0, 3));
       markdown += '### Comments on your puzzles:\n\n';
       Object.entries(commentsByPuzzle).forEach(([puzzleId, commentNotifications]) => {
+        read.push(...commentNotifications);
         const nameDisplay = joinStringsWithAnd(commentNotifications.map(n => n.cn));
         markdown += `* ${nameDisplay} commented on [${commentNotifications[0].pn}](${puzzleLink(puzzleId)})\n`;
       });
@@ -268,6 +270,7 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
       }
       markdown += '### Replies to your comments:\n\n';
       Object.entries(repliesByPuzzle).forEach(([puzzleId, commentNotifications]) => {
+        read.push(...commentNotifications);
         const nameDisplay = joinStringsWithAnd(commentNotifications.map(n => n.cn));
         markdown += `* ${nameDisplay} replied to your comments on [${commentNotifications[0].pn}](${puzzleLink(puzzleId)})\n`;
       });
@@ -297,13 +300,15 @@ Crosshare notifications are sent at most once per day. To manage your notificati
 ${SimpleMarkdown.defaultHtmlOutput(SimpleMarkdown.defaultBlockParse(markdown))}
 </body>
 </html>`
-  });
+  }).then(
+    () => Promise.all(read.map(n => db.doc(`n/${n.id}`).update({ r: true })))
+  );
 }
 
 export async function queueEmails() {
   const db = AdminApp.firestore();
   const unread = await mapEachResult(
-    db.collection('n').where('r', '==', false).where('t', '<=', AdminTimestamp.fromDate(new Date())),
+    db.collection('n').where('e', '==', false).where('r', '==', false).where('t', '<=', AdminTimestamp.fromDate(new Date())),
     NotificationV, (n) => n);
   console.log('unread: ', unread.length);
   const unreadsByUserId = unread.reduce((rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
@@ -312,6 +317,6 @@ export async function queueEmails() {
   }, {});
   console.log('attempting to queue for ', Object.keys(unreadsByUserId).length);
   return Promise.all(Object.entries(unreadsByUserId).map(e => queueEmailForUser(...e).then(
-    () => Promise.all(e[1].map(n => db.doc(`n/${n.id}`).update({ r: true })))
+    () => Promise.all(e[1].map(n => db.doc(`n/${n.id}`).update({ e: true })))
   )));
 }

@@ -18,6 +18,20 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   overflow: hidden;
 }
 
+.emotion-18 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-size: 40px;
+  border-left: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  background: var(--primary);
+}
+
 .emotion-0 {
   position: absolute;
   left: 0.1em;
@@ -38,7 +52,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   font-size: 1em;
 }
 
-.emotion-8 {
+.emotion-3 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -47,8 +61,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
+  border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   background: var(--secondary);
 }
@@ -62,9 +75,9 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
+  border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
+  border-right: 1px solid var(--cell-wall);
   background: var(--cell-wall);
 }
 
@@ -77,13 +90,12 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
   background: var(--cell-bg);
 }
 
-.emotion-30 {
+.emotion-42 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -92,8 +104,9 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 40px;
+  border-left: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
   border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
   background: var(--cell-bg);
 }
 
@@ -106,13 +119,13 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
   background: var(--cell-wall);
 }
 
-.emotion-18 {
+.emotion-96 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -121,10 +134,26 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
+  border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
-  background: var(--primary);
+  border-bottom: 1px solid var(--cell-wall);
+  background: var(--cell-bg);
+}
+
+.emotion-111 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-size: 40px;
+  border-left: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-right: 1px solid var(--cell-wall);
+  background: var(--cell-bg);
 }
 
 .emotion-37 {
@@ -136,25 +165,9 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
-  background: var(--cell-wall);
-}
-
-.emotion-3 {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
-  background: var(--secondary);
+  border-top: 1px solid var(--cell-wall);
+  background: var(--cell-wall);
 }
 
 .emotion-2 {
@@ -200,7 +213,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell0x1"
-      class="emotion-8"
+      class="emotion-3"
     >
       <div
         class="emotion-0"
@@ -227,7 +240,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell0x2"
-      class="emotion-8"
+      class="emotion-3"
     >
       <div
         class="emotion-0"
@@ -312,7 +325,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell1x1"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -337,7 +350,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell1x2"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -370,7 +383,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell1x4"
-      class="emotion-30"
+      class="emotion-42"
     >
       <div
         class="emotion-0"
@@ -420,7 +433,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell2x1"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -445,7 +458,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell2x2"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -470,7 +483,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell2x3"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -495,7 +508,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell2x4"
-      class="emotion-30"
+      class="emotion-42"
     >
       <div
         class="emotion-0"
@@ -553,7 +566,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell3x2"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -578,7 +591,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell3x3"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -603,7 +616,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell3x4"
-      class="emotion-30"
+      class="emotion-42"
     >
       <div
         class="emotion-0"
@@ -636,7 +649,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell4x1"
-      class="emotion-30"
+      class="emotion-96"
     >
       <div
         class="emotion-0"
@@ -661,7 +674,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell4x2"
-      class="emotion-30"
+      class="emotion-96"
     >
       <div
         class="emotion-0"
@@ -686,7 +699,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell4x3"
-      class="emotion-30"
+      class="emotion-96"
     >
       <div
         class="emotion-0"
@@ -711,7 +724,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   >
     <div
       aria-label="cell4x4"
-      class="emotion-30"
+      class="emotion-111"
     >
       <div
         class="emotion-0"
@@ -752,6 +765,20 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   overflow: hidden;
 }
 
+.emotion-18 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-size: 40px;
+  border-left: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  background: var(--primary);
+}
+
 .emotion-0 {
   position: absolute;
   left: 0.1em;
@@ -772,7 +799,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   font-size: 1em;
 }
 
-.emotion-8 {
+.emotion-3 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -781,8 +808,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
+  border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   background: var(--secondary);
 }
@@ -796,9 +822,9 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
+  border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
+  border-right: 1px solid var(--cell-wall);
   background: var(--cell-wall);
 }
 
@@ -811,13 +837,12 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
   background: var(--cell-bg);
 }
 
-.emotion-30 {
+.emotion-42 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -826,8 +851,9 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 40px;
+  border-left: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
   border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
   background: var(--cell-bg);
 }
 
@@ -840,13 +866,13 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
   background: var(--cell-wall);
 }
 
-.emotion-18 {
+.emotion-96 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -855,10 +881,26 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
+  border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
-  background: var(--primary);
+  border-bottom: 1px solid var(--cell-wall);
+  background: var(--cell-bg);
+}
+
+.emotion-111 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-size: 40px;
+  border-left: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  border-bottom: 1px solid var(--cell-wall);
+  border-right: 1px solid var(--cell-wall);
+  background: var(--cell-bg);
 }
 
 .emotion-37 {
@@ -870,25 +912,9 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
-  background: var(--cell-wall);
-}
-
-.emotion-3 {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  font-size: 40px;
-  border-right: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
   border-left: 1px solid var(--cell-wall);
-  background: var(--secondary);
+  border-top: 1px solid var(--cell-wall);
+  background: var(--cell-wall);
 }
 
 .emotion-2 {
@@ -934,7 +960,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell0x1"
-      class="emotion-8"
+      class="emotion-3"
     >
       <div
         class="emotion-0"
@@ -961,7 +987,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell0x2"
-      class="emotion-8"
+      class="emotion-3"
     >
       <div
         class="emotion-0"
@@ -1046,7 +1072,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell1x1"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -1071,7 +1097,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell1x2"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -1104,7 +1130,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell1x4"
-      class="emotion-30"
+      class="emotion-42"
     >
       <div
         class="emotion-0"
@@ -1154,7 +1180,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell2x1"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -1179,7 +1205,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell2x2"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -1204,7 +1230,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell2x3"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -1229,7 +1255,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell2x4"
-      class="emotion-30"
+      class="emotion-42"
     >
       <div
         class="emotion-0"
@@ -1287,7 +1313,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell3x2"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -1312,7 +1338,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell3x3"
-      class="emotion-30"
+      class="emotion-25"
     >
       <div
         class="emotion-0"
@@ -1337,7 +1363,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell3x4"
-      class="emotion-30"
+      class="emotion-42"
     >
       <div
         class="emotion-0"
@@ -1370,7 +1396,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell4x1"
-      class="emotion-30"
+      class="emotion-96"
     >
       <div
         class="emotion-0"
@@ -1395,7 +1421,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell4x2"
-      class="emotion-30"
+      class="emotion-96"
     >
       <div
         class="emotion-0"
@@ -1420,7 +1446,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell4x3"
-      class="emotion-30"
+      class="emotion-96"
     >
       <div
         class="emotion-0"
@@ -1445,7 +1471,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   >
     <div
       aria-label="cell4x4"
-      class="emotion-30"
+      class="emotion-111"
     >
       <div
         class="emotion-0"

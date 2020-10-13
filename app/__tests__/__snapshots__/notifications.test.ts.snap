@@ -246,6 +246,7 @@ Array [
   Object {
     "c": "bam",
     "cn": "BLAST",
+    "e": false,
     "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-bam",
     "k": "comment",
     "p": "puzzle-id-here",
@@ -256,6 +257,7 @@ Array [
   Object {
     "c": "whamo",
     "cn": "Mike D",
+    "e": false,
     "id": "rando-reply-whamo",
     "k": "reply",
     "p": "puzzle-id-here",
@@ -266,6 +268,7 @@ Array [
   Object {
     "c": "test",
     "cn": "Mike D",
+    "e": false,
     "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-test",
     "k": "comment",
     "p": "puzzle-id-here",
@@ -276,6 +279,7 @@ Array [
   Object {
     "c": "test",
     "cn": "Mike D",
+    "e": false,
     "id": "rando-reply-test",
     "k": "reply",
     "p": "puzzle-id-here",
@@ -286,6 +290,7 @@ Array [
   Object {
     "c": "foobar",
     "cn": "Mike D",
+    "e": false,
     "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-foobar",
     "k": "comment",
     "p": "puzzle-id-here",
@@ -301,6 +306,7 @@ Array [
   Object {
     "c": "baz",
     "cn": "Mike D",
+    "e": false,
     "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-baz",
     "k": "comment",
     "p": "puzzle-id-here",
@@ -311,6 +317,7 @@ Array [
   Object {
     "c": "baz",
     "cn": "Mike D",
+    "e": false,
     "id": "dummy-author-id-reply-baz",
     "k": "reply",
     "p": "puzzle-id-here",
@@ -326,6 +333,7 @@ Array [
   Object {
     "c": "baz",
     "cn": "Mike D",
+    "e": false,
     "id": "dummy-author-id-reply-baz",
     "k": "reply",
     "p": "puzzle-id-here",
@@ -341,6 +349,7 @@ Array [
   Object {
     "c": "LwgoVx0BAskM4wVJyoLj",
     "cn": "Mike D",
+    "e": false,
     "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
     "k": "comment",
     "p": "puzzle-id-here",
@@ -356,6 +365,7 @@ Array [
   Object {
     "c": "bar",
     "cn": "Jim",
+    "e": false,
     "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-bar",
     "k": "comment",
     "p": "puzzle-id-here",
@@ -371,6 +381,7 @@ Array [
   Object {
     "c": "bar",
     "cn": "Jim",
+    "e": false,
     "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-bar",
     "k": "comment",
     "p": "puzzle-id-here",
@@ -381,6 +392,7 @@ Array [
   Object {
     "c": "bam",
     "cn": "Tom",
+    "e": false,
     "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-bam",
     "k": "comment",
     "p": "puzzle-id-here",

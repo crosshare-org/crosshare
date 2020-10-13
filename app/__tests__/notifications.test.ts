@@ -250,10 +250,16 @@ describe('email queueing', () => {
     MockDate.set(twoHours);
     await adminApp.firestore().collection('prefs').doc('rando').set({ unsubs: ['all'] }, { merge: true });
 
+    // Nothing has been emailed, nothing read
+    expect((await adminApp.firestore().collection('n').where('e', '==', false).get()).size).toEqual(5);
+    expect((await adminApp.firestore().collection('n').where('r', '==', false).get()).size).toEqual(5);
+
     await queueEmails();
 
-    // We should still have marked everything as read
-    expect((await adminApp.firestore().collection('n').where('r', '==', false).get()).size).toEqual(0);
+    // We should have marked everything as emailed
+    expect((await adminApp.firestore().collection('n').where('e', '==', false).get()).size).toEqual(0);
+    // But not necessarily as read
+    expect((await adminApp.firestore().collection('n').where('r', '==', false).get()).size).toEqual(2);
 
     const mail2 = await adminApp.firestore().collection('mail').get();
     expect(mail2.size).toEqual(1);
@@ -264,10 +270,16 @@ describe('email queueing', () => {
     MockDate.set(twoHours);
     await adminApp.firestore().collection('prefs').doc(basePuzzle.a).set({ unsubs: ['comments'] }, { merge: true });
 
+    // Nothing has been emailed, nothing read
+    expect((await adminApp.firestore().collection('n').where('e', '==', false).get()).size).toEqual(5);
+    expect((await adminApp.firestore().collection('n').where('r', '==', false).get()).size).toEqual(5);
+
     await queueEmails();
 
-    // We should still have marked everything as read
-    expect((await adminApp.firestore().collection('n').where('r', '==', false).get()).size).toEqual(0);
+    // We should have marked everything as emailed
+    expect((await adminApp.firestore().collection('n').where('e', '==', false).get()).size).toEqual(0);
+    // But not necessarily as read
+    expect((await adminApp.firestore().collection('n').where('r', '==', false).get()).size).toEqual(3);
 
     const mail2 = await adminApp.firestore().collection('mail').get();
     expect(mail2.size).toEqual(1);
