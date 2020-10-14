@@ -25,6 +25,7 @@ if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
       'is not a valid value for enumeration ScrollLogicalPosition',
       'Extension context invalidated',
       'entryTypes contained only unsupported types',
+      'The popup has been closed by the user before finalizing the operation',
     ]
   });
 }
