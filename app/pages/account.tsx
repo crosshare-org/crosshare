@@ -17,10 +17,10 @@ import { Button } from '../components/Buttons';
 import { PROFILE_PIC, COVER_PIC } from '../lib/style';
 import { AccountPrefsV, UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { Slide, toast } from 'react-toastify';
 
 import dynamic from 'next/dynamic';
 import type { ImageCropper as ImageCropperType } from '../components/ImageCropper';
+import { useSnackbar } from '../components/Snackbar';
 const ImageCropper = dynamic(
   () => import('../components/ImageCropper').then((mod) => mod.ImageCropper as any),  // eslint-disable-line @typescript-eslint/no-explicit-any
   { ssr: false }
@@ -36,24 +36,13 @@ interface PrefSettingProps {
 }
 
 const PrefSetting = (props: PrefSettingProps) => {
+  const showSnackbar = useSnackbar();
   const unsubbed = props.prefs ?.unsubs ?.includes(props.flag);
   const unsubbedAll = props.prefs ?.unsubs ?.includes('all');
   return <label>
     <input css={{ marginRight: '1em' }} type='checkbox' disabled={!props.neverDisable && unsubbedAll} checked={props.invert ? unsubbed : !unsubbed && !unsubbedAll} onChange={e =>
       App.firestore().doc(`prefs/${props.userId}`).set({ unsubs: e.target.checked !== !!props.invert ? FieldValue.arrayRemove(props.flag) : FieldValue.arrayUnion(props.flag) }, { merge: true }).then(() => {
-        toast(<div>Email Preferences Updated</div>,
-          {
-            className: 'snack-bar',
-            position: 'bottom-left',
-            autoClose: 4000,
-            closeButton: false,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-            transition: Slide
-          });
+        showSnackbar('Email Preferences Updated');
       })
     } />
     {props.text}

@@ -13,7 +13,6 @@ import { MdRefresh } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { FixedSizeList as List } from 'react-window';
-import { toast, Slide } from 'react-toastify';
 
 import { addAutofillFieldsToEntry, numMatchesForEntry } from '../lib/autofillGrid';
 import { ViewableEntry } from '../lib/viewableGrid';
@@ -55,6 +54,7 @@ import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
 import { Keyboard } from './Keyboard';
 import { SMALL_AND_UP } from '../lib/style';
 import { ButtonReset } from './Buttons';
+import { useSnackbar } from './Snackbar';
 
 let worker: Worker;
 
@@ -506,6 +506,7 @@ interface GridModeProps {
 const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, setClueMode, ...props }: GridModeProps) => {
   const [muted, setMuted] = usePersistedBoolean('muted', false);
   const [toggleKeyboard, setToggleKeyboard] = usePersistedBoolean('keyboard', false);
+  const showSnackbar = useSnackbar();
 
   const gridRef = useRef<HTMLDivElement | null>(null);
 
@@ -574,23 +575,10 @@ const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, set
   const { autofillEnabled, setAutofillEnabled } = props;
   const toggleAutofillEnabled = useCallback(() => {
     if (autofillEnabled) {
-      // Show toast for disabling
-      toast(<div>Autofill Disabled</div>,
-        {
-          className: 'snack-bar',
-          position: 'bottom-left',
-          autoClose: 4000,
-          closeButton: false,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          transition: Slide
-        });
+      showSnackbar('Autofill Disabled');
     }
     setAutofillEnabled(!autofillEnabled);
-  }, [autofillEnabled, setAutofillEnabled]);
+  }, [autofillEnabled, setAutofillEnabled, showSnackbar]);
 
   const stats = useMemo(() => {
     let totalLength = 0;

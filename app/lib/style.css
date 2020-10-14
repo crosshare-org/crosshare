@@ -120,14 +120,6 @@ div.paragraph + div.paragraph {
   color: var(--text) !important;
   padding: 1em !important;
 }
-.snack-bar {
-  padding: 0.5em !important;
-  border-radius: 3px;
-  min-height: 32px;
-  background-color: var(--snackbar-bg) !important;
-  color: var(--snackbar-text) !important;
-  box-shadow: 0px 0px 3px 3px rgba(120,120,120,0.5) !important;
-}
 .Toastify__progress-bar {
   background: var(--primary) !important;
 }

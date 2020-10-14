@@ -11,6 +11,7 @@ import * as gtag from '../lib/gtag';
 import { useAuth } from '../lib/hooks';
 import { AuthContext } from '../components/AuthContext';
 import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
+import { Snackbar, SnackbarProvider } from '../components/Snackbar';
 
 import '../lib/style.css';
 
@@ -96,18 +97,13 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
       </Head>
       <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
         <AuthContext.Provider value={authStatus}>
-          <ToastContainer />
-          <Component {...pageProps} err={err} />
+          <SnackbarProvider>
+            <ToastContainer />
+            <Component {...pageProps} err={err} />
+          </SnackbarProvider>
         </AuthContext.Provider>
       </CrosshareAudioContext.Provider>
-      {loading ?
-        <div css={{
-          zIndex: 10000000,
-          position: 'fixed',
-          bottom: '1em',
-          left: '1em',
-        }} className='snack-bar Toastify__toast'>Loading...</div>
-        : ''}
+      <Snackbar message='Loading...' isOpen={loading} />
     </>
   );
 }

@@ -3,7 +3,7 @@ import ReactCrop from 'react-image-crop';
 import { Overlay } from './Overlay';
 import { Button } from './Buttons';
 import { App } from '../lib/firebaseWrapper';
-import { toast, Slide } from 'react-toastify';
+import { useSnackbar } from './Snackbar';
 
 function downsample(image: HTMLImageElement, targetSize: [number, number], crop: ReactCrop.Crop) {
   if (!crop || !crop.width || !crop.height) {
@@ -102,7 +102,7 @@ function downsample(image: HTMLImageElement, targetSize: [number, number], crop:
   return canvas;
 }
 
-function upload(storageKey: string, image: HTMLImageElement | null, targetSize: [number, number], crop: ReactCrop.Crop | null, onComplete: () => void) {
+function upload(storageKey: string, image: HTMLImageElement | null, targetSize: [number, number], crop: ReactCrop.Crop | null, onComplete: (msg: string) => void) {
   if (!image || !crop || !crop.width || !crop.height) {
     return;
   }
@@ -115,25 +115,11 @@ function upload(storageKey: string, image: HTMLImageElement | null, targetSize: 
   canvas.toBlob(
     blob => {
       if (!blob) {
-        alert('something went wrong');
-        onComplete();
+        onComplete('something went wrong');
         return;
       }
       App.storage().ref().child(storageKey).put(blob).then(() => {
-        onComplete();
-        toast(<div>Pic updated. It can take up to several hours to appear on the site.</div>,
-          {
-            className: 'snack-bar',
-            position: 'bottom-left',
-            autoClose: 4000,
-            closeButton: false,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-            transition: Slide
-          });
+        onComplete('Pic updated. It can take up to several hours to appear on the site.');
       });
     },
     'image/jpeg',
@@ -143,6 +129,7 @@ function upload(storageKey: string, image: HTMLImageElement | null, targetSize: 
 
 export function ImageCropper(props: { isCircle: boolean, targetSize: [number, number], storageKey: string, cancelCrop: () => void }) {
   const [upImg, setUpImg] = useState<string>();
+  const showSnackbar = useSnackbar();
   const imgRef = useRef<HTMLImageElement | null>(null);
   const [crop, setCrop] = useState<ReactCrop.Crop>({ unit: 'px', width: props.targetSize[0], aspect: props.targetSize[0] / props.targetSize[1] });
   const [completedCrop, setCompletedCrop] = useState<ReactCrop.Crop | null>(null);
@@ -196,7 +183,10 @@ export function ImageCropper(props: { isCircle: boolean, targetSize: [number, nu
           disabled={uploading || disabled || !completedCrop ?.width || !completedCrop ?.height}
           onClick={() => {
             setUploading(true);
-            upload(props.storageKey, imgRef.current, props.targetSize, completedCrop, props.cancelCrop);
+            upload(props.storageKey, imgRef.current, props.targetSize, completedCrop, (msg: string) => {
+              showSnackbar(msg);
+              props.cancelCrop();
+            });
           }}
           text="Upload Image"
         />
