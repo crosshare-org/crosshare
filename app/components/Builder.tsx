@@ -50,26 +50,11 @@ import AutofillWorker from 'worker-loader?filename=static/[hash].worker.js!../li
 import * as BA from '../lib/bitArray';
 import * as WordDB from '../lib/WordDB';
 import { Overlay } from './Overlay';
-import { usePersistedBoolean } from '../lib/hooks';
+import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
 
 import { Keyboard } from './Keyboard';
 import { SMALL_AND_UP } from '../lib/style';
 import { ButtonReset } from './Buttons';
-
-let hasResizeObserver = false;
-(async () => {
-  if (typeof window !== 'undefined') {
-    if ('ResizeObserver' in window) {
-      hasResizeObserver = true;
-    } else {
-      // Loads polyfill asynchronously, only if required.
-      const module = await import('@juggle/resize-observer');
-      window.ResizeObserver = module.ResizeObserver as unknown as typeof ResizeObserver;
-      hasResizeObserver = true;
-    }
-  }
-})();
-import useResizeObserver from 'use-resize-observer';
 
 let worker: Worker;
 
@@ -115,7 +100,7 @@ interface PotentialFillListProps {
 const PotentialFillList = (props: PotentialFillListProps) => {
   const listRef = useRef<List>(null);
   const listParent = useRef<HTMLDivElement>(null);
-  const { height = 200 } = useResizeObserver({ ref: hasResizeObserver ? listParent : null });
+  const { height = 200 } = usePolyfilledResizeObserver(listParent);
   useEffect(() => {
     if (listRef.current !== null) {
       listRef.current.scrollToItem(0);

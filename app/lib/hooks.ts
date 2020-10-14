@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo, MouseEvent } from 'react';
+import { useState, useCallback, useEffect, useMemo, MouseEvent, RefObject } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
 
@@ -7,6 +7,7 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { App } from './firebaseWrapper';
 import { ConstructorPageV, } from './constructorPage';
 import { NotificationV, NotificationT } from './notifications';
+import useResizeObserver from 'use-resize-observer';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {
@@ -24,6 +25,25 @@ export function useMatchMedia(query: string) {
   }, [query]);
 
   return matches;
+}
+
+export function usePolyfilledResizeObserver(ref: RefObject<HTMLElement>) {
+  const [hasResizeObserver, setHasResizeObserver] = useState(false);
+  useEffect(() => {
+    if (hasResizeObserver) {
+      return;
+    }
+    if ('ResizeObserver' in window) {
+      setHasResizeObserver(true);
+    } else {
+      // Loads polyfill asynchronously, only if required.
+      import('@juggle/resize-observer').then(module => {
+        window.ResizeObserver = module.ResizeObserver as unknown as typeof ResizeObserver;
+        setHasResizeObserver(true);
+      });
+    }
+  }, [hasResizeObserver]);
+  return useResizeObserver({ ref: hasResizeObserver ? ref : null });
 }
 
 export function usePersistedBoolean(key: string, defaultValue: boolean): [boolean, (b: boolean) => void] {
