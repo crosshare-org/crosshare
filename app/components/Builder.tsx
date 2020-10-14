@@ -100,7 +100,7 @@ interface PotentialFillListProps {
 const PotentialFillList = (props: PotentialFillListProps) => {
   const listRef = useRef<List>(null);
   const listParent = useRef<HTMLDivElement>(null);
-  const { height = 200 } = usePolyfilledResizeObserver(listParent);
+  const { height = 320 } = usePolyfilledResizeObserver(listParent);
   useEffect(() => {
     if (listRef.current !== null) {
       listRef.current.scrollToItem(0);

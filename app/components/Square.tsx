@@ -12,8 +12,8 @@ interface SquareProps {
 }
 export const Square = (props: SquareProps) => {
   const { width, height } = usePolyfilledResizeObserver(props.parentRef);
-  const [outWidth, setOutWidth] = useState(200);
-  const [outHeight, setOutHeight] = useState(200);
+  const [outWidth, setOutWidth] = useState(320);
+  const [outHeight, setOutHeight] = useState(320);
   useEffect(() => {
     if (!width || !height || props.waitToResize) {
       return;

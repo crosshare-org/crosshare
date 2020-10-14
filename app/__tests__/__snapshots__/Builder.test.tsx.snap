@@ -5,8 +5,8 @@ exports[`publish custom / non-rectangular size 1`] = `
   -webkit-flex: none;
   -ms-flex: none;
   flex: none;
-  width: 200px;
-  height: 200px;
+  width: 320px;
+  height: 320px;
 }
 
 .emotion-4 {
@@ -26,7 +26,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   background: var(--primary);
@@ -60,7 +60,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   background: var(--secondary);
@@ -74,7 +74,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-right: 1px solid var(--cell-wall);
@@ -89,7 +89,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   background: var(--cell-bg);
@@ -103,7 +103,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-right: 1px solid var(--cell-wall);
@@ -118,7 +118,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
@@ -133,7 +133,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
@@ -653,8 +653,8 @@ exports[`publish custom / non-rectangular size 2`] = `
   -webkit-flex: none;
   -ms-flex: none;
   flex: none;
-  width: 200px;
-  height: 200px;
+  width: 320px;
+  height: 320px;
 }
 
 .emotion-4 {
@@ -674,7 +674,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   background: var(--primary);
@@ -708,7 +708,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   background: var(--secondary);
@@ -722,7 +722,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-right: 1px solid var(--cell-wall);
@@ -737,7 +737,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   background: var(--cell-bg);
@@ -751,7 +751,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-right: 1px solid var(--cell-wall);
@@ -766,7 +766,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
@@ -781,7 +781,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
@@ -1301,8 +1301,8 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   -webkit-flex: none;
   -ms-flex: none;
   flex: none;
-  width: 200px;
-  height: 200px;
+  width: 320px;
+  height: 320px;
 }
 
 .emotion-4 {
@@ -1322,7 +1322,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   background: var(--primary);
@@ -1356,7 +1356,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   background: var(--secondary);
@@ -1370,7 +1370,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-right: 1px solid var(--cell-wall);
@@ -1385,7 +1385,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   background: var(--cell-bg);
@@ -1399,7 +1399,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-right: 1px solid var(--cell-wall);
@@ -1414,7 +1414,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
@@ -1429,7 +1429,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   position: absolute;
   width: 100%;
   height: 100%;
-  font-size: 40px;
+  font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-bottom: 1px solid var(--cell-wall);
