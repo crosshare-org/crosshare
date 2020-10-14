@@ -24,6 +24,7 @@ if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
       'A mutation operation was attempted on a database that did not allow mutations',
       'is not a valid value for enumeration ScrollLogicalPosition',
       'Extension context invalidated',
+      'entryTypes contained only unsupported types',
     ]
   });
 }
