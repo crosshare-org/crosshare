@@ -66,7 +66,7 @@ export default class CrosshareDocument extends Document {
             window.Sentry = undefined;
           </script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-          <script src="https://browser.sentry-cdn.com/5.25.0/bundle.min.js"></script>
+          <script src="https://browser.sentry-cdn.com/5.26.0/bundle.min.js"></script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-app.js"></script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
