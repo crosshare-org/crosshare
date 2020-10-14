@@ -198,7 +198,7 @@ const SuccessOverlay = (props: { publishTime: number, coverImage?: string | null
       <div css={{ textAlign: 'center' }}>
         {props.user ?.uid === props.puzzle.authorId ?
           <>
-            <p>Your puzzle is live! Copy the link to share with solvers. Comments posted below will be visible to anyone who finishes solving the puzzle.</p>
+            <p>Your puzzle is live! Copy the link to share with solvers (solvers will see an empty grid, yours is complete since you authored the puzzle). Comments posted below will be visible to anyone who finishes solving the puzzle.</p>
             <SharingButtons text={`Check out the crossword puzzle I made: "${props.puzzle.title}"`} path={`/crosswords/${props.puzzle.id}`} />
           </>
           :
