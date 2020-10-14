@@ -64,7 +64,7 @@
     "react-window": "^1.8.5",
     "simple-markdown": "^0.7.2",
     "swr": "^0.3.5",
-    "use-resize-observer": "^6.1.0",
+    "use-resize-observer": "^6.2.0-alpha.1",
     "worker-loader": "^3.0.4"
   },
   "devDependencies": {
@@ -72,7 +72,7 @@
     "@modern-dev/jsbn": "^1.2.5",
     "@next/eslint-plugin-next": "^9.5.5",
     "@testing-library/jest-dom": "^5.8.0",
-    "@testing-library/react": "^11.0.4",
+    "@testing-library/react": "^11.1.0",
     "@types/jest-in-case": "^1.0.2",
     "@types/react-dom": "^16.9.8",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
