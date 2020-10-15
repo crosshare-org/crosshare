@@ -29,10 +29,11 @@ export function Snackbar({
         minHeight: 32,
         boxShadow: '0px 0px 3px 3px rgba(120,120,120,0.5)',
         opacity: 0,
-        transitionProperty: 'opacity',
-        transitionDuration: ANIMATION_DELAY + 'ms',
+        visibility: 'hidden',
+        transition: 'all ' + ANIMATION_DELAY + 'ms ease-in-out 0s',
         ...(message && isOpen) && {
-          opacity: 1
+          opacity: 1,
+          visibility: 'visible'
         }
       }}
     >{message}
