@@ -34,7 +34,7 @@ beforeAll(async () => {
       uid: 'miked', admin: true, firebase: {
         sign_in_provider: 'google.com'
       }
-    } as any // eslint-disable-line
+    }
   }) as firebase.app.App;
   app = firebaseTesting.initializeTestApp({
     projectId,
