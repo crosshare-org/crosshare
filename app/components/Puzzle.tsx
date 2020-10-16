@@ -218,10 +218,11 @@ const SuccessOverlay = (props: { publishTime: number, coverImage?: string | null
             }
           </>
           :
-          <div>
-            <PrevDailyMiniLink nextPuzzle={props.nextPuzzle} />
-          </div>
+          ''
         }
+        <div>
+          <PrevDailyMiniLink nextPuzzle={props.nextPuzzle} />
+        </div>
       </div>
       <Comments clueMap={props.clueMap} solveTime={props.solveTime} didCheat={props.didCheat} puzzleId={props.puzzle.id} puzzleAuthorId={props.puzzle.authorId} comments={props.puzzle.comments} />
       {props.user ?.uid !== props.puzzle.authorId ?
