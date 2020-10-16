@@ -19,7 +19,7 @@ import { ConstructorPageV, ConstructorPageT } from '../lib/constructorPage';
 
 const PuzzleListItem = (props: PuzzleResult) => {
   return (
-    <li key={props.id}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>{props.title}</Link> by {props.authorName}{props.category ? ' (' + props.category + ')' : ''}</li>
+    <li key={props.id}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>{props.title}</Link> by {props.authorName}<span css={{ color: 'var(--error)' }}>{props.isPrivate ? ' PRIVATE' : (props.isPrivateUntil ? ' PRIVATE until ' + (new Date(props.isPrivateUntil)).toISOString() : '')}</span></li>
   );
 };
 
