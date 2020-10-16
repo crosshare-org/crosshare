@@ -1,4 +1,3 @@
-import { toast } from 'react-toastify';
 
 import { PosAndDir, Position, Direction, BLOCK } from '../lib/types';
 import { DBPuzzleT, PlayWithoutUserT } from '../lib/dbtypes';
@@ -419,10 +418,6 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
     if (!key) {
       // This seems dumb to check for but at least once we've had key == undefined here
       // https://sentry.io/organizations/m-d/issues/1915351332/
-      return state;
-    }
-    if (key === '$') {
-      toast('🔥 This is an example pop up notification! 🔥');
       return state;
     }
     if (key === '{num}' || key === '{abc}') {

@@ -109,17 +109,3 @@ div.paragraph + div.paragraph {
   height: 100%;
   width: 100%;
 }
-.Toastify__toast-container {
-  z-index: 999999999 !important;
-}
-.Toastify__close-button {
-  color: var(--text) !important;
-}
-.Toastify__toast {
-  background-color: var(--bg) !important;
-  color: var(--text) !important;
-  padding: 1em !important;
-}
-.Toastify__progress-bar {
-  background: var(--primary) !important;
-}

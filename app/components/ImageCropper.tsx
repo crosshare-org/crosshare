@@ -129,7 +129,7 @@ function upload(storageKey: string, image: HTMLImageElement | null, targetSize: 
 
 export function ImageCropper(props: { isCircle: boolean, targetSize: [number, number], storageKey: string, cancelCrop: () => void }) {
   const [upImg, setUpImg] = useState<string>();
-  const showSnackbar = useSnackbar();
+  const { showSnackbar } = useSnackbar();
   const imgRef = useRef<HTMLImageElement | null>(null);
   const [crop, setCrop] = useState<ReactCrop.Crop>({ unit: 'px', width: props.targetSize[0], aspect: props.targetSize[0] / props.targetSize[1] });
   const [completedCrop, setCompletedCrop] = useState<ReactCrop.Crop | null>(null);

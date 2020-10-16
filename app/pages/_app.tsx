@@ -3,8 +3,6 @@ import * as Sentry from '@sentry/node';
 import { AppProps, NextWebVitalsMetric } from 'next/app';
 import NextJSRouter from 'next/router';
 import Head from 'next/head';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
 import 'react-image-crop/dist/ReactCrop.css';
 
 import * as gtag from '../lib/gtag';
@@ -98,7 +96,6 @@ export default function CrosshareApp({ Component, pageProps, err }: AppProps & {
       <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
         <AuthContext.Provider value={authStatus}>
           <SnackbarProvider>
-            <ToastContainer />
             <Component {...pageProps} err={err} />
           </SnackbarProvider>
         </AuthContext.Provider>

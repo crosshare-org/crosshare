@@ -506,7 +506,7 @@ interface GridModeProps {
 const GridMode = ({ getMostConstrainedEntry, reRunAutofill, state, dispatch, setClueMode, ...props }: GridModeProps) => {
   const [muted, setMuted] = usePersistedBoolean('muted', false);
   const [toggleKeyboard, setToggleKeyboard] = usePersistedBoolean('keyboard', false);
-  const showSnackbar = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const gridRef = useRef<HTMLDivElement | null>(null);
 

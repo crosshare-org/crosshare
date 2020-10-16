@@ -36,7 +36,7 @@ interface PrefSettingProps {
 }
 
 const PrefSetting = (props: PrefSettingProps) => {
-  const showSnackbar = useSnackbar();
+  const { showSnackbar } = useSnackbar();
   const unsubbed = props.prefs ?.unsubs ?.includes(props.flag);
   const unsubbedAll = props.prefs ?.unsubs ?.includes('all');
   return <label>

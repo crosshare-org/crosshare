@@ -1,15 +1,57 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { IoMdCloseCircleOutline, } from 'react-icons/io';
+import { createContext, Dispatch, ReactNode, useCallback, useContext, useEffect, useReducer, useState } from 'react';
+import { SMALL_AND_UP } from '../lib/style';
+import { keyframes } from '@emotion/core';
 
-interface SnackbarProps {
-  isOpen: boolean
-  setIsOpen: (open: boolean) => void
-  message: string
-  setMessage: (msg: string) => void
-  fadeTimeout: ReturnType<typeof setTimeout> | null
-  setFadeTimeout: (ft: ReturnType<typeof setTimeout>) => void
+const slidein = keyframes`
+from {
+  margin-left: 100%;
 }
 
-const SnackbarContext = createContext<SnackbarProps | null>(null);
+to {
+  margin-left: 0%;
+}
+`;
+
+enum ActionTypes {
+  ShowSnackbar,
+  CloseSnackbar,
+  AddToast,
+  RemoveToast,
+}
+type Action =
+  | { type: ActionTypes.ShowSnackbar, message: string }
+  | { type: ActionTypes.CloseSnackbar }
+  | { type: ActionTypes.AddToast, id: number, message: string }
+  | { type: ActionTypes.RemoveToast, id: number };
+
+interface SnackbarState {
+  isOpen: boolean,
+  message: string,
+}
+
+interface ToastState {
+  id: number,
+  message: string,
+}
+
+interface State extends SnackbarState {
+  toasts: Array<ToastState>
+}
+
+const initialState = {
+  isOpen: false,
+  message: '',
+  toasts: []
+};
+
+const SnackbarContext = createContext<{
+  state: State;
+  dispatch: Dispatch<Action>;
+}>({
+  state: initialState,
+  dispatch: () => null
+});
 
 export function Snackbar({
   message,
@@ -41,23 +83,124 @@ export function Snackbar({
   );
 }
 
-export function SnackbarProvider(props: { children?: ReactNode }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState('');
-  const [fadeTimeout, setFadeTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
+function Toast({ id, message }: { id: number, message: string }) {
+  const { dispatch } = useContext(SnackbarContext);
+  const [closing, setClosing] = useState(false);
+  const [closed, setClosed] = useState(false);
 
-  const contextProps = {
-    isOpen,
-    setIsOpen,
-    message,
-    setMessage,
-    fadeTimeout,
-    setFadeTimeout,
-  };
+  const close = useCallback(() => {
+    // Close the toast which causes it to slide right
+    setClosing(true);
+
+    // After slide right we set closing which causes it to shrink vertically
+    setTimeout(() => {
+      setClosed(true);
+    }, ANIMATION_DELAY);
+
+    // After shrink vertically we remove the toast
+    setTimeout(() => {
+      dispatch({ type: ActionTypes.RemoveToast, id });
+    }, 2 * ANIMATION_DELAY);
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      close();
+    }, DURATION);
+    return () => clearTimeout(timer);
+  }, [close]);
+
   return (
-    <SnackbarContext.Provider value={contextProps}>
+    <div css={{
+      transition: 'all ' + ANIMATION_DELAY + 'ms ease-in-out 0s',
+      maxHeight: 500,
+      ...closed && { maxHeight: 0 },
+      [SMALL_AND_UP]: {
+        '& + &': {
+          marginTop: '1em',
+        }
+      }
+    }}>
+      <div
+        role="button"
+        tabIndex={0}
+        css={{
+          cursor: 'pointer',
+          zIndex: 10000000,
+          backgroundColor: 'var(--bg)',
+          color: 'var(--text)',
+          padding: '1em',
+          width: '100%',
+          marginLeft: '110%',
+          boxShadow: '0px 0px 3px 3px rgba(120,120,120,0.5)',
+          animation: `${slidein} 0.3s ease-in-out`,
+          transition: 'all ' + ANIMATION_DELAY + 'ms ease-in-out 0s',
+          ...(message && !closing) && {
+            marginLeft: 0,
+          },
+        }}
+        onClick={close}
+        onKeyPress={close}
+      >
+        <IoMdCloseCircleOutline css={{
+          float: 'right',
+        }} />
+        {message}
+      </div>
+    </div>
+  );
+}
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+  case ActionTypes.ShowSnackbar:
+    return {
+      ...state,
+      isOpen: true,
+      message: action.message,
+    };
+  case ActionTypes.CloseSnackbar:
+    return {
+      ...state,
+      isOpen: false,
+    };
+  case ActionTypes.AddToast:
+    state.toasts.push({
+      message: action.message,
+      id: action.id
+    });
+    return { ...state };
+  case ActionTypes.RemoveToast:
+    return {
+      ...state,
+      toasts: state.toasts.filter(i => i.id !== action.id),
+    };
+  }
+};
+
+export function SnackbarProvider(props: { children?: ReactNode }) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    <SnackbarContext.Provider value={{ state, dispatch }}>
       {props.children}
-      <Snackbar {...contextProps} />
+      <Snackbar {...state} />
+      <div css={{
+        position: 'fixed',
+        overflow: 'hidden',
+        width: '100vw',
+        paddingBottom: 4,
+        top: 0,
+        right: 0,
+        ...(state.toasts.length === 0) && { display: 'none' },
+        [SMALL_AND_UP]: {
+          padding: 4,
+          top: '1em',
+          right: '1em',
+          width: 320
+        }
+      }}>
+        {state.toasts.map(t => <Toast key={t.id} {...t} />)}
+      </div>
     </SnackbarContext.Provider>
   );
 }
@@ -65,16 +208,14 @@ export function SnackbarProvider(props: { children?: ReactNode }) {
 const DURATION = 4000;
 const ANIMATION_DELAY = 250;
 
+const toastId = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+
 export function useSnackbar() {
-  const context = useContext<SnackbarProps | null>(SnackbarContext);
-  if (!context) {
-    throw new Error('useSnackbar must be used within a SnackbarProvider');
-  }
-  const nonNullContext = context;
+  const context = useContext(SnackbarContext);
+  const [snackbarTimeout, setSnackbarTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   function openSnackbar(message: string) {
-    nonNullContext.setMessage(message);
-    nonNullContext.setIsOpen(true);
-    nonNullContext.setFadeTimeout(
+    context.dispatch({ type: ActionTypes.ShowSnackbar, message });
+    setSnackbarTimeout(
       setTimeout(
         () => {
           close();
@@ -85,7 +226,7 @@ export function useSnackbar() {
   }
 
   function showSnackbar(message: string) {
-    if (nonNullContext.isOpen) {
+    if (context.state.isOpen) {
       close();
       setTimeout(() => {
         openSnackbar(message);
@@ -96,11 +237,23 @@ export function useSnackbar() {
   }
 
   function close() {
-    if (nonNullContext.fadeTimeout) {
-      clearTimeout(nonNullContext.fadeTimeout);
+    if (snackbarTimeout) {
+      clearTimeout(snackbarTimeout);
+      setSnackbarTimeout(null);
     }
-    nonNullContext.setIsOpen(false);
+    context.dispatch({ type: ActionTypes.CloseSnackbar });
   }
 
-  return showSnackbar;
+  function addToast(message: string, delay = 0) {
+    const id = toastId();
+    if (delay) {
+      setTimeout(() => {
+        context.dispatch({ type: ActionTypes.AddToast, id, message });
+      }, delay);
+    } else {
+      context.dispatch({ type: ActionTypes.AddToast, id, message });
+    }
+  }
+
+  return { showSnackbar, addToast };
 }

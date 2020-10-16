@@ -60,7 +60,6 @@
     "react-icons": "^3.9.0",
     "react-image-crop": "^8.6.5",
     "react-popper": "^2.2.3",
-    "react-toastify": "^6.0.9",
     "react-window": "^1.8.5",
     "simple-markdown": "^0.7.2",
     "swr": "^0.3.5",
