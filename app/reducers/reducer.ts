@@ -15,6 +15,7 @@ interface GridInterfaceState {
   type: string,
   active: PosAndDir,
   grid: ViewableGrid<ViewableEntry>,
+  wasEntryClick: false,
   showExtraKeyLayout: boolean,
   isEnteringRebus: boolean,
   rebusValue: string,
@@ -110,6 +111,7 @@ export function initialBuilderState(
     title: title,
     notes: notes,
     blogPost: null,
+    wasEntryClick: false,
     active: { col: 0, row: 0, dir: Direction.Across },
     grid: initialGrid,
     showExtraKeyLayout: false,
@@ -234,14 +236,6 @@ export interface NewPuzzleAction extends PuzzleAction {
 }
 export function isNewPuzzleAction(action: PuzzleAction): action is NewPuzzleAction {
   return action.type === 'NEWPUZZLE';
-}
-
-interface SetActiveAction extends PuzzleAction {
-  type: 'SETACTIVE',
-  newActive: PosAndDir,
-}
-function isSetActiveAction(action: PuzzleAction): action is SetActiveAction {
-  return action.type === 'SETACTIVE';
 }
 
 export interface ClickedEntryAction extends PuzzleAction {
@@ -395,22 +389,19 @@ export function checkComplete(state: PuzzleState) {
 
 export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, action: PuzzleAction): T {
   if (action.type === 'CHANGEDIRECTION') {
-    return ({ ...state, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
+    return ({ ...state, wasEntryClick: false, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
   }
   if (isClickedEntryAction(action)) {
     const clickedEntry = state.grid.entries[action.entryIndex];
     for (const cell of clickedEntry.cells) {
       if (valAt(state.grid, cell) === ' ') {
-        return ({ ...state, active: { ...cell, dir: clickedEntry.direction } });
+        return ({ ...state, wasEntryClick: true, active: { ...cell, dir: clickedEntry.direction } });
       }
     }
-    return ({ ...state, active: { ...clickedEntry.cells[0], dir: clickedEntry.direction } });
-  }
-  if (isSetActiveAction(action)) {
-    return ({ ...state, active: action.newActive });
+    return ({ ...state, wasEntryClick: true, active: { ...clickedEntry.cells[0], dir: clickedEntry.direction } });
   }
   if (isSetActivePositionAction(action)) {
-    return ({ ...state, active: { ...action.newActive, dir: state.active.dir } });
+    return ({ ...state, wasEntryClick: false, active: { ...action.newActive, dir: state.active.dir } });
   }
   if (isKeypressAction(action)) {
     const key = action.key;
@@ -453,6 +444,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
         }
         return ({
           ...state,
+          wasEntryClick: false,
           active: advancePosition(state.grid, state.active, isPuzzleState(state) ? state.wrongCells : new Set()),
           isEnteringRebus: false, rebusValue: ''
         });
@@ -468,29 +460,29 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       }
       return state;
     } else if (key === ' ' || key === '{dir}') {
-      return ({ ...state, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
+      return ({ ...state, wasEntryClick: false, active: { ...state.active, dir: (state.active.dir + 1) % 2 } });
     } else if (key === '{prev}') {
-      return ({ ...state, active: retreatPosition(state.grid, state.active) });
+      return ({ ...state, wasEntryClick: false, active: retreatPosition(state.grid, state.active) });
     } else if (key === '{next}') {
-      return ({ ...state, active: nextCell(state.grid, state.active) });
+      return ({ ...state, wasEntryClick: false, active: nextCell(state.grid, state.active) });
     } else if ((key === 'Tab' && !shift) || key === '{nextEntry}' || key === 'Enter') {
-      return ({ ...state, active: moveToNextEntry(state.grid, state.active) });
+      return ({ ...state, wasEntryClick: false, active: moveToNextEntry(state.grid, state.active) });
     } else if ((key === 'Tab' && shift) || key === '{prevEntry}') {
-      return ({ ...state, active: moveToPrevEntry(state.grid, state.active) });
+      return ({ ...state, wasEntryClick: false, active: moveToPrevEntry(state.grid, state.active) });
     } else if (key === 'ArrowRight') {
-      return ({ ...state, active: { ...moveRight(state.grid, state.active), dir: Direction.Across } });
+      return ({ ...state, wasEntryClick: false, active: { ...moveRight(state.grid, state.active), dir: Direction.Across } });
     } else if (key === 'ArrowLeft') {
-      return ({ ...state, active: { ...moveLeft(state.grid, state.active), dir: Direction.Across } });
+      return ({ ...state, wasEntryClick: false, active: { ...moveLeft(state.grid, state.active), dir: Direction.Across } });
     } else if (key === 'ArrowUp') {
-      return ({ ...state, active: { ...moveUp(state.grid, state.active), dir: Direction.Down } });
+      return ({ ...state, wasEntryClick: false, active: { ...moveUp(state.grid, state.active), dir: Direction.Down } });
     } else if (key === 'ArrowDown') {
-      return ({ ...state, active: { ...moveDown(state.grid, state.active), dir: Direction.Down } });
+      return ({ ...state, wasEntryClick: false, active: { ...moveDown(state.grid, state.active), dir: Direction.Down } });
     } else if ((key === '.' || key === '{block}') && state.grid.allowBlockEditing) {
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
         state.grid = gridWithBlockToggled(state.grid, state.active, symmetry);
-        return { ...state.postEdit(ci) as T, active: nextCell(state.grid, state.active) }; // TODO postEdit typecast this is trash
+        return { ...state.postEdit(ci) as T, wasEntryClick: false, active: nextCell(state.grid, state.active) }; // TODO postEdit typecast this is trash
       }
       return state;
     } else if (key.match(/^[A-Za-z0-9]$/)) {
@@ -508,6 +500,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       }
       return ({
         ...state,
+        wasEntryClick: false,
         active: advancePosition(state.grid, state.active, isPuzzleState(state) ? state.wrongCells : new Set()),
       });
     } else if (key === 'Backspace' || key === '{bksp}') {
@@ -523,6 +516,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(state: T, act
       }
       return ({
         ...state,
+        wasEntryClick: false,
         active: retreatPosition(state.grid, state.active),
       });
     }

@@ -68,6 +68,7 @@ interface ClueListItemProps {
   isCross: boolean,
   isRefed: boolean,
   active: Position | null,
+  wasEntryClick: boolean,
   showEntry: boolean,
   allEntries?: Array<CluedEntry>,
   grid: GridBase<EntryBase>,
@@ -76,7 +77,7 @@ interface ClueListItemProps {
 
 const ClueListItem = memo(function ClueListItem({ isActive, isCross, ...props }: ClueListItemProps) {
   const ref = useRef<HTMLLIElement>(null);
-  if (ref.current) {
+  if (ref.current && !props.wasEntryClick) {
     if (isActive || (props.scrollToCross && isCross)) {
       ref.current.scrollIntoView({ behavior: 'auto', block: 'center' });
     }
@@ -150,6 +151,7 @@ interface ClueListProps {
   header: string,
   current?: number,
   active: Position,
+  wasEntryClick: boolean,
   cross?: number,
   refed?: Array<number>,
   entries: Array<CluedEntry>,
@@ -166,6 +168,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
     const isCross = props.cross === entry.index;
     const isRefed = props.refed ?.find(n => n === entry.index) !== undefined;
     return (<ClueListItem
+      wasEntryClick={props.wasEntryClick}
       scrollToCross={props.scrollToCross}
       dimCompleted={props.dimCompleted}
       grid={props.grid}

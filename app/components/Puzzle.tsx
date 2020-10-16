@@ -275,6 +275,7 @@ interface PuzzleProps {
 export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps & AuthPropsOptional) => {
   const [state, dispatch] = useReducer(puzzleReducer, {
     type: 'puzzle',
+    wasEntryClick: false,
     active: { col: 0, row: 0, dir: Direction.Across },
     grid: addClues(fromCells({
       mapper: (e) => e,
@@ -592,8 +593,8 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
   const shouldConceal = state.currentTimeWindowStart === 0 && !(state.success && state.dismissedSuccess);
   if (state.clueView) {
     puzzleView = <TwoCol
-      left={<ClueList allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={shouldConceal} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
-      right={<ClueList allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={shouldConceal} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
+      left={<ClueList wasEntryClick={state.wasEntryClick} allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={shouldConceal} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
+      right={<ClueList wasEntryClick={state.wasEntryClick} allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={true} conceal={shouldConceal} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
     />;
   } else {
     puzzleView = <SquareAndCols
@@ -614,8 +615,8 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
           />;
         }
       }
-      left={<ClueList scrollToCross={scrollToCross} allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={shouldConceal} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} dispatch={dispatch} />}
-      right={<ClueList scrollToCross={scrollToCross} allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={shouldConceal} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} dispatch={dispatch} />}
+      left={<ClueList wasEntryClick={state.wasEntryClick} scrollToCross={scrollToCross} allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={shouldConceal} header="Across" entries={acrossEntries} current={entry.index} cross={cross ?.index} dispatch={dispatch} />}
+      right={<ClueList wasEntryClick={state.wasEntryClick} scrollToCross={scrollToCross} allEntries={state.grid.entries} refed={refed} dimCompleted={true} active={state.active} grid={state.grid} showEntries={false} conceal={shouldConceal} header="Down" entries={downEntries} current={entry.index} cross={cross ?.index} dispatch={dispatch} />}
     />;
   }
 

@@ -137,8 +137,8 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
               />;
             }
           }
-          left={<ClueList dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} header="Across" entries={acrossEntries} current={entry ?.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
-          right={<ClueList dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} header="Down" entries={downEntries} current={entry ?.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
+          left={<ClueList wasEntryClick={state.wasEntryClick} dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} header="Across" entries={acrossEntries} current={entry ?.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
+          right={<ClueList wasEntryClick={state.wasEntryClick} dimCompleted={false} active={state.active} grid={state.grid} showEntries={false} conceal={false} header="Down" entries={downEntries} current={entry ?.index} cross={cross ?.index} scrollToCross={scrollToCross} dispatch={dispatch} />}
         />
       </div>
     </div>
