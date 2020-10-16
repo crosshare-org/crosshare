@@ -126,7 +126,6 @@ function Toast({ id, message }: { id: number, message: string }) {
         tabIndex={0}
         css={{
           cursor: 'pointer',
-          zIndex: 10000000,
           backgroundColor: 'var(--bg)',
           color: 'var(--text)',
           padding: '1em',
@@ -185,6 +184,7 @@ export function SnackbarProvider(props: { children?: ReactNode }) {
       {props.children}
       <Snackbar {...state} />
       <div css={{
+        zIndex: 10000000,
         position: 'fixed',
         overflow: 'hidden',
         width: '100vw',

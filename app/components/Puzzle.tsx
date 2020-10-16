@@ -9,7 +9,6 @@ import {
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
-import { toast } from 'react-toastify';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 import { Link, LinkButton, LinkButtonSimpleA } from './Link';
@@ -55,6 +54,7 @@ import { Markdown } from './Markdown';
 import { ToolTipText } from './ToolTipText';
 import { AuthorLink } from './PuzzleLink';
 import formatISO from 'date-fns/formatISO';
+import { useSnackbar } from './Snackbar';
 
 export interface NextPuzzleLink {
   puzzleId: string,
@@ -439,6 +439,8 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
     };
   }, [writePlayToDBIfNeeded, router]);
 
+  const { addToast } = useSnackbar();
+
   if (state.success && !state.ranSuccessEffects) {
     const action: RanSuccessEffectsAction = { type: 'RANSUCCESS' };
     dispatch(action);
@@ -455,19 +457,11 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
 
     let delay = 0;
     if (state.bankedSeconds <= 60) {
-      toast(<div><Emoji symbol='🥇' /> Solved in under a minute!</div>,
-        {
-          closeOnClick: true,
-        });
+      addToast('🥇 Solved in under a minute!');
       delay += 500;
     }
     if (!state.didCheat) {
-      toast(<div><Emoji symbol='🤓' /> Solved without check/reveal! </div>,
-        {
-          delay: delay,
-          closeOnClick: true,
-        });
-      delay += 500;
+      addToast('🤓 Solved without check/reveal!', delay);
     }
     if (!muted && playSuccess.current) {
       playSuccess.current();
