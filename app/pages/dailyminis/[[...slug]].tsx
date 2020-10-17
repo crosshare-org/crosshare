@@ -54,27 +54,25 @@ const MonthNames = ['January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-export async function puzzlesListForCategoryIndex(idx: CategoryIndexT, page: [number, number]) {
+export async function puzzlesListForCategoryIndex(idx: CategoryIndexT, page: [number, number]): Promise<Array<[string, PuzzleResult, ConstructorPageT | null]>> {
   const today = new Date();
   const prefix: string = page[0] + '-' + page[1] + '-';
   const ds = addZeros(getDateString(today));
-  const puzzles: Array<[string, PuzzleResult, ConstructorPageT | null]> = [];
-  await Promise.all(Object.entries(idx)
+  return Promise.all(Object.entries(idx)
     .filter(([k, _v]) => k.startsWith(prefix))
     .map(([k, v]): [string, string] => [addZeros(k), v])
     .filter(([k, _v]) => k <= ds)
     .sort((a, b) => a[0] > b[0] ? -1 : 1)
-    .map(async ([dateString, puzzleId]) => {
+    .map(async ([dateString, puzzleId]): Promise<[string, PuzzleResult, ConstructorPageT | null]> => {
       const dbpuzzle = await getPuzzle(puzzleId);
       if (!dbpuzzle) {
         throw new Error('bad puzzleId in index: ' + puzzleId);
       }
       const puzzle = puzzleFromDB(dbpuzzle);
       const cp = await userIdToPage(dbpuzzle.a);
-      puzzles.push([prettifyDateString(dateString), { ...puzzle, id: puzzleId }, cp]);
+      return [prettifyDateString(dateString), { ...puzzle, id: puzzleId }, cp];
     })
   );
-  return puzzles;
 }
 
 // We export this so we can use it for testing
