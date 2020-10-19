@@ -1,7 +1,7 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
-import { getUser, render, cleanup, fireEvent } from '../lib/testingUtils';
+import { getUser, render, cleanup, fireEvent, getMockedPuzzle } from '../lib/testingUtils';
 import { AccountPage } from '../pages/account';
 import waitForExpect from 'wait-for-expect';
 jest.mock('../lib/firebaseWrapper');
@@ -48,11 +48,11 @@ test('create constructor page', async () => {
 
   cleanup();
   // Just add a dummy constructed puzzle for this user
-  await adminApp.firestore().collection('c').add({ a: 'mikeuserid' });
+  await adminApp.firestore().collection('c').add(getMockedPuzzle({ a: 'mikeuserid' }));
   r = render(
     <AccountPage isAdmin={false} user={mike} />, { user: mike }
   );
-  expect(await r.findByPlaceholderText(/username/i)).toBeVisible();
+  expect(await r.findByPlaceholderText(/username/i, undefined, { timeout: 3000 })).toBeVisible();
   expect(r.queryByText(/Start sharing your own puzzles/i)).toBeNull();
 
   fireEvent.change(r.getByPlaceholderText('username'), { target: { value: 'MikeD' } });
