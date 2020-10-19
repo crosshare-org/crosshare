@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Head from 'next/head';
 
 import { getDisplayName, DisplayNameForm } from '../components/DisplayNameForm';
 import { requiresAuth, AuthProps } from '../components/AuthContext';
-import { LegacyPlayV } from '../lib/dbtypes';
+import { DBPuzzleV, LegacyPlayV } from '../lib/dbtypes';
 import { App, FieldValue } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleResultLink } from '../components/PuzzleLink';
@@ -12,7 +12,7 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { getPuzzle } from '../lib/puzzleCache';
 import { CreatePageForm, BioEditor } from '../components/ConstructorPage';
-import { PuzzleResult, puzzleFromDB } from '../lib/types';
+import { puzzleFromDB } from '../lib/types';
 import { Button } from '../components/Buttons';
 import { PROFILE_PIC, COVER_PIC } from '../lib/style';
 import { AccountPrefsV, UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
@@ -21,6 +21,7 @@ import { useDocument } from 'react-firebase-hooks/firestore';
 import dynamic from 'next/dynamic';
 import type { ImageCropper as ImageCropperType } from '../components/ImageCropper';
 import { useSnackbar } from '../components/Snackbar';
+import { usePaginatedQuery } from '../lib/usePagination';
 const ImageCropper = dynamic(
   () => import('../components/ImageCropper').then((mod) => mod.ImageCropper as any),  // eslint-disable-line @typescript-eslint/no-explicit-any
   { ssr: false }
@@ -53,9 +54,46 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
   const [settingProfilePic, setSettingProfilePic] = useState(false);
   const [settingCoverPic, setSettingCoverPic] = useState(false);
   const [hasAuthoredPuzzle, setHasAuthoredPuzzle] = useState(false);
-  const [unfinishedPuzzles, setUnfinishedPuzzles] = useState<Array<PuzzleResult> | null>(null);
-  const [error, setError] = useState(false);
   const [displayName, setDisplayName] = useState(getDisplayName(user, constructorPage));
+
+  const db = App.firestore();
+  const unfinishedQuery = useMemo(() =>
+    db.collection('p').where('u', '==', user.uid).where('f', '==', false).orderBy('ua', 'desc'),
+  [db, user.uid]);
+  const playMapper = useCallback(async (play) => {
+    const puzzleId = play.c;
+    const puzzle = await getPuzzle(puzzleId);
+    if (!puzzle || puzzle.a === user.uid) {
+      console.log('deleting invalid play');
+      await db.collection('p').doc(`${puzzleId}-${user.uid}`).delete();
+      return undefined;
+    } else {
+      return { ...puzzleFromDB(puzzle), id: puzzleId };
+    }
+  }, [db, user.uid]);
+  const {
+    loading: loadingUnfinished,
+    docs: unfinishedPuzzles,
+    loadMore: loadMoreUnfinished,
+    hasMore: hasMoreUnfinished,
+  } = usePaginatedQuery(unfinishedQuery, LegacyPlayV, 4, playMapper);
+
+  const authoredQuery = useMemo(() =>
+    db.collection('c').where('a', '==', user.uid).orderBy('p', 'desc'),
+  [db, user.uid]);
+  const authoredMapper = useCallback(async (dbres, id) => ({ ...puzzleFromDB(dbres), id }), []);
+  const {
+    loading: loadingAuthored,
+    docs: authoredPuzzles,
+    loadMore: loadMoreAuthored,
+    hasMore: hasMoreAuthored,
+  } = usePaginatedQuery(authoredQuery, DBPuzzleV, 4, authoredMapper);
+
+  useEffect(() => {
+    if (!hasAuthoredPuzzle && authoredPuzzles.length) {
+      setHasAuthoredPuzzle(true);
+    }
+  }, [hasAuthoredPuzzle, authoredPuzzles.length]);
 
   // Account preferences
   const [accountPrefsDoc, loadingAccountPrefs, accountPrefsDBError] = useDocument(App.firestore().doc(`prefs/${user.uid}`));
@@ -73,79 +111,6 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
   }, [accountPrefsDoc]);
   const accountPrefsError = accountPrefsDBError ?.message || accountPrefsDecodeError;
 
-  useEffect(() => {
-    console.log('loading authored puzzle and plays');
-    let ignore = false;
-
-    async function fetchData() {
-      const db = App.firestore();
-
-      if (constructorPage) {
-        setHasAuthoredPuzzle(true);
-      } else {
-        db.collection('c').where('a', '==', user.uid).limit(1).get()
-          .then(res => {
-            if (ignore) {
-              return;
-            }
-            setHasAuthoredPuzzle(res.size > 0);
-          }).catch(reason => {
-            console.error(reason);
-            if (ignore) {
-              return;
-            }
-            setError(true);
-          });
-      }
-
-      db.collection('p').where('u', '==', user.uid).where('f', '==', false).limit(10).get()
-        .then(async playsResult => {
-          if (ignore) {
-            return;
-          }
-          if (playsResult === null) {
-            setUnfinishedPuzzles([]);
-          } else {
-            const unfinishedPuzzles: Array<PuzzleResult> = [];
-            await Promise.all(
-              playsResult.docs.map(async doc => {
-                const playResult = LegacyPlayV.decode(doc.data());
-                if (isRight(playResult)) {
-                  const puzzleId = playResult.right.c;
-                  const puzzle = await getPuzzle(puzzleId);
-                  if (!puzzle || puzzle.a === user.uid) {
-                    console.log('deleting invalid play');
-                    db.collection('p').doc(`${puzzleId}-${user.uid}`).delete();
-                  } else {
-                    unfinishedPuzzles.push({ ...puzzleFromDB(puzzle), id: puzzleId });
-                  }
-                } else {
-                  console.error(PathReporter.report(playResult).join(','));
-                  return Promise.reject('Malformed play');
-                }
-              })
-            );
-            if (ignore) {
-              return;
-            }
-            setUnfinishedPuzzles(unfinishedPuzzles);
-          }
-        }).catch(reason => {
-          console.error(reason);
-          if (ignore) {
-            return;
-          }
-          setError(true);
-        });
-    }
-
-    fetchData();
-    return () => { ignore = true; };
-  }, [user, constructorPage]);
-
-  if (error) {
-    return <div>Error loading plays / authored puzzles. Please try again.</div>;
-  }
   return (
     <>
       <Head>
@@ -195,14 +160,24 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
             <p>Start sharing your own puzzles by creating one with the <Link href='/construct' as='/construct' passHref>Crosshare constructor</Link> or <Link href='/upload' as='/upload' passHref>uploading a .puz file.</Link></p>
           )
         }
-        {unfinishedPuzzles && unfinishedPuzzles.length ?
+        {authoredPuzzles.length ?
+          <>
+            <h2>Your Constructions</h2>
+            {authoredPuzzles.map((puzzle) => <PuzzleResultLink key={puzzle.id} puzzle={puzzle} showAuthor={false} constructorPage={null} />)}
+            {loadingAuthored ? <p>Loading...</p> :
+              hasMoreAuthored && <Button onClick={loadMoreAuthored} text='Older...' />
+            }
+          </>
+          : ''}
+        {unfinishedPuzzles.length ?
           <>
             <h2>Unfinished Solves</h2>
             {unfinishedPuzzles.map((puzzle) => <PuzzleResultLink key={puzzle.id} puzzle={puzzle} showAuthor={false} constructorPage={null} />)}
+            {loadingUnfinished ? <p>Loading...</p> :
+              hasMoreUnfinished && <Button onClick={loadMoreUnfinished} text='Older...' />
+            }
           </>
-          :
-          ''
-        }
+          : ''}
       </div>
       {settingProfilePic ?
         <ImageCropper targetSize={PROFILE_PIC} isCircle={true} storageKey={`/users/${user.uid}/profile.jpg`} cancelCrop={() => setSettingProfilePic(false)} />
