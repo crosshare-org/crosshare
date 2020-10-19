@@ -62,7 +62,6 @@
     "react-popper": "^2.2.3",
     "react-window": "^1.8.5",
     "simple-markdown": "^0.7.2",
-    "swr": "^0.3.5",
     "use-resize-observer": "^6.2.0-alpha.1",
     "worker-loader": "^3.0.5"
   },
@@ -82,7 +81,7 @@
     "eslint-plugin-react": "^7.21.4",
     "eslint-plugin-react-hooks": "^4.0.4",
     "firebase-functions-test": "^0.2.1",
-    "jest": "^26.5.3",
+    "jest": "^26.6.0",
     "jest-emotion": "^10.0.32",
     "jest-in-case": "^1.0.2",
     "leaked-handles": "^5.2.0",
