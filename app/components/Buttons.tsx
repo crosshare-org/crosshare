@@ -10,13 +10,16 @@ interface ButtonBaseProps {
   subCSS?: Interpolation<undefined>,
   hoverCSS?: Interpolation<undefined>,
 }
+interface DisabledProps extends ButtonBaseProps {
+  disabled: true
+}
 interface SubmitProps extends ButtonBaseProps {
   type: 'submit'
 }
 interface OnClickProps extends ButtonBaseProps {
   onClick: (e: MouseEvent) => void,
 }
-type ButtonProps = SubmitProps | OnClickProps;
+type ButtonProps = SubmitProps | OnClickProps | DisabledProps;
 
 export const ButtonResetCSS: Interpolation<undefined> = {
   border: 'none',

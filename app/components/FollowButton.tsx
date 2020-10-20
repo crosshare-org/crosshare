@@ -47,6 +47,12 @@ export const FollowButton = ({ constructor }: { constructor: ConstructorPageT })
       <ToolTipText css={{ marginLeft: '0.5em' }} text={<FaInfoCircle />} tooltip={`Get notified when ${constructor.n} posts a new puzzle`} />
     </>;
   }
+  if (user.uid === constructor.u) {
+    return <>
+      <Button hollow disabled text='Follow' />
+      <ToolTipText css={{ marginLeft: '0.5em' }} text={<FaInfoCircle />} tooltip="You can't follow yourself!" />
+    </>;
+  }
   if (isFollowing) {
     const db = App.firestore();
     return <>
