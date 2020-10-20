@@ -18,6 +18,7 @@ export const ServerTimestamp = firebaseTesting.firestore.FieldValue.serverTimest
 
 export const TimestampClass = firebaseTesting.firestore.Timestamp;
 export const AdminTimestamp = firebaseAdmin.firestore.Timestamp;
+export const FieldValue = firebaseTesting.firestore.FieldValue;
 
 let anonApp: firebase.app.App;
 let anonUser: firebase.User;

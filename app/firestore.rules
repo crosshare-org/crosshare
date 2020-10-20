@@ -21,6 +21,13 @@ service cloud.firestore {
         && (request.resource.data.ac.size() == request.resource.data.an.size())
         && (request.resource.data.dc.size() == request.resource.data.dn.size());
     }
+    function arrayChangedByOnly(a, b, c) {
+      let aSet = a.toSet();
+      let bSet = b.toSet();
+      let aDiff = aSet.difference(bSet);
+      let bDiff = bSet.difference(aSet);
+      return aDiff.union(bDiff).hasOnly([c]);
+    }
     match /cp/{username} {
       allow get: if true;
       allow list: if true;
@@ -111,6 +118,15 @@ service cloud.firestore {
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['r']);
 
       allow read: if isAdmin() || request.auth.uid == resource.data.u;
+    }
+    match /followers/{userId} {
+      allow update: if request.auth.uid != null
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['f'])
+        && arrayChangedByOnly(request.resource.data.f, resource.data.f, request.auth.uid);
+
+      allow create: if request.auth.uid != null
+        && request.resource.data.keys().hasOnly(['f'])
+        && request.resource.data.f.hasOnly([request.auth.uid]);
     }
     match /ds/{dateString} {
       allow read: if isAdmin();
