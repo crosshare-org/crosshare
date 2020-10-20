@@ -9,7 +9,7 @@ import { DBPuzzleV, DBPuzzleT } from './dbtypes';
 import { adminTimestamp } from './adminTimestamp';
 import { mapEachResult } from './dbUtils';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
-import { NotificationV, NotificationT } from './notifications';
+import { NotificationV, NotificationT, CommentNotificationT, isCommentNotification, isReplyNotification, ReplyNotificationT } from './notifications';
 import SimpleMarkdown from 'simple-markdown';
 import { AccountPrefsV, AccountPrefsT } from './prefs';
 
@@ -243,8 +243,8 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
   const read: Array<NotificationT> = [];
 
   if (!prefs ?.unsubs ?.includes('comments')) {
-    const comments = sorted.filter(n => n.k === 'comment');
-    const commentsByPuzzle = comments.reduce((rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
+    const comments: Array<CommentNotificationT> = sorted.filter(isCommentNotification);
+    const commentsByPuzzle = comments.reduce((rv: Record<string, Array<CommentNotificationT>>, x: CommentNotificationT) => {
       (rv[x.p] = rv[x.p] || []).push(x);
       return rv;
     }, {});
@@ -259,8 +259,8 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
       markdown += '\n\n';
     }
 
-    const replies = sorted.filter(n => n.k === 'reply');
-    const repliesByPuzzle = replies.reduce((rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
+    const replies: Array<ReplyNotificationT> = sorted.filter(isReplyNotification);
+    const repliesByPuzzle = replies.reduce((rv: Record<string, Array<ReplyNotificationT>>, x: ReplyNotificationT) => {
       (rv[x.p] = rv[x.p] || []).push(x);
       return rv;
     }, {});

@@ -299,12 +299,14 @@ const NotificationLinkCSS = {
   },
 };
 
-const NotificationLink = ({ notification: n }: { notification: NotificationT }) => {
+const NotificationLink = ({ notification: n }: { notification: NotificationT }): JSX.Element => {
   switch (n.k) {
   case 'comment':
     return <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>• {n.cn} commented on <i>{n.pn}</i></Link>;
   case 'reply':
     return <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>• {n.cn} replied to your comment on <i>{n.pn}</i></Link>;
+  case 'newpuzzle':
+    return <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>• {n.an} published a new puzzle: <i>{n.pn}</i></Link>;
   }
 };
 

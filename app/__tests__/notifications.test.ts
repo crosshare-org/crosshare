@@ -28,12 +28,12 @@ function getComment(fields?: Partial<CommentWithRepliesT>): CommentWithRepliesT 
   };
 }
 
-test('shouldnt notify at all if comment is on own puzzle', () => {
+test('shouldnt notify at all if comment is on own puzzle', async () => {
   const puzzleWithComments = {
     ...basePuzzle,
     cs: [getComment({ a: basePuzzle.a })]
   };
-  const notifications = notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
   expect(notifications.length).toEqual(0);
 });
 
@@ -44,7 +44,7 @@ test('security rules for updating notifications', async () => {
     ...basePuzzle,
     cs: [getComment({ a: 'dummy-author-id' })]
   };
-  const notifications = notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
   expect(notifications.length).toEqual(1);
 
   await firebaseTesting.clearFirestoreData({ projectId });
@@ -93,17 +93,17 @@ const removeTimestamp = (n: NotificationT) => {
   return rest;
 };
 
-test('should notify for a new comment by somebody else', () => {
+test('should notify for a new comment by somebody else', async () => {
   const puzzleWithComments = {
     ...basePuzzle,
     cs: [getComment({ a: 'dummy-author-id' })]
   };
-  const notifications = notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
   expect(notifications.length).toEqual(1);
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
-test('should notify for multiple comments by somebody else', () => {
+test('should notify for multiple comments by somebody else', async () => {
   const puzzleWithComments = {
     ...basePuzzle,
     cs: [
@@ -112,12 +112,12 @@ test('should notify for multiple comments by somebody else', () => {
       getComment({ a: 'another-author', i: 'bam', n: 'Tom' }),
     ]
   };
-  const notifications = notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
   expect(notifications.length).toEqual(2);
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
-test('should notify for a reply to own comment on own puzzle', () => {
+test('should notify for a reply to own comment on own puzzle', async () => {
   const puzzleWithOwn = {
     ...basePuzzle,
     cs: [getComment({ a: basePuzzle.a })]
@@ -126,12 +126,12 @@ test('should notify for a reply to own comment on own puzzle', () => {
     ...basePuzzle,
     cs: [getComment({ a: basePuzzle.a, r: [getComment({ a: 'dummy-author-id', i: 'bar', n: 'Jim' })] })]
   };
-  const notifications = notificationsForPuzzleChange(puzzleWithOwn, puzzleWithComments, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(puzzleWithOwn, puzzleWithComments, 'puzzle-id-here');
   expect(notifications.length).toEqual(1);
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
-test('should notify comment author only when puzzle author replies', () => {
+test('should notify comment author only when puzzle author replies', async () => {
   const puzzleWithComment = {
     ...basePuzzle,
     cs: [getComment({ a: 'dummy-author-id' })]
@@ -140,12 +140,12 @@ test('should notify comment author only when puzzle author replies', () => {
     ...basePuzzle,
     cs: [getComment({ a: 'dummy-author-id', r: [getComment({ a: basePuzzle.a, i: 'baz' })] })]
   };
-  const notifications = notificationsForPuzzleChange(puzzleWithComment, authorReplies, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(puzzleWithComment, authorReplies, 'puzzle-id-here');
   expect(notifications.length).toEqual(1);
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
-test('should notify comment author and puzzle author when third party replies', () => {
+test('should notify comment author and puzzle author when third party replies', async () => {
   const puzzleWithComment = {
     ...basePuzzle,
     cs: [getComment({ a: 'dummy-author-id' })]
@@ -154,12 +154,12 @@ test('should notify comment author and puzzle author when third party replies', 
     ...basePuzzle,
     cs: [getComment({ a: 'dummy-author-id', r: [getComment({ a: 'rando', i: 'baz' })] })]
   };
-  const notifications = notificationsForPuzzleChange(puzzleWithComment, authorReplies, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(puzzleWithComment, authorReplies, 'puzzle-id-here');
   expect(notifications.length).toEqual(2);
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
-test('should handle a combination of multiple new comments and nested replies', () => {
+test('should handle a combination of multiple new comments and nested replies', async () => {
   const startingPoint = {
     ...basePuzzle,
     cs: [getComment({ r: [getComment({ a: 'rando', i: 'baz' })] })]
@@ -181,12 +181,12 @@ test('should handle a combination of multiple new comments and nested replies', 
       })
     ]
   };
-  const notifications = notificationsForPuzzleChange(startingPoint, withReplies, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(startingPoint, withReplies, 'puzzle-id-here');
   expect(notifications.length).toEqual(5);
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
-describe('email queueing', () => {
+describe('email queueing', async () => {
   let adminApp: firebaseAdminType.app.App;
 
   beforeEach(async () => {
@@ -211,7 +211,7 @@ describe('email queueing', () => {
         })
       ]
     };
-    const notifications = notificationsForPuzzleChange(startingPoint, withReplies, 'puzzle-id-here');
+    const notifications = await notificationsForPuzzleChange(startingPoint, withReplies, 'puzzle-id-here');
     expect(notifications.length).toEqual(5);
     await firebaseTesting.clearFirestoreData({ projectId });
     adminApp = firebaseTesting.initializeAdminApp({ projectId }) as unknown as firebaseAdminType.app.App;
@@ -295,7 +295,7 @@ describe('email queueing', () => {
       ...puzzleWithComment,
       cs: [getComment({ a: 'rando', r: [getComment({ a: 'anotherAuthor', n: 'Commenter <div> Foo', i: 'baz' })] })]
     };
-    const notifications = notificationsForPuzzleChange(puzzleWithComment, withReplies, 'second-puzzle');
+    const notifications = await notificationsForPuzzleChange(puzzleWithComment, withReplies, 'second-puzzle');
     expect(notifications.length).toEqual(2);
     for (const notification of notifications) {
       await adminApp.firestore().collection('n').doc(notification.id).set(notification);
@@ -319,7 +319,7 @@ describe('email queueing', () => {
       ...puzzleWithComment,
       cs: [getComment({ a: basePuzzle.a, r: [getComment({ a: 'anotherAuthor', n: 'Foo Bar', i: 'baz' })] })]
     };
-    const notifications = notificationsForPuzzleChange(puzzleWithComment, withReplies, 'second-puzzle');
+    const notifications = await notificationsForPuzzleChange(puzzleWithComment, withReplies, 'second-puzzle');
     expect(notifications.length).toEqual(2);
     for (const notification of notifications) {
       await adminApp.firestore().collection('n').doc(notification.id).set(notification);

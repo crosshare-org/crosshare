@@ -11,7 +11,7 @@ async function addNotifications() {
   const puzzleData = puzzle.data() as DBPuzzleT;
   const prevPuzzleData = { ...puzzleData, cs: [{ ...puzzleData.cs ?.[0], r: undefined }] };
 
-  const notifications = notificationsForPuzzleChange(prevPuzzleData, puzzleData, 'QQeUGbPKXqMFaW0e7fUD');
+  const notifications = await notificationsForPuzzleChange(prevPuzzleData, puzzleData, 'QQeUGbPKXqMFaW0e7fUD');
   console.log('inserting ', notifications.length);
   return Promise.all(notifications.map(notification => db.doc(`n/${notification.id}`).set(notification)));
 }
