@@ -7,7 +7,7 @@ import { PuzzleResult } from '../lib/types';
 import { PuzzleResultLink } from './PuzzleLink';
 import { Link, LinkButtonSimpleA } from './Link';
 import { Markdown } from './Markdown';
-import { AuthPropsOptional, AuthContext } from './AuthContext';
+import { AuthContext } from './AuthContext';
 import { App, ServerTimestamp, DeleteSentinal } from '../lib/firebaseWrapper';
 import { Button } from './Buttons';
 import { HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
@@ -332,7 +332,7 @@ export interface ConstructorPageProps {
   prevPage: number | null,
 }
 
-export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional) => {
+export const ConstructorPage = (props: ConstructorPageProps) => {
   const coverPic = props.coverPicture;
   const profilePic = props.profilePicture;
   const username = props.constructor.i || props.constructor.id;

@@ -1,7 +1,6 @@
 import { GetServerSideProps } from 'next';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
-import { AuthContext } from '../components/AuthContext';
 import { ConstructorPage, ConstructorPageProps } from '../components/ConstructorPage';
 import { validate } from '../lib/constructorPage';
 import { ErrorPage } from '../components/ErrorPage';
@@ -64,8 +63,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
 };
 
 export default function ConstructorPageHandler(props: PageProps) {
-  const authProps = useContext(AuthContext);
-
   const router = useRouter();
   useEffect(() => {
     if ('error' in props) {
@@ -85,5 +82,5 @@ export default function ConstructorPageHandler(props: PageProps) {
     </ErrorPage>;
   }
 
-  return <ConstructorPage {...props} {...authProps} />;
+  return <ConstructorPage {...props} />;
 }
