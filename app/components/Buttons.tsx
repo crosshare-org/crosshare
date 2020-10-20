@@ -5,7 +5,10 @@ interface ButtonBaseProps {
   text: string,
   title?: string,
   disabled?: boolean,
-  className?: string
+  className?: string,
+  hoverText?: string,
+  subCSS?: Interpolation<undefined>,
+  hoverCSS?: Interpolation<undefined>,
 }
 interface SubmitProps extends ButtonBaseProps {
   type: 'submit'
@@ -32,12 +35,25 @@ export const ButtonResetCSS: Interpolation<undefined> = {
   }
 };
 
-export function ButtonReset({ text, ...props }: ButtonProps) {
-  return <button type="button" css={ButtonResetCSS} {...props}>{text}</button>;
+export function ButtonReset({ text, hoverText, subCSS, hoverCSS, ...props }: ButtonProps) {
+  return <button type="button" css={[ButtonResetCSS, subCSS, {
+    '&:after': {
+      content: `"${text}"`
+    },
+    ...hoverCSS && {
+      '&:hover': hoverCSS,
+    },
+    ...hoverText && {
+      '&:hover:after': {
+        content: `"${hoverText}"`
+      },
+    }
+  }]} {...props}>
+  </button>;
 }
 
 export function ButtonAsLink(props: ButtonProps) {
-  return <ButtonReset css={{
+  return <ButtonReset subCSS={{
     color: 'var(--link)',
     '&:hover': {
       textDecoration: 'underline',
@@ -86,13 +102,18 @@ export const ButtonCSS: Interpolation<undefined> = {
   },
 };
 
-export function Button({ boring, ...props }: ButtonProps & { boring?: boolean }) {
-  return <ButtonReset css={[ButtonCSS, {
+export function Button({ boring, hollow, ...props }: ButtonProps & { boring?: boolean, hollow?: boolean }) {
+  return <ButtonReset subCSS={[ButtonCSS, {
     ...boring && {
       backgroundColor: 'var(--boring-bg)',
       '&:hover:enabled': {
         backgroundColor: 'var(--boring-bg-hover)',
       },
+    },
+    ...hollow && {
+      border: 'solid 2px var(--link)',
+      color: 'var(--link)',
+      backgroundColor: 'transparent',
     }
   }]} {...props} />;
 }

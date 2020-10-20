@@ -10,5 +10,6 @@ export const UnsubscribeFlags = {
 export const AccountPrefsV = t.partial({
   /** user id receiving the notification */
   unsubs: t.array(t.keyof(UnsubscribeFlags)),
+  following: t.array(t.string),
 });
 export type AccountPrefsT = t.TypeOf<typeof AccountPrefsV>;

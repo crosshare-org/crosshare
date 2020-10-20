@@ -3,15 +3,22 @@ import { getValidatedAndDelete, setInCache } from '../lib/dbUtils';
 import { App, AuthProvider } from '../lib/firebaseWrapper';
 import { event } from '../lib/gtag';
 
-export const GoogleSignInButton = () => {
+interface GoogleButtonProps {
+  postSignIn?: (user: firebase.User) => Promise<void>
+}
+
+export const GoogleSignInButton = ({ postSignIn }: GoogleButtonProps) => {
   function signin() {
     App.auth().signInWithPopup(AuthProvider)
-      .then(() => {
+      .then((userCredential) => {
         event({
           action: 'login',
           category: 'engagement',
           label: 'google',
         });
+        if (userCredential.user && postSignIn) {
+          return postSignIn(userCredential.user);
+        }
       });
   }
   return (
@@ -19,16 +26,19 @@ export const GoogleSignInButton = () => {
   );
 };
 
-export const GoogleLinkButton = ({ user }: { user: firebase.User }) => {
+export const GoogleLinkButton = ({ user, postSignIn }: { user: firebase.User } & GoogleButtonProps) => {
   function signin() {
     user.linkWithPopup(AuthProvider)
-      .then(() => {
+      .then((userCredential) => {
         console.log('linked w/o needing a merge');
         event({
           action: 'login',
           category: 'engagement',
           label: 'google',
         });
+        if (userCredential.user && postSignIn) {
+          return postSignIn(userCredential.user);
+        }
       })
       .catch(async (error: firebase.auth.AuthError) => {
         if (error.code !== 'auth/credential-already-in-use') {
@@ -58,6 +68,9 @@ export const GoogleLinkButton = ({ user }: { user: firebase.User }) => {
           }));
           user.delete();
           console.log('linked and merged plays');
+          if (postSignIn) {
+            return postSignIn(newUser);
+          }
         });
       });
   }

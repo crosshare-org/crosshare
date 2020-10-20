@@ -8,15 +8,12 @@ import { App, FieldValue } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleResultLink } from '../components/PuzzleLink';
 import { Link } from '../components/Link';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { getPuzzle } from '../lib/puzzleCache';
 import { CreatePageForm, BioEditor } from '../components/ConstructorPage';
 import { puzzleFromDB } from '../lib/types';
 import { Button } from '../components/Buttons';
 import { PROFILE_PIC, COVER_PIC } from '../lib/style';
-import { AccountPrefsV, UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
-import { useDocument } from 'react-firebase-hooks/firestore';
+import { UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
 
 import dynamic from 'next/dynamic';
 import type { ImageCropper as ImageCropperType } from '../components/ImageCropper';
@@ -50,7 +47,7 @@ const PrefSetting = (props: PrefSettingProps) => {
   </label>;
 };
 
-export const AccountPage = ({ user, constructorPage }: AuthProps) => {
+export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
   const [settingProfilePic, setSettingProfilePic] = useState(false);
   const [settingCoverPic, setSettingCoverPic] = useState(false);
   const [hasAuthoredPuzzle, setHasAuthoredPuzzle] = useState(false);
@@ -95,22 +92,6 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
     }
   }, [hasAuthoredPuzzle, authoredPuzzles.length]);
 
-  // Account preferences
-  const [accountPrefsDoc, loadingAccountPrefs, accountPrefsDBError] = useDocument(App.firestore().doc(`prefs/${user.uid}`));
-  const [accountPrefs, accountPrefsDecodeError] = useMemo(() => {
-    if (!accountPrefsDoc ?.exists) {
-      return [undefined, undefined];
-    }
-    const validationResult = AccountPrefsV.decode(accountPrefsDoc.data());
-    if (isRight(validationResult)) {
-      return [validationResult.right, undefined];
-    } else {
-      console.log(PathReporter.report(validationResult).join(','));
-      return [undefined, 'failed to decode account prefs'];
-    }
-  }, [accountPrefsDoc]);
-  const accountPrefsError = accountPrefsDBError ?.message || accountPrefsDecodeError;
-
   return (
     <>
       <Head>
@@ -124,25 +105,15 @@ export const AccountPage = ({ user, constructorPage }: AuthProps) => {
         <p>Your display name - <i>{displayName}</i> - is displayed next to any comments you make or puzzles you create.</p>
         <DisplayNameForm user={user} onChange={setDisplayName} />
         <h3>Notification Settings</h3>
-        {accountPrefsError ?
-          <p>Error loading account preferences, please try again: {accountPrefsError}</p>
-          :
-          (loadingAccountPrefs ?
-            <p>Loading your account preferences...</p>
-            :
-            <>
-              <p>Email me (to {user.email}, at most once per day) when:</p>
-              <ul css={{ listStyleType: 'none' }}>
-                <li>
-                  <PrefSetting prefs={accountPrefs} userId={user.uid} flag='comments' text='I have unseen comments on my puzzles or replies to my comments' />
-                </li>
-                <li>
-                  <PrefSetting prefs={accountPrefs} userId={user.uid} flag='all' invert neverDisable text='Never notify me by email (even for any future notification types)' />
-                </li>
-              </ul>
-            </>
-          )
-        }
+        <p>Email me (to {user.email}, at most once per day) when:</p>
+        <ul css={{ listStyleType: 'none' }}>
+          <li>
+            <PrefSetting prefs={prefs} userId={user.uid} flag='comments' text='I have unseen comments on my puzzles or replies to my comments' />
+          </li>
+          <li>
+            <PrefSetting prefs={prefs} userId={user.uid} flag='all' invert neverDisable text='Never notify me by email (even for any future notification types)' />
+          </li>
+        </ul>
         <h2>Crossword Blog</h2>
         {constructorPage ?
           <>

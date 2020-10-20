@@ -13,9 +13,9 @@ import { Button } from './Buttons';
 import { HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
 import { CoverPic, ProfilePicAndName } from './Images';
 import { ToolTipText } from './ToolTipText';
+import { FollowButton } from './FollowButton';
 import { FaInfoCircle } from 'react-icons/fa';
 import { Overlay } from './Overlay';
-
 
 const BANNED_USERNAMES = {
   api: 1,
@@ -333,7 +333,6 @@ export interface ConstructorPageProps {
 }
 
 export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional) => {
-
   const coverPic = props.coverPicture;
   const profilePic = props.profilePicture;
   const username = props.constructor.i || props.constructor.id;
@@ -341,6 +340,7 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
   const title = props.constructor.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
   const paypalEmail = props.constructor.pp;
   const paypalText = props.constructor.pt;
+
   return <>
     <Head>
       <title>{title}</title>
@@ -377,6 +377,9 @@ export const ConstructorPage = (props: ConstructorPageProps & AuthPropsOptional)
       },
     }}>
       <ProfilePicAndName coverImage={coverPic} profilePic={profilePic} topLine={props.constructor.n} byLine={<h2 css={{ fontSize: '1em', fontWeight: 'normal' }}><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h2>} />
+      <div css={{ textAlign: 'center', marginBottom: '1.5em' }}>
+        <FollowButton {...props} />
+      </div>
       <div css={{ marginBottom: '1.5em' }}>
         <Markdown text={props.constructor.b} />
         {paypalEmail && paypalText ?

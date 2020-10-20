@@ -6,17 +6,20 @@ import { TopBar } from './TopBar';
 import { Optionalize } from '../lib/types';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { NotificationT } from '../lib/notifications';
+import { AccountPrefsT } from '../lib/prefs';
 
 export interface AuthProps {
   isAdmin: boolean,
   user: firebase.User,
-  constructorPage?: ConstructorPageT
+  constructorPage?: ConstructorPageT,
+  prefs?: AccountPrefsT
 }
 
 export interface AuthPropsOptional {
   isAdmin: boolean,
   user?: firebase.User,
-  constructorPage?: ConstructorPageT
+  constructorPage?: ConstructorPageT,
+  prefs?: AccountPrefsT,
 }
 
 export function renderLoginButtonIfNeeded({ user, loading, error }: AuthContextValue): React.ReactNode | null {
@@ -75,7 +78,7 @@ export function requiresAuth<T extends AuthProps>(WrappedComponent: React.Compon
     if (login) {
       return login;
     }
-    return <WrappedComponent {...(props as T)} isAdmin={ctx.isAdmin} user={ctx.user} constructorPage={ctx.constructorPage} />;
+    return <WrappedComponent {...(props as T)} isAdmin={ctx.isAdmin} user={ctx.user} constructorPage={ctx.constructorPage} prefs={ctx.prefs} />;
   };
 }
 
@@ -94,7 +97,7 @@ export function requiresAdmin<T extends AuthProps>(WrappedComponent: React.Compo
         </ErrorPage >
       );
     }
-    return <WrappedComponent {...(props as T)} isAdmin={true} user={ctx.user} constructorPage={ctx.constructorPage} />;
+    return <WrappedComponent {...(props as T)} isAdmin={true} user={ctx.user} constructorPage={ctx.constructorPage} prefs={ctx.prefs} />;
   };
 }
 
@@ -104,6 +107,7 @@ interface AuthContextValue {
   isAdmin: boolean,
   loading: boolean,
   error?: string,
-  constructorPage?: ConstructorPageT
+  constructorPage?: ConstructorPageT,
+  prefs?: AccountPrefsT
 }
-export const AuthContext = createContext({ user: undefined, loading: false, error: 'using default context', constructorPage: undefined } as AuthContextValue);
+export const AuthContext = createContext({ user: undefined, loading: false, error: 'using default context', constructorPage: undefined, prefs: undefined } as AuthContextValue);

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo, MouseEvent, RefObject } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollection } from 'react-firebase-hooks/firestore';
+import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -8,6 +8,7 @@ import { App } from './firebaseWrapper';
 import { ConstructorPageV, } from './constructorPage';
 import { NotificationV, NotificationT } from './notifications';
 import useResizeObserver from 'use-resize-observer';
+import { AccountPrefsV } from './prefs';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {
@@ -86,21 +87,37 @@ export function useAuth() {
     }
   }, [user]);
 
-  // Constructor page + notifications
-  const [cpDocRef, notificationsDocRef] = useMemo(
+  // Constructor page + notifications + prefs
+  const [cpDocRef, notificationsDocRef, prefsDocRef] = useMemo(
     () => {
       if (user && user.email && !user.isAnonymous) {
         setIsLoading(true);
         return [
           App.firestore().collection('cp').where('u', '==', user.uid),
-          App.firestore().collection('n').where('u', '==', user.uid).where('r', '==', false)
+          App.firestore().collection('n').where('u', '==', user.uid).where('r', '==', false),
+          App.firestore().doc(`prefs/${user.uid}`)
         ];
       }
       setIsLoading(false);
-      return [null, null];
+      return [null, null, null];
     },
     [user]
   );
+  const [accountPrefsDoc, loadingAccountPrefs, accountPrefsDBError] = useDocument(prefsDocRef);
+  const [accountPrefs, accountPrefsDecodeError] = useMemo(() => {
+    if (!accountPrefsDoc ?.exists) {
+      return [undefined, undefined];
+    }
+    const validationResult = AccountPrefsV.decode(accountPrefsDoc.data());
+    if (isRight(validationResult)) {
+      return [validationResult.right, undefined];
+    } else {
+      console.log(PathReporter.report(validationResult).join(','));
+      return [undefined, 'failed to decode account prefs'];
+    }
+  }, [accountPrefsDoc]);
+  const accountPrefsError = accountPrefsDBError ?.message || accountPrefsDecodeError;
+
   const [notificationsSnapshot, , notificationError] = useCollection(notificationsDocRef);
   if (notificationError) {
     console.log(notificationError);
@@ -132,7 +149,11 @@ export function useAuth() {
     }
   }, [cpSnapshot]);
 
-  return { user, isAdmin, constructorPage, notifications, loading: isLoading || loadingUser || loadingCP, error: authError ?.message || cpError ?.message || cpDecodeError };
+  return {
+    user, isAdmin, constructorPage, notifications, prefs: accountPrefs,
+    loading: isLoading || loadingUser || loadingCP || loadingAccountPrefs,
+    error: authError ?.message || cpError ?.message || cpDecodeError || accountPrefsError
+  };
 }
 
 export function useHover(): [
