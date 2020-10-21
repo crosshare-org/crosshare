@@ -9,7 +9,7 @@ import { DBPuzzleV, DBPuzzleT } from './dbtypes';
 import { adminTimestamp } from './adminTimestamp';
 import { mapEachResult } from './dbUtils';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
-import { NotificationV, NotificationT, CommentNotificationT, isCommentNotification, isReplyNotification, ReplyNotificationT } from './notifications';
+import { NotificationV, NotificationT, CommentNotificationT, isCommentNotification, isReplyNotification, ReplyNotificationT, NewPuzzleNotificationT, isNewPuzzleNotification } from './notifications';
 import SimpleMarkdown from 'simple-markdown';
 import { AccountPrefsV, AccountPrefsT } from './prefs';
 
@@ -273,6 +273,21 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
         read.push(...commentNotifications);
         const nameDisplay = joinStringsWithAnd(commentNotifications.map(n => n.cn));
         markdown += `* ${nameDisplay} replied to your comments on [${commentNotifications[0].pn}](${puzzleLink(puzzleId)})\n`;
+      });
+      markdown += '\n\n';
+    }
+  }
+
+  if (!prefs ?.unsubs ?.includes('newpuzzles')) {
+    const nps: Array<NewPuzzleNotificationT> = sorted.filter(isNewPuzzleNotification);
+    if (nps.length) {
+      if (!subject) {
+        subject = 'Crosshare: new puzzle(s) by ' + joinStringsWithAnd(nps.map(a => a.an).slice(0, 3));
+      }
+      markdown += '### New puzzles by constructors you follow:\n\n';
+      nps.forEach(p => {
+        read.push(p);
+        markdown += `* ${p.an} published [${p.pn}](${puzzleLink(p.p)})\n`;
       });
       markdown += '\n\n';
     }
