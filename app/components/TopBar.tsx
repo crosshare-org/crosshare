@@ -1,6 +1,7 @@
-import { ReactNode, useState, useContext, useMemo } from 'react';
-import { FaUser, FaUserLock, FaHome } from 'react-icons/fa';
+import { ReactNode, useState, useContext, useMemo, useRef, useEffect, useCallback } from 'react';
+import { FaUser, FaUserLock } from 'react-icons/fa';
 
+import { IoMdCloseCircleOutline, } from 'react-icons/io';
 import { AuthContext } from './AuthContext';
 import { Link } from './Link';
 import { Overlay } from './Overlay';
@@ -8,6 +9,7 @@ import { Logo } from './Icons';
 import { HEADER_HEIGHT, SMALL_AND_UP, HAS_PHYSICAL_KEYBOARD } from '../lib/style';
 import { ButtonResetCSS } from './Buttons';
 import { NotificationT } from '../lib/notifications';
+import { App } from '../lib/firebaseWrapper';
 
 export const TopBarDropDown = (props: { onClose?: () => void, text: string, icon: ReactNode, hoverText?: string, children: (close: () => void) => ReactNode }) => {
   const [dropped, setDropped] = useState(false);
@@ -219,6 +221,21 @@ export const TopBar = ({ children }: TopBarProps) => {
   const now = new Date();
   const filtered = notifications ?.filter(n => n.t.toDate() <= now);
   const [showingNotifications, setShowingNotifications] = useState(false);
+  const notificationsRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = useCallback((event: Event) => {
+    if (showingNotifications && notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
+      setShowingNotifications(false);
+    }
+  }, [showingNotifications]);
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [handleClickOutside]);
+
   return useMemo(() => {
     return <>
       <header css={{
@@ -233,7 +250,7 @@ export const TopBar = ({ children }: TopBarProps) => {
           alignItems: 'center',
           lineHeight: (HEADER_HEIGHT - 4) + 'px',
         }}>
-          {filtered ?.length ?
+          {filtered ?.length && !showingNotifications ?
             <button type="button" onClick={() => setShowingNotifications(true)} css={[ButtonResetCSS,
               {
                 flexGrow: 1,
@@ -278,11 +295,41 @@ export const TopBar = ({ children }: TopBarProps) => {
         </div>
       </header>
       {filtered ?.length && showingNotifications ?
-        <Overlay closeCallback={() => setShowingNotifications(false)}>
-          <TopBarDropDownLinkA icon={<FaHome />} href="/" text="Crosshare Home" />
-          <h3 css={{ marginTop: '1.5em', textAlign: 'center', fontWeight: 'normal', textDecoration: 'underline' }}>Notifications</h3>
-          {filtered.map(n => <NotificationLink key={n.id} notification={n} />)}
-        </Overlay>
+        <div ref={notificationsRef} css={{
+          position: 'absolute',
+          top: HEADER_HEIGHT + 10,
+          left: 5,
+          border: '1px solid var(--text-input-border)',
+          boxShadow: '0 0 3px 3px rgba(60, 60, 60, 0.3)',
+          backgroundColor: 'var(--overlay-inner)',
+          width: 'calc(100vw - 10px)',
+          maxWidth: '30em',
+          borderRadius: 5,
+          zIndex: 102,
+          '&:before': {
+            content: '""',
+            position: 'absolute',
+            top: -19,
+            left: 10,
+            zIndex: 101,
+            border: 'solid 10px transparent',
+            borderBottomColor: 'var(--overlay-inner)',
+          },
+          '&:after': {
+            content: '""',
+            position: 'absolute',
+            top: -20,
+            left: 10,
+            zIndex: 100,
+            border: 'solid 10px transparent',
+            borderBottomColor: 'var(--text-input-border)',
+          },
+        }}>
+          <h3 css={{ borderBottom: '1px solid var(--text-input-border)', margin: 0, paddingLeft: '1em', fontSize: '1em', fontWeight: 'bold' }}>Notifications</h3>
+          <div css={{ margin: '0 1em' }}>
+            {filtered.map(n => <NotificationLink key={n.id} notification={n} />)}
+          </div>
+        </div>
         : ''}
     </>;
   }, [children, filtered, showingNotifications, setShowingNotifications]);
@@ -290,8 +337,12 @@ export const TopBar = ({ children }: TopBarProps) => {
 
 const NotificationLinkCSS = {
   display: 'block',
+  flex: 1,
   color: 'var(--text)',
   padding: '1em',
+  '& + &': {
+    borderTop: '1px solid var(--text-input-border)',
+  },
   '&:hover, &:focus': {
     color: 'var(--text)',
     textDecoration: 'none',
@@ -299,15 +350,52 @@ const NotificationLinkCSS = {
   },
 };
 
+const ANIMATION_DELAY = 250;
+
 const NotificationLink = ({ notification: n }: { notification: NotificationT }): JSX.Element => {
+  const [closing, setClosing] = useState(false);
+
+  const close = useCallback(() => {
+    // Close the toast which causes it to start shrinking
+    setClosing(true);
+    // After shrink vertically we remove the toast
+    setTimeout(() => {
+      App.firestore().collection('n').doc(n.id).update({ r: true });
+    }, ANIMATION_DELAY);
+  }, [n.id]);
+
+  let link: JSX.Element;
   switch (n.k) {
   case 'comment':
-    return <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>• {n.cn} commented on <i>{n.pn}</i></Link>;
+    link = <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>{n.cn} commented on <u>{n.pn}</u></Link>;
+    break;
   case 'reply':
-    return <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>• {n.cn} replied to your comment on <i>{n.pn}</i></Link>;
+    link = <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>{n.cn} replied to your comment on <u>{n.pn}</u></Link>;
+    break;
   case 'newpuzzle':
-    return <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>• {n.an} published a new puzzle: <i>{n.pn}</i></Link>;
+    link = <Link css={NotificationLinkCSS} href="/crosswords/[puzzleId]" as={`/crosswords/${n.p}`}>{n.an} published a new puzzle: <u>{n.pn}</u></Link>;
+    break;
   }
+  return <div css={{
+    transition: 'all ' + ANIMATION_DELAY + 'ms ease-in-out 0s',
+    maxHeight: 500,
+    overflow: 'hidden',
+    ...closing && { maxHeight: 0 },
+    display: 'flex',
+    alignItems: 'center',
+  }}>
+    {link}
+    <div role="button"
+      tabIndex={0}
+      onClick={close}
+      onKeyPress={close}
+      css={{
+        paddingLeft: '1em',
+        cursor: 'pointer',
+      }}>
+      <IoMdCloseCircleOutline />
+    </div>
+  </div >;
 };
 
 export const DefaultTopBar = () => {

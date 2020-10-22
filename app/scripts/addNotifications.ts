@@ -2,16 +2,21 @@
 
 import { AdminApp } from '../lib/firebaseWrapper';
 import { DBPuzzleT } from '../lib/dbtypes';
-import { notificationsForPuzzleChange } from '../lib/notifications';
+import { newPuzzleNotification, NotificationT } from '../lib/notifications';
 
 const db = AdminApp.firestore();
 
 async function addNotifications() {
+  const notifications: Array<NotificationT> = [];
+
   const puzzle = await db.doc('c/QQeUGbPKXqMFaW0e7fUD').get();
   const puzzleData = puzzle.data() as DBPuzzleT;
-  const prevPuzzleData = { ...puzzleData, cs: [{ ...puzzleData.cs ?.[0], r: undefined }] };
+  notifications.push(newPuzzleNotification({ ...puzzleData, id: 'QQeUGbPKXqMFaW0e7fUD' }, 'fSEwJorvqOMK5UhNMHa4mu48izl1'));
 
-  const notifications = await notificationsForPuzzleChange(prevPuzzleData, puzzleData, 'QQeUGbPKXqMFaW0e7fUD');
+  const puzzle2 = await db.doc('c/LciqfPNd5yJRSpk1elwo').get();
+  const puzzleData2 = puzzle2.data() as DBPuzzleT;
+  notifications.push(newPuzzleNotification({ ...puzzleData2, id: 'LciqfPNd5yJRSpk1elwo' }, 'fSEwJorvqOMK5UhNMHa4mu48izl1'));
+
   console.log('inserting ', notifications.length);
   return Promise.all(notifications.map(notification => db.doc(`n/${notification.id}`).set(notification)));
 }

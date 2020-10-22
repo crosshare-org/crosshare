@@ -99,7 +99,7 @@ function parsePuzzle(docdata: any): DBPuzzleT | null {
 type PuzzleWithID = DBPuzzleT & { id: string };
 
 const COMMENT_DELAY = { hours: 1 };
-function commentNotification(comment: CommentWithRepliesT, puzzle: PuzzleWithID): CommentNotificationT {
+export function commentNotification(comment: CommentWithRepliesT, puzzle: PuzzleWithID): CommentNotificationT {
   return {
     id: `${puzzle.a}-comment-${comment.i}`,
     u: puzzle.a,
@@ -114,7 +114,7 @@ function commentNotification(comment: CommentWithRepliesT, puzzle: PuzzleWithID)
   };
 }
 
-function replyNotification(comment: CommentWithRepliesT, parent: CommentWithRepliesT, puzzle: PuzzleWithID): ReplyNotificationT {
+export function replyNotification(comment: CommentWithRepliesT, parent: CommentWithRepliesT, puzzle: PuzzleWithID): ReplyNotificationT {
   return {
     id: `${parent.a}-reply-${comment.i}`,
     u: parent.a,
@@ -126,6 +126,20 @@ function replyNotification(comment: CommentWithRepliesT, parent: CommentWithRepl
     pn: puzzle.t,
     c: comment.i,
     cn: comment.n,
+  };
+}
+
+export function newPuzzleNotification(puzzle: PuzzleWithID, followerId: string): NewPuzzleNotificationT {
+  return {
+    id: `${followerId}-newpuzzle-${puzzle.id}`,
+    u: followerId,
+    t: puzzle.pvu || AdminTimestamp.now(),
+    r: false,
+    e: false,
+    k: 'newpuzzle',
+    p: puzzle.id,
+    pn: puzzle.t,
+    an: puzzle.n,
   };
 }
 
@@ -174,18 +188,7 @@ async function notificationsForPuzzleCreation(puzzle: DBPuzzleT, puzzleId: strin
   if (!followers) {
     return [];
   }
-  return followers.map(followerId =>
-    ({
-      id: `${followerId}-newpuzzle-${puzzleId}`,
-      u: followerId,
-      t: puzzle.pvu || AdminTimestamp.now(),
-      r: false,
-      e: false,
-      k: 'newpuzzle',
-      p: puzzleId,
-      pn: puzzle.t,
-      an: puzzle.n,
-    }));
+  return followers.map(followerId => newPuzzleNotification({ ...puzzle, id: puzzleId }, followerId));
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
