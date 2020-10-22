@@ -281,10 +281,12 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
   if (!prefs ?.unsubs ?.includes('newpuzzles')) {
     const nps: Array<NewPuzzleNotificationT> = sorted.filter(isNewPuzzleNotification);
     if (nps.length) {
+      const plural = nps.length > 1 ? 's' : '';
+      const constructorPlural = nps.length > 1 ? 'constructors' : 'a constructor';
       if (!subject) {
-        subject = 'Crosshare: new puzzle(s) by ' + joinStringsWithAnd(nps.map(a => a.an).slice(0, 3));
+        subject = `Crosshare: new puzzle${plural} by ${joinStringsWithAnd(nps.map(a => a.an).slice(0, 3))}`;
       }
-      markdown += '### New puzzles by constructors you follow:\n\n';
+      markdown += `### New puzzle${plural} by ${constructorPlural} you follow:\n\n`;
       nps.forEach(p => {
         read.push(p);
         markdown += `* ${p.an} published [${p.pn}](${puzzleLink(p.p)})\n`;
