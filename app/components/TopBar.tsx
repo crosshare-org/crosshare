@@ -230,6 +230,12 @@ export const TopBar = ({ children }: TopBarProps) => {
   }, [showingNotifications]);
 
   useEffect(() => {
+    if (!filtered ?.length) {
+      setShowingNotifications(false);
+    }
+  }, [filtered]);
+
+  useEffect(() => {
     document.addEventListener('click', handleClickOutside);
     return () => {
       document.removeEventListener('click', handleClickOutside);
@@ -300,7 +306,7 @@ export const TopBar = ({ children }: TopBarProps) => {
           top: HEADER_HEIGHT + 10,
           left: 5,
           border: '1px solid var(--text-input-border)',
-          boxShadow: '0 0 3px 3px rgba(60, 60, 60, 0.3)',
+          boxShadow: '0 0 5px 5px rgba(60, 60, 60, 0.4)',
           backgroundColor: 'var(--overlay-inner)',
           width: 'calc(100vw - 10px)',
           maxWidth: '30em',
@@ -325,7 +331,7 @@ export const TopBar = ({ children }: TopBarProps) => {
             borderBottomColor: 'var(--text-input-border)',
           },
         }}>
-          <h3 css={{ borderBottom: '1px solid var(--text-input-border)', margin: 0, paddingLeft: '1em', fontSize: '1em', fontWeight: 'bold' }}>Notifications</h3>
+          <h3 css={{ borderBottom: '1px solid var(--text-input-border)', margin: '0.5em 0 0 0', paddingLeft: '1em', fontSize: '1em', fontWeight: 'bold' }}>Notifications</h3>
           <div css={{ margin: '0 1em' }}>
             {filtered.map(n => <NotificationLink key={n.id} notification={n} />)}
           </div>
