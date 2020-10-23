@@ -346,9 +346,6 @@ const NotificationLinkCSS = {
   flex: 1,
   color: 'var(--text)',
   padding: '1em',
-  '& + &': {
-    borderTop: '1px solid var(--text-input-border)',
-  },
   '&:hover, &:focus': {
     color: 'var(--text)',
     textDecoration: 'none',
@@ -389,6 +386,9 @@ const NotificationLink = ({ notification: n }: { notification: NotificationT }):
     ...closing && { maxHeight: 0 },
     display: 'flex',
     alignItems: 'center',
+    '& + &': {
+      borderTop: '1px solid var(--text-input-border)',
+    },
   }}>
     {link}
     <div role="button"
