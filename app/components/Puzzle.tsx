@@ -18,7 +18,7 @@ import {
   RevealPuzzle, Rebus, SpinnerFinished
 } from './Icons';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
-import { AuthPropsOptional } from './AuthContext';
+import { AuthContext, AuthPropsOptional } from './AuthContext';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
@@ -55,6 +55,7 @@ import { ToolTipText } from './ToolTipText';
 import { AuthorLink } from './PuzzleLink';
 import formatISO from 'date-fns/formatISO';
 import { useSnackbar } from './Snackbar';
+import { isNewPuzzleNotification } from '../lib/notifications';
 
 export interface NextPuzzleLink {
   puzzleId: string,
@@ -320,6 +321,25 @@ export const Puzzle = ({ loadingPlayState, puzzle, play, ...props }: PuzzleProps
       return checkComplete(state);
     }
   }, advanceActiveToNonBlock);
+
+  const authContext = useContext(AuthContext);
+  useEffect(() => {
+    if (!authContext.notifications ?.length) {
+      return;
+    }
+    for (const notification of authContext.notifications) {
+      if (notification.r) {  // shouldn't be possible but be defensive
+        continue;
+      }
+      if (!isNewPuzzleNotification(notification)) {
+        continue;
+      }
+      if (notification.p === puzzle.id) {
+        App.firestore().collection('n').doc(notification.id).update({ r: true });
+        return;
+      }
+    }
+  }, [authContext.notifications, puzzle.id]);
 
   useEffect(() => {
     if (loadingPlayState === false) {
