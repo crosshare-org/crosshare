@@ -4,6 +4,7 @@ import NextJSRouter from 'next/router';
 
 import { Markdown } from '../components/Markdown';
 import { Link } from '../components/Link';
+import { Button } from '../components/Buttons';
 import { requiresAdmin } from '../components/AuthContext';
 import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleResult, puzzleFromDB } from '../lib/types';
@@ -13,9 +14,10 @@ import {
   CommentForModerationWithIdT, CommentForModerationV, CommentWithRepliesT
 } from '../lib/dbtypes';
 import { getFromDB, getFromSessionOrDB, mapEachResult } from '../lib/dbUtils';
-import { App } from '../lib/firebaseWrapper';
+import { App, FieldValue } from '../lib/firebaseWrapper';
 import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
 import { ConstructorPageV, ConstructorPageT } from '../lib/constructorPage';
+import { useSnackbar } from '../components/Snackbar';
 
 const PuzzleListItem = (props: PuzzleResult) => {
   return (
@@ -32,6 +34,8 @@ export default requiresAdmin(() => {
   const [mailErrors, setMailErrors] = useState(0);
   const [commentIdsForDeletion, setCommentIdsForDeletion] = useState<Set<string>>(new Set());
   const [pagesForModeration, setPagesForModeration] = useState<Array<ConstructorPageT> | null>(null);
+  const [uidToUnsub, setUidToUnsub] = useState('');
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     console.log('loading admin content');
@@ -246,6 +250,25 @@ export default requiresAdmin(() => {
         <h4 css={{ borderBottom: '1px solid var(--black)' }}>Upcoming Minis</h4>
 
         <UpcomingMinisCalendar disableExisting={false} onChange={goToPuzzle} />
+        <h4 css={{ borderBottom: '1px solid var(--black)' }}>Unsubscribe User</h4>
+        <form onSubmit={
+          (e: React.FormEvent) => {
+            e.preventDefault();
+            const toSubmit = uidToUnsub.trim();
+            setUidToUnsub('');
+            if (toSubmit) {
+              App.firestore().doc(`prefs/${uidToUnsub}`).set({ unsubs: FieldValue.arrayUnion('all') }, { merge: true }).then(() => {
+                showSnackbar('Unsubscribed');
+              });
+            }
+          }
+        }>
+          <label>
+            Unsubscribe by user id:
+            <input css={{ margin: '0 0.5em', }} type="text" value={uidToUnsub} onChange={e => setUidToUnsub(e.target.value)} />
+          </label>
+          <Button type="submit" text="Unsubscribe" />
+        </form>
       </div>
     </>
   );

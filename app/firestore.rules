@@ -97,7 +97,7 @@ service cloud.firestore {
     }
     match /prefs/{userId} {
       allow read: if request.auth.uid == userId;
-      allow write: if request.auth.uid == userId;
+      allow write: if isAdmin() || request.auth.uid == userId;
     }
     match /p/{playId} {
       allow read: if request.auth.uid != null
