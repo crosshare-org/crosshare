@@ -133,7 +133,8 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
         props.loadingPlayState
           ? undefined
           : () => props.dispatch({ type: 'RESUMEACTION' })
-      }>
+      }
+    >
       <PuzzleHeading
         publishTime={props.publishTime}
         showTip={false}
@@ -175,7 +176,7 @@ const ModeratingOverlay = memo(
 
     function schedule() {
       if (!date) {
-        throw new Error("shouldn't be able to schedule w/o date");
+        throw new Error('shouldn\'t be able to schedule w/o date');
       }
       const update: { [k: string]: string | firebase.firestore.FieldValue } = {
         [getDateString(date)]: puzzle.id,
@@ -273,7 +274,8 @@ const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
     <Link
       href="/crosswords/[puzzleId]"
       as={`/crosswords/${nextPuzzle.puzzleId}`}
-      passHref>
+      passHref
+    >
       Play {nextPuzzle.linkText}
     </Link>
   );
@@ -339,24 +341,24 @@ const PuzzleHeading = (props: {
       {props.showTip &&
       props.constructorPage?.pp &&
       props.constructorPage.pt ? (
-        <div css={{ textAlign: 'center' }}>
-          <LinkButtonSimpleA
-            css={{ marginRight: '0.5em' }}
-            href={`https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=${encodeURIComponent(
-              props.constructorPage.pp
-            )}&item_name=${encodeURIComponent(
-              props.constructorPage.pt
-            )}&currency_code=USD&source=url`}
-            text={`Tip ${props.constructorPage.n}`}
-          />
-          <ToolTipText
-            text={<FaInfoCircle />}
-            tooltip="All donations go directly to the constructor via PayPal"
-          />
-        </div>
-      ) : (
-        ''
-      )}
+          <div css={{ textAlign: 'center' }}>
+            <LinkButtonSimpleA
+              css={{ marginRight: '0.5em' }}
+              href={`https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=${encodeURIComponent(
+                props.constructorPage.pp
+              )}&item_name=${encodeURIComponent(
+                props.constructorPage.pt
+              )}&currency_code=USD&source=url`}
+              text={`Tip ${props.constructorPage.n}`}
+            />
+            <ToolTipText
+              text={<FaInfoCircle />}
+              tooltip="All donations go directly to the constructor via PayPal"
+            />
+          </div>
+        ) : (
+          ''
+        )}
     </>
   );
 };
@@ -377,7 +379,8 @@ const SuccessOverlay = (props: {
   return (
     <Overlay
       coverImage={props.coverImage}
-      closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}>
+      closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}
+    >
       <PuzzleHeading
         publishTime={props.publishTime}
         showTip={true}
@@ -473,7 +476,8 @@ export const RebusOverlay = (props: {
           shift: false,
         };
         props.dispatch(escape);
-      }}>
+      }}
+    >
       <div
         css={{
           color: props.value ? 'var(--black)' : 'var(--default-text)',
@@ -481,7 +485,8 @@ export const RebusOverlay = (props: {
           textAlign: 'center',
           fontSize: '2.5em',
           lineHeight: '1em',
-        }}>
+        }}
+      >
         {props.value ? props.value : 'Type to enter rebus...'}
       </div>
       <Button
@@ -536,12 +541,12 @@ export const Puzzle = ({
       active: { col: 0, row: 0, dir: Direction.Across },
       grid: addClues(
         fromCells({
-          mapper: e => e,
+          mapper: (e) => e,
           width: puzzle.size.cols,
           height: puzzle.size.rows,
           cells: play
             ? play.g
-            : puzzle.grid.map(s => (s === BLOCK ? BLOCK : ' ')),
+            : puzzle.grid.map((s) => (s === BLOCK ? BLOCK : ' ')),
           allowBlockEditing: false,
           highlighted: new Set(puzzle.highlighted),
           highlight: puzzle.highlight,
@@ -656,9 +661,9 @@ export const Puzzle = ({
     }
     if (!playSuccess.current && !muted && audioContext) {
       fetch('/success.mp3')
-        .then(response => response.arrayBuffer())
-        .then(buffer => {
-          audioContext.decodeAudioData(buffer, audioBuffer => {
+        .then((response) => response.arrayBuffer())
+        .then((buffer) => {
+          audioContext.decodeAudioData(buffer, (audioBuffer) => {
             playSuccess.current = () => {
               const source = audioContext.createBufferSource();
               source.buffer = audioBuffer;
@@ -690,7 +695,7 @@ export const Puzzle = ({
         .then(() => {
           console.log('Finished writing play state to db');
         })
-        .catch(reason => {
+        .catch((reason) => {
           console.error('Failed to write play: ', reason);
         });
     },
@@ -772,7 +777,7 @@ export const Puzzle = ({
       cachePlayForUser(props.user);
       writePlayToDBIfNeeded(props.user);
     } else {
-      signInAnonymously().then(u => {
+      signInAnonymously().then((u) => {
         cachePlayForUser(u);
         writePlayToDBIfNeeded(u);
       });
@@ -837,10 +842,10 @@ export const Puzzle = ({
   const { acrossEntries, downEntries } = useMemo(() => {
     return {
       acrossEntries: state.grid.entries.filter(
-        e => e.direction === Direction.Across
+        (e) => e.direction === Direction.Across
       ),
       downEntries: state.grid.entries.filter(
-        e => e.direction === Direction.Down
+        (e) => e.direction === Direction.Down
       ),
     };
   }, [state.grid.entries]);
@@ -867,9 +872,9 @@ export const Puzzle = ({
     const asList: Array<[
       string,
       [number, Direction, string]
-    ]> = state.grid.entries.map(e => {
+    ]> = state.grid.entries.map((e) => {
       return [
-        e.cells.map(p => state.answers[cellIndex(state.grid, p)]).join(''),
+        e.cells.map((p) => state.answers[cellIndex(state.grid, p)]).join(''),
         [e.labelNumber, e.direction, e.clue],
       ];
     });
@@ -927,7 +932,7 @@ export const Puzzle = ({
   if (entryIdx !== null) {
     refed = [...refs[entryIdx]].map(([labelNumber, direction]) =>
       state.grid.entries.findIndex(
-        e => e.labelNumber === labelNumber && e.direction === direction
+        (e) => e.labelNumber === labelNumber && e.direction === direction
       )
     );
   }
@@ -1256,10 +1261,10 @@ export const Puzzle = ({
   const description = puzzle.blogPost
     ? puzzle.blogPost.slice(0, 160) + '...'
     : puzzle.clues
-        .map(c => c.clue)
-        .sort()
-        .slice(0, 10)
-        .join('; ');
+      .map((c) => c.clue)
+      .sort()
+      .slice(0, 10)
+      .join('; ');
 
   return (
     <>
@@ -1290,7 +1295,8 @@ export const Puzzle = ({
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
-        }}>
+        }}
+      >
         <div css={{ flex: 'none' }}>
           <TopBar>
             {!loadingPlayState ? (
@@ -1369,24 +1375,25 @@ export const Puzzle = ({
         {state.currentTimeWindowStart === 0 &&
         !state.success &&
         !(state.filled && !state.dismissedKeepTrying) ? (
-          state.bankedSeconds === 0 ? (
-            <BeginPauseOverlay
-              dismissMessage="Begin Puzzle"
-              message="Ready to get started?"
-              {...beginPauseProps}
-            />
+            state.bankedSeconds === 0 ? (
+              <BeginPauseOverlay
+                dismissMessage="Begin Puzzle"
+                message="Ready to get started?"
+                {...beginPauseProps}
+              />
+            ) : (
+              <BeginPauseOverlay
+                dismissMessage="Resume"
+                message="Your puzzle is paused"
+                {...beginPauseProps}
+              />
+            )
           ) : (
-            <BeginPauseOverlay
-              dismissMessage="Resume"
-              message="Your puzzle is paused"
-              {...beginPauseProps}
-            />
-          )
-        ) : (
-          ''
-        )}
+            ''
+          )}
         <div
-          css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}>
+          css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}
+        >
           {puzzleView}
         </div>
         <div css={{ flex: 'none', width: '100%' }}>
