@@ -402,3 +402,28 @@ Array [
   },
 ]
 `;
+
+exports[`should notify for new puzzle if there are subs 1`] = `
+Array [
+  Object {
+    "an": "Mike D",
+    "e": false,
+    "id": "mikeuserid-newpuzzle-puzzle-id-here",
+    "k": "newpuzzle",
+    "p": "puzzle-id-here",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "mikeuserid",
+  },
+  Object {
+    "an": "Mike D",
+    "e": false,
+    "id": "tomuserid-newpuzzle-puzzle-id-here",
+    "k": "newpuzzle",
+    "p": "puzzle-id-here",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "tomuserid",
+  },
+]
+`;

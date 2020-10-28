@@ -1,9 +1,16 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 
 import { getMockedPuzzle } from '../lib/testingUtils';
-import { notificationsForPuzzleChange, NotificationT } from '../lib/notifications';
+import {
+  notificationsForPuzzleChange,
+  NotificationT,
+} from '../lib/notifications';
 import { CommentWithRepliesT } from '../lib/dbtypes';
-import { TimestampClass, setAdminApp, setUserMap } from '../lib/firebaseWrapper';
+import {
+  TimestampClass,
+  setAdminApp,
+  setUserMap,
+} from '../lib/firebaseWrapper';
 import { queueEmails } from '../lib/serverOnly';
 import type firebaseAdminType from 'firebase-admin';
 import add from 'date-fns/add';
@@ -13,10 +20,13 @@ jest.mock('../lib/firebaseWrapper');
 
 const basePuzzle = getMockedPuzzle({ cs: undefined });
 
-function getComment(fields?: Partial<CommentWithRepliesT>): CommentWithRepliesT {
+function getComment(
+  fields?: Partial<CommentWithRepliesT>
+): CommentWithRepliesT {
   return {
     ...{
-      c: 'A couple of two-worders today which I don\'t love, but I hope you all got it anyway!',
+      c:
+        'A couple of two-worders today which I don\'t love, but I hope you all got it anyway!',
       i: 'LwgoVx0BAskM4wVJyoLj',
       t: 36.009,
       p: TimestampClass.now(),
@@ -24,16 +34,20 @@ function getComment(fields?: Partial<CommentWithRepliesT>): CommentWithRepliesT 
       n: 'Mike D',
       ch: false,
     },
-    ...fields
+    ...fields,
   };
 }
 
 test('shouldnt notify at all if comment is on own puzzle', async () => {
   const puzzleWithComments = {
     ...basePuzzle,
-    cs: [getComment({ a: basePuzzle.a })]
+    cs: [getComment({ a: basePuzzle.a })],
   };
-  const notifications = await notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(
+    basePuzzle,
+    puzzleWithComments,
+    'puzzle-id-here'
+  );
   expect(notifications.length).toEqual(0);
 });
 
@@ -42,14 +56,24 @@ const projectId = 'notificationstests';
 test('security rules for updating notifications', async () => {
   const puzzleWithComments = {
     ...basePuzzle,
-    cs: [getComment({ a: 'dummy-author-id' })]
+    cs: [getComment({ a: 'dummy-author-id' })],
   };
-  const notifications = await notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(
+    basePuzzle,
+    puzzleWithComments,
+    'puzzle-id-here'
+  );
   expect(notifications.length).toEqual(1);
 
   await firebaseTesting.clearFirestoreData({ projectId });
-  const adminApp = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
-  await adminApp.firestore().collection('n').doc(notifications[0].id).set(notifications[0]);
+  const adminApp = firebaseTesting.initializeAdminApp({
+    projectId,
+  }) as firebase.app.App;
+  await adminApp
+    .firestore()
+    .collection('n')
+    .doc(notifications[0].id)
+    .set(notifications[0]);
 
   const ownerApp = firebaseTesting.initializeTestApp({
     projectId,
@@ -72,15 +96,27 @@ test('security rules for updating notifications', async () => {
 
   // other user can't change read status
   await firebaseTesting.assertFails(
-    otherApp.firestore().collection('n').doc(notifications[0].id).update({ r: true })
+    otherApp
+      .firestore()
+      .collection('n')
+      .doc(notifications[0].id)
+      .update({ r: true })
   );
   // owner can't change anything other than read status
   await firebaseTesting.assertFails(
-    ownerApp.firestore().collection('n').doc(notifications[0].id).update({ c: 'some new comment id' })
+    ownerApp
+      .firestore()
+      .collection('n')
+      .doc(notifications[0].id)
+      .update({ c: 'some new comment id' })
   );
   // owner can change read status
   await firebaseTesting.assertSucceeds(
-    ownerApp.firestore().collection('n').doc(notifications[0].id).update({ r: true })
+    ownerApp
+      .firestore()
+      .collection('n')
+      .doc(notifications[0].id)
+      .update({ r: true })
   );
 
   await adminApp.delete();
@@ -89,16 +125,54 @@ test('security rules for updating notifications', async () => {
 });
 
 const removeTimestamp = (n: NotificationT) => {
-  const { t, ...rest } = n;  // eslint-disable-line @typescript-eslint/no-unused-vars
+  const { t, ...rest } = n; // eslint-disable-line @typescript-eslint/no-unused-vars
   return rest;
 };
+
+test('should not notify for new puzzle if no subs', async () => {
+  const adminApp = firebaseTesting.initializeAdminApp({
+    projectId,
+  });
+  setAdminApp((adminApp as unknown) as firebaseAdminType.app.App);
+
+  const notifications = await notificationsForPuzzleChange(
+    undefined,
+    basePuzzle,
+    'puzzle-id-here'
+  );
+  expect(notifications.length).toEqual(0);
+});
+
+test('should notify for new puzzle if there are subs', async () => {
+  const adminApp = firebaseTesting.initializeAdminApp({
+    projectId,
+  });
+  setAdminApp((adminApp as unknown) as firebaseAdminType.app.App);
+
+  await adminApp
+    .firestore()
+    .doc(`following/${basePuzzle.a}`)
+    .set({ f: ['mikeuserid', 'tomuserid'] });
+
+  const notifications = await notificationsForPuzzleChange(
+    undefined,
+    basePuzzle,
+    'puzzle-id-here'
+  );
+  expect(notifications.length).toEqual(2);
+  expect(notifications.map(removeTimestamp)).toMatchSnapshot();
+});
 
 test('should notify for a new comment by somebody else', async () => {
   const puzzleWithComments = {
     ...basePuzzle,
-    cs: [getComment({ a: 'dummy-author-id' })]
+    cs: [getComment({ a: 'dummy-author-id' })],
   };
-  const notifications = await notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(
+    basePuzzle,
+    puzzleWithComments,
+    'puzzle-id-here'
+  );
   expect(notifications.length).toEqual(1);
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
@@ -110,9 +184,13 @@ test('should notify for multiple comments by somebody else', async () => {
       getComment({ a: basePuzzle.a, i: 'foo' }),
       getComment({ a: 'dummy-author-id', i: 'bar', n: 'Jim' }),
       getComment({ a: 'another-author', i: 'bam', n: 'Tom' }),
-    ]
+    ],
   };
-  const notifications = await notificationsForPuzzleChange(basePuzzle, puzzleWithComments, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(
+    basePuzzle,
+    puzzleWithComments,
+    'puzzle-id-here'
+  );
   expect(notifications.length).toEqual(2);
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
@@ -120,13 +198,22 @@ test('should notify for multiple comments by somebody else', async () => {
 test('should notify for a reply to own comment on own puzzle', async () => {
   const puzzleWithOwn = {
     ...basePuzzle,
-    cs: [getComment({ a: basePuzzle.a })]
+    cs: [getComment({ a: basePuzzle.a })],
   };
   const puzzleWithComments = {
     ...basePuzzle,
-    cs: [getComment({ a: basePuzzle.a, r: [getComment({ a: 'dummy-author-id', i: 'bar', n: 'Jim' })] })]
+    cs: [
+      getComment({
+        a: basePuzzle.a,
+        r: [getComment({ a: 'dummy-author-id', i: 'bar', n: 'Jim' })],
+      }),
+    ],
   };
-  const notifications = await notificationsForPuzzleChange(puzzleWithOwn, puzzleWithComments, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(
+    puzzleWithOwn,
+    puzzleWithComments,
+    'puzzle-id-here'
+  );
   expect(notifications.length).toEqual(1);
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
@@ -134,13 +221,22 @@ test('should notify for a reply to own comment on own puzzle', async () => {
 test('should notify comment author only when puzzle author replies', async () => {
   const puzzleWithComment = {
     ...basePuzzle,
-    cs: [getComment({ a: 'dummy-author-id' })]
+    cs: [getComment({ a: 'dummy-author-id' })],
   };
   const authorReplies = {
     ...basePuzzle,
-    cs: [getComment({ a: 'dummy-author-id', r: [getComment({ a: basePuzzle.a, i: 'baz' })] })]
+    cs: [
+      getComment({
+        a: 'dummy-author-id',
+        r: [getComment({ a: basePuzzle.a, i: 'baz' })],
+      }),
+    ],
   };
-  const notifications = await notificationsForPuzzleChange(puzzleWithComment, authorReplies, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(
+    puzzleWithComment,
+    authorReplies,
+    'puzzle-id-here'
+  );
   expect(notifications.length).toEqual(1);
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
@@ -148,13 +244,22 @@ test('should notify comment author only when puzzle author replies', async () =>
 test('should notify comment author and puzzle author when third party replies', async () => {
   const puzzleWithComment = {
     ...basePuzzle,
-    cs: [getComment({ a: 'dummy-author-id' })]
+    cs: [getComment({ a: 'dummy-author-id' })],
   };
   const authorReplies = {
     ...basePuzzle,
-    cs: [getComment({ a: 'dummy-author-id', r: [getComment({ a: 'rando', i: 'baz' })] })]
+    cs: [
+      getComment({
+        a: 'dummy-author-id',
+        r: [getComment({ a: 'rando', i: 'baz' })],
+      }),
+    ],
   };
-  const notifications = await notificationsForPuzzleChange(puzzleWithComment, authorReplies, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(
+    puzzleWithComment,
+    authorReplies,
+    'puzzle-id-here'
+  );
   expect(notifications.length).toEqual(2);
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
@@ -162,7 +267,7 @@ test('should notify comment author and puzzle author when third party replies', 
 test('should handle a combination of multiple new comments and nested replies', async () => {
   const startingPoint = {
     ...basePuzzle,
-    cs: [getComment({ r: [getComment({ a: 'rando', i: 'baz' })] })]
+    cs: [getComment({ r: [getComment({ a: 'rando', i: 'baz' })] })],
   };
   const withReplies = {
     ...basePuzzle,
@@ -171,17 +276,23 @@ test('should handle a combination of multiple new comments and nested replies', 
       getComment({
         r: [
           getComment({
-            a: 'rando', i: 'baz', r: [
+            a: 'rando',
+            i: 'baz',
+            r: [
               getComment({ i: 'whamo' }),
-              getComment({ a: 'blaster', i: 'test' })
-            ]
+              getComment({ a: 'blaster', i: 'test' }),
+            ],
           }),
-          getComment({ a: 'another-rando', i: 'foobar' })
-        ]
-      })
-    ]
+          getComment({ a: 'another-rando', i: 'foobar' }),
+        ],
+      }),
+    ],
   };
-  const notifications = await notificationsForPuzzleChange(startingPoint, withReplies, 'puzzle-id-here');
+  const notifications = await notificationsForPuzzleChange(
+    startingPoint,
+    withReplies,
+    'puzzle-id-here'
+  );
   expect(notifications.length).toEqual(5);
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
@@ -192,7 +303,7 @@ describe('email queueing', async () => {
   beforeEach(async () => {
     const startingPoint = {
       ...basePuzzle,
-      cs: [getComment({ r: [getComment({ a: 'rando', i: 'baz' })] })]
+      cs: [getComment({ r: [getComment({ a: 'rando', i: 'baz' })] })],
     };
     const withReplies = {
       ...basePuzzle,
@@ -201,25 +312,40 @@ describe('email queueing', async () => {
         getComment({
           r: [
             getComment({
-              a: 'rando', i: 'baz', r: [
+              a: 'rando',
+              i: 'baz',
+              r: [
                 getComment({ i: 'whamo' }),
-                getComment({ a: 'blaster', i: 'test' })
-              ]
+                getComment({ a: 'blaster', i: 'test' }),
+              ],
             }),
-            getComment({ a: 'another-rando', i: 'foobar' })
-          ]
-        })
-      ]
+            getComment({ a: 'another-rando', i: 'foobar' }),
+          ],
+        }),
+      ],
     };
-    const notifications = await notificationsForPuzzleChange(startingPoint, withReplies, 'puzzle-id-here');
+    const notifications = await notificationsForPuzzleChange(
+      startingPoint,
+      withReplies,
+      'puzzle-id-here'
+    );
     expect(notifications.length).toEqual(5);
     await firebaseTesting.clearFirestoreData({ projectId });
-    adminApp = firebaseTesting.initializeAdminApp({ projectId }) as unknown as firebaseAdminType.app.App;
+    adminApp = (firebaseTesting.initializeAdminApp({
+      projectId,
+    }) as unknown) as firebaseAdminType.app.App;
     setAdminApp(adminApp);
     for (const notification of notifications) {
-      await adminApp.firestore().collection('n').doc(notification.id).set(notification);
+      await adminApp
+        .firestore()
+        .collection('n')
+        .doc(notification.id)
+        .set(notification);
     }
-    setUserMap({ rando: { email: 'rando@example.com' } as firebase.User, [basePuzzle.a]: { email: 'mike@example.com' } as firebase.User });
+    setUserMap({
+      rando: { email: 'rando@example.com' } as firebase.User,
+      [basePuzzle.a]: { email: 'mike@example.com' } as firebase.User,
+    });
   });
 
   afterEach(async () => {
@@ -233,7 +359,7 @@ describe('email queueing', async () => {
     expect(mail.size).toEqual(0);
   });
 
-  const twoHours = (add(new Date(), { hours: 2 }));
+  const twoHours = add(new Date(), { hours: 2 });
 
   test('emails send after an hour, but dont double send', async () => {
     MockDate.set(twoHours);
@@ -243,23 +369,43 @@ describe('email queueing', async () => {
 
     const mail2 = await adminApp.firestore().collection('mail').get();
     expect(mail2.size).toEqual(2);
-    expect(mail2.docs.map(d => d.data()).sort((a, b) => a.to[0].localeCompare(b.to[0]))).toMatchSnapshot();
+    expect(
+      mail2.docs
+        .map((d) => d.data())
+        .sort((a, b) => a.to[0].localeCompare(b.to[0]))
+    ).toMatchSnapshot();
   });
 
   test('dont send if unsubscribed to all', async () => {
     MockDate.set(twoHours);
-    await adminApp.firestore().collection('prefs').doc('rando').set({ unsubs: ['all'] }, { merge: true });
+    await adminApp
+      .firestore()
+      .collection('prefs')
+      .doc('rando')
+      .set({ unsubs: ['all'] }, { merge: true });
 
     // Nothing has been emailed, nothing read
-    expect((await adminApp.firestore().collection('n').where('e', '==', false).get()).size).toEqual(5);
-    expect((await adminApp.firestore().collection('n').where('r', '==', false).get()).size).toEqual(5);
+    expect(
+      (await adminApp.firestore().collection('n').where('e', '==', false).get())
+        .size
+    ).toEqual(5);
+    expect(
+      (await adminApp.firestore().collection('n').where('r', '==', false).get())
+        .size
+    ).toEqual(5);
 
     await queueEmails();
 
     // We should have marked everything as emailed
-    expect((await adminApp.firestore().collection('n').where('e', '==', false).get()).size).toEqual(0);
+    expect(
+      (await adminApp.firestore().collection('n').where('e', '==', false).get())
+        .size
+    ).toEqual(0);
     // But not necessarily as read
-    expect((await adminApp.firestore().collection('n').where('r', '==', false).get()).size).toEqual(2);
+    expect(
+      (await adminApp.firestore().collection('n').where('r', '==', false).get())
+        .size
+    ).toEqual(2);
 
     const mail2 = await adminApp.firestore().collection('mail').get();
     expect(mail2.size).toEqual(1);
@@ -268,18 +414,34 @@ describe('email queueing', async () => {
 
   test('dont send if unsubscribed to comments and thats all we have', async () => {
     MockDate.set(twoHours);
-    await adminApp.firestore().collection('prefs').doc(basePuzzle.a).set({ unsubs: ['comments'] }, { merge: true });
+    await adminApp
+      .firestore()
+      .collection('prefs')
+      .doc(basePuzzle.a)
+      .set({ unsubs: ['comments'] }, { merge: true });
 
     // Nothing has been emailed, nothing read
-    expect((await adminApp.firestore().collection('n').where('e', '==', false).get()).size).toEqual(5);
-    expect((await adminApp.firestore().collection('n').where('r', '==', false).get()).size).toEqual(5);
+    expect(
+      (await adminApp.firestore().collection('n').where('e', '==', false).get())
+        .size
+    ).toEqual(5);
+    expect(
+      (await adminApp.firestore().collection('n').where('r', '==', false).get())
+        .size
+    ).toEqual(5);
 
     await queueEmails();
 
     // We should have marked everything as emailed
-    expect((await adminApp.firestore().collection('n').where('e', '==', false).get()).size).toEqual(0);
+    expect(
+      (await adminApp.firestore().collection('n').where('e', '==', false).get())
+        .size
+    ).toEqual(0);
     // But not necessarily as read
-    expect((await adminApp.firestore().collection('n').where('r', '==', false).get()).size).toEqual(3);
+    expect(
+      (await adminApp.firestore().collection('n').where('r', '==', false).get())
+        .size
+    ).toEqual(3);
 
     const mail2 = await adminApp.firestore().collection('mail').get();
     expect(mail2.size).toEqual(1);
@@ -289,16 +451,35 @@ describe('email queueing', async () => {
   test('emails work w/ multiple puzzles and w/ html in title', async () => {
     const puzzleWithComment = getMockedPuzzle({
       t: 'Our Second <span> Title',
-      cs: [getComment({ a: 'rando' })]
+      cs: [getComment({ a: 'rando' })],
     });
     const withReplies = {
       ...puzzleWithComment,
-      cs: [getComment({ a: 'rando', r: [getComment({ a: 'anotherAuthor', n: 'Commenter <div> Foo', i: 'baz' })] })]
+      cs: [
+        getComment({
+          a: 'rando',
+          r: [
+            getComment({
+              a: 'anotherAuthor',
+              n: 'Commenter <div> Foo',
+              i: 'baz',
+            }),
+          ],
+        }),
+      ],
     };
-    const notifications = await notificationsForPuzzleChange(puzzleWithComment, withReplies, 'second-puzzle');
+    const notifications = await notificationsForPuzzleChange(
+      puzzleWithComment,
+      withReplies,
+      'second-puzzle'
+    );
     expect(notifications.length).toEqual(2);
     for (const notification of notifications) {
-      await adminApp.firestore().collection('n').doc(notification.id).set(notification);
+      await adminApp
+        .firestore()
+        .collection('n')
+        .doc(notification.id)
+        .set(notification);
     }
 
     MockDate.set(twoHours);
@@ -306,23 +487,40 @@ describe('email queueing', async () => {
 
     const mail2 = await adminApp.firestore().collection('mail').get();
     expect(mail2.size).toEqual(2);
-    expect(mail2.docs.map(d => d.data()).sort((a, b) => a.to[0].localeCompare(b.to[0]))).toMatchSnapshot();
+    expect(
+      mail2.docs
+        .map((d) => d.data())
+        .sort((a, b) => a.to[0].localeCompare(b.to[0]))
+    ).toMatchSnapshot();
   });
 
   test('emails work w/ multiple categories of comments', async () => {
     const puzzleWithComment = getMockedPuzzle({
       a: 'rando',
       t: 'Our Second Title',
-      cs: [getComment({ a: basePuzzle.a })]
+      cs: [getComment({ a: basePuzzle.a })],
     });
     const withReplies = {
       ...puzzleWithComment,
-      cs: [getComment({ a: basePuzzle.a, r: [getComment({ a: 'anotherAuthor', n: 'Foo Bar', i: 'baz' })] })]
+      cs: [
+        getComment({
+          a: basePuzzle.a,
+          r: [getComment({ a: 'anotherAuthor', n: 'Foo Bar', i: 'baz' })],
+        }),
+      ],
     };
-    const notifications = await notificationsForPuzzleChange(puzzleWithComment, withReplies, 'second-puzzle');
+    const notifications = await notificationsForPuzzleChange(
+      puzzleWithComment,
+      withReplies,
+      'second-puzzle'
+    );
     expect(notifications.length).toEqual(2);
     for (const notification of notifications) {
-      await adminApp.firestore().collection('n').doc(notification.id).set(notification);
+      await adminApp
+        .firestore()
+        .collection('n')
+        .doc(notification.id)
+        .set(notification);
     }
 
     MockDate.set(twoHours);
@@ -330,6 +528,10 @@ describe('email queueing', async () => {
 
     const mail2 = await adminApp.firestore().collection('mail').get();
     expect(mail2.size).toEqual(2);
-    expect(mail2.docs.map(d => d.data()).sort((a, b) => a.to[0].localeCompare(b.to[0]))).toMatchSnapshot();
+    expect(
+      mail2.docs
+        .map((d) => d.data())
+        .sort((a, b) => a.to[0].localeCompare(b.to[0]))
+    ).toMatchSnapshot();
   });
 });
