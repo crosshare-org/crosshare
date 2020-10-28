@@ -769,32 +769,44 @@ export const Puzzle = ({
 
   const { addToast } = useSnackbar();
 
-  if (state.success && !state.ranSuccessEffects) {
-    const action: RanSuccessEffectsAction = { type: 'RANSUCCESS' };
-    dispatch(action);
+  useEffect(() => {
+    if (state.success && !state.ranSuccessEffects) {
+      const action: RanSuccessEffectsAction = { type: 'RANSUCCESS' };
+      dispatch(action);
 
-    if (props.user) {
-      cachePlayForUser(props.user);
-      writePlayToDBIfNeeded(props.user);
-    } else {
-      signInAnonymously().then((u) => {
-        cachePlayForUser(u);
-        writePlayToDBIfNeeded(u);
-      });
-    }
+      if (props.user) {
+        cachePlayForUser(props.user);
+        writePlayToDBIfNeeded(props.user);
+      } else {
+        signInAnonymously().then((u) => {
+          cachePlayForUser(u);
+          writePlayToDBIfNeeded(u);
+        });
+      }
 
-    let delay = 0;
-    if (state.bankedSeconds <= 60) {
-      addToast('🥇 Solved in under a minute!');
-      delay += 500;
+      let delay = 0;
+      if (state.bankedSeconds <= 60) {
+        addToast('🥇 Solved in under a minute!');
+        delay += 500;
+      }
+      if (!state.didCheat) {
+        addToast('🤓 Solved without check/reveal!', delay);
+      }
+      if (!muted && playSuccess.current) {
+        playSuccess.current();
+      }
     }
-    if (!state.didCheat) {
-      addToast('🤓 Solved without check/reveal!', delay);
-    }
-    if (!muted && playSuccess.current) {
-      playSuccess.current();
-    }
-  }
+  }, [
+    addToast,
+    cachePlayForUser,
+    muted,
+    props.user,
+    state.bankedSeconds,
+    state.didCheat,
+    state.ranSuccessEffects,
+    state.success,
+    writePlayToDBIfNeeded,
+  ]);
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
