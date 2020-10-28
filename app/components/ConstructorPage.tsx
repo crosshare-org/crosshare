@@ -83,8 +83,11 @@ export const CreatePageForm = () => {
       return;
     }
     const lower = username.toLowerCase();
-    if (lower.includes('admin') || lower.includes('crosshare') ||
-      Object.prototype.hasOwnProperty.call(BANNED_USERNAMES, lower)) {
+    if (
+      lower.includes('admin') ||
+      lower.includes('crosshare') ||
+      Object.prototype.hasOwnProperty.call(BANNED_USERNAMES, lower)
+    ) {
       setShowError(true);
       return;
     }
@@ -96,9 +99,12 @@ export const CreatePageForm = () => {
       n: user.displayName || 'Anonymous Crossharer',
       b: '',
       m: true,
-      t: ServerTimestamp
+      t: ServerTimestamp,
     };
-    App.firestore().collection('cp').doc(lower).set(cp)
+    App.firestore()
+      .collection('cp')
+      .doc(lower)
+      .set(cp)
       .catch((e) => {
         console.log(e);
         setShowError(true);
@@ -108,28 +114,55 @@ export const CreatePageForm = () => {
       });
   }
 
-  return <>
-    <form onSubmit={createPage}>
-      <label css={{ width: '100%', margin: 0 }}>
-        <p>Create a constructor blog to keep all of your puzzles on one page.</p>
-        <p>Your blog&apos;s url (choose carefully, you can&apos;t change this later):</p>
-        <p><span css={{ fontWeight: 'bold', marginRight: '0.15em' }}>https://crosshare.org/</span><input type='text' value={username} placeholder='username' onChange={e => { setShowError(false); setUsername(sanitize(e.target.value)); }} /></p>
-      </label>
-      <p>
-        <input type="submit" disabled={isInvalid(username) || submitting} value="Create" />
-        {showError ?
-          <span css={{ color: 'var(--error)', marginLeft: '1em' }}>That username is unavailable. Please try something different.</span>
-          : ''
-        }
-      </p>
-    </form>
-  </>;
+  return (
+    <>
+      <form onSubmit={createPage}>
+        <label css={{ width: '100%', margin: 0 }}>
+          <p>
+            Create a constructor blog to keep all of your puzzles on one page.
+          </p>
+          <p>
+            Your blog&apos;s url (choose carefully, you can&apos;t change this
+            later):
+          </p>
+          <p>
+            <span css={{ fontWeight: 'bold', marginRight: '0.15em' }}>
+              https://crosshare.org/
+            </span>
+            <input
+              type="text"
+              value={username}
+              placeholder="username"
+              onChange={(e) => {
+                setShowError(false);
+                setUsername(sanitize(e.target.value));
+              }}
+            />
+          </p>
+        </label>
+        <p>
+          <input
+            type="submit"
+            disabled={isInvalid(username) || submitting}
+            value="Create"
+          />
+          {showError ? (
+            <span css={{ color: 'var(--error)', marginLeft: '1em' }}>
+              That username is unavailable. Please try something different.
+            </span>
+          ) : (
+            ''
+          )}
+        </p>
+      </form>
+    </>
+  );
 };
 
 interface BioEditorProps {
-  constructorPage: ConstructorPageT,
-  addProfilePic: () => void,
-  addCoverPic: () => void,
+  constructorPage: ConstructorPageT;
+  addProfilePic: () => void;
+  addCoverPic: () => void;
 }
 
 const BIO_LENGTH_LIMIT = 1500;
@@ -142,26 +175,39 @@ export const BioEditor = (props: BioEditorProps) => {
   const [showPaypalEditor, setShowPaypalEditor] = useState(false);
   const [bioText, setBioText] = useState(props.constructorPage.b);
   const [sigText, setSigText] = useState(props.constructorPage.sig || '');
-  const [paypalEmail, setPaypalEmail] = useState(props.constructorPage.pp || '');
+  const [paypalEmail, setPaypalEmail] = useState(
+    props.constructorPage.pp || ''
+  );
   const [paypalText, setPaypalText] = useState(props.constructorPage.pt || '');
   const [submitting, setSubmitting] = useState(false);
 
   function deleteTipButton() {
     console.log('Removing tip button');
     const db = App.firestore();
-    db.collection('cp').doc(props.constructorPage.id).update({ pp: DeleteSentinal, pt: DeleteSentinal, m: true, t: ServerTimestamp }).then(() => {
-      console.log('Updated');
-      setIsOpen(false);
-    });
+    db.collection('cp')
+      .doc(props.constructorPage.id)
+      .update({
+        pp: DeleteSentinal,
+        pt: DeleteSentinal,
+        m: true,
+        t: ServerTimestamp,
+      })
+      .then(() => {
+        console.log('Updated');
+        setIsOpen(false);
+      });
   }
 
   function deleteSig() {
     console.log('Removing sig');
     const db = App.firestore();
-    db.collection('cp').doc(props.constructorPage.id).update({ sig: DeleteSentinal, m: true, t: ServerTimestamp }).then(() => {
-      console.log('Updated');
-      setIsOpen(false);
-    });
+    db.collection('cp')
+      .doc(props.constructorPage.id)
+      .update({ sig: DeleteSentinal, m: true, t: ServerTimestamp })
+      .then(() => {
+        console.log('Updated');
+        setIsOpen(false);
+      });
   }
 
   function submitPaypalInfo(event: FormEvent) {
@@ -172,11 +218,19 @@ export const BioEditor = (props: BioEditorProps) => {
     setSubmitting(true);
     console.log('Submitting new paypal info');
     const db = App.firestore();
-    db.collection('cp').doc(props.constructorPage.id).update({ pp: paypalEmail, pt: paypalText.trim(), m: true, t: ServerTimestamp }).then(() => {
-      console.log('Updated');
-      setShowPaypalEditor(false);
-      setSubmitting(false);
-    });
+    db.collection('cp')
+      .doc(props.constructorPage.id)
+      .update({
+        pp: paypalEmail,
+        pt: paypalText.trim(),
+        m: true,
+        t: ServerTimestamp,
+      })
+      .then(() => {
+        console.log('Updated');
+        setShowPaypalEditor(false);
+        setSubmitting(false);
+      });
   }
 
   function submitEdit(event: FormEvent) {
@@ -187,10 +241,13 @@ export const BioEditor = (props: BioEditorProps) => {
     }
     console.log('Submitting bio');
     const db = App.firestore();
-    db.collection('cp').doc(props.constructorPage.id).update({ b: bioText, m: true, t: ServerTimestamp }).then(() => {
-      console.log('Updated');
-      setIsOpen(false);
-    });
+    db.collection('cp')
+      .doc(props.constructorPage.id)
+      .update({ b: bioText, m: true, t: ServerTimestamp })
+      .then(() => {
+        console.log('Updated');
+        setIsOpen(false);
+      });
   }
 
   function submitSigEdit(event: FormEvent) {
@@ -201,208 +258,441 @@ export const BioEditor = (props: BioEditorProps) => {
     }
     console.log('Submitting sig');
     const db = App.firestore();
-    db.collection('cp').doc(props.constructorPage.id).update({ sig: textToSubmit, m: true, t: ServerTimestamp }).then(() => {
-      console.log('Updated');
-      setIsSigOpen(false);
-    });
+    db.collection('cp')
+      .doc(props.constructorPage.id)
+      .update({ sig: textToSubmit, m: true, t: ServerTimestamp })
+      .then(() => {
+        console.log('Updated');
+        setIsSigOpen(false);
+      });
   }
 
-  return <div css={{
-    marginBottom: '1em',
-    ['p:last-of-type']: {
-      marginBottom: '0.25em',
-    },
-    '& h4': {
-      marginTop: '1.5em'
-    }
-  }} >
-    <h4>Bio</h4>
-    {isOpen ?
-      <>
-        <div css={{ backgroundColor: 'var(--secondary)', borderRadius: '0.5em', padding: '1em', marginTop: '1em' }}>
-          <h4>Live Preview:</h4>
-          <Markdown text={bioText} />
-        </div>
-        <form css={{ margin: '1em 0' }} onSubmit={submitEdit}>
-          <label css={{ width: '100%', margin: 0 }}>
-            Enter new bio text:
-            <textarea css={{ width: '100%', display: 'block', height: '5em' }} value={bioText} onChange={e => setBioText(e.target.value.substring(0, BIO_LENGTH_LIMIT))} />
-          </label>
-          <div css={{
-            textAlign: 'right',
-            color: (BIO_LENGTH_LIMIT - bioText.length) > 10 ? 'var(--default-text)' : 'var(--error)',
-          }}>{bioText.length}/{BIO_LENGTH_LIMIT}</div>
-          <Button type="submit" css={{ marginRight: '0.5em', }} disabled={bioText.trim().length === 0} text="Save" />
-          <Button boring={true} css={{ marginRight: '0.5em' }} onClick={() => { setIsOpen(false); }} text='Cancel' />
-        </form>
-      </>
-      :
-      <>
-        <p>Your bio appears on the top of your blog page - use it to introduce yourself to solvers!</p>
-        {props.constructorPage.b ?
-          <Button onClick={() => setIsOpen(true)} text="Edit bio" />
-          :
-          <Button onClick={() => setIsOpen(true)} text="Add bio" />
-        }
-      </>
-    }
-
-    <h4>Pics</h4>
-    <p>Your profile pic appears on your puzzle pages and your blog page. Your cover pic is a large photo that appears at the top of your blog page.</p>
-    <Button css={{ marginRight: '1.5em' }} onClick={props.addProfilePic} text="Edit profile pic" />
-    <Button onClick={props.addCoverPic} text="Edit cover pic" />
-
-    <h4>Tips</h4>
-    <p>A tip button appears on your puzzle pages and your blog page and is a way for solvers to give you a little cash to show their appreciation for your puzzles!</p>
-    {props.constructorPage.pp && props.constructorPage.pt ?
-      <>
-        <Button css={{ marginRight: '1.5em' }} onClick={() => setShowPaypalEditor(true)} text="Edit tip button" />
-        <Button boring={true} onClick={deleteTipButton} text="Delete tip button" />
-      </>
-      :
-      <Button onClick={() => setShowPaypalEditor(true)} text="Add tip button" />
-    }
-
-    <h4>Signature</h4>
-    {isSigOpen ?
-      /* Todo share this w/ bio editor above */
-      <>
-        <div css={{ backgroundColor: 'var(--secondary)', borderRadius: '0.5em', padding: '1em', marginTop: '1em' }}>
-          <h4>Live Preview:</h4>
-          <Markdown inline={true} text={sigText} />
-        </div>
-        <form css={{ margin: '1em 0' }} onSubmit={submitSigEdit}>
-          <label css={{ width: '100%', margin: 0 }}>
-            Enter new signature:
-            <textarea css={{ width: '100%', display: 'block', height: '5em' }} value={sigText} onChange={e => setSigText(e.target.value.substring(0, SIG_LENGTH_LIMIT))} />
-          </label>
-          <div css={{
-            textAlign: 'right',
-            color: (SIG_LENGTH_LIMIT - sigText.length) > 10 ? 'var(--default-text)' : 'var(--error)',
-          }}>{sigText.length}/{SIG_LENGTH_LIMIT}</div>
-          <Button type="submit" css={{ marginRight: '0.5em', }} disabled={sigText.trim().length === 0} text="Save" />
-          <Button boring={true} css={{ marginRight: '0.5em' }} onClick={() => { setIsSigOpen(false); }} text='Cancel' />
-        </form>
-      </> :
-      <>
-        <p>A sig appears on each of your puzzle pages. You can use it to link to your social media accounts or give other important information about your puzzles.</p>
-        {props.constructorPage.sig ?
-          <>
-            <Button css={{ marginRight: '1.5em' }} onClick={() => setIsSigOpen(true)} text="Edit sig" />
-            <Button boring={true} onClick={deleteSig} text="Delete sig" />
-          </>
-          :
-          <Button onClick={() => setIsSigOpen(true)} text="Add sig" />
-        }
-      </>
-    }
-    {showPaypalEditor ?
-      <Overlay closeCallback={() => setShowPaypalEditor(false)}>
-        <form onSubmit={submitPaypalInfo}>
-          <div>
-            <label>
-              <p>Paypal email address:</p>
-              <input type="text" value={paypalEmail} onChange={e => setPaypalEmail(e.target.value.trim())} />
-            </label>
+  return (
+    <div
+      css={{
+        marginBottom: '1em',
+        ['p:last-of-type']: {
+          marginBottom: '0.25em',
+        },
+        '& h4': {
+          marginTop: '1.5em',
+        },
+      }}
+    >
+      <h4>Bio</h4>
+      {isOpen ? (
+        <>
+          <div
+            css={{
+              backgroundColor: 'var(--secondary)',
+              borderRadius: '0.5em',
+              padding: '1em',
+              marginTop: '1em',
+            }}
+          >
+            <h4>Live Preview:</h4>
+            <Markdown text={bioText} />
           </div>
-          <div css={{ marginTop: '2em' }}>
-            <label css={{ width: '100%', }} >
-              <p>Message to show in paypal dialogue:</p>
-              <input css={{ width: '100%', }} type="text" value={paypalText} onChange={e => setPaypalText(e.target.value.substring(0, PAYPAL_LENGTH_LIMIT))} />
-              <div css={{
+          <form css={{ margin: '1em 0' }} onSubmit={submitEdit}>
+            <label css={{ width: '100%', margin: 0 }}>
+              Enter new bio text:
+              <textarea
+                css={{ width: '100%', display: 'block', height: '5em' }}
+                value={bioText}
+                onChange={(e) =>
+                  setBioText(e.target.value.substring(0, BIO_LENGTH_LIMIT))
+                }
+              />
+            </label>
+            <div
+              css={{
                 textAlign: 'right',
-                color: (PAYPAL_LENGTH_LIMIT - paypalText.length) > 10 ? 'var(--default-text)' : 'var(--error)',
-              }}>{paypalText.length}/{PAYPAL_LENGTH_LIMIT}</div>
-            </label>
+                color:
+                  BIO_LENGTH_LIMIT - bioText.length > 10
+                    ? 'var(--default-text)'
+                    : 'var(--error)',
+              }}
+            >
+              {bioText.length}/{BIO_LENGTH_LIMIT}
+            </div>
+            <Button
+              type="submit"
+              css={{ marginRight: '0.5em' }}
+              disabled={bioText.trim().length === 0}
+              text="Save"
+            />
+            <Button
+              boring={true}
+              css={{ marginRight: '0.5em' }}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+              text="Cancel"
+            />
+          </form>
+        </>
+      ) : (
+        <>
+          <p>
+            Your bio appears on the top of your blog page - use it to introduce
+            yourself to solvers!
+          </p>
+          {props.constructorPage.b ? (
+            <Button onClick={() => setIsOpen(true)} text="Edit bio" />
+          ) : (
+            <Button onClick={() => setIsOpen(true)} text="Add bio" />
+          )}
+        </>
+      )}
+
+      <h4>Pics</h4>
+      <p>
+        Your profile pic appears on your puzzle pages and your blog page. Your
+        cover pic is a large photo that appears at the top of your blog page.
+      </p>
+      <Button
+        css={{ marginRight: '1.5em' }}
+        onClick={props.addProfilePic}
+        text="Edit profile pic"
+      />
+      <Button onClick={props.addCoverPic} text="Edit cover pic" />
+
+      <h4>Tips</h4>
+      <p>
+        A tip button appears on your puzzle pages and your blog page and is a
+        way for solvers to give you a little cash to show their appreciation for
+        your puzzles!
+      </p>
+      {props.constructorPage.pp && props.constructorPage.pt ? (
+        <>
+          <Button
+            css={{ marginRight: '1.5em' }}
+            onClick={() => setShowPaypalEditor(true)}
+            text="Edit tip button"
+          />
+          <Button
+            boring={true}
+            onClick={deleteTipButton}
+            text="Delete tip button"
+          />
+        </>
+      ) : (
+        <Button
+          onClick={() => setShowPaypalEditor(true)}
+          text="Add tip button"
+        />
+      )}
+
+      <h4>Signature</h4>
+      {isSigOpen ? (
+        /* Todo share this w/ bio editor above */
+        <>
+          <div
+            css={{
+              backgroundColor: 'var(--secondary)',
+              borderRadius: '0.5em',
+              padding: '1em',
+              marginTop: '1em',
+            }}
+          >
+            <h4>Live Preview:</h4>
+            <Markdown inline={true} text={sigText} />
           </div>
-          <Button type="submit" text="Save" disabled={submitting} />
-        </form>
-      </Overlay>
-      : ''}
-  </div>;
+          <form css={{ margin: '1em 0' }} onSubmit={submitSigEdit}>
+            <label css={{ width: '100%', margin: 0 }}>
+              Enter new signature:
+              <textarea
+                css={{ width: '100%', display: 'block', height: '5em' }}
+                value={sigText}
+                onChange={(e) =>
+                  setSigText(e.target.value.substring(0, SIG_LENGTH_LIMIT))
+                }
+              />
+            </label>
+            <div
+              css={{
+                textAlign: 'right',
+                color:
+                  SIG_LENGTH_LIMIT - sigText.length > 10
+                    ? 'var(--default-text)'
+                    : 'var(--error)',
+              }}
+            >
+              {sigText.length}/{SIG_LENGTH_LIMIT}
+            </div>
+            <Button
+              type="submit"
+              css={{ marginRight: '0.5em' }}
+              disabled={sigText.trim().length === 0}
+              text="Save"
+            />
+            <Button
+              boring={true}
+              css={{ marginRight: '0.5em' }}
+              onClick={() => {
+                setIsSigOpen(false);
+              }}
+              text="Cancel"
+            />
+          </form>
+        </>
+      ) : (
+        <>
+          <p>
+            A sig appears on each of your puzzle pages. You can use it to link
+            to your social media accounts or give other important information
+            about your puzzles.
+          </p>
+          {props.constructorPage.sig ? (
+            <>
+              <Button
+                css={{ marginRight: '1.5em' }}
+                onClick={() => setIsSigOpen(true)}
+                text="Edit sig"
+              />
+              <Button boring={true} onClick={deleteSig} text="Delete sig" />
+            </>
+          ) : (
+            <Button onClick={() => setIsSigOpen(true)} text="Add sig" />
+          )}
+        </>
+      )}
+      {showPaypalEditor ? (
+        <Overlay closeCallback={() => setShowPaypalEditor(false)}>
+          <form onSubmit={submitPaypalInfo}>
+            <div>
+              <label>
+                <p>Paypal email address:</p>
+                <input
+                  type="text"
+                  value={paypalEmail}
+                  onChange={(e) => setPaypalEmail(e.target.value.trim())}
+                />
+              </label>
+            </div>
+            <div css={{ marginTop: '2em' }}>
+              <label css={{ width: '100%' }}>
+                <p>Message to show in paypal dialogue:</p>
+                <input
+                  css={{ width: '100%' }}
+                  type="text"
+                  value={paypalText}
+                  onChange={(e) =>
+                    setPaypalText(
+                      e.target.value.substring(0, PAYPAL_LENGTH_LIMIT)
+                    )
+                  }
+                />
+                <div
+                  css={{
+                    textAlign: 'right',
+                    color:
+                      PAYPAL_LENGTH_LIMIT - paypalText.length > 10
+                        ? 'var(--default-text)'
+                        : 'var(--error)',
+                  }}
+                >
+                  {paypalText.length}/{PAYPAL_LENGTH_LIMIT}
+                </div>
+              </label>
+            </div>
+            <Button type="submit" text="Save" disabled={submitting} />
+          </form>
+        </Overlay>
+      ) : (
+        ''
+      )}
+    </div>
+  );
 };
 
 export interface ConstructorPageProps {
-  constructor: ConstructorPageT,
-  profilePicture: string | null,
-  coverPicture: string | null,
-  puzzles: Array<PuzzleResult>,
-  nextPage: number | null,
-  currentPage: number,
-  prevPage: number | null,
+  constructor: ConstructorPageT;
+  profilePicture: string | null;
+  coverPicture: string | null;
+  puzzles: Array<PuzzleResult>;
+  nextPage: number | null;
+  currentPage: number;
+  prevPage: number | null;
 }
 
 export const ConstructorPage = (props: ConstructorPageProps) => {
   const coverPic = props.coverPicture;
   const profilePic = props.profilePicture;
   const username = props.constructor.i || props.constructor.id;
-  const description = 'The latest crossword puzzles from ' + props.constructor.n + ' (@' + username + '). ' + props.constructor.b;
-  const title = props.constructor.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
+  const description =
+    'The latest crossword puzzles from ' +
+    props.constructor.n +
+    ' (@' +
+    username +
+    '). ' +
+    props.constructor.b;
+  const title =
+    props.constructor.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
   const paypalEmail = props.constructor.pp;
   const paypalText = props.constructor.pt;
 
-  return <>
-    <Head>
-      <title>{title}</title>
-      <meta key="og:title" property="og:title" content={title} />
-      <meta key="og:description" property="og:description" content={description} />
-      {profilePic ?
-        <>
-          <meta key="og:image" property="og:image" content={profilePic} />
-          <meta key="og:image:width" property="og:image:width" content="200" />
-          <meta key="og:image:height" property="og:image:height" content="200" />
-        </>
-        : ''}
-      <meta key="description" name="description" content={description} />
-      <link rel="canonical" href={'https://crosshare.org/' + username + (props.currentPage !== 0 ? '/page/' + props.currentPage : '')} />
-      {props.prevPage === 0 ?
-        <link rel='prev' href={'https://crosshare.org/' + username} />
-        : ''}
-      {props.prevPage ?
-        <link rel='prev' href={'https://crosshare.org/' + username + '/page/' + props.prevPage} />
-        : ''}
-      {props.nextPage !== null ?
-        <link rel='next' href={'https://crosshare.org/' + username + '/page/' + props.nextPage} />
-        : ''}
-    </Head>
-    <DefaultTopBar />
-    {coverPic ?
-      <CoverPic coverPicture={coverPic} />
-      : ''}
-    <div css={{
-      margin: '2em 1em',
-      [HUGE_AND_UP]: {
-        maxWidth: MAX_WIDTH,
-        margin: '2em auto',
-      },
-    }}>
-      <ProfilePicAndName coverImage={coverPic} profilePic={profilePic} topLine={props.constructor.n} byLine={<h2 css={{ fontSize: '1em', fontWeight: 'normal' }}><Link href='/[...slug]' as={'/' + username} passHref>@{username}</Link></h2>} />
-      <div css={{ textAlign: 'center', marginBottom: '1.5em' }}>
-        <FollowButton {...props} />
+  return (
+    <>
+      <Head>
+        <title>{title}</title>
+        <meta key="og:title" property="og:title" content={title} />
+        <meta
+          key="og:description"
+          property="og:description"
+          content={description}
+        />
+        {profilePic ? (
+          <>
+            <meta key="og:image" property="og:image" content={profilePic} />
+            <meta
+              key="og:image:width"
+              property="og:image:width"
+              content="200"
+            />
+            <meta
+              key="og:image:height"
+              property="og:image:height"
+              content="200"
+            />
+          </>
+        ) : (
+          ''
+        )}
+        <meta key="description" name="description" content={description} />
+        <link
+          rel="canonical"
+          href={
+            'https://crosshare.org/' +
+            username +
+            (props.currentPage !== 0 ? '/page/' + props.currentPage : '')
+          }
+        />
+        {props.prevPage === 0 ? (
+          <link rel="prev" href={'https://crosshare.org/' + username} />
+        ) : (
+          ''
+        )}
+        {props.prevPage ? (
+          <link
+            rel="prev"
+            href={
+              'https://crosshare.org/' + username + '/page/' + props.prevPage
+            }
+          />
+        ) : (
+          ''
+        )}
+        {props.nextPage !== null ? (
+          <link
+            rel="next"
+            href={
+              'https://crosshare.org/' + username + '/page/' + props.nextPage
+            }
+          />
+        ) : (
+          ''
+        )}
+      </Head>
+      <DefaultTopBar />
+      {coverPic ? <CoverPic coverPicture={coverPic} /> : ''}
+      <div
+        css={{
+          margin: '2em 1em',
+          [HUGE_AND_UP]: {
+            maxWidth: MAX_WIDTH,
+            margin: '2em auto',
+          },
+        }}
+      >
+        <ProfilePicAndName
+          coverImage={coverPic}
+          profilePic={profilePic}
+          topLine={props.constructor.n}
+          byLine={
+            <h2 css={{ fontSize: '1em', fontWeight: 'normal' }}>
+              <Link href="/[...slug]" as={'/' + username} passHref>
+                @{username}
+              </Link>
+            </h2>
+          }
+        />
+        <div css={{ textAlign: 'center', marginBottom: '1.5em' }}>
+          <FollowButton page={props.constructor} />
+        </div>
+        <div css={{ marginBottom: '1.5em' }}>
+          <Markdown text={props.constructor.b} />
+          {paypalEmail && paypalText ? (
+            <div>
+              <LinkButtonSimpleA
+                css={{ marginRight: '0.5em' }}
+                href={`https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=${encodeURIComponent(
+                  paypalEmail
+                )}&item_name=${encodeURIComponent(
+                  paypalText
+                )}&currency_code=USD&source=url`}
+                text={`Tip ${props.constructor.n}`}
+              />
+              <ToolTipText
+                text={<FaInfoCircle />}
+                tooltip="All donations go directly to the constructor via PayPal"
+              />
+            </div>
+          ) : (
+            ''
+          )}
+        </div>
+        {props.puzzles.map((p, i) => (
+          <PuzzleResultLink
+            key={i}
+            puzzle={p}
+            showDate={true}
+            showBlogPost={true}
+            showAuthor={false}
+          />
+        ))}
+        {props.nextPage || props.prevPage !== null ? (
+          <p css={{ textAlign: 'center' }}>
+            {props.prevPage === 0 ? (
+              <Link
+                css={{ marginRight: '2em' }}
+                href="/[...slug]"
+                as={'/' + username}
+                passHref
+              >
+                ← Newer Puzzles
+              </Link>
+            ) : (
+              ''
+            )}
+            {props.prevPage ? (
+              <Link
+                css={{ marginRight: '2em' }}
+                href="/[...slug]"
+                as={'/' + username + '/page/' + props.prevPage}
+                passHref
+              >
+                ← Newer Puzzles
+              </Link>
+            ) : (
+              ''
+            )}
+            {props.nextPage !== null ? (
+              <Link
+                href="/[...slug]"
+                as={'/' + username + '/page/' + props.nextPage}
+                passHref
+              >
+                Older Puzzles →
+              </Link>
+            ) : (
+              ''
+            )}
+          </p>
+        ) : (
+          ''
+        )}
       </div>
-      <div css={{ marginBottom: '1.5em' }}>
-        <Markdown text={props.constructor.b} />
-        {paypalEmail && paypalText ?
-          <div>
-            <LinkButtonSimpleA css={{ marginRight: '0.5em' }} href={`https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=${encodeURIComponent(paypalEmail)}&item_name=${encodeURIComponent(paypalText)}&currency_code=USD&source=url`} text={`Tip ${props.constructor.n}`} />
-            <ToolTipText text={<FaInfoCircle />} tooltip='All donations go directly to the constructor via PayPal' />
-          </div>
-          : ''}
-      </div>
-      {props.puzzles.map((p, i) => <PuzzleResultLink key={i} puzzle={p} showDate={true} showBlogPost={true} showAuthor={false} />)}
-      {props.nextPage || props.prevPage !== null ?
-        <p css={{ textAlign: 'center' }}>
-          {props.prevPage === 0 ?
-            <Link css={{ marginRight: '2em' }} href='/[...slug]' as={'/' + username} passHref>← Newer Puzzles</Link>
-            : ''}
-          {props.prevPage ?
-            <Link css={{ marginRight: '2em' }} href='/[...slug]' as={'/' + username + '/page/' + props.prevPage} passHref>← Newer Puzzles</Link>
-            : ''}
-          {props.nextPage !== null ?
-            <Link href='/[...slug]' as={'/' + username + '/page/' + props.nextPage} passHref>Older Puzzles →</Link>
-            : ''}
-        </p>
-        : ''}
-    </div>
-  </>;
+    </>
+  );
 };
