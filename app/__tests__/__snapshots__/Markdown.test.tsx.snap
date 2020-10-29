@@ -6,22 +6,24 @@ exports[`clueMap rendering 1`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    before 
-    <span
-      class="emotion-0"
+  <div>
+    <div
+      class="paragraph"
     >
-      baz BOOM foo BAM &gt;! not! !&lt; fooey
-    </span>
-     with 
-    <span
-      class="emotion-0"
-    >
-      after
-    </span>
-     text
+      before 
+      <span
+        class="emotion-0"
+      >
+        baz BOOM foo BAM &gt;! not! !&lt; fooey
+      </span>
+       with 
+      <span
+        class="emotion-0"
+      >
+        after
+      </span>
+       text
+    </div>
   </div>
 </div>
 `;
@@ -81,47 +83,49 @@ exports[`clueMap rendering 2`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    before 
-    <span
-      class="emotion-4"
+  <div>
+    <div
+      class="paragraph"
     >
-      baz BOOM foo 
+      before 
       <span
-        class="emotion-0"
+        class="emotion-4"
       >
-        BAM
-      </span>
-      <div
-        class="emotion-3"
-        data-popper-escaped="true"
-        data-popper-placement="bottom"
-        data-popper-reference-hidden="true"
-        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
-      >
-        <b
-          class="emotion-1"
+        baz BOOM foo 
+        <span
+          class="emotion-0"
         >
-          2
-          D
-        </b>
-        here is the clue?
+          BAM
+        </span>
         <div
-          class="emotion-2"
-          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
-        />
-      </div>
-       &gt;! not! !&lt; fooey
-    </span>
-     with 
-    <span
-      class="emotion-4"
-    >
-      after
-    </span>
-     text
+          class="emotion-3"
+          data-popper-escaped="true"
+          data-popper-placement="bottom"
+          data-popper-reference-hidden="true"
+          style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+        >
+          <b
+            class="emotion-1"
+          >
+            2
+            D
+          </b>
+          here is the clue?
+          <div
+            class="emotion-2"
+            style="position: absolute; left: 0px; transform: translate(0px, 0px);"
+          />
+        </div>
+         &gt;! not! !&lt; fooey
+      </span>
+       with 
+      <span
+        class="emotion-4"
+      >
+        after
+      </span>
+       text
+    </div>
   </div>
 </div>
 `;
@@ -177,57 +181,59 @@ exports[`clueMap rendering 3`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    <span
-      class="emotion-0"
-    >
-      12ACLUE1
-    </span>
+  <div>
     <div
-      class="emotion-3"
-      data-popper-escaped="true"
-      data-popper-placement="bottom"
-      data-popper-reference-hidden="true"
-      style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+      class="paragraph"
     >
-      <b
-        class="emotion-1"
+      <span
+        class="emotion-0"
       >
-        45
-        A
-      </b>
-      Well now
+        12ACLUE1
+      </span>
       <div
-        class="emotion-2"
-        style="position: absolute; left: 0px; transform: translate(0px, 0px);"
-      />
-    </div>
-     
-    <span
-      class="emotion-0"
-    >
-      BAM
-    </span>
-    <div
-      class="emotion-3"
-      data-popper-escaped="true"
-      data-popper-placement="bottom"
-      data-popper-reference-hidden="true"
-      style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
-    >
-      <b
-        class="emotion-1"
+        class="emotion-3"
+        data-popper-escaped="true"
+        data-popper-placement="bottom"
+        data-popper-reference-hidden="true"
+        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
-        2
-        D
-      </b>
-      here is the clue?
+        <b
+          class="emotion-1"
+        >
+          45
+          A
+        </b>
+        Well now
+        <div
+          class="emotion-2"
+          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
+        />
+      </div>
+       
+      <span
+        class="emotion-0"
+      >
+        BAM
+      </span>
       <div
-        class="emotion-2"
-        style="position: absolute; left: 0px; transform: translate(0px, 0px);"
-      />
+        class="emotion-3"
+        data-popper-escaped="true"
+        data-popper-placement="bottom"
+        data-popper-reference-hidden="true"
+        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+      >
+        <b
+          class="emotion-1"
+        >
+          2
+          D
+        </b>
+        here is the clue?
+        <div
+          class="emotion-2"
+          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
+        />
+      </div>
     </div>
   </div>
 </div>
@@ -288,37 +294,39 @@ exports[`clueMap rendering 4`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    <span
-      class="emotion-4"
+  <div>
+    <div
+      class="paragraph"
     >
       <span
-        class="emotion-0"
+        class="emotion-4"
       >
-        BAM
-      </span>
-      <div
-        class="emotion-3"
-        data-popper-escaped="true"
-        data-popper-placement="bottom"
-        data-popper-reference-hidden="true"
-        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
-      >
-        <b
-          class="emotion-1"
+        <span
+          class="emotion-0"
         >
-          2
-          D
-        </b>
-        here is the clue?
+          BAM
+        </span>
         <div
-          class="emotion-2"
-          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
-        />
-      </div>
-    </span>
+          class="emotion-3"
+          data-popper-escaped="true"
+          data-popper-placement="bottom"
+          data-popper-reference-hidden="true"
+          style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+        >
+          <b
+            class="emotion-1"
+          >
+            2
+            D
+          </b>
+          here is the clue?
+          <div
+            class="emotion-2"
+            style="position: absolute; left: 0px; transform: translate(0px, 0px);"
+          />
+        </div>
+      </span>
+    </div>
   </div>
 </div>
 `;
@@ -378,105 +386,115 @@ exports[`clueMap rendering 5`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    You got it!! Glad the clues pointed you in the right direction. That's what they're there for. Also, it was Brian's suggestion to include 
-    <span
-      class="emotion-4"
+  <div>
+    <div
+      class="paragraph"
     >
-       
+      You got it!! Glad the clues pointed you in the right direction. That's what they're there for. Also, it was Brian's suggestion to include 
       <span
-        class="emotion-0"
+        class="emotion-4"
       >
-        BAM
-      </span>
-      <div
-        class="emotion-3"
-        data-popper-escaped="true"
-        data-popper-placement="bottom"
-        data-popper-reference-hidden="true"
-        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
-      >
-        <b
-          class="emotion-1"
+         
+        <span
+          class="emotion-0"
         >
-          2
-          D
-        </b>
-        here is the clue?
+          BAM
+        </span>
         <div
-          class="emotion-2"
-          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
-        />
-      </div>
-       
-    </span>
-     which I think is such an awesome addition. Cheers!
+          class="emotion-3"
+          data-popper-escaped="true"
+          data-popper-placement="bottom"
+          data-popper-reference-hidden="true"
+          style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+        >
+          <b
+            class="emotion-1"
+          >
+            2
+            D
+          </b>
+          here is the clue?
+          <div
+            class="emotion-2"
+            style="position: absolute; left: 0px; transform: translate(0px, 0px);"
+          />
+        </div>
+         
+      </span>
+       which I think is such an awesome addition. Cheers!
+    </div>
   </div>
 </div>
 `;
 
 exports[`images should not be allowed 1`] = `
 <div>
-  <div
-    class="paragraph"
-  >
-    !
-    <a
-      href="http://example.com/test.png"
-      rel="nofollow ugc noopener noreferrer"
-      target="_blank"
-    />
+  <div>
+    <div
+      class="paragraph"
+    >
+      !
+      <a
+        href="http://example.com/test.png"
+        rel="nofollow ugc noopener noreferrer"
+        target="_blank"
+      />
+    </div>
   </div>
 </div>
 `;
 
 exports[`images should not be allowed 2`] = `
 <div>
-  <div
-    class="paragraph"
-  >
-    !
-    <a
-      rel="nofollow ugc noopener noreferrer"
-      target="_blank"
+  <div>
+    <div
+      class="paragraph"
     >
-      aaalt
-    </a>
-    \\n\\n[1]: 
-    <a
-      href="http://example.com/test.gif\\\\n\\\\n"
-      rel="nofollow ugc noopener noreferrer"
-      target="_blank"
-    >
-      http://example.com/test.gif\\n\\n
-    </a>
+      !
+      <a
+        rel="nofollow ugc noopener noreferrer"
+        target="_blank"
+      >
+        aaalt
+      </a>
+      \\n\\n[1]: 
+      <a
+        href="http://example.com/test.gif\\\\n\\\\n"
+        rel="nofollow ugc noopener noreferrer"
+        target="_blank"
+      >
+        http://example.com/test.gif\\n\\n
+      </a>
+    </div>
   </div>
 </div>
 `;
 
 exports[`markdown preview mode 1`] = `
 <div>
-  <div
-    class="paragraph"
-  >
-    foo bar &gt;!baz
+  <div>
+    <div
+      class="paragraph"
+    >
+      foo bar &gt;!baz
+    </div>
   </div>
 </div>
 `;
 
 exports[`markdown preview mode 2`] = `
 <div>
-  <div
-    class="paragraph"
-  >
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tellus ante, dictum feugiat luctus quis, gravida id nibh. Sed tortor sem, pulvinar ut lacus nec, ornare consectetur ligula. Nam suscipit posuere vulputate. Proin ultricies dictum viverra. Cras tincidunt nec nulla non convallis. Nullam eget arcu mattis sapien ultricies varius nec ac mi. Duis dictum justo est, id tempus mi vestibulum eget. Nam posuere, nibh quis pharetra condimentum, leo ante tempor nibh, vitae facilisis sem elit at tellus. Etiam in tellus sagittis, lacinia enim ut, maximus ipsum. Ut sit amet mi tellus. Nulla a aliquam quam, vitae ultricies metus.
-  </div>
-  <div
-    class="paragraph"
-  >
-    Mauris elit metus, scelerisque in sollicitudin et, bibendum in nulla. Praesent ex sem, tempus quis diam id, lobortis tempor ante. Ut sit amet bibendum purus. Vestibulum vulputate commodo faucibus. Donec dictum id ex eu mattis. Praesent id neque quis purus varius scelerisque. Cras hendrerit metus sed faucibus vestibulum. Ut in elementum mauris. Aenean faucibus tem...
+  <div>
+    <div
+      class="paragraph"
+    >
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tellus ante, dictum feugiat luctus quis, gravida id nibh. Sed tortor sem, pulvinar ut lacus nec, ornare consectetur ligula. Nam suscipit posuere vulputate. Proin ultricies dictum viverra. Cras tincidunt nec nulla non convallis. Nullam eget arcu mattis sapien ultricies varius nec ac mi. Duis dictum justo est, id tempus mi vestibulum eget. Nam posuere, nibh quis pharetra condimentum, leo ante tempor nibh, vitae facilisis sem elit at tellus. Etiam in tellus sagittis, lacinia enim ut, maximus ipsum. Ut sit amet mi tellus. Nulla a aliquam quam, vitae ultricies metus.
+    </div>
+    <div
+      class="paragraph"
+    >
+      Mauris elit metus, scelerisque in sollicitudin et, bibendum in nulla. Praesent ex sem, tempus quis diam id, lobortis tempor ante. Ut sit amet bibendum purus. Vestibulum vulputate commodo faucibus. Donec dictum id ex eu mattis. Praesent id neque quis purus varius scelerisque. Cras hendrerit metus sed faucibus vestibulum. Ut in elementum mauris. Aenean faucibus tem...
+    </div>
   </div>
 </div>
 `;
@@ -487,32 +505,36 @@ exports[`markdown preview mode 3`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    <span
-      class="emotion-0"
+  <div>
+    <div
+      class="paragraph"
     >
-      Lorem 
-      <strong>
-        ipsum
-      </strong>
-       dolor sit amet, consectetur 
-      <em>
-        adipiscing
-      </em>
-       elit. Phasellus tellus ante, dictum feugiat luctu...
-    </span>
+      <span
+        class="emotion-0"
+      >
+        Lorem 
+        <strong>
+          ipsum
+        </strong>
+         dolor sit amet, consectetur 
+        <em>
+          adipiscing
+        </em>
+         elit. Phasellus tellus ante, dictum feugiat luctu...
+      </span>
+    </div>
   </div>
 </div>
 `;
 
 exports[`spoiler text rendering 1`] = `
 <div>
-  <div
-    class="paragraph"
-  >
-    foo bar &gt;!baz
+  <div>
+    <div
+      class="paragraph"
+    >
+      foo bar &gt;!baz
+    </div>
   </div>
 </div>
 `;
@@ -523,15 +545,17 @@ exports[`spoiler text rendering 2`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    foo bar 
-    <span
-      class="emotion-0"
+  <div>
+    <div
+      class="paragraph"
     >
-      baz
-    </span>
+      foo bar 
+      <span
+        class="emotion-0"
+      >
+        baz
+      </span>
+    </div>
   </div>
 </div>
 `;
@@ -542,14 +566,16 @@ exports[`spoiler text rendering 3`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    <span
-      class="emotion-0"
+  <div>
+    <div
+      class="paragraph"
     >
-      baz foo bam ! &gt;&gt; fooey
-    </span>
+      <span
+        class="emotion-0"
+      >
+        baz foo bam ! &gt;&gt; fooey
+      </span>
+    </div>
   </div>
 </div>
 `;
@@ -560,15 +586,17 @@ exports[`spoiler text rendering 4`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    <span
-      class="emotion-0"
+  <div>
+    <div
+      class="paragraph"
     >
-      baz foo bam ! &gt;&gt; fooey
-    </span>
-     with after text
+      <span
+        class="emotion-0"
+      >
+        baz foo bam ! &gt;&gt; fooey
+      </span>
+       with after text
+    </div>
   </div>
 </div>
 `;
@@ -579,16 +607,18 @@ exports[`spoiler text rendering 5`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    before 
-    <span
-      class="emotion-0"
+  <div>
+    <div
+      class="paragraph"
     >
-      baz foo bam &gt;! fooey
-    </span>
-     with after text
+      before 
+      <span
+        class="emotion-0"
+      >
+        baz foo bam &gt;! fooey
+      </span>
+       with after text
+    </div>
   </div>
 </div>
 `;
@@ -599,16 +629,18 @@ exports[`spoiler text rendering 6`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    before 
-    <span
-      class="emotion-0"
+  <div>
+    <div
+      class="paragraph"
     >
-      baz foo bam || fooey
-    </span>
-     with after text
+      before 
+      <span
+        class="emotion-0"
+      >
+        baz foo bam || fooey
+      </span>
+       with after text
+    </div>
   </div>
 </div>
 `;
@@ -619,22 +651,24 @@ exports[`spoiler text rendering 7`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    before 
-    <span
-      class="emotion-0"
+  <div>
+    <div
+      class="paragraph"
     >
-      baz foo bam || fooey
-    </span>
-     with 
-    <span
-      class="emotion-0"
-    >
-      after
-    </span>
-     text
+      before 
+      <span
+        class="emotion-0"
+      >
+        baz foo bam || fooey
+      </span>
+       with 
+      <span
+        class="emotion-0"
+      >
+        after
+      </span>
+       text
+    </div>
   </div>
 </div>
 `;
@@ -645,22 +679,24 @@ exports[`spoiler text rendering 8`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    before 
-    <span
-      class="emotion-0"
+  <div>
+    <div
+      class="paragraph"
     >
-      baz foo bam &gt;! not! !&lt; fooey
-    </span>
-     with 
-    <span
-      class="emotion-0"
-    >
-      after
-    </span>
-     text
+      before 
+      <span
+        class="emotion-0"
+      >
+        baz foo bam &gt;! not! !&lt; fooey
+      </span>
+       with 
+      <span
+        class="emotion-0"
+      >
+        after
+      </span>
+       text
+    </div>
   </div>
 </div>
 `;
@@ -671,26 +707,28 @@ exports[`spoiler text rendering 9`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    before ||baz foo bam 
-  </div>
-  <div
-    class="paragraph"
-  >
-    <span
-      class="emotion-0"
+  <div>
+    <div
+      class="paragraph"
     >
-       not! 
-    </span>
-     fooey|| with 
-    <span
-      class="emotion-0"
+      before ||baz foo bam 
+    </div>
+    <div
+      class="paragraph"
     >
-      after
-    </span>
-     text
+      <span
+        class="emotion-0"
+      >
+         not! 
+      </span>
+       fooey|| with 
+      <span
+        class="emotion-0"
+      >
+        after
+      </span>
+       text
+    </div>
   </div>
 </div>
 `;
@@ -701,26 +739,28 @@ exports[`spoiler text rendering 10`] = `
 }
 
 <div>
-  <div
-    class="paragraph"
-  >
-    before baz foo bam 
-  </div>
-  <div
-    class="paragraph"
-  >
-    <span
-      class="emotion-0"
+  <div>
+    <div
+      class="paragraph"
     >
-       not! 
-    </span>
-     fooey|| with 
-    <span
-      class="emotion-0"
+      before baz foo bam 
+    </div>
+    <div
+      class="paragraph"
     >
-      after
-    </span>
-     text
+      <span
+        class="emotion-0"
+      >
+         not! 
+      </span>
+       fooey|| with 
+      <span
+        class="emotion-0"
+      >
+        after
+      </span>
+       text
+    </div>
   </div>
 </div>
 `;
