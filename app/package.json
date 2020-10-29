@@ -19,7 +19,7 @@
     "analyze": "ANALYZE=true NO_SENTRY=true next build",
     "build": "NO_SENTRY=true next build",
     "start": "next start",
-    "predeploy": "yarn clean && next build",
+    "predeploy": "tsc && yarn clean && next build",
     "deploy": "npx firebase deploy --only hosting:prod,functions:nextjs",
     "prodDeploy": "npx firebase deploy --only hosting:prod,functions:nextjs",
     "stagingDeploy": "npx firebase deploy --only hosting:staging,functions:staging",
