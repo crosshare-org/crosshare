@@ -279,11 +279,12 @@ export async function notificationsForPuzzleChange(
     console.error('Missing/invalid before doc', beforeData, afterData);
     return [];
   }
-  if (!after.cs) {
-    return [];
-  }
+
   const withID = { ...after, id: puzzleId };
-  const notifications = checkComments(after.cs, before.cs, withID);
+  const notifications = [];
+  if (after.cs) {
+    notifications.push(...checkComments(after.cs, before.cs, withID));
+  }
 
   if (after.f && !before.f) {
     notifications.push(featuredNotification(withID, null));

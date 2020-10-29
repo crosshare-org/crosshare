@@ -392,6 +392,36 @@ Array [
 ]
 `;
 
+exports[`should notify author when marked as dailymini 1`] = `
+Array [
+  Object {
+    "as": "the daily mini for 10/29/2020",
+    "e": false,
+    "id": "featured-puzzle-id-here",
+    "k": "featured",
+    "p": "puzzle-id-here",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`;
+
+exports[`should notify author when marked as featured 1`] = `
+Array [
+  Object {
+    "as": null,
+    "e": false,
+    "id": "featured-puzzle-id-here",
+    "k": "featured",
+    "p": "puzzle-id-here",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`;
+
 exports[`should notify comment author and puzzle author when third party replies 1`] = `
 Array [
   Object {

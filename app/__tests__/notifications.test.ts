@@ -264,6 +264,26 @@ test('should notify comment author and puzzle author when third party replies', 
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
+test('should notify author when marked as featured', async () => {
+  const notifications = await notificationsForPuzzleChange(
+    basePuzzle,
+    { ...basePuzzle, f: true },
+    'puzzle-id-here'
+  );
+  expect(notifications.length).toEqual(1);
+  expect(notifications.map(removeTimestamp)).toMatchSnapshot();
+});
+
+test('should notify author when marked as dailymini', async () => {
+  const notifications = await notificationsForPuzzleChange(
+    basePuzzle,
+    { ...basePuzzle, c: 'dailymini', dmd: '10/29/2020' },
+    'puzzle-id-here'
+  );
+  expect(notifications.length).toEqual(1);
+  expect(notifications.map(removeTimestamp)).toMatchSnapshot();
+});
+
 test('should handle a combination of multiple new comments and nested replies', async () => {
   const startingPoint = {
     ...basePuzzle,
