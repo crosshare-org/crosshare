@@ -58,6 +58,97 @@ Crosshare notifications are sent at most once per day. To manage your notificati
 }
 `;
 
+exports[`email queueing email including new puzzle notification 1`] = `
+Object {
+  "message": Object {
+    "html": "<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv=\\"Content-Type\\" content=\\"text/html charset=UTF-8\\" />
+<title>Crosshare: new puzzle by Mike D</title>
+</head>
+<body>
+<h3>New puzzle by a constructor you follow:</h3><ul><li>Mike D published <a href=\\"https://crosshare.org/crosswords/wowowo#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul><hr><div class=\\"paragraph\\">Crosshare notifications are sent at most once per day. To manage your notification preferences visit <a href=\\"https://crosshare.org/account#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">your Account page</a></div>
+</body>
+</html>",
+    "subject": "Crosshare: new puzzle by Mike D",
+    "text": "### New puzzle by a constructor you follow:
+
+* Mike D published [Raises, as young](https://crosshare.org/crosswords/wowowo#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+
+
+---
+
+Crosshare notifications are sent at most once per day. To manage your notification preferences visit [your Account page](https://crosshare.org/account#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)",
+  },
+  "to": Array [
+    "rando@example.com",
+  ],
+}
+`;
+
+exports[`email queueing emails including both comments and new puzzle notifications 1`] = `
+Array [
+  Object {
+    "message": Object {
+      "html": "<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv=\\"Content-Type\\" content=\\"text/html charset=UTF-8\\" />
+<title>Crosshare: new comments on Raises, as young</title>
+</head>
+<body>
+<h3>Comments on your puzzles:</h3><ul><li>BLAST and Mike D commented on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul><hr><div class=\\"paragraph\\">Crosshare notifications are sent at most once per day. To manage your notification preferences visit <a href=\\"https://crosshare.org/account#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">your Account page</a></div>
+</body>
+</html>",
+      "subject": "Crosshare: new comments on Raises, as young",
+      "text": "### Comments on your puzzles:
+
+* BLAST and Mike D commented on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+
+
+---
+
+Crosshare notifications are sent at most once per day. To manage your notification preferences visit [your Account page](https://crosshare.org/account#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)",
+    },
+    "to": Array [
+      "mike@example.com",
+    ],
+  },
+  Object {
+    "message": Object {
+      "html": "<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv=\\"Content-Type\\" content=\\"text/html charset=UTF-8\\" />
+<title>Crosshare: new replies to your comments on Raises, as young</title>
+</head>
+<body>
+<h3>Replies to your comments:</h3><ul><li>Mike D replied to your comments on <a href=\\"https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul><h3>New puzzle by a constructor you follow:</h3><ul><li>Mike D published <a href=\\"https://crosshare.org/crosswords/wowowo#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a></li></ul><hr><div class=\\"paragraph\\">Crosshare notifications are sent at most once per day. To manage your notification preferences visit <a href=\\"https://crosshare.org/account#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">your Account page</a></div>
+</body>
+</html>",
+      "subject": "Crosshare: new replies to your comments on Raises, as young",
+      "text": "### Replies to your comments:
+
+* Mike D replied to your comments on [Raises, as young](https://crosshare.org/crosswords/puzzle-id-here#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+
+
+### New puzzle by a constructor you follow:
+
+* Mike D published [Raises, as young](https://crosshare.org/crosswords/wowowo#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)
+
+
+---
+
+Crosshare notifications are sent at most once per day. To manage your notification preferences visit [your Account page](https://crosshare.org/account#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)",
+    },
+    "to": Array [
+      "rando@example.com",
+    ],
+  },
+]
+`;
+
 exports[`email queueing emails send after an hour, but dont double send 1`] = `
 Array [
   Object {

@@ -297,7 +297,7 @@ test('should handle a combination of multiple new comments and nested replies', 
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
-describe('email queueing', async () => {
+describe('email queueing', () => {
   let adminApp: firebaseAdminType.app.App;
 
   beforeEach(async () => {
@@ -324,17 +324,30 @@ describe('email queueing', async () => {
         }),
       ],
     };
+
     const notifications = await notificationsForPuzzleChange(
       startingPoint,
       withReplies,
       'puzzle-id-here'
     );
+
     expect(notifications.length).toEqual(5);
     await firebaseTesting.clearFirestoreData({ projectId });
     adminApp = (firebaseTesting.initializeAdminApp({
       projectId,
     }) as unknown) as firebaseAdminType.app.App;
     setAdminApp(adminApp);
+    await adminApp
+      .firestore()
+      .doc(`following/${basePuzzle.a}`)
+      .set({ f: ['mikeuserid', 'rando'] });
+
+    notifications.push(
+      ...(await notificationsForPuzzleChange(undefined, basePuzzle, 'wowowo'))
+    );
+
+    expect(notifications.length).toEqual(7);
+
     for (const notification of notifications) {
       await adminApp
         .firestore()
@@ -342,6 +355,11 @@ describe('email queueing', async () => {
         .doc(notification.id)
         .set(notification);
     }
+    await adminApp
+      .firestore()
+      .collection('prefs')
+      .doc('rando')
+      .set({ unsubs: ['newpuzzles'] }, { merge: true });
     setUserMap({
       rando: { email: 'rando@example.com' } as firebase.User,
       [basePuzzle.a]: { email: 'mike@example.com' } as firebase.User,
@@ -359,9 +377,33 @@ describe('email queueing', async () => {
     expect(mail.size).toEqual(0);
   });
 
+  test('email including new puzzle notification', async () => {
+    await adminApp.firestore().doc('prefs/rando').delete();
+    await queueEmails();
+    const mail = await adminApp.firestore().collection('mail').get();
+    expect(mail.size).toEqual(1);
+    expect(mail.docs[0].data()).toMatchSnapshot();
+  });
+
   const twoHours = add(new Date(), { hours: 2 });
 
   test('emails send after an hour, but dont double send', async () => {
+    MockDate.set(twoHours);
+    await queueEmails();
+    // we can do it again immediately and we shouldn't double send due to marking as read
+    await queueEmails();
+
+    const mail2 = await adminApp.firestore().collection('mail').get();
+    expect(mail2.size).toEqual(2);
+    expect(
+      mail2.docs
+        .map((d) => d.data())
+        .sort((a, b) => a.to[0].localeCompare(b.to[0]))
+    ).toMatchSnapshot();
+  });
+
+  test('emails including both comments and new puzzle notifications', async () => {
+    await adminApp.firestore().doc('prefs/rando').delete();
     MockDate.set(twoHours);
     await queueEmails();
     // we can do it again immediately and we shouldn't double send due to marking as read
@@ -388,11 +430,11 @@ describe('email queueing', async () => {
     expect(
       (await adminApp.firestore().collection('n').where('e', '==', false).get())
         .size
-    ).toEqual(5);
+    ).toEqual(7);
     expect(
       (await adminApp.firestore().collection('n').where('r', '==', false).get())
         .size
-    ).toEqual(5);
+    ).toEqual(7);
 
     await queueEmails();
 
@@ -405,7 +447,7 @@ describe('email queueing', async () => {
     expect(
       (await adminApp.firestore().collection('n').where('r', '==', false).get())
         .size
-    ).toEqual(2);
+    ).toEqual(4);
 
     const mail2 = await adminApp.firestore().collection('mail').get();
     expect(mail2.size).toEqual(1);
@@ -424,11 +466,11 @@ describe('email queueing', async () => {
     expect(
       (await adminApp.firestore().collection('n').where('e', '==', false).get())
         .size
-    ).toEqual(5);
+    ).toEqual(7);
     expect(
       (await adminApp.firestore().collection('n').where('r', '==', false).get())
         .size
-    ).toEqual(5);
+    ).toEqual(7);
 
     await queueEmails();
 
@@ -441,7 +483,7 @@ describe('email queueing', async () => {
     expect(
       (await adminApp.firestore().collection('n').where('r', '==', false).get())
         .size
-    ).toEqual(3);
+    ).toEqual(5);
 
     const mail2 = await adminApp.firestore().collection('mail').get();
     expect(mail2.size).toEqual(1);

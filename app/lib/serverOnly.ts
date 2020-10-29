@@ -9,18 +9,31 @@ import { DBPuzzleV, DBPuzzleT } from './dbtypes';
 import { adminTimestamp } from './adminTimestamp';
 import { mapEachResult } from './dbUtils';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
-import { NotificationV, NotificationT, CommentNotificationT, isCommentNotification, isReplyNotification, ReplyNotificationT, NewPuzzleNotificationT, isNewPuzzleNotification } from './notifications';
+import {
+  NotificationV,
+  NotificationT,
+  CommentNotificationT,
+  isCommentNotification,
+  isReplyNotification,
+  ReplyNotificationT,
+  NewPuzzleNotificationT,
+  isNewPuzzleNotification,
+} from './notifications';
 import SimpleMarkdown from 'simple-markdown';
 import { AccountPrefsV, AccountPrefsT } from './prefs';
 
-export async function getStorageUrl(storageKey: string): Promise<string | null> {
+export async function getStorageUrl(
+  storageKey: string
+): Promise<string | null> {
   const profilePic = AdminApp.storage().bucket().file(storageKey);
   if ((await profilePic.exists())[0]) {
     try {
-      return (await profilePic.getSignedUrl({
-        action: 'read',
-        expires: '03-09-2491'
-      }))[0];
+      return (
+        await profilePic.getSignedUrl({
+          action: 'read',
+          expires: '03-09-2491',
+        })
+      )[0];
     } catch (e) {
       console.log('error getting profile pic', storageKey, e);
     }
@@ -35,7 +48,7 @@ const PuzzleIndexV = t.intersection([
     /** array of puzzle timestamps */
     t: t.array(adminTimestamp),
     /** array of puzzle ids */
-    i: t.array(t.string)
+    i: t.array(t.string),
   }),
   t.partial({
     /** array of private puzzle ids */
@@ -44,11 +57,17 @@ const PuzzleIndexV = t.intersection([
     pvui: t.array(t.string),
     /** array of timestamps that the above puzzles become public */
     pvut: t.array(adminTimestamp),
-  })
+  }),
 ]);
 type PuzzleIndexT = t.TypeOf<typeof PuzzleIndexV>;
 
-async function getPuzzlesForPage(indexDocId: string, queryField: string, queryValue: string | boolean, page: number, page_size: number): Promise<[Array<PuzzleResult>, number]> {
+async function getPuzzlesForPage(
+  indexDocId: string,
+  queryField: string,
+  queryValue: string | boolean,
+  page: number,
+  page_size: number
+): Promise<[Array<PuzzleResult>, number]> {
   const db = AdminApp.firestore();
   const indexDoc = await db.collection('i').doc(indexDocId).get();
   let index: PuzzleIndexT | null = null;
@@ -66,16 +85,23 @@ async function getPuzzlesForPage(indexDocId: string, queryField: string, queryVa
     index = { t: [], i: [] };
   }
 
-  let q = db.collection('c').where(queryField, '==', queryValue).orderBy('p', 'desc');
+  let q = db
+    .collection('c')
+    .where(queryField, '==', queryValue)
+    .orderBy('p', 'desc');
   if (index.i.length) {
     const mostRecentTimestamp = index.t[0];
     if (mostRecentTimestamp) {
       q = q.endBefore(mostRecentTimestamp);
     }
   }
-  const newPuzzles: Array<DBPuzzleT & { id: string }> = await mapEachResult(q, DBPuzzleV, (dbpuzz, docId) => {
-    return { ...dbpuzz, id: docId };
-  });
+  const newPuzzles: Array<DBPuzzleT & { id: string }> = await mapEachResult(
+    q,
+    DBPuzzleV,
+    (dbpuzz, docId) => {
+      return { ...dbpuzz, id: docId };
+    }
+  );
 
   if (newPuzzles.length) {
     console.log(`Adding ${newPuzzles.length} to index for ${indexDocId}`);
@@ -100,10 +126,10 @@ async function getPuzzlesForPage(indexDocId: string, queryField: string, queryVa
   // Filter out any private puzzles
   for (let i = index.i.length; i >= 0; i--) {
     const pid = index.i[i];
-    if (index.pv ?.includes(pid)) {
+    if (index.pv?.includes(pid)) {
       index.i.splice(i, 1);
       index.t.splice(i, 1);
-    } else if (index.pvui ?.includes(pid) && index.pvut) {
+    } else if (index.pvui?.includes(pid) && index.pvut) {
       const pvidx = index.pvui.indexOf(pid);
       const goLiveTime = index.pvut[pvidx];
       if (goLiveTime > AdminTimestamp.now()) {
@@ -120,7 +146,7 @@ async function getPuzzlesForPage(indexDocId: string, queryField: string, queryVa
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   for (const puzzleId of entriesForPage) {
-    const alreadyHave = newPuzzles.find(x => x.id === puzzleId);
+    const alreadyHave = newPuzzles.find((x) => x.id === puzzleId);
     if (alreadyHave) {
       puzzles.push({ ...puzzleFromDB(alreadyHave), id: alreadyHave.id });
       continue;
@@ -142,11 +168,18 @@ async function getPuzzlesForPage(indexDocId: string, queryField: string, queryVa
   return [puzzles, index.i.length];
 }
 
-export async function getPuzzlesForConstructorPage(userId: string, page: number, page_size: number): Promise<[Array<PuzzleResult>, number]> {
+export async function getPuzzlesForConstructorPage(
+  userId: string,
+  page: number,
+  page_size: number
+): Promise<[Array<PuzzleResult>, number]> {
   return getPuzzlesForPage(userId, 'a', userId, page, page_size);
 }
 
-export async function getPuzzlesForFeatured(page: number, page_size: number): Promise<[Array<PuzzleResult>, number]> {
+export async function getPuzzlesForFeatured(
+  page: number,
+  page_size: number
+): Promise<[Array<PuzzleResult>, number]> {
   return getPuzzlesForPage('featured', 'f', true, page, page_size);
 }
 
@@ -154,21 +187,26 @@ const usernameMap: Record<string, ConstructorPageT> = {};
 let usernamesUpdated: number | null = null;
 const usernamesTTL = 1000 * 60 * 10;
 
-export async function userIdToPage(userId: string): Promise<ConstructorPageT | null> {
+export async function userIdToPage(
+  userId: string
+): Promise<ConstructorPageT | null> {
   const now = Date.now();
   if (usernamesUpdated === null || now - usernamesUpdated > usernamesTTL) {
     const db = AdminApp.firestore();
     let query: firebaseAdminType.firestore.Query = db.collection('cp');
     if (usernamesUpdated) {
-      query = query.where('t', '>=', AdminTimestamp.fromMillis(usernamesUpdated));
+      query = query.where(
+        't',
+        '>=',
+        AdminTimestamp.fromMillis(usernamesUpdated)
+      );
     }
     try {
-      await mapEachResult(query,
-        ConstructorPageV, (cp, docId) => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { t, ...partial } = cp;
-          usernameMap[cp.u] = { ...partial, id: docId };
-        });
+      await mapEachResult(query, ConstructorPageV, (cp, docId) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { t, ...partial } = cp;
+        usernameMap[cp.u] = { ...partial, id: docId };
+      });
       usernamesUpdated = now;
     } catch (e) {
       console.error('error updating constructor pages');
@@ -178,11 +216,21 @@ export async function userIdToPage(userId: string): Promise<ConstructorPageT | n
   return usernameMap[userId] || null;
 }
 
-export async function sendEmail({ toAddress, subject, text, html }: { toAddress: string, subject: string, text: string, html: string }) {
+export async function sendEmail({
+  toAddress,
+  subject,
+  text,
+  html,
+}: {
+  toAddress: string;
+  subject: string;
+  text: string;
+  html: string;
+}) {
   const db = AdminApp.firestore();
   return db.collection('mail').add({
     to: [toAddress],
-    message: { subject, text, html }
+    message: { subject, text, html },
   });
 }
 
@@ -205,7 +253,7 @@ const puzzleLink = (puzzleId: string) => emailLink(`crosswords/${puzzleId}`);
 const tagsToReplace: Record<string, string> = {
   '&': '&amp;',
   '<': '&lt;',
-  '>': '&gt;'
+  '>': '&gt;',
 };
 
 function replaceTag(tag: string) {
@@ -216,7 +264,10 @@ function safeForHtml(str: string) {
   return str.replace(/[&<>]/g, replaceTag);
 }
 
-async function queueEmailForUser(userId: string, notifications: Array<NotificationT>) {
+async function queueEmailForUser(
+  userId: string,
+  notifications: Array<NotificationT>
+) {
   const db = AdminApp.firestore();
   const sorted = notifications.sort((n1, n2) => n1.id.localeCompare(n2.id));
   const prefsRes = await db.doc(`prefs/${userId}`).get();
@@ -225,14 +276,14 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
     const validationResult = AccountPrefsV.decode(prefsRes.data());
     if (isRight(validationResult)) {
       prefs = validationResult.right;
-      if (prefs.unsubs ?.includes('all')) {
+      if (prefs.unsubs?.includes('all')) {
         return;
       }
     }
   }
 
   const user = await getUser(userId);
-  const toAddress = user.email;
+  const toAddress = user?.email;
   if (!toAddress) {
     console.error('no to address', userId);
     return;
@@ -242,52 +293,97 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
   let subject: string | null = null;
   const read: Array<NotificationT> = [];
 
-  if (!prefs ?.unsubs ?.includes('comments')) {
-    const comments: Array<CommentNotificationT> = sorted.filter(isCommentNotification);
-    const commentsByPuzzle = comments.reduce((rv: Record<string, Array<CommentNotificationT>>, x: CommentNotificationT) => {
-      (rv[x.p] = rv[x.p] || []).push(x);
-      return rv;
-    }, {});
+  if (!prefs?.unsubs?.includes('comments')) {
+    const comments: Array<CommentNotificationT> = sorted.filter(
+      isCommentNotification
+    );
+    const commentsByPuzzle = comments.reduce(
+      (
+        rv: Record<string, Array<CommentNotificationT>>,
+        x: CommentNotificationT
+      ) => {
+        (rv[x.p] = rv[x.p] || []).push(x);
+        return rv;
+      },
+      {}
+    );
     if (comments.length) {
-      subject = 'Crosshare: new comments on ' + joinStringsWithAnd(Object.values(commentsByPuzzle).map(a => a[0].pn).slice(0, 3));
+      subject =
+        'Crosshare: new comments on ' +
+        joinStringsWithAnd(
+          Object.values(commentsByPuzzle)
+            .map((a) => a[0].pn)
+            .slice(0, 3)
+        );
       markdown += '### Comments on your puzzles:\n\n';
-      Object.entries(commentsByPuzzle).forEach(([puzzleId, commentNotifications]) => {
-        read.push(...commentNotifications);
-        const nameDisplay = joinStringsWithAnd(commentNotifications.map(n => n.cn));
-        markdown += `* ${nameDisplay} commented on [${commentNotifications[0].pn}](${puzzleLink(puzzleId)})\n`;
-      });
+      Object.entries(commentsByPuzzle).forEach(
+        ([puzzleId, commentNotifications]) => {
+          read.push(...commentNotifications);
+          const nameDisplay = joinStringsWithAnd(
+            commentNotifications.map((n) => n.cn)
+          );
+          markdown += `* ${nameDisplay} commented on [${
+            commentNotifications[0].pn
+          }](${puzzleLink(puzzleId)})\n`;
+        }
+      );
       markdown += '\n\n';
     }
 
-    const replies: Array<ReplyNotificationT> = sorted.filter(isReplyNotification);
-    const repliesByPuzzle = replies.reduce((rv: Record<string, Array<ReplyNotificationT>>, x: ReplyNotificationT) => {
-      (rv[x.p] = rv[x.p] || []).push(x);
-      return rv;
-    }, {});
+    const replies: Array<ReplyNotificationT> = sorted.filter(
+      isReplyNotification
+    );
+    const repliesByPuzzle = replies.reduce(
+      (
+        rv: Record<string, Array<ReplyNotificationT>>,
+        x: ReplyNotificationT
+      ) => {
+        (rv[x.p] = rv[x.p] || []).push(x);
+        return rv;
+      },
+      {}
+    );
     if (replies.length) {
       if (!subject) {
-        subject = 'Crosshare: new replies to your comments on ' + joinStringsWithAnd(Object.values(repliesByPuzzle).map(a => a[0].pn).slice(0, 3));
+        subject =
+          'Crosshare: new replies to your comments on ' +
+          joinStringsWithAnd(
+            Object.values(repliesByPuzzle)
+              .map((a) => a[0].pn)
+              .slice(0, 3)
+          );
       }
       markdown += '### Replies to your comments:\n\n';
-      Object.entries(repliesByPuzzle).forEach(([puzzleId, commentNotifications]) => {
-        read.push(...commentNotifications);
-        const nameDisplay = joinStringsWithAnd(commentNotifications.map(n => n.cn));
-        markdown += `* ${nameDisplay} replied to your comments on [${commentNotifications[0].pn}](${puzzleLink(puzzleId)})\n`;
-      });
+      Object.entries(repliesByPuzzle).forEach(
+        ([puzzleId, commentNotifications]) => {
+          read.push(...commentNotifications);
+          const nameDisplay = joinStringsWithAnd(
+            commentNotifications.map((n) => n.cn)
+          );
+          markdown += `* ${nameDisplay} replied to your comments on [${
+            commentNotifications[0].pn
+          }](${puzzleLink(puzzleId)})\n`;
+        }
+      );
       markdown += '\n\n';
     }
   }
 
-  if (!prefs ?.unsubs ?.includes('newpuzzles')) {
-    const nps: Array<NewPuzzleNotificationT> = sorted.filter(isNewPuzzleNotification);
+  if (!prefs?.unsubs?.includes('newpuzzles')) {
+    const nps: Array<NewPuzzleNotificationT> = sorted.filter(
+      isNewPuzzleNotification
+    );
     if (nps.length) {
       const plural = nps.length > 1 ? 's' : '';
-      const constructorPlural = nps.length > 1 ? 'constructors' : 'a constructor';
+      const constructorPlural =
+        nps.length > 1 ? 'constructors' : 'a constructor';
       if (!subject) {
-        subject = `Crosshare: new puzzle${plural} by ${joinStringsWithAnd(nps.map(a => a.an).slice(0, 3))}`;
+        subject = `Crosshare: new puzzle${plural} by ${joinStringsWithAnd(
+          nps.map((a) => a.an).slice(0, 3)
+        )}`;
       }
       markdown += `### New puzzle${plural} by ${constructorPlural} you follow:\n\n`;
-      nps.forEach(p => {
+      nps.forEach((p) => {
         read.push(p);
         markdown += `* ${p.an} published [${p.pn}](${puzzleLink(p.p)})\n`;
       });
@@ -301,7 +397,9 @@ async function queueEmailForUser(userId: string, notifications: Array<Notificati
 
   markdown += `---
 
-Crosshare notifications are sent at most once per day. To manage your notification preferences visit [your Account page](${emailLink('account')})`;
+Crosshare notifications are sent at most once per day. To manage your notification preferences visit [your Account page](${emailLink(
+    'account'
+  )})`;
 
   return sendEmail({
     toAddress,
@@ -316,24 +414,37 @@ Crosshare notifications are sent at most once per day. To manage your notificati
 <body>
 ${SimpleMarkdown.defaultHtmlOutput(SimpleMarkdown.defaultBlockParse(markdown))}
 </body>
-</html>`
-  }).then(
-    () => Promise.all(read.map(n => db.doc(`n/${n.id}`).update({ r: true })))
+</html>`,
+  }).then(() =>
+    Promise.all(read.map((n) => db.doc(`n/${n.id}`).update({ r: true })))
   );
 }
 
 export async function queueEmails() {
   const db = AdminApp.firestore();
   const unread = await mapEachResult(
-    db.collection('n').where('e', '==', false).where('r', '==', false).where('t', '<=', AdminTimestamp.fromDate(new Date())),
-    NotificationV, (n) => n);
+    db
+      .collection('n')
+      .where('e', '==', false)
+      .where('r', '==', false)
+      .where('t', '<=', AdminTimestamp.fromDate(new Date())),
+    NotificationV,
+    (n) => n
+  );
   console.log('unread: ', unread.length);
-  const unreadsByUserId = unread.reduce((rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
-    (rv[x.u] = rv[x.u] || []).push(x);
-    return rv;
-  }, {});
+  const unreadsByUserId = unread.reduce(
+    (rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
+      (rv[x.u] = rv[x.u] || []).push(x);
+      return rv;
+    },
+    {}
+  );
   console.log('attempting to queue for ', Object.keys(unreadsByUserId).length);
-  return Promise.all(Object.entries(unreadsByUserId).map(e => queueEmailForUser(...e).then(
-    () => Promise.all(e[1].map(n => db.doc(`n/${n.id}`).update({ e: true })))
-  )));
+  return Promise.all(
+    Object.entries(unreadsByUserId).map((e) =>
+      queueEmailForUser(...e).then(() =>
+        Promise.all(e[1].map((n) => db.doc(`n/${n.id}`).update({ e: true })))
+      )
+    )
+  );
 }
