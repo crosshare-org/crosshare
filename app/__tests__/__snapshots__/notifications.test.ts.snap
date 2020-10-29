@@ -58,6 +58,64 @@ Crosshare notifications are sent at most once per day. To manage your notificati
 }
 `;
 
+exports[`email queueing email for puzzle marked as daily mini 1`] = `
+Object {
+  "message": Object {
+    "html": "<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv=\\"Content-Type\\" content=\\"text/html charset=UTF-8\\" />
+<title>Crosshare featured your puzzle!</title>
+</head>
+<body>
+<h3>Crosshare has featured your puzzle:</h3><ul><li><a href=\\"https://crosshare.org/crosswords/blast#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a> was featured as the daily mini for 10/20/2020</li></ul><hr><div class=\\"paragraph\\">Crosshare notifications are sent at most once per day. To manage your notification preferences visit <a href=\\"https://crosshare.org/account#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">your Account page</a></div>
+</body>
+</html>",
+    "subject": "Crosshare featured your puzzle!",
+    "text": "### Crosshare has featured your puzzle:
+
+* [Raises, as young](https://crosshare.org/crosswords/blast#utm_source=crosshare&utm_medium=email&utm_campaign=notifications) was featured as the daily mini for 10/20/2020
+
+
+---
+
+Crosshare notifications are sent at most once per day. To manage your notification preferences visit [your Account page](https://crosshare.org/account#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)",
+  },
+  "to": Array [
+    "mike@example.com",
+  ],
+}
+`;
+
+exports[`email queueing email for puzzle marked as featured 1`] = `
+Object {
+  "message": Object {
+    "html": "<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv=\\"Content-Type\\" content=\\"text/html charset=UTF-8\\" />
+<title>Crosshare featured your puzzle!</title>
+</head>
+<body>
+<h3>Crosshare has featured your puzzle:</h3><ul><li><a href=\\"https://crosshare.org/crosswords/blast#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">Raises, as young</a> was featured</li></ul><hr><div class=\\"paragraph\\">Crosshare notifications are sent at most once per day. To manage your notification preferences visit <a href=\\"https://crosshare.org/account#utm_source=crosshare&amp;utm_medium=email&amp;utm_campaign=notifications\\">your Account page</a></div>
+</body>
+</html>",
+    "subject": "Crosshare featured your puzzle!",
+    "text": "### Crosshare has featured your puzzle:
+
+* [Raises, as young](https://crosshare.org/crosswords/blast#utm_source=crosshare&utm_medium=email&utm_campaign=notifications) was featured
+
+
+---
+
+Crosshare notifications are sent at most once per day. To manage your notification preferences visit [your Account page](https://crosshare.org/account#utm_source=crosshare&utm_medium=email&utm_campaign=notifications)",
+  },
+  "to": Array [
+    "mike@example.com",
+  ],
+}
+`;
+
 exports[`email queueing email including new puzzle notification 1`] = `
 Object {
   "message": Object {

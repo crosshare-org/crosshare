@@ -399,11 +399,14 @@ async function queueEmailForUser(
     );
     if (fs.length) {
       const plural = fs.length > 1 ? 's' : '';
+      if (!subject) {
+        subject = `Crosshare featured your puzzle${plural}!`;
+      }
       markdown += `### Crosshare has featured your puzzle${plural}:\n\n`;
       fs.forEach((p) => {
         read.push(p);
         markdown += `* [${p.pn}](${puzzleLink(p.p)}) was featured${
-          p.as ? 'as ' + p.as : ''
+          p.as ? ' as ' + p.as : ''
         }\n`;
       });
       markdown += '\n\n';

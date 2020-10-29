@@ -406,6 +406,42 @@ describe('email queueing', () => {
     expect(mail.size).toEqual(0);
   });
 
+  test('email for puzzle marked as featured', async () => {
+    const notifications = await notificationsForPuzzleChange(
+      basePuzzle,
+      { ...basePuzzle, f: true },
+      'blast'
+    );
+    expect(notifications.length).toEqual(1);
+    await adminApp
+      .firestore()
+      .collection('n')
+      .doc(notifications[0].id)
+      .set(notifications[0]);
+    await queueEmails();
+    const mail = await adminApp.firestore().collection('mail').get();
+    expect(mail.size).toEqual(1);
+    expect(mail.docs[0].data()).toMatchSnapshot();
+  });
+
+  test('email for puzzle marked as daily mini', async () => {
+    const notifications = await notificationsForPuzzleChange(
+      basePuzzle,
+      { ...basePuzzle, c: 'dailymini', dmd: '10/20/2020' },
+      'blast'
+    );
+    expect(notifications.length).toEqual(1);
+    await adminApp
+      .firestore()
+      .collection('n')
+      .doc(notifications[0].id)
+      .set(notifications[0]);
+    await queueEmails();
+    const mail = await adminApp.firestore().collection('mail').get();
+    expect(mail.size).toEqual(1);
+    expect(mail.docs[0].data()).toMatchSnapshot();
+  });
+
   test('email including new puzzle notification', async () => {
     await adminApp.firestore().doc('prefs/rando').delete();
     await queueEmails();
