@@ -33,10 +33,12 @@ const NewPuzzleV = t.intersection([
     pn: t.string,
     /** author name */
     an: t.string,
-  })
+  }),
 ]);
-export type NewPuzzleNotificationT = t.TypeOf<typeof NewPuzzleV>
-export function isNewPuzzleNotification(e: NotificationT): e is NewPuzzleNotificationT {
+export type NewPuzzleNotificationT = t.TypeOf<typeof NewPuzzleV>;
+export function isNewPuzzleNotification(
+  e: NotificationT
+): e is NewPuzzleNotificationT {
   return e.k === 'newpuzzle';
 }
 
@@ -56,8 +58,10 @@ const CommentV = t.intersection([
     cn: t.string,
   }),
 ]);
-export type CommentNotificationT = t.TypeOf<typeof CommentV>
-export function isCommentNotification(e: NotificationT): e is CommentNotificationT {
+export type CommentNotificationT = t.TypeOf<typeof CommentV>;
+export function isCommentNotification(
+  e: NotificationT
+): e is CommentNotificationT {
   return e.k === 'comment';
 }
 
@@ -75,9 +79,9 @@ const ReplyV = t.intersection([
     c: t.string,
     /** commenter's name */
     cn: t.string,
-  })
+  }),
 ]);
-export type ReplyNotificationT = t.TypeOf<typeof ReplyV>
+export type ReplyNotificationT = t.TypeOf<typeof ReplyV>;
 export function isReplyNotification(e: NotificationT): e is ReplyNotificationT {
   return e.k === 'reply';
 }
@@ -99,7 +103,10 @@ function parsePuzzle(docdata: any): DBPuzzleT | null {
 type PuzzleWithID = DBPuzzleT & { id: string };
 
 const COMMENT_DELAY = { hours: 1 };
-export function commentNotification(comment: CommentWithRepliesT, puzzle: PuzzleWithID): CommentNotificationT {
+export function commentNotification(
+  comment: CommentWithRepliesT,
+  puzzle: PuzzleWithID
+): CommentNotificationT {
   return {
     id: `${puzzle.a}-comment-${comment.i}`,
     u: puzzle.a,
@@ -114,7 +121,11 @@ export function commentNotification(comment: CommentWithRepliesT, puzzle: Puzzle
   };
 }
 
-export function replyNotification(comment: CommentWithRepliesT, parent: CommentWithRepliesT, puzzle: PuzzleWithID): ReplyNotificationT {
+export function replyNotification(
+  comment: CommentWithRepliesT,
+  parent: CommentWithRepliesT,
+  puzzle: PuzzleWithID
+): ReplyNotificationT {
   return {
     id: `${parent.a}-reply-${comment.i}`,
     u: parent.a,
@@ -129,7 +140,10 @@ export function replyNotification(comment: CommentWithRepliesT, parent: CommentW
   };
 }
 
-export function newPuzzleNotification(puzzle: PuzzleWithID, followerId: string): NewPuzzleNotificationT {
+export function newPuzzleNotification(
+  puzzle: PuzzleWithID,
+  followerId: string
+): NewPuzzleNotificationT {
   return {
     id: `${followerId}-newpuzzle-${puzzle.id}`,
     u: followerId,
@@ -143,10 +157,17 @@ export function newPuzzleNotification(puzzle: PuzzleWithID, followerId: string):
   };
 }
 
-function checkComments(after: Array<CommentWithRepliesT>, before: Array<CommentWithRepliesT> | undefined, puzzle: PuzzleWithID, parent?: CommentWithRepliesT): Array<NotificationT> {
+function checkComments(
+  after: Array<CommentWithRepliesT>,
+  before: Array<CommentWithRepliesT> | undefined,
+  puzzle: PuzzleWithID,
+  parent?: CommentWithRepliesT
+): Array<NotificationT> {
   const notifications: Array<NotificationT> = [];
   for (const comment of after) {
-    const beforeComment = before ?.find(beforeComment => beforeComment.i === comment.i);
+    const beforeComment = before?.find(
+      (beforeComment) => beforeComment.i === comment.i
+    );
     if (!beforeComment) {
       // Don't notify on your own comment
       if (comment.a !== puzzle.a) {
@@ -157,7 +178,9 @@ function checkComments(after: Array<CommentWithRepliesT>, before: Array<CommentW
         notifications.push(replyNotification(comment, parent, puzzle));
       }
     } else if (comment.r) {
-      notifications.push(...checkComments(comment.r, beforeComment.r, puzzle, comment));
+      notifications.push(
+        ...checkComments(comment.r, beforeComment.r, puzzle, comment)
+      );
     }
   }
   return notifications;
@@ -168,13 +191,18 @@ const FollowersV = t.partial({
   f: t.array(t.string),
 });
 
-async function notificationsForPuzzleCreation(puzzle: DBPuzzleT, puzzleId: string): Promise<Array<NewPuzzleNotificationT>> {
+async function notificationsForPuzzleCreation(
+  puzzle: DBPuzzleT,
+  puzzleId: string
+): Promise<Array<NewPuzzleNotificationT>> {
+  console.log('checking for puzzle creation', `followers/${puzzle.a}`);
   if (puzzle.pv) {
     return [];
   }
   const db = AdminApp.firestore();
-  const followersRes = await db.doc(`following/${puzzle.a}`).get();
+  const followersRes = await db.doc(`followers/${puzzle.a}`).get();
   if (!followersRes.exists) {
+    console.log('no followers doc');
     return [];
   }
 
@@ -186,13 +214,21 @@ async function notificationsForPuzzleCreation(puzzle: DBPuzzleT, puzzleId: strin
   }
   const followers = validationResult.right.f;
   if (!followers) {
+    console.log('no followers');
     return [];
   }
-  return followers.map(followerId => newPuzzleNotification({ ...puzzle, id: puzzleId }, followerId));
+  console.log(followers.length, 'followers');
+  return followers.map((followerId) =>
+    newPuzzleNotification({ ...puzzle, id: puzzleId }, followerId)
+  );
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function notificationsForPuzzleChange(beforeData: any, afterData: any, puzzleId: string): Promise<Array<NotificationT>> {
+export async function notificationsForPuzzleChange(
+  beforeData: any,
+  afterData: any,
+  puzzleId: string
+): Promise<Array<NotificationT>> {
   const after = parsePuzzle(afterData);
   if (!after) {
     console.error('Missing/invalid after doc', afterData);

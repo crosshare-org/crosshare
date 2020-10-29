@@ -151,7 +151,7 @@ test('should notify for new puzzle if there are subs', async () => {
 
   await adminApp
     .firestore()
-    .doc(`following/${basePuzzle.a}`)
+    .doc(`followers/${basePuzzle.a}`)
     .set({ f: ['mikeuserid', 'tomuserid'] });
 
   const notifications = await notificationsForPuzzleChange(
@@ -339,7 +339,7 @@ describe('email queueing', () => {
     setAdminApp(adminApp);
     await adminApp
       .firestore()
-      .doc(`following/${basePuzzle.a}`)
+      .doc(`followers/${basePuzzle.a}`)
       .set({ f: ['mikeuserid', 'rando'] });
 
     notifications.push(
