@@ -9,9 +9,17 @@ import { requiresAdmin } from '../components/AuthContext';
 import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleResult, puzzleFromDB } from '../lib/types';
 import {
-  DailyStatsT, DailyStatsV, DBPuzzleV, getDateString,
-  CategoryIndexT, CategoryIndexV, prettifyDateString, DBPuzzleT,
-  CommentForModerationWithIdT, CommentForModerationV, CommentWithRepliesT
+  DailyStatsT,
+  DailyStatsV,
+  DBPuzzleV,
+  getDateString,
+  CategoryIndexT,
+  CategoryIndexV,
+  prettifyDateString,
+  DBPuzzleT,
+  CommentForModerationWithIdT,
+  CommentForModerationV,
+  CommentWithRepliesT,
 } from '../lib/dbtypes';
 import { getFromDB, getFromSessionOrDB, mapEachResult } from '../lib/dbUtils';
 import { App, FieldValue } from '../lib/firebaseWrapper';
@@ -21,19 +29,43 @@ import { useSnackbar } from '../components/Snackbar';
 
 const PuzzleListItem = (props: PuzzleResult) => {
   return (
-    <li key={props.id}><Link href='/crosswords/[puzzleId]' as={`/crosswords/${props.id}`} passHref>{props.title}</Link> by {props.authorName}<span css={{ color: 'var(--error)' }}>{props.isPrivate ? ' PRIVATE' : (props.isPrivateUntil ? ' PRIVATE until ' + (new Date(props.isPrivateUntil)).toISOString() : '')}</span></li>
+    <li key={props.id}>
+      <Link
+        href="/crosswords/[puzzleId]"
+        as={`/crosswords/${props.id}`}
+        passHref
+      >
+        {props.title}
+      </Link>{' '}
+      by {props.authorName}
+      <span css={{ color: 'var(--error)' }}>
+        {props.isPrivate
+          ? ' PRIVATE'
+          : props.isPrivateUntil
+            ? ' PRIVATE until ' + new Date(props.isPrivateUntil).toISOString()
+            : ''}
+      </span>
+    </li>
   );
 };
 
 export default requiresAdmin(() => {
-  const [unmoderated, setUnmoderated] = useState<Array<PuzzleResult> | null>(null);
-  const [commentsForModeration, setCommentsForModeration] = useState<Array<CommentForModerationWithIdT> | null>(null);
+  const [unmoderated, setUnmoderated] = useState<Array<PuzzleResult> | null>(
+    null
+  );
+  const [commentsForModeration, setCommentsForModeration] = useState<Array<
+    CommentForModerationWithIdT
+  > | null>(null);
   const [minis, setMinis] = useState<CategoryIndexT | null>(null);
   const [stats, setStats] = useState<DailyStatsT | null>(null);
   const [error, setError] = useState(false);
   const [mailErrors, setMailErrors] = useState(0);
-  const [commentIdsForDeletion, setCommentIdsForDeletion] = useState<Set<string>>(new Set());
-  const [pagesForModeration, setPagesForModeration] = useState<Array<ConstructorPageT> | null>(null);
+  const [commentIdsForDeletion, setCommentIdsForDeletion] = useState<
+    Set<string>
+  >(new Set());
+  const [pagesForModeration, setPagesForModeration] = useState<Array<
+    ConstructorPageT
+  > | null>(null);
   const [uidToUnsub, setUidToUnsub] = useState('');
   const { showSnackbar } = useSnackbar();
 
@@ -44,27 +76,49 @@ export default requiresAdmin(() => {
     const dateString = getDateString(now);
     Promise.all([
       db.collection('mail').where('delivery.error', '!=', null).get(),
-      getFromSessionOrDB({ collection: 'ds', docId: dateString, validator: DailyStatsV, ttl: 1000 * 60 * 30 }),
-      getFromSessionOrDB({ collection: 'categories', docId: 'dailymini', validator: CategoryIndexV, ttl: 24 * 60 * 60 * 1000 }),
-      mapEachResult(db.collection('c').where('m', '==', false), DBPuzzleV, (dbpuzz, docId) => {
-        return { ...puzzleFromDB(dbpuzz), id: docId };
+      getFromSessionOrDB({
+        collection: 'ds',
+        docId: dateString,
+        validator: DailyStatsV,
+        ttl: 1000 * 60 * 30,
       }),
-      mapEachResult(db.collection('cfm'), CommentForModerationV, (cfm, docId) => {
-        return { ...cfm, i: docId };
+      getFromSessionOrDB({
+        collection: 'categories',
+        docId: 'dailymini',
+        validator: CategoryIndexV,
+        ttl: 24 * 60 * 60 * 1000,
       }),
-      mapEachResult(db.collection('cp').where('m', '==', true), ConstructorPageV, (cp, docId) => {
-        return { ...cp, id: docId };
-      })
+      mapEachResult(
+        db.collection('c').where('m', '==', false),
+        DBPuzzleV,
+        (dbpuzz, docId) => {
+          return { ...puzzleFromDB(dbpuzz), id: docId };
+        }
+      ),
+      mapEachResult(
+        db.collection('cfm'),
+        CommentForModerationV,
+        (cfm, docId) => {
+          return { ...cfm, i: docId };
+        }
+      ),
+      mapEachResult(
+        db.collection('cp').where('m', '==', true),
+        ConstructorPageV,
+        (cp, docId) => {
+          return { ...cp, id: docId };
+        }
+      ),
     ])
       .then(([mailErrors, stats, minis, unmoderated, cfm, cps]) => {
-        setMailErrors(mailErrors.size);
+        setMailErrors(mailErrors?.size || 0);
         setStats(stats);
         setMinis(minis);
         setUnmoderated(unmoderated);
         setCommentsForModeration(cfm);
         setPagesForModeration(cps);
       })
-      .catch(reason => {
+      .catch((reason) => {
         console.error(reason);
         setError(true);
       });
@@ -79,24 +133,33 @@ export default requiresAdmin(() => {
   if (error) {
     return <div>Error loading admin content</div>;
   }
-  if (unmoderated === null || commentsForModeration === null || pagesForModeration === null) {
+  if (
+    unmoderated === null ||
+    commentsForModeration === null ||
+    pagesForModeration === null
+  ) {
     return <div>Loading admin content...</div>;
   }
 
   function titleForId(stats: DailyStatsT, crosswordId: string): string {
     if (minis) {
-      const dateString = Object.keys(minis).find(key => minis[key] === crosswordId);
+      const dateString = Object.keys(minis).find(
+        (key) => minis[key] === crosswordId
+      );
       if (dateString) {
         return 'Daily mini for ' + prettifyDateString(dateString);
       }
     }
-    if (stats.i ?.[crosswordId]) {
+    if (stats.i?.[crosswordId]) {
       return stats.i[crosswordId][0] + ' by ' + stats.i[crosswordId][1];
     }
     return crosswordId;
   }
 
-  function findCommentById(comments: Array<CommentWithRepliesT>, id: string): CommentWithRepliesT | null {
+  function findCommentById(
+    comments: Array<CommentWithRepliesT>,
+    id: string
+  ): CommentWithRepliesT | null {
     for (const comment of comments) {
       if (comment.i === id) {
         return comment;
@@ -183,89 +246,140 @@ export default requiresAdmin(() => {
         <meta name="robots" content="noindex" />
       </Head>
       <DefaultTopBar />
-      <div css={{ margin: '1em', }}>
-        {mailErrors ?
-          <h4>There are {mailErrors} mail errors!</h4>
-          :
-          ''
-        }
-        <h4 css={{ borderBottom: '1px solid var(--black)' }}>Comment Moderation</h4>
-        {commentsForModeration.length === 0 ?
+      <div css={{ margin: '1em' }}>
+        {mailErrors ? <h4>There are {mailErrors} mail errors!</h4> : ''}
+        <h4 css={{ borderBottom: '1px solid var(--black)' }}>
+          Comment Moderation
+        </h4>
+        {commentsForModeration.length === 0 ? (
           <div>No comments are currently awaiting moderation.</div>
-          :
+        ) : (
           <form onSubmit={moderateComments}>
             <p>Check comments to disallow them:</p>
-            {commentsForModeration.map((cfm) =>
+            {commentsForModeration.map((cfm) => (
               <div key={cfm.i}>
                 <label>
-                  <input css={{
-                    marginRight: '1em'
-                  }} type='checkbox' checked={commentIdsForDeletion.has(cfm.i)} onChange={(e) => setCommentForDeletion(cfm.i, e.target.checked)} />
-                  <Link href='/crosswords/[puzzleId]' as={`/crosswords/${cfm.pid}`} passHref>puzzle</Link> {cfm.n}:
+                  <input
+                    css={{
+                      marginRight: '1em',
+                    }}
+                    type="checkbox"
+                    checked={commentIdsForDeletion.has(cfm.i)}
+                    onChange={(e) =>
+                      setCommentForDeletion(cfm.i, e.target.checked)
+                    }
+                  />
+                  <Link
+                    href="/crosswords/[puzzleId]"
+                    as={`/crosswords/${cfm.pid}`}
+                    passHref
+                  >
+                    puzzle
+                  </Link>{' '}
+                  {cfm.n}:
                   <Markdown text={cfm.c} />
                 </label>
               </div>
-            )}
-            <input type='submit' value='Moderate' />
+            ))}
+            <input type="submit" value="Moderate" />
           </form>
-        }
-        <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>Page Moderation</h4>
-        {pagesForModeration.length === 0 ?
+        )}
+        <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>
+          Page Moderation
+        </h4>
+        {pagesForModeration.length === 0 ? (
           <div>No pages need moderation.</div>
-          :
+        ) : (
           <form onSubmit={moderatePages}>
-            {pagesForModeration.map((cp) =>
+            {pagesForModeration.map((cp) => (
               <div key={cp.id}>
-                <p>{cp.n} - <Link href='/[...slug]' as={`/${cp.i}`} passHref>@{cp.i}</Link></p>
+                <p>
+                  {cp.n} -{' '}
+                  <Link href="/[...slug]" as={`/${cp.i}`} passHref>
+                    @{cp.i}
+                  </Link>
+                </p>
                 <Markdown text={cp.b} />
               </div>
-            )}
-            <input type='submit' value='Mark as moderated' />
+            ))}
+            <input type="submit" value="Mark as moderated" />
           </form>
-        }
-        <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>Unmoderated</h4>
-        {unmoderated.length === 0 ?
+        )}
+        <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>
+          Unmoderated
+        </h4>
+        {unmoderated.length === 0 ? (
           <div>No puzzles are currently awaiting moderation.</div>
-          :
+        ) : (
           <ul>{unmoderated.map(PuzzleListItem)}</ul>
-        }
-        {stats ?
+        )}
+        {stats ? (
           <>
-            <h4 css={{ borderBottom: '1px solid var(--black)' }}>Today&apos;s Stats</h4>
+            <h4 css={{ borderBottom: '1px solid var(--black)' }}>
+              Today&apos;s Stats
+            </h4>
             <div>Total completions: {stats.n}</div>
             <div>Users w/ completions: {stats.u.length}</div>
             <h5>Top Puzzles</h5>
             <ul>
-              {Object.entries(stats.c).sort((a, b) => b[1] - a[1]).map(([crosswordId, count]) => {
-                return (
-                  <li key={crosswordId}>
-                    <Link href='/crosswords/[puzzleId]' as={`/crosswords/${crosswordId}`} passHref>{titleForId(stats, crosswordId)}</Link>: {count}
-                    (<Link href='/crosswords/[puzzleId]/stats' as={`/crosswords/${crosswordId}/stats`} passHref>stats</Link>)
-                  </li>
-                );
-              })}
+              {Object.entries(stats.c)
+                .sort((a, b) => b[1] - a[1])
+                .map(([crosswordId, count]) => {
+                  return (
+                    <li key={crosswordId}>
+                      <Link
+                        href="/crosswords/[puzzleId]"
+                        as={`/crosswords/${crosswordId}`}
+                        passHref
+                      >
+                        {titleForId(stats, crosswordId)}
+                      </Link>
+                      : {count}(
+                      <Link
+                        href="/crosswords/[puzzleId]/stats"
+                        as={`/crosswords/${crosswordId}/stats`}
+                        passHref
+                      >
+                        stats
+                      </Link>
+                      )
+                    </li>
+                  );
+                })}
             </ul>
           </>
-          : ''}
+        ) : (
+          ''
+        )}
         <h4 css={{ borderBottom: '1px solid var(--black)' }}>Upcoming Minis</h4>
 
         <UpcomingMinisCalendar disableExisting={false} onChange={goToPuzzle} />
-        <h4 css={{ borderBottom: '1px solid var(--black)' }}>Unsubscribe User</h4>
-        <form onSubmit={
-          (e: React.FormEvent) => {
+        <h4 css={{ borderBottom: '1px solid var(--black)' }}>
+          Unsubscribe User
+        </h4>
+        <form
+          onSubmit={(e: React.FormEvent) => {
             e.preventDefault();
             const toSubmit = uidToUnsub.trim();
             setUidToUnsub('');
             if (toSubmit) {
-              App.firestore().doc(`prefs/${uidToUnsub}`).set({ unsubs: FieldValue.arrayUnion('all') }, { merge: true }).then(() => {
-                showSnackbar('Unsubscribed');
-              });
+              App.firestore()
+                .doc(`prefs/${uidToUnsub}`)
+                .set({ unsubs: FieldValue.arrayUnion('all') }, { merge: true })
+                .then(() => {
+                  showSnackbar('Unsubscribed');
+                });
             }
-          }
-        }>
+          }}
+        >
           <label>
             Unsubscribe by user id:
-            <input css={{ margin: '0 0.5em', }} type="text" value={uidToUnsub} onChange={e => setUidToUnsub(e.target.value)} />
+            <input
+              css={{ margin: '0 0.5em' }}
+              type="text"
+              value={uidToUnsub}
+              onChange={(e) => setUidToUnsub(e.target.value)}
+            />
           </label>
           <Button type="submit" text="Unsubscribe" />
         </form>
