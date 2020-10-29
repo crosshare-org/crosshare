@@ -223,10 +223,9 @@ async function notificationsForPuzzleCreation(
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function notificationsForPuzzleChange(
-  beforeData: any,
-  afterData: any,
+  beforeData: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  afterData: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   puzzleId: string
 ): Promise<Array<NotificationT>> {
   const after = parsePuzzle(afterData);

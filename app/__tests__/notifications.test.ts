@@ -10,6 +10,7 @@ import {
   TimestampClass,
   setAdminApp,
   setUserMap,
+  AdminTimestamp,
 } from '../lib/firebaseWrapper';
 import { queueEmails } from '../lib/serverOnly';
 import type firebaseAdminType from 'firebase-admin';
@@ -344,6 +345,15 @@ describe('email queueing', () => {
 
     notifications.push(
       ...(await notificationsForPuzzleChange(undefined, basePuzzle, 'wowowo'))
+    );
+
+    // Private puzzle should have no effect
+    notifications.push(
+      ...(await notificationsForPuzzleChange(
+        undefined,
+        { ...basePuzzle, id: 'foo', pv: true },
+        'foo'
+      ))
     );
 
     expect(notifications.length).toEqual(7);
