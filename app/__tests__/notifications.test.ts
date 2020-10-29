@@ -10,7 +10,6 @@ import {
   TimestampClass,
   setAdminApp,
   setUserMap,
-  AdminTimestamp,
 } from '../lib/firebaseWrapper';
 import { queueEmails } from '../lib/serverOnly';
 import type firebaseAdminType from 'firebase-admin';
