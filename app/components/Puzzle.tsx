@@ -60,7 +60,11 @@ import {
   entryIndexAtPosition,
 } from '../lib/gridBase';
 import { cachePlay, writePlayToDB, isDirty } from '../lib/plays';
-import { PlayWithoutUserT, getDateString } from '../lib/dbtypes';
+import {
+  PlayWithoutUserT,
+  getDateString,
+  prettifyDateString,
+} from '../lib/dbtypes';
 import {
   cheat,
   checkComplete,
@@ -178,12 +182,16 @@ const ModeratingOverlay = memo(
       if (!date) {
         throw new Error('shouldn\'t be able to schedule w/o date');
       }
+      const ds = getDateString(date);
       const update: { [k: string]: string | firebase.firestore.FieldValue } = {
-        [getDateString(date)]: puzzle.id,
+        [ds]: puzzle.id,
       };
       Promise.all([
         db.collection('categories').doc('dailymini').update(update),
-        db.collection('c').doc(puzzle.id).update({ m: true, c: 'dailymini' }),
+        db
+          .collection('c')
+          .doc(puzzle.id)
+          .update({ m: true, c: 'dailymini', dmd: prettifyDateString(ds) }),
       ]).then(() => {
         console.log('Scheduled mini');
         sessionStorage.removeItem('categories/dailymini');

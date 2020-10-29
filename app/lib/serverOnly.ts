@@ -18,6 +18,8 @@ import {
   ReplyNotificationT,
   NewPuzzleNotificationT,
   isNewPuzzleNotification,
+  isFeaturedNotification,
+  FeaturedNotificationT,
 } from './notifications';
 import SimpleMarkdown from 'simple-markdown';
 import { AccountPrefsV, AccountPrefsT } from './prefs';
@@ -386,6 +388,23 @@ async function queueEmailForUser(
       nps.forEach((p) => {
         read.push(p);
         markdown += `* ${p.an} published [${p.pn}](${puzzleLink(p.p)})\n`;
+      });
+      markdown += '\n\n';
+    }
+  }
+
+  if (!prefs?.unsubs?.includes('featured')) {
+    const fs: Array<FeaturedNotificationT> = sorted.filter(
+      isFeaturedNotification
+    );
+    if (fs.length) {
+      const plural = fs.length > 1 ? 's' : '';
+      markdown += `### Crosshare has featured your puzzle${plural}:\n\n`;
+      fs.forEach((p) => {
+        read.push(p);
+        markdown += `* [${p.pn}](${puzzleLink(p.p)}) was featured${
+          p.as ? 'as ' + p.as : ''
+        }\n`;
       });
       markdown += '\n\n';
     }

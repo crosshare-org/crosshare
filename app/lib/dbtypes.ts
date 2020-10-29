@@ -17,34 +17,36 @@ const CommentV = t.intersection([
     /** author did cheat? */
     ch: t.boolean,
     /** comment publish timestamp */
-    p: timestamp
+    p: timestamp,
   }),
   t.partial({
     /** author username */
     un: t.string,
-  })
+  }),
 ]);
 type CommentT = t.TypeOf<typeof CommentV>;
 
 export interface CommentWithRepliesT extends CommentT {
   /** comment id */
-  i: string,
+  i: string;
   /** replies */
-  r?: Array<CommentWithRepliesT>
+  r?: Array<CommentWithRepliesT>;
 }
 
-const CommentWithRepliesV: t.Type<CommentWithRepliesT> = t.recursion('CommentWithReplies', () =>
-  t.intersection([
-    CommentV,
-    t.type({
-      /** comment id */
-      i: t.string,
-    }),
-    t.partial({
-      /** replies */
-      r: t.array(CommentWithRepliesV)
-    })
-  ])
+const CommentWithRepliesV: t.Type<CommentWithRepliesT> = t.recursion(
+  'CommentWithReplies',
+  () =>
+    t.intersection([
+      CommentV,
+      t.type({
+        /** comment id */
+        i: t.string,
+      }),
+      t.partial({
+        /** replies */
+        r: t.array(CommentWithRepliesV),
+      }),
+    ])
 );
 
 export const CommentForModerationV = t.intersection([
@@ -53,8 +55,8 @@ export const CommentForModerationV = t.intersection([
     /** puzzle id */
     pid: t.string,
     /** id of the comment this is a reply to */
-    rt: t.union([t.string, t.null])
-  })
+    rt: t.union([t.string, t.null]),
+  }),
 ]);
 export type CommentForModerationT = t.TypeOf<typeof CommentForModerationV>;
 
@@ -63,9 +65,11 @@ export const CommentForModerationWithIdV = t.intersection([
   t.type({
     /** comment id */
     i: t.string,
-  })
+  }),
 ]);
-export type CommentForModerationWithIdT = t.TypeOf<typeof CommentForModerationWithIdV>;
+export type CommentForModerationWithIdT = t.TypeOf<
+  typeof CommentForModerationWithIdV
+>;
 
 const DBPuzzleMandatoryV = t.type({
   /** author's user id */
@@ -112,8 +116,13 @@ const DBPuzzleOptionalV = t.partial({
   pv: t.boolean,
   /** isPrivateUntil */
   pvu: timestamp,
+  /** daily mini date */
+  dmd: t.string,
 });
-export const DBPuzzleV = t.intersection([DBPuzzleMandatoryV, DBPuzzleOptionalV]);
+export const DBPuzzleV = t.intersection([
+  DBPuzzleMandatoryV,
+  DBPuzzleOptionalV,
+]);
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
 
 const PlayBaseV = t.type({
@@ -152,7 +161,7 @@ export const LegacyPlayV = t.intersection([
   t.partial({
     /** puzzle title, optional for legacy plays in the db */
     n: t.string,
-  })
+  }),
 ]);
 export type LegacyPlayT = t.TypeOf<typeof LegacyPlayV>;
 
@@ -163,7 +172,7 @@ const PlayV = t.intersection([
     u: t.string,
     /** puzzle title */
     n: t.string,
-  })
+  }),
 ]);
 export type PlayT = t.TypeOf<typeof PlayV>;
 
@@ -173,7 +182,7 @@ export const PlayWithoutUserV = t.intersection([
   t.type({
     /** puzzle title */
     n: t.string,
-  })
+  }),
 ]);
 export type PlayWithoutUserT = t.TypeOf<typeof PlayWithoutUserV>;
 
@@ -217,7 +226,7 @@ export function prettifyDateString(dateString: string) {
   if (!groups) {
     throw new Error('Bad date string: ' + dateString);
   }
-  return (parseInt(groups[2]) + 1) + '/' + parseInt(groups[3]) + '/' + groups[1];
+  return parseInt(groups[2]) + 1 + '/' + parseInt(groups[3]) + '/' + groups[1];
 }
 
 export const PuzzleStatsV = t.type({
@@ -246,7 +255,7 @@ const PuzzleInfoV = t.tuple([
   /** author name */
   t.string,
   /** author id */
-  t.string
+  t.string,
 ]);
 export const DailyStatsV = t.intersection([
   t.type({
@@ -264,7 +273,7 @@ export const DailyStatsV = t.intersection([
   t.partial({
     /** puzzle title, authorName, authorId by puzzleId */
     i: t.record(t.string, PuzzleInfoV),
-  })
+  }),
 ]);
 export type DailyStatsT = t.TypeOf<typeof DailyStatsV>;
 

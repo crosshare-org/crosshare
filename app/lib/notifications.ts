@@ -86,7 +86,28 @@ export function isReplyNotification(e: NotificationT): e is ReplyNotificationT {
   return e.k === 'reply';
 }
 
-export const NotificationV = t.union([NewPuzzleV, ReplyV, CommentV]);
+// One of your puzzles is marked as featured or daily mini
+const FeaturedV = t.intersection([
+  NotificationBaseV,
+  t.type({
+    /** kind of notification */
+    k: t.literal('featured'),
+    /** puzzle id */
+    p: t.string,
+    /** puzzle name */
+    pn: t.string,
+    /** featured as (e.g. 'daily mini for october 10th') */
+    as: t.union([t.string, t.null]),
+  }),
+]);
+export type FeaturedNotificationT = t.TypeOf<typeof FeaturedV>;
+export function isFeaturedNotification(
+  e: NotificationT
+): e is FeaturedNotificationT {
+  return e.k === 'featured';
+}
+
+export const NotificationV = t.union([NewPuzzleV, ReplyV, CommentV, FeaturedV]);
 export type NotificationT = t.TypeOf<typeof NotificationV>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -154,6 +175,23 @@ export function newPuzzleNotification(
     p: puzzle.id,
     pn: puzzle.t,
     an: puzzle.n,
+  };
+}
+
+export function featuredNotification(
+  puzzle: PuzzleWithID,
+  as: string | null
+): FeaturedNotificationT {
+  return {
+    id: `featured-${puzzle.id}`,
+    u: puzzle.a,
+    t: AdminTimestamp.now(),
+    r: false,
+    e: false,
+    k: 'featured',
+    p: puzzle.id,
+    pn: puzzle.t,
+    as,
   };
 }
 
@@ -244,5 +282,16 @@ export async function notificationsForPuzzleChange(
   if (!after.cs) {
     return [];
   }
-  return checkComments(after.cs, before.cs, { ...after, id: puzzleId });
+  const withID = { ...after, id: puzzleId };
+  const notifications = checkComments(after.cs, before.cs, withID);
+
+  if (after.f && !before.f) {
+    notifications.push(featuredNotification(withID, null));
+  } else if (after.c === 'dailymini' && !before.c && after.dmd) {
+    notifications.push(
+      featuredNotification(withID, `the daily mini for ${after.dmd}`)
+    );
+  }
+
+  return notifications;
 }

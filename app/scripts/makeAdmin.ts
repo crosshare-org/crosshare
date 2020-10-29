@@ -9,6 +9,7 @@ admin.initializeApp({
 
 async function grantAdminRole(userEmail: string): Promise<void> {
   const user = await admin.auth().getUserByEmail(userEmail);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (user.customClaims && (user.customClaims as any).admin === true) {
     return;
   }
@@ -21,10 +22,12 @@ if (process.argv.length !== 3) {
   throw Error('Invalid use of makeAdmin. Usage: node makeAdmin.js <email>');
 }
 const email = process.argv[2];
-grantAdminRole(email).then(() => {
-  console.log(`User ${email} has been given admin role`);
-  process.exit(0);
-}).catch((err) => {
-  console.log('Failed to grant user admin role: ' + err);
-  process.exit(1);
-});
+grantAdminRole(email)
+  .then(() => {
+    console.log(`User ${email} has been given admin role`);
+    process.exit(0);
+  })
+  .catch((err) => {
+    console.log('Failed to grant user admin role: ' + err);
+    process.exit(1);
+  });
