@@ -40,9 +40,9 @@ function layoutPDFClues(
   const format = {
     font: 'helvetica',
     fontSize: 9,
-    labelWidth: 13,
+    labelWidth: 19,
     clueWidth: 94,
-    columnSeparator: 18,
+    columnSeparator: 12,
     marginBottom: doc.internal.pageSize.height - 50,
     marginLeft: 50,
     marginRight: doc.internal.pageSize.width - 50,
@@ -52,19 +52,30 @@ function layoutPDFClues(
   let x = format.marginLeft;
   let y = marginTop(x, false);
   let addedPage = false;
-  const acrossTitle = [{ label: 'ACROSS', clue: ' ' }];
+  const constructorNote: Array<{ label: string; clue: string }> = [];
+  if (puzzle.constructorNotes) {
+    constructorNote.push(
+      { label: '', clue: puzzle.constructorNotes },
+      { label: '', clue: '' }
+    );
+  }
+  const acrossTitle = [{ label: 'ACROSS', clue: '' }];
   const downTitle = [
-    { label: ' ', clue: ' ' },
-    { label: 'DOWN', clue: ' ' },
+    { label: '', clue: '' },
+    { label: 'DOWN', clue: '' },
   ];
-  const allClues = acrossTitle
+  const allClues = constructorNote
+    .concat(acrossTitle)
     .concat(acrossClues)
     .concat(downTitle)
     .concat(downClues);
   for (let i = 0; i < allClues.length; i++) {
     // Position clue on page
-    const clueText = doc.splitTextToSize(allClues[i].clue, format.clueWidth);
-    const adjustY = clueText.length * (format.fontSize + 2);
+    const width = allClues[i].label
+      ? format.clueWidth
+      : format.clueWidth + format.labelWidth;
+    const clueText = doc.splitTextToSize(allClues[i].clue, width);
+    const adjustY = clueText.length * (format.fontSize + 3);
     if (y + adjustY > format.marginBottom) {
       x += format.labelWidth + format.clueWidth + format.columnSeparator;
       if (x + format.labelWidth > format.marginRight) {
@@ -77,11 +88,14 @@ function layoutPDFClues(
     if (['across', 'down'].includes(allClues[i].label.toLowerCase())) {
       // Make Across, Down headings bold
       doc.setFont('helvetica', 'bold');
+      doc.text(allClues[i].label, x, y);
     } else {
       doc.setFont('helvetica', 'normal');
+      doc.text(allClues[i].label, x + format.labelWidth - 5, y, {
+        align: 'right',
+      });
+      doc.text(clueText, x + (allClues[i].label ? format.labelWidth : 0), y);
     }
-    doc.text(allClues[i].label, x, y); // Print clue on page
-    doc.text(clueText, x + format.labelWidth, y);
     y += adjustY;
   }
 }
