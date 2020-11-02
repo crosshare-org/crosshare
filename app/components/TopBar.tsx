@@ -455,7 +455,7 @@ export const TopBar = ({ children }: TopBarProps) => {
               top: HEADER_HEIGHT + 10,
               left: 5,
               border: '1px solid var(--text-input-border)',
-              boxShadow: '0 0 5px 5px rgba(60, 60, 60, 0.4)',
+              boxShadow: '0 0 10px 10px rgba(80, 80, 80, 0.6)',
               backgroundColor: 'var(--overlay-inner)',
               width: 'calc(100vw - 10px)',
               maxWidth: '30em',
