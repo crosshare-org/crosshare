@@ -128,9 +128,6 @@ function layoutPDFGrid(
             ? '#DDD'
             : 'white'
       );
-      if (highlighted && puzzle.highlight === 'circle') {
-        // TODO
-      }
       doc.rect(
         format.gridOrigin.x + j * format.squareSize,
         format.gridOrigin.y + i * format.squareSize,
@@ -138,6 +135,14 @@ function layoutPDFGrid(
         format.squareSize,
         'FD'
       );
+      if (highlighted && puzzle.highlight === 'circle') {
+        doc.circle(
+          format.gridOrigin.x + (j + 0.5) * format.squareSize,
+          format.gridOrigin.y + (i + 0.5) * format.squareSize,
+          format.squareSize / 2,
+          'S'
+        );
+      }
     }
   }
   // Label grid
