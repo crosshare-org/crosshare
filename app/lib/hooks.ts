@@ -1,18 +1,26 @@
-import { useState, useCallback, useEffect, useMemo, MouseEvent, RefObject } from 'react';
+import {
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  MouseEvent,
+  RefObject,
+} from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
-
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { App } from './firebaseWrapper';
-import { ConstructorPageV, } from './constructorPage';
+import { ConstructorPageV } from './constructorPage';
 import { NotificationV, NotificationT } from './notifications';
 import useResizeObserver from 'use-resize-observer';
 import { AccountPrefsV } from './prefs';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {
-  const [matches, setMatches] = useState(() => typeof window !== 'undefined' && matchMedia(query).matches);
+  const [matches, setMatches] = useState(
+    () => typeof window !== 'undefined' && matchMedia(query).matches
+  );
 
   useEffect(() => {
     const mediaQueryList = matchMedia(query);
@@ -38,8 +46,8 @@ export function usePolyfilledResizeObserver(ref: RefObject<HTMLElement>) {
       setHasResizeObserver(true);
     } else {
       // Loads polyfill asynchronously, only if required.
-      import('@juggle/resize-observer').then(module => {
-        window.ResizeObserver = module.ResizeObserver as unknown as typeof ResizeObserver;
+      import('@juggle/resize-observer').then((module) => {
+        window.ResizeObserver = (module.ResizeObserver as unknown) as typeof ResizeObserver;
         setHasResizeObserver(true);
       });
     }
@@ -47,7 +55,10 @@ export function usePolyfilledResizeObserver(ref: RefObject<HTMLElement>) {
   return useResizeObserver({ ref: hasResizeObserver ? ref : null });
 }
 
-export function usePersistedBoolean(key: string, defaultValue: boolean): [boolean, (b: boolean) => void] {
+export function usePersistedBoolean(
+  key: string,
+  defaultValue: boolean
+): [boolean, (b: boolean) => void] {
   const [state, setState] = useState<boolean>(defaultValue);
 
   useEffect(() => {
@@ -55,10 +66,13 @@ export function usePersistedBoolean(key: string, defaultValue: boolean): [boolea
     setState(initialValue !== null ? initialValue === 'true' : defaultValue);
   }, [defaultValue, key]);
 
-  const setStateAndPersist = useCallback((newValue: boolean) => {
-    localStorage.setItem(key, newValue ? 'true' : 'false');
-    setState(newValue);
-  }, [key, setState]);
+  const setStateAndPersist = useCallback(
+    (newValue: boolean) => {
+      localStorage.setItem(key, newValue ? 'true' : 'false');
+      setState(newValue);
+    },
+    [key, setState]
+  );
   return [state, setStateAndPersist];
 }
 
@@ -72,7 +86,8 @@ export function useAuth() {
   // Is admin
   useEffect(() => {
     if (user && user.email) {
-      user.getIdTokenResult()
+      user
+        .getIdTokenResult()
         .then((idTokenResult) => {
           if (idTokenResult.claims.admin) {
             setIsAdmin(true);
@@ -88,24 +103,28 @@ export function useAuth() {
   }, [user]);
 
   // Constructor page + notifications + prefs
-  const [cpDocRef, notificationsDocRef, prefsDocRef] = useMemo(
-    () => {
-      if (user && user.email && !user.isAnonymous) {
-        setIsLoading(true);
-        return [
-          App.firestore().collection('cp').where('u', '==', user.uid),
-          App.firestore().collection('n').where('u', '==', user.uid).where('r', '==', false),
-          App.firestore().doc(`prefs/${user.uid}`)
-        ];
-      }
-      setIsLoading(false);
-      return [null, null, null];
-    },
-    [user]
-  );
-  const [accountPrefsDoc, loadingAccountPrefs, accountPrefsDBError] = useDocument(prefsDocRef);
+  const [cpDocRef, notificationsDocRef, prefsDocRef] = useMemo(() => {
+    if (user && user.email && !user.isAnonymous) {
+      setIsLoading(true);
+      return [
+        App.firestore().collection('cp').where('u', '==', user.uid),
+        App.firestore()
+          .collection('n')
+          .where('u', '==', user.uid)
+          .where('r', '==', false),
+        App.firestore().doc(`prefs/${user.uid}`),
+      ];
+    }
+    setIsLoading(false);
+    return [null, null, null];
+  }, [user]);
+  const [
+    accountPrefsDoc,
+    loadingAccountPrefs,
+    accountPrefsDBError,
+  ] = useDocument(prefsDocRef);
   const [accountPrefs, accountPrefsDecodeError] = useMemo(() => {
-    if (!accountPrefsDoc ?.exists) {
+    if (!accountPrefsDoc?.exists) {
       return [undefined, undefined];
     }
     const validationResult = AccountPrefsV.decode(accountPrefsDoc.data());
@@ -116,9 +135,12 @@ export function useAuth() {
       return [undefined, 'failed to decode account prefs'];
     }
   }, [accountPrefsDoc]);
-  const accountPrefsError = accountPrefsDBError ?.message || accountPrefsDecodeError;
+  const accountPrefsError =
+    accountPrefsDBError?.message || accountPrefsDecodeError;
 
-  const [notificationsSnapshot, , notificationError] = useCollection(notificationsDocRef);
+  const [notificationsSnapshot, , notificationError] = useCollection(
+    notificationsDocRef
+  );
   if (notificationError) {
     console.log(notificationError);
   }
@@ -126,7 +148,10 @@ export function useAuth() {
     if (notificationsSnapshot === undefined || notificationsSnapshot.empty) {
       return [];
     }
-    return notificationsSnapshot.docs.map(d => NotificationV.decode(d.data())).filter(isRight).map(r => r.right);
+    return notificationsSnapshot.docs
+      .map((d) => NotificationV.decode(d.data()))
+      .filter(isRight)
+      .map((r) => r.right);
   }, [notificationsSnapshot]);
   const [cpSnapshot, loadingCP, cpError] = useCollection(cpDocRef);
   const [constructorPage, cpDecodeError] = useMemo(() => {
@@ -140,9 +165,14 @@ export function useAuth() {
     if (cpSnapshot.size !== 1) {
       return [undefined, 'Multiple matching constructor pages'];
     }
-    const validationResult = ConstructorPageV.decode(cpSnapshot.docs[0].data({ serverTimestamps: 'previous' }));
+    const validationResult = ConstructorPageV.decode(
+      cpSnapshot.docs[0].data({ serverTimestamps: 'previous' })
+    );
     if (isRight(validationResult)) {
-      return [{ ...validationResult.right, id: cpSnapshot.docs[0].id }, undefined];
+      return [
+        { ...validationResult.right, id: cpSnapshot.docs[0].id },
+        undefined,
+      ];
     } else {
       console.log(PathReporter.report(validationResult).join(','));
       return [undefined, 'Failed to decode constructor page'];
@@ -150,9 +180,17 @@ export function useAuth() {
   }, [cpSnapshot]);
 
   return {
-    user, isAdmin, constructorPage, notifications, prefs: accountPrefs,
+    user,
+    isAdmin,
+    constructorPage,
+    notifications,
+    prefs: accountPrefs,
     loading: isLoading || loadingUser || loadingCP || loadingAccountPrefs,
-    error: authError ?.message || cpError ?.message || cpDecodeError || accountPrefsError
+    error:
+      authError?.message ||
+      cpError?.message ||
+      cpDecodeError ||
+      accountPrefsError,
   };
 }
 
@@ -168,8 +206,12 @@ export function useHover(): [
 
   const bind = useMemo(
     () => ({
-      onClick: (e: MouseEvent) => { e.stopPropagation(); },
-      onMouseMove: () => { setHovered(true); },
+      onClick: (e: MouseEvent) => {
+        e.stopPropagation();
+      },
+      onMouseMove: () => {
+        setHovered(true);
+      },
       onMouseLeave: () => setHovered(false),
     }),
     []

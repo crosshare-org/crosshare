@@ -6,11 +6,13 @@ import {
   render,
   fireEvent,
   RenderResult,
+  getProps,
 } from '../lib/testingUtils';
 import BuilderPage from '../pages/construct';
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
 import type firebaseAdminType from 'firebase-admin';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
+import type firebase from 'firebase/app';
 import NextJSRouter from 'next/router';
 import PuzzlePage, { getServerSideProps } from '../pages/crosswords/[puzzleId]';
 import { PuzzleLoader as StatsPuzzleLoader } from '../pages/crosswords/[puzzleId]/stats';
@@ -191,13 +193,13 @@ test('moderate as daily mini', async () => {
   expect(puzzles.size).toEqual(1);
   const puzzleId = puzzles.docs[0].id;
   cleanup();
-  const props1 = (
+  const props1 = getProps(
     await getServerSideProps({
       params: { puzzleId },
       res: { setHeader: jest.fn() },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
-  ).props;
+  );
   if (!props1) {
     throw new Error('bad props');
   }
@@ -267,13 +269,13 @@ test('publish as default', async () => {
 
   // The puzzle should be visible on the puzzle page, even to a rando
   setApp(serverApp as firebase.app.App);
-  const props1 = (
+  const props1 = getProps(
     await getServerSideProps({
       params: { puzzleId },
       res: { setHeader: jest.fn() },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
-  ).props;
+  );
   if (!props1) {
     throw new Error('bad props');
   }
@@ -375,13 +377,13 @@ test('change author name in publish dialogue should publish w/ new name', async 
 
   // The puzzle should be visible on the puzzle page, even to a rando
   setApp(serverApp as firebase.app.App);
-  const props1 = (
+  const props1 = getProps(
     await getServerSideProps({
       params: { puzzleId },
       res: { setHeader: jest.fn() },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
-  ).props;
+  );
   if (!props1) {
     throw new Error('bad props');
   }
@@ -476,13 +478,13 @@ test('publish custom / non-rectangular size', async () => {
 
   // The puzzle should be visible on the puzzle page, even to a rando
   setApp(serverApp as firebase.app.App);
-  const props1 = (
+  const props1 = getProps(
     await getServerSideProps({
       params: { puzzleId },
       res: { setHeader: jest.fn() },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
-  ).props;
+  );
   if (!props1) {
     throw new Error('bad props');
   }

@@ -1,20 +1,26 @@
 import * as t from 'io-ts';
 import { useEffect, useState } from 'react';
-import type { firestore } from 'firebase';
+import type firebase from 'firebase/app';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 export function usePaginatedQuery<A, N>(
-  query: firestore.Query,
+  query: firebase.firestore.Query,
   validator: t.Type<A>,
   limit: number,
   mapper: (val: A, docid: string) => Promise<N | undefined>
 ) {
-  const [after, setAfter] = useState<firestore.QueryDocumentSnapshot | null>(null);
+  const [
+    after,
+    setAfter,
+  ] = useState<firebase.firestore.QueryDocumentSnapshot | null>(null);
   const [docs, setDocs] = useState<Array<N>>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
-  const [lastLoaded, setLastLoaded] = useState<firestore.QueryDocumentSnapshot | null>(null);
+  const [
+    lastLoaded,
+    setLastLoaded,
+  ] = useState<firebase.firestore.QueryDocumentSnapshot | null>(null);
 
   // when "after" changes, we update our query
   useEffect(() => {
@@ -26,8 +32,9 @@ export function usePaginatedQuery<A, N>(
       if (after) {
         q = q.startAfter(after);
       }
-      q.limit(limit).get()
-        .then(async dbres => {
+      q.limit(limit)
+        .get()
+        .then(async (dbres) => {
           if (didCancel) {
             return;
           }
@@ -40,12 +47,11 @@ export function usePaginatedQuery<A, N>(
             const data = doc.data();
             const validationResult = validator.decode(data);
             if (isRight(validationResult)) {
-              const res = await (mapper(validationResult.right, doc.id));
+              const res = await mapper(validationResult.right, doc.id);
               if (res !== undefined) {
                 results.push(res);
               }
-            }
-            else {
+            } else {
               console.error(PathReporter.report(validationResult).join(','));
               return Promise.reject('Malformed content');
             }
@@ -69,6 +75,6 @@ export function usePaginatedQuery<A, N>(
     loading,
     docs,
     hasMore,
-    loadMore
+    loadMore,
   };
 }

@@ -1,6 +1,7 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import { setAdminApp, FieldValue } from '../lib/firebaseWrapper';
 import type * as firebaseAdminType from 'firebase-admin';
+import type firebase from 'firebase/app';
 
 jest.mock('../lib/firebaseWrapper');
 
@@ -14,21 +15,23 @@ beforeAll(async () => {
   randoApp = firebaseTesting.initializeTestApp({
     projectId,
     auth: {
-      uid: 'tom', firebase: {
-        sign_in_provider: 'google.com'
-      }
-    }
+      uid: 'tom',
+      firebase: {
+        sign_in_provider: 'google.com',
+      },
+    },
   }) as firebase.app.App;
   app = firebaseTesting.initializeTestApp({
     projectId,
     auth: {
-      uid: 'mike', firebase: {
-        sign_in_provider: 'google.com'
-      }
-    }
+      uid: 'mike',
+      firebase: {
+        sign_in_provider: 'google.com',
+      },
+    },
   }) as firebase.app.App;
   admin = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
-  setAdminApp(admin as unknown as firebaseAdminType.app.App);
+  setAdminApp((admin as unknown) as firebaseAdminType.app.App);
 });
 
 afterAll(async () => {
@@ -44,20 +47,34 @@ test('security rules for creating following', async () => {
 
   // Fails if not correct user
   await firebaseTesting.assertFails(
-    app.firestore().collection('followers').doc('blah').set({
-      f: FieldValue.arrayUnion('tom')
-    }, { merge: true })
+    app
+      .firestore()
+      .collection('followers')
+      .doc('blah')
+      .set(
+        {
+          f: FieldValue.arrayUnion('tom'),
+        },
+        { merge: true }
+      )
   );
 
   // Succeeds
   await firebaseTesting.assertSucceeds(
-    app.firestore().collection('followers').doc('blah').set({
-      f: FieldValue.arrayUnion('mike')
-    }, { merge: true })
+    app
+      .firestore()
+      .collection('followers')
+      .doc('blah')
+      .set(
+        {
+          f: FieldValue.arrayUnion('mike'),
+        },
+        { merge: true }
+      )
   );
 
   const res = await admin.firestore().collection('followers').doc('blah').get();
-  expect(res.data() ?.f.sort()).toEqual(['mike']);
+  expect(res.data()?.f.sort()).toEqual(['mike']);
 });
 
 test('security rules for creating by unfollowing', async () => {
@@ -65,62 +82,118 @@ test('security rules for creating by unfollowing', async () => {
 
   // Succeeds
   await firebaseTesting.assertSucceeds(
-    app.firestore().collection('followers').doc('blah').set({
-      f: FieldValue.arrayRemove('mike')
-    }, { merge: true })
+    app
+      .firestore()
+      .collection('followers')
+      .doc('blah')
+      .set(
+        {
+          f: FieldValue.arrayRemove('mike'),
+        },
+        { merge: true }
+      )
   );
 
   const res = await admin.firestore().collection('followers').doc('blah').get();
-  expect(res.data() ?.f.sort()).toEqual([]);
+  expect(res.data()?.f.sort()).toEqual([]);
 });
 
 test('security rules for updating following', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
-  await admin.firestore().collection('followers').doc('randomauthorid').set({ f: ['dummyid'] });
+  await admin
+    .firestore()
+    .collection('followers')
+    .doc('randomauthorid')
+    .set({ f: ['dummyid'] });
 
   // Can't skip an existing user
   await firebaseTesting.assertFails(
-    app.firestore().collection('followers').doc('randomauthorid').set({
-      f: ['mike']
-    }, { merge: true })
+    app
+      .firestore()
+      .collection('followers')
+      .doc('randomauthorid')
+      .set(
+        {
+          f: ['mike'],
+        },
+        { merge: true }
+      )
   );
 
   // Can't update for a different user
   await firebaseTesting.assertFails(
-    app.firestore().collection('followers').doc('randomauthorid').set({
-      f: FieldValue.arrayUnion('tom')
-    }, { merge: true })
+    app
+      .firestore()
+      .collection('followers')
+      .doc('randomauthorid')
+      .set(
+        {
+          f: FieldValue.arrayUnion('tom'),
+        },
+        { merge: true }
+      )
   );
 
   // Can't update for a different user and ours
   await firebaseTesting.assertFails(
-    app.firestore().collection('followers').doc('randomauthorid').set({
-      f: FieldValue.arrayUnion('tom', 'mike')
-    }, { merge: true })
+    app
+      .firestore()
+      .collection('followers')
+      .doc('randomauthorid')
+      .set(
+        {
+          f: FieldValue.arrayUnion('tom', 'mike'),
+        },
+        { merge: true }
+      )
   );
 
   // Succeeds updating array
   await firebaseTesting.assertSucceeds(
-    app.firestore().collection('followers').doc('randomauthorid').set({
-      f: FieldValue.arrayUnion('mike')
-    }, { merge: true })
+    app
+      .firestore()
+      .collection('followers')
+      .doc('randomauthorid')
+      .set(
+        {
+          f: FieldValue.arrayUnion('mike'),
+        },
+        { merge: true }
+      )
   );
 
-  const res = await admin.firestore().collection('followers').doc('randomauthorid').get();
-  expect(res.data() ?.f.sort()).toEqual(['dummyid', 'mike']);
-
+  const res = await admin
+    .firestore()
+    .collection('followers')
+    .doc('randomauthorid')
+    .get();
+  expect(res.data()?.f.sort()).toEqual(['dummyid', 'mike']);
 
   // Succeeds updating array w/ explicit list
   await firebaseTesting.assertSucceeds(
-    app.firestore().collection('followers').doc('randomauthorid').set({
-      f: ['mike', 'dummyid']
-    }, { merge: true })
+    app
+      .firestore()
+      .collection('followers')
+      .doc('randomauthorid')
+      .set(
+        {
+          f: ['mike', 'dummyid'],
+        },
+        { merge: true }
+      )
   );
 
   // Succeeds removing from array w/ explicit list
   await firebaseTesting.assertSucceeds(
-    app.firestore().collection('followers').doc('randomauthorid').set({
-      f: ['dummyid']
-    }, { merge: true })
+    app
+      .firestore()
+      .collection('followers')
+      .doc('randomauthorid')
+      .set(
+        {
+          f: ['dummyid'],
+        },
+        { merge: true }
+      )
   );
 });

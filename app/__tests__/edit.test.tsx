@@ -1,8 +1,16 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
 import type * as firebaseAdminType from 'firebase-admin';
-import { getUser, screen, render, getMockedPuzzle, fireEvent, waitForElementToBeRemoved } from '../lib/testingUtils';
+import {
+  getUser,
+  screen,
+  render,
+  getMockedPuzzle,
+  fireEvent,
+  waitForElementToBeRemoved,
+} from '../lib/testingUtils';
 import { PuzzleLoader } from '../pages/crosswords/[puzzleId]/edit';
+import type firebase from 'firebase/app';
 
 jest.mock('../lib/firebaseWrapper');
 jest.mock('../lib/WordDB');
@@ -19,21 +27,23 @@ beforeAll(async () => {
   randoApp = firebaseTesting.initializeTestApp({
     projectId,
     auth: {
-      uid: 'tom', firebase: {
-        sign_in_provider: 'google.com'
-      }
-    }
+      uid: 'tom',
+      firebase: {
+        sign_in_provider: 'google.com',
+      },
+    },
   }) as firebase.app.App;
   app = firebaseTesting.initializeTestApp({
     projectId,
     auth: {
-      uid: 'mike', firebase: {
-        sign_in_provider: 'google.com'
-      }
-    }
+      uid: 'mike',
+      firebase: {
+        sign_in_provider: 'google.com',
+      },
+    },
   }) as firebase.app.App;
   admin = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
-  setAdminApp(admin as unknown as firebaseAdminType.app.App);
+  setAdminApp((admin as unknown) as firebaseAdminType.app.App);
 });
 
 afterAll(async () => {
@@ -51,15 +61,24 @@ test('cannot edit if not correct user', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
-  await admin.firestore().collection('c').doc(PUZZLEID).set(getMockedPuzzle({ a: 'mike' }));
+  await admin
+    .firestore()
+    .collection('c')
+    .doc(PUZZLEID)
+    .set(getMockedPuzzle({ a: 'mike' }));
 
   setApp(randoApp);
 
   const r = render(
-    <PuzzleLoader puzzleId={PUZZLEID} auth={{ user: rando, isAdmin: false }} />, { user: rando }
+    <PuzzleLoader puzzleId={PUZZLEID} auth={{ user: rando, isAdmin: false }} />,
+    { user: rando }
   );
 
-  expect(await r.findByText('You do not have permission to view this page', { exact: false })).toBeInTheDocument();
+  expect(
+    await r.findByText('You do not have permission to view this page', {
+      exact: false,
+    })
+  ).toBeInTheDocument();
 });
 
 test('basic edit', async () => {
@@ -67,17 +86,26 @@ test('basic edit', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
-  await admin.firestore().collection('c').doc(PUZZLEID).set(getMockedPuzzle({ a: 'mike' }));
+  await admin
+    .firestore()
+    .collection('c')
+    .doc(PUZZLEID)
+    .set(getMockedPuzzle({ a: 'mike' }));
 
   setApp(app);
 
   const r = render(
-    <PuzzleLoader puzzleId={PUZZLEID} auth={{ user: mike, isAdmin: false }} />, { user: mike }
+    <PuzzleLoader puzzleId={PUZZLEID} auth={{ user: mike, isAdmin: false }} />,
+    { user: mike }
   );
 
-  expect(await r.findByText('changes may take up to an hour', { exact: false })).toBeInTheDocument();
+  expect(
+    await r.findByText('changes may take up to an hour', { exact: false })
+  ).toBeInTheDocument();
   fireEvent.click(r.getByTitle('Edit ESSAY'));
-  fireEvent.change(r.getByLabelText('ESSAY'), { target: { value: 'A new clue for essay' } });
+  fireEvent.change(r.getByLabelText('ESSAY'), {
+    target: { value: 'A new clue for essay' },
+  });
   fireEvent.click(r.getByText('Save'));
   await waitForElementToBeRemoved(() => screen.getByText('Save'));
 
@@ -85,7 +113,9 @@ test('basic edit', async () => {
   await checkSnapshot(PUZZLEID);
 
   fireEvent.click(r.getByTitle('Edit SETSA'));
-  fireEvent.change(r.getByLabelText('SETSA'), { target: { value: 'A new clue for wedding' } });
+  fireEvent.change(r.getByLabelText('SETSA'), {
+    target: { value: 'A new clue for wedding' },
+  });
   fireEvent.click(r.getByText('Save'));
   await waitForElementToBeRemoved(() => screen.getByText('Save'));
 
@@ -98,17 +128,26 @@ test('edit title', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
-  await admin.firestore().collection('c').doc(PUZZLEID).set(getMockedPuzzle({ a: 'mike' }));
+  await admin
+    .firestore()
+    .collection('c')
+    .doc(PUZZLEID)
+    .set(getMockedPuzzle({ a: 'mike' }));
 
   setApp(app);
 
   const r = render(
-    <PuzzleLoader puzzleId={PUZZLEID} auth={{ user: mike, isAdmin: false }} />, { user: mike }
+    <PuzzleLoader puzzleId={PUZZLEID} auth={{ user: mike, isAdmin: false }} />,
+    { user: mike }
   );
 
-  expect(await r.findByText('changes may take up to an hour', { exact: false })).toBeInTheDocument();
+  expect(
+    await r.findByText('changes may take up to an hour', { exact: false })
+  ).toBeInTheDocument();
   fireEvent.click(r.getByTitle('Edit Title'));
-  fireEvent.change(r.getByPlaceholderText('Enter Title'), { target: { value: 'Well we got a new title' } });
+  fireEvent.change(r.getByPlaceholderText('Enter Title'), {
+    target: { value: 'Well we got a new title' },
+  });
   fireEvent.click(r.getByText('Save'));
   await waitForElementToBeRemoved(() => screen.getByText('Save'));
 
@@ -132,17 +171,26 @@ test('edit constructor note', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
-  await admin.firestore().collection('c').doc(PUZZLEID).set(getMockedPuzzle({ a: 'mike' }));
+  await admin
+    .firestore()
+    .collection('c')
+    .doc(PUZZLEID)
+    .set(getMockedPuzzle({ a: 'mike' }));
 
   setApp(app);
 
   const r = render(
-    <PuzzleLoader puzzleId={PUZZLEID} auth={{ user: mike, isAdmin: false }} />, { user: mike }
+    <PuzzleLoader puzzleId={PUZZLEID} auth={{ user: mike, isAdmin: false }} />,
+    { user: mike }
   );
 
-  expect(await r.findByText('changes may take up to an hour', { exact: false })).toBeInTheDocument();
+  expect(
+    await r.findByText('changes may take up to an hour', { exact: false })
+  ).toBeInTheDocument();
   fireEvent.click(r.getByTitle('Add Constructor Note'));
-  fireEvent.change(r.getByPlaceholderText('Enter Constructor Note'), { target: { value: 'Here is our note' } });
+  fireEvent.change(r.getByPlaceholderText('Enter Constructor Note'), {
+    target: { value: 'Here is our note' },
+  });
   fireEvent.click(r.getByText('Save'));
   await waitForElementToBeRemoved(() => screen.getByText('Save'));
 
@@ -150,7 +198,9 @@ test('edit constructor note', async () => {
   await checkSnapshot(PUZZLEID);
 
   fireEvent.click(r.getByTitle('Edit Constructor Note'));
-  fireEvent.change(r.getByPlaceholderText('Enter Constructor Note'), { target: { value: 'Here is our new note' } });
+  fireEvent.change(r.getByPlaceholderText('Enter Constructor Note'), {
+    target: { value: 'Here is our new note' },
+  });
   fireEvent.click(r.getByText('Save'));
   await waitForElementToBeRemoved(() => screen.getByText('Save'));
 
@@ -159,7 +209,9 @@ test('edit constructor note', async () => {
   await checkSnapshot(PUZZLEID);
 
   fireEvent.click(r.getByTitle('Delete Constructor Note'));
-  await waitForElementToBeRemoved(() => screen.getByTitle('Delete Constructor Note'));
+  await waitForElementToBeRemoved(() =>
+    screen.getByTitle('Delete Constructor Note')
+  );
 
   await checkSnapshot(PUZZLEID);
   expect(r.getByTitle('Add Constructor Note')).toBeInTheDocument();
@@ -170,17 +222,27 @@ test('edit blog post', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
-  await admin.firestore().collection('c').doc(PUZZLEID).set(getMockedPuzzle({ a: 'mike' }));
+  await admin
+    .firestore()
+    .collection('c')
+    .doc(PUZZLEID)
+    .set(getMockedPuzzle({ a: 'mike' }));
 
   setApp(app);
 
   const r = render(
-    <PuzzleLoader puzzleId={PUZZLEID} auth={{ user: mike, isAdmin: false }} />, { user: mike }
+    <PuzzleLoader puzzleId={PUZZLEID} auth={{ user: mike, isAdmin: false }} />,
+    { user: mike }
   );
 
-  expect(await r.findByText('changes may take up to an hour', { exact: false })).toBeInTheDocument();
+  expect(
+    await r.findByText('changes may take up to an hour', { exact: false })
+  ).toBeInTheDocument();
   fireEvent.click(r.getByTitle('Add Blog Post'));
-  fireEvent.change(r.getByPlaceholderText('Enter Blog Post (markdown formatted)'), { target: { value: 'Here is our new blog post' } });
+  fireEvent.change(
+    r.getByPlaceholderText('Enter Blog Post (markdown formatted)'),
+    { target: { value: 'Here is our new blog post' } }
+  );
   fireEvent.click(r.getByText('Save'));
   await waitForElementToBeRemoved(() => screen.getByText('Save'));
 
@@ -189,7 +251,10 @@ test('edit blog post', async () => {
   await checkSnapshot(PUZZLEID);
 
   fireEvent.click(r.getByTitle('Edit Blog Post'));
-  fireEvent.change(r.getByPlaceholderText('Enter Blog Post (markdown formatted)'), { target: { value: 'Here is our new post' } });
+  fireEvent.change(
+    r.getByPlaceholderText('Enter Blog Post (markdown formatted)'),
+    { target: { value: 'Here is our new post' } }
+  );
   fireEvent.click(r.getByText('Save'));
   await waitForElementToBeRemoved(() => screen.getByText('Save'));
 
@@ -205,8 +270,16 @@ test('edit blog post', async () => {
 
 test('security rules for puzzle edits', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
-  await admin.firestore().collection('c').doc(PUZZLEID).set(getMockedPuzzle({ a: 'mike' }));
-  await admin.firestore().collection('c').doc('other').set(getMockedPuzzle({ a: 'other' }));
+  await admin
+    .firestore()
+    .collection('c')
+    .doc(PUZZLEID)
+    .set(getMockedPuzzle({ a: 'mike' }));
+  await admin
+    .firestore()
+    .collection('c')
+    .doc('other')
+    .set(getMockedPuzzle({ a: 'other' }));
 
   // Succeeds updating title
   await firebaseTesting.assertSucceeds(
@@ -233,22 +306,26 @@ test('security rules for puzzle edits', async () => {
 
   // Fails for clues wrong length
   await firebaseTesting.assertFails(
-    app.firestore().collection('c').doc(PUZZLEID).update({
-      dc: downs.slice(0, -1)
-    })
+    app
+      .firestore()
+      .collection('c')
+      .doc(PUZZLEID)
+      .update({
+        dc: downs.slice(0, -1),
+      })
   );
 
   // Fails for setting featured
   await firebaseTesting.assertFails(
     app.firestore().collection('c').doc(PUZZLEID).update({
-      f: true
+      f: true,
     })
   );
 
   // Fails for setting moderated
   await firebaseTesting.assertFails(
     app.firestore().collection('c').doc(PUZZLEID).update({
-      m: true
+      m: true,
     })
   );
 

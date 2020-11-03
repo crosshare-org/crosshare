@@ -1,5 +1,6 @@
 const firebaseTesting = jest.requireActual('@firebase/rules-unit-testing');
 import firebaseAdmin from 'firebase-admin';
+import type firebase from 'firebase/app';
 
 export let App: firebase.app.App;
 export let AdminApp: firebaseAdmin.app.App;

@@ -1,12 +1,12 @@
 // On client side we include firebase via script tags.
 // The 'externals' field in package.json tells it not to bundle these.
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/performance';
 import 'firebase/auth';
 import 'firebase/storage';
 
-import type * as firebaseAdminType from 'firebase-admin';
+import type firebaseAdminType from 'firebase-admin';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBrmmBf91peVT5T_Z7N3z9oizsPH5u2pUc',
@@ -16,7 +16,7 @@ const firebaseConfig = {
   storageBucket: 'mdcrosshare.appspot.com',
   messagingSenderId: '603173482014',
   appId: '1:603173482014:web:98d7d820731b7c5eaa080f',
-  measurementId: 'G-LTLN7Z4XBS'
+  measurementId: 'G-LTLN7Z4XBS',
 };
 
 // Initialize Firebase
@@ -54,15 +54,22 @@ if (firebase.apps.length) {
     const db = App.firestore();
     db.settings({
       host: 'localhost:8080',
-      ssl: false
+      ssl: false,
     });
   }
 }
 
-export const setApp = (app: firebase.app.App) => { App = app; };
-export const setAdminApp = (app: firebaseAdminType.app.App) => { AdminApp = app; };
+export const setApp = (app: firebase.app.App) => {
+  App = app;
+};
+export const setAdminApp = (app: firebaseAdminType.app.App) => {
+  AdminApp = app;
+};
 
-export const setUpForSignInAnonymously = (_app: firebase.app.App, _user: firebase.User) => {
+export const setUpForSignInAnonymously = (
+  _app: firebase.app.App,
+  _user: firebase.User
+) => {
   throw new Error('For testing only');
 };
 
@@ -74,7 +81,9 @@ export const signInAnonymously = async () => {
   return userCredential.user;
 };
 
-export const setUserMap = (_map: Record<string, firebase.User>) => {/* noop */ };
+export const setUserMap = (_map: Record<string, firebase.User>) => {
+  /* noop */
+};
 export const getUser = (userId: string) => AdminApp.auth().getUser(userId);
 
 export const AuthProvider = new firebase.auth.GoogleAuthProvider();
@@ -86,7 +95,8 @@ export const ServerTimestamp = firebase.firestore.FieldValue.serverTimestamp();
 export const FieldValue = firebase.firestore.FieldValue;
 
 export let TimestampClass = firebase.firestore.Timestamp;
-export function setTimestampClass(cls: any) { //eslint-disable-line @typescript-eslint/no-explicit-any
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function setTimestampClass(cls: any) {
   TimestampClass = cls;
 }
 export type TimestampType = firebase.firestore.Timestamp;

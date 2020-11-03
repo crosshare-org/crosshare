@@ -7,8 +7,13 @@ import { PlayT } from '../lib/dbtypes';
 import * as plays from '../lib/plays';
 import PuzzlePage from '../pages/crosswords/[puzzleId]';
 import * as firebaseWrapper from '../lib/firebaseWrapper';
-import { setApp, setUpForSignInAnonymously, AdminTimestamp } from '../lib/firebaseWrapper';
+import {
+  setApp,
+  setUpForSignInAnonymously,
+  AdminTimestamp,
+} from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
+import type firebase from 'firebase/app';
 
 jest.mock('../lib/firebaseWrapper');
 
@@ -16,7 +21,9 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-window.HTMLElement.prototype.scrollIntoView = function() { return; };
+window.HTMLElement.prototype.scrollIntoView = function () {
+  return;
+};
 
 const testPuzzle: ServerPuzzleResult = {
   authorId: 'test-author-id',
@@ -41,7 +48,31 @@ const testPuzzle: ServerPuzzleResult = {
     { dir: 1, clue: 'Prefix used in "Ghostbusters"', num: 6 },
   ],
   grid: [
-    'H', 'O', 'P', 'E', '.', 'A', 'L', 'O', 'N', 'E', 'L', 'I', 'L', 'A', 'C', 'E', 'V', 'I', 'C', 'T', '.', 'E', 'S', 'T', 'O',
+    'H',
+    'O',
+    'P',
+    'E',
+    '.',
+    'A',
+    'L',
+    'O',
+    'N',
+    'E',
+    'L',
+    'I',
+    'L',
+    'A',
+    'C',
+    'E',
+    'V',
+    'I',
+    'C',
+    'T',
+    '.',
+    'E',
+    'S',
+    'T',
+    'O',
   ],
   highlighted: [],
   highlight: 'circle',
@@ -54,7 +85,12 @@ const testPuzzle: ServerPuzzleResult = {
 
 test('clicking a clue sets slot to active', () => {
   const { getAllByText, getByLabelText } = render(
-    <Puzzle loadingPlayState={false} puzzle={testPuzzle} play={null} isAdmin={false} />,
+    <Puzzle
+      loadingPlayState={false}
+      puzzle={testPuzzle}
+      play={null}
+      isAdmin={false}
+    />,
     {}
   );
 
@@ -97,7 +133,31 @@ const dailymini_5_19: ServerPuzzleResult = {
     { dir: 1, clue: 'Exciting, in modern lingo', num: 7 },
   ],
   grid: [
-    'C', 'A', 'P', 'E', '.', 'L', 'Y', 'E', '.', 'M', 'U', 'N', 'C', 'L', 'E', 'E', '.', 'A', 'I', 'L', '.', 'I', 'N', 'T', 'O',
+    'C',
+    'A',
+    'P',
+    'E',
+    '.',
+    'L',
+    'Y',
+    'E',
+    '.',
+    'M',
+    'U',
+    'N',
+    'C',
+    'L',
+    'E',
+    'E',
+    '.',
+    'A',
+    'I',
+    'L',
+    '.',
+    'I',
+    'N',
+    'T',
+    'O',
   ],
   highlighted: [],
   highlight: 'circle',
@@ -113,12 +173,20 @@ test('daily mini from 5/19/20', () => {
     queryByText,
     getAllByText,
     container,
-  } = render(<Puzzle puzzle={dailymini_5_19} play={null} loadingPlayState={false} isAdmin={false} />, {});
+  } = render(
+    <Puzzle
+      puzzle={dailymini_5_19}
+      play={null}
+      loadingPlayState={false}
+      isAdmin={false}
+    />,
+    {}
+  );
 
   fireEvent.click(getByText(/Begin Puzzle/i));
   expect(queryByText(/Begin Puzzle/i)).toBeNull();
 
-  const clue = getAllByText(/professor plum/i)[0].parentElement ?.parentElement;
+  const clue = getAllByText(/professor plum/i)[0].parentElement?.parentElement;
   expect(clue).toHaveStyleRule('background-color', 'var(--secondary)');
 
   // This puzzle has some cells w/ only a single entry (no cross) which were
@@ -151,9 +219,13 @@ test('nonuser progress should be cached in local storage but not db', async () =
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
 
-  let { findByText, findByTitle, queryByText, getByLabelText, container } = render(
-    <PuzzlePage puzzle={dailymini_5_19} />, {}
-  );
+  let {
+    findByText,
+    findByTitle,
+    queryByText,
+    getByLabelText,
+    container,
+  } = render(<PuzzlePage puzzle={dailymini_5_19} />, {});
 
   fireEvent.click(await findByText(/Begin Puzzle/i));
   expect(queryByText(/Begin Puzzle/i)).toBeNull();
@@ -181,7 +253,8 @@ test('nonuser progress should be cached in local storage but not db', async () =
 
   // Now try again!
   ({ findByTitle, findByText, queryByText, getByLabelText, container } = render(
-    <PuzzlePage puzzle={dailymini_5_19} />, {}
+    <PuzzlePage puzzle={dailymini_5_19} />,
+    {}
   ));
 
   fireEvent.click(await findByText(/Resume/i, undefined, { timeout: 3000 }));
@@ -205,7 +278,7 @@ test('nonuser progress should be cached in local storage but not db', async () =
 
 // TODO this doesn't really work that well
 function flushPromises() {
-  return new Promise(resolve => setImmediate(resolve));
+  return new Promise((resolve) => setImmediate(resolve));
 }
 
 test('anonymous user progress should be cached in local storage and db', async () => {
@@ -218,19 +291,26 @@ test('anonymous user progress should be cached in local storage and db', async (
   const app = firebaseTesting.initializeTestApp({
     projectId: 'test1',
     auth: {
-      uid: 'anonymous-user-id', firebase: {
-        sign_in_provider: 'anonymous'
-      }
-    }
+      uid: 'anonymous-user-id',
+      firebase: {
+        sign_in_provider: 'anonymous',
+      },
+    },
   });
   setApp(app as firebase.app.App);
   const admin = firebaseTesting.initializeAdminApp({ projectId: 'test1' });
 
-  let { findByTitle, findByText, queryByText, getByLabelText, container } = render(
-    <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
-  );
+  let {
+    findByTitle,
+    findByText,
+    queryByText,
+    getByLabelText,
+    container,
+  } = render(<PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser });
 
-  fireEvent.click(await findByText(/Begin Puzzle/i, undefined, { timeout: 3000 }));
+  fireEvent.click(
+    await findByText(/Begin Puzzle/i, undefined, { timeout: 3000 })
+  );
   expect(queryByText(/Begin Puzzle/i)).toBeNull();
 
   fireEvent.keyDown(container, { key: 'A', keyCode: 65 });
@@ -251,13 +331,19 @@ test('anonymous user progress should be cached in local storage and db', async (
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
   fireEvent.click(await findByTitle(/Pause Game/i));
   cleanup();
-  await waitForExpect(async () => expect((await admin.firestore().collection('p').get()).size).toEqual(1));
+  await waitForExpect(async () =>
+    expect((await admin.firestore().collection('p').get()).size).toEqual(1)
+  );
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
   // Now try again!
-  ({ findByTitle, findByText, queryByText, getByLabelText, container } = render(
-    <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
-  ));
+  ({
+    findByTitle,
+    findByText,
+    queryByText,
+    getByLabelText,
+    container,
+  } = render(<PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }));
 
   await findByText(/Resume/i, undefined, { timeout: 3000 });
 
@@ -277,9 +363,13 @@ test('anonymous user progress should be cached in local storage and db', async (
   sessionStorage.clear();
   localStorage.clear();
   plays.resetMemoryStore();
-  ({ findByTitle, findByText, queryByText, getByLabelText, container } = render(
-    <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
-  ));
+  ({
+    findByTitle,
+    findByText,
+    queryByText,
+    getByLabelText,
+    container,
+  } = render(<PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }));
 
   await findByText(/Resume/i, undefined, { timeout: 3000 });
 
@@ -310,10 +400,11 @@ test('visiting a puzzle youve already solved should not write to db', async () =
   const app = firebaseTesting.initializeTestApp({
     projectId: 'test1',
     auth: {
-      uid: 'anonymous-user-id', firebase: {
-        sign_in_provider: 'anonymous'
-      }
-    }
+      uid: 'anonymous-user-id',
+      firebase: {
+        sign_in_provider: 'anonymous',
+      },
+    },
   });
   setApp(app as firebase.app.App);
   const admin = firebaseTesting.initializeAdminApp({ projectId: 'test1' });
@@ -323,7 +414,31 @@ test('visiting a puzzle youve already solved should not write to db', async () =
     u: 'anonymous-user-id',
     ua: AdminTimestamp.now(),
     g: [
-      'C', 'A', 'P', 'E', '.', 'L', 'Y', 'E', '.', 'M', 'U', 'N', 'C', 'L', 'E', 'E', '.', 'A', 'I', 'L', '.', 'I', 'N', 'T', 'O',
+      'C',
+      'A',
+      'P',
+      'E',
+      '.',
+      'L',
+      'Y',
+      'E',
+      '.',
+      'M',
+      'U',
+      'N',
+      'C',
+      'L',
+      'E',
+      'E',
+      '.',
+      'A',
+      'I',
+      'L',
+      '.',
+      'I',
+      'N',
+      'T',
+      'O',
     ],
     ct: [],
     uc: [],
@@ -334,13 +449,17 @@ test('visiting a puzzle youve already solved should not write to db', async () =
     t: 70,
     ch: false,
     f: true,
-    n: 'Puzzle title'
+    n: 'Puzzle title',
   };
-  await admin.firestore().collection('p').doc(dailymini_5_19.id + '-anonymous-user-id').set(play);
+  await admin
+    .firestore()
+    .collection('p')
+    .doc(dailymini_5_19.id + '-anonymous-user-id')
+    .set(play);
 
-  const { findByText } = render(
-    <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
-  );
+  const { findByText } = render(<PuzzlePage puzzle={dailymini_5_19} />, {
+    user: anonymousUser,
+  });
 
   await findByText(/You solved the puzzle in/i, { exact: false });
   cleanup();
@@ -360,17 +479,18 @@ test('user finishing a puzzle causes write to db', async () => {
   const app = firebaseTesting.initializeTestApp({
     projectId: 'test1',
     auth: {
-      uid: 'anonymous-user-id', firebase: {
-        sign_in_provider: 'anonymous'
-      }
-    }
+      uid: 'anonymous-user-id',
+      firebase: {
+        sign_in_provider: 'anonymous',
+      },
+    },
   });
   setApp(app as firebase.app.App);
   const admin = firebaseTesting.initializeAdminApp({ projectId: 'test1' });
 
-  const r = render(
-    <PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }
-  );
+  const r = render(<PuzzlePage puzzle={dailymini_5_19} />, {
+    user: anonymousUser,
+  });
 
   fireEvent.click(await r.findByText(/Begin Puzzle/i));
   expect(r.queryByText(/Begin Puzzle/i)).toBeNull();
@@ -389,7 +509,9 @@ test('user finishing a puzzle causes write to db', async () => {
   expect(cell2).toHaveTextContent('P');
 
   // We've already written to the db when the puzzle was completed
-  await waitForExpect(async () => expect((await admin.firestore().collection('p').get()).size).toEqual(1));
+  await waitForExpect(async () =>
+    expect((await admin.firestore().collection('p').get()).size).toEqual(1)
+  );
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
   cleanup();
@@ -411,22 +533,21 @@ test('nonuser finishing a puzzle should cause creation of anonymous user and wri
   const anonApp = firebaseTesting.initializeTestApp({
     projectId: 'test1',
     auth: {
-      uid: 'anonymous-user-id', firebase: {
-        sign_in_provider: 'anonymous'
-      }
-    }
+      uid: 'anonymous-user-id',
+      firebase: {
+        sign_in_provider: 'anonymous',
+      },
+    },
   });
   const baseApp = firebaseTesting.initializeTestApp({
-    projectId: 'test1'
+    projectId: 'test1',
   });
   setApp(baseApp as firebase.app.App);
   setUpForSignInAnonymously(anonApp as firebase.app.App, anonymousUser);
 
   const admin = firebaseTesting.initializeAdminApp({ projectId: 'test1' });
 
-  const r = render(
-    <PuzzlePage puzzle={dailymini_5_19} />, {}
-  );
+  const r = render(<PuzzlePage puzzle={dailymini_5_19} />, {});
 
   fireEvent.click(await r.findByText(/Begin Puzzle/i));
   expect(r.queryByText(/Begin Puzzle/i)).toBeNull();
@@ -447,7 +568,9 @@ test('nonuser finishing a puzzle should cause creation of anonymous user and wri
   expect(cell2).toHaveTextContent('P');
 
   // We've already written to the db when the puzzle was completed
-  await waitForExpect(async () => expect((await admin.firestore().collection('p').get()).size).toEqual(1));
+  await waitForExpect(async () =>
+    expect((await admin.firestore().collection('p').get()).size).toEqual(1)
+  );
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
   expect(firebaseWrapper.signInAnonymously).toHaveBeenCalledTimes(1);
 

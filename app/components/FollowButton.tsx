@@ -8,6 +8,7 @@ import { FaInfoCircle } from 'react-icons/fa';
 import { useSnackbar } from './Snackbar';
 import { App, FieldValue } from '../lib/firebaseWrapper';
 import { useCallback, useState, useContext } from 'react';
+import type firebase from 'firebase/app';
 
 export const FollowButton = ({ page }: { page: ConstructorPageT }) => {
   const authCtx = useContext(AuthContext);

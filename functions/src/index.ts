@@ -1,5 +1,5 @@
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+import functions from 'firebase-functions';
+import admin from 'firebase-admin';
 
 admin.initializeApp();
 
@@ -29,7 +29,7 @@ export const analytics = functions.pubsub.schedule('every 1 hours').onRun(async 
     }
     startTimestamp = result.right.ranAt;
   }
-  await runAnalytics(db as unknown as firebase.firestore.Firestore, startTimestamp, endTimestamp);
+  await runAnalytics(db, startTimestamp, endTimestamp);
   const status: CronStatusT = { ranAt: endTimestamp };
   console.log("Done, logging analytics timestamp");
   return db.collection("cron_status").doc("hourlyanalytics").set(status);

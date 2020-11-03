@@ -1,11 +1,17 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
-import { getUser, render, cleanup, fireEvent, getMockedPuzzle } from '../lib/testingUtils';
+import {
+  getUser,
+  render,
+  cleanup,
+  fireEvent,
+  getMockedPuzzle,
+} from '../lib/testingUtils';
 import { AccountPage } from '../pages/account';
 import waitForExpect from 'wait-for-expect';
 jest.mock('../lib/firebaseWrapper');
-
+import type firebase from 'firebase/app';
 import { userIdToPage } from '../lib/serverOnly';
 import firebaseAdmin from 'firebase-admin';
 
@@ -13,9 +19,11 @@ const projectId = 'constructorpagetests';
 
 test('invalid constructor page', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
-  const adminApp = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
+  const adminApp = firebaseTesting.initializeAdminApp({
+    projectId,
+  }) as firebase.app.App;
   await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
-  setAdminApp(adminApp as unknown as firebaseAdmin.app.App);
+  setAdminApp((adminApp as unknown) as firebaseAdmin.app.App);
 
   const page = await userIdToPage('miked');
   expect(page).toBeNull();
@@ -25,7 +33,9 @@ test('create constructor page', async () => {
   const mike = getUser('mikeuserid', false);
 
   await firebaseTesting.clearFirestoreData({ projectId });
-  const adminApp = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
+  const adminApp = firebaseTesting.initializeAdminApp({
+    projectId,
+  }) as firebase.app.App;
   await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
 
   const app = firebaseTesting.initializeTestApp({
@@ -40,34 +50,58 @@ test('create constructor page', async () => {
 
   setApp(app as firebase.app.App);
 
-  let r = render(
-    <AccountPage isAdmin={false} user={mike} />, { user: mike }
-  );
+  let r = render(<AccountPage isAdmin={false} user={mike} />, { user: mike });
   expect(await r.findByText(/Start sharing your own puzzles/i)).toBeVisible();
   expect(r.queryByPlaceholderText(/username/i)).toBeNull();
 
   cleanup();
   // Just add a dummy constructed puzzle for this user
-  await adminApp.firestore().collection('c').add(getMockedPuzzle({ a: 'mikeuserid' }));
-  r = render(
-    <AccountPage isAdmin={false} user={mike} />, { user: mike }
-  );
-  expect(await r.findByPlaceholderText(/username/i, undefined, { timeout: 3000 })).toBeVisible();
+  await adminApp
+    .firestore()
+    .collection('c')
+    .add(getMockedPuzzle({ a: 'mikeuserid' }));
+  r = render(<AccountPage isAdmin={false} user={mike} />, { user: mike });
+  expect(
+    await r.findByPlaceholderText(/username/i, undefined, { timeout: 3000 })
+  ).toBeVisible();
   expect(r.queryByText(/Start sharing your own puzzles/i)).toBeNull();
 
-  fireEvent.change(r.getByPlaceholderText('username'), { target: { value: 'MikeD' } });
+  fireEvent.change(r.getByPlaceholderText('username'), {
+    target: { value: 'MikeD' },
+  });
   fireEvent.click(r.getByText('Create', { exact: true }));
-  expect(await r.findByText(/username is unavailable/i, undefined, { timeout: 3000 })).toBeVisible();
+  expect(
+    await r.findByText(/username is unavailable/i, undefined, { timeout: 3000 })
+  ).toBeVisible();
 
-  fireEvent.change(r.getByPlaceholderText('username'), { target: { value: 'TheREALMikeD' } });
+  fireEvent.change(r.getByPlaceholderText('username'), {
+    target: { value: 'TheREALMikeD' },
+  });
   fireEvent.click(r.getByText('Create', { exact: true }));
 
-  await waitForExpect(async () => expect((await adminApp.firestore().collection('cp').doc('therealmiked').get()).data() ?.u).toEqual('mikeuserid'));
+  await waitForExpect(async () =>
+    expect(
+      (
+        await adminApp.firestore().collection('cp').doc('therealmiked').get()
+      ).data()?.u
+    ).toEqual('mikeuserid')
+  );
 
   cleanup();
 
   const s = render(
-    <AccountPage isAdmin={false} user={mike} constructorPage={{ id: 'MIKE', i: 'mike', b: 'My Bio', n: 'Mike D', u: 'mikeuserid' }} />, { user: mike }
+    <AccountPage
+      isAdmin={false}
+      user={mike}
+      constructorPage={{
+        id: 'MIKE',
+        i: 'mike',
+        b: 'My Bio',
+        n: 'Mike D',
+        u: 'mikeuserid',
+      }}
+    />,
+    { user: mike }
   );
   expect(await s.findByText(/blog is live at/i)).toBeVisible();
   expect(s.queryByText(/Start sharing your own puzzles/i)).toBeNull();
@@ -79,7 +113,9 @@ test('create constructor page', async () => {
 
 test('security rules for constructor page creation', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
-  const adminApp = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
+  const adminApp = firebaseTesting.initializeAdminApp({
+    projectId,
+  }) as firebase.app.App;
   await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
   adminApp.delete();
 
@@ -202,14 +238,18 @@ test('security rules for constructor page creation', async () => {
 
   // Fails if using old timestamp
   await firebaseTesting.assertFails(
-    app.firestore().collection('cp').doc('mytestusername').set({
-      i: 'MyTestUsername',
-      u: 'mikeuserid',
-      n: 'Mike D',
-      b: 'Some random bio text',
-      m: true,
-      t: firebaseTesting.firestore.Timestamp.fromDate(new Date('2020-01-01'))
-    })
+    app
+      .firestore()
+      .collection('cp')
+      .doc('mytestusername')
+      .set({
+        i: 'MyTestUsername',
+        u: 'mikeuserid',
+        n: 'Mike D',
+        b: 'Some random bio text',
+        m: true,
+        t: firebaseTesting.firestore.Timestamp.fromDate(new Date('2020-01-01')),
+      })
   );
 
   // SUCCEEDS!
@@ -244,7 +284,9 @@ test('security rules for constructor page creation', async () => {
 
 test('security rules for constructor page updates', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
-  const adminApp = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
+  const adminApp = firebaseTesting.initializeAdminApp({
+    projectId,
+  }) as firebase.app.App;
   await adminApp.firestore().collection('cp').doc('miked').set({
     i: 'miked',
     u: 'foobar',
@@ -277,85 +319,114 @@ test('security rules for constructor page updates', async () => {
 
   // Can update bio text
   await firebaseTesting.assertSucceeds(
-    app.firestore().collection('cp').doc('mytestusername').set({
-      b: 'Some new bio text',
-      m: true,
-      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true })
+    app.firestore().collection('cp').doc('mytestusername').set(
+      {
+        b: 'Some new bio text',
+        m: true,
+        t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
   );
 
   // Can't update bio text w/o timestamp
   await firebaseTesting.assertFails(
-    app.firestore().collection('cp').doc('mytestusername').set({
-      b: 'Some new bio text',
-      m: true,
-    }, { merge: true })
+    app.firestore().collection('cp').doc('mytestusername').set(
+      {
+        b: 'Some new bio text',
+        m: true,
+      },
+      { merge: true }
+    )
   );
 
   // Can't update bio text w/o moderation flag
   await firebaseTesting.assertFails(
-    app.firestore().collection('cp').doc('mytestusername').set({
-      b: 'Some new bio text',
-      m: false,
-      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true })
+    app.firestore().collection('cp').doc('mytestusername').set(
+      {
+        b: 'Some new bio text',
+        m: false,
+        t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
   );
 
   // Can't update bio text for different user
   await firebaseTesting.assertFails(
-    app.firestore().collection('cp').doc('miked').set({
-      b: 'Some new bio text',
-      m: true,
-      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true })
+    app.firestore().collection('cp').doc('miked').set(
+      {
+        b: 'Some new bio text',
+        m: true,
+        t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
   );
 
   // Can't update userid for different user
   await firebaseTesting.assertFails(
-    app.firestore().collection('cp').doc('miked').set({
-      u: 'mikeuserid',
-      m: true,
-      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true })
+    app.firestore().collection('cp').doc('miked').set(
+      {
+        u: 'mikeuserid',
+        m: true,
+        t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
   );
 
   // Can't change username
   await firebaseTesting.assertFails(
-    app.firestore().collection('cp').doc('mytestusername').set({
-      i: 'mytestuser',
-      m: true,
-      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true })
+    app.firestore().collection('cp').doc('mytestusername').set(
+      {
+        i: 'mytestuser',
+        m: true,
+        t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
   );
 
   // Can change case though
   await firebaseTesting.assertSucceeds(
-    app.firestore().collection('cp').doc('mytestusername').set({
-      i: 'MYTESTUSERNAME',
-      m: true,
-      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true })
+    app.firestore().collection('cp').doc('mytestusername').set(
+      {
+        i: 'MYTESTUSERNAME',
+        m: true,
+        t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
   );
 
   // Can't delete name
   await firebaseTesting.assertFails(
-    app.firestore().collection('cp').doc('mytestusername').set({
-      n: '',
-      m: true,
-      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true })
+    app.firestore().collection('cp').doc('mytestusername').set(
+      {
+        n: '',
+        m: true,
+        t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
   );
 
   // Can change name though
   await firebaseTesting.assertSucceeds(
-    app.firestore().collection('cp').doc('mytestusername').set({
-      n: 'New Display Name',
-      m: true,
-      t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true })
+    app.firestore().collection('cp').doc('mytestusername').set(
+      {
+        n: 'New Display Name',
+        m: true,
+        t: firebaseTesting.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
   );
 
-  const data = (await adminApp.firestore().collection('cp').doc('mytestusername').get()).data();
+  const data = (
+    await adminApp.firestore().collection('cp').doc('mytestusername').get()
+  ).data();
   if (data === undefined) {
     throw new Error('botch');
   }

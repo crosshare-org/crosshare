@@ -7,6 +7,7 @@ import { AdminTimestamp } from '../lib/firebaseWrapper';
 
 import type firebaseTypes from 'firebase';
 import { DBPuzzleT } from './dbtypes';
+import { GetServerSidePropsResult } from 'next';
 
 export const getUser = (uid: string, isAnonymous: boolean) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -151,3 +152,17 @@ export * from '@testing-library/react';
 
 // override render method
 export { wrappedRender as render };
+
+function hasOwnProperty<
+  X extends Record<string, unknown>,
+  Y extends PropertyKey
+>(obj: X, prop: Y): obj is X & Record<Y, unknown> {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+export function getProps<T>(a: GetServerSidePropsResult<T>) {
+  if (!hasOwnProperty(a, 'props')) {
+    throw new Error('should have props');
+  }
+  return a.props;
+}

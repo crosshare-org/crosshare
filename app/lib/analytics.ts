@@ -1,23 +1,40 @@
 /* This gets used by the analytics cron function in the `functions` directory.
 
 It lives here so we can test it. */
-
+import type firebase from 'firebase-admin';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isRight } from 'fp-ts/lib/Either';
 
 import {
-  LegacyPlayV, PuzzleStatsT, PuzzleStatsV, DailyStatsV, DailyStatsT,
-  DBPuzzleV, DBPuzzleT, getDateString,
+  LegacyPlayV,
+  PuzzleStatsT,
+  PuzzleStatsV,
+  DailyStatsV,
+  DailyStatsT,
+  DBPuzzleV,
+  DBPuzzleT,
+  getDateString,
 } from './dbtypes';
 
 import { TimestampType } from './firebaseWrapper';
 
-export async function runAnalytics(db: firebase.firestore.Firestore, startTimestamp: TimestampType, endTimestamp: TimestampType) {
-  console.log('Updating analytics btwn', startTimestamp.toDate().toLocaleString(), endTimestamp.toDate().toLocaleString());
-  const value = await db.collection('p').where('f', '==', true)
+export async function runAnalytics(
+  db: firebase.firestore.Firestore,
+  startTimestamp: TimestampType,
+  endTimestamp: TimestampType
+) {
+  console.log(
+    'Updating analytics btwn',
+    startTimestamp.toDate().toLocaleString(),
+    endTimestamp.toDate().toLocaleString()
+  );
+  const value = await db
+    .collection('p')
+    .where('f', '==', true)
     .where('ua', '>=', startTimestamp)
     .where('ua', '<', endTimestamp)
-    .orderBy('ua', 'asc').get();
+    .orderBy('ua', 'asc')
+    .get();
   console.log('Updating analytics for ' + value.size + ' plays');
 
   const puzzleMap: Map<string, DBPuzzleT> = new Map();

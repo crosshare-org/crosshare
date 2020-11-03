@@ -91,7 +91,13 @@ import { SquareAndCols, TwoCol } from './Page';
 import { usePersistedBoolean, useMatchMedia } from '../lib/hooks';
 import { timeString } from '../lib/utils';
 import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
-import { App, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
+import {
+  App,
+  TimestampClass,
+  signInAnonymously,
+  FieldValue,
+} from '../lib/firebaseWrapper';
+import type firebase from 'firebase/app';
 import { Emoji } from './Emoji';
 import { Comments } from './Comments';
 import { ConstructorNotes } from './ConstructorNotes';
@@ -183,7 +189,7 @@ const ModeratingOverlay = memo(
         throw new Error('shouldn\'t be able to schedule w/o date');
       }
       const ds = getDateString(date);
-      const update: { [k: string]: string | firebase.firestore.FieldValue } = {
+      const update: { [k: string]: string | typeof FieldValue } = {
         [ds]: puzzle.id,
       };
       Promise.all([
