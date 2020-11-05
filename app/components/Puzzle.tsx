@@ -878,7 +878,7 @@ export const Puzzle = ({
 
   const beginPauseProps = {
     coverImage: props.coverImage,
-    publishTime: puzzle.publishTime,
+    publishTime: puzzle.isPrivateUntil || puzzle.publishTime,
     blogPost: puzzle.blogPost,
     constructorPage: puzzle.constructorPage,
     profilePicture: props.profilePicture,
@@ -1378,7 +1378,7 @@ export const Puzzle = ({
         )}
         {state.success && !state.dismissedSuccess ? (
           <SuccessOverlay
-            publishTime={puzzle.publishTime}
+            publishTime={puzzle.isPrivateUntil || puzzle.publishTime}
             coverImage={props.coverImage}
             profilePicture={props.profilePicture}
             clueMap={clueMap}
