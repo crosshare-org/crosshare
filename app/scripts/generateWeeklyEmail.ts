@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node-script --skip-project -O {"resolveJsonModule":true}
+#!/usr/bin/env ts-node-script --skip-project -O {"resolveJsonModule":true,"esModuleInterop":true}
 
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isRight } from 'fp-ts/lib/Either';
@@ -7,12 +7,17 @@ import { getDateString, DailyStatsV } from '../lib/dbtypes';
 import { AdminApp } from '../lib/firebaseWrapper';
 
 if (process.argv.length !== 2) {
-  throw Error('Invalid use of generateWeeklyEmail. Usage: ./scripts/generateWeeklyEmail.ts');
+  throw Error(
+    'Invalid use of generateWeeklyEmail. Usage: ./scripts/generateWeeklyEmail.ts'
+  );
 }
 
 const db = AdminApp.firestore();
 
-function sumOnto(a: Record<string, number>, b: Record<string, number> | undefined) {
+function sumOnto(
+  a: Record<string, number>,
+  b: Record<string, number> | undefined
+) {
   if (!b) {
     return;
   }
@@ -21,7 +26,10 @@ function sumOnto(a: Record<string, number>, b: Record<string, number> | undefine
   }
 }
 
-function replaceOnto<T>(a: Record<string, T>, b: Record<string, T> | undefined) {
+function replaceOnto<T>(
+  a: Record<string, T>,
+  b: Record<string, T> | undefined
+) {
   if (!b) {
     return;
   }
@@ -48,16 +56,21 @@ async function topPuzzlesForWeek(): Promise<Array<[string, string]>> {
     }
     d.setDate(d.getDate() - 1);
   }
-  return Object.entries(totalC).sort((a, b) => b[1] - a[1]).slice(0, 5).filter(([id]) => allIs[id]).map(([id]): [string, string] =>
-    ['https://crosshare.org/crosswords/' + id, allIs[id][0] + ' by ' + allIs[id][1]]
-  );
+  return Object.entries(totalC)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .filter(([id]) => allIs[id])
+    .map(([id]): [string, string] => [
+      'https://crosshare.org/crosswords/' + id,
+      allIs[id][0] + ' by ' + allIs[id][1],
+    ]);
 }
 
 async function generateWeeklyEmail() {
   const topForWeek = await topPuzzlesForWeek();
-  console.log('<strong>Top puzzles this week:</strong><br />');
+  console.log('<strong>Most popular puzzles this week:</strong><br />');
   topForWeek.forEach(([link, text]) => {
-    console.log('<a href="' + link + '">' + text + '</a><br />');
+    console.log('<a href="' + link + '">' + text + '</a> - <br /><br />');
   });
 }
 
