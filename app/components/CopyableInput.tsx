@@ -1,0 +1,35 @@
+import { useSnackbar } from './Snackbar';
+
+export function CopyableInput({ text }: { text: string }) {
+  const { showSnackbar } = useSnackbar();
+
+  return (
+    <input
+      css={{
+        cursor: 'pointer',
+        width: '30em',
+        maxWidth: '100%',
+      }}
+      type="text"
+      readOnly
+      value={text}
+      onFocus={(e) => {
+        e.target.select();
+      }}
+      onClick={() => {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(
+            function () {
+              showSnackbar('Copied to clipboard');
+            },
+            function (err) {
+              console.error('Could not copy text: ', err);
+            }
+          );
+        } else {
+          console.error('No navigator.clipboard');
+        }
+      }}
+    />
+  );
+}

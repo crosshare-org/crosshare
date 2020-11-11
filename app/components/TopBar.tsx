@@ -322,11 +322,7 @@ export const TopBarLinkA = (props: TopBarLinkAProps) => {
   );
 };
 
-interface TopBarProps {
-  children?: ReactNode;
-}
-
-export const TopBar = ({ children }: TopBarProps) => {
+export const TopBar = ({ children }: { children?: ReactNode }) => {
   const { notifications } = useContext(AuthContext);
   const now = new Date();
   const filtered = notifications?.filter((n) => n.t.toDate() <= now);
@@ -615,11 +611,12 @@ const NotificationLink = ({
   );
 };
 
-export const DefaultTopBar = () => {
+export const DefaultTopBar = ({ children }: { children?: ReactNode }) => {
   const { isAdmin } = useContext(AuthContext);
 
   return (
     <TopBar>
+      {children}
       {isAdmin ? (
         <TopBarLinkA href="/admin" icon={<FaUserLock />} text="Admin" />
       ) : (

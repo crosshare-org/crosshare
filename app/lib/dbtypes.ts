@@ -229,24 +229,30 @@ export function prettifyDateString(dateString: string) {
   return parseInt(groups[2]) + 1 + '/' + parseInt(groups[3]) + '/' + groups[1];
 }
 
-export const PuzzleStatsV = t.type({
-  /** author id, denormalized for security rules purposes. */
-  a: t.string,
-  /** updated at */
-  ua: timestamp,
-  /** total completions */
-  n: t.number,
-  /** total completions without cheats */
-  s: t.number,
-  /** total time spent on puzzle, in fractional seconds */
-  nt: t.number,
-  /** total time spent by those w/o cheats */
-  st: t.number,
-  /** total play time of last update to each cell, in fractional seconds */
-  ct: t.array(t.number),
-  /** total update iteration count for each cell */
-  uc: t.array(t.number),
-});
+export const PuzzleStatsV = t.intersection([
+  t.type({
+    /** author id, denormalized for security rules purposes. */
+    a: t.string,
+    /** updated at */
+    ua: timestamp,
+    /** total completions */
+    n: t.number,
+    /** total completions without cheats */
+    s: t.number,
+    /** total time spent on puzzle, in fractional seconds */
+    nt: t.number,
+    /** total time spent by those w/o cheats */
+    st: t.number,
+    /** total play time of last update to each cell, in fractional seconds */
+    ct: t.array(t.number),
+    /** total update iteration count for each cell */
+    uc: t.array(t.number),
+  }),
+  t.partial({
+    /** secret key for sharing stats access */
+    sct: t.string,
+  }),
+]);
 export type PuzzleStatsT = t.TypeOf<typeof PuzzleStatsV>;
 
 const PuzzleInfoV = t.tuple([
