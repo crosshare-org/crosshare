@@ -200,7 +200,7 @@ export const PuzzleResultLink = ({
     : new Date(puzzle.publishTime);
   const date = (
     <span title={formatISO(publishDate)}>
-      Published {formatDistanceToNow(publishDate)} ago
+      Published {formatDistanceToNow(publishDate, { addSuffix: true })}
     </span>
   );
   let contents: ReactNode = null;

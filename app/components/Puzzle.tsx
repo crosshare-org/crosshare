@@ -321,7 +321,7 @@ const PuzzleHeading = (props: {
             />{' '}
             ·{' '}
             <span title={formatISO(publishDate)}>
-              Published {formatDistanceToNow(publishDate)} ago
+              Published {formatDistanceToNow(publishDate, { addSuffix: true })}
             </span>
           </p>
         }
