@@ -92,6 +92,10 @@ export async function runAnalytics(
           st: 0,
           ct: [],
           uc: [],
+          sct: Array.from(
+            { length: 6 },
+            () => Math.random().toString(36)[2]
+          ).join(''),
         };
         puzzleStatsMap.set(play.c, puzzleStats);
       }

@@ -180,8 +180,9 @@ test('run for all time w/o initial state', async () => {
   if (data === undefined) {
     throw new Error('botch');
   }
-  const { ua: pua, ...pToSnapshot } = data;
+  const { ua: pua, sct, ...pToSnapshot } = data;
   expect(pua).not.toBeFalsy();
+  expect(sct).not.toBeFalsy();
   expect(pToSnapshot).toMatchSnapshot();
 });
 
@@ -208,8 +209,9 @@ test('run for more recent w/o initial state', async () => {
   if (data === undefined) {
     throw new Error('botch');
   }
-  const { ua: pua, ...pToSnapshot } = data;
+  const { ua: pua, sct, ...pToSnapshot } = data;
   expect(pua).not.toBeFalsy();
+  expect(sct).not.toBeFalsy();
   expect(pToSnapshot).toMatchSnapshot();
 });
 
@@ -242,7 +244,8 @@ test('run w/ initial state', async () => {
   if (data === undefined) {
     throw new Error('botch');
   }
-  const { ua: pua, ...pToSnapshot } = data;
+  const { ua: pua, sct, ...pToSnapshot } = data;
   expect(pua).not.toBeFalsy();
+  expect(sct).not.toBeFalsy();
   expect(pToSnapshot).toMatchSnapshot();
 });
