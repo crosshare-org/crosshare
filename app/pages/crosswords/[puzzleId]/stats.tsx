@@ -142,7 +142,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
       </ErrorPage>
     );
   }
-  if (!didLoad || !stats) {
+  if (!didLoad) {
     return <div>Loading stats...</div>;
   }
 

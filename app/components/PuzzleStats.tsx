@@ -178,7 +178,7 @@ export const StatsPage = ({
   hideShare,
 }: {
   puzzle: PuzzleResult;
-  stats: Omit<PuzzleStatsT, 'ua'>;
+  stats: Omit<PuzzleStatsT, 'ua'> | null;
   hideShare?: boolean;
 }) => {
   const [mode, setMode] = useState(StatsMode.AverageTime);
