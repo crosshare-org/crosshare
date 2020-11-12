@@ -94,8 +94,10 @@ const PuzzleLink = (props: {
                 textShadow:
                   '2px 0 0 white, -2px 0 0 white, 0 2px 0 white, 0 -2px 0 white',
                 position: 'absolute',
-                top: '0.1em',
-                left: '0.35em',
+                top: 0,
+                width: '1.66em',
+                textAlign: 'center',
+                left: 0,
                 fontSize: '0.6em',
               }}
             >
