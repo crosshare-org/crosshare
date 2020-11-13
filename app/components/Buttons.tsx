@@ -1,5 +1,5 @@
 import { MouseEvent } from 'react';
-import { Interpolation } from '@emotion/core';
+import { CSSInterpolation } from '@emotion/serialize';
 
 interface ButtonBaseProps {
   text: string;
@@ -7,8 +7,8 @@ interface ButtonBaseProps {
   disabled?: boolean;
   className?: string;
   hoverText?: string;
-  subCSS?: Interpolation<undefined>;
-  hoverCSS?: Interpolation<undefined>;
+  subCSS?: CSSInterpolation;
+  hoverCSS?: CSSInterpolation;
 }
 interface DisabledProps extends ButtonBaseProps {
   disabled: true;
@@ -21,7 +21,7 @@ interface OnClickProps extends ButtonBaseProps {
 }
 type ButtonProps = SubmitProps | OnClickProps | DisabledProps;
 
-export const ButtonResetCSS: Interpolation<undefined> = {
+export const ButtonResetCSS: CSSInterpolation = {
   border: 'none',
   backgroundColor: 'transparent',
   fontFamily: 'inherit',
@@ -93,7 +93,7 @@ export function ButtonAsLink(props: ButtonProps) {
   );
 }
 
-export const ButtonCSS: Interpolation<undefined> = {
+export const ButtonCSS: CSSInterpolation = {
   overflow: 'wrap',
   maxWidth: '100%',
   /* create a small space when buttons wrap on 2 lines */

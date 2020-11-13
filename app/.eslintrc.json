@@ -32,22 +32,30 @@
   "plugins": [
     "@next/eslint-plugin-next",
     "react",
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "@emotion"
   ],
   "rules": {
+    "@emotion/pkg-renaming": "error",
     "react/prop-types": 0,
     "@next/next/no-html-link-for-pages": "off",
-    "import/no-anonymous-default-export": ["error"],
+    "import/no-anonymous-default-export": [
+      "error"
+    ],
     "jsx-a11y/anchor-is-valid": [
       "error",
       {
-        "components": ["Link"]
+        "components": [
+          "Link"
+        ]
       }
     ],
     "jsx-a11y/anchor-has-content": [
       "error",
       {
-        "components": ["Link"]
+        "components": [
+          "Link"
+        ]
       }
     ],
     "react/display-name": "off",
@@ -72,7 +80,9 @@
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
-      { "argsIgnorePattern": "^_" }
+      {
+        "argsIgnorePattern": "^_"
+      }
     ]
   },
   "settings": {

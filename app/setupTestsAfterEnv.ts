@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { matchers, createSerializer } from 'jest-emotion';
+import { matchers, createSerializer } from '@emotion/jest';
 
 // Add the custom matchers provided by 'jest-emotion'
 expect.extend(matchers);
@@ -12,7 +12,7 @@ localStorage.clear();
 // We need to add this mock since JSDOM doesn't support matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
