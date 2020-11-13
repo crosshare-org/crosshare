@@ -65,7 +65,8 @@ export function ButtonReset({
           }),
         },
       ]}
-      {...props}>
+      {...props}
+    >
       <span>{text}</span>
     </button>
   );
