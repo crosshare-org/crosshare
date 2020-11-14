@@ -293,9 +293,8 @@ class PuzWriter {
     for (let i = 0; i < clues.length; i++) {
       this.writeString(clues[i][1]);
     }
-    //const note = 'Created on crosshare.org';
-    //this.writeString(puzzle.cn ? puzzle.cn + ' - ' + note : note);
-    this.writeString(puzzle.cn ? puzzle.cn : '');
+    const note = 'Created on crosshare.org';
+    this.writeString(puzzle.cn ? puzzle.cn + ' - ' + note : note);
     return stringStart;
   }
 
