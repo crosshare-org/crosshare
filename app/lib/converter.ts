@@ -1,3 +1,4 @@
+import { DBPuzzleT } from './dbtypes';
 import { PuzzleInProgressT, ClueT } from './types';
 import { fromCells, getClueMap } from './viewableGrid';
 
@@ -11,7 +12,10 @@ function isPuz(bytes: Uint8Array) {
 }
 
 function magicIndex(bytes: Uint8Array) {
-  const initialChars = String.fromCodePoint.apply(null, Array.from(bytes.slice(0, 50)));
+  const initialChars = String.fromCodePoint.apply(
+    null,
+    Array.from(bytes.slice(0, 50))
+  );
   return initialChars.indexOf(MAGIC);
 }
 
@@ -41,7 +45,7 @@ class PuzReader {
   readString(length?: number) {
     const result = [];
     let count = 0;
-    for (; ;) {
+    for (;;) {
       if (length && count === length) {
         break;
       }
@@ -123,11 +127,19 @@ class PuzReader {
     for (let i = 0; i < w * h; i++) {
       if (grid[i] == '.') continue;
       let inc = 0;
-      if ((i % w === 0 || grid[i - 1] === '.') && (i + 1) % w !== 0 && grid[i + 1] !== '.') {
+      if (
+        (i % w === 0 || grid[i - 1] === '.') &&
+        (i + 1) % w !== 0 &&
+        grid[i + 1] !== '.'
+      ) {
         clues.push({ num: label, clue: this.readString(), dir: 0 });
         inc = 1;
       }
-      if ((i < w || grid[i - w] === '.') && i + w < grid.length && grid[i + w] !== '.') {
+      if (
+        (i < w || grid[i - w] === '.') &&
+        i + w < grid.length &&
+        grid[i + w] !== '.'
+      ) {
         clues.push({ num: label, clue: this.readString(), dir: 1 });
         inc = 1;
       }
@@ -135,7 +147,7 @@ class PuzReader {
     }
 
     let notes = this.readString().trim() || null;
-    if (notes ?.match(/created (on|with) \w+\.com/i)) {
+    if (notes?.match(/created (on|with) \w+\.com/i)) {
       notes = null;
     }
 
@@ -153,19 +165,225 @@ class PuzReader {
     }
 
     const viewableGrid = fromCells({
-      cells: grid, width: w, height: h,
+      cells: grid,
+      width: w,
+      height: h,
       allowBlockEditing: false,
-      highlighted: new Set<number>(), highlight: 'circle',
-      mapper: (e) => e
+      highlighted: new Set<number>(),
+      highlight: 'circle',
+      mapper: (e) => e,
     });
 
     return {
-      width: w, height: h,
-      grid, title, notes,
+      width: w,
+      height: h,
+      grid,
+      title,
+      notes,
       clues: getClueMap(viewableGrid, clues),
-      highlighted: this.highlighted, highlight: 'circle'
+      highlighted: this.highlighted,
+      highlight: 'circle',
     };
   }
+}
+
+class PuzWriter {
+  public buf: Array<number>;
+  public questionCP: number;
+  public blackCP: number;
+  public dashCP: number;
+
+  constructor() {
+    this.buf = [];
+    const questionCP = '?'.codePointAt(0);
+    const blackCP = '.'.codePointAt(0);
+    const dashCP = '-'.codePointAt(0);
+
+    if (!questionCP || !blackCP || !dashCP) {
+      throw new Error('could not encode fixed chars');
+    }
+    this.questionCP = questionCP;
+    this.blackCP = blackCP;
+    this.dashCP = dashCP;
+  }
+
+  pad(n: number) {
+    for (let i = 0; i < n; i++) {
+      this.buf.push(0);
+    }
+  }
+
+  writeShort(x: number) {
+    this.buf.push(x & 0xff, (x >> 8) & 0xff);
+  }
+
+  setShort(ix: number, x: number) {
+    this.buf[ix] = x & 0xff;
+    this.buf[ix + 1] = (x >> 8) & 0xff;
+  }
+
+  writeString(s: string | undefined) {
+    if (s === undefined) s = '';
+    for (let i = 0; i < s.length; i++) {
+      const cp = s.codePointAt(i);
+      if (cp === undefined) {
+        throw new Error('bad code point at index ' + i);
+      }
+      if (cp < 0x100 && cp > 0) {
+        this.buf.push(cp);
+      } else {
+        // TODO: expose this warning through the UI
+        console.error(
+          'string "' + s + '" has non-ISO-8859-1 codepoint at offset ' + i
+        );
+        this.buf.push(this.questionCP);
+      }
+      if (cp >= 0x10000) i++; // advance by one codepoint
+    }
+    this.buf.push(0);
+  }
+
+  writeHeader(puzzle: DBPuzzleT) {
+    this.pad(2); // placeholder for checksum
+    this.writeString('ACROSS&DOWN');
+    this.pad(2); // placeholder for cib checksum
+    this.pad(8); // placeholder for masked checksum
+    this.writeString('1.3'); // version
+    this.pad(2); // probably extra space for version string
+    this.writeShort(0); // scrambled checksum
+    this.pad(12); // reserved
+    this.buf.push(puzzle.w);
+    this.buf.push(puzzle.h);
+    const numClues = puzzle.ac.length + puzzle.dc.length;
+    this.writeShort(numClues);
+    this.writeShort(1); // puzzle type
+    this.writeShort(0); // scrambled tag
+  }
+
+  writeFill(puzzle: DBPuzzleT): [solutionLoc: number, gridLoc: number] {
+    const grid = puzzle.g;
+    const solutionLoc = this.buf.length;
+    for (let i = 0; i < grid.length; i++) {
+      const char = grid[i].codePointAt(0);
+      if (char === undefined) {
+        throw new Error('cannot encode ' + grid[i]);
+      }
+      this.buf.push(char); // Note: assumes grid is ISO-8859-1
+    }
+    const gridLoc = this.buf.length;
+    for (let i = 0; i < grid.length; i++) {
+      this.buf.push(grid[i] === '.' ? this.blackCP : this.dashCP);
+    }
+    return [solutionLoc, gridLoc];
+  }
+
+  writeStrings(puzzle: DBPuzzleT) {
+    const stringStart = this.buf.length;
+    this.writeString(puzzle.t);
+    this.writeString(puzzle.n);
+    this.writeString(''); // copyright
+    const clues: Array<[number, string]> = [];
+    for (let i = 0; i < puzzle.ac.length; i++) {
+      clues.push([2 * puzzle.an[i], puzzle.ac[i]]);
+    }
+    for (let i = 0; i < puzzle.dc.length; i++) {
+      clues.push([2 * puzzle.dn[i] + 1, puzzle.dc[i]]);
+    }
+    clues.sort((a, b) => a[0] - b[0]);
+    for (let i = 0; i < clues.length; i++) {
+      this.writeString(clues[i][1]);
+    }
+    //const note = 'Created on crosshare.org';
+    //this.writeString(puzzle.cn ? puzzle.cn + ' - ' + note : note);
+    this.writeString(puzzle.cn ? puzzle.cn : '');
+    return stringStart;
+  }
+
+  checksumRegion(base: number, len: number, cksum: number): number {
+    for (let i = 0; i < len; i++) {
+      cksum = (cksum >> 1) | ((cksum & 1) << 15);
+      cksum = (cksum + this.buf[base + i]) & 0xffff;
+    }
+    return cksum;
+  }
+
+  strlen(ix: number) {
+    let i = 0;
+    while (this.buf[ix + i]) i++;
+    return i;
+  }
+
+  checksumStrings(cksum: number, stringLoc: number, numClues: number) {
+    let ix = stringLoc;
+    for (let i = 0; i < 3; i++) {
+      const len = this.strlen(ix);
+      if (len) {
+        cksum = this.checksumRegion(ix, len + 1, cksum);
+      }
+      ix += len + 1;
+    }
+    for (let i = 0; i < numClues; i++) {
+      const len = this.strlen(ix);
+      cksum = this.checksumRegion(ix, len, cksum);
+      ix += len + 1;
+    }
+    const len = this.strlen(ix);
+    if (len) {
+      cksum = this.checksumRegion(ix, len + 1, cksum);
+    }
+    ix += len + 1;
+    return cksum;
+  }
+
+  setMaskedChecksum(
+    i: number,
+    maskLow: number,
+    maskHigh: number,
+    cksum: number
+  ) {
+    this.buf[0x10 + i] = maskLow ^ (cksum & 0xff);
+    this.buf[0x14 + i] = maskHigh ^ (cksum >> 8);
+  }
+
+  computeChecksums(
+    stringLoc: number,
+    solutionLoc: number,
+    gridLoc: number,
+    size: number,
+    numClues: number
+  ) {
+    const c_cib = this.checksumRegion(0x2c, 8, 0);
+    this.setShort(0xe, c_cib);
+    const cksum = this.checksumRegion(solutionLoc, size, c_cib);
+    const cksum2 = this.checksumRegion(gridLoc, size, cksum);
+    const cksum3 = this.checksumStrings(cksum2, stringLoc, numClues);
+    this.setShort(0x0, cksum3);
+    this.setMaskedChecksum(0, 0x49, 0x41, c_cib);
+    const c_sol = this.checksumRegion(solutionLoc, size, 0);
+    this.setMaskedChecksum(1, 0x43, 0x54, c_sol);
+    const c_grid = this.checksumRegion(gridLoc, size, 0);
+    this.setMaskedChecksum(2, 0x48, 0x45, c_grid);
+    const c_part = this.checksumStrings(0, stringLoc, numClues);
+    this.setMaskedChecksum(3, 0x45, 0x44, c_part);
+  }
+
+  toPuz(puzzle: DBPuzzleT) {
+    this.writeHeader(puzzle);
+    const [solutionLoc, gridLoc] = this.writeFill(puzzle);
+    const stringLoc = this.writeStrings(puzzle);
+    this.computeChecksums(
+      stringLoc,
+      solutionLoc,
+      gridLoc,
+      puzzle.w * puzzle.h,
+      puzzle.dc.length + puzzle.ac.length
+    );
+    return new Uint8Array(this.buf);
+  }
+}
+
+export function exportFile(puzzle: DBPuzzleT): Uint8Array {
+  return new PuzWriter().toPuz(puzzle);
 }
 
 export function importFile(bytes: Uint8Array): PuzzleInProgressT | null {
