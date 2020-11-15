@@ -222,7 +222,7 @@ class PuzWriter {
     this.buf[ix + 1] = (x >> 8) & 0xff;
   }
 
-  writeString(s: string | undefined) {
+  writeString(s: string | undefined, nullTerminated = true) {
     if (s === undefined) s = '';
     for (let i = 0; i < s.length; i++) {
       const cp = s.codePointAt(i);
@@ -240,7 +240,9 @@ class PuzWriter {
       }
       if (cp >= 0x10000) i++; // advance by one codepoint
     }
-    this.buf.push(0);
+    if (nullTerminated) {
+      this.buf.push(0);
+    }
   }
 
   writeHeader(puzzle: DBPuzzleT) {
@@ -366,6 +368,55 @@ class PuzWriter {
     this.setMaskedChecksum(3, 0x45, 0x44, c_part);
   }
 
+  addExtension(name: string, data: Array<number>) {
+    this.writeString(name, false);
+    this.writeShort(data.length);
+    const checksumLoc = this.buf.length;
+    this.writeShort(0); // Checksum placeholder
+    const dataLoc = this.buf.length;
+    for (let i = 0; i < data.length; i++) {
+      this.buf.push(data[i]);
+    }
+    this.buf.push(0);
+    const cksum = this.checksumRegion(dataLoc, data.length, 0);
+    this.setShort(checksumLoc, cksum);
+  }
+
+  addGext(highlighted: Array<number>, size: number) {
+    const data: Array<number> = [];
+    for (let i = 0; i < size; i++) {
+      data.push(highlighted.includes(i) ? 0x80 : 0);
+    }
+    this.addExtension('GEXT', data);
+  }
+
+  addGrbs(grid: Array<string>, rtbl: Array<string>) {
+    const data: Array<number> = [];
+    for (let i = 0; i < grid.length; i++) {
+      data.push(rtbl.indexOf(grid[i]) + 1);
+    }
+    this.addExtension('GRBS', data);
+  }
+
+  addRtbl(rtbl: Array<string>) {
+    let data = '';
+    for (let i = 0; i < rtbl.length; i += 1) {
+      const iStr = i.toString();
+      if (iStr.length < 2) {
+        data += ' ';
+      }
+      data += `${iStr}:${rtbl[i]};`;
+    }
+    this.writeString('RTBL', false);
+    this.writeShort(data.length);
+    const checksumLoc = this.buf.length;
+    this.writeShort(0); // Checksum placeholder
+    const dataLoc = this.buf.length;
+    this.writeString(data);
+    const cksum = this.checksumRegion(dataLoc, data.length, 0);
+    this.setShort(checksumLoc, cksum);
+  }
+
   toPuz(puzzle: DBPuzzleT) {
     this.writeHeader(puzzle);
     const [solutionLoc, gridLoc] = this.writeFill(puzzle);
@@ -377,6 +428,22 @@ class PuzWriter {
       puzzle.w * puzzle.h,
       puzzle.dc.length + puzzle.ac.length
     );
+
+    const rebi: Set<string> = new Set();
+    for (const s of puzzle.g) {
+      if (s.length > 1) {
+        rebi.add(s);
+      }
+    }
+    if (rebi.size > 0) {
+      const rtbl = Array.from(rebi);
+      this.addGrbs(puzzle.g, rtbl);
+      this.addRtbl(rtbl);
+    }
+
+    if (puzzle.hs) {
+      this.addGext(puzzle.hs, puzzle.w * puzzle.h);
+    }
     return new Uint8Array(this.buf);
   }
 }

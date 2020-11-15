@@ -83,50 +83,56 @@ test('test error on copyright', async () => {
   ).rejects.toThrowErrorMatchingSnapshot();
 });
 
-// TODO checksum testing, using puzpy?
-test('roundtrip', async () => {
-  const name = 'av110622';
-  const puz = await readFile(
-    path.resolve(__dirname, 'converter/puz/' + name + '.puz')
-  );
-  const pip = importFile(puz);
-  if (!pip) {
-    throw new Error('failed to import');
-  }
-  const ourPuz = exportFile(toDBPuzzle(pip));
-  expect(importFile(ourPuz)).toEqual({
-    ...pip,
-    notes: 'Created on crosshare.org',
-  });
+const CASES = [
+  { name: '2016-1-5-JosephCrosswords' },
+  { name: '2016-1-5-ShefferCrosswords' },
+  { name: '2016-1-5-UniversalCrossword' },
+  { name: '2016-1-5-USAToday' },
+  { name: '2016-1-31-LosAngelesTimes' },
+  { name: '2016-1-31-Newsday' },
+  { name: 'av110622' },
+  { name: 'cs080904' },
+  { name: 'Feb0308_oddnumbering' },
+  { name: 'FamilyCrossword' },
+  { name: 'hobbyistspam' },
+  { name: 'nyt_partlyfilled' },
+  { name: 'nyt_rebus_with_notes_and_shape' },
+  { name: 'nyt_with_shape' },
+  { name: 'puz_131202banks' },
+  { name: 'version-1.2-puzzle-with-notes' },
+  { name: 'version-1.2-puzzle' },
+  { name: 'washpost' },
+  { name: 'wsj110624' },
+];
 
-  // TODO this test doesn't work for the above puzzle due to mismatched author name, notes, and magic field
-  // expect(ourPuz).toEqual(puz);
-});
+cases(
+  'test roundtrip',
+  async (opts) => {
+    const puz = await readFile(
+      path.resolve(__dirname, 'converter/puz/' + opts.name + '.puz')
+    );
+    const pip = importFile(puz);
+    if (!pip) {
+      throw new Error('failed to import');
+    }
+    const ourPuz = exportFile(toDBPuzzle(pip));
+    expect(importFile(ourPuz)).toEqual({
+      ...pip,
+      notes: (pip.notes ? pip.notes + ' - ' : '') + 'Created on crosshare.org',
+    });
+
+    const expected = await readFile(
+      path.resolve(__dirname, 'converter/ourpuz/' + opts.name + '.puz')
+    );
+    expect(ourPuz).toEqual(Uint8Array.from(expected));
+  },
+  CASES
+);
 
 cases(
   'test .puz import',
   async (opts) => {
     expect(await loadPuz(opts.name)).toMatchSnapshot();
   },
-  [
-    { name: '2016-1-5-JosephCrosswords' },
-    { name: '2016-1-5-ShefferCrosswords' },
-    { name: '2016-1-5-UniversalCrossword' },
-    { name: '2016-1-5-USAToday' },
-    { name: '2016-1-31-LosAngelesTimes' },
-    { name: '2016-1-31-Newsday' },
-    { name: 'av110622' },
-    { name: 'cs080904' },
-    { name: 'Feb0308_oddnumbering' },
-    { name: 'FamilyCrossword' },
-    { name: 'hobbyistspam' },
-    { name: 'nyt_partlyfilled' },
-    { name: 'nyt_rebus_with_notes_and_shape' },
-    { name: 'nyt_with_shape' },
-    { name: 'puz_131202banks' },
-    { name: 'version-1.2-puzzle-with-notes' },
-    { name: 'version-1.2-puzzle' },
-    { name: 'washpost' },
-    { name: 'wsj110624' },
-  ]
+  CASES
 );
