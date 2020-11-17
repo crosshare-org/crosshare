@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import { setAdminApp, FieldValue } from '../lib/firebaseWrapper';
 import type * as firebaseAdminType from 'firebase-admin';

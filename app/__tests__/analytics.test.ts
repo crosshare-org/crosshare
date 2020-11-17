@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import { AdminTimestamp } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import { PlayT, LegacyPlayT, DBPuzzleT } from '../lib/dbtypes';

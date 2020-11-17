@@ -1,33 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`basic comment display 1`] = `
-.emotion-6 {
+.emotion-0 {
   margin-top: 1em;
 }
 
-.emotion-0 {
+.emotion-1 {
   border-bottom: 1px solid var(--black);
 }
 
-.emotion-5 {
+.emotion-2 {
   list-style-type: none;
   margin: 2em 0 0 0;
   padding: 0;
 }
 
-.emotion-4 {
+.emotion-3 {
   margin-top: 1em;
 }
 
-.emotion-4 p:last-of-type {
+.emotion-3 p:last-of-type {
   margin-bottom: 0;
 }
 
-.emotion-1 {
+.emotion-4 {
   vertical-align: text-bottom;
 }
 
-.emotion-2 {
+.emotion-5 {
   font-size: 0.75em;
   background-color: var(--caption);
   color: white;
@@ -35,15 +35,15 @@ exports[`basic comment display 1`] = `
   padding: 0.1em 0.2em;
 }
 
-.emotion-3 {
+.emotion-6 {
   font-style: italic;
 }
 
 <div
-  class="emotion-6"
+  class="emotion-0"
 >
   <h4
-    class="emotion-0"
+    class="emotion-1"
   >
     Comments
   </h4>
@@ -51,15 +51,15 @@ exports[`basic comment display 1`] = `
     Sign in with google (above) to leave a comment of your own
   </div>
   <ul
-    class="emotion-5"
+    class="emotion-2"
   >
     <li>
       <div
-        class="emotion-4"
+        class="emotion-3"
       >
         <div>
           <span
-            class="emotion-1"
+            class="emotion-4"
           >
             <svg
               fill="rgb(25,42,230)"
@@ -179,13 +179,13 @@ exports[`basic comment display 1`] = `
             🤓
           </span>
           <span
-            class="emotion-2"
+            class="emotion-5"
           >
             55s
           </span>
            · 
           <span
-            class="emotion-3"
+            class="emotion-6"
             title="2020-08-01T00:00:00-04:00"
           >
             1 day
@@ -208,33 +208,33 @@ exports[`basic comment display 1`] = `
 `;
 
 exports[`comment with username display 1`] = `
-.emotion-6 {
+.emotion-0 {
   margin-top: 1em;
 }
 
-.emotion-0 {
+.emotion-1 {
   border-bottom: 1px solid var(--black);
 }
 
-.emotion-5 {
+.emotion-2 {
   list-style-type: none;
   margin: 2em 0 0 0;
   padding: 0;
 }
 
-.emotion-4 {
+.emotion-3 {
   margin-top: 1em;
 }
 
-.emotion-4 p:last-of-type {
+.emotion-3 p:last-of-type {
   margin-bottom: 0;
 }
 
-.emotion-1 {
+.emotion-4 {
   vertical-align: text-bottom;
 }
 
-.emotion-2 {
+.emotion-5 {
   font-size: 0.75em;
   background-color: var(--caption);
   color: white;
@@ -242,15 +242,15 @@ exports[`comment with username display 1`] = `
   padding: 0.1em 0.2em;
 }
 
-.emotion-3 {
+.emotion-6 {
   font-style: italic;
 }
 
 <div
-  class="emotion-6"
+  class="emotion-0"
 >
   <h4
-    class="emotion-0"
+    class="emotion-1"
   >
     Comments
   </h4>
@@ -258,15 +258,15 @@ exports[`comment with username display 1`] = `
     Sign in with google (above) to leave a comment of your own
   </div>
   <ul
-    class="emotion-5"
+    class="emotion-2"
   >
     <li>
       <div
-        class="emotion-4"
+        class="emotion-3"
       >
         <div>
           <span
-            class="emotion-1"
+            class="emotion-4"
           >
             <svg
               fill="rgb(25,42,230)"
@@ -390,13 +390,13 @@ exports[`comment with username display 1`] = `
             🤓
           </span>
           <span
-            class="emotion-2"
+            class="emotion-5"
           >
             55s
           </span>
            · 
           <span
-            class="emotion-3"
+            class="emotion-6"
             title="2020-08-01T00:00:00-04:00"
           >
             1 day
