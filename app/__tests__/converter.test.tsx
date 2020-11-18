@@ -121,10 +121,7 @@ cases(
       notes: (pip.notes ? pip.notes + ' - ' : '') + 'Created on crosshare.org',
     });
 
-    const expected = await readFile(
-      path.resolve(__dirname, 'converter/ourpuz/' + opts.name + '.puz')
-    );
-    expect(ourPuz).toEqual(Uint8Array.from(expected));
+    expect(ourPuz).toMatchSnapshot();
   },
   CASES
 );

@@ -29,6 +29,7 @@ import {
   FaPrint,
   FaInfoCircle,
   FaEdit,
+  FaRegFile,
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
@@ -1256,6 +1257,11 @@ export const Puzzle = ({
                 href={'/api/pdf/' + puzzle.id}
                 icon={<FaPrint />}
                 text="Print Puzzle"
+              />
+              <TopBarDropDownLinkSimpleA
+                href={'/api/puz/' + puzzle.id}
+                icon={<FaRegFile />}
+                text="Download .puz File"
               />
               <TopBarDropDownLinkA
                 href="/account"

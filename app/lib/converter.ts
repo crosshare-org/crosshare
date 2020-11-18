@@ -283,7 +283,7 @@ class PuzWriter {
     const stringStart = this.buf.length;
     this.writeString(puzzle.t);
     this.writeString(puzzle.n);
-    this.writeString(''); // copyright
+    this.writeString(`Copyright ${puzzle.n}, all rights reserved`);
     const clues: Array<[number, string]> = [];
     for (let i = 0; i < puzzle.ac.length; i++) {
       clues.push([2 * puzzle.an[i], puzzle.ac[i]]);
