@@ -1,4 +1,13 @@
 {
+  "emulators": {
+    "ui": {
+      "enabled": false
+    },
+    "firestore": {
+      "host": "0.0.0.0",
+      "port": 8080
+    }
+  },
   "firestore": {
     "rules": "firestore.rules"
   },
@@ -25,107 +34,110 @@
       "setupTestsAfterEnv.ts"
     ]
   },
-  "hosting": [ {
-    "target": "prod",
-    "public": "public/",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**",
-      "**/*.map",
-      "**/*.ts",
-      "**/*.tsx"
-    ],
-    "cleanUrls": true,
-    "headers": [
-      {
-        "source": "**/static/**",
-        "headers" : [
-          {
-            "key" : "Cache-Control",
-            "value" : "max-age=365000000, immutable"
-          }
-        ]
-      }
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "function": "nextjs-server"
-      }
-    ],
-    "redirects": [
-      {
-        "regex": "/(?i:WWMC)(/(?P<rest>.*))?",
-        "destination": "/PBWMC/:rest",
-        "type": 301
-      },
-      {
-        "source": "/category/dailymini",
-        "destination": "/dailyminis",
-        "type": 301
-      },
-      {
-        "source": "/categories/dailymini",
-        "destination": "/dailyminis",
-        "type": 301
-      },
-      {
-        "source": "/pending/:id",
-        "destination": "/crosswords/:id",
-        "type": 301
-      }
-    ]
-  }, {
-    "target": "staging",
-    "public": "public/",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**",
-      "**/*.map",
-      "**/*.ts",
-      "**/*.tsx"
-    ],
-    "cleanUrls": true,
-    "headers": [
-      {
-        "source": "**/static/**",
-        "headers" : [
-          {
-            "key" : "Cache-Control",
-            "value" : "max-age=365000000, immutable"
-          }
-        ]
-      }
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "function": "staging-server"
-      }
-    ],
-    "redirects": [
-      {
-        "source": "/robots.txt",
-        "destination": "/staging.robots.txt",
-        "type": 301
-      },
-      {
-        "regex": "/(?i:WWMC)(/(?P<rest>.*))?",
-        "destination": "/PBWMC/:rest",
-        "type": 301
-      },
-      {
-        "source": "/category/dailymini",
-        "destination": "/dailyminis",
-        "type": 301
-      },
-      {
-        "source": "/categories/dailymini",
-        "destination": "/dailyminis",
-        "type": 301
-      }
-    ]
-  }]
+  "hosting": [
+    {
+      "target": "prod",
+      "public": "public/",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**",
+        "**/*.map",
+        "**/*.ts",
+        "**/*.tsx"
+      ],
+      "cleanUrls": true,
+      "headers": [
+        {
+          "source": "**/static/**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "max-age=365000000, immutable"
+            }
+          ]
+        }
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "function": "nextjs-server"
+        }
+      ],
+      "redirects": [
+        {
+          "regex": "/(?i:WWMC)(/(?P<rest>.*))?",
+          "destination": "/PBWMC/:rest",
+          "type": 301
+        },
+        {
+          "source": "/category/dailymini",
+          "destination": "/dailyminis",
+          "type": 301
+        },
+        {
+          "source": "/categories/dailymini",
+          "destination": "/dailyminis",
+          "type": 301
+        },
+        {
+          "source": "/pending/:id",
+          "destination": "/crosswords/:id",
+          "type": 301
+        }
+      ]
+    },
+    {
+      "target": "staging",
+      "public": "public/",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**",
+        "**/*.map",
+        "**/*.ts",
+        "**/*.tsx"
+      ],
+      "cleanUrls": true,
+      "headers": [
+        {
+          "source": "**/static/**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "max-age=365000000, immutable"
+            }
+          ]
+        }
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "function": "staging-server"
+        }
+      ],
+      "redirects": [
+        {
+          "source": "/robots.txt",
+          "destination": "/staging.robots.txt",
+          "type": 301
+        },
+        {
+          "regex": "/(?i:WWMC)(/(?P<rest>.*))?",
+          "destination": "/PBWMC/:rest",
+          "type": 301
+        },
+        {
+          "source": "/category/dailymini",
+          "destination": "/dailyminis",
+          "type": 301
+        },
+        {
+          "source": "/categories/dailymini",
+          "destination": "/dailyminis",
+          "type": 301
+        }
+      ]
+    }
+  ]
 }
