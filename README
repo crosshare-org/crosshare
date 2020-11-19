@@ -5,4 +5,4 @@ $ docker build . --target emulators -t emulators
 
 Run:
 $ docker run -p 8080:8080 -ti --rm --name=emulators --network=crosshare_default emulators
-$ docker run -ti -v $(pwd)/app:/src/app --rm --network=crosshare_default dev jest --runInBand
+$ docker run -ti -v $(pwd)/app:/src/app --rm --network=crosshare_default dev jest --maxWorkers=2

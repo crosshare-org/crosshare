@@ -22,4 +22,5 @@ RUN apk add --no-cache git build-base g++ cairo-dev \
 RUN yarn --frozen-lockfile
 COPY . .
 WORKDIR /src/app
+RUN mkdir /src/vscode
 ENV PATH=$PATH:/src/node_modules/.bin NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=emulators:8080
