@@ -1,0 +1,8 @@
+# Ignore all files by default
+*
+
+# White list only the required files
+!app/package.json
+!app/yarn.lock
+!app/firebase.json
+!app/firestore.rules
