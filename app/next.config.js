@@ -23,33 +23,16 @@ process.env.SENTRY_DSN = SENTRY_DSN;
 
 const distDir = 'nextjs';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const nextBuildId = require('next-build-id');
-let latestGitHash;
-try {
-  // Try getting hash from git - this should work locally when we build
-  latestGitHash = nextBuildId.sync({
-    dir: __dirname
-  });
-} catch {
-  // If that fails then we deployed, get it from the pregenerated file
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const fs = require('fs');
-  latestGitHash = fs.readFileSync(distDir + '/BUILD_ID').toString();
-}
-console.log('Loading config for release: ' + latestGitHash);
+const sentryRelease = Array.from({ length : 20 }, () => Math.random().toString(36)[2]).join('');
 
 module.exports = withSourceMaps(withBundleAnalyzer({
   distDir: distDir,
   env: {
     FIREBASE_PROJECT_ID: 'mdcrosshare',
-    NEXT_PUBLIC_SENTRY_RELEASE: latestGitHash,
+    NEXT_PUBLIC_SENTRY_RELEASE: sentryRelease,
   },
   experimental: {
     sprFlushToDisk: false,
-  },
-  generateBuildId: async () => {
-    return latestGitHash;
   },
   poweredByHeader: false,
   webpack: (config, {
@@ -91,7 +74,7 @@ module.exports = withSourceMaps(withBundleAnalyzer({
           include: distDir,
           ignore: ['node_modules'],
           urlPrefix: '~/_next',
-          release: latestGitHash,
+          release: sentryRelease,
         })
       );
     }
