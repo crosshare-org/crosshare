@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  emulators:
+    build:
+      context: .
+      target: emulators
+    image: emulators
+    ports:
+      - 8080:8080
+  jest:
+    command: jest --runInBand
+    depends_on:
+      - emulators
+    build:
+      context: .
+      target: jest
+    image: jest
+    volumes:
+      - "./app:/src/app"

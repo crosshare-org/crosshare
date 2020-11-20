@@ -1,8 +1,12 @@
 Working docker commands:
 Build:
-$ docker build . -t dev
+$ docker build . --target jest -t jest
 $ docker build . --target emulators -t emulators
+$ docker build . --target base -t dev
 
-Run:
+Run emulators:
 $ docker run -p 8080:8080 -ti --rm --name=emulators --network=crosshare_default emulators
-$ docker run -ti -v $(pwd)/app:/src/app --rm --network=crosshare_default dev jest --maxWorkers=2
+Run jest:
+$ docker run -ti -v $(pwd)/app:/src/app --rm --network=crosshare_default jest jest --maxWorkers=2
+Run dev site:
+$ docker run -ti -p 3000:3000 -v $(pwd)/app:/src/app -v $(pwd)/serviceAccountKey.json:/src/serviceAccountKey.json --rm dev yarn dev

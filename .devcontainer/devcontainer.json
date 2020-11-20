@@ -4,7 +4,7 @@
 	"context": "..",
 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
 	"dockerFile": "../Dockerfile",
-	"build.target": "dev",
+	"build.target": "vscode",
 	"workspaceFolder": "/src/vscode",
 	"workspaceMount": "source=${localWorkspaceFolder},target=/src/vscode,type=bind,consistency=cached",
 	// Set *default* container specific settings.json values on container create.
@@ -12,7 +12,9 @@
 		"terminal.integrated.shell.linux": null
 	},
 	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": []
+	"extensions": [
+		"rvest.vs-code-prettier-eslint"
+	]
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 	// Uncomment the next line to run commands after the container is created - for example installing curl.
