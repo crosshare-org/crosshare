@@ -2,7 +2,21 @@
 *
 
 # White list only the required files
+!app/.env.local
 !app/package.json
 !app/yarn.lock
 !app/firebase.json
 !app/firestore.rules
+!app/tsconfig.json
+!app/server.js
+!app/next.config.js
+!app/.babelrc
+!app/typings
+!app/reducers
+!app/public
+!app/pages
+!app/lib
+!app/components
+
+# Explicitly ignore mocks directories
+**/__mocks__

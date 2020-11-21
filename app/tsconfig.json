@@ -21,7 +21,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "jsx": "preserve",
-    "types": ["@emotion/core"]
+    "types": [
+      "@emotion/core"
+    ]
   },
   "exclude": [
     "node_modules"
