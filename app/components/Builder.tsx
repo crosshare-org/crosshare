@@ -50,6 +50,7 @@ import {
   SymmetryVertical,
   SymmetryHorizontal,
   SymmetryNone,
+  PrefillIcon,
   EscapeKey,
   BacktickKey,
   PeriodKey,
@@ -90,6 +91,7 @@ import {
   initialBuilderState,
   BuilderGrid,
   ClickedEntryAction,
+  PrefillSquares,
 } from '../reducers/reducer';
 import {
   NestedDropDown,
@@ -350,12 +352,62 @@ const SizeSelectInput = (props: SizeSelectProps) => {
   );
 };
 
+interface PrefillSelectProps {
+  current: PrefillSquares;
+  option: PrefillSquares;
+  setCurrent: (s: PrefillSquares) => void;
+}
+
+const labelForPrefill = (p: PrefillSquares) => {
+  switch (p) {
+  case PrefillSquares.OddOdd:
+    return 'Odd/Odd';
+  case PrefillSquares.EvenEven:
+    return 'Even/Even';
+  case PrefillSquares.OddEven:
+    return 'Odd/Even';
+  case PrefillSquares.EvenOdd:
+    return 'Even/Odd';
+  }
+};
+
+const PrefillSelectInput = (props: PrefillSelectProps) => {
+  return (
+    <div css={{ fontSize: '1.5em' }}>
+      <label>
+        <input
+          css={{ marginRight: '1em' }}
+          type="radio"
+          name="prefill"
+          value={props.option}
+          checked={props.current === props.option}
+          onChange={(e) => {
+            if (parseInt(e.currentTarget.value) !== props.option) return;
+            props.setCurrent(props.option);
+          }}
+        />
+        <span
+          css={{
+            verticalAlign: 'top !important',
+            fontSize: '2em',
+            marginRight: '0.3em',
+          }}
+        >
+          <PrefillIcon type={props.option} />
+        </span>
+        {labelForPrefill(props.option)}
+      </label>
+    </div>
+  );
+};
+
 const NewPuzzleForm = (props: { dispatch: Dispatch<NewPuzzleAction> }) => {
   const [cols, setCols] = useState(5);
   const [rows, setRows] = useState(5);
   const [current, setCurrent] = useState('Mini');
   const [customRows, setCustomRows] = useState<number | null>(null);
   const [customCols, setCustomCols] = useState<number | null>(null);
+  const [prefill, setPrefill] = useState<PrefillSquares | undefined>(undefined);
 
   let errorMsg = '';
   if (!customRows || !customCols) {
@@ -372,7 +424,7 @@ const NewPuzzleForm = (props: { dispatch: Dispatch<NewPuzzleAction> }) => {
     // Clear current puzzle
     localStorage.removeItem(STORAGE_KEY);
 
-    props.dispatch({ type: 'NEWPUZZLE', cols: cols, rows: rows });
+    props.dispatch({ type: 'NEWPUZZLE', cols, rows, prefill });
   }
 
   return (
@@ -430,12 +482,56 @@ const NewPuzzleForm = (props: { dispatch: Dispatch<NewPuzzleAction> }) => {
             }}
             setCurrent={setCurrent}
           />
+          {current === 'Custom' && errorMsg ? (
+            <p css={{ color: 'var(--error)' }}>{errorMsg}</p>
+          ) : (
+            ''
+          )}
+          <div>
+            <label>
+              <input
+                css={{ marginRight: '1em' }}
+                type="checkbox"
+                checked={prefill !== undefined}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setPrefill(PrefillSquares.OddOdd);
+                  } else {
+                    setPrefill(undefined);
+                  }
+                }}
+              />{' '}
+              Prefill black squares for UK/cryptic style
+            </label>
+            {prefill !== undefined ? (
+              <>
+                <PrefillSelectInput
+                  current={prefill}
+                  option={PrefillSquares.OddOdd}
+                  setCurrent={setPrefill}
+                />
+                <PrefillSelectInput
+                  current={prefill}
+                  option={PrefillSquares.EvenEven}
+                  setCurrent={setPrefill}
+                />
+                <PrefillSelectInput
+                  current={prefill}
+                  option={PrefillSquares.OddEven}
+                  setCurrent={setPrefill}
+                />
+                <PrefillSelectInput
+                  current={prefill}
+                  option={PrefillSquares.EvenOdd}
+                  setCurrent={setPrefill}
+                />
+              </>
+            ) : (
+              ''
+            )}
+          </div>
         </div>
-        {current === 'Custom' && errorMsg ? (
-          <p css={{ color: 'var(--error)' }}>{errorMsg}</p>
-        ) : (
-          ''
-        )}
+
         <input
           type="submit"
           value="Create New Puzzle"
