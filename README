@@ -10,3 +10,7 @@ Run jest:
 $ docker run -ti -v $(pwd)/app:/src/app --rm --network=crosshare_default jest jest --maxWorkers=2
 Run dev site:
 $ docker run -ti -p 3000:3000 -v $(pwd)/app:/src/app -v $(pwd)/serviceAccountKey.json:/src/serviceAccountKey.json --rm dev yarn dev
+
+Test build:
+$ docker build . --target prod -t prod
+$ docker-compose up testBuild

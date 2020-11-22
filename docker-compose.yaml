@@ -1,14 +1,13 @@
 version: '3.8'
 services:
   testBuild:
-    image: builder
+    image: prod
     volumes:
-      - "./serviceAccountKey.json:/src/serviceAccountKey.json"
+      - "./serviceAccountKey.json:/app/serviceAccountKey.json"
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json
+      - GOOGLE_APPLICATION_CREDENTIALS=./serviceAccountKey.json
     ports:
       - "3000:3000"
-    command: next start
   emulators:
     build:
       context: .
