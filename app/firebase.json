@@ -113,7 +113,10 @@
       "rewrites": [
         {
           "source": "**",
-          "function": "staging-server"
+          "run": {
+            "serviceId": "staging",
+            "region": "us-central1"
+          }
         }
       ],
       "redirects": [

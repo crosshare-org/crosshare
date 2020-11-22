@@ -16,6 +16,7 @@ RUN yarn predeploy
 RUN rm -rf nextjs/cache
 WORKDIR /src
 RUN yarn install --production --ignore-scripts --prefer-offline
+RUN find . -name \*.map -type f -delete
 
 FROM node:10-alpine as prod
 RUN apk add cairo pango libjpeg-turbo giflib librsvg
@@ -25,4 +26,4 @@ COPY --from=builder /src/app/next.config.js ./
 COPY --from=builder /src/app/public ./public
 COPY --from=builder /src/app/nextjs ./nextjs
 COPY --from=builder /src/node_modules ./node_modules
-CMD ["next", "start"]
+CMD next start -p $PORT
