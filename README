@@ -1,4 +1,20 @@
-Working docker commands:
+## Deploy steps
+
+### Test locally
+$ docker build . --target prod -t gcr.io/mdcrosshare/prod:latest
+$ docker-compose up testBuild
+
+### Deploy staging
+$ docker push gcr.io/mdcrosshare/prod:latest
+$ gcloud beta run deploy staging --image gcr.io/mdcrosshare/prod
+$ firebase deploy --only hosting:staging
+
+### Deploy prod
+$ gcloud beta run deploy prod --image gcr.io/mdcrosshare/prod
+$ firebase deploy --only hosting:prod
+
+## Old commands for running test env locally, needs updates:
+
 Build:
 $ docker build . --target jest -t jest
 $ docker build . --target emulators -t emulators
@@ -11,6 +27,3 @@ $ docker run -ti -v $(pwd)/app:/src/app --rm --network=crosshare_default jest je
 Run dev site:
 $ docker run -ti -p 3000:3000 -v $(pwd)/app:/src/app -v $(pwd)/serviceAccountKey.json:/src/serviceAccountKey.json --rm dev yarn dev
 
-Test build:
-$ docker build . --target prod -t prod
-$ docker-compose up testBuild

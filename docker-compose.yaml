@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   testBuild:
-    image: prod
+    image: gcr.io/mdcrosshare/prod:latest
     volumes:
       - "./serviceAccountKey.json:/app/serviceAccountKey.json"
     environment:
