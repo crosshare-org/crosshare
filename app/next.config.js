@@ -4,9 +4,6 @@ const { PHASE_PRODUCTION_SERVER } =
 const distDir = 'nextjs';
 const baseConfig = {
   distDir: distDir,
-  experimental: {
-    sprFlushToDisk: false,
-  },
   poweredByHeader: false,
 };
 
