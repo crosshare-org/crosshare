@@ -95,7 +95,7 @@ test('create constructor page', async () => {
     target: { value: 'TheREALMikeD' },
   });
   fireEvent.click(r.getByText('Create', { exact: true }));
-  await r.findByText('Created successfully!');
+  await r.findByText('Created successfully!', undefined, { timeout: 3000 });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   windowSpy = jest.spyOn(global as any, 'window', 'get');

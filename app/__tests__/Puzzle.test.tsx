@@ -1,5 +1,11 @@
 import React from 'react';
-import { anonymousUser, cleanup, render, fireEvent } from '../lib/testingUtils';
+import {
+  anonymousUser,
+  cleanup,
+  render,
+  fireEvent,
+  act,
+} from '../lib/testingUtils';
 import waitForExpect from 'wait-for-expect';
 import { Puzzle } from '../components/Puzzle';
 import { ServerPuzzleResult } from '../lib/types';
@@ -14,6 +20,10 @@ import {
 } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import type firebase from 'firebase/app';
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+jest.mock('next/link', () => ({ children }) => children); // https://github.com/vercel/next.js/issues/16864
 
 jest.mock('../lib/firebaseWrapper');
 
@@ -217,7 +227,11 @@ test('nonuser progress should be cached in local storage but not db', async () =
   setApp(app as firebase.app.App);
   const admin = firebaseTesting.initializeAdminApp({ projectId: 'test1' });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
+  windowSpy.mockRestore();
 
   let {
     findByText,
@@ -246,10 +260,20 @@ test('nonuser progress should be cached in local storage but not db', async () =
   fireEvent.click(await findByTitle(/Pause Game/i));
 
   // Unmount doesn't cause us to write to the db
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
+  windowSpy.mockRestore();
+
   cleanup();
   await flushPromises();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
+  windowSpy.mockRestore();
 
   // Now try again!
   ({ findByTitle, findByText, queryByText, getByLabelText, container } = render(
@@ -269,7 +293,11 @@ test('nonuser progress should be cached in local storage but not db', async () =
   cleanup();
   await flushPromises();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
+  windowSpy.mockRestore();
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(0);
 
   await admin.delete();
@@ -328,12 +356,20 @@ test('anonymous user progress should be cached in local storage and db', async (
   // Pause should cause us to write to the db
 
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(0);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
+  windowSpy.mockRestore();
   fireEvent.click(await findByTitle(/Pause Game/i));
   cleanup();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   await waitForExpect(async () =>
     expect((await admin.firestore().collection('p').get()).size).toEqual(1)
   );
+  windowSpy.mockRestore();
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
   // Now try again!
@@ -356,7 +392,11 @@ test('anonymous user progress should be cached in local storage and db', async (
   cleanup();
   await flushPromises();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  windowSpy.mockRestore();
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
   // Now try again w/o Local storage!
@@ -383,7 +423,11 @@ test('anonymous user progress should be cached in local storage and db', async (
   cleanup();
   await flushPromises();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  windowSpy.mockRestore();
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(2);
 
   await admin.delete();
@@ -451,11 +495,15 @@ test('visiting a puzzle youve already solved should not write to db', async () =
     f: true,
     n: 'Puzzle title',
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   await admin
     .firestore()
     .collection('p')
     .doc(dailymini_5_19.id + '-anonymous-user-id')
     .set(play);
+  windowSpy.mockRestore();
 
   const { findByText } = render(<PuzzlePage puzzle={dailymini_5_19} />, {
     user: anonymousUser,
@@ -507,15 +555,24 @@ test('user finishing a puzzle causes write to db', async () => {
 
   const cell2 = r.getByLabelText('cell0x2');
   expect(cell2).toHaveTextContent('P');
+  await act(() => Promise.resolve());
 
   // We've already written to the db when the puzzle was completed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   await waitForExpect(async () =>
     expect((await admin.firestore().collection('p').get()).size).toEqual(1)
   );
+  windowSpy.mockRestore();
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
   cleanup();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  windowSpy.mockRestore();
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
   await admin.delete();
@@ -566,11 +623,16 @@ test('nonuser finishing a puzzle should cause creation of anonymous user and wri
 
   const cell2 = r.getByLabelText('cell0x2');
   expect(cell2).toHaveTextContent('P');
+  await act(() => Promise.resolve());
 
   // We've already written to the db when the puzzle was completed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   await waitForExpect(async () =>
     expect((await admin.firestore().collection('p').get()).size).toEqual(1)
   );
+  windowSpy.mockRestore();
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
   expect(firebaseWrapper.signInAnonymously).toHaveBeenCalledTimes(1);
 
@@ -580,7 +642,11 @@ test('nonuser finishing a puzzle should cause creation of anonymous user and wri
   fireEvent.click(r.getByLabelText('Previous Entry'));
 
   cleanup();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  windowSpy.mockRestore();
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
   await admin.delete();

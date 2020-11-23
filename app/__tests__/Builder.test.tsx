@@ -235,7 +235,7 @@ test('moderate as daily mini', async () => {
   const dmButton = await r4.findByText(/Schedule as Daily Mini/i);
   fireEvent.click(r4.getByTestId('today-button'));
   fireEvent.click(dmButton);
-  await r4.findByText('Moderated!');
+  await r4.findByText('Moderated!', undefined, { timeout: 3000 });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   windowSpy = jest.spyOn(global as any, 'window', 'get');
@@ -331,7 +331,7 @@ test('publish as default', async () => {
   expect(r4.queryByText(/private until/i)).not.toBeNull();
   const approveButton = await r4.findByText(/Set as Featured/i);
   fireEvent.click(approveButton);
-  await r4.findByText('Moderated!');
+  await r4.findByText('Moderated!', undefined, { timeout: 3000 });
   await act(() => Promise.resolve());
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
