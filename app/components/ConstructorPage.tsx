@@ -60,6 +60,7 @@ export const CreatePageForm = () => {
   const [username, setUsername] = useState('');
   const [showError, setShowError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [created, setCreated] = useState(false);
 
   function sanitize(input: string): string {
     const res = input.match(/^([a-zA-Z]\w*)/);
@@ -76,7 +77,7 @@ export const CreatePageForm = () => {
     return false;
   }
 
-  function createPage(event: FormEvent) {
+  async function createPage(event: FormEvent) {
     event.preventDefault();
     const user = ctx.user;
     if (!user) {
@@ -101,10 +102,13 @@ export const CreatePageForm = () => {
       m: true,
       t: ServerTimestamp,
     };
-    App.firestore()
+    return App.firestore()
       .collection('cp')
       .doc(lower)
       .set(cp)
+      .then(() => {
+        setCreated(true);
+      })
       .catch((e) => {
         console.log(e);
         setShowError(true);
@@ -112,6 +116,10 @@ export const CreatePageForm = () => {
       .finally(() => {
         setSubmitting(false);
       });
+  }
+
+  if (created) {
+    return <p>Created successfully!</p>;
   }
 
   return (
