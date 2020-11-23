@@ -8,7 +8,6 @@
 !app/firebase.json
 !app/firestore.rules
 !app/tsconfig.json
-!app/server.js
 !app/next.config.js
 !app/.babelrc
 !app/typings

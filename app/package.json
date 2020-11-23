@@ -4,7 +4,6 @@
   "description": "Crosshare ported to next.js",
   "author": "Mike D",
   "private": true,
-  "main": "server.js",
   "browserslist": [
     ">0.2%",
     "last 2 versions",
