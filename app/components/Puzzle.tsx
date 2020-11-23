@@ -184,6 +184,7 @@ const ModeratingOverlay = memo(
   }) => {
     const db = App.firestore();
     const [date, setDate] = useState<Date | undefined>();
+    const [success, setSuccess] = useState(false);
 
     function schedule() {
       if (!date) {
@@ -202,7 +203,7 @@ const ModeratingOverlay = memo(
       ]).then(() => {
         console.log('Scheduled mini');
         sessionStorage.removeItem('categories/dailymini');
-        window.location.reload();
+        setSuccess(true);
       });
     }
 
@@ -212,8 +213,16 @@ const ModeratingOverlay = memo(
         .doc(puzzle.id)
         .update(update)
         .then(() => {
-          window.location.reload();
+          setSuccess(true);
         });
+    }
+
+    if (success) {
+      return (
+        <Overlay closeCallback={() => dispatch({ type: 'TOGGLEMODERATING' })}>
+          <h4>Moderated!</h4>
+        </Overlay>
+      );
     }
 
     return (
@@ -896,10 +905,9 @@ export const Puzzle = ({
    *    for grid highlights when an entry is selected.
    */
   const [clueMap, refs] = useMemo(() => {
-    const asList: Array<[
-      string,
-      [number, Direction, string]
-    ]> = state.grid.entries.map((e) => {
+    const asList: Array<
+      [string, [number, Direction, string]]
+    > = state.grid.entries.map((e) => {
       return [
         e.cells.map((p) => state.answers[cellIndex(state.grid, p)]).join(''),
         [e.labelNumber, e.direction, e.clue],
