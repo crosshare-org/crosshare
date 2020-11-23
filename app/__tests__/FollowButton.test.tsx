@@ -69,8 +69,14 @@ test('follow button logged in', async () => {
   await r.findByText(/notified when John Doe posts/, undefined, {
     timeout: 3000,
   });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   const prefs = await adminApp.firestore().doc('prefs/mike').get();
   expect(prefs.data()?.following).toContain('blammo');
   const followers = await adminApp.firestore().doc('followers/blammo').get();
   expect(followers.data()?.f).toContain('mike');
+  windowSpy.mockRestore();
+  await adminApp.delete();
+  await app.delete();
 });

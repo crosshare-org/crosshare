@@ -10,7 +10,7 @@ import {
   useState,
 } from 'react';
 import { SMALL_AND_UP } from '../lib/style';
-import { keyframes } from '@emotion/core';
+import { keyframes } from '@emotion/react';
 
 const slidein = keyframes`
 from {

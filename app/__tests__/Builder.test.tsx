@@ -7,6 +7,7 @@ import {
   fireEvent,
   RenderResult,
   getProps,
+  act,
 } from '../lib/testingUtils';
 import BuilderPage from '../pages/construct';
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
@@ -18,6 +19,10 @@ import PuzzlePage, { getServerSideProps } from '../pages/crosswords/[puzzleId]';
 import { PuzzleLoader as StatsPuzzleLoader } from '../pages/crosswords/[puzzleId]/stats';
 import waitForExpect from 'wait-for-expect';
 import { getDateString, prettifyDateString } from '../lib/dbtypes';
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+jest.mock('next/link', () => ({ children }) => children); // https://github.com/vercel/next.js/issues/16864
 
 jest.mock('../lib/firebaseWrapper');
 jest.mock('../lib/WordDB');
@@ -125,7 +130,11 @@ async function publishPuzzle(
 
   setApp(app as firebase.app.App);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   await admin.firestore().collection('categories').doc('dailymini').set({});
+  windowSpy.mockRestore();
 
   const r = render(<BuilderPage />, { user: mike });
   fireEvent.click((await r.findAllByText('Launch Constructor'))[0]);
@@ -179,20 +188,32 @@ async function publishPuzzle(
   fireEvent.click(publishButton);
   await r.findByText(/Published Successfully/, undefined, { timeout: 3000 });
 
+  cleanup();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
+
   const dailyMinis = await admin
     .firestore()
     .collection('categories')
     .doc('dailymini')
     .get();
   expect(dailyMinis.data()).toEqual({});
+  windowSpy.mockRestore();
 }
 
 test('moderate as daily mini', async () => {
   await publishPuzzle();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   const puzzles = await admin.firestore().collection('c').get();
+  windowSpy.mockRestore();
+
   expect(puzzles.size).toEqual(1);
   const puzzleId = puzzles.docs[0].id;
-  cleanup();
+
   const props1 = getProps(
     await getServerSideProps({
       params: { puzzleId },
@@ -203,6 +224,7 @@ test('moderate as daily mini', async () => {
   if (!props1) {
     throw new Error('bad props');
   }
+  windowSpy.mockRestore();
 
   // The puzzle should be visible to an admin w/ moderation links
   setApp(adminUserApp as firebase.app.App);
@@ -213,13 +235,15 @@ test('moderate as daily mini', async () => {
   const dmButton = await r4.findByText(/Schedule as Daily Mini/i);
   fireEvent.click(r4.getByTestId('today-button'));
   fireEvent.click(dmButton);
+  await r4.findByText('Moderated!', undefined, { timeout: 3000 });
 
-  await waitForExpect(async () =>
-    expect(
-      (await admin.firestore().collection('c').where('m', '==', true).get())
-        .size
-    ).toEqual(1)
-  );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
+
+  expect(
+    (await admin.firestore().collection('c').where('m', '==', true).get()).size
+  ).toEqual(1);
   const res = await admin.firestore().collection('c').get();
   expect(res.size).toEqual(1);
   const updated = res.docs[0].data();
@@ -238,6 +262,7 @@ test('moderate as daily mini', async () => {
     .doc('dailymini')
     .get();
   expect(dailyMinis.data()).toEqual({ [ds]: puzzleId });
+  windowSpy.mockRestore();
 });
 
 test('publish as default', async () => {
@@ -247,9 +272,14 @@ test('publish as default', async () => {
         exact: true,
       })
     );
+    await act(() => Promise.resolve());
   });
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   const puzzles = await admin.firestore().collection('c').get();
+  windowSpy.mockRestore();
+
   expect(puzzles.size).toEqual(1);
   const puzzle = puzzles.docs[0].data();
   const puzzleId = puzzles.docs[0].id;
@@ -265,8 +295,6 @@ test('publish as default', async () => {
     '/crosswords/' + puzzles.docs[0].id
   );
 
-  cleanup();
-
   // The puzzle should be visible on the puzzle page, even to a rando
   setApp(serverApp as firebase.app.App);
   const props1 = getProps(
@@ -280,7 +308,9 @@ test('publish as default', async () => {
     throw new Error('bad props');
   }
   setApp(randoApp as firebase.app.App);
+
   const r5 = render(<PuzzlePage {...props1} />, { user: rando });
+
   expect(
     await r5.findByText('Begin Puzzle', undefined, { timeout: 3000 })
   ).toBeInTheDocument();
@@ -301,13 +331,15 @@ test('publish as default', async () => {
   expect(r4.queryByText(/private until/i)).not.toBeNull();
   const approveButton = await r4.findByText(/Set as Featured/i);
   fireEvent.click(approveButton);
+  await r4.findByText('Moderated!', undefined, { timeout: 3000 });
+  await act(() => Promise.resolve());
 
-  await waitForExpect(async () =>
-    expect(
-      (await admin.firestore().collection('c').where('m', '==', true).get())
-        .size
-    ).toEqual(1)
-  );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
+  expect(
+    (await admin.firestore().collection('c').where('m', '==', true).get()).size
+  ).toEqual(1);
   const res = await admin.firestore().collection('c').get();
   expect(res.size).toEqual(1);
   const updated = res.docs[0].data();
@@ -324,6 +356,7 @@ test('publish as default', async () => {
     .doc('dailymini')
     .get();
   expect(dailyMinis.data()).toEqual({});
+  windowSpy.mockRestore();
 });
 
 test('change author name in publish dialogue should publish w/ new name', async () => {
@@ -335,13 +368,20 @@ test('change author name in publish dialogue should publish w/ new name', async 
       });
       fireEvent.click(r.getByText('Save', { exact: true }));
       await r.findByText(/M to tha D/i);
+      await act(() => Promise.resolve());
     },
     async (r) => {
       fireEvent.click(r.getByText('This puzzle is private', { exact: true }));
+      await act(() => Promise.resolve());
     }
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   const puzzles = await admin.firestore().collection('c').get();
+  windowSpy.mockRestore();
+
   expect(puzzles.size).toEqual(1);
   const puzzle = puzzles.docs[0].data();
   const puzzleId = puzzles.docs[0].id;
@@ -455,7 +495,12 @@ test('publish custom / non-rectangular size', async () => {
   fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
   await r.findByText(/Published Successfully/);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   const puzzles = await admin.firestore().collection('c').get();
+  windowSpy.mockRestore();
+
   expect(puzzles.size).toEqual(1);
   const puzzle = puzzles.docs[0].data();
   const puzzleId = puzzles.docs[0].id;

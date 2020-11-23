@@ -24,6 +24,10 @@ const readFile = util.promisify(fs.readFile);
 jest.mock('../lib/firebaseWrapper');
 jest.mock('../lib/WordDB');
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+jest.mock('next/link', () => ({ children }) => children); // https://github.com/vercel/next.js/issues/16864
+
 afterEach(() => {
   jest.clearAllMocks();
 });
@@ -114,7 +118,11 @@ test('upload a puzzle', async () => {
   fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
   await r.findByText(/Published Successfully/, undefined, { timeout: 3000 });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   const puzzles = await admin.firestore().collection('c').get();
+  windowSpy.mockRestore();
   expect(puzzles.size).toEqual(1);
   const puzzle = puzzles.docs[0].data();
   const puzzleId = puzzles.docs[0].id;
@@ -195,7 +203,11 @@ test('upload after editing', async () => {
   fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
   await r.findByText(/Published Successfully/, undefined, { timeout: 3000 });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   const puzzles = await admin.firestore().collection('c').get();
+  windowSpy.mockRestore();
   expect(puzzles.size).toEqual(1);
   const resData = puzzles.docs[0].data();
   if (!resData) {

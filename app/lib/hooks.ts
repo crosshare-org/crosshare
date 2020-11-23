@@ -39,18 +39,28 @@ export function useMatchMedia(query: string) {
 export function usePolyfilledResizeObserver(ref: RefObject<HTMLElement>) {
   const [hasResizeObserver, setHasResizeObserver] = useState(false);
   useEffect(() => {
-    if (hasResizeObserver) {
-      return;
-    }
-    if ('ResizeObserver' in window) {
-      setHasResizeObserver(true);
-    } else {
-      // Loads polyfill asynchronously, only if required.
-      import('@juggle/resize-observer').then((module) => {
-        window.ResizeObserver = (module.ResizeObserver as unknown) as typeof ResizeObserver;
+    let didCancel = false;
+
+    const loadRO = async () => {
+      if (hasResizeObserver) {
+        return;
+      }
+      if ('ResizeObserver' in window) {
         setHasResizeObserver(true);
-      });
-    }
+      } else {
+        // Loads polyfill asynchronously, only if required.
+        import('@juggle/resize-observer').then((module) => {
+          window.ResizeObserver = (module.ResizeObserver as unknown) as typeof ResizeObserver;
+          if (!didCancel) {
+            setHasResizeObserver(true);
+          }
+        });
+      }
+    };
+    loadRO();
+    return () => {
+      didCancel = true;
+    };
   }, [hasResizeObserver]);
   return useResizeObserver({ ref: hasResizeObserver ? ref : null });
 }

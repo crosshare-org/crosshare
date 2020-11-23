@@ -29,16 +29,16 @@ exports[`clueMap rendering 1`] = `
 `;
 
 exports[`clueMap rendering 2`] = `
-.emotion-4 {
+.emotion-0 {
   background-color: var(--text);
 }
 
-.emotion-0 {
+.emotion-1 {
   border-bottom: 1px dotted;
   white-space: nowrap;
 }
 
-.emotion-3 {
+.emotion-2 {
   z-index: 100000;
   border-radius: 5px;
   background-color: var(--black);
@@ -49,32 +49,33 @@ exports[`clueMap rendering 2`] = `
   visibility: hidden;
 }
 
-.emotion-3[data-popper-reference-hidden=true] {
+.emotion-2[data-popper-reference-hidden=true] {
   visibility: hidden;
 }
 
-.emotion-1 {
+.emotion-3 {
   margin-right: 0.5em;
 }
 
-.emotion-2 {
+.emotion-4 {
   position: absolute;
   width: 10px;
   height: 10px;
 }
 
-[data-popper-placement^="bottom"] .emotion-2 {
+[data-popper-placement^="bottom"] .emotion-4 {
   top: -5px;
 }
 
-[data-popper-placement^="top"] .emotion-2 {
+[data-popper-placement^="top"] .emotion-4 {
   bottom: -5px;
 }
 
-.emotion-2::after {
+.emotion-4::after {
   content: " ";
   position: absolute;
   -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
   width: 10px;
@@ -89,30 +90,30 @@ exports[`clueMap rendering 2`] = `
     >
       before 
       <span
-        class="emotion-4"
+        class="emotion-0"
       >
         baz BOOM foo 
         <span
-          class="emotion-0"
+          class="emotion-1"
         >
           BAM
         </span>
         <div
-          class="emotion-3"
+          class="emotion-2"
           data-popper-escaped="true"
           data-popper-placement="bottom"
           data-popper-reference-hidden="true"
           style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
         >
           <b
-            class="emotion-1"
+            class="emotion-3"
           >
             2
             D
           </b>
           here is the clue?
           <div
-            class="emotion-2"
+            class="emotion-4"
             style="position: absolute; left: 0px; transform: translate(0px, 0px);"
           />
         </div>
@@ -120,7 +121,7 @@ exports[`clueMap rendering 2`] = `
       </span>
        with 
       <span
-        class="emotion-4"
+        class="emotion-0"
       >
         after
       </span>
@@ -136,7 +137,7 @@ exports[`clueMap rendering 3`] = `
   white-space: nowrap;
 }
 
-.emotion-3 {
+.emotion-1 {
   z-index: 100000;
   border-radius: 5px;
   background-color: var(--black);
@@ -147,32 +148,33 @@ exports[`clueMap rendering 3`] = `
   visibility: hidden;
 }
 
-.emotion-3[data-popper-reference-hidden=true] {
+.emotion-1[data-popper-reference-hidden=true] {
   visibility: hidden;
 }
 
-.emotion-1 {
+.emotion-2 {
   margin-right: 0.5em;
 }
 
-.emotion-2 {
+.emotion-3 {
   position: absolute;
   width: 10px;
   height: 10px;
 }
 
-[data-popper-placement^="bottom"] .emotion-2 {
+[data-popper-placement^="bottom"] .emotion-3 {
   top: -5px;
 }
 
-[data-popper-placement^="top"] .emotion-2 {
+[data-popper-placement^="top"] .emotion-3 {
   bottom: -5px;
 }
 
-.emotion-2::after {
+.emotion-3::after {
   content: " ";
   position: absolute;
   -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
   width: 10px;
@@ -191,21 +193,21 @@ exports[`clueMap rendering 3`] = `
         12ACLUE1
       </span>
       <div
-        class="emotion-3"
+        class="emotion-1"
         data-popper-escaped="true"
         data-popper-placement="bottom"
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
         <b
-          class="emotion-1"
+          class="emotion-2"
         >
           45
           A
         </b>
         Well now
         <div
-          class="emotion-2"
+          class="emotion-3"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
@@ -216,21 +218,21 @@ exports[`clueMap rendering 3`] = `
         BAM
       </span>
       <div
-        class="emotion-3"
+        class="emotion-1"
         data-popper-escaped="true"
         data-popper-placement="bottom"
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
         <b
-          class="emotion-1"
+          class="emotion-2"
         >
           2
           D
         </b>
         here is the clue?
         <div
-          class="emotion-2"
+          class="emotion-3"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
@@ -240,16 +242,16 @@ exports[`clueMap rendering 3`] = `
 `;
 
 exports[`clueMap rendering 4`] = `
-.emotion-4 {
+.emotion-0 {
   background-color: var(--text);
 }
 
-.emotion-0 {
+.emotion-1 {
   border-bottom: 1px dotted;
   white-space: nowrap;
 }
 
-.emotion-3 {
+.emotion-2 {
   z-index: 100000;
   border-radius: 5px;
   background-color: var(--black);
@@ -260,32 +262,33 @@ exports[`clueMap rendering 4`] = `
   visibility: hidden;
 }
 
-.emotion-3[data-popper-reference-hidden=true] {
+.emotion-2[data-popper-reference-hidden=true] {
   visibility: hidden;
 }
 
-.emotion-1 {
+.emotion-3 {
   margin-right: 0.5em;
 }
 
-.emotion-2 {
+.emotion-4 {
   position: absolute;
   width: 10px;
   height: 10px;
 }
 
-[data-popper-placement^="bottom"] .emotion-2 {
+[data-popper-placement^="bottom"] .emotion-4 {
   top: -5px;
 }
 
-[data-popper-placement^="top"] .emotion-2 {
+[data-popper-placement^="top"] .emotion-4 {
   bottom: -5px;
 }
 
-.emotion-2::after {
+.emotion-4::after {
   content: " ";
   position: absolute;
   -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
   width: 10px;
@@ -299,29 +302,29 @@ exports[`clueMap rendering 4`] = `
       class="paragraph"
     >
       <span
-        class="emotion-4"
+        class="emotion-0"
       >
         <span
-          class="emotion-0"
+          class="emotion-1"
         >
           BAM
         </span>
         <div
-          class="emotion-3"
+          class="emotion-2"
           data-popper-escaped="true"
           data-popper-placement="bottom"
           data-popper-reference-hidden="true"
           style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
         >
           <b
-            class="emotion-1"
+            class="emotion-3"
           >
             2
             D
           </b>
           here is the clue?
           <div
-            class="emotion-2"
+            class="emotion-4"
             style="position: absolute; left: 0px; transform: translate(0px, 0px);"
           />
         </div>
@@ -332,16 +335,16 @@ exports[`clueMap rendering 4`] = `
 `;
 
 exports[`clueMap rendering 5`] = `
-.emotion-4 {
+.emotion-0 {
   background-color: var(--text);
 }
 
-.emotion-0 {
+.emotion-1 {
   border-bottom: 1px dotted;
   white-space: nowrap;
 }
 
-.emotion-3 {
+.emotion-2 {
   z-index: 100000;
   border-radius: 5px;
   background-color: var(--black);
@@ -352,32 +355,33 @@ exports[`clueMap rendering 5`] = `
   visibility: hidden;
 }
 
-.emotion-3[data-popper-reference-hidden=true] {
+.emotion-2[data-popper-reference-hidden=true] {
   visibility: hidden;
 }
 
-.emotion-1 {
+.emotion-3 {
   margin-right: 0.5em;
 }
 
-.emotion-2 {
+.emotion-4 {
   position: absolute;
   width: 10px;
   height: 10px;
 }
 
-[data-popper-placement^="bottom"] .emotion-2 {
+[data-popper-placement^="bottom"] .emotion-4 {
   top: -5px;
 }
 
-[data-popper-placement^="top"] .emotion-2 {
+[data-popper-placement^="top"] .emotion-4 {
   bottom: -5px;
 }
 
-.emotion-2::after {
+.emotion-4::after {
   content: " ";
   position: absolute;
   -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
   width: 10px;
@@ -392,30 +396,30 @@ exports[`clueMap rendering 5`] = `
     >
       You got it!! Glad the clues pointed you in the right direction. That's what they're there for. Also, it was Brian's suggestion to include 
       <span
-        class="emotion-4"
+        class="emotion-0"
       >
          
         <span
-          class="emotion-0"
+          class="emotion-1"
         >
           BAM
         </span>
         <div
-          class="emotion-3"
+          class="emotion-2"
           data-popper-escaped="true"
           data-popper-placement="bottom"
           data-popper-reference-hidden="true"
           style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
         >
           <b
-            class="emotion-1"
+            class="emotion-3"
           >
             2
             D
           </b>
           here is the clue?
           <div
-            class="emotion-2"
+            class="emotion-4"
             style="position: absolute; left: 0px; transform: translate(0px, 0px);"
           />
         </div>

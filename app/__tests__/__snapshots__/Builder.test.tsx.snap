@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`publish custom / non-rectangular size 1`] = `
-.emotion-100 {
+.emotion-0 {
   -webkit-flex: none;
   -ms-flex: none;
   flex: none;
@@ -9,7 +9,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   height: 320px;
 }
 
-.emotion-4 {
+.emotion-1 {
   width: 20%;
   padding-bottom: 20%;
   float: left;
@@ -18,7 +18,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   overflow: hidden;
 }
 
-.emotion-3 {
+.emotion-2 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -32,7 +32,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   background: var(--primary);
 }
 
-.emotion-0 {
+.emotion-3 {
   position: absolute;
   left: 0.1em;
   top: 0;
@@ -41,18 +41,18 @@ exports[`publish custom / non-rectangular size 1`] = `
   font-size: 0.25em;
 }
 
-.emotion-2 {
+.emotion-4 {
   color: var(--autofill);
   text-align: center;
   line-height: 1.2em;
   font-size: 0.9em;
 }
 
-.emotion-1 {
+.emotion-5 {
   font-size: 1em;
 }
 
-.emotion-8 {
+.emotion-7 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -66,7 +66,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   background: var(--secondary);
 }
 
-.emotion-23 {
+.emotion-22 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -81,7 +81,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   background: var(--secondary);
 }
 
-.emotion-28 {
+.emotion-27 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -95,7 +95,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   background: var(--cell-bg);
 }
 
-.emotion-48 {
+.emotion-47 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -110,7 +110,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   background: var(--cell-bg);
 }
 
-.emotion-78 {
+.emotion-77 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -125,7 +125,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   background: var(--cell-bg);
 }
 
-.emotion-98 {
+.emotion-97 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -143,504 +143,504 @@ exports[`publish custom / non-rectangular size 1`] = `
 
 <div
   aria-label="grid"
-  class="emotion-100"
+  class="emotion-0"
 >
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x0"
-      class="emotion-3"
+      class="emotion-2"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         1
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x1"
-      class="emotion-8"
+      class="emotion-7"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         2
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x2"
-      class="emotion-8"
+      class="emotion-7"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         3
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x3"
-      class="emotion-8"
+      class="emotion-7"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         4
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x4"
-      class="emotion-23"
+      class="emotion-22"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         5
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x0"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         6
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x1"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x2"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x3"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x4"
-      class="emotion-48"
+      class="emotion-47"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x0"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         7
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x1"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x2"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x3"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x4"
-      class="emotion-48"
+      class="emotion-47"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x0"
-      class="emotion-78"
+      class="emotion-77"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         8
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x1"
-      class="emotion-78"
+      class="emotion-77"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x2"
-      class="emotion-78"
+      class="emotion-77"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x3"
-      class="emotion-78"
+      class="emotion-77"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x4"
-      class="emotion-98"
+      class="emotion-97"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
@@ -649,7 +649,7 @@ exports[`publish custom / non-rectangular size 1`] = `
 `;
 
 exports[`publish custom / non-rectangular size 2`] = `
-.emotion-100 {
+.emotion-0 {
   -webkit-flex: none;
   -ms-flex: none;
   flex: none;
@@ -657,7 +657,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   height: 320px;
 }
 
-.emotion-4 {
+.emotion-1 {
   width: 20%;
   padding-bottom: 20%;
   float: left;
@@ -666,7 +666,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   overflow: hidden;
 }
 
-.emotion-3 {
+.emotion-2 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -680,7 +680,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   background: var(--primary);
 }
 
-.emotion-0 {
+.emotion-3 {
   position: absolute;
   left: 0.1em;
   top: 0;
@@ -689,18 +689,18 @@ exports[`publish custom / non-rectangular size 2`] = `
   font-size: 0.25em;
 }
 
-.emotion-2 {
+.emotion-4 {
   color: var(--autofill);
   text-align: center;
   line-height: 1.2em;
   font-size: 0.9em;
 }
 
-.emotion-1 {
+.emotion-5 {
   font-size: 1em;
 }
 
-.emotion-8 {
+.emotion-7 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -714,7 +714,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   background: var(--secondary);
 }
 
-.emotion-23 {
+.emotion-22 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -729,7 +729,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   background: var(--secondary);
 }
 
-.emotion-28 {
+.emotion-27 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -743,7 +743,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   background: var(--cell-bg);
 }
 
-.emotion-48 {
+.emotion-47 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -758,7 +758,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   background: var(--cell-bg);
 }
 
-.emotion-78 {
+.emotion-77 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -773,7 +773,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   background: var(--cell-bg);
 }
 
-.emotion-98 {
+.emotion-97 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -791,504 +791,504 @@ exports[`publish custom / non-rectangular size 2`] = `
 
 <div
   aria-label="grid"
-  class="emotion-100"
+  class="emotion-0"
 >
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x0"
-      class="emotion-3"
+      class="emotion-2"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         1
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x1"
-      class="emotion-8"
+      class="emotion-7"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         2
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x2"
-      class="emotion-8"
+      class="emotion-7"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         3
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x3"
-      class="emotion-8"
+      class="emotion-7"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         4
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x4"
-      class="emotion-23"
+      class="emotion-22"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         5
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x0"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         6
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x1"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x2"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x3"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x4"
-      class="emotion-48"
+      class="emotion-47"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x0"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         7
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x1"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x2"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x3"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x4"
-      class="emotion-48"
+      class="emotion-47"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x0"
-      class="emotion-78"
+      class="emotion-77"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         8
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x1"
-      class="emotion-78"
+      class="emotion-77"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x2"
-      class="emotion-78"
+      class="emotion-77"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x3"
-      class="emotion-78"
+      class="emotion-77"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x4"
-      class="emotion-98"
+      class="emotion-97"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
@@ -1297,7 +1297,7 @@ exports[`publish custom / non-rectangular size 2`] = `
 `;
 
 exports[`puzzle in progress should be cached in local storage 1`] = `
-.emotion-125 {
+.emotion-0 {
   -webkit-flex: none;
   -ms-flex: none;
   flex: none;
@@ -1305,7 +1305,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   height: 320px;
 }
 
-.emotion-4 {
+.emotion-1 {
   width: 20%;
   padding-bottom: 20%;
   float: left;
@@ -1314,7 +1314,41 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   overflow: hidden;
 }
 
-.emotion-18 {
+.emotion-2 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-size: 64px;
+  border-left: 1px solid var(--cell-wall);
+  border-top: 1px solid var(--cell-wall);
+  background: var(--secondary);
+}
+
+.emotion-3 {
+  position: absolute;
+  left: 0.1em;
+  top: 0;
+  font-weight: bold;
+  line-height: 1em;
+  font-size: 0.25em;
+}
+
+.emotion-4 {
+  color: var(--black);
+  text-align: center;
+  line-height: 1.2em;
+  font-size: 0.9em;
+}
+
+.emotion-5 {
+  font-size: 1em;
+}
+
+.emotion-17 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -1328,41 +1362,14 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   background: var(--primary);
 }
 
-.emotion-0 {
-  position: absolute;
-  left: 0.1em;
-  top: 0;
-  font-weight: bold;
-  line-height: 1em;
-  font-size: 0.25em;
-}
-
-.emotion-17 {
+.emotion-19 {
   color: var(--autofill);
   text-align: center;
   line-height: 1.2em;
   font-size: 0.9em;
 }
 
-.emotion-1 {
-  font-size: 1em;
-}
-
-.emotion-3 {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  background: var(--secondary);
-}
-
-.emotion-23 {
+.emotion-22 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -1377,7 +1384,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   background: var(--secondary);
 }
 
-.emotion-28 {
+.emotion-27 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -1391,7 +1398,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   background: var(--cell-bg);
 }
 
-.emotion-48 {
+.emotion-47 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -1406,7 +1413,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   background: var(--cell-bg);
 }
 
-.emotion-103 {
+.emotion-102 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -1421,7 +1428,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   background: var(--cell-bg);
 }
 
-.emotion-123 {
+.emotion-122 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -1435,40 +1442,33 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   border-bottom: 1px solid var(--cell-wall);
   border-right: 1px solid var(--cell-wall);
   background: var(--cell-bg);
-}
-
-.emotion-2 {
-  color: var(--black);
-  text-align: center;
-  line-height: 1.2em;
-  font-size: 0.9em;
 }
 
 <div
   aria-label="grid"
-  class="emotion-125"
+  class="emotion-0"
 >
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x0"
-      class="emotion-3"
+      class="emotion-2"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         1
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         >
           A
         </div>
@@ -1476,26 +1476,26 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x1"
-      class="emotion-3"
+      class="emotion-2"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         2
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         >
           B
         </div>
@@ -1503,26 +1503,26 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x2"
-      class="emotion-3"
+      class="emotion-2"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         3
       </div>
       <div
-        class="emotion-2"
+        class="emotion-4"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         >
           C
         </div>
@@ -1530,551 +1530,551 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x3"
-      class="emotion-18"
+      class="emotion-17"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         4
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell0x4"
-      class="emotion-23"
+      class="emotion-22"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         5
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x0"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         6
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x1"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x2"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x3"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell1x4"
-      class="emotion-48"
+      class="emotion-47"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x0"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         7
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x1"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x2"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x3"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell2x4"
-      class="emotion-48"
+      class="emotion-47"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x0"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         8
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x1"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x2"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x3"
-      class="emotion-28"
+      class="emotion-27"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell3x4"
-      class="emotion-48"
+      class="emotion-47"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell4x0"
-      class="emotion-103"
+      class="emotion-102"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         9
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell4x1"
-      class="emotion-103"
+      class="emotion-102"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell4x2"
-      class="emotion-103"
+      class="emotion-102"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell4x3"
-      class="emotion-103"
+      class="emotion-102"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>
   </div>
   <div
-    class="emotion-4"
+    class="emotion-1"
   >
     <div
       aria-label="cell4x4"
-      class="emotion-123"
+      class="emotion-122"
     >
       <div
-        class="emotion-0"
+        class="emotion-3"
       >
         
         
       </div>
       <div
-        class="emotion-17"
+        class="emotion-19"
       >
         
         
         
         <div
-          class="emotion-1"
+          class="emotion-5"
         />
       </div>
     </div>

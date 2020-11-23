@@ -19,7 +19,7 @@ beforeEach(async () => {
 });
 afterAll(async () => {
   MockDate.reset();
-  await Promise.all(firebaseTesting.apps().map(app => app.delete()));
+  await Promise.all(firebaseTesting.apps().map((app) => app.delete()));
 });
 
 const testComment: Comment = {
@@ -89,8 +89,12 @@ test('security rules should only allow commenting as onesself', async () => {
 });
 
 test('security rules should only allow commenting with username if it matches your account', async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
   await adminApp.firestore().collection('cp').doc('rando').set({ u: 'rando' });
+  windowSpy.mockRestore();
 
   const app = firebaseTesting.initializeTestApp({
     projectId,
@@ -106,16 +110,28 @@ test('security rules should only allow commenting with username if it matches yo
     app.firestore().collection('cfm').add({ c: 'comment text', a: 'mike' })
   );
   await firebaseTesting.assertSucceeds(
-    app.firestore().collection('cfm').add({ c: 'comment text', a: 'mike', un: 'miked' })
+    app
+      .firestore()
+      .collection('cfm')
+      .add({ c: 'comment text', a: 'mike', un: 'miked' })
   );
   await firebaseTesting.assertSucceeds(
-    app.firestore().collection('cfm').add({ c: 'comment text', a: 'mike', un: 'MikeD' })
+    app
+      .firestore()
+      .collection('cfm')
+      .add({ c: 'comment text', a: 'mike', un: 'MikeD' })
   );
   await firebaseTesting.assertFails(
-    app.firestore().collection('cfm').add({ c: 'comment text', a: 'mike', un: 'rando' })
+    app
+      .firestore()
+      .collection('cfm')
+      .add({ c: 'comment text', a: 'mike', un: 'rando' })
   );
   await firebaseTesting.assertFails(
-    app.firestore().collection('cfm').add({ c: 'comment text', a: 'mike', un: 'totalblast' })
+    app
+      .firestore()
+      .collection('cfm')
+      .add({ c: 'comment text', a: 'mike', un: 'totalblast' })
   );
 });
 

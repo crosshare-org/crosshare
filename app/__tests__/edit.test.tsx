@@ -12,6 +12,10 @@ import {
 import { PuzzleLoader } from '../pages/crosswords/[puzzleId]/edit';
 import type firebase from 'firebase/app';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+jest.mock('next/link', () => ({ children }) => children); // https://github.com/vercel/next.js/issues/16864
+
 jest.mock('../lib/firebaseWrapper');
 jest.mock('../lib/WordDB');
 
@@ -61,12 +65,15 @@ test('cannot edit if not correct user', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   await admin
     .firestore()
     .collection('c')
     .doc(PUZZLEID)
     .set(getMockedPuzzle({ a: 'mike' }));
-
+  windowSpy.mockRestore();
   setApp(randoApp);
 
   const r = render(
@@ -86,11 +93,15 @@ test('basic edit', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   await admin
     .firestore()
     .collection('c')
     .doc(PUZZLEID)
     .set(getMockedPuzzle({ a: 'mike' }));
+  windowSpy.mockRestore();
 
   setApp(app);
 
@@ -128,11 +139,15 @@ test('edit title', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   await admin
     .firestore()
     .collection('c')
     .doc(PUZZLEID)
     .set(getMockedPuzzle({ a: 'mike' }));
+  windowSpy.mockRestore();
 
   setApp(app);
 
@@ -156,7 +171,11 @@ test('edit title', async () => {
 });
 
 async function checkSnapshot(puzzleId: string) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   const res = await admin.firestore().collection('c').doc(puzzleId).get();
+  windowSpy.mockRestore();
   const resData = res.data();
   if (!resData) {
     throw new Error('botch');
@@ -171,11 +190,15 @@ test('edit constructor note', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   await admin
     .firestore()
     .collection('c')
     .doc(PUZZLEID)
     .set(getMockedPuzzle({ a: 'mike' }));
+  windowSpy.mockRestore();
 
   setApp(app);
 
@@ -222,11 +245,15 @@ test('edit blog post', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   await admin
     .firestore()
     .collection('c')
     .doc(PUZZLEID)
     .set(getMockedPuzzle({ a: 'mike' }));
+  windowSpy.mockRestore();
 
   setApp(app);
 
@@ -270,6 +297,9 @@ test('edit blog post', async () => {
 
 test('security rules for puzzle edits', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
   await admin
     .firestore()
     .collection('c')
@@ -280,6 +310,7 @@ test('security rules for puzzle edits', async () => {
     .collection('c')
     .doc('other')
     .set(getMockedPuzzle({ a: 'other' }));
+  windowSpy.mockRestore();
 
   // Succeeds updating title
   await firebaseTesting.assertSucceeds(

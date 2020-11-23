@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import type firebaseAdminType from 'firebase-admin';
 
