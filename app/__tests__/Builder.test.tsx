@@ -410,7 +410,9 @@ test('change author name in publish dialogue should publish w/ new name', async 
     { user: mike }
   );
   expect(
-    await stats.findByText(/stats for this puzzle yet/)
+    await stats.findByText(/stats for this puzzle yet/, undefined, {
+      timeout: 3000,
+    })
   ).toBeInTheDocument();
 
   cleanup();
