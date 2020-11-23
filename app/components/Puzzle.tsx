@@ -249,7 +249,6 @@ const ModeratingOverlay = memo(
           value={date}
           onChange={setDate}
         />
-        <div css={{ marginTop: '1em' }}>Be sure to email {puzzle.authorId}</div>
         <div css={{ marginTop: '1em' }}>
           <button disabled={!date || puzzle.moderated} onClick={schedule}>
             Schedule As Daily Mini
