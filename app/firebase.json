@@ -61,7 +61,10 @@
       "rewrites": [
         {
           "source": "**",
-          "function": "nextjs-server"
+          "run": {
+            "serviceId": "prod",
+            "region": "us-central1"
+          }
         }
       ],
       "redirects": [

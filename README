@@ -7,11 +7,13 @@ $ docker-compose up testBuild
 ### Deploy staging
 $ docker push gcr.io/mdcrosshare/prod:latest
 $ gcloud beta run deploy staging --image gcr.io/mdcrosshare/prod
-$ firebase deploy --only hosting:staging
+$ cd app
+$ npx firebase deploy --only hosting:staging
 
 ### Deploy prod
 $ gcloud beta run deploy prod --image gcr.io/mdcrosshare/prod
-$ firebase deploy --only hosting:prod
+$ cd app
+$ npx firebase deploy --only hosting:prod
 
 ## Old commands for running test env locally, needs updates:
 

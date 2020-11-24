@@ -19,9 +19,9 @@
     "build": "NO_SENTRY=true next build",
     "start": "next start",
     "predeploy": "tsc && yarn clean && next build",
-    "prodDeploy": "firebase deploy --only hosting:prod",
-    "stagingDeploy": "firebase deploy --only hosting:staging",
-    "test": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=localhost:8080 firebase emulators:exec --only firestore 'jest --watch'"
+    "prodDeploy": "npx firebase deploy --only hosting:prod",
+    "stagingDeploy": "npx firebase deploy --only hosting:staging",
+    "test": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=localhost:8080 npx firebase emulators:exec --only firestore 'jest --watch'"
   },
   "engines": {
     "node": "12"
@@ -79,6 +79,7 @@
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
     "firebase-functions-test": "^0.2.3",
+    "firebase-tools": "^8.16.2",
     "jest": "^26.6.3",
     "jest-in-case": "^1.0.2",
     "leaked-handles": "^5.2.0",
