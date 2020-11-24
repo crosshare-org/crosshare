@@ -929,9 +929,9 @@ export const Puzzle = ({
         if (!numSection) {
           throw new Error('missing numSection');
         }
-        let numMatch;
+        let numMatch: RegExpExecArray | null;
         const numRe = /\d+/g;
-        while ((numMatch = numRe.exec(numSection)) !== null) {
+        while ((numMatch = numRe.exec(numSection)) !== null && numMatch[0]) {
           refs.add([parseInt(numMatch[0]), dir]);
         }
       }
@@ -941,11 +941,17 @@ export const Puzzle = ({
     // Now do backrefs
     refsList.forEach((refs, idx) => {
       const e1 = state.grid.entries[idx];
+      if (e1 === undefined) {
+        return;
+      }
       refsList.forEach((refs2, idx2) => {
         if (idx2 === idx) {
           return;
         }
         const e2 = state.grid.entries[idx2];
+        if (e2 === undefined) {
+          return;
+        }
         refs2.forEach(([labelNumber, dir]) => {
           if (labelNumber === e1.labelNumber && dir === e1.direction) {
             refs.add([e2.labelNumber, e2.direction]);
@@ -964,7 +970,7 @@ export const Puzzle = ({
   const entryIdx = entryIndexAtPosition(state.grid, state.active);
   let refed: Array<number> = [];
   if (entryIdx !== null) {
-    refed = [...refs[entryIdx]].map(([labelNumber, direction]) =>
+    refed = [...(refs[entryIdx] || [])].map(([labelNumber, direction]) =>
       state.grid.entries.findIndex(
         (e) => e.labelNumber === labelNumber && e.direction === direction
       )

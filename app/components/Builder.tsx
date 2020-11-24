@@ -234,17 +234,23 @@ const PotentialFillList = (props: PotentialFillListProps) => {
           itemSize={35}
           width="100%"
         >
-          {({ index, style }) => (
-            <div style={style}>
-              <PotentialFillItem
-                gridRef={props.gridRef}
-                key={index}
-                entryIndex={props.entryIndex}
-                dispatch={props.dispatch}
-                value={props.values[index]}
-              />
-            </div>
-          )}
+          {({ index, style }) => {
+            const value = props.values[index];
+            if (value === undefined) {
+              return null;
+            }
+            return (
+              <div style={style}>
+                <PotentialFillItem
+                  gridRef={props.gridRef}
+                  key={index}
+                  entryIndex={props.entryIndex}
+                  dispatch={props.dispatch}
+                  value={value}
+                />
+              </div>
+            );
+          }}
         </List>
       </div>
     </div>
@@ -548,7 +554,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   const [autofilledGrid, setAutofilledGrid] = useState<string[]>([]);
   const [autofillInProgress, setAutofillInProgress] = useState(false);
 
-  const getMostConstrainedEntry = useCallback(() => {
+  const getMostConstrainedEntry: () => number | null = useCallback(() => {
     if (!WordDB.wordDB) {
       throw new Error('missing db!');
     }
@@ -565,7 +571,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       ])
       .sort(([_a, aMatches], [_b, bMatches]) => aMatches - bMatches);
     if (openEntries.length) {
-      return openEntries[0][0].index;
+      return openEntries[0]?.[0]?.index ?? null;
     }
     return null;
   }, [state.grid]);
@@ -600,15 +606,12 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     }
     for (const priorSolve of priorSolves.current) {
       let match = true;
-      for (let i = 0; i < state.grid.cells.length; i += 1) {
-        if (priorSolve[i] === '.' && state.grid.cells[i] !== '.') {
+      for (const [i, cell] of state.grid.cells.entries()) {
+        if (priorSolve[i] === '.' && cell !== '.') {
           match = false;
           break;
         }
-        if (
-          state.grid.cells[i].trim() &&
-          priorSolve[i] !== state.grid.cells[i]
-        ) {
+        if (cell.trim() && priorSolve[i] !== cell) {
           match = false;
           break;
         }
@@ -735,16 +738,13 @@ const activeIndex = (
   entry: ViewableEntry
 ): number => {
   let j = -1;
-  for (let i = 0; i <= entry.cells.length; i += 1) {
+  for (const cell of entry.cells) {
     j += 1;
-    if (
-      active.row === entry.cells[i].row &&
-      active.col === entry.cells[i].col
-    ) {
+    if (active.row === cell.row && active.col === cell.col) {
       return j;
     }
     // add extra for rebus:
-    j = j + valAt(grid, entry.cells[i]).length - 1;
+    j = j + valAt(grid, cell).length - 1;
   }
   console.error('active not in entry', active, entry);
   throw new Error('active not in entry');
@@ -756,7 +756,11 @@ const lettersAtIndex = (
 ): string => {
   let seen = '';
   for (const [word] of fill) {
-    if (seen.indexOf(word[index]) === -1) {
+    const char = word[index];
+    if (char === undefined) {
+      continue;
+    }
+    if (seen.indexOf(char) === -1) {
       seen += word[index];
     }
   }
@@ -769,16 +773,18 @@ const potentialFill = (
 ): Array<[string, number]> => {
   let pattern = '';
   const crosses = getCrosses(grid, entry);
-  for (let index = 0; index < entry.cells.length; index += 1) {
-    const cell = entry.cells[index];
+  for (const [index, cell] of entry.cells.entries()) {
     const val = valAt(grid, cell);
     const cross = crosses[index];
+    if (cross === undefined) {
+      throw new Error('bad cross');
+    }
     // If complete, remove any cells whose crosses aren't complete and show that
     if (
       entry.completedWord &&
       val.length === 1 &&
       cross.entryIndex !== null &&
-      !grid.entries[cross.entryIndex].completedWord
+      !grid.entries[cross.entryIndex]?.completedWord
     ) {
       pattern += ' ';
     } else {
@@ -793,9 +799,9 @@ const potentialFill = (
   );
   return matches.filter(([word]) => {
     let j = -1;
-    for (let i = 0; i < entry.cells.length; i += 1) {
+    for (const [i, cellPos] of entry.cells.entries()) {
       j += 1;
-      const cell = valAt(grid, entry.cells[i]);
+      const cell = valAt(grid, cellPos);
       if (cell.length > 1) {
         // Handle rebuses
         j += cell.length - 1;
@@ -805,18 +811,28 @@ const potentialFill = (
         continue;
       }
       const letter = word[j];
-      if (successLetters[i].indexOf(letter) !== -1) {
+      if (letter === undefined) {
+        throw new Error('out of bounds on ' + word);
+      }
+      if (successLetters[i]?.indexOf(letter) !== -1) {
         continue;
       }
-      if (failLetters[i].indexOf(letter) !== -1) {
+      if (failLetters[i]?.indexOf(letter) !== -1) {
         return false;
       }
-      const crossIndex = crosses[i].entryIndex;
+      const crossObj = crosses[i];
+      if (crossObj === undefined) {
+        throw new Error('bad crosses');
+      }
+      const crossIndex = crossObj.entryIndex;
       if (crossIndex === null) {
         successLetters[i] += letter;
         continue;
       }
       const cross = grid.entries[crossIndex];
+      if (cross === undefined) {
+        throw new Error('bad cross index');
+      }
       if (cross.completedWord) {
         successLetters[i] += letter;
         continue;
@@ -824,10 +840,7 @@ const potentialFill = (
 
       let crossPattern = '';
       for (const crossCell of cross.cells) {
-        if (
-          crossCell.row === entry.cells[i].row &&
-          crossCell.col === entry.cells[i].col
-        ) {
+        if (crossCell.row === cellPos.row && crossCell.col === cellPos.col) {
           crossPattern += word[j];
         } else {
           crossPattern += valAt(grid, crossCell);
@@ -939,12 +952,14 @@ const GridMode = ({
           new RegExp('[' + crossValidLetters + ']', 'g')
         ) || []
       ).join('');
-      entryMatches = entryMatches.filter(
-        ([word]) => validLetters.indexOf(word[entryActiveIndex]) !== -1
-      );
-      crossMatches = crossMatches.filter(
-        ([word]) => validLetters.indexOf(word[crossActiveIndex]) !== -1
-      );
+      entryMatches = entryMatches.filter(([word]) => {
+        const l = word[entryActiveIndex];
+        return l && validLetters.indexOf(l) !== -1;
+      });
+      crossMatches = crossMatches.filter(([word]) => {
+        const l = word[crossActiveIndex];
+        return l && validLetters.indexOf(l) !== -1;
+      });
     }
 
     if (cross && crossMatches !== null) {

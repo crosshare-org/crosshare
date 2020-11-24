@@ -64,10 +64,7 @@ export const CreatePageForm = () => {
 
   function sanitize(input: string): string {
     const res = input.match(/^([a-zA-Z]\w*)/);
-    if (res) {
-      return res[0];
-    }
-    return '';
+    return res?.[0] || '';
   }
 
   function isInvalid(u: string) {
