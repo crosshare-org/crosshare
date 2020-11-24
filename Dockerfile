@@ -1,4 +1,4 @@
-FROM node:10-alpine as builder
+FROM node:14-alpine as builder
 RUN apk add --no-cache git build-base g++ cairo-dev \
     jpeg-dev \
     pango-dev \
@@ -18,7 +18,7 @@ WORKDIR /src
 RUN yarn install --production --ignore-scripts --prefer-offline
 RUN find . -name \*.map -type f -delete
 
-FROM node:10-alpine as prod
+FROM node:14-alpine as prod
 RUN apk add cairo pango libjpeg-turbo giflib librsvg
 WORKDIR /app
 ENV NODE_ENV=production PATH=$PATH:/app/node_modules/.bin NEXT_TELEMETRY_DISABLED=1

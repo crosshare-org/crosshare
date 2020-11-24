@@ -23,10 +23,10 @@
     "prodDeploy": "npx firebase deploy --only hosting:prod,functions:nextjs",
     "stagingDeploy": "npx firebase deploy --only hosting:staging,functions:staging",
     "emulator-dev": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=localhost:8080 npx firebase emulators:exec 'next dev'",
-    "test": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=localhost:8080 npx firebase emulators:exec --only firestore 'jest --watch'"
+    "test": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=localhost:8080 firebase emulators:exec --only firestore 'jest --watch'"
   },
   "engines": {
-    "node": "10"
+    "node": "14"
   },
   "dependencies": {
     "@emotion/babel-plugin": "^11.0.0",
