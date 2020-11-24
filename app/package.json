@@ -19,14 +19,12 @@
     "build": "NO_SENTRY=true next build",
     "start": "next start",
     "predeploy": "tsc && yarn clean && next build",
-    "deploy": "npx firebase deploy --only hosting:prod,functions:nextjs",
-    "prodDeploy": "npx firebase deploy --only hosting:prod,functions:nextjs",
-    "stagingDeploy": "npx firebase deploy --only hosting:staging,functions:staging",
-    "emulator-dev": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=localhost:8080 npx firebase emulators:exec 'next dev'",
+    "prodDeploy": "firebase deploy --only hosting:prod",
+    "stagingDeploy": "firebase deploy --only hosting:staging",
     "test": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=localhost:8080 firebase emulators:exec --only firestore 'jest --watch'"
   },
   "engines": {
-    "node": "14"
+    "node": "12"
   },
   "dependencies": {
     "@emotion/babel-plugin": "^11.0.0",
