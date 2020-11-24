@@ -118,6 +118,8 @@ const DBPuzzleOptionalV = t.partial({
   pvu: timestamp,
   /** daily mini date */
   dmd: t.string,
+  /** clue explanations (key is index into ac + dc) */
+  cx: t.record(t.number, t.string),
 });
 export const DBPuzzleV = t.intersection([
   DBPuzzleMandatoryV,

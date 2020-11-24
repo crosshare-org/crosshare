@@ -20,6 +20,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
     "jsx": "preserve",
     "types": [
       "@emotion/react/types/css-prop"

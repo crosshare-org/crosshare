@@ -11,118 +11,125 @@ export const BLOCK = '.';
 
 export enum Direction {
   Across,
-  Down
+  Down,
 }
 
 export interface WorkerMessage {
-  type: string,
+  type: string;
 }
 export interface AutofillResultMessage extends WorkerMessage {
-  type: 'autofill-result',
-  input: string[],
-  result: string[]
+  type: 'autofill-result';
+  input: string[];
+  result: string[];
 }
-export function isAutofillResultMessage(msg: WorkerMessage): msg is AutofillResultMessage {
+export function isAutofillResultMessage(
+  msg: WorkerMessage
+): msg is AutofillResultMessage {
   return msg.type === 'autofill-result';
 }
 export interface AutofillCompleteMessage extends WorkerMessage {
-  type: 'autofill-complete',
+  type: 'autofill-complete';
 }
-export function isAutofillCompleteMessage(msg: WorkerMessage): msg is AutofillCompleteMessage {
+export function isAutofillCompleteMessage(
+  msg: WorkerMessage
+): msg is AutofillCompleteMessage {
   return msg.type === 'autofill-complete';
 }
 export interface LoadDBMessage extends WorkerMessage {
-  type: 'loaddb',
-  db: WordDBT,
+  type: 'loaddb';
+  db: WordDBT;
 }
 export function isLoadDBMessage(msg: WorkerMessage): msg is LoadDBMessage {
   return msg.type === 'loaddb';
 }
 export interface CancelAutofillMessage extends WorkerMessage {
-  type: 'cancel'
+  type: 'cancel';
 }
-export function isCancelAutofillMessage(msg: WorkerMessage): msg is CancelAutofillMessage {
+export function isCancelAutofillMessage(
+  msg: WorkerMessage
+): msg is CancelAutofillMessage {
   return msg.type === 'cancel';
 }
 export interface AutofillMessage extends WorkerMessage {
-  type: 'autofill',
-  grid: string[],
-  width: number,
-  height: number
+  type: 'autofill';
+  grid: string[];
+  width: number;
+  height: number;
 }
 export function isAutofillMessage(msg: WorkerMessage): msg is AutofillMessage {
   return msg.type === 'autofill';
 }
 
 export interface Position {
-  row: number,
-  col: number,
+  row: number;
+  col: number;
 }
 
 export interface PosAndDir extends Position {
-  dir: Direction,
+  dir: Direction;
 }
 
 export interface ClueT {
-  num: number,
-  dir: 0 | 1,
-  clue: string,
+  num: number;
+  dir: 0 | 1;
+  clue: string;
+  explanation: string | null;
 }
 
 export interface Comment {
   /** comment text */
-  commentText: string,
+  commentText: string;
   /** author id */
-  authorId: string,
+  authorId: string;
   /** author display name */
-  authorDisplayName: string,
+  authorDisplayName: string;
   /** author username */
-  authorUsername?: string,
+  authorUsername?: string;
   /** author solve time in fractional seconds */
-  authorSolveTime: number,
+  authorSolveTime: number;
   /** author did cheat? */
-  authorCheated: boolean,
+  authorCheated: boolean;
   /** comment publish timestamp in millis since epoch*/
-  publishTime: number
+  publishTime: number;
   /** comment id */
-  id: string,
+  id: string;
   /** replies */
-  replies?: Array<Comment>
+  replies?: Array<Comment>;
 }
 
 export interface PuzzleT {
-  authorId: string,
-  category: string | null,
-  authorName: string,
-  moderated: boolean,
-  publishTime: number,
-  title: string
+  authorId: string;
+  category: string | null;
+  authorName: string;
+  moderated: boolean;
+  publishTime: number;
+  title: string;
   size: {
-    rows: number,
-    cols: number
-  },
-  clues: Array<ClueT>,
-  grid: Array<string>,
-  highlighted: Array<number>,
-  highlight: 'circle' | 'shade',
-  comments: Array<Comment>,
-  constructorNotes: string | null,
-  blogPost: string | null,
-  isPrivate: boolean,
-  isPrivateUntil: number | null,
+    rows: number;
+    cols: number;
+  };
+  clues: Array<ClueT>;
+  grid: Array<string>;
+  highlighted: Array<number>;
+  highlight: 'circle' | 'shade';
+  comments: Array<Comment>;
+  constructorNotes: string | null;
+  blogPost: string | null;
+  isPrivate: boolean;
+  isPrivateUntil: number | null;
 }
 
 export interface PuzzleResult extends PuzzleT {
-  id: string
+  id: string;
 }
 
 // This is kind of a hack but it helps us to ensure we only query for constructorPages on server side
 export interface ServerPuzzleResult extends PuzzleResult {
-  constructorPage: ConstructorPageT | null
+  constructorPage: ConstructorPageT | null;
 }
 
 function convertComments(comments: Array<CommentWithRepliesT>): Array<Comment> {
-  return comments.map(c => {
+  return comments.map((c) => {
     return {
       commentText: c.c,
       authorId: c.a,
@@ -132,7 +139,7 @@ function convertComments(comments: Array<CommentWithRepliesT>): Array<Comment> {
       publishTime: c.p.toMillis(),
       id: c.i,
       replies: convertComments(c.r || []),
-      ...c.un && { authorUsername: c.un },
+      ...(c.un && { authorUsername: c.un }),
     };
   });
 }
@@ -140,10 +147,22 @@ function convertComments(comments: Array<CommentWithRepliesT>): Array<Comment> {
 export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
   const clues: Array<ClueT> = [];
   for (let i = 0; i < dbPuzzle.ac.length; i += 1) {
-    clues.push({ dir: Direction.Across, clue: dbPuzzle.ac[i], num: dbPuzzle.an[i] });
+    const explanation = dbPuzzle.cx?.[i] || null;
+    clues.push({
+      dir: Direction.Across,
+      clue: dbPuzzle.ac[i],
+      num: dbPuzzle.an[i],
+      explanation,
+    });
   }
   for (let i = 0; i < dbPuzzle.dc.length; i += 1) {
-    clues.push({ dir: Direction.Down, clue: dbPuzzle.dc[i], num: dbPuzzle.dn[i] });
+    const explanation = dbPuzzle.cx?.[i + dbPuzzle.ac.length] || null;
+    clues.push({
+      dir: Direction.Down,
+      clue: dbPuzzle.dc[i],
+      num: dbPuzzle.dn[i],
+      explanation,
+    });
   }
   return {
     authorId: dbPuzzle.a,
@@ -154,7 +173,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     title: dbPuzzle.t,
     size: {
       rows: dbPuzzle.h,
-      cols: dbPuzzle.w
+      cols: dbPuzzle.w,
     },
     clues: clues,
     grid: dbPuzzle.g,
@@ -164,7 +183,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     constructorNotes: dbPuzzle.cn || null,
     blogPost: dbPuzzle.bp || null,
     isPrivate: dbPuzzle.pv || false,
-    isPrivateUntil: dbPuzzle.pvu ? dbPuzzle.pvu.toMillis() : null
+    isPrivateUntil: dbPuzzle.pvu ? dbPuzzle.pvu.toMillis() : null,
   };
 }
 
@@ -177,12 +196,13 @@ export const PuzzleInProgressV = t.intersection([
     highlight: t.keyof({ circle: null, shade: null }),
     title: t.union([t.string, t.null]),
     clues: t.record(t.string, t.string),
-    notes: t.union([t.string, t.null])
+    notes: t.union([t.string, t.null]),
   }),
   t.partial({
     id: t.string,
     isPrivate: t.boolean,
     isPrivateUntil: t.union([t.number, t.null]),
-  })
+    explanations: t.record(t.string, t.string),
+  }),
 ]);
 export type PuzzleInProgressT = t.TypeOf<typeof PuzzleInProgressV>;
