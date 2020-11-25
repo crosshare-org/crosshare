@@ -103,8 +103,8 @@ const testPuzzle: ServerPuzzleResult = {
   blogPost: null,
 };
 
-test('clicking a clue sets slot to active', () => {
-  const { getAllByText, getByLabelText } = render(
+test('clicking a clue sets slot to active', async () => {
+  const { getAllByText, getByLabelText, getByText, queryByText } = render(
     <Puzzle
       loadingPlayState={false}
       puzzle={testPuzzle}
@@ -113,6 +113,10 @@ test('clicking a clue sets slot to active', () => {
     />,
     {}
   );
+
+  fireEvent.click(getByText(/Begin Puzzle/i));
+  await act(() => Promise.resolve());
+  expect(queryByText(/Begin Puzzle/i)).toBeNull();
 
   const cell = getByLabelText('cell0x1');
   expect(cell).toHaveStyleRule('background', 'var(--secondary)');
@@ -206,7 +210,7 @@ const dailymini_5_19: ServerPuzzleResult = {
   constructorNotes: null,
 };
 
-test('daily mini from 5/19/20', () => {
+test('daily mini from 5/19/20', async () => {
   const {
     getByLabelText,
     getByText,
@@ -224,6 +228,7 @@ test('daily mini from 5/19/20', () => {
   );
 
   fireEvent.click(getByText(/Begin Puzzle/i));
+  await act(() => Promise.resolve());
   expect(queryByText(/Begin Puzzle/i)).toBeNull();
 
   const clue = getAllByText(/professor plum/i)[0].parentElement?.parentElement;
@@ -272,6 +277,7 @@ test('nonuser progress should be cached in local storage but not db', async () =
   } = render(<PuzzlePage puzzle={dailymini_5_19} />, {});
 
   fireEvent.click(await findByText(/Begin Puzzle/i));
+  await act(() => Promise.resolve());
   expect(queryByText(/Begin Puzzle/i)).toBeNull();
 
   fireEvent.keyDown(container, { key: 'A', keyCode: 65 });
@@ -369,6 +375,7 @@ test('anonymous user progress should be cached in local storage and db', async (
   fireEvent.click(
     await findByText(/Begin Puzzle/i, undefined, { timeout: 3000 })
   );
+  await act(() => Promise.resolve());
   expect(queryByText(/Begin Puzzle/i)).toBeNull();
 
   fireEvent.keyDown(container, { key: 'A', keyCode: 65 });
@@ -571,6 +578,7 @@ test('user finishing a puzzle causes write to db', async () => {
   });
 
   fireEvent.click(await r.findByText(/Begin Puzzle/i));
+  await act(() => Promise.resolve());
   expect(r.queryByText(/Begin Puzzle/i)).toBeNull();
 
   fireEvent.keyDown(r.container, { key: 'A', keyCode: 65 });
@@ -637,6 +645,7 @@ test('nonuser finishing a puzzle should cause creation of anonymous user and wri
   const r = render(<PuzzlePage puzzle={dailymini_5_19} />, {});
 
   fireEvent.click(await r.findByText(/Begin Puzzle/i));
+  await act(() => Promise.resolve());
   expect(r.queryByText(/Begin Puzzle/i)).toBeNull();
 
   fireEvent.keyDown(r.container, { key: 'A', keyCode: 65 });

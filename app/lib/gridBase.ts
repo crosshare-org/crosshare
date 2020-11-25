@@ -136,7 +136,7 @@ export function entryAndCrossAtPosition<Entry extends EntryBase>(
   }
   const currentEntry = entries[pos.dir];
   const currentCross =
-    entries[pos.dir === Direction.Across ? Direction.Across : Direction.Down];
+    entries[pos.dir === Direction.Across ? Direction.Down : Direction.Across];
   return [
     (currentEntry.entryIndex !== null &&
       grid.entries[currentEntry.entryIndex]) ||

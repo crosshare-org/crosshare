@@ -49,7 +49,7 @@ export function usePolyfilledResizeObserver(ref: RefObject<HTMLElement>) {
         setHasResizeObserver(true);
       } else {
         // Loads polyfill asynchronously, only if required.
-        import('@juggle/resize-observer').then((module) => {
+        return import('@juggle/resize-observer').then((module) => {
           window.ResizeObserver = (module.ResizeObserver as unknown) as typeof ResizeObserver;
           if (!didCancel) {
             setHasResizeObserver(true);
