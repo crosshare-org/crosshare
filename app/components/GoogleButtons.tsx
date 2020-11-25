@@ -12,7 +12,7 @@ export const GoogleSignInButton = ({ postSignIn }: GoogleButtonProps) => {
   function signin() {
     App.auth()
       .signInWithPopup(AuthProvider)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         event({
           action: 'login',
           category: 'engagement',
@@ -21,6 +21,9 @@ export const GoogleSignInButton = ({ postSignIn }: GoogleButtonProps) => {
         if (userCredential.user && postSignIn) {
           return postSignIn(userCredential.user);
         }
+        return () => {
+          /* noop */
+        };
       });
   }
   return (
@@ -42,7 +45,7 @@ export const GoogleLinkButton = ({
   function signin() {
     user
       .linkWithPopup(AuthProvider)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         console.log('linked w/o needing a merge');
         event({
           action: 'login',
@@ -52,6 +55,9 @@ export const GoogleLinkButton = ({
         if (userCredential.user && postSignIn) {
           return postSignIn(userCredential.user);
         }
+        return () => {
+          /* noop */
+        };
       })
       .catch(async (error: firebase.auth.AuthError) => {
         if (error.code !== 'auth/credential-already-in-use') {
