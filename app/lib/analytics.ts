@@ -118,6 +118,9 @@ export async function runAnalytics(
     for (let i = 0; i < play.ct.length; i += 1) {
       let updateTime = play.ct[i];
       const updateIters = play.uc[i];
+      if (updateTime === undefined || updateIters === undefined) {
+        throw new Error('oob');
+      }
       if (play.rc.indexOf(i) !== -1 || play.we.indexOf(i) !== -1) {
         /* If a cell was revealed or checked & wrong, make it's update time the
          * end of the play. This way cheat cells always show as taking the

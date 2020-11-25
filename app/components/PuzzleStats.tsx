@@ -99,7 +99,7 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
   const { acrossEntries, downEntries } = useMemo(() => {
     const cluedEntries = state.grid.entries.map((e) => ({
       ...e,
-      clue: e.completedWord ? state.clues[e.completedWord] : '',
+      clue: e.completedWord ? state.clues[e.completedWord] ?? '' : '',
     }));
     return {
       acrossEntries: cluedEntries.filter(

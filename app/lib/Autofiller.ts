@@ -1,35 +1,45 @@
 import { valAt, getCrosses } from './gridBase';
 import {
-  AutofillGrid, fromTemplate, minGridCost, stableSubsets,
-  numMatchesForEntry, gridWithEntryDecided
+  AutofillGrid,
+  fromTemplate,
+  minGridCost,
+  stableSubsets,
+  numMatchesForEntry,
+  gridWithEntryDecided,
 } from './autofillGrid';
 import * as WordDB from './WordDB';
 import * as BA from './bitArray';
 
 enum ResultTag {
   Recur,
-  Value
+  Value,
 }
 interface Result {
-  type: ResultTag
+  type: ResultTag;
 }
 interface Recur extends Result {
-  type: ResultTag.Recur,
+  type: ResultTag.Recur;
+  grid: AutofillGrid;
+  discrep: number;
+  pitched: Set<string>;
+  subset: Set<number> | null;
+  cont: Cont;
+}
+function isRecur(result: Result): result is Recur {
+  return result.type === ResultTag.Recur;
+}
+function recur(
   grid: AutofillGrid,
   discrep: number,
   pitched: Set<string>,
   subset: Set<number> | null,
   cont: Cont
-}
-function isRecur(result: Result): result is Recur {
-  return result.type === ResultTag.Recur;
-}
-function recur(grid: AutofillGrid, discrep: number, pitched: Set<string>, subset: Set<number> | null, cont: Cont): Recur {
+): Recur {
   return { type: ResultTag.Recur, grid, discrep, pitched, subset, cont };
 }
 interface Value extends Result {
-  type: ResultTag.Value,
-  result: AutofillGrid | null
+  type: ResultTag.Value;
+  result: AutofillGrid | null;
 }
 function isValue(result: Result): result is Value {
   return result.type === ResultTag.Value;
@@ -64,7 +74,15 @@ export class Autofiller {
     this.startTime = new Date().getTime();
 
     // Our initial step is a call to recur
-    this.nextStep = recur(this.initialGrid, 10, new Set<string>(), null, (result) => { return value(result); });
+    this.nextStep = recur(
+      this.initialGrid,
+      10,
+      new Set<string>(),
+      null,
+      (result) => {
+        return value(result);
+      }
+    );
   }
 
   step() {
@@ -87,12 +105,17 @@ export class Autofiller {
         this.nextStep.discrep,
         this.nextStep.pitched,
         this.nextStep.subset,
-        this.nextStep.cont);
+        this.nextStep.cont
+      );
     }
 
     // If it's a "value" (not a "recur") we're done.
     if (isValue(this.nextStep)) {
-      console.log('Finished: ' + ((new Date().getTime() - this.startTime) / 1000).toPrecision(4) + 's');
+      console.log(
+        'Finished: ' +
+          ((new Date().getTime() - this.startTime) / 1000).toPrecision(4) +
+          's'
+      );
       this.completed = true;
       this.onComplete();
     }
@@ -105,7 +128,13 @@ export class Autofiller {
   }
 
   /* Fill out a grid or a subset of a grid */
-  _solve(grid: AutofillGrid, discrep: number, pitched: Set<string>, subset: Set<number> | null, cont: Cont): Result {
+  _solve(
+    grid: AutofillGrid,
+    discrep: number,
+    pitched: Set<string>,
+    subset: Set<number> | null,
+    cont: Cont
+  ): Result {
     const baseCost = minGridCost(grid);
 
     // We already have a solution that's better than this grid could possibly get
@@ -132,10 +161,10 @@ export class Autofiller {
 
     // See if there are any stable subsets  out of the entries we're considering
     const subsets = stableSubsets(grid, subset);
-    if (subsets.length > 1) {
+    if (subsets.length > 1 && subsets[0]) {
       subsets.sort((a, b) => a.size - b.size);
       // Attempt to solve the smallest subset
-      return recur(grid, discrep, pitched, subsets[0], subsolved => {
+      return recur(grid, discrep, pitched, subsets[0], (subsolved) => {
         if (subsolved === null) {
           // The subset couldn't be solved, so this grid is a failure
           return cont(null);
@@ -147,7 +176,9 @@ export class Autofiller {
     }
 
     // Consider entries in order of possible matches
-    entriesToConsider.sort((e1, e2) => numMatchesForEntry(e1) - numMatchesForEntry(e2));
+    entriesToConsider.sort(
+      (e1, e2) => numMatchesForEntry(e1) - numMatchesForEntry(e2)
+    );
     let successor: [AutofillGrid, number, string] | null = null;
     let successorDiff: number | null = null;
 
@@ -159,10 +190,17 @@ export class Autofiller {
 
       let skipEntry = false;
       const failingLetters: Array<string> = [];
-      entry.cells.forEach(() => { failingLetters.push(''); });
+      entry.cells.forEach(() => {
+        failingLetters.push('');
+      });
       const succeedingLetters: Array<string> = [];
-      entry.cells.forEach(() => { succeedingLetters.push(''); });
-      for (const [word, preScore] of WordDB.matchingWords(entry.length, entry.bitmap)) {
+      entry.cells.forEach(() => {
+        succeedingLetters.push('');
+      });
+      for (const [word, preScore] of WordDB.matchingWords(
+        entry.length,
+        entry.bitmap
+      )) {
         if (pitched.has(entry.index + ':' + word)) {
           continue;
         }
@@ -173,57 +211,84 @@ export class Autofiller {
         const cost = WordDB.scoreToCost(preScore) + Math.random() * 0.01;
 
         // If we have a secondBestCost for this entry we know it's lower than existing soln cost
-        const costToBeat = secondBestCost !== null ? secondBestCost : this.solnCost;
+        const costToBeat =
+          secondBestCost !== null ? secondBestCost : this.solnCost;
 
         // Fail fast based on score change due to this entry alone
-        if (costToBeat !== null && ((baseCost - entry.minCost + cost) > costToBeat)) {
+        if (
+          costToBeat !== null &&
+          baseCost - entry.minCost + cost > costToBeat
+        ) {
           continue;
         }
 
         // Fail fast based on score change due to any crosses
         let failFast = false;
         let j = -1;
-        for (let i = 0; i < entry.cells.length; i += 1) {
+        for (const [i, cellPos] of entry.cells.entries()) {
           j += 1;
-          const cell = valAt(grid, entry.cells[i]);
-          if (cell !== ' ') {  // Don't need to check cross
+          const cell = valAt(grid, cellPos);
+          if (cell !== ' ') {
+            // Don't need to check cross
             j += cell.length - 1;
             continue;
           }
-          const crossIndex = crosses[i].entryIndex;
+          const crossIndex = crosses[i]?.entryIndex ?? null;
           if (crossIndex === null) {
             continue;
           }
-          if (failingLetters[i].indexOf(word[j]) !== -1) {
+          const candidateLetter = word[j];
+          if (candidateLetter === undefined) {
+            throw new Error('oob');
+          }
+          if (failingLetters[i]?.includes(candidateLetter)) {
             failFast = true;
             break;
           }
         }
         if (!failFast) {
           let j = -1;
-          for (let i = 0; i < entry.cells.length; i += 1) {
+          for (const [i, cellPos] of entry.cells.entries()) {
             j += 1;
-            const cell = valAt(grid, entry.cells[i]);
-            if (cell !== ' ') {  // Don't need to check cross
+            const cell = valAt(grid, cellPos);
+            if (cell !== ' ') {
+              // Don't need to check cross
               j += cell.length - 1;
               continue;
             }
-            const crossIndex = crosses[i].entryIndex;
+            const candidateLetter = word[j];
+            if (candidateLetter === undefined) {
+              throw new Error('oob');
+            }
+            const crossObj = crosses[i];
+            if (crossObj === undefined) {
+              throw new Error('oob');
+            }
+            const crossIndex = crossObj.entryIndex;
             if (crossIndex === null) {
               continue;
             }
-            if (succeedingLetters[i].indexOf(word[j]) !== -1) {
+            if (succeedingLetters[i]?.includes(candidateLetter)) {
               continue;
             }
             const cross = grid.entries[crossIndex];
+            if (cross === undefined) {
+              throw new Error('oob');
+            }
             const crossLength = cross.length;
-            const newBitmap = WordDB.updateBitmap(crossLength, cross.bitmap, crosses[i].wordIndex, word[j]);
+            const newBitmap = WordDB.updateBitmap(
+              crossLength,
+              cross.bitmap,
+              crossObj.wordIndex,
+              candidateLetter
+            );
             if (BA.isZero(newBitmap)) {
               failingLetters[i] += word[j];
               failFast = true;
               break;
             }
-            const newCost = baseCost - cross.minCost + WordDB.minCost(crossLength, newBitmap);
+            const newCost =
+              baseCost - cross.minCost + WordDB.minCost(crossLength, newBitmap);
             if (costToBeat !== null && newCost > costToBeat) {
               failingLetters[i] += word[j];
               failFast = true;
@@ -268,17 +333,20 @@ export class Autofiller {
         break;
       }
 
-      if (bestGrid === null || bestCost === null) {  // No valid option for this entry, bad grid
+      if (bestGrid === null || bestCost === null) {
+        // No valid option for this entry, bad grid
         return cont(null);
       }
 
-      if (secondBestCost === null) {  // No backup option, so this entry is forced
+      if (secondBestCost === null) {
+        // No backup option, so this entry is forced
         successor = bestGrid;
         break;
       }
 
       const costDiff = secondBestCost - bestCost;
-      if (successorDiff === null || costDiff > successorDiff) {  // No successor or this one has higher cost differential
+      if (successorDiff === null || costDiff > successorDiff) {
+        // No successor or this one has higher cost differential
         successor = bestGrid;
         successorDiff = costDiff;
       }
@@ -290,23 +358,24 @@ export class Autofiller {
     const suc = successor; // weird hack around type system not realizing successor isn't null
     let nextSubset = null;
     if (subset !== null) {
-      nextSubset = new Set(Array.from(subset).filter(e => e !== suc[1]));
+      nextSubset = new Set(Array.from(subset).filter((e) => e !== suc[1]));
     }
 
     if (!discrep || pitched.size >= discrep) {
       return recur(successor[0], discrep, pitched, nextSubset, cont);
     }
 
-    return recur(successor[0], discrep, pitched, nextSubset,
-      result => {
-        const newPitched = new Set(pitched.values());
-        newPitched.add(suc[1] + ':' + suc[2]);
-        return recur(grid, discrep, newPitched, subset,
-          res2 => {
-            return cont((res2 !== null && (result === null || minGridCost(res2) < minGridCost(result))) ? res2 : result);
-          }
+    return recur(successor[0], discrep, pitched, nextSubset, (result) => {
+      const newPitched = new Set(pitched.values());
+      newPitched.add(suc[1] + ':' + suc[2]);
+      return recur(grid, discrep, newPitched, subset, (res2) => {
+        return cont(
+          res2 !== null &&
+            (result === null || minGridCost(res2) < minGridCost(result))
+            ? res2
+            : result
         );
-      }
-    );
+      });
+    });
   }
 }
