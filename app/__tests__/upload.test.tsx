@@ -124,6 +124,9 @@ test('upload a puzzle', async () => {
   const puzzles = await admin.firestore().collection('c').get();
   windowSpy.mockRestore();
   expect(puzzles.size).toEqual(1);
+  if (puzzles.docs[0] === undefined) {
+    throw new Error();
+  }
   const puzzle = puzzles.docs[0].data();
   const puzzleId = puzzles.docs[0].id;
   expect(puzzle['m']).toEqual(false);
@@ -209,6 +212,9 @@ test('upload after editing', async () => {
   const puzzles = await admin.firestore().collection('c').get();
   windowSpy.mockRestore();
   expect(puzzles.size).toEqual(1);
+  if (puzzles.docs[0] === undefined) {
+    throw new Error();
+  }
   const resData = puzzles.docs[0].data();
   if (!resData) {
     throw new Error('botch');
