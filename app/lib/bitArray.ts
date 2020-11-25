@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 
 const b64ToI: Array<number> = [];
 const iToB64: Array<string> = [];
@@ -20,9 +21,9 @@ b64ToI['_'.charCodeAt(0)] = 63;
 iToB64[63] = '_';
 
 function popCount(v: number): number {
-  v -= ((v >>> 1) & 0x55555555);
+  v -= (v >>> 1) & 0x55555555;
   v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
-  return (((v + (v >>> 4) & 0xF0F0F0F) * 0x1010101) >>> 24);
+  return (((v + (v >>> 4)) & 0xf0f0f0f) * 0x1010101) >>> 24;
 }
 
 export type BitArray = Array<number>;
@@ -44,12 +45,13 @@ export function fromString(input: string, base: 32 | 64): BitArray {
 
   for (let i = 0; i < input.length; ++i) {
     const index = input.length - i - 1;
-    const x = b64ToI[input.charCodeAt(index)];
+    // @ts-expect-error
+    const x: number = b64ToI[input.charCodeAt(index)];
     const mod = i % charsPerNum;
     if (mod === 0) {
       nums[usedInts++] = x;
     } else {
-      nums[usedInts - 1] |= (x << mod * bitsPerChar);
+      nums[usedInts - 1] |= x << (mod * bitsPerChar);
     }
   }
   return nums;
@@ -71,7 +73,7 @@ export function setBit(ba: BitArray, index: number) {
   for (let i = ba.length; i < numIndex + 1; i += 1) {
     ba.push(0);
   }
-  ba[numIndex] |= (1 << rem);
+  ba[numIndex] |= 1 << rem;
 }
 
 export function toString(ba: BitArray, base: 32 | 64) {
@@ -81,6 +83,7 @@ export function toString(ba: BitArray, base: 32 | 64) {
   let s = '';
   for (let i = ba.length - 1; i >= 0; --i) {
     for (let j = charsPerNum - 1; j >= 0; --j) {
+      // @ts-expect-error
       const char = iToB64[(ba[i] >> (j * bitsPerChar)) & mask];
       if (s || char !== '0') {
         s += char;
@@ -94,6 +97,7 @@ export function bitLength(ba: BitArray): number {
   if (!ba.length) {
     return 0;
   }
+  // @ts-expect-error
   return 30 * (ba.length - 1) + (32 - Math.clz32(ba[ba.length - 1]));
 }
 
@@ -102,6 +106,7 @@ export function bitCount(ba: BitArray): number {
   let sum = 0;
   for (let i = 0; i < ba.length; i += 1) {
     if (ba[i]) {
+      // @ts-expect-error
       sum += popCount(ba[i]);
     }
   }
@@ -113,6 +118,7 @@ export function and(ba: BitArray, other: BitArray) {
   const usedInts = Math.min(ba.length, other.length);
 
   for (let i = 0; i < usedInts; ++i) {
+    // @ts-expect-error
     nums[i] = ba[i] & other[i];
   }
 
@@ -123,6 +129,7 @@ export function and(ba: BitArray, other: BitArray) {
 export function inPlaceAnd(ba: BitArray, other: BitArray) {
   for (let i = 0; i < ba.length; ++i) {
     if (i < other.length) {
+      // @ts-expect-error
       ba[i] &= other[i];
     } else {
       ba[i] = 0;
@@ -136,9 +143,11 @@ export function activeBits(ba: BitArray): Array<number> {
   for (let i = ba.length - 1; i >= 0; i--) {
     let num = ba[i];
     while (num !== 0) {
+      // @ts-expect-error
       const t = 31 - Math.clz32(num);
+      // @ts-expect-error
       num ^= 1 << t;
-      ret.push((i * 30) + t);
+      ret.push(i * 30 + t);
     }
   }
   return ret;
