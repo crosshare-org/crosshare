@@ -169,7 +169,7 @@ export function useAuth() {
       return [undefined, undefined];
     }
     setIsLoading(false);
-    if (cpSnapshot.empty) {
+    if (cpSnapshot.empty || cpSnapshot.docs[0] === undefined) {
       return [undefined, undefined];
     }
     if (cpSnapshot.size !== 1) {

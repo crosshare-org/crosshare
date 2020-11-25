@@ -37,7 +37,7 @@ if (typeof window === 'undefined') {
   }
 }
 
-if (firebase.apps.length) {
+if (firebase.apps.length && firebase.apps[0]) {
   App = firebase.apps[0];
 } else {
   App = firebase.initializeApp(firebaseConfig);

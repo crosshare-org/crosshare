@@ -28,8 +28,12 @@ export interface GridBase<Entry extends EntryBase> {
 function entriesByCell<Entry extends EntryBase>(
   grid: GridBase<Entry>,
   pos: Position
-) {
-  return grid.entriesByCell[pos.row * grid.width + pos.col];
+): [Cross, Cross] {
+  const entries = grid.entriesByCell[pos.row * grid.width + pos.col];
+  if (entries === undefined) {
+    throw new Error('out of bounds in entriesByCell');
+  }
+  return entries;
 }
 
 /**
@@ -64,8 +68,12 @@ export function valAt<Entry extends EntryBase>(
 export function entryWord<Entry extends EntryBase>(
   grid: GridBase<Entry>,
   entryIndex: number
-) {
-  return grid.entries[entryIndex].cells.map((pos) => valAt(grid, pos)).join('');
+): string {
+  const entry = grid.entries[entryIndex];
+  if (entry === undefined) {
+    throw new Error('entry oob');
+  }
+  return entry.cells.map((pos) => valAt(grid, pos)).join('');
 }
 
 export function setVal<Entry extends EntryBase>(
@@ -111,10 +119,11 @@ export function entryAtPosition<Entry extends EntryBase>(
   if (currentEntryIndex.entryIndex === null) {
     return [null, 0];
   }
-  return [
-    grid.entries[currentEntryIndex.entryIndex],
-    currentEntryIndex.cellIndex,
-  ];
+  const entry = grid.entries[currentEntryIndex.entryIndex];
+  if (entry === undefined) {
+    throw new Error('entry oob');
+  }
+  return [entry, currentEntryIndex.cellIndex];
 }
 
 export function entryAndCrossAtPosition<Entry extends EntryBase>(
@@ -126,14 +135,15 @@ export function entryAndCrossAtPosition<Entry extends EntryBase>(
     return [null, null];
   }
   const currentEntry = entries[pos.dir];
-  const currentCross = entries[(pos.dir + 1) % 2];
+  const currentCross =
+    entries[pos.dir === Direction.Across ? Direction.Across : Direction.Down];
   return [
-    currentEntry.entryIndex === null
-      ? null
-      : grid.entries[currentEntry.entryIndex],
-    currentCross.entryIndex === null
-      ? null
-      : grid.entries[currentCross.entryIndex],
+    (currentEntry.entryIndex !== null &&
+      grid.entries[currentEntry.entryIndex]) ||
+      null,
+    (currentCross.entryIndex !== null &&
+      grid.entries[currentCross.entryIndex]) ||
+      null,
   ];
 }
 
@@ -194,10 +204,14 @@ export function entriesFromCells(
         while (xt < width && yt < height) {
           const cellId = yt * width + xt;
           const cellVal = cells[cellId];
+          const entry = entriesByCell[cellId];
+          if (cellVal === undefined || entry === undefined) {
+            throw new Error('cellid oob');
+          }
           if (cellVal === '.') {
             break;
           }
-          entriesByCell[cellId][dir] = {
+          entry[dir] = {
             entryIndex: entries.length,
             wordIndex: entryPattern.length,
             cellIndex: wordlen,
@@ -243,11 +257,18 @@ export function gridWithEntrySet<
   };
 
   const entry = newGrid.entries[entryIndex];
+  if (entry === undefined) {
+    throw new Error('entryIndex oob');
+  }
   const crosses = getCrosses(newGrid, entry);
   let j = -1;
   for (let i = 0; i < word.length; i += 1) {
     j += 1;
-    const currentVal = valAt(newGrid, entry.cells[j]);
+    const pos = entry.cells[j];
+    if (pos === undefined) {
+      throw new Error('oob');
+    }
+    const currentVal = valAt(newGrid, pos);
     if (currentVal !== ' ') {
       if (currentVal === word.slice(i, i + currentVal.length)) {
         // No change needed for this cell
@@ -257,7 +278,7 @@ export function gridWithEntrySet<
     }
 
     // update cells
-    setVal(newGrid, entry.cells[j], word[i]);
+    setVal(newGrid, pos, word[i]);
 
     // update crossing entry
     const crossIndex = crosses[j].entryIndex;
