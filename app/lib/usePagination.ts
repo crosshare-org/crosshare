@@ -41,7 +41,7 @@ export function usePaginatedQuery<A, N>(
           if (dbres.docs.length < limit) {
             setHasMore(false);
           }
-          setLastLoaded(dbres.docs[dbres.docs.length - 1]);
+          setLastLoaded(dbres.docs[dbres.docs.length - 1] || null);
           const results: Array<N> = [];
           for (const doc of dbres.docs) {
             const data = doc.data();
@@ -58,6 +58,7 @@ export function usePaginatedQuery<A, N>(
           }
           setLoading(false);
           setDocs(results);
+          return;
         });
     };
     fetchData();

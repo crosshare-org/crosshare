@@ -36,8 +36,9 @@ function getStorageKey(user: firebase.User | undefined) {
 }
 
 function getStore(storageKey: string): PlayMapT {
-  if (memoryStore[storageKey]) {
-    return memoryStore[storageKey].data;
+  const store = memoryStore[storageKey];
+  if (store) {
+    return store.data;
   }
   const inStorage = localStorage.getItem(storageKey);
   if (inStorage) {
@@ -143,7 +144,8 @@ export function cachePlay(
     const { ua, ...rest } = p; // eslint-disable-line @typescript-eslint/no-unused-vars
     return rest;
   }
-  if (store[puzzleId] && equal(omitUa(store[puzzleId]), omitUa(play))) {
+  const storedPlay = store[puzzleId];
+  if (storedPlay && equal(omitUa(storedPlay), omitUa(play))) {
     return;
   }
 

@@ -126,14 +126,16 @@ async function getPuzzlesForPage(
   }
 
   // Filter out any private puzzles
-  for (let i = index.i.length; i >= 0; i--) {
-    const pid = index.i[i];
+  for (const [i, pid] of index.i.entries()) {
     if (index.pv?.includes(pid)) {
       index.i.splice(i, 1);
       index.t.splice(i, 1);
     } else if (index.pvui?.includes(pid) && index.pvut) {
       const pvidx = index.pvui.indexOf(pid);
       const goLiveTime = index.pvut[pvidx];
+      if (goLiveTime === undefined) {
+        throw new Error('mising from pvut but in pvui: ' + pid);
+      }
       if (goLiveTime > AdminTimestamp.now()) {
         index.i.splice(i, 1);
         index.t.splice(i, 1);
@@ -314,7 +316,12 @@ async function queueEmailForUser(
         'Crosshare: new comments on ' +
         joinStringsWithAnd(
           Object.values(commentsByPuzzle)
-            .map((a) => a[0].pn)
+            .map((a) => {
+              if (a[0] === undefined) {
+                throw new Error('oob');
+              }
+              return a[0].pn;
+            })
             .slice(0, 3)
         );
       markdown += '### Comments on your puzzles:\n\n';
@@ -325,7 +332,7 @@ async function queueEmailForUser(
             commentNotifications.map((n) => n.cn)
           );
           markdown += `* ${nameDisplay} commented on [${
-            commentNotifications[0].pn
+            commentNotifications[0]?.pn || 'your puzzle'
           }](${puzzleLink(puzzleId)})\n`;
         }
       );
@@ -351,7 +358,12 @@ async function queueEmailForUser(
           'Crosshare: new replies to your comments on ' +
           joinStringsWithAnd(
             Object.values(repliesByPuzzle)
-              .map((a) => a[0].pn)
+              .map((a) => {
+                if (a[0] === undefined) {
+                  throw new Error('oob');
+                }
+                return a[0].pn;
+              })
               .slice(0, 3)
           );
       }
@@ -363,7 +375,7 @@ async function queueEmailForUser(
             commentNotifications.map((n) => n.cn)
           );
           markdown += `* ${nameDisplay} replied to your comments on [${
-            commentNotifications[0].pn
+            commentNotifications[0]?.pn || 'a puzzle'
           }](${puzzleLink(puzzleId)})\n`;
         }
       );
