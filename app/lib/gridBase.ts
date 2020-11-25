@@ -277,15 +277,22 @@ export function gridWithEntrySet<
       }
     }
 
+    const newLetter = word[i];
+    if (newLetter === undefined) {
+      throw new Error('oob');
+    }
     // update cells
-    setVal(newGrid, pos, word[i]);
+    setVal(newGrid, pos, newLetter);
 
     // update crossing entry
-    const crossIndex = crosses[j].entryIndex;
+    const crossIndex = crosses[j]?.entryIndex ?? null;
     if (crossIndex === null) {
       continue;
     }
     const cross = newGrid.entries[crossIndex];
+    if (cross === undefined) {
+      throw new Error('oob');
+    }
     let completedCross: string | null = '';
     for (const cid of cross.cells) {
       const val = valAt(newGrid, cid);
@@ -296,10 +303,10 @@ export function gridWithEntrySet<
         completedCross += val;
       }
     }
-    newGrid.entries[crossIndex].completedWord = completedCross;
+    cross.completedWord = completedCross;
   }
   // update entry itself
-  newGrid.entries[entryIndex].completedWord = word;
+  entry.completedWord = word;
 
   return newGrid;
 }
