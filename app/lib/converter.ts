@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { DBPuzzleT } from './dbtypes';
 import { PuzzleInProgressT, ClueT } from './types';
 import { fromCells, getClueMap } from './viewableGrid';
@@ -35,10 +36,12 @@ class PuzReader {
 
   readShort(ix?: number) {
     if (ix === undefined) {
+      // @ts-expect-error
       const val = this.buf[this.ix] | (this.buf[this.ix + 1] << 8);
       this.ix += 2;
       return val;
     }
+    // @ts-expect-error
     return this.buf[ix] | (this.buf[ix + 1] << 8);
   }
 
@@ -73,8 +76,8 @@ class PuzReader {
       const extension = this.readBytes(length);
       this.ix += 1; // extensions have a trailing byte
       if (name === 'GEXT') {
-        for (let i = 0; i < extension.length; i += 1) {
-          if (extension[i] & CIRCLED) {
+        for (const [i, e] of extension.entries()) {
+          if (e & CIRCLED) {
             this.highlighted.push(i);
           }
         }
@@ -87,6 +90,7 @@ class PuzReader {
             continue;
           }
           const pair = solutionPair.split(':');
+          // @ts-expect-error
           this.rebusKey[parseInt(pair[0], 10)] = pair[1];
         }
       }
@@ -99,6 +103,9 @@ class PuzReader {
   toCrosshare(): PuzzleInProgressT {
     const w = this.buf[0x2c];
     const h = this.buf[0x2d];
+    if (w === undefined || h === undefined) {
+      throw new Error('oob');
+    }
     if (w < 4 || h < 4) {
       throw new Error('All grids must have at least 4 rows+cols for now');
     }
@@ -109,9 +116,13 @@ class PuzReader {
     if (scrambled & 0x0004) {
       throw new Error('Cannot import scrambled .puz files');
     }
-    const grid = [];
+    const grid: Array<string> = [];
     for (let i = 0; i < w * h; i++) {
-      grid.push(String.fromCodePoint(this.buf[0x34 + i]));
+      const gridCell = this.buf[0x34 + i];
+      if (gridCell === undefined) {
+        throw new Error('oob');
+      }
+      grid.push(String.fromCodePoint(gridCell));
     }
 
     this.ix = 0x34 + 2 * w * h;
@@ -132,7 +143,12 @@ class PuzReader {
         (i + 1) % w !== 0 &&
         grid[i + 1] !== '.'
       ) {
-        clues.push({ num: label, clue: this.readString(), dir: 0 });
+        clues.push({
+          num: label,
+          clue: this.readString(),
+          dir: 0,
+          explanation: null,
+        });
         inc = 1;
       }
       if (
@@ -140,7 +156,12 @@ class PuzReader {
         i + w < grid.length &&
         grid[i + w] !== '.'
       ) {
-        clues.push({ num: label, clue: this.readString(), dir: 1 });
+        clues.push({
+          num: label,
+          clue: this.readString(),
+          dir: 1,
+          explanation: null,
+        });
         inc = 1;
       }
       label += inc;
@@ -159,6 +180,7 @@ class PuzReader {
     if (this.rebusKey && this.rebusMap) {
       for (let i = 0; i < this.rebusMap.length; i += 1) {
         if (this.rebusMap[i]) {
+          // @ts-expect-error
           grid[i] = this.rebusKey[this.rebusMap[i] - 1];
         }
       }
@@ -265,16 +287,16 @@ class PuzWriter {
   writeFill(puzzle: DBPuzzleT): [solutionLoc: number, gridLoc: number] {
     const grid = puzzle.g;
     const solutionLoc = this.buf.length;
-    for (let i = 0; i < grid.length; i++) {
-      const char = grid[i].codePointAt(0);
+    for (const cell of grid) {
+      const char = cell.codePointAt(0);
       if (char === undefined) {
-        throw new Error('cannot encode ' + grid[i]);
+        throw new Error('cannot encode ' + cell);
       }
       this.buf.push(char); // Note: assumes grid is ISO-8859-1
     }
     const gridLoc = this.buf.length;
-    for (let i = 0; i < grid.length; i++) {
-      this.buf.push(grid[i] === '.' ? this.blackCP : this.dashCP);
+    for (const cell of grid) {
+      this.buf.push(cell === '.' ? this.blackCP : this.dashCP);
     }
     return [solutionLoc, gridLoc];
   }
@@ -285,15 +307,23 @@ class PuzWriter {
     this.writeString(puzzle.n);
     this.writeString(`Copyright ${puzzle.n}, all rights reserved`);
     const clues: Array<[number, string]> = [];
-    for (let i = 0; i < puzzle.ac.length; i++) {
-      clues.push([2 * puzzle.an[i], puzzle.ac[i]]);
+    for (const [i, clue] of puzzle.ac.entries()) {
+      const clueNumber = puzzle.an[i];
+      if (clueNumber === undefined) {
+        throw new Error('oob');
+      }
+      clues.push([2 * clueNumber, clue]);
     }
-    for (let i = 0; i < puzzle.dc.length; i++) {
-      clues.push([2 * puzzle.dn[i] + 1, puzzle.dc[i]]);
+    for (const [i, clue] of puzzle.dc.entries()) {
+      const clueNumber = puzzle.dn[i];
+      if (clueNumber === undefined) {
+        throw new Error('oob');
+      }
+      clues.push([2 * clueNumber + 1, clue]);
     }
     clues.sort((a, b) => a[0] - b[0]);
-    for (let i = 0; i < clues.length; i++) {
-      this.writeString(clues[i][1]);
+    for (const clue of clues) {
+      this.writeString(clue[1]);
     }
     const note = 'Created on crosshare.org';
     this.writeString(puzzle.cn ? puzzle.cn + ' - ' + note : note);
@@ -303,7 +333,7 @@ class PuzWriter {
   checksumRegion(base: number, len: number, cksum: number): number {
     for (let i = 0; i < len; i++) {
       cksum = (cksum >> 1) | ((cksum & 1) << 15);
-      cksum = (cksum + this.buf[base + i]) & 0xffff;
+      cksum = (cksum + (this.buf[base + i] ?? 0)) & 0xffff;
     }
     return cksum;
   }
@@ -374,8 +404,8 @@ class PuzWriter {
     const checksumLoc = this.buf.length;
     this.writeShort(0); // Checksum placeholder
     const dataLoc = this.buf.length;
-    for (let i = 0; i < data.length; i++) {
-      this.buf.push(data[i]);
+    for (const datum of data) {
+      this.buf.push(datum);
     }
     this.buf.push(0);
     const cksum = this.checksumRegion(dataLoc, data.length, 0);
@@ -392,8 +422,8 @@ class PuzWriter {
 
   addGrbs(grid: Array<string>, rtbl: Array<string>) {
     const data: Array<number> = [];
-    for (let i = 0; i < grid.length; i++) {
-      data.push(rtbl.indexOf(grid[i]) + 1);
+    for (const cell of grid) {
+      data.push(rtbl.indexOf(cell) + 1);
     }
     this.addExtension('GRBS', data);
   }
