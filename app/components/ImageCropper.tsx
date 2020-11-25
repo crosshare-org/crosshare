@@ -5,7 +5,11 @@ import { Button } from './Buttons';
 import { App } from '../lib/firebaseWrapper';
 import { useSnackbar } from './Snackbar';
 
-function downsample(image: HTMLImageElement, targetSize: [number, number], crop: ReactCrop.Crop) {
+function downsample(
+  image: HTMLImageElement,
+  targetSize: [number, number],
+  crop: ReactCrop.Crop
+) {
   if (!crop || !crop.width || !crop.height) {
     return null;
   }
@@ -30,7 +34,7 @@ function downsample(image: HTMLImageElement, targetSize: [number, number], crop:
     0,
     0,
     fullCropWidth,
-    fullCropHeight,
+    fullCropHeight
   );
 
   const width_source = canvas.width;
@@ -78,14 +82,14 @@ function downsample(image: HTMLImageElement, targetSize: [number, number], crop:
           weight = 2 * w * w * w - 3 * w * w + 1;
           const pos_x = 4 * (xx + yy * width_source);
           //alpha
-          gx_a += weight * data[pos_x + 3];
+          gx_a += weight * (data[pos_x + 3] ?? 0);
           weights_alpha += weight;
           //colors
-          if (data[pos_x + 3] < 255)
-            weight = weight * data[pos_x + 3] / 250;
-          gx_r += weight * data[pos_x];
-          gx_g += weight * data[pos_x + 1];
-          gx_b += weight * data[pos_x + 2];
+          if ((data[pos_x + 3] ?? 0) < 255)
+            weight = (weight * (data[pos_x + 3] ?? 0)) / 250;
+          gx_r += weight * (data[pos_x] ?? 0);
+          gx_g += weight * (data[pos_x + 1] ?? 0);
+          gx_b += weight * (data[pos_x + 2] ?? 0);
           weights += weight;
         }
       }
@@ -102,7 +106,13 @@ function downsample(image: HTMLImageElement, targetSize: [number, number], crop:
   return canvas;
 }
 
-function upload(storageKey: string, image: HTMLImageElement | null, targetSize: [number, number], crop: ReactCrop.Crop | null, onComplete: (msg: string) => void) {
+function upload(
+  storageKey: string,
+  image: HTMLImageElement | null,
+  targetSize: [number, number],
+  crop: ReactCrop.Crop | null,
+  onComplete: (msg: string) => void
+) {
   if (!image || !crop || !crop.width || !crop.height) {
     return;
   }
@@ -113,57 +123,89 @@ function upload(storageKey: string, image: HTMLImageElement | null, targetSize: 
   }
 
   canvas.toBlob(
-    blob => {
+    (blob) => {
       if (!blob) {
         onComplete('something went wrong');
         return;
       }
-      App.storage().ref().child(storageKey).put(blob).then(() => {
-        onComplete('Pic updated. It can take up to several hours to appear on the site.');
-      });
+      App.storage()
+        .ref()
+        .child(storageKey)
+        .put(blob)
+        .then(() => {
+          onComplete(
+            'Pic updated. It can take up to several hours to appear on the site.'
+          );
+        });
     },
     'image/jpeg',
     0.85
   );
 }
 
-export function ImageCropper(props: { isCircle: boolean, targetSize: [number, number], storageKey: string, cancelCrop: () => void }) {
+export function ImageCropper(props: {
+  isCircle: boolean;
+  targetSize: [number, number];
+  storageKey: string;
+  cancelCrop: () => void;
+}) {
   const [upImg, setUpImg] = useState<string>();
   const { showSnackbar } = useSnackbar();
   const imgRef = useRef<HTMLImageElement | null>(null);
-  const [crop, setCrop] = useState<ReactCrop.Crop>({ unit: 'px', width: props.targetSize[0], aspect: props.targetSize[0] / props.targetSize[1] });
-  const [completedCrop, setCompletedCrop] = useState<ReactCrop.Crop | null>(null);
+  const [crop, setCrop] = useState<ReactCrop.Crop>({
+    unit: 'px',
+    width: props.targetSize[0],
+    aspect: props.targetSize[0] / props.targetSize[1],
+  });
+  const [completedCrop, setCompletedCrop] = useState<ReactCrop.Crop | null>(
+    null
+  );
   const [minWidth, setMinWidth] = useState(props.targetSize[0]);
   const [disabled, setDisabled] = useState(true);
   const [uploading, setUploading] = useState(false);
 
   const onSelectFile = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
+    if (e.target.files && e.target.files.length > 0 && e.target.files[0]) {
       const reader = new FileReader();
-      reader.addEventListener('load', () => setUpImg(reader.result ?.toString()));
+      reader.addEventListener('load', () =>
+        setUpImg(reader.result?.toString())
+      );
       reader.readAsDataURL(e.target.files[0]);
     }
   };
 
-  const onLoad = useCallback((img: HTMLImageElement) => {
-    if (img.naturalWidth < props.targetSize[0] || img.naturalHeight < props.targetSize[1]) {
-      setDisabled(true);
-      alert(`Please use an image at least ${props.targetSize[0]}x${props.targetSize[1]}`);
-      setUpImg(undefined);
-      return;
-    }
-    setDisabled(false);
-    imgRef.current = img;
-    setMinWidth(props.targetSize[0] * img.width / img.naturalWidth);
-  }, [props.targetSize]);
+  const onLoad = useCallback(
+    (img: HTMLImageElement) => {
+      if (
+        img.naturalWidth < props.targetSize[0] ||
+        img.naturalHeight < props.targetSize[1]
+      ) {
+        setDisabled(true);
+        alert(
+          `Please use an image at least ${props.targetSize[0]}x${props.targetSize[1]}`
+        );
+        setUpImg(undefined);
+        return;
+      }
+      setDisabled(false);
+      imgRef.current = img;
+      setMinWidth((props.targetSize[0] * img.width) / img.naturalWidth);
+    },
+    [props.targetSize]
+  );
 
   return (
     <Overlay closeCallback={props.cancelCrop}>
       <div>
-        <input disabled={uploading} type="file" accept="image/*" onChange={onSelectFile} />
+        <input
+          disabled={uploading}
+          type="file"
+          accept="image/*"
+          onChange={onSelectFile}
+        />
       </div>
       <div css={{ margin: '1em 0' }}>
-        {upImg ?
+        {upImg ? (
           <ReactCrop
             minWidth={minWidth}
             circularCrop={props.isCircle}
@@ -171,26 +213,39 @@ export function ImageCropper(props: { isCircle: boolean, targetSize: [number, nu
             keepSelection={true}
             onImageLoaded={onLoad}
             crop={crop}
-            onChange={c => setCrop(c)}
-            onComplete={c => setCompletedCrop(c)}
+            onChange={(c) => setCrop(c)}
+            onComplete={(c) => setCompletedCrop(c)}
           />
-          : ''}
+        ) : (
+          ''
+        )}
       </div>
-      {uploading ?
+      {uploading ? (
         <p>Uploading...</p>
-        :
+      ) : (
         <Button
-          disabled={uploading || disabled || !completedCrop ?.width || !completedCrop ?.height}
+          disabled={
+            uploading ||
+            disabled ||
+            !completedCrop?.width ||
+            !completedCrop?.height
+          }
           onClick={() => {
             setUploading(true);
-            upload(props.storageKey, imgRef.current, props.targetSize, completedCrop, (msg: string) => {
-              showSnackbar(msg);
-              props.cancelCrop();
-            });
+            upload(
+              props.storageKey,
+              imgRef.current,
+              props.targetSize,
+              completedCrop,
+              (msg: string) => {
+                showSnackbar(msg);
+                props.cancelCrop();
+              }
+            );
           }}
           text="Upload Image"
         />
-      }
+      )}
     </Overlay>
   );
 }
