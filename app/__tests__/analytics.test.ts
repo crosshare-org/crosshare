@@ -174,7 +174,7 @@ test('run for all time w/o initial state', async () => {
   const res = await adminApp.firestore().collection('ds').get();
   expect(res.size).toEqual(1);
   // Can't snapshot updatedAt or playcount by hour
-  const { ua, h, ...toSnapshot } = res.docs[0].data();
+  const { ua, h, ...toSnapshot } = res.docs[0]?.data() || {};
   expect(ua).not.toBeFalsy();
   expect(h.length).toEqual(24);
   expect(toSnapshot).toMatchSnapshot();
@@ -203,7 +203,7 @@ test('run for more recent w/o initial state', async () => {
   const res = await adminApp.firestore().collection('ds').get();
   expect(res.size).toEqual(1);
   // Can't snapshot updatedAt or playcount by hour
-  const { ua, h, ...toSnapshot } = res.docs[0].data();
+  const { ua, h, ...toSnapshot } = res.docs[0]?.data() || {};
   expect(ua).not.toBeFalsy();
   expect(h.length).toEqual(24);
   expect(toSnapshot).toMatchSnapshot();
@@ -238,7 +238,7 @@ test('run w/ initial state', async () => {
   const res = await adminApp.firestore().collection('ds').get();
   expect(res.size).toEqual(1);
   // Can't snapshot updatedAt or playcount by hour
-  const { ua, h, ...toSnapshot } = res.docs[0].data();
+  const { ua, h, ...toSnapshot } = res.docs[0]?.data() || {};
   expect(ua).not.toBeFalsy();
   expect(h.length).toEqual(24);
   expect(toSnapshot).toMatchSnapshot();

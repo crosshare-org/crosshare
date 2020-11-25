@@ -125,6 +125,9 @@ test('clicking a clue sets slot to active', async () => {
   expect(cell2).toHaveStyleRule('background', 'var(--cell-bg)');
 
   const clue = getAllByText(/popeye's love/i)[0];
+  if (!clue) {
+    throw new Error();
+  }
   expect(clue).toBeInTheDocument();
   fireEvent.click(clue);
 
@@ -231,7 +234,7 @@ test('daily mini from 5/19/20', async () => {
   await act(() => Promise.resolve());
   expect(queryByText(/Begin Puzzle/i)).toBeNull();
 
-  const clue = getAllByText(/professor plum/i)[0].parentElement?.parentElement;
+  const clue = getAllByText(/professor plum/i)[0]?.parentElement?.parentElement;
   expect(clue).toHaveStyleRule('background-color', 'var(--secondary)');
 
   // This puzzle has some cells w/ only a single entry (no cross) which were
@@ -246,7 +249,7 @@ test('daily mini from 5/19/20', async () => {
 
   // After a naive fix of the above issue we were still having problems on click
   fireEvent.click(getByLabelText('cell0x3'));
-  const clueOne = getAllByText(/word with cod/i)[0].parentElement
+  const clueOne = getAllByText(/word with cod/i)[0]?.parentElement
     ?.parentElement;
   expect(clueOne).toHaveStyleRule('background-color', 'var(--lighter)');
 });

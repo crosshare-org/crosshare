@@ -93,7 +93,11 @@ test('puzzle in progress should be cached in local storage', async () => {
   setApp(app as firebase.app.App);
 
   let r = render(<BuilderPage />, { user: mike });
-  fireEvent.click((await r.findAllByText('Launch Constructor'))[0]);
+  let launchButton = (await r.findAllByText('Launch Constructor'))[0];
+  if (!launchButton) {
+    throw new Error();
+  }
+  fireEvent.click(launchButton);
 
   await r.findByText(/Across/i);
 
@@ -112,7 +116,11 @@ test('puzzle in progress should be cached in local storage', async () => {
 
   // Now try again!
   r = render(<BuilderPage />, { user: mike });
-  fireEvent.click((await r.findAllByText('Launch Constructor'))[0]);
+  launchButton = (await r.findAllByText('Launch Constructor'))[0];
+  if (!launchButton) {
+    throw new Error();
+  }
+  fireEvent.click(launchButton);
 
   await r.findByText(/Across/i);
   expect(r.getByLabelText('cell0x1')).toHaveTextContent('B');
@@ -137,7 +145,11 @@ async function publishPuzzle(
   windowSpy.mockRestore();
 
   const r = render(<BuilderPage />, { user: mike });
-  fireEvent.click((await r.findAllByText('Launch Constructor'))[0]);
+  const launchButton = (await r.findAllByText('Launch Constructor'))[0];
+  if (!launchButton) {
+    throw new Error();
+  }
+  fireEvent.click(launchButton);
 
   const grid = (await r.findByLabelText('cell0x0')).parentElement || window;
 
@@ -212,7 +224,7 @@ test('moderate as daily mini', async () => {
   windowSpy.mockRestore();
 
   expect(puzzles.size).toEqual(1);
-  const puzzleId = puzzles.docs[0].id;
+  const puzzleId = puzzles.docs[0]?.id;
 
   const props1 = getProps(
     await getServerSideProps({
@@ -246,9 +258,12 @@ test('moderate as daily mini', async () => {
   ).toEqual(1);
   const res = await admin.firestore().collection('c').get();
   expect(res.size).toEqual(1);
-  const updated = res.docs[0].data();
+  const updated = res.docs[0]?.data();
+  if (!updated) {
+    throw new Error();
+  }
   const ds = getDateString(new Date());
-  expect(res.docs[0].id).toEqual(puzzleId);
+  expect(res.docs[0]?.id).toEqual(puzzleId);
   expect(updated['m']).toEqual(true);
   expect(updated['f']).toEqual(undefined);
   expect(updated['p']).not.toEqual(null);
@@ -281,8 +296,11 @@ test('publish as default', async () => {
   windowSpy.mockRestore();
 
   expect(puzzles.size).toEqual(1);
-  const puzzle = puzzles.docs[0].data();
-  const puzzleId = puzzles.docs[0].id;
+  const puzzle = puzzles.docs[0]?.data();
+  if (!puzzle) {
+    throw new Error();
+  }
+  const puzzleId = puzzles.docs[0]?.id;
   expect(puzzle['m']).toEqual(false);
   expect(puzzle['p']).not.toEqual(null);
   expect(puzzle['c']).toEqual(null);
@@ -292,7 +310,7 @@ test('publish as default', async () => {
     expect(NextJSRouter.push).toHaveBeenCalledTimes(1)
   );
   expect(NextJSRouter.push).toHaveBeenCalledWith(
-    '/crosswords/' + puzzles.docs[0].id
+    '/crosswords/' + puzzles.docs[0]?.id
   );
 
   // The puzzle should be visible on the puzzle page, even to a rando
@@ -342,8 +360,11 @@ test('publish as default', async () => {
   ).toEqual(1);
   const res = await admin.firestore().collection('c').get();
   expect(res.size).toEqual(1);
-  const updated = res.docs[0].data();
-  expect(res.docs[0].id).toEqual(puzzleId);
+  const updated = res.docs[0]?.data();
+  if (!updated) {
+    throw new Error();
+  }
+  expect(res.docs[0]?.id).toEqual(puzzleId);
   expect(updated['m']).toEqual(true);
   expect(updated['f']).toEqual(true);
   expect(updated['p']).not.toEqual(null);
@@ -383,8 +404,11 @@ test('change author name in publish dialogue should publish w/ new name', async 
   windowSpy.mockRestore();
 
   expect(puzzles.size).toEqual(1);
-  const puzzle = puzzles.docs[0].data();
-  const puzzleId = puzzles.docs[0].id;
+  const puzzle = puzzles.docs[0]?.data();
+  const puzzleId = puzzles.docs[0]?.id;
+  if (!puzzle || !puzzleId) {
+    throw new Error();
+  }
   expect(puzzle['m']).toEqual(false);
   expect(puzzle['p']).not.toEqual(null);
   expect(puzzle['c']).toEqual(null);
@@ -396,7 +420,7 @@ test('change author name in publish dialogue should publish w/ new name', async 
     expect(NextJSRouter.push).toHaveBeenCalledTimes(1)
   );
   expect(NextJSRouter.push).toHaveBeenCalledWith(
-    '/crosswords/' + puzzles.docs[0].id
+    '/crosswords/' + puzzles.docs[0]?.id
   );
 
   cleanup();
@@ -448,7 +472,11 @@ test('publish custom / non-rectangular size', async () => {
   setApp(app as firebase.app.App);
 
   const r = render(<BuilderPage />, { user: mike });
-  fireEvent.click((await r.findAllByText('Launch Constructor'))[0]);
+  const launchButton = (await r.findAllByText('Launch Constructor'))[0];
+  if (!launchButton) {
+    throw new Error();
+  }
+  fireEvent.click(launchButton);
 
   fireEvent.click(await r.findByText('New Puzzle', { exact: true }));
 
@@ -504,8 +532,11 @@ test('publish custom / non-rectangular size', async () => {
   windowSpy.mockRestore();
 
   expect(puzzles.size).toEqual(1);
-  const puzzle = puzzles.docs[0].data();
-  const puzzleId = puzzles.docs[0].id;
+  const puzzle = puzzles.docs[0]?.data();
+  if (!puzzle) {
+    throw new Error();
+  }
+  const puzzleId = puzzles.docs[0]?.id;
   expect(puzzle['m']).toEqual(false);
   expect(puzzle['p']).not.toEqual(null);
   expect(puzzle['c']).toEqual(null);
@@ -518,7 +549,7 @@ test('publish custom / non-rectangular size', async () => {
     expect(NextJSRouter.push).toHaveBeenCalledTimes(1)
   );
   expect(NextJSRouter.push).toHaveBeenCalledWith(
-    '/crosswords/' + puzzles.docs[0].id
+    '/crosswords/' + puzzles.docs[0]?.id
   );
 
   cleanup();
