@@ -146,21 +146,29 @@ function convertComments(comments: Array<CommentWithRepliesT>): Array<Comment> {
 
 export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
   const clues: Array<ClueT> = [];
-  for (let i = 0; i < dbPuzzle.ac.length; i += 1) {
+  for (const [i, clue] of dbPuzzle.ac.entries()) {
     const explanation = dbPuzzle.cx?.[i] || null;
+    const num = dbPuzzle.an[i];
+    if (num === undefined) {
+      throw new Error('oob');
+    }
     clues.push({
       dir: Direction.Across,
-      clue: dbPuzzle.ac[i],
-      num: dbPuzzle.an[i],
+      clue,
+      num,
       explanation,
     });
   }
-  for (let i = 0; i < dbPuzzle.dc.length; i += 1) {
+  for (const [i, clue] of dbPuzzle.dc.entries()) {
     const explanation = dbPuzzle.cx?.[i + dbPuzzle.ac.length] || null;
+    const num = dbPuzzle.dn[i];
+    if (num === undefined) {
+      throw new Error('oob');
+    }
     clues.push({
       dir: Direction.Down,
-      clue: dbPuzzle.dc[i],
-      num: dbPuzzle.dn[i],
+      clue,
+      num,
       explanation,
     });
   }

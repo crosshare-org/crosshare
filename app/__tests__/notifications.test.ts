@@ -69,6 +69,9 @@ test('security rules for updating notifications', async () => {
     'puzzle-id-here'
   );
   expect(notifications.length).toEqual(1);
+  if (notifications[0] === undefined) {
+    throw new Error();
+  }
 
   await firebaseTesting.clearFirestoreData({ projectId });
   const adminApp = firebaseTesting.initializeAdminApp({
@@ -418,6 +421,9 @@ describe('email queueing', () => {
       'blast'
     );
     expect(notifications.length).toEqual(1);
+    if (notifications[0] === undefined) {
+      throw new Error();
+    }
     await adminApp
       .firestore()
       .collection('n')
@@ -426,6 +432,9 @@ describe('email queueing', () => {
     await queueEmails();
     const mail = await adminApp.firestore().collection('mail').get();
     expect(mail.size).toEqual(1);
+    if (mail.docs[0] === undefined) {
+      throw new Error();
+    }
     expect(mail.docs[0].data()).toMatchSnapshot();
   });
 
@@ -436,6 +445,9 @@ describe('email queueing', () => {
       'blast'
     );
     expect(notifications.length).toEqual(1);
+    if (notifications[0] === undefined) {
+      throw new Error();
+    }
     await adminApp
       .firestore()
       .collection('n')
@@ -444,6 +456,9 @@ describe('email queueing', () => {
     await queueEmails();
     const mail = await adminApp.firestore().collection('mail').get();
     expect(mail.size).toEqual(1);
+    if (mail.docs[0] === undefined) {
+      throw new Error();
+    }
     expect(mail.docs[0].data()).toMatchSnapshot();
   });
 
@@ -452,6 +467,9 @@ describe('email queueing', () => {
     await queueEmails();
     const mail = await adminApp.firestore().collection('mail').get();
     expect(mail.size).toEqual(1);
+    if (mail.docs[0] === undefined) {
+      throw new Error();
+    }
     expect(mail.docs[0].data()).toMatchSnapshot();
   });
 
@@ -521,6 +539,9 @@ describe('email queueing', () => {
 
     const mail2 = await adminApp.firestore().collection('mail').get();
     expect(mail2.size).toEqual(1);
+    if (mail2.docs[0] === undefined) {
+      throw new Error();
+    }
     expect(mail2.docs[0].data()).toMatchSnapshot();
   });
 
@@ -557,6 +578,9 @@ describe('email queueing', () => {
 
     const mail2 = await adminApp.firestore().collection('mail').get();
     expect(mail2.size).toEqual(1);
+    if (mail2.docs[0] === undefined) {
+      throw new Error();
+    }
     expect(mail2.docs[0].data()).toMatchSnapshot();
   });
 
