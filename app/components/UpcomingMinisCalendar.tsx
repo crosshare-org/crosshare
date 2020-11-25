@@ -56,7 +56,7 @@ export const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
 
   const dateChanged = useCallback(
     (d: Date) => {
-      props.onChange(d, minis && minis[getDateString(d)]);
+      props.onChange(d, minis?.[getDateString(d)] ?? null);
     },
     [props, minis]
   );

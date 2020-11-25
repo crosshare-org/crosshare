@@ -204,7 +204,12 @@ export function downloadOptionallyTimestamped<A>(type: t.Type<A>) {
 
 export function addZeros(dateString: string) {
   const groups = dateString.match(/^(\d+)-(\d+)-(\d+)$/);
-  if (!groups) {
+  if (
+    !groups ||
+    groups[1] === undefined ||
+    groups[2] === undefined ||
+    groups[3] === undefined
+  ) {
     throw new Error('Bad date string: ' + dateString);
   }
   const year = groups[1];
@@ -219,13 +224,20 @@ export function addZeros(dateString: string) {
   return year + '-' + month + '-' + date;
 }
 
-export function getDateString(pd: Date) {
+export function getDateString(pd: Date): string {
   return pd.getUTCFullYear() + '-' + pd.getUTCMonth() + '-' + pd.getUTCDate();
 }
 
-export function prettifyDateString(dateString: string) {
+export function prettifyDateString(dateString: string): string {
   const groups = dateString.match(/^(\d+)-(\d+)-(\d+)$/);
   if (!groups) {
+    throw new Error('Bad date string: ' + dateString);
+  }
+  if (
+    groups[2] === undefined ||
+    groups[1] === undefined ||
+    groups[3] === undefined
+  ) {
     throw new Error('Bad date string: ' + dateString);
   }
   return parseInt(groups[2]) + 1 + '/' + parseInt(groups[3]) + '/' + groups[1];
