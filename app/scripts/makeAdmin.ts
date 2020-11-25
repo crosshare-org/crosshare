@@ -22,6 +22,9 @@ if (process.argv.length !== 3) {
   throw Error('Invalid use of makeAdmin. Usage: node makeAdmin.js <email>');
 }
 const email = process.argv[2];
+if (!email) {
+  throw new Error('Bad email param');
+}
 grantAdminRole(email)
   .then(() => {
     console.log(`User ${email} has been given admin role`);

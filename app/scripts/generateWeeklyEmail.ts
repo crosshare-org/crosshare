@@ -21,8 +21,8 @@ function sumOnto(
   if (!b) {
     return;
   }
-  for (const k of Object.keys(b)) {
-    a[k] = (a[k] || 0) + b[k];
+  for (const [k, v] of Object.entries(b)) {
+    a[k] = (a[k] || 0) + v;
   }
 }
 
@@ -62,7 +62,7 @@ async function topPuzzlesForWeek(): Promise<Array<[string, string]>> {
     .filter(([id]) => allIs[id])
     .map(([id]): [string, string] => [
       'https://crosshare.org/crosswords/' + id,
-      allIs[id][0] + ' by ' + allIs[id][1],
+      `${allIs[id]?.[0]} by ${allIs[id]?.[1]}`,
     ]);
 }
 

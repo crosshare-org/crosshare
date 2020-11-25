@@ -384,6 +384,9 @@ function cheatCells(
   for (const cell of cellsToCheck) {
     const ci = cellIndex(state.grid, cell);
     const shouldBe = state.answers[ci];
+    if (shouldBe === undefined) {
+      throw new Error('oob');
+    }
     if (shouldBe === BLOCK) {
       continue;
     }
@@ -441,13 +444,13 @@ export function cheat(
 export function checkComplete(state: PuzzleState) {
   let filled = true;
   let success = true;
-  for (let i = 0; i < state.grid.cells.length; i += 1) {
-    if (state.grid.cells[i].trim() === '') {
+  for (const [i, cell] of state.grid.cells.entries()) {
+    if (cell.trim() === '') {
       filled = false;
       success = false;
       break;
     }
-    if (state.answers && state.grid.cells[i] !== state.answers[i]) {
+    if (state.answers && cell !== state.answers[i]) {
       success = false;
     }
   }
@@ -486,6 +489,9 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
   }
   if (isClickedEntryAction(action)) {
     const clickedEntry = state.grid.entries[action.entryIndex];
+    if (clickedEntry === undefined) {
+      throw new Error('oob');
+    }
     for (const cell of clickedEntry.cells) {
       if (valAt(state.grid, cell) === ' ') {
         return {
@@ -987,19 +993,19 @@ export function validateGrid(state: BuilderState) {
   const repeats = new Set<string>();
   let hasNoShortWords = true;
 
-  for (let i = 0; i < state.grid.cells.length; i += 1) {
-    if (state.grid.cells[i].trim() === '') {
+  for (const cell of state.grid.cells) {
+    if (cell.trim() === '') {
       gridIsComplete = false;
       break;
     }
   }
 
-  for (let i = 0; i < state.grid.entries.length; i += 1) {
-    if (state.grid.entries[i].cells.length <= 2) {
+  for (const [i, entry] of state.grid.entries.entries()) {
+    if (entry.cells.length <= 2) {
       hasNoShortWords = false;
     }
     for (let j = 0; j < state.grid.entries.length; j += 1) {
-      if (state.grid.entries[i].completedWord === null) continue;
+      if (entry.completedWord === null) continue;
       if (i === j) continue;
       if (entryWord(state.grid, i) === entryWord(state.grid, j)) {
         repeats.add(entryWord(state.grid, i));

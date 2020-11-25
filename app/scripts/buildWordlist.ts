@@ -1,5 +1,5 @@
 #!/usr/bin/env ts-node-script --skip-project
-export { };
+export {};
 
 import fs from 'fs';
 import util from 'util';
@@ -10,12 +10,18 @@ const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);
 
 if (process.argv.length !== 5) {
-  throw Error('Invalid use of buildWordlist.\nUsage: `buildWordlist.ts <path to peter brodas list> <path to cluedata> <output filename>`');
+  throw Error(
+    'Invalid use of buildWordlist.\nUsage: `buildWordlist.ts <path to peter brodas list> <path to cluedata> <output filename>`'
+  );
 }
 
 const peters = process.argv[2];
 const cluedata = process.argv[3];
 const out = process.argv[4];
+
+if (!peters || !cluedata || !out) {
+  throw new Error('bad args');
+}
 
 const wordlist: Record<string, 0 | 1 | 2 | 3> = {};
 
@@ -48,8 +54,14 @@ function fileContentsToWords(contents: string): Array<[string, number]> {
     throw new Error('malformed wordlist');
   }
   return wordLines
-    .map(s => s.toUpperCase().split(';'))
-    .filter(s => !/[^A-Z]/.test(s[0])) /* Filter any words w/ non-letters */
+    .map((s): [string, string] => {
+      const split = s.toUpperCase().split(';');
+      if (split[0] && split[1]) {
+        return [split[0], split[1]];
+      }
+      throw new Error('malformed word: ' + s);
+    })
+    .filter((s) => !/[^A-Z]/.test(s[0])) /* Filter any words w/ non-letters */
     .map((s): [string, number] => [s[0], parseInt(s[1])]);
 }
 
@@ -80,7 +92,7 @@ readFile(peters, 'utf8').then((pc: string) => {
     });
 
     console.log('starting build');
-    const db = rawBuild(Object.keys(wordlist).map(word => [word, wordlist[word]]));
+    const db = rawBuild(Object.entries(wordlist));
     console.log('built');
 
     const outContent = JSON.stringify(db);
