@@ -53,9 +53,10 @@ export default requiresAdmin(() => {
   const [unmoderated, setUnmoderated] = useState<Array<PuzzleResult> | null>(
     null
   );
-  const [commentsForModeration, setCommentsForModeration] = useState<Array<
-    CommentForModerationWithIdT
-  > | null>(null);
+  const [
+    commentsForModeration,
+    setCommentsForModeration,
+  ] = useState<Array<CommentForModerationWithIdT> | null>(null);
   const [minis, setMinis] = useState<CategoryIndexT | null>(null);
   const [stats, setStats] = useState<DailyStatsT | null>(null);
   const [error, setError] = useState(false);
@@ -63,9 +64,10 @@ export default requiresAdmin(() => {
   const [commentIdsForDeletion, setCommentIdsForDeletion] = useState<
     Set<string>
   >(new Set());
-  const [pagesForModeration, setPagesForModeration] = useState<Array<
-    ConstructorPageT
-  > | null>(null);
+  const [
+    pagesForModeration,
+    setPagesForModeration,
+  ] = useState<Array<ConstructorPageT> | null>(null);
   const [uidToUnsub, setUidToUnsub] = useState('');
   const { showSnackbar } = useSnackbar();
 
@@ -150,8 +152,9 @@ export default requiresAdmin(() => {
         return 'Daily mini for ' + prettifyDateString(dateString);
       }
     }
-    if (stats.i?.[crosswordId]) {
-      return stats.i[crosswordId][0] + ' by ' + stats.i[crosswordId][1];
+    const forPuzzle = stats.i?.[crosswordId];
+    if (forPuzzle) {
+      return forPuzzle[0] + ' by ' + forPuzzle[1];
     }
     return crosswordId;
   }
@@ -194,8 +197,9 @@ export default requiresAdmin(() => {
         // Don't need to do anything for any comment that has been marked for deletion
         if (!commentIdsForDeletion.has(comment.i)) {
           let puzzle: DBPuzzleT;
-          if (Object.prototype.hasOwnProperty.call(puzzles, comment.pid)) {
-            puzzle = puzzles[comment.pid];
+          const fromCache = puzzles[comment.pid];
+          if (fromCache) {
+            puzzle = fromCache;
           } else {
             puzzle = await getFromDB('c', comment.pid, DBPuzzleV);
             puzzles[comment.pid] = puzzle;

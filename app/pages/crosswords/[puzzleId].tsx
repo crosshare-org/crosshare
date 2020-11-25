@@ -38,7 +38,7 @@ type PageProps = PuzzlePageProps | ErrorProps;
 export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   res,
   params,
-}) => {
+}): Promise<{ props: PuzzlePageProps | ErrorProps }> => {
   const db = App.firestore();
   let puzzle: ServerPuzzleResult | null = null;
   if (!params?.puzzleId || Array.isArray(params.puzzleId)) {
@@ -95,10 +95,10 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   const miniDate = Object.keys(minis).find((key) => minis[key] === puzzleId);
   if (miniDate && addZeros(miniDate) <= addZeros(today)) {
     const previous = Object.entries(minis)
-      .map(([k, v]) => [addZeros(k), v])
+      .map(([k, v]): [string, string] => [addZeros(k), v])
       .filter(([k, _v]) => k < addZeros(miniDate))
       .sort((a, b) => (a[0] > b[0] ? -1 : 1));
-    if (previous.length) {
+    if (previous.length && previous[0]) {
       return {
         props: {
           puzzle,
@@ -112,17 +112,19 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
       };
     }
   }
-
+  const todaysMini = minis[today];
   // Didn't find a previous mini, link to today's
   return {
     props: {
       puzzle,
       profilePicture,
       coverImage,
-      nextPuzzle: {
-        puzzleId: minis[today],
-        linkText: 'today\'s daily mini crossword',
-      },
+      ...(todaysMini && {
+        nextPuzzle: {
+          puzzleId: todaysMini,
+          linkText: 'today\'s daily mini crossword',
+        },
+      }),
     },
   };
 };

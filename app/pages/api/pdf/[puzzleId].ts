@@ -69,12 +69,12 @@ function layoutPDFClues(
     .concat(acrossClues)
     .concat(downTitle)
     .concat(downClues);
-  for (let i = 0; i < allClues.length; i++) {
+  for (const clue of allClues) {
     // Position clue on page
-    const width = allClues[i].label
+    const width = clue.label
       ? format.clueWidth
       : format.clueWidth + format.labelWidth;
-    const clueText = doc.splitTextToSize(allClues[i].clue, width);
+    const clueText = doc.splitTextToSize(clue.clue, width);
     const adjustY = clueText.length * (format.fontSize + 3);
     if (y + adjustY > format.marginBottom) {
       x += format.labelWidth + format.clueWidth + format.columnSeparator;
@@ -85,16 +85,16 @@ function layoutPDFClues(
       }
       y = marginTop(x, addedPage);
     }
-    if (['across', 'down'].includes(allClues[i].label.toLowerCase())) {
+    if (['across', 'down'].includes(clue.label.toLowerCase())) {
       // Make Across, Down headings bold
       doc.setFont('helvetica', 'bold');
-      doc.text(allClues[i].label, x, y);
+      doc.text(clue.label, x, y);
     } else {
       doc.setFont('helvetica', 'normal');
-      doc.text(allClues[i].label, x + format.labelWidth - 5, y, {
+      doc.text(clue.label, x + format.labelWidth - 5, y, {
         align: 'right',
       });
-      doc.text(clueText, x + (allClues[i].label ? format.labelWidth : 0), y);
+      doc.text(clueText, x + (clue.label ? format.labelWidth : 0), y);
     }
     y += adjustY;
   }

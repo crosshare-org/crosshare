@@ -1,7 +1,10 @@
 import { GetServerSideProps } from 'next';
 import { useEffect } from 'react';
 
-import { ConstructorPage, ConstructorPageProps } from '../components/ConstructorPage';
+import {
+  ConstructorPage,
+  ConstructorPageProps,
+} from '../components/ConstructorPage';
 import { validate } from '../lib/constructorPage';
 import { ErrorPage } from '../components/ErrorPage';
 import { App } from '../lib/firebaseWrapper';
@@ -9,14 +12,17 @@ import { getStorageUrl, getPuzzlesForConstructorPage } from '../lib/serverOnly';
 import { useRouter } from 'next/router';
 
 interface ErrorProps {
-  error: string
+  error: string;
 }
 type PageProps = ConstructorPageProps | ErrorProps;
 
 const PAGE_SIZE = 10;
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, params }) => {
-  if (!params || !Array.isArray(params.slug)) {
+export const getServerSideProps: GetServerSideProps<PageProps> = async ({
+  res,
+  params,
+}) => {
+  if (!params || !Array.isArray(params.slug) || !params.slug[0]) {
     console.error('bad constructor page params');
     res.statusCode = 404;
     return { props: { error: 'Bad username' } };
@@ -44,10 +50,14 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
   const coverPicture = await getStorageUrl(`users/${cp.u}/cover.jpg`);
 
   let page = 0;
-  if (params.slug.length === 3 && params.slug[1] === 'page') {
+  if (params.slug.length === 3 && params.slug[1] === 'page' && params.slug[2]) {
     page = parseInt(params.slug[2]) || 0;
   }
-  const [puzzles, totalCount] = await getPuzzlesForConstructorPage(cp.u, page, PAGE_SIZE);
+  const [puzzles, totalCount] = await getPuzzlesForConstructorPage(
+    cp.u,
+    page,
+    PAGE_SIZE
+  );
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
   return {
     props: {
@@ -58,7 +68,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ res, p
       currentPage: page,
       prevPage: page > 0 ? page - 1 : null,
       nextPage: totalCount > (page + 1) * PAGE_SIZE ? page + 1 : null,
-    }
+    },
   };
 };
 
@@ -68,7 +78,9 @@ export default function ConstructorPageHandler(props: PageProps) {
     if ('error' in props) {
       return;
     }
-    const desiredRoute = props.currentPage ? `/${props.constructor.i}/page/${props.currentPage}` : `/${props.constructor.i}`;
+    const desiredRoute = props.currentPage
+      ? `/${props.constructor.i}/page/${props.currentPage}`
+      : `/${props.constructor.i}`;
     if (router.asPath !== desiredRoute) {
       console.log('auto changing route');
       router.replace(desiredRoute, undefined, { shallow: true });
@@ -76,10 +88,12 @@ export default function ConstructorPageHandler(props: PageProps) {
   }, [router, props]);
 
   if ('error' in props) {
-    return <ErrorPage title='Something Went Wrong'>
-      <p>Sorry! Something went wrong while loading that page.</p>
-      {props.error ? <p>{props.error}</p> : ''}
-    </ErrorPage>;
+    return (
+      <ErrorPage title="Something Went Wrong">
+        <p>Sorry! Something went wrong while loading that page.</p>
+        {props.error ? <p>{props.error}</p> : ''}
+      </ErrorPage>
+    );
   }
 
   return <ConstructorPage {...props} />;

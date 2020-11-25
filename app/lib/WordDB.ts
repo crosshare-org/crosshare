@@ -6,7 +6,6 @@ import { set, get } from 'idb-keyval';
 import * as BA from './bitArray';
 import { useEffect, useState } from 'react';
 
-
 const WordDBV = t.type({
   words: t.record(t.string, t.array(t.tuple([t.string, t.number]))),
   bitmaps: t.record(t.string, t.array(t.number)),
@@ -25,7 +24,9 @@ let dbStatus: DBStatus = DBStatus.uninitialized;
 
 const STORAGE_KEY = 'db';
 
-export const useWordDB = (validate?: boolean): [boolean, string, boolean, () => void] => {
+export const useWordDB = (
+  validate?: boolean
+): [boolean, string, boolean, () => void] => {
   const [present, setPresent] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -50,7 +51,7 @@ export const useWordDB = (validate?: boolean): [boolean, string, boolean, () => 
       }
       dbStatus = DBStatus.building;
       console.log('trying to load from idb');
-      return get(STORAGE_KEY).then(db => {
+      return get(STORAGE_KEY).then((db) => {
         if (didCancel) {
           return;
         }
@@ -89,25 +90,33 @@ export const useWordDB = (validate?: boolean): [boolean, string, boolean, () => 
 };
 
 export const rawBuild = (wordlist: Array<[string, number]>): WordDBT => {
-  const words = wordlist.sort((s1, s2) => (s1[1] - s2[1]) || s2[0].localeCompare(s1[0]));
+  const words = wordlist.sort(
+    (s1, s2) => s1[1] - s2[1] || s2[0].localeCompare(s1[0])
+  );
 
   console.log('building words by length');
   const wordsByLength: Record<number, Array<[string, number]>> = words.reduce(
     (acc: Record<number, Array<[string, number]>>, [word, score]) => {
-      if (acc[word.length]) {
-        acc[word.length].push([word, score]);
+      const wfl = acc[word.length];
+      if (wfl) {
+        wfl.push([word, score]);
       } else {
         acc[word.length] = [[word, score]];
       }
       return acc;
-    }, {});
+    },
+    {}
+  );
 
   const bitmaps: Record<string, BA.BitArray> = {};
   console.log('building bitmaps');
 
-  Object.keys(wordsByLength).map(lengthStr => {
+  Object.keys(wordsByLength).map((lengthStr) => {
     const length = parseInt(lengthStr);
     const wordlist = wordsByLength[length];
+    if (wordlist === undefined) {
+      throw new Error('oob');
+    }
     for (let i = 0; i < 26; i += 1) {
       const letter = String.fromCharCode(65 + i);
       for (let idx = 0; idx < length; idx += 1) {
@@ -147,9 +156,14 @@ export const build = async (wordlist: string): Promise<void> => {
   if (!wordLines) {
     throw new Error('malformed wordlist');
   }
+
   const words: Array<[string, number]> = wordLines
-    .map(s => s.toUpperCase().split(';'))
-    .filter(s => !/[^A-Z]/.test(s[0])) /* Filter any words w/ non-letters */
+    .map((s) => s.toUpperCase().split(';'))
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    .filter((s) => !/[^A-Z]/.test(s[0])) /* Filter any words w/ non-letters */
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     .map((s): [string, number] => [s[0], parseInt(s[1])]);
 
   wordDB = rawBuild(words);
@@ -213,12 +227,17 @@ export function numMatches(length: number, bitmap: BA.BitArray | null) {
     throw new Error('uninitialized!');
   }
   if (bitmap === null) {
-    return wordDB.words[length] ?.length || 0;
+    return wordDB.words[length]?.length || 0;
   }
   return BA.bitCount(bitmap);
 }
 
-export function updateBitmap(length: number, bitmap: BA.BitArray | null, index: number, letter: string) {
+export function updateBitmap(
+  length: number,
+  bitmap: BA.BitArray | null,
+  index: number,
+  letter: string
+) {
   if (!wordDB) {
     throw new Error('uninitialized!');
   }
@@ -231,7 +250,8 @@ export function updateBitmap(length: number, bitmap: BA.BitArray | null, index: 
 
 const memoMatchingWords: Map<string, [string, number][]> = new Map();
 export function matchingWords(length: number, bitmap: BA.BitArray | null) {
-  const key: string = length + ':' + (bitmap === null ? 'null' : BA.toString(bitmap, 64));
+  const key: string =
+    length + ':' + (bitmap === null ? 'null' : BA.toString(bitmap, 64));
   const memoed = memoMatchingWords.get(key);
   if (memoed) {
     return memoed;
@@ -246,7 +266,11 @@ export function matchingWords(length: number, bitmap: BA.BitArray | null) {
     const active = BA.activeBits(bitmap);
     rv = [];
     for (const i of active) {
-      rv.push(wordDB.words[length][i]);
+      const word = wordDB.words[length]?.[i];
+      if (word === undefined) {
+        continue;
+      }
+      rv.push(word);
     }
   }
   memoMatchingWords.set(key, rv);
@@ -265,6 +289,9 @@ export function matchingBitmap(pattern: string) {
   let matches = null;
   for (let idx = 0; idx < pattern.length; idx += 1) {
     const letter = pattern[idx];
+    if (letter === undefined) {
+      throw new Error('oob');
+    }
     if (letter === '?' || letter === ' ') {
       continue;
     }
