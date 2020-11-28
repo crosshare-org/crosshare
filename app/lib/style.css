@@ -84,6 +84,12 @@ html {
   height: 100%;
   position: relative;
   -ms-overflow-style: none;
+  scrollbar-color: transparent transparent;
+  scrollbar-width: none;
+}
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 body {
   height: 100%;
