@@ -53,6 +53,15 @@ const BANNED_USERNAMES = {
   featured: 1,
   daily: 1,
   wwmc: 1,
+  meta: 1,
+  themeless: 1,
+  midi: 1,
+  cryptic: 1,
+  themed: 1,
+  hard: 1,
+  easy: 1,
+  medium: 1,
+  beginner: 1,
 };
 
 export const CreatePageForm = () => {
