@@ -177,6 +177,10 @@ const ClueListItem = memo(function ClueListItem({
       >
         <div
           css={{
+            display: props.showEntry ? 'block' : 'none',
+            [SMALL_AND_UP]: {
+              display: 'block',
+            },
             flexShrink: 0,
             width: '3em',
             height: '100%',
