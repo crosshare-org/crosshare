@@ -23,8 +23,6 @@ const TinyNavButton = ({ isLeft, dispatch }: TinyNavButtonProps) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRight: isLeft ? '1px solid var(--clue-bg)' : '',
-        borderLeft: isLeft ? '' : '1px solid var(--clue-bg)',
         [SMALL_AND_UP]: {
           display: 'none',
         },
@@ -106,7 +104,9 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>(
               flexWrap: 'nowrap',
               alignItems: 'stretch',
               flexDirection: 'row',
+              backgroundColor: 'var(--lighter)',
               [SMALL_AND_UP]: {
+                backgroundColor: 'transparent',
                 height: '100%',
                 width: '34vw',
               },
@@ -121,16 +121,16 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>(
                 display: 'flex',
                 flex: '1 1 auto',
                 flexWrap: 'wrap',
-                overflowY: 'scroll',
+                alignContent: 'flex-start',
               }}
             >
               <div
                 css={{
-                  flex: 'auto',
+                  flex: 'none',
                   width: '100%',
+                  overflowY: 'scroll',
                   [SMALL_AND_UP]: {
                     height: '50%',
-                    overflowY: 'scroll',
                   },
                   [LARGE_AND_UP]: {
                     paddingRight: 2,
@@ -143,11 +143,11 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>(
               </div>
               <div
                 css={{
-                  flex: 'auto',
+                  flex: 'none',
                   width: '100%',
+                  overflowY: 'scroll',
                   [SMALL_AND_UP]: {
                     height: '50%',
-                    overflowY: 'scroll',
                   },
                   [LARGE_AND_UP]: {
                     paddingLeft: 2,
