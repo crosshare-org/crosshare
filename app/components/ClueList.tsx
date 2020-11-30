@@ -133,6 +133,10 @@ const ClueListItem = memo(function ClueListItem({
   return (
     <li
       css={{
+        display: isActive || props.showEntry ? 'list-item' : 'none',
+        [SMALL_AND_UP]: {
+          display: 'list-item',
+        },
         padding: '0.5em',
         backgroundColor: isActive
           ? 'var(--lighter)'
