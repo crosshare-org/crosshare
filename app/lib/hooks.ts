@@ -210,22 +210,31 @@ export function useHover(): [
     onClick: (e: MouseEvent) => void;
     onMouseMove: (e: MouseEvent) => void;
     onMouseLeave: (e: MouseEvent) => void;
-  }
+  },
+  () => void
   ] {
   const [isHovered, setHovered] = useState(false);
+  const [clickWhileHovered, setClickWhileHovered] = useState(false);
 
   const bind = useMemo(
     () => ({
       onClick: (e: MouseEvent) => {
+        if (clickWhileHovered) {
+          setHovered(false);
+          setClickWhileHovered(false);
+        }
         e.stopPropagation();
       },
       onMouseMove: () => {
+        if (isHovered) {
+          setClickWhileHovered(true);
+        }
         setHovered(true);
       },
       onMouseLeave: () => setHovered(false),
     }),
-    []
+    [isHovered, clickWhileHovered]
   );
 
-  return [isHovered, bind];
+  return [isHovered, bind, () => setHovered(false)];
 }

@@ -15,7 +15,7 @@ export const ToolTipText = (props: {
     null
   );
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
-  const [isHovered, hoverBind] = useHover();
+  const [isHovered, hoverBind, unhover] = useHover();
   const { styles, attributes, update } = usePopper(
     referenceElement,
     popperElement,
@@ -63,6 +63,10 @@ export const ToolTipText = (props: {
           },
         }}
         ref={setPopperElement}
+        onTouchEnd={(e) => {
+          e.preventDefault();
+          unhover();
+        }}
         style={styles.popper}
         {...attributes.popper}
       >
