@@ -202,6 +202,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
           css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}
         >
           <SquareAndCols
+            leftIsActive={state.active.dir === Direction.Across}
             dispatch={dispatch}
             aspectRatio={state.grid.width / state.grid.height}
             square={(width: number, _height: number) => {

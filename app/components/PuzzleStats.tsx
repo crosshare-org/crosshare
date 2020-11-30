@@ -122,6 +122,7 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
 
   return (
     <SquareAndCols
+      leftIsActive={state.active.dir === Direction.Across}
       aspectRatio={state.grid.width / state.grid.height}
       dispatch={dispatch}
       square={(width: number, _height: number) => {

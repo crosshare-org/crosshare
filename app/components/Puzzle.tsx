@@ -1024,6 +1024,7 @@ export const Puzzle = ({
   } else {
     puzzleView = (
       <SquareAndCols
+        leftIsActive={state.active.dir === Direction.Across}
         waitToResize={state.waitToResize}
         dispatch={dispatch}
         aspectRatio={state.grid.width / state.grid.height}

@@ -51,6 +51,7 @@ interface SquareAndColsProps {
   aspectRatio?: number;
   left: ReactNode;
   right: ReactNode;
+  leftIsActive: boolean;
   dispatch: Dispatch<KeypressAction>;
   waitToResize?: boolean;
 }
@@ -120,17 +121,23 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>(
               css={{
                 display: 'flex',
                 flex: '1 1 auto',
-                flexWrap: 'wrap',
-                alignContent: 'flex-start',
+                flexDirection: 'column',
+                [LARGE_AND_UP]: {
+                  flexDirection: 'row',
+                },
+                height: '100%',
+                overflowY: 'scroll',
               }}
             >
               <div
                 css={{
-                  flex: 'none',
                   width: '100%',
-                  overflowY: 'scroll',
+                  height: '100%',
+                  display: props.leftIsActive ? 'block' : 'none',
                   [SMALL_AND_UP]: {
+                    display: 'block',
                     height: '50%',
+                    overflowY: 'scroll',
                   },
                   [LARGE_AND_UP]: {
                     paddingRight: 2,
@@ -143,11 +150,13 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>(
               </div>
               <div
                 css={{
-                  flex: 'none',
                   width: '100%',
-                  overflowY: 'scroll',
+                  height: '100%',
+                  display: props.leftIsActive ? 'none' : 'block',
                   [SMALL_AND_UP]: {
+                    display: 'block',
                     height: '50%',
+                    overflowY: 'scroll',
                   },
                   [LARGE_AND_UP]: {
                     paddingLeft: 2,

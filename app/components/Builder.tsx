@@ -1503,6 +1503,7 @@ const GridMode = ({
           css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}
         >
           <SquareAndCols
+            leftIsActive={state.active.dir === Direction.Across}
             ref={gridRef}
             aspectRatio={state.grid.width / state.grid.height}
             square={(width: number, _height: number) => {
