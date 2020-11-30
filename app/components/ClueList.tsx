@@ -110,8 +110,11 @@ const ClueListItem = memo(function ClueListItem({
   ...props
 }: ClueListItemProps) {
   const ref = useRef<HTMLLIElement>(null);
-  if (ref.current && !props.wasEntryClick) {
-    if (isActive || (props.scrollToCross && isCross)) {
+  if (ref.current) {
+    if (
+      (isActive && !props.wasEntryClick) ||
+      (props.scrollToCross && isCross)
+    ) {
       ref.current.scrollIntoView({ behavior: 'auto', block: 'center' });
     }
   }
