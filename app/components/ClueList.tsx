@@ -137,7 +137,6 @@ const ClueListItem = memo(function ClueListItem({
         [SMALL_AND_UP]: {
           display: 'list-item',
         },
-        padding: '0.5em',
         backgroundColor: isActive
           ? 'var(--lighter)'
           : isCross
@@ -169,6 +168,7 @@ const ClueListItem = memo(function ClueListItem({
           flexWrap: 'nowrap',
           alignItems: 'center',
           width: '100%',
+          padding: '0.5em',
         }}
         role="button"
         tabIndex={0}
