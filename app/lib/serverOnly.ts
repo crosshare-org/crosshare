@@ -126,7 +126,9 @@ async function getPuzzlesForPage(
   }
 
   // Filter out any private puzzles
-  for (const [i, pid] of index.i.entries()) {
+  const copy = Array.from(index.i.entries());
+  copy.reverse();
+  for (const [i, pid] of copy) {
     if (index.pv?.includes(pid)) {
       index.i.splice(i, 1);
       index.t.splice(i, 1);
