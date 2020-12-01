@@ -32,5 +32,7 @@ $ docker run -ti -p 3000:3000 -v $(pwd)/app:/src/app -v $(pwd)/serviceAccountKey
 
 ## Podman directions
 $ podman build . --format docker --target prod -t gcr.io/mdcrosshare/prod:latest --isolation=rootless
+$ toolbox enter
+$ gcloud auth print-access-token | podman login -u oauth2accesstoken --password-stdin gcr.io
 $ podman push gcr.io/mdcrosshare/prod:latest --remove-signatures
 $ gcloud run deploy staging --image gcr.io/mdcrosshare/prod
