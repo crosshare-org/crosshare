@@ -141,8 +141,33 @@ export function retreatPosition<Entry extends ViewableEntry>(
     if (pos.row + yincr >= 0 && pos.col + xincr >= 0) {
       return { row: pos.row + yincr, col: pos.col + xincr, dir: pos.dir };
     }
+    return pos;
   }
-  return pos;
+  if (entry === null) {
+    return pos;
+  }
+  // Now go to the end of the previous entry
+  let i = 0;
+  for (; i < grid.sortedEntries.length; i += 1) {
+    if (entry.index === grid.sortedEntries[i]) {
+      break;
+    }
+  }
+  const prevIndex =
+    (grid.sortedEntries.length + i - 1) % grid.sortedEntries.length;
+  const entryIndex = grid.sortedEntries[prevIndex];
+  if (entryIndex === undefined) {
+    throw new Error('oob');
+  }
+  const prevEntry = grid.entries[entryIndex];
+  if (prevEntry === undefined) {
+    throw new Error('oob');
+  }
+  const cell = prevEntry.cells[prevEntry.cells.length - 1];
+  if (cell === undefined) {
+    throw new Error('oob');
+  }
+  return { ...cell, dir: prevEntry.direction };
 }
 
 export function nextCell<Entry extends ViewableEntry>(
