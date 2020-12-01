@@ -3,6 +3,7 @@
 ### Test locally
 $ docker build . --target prod -t gcr.io/mdcrosshare/prod:latest
 $ docker-compose up testBuild
+$ podman run -v ./serviceAccountKey.json:/app/serviceAccountKey.json --env GOOGLE_APPLICATION_CREDENTIALS=./serviceAccountKey.json --env PORT=5000 -p 3000:5000 -it --security-opt label=disable gcr.io/mdcrosshare/prod
 
 ### Deploy staging
 $ docker push gcr.io/mdcrosshare/prod:latest
@@ -29,3 +30,7 @@ $ docker run -ti -v $(pwd)/app:/src/app --rm --network=crosshare_default jest je
 Run dev site:
 $ docker run -ti -p 3000:3000 -v $(pwd)/app:/src/app -v $(pwd)/serviceAccountKey.json:/src/serviceAccountKey.json --rm dev yarn dev
 
+## Podman directions
+$ podman build . --format docker --target prod -t gcr.io/mdcrosshare/prod:latest --isolation=rootless
+$ podman push gcr.io/mdcrosshare/prod:latest --remove-signatures
+$ gcloud run deploy staging --image gcr.io/mdcrosshare/prod
