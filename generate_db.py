@@ -8,6 +8,8 @@ import struct
 # https://github.com/mattginsberg/cluer/blob/master/cluer.cpp
 import string
 digs = string.digits + string.ascii_letters
+
+
 def int2base(x, base):
     if x == 0:
         return digs[0]
@@ -17,6 +19,7 @@ def int2base(x, base):
         x = x // base
     digits.reverse()
     return ''.join(digits)
+
 
 def inttob32(n):
     return int2base(n, 32)
@@ -29,7 +32,8 @@ class GenerateDB(object):
     words = []
     clue_map = defaultdict(list)
     words_by_length = defaultdict(list)
-    bitmaps_by_length = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
+    bitmaps_by_length = defaultdict(
+        lambda: defaultdict(lambda: defaultdict(int)))
     b64_by_length = {}
 
     def __init__(self, cluedata_filename):
@@ -40,14 +44,15 @@ class GenerateDB(object):
 
             for _ in range(numwords):
                 l = struct.unpack('<B', f.read(1))[0]
-                s = struct.unpack('<{}s'.format(l), f.read(l))[0].decode('ascii')
+                s = struct.unpack('<{}s'.format(l), f.read(l))[
+                    0].decode('ascii')
                 self.words.append([s, 0])
             self._clueblock = f.tell()
 
     def initialize_bitmaps(self):
         self.words.sort(key=lambda w: w[1])
         for w in filter(lambda w: w[1], self.words):
-            self.words_by_length[len(w[0])].append([w[0],w[1]])
+            self.words_by_length[len(w[0])].append([w[0], w[1]])
         for length, wordlist in self.words_by_length.items():
             for letter in string.ascii_uppercase:
                 for idx in range(length):
@@ -56,7 +61,8 @@ class GenerateDB(object):
                         if wordlist[word_idx][0][idx] == letter:
                             bitmap |= (1 << word_idx)
                     self.bitmaps_by_length[length][letter][idx] = bitmap
-                    self.b64_by_length[str(length)+letter+str(idx)] = inttob32(bitmap)
+                    self.b64_by_length[str(
+                        length)+letter+str(idx)] = inttob32(bitmap)
 
     def initialize_clue_map_and_scores(self):
         with open(self._cluedata, 'rb') as f:
@@ -94,7 +100,7 @@ class GenerateDB(object):
 
                 # Update scoring
                 if not th:
-                    if pnum == 8: # nyt
+                    if pnum == 8:  # nyt
                         self.words[n][1] += num * 5
                     else:
                         self.words[n][1] += num
@@ -106,7 +112,8 @@ class GenerateDB(object):
 
     def write_wordlist(self):
         with open("cluedata.txt", "w") as wordlist:
-            wordlist.writelines([w[0].upper() + ';' + str(w[1]) + '\n' for w in self.words if w[1]])
+            wordlist.writelines(
+                [w[0].upper() + ';' + str(w[1]) + '\n' for w in self.words if w[1]])
 
     def write_db(self):
         def ddict(d):
@@ -122,7 +129,7 @@ class GenerateDB(object):
         with open("_db.json", "w") as dbjson:
             json.dump({"words": self.words_by_length,
                        "bitmaps": self.b64_by_length},
-                       dbjson)
+                      dbjson)
         with open("_db.py", "w") as db:
             content = ["words_by_length = {}\n".format(ddict(self.words_by_length)),
                        # "clue_map = {}".format(self.clue_map),
