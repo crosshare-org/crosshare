@@ -5,6 +5,11 @@ export const parse = async (cluedata: Buffer): Promise<void> => {
     offset += 4;
     return v;
   };
+  const readShort = () => {
+    const v = cluedata.readUInt16LE(offset);
+    offset += 2;
+    return v;
+  };
   const readByte = () => {
     const v = cluedata.readUInt8(offset);
     offset += 1;
@@ -43,5 +48,47 @@ export const parse = async (cluedata: Buffer): Promise<void> => {
   }
   console.log('beginning and end', clues[0], clues[clues.length - 1]);
 
-  
+  console.log('reading entries');
+  interface ClueEntry {
+    frequency: number;
+    difficulty: number;
+    year: number;
+    publisher: number;
+    clue: string;
+    traps: Array<string>;
+  }
+  let entries: Array<ClueEntry> = [];
+  let currentWordIndex = 0;
+  while (offset < cluedata.length) {
+    const wordIndex = readInt();
+    const frequency = readShort();
+    const difficulty = readShort();
+    const year = readShort();
+    const isTheme = readByte();
+    const publisher = readByte();
+    const clueIndex = readInt();
+    const clue = clues[clueIndex];
+    if (clue === undefined) {
+      continue;
+    }
+    if (isTheme) {
+      continue;
+    }
+    if (wordIndex !== currentWordIndex) {
+      console.log('Entries for: ' + words[currentWordIndex]);
+      console.log(entries);
+      if (wordIndex < currentWordIndex) {
+        throw new Error('REVERSE REVERSE');
+      }
+      currentWordIndex = wordIndex;
+      entries = [];
+      if (wordIndex > 1000) {
+        break;
+      }
+    }
+    entries.push({
+      frequency, difficulty, year, publisher, clue,
+      traps: [] // TODO
+    });
+  }
 };
