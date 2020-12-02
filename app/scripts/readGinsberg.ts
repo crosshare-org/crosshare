@@ -13,7 +13,7 @@ if (!word) {
   throw Error('oob');
 }
 
-const db = getDB();
+const db = getDB(true);
 getClues(db, word).then(async c => {
   console.log(JSON.stringify(c, null, 2));
   await db.close();

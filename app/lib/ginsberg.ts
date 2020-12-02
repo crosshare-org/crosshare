@@ -1,5 +1,5 @@
 import levelup, { LevelUp } from 'levelup';
-import leveldown from 'leveldown';
+import rocksdb from 'rocksdb';
 import rimraf from 'rimraf';
 import util from 'util';
 import * as t from 'io-ts';
@@ -99,7 +99,7 @@ export const build = async (cluedata: Buffer): Promise<void> => {
         }
         const traps = (clueClues[entry.clueIndex] || []).reduce((acc: Array<string>, n: number) => {
           const trapWord = words[n >> 1];
-          if (trapWord && trapWord !== word) {
+          if (trapWord && trapWord !== word && trapWord.length === word.length) {
             acc.push(trapWord);
           }
           return acc;
@@ -122,7 +122,7 @@ export const build = async (cluedata: Buffer): Promise<void> => {
   let currentWordIndex = 0;
 
   await util.promisify(rimraf)(CLUEDB);
-  const db = getDB();
+  const db = getDB(false);
 
   while (offset < cluedata.length) {
     const wordIndex = readInt();
@@ -155,16 +155,20 @@ export const build = async (cluedata: Buffer): Promise<void> => {
 
 const CLUEDB = './cluedb';
 
-export const getDB = () => {
-  return levelup(leveldown(CLUEDB));
+export const getDB = (readOnly: boolean) => {
+  return levelup(rocksdb(CLUEDB), {readOnly: readOnly});
 };
 
 export const getClues = async (db: LevelUp, word: string): Promise<ClueListT>  => {
-  const res = JSON.parse(await db.get(word));
-  const validationResult = ClueListV.decode(res);
-  if (!isRight(validationResult)) {
-    console.error(PathReporter.report(validationResult).join(','));
+  try {
+    const res = JSON.parse(await db.get(word));
+    const validationResult = ClueListV.decode(res);
+    if (!isRight(validationResult)) {
+      console.error(PathReporter.report(validationResult).join(','));
+      return [];
+    }
+    return validationResult.right;
+  } catch {
     return [];
   }
-  return validationResult.right;
 };
