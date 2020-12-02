@@ -14,6 +14,7 @@ if (!word) {
 }
 
 const db = getDB();
-getClues(db, word).then(c => {
+getClues(db, word).then(async c => {
   console.log(JSON.stringify(c, null, 2));
+  await db.close();
 });
