@@ -2,6 +2,28 @@ import levelup, { LevelUp } from 'levelup';
 import leveldown from 'leveldown';
 import rimraf from 'rimraf';
 import util from 'util';
+import * as t from 'io-ts';
+import { isRight } from 'fp-ts/lib/These';
+import { PathReporter } from 'io-ts/lib/PathReporter';
+
+const ClueEntryV = t.type({
+  /** clue index */
+  i: t.number,
+  /** clue */
+  c: t.string,
+  /** in NYT */
+  n: t.boolean,
+  /** frequency */
+  f: t.number,
+  /** difficulty (sum for each appearance in freq) */
+  d: t.number,
+  /** year */
+  y: t.number,
+  /** trap words */
+  t: t.array(t.string)
+});
+const ClueListV = t.array(ClueEntryV);
+type ClueListT = t.TypeOf<typeof ClueListV>;
 
 export const build = async (cluedata: Buffer): Promise<void> => {
   let offset = 0;
@@ -58,10 +80,44 @@ export const build = async (cluedata: Buffer): Promise<void> => {
     frequency: number;
     difficulty: number;
     year: number;
-    publisher: number;
-    clue: string;
-    traps: Array<string>;
+    nyt: boolean;
+    clueIndex: number;
   }
+
+  function entriesToDBFormat(word: string, e: Array<ClueEntry>): ClueListT {
+    return e.reduce((acc: ClueListT, entry: ClueEntry) => {
+      const existing = acc.find((existing) => existing.i === entry.clueIndex);
+      if (existing) {
+        existing.f += entry.frequency;
+        existing.d += entry.difficulty;
+        existing.n = existing.n || entry.nyt;
+        existing.y = Math.max(existing.y, entry.year);
+      } else {
+        const clue = clues[entry.clueIndex];
+        if (!clue) {
+          return acc;
+        }
+        const traps = (clueClues[entry.clueIndex] || []).reduce((acc: Array<string>, n: number) => {
+          const trapWord = words[n >> 1];
+          if (trapWord && trapWord !== word) {
+            acc.push(trapWord);
+          }
+          return acc;
+        }, []);
+        acc.push({
+          i: entry.clueIndex,
+          c: clue,
+          f: entry.frequency,
+          d: entry.difficulty,
+          n: entry.nyt,
+          y: entry.year,
+          t: traps
+        });
+      }
+      return acc;
+    }, []);
+  }
+
   let entries: Array<ClueEntry> = [];
   let currentWordIndex = 0;
 
@@ -74,19 +130,15 @@ export const build = async (cluedata: Buffer): Promise<void> => {
     const difficulty = readShort();
     const year = readShort();
     const isTheme = readByte();
-    const publisher = readByte(); // 8 is NYT
+    const publisher = readByte();
     const clueIndex = readInt();
-    const clue = clues[clueIndex];
-    if (clue === undefined) {
-      continue;
-    }
     if (isTheme) {
       continue;
     }
     if (wordIndex !== currentWordIndex) {
       const word = words[currentWordIndex];
       if (word) {
-        await db.put(word, JSON.stringify(entries));
+        await db.put(word, JSON.stringify(entriesToDBFormat(word, entries)));
       }
       if (wordIndex < currentWordIndex) {
         throw new Error('REVERSE REVERSE');
@@ -95,8 +147,7 @@ export const build = async (cluedata: Buffer): Promise<void> => {
       entries = [];
     }
     entries.push({
-      frequency, difficulty, year, publisher, clue,
-      traps: [] // TODO
+      frequency, difficulty, year, nyt: publisher === 8, clueIndex,
     });
   }
   await db.close();
@@ -108,6 +159,12 @@ export const getDB = () => {
   return levelup(leveldown(CLUEDB));
 };
 
-export const getClues = async (db: LevelUp, word: string)  => {
-  return db.get(word);
+export const getClues = async (db: LevelUp, word: string): Promise<ClueListT>  => {
+  const res = JSON.parse(await db.get(word));
+  const validationResult = ClueListV.decode(res);
+  if (!isRight(validationResult)) {
+    console.error(PathReporter.report(validationResult).join(','));
+    return [];
+  }
+  return validationResult.right;
 };

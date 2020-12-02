@@ -15,5 +15,5 @@ if (!word) {
 
 const db = getDB();
 getClues(db, word).then(c => {
-  console.log(c.toString('latin1'));
+  console.log(JSON.stringify(c, null, 2));
 });
