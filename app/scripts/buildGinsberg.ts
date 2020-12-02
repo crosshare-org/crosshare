@@ -3,13 +3,13 @@
 import fs from 'fs';
 import util from 'util';
 
-import { parse } from '../lib/ginsberg';
+import { build } from '../lib/ginsberg';
 
 const readFile = util.promisify(fs.readFile);
 
 if (process.argv.length !== 3) {
   throw Error(
-    'Invalid use of parseGinsberg. Usage: ./scripts/parseGinsberg.ts [pathToCluedataFile]'
+    'Invalid use of buildGinsberg. Usage: ./scripts/buildGinsberg.ts [pathToCluedataFile]'
   );
 }
 
@@ -20,7 +20,7 @@ if (!cluedataFilename) {
 
 console.log(`opening ${cluedataFilename}`);
 readFile(cluedataFilename).then(binary => {
-  parse(binary).then(() => {
+  build(binary).then(() => {
     console.log('done');
   });
 });

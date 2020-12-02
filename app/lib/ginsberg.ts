@@ -1,4 +1,9 @@
-export const parse = async (cluedata: Buffer): Promise<void> => {
+import levelup, { LevelUp } from 'levelup';
+import leveldown from 'leveldown';
+import rimraf from 'rimraf';
+import util from 'util';
+
+export const build = async (cluedata: Buffer): Promise<void> => {
   let offset = 0;
   const readInt = () => {
     const v = cluedata.readInt32LE(offset);
@@ -59,13 +64,17 @@ export const parse = async (cluedata: Buffer): Promise<void> => {
   }
   let entries: Array<ClueEntry> = [];
   let currentWordIndex = 0;
+
+  await util.promisify(rimraf)(CLUEDB);
+  const db = getDB();
+
   while (offset < cluedata.length) {
     const wordIndex = readInt();
     const frequency = readShort();
     const difficulty = readShort();
     const year = readShort();
     const isTheme = readByte();
-    const publisher = readByte();
+    const publisher = readByte(); // 8 is NYT
     const clueIndex = readInt();
     const clue = clues[clueIndex];
     if (clue === undefined) {
@@ -75,20 +84,30 @@ export const parse = async (cluedata: Buffer): Promise<void> => {
       continue;
     }
     if (wordIndex !== currentWordIndex) {
-      console.log('Entries for: ' + words[currentWordIndex]);
-      console.log(entries);
+      const word = words[currentWordIndex];
+      if (word) {
+        await db.put(word, JSON.stringify(entries));
+      }
       if (wordIndex < currentWordIndex) {
         throw new Error('REVERSE REVERSE');
       }
       currentWordIndex = wordIndex;
       entries = [];
-      if (wordIndex > 1000) {
-        break;
-      }
     }
     entries.push({
       frequency, difficulty, year, publisher, clue,
       traps: [] // TODO
     });
   }
+  await db.close();
+};
+
+const CLUEDB = './cluedb';
+
+export const getDB = () => {
+  return levelup(leveldown(CLUEDB));
+};
+
+export const getClues = async (db: LevelUp, word: string)  => {
+  return db.get(word);
 };
