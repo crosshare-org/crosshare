@@ -226,6 +226,20 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
             onSort={onSort}
             sortColumn={'f'}
             sortDirection={'DESC'}
+            onRowClick={(_e, data) => {
+              const clicked = displayList[data.index];
+              if (clicked) {
+                props.select(clicked.c);
+              }
+            }}
+            css={{
+              '& .row-container': {
+                cursor: 'pointer',
+              },
+              '& .row-container:hover': {
+                backgroundColor: '#EEE',
+              },
+            }}
           />
         </>
       ) : (
