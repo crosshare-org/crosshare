@@ -2,28 +2,7 @@ import levelup, { LevelUp } from 'levelup';
 import rocksdb from 'rocksdb';
 import rimraf from 'rimraf';
 import util from 'util';
-import * as t from 'io-ts';
-import { isRight } from 'fp-ts/lib/These';
-import { PathReporter } from 'io-ts/lib/PathReporter';
-
-const ClueEntryV = t.type({
-  /** clue index */
-  i: t.number,
-  /** clue */
-  c: t.string,
-  /** in NYT */
-  n: t.boolean,
-  /** frequency */
-  f: t.number,
-  /** difficulty (sum for each appearance in freq) */
-  d: t.number,
-  /** year */
-  y: t.number,
-  /** trap words */
-  t: t.array(t.string)
-});
-const ClueListV = t.array(ClueEntryV);
-type ClueListT = t.TypeOf<typeof ClueListV>;
+import { ClueListT, parseClueList } from './ginsbergCommon';
 
 export const build = async (cluedata: Buffer): Promise<void> => {
   let offset = 0;
@@ -97,13 +76,20 @@ export const build = async (cluedata: Buffer): Promise<void> => {
         if (!clue) {
           return acc;
         }
-        const traps = (clueClues[entry.clueIndex] || []).reduce((acc: Array<string>, n: number) => {
-          const trapWord = words[n >> 1];
-          if (trapWord && trapWord !== word && trapWord.length === word.length) {
-            acc.push(trapWord);
-          }
-          return acc;
-        }, []);
+        const traps = (clueClues[entry.clueIndex] || []).reduce(
+          (acc: Array<string>, n: number) => {
+            const trapWord = words[n >> 1];
+            if (
+              trapWord &&
+              trapWord !== word &&
+              trapWord.length === word.length
+            ) {
+              acc.push(trapWord);
+            }
+            return acc;
+          },
+          []
+        );
         acc.push({
           i: entry.clueIndex,
           c: clue,
@@ -111,7 +97,7 @@ export const build = async (cluedata: Buffer): Promise<void> => {
           d: entry.difficulty,
           n: entry.nyt,
           y: entry.year,
-          t: traps
+          t: traps,
         });
       }
       return acc;
@@ -147,7 +133,11 @@ export const build = async (cluedata: Buffer): Promise<void> => {
       entries = [];
     }
     entries.push({
-      frequency, difficulty, year, nyt: publisher === 8, clueIndex,
+      frequency,
+      difficulty,
+      year,
+      nyt: publisher === 8,
+      clueIndex,
     });
   }
   await db.close();
@@ -156,18 +146,16 @@ export const build = async (cluedata: Buffer): Promise<void> => {
 const CLUEDB = './cluedb';
 
 export const getDB = (readOnly: boolean) => {
-  return levelup(rocksdb(CLUEDB), {readOnly: readOnly});
+  return levelup(rocksdb(CLUEDB), { readOnly: readOnly });
 };
 
-export const getClues = async (db: LevelUp, word: string): Promise<ClueListT>  => {
+export const getClues = async (
+  db: LevelUp,
+  word: string
+): Promise<ClueListT> => {
   try {
     const res = JSON.parse(await db.get(word));
-    const validationResult = ClueListV.decode(res);
-    if (!isRight(validationResult)) {
-      console.error(PathReporter.report(validationResult).join(','));
-      return [];
-    }
-    return validationResult.right;
+    return parseClueList(res);
   } catch {
     return [];
   }
