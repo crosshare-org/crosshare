@@ -38,6 +38,7 @@ exports[`upload a puzzle 1`] = `
   top: 0;
   font-weight: bold;
   line-height: 1em;
+  color: var(--black);
   font-size: 0.25em;
 }
 

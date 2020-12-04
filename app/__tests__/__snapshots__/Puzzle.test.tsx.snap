@@ -38,6 +38,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   top: 0;
   font-weight: bold;
   line-height: 1em;
+  color: var(--black);
   font-size: 0.25em;
 }
 
@@ -785,6 +786,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   top: 0;
   font-weight: bold;
   line-height: 1em;
+  color: var(--black);
   font-size: 0.25em;
 }
 

@@ -38,6 +38,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   top: 0;
   font-weight: bold;
   line-height: 1em;
+  color: var(--black);
   font-size: 0.25em;
 }
 
@@ -686,6 +687,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   top: 0;
   font-weight: bold;
   line-height: 1em;
+  color: var(--black);
   font-size: 0.25em;
 }
 
@@ -1334,6 +1336,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   top: 0;
   font-weight: bold;
   line-height: 1em;
+  color: var(--black);
   font-size: 0.25em;
 }
 

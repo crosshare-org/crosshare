@@ -469,6 +469,11 @@ const SuccessOverlay = (props: {
         solveTime={props.solveTime}
         didCheat={props.didCheat}
         puzzleId={props.puzzle.id}
+        puzzlePublishTime={
+          props.puzzle.isPrivateUntil
+            ? props.puzzle.isPrivateUntil
+            : props.puzzle.publishTime
+        }
         puzzleAuthorId={props.puzzle.authorId}
         comments={props.puzzle.comments}
       />

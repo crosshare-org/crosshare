@@ -33,6 +33,7 @@ type CommentWithPossibleLocalReplies = Omit<Comment, 'replies'> & {
 type CommentOrLocalComment = CommentWithPossibleLocalReplies | LocalComment;
 
 interface CommentProps {
+  puzzlePublishTime: number;
   puzzleAuthorId: string;
   comment: CommentOrLocalComment;
   children?: ReactNode;
@@ -50,7 +51,10 @@ const CommentView = (props: CommentProps) => {
     >
       <div>
         <CommentFlair
-          publishTime={props.comment.publishTime}
+          publishTime={Math.max(
+            props.comment.publishTime,
+            props.puzzlePublishTime
+          )}
           displayName={props.comment.authorDisplayName}
           username={props.comment.authorUsername}
           userId={props.comment.authorId}
@@ -76,6 +80,7 @@ const CommentWithReplies = (
   const replies = isComment(props.comment) ? props.comment.replies : undefined;
   return (
     <CommentView
+      puzzlePublishTime={props.puzzlePublishTime}
       clueMap={props.clueMap}
       puzzleAuthorId={props.puzzleAuthorId}
       comment={props.comment}
@@ -211,7 +216,7 @@ const CommentFlair = (props: CommentFlairProps) => {
         <>
           &nbsp;·&nbsp;
           <span css={{ fontStyle: 'italic' }} title={formatISO(publishDate)}>
-            {formatDistanceToNow(publishDate)} ago
+            {formatDistanceToNow(publishDate, { addSuffix: true })}{' '}
           </span>
         </>
       ) : (
@@ -225,6 +230,7 @@ interface CommentFormProps {
   displayName: string;
   setDisplayName: (name: string) => void;
   username?: string;
+  puzzlePublishTime: number;
   puzzleAuthorId: string;
   user: firebase.User;
   solveTime: number;
@@ -305,6 +311,7 @@ const CommentForm = ({
     return (
       <CommentView
         clueMap={props.clueMap}
+        puzzlePublishTime={props.puzzlePublishTime}
         puzzleAuthorId={props.puzzleAuthorId}
         comment={submittedComment}
       />
@@ -411,6 +418,7 @@ interface CommentsProps {
   didCheat: boolean;
   puzzleId: string;
   puzzleAuthorId: string;
+  puzzlePublishTime: number;
   comments: Array<Comment>;
   clueMap: Map<string, [number, Direction, string]>;
 }
