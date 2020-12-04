@@ -4,7 +4,8 @@ RUN apk add --no-cache git build-base g++ cairo-dev \
     pango-dev \
     freetype-dev \
     giflib-dev \
-    librsvg-dev
+    librsvg-dev \
+    linux-headers
 RUN mkdir /src
 WORKDIR /src
 COPY app/package.json app/yarn.lock ./
@@ -21,6 +22,7 @@ RUN find . -name \*.map -type f -delete
 FROM node:12-alpine as prod
 RUN apk add cairo pango libjpeg-turbo giflib librsvg
 WORKDIR /app
+COPY app/cluedb ./
 ENV NODE_ENV=production PATH=$PATH:/app/node_modules/.bin NEXT_TELEMETRY_DISABLED=1
 COPY --from=builder /src/app/next.config.js ./
 COPY --from=builder /src/app/public ./public
