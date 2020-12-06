@@ -113,6 +113,7 @@ export default requiresAdmin(() => {
       ),
     ])
       .then(([mailErrors, stats, minis, unmoderated, cfm, cps]) => {
+        unmoderated.sort((a, b) => a.publishTime - b.publishTime);
         setMailErrors(mailErrors?.size || 0);
         setStats(stats);
         setMinis(minis);
