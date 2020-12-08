@@ -56,6 +56,15 @@
               "value": "max-age=365000000, immutable"
             }
           ]
+        },
+        {
+          "source": "!(**/embed/**)",
+          "headers": [
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            }
+          ]
         }
       ],
       "rewrites": [
@@ -109,6 +118,15 @@
             {
               "key": "Cache-Control",
               "value": "max-age=365000000, immutable"
+            }
+          ]
+        },
+        {
+          "source": "!(**/embed/**)",
+          "headers": [
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
             }
           ]
         }
