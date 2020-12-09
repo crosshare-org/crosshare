@@ -1,11 +1,17 @@
 import { AdminApp, AdminTimestamp, getUser } from '../lib/firebaseWrapper';
-import { PuzzleResult, puzzleFromDB } from './types';
+import { PuzzleResult, puzzleFromDB, ServerPuzzleResult } from './types';
 import type firebaseAdminType from 'firebase-admin';
 
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { DBPuzzleV, DBPuzzleT } from './dbtypes';
+import {
+  DBPuzzleV,
+  DBPuzzleT,
+  CategoryIndexT,
+  getDateString,
+  addZeros,
+} from './dbtypes';
 import { adminTimestamp } from './adminTimestamp';
 import { mapEachResult } from './dbUtils';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
@@ -23,6 +29,9 @@ import {
 } from './notifications';
 import SimpleMarkdown from 'simple-markdown';
 import { AccountPrefsV, AccountPrefsT } from './prefs';
+import { NextPuzzleLink } from '../components/Puzzle';
+import { GetServerSideProps } from 'next';
+import { getDailyMinis } from './dailyMinis';
 
 export async function getStorageUrl(
   storageKey: string
@@ -484,3 +493,110 @@ export async function queueEmails() {
     )
   );
 }
+
+interface PuzzlePageErrorProps {
+  error: string;
+}
+
+export interface PuzzlePageResultProps {
+  puzzle: ServerPuzzleResult;
+  profilePicture?: string | null;
+  coverImage?: string | null;
+  nextPuzzle?: NextPuzzleLink;
+}
+
+export type PuzzlePageProps = PuzzlePageResultProps | PuzzlePageErrorProps;
+
+export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
+  res,
+  params,
+}): Promise<{ props: PuzzlePageProps }> => {
+  const db = AdminApp.firestore();
+  let puzzle: ServerPuzzleResult | null = null;
+  if (!params?.puzzleId || Array.isArray(params.puzzleId)) {
+    return { props: { error: 'bad puzzle params' } };
+  }
+  let dbres;
+  try {
+    dbres = await db.collection('c').doc(params.puzzleId).get();
+  } catch {
+    return { props: { error: 'error getting puzzle' } };
+  }
+  if (!dbres.exists) {
+    return { props: { error: 'puzzle doesnt exist' } };
+  }
+  const validationResult = DBPuzzleV.decode(dbres.data());
+  if (isRight(validationResult)) {
+    res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
+    puzzle = {
+      ...puzzleFromDB(validationResult.right),
+      id: dbres.id,
+      constructorPage: await userIdToPage(validationResult.right.a),
+    };
+  } else {
+    console.error(PathReporter.report(validationResult).join(','));
+    return { props: { error: 'invalid puzzle' } };
+  }
+
+  let profilePicture: string | null = null;
+  let coverImage: string | null = null;
+  if (puzzle.constructorPage?.u) {
+    profilePicture = await getStorageUrl(
+      `users/${puzzle.constructorPage.u}/profile.jpg`
+    );
+    coverImage = await getStorageUrl(
+      `users/${puzzle.constructorPage.u}/${puzzle.id}/cover.jpg`
+    );
+  }
+
+  // Get puzzle to show as next link after this one is finished
+  let minis: CategoryIndexT;
+  try {
+    minis = await getDailyMinis();
+  } catch {
+    return {
+      props: {
+        puzzle,
+        profilePicture,
+        coverImage,
+      },
+    };
+  }
+  const puzzleId = puzzle.id;
+  const today = getDateString(new Date());
+  const miniDate = Object.keys(minis).find((key) => minis[key] === puzzleId);
+  if (miniDate && addZeros(miniDate) <= addZeros(today)) {
+    const previous = Object.entries(minis)
+      .map(([k, v]): [string, string] => [addZeros(k), v])
+      .filter(([k, _v]) => k < addZeros(miniDate))
+      .sort((a, b) => (a[0] > b[0] ? -1 : 1));
+    if (previous.length && previous[0]) {
+      return {
+        props: {
+          puzzle,
+          profilePicture,
+          coverImage,
+          nextPuzzle: {
+            puzzleId: previous[0][1],
+            linkText: 'the previous daily mini crossword',
+          },
+        },
+      };
+    }
+  }
+  const todaysMini = minis[today];
+  // Didn't find a previous mini, link to today's
+  return {
+    props: {
+      puzzle,
+      profilePicture,
+      coverImage,
+      ...(todaysMini && {
+        nextPuzzle: {
+          puzzleId: todaysMini,
+          linkText: 'today\'s daily mini crossword',
+        },
+      }),
+    },
+  };
+};
