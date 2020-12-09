@@ -1,5 +1,5 @@
 import { CSSInterpolation } from '@emotion/serialize';
-import { mix } from 'color2k';
+import { adjustHue, mix } from 'color2k';
 
 export const KEYBOARD_HEIGHT = 164;
 export const HEADER_HEIGHT = 35;
@@ -28,6 +28,7 @@ export const colorTheme = (
   const bg = darkMode ? '#121212' : '#fff';
   const secondary = darkMode ? '#444' : '#ccc';
   const reffed = mix(p, cellBG, 0.8);
+  const error = adjustHue(p, 300);
   return {
     '--bg': bg,
     '--primary': p,
@@ -39,16 +40,16 @@ export const colorTheme = (
     '--reffed-hover': mix(reffed, hover, hoverRatio),
     '--boring-bg': darkMode ? '#b5b5b5' : '#555',
     '--boring-bg-hover': darkMode ? '#bbb' : '#5f5f5f',
-    '--error': darkMode ? '#f1a7f5' : '#e34eeb',
+    '--error': error,
+    '--error-hover': mix(error, 'black', 0.3),
     '--notification-bg': '#de30e7',
-    '--error-hover': '#860f8c',
     '--link': darkMode ? '#7fbdff' : '#2874a6',
     '--link-hover': darkMode ? '#8dc4ff' : '#21618c',
     '--text': darkMode ? '#d0d0d0' : '#212529',
     '--default-text': darkMode ? '#777' : '#999',
     '--caption': '#6c757d',
     '--black': darkMode ? '#eee' : 'black',
-    '--verified': darkMode ? '#a7b1f5' : '#4e61eb',
+    '--verified': mix(adjustHue(p, 180), hover, darkMode ? 0.4 : 0.3),
     '--autofill': darkMode ? '#999' : '#bbb',
     '--top-bar-hover': 'rgba(0, 0, 0, 0.1)',
     '--shade-highlight': darkMode

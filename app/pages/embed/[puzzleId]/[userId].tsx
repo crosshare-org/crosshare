@@ -11,7 +11,7 @@ export default function ThemedPage(props: PuzzlePageProps) {
     <>
       <Global
         styles={{
-          html: colorTheme(adjustHue('#eb984e', 0), true),
+          html: colorTheme(adjustHue('#eb984e', 300), true),
         }}
       />
       <PuzzlePage {...props} />
