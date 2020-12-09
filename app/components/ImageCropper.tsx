@@ -4,6 +4,7 @@ import { Overlay } from './Overlay';
 import { Button } from './Buttons';
 import { App } from '../lib/firebaseWrapper';
 import { useSnackbar } from './Snackbar';
+import 'react-image-crop/dist/ReactCrop.css';
 
 function downsample(
   image: HTMLImageElement,

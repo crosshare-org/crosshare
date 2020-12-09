@@ -6,6 +6,7 @@ import {
   KeyboardEvent,
   ReactNode,
   Fragment,
+  RefObject,
 } from 'react';
 
 import { Position, Direction } from '../lib/types';
@@ -102,6 +103,7 @@ interface ClueListItemProps {
   allEntries?: Array<CluedEntry>;
   grid: GridBase<EntryBase>;
   scrollToCross: boolean;
+  listRef: RefObject<HTMLDivElement>;
 }
 
 const ClueListItem = memo(function ClueListItem({
@@ -110,12 +112,13 @@ const ClueListItem = memo(function ClueListItem({
   ...props
 }: ClueListItemProps) {
   const ref = useRef<HTMLLIElement>(null);
-  if (ref.current) {
+  if (ref.current && props.listRef.current) {
     if (
       (isActive && !props.wasEntryClick) ||
       (props.scrollToCross && isCross)
     ) {
-      ref.current.scrollIntoView({ behavior: 'auto', block: 'center' });
+      props.listRef.current.scrollTop =
+        ref.current.offsetTop - props.listRef.current.offsetTop;
     }
   }
   function click(e: MouseEvent | KeyboardEvent) {
@@ -270,12 +273,14 @@ interface ClueListProps {
 }
 
 export const ClueList = (props: ClueListProps): JSX.Element => {
+  const ref = useRef<HTMLDivElement>(null);
   const clues = props.entries.map((entry) => {
     const isActive = props.current === entry.index;
     const isCross = props.cross === entry.index;
     const isRefed = props.refed?.find((n) => n === entry.index) !== undefined;
     return (
       <ClueListItem
+        listRef={ref}
         wasEntryClick={props.wasEntryClick}
         scrollToCross={props.scrollToCross}
         dimCompleted={props.dimCompleted}
@@ -317,6 +322,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
         {props.header}
       </div>
       <div
+        ref={ref}
         css={{
           maxHeight: '100%',
           [SMALL_AND_UP]: {

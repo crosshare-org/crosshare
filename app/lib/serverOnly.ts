@@ -498,11 +498,17 @@ interface PuzzlePageErrorProps {
   error: string;
 }
 
+interface ColorTheme {
+  primary: string;
+  darkMode: boolean;
+}
+
 export interface PuzzlePageResultProps {
   puzzle: ServerPuzzleResult;
   profilePicture?: string | null;
   coverImage?: string | null;
   nextPuzzle?: NextPuzzleLink;
+  theme?: ColorTheme;
 }
 
 export type PuzzlePageProps = PuzzlePageResultProps | PuzzlePageErrorProps;

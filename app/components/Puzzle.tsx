@@ -115,6 +115,7 @@ import { AuthorLink } from './PuzzleLink';
 import formatISO from 'date-fns/formatISO';
 import { useSnackbar } from './Snackbar';
 import { isNewPuzzleNotification } from '../lib/notifications';
+import { PuzzlePageResultProps } from '../lib/serverOnly';
 
 export interface NextPuzzleLink {
   puzzleId: string;
@@ -547,13 +548,9 @@ export const RebusOverlay = (props: {
   );
 };
 
-interface PuzzleProps {
-  puzzle: ServerPuzzleResult;
+interface PuzzleProps extends PuzzlePageResultProps {
   play: PlayWithoutUserT | null;
   loadingPlayState: boolean;
-  nextPuzzle?: NextPuzzleLink;
-  profilePicture?: string | null;
-  coverImage?: string | null;
 }
 export const Puzzle = ({
   loadingPlayState,
