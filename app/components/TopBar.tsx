@@ -276,6 +276,9 @@ export const TopBarLink = (props: TopBarLinkProps) => {
         margin: 0,
         padding: '0 0.45em',
         color: 'var(--text)',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'clip',
         '&:hover, &:focus': {
           textDecoration: 'none',
           backgroundColor: 'var(--top-bar-hover)',
