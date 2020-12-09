@@ -145,7 +145,7 @@ const ClueListItem = memo(function ClueListItem({
           : isCross
             ? 'var(--secondary)'
             : props.isRefed
-              ? 'var(--vlighter)'
+              ? 'var(--reffed)'
               : 'none',
         listStyleType: 'none',
         cursor: 'pointer',
@@ -153,10 +153,10 @@ const ClueListItem = memo(function ClueListItem({
           backgroundColor: isActive
             ? 'var(--lighter)'
             : isCross
-              ? 'var(--cross-clue-bg)'
+              ? 'var(--secondary-hover)'
               : props.isRefed
-                ? 'var(--vvlighter)'
-                : 'var(--clue-bg)',
+                ? 'var(--reffed-hover)'
+                : 'var(--bg-hover)',
         },
         width: '100%',
       }}

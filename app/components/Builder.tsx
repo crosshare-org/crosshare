@@ -165,7 +165,7 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
         padding: '0.5em 1em',
         color: 'var(--text)',
         '&:hover': {
-          backgroundColor: 'var(--clue-bg)',
+          backgroundColor: 'var(--bg-hover)',
         },
         alignItems: 'center',
         height: 35,

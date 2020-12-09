@@ -22,12 +22,21 @@ export const colorTheme = (
   darkMode: boolean
 ): CSSInterpolation => {
   const p = darkMode ? mix(primary, 'black', 0.5) : primary;
+  const cellBG = darkMode ? '#6d6d6d' : 'white';
+  const hover = darkMode ? 'white' : 'black';
+  const hoverRatio = 0.1;
+  const bg = darkMode ? '#121212' : '#fff';
+  const secondary = darkMode ? '#444' : '#ccc';
+  const reffed = mix(p, cellBG, 0.8);
   return {
+    '--bg': bg,
     '--primary': p,
     '--lighter': darkMode ? p : mix(p, 'white', 0.5),
-    '--vlighter': darkMode ? '#514439' : '#fcefe3',
-    '--vvlighter': darkMode ? '#5c4e42' : '#fbeada',
-    '--secondary': darkMode ? '#444' : '#ccc',
+    '--reffed': reffed,
+    '--secondary': secondary,
+    '--bg-hover': mix(bg, hover, hoverRatio),
+    '--secondary-hover': mix(secondary, hover, hoverRatio),
+    '--reffed-hover': mix(reffed, hover, hoverRatio),
     '--boring-bg': darkMode ? '#b5b5b5' : '#555',
     '--boring-bg-hover': darkMode ? '#bbb' : '#5f5f5f',
     '--error': darkMode ? '#f1a7f5' : '#e34eeb',
@@ -37,13 +46,10 @@ export const colorTheme = (
     '--link-hover': darkMode ? '#8dc4ff' : '#21618c',
     '--text': darkMode ? '#d0d0d0' : '#212529',
     '--default-text': darkMode ? '#777' : '#999',
-    '--bg': darkMode ? '#121212' : '#fff',
     '--caption': '#6c757d',
     '--black': darkMode ? '#eee' : 'black',
     '--verified': darkMode ? '#a7b1f5' : '#4e61eb',
     '--autofill': darkMode ? '#999' : '#bbb',
-    '--clue-bg': darkMode ? '#222' : '#eee',
-    '--cross-clue-bg': darkMode ? '#444' : '#ddd',
     '--top-bar-hover': 'rgba(0, 0, 0, 0.1)',
     '--shade-highlight': darkMode
       ? 'rgba(255, 255, 255, 0.3)'
@@ -51,7 +57,7 @@ export const colorTheme = (
     '--overlay-bg': 'rgba(0, 0, 0, 0.85)',
     '--overlay-inner': darkMode ? '#151515' : 'white',
     '--conceal-text': darkMode ? 'white' : 'rgba(0, 0, 0, 0.7)',
-    '--cell-bg': darkMode ? '#6d6d6d' : 'white',
+    '--cell-bg': cellBG,
     '--cell-wall': 'black',
     '--white': darkMode ? '#000' : 'white',
     '--logo-white': darkMode ? '#d0d0d0' : 'white',
