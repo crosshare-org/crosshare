@@ -4,7 +4,53 @@ import * as Sentry from '@sentry/node';
 
 import { ErrorPage } from '../components/ErrorPage';
 
-const MyError = ({ title, statusCode, hasGetInitialPropsRun, err }: { title?: string, err: Error, statusCode: number, hasGetInitialPropsRun: boolean }) => {
+const LocalStorageErrorPage = () => (
+  <ErrorPage title="Couldn't Store Data">
+    <p>
+      Crosshare needs permission to store data in your browser to keep track of
+      your solve progress on puzzles. Please grant access in your browsers
+      settings (e.g. in settings/cookies for Chrome).
+    </p>
+    <p>
+      If you&apos;re having trouble figuring this out please get in touch via{' '}
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="mailto:crosshareapp@gmail.com"
+      >
+        email
+      </a>{' '}
+      or{' '}
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://twitter.com/crosshareapp"
+      >
+        twitter
+      </a>
+      !
+    </p>
+  </ErrorPage>
+);
+
+const isLocalStorageError = (err: Error): boolean => {
+  return err.message.includes('Failed to read the \'localStorage\' property');
+};
+
+const MyError = ({
+  title,
+  statusCode,
+  hasGetInitialPropsRun,
+  err,
+}: {
+  title?: string;
+  err: Error;
+  statusCode: number;
+  hasGetInitialPropsRun: boolean;
+}) => {
+  if (isLocalStorageError(err)) {
+    return <LocalStorageErrorPage />;
+  }
   if (!hasGetInitialPropsRun && err && typeof Sentry !== 'undefined') {
     // getInitialProps is not called in case of
     // https://github.com/vercel/next.js/issues/8592. As a workaround, we pass
@@ -13,15 +59,22 @@ const MyError = ({ title, statusCode, hasGetInitialPropsRun, err }: { title?: st
   }
 
   return (
-    <ErrorPage title='Something Went Wrong'>
-      <p>Sorry! An error with Crosshare occurred - you can email us for help at crosshare@googlegroups.com.</p>
-      <p>{statusCode} {title}</p>
+    <ErrorPage title="Something Went Wrong">
+      <p>
+        Sorry! An error with Crosshare occurred - you can email us for help at
+        crosshare@googlegroups.com.
+      </p>
+      <p>
+        {statusCode} {title}
+      </p>
     </ErrorPage>
   );
 };
 
 MyError.getInitialProps = async ({ res, err, asPath }: NextPageContext) => {
-  const errorInitialProps: ErrorProps = await NextErrorComponent.getInitialProps({ res, err } as NextPageContext);
+  const errorInitialProps: ErrorProps = await NextErrorComponent.getInitialProps(
+    { res, err } as NextPageContext
+  );
 
   // Running on the server, the response object (`res`) is available.
   //
@@ -36,12 +89,13 @@ MyError.getInitialProps = async ({ res, err, asPath }: NextPageContext) => {
   //    Boundary. Read more about what types of exceptions are caught by Error
   //    Boundaries: https://reactjs.org/docs/error-boundaries.html
 
-  if (res ?.statusCode === 404) {
-    // Opinionated: do not record an exception in Sentry for 404
+  if (res?.statusCode === 404) {
     return { statusCode: 404 };
   }
   if (err && typeof Sentry !== 'undefined') {
-    Sentry.captureException(err);
+    if (!isLocalStorageError(err)) {
+      Sentry.captureException(err);
+    }
     return { ...errorInitialProps, hasGetInitialPropsRun: true };
   }
 
