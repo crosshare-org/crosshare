@@ -38,6 +38,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     return { props: { error: 'Error loading constructor page' } };
   }
   if (!dbres.exists) {
+    res.statusCode = 404;
     return { props: { error: 'Page does not exist' } };
   }
 

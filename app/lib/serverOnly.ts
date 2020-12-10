@@ -520,6 +520,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   const db = AdminApp.firestore();
   let puzzle: ServerPuzzleResult | null = null;
   if (!params?.puzzleId || Array.isArray(params.puzzleId)) {
+    res.statusCode = 404;
     return { props: { error: 'bad puzzle params' } };
   }
   let dbres;
@@ -529,6 +530,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     return { props: { error: 'error getting puzzle' } };
   }
   if (!dbres.exists) {
+    res.statusCode = 404;
     return { props: { error: 'puzzle doesnt exist' } };
   }
   const validationResult = DBPuzzleV.decode(dbres.data());
