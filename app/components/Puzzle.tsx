@@ -849,6 +849,8 @@ export const Puzzle = ({
     dispatch: dispatch,
   };
 
+  const isEmbed = useContext(EmbedContext);
+
   /* `clueMap` is a map from ENTRYWORD => '5D: This is the clue' - we use this
    *    for comment clue tooltips.
    * `refs` is a set of referenced '5D's for each entry in the grid - we use this
@@ -1216,16 +1218,22 @@ export const Puzzle = ({
               ) : (
                 ''
               )}
-              <TopBarDropDownLinkSimpleA
-                href={'/api/pdf/' + puzzle.id}
-                icon={<FaPrint />}
-                text="Print Puzzle"
-              />
-              <TopBarDropDownLinkSimpleA
-                href={'/api/puz/' + puzzle.id}
-                icon={<FaRegFile />}
-                text="Download .puz File"
-              />
+              {!isEmbed ? (
+                <>
+                  <TopBarDropDownLinkSimpleA
+                    href={'/api/pdf/' + puzzle.id}
+                    icon={<FaPrint />}
+                    text="Print Puzzle"
+                  />
+                  <TopBarDropDownLinkSimpleA
+                    href={'/api/puz/' + puzzle.id}
+                    icon={<FaRegFile />}
+                    text="Download .puz File"
+                  />
+                </>
+              ) : (
+                ''
+              )}
               <TopBarDropDownLinkA
                 href="/account"
                 icon={<FaUser />}
@@ -1250,6 +1258,7 @@ export const Puzzle = ({
       state.success,
       toggleKeyboard,
       setToggleKeyboard,
+      isEmbed,
     ]
   );
 
