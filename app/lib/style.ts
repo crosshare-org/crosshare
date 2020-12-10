@@ -28,7 +28,7 @@ export const colorTheme = (
   const bg = darkMode ? '#121212' : '#fff';
   const secondary = darkMode ? '#222' : '#ccc';
   const reffed = mix(p, cellBG, 0.7);
-  const error = adjustHue(p, 300);
+  const error = mix(adjustHue(p, 280), 'white', darkMode ? 0.3 : 0);
   return {
     '--bg': bg,
     '--primary': p,
