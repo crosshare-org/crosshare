@@ -102,7 +102,7 @@ import {
   TopBarDropDown,
 } from './TopBar';
 import { SquareAndCols } from './Page';
-import { RebusOverlay } from './Puzzle';
+import { RebusOverlay } from './RebusOverlay';
 import { ClueMode } from './ClueMode';
 // eslint-disable-next-line import/no-unresolved
 import AutofillWorker from 'worker-loader?filename=static/[hash].worker.js!../lib/autofill.worker';
@@ -1477,7 +1477,11 @@ const GridMode = ({
           ''
         )}
         {state.isEnteringRebus ? (
-          <RebusOverlay dispatch={dispatch} value={state.rebusValue} />
+          <RebusOverlay
+            toggleKeyboard={toggleKeyboard}
+            dispatch={dispatch}
+            value={state.rebusValue}
+          />
         ) : (
           ''
         )}

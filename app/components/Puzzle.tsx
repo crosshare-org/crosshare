@@ -48,6 +48,7 @@ import {
   Rebus,
   SpinnerFinished,
 } from './Icons';
+import { RebusOverlay } from './RebusOverlay';
 import { AuthContext, AuthPropsOptional } from './AuthContext';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
@@ -472,63 +473,6 @@ const SuccessOverlay = (props: {
       ) : (
         ''
       )}
-    </Overlay>
-  );
-};
-
-export const RebusOverlay = (props: {
-  value: string;
-  dispatch: Dispatch<KeypressAction>;
-}) => {
-  return (
-    <Overlay
-      showKeyboard
-      closeCallback={() => {
-        const escape: KeypressAction = {
-          type: 'KEYPRESS',
-          key: 'Escape',
-          shift: false,
-        };
-        props.dispatch(escape);
-      }}
-    >
-      <div
-        css={{
-          color: props.value ? 'var(--black)' : 'var(--default-text)',
-          margin: '0.5em 0',
-          textAlign: 'center',
-          fontSize: '2.5em',
-          lineHeight: '1em',
-        }}
-      >
-        {props.value ? props.value : 'Type to enter rebus...'}
-      </div>
-      <Button
-        boring={true}
-        onClick={() => {
-          const escape: KeypressAction = {
-            type: 'KEYPRESS',
-            key: 'Escape',
-            shift: false,
-          };
-          props.dispatch(escape);
-        }}
-        css={{ marginRight: '10%', width: '45%' }}
-        text="Cancel"
-      />
-      <Button
-        disabled={props.value.length === 0}
-        onClick={() => {
-          const enter: KeypressAction = {
-            type: 'KEYPRESS',
-            key: 'Enter',
-            shift: false,
-          };
-          props.dispatch(enter);
-        }}
-        css={{ width: '45%' }}
-        text="Submit Rebus"
-      />
     </Overlay>
   );
 };
@@ -1372,7 +1316,11 @@ export const Puzzle = ({
           </TopBar>
         </div>
         {state.isEnteringRebus ? (
-          <RebusOverlay dispatch={dispatch} value={state.rebusValue} />
+          <RebusOverlay
+            toggleKeyboard={toggleKeyboard}
+            dispatch={dispatch}
+            value={state.rebusValue}
+          />
         ) : (
           ''
         )}
