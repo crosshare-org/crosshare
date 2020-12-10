@@ -48,7 +48,6 @@ import {
   Rebus,
   SpinnerFinished,
 } from './Icons';
-import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { AuthContext, AuthPropsOptional } from './AuthContext';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
@@ -103,7 +102,6 @@ import { Emoji } from './Emoji';
 import { Comments } from './Comments';
 import { ConstructorNotes } from './ConstructorNotes';
 import { ConstructorPageT } from '../lib/constructorPage';
-import { SharingButtons } from './SharingButtons';
 import { SMALL_AND_UP_RULES } from '../lib/style';
 import { Keyboard } from './Keyboard';
 import { useRouter } from 'next/router';
@@ -427,50 +425,32 @@ const SuccessOverlay = (props: {
         {props.user?.uid === props.puzzle.authorId ? (
           <>
             <p>
-              Your puzzle is live! Copy the link to share with solvers (solvers
+              Your puzzle is live!{' '}
+              {isEmbed
+                ? `Solvers
               will see an empty grid, yours is complete since you authored the
-              puzzle). Comments posted below will be visible to anyone who
-              finishes solving the puzzle.
+              puzzle.`
+                : `Copy the link to share with solvers (solvers
+                will see an empty grid, yours is complete since you authored the
+                puzzle).`}{' '}
+              Comments posted below will be visible to anyone who finishes
+              solving the puzzle.
             </p>
-            <SharingButtons
-              text={`Check out the crossword puzzle I made: "${props.puzzle.title}"`}
-              path={`/crosswords/${props.puzzle.id}`}
-            />
           </>
         ) : (
           <>
-            <h4 css={{ marginTop: '1.5em' }}>
-              <Emoji symbol="🎉" /> Congratulations! <Emoji symbol="🎊" />
-            </h4>
-            <p css={{ marginBottom: 0 }}>
-              You solved the puzzle in{' '}
-              <b>{timeString(props.solveTime, false)}</b> - challenge your
-              friends:
+            <p css={{ marginBottom: 0, fontSize: '1.5em' }}>
+              Solved in <b>{timeString(props.solveTime, false)}</b>
             </p>
-            <SharingButtons
-              text={`I solved "${props.puzzle.title}" in ${timeString(
-                props.solveTime,
-                false
-              )} - how fast can you solve it?`}
-              path={`/crosswords/${props.puzzle.id}`}
-            />
           </>
         )}
-        {!props.user || props.user.isAnonymous ? (
-          <>
-            <p>Sign in with google to track your puzzle solving streak!</p>
-            {props.user ? (
-              <GoogleLinkButton user={props.user} />
-            ) : (
-              <GoogleSignInButton />
-            )}
-          </>
-        ) : (
+        {isEmbed ? (
           ''
+        ) : (
+          <div>
+            <PrevDailyMiniLink nextPuzzle={props.nextPuzzle} />
+          </div>
         )}
-        <div>
-          <PrevDailyMiniLink nextPuzzle={props.nextPuzzle} />
-        </div>
       </div>
       <Comments
         clueMap={props.clueMap}

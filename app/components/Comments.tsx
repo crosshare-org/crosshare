@@ -15,6 +15,7 @@ import {
   CommentForModerationWithIdV,
   CommentForModerationWithIdT,
 } from '../lib/dbtypes';
+import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { Markdown } from './Markdown';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { Link } from './Link';
@@ -542,7 +543,14 @@ export const Comments = ({
     <div css={{ marginTop: '1em' }}>
       <h4 css={{ borderBottom: '1px solid var(--black)' }}>Comments</h4>
       {!authContext.user || authContext.user.isAnonymous ? (
-        <div>Sign in with google (above) to leave a comment of your own</div>
+        <div css={{ textAlign: 'center' }}>
+          <p>Sign in with google to leave a comment of your own:</p>
+          {authContext.user ? (
+            <GoogleLinkButton user={authContext.user} />
+          ) : (
+            <GoogleSignInButton />
+          )}
+        </div>
       ) : (
         <CommentForm
           {...props}
