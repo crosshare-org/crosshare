@@ -140,6 +140,17 @@ interface PauseBeginProps {
 const BeginPauseOverlay = (props: PauseBeginProps) => {
   const isEmbed = useContext(EmbedContext);
 
+  const showFullscreen =
+    typeof window !== 'undefined' && isEmbed && document.fullscreenEnabled;
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
+    }
+  };
+
   return (
     <Overlay
       coverImage={props.coverImage}
@@ -161,6 +172,15 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
         constructorPage={props.constructorPage}
       />
       <div css={{ textAlign: 'center' }}>
+        {showFullscreen ? (
+          <Button
+            css={{ marginBottom: '2em' }}
+            onClick={toggleFullscreen}
+            text="Toggle Fullscreen"
+          />
+        ) : (
+          ''
+        )}
         {props.loadingPlayState ? (
           <div>Checking for previous play data...</div>
         ) : (
