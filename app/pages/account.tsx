@@ -188,7 +188,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
           <>
             <p>
               Your blog is live at{' '}
-              <Link href="/[...slug]" as={'/' + constructorPage.i} passHref>
+              <Link href={'/' + constructorPage.i}>
                 https://crosshare.org/{constructorPage.i}
               </Link>
             </p>
@@ -210,13 +210,8 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         ) : (
           <p>
             Start sharing your own puzzles by creating one with the{' '}
-            <Link href="/construct" as="/construct" passHref>
-              Crosshare constructor
-            </Link>{' '}
-            or{' '}
-            <Link href="/upload" as="/upload" passHref>
-              uploading a .puz file.
-            </Link>
+            <Link href="/construct">Crosshare constructor</Link> or{' '}
+            <Link href="/upload">uploading a .puz file.</Link>
           </p>
         )}
         {authoredPuzzles.length ? (

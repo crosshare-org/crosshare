@@ -147,11 +147,7 @@ function commentsFromStorage(
 
 const CommentAuthor = (props: { username?: string; displayName: string }) => {
   if (props.username) {
-    return (
-      <Link href="/[...slug]" as={'/' + props.username} passHref>
-        {props.displayName}
-      </Link>
-    );
+    return <Link href={'/' + props.username}>{props.displayName}</Link>;
   }
   return <>{props.displayName}</>;
 };

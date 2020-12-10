@@ -119,7 +119,7 @@ export default function BuilderPage() {
         attribution={
           <>
             Will Pfadenhauer of{' '}
-            <Link href="/[...slug]" as={'/PBWMC'} passHref>
+            <Link href={'/PBWMC'}>
               Pandora&apos;s Blocks Weekly Meta Crossword
             </Link>
           </>
@@ -315,11 +315,7 @@ export default function BuilderPage() {
           <h2 css={{ textAlign: 'center' }}>FAQ</h2>
           <h3>What if I have an existing puzzle I’d like to upload?</h3>
           <p>
-            Crosshare supports .puz uploading{' '}
-            <Link href="/upload" as="/upload" passHref>
-              here
-            </Link>
-            .
+            Crosshare supports .puz uploading <Link href="/upload">here</Link>.
           </p>
           <h3>Does Crosshare support rebuses?</h3>
           <p>

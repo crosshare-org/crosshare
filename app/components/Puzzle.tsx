@@ -35,7 +35,7 @@ import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
-import { Link, LinkButton, LinkButtonSimpleA } from './Link';
+import { Link, LinkButtonSimpleA } from './Link';
 import { ClueList } from './ClueList';
 import {
   EscapeKey,
@@ -296,9 +296,7 @@ const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   }
   return (
     <Link
-      href="/crosswords/[puzzleId]"
-      as={`/crosswords/${nextPuzzle.puzzleId}`}
-      passHref
+      href={`/crosswords/${nextPuzzle.puzzleId}`}
     >
       Play {nextPuzzle.linkText}
     </Link>
@@ -478,15 +476,6 @@ const SuccessOverlay = (props: {
         puzzleAuthorId={props.puzzle.authorId}
         comments={props.puzzle.comments}
       />
-      {props.user?.uid !== props.puzzle.authorId ? (
-        <div css={{ marginTop: '2em', textAlign: 'center' }}>
-          <LinkButton href="/construct" as="/construct" passHref>
-            Make your own puzzle with the Crosshare constructor
-          </LinkButton>
-        </div>
-      ) : (
-        ''
-      )}
     </Overlay>
   );
 };
@@ -1254,14 +1243,12 @@ export const Puzzle = ({
               {props.isAdmin || props.user?.uid === puzzle.authorId ? (
                 <>
                   <TopBarDropDownLinkA
-                    href="/crosswords/[puzzleId]/stats"
-                    as={`/crosswords/${puzzle.id}/stats`}
+                    href={`/crosswords/${puzzle.id}/stats`}
                     icon={<IoMdStats />}
                     text="Stats"
                   />
                   <TopBarDropDownLinkA
-                    href="/crosswords/[puzzleId]/edit"
-                    as={`/crosswords/${puzzle.id}/edit`}
+                    href={`/crosswords/${puzzle.id}/edit`}
                     icon={<FaEdit />}
                     text="Edit"
                   />

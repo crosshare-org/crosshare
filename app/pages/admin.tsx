@@ -30,14 +30,8 @@ import { useSnackbar } from '../components/Snackbar';
 const PuzzleListItem = (props: PuzzleResult) => {
   return (
     <li key={props.id}>
-      <Link
-        href="/crosswords/[puzzleId]"
-        as={`/crosswords/${props.id}`}
-        passHref
-      >
-        {props.title}
-      </Link>{' '}
-      by {props.authorName}
+      <Link href={`/crosswords/${props.id}`}>{props.title}</Link> by{' '}
+      {props.authorName}
       <span css={{ color: 'var(--error)' }}>
         {props.isPrivate
           ? ' PRIVATE'
@@ -274,14 +268,7 @@ export default requiresAdmin(() => {
                       setCommentForDeletion(cfm.i, e.target.checked)
                     }
                   />
-                  <Link
-                    href="/crosswords/[puzzleId]"
-                    as={`/crosswords/${cfm.pid}`}
-                    passHref
-                  >
-                    puzzle
-                  </Link>{' '}
-                  {cfm.n}:
+                  <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
                   <Markdown text={cfm.c} />
                 </label>
               </div>
@@ -299,10 +286,7 @@ export default requiresAdmin(() => {
             {pagesForModeration.map((cp) => (
               <div key={cp.id}>
                 <p>
-                  {cp.n} -{' '}
-                  <Link href="/[...slug]" as={`/${cp.i}`} passHref>
-                    @{cp.i}
-                  </Link>
+                  {cp.n} - <Link href={`/${cp.i}`}>@{cp.i}</Link>
                 </p>
                 <Markdown text={cp.b} />
               </div>
@@ -332,19 +316,11 @@ export default requiresAdmin(() => {
                 .map(([crosswordId, count]) => {
                   return (
                     <li key={crosswordId}>
-                      <Link
-                        href="/crosswords/[puzzleId]"
-                        as={`/crosswords/${crosswordId}`}
-                        passHref
-                      >
+                      <Link href={`/crosswords/${crosswordId}`}>
                         {titleForId(stats, crosswordId)}
                       </Link>
                       : {count}(
-                      <Link
-                        href="/crosswords/[puzzleId]/stats"
-                        as={`/crosswords/${crosswordId}/stats`}
-                        passHref
-                      >
+                      <Link href={`/crosswords/${crosswordId}/stats`}>
                         stats
                       </Link>
                       )

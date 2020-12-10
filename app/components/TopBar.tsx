@@ -162,14 +162,11 @@ export const TopBarDropDownLink = (props: TopBarDropDownLinkProps) => {
 
 interface TopBarDropDownLinkAProps extends TopBarDropDownLinkCommonProps {
   href: string;
-  as?: string;
 }
 export const TopBarDropDownLinkA = (props: TopBarDropDownLinkAProps) => {
   return (
     <Link
       href={props.href}
-      as={props.as}
-      passHref
       title={props.text}
       css={{
         backgroundColor: 'transparent',
@@ -300,8 +297,6 @@ export const TopBarLinkA = (props: TopBarLinkAProps) => {
   return (
     <Link
       href={props.href}
-      as={props.as}
-      passHref
       title={props.hoverText || props.text}
       css={{
         backgroundColor: 'transparent',
@@ -413,7 +408,6 @@ export const TopBar = ({ children }: { children?: ReactNode }) => {
             ) : (
               <Link
                 href="/"
-                passHref
                 css={{
                   flexGrow: 1,
                   display: 'flex',
@@ -539,44 +533,28 @@ const NotificationLink = ({
   switch (n.k) {
   case 'comment':
     link = (
-      <Link
-        css={NotificationLinkCSS}
-        href="/crosswords/[puzzleId]"
-        as={`/crosswords/${n.p}`}
-      >
+      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}`}>
         {n.cn} commented on <u>{n.pn}</u>
       </Link>
     );
     break;
   case 'reply':
     link = (
-      <Link
-        css={NotificationLinkCSS}
-        href="/crosswords/[puzzleId]"
-        as={`/crosswords/${n.p}`}
-      >
+      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}`}>
         {n.cn} replied to your comment on <u>{n.pn}</u>
       </Link>
     );
     break;
   case 'newpuzzle':
     link = (
-      <Link
-        css={NotificationLinkCSS}
-        href="/crosswords/[puzzleId]"
-        as={`/crosswords/${n.p}`}
-      >
+      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}`}>
         {n.an} published a new puzzle: <u>{n.pn}</u>
       </Link>
     );
     break;
   case 'featured':
     link = (
-      <Link
-        css={NotificationLinkCSS}
-        href="/crosswords/[puzzleId]"
-        as={`/crosswords/${n.p}`}
-      >
+      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}`}>
           Crosshare is featuring your puzzle <u>{n.pn}</u>
         {n.as ? ` as ${n.as}` : ' on the homepage'}!
       </Link>

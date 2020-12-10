@@ -159,11 +159,7 @@ export default function DailyMiniPage(props: PageProps) {
           requested: {props.error}
         </p>
         <p>
-          Try the{' '}
-          <Link href="/" passHref>
-            homepage
-          </Link>
-          .
+          Try the <Link href="/">homepage</Link>.
         </p>
       </ErrorPage>
     );
@@ -233,9 +229,7 @@ export default function DailyMiniPage(props: PageProps) {
           {props.newerLink ? (
             <Link
               css={{ marginRight: '1em' }}
-              href="/dailyminis/[[...slug]]"
-              as={'/dailyminis/' + props.newerLink}
-              passHref
+              href={'/dailyminis/' + props.newerLink}
             >
               Newer Minis
             </Link>
@@ -243,13 +237,7 @@ export default function DailyMiniPage(props: PageProps) {
             ''
           )}
           {props.olderLink ? (
-            <Link
-              href="/dailyminis/[[...slug]]"
-              as={'/dailyminis/' + props.olderLink}
-              passHref
-            >
-              Older Minis
-            </Link>
+            <Link href={'/dailyminis/' + props.olderLink}>Older Minis</Link>
           ) : (
             ''
           )}

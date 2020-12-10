@@ -82,9 +82,7 @@ const PuzzleLink = (props: {
             lineHeight: '1em',
           },
         ]}
-        href="/crosswords/[puzzleId]"
-        as={`/crosswords/${props.id}`}
-        passHref
+        href={`/crosswords/${props.id}`}
       >
         <div css={{ position: 'relative' }}>
           <PuzzleSizeIcon width={props.width} height={props.height} />
@@ -115,12 +113,7 @@ const PuzzleLink = (props: {
         </div>
       </Link>
       <div css={{ flex: 1 }}>
-        <Link
-          css={linkCss}
-          href="/crosswords/[puzzleId]"
-          as={`/crosswords/${props.id}`}
-          passHref
-        >
+        <Link css={linkCss} href={`/crosswords/${props.id}`}>
           <h3
             css={{
               marginBottom: 0,
@@ -166,10 +159,7 @@ export const AuthorLink = ({
     const username = constructorPage.i || constructorPage.id;
     return (
       <>
-        By{' '}
-        <Link href="/[...slug]" as={'/' + username} passHref>
-          {constructorPage.n}
-        </Link>
+        By <Link href={'/' + username}>{constructorPage.n}</Link>
       </>
     );
   }

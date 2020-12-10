@@ -19,11 +19,7 @@ export function PuzzlePage(props: PuzzlePageProps) {
         <p>We&apos;re sorry, we couldn&apos;t find the puzzle you requested.</p>
         <p>{props.error}</p>
         <p>
-          Try the{' '}
-          <Link href="/" passHref>
-            homepage
-          </Link>
-          .
+          Try the <Link href="/">homepage</Link>.
         </p>
       </ErrorPage>
     );

@@ -625,9 +625,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
           topLine={props.constructor.n}
           byLine={
             <h2 css={{ fontSize: '1em', fontWeight: 'normal' }}>
-              <Link href="/[...slug]" as={'/' + username} passHref>
-                @{username}
-              </Link>
+              <Link href={'/' + username}>@{username}</Link>
             </h2>
           }
         />
@@ -668,12 +666,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
         {props.nextPage || props.prevPage !== null ? (
           <p css={{ textAlign: 'center' }}>
             {props.prevPage === 0 ? (
-              <Link
-                css={{ marginRight: '2em' }}
-                href="/[...slug]"
-                as={'/' + username}
-                passHref
-              >
+              <Link css={{ marginRight: '2em' }} href={'/' + username}>
                 ← Newer Puzzles
               </Link>
             ) : (
@@ -682,9 +675,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
             {props.prevPage ? (
               <Link
                 css={{ marginRight: '2em' }}
-                href="/[...slug]"
-                as={'/' + username + '/page/' + props.prevPage}
-                passHref
+                href={'/' + username + '/page/' + props.prevPage}
               >
                 ← Newer Puzzles
               </Link>
@@ -692,11 +683,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
               ''
             )}
             {props.nextPage !== null ? (
-              <Link
-                href="/[...slug]"
-                as={'/' + username + '/page/' + props.nextPage}
-                passHref
-              >
+              <Link href={'/' + username + '/page/' + props.nextPage}>
                 Older Puzzles →
               </Link>
             ) : (
