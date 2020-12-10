@@ -22,12 +22,12 @@ export const colorTheme = (
   darkMode: boolean
 ): CSSInterpolation => {
   const p = darkMode ? mix(primary, 'black', 0.5) : primary;
-  const cellBG = darkMode ? '#6d6d6d' : 'white';
+  const cellBG = darkMode ? '#444' : 'white';
   const hover = darkMode ? 'white' : 'black';
   const hoverRatio = 0.1;
   const bg = darkMode ? '#121212' : '#fff';
-  const secondary = darkMode ? '#444' : '#ccc';
-  const reffed = mix(p, cellBG, 0.8);
+  const secondary = darkMode ? '#222' : '#ccc';
+  const reffed = mix(p, cellBG, 0.7);
   const error = adjustHue(p, 300);
   return {
     '--bg': bg,
@@ -53,7 +53,7 @@ export const colorTheme = (
     '--autofill': darkMode ? '#999' : '#bbb',
     '--top-bar-hover': 'rgba(0, 0, 0, 0.1)',
     '--shade-highlight': darkMode
-      ? 'rgba(255, 255, 255, 0.3)'
+      ? 'rgba(255, 255, 255, 0.2)'
       : 'rgba(0, 0, 0, 0.3)',
     '--overlay-bg': 'rgba(0, 0, 0, 0.85)',
     '--overlay-inner': darkMode ? '#151515' : 'white',

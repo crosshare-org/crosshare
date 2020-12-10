@@ -116,6 +116,7 @@ import formatISO from 'date-fns/formatISO';
 import { useSnackbar } from './Snackbar';
 import { isNewPuzzleNotification } from '../lib/notifications';
 import { PuzzlePageResultProps } from '../lib/serverOnly';
+import { EmbedContext } from './EmbedContext';
 
 export interface NextPuzzleLink {
   puzzleId: string;
@@ -138,6 +139,8 @@ interface PauseBeginProps {
 }
 
 const BeginPauseOverlay = (props: PauseBeginProps) => {
+  const isEmbed = useContext(EmbedContext);
+
   return (
     <Overlay
       coverImage={props.coverImage}
@@ -169,6 +172,13 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
               text={props.dismissMessage}
             />
           </>
+        )}
+        {isEmbed ? (
+          <div css={{ marginTop: '2em' }}>
+            <Link href="/">Powered by crosshare.org</Link>
+          </div>
+        ) : (
+          ''
         )}
       </div>
     </Overlay>
@@ -295,9 +305,7 @@ const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
     return <></>;
   }
   return (
-    <Link
-      href={`/crosswords/${nextPuzzle.puzzleId}`}
-    >
+    <Link href={`/crosswords/${nextPuzzle.puzzleId}`}>
       Play {nextPuzzle.linkText}
     </Link>
   );
@@ -398,6 +406,7 @@ const SuccessOverlay = (props: {
   didCheat: boolean;
   dispatch: Dispatch<PuzzleAction>;
 }) => {
+  const isEmbed = useContext(EmbedContext);
   return (
     <Overlay
       coverImage={props.coverImage}
@@ -476,6 +485,13 @@ const SuccessOverlay = (props: {
         puzzleAuthorId={props.puzzle.authorId}
         comments={props.puzzle.comments}
       />
+      {isEmbed ? (
+        <div css={{ marginTop: '2em', textAlign: 'center' }}>
+          <Link href="/">Powered by crosshare.org</Link>
+        </div>
+      ) : (
+        ''
+      )}
     </Overlay>
   );
 };

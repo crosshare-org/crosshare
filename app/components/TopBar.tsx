@@ -22,6 +22,7 @@ import {
 import { ButtonResetCSS } from './Buttons';
 import { NotificationT } from '../lib/notifications';
 import { App } from '../lib/firebaseWrapper';
+import { EmbedContext } from './EmbedContext';
 
 export const TopBarDropDown = (props: {
   onClose?: () => void;
@@ -322,6 +323,7 @@ export const TopBarLinkA = (props: TopBarLinkAProps) => {
 
 export const TopBar = ({ children }: { children?: ReactNode }) => {
   const { notifications } = useContext(AuthContext);
+  const isEmbed = useContext(EmbedContext);
   const now = new Date();
   const filtered = notifications?.filter((n) => n.t.toDate() <= now);
   const [showingNotifications, setShowingNotifications] = useState(false);
@@ -372,7 +374,9 @@ export const TopBar = ({ children }: { children?: ReactNode }) => {
               lineHeight: HEADER_HEIGHT - 4 + 'px',
             }}
           >
-            {filtered?.length && !showingNotifications ? (
+            {isEmbed ? (
+              <div css={{ flexGrow: 1 }} />
+            ) : filtered?.length && !showingNotifications ? (
               <button
                 type="button"
                 onClick={() => setShowingNotifications(true)}
@@ -496,7 +500,13 @@ export const TopBar = ({ children }: { children?: ReactNode }) => {
         )}
       </>
     );
-  }, [children, filtered, showingNotifications, setShowingNotifications]);
+  }, [
+    children,
+    filtered,
+    showingNotifications,
+    setShowingNotifications,
+    isEmbed,
+  ]);
 };
 
 const NotificationLinkCSS = {
