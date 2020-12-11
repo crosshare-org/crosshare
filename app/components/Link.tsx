@@ -13,8 +13,7 @@ interface LinkProps {
 
 export function LinkButton(props: LinkProps) {
   return (
-    /* href is passed by NextLink */
-    /* eslint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/anchor-has-content */
+    /* eslint-disable-next-line jsx-a11y/anchor-has-content */
     <Link
       css={[
         ButtonResetCSS,
