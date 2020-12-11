@@ -295,7 +295,7 @@ export default requiresAdmin(() => {
           </form>
         )}
         <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>
-          Unmoderated
+          Unmoderated (oldest first)
         </h4>
         {unmoderated.length === 0 ? (
           <div>No puzzles are currently awaiting moderation.</div>
