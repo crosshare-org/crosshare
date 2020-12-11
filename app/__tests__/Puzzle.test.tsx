@@ -550,7 +550,7 @@ test('visiting a puzzle youve already solved should not write to db', async () =
     user: anonymousUser,
   });
 
-  await findByText(/You solved the puzzle in/i, { exact: false });
+  await findByText(/Solved in/i, { exact: false });
   cleanup();
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(0);
 
