@@ -10,24 +10,28 @@ exports[`basic comment display 1`] = `
 }
 
 .emotion-2 {
+  text-align: center;
+}
+
+.emotion-3 {
   list-style-type: none;
   margin: 2em 0 0 0;
   padding: 0;
 }
 
-.emotion-3 {
+.emotion-4 {
   margin-top: 1em;
 }
 
-.emotion-3 p:last-of-type {
+.emotion-4 p:last-of-type {
   margin-bottom: 0;
 }
 
-.emotion-4 {
+.emotion-5 {
   vertical-align: text-bottom;
 }
 
-.emotion-5 {
+.emotion-6 {
   font-size: 0.75em;
   background-color: var(--caption);
   color: white;
@@ -35,7 +39,7 @@ exports[`basic comment display 1`] = `
   padding: 0.1em 0.2em;
 }
 
-.emotion-6 {
+.emotion-7 {
   font-style: italic;
 }
 
@@ -47,19 +51,30 @@ exports[`basic comment display 1`] = `
   >
     Comments
   </h4>
-  <div>
-    Sign in with google (above) to leave a comment of your own
+  <div
+    class="emotion-2"
+  >
+    <p>
+      Sign in with google to leave a comment of your own:
+    </p>
+    <input
+      alt="Sign in with Google"
+      height="46"
+      src="/googlesignin.png"
+      type="image"
+      width="191"
+    />
   </div>
   <ul
-    class="emotion-2"
+    class="emotion-3"
   >
     <li>
       <div
-        class="emotion-3"
+        class="emotion-4"
       >
         <div>
           <span
-            class="emotion-4"
+            class="emotion-5"
           >
             <svg
               fill="rgb(25,42,230)"
@@ -179,13 +194,13 @@ exports[`basic comment display 1`] = `
             🤓
           </span>
           <span
-            class="emotion-5"
+            class="emotion-6"
           >
             55s
           </span>
            · 
           <span
-            class="emotion-6"
+            class="emotion-7"
             title="2020-08-01T00:00:00-04:00"
           >
             1 day ago
@@ -217,24 +232,28 @@ exports[`comment with username display 1`] = `
 }
 
 .emotion-2 {
+  text-align: center;
+}
+
+.emotion-3 {
   list-style-type: none;
   margin: 2em 0 0 0;
   padding: 0;
 }
 
-.emotion-3 {
+.emotion-4 {
   margin-top: 1em;
 }
 
-.emotion-3 p:last-of-type {
+.emotion-4 p:last-of-type {
   margin-bottom: 0;
 }
 
-.emotion-4 {
+.emotion-5 {
   vertical-align: text-bottom;
 }
 
-.emotion-5 {
+.emotion-6 {
   font-size: 0.75em;
   background-color: var(--caption);
   color: white;
@@ -242,7 +261,7 @@ exports[`comment with username display 1`] = `
   padding: 0.1em 0.2em;
 }
 
-.emotion-6 {
+.emotion-7 {
   font-style: italic;
 }
 
@@ -254,19 +273,30 @@ exports[`comment with username display 1`] = `
   >
     Comments
   </h4>
-  <div>
-    Sign in with google (above) to leave a comment of your own
+  <div
+    class="emotion-2"
+  >
+    <p>
+      Sign in with google to leave a comment of your own:
+    </p>
+    <input
+      alt="Sign in with Google"
+      height="46"
+      src="/googlesignin.png"
+      type="image"
+      width="191"
+    />
   </div>
   <ul
-    class="emotion-2"
+    class="emotion-3"
   >
     <li>
       <div
-        class="emotion-3"
+        class="emotion-4"
       >
         <div>
           <span
-            class="emotion-4"
+            class="emotion-5"
           >
             <svg
               fill="rgb(25,42,230)"
@@ -390,13 +420,13 @@ exports[`comment with username display 1`] = `
             🤓
           </span>
           <span
-            class="emotion-5"
+            class="emotion-6"
           >
             55s
           </span>
            · 
           <span
-            class="emotion-6"
+            class="emotion-7"
             title="2020-08-01T00:00:00-04:00"
           >
             1 day ago
