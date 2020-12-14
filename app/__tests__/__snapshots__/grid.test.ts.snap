@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test getEntryToClueMap 1`] = `
+Map {
+  "UP" => Array [
+    1,
+    0,
+    "Not down",
+  ],
+  "US" => Array [
+    1,
+    1,
+    "You and I",
+  ],
+  "PO" => Array [
+    2,
+    1,
+    "Post office abbr.",
+  ],
+  "SO" => Array [
+    3,
+    0,
+    "Then...",
+  ],
+}
+`;

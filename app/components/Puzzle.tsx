@@ -54,12 +54,8 @@ import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
 import { Direction, BLOCK, ServerPuzzleResult } from '../lib/types';
-import { fromCells, addClues } from '../lib/viewableGrid';
-import {
-  entryAndCrossAtPosition,
-  cellIndex,
-  entryIndexAtPosition,
-} from '../lib/gridBase';
+import { fromCells, addClues, getEntryToClueMap } from '../lib/viewableGrid';
+import { entryAndCrossAtPosition, entryIndexAtPosition } from '../lib/gridBase';
 import { cachePlay, writePlayToDB, isDirty } from '../lib/plays';
 import {
   PlayWithoutUserT,
@@ -852,20 +848,15 @@ export const Puzzle = ({
   const isEmbed = useContext(EmbedContext);
 
   /* `clueMap` is a map from ENTRYWORD => '5D: This is the clue' - we use this
-   *    for comment clue tooltips.
-   * `refs` is a set of referenced '5D's for each entry in the grid - we use this
+   *    for comment clue tooltips. */
+  const clueMap = useMemo(() => {
+    return getEntryToClueMap(state.grid, state.answers);
+  }, [state.grid, state.answers]);
+
+  /* `refs` is a set of referenced '5D's for each entry in the grid - we use this
    *    for grid highlights when an entry is selected.
    */
-  const [clueMap, refs] = useMemo(() => {
-    const asList: Array<
-      [string, [number, Direction, string]]
-    > = state.grid.entries.map((e) => {
-      return [
-        e.cells.map((p) => state.answers[cellIndex(state.grid, p)]).join(''),
-        [e.labelNumber, e.direction, e.clue],
-      ];
-    });
-
+  const refs = useMemo(() => {
     const refsList: Array<Set<[number, 0 | 1]>> = [];
 
     for (const e of state.grid.entries) {
@@ -913,8 +904,8 @@ export const Puzzle = ({
       });
     });
 
-    return [new Map(asList), refsList];
-  }, [state.answers, state.grid]);
+    return refsList;
+  }, [state.grid]);
 
   const scrollToCross = useMatchMedia(SMALL_AND_UP_RULES);
 

@@ -417,6 +417,25 @@ function cluesByDirection(rawClues: Array<ClueT>) {
   return clues;
 }
 
+/* Returns a map from ENTRYWORD => '5D: This is the clue'.
+ *
+ * We use this for comment clue tooltips. */
+export function getEntryToClueMap(
+  grid: CluedGrid,
+  answers: Array<string>
+): Map<string, [number, Direction, string]> {
+  const asList: Array<[string, [number, Direction, string]]> = grid.entries.map(
+    (e) => {
+      return [
+        e.cells.map((p) => answers[cellIndex(grid, p)]).join(''),
+        [e.labelNumber, e.direction, e.clue],
+      ];
+    }
+  );
+
+  return new Map(asList);
+}
+
 export function addClues<
   Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>
