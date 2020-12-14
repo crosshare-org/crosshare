@@ -1,5 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`test getClueRefs for 35-downs 1`] = `
+Array [
+  Array [
+    Array [
+      1,
+      1,
+    ],
+  ],
+  Array [
+    Array [
+      1,
+      0,
+    ],
+    Array [
+      3,
+      0,
+    ],
+  ],
+  Array [
+    Array [
+      3,
+      0,
+    ],
+  ],
+  Array [
+    Array [
+      2,
+      1,
+    ],
+    Array [
+      1,
+      1,
+    ],
+  ],
+]
+`;
+
 exports[`test getClueRefs for puzzle with refs 1`] = `
 Array [
   Array [

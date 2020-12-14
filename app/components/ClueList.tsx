@@ -25,7 +25,7 @@ interface ClueTextProps {
 const ClueText = (props: ClueTextProps) => {
   let text = props.text;
   const parts: Array<ReactNode> = [];
-  const re = /^(?<all>(?<num>\d+)(?<others>[, \d-]*?((and|&)[\d -]+)?)(?<dir>across|down))\b/i;
+  const re = /^(?<all>(?<num>\d+)(?<others>[, \d-]*?((and|&)[\d -]+)?)(?<dir>across(es)?|downs?))\b/i;
   const digit = /\d/;
   const oppo = /^(?<text>.+?)\b\d/;
   let i = 0;
@@ -39,10 +39,9 @@ const ClueText = (props: ClueTextProps) => {
       match.groups.all
     ) {
       const num = parseInt(match.groups.num);
-      const dir =
-        match.groups.dir.toLowerCase() === 'across'
-          ? Direction.Across
-          : Direction.Down;
+      const dir = match.groups.dir.toLowerCase().startsWith('across')
+        ? Direction.Across
+        : Direction.Down;
       let matchLength = match.groups.all.length;
       if (match.groups.others?.match(digit)) {
         // There are more numbers, so only link on the digits themselves
