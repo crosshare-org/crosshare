@@ -436,6 +436,60 @@ export function getEntryToClueMap(
   return new Map(asList);
 }
 
+/* `refs` is a set of referenced '5D's for each entry in the grid - we use this
+ *    for grid highlights when an entry is selected.
+ */
+export function getRefs(grid: CluedGrid): Array<Set<[number, Direction]>> {
+  const refsList: Array<Set<[number, 0 | 1]>> = [];
+
+  for (const e of grid.entries) {
+    const refs = new Set<[number, 0 | 1]>();
+    let match;
+    const re = /(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>across|down)\b/gi;
+    while ((match = re.exec(e.clue)) !== null) {
+      const dirString = match.groups?.dir?.toLowerCase();
+      if (!dirString) {
+        throw new Error('missing dir string');
+      }
+      const dir = dirString === 'across' ? Direction.Across : Direction.Down;
+      const numSection = match.groups?.numSection;
+      if (!numSection) {
+        throw new Error('missing numSection');
+      }
+      let numMatch: RegExpExecArray | null;
+      const numRe = /\d+/g;
+      while ((numMatch = numRe.exec(numSection)) !== null && numMatch[0]) {
+        refs.add([parseInt(numMatch[0]), dir]);
+      }
+    }
+    refsList.push(refs);
+  }
+
+  // Now do backrefs
+  refsList.forEach((refs, idx) => {
+    const e1 = grid.entries[idx];
+    if (e1 === undefined) {
+      return;
+    }
+    refsList.forEach((refs2, idx2) => {
+      if (idx2 === idx) {
+        return;
+      }
+      const e2 = grid.entries[idx2];
+      if (e2 === undefined) {
+        return;
+      }
+      refs2.forEach(([labelNumber, dir]) => {
+        if (labelNumber === e1.labelNumber && dir === e1.direction) {
+          refs.add([e2.labelNumber, e2.direction]);
+        }
+      });
+    });
+  });
+
+  return refsList;
+}
+
 export function addClues<
   Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>

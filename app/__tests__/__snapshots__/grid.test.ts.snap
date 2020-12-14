@@ -1,5 +1,63 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`test getClueRefs for puzzle with refs 1`] = `
+Array [
+  Set {
+    Array [
+      5,
+      0,
+    ],
+    Array [
+      1,
+      1,
+    ],
+  },
+  Set {
+    Array [
+      1,
+      0,
+    ],
+    Array [
+      3,
+      0,
+    ],
+    Array [
+      1,
+      0,
+    ],
+  },
+  Set {
+    Array [
+      3,
+      0,
+    ],
+  },
+  Set {
+    Array [
+      2,
+      1,
+    ],
+    Array [
+      1,
+      1,
+    ],
+    Array [
+      2,
+      1,
+    ],
+  },
+]
+`;
+
+exports[`test getClueRefs for puzzle without any 1`] = `
+Array [
+  Set {},
+  Set {},
+  Set {},
+  Set {},
+]
+`;
+
 exports[`test getEntryToClueMap 1`] = `
 Map {
   "UP" => Array [
