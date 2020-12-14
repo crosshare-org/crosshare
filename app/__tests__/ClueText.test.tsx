@@ -1,5 +1,5 @@
 import { render } from '../lib/testingUtils';
-import { addClues, CluedGrid, fromCells } from '../lib/viewableGrid';
+import { addClues, CluedGrid, fromCells, getRefs } from '../lib/viewableGrid';
 import { ClueText } from '../components/ClueText';
 
 test('Highlighting for different types of clues', () => {
@@ -21,12 +21,16 @@ test('Highlighting for different types of clues', () => {
     { num: 2, dir: 1, clue: '3A Post office abbr.', explanation: null },
   ]);
 
+  const [, refPositions] = getRefs(cluedGrid);
+
+  console.log(refPositions);
   for (let i = 0; i < 4; i += 1) {
     const { container } = render(
       <ClueText
         grid={cluedGrid}
         allEntries={cluedGrid.entries}
         entryIndex={i}
+        refPositions={refPositions}
       />,
       {}
     );

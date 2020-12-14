@@ -104,10 +104,18 @@ Array [
 
 exports[`test getClueRefs for puzzle without any 1`] = `
 Array [
-  Set {},
-  Set {},
-  Set {},
-  Set {},
+  Array [
+    Set {},
+    Set {},
+    Set {},
+    Set {},
+  ],
+  Array [
+    Array [],
+    Array [],
+    Array [],
+    Array [],
+  ],
 ]
 `;
 

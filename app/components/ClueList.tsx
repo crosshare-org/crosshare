@@ -8,7 +8,7 @@ import {
 } from 'react';
 
 import { Position, Direction } from '../lib/types';
-import { CluedEntry } from '../lib/viewableGrid';
+import { CluedEntry, RefPosition } from '../lib/viewableGrid';
 import { GridBase, valAt, EntryBase } from '../lib/gridBase';
 
 import { PuzzleAction, ClickedEntryAction } from '../reducers/reducer';
@@ -27,6 +27,7 @@ interface ClueListItemProps {
   wasEntryClick: boolean;
   showEntry: boolean;
   allEntries?: Array<CluedEntry>;
+  refPositions?: Array<Array<RefPosition>>;
   grid: GridBase<EntryBase>;
   scrollToCross: boolean;
   listRef: RefObject<HTMLDivElement>;
@@ -139,9 +140,10 @@ const ClueListItem = memo(function ClueListItem({
             textShadow: props.conceal ? '0 0 1em var(--conceal-text)' : '',
           }}
         >
-          {props.allEntries ? (
+          {props.allEntries && props.refPositions ? (
             <ClueText
-              text={props.entry.clue}
+              refPositions={props.refPositions}
+              entryIndex={props.entry.index}
               allEntries={props.allEntries}
               grid={props.grid}
             />
@@ -192,6 +194,7 @@ interface ClueListProps {
   refed: Set<number>;
   entries: Array<CluedEntry>;
   allEntries?: Array<CluedEntry>;
+  refPositions?: Array<Array<RefPosition>>;
   dispatch: Dispatch<PuzzleAction>;
   showEntries: boolean;
   grid: GridBase<EntryBase>;
@@ -213,6 +216,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
         grid={props.grid}
         showEntry={props.showEntries}
         allEntries={props.allEntries}
+        refPositions={props.refPositions}
         entry={entry}
         conceal={props.conceal}
         key={entry.index}

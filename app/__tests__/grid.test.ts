@@ -70,7 +70,7 @@ test('test getClueRefs for puzzle with refs', () => {
     { num: 2, dir: 1, clue: '3A Post office abbr.', explanation: null },
   ]);
 
-  const res = getRefs(cluedGrid).map((s) => {
+  const res = getRefs(cluedGrid)[0].map((s) => {
     return [...s].map((e): [number | undefined, number | undefined] => {
       return [
         cluedGrid.entries[e]?.labelNumber,
@@ -105,7 +105,7 @@ test('test getClueRefs for puzzle with starred clues', () => {
     },
   ]);
 
-  const res = getRefs(cluedGrid).map((s) => {
+  const res = getRefs(cluedGrid)[0].map((s) => {
     return [...s].map((e): [number | undefined, number | undefined] => {
       return [
         cluedGrid.entries[e]?.labelNumber,
@@ -135,7 +135,7 @@ test('test getClueRefs for 35-downs', () => {
     { num: 2, dir: 1, clue: '3A Post office abbr.', explanation: null },
   ]);
 
-  const res = getRefs(cluedGrid).map((s) => {
+  const res = getRefs(cluedGrid)[0].map((s) => {
     return [...s].map((e): [number | undefined, number | undefined] => {
       return [
         cluedGrid.entries[e]?.labelNumber,

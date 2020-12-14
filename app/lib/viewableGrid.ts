@@ -436,14 +436,19 @@ export function getEntryToClueMap(
   return new Map(asList);
 }
 
+export type RefPosition = [entryIndex: number, start: number, end: number];
 /* `refs` is a set of referenced entry indexes for each entry in the grid - we use this
  *    for grid highlights when an entry is selected.
  */
-export function getRefs(grid: CluedGrid): Array<Set<number>> {
+export function getRefs(
+  grid: CluedGrid
+): [Array<Set<number>>, Array<Array<RefPosition>>] {
   const refsList: Array<Set<number>> = [];
+  const refPositions: Array<Array<RefPosition>> = [];
 
   for (const e of grid.entries) {
     const refs = new Set<number>();
+    const refPos: Array<RefPosition> = [];
     let match;
     const re = /(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>across(es)?|downs?)\b/gi;
     while ((match = re.exec(e.clue)) !== null) {
@@ -467,7 +472,16 @@ export function getRefs(grid: CluedGrid): Array<Set<number>> {
         );
         if (entryIndex !== -1) {
           refs.add(entryIndex);
+          refPos.push([
+            entryIndex,
+            match.index + numMatch.index,
+            match.index + numMatch.index + numMatch[0].length,
+          ]);
         }
+      }
+      const last = refPos[refPos.length - 1];
+      if (last && match[0]) {
+        last[2] = match.index + match[0].length;
       }
     }
     const lowerClue = e.clue.toLowerCase();
@@ -482,6 +496,7 @@ export function getRefs(grid: CluedGrid): Array<Set<number>> {
       }
     }
     refsList.push(refs);
+    refPositions.push(refPos);
   }
 
   // Now do backrefs
@@ -495,7 +510,7 @@ export function getRefs(grid: CluedGrid): Array<Set<number>> {
     }
   });
 
-  return refsList;
+  return [refsList, refPositions];
 }
 
 export function addClues<
