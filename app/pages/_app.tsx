@@ -26,6 +26,7 @@ if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
       'Extension context invalidated',
       'entryTypes contained only unsupported types',
       'The popup has been closed by the user before finalizing the operation',
+      'SecurityError: Blocked a frame with origin "https://crosshare.org"',
     ],
   });
 }
