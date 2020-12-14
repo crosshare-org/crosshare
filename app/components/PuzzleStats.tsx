@@ -148,6 +148,7 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
           header="Across"
           entries={acrossEntries}
           current={entry?.index}
+          refed={new Set()}
           cross={cross?.index}
           scrollToCross={scrollToCross}
           dispatch={dispatch}
@@ -164,6 +165,7 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
           header="Down"
           entries={downEntries}
           current={entry?.index}
+          refed={new Set()}
           cross={cross?.index}
           scrollToCross={scrollToCross}
           dispatch={dispatch}

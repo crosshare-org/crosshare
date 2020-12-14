@@ -468,6 +468,17 @@ export function getRefs(grid: CluedGrid): Array<Set<number>> {
         }
       }
     }
+    const lowerClue = e.clue.toLowerCase();
+    if (
+      lowerClue.includes('the starred clues') ||
+      lowerClue.includes('the starred entries')
+    ) {
+      for (const [idx, otherE] of grid.entries.entries()) {
+        if (otherE.clue.startsWith('*')) {
+          refs.add(idx);
+        }
+      }
+    }
     refsList.push(refs);
   }
 

@@ -37,6 +37,34 @@ Array [
 ]
 `;
 
+exports[`test getClueRefs for puzzle with starred clues 1`] = `
+Array [
+  Array [
+    Array [
+      2,
+      1,
+    ],
+  ],
+  Array [
+    Array [
+      2,
+      1,
+    ],
+  ],
+  Array [
+    Array [
+      1,
+      0,
+    ],
+    Array [
+      1,
+      1,
+    ],
+  ],
+  Array [],
+]
+`;
+
 exports[`test getClueRefs for puzzle without any 1`] = `
 Array [
   Set {},

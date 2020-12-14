@@ -227,6 +227,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
                 header="Across"
                 entries={acrossEntries}
                 current={entry?.index}
+                refed={new Set()}
                 cross={cross?.index}
                 scrollToCross={scrollToCross}
                 dispatch={dispatch}
@@ -243,6 +244,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
                 header="Down"
                 entries={downEntries}
                 current={entry?.index}
+                refed={new Set()}
                 cross={cross?.index}
                 scrollToCross={scrollToCross}
                 dispatch={dispatch}
