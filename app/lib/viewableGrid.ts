@@ -450,15 +450,13 @@ export function getRefs(
     const refs = new Set<number>();
     const refPos: Array<RefPosition> = [];
     let match;
-    const re = /(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>across(es)?|downs?)\b/gi;
+    const re = /(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
     while ((match = re.exec(e.clue)) !== null) {
       const dirString = match.groups?.dir?.toLowerCase();
       if (!dirString) {
         throw new Error('missing dir string');
       }
-      const dir = dirString.startsWith('across')
-        ? Direction.Across
-        : Direction.Down;
+      const dir = dirString.startsWith('a') ? Direction.Across : Direction.Down;
       const numSection = match.groups?.numSection;
       if (!numSection) {
         throw new Error('missing numSection');

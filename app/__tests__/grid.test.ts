@@ -132,7 +132,7 @@ test('test getClueRefs for 35-downs', () => {
     { num: 1, dir: 0, clue: 'Not down 5-acrosses', explanation: null },
     { num: 3, dir: 0, clue: '2-downs Then...', explanation: null },
     { num: 1, dir: 1, clue: '1- and 3- acrosses You and I', explanation: null },
-    { num: 2, dir: 1, clue: '3A Post office abbr.', explanation: null },
+    { num: 2, dir: 1, clue: '1-A Post office abbr.', explanation: null },
   ]);
 
   const res = getRefs(cluedGrid)[0].map((s) => {
