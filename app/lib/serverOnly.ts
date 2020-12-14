@@ -54,7 +54,7 @@ export async function getStorageUrl(
   return null;
 }
 
-const PuzzleIndexV = t.intersection([
+export const PuzzleIndexV = t.intersection([
   t.type({
     /** array of puzzle timestamps */
     t: t.array(adminTimestamp),
