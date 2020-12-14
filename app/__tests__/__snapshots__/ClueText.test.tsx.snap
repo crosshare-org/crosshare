@@ -1,0 +1,203 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Highlighting for different types of clues 1`] = `
+<div>
+  <div>
+    Not down 
+    5-acrosses
+  </div>
+</div>
+`;
+
+exports[`Highlighting for different types of clues 2`] = `
+.emotion-0 {
+  border-bottom: 1px dotted;
+  white-space: nowrap;
+}
+
+.emotion-1 {
+  z-index: 100000;
+  border-radius: 5px;
+  background-color: var(--black);
+  color: var(--white);
+  text-align: center;
+  max-width: 30em;
+  padding: 10px;
+  visibility: hidden;
+}
+
+.emotion-1[data-popper-reference-hidden=true] {
+  visibility: hidden;
+}
+
+.emotion-2 {
+  margin-left: 0.5em;
+  white-space: nowrap;
+}
+
+.emotion-3 {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+}
+
+[data-popper-placement^="bottom"] .emotion-3 {
+  top: -5px;
+}
+
+[data-popper-placement^="top"] .emotion-3 {
+  bottom: -5px;
+}
+
+.emotion-3::after {
+  content: " ";
+  position: absolute;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background-color: var(--black);
+}
+
+<div>
+  <div>
+    <span
+      class="emotion-0"
+    >
+      1
+    </span>
+    <div
+      class="emotion-1"
+      style="position: fixed; left: 0px; top: 0px;"
+    >
+      Not down 5-acrosses
+      <b
+        class="emotion-2"
+      >
+        [
+        U
+        P
+        ]
+      </b>
+      <div
+        class="emotion-3"
+      />
+    </div>
+    - and 
+    <span
+      class="emotion-0"
+    >
+      3- acrosses
+    </span>
+    <div
+      class="emotion-1"
+      style="position: fixed; left: 0px; top: 0px;"
+    >
+      2-down Then...
+      <b
+        class="emotion-2"
+      >
+        [
+        S
+        O
+        ]
+      </b>
+      <div
+        class="emotion-3"
+      />
+    </div>
+     You and I
+  </div>
+</div>
+`;
+
+exports[`Highlighting for different types of clues 3`] = `
+<div>
+  <div>
+    3A Post office abbr.
+  </div>
+</div>
+`;
+
+exports[`Highlighting for different types of clues 4`] = `
+.emotion-0 {
+  border-bottom: 1px dotted;
+  white-space: nowrap;
+}
+
+.emotion-1 {
+  z-index: 100000;
+  border-radius: 5px;
+  background-color: var(--black);
+  color: var(--white);
+  text-align: center;
+  max-width: 30em;
+  padding: 10px;
+  visibility: hidden;
+}
+
+.emotion-1[data-popper-reference-hidden=true] {
+  visibility: hidden;
+}
+
+.emotion-2 {
+  margin-left: 0.5em;
+  white-space: nowrap;
+}
+
+.emotion-3 {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+}
+
+[data-popper-placement^="bottom"] .emotion-3 {
+  top: -5px;
+}
+
+[data-popper-placement^="top"] .emotion-3 {
+  bottom: -5px;
+}
+
+.emotion-3::after {
+  content: " ";
+  position: absolute;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background-color: var(--black);
+}
+
+<div>
+  <div>
+    <span
+      class="emotion-0"
+    >
+      2-down
+    </span>
+    <div
+      class="emotion-1"
+      style="position: fixed; left: 0px; top: 0px;"
+    >
+      3A Post office abbr.
+      <b
+        class="emotion-2"
+      >
+        [
+        P
+        O
+        ]
+      </b>
+      <div
+        class="emotion-3"
+      />
+    </div>
+     Then...
+  </div>
+</div>
+`;
