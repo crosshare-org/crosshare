@@ -2,17 +2,13 @@
 
 exports[`test getClueRefs for puzzle with refs 1`] = `
 Array [
-  Set {
-    Array [
-      5,
-      0,
-    ],
+  Array [
     Array [
       1,
       1,
     ],
-  },
-  Set {
+  ],
+  Array [
     Array [
       1,
       0,
@@ -21,18 +17,14 @@ Array [
       3,
       0,
     ],
-    Array [
-      1,
-      0,
-    ],
-  },
-  Set {
+  ],
+  Array [
     Array [
       3,
       0,
     ],
-  },
-  Set {
+  ],
+  Array [
     Array [
       2,
       1,
@@ -41,11 +33,7 @@ Array [
       1,
       1,
     ],
-    Array [
-      2,
-      1,
-    ],
-  },
+  ],
 ]
 `;
 

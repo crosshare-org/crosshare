@@ -263,7 +263,7 @@ interface ClueListProps {
   active: Position;
   wasEntryClick: boolean;
   cross?: number;
-  refed?: Array<number>;
+  refed: Set<number>;
   entries: Array<CluedEntry>;
   allEntries?: Array<CluedEntry>;
   dispatch: Dispatch<PuzzleAction>;
@@ -277,7 +277,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
   const clues = props.entries.map((entry) => {
     const isActive = props.current === entry.index;
     const isCross = props.cross === entry.index;
-    const isRefed = props.refed?.find((n) => n === entry.index) !== undefined;
+    const isRefed = props.refed.has(entry.index);
     return (
       <ClueListItem
         listRef={ref}

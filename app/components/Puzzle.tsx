@@ -858,8 +858,8 @@ export const Puzzle = ({
     return getEntryToClueMap(state.grid, state.answers);
   }, [state.grid, state.answers]);
 
-  /* `refs` is a set of referenced '5D's for each entry in the grid - we use this
-   *    for grid highlights when an entry is selected.
+  /* `refs` is a set of referenced entry indexes for each entry in the grid - we use this
+   * for grid highlights when an entry is selected.
    */
   const refs = useMemo(() => {
     return getRefs(state.grid);
@@ -870,13 +870,9 @@ export const Puzzle = ({
   let puzzleView: ReactNode;
 
   const entryIdx = entryIndexAtPosition(state.grid, state.active);
-  let refed: Array<number> = [];
+  let refed: Set<number> = new Set();
   if (entryIdx !== null) {
-    refed = [...(refs[entryIdx] || [])].map(([labelNumber, direction]) =>
-      state.grid.entries.findIndex(
-        (e) => e.labelNumber === labelNumber && e.direction === direction
-      )
-    );
+    refed = refs[entryIdx] || new Set();
   }
 
   const shouldConceal =

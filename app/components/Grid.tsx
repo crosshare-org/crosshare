@@ -22,7 +22,7 @@ type GridViewProps = {
   squareWidth: number;
   cellColors?: Array<number>;
   highlightEntry?: number;
-  entryRefs?: Array<Set<[number, 0 | 1]>>;
+  entryRefs?: Array<Set<number>>;
 };
 
 export const GridView = ({
@@ -41,11 +41,10 @@ export const GridView = ({
   if (entryIdx !== null) {
     const refedCellsSet = new Set(entryCells);
     if (props.entryRefs) {
-      props.entryRefs[entryIdx]?.forEach(([labelNumber, dir]) => {
-        for (const e of grid.entries) {
-          if (e.direction === dir && e.labelNumber === labelNumber) {
-            e.cells.forEach((p) => refedCellsSet.add(p));
-          }
+      props.entryRefs[entryIdx]?.forEach((refedEntryIdx) => {
+        const refedEntry = grid.entries[refedEntryIdx];
+        if (refedEntry) {
+          refedEntry.cells.forEach((p) => refedCellsSet.add(p));
         }
       });
     }

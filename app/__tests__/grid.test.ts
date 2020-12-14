@@ -70,5 +70,13 @@ test('test getClueRefs for puzzle with refs', () => {
     { num: 2, dir: 1, clue: '3A Post office abbr.', explanation: null },
   ]);
 
-  expect(getRefs(cluedGrid)).toMatchSnapshot();
+  const res = getRefs(cluedGrid).map((s) => {
+    return [...s].map((e): [number | undefined, number | undefined] => {
+      return [
+        cluedGrid.entries[e]?.labelNumber,
+        cluedGrid.entries[e]?.direction,
+      ];
+    });
+  });
+  expect(res).toMatchSnapshot();
 });

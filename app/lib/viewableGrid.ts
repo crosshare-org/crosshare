@@ -436,14 +436,14 @@ export function getEntryToClueMap(
   return new Map(asList);
 }
 
-/* `refs` is a set of referenced '5D's for each entry in the grid - we use this
+/* `refs` is a set of referenced entry indexes for each entry in the grid - we use this
  *    for grid highlights when an entry is selected.
  */
-export function getRefs(grid: CluedGrid): Array<Set<[number, Direction]>> {
-  const refsList: Array<Set<[number, 0 | 1]>> = [];
+export function getRefs(grid: CluedGrid): Array<Set<number>> {
+  const refsList: Array<Set<number>> = [];
 
   for (const e of grid.entries) {
-    const refs = new Set<[number, 0 | 1]>();
+    const refs = new Set<number>();
     let match;
     const re = /(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>across|down)\b/gi;
     while ((match = re.exec(e.clue)) !== null) {
@@ -459,7 +459,13 @@ export function getRefs(grid: CluedGrid): Array<Set<[number, Direction]>> {
       let numMatch: RegExpExecArray | null;
       const numRe = /\d+/g;
       while ((numMatch = numRe.exec(numSection)) !== null && numMatch[0]) {
-        refs.add([parseInt(numMatch[0]), dir]);
+        const labelNumber = parseInt(numMatch[0]);
+        const entryIndex = grid.entries.findIndex(
+          (e) => e.labelNumber === labelNumber && e.direction === dir
+        );
+        if (entryIndex !== -1) {
+          refs.add(entryIndex);
+        }
       }
     }
     refsList.push(refs);
@@ -467,24 +473,13 @@ export function getRefs(grid: CluedGrid): Array<Set<[number, Direction]>> {
 
   // Now do backrefs
   refsList.forEach((refs, idx) => {
-    const e1 = grid.entries[idx];
-    if (e1 === undefined) {
-      return;
+    for (const refedEntryIdx of refs) {
+      const backRefs = refsList[refedEntryIdx];
+      if (backRefs === undefined) {
+        throw new Error('bad backrefs');
+      }
+      backRefs.add(idx);
     }
-    refsList.forEach((refs2, idx2) => {
-      if (idx2 === idx) {
-        return;
-      }
-      const e2 = grid.entries[idx2];
-      if (e2 === undefined) {
-        return;
-      }
-      refs2.forEach(([labelNumber, dir]) => {
-        if (labelNumber === e1.labelNumber && dir === e1.direction) {
-          refs.add([e2.labelNumber, e2.direction]);
-        }
-      });
-    });
   });
 
   return refsList;
