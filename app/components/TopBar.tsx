@@ -321,7 +321,13 @@ export const TopBarLinkA = (props: TopBarLinkAProps) => {
   );
 };
 
-export const TopBar = ({ children }: { children?: ReactNode }) => {
+export const TopBar = ({
+  children,
+  title,
+}: {
+  children?: ReactNode;
+  title?: string;
+}) => {
   const { notifications } = useContext(AuthContext);
   const isEmbed = useContext(EmbedContext);
   const now = new Date();
@@ -375,7 +381,23 @@ export const TopBar = ({ children }: { children?: ReactNode }) => {
             }}
           >
             {isEmbed ? (
-              <div css={{ flexGrow: 1 }} />
+              <div
+                title={title}
+                css={{
+                  flexGrow: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  marginLeft: '5px',
+                  color: 'var(--text)',
+                  fontSize: HEADER_HEIGHT - 10,
+                  [SMALL_AND_UP]: {
+                    display: 'inline-block',
+                  },
+                }}
+              >
+                {title}
+              </div>
             ) : filtered?.length && !showingNotifications ? (
               <button
                 type="button"

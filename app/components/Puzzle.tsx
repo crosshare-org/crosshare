@@ -1176,7 +1176,7 @@ export const Puzzle = ({
         }}
       >
         <div css={{ flex: 'none' }}>
-          <TopBar>
+          <TopBar title={puzzle.title}>
             {!loadingPlayState ? (
               !state.success ? (
                 <>
