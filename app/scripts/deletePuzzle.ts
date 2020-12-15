@@ -63,11 +63,6 @@ async function deletePuzzle() {
     return;
   }
 
-  if (dbpuz.f) {
-    console.error('Cant delete featured');
-    return;
-  }
-
   console.log('deleting notifications');
   db.collection('n')
     .where('p', '==', dbres.id)
