@@ -1,10 +1,10 @@
-import { Dispatch, useMemo, useState, useCallback } from 'react';
+import { Dispatch, useMemo, useState, useCallback, useEffect } from 'react';
 import { Direction, ServerPuzzleResult } from '../lib/types';
 import { PuzzleAction } from '../reducers/reducer';
 import { Overlay } from './Overlay';
 import type firebase from 'firebase/app';
 import { CopyableInput } from './CopyableInput';
-import { EmbedOptionsT } from '../lib/embedOptions';
+import { EmbedOptionsT, validate } from '../lib/embedOptions';
 import { colorTheme, PRIMARY } from '../lib/style';
 import { adjustHue, parseToRgba } from 'color2k';
 import { GridView } from './Grid';
@@ -21,6 +21,30 @@ export const EmbedOverlay = ({
   dispatch: Dispatch<PuzzleAction>;
   user: firebase.User;
 }) => {
+  const [loadingOptions, setLoadingOptions] = useState(true);
+  const [embedOptions, setEmbedOptions] = useState<EmbedOptionsT | null>(null);
+
+  useEffect(() => {
+    let didCancel = false;
+    async function getEmbedOptions() {
+      const res = await App.firestore().doc(`em/${user.uid}`).get();
+      if (didCancel) {
+        return;
+      }
+      if (!res.exists) {
+        setLoadingOptions(false);
+        return;
+      }
+      const validated = validate(res.data());
+      setEmbedOptions(validated);
+      setLoadingOptions(false);
+    }
+    getEmbedOptions();
+    return () => {
+      didCancel = true;
+    };
+  }, [user.uid]);
+
   return (
     <Overlay closeCallback={() => dispatch({ type: 'TOGGLEEMBEDOVERLAY' })}>
       <h2>Embed this Puzzle</h2>
@@ -55,7 +79,11 @@ export const EmbedOverlay = ({
         text={`<iframe width="100%" height="700" src="https://crosshare.org/embed/${puzzle.id}/${user.uid}" frameborder="0" allowfullscreen="true" allowtransparency="true"></iframe>`}
       />
       <h3 css={{ marginTop: '1em' }}>Theme</h3>
-      <ThemePicker userId={user.uid} />
+      {loadingOptions ? (
+        <p>Loading your embed settings...</p>
+      ) : (
+        <ThemePicker userId={user.uid} {...embedOptions} />
+      )}
     </Overlay>
   );
 };
@@ -95,7 +123,9 @@ const NUMSWATCHES = 36;
 
 const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
   const [isDark, setIsDark] = useState(props.d || false);
+  const [savedIsDark, setSavedIsDark] = useState(isDark);
   const [primary, setPrimary] = useState(props.p || PRIMARY);
+  const [savedPrimary, setSavedPrimary] = useState(primary);
   const [saving, setSaving] = useState(false);
   // Just ensure color is parseable, this'll throw if not:
   parseToRgba(primary);
@@ -111,6 +141,8 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       .set(theme)
       .then(() => {
         setSaving(false);
+        setSavedIsDark(isDark);
+        setSavedPrimary(primary);
       });
   }, [isDark, primary, props.userId]);
 
@@ -144,7 +176,8 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       <p>
         Your theme choices apply to <b>all</b> of your embeds, including
         pre-existing embeds. If you need to use a one-off theme please get in
-        touch and we can help.
+        touch and we can help. Note: changes can take up to an hour to take
+        effect for existing embeds - we cache pages to keep Crosshare fast!
       </p>
       <h4>Colors</h4>
       {swatches}
@@ -161,7 +194,9 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       </div>
       <Button
         onClick={saveTheme}
-        disabled={saving || (primary === props.p && isDark === props.d)}
+        disabled={
+          saving || (primary === savedPrimary && isDark === savedIsDark)
+        }
         text={saving ? 'Saving...' : 'Save Theme Choices'}
       />
       <h4>Preview</h4>
