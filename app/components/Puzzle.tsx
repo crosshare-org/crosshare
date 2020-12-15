@@ -1079,11 +1079,15 @@ export const Puzzle = ({
                     icon={<FaEdit />}
                     text="Edit"
                   />
-                  <TopBarDropDownLink
-                    icon={<ImEmbed />}
-                    text="Embed (beta)"
-                    onClick={() => dispatch({ type: 'TOGGLEEMBEDOVERLAY' })}
-                  />
+                  {!isEmbed ? (
+                    <TopBarDropDownLink
+                      icon={<ImEmbed />}
+                      text="Embed (beta)"
+                      onClick={() => dispatch({ type: 'TOGGLEEMBEDOVERLAY' })}
+                    />
+                  ) : (
+                    ''
+                  )}
                 </>
               ) : (
                 ''
