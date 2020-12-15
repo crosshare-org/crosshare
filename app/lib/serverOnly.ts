@@ -32,6 +32,7 @@ import { AccountPrefsV, AccountPrefsT } from './prefs';
 import { NextPuzzleLink } from '../components/Puzzle';
 import { GetServerSideProps } from 'next';
 import { getDailyMinis } from './dailyMinis';
+import { EmbedOptionsT } from './embedOptions';
 
 export async function getStorageUrl(
   storageKey: string
@@ -498,17 +499,12 @@ interface PuzzlePageErrorProps {
   error: string;
 }
 
-interface ColorTheme {
-  primary: string;
-  darkMode: boolean;
-}
-
 export interface PuzzlePageResultProps {
   puzzle: ServerPuzzleResult;
   profilePicture?: string | null;
   coverImage?: string | null;
   nextPuzzle?: NextPuzzleLink;
-  theme?: ColorTheme;
+  embedOptions?: EmbedOptionsT;
 }
 
 export type PuzzlePageProps = PuzzlePageResultProps | PuzzlePageErrorProps;
