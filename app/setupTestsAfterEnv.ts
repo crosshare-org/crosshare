@@ -31,4 +31,4 @@ if (typeof window !== 'undefined') {
   });
 }
 
-jest.setTimeout(20000);
+jest.setTimeout(40000);
