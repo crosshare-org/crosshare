@@ -33,6 +33,9 @@ body {
   text-align: left;
   background-color: var(--bg);
 }
+:root:fullscreen {
+  background-color: var(--bg) !important;
+}
 [tabindex='-1']:focus:not(:focus-visible) {
   outline: 0 !important;
 }
