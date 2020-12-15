@@ -127,6 +127,7 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>(
                 },
                 height: '100%',
                 overflowY: 'scroll',
+                scrollbarWidth: 'none',
               }}
             >
               <div
@@ -138,6 +139,7 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>(
                     display: 'block',
                     height: '50%',
                     overflowY: 'scroll',
+                    scrollbarWidth: 'none',
                   },
                   [LARGE_AND_UP]: {
                     paddingRight: 2,
@@ -157,6 +159,7 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>(
                     display: 'block',
                     height: '50%',
                     overflowY: 'scroll',
+                    scrollbarWidth: 'none',
                   },
                   [LARGE_AND_UP]: {
                     paddingLeft: 2,
@@ -190,6 +193,7 @@ export const TwoCol = (props: TwoColProps) => {
           flex: '1 1 auto',
           display: 'block',
           overflow: 'scroll',
+          scrollbarWidth: 'none',
           [SMALL_AND_UP]: {
             display: 'flex',
           },
@@ -202,6 +206,7 @@ export const TwoCol = (props: TwoColProps) => {
               paddingRight: 2,
               width: '50%',
               overflow: 'scroll',
+              scrollbarWidth: 'none',
               flex: '1 1 auto',
             },
           }}
@@ -214,6 +219,7 @@ export const TwoCol = (props: TwoColProps) => {
               paddingLeft: 2,
               width: '50%',
               overflow: 'scroll',
+              scrollbarWidth: 'none',
               flex: '1 1 auto',
             },
           }}

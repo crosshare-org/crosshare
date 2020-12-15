@@ -1271,7 +1271,12 @@ export const Puzzle = ({
             ''
           )}
         <div
-          css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}
+          css={{
+            flex: '1 1 auto',
+            overflow: 'scroll',
+            scrollbarWidth: 'none',
+            position: 'relative',
+          }}
         >
           {puzzleView}
         </div>

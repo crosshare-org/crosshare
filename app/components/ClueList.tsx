@@ -73,7 +73,7 @@ const ClueListItem = memo(function ClueListItem({
             ? 'var(--secondary)'
             : props.isRefed
               ? 'var(--reffed)'
-              : 'none',
+              : 'var(--bg)',
         listStyleType: 'none',
         cursor: 'pointer',
         '&:hover': {
@@ -247,6 +247,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
           borderBottom: '1px solid var(--autofill)',
           height: '1.5em',
           paddingLeft: '0.5em',
+          backgroundColor: 'var(--bg)',
         }}
       >
         {props.header}
@@ -259,6 +260,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
             maxHeight: 'calc(100% - 1.5em)',
           },
           overflowY: 'scroll',
+          scrollbarWidth: 'none',
         }}
       >
         <ol

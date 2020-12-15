@@ -65,7 +65,7 @@ export const colorTheme = (
     '--logo-white': darkMode ? '#d0d0d0' : 'white',
     '--key-bg': darkMode ? 'rgba(255, 255, 255, 0.15)' : 'white',
     '--key-ul': darkMode ? 'black' : '#b5b5b5',
-    '--kb-bg': darkMode ? 'rgba(255, 255, 255, 0.1)' : '#ececec',
+    '--kb-bg': darkMode ? '#191919' : '#ececec',
     '--kb-bg-click': darkMode ? 'black' : '#ddd',
     '--text-input-bg': darkMode ? '#333' : '#f5f5f5',
     '--text-input-border': darkMode ? '#000' : '#777',
