@@ -1,13 +1,11 @@
 import {
   useReducer,
-  useState,
   useEffect,
   useCallback,
   useMemo,
   useRef,
   useContext,
   Dispatch,
-  memo,
   ReactNode,
 } from 'react';
 import Head from 'next/head';
@@ -62,11 +60,7 @@ import {
 } from '../lib/viewableGrid';
 import { entryAndCrossAtPosition, entryIndexAtPosition } from '../lib/gridBase';
 import { cachePlay, writePlayToDB, isDirty } from '../lib/plays';
-import {
-  PlayWithoutUserT,
-  getDateString,
-  prettifyDateString,
-} from '../lib/dbtypes';
+import { PlayWithoutUserT } from '../lib/dbtypes';
 import {
   cheat,
   checkComplete,
@@ -92,13 +86,7 @@ import {
 import { SquareAndCols, TwoCol } from './Page';
 import { usePersistedBoolean, useMatchMedia } from '../lib/hooks';
 import { timeString } from '../lib/utils';
-import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
-import {
-  App,
-  TimestampClass,
-  signInAnonymously,
-  FieldValue,
-} from '../lib/firebaseWrapper';
+import { App, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
 import type firebase from 'firebase/app';
 import { Emoji } from './Emoji';
 import { Comments } from './Comments';
@@ -117,6 +105,13 @@ import { useSnackbar } from './Snackbar';
 import { isNewPuzzleNotification } from '../lib/notifications';
 import { PuzzlePageResultProps } from '../lib/serverOnly';
 import { EmbedContext } from './EmbedContext';
+import dynamic from 'next/dynamic';
+import type { ModeratingOverlay as ModeratingOverlayType } from './ModerateOverlay';
+
+const ModeratingOverlay = dynamic(
+  () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
+  { ssr: false }
+) as typeof ModeratingOverlayType;
 
 export interface NextPuzzleLink {
   puzzleId: string;
@@ -204,99 +199,6 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
     </Overlay>
   );
 };
-
-const ModeratingOverlay = memo(
-  ({
-    dispatch,
-    puzzle,
-  }: {
-    puzzle: ServerPuzzleResult;
-    dispatch: Dispatch<PuzzleAction>;
-  }) => {
-    const db = App.firestore();
-    const [date, setDate] = useState<Date | undefined>();
-    const [success, setSuccess] = useState(false);
-
-    function schedule() {
-      if (!date) {
-        throw new Error('shouldn\'t be able to schedule w/o date');
-      }
-      const ds = getDateString(date);
-      const update: { [k: string]: string | typeof FieldValue } = {
-        [ds]: puzzle.id,
-      };
-      Promise.all([
-        db.collection('categories').doc('dailymini').update(update),
-        db
-          .collection('c')
-          .doc(puzzle.id)
-          .update({ m: true, c: 'dailymini', dmd: prettifyDateString(ds) }),
-      ]).then(() => {
-        console.log('Scheduled mini');
-        sessionStorage.removeItem('categories/dailymini');
-        setSuccess(true);
-      });
-    }
-
-    function markAsModerated(featured: boolean) {
-      const update = { m: true, c: null, f: featured };
-      db.collection('c')
-        .doc(puzzle.id)
-        .update(update)
-        .then(() => {
-          setSuccess(true);
-        });
-    }
-
-    if (success) {
-      return (
-        <Overlay closeCallback={() => dispatch({ type: 'TOGGLEMODERATING' })}>
-          <h4>Moderated!</h4>
-        </Overlay>
-      );
-    }
-
-    return (
-      <Overlay closeCallback={() => dispatch({ type: 'TOGGLEMODERATING' })}>
-        <h4>Moderate this Puzzle</h4>
-        {puzzle.isPrivate ? (
-          <h4 css={{ color: 'var(--error)' }}>This puzzle is private</h4>
-        ) : (
-          ''
-        )}
-        {puzzle.isPrivateUntil ? (
-          <h4 css={{ color: 'var(--error)' }}>
-            This puzzle is private until{' '}
-            {new Date(puzzle.isPrivateUntil).toISOString()}
-          </h4>
-        ) : (
-          ''
-        )}
-        <div css={{ marginTop: '1em' }}>
-          Pick a date to appear as daily mini:
-        </div>
-        <UpcomingMinisCalendar
-          disableExisting={true}
-          value={date}
-          onChange={setDate}
-        />
-        <div css={{ marginTop: '1em' }}>
-          <button disabled={!date || puzzle.moderated} onClick={schedule}>
-            Schedule As Daily Mini
-          </button>
-        </div>
-        <div css={{ marginTop: '1em' }}>
-          <button onClick={() => markAsModerated(true)}>Set as Featured</button>
-        </div>
-        <div css={{ marginTop: '1em' }}>
-          <button onClick={() => markAsModerated(false)}>
-            Mark as Moderated
-          </button>
-        </div>
-      </Overlay>
-    );
-  }
-);
 
 const KeepTryingOverlay = ({
   dispatch,
