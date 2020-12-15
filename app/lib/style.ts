@@ -57,7 +57,7 @@ export const colorTheme = (
       ? 'rgba(255, 255, 255, 0.2)'
       : 'rgba(0, 0, 0, 0.3)',
     '--overlay-bg': 'rgba(0, 0, 0, 0.85)',
-    '--overlay-inner': darkMode ? '#151515' : 'white',
+    '--overlay-inner': darkMode ? '#252525' : 'white',
     '--conceal-text': darkMode ? 'white' : 'rgba(0, 0, 0, 0.7)',
     '--cell-bg': cellBG,
     '--cell-wall': 'black',
