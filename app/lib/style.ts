@@ -17,6 +17,7 @@ export const HUGE_AND_UP = '@media (min-width: 1240px)';
 export const HAS_PHYSICAL_KEYBOARD =
   '@media (hover: hover) and (pointer: fine)';
 
+export const PRIMARY = '#eb984e';
 export const colorTheme = (
   primary: string,
   darkMode: boolean

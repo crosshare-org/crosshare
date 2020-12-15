@@ -7,8 +7,7 @@ export function CopyableInput({ text }: { text: string }) {
     <input
       css={{
         cursor: 'pointer',
-        width: '30em',
-        maxWidth: '100%',
+        width: '100%',
       }}
       type="text"
       readOnly

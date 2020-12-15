@@ -9,6 +9,7 @@ import {
   ReactNode,
 } from 'react';
 import Head from 'next/head';
+import { ImEmbed } from 'react-icons/im';
 import {
   FaListOl,
   FaGlasses,
@@ -107,11 +108,17 @@ import { PuzzlePageResultProps } from '../lib/serverOnly';
 import { EmbedContext } from './EmbedContext';
 import dynamic from 'next/dynamic';
 import type { ModeratingOverlay as ModeratingOverlayType } from './ModerateOverlay';
+import type { EmbedOverlay as EmbedOverlayType } from './EmbedOverlay';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
   { ssr: false }
 ) as typeof ModeratingOverlayType;
+
+const EmbedOverlay = dynamic(
+  () => import('./EmbedOverlay').then((mod) => mod.EmbedOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
+  { ssr: false }
+) as typeof EmbedOverlayType;
 
 export interface NextPuzzleLink {
   puzzleId: string;
@@ -444,6 +451,7 @@ export const Puzzle = ({
       dismissedKeepTrying: false,
       dismissedSuccess: false,
       moderating: false,
+      showingEmbedOverlay: false,
       displaySeconds: play ? play.t : 0,
       bankedSeconds: play ? play.t : 0,
       currentTimeWindowStart: 0,
@@ -1067,6 +1075,11 @@ export const Puzzle = ({
                     icon={<FaEdit />}
                     text="Edit"
                   />
+                  <TopBarDropDownLink
+                    icon={<ImEmbed />}
+                    text="Embed (beta)"
+                    onClick={() => dispatch({ type: 'TOGGLEEMBEDOVERLAY' })}
+                  />
                 </>
               ) : (
                 ''
@@ -1230,6 +1243,11 @@ export const Puzzle = ({
         )}
         {state.moderating ? (
           <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />
+        ) : (
+          ''
+        )}
+        {state.showingEmbedOverlay && props.user ? (
+          <EmbedOverlay user={props.user} puzzle={puzzle} dispatch={dispatch} />
         ) : (
           ''
         )}

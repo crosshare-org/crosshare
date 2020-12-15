@@ -128,6 +128,13 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['f'])
         && request.resource.data.f.hasOnly([request.auth.uid]);
     }
+    // Embedded puzzle options
+    match /em/{userId} {
+      allow read: if true;
+      allow write: if request.auth.uid != null
+        && isNonAnonymous()
+        && request.auth.uid == userId;
+    }
     match /ds/{dateString} {
       allow read: if isAdmin();
     }

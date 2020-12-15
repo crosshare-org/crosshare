@@ -12,7 +12,7 @@ import { Snackbar, SnackbarProvider } from '../components/Snackbar';
 import { Global } from '@emotion/react';
 
 import '../lib/style.css';
-import { colorTheme } from '../lib/style';
+import { colorTheme, PRIMARY } from '../lib/style';
 
 if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
   Sentry.init({
@@ -141,12 +141,9 @@ export default function CrosshareApp({
       <Global
         styles={{
           html: [
-            colorTheme('#eb984e', false),
+            colorTheme(PRIMARY, false),
             {
-              '@media (prefers-color-scheme: dark)': colorTheme(
-                '#eb984e',
-                true
-              ),
+              '@media (prefers-color-scheme: dark)': colorTheme(PRIMARY, true),
             },
           ],
         }}

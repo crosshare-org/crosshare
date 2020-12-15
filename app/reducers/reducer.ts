@@ -54,6 +54,7 @@ interface PuzzleState extends GridInterfaceState {
   dismissedKeepTrying: boolean;
   dismissedSuccess: boolean;
   moderating: boolean;
+  showingEmbedOverlay: boolean;
   didCheat: boolean;
   clueView: boolean;
   cellsUpdatedAt: Array<number>;
@@ -984,6 +985,9 @@ export function puzzleReducer(
   }
   if (action.type === 'TOGGLEMODERATING') {
     return { ...state, moderating: !state.moderating };
+  }
+  if (action.type === 'TOGGLEEMBEDOVERLAY') {
+    return { ...state, showingEmbedOverlay: !state.showingEmbedOverlay };
   }
   return state;
 }
