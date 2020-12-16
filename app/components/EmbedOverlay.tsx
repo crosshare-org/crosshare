@@ -1,4 +1,11 @@
-import { Dispatch, useMemo, useState, useCallback, useEffect } from 'react';
+import {
+  Dispatch,
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+  ChangeEvent,
+} from 'react';
 import { Direction, ServerPuzzleResult } from '../lib/types';
 import { PuzzleAction } from '../reducers/reducer';
 import { Overlay } from './Overlay';
@@ -6,7 +13,7 @@ import type firebase from 'firebase/app';
 import { CopyableInput } from './CopyableInput';
 import { EmbedOptionsT, validate } from '../lib/embedOptions';
 import { colorTheme, PRIMARY } from '../lib/style';
-import { adjustHue, parseToRgba } from 'color2k';
+import { adjustHue, parseToRgba, guard } from 'color2k';
 import { GridView } from './Grid';
 import { fromCells } from '../lib/viewableGrid';
 import { Button } from './Buttons';
@@ -121,19 +128,38 @@ const Swatch = (props: SwatchProps) => {
 
 const NUMSWATCHES = 36;
 
+const toHex = (n: number) => guard(0, 255, n).toString(16).padStart(2, '0');
+const rgbToHex = (r: number, g: number, b: number) => {
+  return '#' + toHex(r) + toHex(g) + toHex(b);
+};
+
 const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
   const [isDark, setIsDark] = useState(props.d || false);
-  const [savedIsDark, setSavedIsDark] = useState(isDark);
   const [primary, setPrimary] = useState(props.p || PRIMARY);
-  const [savedPrimary, setSavedPrimary] = useState(primary);
+  const [preservePrimary, setPreservePrimary] = useState(props.pp || false);
+  const [dirty, setDirty] = useState(false);
+  const [r, g, b] = parseToRgba(primary);
+  const [hexColor, setHexColor] = useState(rgbToHex(r, g, b));
+
   const [saving, setSaving] = useState(false);
-  // Just ensure color is parseable, this'll throw if not:
-  parseToRgba(primary);
+
+  const updateHexColor = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const newColor = e.target.value;
+    setHexColor(newColor);
+    try {
+      const [r, g, b] = parseToRgba(newColor);
+      setPrimary(rgbToHex(r, g, b));
+      setDirty(true);
+    } catch {
+      /* noop */
+    }
+  }, []);
 
   const saveTheme = useCallback(() => {
     const theme: EmbedOptionsT = {
       p: primary,
       d: isDark,
+      pp: preservePrimary,
     };
     setSaving(true);
     App.firestore()
@@ -141,10 +167,9 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       .set(theme)
       .then(() => {
         setSaving(false);
-        setSavedIsDark(isDark);
-        setSavedPrimary(primary);
+        setDirty(false);
       });
-  }, [isDark, primary, props.userId]);
+  }, [isDark, primary, preservePrimary, props.userId]);
 
   const dummyGrid = useMemo(() => {
     return fromCells({
@@ -165,7 +190,12 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       <Swatch
         key={i}
         color={color}
-        select={() => setPrimary(color)}
+        select={() => {
+          setPrimary(color);
+          const [r, g, b] = parseToRgba(color);
+          setHexColor(rgbToHex(r, g, b));
+          setDirty(true);
+        }}
         selected={primary}
       />
     );
@@ -181,30 +211,58 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       </p>
       <h4>Colors</h4>
       {swatches}
+      <input type="text" value={hexColor} onChange={updateHexColor} />
       <div>
         <label>
           <input
             css={{ marginRight: '1em' }}
             type="checkbox"
             checked={isDark}
-            onChange={(e) => setIsDark(e.target.checked)}
+            onChange={(e) => {
+              setIsDark(e.target.checked);
+              setDirty(true);
+            }}
           />
           Dark Mode
         </label>
       </div>
+      <div>
+        <label>
+          <input
+            css={{ marginRight: '1em' }}
+            disabled={!isDark}
+            type="checkbox"
+            checked={preservePrimary}
+            onChange={(e) => {
+              setPreservePrimary(e.target.checked);
+              setDirty(true);
+            }}
+          />
+          <span
+            css={{
+              color: isDark ? 'var(--text)' : 'var(--autofill)',
+            }}
+          >
+            Use exact color in Dark Mode (default is to dim color choice)
+          </span>
+        </label>
+      </div>
       <Button
         onClick={saveTheme}
-        disabled={
-          saving || (primary === savedPrimary && isDark === savedIsDark)
-        }
+        disabled={saving || !dirty}
         text={saving ? 'Saving...' : 'Save Theme Choices'}
       />
       <h4>Preview</h4>
-      <div css={[{ width: 200, height: 200 }, colorTheme(primary, isDark)]}>
+      <div
+        css={[
+          { width: 200, height: 200 },
+          colorTheme(primary, isDark, preservePrimary),
+        ]}
+      >
         <GridView
           squareWidth={200}
           grid={dummyGrid}
-          active={{ row: 2, col: 2, dir: Direction.Across }}
+          active={{ row: 2, col: 1, dir: Direction.Across }}
           dispatch={() => {
             /* noop */
           }}

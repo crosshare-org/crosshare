@@ -141,9 +141,13 @@ export default function CrosshareApp({
       <Global
         styles={{
           html: [
-            colorTheme(PRIMARY, false),
+            colorTheme(PRIMARY, false, false),
             {
-              '@media (prefers-color-scheme: dark)': colorTheme(PRIMARY, true),
+              '@media (prefers-color-scheme: dark)': colorTheme(
+                PRIMARY,
+                true,
+                false
+              ),
             },
           ],
         }}

@@ -20,9 +20,10 @@ export const HAS_PHYSICAL_KEYBOARD =
 export const PRIMARY = '#eb984e';
 export const colorTheme = (
   primary: string,
-  darkMode: boolean
+  darkMode: boolean,
+  preservePrimary: boolean
 ): CSSInterpolation => {
-  const p = darkMode ? mix(primary, 'black', 0.5) : primary;
+  const p = darkMode && !preservePrimary ? mix(primary, 'black', 0.5) : primary;
   const cellBG = darkMode ? '#444' : 'white';
   const hover = darkMode ? 'white' : 'black';
   const hoverRatio = 0.1;

@@ -8,6 +8,8 @@ const EmbedOptionsV = t.partial({
   p: t.string,
   /** use dark theme? */
   d: t.boolean,
+  /** don't transform primary for dark theme? */
+  pp: t.boolean,
 });
 
 export type EmbedOptionsT = t.TypeOf<typeof EmbedOptionsV>;

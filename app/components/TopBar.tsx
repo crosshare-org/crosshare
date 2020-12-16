@@ -528,6 +528,7 @@ export const TopBar = ({
     showingNotifications,
     setShowingNotifications,
     isEmbed,
+    title,
   ]);
 };
 

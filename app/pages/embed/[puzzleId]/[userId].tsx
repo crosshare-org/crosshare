@@ -37,9 +37,11 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({
 export default function ThemedPage(props: PuzzlePageProps) {
   let primary = PRIMARY;
   let darkMode = false;
+  let preservePrimary = false;
   if ('embedOptions' in props) {
     primary = props.embedOptions?.p || PRIMARY;
     darkMode = props.embedOptions?.d || false;
+    preservePrimary = props.embedOptions?.pp || false;
     // Just ensure color is parseable, this'll throw if not:
     parseToRgba(primary);
   }
@@ -48,7 +50,7 @@ export default function ThemedPage(props: PuzzlePageProps) {
     <>
       <Global
         styles={{
-          html: colorTheme(primary, darkMode),
+          html: colorTheme(primary, darkMode, preservePrimary),
           body: {
             backgroundColor: 'transparent !important',
           },
