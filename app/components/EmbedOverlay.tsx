@@ -211,7 +211,9 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       </p>
       <h4>Colors</h4>
       {swatches}
-      <input type="text" value={hexColor} onChange={updateHexColor} />
+      <div>
+        <input type="text" value={hexColor} onChange={updateHexColor} />
+      </div>
       <div>
         <label>
           <input
