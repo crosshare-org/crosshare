@@ -144,14 +144,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
   const isEmbed = useContext(EmbedContext);
 
   return (
-    <Overlay
-      coverImage={props.coverImage}
-      closeCallback={
-        props.loadingPlayState
-          ? undefined
-          : () => props.dispatch({ type: 'RESUMEACTION' })
-      }
-    >
+    <Overlay coverImage={props.coverImage}>
       <PuzzleHeading
         publishTime={props.publishTime}
         showTip={false}
