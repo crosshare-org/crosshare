@@ -40,7 +40,14 @@ function getStore(storageKey: string): PlayMapT {
   if (store) {
     return store.data;
   }
-  const inStorage = localStorage.getItem(storageKey);
+  let inStorage: string | null;
+  try {
+    inStorage = localStorage.getItem(storageKey);
+  } catch {
+    /* happens on incognito when iframed */
+    console.warn('not loading plays from LS');
+    inStorage = null;
+  }
   if (inStorage) {
     const validationResult = TimestampedPlayMapV.decode(JSON.parse(inStorage));
     if (isRight(validationResult)) {
@@ -154,7 +161,12 @@ export function cachePlay(
     downloadedAt: null,
     data: store,
   };
-  localStorage.setItem(storageKey, JSON.stringify(forLS));
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(forLS));
+  } catch {
+    /* iframed and incogito */
+    console.warn('not caching play, error on LS');
+  }
   memoryStore[storageKey] = forLS;
 
   if (user && play && !isClean) {

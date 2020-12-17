@@ -72,13 +72,22 @@ export function usePersistedBoolean(
   const [state, setState] = useState<boolean>(defaultValue);
 
   useEffect(() => {
-    const initialValue = localStorage.getItem(key);
-    setState(initialValue !== null ? initialValue === 'true' : defaultValue);
+    try {
+      const initialValue = localStorage.getItem(key);
+      setState(initialValue !== null ? initialValue === 'true' : defaultValue);
+    } catch {
+      /* happens on incognito when iframed */
+      console.warn('not loading setting from LS');
+    }
   }, [defaultValue, key]);
 
   const setStateAndPersist = useCallback(
     (newValue: boolean) => {
-      localStorage.setItem(key, newValue ? 'true' : 'false');
+      try {
+        localStorage.setItem(key, newValue ? 'true' : 'false');
+      } catch {
+        console.warn('failed to store setting in LS');
+      }
       setState(newValue);
     },
     [key, setState]

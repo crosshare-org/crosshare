@@ -131,7 +131,14 @@ function commentsKey(puzzleId: string) {
 function commentsFromStorage(
   puzzleId: string
 ): Array<CommentForModerationWithIdT> {
-  const inSession = localStorage.getItem(commentsKey(puzzleId));
+  let inSession: string | null;
+  try {
+    inSession = localStorage.getItem(commentsKey(puzzleId));
+  } catch {
+    /* happens on incognito when iframed */
+    console.warn('not loading comments from LS');
+    inSession = null;
+  }
   if (inSession) {
     const res = t
       .array(CommentForModerationWithIdV)
@@ -297,10 +304,15 @@ const CommentForm = ({
         // Add the comment to localStorage for the medium term
         const forSession = commentsFromStorage(props.puzzleId);
         forSession.push({ i: ref.id, ...comment });
-        localStorage.setItem(
-          commentsKey(props.puzzleId),
-          JSON.stringify(forSession)
-        );
+        try {
+          localStorage.setItem(
+            commentsKey(props.puzzleId),
+            JSON.stringify(forSession)
+          );
+        } catch {
+          /* happens on incognito when iframed */
+          console.warn('not saving comment in LS');
+        }
       });
   }
 
@@ -526,7 +538,9 @@ export const Comments = ({
         }
       }
     }
-    // This means one or more have made it through moderation - update LS
+    /* This means one or more have made it through moderation - update LS.
+     * We don't need to try/catch this LS access as we only do it if we
+     * read from LS successfully above */
     if (toKeepInStorage.length !== unmoderatedComments.length) {
       if (toKeepInStorage.length === 0) {
         localStorage.removeItem(commentsKey(props.puzzleId));
