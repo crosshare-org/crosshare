@@ -31,6 +31,7 @@ const CachePlayLoader = (props: PuzzlePageResultProps) => {
   const { user, isAdmin, loading, error } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
   const [loadingPlay, setLoadingPlay] = useState(true);
+  const [showedNonDB, setShowedNonDB] = useState(false);
 
   useEffect(() => {
     if (loading || error) {
@@ -64,7 +65,10 @@ const CachePlayLoader = (props: PuzzlePageResultProps) => {
       />
     );
   }
-  if (play || !user || props.puzzle.authorId === user.uid) {
+  if (showedNonDB || play || !user || props.puzzle.authorId === user.uid) {
+    if (!showedNonDB) {
+      setShowedNonDB(true);
+    }
     return (
       <Puzzle
         key={props.puzzle.id}
