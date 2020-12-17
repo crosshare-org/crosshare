@@ -12,11 +12,11 @@ import { Overlay } from './Overlay';
 import type firebase from 'firebase/app';
 import { CopyableInput } from './CopyableInput';
 import { EmbedOptionsT, validate } from '../lib/embedOptions';
-import { colorTheme, PRIMARY } from '../lib/style';
+import { colorTheme, LINK, PRIMARY } from '../lib/style';
 import { adjustHue, parseToRgba, guard } from 'color2k';
 import { GridView } from './Grid';
 import { fromCells } from '../lib/viewableGrid';
-import { Button } from './Buttons';
+import { Button, ButtonAsLink } from './Buttons';
 import { App } from '../lib/firebaseWrapper';
 
 export const EmbedOverlay = ({
@@ -133,31 +133,73 @@ const rgbToHex = (r: number, g: number, b: number) => {
   return '#' + toHex(r) + toHex(g) + toHex(b);
 };
 
+interface ColorPickerProps {
+  initial: string;
+  swatchBase: string;
+  onChange: (newColor: string) => void;
+}
+const ColorPicker = (props: ColorPickerProps) => {
+  const [current, setCurrent] = useState(props.initial);
+  const [r, g, b] = parseToRgba(props.initial);
+  const [hexColor, setHexColor] = useState(rgbToHex(r, g, b));
+
+  const updateHexColor = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const newColor = e.target.value;
+      setHexColor(newColor);
+      try {
+        const [r, g, b] = parseToRgba(newColor);
+        const color = rgbToHex(r, g, b);
+        setCurrent(color);
+        props.onChange(color);
+      } catch {
+        /* noop */
+      }
+    },
+    [props]
+  );
+
+  const swatches = [];
+  for (let i = 0; i < NUMSWATCHES; i += 1) {
+    const color = adjustHue(props.swatchBase, (i * 360) / NUMSWATCHES);
+    swatches.push(
+      <Swatch
+        key={i}
+        color={color}
+        select={() => {
+          setCurrent(color);
+          props.onChange(color);
+          const [r, g, b] = parseToRgba(color);
+          setHexColor(rgbToHex(r, g, b));
+        }}
+        selected={current}
+      />
+    );
+  }
+
+  return (
+    <div css={{ marginBottom: '1em' }}>
+      {swatches}
+      <div>
+        <input type="text" value={hexColor} onChange={updateHexColor} />
+      </div>
+    </div>
+  );
+};
+
 const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
   const [isDark, setIsDark] = useState(props.d || false);
   const [primary, setPrimary] = useState(props.p || PRIMARY);
+  const [link, setLink] = useState(props.l || LINK);
   const [preservePrimary, setPreservePrimary] = useState(props.pp || false);
   const [dirty, setDirty] = useState(false);
-  const [r, g, b] = parseToRgba(primary);
-  const [hexColor, setHexColor] = useState(rgbToHex(r, g, b));
 
   const [saving, setSaving] = useState(false);
-
-  const updateHexColor = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const newColor = e.target.value;
-    setHexColor(newColor);
-    try {
-      const [r, g, b] = parseToRgba(newColor);
-      setPrimary(rgbToHex(r, g, b));
-      setDirty(true);
-    } catch {
-      /* noop */
-    }
-  }, []);
 
   const saveTheme = useCallback(() => {
     const theme: EmbedOptionsT = {
       p: primary,
+      l: link,
       d: isDark,
       pp: preservePrimary,
     };
@@ -169,7 +211,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
         setSaving(false);
         setDirty(false);
       });
-  }, [isDark, primary, preservePrimary, props.userId]);
+  }, [isDark, primary, link, preservePrimary, props.userId]);
 
   const dummyGrid = useMemo(() => {
     return fromCells({
@@ -183,24 +225,6 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
     });
   }, []);
 
-  const swatches = [];
-  for (let i = 0; i < NUMSWATCHES; i += 1) {
-    const color = adjustHue(PRIMARY, (i * 360) / NUMSWATCHES);
-    swatches.push(
-      <Swatch
-        key={i}
-        color={color}
-        select={() => {
-          setPrimary(color);
-          const [r, g, b] = parseToRgba(color);
-          setHexColor(rgbToHex(r, g, b));
-          setDirty(true);
-        }}
-        selected={primary}
-      />
-    );
-  }
-
   return (
     <>
       <p>
@@ -210,10 +234,24 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
         effect for existing embeds - we cache pages to keep Crosshare fast!
       </p>
       <h4>Colors</h4>
-      {swatches}
-      <div>
-        <input type="text" value={hexColor} onChange={updateHexColor} />
-      </div>
+      <h5>Primary Color</h5>
+      <ColorPicker
+        initial={primary}
+        swatchBase={PRIMARY}
+        onChange={(c) => {
+          setPrimary(c);
+          setDirty(true);
+        }}
+      />
+      <h5>Link/Button Color</h5>
+      <ColorPicker
+        initial={link}
+        swatchBase={LINK}
+        onChange={(c) => {
+          setLink(c);
+          setDirty(true);
+        }}
+      />
       <div>
         <label>
           <input
@@ -245,7 +283,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
               color: isDark ? 'var(--text)' : 'var(--autofill)',
             }}
           >
-            Use exact color in Dark Mode (default is to dim color choice)
+            Use exact colors in Dark Mode (default is to dim color choices)
           </span>
         </label>
       </div>
@@ -254,21 +292,44 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
         disabled={saving || !dirty}
         text={saving ? 'Saving...' : 'Save Theme Choices'}
       />
-      <h4>Preview</h4>
+      <h4 css={{ marginTop: '1em' }}>Preview</h4>
       <div
         css={[
-          { width: 200, height: 200 },
-          colorTheme(primary, isDark, preservePrimary),
+          {
+            display: 'flex',
+            flexWrap: 'wrap',
+            backgroundColor: 'var(--bg)',
+            color: 'var(--text)',
+            padding: '1em',
+          },
+          colorTheme(primary, link, isDark, preservePrimary),
         ]}
       >
-        <GridView
-          squareWidth={200}
-          grid={dummyGrid}
-          active={{ row: 2, col: 1, dir: Direction.Across }}
-          dispatch={() => {
-            /* noop */
-          }}
-        />
+        <div css={{ width: 200, height: 200 }}>
+          <GridView
+            squareWidth={200}
+            grid={dummyGrid}
+            active={{ row: 2, col: 1, dir: Direction.Across }}
+            dispatch={() => {
+              /* noop */
+            }}
+          />
+        </div>
+        <div css={{ width: 200, height: 200, padding: '1em' }}>
+          <div>Example text</div>
+          <ButtonAsLink
+            text="Example Link"
+            onClick={() => {
+              /*noop*/
+            }}
+          />
+          <Button
+            text="Example Button"
+            onClick={() => {
+              /* noop */
+            }}
+          />
+        </div>
       </div>
     </>
   );

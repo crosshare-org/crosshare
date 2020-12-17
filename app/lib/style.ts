@@ -18,12 +18,15 @@ export const HAS_PHYSICAL_KEYBOARD =
   '@media (hover: hover) and (pointer: fine)';
 
 export const PRIMARY = '#eb984e';
+export const LINK = '#2874a6';
 export const colorTheme = (
   primary: string,
+  link: string,
   darkMode: boolean,
   preservePrimary: boolean
 ): CSSInterpolation => {
   const p = darkMode && !preservePrimary ? mix(primary, 'black', 0.5) : primary;
+  const l = darkMode && !preservePrimary ? mix(link, 'white', 0.4) : link;
   const cellBG = darkMode ? '#444' : 'white';
   const hover = darkMode ? 'white' : 'black';
   const hoverRatio = 0.1;
@@ -45,8 +48,8 @@ export const colorTheme = (
     '--error': error,
     '--error-hover': mix(error, 'black', 0.3),
     '--notification-bg': '#de30e7',
-    '--link': darkMode ? '#7fbdff' : '#2874a6',
-    '--link-hover': darkMode ? '#8dc4ff' : '#21618c',
+    '--link': l,
+    '--link-hover': mix(l, hover, hoverRatio),
     '--text': darkMode ? '#d0d0d0' : '#212529',
     '--default-text': darkMode ? '#777' : '#999',
     '--caption': '#6c757d',

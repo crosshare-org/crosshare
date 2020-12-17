@@ -6,9 +6,11 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 const EmbedOptionsV = t.partial({
   /** primary color */
   p: t.string,
+  /** link color */
+  l: t.string,
   /** use dark theme? */
   d: t.boolean,
-  /** don't transform primary for dark theme? */
+  /** don't transform colors for dark theme? */
   pp: t.boolean,
 });
 

@@ -1,7 +1,7 @@
 import { getPuzzlePageProps, PuzzlePageProps } from '../../../lib/serverOnly';
 import { PuzzlePage } from '../../../components/PuzzlePage';
 import { Global } from '@emotion/react';
-import { colorTheme, PRIMARY } from '../../../lib/style';
+import { colorTheme, LINK, PRIMARY } from '../../../lib/style';
 import { parseToRgba } from 'color2k';
 import { EmbedContext } from '../../../components/EmbedContext';
 import { GetServerSideProps } from 'next';
@@ -36,10 +36,12 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({
 
 export default function ThemedPage(props: PuzzlePageProps) {
   let primary = PRIMARY;
+  let link = LINK;
   let darkMode = false;
   let preservePrimary = false;
   if ('embedOptions' in props) {
     primary = props.embedOptions?.p || PRIMARY;
+    link = props.embedOptions?.l || LINK;
     darkMode = props.embedOptions?.d || false;
     preservePrimary = props.embedOptions?.pp || false;
     // Just ensure color is parseable, this'll throw if not:
@@ -50,7 +52,7 @@ export default function ThemedPage(props: PuzzlePageProps) {
     <>
       <Global
         styles={{
-          html: colorTheme(primary, darkMode, preservePrimary),
+          html: colorTheme(primary, link, darkMode, preservePrimary),
           body: {
             backgroundColor: 'transparent !important',
           },
