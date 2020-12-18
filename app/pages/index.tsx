@@ -15,6 +15,7 @@ import { PAGE_SIZE } from './featured/[pageNumber]';
 import { useContext } from 'react';
 import { AuthContext } from '../components/AuthContext';
 import { Button } from '../components/Buttons';
+import { ContactLinks } from '../components/ContactLinks';
 
 interface HomePageProps {
   dailymini: ServerPuzzleResult;
@@ -122,23 +123,8 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
           <Link href="/featured/1">Previous Featured Puzzles</Link>
         </p>
         <p css={{ marginTop: '1em', textAlign: 'center' }}>
-          For questions and discussion, join the{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://groups.google.com/forum/#!forum/crosshare"
-          >
-            Google Group
-          </a>
-          . Follow us on twitter{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://twitter.com/crosshareapp"
-          >
-            @crosshareapp
-          </a>
-          .
+          If you have questions or suggestions please contact us via{' '}
+          <ContactLinks />.
         </p>
         {!loading && !user?.email ? (
           <form

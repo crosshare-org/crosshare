@@ -16,6 +16,7 @@ import { RiPagesLine } from 'react-icons/ri';
 import { FeatureList, FeatureListItem } from '../components/FeatureList';
 import { BigQuote } from '../components/BigQuote';
 import { Hero } from '../components/Hero';
+import { ContactLinks } from '../components/ContactLinks';
 
 export default function UploadPage() {
   const ctx = useContext(AuthContext);
@@ -80,8 +81,8 @@ export default function UploadPage() {
           <>
             <p>Error: {error}</p>
             <p>
-              If your puzzle isn&apos;t uploading correctly please message us on
-              twitter or in the google group so we can help!
+              If your puzzle isn&apos;t uploading correctly please get in touch
+              via <ContactLinks /> so we can help!
             </p>
           </>
         ) : (

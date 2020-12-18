@@ -18,6 +18,7 @@ import { GridView } from './Grid';
 import { fromCells } from '../lib/viewableGrid';
 import { Button, ButtonAsLink } from './Buttons';
 import { App } from '../lib/firebaseWrapper';
+import { ContactLinks } from './ContactLinks';
 
 export const EmbedOverlay = ({
   dispatch,
@@ -57,23 +58,7 @@ export const EmbedOverlay = ({
       <h2>Embed this Puzzle</h2>
       <p>
         Crosshare embedding is a newly launched feature - please get in touch
-        via{' '}
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="mailto:crosshareapp@gmail.com"
-        >
-          email
-        </a>{' '}
-        or{' '}
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://twitter.com/crosshareapp"
-        >
-          twitter
-        </a>{' '}
-        if you have any issues, questions, or suggestions!
+        via <ContactLinks /> if you have any issues, questions, or suggestions!
       </p>
       <p>
         To embed your puzzle copy and paste the following HTML into your

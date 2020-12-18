@@ -24,6 +24,7 @@ import { Hero } from '../components/Hero';
 import { Button } from '../components/Buttons';
 import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
 import { Emoji } from '../components/Emoji';
+import { ContactLinks } from '../components/ContactLinks';
 
 export default function BuilderPage() {
   const [ready, error, loading, setLoaded] = useWordDB();
@@ -381,23 +382,7 @@ export default function BuilderPage() {
           <p>ALL OF THEM.</p>
           <h3>What if I have a different question?</h3>
           <p>
-            Please get in touch via{' '}
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://twitter.com/crosshareapp"
-            >
-              twitter
-            </a>{' '}
-            or (better yet!) the{' '}
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://groups.google.com/forum/#!forum/crosshare"
-            >
-              Google Group
-            </a>
-            . I’ll answer it ASAP and maybe even add it to this page.
+            Please get in touch via <ContactLinks />.
           </p>
         </div>
       </div>
