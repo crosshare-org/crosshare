@@ -38,7 +38,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   top: 0;
   font-weight: bold;
   line-height: 1em;
-  color: var(--black);
+  color: var(--onprimary);
   font-size: 0.25em;
 }
 
@@ -64,7 +64,17 @@ exports[`publish custom / non-rectangular size 1`] = `
   font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
-  background: var(--secondary);
+  background: var(--lighter);
+}
+
+.emotion-8 {
+  position: absolute;
+  left: 0.1em;
+  top: 0;
+  font-weight: bold;
+  line-height: 1em;
+  color: var(--text);
+  font-size: 0.25em;
 }
 
 .emotion-22 {
@@ -79,7 +89,7 @@ exports[`publish custom / non-rectangular size 1`] = `
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-right: 1px solid var(--cell-wall);
-  background: var(--secondary);
+  background: var(--lighter);
 }
 
 .emotion-27 {
@@ -179,7 +189,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-7"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         2
@@ -204,7 +214,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-7"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         3
@@ -229,7 +239,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-7"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         4
@@ -254,7 +264,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-22"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         5
@@ -279,7 +289,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         6
@@ -304,7 +314,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -329,7 +339,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -354,7 +364,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -379,7 +389,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-47"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -404,7 +414,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         7
@@ -429,7 +439,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -454,7 +464,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -479,7 +489,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -504,7 +514,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-47"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -529,7 +539,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-77"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         8
@@ -554,7 +564,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-77"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -579,7 +589,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-77"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -604,7 +614,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-77"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -629,7 +639,7 @@ exports[`publish custom / non-rectangular size 1`] = `
       class="emotion-97"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -687,7 +697,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   top: 0;
   font-weight: bold;
   line-height: 1em;
-  color: var(--black);
+  color: var(--onprimary);
   font-size: 0.25em;
 }
 
@@ -713,7 +723,17 @@ exports[`publish custom / non-rectangular size 2`] = `
   font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
-  background: var(--secondary);
+  background: var(--lighter);
+}
+
+.emotion-8 {
+  position: absolute;
+  left: 0.1em;
+  top: 0;
+  font-weight: bold;
+  line-height: 1em;
+  color: var(--text);
+  font-size: 0.25em;
 }
 
 .emotion-22 {
@@ -728,7 +748,7 @@ exports[`publish custom / non-rectangular size 2`] = `
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-right: 1px solid var(--cell-wall);
-  background: var(--secondary);
+  background: var(--lighter);
 }
 
 .emotion-27 {
@@ -828,7 +848,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-7"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         2
@@ -853,7 +873,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-7"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         3
@@ -878,7 +898,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-7"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         4
@@ -903,7 +923,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-22"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         5
@@ -928,7 +948,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         6
@@ -953,7 +973,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -978,7 +998,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -1003,7 +1023,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -1028,7 +1048,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-47"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -1053,7 +1073,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         7
@@ -1078,7 +1098,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -1103,7 +1123,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -1128,7 +1148,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-27"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -1153,7 +1173,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-47"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -1178,7 +1198,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-77"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         8
@@ -1203,7 +1223,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-77"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -1228,7 +1248,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-77"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -1253,7 +1273,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-77"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -1278,7 +1298,7 @@ exports[`publish custom / non-rectangular size 2`] = `
       class="emotion-97"
     >
       <div
-        class="emotion-3"
+        class="emotion-8"
       >
         
         
@@ -1327,7 +1347,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
-  background: var(--secondary);
+  background: var(--lighter);
 }
 
 .emotion-3 {
@@ -1336,12 +1356,12 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   top: 0;
   font-weight: bold;
   line-height: 1em;
-  color: var(--black);
+  color: var(--text);
   font-size: 0.25em;
 }
 
 .emotion-4 {
-  color: var(--black);
+  color: var(--text);
   text-align: center;
   line-height: 1.2em;
   font-size: 0.9em;
@@ -1365,6 +1385,16 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   background: var(--primary);
 }
 
+.emotion-18 {
+  position: absolute;
+  left: 0.1em;
+  top: 0;
+  font-weight: bold;
+  line-height: 1em;
+  color: var(--onprimary);
+  font-size: 0.25em;
+}
+
 .emotion-19 {
   color: var(--autofill);
   text-align: center;
@@ -1384,7 +1414,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   border-right: 1px solid var(--cell-wall);
-  background: var(--secondary);
+  background: var(--lighter);
 }
 
 .emotion-27 {
@@ -1540,7 +1570,7 @@ exports[`puzzle in progress should be cached in local storage 1`] = `
       class="emotion-17"
     >
       <div
-        class="emotion-3"
+        class="emotion-18"
       >
         
         4

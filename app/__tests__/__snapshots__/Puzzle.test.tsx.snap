@@ -29,7 +29,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
-  background: var(--secondary);
+  background: var(--lighter);
 }
 
 .emotion-3 {
@@ -38,12 +38,12 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   top: 0;
   font-weight: bold;
   line-height: 1em;
-  color: var(--black);
+  color: var(--text);
   font-size: 0.25em;
 }
 
 .emotion-4 {
-  color: var(--black);
+  color: var(--text);
   text-align: center;
   line-height: 1.2em;
   font-size: 0.9em;
@@ -65,6 +65,16 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   background: var(--primary);
+}
+
+.emotion-18 {
+  position: absolute;
+  left: 0.1em;
+  top: 0;
+  font-weight: bold;
+  line-height: 1em;
+  color: var(--onprimary);
+  font-size: 0.25em;
 }
 
 .emotion-19 {
@@ -271,7 +281,7 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
       class="emotion-17"
     >
       <div
-        class="emotion-3"
+        class="emotion-18"
       >
         
         
@@ -777,7 +787,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   font-size: 64px;
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
-  background: var(--secondary);
+  background: var(--lighter);
 }
 
 .emotion-3 {
@@ -786,12 +796,12 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   top: 0;
   font-weight: bold;
   line-height: 1em;
-  color: var(--black);
+  color: var(--text);
   font-size: 0.25em;
 }
 
 .emotion-4 {
-  color: var(--black);
+  color: var(--text);
   text-align: center;
   line-height: 1.2em;
   font-size: 0.9em;
@@ -813,6 +823,16 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   border-left: 1px solid var(--cell-wall);
   border-top: 1px solid var(--cell-wall);
   background: var(--primary);
+}
+
+.emotion-18 {
+  position: absolute;
+  left: 0.1em;
+  top: 0;
+  font-weight: bold;
+  line-height: 1em;
+  color: var(--onprimary);
+  font-size: 0.25em;
 }
 
 .emotion-19 {
@@ -1019,7 +1039,7 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
       class="emotion-17"
     >
       <div
-        class="emotion-3"
+        class="emotion-18"
       >
         
         

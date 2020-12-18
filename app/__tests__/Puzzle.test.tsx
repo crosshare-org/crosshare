@@ -119,7 +119,7 @@ test('clicking a clue sets slot to active', async () => {
   expect(queryByText(/Begin Puzzle/i)).toBeNull();
 
   const cell = getByLabelText('cell0x1');
-  expect(cell).toHaveStyleRule('background', 'var(--secondary)');
+  expect(cell).toHaveStyleRule('background', 'var(--lighter)');
 
   const cell2 = getByLabelText('cell1x1');
   expect(cell2).toHaveStyleRule('background', 'var(--cell-bg)');
@@ -132,7 +132,7 @@ test('clicking a clue sets slot to active', async () => {
   fireEvent.click(clue);
 
   expect(cell).toHaveStyleRule('background', 'var(--primary)');
-  expect(cell2).toHaveStyleRule('background', 'var(--secondary)');
+  expect(cell2).toHaveStyleRule('background', 'var(--lighter)');
 });
 
 const dailymini_5_19: ServerPuzzleResult = {
@@ -234,9 +234,8 @@ test('daily mini from 5/19/20', async () => {
   await act(() => Promise.resolve());
   expect(queryByText(/Begin Puzzle/i)).toBeNull();
 
-  const clue = getAllByText(/professor plum/i)[0]?.parentElement?.parentElement
-    ?.parentElement;
-  expect(clue).toHaveStyleRule('background-color', 'var(--secondary)');
+  const clue = getAllByText(/professor plum/i)[0]?.parentElement?.parentElement;
+  expect(clue).toHaveStyleRule('border-left', '0.6em solid var(--lighter)');
 
   // This puzzle has some cells w/ only a single entry (no cross) which were
   // causing errors when tabbing through the puzzle
@@ -246,12 +245,15 @@ test('daily mini from 5/19/20', async () => {
   fireEvent.keyDown(container, { key: 'Tab', keyCode: 9 });
   fireEvent.keyDown(container, { key: 'Tab', keyCode: 9 });
 
-  expect(clue).toHaveStyleRule('background-color', 'var(--lighter)');
+  expect(clue?.parentElement?.parentElement).toHaveStyleRule(
+    'background-color',
+    'var(--lighter)'
+  );
 
   // After a naive fix of the above issue we were still having problems on click
   fireEvent.click(getByLabelText('cell0x3'));
   const clueOne = getAllByText(/word with cod/i)[0]?.parentElement
-    ?.parentElement?.parentElement;
+    ?.parentElement?.parentElement?.parentElement;
   expect(clueOne).toHaveStyleRule('background-color', 'var(--lighter)');
 });
 
