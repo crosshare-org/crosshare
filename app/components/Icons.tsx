@@ -581,7 +581,7 @@ export const Logo = (props: IconProps & { notificationCount: number }) => {
       height={props.height || '1em'}
       viewBox="0 0 16 16"
     >
-      <g fill="var(--logo-white)">
+      <g fill="white">
         <path d="M1 10h14v5H1z" />
         <path d="M3 9h10v1H3zm0-7h5v3H3z" />
         <path d="M6 5h1v5H6zm4-2h2v6h-2z" />

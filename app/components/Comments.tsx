@@ -189,7 +189,7 @@ const CommentFlair = (props: CommentFlairProps) => {
           css={{
             fontSize: '0.75em',
             backgroundColor: 'var(--primary)',
-            color: 'white',
+            color: 'var(--onprimary)',
             borderRadius: 5,
             padding: '0.1em 0.2em',
           }}

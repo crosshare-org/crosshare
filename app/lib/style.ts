@@ -1,5 +1,5 @@
 import { CSSInterpolation } from '@emotion/serialize';
-import { adjustHue, mix } from 'color2k';
+import { adjustHue, mix, readableColor } from 'color2k';
 
 export const KEYBOARD_HEIGHT = 164;
 export const HEADER_HEIGHT = 35;
@@ -36,6 +36,7 @@ export const colorTheme = (
   return {
     '--bg': bg,
     '--primary': p,
+    '--onprimary': readableColor(p),
     '--lighter': mix(p, cellBG, 0.6),
     '--secondary': secondary,
     '--bg-hover': mix(bg, hover, hoverRatio),
@@ -46,8 +47,9 @@ export const colorTheme = (
     '--error-hover': mix(error, 'black', 0.3),
     '--notification-bg': '#de30e7',
     '--link': l,
+    '--onlink': readableColor(l),
     '--link-hover': mix(l, hover, hoverRatio),
-    '--text': darkMode ? '#d0d0d0' : '#212529',
+    '--text': darkMode ? 'white' : 'black',
     '--default-text': darkMode ? '#777' : '#999',
     '--caption': '#6c757d',
     '--black': darkMode ? '#eee' : 'black',
@@ -63,7 +65,6 @@ export const colorTheme = (
     '--cell-bg': cellBG,
     '--cell-wall': 'black',
     '--white': darkMode ? '#000' : 'white',
-    '--logo-white': darkMode ? '#d0d0d0' : 'white',
     '--key-bg': darkMode ? 'rgba(255, 255, 255, 0.15)' : 'white',
     '--key-ul': darkMode ? 'black' : '#b5b5b5',
     '--kb-bg': darkMode ? '#191919' : '#ececec',

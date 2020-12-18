@@ -102,7 +102,7 @@ export const ButtonCSS: CSSInterpolation = {
   border: 'solid 1px transparent',
   borderRadius: 4,
   padding: '0.5em 1em',
-  color: 'var(--white)',
+  color: 'var(--onlink)',
   backgroundColor: 'var(--link)',
   lineHeight: 1.1,
   textAlign: 'center',
@@ -117,7 +117,7 @@ export const ButtonCSS: CSSInterpolation = {
   },
   '&:hover': {
     textDecoration: 'none',
-    color: 'var(--white)',
+    color: 'var(--onlink)',
     backgroundColor: 'var(--link-hover)',
   },
   '&:hover:disabled': {

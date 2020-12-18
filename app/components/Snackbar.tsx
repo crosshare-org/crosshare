@@ -82,7 +82,7 @@ export function Snackbar({
         borderRadius: 3,
         minHeight: 32,
         maxWidth: 'calc(100vw - 2em)',
-        boxShadow: '0px 0px 3px 3px rgba(120,120,120,0.5)',
+        boxShadow: '0px 0px 3px 3px rgba(0,0,0,0.5)',
         opacity: 0,
         visibility: 'hidden',
         transition: 'all ' + ANIMATION_DELAY + 'ms ease-in-out 0s',
@@ -143,12 +143,12 @@ function Toast({ id, message }: { id: number; message: string }) {
         tabIndex={0}
         css={{
           cursor: 'pointer',
-          backgroundColor: 'var(--bg)',
+          backgroundColor: 'var(--overlay-inner)',
           color: 'var(--text)',
           padding: '1em',
           width: '100%',
           marginLeft: '110%',
-          boxShadow: '0px 0px 3px 3px rgba(120,120,120,0.5)',
+          boxShadow: '0px 0px 3px 3px rgba(0, 0, 0, 0.5)',
           animation: `${slidein} 0.3s ease-in-out`,
           transition: 'all ' + ANIMATION_DELAY + 'ms ease-in-out 0s',
           ...(message &&

@@ -205,9 +205,9 @@ export const TopBarDropDownLinkSimpleA = (props: TopBarDropDownLinkAProps) => {
         margin: 0,
         padding: '0.5em',
         width: '100%',
-        color: 'var(--text)',
+        color: 'var(--onprimary)',
         '&:hover, &:focus': {
-          color: 'var(--text)',
+          color: 'var(--onprimary)',
           textDecoration: 'none',
           backgroundColor: 'var(--top-bar-hover)',
         },
@@ -273,7 +273,7 @@ export const TopBarLink = (props: TopBarLinkProps) => {
         display: 'inline',
         margin: 0,
         padding: '0 0.45em',
-        color: 'var(--text)',
+        color: 'var(--onprimary)',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'clip',
@@ -307,9 +307,9 @@ export const TopBarLinkA = (props: TopBarLinkAProps) => {
         display: 'inline',
         margin: 0,
         padding: '0 0.45em',
-        color: 'var(--text)',
+        color: 'var(--onprimary)',
         '&:hover, &:focus': {
-          color: 'var(--text)',
+          color: 'var(--onprimary)',
           textDecoration: 'none',
           backgroundColor: 'var(--top-bar-hover)',
         },
@@ -368,6 +368,7 @@ export const TopBar = ({
           css={{
             height: HEADER_HEIGHT,
             backgroundColor: 'var(--primary)',
+            color: 'var(--onprimary)',
           }}
         >
           <div
@@ -389,7 +390,7 @@ export const TopBar = ({
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
                   marginLeft: '5px',
-                  color: 'var(--text)',
+                  color: 'var(--onprimary)',
                   fontSize: HEADER_HEIGHT - 10,
                   [SMALL_AND_UP]: {
                     display: 'inline-block',
@@ -421,7 +422,7 @@ export const TopBar = ({
                   css={{
                     marginLeft: '5px',
                     display: 'none',
-                    color: 'var(--text)',
+                    color: 'var(--onprimary)',
                     fontSize: HEADER_HEIGHT - 10,
                     [SMALL_AND_UP]: {
                       display: 'inline-block',
@@ -452,7 +453,7 @@ export const TopBar = ({
                   css={{
                     marginLeft: '5px',
                     display: 'none',
-                    color: 'var(--text)',
+                    color: 'var(--onprimary)',
                     fontSize: HEADER_HEIGHT - 10,
                     [SMALL_AND_UP]: {
                       display: 'inline-block',

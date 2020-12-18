@@ -97,7 +97,7 @@ export const Cell = memo(function Cell(props: CellProps) {
                 top: 0,
                 fontWeight: 'bold',
                 lineHeight: '1em',
-                color: 'var(--black)',
+                color: props.active ? 'var(--onprimary)' : 'var(--text)',
                 fontSize: '0.25em',
               }}
             >
@@ -123,7 +123,9 @@ export const Cell = memo(function Cell(props: CellProps) {
                 color: props.isVerified
                   ? 'var(--verified)'
                   : props.value.trim()
-                    ? 'var(--black)'
+                    ? props.active
+                      ? 'var(--onprimary)'
+                      : 'var(--text)'
                     : 'var(--autofill)',
                 textAlign: 'center',
                 lineHeight: '1.2em',
