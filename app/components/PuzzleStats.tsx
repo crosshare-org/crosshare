@@ -140,7 +140,6 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
       left={
         <ClueList
           wasEntryClick={state.wasEntryClick}
-          dimCompleted={false}
           active={state.active}
           grid={state.grid}
           showEntries={false}
@@ -157,7 +156,6 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
       right={
         <ClueList
           wasEntryClick={state.wasEntryClick}
-          dimCompleted={false}
           active={state.active}
           grid={state.grid}
           showEntries={false}

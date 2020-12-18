@@ -219,7 +219,6 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
             left={
               <ClueList
                 wasEntryClick={state.wasEntryClick}
-                dimCompleted={false}
                 active={state.active}
                 grid={state.grid}
                 showEntries={false}
@@ -236,7 +235,6 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
             right={
               <ClueList
                 wasEntryClick={state.wasEntryClick}
-                dimCompleted={false}
                 active={state.active}
                 grid={state.grid}
                 showEntries={false}
