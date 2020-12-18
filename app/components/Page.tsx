@@ -142,7 +142,6 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>(
                     scrollbarWidth: 'none',
                   },
                   [LARGE_AND_UP]: {
-                    paddingRight: 2,
                     width: '50%',
                     height: '100%',
                   },
@@ -162,7 +161,6 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>(
                     scrollbarWidth: 'none',
                   },
                   [LARGE_AND_UP]: {
-                    paddingLeft: 2,
                     width: '50%',
                     height: '100%',
                   },

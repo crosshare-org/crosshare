@@ -69,21 +69,17 @@ const ClueListItem = memo(function ClueListItem({
         },
         backgroundColor: isActive
           ? 'var(--lighter)'
-          : isCross
+          : props.isRefed
             ? 'var(--secondary)'
-            : props.isRefed
-              ? 'var(--reffed)'
-              : 'var(--bg)',
+            : 'var(--bg)',
         listStyleType: 'none',
         cursor: 'pointer',
         '&:hover': {
           backgroundColor: isActive
             ? 'var(--lighter)'
-            : isCross
+            : props.isRefed
               ? 'var(--secondary-hover)'
-              : props.isRefed
-                ? 'var(--reffed-hover)'
-                : 'var(--bg-hover)',
+              : 'var(--bg-hover)',
         },
         width: '100%',
       }}
@@ -93,12 +89,8 @@ const ClueListItem = memo(function ClueListItem({
       <div
         css={{
           outline: 'none',
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'nowrap',
-          alignItems: 'center',
           width: '100%',
-          padding: '0.5em',
+          paddingLeft: '0.4em',
         }}
         role="button"
         tabIndex={0}
@@ -107,76 +99,90 @@ const ClueListItem = memo(function ClueListItem({
       >
         <div
           css={{
-            display: props.showEntry ? 'block' : 'none',
-            [SMALL_AND_UP]: {
-              display: 'block',
-            },
-            flexShrink: 0,
-            width: '3em',
-            height: '100%',
-            fontWeight: 'bold',
-            textAlign: 'right',
-            padding: '0 0.5em',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'nowrap',
+            alignItems: 'center',
+            borderLeft: isCross
+              ? '0.6em solid var(--lighter)'
+              : '0.6em solid transparent',
+            padding: '0.5em 0.5em 0.5em 0',
           }}
         >
-          {props.entry.labelNumber}
-          <span
+          <div
             css={{
-              [SMALL_AND_UP]: { display: 'none' },
+              display: props.showEntry ? 'block' : 'none',
+              [SMALL_AND_UP]: {
+                display: 'block',
+              },
+              flexShrink: 0,
+              width: '2.5em',
+              height: '100%',
+              fontWeight: 'bold',
+              textAlign: 'right',
+              paddingRight: '0.5em',
             }}
           >
-            {props.entry.direction === Direction.Across ? 'A' : 'D'}
-          </span>
-        </div>
-        <div
-          css={{
-            flex: '1 1 auto',
-            height: '100%',
-            color: props.conceal
-              ? 'transparent'
-              : props.entry.completedWord && props.dimCompleted
-                ? 'var(--default-text)'
-                : 'var(--black)',
-            textShadow: props.conceal ? '0 0 1em var(--conceal-text)' : '',
-          }}
-        >
-          {props.allEntries && props.refPositions ? (
-            <ClueText
-              refPositions={props.refPositions}
-              entryIndex={props.entry.index}
-              allEntries={props.allEntries}
-              grid={props.grid}
-            />
-          ) : (
-            <div>{props.entry.clue}</div>
-          )}
-          {props.showEntry ? (
-            <div>
-              {props.entry.cells.map((a) => {
-                return (
-                  <span
-                    key={a.col + '-' + a.row}
-                    css={{
-                      display: 'inline-block',
-                      textAlign: 'center',
-                      fontWeight: 'bold',
-                      minWidth: '1em',
-                      border:
-                        props.active &&
-                        a.row === props.active.row &&
-                        a.col === props.active.col
-                          ? '1px solid var(--black)'
-                          : '1px solid transparent',
-                    }}
-                  >
-                    {valAt(props.grid, a).trim() || '-'}
-                  </span>
-                );
-              })}
-            </div>
-          ) : (
-            ''
-          )}
+            {props.entry.labelNumber}
+            <span
+              css={{
+                [SMALL_AND_UP]: { display: 'none' },
+              }}
+            >
+              {props.entry.direction === Direction.Across ? 'A' : 'D'}
+            </span>
+          </div>
+          <div
+            css={{
+              flex: '1 1 auto',
+              height: '100%',
+              color: props.conceal
+                ? 'transparent'
+                : props.entry.completedWord && props.dimCompleted
+                  ? 'var(--default-text)'
+                  : 'var(--black)',
+              textShadow: props.conceal ? '0 0 1em var(--conceal-text)' : '',
+            }}
+          >
+            {props.allEntries && props.refPositions ? (
+              <ClueText
+                refPositions={props.refPositions}
+                entryIndex={props.entry.index}
+                allEntries={props.allEntries}
+                grid={props.grid}
+              />
+            ) : (
+              <div>{props.entry.clue}</div>
+            )}
+            {props.showEntry ? (
+              <div>
+                {props.entry.cells.map((a) => {
+                  return (
+                    <span
+                      key={a.col + '-' + a.row}
+                      css={{
+                        display: 'inline-block',
+                        textAlign: 'center',
+                        fontWeight: 'bold',
+                        minWidth: '1em',
+                        border:
+                          props.active &&
+                          a.row === props.active.row &&
+                          a.col === props.active.col
+                            ? '1px solid var(--black)'
+                            : '1px solid transparent',
+                      }}
+                    >
+                      {valAt(props.grid, a).trim() || '-'}
+                    </span>
+                  );
+                })}
+              </div>
+            ) : (
+              ''
+            )}
+          </div>
         </div>
       </div>
     </li>

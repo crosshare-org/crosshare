@@ -36,9 +36,9 @@ export const Cell = memo(function Cell(props: CellProps) {
   } else if (props.active) {
     bg = 'var(--primary)';
   } else if (props.entryCell) {
-    bg = 'var(--secondary)';
+    bg = 'var(--lighter)';
   } else if (props.refedCell) {
-    bg = 'var(--reffed)';
+    bg = 'var(--secondary)';
   }
 
   const cellSize = props.squareWidth / props.gridWidth;

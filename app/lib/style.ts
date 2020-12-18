@@ -27,22 +27,19 @@ export const colorTheme = (
 ): CSSInterpolation => {
   const p = darkMode && !preservePrimary ? mix(primary, 'black', 0.5) : primary;
   const l = darkMode && !preservePrimary ? mix(link, 'white', 0.4) : link;
-  const cellBG = darkMode ? '#444' : 'white';
+  const cellBG = darkMode ? '#353535' : 'white';
   const hover = darkMode ? 'white' : 'black';
   const hoverRatio = 0.1;
   const bg = darkMode ? '#121212' : '#fff';
-  const secondary = darkMode ? '#222' : '#ccc';
-  const reffed = mix(p, cellBG, 0.7);
+  const secondary = darkMode ? '#505050' : '#ccc';
   const error = mix(adjustHue(p, 280), 'white', darkMode ? 0.3 : 0);
   return {
     '--bg': bg,
     '--primary': p,
-    '--lighter': darkMode ? p : mix(p, 'white', 0.5),
-    '--reffed': reffed,
+    '--lighter': mix(p, cellBG, 0.6),
     '--secondary': secondary,
     '--bg-hover': mix(bg, hover, hoverRatio),
     '--secondary-hover': mix(secondary, hover, hoverRatio),
-    '--reffed-hover': mix(reffed, hover, hoverRatio),
     '--boring-bg': darkMode ? '#b5b5b5' : '#555',
     '--boring-bg-hover': darkMode ? '#bbb' : '#5f5f5f',
     '--error': error,
