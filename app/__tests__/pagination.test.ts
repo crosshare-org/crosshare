@@ -177,10 +177,12 @@ test('try constructor page with some puzzles private or private until', async ()
     .set(getMockedPuzzle());
 
   [page1, total] = await getPuzzlesForConstructorPage(uid, 0, 2);
-  expect(page1.map((p) => p.id)).toEqual(['featured5', 'featured4']);
+  expect(page1.map((p) => p.id)).toEqual(['featured5', 'featured3']);
   expect(total).toEqual(5);
   [page2] = await getPuzzlesForConstructorPage(uid, 1, 2);
-  expect(page2.map((p) => p.id)).toEqual(['featured3', 'featured2']);
+  expect(page2.map((p) => p.id)).toEqual(['featured2', 'featured1']);
+  const [page3] = await getPuzzlesForConstructorPage(uid, 2, 2);
+  expect(page3.map((p) => p.id)).toEqual(['featured4']);
 
   expect(
     (await adminApp.firestore().collection('i').doc(uid).get()).data()?.i
@@ -272,10 +274,12 @@ test('constructor page was failing for private until', async () => {
     .set(getMockedPuzzle());
 
   [page1, total] = await getPuzzlesForConstructorPage(uid, 0, 2);
-  expect(page1.map((p) => p.id)).toEqual(['featured5', 'featured4']);
+  expect(page1.map((p) => p.id)).toEqual(['featured5', 'featured3']);
   expect(total).toEqual(5);
   [page2] = await getPuzzlesForConstructorPage(uid, 1, 2);
-  expect(page2.map((p) => p.id)).toEqual(['featured3', 'featured2']);
+  expect(page2.map((p) => p.id)).toEqual(['featured2', 'featured1']);
+  const [page3] = await getPuzzlesForConstructorPage(uid, 2, 2);
+  expect(page3.map((p) => p.id)).toEqual(['featured4']);
 
   expect(
     (await adminApp.firestore().collection('i').doc(uid).get()).data()?.i

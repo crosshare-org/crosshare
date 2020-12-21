@@ -2,6 +2,7 @@ import { AdminApp, AdminTimestamp, getUser } from '../lib/firebaseWrapper';
 import { PuzzleResult, puzzleFromDB, ServerPuzzleResult } from './types';
 import type firebaseAdminType from 'firebase-admin';
 
+import { zip } from 'fp-ts/Array';
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -135,13 +136,14 @@ async function getPuzzlesForPage(
     await db.collection('i').doc(indexDocId).set(index);
   }
 
+  const idsAndTimes = zip(index.i, index.t);
+
   // Filter out any private puzzles
   const copy = Array.from(index.i.entries());
   copy.reverse();
   for (const [i, pid] of copy) {
     if (index.pv?.includes(pid)) {
-      index.i.splice(i, 1);
-      index.t.splice(i, 1);
+      idsAndTimes.splice(i, 1);
     } else if (index.pvui?.includes(pid) && index.pvut) {
       const pvidx = index.pvui.indexOf(pid);
       const goLiveTime = index.pvut[pvidx];
@@ -149,14 +151,23 @@ async function getPuzzlesForPage(
         throw new Error('mising from pvut but in pvui: ' + pid);
       }
       if (goLiveTime > AdminTimestamp.now()) {
-        index.i.splice(i, 1);
-        index.t.splice(i, 1);
+        idsAndTimes.splice(i, 1);
+      } else {
+        // Replace publish time w/ privateUntil for sorting purposes
+        const valAt = idsAndTimes[i];
+        if (valAt !== undefined) {
+          valAt[1] = goLiveTime;
+        }
       }
     }
   }
 
+  idsAndTimes.sort((a, b) => b[1].toMillis() - a[1].toMillis());
+
   const start = page * page_size;
-  const entriesForPage = index.i.slice(start, start + page_size);
+  const entriesForPage = idsAndTimes
+    .slice(start, start + page_size)
+    .map((a) => a[0]);
 
   const puzzles: Array<PuzzleResult> = [];
 
@@ -181,7 +192,7 @@ async function getPuzzlesForPage(
       console.error(PathReporter.report(validationResult).join(','));
     }
   }
-  return [puzzles, index.i.length];
+  return [puzzles, idsAndTimes.length];
 }
 
 export async function getPuzzlesForConstructorPage(
