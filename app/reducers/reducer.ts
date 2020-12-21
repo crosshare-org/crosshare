@@ -477,13 +477,40 @@ export function checkComplete(state: PuzzleState) {
   return state;
 }
 
+function closeRebus<T extends GridInterfaceState>(state: T): T {
+  if (!state.isEnteringRebus) {
+    return state;
+  }
+  const ci = cellIndex(state.grid, state.active);
+  if (state.isEditable(ci)) {
+    if (isPuzzleState(state)) {
+      const elapsed = getCurrentTime(state);
+      state.cellsUpdatedAt[ci] = elapsed;
+      state.cellsIterationCount[ci] += 1;
+    }
+    const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
+    state.grid = gridWithNewChar(
+      state.grid,
+      state.active,
+      state.rebusValue || ' ',
+      symmetry
+    );
+    state = state.postEdit(ci) as T; // TODO this is trash
+  }
+  return {
+    ...state,
+    isEnteringRebus: false,
+    rebusValue: '',
+  };
+}
+
 export function gridInterfaceReducer<T extends GridInterfaceState>(
   state: T,
   action: PuzzleAction
 ): T {
   if (action.type === 'CHANGEDIRECTION') {
     return {
-      ...state,
+      ...closeRebus(state),
       wasEntryClick: false,
       active: { ...state.active, dir: (state.active.dir + 1) % 2 },
     };
@@ -496,21 +523,21 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
     for (const cell of clickedEntry.cells) {
       if (valAt(state.grid, cell) === ' ') {
         return {
-          ...state,
+          ...closeRebus(state),
           wasEntryClick: true,
           active: { ...cell, dir: clickedEntry.direction },
         };
       }
     }
     return {
-      ...state,
+      ...closeRebus(state),
       wasEntryClick: true,
       active: { ...clickedEntry.cells[0], dir: clickedEntry.direction },
     };
   }
   if (isSetActivePositionAction(action)) {
     return {
-      ...state,
+      ...closeRebus(state),
       wasEntryClick: false,
       active: { ...action.newActive, dir: state.active.dir },
     };
@@ -546,39 +573,19 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           rebusValue: state.rebusValue ? state.rebusValue.slice(0, -1) : '',
         };
       } else if (key === 'Enter') {
-        const ci = cellIndex(state.grid, state.active);
-        if (state.isEditable(ci)) {
-          if (isPuzzleState(state)) {
-            const elapsed = getCurrentTime(state);
-            state.cellsUpdatedAt[ci] = elapsed;
-            state.cellsIterationCount[ci] += 1;
-          }
-          const symmetry = isBuilderState(state)
-            ? state.symmetry
-            : Symmetry.None;
-          state.grid = gridWithNewChar(
-            state.grid,
-            state.active,
-            state.rebusValue || ' ',
-            symmetry
-          );
-          state = state.postEdit(ci) as T; // TODO this is trash
-        }
         return {
-          ...state,
+          ...closeRebus(state),
           wasEntryClick: false,
           active: advancePosition(
             state.grid,
             state.active,
             isPuzzleState(state) ? state.wrongCells : new Set()
           ),
-          isEnteringRebus: false,
-          rebusValue: '',
         };
       } else if (key === 'Escape') {
         return { ...state, isEnteringRebus: false, rebusValue: '' };
       }
-      return state;
+      return closeRebus(state);
     }
     if (key === '{rebus}' || key === 'Escape') {
       const ci = cellIndex(state.grid, state.active);

@@ -16,6 +16,8 @@ type GridViewProps = {
   dispatch: Dispatch<PuzzleAction>;
   revealedCells?: Set<number>;
   verifiedCells?: Set<number>;
+  isEnteringRebus?: boolean;
+  rebusValue?: string;
   wrongCells?: Set<number>;
   allowBlockEditing?: boolean;
   autofill?: Array<string>;
@@ -79,6 +81,8 @@ export const GridView = ({
     }
     cells.push(
       <Cell
+        isEnteringRebus={props.isEnteringRebus || false}
+        rebusValue={props.rebusValue}
         squareWidth={props.squareWidth}
         autofill={props.autofill?.[idx] ?? ''}
         gridWidth={grid.width}

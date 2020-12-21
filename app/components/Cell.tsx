@@ -1,8 +1,36 @@
+import { keyframes } from '@emotion/react';
 import { memo } from 'react';
 
 import { FaSlash, FaEye } from 'react-icons/fa';
 
+const blink = keyframes`
+from, to {
+  background-color: transparent;
+}
+50% {
+  background-color: var(--text);
+}
+`;
+
+const Cursor = () => {
+  return (
+    <span
+      css={{
+        width: '0.05em',
+        height: '0.8em',
+        position: 'relative',
+        backgroundColor: 'var(--text)',
+        top: '0.03em',
+        display: 'inline-block',
+        animation: `1s ${blink} step-end infinite`,
+      }}
+    ></span>
+  );
+};
+
 type CellProps = {
+  isEnteringRebus: boolean;
+  rebusValue?: string;
   autofill: string;
   gridWidth: number;
   gridHeight: number;
@@ -26,13 +54,17 @@ type CellProps = {
 
 export const Cell = memo(function Cell(props: CellProps) {
   let bg = 'var(--cell-bg)';
-  if (props.isBlock && props.active) {
+  if (props.isEnteringRebus && props.active) {
+    /* noop */
+  } else if (props.isBlock && props.active) {
     bg =
       'repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px,var(--primary) 10px,var(--primary) 20px);';
   } else if (props.isBlock) {
     bg = 'var(--cell-wall)';
   } else if (props.cellColor !== undefined) {
     bg = 'rgba(241, 167, 45, ' + props.cellColor + ')';
+  } else if (props.isEnteringRebus) {
+    /* noop */
   } else if (props.active) {
     bg = 'var(--primary)';
   } else if (props.entryCell) {
@@ -42,10 +74,19 @@ export const Cell = memo(function Cell(props: CellProps) {
   }
 
   const cellSize = props.squareWidth / props.gridWidth;
-  const value = props.value.trim() ? props.value : props.autofill;
+  const filledValue =
+    props.active && props.isEnteringRebus
+      ? props.rebusValue || ''
+      : props.value.trim();
+  const value =
+    props.active && props.isEnteringRebus
+      ? filledValue
+      : filledValue || props.autofill;
 
   let boxShadow = '';
-  if (props.highlightCell) {
+  if (props.isEnteringRebus && props.active) {
+    boxShadow = 'inset 0 0 0 0.1em var(--primary)';
+  } else if (props.highlightCell) {
     boxShadow = 'inset 0 0 0 0.02em var(--black)';
   } else if (props.cellColor !== undefined) {
     if (props.active) {
@@ -88,7 +129,7 @@ export const Cell = memo(function Cell(props: CellProps) {
           ...(boxShadow && { boxShadow }),
         }}
       >
-        {!props.isBlock ? (
+        {!props.isBlock || (props.isEnteringRebus && props.active) ? (
           <>
             <div
               css={{
@@ -122,8 +163,8 @@ export const Cell = memo(function Cell(props: CellProps) {
               css={{
                 color: props.isVerified
                   ? 'var(--verified)'
-                  : props.value.trim()
-                    ? props.active
+                  : filledValue
+                    ? props.active && !props.isEnteringRebus
                       ? 'var(--onprimary)'
                       : 'var(--text)'
                     : 'var(--autofill)',
@@ -180,10 +221,11 @@ export const Cell = memo(function Cell(props: CellProps) {
               )}
               <div
                 css={{
-                  fontSize: 1.0 / Math.max(props.value.length - 0.4, 1) + 'em',
+                  fontSize: 1.0 / Math.max(value.length - 0.4, 1) + 'em',
                 }}
               >
                 {value}
+                {props.active && props.isEnteringRebus ? <Cursor /> : ''}
               </div>
             </div>
           </>

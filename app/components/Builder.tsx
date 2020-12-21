@@ -102,7 +102,6 @@ import {
   TopBarDropDown,
 } from './TopBar';
 import { SquareAndCols } from './Page';
-import { RebusOverlay } from './RebusOverlay';
 import { ClueMode } from './ClueMode';
 // eslint-disable-next-line import/no-unresolved
 import AutofillWorker from 'worker-loader?filename=static/[hash].worker.js!../lib/autofill.worker';
@@ -899,7 +898,8 @@ const GridMode = ({
       if (e.metaKey || e.altKey || e.ctrlKey) {
         return; // This way you can still do apple-R and such
       }
-      if (e.key === 'Enter') {
+      /* TODO this logic belongs in the reducer */
+      if (e.key === 'Enter' && !state.isEnteringRebus) {
         reRunAutofill();
         return;
       }
@@ -921,7 +921,7 @@ const GridMode = ({
       dispatch(kpa);
       e.preventDefault();
     },
-    [dispatch, reRunAutofill, getMostConstrainedEntry]
+    [dispatch, reRunAutofill, state.isEnteringRebus, getMostConstrainedEntry]
   );
   useEventListener(
     'keydown',
@@ -1476,15 +1476,6 @@ const GridMode = ({
         ) : (
           ''
         )}
-        {state.isEnteringRebus ? (
-          <RebusOverlay
-            toggleKeyboard={toggleKeyboard}
-            dispatch={dispatch}
-            value={state.rebusValue}
-          />
-        ) : (
-          ''
-        )}
         {state.publishErrors.length ? (
           <Overlay
             closeCallback={() => dispatch({ type: 'CLEARPUBLISHERRORS' })}
@@ -1513,6 +1504,8 @@ const GridMode = ({
             square={(width: number, _height: number) => {
               return (
                 <GridView
+                  isEnteringRebus={state.isEnteringRebus}
+                  rebusValue={state.rebusValue}
                   squareWidth={width}
                   grid={state.grid}
                   active={state.active}

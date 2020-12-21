@@ -26,7 +26,7 @@ export const colorTheme = (
   preservePrimary: boolean
 ): CSSInterpolation => {
   const p = darkMode && !preservePrimary ? mix(primary, 'black', 0.5) : primary;
-  const l = darkMode && !preservePrimary ? mix(link, 'white', 0.4) : link;
+  const l = darkMode && !preservePrimary ? mix(link, 'white', 0.5) : link;
   const cellBG = darkMode ? '#353535' : 'white';
   const hover = darkMode ? 'white' : 'black';
   const hoverRatio = 0.1;

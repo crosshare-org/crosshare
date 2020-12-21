@@ -47,7 +47,6 @@ import {
   Rebus,
   SpinnerFinished,
 } from './Icons';
-import { RebusOverlay } from './RebusOverlay';
 import { AuthContext, AuthPropsOptional } from './AuthContext';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
@@ -792,6 +791,8 @@ export const Puzzle = ({
       <TwoCol
         left={
           <ClueList
+            isEnteringRebus={state.isEnteringRebus}
+            rebusValue={state.rebusValue}
             wasEntryClick={state.wasEntryClick}
             allEntries={state.grid.entries}
             refPositions={refPositions}
@@ -810,6 +811,8 @@ export const Puzzle = ({
         }
         right={
           <ClueList
+            isEnteringRebus={state.isEnteringRebus}
+            rebusValue={state.rebusValue}
             wasEntryClick={state.wasEntryClick}
             allEntries={state.grid.entries}
             refPositions={refPositions}
@@ -838,6 +841,8 @@ export const Puzzle = ({
         square={(width: number, _height: number) => {
           return (
             <GridView
+              isEnteringRebus={state.isEnteringRebus}
+              rebusValue={state.rebusValue}
               squareWidth={width}
               grid={state.grid}
               active={state.active}
@@ -1211,15 +1216,6 @@ export const Puzzle = ({
             )}
           </TopBar>
         </div>
-        {state.isEnteringRebus ? (
-          <RebusOverlay
-            toggleKeyboard={toggleKeyboard}
-            dispatch={dispatch}
-            value={state.rebusValue}
-          />
-        ) : (
-          ''
-        )}
         {state.filled && !state.success && !state.dismissedKeepTrying ? (
           <KeepTryingOverlay dispatch={dispatch} />
         ) : (

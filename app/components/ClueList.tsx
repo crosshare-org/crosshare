@@ -16,6 +16,8 @@ import { SMALL_AND_UP } from '../lib/style';
 import { ClueText } from './ClueText';
 
 interface ClueListItemProps {
+  isEnteringRebus?: boolean;
+  rebusValue?: string;
   conceal: boolean;
   entry: CluedEntry;
   dispatch: Dispatch<PuzzleAction>;
@@ -153,6 +155,10 @@ const ClueListItem = memo(function ClueListItem({
             {props.showEntry ? (
               <div>
                 {props.entry.cells.map((a) => {
+                  const isActiveCell =
+                    props.active &&
+                    a.row === props.active.row &&
+                    a.col === props.active.col;
                   return (
                     <span
                       key={a.col + '-' + a.row}
@@ -161,15 +167,16 @@ const ClueListItem = memo(function ClueListItem({
                         textAlign: 'center',
                         fontWeight: 'bold',
                         minWidth: '1em',
-                        border:
-                          props.active &&
-                          a.row === props.active.row &&
-                          a.col === props.active.col
-                            ? '1px solid var(--black)'
-                            : '1px solid transparent',
+                        border: isActiveCell
+                          ? props.isEnteringRebus
+                            ? '1px solid var(--primary)'
+                            : '1px solid var(--black)'
+                          : '1px solid transparent',
                       }}
                     >
-                      {valAt(props.grid, a).trim() || '-'}
+                      {props.isEnteringRebus && isActiveCell
+                        ? props.rebusValue || '|'
+                        : valAt(props.grid, a).trim() || '-'}
                     </span>
                   );
                 })}
@@ -197,6 +204,8 @@ interface ClueListProps {
   refPositions?: Array<Array<RefPosition>>;
   dispatch: Dispatch<PuzzleAction>;
   showEntries: boolean;
+  isEnteringRebus?: boolean;
+  rebusValue?: string;
   grid: GridBase<EntryBase>;
   scrollToCross: boolean;
 }
@@ -212,6 +221,8 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
         listRef={ref}
         wasEntryClick={props.wasEntryClick}
         scrollToCross={props.scrollToCross}
+        isEnteringRebus={props.isEnteringRebus}
+        rebusValue={props.rebusValue}
         grid={props.grid}
         showEntry={props.showEntries}
         allEntries={props.allEntries}
