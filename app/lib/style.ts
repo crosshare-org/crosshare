@@ -1,5 +1,5 @@
 import { CSSInterpolation } from '@emotion/serialize';
-import { adjustHue, mix, readableColor } from 'color2k';
+import { adjustHue, mix, readableColorIsBlack } from 'color2k';
 
 export const KEYBOARD_HEIGHT = 164;
 export const HEADER_HEIGHT = 35;
@@ -19,6 +19,18 @@ export const HAS_PHYSICAL_KEYBOARD =
 
 export const PRIMARY = '#eb984e';
 export const LINK = '#2874a6';
+const DARK_MODE_WHITE = '#d0d0d0';
+
+export const readableColor = (color: string, darkMode: boolean) => {
+  if (readableColorIsBlack(color)) {
+    return '#000';
+  } else if (darkMode) {
+    return DARK_MODE_WHITE;
+  } else {
+    return '#fff';
+  }
+};
+
 export const colorTheme = (
   primary: string,
   link: string,
@@ -36,7 +48,7 @@ export const colorTheme = (
   return {
     '--bg': bg,
     '--primary': p,
-    '--onprimary': readableColor(p),
+    '--onprimary': readableColor(p, darkMode),
     '--lighter': mix(p, cellBG, 0.6),
     '--secondary': secondary,
     '--bg-hover': mix(bg, hover, hoverRatio),
@@ -47,9 +59,10 @@ export const colorTheme = (
     '--error-hover': mix(error, 'black', 0.3),
     '--notification-bg': '#de30e7',
     '--link': l,
-    '--onlink': readableColor(l),
+    '--onlink': readableColor(l, darkMode),
     '--link-hover': mix(l, hover, hoverRatio),
-    '--text': darkMode ? 'white' : 'black',
+    '--text': darkMode ? DARK_MODE_WHITE : 'black',
+    '--logo-white': darkMode ? DARK_MODE_WHITE : 'white',
     '--default-text': darkMode ? '#777' : '#999',
     '--caption': '#6c757d',
     '--black': darkMode ? '#eee' : 'black',
