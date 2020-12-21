@@ -3,11 +3,7 @@ import { createPortal } from 'react-dom';
 
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 
-import {
-  HAS_PHYSICAL_KEYBOARD,
-  KEYBOARD_HEIGHT,
-  SMALL_AND_UP,
-} from '../lib/style';
+import { SMALL_AND_UP } from '../lib/style';
 import { CoverPic } from './Images';
 
 export const Overlay = (props: {
@@ -15,8 +11,6 @@ export const Overlay = (props: {
   onClick?: () => void;
   hidden?: boolean;
   closeCallback?: () => void;
-  showKeyboard?: boolean;
-  toggleKeyboard?: boolean;
   children: React.ReactNode;
 }) => {
   const ref = useRef<HTMLElement | null>(null);
@@ -45,16 +39,7 @@ export const Overlay = (props: {
         width: '100%',
         overflowY: 'scroll',
         overscrollBehavior: 'contain',
-        height: props.showKeyboard
-          ? props.toggleKeyboard
-            ? '100%'
-            : 'calc(100% - ' + KEYBOARD_HEIGHT + 'px)'
-          : '100%',
-        [HAS_PHYSICAL_KEYBOARD]: {
-          height: props.toggleKeyboard
-            ? 'calc(100% - ' + KEYBOARD_HEIGHT + 'px)'
-            : '100%',
-        },
+        height: '100%',
         zIndex: 10000,
       }}
     >
