@@ -224,8 +224,14 @@ export const Cell = memo(function Cell(props: CellProps) {
                   fontSize: 1.0 / Math.max(value.length - 0.4, 1) + 'em',
                 }}
               >
-                {value}
-                {props.active && props.isEnteringRebus ? <Cursor /> : ''}
+                {props.active && props.isEnteringRebus ? (
+                  <>
+                    {value}
+                    <Cursor />
+                  </>
+                ) : (
+                  value
+                )}
               </div>
             </div>
           </>
