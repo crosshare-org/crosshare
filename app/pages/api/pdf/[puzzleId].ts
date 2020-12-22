@@ -182,7 +182,11 @@ function layoutPDFInfo(doc: jsPDF, puzzle: PuzzleT) {
   doc.setFontSize(18);
   doc.text(puzzle.title, 50, 50 + 8);
   doc.setFontSize(9);
-  doc.text(`By ${puzzle.authorName} - Published on crosshare.org`, 50, 50 + 20);
+  let authorText = `By ${puzzle.authorName}`;
+  if (puzzle.guestConstructor) {
+    authorText = `By ${puzzle.guestConstructor} - Published by ${puzzle.authorName}`;
+  }
+  doc.text(`${authorText} - Published on crosshare.org`, 50, 50 + 20);
 }
 
 function getPdf(puzzle: PuzzleT): ArrayBuffer {

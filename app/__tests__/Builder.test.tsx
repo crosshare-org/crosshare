@@ -383,7 +383,7 @@ test('publish as default', async () => {
 test('change author name in publish dialogue should publish w/ new name', async () => {
   await publishPuzzle(
     async (r) => {
-      fireEvent.click(r.getByText('change name'));
+      fireEvent.click(r.getByText('change your display name'));
       fireEvent.change(r.getByLabelText('Update display name:'), {
         target: { value: 'M to tha D' },
       });
