@@ -209,10 +209,18 @@ export const PuzzleResultLink = ({
         {authorLink} · {date}
       </p>
     );
+  } else if (puzzle.guestConstructor && showDate) {
+    contents = (
+      <p>
+        By guest constructor {puzzle.guestConstructor} · {date}
+      </p>
+    );
   } else if (showDate) {
     contents = <p>{date}</p>;
   } else if (showAuthor) {
     contents = <p>{authorLink}</p>;
+  } else if (puzzle.guestConstructor) {
+    contents = <p>By guest constructor {puzzle.guestConstructor}</p>;
   }
   return (
     <>

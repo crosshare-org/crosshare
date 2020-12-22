@@ -86,10 +86,20 @@ export function PublishOverlay(props: {
           />
         ) : (
           <h3>
-            by <i>{displayName}</i> (
+            {props.toPublish.gc ? (
+              <>
+                by <i>{props.toPublish.gc}</i>, published by{' '}
+                <i>{displayName}</i>
+              </>
+            ) : (
+              <>
+                by <i>{displayName}</i>
+              </>
+            )}{' '}
+            (
             <ButtonAsLink
               onClick={() => setEditingDisplayName(true)}
-              text="change name"
+              text="change your display name"
             />
             )
           </h3>
