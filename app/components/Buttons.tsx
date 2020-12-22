@@ -106,7 +106,7 @@ export const ButtonCSS: CSSInterpolation = {
   backgroundColor: 'var(--link)',
   lineHeight: 1.1,
   textAlign: 'center',
-  boxShadow: '0 3px 5px rgba(0, 0, 0, 0.18)',
+  boxShadow: '0 3px 5px rgba(0, 0, 0, 0.5)',
   '&:disabled': {
     color: 'var(--default-text)',
     borderColor: 'var(--default-text)',
