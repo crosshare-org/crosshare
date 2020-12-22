@@ -302,10 +302,17 @@ class PuzWriter {
   }
 
   writeStrings(puzzle: DBPuzzleT) {
+    let note = 'Published on crosshare.org';
+    let author = puzzle.n;
+    if (puzzle.gc) {
+      author = puzzle.gc;
+      note = `Published by ${puzzle.n} on crosshare.org`;
+    }
+
     const stringStart = this.buf.length;
     this.writeString(puzzle.t);
-    this.writeString(puzzle.n);
-    this.writeString(`Copyright ${puzzle.n}, all rights reserved`);
+    this.writeString(author);
+    this.writeString(`Copyright ${author}, all rights reserved`);
     const clues: Array<[number, string]> = [];
     for (const [i, clue] of puzzle.ac.entries()) {
       const clueNumber = puzzle.an[i];
@@ -325,7 +332,6 @@ class PuzWriter {
     for (const clue of clues) {
       this.writeString(clue[1]);
     }
-    const note = 'Created on crosshare.org';
     this.writeString(puzzle.cn ? puzzle.cn + ' - ' + note : note);
     return stringStart;
   }
