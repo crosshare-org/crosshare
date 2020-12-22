@@ -31,6 +31,8 @@ const initializeState = (
 ): BuilderState => {
   return initialBuilderState({
     id: null,
+    blogPost: null,
+    guestConstructor: null,
     width: props.width,
     height: props.height,
     grid: props.grid,
@@ -103,6 +105,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
         authorId={state.authorId}
         dispatch={dispatch}
         blogPost={state.blogPost}
+        guestConstructor={state.guestConstructor}
         title={state.title}
         notes={state.notes}
         clues={state.clues}
