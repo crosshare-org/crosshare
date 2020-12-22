@@ -302,7 +302,7 @@ class PuzWriter {
   }
 
   writeStrings(puzzle: DBPuzzleT) {
-    let note = 'Published on crosshare.org';
+    let note = 'Created on crosshare.org';
     let author = puzzle.n;
     if (puzzle.gc) {
       author = puzzle.gc;
