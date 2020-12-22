@@ -135,6 +135,7 @@ interface PauseBeginProps {
   dismissMessage: string;
   notes: string | null;
   blogPost: string | null;
+  guestConstructor: string | null;
   profilePicture?: string | null;
   coverImage?: string | null;
 }
@@ -154,6 +155,7 @@ const BeginPauseOverlay = (props: PauseBeginProps) => {
         title={props.title}
         authorName={props.authorName}
         constructorPage={props.constructorPage}
+        guestConstructor={props.guestConstructor}
       />
       <div css={{ textAlign: 'center' }}>
         {props.loadingPlayState ? (
@@ -220,6 +222,7 @@ const PuzzleHeading = (props: {
   profilePic: string | null | undefined;
   title: string;
   authorName: string;
+  guestConstructor: string | null;
   constructorPage: ConstructorPageT | null;
   blogPost: string | null;
 }) => {
@@ -248,6 +251,7 @@ const PuzzleHeading = (props: {
             <AuthorLink
               authorName={props.authorName}
               constructorPage={props.constructorPage}
+              guestConstructor={props.guestConstructor}
             />{' '}
             ·{' '}
             <span title={formatISO(publishDate)}>
@@ -338,6 +342,7 @@ const SuccessOverlay = (props: {
       closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}
     >
       <PuzzleHeading
+        guestConstructor={props.puzzle.guestConstructor}
         publishTime={props.publishTime}
         showTip={true}
         coverImage={props.coverImage}
@@ -744,6 +749,7 @@ export const Puzzle = ({
   }, [state.grid.entries]);
 
   const beginPauseProps = {
+    guestConstructor: puzzle.guestConstructor,
     coverImage: props.coverImage,
     publishTime: puzzle.isPrivateUntil || puzzle.publishTime,
     blogPost: puzzle.blogPost,

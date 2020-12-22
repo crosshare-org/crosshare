@@ -151,19 +151,25 @@ const PuzzleLink = (props: {
 export const AuthorLink = ({
   authorName,
   constructorPage,
+  guestConstructor,
 }: {
   authorName: string;
   constructorPage: ConstructorPageT | null;
+  guestConstructor: string | null;
 }) => {
+  let link: ReactNode = authorName;
   if (constructorPage) {
     const username = constructorPage.i || constructorPage.id;
+    link = <Link href={'/' + username}>{constructorPage.n}</Link>;
+  }
+  if (guestConstructor) {
     return (
       <>
-        By <Link href={'/' + username}>{constructorPage.n}</Link>
+        By {guestConstructor} · Published by {link}
       </>
     );
   }
-  return <>By {authorName}</>;
+  return <>By {link}</>;
 };
 
 export const PuzzleResultLink = ({
@@ -184,6 +190,7 @@ export const PuzzleResultLink = ({
   const authorLink = (
     <AuthorLink
       authorName={puzzle.authorName}
+      guestConstructor={puzzle.guestConstructor}
       constructorPage={constructorPage || null}
     />
   );
