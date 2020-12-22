@@ -36,6 +36,7 @@ type CommentOrLocalComment = CommentWithPossibleLocalReplies | LocalComment;
 interface CommentProps {
   puzzlePublishTime: number;
   puzzleAuthorId: string;
+  hasGuestConstructor: boolean;
   comment: CommentOrLocalComment;
   children?: ReactNode;
   clueMap: Map<string, [number, Direction, string]>;
@@ -60,6 +61,7 @@ const CommentView = (props: CommentProps) => {
           username={props.comment.authorUsername}
           userId={props.comment.authorId}
           puzzleAuthorId={props.puzzleAuthorId}
+          hasGuestConstructor={props.hasGuestConstructor}
           solveTime={props.comment.authorSolveTime}
           didCheat={props.comment.authorCheated}
         />
@@ -81,6 +83,7 @@ const CommentWithReplies = (
   const replies = isComment(props.comment) ? props.comment.replies : undefined;
   return (
     <CommentView
+      hasGuestConstructor={props.hasGuestConstructor}
       puzzlePublishTime={props.puzzlePublishTime}
       clueMap={props.clueMap}
       puzzleAuthorId={props.puzzleAuthorId}
@@ -168,6 +171,7 @@ interface CommentFlairProps {
   userId: string;
   username?: string;
   puzzleAuthorId: string;
+  hasGuestConstructor: boolean;
 }
 const CommentFlair = (props: CommentFlairProps) => {
   const publishDate =
@@ -194,7 +198,7 @@ const CommentFlair = (props: CommentFlairProps) => {
             padding: '0.1em 0.2em',
           }}
         >
-          constructor
+          {props.hasGuestConstructor ? 'publisher' : 'constructor'}
         </span>
       ) : (
         <>
@@ -236,6 +240,7 @@ interface CommentFormProps {
   username?: string;
   puzzlePublishTime: number;
   puzzleAuthorId: string;
+  hasGuestConstructor: boolean;
   user: firebase.User;
   solveTime: number;
   didCheat: boolean;
@@ -319,6 +324,7 @@ const CommentForm = ({
   if (submittedComment) {
     return (
       <CommentView
+        hasGuestConstructor={props.hasGuestConstructor}
         clueMap={props.clueMap}
         puzzlePublishTime={props.puzzlePublishTime}
         puzzleAuthorId={props.puzzleAuthorId}
@@ -373,6 +379,7 @@ const CommentForm = ({
             )}
             commenting as{' '}
             <CommentFlair
+              hasGuestConstructor={props.hasGuestConstructor}
               username={props.username}
               displayName={props.displayName}
               userId={props.user.uid}
@@ -427,6 +434,7 @@ interface CommentsProps {
   didCheat: boolean;
   puzzleId: string;
   puzzleAuthorId: string;
+  hasGuestConstructor: boolean;
   puzzlePublishTime: number;
   comments: Array<Comment>;
   clueMap: Map<string, [number, Direction, string]>;

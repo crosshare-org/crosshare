@@ -133,6 +133,7 @@ type BuilderProps = WithOptional<
   | 'title'
   | 'constructorNotes'
   | 'blogPost'
+  | 'guestConstructor'
   | 'isPrivate'
   | 'isPrivateUntil'
   | 'highlighted'

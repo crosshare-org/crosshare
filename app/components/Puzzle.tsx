@@ -385,6 +385,7 @@ const SuccessOverlay = (props: {
         )}
       </div>
       <Comments
+        hasGuestConstructor={props.puzzle.guestConstructor !== null}
         clueMap={props.clueMap}
         solveTime={props.solveTime}
         didCheat={props.didCheat}

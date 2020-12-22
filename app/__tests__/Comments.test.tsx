@@ -41,6 +41,7 @@ test('basic comment display', () => {
       didCheat={false}
       puzzleId="puzz"
       puzzleAuthorId="puzzAuthor"
+      hasGuestConstructor={false}
       puzzlePublishTime={new Date('2020-6-1').getTime()}
       comments={[testComment]}
     />,
@@ -59,6 +60,7 @@ test('comment with username display', () => {
       didCheat={false}
       puzzleId="puzz"
       puzzleAuthorId="puzzAuthor"
+      hasGuestConstructor={false}
       puzzlePublishTime={new Date('2020-6-1').getTime()}
       comments={[{ authorUsername: 'MikeD', ...testComment }]}
     />,

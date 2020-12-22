@@ -101,6 +101,7 @@ const testPuzzle: ServerPuzzleResult = {
   constructorNotes: null,
   constructorPage: null,
   blogPost: null,
+  guestConstructor: null,
 };
 
 test('clicking a clue sets slot to active', async () => {
@@ -211,6 +212,7 @@ const dailymini_5_19: ServerPuzzleResult = {
   comments: [],
   id: 'iMwPVXfePmv3bJC6KaQL',
   constructorNotes: null,
+  guestConstructor: null,
 };
 
 test('daily mini from 5/19/20', async () => {
