@@ -10,6 +10,7 @@ import {
   SetBlogPostAction,
   BuilderState,
   SetPrivateAction,
+  SetGuestConstructorAction,
 } from '../reducers/reducer';
 import { TopBarLink, TopBar } from './TopBar';
 import { Direction } from '../lib/types';
@@ -42,6 +43,9 @@ export function sanitizeClue(input: string) {
   return input.substring(0, 140);
 }
 export function sanitizeTitle(input: string) {
+  return input.substring(0, 140);
+}
+export function sanitizeGuestConstructor(input: string) {
   return input.substring(0, 140);
 }
 export function sanitizeConstructorNotes(input: string) {
@@ -134,6 +138,7 @@ interface ClueModeProps {
   title: string | null;
   notes: string | null;
   blogPost: string | null;
+  guestConstructor: string | null;
   exitClueMode: () => void;
   authorId: string;
   puzzleId: string;
@@ -175,7 +180,7 @@ export const ClueMode = (props: ClueModeProps) => {
           <h2>Title</h2>
           <input
             type="text"
-            css={{ width: '100%', marginBottom: '1.5em' }}
+            css={{ width: '100%' }}
             placeholder="Give your puzzle a title"
             value={props.title || ''}
             onChange={(e) => {
@@ -187,7 +192,7 @@ export const ClueMode = (props: ClueModeProps) => {
             }}
           />
         </label>
-        <h2>Metadata</h2>
+        <h2 css={{ marginTop: '1em' }}>Metadata</h2>
         <div>
           <label>
             <input
@@ -320,7 +325,7 @@ export const ClueMode = (props: ClueModeProps) => {
             <h3>Note:</h3>
             <input
               type="text"
-              css={{ width: '100%', marginBottom: '1.5em' }}
+              css={{ width: '100%' }}
               placeholder="Add a note"
               value={props.notes}
               onChange={(e) => {
@@ -357,6 +362,49 @@ export const ClueMode = (props: ClueModeProps) => {
             />
           </div>
         )}
+        {props.guestConstructor !== null ? (
+          <>
+            <h3>Guest Constructor:</h3>
+            <input
+              type="text"
+              css={{ width: '100%' }}
+              placeholder="Guest constructor's name"
+              value={props.guestConstructor}
+              onChange={(e) => {
+                const sta: SetGuestConstructorAction = {
+                  type: 'SETGC',
+                  value: sanitizeGuestConstructor(e.target.value),
+                };
+                props.dispatch(sta);
+              }}
+            />
+            <p>
+              <ButtonAsLink
+                text="Remove guest constructor"
+                onClick={() => {
+                  const sna: SetGuestConstructorAction = {
+                    type: 'SETGC',
+                    value: null,
+                  };
+                  props.dispatch(sna);
+                }}
+              />
+            </p>
+          </>
+        ) : (
+          <div>
+            <ButtonAsLink
+              text="This puzzle is by a guest constructor"
+              onClick={() => {
+                const sna: SetGuestConstructorAction = {
+                  type: 'SETGC',
+                  value: '',
+                };
+                props.dispatch(sna);
+              }}
+            />
+          </div>
+        )}
         {props.blogPost !== null ? (
           <>
             <h3>Blog Post:</h3>
@@ -366,7 +414,7 @@ export const ClueMode = (props: ClueModeProps) => {
               <code>||like this||</code>.
             </p>
             <textarea
-              css={{ width: '100%', display: 'block', marginBottom: '1em' }}
+              css={{ width: '100%', display: 'block' }}
               placeholder="Your post text (markdown format)"
               value={props.blogPost}
               onChange={(e) => {
@@ -418,7 +466,7 @@ export const ClueMode = (props: ClueModeProps) => {
             />
           </div>
         )}
-        <h2>Clues</h2>
+        <h2 css={{ marginTop: '1em' }}>Clues</h2>
         {props.completedEntries.length ? (
           <table css={{ width: '100%' }}>
             <tbody>{clueRows}</tbody>

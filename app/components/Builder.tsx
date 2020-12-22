@@ -287,6 +287,8 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     editable: true,
     isPrivate: saved?.isPrivate || false,
     isPrivateUntil: saved?.isPrivateUntil || null,
+    blogPost: saved?.blogPost || null,
+    guestConstructor: saved?.guestConstructor || null,
   });
 };
 
@@ -672,6 +674,8 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       clues: state.clues,
       title: state.title,
       notes: state.notes,
+      blogPost: state.blogPost,
+      guestConstructor: state.guestConstructor,
       isPrivate: state.isPrivate,
       isPrivateUntil: state.isPrivateUntil?.toMillis(),
     };
@@ -686,6 +690,8 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     state.grid.highlighted,
     state.title,
     state.notes,
+    state.blogPost,
+    state.guestConstructor,
     state.isPrivate,
     state.isPrivateUntil,
   ]);
@@ -704,6 +710,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
         authorId={state.authorId}
         dispatch={dispatch}
         blogPost={state.blogPost}
+        guestConstructor={state.guestConstructor}
         title={state.title}
         notes={state.notes}
         clues={state.clues}

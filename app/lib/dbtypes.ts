@@ -112,6 +112,8 @@ const DBPuzzleOptionalV = t.partial({
   cn: t.string,
   /** blog post */
   bp: t.string,
+  /** guest constructor */
+  gc: t.string,
   /** isPrivate */
   pv: t.boolean,
   /** isPrivateUntil */

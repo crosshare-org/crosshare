@@ -101,6 +101,7 @@ export interface PuzzleT {
   authorId: string;
   category: string | null;
   authorName: string;
+  guestConstructor: string | null;
   moderated: boolean;
   publishTime: number;
   title: string;
@@ -176,6 +177,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     authorId: dbPuzzle.a,
     category: dbPuzzle.c,
     authorName: dbPuzzle.n,
+    guestConstructor: dbPuzzle.gc || null,
     moderated: dbPuzzle.m,
     publishTime: dbPuzzle.p.toMillis(),
     title: dbPuzzle.t,
@@ -207,6 +209,8 @@ export const PuzzleInProgressV = t.intersection([
     notes: t.union([t.string, t.null]),
   }),
   t.partial({
+    blogPost: t.union([t.string, t.null]),
+    guestConstructor: t.union([t.string, t.null]),
     id: t.string,
     isPrivate: t.boolean,
     isPrivateUntil: t.union([t.number, t.null]),

@@ -78,6 +78,7 @@ export interface BuilderState extends GridInterfaceState {
   type: 'builder';
   title: string | null;
   notes: string | null;
+  guestConstructor: string | null;
   blogPost: string | null;
   grid: BuilderGrid;
   gridIsComplete: boolean;
@@ -111,6 +112,8 @@ export function initialBuilderState({
   editable,
   isPrivate,
   isPrivateUntil,
+  blogPost,
+  guestConstructor,
 }: {
   id: string | null;
   width: number;
@@ -118,6 +121,8 @@ export function initialBuilderState({
   grid: Array<string>;
   highlighted: Array<number>;
   highlight: 'circle' | 'shade';
+  blogPost: string | null;
+  guestConstructor: string | null;
   title: string | null;
   notes: string | null;
   clues: Record<string, string>;
@@ -141,7 +146,8 @@ export function initialBuilderState({
     type: 'builder',
     title: title,
     notes: notes,
-    blogPost: null,
+    blogPost: blogPost,
+    guestConstructor: guestConstructor,
     wasEntryClick: false,
     active: { col: 0, row: 0, dir: Direction.Across },
     grid: initialGrid,
@@ -233,6 +239,16 @@ export interface SetNotesAction extends PuzzleAction {
 }
 function isSetNotesAction(action: PuzzleAction): action is SetNotesAction {
   return action.type === 'SETNOTES';
+}
+
+export interface SetGuestConstructorAction extends PuzzleAction {
+  type: 'SETGC';
+  value: string | null;
+}
+function isSetGuestConstructorAction(
+  action: PuzzleAction
+): action is SetGuestConstructorAction {
+  return action.type === 'SETGC';
 }
 
 export interface SetHighlightAction extends PuzzleAction {
@@ -753,6 +769,9 @@ export function builderReducer(
   if (isSetNotesAction(action)) {
     return { ...state, notes: action.value };
   }
+  if (isSetGuestConstructorAction(action)) {
+    return { ...state, guestConstructor: action.value };
+  }
   if (isClickedFillAction(action)) {
     return {
       ...state,
@@ -801,6 +820,8 @@ export function builderReducer(
       grid: initialFill,
       title: null,
       notes: null,
+      blogPost: null,
+      guestConstructor: null,
       highlight: 'circle',
       highlighted: [],
       clues: {},
@@ -876,6 +897,7 @@ export function builderReducer(
       dn,
       ...(state.notes && { cn: state.notes }),
       ...(state.blogPost && { bp: state.blogPost }),
+      ...(state.guestConstructor && { gc: state.guestConstructor }),
       ...(state.isPrivate && { pv: true }),
       ...(state.isPrivateUntil && { pvu: state.isPrivateUntil }),
     };
