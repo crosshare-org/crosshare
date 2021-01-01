@@ -229,7 +229,7 @@ export default async function pdf(req: NextApiRequest, res: NextApiResponse) {
   }
   const fromDB = puzzleFromDB(puzzle);
   res.setHeader('X-Robots-Tag', 'noindex');
-  res.setHeader('Cache-Control', 'public, max-age=172800, s-maxage=172800');
+  res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
   res.setHeader(
     'Content-Disposition',
     'inline; filename="' + puzzle.t.replace(/[^\w ]/g, '') + '.pdf"'

@@ -16,7 +16,7 @@ export default async function puz(req: NextApiRequest, res: NextApiResponse) {
       .json({ statusCode: 404, message: 'failed to get puzzle' });
   }
   res.setHeader('X-Robots-Tag', 'noindex');
-  res.setHeader('Cache-Control', 'public, max-age=172800, s-maxage=172800');
+  res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
   res.setHeader(
     'Content-Disposition',
     'inline; filename="' + puzzle.t.replace(/[^\w ]/g, '') + '.puz"'
