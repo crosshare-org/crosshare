@@ -1093,22 +1093,16 @@ export const Puzzle = ({
               ) : (
                 ''
               )}
-              {!isEmbed ? (
-                <>
-                  <TopBarDropDownLinkSimpleA
-                    href={'/api/pdf/' + puzzle.id}
-                    icon={<FaPrint />}
-                    text="Print Puzzle"
-                  />
-                  <TopBarDropDownLinkSimpleA
-                    href={'/api/puz/' + puzzle.id}
-                    icon={<FaRegFile />}
-                    text="Download .puz File"
-                  />
-                </>
-              ) : (
-                ''
-              )}
+              <TopBarDropDownLinkSimpleA
+                href={'/api/pdf/' + puzzle.id}
+                icon={<FaPrint />}
+                text="Print Puzzle"
+              />
+              <TopBarDropDownLinkSimpleA
+                href={'/api/puz/' + puzzle.id}
+                icon={<FaRegFile />}
+                text="Download .puz File"
+              />
               <TopBarDropDownLinkA
                 href="/account"
                 icon={<FaUser />}
