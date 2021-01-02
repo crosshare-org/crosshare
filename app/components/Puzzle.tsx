@@ -107,6 +107,7 @@ import { EmbedContext } from './EmbedContext';
 import dynamic from 'next/dynamic';
 import type { ModeratingOverlay as ModeratingOverlayType } from './ModerateOverlay';
 import type { EmbedOverlay as EmbedOverlayType } from './EmbedOverlay';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -355,8 +356,25 @@ const SuccessOverlay = (props: {
       <div css={{ textAlign: 'center' }}>
         {props.user?.uid === props.puzzle.authorId ? (
           <>
+            {props.puzzle.isPrivate ||
+            (props.puzzle.isPrivateUntil &&
+              props.puzzle.isPrivateUntil > Date.now()) ? (
+                <p>
+                Your puzzle is private
+                  {props.puzzle.isPrivateUntil && !props.puzzle.isPrivate
+                    ? ` until ${formatDistanceToNow(
+                      new Date(props.puzzle.isPrivateUntil)
+                    )} from now. Until then, it `
+                    : '. It '}
+                won&apos;t appear on your Crosshare blog, isn&apos;t eligible to
+                be featured on the homepage, and notifications won&apos;t get
+                sent to any of your followers. It is still viewable by anybody
+                you send the link to (or if you share it elsewhere as an embed).
+                </p>
+              ) : (
+                <p>Your puzzle is live!</p>
+              )}
             <p>
-              Your puzzle is live!{' '}
               {isEmbed
                 ? `Solvers
               will see an empty grid, yours is complete since you authored the
