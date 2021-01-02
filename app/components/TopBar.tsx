@@ -192,8 +192,10 @@ export const TopBarDropDownLinkA = (props: TopBarDropDownLinkAProps) => {
 };
 
 export const TopBarDropDownLinkSimpleA = (props: TopBarDropDownLinkAProps) => {
+  const isEmbed = useContext(EmbedContext);
   return (
     <a
+      {...(isEmbed && { target: '_blank', rel: 'noreferrer' })}
       href={props.href}
       title={props.text}
       css={{
