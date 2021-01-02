@@ -32,7 +32,6 @@ import {
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 import { Link, LinkButtonSimpleA } from './Link';
 import { ClueList } from './ClueList';
@@ -85,7 +84,7 @@ import {
 } from './TopBar';
 import { SquareAndCols, TwoCol } from './Page';
 import { usePersistedBoolean, useMatchMedia } from '../lib/hooks';
-import { timeString } from '../lib/utils';
+import { pastDistanceToNow, timeString } from '../lib/utils';
 import { App, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
 import type firebase from 'firebase/app';
 import { Emoji } from './Emoji';
@@ -255,7 +254,7 @@ const PuzzleHeading = (props: {
             />{' '}
             ·{' '}
             <span title={formatISO(publishDate)}>
-              Published {formatDistanceToNow(publishDate, { addSuffix: true })}
+              Published {pastDistanceToNow(publishDate)}
             </span>
           </p>
         }

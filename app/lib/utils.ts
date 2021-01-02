@@ -1,16 +1,31 @@
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+
 export function timeString(elapsed: number, fixedSize: boolean): string {
   const hours = Math.floor(elapsed / 3600);
-  const minutes = Math.floor((elapsed - (hours * 3600)) / 60);
-  const seconds = Math.floor(elapsed - (hours * 3600) - (minutes * 60));
+  const minutes = Math.floor((elapsed - hours * 3600) / 60);
+  const seconds = Math.floor(elapsed - hours * 3600 - minutes * 60);
   if (hours === 0 && minutes === 0 && !fixedSize) {
     return seconds + 's';
   }
   if (hours === 0 && !fixedSize) {
     return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
   }
-  return hours + ':' +
-    (minutes < 10 ? '0' : '') + minutes + ':' +
-    (seconds < 10 ? '0' : '') + seconds;
+  return (
+    hours +
+    ':' +
+    (minutes < 10 ? '0' : '') +
+    minutes +
+    ':' +
+    (seconds < 10 ? '0' : '') +
+    seconds
+  );
+}
+
+export function pastDistanceToNow(date: Date) {
+  if (date > new Date()) {
+    return 'just now';
+  }
+  return formatDistanceToNow(date, { addSuffix: true });
 }
 
 export function hslToRgb(h: number, s: number, l: number) {
@@ -43,7 +58,8 @@ export function fnv1a(input: string) {
   for (let i = 0; i < input.length; i++) {
     const characterCode = input.charCodeAt(i);
     hash ^= characterCode;
-    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+    hash +=
+      (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
   }
   return hash >>> 0;
 }

@@ -7,12 +7,11 @@ import { PuzzleResult } from '../lib/types';
 import { SMALL_AND_UP } from '../lib/style';
 import { PuzzleSizeIcon } from '../components/Icons';
 import { Emoji } from '../components/Emoji';
-import { timeString } from '../lib/utils';
+import { pastDistanceToNow, timeString } from '../lib/utils';
 import { PlayWithoutUserT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { Markdown } from './Markdown';
 import formatISO from 'date-fns/formatISO';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 const PuzzleLink = (props: {
   showingBlog: boolean;
@@ -199,7 +198,7 @@ export const PuzzleResultLink = ({
     : new Date(puzzle.publishTime);
   const date = (
     <span title={formatISO(publishDate)}>
-      Published {formatDistanceToNow(publishDate, { addSuffix: true })}
+      Published {pastDistanceToNow(publishDate)}
     </span>
   );
   let contents: ReactNode = null;
