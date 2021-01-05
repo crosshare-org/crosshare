@@ -74,6 +74,17 @@ async function deletePuzzle() {
       });
     });
 
+  console.log('deleting plays');
+  db.collection('p')
+    .where('c', '==', dbres.id)
+    .get()
+    .then((snap) => {
+      snap.forEach(async (res) => {
+        console.log('deleting play');
+        await res.ref.delete();
+      });
+    });
+
   const featuredIndexRes = await db.doc('i/featured').get();
   removeFromIndex(featuredIndexRes, dbres.id);
 
