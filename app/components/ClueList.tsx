@@ -16,6 +16,7 @@ import { SMALL_AND_UP } from '../lib/style';
 import { ClueText } from './ClueText';
 
 interface ClueListItemProps {
+  dimCompleted: boolean;
   isEnteringRebus?: boolean;
   rebusValue?: string;
   conceal: boolean;
@@ -138,7 +139,11 @@ const ClueListItem = memo(function ClueListItem({
             css={{
               flex: '1 1 auto',
               height: '100%',
-              color: props.conceal ? 'transparent' : 'var(--text)',
+              color: props.conceal
+                ? 'transparent'
+                : props.entry.completedWord && props.dimCompleted
+                  ? 'var(--completed-clue)'
+                  : 'var(--text)',
               textShadow: props.conceal ? '0 0 1em var(--conceal-text)' : '',
             }}
           >
@@ -193,6 +198,7 @@ const ClueListItem = memo(function ClueListItem({
 
 interface ClueListProps {
   conceal: boolean;
+  dimCompleted: boolean;
   header: string;
   current?: number;
   active: Position;
@@ -218,6 +224,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
     const isRefed = props.refed.has(entry.index);
     return (
       <ClueListItem
+        dimCompleted={props.dimCompleted}
         listRef={ref}
         wasEntryClick={props.wasEntryClick}
         scrollToCross={props.scrollToCross}

@@ -43,6 +43,7 @@ export const colorTheme = (
   const hover = darkMode ? 'white' : 'black';
   const hoverRatio = 0.1;
   const bg = darkMode ? '#121212' : '#fff';
+  const text = darkMode ? DARK_MODE_WHITE : 'black';
   const secondary = darkMode ? '#505050' : '#ccc';
   const error = mix(adjustHue(p, 280), 'white', darkMode ? 0.3 : 0);
   return {
@@ -61,7 +62,8 @@ export const colorTheme = (
     '--link': l,
     '--onlink': readableColor(l, darkMode),
     '--link-hover': mix(l, hover, hoverRatio),
-    '--text': darkMode ? DARK_MODE_WHITE : 'black',
+    '--text': text,
+    '--completed-clue': mix(text, bg, 0.4),
     '--logo-white': darkMode ? DARK_MODE_WHITE : 'white',
     '--default-text': darkMode ? '#777' : '#999',
     '--caption': '#6c757d',
