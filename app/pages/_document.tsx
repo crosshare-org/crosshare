@@ -168,15 +168,15 @@ export default class CrosshareDocument extends Document {
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script src="https://browser.sentry-cdn.com/5.29.2/bundle.min.js"></script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-          <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+          <script src="https://www.gstatic.com/firebasejs/8.2.2/firebase-app.js"></script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-          <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
+          <script src="https://www.gstatic.com/firebasejs/8.2.2/firebase-auth.js"></script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-          <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
+          <script src="https://www.gstatic.com/firebasejs/8.2.2/firebase-firestore.js"></script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-          <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-performance.js"></script>
+          <script src="https://www.gstatic.com/firebasejs/8.2.2/firebase-performance.js"></script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-          <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-storage.js"></script>
+          <script src="https://www.gstatic.com/firebasejs/8.2.2/firebase-storage.js"></script>
           <NextScript />
         </body>
       </Html>
