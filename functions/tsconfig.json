@@ -10,10 +10,16 @@
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "target": "es2017",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "types": [
+      "@emotion/react/types/css-prop"
+    ],
+
   },
   "compileOnSave": true,
   "include": [
-    "src"
+    "src",
+    "typings/**/*.ts"
   ]
 }
