@@ -1084,6 +1084,155 @@ Array [
 ]
 `;
 
+exports[`should update indexes when a private puzzle is marked private until 1`] = `
+Array [
+  Object {
+    "c": "LwgoVx0BAskM4wVJyoLj",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
+    "k": "comment",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`;
+
+exports[`should update indexes when a private puzzle is marked private until 2`] = `
+Array [
+  Object {
+    "i": Array [
+      "puzzletokeep",
+      "puzzletodelete",
+    ],
+    "pv": Array [
+      "puzzletodelete",
+      "puzzletokeep",
+    ],
+    "t": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+  },
+  Object {
+    "i": Array [
+      "puzzletokeep",
+      "puzzletodelete",
+    ],
+    "pv": Array [
+      "puzzletodelete",
+      "puzzletokeep",
+    ],
+    "t": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+  },
+]
+`;
+
+exports[`should update indexes when a private puzzle is marked private until 3`] = `
+Array [
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`;
+
+exports[`should update indexes when a private puzzle is marked private until 4`] = `
+Array [
+  Object {
+    "i": Array [
+      "puzzletokeep",
+      "puzzletodelete",
+    ],
+    "pv": Array [
+      "puzzletokeep",
+    ],
+    "pvui": Array [
+      "puzzletodelete",
+    ],
+    "pvut": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+    "t": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+  },
+  Object {
+    "i": Array [
+      "puzzletokeep",
+      "puzzletodelete",
+    ],
+    "pv": Array [
+      "puzzletokeep",
+    ],
+    "pvui": Array [
+      "puzzletodelete",
+    ],
+    "pvut": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+    "t": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+  },
+]
+`;
+
 exports[`should update indexes when a private puzzle is marked public 1`] = `
 Array [
   Object {
@@ -1211,6 +1360,175 @@ Array [
     ],
     "pv": Array [
       "puzzletokeep",
+    ],
+    "t": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+  },
+]
+`;
+
+exports[`should update indexes when a private until puzzle is marked private 1`] = `
+Array [
+  Object {
+    "c": "LwgoVx0BAskM4wVJyoLj",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
+    "k": "comment",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`;
+
+exports[`should update indexes when a private until puzzle is marked private 2`] = `
+Array [
+  Object {
+    "i": Array [
+      "puzzletokeep",
+      "puzzletodelete",
+    ],
+    "pvui": Array [
+      "puzzletokeep",
+      "puzzletodelete",
+    ],
+    "pvut": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+    "t": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+  },
+  Object {
+    "i": Array [
+      "puzzletokeep",
+      "puzzletodelete",
+    ],
+    "pvui": Array [
+      "puzzletokeep",
+      "puzzletodelete",
+    ],
+    "pvut": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+    "t": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+  },
+]
+`;
+
+exports[`should update indexes when a private until puzzle is marked private 3`] = `
+Array [
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`;
+
+exports[`should update indexes when a private until puzzle is marked private 4`] = `
+Array [
+  Object {
+    "i": Array [
+      "puzzletokeep",
+      "puzzletodelete",
+    ],
+    "pv": Array [
+      "puzzletodelete",
+    ],
+    "pvui": Array [
+      "puzzletokeep",
+    ],
+    "pvut": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+    "t": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+  },
+  Object {
+    "i": Array [
+      "puzzletokeep",
+      "puzzletodelete",
+    ],
+    "pv": Array [
+      "puzzletodelete",
+    ],
+    "pvui": Array [
+      "puzzletokeep",
+    ],
+    "pvut": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
     ],
     "t": Array [
       Timestamp {
