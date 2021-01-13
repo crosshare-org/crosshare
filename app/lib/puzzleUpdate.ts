@@ -75,7 +75,7 @@ async function markPuzzlePublic(
 
   // remove from private index if present
   const pvi = idx.pv?.indexOf(puzzleId);
-  if (pvi && pvi < 0) {
+  if (pvi !== undefined && pvi >= 0) {
     idx.pv?.splice(pvi, 1);
   }
 
@@ -107,7 +107,7 @@ async function markPuzzlePrivateUntil(
 
   // remove from private index if present
   const pvi = idx.pv?.indexOf(puzzleId);
-  if (pvi && pvi < 0) {
+  if (pvi !== undefined && pvi >= 0) {
     idx.pv?.splice(pvi, 1);
   }
 

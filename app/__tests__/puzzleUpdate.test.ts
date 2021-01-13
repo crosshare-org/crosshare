@@ -395,9 +395,94 @@ test('should remove from notifications and update indexes when a public puzzle i
   ).toMatchSnapshot();
 });
 
-test.todo(
-  'should remove from notifications and update indexes when a private puzzle is marked public'
-);
+test('should update indexes when a private puzzle is marked public', async () => {
+  await firebaseTesting.clearFirestoreData({ projectId });
+
+  // create some notifications
+  const puzzleWithComments = {
+    ...basePuzzle,
+    cs: [getComment({ a: 'dummy-author-id' })],
+  };
+  const puzzleWithComments2 = {
+    ...basePuzzle,
+    cs: [getComment({ a: 'dummy-author-id', i: 'randomCommentId' })],
+  };
+  await handlePuzzleUpdate(basePuzzle, puzzleWithComments, toDeleteId);
+  await handlePuzzleUpdate(basePuzzle, puzzleWithComments2, toKeepId);
+
+  // create the actual puzzles
+  await adminApp
+    .firestore()
+    .collection('c')
+    .doc(toDeleteId)
+    .set({ ...puzzleWithComments, pv: true });
+  await adminApp
+    .firestore()
+    .collection('c')
+    .doc(toKeepId)
+    .set({ ...puzzleWithComments2, pv: true });
+
+  // create the indexes
+  await getPuzzlesForConstructorPage(puzzleWithComments.a, 0, 5);
+  await getPuzzlesForFeatured(0, 5);
+
+  expect(
+    await adminApp
+      .firestore()
+      .collection('n')
+      .get()
+      .then((r) =>
+        r.docs
+          .map((d) => d.data())
+          .map((d) => {
+            delete d['t'];
+            return d;
+          })
+      )
+  ).toMatchSnapshot();
+  expect(
+    await adminApp
+      .firestore()
+      .collection('i')
+      .get()
+      .then((r) => r.docs.map((d) => d.data()))
+  ).toMatchSnapshot();
+
+  // mark as public
+  await handlePuzzleUpdate(
+    { ...puzzleWithComments, pv: true },
+    puzzleWithComments,
+    toDeleteId
+  );
+  await handlePuzzleUpdate(
+    { ...puzzleWithComments2, pv: true },
+    { ...puzzleWithComments2, pv: true },
+    toKeepId
+  );
+
+  // and check results
+  expect(
+    await adminApp
+      .firestore()
+      .collection('n')
+      .get()
+      .then((r) =>
+        r.docs
+          .map((d) => d.data())
+          .map((d) => {
+            delete d['t'];
+            return d;
+          })
+      )
+  ).toMatchSnapshot();
+  expect(
+    await adminApp
+      .firestore()
+      .collection('i')
+      .get()
+      .then((r) => r.docs.map((d) => d.data()))
+  ).toMatchSnapshot();
+});
 
 test.todo(
   'should remove from notifications and update indexes when a private until puzzle is marked public'
