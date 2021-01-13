@@ -72,7 +72,7 @@ export const PuzzleIndexV = t.intersection([
     pvut: t.array(adminTimestamp),
   }),
 ]);
-type PuzzleIndexT = t.TypeOf<typeof PuzzleIndexV>;
+export type PuzzleIndexT = t.TypeOf<typeof PuzzleIndexV>;
 
 async function getPuzzlesForPage(
   indexDocId: string,
