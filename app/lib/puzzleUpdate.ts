@@ -245,7 +245,7 @@ export async function handlePuzzleUpdate(
         markPuzzlePrivate(authorIndexRes, puzzleId);
       }
     } else if (after.pvu) {
-      if (after.pvu !== before.pvu) {
+      if (after.pvu.toMillis() !== before.pvu?.toMillis()) {
         // been marked private until
         await deleteNotifications(puzzleId);
 
