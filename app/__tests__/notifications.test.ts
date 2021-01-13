@@ -144,7 +144,7 @@ test('should not notify for new puzzle if no subs', async () => {
   setAdminApp((adminApp as unknown) as firebaseAdminType.app.App);
 
   const notifications = await notificationsForPuzzleChange(
-    undefined,
+    null,
     basePuzzle,
     'puzzle-id-here'
   );
@@ -163,7 +163,7 @@ test('should notify for new puzzle if there are subs', async () => {
     .set({ f: ['mikeuserid', 'tomuserid'] });
 
   const notifications = await notificationsForPuzzleChange(
-    undefined,
+    null,
     basePuzzle,
     'puzzle-id-here'
   );
@@ -371,14 +371,14 @@ describe('email queueing', () => {
       .set({ f: ['mikeuserid', 'rando'] });
 
     notifications.push(
-      ...(await notificationsForPuzzleChange(undefined, basePuzzle, 'wowowo'))
+      ...(await notificationsForPuzzleChange(null, basePuzzle, 'wowowo'))
     );
 
     // Private puzzle should have no effect
     notifications.push(
       ...(await notificationsForPuzzleChange(
-        undefined,
-        { ...basePuzzle, id: 'foo', pv: true },
+        null,
+        { ...basePuzzle, pv: true },
         'foo'
       ))
     );

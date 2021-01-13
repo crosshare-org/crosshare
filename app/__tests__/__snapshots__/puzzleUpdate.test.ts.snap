@@ -1,0 +1,485 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should remove from notifications, plays, indexes and puzzle itself when a puzzle is deleted 1`] = `
+Array [
+  Object {
+    "c": "LwgoVx0BAskM4wVJyoLj",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
+    "k": "comment",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`;
+
+exports[`should remove from notifications, plays, indexes and puzzle itself when a puzzle is deleted 2`] = `
+Array [
+  Object {
+    "c": "puzzletokeep",
+    "ch": false,
+    "ct": Array [],
+    "f": true,
+    "g": Array [],
+    "rc": Array [],
+    "t": 44,
+    "u": "anonymous-user-id",
+    "ua": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604965200,
+    },
+    "uc": Array [],
+    "vc": Array [],
+    "wc": Array [],
+    "we": Array [],
+  },
+  Object {
+    "c": "puzzletodelete",
+    "ch": true,
+    "ct": Array [
+      1,
+      2,
+      4,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+    ],
+    "f": true,
+    "g": Array [],
+    "n": "Puzzle title",
+    "rc": Array [],
+    "t": 70,
+    "u": "blah",
+    "ua": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604965200,
+    },
+    "uc": Array [
+      5,
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+    ],
+    "vc": Array [],
+    "wc": Array [],
+    "we": Array [],
+  },
+]
+`;
+
+exports[`should remove from notifications, plays, indexes and puzzle itself when a puzzle is deleted 3`] = `
+Array [
+  Object {
+    "a": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+    "ac": Array [
+      " Cobbler's forms",
+      "Absolutely perfect",
+      "Spike Lee's \\"She's ___ Have It\\"",
+      "English class assignment",
+      "Raises, as young",
+    ],
+    "an": Array [
+      1,
+      6,
+      7,
+      8,
+      9,
+    ],
+    "c": null,
+    "cs": Array [
+      Object {
+        "a": "dummy-author-id",
+        "c": "A couple of two-worders today which I don't love, but I hope you all got it anyway!",
+        "ch": false,
+        "i": "LwgoVx0BAskM4wVJyoLj",
+        "n": "Mike D",
+        "p": Timestamp {
+          "_nanoseconds": 0,
+          "_seconds": 1604966400,
+        },
+        "t": 36.009,
+      },
+    ],
+    "dc": Array [
+      "Hybrid whose father is a lion",
+      "___ of reality (wake-up call)",
+      "___ date (makes wedding plans)",
+      "Middle Ages invader",
+      "Has a great night at the comedy club",
+    ],
+    "del": true,
+    "dn": Array [
+      1,
+      2,
+      3,
+      4,
+      5,
+    ],
+    "f": true,
+    "g": Array [
+      "L",
+      "A",
+      "S",
+      "T",
+      "S",
+      "I",
+      "D",
+      "E",
+      "A",
+      "L",
+      "G",
+      "O",
+      "T",
+      "T",
+      "A",
+      "E",
+      "S",
+      "S",
+      "A",
+      "Y",
+      "R",
+      "E",
+      "A",
+      "R",
+      "S",
+    ],
+    "h": 5,
+    "m": false,
+    "n": "Mike D",
+    "p": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604966400,
+    },
+    "t": "Raises, as young",
+    "w": 5,
+  },
+  Object {
+    "a": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+    "ac": Array [
+      " Cobbler's forms",
+      "Absolutely perfect",
+      "Spike Lee's \\"She's ___ Have It\\"",
+      "English class assignment",
+      "Raises, as young",
+    ],
+    "an": Array [
+      1,
+      6,
+      7,
+      8,
+      9,
+    ],
+    "c": null,
+    "cs": Array [
+      Object {
+        "a": "dummy-author-id",
+        "c": "A couple of two-worders today which I don't love, but I hope you all got it anyway!",
+        "ch": false,
+        "i": "LwgoVx0BAskM4wVJyoLj",
+        "n": "Mike D",
+        "p": Timestamp {
+          "_nanoseconds": 0,
+          "_seconds": 1604966400,
+        },
+        "t": 36.009,
+      },
+    ],
+    "dc": Array [
+      "Hybrid whose father is a lion",
+      "___ of reality (wake-up call)",
+      "___ date (makes wedding plans)",
+      "Middle Ages invader",
+      "Has a great night at the comedy club",
+    ],
+    "dn": Array [
+      1,
+      2,
+      3,
+      4,
+      5,
+    ],
+    "f": true,
+    "g": Array [
+      "L",
+      "A",
+      "S",
+      "T",
+      "S",
+      "I",
+      "D",
+      "E",
+      "A",
+      "L",
+      "G",
+      "O",
+      "T",
+      "T",
+      "A",
+      "E",
+      "S",
+      "S",
+      "A",
+      "Y",
+      "R",
+      "E",
+      "A",
+      "R",
+      "S",
+    ],
+    "h": 5,
+    "m": false,
+    "n": "Mike D",
+    "p": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604966400,
+    },
+    "t": "Raises, as young",
+    "w": 5,
+  },
+]
+`;
+
+exports[`should remove from notifications, plays, indexes and puzzle itself when a puzzle is deleted 4`] = `
+Array [
+  Object {
+    "i": Array [
+      "puzzletokeep",
+      "puzzletodelete",
+    ],
+    "t": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+  },
+  Object {
+    "i": Array [
+      "puzzletokeep",
+      "puzzletodelete",
+    ],
+    "t": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+  },
+]
+`;
+
+exports[`should remove from notifications, plays, indexes and puzzle itself when a puzzle is deleted 5`] = `
+Array [
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`;
+
+exports[`should remove from notifications, plays, indexes and puzzle itself when a puzzle is deleted 6`] = `
+Array [
+  Object {
+    "c": "puzzletokeep",
+    "ch": false,
+    "ct": Array [],
+    "f": true,
+    "g": Array [],
+    "rc": Array [],
+    "t": 44,
+    "u": "anonymous-user-id",
+    "ua": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604965200,
+    },
+    "uc": Array [],
+    "vc": Array [],
+    "wc": Array [],
+    "we": Array [],
+  },
+]
+`;
+
+exports[`should remove from notifications, plays, indexes and puzzle itself when a puzzle is deleted 7`] = `
+Array [
+  Object {
+    "a": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+    "ac": Array [
+      " Cobbler's forms",
+      "Absolutely perfect",
+      "Spike Lee's \\"She's ___ Have It\\"",
+      "English class assignment",
+      "Raises, as young",
+    ],
+    "an": Array [
+      1,
+      6,
+      7,
+      8,
+      9,
+    ],
+    "c": null,
+    "cs": Array [
+      Object {
+        "a": "dummy-author-id",
+        "c": "A couple of two-worders today which I don't love, but I hope you all got it anyway!",
+        "ch": false,
+        "i": "LwgoVx0BAskM4wVJyoLj",
+        "n": "Mike D",
+        "p": Timestamp {
+          "_nanoseconds": 0,
+          "_seconds": 1604966400,
+        },
+        "t": 36.009,
+      },
+    ],
+    "dc": Array [
+      "Hybrid whose father is a lion",
+      "___ of reality (wake-up call)",
+      "___ date (makes wedding plans)",
+      "Middle Ages invader",
+      "Has a great night at the comedy club",
+    ],
+    "dn": Array [
+      1,
+      2,
+      3,
+      4,
+      5,
+    ],
+    "f": true,
+    "g": Array [
+      "L",
+      "A",
+      "S",
+      "T",
+      "S",
+      "I",
+      "D",
+      "E",
+      "A",
+      "L",
+      "G",
+      "O",
+      "T",
+      "T",
+      "A",
+      "E",
+      "S",
+      "S",
+      "A",
+      "Y",
+      "R",
+      "E",
+      "A",
+      "R",
+      "S",
+    ],
+    "h": 5,
+    "m": false,
+    "n": "Mike D",
+    "p": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604966400,
+    },
+    "t": "Raises, as young",
+    "w": 5,
+  },
+]
+`;
+
+exports[`should remove from notifications, plays, indexes and puzzle itself when a puzzle is deleted 8`] = `
+Array [
+  Object {
+    "i": Array [
+      "puzzletokeep",
+    ],
+    "t": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+  },
+  Object {
+    "i": Array [
+      "puzzletokeep",
+    ],
+    "t": Array [
+      Timestamp {
+        "_nanoseconds": 0,
+        "_seconds": 1604966400,
+      },
+    ],
+  },
+]
+`;

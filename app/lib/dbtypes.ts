@@ -122,6 +122,8 @@ const DBPuzzleOptionalV = t.partial({
   dmd: t.string,
   /** clue explanations (key is index into ac + dc) */
   cx: t.record(t.number, t.string),
+  /** puzzle is marked for deletion */
+  del: t.boolean,
 });
 export const DBPuzzleV = t.intersection([
   DBPuzzleMandatoryV,

@@ -2,7 +2,7 @@ import * as t from 'io-ts';
 
 import { timestamp } from './timestamp';
 
-import { DBPuzzleV, DBPuzzleT, CommentWithRepliesT } from './dbtypes';
+import { DBPuzzleT, CommentWithRepliesT } from './dbtypes';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { AdminApp, AdminTimestamp } from './firebaseWrapper';
@@ -109,17 +109,6 @@ export function isFeaturedNotification(
 
 export const NotificationV = t.union([NewPuzzleV, ReplyV, CommentV, FeaturedV]);
 export type NotificationT = t.TypeOf<typeof NotificationV>;
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function parsePuzzle(docdata: any): DBPuzzleT | null {
-  const validationResult = DBPuzzleV.decode(docdata);
-  if (isRight(validationResult)) {
-    return validationResult.right;
-  } else {
-    console.error(PathReporter.report(validationResult).join(','));
-    return null;
-  }
-}
 
 type PuzzleWithID = DBPuzzleT & { id: string };
 
@@ -262,24 +251,13 @@ async function notificationsForPuzzleCreation(
 }
 
 export async function notificationsForPuzzleChange(
-  beforeData: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-  afterData: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  before: DBPuzzleT | null,
+  after: DBPuzzleT,
   puzzleId: string
 ): Promise<Array<NotificationT>> {
-  const after = parsePuzzle(afterData);
-  if (!after) {
-    console.error('Missing/invalid after doc', afterData);
-    return [];
-  }
-  if (beforeData === undefined) {
+  if (before === null) {
     return notificationsForPuzzleCreation(after, puzzleId);
   }
-  const before = parsePuzzle(beforeData);
-  if (!before) {
-    console.error('Missing/invalid before doc', beforeData, afterData);
-    return [];
-  }
-
   const withID = { ...after, id: puzzleId };
   const notifications = [];
   if (after.cs) {
