@@ -7,7 +7,11 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { requiresAuth, AuthProps } from '../../../components/AuthContext';
 import { PuzzleResult, puzzleFromDB, Direction } from '../../../lib/types';
 import { DBPuzzleV, DBPuzzleT } from '../../../lib/dbtypes';
-import { App, DeleteSentinal } from '../../../lib/firebaseWrapper';
+import {
+  App,
+  DeleteSentinal,
+  TimestampClass,
+} from '../../../lib/firebaseWrapper';
 import { DefaultTopBar } from '../../../components/TopBar';
 import { ErrorPage } from '../../../components/ErrorPage';
 import { useDocument } from 'react-firebase-hooks/firestore';
@@ -28,6 +32,9 @@ import dynamic from 'next/dynamic';
 import type { ImageCropper as ImageCropperType } from '../../../components/ImageCropper';
 import { ContactLinks } from '../../../components/ContactLinks';
 import { useSnackbar } from '../../../components/Snackbar';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import lightFormat from 'date-fns/lightFormat';
+import set from 'date-fns/set';
 const ImageCropper = dynamic(
   () =>
     import('../../../components/ImageCropper').then(
@@ -438,6 +445,9 @@ const PuzzleEditor = ({
   const router = useRouter();
   const { showSnackbar } = useSnackbar();
 
+  const [isPrivate, setIsPrivate] = useState(puzzle.isPrivate);
+  const [isPrivateUntil, setIsPrivateUntil] = useState(puzzle.isPrivateUntil);
+
   return (
     <>
       <Head>
@@ -532,6 +542,145 @@ const PuzzleEditor = ({
         ) : (
           ''
         )}
+        <h3 css={{ marginTop: '1em' }}>Privacy</h3>
+        {puzzle.isPrivate ? (
+          <p>This puzzle is currently private.</p>
+        ) : puzzle.isPrivateUntil ? (
+          puzzle.isPrivateUntil > Date.now() ? (
+            <p>
+              This puzzle is currently private until{' '}
+              {formatDistanceToNow(new Date(puzzle.isPrivateUntil))} from now.
+            </p>
+          ) : (
+            <p>
+              This puzzle is currently public (since{' '}
+              {formatDistanceToNow(new Date(puzzle.isPrivateUntil))} ago).
+            </p>
+          )
+        ) : (
+          <p>This puzzle is currently public.</p>
+        )}
+        <p>
+          Private puzzles don&apos;t appear on your constructor blog and
+          aren&apos;t eligible to be featured on the Crosshare homepage or in
+          Crosshare&apos;s weekly email. Private puzzles are still visible to
+          anybody you share the link with.
+        </p>
+        <p>
+          <label>
+            <input
+              css={{ marginRight: '1em' }}
+              type="checkbox"
+              checked={isPrivate}
+              onChange={(e) => {
+                setIsPrivate(e.target.checked);
+                if (e.target.checked) {
+                  setIsPrivateUntil(null);
+                }
+              }}
+            />{' '}
+            Private
+          </label>
+        </p>
+        <p>
+          <label>
+            <input
+              css={{ marginRight: '1em' }}
+              type="checkbox"
+              checked={isPrivateUntil !== null}
+              onChange={(e) => {
+                setIsPrivateUntil((e.target.checked && Date.now()) || null);
+                if (e.target.checked) {
+                  setIsPrivate(false);
+                }
+              }}
+            />{' '}
+            Private until specified date/time
+          </label>
+          {isPrivateUntil ? (
+            <p>
+              Visible after {lightFormat(isPrivateUntil, 'M/d/y\' at \'h:mma')}:
+              <input
+                css={{
+                  marginLeft: '0.5em',
+                  '&:invalid': {
+                    borderColor: 'var(--error)',
+                  },
+                }}
+                type="date"
+                defaultValue={lightFormat(isPrivateUntil, 'yyyy-MM-dd')}
+                required
+                pattern="\d{4}-\d{1,2}-\d{1,2}"
+                onBlur={(e) => {
+                  if (!e.target.checkValidity()) {
+                    return;
+                  }
+                  const split = e.target.value.split('-');
+                  if (
+                    split[0] === undefined ||
+                    split[1] === undefined ||
+                    split[2] === undefined
+                  ) {
+                    throw new Error('bad date ' + e.target.value);
+                  }
+                  const newDate = set(isPrivateUntil, {
+                    year: parseInt(split[0]),
+                    month: parseInt(split[1]) - 1,
+                    date: parseInt(split[2]),
+                  });
+                  setIsPrivateUntil(newDate.getTime());
+                }}
+              />
+              <input
+                css={{ marginLeft: '0.5em' }}
+                type="time"
+                defaultValue={lightFormat(isPrivateUntil, 'HH:mm')}
+                required
+                pattern="[0-9]{1,2}:[0-9]{2}"
+                onBlur={(e) => {
+                  if (!e.target.checkValidity()) {
+                    return;
+                  }
+                  const split = e.target.value.split(':');
+                  if (split[0] === undefined || split[1] === undefined) {
+                    throw new Error('bad time ' + e.target.value);
+                  }
+                  const newDate = set(isPrivateUntil, {
+                    hours: parseInt(split[0]),
+                    minutes: parseInt(split[1]),
+                  });
+                  setIsPrivateUntil(newDate.getTime());
+                }}
+              />
+            </p>
+          ) : (
+            ''
+          )}
+        </p>
+        <Button
+          text="Update Privacy Settings"
+          disabled={
+            isPrivate === puzzle.isPrivate &&
+            isPrivateUntil === puzzle.isPrivateUntil
+          }
+          onClick={() => {
+            App.firestore()
+              .doc(`c/${puzzle.id}`)
+              .update({
+                pv: isPrivate,
+                pvu:
+                  (!isPrivate &&
+                    isPrivateUntil &&
+                    TimestampClass.fromMillis(isPrivateUntil)) ||
+                  DeleteSentinal,
+              })
+              .then(() => {
+                showSnackbar(
+                  'Privacy settings updated - it may take up to an hour for updates to be visible on the site.'
+                );
+              });
+          }}
+        />
         <h3 css={{ marginTop: '1em' }}>Delete</h3>
         {puzzle.category ? (
           <p>
