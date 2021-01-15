@@ -58,7 +58,7 @@ async function topPuzzlesForWeek(): Promise<Array<[string, string]>> {
   }
   return Object.entries(totalC)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
+    .slice(0, 15)
     .filter(([id]) => allIs[id])
     .map(([id]): [string, string] => [
       'https://crosshare.org/crosswords/' + id,
