@@ -26,6 +26,8 @@ import { COVER_PIC } from '../../../lib/style';
 
 import dynamic from 'next/dynamic';
 import type { ImageCropper as ImageCropperType } from '../../../components/ImageCropper';
+import { ContactLinks } from '../../../components/ContactLinks';
+import { useSnackbar } from '../../../components/Snackbar';
 const ImageCropper = dynamic(
   () =>
     import('../../../components/ImageCropper').then(
@@ -431,6 +433,10 @@ const PuzzleEditor = ({
       />
     ));
   const [settingCoverPic, setSettingCoverPic] = useState(false);
+  const [showingDeleteOverlay, setShowingDeleteOverlay] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const router = useRouter();
+  const { showSnackbar } = useSnackbar();
 
   return (
     <>
@@ -525,6 +531,60 @@ const PuzzleEditor = ({
           />
         ) : (
           ''
+        )}
+        <h3 css={{ marginTop: '1em' }}>Delete</h3>
+        {puzzle.category ? (
+          <p>
+            This puzzle has been selected as a daily mini - please contact us
+            via <ContactLinks /> if you need to delete it.
+          </p>
+        ) : (
+          <>
+            <p>
+              Puzzle deletion is <b>permanent</b>.
+            </p>
+            <Button
+              css={{ backgroundColor: 'var(--error)', color: 'var(--onerror)' }}
+              hoverCSS={{ backgroundColor: 'var(--error-hover)' }}
+              text="Delete"
+              onClick={() => setShowingDeleteOverlay(true)}
+            />
+            {showingDeleteOverlay ? (
+              <Overlay closeCallback={() => setShowingDeleteOverlay(false)}>
+                <p>Type DELETE to confirm deletion</p>
+                <input
+                  type="text"
+                  value={deleteConfirmation}
+                  onChange={(e) => {
+                    setDeleteConfirmation(e.target.value);
+                  }}
+                />
+                <Button
+                  css={{
+                    marginLeft: '1em',
+                    backgroundColor: 'var(--error)',
+                    color: 'var(--onerror)',
+                  }}
+                  hoverCSS={{ backgroundColor: 'var(--error-hover)' }}
+                  text="Confirm Delete"
+                  disabled={deleteConfirmation.toLowerCase() !== 'delete'}
+                  onClick={() => {
+                    App.firestore()
+                      .doc(`c/${puzzle.id}`)
+                      .update({ del: true })
+                      .then(() => {
+                        showSnackbar(
+                          'Your puzzle has been deleted - it may take up to an hour to be fully removed from the site.'
+                        );
+                        router.push('/');
+                      });
+                  }}
+                />
+              </Overlay>
+            ) : (
+              ''
+            )}
+          </>
         )}
       </div>
     </>
