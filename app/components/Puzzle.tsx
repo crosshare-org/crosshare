@@ -252,11 +252,17 @@ const PuzzleHeading = (props: {
               authorName={props.authorName}
               constructorPage={props.constructorPage}
               guestConstructor={props.guestConstructor}
-            />{' '}
-            ·{' '}
-            <span title={formatISO(publishDate)}>
-              Published {pastDistanceToNow(publishDate)}
-            </span>
+            />
+            {isEmbed ? (
+              ''
+            ) : (
+              <>
+                {' · '}
+                <span title={formatISO(publishDate)}>
+                  Published {pastDistanceToNow(publishDate)}
+                </span>
+              </>
+            )}
           </p>
         }
       />
