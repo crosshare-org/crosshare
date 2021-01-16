@@ -34,7 +34,7 @@ import { ContactLinks } from '../../../components/ContactLinks';
 import { useSnackbar } from '../../../components/Snackbar';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import lightFormat from 'date-fns/lightFormat';
-import set from 'date-fns/set';
+import { DateTimePicker } from '../../../components/DateTimePicker';
 const ImageCropper = dynamic(
   () =>
     import('../../../components/ImageCropper').then(
@@ -600,57 +600,9 @@ const PuzzleEditor = ({
           {isPrivateUntil ? (
             <p>
               Visible after {lightFormat(isPrivateUntil, 'M/d/y\' at \'h:mma')}:
-              <input
-                css={{
-                  marginLeft: '0.5em',
-                  '&:invalid': {
-                    borderColor: 'var(--error)',
-                  },
-                }}
-                type="date"
-                defaultValue={lightFormat(isPrivateUntil, 'yyyy-MM-dd')}
-                required
-                pattern="\d{4}-\d{1,2}-\d{1,2}"
-                onBlur={(e) => {
-                  if (!e.target.checkValidity()) {
-                    return;
-                  }
-                  const split = e.target.value.split('-');
-                  if (
-                    split[0] === undefined ||
-                    split[1] === undefined ||
-                    split[2] === undefined
-                  ) {
-                    throw new Error('bad date ' + e.target.value);
-                  }
-                  const newDate = set(isPrivateUntil, {
-                    year: parseInt(split[0]),
-                    month: parseInt(split[1]) - 1,
-                    date: parseInt(split[2]),
-                  });
-                  setIsPrivateUntil(newDate.getTime());
-                }}
-              />
-              <input
-                css={{ marginLeft: '0.5em' }}
-                type="time"
-                defaultValue={lightFormat(isPrivateUntil, 'HH:mm')}
-                required
-                pattern="[0-9]{1,2}:[0-9]{2}"
-                onBlur={(e) => {
-                  if (!e.target.checkValidity()) {
-                    return;
-                  }
-                  const split = e.target.value.split(':');
-                  if (split[0] === undefined || split[1] === undefined) {
-                    throw new Error('bad time ' + e.target.value);
-                  }
-                  const newDate = set(isPrivateUntil, {
-                    hours: parseInt(split[0]),
-                    minutes: parseInt(split[1]),
-                  });
-                  setIsPrivateUntil(newDate.getTime());
-                }}
+              <DateTimePicker
+                picked={isPrivateUntil}
+                setPicked={(d) => setIsPrivateUntil(d.getTime())}
               />
             </p>
           ) : (

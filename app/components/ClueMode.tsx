@@ -22,11 +22,11 @@ import { TimestampClass } from '../lib/firebaseWrapper';
 import { ToolTipText } from './ToolTipText';
 import { FaInfoCircle } from 'react-icons/fa';
 import lightFormat from 'date-fns/lightFormat';
-import set from 'date-fns/set';
 
 import dynamic from 'next/dynamic';
 import type { ImageCropper as ImageCropperType } from './ImageCropper';
 import type { SuggestOverlay as SuggestOverlayType } from './ClueSuggestionOverlay';
+import { DateTimePicker } from './DateTimePicker';
 
 const ImageCropper = dynamic(
   () => import('./ImageCropper').then((mod) => mod.ImageCropper as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -239,62 +239,12 @@ export const ClueMode = (props: ClueModeProps) => {
           {privateUntil ? (
             <p>
               Visible after {lightFormat(privateUntil, 'M/d/y\' at \'h:mma')}:
-              <input
-                css={{
-                  marginLeft: '0.5em',
-                  '&:invalid': {
-                    borderColor: 'var(--error)',
-                  },
-                }}
-                type="date"
-                defaultValue={lightFormat(privateUntil, 'yyyy-MM-dd')}
-                required
-                pattern="\d{4}-\d{1,2}-\d{1,2}"
-                onBlur={(e) => {
-                  if (!e.target.checkValidity()) {
-                    return;
-                  }
-                  const split = e.target.value.split('-');
-                  if (
-                    split[0] === undefined ||
-                    split[1] === undefined ||
-                    split[2] === undefined
-                  ) {
-                    throw new Error('bad date ' + e.target.value);
-                  }
-                  const newDate = set(privateUntil, {
-                    year: parseInt(split[0]),
-                    month: parseInt(split[1]) - 1,
-                    date: parseInt(split[2]),
-                  });
+              <DateTimePicker
+                picked={privateUntil}
+                setPicked={(d) => {
                   const spa: SetPrivateAction = {
                     type: 'SETPRIVATE',
-                    value: TimestampClass.fromDate(newDate),
-                  };
-                  props.dispatch(spa);
-                }}
-              />
-              <input
-                css={{ marginLeft: '0.5em' }}
-                type="time"
-                defaultValue={lightFormat(privateUntil, 'HH:mm')}
-                required
-                pattern="[0-9]{1,2}:[0-9]{2}"
-                onBlur={(e) => {
-                  if (!e.target.checkValidity()) {
-                    return;
-                  }
-                  const split = e.target.value.split(':');
-                  if (split[0] === undefined || split[1] === undefined) {
-                    throw new Error('bad time ' + e.target.value);
-                  }
-                  const newDate = set(privateUntil, {
-                    hours: parseInt(split[0]),
-                    minutes: parseInt(split[1]),
-                  });
-                  const spa: SetPrivateAction = {
-                    type: 'SETPRIVATE',
-                    value: TimestampClass.fromDate(newDate),
+                    value: TimestampClass.fromDate(d),
                   };
                   props.dispatch(spa);
                 }}
