@@ -183,6 +183,20 @@ export default requiresAdmin(() => {
     setPagesForModeration([]);
   }
 
+  async function moderatePuzzles(e: FormEvent) {
+    e.preventDefault();
+    const db = App.firestore();
+    if (unmoderated) {
+      await Promise.all(
+        unmoderated.map((pr) => {
+          return db.collection('c').doc(pr.id).update({ m: true });
+        })
+      ).then(() => {
+        setUnmoderated([]);
+      });
+    }
+  }
+
   async function moderateComments(e: FormEvent) {
     e.preventDefault();
     const db = App.firestore();
@@ -300,7 +314,10 @@ export default requiresAdmin(() => {
         {unmoderated.length === 0 ? (
           <div>No puzzles are currently awaiting moderation.</div>
         ) : (
-          <ul>{unmoderated.map(PuzzleListItem)}</ul>
+          <>
+            <ul>{unmoderated.map(PuzzleListItem)}</ul>
+            <Button onClick={moderatePuzzles} text="Mark all as moderated" />
+          </>
         )}
         {stats ? (
           <>
