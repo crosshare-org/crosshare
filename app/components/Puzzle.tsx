@@ -375,7 +375,7 @@ const SuccessOverlay = (props: {
                 won&apos;t appear on your Crosshare blog, isn&apos;t eligible to
                 be featured on the homepage, and notifications won&apos;t get
                 sent to any of your followers. It is still viewable by anybody
-                you send the link to (or if you share it elsewhere as an embed).
+                you send the link to or if you embed it on another site.
                 </p>
               ) : (
                 <p>Your puzzle is live!</p>
