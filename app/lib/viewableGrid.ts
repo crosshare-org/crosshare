@@ -485,6 +485,7 @@ export function getRefs(
     const lowerClue = e.clue.toLowerCase();
     if (
       lowerClue.includes('the starred clues') ||
+      lowerClue.includes('the starred answers') ||
       lowerClue.includes('the starred entries')
     ) {
       for (const [idx, otherE] of grid.entries.entries()) {
