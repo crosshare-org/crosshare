@@ -2,7 +2,12 @@
 
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isRight } from 'fp-ts/lib/Either';
-import { getDateString, DailyStatsV } from '../lib/dbtypes';
+import {
+  getDateString,
+  DailyStatsV,
+  DBPuzzleT,
+  DBPuzzleV,
+} from '../lib/dbtypes';
 
 import { AdminApp } from '../lib/firebaseWrapper';
 
@@ -56,14 +61,45 @@ async function topPuzzlesForWeek(): Promise<Array<[string, string]>> {
     }
     d.setDate(d.getDate() - 1);
   }
-  return Object.entries(totalC)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 15)
-    .filter(([id]) => allIs[id])
-    .map(([id]): [string, string] => [
-      'https://crosshare.org/crosswords/' + id,
-      `${allIs[id]?.[0]} by ${allIs[id]?.[1]}`,
-    ]);
+  return Promise.all(
+    Object.entries(totalC)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 15)
+      .map(
+        async ([id]): Promise<(DBPuzzleT & { id: string }) | null> => {
+          const dbres = await db.collection('c').doc(id).get();
+          if (!dbres.exists) {
+            return null;
+          }
+          const validationResult = DBPuzzleV.decode(dbres.data());
+          if (isRight(validationResult)) {
+            return { ...validationResult.right, id };
+          } else {
+            return null;
+          }
+        }
+      )
+  ).then((puzzles) => {
+    return puzzles
+      .filter((p) => {
+        if (p === null) {
+          return false;
+        }
+        if (p.pv) {
+          return false;
+        }
+        if (p.pvu && p.pvu.toDate() > new Date()) {
+          return false;
+        }
+        return true;
+      })
+      .map((p): [string, string] => {
+        if (!p) {
+          throw new Error('impossible');
+        }
+        return ['https://crosshare.org/crosswords/' + p.id, `${p.t} by ${p.n}`];
+      });
+  });
 }
 
 async function generateWeeklyEmail() {
