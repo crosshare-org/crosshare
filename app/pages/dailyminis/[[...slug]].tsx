@@ -139,7 +139,7 @@ export async function propsForDailyMini(
         }
         : null),
       ...(month === 0 && `${year - 1}-11-31` in validationResult.right
-        ? { olderLink: `${year - 1}/11` }
+        ? { olderLink: `${year - 1}/12` }
         : `${year}-${month - 1}-28` in validationResult.right
           ? { olderLink: `${year}/${month}` }
           : null),
