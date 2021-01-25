@@ -282,6 +282,20 @@ test('should notify author when marked as featured', async () => {
   expect(notifications.map(removeTimestamp)).toMatchSnapshot();
 });
 
+test('when private until is marked as featured hold notification', async () => {
+  const puz = getMockedPuzzle({
+    cs: undefined,
+    pvu: TimestampClass.fromDate(new Date('2020-10-1')),
+  });
+  const notifications = await notificationsForPuzzleChange(
+    puz,
+    { ...puz, f: true },
+    'puzzle-id-here'
+  );
+  expect(notifications.length).toEqual(1);
+  expect(notifications).toMatchSnapshot();
+});
+
 test('should notify author when marked as dailymini', async () => {
   const notifications = await notificationsForPuzzleChange(
     basePuzzle,

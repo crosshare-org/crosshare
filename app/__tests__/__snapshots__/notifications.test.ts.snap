@@ -606,3 +606,22 @@ Array [
   },
 ]
 `;
+
+exports[`when private until is marked as featured hold notification 1`] = `
+Array [
+  Object {
+    "as": null,
+    "e": false,
+    "id": "featured-puzzle-id-here",
+    "k": "featured",
+    "p": "puzzle-id-here",
+    "pn": "Raises, as young",
+    "r": false,
+    "t": Object {
+      "nanoseconds": 0,
+      "seconds": 1601524800,
+    },
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`;

@@ -174,7 +174,7 @@ export function featuredNotification(
   return {
     id: `featured-${puzzle.id}`,
     u: puzzle.a,
-    t: AdminTimestamp.now(),
+    t: puzzle.pvu || AdminTimestamp.now(),
     r: false,
     e: false,
     k: 'featured',
