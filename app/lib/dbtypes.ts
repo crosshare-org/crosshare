@@ -124,6 +124,12 @@ const DBPuzzleOptionalV = t.partial({
   cx: t.record(t.number, t.string),
   /** puzzle is marked for deletion */
   del: t.boolean,
+  /** if present, this is a contest puzzle! these are the contest answers */
+  ct_ans: t.array(t.string),
+  /** the contest has a prize so give ppl option to include email address in submission */
+  ct_prz: t.boolean,
+  /** explanation of contest answer (shown as blog post after submission) */
+  ct_exp: t.string,
 });
 export const DBPuzzleV = t.intersection([
   DBPuzzleMandatoryV,

@@ -92,6 +92,10 @@ export interface BuilderState extends GridInterfaceState {
   authorName: string;
   isPrivate: boolean;
   isPrivateUntil: TimestampType | null;
+  isContestPuzzle: boolean;
+  contestAnswers: Array<string> | null;
+  contestHasPrize: boolean;
+  contestExplanation: string | null;
 }
 function isBuilderState(state: GridInterfaceState): state is BuilderState {
   return state.type === 'builder';
@@ -114,6 +118,9 @@ export function initialBuilderState({
   isPrivateUntil,
   blogPost,
   guestConstructor,
+  contestAnswers,
+  contestHasPrize,
+  contestExplanation,
 }: {
   id: string | null;
   width: number;
@@ -131,6 +138,9 @@ export function initialBuilderState({
   editable: boolean;
   isPrivate: boolean;
   isPrivateUntil: number | null;
+  contestAnswers: Array<string> | null;
+  contestHasPrize: boolean;
+  contestExplanation: string | null;
 }) {
   const initialGrid = fromCells({
     mapper: (e) => e,
@@ -172,6 +182,10 @@ export function initialBuilderState({
     postEdit(_cellIndex) {
       return validateGrid(this);
     },
+    isContestPuzzle: contestAnswers ? contestAnswers.length > 0 : false,
+    contestAnswers,
+    contestExplanation,
+    contestHasPrize,
   });
 }
 
@@ -249,6 +263,20 @@ function isSetGuestConstructorAction(
   action: PuzzleAction
 ): action is SetGuestConstructorAction {
   return action.type === 'SETGC';
+}
+
+export interface UpdateContestAction extends PuzzleAction {
+  type: 'CONTEST';
+  enabled?: boolean;
+  addAnswer?: string;
+  removeAnswer?: string;
+  hasPrize?: boolean;
+  explanation?: string | null;
+}
+function isUpdateContestAction(
+  action: PuzzleAction
+): action is UpdateContestAction {
+  return action.type === 'CONTEST';
 }
 
 export interface SetHighlightAction extends PuzzleAction {
@@ -731,6 +759,22 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
   return state;
 }
 
+function normalizeAnswer(answer: string): string {
+  return answer.toLowerCase().trim();
+}
+
+function addAnswer(answers: Array<string>, newAnswer: string): Array<string> {
+  const updated = new Set(answers);
+  updated.add(normalizeAnswer(newAnswer));
+  return Array.from(updated.values());
+}
+
+function removeAnswer(answers: Array<string>, toRemove: string): Array<string> {
+  const updated = new Set(answers);
+  updated.delete(normalizeAnswer(toRemove));
+  return Array.from(updated.values());
+}
+
 export function builderReducer(
   state: BuilderState,
   action: PuzzleAction
@@ -771,6 +815,27 @@ export function builderReducer(
   }
   if (isSetGuestConstructorAction(action)) {
     return { ...state, guestConstructor: action.value };
+  }
+  if (isUpdateContestAction(action)) {
+    return {
+      ...state,
+      ...(action.enabled !== undefined && { isContestPuzzle: action.enabled }),
+      ...(action.addAnswer !== undefined && {
+        contestAnswers: addAnswer(state.contestAnswers || [], action.addAnswer),
+      }),
+      ...(action.removeAnswer !== undefined && {
+        contestAnswers: removeAnswer(
+          state.contestAnswers || [],
+          action.removeAnswer
+        ),
+      }),
+      ...(action.hasPrize !== undefined && {
+        contestHasPrize: action.hasPrize,
+      }),
+      ...(action.explanation !== undefined && {
+        contestExplanation: action.explanation,
+      }),
+    };
   }
   if (isClickedFillAction(action)) {
     return {
@@ -830,6 +895,9 @@ export function builderReducer(
       editable: true,
       isPrivate: false,
       isPrivateUntil: null,
+      contestAnswers: null,
+      contestExplanation: null,
+      contestHasPrize: false,
     });
   }
   if (isPublishAction(action)) {
