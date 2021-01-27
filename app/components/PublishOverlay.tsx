@@ -6,7 +6,6 @@ import { AuthContext } from './AuthContext';
 import { DisplayNameForm, getDisplayName } from './DisplayNameForm';
 import { Overlay } from './Overlay';
 import { Emoji } from './Emoji';
-import { ConstructorNotes } from './ConstructorNotes';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
 import { DBPuzzleT } from '../lib/dbtypes';
 import { STORAGE_KEY } from './Builder';
