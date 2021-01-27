@@ -104,11 +104,6 @@ export function PublishOverlay(props: {
             )
           </h3>
         )}
-        {props.toPublish.cn ? (
-          <ConstructorNotes notes={props.toPublish.cn} />
-        ) : (
-          ''
-        )}
         <p>
           Thanks for constructing a puzzle! <Emoji symbol="😎" />
         </p>
