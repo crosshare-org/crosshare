@@ -915,6 +915,16 @@ export function builderReducer(
     if (!state.title) {
       errors.push('Puzzle must have a title set');
     }
+    if (state.isContestPuzzle) {
+      if (!state.contestAnswers?.length) {
+        errors.push('Contest puzzles must specify at least one answer');
+      }
+      if (!state.notes) {
+        errors.push(
+          'Contest puzzles must include a note to prompt the contest'
+        );
+      }
+    }
     const missingClues = state.grid.entries
       .filter((e) => e.completedWord && !state.clues[e.completedWord])
       .map((e) => e.completedWord || '');
@@ -968,6 +978,12 @@ export function builderReducer(
       ...(state.guestConstructor && { gc: state.guestConstructor }),
       ...(state.isPrivate && { pv: true }),
       ...(state.isPrivateUntil && { pvu: state.isPrivateUntil }),
+      ...(state.isContestPuzzle &&
+        state.contestAnswers?.length && {
+        ct_ans: state.contestAnswers,
+        ct_prz: state.contestHasPrize || false,
+        ct_exp: state.contestExplanation?.trim() || undefined,
+      }),
     };
     if (state.grid.highlighted.size) {
       puzzle.hs = Array.from(state.grid.highlighted);
