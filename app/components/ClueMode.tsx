@@ -16,8 +16,6 @@ import {
 import { TopBarLink, TopBar } from './TopBar';
 import { Direction } from '../lib/types';
 import { ButtonAsLink, Button } from './Buttons';
-import { Overlay } from './Overlay';
-import { Markdown } from './Markdown';
 import { COVER_PIC } from '../lib/style';
 import { TimestampClass } from '../lib/firebaseWrapper';
 import { ToolTipText } from './ToolTipText';
@@ -28,6 +26,7 @@ import dynamic from 'next/dynamic';
 import type { ImageCropper as ImageCropperType } from './ImageCropper';
 import type { SuggestOverlay as SuggestOverlayType } from './ClueSuggestionOverlay';
 import { DateTimePicker } from './DateTimePicker';
+import { MarkdownPreview } from './MarkdownPreview';
 
 const ImageCropper = dynamic(
   () => import('./ImageCropper').then((mod) => mod.ImageCropper as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -149,7 +148,6 @@ interface ClueModeProps {
   dispatch: Dispatch<PuzzleAction>;
 }
 export const ClueMode = (props: ClueModeProps) => {
-  const [showPostPreview, setShowPostPreview] = useState(false);
   const [settingCoverPic, setSettingCoverPic] = useState(false);
   const [contestAnswerInProg, setContestAnswerInProg] = useState('');
   const privateUntil = props.state.isPrivateUntil?.toDate();
@@ -274,15 +272,7 @@ export const ClueMode = (props: ClueModeProps) => {
               }}
             />
             <p>
-              {props.blogPost ? (
-                <ButtonAsLink
-                  css={{ marginRight: '1em' }}
-                  text="Preview"
-                  onClick={() => setShowPostPreview(true)}
-                />
-              ) : (
-                ''
-              )}
+              <MarkdownPreview markdown={props.blogPost} />
               <ButtonAsLink
                 text="Remove blog post"
                 onClick={() => {
@@ -396,7 +386,20 @@ export const ClueMode = (props: ClueModeProps) => {
               {props.state.contestAnswers?.length ? (
                 <ul>
                   {props.state.contestAnswers.map((a) => (
-                    <li key={a}>{a}</li>
+                    <li key={a}>
+                      {a} (
+                      <ButtonAsLink
+                        onClick={() => {
+                          const spa: UpdateContestAction = {
+                            type: 'CONTEST',
+                            removeAnswer: a,
+                          };
+                          props.dispatch(spa);
+                        }}
+                        text="remove"
+                      />
+                      )
+                    </li>
                   ))}
                 </ul>
               ) : (
@@ -419,8 +422,8 @@ export const ClueMode = (props: ClueModeProps) => {
             </form>
             <h4 css={{ marginTop: '1em' }}>Contest explanation (optional):</h4>
             <p>
-              If specified the explainer for the contest solution is shown after
-              a user submits their contest answer.
+              If specified, the explainer for the contest solution is shown
+              after a user submits their contest answer.
             </p>
             <textarea
               css={{ width: '100%', display: 'block' }}
@@ -434,6 +437,7 @@ export const ClueMode = (props: ClueModeProps) => {
                 props.dispatch(sta);
               }}
             />
+            <MarkdownPreview markdown={props.state.contestExplanation} />
             <h4 css={{ marginTop: '1em' }}>Contest prize</h4>
             <p>
               If the contest has a prize solvers can choose to include their
@@ -547,13 +551,6 @@ export const ClueMode = (props: ClueModeProps) => {
           </>
         )}
       </div>
-      {showPostPreview && props.blogPost ? (
-        <Overlay closeCallback={() => setShowPostPreview(false)}>
-          <Markdown text={props.blogPost} />
-        </Overlay>
-      ) : (
-        ''
-      )}
     </>
   );
 };
