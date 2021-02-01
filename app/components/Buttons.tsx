@@ -144,7 +144,7 @@ export function Button({
             },
           }),
           ...(hollow && {
-            border: 'solid 2px var(--link)',
+            borderColor: 'var(--link)',
             color: 'var(--link)',
             backgroundColor: 'transparent',
           }),
