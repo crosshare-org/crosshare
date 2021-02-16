@@ -429,8 +429,10 @@ export const Puzzle = ({
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
       // disable keyboard when paused / loading play
-      if (loadingPlayState || !state.currentTimeWindowStart) {
-        return;
+      if (!(state.success && state.dismissedSuccess)) {
+        if (loadingPlayState || !state.currentTimeWindowStart) {
+          return;
+        }
       }
       const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
       if (tagName === 'textarea' || tagName === 'input') {
@@ -447,7 +449,7 @@ export const Puzzle = ({
       dispatch(kpa);
       e.preventDefault();
     },
-    [dispatch, loadingPlayState, state.currentTimeWindowStart]
+    [dispatch, loadingPlayState, state.currentTimeWindowStart, state.success, state.dismissedSuccess]
   );
   useEventListener('keydown', physicalKeyboardHandler);
 
