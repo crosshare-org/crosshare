@@ -141,7 +141,9 @@ export function Button({
             backgroundColor: 'var(--boring-bg)',
             '&:hover:enabled': {
               backgroundColor: 'var(--boring-bg-hover)',
+              color: 'var(--onboring)',
             },
+            color: 'var(--onboring)',
           }),
           ...(hollow && {
             borderColor: 'var(--link)',
