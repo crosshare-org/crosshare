@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
 
 import { LinkButtonSimpleA } from './Link';
@@ -27,8 +27,13 @@ export const PuzzleHeading = (props: {
 }) => {
   const isEmbed = useContext(EmbedContext);
 
-  const showFullscreen =
-    typeof window !== 'undefined' && isEmbed && document.fullscreenEnabled;
+  const [showFullscreen, setShowFullscreen] = useState(false);
+
+  useEffect(() => {
+    if (isEmbed && document.fullscreenEnabled) {
+      setShowFullscreen(true);
+    }
+  }, [isEmbed]);
 
   const toggleFullscreen = () => {
     if (document.fullscreenElement) {
