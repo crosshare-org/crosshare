@@ -26,14 +26,12 @@ import {
   FaComment,
   FaHammer,
   FaPrint,
-  FaInfoCircle,
   FaEdit,
   FaRegFile,
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 
-import { Link, LinkButtonSimpleA } from './Link';
 import { ClueList } from './ClueList';
 import {
   EscapeKey,
@@ -50,7 +48,7 @@ import { AuthContext, AuthPropsOptional } from './AuthContext';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
-import { Direction, BLOCK, ServerPuzzleResult } from '../lib/types';
+import { Direction, BLOCK } from '../lib/types';
 import {
   fromCells,
   addClues,
@@ -84,22 +82,14 @@ import {
 } from './TopBar';
 import { SquareAndCols, TwoCol } from './Page';
 import { usePersistedBoolean, useMatchMedia } from '../lib/hooks';
-import { pastDistanceToNow, timeString } from '../lib/utils';
+import { timeString } from '../lib/utils';
 import { App, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
 import type firebase from 'firebase/app';
 import { Emoji } from './Emoji';
-import { Comments } from './Comments';
-import { ConstructorNotes } from './ConstructorNotes';
-import { ConstructorPageT } from '../lib/constructorPage';
 import { SMALL_AND_UP_RULES } from '../lib/style';
 import { Keyboard } from './Keyboard';
 import { useRouter } from 'next/router';
 import { Button } from './Buttons';
-import { ProfilePicAndName } from './Images';
-import { Markdown } from './Markdown';
-import { ToolTipText } from './ToolTipText';
-import { AuthorLink } from './PuzzleLink';
-import formatISO from 'date-fns/formatISO';
 import { useSnackbar } from './Snackbar';
 import { isNewPuzzleNotification } from '../lib/notifications';
 import { PuzzlePageResultProps } from '../lib/serverOnly';
@@ -107,7 +97,11 @@ import { EmbedContext } from './EmbedContext';
 import dynamic from 'next/dynamic';
 import type { ModeratingOverlay as ModeratingOverlayType } from './ModerateOverlay';
 import type { EmbedOverlay as EmbedOverlayType } from './EmbedOverlay';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import {
+  OverlayType,
+  PuzzleOverlay,
+  PuzzleOverlayBaseProps,
+} from './PuzzleOverlay';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -123,63 +117,6 @@ export interface NextPuzzleLink {
   puzzleId: string;
   linkText: string;
 }
-
-interface PauseBeginProps {
-  loadingPlayState: boolean;
-  publishTime: number;
-  title: string;
-  authorName: string;
-  constructorPage: ConstructorPageT | null;
-  dispatch: Dispatch<PuzzleAction>;
-  message: string;
-  dismissMessage: string;
-  notes: string | null;
-  blogPost: string | null;
-  guestConstructor: string | null;
-  profilePicture?: string | null;
-  coverImage?: string | null;
-}
-
-const BeginPauseOverlay = (props: PauseBeginProps) => {
-  const isEmbed = useContext(EmbedContext);
-
-  return (
-    <Overlay coverImage={props.coverImage}>
-      <PuzzleHeading
-        publishTime={props.publishTime}
-        showTip={false}
-        coverImage={props.coverImage}
-        blogPost={props.blogPost}
-        constructorNotes={props.notes}
-        profilePic={props.profilePicture}
-        title={props.title}
-        authorName={props.authorName}
-        constructorPage={props.constructorPage}
-        guestConstructor={props.guestConstructor}
-      />
-      <div css={{ textAlign: 'center' }}>
-        {props.loadingPlayState ? (
-          <div>Checking for previous play data...</div>
-        ) : (
-          <>
-            <div css={{ marginBottom: '1em' }}>{props.message}</div>
-            <Button
-              onClick={() => props.dispatch({ type: 'RESUMEACTION' })}
-              text={props.dismissMessage}
-            />
-          </>
-        )}
-        {isEmbed ? (
-          <div css={{ marginTop: '2em' }}>
-            <Link href="/">Powered by crosshare.org</Link>
-          </div>
-        ) : (
-          ''
-        )}
-      </div>
-    </Overlay>
-  );
-};
 
 const KeepTryingOverlay = ({
   dispatch,
@@ -199,235 +136,6 @@ const KeepTryingOverlay = ({
         onClick={() => dispatch({ type: 'DISMISSKEEPTRYING' })}
         text="Keep Trying"
       />
-    </Overlay>
-  );
-};
-
-const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
-  if (!nextPuzzle) {
-    return <></>;
-  }
-  return (
-    <Link href={`/crosswords/${nextPuzzle.puzzleId}`}>
-      Play {nextPuzzle.linkText}
-    </Link>
-  );
-};
-
-const PuzzleHeading = (props: {
-  publishTime: number;
-  showTip: boolean;
-  constructorNotes: string | null;
-  coverImage: string | null | undefined;
-  profilePic: string | null | undefined;
-  title: string;
-  authorName: string;
-  guestConstructor: string | null;
-  constructorPage: ConstructorPageT | null;
-  blogPost: string | null;
-}) => {
-  const isEmbed = useContext(EmbedContext);
-
-  const showFullscreen =
-    typeof window !== 'undefined' && isEmbed && document.fullscreenEnabled;
-
-  const toggleFullscreen = () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else {
-      document.documentElement.requestFullscreen();
-    }
-  };
-
-  const publishDate = new Date(props.publishTime);
-  return (
-    <>
-      <ProfilePicAndName
-        {...props}
-        bonusMargin={1}
-        topLine={props.title}
-        byLine={
-          <p>
-            <AuthorLink
-              authorName={props.authorName}
-              constructorPage={props.constructorPage}
-              guestConstructor={props.guestConstructor}
-            />
-            {isEmbed ? (
-              ''
-            ) : (
-              <>
-                {' · '}
-                <span title={formatISO(publishDate)}>
-                  Published {pastDistanceToNow(publishDate)}
-                </span>
-              </>
-            )}
-          </p>
-        }
-      />
-      {props.constructorNotes ? (
-        <div css={{ textAlign: 'center' }}>
-          <ConstructorNotes notes={props.constructorNotes} />
-        </div>
-      ) : (
-        ''
-      )}
-      {props.blogPost ? (
-        <div css={{ margin: '1em 0' }}>
-          <Markdown css={{ textAlign: 'left' }} text={props.blogPost} />
-        </div>
-      ) : (
-        ''
-      )}
-      {props.constructorPage?.sig ? (
-        <div css={{ margin: '1em 0' }}>
-          <Markdown
-            inline={true}
-            css={{ textAlign: 'left' }}
-            text={props.constructorPage.sig}
-          />
-        </div>
-      ) : (
-        ''
-      )}
-
-      {props.showTip &&
-      props.constructorPage?.pp &&
-      props.constructorPage.pt ? (
-          <div css={{ textAlign: 'center' }}>
-            <LinkButtonSimpleA
-              css={{ marginRight: '0.5em' }}
-              href={`https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=${encodeURIComponent(
-                props.constructorPage.pp
-              )}&item_name=${encodeURIComponent(
-                props.constructorPage.pt
-              )}&currency_code=USD&source=url`}
-              text={`Tip ${props.constructorPage.n}`}
-            />
-            <ToolTipText
-              text={<FaInfoCircle />}
-              tooltip="All donations go directly to the constructor via PayPal"
-            />
-          </div>
-        ) : (
-          ''
-        )}
-      {showFullscreen ? (
-        <div css={{ textAlign: 'center' }}>
-          <Button
-            css={{ marginBottom: '2em' }}
-            onClick={toggleFullscreen}
-            text="Toggle Fullscreen"
-          />
-        </div>
-      ) : (
-        ''
-      )}
-    </>
-  );
-};
-
-const SuccessOverlay = (props: {
-  publishTime: number;
-  coverImage?: string | null;
-  profilePicture?: string | null;
-  clueMap: Map<string, [number, Direction, string]>;
-  user?: firebase.User;
-  puzzle: ServerPuzzleResult;
-  nextPuzzle?: NextPuzzleLink;
-  isMuted: boolean;
-  solveTime: number;
-  didCheat: boolean;
-  dispatch: Dispatch<PuzzleAction>;
-}) => {
-  const isEmbed = useContext(EmbedContext);
-  return (
-    <Overlay
-      coverImage={props.coverImage}
-      closeCallback={() => props.dispatch({ type: 'DISMISSSUCCESS' })}
-    >
-      <PuzzleHeading
-        guestConstructor={props.puzzle.guestConstructor}
-        publishTime={props.publishTime}
-        showTip={true}
-        coverImage={props.coverImage}
-        blogPost={props.puzzle.blogPost}
-        constructorNotes={props.puzzle.constructorNotes}
-        profilePic={props.profilePicture}
-        title={props.puzzle.title}
-        authorName={props.puzzle.authorName}
-        constructorPage={props.puzzle.constructorPage}
-      />
-      <div css={{ textAlign: 'center' }}>
-        {props.user?.uid === props.puzzle.authorId ? (
-          <>
-            {props.puzzle.isPrivate ||
-            (props.puzzle.isPrivateUntil &&
-              props.puzzle.isPrivateUntil > Date.now()) ? (
-                <p>
-                Your puzzle is private
-                  {props.puzzle.isPrivateUntil && !props.puzzle.isPrivate
-                    ? ` until ${formatDistanceToNow(
-                      new Date(props.puzzle.isPrivateUntil)
-                    )} from now. Until then, it `
-                    : '. It '}
-                won&apos;t appear on your Crosshare blog, isn&apos;t eligible to
-                be featured on the homepage, and notifications won&apos;t get
-                sent to any of your followers. It is still viewable by anybody
-                you send the link to or if you embed it on another site.
-                </p>
-              ) : (
-                <p>Your puzzle is live!</p>
-              )}
-            <p>
-              {isEmbed
-                ? `Solvers
-              will see an empty grid, yours is complete since you authored the
-              puzzle.`
-                : `Copy the link to share with solvers (solvers
-                will see an empty grid, yours is complete since you authored the
-                puzzle).`}{' '}
-              Comments posted below will be visible to anyone who finishes
-              solving the puzzle.
-            </p>
-          </>
-        ) : (
-          <>
-            <p css={{ marginBottom: 0, fontSize: '1.5em' }}>
-              Solved in <b>{timeString(props.solveTime, false)}</b>
-            </p>
-          </>
-        )}
-        {isEmbed ? (
-          ''
-        ) : (
-          <div>
-            <PrevDailyMiniLink nextPuzzle={props.nextPuzzle} />
-          </div>
-        )}
-      </div>
-      <Comments
-        hasGuestConstructor={props.puzzle.guestConstructor !== null}
-        clueMap={props.clueMap}
-        solveTime={props.solveTime}
-        didCheat={props.didCheat}
-        puzzleId={props.puzzle.id}
-        puzzlePublishTime={
-          props.puzzle.isPrivateUntil
-            ? props.puzzle.isPrivateUntil
-            : props.puzzle.publishTime
-        }
-        puzzleAuthorId={props.puzzle.authorId}
-        comments={props.puzzle.comments}
-      />
-      {isEmbed ? (
-        <div css={{ marginTop: '2em', textAlign: 'center' }}>
-          <Link href="/">Powered by crosshare.org</Link>
-        </div>
-      ) : (
-        ''
-      )}
     </Overlay>
   );
 };
@@ -772,20 +480,6 @@ export const Puzzle = ({
     };
   }, [state.grid.entries]);
 
-  const beginPauseProps = {
-    guestConstructor: puzzle.guestConstructor,
-    coverImage: props.coverImage,
-    publishTime: puzzle.isPrivateUntil || puzzle.publishTime,
-    blogPost: puzzle.blogPost,
-    constructorPage: puzzle.constructorPage,
-    profilePicture: props.profilePicture,
-    loadingPlayState: loadingPlayState || !state.loadedPlayState,
-    notes: puzzle.constructorNotes,
-    authorName: puzzle.authorName,
-    title: puzzle.title,
-    dispatch: dispatch,
-  };
-
   const isEmbed = useContext(EmbedContext);
 
   /* `clueMap` is a map from ENTRYWORD => '5D: This is the clue' - we use this
@@ -804,6 +498,20 @@ export const Puzzle = ({
   }, [state.grid]);
 
   const scrollToCross = useMatchMedia(SMALL_AND_UP_RULES);
+
+  const overlayBaseProps: PuzzleOverlayBaseProps = {
+    publishTime: puzzle.isPrivateUntil || puzzle.publishTime,
+    coverImage: props.coverImage,
+    profilePicture: props.profilePicture,
+    clueMap: clueMap,
+    user: props.user,
+    nextPuzzle: props.nextPuzzle,
+    puzzle: puzzle,
+    isMuted: muted,
+    solveTime: state.displaySeconds,
+    didCheat: state.didCheat,
+    dispatch: dispatch,
+  };
 
   let puzzleView: ReactNode;
 
@@ -1250,18 +958,9 @@ export const Puzzle = ({
           ''
         )}
         {state.success && !state.dismissedSuccess ? (
-          <SuccessOverlay
-            publishTime={puzzle.isPrivateUntil || puzzle.publishTime}
-            coverImage={props.coverImage}
-            profilePicture={props.profilePicture}
-            clueMap={clueMap}
-            user={props.user}
-            nextPuzzle={props.nextPuzzle}
-            puzzle={puzzle}
-            isMuted={muted}
-            solveTime={state.displaySeconds}
-            didCheat={state.didCheat}
-            dispatch={dispatch}
+          <PuzzleOverlay
+            {...overlayBaseProps}
+            overlayType={OverlayType.Success}
           />
         ) : (
           ''
@@ -1280,16 +979,20 @@ export const Puzzle = ({
         !state.success &&
         !(state.filled && !state.dismissedKeepTrying) ? (
             state.bankedSeconds === 0 ? (
-              <BeginPauseOverlay
+              <PuzzleOverlay
+                {...overlayBaseProps}
+                overlayType={OverlayType.BeginPause}
                 dismissMessage="Begin Puzzle"
                 message="Ready to get started?"
-                {...beginPauseProps}
+                loadingPlayState={loadingPlayState || !state.loadedPlayState}
               />
             ) : (
-              <BeginPauseOverlay
+              <PuzzleOverlay
+                {...overlayBaseProps}
+                overlayType={OverlayType.BeginPause}
                 dismissMessage="Resume"
                 message="Your puzzle is paused"
-                {...beginPauseProps}
+                loadingPlayState={loadingPlayState || !state.loadedPlayState}
               />
             )
           ) : (
