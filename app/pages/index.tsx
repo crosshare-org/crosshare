@@ -62,6 +62,11 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
     });
 };
 
+const PBAuthorId = 'QFOR4mv47phGFzJMMqeRwTiLQ1F2';
+const PBPart7 = 'If5fqXrMwK0A0pvhOh76';
+const PBPart8 = 'VVZF8IdZ0N1s86SlSMKS';
+const PBPart9 = 'yTixqTUgkIFpZTV3csVX';
+
 export default function HomePage({ dailymini, featured }: HomePageProps) {
   const today = new Date();
   const { user, loading } = useContext(AuthContext);
@@ -83,12 +88,48 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
           puzzles.
         </p>
         <h2>Daily Mini</h2>
+        {dailymini.authorId === PBAuthorId ? (
+          <>
+            <img
+              alt="PBWMC banner"
+              src="/pbwmcbanner.png"
+              width="1002"
+              height="152"
+              css={{
+                width: '100%',
+                height: 'auto',
+                objectFit: 'contain',
+                marginBottom: '1em',
+                marginTop: '0.5em',
+              }}
+            />
+          </>
+        ) : (
+          ''
+        )}
         <PuzzleResultLink
           puzzle={dailymini}
           showAuthor={true}
           constructorPage={dailymini.constructorPage}
           title={'Today\'s daily mini crossword'}
         />
+        {dailymini.id === PBPart7 ? (
+          <div css={{ fontSize: '1.2em', marginTop: '-1em' }}>
+            <h4>Bonus:</h4>
+            <p>
+              <a href={`/crosswords/${PBPart8}`}>
+                You Crossed the Line! (pt. 8)
+              </a>
+            </p>
+            <p>
+              <a href={`/crosswords/${PBPart9}`}>
+                You Crossed the Line! (pt. 9)
+              </a>
+            </p>
+          </div>
+        ) : (
+          ''
+        )}
         <p>
           <Link
             href={`/dailyminis/${today.getUTCFullYear()}/${
