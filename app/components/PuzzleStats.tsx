@@ -63,6 +63,9 @@ const initializeState = (props: PuzzleStatsProps): BuilderState => {
     isPrivateUntil: null,
     blogPost: props.puzzle.blogPost,
     guestConstructor: props.puzzle.guestConstructor,
+    contestAnswers: props.puzzle.contestAnswers,
+    contestHasPrize: props.puzzle.contestHasPrize,
+    contestExplanation: props.puzzle.contestExplanation,
   });
 };
 

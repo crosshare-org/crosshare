@@ -45,6 +45,9 @@ const testPuzzle: ServerPuzzleResult = {
   publishTime: 100000,
   title: 'Without company',
   size: { rows: 5, cols: 5 },
+  contestAnswers: null,
+  contestExplanation: null,
+  contestHasPrize: false,
   clues: [
     {
       explanation: null,
@@ -141,6 +144,9 @@ const dailymini_5_19: ServerPuzzleResult = {
   isPrivate: false,
   isPrivateUntil: null,
   blogPost: null,
+  contestAnswers: null,
+  contestExplanation: null,
+  contestHasPrize: false,
   authorId: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
   category: 'dailymini',
   authorName: 'Mike D',
