@@ -290,6 +290,9 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     isPrivateUntil: saved?.isPrivateUntil || null,
     blogPost: saved?.blogPost || null,
     guestConstructor: saved?.guestConstructor || null,
+    contestAnswers: saved?.contestAnswers || null,
+    contestHasPrize: saved?.contestHasPrize || false,
+    contestExplanation: saved?.contestExplanation || null,
   });
 };
 
@@ -706,6 +709,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   if (clueMode) {
     return (
       <ClueMode
+        isAdmin={props.isAdmin}
         state={state}
         puzzleId={state.id}
         authorId={state.authorId}

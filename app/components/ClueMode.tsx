@@ -146,6 +146,7 @@ interface ClueModeProps {
   clues: Record<string, string>;
   state: BuilderState;
   dispatch: Dispatch<PuzzleAction>;
+  isAdmin: boolean;
 }
 export const ClueMode = (props: ClueModeProps) => {
   const [settingCoverPic, setSettingCoverPic] = useState(false);
@@ -340,127 +341,136 @@ export const ClueMode = (props: ClueModeProps) => {
         ) : (
           ''
         )}
-        <div>
-          <label>
-            <input
-              css={{ marginRight: '1em' }}
-              type="checkbox"
-              checked={props.state.isContestPuzzle}
-              onChange={(e) => {
-                const spa: UpdateContestAction = {
-                  type: 'CONTEST',
-                  enabled: e.target.checked,
-                };
-                props.dispatch(spa);
-              }}
-            />{' '}
-            This is a meta/contest puzzle{' '}
-            <ToolTipText
-              css={{ marginLeft: '0.5em' }}
-              text={<FaInfoCircle />}
-              tooltip="A meta puzzle has an extra puzzle embedded in the grid for after solvers have finished solving. Solvers can submit their solution, find out if they were right or wrong, and view a leaderboard of those who've solved the contest correctly."
-            />
-          </label>
-        </div>
-        {props.state.isContestPuzzle ? (
-          <p css={{ marginLeft: '1.5em' }}>
-            <h4>Contest prompt (required):</h4>
-            <p>
-              Use the notes field above to give solvers a prompt for the
-              contest.
-            </p>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const spa: UpdateContestAction = {
-                  type: 'CONTEST',
-                  addAnswer: contestAnswerInProg,
-                };
-                props.dispatch(spa);
-                setContestAnswerInProg('');
-              }}
-            >
-              <h4>
-                Contest solution(s) - must specify at least one valid solution:
-              </h4>
-              {props.state.contestAnswers?.length ? (
-                <ul>
-                  {props.state.contestAnswers.map((a) => (
-                    <li key={a}>
-                      {a} (
-                      <ButtonAsLink
-                        onClick={() => {
-                          const spa: UpdateContestAction = {
-                            type: 'CONTEST',
-                            removeAnswer: a,
-                          };
-                          props.dispatch(spa);
-                        }}
-                        text="remove"
-                      />
-                      )
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                ''
-              )}
-              <input
-                type="text"
-                placeholder="Solution (case insensitive)"
-                value={contestAnswerInProg}
-                onChange={(e) => {
-                  setContestAnswerInProg(e.target.value);
-                }}
-              />
-              <Button
-                type="submit"
-                css={{ marginLeft: '0.5em' }}
-                disabled={contestAnswerInProg.trim().length === 0}
-                text="Add Solution"
-              />
-            </form>
-            <h4 css={{ marginTop: '1em' }}>Contest explanation (optional):</h4>
-            <p>
-              If specified, the explainer for the contest solution is shown
-              after a user submits their contest answer.
-            </p>
-            <textarea
-              css={{ width: '100%', display: 'block' }}
-              placeholder="Your explainer text (markdown format)"
-              value={props.state.contestExplanation || ''}
-              onChange={(e) => {
-                const sta: UpdateContestAction = {
-                  type: 'CONTEST',
-                  explanation: sanitizeBlogPost(e.target.value),
-                };
-                props.dispatch(sta);
-              }}
-            />
-            <MarkdownPreview markdown={props.state.contestExplanation} />
-            <h4 css={{ marginTop: '1em' }}>Contest prize</h4>
-            <p>
-              If the contest has a prize solvers can choose to include their
-              email address in their submission to be eligible to win.
-            </p>
+        {props.isAdmin ? (
+          <>
             <div>
               <label>
                 <input
                   css={{ marginRight: '1em' }}
                   type="checkbox"
-                  checked={props.state.contestHasPrize}
+                  checked={props.state.isContestPuzzle}
                   onChange={(e) => {
                     const spa: UpdateContestAction = {
                       type: 'CONTEST',
-                      hasPrize: e.target.checked,
+                      enabled: e.target.checked,
                     };
                     props.dispatch(spa);
                   }}
                 />{' '}
-                This contest has a prize
+                This is a meta/contest puzzle{' '}
+                <ToolTipText
+                  css={{ marginLeft: '0.5em' }}
+                  text={<FaInfoCircle />}
+                  tooltip="A meta puzzle has an extra puzzle embedded in the grid for after solvers have finished solving. Solvers can submit their solution, find out if they were right or wrong, and view a leaderboard of those who've solved the contest correctly."
+                />
               </label>
             </div>
-          </p>
+            {props.state.isContestPuzzle ? (
+              <p css={{ marginLeft: '1.5em' }}>
+                <h4>Contest prompt (required):</h4>
+                <p>
+                  Use the notes field above to give solvers a prompt for the
+                  contest.
+                </p>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const spa: UpdateContestAction = {
+                      type: 'CONTEST',
+                      addAnswer: contestAnswerInProg,
+                    };
+                    props.dispatch(spa);
+                    setContestAnswerInProg('');
+                  }}
+                >
+                  <h4>
+                    Contest solution(s) - must specify at least one valid
+                    solution:
+                  </h4>
+                  {props.state.contestAnswers?.length ? (
+                    <ul>
+                      {props.state.contestAnswers.map((a) => (
+                        <li key={a}>
+                          {a} (
+                          <ButtonAsLink
+                            onClick={() => {
+                              const spa: UpdateContestAction = {
+                                type: 'CONTEST',
+                                removeAnswer: a,
+                              };
+                              props.dispatch(spa);
+                            }}
+                            text="remove"
+                          />
+                          )
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    ''
+                  )}
+                  <input
+                    type="text"
+                    placeholder="Solution (case insensitive)"
+                    value={contestAnswerInProg}
+                    onChange={(e) => {
+                      setContestAnswerInProg(e.target.value);
+                    }}
+                  />
+                  <Button
+                    type="submit"
+                    css={{ marginLeft: '0.5em' }}
+                    disabled={contestAnswerInProg.trim().length === 0}
+                    text="Add Solution"
+                  />
+                </form>
+                <h4 css={{ marginTop: '1em' }}>
+                  Contest explanation (optional):
+                </h4>
+                <p>
+                  If specified, the explainer for the contest solution is shown
+                  after a user submits their contest answer.
+                </p>
+                <textarea
+                  css={{ width: '100%', display: 'block' }}
+                  placeholder="Your explainer text (markdown format)"
+                  value={props.state.contestExplanation || ''}
+                  onChange={(e) => {
+                    const sta: UpdateContestAction = {
+                      type: 'CONTEST',
+                      explanation: sanitizeBlogPost(e.target.value),
+                    };
+                    props.dispatch(sta);
+                  }}
+                />
+                <MarkdownPreview markdown={props.state.contestExplanation} />
+                <h4 css={{ marginTop: '1em' }}>Contest prize</h4>
+                <p>
+                  If the contest has a prize solvers can choose to include their
+                  email address in their submission to be eligible to win.
+                </p>
+                <div>
+                  <label>
+                    <input
+                      css={{ marginRight: '1em' }}
+                      type="checkbox"
+                      checked={props.state.contestHasPrize}
+                      onChange={(e) => {
+                        const spa: UpdateContestAction = {
+                          type: 'CONTEST',
+                          hasPrize: e.target.checked,
+                        };
+                        props.dispatch(spa);
+                      }}
+                    />{' '}
+                    This contest has a prize
+                  </label>
+                </div>
+              </p>
+            ) : (
+              ''
+            )}
+          </>
         ) : (
           ''
         )}
