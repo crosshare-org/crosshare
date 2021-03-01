@@ -118,12 +118,12 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
             <h4>Bonus:</h4>
             <p>
               <a href={`/crosswords/${PBPart8}`}>
-                You Crossed the Line! (pt. 8)
+                Some Assembly Required (pt. 8)
               </a>
             </p>
             <p>
               <a href={`/crosswords/${PBPart9}`}>
-                You Crossed the Line! (pt. 9)
+                Some Assembly Required (pt. 9)
               </a>
             </p>
           </div>
