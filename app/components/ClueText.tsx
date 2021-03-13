@@ -4,6 +4,7 @@ import { CluedEntry, RefPosition } from '../lib/viewableGrid';
 import { GridBase, valAt, EntryBase } from '../lib/gridBase';
 
 import { ToolTipText } from './ToolTipText';
+import { getClueText } from '../lib/types';
 
 interface ClueTextProps {
   entryIndex: number;
@@ -16,7 +17,7 @@ export const ClueText = (props: ClueTextProps) => {
   if (!entry) {
     throw new Error('oob');
   }
-  const text = entry.clue;
+  const text = getClueText(entry);
   let offset = 0;
   const parts: Array<ReactNode> = [];
   let i = 0;
@@ -35,7 +36,7 @@ export const ClueText = (props: ClueTextProps) => {
         text={text.slice(start, end)}
         tooltip={
           <>
-            {e.clue}
+            {getClueText(e)}
             <b
               css={{
                 marginLeft: '0.5em',

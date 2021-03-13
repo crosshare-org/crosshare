@@ -7,7 +7,7 @@ import {
   RefObject,
 } from 'react';
 
-import { Position, Direction } from '../lib/types';
+import { Position, Direction, getClueText } from '../lib/types';
 import { CluedEntry, RefPosition } from '../lib/viewableGrid';
 import { GridBase, valAt, EntryBase } from '../lib/gridBase';
 
@@ -155,7 +155,7 @@ const ClueListItem = memo(function ClueListItem({
                 grid={props.grid}
               />
             ) : (
-              <div>{props.entry.clue}</div>
+              <div>{getClueText(props.entry)}</div>
             )}
             {props.showEntry ? (
               <div>

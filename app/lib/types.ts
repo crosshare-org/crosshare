@@ -76,6 +76,17 @@ export interface ClueT {
   explanation: string | null;
 }
 
+export function removeClueSpecials(c: string): string {
+  if (c.startsWith('!@')) {
+    return c.substring(2).trim();
+  }
+  return c;
+}
+
+export function getClueText(c: {clue: string}): string {
+  return removeClueSpecials(c.clue);
+}
+
 export interface Comment {
   /** comment text */
   commentText: string;

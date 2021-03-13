@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { DBPuzzleT } from './dbtypes';
-import { PuzzleInProgressT, ClueT } from './types';
+import { PuzzleInProgressT, ClueT, removeClueSpecials } from './types';
 import { fromCells, getClueMap } from './viewableGrid';
 
 const EXTENSION_HEADER_LENGTH = 8;
@@ -319,14 +319,14 @@ class PuzWriter {
       if (clueNumber === undefined) {
         throw new Error('oob');
       }
-      clues.push([2 * clueNumber, clue]);
+      clues.push([2 * clueNumber, removeClueSpecials(clue)]);
     }
     for (const [i, clue] of puzzle.dc.entries()) {
       const clueNumber = puzzle.dn[i];
       if (clueNumber === undefined) {
         throw new Error('oob');
       }
-      clues.push([2 * clueNumber + 1, clue]);
+      clues.push([2 * clueNumber + 1, removeClueSpecials(clue)]);
     }
     clues.sort((a, b) => a[0] - b[0]);
     for (const clue of clues) {

@@ -8,7 +8,7 @@ import {
   ViewableEntry,
   addClues,
 } from '../../../lib/viewableGrid';
-import { puzzleFromDB, PuzzleT, Direction } from '../../../lib/types';
+import { puzzleFromDB, PuzzleT, Direction, getClueText } from '../../../lib/types';
 
 function layoutPDFClues(
   doc: jsPDF,
@@ -22,14 +22,14 @@ function layoutPDFClues(
   );
   const acrossClues = acrossEntries.map((e) => ({
     label: e.labelNumber.toString(),
-    clue: e.clue,
+    clue: getClueText(e),
   }));
   const downEntries = clued.entries.filter(
     (e) => e.direction === Direction.Down
   );
   const downClues = downEntries.map((e) => ({
     label: e.labelNumber.toString(),
-    clue: e.clue,
+    clue: getClueText(e),
   }));
   function marginTop(x: number, addedPage: boolean) {
     if (addedPage || x > squareSize * puzzle.size.cols + 10) {
@@ -74,7 +74,7 @@ function layoutPDFClues(
     const width = clue.label
       ? format.clueWidth
       : format.clueWidth + format.labelWidth;
-    const clueText = doc.splitTextToSize(clue.clue, width);
+    const clueText = doc.splitTextToSize(getClueText(clue), width);
     const adjustY = clueText.length * (format.fontSize + 3);
     if (y + adjustY > format.marginBottom) {
       x += format.labelWidth + format.clueWidth + format.columnSeparator;
