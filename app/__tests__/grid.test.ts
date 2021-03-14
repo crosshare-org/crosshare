@@ -145,3 +145,24 @@ test('test getClueRefs for 35-downs', () => {
   });
   expect(res).toMatchSnapshot();
 });
+
+test('test getClueRefs for 35-downs with !@', () => {
+  const answers = ['U', 'P', 'S', 'O'];
+  const grid = fromCells({
+    width: 2,
+    height: 2,
+    cells: answers,
+    allowBlockEditing: false,
+    highlighted: new Set<number>(),
+    highlight: 'circle',
+    mapper: (x) => x,
+  });
+
+  const cluedGrid: CluedGrid = addClues(grid, [
+    { num: 1, dir: 0, clue: '!@Not down 5-acrosses', explanation: null },
+    { num: 3, dir: 0, clue: '2-downs Then...', explanation: null },
+    { num: 1, dir: 1, clue: '!@ 1- and 3- acrosses You and I', explanation: null },
+    { num: 2, dir: 1, clue: '1-A Post office abbr.', explanation: null },
+  ]);
+  expect(getRefs(cluedGrid)).toMatchSnapshot();
+});

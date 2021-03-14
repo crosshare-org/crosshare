@@ -450,11 +450,8 @@ export function getRefs(
     const refs = new Set<number>();
     const refPos: Array<RefPosition> = [];
     let match;
-    if (e.clue.startsWith('!@')) {
-      continue;
-    }
     const re = /(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
-    while ((match = re.exec(e.clue)) !== null) {
+    while (!e.clue.startsWith('!@') && (match = re.exec(e.clue)) !== null) {
       const dirString = match.groups?.dir?.toLowerCase();
       if (!dirString) {
         throw new Error('missing dir string');

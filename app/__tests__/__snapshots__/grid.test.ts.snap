@@ -45,6 +45,42 @@ Array [
 ]
 `;
 
+exports[`test getClueRefs for 35-downs with !@ 1`] = `
+Array [
+  Array [
+    Set {
+      2,
+    },
+    Set {},
+    Set {
+      0,
+      3,
+    },
+    Set {
+      2,
+    },
+  ],
+  Array [
+    Array [],
+    Array [],
+    Array [
+      Array [
+        0,
+        0,
+        3,
+      ],
+    ],
+    Array [
+      Array [
+        2,
+        0,
+        7,
+      ],
+    ],
+  ],
+]
+`;
+
 exports[`test getClueRefs for puzzle with refs 1`] = `
 Array [
   Array [
