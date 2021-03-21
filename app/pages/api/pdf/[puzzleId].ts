@@ -8,7 +8,12 @@ import {
   ViewableEntry,
   addClues,
 } from '../../../lib/viewableGrid';
-import { puzzleFromDB, PuzzleT, Direction, getClueText } from '../../../lib/types';
+import {
+  puzzleFromDB,
+  PuzzleT,
+  Direction,
+  getClueText,
+} from '../../../lib/types';
 
 function layoutPDFClues(
   doc: jsPDF,
@@ -32,7 +37,10 @@ function layoutPDFClues(
     clue: getClueText(e),
   }));
   function marginTop(x: number, addedPage: boolean) {
-    if (addedPage || x > squareSize * puzzle.size.cols + 10) {
+    if (
+      addedPage ||
+      x > format.marginLeft + squareSize * puzzle.size.cols + 10
+    ) {
       return 85;
     }
     return 100 + squareSize * puzzle.size.rows;
@@ -69,14 +77,31 @@ function layoutPDFClues(
     .concat(acrossClues)
     .concat(downTitle)
     .concat(downClues);
-  for (const clue of allClues) {
+  for (const [idx, clue] of allClues.entries()) {
     // Position clue on page
     const width = clue.label
       ? format.clueWidth
       : format.clueWidth + format.labelWidth;
     const clueText = doc.splitTextToSize(getClueText(clue), width);
     const adjustY = clueText.length * (format.fontSize + 3);
-    if (y + adjustY > format.marginBottom) {
+
+    // If we have an across/down heading make sure the first clue will fit in this column too
+    let testAdjustY = adjustY;
+    if (['across', 'down'].includes(clue.label.toLowerCase())) {
+      const nextClue = allClues[idx + 1];
+      if (!nextClue) {
+        continue;
+      }
+      const nextWidth = nextClue.label
+        ? format.clueWidth
+        : format.clueWidth + format.labelWidth;
+      const nextClueText = doc.splitTextToSize(
+        getClueText(nextClue),
+        nextWidth
+      );
+      testAdjustY += nextClueText.length * (format.fontSize + 3);
+    }
+    if (y + testAdjustY > format.marginBottom) {
       x += format.labelWidth + format.clueWidth + format.columnSeparator;
       if (x + format.labelWidth > format.marginRight) {
         doc.addPage();
