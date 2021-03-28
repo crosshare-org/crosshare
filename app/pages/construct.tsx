@@ -327,6 +327,23 @@ export default function BuilderPage() {
           </p>
           <h3>What about circled / shaded squares?</h3>
           <p>Yup, and yup!</p>
+          <h3>How do clue cross-references work?</h3>
+          <p>
+            When you use something like <i>7-Across</i> or <i>5D</i> in a clue
+            it will automatically get linked to the referenced clue. This sets
+            up clue highlighting for solvers. You can also prefix clues with a
+            &lsquo;*&rsquo; and use phrases like &ldquo;the starred clues&rdquo;
+            in another clue set up references to them.
+          </p>
+          <h3>
+            What if my clue uses <i>3D</i> but it&apos;s not supposed to be a
+            cross-reference?
+          </h3>
+          <p>
+            You can prefix a clue with &lsquo;!@&rsquo; to tell Crosshare to
+            skip it when scanning for clue references. Solvers won&apos;t see
+            the !@, obviously.
+          </p>
           <h3>Where does the wordlist come from?</h3>
           <p>
             Crosshare uses a custom wordlist that’s mostly based off of{' '}
