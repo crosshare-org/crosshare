@@ -82,6 +82,7 @@ exports[`Highlighting for different types of clues 2`] = `
       </b>
       <div
         class="emotion-3"
+        style="position: absolute;"
       />
     </div>
     - and 
@@ -105,6 +106,7 @@ exports[`Highlighting for different types of clues 2`] = `
       </b>
       <div
         class="emotion-3"
+        style="position: absolute;"
       />
     </div>
      You and I
@@ -186,6 +188,7 @@ exports[`Highlighting for different types of clues 3`] = `
       </b>
       <div
         class="emotion-3"
+        style="position: absolute;"
       />
     </div>
      Post office abbr.
@@ -267,6 +270,7 @@ exports[`Highlighting for different types of clues 4`] = `
       </b>
       <div
         class="emotion-3"
+        style="position: absolute;"
       />
     </div>
      Then...
