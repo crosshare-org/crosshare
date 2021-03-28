@@ -331,9 +331,9 @@ export default function BuilderPage() {
           <p>
             When you use something like <i>7-Across</i> or <i>5D</i> in a clue
             it will automatically get linked to the referenced clue. This sets
-            up clue highlighting for solvers. You can also prefix clues with a
-            &lsquo;*&rsquo; and use phrases like &ldquo;the starred clues&rdquo;
-            in another clue set up references to them.
+            up clue highlighting and tooltips for solvers. You can also prefix
+            clues with a &lsquo;*&rsquo; and use phrases like &ldquo;the starred
+            clues&rdquo; in another clue to set up references to them.
           </p>
           <h3>
             What if my clue uses <i>3D</i> but it&apos;s not supposed to be a
