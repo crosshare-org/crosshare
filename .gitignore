@@ -4,6 +4,8 @@ _db.py
 __pycache__
 _db.json
 cluedata
+peter-broda-wordlist__scored.txt
+ExpandedNames_unscored.txt
 cluedata.txt
 .DS*
 .firebase
