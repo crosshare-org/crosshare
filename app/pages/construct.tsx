@@ -69,7 +69,8 @@ export default function BuilderPage() {
       <>
         <p>
           The first time you use the constructor on a new browser Crosshare
-          needs to download and build a word database.
+          needs to download and build a word database. Occassional rebuilds are
+          needed as Crosshare adds new words.
         </p>
         <LoadButton
           buttonText="Build Database"

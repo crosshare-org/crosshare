@@ -24,6 +24,9 @@ let dbStatus: DBStatus = DBStatus.uninitialized;
 
 const STORAGE_KEY = 'db';
 
+const VERSION_KEY = 'db_version';
+const VERSION = '1';
+
 export const useWordDB = (
   validate?: boolean
 ): [boolean, string, boolean, () => void] => {
@@ -50,6 +53,13 @@ export const useWordDB = (
         return;
       }
       dbStatus = DBStatus.building;
+      console.log('checking db version');
+      if (localStorage.getItem(VERSION_KEY) !== VERSION) {
+        console.log('version missing or out of date');
+        dbStatus = DBStatus.notPresent;
+        setLoading(false);
+        return;
+      }
       console.log('trying to load from idb');
       return get(STORAGE_KEY).then((db) => {
         if (didCancel) {
@@ -141,6 +151,7 @@ export const validateAndSet = async (dled: any): Promise<void> => {
     console.log('validated');
     wordDB = validationResult.right;
     await set(STORAGE_KEY, wordDB);
+    localStorage.setItem(VERSION_KEY, VERSION);
     dbStatus = DBStatus.present;
   } else {
     console.error(PathReporter.report(validationResult).join(','));
