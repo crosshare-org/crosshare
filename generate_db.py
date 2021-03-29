@@ -30,7 +30,7 @@ class GenerateDB(object):
     _cluedata = None
     _clueblock = None
     words = []
-    clue_map = defaultdict(list)
+    # clue_map = defaultdict(list)
     words_by_length = defaultdict(list)
     bitmaps_by_length = defaultdict(
         lambda: defaultdict(lambda: defaultdict(int)))
@@ -70,6 +70,7 @@ class GenerateDB(object):
             clues = []
             clue_clues = []
             numclues = struct.unpack('<I', f.read(4))[0]
+            print('numclues: ', numclues)
             for _ in range(numclues):
                 l = struct.unpack('<B', f.read(1))[0]
                 s = struct.unpack('<{}s'.format(l), f.read(l))[0]
@@ -80,6 +81,7 @@ class GenerateDB(object):
                     traps.append(struct.unpack('<I', f.read(4))[0])
                 clue_clues.append(traps)
 
+            print('done w/ words')
             n = struct.unpack('<I', f.read(4))[0]
             while(True):
                 num = struct.unpack('<h', f.read(2))[0]
@@ -88,15 +90,15 @@ class GenerateDB(object):
                 th = struct.unpack('<b', f.read(1))[0]
                 pnum = struct.unpack('<b', f.read(1))[0]
                 cnum = struct.unpack('<I', f.read(4))[0]
-                fill = self.words[n][0]
-                self.clue_map[fill].append({"num": num,
-                                            "diff": diff,
-                                            "yr": yr,
-                                            "pnum": pnum,
-                                            "th": th,
-                                            "cnum": cnum,
-                                            "text": clues[cnum],
-                                            "traps": [(t, self.words[t >> 1][0]) for t in clue_clues[cnum]]})
+                # fill = self.words[n][0]
+                # self.clue_map[fill].append({"num": num,
+                #                             "diff": diff,
+                #                             "yr": yr,
+                #                             "pnum": pnum,
+                #                             "th": th,
+                #                             "cnum": cnum,
+                #                             "text": clues[cnum],
+                #                             "traps": [(t, self.words[t >> 1][0]) for t in clue_clues[cnum]]})
 
                 # Update scoring
                 if not th:
