@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node-script --skip-project
+#!/usr/bin/env -S npx ts-node-script --skip-project -O '{"resolveJsonModule":true,"esModuleInterop":true,"noUncheckedIndexedAccess":true,"strict":true}'
 export {};
 
 import fs from 'fs';
@@ -9,17 +9,18 @@ import { rawBuild } from '../lib/WordDB';
 const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);
 
-if (process.argv.length !== 5) {
+if (process.argv.length !== 6) {
   throw Error(
-    'Invalid use of buildWordlist.\nUsage: `buildWordlist.ts <path to peter brodas list> <path to cluedata> <output filename>`'
+    'Invalid use of buildWordlist.\nUsage: `buildWordlist.ts <path to peter brodas list> <path to cluedata> <path to expanded wordlist> <output filename>`'
   );
 }
 
 const peters = process.argv[2];
 const cluedata = process.argv[3];
-const out = process.argv[4];
+const expanded = process.argv[4];
+const out = process.argv[5];
 
-if (!peters || !cluedata || !out) {
+if (!peters || !cluedata || !expanded || !out) {
   throw new Error('bad args');
 }
 
@@ -59,7 +60,11 @@ function fileContentsToWords(contents: string): Array<[string, number]> {
       if (split[0] && split[1]) {
         return [split[0], split[1]];
       }
-      throw new Error('malformed word: ' + s);
+      if (split[0]) {
+        return [split[0], '0'];
+      }
+      console.log('malformed word: ' + s);
+      return ['1', '0'];
     })
     .filter((s) => !/[^A-Z]/.test(s[0])) /* Filter any words w/ non-letters */
     .map((s): [string, number] => [s[0], parseInt(s[1])]);
@@ -91,13 +96,26 @@ readFile(peters, 'utf8').then((pc: string) => {
       }
     });
 
-    console.log('starting build');
-    const db = rawBuild(Object.entries(wordlist));
-    console.log('built');
+    readFile(expanded, 'utf8').then((ec: string) => {
+      const expandedWords = fileContentsToWords(ec);
+      expandedWords.forEach(([word]) => {
+        if (!wordlist[word]) {
+          if (word.length <= 15) {
+            wordlist[word] = 1;
+          } else {
+            console.log('skipping ' + word);
+          }
+        }
+      });
 
-    const outContent = JSON.stringify(db);
-    writeFile(out, outContent).then(() => {
-      console.log('wrote result to ' + out);
+      console.log('starting build');
+      const db = rawBuild(Object.entries(wordlist));
+      console.log('built');
+
+      const outContent = JSON.stringify(db);
+      writeFile(out, outContent).then(() => {
+        console.log('wrote result to ' + out);
+      });
     });
   });
 });

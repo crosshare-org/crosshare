@@ -1,5 +1,6 @@
 Build cluedata.txt:
-Extract `cluedata` from Ginsberg's cluer.app. `cd ..; python generate_db.py`
+Extract `cluedata` from Ginsberg's cluer.app.
+`cd ..; python generate_db.py`
 
 Can build clue database now:
 `./scripts/buildGinsberg.ts`
@@ -7,7 +8,7 @@ Can build clue database now:
 Build wordlist:
 Download expanded names: https://sites.google.com/view/expandedcrosswordnamedatabase/home
 Download peter's wordlist: https://peterbroda.me/crosswords/wordlist/
-`./scripts/buildWordlist.ts ~/Downloads/peter-broda-wordlist__scored.txt ../cluedata.txt worddb.json`
+`./scripts/buildWordlist.ts ../peter-broda-wordlist__scored.txt ../cluedata.txt ../ExpandedNames_unscored.txt worddb.json`
 
 Upload wordlist:
-`~/software/google-cloud-sdk/bin/gsutil cp -Z worddb.json gs://mdcrosshare.appspot.com/`
+toolbox run gsutil cp -Z worddb.json gs://mdcrosshare.appspot.com/
