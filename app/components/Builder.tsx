@@ -10,10 +10,12 @@ import {
   FormEvent,
   MutableRefObject,
 } from 'react';
+import { ContactLinks } from './ContactLinks';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   FaRegNewspaper,
+  FaFileImport,
   FaUser,
   FaListOl,
   FaRegCircle,
@@ -92,6 +94,7 @@ import {
   BuilderGrid,
   ClickedEntryAction,
   PrefillSquares,
+  ImportPuzAction,
 } from '../reducers/reducer';
 import {
   NestedDropDown,
@@ -115,6 +118,7 @@ import { Keyboard } from './Keyboard';
 import { SMALL_AND_UP } from '../lib/style';
 import { ButtonReset } from './Buttons';
 import { useSnackbar } from './Snackbar';
+import { importFile } from '../lib/converter';
 
 let worker: Worker;
 
@@ -412,6 +416,69 @@ const PrefillSelectInput = (props: PrefillSelectProps) => {
         {labelForPrefill(props.option)}
       </label>
     </div>
+  );
+};
+
+const ImportPuzForm = (props: { dispatch: Dispatch<ImportPuzAction> }) => {
+  const [error, setError] = useState<string | null>(null);
+
+  function handleFile(f: FileList | null) {
+    if (!f || !f[0]) {
+      setError('No file selected');
+      return;
+    }
+    const fileReader = new FileReader();
+    fileReader.onloadend = () => {
+      if (!fileReader.result) {
+        setError('No file result');
+      } else if (typeof fileReader.result === 'string') {
+        setError('Failed to read as binary');
+      } else {
+        try {
+          const puzzle = importFile(new Uint8Array(fileReader.result));
+          if (!puzzle) {
+            setError('Failed to parse file');
+          } else {
+            props.dispatch({
+              type: 'IMPORTPUZ',
+              puz: puzzle,
+            });
+          }
+        } catch (error) {
+          console.error(error);
+          setError(error.message || 'Could not import file');
+        }
+      }
+    };
+    fileReader.readAsArrayBuffer(f[0]);
+  }
+
+  return (
+    <>
+      {error ? (
+        <>
+          <p>Error: {error}</p>
+          <p>
+            If your puzzle isn&apos;t uploading correctly please get in touch
+            via <ContactLinks /> so we can help!
+          </p>
+        </>
+      ) : (
+        ''
+      )}
+      <label>
+        <p>
+          Select a .puz file to import - any existing progress on your current
+          construction will be overwritten!
+        </p>
+        <input
+          css={{ overflow: 'hidden', maxWidth: '70vw' }}
+          type="file"
+          accept=".puz"
+          onChange={(e) => handleFile(e.target.files)}
+        />
+      </label>
+    </>
   );
 };
 
@@ -1180,6 +1247,14 @@ const GridMode = ({
                 text="New Puzzle"
               >
                 {() => <NewPuzzleForm dispatch={dispatch} />}
+              </NestedDropDown>
+              <NestedDropDown
+                onClose={focusGrid}
+                closeParent={closeDropdown}
+                icon={<FaFileImport />}
+                text="Import .puz File"
+              >
+                {() => <ImportPuzForm dispatch={dispatch} />}
               </NestedDropDown>
               <NestedDropDown
                 onClose={focusGrid}

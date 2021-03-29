@@ -1,4 +1,10 @@
-import { PosAndDir, Position, Direction, BLOCK } from '../lib/types';
+import {
+  PosAndDir,
+  Position,
+  Direction,
+  BLOCK,
+  PuzzleInProgressT,
+} from '../lib/types';
 import { DBPuzzleT, PlayWithoutUserT } from '../lib/dbtypes';
 import {
   ViewableGrid,
@@ -99,6 +105,34 @@ export interface BuilderState extends GridInterfaceState {
 }
 function isBuilderState(state: GridInterfaceState): state is BuilderState {
   return state.type === 'builder';
+}
+
+export function initialBuilderStateFromSaved(
+  saved: PuzzleInProgressT | null,
+  state: BuilderState
+) {
+  return initialBuilderState({
+    id: saved?.id || null,
+    width: saved?.width || state.grid.width,
+    height: saved?.height || state.grid.height,
+    grid: saved?.grid || state.grid.cells,
+    highlighted:
+      saved?.highlighted || Array.from(state.grid.highlighted.values()),
+    highlight: saved?.highlight || state.grid.highlight,
+    title: saved?.title || state.title,
+    notes: saved?.notes || state.notes,
+    clues: saved?.clues || {},
+    authorId: state.authorId,
+    authorName: state.authorName,
+    editable: true,
+    isPrivate: saved?.isPrivate || false,
+    isPrivateUntil: saved?.isPrivateUntil || null,
+    blogPost: saved?.blogPost || null,
+    guestConstructor: saved?.guestConstructor || null,
+    contestAnswers: saved?.contestAnswers || null,
+    contestHasPrize: saved?.contestHasPrize || false,
+    contestExplanation: saved?.contestExplanation || null,
+  });
 }
 
 export function initialBuilderState({
@@ -322,6 +356,15 @@ export enum PrefillSquares {
   OddOdd,
   EvenOdd,
   OddEven,
+}
+export interface ImportPuzAction extends PuzzleAction {
+  type: 'IMPORTPUZ';
+  puz: PuzzleInProgressT;
+}
+export function isImportPuzAction(
+  action: PuzzleAction
+): action is ImportPuzAction {
+  return action.type === 'IMPORTPUZ';
 }
 
 export interface NewPuzzleAction extends PuzzleAction {
@@ -899,6 +942,9 @@ export function builderReducer(
       contestExplanation: null,
       contestHasPrize: false,
     });
+  }
+  if (isImportPuzAction(action)) {
+    return initialBuilderStateFromSaved(action.puz, state);
   }
   if (isPublishAction(action)) {
     const errors = [];
