@@ -29,7 +29,7 @@ export default function DonatePage() {
               name="hosted_button_id"
               value="4JV5YY5RJ4FAY"
             />
-            <Button type="submit" text="Donate (via paypal)" />
+            <Button type="submit" text="Donate (via credit card / paypal)" />
           </form>
         </p>
         <p>
