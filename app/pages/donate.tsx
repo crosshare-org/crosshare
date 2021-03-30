@@ -63,6 +63,9 @@ export default function DonatePage() {
               <a href="/pchow13">Philip Chow</a>
             </b>
           </li>
+          <li>
+            <a href="/dritters">David Ritterskamp</a>
+          </li>
         </ul>
       </div>
     </>
