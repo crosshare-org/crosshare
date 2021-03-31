@@ -24,11 +24,13 @@ export default function DonatePage() {
             method="post"
             target="_top"
           >
+            <input type="hidden" name="business" value="FTAE6AJHUAJ42" />
             <input
               type="hidden"
-              name="hosted_button_id"
-              value="4JV5YY5RJ4FAY"
+              name="item_name"
+              value="All donations support crosshare.org"
             />
+            <input type="hidden" name="currency_code" value="USD" />
             <Button type="submit" text="Donate (via credit card / paypal)" />
           </form>
         </p>
