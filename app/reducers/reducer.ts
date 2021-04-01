@@ -102,6 +102,7 @@ export interface BuilderState extends GridInterfaceState {
   contestAnswers: Array<string> | null;
   contestHasPrize: boolean;
   contestExplanation: string | null;
+  showDownloadLink: boolean;
 }
 function isBuilderState(state: GridInterfaceState): state is BuilderState {
   return state.type === 'builder';
@@ -220,6 +221,7 @@ export function initialBuilderState({
     contestAnswers,
     contestExplanation,
     contestHasPrize,
+    showDownloadLink: false,
   });
 }
 
@@ -287,6 +289,16 @@ export interface SetNotesAction extends PuzzleAction {
 }
 function isSetNotesAction(action: PuzzleAction): action is SetNotesAction {
   return action.type === 'SETNOTES';
+}
+
+export interface SetShowDownloadLink extends PuzzleAction {
+  type: 'SETSHOWDOWNLOAD';
+  value: boolean;
+}
+function isSetShowDownloadLink(
+  action: PuzzleAction
+): action is SetShowDownloadLink {
+  return action.type === 'SETSHOWDOWNLOAD';
 }
 
 export interface SetGuestConstructorAction extends PuzzleAction {
@@ -883,6 +895,9 @@ export function builderReducer(
   }
   if (isSetNotesAction(action)) {
     return { ...state, notes: action.value };
+  }
+  if (isSetShowDownloadLink(action)) {
+    return { ...state, showDownloadLink: action.value };
   }
   if (isSetGuestConstructorAction(action)) {
     return { ...state, guestConstructor: action.value };

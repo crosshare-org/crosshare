@@ -97,6 +97,7 @@ import {
   PrefillSquares,
   ImportPuzAction,
   getClueProps,
+  SetShowDownloadLink,
 } from '../reducers/reducer';
 import {
   NestedDropDown,
@@ -973,6 +974,30 @@ const PuzDownloadLink = (props: ExportProps) => {
   );
 };
 
+const PuzDownloadOverlay = (props: {
+  state: BuilderState;
+  cancel: () => void;
+}) => {
+  return (
+    <Overlay closeCallback={props.cancel}>
+      <h2>Exporting .puz</h2>
+      <p>
+        <PuzDownloadLink
+          w={props.state.grid.width}
+          h={props.state.grid.height}
+          g={props.state.grid.cells}
+          n={props.state.authorName}
+          t={props.state.title || 'Crosshare puzzle'}
+          hs={Array.from(props.state.grid.highlighted)}
+          cn={props.state.notes || undefined}
+          gc={props.state.guestConstructor || undefined}
+          {...getClueProps(props.state.grid.entries, props.state.clues, false)}
+        />
+      </p>
+    </Overlay>
+  );
+};
+
 interface GridModeProps {
   user: firebase.User;
   isAdmin: boolean;
@@ -1290,35 +1315,17 @@ const GridMode = ({
               >
                 {() => <ImportPuzForm dispatch={dispatch} />}
               </NestedDropDown>
-              <NestedDropDown
-                onClose={focusGrid}
-                closeParent={closeDropdown}
+              <TopBarDropDownLink
                 icon={<FaRegFile />}
                 text="Export .puz File"
-              >
-                {() => (
-                  <>
-                    <h2>Exporting .puz</h2>
-                    <p>
-                      <PuzDownloadLink
-                        w={state.grid.width}
-                        h={state.grid.height}
-                        g={state.grid.cells}
-                        n={state.authorName}
-                        t={state.title || 'Crosshare puzzle'}
-                        hs={Array.from(state.grid.highlighted)}
-                        cn={state.notes || undefined}
-                        gc={state.guestConstructor || undefined}
-                        {...getClueProps(
-                          state.grid.entries,
-                          state.clues,
-                          false
-                        )}
-                      />
-                    </p>
-                  </>
-                )}
-              </NestedDropDown>
+                onClick={() => {
+                  const a: SetShowDownloadLink = {
+                    type: 'SETSHOWDOWNLOAD',
+                    value: true,
+                  };
+                  dispatch(a);
+                }}
+              />
               <NestedDropDown
                 onClose={focusGrid}
                 closeParent={closeDropdown}
@@ -1592,14 +1599,6 @@ const GridMode = ({
     props.isAdmin,
     setClueMode,
     setMuted,
-    state.title,
-    state.clues,
-    state.authorName,
-    state.notes,
-    state.guestConstructor,
-    state.grid.highlighted,
-    state.grid.entries,
-    state.grid.cells,
     state.grid.highlight,
     state.grid.width,
     state.grid.height,
@@ -1627,6 +1626,20 @@ const GridMode = ({
         <div css={{ flex: 'none' }}>
           <TopBar>{topBarChildren}</TopBar>
         </div>
+        {state.showDownloadLink ? (
+          <PuzDownloadOverlay
+            state={state}
+            cancel={() => {
+              const a: SetShowDownloadLink = {
+                type: 'SETSHOWDOWNLOAD',
+                value: false,
+              };
+              dispatch(a);
+            }}
+          />
+        ) : (
+          ''
+        )}
         {state.toPublish ? (
           <PublishOverlay
             id={state.id}
