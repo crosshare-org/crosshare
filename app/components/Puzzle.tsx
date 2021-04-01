@@ -48,7 +48,7 @@ import { AuthContext, AuthPropsOptional } from './AuthContext';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
-import { Direction, BLOCK } from '../lib/types';
+import { Direction, BLOCK, getClueText } from '../lib/types';
 import {
   fromCells,
   addClues,
@@ -449,7 +449,13 @@ export const Puzzle = ({
       dispatch(kpa);
       e.preventDefault();
     },
-    [dispatch, loadingPlayState, state.currentTimeWindowStart, state.success, state.dismissedSuccess]
+    [
+      dispatch,
+      loadingPlayState,
+      state.currentTimeWindowStart,
+      state.success,
+      state.dismissedSuccess,
+    ]
   );
   useEventListener('keydown', physicalKeyboardHandler);
 
@@ -820,7 +826,7 @@ export const Puzzle = ({
                   {!isEmbed ? (
                     <TopBarDropDownLink
                       icon={<ImEmbed />}
-                      text="Embed (beta)"
+                      text="Embed"
                       onClick={() => dispatch({ type: 'TOGGLEEMBEDOVERLAY' })}
                     />
                   ) : (
@@ -870,11 +876,7 @@ export const Puzzle = ({
 
   const description = puzzle.blogPost
     ? puzzle.blogPost.slice(0, 160) + '...'
-    : puzzle.clues
-      .map((c) => c.clue)
-      .sort()
-      .slice(0, 10)
-      .join('; ');
+    : puzzle.clues.map(getClueText).sort().slice(0, 10).join('; ');
 
   return (
     <>
