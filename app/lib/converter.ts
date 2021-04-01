@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { DBPuzzleT } from './dbtypes';
 import { PuzzleInProgressT, ClueT, removeClueSpecials } from './types';
 import { fromCells, getClueMap } from './viewableGrid';
 
@@ -209,6 +208,33 @@ class PuzReader {
   }
 }
 
+export interface ExportProps {
+  /** grid width / columns */
+  w: number;
+  /** grid height / rows */
+  h: number;
+  /** across clue strings */
+  ac: Array<string>;
+  /** across clue display numbers */
+  an: Array<number>;
+  /** down clue strings */
+  dc: Array<string>;
+  /** down clue display numbers */
+  dn: Array<number>;
+  /** grid (solution) */
+  g: Array<string>;
+  /** author's display name */
+  n: string;
+  /** title */
+  t: string;
+  /** highlighted cell indexes */
+  hs?: Array<number>;
+  /** constructor notes */
+  cn?: string;
+  /** guest constructor */
+  gc?: string;
+}
+
 class PuzWriter {
   public buf: Array<number>;
   public questionCP: number;
@@ -267,7 +293,7 @@ class PuzWriter {
     }
   }
 
-  writeHeader(puzzle: DBPuzzleT) {
+  writeHeader(puzzle: ExportProps) {
     this.pad(2); // placeholder for checksum
     this.writeString('ACROSS&DOWN');
     this.pad(2); // placeholder for cib checksum
@@ -284,7 +310,7 @@ class PuzWriter {
     this.writeShort(0); // scrambled tag
   }
 
-  writeFill(puzzle: DBPuzzleT): [solutionLoc: number, gridLoc: number] {
+  writeFill(puzzle: ExportProps): [solutionLoc: number, gridLoc: number] {
     const grid = puzzle.g;
     const solutionLoc = this.buf.length;
     for (const cell of grid) {
@@ -301,7 +327,7 @@ class PuzWriter {
     return [solutionLoc, gridLoc];
   }
 
-  writeStrings(puzzle: DBPuzzleT) {
+  writeStrings(puzzle: ExportProps) {
     let note = 'Created on crosshare.org';
     let author = puzzle.n;
     if (puzzle.gc) {
@@ -453,7 +479,7 @@ class PuzWriter {
     this.setShort(checksumLoc, cksum);
   }
 
-  toPuz(puzzle: DBPuzzleT) {
+  toPuz(puzzle: ExportProps) {
     this.writeHeader(puzzle);
     const [solutionLoc, gridLoc] = this.writeFill(puzzle);
     const stringLoc = this.writeStrings(puzzle);
@@ -484,7 +510,7 @@ class PuzWriter {
   }
 }
 
-export function exportFile(puzzle: DBPuzzleT): Uint8Array {
+export function exportFile(puzzle: ExportProps): Uint8Array {
   return new PuzWriter().toPuz(puzzle);
 }
 

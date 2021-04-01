@@ -29,6 +29,7 @@ import {
   FaRegPlusSquare,
   FaSignInAlt,
   FaKeyboard,
+  FaRegFile,
 } from 'react-icons/fa';
 import { MdRefresh } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
@@ -95,6 +96,7 @@ import {
   ClickedEntryAction,
   PrefillSquares,
   ImportPuzAction,
+  getClueProps,
 } from '../reducers/reducer';
 import {
   NestedDropDown,
@@ -118,7 +120,7 @@ import { Keyboard } from './Keyboard';
 import { SMALL_AND_UP } from '../lib/style';
 import { ButtonReset } from './Buttons';
 import { useSnackbar } from './Snackbar';
-import { importFile } from '../lib/converter';
+import { importFile, exportFile, ExportProps } from '../lib/converter';
 
 let worker: Worker;
 
@@ -939,6 +941,38 @@ const potentialFill = (
   });
 };
 
+const PuzDownloadLink = (props: ExportProps) => {
+  const [dataURI, setDataURI] = useState('');
+  const [error, setError] = useState('');
+  useEffect(() => {
+    const data = exportFile(props);
+    const reader = new FileReader();
+    reader.addEventListener(
+      'load',
+      function () {
+        if (typeof reader.result === 'string') {
+          setDataURI(reader.result);
+        } else {
+          setError('Bad result, please try again');
+        }
+      },
+      false
+    );
+    reader.readAsDataURL(new Blob([data]));
+  }, [props]);
+  if (error) {
+    return <>{error}</>;
+  }
+  if (!dataURI) {
+    return <>Generating file...</>;
+  }
+  return (
+    <a href={dataURI} download={props.t + '.puz'}>
+      Download
+    </a>
+  );
+};
+
 interface GridModeProps {
   user: firebase.User;
   isAdmin: boolean;
@@ -1259,6 +1293,35 @@ const GridMode = ({
               <NestedDropDown
                 onClose={focusGrid}
                 closeParent={closeDropdown}
+                icon={<FaRegFile />}
+                text="Export .puz File"
+              >
+                {() => (
+                  <>
+                    <h2>Exporting .puz</h2>
+                    <p>
+                      <PuzDownloadLink
+                        w={state.grid.width}
+                        h={state.grid.height}
+                        g={state.grid.cells}
+                        n={state.authorName}
+                        t={state.title || 'Crosshare puzzle'}
+                        hs={Array.from(state.grid.highlighted)}
+                        cn={state.notes || undefined}
+                        gc={state.guestConstructor || undefined}
+                        {...getClueProps(
+                          state.grid.entries,
+                          state.clues,
+                          false
+                        )}
+                      />
+                    </p>
+                  </>
+                )}
+              </NestedDropDown>
+              <NestedDropDown
+                onClose={focusGrid}
+                closeParent={closeDropdown}
                 icon={<IoMdStats />}
                 text="Stats"
               >
@@ -1529,6 +1592,14 @@ const GridMode = ({
     props.isAdmin,
     setClueMode,
     setMuted,
+    state.title,
+    state.clues,
+    state.authorName,
+    state.notes,
+    state.guestConstructor,
+    state.grid.highlighted,
+    state.grid.entries,
+    state.grid.cells,
     state.grid.highlight,
     state.grid.width,
     state.grid.height,

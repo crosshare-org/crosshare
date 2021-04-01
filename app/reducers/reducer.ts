@@ -818,6 +818,34 @@ function removeAnswer(answers: Array<string>, toRemove: string): Array<string> {
   return Array.from(updated.values());
 }
 
+export function getClueProps(
+  entries: ViewableEntry[],
+  clues: Record<string, string>,
+  requireComplete: boolean
+) {
+  const ac: Array<string> = [];
+  const an: Array<number> = [];
+  const dc: Array<string> = [];
+  const dn: Array<number> = [];
+  entries.forEach((e) => {
+    if (requireComplete && !e.completedWord) {
+      throw new Error('Publish unfinished grid');
+    }
+    const clue = clues[e.completedWord || ''] || '';
+    if (requireComplete && !clue) {
+      throw new Error('Bad clue for ' + e.completedWord);
+    }
+    if (e.direction === Direction.Across) {
+      ac.push(clue);
+      an.push(e.labelNumber);
+    } else {
+      dc.push(clue);
+      dn.push(e.labelNumber);
+    }
+  });
+  return { ac, an, dc, dn };
+}
+
 export function builderReducer(
   state: BuilderState,
   action: PuzzleAction
@@ -985,26 +1013,6 @@ export function builderReducer(
       return { ...state, publishErrors: errors };
     }
 
-    const ac: Array<string> = [];
-    const an: Array<number> = [];
-    const dc: Array<string> = [];
-    const dn: Array<number> = [];
-    state.grid.entries.forEach((e) => {
-      if (!e.completedWord) {
-        throw new Error('Publish unfinished grid');
-      }
-      const clue = state.clues[e.completedWord];
-      if (!clue) {
-        throw new Error('Bad clue for ' + e.completedWord);
-      }
-      if (e.direction === Direction.Across) {
-        ac.push(clue);
-        an.push(e.labelNumber);
-      } else {
-        dc.push(clue);
-        dn.push(e.labelNumber);
-      }
-    });
     const puzzle: DBPuzzleT = {
       t: state.title || 'Anonymous',
       a: state.authorId,
@@ -1015,10 +1023,7 @@ export function builderReducer(
       h: state.grid.height,
       w: state.grid.width,
       g: state.grid.cells,
-      ac,
-      an,
-      dc,
-      dn,
+      ...getClueProps(state.grid.entries, state.clues, true),
       ...(state.notes && { cn: state.notes }),
       ...(state.blogPost && { bp: state.blogPost }),
       ...(state.guestConstructor && { gc: state.guestConstructor }),
