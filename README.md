@@ -68,6 +68,8 @@ Then start the server:
 $ yarn dev
 ```
 
+You should now be able to view Crosshare locally at http://localhost:3000
+
 ## Credits
 
 See the [contributors](https://github.com/mdirolf/crosshare/graphs/contributors) on this repository and [crosshare.org/donate](https://crosshare.org/donate).
