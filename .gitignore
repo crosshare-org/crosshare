@@ -10,6 +10,7 @@ cluedata.txt
 .DS*
 .firebase
 serviceAccountKey.json
+firebaseConfig.ts
 firebase-debug.log
 wordlist.txt
 worddb.json
