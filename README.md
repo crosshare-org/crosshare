@@ -28,7 +28,7 @@ Click the little gear icon in the side bar. Scroll to the "Your apps" section an
 
 Copy the `var firebaseConfig = {...}` lines from the Add Firebase SDK dialog that pops up and paste them into a new file at `app/firebaseConfig.ts`. Change `var firebaseConfig` to `export const firebaseConfig`. These are the credentials used by the Crosshare frontend.
 
-New click "Service Accounts" at the top of the Project Settings page. Under "Firebase Admin SDK" click "Generate new private key". Save the resultant file as `serviceAccountKey.json` in the root of this repository.
+New click "Service Accounts" at the top of the Project Settings page. Under "Firebase Admin SDK" click "Generate new private key". Save the resultant file as `serviceAccountKey.json` in the root of this repository. This is the credential file for the Crosshare server.
 
 ### Install dependencies
 
