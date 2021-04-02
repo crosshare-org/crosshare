@@ -5,7 +5,7 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import type firebase from 'firebase/app';
 
-import { getMockedPuzzle } from '../lib/testingUtils';
+import { getMockedPuzzle } from '../lib/getMockedPuzzle';
 import {
   notificationsForPuzzleChange,
   NotificationT,

@@ -5,10 +5,10 @@ import {
   getUser,
   screen,
   render,
-  getMockedPuzzle,
   fireEvent,
   waitForElementToBeRemoved,
 } from '../lib/testingUtils';
+import { getMockedPuzzle } from '../lib/getMockedPuzzle';
 import { PuzzleLoader } from '../pages/crosswords/[puzzleId]/edit';
 import type firebase from 'firebase/app';
 

@@ -4,7 +4,7 @@
 
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 
-import { getMockedPuzzle } from '../lib/testingUtils';
+import { getMockedPuzzle } from '../lib/getMockedPuzzle';
 import { CommentWithRepliesT } from '../lib/dbtypes';
 import { AdminTimestamp, setAdminApp } from '../lib/firebaseWrapper';
 import {

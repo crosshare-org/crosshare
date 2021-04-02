@@ -1,7 +1,7 @@
 import { DBPuzzleT } from '../lib/dbtypes';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import { TimestampClass } from '../lib/firebaseWrapper';
-import { getMockedPuzzle } from '../lib/testingUtils';
+import { getMockedPuzzle } from '../lib/getMockedPuzzle';
 
 jest.mock('../lib/firebaseWrapper');
 
@@ -24,27 +24,45 @@ test('security rules should not allow publishing with restricted fields set', as
     app.firestore().collection('c').add(withComments)
   );
   await firebaseTesting.assertFails(
-    app.firestore().collection('c').add({ ...puzzle, m: true })
+    app
+      .firestore()
+      .collection('c')
+      .add({ ...puzzle, m: true })
   );
   await firebaseTesting.assertFails(
-    app.firestore().collection('c').add({ ...puzzle, c: 'dailymini' })
+    app
+      .firestore()
+      .collection('c')
+      .add({ ...puzzle, c: 'dailymini' })
   );
   await firebaseTesting.assertFails(
-    app.firestore().collection('c').add({ ...puzzle, p: null })
+    app
+      .firestore()
+      .collection('c')
+      .add({ ...puzzle, p: null })
   );
   const future = new Date();
   future.setHours(future.getHours() + 1);
   await firebaseTesting.assertFails(
-    app.firestore().collection('c').add({ ...puzzle, p: TimestampClass.fromDate(future) })
+    app
+      .firestore()
+      .collection('c')
+      .add({ ...puzzle, p: TimestampClass.fromDate(future) })
   );
   await firebaseTesting.assertSucceeds(
     app.firestore().collection('c').add(puzzle)
   );
   await firebaseTesting.assertFails(
-    app.firestore().collection('c').add({ ...puzzle, f: true })
+    app
+      .firestore()
+      .collection('c')
+      .add({ ...puzzle, f: true })
   );
   await firebaseTesting.assertFails(
-    app.firestore().collection('c').add({ ...puzzle, g: puzzle.g.slice(0, 24) })
+    app
+      .firestore()
+      .collection('c')
+      .add({ ...puzzle, g: puzzle.g.slice(0, 24) })
   );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { cs, ...withoutComments } = withComments;
@@ -52,7 +70,10 @@ test('security rules should not allow publishing with restricted fields set', as
     app.firestore().collection('c').add(withoutComments)
   );
   await firebaseTesting.assertFails(
-    app.firestore().collection('c').add({ ...puzzle, p: null, c: 'dailymini' })
+    app
+      .firestore()
+      .collection('c')
+      .add({ ...puzzle, p: null, c: 'dailymini' })
   );
   app.delete();
 });
@@ -93,7 +114,7 @@ test('security rules should not allow publishing if anonymous', async () => {
 
 test('security rules should not allow publishing if non-user', async () => {
   const app = firebaseTesting.initializeTestApp({
-    projectId: 'mdcrosshare'
+    projectId: 'mdcrosshare',
   });
 
   await firebaseTesting.assertFails(

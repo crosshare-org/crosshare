@@ -16,7 +16,7 @@ import {
   getPuzzlesForFeatured,
   getPuzzlesForConstructorPage,
 } from '../lib/serverOnly';
-import { getMockedPuzzle } from '../lib/testingUtils';
+import { getMockedPuzzle } from '../lib/getMockedPuzzle';
 
 test('try it when empty', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });

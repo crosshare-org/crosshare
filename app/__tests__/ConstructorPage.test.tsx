@@ -1,13 +1,8 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
-import {
-  getUser,
-  render,
-  cleanup,
-  fireEvent,
-  getMockedPuzzle,
-} from '../lib/testingUtils';
+import { getUser, render, cleanup, fireEvent } from '../lib/testingUtils';
+import { getMockedPuzzle } from '../lib/getMockedPuzzle';
 import { AccountPage } from '../pages/account';
 import waitForExpect from 'wait-for-expect';
 jest.mock('../lib/firebaseWrapper');

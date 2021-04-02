@@ -3,14 +3,22 @@
 import { getDateString } from '../lib/dbtypes';
 
 import { AdminApp } from '../lib/firebaseWrapper';
-import { getMockedPuzzle } from '../lib/testingUtils';
+import { getMockedPuzzle } from '../lib/getMockedPuzzle';
 
 const db = AdminApp.firestore();
 
-const testpuz = getMockedPuzzle();
-await db.doc('c/testpuzzleid').set(testpuz);
+async function bootstrap() {
+  const testpuz = getMockedPuzzle();
+  await db.doc('c/testpuzzleid').set(testpuz);
 
-const today = getDateString(new Date());
-await db.doc('categories/dailymini').set({ [today]: 'testpuzzleid' });
+  const res = await db.doc('categories/dailymini').get();
+  if (res.exists) {
+    throw new Error('running boostrap but we already have data!');
+  }
+  const today = getDateString(new Date());
+  await db.doc('categories/dailymini').set({ [today]: 'testpuzzleid' });
+}
 
-console.log('done');
+bootstrap().then(() => {
+  console.log('done');
+});
