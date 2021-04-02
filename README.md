@@ -20,8 +20,6 @@ Click "Authentication" in the side bar. Click "Get started". Click on the "Googl
 
 Click "Firestore Database" in the side bar. Click "Create database". Choose "start in production mode" and any storage location.
 
-Once the database is created click on the rules tab. Replace the default rules with the [firestore rules](app/firestore.rules) for Crosshare. Click publish
-
 #### Download credentials
 
 Click the little gear icon in the side bar. Scroll to the "Your apps" section and click "</>" to create a web app. Register an app using whatever name you'd like. You don't need to set up hosting. 
@@ -50,7 +48,17 @@ $ yarn
 
 ### Now you can run crosshare locally
 
-While still in the `app/` directory, first bootstrap some data that the app depends on:
+While still in the `app/` directory, connect to your firebase project:
+```shell
+$ npx firebase use --add
+```
+
+Now deploy the firestore rules and indexes:
+```shell
+$ npx firebase deploy --only firestore
+```
+
+Bootstrap some data that the app depends on:
 ```shell
 $ GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json ./scripts/bootstrapDatabase.ts
 ```
