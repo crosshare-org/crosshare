@@ -33,21 +33,22 @@ $ npx firebase deploy --only functions:puzzleUpdate
 
 ## Updating wordlist + clue database
 ```shell
-# Build cluedata.txt:
-# Extract `cluedata` from Ginsberg's cluer.app, then
+# First download cluer.zip from http://tiwwdty.com/clue/
+# Unzip and extract the `cluedata` file to the root of this repo
+# Now build cluedata.txt:
 $ python generate_db.py
 
 # Can build clue database now:
 $ cd app
-$ ./scripts/buildGinsberg.ts
+$ ./scripts/buildGinsberg.ts ../cluedata
 
 # Build wordlist:
 # Download expanded names: https://sites.google.com/view/expandedcrosswordnamedatabase/home
 # Download peter's wordlist: https://peterbroda.me/crosswords/wordlist/
-$ ./scripts/buildWordlist.ts ../peter-broda-wordlist__scored.txt ../cluedata.txt ../ExpandedNames_unscored.txt worddb.json`
+$ ./scripts/buildWordlist.ts ../peter-broda-wordlist__scored.txt ../cluedata.txt ../ExpandedNames_unscored.txt worddb.json
 
 # Upload wordlist:
-$ toolbox run gsutil cp -Z worddb.json gs://mdcrosshare.appspot.com/
+$ GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json ./scripts/uploadWordlist.ts
 
-# Now increment version constant in WordDB.ts to force rebuild
+# If deploying for prod, now increment version constant in WordDB.ts to force rebuild
 ```

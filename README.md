@@ -70,6 +70,10 @@ $ yarn dev
 
 You should now be able to view Crosshare locally at http://localhost:3000
 
+#### Wordlists
+
+When running the constructor locally you'll get an error trying to download the word database. You can follow the [instructions in the deployment guide](/DEPLOY.md#updating-wordlist--clue-database) to build and upload a version to your firebase app. (TODO - we should probably provide the wordlist (maybe not the clue db) pregenerated for developers, this is a lot of work)
+
 ## Credits
 
 See the [contributors](https://github.com/mdirolf/crosshare/graphs/contributors) on this repository and [crosshare.org/donate](https://crosshare.org/donate).
