@@ -51,6 +51,10 @@ service cloud.firestore {
         && request.resource.data.n is string && request.resource.data.n.size() > 0
         && request.resource.data.t == request.time;
     }
+    match /donations/donations {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
     match /mail/{messageId} {
       allow read: if isAdmin();
     }

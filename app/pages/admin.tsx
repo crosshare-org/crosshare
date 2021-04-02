@@ -22,7 +22,7 @@ import {
   CommentWithRepliesT,
 } from '../lib/dbtypes';
 import { getFromDB, getFromSessionOrDB, mapEachResult } from '../lib/dbUtils';
-import { App, FieldValue } from '../lib/firebaseWrapper';
+import { App, FieldValue, TimestampClass } from '../lib/firebaseWrapper';
 import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
 import { ConstructorPageV, ConstructorPageT } from '../lib/constructorPage';
 import { useSnackbar } from '../components/Snackbar';
@@ -63,6 +63,11 @@ export default requiresAdmin(() => {
     setPagesForModeration,
   ] = useState<Array<ConstructorPageT> | null>(null);
   const [uidToUnsub, setUidToUnsub] = useState('');
+  const [donationEmail, setDonationEmail] = useState('');
+  const [donationAmount, setDonationAmount] = useState('');
+  const [donationReceivedAmount, setDonationReceivedAmount] = useState('');
+  const [donationName, setDonationName] = useState('');
+  const [donationPage, setDonationPage] = useState('');
   const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -380,6 +385,83 @@ export default requiresAdmin(() => {
             />
           </label>
           <Button type="submit" text="Unsubscribe" />
+        </form>
+        <h4 css={{ borderBottom: '1px solid var(--black)' }}>
+          Record Donation
+        </h4>
+        <form
+          onSubmit={(e: React.FormEvent) => {
+            e.preventDefault();
+            if (!donationEmail.trim()) {
+              return;
+            }
+            const toAdd = {
+              e: donationEmail.trim(),
+              d: TimestampClass.now(),
+              a: parseFloat(donationAmount),
+              r: parseFloat(donationReceivedAmount),
+              n: donationName.trim() || null,
+              p: donationPage.trim() || null,
+            };
+            App.firestore()
+              .doc('donations/donations')
+              .set({ d: FieldValue.arrayUnion(toAdd) }, { merge: true })
+              .then(() => {
+                showSnackbar('Added Donation');
+                setDonationEmail('');
+                setDonationAmount('');
+                setDonationReceivedAmount('');
+                setDonationName('');
+                setDonationPage('');
+              });
+          }}
+        >
+          <label>
+            Email
+            <input
+              css={{ margin: '0 0.5em' }}
+              type="text"
+              value={donationEmail}
+              onChange={(e) => setDonationEmail(e.target.value)}
+            />
+          </label>
+          <label>
+            Amount
+            <input
+              css={{ margin: '0 0.5em' }}
+              type="text"
+              value={donationAmount}
+              onChange={(e) => setDonationAmount(e.target.value)}
+            />
+          </label>
+          <label>
+            Received Amount
+            <input
+              css={{ margin: '0 0.5em' }}
+              type="text"
+              value={donationReceivedAmount}
+              onChange={(e) => setDonationReceivedAmount(e.target.value)}
+            />
+          </label>
+          <label>
+            Name
+            <input
+              css={{ margin: '0 0.5em' }}
+              type="text"
+              value={donationName}
+              onChange={(e) => setDonationName(e.target.value)}
+            />
+          </label>
+          <label>
+            Page
+            <input
+              css={{ margin: '0 0.5em' }}
+              type="text"
+              value={donationPage}
+              onChange={(e) => setDonationPage(e.target.value)}
+            />
+          </label>
+          <Button type="submit" text="Record Donation" />
         </form>
       </div>
     </>

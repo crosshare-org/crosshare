@@ -1,10 +1,101 @@
 import Head from 'next/head';
+import { GetServerSideProps } from 'next';
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import { Button } from '../components/Buttons';
 import { ContactLinks } from '../components/ContactLinks';
 import { Emoji } from '../components/Emoji';
 import { DefaultTopBar } from '../components/TopBar';
+import { AdminApp } from '../lib/firebaseWrapper';
+import * as t from 'io-ts';
+import { timestamp } from '../lib/timestamp';
 
-export default function DonatePage() {
+interface DonateProps {
+  donors: Array<{
+    name: string | null;
+    page: string | null;
+    above100: boolean;
+  }>;
+}
+
+const DonationsListV = t.type({
+  d: t.array(
+    t.type({
+      /** email */
+      e: t.string,
+      /** date */
+      d: timestamp,
+      /** donated amount */
+      a: t.number,
+      /** received amount */
+      r: t.number,
+      /** name */
+      n: t.union([t.string, t.null]),
+      /** page */
+      p: t.union([t.string, t.null]),
+    })
+  ),
+});
+
+export const getServerSideProps: GetServerSideProps<DonateProps> = async ({
+  res,
+}) => {
+  const db = AdminApp.firestore();
+
+  return db
+    .doc('donations/donations')
+    .get()
+    .then(async (result) => {
+      const data = result.data();
+      const validationResult = DonationsListV.decode(data);
+      if (isRight(validationResult)) {
+        res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
+        const groupedByEmail = validationResult.right.d.reduce(
+          (
+            acc: Map<
+              string,
+              { name: string | null; page: string | null; total: number }
+            >,
+            val
+          ) => {
+            const prev = acc.get(val.e);
+            if (prev) {
+              acc.set(val.e, {
+                name: val.n || prev.name,
+                page: val.p || prev.page,
+                total: val.a + prev.total,
+              });
+            } else {
+              acc.set(val.e, {
+                name: val.n || null,
+                page: val.p || null,
+                total: val.a,
+              });
+            }
+            return acc;
+          },
+          new Map()
+        );
+        return {
+          props: {
+            donors: Array.from(groupedByEmail.values())
+              .map((v) => ({
+                name: v.name,
+                page: v.page,
+                above100: v.total >= 100,
+              }))
+              .filter((v) => v.name)
+              .sort((a, b) => a.name?.localeCompare(b.name || '') || 0),
+          },
+        };
+      } else {
+        console.error(PathReporter.report(validationResult).join(','));
+        throw new Error('Malformed donations list');
+      }
+    });
+};
+
+export default function DonatePage({ donors }: DonateProps) {
   return (
     <>
       <Head>
@@ -55,23 +146,14 @@ export default function DonatePage() {
           Our Contributors <Emoji symbol="🥰" />
         </h2>
         <p>
-          <i>
-            Monthly contributions and contributions of $100 or more are in bold
-          </i>
+          <i>Contributors who have totaled $100 or more are in bold</i>
         </p>
         <ul>
-          <li>
-            <b>
-              <a href="/pchow13">Philip Chow</a>
-            </b>
-          </li>
-          <li>Cynthia Heisler</li>
-          <li>
-            <a href="/dritters">David Ritterskamp</a>
-          </li>
-          <li>
-            <b>David Turner</b>
-          </li>
+          {donors.map((d, i) => (
+            <li key={i} css={{ fontWeight: d.above100 ? 'bold' : 'normal' }}>
+              {d.page ? <a href={`/${d.page}`}>{d.name}</a> : d.name}
+            </li>
+          ))}
         </ul>
       </div>
     </>
