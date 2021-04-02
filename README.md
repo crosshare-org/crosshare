@@ -50,7 +50,12 @@ $ yarn
 
 ### Now you can run crosshare locally
 
-While still in the `app/` directory:
+While still in the `app/` directory, first bootstrap some data that the app depends on:
+```shell
+$ GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json ./scripts/bootstrapDatabase.ts
+```
+
+Then start the server:
 ```shell
 $ yarn dev
 ```
