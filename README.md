@@ -76,6 +76,14 @@ When running the constructor locally you'll get an error trying to download the 
 
 Once the wordlist has been updated you need to update your cloud storage CORS settings so it can be downloaded in the browser. This [stackoverflow post](https://stackoverflow.com/a/58613527) gives a step-by-step run down.
 
+## Running Tests
+
+You'll need Java installed to run the firebase emulators. Once you've done the steps above to set up local development do:
+
+```shell
+$ yarn test
+```
+
 ## Credits
 
 See the [contributors](https://github.com/mdirolf/crosshare/graphs/contributors) on this repository and [crosshare.org/donate](https://crosshare.org/donate).
