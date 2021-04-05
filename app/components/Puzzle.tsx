@@ -460,13 +460,9 @@ export const Puzzle = ({
   useEventListener('keydown', physicalKeyboardHandler);
 
   let [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
-  if (entry === null) {
-    if (cross === null) {
-      throw new Error('Null entry and cross while playing puzzle!');
-    } else {
-      dispatch({ type: 'CHANGEDIRECTION' });
-      [entry, cross] = [cross, entry];
-    }
+  if (entry === null && cross !== null) {
+    dispatch({ type: 'CHANGEDIRECTION' });
+    [entry, cross] = [cross, entry];
   }
 
   const keyboardHandler = useCallback(
@@ -550,7 +546,7 @@ export const Puzzle = ({
             conceal={shouldConceal}
             header="Across"
             entries={acrossEntries}
-            current={entry.index}
+            current={entry?.index}
             cross={cross?.index}
             scrollToCross={scrollToCross}
             dispatch={dispatch}
@@ -571,7 +567,7 @@ export const Puzzle = ({
             conceal={shouldConceal}
             header="Down"
             entries={downEntries}
-            current={entry.index}
+            current={entry?.index}
             cross={cross?.index}
             scrollToCross={scrollToCross}
             dispatch={dispatch}
@@ -616,7 +612,7 @@ export const Puzzle = ({
             conceal={shouldConceal}
             header="Across"
             entries={acrossEntries}
-            current={entry.index}
+            current={entry?.index}
             cross={cross?.index}
             dispatch={dispatch}
           />
@@ -635,7 +631,7 @@ export const Puzzle = ({
             conceal={shouldConceal}
             header="Down"
             entries={downEntries}
-            current={entry.index}
+            current={entry?.index}
             cross={cross?.index}
             dispatch={dispatch}
           />
