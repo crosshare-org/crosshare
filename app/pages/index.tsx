@@ -28,8 +28,11 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
   const db = App.firestore();
   const minis = await getDailyMinis();
   const today = getDateString(new Date());
-  if (!minis[today]) {
-    throw new Error('no mini scheduled for today!');
+  const todaysMini = Object.entries(minis)
+    .filter(([date]) => date <= today)
+    .sort(([a], [b]) => b.localeCompare(a))?.[0]?.[1];
+  if (!todaysMini) {
+    throw new Error('no minis scheduled!');
   }
 
   const [puzzlesWithoutConstructor] = await getPuzzlesForFeatured(0, PAGE_SIZE);
@@ -42,7 +45,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
 
   return db
     .collection('c')
-    .doc(minis[today])
+    .doc(todaysMini)
     .get()
     .then(async (dmResult) => {
       const data = dmResult.data();
