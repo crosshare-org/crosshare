@@ -2,6 +2,7 @@
 *
 
 # White list only the required files
+!app/firebaseConfig.ts
 !app/.env.local
 !app/package.json
 !app/yarn.lock
