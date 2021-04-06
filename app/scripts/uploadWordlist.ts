@@ -1,4 +1,4 @@
-#!/usr/bin/env -S npx ts-node-script --skip-project -O '{"resolveJsonModule":true,"esModuleInterop":true,"noUncheckedIndexedAccess":true,"strict":true}'
+#!/usr/bin/env -S npx ts-node-script
 
 import { AdminApp } from '../lib/firebaseWrapper';
 

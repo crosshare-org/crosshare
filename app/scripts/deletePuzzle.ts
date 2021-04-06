@@ -1,4 +1,4 @@
-#!/usr/bin/env -S npx ts-node-script --skip-project -O '{"resolveJsonModule":true,"esModuleInterop":true,"jsx":"preserve","downlevelIteration":true}'
+#!/usr/bin/env -S npx ts-node-script
 
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isRight } from 'fp-ts/lib/Either';

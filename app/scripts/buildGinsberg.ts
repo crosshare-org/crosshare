@@ -1,4 +1,4 @@
-#!/usr/bin/env -S npx ts-node-script --skip-project -O '{"resolveJsonModule":true,"esModuleInterop":true}'
+#!/usr/bin/env -S npx ts-node-script
 
 import fs from 'fs';
 import util from 'util';

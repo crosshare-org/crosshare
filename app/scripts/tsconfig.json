@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "noUncheckedIndexedAccess": true,
+    "strict": true,
+    "jsx": "preserve",
+    "downlevelIteration": true
+  }
+}

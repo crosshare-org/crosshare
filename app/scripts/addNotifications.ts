@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node-script --skip-project -O {"resolveJsonModule":true,"esModuleInterop":true}
+#!/usr/bin/env -S npx ts-node-script
 
 import { AdminApp } from '../lib/firebaseWrapper';
 import { DBPuzzleT } from '../lib/dbtypes';

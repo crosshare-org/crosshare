@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node-script
+#!/usr/bin/env -S npx ts-node-script
 
 import * as admin from 'firebase-admin';
 

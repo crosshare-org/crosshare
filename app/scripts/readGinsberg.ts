@@ -1,4 +1,4 @@
-#!/usr/bin/env -S npx ts-node-script --skip-project -O '{"resolveJsonModule":true,"esModuleInterop":true}'
+#!/usr/bin/env -S npx ts-node-script
 
 import { getDB, getClues } from '../lib/ginsberg';
 
@@ -14,7 +14,7 @@ if (!word) {
 }
 
 const db = getDB(true);
-getClues(db, word).then(async c => {
+getClues(db, word).then(async (c) => {
   console.log(JSON.stringify(c, null, 2));
   await db.close();
 });
