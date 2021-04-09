@@ -50,6 +50,7 @@ $ yarn
 
 While still in the `app/` directory, connect to your firebase project:
 ```shell
+$ npx firebase login
 $ npx firebase use --add
 ```
 
@@ -69,6 +70,8 @@ $ yarn dev
 ```
 
 You should now be able to view Crosshare locally at http://localhost:3000
+
+Note: The indexes you created with `firebase deploy --only firestore` can take a while to finish building. You might get related errors when viewing the site until they are done.
 
 #### Wordlists
 
