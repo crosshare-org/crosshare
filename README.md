@@ -8,6 +8,10 @@ Use [GitHub issues](https://github.com/mdirolf/crosshare/issues) for bug reports
 
 ## Developing Locally
 
+#### Windows
+
+Most of these instructions are written for unix-like OSes - folks have had success using [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/about) to follow them on Windows, though.
+
 ### Set up a new firebase project
 
 Visit http://console.firebase.google.com/, click "add project". Use whatever name you'd like. You don't need to enable google analytics.
