@@ -39,7 +39,11 @@ const CachePlayLoader = (props: PuzzlePageResultProps) => {
     }
 
     const cachedPlay = getPlayFromCache(user, props.puzzle.id);
-    if (cachedPlay?.f || !user) {
+    // Contest puzzles aren't done until they have a submission and a finished grid
+    const done = props.puzzle.contestAnswers?.length
+      ? cachedPlay?.f && cachedPlay.ct_sub
+      : cachedPlay?.f;
+    if (done || !user) {
       setPlay(cachedPlay || null);
     }
     setLoadingPlay(false);
