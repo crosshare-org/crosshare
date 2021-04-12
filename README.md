@@ -6,6 +6,12 @@ Crosshare is a free community for crossword constructors and solvers. Crosshare 
 
 Use [GitHub issues](https://github.com/mdirolf/crosshare/issues) for bug reports and feature requests.
 
+## Contributing
+
+Contributions are very much encouraged! It's recommended that you comment on (or create) the relevant issue before starting work so that we don't have multiple folks duplicating efforts simultaneously. Once you're happy with your changes please submit a pull request describing the change, any concerns, etc. PRs that include tests for the changed behavior are much more likely to be swiftly merged.
+
+If you're looking for good issues to start out on check the [good first issue](https://github.com/mdirolf/crosshare/issues?q=is%3Aissue+is%3Aopen+label%3A"good+first+issue") tag.
+
 ## Developing Locally
 
 #### Windows
