@@ -8,6 +8,7 @@ import {
   RenderResult,
   getProps,
   act,
+  waitFor,
 } from '../lib/testingUtils';
 import BuilderPage from '../pages/construct';
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
@@ -244,9 +245,15 @@ test('moderate as daily mini', async () => {
   await r4.findByText(/Enter Rebus/i);
   expect(r4.queryByText(/visible to others yet/i)).toBeNull();
   fireEvent.click(r4.getByText(/Moderate/i));
-  const dmButton = await r4.findByText(/Schedule as Daily Mini/i);
+  await r4.findByText(/Schedule as Daily Mini/i);
   fireEvent.click(r4.getByTestId('today-button'));
-  fireEvent.click(dmButton);
+  await waitFor(
+    () => expect(r4.getByText(/Schedule as Daily Mini/i)).not.toBeDisabled(),
+    {
+      timeout: 5000,
+    }
+  );
+  fireEvent.click(r4.getByText(/Schedule as Daily Mini/i));
   await r4.findByText('Moderated!', undefined, { timeout: 10000 });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
