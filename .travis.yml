@@ -3,6 +3,7 @@ node_js:
   - 12
 before_install:
   - cd app
+  - cp firebaseConfig.travis.ts firebaseConfig.ts
   - curl -sL https://firebase.tools | bash
 script:
   - yarn ci
