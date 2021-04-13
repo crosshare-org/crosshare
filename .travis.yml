@@ -4,3 +4,5 @@ node_js:
 before_install:
   - cd app
   - curl -sL https://firebase.tools | bash
+script:
+  - yarn ci
