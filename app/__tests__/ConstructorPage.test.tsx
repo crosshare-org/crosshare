@@ -270,7 +270,9 @@ test('security rules for constructor page creation', async () => {
         n: 'Mike D',
         b: 'Some random bio text',
         m: true,
-        t: firebaseTesting.firestore.Timestamp.fromDate(new Date('2020-01-01')),
+        t: firebaseTesting.firestore.Timestamp.fromDate(
+          new Date(Date.UTC(2020, 0, 1, 7))
+        ),
       })
   );
 

@@ -12,7 +12,7 @@ const adminApp = firebaseTesting.initializeAdminApp({ projectId });
 const app = firebaseTesting.initializeTestApp({ projectId });
 
 beforeAll(() => {
-  MockDate.set(new Date('2020-8-2'));
+  MockDate.set(new Date(Date.UTC(2020, 7, 2, 7)));
 });
 beforeEach(async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
@@ -29,7 +29,7 @@ const testComment: Comment = {
   authorDisplayName: 'Mike D',
   authorSolveTime: 55.4,
   authorCheated: false,
-  publishTime: new Date('2020-8-1').getTime(),
+  publishTime: new Date(Date.UTC(2020, 7, 1, 7)).getTime(),
 };
 
 test('basic comment display', () => {
@@ -42,7 +42,7 @@ test('basic comment display', () => {
       puzzleId="puzz"
       puzzleAuthorId="puzzAuthor"
       hasGuestConstructor={false}
-      puzzlePublishTime={new Date('2020-6-1').getTime()}
+      puzzlePublishTime={new Date(Date.UTC(2020, 5, 1, 7)).getTime()}
       comments={[testComment]}
     />,
     {}
@@ -61,7 +61,7 @@ test('comment with username display', () => {
       puzzleId="puzz"
       puzzleAuthorId="puzzAuthor"
       hasGuestConstructor={false}
-      puzzlePublishTime={new Date('2020-6-1').getTime()}
+      puzzlePublishTime={new Date(Date.UTC(2020, 5, 1, 7)).getTime()}
       comments={[{ authorUsername: 'MikeD', ...testComment }]}
     />,
     {}

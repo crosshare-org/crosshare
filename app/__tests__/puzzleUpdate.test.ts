@@ -18,7 +18,7 @@ jest.mock('../lib/firebaseWrapper');
 
 const toDeleteId = 'puzzletodelete';
 const toKeepId = 'puzzletokeep';
-const baseTime = new Date('2020-11-10');
+const baseTime = new Date(Date.UTC(2020, 10, 10));
 const basePuzzle = getMockedPuzzle({
   cs: undefined,
   f: true,

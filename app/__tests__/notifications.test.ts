@@ -285,7 +285,7 @@ test('should notify author when marked as featured', async () => {
 test('when private until is marked as featured hold notification', async () => {
   const puz = getMockedPuzzle({
     cs: undefined,
-    pvu: TimestampClass.fromDate(new Date('2020-10-1')),
+    pvu: TimestampClass.fromDate(new Date(Date.UTC(2020, 9, 1, 7))),
   });
   const notifications = await notificationsForPuzzleChange(
     puz,
