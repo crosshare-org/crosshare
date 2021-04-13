@@ -21,7 +21,7 @@
     "predeploy": "tsc && yarn clean && next build",
     "prodDeploy": "npx firebase deploy --only hosting:prod",
     "stagingDeploy": "npx firebase deploy --only hosting:staging",
-    "test": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=localhost:8080 npx firebase emulators:exec --only firestore 'jest --watch'"
+    "test": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=localhost:8080 npx firebase emulators:exec --only firestore 'jest'"
   },
   "engines": {
     "node": "12"
