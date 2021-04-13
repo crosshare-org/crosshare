@@ -201,7 +201,7 @@ exports[`basic comment display 1`] = `
            · 
           <span
             class="emotion-7"
-            title="2020-08-01T00:00:00-04:00"
+            title="2020-08-01T07:00:00.000Z"
           >
             1 day ago
              
@@ -427,7 +427,7 @@ exports[`comment with username display 1`] = `
            · 
           <span
             class="emotion-7"
-            title="2020-08-01T00:00:00-04:00"
+            title="2020-08-01T07:00:00.000Z"
           >
             1 day ago
              

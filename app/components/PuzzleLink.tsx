@@ -11,7 +11,6 @@ import { pastDistanceToNow, timeString } from '../lib/utils';
 import { PlayWithoutUserT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { Markdown } from './Markdown';
-import formatISO from 'date-fns/formatISO';
 
 const PuzzleLink = (props: {
   showingBlog: boolean;
@@ -197,7 +196,7 @@ export const PuzzleResultLink = ({
     ? new Date(puzzle.isPrivateUntil)
     : new Date(puzzle.publishTime);
   const date = (
-    <span title={formatISO(publishDate)}>
+    <span title={publishDate.toISOString()}>
       Published {pastDistanceToNow(publishDate)}
     </span>
   );
