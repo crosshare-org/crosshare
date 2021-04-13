@@ -10,7 +10,6 @@ import { ProfilePicAndName } from './Images';
 import { Markdown } from './Markdown';
 import { ToolTipText } from './ToolTipText';
 import { AuthorLink } from './PuzzleLink';
-import formatISO from 'date-fns/formatISO';
 import { EmbedContext } from './EmbedContext';
 
 export const PuzzleHeading = (props: {
@@ -62,7 +61,7 @@ export const PuzzleHeading = (props: {
             ) : (
               <>
                 {' · '}
-                <span title={formatISO(publishDate)}>
+                <span title={publishDate.toISOString()}>
                   Published {pastDistanceToNow(publishDate)}
                 </span>
               </>

@@ -20,7 +20,6 @@ import { Markdown } from './Markdown';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { Link } from './Link';
 import { ButtonAsLink, Button } from './Buttons';
-import formatISO from 'date-fns/formatISO';
 
 const COMMENT_LENGTH_LIMIT = 280;
 
@@ -222,7 +221,7 @@ const CommentFlair = (props: CommentFlairProps) => {
       {publishDate ? (
         <>
           &nbsp;·&nbsp;
-          <span css={{ fontStyle: 'italic' }} title={formatISO(publishDate)}>
+          <span css={{ fontStyle: 'italic' }} title={publishDate.toISOString()}>
             {pastDistanceToNow(publishDate)}{' '}
           </span>
         </>
