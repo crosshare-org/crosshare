@@ -1,8 +1,8 @@
-import { render } from '../lib/testingUtils';
+import { act, render } from '../lib/testingUtils';
 import { addClues, CluedGrid, fromCells, getRefs } from '../lib/viewableGrid';
 import { ClueText } from '../components/ClueText';
 
-test('Highlighting for different types of clues', () => {
+test('Highlighting for different types of clues', async () => {
   const answers = ['U', 'P', 'S', 'O'];
   const grid = fromCells({
     width: 2,
@@ -35,5 +35,6 @@ test('Highlighting for different types of clues', () => {
       {}
     );
     expect(container).toMatchSnapshot();
+    await act(async () => Promise.resolve()); // Popper update() - https://github.com/popperjs/react-popper/issues/350
   }
 });

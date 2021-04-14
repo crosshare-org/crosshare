@@ -15,6 +15,14 @@ import { ConstructorPageT } from '../lib/constructorPage';
 
 const projectId = 'followtests';
 
+beforeAll(() => {
+  jest.useFakeTimers();
+});
+
+afterAll(() => {
+  jest.useRealTimers();
+});
+
 test('follow button logged out', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
 
@@ -69,6 +77,7 @@ test('follow button logged in', async () => {
   await r.findByText(/notified when John Doe posts/, undefined, {
     timeout: 3000,
   });
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const windowSpy = jest.spyOn(global as any, 'window', 'get');
   windowSpy.mockImplementation(() => undefined);
