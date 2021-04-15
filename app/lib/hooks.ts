@@ -199,7 +199,7 @@ export function useAuth() {
   }, [cpSnapshot]);
 
   return {
-    user,
+    user: user || undefined,
     isAdmin,
     constructorPage,
     notifications,

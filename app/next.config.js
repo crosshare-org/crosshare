@@ -50,7 +50,12 @@ module.exports = (phase) => {
         FIREBASE_PROJECT_ID: 'mdcrosshare',
         NEXT_PUBLIC_SENTRY_RELEASE: sentryRelease,
       },
-      webpack: (config, { isServer }) => {
+      webpack: (config, { isServer, dev }) => {
+        // https://github.com/vercel/next.js/issues/22813
+        config.output.chunkFilename = isServer
+          ? `${dev ? '[name]' : '[name].[fullhash]'}.js`
+          : `static/chunks/${dev ? '[name]' : '[name].[fullhash]'}.js`;
+
         // Note: we provide webpack above so you should not `require` it
         // Perform customizations to webpack config
         // Important: return the modified config
