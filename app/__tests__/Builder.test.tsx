@@ -27,6 +27,7 @@ jest.mock('next/link', () => ({ children }) => children); // https://github.com/
 
 jest.mock('../lib/firebaseWrapper');
 jest.mock('../lib/WordDB');
+jest.mock('../lib/workerLoader');
 
 afterEach(() => {
   jest.clearAllMocks();

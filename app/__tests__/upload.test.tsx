@@ -23,6 +23,7 @@ const readFile = util.promisify(fs.readFile);
 
 jest.mock('../lib/firebaseWrapper');
 jest.mock('../lib/WordDB');
+jest.mock('../lib/workerLoader');
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

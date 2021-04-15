@@ -109,8 +109,6 @@ import {
 } from './TopBar';
 import { SquareAndCols } from './Page';
 import { ClueMode } from './ClueMode';
-// eslint-disable-next-line import/no-unresolved
-import AutofillWorker from 'worker-loader?filename=static/[hash].worker.js!../lib/autofill.worker';
 
 import * as BA from '../lib/bitArray';
 import * as WordDB from '../lib/WordDB';
@@ -122,6 +120,7 @@ import { SMALL_AND_UP } from '../lib/style';
 import { ButtonReset } from './Buttons';
 import { useSnackbar } from './Snackbar';
 import { importFile, exportFile, ExportProps } from '../lib/converter';
+import { getAutofillWorker } from '../lib/workerLoader';
 
 let worker: Worker;
 
@@ -707,7 +706,9 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     setAutofilledGrid([]);
     if (!worker) {
       console.log('initializing worker');
-      worker = new AutofillWorker();
+
+      worker = getAutofillWorker();
+
       worker.onmessage = (e) => {
         const data = e.data as WorkerMessage;
         if (isAutofillResultMessage(data)) {
