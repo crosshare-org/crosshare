@@ -116,10 +116,7 @@ cases(
       throw new Error('failed to import');
     }
     const ourPuz = exportFile(toDBPuzzle(pip));
-    expect(importFile(ourPuz)).toEqual({
-      ...pip,
-      notes: (pip.notes ? pip.notes + ' - ' : '') + 'Created on crosshare.org',
-    });
+    expect(importFile(ourPuz)).toEqual(pip);
 
     expect(ourPuz).toMatchSnapshot();
   },
