@@ -108,13 +108,11 @@ async function getPuzzlesForPage(
       q = q.endBefore(mostRecentTimestamp);
     }
   }
-  const newPuzzles: Array<DBPuzzleT & { id: string }> = await mapEachResult(
-    q,
-    DBPuzzleV,
-    (dbpuzz, docId) => {
+  const newPuzzles: Array<DBPuzzleT & { id: string }> = (
+    await mapEachResult(q, DBPuzzleV, (dbpuzz, docId) => {
       return { ...dbpuzz, id: docId };
-    }
-  );
+    })
+  ).filter((a) => !index?.i.includes(a.id));
 
   if (newPuzzles.length) {
     console.log(`Adding ${newPuzzles.length} to index for ${indexDocId}`);
