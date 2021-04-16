@@ -14,6 +14,7 @@ import { ButtonAsLink, Button } from './Buttons';
 export function PublishOverlay(props: {
   id: string;
   toPublish: DBPuzzleT;
+  warnings: Array<string>;
   user: firebase.User;
   cancelPublish: () => void;
 }) {
@@ -111,6 +112,19 @@ export function PublishOverlay(props: {
           reason (e.g. if the content is deemed offensive or if it is found to
           be copyright infringement)
         </p>
+        {props.warnings.length ? (
+          <>
+            <p css={{ color: 'var(--error)' }}>Warnings:</p>
+            <ul>
+              {props.warnings.map((s, i) => (
+                <li key={i}>{s}</li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          ''
+        )}
+
         <Button
           onClick={doPublish}
           disabled={editingDisplayName}

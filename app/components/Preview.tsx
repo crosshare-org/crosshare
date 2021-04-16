@@ -156,6 +156,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
           <PublishOverlay
             id={state.id}
             toPublish={state.toPublish}
+            warnings={state.publishWarnings}
             user={props.user}
             cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })}
           />
@@ -176,6 +177,18 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
                 ))}
               </ul>
             </>
+            {state.publishWarnings.length ? (
+              <>
+                <div>Warnings:</div>
+                <ul>
+                  {state.publishWarnings.map((s, i) => (
+                    <li key={i}>{s}</li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              ''
+            )}
           </Overlay>
         ) : (
           ''

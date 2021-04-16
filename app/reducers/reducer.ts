@@ -93,6 +93,7 @@ export interface BuilderState extends GridInterfaceState {
   clues: Record<string, Array<string>>;
   symmetry: Symmetry;
   publishErrors: Array<string>;
+  publishWarnings: Array<string>;
   toPublish: DBPuzzleT | null;
   authorId: string;
   authorName: string;
@@ -210,6 +211,7 @@ export function initialBuilderState({
       )
     ),
     publishErrors: [],
+    publishWarnings: [],
     toPublish: null,
     authorId: authorId,
     authorName: authorName,
@@ -950,7 +952,7 @@ export function builderReducer(
     }.postEdit(0) as BuilderState;
   }
   if (action.type === 'CLEARPUBLISHERRORS') {
-    return { ...state, publishErrors: [] };
+    return { ...state, publishErrors: [], publishWarnings: [] };
   }
   if (isNewPuzzleAction(action)) {
     const initialFill = Array(action.cols * action.rows).fill(' ');
@@ -1011,12 +1013,13 @@ export function builderReducer(
   }
   if (isPublishAction(action)) {
     const errors = [];
+    const warnings = [];
     if (!state.gridIsComplete) {
       errors.push('All squares in the grid must be filled in');
     }
     if (state.repeats.size > 0) {
-      errors.push(
-        'No words can be repeated (' +
+      warnings.push(
+        'Some words are repeated (' +
           Array.from(state.repeats).sort().join(', ') +
           ')'
       );
@@ -1034,18 +1037,28 @@ export function builderReducer(
         );
       }
     }
-    const missingClues = state.grid.entries
-      .filter((e) => e.completedWord && !state.clues[e.completedWord])
-      .map((e) => e.completedWord || '');
+    const missingClues = Object.entries(
+      state.grid.entries
+        .map((e) => e.completedWord || '')
+        .reduce((counts: Record<string, number>, entry) => {
+          counts[entry] = (counts[entry] || 0) + 1;
+          return counts;
+        }, {})
+    )
+      .filter(
+        ([entry, count]) =>
+          state.clues[entry]?.filter((c) => c.trim().length > 0)?.length !==
+          count
+      )
+      .map(([entry]) => entry);
     if (missingClues.length) {
       errors.push(
-        'Some words are missing clues: ' +
-          Array.from(new Set(missingClues)).sort().join(', ')
+        'Some words are missing clues: ' + missingClues.sort().join(', ')
       );
     }
 
     if (errors.length) {
-      return { ...state, publishErrors: errors };
+      return { ...state, publishErrors: errors, publishWarnings: warnings };
     }
 
     const puzzle: DBPuzzleT = {
@@ -1082,7 +1095,7 @@ export function builderReducer(
         puzzle.s = true;
       }
     }
-    return { ...state, toPublish: puzzle };
+    return { ...state, toPublish: puzzle, publishWarnings: warnings };
   }
   if (isCancelPublishAction(action)) {
     return { ...state, toPublish: null };

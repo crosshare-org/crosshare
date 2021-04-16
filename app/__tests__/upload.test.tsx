@@ -10,6 +10,7 @@ import {
   render,
   fireEvent,
   getProps,
+  getByLabelText,
 } from '../lib/testingUtils';
 import UploadPage from '../pages/upload';
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
@@ -222,4 +223,94 @@ test('upload after editing', async () => {
   }
   delete resData['p'];
   expect(resData).toMatchSnapshot();
+});
+
+test('upload a puzzle with duplicate entries', async () => {
+  sessionStorage.clear();
+  localStorage.clear();
+
+  await firebaseTesting.clearFirestoreData({ projectId });
+
+  setApp(app as firebase.app.App);
+
+  const r = render(<UploadPage />, { user: mike });
+
+  const input = await r.findByLabelText('Select a .puz file', { exact: false });
+  const puz = await readFile(
+    path.resolve(__dirname, 'converter/puz/qvxdupes.puz')
+  );
+
+  const file = new File([puz], 'blah.puz', {
+    type: 'text/puz',
+  });
+  fireEvent.change(input, { target: { files: [file] } });
+
+  expect(await r.findByText('Across')).toBeInTheDocument();
+
+  fireEvent.click(r.getByText('Edit', { exact: true }));
+  fireEvent.change(r.getByDisplayValue('Fall guys'), {
+    target: { value: ' ' },
+  });
+
+  fireEvent.click(r.getByText('Back to Grid', { exact: true }));
+  fireEvent.click(r.getByText('Publish', { exact: true }));
+
+  const err = await r.findByText(/Please fix the following errors/i);
+  expect(r.getByText(/Some words are missing clues/)).toBeInTheDocument();
+  expect(r.getByText(/Some words are repeated/)).toBeInTheDocument();
+  if (err.parentElement === null) {
+    throw new Error('missing parent');
+  }
+  fireEvent.click(getByLabelText(err.parentElement, 'close', { exact: true }));
+  expect(r.queryByText(/Please fix the following errors/i)).toBeNull();
+
+  fireEvent.click(r.getByText('Edit', { exact: true }));
+  fireEvent.change(r.getByTestId('DUPES-2-input'), {
+    target: { value: 'This entry is a dupe!' },
+  });
+
+  fireEvent.click(r.getByText('Back to Grid', { exact: true }));
+  fireEvent.click(r.getByText('Publish', { exact: true }));
+  await r.findByText(/Some words are repeated/i);
+  fireEvent.click(r.getByText('Publish Puzzle', { exact: true }));
+  await r.findByText(/Published Successfully/, undefined, { timeout: 3000 });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const windowSpy = jest.spyOn(global as any, 'window', 'get');
+  windowSpy.mockImplementation(() => undefined);
+  const puzzles = await admin.firestore().collection('c').get();
+  windowSpy.mockRestore();
+  expect(puzzles.size).toEqual(1);
+  if (puzzles.docs[0] === undefined) {
+    throw new Error();
+  }
+  const resData = puzzles.docs[0].data();
+  if (!resData) {
+    throw new Error('botch');
+  }
+  delete resData['p'];
+  expect(resData).toMatchSnapshot();
+
+  cleanup();
+
+  // The puzzle should be visible on the puzzle page, even to a rando
+  setApp(serverApp as firebase.app.App);
+  const props1 = getProps(
+    await getServerSideProps({
+      params: { puzzleId: puzzles.docs[0].id },
+      res: { setHeader: jest.fn() },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
+  );
+  if (!props1) {
+    throw new Error('bad props');
+  }
+  setApp(randoApp as firebase.app.App);
+  const r5 = render(<PuzzlePage {...props1} />, { user: rando });
+  expect(
+    await r5.findByText('Begin Puzzle', undefined, { timeout: 3000 })
+  ).toBeInTheDocument();
+  expect(r5.queryByText(/Chain of fools/)).toBeInTheDocument();
+  expect(r5.queryByText(/This entry is a dupe/)).toBeInTheDocument();
+  expect(r5.queryByText(/Fall guys/)).not.toBeInTheDocument();
 });

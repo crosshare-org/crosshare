@@ -89,14 +89,15 @@ const ClueRow = (props: {
       >
         <label
           css={{ marginBottom: 0 }}
-          htmlFor={props.entry.completedWord + '-input'}
+          htmlFor={props.entry.completedWord + '-' + props.idx + '-input'}
         >
           {props.entry.completedWord}
         </label>
       </td>
       <td css={{ paddingBottom: '1em' }}>
         <input
-          id={props.entry.completedWord + '-input'}
+          id={props.entry.completedWord + '-' + props.idx + '-input'}
+          data-testid={props.entry.completedWord + '-' + props.idx + '-input'}
           type="text"
           css={{ width: '100%' }}
           placeholder="Enter a clue"
@@ -170,7 +171,7 @@ export const ClueMode = (props: ClueModeProps) => {
       return (
         <ClueRow
           idx={clueIdx}
-          key={e.completedWord || ''}
+          key={(e.completedWord || '') + clueIdx}
           dispatch={props.dispatch}
           entry={e}
           clues={props.clues}

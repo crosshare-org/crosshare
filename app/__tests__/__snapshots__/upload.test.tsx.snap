@@ -5201,6 +5201,73 @@ exports[`upload a puzzle 1`] = `
 </div>
 `;
 
+exports[`upload a puzzle with duplicate entries 1`] = `
+Object {
+  "a": "mike",
+  "ac": Array [
+    "Marks",
+    "Three Stooges, e.g.",
+    "This entry is a dupe!",
+    "Fish",
+    "Chain of fools?",
+  ],
+  "an": Array [
+    1,
+    6,
+    7,
+    8,
+    9,
+  ],
+  "c": null,
+  "dc": Array [
+    "Memetic adjective for some fruit",
+    "Practice",
+    "Some pulses",
+    "Relaxation",
+    "There's two of 'em in this clue",
+  ],
+  "dn": Array [
+    1,
+    2,
+    3,
+    4,
+    5,
+  ],
+  "g": Array [
+    "D",
+    "U",
+    "P",
+    "E",
+    "S",
+    "D",
+    "U",
+    "P",
+    "E",
+    "S",
+    "D",
+    "U",
+    "P",
+    "E",
+    "S",
+    "D",
+    "U",
+    "P",
+    "E",
+    "S",
+    "D",
+    "U",
+    "P",
+    "E",
+    "S",
+  ],
+  "h": 5,
+  "m": false,
+  "n": "Anonymous Crossharer",
+  "t": "Chain of Fools (Monday Mini #11)",
+  "w": 5,
+}
+`;
+
 exports[`upload after editing 1`] = `
 Object {
   "a": "mike",
