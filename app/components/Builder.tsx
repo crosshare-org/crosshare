@@ -1670,6 +1670,18 @@ const GridMode = ({
                   <li key={i}>{s}</li>
                 ))}
               </ul>
+              {state.publishWarnings.length ? (
+                <>
+                  <div>Warnings:</div>
+                  <ul>
+                    {state.publishWarnings.map((s, i) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                ''
+              )}
             </>
           </Overlay>
         ) : (
