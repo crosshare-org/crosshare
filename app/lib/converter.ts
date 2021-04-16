@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { PuzzleInProgressT, ClueT, removeClueSpecials } from './types';
+import { PuzzleInProgressStrictT, ClueT, removeClueSpecials } from './types';
 import { fromCells, getClueMap } from './viewableGrid';
 
 const EXTENSION_HEADER_LENGTH = 8;
@@ -99,7 +99,7 @@ class PuzReader {
     return false;
   }
 
-  toCrosshare(): PuzzleInProgressT {
+  toCrosshare(): PuzzleInProgressStrictT {
     const w = this.buf[0x2c];
     const h = this.buf[0x2d];
     if (w === undefined || h === undefined) {
@@ -515,7 +515,7 @@ export function exportFile(puzzle: ExportProps): Uint8Array {
   return new PuzWriter().toPuz(puzzle);
 }
 
-export function importFile(bytes: Uint8Array): PuzzleInProgressT | null {
+export function importFile(bytes: Uint8Array): PuzzleInProgressStrictT | null {
   if (isPuz(bytes)) {
     return new PuzReader(bytes).toCrosshare();
   }

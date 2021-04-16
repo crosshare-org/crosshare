@@ -14,7 +14,11 @@ import {
 import { SquareAndCols } from './Page';
 import { Direction, PuzzleResult } from '../lib/types';
 import { PuzzleStatsT } from '../lib/dbtypes';
-import { fromCells, getClueMap } from '../lib/viewableGrid';
+import {
+  fromCells,
+  getCluedAcrossAndDown,
+  getClueMap,
+} from '../lib/viewableGrid';
 import { useMatchMedia } from '../lib/hooks';
 import { SMALL_AND_UP, SMALL_AND_UP_RULES } from '../lib/style';
 import { DefaultTopBar, TopBarLink } from './TopBar';
@@ -102,17 +106,12 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
   }
 
   const { acrossEntries, downEntries } = useMemo(() => {
-    const cluedEntries = state.grid.entries.map((e) => ({
-      ...e,
-      clue: e.completedWord ? state.clues[e.completedWord] ?? '' : '',
-    }));
-    return {
-      acrossEntries: cluedEntries.filter(
-        (e) => e.direction === Direction.Across
-      ),
-      downEntries: cluedEntries.filter((e) => e.direction === Direction.Down),
-    };
-  }, [state.grid.entries, state.clues]);
+    return getCluedAcrossAndDown(
+      state.clues,
+      state.grid.entries,
+      state.grid.sortedEntries
+    );
+  }, [state.grid.entries, state.grid.sortedEntries, state.clues]);
 
   const normalizedColors = useMemo(() => {
     const data =

@@ -992,7 +992,12 @@ const PuzDownloadOverlay = (props: {
           hs={Array.from(props.state.grid.highlighted)}
           cn={props.state.notes || undefined}
           gc={props.state.guestConstructor || undefined}
-          {...getClueProps(props.state.grid.entries, props.state.clues, false)}
+          {...getClueProps(
+            props.state.grid.sortedEntries,
+            props.state.grid.entries,
+            props.state.clues,
+            false
+          )}
         />
       </p>
     </Overlay>

@@ -90,7 +90,7 @@ export interface BuilderState extends GridInterfaceState {
   gridIsComplete: boolean;
   repeats: Set<string>;
   hasNoShortWords: boolean;
-  clues: Record<string, string>;
+  clues: Record<string, Array<string>>;
   symmetry: Symmetry;
   publishErrors: Array<string>;
   toPublish: DBPuzzleT | null;
@@ -167,7 +167,7 @@ export function initialBuilderState({
   guestConstructor: string | null;
   title: string | null;
   notes: string | null;
-  clues: Record<string, string>;
+  clues: Record<string, string> | Record<string, Array<string>>;
   authorId: string;
   authorName: string;
   editable: boolean;
@@ -204,7 +204,11 @@ export function initialBuilderState({
     hasNoShortWords: false,
     isEditable: () => editable,
     symmetry: width === 5 && height === 5 ? Symmetry.None : Symmetry.Rotational,
-    clues: clues,
+    clues: Object.fromEntries(
+      Object.entries(clues).map(([word, val]) =>
+        typeof val === 'string' ? [word, [val]] : [word, val]
+      )
+    ),
     publishErrors: [],
     toPublish: null,
     authorId: authorId,
@@ -252,6 +256,7 @@ export interface SetClueAction extends PuzzleAction {
   type: 'SETCLUE';
   word: string;
   clue: string;
+  idx: number;
 }
 function isSetClueAction(action: PuzzleAction): action is SetClueAction {
   return action.type === 'SETCLUE';
@@ -831,27 +836,40 @@ function removeAnswer(answers: Array<string>, toRemove: string): Array<string> {
 }
 
 export function getClueProps(
+  sortedEntries: Array<number>,
   entries: ViewableEntry[],
-  clues: Record<string, string>,
+  clues: Record<string, Array<string>>,
   requireComplete: boolean
 ) {
   const ac: Array<string> = [];
   const an: Array<number> = [];
   const dc: Array<string> = [];
   const dn: Array<number> = [];
-  entries.forEach((e) => {
+
+  const wordCounts: Record<string, number> = {};
+
+  sortedEntries.forEach((entryidx) => {
+    const e = entries[entryidx];
+    if (!e) {
+      return;
+    }
     if (requireComplete && !e.completedWord) {
       throw new Error('Publish unfinished grid');
     }
-    const clue = clues[e.completedWord || ''] || '';
-    if (requireComplete && !clue) {
+    const word = e.completedWord || '';
+    const clueArray = clues[word] || [];
+    const idx = wordCounts[word] || 0;
+    wordCounts[word] = idx + 1;
+    const clueString = clueArray[idx] || '';
+
+    if (requireComplete && !clueString) {
       throw new Error('Bad clue for ' + e.completedWord);
     }
     if (e.direction === Direction.Across) {
-      ac.push(clue);
+      ac.push(clueString);
       an.push(e.labelNumber);
     } else {
-      dc.push(clue);
+      dc.push(clueString);
       dn.push(e.labelNumber);
     }
   });
@@ -879,7 +897,9 @@ export function builderReducer(
     return { ...state };
   }
   if (isSetClueAction(action)) {
-    return { ...state, clues: { ...state.clues, [action.word]: action.clue } };
+    const newVal = state.clues[action.word] || [];
+    newVal[action.idx] = action.clue;
+    return { ...state, clues: { ...state.clues, [action.word]: newVal } };
   }
   if (isSetTitleAction(action)) {
     return { ...state, title: action.value };
@@ -1038,7 +1058,12 @@ export function builderReducer(
       h: state.grid.height,
       w: state.grid.width,
       g: state.grid.cells,
-      ...getClueProps(state.grid.entries, state.clues, true),
+      ...getClueProps(
+        state.grid.sortedEntries,
+        state.grid.entries,
+        state.clues,
+        true
+      ),
       ...(state.notes && { cn: state.notes }),
       ...(state.blogPost && { bp: state.blogPost }),
       ...(state.guestConstructor && { gc: state.guestConstructor }),

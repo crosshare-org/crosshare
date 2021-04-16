@@ -381,15 +381,42 @@ export function gridWithBlockToggled<
   return fromCells({ ...grid, cells });
 }
 
+export function getCluedAcrossAndDown<Entry extends ViewableEntry>(
+  clueMap: Record<string, Array<string>>,
+  entries: Array<Entry>,
+  sortedEntries: Array<number>
+) {
+  const wordCounts: Record<string, number> = {};
+  const cluedEntries = sortedEntries.map((entryidx) => {
+    const e = entries[entryidx];
+    if (!e) {
+      throw new Error('Bad clue idx');
+    }
+    const word = e.completedWord || '';
+    const clueArray = clueMap[word] || [];
+    const idx = wordCounts[word] || 0;
+    wordCounts[word] = idx + 1;
+    const clueString = clueArray[idx] || '';
+
+    return { ...e, clue: clueString };
+  });
+  return {
+    acrossEntries: cluedEntries.filter((e) => e.direction === Direction.Across),
+    downEntries: cluedEntries.filter((e) => e.direction === Direction.Down),
+  };
+}
+
 export function getClueMap<
   Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>
->(grid: Grid, rawClues: Array<ClueT>): Record<string, string> {
-  const result: Record<string, string> = {};
+>(grid: Grid, rawClues: Array<ClueT>): Record<string, Array<string>> {
+  const result: Record<string, Array<string>> = {};
   const clues = cluesByDirection(rawClues);
 
-  for (const entry of grid.entries) {
-    if (entry.completedWord === null) {
+  for (const entryIndex of grid.sortedEntries) {
+    const entry = grid.entries[entryIndex];
+
+    if (!entry || entry.completedWord === null) {
       continue;
     }
     const cluesForDir = clues[entry.direction];
@@ -400,7 +427,12 @@ export function getClueMap<
     if (!clue) {
       continue;
     }
-    result[entry.completedWord] = clue;
+    const prevVal = result[entry.completedWord];
+    if (prevVal === undefined) {
+      result[entry.completedWord] = [clue];
+    } else {
+      prevVal.push(clue);
+    }
   }
   return result;
 }

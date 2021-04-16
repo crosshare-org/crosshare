@@ -25,6 +25,7 @@ import { useMatchMedia } from '../lib/hooks';
 import { SMALL_AND_UP_RULES } from '../lib/style';
 import { ClueMode } from './ClueMode';
 import { ContactLinks } from './ContactLinks';
+import { getCluedAcrossAndDown } from '../lib/viewableGrid';
 
 const initializeState = (
   props: PuzzleInProgressT & AuthProps
@@ -86,17 +87,12 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
   }
 
   const { acrossEntries, downEntries } = useMemo(() => {
-    const cluedEntries = state.grid.entries.map((e) => ({
-      ...e,
-      clue: e.completedWord ? state.clues[e.completedWord] ?? '' : '',
-    }));
-    return {
-      acrossEntries: cluedEntries.filter(
-        (e) => e.direction === Direction.Across
-      ),
-      downEntries: cluedEntries.filter((e) => e.direction === Direction.Down),
-    };
-  }, [state.grid.entries, state.clues]);
+    return getCluedAcrossAndDown(
+      state.clues,
+      state.grid.entries,
+      state.grid.sortedEntries
+    );
+  }, [state.grid.entries, state.grid.sortedEntries, state.clues]);
   const scrollToCross = useMatchMedia(SMALL_AND_UP_RULES);
 
   const [clueMode, setClueMode] = useState(false);

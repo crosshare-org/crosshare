@@ -4,10 +4,11 @@ import util from 'util';
 import path from 'path';
 
 import { importFile, exportFile } from '../lib/converter';
-import { Direction, PuzzleInProgressT } from '../lib/types';
+import { PuzzleInProgressStrictT } from '../lib/types';
 import { DBPuzzleT } from '../lib/dbtypes';
 import { TimestampClass } from '../lib/__mocks__/firebaseWrapper';
 import { fromCells } from '../lib/viewableGrid';
+import { getClueProps } from '../reducers/reducer';
 
 const readFile = util.promisify(fs.readFile);
 
@@ -18,11 +19,7 @@ async function loadPuz(name: string) {
   return importFile(puz);
 }
 
-function toDBPuzzle(pip: PuzzleInProgressT): DBPuzzleT {
-  const ac: Array<string> = [];
-  const an: Array<number> = [];
-  const dc: Array<string> = [];
-  const dn: Array<number> = [];
+function toDBPuzzle(pip: PuzzleInProgressStrictT): DBPuzzleT {
   const grid = fromCells({
     mapper: (e) => e,
     width: pip.width,
@@ -31,22 +28,6 @@ function toDBPuzzle(pip: PuzzleInProgressT): DBPuzzleT {
     allowBlockEditing: false,
     highlighted: new Set(pip.highlighted),
     highlight: pip.highlight,
-  });
-  grid.entries.forEach((e) => {
-    if (!e.completedWord) {
-      throw new Error('Publish unfinished grid');
-    }
-    const clue = pip.clues[e.completedWord];
-    if (!clue) {
-      throw new Error('Bad clue for ' + e.completedWord);
-    }
-    if (e.direction === Direction.Across) {
-      ac.push(clue);
-      an.push(e.labelNumber);
-    } else {
-      dc.push(clue);
-      dn.push(e.labelNumber);
-    }
   });
   const puzzle: DBPuzzleT = {
     t: pip.title || 'Anonymous',
@@ -58,10 +39,7 @@ function toDBPuzzle(pip: PuzzleInProgressT): DBPuzzleT {
     h: pip.height,
     w: pip.width,
     g: pip.grid,
-    ac,
-    an,
-    dc,
-    dn,
+    ...getClueProps(grid.sortedEntries, grid.entries, pip.clues, true),
     ...(pip.notes && { cn: pip.notes }),
   };
   if (pip.highlighted.length) {
@@ -101,6 +79,7 @@ const CASES = [
   { name: 'puz_131202banks' },
   { name: 'version-1.2-puzzle-with-notes' },
   { name: 'version-1.2-puzzle' },
+  { name: 'qvxdupes' },
   { name: 'washpost' },
   { name: 'wsj110624' },
 ];
@@ -117,7 +96,6 @@ cases(
     }
     const ourPuz = exportFile(toDBPuzzle(pip));
     expect(importFile(ourPuz)).toEqual(pip);
-
     expect(ourPuz).toMatchSnapshot();
   },
   CASES
@@ -126,7 +104,16 @@ cases(
 cases(
   'test .puz import',
   async (opts) => {
-    expect(await loadPuz(opts.name)).toMatchSnapshot();
+    const loaded = await loadPuz(opts.name);
+    if (!loaded) {
+      throw new Error('BAD');
+    }
+    const simplifiedClues = Object.fromEntries(
+      Object.entries(loaded.clues).map(([entry, clues]) =>
+        clues.length === 1 && clues[0] ? [entry, clues[0]] : [entry, clues]
+      )
+    );
+    expect({ ...loaded, clues: simplifiedClues }).toMatchSnapshot();
   },
   CASES
 );

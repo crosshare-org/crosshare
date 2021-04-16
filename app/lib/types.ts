@@ -83,7 +83,7 @@ export function removeClueSpecials(c: string): string {
   return c;
 }
 
-export function getClueText(c: {clue: string}): string {
+export function getClueText(c: { clue: string }): string {
   return removeClueSpecials(c.clue);
 }
 
@@ -214,7 +214,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
   };
 }
 
-export const PuzzleInProgressV = t.intersection([
+const PuzzleInProgressBaseV = t.intersection([
   t.type({
     width: t.number,
     height: t.number,
@@ -222,7 +222,7 @@ export const PuzzleInProgressV = t.intersection([
     highlighted: t.array(t.number),
     highlight: t.keyof({ circle: null, shade: null }),
     title: t.union([t.string, t.null]),
-    clues: t.record(t.string, t.string),
+
     notes: t.union([t.string, t.null]),
   }),
   t.partial({
@@ -237,4 +237,26 @@ export const PuzzleInProgressV = t.intersection([
     contestExplanation: t.string,
   }),
 ]);
+
+export const PuzzleInProgressV = t.intersection([
+  PuzzleInProgressBaseV,
+  t.type({
+    /** Clues are a map from ENTRY => CLUE.
+     *
+     * But new style is an array of CLUEs per ENTRY to support dupe entries. */
+    clues: t.union([
+      t.record(t.string, t.string),
+      t.record(t.string, t.array(t.string)),
+    ]),
+  }),
+]);
 export type PuzzleInProgressT = t.TypeOf<typeof PuzzleInProgressV>;
+
+export const PuzzleInProgressStrictV = t.intersection([
+  PuzzleInProgressBaseV,
+  t.type({
+    /** Clues are a map from ENTRY => Array of clues for that entry */
+    clues: t.record(t.string, t.array(t.string)),
+  }),
+]);
+export type PuzzleInProgressStrictT = t.TypeOf<typeof PuzzleInProgressStrictV>;

@@ -56,9 +56,10 @@ export function sanitizeBlogPost(input: string) {
 }
 
 const ClueRow = (props: {
+  idx: number;
   dispatch: Dispatch<PuzzleAction>;
   entry: BuilderEntry;
-  clues: Record<string, string>;
+  clues: Record<string, Array<string>>;
 }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const word = props.entry.completedWord;
@@ -99,11 +100,12 @@ const ClueRow = (props: {
           type="text"
           css={{ width: '100%' }}
           placeholder="Enter a clue"
-          value={props.clues[word] || ''}
+          value={props.clues[word]?.[props.idx] || ''}
           onChange={(e) => {
             const sca: SetClueAction = {
               type: 'SETCLUE',
               word: word,
+              idx: props.idx,
               clue: sanitizeClue(e.target.value),
             };
             props.dispatch(sca);
@@ -120,6 +122,7 @@ const ClueRow = (props: {
               const sca: SetClueAction = {
                 type: 'SETCLUE',
                 word: word,
+                idx: props.idx,
                 clue: sanitizeClue(clue),
               };
               props.dispatch(sca);
@@ -143,7 +146,7 @@ interface ClueModeProps {
   authorId: string;
   puzzleId: string;
   completedEntries: Array<BuilderEntry>;
-  clues: Record<string, string>;
+  clues: Record<string, Array<string>>;
   state: BuilderState;
   dispatch: Dispatch<PuzzleAction>;
   isAdmin: boolean;
@@ -153,20 +156,27 @@ export const ClueMode = (props: ClueModeProps) => {
   const [contestAnswerInProg, setContestAnswerInProg] = useState('');
   const privateUntil = props.state.isPrivateUntil?.toDate();
 
+  const count: Record<string, number> = {};
+
   const clueRows = props.completedEntries
     .sort((e1, e2) =>
       e1.direction === e2.direction
         ? e1.labelNumber - e2.labelNumber
         : e1.direction - e2.direction
     )
-    .map((e) => (
-      <ClueRow
-        key={e.completedWord || ''}
-        dispatch={props.dispatch}
-        entry={e}
-        clues={props.clues}
-      />
-    ));
+    .map((e) => {
+      const clueIdx = count[e.completedWord || ''] || 0;
+      count[e.completedWord || ''] = clueIdx + 1;
+      return (
+        <ClueRow
+          idx={clueIdx}
+          key={e.completedWord || ''}
+          dispatch={props.dispatch}
+          entry={e}
+          clues={props.clues}
+        />
+      );
+    });
   return (
     <>
       <TopBar>
