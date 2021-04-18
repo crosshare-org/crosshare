@@ -238,7 +238,6 @@ test('moderate as daily mini', async () => {
   if (!props1) {
     throw new Error('bad props');
   }
-  windowSpy.mockRestore();
 
   // The puzzle should be visible to an admin w/ moderation links
   setApp(adminUserApp as firebase.app.App);
