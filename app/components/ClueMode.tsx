@@ -28,6 +28,8 @@ import type { SuggestOverlay as SuggestOverlayType } from './ClueSuggestionOverl
 import { DateTimePicker } from './DateTimePicker';
 import { MarkdownPreview } from './MarkdownPreview';
 
+const MAX_STRING_LENGTH = 2048;
+
 const ImageCropper = dynamic(
   () => import('./ImageCropper').then((mod) => mod.ImageCropper as any), // eslint-disable-line @typescript-eslint/no-explicit-any
   { ssr: false }
@@ -40,16 +42,16 @@ const SuggestOverlay = dynamic(
 ) as typeof SuggestOverlayType;
 
 export function sanitizeClue(input: string) {
-  return input.substring(0, 140);
+  return input.substring(0, MAX_STRING_LENGTH);
 }
 export function sanitizeTitle(input: string) {
-  return input.substring(0, 140);
+  return input.substring(0, MAX_STRING_LENGTH);
 }
 export function sanitizeGuestConstructor(input: string) {
-  return input.substring(0, 140);
+  return input.substring(0, MAX_STRING_LENGTH);
 }
 export function sanitizeConstructorNotes(input: string) {
-  return input.substring(0, 200);
+  return input.substring(0, MAX_STRING_LENGTH);
 }
 export function sanitizeBlogPost(input: string) {
   return input.substring(0, 20000);

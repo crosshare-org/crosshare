@@ -6,6 +6,7 @@ const EXTENSION_HEADER_LENGTH = 8;
 const EXTENSION_NAME_LENGTH = 4;
 const CIRCLED = 0x80;
 const MAGIC = 'ACROSS&DOWN';
+const MAX_STRING_LENGTH = 2048;
 
 function isPuz(bytes: Uint8Array) {
   return magicIndex(bytes) !== -1;
@@ -56,7 +57,7 @@ class PuzReader {
       if (!c) break; // null terminated
       result.push(String.fromCodePoint(c));
     }
-    return result.join('');
+    return result.join('').substring(0, MAX_STRING_LENGTH);
   }
 
   readBytes(length: number) {
