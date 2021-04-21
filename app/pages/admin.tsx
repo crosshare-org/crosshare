@@ -211,28 +211,34 @@ export default requiresAdmin(() => {
       for (const comment of commentsForModeration) {
         // Don't need to do anything for any comment that has been marked for deletion
         if (!commentIdsForDeletion.has(comment.i)) {
-          let puzzle: DBPuzzleT;
+          let puzzle: DBPuzzleT | null = null;
           const fromCache = puzzles[comment.pid];
           if (fromCache) {
             puzzle = fromCache;
           } else {
-            puzzle = await getFromDB('c', comment.pid, DBPuzzleV);
-            puzzles[comment.pid] = puzzle;
-          }
-          if (puzzle.cs === undefined) {
-            puzzle.cs = [];
-          }
-          if (comment.rt === null) {
-            puzzle.cs.push(comment);
-          } else {
-            const parent = findCommentById(puzzle.cs, comment.rt);
-            if (parent === null) {
-              throw new Error('parent comment not found');
+            try {
+              puzzle = await getFromDB('c', comment.pid, DBPuzzleV);
+              puzzles[comment.pid] = puzzle;
+            } catch {
+              puzzle = null;
             }
-            if (parent.r) {
-              parent.r.push(comment);
+          }
+          if (puzzle) {
+            if (puzzle.cs === undefined) {
+              puzzle.cs = [];
+            }
+            if (comment.rt === null) {
+              puzzle.cs.push(comment);
             } else {
-              parent.r = [comment];
+              const parent = findCommentById(puzzle.cs, comment.rt);
+              if (parent === null) {
+                throw new Error('parent comment not found');
+              }
+              if (parent.r) {
+                parent.r.push(comment);
+              } else {
+                parent.r = [comment];
+              }
             }
           }
         }
