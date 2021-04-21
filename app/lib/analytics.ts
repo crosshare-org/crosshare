@@ -42,14 +42,15 @@ export async function runAnalytics(
   const dailyStatsMap: Map<string, DailyStatsT> = new Map();
 
   // Get puzzle obj from cache or db
-  async function getPuzzle(puzzleId: string): Promise<DBPuzzleT> {
+  async function getPuzzle(puzzleId: string): Promise<DBPuzzleT | null> {
     const puzzle = puzzleMap.get(puzzleId);
     if (puzzle) {
       return puzzle;
     }
     const puzzleRes = await db.collection('c').doc(puzzleId).get();
     if (!puzzleRes.exists) {
-      throw new Error('Missing puzzle but have play: ' + puzzleId);
+      console.log('Missing puzzle but have play: ' + puzzleId);
+      return null;
     }
     const dbpuzzle = DBPuzzleV.decode(puzzleRes.data());
     if (!isRight(dbpuzzle)) {
@@ -83,6 +84,9 @@ export async function runAnalytics(
         puzzleStatsMap.set(play.c, puzzleStats);
       } else {
         const puzzle = await getPuzzle(play.c);
+        if (!puzzle) {
+          continue;
+        }
         puzzleStats = {
           a: puzzle.a,
           ua: endTimestamp,
@@ -166,6 +170,9 @@ export async function runAnalytics(
     dailyStats.c[play.c] = (dailyStats.c[play.c] || 0) + 1;
     if (dailyStats.i && !dailyStats.i[play.c]) {
       const puzzle = await getPuzzle(play.c);
+      if (!puzzle) {
+        continue;
+      }
       dailyStats.i[play.c] = [puzzle.t, puzzle.n, puzzle.a];
     }
     const hour = pd.getUTCHours();
