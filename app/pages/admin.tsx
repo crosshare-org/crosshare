@@ -177,6 +177,20 @@ export default requiresAdmin(() => {
     return null;
   }
 
+  async function retryMail(e: FormEvent) {
+    e.preventDefault();
+    const db = App.firestore();
+    db.collection('mail')
+      .where('delivery.error', '!=', null)
+      .get()
+      .then((r) => {
+        r.forEach((s) => {
+          console.log('retrying', s.id);
+          db.collection('mail').doc(s.id).update({ 'delivery.state': 'RETRY' });
+        });
+      });
+  }
+
   async function moderatePages(e: FormEvent) {
     e.preventDefault();
     const db = App.firestore();
@@ -272,7 +286,14 @@ export default requiresAdmin(() => {
       </Head>
       <DefaultTopBar />
       <div css={{ margin: '1em' }}>
-        {mailErrors ? <h4>There are {mailErrors} mail errors!</h4> : ''}
+        {mailErrors ? (
+          <div>
+            <h4>There are {mailErrors} mail errors!</h4>
+            <Button onClick={retryMail} text="Retry send" />
+          </div>
+        ) : (
+          ''
+        )}
         <h4 css={{ borderBottom: '1px solid var(--black)' }}>
           Comment Moderation
         </h4>

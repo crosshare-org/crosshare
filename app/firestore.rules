@@ -57,6 +57,7 @@ service cloud.firestore {
     }
     match /mail/{messageId} {
       allow read: if isAdmin();
+      allow write: if isAdmin();
     }
     match /c/{crosswordId} {
       allow get: if true;
