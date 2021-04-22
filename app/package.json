@@ -82,6 +82,7 @@
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "@zeit/next-source-maps": "0.0.4-canary.1",
+    "csv": "^5.5.0",
     "eslint": "^7.24.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-jsx-a11y": "^6.4.1",
