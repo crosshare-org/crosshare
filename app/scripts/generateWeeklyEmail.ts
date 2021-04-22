@@ -41,7 +41,9 @@ function replaceOnto<T>(
   Object.assign(a, b);
 }
 
-async function topPuzzlesForWeek(): Promise<Array<[string, string]>> {
+async function topPuzzlesForWeek(): Promise<
+  [Array<[string, string]>, Array<[string, string]>]
+  > {
   const totalC: Record<string, number> = {};
   const allIs: Record<string, [string, string, string]> = {};
   const d = new Date();
@@ -61,6 +63,7 @@ async function topPuzzlesForWeek(): Promise<Array<[string, string]>> {
     }
     d.setDate(d.getDate() - 1);
   }
+  const initVal: [Array<[string, string]>, Array<[string, string]>] = [[], []];
   return Promise.all(
     Object.entries(totalC)
       .sort((a, b) => b[1] - a[1])
@@ -93,19 +96,35 @@ async function topPuzzlesForWeek(): Promise<Array<[string, string]>> {
         }
         return true;
       })
-      .map((p): [string, string] => {
+      .map((p): [string, string, boolean] => {
         if (!p) {
           throw new Error('impossible');
         }
-        return ['https://crosshare.org/crosswords/' + p.id, `${p.t} by ${p.n}`];
-      });
+        return [
+          'https://crosshare.org/crosswords/' + p.id,
+          `${p.t} by ${p.n}`,
+          p.w <= 8 && p.h <= 8,
+        ];
+      })
+      .reduce((res, val) => {
+        if (val[2]) {
+          res[1].push([val[0], val[1]]);
+        } else {
+          res[0].push([val[0], val[1]]);
+        }
+        return res;
+      }, initVal);
   });
 }
 
 async function generateWeeklyEmail() {
-  const topForWeek = await topPuzzlesForWeek();
-  console.log('<strong>Most popular puzzles this week:</strong><br />');
+  const [topForWeek, topMinis] = await topPuzzlesForWeek();
+  console.log('<strong>Top puzzles this week:</strong><br /><br />');
   topForWeek.forEach(([link, text]) => {
+    console.log('<a href="' + link + '">' + text + '</a> - <br /><br />');
+  });
+  console.log('<strong>Top minis this week:</strong><br /><br />');
+  topMinis.forEach(([link, text]) => {
     console.log('<a href="' + link + '">' + text + '</a> - <br /><br />');
   });
 }
