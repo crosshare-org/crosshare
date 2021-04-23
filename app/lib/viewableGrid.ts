@@ -516,12 +516,12 @@ export function getRefs(
     }
     const lowerClue = e.clue.toLowerCase();
     if (
-      lowerClue.includes('the starred clues') ||
-      lowerClue.includes('the starred answers') ||
-      lowerClue.includes('the starred entries') ||
-      lowerClue.includes('each starred clue') ||
-      lowerClue.includes('each starred answer') ||
-      lowerClue.includes('each starred entry')
+      lowerClue.includes(' starred clues') ||
+      lowerClue.includes(' starred answers') ||
+      lowerClue.includes(' starred entries') ||
+      lowerClue.includes(' starred clue') ||
+      lowerClue.includes(' starred answer') ||
+      lowerClue.includes(' starred entry')
     ) {
       for (const [idx, otherE] of grid.entries.entries()) {
         if (otherE.clue.startsWith('*')) {
