@@ -132,12 +132,21 @@ export const Markdown = ({
   className?: string;
 }) => {
   if (clueMap && clueMap.size) {
-    const fullClueMap = new Map<string, {fullClueNumber: string, answer: string, clue: string}>();
+    const fullClueMap = new Map<
+      string,
+      { fullClueNumber: string; answer: string; clue: string }
+    >();
     clueMap.forEach(([clueNumber, direction, clue], answer) => {
-      const fullClueNumber = `${clueNumber}${direction === Direction.Down ? 'D' : 'A'}`;
-      const entry = {fullClueNumber, answer, clue};
+      const longDirection = direction === Direction.Down ? 'Down' : 'Across';
+      const shortDirection = direction === Direction.Down ? 'D' : 'A';
+      const fullClueNumber = `${clueNumber}${shortDirection}`;
+      const entry = { fullClueNumber, answer, clue };
       fullClueMap.set(answer, entry);
-      fullClueMap.set(fullClueNumber, entry);
+      ['', '-'].forEach((separator) => {
+        [shortDirection, longDirection].forEach((directionText) => {
+          fullClueMap.set(`${clueNumber}${separator}${directionText}`, entry);
+        });
+      });
     });
 
     const regex =

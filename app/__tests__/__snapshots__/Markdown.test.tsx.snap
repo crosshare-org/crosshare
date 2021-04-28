@@ -534,7 +534,63 @@ exports[`clueMap rendering 6`] = `
       <span
         class="emotion-0"
       >
-        2D
+        2-D
+      </span>
+      <div
+        class="emotion-1"
+        data-popper-escaped="true"
+        data-popper-placement="bottom"
+        data-popper-reference-hidden="true"
+        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+      >
+        <b
+          class="emotion-2"
+        >
+          2D
+           
+          <code>
+            BAM
+          </code>
+        </b>
+        here is the clue?
+        <div
+          class="emotion-3"
+          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
+        />
+      </div>
+       and 
+      <span
+        class="emotion-0"
+      >
+        45-Across
+      </span>
+      <div
+        class="emotion-1"
+        data-popper-escaped="true"
+        data-popper-placement="bottom"
+        data-popper-reference-hidden="true"
+        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+      >
+        <b
+          class="emotion-2"
+        >
+          45A
+           
+          <code>
+            12ACLUE1
+          </code>
+        </b>
+        Well now
+        <div
+          class="emotion-3"
+          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
+        />
+      </div>
+       and 
+      <span
+        class="emotion-0"
+      >
+        2Down
       </span>
       <div
         class="emotion-1"

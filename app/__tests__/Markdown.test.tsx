@@ -90,7 +90,7 @@ test('clueMap rendering', async () => {
   await waitFor(() => {/* noop */ });
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown clueMap={clueMap} text='Reference 45A and 2D and unknown 11A' />, {});
+  r = render(<Markdown clueMap={clueMap} text='Reference 45A and 2-D and 45-Across and 2Down and unknown 11A' />, {});
   await waitFor(() => {/* noop */ });
   expect(r.container).toMatchSnapshot();
 });
