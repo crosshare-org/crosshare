@@ -364,12 +364,17 @@ export const TopBar = ({
   }, [handleClickOutside]);
 
   return useMemo(() => {
+    const today = new Date();
     return (
       <>
         <header
           css={{
             height: HEADER_HEIGHT,
-            backgroundColor: 'var(--primary)',
+            ...((today.getUTCMonth() === 5 &&
+              today.getUTCDate() <= 3 && {
+              backgroundImage:
+                  'linear-gradient(to right, red,orange,yellow,green,blue,indigo,violet)',
+            }) || { backgroundColor: 'var(--primary)' }),
             color: 'var(--onprimary)',
           }}
         >
