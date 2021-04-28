@@ -359,13 +359,7 @@ export default function BuilderPage() {
             puzzles.
           </p>
           <h3>Can I use my own wordlist?</h3>
-          <p>
-            Custom wordlists / wordlist editing will be released soon, but will
-            be a “pro” feature. I expect Crosshare Pro to be more affordable
-            than existing construction software (but I need to support this
-            project somehow <Emoji symbol="😛" />
-            ).
-          </p>
+          <p>Custom wordlists / wordlist editing will be released soon.</p>
           <h3>Can I create rectangular grids?</h3>
           <p>
             Yup, you can use any dimensions you want. Better yet, both the
