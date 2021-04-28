@@ -108,8 +108,11 @@ exports[`clueMap rendering 2`] = `
           <b
             class="emotion-3"
           >
-            2
-            D
+            2D
+             
+            <code>
+              BAM
+            </code>
           </b>
           here is the clue?
           <div
@@ -202,8 +205,11 @@ exports[`clueMap rendering 3`] = `
         <b
           class="emotion-2"
         >
-          45
-          A
+          45A
+           
+          <code>
+            12ACLUE1
+          </code>
         </b>
         Well now
         <div
@@ -227,8 +233,11 @@ exports[`clueMap rendering 3`] = `
         <b
           class="emotion-2"
         >
-          2
-          D
+          2D
+           
+          <code>
+            BAM
+          </code>
         </b>
         here is the clue?
         <div
@@ -319,8 +328,11 @@ exports[`clueMap rendering 4`] = `
           <b
             class="emotion-3"
           >
-            2
-            D
+            2D
+             
+            <code>
+              BAM
+            </code>
           </b>
           here is the clue?
           <div
@@ -414,8 +426,11 @@ exports[`clueMap rendering 5`] = `
           <b
             class="emotion-3"
           >
-            2
-            D
+            2D
+             
+            <code>
+              BAM
+            </code>
           </b>
           here is the clue?
           <div
@@ -426,6 +441,124 @@ exports[`clueMap rendering 5`] = `
          
       </span>
        which I think is such an awesome addition. Cheers!
+    </div>
+  </div>
+</div>
+`;
+
+exports[`clueMap rendering 6`] = `
+.emotion-0 {
+  border-bottom: 1px dotted;
+  white-space: nowrap;
+}
+
+.emotion-1 {
+  z-index: 100000;
+  border-radius: 5px;
+  background-color: var(--black);
+  color: var(--white);
+  text-align: center;
+  max-width: 30em;
+  padding: 10px;
+  visibility: hidden;
+}
+
+.emotion-1[data-popper-reference-hidden=true] {
+  visibility: hidden;
+}
+
+.emotion-2 {
+  margin-right: 0.5em;
+}
+
+.emotion-3 {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+}
+
+[data-popper-placement^="bottom"] .emotion-3 {
+  top: -5px;
+}
+
+[data-popper-placement^="top"] .emotion-3 {
+  bottom: -5px;
+}
+
+.emotion-3::after {
+  content: " ";
+  position: absolute;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background-color: var(--black);
+}
+
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      Reference 
+      <span
+        class="emotion-0"
+      >
+        45A
+      </span>
+      <div
+        class="emotion-1"
+        data-popper-escaped="true"
+        data-popper-placement="bottom"
+        data-popper-reference-hidden="true"
+        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+      >
+        <b
+          class="emotion-2"
+        >
+          45A
+           
+          <code>
+            12ACLUE1
+          </code>
+        </b>
+        Well now
+        <div
+          class="emotion-3"
+          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
+        />
+      </div>
+       and 
+      <span
+        class="emotion-0"
+      >
+        2D
+      </span>
+      <div
+        class="emotion-1"
+        data-popper-escaped="true"
+        data-popper-placement="bottom"
+        data-popper-reference-hidden="true"
+        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+      >
+        <b
+          class="emotion-2"
+        >
+          2D
+           
+          <code>
+            BAM
+          </code>
+        </b>
+        here is the clue?
+        <div
+          class="emotion-3"
+          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
+        />
+      </div>
+       and unknown 11A
     </div>
   </div>
 </div>
