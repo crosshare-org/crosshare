@@ -20,11 +20,11 @@ Most of these instructions are written for unix-like OSes - folks have had succe
 
 ### Set up a new firebase project
 
-Visit http://console.firebase.google.com/, click "add project". Use whatever name you'd like. You don't need to enable google analytics.
+Visit http://console.firebase.google.com/, click "add project" or "create a project". Use whatever name you'd like. You don't need to enable google analytics.
 
 #### Set up authentication
 
-Click "Authentication" in the side bar. Click "Get started". Click on the "Google" sign-in provider and toggle to "Enabled". Use anything you like for public facing name and enter your email as the project support email. Click "Save".
+Click "Build" in the side bar, then "Authentication". Click "Get started". Click on the "Google" sign-in provider and toggle to "Enabled". Use anything you like for public facing name and enter your email as the project support email. Click "Save".
 
 #### Set up the database
 
@@ -32,11 +32,11 @@ Click "Firestore Database" in the side bar. Click "Create database". Choose "sta
 
 #### Download credentials
 
-Click the little gear icon in the side bar. Scroll to the "Your apps" section and click "</>" to create a web app. Register an app using whatever name you'd like. You don't need to set up hosting. 
+Click the little gear icon in the side bar and select "Project settings". Scroll to the "Your apps" section and click "</>" to create a web app. Register an app using whatever name you'd like. You don't need to set up hosting. 
 
 Copy the `var firebaseConfig = {...}` lines from the Add Firebase SDK dialog that pops up and paste them into a new file at `app/firebaseConfig.ts`. Change `var firebaseConfig` to `export const firebaseConfig`. These are the credentials used by the Crosshare frontend.
 
-New click "Service Accounts" at the top of the Project Settings page. Under "Firebase Admin SDK" click "Generate new private key". Save the resultant file as `serviceAccountKey.json` in the root of this repository. This is the credential file for the Crosshare server.
+Now click "Continue to console" and click "Service Accounts" at the top of the Project Settings page. Under "Firebase Admin SDK" click "Generate new private key". Save the resultant file as `serviceAccountKey.json` in the root of this repository. This is the credential file for the Crosshare server.
 
 ### Install dependencies
 
