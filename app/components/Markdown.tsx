@@ -123,15 +123,35 @@ export const Markdown = ({
   className,
 }: {
   text: string;
+  // If this is included, references to clues by answer or full clue number will
+  // get a tooltip describing the referenced clues. This popup includes the
+  // answer, so only include this in a context where spoilers are OK!
   clueMap?: Map<string, [number, Direction, string]>;
   preview?: number;
   inline?: boolean;
   className?: string;
 }) => {
   if (clueMap && clueMap.size) {
+    const fullClueMap = new Map<
+      string,
+      { fullClueNumber: string; answer: string; clue: string }
+    >();
+    clueMap.forEach(([clueNumber, direction, clue], answer) => {
+      const longDirection = direction === Direction.Down ? 'Down' : 'Across';
+      const shortDirection = direction === Direction.Down ? 'D' : 'A';
+      const fullClueNumber = `${clueNumber}${shortDirection}`;
+      const entry = { fullClueNumber, answer, clue };
+      fullClueMap.set(answer, entry);
+      ['', '-'].forEach((separator) => {
+        [shortDirection, longDirection].forEach((directionText) => {
+          fullClueMap.set(`${clueNumber}${separator}${directionText}`, entry);
+        });
+      });
+    });
+
     const regex =
       '^([^0-9A-Za-z\\s\\u00c0-\\uffff]*[0-9A-Za-z\\s\\u00c0-\\uffff]*)\\b(' +
-      Array.from(clueMap.keys()).join('|') +
+      Array.from(fullClueMap.keys()).join('|') +
       ')\\b';
     const re = new RegExp(regex);
     const newRules = {
@@ -148,7 +168,7 @@ export const Markdown = ({
           };
         },
         react(node: any, recurseOutput: any, state: any) {
-          const mouseover = clueMap.get(node.content);
+          const mouseover = fullClueMap.get(node.content);
           if (!mouseover) {
             throw new Error('expected to find clue ' + node.content);
           }
@@ -160,10 +180,10 @@ export const Markdown = ({
                 tooltip={
                   <>
                     <b css={{ marginRight: '0.5em' }}>
-                      {mouseover[0]}
-                      {mouseover[1] === Direction.Down ? 'D' : 'A'}
+                      {mouseover.fullClueNumber}{' '}
+                      <code>{mouseover.answer}</code>
                     </b>
-                    {mouseover[2]}
+                    {mouseover.clue}
                   </>
                 }
               />
