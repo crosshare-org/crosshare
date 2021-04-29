@@ -36,10 +36,6 @@ afterAll(async () => {
 beforeEach(async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
-
   await admin
     .firestore()
     .doc('s/foobar')
@@ -104,7 +100,6 @@ beforeEach(async () => {
         0.2,
       ],
     });
-  windowSpy.mockRestore();
 });
 
 test('security rules for querying puzzle stats', async () => {

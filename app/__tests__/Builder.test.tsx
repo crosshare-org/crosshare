@@ -140,11 +140,7 @@ async function publishPuzzle(
 
   setApp(app as firebase.app.App);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   await admin.firestore().collection('categories').doc('dailymini').set({});
-  windowSpy.mockRestore();
 
   const r = render(<BuilderPage />, { user: mike });
   const launchButton = (await r.findAllByText('Launch Constructor'))[0];
@@ -204,26 +200,17 @@ async function publishPuzzle(
 
   cleanup();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
-
   const dailyMinis = await admin
     .firestore()
     .collection('categories')
     .doc('dailymini')
     .get();
   expect(dailyMinis.data()).toEqual({});
-  windowSpy.mockRestore();
 }
 
 test('moderate as daily mini', async () => {
   await publishPuzzle();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   const puzzles = await admin.firestore().collection('c').get();
-  windowSpy.mockRestore();
 
   expect(puzzles.size).toEqual(1);
   const puzzleId = puzzles.docs[0]?.id;
@@ -256,10 +243,6 @@ test('moderate as daily mini', async () => {
   fireEvent.click(r4.getByText(/Schedule as Daily Mini/i));
   await r4.findByText('Moderated!', undefined, { timeout: 10000 });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
-
   expect(
     (await admin.firestore().collection('c').where('m', '==', true).get()).size
   ).toEqual(1);
@@ -284,7 +267,6 @@ test('moderate as daily mini', async () => {
     .doc('dailymini')
     .get();
   expect(dailyMinis.data()).toEqual({ [ds]: puzzleId });
-  windowSpy.mockRestore();
 });
 
 test('publish as default', async () => {
@@ -296,11 +278,7 @@ test('publish as default', async () => {
     );
     await act(() => Promise.resolve());
   });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   const puzzles = await admin.firestore().collection('c').get();
-  windowSpy.mockRestore();
 
   expect(puzzles.size).toEqual(1);
   const puzzle = puzzles.docs[0]?.data();
@@ -359,9 +337,6 @@ test('publish as default', async () => {
   await r4.findByText('Moderated!', undefined, { timeout: 5000 });
   await act(() => Promise.resolve());
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   expect(
     (await admin.firestore().collection('c').where('m', '==', true).get()).size
   ).toEqual(1);
@@ -384,7 +359,6 @@ test('publish as default', async () => {
     .doc('dailymini')
     .get();
   expect(dailyMinis.data()).toEqual({});
-  windowSpy.mockRestore();
 });
 
 test('change author name in publish dialogue should publish w/ new name', async () => {
@@ -404,11 +378,7 @@ test('change author name in publish dialogue should publish w/ new name', async 
     }
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   const puzzles = await admin.firestore().collection('c').get();
-  windowSpy.mockRestore();
 
   expect(puzzles.size).toEqual(1);
   const puzzle = puzzles.docs[0]?.data();
@@ -532,11 +502,7 @@ test('publish custom / non-rectangular size', async () => {
   fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
   await r.findByText(/Published Successfully/);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   const puzzles = await admin.firestore().collection('c').get();
-  windowSpy.mockRestore();
 
   expect(puzzles.size).toEqual(1);
   const puzzle = puzzles.docs[0]?.data();

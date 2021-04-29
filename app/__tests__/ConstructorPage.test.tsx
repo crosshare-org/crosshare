@@ -17,9 +17,6 @@ jest.mock('next/link', () => ({ children }) => children); // https://github.com/
 const projectId = 'constructorpagetests';
 
 test('invalid constructor page', async () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   await firebaseTesting.clearFirestoreData({ projectId });
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
@@ -29,7 +26,6 @@ test('invalid constructor page', async () => {
 
   const page = await userIdToPage('miked');
   expect(page).toBeNull();
-  windowSpy.mockRestore();
 });
 
 test('create constructor page', async () => {
@@ -39,11 +35,7 @@ test('create constructor page', async () => {
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
   }) as firebase.app.App;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
-  windowSpy.mockRestore();
 
   const app = firebaseTesting.initializeTestApp({
     projectId,
@@ -63,14 +55,10 @@ test('create constructor page', async () => {
 
   cleanup();
   // Just add a dummy constructed puzzle for this user
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   await adminApp
     .firestore()
     .collection('c')
     .add(getMockedPuzzle({ a: 'mikeuserid' }));
-  windowSpy.mockRestore();
   r = render(<AccountPage isAdmin={false} user={mike} />, { user: mike });
   expect(
     await r.findByPlaceholderText(/username/i, undefined, { timeout: 3000 })
@@ -92,9 +80,6 @@ test('create constructor page', async () => {
   fireEvent.click(r.getByText('Create', { exact: true }));
   await r.findByText('Created successfully!', undefined, { timeout: 3000 });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   await waitForExpect(async () =>
     expect(
       (
@@ -102,7 +87,6 @@ test('create constructor page', async () => {
       ).data()?.u
     ).toEqual('mikeuserid')
   );
-  windowSpy.mockRestore();
 
   cleanup();
 
@@ -134,11 +118,7 @@ test('security rules for constructor page creation', async () => {
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
   }) as firebase.app.App;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
-  windowSpy.mockRestore();
   adminApp.delete();
 
   const app = firebaseTesting.initializeTestApp({
@@ -311,9 +291,6 @@ test('security rules for constructor page updates', async () => {
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
   }) as firebase.app.App;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   await adminApp.firestore().collection('cp').doc('miked').set({
     i: 'miked',
     u: 'foobar',
@@ -461,7 +438,6 @@ test('security rules for constructor page updates', async () => {
   expect(t).not.toBeFalsy();
   expect(toSnapshot).toMatchSnapshot();
 
-  windowSpy.mockRestore();
   adminApp.delete();
   app.delete();
 });

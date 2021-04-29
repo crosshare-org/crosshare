@@ -120,11 +120,7 @@ test('upload a puzzle', async () => {
   fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
   await r.findByText(/Published Successfully/, undefined, { timeout: 3000 });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   const puzzles = await admin.firestore().collection('c').get();
-  windowSpy.mockRestore();
   expect(puzzles.size).toEqual(1);
   if (puzzles.docs[0] === undefined) {
     throw new Error();
@@ -208,11 +204,7 @@ test('upload after editing', async () => {
   fireEvent.click(await r.findByText('Publish Puzzle', { exact: true }));
   await r.findByText(/Published Successfully/, undefined, { timeout: 3000 });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   const puzzles = await admin.firestore().collection('c').get();
-  windowSpy.mockRestore();
   expect(puzzles.size).toEqual(1);
   if (puzzles.docs[0] === undefined) {
     throw new Error();
@@ -275,11 +267,7 @@ test('upload a puzzle with duplicate entries', async () => {
   fireEvent.click(r.getByText('Publish Puzzle', { exact: true }));
   await r.findByText(/Published Successfully/, undefined, { timeout: 3000 });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   const puzzles = await admin.firestore().collection('c').get();
-  windowSpy.mockRestore();
   expect(puzzles.size).toEqual(1);
   if (puzzles.docs[0] === undefined) {
     throw new Error();

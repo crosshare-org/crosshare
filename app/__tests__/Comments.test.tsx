@@ -93,12 +93,8 @@ test('security rules should only allow commenting as onesself', async () => {
 });
 
 test('security rules should only allow commenting with username if it matches your account', async () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const windowSpy = jest.spyOn(global as any, 'window', 'get');
-  windowSpy.mockImplementation(() => undefined);
   await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
   await adminApp.firestore().collection('cp').doc('rando').set({ u: 'rando' });
-  windowSpy.mockRestore();
 
   const app = firebaseTesting.initializeTestApp({
     projectId,
