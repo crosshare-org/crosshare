@@ -82,8 +82,9 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
 
       <div css={{ margin: '1em' }}>
         <p css={{ marginBottom: '1em' }}>
-          Crosshare is a <b>free</b> and <b>ad-free</b> place to create, share
-          and solve crossword puzzles.
+          Crosshare is a <b>free</b>, <b>ad-free</b>, and{' '}
+          <a href="https://github.com/mdirolf/crosshare/">open-source</a> place
+          to create, share and solve crossword puzzles.
         </p>
         <p>
           If you&apos;re enjoying Crosshare please consider{' '}
