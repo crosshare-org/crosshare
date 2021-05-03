@@ -524,7 +524,7 @@ export function getRefs(
       lowerClue.includes(' starred entry')
     ) {
       for (const [idx, otherE] of grid.entries.entries()) {
-        if (otherE.clue.startsWith('*')) {
+        if (otherE.clue.startsWith('*') || otherE.clue.endsWith('*')) {
           refs.add(idx);
         }
       }
