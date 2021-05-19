@@ -816,6 +816,22 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         wasEntryClick: false,
         active: retreatPosition(state.grid, state.active),
       };
+    } else if (key === 'Delete') {
+      const ci = cellIndex(state.grid, state.active);
+      if (state.isEditable(ci)) {
+        const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
+        if (isPuzzleState(state)) {
+          const elapsed = getCurrentTime(state);
+          state.cellsUpdatedAt[ci] = elapsed;
+        }
+        state.grid = gridWithNewChar(state.grid, state.active, ' ', symmetry);
+        state = state.postEdit(ci) as T; // TODO this is trash
+      }
+      return {
+        ...state,
+        wasEntryClick: false,
+        active: nextCell(state.grid, state.active),
+      };
     }
   }
   return state;
