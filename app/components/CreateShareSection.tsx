@@ -46,7 +46,7 @@ export function CreateShareSection() {
                 textDecoration: 'none !important',
               }}
             >
-              Build a puzzle with the Crosshare constructor
+              Build a crossword puzzle with the Crosshare constructor
             </p>
           </div>
         </Link>
