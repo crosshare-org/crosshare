@@ -16,6 +16,8 @@ import { useContext } from 'react';
 import { AuthContext } from '../components/AuthContext';
 import { Button } from '../components/Buttons';
 import { ContactLinks } from '../components/ContactLinks';
+import { CreateShareSection } from '../components/CreateShareSection';
+import { SMALL_AND_UP } from '../lib/style';
 
 interface HomePageProps {
   dailymini: ServerPuzzleResult;
@@ -90,33 +92,38 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
           If you&apos;re enjoying Crosshare please consider{' '}
           <a href="/donate">donating</a> to support its continuing development.
         </p>
-        <h2>Daily Mini</h2>
-        <PuzzleResultLink
-          puzzle={dailymini}
-          showAuthor={true}
-          constructorPage={dailymini.constructorPage}
-          title={'Today\'s daily mini crossword'}
-        />
-        <p>
-          <Link
-            href={`/dailyminis/${today.getUTCFullYear()}/${
-              today.getUTCMonth() + 1
-            }`}
-          >
-            Play previous daily minis
-          </Link>
-        </p>
-        <h2>Create or Share a Puzzle</h2>
-        <p>
-          <Link href="/construct">
-            Construct a new puzzle with the Crosshare constructor
-          </Link>
-        </p>
-        <p>
-          <Link href="/upload">
-            Upload a .puz to get a Crosshare link to share with solvers
-          </Link>
-        </p>
+        <div
+          css={{
+            display: 'flex',
+            flexDirection: 'column',
+            [SMALL_AND_UP]: {
+              flexDirection: 'row',
+            },
+          }}
+        >
+          <div css={{ flex: '50%' }}>
+            <h2>Daily Mini</h2>
+            <PuzzleResultLink
+              fullWidth
+              puzzle={dailymini}
+              showAuthor={true}
+              constructorPage={dailymini.constructorPage}
+              title={'Today\'s daily mini crossword'}
+            />
+            <p>
+              <Link
+                href={`/dailyminis/${today.getUTCFullYear()}/${
+                  today.getUTCMonth() + 1
+                }`}
+              >
+                Play previous daily minis
+              </Link>
+            </p>
+          </div>
+          <div css={{ flex: '50%' }}>
+            <CreateShareSection />
+          </div>
+        </div>
         <h2>Featured Puzzles</h2>
         {featured.map((p, i) => (
           <PuzzleResultLink

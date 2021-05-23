@@ -13,6 +13,7 @@ import { ConstructorPageT } from '../lib/constructorPage';
 import { Markdown } from './Markdown';
 
 const PuzzleLink = (props: {
+  fullWidth?: boolean;
   showingBlog: boolean;
   id: string;
   authorId: string;
@@ -67,7 +68,7 @@ const PuzzleLink = (props: {
         alignItems: 'flex-start',
         width: '100%',
         [SMALL_AND_UP]: {
-          width: props.showingBlog ? '100%' : '50%',
+          width: props.showingBlog || props.fullWidth ? '100%' : '50%',
         },
       }}
     >
@@ -171,6 +172,7 @@ export const AuthorLink = ({
 };
 
 export const PuzzleResultLink = ({
+  fullWidth,
   puzzle,
   showDate,
   showBlogPost,
@@ -178,6 +180,7 @@ export const PuzzleResultLink = ({
   constructorPage,
   title,
 }: {
+  fullWidth?: boolean;
   puzzle: PuzzleResult;
   showDate?: boolean;
   showBlogPost?: boolean;
@@ -223,6 +226,7 @@ export const PuzzleResultLink = ({
   return (
     <>
       <PuzzleLink
+        fullWidth={fullWidth}
         showingBlog={showBlogPost && puzzle.blogPost ? true : false}
         authorId={puzzle.authorId}
         id={puzzle.id}
