@@ -43,6 +43,8 @@ export const colorTheme = (
   const hover = darkMode ? 'white' : 'black';
   const hoverRatio = 0.1;
   const bg = darkMode ? '#121212' : '#fff';
+  const linkLightBG = mix(link, bg, 0.9);
+  const linkLightBGHover = mix(link, bg, 0.8);
   const text = darkMode ? DARK_MODE_WHITE : 'black';
   const secondary = darkMode ? '#505050' : '#ccc';
   const error = mix(adjustHue(p, 280), 'white', darkMode ? 0.3 : 0);
@@ -62,6 +64,8 @@ export const colorTheme = (
     '--onerror': readableColor(error, darkMode),
     '--notification-bg': '#de30e7',
     '--link': l,
+    '--link-light-bg': linkLightBG,
+    '--link-light-bg-hover': linkLightBGHover,
     '--onlink': readableColor(l, darkMode),
     '--link-hover': mix(l, hover, hoverRatio),
     '--text': text,
