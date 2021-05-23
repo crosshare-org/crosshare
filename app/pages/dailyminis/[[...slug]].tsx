@@ -169,7 +169,7 @@ export default function DailyMiniPage(props: PageProps) {
   learn how crosswords work before taking on larger puzzles.
 
   Mini puzzles are most often 5x5, but can be other sizes as well - sometimes
-  the weekend minis are a bit larger. Any small sized puzzle you publish to Crosshare
+  the weekend minis are a bit larger. Any small sized puzzle you publish publically to Crosshare
   will be eligible for selection as a daily mini!`;
   const date = `${MonthNames[props.month]} ${props.year}`;
   return (
