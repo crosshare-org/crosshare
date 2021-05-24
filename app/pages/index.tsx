@@ -18,6 +18,7 @@ import { Button } from '../components/Buttons';
 import { ContactLinks } from '../components/ContactLinks';
 import { CreateShareSection } from '../components/CreateShareSection';
 import { SMALL_AND_UP } from '../lib/style';
+import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList';
 
 interface HomePageProps {
   dailymini: ServerPuzzleResult;
@@ -116,7 +117,7 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
                   today.getUTCMonth() + 1
                 }`}
               >
-                Play previous daily minis
+                Previous daily minis &rarr;
               </Link>
             </p>
           </div>
@@ -134,9 +135,10 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
             showAuthor={true}
           />
         ))}
-        <p css={{ textAlign: 'center' }}>
-          <Link href="/featured/1">Previous Featured Puzzles</Link>
+        <p>
+          <Link href="/featured/1">Previous featured puzzles &rarr;</Link>
         </p>
+        <UnfinishedPuzzleList user={user} />
         <p css={{ marginTop: '1em', textAlign: 'center' }}>
           If you have questions or suggestions please contact us via{' '}
           <ContactLinks />.

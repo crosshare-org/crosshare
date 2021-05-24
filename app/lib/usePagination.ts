@@ -5,7 +5,7 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 export function usePaginatedQuery<A, N>(
-  query: firebase.firestore.Query,
+  query: firebase.firestore.Query | undefined,
   validator: t.Type<A>,
   limit: number,
   mapper: (val: A, docid: string) => Promise<N | undefined>
@@ -25,6 +25,11 @@ export function usePaginatedQuery<A, N>(
   // when "after" changes, we update our query
   useEffect(() => {
     let didCancel = false;
+
+    if (!query) {
+      setLoading(false);
+      return;
+    }
 
     const fetchData = async () => {
       console.log('Doing fetch');

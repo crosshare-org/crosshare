@@ -3,12 +3,11 @@ import Head from 'next/head';
 
 import { getDisplayName, DisplayNameForm } from '../components/DisplayNameForm';
 import { requiresAuth, AuthProps } from '../components/AuthContext';
-import { DBPuzzleV, LegacyPlayV } from '../lib/dbtypes';
+import { DBPuzzleV } from '../lib/dbtypes';
 import { App, FieldValue } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleResultLink } from '../components/PuzzleLink';
 import { Link } from '../components/Link';
-import { getPuzzle } from '../lib/puzzleCache';
 import { CreatePageForm, BioEditor } from '../components/ConstructorPage';
 import { puzzleFromDB } from '../lib/types';
 import { Button } from '../components/Buttons';
@@ -76,36 +75,6 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
   );
 
   const db = App.firestore();
-  const unfinishedQuery = useMemo(
-    () =>
-      db
-        .collection('p')
-        .where('u', '==', user.uid)
-        .where('f', '==', false)
-        .orderBy('ua', 'desc'),
-    [db, user.uid]
-  );
-  const playMapper = useCallback(
-    async (play) => {
-      const puzzleId = play.c;
-      const puzzle = await getPuzzle(puzzleId);
-      if (!puzzle || puzzle.a === user.uid) {
-        console.log('deleting invalid play');
-        await db.collection('p').doc(`${puzzleId}-${user.uid}`).delete();
-        return undefined;
-      } else {
-        return { ...puzzleFromDB(puzzle), id: puzzleId };
-      }
-    },
-    [db, user.uid]
-  );
-  const {
-    loading: loadingUnfinished,
-    docs: unfinishedPuzzles,
-    loadMore: loadMoreUnfinished,
-    hasMore: hasMoreUnfinished,
-  } = usePaginatedQuery(unfinishedQuery, LegacyPlayV, 4, playMapper);
-
   const authoredQuery = useMemo(
     () => db.collection('c').where('a', '==', user.uid).orderBy('p', 'desc'),
     [db, user.uid]
@@ -230,28 +199,6 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
             ) : (
               hasMoreAuthored && (
                 <Button onClick={loadMoreAuthored} text="Older..." />
-              )
-            )}
-          </>
-        ) : (
-          ''
-        )}
-        {unfinishedPuzzles.length ? (
-          <>
-            <h2>Unfinished Solves</h2>
-            {unfinishedPuzzles.map((puzzle) => (
-              <PuzzleResultLink
-                key={puzzle.id}
-                puzzle={puzzle}
-                showAuthor={false}
-                constructorPage={null}
-              />
-            ))}
-            {loadingUnfinished ? (
-              <p>Loading...</p>
-            ) : (
-              hasMoreUnfinished && (
-                <Button onClick={loadMoreUnfinished} text="Older..." />
               )
             )}
           </>
