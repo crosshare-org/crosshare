@@ -1,15 +1,12 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Head from 'next/head';
 
 import { getDisplayName, DisplayNameForm } from '../components/DisplayNameForm';
 import { requiresAuth, AuthProps } from '../components/AuthContext';
-import { DBPuzzleV } from '../lib/dbtypes';
 import { App, FieldValue } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
-import { PuzzleResultLink } from '../components/PuzzleLink';
 import { Link } from '../components/Link';
 import { CreatePageForm, BioEditor } from '../components/ConstructorPage';
-import { puzzleFromDB } from '../lib/types';
 import { Button } from '../components/Buttons';
 import { PROFILE_PIC, COVER_PIC } from '../lib/style';
 import { UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
@@ -17,7 +14,7 @@ import { UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
 import dynamic from 'next/dynamic';
 import type { ImageCropper as ImageCropperType } from '../components/ImageCropper';
 import { useSnackbar } from '../components/Snackbar';
-import { usePaginatedQuery } from '../lib/usePagination';
+import { useCollection } from 'react-firebase-hooks/firestore';
 const ImageCropper = dynamic(
   () =>
     import('../components/ImageCropper').then((mod) => mod.ImageCropper as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -76,25 +73,16 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
 
   const db = App.firestore();
   const authoredQuery = useMemo(
-    () => db.collection('c').where('a', '==', user.uid).orderBy('p', 'desc'),
+    () => db.collection('c').where('a', '==', user.uid).limit(1),
     [db, user.uid]
   );
-  const authoredMapper = useCallback(
-    async (dbres, id) => ({ ...puzzleFromDB(dbres), id }),
-    []
-  );
-  const {
-    loading: loadingAuthored,
-    docs: authoredPuzzles,
-    loadMore: loadMoreAuthored,
-    hasMore: hasMoreAuthored,
-  } = usePaginatedQuery(authoredQuery, DBPuzzleV, 4, authoredMapper);
+  const [authoredSnap] = useCollection(authoredQuery);
 
   useEffect(() => {
-    if (!hasAuthoredPuzzle && authoredPuzzles.length) {
+    if (authoredSnap && authoredSnap.size >= 0) {
       setHasAuthoredPuzzle(true);
     }
-  }, [hasAuthoredPuzzle, authoredPuzzles.length]);
+  }, [authoredSnap]);
 
   return (
     <>
@@ -153,6 +141,17 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
           </li>
         </ul>
         <h2>Crossword Blog</h2>
+        {hasAuthoredPuzzle ? (
+          <CreatePageForm
+            css={{ display: constructorPage ? 'none' : 'block' }}
+          />
+        ) : (
+          <p>
+            Start sharing your own puzzles by creating one with the{' '}
+            <Link href="/construct">Crosshare constructor</Link> or{' '}
+            <Link href="/upload">uploading a .puz file.</Link>
+          </p>
+        )}
         {constructorPage ? (
           <>
             <p>
@@ -171,36 +170,6 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
               addProfilePic={() => setSettingProfilePic(true)}
               addCoverPic={() => setSettingCoverPic(true)}
             />
-          </>
-        ) : hasAuthoredPuzzle ? (
-          <>
-            <CreatePageForm />
-          </>
-        ) : (
-          <p>
-            Start sharing your own puzzles by creating one with the{' '}
-            <Link href="/construct">Crosshare constructor</Link> or{' '}
-            <Link href="/upload">uploading a .puz file.</Link>
-          </p>
-        )}
-        {authoredPuzzles.length ? (
-          <>
-            <h2>Your Constructions</h2>
-            {authoredPuzzles.map((puzzle) => (
-              <PuzzleResultLink
-                key={puzzle.id}
-                puzzle={puzzle}
-                showAuthor={false}
-                constructorPage={null}
-              />
-            ))}
-            {loadingAuthored ? (
-              <p>Loading...</p>
-            ) : (
-              hasMoreAuthored && (
-                <Button onClick={loadMoreAuthored} text="Older..." />
-              )
-            )}
           </>
         ) : (
           ''

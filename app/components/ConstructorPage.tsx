@@ -64,7 +64,7 @@ const BANNED_USERNAMES = {
   beginner: 1,
 };
 
-export const CreatePageForm = () => {
+export const CreatePageForm = (props: { className?: string }) => {
   const ctx = useContext(AuthContext);
   const [username, setUsername] = useState('');
   const [showError, setShowError] = useState(false);
@@ -125,15 +125,16 @@ export const CreatePageForm = () => {
   }
 
   if (created) {
-    return <p>Created successfully!</p>;
+    return <p className={props.className}>Created successfully!</p>;
   }
 
   return (
-    <>
+    <div className={props.className}>
       <form onSubmit={createPage}>
         <label css={{ width: '100%', margin: 0 }}>
           <p>
-            Create a constructor blog to keep all of your puzzles on one page.
+            Create a constructor blog to keep all of your public puzzles on one
+            page.
           </p>
           <p>
             Your blog&apos;s url (choose carefully, you can&apos;t change this
@@ -169,7 +170,7 @@ export const CreatePageForm = () => {
           )}
         </p>
       </form>
-    </>
+    </div>
   );
 };
 

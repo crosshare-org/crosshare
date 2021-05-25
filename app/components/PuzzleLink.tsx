@@ -11,6 +11,7 @@ import { pastDistanceToNow, timeString } from '../lib/utils';
 import { PlayWithoutUserT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { Markdown } from './Markdown';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 const PuzzleLink = (props: {
   fullWidth?: boolean;
@@ -179,11 +180,13 @@ export const PuzzleResultLink = ({
   showAuthor,
   constructorPage,
   title,
+  ...props
 }: {
   fullWidth?: boolean;
   puzzle: PuzzleResult;
   showDate?: boolean;
   showBlogPost?: boolean;
+  showPrivateStatus?: boolean;
   showAuthor: boolean;
   title?: string;
   constructorPage?: ConstructorPageT | null;
@@ -198,11 +201,30 @@ export const PuzzleResultLink = ({
   const publishDate = puzzle.isPrivateUntil
     ? new Date(puzzle.isPrivateUntil)
     : new Date(puzzle.publishTime);
-  const date = (
+  let date = (
     <span title={publishDate.toISOString()}>
       Published {pastDistanceToNow(publishDate)}
     </span>
   );
+  if (props.showPrivateStatus) {
+    if (puzzle.isPrivate) {
+      date = (
+        <span css={{ color: 'var(--error)' }} title={publishDate.toISOString()}>
+          Published privately {pastDistanceToNow(publishDate)}
+        </span>
+      );
+    } else if (
+      puzzle.isPrivateUntil &&
+      new Date(puzzle.isPrivateUntil) > new Date()
+    ) {
+      date = (
+        <span css={{ color: 'var(--error)' }} title={publishDate.toISOString()}>
+          Private, going public{' '}
+          {formatDistanceToNow(publishDate, { addSuffix: true })}
+        </span>
+      );
+    }
+  }
   let contents: ReactNode = null;
   if (showDate && showAuthor) {
     contents = (
