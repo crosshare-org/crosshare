@@ -1,11 +1,11 @@
 import { FaCloudUploadAlt, FaHammer } from 'react-icons/fa';
 import { Link } from '../components/Link';
-import { LARGE_AND_UP } from '../lib/style';
+import { LARGE_AND_UP, SMALL_AND_UP } from '../lib/style';
 
-const createShareButtonCss = {
+const getCreateShareButtonCss = (halfWidth: boolean) => ({
   width: '100%',
-  [LARGE_AND_UP]: {
-    width: '48%',
+  [halfWidth ? LARGE_AND_UP : SMALL_AND_UP]: {
+    width: 'calc(50% - 0.5em)',
   },
   padding: '1em',
   display: 'flex',
@@ -16,9 +16,11 @@ const createShareButtonCss = {
     backgroundColor: 'var(--link-light-bg-hover)',
   },
   borderRadius: '0.5em',
-};
+});
 
-export function CreateShareSection() {
+export function CreateShareSection(props: { halfWidth: boolean }) {
+  const createShareButtonCss = getCreateShareButtonCss(props.halfWidth);
+
   return (
     <>
       <h2>Create or Share a Puzzle</h2>
@@ -28,7 +30,7 @@ export function CreateShareSection() {
           alignItems: 'flex-start',
           justifyContent: 'space-between',
           flexDirection: 'column',
-          [LARGE_AND_UP]: {
+          [props.halfWidth ? LARGE_AND_UP : SMALL_AND_UP]: {
             flexDirection: 'row',
           },
         }}

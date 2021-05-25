@@ -7,7 +7,7 @@ import {
   useEffect,
   useCallback,
 } from 'react';
-import { FaUser, FaUserLock } from 'react-icons/fa';
+import { FaHammer, FaUser, FaUserLock } from 'react-icons/fa';
 
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 import { AuthContext } from './AuthContext';
@@ -292,6 +292,7 @@ export const TopBarLink = (props: TopBarLinkProps) => {
 };
 
 interface TopBarLinkAProps extends TopBarLinkCommonProps {
+  disabled?: boolean;
   href: string;
   as?: string;
 }
@@ -302,18 +303,23 @@ export const TopBarLinkA = (props: TopBarLinkAProps) => {
       href={props.href}
       title={props.hoverText || props.text}
       css={{
-        backgroundColor: 'transparent',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'clip',
+        backgroundColor: props.disabled ? 'var(--bg)' : 'transparent',
         border: 'none',
-        cursor: 'pointer',
+        cursor: props.disabled ? 'default' : 'pointer',
+        pointerEvents: props.disabled ? 'none' : 'auto',
         textDecoration: 'none',
-        display: 'inline',
         margin: 0,
         padding: '0 0.45em',
         color: 'var(--onprimary)',
         '&:hover, &:focus': {
           color: 'var(--onprimary)',
           textDecoration: 'none',
-          backgroundColor: 'var(--top-bar-hover)',
+          backgroundColor: props.disabled
+            ? 'var(--bg)'
+            : 'var(--top-bar-hover)',
         },
       }}
       onClick={props.onClick}
@@ -633,18 +639,41 @@ const NotificationLink = ({
   );
 };
 
-export const DefaultTopBar = ({ children }: { children?: ReactNode }) => {
-  const { isAdmin } = useContext(AuthContext);
+export const DefaultTopBar = ({
+  dashboardSelected,
+  accountSelected,
+  children,
+}: {
+  dashboardSelected?: boolean;
+  accountSelected?: boolean;
+  children?: ReactNode;
+}) => {
+  const ctxt = useContext(AuthContext);
 
   return (
     <TopBar>
       {children}
-      {isAdmin ? (
+      {ctxt.isAdmin ? (
         <TopBarLinkA href="/admin" icon={<FaUserLock />} text="Admin" />
       ) : (
         ''
       )}
-      <TopBarLinkA href="/account" icon={<FaUser />} text="Account" />
+      {ctxt.user ? (
+        <TopBarLinkA
+          disabled={dashboardSelected}
+          href="/dashboard"
+          icon={<FaHammer />}
+          text="Constructor Dashboard"
+        />
+      ) : (
+        ''
+      )}
+      <TopBarLinkA
+        disabled={accountSelected}
+        href="/account"
+        icon={<FaUser />}
+        text="Account"
+      />
     </TopBar>
   );
 };

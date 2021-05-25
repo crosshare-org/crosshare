@@ -2,4 +2,5 @@
 User-agent: *
 Disallow: /admin
 Disallow: /account
+Disallow: /dashboard
 Disallow: /api/pdf/

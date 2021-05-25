@@ -1,10 +1,10 @@
 import { useReducer, useCallback, useMemo, useState } from 'react';
 import useEventListener from '@use-it/event-listener';
-import { FaRegNewspaper, FaUser, FaUserLock, FaListOl } from 'react-icons/fa';
+import { FaRegNewspaper, FaListOl } from 'react-icons/fa';
 
 import { TimestampClass } from '../lib/firebaseWrapper';
 import { Emoji } from './Emoji';
-import { TopBarLink, TopBar, TopBarLinkA } from './TopBar';
+import { TopBarLink, DefaultTopBar } from './TopBar';
 import { ClueList } from './ClueList';
 import { AuthProps } from './AuthContext';
 import { ConstructorNotes } from './ConstructorNotes';
@@ -125,7 +125,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
         }}
       >
         <div css={{ flex: 'none' }}>
-          <TopBar>
+          <DefaultTopBar>
             <TopBarLink
               icon={<FaRegNewspaper />}
               text="Publish"
@@ -142,15 +142,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
               text="Edit"
               onClick={() => setClueMode(true)}
             />
-            {props.isAdmin ? (
-              <>
-                <TopBarLinkA href="/admin" icon={<FaUserLock />} text="Admin" />
-              </>
-            ) : (
-              ''
-            )}
-            <TopBarLinkA href="/account" icon={<FaUser />} text="Account" />
-          </TopBar>
+          </DefaultTopBar>
         </div>
         {state.toPublish ? (
           <PublishOverlay

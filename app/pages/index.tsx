@@ -122,7 +122,7 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
             </p>
           </div>
           <div css={{ flex: '50%' }}>
-            <CreateShareSection />
+            <CreateShareSection halfWidth={true} />
           </div>
         </div>
         <h2>Featured Puzzles</h2>

@@ -102,7 +102,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         <title>Account | Crosshare</title>
         <meta name="robots" content="noindex" />
       </Head>
-      <DefaultTopBar />
+      <DefaultTopBar accountSelected />
       <div css={{ margin: '1em' }}>
         <h2>Account</h2>
         <p>
