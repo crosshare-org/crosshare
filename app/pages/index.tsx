@@ -125,6 +125,7 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
             <CreateShareSection halfWidth={true} />
           </div>
         </div>
+        <hr css={{ margin: '2em 0' }} />
         <h2>Featured Puzzles</h2>
         {featured.map((p, i) => (
           <PuzzleResultLink
@@ -138,6 +139,7 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
         <p>
           <Link href="/featured/1">Previous featured puzzles &rarr;</Link>
         </p>
+        <hr css={{ margin: '2em 0' }} />
         <UnfinishedPuzzleList user={user} />
         <p css={{ marginTop: '1em', textAlign: 'center' }}>
           If you have questions or suggestions please contact us via{' '}

@@ -8,7 +8,7 @@ import { puzzleFromDB } from '../lib/types';
 import { usePaginatedQuery } from '../lib/usePagination';
 import { DBPuzzleV } from '../lib/dbtypes';
 import { PuzzleResultLink } from '../components/PuzzleLink';
-import { Button, ButtonAsLink } from '../components/Buttons';
+import { ButtonAsLink } from '../components/Buttons';
 import { Link } from '../components/Link';
 import { CreatePageForm } from '../components/ConstructorPage';
 

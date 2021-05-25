@@ -140,6 +140,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
             />
           </li>
         </ul>
+        <hr css={{ margin: '2em 0' }} />
         <h2>Crossword Blog</h2>
         {hasAuthoredPuzzle ? (
           <CreatePageForm
