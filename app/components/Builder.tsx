@@ -15,6 +15,7 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   FaRegNewspaper,
+  FaHammer,
   FaFileImport,
   FaUser,
   FaListOl,
@@ -515,7 +516,8 @@ const NewPuzzleForm = (props: { dispatch: Dispatch<NewPuzzleAction> }) => {
       <h2>Start a new puzzle</h2>
       <p css={{ color: 'var(--error)' }}>
         WARNING: all progress on your current puzzle will be permanently lost.
-        If you want to keep it, please publish the current puzzle first.
+        If you want to keep it, please publish the current puzzle or export a
+        .puz file first.
       </p>
       <form onSubmit={startPuzzle}>
         <div /* eslint-disable-line */
@@ -783,6 +785,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   if (clueMode) {
     return (
       <ClueMode
+        user={props.user}
         isAdmin={props.isAdmin}
         state={state}
         puzzleId={state.id}
@@ -1585,6 +1588,11 @@ const GridMode = ({
               ) : (
                 ''
               )}
+              <TopBarDropDownLinkA
+                href="/dashboard"
+                icon={<FaHammer />}
+                text="Constructor Dashboard"
+              />
               <TopBarDropDownLinkA
                 href="/account"
                 icon={<FaUser />}

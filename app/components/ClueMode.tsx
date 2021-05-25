@@ -12,6 +12,7 @@ import {
   SetPrivateAction,
   SetGuestConstructorAction,
   UpdateContestAction,
+  PublishAction,
 } from '../reducers/reducer';
 import { TopBarLink, TopBar } from './TopBar';
 import { Direction } from '../lib/types';
@@ -19,14 +20,16 @@ import { ButtonAsLink, Button } from './Buttons';
 import { COVER_PIC } from '../lib/style';
 import { TimestampClass } from '../lib/firebaseWrapper';
 import { ToolTipText } from './ToolTipText';
-import { FaInfoCircle } from 'react-icons/fa';
+import { FaInfoCircle, FaRegNewspaper } from 'react-icons/fa';
 import lightFormat from 'date-fns/lightFormat';
-
+import { PublishOverlay } from './PublishOverlay';
+import { Overlay } from './Overlay';
 import dynamic from 'next/dynamic';
 import type { ImageCropper as ImageCropperType } from './ImageCropper';
 import type { SuggestOverlay as SuggestOverlayType } from './ClueSuggestionOverlay';
 import { DateTimePicker } from './DateTimePicker';
 import { MarkdownPreview } from './MarkdownPreview';
+import type firebase from 'firebase/app';
 
 const MAX_STRING_LENGTH = 2048;
 
@@ -153,11 +156,12 @@ interface ClueModeProps {
   state: BuilderState;
   dispatch: Dispatch<PuzzleAction>;
   isAdmin: boolean;
+  user: firebase.User;
 }
-export const ClueMode = (props: ClueModeProps) => {
+export const ClueMode = ({ state, ...props }: ClueModeProps) => {
   const [settingCoverPic, setSettingCoverPic] = useState(false);
   const [contestAnswerInProg, setContestAnswerInProg] = useState('');
-  const privateUntil = props.state.isPrivateUntil?.toDate();
+  const privateUntil = state.isPrivateUntil?.toDate();
 
   const count: Record<string, number> = {};
 
@@ -184,11 +188,62 @@ export const ClueMode = (props: ClueModeProps) => {
     <>
       <TopBar>
         <TopBarLink
+          icon={<FaRegNewspaper />}
+          text="Publish"
+          onClick={() => {
+            const a: PublishAction = {
+              type: 'PUBLISH',
+              publishTimestamp: TimestampClass.now(),
+            };
+            props.dispatch(a);
+          }}
+        />
+        <TopBarLink
           icon={<SpinnerFinished />}
           text="Back to Grid"
           onClick={props.exitClueMode}
         />
       </TopBar>
+      {state.toPublish ? (
+        <PublishOverlay
+          id={state.id}
+          toPublish={state.toPublish}
+          warnings={state.publishWarnings}
+          user={props.user}
+          cancelPublish={() => props.dispatch({ type: 'CANCELPUBLISH' })}
+        />
+      ) : (
+        ''
+      )}
+      {state.publishErrors.length ? (
+        <Overlay
+          closeCallback={() => props.dispatch({ type: 'CLEARPUBLISHERRORS' })}
+        >
+          <>
+            <div>Please fix the following errors and try publishing again:</div>
+            <ul>
+              {state.publishErrors.map((s, i) => (
+                <li key={i}>{s}</li>
+              ))}
+            </ul>
+            {state.publishWarnings.length ? (
+              <>
+                <div>Warnings:</div>
+                <ul>
+                  {state.publishWarnings.map((s, i) => (
+                    <li key={i}>{s}</li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              ''
+            )}
+          </>
+        </Overlay>
+      ) : (
+        ''
+      )}
+
       <div css={{ padding: '1em' }}>
         <label css={{ width: '100%' }}>
           <h2>Title</h2>
@@ -361,7 +416,7 @@ export const ClueMode = (props: ClueModeProps) => {
                 <input
                   css={{ marginRight: '1em' }}
                   type="checkbox"
-                  checked={props.state.isContestPuzzle}
+                  checked={state.isContestPuzzle}
                   onChange={(e) => {
                     const spa: UpdateContestAction = {
                       type: 'CONTEST',
@@ -378,7 +433,7 @@ export const ClueMode = (props: ClueModeProps) => {
                 />
               </label>
             </div>
-            {props.state.isContestPuzzle ? (
+            {state.isContestPuzzle ? (
               <p css={{ marginLeft: '1.5em' }}>
                 <h4>Contest prompt (required):</h4>
                 <p>
@@ -400,9 +455,9 @@ export const ClueMode = (props: ClueModeProps) => {
                     Contest solution(s) - must specify at least one valid
                     solution:
                   </h4>
-                  {props.state.contestAnswers?.length ? (
+                  {state.contestAnswers?.length ? (
                     <ul>
-                      {props.state.contestAnswers.map((a) => (
+                      {state.contestAnswers.map((a) => (
                         <li key={a}>
                           {a} (
                           <ButtonAsLink
@@ -447,7 +502,7 @@ export const ClueMode = (props: ClueModeProps) => {
                 <textarea
                   css={{ width: '100%', display: 'block' }}
                   placeholder="Your explainer text (markdown format)"
-                  value={props.state.contestExplanation || ''}
+                  value={state.contestExplanation || ''}
                   onChange={(e) => {
                     const sta: UpdateContestAction = {
                       type: 'CONTEST',
@@ -456,7 +511,7 @@ export const ClueMode = (props: ClueModeProps) => {
                     props.dispatch(sta);
                   }}
                 />
-                <MarkdownPreview markdown={props.state.contestExplanation} />
+                <MarkdownPreview markdown={state.contestExplanation} />
                 <h4 css={{ marginTop: '1em' }}>Contest prize</h4>
                 <p>
                   If the contest has a prize solvers can choose to include their
@@ -467,7 +522,7 @@ export const ClueMode = (props: ClueModeProps) => {
                     <input
                       css={{ marginRight: '1em' }}
                       type="checkbox"
-                      checked={props.state.contestHasPrize}
+                      checked={state.contestHasPrize}
                       onChange={(e) => {
                         const spa: UpdateContestAction = {
                           type: 'CONTEST',
@@ -492,7 +547,7 @@ export const ClueMode = (props: ClueModeProps) => {
             <input
               css={{ marginRight: '1em' }}
               type="checkbox"
-              checked={props.state.isPrivate}
+              checked={state.isPrivate}
               onChange={(e) => {
                 const spa: SetPrivateAction = {
                   type: 'SETPRIVATE',
@@ -514,7 +569,7 @@ export const ClueMode = (props: ClueModeProps) => {
             <input
               css={{ marginRight: '1em' }}
               type="checkbox"
-              checked={props.state.isPrivateUntil !== null}
+              checked={state.isPrivateUntil !== null}
               onChange={(e) => {
                 const spa: SetPrivateAction = {
                   type: 'SETPRIVATE',
