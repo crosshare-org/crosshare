@@ -306,6 +306,7 @@ export const TopBarLinkA = (props: TopBarLinkAProps) => {
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'clip',
+        height: '100%',
         backgroundColor: props.disabled ? 'var(--bg)' : 'transparent',
         border: 'none',
         cursor: props.disabled ? 'default' : 'pointer',
