@@ -106,8 +106,8 @@ test('create constructor page', async () => {
   );
 
   expect(await s.findByText(/blog is live at/i)).toBeVisible();
+  expect(await s.findByPlaceholderText(/username/i)).not.toBeVisible();
   expect(s.queryByText(/Start sharing your own puzzles/i)).toBeNull();
-  expect(s.queryByPlaceholderText(/username/i)).toBeNull();
 
   app.delete();
   adminApp.delete();
