@@ -515,17 +515,21 @@ export function getRefs(
       }
     }
     const lowerClue = e.clue.toLowerCase();
-    if (
-      lowerClue.includes(' starred clues') ||
-      lowerClue.includes(' starred answers') ||
-      lowerClue.includes(' starred entries') ||
-      lowerClue.includes(' starred clue') ||
-      lowerClue.includes(' starred answer') ||
-      lowerClue.includes(' starred entry')
-    ) {
-      for (const [idx, otherE] of grid.entries.entries()) {
-        if (otherE.clue.startsWith('*') || otherE.clue.endsWith('*')) {
-          refs.add(idx);
+    for (const starTerm of ['starred', '*ed']) {
+      for (const entryTerm of [
+        'clues',
+        'answers',
+        'entries',
+        'clue',
+        'answer',
+        'entry',
+      ]) {
+        if (lowerClue.includes(` ${starTerm} ${entryTerm}`)) {
+          for (const [idx, otherE] of grid.entries.entries()) {
+            if (otherE.clue.startsWith('*') || otherE.clue.endsWith('*')) {
+              refs.add(idx);
+            }
+          }
         }
       }
     }
