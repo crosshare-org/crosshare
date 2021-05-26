@@ -177,6 +177,8 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>(
   }
 );
 
+SquareAndCols.displayName = 'SquareAndCols';
+
 interface TwoColProps {
   left: ReactNode;
   right: ReactNode;
