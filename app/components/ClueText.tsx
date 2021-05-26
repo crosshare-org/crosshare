@@ -54,5 +54,5 @@ export const ClueText = (props: ClueTextProps) => {
   if (offset < text.length) {
     parts.push(<Fragment key={i++}>{text.slice(offset)}</Fragment>);
   }
-  return <div>{parts}</div>;
+  return <>{parts}</>;
 };

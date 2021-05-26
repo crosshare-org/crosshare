@@ -51,6 +51,7 @@ interface SquareAndColsProps {
   aspectRatio?: number;
   left: ReactNode;
   right: ReactNode;
+  header?: ReactNode;
   leftIsActive: boolean;
   dispatch: Dispatch<KeypressAction>;
   waitToResize?: boolean;
@@ -91,6 +92,7 @@ export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>(
           }}
         >
           <Square
+            header={props.header}
             waitToResize={props.waitToResize}
             parentRef={parentRef}
             aspectRatio={props.aspectRatio || 1}

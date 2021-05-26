@@ -29,6 +29,7 @@ import {
   FaEdit,
   FaRegFile,
 } from 'react-icons/fa';
+import { ClueText } from './ClueText';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 
@@ -86,7 +87,7 @@ import { timeString } from '../lib/utils';
 import { App, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
 import type firebase from 'firebase/app';
 import { Emoji } from './Emoji';
-import { SMALL_AND_UP_RULES } from '../lib/style';
+import { SMALL_AND_UP_RULES, SQUARE_HEADER_HEIGHT } from '../lib/style';
 import { Keyboard } from './Keyboard';
 import { useRouter } from 'next/router';
 import { Button } from './Buttons';
@@ -598,6 +599,50 @@ export const Puzzle = ({
             />
           );
         }}
+        header={
+          <div
+            css={{
+              height: SQUARE_HEADER_HEIGHT,
+              fontSize: 18,
+              lineHeight: '24px',
+              backgroundColor: 'var(--lighter)',
+              overflowY: 'scroll',
+              scrollbarWidth: 'none',
+              display: 'flex',
+            }}
+          >
+            {entry ? (
+              <div css={{ margin: 'auto 1em' }}>
+                <span
+                  css={{
+                    fontWeight: 'bold',
+                    paddingRight: '0.5em',
+                  }}
+                >
+                  {entry.labelNumber}
+                  {entry.direction === Direction.Across ? 'A' : 'D'}
+                </span>
+                <span
+                  css={{
+                    color: shouldConceal ? 'transparent' : 'var(--text)',
+                    textShadow: shouldConceal
+                      ? '0 0 1em var(--conceal-text)'
+                      : '',
+                  }}
+                >
+                  <ClueText
+                    refPositions={refPositions}
+                    entryIndex={entry.index}
+                    allEntries={state.grid.entries}
+                    grid={state.grid}
+                  />
+                </span>
+              </div>
+            ) : (
+              ''
+            )}
+          </div>
+        }
         left={
           <ClueList
             wasEntryClick={state.wasEntryClick}
