@@ -40,7 +40,6 @@ export const Square = (props: SquareProps) => {
 
   return (
     <div
-      aria-label="grid"
       css={{
         flex: 'none',
         width: outWidth,
@@ -63,7 +62,10 @@ export const Square = (props: SquareProps) => {
       >
         {props.header}
       </div>
-      <div css={{ width: outWidth, height: outHeight }}>
+      <div
+        aria-label="grid"
+        css={{ flex: 'none', width: outWidth, height: outHeight }}
+      >
         {props.contents(outWidth, outHeight)}
       </div>
     </div>

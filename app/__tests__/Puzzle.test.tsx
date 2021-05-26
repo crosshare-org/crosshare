@@ -260,7 +260,7 @@ test('daily mini from 5/19/20', async () => {
 
   // After a naive fix of the above issue we were still having problems on click
   fireEvent.click(getByLabelText('cell0x3'));
-  const clueOne = getAllByText(/word with cod/i)[0]?.parentElement
+  const clueOne = getAllByText(/word with cod/i)[1]?.parentElement
     ?.parentElement?.parentElement?.parentElement;
   expect(clueOne).toHaveStyleRule('background-color', 'var(--lighter)');
 });

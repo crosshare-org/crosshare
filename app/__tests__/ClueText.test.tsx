@@ -26,12 +26,14 @@ test('Highlighting for different types of clues', async () => {
   console.log(refPositions);
   for (let i = 0; i < 4; i += 1) {
     const { container } = render(
-      <ClueText
-        grid={cluedGrid}
-        allEntries={cluedGrid.entries}
-        entryIndex={i}
-        refPositions={refPositions}
-      />,
+      <div>
+        <ClueText
+          grid={cluedGrid}
+          allEntries={cluedGrid.entries}
+          entryIndex={i}
+          refPositions={refPositions}
+        />
+      </div>,
       {}
     );
     expect(container).toMatchSnapshot();

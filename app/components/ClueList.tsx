@@ -148,12 +148,14 @@ const ClueListItem = memo(function ClueListItem({
             }}
           >
             {props.allEntries && props.refPositions ? (
-              <ClueText
-                refPositions={props.refPositions}
-                entryIndex={props.entry.index}
-                allEntries={props.allEntries}
-                grid={props.grid}
-              />
+              <div>
+                <ClueText
+                  refPositions={props.refPositions}
+                  entryIndex={props.entry.index}
+                  allEntries={props.allEntries}
+                  grid={props.grid}
+                />
+              </div>
             ) : (
               <div>{getClueText(props.entry)}</div>
             )}
