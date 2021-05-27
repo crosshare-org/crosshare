@@ -26,13 +26,17 @@ export const ConstructorPageV = t.intersection([
     pt: t.string,
     /** constructor signature */
     sig: t.string,
-  })
+  }),
 ]);
-export interface ConstructorPageT extends Omit<t.TypeOf<typeof ConstructorPageV>, 't'> {
-  id: string,
+export interface ConstructorPageT
+  extends Omit<t.TypeOf<typeof ConstructorPageV>, 't'> {
+  id: string;
 }
 
-export function validate(cp: unknown, username: string): ConstructorPageT | null {
+export function validate(
+  cp: unknown,
+  username: string
+): ConstructorPageT | null {
   const validationResult = ConstructorPageV.decode(cp);
   if (isRight(validationResult)) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

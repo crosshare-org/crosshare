@@ -333,7 +333,7 @@ export const Puzzle = ({
           : state.bankedSeconds +
             (new Date().getTime() - state.currentTimeWindowStart) / 1000;
 
-      const play: PlayWithoutUserT = {
+      const playForUser: PlayWithoutUserT = {
         c: puzzle.id,
         n: puzzle.title,
         ua: updatedAt,
@@ -347,8 +347,14 @@ export const Puzzle = ({
         t: playTime,
         ch: state.didCheat,
         f: state.success,
+        ...(play && {
+          ct_sub: play.ct_sub,
+          ct_t: play.ct_t,
+          ct_n: play.ct_n,
+          ct_em: play.ct_em,
+        }),
       };
-      cachePlay(user, puzzle.id, play);
+      cachePlay(user, puzzle.id, playForUser);
     },
     [
       state.loadedPlayState,
@@ -365,6 +371,7 @@ export const Puzzle = ({
       puzzle.title,
       state.bankedSeconds,
       state.currentTimeWindowStart,
+      play,
     ]
   );
 
@@ -1007,6 +1014,7 @@ export const Puzzle = ({
             {...overlayBaseProps}
             overlayType={OverlayType.Success}
             contestSubmission={play?.ct_sub}
+            contestHasPrize={puzzle.contestHasPrize}
           />
         ) : (
           ''

@@ -109,7 +109,7 @@ const DBPlayLoader = (
       return [null, undefined];
     }
     const validationResult = PlayWithoutUserV.decode(
-      doc.data({ serverTimestamps: 'previous' })
+      doc.data({ serverTimestamps: 'estimate' })
     );
     if (isRight(validationResult)) {
       cachePlay(

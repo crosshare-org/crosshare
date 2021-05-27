@@ -3,7 +3,7 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import equal from 'fast-deep-equal';
 import type firebase from 'firebase/app';
-import { App } from './firebaseWrapper';
+import { App, ServerTimestamp } from './firebaseWrapper';
 import {
   PlayWithoutUserT,
   PlayWithoutUserV,
@@ -111,6 +111,27 @@ export async function getPlayFromDB(
     console.error(PathReporter.report(playResult).join(','));
     return Promise.reject('Malformed play');
   }
+}
+
+export async function writeMetaSubmission(
+  user: firebase.User,
+  puzzleId: string,
+  submission: string,
+  displayName: string,
+  prizeEmail: string | undefined
+) {
+  const docId = puzzleId + '-' + user.uid;
+  return App.firestore()
+    .collection('p')
+    .doc(docId)
+    .update({
+      c: puzzleId,
+      u: user.uid,
+      ct_sub: submission,
+      ct_t: ServerTimestamp,
+      ct_n: displayName,
+      ...(prizeEmail && { ct_em: prizeEmail }),
+    });
 }
 
 export async function writePlayToDB(

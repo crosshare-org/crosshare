@@ -11,7 +11,7 @@ import { NextPuzzleLink } from './Puzzle';
 import { Overlay } from './Overlay';
 import { PuzzleHeading } from './PuzzleHeading';
 import { Button } from './Buttons';
-import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
+import { MetaSubmission } from './MetaSubmission';
 
 const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {
@@ -46,6 +46,7 @@ export interface PuzzleOverlayBaseProps {
 interface SuccessOverlayProps extends PuzzleOverlayBaseProps {
   overlayType: OverlayType.Success;
   contestSubmission?: string;
+  contestHasPrize?: boolean;
 }
 interface BeginPauseProps extends PuzzleOverlayBaseProps {
   overlayType: OverlayType.BeginPause;
@@ -56,8 +57,9 @@ interface BeginPauseProps extends PuzzleOverlayBaseProps {
 
 export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
   const isEmbed = useContext(EmbedContext);
-  const isContest =
-    props.puzzle.contestAnswers && props.puzzle.contestAnswers.length > 0;
+  const isContest = props.puzzle.contestAnswers
+    ? props.puzzle.contestAnswers.length > 0
+    : false;
   return (
     <Overlay
       coverImage={props.coverImage}
@@ -138,46 +140,19 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                 </p>
               </>
             )}
-            {isEmbed ? (
-              ''
-            ) : (
-              <div>
-                <PrevDailyMiniLink nextPuzzle={props.nextPuzzle} />
-              </div>
-            )}
           </>
         )}
       </div>
       {props.overlayType === OverlayType.Success &&
       isContest &&
+      props.puzzle.contestAnswers &&
       props.user?.uid !== props.puzzle.authorId ? (
-          !props.user || props.user.isAnonymous ? (
-            <>
-              <div css={{ marginTop: '1em', textAlign: 'center' }}>
-                <p>
-                This is a meta puzzle! Sign in with google to submit your
-                solution, view the solution, view the leaderboard, and read or
-                submit comments:
-                </p>
-                {props.user ? (
-                  <GoogleLinkButton user={props.user} />
-                ) : (
-                  <GoogleSignInButton />
-                )}
-              </div>
-            </>
-          ) : !props.contestSubmission ? (
-            <>
-              <div css={{ marginTop: '1em', textAlign: 'center' }}>
-                <p>
-                This is a meta puzzle! Submit your solution to see if you got
-                it, view the leaderboard, and read or submit comments:
-                </p>
-              </div>
-            </>
-          ) : (
-            <></>
-          )
+          <MetaSubmission
+            hasPrize={!!props.contestHasPrize}
+            contestSubmission={props.contestSubmission}
+            puzzleId={props.puzzle.id}
+            solutions={props.puzzle.contestAnswers}
+          />
         ) : (
           ''
         )}
@@ -217,6 +192,13 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           puzzleAuthorId={props.puzzle.authorId}
           comments={props.puzzle.comments}
         />
+        {isEmbed ? (
+          ''
+        ) : (
+          <div css={{ textAlign: 'center' }}>
+            <PrevDailyMiniLink nextPuzzle={props.nextPuzzle} />
+          </div>
+        )}
       </div>
       {isEmbed ? (
         <div css={{ marginTop: '2em', textAlign: 'center' }}>
