@@ -492,26 +492,6 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                     text="Add Solution"
                   />
                 </form>
-                <h4 css={{ marginTop: '1em' }}>
-                  Contest explanation (optional):
-                </h4>
-                <p>
-                  If specified, the explainer for the contest solution is shown
-                  after a user submits their contest answer.
-                </p>
-                <textarea
-                  css={{ width: '100%', display: 'block' }}
-                  placeholder="Your explainer text (markdown format)"
-                  value={state.contestExplanation || ''}
-                  onChange={(e) => {
-                    const sta: UpdateContestAction = {
-                      type: 'CONTEST',
-                      explanation: sanitizeBlogPost(e.target.value),
-                    };
-                    props.dispatch(sta);
-                  }}
-                />
-                <MarkdownPreview markdown={state.contestExplanation} />
                 <h4 css={{ marginTop: '1em' }}>Contest prize</h4>
                 <p>
                   If the contest has a prize solvers can choose to include their

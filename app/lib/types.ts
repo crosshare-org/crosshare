@@ -131,7 +131,6 @@ export interface PuzzleT {
   isPrivateUntil: number | null;
   contestAnswers: Array<string> | null;
   contestHasPrize: boolean;
-  contestExplanation: string | null;
 }
 
 export interface PuzzleResult extends PuzzleT {
@@ -210,7 +209,6 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     isPrivateUntil: dbPuzzle.pvu ? dbPuzzle.pvu.toMillis() : null,
     contestAnswers: dbPuzzle.ct_ans || null,
     contestHasPrize: dbPuzzle.ct_prz || false,
-    contestExplanation: dbPuzzle.ct_exp || null,
   };
 }
 
@@ -234,7 +232,6 @@ const PuzzleInProgressBaseV = t.intersection([
     explanations: t.record(t.string, t.string),
     contestAnswers: t.array(t.string),
     contestHasPrize: t.boolean,
-    contestExplanation: t.string,
   }),
 ]);
 

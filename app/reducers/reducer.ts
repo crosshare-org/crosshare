@@ -102,7 +102,6 @@ export interface BuilderState extends GridInterfaceState {
   isContestPuzzle: boolean;
   contestAnswers: Array<string> | null;
   contestHasPrize: boolean;
-  contestExplanation: string | null;
   showDownloadLink: boolean;
 }
 function isBuilderState(state: GridInterfaceState): state is BuilderState {
@@ -133,7 +132,6 @@ export function initialBuilderStateFromSaved(
     guestConstructor: saved?.guestConstructor || null,
     contestAnswers: saved?.contestAnswers || null,
     contestHasPrize: saved?.contestHasPrize || false,
-    contestExplanation: saved?.contestExplanation || null,
   });
 }
 
@@ -156,7 +154,6 @@ export function initialBuilderState({
   guestConstructor,
   contestAnswers,
   contestHasPrize,
-  contestExplanation,
 }: {
   id: string | null;
   width: number;
@@ -176,7 +173,6 @@ export function initialBuilderState({
   isPrivateUntil: number | null;
   contestAnswers: Array<string> | null;
   contestHasPrize: boolean;
-  contestExplanation: string | null;
 }) {
   const initialGrid = fromCells({
     mapper: (e) => e,
@@ -225,7 +221,6 @@ export function initialBuilderState({
     },
     isContestPuzzle: contestAnswers ? contestAnswers.length > 0 : false,
     contestAnswers,
-    contestExplanation,
     contestHasPrize,
     showDownloadLink: false,
   });
@@ -324,7 +319,6 @@ export interface UpdateContestAction extends PuzzleAction {
   addAnswer?: string;
   removeAnswer?: string;
   hasPrize?: boolean;
-  explanation?: string | null;
 }
 function isUpdateContestAction(
   action: PuzzleAction
@@ -956,9 +950,6 @@ export function builderReducer(
       ...(action.hasPrize !== undefined && {
         contestHasPrize: action.hasPrize,
       }),
-      ...(action.explanation !== undefined && {
-        contestExplanation: action.explanation,
-      }),
     };
   }
   if (isClickedFillAction(action)) {
@@ -1020,7 +1011,6 @@ export function builderReducer(
       isPrivate: false,
       isPrivateUntil: null,
       contestAnswers: null,
-      contestExplanation: null,
       contestHasPrize: false,
     });
   }
@@ -1102,7 +1092,6 @@ export function builderReducer(
         state.contestAnswers?.length && {
         ct_ans: state.contestAnswers,
         ct_prz: state.contestHasPrize || false,
-        ct_exp: state.contestExplanation?.trim() || undefined,
       }),
     };
     if (state.grid.highlighted.size) {

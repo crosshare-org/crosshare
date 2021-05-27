@@ -692,28 +692,6 @@ const PuzzleEditor = ({
                 />
                 {puzzle.contestAnswers?.length ? (
                   <>
-                    <p>
-                      You can provide an explanation for the contest that is
-                      only shown after a solver submits their contest answer:
-                    </p>
-                    <EditableText
-                      textarea={true}
-                      title="Contest Explanation (markdown format)"
-                      deletable={true}
-                      css={{ marginBottom: '1em' }}
-                      text={puzzle.contestExplanation}
-                      sanitize={sanitizeBlogPost}
-                      handleSubmit={(post) =>
-                        App.firestore()
-                          .doc(`c/${puzzle.id}`)
-                          .update({ ct_exp: post })
-                      }
-                      handleDelete={() =>
-                        App.firestore()
-                          .doc(`c/${puzzle.id}`)
-                          .update({ ct_exp: DeleteSentinal })
-                      }
-                    />
                     {puzzle.contestHasPrize ? (
                       <>
                         <p>

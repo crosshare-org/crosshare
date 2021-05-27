@@ -46,7 +46,6 @@ const testPuzzle: ServerPuzzleResult = {
   title: 'Without company',
   size: { rows: 5, cols: 5 },
   contestAnswers: null,
-  contestExplanation: null,
   contestHasPrize: false,
   clues: [
     {
@@ -145,7 +144,6 @@ const dailymini_5_19: ServerPuzzleResult = {
   isPrivateUntil: null,
   blogPost: null,
   contestAnswers: null,
-  contestExplanation: null,
   contestHasPrize: false,
   authorId: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
   category: 'dailymini',

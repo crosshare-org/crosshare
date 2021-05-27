@@ -141,7 +141,6 @@ type BuilderProps = WithOptional<
   | 'constructorNotes'
   | 'blogPost'
   | 'contestAnswers'
-  | 'contestExplanation'
   | 'contestHasPrize'
   | 'guestConstructor'
   | 'isPrivate'
@@ -302,7 +301,6 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     guestConstructor: saved?.guestConstructor || null,
     contestAnswers: saved?.contestAnswers || null,
     contestHasPrize: saved?.contestHasPrize || false,
-    contestExplanation: saved?.contestExplanation || null,
   });
 };
 
