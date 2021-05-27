@@ -15,6 +15,7 @@ import { EmbedContext } from './EmbedContext';
 export const PuzzleHeading = (props: {
   publishTime: number;
   showTip: boolean;
+  isContest: boolean;
   constructorNotes: string | null;
   coverImage: string | null | undefined;
   profilePic: string | null | undefined;
@@ -71,7 +72,10 @@ export const PuzzleHeading = (props: {
       />
       {props.constructorNotes ? (
         <div css={{ textAlign: 'center' }}>
-          <ConstructorNotes notes={props.constructorNotes} />
+          <ConstructorNotes
+            isContest={props.isContest}
+            notes={props.constructorNotes}
+          />
         </div>
       ) : (
         ''
