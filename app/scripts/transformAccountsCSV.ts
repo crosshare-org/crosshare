@@ -12,6 +12,7 @@ readFile('accounts.csv').then((binary) => {
   const csv: Array<Array<string>> = parse(binary, {
     quote: null,
     escape: null,
+    relax_column_count: true,
   });
   const out = csv
     .filter((r) => r[1])
