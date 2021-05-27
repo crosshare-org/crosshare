@@ -355,8 +355,16 @@ export default function BuilderPage() {
             >
               Peter Broda’s list
             </a>{' '}
-            with some additional words that have frequently appeared in NYT
-            puzzles.
+            and{' '}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://twitter.com/ewojcik"
+            >
+              Erica’s
+            </a>{' '}
+            expanded name list with some additional words that have frequently
+            appeared in NYT puzzles.
           </p>
           <h3>Can I use my own wordlist?</h3>
           <p>Custom wordlists / wordlist editing will be released soon.</p>
@@ -376,8 +384,12 @@ export default function BuilderPage() {
             first class constructing experience on your iPad. If you have any
             issues on any device, please get in touch and let me know!
           </p>
-          <h3>How come I can only work on one puzzle at a time?</h3>
-          <p>Saving and loading multiple puzzles is coming soon.</p>
+          <h3>Can I work on more than one puzzle at a time?</h3>
+          <p>
+            Saving and loading multiple puzzles is coming soon. In the meantime
+            you can use the export/import .puz features to save a local copy of
+            a puzzle in progress and then import it again later.
+          </p>
           <h3>Will Crosshare ever have an offline mode?</h3>
           <p>
             I know I’m sounding like a broken record, but this is coming soon
@@ -385,10 +397,11 @@ export default function BuilderPage() {
           </p>
           <h3>Can I export my puzzle as a PDF or .puz file?</h3>
           <p>
-            After publishing a puzzle both PDF and .puz become available for
-            solvers. To get a nicely formatted PDF for printing: click “More”
-            and then “Print puzzle”. To download a .puz click “More” and then
-            “Download .puz”
+            You can export a .puz file directly from the constructor. After
+            publishing a puzzle both PDF and .puz become available for solvers.
+            To get a nicely formatted PDF for printing: click “More” and then
+            “Print puzzle”. To download a .puz click “More” and then “Download
+            .puz”
           </p>
           <h3>What types of grid symmetry are supported?</h3>
           <p>ALL OF THEM.</p>
