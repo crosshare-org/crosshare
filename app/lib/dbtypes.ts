@@ -99,6 +99,12 @@ const DBPuzzleMandatoryV = t.type({
   /** grid (solution) */
   g: t.array(t.string),
 });
+const ContestWinner = t.type({
+  /** name */
+  n: t.string,
+  /** submitted time */
+  t: timestamp,
+});
 const DBPuzzleOptionalV = t.partial({
   /** highlighted cell indexes */
   hs: t.array(t.number),
@@ -128,6 +134,8 @@ const DBPuzzleOptionalV = t.partial({
   ct_ans: t.array(t.string),
   /** the contest has a prize so give ppl option to include email address in submission */
   ct_prz: t.boolean,
+  /** contests winners */
+  ct_win: t.array(ContestWinner),
 });
 export const DBPuzzleV = t.intersection([
   DBPuzzleMandatoryV,
@@ -263,6 +271,19 @@ export function prettifyDateString(dateString: string): string {
   return parseInt(groups[2]) + 1 + '/' + parseInt(groups[3]) + '/' + groups[1];
 }
 
+const MetaSubmission = t.type({
+  /** display name */
+  n: t.string,
+  /** uid */
+  u: t.string,
+  /** submission */
+  s: t.string,
+  /** submit time */
+  t: timestamp,
+  /** email */
+  e: t.union([t.string, t.null]),
+});
+
 export const PuzzleStatsV = t.intersection([
   t.type({
     /** author id, denormalized for security rules purposes. */
@@ -285,6 +306,8 @@ export const PuzzleStatsV = t.intersection([
   t.partial({
     /** secret key for sharing stats access */
     sct: t.string,
+    /** meta submissions */
+    ct_subs: t.array(MetaSubmission),
   }),
 ]);
 export type PuzzleStatsT = t.TypeOf<typeof PuzzleStatsV>;

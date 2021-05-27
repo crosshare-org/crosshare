@@ -12,6 +12,7 @@ import { Overlay } from './Overlay';
 import { PuzzleHeading } from './PuzzleHeading';
 import { Button } from './Buttons';
 import { MetaSubmission } from './MetaSubmission';
+import { lightFormat } from 'date-fns';
 
 const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {
@@ -170,9 +171,21 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           <>
             <div css={{ marginTop: '1em' }}>
               <h4 css={{ borderBottom: '1px solid var(--black)' }}>
-                Contest Leaderboard (updated hourly)
+                Leaderboard (updated hourly)
               </h4>
-              <p>TODO</p>
+              {props.puzzle.contestWinners?.length ? (
+                <ul>
+                  {props.puzzle.contestWinners
+                    .sort((w1, w2) => w1.t - w2.t)
+                    .map((w, i) => (
+                      <li key={i}>
+                        {w.n}: {lightFormat(w.t, 'M/d/yyyy at H:mm')}
+                      </li>
+                    ))}
+                </ul>
+              ) : (
+                <p>Nobody is on the leaderboard yet</p>
+              )}
             </div>
           </>
         ) : (
