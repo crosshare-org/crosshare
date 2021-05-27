@@ -6,6 +6,7 @@ import type firebase from 'firebase/app';
 import { Button, ButtonAsLink } from './Buttons';
 import { useSnackbar } from './Snackbar';
 import { writeMetaSubmission } from '../lib/plays';
+import { Emoji } from './Emoji';
 
 function normalize(n: string) {
   return n.toLowerCase().replace(/ /g, '');
@@ -154,6 +155,33 @@ export const MetaSubmission = (props: {
             <GoogleSignInButton />
           )}
         </>
+      ) : props.contestSubmission ? (
+        isSolution(props.contestSubmission, props.solutions) ? (
+          <p>
+            Your submission (<strong>{props.contestSubmission}</strong>) is
+            correct!
+          </p>
+        ) : (
+          <>
+            <p>
+              Your submission (<strong>{props.contestSubmission}</strong>) was
+              incorrect <Emoji symbol="😭" />.
+            </p>
+            {props.solutions.length === 1 ? (
+              <p>
+                The solution is: <strong>{props.solutions[0]}</strong>
+              </p>
+            ) : (
+              <p>
+                The solutions are:{' '}
+                {props.solutions.map((s, i) => [
+                  i > 0 && ', ',
+                  <strong key={i}>{s}</strong>,
+                ])}
+              </p>
+            )}
+          </>
+        )
       ) : (
         <>
           <p>
