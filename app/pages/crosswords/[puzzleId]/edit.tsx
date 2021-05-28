@@ -18,17 +18,19 @@ import { ErrorPage } from '../../../components/ErrorPage';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { fromCells, CluedEntry, addClues } from '../../../lib/viewableGrid';
 import {
-  sanitizeClue,
-  sanitizeTitle,
-  sanitizeConstructorNotes,
-  sanitizeBlogPost,
-  sanitizeGuestConstructor,
+  MAX_META_SUBMISSION_LENGTH,
+  MAX_STRING_LENGTH,
+  MAX_BLOG_LENGTH,
 } from '../../../components/ClueMode';
 import { Button, ButtonAsLink } from '../../../components/Buttons';
 import { Markdown } from '../../../components/Markdown';
 import { Overlay } from '../../../components/Overlay';
 import { COVER_PIC } from '../../../lib/style';
-
+import {
+  LengthView,
+  LengthLimitedInput,
+  LengthLimitedTextarea,
+} from '../../../components/Inputs';
 import dynamic from 'next/dynamic';
 import type { ImageCropper as ImageCropperType } from '../../../components/ImageCropper';
 import { ContactLinks } from '../../../components/ContactLinks';
@@ -205,15 +207,19 @@ const ClueRow = (props: {
             css={{ display: 'flex', flexWrap: 'wrap' }}
             onSubmit={handleSubmit}
           >
-            <input
+            <LengthLimitedInput
               id={word + '-input'}
               type="text"
               css={{ marginRight: '0.5em', flex: '1 1 auto' }}
               placeholder="Enter a clue"
               value={value}
-              onChange={(e) => {
-                setValue(sanitizeClue(e.target.value));
-              }}
+              updateValue={setValue}
+              maxLength={MAX_STRING_LENGTH}
+            />
+            <LengthView
+              maxLength={MAX_STRING_LENGTH}
+              value={value}
+              hideUntilWithin={30}
             />
             <Button
               type="submit"
@@ -251,9 +257,9 @@ const ClueRow = (props: {
 interface EditableTextPropsBase {
   title: string;
   textarea?: boolean;
-  sanitize?: (input: string) => string;
   handleSubmit: (value: string) => Promise<void>;
   className?: string;
+  maxLength: number;
 }
 interface EditableTextProps extends EditableTextPropsBase {
   deletable?: false;
@@ -287,33 +293,38 @@ const EditableText = (
       >
         {props.textarea ? (
           <>
-            <textarea
+            <LengthLimitedTextarea
               css={{ width: '100%', display: 'block', marginBottom: '0.5em' }}
               placeholder={`Enter ${props.title} (markdown formatted)`}
               value={value}
-              onChange={(e) => {
-                setValue(
-                  props.sanitize
-                    ? props.sanitize(e.target.value)
-                    : e.target.value
-                );
-              }}
+              maxLength={props.maxLength}
+              updateValue={setValue}
+            />
+            <LengthView
+              hideUntilWithin={30}
+              value={value}
+              maxLength={props.maxLength}
             />
             <MarkdownPreview markdown={value} />
           </>
         ) : (
-          <input
-            type="text"
-            css={{ marginRight: '0.5em', flex: '1 1 auto' }}
-            placeholder={`Enter ${props.title}`}
-            value={value}
-            onChange={(e) => {
-              setValue(
-                props.sanitize ? props.sanitize(e.target.value) : e.target.value
-              );
-            }}
-          />
+          <>
+            <LengthLimitedInput
+              type="text"
+              css={{ marginRight: '0.5em', flex: '1 1 auto' }}
+              placeholder={`Enter ${props.title}`}
+              value={value}
+              maxLength={props.maxLength}
+              updateValue={setValue}
+            />
+            <LengthView
+              hideUntilWithin={30}
+              value={value}
+              maxLength={props.maxLength}
+            />
+          </>
         )}
+
         <Button
           type="submit"
           text="Save"
@@ -468,7 +479,7 @@ const PuzzleEditor = ({
           title="Title"
           css={{ marginBottom: '1em' }}
           text={puzzle.title}
-          sanitize={sanitizeTitle}
+          maxLength={MAX_STRING_LENGTH}
           handleSubmit={(newTitle) =>
             App.firestore().doc(`c/${puzzle.id}`).update({ t: newTitle })
           }
@@ -488,7 +499,7 @@ const PuzzleEditor = ({
           deletable={true}
           css={{ marginBottom: '1em' }}
           text={puzzle.constructorNotes}
-          sanitize={sanitizeConstructorNotes}
+          maxLength={MAX_STRING_LENGTH}
           handleSubmit={(notes) =>
             App.firestore().doc(`c/${puzzle.id}`).update({ cn: notes })
           }
@@ -502,7 +513,7 @@ const PuzzleEditor = ({
           deletable={true}
           css={{ marginBottom: '1em' }}
           text={puzzle.guestConstructor}
-          sanitize={sanitizeGuestConstructor}
+          maxLength={MAX_STRING_LENGTH}
           handleSubmit={(gc) =>
             App.firestore().doc(`c/${puzzle.id}`).update({ gc: gc })
           }
@@ -523,7 +534,7 @@ const PuzzleEditor = ({
           deletable={true}
           css={{ marginBottom: '1em' }}
           text={puzzle.blogPost}
-          sanitize={sanitizeBlogPost}
+          maxLength={MAX_BLOG_LENGTH}
           handleSubmit={(post) =>
             App.firestore().doc(`c/${puzzle.id}`).update({ bp: post })
           }
@@ -682,6 +693,7 @@ const PuzzleEditor = ({
                   title="Solution (case insensitive)"
                   css={{ marginBottom: '1em' }}
                   text={''}
+                  maxLength={MAX_META_SUBMISSION_LENGTH}
                   handleSubmit={(sol) =>
                     App.firestore()
                       .doc(`c/${puzzle.id}`)

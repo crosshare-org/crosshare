@@ -1,5 +1,9 @@
 import { Dispatch, useState } from 'react';
-
+import {
+  LengthView,
+  LengthLimitedInput,
+  LengthLimitedTextarea,
+} from './Inputs';
 import { SpinnerFinished } from './Icons';
 import {
   BuilderEntry,
@@ -31,7 +35,9 @@ import { DateTimePicker } from './DateTimePicker';
 import { MarkdownPreview } from './MarkdownPreview';
 import type firebase from 'firebase/app';
 
-const MAX_STRING_LENGTH = 2048;
+export const MAX_STRING_LENGTH = 2048;
+export const MAX_BLOG_LENGTH = 20000;
+export const MAX_META_SUBMISSION_LENGTH = 100;
 
 const ImageCropper = dynamic(
   () => import('./ImageCropper').then((mod) => mod.ImageCropper as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -43,22 +49,6 @@ const SuggestOverlay = dynamic(
     import('./ClueSuggestionOverlay').then((mod) => mod.SuggestOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
   { ssr: false }
 ) as typeof SuggestOverlayType;
-
-export function sanitizeClue(input: string) {
-  return input.substring(0, MAX_STRING_LENGTH);
-}
-export function sanitizeTitle(input: string) {
-  return input.substring(0, MAX_STRING_LENGTH);
-}
-export function sanitizeGuestConstructor(input: string) {
-  return input.substring(0, MAX_STRING_LENGTH);
-}
-export function sanitizeConstructorNotes(input: string) {
-  return input.substring(0, MAX_STRING_LENGTH);
-}
-export function sanitizeBlogPost(input: string) {
-  return input.substring(0, 20000);
-}
 
 const ClueRow = (props: {
   idx: number;
@@ -99,23 +89,29 @@ const ClueRow = (props: {
           {props.entry.completedWord}
         </label>
       </td>
-      <td css={{ paddingBottom: '1em' }}>
-        <input
+      <td css={{ paddingBottom: '1em', display: 'flex' }}>
+        <LengthLimitedInput
           id={props.entry.completedWord + '-' + props.idx + '-input'}
           data-testid={props.entry.completedWord + '-' + props.idx + '-input'}
           type="text"
-          css={{ width: '100%' }}
+          css={{ flex: 1 }}
           placeholder="Enter a clue"
           value={props.clues[word]?.[props.idx] || ''}
-          onChange={(e) => {
+          maxLength={MAX_STRING_LENGTH}
+          updateValue={(s: string) => {
             const sca: SetClueAction = {
               type: 'SETCLUE',
               word: word,
               idx: props.idx,
-              clue: sanitizeClue(e.target.value),
+              clue: s,
             };
             props.dispatch(sca);
           }}
+        />
+        <LengthView
+          maxLength={MAX_STRING_LENGTH}
+          value={props.clues[word]?.[props.idx] || ''}
+          hideUntilWithin={30}
         />
       </td>
       <td css={{ width: '1px', paddingLeft: '1em', paddingBottom: '1em' }}>
@@ -129,7 +125,7 @@ const ClueRow = (props: {
                 type: 'SETCLUE',
                 word: word,
                 idx: props.idx,
-                clue: sanitizeClue(clue),
+                clue: clue.substring(0, MAX_STRING_LENGTH),
               };
               props.dispatch(sca);
               setShowSuggestions(false);
@@ -245,21 +241,30 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
       )}
 
       <div css={{ padding: '1em' }}>
+        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label css={{ width: '100%' }}>
           <h2>Title</h2>
-          <input
+          <LengthLimitedInput
             type="text"
             css={{ width: '100%' }}
             placeholder="Give your puzzle a title"
             value={props.title || ''}
-            onChange={(e) => {
+            maxLength={MAX_STRING_LENGTH}
+            updateValue={(s: string) => {
               const sta: SetTitleAction = {
                 type: 'SETTITLE',
-                value: sanitizeTitle(e.target.value),
+                value: s,
               };
               props.dispatch(sta);
             }}
           />
+          <div css={{ textAlign: 'right' }}>
+            <LengthView
+              maxLength={MAX_STRING_LENGTH}
+              value={props.title || ''}
+              hideUntilWithin={30}
+            />
+          </div>
         </label>
         <h2 css={{ marginTop: '1em' }}>Metadata</h2>
         <div>
@@ -281,19 +286,27 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
         {props.notes !== null ? (
           <>
             <h3>Note:</h3>
-            <input
+            <LengthLimitedInput
               type="text"
               css={{ width: '100%' }}
               placeholder="Add a note"
               value={props.notes}
-              onChange={(e) => {
+              maxLength={MAX_STRING_LENGTH}
+              updateValue={(s: string) => {
                 const sta: SetNotesAction = {
                   type: 'SETNOTES',
-                  value: sanitizeConstructorNotes(e.target.value),
+                  value: s,
                 };
                 props.dispatch(sta);
               }}
             />
+            <div css={{ textAlign: 'right' }}>
+              <LengthView
+                maxLength={MAX_STRING_LENGTH}
+                value={props.notes}
+                hideUntilWithin={30}
+              />
+            </div>
             <p>
               <ButtonAsLink
                 text="Remove note"
@@ -328,18 +341,26 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               If you include spoilers you can hide them{' '}
               <code>||like this||</code>.
             </p>
-            <textarea
+            <LengthLimitedTextarea
               css={{ width: '100%', display: 'block' }}
               placeholder="Your post text (markdown format)"
               value={props.blogPost}
-              onChange={(e) => {
+              maxLength={MAX_BLOG_LENGTH}
+              updateValue={(s: string) => {
                 const sta: SetBlogPostAction = {
                   type: 'SETBLOGPOST',
-                  value: sanitizeBlogPost(e.target.value),
+                  value: s,
                 };
                 props.dispatch(sta);
               }}
             />
+            <div css={{ textAlign: 'right' }}>
+              <LengthView
+                maxLength={MAX_BLOG_LENGTH}
+                value={props.blogPost || ''}
+                hideUntilWithin={30}
+              />
+            </div>
             <p>
               <MarkdownPreview markdown={props.blogPost} />
               <ButtonAsLink
@@ -391,21 +412,29 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
           </label>
         </div>
         {props.guestConstructor !== null ? (
-          <p css={{ marginLeft: '1.5em' }}>
-            <input
+          <div css={{ marginLeft: '1.5em', marginBottom: '1em' }}>
+            <LengthLimitedInput
               type="text"
               css={{ width: '100%' }}
               placeholder="Guest constructor's name"
               value={props.guestConstructor}
-              onChange={(e) => {
+              maxLength={MAX_STRING_LENGTH}
+              updateValue={(s: string) => {
                 const sta: SetGuestConstructorAction = {
                   type: 'SETGC',
-                  value: sanitizeGuestConstructor(e.target.value),
+                  value: s,
                 };
                 props.dispatch(sta);
               }}
             />
-          </p>
+            <div css={{ textAlign: 'right' }}>
+              <LengthView
+                maxLength={MAX_STRING_LENGTH}
+                value={props.guestConstructor}
+                hideUntilWithin={30}
+              />
+            </div>
+          </div>
         ) : (
           ''
         )}
@@ -434,7 +463,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               </label>
             </div>
             {state.isContestPuzzle ? (
-              <p css={{ marginLeft: '1.5em' }}>
+              <div css={{ marginLeft: '1.5em', marginBottom: '1em' }}>
                 <h4>Contest prompt (required):</h4>
                 <p>
                   Use the notes field above to give solvers a prompt for the
@@ -477,13 +506,17 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                   ) : (
                     ''
                   )}
-                  <input
+                  <LengthLimitedInput
                     type="text"
                     placeholder="Solution (case insensitive)"
                     value={contestAnswerInProg}
-                    onChange={(e) => {
-                      setContestAnswerInProg(e.target.value);
-                    }}
+                    updateValue={setContestAnswerInProg}
+                    maxLength={MAX_META_SUBMISSION_LENGTH}
+                  />
+                  <LengthView
+                    maxLength={MAX_META_SUBMISSION_LENGTH}
+                    value={contestAnswerInProg}
+                    hideUntilWithin={30}
                   />
                   <Button
                     type="submit"
@@ -514,7 +547,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                     This contest has a prize
                   </label>
                 </div>
-              </p>
+              </div>
             ) : (
               ''
             )}

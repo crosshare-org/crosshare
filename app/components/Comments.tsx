@@ -20,6 +20,7 @@ import { Markdown } from './Markdown';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { Link } from './Link';
 import { ButtonAsLink, Button } from './Buttons';
+import { LengthLimitedTextarea, LengthView } from './Inputs';
 
 const COMMENT_LENGTH_LIMIT = 280;
 
@@ -261,10 +262,6 @@ const CommentForm = ({
     throw new Error('displaying comment form w/ no user');
   }
 
-  function sanitize(input: string) {
-    return input.substring(0, COMMENT_LENGTH_LIMIT);
-  }
-
   function submitComment(event: FormEvent) {
     event.preventDefault();
     const textToSubmit = commentText.trim();
@@ -338,22 +335,15 @@ const CommentForm = ({
           {(props.replyToId !== undefined
             ? 'Enter your reply '
             : 'Leave a comment ') + '(please be nice!):'}
-          <textarea
+          <LengthLimitedTextarea
             css={{ width: '100%', display: 'block' }}
+            maxLength={COMMENT_LENGTH_LIMIT}
             value={commentText}
-            onChange={(e) => setCommentText(sanitize(e.target.value))}
+            updateValue={setCommentText}
           />
         </label>
-        <div
-          css={{
-            textAlign: 'right',
-            color:
-              COMMENT_LENGTH_LIMIT - commentText.length > 10
-                ? 'var(--default-text)'
-                : 'var(--error)',
-          }}
-        >
-          {commentText.length}/{COMMENT_LENGTH_LIMIT}
+        <div css={{ textAlign: 'right' }}>
+          <LengthView maxLength={COMMENT_LENGTH_LIMIT} value={commentText} />
         </div>
         {editingDisplayName ? (
           ''

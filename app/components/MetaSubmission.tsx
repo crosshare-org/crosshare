@@ -8,6 +8,8 @@ import { useSnackbar } from './Snackbar';
 import { writeMetaSubmission } from '../lib/plays';
 import { Emoji } from './Emoji';
 import { isMetaSolution } from '../lib/utils';
+import { LengthLimitedInput, LengthView } from './Inputs';
+import { MAX_META_SUBMISSION_LENGTH } from './ClueMode';
 
 export const MetaSubmissionForm = (props: {
   user: firebase.User;
@@ -43,14 +45,21 @@ export const MetaSubmissionForm = (props: {
     <>
       <form onSubmit={submitMeta}>
         <p>
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label>
             Your meta submission (you only get to submit once!):
             <br />
-            <input
+            <LengthLimitedInput
               placeholder="Submission (case insensitive)"
               type="text"
               value={submission}
-              onChange={(e) => setSubmission(e.target.value)}
+              maxLength={MAX_META_SUBMISSION_LENGTH}
+              updateValue={setSubmission}
+            />
+            <LengthView
+              value={submission}
+              maxLength={MAX_META_SUBMISSION_LENGTH}
+              hideUntilWithin={30}
             />
           </label>
         </p>
