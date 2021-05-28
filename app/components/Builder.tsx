@@ -1325,7 +1325,7 @@ const GridMode = ({
               </NestedDropDown>
               <TopBarDropDownLink
                 icon={<FaRegFile />}
-                text="Export .puz File (beta)"
+                text="Export .puz File"
                 onClick={() => {
                   const a: SetShowDownloadLink = {
                     type: 'SETSHOWDOWNLOAD',
