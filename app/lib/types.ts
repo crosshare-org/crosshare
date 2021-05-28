@@ -131,7 +131,7 @@ export interface PuzzleT {
   isPrivateUntil: number | null;
   contestAnswers: Array<string> | null;
   contestHasPrize: boolean;
-  contestWinners: Array<{ n: string; t: number }> | null;
+  contestSubmissions: Array<{ n: string; t: number; s: string }> | null;
 }
 
 export interface PuzzleResult extends PuzzleT {
@@ -210,8 +210,9 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     isPrivateUntil: dbPuzzle.pvu ? dbPuzzle.pvu.toMillis() : null,
     contestAnswers: dbPuzzle.ct_ans || null,
     contestHasPrize: dbPuzzle.ct_prz || false,
-    contestWinners:
-      dbPuzzle.ct_win?.map((w) => ({ n: w.n, t: w.t.toMillis() })) || null,
+    contestSubmissions:
+      dbPuzzle.ct_subs?.map((w) => ({ n: w.n, t: w.t.toMillis(), s: w.s })) ||
+      null,
   };
 }
 

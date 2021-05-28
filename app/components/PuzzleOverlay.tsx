@@ -2,7 +2,7 @@ import { useContext, Dispatch } from 'react';
 import { Link } from './Link';
 import { Direction, ServerPuzzleResult } from '../lib/types';
 import { PuzzleAction } from '../reducers/reducer';
-import { timeString } from '../lib/utils';
+import { isMetaSolution, timeString } from '../lib/utils';
 import type firebase from 'firebase/app';
 import { Comments } from './Comments';
 import { EmbedContext } from './EmbedContext';
@@ -58,9 +58,14 @@ interface BeginPauseProps extends PuzzleOverlayBaseProps {
 
 export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
   const isEmbed = useContext(EmbedContext);
-  const isContest = props.puzzle.contestAnswers
-    ? props.puzzle.contestAnswers.length > 0
-    : false;
+  const contestAnswers = props.puzzle.contestAnswers;
+  const isContest = contestAnswers ? contestAnswers.length > 0 : false;
+  const winningSubmissions =
+    contestAnswers &&
+    props.puzzle.contestSubmissions?.filter((sub) =>
+      isMetaSolution(sub.s, contestAnswers)
+    );
+
   return (
     <Overlay
       coverImage={props.coverImage}
@@ -167,15 +172,15 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           }),
         }}
       >
-        {isContest ? (
+        {isContest && props.puzzle.contestAnswers ? (
           <>
             <div css={{ marginTop: '1em' }}>
               <h4 css={{ borderBottom: '1px solid var(--black)' }}>
                 Leaderboard (updated hourly)
               </h4>
-              {props.puzzle.contestWinners?.length ? (
+              {winningSubmissions?.length ? (
                 <ul>
-                  {props.puzzle.contestWinners
+                  {winningSubmissions
                     .sort((w1, w2) => w1.t - w2.t)
                     .map((w, i) => (
                       <li key={i}>

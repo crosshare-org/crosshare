@@ -7,20 +7,7 @@ import { Button, ButtonAsLink } from './Buttons';
 import { useSnackbar } from './Snackbar';
 import { writeMetaSubmission } from '../lib/plays';
 import { Emoji } from './Emoji';
-
-function normalize(n: string) {
-  return n.toLowerCase().replace(/ /g, '');
-}
-
-function isSolution(submission: string, solutions: Array<string>) {
-  const normalized = normalize(submission);
-  for (const solution of solutions) {
-    if (normalize(solution) === normalized) {
-      return true;
-    }
-  }
-  return false;
-}
+import { isMetaSolution } from '../lib/utils';
 
 export const MetaSubmissionForm = (props: {
   user: firebase.User;
@@ -46,7 +33,7 @@ export const MetaSubmissionForm = (props: {
         ? props.user.email
         : undefined
     ).then(() => {
-      if (isSolution(submission, props.solutions)) {
+      if (isMetaSolution(submission, props.solutions)) {
         addToast('🚀 Solved a meta puzzle!');
       }
     });
@@ -156,7 +143,7 @@ export const MetaSubmission = (props: {
           )}
         </>
       ) : props.contestSubmission ? (
-        isSolution(props.contestSubmission, props.solutions) ? (
+        isMetaSolution(props.contestSubmission, props.solutions) ? (
           <p>
             Your submission (<strong>{props.contestSubmission}</strong>) is
             correct!

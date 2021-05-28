@@ -63,3 +63,17 @@ export function fnv1a(input: string) {
   }
   return hash >>> 0;
 }
+
+function normalize(n: string) {
+  return n.toLowerCase().replace(/ /g, '');
+}
+
+export function isMetaSolution(submission: string, solutions: Array<string>) {
+  const normalized = normalize(submission);
+  for (const solution of solutions) {
+    if (normalize(solution) === normalized) {
+      return true;
+    }
+  }
+  return false;
+}

@@ -102,6 +102,7 @@ const testPuzzle: ServerPuzzleResult = {
   comments: [],
   constructorNotes: null,
   constructorPage: null,
+  contestSubmissions: null,
   blogPost: null,
   guestConstructor: null,
 };
@@ -145,6 +146,7 @@ const dailymini_5_19: ServerPuzzleResult = {
   blogPost: null,
   contestAnswers: null,
   contestHasPrize: false,
+  contestSubmissions: null,
   authorId: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
   category: 'dailymini',
   authorName: 'Mike D',

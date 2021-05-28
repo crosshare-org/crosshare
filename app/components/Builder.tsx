@@ -141,6 +141,7 @@ type BuilderProps = WithOptional<
   | 'constructorNotes'
   | 'blogPost'
   | 'contestAnswers'
+  | 'contestSubmissions'
   | 'contestHasPrize'
   | 'guestConstructor'
   | 'isPrivate'
