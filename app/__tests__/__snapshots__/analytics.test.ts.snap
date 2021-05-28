@@ -1,5 +1,240 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`run for all time w/ some meta submissions 1`] = `
+Object {
+  "c": Object {
+    "mike": 3,
+  },
+  "i": Object {
+    "mike": Array [
+      "Raises, as young",
+      "Mike D",
+      "fSEwJorvqOMK5UhNMHa4mu48izl1",
+    ],
+  },
+  "n": 3,
+  "u": Array [
+    "anonymous-user-id",
+    "blah",
+    "other-user-id",
+  ],
+}
+`;
+
+exports[`run for all time w/ some meta submissions 2`] = `
+Object {
+  "a": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  "ct": Array [
+    0.01,
+    0.02,
+    0.04,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+  ],
+  "ct_subs": Array [
+    Object {
+      "e": "foo@example.com",
+      "n": "Blah",
+      "s": "just a guess",
+      "t": null,
+      "u": "blah",
+    },
+    Object {
+      "e": null,
+      "n": "Mike D",
+      "s": "my submission",
+      "t": null,
+      "u": "other-user-id",
+    },
+  ],
+  "n": 3,
+  "nt": 158,
+  "s": 2,
+  "st": 88,
+  "uc": Array [
+    1,
+    0.4,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+  ],
+}
+`;
+
+exports[`run for all time w/ some meta submissions 3`] = `
+Array [
+  Object {
+    "n": "Blah",
+    "s": "just a guess",
+    "t": null,
+  },
+  Object {
+    "n": "Mike D",
+    "s": "my submission",
+    "t": null,
+  },
+]
+`;
+
+exports[`run for all time w/ some meta submissions 4`] = `
+Object {
+  "a": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  "ct": Array [
+    0.02,
+    0.04,
+    0.08,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+  ],
+  "ct_subs": Array [
+    Object {
+      "e": "foo@example.com",
+      "n": "Blah",
+      "s": "just a guess",
+      "t": null,
+      "u": "blah",
+    },
+    Object {
+      "e": null,
+      "n": "Mike D",
+      "s": "my submission",
+      "t": null,
+      "u": "other-user-id",
+    },
+    Object {
+      "e": "foo@example.com",
+      "n": "Blah",
+      "s": "just a guess 2",
+      "t": null,
+      "u": "blah",
+    },
+    Object {
+      "e": null,
+      "n": "Mike D",
+      "s": "my submission 2",
+      "t": null,
+      "u": "other-user-id",
+    },
+  ],
+  "n": 6,
+  "nt": 316,
+  "s": 4,
+  "st": 176,
+  "uc": Array [
+    2,
+    0.8,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+  ],
+}
+`;
+
+exports[`run for all time w/ some meta submissions 5`] = `
+Array [
+  Object {
+    "n": "Blah",
+    "s": "just a guess",
+    "t": null,
+  },
+  Object {
+    "n": "Mike D",
+    "s": "my submission",
+    "t": null,
+  },
+  Object {
+    "n": "Blah",
+    "s": "just a guess 2",
+    "t": null,
+  },
+  Object {
+    "n": "Mike D",
+    "s": "my submission 2",
+    "t": null,
+  },
+]
+`;
+
 exports[`run for all time w/o initial state 1`] = `
 Object {
   "c": Object {

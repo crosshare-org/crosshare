@@ -4,6 +4,7 @@ It lives here so we can test it. */
 import type firebase from 'firebase-admin';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isRight } from 'fp-ts/lib/Either';
+import admin from 'firebase-admin';
 
 import {
   LegacyPlayV,
@@ -17,7 +18,7 @@ import {
   MetaSubmissionForPuzzleT,
 } from './dbtypes';
 
-import { FieldValue, TimestampType } from './firebaseWrapper';
+import { TimestampType } from './firebaseWrapper';
 
 export async function runAnalytics(
   db: firebase.firestore.Firestore,
@@ -71,6 +72,9 @@ export async function runAnalytics(
           throw new Error('Malformed puzzle stats');
         }
         puzzleStats = result.right;
+        puzzleStats.ct_subs?.forEach(
+          (x) => (x.t = admin.firestore.Timestamp.fromMillis(x.t.toMillis()))
+        );
         puzzleStatsMap.set(puzzleId, puzzleStats);
       } else {
         const puzzle = await getPuzzle(puzzleId);
@@ -227,7 +231,7 @@ export async function runAnalytics(
       e: play.ct_em || null,
       u: play.u,
       s: play.ct_sub,
-      t: play.ct_t,
+      t: admin.firestore.Timestamp.fromMillis(play.ct_t.toMillis()),
     });
 
     const puzzle = await getPuzzle(play.c);
@@ -239,7 +243,11 @@ export async function runAnalytics(
     if (!subs) {
       subs = [];
     }
-    subs.push({ n: play.ct_n, t: play.ct_t, s: play.ct_sub });
+    subs.push({
+      n: play.ct_n,
+      t: admin.firestore.Timestamp.fromMillis(play.ct_t.toMillis()),
+      s: play.ct_sub,
+    });
     puzzleNewSubs.set(play.c, subs);
   }
 
@@ -257,7 +265,7 @@ export async function runAnalytics(
       .collection('c')
       .doc(crosswordId)
       .update({
-        ct_subs: FieldValue.arrayUnion(...subs),
+        ct_subs: admin.firestore.FieldValue.arrayUnion(...subs),
       });
   }
 }

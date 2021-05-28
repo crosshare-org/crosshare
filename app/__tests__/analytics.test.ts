@@ -25,13 +25,13 @@ afterAll(async () =>
   Promise.all(firebaseTesting.apps().map((app) => app.delete()))
 );
 
+const thirtyAgo = new Date();
+thirtyAgo.setMinutes(thirtyAgo.getMinutes() - 30);
+const twentyAgo = new Date();
+twentyAgo.setMinutes(twentyAgo.getMinutes() - 20);
+
 beforeEach(async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
-
-  const thirtyAgo = new Date();
-  thirtyAgo.setMinutes(thirtyAgo.getMinutes() - 30);
-  const twentyAgo = new Date();
-  twentyAgo.setMinutes(twentyAgo.getMinutes() - 20);
 
   play1 = {
     c: 'mike',
@@ -188,6 +188,110 @@ test('run for all time w/o initial state', async () => {
   expect(pua).not.toBeFalsy();
   expect(sct).not.toBeFalsy();
   expect(pToSnapshot).toMatchSnapshot();
+});
+
+test('run for all time w/ some meta submissions', async () => {
+  const hourAgo = new Date();
+  hourAgo.setMinutes(hourAgo.getMinutes() - 60);
+
+  await adminApp
+    .firestore()
+    .collection('p')
+    .doc('mike-other-user-id')
+    .update({
+      ct_sub: 'my submission',
+      ct_t: AdminTimestamp.fromDate(twentyAgo),
+      ct_n: 'Mike D',
+    });
+
+  await adminApp
+    .firestore()
+    .collection('p')
+    .doc('mike-blah')
+    .update({
+      ct_sub: 'just a guess',
+      ct_em: 'foo@example.com',
+      ct_t: AdminTimestamp.fromDate(twentyAgo),
+      ct_n: 'Blah',
+    });
+
+  await runAnalytics(
+    adminApp.firestore(),
+    AdminTimestamp.fromDate(hourAgo),
+    AdminTimestamp.fromDate(new Date())
+  );
+
+  const res = await adminApp.firestore().collection('ds').get();
+  expect(res.size).toEqual(1);
+  // Can't snapshot updatedAt or playcount by hour
+  const { ua, h, ...toSnapshot } = res.docs[0]?.data() || {};
+  expect(ua).not.toBeFalsy();
+  expect(h.length).toEqual(24);
+  expect(toSnapshot).toMatchSnapshot();
+
+  const pres = await adminApp.firestore().collection('s').doc('mike').get();
+  const data = pres.data();
+  if (data === undefined) {
+    throw new Error('botch');
+  }
+  const { ua: pua, sct, ...pToSnapshot } = data;
+  expect(pua).not.toBeFalsy();
+  expect(sct).not.toBeFalsy();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  pToSnapshot.ct_subs.forEach((a: any) => {
+    a.t = null;
+  });
+  expect(pToSnapshot).toMatchSnapshot();
+
+  const puzres = await adminApp.firestore().collection('c').doc('mike').get();
+  const puzdata = puzres.data();
+  if (puzdata === undefined) {
+    throw new Error('botch');
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  puzdata.ct_subs.forEach((a: any) => {
+    a.t = null;
+  });
+  expect(puzdata.ct_subs).toMatchSnapshot();
+
+  // Just run it again w/ new submission values:
+  await adminApp.firestore().collection('p').doc('mike-other-user-id').update({
+    ct_sub: 'my submission 2',
+  });
+
+  await adminApp.firestore().collection('p').doc('mike-blah').update({
+    ct_sub: 'just a guess 2',
+  });
+  await runAnalytics(
+    adminApp.firestore(),
+    AdminTimestamp.fromDate(hourAgo),
+    AdminTimestamp.fromDate(new Date())
+  );
+
+  const pres1 = await adminApp.firestore().collection('s').doc('mike').get();
+  const data1 = pres1.data();
+  if (data1 === undefined) {
+    throw new Error('botch');
+  }
+  const { ua: pua1, sct: sct1, ...pToSnapshot1 } = data1;
+  expect(pua1).not.toBeFalsy();
+  expect(sct1).not.toBeFalsy();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  pToSnapshot1.ct_subs.forEach((a: any) => {
+    a.t = null;
+  });
+  expect(pToSnapshot1).toMatchSnapshot();
+
+  const puzres1 = await adminApp.firestore().collection('c').doc('mike').get();
+  const puzdata1 = puzres1.data();
+  if (puzdata1 === undefined) {
+    throw new Error('botch');
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  puzdata1.ct_subs.forEach((a: any) => {
+    a.t = null;
+  });
+  expect(puzdata1.ct_subs).toMatchSnapshot();
 });
 
 test('run for more recent w/o initial state', async () => {
