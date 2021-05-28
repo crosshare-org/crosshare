@@ -145,11 +145,13 @@ export const MetaSubmission = (props: {
             view the solution, view the leaderboard, and read or submit
             comments:
           </p>
-          {authContext.user ? (
-            <GoogleLinkButton user={authContext.user} />
-          ) : (
-            <GoogleSignInButton />
-          )}
+          <div css={{ textAlign: 'center' }}>
+            {authContext.user ? (
+              <GoogleLinkButton user={authContext.user} />
+            ) : (
+              <GoogleSignInButton />
+            )}
+          </div>
         </>
       ) : props.contestSubmission ? (
         isMetaSolution(props.contestSubmission, props.solutions) ? (

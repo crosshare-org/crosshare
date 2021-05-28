@@ -3,10 +3,10 @@ import { ErrorPage } from '../components/ErrorPage';
 import type firebase from 'firebase/app';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { TopBar } from './TopBar';
-import { Optionalize } from '../lib/types';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { NotificationT } from '../lib/notifications';
 import { AccountPrefsT } from '../lib/prefs';
+import { WithConditionalCSSProp } from '@emotion/react/types/jsx-namespace';
 
 export interface AuthProps {
   isAdmin: boolean;
@@ -87,10 +87,8 @@ function renderLoginIfNeeded({
 }
 
 /* Ensure we have a non-anonymous user, upgrading an anonymous user if we have one. */
-export function requiresAuth<T extends AuthProps>(
-  WrappedComponent: React.ComponentType<T>
-) {
-  return (props: Optionalize<T, AuthProps>): ReactNode => {
+export function requiresAuth<T>(WrappedComponent: React.ComponentType<T>) {
+  return (props: T & WithConditionalCSSProp<T>): ReactNode => {
     const ctx = useContext(AuthContext);
     const login = renderLoginIfNeeded(ctx);
     if (login) {
@@ -98,7 +96,7 @@ export function requiresAuth<T extends AuthProps>(
     }
     return (
       <WrappedComponent
-        {...(props as T)}
+        {...props}
         isAdmin={ctx.isAdmin}
         user={ctx.user}
         constructorPage={ctx.constructorPage}
@@ -109,10 +107,8 @@ export function requiresAuth<T extends AuthProps>(
 }
 
 /* Ensure we have an admin user, upgrading an anonymous user if we have one. */
-export function requiresAdmin<T extends AuthProps>(
-  WrappedComponent: React.ComponentType<T>
-) {
-  return (props: Optionalize<T, AuthProps>): ReactNode => {
+export function requiresAdmin<T>(WrappedComponent: React.ComponentType<T>) {
+  return (props: T & WithConditionalCSSProp<T>): ReactNode => {
     const ctx = useContext(AuthContext);
     const login = renderLoginIfNeeded(ctx);
     if (login) {
@@ -127,7 +123,7 @@ export function requiresAdmin<T extends AuthProps>(
     }
     return (
       <WrappedComponent
-        {...(props as T)}
+        {...props}
         isAdmin={true}
         user={ctx.user}
         constructorPage={ctx.constructorPage}

@@ -26,6 +26,7 @@ import type firebase from 'firebase/app';
 jest.mock('next/link', () => ({ children }) => children); // https://github.com/vercel/next.js/issues/16864
 
 jest.mock('../lib/firebaseWrapper');
+jest.mock('../lib/workerLoader');
 
 afterEach(() => {
   jest.clearAllMocks();

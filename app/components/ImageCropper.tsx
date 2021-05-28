@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, ChangeEvent } from 'react';
+import { useState, useCallback, useRef, ChangeEvent } from 'react';
 import ReactCrop from 'react-image-crop';
 import { Overlay } from './Overlay';
 import { Button } from './Buttons';

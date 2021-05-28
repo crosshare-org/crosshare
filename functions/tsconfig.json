@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
+    "target": "es2017",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
-    "module": "commonjs",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "isolatedModules": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",
@@ -14,15 +17,10 @@
     "strict": true,
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
-    "target": "es2017",
     "esModuleInterop": true,
     "jsx": "preserve",
-    "types": [
-      "@emotion/react/types/css-prop"
-    ],
-
+    "jsxImportSource": "@emotion/react",
   },
-  "compileOnSave": true,
   "include": [
     "src",
     "typings/**/*.ts"
