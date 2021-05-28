@@ -8,7 +8,7 @@ import { Overlay } from './Overlay';
 import { Emoji } from './Emoji';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
 import { DBPuzzleT } from '../lib/dbtypes';
-import { STORAGE_KEY } from './Builder';
+import { STORAGE_KEY } from '../lib/utils';
 import { ButtonAsLink, Button } from './Buttons';
 
 export function PublishOverlay(props: {

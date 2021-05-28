@@ -1,5 +1,7 @@
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
+export const STORAGE_KEY = 'puzzleInProgress';
+
 export function timeString(elapsed: number, fixedSize: boolean): string {
   const hours = Math.floor(elapsed / 3600);
   const minutes = Math.floor((elapsed - hours * 3600) / 60);

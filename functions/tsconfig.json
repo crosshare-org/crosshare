@@ -6,9 +6,8 @@
       "dom.iterable",
       "esnext"
     ],
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
-    "isolatedModules": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",

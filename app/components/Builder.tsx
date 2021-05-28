@@ -10,6 +10,7 @@ import {
   FormEvent,
   MutableRefObject,
 } from 'react';
+import { STORAGE_KEY } from '../lib/utils';
 import { ContactLinks } from './ContactLinks';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -266,8 +267,6 @@ const PotentialFillList = (props: PotentialFillListProps) => {
     </div>
   );
 };
-
-export const STORAGE_KEY = 'puzzleInProgress';
 
 const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
   const inStorage = localStorage.getItem(STORAGE_KEY);
