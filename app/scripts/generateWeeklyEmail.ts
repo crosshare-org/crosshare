@@ -101,7 +101,9 @@ async function topPuzzlesForWeek(): Promise<
           throw new Error('impossible');
         }
         return [
-          'https://crosshare.org/crosswords/' + p.id,
+          'https://crosshare.org/crosswords/' +
+            p.id +
+            '#utm_source=mailchimp&utm_medium=email&utm_campaign=weekly',
           `${p.t} by ${p.n}`,
           p.w <= 8 && p.h <= 8,
         ];
