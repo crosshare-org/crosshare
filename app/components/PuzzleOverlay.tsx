@@ -100,6 +100,15 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                   onClick={() => props.dispatch({ type: 'RESUMEACTION' })}
                   text={props.dismissMessage}
                 />
+                {isContest ? (
+                  <p>
+                    This is a contest/meta puzzle. To submit your answer, first
+                    finish solving the grid (or reveal it if you get stuck or
+                    solved offline).
+                  </p>
+                ) : (
+                  ''
+                )}
               </>
             )}
           </>

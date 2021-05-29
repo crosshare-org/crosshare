@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { useReducer, useCallback, useMemo, useState } from 'react';
 import useEventListener from '@use-it/event-listener';
-
+import orderBy from 'lodash/orderBy';
 import { ClueList } from './ClueList';
 import { GridView } from './Grid';
 import { entryAndCrossAtPosition } from '../lib/gridBase';
@@ -25,17 +25,87 @@ import { DefaultTopBar, TopBarLink } from './TopBar';
 import { FaShareSquare } from 'react-icons/fa';
 import { Overlay } from './Overlay';
 import { CopyableInput } from './CopyableInput';
-import { timeString } from '../lib/utils';
+import { isMetaSolution, timeString } from '../lib/utils';
 import { ButtonAsLink } from './Buttons';
+import { ColumnProps, Table } from 'react-fluid-table';
+import { Emoji } from './Emoji';
 
 export enum StatsMode {
   AverageTime,
   AverageEditCount,
+  MetaSubmissions,
 }
 
-interface PuzzleStatsProps {
+interface MetaSubmissionListProps {
   puzzle: PuzzleResult;
   stats: Omit<PuzzleStatsT, 'ua'>;
+}
+
+const MetaSubmissionList = (props: MetaSubmissionListProps) => {
+  const [subs, setSubs] = useState(props.stats.ct_subs);
+  if (!subs || subs.length === 0) {
+    return <p>No submissions yet - data is updated once per hour.</p>;
+  }
+
+  const onSort = (col: string | null, dir: string | null) => {
+    if (!subs || !col || !dir) {
+      return;
+    }
+    setSubs(
+      orderBy(subs, [col], [dir.toLowerCase() === 'asc' ? 'asc' : 'desc'])
+    );
+  };
+
+  const columns: ColumnProps[] = [
+    { key: 'n', header: 'Submitter', sortable: true },
+    {
+      key: 's',
+      header: 'Submission',
+      sortable: true,
+      content: ({ row }) => (
+        <>
+          {isMetaSolution(row.s, props.puzzle.contestAnswers || []) ? (
+            <Emoji symbol="✅" />
+          ) : (
+            <Emoji symbol="❌" />
+          )}{' '}
+          {row.s}
+        </>
+      ),
+    },
+    {
+      key: 't',
+      header: 'Timestamp',
+      content: ({ row }) => row.t.toDate().toISOString(),
+      sortable: true,
+    },
+  ];
+  if (props.puzzle.contestHasPrize) {
+    columns.push({ key: 'e', header: 'Email', sortable: true });
+  }
+
+  return (
+    <div css={{ margin: '1em' }}>
+      <Table
+        css={{
+          '& .cell': {
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            display: 'block !important',
+          },
+        }}
+        data={subs}
+        columns={columns}
+        onSort={onSort}
+        sortColumn={'t'}
+        sortDirection={'ASC'}
+      />
+    </div>
+  );
+};
+
+interface PuzzleStatsProps extends MetaSubmissionListProps {
   mode: StatsMode;
 }
 
@@ -189,6 +259,7 @@ export const StatsPage = ({
 }) => {
   const [mode, setMode] = useState(StatsMode.AverageTime);
   const [dropped, setDropped] = useState(false);
+  const isMeta = (puzzle.contestAnswers?.length || 0) > 0;
 
   return (
     <>
@@ -255,7 +326,7 @@ export const StatsPage = ({
                 <div
                   css={{
                     [SMALL_AND_UP]: {
-                      width: '45%',
+                      width: isMeta ? '31%' : '48%',
                     },
                   }}
                 >
@@ -268,7 +339,7 @@ export const StatsPage = ({
                 <div
                   css={{
                     [SMALL_AND_UP]: {
-                      width: '45%',
+                      width: isMeta ? '31%' : '48%',
                     },
                   }}
                 >
@@ -278,10 +349,32 @@ export const StatsPage = ({
                     {stats.s && timeString(stats.st / stats.s, true)}
                   </div>
                 </div>
+                {isMeta ? (
+                  <div
+                    css={{
+                      [SMALL_AND_UP]: {
+                        width: '31%',
+                      },
+                    }}
+                  >
+                    <div>
+                      Correct contest submissions:{' '}
+                      {stats.ct_subs?.filter((sub) =>
+                        isMetaSolution(sub.s, puzzle.contestAnswers || [])
+                      ).length || 0}
+                    </div>
+                    <div>
+                      Total contest submissions:
+                      {stats.ct_subs?.length || 0}
+                    </div>
+                  </div>
+                ) : (
+                  ''
+                )}
               </div>
               <div css={{ paddingTop: '1em', textAlign: 'center' }}>
                 <ButtonAsLink
-                  css={{ marginRight: '1em' }}
+                  css={{ marginRight: '0.5em' }}
                   disabled={mode === StatsMode.AverageTime}
                   onClick={() => {
                     setMode(StatsMode.AverageTime);
@@ -289,13 +382,28 @@ export const StatsPage = ({
                   text="Time to Correct"
                 />
                 <ButtonAsLink
-                  css={{ marginLeft: '1em' }}
+                  css={{
+                    marginLeft: '0.5em',
+                    marginRight: isMeta ? '0.5em' : 0,
+                  }}
                   disabled={mode === StatsMode.AverageEditCount}
                   onClick={() => {
                     setMode(StatsMode.AverageEditCount);
                   }}
                   text="Number of Edits"
                 />
+                {isMeta ? (
+                  <ButtonAsLink
+                    css={{ marginLeft: '0.5em' }}
+                    disabled={mode === StatsMode.MetaSubmissions}
+                    onClick={() => {
+                      setMode(StatsMode.MetaSubmissions);
+                    }}
+                    text="Contest Submissions"
+                  />
+                ) : (
+                  ''
+                )}
               </div>
             </>
           ) : (
@@ -310,7 +418,11 @@ export const StatsPage = ({
           css={{ flex: '1 1 auto', overflow: 'hidden', position: 'relative' }}
         >
           {stats ? (
-            <PuzzleStats puzzle={puzzle} stats={stats} mode={mode} />
+            mode === StatsMode.MetaSubmissions ? (
+              <MetaSubmissionList puzzle={puzzle} stats={stats} />
+            ) : (
+              <PuzzleStats puzzle={puzzle} stats={stats} mode={mode} />
+            )
           ) : (
             ''
           )}
