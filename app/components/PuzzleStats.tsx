@@ -29,6 +29,7 @@ import { isMetaSolution, timeString } from '../lib/utils';
 import { ButtonAsLink } from './Buttons';
 import { ColumnProps, Table } from 'react-fluid-table';
 import { Emoji } from './Emoji';
+import { CSVLink } from 'react-csv';
 
 export enum StatsMode {
   AverageTime,
@@ -42,7 +43,9 @@ interface MetaSubmissionListProps {
 }
 
 const MetaSubmissionList = (props: MetaSubmissionListProps) => {
-  const [subs, setSubs] = useState(props.stats.ct_subs);
+  const [subs, setSubs] = useState(
+    props.stats.ct_subs?.map((n) => ({ d: n.t.toDate().toISOString(), ...n }))
+  );
   if (!subs || subs.length === 0) {
     return <p>No submissions yet - data is updated once per hour.</p>;
   }
@@ -74,9 +77,8 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
       ),
     },
     {
-      key: 't',
-      header: 'Timestamp',
-      content: ({ row }) => row.t.toDate().toISOString(),
+      key: 'd',
+      header: 'Date',
       sortable: true,
     },
   ];
@@ -85,23 +87,40 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
   }
 
   return (
-    <div css={{ margin: '1em' }}>
-      <Table
-        css={{
-          '& .cell': {
-            textOverflow: 'ellipsis',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            display: 'block !important',
-          },
-        }}
-        data={subs}
-        columns={columns}
-        onSort={onSort}
-        sortColumn={'t'}
-        sortDirection={'ASC'}
-      />
-    </div>
+    <>
+      <p css={{ margin: '1em' }}>
+        <CSVLink
+          data={subs}
+          headers={[
+            { label: 'Name', key: 'n' },
+            { label: 'Submission', key: 's' },
+            { label: 'Email', key: 'e' },
+            { label: 'Date', key: 'd' },
+          ]}
+          filename={`${props.puzzle.title}.csv`}
+          target="_blank"
+        >
+          Download submission table as CSV
+        </CSVLink>
+      </p>
+      <div css={{ margin: '1em' }}>
+        <Table
+          css={{
+            '& .cell': {
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              display: 'block !important',
+            },
+          }}
+          data={subs}
+          columns={columns}
+          onSort={onSort}
+          sortColumn={'t'}
+          sortDirection={'ASC'}
+        />
+      </div>
+    </>
   );
 };
 
