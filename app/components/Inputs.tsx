@@ -58,7 +58,7 @@ export const LengthView = (props: LengthViewProps) => {
   return (
     <span
       css={{
-        margin: '0 0.5em',
+        margin: 'auto 0.5em',
         color:
           props.maxLength - props.value.length > 10
             ? 'var(--default-text)'

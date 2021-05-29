@@ -34,6 +34,7 @@ import type { SuggestOverlay as SuggestOverlayType } from './ClueSuggestionOverl
 import { DateTimePicker } from './DateTimePicker';
 import { MarkdownPreview } from './MarkdownPreview';
 import type firebase from 'firebase/app';
+import { isMetaSolution } from '../lib/utils';
 
 export const MAX_STRING_LENGTH = 2048;
 export const MAX_BLOG_LENGTH = 20000;
@@ -158,6 +159,12 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
   const [settingCoverPic, setSettingCoverPic] = useState(false);
   const [contestAnswerInProg, setContestAnswerInProg] = useState('');
   const privateUntil = state.isPrivateUntil?.toDate();
+
+  const contestAnswerError =
+    state.contestAnswers &&
+    isMetaSolution(contestAnswerInProg, state.contestAnswers)
+      ? 'Duplicate solution!'
+      : '';
 
   const count: Record<string, number> = {};
 
@@ -518,10 +525,20 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                     value={contestAnswerInProg}
                     hideUntilWithin={30}
                   />
+                  {contestAnswerError ? (
+                    <span css={{ color: 'var(--error)', margin: 'auto 0.5em' }}>
+                      {contestAnswerError}
+                    </span>
+                  ) : (
+                    ''
+                  )}
                   <Button
                     type="submit"
                     css={{ marginLeft: '0.5em' }}
-                    disabled={contestAnswerInProg.trim().length === 0}
+                    disabled={
+                      contestAnswerError !== '' ||
+                      contestAnswerInProg.trim().length === 0
+                    }
                     text="Add Solution"
                   />
                 </form>

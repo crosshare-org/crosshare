@@ -184,7 +184,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                     .sort((w1, w2) => w1.t - w2.t)
                     .map((w, i) => (
                       <li key={i}>
-                        {w.n}: {lightFormat(w.t, 'M/d/yyyy at H:mm')}
+                        {w.n}: {lightFormat(w.t, 'M/d/yyyy H:mm')}
                       </li>
                     ))}
                 </ul>

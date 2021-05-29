@@ -39,6 +39,7 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import lightFormat from 'date-fns/lightFormat';
 import { DateTimePicker } from '../../../components/DateTimePicker';
 import { MarkdownPreview } from '../../../components/MarkdownPreview';
+import { isMetaSolution } from '../../../lib/utils';
 const ImageCropper = dynamic(
   () =>
     import('../../../components/ImageCropper').then(
@@ -260,6 +261,7 @@ interface EditableTextPropsBase {
   handleSubmit: (value: string) => Promise<void>;
   className?: string;
   maxLength: number;
+  hasError?: (value: string) => string;
 }
 interface EditableTextProps extends EditableTextPropsBase {
   deletable?: false;
@@ -276,6 +278,8 @@ const EditableText = (
   const [editing, setEditing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [value, setValue] = useState(props.text || '');
+
+  const error = props.hasError?.(value) || '';
 
   if (editing) {
     return (
@@ -324,11 +328,17 @@ const EditableText = (
             />
           </>
         )}
-
+        {error ? (
+          <span css={{ color: 'var(--error)', margin: 'auto 0.5em' }}>
+            {error}
+          </span>
+        ) : (
+          ''
+        )}
         <Button
           type="submit"
           text="Save"
-          disabled={submitting || !value.trim()}
+          disabled={error !== '' || submitting || !value.trim()}
         />
         <Button
           boring={true}
@@ -690,15 +700,21 @@ const PuzzleEditor = ({
                   </>
                 )}
                 <EditableText
-                  title="Solution (case insensitive)"
+                  title="Solution (case & whitespace insensitive)"
                   css={{ marginBottom: '1em' }}
                   text={''}
                   maxLength={MAX_META_SUBMISSION_LENGTH}
+                  hasError={(sol) =>
+                    puzzle.contestAnswers &&
+                    isMetaSolution(sol, puzzle.contestAnswers)
+                      ? 'Duplicate solution!'
+                      : ''
+                  }
                   handleSubmit={(sol) =>
                     App.firestore()
                       .doc(`c/${puzzle.id}`)
                       .update({
-                        ct_ans: FieldValue.arrayUnion(sol.toLowerCase().trim()),
+                        ct_ans: FieldValue.arrayUnion(sol.trim()),
                       })
                   }
                 />

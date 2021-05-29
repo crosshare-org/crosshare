@@ -832,7 +832,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
 }
 
 function normalizeAnswer(answer: string): string {
-  return answer.toLowerCase().trim();
+  return answer.trim();
 }
 
 function addAnswer(answers: Array<string>, newAnswer: string): Array<string> {
