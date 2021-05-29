@@ -179,12 +179,27 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                 Leaderboard (updated hourly)
               </h4>
               {winningSubmissions?.length ? (
-                <ul>
+                <ul
+                  css={{
+                    maxHeight: '10em',
+                    listStyleType: 'none',
+                    padding: '0.5em',
+                    overflow: 'scroll',
+                  }}
+                >
                   {winningSubmissions
                     .sort((w1, w2) => w1.t - w2.t)
                     .map((w, i) => (
-                      <li key={i}>
-                        {w.n}: {lightFormat(w.t, 'M/d/yyyy H:mm')}
+                      <li
+                        css={{
+                          padding: '0.5em 0',
+                          borderBottom: '1px solid var(--bg-hover)',
+                          '&:last-child': { borderBottom: 'none' },
+                        }}
+                        key={i}
+                      >
+                        <strong>{w.n}</strong> solved at{' '}
+                        {lightFormat(w.t, 'H:mm \'on\' M/d/yyyy')}
                       </li>
                     ))}
                 </ul>
