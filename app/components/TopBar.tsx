@@ -659,7 +659,7 @@ export const DefaultTopBar = ({
       ) : (
         ''
       )}
-      {ctxt.user ? (
+      {ctxt.user && ctxt.user.email ? (
         <TopBarLinkA
           disabled={dashboardSelected}
           href="/dashboard"
