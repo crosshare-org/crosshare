@@ -72,6 +72,7 @@ import {
   ToggleClueViewAction,
   LoadPlayAction,
   RanSuccessEffectsAction,
+  RanMetaSubmitEffectsAction,
 } from '../reducers/reducer';
 import {
   TopBar,
@@ -188,6 +189,15 @@ export const Puzzle = ({
       showingEmbedOverlay: false,
       displaySeconds: play ? play.t : 0,
       bankedSeconds: play ? play.t : 0,
+      ranMetaSubmitEffects: false,
+      ...(play &&
+        play.ct_sub && {
+        ranMetaSubmitEffects: true,
+        contestDisplayName: play.ct_n,
+        contestSubmission: play.ct_sub,
+        contestEmail: play.ct_em,
+        contestSubmitTime: play.ct_t?.toMillis(),
+      }),
       currentTimeWindowStart: 0,
       didCheat: play ? play.ch : false,
       clueView: false,
@@ -300,8 +310,16 @@ export const Puzzle = ({
       if (!state.loadedPlayState) {
         return;
       }
-      if (state.ranSuccessEffects) {
-        return;
+      if (puzzle.contestAnswers?.length) {
+        // For a meta we need to have run both to skip
+        if (state.ranSuccessEffects && state.ranMetaSubmitEffects) {
+          return;
+        }
+      } else {
+        // For a reg puzzle skip if success effects have run
+        if (state.ranSuccessEffects) {
+          return;
+        }
       }
       const u = user || props.user;
       if (!u) {
@@ -318,7 +336,14 @@ export const Puzzle = ({
           console.error('Failed to write play: ', reason);
         });
     },
-    [puzzle.id, props.user, state.ranSuccessEffects, state.loadedPlayState]
+    [
+      puzzle.id,
+      puzzle.contestAnswers,
+      props.user,
+      state.ranMetaSubmitEffects,
+      state.ranSuccessEffects,
+      state.loadedPlayState,
+    ]
   );
 
   const cachePlayForUser = useCallback(
@@ -347,11 +372,16 @@ export const Puzzle = ({
         t: playTime,
         ch: state.didCheat,
         f: state.success,
-        ...(play && {
-          ct_sub: play.ct_sub,
-          ct_t: play.ct_t,
-          ct_n: play.ct_n,
-          ct_em: play.ct_em,
+        ...(state.contestSubmission && {
+          ct_sub: state.contestSubmission,
+          ct_t:
+            state.contestSubmitTime !== undefined
+              ? TimestampClass.fromMillis(state.contestSubmitTime)
+              : undefined,
+          ct_n: state.contestDisplayName,
+          ...(state.contestEmail && {
+            ct_em: state.contestEmail,
+          }),
         }),
       };
       cachePlay(user, puzzle.id, playForUser);
@@ -371,7 +401,10 @@ export const Puzzle = ({
       puzzle.title,
       state.bankedSeconds,
       state.currentTimeWindowStart,
-      play,
+      state.contestSubmission,
+      state.contestSubmitTime,
+      state.contestEmail,
+      state.contestDisplayName,
     ]
   );
 
@@ -394,6 +427,28 @@ export const Puzzle = ({
   }, [writePlayToDBIfNeeded, router]);
 
   const { addToast } = useSnackbar();
+
+  useEffect(() => {
+    if (state.contestSubmission && !state.ranMetaSubmitEffects) {
+      const action: RanMetaSubmitEffectsAction = { type: 'RANMETASUBMIT' };
+      dispatch(action);
+      if (props.user) {
+        cachePlayForUser(props.user);
+        writePlayToDBIfNeeded(props.user);
+      } else {
+        signInAnonymously().then((u) => {
+          cachePlayForUser(u);
+          writePlayToDBIfNeeded(u);
+        });
+      }
+    }
+  }, [
+    cachePlayForUser,
+    state.contestSubmission,
+    state.ranMetaSubmitEffects,
+    props.user,
+    writePlayToDBIfNeeded,
+  ]);
 
   useEffect(() => {
     if (state.success && !state.ranSuccessEffects) {

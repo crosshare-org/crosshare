@@ -43,7 +43,8 @@ const CachePlayLoader = (props: PuzzlePageResultProps) => {
     const done = props.puzzle.contestAnswers?.length
       ? cachedPlay?.f && cachedPlay.ct_sub
       : cachedPlay?.f;
-    if (done || !user) {
+    if (done || !user || props.puzzle.authorId === user.uid) {
+      console.log('using cached play');
       setPlay(cachedPlay || null);
     }
     setLoadingPlay(false);
@@ -108,9 +109,7 @@ const DBPlayLoader = (
     if (!doc.exists) {
       return [null, undefined];
     }
-    const validationResult = PlayWithoutUserV.decode(
-      doc.data({ serverTimestamps: 'estimate' })
-    );
+    const validationResult = PlayWithoutUserV.decode(doc.data());
     if (isRight(validationResult)) {
       cachePlay(
         props.user,

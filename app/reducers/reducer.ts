@@ -55,6 +55,7 @@ interface PuzzleState extends GridInterfaceState {
   wrongCells: Set<number>;
   success: boolean;
   ranSuccessEffects: boolean;
+  ranMetaSubmitEffects: boolean;
   filled: boolean;
   autocheck: boolean;
   dismissedKeepTrying: boolean;
@@ -71,6 +72,10 @@ interface PuzzleState extends GridInterfaceState {
   currentTimeWindowStart: number;
   loadedPlayState: boolean;
   waitToResize: boolean;
+  contestSubmission?: string;
+  contestSubmitTime?: number;
+  contestDisplayName?: string;
+  contestEmail?: string;
 }
 function isPuzzleState(state: GridInterfaceState): state is PuzzleState {
   return state.type === 'puzzle';
@@ -435,6 +440,18 @@ function isCheatAction(action: PuzzleAction): action is CheatAction {
   return action.type === 'CHEAT';
 }
 
+export interface ContestSubmitAction extends PuzzleAction {
+  type: 'CONTESTSUBMIT';
+  submission: string;
+  displayName: string;
+  email?: string;
+}
+function isContestSubmitAction(
+  action: PuzzleAction
+): action is ContestSubmitAction {
+  return action.type === 'CONTESTSUBMIT';
+}
+
 export interface ToggleAutocheckAction extends PuzzleAction {
   type: 'TOGGLEAUTOCHECK';
 }
@@ -460,6 +477,15 @@ function isRanSuccessEffectsAction(
   action: PuzzleAction
 ): action is RanSuccessEffectsAction {
   return action.type === 'RANSUCCESS';
+}
+
+export interface RanMetaSubmitEffectsAction extends PuzzleAction {
+  type: 'RANMETASUBMIT';
+}
+function isRanMetaSubmitEffectsAction(
+  action: PuzzleAction
+): action is RanMetaSubmitEffectsAction {
+  return action.type === 'RANMETASUBMIT';
 }
 
 export interface LoadPlayAction extends PuzzleAction {
@@ -1126,8 +1152,20 @@ export function puzzleReducer(
   if (isCheatAction(action)) {
     return cheat(state, action.unit, action.isReveal === true);
   }
+  if (isContestSubmitAction(action)) {
+    return {
+      ...state,
+      contestSubmission: action.submission,
+      contestEmail: action.email,
+      contestDisplayName: action.displayName,
+      contestSubmitTime: new Date().getTime(),
+    };
+  }
   if (isRanSuccessEffectsAction(action)) {
     return { ...state, ranSuccessEffects: true };
+  }
+  if (isRanMetaSubmitEffectsAction(action)) {
+    return { ...state, ranMetaSubmitEffects: true };
   }
   if (isLoadPlayAction(action)) {
     if (action.isAuthor) {
@@ -1135,6 +1173,7 @@ export function puzzleReducer(
         ...state,
         success: true,
         ranSuccessEffects: true,
+        ranMetaSubmitEffects: true,
         grid: { ...state.grid, cells: state.answers },
       };
     }
@@ -1157,6 +1196,14 @@ export function puzzleReducer(
       cellsUpdatedAt: play.ct,
       cellsIterationCount: play.uc,
       cellsEverMarkedWrong: new Set<number>(play.we),
+      ...(play &&
+        play.ct_sub && {
+        ranMetaSubmitEffects: true,
+        contestDisplayName: play.ct_n,
+        contestSubmission: play.ct_sub,
+        contestEmail: play.ct_em,
+        contestSubmitTime: play.ct_t?.toMillis(),
+      }),
     };
   }
   if (isToggleClueViewAction(action)) {

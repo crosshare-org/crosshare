@@ -1,20 +1,20 @@
-import { FormEvent, useContext, useState } from 'react';
+import { FormEvent, useContext, useState, Dispatch } from 'react';
 import { AuthContext } from './AuthContext';
 import { getDisplayName, DisplayNameForm } from './DisplayNameForm';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import type firebase from 'firebase/app';
 import { Button, ButtonAsLink } from './Buttons';
 import { useSnackbar } from './Snackbar';
-import { writeMetaSubmission } from '../lib/plays';
 import { Emoji } from './Emoji';
 import { isMetaSolution } from '../lib/utils';
 import { LengthLimitedInput, LengthView } from './Inputs';
 import { MAX_META_SUBMISSION_LENGTH } from './ClueMode';
+import { ContestSubmitAction } from '../reducers/reducer';
 
 export const MetaSubmissionForm = (props: {
   user: firebase.User;
   hasPrize: boolean;
-  puzzleId: string;
+  dispatch: Dispatch<ContestSubmitAction>;
   solutions: Array<string>;
   displayName: string;
 }) => {
@@ -26,19 +26,17 @@ export const MetaSubmissionForm = (props: {
 
   function submitMeta(event: FormEvent) {
     event.preventDefault();
-    writeMetaSubmission(
-      props.user,
-      props.puzzleId,
-      submission,
-      displayName,
-      props.hasPrize && enteringForPrize && props.user.email
-        ? props.user.email
-        : undefined
-    ).then(() => {
-      if (isMetaSolution(submission, props.solutions)) {
-        addToast('🚀 Solved a meta puzzle!');
-      }
+    props.dispatch({
+      type: 'CONTESTSUBMIT',
+      submission: submission,
+      displayName: props.displayName,
+      ...(props.hasPrize &&
+        enteringForPrize &&
+        props.user.email && { email: props.user.email }),
     });
+    if (isMetaSolution(submission, props.solutions)) {
+      addToast('🚀 Solved a meta puzzle!');
+    }
   }
 
   return (
@@ -125,7 +123,7 @@ export const MetaSubmissionForm = (props: {
 export const MetaSubmission = (props: {
   contestSubmission?: string;
   hasPrize: boolean;
-  puzzleId: string;
+  dispatch: Dispatch<ContestSubmitAction>;
   solutions: Array<string>;
 }) => {
   const authContext = useContext(AuthContext);

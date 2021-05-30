@@ -165,7 +165,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           <MetaSubmission
             hasPrize={!!props.contestHasPrize}
             contestSubmission={props.contestSubmission}
-            puzzleId={props.puzzle.id}
+            dispatch={props.dispatch}
             solutions={props.puzzle.contestAnswers}
           />
         ) : (
