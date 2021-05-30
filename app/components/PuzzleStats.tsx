@@ -436,19 +436,30 @@ export const StatsPage = ({
             </p>
           )}
         </div>
-        <div
-          css={{ flex: '1 1 auto', overflow: 'hidden', position: 'relative' }}
-        >
-          {stats ? (
-            mode === StatsMode.MetaSubmissions ? (
+        {stats ? (
+          mode === StatsMode.MetaSubmissions ? (
+            <div
+              css={{
+                flex: '1 1 auto',
+                position: 'relative',
+              }}
+            >
               <MetaSubmissionList puzzle={puzzle} stats={stats} />
-            ) : (
-              <PuzzleStats puzzle={puzzle} stats={stats} mode={mode} />
-            )
+            </div>
           ) : (
-            ''
-          )}
-        </div>
+            <div
+              css={{
+                flex: '1 1 auto',
+                overflow: 'hidden',
+                position: 'relative',
+              }}
+            >
+              <PuzzleStats puzzle={puzzle} stats={stats} mode={mode} />
+            </div>
+          )
+        ) : (
+          ''
+        )}
       </div>
     </>
   );
