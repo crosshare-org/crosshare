@@ -237,7 +237,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         {isEmbed ? (
           ''
         ) : (
-          <div css={{ textAlign: 'center' }}>
+          <div css={{ textAlign: 'center', marginTop: '2em' }}>
             <PrevDailyMiniLink nextPuzzle={props.nextPuzzle} />
           </div>
         )}
