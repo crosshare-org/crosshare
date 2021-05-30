@@ -13,7 +13,7 @@ import {
 } from '../reducers/reducer';
 import { SquareAndCols } from './Page';
 import { Direction, PuzzleResult } from '../lib/types';
-import { PuzzleStatsT } from '../lib/dbtypes';
+import { PuzzleStatsViewT } from '../lib/dbtypes';
 import {
   fromCells,
   getCluedAcrossAndDown,
@@ -39,12 +39,15 @@ export enum StatsMode {
 
 interface MetaSubmissionListProps {
   puzzle: PuzzleResult;
-  stats: Omit<PuzzleStatsT, 'ua'>;
+  stats: PuzzleStatsViewT;
 }
 
 const MetaSubmissionList = (props: MetaSubmissionListProps) => {
   const [subs, setSubs] = useState(
-    props.stats.ct_subs?.map((n) => ({ d: n.t.toDate().toISOString(), ...n }))
+    props.stats.ct_subs?.map((n) => ({
+      d: (typeof n.t === 'number' ? new Date(n.t) : n.t.toDate()).toISOString(),
+      ...n,
+    }))
   );
   if (!subs || subs.length === 0) {
     return <p>No submissions yet - data is updated once per hour.</p>;
@@ -273,7 +276,7 @@ export const StatsPage = ({
   hideShare,
 }: {
   puzzle: PuzzleResult;
-  stats: Omit<PuzzleStatsT, 'ua'> | null;
+  stats: PuzzleStatsViewT | null;
   hideShare?: boolean;
 }) => {
   const [mode, setMode] = useState(StatsMode.AverageTime);

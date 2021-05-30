@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+import { TimestampType } from './firebaseWrapper';
 
 // We import this instead of defining it here so that we can define it
 // differently for the main react app and the 'functions' subdirectory
@@ -120,6 +121,11 @@ const MetaSubmissionForStatsV = t.intersection([
 export type MetaSubmissionForPuzzleT = t.TypeOf<
   typeof MetaSubmissionForPuzzleV
 >;
+
+type MetaSubmissionForStatsViewT = Omit<
+  t.TypeOf<typeof MetaSubmissionForStatsV>,
+  't'
+> & { t: number | TimestampType };
 
 const DBPuzzleOptionalV = t.partial({
   /** highlighted cell indexes */
@@ -314,6 +320,10 @@ export const PuzzleStatsV = t.intersection([
   }),
 ]);
 export type PuzzleStatsT = t.TypeOf<typeof PuzzleStatsV>;
+
+export type PuzzleStatsViewT = Omit<Omit<PuzzleStatsT, 'ct_subs'>, 'ua'> & {
+  ct_subs?: Array<MetaSubmissionForStatsViewT>;
+};
 
 const PuzzleInfoV = t.tuple([
   /** title */
