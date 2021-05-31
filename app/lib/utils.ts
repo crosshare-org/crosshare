@@ -67,7 +67,7 @@ export function fnv1a(input: string) {
 }
 
 function normalize(n: string) {
-  return n.toLowerCase().replace(/ /g, '');
+  return n.toLowerCase().replace(/[\s!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g, '');
 }
 
 export function isMetaSolution(submission: string, solutions: Array<string>) {

@@ -679,15 +679,22 @@ const PuzzleEditor = ({
                     </li>
                   ))}
                 </ul>
-                <p>Add another solution:</p>
+                <p>
+                  Add another solution (submissions will match regardless of
+                  case, whitespace, and punctuation):
+                </p>
               </>
             ) : (
               <>
-                <p>Add a solution to enable contest mode for this puzzle:</p>
+                <p>
+                  Add a solution to enable contest mode for this puzzle
+                  (submissions will match regardless of case, whitespace, and
+                  punctuation):
+                </p>
               </>
             )}
             <EditableText
-              title="Solution (case & whitespace insensitive)"
+              title="Solution"
               css={{ marginBottom: '1em' }}
               text={''}
               maxLength={MAX_META_SUBMISSION_LENGTH}

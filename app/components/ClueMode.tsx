@@ -487,6 +487,10 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               <h4>
                 Contest solution(s) - must specify at least one valid solution:
               </h4>
+              <p>
+                Submissions will match regardless of case, whitespace, and
+                punctuation.
+              </p>
               {state.contestAnswers?.length ? (
                 <ul>
                   {state.contestAnswers.map((a) => (
@@ -511,7 +515,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               )}
               <LengthLimitedInput
                 type="text"
-                placeholder="Solution (case insensitive)"
+                placeholder="Solution"
                 value={contestAnswerInProg}
                 updateValue={setContestAnswerInProg}
                 maxLength={MAX_META_SUBMISSION_LENGTH}
