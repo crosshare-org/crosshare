@@ -118,14 +118,7 @@ export const PuzzleLoader = ({
     );
   }
 
-  return (
-    <PuzzleEditor
-      isAdmin={auth.isAdmin}
-      key={puzzleId}
-      puzzle={nicePuzzle}
-      dbPuzzle={puzzle}
-    />
-  );
+  return <PuzzleEditor key={puzzleId} puzzle={nicePuzzle} dbPuzzle={puzzle} />;
 };
 
 const ClueRow = (props: {
@@ -427,11 +420,9 @@ const EditableText = (
 const PuzzleEditor = ({
   puzzle,
   dbPuzzle,
-  isAdmin,
 }: {
   puzzle: PuzzleResult;
   dbPuzzle: DBPuzzleT;
-  isAdmin: boolean;
 }) => {
   const grid = useMemo(() => {
     return addClues(
@@ -658,116 +649,108 @@ const PuzzleEditor = ({
               });
           }}
         />
-        {isAdmin ? (
+        <h3 css={{ marginTop: '1em' }}>Contest / meta puzzle</h3>
+        <p>
+          A meta puzzle has an extra puzzle embedded in the grid for after
+          solvers have finished solving. Solvers can submit their solution, find
+          out if they were right or wrong, and view a leaderboard of those who
+          have solved the contest correctly.
+        </p>
+        {puzzle.constructorNotes ? (
           <>
-            <h3 css={{ marginTop: '1em' }}>Contest / meta puzzle</h3>
-            <p>
-              A meta puzzle has an extra puzzle embedded in the grid for after
-              solvers have finished solving. Solvers can submit their solution,
-              find out if they were right or wrong, and view a leaderboard of
-              those who have solved the contest correctly.
-            </p>
-            {puzzle.constructorNotes ? (
+            {puzzle.contestAnswers?.length ? (
               <>
-                {puzzle.contestAnswers?.length ? (
+                <p>Contest mode is on for this puzzle. Solutions:</p>
+                <ul>
+                  {puzzle.contestAnswers.map((a) => (
+                    <li key={a}>
+                      {a} (
+                      <ButtonAsLink
+                        onClick={() => {
+                          App.firestore()
+                            .doc(`c/${puzzle.id}`)
+                            .update({
+                              ct_ans: FieldValue.arrayRemove(a),
+                            });
+                        }}
+                        text="remove"
+                      />
+                      )
+                    </li>
+                  ))}
+                </ul>
+                <p>Add another solution:</p>
+              </>
+            ) : (
+              <>
+                <p>Add a solution to enable contest mode for this puzzle:</p>
+              </>
+            )}
+            <EditableText
+              title="Solution (case & whitespace insensitive)"
+              css={{ marginBottom: '1em' }}
+              text={''}
+              maxLength={MAX_META_SUBMISSION_LENGTH}
+              hasError={(sol) =>
+                puzzle.contestAnswers &&
+                isMetaSolution(sol, puzzle.contestAnswers)
+                  ? 'Duplicate solution!'
+                  : ''
+              }
+              handleSubmit={(sol) =>
+                App.firestore()
+                  .doc(`c/${puzzle.id}`)
+                  .update({
+                    ct_ans: FieldValue.arrayUnion(sol.trim()),
+                  })
+              }
+            />
+            {puzzle.contestAnswers?.length ? (
+              <>
+                {puzzle.contestHasPrize ? (
                   <>
-                    <p>Contest mode is on for this puzzle. Solutions:</p>
-                    <ul>
-                      {puzzle.contestAnswers.map((a) => (
-                        <li key={a}>
-                          {a} (
-                          <ButtonAsLink
-                            onClick={() => {
-                              App.firestore()
-                                .doc(`c/${puzzle.id}`)
-                                .update({
-                                  ct_ans: FieldValue.arrayRemove(a),
-                                });
-                            }}
-                            text="remove"
-                          />
-                          )
-                        </li>
-                      ))}
-                    </ul>
-                    <p>Add another solution:</p>
+                    <p>
+                      This puzzle has a prize. Solvers will be notified and can
+                      choose to include their email address in their submission
+                      to be eligible to win.
+                    </p>
+                    <Button
+                      onClick={() => {
+                        App.firestore()
+                          .doc(`c/${puzzle.id}`)
+                          .update({ ct_prz: false });
+                      }}
+                      text="Remove Prize"
+                    />
                   </>
                 ) : (
                   <>
                     <p>
-                      Add a solution to enable contest mode for this puzzle:
+                      This puzzle does not have a prize. If a puzzle has a
+                      prize, solvers will be notified and can choose to include
+                      their email address in their submission to be eligible to
+                      win.
                     </p>
+                    <Button
+                      onClick={() => {
+                        App.firestore()
+                          .doc(`c/${puzzle.id}`)
+                          .update({ ct_prz: true });
+                      }}
+                      text="Add a Prize"
+                    />
                   </>
-                )}
-                <EditableText
-                  title="Solution (case & whitespace insensitive)"
-                  css={{ marginBottom: '1em' }}
-                  text={''}
-                  maxLength={MAX_META_SUBMISSION_LENGTH}
-                  hasError={(sol) =>
-                    puzzle.contestAnswers &&
-                    isMetaSolution(sol, puzzle.contestAnswers)
-                      ? 'Duplicate solution!'
-                      : ''
-                  }
-                  handleSubmit={(sol) =>
-                    App.firestore()
-                      .doc(`c/${puzzle.id}`)
-                      .update({
-                        ct_ans: FieldValue.arrayUnion(sol.trim()),
-                      })
-                  }
-                />
-                {puzzle.contestAnswers?.length ? (
-                  <>
-                    {puzzle.contestHasPrize ? (
-                      <>
-                        <p>
-                          This puzzle has a prize. Solvers will be notified and
-                          can choose to include their email address in their
-                          submission to be eligible to win.
-                        </p>
-                        <Button
-                          onClick={() => {
-                            App.firestore()
-                              .doc(`c/${puzzle.id}`)
-                              .update({ ct_prz: false });
-                          }}
-                          text="Remove Prize"
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <p>
-                          This puzzle does not have a prize. If a puzzle has a
-                          prize, solvers will be notified and can choose to
-                          include their email address in their submission to be
-                          eligible to win.
-                        </p>
-                        <Button
-                          onClick={() => {
-                            App.firestore()
-                              .doc(`c/${puzzle.id}`)
-                              .update({ ct_prz: true });
-                          }}
-                          text="Add a Prize"
-                        />
-                      </>
-                    )}
-                  </>
-                ) : (
-                  ''
                 )}
               </>
             ) : (
-              <p>
-                To make this puzzle a contest puzzle, first use the notes field
-                above to add a prompt for the contest.
-              </p>
+              ''
             )}
           </>
         ) : (
-          ''
+          <p>
+            To make this puzzle a contest puzzle, first use the notes field
+            above to add a prompt for the contest.
+          </p>
         )}
         <h3 css={{ marginTop: '1em' }}>Delete</h3>
         {puzzle.category ? (

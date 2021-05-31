@@ -784,7 +784,6 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     return (
       <ClueMode
         user={props.user}
-        isAdmin={props.isAdmin}
         state={state}
         puzzleId={state.id}
         authorId={state.authorId}

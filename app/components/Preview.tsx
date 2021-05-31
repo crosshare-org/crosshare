@@ -109,7 +109,6 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
         clues={state.clues}
         completedEntries={state.grid.entries.filter((e) => e.completedWord)}
         exitClueMode={() => setClueMode(false)}
-        isAdmin={props.isAdmin}
         user={props.user}
       />
     );
