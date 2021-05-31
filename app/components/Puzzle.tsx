@@ -1048,7 +1048,13 @@ export const Puzzle = ({
                 <>
                   <TopBarLink
                     icon={<FaComment />}
-                    text={'Show Comments'}
+                    text={
+                      puzzle.contestAnswers?.length
+                        ? !state.contestSubmission
+                          ? 'Contest Prompt / Submission'
+                          : 'Comments / Leaderboard'
+                        : 'Show Comments'
+                    }
                     onClick={() => dispatch({ type: 'UNDISMISSSUCCESS' })}
                   />
                   {moreMenu}
