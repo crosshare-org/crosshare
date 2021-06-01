@@ -264,6 +264,8 @@ interface TopBarLinkProps extends TopBarLinkCommonProps {
 }
 
 export const TopBarLink = (props: TopBarLinkProps) => {
+  const isEmbed = useContext(EmbedContext);
+  const today = new Date();
   return (
     <button
       title={props.hoverText || props.text}
@@ -283,6 +285,10 @@ export const TopBarLink = (props: TopBarLinkProps) => {
           textDecoration: 'none',
           backgroundColor: 'var(--top-bar-hover)',
         },
+        ...(!isEmbed &&
+          today.getUTCMonth() === 5 && {
+          color: 'black',
+        }),
       }}
       onClick={props.onClick}
     >
@@ -298,6 +304,8 @@ interface TopBarLinkAProps extends TopBarLinkCommonProps {
 }
 
 export const TopBarLinkA = (props: TopBarLinkAProps) => {
+  const isEmbed = useContext(EmbedContext);
+  const today = new Date();
   return (
     <Link
       href={props.href}
@@ -322,6 +330,10 @@ export const TopBarLinkA = (props: TopBarLinkAProps) => {
             ? 'var(--bg)'
             : 'var(--top-bar-hover)',
         },
+        ...(!isEmbed &&
+          today.getUTCMonth() === 5 && {
+          color: 'black',
+        }),
       }}
       onClick={props.onClick}
     >
@@ -379,10 +391,10 @@ export const TopBar = ({
             height: HEADER_HEIGHT,
             color: 'var(--onprimary)',
             ...((!isEmbed &&
-              today.getUTCMonth() === 5 &&
-              today.getUTCDate() <= 3 && {
+              today.getUTCMonth() === 5 && {
+              color: 'black',
               backgroundImage:
-                  'linear-gradient(to right, red,orange,yellow,green,blue,indigo,violet)',
+                  'linear-gradient(to right, red,orange,yellow,darkseagreen,deepskyblue,violet)',
             }) || { backgroundColor: 'var(--primary)' }),
           }}
         >
@@ -442,6 +454,10 @@ export const TopBar = ({
                     [SMALL_AND_UP]: {
                       display: 'inline-block',
                     },
+                    ...(!isEmbed &&
+                      today.getUTCMonth() === 5 && {
+                      color: 'black',
+                    }),
                   }}
                 >
                   CROSSHARE
@@ -473,6 +489,10 @@ export const TopBar = ({
                     [SMALL_AND_UP]: {
                       display: 'inline-block',
                     },
+                    ...(!isEmbed &&
+                      today.getUTCMonth() === 5 && {
+                      color: 'black',
+                    }),
                   }}
                 >
                   CROSSHARE
