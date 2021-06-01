@@ -264,8 +264,6 @@ interface TopBarLinkProps extends TopBarLinkCommonProps {
 }
 
 export const TopBarLink = (props: TopBarLinkProps) => {
-  const isEmbed = useContext(EmbedContext);
-  const today = new Date();
   return (
     <button
       title={props.hoverText || props.text}
@@ -285,10 +283,6 @@ export const TopBarLink = (props: TopBarLinkProps) => {
           textDecoration: 'none',
           backgroundColor: 'var(--top-bar-hover)',
         },
-        ...(!isEmbed &&
-          today.getUTCMonth() === 5 && {
-          color: 'black',
-        }),
       }}
       onClick={props.onClick}
     >
@@ -304,8 +298,6 @@ interface TopBarLinkAProps extends TopBarLinkCommonProps {
 }
 
 export const TopBarLinkA = (props: TopBarLinkAProps) => {
-  const isEmbed = useContext(EmbedContext);
-  const today = new Date();
   return (
     <Link
       href={props.href}
@@ -330,10 +322,6 @@ export const TopBarLinkA = (props: TopBarLinkAProps) => {
             ? 'var(--bg)'
             : 'var(--top-bar-hover)',
         },
-        ...(!isEmbed &&
-          today.getUTCMonth() === 5 && {
-          color: 'black',
-        }),
       }}
       onClick={props.onClick}
     >
@@ -389,13 +377,17 @@ export const TopBar = ({
         <header
           css={{
             height: HEADER_HEIGHT,
+            background: 'var(--primary)',
             color: 'var(--onprimary)',
-            ...((!isEmbed &&
+            ...(!isEmbed &&
               today.getUTCMonth() === 5 && {
-              color: 'black',
-              backgroundImage:
-                  'linear-gradient(to right, red,orange,yellow,darkseagreen,deepskyblue,violet)',
-            }) || { backgroundColor: 'var(--primary)' }),
+              background:
+                  'linear-gradient(to right, indianred,orange,gold,darkseagreen,deepskyblue,violet)',
+              '@media (prefers-color-scheme: dark)': {
+                background:
+                    'linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)), linear-gradient(to right, indianred,orange,gold,darkseagreen,deepskyblue,violet)',
+              },
+            }),
           }}
         >
           <div
@@ -454,10 +446,6 @@ export const TopBar = ({
                     [SMALL_AND_UP]: {
                       display: 'inline-block',
                     },
-                    ...(!isEmbed &&
-                      today.getUTCMonth() === 5 && {
-                      color: 'black',
-                    }),
                   }}
                 >
                   CROSSHARE
@@ -489,10 +477,6 @@ export const TopBar = ({
                     [SMALL_AND_UP]: {
                       display: 'inline-block',
                     },
-                    ...(!isEmbed &&
-                      today.getUTCMonth() === 5 && {
-                      color: 'black',
-                    }),
                   }}
                 >
                   CROSSHARE
