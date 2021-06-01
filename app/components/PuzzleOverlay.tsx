@@ -101,7 +101,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                   text={props.dismissMessage}
                 />
                 {isContest ? (
-                  <p>
+                  <p css={{ marginTop: '1em' }}>
                     This is a contest/meta puzzle. To submit your answer, first
                     finish solving the grid (or reveal it if you get stuck or
                     solved offline).
