@@ -953,7 +953,7 @@ export const Puzzle = ({
               <TopBarDropDownLinkA
                 href="/account"
                 icon={<FaUser />}
-                text="Account"
+                text="Account / Settings"
               />
               <TopBarDropDownLinkA
                 href="/construct"
