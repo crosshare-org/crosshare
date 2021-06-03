@@ -708,7 +708,8 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           active: advancePosition(
             state.grid,
             state.active,
-            isPuzzleState(state) ? state.wrongCells : new Set()
+            isPuzzleState(state) ? state.wrongCells : new Set(),
+            isPuzzleState(state) ? state.prefs : undefined
           ),
         };
       } else if (key === 'Escape') {
@@ -838,7 +839,8 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         active: advancePosition(
           state.grid,
           state.active,
-          isPuzzleState(state) ? state.wrongCells : new Set()
+          isPuzzleState(state) ? state.wrongCells : new Set(),
+          isPuzzleState(state) ? state.prefs : undefined
         ),
       };
     } else if (key === 'Backspace' || key === '{bksp}') {

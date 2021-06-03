@@ -9,6 +9,7 @@ import {
 } from './gridBase';
 import { ClueT, Position, Direction, PosAndDir, BLOCK } from './types';
 import { Symmetry } from '../reducers/reducer';
+import { AccountPrefsFlagsT } from './prefs';
 
 export interface ViewableEntry extends EntryBase {
   labelNumber: number;
@@ -208,25 +209,37 @@ export function nextNonBlock<Entry extends ViewableEntry>(
 export function advancePosition<Entry extends ViewableEntry>(
   grid: ViewableGrid<Entry>,
   pos: PosAndDir,
-  wrongCells: Set<number>
+  wrongCells: Set<number>,
+  prefs: AccountPrefsFlagsT | undefined
 ): PosAndDir {
   const [entry, index] = entryAtPosition(grid, pos);
   if (!entry) {
     return pos;
   }
-  for (let offset = 0; offset < entry.cells.length; offset += 1) {
-    const cell = entry.cells[(index + offset + 1) % entry.cells.length];
-    if (cell === undefined) {
-      throw new Error('oob');
-    }
-    if (valAt(grid, cell) === ' ' || wrongCells.has(cellIndex(grid, cell))) {
-      return { ...cell, dir: pos.dir };
+  // First try for the next empty square
+  if (!prefs?.dontSkipCompleted) {
+    for (let offset = 0; offset < entry.cells.length; offset += 1) {
+      const cell = entry.cells[(index + offset + 1) % entry.cells.length];
+      if (cell === undefined) {
+        throw new Error('oob');
+      }
+      if (valAt(grid, cell) === ' ' || wrongCells.has(cellIndex(grid, cell))) {
+        return { ...cell, dir: pos.dir };
+      }
     }
   }
-  if (index === entry.cells.length - 1) {
-    return moveToNextEntry(grid, pos);
+
+  // If we're at the end of the word and it's complete, advance to next entry
+  if (index === entry.cells.length - 1 && entry.completedWord) {
+    if (prefs?.dontAdvanceWordAfterCompletion) {
+      return pos;
+    } else {
+      return moveToNextEntry(grid, pos);
+    }
   }
-  const cell = entry.cells[index + 1];
+
+  // Just advance to the next cell in order
+  const cell = entry.cells[(index + 1) % entry.cells.length];
   if (cell === undefined) {
     throw new Error('oob');
   }
