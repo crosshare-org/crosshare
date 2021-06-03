@@ -33,6 +33,7 @@ import {
 } from '../lib/gridBase';
 import type firebase from 'firebase';
 import { App, TimestampType, TimestampClass } from '../lib/firebaseWrapper';
+import { AccountPrefsFlagsT } from '../lib/prefs';
 
 interface GridInterfaceState {
   type: string;
@@ -49,6 +50,7 @@ interface GridInterfaceState {
 interface PuzzleState extends GridInterfaceState {
   type: 'puzzle';
   grid: CluedGrid;
+  prefs?: AccountPrefsFlagsT;
   answers: Array<string>;
   verifiedCells: Set<number>;
   revealedCells: Set<number>;
@@ -491,6 +493,7 @@ function isRanMetaSubmitEffectsAction(
 export interface LoadPlayAction extends PuzzleAction {
   type: 'LOADPLAY';
   play: PlayWithoutUserT | null;
+  prefs?: AccountPrefsFlagsT;
   isAuthor: boolean;
 }
 function isLoadPlayAction(action: PuzzleAction): action is LoadPlayAction {
@@ -758,7 +761,10 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         ...state,
         wasEntryClick: false,
         active: {
-          ...moveRight(state.grid, state.active),
+          ...state.active,
+          ...((state.active.dir === Direction.Across ||
+            (isPuzzleState(state) && state.prefs?.advanceOnPerpendicular)) &&
+            moveRight(state.grid, state.active)),
           dir: Direction.Across,
         },
       };
@@ -767,7 +773,10 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         ...state,
         wasEntryClick: false,
         active: {
-          ...moveLeft(state.grid, state.active),
+          ...state.active,
+          ...((state.active.dir === Direction.Across ||
+            (isPuzzleState(state) && state.prefs?.advanceOnPerpendicular)) &&
+            moveLeft(state.grid, state.active)),
           dir: Direction.Across,
         },
       };
@@ -775,13 +784,25 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       return {
         ...state,
         wasEntryClick: false,
-        active: { ...moveUp(state.grid, state.active), dir: Direction.Down },
+        active: {
+          ...state.active,
+          ...((state.active.dir === Direction.Down ||
+            (isPuzzleState(state) && state.prefs?.advanceOnPerpendicular)) &&
+            moveUp(state.grid, state.active)),
+          dir: Direction.Down,
+        },
       };
     } else if (key === 'ArrowDown') {
       return {
         ...state,
         wasEntryClick: false,
-        active: { ...moveDown(state.grid, state.active), dir: Direction.Down },
+        active: {
+          ...state.active,
+          ...((state.active.dir === Direction.Down ||
+            (isPuzzleState(state) && state.prefs?.advanceOnPerpendicular)) &&
+            moveDown(state.grid, state.active)),
+          dir: Direction.Down,
+        },
       };
     } else if (
       (key === '.' || key === '{block}') &&
@@ -1171,6 +1192,7 @@ export function puzzleReducer(
     if (action.isAuthor) {
       return {
         ...state,
+        prefs: action.prefs,
         success: true,
         ranSuccessEffects: true,
         ranMetaSubmitEffects: true,
@@ -1179,10 +1201,11 @@ export function puzzleReducer(
     }
     const play = action.play;
     if (play === null) {
-      return { ...state, loadedPlayState: true };
+      return { ...state, prefs: action.prefs, loadedPlayState: true };
     }
     return {
       ...state,
+      prefs: action.prefs,
       loadedPlayState: true,
       grid: { ...state.grid, cells: play.g },
       verifiedCells: new Set<number>(play.vc),

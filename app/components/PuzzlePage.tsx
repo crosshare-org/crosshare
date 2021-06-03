@@ -11,6 +11,7 @@ import { ErrorPage } from './ErrorPage';
 import { Link } from './Link';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { PuzzlePageProps, PuzzlePageResultProps } from '../lib/serverOnly';
+import { AccountPrefsT } from '../lib/prefs';
 
 export function PuzzlePage(props: PuzzlePageProps) {
   if ('error' in props) {
@@ -28,7 +29,7 @@ export function PuzzlePage(props: PuzzlePageProps) {
 }
 
 const CachePlayLoader = (props: PuzzlePageResultProps) => {
-  const { user, isAdmin, loading, error } = useContext(AuthContext);
+  const { user, isAdmin, prefs, loading, error } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
   const [loadingPlay, setLoadingPlay] = useState(true);
   const [showedNonDB, setShowedNonDB] = useState(false);
@@ -65,6 +66,7 @@ const CachePlayLoader = (props: PuzzlePageResultProps) => {
         {...props}
         loadingPlayState={true}
         play={play}
+        prefs={prefs}
         user={user}
         isAdmin={isAdmin}
       />
@@ -80,6 +82,7 @@ const CachePlayLoader = (props: PuzzlePageResultProps) => {
         {...props}
         loadingPlayState={false}
         play={play}
+        prefs={prefs}
         user={user}
         isAdmin={isAdmin}
       />
@@ -90,13 +93,18 @@ const CachePlayLoader = (props: PuzzlePageResultProps) => {
       key={props.puzzle.id}
       {...props}
       user={user}
+      prefs={prefs}
       isAdmin={isAdmin}
     />
   );
 };
 
 const DBPlayLoader = (
-  props: { user: firebase.User; isAdmin: boolean } & PuzzlePageResultProps
+  props: {
+    user: firebase.User;
+    isAdmin: boolean;
+    prefs?: AccountPrefsT;
+  } & PuzzlePageResultProps
 ) => {
   // Load from db
   const [doc, loading, error] = useDocument(

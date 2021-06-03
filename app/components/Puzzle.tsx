@@ -249,11 +249,12 @@ export const Puzzle = ({
       const action: LoadPlayAction = {
         type: 'LOADPLAY',
         play: play,
+        prefs: props.prefs,
         isAuthor: props.user ? props.user.uid === puzzle.authorId : false,
       };
       dispatch(action);
     }
-  }, [loadingPlayState, play, props.user, puzzle.authorId]);
+  }, [loadingPlayState, play, props.user, props.prefs, puzzle.authorId]);
 
   // Every (unpaused) second dispatch a tick action which updates the display time
   useEffect(() => {

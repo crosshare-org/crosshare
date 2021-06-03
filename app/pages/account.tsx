@@ -9,7 +9,11 @@ import { Link } from '../components/Link';
 import { CreatePageForm, BioEditor } from '../components/ConstructorPage';
 import { Button } from '../components/Buttons';
 import { PROFILE_PIC, COVER_PIC } from '../lib/style';
-import { UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
+import {
+  UnsubscribeFlags,
+  AccountPrefsT,
+  AccountPrefsFlagsT,
+} from '../lib/prefs';
 
 import dynamic from 'next/dynamic';
 import type { ImageCropper as ImageCropperType } from '../components/ImageCropper';
@@ -21,7 +25,7 @@ const ImageCropper = dynamic(
   { ssr: false }
 ) as typeof ImageCropperType;
 
-interface PrefSettingProps {
+interface UnsubSettingProps {
   prefs: AccountPrefsT | undefined;
   userId: string;
   flag: keyof typeof UnsubscribeFlags;
@@ -30,7 +34,7 @@ interface PrefSettingProps {
   neverDisable?: boolean;
 }
 
-const PrefSetting = (props: PrefSettingProps) => {
+const UnsubSetting = (props: UnsubSettingProps) => {
   const { showSnackbar } = useSnackbar();
   const unsubbed = props.prefs?.unsubs?.includes(props.flag);
   const unsubbedAll = props.prefs?.unsubs?.includes('all');
@@ -55,6 +59,44 @@ const PrefSetting = (props: PrefSettingProps) => {
             )
             .then(() => {
               showSnackbar('Email Preferences Updated');
+            })
+        }
+      />
+      {props.text}
+    </label>
+  );
+};
+
+interface PrefSettingProps {
+  prefs: AccountPrefsT | undefined;
+  userId: string;
+  flag: keyof AccountPrefsFlagsT;
+  text: string;
+  invert?: boolean;
+}
+
+const PrefSetting = (props: PrefSettingProps) => {
+  const { showSnackbar } = useSnackbar();
+  const prefSet = props.prefs?.[props.flag] || false;
+  return (
+    <label>
+      <input
+        css={{ marginRight: '1em' }}
+        type="checkbox"
+        checked={props.invert ? !prefSet : prefSet}
+        onChange={(e) =>
+          App.firestore()
+            .doc(`prefs/${props.userId}`)
+            .set(
+              {
+                [props.flag]: props.invert
+                  ? !e.target.checked
+                  : e.target.checked,
+              },
+              { merge: true }
+            )
+            .then(() => {
+              showSnackbar('Preferences Updated');
             })
         }
       />
@@ -106,7 +148,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         <p>Email me (to {user.email}, at most once per day) when:</p>
         <ul css={{ listStyleType: 'none' }}>
           <li>
-            <PrefSetting
+            <UnsubSetting
               prefs={prefs}
               userId={user.uid}
               flag="comments"
@@ -114,7 +156,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
             />
           </li>
           <li>
-            <PrefSetting
+            <UnsubSetting
               prefs={prefs}
               userId={user.uid}
               flag="newpuzzles"
@@ -122,7 +164,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
             />
           </li>
           <li>
-            <PrefSetting
+            <UnsubSetting
               prefs={prefs}
               userId={user.uid}
               flag="featured"
@@ -130,13 +172,48 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
             />
           </li>
           <li>
-            <PrefSetting
+            <UnsubSetting
               prefs={prefs}
               userId={user.uid}
               flag="all"
               invert
               neverDisable
               text="Never notify me by email (even for any future notification types)"
+            />
+          </li>
+        </ul>
+        <hr css={{ margin: '2em 0' }} />
+        <h2>Solving Preferences</h2>
+        <ul
+          css={{
+            listStyleType: 'none',
+            padding: '0 0',
+          }}
+        >
+          <li>
+            <PrefSetting
+              prefs={prefs}
+              userId={user.uid}
+              flag={'advanceOnPerpendicular'}
+              text="Advance to next square when changing direction with arrow keys"
+            />
+          </li>
+          <li>
+            <PrefSetting
+              prefs={prefs}
+              userId={user.uid}
+              flag={'dontSkipCompleted'}
+              invert={true}
+              text="Skip over completed squares after entering a letter"
+            />
+          </li>
+          <li>
+            <PrefSetting
+              prefs={prefs}
+              userId={user.uid}
+              flag={'dontAdvanceWordAfterCompletion'}
+              invert={true}
+              text="Move to next clue after completing an entry"
             />
           </li>
         </ul>
