@@ -14,7 +14,6 @@ import { GridBase, valAt, EntryBase } from '../lib/gridBase';
 import { PuzzleAction, ClickedEntryAction } from '../reducers/reducer';
 import { SMALL_AND_UP } from '../lib/style';
 import { ClueText } from './ClueText';
-import { Button } from './Buttons';
 
 interface ClueListItemProps {
   dimCompleted: boolean;
@@ -287,25 +286,14 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
           scrollbarWidth: 'none',
         }}
       >
-        {props.downsOnly && props.header === 'Across' ? (
-          <div css={{ padding: '1em', backgroundColor: 'var(--bg)' }}>
-            You are currently solving downs-only:
-            <br />
-            <Button
-              onClick={() => props.dispatch({ type: 'STOPDOWNSONLY' })}
-              text={'Enable across clues'}
-            />
-          </div>
-        ) : (
-          <ol
-            css={{
-              margin: 0,
-              padding: 0,
-            }}
-          >
-            {clues}
-          </ol>
-        )}
+        <ol
+          css={{
+            margin: 0,
+            padding: 0,
+          }}
+        >
+          {clues}
+        </ol>
       </div>
     </div>
   );

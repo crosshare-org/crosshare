@@ -413,16 +413,6 @@ export const Puzzle = ({
   );
 
   useEffect(() => {
-    if (
-      state.active.dir === Direction.Across &&
-      state.downsOnly &&
-      !state.success
-    ) {
-      dispatch({ type: 'CHANGEDIRECTION' });
-    }
-  }, [state.active.dir, state.downsOnly, state.success]);
-
-  useEffect(() => {
     cachePlayForUser(props.user);
   }, [props.user, cachePlayForUser]);
 
@@ -537,11 +527,7 @@ export const Puzzle = ({
   useEventListener('keydown', physicalKeyboardHandler);
 
   let [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
-  if (
-    entry === null &&
-    cross !== null &&
-    !(state.downsOnly && !state.success)
-  ) {
+  if (entry === null && cross !== null) {
     dispatch({ type: 'CHANGEDIRECTION' });
     [entry, cross] = [cross, entry];
   }
@@ -556,15 +542,14 @@ export const Puzzle = ({
 
   const { acrossEntries, downEntries } = useMemo(() => {
     return {
-      acrossEntries:
-        state.downsOnly && !state.success
-          ? []
-          : state.grid.entries.filter((e) => e.direction === Direction.Across),
+      acrossEntries: state.grid.entries.filter(
+        (e) => e.direction === Direction.Across
+      ),
       downEntries: state.grid.entries.filter(
         (e) => e.direction === Direction.Down
       ),
     };
-  }, [state.grid.entries, state.downsOnly, state.success]);
+  }, [state.grid.entries]);
 
   const isEmbed = useContext(EmbedContext);
 

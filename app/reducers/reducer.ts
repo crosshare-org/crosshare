@@ -648,14 +648,13 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
   state: T,
   action: PuzzleAction
 ): T {
-  const downsOnly = state.downsOnly && !(isPuzzleState(state) && state.success);
   if (action.type === 'CHANGEDIRECTION') {
     return {
       ...closeRebus(state),
       wasEntryClick: false,
       active: {
         ...state.active,
-        dir: downsOnly ? Direction.Down : (state.active.dir + 1) % 2,
+        dir: (state.active.dir + 1) % 2,
       },
     };
   }
@@ -724,8 +723,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
             state.grid,
             state.active,
             isPuzzleState(state) ? state.wrongCells : new Set(),
-            isPuzzleState(state) ? state.prefs : undefined,
-            downsOnly
+            isPuzzleState(state) ? state.prefs : undefined
           ),
         };
       } else if (key === 'Escape') {
@@ -745,7 +743,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         wasEntryClick: false,
         active: {
           ...state.active,
-          dir: downsOnly ? Direction.Down : (state.active.dir + 1) % 2,
+          dir: (state.active.dir + 1) % 2,
         },
       };
     } else if (key === '{prev}') {
@@ -768,49 +766,37 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       return {
         ...state,
         wasEntryClick: false,
-        active: moveToNextEntry(state.grid, state.active, downsOnly),
+        active: moveToNextEntry(state.grid, state.active),
       };
     } else if ((key === 'Tab' && shift) || key === '{prevEntry}') {
       return {
         ...state,
         wasEntryClick: false,
-        active: moveToPrevEntry(state.grid, state.active, downsOnly),
+        active: moveToPrevEntry(state.grid, state.active),
       };
     } else if (key === 'ArrowRight') {
       return {
         ...state,
         wasEntryClick: false,
-        active: downsOnly
-          ? {
-            ...moveRight(state.grid, state.active),
-            dir: Direction.Down,
-          }
-          : {
-            ...state.active,
-            ...((state.active.dir === Direction.Across ||
-                (isPuzzleState(state) &&
-                  state.prefs?.advanceOnPerpendicular)) &&
-                moveRight(state.grid, state.active)),
-            dir: Direction.Across,
-          },
+        active: {
+          ...state.active,
+          ...((state.active.dir === Direction.Across ||
+            (isPuzzleState(state) && state.prefs?.advanceOnPerpendicular)) &&
+            moveRight(state.grid, state.active)),
+          dir: Direction.Across,
+        },
       };
     } else if (key === 'ArrowLeft') {
       return {
         ...state,
         wasEntryClick: false,
-        active: downsOnly
-          ? {
-            ...moveLeft(state.grid, state.active),
-            dir: Direction.Down,
-          }
-          : {
-            ...state.active,
-            ...((state.active.dir === Direction.Across ||
-                (isPuzzleState(state) &&
-                  state.prefs?.advanceOnPerpendicular)) &&
-                moveLeft(state.grid, state.active)),
-            dir: Direction.Across,
-          },
+        active: {
+          ...state.active,
+          ...((state.active.dir === Direction.Across ||
+            (isPuzzleState(state) && state.prefs?.advanceOnPerpendicular)) &&
+            moveLeft(state.grid, state.active)),
+          dir: Direction.Across,
+        },
       };
     } else if (key === 'ArrowUp') {
       return {
@@ -871,8 +857,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           state.grid,
           state.active,
           isPuzzleState(state) ? state.wrongCells : new Set(),
-          isPuzzleState(state) ? state.prefs : undefined,
-          downsOnly
+          isPuzzleState(state) ? state.prefs : undefined
         ),
       };
     } else if (key === 'Backspace' || key === '{bksp}') {
@@ -1365,7 +1350,7 @@ export function advanceActiveToNonBlock(state: PuzzleState) {
     ...state,
     active: {
       ...nextNonBlock(state.grid, state.active),
-      dir: state.downsOnly ? Direction.Down : Direction.Across,
+      dir: Direction.Across,
     },
   };
 }

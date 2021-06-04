@@ -18,6 +18,9 @@ export const ClueText = (props: ClueTextProps) => {
   if (!entry) {
     throw new Error('oob');
   }
+  if (props.downsOnly && entry.direction === Direction.Across) {
+    return <span>-</span>;
+  }
   const text = getClueText(entry);
   let offset = 0;
   const parts: Array<ReactNode> = [];
@@ -38,7 +41,7 @@ export const ClueText = (props: ClueTextProps) => {
         tooltip={
           <>
             {props.downsOnly && e.direction === Direction.Across
-              ? ''
+              ? '-'
               : getClueText(e)}
             <b
               css={{
