@@ -29,6 +29,7 @@ const testComment: Comment = {
   authorDisplayName: 'Mike D',
   authorSolveTime: 55.4,
   authorCheated: false,
+  authorSolvedDownsOnly: false,
   publishTime: new Date(Date.UTC(2020, 7, 1, 7)).getTime(),
 };
 
@@ -39,6 +40,7 @@ test('basic comment display', () => {
       clueMap={new Map()}
       solveTime={10}
       didCheat={false}
+      downsOnly={false}
       puzzleId="puzz"
       puzzleAuthorId="puzzAuthor"
       hasGuestConstructor={false}
@@ -58,6 +60,7 @@ test('comment with username display', () => {
       clueMap={new Map()}
       solveTime={10}
       didCheat={false}
+      downsOnly={false}
       puzzleId="puzz"
       puzzleAuthorId="puzzAuthor"
       hasGuestConstructor={false}

@@ -32,6 +32,7 @@ test('Highlighting for different types of clues', async () => {
           allEntries={cluedGrid.entries}
           entryIndex={i}
           refPositions={refPositions}
+          downsOnly={false}
         />
       </div>,
       {}
