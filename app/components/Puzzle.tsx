@@ -413,10 +413,14 @@ export const Puzzle = ({
   );
 
   useEffect(() => {
-    if (state.active.dir === Direction.Across && state.downsOnly) {
+    if (
+      state.active.dir === Direction.Across &&
+      state.downsOnly &&
+      !state.success
+    ) {
       dispatch({ type: 'CHANGEDIRECTION' });
     }
-  }, [state.active.dir, state.downsOnly]);
+  }, [state.active.dir, state.downsOnly, state.success]);
 
   useEffect(() => {
     cachePlayForUser(props.user);
@@ -533,7 +537,11 @@ export const Puzzle = ({
   useEventListener('keydown', physicalKeyboardHandler);
 
   let [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
-  if (entry === null && cross !== null && !state.downsOnly) {
+  if (
+    entry === null &&
+    cross !== null &&
+    !(state.downsOnly && !state.success)
+  ) {
     dispatch({ type: 'CHANGEDIRECTION' });
     [entry, cross] = [cross, entry];
   }
@@ -548,14 +556,15 @@ export const Puzzle = ({
 
   const { acrossEntries, downEntries } = useMemo(() => {
     return {
-      acrossEntries: state.downsOnly
-        ? []
-        : state.grid.entries.filter((e) => e.direction === Direction.Across),
+      acrossEntries:
+        state.downsOnly && !state.success
+          ? []
+          : state.grid.entries.filter((e) => e.direction === Direction.Across),
       downEntries: state.grid.entries.filter(
         (e) => e.direction === Direction.Down
       ),
     };
-  }, [state.grid.entries, state.downsOnly]);
+  }, [state.grid.entries, state.downsOnly, state.success]);
 
   const isEmbed = useContext(EmbedContext);
 
@@ -624,7 +633,7 @@ export const Puzzle = ({
             cross={cross?.index}
             scrollToCross={scrollToCross}
             dispatch={dispatch}
-            downsOnly={state.downsOnly}
+            downsOnly={state.downsOnly && !state.success}
           />
         }
         right={
@@ -646,7 +655,7 @@ export const Puzzle = ({
             cross={cross?.index}
             scrollToCross={scrollToCross}
             dispatch={dispatch}
-            downsOnly={state.downsOnly}
+            downsOnly={state.downsOnly && !state.success}
           />
         }
       />
@@ -710,7 +719,7 @@ export const Puzzle = ({
                     entryIndex={entry.index}
                     allEntries={state.grid.entries}
                     grid={state.grid}
-                    downsOnly={state.downsOnly}
+                    downsOnly={state.downsOnly && !state.success}
                   />
                 </span>
               </div>
@@ -736,7 +745,7 @@ export const Puzzle = ({
             current={entry?.index}
             cross={cross?.index}
             dispatch={dispatch}
-            downsOnly={state.downsOnly}
+            downsOnly={state.downsOnly && !state.success}
           />
         }
         right={
@@ -756,7 +765,7 @@ export const Puzzle = ({
             current={entry?.index}
             cross={cross?.index}
             dispatch={dispatch}
-            downsOnly={state.downsOnly}
+            downsOnly={state.downsOnly && !state.success}
           />
         }
       />
