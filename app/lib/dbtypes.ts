@@ -23,6 +23,8 @@ const CommentV = t.intersection([
   t.partial({
     /** author username */
     un: t.string,
+    /** solved downs-only */
+    do: t.boolean,
   }),
 ]);
 type CommentT = t.TypeOf<typeof CommentV>;

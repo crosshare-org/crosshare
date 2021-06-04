@@ -63,6 +63,7 @@ const CommentView = (props: CommentProps) => {
           hasGuestConstructor={props.hasGuestConstructor}
           solveTime={props.comment.authorSolveTime}
           didCheat={props.comment.authorCheated}
+          downsOnly={props.comment.authorSolvedDownsOnly}
         />
       </div>
       <Markdown text={props.comment.commentText} clueMap={props.clueMap} />
@@ -166,6 +167,7 @@ interface CommentFlairProps {
   publishTime?: number;
   solveTime: number;
   didCheat: boolean;
+  downsOnly: boolean;
   displayName: string;
   userId: string;
   username?: string;
@@ -203,6 +205,8 @@ const CommentFlair = (props: CommentFlairProps) => {
         <>
           {props.didCheat ? (
             ''
+          ) : props.downsOnly ? (
+            <Emoji title="Solved downs-only" symbol="👇" />
           ) : (
             <Emoji title="Solved without helpers" symbol="🤓" />
           )}
@@ -243,6 +247,7 @@ interface CommentFormProps {
   user: firebase.User;
   solveTime: number;
   didCheat: boolean;
+  downsOnly: boolean;
   puzzleId: string;
   replyToId?: string;
   clueMap: Map<string, [number, Direction, string]>;
@@ -274,6 +279,7 @@ const CommentForm = ({
       n: props.displayName,
       t: props.solveTime,
       ch: props.didCheat,
+      do: props.downsOnly,
       p: TimestampClass.now(),
       pid: props.puzzleId,
       rt: props.replyToId !== undefined ? props.replyToId : null,
@@ -299,6 +305,7 @@ const CommentForm = ({
           authorDisplayName: comment.n,
           authorSolveTime: comment.t,
           authorCheated: comment.ch,
+          authorSolvedDownsOnly: comment.do || false,
           publishTime: comment.p.toMillis(),
         });
         // Add the comment to localStorage for the medium term
@@ -374,6 +381,7 @@ const CommentForm = ({
               puzzleAuthorId={props.puzzleAuthorId}
               solveTime={props.solveTime}
               didCheat={props.didCheat}
+              downsOnly={props.downsOnly}
             />{' '}
             (
             <ButtonAsLink
@@ -420,6 +428,7 @@ const CommentForm = ({
 interface CommentsProps {
   solveTime: number;
   didCheat: boolean;
+  downsOnly: boolean;
   puzzleId: string;
   puzzleAuthorId: string;
   hasGuestConstructor: boolean;
@@ -513,6 +522,7 @@ export const Comments = ({
         authorUsername: c.un,
         authorSolveTime: c.t,
         authorCheated: c.ch,
+        authorSolvedDownsOnly: c.do || false,
         publishTime: c.p.toMillis(),
       };
       if (c.rt === null) {

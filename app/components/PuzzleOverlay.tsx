@@ -164,7 +164,15 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
             ) : (
               <>
                 <p css={{ marginBottom: 0, fontSize: '1.5em' }}>
-                  Solved in <b>{timeString(props.solveTime, false)}</b>
+                  Solved{' '}
+                  {props.didCheat ? (
+                    ''
+                  ) : props.downsOnly ? (
+                    <b>downs-only </b>
+                  ) : (
+                    <b>without check/reveal </b>
+                  )}
+                  in <b>{timeString(props.solveTime, false)}</b>
                 </p>
               </>
             )}
@@ -234,6 +242,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           ''
         )}
         <Comments
+          downsOnly={props.downsOnly}
           hasGuestConstructor={props.puzzle.guestConstructor !== null}
           clueMap={props.clueMap}
           solveTime={props.solveTime}

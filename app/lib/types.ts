@@ -100,6 +100,8 @@ export interface Comment {
   authorSolveTime: number;
   /** author did cheat? */
   authorCheated: boolean;
+  /** author solved downs only? */
+  authorSolvedDownsOnly: boolean;
   /** comment publish timestamp in millis since epoch*/
   publishTime: number;
   /** comment id */
@@ -151,6 +153,7 @@ function convertComments(comments: Array<CommentWithRepliesT>): Array<Comment> {
       authorDisplayName: c.n,
       authorSolveTime: c.t,
       authorCheated: c.ch,
+      authorSolvedDownsOnly: c.do || false,
       publishTime: c.p.toMillis(),
       id: c.i,
       replies: convertComments(c.r || []),
