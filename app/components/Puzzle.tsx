@@ -474,7 +474,9 @@ export const Puzzle = ({
         addToast('🥇 Solved in under a minute!');
         delay += 500;
       }
-      if (!state.didCheat) {
+      if (!state.didCheat && state.downsOnly) {
+        addToast('👇 Solved downs-only!', delay);
+      } else if (!state.didCheat) {
         addToast('🤓 Solved without check/reveal!', delay);
       }
       if (!muted && playSuccess.current) {
@@ -488,6 +490,7 @@ export const Puzzle = ({
     props.user,
     state.bankedSeconds,
     state.didCheat,
+    state.downsOnly,
     state.ranSuccessEffects,
     state.success,
     writePlayToDBIfNeeded,
