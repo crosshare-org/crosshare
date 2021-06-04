@@ -216,6 +216,14 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
               text="Move to next clue after completing an entry"
             />
           </li>
+          <li>
+            <PrefSetting
+              prefs={prefs}
+              userId={user.uid}
+              flag={'solveDownsOnly'}
+              text="Start puzzles in downs-only mode"
+            />
+          </li>
         </ul>
         <hr css={{ margin: '2em 0' }} />
         <h2>Crossword Blog</h2>

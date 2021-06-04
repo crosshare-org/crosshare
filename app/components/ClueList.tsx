@@ -14,6 +14,7 @@ import { GridBase, valAt, EntryBase } from '../lib/gridBase';
 import { PuzzleAction, ClickedEntryAction } from '../reducers/reducer';
 import { SMALL_AND_UP } from '../lib/style';
 import { ClueText } from './ClueText';
+import { Button } from './Buttons';
 
 interface ClueListItemProps {
   dimCompleted: boolean;
@@ -33,6 +34,7 @@ interface ClueListItemProps {
   grid: GridBase<EntryBase>;
   scrollToCross: boolean;
   listRef: RefObject<HTMLDivElement>;
+  downsOnly: boolean;
 }
 
 const ClueListItem = memo(function ClueListItem({
@@ -154,6 +156,7 @@ const ClueListItem = memo(function ClueListItem({
                   entryIndex={props.entry.index}
                   allEntries={props.allEntries}
                   grid={props.grid}
+                  downsOnly={props.downsOnly}
                 />
               </div>
             ) : (
@@ -216,6 +219,7 @@ interface ClueListProps {
   rebusValue?: string;
   grid: GridBase<EntryBase>;
   scrollToCross: boolean;
+  downsOnly: boolean;
 }
 
 export const ClueList = (props: ClueListProps): JSX.Element => {
@@ -243,6 +247,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
         isActive={isActive}
         isCross={isCross}
         isRefed={isRefed}
+        downsOnly={props.downsOnly}
         active={
           props.showEntries && (isActive || isCross) ? props.active : null
         }
@@ -282,14 +287,25 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
           scrollbarWidth: 'none',
         }}
       >
-        <ol
-          css={{
-            margin: 0,
-            padding: 0,
-          }}
-        >
-          {clues}
-        </ol>
+        {props.downsOnly && props.header === 'Across' ? (
+          <div css={{ margin: '1em' }}>
+            You are currently solving downs-only:
+            <br />
+            <Button
+              onClick={() => props.dispatch({ type: 'STOPDOWNSONLY' })}
+              text={'Enable across clues'}
+            />
+          </div>
+        ) : (
+          <ol
+            css={{
+              margin: 0,
+              padding: 0,
+            }}
+          >
+            {clues}
+          </ol>
+        )}
       </div>
     </div>
   );

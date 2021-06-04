@@ -4,13 +4,14 @@ import { CluedEntry, RefPosition } from '../lib/viewableGrid';
 import { GridBase, valAt, EntryBase } from '../lib/gridBase';
 
 import { ToolTipText } from './ToolTipText';
-import { getClueText } from '../lib/types';
+import { Direction, getClueText } from '../lib/types';
 
 interface ClueTextProps {
   entryIndex: number;
   allEntries: Array<CluedEntry>;
   refPositions: Array<Array<RefPosition>>;
   grid: GridBase<EntryBase>;
+  downsOnly: boolean;
 }
 export const ClueText = (props: ClueTextProps) => {
   const entry = props.allEntries[props.entryIndex];
@@ -36,7 +37,9 @@ export const ClueText = (props: ClueTextProps) => {
         text={text.slice(start, end)}
         tooltip={
           <>
-            {getClueText(e)}
+            {props.downsOnly && e.direction === Direction.Across
+              ? ''
+              : getClueText(e)}
             <b
               css={{
                 marginLeft: '0.5em',

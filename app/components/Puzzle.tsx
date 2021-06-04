@@ -177,6 +177,7 @@ export const Puzzle = ({
       verifiedCells: new Set<number>(play ? play.vc : []),
       wrongCells: new Set<number>(play ? play.wc : []),
       revealedCells: new Set<number>(play ? play.rc : []),
+      downsOnly: play?.do || false,
       isEnteringRebus: false,
       rebusValue: '',
       success: play ? play.f : false,
@@ -372,6 +373,7 @@ export const Puzzle = ({
         rc: Array.from(state.revealedCells),
         t: playTime,
         ch: state.didCheat,
+        do: state.downsOnly,
         f: state.success,
         ...(state.contestSubmission && {
           ct_sub: state.contestSubmission,
@@ -388,6 +390,7 @@ export const Puzzle = ({
       cachePlay(user, puzzle.id, playForUser);
     },
     [
+      state.downsOnly,
       state.loadedPlayState,
       puzzle.id,
       state.cellsEverMarkedWrong,
@@ -408,6 +411,12 @@ export const Puzzle = ({
       state.contestDisplayName,
     ]
   );
+
+  useEffect(() => {
+    if (state.active.dir === Direction.Across && state.downsOnly) {
+      dispatch({ type: 'CHANGEDIRECTION' });
+    }
+  }, [state.active.dir, state.downsOnly]);
 
   useEffect(() => {
     cachePlayForUser(props.user);
@@ -524,7 +533,7 @@ export const Puzzle = ({
   useEventListener('keydown', physicalKeyboardHandler);
 
   let [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
-  if (entry === null && cross !== null) {
+  if (entry === null && cross !== null && !state.downsOnly) {
     dispatch({ type: 'CHANGEDIRECTION' });
     [entry, cross] = [cross, entry];
   }
@@ -539,14 +548,14 @@ export const Puzzle = ({
 
   const { acrossEntries, downEntries } = useMemo(() => {
     return {
-      acrossEntries: state.grid.entries.filter(
-        (e) => e.direction === Direction.Across
-      ),
+      acrossEntries: state.downsOnly
+        ? []
+        : state.grid.entries.filter((e) => e.direction === Direction.Across),
       downEntries: state.grid.entries.filter(
         (e) => e.direction === Direction.Down
       ),
     };
-  }, [state.grid.entries]);
+  }, [state.grid.entries, state.downsOnly]);
 
   const isEmbed = useContext(EmbedContext);
 
@@ -571,6 +580,7 @@ export const Puzzle = ({
     publishTime: puzzle.isPrivateUntil || puzzle.publishTime,
     coverImage: props.coverImage,
     profilePicture: props.profilePicture,
+    downsOnly: state.downsOnly,
     clueMap: clueMap,
     user: props.user,
     nextPuzzle: props.nextPuzzle,
@@ -614,6 +624,7 @@ export const Puzzle = ({
             cross={cross?.index}
             scrollToCross={scrollToCross}
             dispatch={dispatch}
+            downsOnly={state.downsOnly}
           />
         }
         right={
@@ -635,6 +646,7 @@ export const Puzzle = ({
             cross={cross?.index}
             scrollToCross={scrollToCross}
             dispatch={dispatch}
+            downsOnly={state.downsOnly}
           />
         }
       />
@@ -698,6 +710,7 @@ export const Puzzle = ({
                     entryIndex={entry.index}
                     allEntries={state.grid.entries}
                     grid={state.grid}
+                    downsOnly={state.downsOnly}
                   />
                 </span>
               </div>
@@ -723,6 +736,7 @@ export const Puzzle = ({
             current={entry?.index}
             cross={cross?.index}
             dispatch={dispatch}
+            downsOnly={state.downsOnly}
           />
         }
         right={
@@ -742,6 +756,7 @@ export const Puzzle = ({
             current={entry?.index}
             cross={cross?.index}
             dispatch={dispatch}
+            downsOnly={state.downsOnly}
           />
         }
       />

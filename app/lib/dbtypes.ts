@@ -201,6 +201,8 @@ const PlayBaseV = t.intersection([
     ct_n: t.string,
     /** contest prize email */
     ct_em: t.string,
+    /** solved (or is solving) downs-only */
+    do: t.boolean,
   }),
 ]);
 

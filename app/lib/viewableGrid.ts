@@ -210,7 +210,8 @@ export function advancePosition<Entry extends ViewableEntry>(
   grid: ViewableGrid<Entry>,
   pos: PosAndDir,
   wrongCells: Set<number>,
-  prefs: AccountPrefsFlagsT | undefined
+  prefs: AccountPrefsFlagsT | undefined,
+  downsOnly: boolean
 ): PosAndDir {
   const [entry, index] = entryAtPosition(grid, pos);
   if (!entry) {
@@ -234,7 +235,7 @@ export function advancePosition<Entry extends ViewableEntry>(
     if (prefs?.dontAdvanceWordAfterCompletion) {
       return pos;
     } else {
-      return moveToNextEntry(grid, pos);
+      return moveToNextEntry(grid, pos, downsOnly);
     }
   }
 
@@ -248,14 +249,16 @@ export function advancePosition<Entry extends ViewableEntry>(
 
 export function moveToPrevEntry<Entry extends ViewableEntry>(
   grid: ViewableGrid<Entry>,
-  pos: PosAndDir
+  pos: PosAndDir,
+  downsOnly: boolean
 ): PosAndDir {
-  return moveToNextEntry(grid, pos, true);
+  return moveToNextEntry(grid, pos, downsOnly, true);
 }
 
 export function moveToNextEntry<Entry extends ViewableEntry>(
   grid: ViewableGrid<Entry>,
   pos: PosAndDir,
+  downsOnly: boolean,
   reverse = false
 ): PosAndDir {
   const [currentEntry] = entryAtPosition(grid, pos);
@@ -300,6 +303,9 @@ export function moveToNextEntry<Entry extends ViewableEntry>(
     if (tryEntry === undefined) {
       throw new Error('oob');
     }
+    if (downsOnly && tryEntry.direction === Direction.Across) {
+      continue;
+    }
     if (tryEntry.completedWord === null) {
       for (const cell of tryEntry.cells) {
         if (valAt(grid, cell) === ' ') {
@@ -326,7 +332,10 @@ export function moveToNextEntry<Entry extends ViewableEntry>(
   if (firstCell === undefined) {
     throw new Error('oob');
   }
-  return { ...firstCell, dir: nextEntry.direction };
+  return {
+    ...firstCell,
+    dir: downsOnly ? Direction.Down : nextEntry.direction,
+  };
 }
 
 export function gridWithNewChar<

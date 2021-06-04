@@ -11,6 +11,7 @@ const AccountPrefsFlagsV = t.partial({
   advanceOnPerpendicular: t.boolean,
   dontSkipCompleted: t.boolean,
   dontAdvanceWordAfterCompletion: t.boolean,
+  solveDownsOnly: t.boolean,
 });
 export type AccountPrefsFlagsT = t.TypeOf<typeof AccountPrefsFlagsV>;
 

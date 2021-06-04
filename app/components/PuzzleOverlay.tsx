@@ -10,7 +10,7 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { NextPuzzleLink } from './Puzzle';
 import { Overlay } from './Overlay';
 import { PuzzleHeading } from './PuzzleHeading';
-import { Button } from './Buttons';
+import { Button, ButtonAsLink } from './Buttons';
 import { MetaSubmission } from './MetaSubmission';
 import { lightFormat } from 'date-fns';
 
@@ -41,6 +41,7 @@ export interface PuzzleOverlayBaseProps {
   isMuted: boolean;
   solveTime: number;
   didCheat: boolean;
+  downsOnly: boolean;
   dispatch: Dispatch<PuzzleAction>;
 }
 
@@ -100,6 +101,18 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                   onClick={() => props.dispatch({ type: 'RESUMEACTION' })}
                   text={props.dismissMessage}
                 />
+                {props.downsOnly ? (
+                  <p css={{ marginTop: '1em' }}>
+                    You are currently solving downs-only: (
+                    <ButtonAsLink
+                      onClick={() => props.dispatch({ type: 'STOPDOWNSONLY' })}
+                      text={'enable across clues'}
+                    />
+                    ).
+                  </p>
+                ) : (
+                  ''
+                )}
                 {isContest ? (
                   <p css={{ marginTop: '1em' }}>
                     This is a contest/meta puzzle. To submit your answer, first
