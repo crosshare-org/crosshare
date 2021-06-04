@@ -288,7 +288,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
         }}
       >
         {props.downsOnly && props.header === 'Across' ? (
-          <div css={{ margin: '1em' }}>
+          <div css={{ padding: '1em', backgroundColor: 'var(--bg)' }}>
             You are currently solving downs-only:
             <br />
             <Button
