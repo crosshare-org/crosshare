@@ -241,6 +241,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
                 cross={cross?.index}
                 scrollToCross={scrollToCross}
                 dispatch={dispatch}
+                downsOnly={false}
               />
             }
             right={
@@ -258,6 +259,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
                 cross={cross?.index}
                 scrollToCross={scrollToCross}
                 dispatch={dispatch}
+                downsOnly={false}
               />
             }
           />

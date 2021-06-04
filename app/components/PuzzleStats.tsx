@@ -247,6 +247,7 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
           cross={cross?.index}
           scrollToCross={scrollToCross}
           dispatch={dispatch}
+          downsOnly={false}
         />
       }
       right={
@@ -264,6 +265,7 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
           cross={cross?.index}
           scrollToCross={scrollToCross}
           dispatch={dispatch}
+          downsOnly={false}
         />
       }
     />
