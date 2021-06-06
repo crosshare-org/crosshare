@@ -93,10 +93,16 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
     <>
       <p css={{ margin: '1em' }}>
         <CSVLink
-          data={subs}
+          data={subs.map((s) => ({
+            ...s,
+            c: isMetaSolution(s.s, props.puzzle.contestAnswers || [])
+              ? 'true'
+              : 'false',
+          }))}
           headers={[
             { label: 'Name', key: 'n' },
             { label: 'Submission', key: 's' },
+            { label: 'Correct?', key: 'c' },
             { label: 'Email', key: 'e' },
             { label: 'Date', key: 'd' },
           ]}
