@@ -8,7 +8,7 @@ import { PartialBy, Comment, Direction } from '../lib/types';
 import { Identicon } from './Icons';
 import { timeString, pastDistanceToNow } from '../lib/utils';
 import { Emoji } from './Emoji';
-import { DisplayNameForm, getDisplayName } from './DisplayNameForm';
+import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
 import {
   CommentForModerationT,
@@ -238,8 +238,6 @@ const CommentFlair = (props: CommentFlairProps) => {
 };
 
 interface CommentFormProps {
-  displayName: string;
-  setDisplayName: (name: string) => void;
   username?: string;
   puzzlePublishTime: number;
   puzzleAuthorId: string;
@@ -258,6 +256,7 @@ const CommentForm = ({
   ...props
 }: CommentFormProps & { onCancel?: () => void }) => {
   const [commentText, setCommentText] = useState('');
+  const displayName = useDisplayName();
   const [editingDisplayName, setEditingDisplayName] = useState(false);
   const [submittedComment, setSubmittedComment] = useState<LocalComment | null>(
     null
@@ -276,7 +275,7 @@ const CommentForm = ({
     const comment: CommentForModerationT = {
       c: textToSubmit,
       a: props.user.uid,
-      n: props.displayName,
+      n: displayName || 'Anonymous Crossharer',
       t: props.solveTime,
       ch: props.didCheat,
       do: props.downsOnly,
@@ -352,7 +351,7 @@ const CommentForm = ({
         <div css={{ textAlign: 'right' }}>
           <LengthView maxLength={COMMENT_LENGTH_LIMIT} value={commentText} />
         </div>
-        {editingDisplayName ? (
+        {editingDisplayName || !displayName ? (
           ''
         ) : (
           <>
@@ -376,7 +375,7 @@ const CommentForm = ({
             <CommentFlair
               hasGuestConstructor={props.hasGuestConstructor}
               username={props.username}
-              displayName={props.displayName}
+              displayName={displayName}
               userId={props.user.uid}
               puzzleAuthorId={props.puzzleAuthorId}
               solveTime={props.solveTime}
@@ -407,16 +406,9 @@ const CommentForm = ({
           ''
         )}
       </form>
-      {editingDisplayName ? (
+      {editingDisplayName || !displayName ? (
         <>
-          <DisplayNameForm
-            user={props.user}
-            onChange={(s) => {
-              props.setDisplayName(s);
-              setEditingDisplayName(false);
-            }}
-            onCancel={() => setEditingDisplayName(false)}
-          />
+          <DisplayNameForm onCancel={() => setEditingDisplayName(false)} />
         </>
       ) : (
         ''
@@ -470,9 +462,6 @@ export const Comments = ({
 }: CommentsProps): JSX.Element => {
   const authContext = useContext(AuthContext);
   const [toShow, setToShow] = useState<Array<CommentOrLocalComment>>(comments);
-  const [displayName, setDisplayName] = useState(
-    getDisplayName(authContext.user, authContext.constructorPage)
-  );
 
   useEffect(() => {
     if (!authContext.notifications?.length) {
@@ -575,8 +564,6 @@ export const Comments = ({
         <CommentForm
           {...props}
           username={authContext.constructorPage?.i}
-          displayName={displayName}
-          setDisplayName={setDisplayName}
           user={authContext.user}
         />
       )}
@@ -592,8 +579,6 @@ export const Comments = ({
             <CommentWithReplies
               user={authContext.user}
               constructorPage={authContext.constructorPage}
-              displayName={displayName}
-              setDisplayName={setDisplayName}
               comment={a}
               {...props}
             />

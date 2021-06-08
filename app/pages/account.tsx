@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Head from 'next/head';
 
-import { getDisplayName, DisplayNameForm } from '../components/DisplayNameForm';
+import { DisplayNameForm, useDisplayName } from '../components/DisplayNameForm';
 import { requiresAuth, AuthProps } from '../components/AuthContext';
 import { App, FieldValue } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
@@ -109,9 +109,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
   const [settingProfilePic, setSettingProfilePic] = useState(false);
   const [settingCoverPic, setSettingCoverPic] = useState(false);
   const [hasAuthoredPuzzle, setHasAuthoredPuzzle] = useState(false);
-  const [displayName, setDisplayName] = useState(
-    getDisplayName(user, constructorPage)
-  );
+  const displayName = useDisplayName();
 
   const db = App.firestore();
   const authoredQuery = useMemo(
@@ -140,10 +138,17 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
           <Button onClick={() => App.auth().signOut()} text="Log out" />
         </p>
         <p>
-          Your display name - <i>{displayName}</i> - is displayed next to any
-          comments you make or puzzles you create.
+          Your display name{' '}
+          {displayName ? (
+            <>
+              - <i>{displayName}</i> -{' '}
+            </>
+          ) : (
+            ''
+          )}
+          is displayed next to any comments you make or puzzles you create.
         </p>
-        <DisplayNameForm user={user} onChange={setDisplayName} />
+        <DisplayNameForm />
         <h3>Notification Settings</h3>
         <p>Email me (to {user.email}, at most once per day) when:</p>
         <ul css={{ listStyleType: 'none' }}>

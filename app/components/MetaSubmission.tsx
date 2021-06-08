@@ -1,6 +1,6 @@
 import { FormEvent, useContext, useState, Dispatch } from 'react';
 import { AuthContext } from './AuthContext';
-import { getDisplayName, DisplayNameForm } from './DisplayNameForm';
+import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import type firebase from 'firebase/app';
 import { Button, ButtonAsLink } from './Buttons';
@@ -16,10 +16,9 @@ export const MetaSubmissionForm = (props: {
   hasPrize: boolean;
   dispatch: Dispatch<ContestSubmitAction>;
   solutions: Array<string>;
-  displayName: string;
 }) => {
   const [submission, setSubmission] = useState('');
-  const [displayName, setDisplayName] = useState(props.displayName);
+  const displayName = useDisplayName();
   const [editingDisplayName, setEditingDisplayName] = useState(false);
   const [enteringForPrize, setEnteringForPrize] = useState(false);
   const { addToast } = useSnackbar();
@@ -29,7 +28,7 @@ export const MetaSubmissionForm = (props: {
     props.dispatch({
       type: 'CONTESTSUBMIT',
       submission: submission,
-      displayName: props.displayName,
+      displayName: displayName || 'Anonymous Crossharer',
       ...(props.hasPrize &&
         enteringForPrize &&
         props.user.email && { email: props.user.email }),
@@ -81,7 +80,7 @@ export const MetaSubmissionForm = (props: {
         ) : (
           ''
         )}
-        {editingDisplayName ? (
+        {editingDisplayName || !displayName ? (
           ''
         ) : (
           <>
@@ -102,16 +101,9 @@ export const MetaSubmissionForm = (props: {
           </>
         )}
       </form>
-      {editingDisplayName ? (
+      {editingDisplayName || !displayName ? (
         <>
-          <DisplayNameForm
-            user={props.user}
-            onChange={(s) => {
-              setDisplayName(s);
-              setEditingDisplayName(false);
-            }}
-            onCancel={() => setEditingDisplayName(false)}
-          />
+          <DisplayNameForm onCancel={() => setEditingDisplayName(false)} />
         </>
       ) : (
         ''
@@ -127,10 +119,6 @@ export const MetaSubmission = (props: {
   solutions: Array<string>;
 }) => {
   const authContext = useContext(AuthContext);
-  const displayName = getDisplayName(
-    authContext.user,
-    authContext.constructorPage
-  );
 
   return (
     <div css={{ marginTop: '1em' }}>
@@ -184,11 +172,7 @@ export const MetaSubmission = (props: {
             This is a meta puzzle! Submit your solution to see if you got it,
             view the leaderboard, and read or submit comments:
           </p>
-          <MetaSubmissionForm
-            user={authContext.user}
-            displayName={displayName}
-            {...props}
-          />
+          <MetaSubmissionForm user={authContext.user} {...props} />
         </>
       )}
     </div>

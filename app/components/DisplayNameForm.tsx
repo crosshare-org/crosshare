@@ -1,45 +1,45 @@
 import { useState, useContext } from 'react';
-import type firebase from 'firebase/app';
 import { AuthContext } from './AuthContext';
-import { ConstructorPageT } from '../lib/constructorPage';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
 import { Button } from './Buttons';
+import { useSnackbar } from './Snackbar';
 
-export const getDisplayName = (
-  user: firebase.User | undefined,
-  constructorPage: ConstructorPageT | undefined
-) => {
-  return constructorPage?.n || user?.displayName || 'Anonymous Crossharer';
+export const useDisplayName = () => {
+  const ctx = useContext(AuthContext);
+  return ctx.displayName;
 };
 
 interface DisplayNameFormProps {
-  user: firebase.User;
-  onChange: (newName: string) => void;
   onCancel?: () => void;
 }
 
-export const DisplayNameForm = ({
-  user,
-  onChange,
-  onCancel,
-}: DisplayNameFormProps) => {
+export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
   const ctx = useContext(AuthContext);
-  const db = App.firestore();
   const [submitting, setSubmitting] = useState(false);
+  const { showSnackbar } = useSnackbar();
 
-  function sanitize(input: string) {
-    return input.replace(/[^0-9a-zA-Z ]/g, '');
+  const user = ctx.user;
+
+  function sanitize(input: string | null | undefined) {
+    return input && input.replace(/[^0-9a-zA-Z ]/g, '');
   }
+
   const [newDisplayName, setNewDisplayName] = useState(
-    sanitize(getDisplayName(user, ctx.constructorPage))
+    sanitize(ctx.displayName)
   );
+
+  if (!user) {
+    return <>Must be logged in</>;
+  }
+
+  const db = App.firestore();
 
   const handleSubmit = (e: React.FormEvent) => {
     setSubmitting(true);
     e.preventDefault();
-    const toSubmit = newDisplayName.trim();
-    if (toSubmit) {
-      const updates = [user.updateProfile({ displayName: toSubmit })];
+    const toSubmit = newDisplayName?.trim();
+    if (toSubmit && ctx.updateDisplayName) {
+      const updates = [ctx.updateDisplayName(toSubmit)];
       if (ctx.constructorPage) {
         updates.push(
           db
@@ -50,10 +50,8 @@ export const DisplayNameForm = ({
       }
       Promise.all(updates).then(() => {
         setSubmitting(false);
-        if (!user.displayName) {
-          throw new Error('something went wrong');
-        }
-        onChange(user.displayName);
+        showSnackbar('Display name updated');
+        onCancel?.();
       });
     }
   };
@@ -61,15 +59,19 @@ export const DisplayNameForm = ({
   return (
     <form onSubmit={handleSubmit}>
       <label>
-        Update display name:
+        {ctx.displayName ? 'Update display name:' : 'Set your display name:'}
         <input
           css={{ margin: '0 0.5em' }}
           type="text"
-          value={newDisplayName}
+          value={newDisplayName || ''}
           onChange={(e) => setNewDisplayName(sanitize(e.target.value))}
         />
       </label>
-      <Button type="submit" text="Save" disabled={submitting} />
+      <Button
+        type="submit"
+        text="Save"
+        disabled={submitting || !newDisplayName?.trim()}
+      />
       {onCancel ? (
         <Button
           boring={true}

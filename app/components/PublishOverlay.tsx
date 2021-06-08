@@ -1,9 +1,8 @@
-import { useState, useCallback, useContext, FormEvent, ReactNode } from 'react';
+import { useState, useCallback, FormEvent, ReactNode } from 'react';
 import NextJSRouter from 'next/router';
 import type firebase from 'firebase/app';
 
-import { AuthContext } from './AuthContext';
-import { DisplayNameForm, getDisplayName } from './DisplayNameForm';
+import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
 import { Overlay } from './Overlay';
 import { Emoji } from './Emoji';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
@@ -18,13 +17,10 @@ export function PublishOverlay(props: {
   user: firebase.User;
   cancelPublish: () => void;
 }) {
-  const { constructorPage } = useContext(AuthContext);
   const [inProgress, setInProgress] = useState(false);
   const [done, setDone] = useState(false);
   const [editingDisplayName, setEditingDisplayName] = useState(false);
-  const [displayName, setDisplayName] = useState(
-    getDisplayName(props.user, constructorPage)
-  );
+  const displayName = useDisplayName();
 
   const doPublish = useCallback(
     (event: FormEvent) => {
@@ -42,7 +38,7 @@ export function PublishOverlay(props: {
       hourAgo.setHours(hourAgo.getHours() - 1);
       const toPublish = {
         ...props.toPublish,
-        n: displayName,
+        n: displayName || 'Anonymous Crossharer',
         p: ServerTimestamp,
       };
 
@@ -75,15 +71,8 @@ export function PublishOverlay(props: {
   } else {
     contents = (
       <>
-        {editingDisplayName ? (
-          <DisplayNameForm
-            user={props.user}
-            onChange={(s) => {
-              setDisplayName(s);
-              setEditingDisplayName(false);
-            }}
-            onCancel={() => setEditingDisplayName(false)}
-          />
+        {editingDisplayName || !displayName ? (
+          <DisplayNameForm onCancel={() => setEditingDisplayName(false)} />
         ) : (
           <h3>
             {props.toPublish.gc ? (
@@ -127,7 +116,7 @@ export function PublishOverlay(props: {
 
         <Button
           onClick={doPublish}
-          disabled={editingDisplayName}
+          disabled={editingDisplayName || !displayName}
           text="Publish Puzzle"
         />
       </>

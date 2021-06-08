@@ -133,7 +133,7 @@ export function requiresAdmin<T>(WrappedComponent: React.ComponentType<T>) {
   };
 }
 
-interface AuthContextValue {
+export interface AuthContextValue {
   user?: firebase.User;
   notifications?: Array<NotificationT>;
   isAdmin: boolean;
@@ -141,6 +141,8 @@ interface AuthContextValue {
   error?: string;
   constructorPage?: ConstructorPageT;
   prefs?: AccountPrefsT;
+  displayName?: string | null;
+  updateDisplayName?: (n: string) => Promise<void>;
 }
 export const AuthContext = createContext({
   user: undefined,

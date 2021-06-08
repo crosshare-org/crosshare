@@ -11,10 +11,12 @@ import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { App } from './firebaseWrapper';
-import { ConstructorPageV } from './constructorPage';
+import { ConstructorPageT, ConstructorPageV } from './constructorPage';
 import { NotificationV, NotificationT } from './notifications';
 import useResizeObserver from 'use-resize-observer';
 import { AccountPrefsV } from './prefs';
+import type firebase from 'firebase/app';
+import { AuthContextValue } from '../components/AuthContext';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {
@@ -95,7 +97,14 @@ export function usePersistedBoolean(
   return [state, setStateAndPersist];
 }
 
-export function useAuth() {
+const getDisplayName = (
+  user: firebase.User | undefined,
+  constructorPage: ConstructorPageT | undefined
+) => {
+  return constructorPage?.n || user?.displayName || null;
+};
+
+export function useAuth(): AuthContextValue {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -198,6 +207,39 @@ export function useAuth() {
     }
   }, [cpSnapshot]);
 
+  const [displayName, setDisplayName] = useState(
+    getDisplayName(user || undefined, constructorPage)
+  );
+  const [didUpdateDN, setDidUpdateDN] = useState(false);
+
+  // On change to user/cp, update display name if we haven't already set
+  useEffect(() => {
+    if (!didUpdateDN) {
+      setDisplayName(getDisplayName(user || undefined, constructorPage));
+    }
+  }, [user, constructorPage, didUpdateDN]);
+
+  // On logout, reset display name
+  useEffect(() => {
+    if (!user) {
+      setDisplayName(null);
+      setDidUpdateDN(false);
+    }
+  }, [user]);
+
+  const updateDisplayName = useCallback(
+    async (newDN: string) => {
+      if (user) {
+        setDisplayName(newDN);
+        setDidUpdateDN(true);
+        return user.updateProfile({
+          displayName: newDN,
+        });
+      }
+    },
+    [user]
+  );
+
   return {
     user: user || undefined,
     isAdmin,
@@ -210,6 +252,8 @@ export function useAuth() {
       cpError?.message ||
       cpDecodeError ||
       accountPrefsError,
+    displayName,
+    updateDisplayName,
   };
 }
 

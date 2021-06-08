@@ -542,6 +542,12 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                 text="Add Solution"
               />
             </form>
+            <h4 css={{ marginTop: '1em' }}>Contest explanation</h4>
+            <p>
+              After publishing, you can use a comment to explain how the
+              meta/contest works - comments are only visibles to solvers who
+              have submitted a solution.
+            </p>
             <h4 css={{ marginTop: '1em' }}>Contest prize</h4>
             <p>
               If the contest has a prize solvers can choose to include their
