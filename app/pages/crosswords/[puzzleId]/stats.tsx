@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -10,6 +10,7 @@ import { getFromSessionOrDB } from '../../../lib/dbUtils';
 import { App } from '../../../lib/firebaseWrapper';
 import { ErrorPage } from '../../../components/ErrorPage';
 import { StatsPage } from '../../../components/PuzzleStats';
+import { useDocument } from 'react-firebase-hooks/firestore';
 
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();
@@ -31,68 +32,57 @@ export const PuzzleLoader = ({
   puzzleId: string;
   auth: AuthProps;
 }) => {
-  const [puzzle, setPuzzle] = useState<PuzzleResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [doc, loading, error] = useDocument(
+    App.firestore().doc(`c/${puzzleId}`)
+  );
+  const [puzzle, puzzleDecodeError] = useMemo(() => {
+    if (doc === undefined) {
+      return [undefined, undefined];
+    }
+    if (!doc.exists) {
+      return [null, undefined];
+    }
+    const validationResult = DBPuzzleV.decode(
+      doc.data({ serverTimestamps: 'previous' })
+    );
+    if (isRight(validationResult)) {
+      const puzzle = validationResult.right;
+      return [puzzle, undefined];
+    } else {
+      console.log(PathReporter.report(validationResult).join(','));
+      return [undefined, 'failed to decode puzzle'];
+    }
+  }, [doc]);
 
-  useEffect(() => {
-    let didCancel = false;
-
-    const fetchData = async () => {
-      const db = App.firestore();
-      db.collection('c')
-        .doc(puzzleId)
-        .get()
-        .then((dbres) => {
-          if (didCancel) {
-            return;
-          }
-          if (!dbres.exists) {
-            setError('No puzzle found');
-          }
-          const validationResult = DBPuzzleV.decode(dbres.data());
-          if (isRight(validationResult)) {
-            console.log('loaded puzzle from db');
-            setPuzzle({
-              ...puzzleFromDB(validationResult.right),
-              id: dbres.id,
-            });
-          } else {
-            console.error(PathReporter.report(validationResult).join(','));
-            setError('Malformed puzzle found');
-          }
-        })
-        .catch((e) => {
-          console.error(e);
-          if (didCancel) {
-            return;
-          }
-          setError(typeof e === 'string' ? e : 'error loading puzzle');
-        });
-    };
-    fetchData();
-    return () => {
-      didCancel = true;
-    };
-  }, [puzzleId]);
-  if (error) {
+  if (error || puzzleDecodeError) {
     return (
       <ErrorPage title="Something Went Wrong">
-        <p>{error}</p>
+        <p>{error || puzzleDecodeError}</p>
       </ErrorPage>
     );
   }
-  if (!puzzle) {
+  if (loading) {
     return <div>Loading...</div>;
   }
+  if (!puzzle) {
+    return (
+      <ErrorPage title="Something Went Wrong">
+        <p>Failed to load the puzzle!</p>
+      </ErrorPage>
+    );
+  }
 
-  if (!auth.isAdmin && auth.user.uid !== puzzle.authorId) {
+  const nicePuzzle: PuzzleResult = { ...puzzleFromDB(puzzle), id: puzzleId };
+
+  if (!auth.isAdmin && auth.user.uid !== nicePuzzle.authorId) {
     return (
       <ErrorPage title="Not Allowed">
         <p>You do not have permission to view this page</p>
       </ErrorPage>
     );
   }
-  return <StatsLoader puzzle={puzzle} />;
+
+  return <StatsLoader key={puzzleId} puzzle={nicePuzzle} />;
 };
 
 const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {

@@ -30,6 +30,8 @@ import { ButtonAsLink } from './Buttons';
 import { ColumnProps, Table } from 'react-fluid-table';
 import { Emoji } from './Emoji';
 import { CSVLink } from 'react-csv';
+import { App, FieldValue } from '../lib/firebaseWrapper';
+import { useSnackbar } from './Snackbar';
 
 export enum StatsMode {
   AverageTime,
@@ -43,6 +45,7 @@ interface MetaSubmissionListProps {
 }
 
 const MetaSubmissionList = (props: MetaSubmissionListProps) => {
+  const { showSnackbar } = useSnackbar();
   const [subs, setSubs] = useState(
     props.stats.ct_subs?.map((n) => ({
       d: (typeof n.t === 'number' ? new Date(n.t) : n.t.toDate()).toISOString(),
@@ -68,16 +71,38 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
       key: 's',
       header: 'Submission',
       sortable: true,
-      content: ({ row }) => (
-        <>
-          {isMetaSolution(row.s, props.puzzle.contestAnswers || []) ? (
-            <Emoji symbol="✅" />
-          ) : (
-            <Emoji symbol="❌" />
-          )}{' '}
-          {row.s}
-        </>
-      ),
+      content: ({ row }) => {
+        const isSolution = isMetaSolution(
+          row.s,
+          props.puzzle.contestAnswers || []
+        );
+        return (
+          <>
+            {isSolution ? <Emoji symbol="✅" /> : <Emoji symbol="❌" />} {row.s}{' '}
+            {!isSolution ? (
+              <>
+                (
+                <ButtonAsLink
+                  text="Accept as solution"
+                  onClick={() => {
+                    App.firestore()
+                      .doc(`c/${props.puzzle.id}`)
+                      .update({ ct_ans: FieldValue.arrayUnion(row.s) })
+                      .then(() => {
+                        showSnackbar(
+                          'Solution marked as accepted - it may take up to an hour for the leaderboard to update'
+                        );
+                      });
+                  }}
+                />
+                )
+              </>
+            ) : (
+              ''
+            )}
+          </>
+        );
+      },
     },
     {
       key: 'd',
