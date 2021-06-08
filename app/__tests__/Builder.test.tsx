@@ -94,7 +94,7 @@ test('puzzle in progress should be cached in local storage', async () => {
 
   setApp(app as firebase.app.App);
 
-  let r = render(<BuilderPage />, { user: mike });
+  let r = render(<BuilderPage />, { user: mike, displayName: 'Mike' });
   let launchButton = (await r.findAllByText('Launch Constructor'))[0];
   if (!launchButton) {
     throw new Error();
@@ -117,7 +117,7 @@ test('puzzle in progress should be cached in local storage', async () => {
   cleanup();
 
   // Now try again!
-  r = render(<BuilderPage />, { user: mike });
+  r = render(<BuilderPage />, { user: mike, displayName: 'Mike' });
   launchButton = (await r.findAllByText('Launch Constructor'))[0];
   if (!launchButton) {
     throw new Error();
@@ -142,7 +142,7 @@ async function publishPuzzle(
 
   await admin.firestore().collection('categories').doc('dailymini').set({});
 
-  const r = render(<BuilderPage />, { user: mike });
+  const r = render(<BuilderPage />, { user: mike, displayName: 'Mike' });
   const launchButton = (await r.findAllByText('Launch Constructor'))[0];
   if (!launchButton) {
     throw new Error();
@@ -228,7 +228,11 @@ test('moderate as daily mini', async () => {
 
   // The puzzle should be visible to an admin w/ moderation links
   setApp(adminUserApp as firebase.app.App);
-  const r4 = render(<PuzzlePage {...props1} />, { user: miked, isAdmin: true });
+  const r4 = render(<PuzzlePage {...props1} />, {
+    user: miked,
+    isAdmin: true,
+    displayName: 'Mike',
+  });
   await r4.findByText(/Enter Rebus/i);
   expect(r4.queryByText(/visible to others yet/i)).toBeNull();
   fireEvent.click(r4.getByText(/Moderate/i));
@@ -298,6 +302,22 @@ test('publish as default', async () => {
     '/crosswords/' + puzzles.docs[0]?.id
   );
 
+  // The stats page shouldn't error even though there aren't any yet
+  const stats = render(
+    <StatsPuzzleLoader
+      puzzleId={puzzles.docs[0]?.id || 'botch'}
+      auth={{ user: mike, isAdmin: false }}
+    />,
+    { user: mike }
+  );
+  expect(
+    await stats.findByText(/stats for this puzzle yet/, undefined, {
+      timeout: 3000,
+    })
+  ).toBeInTheDocument();
+
+  cleanup();
+
   // The puzzle should be visible on the puzzle page, even to a rando
   setApp(serverApp as firebase.app.App);
   const props1 = getProps(
@@ -312,13 +332,16 @@ test('publish as default', async () => {
   }
   setApp(randoApp as firebase.app.App);
 
-  const r5 = render(<PuzzlePage {...props1} />, { user: rando });
+  const r5 = render(<PuzzlePage {...props1} />, {
+    user: rando,
+    displayName: 'Mike',
+  });
 
   expect(
     await r5.findByText('Begin Puzzle', undefined, { timeout: 3000 })
   ).toBeInTheDocument();
   expect(r5.queryByText(/Our Title/)).toBeInTheDocument();
-  expect(r5.queryByText(/By Anonymous Crossharer/)).toBeInTheDocument();
+  expect(r5.queryByText(/By Mike/)).toBeInTheDocument();
   expect(r5.queryByText(/Daily Mini/)).toBeNull();
   await r5.findByText(/Enter Rebus/i);
   expect(r5.queryByText(/Moderate/i)).toBeNull();
@@ -327,7 +350,11 @@ test('publish as default', async () => {
 
   // The puzzle should be visible to an admin w/ moderation links
   setApp(adminUserApp as firebase.app.App);
-  const r4 = render(<PuzzlePage {...props1} />, { user: miked, isAdmin: true });
+  const r4 = render(<PuzzlePage {...props1} />, {
+    user: miked,
+    isAdmin: true,
+    displayName: 'Mike',
+  });
   await r4.findByText(/Enter Rebus/i);
   expect(r4.queryByText(/visible to others yet/i)).toBeNull();
   fireEvent.click(r4.getByText(/Moderate/i));
@@ -361,85 +388,6 @@ test('publish as default', async () => {
   expect(dailyMinis.data()).toEqual({});
 });
 
-test('change author name in publish dialogue should publish w/ new name', async () => {
-  await publishPuzzle(
-    async (r) => {
-      fireEvent.click(r.getByText('change your display name'));
-      fireEvent.change(r.getByLabelText('Update display name:'), {
-        target: { value: 'M to tha D' },
-      });
-      fireEvent.click(r.getByText('Save', { exact: true }));
-      await r.findByText(/M to tha D/i);
-      await act(() => Promise.resolve());
-    },
-    async (r) => {
-      fireEvent.click(r.getByText('This puzzle is private', { exact: true }));
-      await act(() => Promise.resolve());
-    }
-  );
-
-  const puzzles = await admin.firestore().collection('c').get();
-
-  expect(puzzles.size).toEqual(1);
-  const puzzle = puzzles.docs[0]?.data();
-  const puzzleId = puzzles.docs[0]?.id;
-  if (!puzzle || !puzzleId) {
-    throw new Error();
-  }
-  expect(puzzle['m']).toEqual(false);
-  expect(puzzle['p']).not.toEqual(null);
-  expect(puzzle['c']).toEqual(null);
-  expect(puzzle['t']).toEqual('Our Title');
-  expect(puzzle['n']).toEqual('M to tha D');
-  expect(puzzle['pv']).toEqual(true);
-  expect(puzzle['pvu']).toBeUndefined();
-  await waitForExpect(async () =>
-    expect(NextJSRouter.push).toHaveBeenCalledTimes(1)
-  );
-  expect(NextJSRouter.push).toHaveBeenCalledWith(
-    '/crosswords/' + puzzles.docs[0]?.id
-  );
-
-  cleanup();
-
-  // The stats page shouldn't error even though there aren't any yet
-  const stats = render(
-    <StatsPuzzleLoader
-      puzzleId={puzzleId}
-      auth={{ user: mike, isAdmin: false }}
-    />,
-    { user: mike }
-  );
-  expect(
-    await stats.findByText(/stats for this puzzle yet/, undefined, {
-      timeout: 3000,
-    })
-  ).toBeInTheDocument();
-
-  cleanup();
-
-  // The puzzle should be visible on the puzzle page, even to a rando
-  setApp(serverApp as firebase.app.App);
-  const props1 = getProps(
-    await getServerSideProps({
-      params: { puzzleId },
-      res: { setHeader: jest.fn() },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any)
-  );
-  if (!props1) {
-    throw new Error('bad props');
-  }
-  setApp(randoApp as firebase.app.App);
-  const r5 = render(<PuzzlePage {...props1} />, { user: rando });
-  expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
-  expect(r5.queryByText(/Our Title/)).toBeInTheDocument();
-  expect(r5.queryByText(/By M to tha D/)).toBeInTheDocument();
-  expect(r5.queryByText(/Daily Mini/)).toBeNull();
-  await r5.findByText(/Enter Rebus/i);
-  expect(r5.queryByText(/Moderate/i)).toBeNull();
-});
-
 test('publish custom / non-rectangular size', async () => {
   sessionStorage.clear();
   localStorage.clear();
@@ -448,7 +396,7 @@ test('publish custom / non-rectangular size', async () => {
 
   setApp(app as firebase.app.App);
 
-  const r = render(<BuilderPage />, { user: mike });
+  const r = render(<BuilderPage />, { user: mike, displayName: 'Mike' });
   const launchButton = (await r.findAllByText('Launch Constructor'))[0];
   if (!launchButton) {
     throw new Error();
@@ -540,7 +488,10 @@ test('publish custom / non-rectangular size', async () => {
     throw new Error('bad props');
   }
   setApp(randoApp as firebase.app.App);
-  const r5 = render(<PuzzlePage {...props1} />, { user: rando });
+  const r5 = render(<PuzzlePage {...props1} />, {
+    user: rando,
+    displayName: 'Mike',
+  });
   expect(await r5.findByText('Begin Puzzle')).toBeInTheDocument();
   expect(r5.queryByText(/Our Title/)).toBeInTheDocument();
   expect(r5.queryByText(/Here is our new blog post/)).toBeInTheDocument();

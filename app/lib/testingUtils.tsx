@@ -29,10 +29,11 @@ const WithAllProviders: (
   return (
     <AuthContext.Provider
       value={{
-        user: opts.user,
-        isAdmin: opts.isAdmin || false,
+        user: undefined,
+        isAdmin: false,
         loading: false,
         error: undefined,
+        ...opts,
       }}
     >
       {includeSnackbar ? (
@@ -47,6 +48,7 @@ const WithAllProviders: (
 interface AuthOptions {
   user?: firebaseTypes.User;
   isAdmin?: boolean;
+  displayName?: string;
 }
 
 function wrappedRender(

@@ -103,7 +103,7 @@ test('upload a puzzle', async () => {
 
   setApp(app as firebase.app.App);
 
-  const r = render(<UploadPage />, { user: mike });
+  const r = render(<UploadPage />, { user: mike, displayName: 'Mike' });
 
   const input = await r.findByLabelText('Select a .puz file', { exact: false });
   const puz = await readFile(
@@ -173,7 +173,7 @@ test('upload after editing', async () => {
 
   setApp(app as firebase.app.App);
 
-  const r = render(<UploadPage />, { user: mike });
+  const r = render(<UploadPage />, { user: mike, displayName: 'Mike' });
 
   const input = await r.findByLabelText('Select a .puz file', { exact: false });
   const puz = await readFile(
@@ -225,7 +225,7 @@ test('upload a puzzle with duplicate entries', async () => {
 
   setApp(app as firebase.app.App);
 
-  const r = render(<UploadPage />, { user: mike });
+  const r = render(<UploadPage />, { user: mike, displayName: 'Mike' });
 
   const input = await r.findByLabelText('Select a .puz file', { exact: false });
   const puz = await readFile(
