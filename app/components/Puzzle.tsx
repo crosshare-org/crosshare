@@ -1087,7 +1087,7 @@ export const Puzzle = ({
           <PuzzleOverlay
             {...overlayBaseProps}
             overlayType={OverlayType.Success}
-            contestSubmission={play?.ct_sub}
+            contestSubmission={state.contestSubmission}
             contestHasPrize={puzzle.contestHasPrize}
           />
         ) : (
