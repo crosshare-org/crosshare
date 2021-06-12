@@ -235,6 +235,20 @@ Array [
 ]
 `;
 
+exports[`run for all time w/ some meta submissions 6`] = `
+Object {
+  "mike": Object {
+    "ct_sub_c": 1,
+    "ct_sub_n": 4,
+    "n": 6,
+    "s": 4,
+    "st": 176,
+  },
+}
+`;
+
+exports[`run for all time w/ some meta submissions 7`] = `"fSEwJorvqOMK5UhNMHa4mu48izl1"`;
+
 exports[`run for all time w/o initial state 1`] = `
 Object {
   "c": Object {
@@ -319,6 +333,18 @@ Object {
   ],
 }
 `;
+
+exports[`run for all time w/o initial state 3`] = `
+Object {
+  "mike": Object {
+    "n": 3,
+    "s": 2,
+    "st": 88,
+  },
+}
+`;
+
+exports[`run for all time w/o initial state 4`] = `"fSEwJorvqOMK5UhNMHa4mu48izl1"`;
 
 exports[`run for more recent w/o initial state 1`] = `
 Object {

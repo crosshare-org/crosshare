@@ -73,6 +73,7 @@ beforeEach(async () => {
     .set(play2);
   // Since play2 is a LegacyPlayT, getPlays() will look up the puzzle to get a title
   const puzzle: DBPuzzleT = {
+    ct_ans: ['just A GUESS'],
     c: 'dailymini',
     m: true,
     t: 'Raises, as young',
@@ -188,6 +189,13 @@ test('run for all time w/o initial state', async () => {
   expect(pua).not.toBeFalsy();
   expect(sct).not.toBeFalsy();
   expect(pToSnapshot).toMatchSnapshot();
+
+  const cres = await adminApp.firestore().collection('cs').get();
+  expect(cres.size).toEqual(1);
+  // Can't snapshot updatedAt or playcount by hour
+  const ctoSnapshot = cres.docs[0]?.data() || {};
+  expect(ctoSnapshot).toMatchSnapshot();
+  expect(cres.docs[0]?.id).toMatchSnapshot();
 });
 
 test('run for all time w/ some meta submissions', async () => {
@@ -292,6 +300,13 @@ test('run for all time w/ some meta submissions', async () => {
     a.t = null;
   });
   expect(puzdata1.ct_subs).toMatchSnapshot();
+
+  const cres = await adminApp.firestore().collection('cs').get();
+  expect(cres.size).toEqual(1);
+  // Can't snapshot updatedAt or playcount by hour
+  const ctoSnapshot = cres.docs[0]?.data() || {};
+  expect(ctoSnapshot).toMatchSnapshot();
+  expect(cres.docs[0]?.id).toMatchSnapshot();
 });
 
 test('run for more recent w/o initial state', async () => {

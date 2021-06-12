@@ -16,9 +16,11 @@ import {
   DBPuzzleT,
   getDateString,
   MetaSubmissionForPuzzleT,
+  ConstructorStatsForPuzzleT,
 } from './dbtypes';
 
 import { TimestampType } from './firebaseWrapper';
+import { isMetaSolution } from './utils';
 
 export async function runAnalytics(
   db: firebase.firestore.Firestore,
@@ -267,5 +269,32 @@ export async function runAnalytics(
       .update({
         ct_subs: admin.firestore.FieldValue.arrayUnion(...subs),
       });
+  }
+  console.log(
+    'Done, writing ' +
+      puzzleStatsMap.size +
+      ' puzzle stats into constructor stats docs'
+  );
+  for (const [crosswordId, puzzleStats] of puzzleStatsMap.entries()) {
+    const puzzleStatsForConstructor: ConstructorStatsForPuzzleT = {
+      n: puzzleStats.n,
+      s: puzzleStats.s,
+      st: puzzleStats.st,
+    };
+    if (puzzleStats.ct_subs?.length) {
+      const puzzle = await getPuzzle(crosswordId);
+      const solutions = puzzle?.ct_ans;
+      if (!solutions) {
+        break;
+      }
+      puzzleStatsForConstructor.ct_sub_n = puzzleStats.ct_subs.length;
+      puzzleStatsForConstructor.ct_sub_c = puzzleStats.ct_subs.filter((sub) =>
+        isMetaSolution(sub.s, solutions)
+      ).length;
+    }
+    await db
+      .collection('cs')
+      .doc(puzzleStats.a)
+      .set({ [crosswordId]: puzzleStatsForConstructor }, { merge: true });
   }
 }

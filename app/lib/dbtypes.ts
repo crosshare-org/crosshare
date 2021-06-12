@@ -297,6 +297,29 @@ export function prettifyDateString(dateString: string): string {
   return parseInt(groups[2]) + 1 + '/' + parseInt(groups[3]) + '/' + groups[1];
 }
 
+const ConstructorStatsForPuzzleV = t.intersection([
+  t.type({
+    /** total completions */
+    n: t.number,
+    /** total completions without cheats */
+    s: t.number,
+    /** total time spent by those w/o cheats */
+    st: t.number,
+  }),
+  t.partial({
+    /** total # of meta submissions */
+    ct_sub_n: t.number,
+    /** total # of correct meta submissions */
+    ct_sub_c: t.number,
+  }),
+]);
+export type ConstructorStatsForPuzzleT = t.TypeOf<
+  typeof ConstructorStatsForPuzzleV
+>;
+
+export const ConstructorStatsV = t.record(t.string, ConstructorStatsForPuzzleV);
+export type ConstructorStatsT = t.TypeOf<typeof ConstructorStatsV>;
+
 export const PuzzleStatsV = t.intersection([
   t.type({
     /** author id, denormalized for security rules purposes. */
