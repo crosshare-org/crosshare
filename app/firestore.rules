@@ -104,6 +104,9 @@ service cloud.firestore {
       allow read: if request.auth.uid == userId;
       allow write: if isAdmin() || request.auth.uid == userId;
     }
+    match /cs/{userId} {
+      allow read: if request.auth.uid == userId || isAdmin();
+    }
     match /p/{playId} {
       allow read: if request.auth.uid != null
         && (resource == null || request.auth.uid == resource.data.u);

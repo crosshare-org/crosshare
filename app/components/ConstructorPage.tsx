@@ -16,6 +16,7 @@ import { ToolTipText } from './ToolTipText';
 import { FollowButton } from './FollowButton';
 import { FaInfoCircle } from 'react-icons/fa';
 import { Overlay } from './Overlay';
+import { ConstructorStats } from './ConstructorStats';
 
 const BANNED_USERNAMES = {
   api: 1,
@@ -532,6 +533,7 @@ export interface ConstructorPageProps {
 }
 
 export const ConstructorPage = (props: ConstructorPageProps) => {
+  const { isAdmin } = useContext(AuthContext);
   const coverPic = props.coverPicture;
   const profilePic = props.profilePicture;
   const username = props.constructor.i || props.constructor.id;
@@ -694,6 +696,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
         ) : (
           ''
         )}
+        {isAdmin ? <ConstructorStats userId={props.constructor.u} /> : ''}
       </div>
     </>
   );

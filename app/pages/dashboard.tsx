@@ -11,6 +11,7 @@ import { PuzzleResultLink } from '../components/PuzzleLink';
 import { ButtonAsLink } from '../components/Buttons';
 import { Link } from '../components/Link';
 import { CreatePageForm } from '../components/ConstructorPage';
+import { ConstructorStats } from '../components/ConstructorStats';
 
 export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
   const db = App.firestore();
@@ -38,9 +39,10 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
       <DefaultTopBar dashboardSelected />
       <div css={{ margin: '1em' }}>
         <CreateShareSection halfWidth={false} />
+        <ConstructorStats userId={user.uid} />
         {authoredPuzzles.length ? (
           <div>
-            <h2>Your Puzzles</h2>
+            <h2>Recent Puzzles</h2>
             {constructorPage ? (
               <>
                 <p>
