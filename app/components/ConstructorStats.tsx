@@ -8,6 +8,7 @@ import {
 } from '../lib/dbtypes';
 import { Link } from '../components/Link';
 import { getFromSessionOrDB } from '../lib/dbUtils';
+import { timeString } from '../lib/utils';
 
 const usePuzzleDoc = (
   puzzleId: string | undefined
@@ -168,11 +169,11 @@ export const ConstructorStats = (props: { userId: string }) => {
           </p>
           <p>
             <b>Average solve time (w/o check/reveal)</b>:{' '}
-            {Math.round(
+            {timeString(
               Object.values(stats).reduce((a, b) => a + b.st, 0) /
-                Object.values(stats).reduce((a, b) => a + b.s, 0)
-            )}{' '}
-            seconds
+                Object.values(stats).reduce((a, b) => a + b.s, 0),
+              false
+            )}
           </p>
           <PuzzleList
             title="Most solved puzzles"
@@ -196,6 +197,22 @@ export const ConstructorStats = (props: { userId: string }) => {
             mapper={(a) => (100 * a.s) / a.n}
             valueDisplay={(a) => `${Math.round(a)}%`}
             sortDesc={false}
+          />
+          <PuzzleList
+            title="Fastest avg. solve w/o check/reveal (min 5 solves)"
+            stats={stats}
+            filter={(a) => a.s > 5}
+            mapper={(a) => a.st / a.s}
+            valueDisplay={(a) => timeString(a, false)}
+            sortDesc={false}
+          />
+          <PuzzleList
+            title="Slowest avg. solve w/o check/reveal (min 5 solves)"
+            stats={stats}
+            filter={(a) => a.s > 5}
+            mapper={(a) => a.st / a.s}
+            valueDisplay={(a) => timeString(a, false)}
+            sortDesc={true}
           />
           <PuzzleList
             title="Metas with the most submissions"
