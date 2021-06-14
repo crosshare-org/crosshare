@@ -9,8 +9,11 @@ import {
 import { Link } from '../components/Link';
 import { getFromSessionOrDB } from '../lib/dbUtils';
 
-const usePuzzleDoc = (puzzleId: string | undefined) => {
+const usePuzzleDoc = (
+  puzzleId: string | undefined
+): [DBPuzzleT | null, boolean] => {
   const [puzzle, setPuzzle] = useState<DBPuzzleT | null>(null);
+  const [done, setDone] = useState(false);
   useEffect(() => {
     let didCancel = false;
 
@@ -29,6 +32,7 @@ const usePuzzleDoc = (puzzleId: string | undefined) => {
           return;
         }
         setPuzzle(s);
+        setDone(true);
       });
     };
     fetchData();
@@ -36,7 +40,7 @@ const usePuzzleDoc = (puzzleId: string | undefined) => {
       didCancel = true;
     };
   }, [puzzleId]);
-  return puzzle;
+  return [puzzle, done];
 };
 
 const PuzzleLink = ({
@@ -48,7 +52,10 @@ const PuzzleLink = ({
   value: number;
   valueDisplay?: (x: number) => string;
 }) => {
-  const puzzle = usePuzzleDoc(puzzleId);
+  const [puzzle, done] = usePuzzleDoc(puzzleId);
+  if (done && !puzzle) {
+    return <></>;
+  }
   return (
     <li>
       <Link href={'/crosswords/' + puzzleId}>
@@ -141,7 +148,7 @@ export const ConstructorStats = (props: { userId: string }) => {
 
   return (
     <div>
-      <h2>Stats</h2>
+      <h2>Stats (updated hourly)</h2>
       {error ? (
         <p>Error loading stats, please try again.</p>
       ) : loading ? (
