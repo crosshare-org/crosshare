@@ -225,7 +225,7 @@ export const ConstructorStats = (props: { userId: string }) => {
             title="Metas with the most % correct submissions out of total solvers"
             stats={stats}
             filter={(a) => (a.ct_sub_n ? a.ct_sub_n > 0 : false)}
-            mapper={(a) => (100 * (a.ct_sub_n || 0)) / a.n}
+            mapper={(a) => (100 * (a.ct_sub_c || 0)) / a.n}
             valueDisplay={(a) => `${Math.round(a)}%`}
             sortDesc={true}
           />
@@ -233,7 +233,7 @@ export const ConstructorStats = (props: { userId: string }) => {
             title="Metas with the lowest % correct submissions out of total solvers"
             stats={stats}
             filter={(a) => (a.ct_sub_n ? a.ct_sub_n > 0 : false)}
-            mapper={(a) => (100 * (a.ct_sub_n || 0)) / a.n}
+            mapper={(a) => (100 * (a.ct_sub_c || 0)) / a.n}
             valueDisplay={(a) => `${Math.round(a)}%`}
             sortDesc={false}
           />
