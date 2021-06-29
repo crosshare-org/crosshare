@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+import { GlickoScoreV } from './dbtypes';
 
 export const UnsubscribeFlags = {
   all: null, // unsubscribe from all notification emails
@@ -21,6 +22,7 @@ export const AccountPrefsV = t.intersection([
     /** user id receiving the notification */
     unsubs: t.array(t.keyof(UnsubscribeFlags)),
     following: t.array(t.string),
+    rtg: GlickoScoreV,
   }),
 ]);
 export type AccountPrefsT = t.TypeOf<typeof AccountPrefsV>;
