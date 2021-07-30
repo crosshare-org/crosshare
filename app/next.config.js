@@ -5,9 +5,6 @@ const distDir = 'nextjs';
 const baseConfig = {
   distDir: distDir,
   poweredByHeader: false,
-  future: {
-    webpack5: true,
-  },
 };
 
 module.exports = (phase) => {
