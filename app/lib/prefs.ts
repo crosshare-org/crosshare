@@ -23,6 +23,7 @@ export const AccountPrefsV = t.intersection([
     unsubs: t.array(t.keyof(UnsubscribeFlags)),
     following: t.array(t.string),
     rtg: GlickoScoreV,
+    rtgs: t.array(GlickoScoreV),
   }),
 ]);
 export type AccountPrefsT = t.TypeOf<typeof AccountPrefsV>;

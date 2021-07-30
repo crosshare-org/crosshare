@@ -1,10 +1,10 @@
-import { GlickoScoreT, DBPuzzleV, LegacyPlayT } from './dbtypes';
+import { GlickoScoreT, LegacyPlayT } from './dbtypes';
 import admin from 'firebase-admin';
-import { AccountPrefsV } from './prefs';
-import { isRight } from 'fp-ts/lib/Either';
+/*import { AccountPrefsV } from './prefs';
+import { isRight } from 'fp-ts/lib/Either';*/
 
-const INITIAL_RATING = 1500;
-const INITIAL_RD = 350;
+export const INITIAL_RATING = 1500;
+export const INITIAL_RD = 350;
 const MAX_RD = 350;
 const PLAYER_MIN_RD = 30;
 const PUZZLE_MIN_RD = 10;
@@ -25,6 +25,18 @@ type PlayerId = string;
 
 export function timestampToRound(ts: number): number {
   return Math.abs(Math.round((ts / 1000) * 60 * 60));
+}
+
+export function gFunc(rd: number) {
+  return 1 / Math.sqrt(1 + (3 * Q_SQ * rd * rd) / PI_SQ);
+}
+
+export function expectedOutcome(
+  g: number,
+  rating: number,
+  oppRating: number
+): number {
+  return 1 / (1 + Math.pow(10, (-g * (rating - oppRating)) / 400));
 }
 
 export class GlickoRound {
@@ -103,8 +115,8 @@ export class GlickoRound {
     minRD: number
   ): GlickoScoreT {
     const withCalcs = matches.map((match) => {
-      const g = 1 / Math.sqrt(1 + (3 * Q_SQ * match.d * match.d) / PI_SQ);
-      const e = 1 / (1 + Math.pow(10, (-g * (prevScore.r - match.r)) / 400));
+      const g = gFunc(match.d);
+      const e = expectedOutcome(g, prevScore.r, match.r);
       return { ...match, g, e };
     });
     const d_sq =
@@ -212,6 +224,8 @@ export class GlickoRound {
   }
 }
 
+const SCORE_CACHE: Map<string, GlickoScoreT> = new Map();
+
 export class CrosshareGlickoRound extends GlickoRound {
   db = admin.firestore();
 
@@ -220,14 +234,22 @@ export class CrosshareGlickoRound extends GlickoRound {
   }
 
   savePlayerScore = async (playerId: string, score: GlickoScoreT) => {
+    SCORE_CACHE.set(playerId, score);
     await this.db
       .collection('prefs')
       .doc(playerId)
-      .set({ rtg: score }, { merge: true });
+      .set(
+        {
+          rtg: score,
+          rtgs: admin.firestore.FieldValue.arrayUnion(score),
+        },
+        { merge: true }
+      );
     return;
   };
 
   savePuzzleScore = async (puzzleId: string, score: GlickoScoreT) => {
+    SCORE_CACHE.set(puzzleId, score);
     await this.db
       .collection('c')
       .doc(puzzleId)
@@ -236,23 +258,26 @@ export class CrosshareGlickoRound extends GlickoRound {
   };
 
   loadPlayerScore = async (playerId: string) => {
-    const res = await this.db.collection('prefs').doc(playerId).get();
+    /*const res = await this.db.collection('prefs').doc(playerId).get();
     if (!res.exists) return undefined;
     const vr = AccountPrefsV.decode(res.data());
     if (isRight(vr)) {
       return vr.right.rtg;
     }
-    return undefined;
+    return undefined;*/
+    return SCORE_CACHE.get(playerId);
   };
 
   loadPuzzleScore = async (puzzleId: string) => {
+    /*
     const res = await this.db.collection('c').doc(puzzleId).get();
     if (!res.exists) return undefined;
     const vr = DBPuzzleV.decode(res.data());
     if (isRight(vr)) {
       return vr.right.rtg;
     }
-    return undefined;
+    return undefined;*/
+    return SCORE_CACHE.get(puzzleId);
   };
 
   addPlayToRound(play: LegacyPlayT) {
