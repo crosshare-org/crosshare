@@ -52,6 +52,8 @@ export const colorTheme = (
   return {
     '--bg': bg,
     '--primary': p,
+    '--blue': darkMode ? mix('blue', 'white', 0.5) : 'blue',
+    '--green': darkMode ? mix('green', 'white', 0.5) : 'green',
     '--onprimary': readableColor(p, darkMode),
     '--lighter': mix(p, cellBG, 0.6),
     '--secondary': secondary,
