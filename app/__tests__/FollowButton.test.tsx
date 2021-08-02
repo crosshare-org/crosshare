@@ -10,17 +10,21 @@ import {
 import { FollowButton } from '../components/FollowButton';
 jest.mock('../lib/firebaseWrapper');
 import type firebase from 'firebase/app';
+import type firebaseAdminType from 'firebase-admin';
 
 import { ConstructorPageT } from '../lib/constructorPage';
 
 const projectId = 'followtests';
+let adminApp: firebaseAdminType.app.App;
 
 beforeAll(() => {
-  jest.useFakeTimers();
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  adminApp = firebaseTesting.initializeAdminApp({ projectId });
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  Promise.all(firebaseTesting.apps().map((app) => app.delete()));
 });
 
 test('follow button logged out', async () => {
@@ -47,9 +51,6 @@ const mike = getUser('mike', false);
 
 test('follow button logged in', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
-  const adminApp = firebaseTesting.initializeAdminApp({
-    projectId,
-  }) as firebase.app.App;
 
   const app = firebaseTesting.initializeTestApp({
     projectId,
