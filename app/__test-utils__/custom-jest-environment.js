@@ -14,6 +14,7 @@ class MyEnvironment extends JSDomEnvironment {
           Uint32Array: Uint32Array,
           Uint8Array: Uint8Array,
           ArrayBuffer: ArrayBuffer,
+          setImmediate: setImmediate,
         }),
       }),
     );
