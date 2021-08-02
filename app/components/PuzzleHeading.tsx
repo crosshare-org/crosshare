@@ -1,11 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
 
 import { LinkButtonSimpleA } from './Link';
 import { pastDistanceToNow } from '../lib/utils';
 import { ConstructorNotes } from './ConstructorNotes';
 import { ConstructorPageT } from '../lib/constructorPage';
-import { Button } from './Buttons';
 import { ProfilePicAndName } from './Images';
 import { Markdown } from './Markdown';
 import { ToolTipText } from './ToolTipText';
@@ -26,22 +25,6 @@ export const PuzzleHeading = (props: {
   blogPost: string | null;
 }) => {
   const isEmbed = useContext(EmbedContext);
-
-  const [showFullscreen, setShowFullscreen] = useState(false);
-
-  useEffect(() => {
-    if (isEmbed && document.fullscreenEnabled) {
-      setShowFullscreen(true);
-    }
-  }, [isEmbed]);
-
-  const toggleFullscreen = () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else {
-      document.documentElement.requestFullscreen();
-    }
-  };
 
   const publishDate = new Date(props.publishTime);
   return (
@@ -120,17 +103,6 @@ export const PuzzleHeading = (props: {
         ) : (
           ''
         )}
-      {showFullscreen ? (
-        <div css={{ textAlign: 'center' }}>
-          <Button
-            css={{ marginBottom: '2em' }}
-            onClick={toggleFullscreen}
-            text="Toggle Fullscreen"
-          />
-        </div>
-      ) : (
-        ''
-      )}
     </>
   );
 };

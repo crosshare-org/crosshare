@@ -72,12 +72,12 @@ export const Overlay = (props: {
                 border: 'none',
                 position: 'absolute',
                 padding: 0,
-                fontSize: '3em',
+                fontSize: '2.5em',
                 verticalAlign: 'text-top',
                 width: '1em',
                 height: '1em',
-                top: 0,
-                right: 0,
+                top: '0.5em',
+                right: '0.5em',
               }}
               onClick={props.closeCallback}
             >

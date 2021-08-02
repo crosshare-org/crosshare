@@ -1,4 +1,4 @@
-import { useContext, Dispatch } from 'react';
+import { useContext, useState, useEffect, Dispatch } from 'react';
 import { Link } from './Link';
 import { Direction, ServerPuzzleResult } from '../lib/types';
 import { PuzzleAction } from '../reducers/reducer';
@@ -13,6 +13,7 @@ import { PuzzleHeading } from './PuzzleHeading';
 import { Button, ButtonAsLink } from './Buttons';
 import { MetaSubmission } from './MetaSubmission';
 import { lightFormat } from 'date-fns';
+import { GoScreenFull } from 'react-icons/go';
 
 const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {
@@ -67,6 +68,22 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
       isMetaSolution(sub.s, contestAnswers)
     );
 
+  const [showFullscreen, setShowFullscreen] = useState(false);
+
+  useEffect(() => {
+    if (isEmbed && document.fullscreenEnabled) {
+      setShowFullscreen(true);
+    }
+  }, [isEmbed]);
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
+    }
+  };
+
   return (
     <Overlay
       coverImage={props.coverImage}
@@ -76,6 +93,33 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           : undefined
       }
     >
+      {showFullscreen ? (
+        <button
+          css={{
+            background: 'transparent',
+            color: 'var(--text)',
+            ...(props.coverImage && { color: 'var(--social-text)' }),
+            border: 'none',
+            position: 'absolute',
+            padding: 0,
+            fontSize: '2em',
+            verticalAlign: 'text-top',
+            width: '1em',
+            height: '1em',
+            top: '1em',
+            left: '1em',
+          }}
+          onClick={toggleFullscreen}
+        >
+          <GoScreenFull
+            aria-label="toggle fullscreen"
+            title="Toggle Fullscreen"
+            css={{ position: 'absolute', top: 0, left: 0 }}
+          />
+        </button>
+      ) : (
+        ''
+      )}
       <PuzzleHeading
         publishTime={props.publishTime}
         showTip={props.overlayType === OverlayType.Success}
