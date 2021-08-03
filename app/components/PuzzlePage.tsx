@@ -33,6 +33,17 @@ const CachePlayLoader = (props: PuzzlePageResultProps) => {
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
   const [loadingPlay, setLoadingPlay] = useState(true);
   const [showedNonDB, setShowedNonDB] = useState(false);
+  const [userId, setUserId] = useState('');
+
+  // If we loaded w/ one user and now switched to another reset all state
+  useEffect(() => {
+    if (user && userId !== user.uid) {
+      setPlay(null);
+      setLoadingPlay(true);
+      setShowedNonDB(false);
+      setUserId(user.uid);
+    }
+  }, [user, userId]);
 
   useEffect(() => {
     if (loading || error) {
@@ -90,7 +101,7 @@ const CachePlayLoader = (props: PuzzlePageResultProps) => {
   }
   return (
     <DBPlayLoader
-      key={props.puzzle.id}
+      key={`${props.puzzle.id}-${user.uid}`}
       {...props}
       user={user}
       prefs={prefs}
@@ -151,7 +162,7 @@ const DBPlayLoader = (
   if (loading || play === undefined) {
     return (
       <Puzzle
-        key={props.puzzle.id}
+        key={`${props.puzzle.id}-${props.user.uid}`}
         {...props}
         loadingPlayState={true}
         play={null}
@@ -160,7 +171,7 @@ const DBPlayLoader = (
   }
   return (
     <Puzzle
-      key={props.puzzle.id}
+      key={`${props.puzzle.id}-${props.user.uid}`}
       {...props}
       loadingPlayState={false}
       play={play}
