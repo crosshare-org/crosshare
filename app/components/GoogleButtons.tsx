@@ -3,12 +3,14 @@ import { getValidatedAndDelete, setInCache } from '../lib/dbUtils';
 import { App, AuthProvider } from '../lib/firebaseWrapper';
 import { event } from '../lib/gtag';
 import type firebase from 'firebase/app';
+import { ButtonAsLink } from './Buttons';
 
 interface GoogleButtonProps {
   postSignIn?: (user: firebase.User) => Promise<void>;
+  text?: string;
 }
 
-export const GoogleSignInButton = ({ postSignIn }: GoogleButtonProps) => {
+export const GoogleSignInButton = ({ postSignIn, text }: GoogleButtonProps) => {
   function signin() {
     App.auth()
       .signInWithPopup(AuthProvider)
@@ -26,6 +28,9 @@ export const GoogleSignInButton = ({ postSignIn }: GoogleButtonProps) => {
         };
       });
   }
+  if (text) {
+    return <ButtonAsLink text={text} onClick={signin} />;
+  }
   return (
     <input
       type="image"
@@ -41,6 +46,7 @@ export const GoogleSignInButton = ({ postSignIn }: GoogleButtonProps) => {
 export const GoogleLinkButton = ({
   user,
   postSignIn,
+  text,
 }: { user: firebase.User } & GoogleButtonProps) => {
   function signin() {
     user
@@ -103,6 +109,9 @@ export const GoogleLinkButton = ({
             }
           });
       });
+  }
+  if (text) {
+    return <ButtonAsLink text={text} onClick={signin} />;
   }
   return (
     <input

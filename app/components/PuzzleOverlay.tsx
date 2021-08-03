@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, Dispatch } from 'react';
+import { useContext, useState, useEffect, Dispatch, ReactNode } from 'react';
 import { Link } from './Link';
 import { Direction, ServerPuzzleResult } from '../lib/types';
 import { PuzzleAction } from '../reducers/reducer';
@@ -14,6 +14,8 @@ import { Button, ButtonAsLink } from './Buttons';
 import { MetaSubmission } from './MetaSubmission';
 import { lightFormat } from 'date-fns';
 import { GoScreenFull } from 'react-icons/go';
+import { AuthContext } from './AuthContext';
+import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 
 const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {
@@ -59,6 +61,7 @@ interface BeginPauseProps extends PuzzleOverlayBaseProps {
 }
 
 export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
+  const authContext = useContext(AuthContext);
   const isEmbed = useContext(EmbedContext);
   const contestAnswers = props.puzzle.contestAnswers;
   const isContest = contestAnswers ? contestAnswers.length > 0 : false;
@@ -83,6 +86,28 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
       document.documentElement.requestFullscreen();
     }
   };
+
+  let loginButton: ReactNode =
+    'Login (via Google) to save your puzzle progress/stats';
+  if (!authContext.loading) {
+    if (authContext.user?.email) {
+      loginButton = `Logged in as ${authContext.user.email}`;
+    } else if (authContext.user) {
+      loginButton = (
+        <>
+          <GoogleLinkButton user={authContext.user} text="Login (via Google)" />{' '}
+          to save your puzzle progress/stats
+        </>
+      );
+    } else {
+      loginButton = (
+        <>
+          <GoogleSignInButton text="Login (via Google)" /> to save your puzzle
+          progress/stats
+        </>
+      );
+    }
+  }
 
   return (
     <Overlay
@@ -145,6 +170,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                   onClick={() => props.dispatch({ type: 'RESUMEACTION' })}
                   text={props.dismissMessage}
                 />
+                <p css={{ marginTop: '1em' }}>{loginButton}</p>
                 {props.downsOnly ? (
                   <p css={{ marginTop: '1em' }}>
                     You are currently solving downs-only: (
