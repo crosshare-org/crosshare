@@ -12,6 +12,7 @@
     "not op_mini all"
   ],
   "scripts": {
+    "supportedBrowsers": "echo \"export const browserRegex = $(browserslist-useragent-regexp --allowHigherVersions);\" > lib/supportedBrowsers.ts",
     "eslint": "npx eslint __mocks__ __tests__ components lib pages reducers",
     "clean": "rimraf nextjs/",
     "dev": "GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json next dev",
@@ -84,6 +85,7 @@
     "@typescript-eslint/eslint-plugin": "^4.28.5",
     "@typescript-eslint/parser": "^4.28.5",
     "@zeit/next-source-maps": "0.0.4-canary.1",
+    "browserslist-useragent-regexp": "^3.0.0",
     "csv": "^5.5.0",
     "eslint": "^7.31.0",
     "eslint-plugin-import": "^2.23.4",
