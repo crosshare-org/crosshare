@@ -13,6 +13,7 @@ import { Global } from '@emotion/react';
 
 import '../lib/style.css';
 import { colorTheme, LINK, PRIMARY } from '../lib/style';
+import { BrowserWarning } from '../components/BrowserWarning';
 
 if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
   Sentry.init({
@@ -153,6 +154,7 @@ export default function CrosshareApp({
       <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
         <AuthContext.Provider value={authStatus}>
           <SnackbarProvider>
+            <BrowserWarning />
             <Component {...pageProps} err={err} />
           </SnackbarProvider>
         </AuthContext.Provider>
