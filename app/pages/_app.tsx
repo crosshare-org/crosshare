@@ -29,6 +29,9 @@ if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
       'The popup has been closed by the user before finalizing the operation',
       'SecurityError: Blocked a frame with origin "https://crosshare.org"',
       'LPContentScriptFeatures',
+      'because the client is offline',
+      'Object.fromEntries is not a function',
+      'cancelled due to another conflicting popup being opened',
     ],
   });
 }
