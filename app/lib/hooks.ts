@@ -52,7 +52,8 @@ export function usePolyfilledResizeObserver(ref: RefObject<HTMLElement>) {
       } else {
         // Loads polyfill asynchronously, only if required.
         return import('@juggle/resize-observer').then((module) => {
-          window.ResizeObserver = (module.ResizeObserver as unknown) as typeof ResizeObserver;
+          window.ResizeObserver =
+            module.ResizeObserver as unknown as typeof ResizeObserver;
           if (!didCancel) {
             setHasResizeObserver(true);
           }
@@ -143,14 +144,13 @@ export function useAuth(): AuthContextValue {
         App.firestore().doc(`prefs/${user.uid}`),
       ];
     }
-    setIsLoading(false);
+    if (!loadingUser) {
+      setIsLoading(false);
+    }
     return [null, null, null];
-  }, [user]);
-  const [
-    accountPrefsDoc,
-    loadingAccountPrefs,
-    accountPrefsDBError,
-  ] = useDocument(prefsDocRef);
+  }, [user, loadingUser]);
+  const [accountPrefsDoc, loadingAccountPrefs, accountPrefsDBError] =
+    useDocument(prefsDocRef);
   const [accountPrefs, accountPrefsDecodeError] = useMemo(() => {
     if (!accountPrefsDoc?.exists) {
       return [undefined, undefined];
@@ -166,9 +166,8 @@ export function useAuth(): AuthContextValue {
   const accountPrefsError =
     accountPrefsDBError?.message || accountPrefsDecodeError;
 
-  const [notificationsSnapshot, , notificationError] = useCollection(
-    notificationsDocRef
-  );
+  const [notificationsSnapshot, , notificationError] =
+    useCollection(notificationsDocRef);
   if (notificationError) {
     console.log(notificationError);
   }
