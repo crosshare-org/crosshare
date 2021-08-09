@@ -337,6 +337,10 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
       {isEmbed ? (
         <div css={{ marginTop: '2em', textAlign: 'center' }}>
           <Link href="/">Powered by crosshare.org</Link>
+          {' · '}
+          <Link href={`/crosswords/${props.puzzle.id}`}>
+            Solve on crosshare.org
+          </Link>
         </div>
       ) : (
         ''
