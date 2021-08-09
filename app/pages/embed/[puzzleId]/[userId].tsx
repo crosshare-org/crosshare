@@ -52,10 +52,15 @@ export default function ThemedPage(props: PuzzlePageProps) {
     <>
       <Global
         styles={{
-          html: colorTheme(primary, link, darkMode, preservePrimary),
           body: {
             backgroundColor: 'transparent !important',
           },
+          'html, body.light-mode, body.dark-mode': colorTheme(
+            primary,
+            link,
+            darkMode,
+            preservePrimary
+          ),
         }}
       />
       <EmbedContext.Provider value={true}>

@@ -68,6 +68,56 @@ export function usePolyfilledResizeObserver(ref: RefObject<HTMLElement>) {
   return useResizeObserver({ ref: hasResizeObserver ? ref : null });
 }
 
+type DarkModePreference = 'dark' | 'light' | null;
+const darkModeKey = 'colorScheme';
+const darkClass = 'dark-mode';
+const lightClass = 'light-mode';
+export function useDarkModeControl(): [
+  DarkModePreference,
+  (preference: DarkModePreference) => void
+  ] {
+  const [pref, setPref] = useState<DarkModePreference>(null);
+
+  useEffect(() => {
+    try {
+      const initialValue = localStorage.getItem(darkModeKey);
+      if (initialValue !== null) {
+        setPref(initialValue === 'dark' ? 'dark' : 'light');
+      }
+    } catch {
+      /* happens on incognito when iframed */
+      console.warn('not loading setting from LS');
+    }
+  }, []);
+
+  const setPrefAndPersist = useCallback((newVal: DarkModePreference) => {
+    try {
+      if (newVal === null) {
+        localStorage.removeItem(darkModeKey);
+      } else {
+        localStorage.setItem(darkModeKey, newVal);
+      }
+    } catch {
+      console.warn('failed to store setting in LS');
+    }
+    setPref(newVal);
+    if (newVal !== 'dark') {
+      document.body.classList.remove(darkClass);
+    }
+    if (newVal !== 'light') {
+      document.body.classList.remove(lightClass);
+    }
+    if (newVal === 'dark') {
+      document.body.classList.add(darkClass);
+    }
+    if (newVal === 'light') {
+      document.body.classList.add(lightClass);
+    }
+  }, []);
+
+  return [pref, setPrefAndPersist];
+}
+
 export function usePersistedBoolean(
   key: string,
   defaultValue: boolean

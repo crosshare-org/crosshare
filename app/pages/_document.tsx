@@ -163,6 +163,24 @@ export default class CrosshareDocument extends Document {
           />
         </Head>
         <body>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+              (function() {
+                var preferredTheme;
+                try {
+                  preferredTheme = localStorage.getItem('colorScheme');
+                } catch (err) { }
+                if (preferredTheme === 'light') {
+                  document.body.classList.add('light-mode');
+                }
+                if (preferredTheme === 'dark') {
+                  document.body.classList.add('dark-mode');
+                }
+              })();
+            `,
+            }}
+          />
           <Main />
           <div id="modal" />
           <script>window.Sentry = undefined;</script>

@@ -152,6 +152,8 @@ export default function CrosshareApp({
               ),
             },
           ],
+          'body.dark-mode': colorTheme(PRIMARY, LINK, true, false),
+          'body.light-mode': colorTheme(PRIMARY, LINK, false, false),
         }}
       />
       <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
