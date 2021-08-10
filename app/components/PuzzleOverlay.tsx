@@ -339,7 +339,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           <Link href="/">Powered by crosshare.org</Link>
           {' · '}
           <Link href={`/crosswords/${props.puzzle.id}`}>
-            Solve on crosshare.org
+            Open on crosshare.org
           </Link>
         </div>
       ) : (

@@ -19,7 +19,7 @@ import dynamic from 'next/dynamic';
 import type { ImageCropper as ImageCropperType } from '../components/ImageCropper';
 import { useSnackbar } from '../components/Snackbar';
 import { useCollection } from 'react-firebase-hooks/firestore';
-import { useDarkModeControl } from '../lib/hooks';
+import { useDarkModeControl, usePersistedBoolean } from '../lib/hooks';
 const ImageCropper = dynamic(
   () =>
     import('../components/ImageCropper').then((mod) => mod.ImageCropper as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -119,6 +119,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
   );
   const [authoredSnap] = useCollection(authoredQuery);
   const [colorPref, setColorPref] = useDarkModeControl();
+  const [muted, setMuted] = usePersistedBoolean('muted', false);
 
   useEffect(() => {
     if (authoredSnap && authoredSnap.size >= 0) {
@@ -233,7 +234,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
           </li>
         </ul>
         <hr css={{ margin: '2em 0' }} />
-        <h2>Browser Specific Settings</h2>
+        <h2>Browser-specific Settings</h2>
         <h3>Color Theme</h3>
         <label>
           <input
@@ -279,6 +280,19 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
           />{' '}
           Use light mode
         </label>
+        <h3>Audio</h3>
+        <label>
+          <input
+            css={{ marginRight: '1em' }}
+            type="checkbox"
+            checked={muted}
+            onChange={(e) => {
+              setMuted(e.target.checked);
+            }}
+          />
+          Mute success music
+        </label>
+
         <hr css={{ margin: '2em 0' }} />
         <h2>Crossword Blog</h2>
         {hasAuthoredPuzzle ? (
