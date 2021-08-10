@@ -129,6 +129,16 @@ type MetaSubmissionForStatsViewT = Omit<
   't'
 > & { t: number | TimestampType };
 
+export const GlickoScoreV = t.type({
+  /** rating */
+  r: t.number,
+  /** rating deviation */
+  d: t.number,
+  /** round # of last update */
+  u: t.number,
+});
+export type GlickoScoreT = t.TypeOf<typeof GlickoScoreV>;
+
 const DBPuzzleOptionalV = t.partial({
   /** highlighted cell indexes */
   hs: t.array(t.number),
@@ -160,6 +170,8 @@ const DBPuzzleOptionalV = t.partial({
   ct_prz: t.boolean,
   /** contests submissions */
   ct_subs: t.array(MetaSubmissionForPuzzleV),
+  /** puzzle rating */
+  rtg: GlickoScoreV,
 });
 export const DBPuzzleV = t.intersection([
   DBPuzzleMandatoryV,

@@ -40,13 +40,8 @@ if (firebase.apps.length && firebase.apps[0]) {
       }
     }
   }
-  if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR) {
-    const db = App.firestore();
-    db.settings({
-      host: 'localhost:8080',
-      ssl: false,
-    });
-  }
+  const db = App.firestore();
+  db.useEmulator('localhost', 8080);
 }
 
 export const setApp = (app: firebase.app.App) => {

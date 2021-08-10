@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
 import type { WordDBT } from './WordDB';
 
-import { DBPuzzleT, CommentWithRepliesT } from '../lib/dbtypes';
+import { DBPuzzleT, CommentWithRepliesT, GlickoScoreT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
@@ -134,6 +134,7 @@ export interface PuzzleT {
   contestAnswers: Array<string> | null;
   contestHasPrize: boolean;
   contestSubmissions: Array<{ n: string; t: number; s: string }> | null;
+  rating: GlickoScoreT | null;
 }
 
 export interface PuzzleResult extends PuzzleT {
@@ -216,6 +217,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     contestSubmissions:
       dbPuzzle.ct_subs?.map((w) => ({ n: w.n, t: w.t.toMillis(), s: w.s })) ||
       null,
+    rating: dbPuzzle.rtg || null,
   };
 }
 
