@@ -284,6 +284,9 @@ export class CrosshareGlickoRound extends GlickoRound {
     if (!res.exists) return undefined;
     const vr = AccountPrefsV.decode(res.data());
     if (isRight(vr) && vr.right.rtg) {
+      if (vr.right.rtg.u >= this.currentRound) {
+        return undefined;
+      }
       PLAYER_SCORE_CACHE.set(playerId, vr.right.rtg);
       SCORES_CACHE.set(playerId, vr.right.rtgs || []);
       return vr.right.rtg;
@@ -301,6 +304,9 @@ export class CrosshareGlickoRound extends GlickoRound {
     if (!res.exists) return undefined;
     const vr = DBPuzzleV.decode(res.data());
     if (isRight(vr) && vr.right.rtg) {
+      if (vr.right.rtg.u >= this.currentRound) {
+        return undefined;
+      }
       PUZZLE_SCORE_CACHE.set(puzzleId, vr.right.rtg);
       return vr.right.rtg;
     }
@@ -320,6 +326,7 @@ export class CrosshareGlickoRound extends GlickoRound {
 }
 
 export async function doGlicko(db: FirebaseFirestore.Firestore) {
+  const runBegin = new Date().getTime();
   let startTimestamp: FirebaseFirestore.Timestamp | null = null;
   const endTimestamp = admin.firestore.Timestamp.now();
   const value = await db.collection('cron_status').doc('ratings').get();
@@ -333,36 +340,46 @@ export async function doGlicko(db: FirebaseFirestore.Firestore) {
     startTimestamp = result.right.ranAt;
   }
 
+  console.log('start', startTimestamp);
+  console.log('end', endTimestamp);
+
   let startRound = Math.floor(1586895805 / (60 * 60 * 24));
+
   let readFromCacheOnly = true;
   if (startTimestamp !== null) {
     startRound = Math.floor(startTimestamp.toMillis() / (1000 * 60 * 60 * 24));
     readFromCacheOnly = false;
   }
 
-  let endRound = Math.floor(endTimestamp.toMillis() / (1000 * 60 * 60 * 24));
-  if (endRound - startRound > 150) {
-    endRound = startRound + 150;
-  }
+  const endRound = Math.floor(endTimestamp.toMillis() / (1000 * 60 * 60 * 24));
 
+  let queryEndTimestamp: FirebaseFirestore.Timestamp | null = null;
   for (let roundNumber = startRound; roundNumber < endRound; roundNumber += 1) {
+    if (new Date().getTime() - runBegin > 1000 * 60 * 2) {
+      console.log('run has taken too long, breaking out');
+      break;
+    }
     const round = new CrosshareGlickoRound(roundNumber, readFromCacheOnly);
 
-    const startTimestamp = admin.firestore.Timestamp.fromMillis(
+    const queryStartTimestamp = admin.firestore.Timestamp.fromMillis(
       roundNumber * 60 * 60 * 1000 * 24
     );
-    const endTimestamp = admin.firestore.Timestamp.fromMillis(
+    queryEndTimestamp = admin.firestore.Timestamp.fromMillis(
       (roundNumber + 1) * 60 * 60 * 1000 * 24
     );
     const value = await db
       .collection('p')
       .where('f', '==', true)
-      .where('ua', '>=', startTimestamp)
-      .where('ua', '<', endTimestamp)
+      .where('ua', '>=', queryStartTimestamp)
+      .where('ua', '<', queryEndTimestamp)
       .orderBy('ua', 'asc')
       .get();
     console.log(
-      'doing round ' + startTimestamp.toDate() + ' for ' + value.size + ' plays'
+      'doing round ' +
+        queryStartTimestamp.toDate() +
+        ' for ' +
+        value.size +
+        ' plays'
     );
     for (const doc of value.docs) {
       const validationResult = LegacyPlayV.decode(doc.data());
@@ -377,8 +394,10 @@ export async function doGlicko(db: FirebaseFirestore.Firestore) {
 
   console.log('writing results to db');
   await writeCacheToDB(db);
-  const status: CronStatusT = { ranAt: endTimestamp };
-  console.log('Done, logging ratings timestamp');
-  return db.collection('cron_status').doc('ratings').set(status);
+  if (queryEndTimestamp) {
+    const status: CronStatusT = { ranAt: queryEndTimestamp };
+    console.log('Done, logging ratings timestamp');
+    await db.collection('cron_status').doc('ratings').set(status);
+  }
   console.log('Finished');
 }
