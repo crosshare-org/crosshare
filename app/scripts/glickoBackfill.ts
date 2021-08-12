@@ -4,7 +4,7 @@ import admin from 'firebase-admin';
 import { isRight } from 'fp-ts/lib/Either';
 
 import { LegacyPlayV } from '../lib/dbtypes';
-import { CrosshareGlickoRound } from '../lib/glicko';
+import { CrosshareGlickoRound, writeCacheToDB } from '../lib/glicko';
 
 //admin.initializeApp({ projectId: 'mdcrosshare' });
 const db = admin.firestore();
@@ -14,7 +14,7 @@ const nowHours = Math.floor(new Date().getTime() / (1000 * 60 * 60 * 24));
 
 async function doGlicko() {
   for (let roundNumber = startHours; roundNumber < nowHours; roundNumber += 1) {
-    const round = new CrosshareGlickoRound(roundNumber);
+    const round = new CrosshareGlickoRound(roundNumber, true);
 
     const startTimestamp = admin.firestore.Timestamp.fromMillis(
       roundNumber * 60 * 60 * 1000 * 24
@@ -40,6 +40,9 @@ async function doGlicko() {
     }
     await round.computeAndUpdate();
   }
+
+  console.log('writing results to db');
+  await writeCacheToDB(db);
 
   console.log(
     (await db.collection('c').doc('dOO3V7B3evfs1Dobz2p6').get()).data()

@@ -1,10 +1,10 @@
-import { GlickoScoreT, LegacyPlayT } from './dbtypes';
+import { DBPuzzleV, GlickoScoreT, LegacyPlayT, LegacyPlayV } from './dbtypes';
 import admin from 'firebase-admin';
-/*import { AccountPrefsV } from './prefs';
-import { isRight } from 'fp-ts/lib/Either';*/
+import { AccountPrefsV } from './prefs';
+import { isRight } from 'fp-ts/lib/Either';
 
-export const INITIAL_RATING = 1500;
-export const INITIAL_RD = 350;
+const INITIAL_RATING = 1500;
+const INITIAL_RD = 350;
 const MAX_RD = 350;
 const PLAYER_MIN_RD = 30;
 const PUZZLE_MIN_RD = 10;
@@ -51,12 +51,10 @@ export class GlickoRound {
   playerMatches: Map<PlayerId, Array<[CrosswordId, Result]>>;
   puzzleMatches: Map<CrosswordId, Array<[PlayerId, Result]>>;
 
-  loadPlayerScore: (
-    playerId: string
-  ) => Promise<GlickoScoreT | undefined> = async () => undefined;
-  loadPuzzleScore: (
-    puzzleId: string
-  ) => Promise<GlickoScoreT | undefined> = async () => undefined;
+  loadPlayerScore: (playerId: string) => Promise<GlickoScoreT | undefined> =
+    async () => undefined;
+  loadPuzzleScore: (puzzleId: string) => Promise<GlickoScoreT | undefined> =
+    async () => undefined;
   savePlayerScore: (
     playerId: string,
     score: GlickoScoreT
@@ -224,60 +222,81 @@ export class GlickoRound {
   }
 }
 
-const SCORE_CACHE: Map<string, GlickoScoreT> = new Map();
+const PLAYER_SCORE_CACHE: Map<string, GlickoScoreT> = new Map();
+const PUZZLE_SCORE_CACHE: Map<string, GlickoScoreT> = new Map();
+const SCORES_CACHE: Map<string, Array<GlickoScoreT>> = new Map();
+
+export async function writeCacheToDB(db: FirebaseFirestore.Firestore) {
+  for (const [playerId, score] of PLAYER_SCORE_CACHE.entries()) {
+    const scores = SCORES_CACHE.get(playerId) || [];
+
+    await db.collection('prefs').doc(playerId).set(
+      {
+        rtg: score,
+        rtgs: scores,
+      },
+      { merge: true }
+    );
+  }
+
+  for (const [puzzleId, score] of PUZZLE_SCORE_CACHE.entries()) {
+    await db.collection('c').doc(puzzleId).set({ rtg: score }, { merge: true });
+  }
+}
 
 export class CrosshareGlickoRound extends GlickoRound {
   db = admin.firestore();
+  readFromCacheOnly: boolean;
 
-  constructor(roundNumber: number) {
+  constructor(roundNumber: number, readFromCacheOnly: boolean) {
     super(roundNumber, PLAYER_MIN_RD, PUZZLE_MIN_RD, PLAYER_C_SQ, PUZZLE_C_SQ);
+    this.readFromCacheOnly = readFromCacheOnly;
   }
 
   savePlayerScore = async (playerId: string, score: GlickoScoreT) => {
-    SCORE_CACHE.set(playerId, score);
-    await this.db
-      .collection('prefs')
-      .doc(playerId)
-      .set(
-        {
-          rtg: score,
-          rtgs: admin.firestore.FieldValue.arrayUnion(score),
-        },
-        { merge: true }
-      );
+    PLAYER_SCORE_CACHE.set(playerId, score);
+    const scores = SCORES_CACHE.get(playerId) || [];
+    scores.push(score);
+    SCORES_CACHE.set(playerId, scores);
     return;
   };
 
   savePuzzleScore = async (puzzleId: string, score: GlickoScoreT) => {
-    SCORE_CACHE.set(puzzleId, score);
-    await this.db
-      .collection('c')
-      .doc(puzzleId)
-      .set({ rtg: score }, { merge: true });
+    PUZZLE_SCORE_CACHE.set(puzzleId, score);
     return;
   };
 
   loadPlayerScore = async (playerId: string) => {
-    /*const res = await this.db.collection('prefs').doc(playerId).get();
+    const score = PLAYER_SCORE_CACHE.get(playerId);
+    if (score || this.readFromCacheOnly) {
+      return score;
+    }
+
+    const res = await this.db.collection('prefs').doc(playerId).get();
     if (!res.exists) return undefined;
     const vr = AccountPrefsV.decode(res.data());
-    if (isRight(vr)) {
+    if (isRight(vr) && vr.right.rtg) {
+      PLAYER_SCORE_CACHE.set(playerId, vr.right.rtg);
+      SCORES_CACHE.set(playerId, vr.right.rtgs || []);
       return vr.right.rtg;
     }
-    return undefined;*/
-    return SCORE_CACHE.get(playerId);
+    return undefined;
   };
 
   loadPuzzleScore = async (puzzleId: string) => {
-    /*
+    const score = PUZZLE_SCORE_CACHE.get(puzzleId);
+    if (score || this.readFromCacheOnly) {
+      return score;
+    }
+
     const res = await this.db.collection('c').doc(puzzleId).get();
     if (!res.exists) return undefined;
     const vr = DBPuzzleV.decode(res.data());
-    if (isRight(vr)) {
+    if (isRight(vr) && vr.right.rtg) {
+      PUZZLE_SCORE_CACHE.set(puzzleId, vr.right.rtg);
       return vr.right.rtg;
     }
-    return undefined;*/
-    return SCORE_CACHE.get(puzzleId);
+    return undefined;
   };
 
   addPlayToRound(play: LegacyPlayT) {
@@ -290,4 +309,51 @@ export class CrosshareGlickoRound extends GlickoRound {
 
     this.addMatchToRound(play.u, play.c, result);
   }
+}
+
+export async function doGlicko(
+  db: FirebaseFirestore.Firestore,
+  startTimestamp: FirebaseFirestore.Timestamp | null,
+  endTimestamp: FirebaseFirestore.Timestamp
+) {
+  let startRound = Math.floor(1586895805 / (60 * 60 * 24));
+  let readFromCacheOnly = true;
+  if (startTimestamp !== null) {
+    startRound = Math.floor(startTimestamp.toMillis() / (1000 * 60 * 60 * 24));
+    readFromCacheOnly = false;
+  }
+
+  const endRound = Math.floor(endTimestamp.toMillis() / (1000 * 60 * 60 * 24));
+
+  for (let roundNumber = startRound; roundNumber < endRound; roundNumber += 1) {
+    const round = new CrosshareGlickoRound(roundNumber, readFromCacheOnly);
+
+    const startTimestamp = admin.firestore.Timestamp.fromMillis(
+      roundNumber * 60 * 60 * 1000 * 24
+    );
+    const endTimestamp = admin.firestore.Timestamp.fromMillis(
+      (roundNumber + 1) * 60 * 60 * 1000 * 24
+    );
+    const value = await db
+      .collection('p')
+      .where('f', '==', true)
+      .where('ua', '>=', startTimestamp)
+      .where('ua', '<', endTimestamp)
+      .orderBy('ua', 'asc')
+      .get();
+    console.log('doing round for ' + value.size + ' plays');
+    for (const doc of value.docs) {
+      const validationResult = LegacyPlayV.decode(doc.data());
+      if (!isRight(validationResult)) {
+        throw new Error('Malformed play');
+      }
+      const play = validationResult.right;
+      round.addPlayToRound(play);
+    }
+    await round.computeAndUpdate();
+  }
+
+  console.log('writing results to db');
+  await writeCacheToDB(db);
+  console.log('Finished');
 }
