@@ -1,7 +1,15 @@
-import { DBPuzzleV, GlickoScoreT, LegacyPlayT, LegacyPlayV } from './dbtypes';
+import {
+  CronStatusT,
+  CronStatusV,
+  DBPuzzleV,
+  GlickoScoreT,
+  LegacyPlayT,
+  LegacyPlayV,
+} from './dbtypes';
 import admin from 'firebase-admin';
 import { AccountPrefsV } from './prefs';
 import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 
 const INITIAL_RATING = 1500;
 const INITIAL_RD = 350;
@@ -311,11 +319,20 @@ export class CrosshareGlickoRound extends GlickoRound {
   }
 }
 
-export async function doGlicko(
-  db: FirebaseFirestore.Firestore,
-  startTimestamp: FirebaseFirestore.Timestamp | null,
-  endTimestamp: FirebaseFirestore.Timestamp
-) {
+export async function doGlicko(db: FirebaseFirestore.Firestore) {
+  let startTimestamp: FirebaseFirestore.Timestamp | null = null;
+  const endTimestamp = admin.firestore.Timestamp.now();
+  const value = await db.collection('cron_status').doc('ratings').get();
+  const data = value.data();
+  if (data) {
+    const result = CronStatusV.decode(data);
+    if (!isRight(result)) {
+      console.error(PathReporter.report(result).join(','));
+      throw new Error('Malformed cron_status');
+    }
+    startTimestamp = result.right.ranAt;
+  }
+
   let startRound = Math.floor(1586895805 / (60 * 60 * 24));
   let readFromCacheOnly = true;
   if (startTimestamp !== null) {
@@ -323,7 +340,10 @@ export async function doGlicko(
     readFromCacheOnly = false;
   }
 
-  const endRound = Math.floor(endTimestamp.toMillis() / (1000 * 60 * 60 * 24));
+  let endRound = Math.floor(endTimestamp.toMillis() / (1000 * 60 * 60 * 24));
+  if (endRound - startRound > 150) {
+    endRound = startRound + 150;
+  }
 
   for (let roundNumber = startRound; roundNumber < endRound; roundNumber += 1) {
     const round = new CrosshareGlickoRound(roundNumber, readFromCacheOnly);
@@ -341,7 +361,9 @@ export async function doGlicko(
       .where('ua', '<', endTimestamp)
       .orderBy('ua', 'asc')
       .get();
-    console.log('doing round for ' + value.size + ' plays');
+    console.log(
+      'doing round ' + startTimestamp.toDate() + ' for ' + value.size + ' plays'
+    );
     for (const doc of value.docs) {
       const validationResult = LegacyPlayV.decode(doc.data());
       if (!isRight(validationResult)) {
@@ -355,5 +377,8 @@ export async function doGlicko(
 
   console.log('writing results to db');
   await writeCacheToDB(db);
+  const status: CronStatusT = { ranAt: endTimestamp };
+  console.log('Done, logging ratings timestamp');
+  return db.collection('cron_status').doc('ratings').set(status);
   console.log('Finished');
 }

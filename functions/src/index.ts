@@ -17,24 +17,9 @@ import * as wrapper from '../../app/lib/firebaseWrapper';
 wrapper.setTimestampClass(admin.firestore.Timestamp);
 
 export const ratings = functions.pubsub.schedule('every 24 hours').onRun(async (_context) => {
-  const db = admin.firestore()
-  let startTimestamp: FirebaseFirestore.Timestamp | null = null;
-  const endTimestamp = admin.firestore.Timestamp.now();
-  const value = await db.collection("cron_status").doc('ratings').get();
-  const data = value.data();
-  if (data) {
-    const result = CronStatusV.decode(data);
-    if (!isRight(result)) {
-      console.error(PathReporter.report(result).join(","));
-      throw new Error("Malformed cron_status");
-    }
-    startTimestamp = result.right.ranAt;
-  }
-
-  await doGlicko(db, startTimestamp, endTimestamp);
-  const status: CronStatusT = { ranAt: endTimestamp };
-  console.log("Done, logging ratings timestamp");
-  return db.collection("cron_status").doc("ratings").set(status);
+  const db = admin.firestore();
+  await doGlicko(db);
+  return;
 });
 
 export const analytics = functions.pubsub.schedule('every 1 hours').onRun(async (_context) => {
