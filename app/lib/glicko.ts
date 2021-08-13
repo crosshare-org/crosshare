@@ -10,17 +10,20 @@ import admin from 'firebase-admin';
 import { AccountPrefsV } from './prefs';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
+import {
+  gFunc,
+  expectedOutcome,
+  Q,
+  Q_SQ,
+  INITIAL_RATING,
+  INITIAL_RD,
+} from './glickoUtil';
 
-const INITIAL_RATING = 1500;
-const INITIAL_RD = 350;
 const MAX_RD = 350;
 const PLAYER_MIN_RD = 30;
 const PUZZLE_MIN_RD = 10;
 const PUZZLE_C_SQ = 2.7;
 const PLAYER_C_SQ = 13.7;
-const Q = 0.0057565;
-const Q_SQ = Q * Q;
-const PI_SQ = Math.PI * Math.PI;
 
 export enum Result {
   Win = 1,
@@ -30,22 +33,6 @@ export enum Result {
 
 type CrosswordId = string;
 type PlayerId = string;
-
-export function timestampToRound(ts: number): number {
-  return Math.abs(Math.round((ts / 1000) * 60 * 60));
-}
-
-export function gFunc(rd: number) {
-  return 1 / Math.sqrt(1 + (3 * Q_SQ * rd * rd) / PI_SQ);
-}
-
-export function expectedOutcome(
-  g: number,
-  rating: number,
-  oppRating: number
-): number {
-  return 1 / (1 + Math.pow(10, (-g * (rating - oppRating)) / 400));
-}
 
 export class GlickoRound {
   PLAYER_MIN_RD: number;

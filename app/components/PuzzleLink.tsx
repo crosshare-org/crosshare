@@ -6,28 +6,13 @@ import { getPossiblyStalePlay } from '../lib/plays';
 import { PuzzleResult } from '../lib/types';
 import { SMALL_AND_UP } from '../lib/style';
 import { PuzzleSizeIcon } from '../components/Icons';
+import { DifficultyBadge } from '../components/DifficultyBadge';
 import { Emoji } from '../components/Emoji';
 import { pastDistanceToNow, timeString } from '../lib/utils';
-import { GlickoScoreT, PlayWithoutUserT } from '../lib/dbtypes';
+import { PlayWithoutUserT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { Markdown } from './Markdown';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-
-const Q = 0.0057565;
-const Q_SQ = Q * Q;
-const PI_SQ = Math.PI * Math.PI;
-
-export function gFunc(rd: number) {
-  return 1 / Math.sqrt(1 + (3 * Q_SQ * rd * rd) / PI_SQ);
-}
-
-export function expectedOutcome(
-  g: number,
-  rating: number,
-  oppRating: number
-): number {
-  return 1 / (1 + Math.pow(10, (-g * (rating - oppRating)) / 400));
-}
 
 const PuzzleLink = (props: {
   fullWidth?: boolean;
@@ -186,57 +171,6 @@ export const AuthorLink = ({
     );
   }
   return <>By {link}</>;
-};
-
-const DifficultyBadge = (props: { puzzleRating: GlickoScoreT | null }) => {
-  const { prefs } = useContext(AuthContext);
-
-  let symbol = (
-    <span
-      css={{ color: 'var(--primary)' }}
-      title="Unsure (not enough solves yet)"
-    >
-      ●
-    </span>
-  );
-
-  const userRating = prefs?.rtg || { r: 1500, d: 350, u: 0 };
-
-  if (props.puzzleRating && props.puzzleRating.d < 200) {
-    const g = gFunc(
-      Math.sqrt(
-        props.puzzleRating.d * props.puzzleRating.d +
-          userRating.d * userRating.d
-      )
-    );
-    const expectation = expectedOutcome(g, userRating.r, props.puzzleRating.r);
-    if (expectation < 0.25) {
-      symbol = (
-        <span css={{ color: 'var(--text)' }} title="Very Difficult">
-          ◆◆
-        </span>
-      );
-    } else if (expectation < 0.5) {
-      symbol = (
-        <span css={{ color: 'var(--text)' }} title="Difficult">
-          ◆
-        </span>
-      );
-    } else if (expectation < 0.8) {
-      symbol = (
-        <span css={{ color: 'var(--blue)' }} title="Medium">
-          ■
-        </span>
-      );
-    } else {
-      symbol = (
-        <span css={{ color: 'var(--green)' }} title="Easy">
-          ●
-        </span>
-      );
-    }
-  }
-  return symbol;
 };
 
 export const PuzzleResultLink = ({
