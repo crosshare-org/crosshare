@@ -121,8 +121,8 @@ export const DifficultyBadge = (props: {
             </>
           ) : (
             <p>
-              This puzzle has not had enough solves yet to have a rating from
-              Crosshare. Puzzle ratings are updated once per day.
+              This puzzle has not had enough solves yet to have a difficulty
+              rating. Ratings are updated once per day.
             </p>
           )}
         </Overlay>
