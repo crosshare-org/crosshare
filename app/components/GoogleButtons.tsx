@@ -10,6 +10,16 @@ interface GoogleButtonProps {
   text?: string;
 }
 
+export const GoogleButton = ({
+  user,
+  ...props
+}: { user: firebase.User | undefined } & GoogleButtonProps) => {
+  if (user) {
+    return <GoogleLinkButton user={user} {...props} />;
+  }
+  return <GoogleSignInButton {...props} />;
+};
+
 export const GoogleSignInButton = ({ postSignIn, text }: GoogleButtonProps) => {
   function signin() {
     App.auth()
