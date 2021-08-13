@@ -10,8 +10,11 @@ import { Markdown } from './Markdown';
 import { ToolTipText } from './ToolTipText';
 import { AuthorLink } from './PuzzleLink';
 import { EmbedContext } from './EmbedContext';
+import { GlickoScoreT } from '../lib/dbtypes';
+import { DifficultyBadge } from './DifficultyBadge';
 
 export const PuzzleHeading = (props: {
+  rating: GlickoScoreT | null;
   publishTime: number;
   showTip: boolean;
   isContest: boolean;
@@ -35,6 +38,8 @@ export const PuzzleHeading = (props: {
         topLine={props.title}
         byLine={
           <p>
+            <DifficultyBadge puzzleRating={props.rating} />
+            {' · '}
             <AuthorLink
               authorName={props.authorName}
               constructorPage={props.constructorPage}

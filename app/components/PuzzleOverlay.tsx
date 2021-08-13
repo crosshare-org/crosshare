@@ -146,6 +146,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         ''
       )}
       <PuzzleHeading
+        rating={props.puzzle.rating}
         publishTime={props.publishTime}
         showTip={props.overlayType === OverlayType.Success}
         coverImage={props.coverImage}
