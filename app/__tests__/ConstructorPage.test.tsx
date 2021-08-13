@@ -10,9 +10,14 @@ import type firebase from 'firebase/app';
 import { userIdToPage } from '../lib/serverOnly';
 import firebaseAdmin from 'firebase-admin';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-jest.mock('next/link', () => ({ children }) => children); // https://github.com/vercel/next.js/issues/16864
+jest.mock(
+  'next/link',
+  () =>
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    ({ children }) =>
+      children
+); // https://github.com/vercel/next.js/issues/16864
 
 const projectId = 'constructorpagetests';
 
@@ -20,9 +25,9 @@ test('invalid constructor page', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
-  }) as firebase.app.App;
+  }) as unknown as firebase.app.App;
   await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
-  setAdminApp((adminApp as unknown) as firebaseAdmin.app.App);
+  setAdminApp(adminApp as unknown as firebaseAdmin.app.App);
 
   const page = await userIdToPage('miked');
   expect(page).toBeNull();
@@ -34,7 +39,7 @@ test('create constructor page', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
-  }) as firebase.app.App;
+  }) as unknown as firebase.app.App;
   await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
 
   const app = firebaseTesting.initializeTestApp({
@@ -117,7 +122,7 @@ test('security rules for constructor page creation', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
-  }) as firebase.app.App;
+  }) as unknown as firebase.app.App;
   await adminApp.firestore().collection('cp').doc('miked').set({ u: 'mike' });
   adminApp.delete();
 
@@ -290,7 +295,7 @@ test('security rules for constructor page updates', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
-  }) as firebase.app.App;
+  }) as unknown as firebase.app.App;
   await adminApp.firestore().collection('cp').doc('miked').set({
     i: 'miked',
     u: 'foobar',

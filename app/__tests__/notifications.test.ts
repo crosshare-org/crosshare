@@ -30,8 +30,7 @@ function getComment(
 ): CommentWithRepliesT {
   return {
     ...{
-      c:
-        'A couple of two-worders today which I don\'t love, but I hope you all got it anyway!',
+      c: 'A couple of two-worders today which I don\'t love, but I hope you all got it anyway!',
       i: 'LwgoVx0BAskM4wVJyoLj',
       t: 36.009,
       p: TimestampClass.now(),
@@ -76,7 +75,7 @@ test('security rules for updating notifications', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
-  }) as firebase.app.App;
+  }) as unknown as firebase.app.App;
   await adminApp
     .firestore()
     .collection('n')
@@ -141,7 +140,7 @@ test('should not notify for new puzzle if no subs', async () => {
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
   });
-  setAdminApp((adminApp as unknown) as firebaseAdminType.app.App);
+  setAdminApp(adminApp as unknown as firebaseAdminType.app.App);
 
   const notifications = await notificationsForPuzzleChange(
     null,
@@ -155,7 +154,7 @@ test('should notify for new puzzle if there are subs', async () => {
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
   });
-  setAdminApp((adminApp as unknown) as firebaseAdminType.app.App);
+  setAdminApp(adminApp as unknown as firebaseAdminType.app.App);
 
   await adminApp
     .firestore()
@@ -375,9 +374,9 @@ describe('email queueing', () => {
 
     expect(notifications.length).toEqual(5);
     await firebaseTesting.clearFirestoreData({ projectId });
-    adminApp = (firebaseTesting.initializeAdminApp({
+    adminApp = firebaseTesting.initializeAdminApp({
       projectId,
-    }) as unknown) as firebaseAdminType.app.App;
+    }) as unknown as firebaseAdminType.app.App;
     setAdminApp(adminApp);
     await adminApp
       .firestore()

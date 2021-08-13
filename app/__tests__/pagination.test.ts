@@ -22,8 +22,8 @@ test('try it when empty', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
-  }) as firebase.app.App;
-  setAdminApp((adminApp as unknown) as firebaseAdminType.app.App);
+  }) as unknown as firebase.app.App;
+  setAdminApp(adminApp as unknown as firebaseAdminType.app.App);
 
   expect(
     (await adminApp.firestore().collection('i').doc('featured').get()).exists
@@ -42,8 +42,8 @@ test('try it with a few puzzles', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
-  }) as firebase.app.App;
-  setAdminApp((adminApp as unknown) as firebaseAdminType.app.App);
+  }) as unknown as firebase.app.App;
+  setAdminApp(adminApp as unknown as firebaseAdminType.app.App);
 
   expect(
     (await adminApp.firestore().collection('i').doc('featured').get()).exists
@@ -114,8 +114,8 @@ test('try constructor page with some puzzles private or private until', async ()
   await firebaseTesting.clearFirestoreData({ projectId });
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
-  }) as firebase.app.App;
-  setAdminApp((adminApp as unknown) as firebaseAdminType.app.App);
+  }) as unknown as firebase.app.App;
+  setAdminApp(adminApp as unknown as firebaseAdminType.app.App);
 
   const uid = getMockedPuzzle()['a'];
 
@@ -201,8 +201,8 @@ test('constructor page was failing for private until', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
   const adminApp = firebaseTesting.initializeAdminApp({
     projectId,
-  }) as firebase.app.App;
-  setAdminApp((adminApp as unknown) as firebaseAdminType.app.App);
+  }) as unknown as firebase.app.App;
+  setAdminApp(adminApp as unknown as firebaseAdminType.app.App);
 
   const uid = getMockedPuzzle()['a'];
 

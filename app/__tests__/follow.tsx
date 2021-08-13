@@ -34,8 +34,10 @@ beforeAll(async () => {
       },
     },
   }) as firebase.app.App;
-  admin = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
-  setAdminApp((admin as unknown) as firebaseAdminType.app.App);
+  admin = firebaseTesting.initializeAdminApp({
+    projectId,
+  }) as unknown as firebase.app.App;
+  setAdminApp(admin as unknown as firebaseAdminType.app.App);
 });
 
 afterAll(async () => {

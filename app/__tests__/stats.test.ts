@@ -1,5 +1,6 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import type firebase from 'firebase/app';
+import type firebaseAdminType from 'firebase-admin';
 
 jest.mock('../lib/firebaseWrapper');
 
@@ -9,7 +10,9 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-let randoApp: firebase.app.App, app: firebase.app.App, admin: firebase.app.App;
+let randoApp: firebase.app.App,
+  app: firebase.app.App,
+  admin: firebaseAdminType.app.App;
 
 beforeAll(async () => {
   randoApp = firebaseTesting.initializeTestApp({
@@ -24,7 +27,9 @@ beforeAll(async () => {
       },
     },
   }) as firebase.app.App;
-  admin = firebaseTesting.initializeAdminApp({ projectId });
+  admin = firebaseTesting.initializeAdminApp({
+    projectId,
+  }) as unknown as firebaseAdminType.app.App;
 });
 
 afterAll(async () => {
@@ -42,62 +47,16 @@ beforeEach(async () => {
     .set({
       a: 'mike',
       ct: [
-        0.01,
-        0.02,
-        0.04,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        0.01, 0.02, 0.04, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1,
       ],
       n: 3,
       nt: 158,
       s: 2,
       st: 88,
       uc: [
-        1,
-        0.4,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
-        0.2,
+        1, 0.4, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2,
+        0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2,
       ],
     });
 });

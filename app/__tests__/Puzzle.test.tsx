@@ -21,9 +21,14 @@ import {
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import type firebase from 'firebase/app';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-jest.mock('next/link', () => ({ children }) => children); // https://github.com/vercel/next.js/issues/16864
+jest.mock(
+  'next/link',
+  () =>
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    ({ children }) =>
+      children
+); // https://github.com/vercel/next.js/issues/16864
 
 jest.mock('../lib/firebaseWrapper');
 jest.mock('../lib/workerLoader');
@@ -37,6 +42,7 @@ window.HTMLElement.prototype.scrollIntoView = function () {
 };
 
 const testPuzzle: ServerPuzzleResult = {
+  rating: null,
   authorId: 'test-author-id',
   isPrivate: false,
   isPrivateUntil: null,
@@ -141,6 +147,7 @@ test('clicking a clue sets slot to active', async () => {
 });
 
 const dailymini_5_19: ServerPuzzleResult = {
+  rating: null,
   constructorPage: null,
   isPrivate: false,
   isPrivateUntil: null,
@@ -223,21 +230,16 @@ const dailymini_5_19: ServerPuzzleResult = {
 };
 
 test('daily mini from 5/19/20', async () => {
-  const {
-    getByLabelText,
-    getByText,
-    queryByText,
-    getAllByText,
-    container,
-  } = render(
-    <Puzzle
-      puzzle={dailymini_5_19}
-      play={null}
-      loadingPlayState={false}
-      isAdmin={false}
-    />,
-    {}
-  );
+  const { getByLabelText, getByText, queryByText, getAllByText, container } =
+    render(
+      <Puzzle
+        puzzle={dailymini_5_19}
+        play={null}
+        loadingPlayState={false}
+        isAdmin={false}
+      />,
+      {}
+    );
 
   fireEvent.click(getByText(/Begin Puzzle/i));
   await act(() => Promise.resolve());
@@ -261,8 +263,9 @@ test('daily mini from 5/19/20', async () => {
 
   // After a naive fix of the above issue we were still having problems on click
   fireEvent.click(getByLabelText('cell0x3'));
-  const clueOne = getAllByText(/word with cod/i)[1]?.parentElement
-    ?.parentElement?.parentElement?.parentElement;
+  const clueOne =
+    getAllByText(/word with cod/i)[1]?.parentElement?.parentElement
+      ?.parentElement?.parentElement;
   expect(clueOne).toHaveStyleRule('background-color', 'var(--lighter)');
 });
 
@@ -279,13 +282,8 @@ test('nonuser progress should be cached in local storage but not db', async () =
 
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
 
-  let {
-    findByText,
-    findByTitle,
-    queryByText,
-    getByLabelText,
-    container,
-  } = render(<PuzzlePage puzzle={dailymini_5_19} />, {});
+  let { findByText, findByTitle, queryByText, getByLabelText, container } =
+    render(<PuzzlePage puzzle={dailymini_5_19} />, {});
 
   fireEvent.click(await findByText(/Begin Puzzle/i));
   await act(() => Promise.resolve());
@@ -363,13 +361,8 @@ test('anonymous user progress should be cached in local storage and db', async (
   setApp(app as firebase.app.App);
   const admin = firebaseTesting.initializeAdminApp({ projectId: 'test1' });
 
-  let {
-    findByTitle,
-    findByText,
-    queryByText,
-    getByLabelText,
-    container,
-  } = render(<PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser });
+  let { findByTitle, findByText, queryByText, getByLabelText, container } =
+    render(<PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser });
 
   fireEvent.click(
     await findByText(/Begin Puzzle/i, undefined, { timeout: 3000 })
@@ -401,13 +394,10 @@ test('anonymous user progress should be cached in local storage and db', async (
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
   // Now try again!
-  ({
-    findByTitle,
-    findByText,
-    queryByText,
-    getByLabelText,
-    container,
-  } = render(<PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }));
+  ({ findByTitle, findByText, queryByText, getByLabelText, container } = render(
+    <PuzzlePage puzzle={dailymini_5_19} />,
+    { user: anonymousUser }
+  ));
 
   await findByText(/Resume/i, undefined, { timeout: 3000 });
 
@@ -427,13 +417,10 @@ test('anonymous user progress should be cached in local storage and db', async (
   sessionStorage.clear();
   localStorage.clear();
   plays.resetMemoryStore();
-  ({
-    findByTitle,
-    findByText,
-    queryByText,
-    getByLabelText,
-    container,
-  } = render(<PuzzlePage puzzle={dailymini_5_19} />, { user: anonymousUser }));
+  ({ findByTitle, findByText, queryByText, getByLabelText, container } = render(
+    <PuzzlePage puzzle={dailymini_5_19} />,
+    { user: anonymousUser }
+  ));
 
   await findByText(/Resume/i, undefined, { timeout: 3000 });
 

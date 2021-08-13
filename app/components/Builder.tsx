@@ -136,6 +136,7 @@ type BuilderProps = WithOptional<
     | 'authorName'
     | 'moderated'
     | 'publishTime'
+    | 'rating'
   >,
   | 'clues'
   | 'title'

@@ -26,9 +26,14 @@ jest.mock('../lib/firebaseWrapper');
 jest.mock('../lib/WordDB');
 jest.mock('../lib/workerLoader');
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-jest.mock('next/link', () => ({ children }) => children); // https://github.com/vercel/next.js/issues/16864
+jest.mock(
+  'next/link',
+  () =>
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    ({ children }) =>
+      children
+); // https://github.com/vercel/next.js/issues/16864
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -61,8 +66,10 @@ beforeAll(async () => {
       },
     },
   }) as firebase.app.App;
-  admin = firebaseTesting.initializeAdminApp({ projectId }) as firebase.app.App;
-  setAdminApp((admin as unknown) as firebaseAdminType.app.App);
+  admin = firebaseTesting.initializeAdminApp({
+    projectId,
+  }) as unknown as firebase.app.App;
+  setAdminApp(admin as unknown as firebaseAdminType.app.App);
 });
 
 afterAll(async () => {
