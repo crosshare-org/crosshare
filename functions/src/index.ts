@@ -16,7 +16,7 @@ import { CronStatusV, CronStatusT } from '../../app/lib/dbtypes';
 import * as wrapper from '../../app/lib/firebaseWrapper';
 wrapper.setTimestampClass(admin.firestore.Timestamp);
 
-export const ratings = functions.pubsub.schedule('every 24 hours').onRun(async (_context) => {
+export const ratings = functions.pubsub.schedule('every day 00:05').onRun(async (_context) => {
   const db = admin.firestore();
   await doGlicko(db);
   return;
