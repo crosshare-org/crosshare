@@ -1223,13 +1223,19 @@ export function puzzleReducer(
     }
     const play = action.play;
     if (play === null) {
+      const downsOnly = action.prefs?.solveDownsOnly || false;
       return {
         ...state,
-        downsOnly: action.prefs?.solveDownsOnly || false,
+        downsOnly,
+        active: {
+          ...state.active,
+          dir: downsOnly ? Direction.Down : state.active.dir,
+        },
         prefs: action.prefs,
         loadedPlayState: true,
       };
     }
+    const downsOnly = play.do || false;
     return {
       ...state,
       prefs: action.prefs,
@@ -1240,7 +1246,11 @@ export function puzzleReducer(
       revealedCells: new Set<number>(play.rc),
       success: play.f,
       ranSuccessEffects: play.f,
-      downsOnly: play.do || false,
+      downsOnly,
+      active: {
+        ...state.active,
+        dir: downsOnly ? Direction.Down : state.active.dir,
+      },
       displaySeconds: play.t,
       bankedSeconds: play.t,
       didCheat: play.ch,

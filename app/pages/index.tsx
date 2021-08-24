@@ -14,7 +14,6 @@ import { getPuzzlesForFeatured, userIdToPage } from '../lib/serverOnly';
 import { PAGE_SIZE } from './featured/[pageNumber]';
 import { useContext } from 'react';
 import { AuthContext } from '../components/AuthContext';
-import { Button } from '../components/Buttons';
 import { ContactLinks } from '../components/ContactLinks';
 import { CreateShareSection } from '../components/CreateShareSection';
 import { SMALL_AND_UP } from '../lib/style';
