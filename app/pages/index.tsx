@@ -146,39 +146,19 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
           <ContactLinks />.
         </p>
         {!loading && !user?.email ? (
-          <form
-            css={{ textAlign: 'center' }}
-            action="https://crosshare.us2.list-manage.com/subscribe/post?u=00ed30fa1e63ee37b6baf232c&amp;id=de9a6d6b7a"
-            method="post"
-            target="_blank"
-          >
-            <label>
-              <p>
-                Subscribe to get a once-per-week email listing the best new
-                puzzles and constructors on Crosshare:
-              </p>
-              <input
-                type="email"
-                placeholder="Your email address"
-                name="EMAIL"
-              />
-              <Button
-                css={{ marginLeft: '1em' }}
-                type="submit"
-                text="Subscribe"
-              />
-            </label>
-            <div
-              style={{ position: 'absolute', left: '-5000px' }}
-              aria-hidden="true"
-            >
-              <input
-                type="text"
-                name="b_00ed30fa1e63ee37b6baf232c_de9a6d6b7a"
-                tabIndex={-1}
-              />
-            </div>
-          </form>
+          <iframe
+            css={{
+              height: 300,
+              width: 800,
+              display: 'block',
+              margin: 'auto',
+              maxWidth: '100%',
+            }}
+            title="subscribe"
+            frameBorder="0"
+            scrolling="no"
+            src="https://app.mailjet.com/widget/iframe/71WB/Kgs"
+          ></iframe>
         ) : (
           ''
         )}
