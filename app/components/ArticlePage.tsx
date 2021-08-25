@@ -46,7 +46,10 @@ function Article(props: ArticleT) {
           },
         }}
       >
-        <Markdown css={{ marginBottom: '2em' }} text={props.c} />
+        <Markdown
+          css={{ marginBottom: '2em', '& h2': { marginTop: '1em' } }}
+          text={props.c}
+        />
         <p>
           This article is part of a series of posts designed to teach visitors
           about crosswords in general as well as some Crosshare specific
