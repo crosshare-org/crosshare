@@ -4,6 +4,7 @@ import { useContext, useState } from 'react';
 import { gFunc, expectedOutcome } from '../lib/glickoUtil';
 import { Overlay } from './Overlay';
 import { GoogleButton } from './GoogleButtons';
+import { Link } from './Link';
 
 export const DifficultyBadge = (props: {
   puzzleRating: GlickoScoreT | null;
@@ -125,6 +126,13 @@ export const DifficultyBadge = (props: {
               rating. Ratings are updated once per day.
             </p>
           )}
+          <p>
+            See our{' '}
+            <Link href="/articles/crossword-difficulty-ratings">
+              article about Crosshare difficulty ratings
+            </Link>{' '}
+            for more info on how this works.
+          </p>
         </Overlay>
       ) : (
         ''

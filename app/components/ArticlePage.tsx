@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { ArticleT } from '../lib/article';
 import { ArticlePageProps } from '../lib/serverOnly';
 import { HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
+import { ContactLinks } from './ContactLinks';
 import { ErrorPage } from './ErrorPage';
 import { Link } from './Link';
 import { Markdown } from './Markdown';
@@ -36,8 +37,7 @@ function Article(props: ArticleT) {
         />
       </Head>
       <DefaultTopBar />
-      <Markdown
-        text={props.c}
+      <div
         css={{
           margin: '2em 1em',
           [HUGE_AND_UP]: {
@@ -45,7 +45,20 @@ function Article(props: ArticleT) {
             margin: '2em auto',
           },
         }}
-      />
+      >
+        <Markdown css={{ marginBottom: '2em' }} text={props.c} />
+        <p>
+          This article is part of a series of posts designed to teach visitors
+          about crosswords in general as well as some Crosshare specific
+          features. If you have any questions or suggestions for this or other
+          articles please contact us via <ContactLinks />.
+        </p>
+        <p>
+          We&apos;re seeking volunteers to help expand and edit this
+          knowledgebase so it becomes more useful for constructors and solvers.
+          If you&apos;re interested please reach out!
+        </p>
+      </div>
     </>
   );
 }
