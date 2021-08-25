@@ -161,5 +161,9 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow delete: if isAdmin();
     }
+    match /a/{articleId} {
+      allow write: if isAdmin();
+      allow read: if isAdmin();
+    }
   }
 }

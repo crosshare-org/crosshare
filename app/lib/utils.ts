@@ -2,6 +2,19 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 export const STORAGE_KEY = 'puzzleInProgress';
 
+export const slugify = (...args: (string | number)[]): string => {
+  const value = args.join(' ');
+
+  return value
+    .replace(/-/g, ' ')
+    .normalize('NFD') // split an accented letter in the base letter and the acent
+    .replace(/[\u0300-\u036f]/g, '') // remove all previously split accents
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9 ]/g, '') // remove all chars not letters, numbers and spaces (to be replaced)
+    .replace(/\s+/g, '-'); // separator
+};
+
 export function timeString(elapsed: number, fixedSize: boolean): string {
   const hours = Math.floor(elapsed / 3600);
   const minutes = Math.floor((elapsed - hours * 3600) / 60);

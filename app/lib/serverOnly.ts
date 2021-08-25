@@ -34,6 +34,7 @@ import { NextPuzzleLink } from '../components/Puzzle';
 import { GetServerSideProps } from 'next';
 import { getDailyMinis } from './dailyMinis';
 import { EmbedOptionsT } from './embedOptions';
+import { ArticleT, validate } from './article';
 
 export async function getStorageUrl(
   storageKey: string
@@ -360,9 +361,8 @@ async function queueEmailForUser(
       markdown += '\n\n';
     }
 
-    const replies: Array<ReplyNotificationT> = sorted.filter(
-      isReplyNotification
-    );
+    const replies: Array<ReplyNotificationT> =
+      sorted.filter(isReplyNotification);
     const repliesByPuzzle = replies.reduce(
       (
         rv: Record<string, Array<ReplyNotificationT>>,
@@ -504,9 +504,33 @@ export async function queueEmails() {
   );
 }
 
-interface PuzzlePageErrorProps {
+interface PageErrorProps {
   error: string;
 }
+
+export type ArticlePageProps = PageErrorProps | ArticleT;
+
+export const getArticlePageProps: GetServerSideProps<ArticlePageProps> =
+  async ({ res, params }): Promise<{ props: ArticlePageProps }> => {
+    const db = AdminApp.firestore();
+    if (!params?.slug || Array.isArray(params.slug)) {
+      res.statusCode = 404;
+      return { props: { error: 'bad article params' } };
+    }
+    let dbres;
+    try {
+      dbres = await db.collection('a').where('s', '==', params.slug).get();
+    } catch {
+      return { props: { error: 'error getting article' } };
+    }
+    const article = validate(dbres.docs[0]?.data());
+    if (!article) {
+      res.statusCode = 404;
+      return { props: { error: 'article doesnt exist' } };
+    }
+    res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
+    return { props: article };
+  };
 
 export interface PuzzlePageResultProps {
   puzzle: ServerPuzzleResult;
@@ -516,7 +540,7 @@ export interface PuzzlePageResultProps {
   embedOptions?: EmbedOptionsT;
 }
 
-export type PuzzlePageProps = PuzzlePageResultProps | PuzzlePageErrorProps;
+export type PuzzlePageProps = PuzzlePageResultProps | PageErrorProps;
 
 export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   res,

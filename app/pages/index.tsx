@@ -7,7 +7,7 @@ import { getDailyMinis } from '../lib/dailyMinis';
 import { Link } from '../components/Link';
 import { puzzleFromDB, ServerPuzzleResult } from '../lib/types';
 import { DBPuzzleV, getDateString } from '../lib/dbtypes';
-import { App } from '../lib/firebaseWrapper';
+import { AdminApp } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleResultLink } from '../components/PuzzleLink';
 import { getPuzzlesForFeatured, userIdToPage } from '../lib/serverOnly';
@@ -18,16 +18,18 @@ import { ContactLinks } from '../components/ContactLinks';
 import { CreateShareSection } from '../components/CreateShareSection';
 import { SMALL_AND_UP } from '../lib/style';
 import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList';
+import { ArticleT, validate } from '../lib/article';
 
 interface HomePageProps {
   dailymini: ServerPuzzleResult;
   featured: Array<ServerPuzzleResult>;
+  articles: Array<ArticleT>;
 }
 
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
   res,
 }) => {
-  const db = App.firestore();
+  const db = AdminApp.firestore();
   const minis = await getDailyMinis();
   const today = getDateString(new Date());
   const todaysMini = Object.entries(minis)
@@ -36,6 +38,18 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
   if (!todaysMini) {
     throw new Error('no minis scheduled!');
   }
+
+  const unfilteredArticles = await db
+    .collection('a')
+    .where('f', '==', true)
+    .get()
+    .then((articlesResult) => {
+      return articlesResult.docs.map((d) => validate(d.data()));
+    });
+
+  const articles: ArticleT[] = unfilteredArticles.filter((i): i is ArticleT => {
+    return i !== null;
+  });
 
   const [puzzlesWithoutConstructor] = await getPuzzlesForFeatured(0, PAGE_SIZE);
   const featured = await Promise.all(
@@ -59,7 +73,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
           id: dmResult.id,
           constructorPage: await userIdToPage(validationResult.right.a),
         };
-        return { props: { dailymini: dm, featured } };
+        return { props: { dailymini: dm, featured, articles } };
       } else {
         console.error(PathReporter.report(validationResult).join(','));
         throw new Error('Malformed daily mini');
@@ -67,7 +81,19 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
     });
 };
 
-export default function HomePage({ dailymini, featured }: HomePageProps) {
+const ArticleListItem = (props: ArticleT) => {
+  return (
+    <li key={props.s}>
+      <Link href={`/articles/${props.s}`}>{props.t}</Link>
+    </li>
+  );
+};
+
+export default function HomePage({
+  dailymini,
+  featured,
+  articles,
+}: HomePageProps) {
   const today = new Date();
   const { user, loading } = useContext(AuthContext);
 
@@ -140,10 +166,6 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
         </p>
         <hr css={{ margin: '2em 0' }} />
         <UnfinishedPuzzleList user={user} />
-        <p css={{ marginTop: '1em', textAlign: 'center' }}>
-          If you have questions or suggestions please contact us via{' '}
-          <ContactLinks />.
-        </p>
         {!loading && !user?.email ? (
           <iframe
             css={{
@@ -161,6 +183,23 @@ export default function HomePage({ dailymini, featured }: HomePageProps) {
         ) : (
           ''
         )}
+        <h4 css={{ marginTop: '2em' }}>
+          Frequently asked questions and information
+        </h4>
+        <ul
+          css={{
+            listStyleType: 'none',
+            padding: 0,
+            margin: 0,
+            columnWidth: '30em',
+          }}
+        >
+          {articles.map(ArticleListItem)}
+        </ul>
+        <p css={{ marginTop: '1em', textAlign: 'center' }}>
+          If you have questions or suggestions please contact us via{' '}
+          <ContactLinks />.
+        </p>
       </div>
     </>
   );
