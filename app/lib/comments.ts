@@ -75,7 +75,6 @@ export async function moderateComments(
 
   // Now we've merged in all the comments, so update the puzzles:
   for (const [puzzleId, dbPuzzle] of Object.entries(puzzles)) {
-    console.log('updating', puzzleId, dbPuzzle.cs);
     await db.collection('c').doc(puzzleId).update({ cs: dbPuzzle.cs });
   }
 }
