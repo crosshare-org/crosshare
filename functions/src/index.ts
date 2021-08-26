@@ -10,15 +10,42 @@ import { runAnalytics } from '../../app/lib/analytics';
 import { queueEmails } from '../../app/lib/serverOnly';
 import { handlePuzzleUpdate } from '../../app/lib/puzzleUpdate';
 import { doGlicko } from '../../app/lib/glicko';
+import { moderateComments } from '../../app/lib/comments';
 
-import { CronStatusV, CronStatusT } from '../../app/lib/dbtypes';
+import { CronStatusV, CronStatusT, CommentForModerationV } from '../../app/lib/dbtypes';
 
 import * as wrapper from '../../app/lib/firebaseWrapper';
+import { mapEachResult } from '../../app/lib/dbUtils';
 wrapper.setTimestampClass(admin.firestore.Timestamp);
 
 export const ratings = functions.pubsub.schedule('every day 00:05').onRun(async (_context) => {
   const db = admin.firestore();
   await doGlicko(db);
+  return;
+});
+
+export const autoModerator = functions.pubsub.schedule('every 30 minutes').onRun(async(_context) => {
+  console.log('running automoderator');
+  const db = admin.firestore();
+  const settingsDoc = await db.doc('settings/settings').get();
+  if (!settingsDoc?.data()?.automoderate) {
+    console.log('automoderation is turned off, done');
+    return;
+  }
+
+  const commentsForModeration = await mapEachResult(
+    db.collection('cfm'),
+    CommentForModerationV,
+    (cfm, docId) => {
+      return { ...cfm, i: docId };
+    }
+  );
+
+  console.log(`automoderating ${commentsForModeration.length} comments`);
+
+  await moderateComments(db, commentsForModeration, new Set(), true);
+
+  console.log('done');
   return;
 });
 

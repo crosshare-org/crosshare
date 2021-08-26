@@ -16,16 +16,15 @@ import {
   CategoryIndexT,
   CategoryIndexV,
   prettifyDateString,
-  DBPuzzleT,
   CommentForModerationWithIdT,
   CommentForModerationV,
-  CommentWithRepliesT,
 } from '../lib/dbtypes';
-import { getFromDB, getFromSessionOrDB, mapEachResult } from '../lib/dbUtils';
+import { getFromSessionOrDB, mapEachResult } from '../lib/dbUtils';
 import { App, FieldValue, TimestampClass } from '../lib/firebaseWrapper';
 import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
 import { ConstructorPageV, ConstructorPageT } from '../lib/constructorPage';
 import { useSnackbar } from '../components/Snackbar';
+import { moderateComments } from '../lib/comments';
 
 const PuzzleListItem = (props: PuzzleResult) => {
   return (
@@ -47,10 +46,8 @@ export default requiresAdmin(() => {
   const [unmoderated, setUnmoderated] = useState<Array<PuzzleResult> | null>(
     null
   );
-  const [
-    commentsForModeration,
-    setCommentsForModeration,
-  ] = useState<Array<CommentForModerationWithIdT> | null>(null);
+  const [commentsForModeration, setCommentsForModeration] =
+    useState<Array<CommentForModerationWithIdT> | null>(null);
   const [minis, setMinis] = useState<CategoryIndexT | null>(null);
   const [stats, setStats] = useState<DailyStatsT | null>(null);
   const [error, setError] = useState(false);
@@ -58,10 +55,8 @@ export default requiresAdmin(() => {
   const [commentIdsForDeletion, setCommentIdsForDeletion] = useState<
     Set<string>
   >(new Set());
-  const [
-    pagesForModeration,
-    setPagesForModeration,
-  ] = useState<Array<ConstructorPageT> | null>(null);
+  const [pagesForModeration, setPagesForModeration] =
+    useState<Array<ConstructorPageT> | null>(null);
   const [uidToUnsub, setUidToUnsub] = useState('');
   const [donationEmail, setDonationEmail] = useState('');
   const [donationAmount, setDonationAmount] = useState('');
@@ -159,24 +154,6 @@ export default requiresAdmin(() => {
     return crosswordId;
   }
 
-  function findCommentById(
-    comments: Array<CommentWithRepliesT>,
-    id: string
-  ): CommentWithRepliesT | null {
-    for (const comment of comments) {
-      if (comment.i === id) {
-        return comment;
-      }
-      if (comment.r !== undefined) {
-        const res = findCommentById(comment.r, id);
-        if (res !== null) {
-          return res;
-        }
-      }
-    }
-    return null;
-  }
-
   async function retryMail(e: FormEvent) {
     e.preventDefault();
     const db = App.firestore();
@@ -217,55 +194,18 @@ export default requiresAdmin(() => {
     }
   }
 
-  async function moderateComments(e: FormEvent) {
+  async function doModerateComments(e: FormEvent) {
     e.preventDefault();
+    if (!commentsForModeration) {
+      return;
+    }
     const db = App.firestore();
-    const puzzles: Record<string, DBPuzzleT> = {};
-    if (commentsForModeration) {
-      for (const comment of commentsForModeration) {
-        // Don't need to do anything for any comment that has been marked for deletion
-        if (!commentIdsForDeletion.has(comment.i)) {
-          let puzzle: DBPuzzleT | null = null;
-          const fromCache = puzzles[comment.pid];
-          if (fromCache) {
-            puzzle = fromCache;
-          } else {
-            try {
-              puzzle = await getFromDB('c', comment.pid, DBPuzzleV);
-              puzzles[comment.pid] = puzzle;
-            } catch {
-              puzzle = null;
-            }
-          }
-          if (puzzle) {
-            if (puzzle.cs === undefined) {
-              puzzle.cs = [];
-            }
-            if (comment.rt === null) {
-              puzzle.cs.push(comment);
-            } else {
-              const parent = findCommentById(puzzle.cs, comment.rt);
-              if (parent === null) {
-                throw new Error('parent comment not found');
-              }
-              if (parent.r) {
-                parent.r.push(comment);
-              } else {
-                parent.r = [comment];
-              }
-            }
-          }
-        }
-        await db.collection('cfm').doc(comment.i).delete();
-      }
-    }
-
-    // Now we've merged in all the comments, so update the puzzles:
-    for (const [puzzleId, dbPuzzle] of Object.entries(puzzles)) {
-      console.log('updating', puzzleId, dbPuzzle.cs);
-      await db.collection('c').doc(puzzleId).update({ cs: dbPuzzle.cs });
-    }
-
+    moderateComments(
+      db as unknown as FirebaseFirestore.Firestore,
+      commentsForModeration,
+      commentIdsForDeletion,
+      false
+    );
     setCommentsForModeration([]);
   }
 
@@ -300,7 +240,7 @@ export default requiresAdmin(() => {
         {commentsForModeration.length === 0 ? (
           <div>No comments are currently awaiting moderation.</div>
         ) : (
-          <form onSubmit={moderateComments}>
+          <form onSubmit={doModerateComments}>
             <p>Check comments to disallow them:</p>
             {commentsForModeration.map((cfm) => (
               <div key={cfm.i}>
