@@ -102,14 +102,20 @@ const DBPuzzleMandatoryV = t.type({
   /** grid (solution) */
   g: t.array(t.string),
 });
-const MetaSubmissionForPuzzleV = t.type({
-  /** display name */
-  n: t.string,
-  /** submit time */
-  t: timestamp,
-  /** submission */
-  s: t.string,
-});
+const MetaSubmissionForPuzzleV = t.intersection([
+  t.type({
+    /** display name */
+    n: t.string,
+    /** submit time */
+    t: timestamp,
+    /** submission */
+    s: t.string,
+  }),
+  t.partial({
+    /** user id (only available on newer subs) */
+    u: t.string,
+  }),
+]);
 
 const MetaSubmissionForStatsV = t.intersection([
   MetaSubmissionForPuzzleV,
@@ -118,6 +124,12 @@ const MetaSubmissionForStatsV = t.intersection([
     u: t.string,
     /** email */
     e: t.union([t.string, t.null]),
+  }),
+  t.partial({
+    /** did reveal? */
+    rv: t.boolean,
+    /** previous guesses */
+    gs: t.array(t.string),
   }),
 ]);
 export type MetaSubmissionForPuzzleT = t.TypeOf<
@@ -170,6 +182,8 @@ const DBPuzzleOptionalV = t.partial({
   ct_prz: t.boolean,
   /** contests submissions */
   ct_subs: t.array(MetaSubmissionForPuzzleV),
+  /** contest delay until reveal is available (in ms) */
+  ct_rv_dl: t.number,
   /** puzzle rating */
   rtg: GlickoScoreV,
 });
@@ -209,6 +223,10 @@ const PlayBaseV = t.intersection([
   t.partial({
     /** contest submission */
     ct_sub: t.string,
+    /** contest was revealed */
+    ct_rv: t.boolean,
+    /** previous submissions */
+    ct_pr_subs: t.array(t.string),
     /** contest submission timestamp */
     ct_t: timestamp,
     /** contest submission name */

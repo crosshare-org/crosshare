@@ -214,7 +214,7 @@ export async function runAnalytics(
     }
     const play = validationResult.right;
 
-    if (!play.ct_n || !play.ct_sub || !play.ct_t) {
+    if (!play.ct_n || !play.ct_t || (!play.ct_sub && !play.ct_rv)) {
       throw new Error(
         'Bad meta submission for play u: ' + play.u + ' c: ' + play.c
       );
@@ -228,11 +228,20 @@ export async function runAnalytics(
     if (!puzzleStats.ct_subs) {
       puzzleStats.ct_subs = [];
     }
+    // Remove any previous submissions for this user
+    puzzleStats.ct_subs = puzzleStats.ct_subs.filter((x) => x.u !== play.u);
+    // Now add the current submission
     puzzleStats.ct_subs.push({
       n: play.ct_n,
       e: play.ct_em || null,
       u: play.u,
-      s: play.ct_sub,
+      s: play.ct_sub || '',
+      ...(play.ct_rv && {
+        rv: play.ct_rv,
+      }),
+      ...(play.ct_pr_subs && {
+        gs: play.ct_pr_subs,
+      }),
       t: admin.firestore.Timestamp.fromMillis(play.ct_t.toMillis()),
     });
 
@@ -241,16 +250,20 @@ export async function runAnalytics(
       continue;
     }
 
-    let subs = puzzleNewSubs.get(play.c);
-    if (!subs) {
-      subs = [];
+    if (play.ct_sub) {
+      let subs = puzzleNewSubs.get(play.c);
+      if (!subs) {
+        subs = puzzle.ct_subs || [];
+      }
+      subs = subs.filter((x) => x.u !== play.u);
+      subs.push({
+        n: play.ct_n,
+        t: admin.firestore.Timestamp.fromMillis(play.ct_t.toMillis()),
+        s: play.ct_sub,
+        u: play.u,
+      });
+      puzzleNewSubs.set(play.c, subs);
     }
-    subs.push({
-      n: play.ct_n,
-      t: admin.firestore.Timestamp.fromMillis(play.ct_t.toMillis()),
-      s: play.ct_sub,
-    });
-    puzzleNewSubs.set(play.c, subs);
   }
 
   console.log('Done, writing ' + puzzleStatsMap.size + ' puzzle stats objects');
@@ -261,14 +274,13 @@ export async function runAnalytics(
   for (const [dateString, dailyStats] of dailyStatsMap.entries()) {
     await db.collection('ds').doc(dateString).set(dailyStats);
   }
-  console.log('Writing ' + puzzleNewSubs.size + ' new puzzle submissions');
+  console.log(
+    'Writing ' + puzzleNewSubs.size + ' new puzzle submission arrays'
+  );
   for (const [crosswordId, subs] of puzzleNewSubs.entries()) {
-    await db
-      .collection('c')
-      .doc(crosswordId)
-      .update({
-        ct_subs: admin.firestore.FieldValue.arrayUnion(...subs),
-      });
+    await db.collection('c').doc(crosswordId).update({
+      ct_subs: subs,
+    });
   }
   console.log(
     'Done, writing ' +

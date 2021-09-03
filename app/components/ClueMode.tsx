@@ -548,6 +548,37 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               meta/contest works - comments are only visibles to solvers who
               have submitted a solution.
             </p>
+            <h4 css={{ marginTop: '1em' }}>Delay before allowing reveal</h4>
+            <p>
+              Solvers get unlimited submission attempts and can optionally
+              reveal the answer if they aren&apos;t able to figure it out. You
+              can set a delay so that the reveal function will not be available
+              until 1 week after the publish date.
+            </p>
+            <div>
+              <label>
+                <input
+                  css={{ marginRight: '1em' }}
+                  type="checkbox"
+                  checked={
+                    state.contestRevealDelay
+                      ? state.contestRevealDelay > 0
+                      : false
+                  }
+                  onChange={(e) => {
+                    const spa: UpdateContestAction = {
+                      type: 'CONTEST',
+                      revealDelay: e.target.checked
+                        ? 1000 * 60 * 60 * 24 * 7
+                        : null,
+                    };
+                    props.dispatch(spa);
+                  }}
+                />{' '}
+                Delay one week from publish date before allowing reveals
+              </label>
+            </div>
+
             <h4 css={{ marginTop: '1em' }}>Contest prize</h4>
             <p>
               If the contest has a prize solvers can choose to include their

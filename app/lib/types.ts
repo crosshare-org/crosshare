@@ -134,6 +134,7 @@ export interface PuzzleT {
   contestAnswers: Array<string> | null;
   contestHasPrize: boolean;
   contestSubmissions: Array<{ n: string; t: number; s: string }> | null;
+  contestRevealDelay: number | null;
   rating: GlickoScoreT | null;
 }
 
@@ -217,6 +218,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     contestSubmissions:
       dbPuzzle.ct_subs?.map((w) => ({ n: w.n, t: w.t.toMillis(), s: w.s })) ||
       null,
+    contestRevealDelay: dbPuzzle.ct_rv_dl || null,
     rating: dbPuzzle.rtg || null,
   };
 }
@@ -241,6 +243,7 @@ const PuzzleInProgressBaseV = t.intersection([
     explanations: t.record(t.string, t.string),
     contestAnswers: t.array(t.string),
     contestHasPrize: t.boolean,
+    contestRevealDelay: t.number,
   }),
 ]);
 

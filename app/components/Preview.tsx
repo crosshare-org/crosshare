@@ -49,6 +49,7 @@ const initializeState = (
     isPrivateUntil: null,
     contestAnswers: null,
     contestHasPrize: false,
+    contestRevealDelay: null,
   });
 };
 

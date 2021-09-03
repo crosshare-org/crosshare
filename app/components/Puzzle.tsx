@@ -84,7 +84,7 @@ import {
 } from './TopBar';
 import { SquareAndCols, TwoCol } from './Page';
 import { usePersistedBoolean, useMatchMedia } from '../lib/hooks';
-import { timeString } from '../lib/utils';
+import { isMetaSolution, timeString } from '../lib/utils';
 import { App, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
 import type firebase from 'firebase/app';
 import { Emoji } from './Emoji';
@@ -192,8 +192,13 @@ export const Puzzle = ({
       bankedSeconds: play ? play.t : 0,
       ranMetaSubmitEffects: false,
       ...(play &&
+        play.ct_rv && {
+        contestRevealed: true,
+      }),
+      ...(play &&
         play.ct_sub && {
         ranMetaSubmitEffects: true,
+        contestPriorSubmissions: play.ct_pr_subs,
         contestDisplayName: play.ct_n,
         contestSubmission: play.ct_sub,
         contestEmail: play.ct_em,
@@ -375,8 +380,17 @@ export const Puzzle = ({
         ch: state.didCheat,
         do: state.downsOnly,
         f: state.success,
+        ...(state.contestRevealed && {
+          ct_rv: state.contestRevealed,
+          ct_t:
+            state.contestSubmitTime !== undefined
+              ? TimestampClass.fromMillis(state.contestSubmitTime)
+              : undefined,
+          ct_n: state.contestDisplayName,
+        }),
         ...(state.contestSubmission && {
           ct_sub: state.contestSubmission,
+          ct_pr_subs: state.contestPriorSubmissions,
           ct_t:
             state.contestSubmitTime !== undefined
               ? TimestampClass.fromMillis(state.contestSubmitTime)
@@ -409,6 +423,8 @@ export const Puzzle = ({
       state.contestSubmitTime,
       state.contestEmail,
       state.contestDisplayName,
+      state.contestRevealed,
+      state.contestPriorSubmissions,
     ]
   );
 
@@ -433,7 +449,10 @@ export const Puzzle = ({
   const { addToast } = useSnackbar();
 
   useEffect(() => {
-    if (state.contestSubmission && !state.ranMetaSubmitEffects) {
+    if (
+      (state.contestSubmission || state.contestRevealed) &&
+      !state.ranMetaSubmitEffects
+    ) {
       const action: RanMetaSubmitEffectsAction = { type: 'RANMETASUBMIT' };
       dispatch(action);
       if (props.user) {
@@ -449,6 +468,7 @@ export const Puzzle = ({
   }, [
     cachePlayForUser,
     state.contestSubmission,
+    state.contestRevealed,
     state.ranMetaSubmitEffects,
     props.user,
     writePlayToDBIfNeeded,
@@ -1063,7 +1083,10 @@ export const Puzzle = ({
                     icon={<FaComment />}
                     text={
                       puzzle.contestAnswers?.length
-                        ? !state.contestSubmission
+                        ? !isMetaSolution(
+                          state.contestSubmission,
+                          puzzle.contestAnswers
+                        ) && !state.contestRevealed
                           ? 'Contest Prompt / Submission'
                           : 'Comments / Leaderboard'
                         : 'Show Comments'
@@ -1089,6 +1112,7 @@ export const Puzzle = ({
             overlayType={OverlayType.Success}
             contestSubmission={state.contestSubmission}
             contestHasPrize={puzzle.contestHasPrize}
+            contestRevealDelay={puzzle.contestRevealDelay}
           />
         ) : (
           ''

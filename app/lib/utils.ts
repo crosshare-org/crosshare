@@ -83,7 +83,13 @@ function normalize(n: string) {
   return n.toLowerCase().replace(/[\s!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g, '');
 }
 
-export function isMetaSolution(submission: string, solutions: Array<string>) {
+export function isMetaSolution(
+  submission: string | undefined,
+  solutions: Array<string>
+) {
+  if (submission === undefined) {
+    return false;
+  }
   const normalized = normalize(submission);
   for (const solution of solutions) {
     if (normalize(solution) === normalized) {

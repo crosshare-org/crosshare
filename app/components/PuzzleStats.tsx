@@ -192,6 +192,7 @@ const initializeState = (props: PuzzleStatsProps): BuilderState => {
     guestConstructor: props.puzzle.guestConstructor,
     contestAnswers: props.puzzle.contestAnswers,
     contestHasPrize: props.puzzle.contestHasPrize,
+    contestRevealDelay: props.puzzle.contestRevealDelay,
   });
 };
 

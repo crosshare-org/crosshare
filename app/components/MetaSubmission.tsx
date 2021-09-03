@@ -9,12 +9,14 @@ import { Emoji } from './Emoji';
 import { isMetaSolution } from '../lib/utils';
 import { LengthLimitedInput, LengthView } from './Inputs';
 import { MAX_META_SUBMISSION_LENGTH } from './ClueMode';
-import { ContestSubmitAction } from '../reducers/reducer';
+import { ContestRevealAction, ContestSubmitAction } from '../reducers/reducer';
+import { formatDistanceToNow } from 'date-fns';
 
 export const MetaSubmissionForm = (props: {
   user: firebase.User;
+  revealDisabledUntil: Date | null;
   hasPrize: boolean;
-  dispatch: Dispatch<ContestSubmitAction>;
+  dispatch: Dispatch<ContestSubmitAction | ContestRevealAction>;
   solutions: Array<string>;
 }) => {
   const [submission, setSubmission] = useState('');
@@ -22,6 +24,9 @@ export const MetaSubmissionForm = (props: {
   const [editingDisplayName, setEditingDisplayName] = useState(false);
   const [enteringForPrize, setEnteringForPrize] = useState(false);
   const { addToast } = useSnackbar();
+  const disabled = props.revealDisabledUntil
+    ? new Date() < props.revealDisabledUntil
+    : false;
 
   function submitMeta(event: FormEvent) {
     event.preventDefault();
@@ -44,7 +49,7 @@ export const MetaSubmissionForm = (props: {
         <p>
           {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label>
-            Your meta submission (you only get to submit once!):
+            Your meta submission:
             <br />
             <LengthLimitedInput
               placeholder="Submission (case insensitive)"
@@ -108,65 +113,104 @@ export const MetaSubmissionForm = (props: {
       ) : (
         ''
       )}
+      <p>
+        <Button
+          css={{ marginRight: '0.5em' }}
+          onClick={() => {
+            props.dispatch({
+              type: 'CONTESTREVEAL',
+              displayName: displayName || 'Anonymous Crossharer',
+            });
+          }}
+          disabled={disabled}
+          text="Give Up / Reveal"
+        />
+        {disabled && props.revealDisabledUntil ? (
+          <span>
+            Reveal will be available{' '}
+            {formatDistanceToNow(props.revealDisabledUntil, {
+              addSuffix: true,
+            })}
+          </span>
+        ) : (
+          ''
+        )}
+      </p>
     </>
   );
 };
 
 export const MetaSubmission = (props: {
   contestSubmission?: string;
+  contestRevealed?: boolean;
+  revealDisabledUntil: Date | null;
   hasPrize: boolean;
-  dispatch: Dispatch<ContestSubmitAction>;
+  dispatch: Dispatch<ContestSubmitAction | ContestRevealAction>;
   solutions: Array<string>;
 }) => {
   const authContext = useContext(AuthContext);
+  if (!authContext.user || authContext.user.isAnonymous) {
+    return (
+      <div css={{ marginTop: '1em' }}>
+        <h4 css={{ borderBottom: '1px solid var(--black)' }}>Contest</h4>
+        <p>
+          This is a meta puzzle! Sign in with google to submit your solution,
+          view the solution, view the leaderboard, and read or submit comments:
+        </p>
+        <div css={{ textAlign: 'center' }}>
+          {authContext.user ? (
+            <GoogleLinkButton user={authContext.user} />
+          ) : (
+            <GoogleSignInButton />
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  const isComplete =
+    props.contestRevealed ||
+    isMetaSolution(props.contestSubmission, props.solutions);
 
   return (
     <div css={{ marginTop: '1em' }}>
       <h4 css={{ borderBottom: '1px solid var(--black)' }}>Contest</h4>
 
-      {!authContext.user || authContext.user.isAnonymous ? (
-        <>
-          <p>
-            This is a meta puzzle! Sign in with google to submit your solution,
-            view the solution, view the leaderboard, and read or submit
-            comments:
-          </p>
-          <div css={{ textAlign: 'center' }}>
-            {authContext.user ? (
-              <GoogleLinkButton user={authContext.user} />
-            ) : (
-              <GoogleSignInButton />
-            )}
-          </div>
-        </>
-      ) : props.contestSubmission ? (
+      {props.contestSubmission ? (
         isMetaSolution(props.contestSubmission, props.solutions) ? (
           <p>
             Your submission (<strong>{props.contestSubmission}</strong>) is
             correct!
           </p>
         ) : (
-          <>
-            <p>
-              Your submission (<strong>{props.contestSubmission}</strong>) was
-              incorrect <Emoji symbol="😭" />.
-            </p>
-            {props.solutions.length === 1 ? (
-              <p>
-                The solution is: <strong>{props.solutions[0]}</strong>
-              </p>
-            ) : (
-              <p>
-                The solutions are:{' '}
-                {props.solutions.map((s, i) => [
-                  i > 0 && ', ',
-                  <strong key={i}>{s}</strong>,
-                ])}
-              </p>
-            )}
-          </>
+          <p>
+            Your submission (<strong>{props.contestSubmission}</strong>) was
+            incorrect <Emoji symbol="😭" />.
+          </p>
         )
       ) : (
+        ''
+      )}
+
+      {props.contestRevealed ? (
+        props.solutions.length === 1 ? (
+          <p>
+            The solution is: <strong>{props.solutions[0]}</strong>
+          </p>
+        ) : (
+          <p>
+            The solutions are:{' '}
+            {props.solutions.map((s, i) => [
+              i > 0 && ', ',
+              <strong key={i}>{s}</strong>,
+            ])}
+          </p>
+        )
+      ) : (
+        ''
+      )}
+
+      {!isComplete ? (
         <>
           <p>
             This is a meta puzzle! Submit your solution to see if you got it,
@@ -174,6 +218,8 @@ export const MetaSubmission = (props: {
           </p>
           <MetaSubmissionForm user={authContext.user} {...props} />
         </>
+      ) : (
+        ''
       )}
     </div>
   );

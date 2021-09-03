@@ -126,8 +126,7 @@ beforeEach(async () => {
     w: 5,
     cs: [
       {
-        c:
-          'A couple of two-worders today which I don\'t love, but I hope you all got it anyway!',
+        c: 'A couple of two-worders today which I don\'t love, but I hope you all got it anyway!',
         i: 'LwgoVx0BAskM4wVJyoLj',
         t: 36.009,
         p: AdminTimestamp.now(),
@@ -307,6 +306,96 @@ test('run for all time w/ some meta submissions', async () => {
   const ctoSnapshot = cres.docs[0]?.data() || {};
   expect(ctoSnapshot).toMatchSnapshot();
   expect(cres.docs[0]?.id).toMatchSnapshot();
+
+  // Now add one more correct, change one to correct, and add a reveal:
+  await adminApp
+    .firestore()
+    .collection('p')
+    .doc('mike-foo-bar')
+    .set({
+      c: 'mike',
+      u: 'foo-bar',
+      ua: AdminTimestamp.fromDate(twentyAgo),
+      g: [],
+      ct: [],
+      uc: [],
+      vc: [],
+      wc: [],
+      we: [],
+      rc: [],
+      t: 44,
+      ch: false,
+      f: true,
+      ct_sub: 'just a guess',
+      ct_em: 'foobar@example.com',
+      ct_t: AdminTimestamp.fromDate(twentyAgo),
+      ct_n: 'FOOBAR',
+    });
+
+  await adminApp.firestore().collection('p').doc('mike-blah').update({
+    ct_sub: 'just a guess',
+  });
+
+  await adminApp
+    .firestore()
+    .collection('p')
+    .doc('mike-i-revealed')
+    .set({
+      c: 'mike',
+      u: 'i-revealed',
+      ua: AdminTimestamp.fromDate(twentyAgo),
+      g: [],
+      ct: [],
+      uc: [],
+      vc: [],
+      wc: [],
+      we: [],
+      rc: [],
+      t: 44,
+      ch: false,
+      f: true,
+      ct_rv: true,
+      ct_t: AdminTimestamp.fromDate(twentyAgo),
+      ct_n: 'Revealing',
+    });
+
+  await runAnalytics(
+    adminApp.firestore(),
+    AdminTimestamp.fromDate(hourAgo),
+    AdminTimestamp.fromDate(new Date())
+  );
+
+  const pres2 = await adminApp.firestore().collection('s').doc('mike').get();
+  const data2 = pres2.data();
+  if (data2 === undefined) {
+    throw new Error('botch');
+  }
+  const { ua: pua2, sct: sct2, ...pToSnapshot2 } = data2;
+  expect(pua2).not.toBeFalsy();
+  expect(sct2).not.toBeFalsy();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  pToSnapshot2.ct_subs.forEach((a: any) => {
+    a.t = null;
+  });
+  expect(pToSnapshot2).toMatchSnapshot();
+
+  const puzres2 = await adminApp.firestore().collection('c').doc('mike').get();
+  const puzdata2 = puzres2.data();
+  if (puzdata2 === undefined) {
+    throw new Error('botch');
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  puzdata2.ct_subs.forEach((a: any) => {
+    a.t = null;
+  });
+  expect(puzdata2.ct_subs).toMatchSnapshot();
+
+  const cres2 = await adminApp.firestore().collection('cs').get();
+  expect(cres2.size).toEqual(1);
+  // Can't snapshot updatedAt or playcount by hour
+  const ctoSnapshot2 = cres2.docs[0]?.data() || {};
+  expect(ctoSnapshot2).toMatchSnapshot();
+  expect(cres2.docs[0]?.id).toMatchSnapshot();
 });
 
 test('run for more recent w/o initial state', async () => {

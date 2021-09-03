@@ -76,6 +76,8 @@ interface PuzzleState extends GridInterfaceState {
   loadedPlayState: boolean;
   waitToResize: boolean;
   contestSubmission?: string;
+  contestPriorSubmissions?: Array<string>;
+  contestRevealed?: boolean;
   contestSubmitTime?: number;
   contestDisplayName?: string;
   contestEmail?: string;
@@ -110,6 +112,7 @@ export interface BuilderState extends GridInterfaceState {
   isContestPuzzle: boolean;
   contestAnswers: Array<string> | null;
   contestHasPrize: boolean;
+  contestRevealDelay: number | null;
   showDownloadLink: boolean;
 }
 function isBuilderState(state: GridInterfaceState): state is BuilderState {
@@ -140,6 +143,7 @@ export function initialBuilderStateFromSaved(
     guestConstructor: saved?.guestConstructor || null,
     contestAnswers: saved?.contestAnswers || null,
     contestHasPrize: saved?.contestHasPrize || false,
+    contestRevealDelay: saved?.contestRevealDelay || null,
   });
 }
 
@@ -162,6 +166,7 @@ export function initialBuilderState({
   guestConstructor,
   contestAnswers,
   contestHasPrize,
+  contestRevealDelay,
 }: {
   id: string | null;
   width: number;
@@ -181,6 +186,7 @@ export function initialBuilderState({
   isPrivateUntil: number | null;
   contestAnswers: Array<string> | null;
   contestHasPrize: boolean;
+  contestRevealDelay: number | null;
 }) {
   const initialGrid = fromCells({
     mapper: (e) => e,
@@ -230,6 +236,7 @@ export function initialBuilderState({
     isContestPuzzle: contestAnswers ? contestAnswers.length > 0 : false,
     contestAnswers,
     contestHasPrize,
+    contestRevealDelay,
     showDownloadLink: false,
     downsOnly: false,
   });
@@ -328,6 +335,7 @@ export interface UpdateContestAction extends PuzzleAction {
   addAnswer?: string;
   removeAnswer?: string;
   hasPrize?: boolean;
+  revealDelay?: number | null;
 }
 function isUpdateContestAction(
   action: PuzzleAction
@@ -463,6 +471,16 @@ function isContestSubmitAction(
   action: PuzzleAction
 ): action is ContestSubmitAction {
   return action.type === 'CONTESTSUBMIT';
+}
+
+export interface ContestRevealAction extends PuzzleAction {
+  type: 'CONTESTREVEAL';
+  displayName: string;
+}
+function isContestRevealAction(
+  action: PuzzleAction
+): action is ContestRevealAction {
+  return action.type === 'CONTESTREVEAL';
 }
 
 export interface ToggleAutocheckAction extends PuzzleAction {
@@ -1016,6 +1034,9 @@ export function builderReducer(
       ...(action.hasPrize !== undefined && {
         contestHasPrize: action.hasPrize,
       }),
+      ...(action.revealDelay !== undefined && {
+        contestRevealDelay: action.revealDelay,
+      }),
     };
   }
   if (isClickedFillAction(action)) {
@@ -1078,6 +1099,7 @@ export function builderReducer(
       isPrivateUntil: null,
       contestAnswers: null,
       contestHasPrize: false,
+      contestRevealDelay: null,
     });
   }
   if (isImportPuzAction(action)) {
@@ -1158,6 +1180,7 @@ export function builderReducer(
         state.contestAnswers?.length && {
         ct_ans: state.contestAnswers,
         ct_prz: state.contestHasPrize || false,
+        ct_rv_dl: state.contestRevealDelay || undefined,
       }),
     };
     if (state.grid.highlighted.size) {
@@ -1195,8 +1218,23 @@ export function puzzleReducer(
   if (isContestSubmitAction(action)) {
     return {
       ...state,
+      ...(state.contestSubmission && {
+        contestPriorSubmissions: (state.contestPriorSubmissions || []).concat([
+          state.contestSubmission,
+        ]),
+      }),
+      ranMetaSubmitEffects: false,
       contestSubmission: action.submission,
       contestEmail: action.email,
+      contestDisplayName: action.displayName,
+      contestSubmitTime: new Date().getTime(),
+    };
+  }
+  if (isContestRevealAction(action)) {
+    return {
+      ...state,
+      ranMetaSubmitEffects: false,
+      contestRevealed: true,
       contestDisplayName: action.displayName,
       contestSubmitTime: new Date().getTime(),
     };

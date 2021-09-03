@@ -12,6 +12,7 @@ import { Link } from './Link';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { PuzzlePageProps, PuzzlePageResultProps } from '../lib/serverOnly';
 import { AccountPrefsT } from '../lib/prefs';
+import { isMetaSolution } from '../lib/utils';
 
 export function PuzzlePage(props: PuzzlePageProps) {
   if ('error' in props) {
@@ -51,9 +52,12 @@ const CachePlayLoader = (props: PuzzlePageResultProps) => {
     }
 
     const cachedPlay = getPlayFromCache(user, props.puzzle.id);
-    // Contest puzzles aren't done until they have a submission and a finished grid
+    // Contest puzzles aren't done until they have a finished grid
+    // AND a correct submission or a reveal
     const done = props.puzzle.contestAnswers?.length
-      ? cachedPlay?.f && cachedPlay.ct_sub
+      ? cachedPlay?.f &&
+        (cachedPlay.ct_rv ||
+          isMetaSolution(cachedPlay.ct_sub, props.puzzle.contestAnswers))
       : cachedPlay?.f;
     if (done || !user || props.puzzle.authorId === user.uid) {
       console.log('using cached play');

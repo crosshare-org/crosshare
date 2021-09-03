@@ -52,6 +52,8 @@ interface SuccessOverlayProps extends PuzzleOverlayBaseProps {
   overlayType: OverlayType.Success;
   contestSubmission?: string;
   contestHasPrize?: boolean;
+  contestRevealed?: boolean;
+  contestRevealDelay?: number | null;
 }
 interface BeginPauseProps extends PuzzleOverlayBaseProps {
   overlayType: OverlayType.BeginPause;
@@ -257,6 +259,12 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           <MetaSubmission
             hasPrize={!!props.contestHasPrize}
             contestSubmission={props.contestSubmission}
+            contestRevealed={props.contestRevealed}
+            revealDisabledUntil={
+              props.contestRevealDelay
+                ? new Date(props.publishTime + props.contestRevealDelay)
+                : null
+            }
             dispatch={props.dispatch}
             solutions={props.puzzle.contestAnswers}
           />
@@ -319,11 +327,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           solveTime={props.solveTime}
           didCheat={props.didCheat}
           puzzleId={props.puzzle.id}
-          puzzlePublishTime={
-            props.puzzle.isPrivateUntil
-              ? props.puzzle.isPrivateUntil
-              : props.puzzle.publishTime
-          }
+          puzzlePublishTime={props.publishTime}
           puzzleAuthorId={props.puzzle.authorId}
           comments={props.puzzle.comments}
         />
