@@ -41,6 +41,7 @@ export const MetaSubmissionForm = (props: {
     if (isMetaSolution(submission, props.solutions)) {
       addToast('🚀 Solved a meta puzzle!');
     }
+    setSubmission('');
   }
 
   return (

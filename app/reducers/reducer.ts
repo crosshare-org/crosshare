@@ -1180,7 +1180,9 @@ export function builderReducer(
         state.contestAnswers?.length && {
         ct_ans: state.contestAnswers,
         ct_prz: state.contestHasPrize || false,
-        ct_rv_dl: state.contestRevealDelay || undefined,
+        ...(state.contestRevealDelay && {
+          ct_rv_dl: state.contestRevealDelay,
+        }),
       }),
     };
     if (state.grid.highlighted.size) {
@@ -1296,8 +1298,14 @@ export function puzzleReducer(
       cellsIterationCount: play.uc,
       cellsEverMarkedWrong: new Set<number>(play.we),
       ...(play &&
+        play.ct_rv && {
+        contestRevealed: true,
+        contestSubmitTime: play.ct_t?.toMillis(),
+      }),
+      ...(play &&
         play.ct_sub && {
         ranMetaSubmitEffects: true,
+        contestPriorSubmissions: play.ct_pr_subs,
         contestDisplayName: play.ct_n,
         contestSubmission: play.ct_sub,
         contestEmail: play.ct_em,

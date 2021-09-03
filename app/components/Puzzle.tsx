@@ -194,6 +194,7 @@ export const Puzzle = ({
       ...(play &&
         play.ct_rv && {
         contestRevealed: true,
+        contestSubmitTime: play.ct_t?.toMillis(),
       }),
       ...(play &&
         play.ct_sub && {
@@ -390,7 +391,7 @@ export const Puzzle = ({
         }),
         ...(state.contestSubmission && {
           ct_sub: state.contestSubmission,
-          ct_pr_subs: state.contestPriorSubmissions,
+          ct_pr_subs: state.contestPriorSubmissions || [],
           ct_t:
             state.contestSubmitTime !== undefined
               ? TimestampClass.fromMillis(state.contestSubmitTime)
@@ -1112,6 +1113,7 @@ export const Puzzle = ({
             overlayType={OverlayType.Success}
             contestSubmission={state.contestSubmission}
             contestHasPrize={puzzle.contestHasPrize}
+            contestRevealed={state.contestRevealed}
             contestRevealDelay={puzzle.contestRevealDelay}
           />
         ) : (

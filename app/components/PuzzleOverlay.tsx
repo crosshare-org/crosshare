@@ -275,7 +275,11 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         css={{
           ...((props.overlayType === OverlayType.BeginPause ||
             (isContest &&
-              !props.contestSubmission &&
+              !props.contestRevealed &&
+              !isMetaSolution(
+                props.contestSubmission,
+                props.puzzle.contestAnswers || []
+              ) &&
               props.user?.uid !== props.puzzle.authorId)) && {
             display: 'none',
           }),
