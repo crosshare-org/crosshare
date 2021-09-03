@@ -49,6 +49,8 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
   const [subs, setSubs] = useState(
     props.stats.ct_subs?.map((n) => ({
       d: (typeof n.t === 'number' ? new Date(n.t) : n.t.toDate()).toISOString(),
+      r: n.rv ? 'Yes' : 'No',
+      p: (n.gs || []).length.toString(),
       ...n,
     }))
   );
@@ -109,6 +111,16 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
       header: 'Date',
       sortable: true,
     },
+    {
+      key: 'p',
+      header: '# of Prior Submissions',
+      sortable: true,
+    },
+    {
+      key: 'r',
+      header: 'Revealed',
+      sortable: true,
+    },
   ];
   if (props.puzzle.contestHasPrize) {
     columns.push({ key: 'e', header: 'Email', sortable: true });
@@ -120,6 +132,8 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
         <CSVLink
           data={subs.map((s) => ({
             ...s,
+            r: s.rv ? 'Yes' : 'No',
+            p: (s.gs || []).length.toString(),
             c: isMetaSolution(s.s, props.puzzle.contestAnswers || [])
               ? 'true'
               : 'false',
@@ -128,6 +142,8 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
             { label: 'Name', key: 'n' },
             { label: 'Submission', key: 's' },
             { label: 'Correct?', key: 'c' },
+            { label: 'Revealed?', key: 'r' },
+            { label: 'Num. Prior Submissions', key: 'p' },
             { label: 'Email', key: 'e' },
             { label: 'Date', key: 'd' },
           ]}
