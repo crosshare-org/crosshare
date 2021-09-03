@@ -545,8 +545,8 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
             <h4 css={{ marginTop: '1em' }}>Contest explanation</h4>
             <p>
               After publishing, you can use a comment to explain how the
-              meta/contest works - comments are only visibles to solvers who
-              have submitted a solution.
+              meta/contest works - comments are only visible to solvers who have
+              submitted or revealed the correct solution.
             </p>
             <h4 css={{ marginTop: '1em' }}>Delay before allowing reveal</h4>
             <p>
