@@ -98,3 +98,42 @@ export function isMetaSolution(
   }
   return false;
 }
+
+export function checkGrid(
+  grid: Array<string>,
+  answers: Array<string>,
+  alts: Array<Array<[index: number, value: string]>>
+): [filled: boolean, success: boolean] {
+  let filled = true;
+  let success = true;
+  for (const [i, cell] of grid.entries()) {
+    if (cell.trim() === '') {
+      filled = false;
+      success = false;
+      break;
+    }
+
+    if (answers && cell !== answers[i]) {
+      success = false;
+      // This cell is wrong, but see if any alternate solutions that have it are satisfied
+      for (const alt of alts) {
+        let containsOurs = false;
+        let satisfied = true;
+        for (const [idx, val] of alt) {
+          if (idx === i) {
+            containsOurs = true;
+          }
+          if (val !== grid[idx]) {
+            satisfied = false;
+          }
+        }
+        if (satisfied && containsOurs) {
+          success = true;
+          break;
+        }
+      }
+    }
+  }
+
+  return [filled, success];
+}
