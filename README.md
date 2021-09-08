@@ -34,7 +34,7 @@ Click "Firestore Database" in the side bar. Click "Create database". Choose "sta
 
 Click the little gear icon in the side bar and select "Project settings". Scroll to the "Your apps" section and click "</>" to create a web app. Register an app using whatever name you'd like. You don't need to set up hosting. 
 
-Copy the `const firebaseConfig = {...}` lines from the Add Firebase SDK dialog that pops up and paste them into a new file at `app/firebaseConfig.ts`. Change `var firebaseConfig` to `export const firebaseConfig`. These are the credentials used by the Crosshare frontend.
+Copy the `const firebaseConfig = {...}` lines from the Add Firebase SDK dialog that pops up and paste them into a new file at `app/firebaseConfig.ts`. Change `const firebaseConfig` to `export const firebaseConfig`. These are the credentials used by the Crosshare frontend.
 
 Now click "Continue to console" and click "Service accounts" at the top of the Project Settings page. Under "Firebase Admin SDK" click "Generate new private key". Save the resultant file as `serviceAccountKey.json` in the root of this repository. This is the credential file for the Crosshare server.
 
