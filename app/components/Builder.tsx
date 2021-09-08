@@ -497,8 +497,8 @@ const NewPuzzleForm = (props: { dispatch: Dispatch<NewPuzzleAction> }) => {
   let errorMsg = '';
   if (!customRows || !customCols) {
     errorMsg = 'Both a width and a height must be specified for custom sizes';
-  } else if (customRows < 4 || customCols < 4) {
-    errorMsg = 'Cannot have fewer than 4 rows or columns';
+  } else if (customRows < 1 || customCols < 1) {
+    errorMsg = 'Must have at least one row and column';
   } else if (customRows > 25 || customCols > 25) {
     errorMsg = 'Cannot have more than 25 rows or columns';
   }
