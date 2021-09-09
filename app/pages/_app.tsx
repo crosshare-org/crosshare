@@ -33,6 +33,7 @@ if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
       'Object.fromEntries is not a function',
       'cancelled due to another conflicting popup being opened',
       'installations/app-offline',
+      'Error: Network Error',
     ],
   });
 }
