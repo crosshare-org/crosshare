@@ -136,6 +136,7 @@ export interface PuzzleT {
   contestSubmissions: Array<{ n: string; t: number; s: string }> | null;
   contestRevealDelay: number | null;
   rating: GlickoScoreT | null;
+  alternateSolutions: Array<Array<[number, string]>>;
 }
 
 export interface PuzzleResult extends PuzzleT {
@@ -220,6 +221,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
       null,
     contestRevealDelay: dbPuzzle.ct_rv_dl || null,
     rating: dbPuzzle.rtg || null,
+    alternateSolutions: dbPuzzle.alts || [],
   };
 }
 

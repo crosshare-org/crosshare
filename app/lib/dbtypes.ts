@@ -152,6 +152,8 @@ export const GlickoScoreV = t.type({
 export type GlickoScoreT = t.TypeOf<typeof GlickoScoreV>;
 
 const DBPuzzleOptionalV = t.partial({
+  /** array of alternate solutions */
+  alts: t.array(t.array(t.tuple([t.number, t.string]))),
   /** highlighted cell indexes */
   hs: t.array(t.number),
   /** use shade instead of circle for highlight? */

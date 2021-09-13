@@ -55,6 +55,7 @@ const testPuzzle: ServerPuzzleResult = {
   contestAnswers: null,
   contestRevealDelay: null,
   contestHasPrize: false,
+  alternateSolutions: [],
   clues: [
     {
       explanation: null,
@@ -164,6 +165,7 @@ const dailymini_5_19: ServerPuzzleResult = {
   publishTime: 1000,
   title: 'Word of surrender',
   size: { rows: 5, cols: 5 },
+  alternateSolutions: [],
   clues: [
     { explanation: null, dir: 0, clue: 'Word with Cod or Canaveral', num: 1 },
     { explanation: null, dir: 0, clue: 'Caustic compound', num: 4 },

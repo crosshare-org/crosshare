@@ -174,6 +174,7 @@ export const Puzzle = ({
       ),
       showExtraKeyLayout: false,
       answers: puzzle.grid,
+      alternateSolutions: puzzle.alternateSolutions,
       verifiedCells: new Set<number>(play ? play.vc : []),
       wrongCells: new Set<number>(play ? play.wc : []),
       revealedCells: new Set<number>(play ? play.rc : []),

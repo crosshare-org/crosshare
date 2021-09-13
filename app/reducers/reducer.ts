@@ -34,6 +34,7 @@ import {
 import type firebase from 'firebase';
 import { App, TimestampType, TimestampClass } from '../lib/firebaseWrapper';
 import { AccountPrefsFlagsT } from '../lib/prefs';
+import { checkGrid } from '../lib/utils';
 
 interface GridInterfaceState {
   type: string;
@@ -53,6 +54,7 @@ interface PuzzleState extends GridInterfaceState {
   grid: CluedGrid;
   prefs?: AccountPrefsFlagsT;
   answers: Array<string>;
+  alternateSolutions: Array<Array<[number, string]>>;
   verifiedCells: Set<number>;
   revealedCells: Set<number>;
   wrongCells: Set<number>;
@@ -601,18 +603,11 @@ export function cheat(
 }
 
 export function checkComplete(state: PuzzleState) {
-  let filled = true;
-  let success = true;
-  for (const [i, cell] of state.grid.cells.entries()) {
-    if (cell.trim() === '') {
-      filled = false;
-      success = false;
-      break;
-    }
-    if (state.answers && cell !== state.answers[i]) {
-      success = false;
-    }
-  }
+  const [filled, success] = checkGrid(
+    state.grid.cells,
+    state.answers,
+    state.alternateSolutions
+  );
   if (filled !== state.filled || success !== state.success) {
     let currentTimeWindowStart = state.currentTimeWindowStart;
     let dismissedKeepTrying = state.dismissedKeepTrying;
