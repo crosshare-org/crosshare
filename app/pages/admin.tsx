@@ -25,6 +25,7 @@ import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
 import { ConstructorPageV, ConstructorPageT } from '../lib/constructorPage';
 import { useSnackbar } from '../components/Snackbar';
 import { moderateComments } from '../lib/comments';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 const PuzzleListItem = (props: PuzzleResult) => {
   return (
@@ -64,10 +65,10 @@ export default requiresAdmin(() => {
   const [donationName, setDonationName] = useState('');
   const [donationPage, setDonationPage] = useState('');
   const { showSnackbar } = useSnackbar();
+  const db = App.firestore();
 
   useEffect(() => {
     console.log('loading admin content');
-    const db = App.firestore();
     const now = new Date();
     const dateString = getDateString(now);
     Promise.all([
@@ -119,13 +120,18 @@ export default requiresAdmin(() => {
         console.error(reason);
         setError(true);
       });
-  }, []);
+  }, [db]);
 
   const goToPuzzle = useCallback((_date: Date, puzzle: string | null) => {
     if (puzzle) {
       NextJSRouter.push('/crosswords/' + puzzle);
     }
   }, []);
+
+  const [automoderated] = useCollectionData<CommentForModerationWithIdT>(
+    db.collection('automoderated'),
+    { idField: 'i' }
+  );
 
   if (error) {
     return <div>Error loading admin content</div>;
@@ -262,6 +268,36 @@ export default requiresAdmin(() => {
             ))}
             <input type="submit" value="Moderate" />
           </form>
+        )}
+        {automoderated ? (
+          <>
+            <h4 css={{ borderBottom: '1px solid var(--black)' }}>
+              Auto-moderated Comments
+            </h4>
+            {automoderated.length === 0 ? (
+              <div>No automoderated comments.</div>
+            ) : (
+              <>
+                {automoderated.map((cfm) => (
+                  <div key={cfm.i}>
+                    <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
+                    <Markdown text={cfm.c} />
+                  </div>
+                ))}
+                <Button
+                  onClick={() => {
+                    const db = App.firestore();
+                    automoderated.forEach((cfm) => {
+                      db.doc(`automoderated/${cfm.i}`).delete();
+                    });
+                  }}
+                  text="Moderate"
+                />
+              </>
+            )}
+          </>
+        ) : (
+          ''
         )}
         <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>
           Page Moderation

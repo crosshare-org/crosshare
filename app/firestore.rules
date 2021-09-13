@@ -165,5 +165,9 @@ service cloud.firestore {
       allow write: if isAdmin();
       allow read: if isAdmin();
     }
+    match /automoderated/{id} {
+      allow write: if isAdmin();
+      allow read: if isAdmin();
+    }
   }
 }
