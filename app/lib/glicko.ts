@@ -302,9 +302,14 @@ export class CrosshareGlickoRound extends GlickoRound {
 
   addPlayToRound(play: LegacyPlayT) {
     let result = Result.Win;
-    if (play.ch) {
+    if (play.ch && play.t <= 5) {
+      // If somebody reveals right away just call it a tie - they might've solved offline
+      result = Result.Tie;
+    } else if (play.ch) {
+      // Otherwise any cheating is a loss
       result = Result.Loss;
     } else if (play.t > play.g.length * 3 && !play.do) {
+      // If they took a long time it's a tie unless it was downs-only
       result = Result.Tie;
     }
 
