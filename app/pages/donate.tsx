@@ -36,6 +36,7 @@ const DonationsListV = t.type({
     })
   ),
 });
+export type DonationsListT = t.TypeOf<typeof DonationsListV>;
 
 export const getServerSideProps: GetServerSideProps<DonateProps> = async ({
   res,

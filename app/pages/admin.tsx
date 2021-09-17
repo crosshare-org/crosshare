@@ -25,7 +25,11 @@ import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
 import { ConstructorPageV, ConstructorPageT } from '../lib/constructorPage';
 import { useSnackbar } from '../components/Snackbar';
 import { moderateComments } from '../lib/comments';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+import {
+  useCollectionData,
+  useDocumentDataOnce,
+} from 'react-firebase-hooks/firestore';
+import { DonationsListT } from './donate';
 
 const PuzzleListItem = (props: PuzzleResult) => {
   return (
@@ -131,6 +135,10 @@ export default requiresAdmin(() => {
   const [automoderated] = useCollectionData<CommentForModerationWithIdT>(
     db.collection('automoderated'),
     { idField: 'i' }
+  );
+
+  const [donations] = useDocumentDataOnce<DonationsListT>(
+    db.doc('donations/donations')
   );
 
   if (error) {
@@ -470,6 +478,23 @@ export default requiresAdmin(() => {
           </label>
           <Button type="submit" text="Record Donation" />
         </form>
+        {donations ? (
+          <>
+            <h4 css={{ borderBottom: '1px solid var(--black)' }}>
+              Donation Totals
+            </h4>
+            <p>
+              Total given:{' '}
+              {Math.floor(donations.d.reduce((prev, cur) => prev + cur.a, 0))}
+            </p>
+            <p>
+              Total received:{' '}
+              {Math.floor(donations.d.reduce((prev, cur) => prev + cur.r, 0))}
+            </p>
+          </>
+        ) : (
+          ''
+        )}
       </div>
     </>
   );
