@@ -18,7 +18,7 @@ import * as wrapper from '../../app/lib/firebaseWrapper';
 import { mapEachResult } from '../../app/lib/dbUtils';
 wrapper.setTimestampClass(admin.firestore.Timestamp);
 
-export const ratings = functions.pubsub.schedule('every day 00:05').onRun(async (_context) => {
+export const ratings = functions.pubsub.schedule('every day 00:05').timeZone('UTC').onRun(async (_context) => {
   const db = admin.firestore();
   await doGlicko(db);
   return;
