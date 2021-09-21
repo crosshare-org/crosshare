@@ -52,14 +52,18 @@ export async function moderateComments(
             puzzle.cs = [];
           }
           if (comment.rt === null) {
-            puzzle.cs.push(comment);
+            if (!puzzle.cs.find((existing) => existing.i === comment.i)) {
+              puzzle.cs.push(comment);
+            }
           } else {
             const parent = findCommentById(puzzle.cs, comment.rt);
             if (parent === null) {
               throw new Error('parent comment not found');
             }
             if (parent.r) {
-              parent.r.push(comment);
+              if (!parent.r.find((existing) => existing.i === comment.i)) {
+                parent.r.push(comment);
+              }
             } else {
               parent.r = [comment];
             }
