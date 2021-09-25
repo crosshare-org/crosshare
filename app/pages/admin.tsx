@@ -39,7 +39,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
       <span css={{ color: 'var(--error)' }}>
         {props.isPrivate
           ? ' PRIVATE'
-          : props.isPrivateUntil
+          : props.isPrivateUntil && props.isPrivateUntil > Date.now()
             ? ' PRIVATE until ' + new Date(props.isPrivateUntil).toISOString()
             : ''}
       </span>

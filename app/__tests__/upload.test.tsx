@@ -221,6 +221,8 @@ test('upload after editing', async () => {
     throw new Error('botch');
   }
   delete resData['p'];
+  expect(resData.pvu).toBeTruthy();
+  delete resData['pvu'];
   expect(resData).toMatchSnapshot();
 });
 
@@ -284,6 +286,8 @@ test('upload a puzzle with duplicate entries', async () => {
     throw new Error('botch');
   }
   delete resData['p'];
+  expect(resData.pvu).toBeTruthy();
+  delete resData['pvu'];
   expect(resData).toMatchSnapshot();
 
   cleanup();

@@ -1170,7 +1170,12 @@ export function builderReducer(
       ...(state.blogPost && { bp: state.blogPost }),
       ...(state.guestConstructor && { gc: state.guestConstructor }),
       ...(state.isPrivate && { pv: true }),
-      ...(state.isPrivateUntil && { pvu: state.isPrivateUntil }),
+      ...(!state.isPrivate && {
+        pvu:
+          state.isPrivateUntil && state.isPrivateUntil > action.publishTimestamp
+            ? state.isPrivateUntil
+            : action.publishTimestamp,
+      }),
       ...(state.isContestPuzzle &&
         state.contestAnswers?.length && {
         ct_ans: state.contestAnswers,

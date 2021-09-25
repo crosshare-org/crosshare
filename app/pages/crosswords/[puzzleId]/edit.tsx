@@ -430,7 +430,7 @@ const PuzzleEditor = ({
             <input
               css={{ marginRight: '1em' }}
               type="checkbox"
-              checked={isPrivateUntil !== null}
+              checked={isPrivateUntil !== null && isPrivateUntil > Date.now()}
               onChange={(e) => {
                 setIsPrivateUntil((e.target.checked && Date.now()) || null);
                 if (e.target.checked) {
@@ -463,11 +463,11 @@ const PuzzleEditor = ({
               .doc(`c/${puzzle.id}`)
               .update({
                 pv: isPrivate,
-                pvu:
-                  (!isPrivate &&
-                    isPrivateUntil &&
-                    TimestampClass.fromMillis(isPrivateUntil)) ||
-                  DeleteSentinal,
+                pvu: isPrivate
+                  ? DeleteSentinal
+                  : isPrivateUntil && isPrivateUntil > Date.now()
+                    ? TimestampClass.fromMillis(isPrivateUntil)
+                    : TimestampClass.now(),
               })
               .then(() => {
                 showSnackbar(

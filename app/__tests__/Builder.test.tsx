@@ -301,7 +301,7 @@ test('publish as default', async () => {
   expect(puzzle['p']).not.toEqual(null);
   expect(puzzle['c']).toEqual(null);
   expect(puzzle['t']).toEqual('Our Title');
-  expect(puzzle['pvu']).not.toBeNull();
+  expect(puzzle['pvu']).toBeTruthy();
   await waitForExpect(async () =>
     expect(NextJSRouter.push).toHaveBeenCalledTimes(1)
   );
@@ -471,7 +471,7 @@ test('publish custom / non-rectangular size', async () => {
   expect(puzzle['t']).toEqual('Our Title');
   expect(puzzle['bp']).toEqual('Here is our new blog post');
   expect(puzzle['pv']).toBeUndefined();
-  expect(puzzle['pvu']).toBeUndefined();
+  expect(puzzle['pvu']).toBeTruthy();
 
   await waitForExpect(async () =>
     expect(NextJSRouter.push).toHaveBeenCalledTimes(1)
