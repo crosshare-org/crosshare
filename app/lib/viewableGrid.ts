@@ -543,7 +543,12 @@ export function getRefs(
       ]) {
         if (lowerClue.includes(` ${starTerm} ${entryTerm}`)) {
           for (const [idx, otherE] of grid.entries.entries()) {
-            if (otherE.clue.startsWith('*') || otherE.clue.endsWith('*')) {
+            if (
+              otherE.clue.startsWith('*') ||
+              otherE.clue.endsWith('*') ||
+              otherE.clue.startsWith('(*)') ||
+              otherE.clue.endsWith('(*)')
+            ) {
               refs.add(idx);
             }
           }
