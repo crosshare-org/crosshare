@@ -34,6 +34,10 @@ export enum Result {
 type CrosswordId = string;
 type PlayerId = string;
 
+function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
+  return value !== null && value !== undefined;
+}
+
 export class GlickoRound {
   PLAYER_MIN_RD: number;
   PUZZLE_MIN_RD: number;
@@ -136,12 +140,18 @@ export class GlickoRound {
   async computeAndUpdate() {
     for (const [userId, playerMatches] of this.playerMatches.entries()) {
       const userScore = await this.scoreForPlayer(userId);
-      const matches = await Promise.all(
-        playerMatches.map(async ([puzzleId, result]) => {
-          const puzScore = await this.scoreForPuzzle(puzzleId);
-          return { ...puzScore, s: result };
-        })
-      );
+      const matches = (
+        await Promise.all(
+          playerMatches.map(async ([puzzleId, result]) => {
+            try {
+              const puzScore = await this.scoreForPuzzle(puzzleId);
+              return { ...puzScore, s: result };
+            } catch {
+              return null;
+            }
+          })
+        )
+      ).filter(notEmpty);
       const newScore = this.computeNewScore(
         userScore,
         matches,
@@ -150,19 +160,23 @@ export class GlickoRound {
       await this.savePlayerScore(userId, newScore);
     }
     for (const [puzzleId, puzzleMatches] of this.puzzleMatches.entries()) {
-      const puzScore = await this.scoreForPuzzle(puzzleId);
-      const matches = await Promise.all(
-        puzzleMatches.map(async ([playerId, result]) => {
-          const playerScore = await this.scoreForPlayer(playerId);
-          return { ...playerScore, s: result };
-        })
-      );
-      const newScore = this.computeNewScore(
-        puzScore,
-        matches,
-        this.PUZZLE_MIN_RD
-      );
-      await this.savePuzzleScore(puzzleId, newScore);
+      try {
+        const puzScore = await this.scoreForPuzzle(puzzleId);
+        const matches = await Promise.all(
+          puzzleMatches.map(async ([playerId, result]) => {
+            const playerScore = await this.scoreForPlayer(playerId);
+            return { ...playerScore, s: result };
+          })
+        );
+        const newScore = this.computeNewScore(
+          puzScore,
+          matches,
+          this.PUZZLE_MIN_RD
+        );
+        await this.savePuzzleScore(puzzleId, newScore);
+      } catch {
+        continue;
+      }
     }
   }
 
@@ -288,7 +302,9 @@ export class CrosshareGlickoRound extends GlickoRound {
     }
 
     const res = await this.db.collection('c').doc(puzzleId).get();
-    if (!res.exists) return undefined;
+    if (!res.exists) {
+      throw new Error('puzzle does not exist');
+    }
     const vr = DBPuzzleV.decode(res.data());
     if (isRight(vr) && vr.right.rtg) {
       if (vr.right.rtg.u >= this.currentRound) {

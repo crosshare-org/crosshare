@@ -52,7 +52,7 @@ export async function runAnalytics(
     const dbpuzzle = DBPuzzleV.decode(puzzleRes.data());
     if (!isRight(dbpuzzle)) {
       console.error(PathReporter.report(dbpuzzle).join(','));
-      throw new Error('Malformed puzzle');
+      throw new Error('Malformed puzzle: ' + puzzleId);
     }
     puzzleMap.set(puzzleId, dbpuzzle.right);
     return dbpuzzle.right;
