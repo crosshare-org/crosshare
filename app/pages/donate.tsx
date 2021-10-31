@@ -110,22 +110,21 @@ export default function DonatePage({ donors }: DonateProps) {
           supports the continued development and hosting costs associated with
           running the site. Thank you!
         </p>
-        <p>
-          <form
-            action="https://www.paypal.com/donate"
-            method="post"
-            target="_top"
-          >
-            <input type="hidden" name="business" value="FTAE6AJHUAJ42" />
-            <input
-              type="hidden"
-              name="item_name"
-              value="All donations support crosshare.org"
-            />
-            <input type="hidden" name="currency_code" value="USD" />
-            <Button type="submit" text="Donate (via credit card / paypal)" />
-          </form>
-        </p>
+        <form
+          css={{ marginBottom: '1.5em' }}
+          action="https://www.paypal.com/donate"
+          method="post"
+          target="_top"
+        >
+          <input type="hidden" name="business" value="FTAE6AJHUAJ42" />
+          <input
+            type="hidden"
+            name="item_name"
+            value="All donations support crosshare.org"
+          />
+          <input type="hidden" name="currency_code" value="USD" />
+          <Button type="submit" text="Donate (via credit card / paypal)" />
+        </form>
         <p>
           We&apos;ll add your name to the list below - please comment with your
           donation if you&apos;d like to remain anonymous or use a specific

@@ -111,7 +111,18 @@ export default function CrosshareApp({
     i18n.load(locale, pageProps.translation);
     i18n.activate(locale);
     firstRender.current = false;
+  } else if (firstRender.current) {
+    i18n.activate('en');
+    firstRender.current = false;
   }
+
+  // listen for the locale changes
+  useEffect(() => {
+    if (locale && pageProps.translation) {
+      i18n.load(locale, pageProps.translation);
+      i18n.activate(locale);
+    }
+  }, [locale, pageProps.translation]);
 
   return (
     <>
