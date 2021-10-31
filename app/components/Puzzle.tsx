@@ -104,6 +104,7 @@ import {
   PuzzleOverlay,
   PuzzleOverlayBaseProps,
 } from './PuzzleOverlay';
+import { t } from '@lingui/macro';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -785,12 +786,12 @@ export const Puzzle = ({
   const checkRevealMenus = useMemo(
     () => (
       <>
-        <TopBarDropDown icon={<FaEye />} text="Reveal">
+        <TopBarDropDown icon={<FaEye />} text={t`Reveal`}>
           {() => (
             <>
               <TopBarDropDownLink
                 icon={<RevealSquare />}
-                text="Reveal Square"
+                text={t`Reveal Square`}
                 onClick={() => {
                   const ca: CheatAction = {
                     type: 'CHEAT',
@@ -802,7 +803,7 @@ export const Puzzle = ({
               />
               <TopBarDropDownLink
                 icon={<RevealEntry />}
-                text="Reveal Word"
+                text={t`Reveal Word`}
                 onClick={() => {
                   const ca: CheatAction = {
                     type: 'CHEAT',
@@ -814,7 +815,7 @@ export const Puzzle = ({
               />
               <TopBarDropDownLink
                 icon={<RevealPuzzle />}
-                text="Reveal Puzzle"
+                text={t`Reveal Puzzle`}
                 onClick={() => {
                   const ca: CheatAction = {
                     type: 'CHEAT',
@@ -828,12 +829,12 @@ export const Puzzle = ({
           )}
         </TopBarDropDown>
         {!state.autocheck ? (
-          <TopBarDropDown icon={<FaCheck />} text="Check">
+          <TopBarDropDown icon={<FaCheck />} text={t`Check`}>
             {() => (
               <>
                 <TopBarDropDownLink
                   icon={<FaCheckSquare />}
-                  text="Autocheck"
+                  text={t`Autocheck`}
                   onClick={() => {
                     const action: ToggleAutocheckAction = {
                       type: 'TOGGLEAUTOCHECK',
@@ -843,7 +844,7 @@ export const Puzzle = ({
                 />
                 <TopBarDropDownLink
                   icon={<CheckSquare />}
-                  text="Check Square"
+                  text={t`Check Square`}
                   onClick={() => {
                     const ca: CheatAction = {
                       type: 'CHEAT',
@@ -854,7 +855,7 @@ export const Puzzle = ({
                 />
                 <TopBarDropDownLink
                   icon={<CheckEntry />}
-                  text="Check Word"
+                  text={t`Check Word`}
                   onClick={() => {
                     const ca: CheatAction = {
                       type: 'CHEAT',
@@ -865,7 +866,7 @@ export const Puzzle = ({
                 />
                 <TopBarDropDownLink
                   icon={<CheckPuzzle />}
-                  text="Check Puzzle"
+                  text={t`Check Puzzle`}
                   onClick={() => {
                     const ca: CheatAction = {
                       type: 'CHEAT',
@@ -880,7 +881,7 @@ export const Puzzle = ({
         ) : (
           <TopBarLink
             icon={<FaCheckSquare />}
-            text="Autochecking"
+            text={t`Autochecking`}
             onClick={() => {
               const action: ToggleAutocheckAction = { type: 'TOGGLEAUTOCHECK' };
               dispatch(action);

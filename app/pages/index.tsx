@@ -19,6 +19,8 @@ import { CreateShareSection } from '../components/CreateShareSection';
 import { SMALL_AND_UP } from '../lib/style';
 import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList';
 import { ArticleT, validate } from '../lib/article';
+import { Trans, t } from '@lingui/macro';
+import { withTranslation } from '../lib/utils';
 
 interface HomePageProps {
   dailymini: ServerPuzzleResult;
@@ -26,9 +28,7 @@ interface HomePageProps {
   articles: Array<ArticleT>;
 }
 
-export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
-  res,
-}) => {
+const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
   const db = AdminApp.firestore();
   const minis = await getDailyMinis();
   const today = getDateString(new Date());
@@ -81,6 +81,8 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
     });
 };
 
+export const getServerSideProps = withTranslation(gssp);
+
 const ArticleListItem = (props: ArticleT) => {
   return (
     <li key={props.s}>
@@ -110,13 +112,18 @@ export default function HomePage({
 
       <div css={{ margin: '1em' }}>
         <p css={{ marginBottom: '1em' }}>
-          Crosshare is a <b>free</b>, <b>ad-free</b>, and{' '}
-          <a href="https://github.com/mdirolf/crosshare/">open-source</a> place
-          to create, share and solve crossword puzzles.
+          <Trans>
+            Crosshare is a <b>free</b>, <b>ad-free</b>, and{' '}
+            <a href="https://github.com/mdirolf/crosshare/">open-source</a>{' '}
+            place to create, share and solve crossword puzzles.
+          </Trans>
         </p>
         <p>
-          If you&apos;re enjoying Crosshare please consider{' '}
-          <a href="/donate">donating</a> to support its continuing development.
+          <Trans>
+            If you&apos;re enjoying Crosshare please consider{' '}
+            <a href="/donate">donating</a> to support its continuing
+            development.
+          </Trans>
         </p>
         <div
           css={{
@@ -128,13 +135,15 @@ export default function HomePage({
           }}
         >
           <div css={{ flex: '50%' }}>
-            <h2>Daily Mini</h2>
+            <h2>
+              <Trans>Daily Mini</Trans>
+            </h2>
             <PuzzleResultLink
               fullWidth
               puzzle={dailymini}
               showAuthor={true}
               constructorPage={dailymini.constructorPage}
-              title={'Today\'s daily mini crossword'}
+              title={t`Today's daily mini crossword`}
             />
             <p>
               <Link
@@ -142,7 +151,7 @@ export default function HomePage({
                   today.getUTCMonth() + 1
                 }`}
               >
-                Previous daily minis &rarr;
+                <Trans>Previous daily minis</Trans> &rarr;
               </Link>
             </p>
           </div>

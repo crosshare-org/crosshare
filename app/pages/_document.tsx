@@ -185,7 +185,7 @@ export default class CrosshareDocument extends Document {
           <div id="modal" />
           <script>window.Sentry = undefined;</script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-          <script src="https://browser.sentry-cdn.com/6.11.0/bundle.min.js"></script>
+          <script src="https://browser.sentry-cdn.com/6.13.3/bundle.min.js"></script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}

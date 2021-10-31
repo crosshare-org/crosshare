@@ -1,7 +1,7 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import * as Sentry from '@sentry/node';
 import { AppProps, NextWebVitalsMetric } from 'next/app';
-import NextJSRouter from 'next/router';
+import NextJSRouter, { useRouter } from 'next/router';
 import Head from 'next/head';
 
 import * as gtag from '../lib/gtag';
@@ -14,6 +14,11 @@ import { Global } from '@emotion/react';
 import '../lib/style.css';
 import { colorTheme, LINK, PRIMARY } from '../lib/style';
 import { BrowserWarning } from '../components/BrowserWarning';
+import { i18n } from '@lingui/core';
+import { initTranslation } from '../lib/utils';
+import { I18nProvider } from '@lingui/react';
+
+initTranslation(i18n);
 
 if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
   Sentry.init({
@@ -98,6 +103,16 @@ export default function CrosshareApp({
     };
   }, []);
 
+  const router = useRouter();
+  const locale = router.locale || router.defaultLocale;
+  const firstRender = useRef(true);
+
+  if (locale && pageProps.translation && firstRender.current) {
+    i18n.load(locale, pageProps.translation);
+    i18n.activate(locale);
+    firstRender.current = false;
+  }
+
   return (
     <>
       <Head>
@@ -162,7 +177,9 @@ export default function CrosshareApp({
         <AuthContext.Provider value={authStatus}>
           <SnackbarProvider>
             <BrowserWarning />
-            <Component {...pageProps} err={err} />
+            <I18nProvider i18n={i18n}>
+              <Component {...pageProps} err={err} />
+            </I18nProvider>
           </SnackbarProvider>
         </AuthContext.Provider>
       </CrosshareAudioContext.Provider>

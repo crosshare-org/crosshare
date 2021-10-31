@@ -5,6 +5,10 @@ const distDir = 'nextjs';
 const baseConfig = {
   distDir: distDir,
   poweredByHeader: false,
+  i18n: {
+    locales: ['en', 'es', 'pseudo'],
+    defaultLocale: 'en'
+  }
 };
 
 module.exports = (phase) => {

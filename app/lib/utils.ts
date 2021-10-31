@@ -1,4 +1,28 @@
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import type { I18n } from '@lingui/core';
+import { en, es } from 'make-plural/plurals';
+
+import { messages as enMessages } from '../locales/en/messages';
+import { messages as esMessages } from '../locales/es/messages';
+import { messages as pseudoMessages } from '../locales/pseudo/messages';
+import { GetServerSideProps } from 'next';
+
+const localeMap: Record<string, typeof enMessages> = {
+  en: enMessages,
+  es: esMessages,
+  pseudo: pseudoMessages,
+};
+
+export function withTranslation(gssp: GetServerSideProps): GetServerSideProps {
+  return async (ctx) => {
+    const translation = (ctx.locale && localeMap[ctx.locale]) || null;
+    const ssp = await gssp(ctx);
+    if ('props' in ssp) {
+      return { ...ssp, props: { ...ssp.props, translation } };
+    }
+    return ssp;
+  };
+}
 
 export const STORAGE_KEY = 'puzzleInProgress';
 
@@ -14,6 +38,14 @@ export const slugify = (...args: (string | number)[]): string => {
     .replace(/[^a-z0-9 ]/g, '') // remove all chars not letters, numbers and spaces (to be replaced)
     .replace(/\s+/g, '-'); // separator
 };
+
+export function initTranslation(i18n: I18n): void {
+  i18n.loadLocaleData({
+    en: { plurals: en },
+    es: { plurals: es },
+    pseudo: { plurals: en },
+  });
+}
 
 export function timeString(elapsed: number, fixedSize: boolean): string {
   const hours = Math.floor(elapsed / 3600);

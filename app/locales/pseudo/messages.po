@@ -1,0 +1,68 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2021-10-31 15:49-0400\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: pseudo\n"
+
+#: components/Puzzle.tsx:837
+msgid "Autocheck"
+msgstr ""
+
+#: components/Puzzle.tsx:884
+msgid "Autochecking"
+msgstr ""
+
+#: components/Puzzle.tsx:832
+msgid "Check"
+msgstr ""
+
+#: components/Puzzle.tsx:869
+msgid "Check Puzzle"
+msgstr ""
+
+#: components/Puzzle.tsx:847
+msgid "Check Square"
+msgstr ""
+
+#: components/Puzzle.tsx:858
+msgid "Check Word"
+msgstr ""
+
+#: pages/index.tsx:124
+msgid "Crosshare is a <0>free</0>, <1>ad-free</1>, and <2>open-source</2> place to create, share and solve crossword puzzles."
+msgstr ""
+
+#: pages/index.tsx:148
+msgid "Daily Mini"
+msgstr ""
+
+#: pages/index.tsx:131
+msgid "If you're enjoying Crosshare please consider <0>donating</0> to support its continuing development."
+msgstr ""
+
+#: pages/index.tsx:163
+msgid "Previous daily minis"
+msgstr ""
+
+#: components/Puzzle.tsx:789
+msgid "Reveal"
+msgstr ""
+
+#: components/Puzzle.tsx:818
+msgid "Reveal Puzzle"
+msgstr ""
+
+#: components/Puzzle.tsx:794
+msgid "Reveal Square"
+msgstr ""
+
+#: components/Puzzle.tsx:806
+msgid "Reveal Word"
+msgstr ""
+
+#: pages/index.tsx:155
+msgid "Today's daily mini crossword"
+msgstr ""
