@@ -1,0 +1,15 @@
+{
+  "locales": ["en", "es", "pseudo"],
+  "sourceLocale": "en",
+  "pseudoLocale": "pseudo",
+  "fallbackLocales": {
+    "default": "en"
+  },
+  "catalogs": [{
+    "path": "locales/{locale}/messages",
+    "include": ["pages", "components", "lib"],
+    "exclude": ["**/node_modules/**"]
+  }],
+  "format": "po",
+  "compileNamespace": "ts",
+}

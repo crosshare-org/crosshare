@@ -22,6 +22,7 @@
     "start": "next start",
     "extract": "NODE_ENV=development npx lingui extract --overwrite",
     "sync": "NODE_ENV=development npx lingui extract --overwrite && npx lingui compile",
+    "compileI18n": "npx lingui compile",
     "predeploy": "tsc && yarn clean && next build",
     "prodDeploy": "npx firebase deploy --only hosting:prod",
     "stagingDeploy": "npx firebase deploy --only hosting:staging",
