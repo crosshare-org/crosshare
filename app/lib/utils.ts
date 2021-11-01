@@ -7,7 +7,7 @@ import { messages as esMessages } from '../locales/es/messages';
 import { messages as pseudoMessages } from '../locales/pseudo/messages';
 import { GetServerSideProps } from 'next';
 
-const localeMap: Record<string, typeof enMessages> = {
+const localeMap: Record<string, Partial<typeof enMessages>> = {
   en: enMessages,
   es: esMessages,
   pseudo: pseudoMessages,
