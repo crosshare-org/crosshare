@@ -7,7 +7,17 @@ const baseConfig = {
   poweredByHeader: false,
   i18n: {
     locales: ['en', 'es', 'pseudo'],
-    defaultLocale: 'en'
+    defaultLocale: 'en',
+    domains: [
+      {
+        domain: 'crosshare.org',
+        defaultLocale: 'en',
+      },
+      {
+        domain: 'es.crosshare.org',
+        defaultLocale: 'es',
+      },
+    ]
   }
 };
 
