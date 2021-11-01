@@ -6,6 +6,8 @@ import { SnackbarProvider } from '../components/Snackbar';
 
 import type firebaseTypes from 'firebase';
 import { GetServerSidePropsResult } from 'next';
+import { I18nProvider } from '@lingui/react';
+import { i18n } from '@lingui/core';
 
 export const getUser = (uid: string, isAnonymous: boolean) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,27 +25,29 @@ export const anonymousUser = getUser('anonymous-user-id', true);
 const WithAllProviders: (
   opts: AuthOptions,
   includeSnackbar?: boolean
-) => ComponentType = (opts: AuthOptions, includeSnackbar?: boolean) => ({
-  children,
-}) => {
-  return (
-    <AuthContext.Provider
-      value={{
-        user: undefined,
-        isAdmin: false,
-        loading: false,
-        error: undefined,
-        ...opts,
-      }}
-    >
-      {includeSnackbar ? (
-        <SnackbarProvider>{children}</SnackbarProvider>
-      ) : (
-        children
-      )}
-    </AuthContext.Provider>
-  );
-};
+) => ComponentType =
+  (opts: AuthOptions, includeSnackbar?: boolean) =>
+    ({ children }) => {
+      return (
+        <I18nProvider i18n={i18n} forceRenderOnLocaleChange={false}>
+          <AuthContext.Provider
+            value={{
+              user: undefined,
+              isAdmin: false,
+              loading: false,
+              error: undefined,
+              ...opts,
+            }}
+          >
+            {includeSnackbar ? (
+              <SnackbarProvider>{children}</SnackbarProvider>
+            ) : (
+              children
+            )}
+          </AuthContext.Provider>
+        </I18nProvider>
+      );
+    };
 
 interface AuthOptions {
   user?: firebaseTypes.User;
