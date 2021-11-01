@@ -8,8 +8,9 @@ cache:
 before_install:
   - cd app
   - cp .linguirc.travis .linguirc
-  - yarn compileI18n
   - cp firebaseConfig.travis.ts firebaseConfig.ts
   - curl -sL https://firebase.tools | bash
+before_script:
+  - yarn compileI18n
 script:
   - yarn ci
