@@ -380,6 +380,7 @@ export const TopBar = ({
             height: HEADER_HEIGHT,
             background: 'var(--primary)',
             color: 'var(--onprimary)',
+            /* Pride month */
             ...(!isEmbed &&
               today.getUTCMonth() === 5 && {
               background:
@@ -387,6 +388,17 @@ export const TopBar = ({
               '@media (prefers-color-scheme: dark)': {
                 background:
                     'linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)), linear-gradient(to right, indianred,orange,gold,darkseagreen,deepskyblue,violet)',
+              },
+            }),
+            /* Transgender day of remembrance */
+            ...(!isEmbed &&
+              today.getUTCMonth() === 10 &&
+              today.getUTCDate() === 20 && {
+              background:
+                  'linear-gradient(to right, #50DFE4 0% 15%,#FFA6D6 25% 35%,#FFFFFF 45% 55%,#FFA6D6 65% 75%,#50DFE4 85% 100%)',
+              '@media (prefers-color-scheme: dark)': {
+                background:
+                    'linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)), linear-gradient(to right, #50DFE4 0% 15%,#FFA6D6 25% 35%,#FFFFFF 45% 55%,#FFA6D6 65% 75%,#50DFE4 85% 100%)',
               },
             }),
           }}

@@ -102,7 +102,7 @@ msgstr ""
 
 #: components/DisplayNameForm.tsx:54
 msgid "Display name updated"
-msgstr "Display name updated"
+msgstr ""
 
 #: components/Puzzle.tsx:663
 #: components/Puzzle.tsx:774
@@ -233,7 +233,7 @@ msgstr ""
 
 #: components/DisplayNameForm.tsx:63
 msgid "Set your display name:"
-msgstr "Set your display name:"
+msgstr ""
 
 #: components/Puzzle.tsx:1095
 msgid "Show Comments"
@@ -277,7 +277,7 @@ msgstr ""
 
 #: components/DisplayNameForm.tsx:63
 msgid "Update display name:"
-msgstr "Update display name:"
+msgstr ""
 
 #: components/PuzzleOverlay.tsx:202
 msgid "You are currently solving downs-only:"
