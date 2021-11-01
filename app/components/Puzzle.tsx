@@ -104,7 +104,7 @@ import {
   PuzzleOverlay,
   PuzzleOverlayBaseProps,
 } from './PuzzleOverlay';
-import { t } from '@lingui/macro';
+import { t, Trans } from '@lingui/macro';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -129,15 +129,15 @@ const KeepTryingOverlay = ({
   return (
     <Overlay closeCallback={() => dispatch({ type: 'DISMISSKEEPTRYING' })}>
       <h4>
-        <Emoji symbol="🤔" /> Almost there!
+        <Emoji symbol="🤔" /> <Trans>Almost there!</Trans>
       </h4>
       <p>
-        You&apos;ve completed the puzzle, but there are one or more mistakes.
+        <Trans>You&apos;ve completed the puzzle, but there are one or more mistakes.</Trans>
       </p>
       <Button
         css={{ width: '100%' }}
         onClick={() => dispatch({ type: 'DISMISSKEEPTRYING' })}
-        text="Keep Trying"
+        text={t`Keep Trying`}
       />
     </Overlay>
   );
@@ -638,7 +638,7 @@ export const Puzzle = ({
             grid={state.grid}
             showEntries={true}
             conceal={shouldConceal}
-            header="Across"
+            header={t`Across`}
             entries={acrossEntries}
             current={entry?.index}
             cross={cross?.index}
@@ -660,7 +660,7 @@ export const Puzzle = ({
             grid={state.grid}
             showEntries={true}
             conceal={shouldConceal}
-            header="Down"
+            header={t`Down`}
             entries={downEntries}
             current={entry?.index}
             cross={cross?.index}
@@ -751,7 +751,7 @@ export const Puzzle = ({
             grid={state.grid}
             showEntries={false}
             conceal={shouldConceal}
-            header="Across"
+            header={t`Across`}
             entries={acrossEntries}
             current={entry?.index}
             cross={cross?.index}
@@ -771,7 +771,7 @@ export const Puzzle = ({
             grid={state.grid}
             showEntries={false}
             conceal={shouldConceal}
-            header="Down"
+            header={t`Down`}
             entries={downEntries}
             current={entry?.index}
             cross={cross?.index}
@@ -896,13 +896,13 @@ export const Puzzle = ({
   const moreMenu = useMemo(
     () => (
       <>
-        <TopBarDropDown icon={<FaEllipsisH />} text="More">
+        <TopBarDropDown icon={<FaEllipsisH />} text={t`More`}>
           {() => (
             <>
               {!state.success ? (
                 <TopBarDropDownLink
                   icon={<Rebus />}
-                  text="Enter Rebus"
+                  text={t`Enter Rebus`}
                   shortcutHint={<EscapeKey />}
                   onClick={() => {
                     const kpa: KeypressAction = {
@@ -919,19 +919,19 @@ export const Puzzle = ({
               {muted ? (
                 <TopBarDropDownLink
                   icon={<FaVolumeUp />}
-                  text="Unmute"
+                  text={t`Unmute`}
                   onClick={() => setMuted(false)}
                 />
               ) : (
                 <TopBarDropDownLink
                   icon={<FaVolumeMute />}
-                  text="Mute"
+                  text={t`Mute`}
                   onClick={() => setMuted(true)}
                 />
               )}
               <TopBarDropDownLink
                 icon={<FaKeyboard />}
-                text="Toggle Keyboard"
+                text={t`Toggle Keyboard`}
                 onClick={() => setToggleKeyboard(!toggleKeyboard)}
               />
               {props.isAdmin ? (
@@ -955,17 +955,17 @@ export const Puzzle = ({
                   <TopBarDropDownLinkA
                     href={`/crosswords/${puzzle.id}/stats`}
                     icon={<IoMdStats />}
-                    text="Stats"
+                    text={t`Stats`}
                   />
                   <TopBarDropDownLinkA
                     href={`/crosswords/${puzzle.id}/edit`}
                     icon={<FaEdit />}
-                    text="Edit"
+                    text={t`Edit`}
                   />
                   {!isEmbed ? (
                     <TopBarDropDownLink
                       icon={<ImEmbed />}
-                      text="Embed"
+                      text={t`Embed`}
                       onClick={() => dispatch({ type: 'TOGGLEEMBEDOVERLAY' })}
                     />
                   ) : (
@@ -978,22 +978,22 @@ export const Puzzle = ({
               <TopBarDropDownLinkSimpleA
                 href={'/api/pdf/' + puzzle.id}
                 icon={<FaPrint />}
-                text="Print Puzzle"
+                text={t`Print Puzzle`}
               />
               <TopBarDropDownLinkSimpleA
                 href={'/api/puz/' + puzzle.id}
                 icon={<FaRegFile />}
-                text="Download .puz File"
+                text={t`Download .puz File`}
               />
               <TopBarDropDownLinkA
                 href="/account"
                 icon={<FaUser />}
-                text="Account / Settings"
+                text={t`Account / Settings`}
               />
               <TopBarDropDownLinkA
                 href="/construct"
                 icon={<FaHammer />}
-                text="Construct a Puzzle"
+                text={t`Construct a Puzzle`}
               />
             </>
           )}
@@ -1059,7 +1059,7 @@ export const Puzzle = ({
                 <>
                   <TopBarLink
                     icon={<FaPause />}
-                    hoverText={'Pause Game'}
+                    hoverText={t`Pause Game`}
                     text={timeString(state.displaySeconds, true)}
                     onClick={() => {
                       dispatch({ type: 'PAUSEACTION' });
@@ -1069,7 +1069,7 @@ export const Puzzle = ({
                   />
                   <TopBarLink
                     icon={state.clueView ? <SpinnerFinished /> : <FaListOl />}
-                    text={state.clueView ? 'Grid' : 'Clues'}
+                    text={state.clueView ? t`Grid` : t`Clues`}
                     onClick={() => {
                       const a: ToggleClueViewAction = {
                         type: 'TOGGLECLUEVIEW',
@@ -1090,9 +1090,9 @@ export const Puzzle = ({
                           state.contestSubmission,
                           puzzle.contestAnswers
                         ) && !state.contestRevealed
-                          ? 'Contest Prompt / Submission'
-                          : 'Comments / Leaderboard'
-                        : 'Show Comments'
+                          ? t`Contest Prompt / Submission`
+                          : t`Comments / Leaderboard`
+                        : t`Show Comments`
                     }
                     onClick={() => dispatch({ type: 'UNDISMISSSUCCESS' })}
                   />
@@ -1138,16 +1138,16 @@ export const Puzzle = ({
               <PuzzleOverlay
                 {...overlayBaseProps}
                 overlayType={OverlayType.BeginPause}
-                dismissMessage="Begin Puzzle"
-                message="Ready to get started?"
+                dismissMessage={t`Begin Puzzle`}
+                message={t`Ready to get started?`}
                 loadingPlayState={loadingPlayState || !state.loadedPlayState}
               />
             ) : (
               <PuzzleOverlay
                 {...overlayBaseProps}
                 overlayType={OverlayType.BeginPause}
-                dismissMessage="Resume"
-                message="Your puzzle is paused"
+                dismissMessage={t`Resume`}
+                message={t`Your puzzle is paused`}
                 loadingPlayState={loadingPlayState || !state.loadedPlayState}
               />
             )

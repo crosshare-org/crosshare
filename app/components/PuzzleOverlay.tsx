@@ -16,6 +16,7 @@ import { lightFormat } from 'date-fns';
 import { GoScreenFull } from 'react-icons/go';
 import { AuthContext } from './AuthContext';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
+import { t, Trans } from '@lingui/macro';
 
 const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {
@@ -89,24 +90,44 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
     }
   };
 
-  let loginButton: ReactNode =
-    'Login (via Google) to save your puzzle progress/stats';
+  let loginButton: ReactNode = t`Login (via Google) to save your puzzle progress/stats`;
   if (!authContext.loading) {
     if (authContext.user?.email) {
-      loginButton = `Logged in as ${authContext.user.email}`;
+      loginButton = t`Logged in as ${authContext.user.email}`;
     } else if (authContext.user) {
       loginButton = (
         <>
-          <GoogleLinkButton user={authContext.user} text="Login (via Google)" />{' '}
-          to save your puzzle progress/stats
+          <GoogleLinkButton
+            user={authContext.user}
+            text={t`Login (via Google)`}
+          />{' '}
+          <Trans>to save your puzzle progress/stats</Trans>
         </>
       );
     } else {
       loginButton = (
         <>
-          <GoogleSignInButton text="Login (via Google)" /> to save your puzzle
-          progress/stats
+          <GoogleSignInButton text={t`Login (via Google)`} />{' '}
+          <Trans>to save your puzzle progress/stats</Trans>
         </>
+      );
+    }
+  }
+
+  const solveTimeString = <b>{timeString(props.solveTime, false)}</b>;
+  let solvedMessage = <Trans>Solved in</Trans>;
+  if (!props.didCheat) {
+    if (props.downsOnly) {
+      solvedMessage = (
+        <Trans>
+          Solved <b>downs-only</b> in
+        </Trans>
+      );
+    } else {
+      solvedMessage = (
+        <Trans>
+          Solved <b>without check/reveal</b> in
+        </Trans>
       );
     }
   }
@@ -165,7 +186,9 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         {props.overlayType === OverlayType.BeginPause ? (
           <>
             {props.loadingPlayState ? (
-              <div>Checking for previous play data...</div>
+              <div>
+                <Trans>Checking for previous play data...</Trans>
+              </div>
             ) : (
               <>
                 <div css={{ marginBottom: '1em' }}>{props.message}</div>
@@ -176,10 +199,10 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                 <p css={{ marginTop: '1em' }}>{loginButton}</p>
                 {props.downsOnly ? (
                   <p css={{ marginTop: '1em' }}>
-                    You are currently solving downs-only: (
+                    <Trans>You are currently solving downs-only:</Trans> (
                     <ButtonAsLink
                       onClick={() => props.dispatch({ type: 'STOPDOWNSONLY' })}
-                      text={'enable across clues'}
+                      text={t`enable across clues`}
                     />
                     ).
                   </p>
@@ -188,9 +211,11 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                 )}
                 {isContest ? (
                   <p css={{ marginTop: '1em' }}>
-                    This is a contest/meta puzzle. To submit your answer, first
-                    finish solving the grid (or reveal it if you get stuck or
-                    solved offline).
+                    <Trans>
+                      This is a contest/meta puzzle. To submit your answer,
+                      first finish solving the grid (or reveal it if you get
+                      stuck or solved offline).
+                    </Trans>
                   </p>
                 ) : (
                   ''
@@ -237,15 +262,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
             ) : (
               <>
                 <p css={{ marginBottom: 0, fontSize: '1.5em' }}>
-                  Solved{' '}
-                  {props.didCheat ? (
-                    ''
-                  ) : props.downsOnly ? (
-                    <b>downs-only </b>
-                  ) : (
-                    <b>without check/reveal </b>
-                  )}
-                  in <b>{timeString(props.solveTime, false)}</b>
+                  {solvedMessage} {solveTimeString}
                 </p>
               </>
             )}
@@ -289,7 +306,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           <>
             <div css={{ marginTop: '1em' }}>
               <h4 css={{ borderBottom: '1px solid var(--black)' }}>
-                Leaderboard (updated hourly)
+                <Trans>Leaderboard (updated hourly)</Trans>
               </h4>
               {winningSubmissions?.length ? (
                 <ul
@@ -317,7 +334,9 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                     ))}
                 </ul>
               ) : (
-                <p>Nobody is on the leaderboard yet</p>
+                <p>
+                  <Trans>Nobody is on the leaderboard yet</Trans>
+                </p>
               )}
             </div>
           </>
@@ -345,10 +364,12 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
       </div>
       {isEmbed ? (
         <div css={{ marginTop: '2em', textAlign: 'center' }}>
-          <Link href="/">Powered by crosshare.org</Link>
+          <Link href="/">
+            <Trans>Powered by crosshare.org</Trans>
+          </Link>
           {' · '}
           <Link href={`/crosswords/${props.puzzle.id}`}>
-            Open on crosshare.org
+            <Trans>Open on crosshare.org</Trans>
           </Link>
         </div>
       ) : (

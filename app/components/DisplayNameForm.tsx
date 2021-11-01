@@ -3,6 +3,7 @@ import { AuthContext } from './AuthContext';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
 import { Button } from './Buttons';
 import { useSnackbar } from './Snackbar';
+import { t } from '@lingui/macro';
 
 export const useDisplayName = () => {
   const ctx = useContext(AuthContext);
@@ -50,7 +51,7 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
       }
       Promise.all(updates).then(() => {
         setSubmitting(false);
-        showSnackbar('Display name updated');
+        showSnackbar(t`Display name updated`);
         onCancel?.();
       });
     }
@@ -59,7 +60,7 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
   return (
     <form onSubmit={handleSubmit}>
       <label>
-        {ctx.displayName ? 'Update display name:' : 'Set your display name:'}
+        {ctx.displayName ? t`Update display name:` : t`Set your display name:`}
         <input
           css={{ margin: '0 0.5em' }}
           type="text"
@@ -69,7 +70,7 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
       </label>
       <Button
         type="submit"
-        text="Save"
+        text={t`Save`}
         disabled={submitting || !newDisplayName?.trim()}
       />
       {onCancel ? (
@@ -77,7 +78,7 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
           boring={true}
           css={{ marginLeft: '0.5em' }}
           onClick={onCancel}
-          text="Cancel"
+          text={t`Cancel`}
         />
       ) : (
         ''

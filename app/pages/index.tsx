@@ -97,7 +97,7 @@ export default function HomePage({
   articles,
 }: HomePageProps) {
   const today = new Date();
-  const { user, loading } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   return (
     <>
@@ -175,23 +175,6 @@ export default function HomePage({
         </p>
         <hr css={{ margin: '2em 0' }} />
         <UnfinishedPuzzleList user={user} />
-        {!loading && !user?.email ? (
-          <iframe
-            css={{
-              height: 300,
-              width: 800,
-              display: 'block',
-              margin: 'auto',
-              maxWidth: '100%',
-            }}
-            title="subscribe"
-            frameBorder="0"
-            scrolling="no"
-            src="https://app.mailjet.com/widget/iframe/71WB/Kgs"
-          ></iframe>
-        ) : (
-          ''
-        )}
         <h4 css={{ marginTop: '2em' }}>
           Frequently asked questions and information
         </h4>

@@ -23,6 +23,7 @@ import { ButtonResetCSS } from './Buttons';
 import { NotificationT } from '../lib/notifications';
 import { App } from '../lib/firebaseWrapper';
 import { EmbedContext } from './EmbedContext';
+import { Trans } from '@lingui/macro';
 
 export const TopBarDropDown = (props: {
   onClose?: () => void;
@@ -118,7 +119,7 @@ const TopBarDropDownLinkContents = (props: TopBarDropDownLinkCommonProps) => {
             }}
           >
             {' '}
-            (hotkey:{' '}
+            (<Trans>hotkey</Trans>:{' '}
             <span css={{ fontSize: HEADER_HEIGHT - 10 }}>
               {props.shortcutHint}
             </span>{' '}

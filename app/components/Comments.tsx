@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, ReactNode, FormEvent } from 'react';
-import * as t from 'io-ts';
+import * as iot from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import type firebase from 'firebase/app';
@@ -21,6 +21,7 @@ import { ConstructorPageT } from '../lib/constructorPage';
 import { Link } from './Link';
 import { ButtonAsLink, Button } from './Buttons';
 import { LengthLimitedTextarea, LengthView } from './Inputs';
+import { Trans, t } from '@lingui/macro';
 
 const COMMENT_LENGTH_LIMIT = 280;
 
@@ -103,7 +104,7 @@ const CommentWithReplies = (
         </div>
       ) : (
         <div>
-          <ButtonAsLink onClick={() => setShowingForm(true)} text="Reply" />
+          <ButtonAsLink onClick={() => setShowingForm(true)} text={t`Reply`} />
         </div>
       )}
       {replies ? (
@@ -143,7 +144,7 @@ function commentsFromStorage(
     inSession = null;
   }
   if (inSession) {
-    const res = t
+    const res = iot
       .array(CommentForModerationWithIdV)
       .decode(JSON.parse(inSession));
     if (isRight(res)) {
@@ -199,7 +200,7 @@ const CommentFlair = (props: CommentFlairProps) => {
             padding: '0.1em 0.2em',
           }}
         >
-          {props.hasGuestConstructor ? 'publisher' : 'constructor'}
+          {props.hasGuestConstructor ? t`publisher` : t`constructor`}
         </span>
       ) : (
         <>
@@ -339,8 +340,10 @@ const CommentForm = ({
       <form onSubmit={submitComment}>
         <label css={{ width: '100%', margin: 0 }}>
           {(props.replyToId !== undefined
-            ? 'Enter your reply '
-            : 'Leave a comment ') + '(please be nice!):'}
+            ? t`Enter your reply`
+            : t`Leave a comment`) +
+            ' ' +
+            t`(please be nice!):`}
           <LengthLimitedTextarea
             css={{ width: '100%', display: 'block' }}
             maxLength={COMMENT_LENGTH_LIMIT}
@@ -359,19 +362,19 @@ const CommentForm = ({
               type="submit"
               css={{ marginRight: '0.5em' }}
               disabled={commentText.length === 0}
-              text="Save"
+              text={t`Save`}
             />
             {onCancel ? (
               <Button
                 boring={true}
                 css={{ marginRight: '0.5em' }}
                 onClick={onCancel}
-                text="Cancel"
+                text={t`Cancel`}
               />
             ) : (
               ''
             )}
-            commenting as{' '}
+            <Trans>commenting as</Trans>{' '}
             <CommentFlair
               hasGuestConstructor={props.hasGuestConstructor}
               username={props.username}
@@ -385,7 +388,7 @@ const CommentForm = ({
             (
             <ButtonAsLink
               onClick={() => setEditingDisplayName(true)}
-              text="change name"
+              text={t`change name`}
             />
             )
           </>
@@ -399,7 +402,9 @@ const CommentForm = ({
               marginTop: '1em',
             }}
           >
-            <h4>Live Preview:</h4>
+            <h4>
+              <Trans>Live Preview:</Trans>
+            </h4>
             <Markdown text={commentText} clueMap={props.clueMap} />
           </div>
         ) : (
@@ -550,10 +555,14 @@ export const Comments = ({
   }, [props.puzzleId, comments]);
   return (
     <div css={{ marginTop: '1em' }}>
-      <h4 css={{ borderBottom: '1px solid var(--black)' }}>Comments</h4>
+      <h4 css={{ borderBottom: '1px solid var(--black)' }}>
+        <Trans>Comments</Trans>
+      </h4>
       {!authContext.user || authContext.user.isAnonymous ? (
         <div css={{ textAlign: 'center' }}>
-          <p>Sign in with google to leave a comment of your own:</p>
+          <p>
+            <Trans>Sign in with google to leave a comment of your own:</Trans>
+          </p>
           {authContext.user ? (
             <GoogleLinkButton user={authContext.user} />
           ) : (

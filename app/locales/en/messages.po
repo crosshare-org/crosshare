@@ -13,12 +13,43 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: components/Comments.tsx:346
+msgid "(please be nice!):"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:99
+#: components/PuzzleOverlay.tsx:106
+#~ msgid "<0/> to save your puzzle progress/stats"
+#~ msgstr "<0/> to save your puzzle progress/stats"
+
+#: components/Puzzle.tsx:991
+msgid "Account / Settings"
+msgstr ""
+
+#: components/Puzzle.tsx:641
+#: components/Puzzle.tsx:754
+msgid "Across"
+msgstr ""
+
+#: components/Puzzle.tsx:132
+msgid "Almost there!"
+msgstr ""
+
 #: components/Puzzle.tsx:837
 msgid "Autocheck"
 msgstr ""
 
 #: components/Puzzle.tsx:884
 msgid "Autochecking"
+msgstr ""
+
+#: components/Puzzle.tsx:1141
+msgid "Begin Puzzle"
+msgstr ""
+
+#: components/Comments.tsx:372
+#: components/DisplayNameForm.tsx:81
+msgid "Cancel"
 msgstr ""
 
 #: components/Puzzle.tsx:832
@@ -37,20 +68,146 @@ msgstr ""
 msgid "Check Word"
 msgstr ""
 
-#: pages/index.tsx:124
+#: components/PuzzleOverlay.tsx:190
+msgid "Checking for previous play data..."
+msgstr ""
+
+#: components/Puzzle.tsx:1072
+msgid "Clues"
+msgstr ""
+
+#: components/Comments.tsx:559
+msgid "Comments"
+msgstr ""
+
+#: components/Puzzle.tsx:1094
+msgid "Comments / Leaderboard"
+msgstr ""
+
+#: components/Puzzle.tsx:996
+msgid "Construct a Puzzle"
+msgstr ""
+
+#: components/Puzzle.tsx:1093
+msgid "Contest Prompt / Submission"
+msgstr ""
+
+#: pages/index.tsx:115
 msgid "Crosshare is a <0>free</0>, <1>ad-free</1>, and <2>open-source</2> place to create, share and solve crossword puzzles."
 msgstr ""
 
-#: pages/index.tsx:148
+#: pages/index.tsx:139
 msgid "Daily Mini"
 msgstr ""
 
-#: pages/index.tsx:131
+#: components/DisplayNameForm.tsx:54
+msgid "Display name updated"
+msgstr "Display name updated"
+
+#: components/Puzzle.tsx:663
+#: components/Puzzle.tsx:774
+msgid "Down"
+msgstr ""
+
+#: components/Puzzle.tsx:986
+msgid "Download .puz File"
+msgstr ""
+
+#: components/Puzzle.tsx:963
+msgid "Edit"
+msgstr ""
+
+#: components/Puzzle.tsx:968
+msgid "Embed"
+msgstr ""
+
+#: components/Puzzle.tsx:905
+msgid "Enter Rebus"
+msgstr ""
+
+#: components/Comments.tsx:343
+msgid "Enter your reply"
+msgstr ""
+
+#: components/Puzzle.tsx:1072
+msgid "Grid"
+msgstr ""
+
+#: pages/index.tsx:122
 msgid "If you're enjoying Crosshare please consider <0>donating</0> to support its continuing development."
 msgstr ""
 
-#: pages/index.tsx:163
+#: components/Puzzle.tsx:140
+msgid "Keep Trying"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:309
+msgid "Leaderboard (updated hourly)"
+msgstr ""
+
+#: components/Comments.tsx:344
+msgid "Leave a comment"
+msgstr ""
+
+#: components/Comments.tsx:406
+msgid "Live Preview:"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:96
+msgid "Logged in as {0}"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:102
+#: components/PuzzleOverlay.tsx:110
+msgid "Login (via Google)"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:93
+msgid "Login (via Google) to save your puzzle progress/stats"
+msgstr ""
+
+#: components/Puzzle.tsx:899
+msgid "More"
+msgstr ""
+
+#: components/Puzzle.tsx:928
+msgid "Mute"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:338
+msgid "Nobody is on the leaderboard yet"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:372
+msgid "Open on crosshare.org"
+msgstr ""
+
+#: components/Puzzle.tsx:1062
+msgid "Pause Game"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:368
+msgid "Powered by crosshare.org"
+msgstr ""
+
+#: pages/index.tsx:154
 msgid "Previous daily minis"
+msgstr ""
+
+#: components/Puzzle.tsx:981
+msgid "Print Puzzle"
+msgstr ""
+
+#: components/Puzzle.tsx:1142
+msgid "Ready to get started?"
+msgstr ""
+
+#: components/Comments.tsx:107
+msgid "Reply"
+msgstr ""
+
+#: components/Puzzle.tsx:1149
+msgid "Resume"
 msgstr ""
 
 #: components/Puzzle.tsx:789
@@ -69,6 +226,96 @@ msgstr ""
 msgid "Reveal Word"
 msgstr ""
 
-#: pages/index.tsx:155
+#: components/Comments.tsx:365
+#: components/DisplayNameForm.tsx:73
+msgid "Save"
+msgstr ""
+
+#: components/DisplayNameForm.tsx:63
+msgid "Set your display name:"
+msgstr "Set your display name:"
+
+#: components/Puzzle.tsx:1095
+msgid "Show Comments"
+msgstr ""
+
+#: components/Comments.tsx:564
+msgid "Sign in with google to leave a comment of your own:"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:122
+msgid "Solved <0>downs-only</0> in"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:128
+msgid "Solved <0>without check/reveal</0> in"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:118
+msgid "Solved in"
+msgstr ""
+
+#: components/Puzzle.tsx:958
+msgid "Stats"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:214
+msgid "This is a contest/meta puzzle. To submit your answer, first finish solving the grid (or reveal it if you get stuck or solved offline)."
+msgstr ""
+
+#: pages/index.tsx:146
 msgid "Today's daily mini crossword"
+msgstr ""
+
+#: components/Puzzle.tsx:934
+msgid "Toggle Keyboard"
+msgstr ""
+
+#: components/Puzzle.tsx:922
+msgid "Unmute"
+msgstr ""
+
+#: components/DisplayNameForm.tsx:63
+msgid "Update display name:"
+msgstr "Update display name:"
+
+#: components/PuzzleOverlay.tsx:202
+msgid "You are currently solving downs-only:"
+msgstr ""
+
+#: components/Puzzle.tsx:135
+msgid "You've completed the puzzle, but there are one or more mistakes."
+msgstr ""
+
+#: components/Puzzle.tsx:1150
+msgid "Your puzzle is paused"
+msgstr ""
+
+#: components/Comments.tsx:391
+msgid "change name"
+msgstr ""
+
+#: components/Comments.tsx:377
+msgid "commenting as"
+msgstr ""
+
+#: components/Comments.tsx:203
+msgid "constructor"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:205
+msgid "enable across clues"
+msgstr ""
+
+#: components/TopBar.tsx:122
+msgid "hotkey"
+msgstr ""
+
+#: components/Comments.tsx:203
+msgid "publisher"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:104
+#: components/PuzzleOverlay.tsx:111
+msgid "to save your puzzle progress/stats"
 msgstr ""
