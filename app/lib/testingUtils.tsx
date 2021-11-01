@@ -90,9 +90,9 @@ function hasOwnProperty<
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-export function getProps<T>(a: GetServerSidePropsResult<T>) {
+export async function getProps<T>(a: GetServerSidePropsResult<T>) {
   if (!hasOwnProperty(a, 'props')) {
     throw new Error('should have props');
   }
-  return a.props;
+  return await Promise.resolve(a.props);
 }

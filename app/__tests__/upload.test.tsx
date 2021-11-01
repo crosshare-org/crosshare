@@ -16,7 +16,8 @@ import UploadPage from '../pages/upload';
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import NextJSRouter from 'next/router';
-import PuzzlePage, { getServerSideProps } from '../pages/crosswords/[puzzleId]';
+import PuzzlePage from '../pages/crosswords/[puzzleId]';
+import { getPuzzlePageProps as getServerSideProps } from '../lib/serverOnly';
 import waitForExpect from 'wait-for-expect';
 import type firebase from 'firebase/app';
 
@@ -149,7 +150,7 @@ test('upload a puzzle', async () => {
 
   // The puzzle should be visible on the puzzle page, even to a rando
   setApp(serverApp as firebase.app.App);
-  const props1 = getProps(
+  const props1 = await getProps(
     await getServerSideProps({
       params: { puzzleId },
       res: { setHeader: jest.fn() },
@@ -294,7 +295,7 @@ test('upload a puzzle with duplicate entries', async () => {
 
   // The puzzle should be visible on the puzzle page, even to a rando
   setApp(serverApp as firebase.app.App);
-  const props1 = getProps(
+  const props1 = await getProps(
     await getServerSideProps({
       params: { puzzleId: puzzles.docs[0].id },
       res: { setHeader: jest.fn() },

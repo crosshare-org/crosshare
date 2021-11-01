@@ -16,7 +16,8 @@ import type firebaseAdminType from 'firebase-admin';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import type firebase from 'firebase/app';
 import NextJSRouter from 'next/router';
-import PuzzlePage, { getServerSideProps } from '../pages/crosswords/[puzzleId]';
+import PuzzlePage from '../pages/crosswords/[puzzleId]';
+import { getPuzzlePageProps as getServerSideProps } from '../lib/serverOnly';
 import { PuzzleLoader as StatsPuzzleLoader } from '../pages/crosswords/[puzzleId]/stats';
 import waitForExpect from 'wait-for-expect';
 import { getDateString, prettifyDateString } from '../lib/dbtypes';
@@ -222,7 +223,7 @@ test('moderate as daily mini', async () => {
   expect(puzzles.size).toEqual(1);
   const puzzleId = puzzles.docs[0]?.id;
 
-  const props1 = getProps(
+  const props1 = await getProps(
     await getServerSideProps({
       params: { puzzleId },
       res: { setHeader: jest.fn() },
@@ -327,7 +328,7 @@ test('publish as default', async () => {
 
   // The puzzle should be visible on the puzzle page, even to a rando
   setApp(serverApp as firebase.app.App);
-  const props1 = getProps(
+  const props1 = await getProps(
     await getServerSideProps({
       params: { puzzleId },
       res: { setHeader: jest.fn() },
@@ -484,7 +485,7 @@ test('publish custom / non-rectangular size', async () => {
 
   // The puzzle should be visible on the puzzle page, even to a rando
   setApp(serverApp as firebase.app.App);
-  const props1 = getProps(
+  const props1 = await getProps(
     await getServerSideProps({
       params: { puzzleId },
       res: { setHeader: jest.fn() },

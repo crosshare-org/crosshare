@@ -47,7 +47,11 @@ export default function UploadPage() {
           }
         } catch (error) {
           console.error(error);
-          setError(error.message || 'Could not import file');
+          if (error instanceof Error) {
+            setError(error.message);
+          } else {
+            setError('Could not import file');
+          }
         }
       }
     };

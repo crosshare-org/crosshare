@@ -450,8 +450,12 @@ const ImportPuzForm = (props: { dispatch: Dispatch<ImportPuzAction> }) => {
             });
           }
         } catch (error) {
+          if (error instanceof Error) {
+            setError(error.message);
+          } else {
+            setError('Could not import file');
+          }
           console.error(error);
-          setError(error.message || 'Could not import file');
         }
       }
     };

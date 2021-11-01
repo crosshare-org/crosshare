@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, ChangeEvent } from 'react';
-import ReactCrop from 'react-image-crop';
+import ReactCrop, { Crop } from 'react-image-crop';
 import { Overlay } from './Overlay';
 import { Button } from './Buttons';
 import { App } from '../lib/firebaseWrapper';
@@ -9,7 +9,7 @@ import 'react-image-crop/dist/ReactCrop.css';
 function downsample(
   image: HTMLImageElement,
   targetSize: [number, number],
-  crop: ReactCrop.Crop
+  crop: Crop
 ) {
   if (!crop || !crop.width || !crop.height) {
     return null;
@@ -111,7 +111,7 @@ function upload(
   storageKey: string,
   image: HTMLImageElement | null,
   targetSize: [number, number],
-  crop: ReactCrop.Crop | null,
+  crop: Crop | null,
   onComplete: (msg: string) => void
 ) {
   if (!image || !crop || !crop.width || !crop.height) {
@@ -153,14 +153,12 @@ export function ImageCropper(props: {
   const [upImg, setUpImg] = useState<string>();
   const { showSnackbar } = useSnackbar();
   const imgRef = useRef<HTMLImageElement | null>(null);
-  const [crop, setCrop] = useState<ReactCrop.Crop>({
+  const [crop, setCrop] = useState<Partial<Crop>>({
     unit: 'px',
     width: props.targetSize[0],
     aspect: props.targetSize[0] / props.targetSize[1],
   });
-  const [completedCrop, setCompletedCrop] = useState<ReactCrop.Crop | null>(
-    null
-  );
+  const [completedCrop, setCompletedCrop] = useState<Crop | null>(null);
   const [minWidth, setMinWidth] = useState(props.targetSize[0]);
   const [disabled, setDisabled] = useState(true);
   const [uploading, setUploading] = useState(false);
