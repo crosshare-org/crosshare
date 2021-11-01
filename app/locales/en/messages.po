@@ -17,11 +17,6 @@ msgstr ""
 msgid "(please be nice!):"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:99
-#: components/PuzzleOverlay.tsx:106
-#~ msgid "<0/> to save your puzzle progress/stats"
-#~ msgstr "<0/> to save your puzzle progress/stats"
-
 #: components/Puzzle.tsx:991
 msgid "Account / Settings"
 msgstr ""

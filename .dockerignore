@@ -15,6 +15,7 @@
 !app/typings
 !app/reducers
 !app/public
+!app/locales
 !app/pages
 !app/lib
 !app/components
