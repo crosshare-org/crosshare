@@ -20,7 +20,7 @@ import { SMALL_AND_UP } from '../lib/style';
 import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList';
 import { ArticleT, validate } from '../lib/article';
 import { Trans, t } from '@lingui/macro';
-import { withTranslation } from '../lib/utils';
+import { withTranslation } from '../lib/translation';
 
 interface HomePageProps {
   dailymini: ServerPuzzleResult;
