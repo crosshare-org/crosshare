@@ -20,7 +20,6 @@ import { SMALL_AND_UP } from '../lib/style';
 import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList';
 import { ArticleT, validate } from '../lib/article';
 import { Trans, t } from '@lingui/macro';
-import { withTranslation } from '../lib/translation';
 
 interface HomePageProps {
   dailymini: ServerPuzzleResult;
@@ -28,7 +27,9 @@ interface HomePageProps {
   articles: Array<ArticleT>;
 }
 
-const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
+  res,
+}) => {
   const db = AdminApp.firestore();
   const minis = await getDailyMinis();
   const today = getDateString(new Date());
@@ -80,8 +81,6 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
       }
     });
 };
-
-export const getServerSideProps = withTranslation(gssp);
 
 const ArticleListItem = (props: ArticleT) => {
   return (

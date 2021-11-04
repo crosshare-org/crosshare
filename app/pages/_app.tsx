@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, useRef } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import * as Sentry from '@sentry/node';
 import { AppProps, NextWebVitalsMetric } from 'next/app';
 import NextJSRouter, { useRouter } from 'next/router';
@@ -103,26 +103,18 @@ export default function CrosshareApp({
     };
   }, []);
 
-  const router = useRouter();
-  const locale = router.locale || router.defaultLocale;
-  const firstRender = useRef(true);
+  const { locale } = useRouter();
 
-  if (locale && pageProps.translation && firstRender.current) {
-    i18n.load(locale, pageProps.translation);
-    i18n.activate(locale);
-    firstRender.current = false;
-  } else if (firstRender.current) {
-    i18n.activate('en');
-    firstRender.current = false;
-  }
-
-  // listen for the locale changes
   useEffect(() => {
-    if (locale && pageProps.translation) {
-      i18n.load(locale, pageProps.translation);
+    async function load(locale: string) {
+      const { messages } = await import(`../locales/${locale}/messages.ts`);
+
+      i18n.load(locale, messages);
       i18n.activate(locale);
     }
-  }, [locale, pageProps.translation]);
+
+    load(locale || 'en');
+  }, [locale]);
 
   return (
     <>
