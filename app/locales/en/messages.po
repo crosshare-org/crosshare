@@ -87,11 +87,11 @@ msgstr ""
 msgid "Contest Prompt / Submission"
 msgstr ""
 
-#: pages/index.tsx:115
+#: pages/index.tsx:114
 msgid "Crosshare is a <0>free</0>, <1>ad-free</1>, and <2>open-source</2> place to create, share and solve crossword puzzles."
 msgstr ""
 
-#: pages/index.tsx:139
+#: pages/index.tsx:138
 msgid "Daily Mini"
 msgstr ""
 
@@ -128,7 +128,7 @@ msgstr ""
 msgid "Grid"
 msgstr ""
 
-#: pages/index.tsx:122
+#: pages/index.tsx:121
 msgid "If you're enjoying Crosshare please consider <0>donating</0> to support its continuing development."
 msgstr ""
 
@@ -185,7 +185,7 @@ msgstr ""
 msgid "Powered by crosshare.org"
 msgstr ""
 
-#: pages/index.tsx:154
+#: pages/index.tsx:153
 msgid "Previous daily minis"
 msgstr ""
 
@@ -258,7 +258,7 @@ msgstr ""
 msgid "This is a contest/meta puzzle. To submit your answer, first finish solving the grid (or reveal it if you get stuck or solved offline)."
 msgstr ""
 
-#: pages/index.tsx:146
+#: pages/index.tsx:145
 msgid "Today's daily mini crossword"
 msgstr ""
 

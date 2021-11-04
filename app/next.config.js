@@ -6,7 +6,7 @@ const baseConfig = {
   distDir: distDir,
   poweredByHeader: false,
   i18n: {
-    locales: ['en', 'es', 'pseudo'],
+    locales: ['en', 'es', 'it', 'pseudo'],
     defaultLocale: 'en',
   }
 };
