@@ -65,14 +65,15 @@ export const ModeratingOverlay = memo(
         ) : (
           ''
         )}
-        {puzzle.isPrivateUntil ? (
-          <h4 css={{ color: 'var(--error)' }}>
+        {puzzle.isPrivateUntil &&
+        puzzle.isPrivateUntil > new Date().getTime() ? (
+            <h4 css={{ color: 'var(--error)' }}>
             This puzzle is private until{' '}
-            {new Date(puzzle.isPrivateUntil).toISOString()}
-          </h4>
-        ) : (
-          ''
-        )}
+              {new Date(puzzle.isPrivateUntil).toISOString()}
+            </h4>
+          ) : (
+            ''
+          )}
         <div css={{ marginTop: '1em' }}>
           Pick a date to appear as daily mini:
         </div>
