@@ -299,7 +299,7 @@ export default requiresAdmin(() => {
                       db.doc(`automoderated/${cfm.i}`).delete();
                     });
                   }}
-                  text="Moderate"
+                  text="Mark as Seen"
                 />
               </>
             )}
