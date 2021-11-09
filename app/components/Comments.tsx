@@ -200,7 +200,11 @@ const CommentFlair = (props: CommentFlairProps) => {
             padding: '0.1em 0.2em',
           }}
         >
-          {props.hasGuestConstructor ? t`publisher` : t`constructor`}
+          {props.hasGuestConstructor ? (
+            <Trans>publisher</Trans>
+          ) : (
+            <Trans id="ctor">constructor</Trans>
+          )}
         </span>
       ) : (
         <>
