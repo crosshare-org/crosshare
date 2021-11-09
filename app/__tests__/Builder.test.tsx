@@ -366,7 +366,7 @@ test('publish as default', async () => {
   await r4.findByText(/Enter Rebus/i);
   expect(r4.queryByText(/visible to others yet/i)).toBeNull();
   fireEvent.click(r4.getByText(/Moderate/i));
-  expect(r4.queryByText(/private until/i)).not.toBeNull();
+  expect(r4.queryByText(/private until/i)).toBeNull();
   const approveButton = await r4.findByText(/Set as Featured/i);
   fireEvent.click(approveButton);
   await r4.findByText('Moderated!', undefined, { timeout: 5000 });
