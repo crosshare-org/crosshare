@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { css } from '@emotion/react';
 import { ReactNode, Fragment } from 'react';
 import SimpleMarkdown, { SingleASTNode, ASTNode } from 'simple-markdown';
 import { useHover } from '../lib/hooks';
@@ -115,6 +116,10 @@ function chopTo(
   return out;
 }
 
+const marginRight = css`
+  margin-right: 0.5em;
+`;
+
 export const Markdown = ({
   text,
   clueMap,
@@ -179,9 +184,8 @@ export const Markdown = ({
                 text={node.content}
                 tooltip={
                   <>
-                    <b css={{ marginRight: '0.5em' }}>
-                      {mouseover.fullClueNumber}{' '}
-                      <code>{mouseover.answer}</code>
+                    <b css={marginRight}>
+                      {mouseover.fullClueNumber} <code>{mouseover.answer}</code>
                     </b>
                     {mouseover.clue}
                   </>
