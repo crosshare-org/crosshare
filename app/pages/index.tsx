@@ -112,14 +112,14 @@ export default function HomePage({
 
       <div css={{ margin: '1em' }}>
         <p css={{ marginBottom: '1em' }}>
-          <Trans>
+          <Trans id="crosshare-intro">
             Crosshare is a <b>free</b>, <b>ad-free</b>, and{' '}
             <a href="https://github.com/mdirolf/crosshare/">open-source</a>{' '}
             place to create, share and solve crossword puzzles.
           </Trans>
         </p>
         <p>
-          <Trans>
+          <Trans id="consider-donating">
             If you&apos;re enjoying Crosshare please consider{' '}
             <a href="/donate">donating</a> to support its continuing
             development.

@@ -211,7 +211,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                 )}
                 {isContest ? (
                   <p css={{ marginTop: '1em' }}>
-                    <Trans>
+                    <Trans id="meta-explanation">
                       This is a contest/meta puzzle. To submit your answer,
                       first finish solving the grid (or reveal it if you get
                       stuck or solved offline).
