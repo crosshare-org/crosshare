@@ -127,12 +127,7 @@ export default function FeaturedPageHandler(props: PageProps) {
             Crosshare Featured Puzzles
           </Trans>
         </h1>
-        <p>
-          <Trans>
-            Featured puzzles are puzzles selected by Crosshare that we found to be
-            particularly fun and well constructed. Enjoy!
-          </Trans>
-        </p>
+        <p>{description}</p>
         {props.puzzles.map((p, i) => (
           <PuzzleResultLink
             key={i}

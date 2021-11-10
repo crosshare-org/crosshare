@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2021-11-10 13:14-0500\n"
+"POT-Creation-Date: 2021-11-10 15:29-0500\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,24 +19,24 @@ msgstr ""
 msgid "Account"
 msgstr ""
 
-#: components/Puzzle.tsx:991
+#: components/Puzzle.tsx:992
 msgid "Account / Settings"
 msgstr "Account / Impostazioni"
 
-#: components/Puzzle.tsx:641
-#: components/Puzzle.tsx:754
+#: components/Puzzle.tsx:642
+#: components/Puzzle.tsx:755
 msgid "Across"
 msgstr "Orizzontali"
 
-#: components/Puzzle.tsx:132
+#: components/Puzzle.tsx:133
 msgid "Almost there!"
 msgstr "Ci sei quasi!"
 
-#: components/Puzzle.tsx:837
+#: components/Puzzle.tsx:838
 msgid "Autocheck"
 msgstr "Controllo automatico"
 
-#: components/Puzzle.tsx:884
+#: components/Puzzle.tsx:885
 msgid "Autochecking"
 msgstr "Controllo automatico in corso"
 
@@ -59,19 +59,19 @@ msgstr ""
 msgid "Cancel"
 msgstr "Annulla"
 
-#: components/Puzzle.tsx:832
+#: components/Puzzle.tsx:833
 msgid "Check"
 msgstr "Controlla"
 
-#: components/Puzzle.tsx:869
+#: components/Puzzle.tsx:870
 msgid "Check Puzzle"
 msgstr "Controlla lo Schema"
 
-#: components/Puzzle.tsx:847
+#: components/Puzzle.tsx:848
 msgid "Check Square"
 msgstr "Controlla la Casella"
 
-#: components/Puzzle.tsx:858
+#: components/Puzzle.tsx:859
 msgid "Check Word"
 msgstr "Controlla la Parola"
 
@@ -91,7 +91,7 @@ msgstr "Commenti"
 msgid "Comments / Leaderboard"
 msgstr "Commenti / Classifica"
 
-#: components/Puzzle.tsx:996
+#: components/Puzzle.tsx:997
 msgid "Construct a Puzzle"
 msgstr "Costruisci un Cruciverba"
 
@@ -108,19 +108,19 @@ msgid "Create or Share a Puzzle"
 msgstr ""
 
 #. the variable is a month and year like 'noviembre de 2021'
-#: pages/dailyminis/[[...slug]].tsx:210
+#: pages/dailyminis/[[...slug]].tsx:207
 msgid "Crosshare Daily Mini Puzzles for {date}"
 msgstr ""
 
-#: pages/featured/[pageNumber].tsx:124
+#: pages/featured/[pageNumber].tsx:126
 msgid "Crosshare Featured Puzzles"
 msgstr ""
 
-#: pages/index.tsx:149
+#: pages/index.tsx:153
 msgid "Daily Mini"
 msgstr "Mini di Oggi"
 
-#: pages/dailyminis/[[...slug]].tsx:222
+#: pages/dailyminis/[[...slug]].tsx:219
 msgid "Daily Mini for {displayDate}"
 msgstr ""
 
@@ -128,24 +128,24 @@ msgstr ""
 msgid "Display name updated"
 msgstr "Nome aggiornato"
 
-#: components/Puzzle.tsx:663
-#: components/Puzzle.tsx:774
+#: components/Puzzle.tsx:664
+#: components/Puzzle.tsx:775
 msgid "Down"
 msgstr "Verticali"
 
-#: components/Puzzle.tsx:986
+#: components/Puzzle.tsx:987
 msgid "Download .puz File"
 msgstr "Scarica il file .puz"
 
-#: components/Puzzle.tsx:963
+#: components/Puzzle.tsx:964
 msgid "Edit"
 msgstr "Modifica"
 
-#: components/Puzzle.tsx:968
+#: components/Puzzle.tsx:969
 msgid "Embed"
 msgstr "Incorpora"
 
-#: components/Puzzle.tsx:905
+#: components/Puzzle.tsx:906
 msgid "Enter Rebus"
 msgstr "Inserisci Rebus"
 
@@ -153,19 +153,15 @@ msgstr "Inserisci Rebus"
 msgid "Enter your reply"
 msgstr "Inserisci la tua risposta"
 
-#: pages/index.tsx:171
+#: pages/index.tsx:175
 msgid "Featured Puzzles"
-msgstr ""
-
-#: pages/featured/[pageNumber].tsx:129
-msgid "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
 msgstr ""
 
 #: components/Puzzle.tsx:1072
 msgid "Grid"
 msgstr "Griglia"
 
-#: components/Puzzle.tsx:140
+#: components/Puzzle.tsx:141
 msgid "Keep Trying"
 msgstr "Riprova"
 
@@ -198,20 +194,20 @@ msgstr "Accedi (tramite Google)"
 msgid "Login (via Google) to save your puzzle progress/stats"
 msgstr "Accedi (tramite Google) per salvare progressi e statistiche sui cruciverba"
 
-#: components/Puzzle.tsx:899
+#: components/Puzzle.tsx:900
 msgid "More"
 msgstr "Di più"
 
-#: components/Puzzle.tsx:928
+#: components/Puzzle.tsx:929
 msgid "Mute"
 msgstr "Silenzia"
 
-#: pages/dailyminis/[[...slug]].tsx:232
+#: pages/dailyminis/[[...slug]].tsx:229
 msgid "Newer Minis"
 msgstr ""
 
-#: pages/featured/[pageNumber].tsx:147
-#: pages/featured/[pageNumber].tsx:157
+#: pages/featured/[pageNumber].tsx:144
+#: pages/featured/[pageNumber].tsx:154
 msgid "Newer Puzzles"
 msgstr ""
 
@@ -219,11 +215,11 @@ msgstr ""
 msgid "Nobody is on the leaderboard yet"
 msgstr "La classifica è vuota per ora."
 
-#: pages/dailyminis/[[...slug]].tsx:238
+#: pages/dailyminis/[[...slug]].tsx:235
 msgid "Older Minis"
 msgstr ""
 
-#: pages/featured/[pageNumber].tsx:163
+#: pages/featured/[pageNumber].tsx:160
 msgid "Older Puzzles"
 msgstr ""
 
@@ -243,15 +239,15 @@ msgstr "Metti in pausa il gioco"
 msgid "Powered by crosshare.org"
 msgstr "Realizzato da crosshare.org"
 
-#: pages/index.tsx:162
+#: pages/index.tsx:166
 msgid "Previous daily minis"
 msgstr "Mini dei giorni scorsi"
 
-#: pages/index.tsx:182
+#: pages/index.tsx:186
 msgid "Previous featured puzzles"
 msgstr ""
 
-#: components/Puzzle.tsx:981
+#: components/Puzzle.tsx:982
 msgid "Print Puzzle"
 msgstr "Stampa Puzzle"
 
@@ -289,19 +285,19 @@ msgstr "Rispondi"
 msgid "Resume"
 msgstr "Riprendi"
 
-#: components/Puzzle.tsx:789
+#: components/Puzzle.tsx:790
 msgid "Reveal"
 msgstr "Svela"
 
-#: components/Puzzle.tsx:818
+#: components/Puzzle.tsx:819
 msgid "Reveal Puzzle"
 msgstr "Svela lo Schema"
 
-#: components/Puzzle.tsx:794
+#: components/Puzzle.tsx:795
 msgid "Reveal Square"
 msgstr "Svela la Casella"
 
-#: components/Puzzle.tsx:806
+#: components/Puzzle.tsx:807
 msgid "Reveal Word"
 msgstr "Svela la Parola"
 
@@ -334,15 +330,15 @@ msgstr "Risolto <0>senza controllare/svelare</0> in"
 msgid "Solved in"
 msgstr "Risolto in"
 
-#: components/Puzzle.tsx:958
+#: components/Puzzle.tsx:959
 msgid "Stats"
 msgstr "Statistiche"
 
-#: pages/index.tsx:156
+#: pages/index.tsx:160
 msgid "Today's daily mini crossword"
 msgstr "Il mini cruciverba di oggi"
 
-#: components/Puzzle.tsx:934
+#: components/Puzzle.tsx:935
 msgid "Toggle Keyboard"
 msgstr "Attiva/disattiva tastiera"
 
@@ -350,7 +346,7 @@ msgstr "Attiva/disattiva tastiera"
 msgid "Unfinished Solves"
 msgstr ""
 
-#: components/Puzzle.tsx:922
+#: components/Puzzle.tsx:923
 msgid "Unmute"
 msgstr "Riattiva il suono"
 
@@ -362,7 +358,7 @@ msgstr "Aggiorna il tuo nome:"
 msgid "You are currently solving downs-only:"
 msgstr "Al momento stai risolvendo con solo le verticali:"
 
-#: components/Puzzle.tsx:135
+#: components/Puzzle.tsx:136
 msgid "You've completed the puzzle, but there are one or more mistakes."
 msgstr "Hai completato il cruciverba, ma c'è almeno un errore."
 
@@ -378,7 +374,7 @@ msgstr "cambia nome"
 msgid "commenting as"
 msgstr "stai commentando come"
 
-#: pages/index.tsx:132
+#: pages/index.tsx:136
 msgid "consider-donating"
 msgstr "Se ti piace Crosshare, per favore considera una <0>donazione</0> per sostenere il suo continuo sviluppo."
 
@@ -386,7 +382,7 @@ msgstr "Se ti piace Crosshare, per favore considera una <0>donazione</0> per sos
 msgid "create-button"
 msgstr ""
 
-#: pages/index.tsx:125
+#: pages/index.tsx:129
 msgid "crosshare-intro"
 msgstr "Crosshare è un luogo per creare, condividere e risolvere cruciverba ed è <0>gratuito</0> , <1>senza pubblicità</1> e <2>open-source</2>."
 
@@ -398,15 +394,15 @@ msgstr "costruttore"
 msgid "enable across clues"
 msgstr "abilita le definizioni orizzontali"
 
-#: pages/index.tsx:187
+#: pages/index.tsx:191
 msgid "faq"
 msgstr ""
 
-#: pages/featured/[pageNumber].tsx:74
+#: pages/featured/[pageNumber].tsx:79
 msgid "feat-desc"
 msgstr ""
 
-#: pages/featured/[pageNumber].tsx:72
+#: pages/featured/[pageNumber].tsx:77
 msgid "featured-title"
 msgstr ""
 
@@ -417,7 +413,7 @@ msgstr ""
 msgid "guest-attrib"
 msgstr ""
 
-#: pages/index.tsx:114
+#: pages/index.tsx:117
 msgid "home-title"
 msgstr ""
 
@@ -433,12 +429,12 @@ msgstr ""
 msgid "meta-explanation"
 msgstr "Questo è un concorso/meta puzzle. Per inviare la tua risposta, prima finisci di risolvere la griglia (o rivelala se rimani bloccato o risolvi offline)."
 
-#: pages/dailyminis/[[...slug]].tsx:160
+#: pages/dailyminis/[[...slug]].tsx:161
 msgid "mini-explain"
 msgstr ""
 
 #. The variable is a month and year like noviembre de 2021
-#: pages/dailyminis/[[...slug]].tsx:169
+#: pages/dailyminis/[[...slug]].tsx:171
 msgid "mini-title"
 msgstr ""
 
@@ -447,7 +443,7 @@ msgid "publisher"
 msgstr "editore"
 
 #. the variable is a translated version of 'email or twitter'
-#: pages/index.tsx:200
+#: pages/index.tsx:204
 msgid "questions"
 msgstr ""
 
