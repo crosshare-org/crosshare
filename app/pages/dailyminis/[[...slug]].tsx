@@ -11,7 +11,7 @@ import {
   CategoryIndexT,
   addZeros,
   getDateString,
-  prettifyDateString,
+  parseDateString,
 } from '../../lib/dbtypes';
 import { PuzzleResult, puzzleFromDB } from '../../lib/types';
 import { ConstructorPageT } from '../../lib/constructorPage';
@@ -20,6 +20,9 @@ import { Markdown } from '../../components/Markdown';
 import { DefaultTopBar } from '../../components/TopBar';
 import { PuzzleResultLink } from '../../components/PuzzleLink';
 import { userIdToPage } from '../../lib/serverOnly';
+import { useRouter } from 'next/router';
+import { Trans, t } from '@lingui/macro';
+import { withTranslation } from '../../lib/translation';
 
 export interface DailyMiniProps {
   puzzles: Array<[string, PuzzleResult, ConstructorPageT | null]>;
@@ -33,7 +36,7 @@ interface ErrorProps {
 }
 type PageProps = DailyMiniProps | ErrorProps;
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async ({
+const gssp: GetServerSideProps<PageProps> = async ({
   res,
   params,
 }) => {
@@ -59,20 +62,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   return { props: props };
 };
 
-const MonthNames = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
+export const getServerSideProps = withTranslation(gssp);
 
 export async function puzzlesListForCategoryIndex(
   idx: CategoryIndexT,
@@ -98,7 +88,7 @@ export async function puzzlesListForCategoryIndex(
           const puzzle = puzzleFromDB(dbpuzzle);
           const cp = await userIdToPage(dbpuzzle.a);
           return [
-            prettifyDateString(dateString),
+            dateString,
             { ...puzzle, id: puzzleId },
             cp,
           ];
@@ -151,6 +141,9 @@ export async function propsForDailyMini(
 }
 
 export default function DailyMiniPage(props: PageProps) {
+  const {locale} = useRouter();
+  const loc = locale || 'en';
+
   if ('error' in props) {
     return (
       <ErrorPage title="Category Not Found">
@@ -164,22 +157,24 @@ export default function DailyMiniPage(props: PageProps) {
       </ErrorPage>
     );
   }
-  const description = `Crosshare features a free daily mini crossword every day of the week.
+  const description = t({id: 'mini-explain', message: `Crosshare features a free daily mini crossword every day of the week.
   These puzzles are a great way to give your brain a bite-sized challenge, and to
   learn how crosswords work before taking on larger puzzles.
 
   Mini puzzles are most often 5x5, but can be other sizes as well - sometimes
   the weekend minis are a bit larger. Any small sized puzzle you publish publicly to Crosshare
-  will be eligible for selection as a daily mini!`;
-  const date = `${MonthNames[props.month]} ${props.year}`;
+  will be eligible for selection as a daily mini!`});
+
+  const date = new Date(props.year, props.month, 1).toLocaleString(loc, {month: 'long', year: 'numeric'});
+  const title = t({id: 'mini-title', message: `Daily Mini Puzzles for ${date}`, comment: 'The variable is a month and year like noviembre de 2021'});
   return (
     <>
       <Head>
-        <title>Daily Mini Puzzles for {date} | Crosshare crosswords</title>
+        <title>{title} | Crosshare crosswords</title>
         <meta
           key="og:title"
           property="og:title"
-          content={'Daily Mini Puzzles for ' + date}
+          content={title}
         />
         <meta key="description" name="description" content={description} />
         <meta
@@ -212,32 +207,35 @@ export default function DailyMiniPage(props: PageProps) {
       </Head>
       <DefaultTopBar />
       <div css={{ margin: '1em' }}>
-        <h2>Crosshare Daily Mini Puzzles for {date}</h2>
+        <h2><Trans comment="the variable is a month and year like 'noviembre de 2021'">Crosshare Daily Mini Puzzles for {date}</Trans></h2>
         <div css={{ marginBottom: '2em' }}>
           <Markdown text={description} />
         </div>
-        {props.puzzles.map(([dateString, puzzle, cp]) => (
-          <PuzzleResultLink
+        {props.puzzles.map(([dateString, puzzle, cp]) => {
+          const parts = parseDateString(dateString);
+          const displayDate = new Date(...parts).toLocaleDateString(loc);
+          return <PuzzleResultLink
             key={dateString}
             puzzle={puzzle}
             showAuthor={true}
             constructorPage={cp}
-            title={'Daily Mini for ' + dateString}
-          />
-        ))}
+            title={t`Daily Mini for ${displayDate}`}
+          />;
+        }
+        )}
         <p css={{ textAlign: 'center', paddingBottom: '1em' }}>
           {props.newerLink ? (
             <Link
               css={{ marginRight: '1em' }}
               href={'/dailyminis/' + props.newerLink}
             >
-              Newer Minis
+              <Trans>Newer Minis</Trans>
             </Link>
           ) : (
             ''
           )}
           {props.olderLink ? (
-            <Link href={'/dailyminis/' + props.olderLink}>Older Minis</Link>
+            <Link href={'/dailyminis/' + props.olderLink}><Trans>Older Minis</Trans></Link>
           ) : (
             ''
           )}

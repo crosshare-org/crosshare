@@ -7,6 +7,7 @@ import { PuzzleResultLink } from '../components/PuzzleLink';
 import { getPuzzle } from '../lib/puzzleCache';
 import { puzzleFromDB } from '../lib/types';
 import { ButtonAsLink } from '../components/Buttons';
+import { Trans, t } from '@lingui/macro';
 
 import { usePaginatedQuery } from '../lib/usePagination';
 
@@ -50,7 +51,7 @@ export function UnfinishedPuzzleList({
   if (unfinishedPuzzles.length) {
     return (
       <>
-        <h2>Unfinished Solves</h2>
+        <h2><Trans>Unfinished Solves</Trans></h2>
         {unfinishedPuzzles.map((puzzle) => (
           <PuzzleResultLink
             key={puzzle.id}
@@ -60,12 +61,12 @@ export function UnfinishedPuzzleList({
           />
         ))}
         {loadingUnfinished ? (
-          <p>Loading...</p>
+          <p><Trans>Loading...</Trans></p>
         ) : (
           hasMoreUnfinished && (
             <ButtonAsLink
               onClick={loadMoreUnfinished}
-              text="Older unfinished solves &rarr;"
+              text={t`Older unfinished solves` + ' &rarr;'}
             />
           )
         )}

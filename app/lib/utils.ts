@@ -1,5 +1,3 @@
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-
 export const STORAGE_KEY = 'puzzleInProgress';
 
 export const slugify = (...args: (string | number)[]): string => {
@@ -34,13 +32,6 @@ export function timeString(elapsed: number, fixedSize: boolean): string {
     (seconds < 10 ? '0' : '') +
     seconds
   );
-}
-
-export function pastDistanceToNow(date: Date) {
-  if (date > new Date()) {
-    return 'just now';
-  }
-  return formatDistanceToNow(date, { addSuffix: true });
 }
 
 export function hslToRgb(h: number, s: number, l: number) {

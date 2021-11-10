@@ -1,6 +1,7 @@
 import { FaCloudUploadAlt, FaHammer } from 'react-icons/fa';
 import { Link } from '../components/Link';
 import { LARGE_AND_UP, SMALL_AND_UP } from '../lib/style';
+import { Trans } from '@lingui/macro';
 
 const getCreateShareButtonCss = (halfWidth: boolean) => ({
   width: '100%',
@@ -23,7 +24,7 @@ export function CreateShareSection(props: { halfWidth: boolean }) {
 
   return (
     <>
-      <h2>Create or Share a Puzzle</h2>
+      <h2><Trans>Create or Share a Puzzle</Trans></h2>
       <div
         css={{
           display: 'flex',
@@ -40,16 +41,18 @@ export function CreateShareSection(props: { halfWidth: boolean }) {
             css={{ alignSelf: 'center', marginRight: '0.5em', fontSize: '2em' }}
           />
           <div css={{ flex: 1 }}>
-            <h4>Create a new puzzle</h4>
-            <p
-              css={{
-                color: 'var(--text)',
-                display: 'inline-block',
-                textDecoration: 'none !important',
-              }}
-            >
-              Build a crossword puzzle with the Crosshare constructor
-            </p>
+            <Trans id="create-button">
+              <h4>Create a new puzzle</h4>
+              <p
+                css={{
+                  color: 'var(--text)',
+                  display: 'inline-block',
+                  textDecoration: 'none !important',
+                }}
+              >
+                Build a crossword puzzle with the Crosshare constructor
+              </p>
+            </Trans>
           </div>
         </Link>
         <Link css={createShareButtonCss} href="/upload">
@@ -57,16 +60,18 @@ export function CreateShareSection(props: { halfWidth: boolean }) {
             css={{ alignSelf: 'center', marginRight: '0.5em', fontSize: '2em' }}
           />
           <div css={{ flex: 1 }}>
-            <h4>Upload a .puz file</h4>
-            <p
-              css={{
-                color: 'var(--text)',
-                display: 'inline-block',
-                textDecoration: 'none !important',
-              }}
-            >
-              Get a Crosshare link to share with solvers
-            </p>
+            <Trans id="upload-button">
+              <h4>Upload a .puz file</h4>
+              <p
+                css={{
+                  color: 'var(--text)',
+                  display: 'inline-block',
+                  textDecoration: 'none !important',
+                }}
+              >
+                Get a Crosshare link to share with solvers
+              </p>
+            </Trans>
           </div>
         </Link>
       </div>

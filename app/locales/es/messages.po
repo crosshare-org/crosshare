@@ -1,15 +1,29 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2021-11-09 18:04-0500\n"
+"POT-Creation-Date: 2021-11-10 09:33-0500\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: es\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
-#: components/Comments.tsx:350
+#: components/Comments.tsx:351
 msgid "(please be nice!):"
 msgstr "(¡por favor sé amable!):"
+
+#: components/ContactLinks.tsx:6
+msgid "<0>email</0> or <1>twitter</1>"
+msgstr ""
+
+#: components/TopBar.tsx:694
+msgid "Account"
+msgstr ""
 
 #: components/Puzzle.tsx:991
 msgid "Account / Settings"
@@ -36,7 +50,17 @@ msgstr "Verificando automáticamente"
 msgid "Begin Puzzle"
 msgstr "Comenzar crucigrama"
 
-#: components/Comments.tsx:376
+#. The variable is the name of the puzzle's constructor
+#: components/PuzzleLink.tsx:170
+msgid "By {guestConstructor}"
+msgstr ""
+
+#. The variable is the name of the puzzle's constructor
+#: components/PuzzleLink.tsx:182
+msgid "By {link}"
+msgstr ""
+
+#: components/Comments.tsx:377
 #: components/DisplayNameForm.tsx:81
 msgid "Cancel"
 msgstr "Cancelar"
@@ -65,7 +89,7 @@ msgstr "Comprobando datos de juego anteriores…"
 msgid "Clues"
 msgstr "Pistas"
 
-#: components/Comments.tsx:563
+#: components/Comments.tsx:564
 msgid "Comments"
 msgstr "Comentarios"
 
@@ -77,13 +101,30 @@ msgstr "Comentarios / Tabla de clasificación"
 msgid "Construct a Puzzle"
 msgstr "Crear un cucigrama"
 
+#: components/TopBar.tsx:685
+msgid "Constructor Dashboard"
+msgstr ""
+
 #: components/Puzzle.tsx:1093
 msgid "Contest Prompt / Submission"
 msgstr "Entrada / Presentación de concurso"
 
-#: pages/index.tsx:139
+#: components/CreateShareSection.tsx:27
+msgid "Create or Share a Puzzle"
+msgstr ""
+
+#. the variable is a month and year like 'noviembre de 2021'
+#: pages/dailyminis/[[...slug]].tsx:210
+msgid "Crosshare Daily Mini Puzzles for {date}"
+msgstr ""
+
+#: pages/index.tsx:152
 msgid "Daily Mini"
 msgstr "Mini Diario "
+
+#: pages/dailyminis/[[...slug]].tsx:222
+msgid "Daily Mini for {displayDate}"
+msgstr ""
 
 #: components/DisplayNameForm.tsx:54
 msgid "Display name updated"
@@ -110,9 +151,13 @@ msgstr "Incrustar"
 msgid "Enter Rebus"
 msgstr "Ingresar jeroglífico"
 
-#: components/Comments.tsx:347
+#: components/Comments.tsx:348
 msgid "Enter your reply"
 msgstr "Ingresar tu respuesta"
+
+#: pages/index.tsx:174
+msgid "Featured Puzzles"
+msgstr ""
 
 #: components/Puzzle.tsx:1072
 msgid "Grid"
@@ -126,13 +171,17 @@ msgstr "Sigue intentando"
 msgid "Leaderboard (updated hourly)"
 msgstr "Tabla de clasificación (actualizada cada hora)"
 
-#: components/Comments.tsx:348
+#: components/Comments.tsx:349
 msgid "Leave a comment"
 msgstr "Deja un comentario"
 
-#: components/Comments.tsx:410
+#: components/Comments.tsx:411
 msgid "Live Preview:"
 msgstr "Vista previa en vivo:"
+
+#: components/UnfinishedPuzzleList.tsx:64
+msgid "Loading..."
+msgstr ""
 
 #: components/PuzzleOverlay.tsx:96
 msgid "Logged in as {0}"
@@ -155,9 +204,21 @@ msgstr "Más"
 msgid "Mute"
 msgstr "Silenciar"
 
+#: pages/dailyminis/[[...slug]].tsx:232
+msgid "Newer Minis"
+msgstr ""
+
 #: components/PuzzleOverlay.tsx:338
 msgid "Nobody is on the leaderboard yet"
 msgstr "Todavía no hay nadie en la tabla de clasificación"
+
+#: pages/dailyminis/[[...slug]].tsx:238
+msgid "Older Minis"
+msgstr ""
+
+#: components/UnfinishedPuzzleList.tsx:69
+msgid "Older unfinished solves"
+msgstr ""
 
 #: components/PuzzleOverlay.tsx:372
 msgid "Open on crosshare.org"
@@ -171,19 +232,45 @@ msgstr "Pausar juego"
 msgid "Powered by crosshare.org"
 msgstr "Desarrollado por crosshare.org"
 
-#: pages/index.tsx:154
+#: pages/index.tsx:165
 msgid "Previous daily minis"
 msgstr "Minis diarios anteriores "
+
+#: pages/index.tsx:185
+msgid "Previous featured puzzles"
+msgstr ""
 
 #: components/Puzzle.tsx:981
 msgid "Print Puzzle"
 msgstr "Imprimir crucigrama"
 
+#. The variable is a timestamp like 'in 4 days' or 'en 4 dias'
+#: components/PuzzleLink.tsx:284
+msgid "Private, going public <0/>"
+msgstr ""
+
+#. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
+#. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
+#: components/PuzzleHeading.tsx:55
+#: components/PuzzleLink.tsx:264
+msgid "Published <0/>"
+msgstr ""
+
+#. The variable is the name of the user who published the puzzle
+#: components/PuzzleLink.tsx:174
+msgid "Published by {link}"
+msgstr ""
+
+#. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
+#: components/PuzzleLink.tsx:273
+msgid "Published privately <0/>"
+msgstr ""
+
 #: components/Puzzle.tsx:1142
 msgid "Ready to get started?"
 msgstr "¿Todo listo para comenzar?"
 
-#: components/Comments.tsx:107
+#: components/Comments.tsx:108
 msgid "Reply"
 msgstr "Responder"
 
@@ -207,7 +294,7 @@ msgstr "Revelar casillero"
 msgid "Reveal Word"
 msgstr "Revelar palabra"
 
-#: components/Comments.tsx:369
+#: components/Comments.tsx:370
 #: components/DisplayNameForm.tsx:73
 msgid "Save"
 msgstr "Guardar"
@@ -220,7 +307,7 @@ msgstr "Establecer tu nombre visible:"
 msgid "Show Comments"
 msgstr "Mostrar comentarios"
 
-#: components/Comments.tsx:568
+#: components/Comments.tsx:569
 msgid "Sign in with google to leave a comment of your own:"
 msgstr "Inicia sesión con Google para dejar un comentario tuyo:"
 
@@ -240,13 +327,17 @@ msgstr "Resuelto en"
 msgid "Stats"
 msgstr "Estadísticas"
 
-#: pages/index.tsx:146
+#: pages/index.tsx:159
 msgid "Today's daily mini crossword"
 msgstr "Mini crucigrama diario de hoy "
 
 #: components/Puzzle.tsx:934
 msgid "Toggle Keyboard"
 msgstr "Activar/desactivar teclado"
+
+#: components/UnfinishedPuzzleList.tsx:54
+msgid "Unfinished Solves"
+msgstr ""
 
 #: components/Puzzle.tsx:922
 msgid "Unmute"
@@ -268,23 +359,27 @@ msgstr "Has completado el crucigrama, pero hay uno o más errores."
 msgid "Your puzzle is paused"
 msgstr "Tu crucigramas está pausado"
 
-#: components/Comments.tsx:395
+#: components/Comments.tsx:396
 msgid "change name"
 msgstr "cambiar nombre"
 
-#: components/Comments.tsx:381
+#: components/Comments.tsx:382
 msgid "commenting as"
 msgstr "comentando como"
 
-#: pages/index.tsx:122
+#: pages/index.tsx:135
 msgid "consider-donating"
 msgstr "Si estás disfrutando Crosshare por favor considera <0>donar</0> para sostener la continuación de su desarrollo."
 
-#: pages/index.tsx:115
+#: components/CreateShareSection.tsx:44
+msgid "create-button"
+msgstr ""
+
+#: pages/index.tsx:128
 msgid "crosshare-intro"
 msgstr "Crosshare es un espacio <0>gratuito</0>, <1>sin publicidad</1> y de <2>código abierto</2> para crear, compartir y resolver crucigramas."
 
-#: components/Comments.tsx:206
+#: components/Comments.tsx:207
 msgid "ctor"
 msgstr "constructor"
 
@@ -292,19 +387,60 @@ msgstr "constructor"
 msgid "enable across clues"
 msgstr "activar pistas horizontales"
 
+#: pages/index.tsx:190
+msgid "faq"
+msgstr ""
+
+#. The variable is the guest constructor's name
+#. The variable is the guest constructor's name
+#: components/PuzzleLink.tsx:302
+#: components/PuzzleLink.tsx:327
+msgid "guest-attrib"
+msgstr ""
+
 #: components/TopBar.tsx:122
 msgid "hotkey"
 msgstr "atajo de teclado"
+
+#: components/TimeDisplay.tsx:21
+msgid "just now"
+msgstr ""
 
 #: components/PuzzleOverlay.tsx:214
 msgid "meta-explanation"
 msgstr "Este es un crucigrama meta o de concurso. Para presentar tu respuesta, primero termina de resolver la cuadrícula (o revélala si te trabas o si la resolviste sin conexión)."
 
-#: components/Comments.tsx:204
+#: pages/dailyminis/[[...slug]].tsx:160
+msgid "mini-explain"
+msgstr ""
+
+#. The variable is a month and year like noviembre de 2021
+#: pages/dailyminis/[[...slug]].tsx:169
+msgid "mini-title"
+msgstr ""
+
+#: components/Comments.tsx:205
 msgid "publisher"
 msgstr "publicador"
+
+#. the variable is a translated version of 'email or twitter'
+#: pages/index.tsx:203
+msgid "questions"
+msgstr ""
+
+#: components/PuzzleHeading.tsx:109
+msgid "tip-hover"
+msgstr ""
 
 #: components/PuzzleOverlay.tsx:104
 #: components/PuzzleOverlay.tsx:111
 msgid "to save your puzzle progress/stats"
 msgstr "para guardar tu progreso/estadísticas de crucigramas"
+
+#: components/PuzzleLink.tsx:129
+msgid "unfinished"
+msgstr ""
+
+#: components/CreateShareSection.tsx:63
+msgid "upload-button"
+msgstr ""

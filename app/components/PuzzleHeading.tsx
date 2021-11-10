@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
 
 import { LinkButtonSimpleA } from './Link';
-import { pastDistanceToNow } from '../lib/utils';
+import { PastDistanceToNow } from './TimeDisplay';
 import { ConstructorNotes } from './ConstructorNotes';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { ProfilePicAndName } from './Images';
@@ -12,6 +12,7 @@ import { AuthorLink } from './PuzzleLink';
 import { EmbedContext } from './EmbedContext';
 import { GlickoScoreT } from '../lib/dbtypes';
 import { DifficultyBadge } from './DifficultyBadge';
+import { Trans } from '@lingui/macro';
 
 export const PuzzleHeading = (props: {
   rating: GlickoScoreT | null;
@@ -51,7 +52,9 @@ export const PuzzleHeading = (props: {
               <>
                 {' · '}
                 <span title={publishDate.toISOString()}>
-                  Published {pastDistanceToNow(publishDate)}
+                  <Trans comment="The variable is a timestamp like '4 days ago' or 'hace 4 dias'">
+                    Published <PastDistanceToNow date={publishDate} />
+                  </Trans>
                 </span>
               </>
             )}
@@ -102,7 +105,11 @@ export const PuzzleHeading = (props: {
             />
             <ToolTipText
               text={<FaInfoCircle />}
-              tooltip="All donations go directly to the constructor via PayPal"
+              tooltip={
+                <Trans id="tip-hover">
+                All donations go directly to the constructor via PayPal
+                </Trans>
+              }
             />
           </div>
         ) : (

@@ -8,11 +8,12 @@ import { SMALL_AND_UP } from '../lib/style';
 import { PuzzleSizeIcon } from '../components/Icons';
 import { DifficultyBadge } from '../components/DifficultyBadge';
 import { Emoji } from '../components/Emoji';
-import { pastDistanceToNow, timeString } from '../lib/utils';
+import { timeString } from '../lib/utils';
 import { PlayWithoutUserT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { Markdown } from './Markdown';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { Trans } from '@lingui/macro';
+import { PastDistanceToNow, DistanceToNow } from './TimeDisplay';
 
 const PuzzleLink = (props: {
   fullWidth?: boolean;
@@ -125,7 +126,7 @@ const PuzzleLink = (props: {
               play.f ? (
                 <i>({timeString(play.t, false)})</i>
               ) : (
-                <i>(unfinished)</i>
+                <i>(<Trans>unfinished</Trans>)</i>
               )
             ) : (
               ''
@@ -166,12 +167,67 @@ export const AuthorLink = ({
   if (guestConstructor) {
     return (
       <>
-        By {guestConstructor} · Published by {link}
+        <Trans comment="The variable is the name of the puzzle's constructor">
+          By {guestConstructor}
+        </Trans>{' '}
+        ·{' '}
+        <Trans comment="The variable is the name of the user who published the puzzle">
+          Published by {link}
+        </Trans>
       </>
     );
   }
-  return <>By {link}</>;
+  return (
+    <>
+      <Trans comment="The variable is the name of the puzzle's constructor">
+        By {link}
+      </Trans>
+    </>
+  );
 };
+
+export type LinkablePuzzle = Pick<
+  PuzzleResult,
+  | 'title'
+  | 'rating'
+  | 'authorName'
+  | 'guestConstructor'
+  | 'isPrivateUntil'
+  | 'publishTime'
+  | 'isPrivate'
+  | 'blogPost'
+  | 'authorId'
+  | 'id'
+  | 'size'
+>;
+
+export function toLinkablePuzzle({
+  title,
+  rating,
+  authorName,
+  guestConstructor,
+  isPrivateUntil,
+  publishTime,
+  isPrivate,
+  blogPost,
+  authorId,
+  id,
+  size,
+}: LinkablePuzzle): LinkablePuzzle {
+  return {
+    title,
+    rating,
+    authorName,
+    guestConstructor,
+    isPrivate,
+    isPrivateUntil,
+    publishTime,
+    blogPost,
+    authorId,
+    id,
+    size,
+  };
+}
 
 export const PuzzleResultLink = ({
   fullWidth,
@@ -184,7 +240,7 @@ export const PuzzleResultLink = ({
   ...props
 }: {
   fullWidth?: boolean;
-  puzzle: PuzzleResult;
+  puzzle: LinkablePuzzle;
   showDate?: boolean;
   showBlogPost?: boolean;
   showPrivateStatus?: boolean;
@@ -205,14 +261,18 @@ export const PuzzleResultLink = ({
     : new Date(puzzle.publishTime);
   let date = (
     <span title={publishDate.toISOString()}>
-      Published {pastDistanceToNow(publishDate)}
+      <Trans comment="The variable is a timestamp like '4 days ago' or 'hace 4 dias'">
+        Published <PastDistanceToNow date={publishDate} />
+      </Trans>
     </span>
   );
   if (props.showPrivateStatus) {
     if (puzzle.isPrivate) {
       date = (
         <span css={{ color: 'var(--error)' }} title={publishDate.toISOString()}>
-          Published privately {pastDistanceToNow(publishDate)}
+          <Trans comment="The variable is a timestamp like '4 days ago' or 'hace 4 dias'">
+            Published privately <PastDistanceToNow date={publishDate} />
+          </Trans>
         </span>
       );
     } else if (
@@ -221,8 +281,9 @@ export const PuzzleResultLink = ({
     ) {
       date = (
         <span css={{ color: 'var(--error)' }} title={publishDate.toISOString()}>
-          Private, going public{' '}
-          {formatDistanceToNow(publishDate, { addSuffix: true })}
+          <Trans comment="The variable is a timestamp like 'in 4 days' or 'en 4 dias'">
+            Private, going public <DistanceToNow date={publishDate} />
+          </Trans>
         </span>
       );
     }
@@ -237,7 +298,14 @@ export const PuzzleResultLink = ({
   } else if (puzzle.guestConstructor && showDate) {
     contents = (
       <p>
-        {difficulty} · By guest constructor {puzzle.guestConstructor} · {date}
+        {difficulty} ·{' '}
+        <Trans
+          id="guest-attrib"
+          comment="The variable is the guest constructor's name"
+        >
+          By guest constructor {puzzle.guestConstructor}
+        </Trans>{' '}
+        · {date}
       </p>
     );
   } else if (showDate) {
@@ -255,7 +323,13 @@ export const PuzzleResultLink = ({
   } else if (puzzle.guestConstructor) {
     contents = (
       <p>
-        {difficulty} · By guest constructor {puzzle.guestConstructor}
+        {difficulty} ·{' '}
+        <Trans
+          id="guest-attrib"
+          comment="The variable is the guest constructor's name"
+        >
+          By guest constructor {puzzle.guestConstructor}
+        </Trans>
       </p>
     );
   }

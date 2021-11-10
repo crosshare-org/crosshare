@@ -314,7 +314,7 @@ export function getDateString(pd: Date): string {
   return pd.getUTCFullYear() + '-' + pd.getUTCMonth() + '-' + pd.getUTCDate();
 }
 
-export function prettifyDateString(dateString: string): string {
+export function parseDateString(dateString: string): [year: number, month: number, day: number] {
   const groups = dateString.match(/^(\d+)-(\d+)-(\d+)$/);
   if (!groups) {
     throw new Error('Bad date string: ' + dateString);
@@ -326,7 +326,12 @@ export function prettifyDateString(dateString: string): string {
   ) {
     throw new Error('Bad date string: ' + dateString);
   }
-  return parseInt(groups[2]) + 1 + '/' + parseInt(groups[3]) + '/' + groups[1];
+  return [parseInt(groups[1]), parseInt(groups[2]), parseInt(groups[3])];
+}
+
+export function prettifyDateString(dateString: string): string {
+  const groups = parseDateString(dateString);
+  return (groups[1] + 1) + '/' + groups[2] + '/' + groups[0];
 }
 
 const ConstructorStatsForPuzzleV = t.intersection([

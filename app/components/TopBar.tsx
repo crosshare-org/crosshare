@@ -23,7 +23,7 @@ import { ButtonResetCSS } from './Buttons';
 import { NotificationT } from '../lib/notifications';
 import { App } from '../lib/firebaseWrapper';
 import { EmbedContext } from './EmbedContext';
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 
 export const TopBarDropDown = (props: {
   onClose?: () => void;
@@ -682,7 +682,7 @@ export const DefaultTopBar = ({
           disabled={dashboardSelected}
           href="/dashboard"
           icon={<FaHammer />}
-          text="Constructor Dashboard"
+          text={t`Constructor Dashboard`}
         />
       ) : (
         ''
@@ -691,7 +691,7 @@ export const DefaultTopBar = ({
         disabled={accountSelected}
         href="/account"
         icon={<FaUser />}
-        text="Account"
+        text={t`Account`}
       />
     </TopBar>
   );

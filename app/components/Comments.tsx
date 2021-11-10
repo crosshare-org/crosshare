@@ -6,7 +6,7 @@ import type firebase from 'firebase/app';
 import { AuthContext } from './AuthContext';
 import { PartialBy, Comment, Direction } from '../lib/types';
 import { Identicon } from './Icons';
-import { timeString, pastDistanceToNow } from '../lib/utils';
+import { timeString } from '../lib/utils';
 import { Emoji } from './Emoji';
 import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
 import { App, TimestampClass } from '../lib/firebaseWrapper';
@@ -22,6 +22,7 @@ import { Link } from './Link';
 import { ButtonAsLink, Button } from './Buttons';
 import { LengthLimitedTextarea, LengthView } from './Inputs';
 import { Trans, t } from '@lingui/macro';
+import { PastDistanceToNow } from './TimeDisplay';
 
 const COMMENT_LENGTH_LIMIT = 280;
 
@@ -232,7 +233,7 @@ const CommentFlair = (props: CommentFlairProps) => {
         <>
           &nbsp;·&nbsp;
           <span css={{ fontStyle: 'italic' }} title={publishDate.toISOString()}>
-            {pastDistanceToNow(publishDate)}{' '}
+            <PastDistanceToNow date={publishDate} />{' '}
           </span>
         </>
       ) : (

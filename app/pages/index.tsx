@@ -5,11 +5,15 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { getDailyMinis } from '../lib/dailyMinis';
 import { Link } from '../components/Link';
-import { puzzleFromDB, ServerPuzzleResult } from '../lib/types';
+import { puzzleFromDB } from '../lib/types';
 import { DBPuzzleV, getDateString } from '../lib/dbtypes';
 import { AdminApp } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
-import { PuzzleResultLink } from '../components/PuzzleLink';
+import {
+  toLinkablePuzzle,
+  LinkablePuzzle,
+  PuzzleResultLink,
+} from '../components/PuzzleLink';
 import { getPuzzlesForFeatured, userIdToPage } from '../lib/serverOnly';
 import { PAGE_SIZE } from './featured/[pageNumber]';
 import { useContext } from 'react';
@@ -21,10 +25,15 @@ import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList';
 import { ArticleT, validate } from '../lib/article';
 import { Trans, t } from '@lingui/macro';
 import { withTranslation } from '../lib/translation';
+import { ConstructorPageT } from '../lib/constructorPage';
+
+type HomepagePuz = LinkablePuzzle & {
+  constructorPage: ConstructorPageT | null;
+};
 
 interface HomePageProps {
-  dailymini: ServerPuzzleResult;
-  featured: Array<ServerPuzzleResult>;
+  dailymini: HomepagePuz;
+  featured: Array<HomepagePuz>;
   articles: Array<ArticleT>;
 }
 
@@ -54,7 +63,7 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
   const [puzzlesWithoutConstructor] = await getPuzzlesForFeatured(0, PAGE_SIZE);
   const featured = await Promise.all(
     puzzlesWithoutConstructor.map(async (p) => ({
-      ...p,
+      ...toLinkablePuzzle(p),
       constructorPage: await userIdToPage(p.authorId),
     }))
   );
@@ -68,12 +77,16 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
       const validationResult = DBPuzzleV.decode(data);
       if (isRight(validationResult)) {
         res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-        const dm = {
-          ...puzzleFromDB(validationResult.right),
-          id: dmResult.id,
+        const dm: HomepagePuz = {
+          ...toLinkablePuzzle({
+            ...puzzleFromDB(validationResult.right),
+            id: dmResult.id,
+          }),
           constructorPage: await userIdToPage(validationResult.right.a),
         };
-        return { props: { dailymini: dm, featured, articles } };
+        return {
+          props: { dailymini: dm, featured, articles },
+        };
       } else {
         console.error(PathReporter.report(validationResult).join(','));
         throw new Error('Malformed daily mini');
@@ -147,9 +160,7 @@ export default function HomePage({
             />
             <p>
               <Link
-                href={`/dailyminis/${today.getUTCFullYear()}/${
-                  today.getUTCMonth() + 1
-                }`}
+                href={`/dailyminis/${today.getUTCFullYear()}/${today.getUTCMonth() + 1}`}
               >
                 <Trans>Previous daily minis</Trans> &rarr;
               </Link>
@@ -160,7 +171,7 @@ export default function HomePage({
           </div>
         </div>
         <hr css={{ margin: '2em 0' }} />
-        <h2>Featured Puzzles</h2>
+        <h2><Trans>Featured Puzzles</Trans></h2>
         {featured.map((p, i) => (
           <PuzzleResultLink
             key={i}
@@ -171,12 +182,12 @@ export default function HomePage({
           />
         ))}
         <p>
-          <Link href="/featured/1">Previous featured puzzles &rarr;</Link>
+          <Link href="/featured/1"><Trans>Previous featured puzzles</Trans> &rarr;</Link>
         </p>
         <hr css={{ margin: '2em 0' }} />
         <UnfinishedPuzzleList user={user} />
         <h4 css={{ marginTop: '2em' }}>
-          Frequently asked questions and information
+          <Trans id="faq">Frequently asked questions and information</Trans>
         </h4>
         <ul
           css={{
@@ -189,8 +200,9 @@ export default function HomePage({
           {articles.map(ArticleListItem)}
         </ul>
         <p css={{ marginTop: '1em', textAlign: 'center' }}>
-          If you have questions or suggestions please contact us via{' '}
-          <ContactLinks />.
+          <Trans id="questions" comment="the variable is a translated version of 'email or twitter'">If you have questions or suggestions please contact us via{' '}
+            <ContactLinks />.
+          </Trans>
         </p>
       </div>
     </>
