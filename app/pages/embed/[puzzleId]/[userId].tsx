@@ -7,8 +7,9 @@ import { EmbedContext } from '../../../components/EmbedContext';
 import { GetServerSideProps } from 'next';
 import { App } from '../../../lib/firebaseWrapper';
 import { validate } from '../../../lib/embedOptions';
+import { withTranslation } from '../../../lib/translation';
 
-export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({
+export const gssp: GetServerSideProps<PuzzlePageProps> = async ({
   params,
   ...rest
 }) => {
@@ -33,6 +34,8 @@ export const getServerSideProps: GetServerSideProps<PuzzlePageProps> = async ({
   }
   return { ...props, props: { ...props.props, embedOptions } };
 };
+
+export const getServerSideProps = withTranslation(gssp);
 
 export default function ThemedPage(props: PuzzlePageProps) {
   let primary = PRIMARY;
