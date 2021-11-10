@@ -5,7 +5,7 @@ import { GA_TRACKING_ID } from '../lib/gtag';
 export default class CrosshareDocument extends Document {
   render(): JSX.Element {
     return (
-      <Html lang="en">
+      <Html>
         <Head>
           <meta charSet="utf-8" />
           <link

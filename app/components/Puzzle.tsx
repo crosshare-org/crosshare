@@ -104,6 +104,7 @@ import {
   PuzzleOverlay,
   PuzzleOverlayBaseProps,
 } from './PuzzleOverlay';
+import { I18nTags } from './I18nTags';
 import { t, Trans } from '@lingui/macro';
 
 const ModeratingOverlay = dynamic(
@@ -366,7 +367,7 @@ export const Puzzle = ({
         state.currentTimeWindowStart === 0
           ? state.bankedSeconds
           : state.bankedSeconds +
-            (new Date().getTime() - state.currentTimeWindowStart) / 1000;
+          (new Date().getTime() - state.currentTimeWindowStart) / 1000;
 
       const playForUser: PlayWithoutUserT = {
         c: puzzle.id,
@@ -1017,14 +1018,13 @@ export const Puzzle = ({
     ? puzzle.blogPost.slice(0, 160) + '...'
     : puzzle.clues.map(getClueText).sort().slice(0, 10).join('; ');
 
+  const locale = router.locale || 'en';
+
   return (
     <>
       <Head>
         <title>{puzzle.title} | Crosshare crossword puzzle</title>
-        <link
-          rel="canonical"
-          href={`https://crosshare.org/crosswords/${puzzle.id}`}
-        />
+        <I18nTags locale={locale} canonicalPath={`/crosswords/${puzzle.id}`} />
         <meta key="og:title" property="og:title" content={puzzle.title} />
         <meta
           key="og:description"

@@ -26,6 +26,8 @@ import { ArticleT, validate } from '../lib/article';
 import { Trans, t } from '@lingui/macro';
 import { withTranslation } from '../lib/translation';
 import { ConstructorPageT } from '../lib/constructorPage';
+import { I18nTags } from '../components/I18nTags';
+import { useRouter } from 'next/router';
 
 type HomepagePuz = LinkablePuzzle & {
   constructorPage: ConstructorPageT | null;
@@ -110,12 +112,14 @@ export default function HomePage({
   articles,
 }: HomePageProps) {
   const today = new Date();
+  const router = useRouter();
   const { user } = useContext(AuthContext);
   const title = t({ id: 'home-title', message: 'Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles' });
   return (
     <>
       <Head>
         <title>{title}</title>
+        <I18nTags locale={router.locale || 'en'} canonicalPath='/' />
       </Head>
 
       <DefaultTopBar />

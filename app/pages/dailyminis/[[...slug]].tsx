@@ -23,6 +23,7 @@ import { userIdToPage } from '../../lib/serverOnly';
 import { useRouter } from 'next/router';
 import { Trans, t } from '@lingui/macro';
 import { withTranslation } from '../../lib/translation';
+import { I18nTags } from '../../components/I18nTags';
 
 export interface DailyMiniProps {
   puzzles: Array<[string, PuzzleResult, ConstructorPageT | null]>;
@@ -125,7 +126,7 @@ export async function propsForDailyMini(
       ...(today.getUTCFullYear() !== year || today.getUTCMonth() !== month
         ? {
           newerLink:
-              month + 1 === 12 ? `${year + 1}/1` : `${year}/${month + 2}`,
+            month + 1 === 12 ? `${year + 1}/1` : `${year}/${month + 2}`,
         }
         : null),
       ...(month === 0 && `${year - 1}-11-31` in validationResult.right
@@ -141,7 +142,7 @@ export async function propsForDailyMini(
 }
 
 export default function DailyMiniPage(props: PageProps) {
-  const {locale} = useRouter();
+  const { locale } = useRouter();
   const loc = locale || 'en';
 
   if ('error' in props) {
@@ -157,7 +158,8 @@ export default function DailyMiniPage(props: PageProps) {
       </ErrorPage>
     );
   }
-  const description = t({id: 'mini-explain', message: `Crosshare features a free daily mini crossword every day of the week.
+  const description = t({
+    id: 'mini-explain', message: `Crosshare features a free daily mini crossword every day of the week.
   These puzzles are a great way to give your brain a bite-sized challenge, and to
   learn how crosswords work before taking on larger puzzles.
 
@@ -165,8 +167,8 @@ export default function DailyMiniPage(props: PageProps) {
   the weekend minis are a bit larger. Any small sized puzzle you publish publicly to Crosshare
   will be eligible for selection as a daily mini!`});
 
-  const date = new Date(props.year, props.month, 1).toLocaleString(loc, {month: 'long', year: 'numeric'});
-  const title = t({id: 'mini-title', message: `Daily Mini Puzzles for ${date}`, comment: 'The variable is a month and year like noviembre de 2021'});
+  const date = new Date(props.year, props.month, 1).toLocaleString(loc, { month: 'long', year: 'numeric' });
+  const title = t({ id: 'mini-title', message: `Daily Mini Puzzles for ${date}`, comment: 'The variable is a month and year like noviembre de 2021' });
   return (
     <>
       <Head>
@@ -182,16 +184,11 @@ export default function DailyMiniPage(props: PageProps) {
           property="og:description"
           content={description}
         />
-        <link
-          rel="canonical"
-          href={`https://crosshare.org/dailyminis/${props.year}/${
-            props.month + 1
-          }`}
-        />
+        <I18nTags locale={loc} canonicalPath={`/dailyminis/${props.year}/${props.month + 1}`} />
         {props.olderLink ? (
           <link
             rel="next"
-            href={'https://crosshare.org/dailyminis/' + props.olderLink}
+            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/dailyminis/${props.olderLink}`}
           />
         ) : (
           ''
@@ -199,7 +196,7 @@ export default function DailyMiniPage(props: PageProps) {
         {props.newerLink ? (
           <link
             rel="next"
-            href={'https://crosshare.org/dailyminis/' + props.newerLink}
+            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/dailyminis/${props.newerLink}`}
           />
         ) : (
           ''

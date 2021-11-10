@@ -10,6 +10,8 @@ import { PuzzleResultLink } from '../../components/PuzzleLink';
 import { Link } from '../../components/Link';
 import { withTranslation } from '../../lib/translation';
 import { Trans, t } from '@lingui/macro';
+import { useRouter } from 'next/router';
+import { I18nTags } from '../../components/I18nTags';
 
 interface FeaturedPageProps {
   puzzles: Array<ServerPuzzleResult>;
@@ -60,6 +62,9 @@ const gssp: GetServerSideProps<PageProps> = async ({
 export const getServerSideProps = withTranslation(gssp);
 
 export default function FeaturedPageHandler(props: PageProps) {
+  const { locale } = useRouter();
+  const loc = locale || 'en';
+
   if ('error' in props) {
     return (
       <ErrorPage title="Something Went Wrong">
@@ -84,19 +89,16 @@ export default function FeaturedPageHandler(props: PageProps) {
           content={description}
         />
         <meta key="description" name="description" content={description} />
-        <link
-          rel="canonical"
-          href={'https://crosshare.org/featured/' + props.currentPage}
-        />
+        <I18nTags locale={loc} canonicalPath={`/featured/${props.currentPage}`} />
         {props.prevPage === 0 ? (
-          <link rel="prev" href={'https://crosshare.org/'} />
+          <link rel="prev" href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/`} />
         ) : (
           ''
         )}
         {props.prevPage ? (
           <link
             rel="prev"
-            href={'https://crosshare.org/featured/' + props.prevPage}
+            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/featured/${props.prevPage}`}
           />
         ) : (
           ''
@@ -104,7 +106,7 @@ export default function FeaturedPageHandler(props: PageProps) {
         {props.nextPage !== null ? (
           <link
             rel="next"
-            href={'https://crosshare.org/featured/' + props.nextPage}
+            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/featured/${props.nextPage}`}
           />
         ) : (
           ''
