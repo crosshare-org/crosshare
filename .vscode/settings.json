@@ -1,3 +1,4 @@
 {
-    "typescript.tsdk": "./app/node_modules/typescript/lib"
+    "typescript.tsdk": "./app/node_modules/typescript/lib",
+    "editor.formatOnSave": true
 }
