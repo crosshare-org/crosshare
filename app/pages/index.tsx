@@ -111,14 +111,11 @@ export default function HomePage({
 }: HomePageProps) {
   const today = new Date();
   const { user } = useContext(AuthContext);
-
+  const title = t({ id: 'home-title', message: 'Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles' });
   return (
     <>
       <Head>
-        <title>
-          Crosshare - Free Crossword Constructor and Daily Mini Crossword
-          Puzzles
-        </title>
+        <title>{title}</title>
       </Head>
 
       <DefaultTopBar />

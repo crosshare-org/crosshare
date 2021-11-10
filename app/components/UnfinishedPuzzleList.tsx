@@ -66,7 +66,7 @@ export function UnfinishedPuzzleList({
           hasMoreUnfinished && (
             <ButtonAsLink
               onClick={loadMoreUnfinished}
-              text={t`Older unfinished solves` + ' &rarr;'}
+              text={t`Older unfinished solves` + ' →'}
             />
           )
         )}

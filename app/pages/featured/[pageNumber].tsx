@@ -8,6 +8,8 @@ import { DefaultTopBar } from '../../components/TopBar';
 import { HUGE_AND_UP, MAX_WIDTH } from '../../lib/style';
 import { PuzzleResultLink } from '../../components/PuzzleLink';
 import { Link } from '../../components/Link';
+import { withTranslation } from '../../lib/translation';
+import { Trans, t } from '@lingui/macro';
 
 interface FeaturedPageProps {
   puzzles: Array<ServerPuzzleResult>;
@@ -22,7 +24,7 @@ type PageProps = FeaturedPageProps | ErrorProps;
 
 export const PAGE_SIZE = 20;
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async ({
+const gssp: GetServerSideProps<PageProps> = async ({
   res,
   params,
 }) => {
@@ -55,6 +57,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   };
 };
 
+export const getServerSideProps = withTranslation(gssp);
+
 export default function FeaturedPageHandler(props: PageProps) {
   if ('error' in props) {
     return (
@@ -65,9 +69,9 @@ export default function FeaturedPageHandler(props: PageProps) {
     );
   }
 
-  const title = `Featured Puzzles | Page ${props.currentPage} | Crosshare`;
+  const title = t({ id: 'featured-title', message: `Featured Puzzles | Page ${props.currentPage} | Crosshare` });
   const description =
-    'Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!';
+    t({ id: 'feat-desc', message: 'Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!' });
 
   return (
     <>
@@ -117,11 +121,15 @@ export default function FeaturedPageHandler(props: PageProps) {
         }}
       >
         <h1 css={{ fontSize: '1.4em', marginBottom: 0 }}>
-          Crosshare Featured Puzzles
+          <Trans>
+            Crosshare Featured Puzzles
+          </Trans>
         </h1>
         <p>
-          Featured puzzles are puzzles selected by Crosshare that we found to be
-          particularly fun and well constructed. Enjoy!
+          <Trans>
+            Featured puzzles are puzzles selected by Crosshare that we found to be
+            particularly fun and well constructed. Enjoy!
+          </Trans>
         </p>
         {props.puzzles.map((p, i) => (
           <PuzzleResultLink
@@ -136,7 +144,7 @@ export default function FeaturedPageHandler(props: PageProps) {
           <p css={{ textAlign: 'center' }}>
             {props.prevPage === 0 ? (
               <Link css={{ marginRight: '2em' }} href="/">
-                ← Newer Puzzles
+                ← <Trans>Newer Puzzles</Trans>
               </Link>
             ) : (
               ''
@@ -146,13 +154,13 @@ export default function FeaturedPageHandler(props: PageProps) {
                 css={{ marginRight: '2em' }}
                 href={'/featured/' + props.prevPage}
               >
-                ← Newer Puzzles
+                ← <Trans>Newer Puzzles</Trans>
               </Link>
             ) : (
               ''
             )}
             {props.nextPage !== null ? (
-              <Link href={'/featured/' + props.nextPage}>Older Puzzles →</Link>
+              <Link href={'/featured/' + props.nextPage}><Trans>Older Puzzles</Trans> →</Link>
             ) : (
               ''
             )}

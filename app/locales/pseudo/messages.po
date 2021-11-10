@@ -118,7 +118,11 @@ msgstr ""
 msgid "Crosshare Daily Mini Puzzles for {date}"
 msgstr ""
 
-#: pages/index.tsx:152
+#: pages/featured/[pageNumber].tsx:124
+msgid "Crosshare Featured Puzzles"
+msgstr ""
+
+#: pages/index.tsx:154
 msgid "Daily Mini"
 msgstr ""
 
@@ -155,8 +159,12 @@ msgstr ""
 msgid "Enter your reply"
 msgstr ""
 
-#: pages/index.tsx:174
+#: pages/index.tsx:176
 msgid "Featured Puzzles"
+msgstr ""
+
+#: pages/featured/[pageNumber].tsx:129
+msgid "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
 msgstr ""
 
 #: components/Puzzle.tsx:1072
@@ -208,12 +216,21 @@ msgstr ""
 msgid "Newer Minis"
 msgstr ""
 
+#: pages/featured/[pageNumber].tsx:147
+#: pages/featured/[pageNumber].tsx:157
+msgid "Newer Puzzles"
+msgstr ""
+
 #: components/PuzzleOverlay.tsx:338
 msgid "Nobody is on the leaderboard yet"
 msgstr ""
 
 #: pages/dailyminis/[[...slug]].tsx:238
 msgid "Older Minis"
+msgstr ""
+
+#: pages/featured/[pageNumber].tsx:163
+msgid "Older Puzzles"
 msgstr ""
 
 #: components/UnfinishedPuzzleList.tsx:69
@@ -232,11 +249,11 @@ msgstr ""
 msgid "Powered by crosshare.org"
 msgstr ""
 
-#: pages/index.tsx:165
+#: pages/index.tsx:167
 msgid "Previous daily minis"
 msgstr ""
 
-#: pages/index.tsx:185
+#: pages/index.tsx:187
 msgid "Previous featured puzzles"
 msgstr ""
 
@@ -327,7 +344,7 @@ msgstr ""
 msgid "Stats"
 msgstr ""
 
-#: pages/index.tsx:159
+#: pages/index.tsx:161
 msgid "Today's daily mini crossword"
 msgstr ""
 
@@ -367,7 +384,7 @@ msgstr ""
 msgid "commenting as"
 msgstr ""
 
-#: pages/index.tsx:135
+#: pages/index.tsx:137
 msgid "consider-donating"
 msgstr ""
 
@@ -375,7 +392,7 @@ msgstr ""
 msgid "create-button"
 msgstr ""
 
-#: pages/index.tsx:128
+#: pages/index.tsx:130
 msgid "crosshare-intro"
 msgstr ""
 
@@ -387,8 +404,16 @@ msgstr ""
 msgid "enable across clues"
 msgstr ""
 
-#: pages/index.tsx:190
+#: pages/index.tsx:192
 msgid "faq"
+msgstr ""
+
+#: pages/featured/[pageNumber].tsx:74
+msgid "feat-desc"
+msgstr ""
+
+#: pages/featured/[pageNumber].tsx:72
+msgid "featured-title"
 msgstr ""
 
 #. The variable is the guest constructor's name
@@ -396,6 +421,10 @@ msgstr ""
 #: components/PuzzleLink.tsx:302
 #: components/PuzzleLink.tsx:327
 msgid "guest-attrib"
+msgstr ""
+
+#: pages/index.tsx:119
+msgid "home-title"
 msgstr ""
 
 #: components/TopBar.tsx:122
@@ -424,7 +453,7 @@ msgid "publisher"
 msgstr ""
 
 #. the variable is a translated version of 'email or twitter'
-#: pages/index.tsx:203
+#: pages/index.tsx:205
 msgid "questions"
 msgstr ""
 

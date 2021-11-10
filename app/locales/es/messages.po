@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2021-11-10 09:33-0500\n"
+"POT-Creation-Date: 2021-11-10 13:14-0500\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: es\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #: components/Comments.tsx:351
 msgid "(please be nice!):"
@@ -118,7 +112,11 @@ msgstr ""
 msgid "Crosshare Daily Mini Puzzles for {date}"
 msgstr ""
 
-#: pages/index.tsx:152
+#: pages/featured/[pageNumber].tsx:124
+msgid "Crosshare Featured Puzzles"
+msgstr ""
+
+#: pages/index.tsx:149
 msgid "Daily Mini"
 msgstr "Mini Diario "
 
@@ -155,8 +153,12 @@ msgstr "Ingresar jeroglífico"
 msgid "Enter your reply"
 msgstr "Ingresar tu respuesta"
 
-#: pages/index.tsx:174
+#: pages/index.tsx:171
 msgid "Featured Puzzles"
+msgstr ""
+
+#: pages/featured/[pageNumber].tsx:129
+msgid "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
 msgstr ""
 
 #: components/Puzzle.tsx:1072
@@ -208,12 +210,21 @@ msgstr "Silenciar"
 msgid "Newer Minis"
 msgstr ""
 
+#: pages/featured/[pageNumber].tsx:147
+#: pages/featured/[pageNumber].tsx:157
+msgid "Newer Puzzles"
+msgstr ""
+
 #: components/PuzzleOverlay.tsx:338
 msgid "Nobody is on the leaderboard yet"
 msgstr "Todavía no hay nadie en la tabla de clasificación"
 
 #: pages/dailyminis/[[...slug]].tsx:238
 msgid "Older Minis"
+msgstr ""
+
+#: pages/featured/[pageNumber].tsx:163
+msgid "Older Puzzles"
 msgstr ""
 
 #: components/UnfinishedPuzzleList.tsx:69
@@ -232,11 +243,11 @@ msgstr "Pausar juego"
 msgid "Powered by crosshare.org"
 msgstr "Desarrollado por crosshare.org"
 
-#: pages/index.tsx:165
+#: pages/index.tsx:162
 msgid "Previous daily minis"
 msgstr "Minis diarios anteriores "
 
-#: pages/index.tsx:185
+#: pages/index.tsx:182
 msgid "Previous featured puzzles"
 msgstr ""
 
@@ -327,7 +338,7 @@ msgstr "Resuelto en"
 msgid "Stats"
 msgstr "Estadísticas"
 
-#: pages/index.tsx:159
+#: pages/index.tsx:156
 msgid "Today's daily mini crossword"
 msgstr "Mini crucigrama diario de hoy "
 
@@ -367,7 +378,7 @@ msgstr "cambiar nombre"
 msgid "commenting as"
 msgstr "comentando como"
 
-#: pages/index.tsx:135
+#: pages/index.tsx:132
 msgid "consider-donating"
 msgstr "Si estás disfrutando Crosshare por favor considera <0>donar</0> para sostener la continuación de su desarrollo."
 
@@ -375,7 +386,7 @@ msgstr "Si estás disfrutando Crosshare por favor considera <0>donar</0> para so
 msgid "create-button"
 msgstr ""
 
-#: pages/index.tsx:128
+#: pages/index.tsx:125
 msgid "crosshare-intro"
 msgstr "Crosshare es un espacio <0>gratuito</0>, <1>sin publicidad</1> y de <2>código abierto</2> para crear, compartir y resolver crucigramas."
 
@@ -387,8 +398,16 @@ msgstr "constructor"
 msgid "enable across clues"
 msgstr "activar pistas horizontales"
 
-#: pages/index.tsx:190
+#: pages/index.tsx:187
 msgid "faq"
+msgstr ""
+
+#: pages/featured/[pageNumber].tsx:74
+msgid "feat-desc"
+msgstr ""
+
+#: pages/featured/[pageNumber].tsx:72
+msgid "featured-title"
 msgstr ""
 
 #. The variable is the guest constructor's name
@@ -396,6 +415,10 @@ msgstr ""
 #: components/PuzzleLink.tsx:302
 #: components/PuzzleLink.tsx:327
 msgid "guest-attrib"
+msgstr ""
+
+#: pages/index.tsx:114
+msgid "home-title"
 msgstr ""
 
 #: components/TopBar.tsx:122
@@ -424,7 +447,7 @@ msgid "publisher"
 msgstr "publicador"
 
 #. the variable is a translated version of 'email or twitter'
-#: pages/index.tsx:203
+#: pages/index.tsx:200
 msgid "questions"
 msgstr ""
 
