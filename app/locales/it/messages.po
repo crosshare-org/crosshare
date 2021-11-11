@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2021-11-10 15:29-0500\n"
+"POT-Creation-Date: 2021-11-11 07:31-0500\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,11 +13,11 @@ msgstr "(per favore sii gentile!):"
 
 #: components/ContactLinks.tsx:6
 msgid "<0>email</0> or <1>twitter</1>"
-msgstr ""
+msgstr "<0>e-mail</0> o <1>twitter</1>"
 
 #: components/TopBar.tsx:694
 msgid "Account"
-msgstr ""
+msgstr "Account"
 
 #: components/Puzzle.tsx:992
 msgid "Account / Settings"
@@ -47,12 +47,12 @@ msgstr "Inizia il Cruciverba"
 #. The variable is the name of the puzzle's constructor
 #: components/PuzzleLink.tsx:170
 msgid "By {guestConstructor}"
-msgstr ""
+msgstr "Di {guestConstructor}"
 
 #. The variable is the name of the puzzle's constructor
 #: components/PuzzleLink.tsx:182
 msgid "By {link}"
-msgstr ""
+msgstr "Di {link}"
 
 #: components/Comments.tsx:377
 #: components/DisplayNameForm.tsx:81
@@ -97,7 +97,7 @@ msgstr "Costruisci un Cruciverba"
 
 #: components/TopBar.tsx:685
 msgid "Constructor Dashboard"
-msgstr ""
+msgstr "Pannello di Controllo del Costruttore"
 
 #: components/Puzzle.tsx:1093
 msgid "Contest Prompt / Submission"
@@ -105,16 +105,16 @@ msgstr "Inserisci e invia la risposta al contest"
 
 #: components/CreateShareSection.tsx:27
 msgid "Create or Share a Puzzle"
-msgstr ""
+msgstr "Crea o Condividi uno Schema"
 
 #. the variable is a month and year like 'noviembre de 2021'
 #: pages/dailyminis/[[...slug]].tsx:207
 msgid "Crosshare Daily Mini Puzzles for {date}"
-msgstr ""
+msgstr "Mini Cruciverba di Crosshare del giorno {date}"
 
 #: pages/featured/[pageNumber].tsx:126
 msgid "Crosshare Featured Puzzles"
-msgstr ""
+msgstr "Cruciverba in evidenza su Crosshare"
 
 #: pages/index.tsx:153
 msgid "Daily Mini"
@@ -122,7 +122,7 @@ msgstr "Mini di Oggi"
 
 #: pages/dailyminis/[[...slug]].tsx:219
 msgid "Daily Mini for {displayDate}"
-msgstr ""
+msgstr "Mini del Giorno {displayDate}"
 
 #: components/DisplayNameForm.tsx:54
 msgid "Display name updated"
@@ -155,7 +155,7 @@ msgstr "Inserisci la tua risposta"
 
 #: pages/index.tsx:175
 msgid "Featured Puzzles"
-msgstr ""
+msgstr "Cruciverba in Evidenza"
 
 #: components/Puzzle.tsx:1072
 msgid "Grid"
@@ -179,7 +179,7 @@ msgstr "Anteprima:"
 
 #: components/UnfinishedPuzzleList.tsx:64
 msgid "Loading..."
-msgstr ""
+msgstr "Caricamento..."
 
 #: components/PuzzleOverlay.tsx:96
 msgid "Logged in as {0}"
@@ -204,12 +204,12 @@ msgstr "Silenzia"
 
 #: pages/dailyminis/[[...slug]].tsx:229
 msgid "Newer Minis"
-msgstr ""
+msgstr "Mini Più Nuovi"
 
 #: pages/featured/[pageNumber].tsx:144
 #: pages/featured/[pageNumber].tsx:154
 msgid "Newer Puzzles"
-msgstr ""
+msgstr "Cruciverba Più Nuovi"
 
 #: components/PuzzleOverlay.tsx:338
 msgid "Nobody is on the leaderboard yet"
@@ -217,15 +217,15 @@ msgstr "La classifica è vuota per ora."
 
 #: pages/dailyminis/[[...slug]].tsx:235
 msgid "Older Minis"
-msgstr ""
+msgstr "Mini Più Vecchi"
 
 #: pages/featured/[pageNumber].tsx:160
 msgid "Older Puzzles"
-msgstr ""
+msgstr "Cruciverba Più Vecchi"
 
 #: components/UnfinishedPuzzleList.tsx:69
 msgid "Older unfinished solves"
-msgstr ""
+msgstr "Altri tentativi non completati"
 
 #: components/PuzzleOverlay.tsx:372
 msgid "Open on crosshare.org"
@@ -245,7 +245,7 @@ msgstr "Mini dei giorni scorsi"
 
 #: pages/index.tsx:186
 msgid "Previous featured puzzles"
-msgstr ""
+msgstr "Cruciverba precedentemente in evidenza"
 
 #: components/Puzzle.tsx:982
 msgid "Print Puzzle"
@@ -254,24 +254,24 @@ msgstr "Stampa Puzzle"
 #. The variable is a timestamp like 'in 4 days' or 'en 4 dias'
 #: components/PuzzleLink.tsx:284
 msgid "Private, going public <0/>"
-msgstr ""
+msgstr "<0/> privati, che diventeranno pubblici"
 
 #. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
 #. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
 #: components/PuzzleHeading.tsx:55
 #: components/PuzzleLink.tsx:264
 msgid "Published <0/>"
-msgstr ""
+msgstr "<0/> pubblicati "
 
 #. The variable is the name of the user who published the puzzle
 #: components/PuzzleLink.tsx:174
 msgid "Published by {link}"
-msgstr ""
+msgstr "Pubblicato da {link}"
 
 #. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
 #: components/PuzzleLink.tsx:273
 msgid "Published privately <0/>"
-msgstr ""
+msgstr "<0/> pubblicati privatamente "
 
 #: components/Puzzle.tsx:1142
 msgid "Ready to get started?"
@@ -344,7 +344,7 @@ msgstr "Attiva/disattiva tastiera"
 
 #: components/UnfinishedPuzzleList.tsx:54
 msgid "Unfinished Solves"
-msgstr ""
+msgstr "Tentativi non Completati"
 
 #: components/Puzzle.tsx:923
 msgid "Unmute"
@@ -380,7 +380,7 @@ msgstr "Se ti piace Crosshare, per favore considera una <0>donazione</0> per sos
 
 #: components/CreateShareSection.tsx:44
 msgid "create-button"
-msgstr ""
+msgstr "<0>Crea un nuovo puzzle</0> <1>Costruisci un cruciverba con il costruttore Crosshare</1>"
 
 #: pages/index.tsx:129
 msgid "crosshare-intro"
@@ -396,26 +396,26 @@ msgstr "abilita le definizioni orizzontali"
 
 #: pages/index.tsx:191
 msgid "faq"
-msgstr ""
+msgstr "Domande frequenti e informazioni"
 
 #: pages/featured/[pageNumber].tsx:79
 msgid "feat-desc"
-msgstr ""
+msgstr "I cruciverba in evidenza sono schemi selezionati da Crosshare che abbiamo trovato particolarmente divertenti e ben costruiti. Divertiti!"
 
 #: pages/featured/[pageNumber].tsx:77
 msgid "featured-title"
-msgstr ""
+msgstr "Cruciverba in Evidenza | Pagina {0} | Crosshare"
 
 #. The variable is the guest constructor's name
 #. The variable is the guest constructor's name
 #: components/PuzzleLink.tsx:302
 #: components/PuzzleLink.tsx:327
 msgid "guest-attrib"
-msgstr ""
+msgstr "Del costruttore ospite {0}"
 
 #: pages/index.tsx:117
 msgid "home-title"
-msgstr ""
+msgstr "Crosshare - Costruttore di Cruciverba Gratuito e Mini Cruciverba quotidiani"
 
 #: components/TopBar.tsx:122
 msgid "hotkey"
@@ -423,7 +423,7 @@ msgstr "tasto di scelta rapida"
 
 #: components/TimeDisplay.tsx:21
 msgid "just now"
-msgstr ""
+msgstr "ora"
 
 #: components/PuzzleOverlay.tsx:214
 msgid "meta-explanation"
@@ -432,11 +432,14 @@ msgstr "Questo è un concorso/meta puzzle. Per inviare la tua risposta, prima fi
 #: pages/dailyminis/[[...slug]].tsx:161
 msgid "mini-explain"
 msgstr ""
+"Crosshare offre un mini cruciverba quotidiano gratuito ogni giorno della settimana.\n"
+"Questi schemi sono un ottimo modo di allenare il tuo cervello con una mini-sfida e di imparare come funzionano i cruciverba, prima di affrontarne di più grandi.\n"
+"I mini cruciverba sono per la gran parte 5x5, ma possono esistere anche in altre dimensioni: spesso nel fine settimana sono un po' più grandi. Qualsiasi cruciverba di piccole dimensioni che carichi pubblicamente su Crosshare potrà essere selezionato come mini del giorno!"
 
 #. The variable is a month and year like noviembre de 2021
 #: pages/dailyminis/[[...slug]].tsx:171
 msgid "mini-title"
-msgstr ""
+msgstr "Mini Cruciverba del Giorno {date}"
 
 #: components/Comments.tsx:205
 msgid "publisher"
@@ -445,11 +448,11 @@ msgstr "editore"
 #. the variable is a translated version of 'email or twitter'
 #: pages/index.tsx:204
 msgid "questions"
-msgstr ""
+msgstr "Se hai domande o suggerimenti, per favore contattaci tramite <0/>"
 
 #: components/PuzzleHeading.tsx:109
 msgid "tip-hover"
-msgstr ""
+msgstr "Tutte le donazioni sono effettuate direttamente al costruttore tramite PayPal"
 
 #: components/PuzzleOverlay.tsx:104
 #: components/PuzzleOverlay.tsx:111
@@ -458,8 +461,8 @@ msgstr "per salvare progressi e statistiche sui cruciverba"
 
 #: components/PuzzleLink.tsx:129
 msgid "unfinished"
-msgstr ""
+msgstr "non completato"
 
 #: components/CreateShareSection.tsx:63
 msgid "upload-button"
-msgstr ""
+msgstr "<0>Carica un file .puz</0> <1>Ottieni un link Crosshare da condividere con i risolutori</1>"
