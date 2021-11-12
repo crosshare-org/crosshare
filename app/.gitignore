@@ -4,6 +4,7 @@ cluedb/**
 locales/_build/
 locales/**/*.js
 locales/**/*.ts
+locales/pseudo/**
 .linguirc
 
 # Created by https://www.gitignore.io/api/node,firebase
