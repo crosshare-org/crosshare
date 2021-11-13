@@ -17,6 +17,9 @@ import { FollowButton } from './FollowButton';
 import { FaInfoCircle } from 'react-icons/fa';
 import { Overlay } from './Overlay';
 import { ConstructorStats } from './ConstructorStats';
+import { Trans, t, Plural } from '@lingui/macro';
+import { I18nTags } from './I18nTags';
+import { useRouter } from 'next/router';
 
 const BANNED_USERNAMES = {
   api: 1,
@@ -524,6 +527,7 @@ export const BioEditor = (props: BioEditorProps) => {
 
 export interface ConstructorPageProps {
   constructor: ConstructorPageT;
+  followCount: number;
   profilePicture: string | null;
   coverPicture: string | null;
   puzzles: Array<PuzzleResult>;
@@ -533,6 +537,7 @@ export interface ConstructorPageProps {
 }
 
 export const ConstructorPage = (props: ConstructorPageProps) => {
+  const { locale } = useRouter();
   const { isAdmin } = useContext(AuthContext);
   const coverPic = props.coverPicture;
   const profilePic = props.profilePicture;
@@ -548,6 +553,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
     props.constructor.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
   const paypalEmail = props.constructor.pp;
   const paypalText = props.constructor.pt;
+  const loc = locale || 'en';
 
   return (
     <>
@@ -577,16 +583,9 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
           ''
         )}
         <meta key="description" name="description" content={description} />
-        <link
-          rel="canonical"
-          href={
-            'https://crosshare.org/' +
-            username +
-            (props.currentPage !== 0 ? '/page/' + props.currentPage : '')
-          }
-        />
+        <I18nTags locale={loc} canonicalPath={`/${username}${props.currentPage !== 0 ? '/page/' + props.currentPage : ''}`} />
         {props.prevPage === 0 ? (
-          <link rel="prev" href={'https://crosshare.org/' + username} />
+          <link rel="prev" href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/${username}`} />
         ) : (
           ''
         )}
@@ -594,7 +593,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
           <link
             rel="prev"
             href={
-              'https://crosshare.org/' + username + '/page/' + props.prevPage
+              `https://crosshare.org${loc == 'en' ? '' : '/' + loc}/${username}/page/${props.prevPage}`
             }
           />
         ) : (
@@ -604,7 +603,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
           <link
             rel="next"
             href={
-              'https://crosshare.org/' + username + '/page/' + props.nextPage
+              `https://crosshare.org${loc == 'en' ? '' : '/' + loc}/${username}/page/${props.nextPage}`
             }
           />
         ) : (
@@ -627,9 +626,12 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
           profilePic={profilePic}
           topLine={props.constructor.n}
           byLine={
-            <h2 css={{ fontSize: '1em', fontWeight: 'normal' }}>
-              <Link href={'/' + username}>@{username}</Link>
-            </h2>
+            <>
+              <h2 css={{ fontSize: '1em', fontWeight: 'normal', marginBottom: '0.25em' }}>
+                <Link href={'/' + username}>@{username}</Link>
+              </h2>
+              <p><Plural id="follower-count" value={props.followCount} one="1 Follower" other="# Followers" /></p>
+            </>
           }
         />
         <div css={{ textAlign: 'center', marginBottom: '1.5em' }}>
@@ -646,11 +648,11 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                 )}&item_name=${encodeURIComponent(
                   paypalText
                 )}&currency_code=USD&source=url`}
-                text={`Tip ${props.constructor.n}`}
+                text={t({ message: `Tip ${props.constructor.n}`, comment: 'The variable is the name of the user who will recieve the $ tip' })}
               />
               <ToolTipText
                 text={<FaInfoCircle />}
-                tooltip="All donations go directly to the constructor via PayPal"
+                tooltip={t`All donations go directly to the constructor via PayPal`}
               />
             </div>
           ) : (
@@ -670,7 +672,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
           <p css={{ textAlign: 'center' }}>
             {props.prevPage === 0 ? (
               <Link css={{ marginRight: '2em' }} href={'/' + username}>
-                ← Newer Puzzles
+                ← <Trans>Newer Puzzles</Trans>
               </Link>
             ) : (
               ''
@@ -680,14 +682,14 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                 css={{ marginRight: '2em' }}
                 href={'/' + username + '/page/' + props.prevPage}
               >
-                ← Newer Puzzles
+                ← <Trans>Newer Puzzles</Trans>
               </Link>
             ) : (
               ''
             )}
             {props.nextPage !== null ? (
               <Link href={'/' + username + '/page/' + props.nextPage}>
-                Older Puzzles →
+                <Trans>Older Puzzles</Trans> →
               </Link>
             ) : (
               ''

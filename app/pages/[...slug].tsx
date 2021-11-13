@@ -7,9 +7,13 @@ import {
 } from '../components/ConstructorPage';
 import { validate } from '../lib/constructorPage';
 import { ErrorPage } from '../components/ErrorPage';
-import { App } from '../lib/firebaseWrapper';
+import { AdminApp, App } from '../lib/firebaseWrapper';
 import { getStorageUrl, getPuzzlesForConstructorPage } from '../lib/serverOnly';
 import { useRouter } from 'next/router';
+import { withTranslation } from '../lib/translation';
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
+import { FollowersV } from '../lib/dbtypes';
 
 interface ErrorProps {
   error: string;
@@ -18,7 +22,29 @@ type PageProps = ConstructorPageProps | ErrorProps;
 
 const PAGE_SIZE = 10;
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async ({
+const getFollowerCount = async (userId: string) => {
+  const db = AdminApp.firestore();
+  const followersRes = await db.doc(`followers/${userId}`).get();
+  if (!followersRes.exists) {
+    console.log('no followers doc');
+    return 0;
+  }
+
+  const validationResult = FollowersV.decode(followersRes.data());
+  if (!isRight(validationResult)) {
+    console.error('could not decode followers for', userId);
+    console.error(PathReporter.report(validationResult).join(','));
+    return 0;
+  }
+  const followers = validationResult.right.f;
+  if (!followers) {
+    console.log('no followers');
+    return 0;
+  }
+  return followers.length;
+};
+
+export const gssp: GetServerSideProps<PageProps> = async ({
   res,
   params,
 }) => {
@@ -59,9 +85,13 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     page,
     PAGE_SIZE
   );
+
+  const followCount = await getFollowerCount(cp.u);
+
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
   return {
     props: {
+      followCount,
       constructor: cp,
       profilePicture,
       coverPicture,
@@ -72,6 +102,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     },
   };
 };
+
+export const getServerSideProps = withTranslation(gssp);
 
 export default function ConstructorPageHandler(props: PageProps) {
   const router = useRouter();

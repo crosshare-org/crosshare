@@ -2,7 +2,7 @@ import * as t from 'io-ts';
 
 import { timestamp } from './timestamp';
 
-import { DBPuzzleT, CommentWithRepliesT } from './dbtypes';
+import { DBPuzzleT, CommentWithRepliesT, FollowersV } from './dbtypes';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { AdminApp, AdminTimestamp } from './firebaseWrapper';
@@ -212,11 +212,6 @@ function checkComments(
   }
   return notifications;
 }
-
-const FollowersV = t.partial({
-  /** follower user ids */
-  f: t.array(t.string),
-});
 
 async function notificationsForPuzzleCreation(
   puzzle: DBPuzzleT,

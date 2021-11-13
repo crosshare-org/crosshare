@@ -151,6 +151,13 @@ export const GlickoScoreV = t.type({
 });
 export type GlickoScoreT = t.TypeOf<typeof GlickoScoreV>;
 
+
+export const FollowersV = t.partial({
+  /** follower user ids */
+  f: t.array(t.string),
+});
+
+
 const DBPuzzleOptionalV = t.partial({
   /** array of alternate solutions */
   alts: t.array(t.array(t.tuple([t.number, t.string]))),

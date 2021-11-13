@@ -17,10 +17,6 @@ msgstr ""
 msgid "(please be nice!):"
 msgstr ""
 
-#: components/ContactLinks.tsx:6
-msgid "<0>email</0> or <1>twitter</1>"
-msgstr ""
-
 #: components/TopBar.tsx:694
 msgid "Account"
 msgstr ""
@@ -32,6 +28,10 @@ msgstr ""
 #: components/Puzzle.tsx:642
 #: components/Puzzle.tsx:755
 msgid "Across"
+msgstr ""
+
+#: components/ConstructorPage.tsx:655
+msgid "All donations go directly to the constructor via PayPal"
 msgstr ""
 
 #: components/Puzzle.tsx:133
@@ -163,6 +163,16 @@ msgstr ""
 msgid "Featured Puzzles"
 msgstr ""
 
+#: components/FollowButton.tsx:62
+#: components/FollowButton.tsx:70
+#: components/FollowButton.tsx:106
+msgid "Follow"
+msgstr ""
+
+#: components/FollowButton.tsx:99
+msgid "Following"
+msgstr ""
+
 #: components/Puzzle.tsx:1072
 msgid "Grid"
 msgstr ""
@@ -212,9 +222,15 @@ msgstr ""
 msgid "Newer Minis"
 msgstr ""
 
+#: components/ConstructorPage.tsx:675
+#: components/ConstructorPage.tsx:685
 #: pages/featured/[pageNumber].tsx:144
 #: pages/featured/[pageNumber].tsx:154
 msgid "Newer Puzzles"
+msgstr ""
+
+#: components/FollowButton.tsx:96
+msgid "No longer following {0}"
 msgstr ""
 
 #: components/PuzzleOverlay.tsx:338
@@ -225,6 +241,7 @@ msgstr ""
 msgid "Older Minis"
 msgstr ""
 
+#: components/ConstructorPage.tsx:692
 #: pages/featured/[pageNumber].tsx:160
 msgid "Older Puzzles"
 msgstr ""
@@ -340,6 +357,11 @@ msgstr ""
 msgid "Stats"
 msgstr ""
 
+#. The variable is the name of the user who will recieve the $ tip
+#: components/ConstructorPage.tsx:651
+msgid "Tip {0}"
+msgstr ""
+
 #: pages/index.tsx:160
 msgid "Today's daily mini crossword"
 msgstr ""
@@ -352,6 +374,10 @@ msgstr ""
 msgid "Unfinished Solves"
 msgstr ""
 
+#: components/FollowButton.tsx:100
+msgid "Unfollow"
+msgstr ""
+
 #: components/Puzzle.tsx:923
 msgid "Unmute"
 msgstr ""
@@ -362,6 +388,15 @@ msgstr ""
 
 #: components/PuzzleOverlay.tsx:202
 msgid "You are currently solving downs-only:"
+msgstr ""
+
+#: components/FollowButton.tsx:74
+msgid "You can't follow yourself!"
+msgstr ""
+
+#: components/FollowButton.tsx:32
+#: components/FollowButton.tsx:32
+msgid "You'll be notified when {0} posts a new puzzle"
 msgstr ""
 
 #: components/Puzzle.tsx:136
@@ -383,6 +418,10 @@ msgstr ""
 #: pages/index.tsx:136
 msgid "consider-donating"
 msgstr "If you're enjoying Crosshare please consider <0>donating</0> to support its continuing development."
+
+#: components/ContactLinks.tsx:6
+msgid "contact"
+msgstr "<0>email</0>, <1>twitter</1>, or <2>discord</2>"
 
 #: components/CreateShareSection.tsx:44
 msgid "create-button"
@@ -411,6 +450,13 @@ msgstr "Featured puzzles are puzzles selected by Crosshare that we found to be p
 #: pages/featured/[pageNumber].tsx:77
 msgid "featured-title"
 msgstr "Featured Puzzles | Page {0} | Crosshare"
+
+#. js-lingui:pluralize_on=0
+#: components/ConstructorPage.tsx:633
+msgid "follower-count"
+msgid_plural "follower-count_plural"
+msgstr[0] "1 Follower"
+msgstr[1] "# Followers"
 
 #. The variable is the guest constructor's name
 #. The variable is the guest constructor's name

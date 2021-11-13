@@ -9,6 +9,7 @@ import { useSnackbar } from './Snackbar';
 import { App, FieldValue } from '../lib/firebaseWrapper';
 import { useCallback, useState, useContext } from 'react';
 import type firebase from 'firebase/app';
+import { t } from '@lingui/macro';
 
 export const FollowButton = ({ page }: { page: ConstructorPageT }) => {
   const authCtx = useContext(AuthContext);
@@ -28,7 +29,7 @@ export const FollowButton = ({ page }: { page: ConstructorPageT }) => {
           .doc(`followers/${page.u}`)
           .set({ f: FieldValue.arrayUnion(loggedInAs.uid) }, { merge: true }),
       ]).then(() => {
-        showSnackbar(`You'll be notified when ${page.n} posts a new puzzle`);
+        showSnackbar(t`You'll be notified when ${page.n} posts a new puzzle`);
       });
     },
     [page.n, page.u, showSnackbar]
@@ -58,7 +59,7 @@ export const FollowButton = ({ page }: { page: ConstructorPageT }) => {
           hollow
           disabled={authCtx.loading}
           onClick={() => setShowOverlay(true)}
-          text="Follow"
+          text={t`Follow`}
         />
       </>
     );
@@ -66,11 +67,11 @@ export const FollowButton = ({ page }: { page: ConstructorPageT }) => {
   if (user.uid === page.u) {
     return (
       <>
-        <Button hollow disabled text="Follow" />
+        <Button hollow disabled text={t`Follow`} />
         <ToolTipText
           css={{ marginLeft: '0.5em' }}
           text={<FaInfoCircle />}
-          tooltip="You can't follow yourself!"
+          tooltip={t`You can't follow yourself!`}
         />
       </>
     );
@@ -92,15 +93,15 @@ export const FollowButton = ({ page }: { page: ConstructorPageT }) => {
                 .doc(`followers/${page.u}`)
                 .set({ f: FieldValue.arrayRemove(user.uid) }, { merge: true }),
             ]).then(() => {
-              showSnackbar(`No longer following ${page.n}`);
+              showSnackbar(t`No longer following ${page.n}`);
             })
           }
-          text="Following"
-          hoverText="Unfollow"
+          text={t`Following`}
+          hoverText={t`Unfollow`}
           hoverCSS={{ backgroundColor: 'var(--error)' }}
         />
       </>
     );
   }
-  return <Button hollow onClick={() => doFollow(user)} text="Follow" />;
+  return <Button hollow onClick={() => doFollow(user)} text={t`Follow`} />;
 };
