@@ -106,8 +106,8 @@ class PuzReader {
     if (w === undefined || h === undefined) {
       throw new Error('oob');
     }
-    if (w < 4 || h < 4) {
-      throw new Error('All grids must have at least 4 rows+cols for now');
+    if (w < 2 || h < 2) {
+      throw new Error('All grids must have at least 2 rows+cols for now');
     }
     if (w > 25 || h > 25) {
       throw new Error('All grids must have max of 25 rows+cols for now');
