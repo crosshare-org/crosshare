@@ -100,6 +100,7 @@ import {
   ImportPuzAction,
   getClueProps,
   SetShowDownloadLink,
+  PasteAction,
 } from '../reducers/reducer';
 import {
   NestedDropDown,
@@ -1050,7 +1051,7 @@ const GridMode = ({
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
-      if (e.metaKey || e.altKey || e.ctrlKey) {
+      if (e.metaKey || e.altKey || e.ctrlKey || e.key === 'CapsLock') {
         return; // This way you can still do apple-R and such
       }
       /* TODO this logic belongs in the reducer */
@@ -1082,6 +1083,19 @@ const GridMode = ({
     'keydown',
     physicalKeyboardHandler,
     gridRef.current || undefined
+  );
+
+  const pasteHandler = useCallback((e: ClipboardEvent) => {
+    const pa: PasteAction = {
+      type: 'PASTE',
+      content: e.clipboardData?.getData('Text') || ''
+    };
+    dispatch(pa);
+    e.preventDefault();
+  }, [dispatch]);
+  useEventListener(
+    'paste',
+    pasteHandler
   );
 
   const fillLists = useMemo(() => {

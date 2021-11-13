@@ -73,6 +73,7 @@ import {
   LoadPlayAction,
   RanSuccessEffectsAction,
   RanMetaSubmitEffectsAction,
+  PasteAction,
 } from '../reducers/reducer';
 import {
   TopBar,
@@ -532,7 +533,7 @@ export const Puzzle = ({
       if (tagName === 'textarea' || tagName === 'input') {
         return;
       }
-      if (e.metaKey || e.altKey || e.ctrlKey) {
+      if (e.metaKey || e.altKey || e.ctrlKey || e.key === 'CapsLock') {
         return; // This way you can still do apple-R and such
       }
       const kpa: KeypressAction = {
@@ -552,6 +553,19 @@ export const Puzzle = ({
     ]
   );
   useEventListener('keydown', physicalKeyboardHandler);
+
+  const pasteHandler = useCallback((e: ClipboardEvent) => {
+    const pa: PasteAction = {
+      type: 'PASTE',
+      content: e.clipboardData?.getData('Text') || ''
+    };
+    dispatch(pa);
+    e.preventDefault();
+  }, [dispatch]);
+  useEventListener(
+    'paste',
+    pasteHandler
+  );
 
   let [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
   if (entry === null && cross !== null) {
@@ -1132,8 +1146,8 @@ export const Puzzle = ({
           ''
         )}
         {state.currentTimeWindowStart === 0 &&
-        !state.success &&
-        !(state.filled && !state.dismissedKeepTrying) ? (
+          !state.success &&
+          !(state.filled && !state.dismissedKeepTrying) ? (
             state.bankedSeconds === 0 ? (
               <PuzzleOverlay
                 {...overlayBaseProps}

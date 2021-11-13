@@ -257,6 +257,14 @@ function isKeypressAction(action: PuzzleAction): action is KeypressAction {
   return action.type === 'KEYPRESS';
 }
 
+export interface PasteAction extends PuzzleAction {
+  type: 'PASTE';
+  content: string;
+}
+function isPasteAction(action: PuzzleAction): action is PasteAction {
+  return action.type === 'PASTE';
+}
+
 export interface SymmetryAction extends PuzzleAction {
   type: 'CHANGESYMMETRY';
   symmetry: Symmetry;
@@ -630,10 +638,7 @@ export function checkComplete(state: PuzzleState) {
   return state;
 }
 
-function closeRebus<T extends GridInterfaceState>(state: T): T {
-  if (!state.isEnteringRebus) {
-    return state;
-  }
+function enterText<T extends GridInterfaceState>(state: T, text: string): T {
   const ci = cellIndex(state.grid, state.active);
   if (state.isEditable(ci)) {
     if (isPuzzleState(state)) {
@@ -645,17 +650,27 @@ function closeRebus<T extends GridInterfaceState>(state: T): T {
     state.grid = gridWithNewChar(
       state.grid,
       state.active,
-      state.rebusValue || ' ',
+      text || ' ',
       symmetry
     );
     state = state.postEdit(ci) as T; // TODO this is trash
   }
+  return state;
+}
+
+function closeRebus<T extends GridInterfaceState>(state: T): T {
+  if (!state.isEnteringRebus) {
+    return state;
+  }
+  state = enterText(state, state.rebusValue);
   return {
     ...state,
     isEnteringRebus: false,
     rebusValue: '',
   };
 }
+
+const ALLOWABLE_GRID_CHARS = /^[A-Za-z0-9Ññ&]$/;
 
 export function gridInterfaceReducer<T extends GridInterfaceState>(
   state: T,
@@ -698,6 +713,26 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       active: { ...action.newActive, dir: state.active.dir },
     };
   }
+  if (isPasteAction(action)) {
+    const toPaste = action.content.split('').filter(x => x.match(ALLOWABLE_GRID_CHARS)).join('').toUpperCase();
+    if (!toPaste) {
+      return state;
+    }
+    if (state.isEnteringRebus) {
+      return { ...state, rebusValue: state.rebusValue + toPaste };
+    }
+    state = enterText(state, toPaste);
+    return {
+      ...state,
+      wasEntryClick: false,
+      active: advancePosition(
+        state.grid,
+        state.active,
+        isPuzzleState(state) ? state.wrongCells : new Set(),
+        isPuzzleState(state) ? state.prefs : undefined
+      ),
+    };
+  }
   if (isKeypressAction(action)) {
     const key = action.key;
     const shift = action.shift;
@@ -721,7 +756,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       return { ...state };
     }
     if (state.isEnteringRebus) {
-      if (key.match(/^[A-Za-z0-9]$/)) {
+      if (key.match(ALLOWABLE_GRID_CHARS)) {
         return { ...state, rebusValue: state.rebusValue + key.toUpperCase() };
       } else if (key === 'Backspace' || key === '{bksp}') {
         return {
@@ -850,19 +885,9 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         }; // TODO postEdit typecast this is trash
       }
       return state;
-    } else if (key.match(/^[A-Za-z0-9]$/)) {
+    } else if (key.match(ALLOWABLE_GRID_CHARS)) {
       const char = key.toUpperCase();
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-        if (isPuzzleState(state)) {
-          const elapsed = getCurrentTime(state);
-          state.cellsUpdatedAt[ci] = elapsed;
-          state.cellsIterationCount[ci] += 1;
-        }
-        state.grid = gridWithNewChar(state.grid, state.active, char, symmetry);
-        state = state.postEdit(ci) as T; // TODO this is trash
-      }
+      state = enterText(state, char);
       return {
         ...state,
         wasEntryClick: false,

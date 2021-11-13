@@ -186,6 +186,7 @@ export const Keyboard = memo(function Keyboard({
           <Key keyStroke="3" onKeypress={keypress} />
           <Key keyStroke="4" onKeypress={keypress} />
           <Key keyStroke="5" onKeypress={keypress} />
+          <Key keyStroke="Ñ" onKeypress={keypress} />
         </KeyRow>
         <KeyRow>
           <Key keyStroke="6" onKeypress={keypress} />
@@ -193,6 +194,7 @@ export const Keyboard = memo(function Keyboard({
           <Key keyStroke="8" onKeypress={keypress} />
           <Key keyStroke="9" onKeypress={keypress} />
           <Key keyStroke="0" onKeypress={keypress} />
+          <Key keyStroke="&" onKeypress={keypress} />
         </KeyRow>
         <KeyRow>
           <Key keyStroke="{abc}" display="ABC" onKeypress={keypress} />
