@@ -13,7 +13,6 @@ RUN yarn --frozen-lockfile
 ENV PATH=$PATH:/src/node_modules/.bin NEXT_TELEMETRY_DISABLED=1
 COPY . .
 WORKDIR /src/app
-RUN cp .linguirc.travis .linguirc
 RUN yarn compileI18n
 RUN yarn predeploy
 RUN rm -rf nextjs/cache

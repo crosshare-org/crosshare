@@ -11,7 +11,7 @@
 !app/tsconfig.json
 !app/next.config.js
 !app/.babelrc
-!app/.linguirc.travis
+!app/.linguirc
 !app/typings
 !app/reducers
 !app/public

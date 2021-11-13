@@ -7,7 +7,6 @@ cache:
   - $HOME/.cache/firebase
 before_install:
   - cd app
-  - cp .linguirc.travis .linguirc
   - cp firebaseConfig.travis.ts firebaseConfig.ts
   - curl -sL https://firebase.tools | bash
 before_script:
