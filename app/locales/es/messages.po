@@ -21,12 +21,12 @@ msgstr "(¡por favor sé amable!):"
 msgid "Account"
 msgstr "Cuenta"
 
-#: components/Puzzle.tsx:992
+#: components/Puzzle.tsx:1006
 msgid "Account / Settings"
 msgstr "Cuenta / Ajustes"
 
-#: components/Puzzle.tsx:642
-#: components/Puzzle.tsx:755
+#: components/Puzzle.tsx:656
+#: components/Puzzle.tsx:769
 msgid "Across"
 msgstr "Horizontales"
 
@@ -34,19 +34,19 @@ msgstr "Horizontales"
 msgid "All donations go directly to the constructor via PayPal"
 msgstr ""
 
-#: components/Puzzle.tsx:133
+#: components/Puzzle.tsx:134
 msgid "Almost there!"
 msgstr "¡Ya casi!"
 
-#: components/Puzzle.tsx:838
+#: components/Puzzle.tsx:852
 msgid "Autocheck"
 msgstr "Verificar automáticamente"
 
-#: components/Puzzle.tsx:885
+#: components/Puzzle.tsx:899
 msgid "Autochecking"
 msgstr "Verificando automáticamente"
 
-#: components/Puzzle.tsx:1141
+#: components/Puzzle.tsx:1155
 msgid "Begin Puzzle"
 msgstr "Comenzar crucigrama"
 
@@ -65,19 +65,19 @@ msgstr "Por {link}"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: components/Puzzle.tsx:833
+#: components/Puzzle.tsx:847
 msgid "Check"
 msgstr "Verificar"
 
-#: components/Puzzle.tsx:870
+#: components/Puzzle.tsx:884
 msgid "Check Puzzle"
 msgstr "Verificar crucigrama"
 
-#: components/Puzzle.tsx:848
+#: components/Puzzle.tsx:862
 msgid "Check Square"
 msgstr "Verificar casillero"
 
-#: components/Puzzle.tsx:859
+#: components/Puzzle.tsx:873
 msgid "Check Word"
 msgstr "Verificar palabra"
 
@@ -85,7 +85,7 @@ msgstr "Verificar palabra"
 msgid "Checking for previous play data..."
 msgstr "Comprobando datos de juego anteriores…"
 
-#: components/Puzzle.tsx:1072
+#: components/Puzzle.tsx:1086
 msgid "Clues"
 msgstr "Pistas"
 
@@ -93,11 +93,11 @@ msgstr "Pistas"
 msgid "Comments"
 msgstr "Comentarios"
 
-#: components/Puzzle.tsx:1094
+#: components/Puzzle.tsx:1108
 msgid "Comments / Leaderboard"
 msgstr "Comentarios / Tabla de clasificación"
 
-#: components/Puzzle.tsx:997
+#: components/Puzzle.tsx:1011
 msgid "Construct a Puzzle"
 msgstr "Crear un cucigrama"
 
@@ -105,7 +105,7 @@ msgstr "Crear un cucigrama"
 msgid "Constructor Dashboard"
 msgstr "Panel de constructor"
 
-#: components/Puzzle.tsx:1093
+#: components/Puzzle.tsx:1107
 msgid "Contest Prompt / Submission"
 msgstr "Entrada / Presentación de concurso"
 
@@ -134,24 +134,24 @@ msgstr "Mini diario del {displayDate}"
 msgid "Display name updated"
 msgstr "Nombre visible actualizado"
 
-#: components/Puzzle.tsx:664
-#: components/Puzzle.tsx:775
+#: components/Puzzle.tsx:678
+#: components/Puzzle.tsx:789
 msgid "Down"
 msgstr "Verticales"
 
-#: components/Puzzle.tsx:987
+#: components/Puzzle.tsx:1001
 msgid "Download .puz File"
 msgstr "Descargar archivo .puz"
 
-#: components/Puzzle.tsx:964
+#: components/Puzzle.tsx:978
 msgid "Edit"
 msgstr "Editar"
 
-#: components/Puzzle.tsx:969
+#: components/Puzzle.tsx:983
 msgid "Embed"
 msgstr "Incrustar"
 
-#: components/Puzzle.tsx:906
+#: components/Puzzle.tsx:920
 msgid "Enter Rebus"
 msgstr "Ingresar jeroglífico"
 
@@ -173,11 +173,11 @@ msgstr ""
 msgid "Following"
 msgstr ""
 
-#: components/Puzzle.tsx:1072
+#: components/Puzzle.tsx:1086
 msgid "Grid"
 msgstr "Cuadrícula"
 
-#: components/Puzzle.tsx:141
+#: components/Puzzle.tsx:142
 msgid "Keep Trying"
 msgstr "Sigue intentando"
 
@@ -210,11 +210,11 @@ msgstr "Iniciar sesión (a través de Google)"
 msgid "Login (via Google) to save your puzzle progress/stats"
 msgstr "Inicia sesión (a través de Google) para guardar tu progreso/estadísticas de crucigramas"
 
-#: components/Puzzle.tsx:900
+#: components/Puzzle.tsx:914
 msgid "More"
 msgstr "Más"
 
-#: components/Puzzle.tsx:929
+#: components/Puzzle.tsx:943
 msgid "Mute"
 msgstr "Silenciar"
 
@@ -254,7 +254,7 @@ msgstr "Soluciones inconclusas más viejas"
 msgid "Open on crosshare.org"
 msgstr "Abrir en crosshare.org"
 
-#: components/Puzzle.tsx:1062
+#: components/Puzzle.tsx:1076
 msgid "Pause Game"
 msgstr "Pausar juego"
 
@@ -270,7 +270,7 @@ msgstr "Minis diarios anteriores "
 msgid "Previous featured puzzles"
 msgstr "Crucigramas destacados anteriores"
 
-#: components/Puzzle.tsx:982
+#: components/Puzzle.tsx:996
 msgid "Print Puzzle"
 msgstr "Imprimir crucigrama"
 
@@ -296,7 +296,7 @@ msgstr "Publicado por {link}"
 msgid "Published privately <0/>"
 msgstr "Publicado de forma privada <0/>"
 
-#: components/Puzzle.tsx:1142
+#: components/Puzzle.tsx:1156
 msgid "Ready to get started?"
 msgstr "¿Todo listo para comenzar?"
 
@@ -304,23 +304,23 @@ msgstr "¿Todo listo para comenzar?"
 msgid "Reply"
 msgstr "Responder"
 
-#: components/Puzzle.tsx:1149
+#: components/Puzzle.tsx:1163
 msgid "Resume"
 msgstr "Reanudar"
 
-#: components/Puzzle.tsx:790
+#: components/Puzzle.tsx:804
 msgid "Reveal"
 msgstr "Revelar"
 
-#: components/Puzzle.tsx:819
+#: components/Puzzle.tsx:833
 msgid "Reveal Puzzle"
 msgstr "Revelar crucigrama"
 
-#: components/Puzzle.tsx:795
+#: components/Puzzle.tsx:809
 msgid "Reveal Square"
 msgstr "Revelar casillero"
 
-#: components/Puzzle.tsx:807
+#: components/Puzzle.tsx:821
 msgid "Reveal Word"
 msgstr "Revelar palabra"
 
@@ -333,7 +333,7 @@ msgstr "Guardar"
 msgid "Set your display name:"
 msgstr "Establecer tu nombre visible:"
 
-#: components/Puzzle.tsx:1095
+#: components/Puzzle.tsx:1109
 msgid "Show Comments"
 msgstr "Mostrar comentarios"
 
@@ -353,7 +353,7 @@ msgstr "Resuelto <0>sin verificar/revelar</0> en"
 msgid "Solved in"
 msgstr "Resuelto en"
 
-#: components/Puzzle.tsx:959
+#: components/Puzzle.tsx:973
 msgid "Stats"
 msgstr "Estadísticas"
 
@@ -366,7 +366,7 @@ msgstr ""
 msgid "Today's daily mini crossword"
 msgstr "Mini crucigrama diario de hoy "
 
-#: components/Puzzle.tsx:935
+#: components/Puzzle.tsx:949
 msgid "Toggle Keyboard"
 msgstr "Activar/desactivar teclado"
 
@@ -378,7 +378,7 @@ msgstr "Soluciones inconclusas"
 msgid "Unfollow"
 msgstr ""
 
-#: components/Puzzle.tsx:923
+#: components/Puzzle.tsx:937
 msgid "Unmute"
 msgstr "Activar sonido"
 
@@ -399,11 +399,11 @@ msgstr ""
 msgid "You'll be notified when {0} posts a new puzzle"
 msgstr ""
 
-#: components/Puzzle.tsx:136
+#: components/Puzzle.tsx:137
 msgid "You've completed the puzzle, but there are one or more mistakes."
 msgstr "Has completado el crucigrama, pero hay uno o más errores."
 
-#: components/Puzzle.tsx:1150
+#: components/Puzzle.tsx:1164
 msgid "Your puzzle is paused"
 msgstr "Tu crucigramas está pausado"
 
