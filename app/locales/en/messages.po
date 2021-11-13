@@ -21,12 +21,12 @@ msgstr ""
 msgid "Account"
 msgstr ""
 
-#: components/Puzzle.tsx:1006
+#: components/Puzzle.tsx:1011
 msgid "Account / Settings"
 msgstr ""
 
-#: components/Puzzle.tsx:656
-#: components/Puzzle.tsx:769
+#: components/Puzzle.tsx:661
+#: components/Puzzle.tsx:774
 msgid "Across"
 msgstr ""
 
@@ -38,15 +38,15 @@ msgstr ""
 msgid "Almost there!"
 msgstr ""
 
-#: components/Puzzle.tsx:852
+#: components/Puzzle.tsx:857
 msgid "Autocheck"
 msgstr ""
 
-#: components/Puzzle.tsx:899
+#: components/Puzzle.tsx:904
 msgid "Autochecking"
 msgstr ""
 
-#: components/Puzzle.tsx:1155
+#: components/Puzzle.tsx:1160
 msgid "Begin Puzzle"
 msgstr ""
 
@@ -65,19 +65,19 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: components/Puzzle.tsx:847
+#: components/Puzzle.tsx:852
 msgid "Check"
 msgstr ""
 
-#: components/Puzzle.tsx:884
+#: components/Puzzle.tsx:889
 msgid "Check Puzzle"
 msgstr ""
 
-#: components/Puzzle.tsx:862
+#: components/Puzzle.tsx:867
 msgid "Check Square"
 msgstr ""
 
-#: components/Puzzle.tsx:873
+#: components/Puzzle.tsx:878
 msgid "Check Word"
 msgstr ""
 
@@ -85,7 +85,7 @@ msgstr ""
 msgid "Checking for previous play data..."
 msgstr ""
 
-#: components/Puzzle.tsx:1086
+#: components/Puzzle.tsx:1091
 msgid "Clues"
 msgstr ""
 
@@ -93,11 +93,11 @@ msgstr ""
 msgid "Comments"
 msgstr ""
 
-#: components/Puzzle.tsx:1108
+#: components/Puzzle.tsx:1113
 msgid "Comments / Leaderboard"
 msgstr ""
 
-#: components/Puzzle.tsx:1011
+#: components/Puzzle.tsx:1016
 msgid "Construct a Puzzle"
 msgstr ""
 
@@ -105,7 +105,7 @@ msgstr ""
 msgid "Constructor Dashboard"
 msgstr ""
 
-#: components/Puzzle.tsx:1107
+#: components/Puzzle.tsx:1112
 msgid "Contest Prompt / Submission"
 msgstr ""
 
@@ -134,24 +134,24 @@ msgstr ""
 msgid "Display name updated"
 msgstr ""
 
-#: components/Puzzle.tsx:678
-#: components/Puzzle.tsx:789
+#: components/Puzzle.tsx:683
+#: components/Puzzle.tsx:794
 msgid "Down"
 msgstr ""
 
-#: components/Puzzle.tsx:1001
+#: components/Puzzle.tsx:1006
 msgid "Download .puz File"
 msgstr ""
 
-#: components/Puzzle.tsx:978
+#: components/Puzzle.tsx:983
 msgid "Edit"
 msgstr ""
 
-#: components/Puzzle.tsx:983
+#: components/Puzzle.tsx:988
 msgid "Embed"
 msgstr ""
 
-#: components/Puzzle.tsx:920
+#: components/Puzzle.tsx:925
 msgid "Enter Rebus"
 msgstr ""
 
@@ -173,7 +173,7 @@ msgstr ""
 msgid "Following"
 msgstr ""
 
-#: components/Puzzle.tsx:1086
+#: components/Puzzle.tsx:1091
 msgid "Grid"
 msgstr ""
 
@@ -210,11 +210,11 @@ msgstr ""
 msgid "Login (via Google) to save your puzzle progress/stats"
 msgstr ""
 
-#: components/Puzzle.tsx:914
+#: components/Puzzle.tsx:919
 msgid "More"
 msgstr ""
 
-#: components/Puzzle.tsx:943
+#: components/Puzzle.tsx:948
 msgid "Mute"
 msgstr ""
 
@@ -254,7 +254,7 @@ msgstr ""
 msgid "Open on crosshare.org"
 msgstr ""
 
-#: components/Puzzle.tsx:1076
+#: components/Puzzle.tsx:1081
 msgid "Pause Game"
 msgstr ""
 
@@ -270,7 +270,7 @@ msgstr ""
 msgid "Previous featured puzzles"
 msgstr ""
 
-#: components/Puzzle.tsx:996
+#: components/Puzzle.tsx:1001
 msgid "Print Puzzle"
 msgstr ""
 
@@ -296,7 +296,7 @@ msgstr ""
 msgid "Published privately <0/>"
 msgstr ""
 
-#: components/Puzzle.tsx:1156
+#: components/Puzzle.tsx:1161
 msgid "Ready to get started?"
 msgstr ""
 
@@ -304,23 +304,23 @@ msgstr ""
 msgid "Reply"
 msgstr ""
 
-#: components/Puzzle.tsx:1163
+#: components/Puzzle.tsx:1168
 msgid "Resume"
 msgstr ""
 
-#: components/Puzzle.tsx:804
+#: components/Puzzle.tsx:809
 msgid "Reveal"
 msgstr ""
 
-#: components/Puzzle.tsx:833
+#: components/Puzzle.tsx:838
 msgid "Reveal Puzzle"
 msgstr ""
 
-#: components/Puzzle.tsx:809
+#: components/Puzzle.tsx:814
 msgid "Reveal Square"
 msgstr ""
 
-#: components/Puzzle.tsx:821
+#: components/Puzzle.tsx:826
 msgid "Reveal Word"
 msgstr ""
 
@@ -333,7 +333,7 @@ msgstr ""
 msgid "Set your display name:"
 msgstr ""
 
-#: components/Puzzle.tsx:1109
+#: components/Puzzle.tsx:1114
 msgid "Show Comments"
 msgstr ""
 
@@ -353,7 +353,7 @@ msgstr ""
 msgid "Solved in"
 msgstr ""
 
-#: components/Puzzle.tsx:973
+#: components/Puzzle.tsx:978
 msgid "Stats"
 msgstr ""
 
@@ -366,7 +366,7 @@ msgstr ""
 msgid "Today's daily mini crossword"
 msgstr ""
 
-#: components/Puzzle.tsx:949
+#: components/Puzzle.tsx:954
 msgid "Toggle Keyboard"
 msgstr ""
 
@@ -378,7 +378,7 @@ msgstr ""
 msgid "Unfollow"
 msgstr ""
 
-#: components/Puzzle.tsx:937
+#: components/Puzzle.tsx:942
 msgid "Unmute"
 msgstr ""
 
@@ -403,7 +403,7 @@ msgstr ""
 msgid "You've completed the puzzle, but there are one or more mistakes."
 msgstr ""
 
-#: components/Puzzle.tsx:1164
+#: components/Puzzle.tsx:1169
 msgid "Your puzzle is paused"
 msgstr ""
 
