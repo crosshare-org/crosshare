@@ -25,6 +25,9 @@ import { Button } from '../components/Buttons';
 import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
 import { Emoji } from '../components/Emoji';
 import { ContactLinks } from '../components/ContactLinks';
+import { withStaticTranslation } from '../lib/translation';
+
+export const getStaticProps = withStaticTranslation(() => { return { props: {} }; });
 
 export default function BuilderPage() {
   const [ready, error, loading, setLoaded] = useWordDB();

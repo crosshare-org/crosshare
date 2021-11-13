@@ -9,6 +9,7 @@ import { DefaultTopBar } from '../components/TopBar';
 import { AdminApp } from '../lib/firebaseWrapper';
 import * as t from 'io-ts';
 import { timestamp } from '../lib/timestamp';
+import { withTranslation } from '../lib/translation';
 
 interface DonateProps {
   donors: Array<{
@@ -38,7 +39,7 @@ const DonationsListV = t.type({
 });
 export type DonationsListT = t.TypeOf<typeof DonationsListV>;
 
-export const getServerSideProps: GetServerSideProps<DonateProps> = async ({
+const gssp: GetServerSideProps<DonateProps> = async ({
   res,
 }) => {
   const db = AdminApp.firestore();
@@ -95,6 +96,8 @@ export const getServerSideProps: GetServerSideProps<DonateProps> = async ({
       }
     });
 };
+
+export const getServerSideProps = withTranslation(gssp);
 
 export default function DonatePage({ donors }: DonateProps) {
   return (

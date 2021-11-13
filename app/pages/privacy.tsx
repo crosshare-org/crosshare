@@ -1,5 +1,8 @@
 import Head from 'next/head';
 import { DefaultTopBar } from '../components/TopBar';
+import { withStaticTranslation } from '../lib/translation';
+
+export const getStaticProps = withStaticTranslation(() => { return { props: {} }; });
 
 export default function PrivacyPage() {
   return (

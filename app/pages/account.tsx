@@ -26,6 +26,10 @@ const ImageCropper = dynamic(
   { ssr: false }
 ) as typeof ImageCropperType;
 
+import { withStaticTranslation } from '../lib/translation';
+
+export const getStaticProps = withStaticTranslation(() => { return { props: {} }; });
+
 interface UnsubSettingProps {
   prefs: AccountPrefsT | undefined;
   userId: string;

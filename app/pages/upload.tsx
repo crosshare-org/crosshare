@@ -17,6 +17,9 @@ import { FeatureList, FeatureListItem } from '../components/FeatureList';
 import { BigQuote } from '../components/BigQuote';
 import { Hero } from '../components/Hero';
 import { ContactLinks } from '../components/ContactLinks';
+import { withStaticTranslation } from '../lib/translation';
+
+export const getStaticProps = withStaticTranslation(() => { return { props: {} }; });
 
 export default function UploadPage() {
   const ctx = useContext(AuthContext);
