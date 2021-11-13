@@ -555,6 +555,11 @@ export const Puzzle = ({
   useEventListener('keydown', physicalKeyboardHandler);
 
   const pasteHandler = useCallback((e: ClipboardEvent) => {
+    const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
+    if (tagName === 'textarea' || tagName === 'input') {
+      return;
+    }
+
     const pa: PasteAction = {
       type: 'PASTE',
       content: e.clipboardData?.getData('Text') || ''
