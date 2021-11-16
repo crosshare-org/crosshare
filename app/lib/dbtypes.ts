@@ -176,7 +176,7 @@ const DBPuzzleOptionalV = t.partial({
   /** guest constructor */
   gc: t.string,
   /** isPrivate */
-  pv: t.boolean,
+  pv: t.union([t.boolean, timestamp]),
   /** isPrivateUntil */
   pvu: timestamp,
   /** daily mini date */
