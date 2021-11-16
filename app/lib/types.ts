@@ -3,6 +3,7 @@ import type { WordDBT } from './WordDB';
 
 import { DBPuzzleT, CommentWithRepliesT, GlickoScoreT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
+import { isFirestoreTimestamp } from '../lib/timestamp';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -129,7 +130,7 @@ export interface PuzzleT {
   comments: Array<Comment>;
   constructorNotes: string | null;
   blogPost: string | null;
-  isPrivate: boolean;
+  isPrivate: boolean | number;
   isPrivateUntil: number | null;
   contestAnswers: Array<string> | null;
   contestHasPrize: boolean;
@@ -212,7 +213,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     comments: convertComments(dbPuzzle.cs || []),
     constructorNotes: dbPuzzle.cn || null,
     blogPost: dbPuzzle.bp || null,
-    isPrivate: dbPuzzle.pv || false,
+    isPrivate: isFirestoreTimestamp(dbPuzzle.pv) ? dbPuzzle.pv.toMillis() : dbPuzzle.pv || false,
     isPrivateUntil: dbPuzzle.pvu ? dbPuzzle.pvu.toMillis() : null,
     contestAnswers: dbPuzzle.ct_ans || null,
     contestHasPrize: dbPuzzle.ct_prz || false,
