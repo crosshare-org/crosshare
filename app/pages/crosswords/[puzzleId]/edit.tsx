@@ -388,18 +388,11 @@ const PuzzleEditor = ({
         <h3 css={{ marginTop: '1em' }}>Privacy</h3>
         {puzzle.isPrivate ? (
           <p>This puzzle is currently private.</p>
-        ) : puzzle.isPrivateUntil ? (
-          puzzle.isPrivateUntil > Date.now() ? (
-            <p>
-              This puzzle is currently private until{' '}
-              {formatDistanceToNow(new Date(puzzle.isPrivateUntil))} from now.
-            </p>
-          ) : (
-            <p>
-              This puzzle is currently public (since{' '}
-              {formatDistanceToNow(new Date(puzzle.isPrivateUntil))} ago).
-            </p>
-          )
+        ) : puzzle.isPrivateUntil && puzzle.isPrivateUntil > Date.now() ? (
+          <p>
+            This puzzle is currently private until{' '}
+            {formatDistanceToNow(new Date(puzzle.isPrivateUntil))} from now.
+          </p>
         ) : (
           <p>This puzzle is currently public.</p>
         )}
@@ -414,10 +407,13 @@ const PuzzleEditor = ({
             <input
               css={{ marginRight: '1em' }}
               type="checkbox"
-              checked={isPrivate}
+              checked={isPrivate ? true : false}
               onChange={(e) => {
-                setIsPrivate(e.target.checked);
-                if (e.target.checked) {
+                if (!e.target.checked) {
+                  setIsPrivateUntil(typeof puzzle.isPrivate === 'number' ? puzzle.isPrivate : Date.now());
+                  setIsPrivate(false);
+                } else {
+                  setIsPrivate((puzzle.isPrivate === true || (puzzle.isPrivateUntil && puzzle.isPrivateUntil > Date.now())) ? true : puzzle.isPrivateUntil || puzzle.publishTime);
                   setIsPrivateUntil(null);
                 }
               }}
@@ -425,34 +421,38 @@ const PuzzleEditor = ({
             Private
           </label>
         </p>
-        <p>
-          <label>
-            <input
-              css={{ marginRight: '1em' }}
-              type="checkbox"
-              checked={isPrivateUntil !== null && isPrivateUntil > Date.now()}
-              onChange={(e) => {
-                setIsPrivateUntil((e.target.checked && Date.now()) || null);
-                if (e.target.checked) {
-                  setIsPrivate(false);
-                }
-              }}
-            />{' '}
-            Private until specified date/time
-          </label>
-          {isPrivateUntil ? (
-            <p>
-              Visible after {lightFormat(isPrivateUntil, 'M/d/y\' at \'h:mma')}:
-              <DateTimePicker
-                picked={isPrivateUntil}
-                setPicked={(d) => setIsPrivateUntil(d.getTime())}
-              />
-            </p>
-          ) : (
-            ''
-          )}
-        </p>
+        {(puzzle.isPrivate === true || (puzzle.isPrivateUntil && puzzle.isPrivateUntil > Date.now())) ?
+          <p>
+            <label>
+              <input
+                css={{ marginRight: '1em' }}
+                type="checkbox"
+                checked={isPrivateUntil !== null && isPrivateUntil > Date.now()}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setIsPrivate(false);
+                    setIsPrivateUntil(e.target.checked ? Date.now() + 24 * 60 * 60 * 1000 : null);
+                  } else {
+                    setIsPrivateUntil(Date.now() - 10);
+                  }
+                }}
+              />{' '}
+              Private until specified date/time
+            </label>
+            {isPrivateUntil && isPrivateUntil > Date.now() ? (
+              <p>
+                Visible after {lightFormat(isPrivateUntil, 'M/d/y\' at \'h:mma')}:
+                <DateTimePicker
+                  picked={isPrivateUntil}
+                  setPicked={(d) => setIsPrivateUntil(d.getTime())}
+                />
+              </p>
+            ) : (
+              ''
+            )}
+          </p> : ''}
         <Button
+          css={{ marginRight: '1em' }}
           text="Update Privacy Settings"
           disabled={
             isPrivate === puzzle.isPrivate &&
@@ -476,6 +476,16 @@ const PuzzleEditor = ({
               });
           }}
         />
+        <Button
+          text="Cancel"
+          disabled={
+            isPrivate === puzzle.isPrivate &&
+            isPrivateUntil === puzzle.isPrivateUntil
+          }
+          onClick={() => {
+            setIsPrivate(puzzle.isPrivate);
+            setIsPrivateUntil(puzzle.isPrivateUntil);
+          }} />
         <h3 css={{ marginTop: '1em' }}>Contest / meta puzzle</h3>
         <p>
           A meta puzzle has an extra puzzle embedded in the grid for after
@@ -527,7 +537,7 @@ const PuzzleEditor = ({
               maxLength={MAX_META_SUBMISSION_LENGTH}
               hasError={(sol) =>
                 puzzle.contestAnswers &&
-                isMetaSolution(sol, puzzle.contestAnswers)
+                  isMetaSolution(sol, puzzle.contestAnswers)
                   ? 'Duplicate solution!'
                   : ''
               }
