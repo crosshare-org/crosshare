@@ -3,8 +3,7 @@ import { useState, FormEvent, useContext } from 'react';
 
 import { DefaultTopBar } from './TopBar';
 import { ConstructorPageT } from '../lib/constructorPage';
-import { PuzzleResult } from '../lib/types';
-import { PuzzleResultLink } from './PuzzleLink';
+import { LinkablePuzzle, PuzzleResultLink } from './PuzzleLink';
 import { Link, LinkButtonSimpleA } from './Link';
 import { Markdown } from './Markdown';
 import { AuthContext } from './AuthContext';
@@ -530,7 +529,7 @@ export interface ConstructorPageProps {
   followCount: number;
   profilePicture: string | null;
   coverPicture: string | null;
-  puzzles: Array<PuzzleResult>;
+  puzzles: Array<LinkablePuzzle>;
   nextPage: number | null;
   currentPage: number;
   prevPage: number | null;

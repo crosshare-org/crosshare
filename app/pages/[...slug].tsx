@@ -14,6 +14,7 @@ import { withTranslation } from '../lib/translation';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { FollowersV } from '../lib/dbtypes';
+import { paginatedPuzzles } from '../lib/paginatedPuzzles';
 
 interface ErrorProps {
   error: string;
@@ -80,10 +81,11 @@ export const gssp: GetServerSideProps<PageProps> = async ({
   if (params.slug.length === 3 && params.slug[1] === 'page' && params.slug[2]) {
     page = parseInt(params.slug[2]) || 0;
   }
-  const [puzzles, totalCount] = await getPuzzlesForConstructorPage(
-    cp.u,
+  const [puzzles, hasNext] = await paginatedPuzzles(
     page,
-    PAGE_SIZE
+    PAGE_SIZE,
+    'a',
+    cp.u,
   );
 
   const followCount = await getFollowerCount(cp.u);
@@ -98,7 +100,7 @@ export const gssp: GetServerSideProps<PageProps> = async ({
       puzzles,
       currentPage: page,
       prevPage: page > 0 ? page - 1 : null,
-      nextPage: totalCount > (page + 1) * PAGE_SIZE ? page + 1 : null,
+      nextPage: hasNext ? page + 1 : null,
     },
   };
 };
