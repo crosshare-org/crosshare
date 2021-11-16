@@ -84,7 +84,7 @@ export const ModeratingOverlay = memo(
         />
         <div css={{ marginTop: '1em' }}>
           <button
-            disabled={!date || puzzle.moderated || puzzle.isPrivate}
+            disabled={!date || puzzle.moderated || !!puzzle.isPrivate}
             onClick={schedule}
           >
             Schedule As Daily Mini
@@ -92,7 +92,7 @@ export const ModeratingOverlay = memo(
         </div>
         <div css={{ marginTop: '1em' }}>
           <button
-            disabled={puzzle.isPrivate}
+            disabled={!!puzzle.isPrivate}
             onClick={() => markAsModerated(true)}
           >
             Set as Featured

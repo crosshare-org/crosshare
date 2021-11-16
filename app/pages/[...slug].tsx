@@ -8,7 +8,7 @@ import {
 import { validate } from '../lib/constructorPage';
 import { ErrorPage } from '../components/ErrorPage';
 import { AdminApp, App } from '../lib/firebaseWrapper';
-import { getStorageUrl, getPuzzlesForConstructorPage } from '../lib/serverOnly';
+import { getStorageUrl } from '../lib/serverOnly';
 import { useRouter } from 'next/router';
 import { withTranslation } from '../lib/translation';
 import { isRight } from 'fp-ts/lib/Either';
