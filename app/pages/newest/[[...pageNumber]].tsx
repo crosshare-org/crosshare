@@ -31,14 +31,19 @@ const gssp: GetServerSideProps<PageProps> = async ({
   res,
   params,
 }) => {
-  if (!params?.pageNumber || Array.isArray(params.pageNumber)) {
-    return { props: { error: 'Bad params' } };
-  }
-
-  const page = parseInt(params.pageNumber);
-  if (page < 0 || page.toString() !== params.pageNumber) {
+  const pn = params?.pageNumber;
+  let page: number;
+  if (!pn) {
+    page = 0;
+  } else if (Array.isArray(pn) && pn.length === 1 && pn[0]) {
+    page = parseInt(pn[0]);
+    if (page.toString() !== pn[0] || page <= 0) {
+      return { props: { error: 'Bad page number' } };
+    }
+  } else {
     return { props: { error: 'Bad page number' } };
   }
+
   const [puzzlesWithoutConstructor, hasNext] = await paginatedPuzzles(
     page,
     PAGE_SIZE
@@ -75,7 +80,8 @@ export default function NewestPageHandler(props: PageProps) {
     );
   }
 
-  const title = t({ id: 'newest-title', message: `Newest Puzzles | Page ${props.currentPage} | Crosshare` });
+  const page = props.currentPage;
+  const title = t`Newest Puzzles` + (page > 0 ? ' | ' + t`Page ${page}` : '') + ' | Crosshare';
   const description =
     t({ id: 'newest-desc', message: 'All of the latest public puzzles on Crosshare, as they are posted. Enjoy!' });
 
@@ -90,11 +96,11 @@ export default function NewestPageHandler(props: PageProps) {
           content={description}
         />
         <meta key="description" name="description" content={description} />
-        <I18nTags locale={loc} canonicalPath={`/newest/${props.currentPage}`} />
+        <I18nTags locale={loc} canonicalPath={`/newest${page !== 0 ? `/${page}` : ''}`} />
         {props.prevPage !== null ? (
           <link
             rel="prev"
-            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/newest/${props.prevPage}`}
+            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/newest${props.prevPage !== 0 ? `/${props.prevPage}` : ''}`}
           />
         ) : (
           ''

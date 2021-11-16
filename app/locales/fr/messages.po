@@ -30,7 +30,7 @@ msgstr "Compter / Les Paramètres"
 msgid "Across"
 msgstr "Horizontalement"
 
-#: components/ConstructorPage.tsx:655
+#: components/ConstructorPage.tsx:654
 msgid "All donations go directly to the constructor via PayPal"
 msgstr ""
 
@@ -118,11 +118,11 @@ msgstr "Créer ou Partager un Puzzle"
 msgid "Crosshare Daily Mini Puzzles for {date}"
 msgstr "Des Puzzles Minis Quotidien sur Crosshare pour {date}"
 
-#: pages/featured/[pageNumber].tsx:126
+#: pages/featured/[pageNumber].tsx:129
 msgid "Crosshare Featured Puzzles"
 msgstr "Des Puzzles en Vedette sur Crosshare"
 
-#: pages/index.tsx:153
+#: pages/index.tsx:154
 msgid "Daily Mini"
 msgstr "Mini Quotidien"
 
@@ -159,7 +159,7 @@ msgstr "Insérer Rebus"
 msgid "Enter your reply"
 msgstr "Insérer votre réponse"
 
-#: pages/index.tsx:175
+#: pages/index.tsx:176
 msgid "Featured Puzzles"
 msgstr "Les Puzzles en Vedette"
 
@@ -222,12 +222,18 @@ msgstr "Sourdine"
 msgid "Newer Minis"
 msgstr "Nouveaux Minis"
 
-#: components/ConstructorPage.tsx:675
-#: components/ConstructorPage.tsx:685
-#: pages/featured/[pageNumber].tsx:144
-#: pages/featured/[pageNumber].tsx:154
+#: components/ConstructorPage.tsx:674
+#: components/ConstructorPage.tsx:684
+#: pages/featured/[pageNumber].tsx:147
+#: pages/featured/[pageNumber].tsx:157
+#: pages/newest/[[...pageNumber]].tsx:145
 msgid "Newer Puzzles"
 msgstr "Nouveaux Puzzles"
+
+#: pages/newest/[[...pageNumber]].tsx:80
+#: pages/newest/[[...pageNumber]].tsx:124
+msgid "Newest Puzzles"
+msgstr ""
 
 #: components/FollowButton.tsx:96
 msgid "No longer following {0}"
@@ -241,8 +247,9 @@ msgstr "En ce moment, le classement est vide"
 msgid "Older Minis"
 msgstr "Vieux Minis"
 
-#: components/ConstructorPage.tsx:692
-#: pages/featured/[pageNumber].tsx:160
+#: components/ConstructorPage.tsx:691
+#: pages/featured/[pageNumber].tsx:163
+#: pages/newest/[[...pageNumber]].tsx:151
 msgid "Older Puzzles"
 msgstr "Vieux Puzzles"
 
@@ -254,6 +261,10 @@ msgstr "Vieilles tentatives inachevé"
 msgid "Open on crosshare.org"
 msgstr "Ouvrier sur crosshare.org"
 
+#: pages/newest/[[...pageNumber]].tsx:80
+msgid "Page {page}"
+msgstr ""
+
 #: components/Puzzle.tsx:1081
 msgid "Pause Game"
 msgstr "Arrêter le Jeu"
@@ -262,11 +273,11 @@ msgstr "Arrêter le Jeu"
 msgid "Powered by crosshare.org"
 msgstr "Géré par crosshare.org"
 
-#: pages/index.tsx:166
+#: pages/index.tsx:167
 msgid "Previous daily minis"
 msgstr "Les minis quotidien précédent"
 
-#: pages/index.tsx:186
+#: pages/index.tsx:187
 msgid "Previous featured puzzles"
 msgstr "Les puzzles en vedette précédent"
 
@@ -358,11 +369,11 @@ msgid "Stats"
 msgstr "Statistiques"
 
 #. The variable is the name of the user who will recieve the $ tip
-#: components/ConstructorPage.tsx:651
+#: components/ConstructorPage.tsx:650
 msgid "Tip {0}"
 msgstr ""
 
-#: pages/index.tsx:160
+#: pages/index.tsx:161
 msgid "Today's daily mini crossword"
 msgstr "Le mots-croisés mini quotidien d'aujourd'hui"
 
@@ -415,7 +426,7 @@ msgstr ""
 msgid "commenting as"
 msgstr ""
 
-#: pages/index.tsx:136
+#: pages/index.tsx:137
 msgid "consider-donating"
 msgstr "If you're enjoying Crosshare please consider <0>donating</0> to support its continuing development."
 
@@ -427,7 +438,7 @@ msgstr "<0>e-mail</0>, <1>twitter</1> ou <2>discord</2>"
 msgid "create-button"
 msgstr "<0>Create a new puzzle</0><1>Build a crossword puzzle with the Crosshare constructor</1>"
 
-#: pages/index.tsx:129
+#: pages/index.tsx:130
 msgid "crosshare-intro"
 msgstr "Crosshare is a <0>free</0>, <1>ad-free</1>, and <2>open-source</2> place to create, share and solve crossword puzzles."
 
@@ -439,20 +450,20 @@ msgstr "constructor"
 msgid "enable across clues"
 msgstr ""
 
-#: pages/index.tsx:191
+#: pages/index.tsx:192
 msgid "faq"
 msgstr "Frequently asked questions and information"
 
-#: pages/featured/[pageNumber].tsx:79
+#: pages/featured/[pageNumber].tsx:82
 msgid "feat-desc"
 msgstr "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
 
-#: pages/featured/[pageNumber].tsx:77
+#: pages/featured/[pageNumber].tsx:80
 msgid "featured-title"
 msgstr "Featured Puzzles | Page {0} | Crosshare"
 
 #. js-lingui:pluralize_on=0
-#: components/ConstructorPage.tsx:633
+#: components/ConstructorPage.tsx:632
 msgid "follower-count"
 msgid_plural "follower-count_plural"
 msgstr[0] ""
@@ -465,7 +476,7 @@ msgstr[1] ""
 msgid "guest-attrib"
 msgstr "By guest constructor {0}"
 
-#: pages/index.tsx:117
+#: pages/index.tsx:118
 msgid "home-title"
 msgstr "Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles"
 
@@ -496,12 +507,16 @@ msgstr ""
 msgid "mini-title"
 msgstr "Daily Mini Puzzles for {date}"
 
+#: pages/newest/[[...pageNumber]].tsx:82
+msgid "newest-desc"
+msgstr ""
+
 #: components/Comments.tsx:205
 msgid "publisher"
 msgstr ""
 
 #. the variable is a translated version of 'email or twitter'
-#: pages/index.tsx:204
+#: pages/index.tsx:205
 msgid "questions"
 msgstr "If you have questions or suggestions please contact us via <0/>."
 

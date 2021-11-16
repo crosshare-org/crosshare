@@ -59,7 +59,7 @@ export async function paginatedPuzzles(
   if (queryField) {
     q = q.where(queryField, '==', queryValue);
   }
-  q = q.where('pvu', '<', startTimestamp).orderBy('pvu', 'desc').limit(pageSize + 1);
+  q = q.where('pvu', '<=', startTimestamp).orderBy('pvu', 'desc').limit(pageSize + 1);
 
   const results: Array<DBPuzzleT & { id: string }> = (
     await mapEachResult(q, DBPuzzleV, (dbpuzz, docId) => {

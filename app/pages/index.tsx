@@ -14,7 +14,7 @@ import {
   LinkablePuzzle,
   PuzzleResultLink,
 } from '../components/PuzzleLink';
-import { getPuzzlesForFeatured, userIdToPage } from '../lib/serverOnly';
+import { userIdToPage } from '../lib/serverOnly';
 import { PAGE_SIZE } from './featured/[pageNumber]';
 import { useContext } from 'react';
 import { AuthContext } from '../components/AuthContext';
@@ -28,6 +28,7 @@ import { withTranslation } from '../lib/translation';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { I18nTags } from '../components/I18nTags';
 import { useRouter } from 'next/router';
+import { paginatedPuzzles } from '../lib/paginatedPuzzles';
 
 type HomepagePuz = LinkablePuzzle & {
   constructorPage: ConstructorPageT | null;
@@ -62,10 +63,10 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
     return i !== null;
   });
 
-  const [puzzlesWithoutConstructor] = await getPuzzlesForFeatured(0, PAGE_SIZE);
+  const [puzzlesWithoutConstructor] = await paginatedPuzzles(0, PAGE_SIZE, 'f', true);
   const featured = await Promise.all(
     puzzlesWithoutConstructor.map(async (p) => ({
-      ...toLinkablePuzzle(p),
+      ...p,
       constructorPage: await userIdToPage(p.authorId),
     }))
   );

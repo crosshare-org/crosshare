@@ -1,20 +1,21 @@
 import { GetServerSideProps } from 'next';
 
 import { ErrorPage } from '../../components/ErrorPage';
-import { getPuzzlesForFeatured, userIdToPage } from '../../lib/serverOnly';
-import { ServerPuzzleResult } from '../../lib/types';
+import { userIdToPage } from '../../lib/serverOnly';
 import Head from 'next/head';
 import { DefaultTopBar } from '../../components/TopBar';
 import { HUGE_AND_UP, MAX_WIDTH } from '../../lib/style';
-import { PuzzleResultLink } from '../../components/PuzzleLink';
+import { LinkablePuzzle, PuzzleResultLink } from '../../components/PuzzleLink';
 import { Link } from '../../components/Link';
 import { withTranslation } from '../../lib/translation';
 import { Trans, t } from '@lingui/macro';
 import { useRouter } from 'next/router';
 import { I18nTags } from '../../components/I18nTags';
+import { paginatedPuzzles } from '../../lib/paginatedPuzzles';
+import { ConstructorPageT } from '../../lib/constructorPage';
 
 interface FeaturedPageProps {
-  puzzles: Array<ServerPuzzleResult>;
+  puzzles: Array<LinkablePuzzle & { constructorPage: ConstructorPageT | null }>;
   nextPage: number | null;
   currentPage: number;
   prevPage: number | null;
@@ -38,9 +39,11 @@ const gssp: GetServerSideProps<PageProps> = async ({
   if (page < 1 || page.toString() !== params.pageNumber) {
     return { props: { error: 'Bad page number' } };
   }
-  const [puzzlesWithoutConstructor, totalCount] = await getPuzzlesForFeatured(
+  const [puzzlesWithoutConstructor, hasNext] = await paginatedPuzzles(
     page,
-    PAGE_SIZE
+    PAGE_SIZE,
+    'f',
+    true
   );
   const puzzles = await Promise.all(
     puzzlesWithoutConstructor.map(async (p) => ({
@@ -54,7 +57,7 @@ const gssp: GetServerSideProps<PageProps> = async ({
       puzzles,
       currentPage: page,
       prevPage: page > 0 ? page - 1 : null,
-      nextPage: totalCount > (page + 1) * PAGE_SIZE ? page + 1 : null,
+      nextPage: hasNext ? page + 1 : null,
     },
   };
 };

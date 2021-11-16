@@ -90,7 +90,7 @@ export default requiresAdmin(() => {
         ttl: 24 * 60 * 60 * 1000,
       }),
       mapEachResult(
-        db.collection('c').where('m', '==', false),
+        db.collection('c').where('m', '==', false).where('pvu', '<=', TimestampClass.now()),
         DBPuzzleV,
         (dbpuzz, docId) => {
           return { ...puzzleFromDB(dbpuzz), id: docId };
