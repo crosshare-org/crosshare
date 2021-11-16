@@ -6,7 +6,7 @@ import type firebase from 'firebase/app';
 
 import { TimestampClass } from './firebaseWrapper';
 
-const isFirestoreTimestamp = (u: unknown): u is firebase.firestore.Timestamp =>
+export const isFirestoreTimestamp = (u: unknown): u is firebase.firestore.Timestamp =>
   u ? u instanceof TimestampClass : false;
 
 const validateTimestamp: t.Validate<unknown, firebase.firestore.Timestamp> = (
