@@ -139,7 +139,7 @@ export default function BuilderPage() {
         <FeatureListItem
           icon={<FaMagic />}
           heading="Fill grids like magic"
-          text="The autofiller instantly fills in the rest of the grid as enter your fill. Press the `Enter` key to shake things up and get a different autofill."
+          text="The autofiller instantly fills in the rest of the grid as you enter your fill. Press the `Enter` key to shake things up and get a different autofill."
         />
         <FeatureListItem
           icon={<IoMdResize />}
