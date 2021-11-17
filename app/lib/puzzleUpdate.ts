@@ -12,13 +12,15 @@ async function deleteNotifications(puzzleId: string, shouldDelete?: (n: Notifica
     .where('p', '==', puzzleId)
     .get()
     .then((snap) => {
-      snap.forEach(async (res) => {
-        const n = NotificationV.decode(res.data());
-        if (!shouldDelete || !isRight(n) || shouldDelete(n.right)) {
-          console.log('deleting notification');
-          await res.ref.delete();
-        }
-      });
+      return Promise.all(
+        snap.docs.map(async (res) => {
+          const n = NotificationV.decode(res.data());
+          if (!shouldDelete || !isRight(n) || shouldDelete(n.right)) {
+            console.log('deleting notification');
+            await res.ref.delete();
+          }
+        })
+      );
     });
 }
 
@@ -30,16 +32,17 @@ async function updateNotifications(puzzleId: string, update: (n: NotificationT) 
     .where('p', '==', puzzleId)
     .get()
     .then((snap) => {
-      snap.forEach(async (res) => {
-        const n = NotificationV.decode(res.data());
-        if (isRight(n)) {
-          const toUpdate = update(n.right);
-          if (toUpdate) {
-            console.log('updating notification');
-            await res.ref.update(toUpdate);
+      return Promise.all(
+        snap.docs.map(async (res) => {
+          const n = NotificationV.decode(res.data());
+          if (isRight(n)) {
+            const toUpdate = update(n.right);
+            if (toUpdate) {
+              console.log('updating notification');
+              await res.ref.update(toUpdate);
+            }
           }
-        }
-      });
+        }));
     });
 }
 
@@ -59,10 +62,12 @@ async function deletePuzzle(puzzleId: string, dbpuz: DBPuzzleT) {
     .where('c', '==', puzzleId)
     .get()
     .then((snap) => {
-      snap.forEach(async (res) => {
-        console.log('deleting play');
-        await res.ref.delete();
-      });
+      return Promise.all(
+        snap.docs.map(async (res) => {
+          console.log('deleting play');
+          await res.ref.delete();
+        })
+      );
     });
 
   console.log('deleting puzzle');
