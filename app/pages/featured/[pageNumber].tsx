@@ -57,7 +57,7 @@ const gssp: GetServerSideProps<PageProps> = async ({
       puzzles,
       currentPage: page,
       prevPage: page > 0 ? page - 1 : null,
-      nextPage: hasNext ? page + 1 : null,
+      nextPage: hasNext && page < 9 ? page + 1 : null,
     },
   };
 };
