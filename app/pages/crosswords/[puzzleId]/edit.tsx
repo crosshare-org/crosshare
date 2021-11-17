@@ -462,7 +462,7 @@ const PuzzleEditor = ({
             App.firestore()
               .doc(`c/${puzzle.id}`)
               .update({
-                pv: isPrivate,
+                pv: typeof isPrivate === 'number' ? TimestampClass.fromMillis(isPrivate) : isPrivate,
                 pvu: isPrivate
                   ? DeleteSentinal
                   : isPrivateUntil && isPrivateUntil > Date.now()
