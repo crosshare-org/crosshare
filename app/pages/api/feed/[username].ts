@@ -58,7 +58,7 @@ export default async function constructorFeed(req: NextApiRequest, res: NextApiR
     });
   });
 
-  res.setHeader('Cache-Control', 'public, max-age=172800, s-maxage=172800');
+  res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/xml; charset=utf-8');
   res.end(feed.rss2());
