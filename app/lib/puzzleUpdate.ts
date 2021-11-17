@@ -8,7 +8,7 @@ async function deleteNotifications(puzzleId: string) {
   const db = AdminApp.firestore();
 
   console.log('deleting notifications');
-  db.collection('n')
+  await db.collection('n')
     .where('p', '==', puzzleId)
     .get()
     .then((snap) => {
@@ -31,7 +31,7 @@ async function deletePuzzle(puzzleId: string, dbpuz: DBPuzzleT) {
   await deleteNotifications(puzzleId);
 
   console.log('deleting plays');
-  db.collection('p')
+  await db.collection('p')
     .where('c', '==', puzzleId)
     .get()
     .then((snap) => {
