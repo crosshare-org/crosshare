@@ -60,7 +60,7 @@ const gssp: GetServerSideProps<PageProps> = async ({
       puzzles,
       currentPage: page,
       prevPage: page > 0 ? page - 1 : null,
-      nextPage: hasNext ? page + 1 : null,
+      nextPage: hasNext && page < 9 ? page + 1 : null,
     },
   };
 };
@@ -144,7 +144,7 @@ export default function NewestPageHandler(props: PageProps) {
             {props.prevPage !== null ? (
               <Link
                 css={{ marginRight: '2em' }}
-                href={'/newest/' + props.prevPage}
+                href={`/newest/${props.prevPage !== 0 ? `/${props.prevPage}` : ''}`}
               >
                 ← <Trans>Newer Puzzles</Trans>
               </Link>

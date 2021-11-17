@@ -14,6 +14,7 @@ import { ConstructorPageT } from '../lib/constructorPage';
 import { Markdown } from './Markdown';
 import { Trans } from '@lingui/macro';
 import { PastDistanceToNow, DistanceToNow } from './TimeDisplay';
+import { FollowButton } from './FollowButton';
 
 const PuzzleLink = (props: {
   fullWidth?: boolean;
@@ -154,15 +155,21 @@ export const AuthorLink = ({
   authorName,
   constructorPage,
   guestConstructor,
+  showFollowButton
 }: {
   authorName: string;
   constructorPage: ConstructorPageT | null;
   guestConstructor: string | null;
+  showFollowButton?: boolean;
 }) => {
   let link: ReactNode = authorName;
+  let followButton: ReactNode = <></>;
   if (constructorPage) {
     const username = constructorPage.i || constructorPage.id;
     link = <Link href={'/' + username}>{constructorPage.n}</Link>;
+  }
+  if (constructorPage && showFollowButton) {
+    followButton = <FollowButton css={{ marginLeft: '0.5em', padding: '0.25em', fontSize: '0.9em', boxShadow: 'none' }} page={constructorPage} />;
   }
   if (guestConstructor) {
     return (
@@ -174,6 +181,7 @@ export const AuthorLink = ({
         <Trans comment="The variable is the name of the user who published the puzzle">
           Published by {link}
         </Trans>
+        {followButton}
       </>
     );
   }
@@ -182,6 +190,7 @@ export const AuthorLink = ({
       <Trans comment="The variable is the name of the puzzle's constructor">
         By {link}
       </Trans>
+      {followButton}
     </>
   );
 };

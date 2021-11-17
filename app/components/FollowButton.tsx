@@ -11,7 +11,7 @@ import { useCallback, useState, useContext } from 'react';
 import type firebase from 'firebase/app';
 import { t } from '@lingui/macro';
 
-export const FollowButton = ({ page }: { page: ConstructorPageT }) => {
+export const FollowButton = ({ page, ...props }: { page: ConstructorPageT, className?: string }) => {
   const authCtx = useContext(AuthContext);
   const user = authCtx.user;
   const isFollowing = authCtx.prefs?.following?.includes(page.u);
@@ -60,6 +60,7 @@ export const FollowButton = ({ page }: { page: ConstructorPageT }) => {
           disabled={authCtx.loading}
           onClick={() => setShowOverlay(true)}
           text={t`Follow`}
+          {...props}
         />
       </>
     );
@@ -67,7 +68,7 @@ export const FollowButton = ({ page }: { page: ConstructorPageT }) => {
   if (user.uid === page.u) {
     return (
       <>
-        <Button hollow disabled text={t`Follow`} />
+        <Button hollow disabled text={t`Follow`} {...props} />
         <ToolTipText
           css={{ marginLeft: '0.5em' }}
           text={<FaInfoCircle />}
@@ -99,9 +100,10 @@ export const FollowButton = ({ page }: { page: ConstructorPageT }) => {
           text={t`Following`}
           hoverText={t`Unfollow`}
           hoverCSS={{ backgroundColor: 'var(--error)' }}
+          {...props}
         />
       </>
     );
   }
-  return <Button hollow onClick={() => doFollow(user)} text={t`Follow`} />;
+  return <Button hollow onClick={() => doFollow(user)} text={t`Follow`} {...props} />;
 };

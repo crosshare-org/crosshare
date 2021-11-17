@@ -45,6 +45,7 @@ export const PuzzleHeading = (props: {
               authorName={props.authorName}
               constructorPage={props.constructorPage}
               guestConstructor={props.guestConstructor}
+              showFollowButton={true}
             />
             {isEmbed ? (
               ''
