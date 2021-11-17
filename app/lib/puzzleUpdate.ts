@@ -1,119 +1,8 @@
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { AdminApp, AdminTimestamp } from '../lib/firebaseWrapper';
+import { AdminApp } from '../lib/firebaseWrapper';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
 import { notificationsForPuzzleChange } from './notifications';
-import { PuzzleIndexV, PuzzleIndexT } from '../lib/serverOnly';
-
-function parseIndex(
-  indexRes: FirebaseFirestore.DocumentSnapshot
-): PuzzleIndexT | null {
-  if (!indexRes.exists) {
-    console.log('no index, skipping');
-    return null;
-  }
-
-  const validationResult = PuzzleIndexV.decode(indexRes.data());
-  if (!isRight(validationResult)) {
-    console.error(PathReporter.report(validationResult).join(','));
-    return null;
-  }
-  return validationResult.right;
-}
-
-async function markPuzzlePrivate(
-  indexRes: FirebaseFirestore.DocumentSnapshot,
-  puzzleId: string
-) {
-  console.log(`attempting mark private for ${indexRes.id}`);
-  const idx = parseIndex(indexRes);
-  if (idx === null) {
-    return;
-  }
-  if (!idx.i.includes(puzzleId)) {
-    console.log('puzzle not in index');
-    return;
-  }
-
-  // remove from private until index if present
-  if (idx.pvui?.includes(puzzleId) && idx.pvut) {
-    const pvidx = idx.pvui.indexOf(puzzleId);
-    console.log('splicing out ', idx.pvui.splice(pvidx, 1));
-    idx.pvut.splice(pvidx, 1);
-  }
-
-  if (!idx.pv) {
-    idx.pv = [puzzleId];
-  } else if (!idx.pv.includes(puzzleId)) {
-    idx.pv.push(puzzleId);
-  }
-
-  console.log('writing');
-  await indexRes.ref.set(idx);
-}
-
-async function markPuzzlePrivateUntil(
-  indexRes: FirebaseFirestore.DocumentSnapshot,
-  puzzleId: string,
-  until: number
-) {
-  console.log(`attempting mark private until for ${indexRes.id}`);
-  const idx = parseIndex(indexRes);
-  if (idx === null) {
-    return;
-  }
-  if (!idx.i.includes(puzzleId)) {
-    console.log('puzzle not in index');
-    return;
-  }
-
-  // remove from private until index if present
-  if (idx.pvui?.includes(puzzleId) && idx.pvut) {
-    const pvidx = idx.pvui.indexOf(puzzleId);
-    console.log('splicing out ', idx.pvui.splice(pvidx, 1));
-    idx.pvut.splice(pvidx, 1);
-  }
-
-  // remove from private index if present
-  const pvi = idx.pv?.indexOf(puzzleId);
-  if (pvi !== undefined && pvi >= 0) {
-    idx.pv?.splice(pvi, 1);
-  }
-
-  if (!idx.pvui) {
-    idx.pvui = [];
-  }
-  if (!idx.pvut) {
-    idx.pvut = [];
-  }
-  idx.pvui.unshift(puzzleId);
-  idx.pvut.unshift(AdminTimestamp.fromMillis(until));
-
-  console.log('writing');
-  await indexRes.ref.set(idx);
-}
-
-async function removeFromIndex(
-  indexRes: FirebaseFirestore.DocumentSnapshot,
-  puzzleId: string
-) {
-  console.log(`attempting delete for ${indexRes.id}`);
-  const idx = parseIndex(indexRes);
-  if (idx === null) {
-    return;
-  }
-  const pi = idx.i.indexOf(puzzleId);
-  if (pi < 0) {
-    console.log('puzzle not in index');
-    return;
-  }
-
-  console.log('splicing out ', idx.i.splice(pi, 1));
-  idx.t.splice(pi, 1);
-
-  console.log('writing');
-  await indexRes.ref.set(idx);
-}
 
 async function deleteNotifications(puzzleId: string) {
   const db = AdminApp.firestore();
@@ -151,12 +40,6 @@ async function deletePuzzle(puzzleId: string, dbpuz: DBPuzzleT) {
         await res.ref.delete();
       });
     });
-
-  const featuredIndexRes = await db.doc('i/featured').get();
-  removeFromIndex(featuredIndexRes, puzzleId);
-
-  const authorIndexRes = await db.doc(`i/${dbpuz.a}`).get();
-  removeFromIndex(authorIndexRes, puzzleId);
 
   console.log('deleting puzzle');
   await db.doc(`c/${puzzleId}`).delete();
@@ -206,27 +89,11 @@ export async function handlePuzzleUpdate(
       if (!before.pv) {
         // been marked private
         await deleteNotifications(puzzleId);
-
-        const featuredIndexRes = await db.doc('i/featured').get();
-        markPuzzlePrivate(featuredIndexRes, puzzleId);
-
-        const authorIndexRes = await db.doc(`i/${after.a}`).get();
-        markPuzzlePrivate(authorIndexRes, puzzleId);
       }
     } else if (after.pvu) {
       if (after.pvu.toMillis() !== before.pvu?.toMillis()) {
         // been marked private until
         await deleteNotifications(puzzleId);
-
-        const featuredIndexRes = await db.doc('i/featured').get();
-        markPuzzlePrivateUntil(
-          featuredIndexRes,
-          puzzleId,
-          after.pvu.toMillis()
-        );
-
-        const authorIndexRes = await db.doc(`i/${after.a}`).get();
-        markPuzzlePrivateUntil(authorIndexRes, puzzleId, after.pvu.toMillis());
       }
     }
   }

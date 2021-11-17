@@ -1,14 +1,12 @@
 import { AdminApp, AdminTimestamp, getUser } from '../lib/firebaseWrapper';
-import { PuzzleResult, puzzleFromDB, ServerPuzzleResult } from './types';
+import { puzzleFromDB, ServerPuzzleResult } from './types';
 import type firebaseAdminType from 'firebase-admin';
 
-import { zip } from 'fp-ts/Array';
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   DBPuzzleV,
-  DBPuzzleT,
   CategoryIndexT,
   getDateString,
   addZeros,
@@ -73,141 +71,6 @@ export const PuzzleIndexV = t.intersection([
     pvut: t.array(adminTimestamp),
   }),
 ]);
-export type PuzzleIndexT = t.TypeOf<typeof PuzzleIndexV>;
-
-async function getPuzzlesForPage(
-  indexDocId: string,
-  queryField: string,
-  queryValue: string | boolean,
-  page: number,
-  page_size: number
-): Promise<[Array<PuzzleResult>, number]> {
-  const db = AdminApp.firestore();
-  const indexDoc = await db.collection('i').doc(indexDocId).get();
-  let index: PuzzleIndexT | null = null;
-  if (indexDoc.exists) {
-    const validationResult = PuzzleIndexV.decode(indexDoc.data());
-    if (isRight(validationResult)) {
-      index = validationResult.right;
-    } else {
-      console.error(PathReporter.report(validationResult).join(','));
-      throw new Error('failed to validate index for ' + indexDocId);
-    }
-  }
-  if (index === null) {
-    console.log('No index, initializing', indexDocId);
-    index = { t: [], i: [] };
-  }
-
-  let q = db
-    .collection('c')
-    .where(queryField, '==', queryValue)
-    .orderBy('p', 'desc');
-  if (index.i.length) {
-    const mostRecentTimestamp = index.t[0];
-    if (mostRecentTimestamp) {
-      q = q.endBefore(mostRecentTimestamp);
-    }
-  }
-  const newPuzzles: Array<DBPuzzleT & { id: string }> = (
-    await mapEachResult(q, DBPuzzleV, (dbpuzz, docId) => {
-      return { ...dbpuzz, id: docId };
-    })
-  ).filter((a) => !index?.i.includes(a.id));
-
-  if (newPuzzles.length) {
-    console.log(`Adding ${newPuzzles.length} to index for ${indexDocId}`);
-    // Add new puzzles to the beginning
-    for (const p of newPuzzles.reverse()) {
-      index.t.unshift(AdminTimestamp.fromMillis(p.p.toMillis()));
-      index.i.unshift(p.id);
-      if (p.pv) {
-        index.pv = index.pv || [];
-        index.pv.push(p.id);
-      }
-      if (p.pvu) {
-        index.pvui = index.pvui || [];
-        index.pvut = index.pvut || [];
-        index.pvut.unshift(AdminTimestamp.fromMillis(p.pvu.toMillis()));
-        index.pvui.unshift(p.id);
-      }
-    }
-    await db.collection('i').doc(indexDocId).set(index);
-  }
-
-  const idsAndTimes = zip(index.i, index.t);
-
-  // Filter out any private puzzles
-  const copy = Array.from(index.i.entries());
-  copy.reverse();
-  for (const [i, pid] of copy) {
-    if (index.pv?.includes(pid)) {
-      idsAndTimes.splice(i, 1);
-    } else if (index.pvui?.includes(pid) && index.pvut) {
-      const pvidx = index.pvui.indexOf(pid);
-      const goLiveTime = index.pvut[pvidx];
-      if (goLiveTime === undefined) {
-        throw new Error('mising from pvut but in pvui: ' + pid);
-      }
-      if (goLiveTime > AdminTimestamp.now()) {
-        idsAndTimes.splice(i, 1);
-      } else {
-        // Replace publish time w/ privateUntil for sorting purposes
-        const valAt = idsAndTimes[i];
-        if (valAt !== undefined) {
-          valAt[1] = goLiveTime;
-        }
-      }
-    }
-  }
-
-  idsAndTimes.sort((a, b) => b[1].toMillis() - a[1].toMillis());
-
-  const start = page * page_size;
-  const entriesForPage = idsAndTimes
-    .slice(start, start + page_size)
-    .map((a) => a[0]);
-
-  const puzzles: Array<PuzzleResult> = [];
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  for (const puzzleId of entriesForPage) {
-    const alreadyHave = newPuzzles.find((x) => x.id === puzzleId);
-    if (alreadyHave) {
-      puzzles.push({ ...puzzleFromDB(alreadyHave), id: alreadyHave.id });
-      continue;
-    }
-
-    const dbres = await db.collection('c').doc(puzzleId).get();
-    if (!dbres.exists) {
-      console.warn('Puzzle id in index but no puzzle exists ', puzzleId);
-      continue;
-    }
-    const validationResult = DBPuzzleV.decode(dbres.data());
-    if (isRight(validationResult)) {
-      puzzles.push({ ...puzzleFromDB(validationResult.right), id: dbres.id });
-    } else {
-      console.error('Puzzle id in index but invalid puzzle', puzzleId);
-      console.error(PathReporter.report(validationResult).join(','));
-    }
-  }
-  return [puzzles, idsAndTimes.length];
-}
-
-export async function getPuzzlesForConstructorPage(
-  userId: string,
-  page: number,
-  page_size: number
-): Promise<[Array<PuzzleResult>, number]> {
-  return getPuzzlesForPage(userId, 'a', userId, page, page_size);
-}
-
-export async function getPuzzlesForFeatured(
-  page: number,
-  page_size: number
-): Promise<[Array<PuzzleResult>, number]> {
-  return getPuzzlesForPage('featured', 'f', true, page, page_size);
-}
 
 const usernameMap: Record<string, ConstructorPageT> = {};
 let usernamesUpdated: number | null = null;
