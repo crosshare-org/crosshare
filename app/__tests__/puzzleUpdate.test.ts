@@ -7,10 +7,6 @@ import * as firebaseTesting from '@firebase/rules-unit-testing';
 import { getMockedPuzzle } from '../lib/getMockedPuzzle';
 import { CommentWithRepliesT } from '../lib/dbtypes';
 import { AdminTimestamp, setAdminApp } from '../lib/firebaseWrapper';
-import {
-  getPuzzlesForConstructorPage,
-  getPuzzlesForFeatured,
-} from '../lib/serverOnly';
 import type firebaseAdminType from 'firebase-admin';
 import { handlePuzzleUpdate } from '../lib/puzzleUpdate';
 
@@ -23,6 +19,7 @@ const basePuzzle = getMockedPuzzle({
   cs: undefined,
   f: true,
   p: AdminTimestamp.fromDate(baseTime),
+  pvu: AdminTimestamp.fromDate(baseTime)
 });
 
 function getComment(
@@ -55,7 +52,7 @@ afterAll(async () =>
   Promise.all(firebaseTesting.apps().map((app) => app.delete()))
 );
 
-test('should remove from notifications, plays, indexes and puzzle itself when a puzzle is deleted', async () => {
+test('should remove from notifications, plays and puzzle itself when a puzzle is deleted', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
 
   // Create some plays
@@ -125,45 +122,329 @@ test('should remove from notifications, plays, indexes and puzzle itself when a 
     .doc(toKeepId)
     .set(puzzleWithComments);
 
-  // create the indexes
-  await getPuzzlesForConstructorPage(puzzleWithComments.a, 0, 5);
-  await getPuzzlesForFeatured(0, 5);
-
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "LwgoVx0BAskM4wVJyoLj",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
+    "k": "comment",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`);
   expect(
-    await adminApp
-      .firestore()
-      .collection('p')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+    await adminApp.
+      firestore().
+      collection('p').
+      get().
+      then((r) => r.docs.map((d) => d.data()))).
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "puzzletokeep",
+    "ch": false,
+    "ct": Array [],
+    "f": true,
+    "g": Array [],
+    "rc": Array [],
+    "t": 44,
+    "u": "anonymous-user-id",
+    "ua": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604965200,
+    },
+    "uc": Array [],
+    "vc": Array [],
+    "wc": Array [],
+    "we": Array [],
+  },
+  Object {
+    "c": "puzzletodelete",
+    "ch": true,
+    "ct": Array [
+      1,
+      2,
+      4,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+    ],
+    "f": true,
+    "g": Array [],
+    "n": "Puzzle title",
+    "rc": Array [],
+    "t": 70,
+    "u": "blah",
+    "ua": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604965200,
+    },
+    "uc": Array [
+      5,
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+    ],
+    "vc": Array [],
+    "wc": Array [],
+    "we": Array [],
+  },
+]
+`);
   expect(
-    await adminApp
-      .firestore()
-      .collection('c')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+    await adminApp.
+      firestore().
+      collection('c').
+      get().
+      then((r) => r.docs.map((d) => d.data()))).
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "a": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+    "ac": Array [
+      " Cobbler's forms",
+      "Absolutely perfect",
+      "Spike Lee's \\"She's ___ Have It\\"",
+      "English class assignment",
+      "Raises, as young",
+    ],
+    "an": Array [
+      1,
+      6,
+      7,
+      8,
+      9,
+    ],
+    "c": null,
+    "cs": Array [
+      Object {
+        "a": "dummy-author-id",
+        "c": "A couple of two-worders today which I don't love, but I hope you all got it anyway!",
+        "ch": false,
+        "i": "LwgoVx0BAskM4wVJyoLj",
+        "n": "Mike D",
+        "p": Timestamp {
+          "_nanoseconds": 0,
+          "_seconds": 1604966400,
+        },
+        "t": 36.009,
+      },
+    ],
+    "dc": Array [
+      "Hybrid whose father is a lion",
+      "___ of reality (wake-up call)",
+      "___ date (makes wedding plans)",
+      "Middle Ages invader",
+      "Has a great night at the comedy club",
+    ],
+    "del": true,
+    "dn": Array [
+      1,
+      2,
+      3,
+      4,
+      5,
+    ],
+    "f": true,
+    "g": Array [
+      "L",
+      "A",
+      "S",
+      "T",
+      "S",
+      "I",
+      "D",
+      "E",
+      "A",
+      "L",
+      "G",
+      "O",
+      "T",
+      "T",
+      "A",
+      "E",
+      "S",
+      "S",
+      "A",
+      "Y",
+      "R",
+      "E",
+      "A",
+      "R",
+      "S",
+    ],
+    "h": 5,
+    "m": false,
+    "n": "Mike D",
+    "p": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604966400,
+    },
+    "pvu": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604966400,
+    },
+    "t": "Raises, as young",
+    "w": 5,
+  },
+  Object {
+    "a": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+    "ac": Array [
+      " Cobbler's forms",
+      "Absolutely perfect",
+      "Spike Lee's \\"She's ___ Have It\\"",
+      "English class assignment",
+      "Raises, as young",
+    ],
+    "an": Array [
+      1,
+      6,
+      7,
+      8,
+      9,
+    ],
+    "c": null,
+    "cs": Array [
+      Object {
+        "a": "dummy-author-id",
+        "c": "A couple of two-worders today which I don't love, but I hope you all got it anyway!",
+        "ch": false,
+        "i": "LwgoVx0BAskM4wVJyoLj",
+        "n": "Mike D",
+        "p": Timestamp {
+          "_nanoseconds": 0,
+          "_seconds": 1604966400,
+        },
+        "t": 36.009,
+      },
+    ],
+    "dc": Array [
+      "Hybrid whose father is a lion",
+      "___ of reality (wake-up call)",
+      "___ date (makes wedding plans)",
+      "Middle Ages invader",
+      "Has a great night at the comedy club",
+    ],
+    "dn": Array [
+      1,
+      2,
+      3,
+      4,
+      5,
+    ],
+    "f": true,
+    "g": Array [
+      "L",
+      "A",
+      "S",
+      "T",
+      "S",
+      "I",
+      "D",
+      "E",
+      "A",
+      "L",
+      "G",
+      "O",
+      "T",
+      "T",
+      "A",
+      "E",
+      "S",
+      "S",
+      "A",
+      "Y",
+      "R",
+      "E",
+      "A",
+      "R",
+      "S",
+    ],
+    "h": 5,
+    "m": false,
+    "n": "Mike D",
+    "p": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604966400,
+    },
+    "pvu": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604966400,
+    },
+    "t": "Raises, as young",
+    "w": 5,
+  },
+]
+`);
 
   // do the delete
   await handlePuzzleUpdate(
@@ -175,43 +456,161 @@ test('should remove from notifications, plays, indexes and puzzle itself when a 
 
   // and check results
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`);
   expect(
-    await adminApp
-      .firestore()
-      .collection('p')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+    await adminApp.
+      firestore().
+      collection('p').
+      get().
+      then((r) => r.docs.map((d) => d.data()))).
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "puzzletokeep",
+    "ch": false,
+    "ct": Array [],
+    "f": true,
+    "g": Array [],
+    "rc": Array [],
+    "t": 44,
+    "u": "anonymous-user-id",
+    "ua": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604965200,
+    },
+    "uc": Array [],
+    "vc": Array [],
+    "wc": Array [],
+    "we": Array [],
+  },
+]
+`);
   expect(
-    await adminApp
-      .firestore()
-      .collection('c')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+    await adminApp.
+      firestore().
+      collection('c').
+      get().
+      then((r) => r.docs.map((d) => d.data()))).
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "a": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+    "ac": Array [
+      " Cobbler's forms",
+      "Absolutely perfect",
+      "Spike Lee's \\"She's ___ Have It\\"",
+      "English class assignment",
+      "Raises, as young",
+    ],
+    "an": Array [
+      1,
+      6,
+      7,
+      8,
+      9,
+    ],
+    "c": null,
+    "cs": Array [
+      Object {
+        "a": "dummy-author-id",
+        "c": "A couple of two-worders today which I don't love, but I hope you all got it anyway!",
+        "ch": false,
+        "i": "LwgoVx0BAskM4wVJyoLj",
+        "n": "Mike D",
+        "p": Timestamp {
+          "_nanoseconds": 0,
+          "_seconds": 1604966400,
+        },
+        "t": 36.009,
+      },
+    ],
+    "dc": Array [
+      "Hybrid whose father is a lion",
+      "___ of reality (wake-up call)",
+      "___ date (makes wedding plans)",
+      "Middle Ages invader",
+      "Has a great night at the comedy club",
+    ],
+    "dn": Array [
+      1,
+      2,
+      3,
+      4,
+      5,
+    ],
+    "f": true,
+    "g": Array [
+      "L",
+      "A",
+      "S",
+      "T",
+      "S",
+      "I",
+      "D",
+      "E",
+      "A",
+      "L",
+      "G",
+      "O",
+      "T",
+      "T",
+      "A",
+      "E",
+      "S",
+      "S",
+      "A",
+      "Y",
+      "R",
+      "E",
+      "A",
+      "R",
+      "S",
+    ],
+    "h": 5,
+    "m": false,
+    "n": "Mike D",
+    "p": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604966400,
+    },
+    "pvu": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604966400,
+    },
+    "t": "Raises, as young",
+    "w": 5,
+  },
+]
+`);
 });
 
-test('should remove from notifications and update indexes when a public puzzle is marked private', async () => {
+test('should remove from notifications when a public puzzle is marked private', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
 
   // create some notifications
@@ -238,79 +637,88 @@ test('should remove from notifications and update indexes when a public puzzle i
     .doc(toKeepId)
     .set(puzzleWithComments2);
 
-  // create the indexes
-  await getPuzzlesForConstructorPage(puzzleWithComments.a, 0, 5);
-  await getPuzzlesForFeatured(0, 5);
-
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('c')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "LwgoVx0BAskM4wVJyoLj",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
+    "k": "comment",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`);
 
   // mark as private
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {pvu, ...withoutPVU} = puzzleWithComments;
   await handlePuzzleUpdate(
     puzzleWithComments,
-    { ...puzzleWithComments, pv: true },
+    { ...withoutPVU, pv: true },
     toDeleteId
   );
   await handlePuzzleUpdate(puzzleWithComments2, puzzleWithComments2, toKeepId);
 
   // and check results
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('c')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`);
 });
 
-test('should remove from notifications and update indexes when a public puzzle is marked private until', async () => {
+test('should remove from notifications when a public puzzle is marked private until', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
 
   // create some notifications
@@ -337,31 +745,45 @@ test('should remove from notifications and update indexes when a public puzzle i
     .doc(toKeepId)
     .set(puzzleWithComments2);
 
-  // create the indexes
-  await getPuzzlesForConstructorPage(puzzleWithComments.a, 0, 5);
-  await getPuzzlesForFeatured(0, 5);
-
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "LwgoVx0BAskM4wVJyoLj",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
+    "k": "comment",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`);
 
   // mark as private
   await handlePuzzleUpdate(
@@ -373,26 +795,44 @@ test('should remove from notifications and update indexes when a public puzzle i
 
   // and check results
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "LwgoVx0BAskM4wVJyoLj",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
+    "k": "comment",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`);
 });
 
 test('should update indexes when a private puzzle is marked public', async () => {
@@ -422,31 +862,45 @@ test('should update indexes when a private puzzle is marked public', async () =>
     .doc(toKeepId)
     .set({ ...puzzleWithComments2, pv: true });
 
-  // create the indexes
-  await getPuzzlesForConstructorPage(puzzleWithComments.a, 0, 5);
-  await getPuzzlesForFeatured(0, 5);
-
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "LwgoVx0BAskM4wVJyoLj",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
+    "k": "comment",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`);
 
   // mark as public
   await handlePuzzleUpdate(
@@ -462,26 +916,44 @@ test('should update indexes when a private puzzle is marked public', async () =>
 
   // and check results
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "LwgoVx0BAskM4wVJyoLj",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
+    "k": "comment",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`);
 });
 
 test('should update indexes when a private until puzzle is marked public', async () => {
@@ -513,31 +985,45 @@ test('should update indexes when a private until puzzle is marked public', async
     .doc(toKeepId)
     .set(puzzleWithComments2);
 
-  // create the indexes
-  await getPuzzlesForConstructorPage(puzzleWithComments.a, 0, 5);
-  await getPuzzlesForFeatured(0, 5);
-
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "LwgoVx0BAskM4wVJyoLj",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
+    "k": "comment",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`);
 
   // mark as public
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -547,26 +1033,44 @@ test('should update indexes when a private until puzzle is marked public', async
 
   // and check results
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "LwgoVx0BAskM4wVJyoLj",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
+    "k": "comment",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`);
 });
 
 test('should update indexes when a private puzzle is marked private until', async () => {
@@ -598,31 +1102,20 @@ test('should update indexes when a private puzzle is marked private until', asyn
     .doc(toKeepId)
     .set(puzzleWithComments2);
 
-  // create the indexes
-  await getPuzzlesForConstructorPage(puzzleWithComments.a, 0, 5);
-  await getPuzzlesForFeatured(0, 5);
-
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot('Array []');
 
   // mark as privateuntil
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -636,26 +1129,19 @@ test('should update indexes when a private puzzle is marked private until', asyn
 
   // and check results
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot('Array []');
 });
 
 test('should update indexes when a private until puzzle is marked private', async () => {
@@ -687,31 +1173,45 @@ test('should update indexes when a private until puzzle is marked private', asyn
     .doc(toKeepId)
     .set(puzzleWithComments2);
 
-  // create the indexes
-  await getPuzzlesForConstructorPage(puzzleWithComments.a, 0, 5);
-  await getPuzzlesForFeatured(0, 5);
-
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "LwgoVx0BAskM4wVJyoLj",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
+    "k": "comment",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`);
 
   // mark as private
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -725,24 +1225,31 @@ test('should update indexes when a private until puzzle is marked private', asyn
 
   // and check results
   expect(
-    await adminApp
-      .firestore()
-      .collection('n')
-      .get()
-      .then((r) =>
-        r.docs
-          .map((d) => d.data())
-          .map((d) => {
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()).
+          map((d) => {
             delete d['t'];
             return d;
-          })
-      )
-  ).toMatchSnapshot();
-  expect(
-    await adminApp
-      .firestore()
-      .collection('i')
-      .get()
-      .then((r) => r.docs.map((d) => d.data()))
-  ).toMatchSnapshot();
+          }))).
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "c": "randomCommentId",
+    "cn": "Mike D",
+    "e": false,
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
+    "k": "comment",
+    "p": "puzzletokeep",
+    "pn": "Raises, as young",
+    "r": false,
+    "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
+  },
+]
+`);
 });

@@ -450,7 +450,7 @@ const PuzzleEditor = ({
             ) : (
               ''
             )}
-          </p> : ''}
+          </p> : <p>Private until is unavailable if a puzzle has ever been public</p>}
         <Button
           css={{ marginRight: '1em' }}
           text="Update Privacy Settings"
