@@ -52,37 +52,6 @@ async function markPuzzlePrivate(
   await indexRes.ref.set(idx);
 }
 
-async function markPuzzlePublic(
-  indexRes: FirebaseFirestore.DocumentSnapshot,
-  puzzleId: string
-) {
-  console.log(`attempting mark public for ${indexRes.id}`);
-  const idx = parseIndex(indexRes);
-  if (idx === null) {
-    return;
-  }
-  if (!idx.i.includes(puzzleId)) {
-    console.log('puzzle not in index');
-    return;
-  }
-
-  // remove from private until index if present
-  if (idx.pvui?.includes(puzzleId) && idx.pvut) {
-    const pvidx = idx.pvui.indexOf(puzzleId);
-    console.log('splicing out ', idx.pvui.splice(pvidx, 1));
-    idx.pvut.splice(pvidx, 1);
-  }
-
-  // remove from private index if present
-  const pvi = idx.pv?.indexOf(puzzleId);
-  if (pvi !== undefined && pvi >= 0) {
-    idx.pv?.splice(pvi, 1);
-  }
-
-  console.log('writing');
-  await indexRes.ref.set(idx);
-}
-
 async function markPuzzlePrivateUntil(
   indexRes: FirebaseFirestore.DocumentSnapshot,
   puzzleId: string,
@@ -259,13 +228,6 @@ export async function handlePuzzleUpdate(
         const authorIndexRes = await db.doc(`i/${after.a}`).get();
         markPuzzlePrivateUntil(authorIndexRes, puzzleId, after.pvu.toMillis());
       }
-    } else if (before.pv || before.pvu) {
-      // puzzle been made public
-      const featuredIndexRes = await db.doc('i/featured').get();
-      markPuzzlePublic(featuredIndexRes, puzzleId);
-
-      const authorIndexRes = await db.doc(`i/${after.a}`).get();
-      markPuzzlePublic(authorIndexRes, puzzleId);
     }
   }
 

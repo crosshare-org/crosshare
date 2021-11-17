@@ -3,7 +3,7 @@
 import fs from 'fs';
 import util from 'util';
 
-import parse from 'csv-parse/lib/sync';
+import { parse } from 'csv-parse/lib/sync';
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);

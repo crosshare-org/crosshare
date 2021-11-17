@@ -15,6 +15,7 @@ import {
   TimestampClass,
   setAdminApp,
   setUserMap,
+  AdminTimestamp,
 } from '../lib/firebaseWrapper';
 import { queueEmails } from '../lib/serverOnly';
 import type firebaseAdminType from 'firebase-admin';
@@ -23,7 +24,7 @@ import MockDate from 'mockdate';
 
 jest.mock('../lib/firebaseWrapper');
 
-const basePuzzle = getMockedPuzzle({ cs: undefined });
+const basePuzzle = getMockedPuzzle({ cs: undefined, pvu: AdminTimestamp.now() });
 
 function getComment(
   fields?: Partial<CommentWithRepliesT>
@@ -391,7 +392,7 @@ describe('email queueing', () => {
     notifications.push(
       ...(await notificationsForPuzzleChange(
         null,
-        { ...basePuzzle, pv: true },
+        { ...basePuzzle, pv: true, pvu: undefined },
         'foo'
       ))
     );

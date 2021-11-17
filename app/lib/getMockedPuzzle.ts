@@ -5,6 +5,7 @@ export function getMockedPuzzle(
   fields?: Partial<DBPuzzleT>,
   timestampClass?: typeof AdminTimestamp
 ): DBPuzzleT {
+  const {pv, pvu, ...rest} = fields || {};
   return {
     ...{
       c: null,
@@ -71,6 +72,7 @@ export function getMockedPuzzle(
       ],
       n: 'Mike D',
     },
-    ...fields,
+    ...rest,
+    ...pvu && {pvu} || {pv: pv || true},
   };
 }

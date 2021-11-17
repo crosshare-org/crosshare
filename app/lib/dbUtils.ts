@@ -63,7 +63,7 @@ interface firebaseQuery {
 
 export async function mapEachResult<N, A>(
   query: firebaseQuery,
-  validator: t.Type<A>,
+  validator: t.Decoder<unknown, A>,
   mapper: (val: A, docid: string) => N
 ): Promise<Array<N>> {
   const value = await query.get();
@@ -75,6 +75,7 @@ export async function mapEachResult<N, A>(
       results.push(mapper(validationResult.right, doc.id));
     }
     else {
+      console.error('bad doc: ', doc.id);
       console.error(PathReporter.report(validationResult).join(','));
       return Promise.reject('Malformed content');
     }

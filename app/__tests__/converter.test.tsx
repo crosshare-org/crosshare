@@ -39,6 +39,7 @@ function toDBPuzzle(pip: PuzzleInProgressStrictT): DBPuzzleT {
     h: pip.height,
     w: pip.width,
     g: pip.grid,
+    pv: true,
     ...getClueProps(grid.sortedEntries, grid.entries, pip.clues, true),
     ...(pip.notes && { cn: pip.notes }),
   };

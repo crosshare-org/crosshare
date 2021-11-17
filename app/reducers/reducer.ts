@@ -1194,13 +1194,14 @@ export function builderReducer(
       ...(state.notes && { cn: state.notes }),
       ...(state.blogPost && { bp: state.blogPost }),
       ...(state.guestConstructor && { gc: state.guestConstructor }),
-      ...(state.isPrivate && { pv: true }),
-      ...(!state.isPrivate && {
-        pvu:
-          state.isPrivateUntil && state.isPrivateUntil > action.publishTimestamp
-            ? state.isPrivateUntil
-            : action.publishTimestamp,
-      }),
+      ...(state.isPrivate && 
+           { pv: true } || 
+           {
+             pvu:
+               state.isPrivateUntil && state.isPrivateUntil > action.publishTimestamp
+                 ? state.isPrivateUntil
+                 : action.publishTimestamp,
+           }),
       ...(state.isContestPuzzle &&
         state.contestAnswers?.length && {
         ct_ans: state.contestAnswers,

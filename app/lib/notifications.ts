@@ -253,6 +253,7 @@ export async function notificationsForPuzzleChange(
   if (before === null) {
     return notificationsForPuzzleCreation(after, puzzleId);
   }
+
   const withID = { ...after, id: puzzleId };
   const notifications = [];
   if (after.cs) {

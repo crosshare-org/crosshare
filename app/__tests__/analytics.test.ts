@@ -136,6 +136,7 @@ beforeEach(async () => {
       },
     ],
     n: 'Mike D',
+    pv: true
   };
   await adminApp.firestore().collection('c').doc('mike').set(puzzle);
 

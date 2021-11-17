@@ -175,10 +175,6 @@ const DBPuzzleOptionalV = t.partial({
   bp: t.string,
   /** guest constructor */
   gc: t.string,
-  /** isPrivate */
-  pv: t.union([t.boolean, timestamp]),
-  /** isPrivateUntil */
-  pvu: timestamp,
   /** daily mini date */
   dmd: t.string,
   /** clue explanations (key is index into ac + dc) */
@@ -196,9 +192,31 @@ const DBPuzzleOptionalV = t.partial({
   /** puzzle rating */
   rtg: GlickoScoreV,
 });
+
 export const DBPuzzleV = t.intersection([
   DBPuzzleMandatoryV,
   DBPuzzleOptionalV,
+  /** We must have either pv or pvu but not both! */
+  t.union([
+    t.intersection([
+      t.type({
+      /** isPrivate */
+        pv: t.union([t.literal(true), timestamp]),
+      }),
+      t.partial({
+        pvu: t.undefined,
+      })
+    ]),
+    t.intersection([
+      t.type({
+      /** isPrivateUntil */
+        pvu: timestamp,
+      }),
+      t.partial({
+        pv: t.union([t.undefined, t.literal(false) ]),
+      })
+    ])
+  ])
 ]);
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
 
