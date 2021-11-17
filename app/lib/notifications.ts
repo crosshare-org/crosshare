@@ -157,7 +157,7 @@ export function newPuzzleNotification(
   return {
     id: `${followerId}-newpuzzle-${puzzle.id}`,
     u: followerId,
-    t: puzzle.pvu || AdminTimestamp.now(),
+    t: puzzle.pvu ? AdminTimestamp.fromMillis(puzzle.pvu.toMillis()) : AdminTimestamp.now(),
     r: false,
     e: false,
     k: 'newpuzzle',
@@ -250,7 +250,7 @@ export async function notificationsForPuzzleChange(
   after: DBPuzzleT,
   puzzleId: string
 ): Promise<Array<NotificationT>> {
-  if (before === null) {
+  if (before === null || (before.pv === true && !after.pv)) {
     return notificationsForPuzzleCreation(after, puzzleId);
   }
 

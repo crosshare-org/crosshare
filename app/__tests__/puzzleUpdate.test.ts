@@ -5,16 +5,18 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 
 import { getMockedPuzzle } from '../lib/getMockedPuzzle';
-import { CommentWithRepliesT } from '../lib/dbtypes';
+import { CommentWithRepliesT, DBPuzzleT } from '../lib/dbtypes';
 import { AdminTimestamp, setAdminApp } from '../lib/firebaseWrapper';
 import type firebaseAdminType from 'firebase-admin';
 import { handlePuzzleUpdate } from '../lib/puzzleUpdate';
+import { newPuzzleNotification } from '../lib/notifications';
 
 jest.mock('../lib/firebaseWrapper');
 
 const toDeleteId = 'puzzletodelete';
 const toKeepId = 'puzzletokeep';
 const baseTime = new Date(Date.UTC(2020, 10, 10));
+const baseTime2 = new Date(Date.UTC(2020, 11, 11));
 const basePuzzle = getMockedPuzzle({
   cs: undefined,
   f: true,
@@ -622,8 +624,11 @@ test('should remove from notifications when a public puzzle is marked private', 
     ...basePuzzle,
     cs: [getComment({ a: 'dummy-author-id', i: 'randomCommentId' })],
   };
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments, toDeleteId);
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments2, toKeepId);
+
+  const note1 = newPuzzleNotification({...puzzleWithComments, id: toDeleteId}, 'fSEwJorvqOMK5UhNMHa4mu48izl1');
+  const note2 = newPuzzleNotification({...puzzleWithComments2, id: toKeepId}, 'fSEwJorvqOMK5UhNMHa4mu48izl1');
+  await adminApp.firestore().collection('n').doc(note1.id).set(note1);
+  await adminApp.firestore().collection('n').doc(note2.id).set(note2);
 
   // create the actual puzzles
   await adminApp
@@ -653,22 +658,20 @@ test('should remove from notifications when a public puzzle is marked private', 
     toMatchInlineSnapshot(`
 Array [
   Object {
-    "c": "LwgoVx0BAskM4wVJyoLj",
-    "cn": "Mike D",
+    "an": "Mike D",
     "e": false,
-    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
-    "k": "comment",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-newpuzzle-puzzletodelete",
+    "k": "newpuzzle",
     "p": "puzzletodelete",
     "pn": "Raises, as young",
     "r": false,
     "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
   },
   Object {
-    "c": "randomCommentId",
-    "cn": "Mike D",
+    "an": "Mike D",
     "e": false,
-    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
-    "k": "comment",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-newpuzzle-puzzletokeep",
+    "k": "newpuzzle",
     "p": "puzzletokeep",
     "pn": "Raises, as young",
     "r": false,
@@ -704,11 +707,10 @@ Array [
     toMatchInlineSnapshot(`
 Array [
   Object {
-    "c": "randomCommentId",
-    "cn": "Mike D",
+    "an": "Mike D",
     "e": false,
-    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
-    "k": "comment",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-newpuzzle-puzzletokeep",
+    "k": "newpuzzle",
     "p": "puzzletokeep",
     "pn": "Raises, as young",
     "r": false,
@@ -1076,19 +1078,21 @@ Array [
 test('should update indexes when a private puzzle is marked private until', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
 
-  // create some notifications
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {pvu, ...newBase} = basePuzzle;
+
+  await adminApp.firestore().collection('followers').doc('fSEwJorvqOMK5UhNMHa4mu48izl1').set({f: ['dummyuserid']});
+
   const puzzleWithComments = {
-    ...basePuzzle,
+    ...newBase,
     pv: true,
     cs: [getComment({ a: 'dummy-author-id' })],
   };
   const puzzleWithComments2 = {
-    ...basePuzzle,
+    ...newBase,
     pv: true,
     cs: [getComment({ a: 'dummy-author-id', i: 'randomCommentId' })],
   };
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments, toDeleteId);
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments2, toKeepId);
 
   // create the actual puzzles
   await adminApp
@@ -1118,8 +1122,7 @@ test('should update indexes when a private puzzle is marked private until', asyn
     toMatchInlineSnapshot('Array []');
 
   // mark as privateuntil
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const updated = {
+  const updated: DBPuzzleT = {
     ...puzzleWithComments,
     pv: false,
     pvu: AdminTimestamp.fromDate(baseTime),
@@ -1135,31 +1138,82 @@ test('should update indexes when a private puzzle is marked private until', asyn
       get().
       then((r) =>
         r.docs.
-          map((d) => d.data()).
-          map((d) => {
-            delete d['t'];
-            return d;
-          }))).
+          map((d) => d.data()))).
 
-    toMatchInlineSnapshot('Array []');
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "an": "Mike D",
+    "e": false,
+    "id": "dummyuserid-newpuzzle-puzzletodelete",
+    "k": "newpuzzle",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "t": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1604966400,
+    },
+    "u": "dummyuserid",
+  },
+]
+`);
+
+  // Now try changing privateUntil
+  await handlePuzzleUpdate(updated, {...updated, pvu: AdminTimestamp.fromDate(baseTime2)}, toDeleteId);
+  // and check results
+  expect(
+    await adminApp.
+      firestore().
+      collection('n').
+      get().
+      then((r) =>
+        r.docs.
+          map((d) => d.data()))).
+
+
+    toMatchInlineSnapshot(`
+Array [
+  Object {
+    "an": "Mike D",
+    "e": false,
+    "id": "dummyuserid-newpuzzle-puzzletodelete",
+    "k": "newpuzzle",
+    "p": "puzzletodelete",
+    "pn": "Raises, as young",
+    "r": false,
+    "t": Timestamp {
+      "_nanoseconds": 0,
+      "_seconds": 1607644800,
+    },
+    "u": "dummyuserid",
+  },
+]
+`);
 });
 
 test('should update indexes when a private until puzzle is marked private', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
 
   // create some notifications
-  const puzzleWithComments = {
+  const puzzleWithComments: DBPuzzleT = {
     ...basePuzzle,
+    pv: false,
     pvu: AdminTimestamp.fromDate(baseTime),
     cs: [getComment({ a: 'dummy-author-id' })],
   };
-  const puzzleWithComments2 = {
+  const puzzleWithComments2: DBPuzzleT = {
     ...basePuzzle,
+    pv: false,
     pvu: AdminTimestamp.fromDate(baseTime),
     cs: [getComment({ a: 'dummy-author-id', i: 'randomCommentId' })],
   };
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments, toDeleteId);
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments2, toKeepId);
+
+  const note1 = newPuzzleNotification({...puzzleWithComments, id: toDeleteId}, 'fSEwJorvqOMK5UhNMHa4mu48izl1');
+  const note2 = newPuzzleNotification({...puzzleWithComments2, id: toKeepId}, 'fSEwJorvqOMK5UhNMHa4mu48izl1');
+  await adminApp.firestore().collection('n').doc(note1.id).set(note1);
+  await adminApp.firestore().collection('n').doc(note2.id).set(note2);
 
   // create the actual puzzles
   await adminApp
@@ -1189,22 +1243,20 @@ test('should update indexes when a private until puzzle is marked private', asyn
     toMatchInlineSnapshot(`
 Array [
   Object {
-    "c": "LwgoVx0BAskM4wVJyoLj",
-    "cn": "Mike D",
+    "an": "Mike D",
     "e": false,
-    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-LwgoVx0BAskM4wVJyoLj",
-    "k": "comment",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-newpuzzle-puzzletodelete",
+    "k": "newpuzzle",
     "p": "puzzletodelete",
     "pn": "Raises, as young",
     "r": false,
     "u": "fSEwJorvqOMK5UhNMHa4mu48izl1",
   },
   Object {
-    "c": "randomCommentId",
-    "cn": "Mike D",
+    "an": "Mike D",
     "e": false,
-    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
-    "k": "comment",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-newpuzzle-puzzletokeep",
+    "k": "newpuzzle",
     "p": "puzzletokeep",
     "pn": "Raises, as young",
     "r": false,
@@ -1240,11 +1292,10 @@ Array [
     toMatchInlineSnapshot(`
 Array [
   Object {
-    "c": "randomCommentId",
-    "cn": "Mike D",
+    "an": "Mike D",
     "e": false,
-    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-comment-randomCommentId",
-    "k": "comment",
+    "id": "fSEwJorvqOMK5UhNMHa4mu48izl1-newpuzzle-puzzletokeep",
+    "k": "newpuzzle",
     "p": "puzzletokeep",
     "pn": "Raises, as young",
     "r": false,

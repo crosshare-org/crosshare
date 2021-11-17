@@ -1,10 +1,10 @@
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { AdminApp } from '../lib/firebaseWrapper';
+import { AdminApp, AdminTimestamp } from '../lib/firebaseWrapper';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
-import { notificationsForPuzzleChange } from './notifications';
+import { isNewPuzzleNotification, notificationsForPuzzleChange, NotificationT, NotificationV } from './notifications';
 
-async function deleteNotifications(puzzleId: string) {
+async function deleteNotifications(puzzleId: string, shouldDelete?: (n: NotificationT) => boolean) {
   const db = AdminApp.firestore();
 
   console.log('deleting notifications');
@@ -13,8 +13,32 @@ async function deleteNotifications(puzzleId: string) {
     .get()
     .then((snap) => {
       snap.forEach(async (res) => {
-        console.log('deleting notification');
-        await res.ref.delete();
+        const n = NotificationV.decode(res.data());
+        if (!shouldDelete || !isRight(n) || shouldDelete(n.right)) {
+          console.log('deleting notification');
+          await res.ref.delete();
+        }
+      });
+    });
+}
+
+async function updateNotifications(puzzleId: string, update: (n: NotificationT) => Partial<NotificationT> | null) {
+  const db = AdminApp.firestore();
+
+  console.log('updating notifications');
+  await db.collection('n')
+    .where('p', '==', puzzleId)
+    .get()
+    .then((snap) => {
+      snap.forEach(async (res) => {
+        const n = NotificationV.decode(res.data());
+        if (isRight(n)) {
+          const toUpdate = update(n.right);
+          if (toUpdate) {
+            console.log('updating notification');
+            await res.ref.update(toUpdate);
+          }
+        }
       });
     });
 }
@@ -88,12 +112,17 @@ export async function handlePuzzleUpdate(
     if (after.pv) {
       if (!before.pv) {
         // been marked private
-        await deleteNotifications(puzzleId);
+        await deleteNotifications(puzzleId, isNewPuzzleNotification);
       }
-    } else if (after.pvu) {
+    } else {
       if (after.pvu.toMillis() !== before.pvu?.toMillis()) {
-        // been marked private until
-        await deleteNotifications(puzzleId);
+        // been marked private until or updated privateUntil
+        await updateNotifications(puzzleId, n => {
+          if (isNewPuzzleNotification(n)) {
+            return {t: AdminTimestamp.fromMillis(after.pvu.toMillis())};
+          }
+          return null;
+        });
       }
     }
   }
