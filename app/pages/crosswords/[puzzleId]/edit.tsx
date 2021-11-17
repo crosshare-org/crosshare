@@ -465,7 +465,7 @@ const PuzzleEditor = ({
                 pv: typeof isPrivate === 'number' ? TimestampClass.fromMillis(isPrivate) : isPrivate,
                 pvu: isPrivate
                   ? DeleteSentinal
-                  : isPrivateUntil && isPrivateUntil > Date.now()
+                  : isPrivateUntil
                     ? TimestampClass.fromMillis(isPrivateUntil)
                     : TimestampClass.now(),
               })
