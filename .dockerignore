@@ -15,7 +15,10 @@
 !app/typings
 !app/reducers
 !app/public
-!app/locales/*/*.po
+!app/locales/en/messages.po
+!app/locales/es/messages.po
+!app/locales/it/messages.po
+!app/locales/fr/messages.po
 !app/pages
 !app/lib
 !app/components
