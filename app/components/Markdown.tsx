@@ -140,6 +140,7 @@ export const Markdown = ({
   inline?: boolean;
   className?: string;
 }) => {
+  text = text.replace(/[^\s\S]/g, '');
   if (clueMap && clueMap.size) {
     const fullClueMap = new Map<
       string,

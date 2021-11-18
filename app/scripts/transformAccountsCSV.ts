@@ -3,7 +3,8 @@
 import fs from 'fs';
 import util from 'util';
 
-import { parse } from 'csv-parse/lib/sync';
+// eslint-disable-next-line import/no-unresolved
+import { parse } from 'csv-parse/sync';
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
