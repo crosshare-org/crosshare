@@ -29,6 +29,7 @@ export function withTranslation(gssp: GetServerSideProps): GetServerSideProps {
 export function withStaticTranslation(gsp: GetStaticProps): GetStaticProps {
   return async (ctx) => {
     const ssp = await gsp(ctx);
+    ssp.revalidate = 60 * 60;
     const locale = ctx.locale;
     if (!locale) {
       return ssp;
