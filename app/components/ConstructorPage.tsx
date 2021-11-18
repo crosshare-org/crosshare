@@ -582,6 +582,9 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
           ''
         )}
         <meta key="description" name="description" content={description} />
+        <link rel="alternate" type="application/rss+xml"
+          title={title}
+          href={`https://crosshare.org/api/feed/${username}`} />
         <I18nTags locale={loc} canonicalPath={`/${username}${props.currentPage !== 0 ? '/page/' + props.currentPage : ''}`} />
         {props.prevPage === 0 ? (
           <link rel="prev" href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/${username}`} />
