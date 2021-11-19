@@ -173,7 +173,8 @@ export default function HomePage({
           </div>
         </div>
         <hr css={{ margin: '2em 0' }} />
-        <h2><Trans>Featured Puzzles</Trans></h2>
+        <h2 css={{ marginBottom: 0 }}><Trans>Featured Puzzles</Trans></h2>
+        <div css={{ marginBottom: '1.5em' }}><Link href="/newest"><Trans>View all puzzles</Trans>  &rarr;</Link></div>
         {featured.map((p, i) => (
           <PuzzleResultLink
             key={i}
