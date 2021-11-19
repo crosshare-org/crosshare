@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useState, FormEvent, useContext } from 'react';
+import { useState, FormEvent, useContext, useCallback } from 'react';
 
 import { DefaultTopBar } from './TopBar';
 import { ConstructorPageT } from '../lib/constructorPage';
@@ -8,7 +8,7 @@ import { Link, LinkButtonSimpleA } from './Link';
 import { Markdown } from './Markdown';
 import { AuthContext } from './AuthContext';
 import { App, ServerTimestamp, DeleteSentinal } from '../lib/firebaseWrapper';
-import { Button } from './Buttons';
+import { Button, ButtonAsLink } from './Buttons';
 import { HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
 import { CoverPic, ProfilePicAndName } from './Images';
 import { ToolTipText } from './ToolTipText';
@@ -527,6 +527,8 @@ export const BioEditor = (props: BioEditorProps) => {
 export interface ConstructorPageProps {
   constructor: ConstructorPageT;
   followCount: number;
+  followers: Array<ConstructorPageT>;
+  following: Array<ConstructorPageT>;
   profilePicture: string | null;
   coverPicture: string | null;
   puzzles: Array<LinkablePuzzle>;
@@ -535,9 +537,37 @@ export interface ConstructorPageProps {
   prevPage: number | null;
 }
 
+const FollowersList = ({ pages, close }: { pages: Array<ConstructorPageT>, close: () => void }) => {
+  return <ul css={{ width: '100%', maxWidth: '40em', listStyleType: 'none', padding: 0, margin: 'auto', textAlign: 'left' }}>
+    {pages.map(f => <FollowersListItem key={f.i} page={f} close={close} />)}
+  </ul>;
+};
+
+const FollowersListItem = ({ page, close }: { page: ConstructorPageT, close: () => void }) => {
+  const router = useRouter();
+
+  const click = useCallback(() => { close(); router.push(`/${page.i}`); }, [page.i, router, close]);
+
+  return <li>
+    <div tabIndex={0} role="button" onClick={click} onKeyPress={click} css={{
+      padding: '1.5em 1em', display: 'flex', alignItems: 'flex-start', flexWrap: 'wrap', '&:hover': {
+        backgroundColor: 'var(--secondary)'
+      }, cursor: 'pointer'
+    }}>
+      <div css={{ marginRight: '1em' }}>
+        <div><b css={{ fontSize: '1.1em', '&:hover': { textDecoration: 'underline' } }}>{page.n}</b></div>
+        <div>@{page.i}</div>
+      </div>
+      <FollowButton css={{ marginLeft: 'auto' }} page={page} />
+    </div>
+  </li>;
+};
+
 export const ConstructorPage = (props: ConstructorPageProps) => {
   const { locale } = useRouter();
   const { isAdmin } = useContext(AuthContext);
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [overlayIsFollowing, setOverlayIsFollowing] = useState(false);
   const coverPic = props.coverPicture;
   const profilePic = props.profilePicture;
   const username = props.constructor.i || props.constructor.id;
@@ -632,7 +662,34 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
               <h2 css={{ fontSize: '1em', fontWeight: 'normal', marginBottom: '0.25em' }}>
                 <Link href={'/' + username}>@{username}</Link>
               </h2>
-              <p><Plural id="follower-count" value={props.followCount} one="1 Follower" other="# Followers" /></p>
+              {showOverlay ? (
+                <Overlay closeCallback={() => setShowOverlay(false)}>
+                  <div css={{ textAlign: 'center' }}>
+                    {overlayIsFollowing ?
+                      <>
+                        <h2>
+                          Following
+                        </h2>
+                        <FollowersList pages={props.following} close={() => setShowOverlay(false)} />
+                      </>
+                      :
+                      <>
+                        <h2>
+                          Followers
+                        </h2>
+                        <FollowersList pages={props.followers} close={() => setShowOverlay(false)} />
+                      </>
+                    }
+                  </div>
+                </Overlay>
+              ) : (
+                ''
+              )}
+              <p>
+                <ButtonAsLink disabled={props.following.length === 0} onClick={() => { setShowOverlay(true); setOverlayIsFollowing(true); }} text={<Trans id="following-count">{props.following.length} Following</Trans>} />
+                {' · '}
+                <ButtonAsLink disabled={props.followCount === 0} onClick={() => { setShowOverlay(true); setOverlayIsFollowing(false); }} text={<Plural id="follower-count" value={props.followCount} one="1 Follower" other="# Followers" />} />
+              </p>
             </>
           }
         />

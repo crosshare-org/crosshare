@@ -35,6 +35,8 @@ export const FollowButton = ({ page, ...props }: { page: ConstructorPageT, class
     [page.n, page.u, showSnackbar]
   );
 
+  const css = { minWidth: '7em' };
+
   if (!user || user.isAnonymous) {
     return (
       <>
@@ -56,9 +58,10 @@ export const FollowButton = ({ page, ...props }: { page: ConstructorPageT, class
           ''
         )}
         <Button
+          css={css}
           hollow
           disabled={authCtx.loading}
-          onClick={() => setShowOverlay(true)}
+          onClick={(e) => { e.stopPropagation(); setShowOverlay(true); }}
           text={t`Follow`}
           {...props}
         />
@@ -68,12 +71,13 @@ export const FollowButton = ({ page, ...props }: { page: ConstructorPageT, class
   if (user.uid === page.u) {
     return (
       <>
-        <Button hollow disabled text={t`Follow`} {...props} />
-        <ToolTipText
-          css={{ marginLeft: '0.5em' }}
-          text={<FaInfoCircle />}
-          tooltip={t`You can't follow yourself!`}
-        />
+        <Button css={css} hollow disabled text={<>{t`Follow`}
+          <ToolTipText
+            css={{ marginLeft: '0.5em' }}
+            text={<FaInfoCircle />}
+            tooltip={t`You can't follow yourself!`}
+          />
+        </>} {...props} />
       </>
     );
   }
@@ -82,8 +86,10 @@ export const FollowButton = ({ page, ...props }: { page: ConstructorPageT, class
     return (
       <>
         <Button
-          onClick={() =>
-            Promise.all([
+          css={css}
+          onClick={(e) => {
+            e.stopPropagation();
+            return Promise.all([
               db
                 .doc(`prefs/${user.uid}`)
                 .set(
@@ -95,7 +101,8 @@ export const FollowButton = ({ page, ...props }: { page: ConstructorPageT, class
                 .set({ f: FieldValue.arrayRemove(user.uid) }, { merge: true }),
             ]).then(() => {
               showSnackbar(t`No longer following ${page.n}`);
-            })
+            });
+          }
           }
           text={t`Following`}
           hoverText={t`Unfollow`}
@@ -105,5 +112,5 @@ export const FollowButton = ({ page, ...props }: { page: ConstructorPageT, class
       </>
     );
   }
-  return <Button hollow onClick={() => doFollow(user)} text={t`Follow`} {...props} />;
+  return <Button css={css} hollow onClick={(e) => { e.stopPropagation(); doFollow(user); }} text={t`Follow`} {...props} />;
 };

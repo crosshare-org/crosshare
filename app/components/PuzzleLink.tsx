@@ -169,7 +169,7 @@ export const AuthorLink = ({
     link = <Link href={'/' + username}>{constructorPage.n}</Link>;
   }
   if (constructorPage && showFollowButton) {
-    followButton = <FollowButton css={{ marginLeft: '0.5em', padding: '0.25em', fontSize: '0.9em', boxShadow: 'none' }} page={constructorPage} />;
+    followButton = <FollowButton css={{ marginLeft: '0.5em', padding: '0.25em', fontSize: '0.9em', minWidth: '5.2em', boxShadow: 'none' }} page={constructorPage} />;
   }
   if (guestConstructor) {
     return (

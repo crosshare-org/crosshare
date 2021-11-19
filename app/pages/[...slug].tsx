@@ -8,13 +8,14 @@ import {
 import { validate } from '../lib/constructorPage';
 import { ErrorPage } from '../components/ErrorPage';
 import { AdminApp, App } from '../lib/firebaseWrapper';
-import { getStorageUrl } from '../lib/serverOnly';
+import { getStorageUrl, userIdToPage } from '../lib/serverOnly';
 import { useRouter } from 'next/router';
 import { withTranslation } from '../lib/translation';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { FollowersV } from '../lib/dbtypes';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles';
+import { AccountPrefsV } from '../lib/prefs';
 
 interface ErrorProps {
   error: string;
@@ -23,26 +24,48 @@ type PageProps = ConstructorPageProps | ErrorProps;
 
 const PAGE_SIZE = 10;
 
-const getFollowerCount = async (userId: string) => {
+const getFollowerIds = async (userId: string) => {
   const db = AdminApp.firestore();
   const followersRes = await db.doc(`followers/${userId}`).get();
   if (!followersRes.exists) {
     console.log('no followers doc');
-    return 0;
+    return [];
   }
 
   const validationResult = FollowersV.decode(followersRes.data());
   if (!isRight(validationResult)) {
     console.error('could not decode followers for', userId);
     console.error(PathReporter.report(validationResult).join(','));
-    return 0;
+    return [];
   }
   const followers = validationResult.right.f;
   if (!followers) {
     console.log('no followers');
-    return 0;
+    return [];
   }
-  return followers.length;
+  return followers;
+};
+
+const getFollowingIds = async (userId: string) => {
+  const db = AdminApp.firestore();
+  const prefsRes = await db.doc(`prefs/${userId}`).get();
+  if (!prefsRes.exists) {
+    console.log('no prefs doc');
+    return [];
+  }
+
+  const validationResult = AccountPrefsV.decode(prefsRes.data());
+  if (!isRight(validationResult)) {
+    console.error('could not decode prefs for', userId);
+    console.error(PathReporter.report(validationResult).join(','));
+    return [];
+  }
+  const following = validationResult.right.following;
+  if (!following) {
+    console.log('not following');
+    return [];
+  }
+  return following;
 };
 
 export const gssp: GetServerSideProps<PageProps> = async ({
@@ -88,12 +111,18 @@ export const gssp: GetServerSideProps<PageProps> = async ({
     cp.u,
   );
 
-  const followCount = await getFollowerCount(cp.u);
+  const followerIds = await getFollowerIds(cp.u);
+  const followers = (await Promise.all(followerIds.map(userIdToPage))).flatMap(a => a ? [a] : []);
+
+  const followingIds = await getFollowingIds(cp.u);
+  const following = (await Promise.all(followingIds.map(userIdToPage))).flatMap(a => a ? [a] : []);
 
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
   return {
     props: {
-      followCount,
+      followCount: followerIds.length,
+      followers,
+      following,
       constructor: cp,
       profilePicture,
       coverPicture,
