@@ -220,6 +220,11 @@ export const DBPuzzleV = t.intersection([
 ]);
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
 
+export const AdminSettingsV = t.type({
+  automoderate: t.boolean,
+  noAuto: t.array(t.string)
+});
+
 const PlayBaseV = t.intersection([
   t.type({
     /** crossword id */
