@@ -3,6 +3,15 @@
 exports[`clueMap rendering 1`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 <div>
@@ -13,12 +22,16 @@ exports[`clueMap rendering 1`] = `
       before 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         baz BOOM foo BAM &gt;! not! !&lt; fooey
       </span>
        with 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         after
       </span>
@@ -31,6 +44,15 @@ exports[`clueMap rendering 1`] = `
 exports[`clueMap rendering 2`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 .emotion-1 {
@@ -91,6 +113,8 @@ exports[`clueMap rendering 2`] = `
       before 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         baz BOOM foo 
         <span
@@ -125,6 +149,8 @@ exports[`clueMap rendering 2`] = `
        with 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         after
       </span>
@@ -253,6 +279,15 @@ exports[`clueMap rendering 3`] = `
 exports[`clueMap rendering 4`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 .emotion-1 {
@@ -312,6 +347,8 @@ exports[`clueMap rendering 4`] = `
     >
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         <span
           class="emotion-1"
@@ -349,6 +386,15 @@ exports[`clueMap rendering 4`] = `
 exports[`clueMap rendering 5`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 .emotion-1 {
@@ -409,6 +455,8 @@ exports[`clueMap rendering 5`] = `
       You got it!! Glad the clues pointed you in the right direction. That's what they're there for. Also, it was Brian's suggestion to include 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
          
         <span
@@ -695,6 +743,15 @@ exports[`markdown preview mode 2`] = `
 exports[`markdown preview mode 3`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 <div>
@@ -704,6 +761,8 @@ exports[`markdown preview mode 3`] = `
     >
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         Lorem 
         <strong>
@@ -735,6 +794,15 @@ exports[`spoiler text rendering 1`] = `
 exports[`spoiler text rendering 2`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 <div>
@@ -745,6 +813,8 @@ exports[`spoiler text rendering 2`] = `
       foo bar 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         baz
       </span>
@@ -756,6 +826,15 @@ exports[`spoiler text rendering 2`] = `
 exports[`spoiler text rendering 3`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 <div>
@@ -765,6 +844,8 @@ exports[`spoiler text rendering 3`] = `
     >
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         baz foo bam ! &gt;&gt; fooey
       </span>
@@ -776,6 +857,15 @@ exports[`spoiler text rendering 3`] = `
 exports[`spoiler text rendering 4`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 <div>
@@ -785,6 +875,8 @@ exports[`spoiler text rendering 4`] = `
     >
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         baz foo bam ! &gt;&gt; fooey
       </span>
@@ -797,6 +889,15 @@ exports[`spoiler text rendering 4`] = `
 exports[`spoiler text rendering 5`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 <div>
@@ -807,6 +908,8 @@ exports[`spoiler text rendering 5`] = `
       before 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         baz foo bam &gt;! fooey
       </span>
@@ -819,6 +922,15 @@ exports[`spoiler text rendering 5`] = `
 exports[`spoiler text rendering 6`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 <div>
@@ -829,6 +941,8 @@ exports[`spoiler text rendering 6`] = `
       before 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         baz foo bam || fooey
       </span>
@@ -841,6 +955,15 @@ exports[`spoiler text rendering 6`] = `
 exports[`spoiler text rendering 7`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 <div>
@@ -851,12 +974,16 @@ exports[`spoiler text rendering 7`] = `
       before 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         baz foo bam || fooey
       </span>
        with 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         after
       </span>
@@ -869,6 +996,15 @@ exports[`spoiler text rendering 7`] = `
 exports[`spoiler text rendering 8`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 <div>
@@ -879,12 +1015,16 @@ exports[`spoiler text rendering 8`] = `
       before 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         baz foo bam &gt;! not! !&lt; fooey
       </span>
        with 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         after
       </span>
@@ -897,6 +1037,15 @@ exports[`spoiler text rendering 8`] = `
 exports[`spoiler text rendering 9`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 <div>
@@ -911,12 +1060,16 @@ exports[`spoiler text rendering 9`] = `
     >
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
          not! 
       </span>
        fooey|| with 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         after
       </span>
@@ -929,6 +1082,15 @@ exports[`spoiler text rendering 9`] = `
 exports[`spoiler text rendering 10`] = `
 .emotion-0 {
   background-color: var(--text);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-0 * {
+  visibility: hidden;
 }
 
 <div>
@@ -943,12 +1105,16 @@ exports[`spoiler text rendering 10`] = `
     >
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
          not! 
       </span>
        fooey|| with 
       <span
         class="emotion-0"
+        role="button"
+        tabindex="0"
       >
         after
       </span>
