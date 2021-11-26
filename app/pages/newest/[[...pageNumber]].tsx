@@ -37,7 +37,7 @@ const gssp: GetServerSideProps<PageProps> = async ({
     page = 0;
   } else if (Array.isArray(pn) && pn.length === 1 && pn[0]) {
     page = parseInt(pn[0]);
-    if (page.toString() !== pn[0] || page <= 0) {
+    if (page.toString() !== pn[0] || page <= 0 || page >= 10) {
       return { props: { error: 'Bad page number' } };
     }
   } else {

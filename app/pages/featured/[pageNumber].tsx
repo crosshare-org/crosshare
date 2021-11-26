@@ -36,7 +36,7 @@ const gssp: GetServerSideProps<PageProps> = async ({
   }
 
   const page = parseInt(params.pageNumber);
-  if (page < 1 || page.toString() !== params.pageNumber) {
+  if (page < 1 || page.toString() !== params.pageNumber || page >= 10) {
     return { props: { error: 'Bad page number' } };
   }
   const [puzzlesWithoutConstructor, hasNext] = await paginatedPuzzles(
