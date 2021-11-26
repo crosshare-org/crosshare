@@ -569,6 +569,59 @@ export const SymmetryNone = (props: IconProps) => {
   return <SymmetryIcon type={Symmetry.None} {...props} />;
 };
 
+const BlankLogo = () => {
+  return <>
+    <g fill="var(--logo-white)">
+      <path d="M1 10h14v5H1z" />
+      <path d="M3 9h10v1H3zm0-7h5v3H3z" />
+      <path d="M6 5h1v5H6zm4-2h2v6h-2z" />
+      <path d="M12 1h2v3h-2z" />
+      <path d="M14 1h1v1h-1z" />
+    </g>
+    <path d="M13 0h3v1h-3zM4 1h3v1H4z" />
+    <path d="M12 1h1v1h-1zm3 0h1v1h-1zM3 2h1v1H3zm3 0h2v1H6z" />
+    <path d="M11 2h1v1h-1zm3 0h1v1h-1zM2 3h1v3H2zm3 0h1v6H5z" />
+    <path d="M7 3h1v7H7zm3 0h1v1h-1zm3 0h1v1h-1zM4 4h1v1H4z" />
+    <path d="M9 4h1v5H9zm3 0h1v1h-1z" />
+    <path d="M3 5h1v1H3zm8 0h1v4h-1zM4 8h1v1H4z" />
+    <path d="M3 9h1v1H3zm5 0h1v1H8z" />
+    <path d="M12 9h1v1h-1zM1 10h2v1H1z" />
+    <path d="M13 10h2v1h-2zM0 11h1v3H0z" />
+    <path d="M15 11h1v3h-1z" />
+    <path d="M1 14h3v1H1zm11 0h3v1h-3z" />
+    <path d="M4 15h8v1H4z" />
+  </>;
+};
+
+export const PatronIcon = () => {
+  return (
+    <svg
+      css={{ verticalAlign: 'text-top' }}
+      xmlns="http://www.w3.org/2000/svg"
+      width={'1em'}
+      height={'1em'}
+      viewBox="0 0 16 16"
+    >
+      <title>Crosshare Patron</title>
+      <BlankLogo />
+      <g fill="#cb0">
+        <rect x="2" y="7" width="12" height="2" />
+        <rect x="1" y="6" width="2" height="2" />
+        <rect x="13" y="6" width="2" height="2" />
+        <rect x="4" y="5" width="1" height="1" />
+      </g>
+      <g fill="#980">
+        <rect x="8" y="4" width="1" height="2" />
+        <rect x="12" y="5" width="2" height="1" />
+      </g>
+      <rect fill="#fd0" x="2" y="7" width="6" height="1" />
+      <g fill="var(--logo-white)">
+        <rect x="4" y="10" width="8" height="4" />
+      </g>
+    </svg>
+  );
+};
+
 interface IconProps {
   width?: string | number;
   height?: string | number;
@@ -581,26 +634,11 @@ export const Logo = (props: IconProps & { notificationCount: number }) => {
       height={props.height || '1em'}
       viewBox="0 0 16 16"
     >
-      <g fill="var(--logo-white)">
-        <path d="M1 10h14v5H1z" />
-        <path d="M3 9h10v1H3zm0-7h5v3H3z" />
-        <path d="M6 5h1v5H6zm4-2h2v6h-2z" />
-        <path d="M12 1h2v3h-2z" />
-        <path d="M14 1h1v1h-1z" />
-      </g>
-      <path d="M13 0h3v1h-3zM4 1h3v1H4z" />
-      <path d="M12 1h1v1h-1zm3 0h1v1h-1zM3 2h1v1H3zm3 0h2v1H6z" />
-      <path d="M11 2h1v1h-1zm3 0h1v1h-1zM2 3h1v3H2zm3 0h1v6H5z" />
-      <path d="M7 3h1v7H7zm3 0h1v1h-1zm3 0h1v1h-1zM4 4h1v1H4z" />
-      <path d="M9 4h1v5H9zm3 0h1v1h-1z" />
-      <path d="M3 5h1v1H3zm8 0h1v4h-1zM4 8h1v1H4z" />
-      <path d="M3 9h1v1H3zm5 0h1v1H8z" />
-      <path d="M12 9h1v1h-1zM1 10h2v1H1z" />
-      <path d="M5 10h1v1H5zm8 0h2v1h-2z" />
-      <path d="M0 11h1v3H0zm15 0h1v3h-1zm-9 0h1v1H6z" />
+      <BlankLogo />
+      <path d="M5 10h1v1H5z" />
+      <path d="M6 11h1v1H6z" />
       <path d="M4 12h2v1H4z" />
-      <path d="M5 13h2v1H5zm4 0h2v1H9zm-8 1h3v1H1zm11 0h3v1h-3z" />
-      <path d="M4 15h8v1H4z" />
+      <path d="M5 13h2v1H5zm4 0h2v1H9z" />
       <rect x="10" y="10" width="1" height="1">
         <animate
           attributeName="width"
@@ -631,17 +669,19 @@ export const Logo = (props: IconProps & { notificationCount: number }) => {
           calcMode="discrete"
         />
       </rect>
-      {props.notificationCount ? (
-        <>
-          <circle fill="var(--notification-bg)" cx="12" cy="4" r="4" />
-          <text x="12" y="6" textAnchor="middle" fill="white" fontSize="6">
-            {props.notificationCount}
-          </text>
-        </>
-      ) : (
-        ''
-      )}
-    </svg>
+      {
+        props.notificationCount ? (
+          <>
+            <circle fill="var(--notification-bg)" cx="12" cy="4" r="4" />
+            <text x="12" y="6" textAnchor="middle" fill="white" fontSize="6">
+              {props.notificationCount}
+            </text>
+          </>
+        ) : (
+          ''
+        )
+      }
+    </svg >
   );
 };
 

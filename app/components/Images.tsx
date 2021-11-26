@@ -62,7 +62,7 @@ export const ProfilePicAndName = (props: {
   bonusMargin?: number;
   coverImage: string | null | undefined;
   profilePic: string | null | undefined;
-  topLine: string;
+  topLine: ReactNode;
   byLine: ReactNode;
 }) => {
   return (
