@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext, ReactNode } from 'react';
+import { slugify } from '../lib/utils';
 
 import { Link } from './Link';
 import { AuthContext } from './AuthContext';
@@ -85,7 +86,7 @@ const PuzzleLink = (props: {
             lineHeight: '1em',
           },
         ]}
-        href={`/crosswords/${props.id}`}
+        href={`/crosswords/${props.id}/${slugify(props.title)}`}
       >
         <div css={{ position: 'relative' }}>
           <PuzzleSizeIcon width={props.width} height={props.height} />
@@ -116,7 +117,7 @@ const PuzzleLink = (props: {
         </div>
       </Link>
       <div css={{ flex: 1 }}>
-        <Link css={linkCss} href={`/crosswords/${props.id}`}>
+        <Link css={linkCss} href={`/crosswords/${props.id}/${slugify(props.title)}`}>
           <h3
             css={{
               marginBottom: 0,

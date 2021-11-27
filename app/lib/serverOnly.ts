@@ -411,13 +411,14 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
 }): Promise<{ props: PuzzlePageProps }> => {
   const db = AdminApp.firestore();
   let puzzle: ServerPuzzleResult | null = null;
-  if (!params?.puzzleId || Array.isArray(params.puzzleId)) {
+  const puzzleId = params?.puzzleId?.[0];
+  if (!puzzleId || Array.isArray(puzzleId)) {
     res.statusCode = 404;
     return { props: { error: 'bad puzzle params' } };
   }
   let dbres;
   try {
-    dbres = await db.collection('c').doc(params.puzzleId).get();
+    dbres = await db.collection('c').doc(puzzleId).get();
   } catch {
     return { props: { error: 'error getting puzzle' } };
   }
@@ -462,7 +463,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
       },
     };
   }
-  const puzzleId = puzzle.id;
+
   const today = getDateString(new Date());
   const miniDate = Object.keys(minis).find((key) => minis[key] === puzzleId);
   if (miniDate && addZeros(miniDate) <= addZeros(today)) {

@@ -225,7 +225,7 @@ test('moderate as daily mini', async () => {
 
   const props1 = await getProps(
     await getServerSideProps({
-      params: { puzzleId },
+      params: { puzzleId: [puzzleId] },
       res: { setHeader: jest.fn() },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)

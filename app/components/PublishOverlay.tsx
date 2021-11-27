@@ -7,7 +7,7 @@ import { Overlay } from './Overlay';
 import { Emoji } from './Emoji';
 import { App, ServerTimestamp } from '../lib/firebaseWrapper';
 import { DBPuzzleT } from '../lib/dbtypes';
-import { STORAGE_KEY } from '../lib/utils';
+import { slugify, STORAGE_KEY } from '../lib/utils';
 import { ButtonAsLink, Button } from './Buttons';
 
 export function PublishOverlay(props: {
@@ -49,7 +49,7 @@ export function PublishOverlay(props: {
           console.log('Uploaded', props.id);
           localStorage.removeItem(STORAGE_KEY);
           setDone(true);
-          NextJSRouter.push('/crosswords/' + props.id);
+          NextJSRouter.push(`/crosswords/${props.id}/${slugify(toPublish.t)}`);
         });
     },
     [props.id, inProgress, done, displayName, props.toPublish]

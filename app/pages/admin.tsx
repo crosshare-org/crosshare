@@ -25,6 +25,7 @@ import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
 import { ConstructorPageV, ConstructorPageT } from '../lib/constructorPage';
 import { useSnackbar } from '../components/Snackbar';
 import { moderateComments } from '../lib/comments';
+import { slugify } from '../lib/utils';
 import {
   useCollectionData,
   useDocumentDataOnce,
@@ -34,7 +35,7 @@ import { DonationsListT } from './donate';
 const PuzzleListItem = (props: PuzzleResult) => {
   return (
     <li key={props.id}>
-      <Link href={`/crosswords/${props.id}`}>{props.title}</Link> by{' '}
+      <Link href={`/crosswords/${props.id}/${slugify(props.title)}`}>{props.title}</Link> by{' '}
       {props.authorName}
       <span css={{ color: 'var(--error)' }}>
         {props.isPrivate

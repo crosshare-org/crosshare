@@ -10,6 +10,7 @@ import {
 } from '../lib/dbtypes';
 
 import { AdminApp } from '../lib/firebaseWrapper';
+import { slugify } from '../lib/utils';
 
 if (process.argv.length !== 2) {
   throw Error(
@@ -103,6 +104,8 @@ async function topPuzzlesForWeek(): Promise<
         return [
           'https://crosshare.org/crosswords/' +
             p.id +
+            '/' +
+            slugify(p.t) +
             '#utm_source=mailchimp&utm_medium=email&utm_campaign=weekly',
           `${p.t} by ${p.n}`,
           p.w <= 8 && p.h <= 8,
