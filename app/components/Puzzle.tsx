@@ -60,8 +60,6 @@ import { entryAndCrossAtPosition, entryIndexAtPosition } from '../lib/gridBase';
 import { cachePlay, writePlayToDB, isDirty } from '../lib/plays';
 import { PlayWithoutUserT } from '../lib/dbtypes';
 import {
-  cheat,
-  checkComplete,
   puzzleReducer,
   advanceActiveToNonBlock,
   PuzzleAction,
@@ -219,14 +217,6 @@ export const Puzzle = ({
       waitToResize: true,
       isEditable(cellIndex) {
         return !this.verifiedCells.has(cellIndex) && !this.success;
-      },
-      postEdit(cellIndex) {
-        let state = this; // eslint-disable-line @typescript-eslint/no-this-alias
-        state.wrongCells.delete(cellIndex);
-        if (state.autocheck) {
-          state = cheat(state, CheatUnit.Square, false);
-        }
-        return checkComplete(state);
       },
     },
     advanceActiveToNonBlock

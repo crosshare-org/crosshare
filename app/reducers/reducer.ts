@@ -35,6 +35,7 @@ import type firebase from 'firebase';
 import { App, TimestampType, TimestampClass } from '../lib/firebaseWrapper';
 import { AccountPrefsFlagsT } from '../lib/prefs';
 import { checkGrid } from '../lib/utils';
+import equal from 'fast-deep-equal';
 
 interface GridInterfaceState {
   type: string;
@@ -46,7 +47,6 @@ interface GridInterfaceState {
   rebusValue: string;
   downsOnly: boolean;
   isEditable(cellIndex: number): boolean;
-  postEdit(cellIndex: number): GridInterfaceState;
 }
 
 interface PuzzleState extends GridInterfaceState {
@@ -116,6 +116,7 @@ export interface BuilderState extends GridInterfaceState {
   contestHasPrize: boolean;
   contestRevealDelay: number | null;
   showDownloadLink: boolean;
+  alternates: Array<Record<number, string>>;
 }
 function isBuilderState(state: GridInterfaceState): state is BuilderState {
   return state.type === 'builder';
@@ -146,6 +147,7 @@ export function initialBuilderStateFromSaved(
     contestAnswers: saved?.contestAnswers || null,
     contestHasPrize: saved?.contestHasPrize || false,
     contestRevealDelay: saved?.contestRevealDelay || null,
+    alternates: saved?.alternates || null,
   });
 }
 
@@ -169,6 +171,7 @@ export function initialBuilderState({
   contestAnswers,
   contestHasPrize,
   contestRevealDelay,
+  alternates,
 }: {
   id: string | null;
   width: number;
@@ -189,6 +192,7 @@ export function initialBuilderState({
   contestAnswers: Array<string> | null;
   contestHasPrize: boolean;
   contestRevealDelay: number | null;
+  alternates: Array<Record<number, string>> | null;
 }) {
   const initialGrid = fromCells({
     mapper: (e) => e,
@@ -215,7 +219,7 @@ export function initialBuilderState({
     gridIsComplete: false,
     repeats: new Set<string>(),
     hasNoShortWords: false,
-    isEditable: () => editable,
+    isEditable() { return !this.alternates.length && editable; },
     symmetry: width === 5 && height === 5 ? Symmetry.None : Symmetry.Rotational,
     clues: Object.fromEntries(
       Object.entries(clues).map(([word, val]) =>
@@ -232,15 +236,13 @@ export function initialBuilderState({
       isPrivateUntil !== null
         ? TimestampClass.fromMillis(isPrivateUntil)
         : null,
-    postEdit(_cellIndex) {
-      return validateGrid(this);
-    },
     isContestPuzzle: contestAnswers ? contestAnswers.length > 0 : false,
     contestAnswers,
     contestHasPrize,
     contestRevealDelay,
     showDownloadLink: false,
     downsOnly: false,
+    alternates: alternates || [],
   });
 }
 
@@ -351,6 +353,22 @@ function isUpdateContestAction(
   action: PuzzleAction
 ): action is UpdateContestAction {
   return action.type === 'CONTEST';
+}
+
+export interface AddAlternateAction extends PuzzleAction {
+  type: 'ADDALT';
+  alternate: Record<number, string>;
+}
+function isAddAlternateAction(action: PuzzleAction): action is AddAlternateAction {
+  return action.type === 'ADDALT';
+}
+
+export interface DelAlternateAction extends PuzzleAction {
+  type: 'DELALT';
+  alternate: Record<number, string>;
+}
+function isDelAlternateAction(action: PuzzleAction): action is DelAlternateAction {
+  return action.type === 'DELALT';
 }
 
 export interface SetHighlightAction extends PuzzleAction {
@@ -638,6 +656,23 @@ export function checkComplete(state: PuzzleState) {
   return state;
 }
 
+function postEdit(state: PuzzleState, cellIndex: number): PuzzleState;
+function postEdit(state: BuilderState, cellIndex: number): BuilderState;
+function postEdit<T extends GridInterfaceState>(state: T, cellIndex: number): T;
+function postEdit(state: GridInterfaceState, cellIndex: number): GridInterfaceState {
+  if (isPuzzleState(state)) {
+    state.wrongCells.delete(cellIndex);
+    if (state.autocheck) {
+      return checkComplete(cheat(state, CheatUnit.Square, false));
+    }
+    return checkComplete(state);
+  }
+  if (isBuilderState(state)) {
+    return validateGrid(state);
+  }
+  return state;
+}
+
 function enterText<T extends GridInterfaceState>(state: T, text: string): T {
   const ci = cellIndex(state.grid, state.active);
   if (state.isEditable(ci)) {
@@ -653,7 +688,7 @@ function enterText<T extends GridInterfaceState>(state: T, text: string): T {
       text || ' ',
       symmetry
     );
-    state = state.postEdit(ci) as T; // TODO this is trash
+    state = postEdit(state, ci);
   }
   return state;
 }
@@ -879,10 +914,10 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
         state.grid = gridWithBlockToggled(state.grid, state.active, symmetry);
         return {
-          ...(state.postEdit(ci) as T),
+          ...postEdit(state, ci),
           wasEntryClick: false,
           active: nextCell(state.grid, state.active),
-        }; // TODO postEdit typecast this is trash
+        };
       }
       return state;
     } else if (key.match(ALLOWABLE_GRID_CHARS)) {
@@ -907,7 +942,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           state.cellsUpdatedAt[ci] = elapsed;
         }
         state.grid = gridWithNewChar(state.grid, state.active, ' ', symmetry);
-        state = state.postEdit(ci) as T; // TODO this is trash
+        state = postEdit(state, ci);
       }
       return {
         ...state,
@@ -923,7 +958,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           state.cellsUpdatedAt[ci] = elapsed;
         }
         state.grid = gridWithNewChar(state.grid, state.active, ' ', symmetry);
-        state = state.postEdit(ci) as T; // TODO this is trash
+        state = postEdit(state, ci);
       }
       return {
         ...state,
@@ -1059,11 +1094,24 @@ export function builderReducer(
       }),
     };
   }
-  if (isClickedFillAction(action)) {
+  if (isAddAlternateAction(action)) {
+    state.alternates = state.alternates.filter(a => !equal(a, action.alternate));
+    state.alternates.push(action.alternate);
     return {
       ...state,
+    };
+  }
+  if (isDelAlternateAction(action)) {
+    return {
+      ...state,
+      alternates: state.alternates.filter(a => !equal(a, action.alternate))
+    };
+  }
+  if (isClickedFillAction(action)) {
+    return postEdit({
+      ...state,
       grid: gridWithEntrySet(state.grid, action.entryIndex, action.value),
-    }.postEdit(0) as BuilderState;
+    }, 0);
   }
   if (action.type === 'CLEARPUBLISHERRORS') {
     return { ...state, publishErrors: [], publishWarnings: [] };
@@ -1120,6 +1168,7 @@ export function builderReducer(
       contestAnswers: null,
       contestHasPrize: false,
       contestRevealDelay: null,
+      alternates: null,
     });
   }
   if (isImportPuzAction(action)) {
@@ -1191,6 +1240,7 @@ export function builderReducer(
         state.clues,
         true
       ),
+      ...(state.alternates && {alts: state.alternates}),
       ...(state.notes && { cn: state.notes }),
       ...(state.blogPost && { bp: state.blogPost }),
       ...(state.guestConstructor && { gc: state.guestConstructor }),

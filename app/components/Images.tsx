@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
 import { ReactNode } from 'react';
 

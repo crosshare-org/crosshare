@@ -12,6 +12,7 @@ import {
 
 type GridViewProps = {
   grid: ViewableGrid<ViewableEntry>;
+  defaultGrid?: ViewableGrid<ViewableEntry>;  // This is used for the add alternate solution interface
   active: PosAndDir;
   dispatch: Dispatch<PuzzleAction>;
   revealedCells?: Set<number>;
@@ -71,6 +72,7 @@ export const GridView = ({
 
   const cells = new Array<ReactNode>();
   for (const [idx, cellValue] of grid.cells.entries()) {
+    const defaultCellValue = props.defaultGrid?.cells[idx];
     const number = grid.cellLabels.get(idx);
     const isActive = cellIndex(grid, active) === idx;
     let onClick = changeActive;
@@ -78,6 +80,15 @@ export const GridView = ({
       onClick = noOp;
     } else if (isActive) {
       onClick = changeDirection;
+    }
+    let toDisplay = cellValue;
+    let showAsVerified = false;
+    if (defaultCellValue) {
+      if (cellValue.trim() && cellValue.trim() != defaultCellValue.trim()) {
+        showAsVerified = true;
+      } else {
+        toDisplay = defaultCellValue;
+      }
     }
     cells.push(
       <Cell
@@ -96,9 +107,9 @@ export const GridView = ({
         row={Math.floor(idx / grid.width)}
         column={idx % grid.width}
         onClick={onClick}
-        value={cellValue}
+        value={toDisplay}
         isBlock={cellValue === BLOCK}
-        isVerified={props.verifiedCells?.has(idx)}
+        isVerified={props.verifiedCells?.has(idx) || showAsVerified}
         isWrong={props.wrongCells?.has(idx)}
         wasRevealed={props.revealedCells?.has(idx)}
         highlight={grid.highlighted.has(idx) ? grid.highlight : undefined}

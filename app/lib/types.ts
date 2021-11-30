@@ -221,7 +221,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
       null,
     contestRevealDelay: dbPuzzle.ct_rv_dl || null,
     rating: dbPuzzle.rtg || null,
-    alternateSolutions: dbPuzzle.alts || [],
+    alternateSolutions: dbPuzzle.alts?.map(alt => Object.entries(alt).map(([n, s]) => [parseInt(n), s])) || [],
   };
 }
 
@@ -246,6 +246,7 @@ const PuzzleInProgressBaseV = t.intersection([
     contestAnswers: t.array(t.string),
     contestHasPrize: t.boolean,
     contestRevealDelay: t.number,
+    alternates: t.array(t.record(t.string, t.string))
   }),
 ]);
 

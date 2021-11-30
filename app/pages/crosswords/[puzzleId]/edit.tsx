@@ -35,6 +35,7 @@ import lightFormat from 'date-fns/lightFormat';
 import { DateTimePicker } from '../../../components/DateTimePicker';
 import { isMetaSolution } from '../../../lib/utils';
 import { EditableText } from '../../../components/EditableText';
+import { AlternateSolutionEditor } from '../../../components/AlternateSolutionEditor';
 
 const ImageCropper = dynamic(
   () =>
@@ -290,6 +291,13 @@ const PuzzleEditor = ({
 
   const [isPrivate, setIsPrivate] = useState(puzzle.isPrivate);
   const [isPrivateUntil, setIsPrivateUntil] = useState(puzzle.isPrivateUntil);
+  const [addingAlternate, setAddingAlternate] = useState(false);
+
+  if (addingAlternate) {
+    return <>
+      <AlternateSolutionEditor grid={puzzle.grid} save={async (alt) => App.firestore().doc(`c/${puzzle.id}`).update({ alts: FieldValue.arrayUnion(alt) })} cancel={() => setAddingAlternate(false)} width={puzzle.size.cols} height={puzzle.size.rows} highlight={puzzle.highlight} highlighted={new Set(puzzle.highlighted)} />
+    </>;
+  }
 
   return (
     <>
@@ -596,6 +604,29 @@ const PuzzleEditor = ({
             above to add a prompt for the contest.
           </p>
         )}
+        <h3 css={{ marginTop: '1em' }}>Alternate Solutions</h3>
+        <p>
+          Alternate solutions can be used if one or more entries in your puzzle
+          have multiple valid solutions (e.g. a Schrödinger&apos;s puzzle or a
+          puzzle with bi-directional rebuses).
+        </p>
+        {puzzle.alternateSolutions?.length ? <ul>
+          {puzzle.alternateSolutions.map((a, i) => (
+            <li key={i}>
+              {a.map(([pos, str]) => <span css={{ '& + &:before': { content: '", "' } }} key={pos}>Cell {pos}: &quot;{str}&quot;</span>)} (
+              <ButtonAsLink
+                onClick={() => {
+                  const toRemove = a.reduce((prev, [n, s]) => { prev[n] = s; return prev; }, {} as Record<number, string>);
+                  console.log(toRemove);
+                  App.firestore().doc(`c/${puzzle.id}`).update({ alts: FieldValue.arrayRemove(toRemove) });
+                }}
+                text="remove"
+              />
+              )
+            </li>
+          ))}
+        </ul> : ''}
+        <Button onClick={() => { setAddingAlternate(true); }} text="Add an alternate solution" />
         <h3 css={{ marginTop: '1em' }}>Delete</h3>
         {puzzle.category ? (
           <p>

@@ -14,6 +14,7 @@ interface SquareProps {
   contents: (width: number, height: number) => ReactNode;
   parentRef: RefObject<HTMLElement>;
   waitToResize?: boolean;
+  noColumns?: boolean;
 }
 export const Square = (props: SquareProps) => {
   const { width, height } = usePolyfilledResizeObserver(props.parentRef);
@@ -34,9 +35,13 @@ export const Square = (props: SquareProps) => {
         height - (props.header !== undefined ? SQUARE_HEADER_HEIGHT : 0);
       newWidth = width * 0.66;
     }
+    if (props.noColumns) {
+      newWidth = width;
+      newHeight = height;
+    }
     setOutWidth(Math.min(newWidth, props.aspectRatio * newHeight));
     setOutHeight(Math.min(newWidth / props.aspectRatio, newHeight));
-  }, [width, height, props.aspectRatio, props.waitToResize, props.header]);
+  }, [width, height, props.aspectRatio, props.waitToResize, props.header, props.noColumns]);
 
   return (
     <div
