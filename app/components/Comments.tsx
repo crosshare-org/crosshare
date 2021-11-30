@@ -346,21 +346,23 @@ const CommentForm = ({
   return (
     <>
       <form onSubmit={submitComment}>
-        <label css={{ width: '100%', margin: 0 }}>
-          {(props.replyToId !== undefined
-            ? t`Enter your reply`
-            : t`Leave a comment`) +
-            ' ' +
-            t`(please be nice!):`}
-          <LengthLimitedTextarea
-            css={{ width: '100%', display: 'block' }}
-            maxLength={COMMENT_LENGTH_LIMIT}
-            value={commentText}
-            updateValue={setCommentText}
-          />
-        </label>
-        <div css={{ textAlign: 'right' }}>
-          <LengthView maxLength={COMMENT_LENGTH_LIMIT} value={commentText} hideUntilWithin={200} />
+        <div css={{ marginBottom: '1em' }}>
+          <label css={{ width: '100%', margin: 0 }}>
+            {(props.replyToId !== undefined
+              ? t`Enter your reply`
+              : t`Leave a comment`) +
+              ' ' +
+              t`(please be nice!):`}
+            <LengthLimitedTextarea
+              css={{ width: '100%', display: 'block' }}
+              maxLength={COMMENT_LENGTH_LIMIT}
+              value={commentText}
+              updateValue={setCommentText}
+            />
+          </label>
+          <div css={{ textAlign: 'right' }}>
+            <LengthView maxLength={COMMENT_LENGTH_LIMIT} value={commentText} hideUntilWithin={200} />
+          </div>
         </div>
         {editingDisplayName || !displayName ? (
           ''
