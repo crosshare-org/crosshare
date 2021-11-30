@@ -83,13 +83,11 @@ export const GridView = ({
   );
 
   let altToShow: Array<string> = [];
-  const altCells: Set<number> = new Set();
   if (props.answers && props.showAlternates?.length) {
     altToShow = [...props.answers];
     const altIndex = counter % (props.showAlternates.length + 1);
     if (altIndex > 0) {
       props.showAlternates[altIndex - 1]?.forEach(([n, s]) => {
-        altCells.add(n);
         altToShow[n] = s;
       });
     }
@@ -117,7 +115,6 @@ export const GridView = ({
     }
     if (altToShow.length) {
       toDisplay = altToShow[idx] || toDisplay;
-      showAsVerified = altCells.has(idx);
     }
 
     cells.push(
