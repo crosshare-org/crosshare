@@ -24,7 +24,7 @@ import { LengthLimitedTextarea, LengthView } from './Inputs';
 import { Trans, t } from '@lingui/macro';
 import { PastDistanceToNow } from './TimeDisplay';
 
-const COMMENT_LENGTH_LIMIT = 280;
+const COMMENT_LENGTH_LIMIT = 2048;
 
 interface LocalComment extends Omit<Comment, 'replies'> {
   isLocal: true;
@@ -357,7 +357,7 @@ const CommentForm = ({
           />
         </label>
         <div css={{ textAlign: 'right' }}>
-          <LengthView maxLength={COMMENT_LENGTH_LIMIT} value={commentText} />
+          <LengthView maxLength={COMMENT_LENGTH_LIMIT} value={commentText} hideUntilWithin={200} />
         </div>
         {editingDisplayName || !displayName ? (
           ''
