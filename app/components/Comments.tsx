@@ -267,6 +267,7 @@ const CommentForm = ({
   const [submittedComment, setSubmittedComment] = useState<LocalComment | null>(
     null
   );
+  const [saving, setSaving] = useState(false);
 
   if (props.user === null) {
     throw new Error('displaying comment form w/ no user');
@@ -278,6 +279,7 @@ const CommentForm = ({
     if (!textToSubmit) {
       return;
     }
+    setSaving(true);
     const comment: CommentForModerationT = {
       c: textToSubmit,
       a: props.user.uid,
@@ -299,6 +301,7 @@ const CommentForm = ({
       .add(comment)
       .then((ref) => {
         console.log('Uploaded', ref.id);
+        setSaving(false);
 
         // Replace this form w/ the comment for the short term
         setSubmittedComment({
@@ -366,12 +369,13 @@ const CommentForm = ({
             <Button
               type="submit"
               css={{ marginRight: '0.5em' }}
-              disabled={commentText.length === 0}
+              disabled={commentText.length === 0 || saving}
               text={t`Save`}
             />
             {onCancel ? (
               <Button
                 boring={true}
+                disabled={saving}
                 css={{ marginRight: '0.5em' }}
                 onClick={onCancel}
                 text={t`Cancel`}
