@@ -701,6 +701,8 @@ export const Puzzle = ({
               revealedCells={state.revealedCells}
               verifiedCells={state.verifiedCells}
               wrongCells={state.wrongCells}
+              showAlternates={state.success ? state.alternateSolutions : null}
+              answers={state.answers}
             />
           );
         }}

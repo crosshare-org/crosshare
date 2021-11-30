@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, useCallback } from 'react';
+import { Dispatch, ReactNode, useCallback, useEffect, useState } from 'react';
 
 import { PosAndDir, Position, BLOCK } from '../lib/types';
 import { Cell } from './Cell';
@@ -26,6 +26,8 @@ type GridViewProps = {
   cellColors?: Array<number>;
   highlightEntry?: number;
   entryRefs?: Array<Set<number>>;
+  showAlternates?: Array<Array<[number, string]>> | null;
+  answers?: Array<string> | null;
 };
 
 export const GridView = ({
@@ -54,6 +56,16 @@ export const GridView = ({
     refedCells = [...refedCellsSet];
   }
 
+  // We use this counter to rotate through possible correct grids
+  // when there are multiple solutions
+  const [counter, setCounter] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCounter(counter + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [counter]);
+
   const noOp = useCallback(() => undefined, []);
   const changeActive = useCallback(
     (pos) => {
@@ -69,6 +81,19 @@ export const GridView = ({
     () => dispatch({ type: 'CHANGEDIRECTION' }),
     [dispatch]
   );
+
+  let altToShow: Array<string> = [];
+  const altCells: Set<number> = new Set();
+  if (props.answers && props.showAlternates?.length) {
+    altToShow = [...props.answers];
+    const altIndex = counter % (props.showAlternates.length + 1);
+    if (altIndex > 0) {
+      props.showAlternates[altIndex - 1]?.forEach(([n, s]) => {
+        altCells.add(n);
+        altToShow[n] = s;
+      });
+    }
+  }
 
   const cells = new Array<ReactNode>();
   for (const [idx, cellValue] of grid.cells.entries()) {
@@ -90,6 +115,11 @@ export const GridView = ({
         toDisplay = defaultCellValue;
       }
     }
+    if (altToShow.length) {
+      toDisplay = altToShow[idx] || toDisplay;
+      showAsVerified = altCells.has(idx);
+    }
+
     cells.push(
       <Cell
         isEnteringRebus={props.isEnteringRebus || false}
