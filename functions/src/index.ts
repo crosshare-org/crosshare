@@ -89,7 +89,19 @@ export const scheduledFirestoreExport = functions.pubsub.schedule('every day 00:
     // Leave collectionIds empty to export all collections
     // or set to a list of collection IDs to export,
     // collectionIds: ['users', 'posts']
-    collectionIds: []
+    collectionIds: [
+      'a',  // articles
+      'c',  // puzzles
+      'cp', // blogs
+      'cs', // constructor stats
+      'donations',
+      'ds', // daily stats
+      'em', // embed settings
+      'followers',
+      'prefs',
+      's',  // puzzle stats
+      'settings',
+    ]
   })
     .then((responses: any) => {
       const response = responses[0];
