@@ -19,6 +19,20 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
+          "fieldPath": "a",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "pvu",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "c",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
           "fieldPath": "c",
           "order": "ASCENDING"
         },
@@ -89,6 +103,34 @@
         {
           "fieldPath": "p",
           "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "c",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "f",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "pvu",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "c",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "m",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "pvu",
+          "order": "ASCENDING"
         }
       ]
     },
