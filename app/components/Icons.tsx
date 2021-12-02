@@ -593,7 +593,7 @@ const BlankLogo = () => {
   </>;
 };
 
-export const PatronIcon = () => {
+export const PatronIcon = (props: { className?: string }) => {
   return (
     <svg
       css={{ verticalAlign: 'text-top' }}
@@ -601,6 +601,7 @@ export const PatronIcon = () => {
       width={'1em'}
       height={'1em'}
       viewBox="0 0 16 16"
+      className={props.className}
     >
       <title>Crosshare Patron</title>
       <BlankLogo />

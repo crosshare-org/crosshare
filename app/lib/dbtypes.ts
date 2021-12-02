@@ -455,3 +455,23 @@ export type CronStatusT = t.TypeOf<typeof CronStatusV>;
 /** date string -> puzzle id */
 export const CategoryIndexV = t.record(t.string, t.string);
 export type CategoryIndexT = t.TypeOf<typeof CategoryIndexV>;
+
+export const DonationsListV = t.type({
+  d: t.array(
+    t.type({
+      /** email */
+      e: t.string,
+      /** date */
+      d: timestamp,
+      /** donated amount */
+      a: t.number,
+      /** received amount */
+      r: t.number,
+      /** name */
+      n: t.union([t.string, t.null]),
+      /** page */
+      p: t.union([t.string, t.null]),
+    })
+  ),
+});
+export type DonationsListT = t.TypeOf<typeof DonationsListV>;
