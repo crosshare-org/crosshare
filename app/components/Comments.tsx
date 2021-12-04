@@ -5,7 +5,7 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import type firebase from 'firebase/app';
 import { AuthContext } from './AuthContext';
 import { PartialBy, Comment, Direction } from '../lib/types';
-import { Identicon } from './Icons';
+import { PatronIcon } from './Icons';
 import { timeString } from '../lib/utils';
 import { Emoji } from './Emoji';
 import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
@@ -66,6 +66,7 @@ const CommentView = (props: CommentProps) => {
           solveTime={props.comment.authorSolveTime}
           didCheat={props.comment.authorCheated}
           downsOnly={props.comment.authorSolvedDownsOnly}
+          isPatron={props.comment.authorIsPatron}
         />
       </div>
       <Markdown text={props.comment.commentText} clueMap={props.clueMap} />
@@ -151,7 +152,7 @@ function commentsFromStorage(
     if (isRight(res)) {
       return res.right;
     } else {
-      console.error('Couldn\'t parse object in local storage');
+      console.error("Couldn't parse object in local storage");
       console.error(PathReporter.report(res).join(','));
     }
   }
@@ -171,6 +172,7 @@ interface CommentFlairProps {
   didCheat: boolean;
   downsOnly: boolean;
   displayName: string;
+  isPatron: boolean;
   userId: string;
   username?: string;
   puzzleAuthorId: string;
@@ -181,9 +183,7 @@ const CommentFlair = (props: CommentFlairProps) => {
     props.publishTime !== undefined && new Date(props.publishTime);
   return (
     <>
-      <span css={{ verticalAlign: 'text-bottom' }}>
-        <Identicon id={props.userId} />
-      </span>
+      {props.isPatron ? <PatronIcon linkIt={true} /> : ''}
       <i>
         {' '}
         <CommentAuthor
@@ -245,6 +245,7 @@ const CommentFlair = (props: CommentFlairProps) => {
 
 interface CommentFormProps {
   username?: string;
+  isPatron: boolean;
   puzzlePublishTime: number;
   puzzleAuthorId: string;
   hasGuestConstructor: boolean;
@@ -315,6 +316,7 @@ const CommentForm = ({
           authorCheated: comment.ch,
           authorSolvedDownsOnly: comment.do || false,
           publishTime: comment.p.toMillis(),
+          authorIsPatron: props.isPatron,
         });
         // Add the comment to localStorage for the medium term
         const forSession = commentsFromStorage(props.puzzleId);
@@ -361,7 +363,11 @@ const CommentForm = ({
             />
           </label>
           <div css={{ textAlign: 'right' }}>
-            <LengthView maxLength={COMMENT_LENGTH_LIMIT} value={commentText} hideUntilWithin={200} />
+            <LengthView
+              maxLength={COMMENT_LENGTH_LIMIT}
+              value={commentText}
+              hideUntilWithin={200}
+            />
           </div>
         </div>
         {editingDisplayName || !displayName ? (
@@ -389,6 +395,7 @@ const CommentForm = ({
             <CommentFlair
               hasGuestConstructor={props.hasGuestConstructor}
               username={props.username}
+              isPatron={props.isPatron}
               displayName={displayName}
               userId={props.user.uid}
               puzzleAuthorId={props.puzzleAuthorId}
@@ -501,7 +508,7 @@ export const Comments = ({
   }, [comments, authContext.notifications]);
 
   useEffect(() => {
-    const rebuiltComments: Array<CommentOrLocalComment> = comments;
+    const rebuiltComments: Array<CommentOrLocalComment> = [...comments];
     const unmoderatedComments = commentsFromStorage(props.puzzleId);
     const toKeepInStorage: Array<CommentForModerationWithIdT> = [];
     for (const c of unmoderatedComments) {
@@ -529,6 +536,7 @@ export const Comments = ({
         authorCheated: c.ch,
         authorSolvedDownsOnly: c.do || false,
         publishTime: c.p.toMillis(),
+        authorIsPatron: authContext.isPatron,
       };
       if (c.rt === null) {
         rebuiltComments.push(localComment);
@@ -563,7 +571,7 @@ export const Comments = ({
       }
     }
     setToShow(rebuiltComments);
-  }, [props.puzzleId, comments]);
+  }, [props.puzzleId, comments, authContext.isPatron]);
   return (
     <div css={{ marginTop: '1em' }}>
       <h4 css={{ borderBottom: '1px solid var(--black)' }}>
@@ -585,6 +593,7 @@ export const Comments = ({
           {...props}
           username={authContext.constructorPage?.i}
           user={authContext.user}
+          isPatron={authContext.isPatron}
         />
       )}
       <ul
@@ -599,6 +608,7 @@ export const Comments = ({
             <CommentWithReplies
               user={authContext.user}
               constructorPage={authContext.constructorPage}
+              isPatron={authContext.isPatron}
               comment={a}
               {...props}
             />

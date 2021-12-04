@@ -7,7 +7,7 @@ import { ContactLinks } from '../components/ContactLinks';
 import { DefaultTopBar } from '../components/TopBar';
 import { AdminApp } from '../lib/firebaseWrapper';
 import { withTranslation } from '../lib/translation';
-import { DonationsListV } from '../lib/dbtypes';
+import { donationsByEmail, DonationsListV } from '../lib/dbtypes';
 import { differenceInDays } from 'date-fns';
 import { PatronIcon } from '../components/Icons';
 import { SMALL_AND_UP } from '../lib/style';
@@ -36,34 +36,7 @@ const gssp: GetServerSideProps<DonateProps> = async ({
       const validationResult = DonationsListV.decode(data);
       if (isRight(validationResult)) {
         res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-        const groupedByEmail = validationResult.right.d.reduce(
-          (
-            acc: Map<
-              string,
-              { name: string | null; page: string | null; total: number, date: Date }
-            >,
-            val
-          ) => {
-            const prev = acc.get(val.e);
-            if (prev) {
-              acc.set(val.e, {
-                name: val.n || prev.name,
-                page: val.p || prev.page,
-                total: val.a + prev.total,
-                date: val.d.toDate() < prev.date ? prev.date : val.d.toDate(),
-              });
-            } else {
-              acc.set(val.e, {
-                name: val.n || null,
-                page: val.p || null,
-                total: val.a,
-                date: val.d.toDate()
-              });
-            }
-            return acc;
-          },
-          new Map()
-        );
+        const groupedByEmail = donationsByEmail(validationResult.right);
         return {
           props: {
             donors: Array.from(groupedByEmail.values())

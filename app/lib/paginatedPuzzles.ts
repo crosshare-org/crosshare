@@ -19,14 +19,16 @@ export async function paginatedPuzzles(
   page: number,
   pageSize: number,
   queryField?: string,
-  queryValue?: string | boolean,
+  queryValue?: string | boolean
 ): Promise<[Array<LinkablePuzzle>, boolean]> {
   const db = AdminApp.firestore();
 
   if (queryField && queryValue === undefined) {
     throw new Error(`Missing queryValue for "${queryField}"`);
   }
-  const indexDocId = queryField ? `${queryField}-${queryValue}-${pageSize}` : `public-${pageSize}`;
+  const indexDocId = queryField
+    ? `${queryField}-${queryValue}-${pageSize}`
+    : `public-${pageSize}`;
   const indexDoc = await db.collection('in').doc(indexDocId).get();
   let index: NewPuzzleIndexT | null = null;
   if (indexDoc.exists) {
@@ -45,7 +47,7 @@ export async function paginatedPuzzles(
 
   let startTimestamp = AdminTimestamp.now();
   if (page) {
-    const fromIndex = index.p[page-1];
+    const fromIndex = index.p[page - 1];
     if (!fromIndex) {
       console.log('No results for page', page);
       return [[], false];
@@ -53,18 +55,22 @@ export async function paginatedPuzzles(
     startTimestamp = fromIndex;
   }
 
-  let q: FirebaseFirestore.Query = db
-    .collection('c');
+  let q: FirebaseFirestore.Query = db.collection('c');
 
   if (queryField) {
     q = q.where(queryField, '==', queryValue);
   }
-  q = q.where('pvu', '<=', startTimestamp).orderBy('pvu', 'desc').limit(pageSize + 1);
+  q = q
+    .where('pvu', '<=', startTimestamp)
+    .orderBy('pvu', 'desc')
+    .limit(pageSize + 1);
 
-  const results: Array<DBPuzzleT & { id: string }> = (
-    await mapEachResult(q, DBPuzzleV, (dbpuzz, docId) => {
+  const results: Array<DBPuzzleT & { id: string }> = await mapEachResult(
+    q,
+    DBPuzzleV,
+    (dbpuzz, docId) => {
       return { ...dbpuzz, id: docId };
-    })
+    }
   );
 
   const lastPuz = results[pageSize];
@@ -74,6 +80,11 @@ export async function paginatedPuzzles(
     index.p[page] = AdminTimestamp.fromMillis(lastPuz.pvu.toMillis());
     await db.collection('in').doc(indexDocId).set(index);
   }
-  
-  return [results.slice(0, pageSize).map(x => toLinkablePuzzle({...puzzleFromDB(x), id: x.id})), hasMore];
+
+  return [
+    results
+      .slice(0, pageSize)
+      .map((x) => toLinkablePuzzle({ ...puzzleFromDB(x), id: x.id })),
+    hasMore,
+  ];
 }

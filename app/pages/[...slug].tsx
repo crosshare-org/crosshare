@@ -16,6 +16,7 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { FollowersV } from '../lib/dbtypes';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles';
 import { AccountPrefsV } from '../lib/prefs';
+import { isUserPatron } from '../lib/patron';
 
 interface ErrorProps {
   error: string;
@@ -111,6 +112,8 @@ export const gssp: GetServerSideProps<PageProps> = async ({
     cp.u,
   );
 
+  const isPatron = await isUserPatron(cp.u);
+
   const followerIds = await getFollowerIds(cp.u);
   const followers = (await Promise.all(followerIds.map(userIdToPage))).flatMap(a => a ? [a] : []);
 
@@ -124,6 +127,7 @@ export const gssp: GetServerSideProps<PageProps> = async ({
       followers,
       following,
       constructor: cp,
+      isPatron,
       profilePicture,
       coverPicture,
       puzzles,

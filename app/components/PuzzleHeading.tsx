@@ -26,6 +26,7 @@ export const PuzzleHeading = (props: {
   authorName: string;
   guestConstructor: string | null;
   constructorPage: ConstructorPageT | null;
+  constructorIsPatron: boolean;
   blogPost: string | null;
 }) => {
   const isEmbed = useContext(EmbedContext);
@@ -46,6 +47,7 @@ export const PuzzleHeading = (props: {
               constructorPage={props.constructorPage}
               guestConstructor={props.guestConstructor}
               showFollowButton={true}
+              isPatron={props.constructorIsPatron}
             />
             {isEmbed ? (
               ''
@@ -94,28 +96,28 @@ export const PuzzleHeading = (props: {
       {props.showTip &&
       props.constructorPage?.pp &&
       props.constructorPage.pt ? (
-          <div css={{ textAlign: 'center' }}>
-            <LinkButtonSimpleA
-              css={{ marginRight: '0.5em' }}
-              href={`https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=${encodeURIComponent(
-                props.constructorPage.pp
-              )}&item_name=${encodeURIComponent(
-                props.constructorPage.pt
-              )}&currency_code=USD&source=url`}
-              text={`Tip ${props.constructorPage.n}`}
-            />
-            <ToolTipText
-              text={<FaInfoCircle />}
-              tooltip={
-                <Trans id="tip-hover">
+        <div css={{ textAlign: 'center' }}>
+          <LinkButtonSimpleA
+            css={{ marginRight: '0.5em' }}
+            href={`https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=${encodeURIComponent(
+              props.constructorPage.pp
+            )}&item_name=${encodeURIComponent(
+              props.constructorPage.pt
+            )}&currency_code=USD&source=url`}
+            text={`Tip ${props.constructorPage.n}`}
+          />
+          <ToolTipText
+            text={<FaInfoCircle />}
+            tooltip={
+              <Trans id="tip-hover">
                 All donations go directly to the constructor via PayPal
-                </Trans>
-              }
-            />
-          </div>
-        ) : (
-          ''
-        )}
+              </Trans>
+            }
+          />
+        </div>
+      ) : (
+        ''
+      )}
     </>
   );
 };

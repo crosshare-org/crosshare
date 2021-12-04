@@ -132,7 +132,7 @@ const ClueRow = (props: {
   const [value, setValue] = useState(props.entry.clue);
   const word = props.entry.completedWord;
   if (word === null) {
-    throw new Error('shouldn\'t ever get here');
+    throw new Error("shouldn't ever get here");
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -294,9 +294,23 @@ const PuzzleEditor = ({
   const [addingAlternate, setAddingAlternate] = useState(false);
 
   if (addingAlternate) {
-    return <>
-      <AlternateSolutionEditor grid={puzzle.grid} save={async (alt) => App.firestore().doc(`c/${puzzle.id}`).update({ alts: FieldValue.arrayUnion(alt) })} cancel={() => setAddingAlternate(false)} width={puzzle.size.cols} height={puzzle.size.rows} highlight={puzzle.highlight} highlighted={new Set(puzzle.highlighted)} />
-    </>;
+    return (
+      <>
+        <AlternateSolutionEditor
+          grid={puzzle.grid}
+          save={async (alt) =>
+            App.firestore()
+              .doc(`c/${puzzle.id}`)
+              .update({ alts: FieldValue.arrayUnion(alt) })
+          }
+          cancel={() => setAddingAlternate(false)}
+          width={puzzle.size.cols}
+          height={puzzle.size.rows}
+          highlight={puzzle.highlight}
+          highlighted={new Set(puzzle.highlighted)}
+        />
+      </>
+    );
   }
 
   return (
@@ -418,10 +432,20 @@ const PuzzleEditor = ({
               checked={isPrivate ? true : false}
               onChange={(e) => {
                 if (!e.target.checked) {
-                  setIsPrivateUntil(typeof puzzle.isPrivate === 'number' ? puzzle.isPrivate : Date.now());
+                  setIsPrivateUntil(
+                    typeof puzzle.isPrivate === 'number'
+                      ? puzzle.isPrivate
+                      : Date.now()
+                  );
                   setIsPrivate(false);
                 } else {
-                  setIsPrivate((puzzle.isPrivate === true || (puzzle.isPrivateUntil && puzzle.isPrivateUntil > Date.now())) ? true : puzzle.isPrivateUntil || puzzle.publishTime);
+                  setIsPrivate(
+                    puzzle.isPrivate === true ||
+                      (puzzle.isPrivateUntil &&
+                        puzzle.isPrivateUntil > Date.now())
+                      ? true
+                      : puzzle.isPrivateUntil || puzzle.publishTime
+                  );
                   setIsPrivateUntil(null);
                 }
               }}
@@ -429,7 +453,8 @@ const PuzzleEditor = ({
             Private
           </label>
         </p>
-        {(puzzle.isPrivate === true || (puzzle.isPrivateUntil && puzzle.isPrivateUntil > Date.now())) ?
+        {puzzle.isPrivate === true ||
+        (puzzle.isPrivateUntil && puzzle.isPrivateUntil > Date.now()) ? (
           <p>
             <label>
               <input
@@ -439,7 +464,9 @@ const PuzzleEditor = ({
                 onChange={(e) => {
                   if (e.target.checked) {
                     setIsPrivate(false);
-                    setIsPrivateUntil(e.target.checked ? Date.now() + 24 * 60 * 60 * 1000 : null);
+                    setIsPrivateUntil(
+                      e.target.checked ? Date.now() + 24 * 60 * 60 * 1000 : null
+                    );
                   } else {
                     setIsPrivateUntil(Date.now() - 10);
                   }
@@ -449,7 +476,7 @@ const PuzzleEditor = ({
             </label>
             {isPrivateUntil && isPrivateUntil > Date.now() ? (
               <p>
-                Visible after {lightFormat(isPrivateUntil, 'M/d/y\' at \'h:mma')}:
+                Visible after {lightFormat(isPrivateUntil, "M/d/y' at 'h:mma")}:
                 <DateTimePicker
                   picked={isPrivateUntil}
                   setPicked={(d) => setIsPrivateUntil(d.getTime())}
@@ -458,7 +485,10 @@ const PuzzleEditor = ({
             ) : (
               ''
             )}
-          </p> : <p>Private until is unavailable if a puzzle has ever been public</p>}
+          </p>
+        ) : (
+          <p>Private until is unavailable if a puzzle has ever been public</p>
+        )}
         <Button
           css={{ marginRight: '1em' }}
           text="Update Privacy Settings"
@@ -470,12 +500,15 @@ const PuzzleEditor = ({
             App.firestore()
               .doc(`c/${puzzle.id}`)
               .update({
-                pv: typeof isPrivate === 'number' ? TimestampClass.fromMillis(isPrivate) : isPrivate,
+                pv:
+                  typeof isPrivate === 'number'
+                    ? TimestampClass.fromMillis(isPrivate)
+                    : isPrivate,
                 pvu: isPrivate
                   ? DeleteSentinal
                   : isPrivateUntil
-                    ? TimestampClass.fromMillis(isPrivateUntil)
-                    : TimestampClass.now(),
+                  ? TimestampClass.fromMillis(isPrivateUntil)
+                  : TimestampClass.now(),
               })
               .then(() => {
                 showSnackbar(
@@ -493,7 +526,8 @@ const PuzzleEditor = ({
           onClick={() => {
             setIsPrivate(puzzle.isPrivate);
             setIsPrivateUntil(puzzle.isPrivateUntil);
-          }} />
+          }}
+        />
         <h3 css={{ marginTop: '1em' }}>Contest / meta puzzle</h3>
         <p>
           A meta puzzle has an extra puzzle embedded in the grid for after
@@ -545,7 +579,7 @@ const PuzzleEditor = ({
               maxLength={MAX_META_SUBMISSION_LENGTH}
               hasError={(sol) =>
                 puzzle.contestAnswers &&
-                  isMetaSolution(sol, puzzle.contestAnswers)
+                isMetaSolution(sol, puzzle.contestAnswers)
                   ? 'Duplicate solution!'
                   : ''
               }
@@ -610,23 +644,42 @@ const PuzzleEditor = ({
           have multiple valid solutions (e.g. a Schrödinger&apos;s puzzle or a
           puzzle with bi-directional rebuses).
         </p>
-        {puzzle.alternateSolutions?.length ? <ul>
-          {puzzle.alternateSolutions.map((a, i) => (
-            <li key={i}>
-              {a.map(([pos, str]) => <span css={{ '& + &:before': { content: '", "' } }} key={pos}>Cell {pos}: &quot;{str}&quot;</span>)} (
-              <ButtonAsLink
-                onClick={() => {
-                  const toRemove = a.reduce((prev, [n, s]) => { prev[n] = s; return prev; }, {} as Record<number, string>);
-                  console.log(toRemove);
-                  App.firestore().doc(`c/${puzzle.id}`).update({ alts: FieldValue.arrayRemove(toRemove) });
-                }}
-                text="remove"
-              />
-              )
-            </li>
-          ))}
-        </ul> : ''}
-        <Button onClick={() => { setAddingAlternate(true); }} text="Add an alternate solution" />
+        {puzzle.alternateSolutions?.length ? (
+          <ul>
+            {puzzle.alternateSolutions.map((a, i) => (
+              <li key={i}>
+                {a.map(([pos, str]) => (
+                  <span css={{ '& + &:before': { content: '", "' } }} key={pos}>
+                    Cell {pos}: &quot;{str}&quot;
+                  </span>
+                ))}{' '}
+                (
+                <ButtonAsLink
+                  onClick={() => {
+                    const toRemove = a.reduce((prev, [n, s]) => {
+                      prev[n] = s;
+                      return prev;
+                    }, {} as Record<number, string>);
+                    console.log(toRemove);
+                    App.firestore()
+                      .doc(`c/${puzzle.id}`)
+                      .update({ alts: FieldValue.arrayRemove(toRemove) });
+                  }}
+                  text="remove"
+                />
+                )
+              </li>
+            ))}
+          </ul>
+        ) : (
+          ''
+        )}
+        <Button
+          onClick={() => {
+            setAddingAlternate(true);
+          }}
+          text="Add an alternate solution"
+        />
         <h3 css={{ marginTop: '1em' }}>Delete</h3>
         {puzzle.category ? (
           <p>

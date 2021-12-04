@@ -475,3 +475,37 @@ export const DonationsListV = t.type({
   ),
 });
 export type DonationsListT = t.TypeOf<typeof DonationsListV>;
+
+export const donationsByEmail = (donations: DonationsListT) => {
+  const res = donations.d.reduce(
+    (
+      acc: Map<
+        string,
+        { name: string | null; page: string | null; total: number, date: Date }
+      >,
+      val
+    ) => {
+      const prev = acc.get(val.e);
+      if (prev) {
+        acc.set(val.e, {
+          name: val.n || prev.name,
+          page: val.p || prev.page,
+          total: val.a + prev.total,
+          date: val.d.toDate() < prev.date ? prev.date : val.d.toDate(),
+        });
+      } else {
+        acc.set(val.e, {
+          name: val.n || null,
+          page: val.p || null,
+          total: val.a,
+          date: val.d.toDate()
+        });
+      }
+      return acc;
+    },
+    new Map()
+  );
+  // manually add to account for server costs I don't record yet
+  res.set('mike@dirolf.com', {name: 'Mike D', page: 'mike', total: 100, date: new Date()});
+  return res;
+};

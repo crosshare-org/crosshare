@@ -13,9 +13,15 @@ import { useRouter } from 'next/router';
 import { I18nTags } from '../../components/I18nTags';
 import { paginatedPuzzles } from '../../lib/paginatedPuzzles';
 import { ConstructorPageT } from '../../lib/constructorPage';
+import { isUserPatron } from '../../lib/patron';
 
 interface FeaturedPageProps {
-  puzzles: Array<LinkablePuzzle & { constructorPage: ConstructorPageT | null }>;
+  puzzles: Array<
+    LinkablePuzzle & {
+      constructorPage: ConstructorPageT | null;
+      constructorIsPatron: boolean;
+    }
+  >;
   nextPage: number | null;
   currentPage: number;
   prevPage: number | null;
@@ -27,10 +33,7 @@ type PageProps = FeaturedPageProps | ErrorProps;
 
 export const PAGE_SIZE = 20;
 
-const gssp: GetServerSideProps<PageProps> = async ({
-  res,
-  params,
-}) => {
+const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
   if (!params?.pageNumber || Array.isArray(params.pageNumber)) {
     return { props: { error: 'Bad params' } };
   }
@@ -49,6 +52,7 @@ const gssp: GetServerSideProps<PageProps> = async ({
     puzzlesWithoutConstructor.map(async (p) => ({
       ...p,
       constructorPage: await userIdToPage(p.authorId),
+      constructorIsPatron: await isUserPatron(p.authorId),
     }))
   );
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
@@ -77,9 +81,15 @@ export default function FeaturedPageHandler(props: PageProps) {
     );
   }
 
-  const title = t({ id: 'featured-title', message: `Featured Puzzles | Page ${props.currentPage} | Crosshare` });
-  const description =
-    t({ id: 'feat-desc', message: 'Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!' });
+  const title = t({
+    id: 'featured-title',
+    message: `Featured Puzzles | Page ${props.currentPage} | Crosshare`,
+  });
+  const description = t({
+    id: 'feat-desc',
+    message:
+      'Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!',
+  });
 
   return (
     <>
@@ -92,16 +102,24 @@ export default function FeaturedPageHandler(props: PageProps) {
           content={description}
         />
         <meta key="description" name="description" content={description} />
-        <I18nTags locale={loc} canonicalPath={`/featured/${props.currentPage}`} />
+        <I18nTags
+          locale={loc}
+          canonicalPath={`/featured/${props.currentPage}`}
+        />
         {props.prevPage === 0 ? (
-          <link rel="prev" href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/`} />
+          <link
+            rel="prev"
+            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/`}
+          />
         ) : (
           ''
         )}
         {props.prevPage ? (
           <link
             rel="prev"
-            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/featured/${props.prevPage}`}
+            href={`https://crosshare.org${
+              loc == 'en' ? '' : '/' + loc
+            }/featured/${props.prevPage}`}
           />
         ) : (
           ''
@@ -109,7 +127,9 @@ export default function FeaturedPageHandler(props: PageProps) {
         {props.nextPage !== null ? (
           <link
             rel="next"
-            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/featured/${props.nextPage}`}
+            href={`https://crosshare.org${
+              loc == 'en' ? '' : '/' + loc
+            }/featured/${props.nextPage}`}
           />
         ) : (
           ''
@@ -126,9 +146,7 @@ export default function FeaturedPageHandler(props: PageProps) {
         }}
       >
         <h1 css={{ fontSize: '1.4em', marginBottom: 0 }}>
-          <Trans>
-            Crosshare Featured Puzzles
-          </Trans>
+          <Trans>Crosshare Featured Puzzles</Trans>
         </h1>
         <p>{description}</p>
         {props.puzzles.map((p, i) => (
@@ -137,6 +155,7 @@ export default function FeaturedPageHandler(props: PageProps) {
             puzzle={p}
             showDate={true}
             constructorPage={p.constructorPage}
+            constructorIsPatron={p.constructorIsPatron}
             showAuthor={true}
           />
         ))}
@@ -160,7 +179,9 @@ export default function FeaturedPageHandler(props: PageProps) {
               ''
             )}
             {props.nextPage !== null ? (
-              <Link href={'/featured/' + props.nextPage}><Trans>Older Puzzles</Trans> →</Link>
+              <Link href={'/featured/' + props.nextPage}>
+                <Trans>Older Puzzles</Trans> →
+              </Link>
             ) : (
               ''
             )}

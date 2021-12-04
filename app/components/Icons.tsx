@@ -1,7 +1,6 @@
-import { ReactNode } from 'react';
 import { FaEye, FaCheck } from 'react-icons/fa';
 import { CheatUnit, PrefillSquares, Symmetry } from '../reducers/reducer';
-import { fnv1a, hslToRgb } from '../lib/utils';
+import { Link } from './Link';
 
 const Square = (props: {
   cx: number;
@@ -570,31 +569,33 @@ export const SymmetryNone = (props: IconProps) => {
 };
 
 const BlankLogo = () => {
-  return <>
-    <g fill="var(--logo-white)">
-      <path d="M1 10h14v5H1z" />
-      <path d="M3 9h10v1H3zm0-7h5v3H3z" />
-      <path d="M6 5h1v5H6zm4-2h2v6h-2z" />
-      <path d="M12 1h2v3h-2z" />
-      <path d="M14 1h1v1h-1z" />
-    </g>
-    <path d="M13 0h3v1h-3zM4 1h3v1H4z" />
-    <path d="M12 1h1v1h-1zm3 0h1v1h-1zM3 2h1v1H3zm3 0h2v1H6z" />
-    <path d="M11 2h1v1h-1zm3 0h1v1h-1zM2 3h1v3H2zm3 0h1v6H5z" />
-    <path d="M7 3h1v7H7zm3 0h1v1h-1zm3 0h1v1h-1zM4 4h1v1H4z" />
-    <path d="M9 4h1v5H9zm3 0h1v1h-1z" />
-    <path d="M3 5h1v1H3zm8 0h1v4h-1zM4 8h1v1H4z" />
-    <path d="M3 9h1v1H3zm5 0h1v1H8z" />
-    <path d="M12 9h1v1h-1zM1 10h2v1H1z" />
-    <path d="M13 10h2v1h-2zM0 11h1v3H0z" />
-    <path d="M15 11h1v3h-1z" />
-    <path d="M1 14h3v1H1zm11 0h3v1h-3z" />
-    <path d="M4 15h8v1H4z" />
-  </>;
+  return (
+    <>
+      <g fill="var(--logo-white)">
+        <path d="M1 10h14v5H1z" />
+        <path d="M3 9h10v1H3zm0-7h5v3H3z" />
+        <path d="M6 5h1v5H6zm4-2h2v6h-2z" />
+        <path d="M12 1h2v3h-2z" />
+        <path d="M14 1h1v1h-1z" />
+      </g>
+      <path d="M13 0h3v1h-3zM4 1h3v1H4z" />
+      <path d="M12 1h1v1h-1zm3 0h1v1h-1zM3 2h1v1H3zm3 0h2v1H6z" />
+      <path d="M11 2h1v1h-1zm3 0h1v1h-1zM2 3h1v3H2zm3 0h1v6H5z" />
+      <path d="M7 3h1v7H7zm3 0h1v1h-1zm3 0h1v1h-1zM4 4h1v1H4z" />
+      <path d="M9 4h1v5H9zm3 0h1v1h-1z" />
+      <path d="M3 5h1v1H3zm8 0h1v4h-1zM4 8h1v1H4z" />
+      <path d="M3 9h1v1H3zm5 0h1v1H8z" />
+      <path d="M12 9h1v1h-1zM1 10h2v1H1z" />
+      <path d="M13 10h2v1h-2zM0 11h1v3H0z" />
+      <path d="M15 11h1v3h-1z" />
+      <path d="M1 14h3v1H1zm11 0h3v1h-3z" />
+      <path d="M4 15h8v1H4z" />
+    </>
+  );
 };
 
-export const PatronIcon = (props: { className?: string }) => {
-  return (
+export const PatronIcon = (props: { className?: string; linkIt?: boolean }) => {
+  const icon = (
     <svg
       css={{ verticalAlign: 'text-top' }}
       xmlns="http://www.w3.org/2000/svg"
@@ -603,7 +604,6 @@ export const PatronIcon = (props: { className?: string }) => {
       viewBox="0 0 16 16"
       className={props.className}
     >
-      <title>Crosshare Patron</title>
       <BlankLogo />
       <g fill="#cb0">
         <rect x="2" y="7" width="12" height="2" />
@@ -621,6 +621,14 @@ export const PatronIcon = (props: { className?: string }) => {
       </g>
     </svg>
   );
+  if (props.linkIt) {
+    return (
+      <Link title="Crosshare Patron" href="/donate">
+        {icon}
+      </Link>
+    );
+  }
+  return icon;
 };
 
 interface IconProps {
@@ -670,19 +678,17 @@ export const Logo = (props: IconProps & { notificationCount: number }) => {
           calcMode="discrete"
         />
       </rect>
-      {
-        props.notificationCount ? (
-          <>
-            <circle fill="var(--notification-bg)" cx="12" cy="4" r="4" />
-            <text x="12" y="6" textAnchor="middle" fill="white" fontSize="6">
-              {props.notificationCount}
-            </text>
-          </>
-        ) : (
-          ''
-        )
-      }
-    </svg >
+      {props.notificationCount ? (
+        <>
+          <circle fill="var(--notification-bg)" cx="12" cy="4" r="4" />
+          <text x="12" y="6" textAnchor="middle" fill="white" fontSize="6">
+            {props.notificationCount}
+          </text>
+        </>
+      ) : (
+        ''
+      )}
+    </svg>
   );
 };
 
@@ -743,51 +749,6 @@ export const PuzzleSizeIcon = (props: { width?: number; height?: number }) => {
       ) : (
         ''
       )}
-    </svg>
-  );
-};
-
-export const Identicon = ({ id }: { id: string }) => {
-  const hash = fnv1a(id);
-  // foreground is rightmost 17 bits as hue at 80% saturation, 50% brightness
-  const hueNumBits = (1 << 17) - 1;
-  const hue = (hash & hueNumBits) / hueNumBits;
-  const foreground = hslToRgb(hue, 0.8, 0.5);
-
-  // leftmost 15 bits are which squares to show
-  const squares: Array<ReactNode> = [];
-  for (let i = 0; i < 15; i++) {
-    if (((1 << (17 + i)) & hash) !== 0) {
-      if (i < 5) {
-        squares.push(<rect key={i} x="2" y={i} width="1" height="1" />);
-      } else if (i < 10) {
-        squares.push(
-          <rect key={i + 'a'} x="1" y={i - 5} width="1" height="1" />
-        );
-        squares.push(
-          <rect key={i + 'b'} x="3" y={i - 5} width="1" height="1" />
-        );
-      } else {
-        squares.push(
-          <rect key={i + 'a'} x="0" y={i - 10} width="1" height="1" />
-        );
-        squares.push(
-          <rect key={i + 'b'} x="4" y={i - 10} width="1" height="1" />
-        );
-      }
-    }
-  }
-  return (
-    <svg
-      shapeRendering="crispEdges"
-      width="1em"
-      height="1em"
-      viewBox="0 0 5 5"
-      xmlns="http://www.w3.org/2000/svg"
-      fill={'rgb(' + foreground.join(',') + ')'}
-    >
-      <rect width="100%" height="100%" fill="rgba(140,140,140,0.2)" />
-      {squares}
     </svg>
   );
 };

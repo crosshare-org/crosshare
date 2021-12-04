@@ -51,17 +51,22 @@ export function UnfinishedPuzzleList({
   if (unfinishedPuzzles.length) {
     return (
       <>
-        <h2><Trans>Unfinished Solves</Trans></h2>
+        <h2>
+          <Trans>Unfinished Solves</Trans>
+        </h2>
         {unfinishedPuzzles.map((puzzle) => (
           <PuzzleResultLink
             key={puzzle.id}
             puzzle={puzzle}
             showAuthor={false}
             constructorPage={null}
+            constructorIsPatron={false}
           />
         ))}
         {loadingUnfinished ? (
-          <p><Trans>Loading...</Trans></p>
+          <p>
+            <Trans>Loading...</Trans>
+          </p>
         ) : (
           hasMoreUnfinished && (
             <ButtonAsLink

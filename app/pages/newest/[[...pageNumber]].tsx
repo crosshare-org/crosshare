@@ -13,9 +13,15 @@ import { useRouter } from 'next/router';
 import { I18nTags } from '../../components/I18nTags';
 import { ConstructorPageT } from '../../lib/constructorPage';
 import { paginatedPuzzles } from '../../lib/paginatedPuzzles';
+import { isUserPatron } from '../../lib/patron';
 
 interface NewestPageProps {
-  puzzles: Array<LinkablePuzzle & { constructorPage: ConstructorPageT | null }>;
+  puzzles: Array<
+    LinkablePuzzle & {
+      constructorPage: ConstructorPageT | null;
+      constructorIsPatron: boolean;
+    }
+  >;
   nextPage: number | null;
   currentPage: number;
   prevPage: number | null;
@@ -27,10 +33,7 @@ type PageProps = NewestPageProps | ErrorProps;
 
 export const PAGE_SIZE = 20;
 
-const gssp: GetServerSideProps<PageProps> = async ({
-  res,
-  params,
-}) => {
+const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
   const pn = params?.pageNumber;
   let page: number;
   if (!pn) {
@@ -52,6 +55,7 @@ const gssp: GetServerSideProps<PageProps> = async ({
     puzzlesWithoutConstructor.map(async (p) => ({
       ...p,
       constructorPage: await userIdToPage(p.authorId),
+      constructorIsPatron: await isUserPatron(p.authorId),
     }))
   );
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
@@ -81,9 +85,15 @@ export default function NewestPageHandler(props: PageProps) {
   }
 
   const page = props.currentPage;
-  const title = t`Newest Puzzles` + (page > 0 ? ' | ' + t`Page ${page}` : '') + ' | Crosshare';
-  const description =
-    t({ id: 'newest-desc', message: 'All of the latest public puzzles on Crosshare, as they are posted. Enjoy!' });
+  const title =
+    t`Newest Puzzles` +
+    (page > 0 ? ' | ' + t`Page ${page}` : '') +
+    ' | Crosshare';
+  const description = t({
+    id: 'newest-desc',
+    message:
+      'All of the latest public puzzles on Crosshare, as they are posted. Enjoy!',
+  });
 
   return (
     <>
@@ -96,11 +106,16 @@ export default function NewestPageHandler(props: PageProps) {
           content={description}
         />
         <meta key="description" name="description" content={description} />
-        <I18nTags locale={loc} canonicalPath={`/newest${page !== 0 ? `/${page}` : ''}`} />
+        <I18nTags
+          locale={loc}
+          canonicalPath={`/newest${page !== 0 ? `/${page}` : ''}`}
+        />
         {props.prevPage !== null ? (
           <link
             rel="prev"
-            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/newest${props.prevPage !== 0 ? `/${props.prevPage}` : ''}`}
+            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/newest${
+              props.prevPage !== 0 ? `/${props.prevPage}` : ''
+            }`}
           />
         ) : (
           ''
@@ -108,7 +123,9 @@ export default function NewestPageHandler(props: PageProps) {
         {props.nextPage !== null ? (
           <link
             rel="next"
-            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/newest/${props.nextPage}`}
+            href={`https://crosshare.org${
+              loc == 'en' ? '' : '/' + loc
+            }/newest/${props.nextPage}`}
           />
         ) : (
           ''
@@ -125,9 +142,7 @@ export default function NewestPageHandler(props: PageProps) {
         }}
       >
         <h1 css={{ fontSize: '1.4em', marginBottom: 0 }}>
-          <Trans>
-            Newest Puzzles
-          </Trans>
+          <Trans>Newest Puzzles</Trans>
         </h1>
         <p>{description}</p>
         {props.puzzles.map((p, i) => (
@@ -136,6 +151,7 @@ export default function NewestPageHandler(props: PageProps) {
             puzzle={p}
             showDate={true}
             constructorPage={p.constructorPage}
+            constructorIsPatron={p.constructorIsPatron}
             showAuthor={true}
           />
         ))}
@@ -144,7 +160,9 @@ export default function NewestPageHandler(props: PageProps) {
             {props.prevPage !== null ? (
               <Link
                 css={{ marginRight: '2em' }}
-                href={`/newest/${props.prevPage !== 0 ? `/${props.prevPage}` : ''}`}
+                href={`/newest/${
+                  props.prevPage !== 0 ? `/${props.prevPage}` : ''
+                }`}
               >
                 ← <Trans>Newer Puzzles</Trans>
               </Link>
@@ -152,7 +170,9 @@ export default function NewestPageHandler(props: PageProps) {
               ''
             )}
             {props.nextPage !== null ? (
-              <Link href={'/newest/' + props.nextPage}><Trans>Older Puzzles</Trans> →</Link>
+              <Link href={'/newest/' + props.nextPage}>
+                <Trans>Older Puzzles</Trans> →
+              </Link>
             ) : (
               ''
             )}

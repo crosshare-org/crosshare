@@ -19,6 +19,7 @@ import { ConstructorStats } from './ConstructorStats';
 import { Trans, t, Plural } from '@lingui/macro';
 import { I18nTags } from './I18nTags';
 import { useRouter } from 'next/router';
+import { PatronIcon } from './Icons';
 
 const BANNED_USERNAMES = {
   api: 1,
@@ -526,6 +527,7 @@ export const BioEditor = (props: BioEditorProps) => {
 
 export interface ConstructorPageProps {
   constructor: ConstructorPageT;
+  isPatron: boolean;
   followCount: number;
   followers: Array<ConstructorPageT>;
   following: Array<ConstructorPageT>;
@@ -537,30 +539,80 @@ export interface ConstructorPageProps {
   prevPage: number | null;
 }
 
-const FollowersList = ({ pages, close }: { pages: Array<ConstructorPageT>, close: () => void }) => {
-  return <ul css={{ width: '100%', maxWidth: '40em', listStyleType: 'none', padding: 0, margin: 'auto', textAlign: 'left' }}>
-    {pages.map(f => <FollowersListItem key={f.i} page={f} close={close} />)}
-  </ul>;
+const FollowersList = ({
+  pages,
+  close,
+}: {
+  pages: Array<ConstructorPageT>;
+  close: () => void;
+}) => {
+  return (
+    <ul
+      css={{
+        width: '100%',
+        maxWidth: '40em',
+        listStyleType: 'none',
+        padding: 0,
+        margin: 'auto',
+        textAlign: 'left',
+      }}
+    >
+      {pages.map((f) => (
+        <FollowersListItem key={f.i} page={f} close={close} />
+      ))}
+    </ul>
+  );
 };
 
-const FollowersListItem = ({ page, close }: { page: ConstructorPageT, close: () => void }) => {
+const FollowersListItem = ({
+  page,
+  close,
+}: {
+  page: ConstructorPageT;
+  close: () => void;
+}) => {
   const router = useRouter();
 
-  const click = useCallback(() => { close(); router.push(`/${page.i}`); }, [page.i, router, close]);
+  const click = useCallback(() => {
+    close();
+    router.push(`/${page.i}`);
+  }, [page.i, router, close]);
 
-  return <li>
-    <div tabIndex={0} role="button" onClick={click} onKeyPress={click} css={{
-      padding: '1.5em 1em', display: 'flex', alignItems: 'flex-start', flexWrap: 'wrap', '&:hover': {
-        backgroundColor: 'var(--secondary)'
-      }, cursor: 'pointer'
-    }}>
-      <div css={{ marginRight: '1em' }}>
-        <div><b css={{ fontSize: '1.1em', '&:hover': { textDecoration: 'underline' } }}>{page.n}</b></div>
-        <div>@{page.i}</div>
+  return (
+    <li>
+      <div
+        tabIndex={0}
+        role="button"
+        onClick={click}
+        onKeyPress={click}
+        css={{
+          padding: '1.5em 1em',
+          display: 'flex',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+          '&:hover': {
+            backgroundColor: 'var(--secondary)',
+          },
+          cursor: 'pointer',
+        }}
+      >
+        <div css={{ marginRight: '1em' }}>
+          <div>
+            <b
+              css={{
+                fontSize: '1.1em',
+                '&:hover': { textDecoration: 'underline' },
+              }}
+            >
+              {page.n}
+            </b>
+          </div>
+          <div>@{page.i}</div>
+        </div>
+        <FollowButton css={{ marginLeft: 'auto' }} page={page} />
       </div>
-      <FollowButton css={{ marginLeft: 'auto' }} page={page} />
-    </div>
-  </li>;
+    </li>
+  );
 };
 
 export const ConstructorPage = (props: ConstructorPageProps) => {
@@ -612,21 +664,34 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
           ''
         )}
         <meta key="description" name="description" content={description} />
-        <link rel="alternate" type="application/rss+xml"
+        <link
+          rel="alternate"
+          type="application/rss+xml"
           title={title}
-          href={`https://crosshare.org/api/feed/${username}`} />
-        <I18nTags locale={loc} canonicalPath={`/${username}${props.currentPage !== 0 ? '/page/' + props.currentPage : ''}`} />
+          href={`https://crosshare.org/api/feed/${username}`}
+        />
+        <I18nTags
+          locale={loc}
+          canonicalPath={`/${username}${
+            props.currentPage !== 0 ? '/page/' + props.currentPage : ''
+          }`}
+        />
         {props.prevPage === 0 ? (
-          <link rel="prev" href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/${username}`} />
+          <link
+            rel="prev"
+            href={`https://crosshare.org${
+              loc == 'en' ? '' : '/' + loc
+            }/${username}`}
+          />
         ) : (
           ''
         )}
         {props.prevPage ? (
           <link
             rel="prev"
-            href={
-              `https://crosshare.org${loc == 'en' ? '' : '/' + loc}/${username}/page/${props.prevPage}`
-            }
+            href={`https://crosshare.org${
+              loc == 'en' ? '' : '/' + loc
+            }/${username}/page/${props.prevPage}`}
           />
         ) : (
           ''
@@ -634,9 +699,9 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
         {props.nextPage !== null ? (
           <link
             rel="next"
-            href={
-              `https://crosshare.org${loc == 'en' ? '' : '/' + loc}/${username}/page/${props.nextPage}`
-            }
+            href={`https://crosshare.org${
+              loc == 'en' ? '' : '/' + loc
+            }/${username}/page/${props.nextPage}`}
           />
         ) : (
           ''
@@ -656,39 +721,81 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
         <ProfilePicAndName
           coverImage={coverPic}
           profilePic={profilePic}
-          topLine={props.constructor.n}
+          topLine={
+            <>
+              {props.isPatron ? (
+                <PatronIcon css={{ marginRight: '0.3em' }} linkIt={true} />
+              ) : (
+                ''
+              )}
+              {props.constructor.n}
+            </>
+          }
           byLine={
             <>
-              <h2 css={{ fontSize: '1em', fontWeight: 'normal', marginBottom: '0.25em' }}>
+              <h2
+                css={{
+                  fontSize: '1em',
+                  fontWeight: 'normal',
+                  marginBottom: '0.25em',
+                }}
+              >
                 <Link href={'/' + username}>@{username}</Link>
               </h2>
               {showOverlay ? (
                 <Overlay closeCallback={() => setShowOverlay(false)}>
                   <div css={{ textAlign: 'center' }}>
-                    {overlayIsFollowing ?
+                    {overlayIsFollowing ? (
                       <>
-                        <h2>
-                          Following
-                        </h2>
-                        <FollowersList pages={props.following} close={() => setShowOverlay(false)} />
+                        <h2>Following</h2>
+                        <FollowersList
+                          pages={props.following}
+                          close={() => setShowOverlay(false)}
+                        />
                       </>
-                      :
+                    ) : (
                       <>
-                        <h2>
-                          Followers
-                        </h2>
-                        <FollowersList pages={props.followers} close={() => setShowOverlay(false)} />
+                        <h2>Followers</h2>
+                        <FollowersList
+                          pages={props.followers}
+                          close={() => setShowOverlay(false)}
+                        />
                       </>
-                    }
+                    )}
                   </div>
                 </Overlay>
               ) : (
                 ''
               )}
               <p>
-                <ButtonAsLink disabled={props.following.length === 0} onClick={() => { setShowOverlay(true); setOverlayIsFollowing(true); }} text={<Trans id="following-count">{props.following.length} Following</Trans>} />
+                <ButtonAsLink
+                  disabled={props.following.length === 0}
+                  onClick={() => {
+                    setShowOverlay(true);
+                    setOverlayIsFollowing(true);
+                  }}
+                  text={
+                    <Trans id="following-count">
+                      {props.following.length} Following
+                    </Trans>
+                  }
+                />
                 {' · '}
-                <ButtonAsLink disabled={props.followCount === 0} onClick={() => { setShowOverlay(true); setOverlayIsFollowing(false); }} text={<Plural id="follower-count" value={props.followCount} one="1 Follower" other="# Followers" />} />
+                <ButtonAsLink
+                  disabled={props.followCount === 0}
+                  onClick={() => {
+                    setShowOverlay(true);
+                    setOverlayIsFollowing(false);
+                  }}
+                  text={
+                    <Plural
+                      id="follower-count"
+                      value={props.followCount}
+                      one="1 Follower"
+                      other="# Followers"
+                    />
+                  }
+                />
               </p>
             </>
           }
@@ -707,7 +814,11 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                 )}&item_name=${encodeURIComponent(
                   paypalText
                 )}&currency_code=USD&source=url`}
-                text={t({ message: `Tip ${props.constructor.n}`, comment: 'The variable is the name of the user who will recieve the $ tip' })}
+                text={t({
+                  message: `Tip ${props.constructor.n}`,
+                  comment:
+                    'The variable is the name of the user who will recieve the $ tip',
+                })}
               />
               <ToolTipText
                 text={<FaInfoCircle />}
@@ -725,6 +836,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
             showDate={true}
             showBlogPost={true}
             showAuthor={false}
+            constructorIsPatron={props.isPatron}
           />
         ))}
         {props.nextPage || props.prevPage !== null ? (

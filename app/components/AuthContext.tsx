@@ -137,6 +137,7 @@ export interface AuthContextValue {
   user?: firebase.User;
   notifications?: Array<NotificationT>;
   isAdmin: boolean;
+  isPatron: boolean;
   loading: boolean;
   error?: string;
   constructorPage?: ConstructorPageT;
@@ -144,10 +145,12 @@ export interface AuthContextValue {
   displayName?: string | null;
   updateDisplayName?: (n: string) => Promise<void>;
 }
-export const AuthContext = createContext({
+export const AuthContext = createContext<AuthContextValue>({
   user: undefined,
+  isAdmin: false,
+  isPatron: false,
   loading: false,
   error: 'using default context',
   constructorPage: undefined,
   prefs: undefined,
-} as AuthContextValue);
+});

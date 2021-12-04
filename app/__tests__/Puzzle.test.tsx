@@ -8,7 +8,7 @@ import {
 } from '../lib/testingUtils';
 import waitForExpect from 'wait-for-expect';
 import { Puzzle } from '../components/Puzzle';
-import { ServerPuzzleResult } from '../lib/types';
+import { PuzzleResultWithAugmentedComments } from '../lib/types';
 import { PlayT } from '../lib/dbtypes';
 import * as plays from '../lib/plays';
 import PuzzlePage from '../pages/crosswords/[puzzleId]';
@@ -41,7 +41,8 @@ window.HTMLElement.prototype.scrollIntoView = function () {
   return;
 };
 
-const testPuzzle: ServerPuzzleResult = {
+const testPuzzle: PuzzleResultWithAugmentedComments = {
+  constructorIsPatron: false,
   rating: null,
   authorId: 'test-author-id',
   isPrivate: false,
@@ -68,7 +69,7 @@ const testPuzzle: ServerPuzzleResult = {
     { explanation: null, dir: 0, clue: 'Throw out', num: 8 },
     { explanation: null, dir: 0, clue: 'This, in Madrid', num: 9 },
     { explanation: null, dir: 1, clue: 'In good health', num: 1 },
-    { explanation: null, dir: 1, clue: 'Popeye\'s love', num: 2 },
+    { explanation: null, dir: 1, clue: "Popeye's love", num: 2 },
     { explanation: null, dir: 1, clue: 'Ancient Greek city-state', num: 3 },
     { explanation: null, dir: 1, clue: 'Pass, as a law', num: 4 },
     {
@@ -148,7 +149,8 @@ test('clicking a clue sets slot to active', async () => {
   expect(cell2).toHaveStyleRule('background', 'var(--lighter)');
 });
 
-const dailymini_5_19: ServerPuzzleResult = {
+const dailymini_5_19: PuzzleResultWithAugmentedComments = {
+  constructorIsPatron: false,
   rating: null,
   constructorPage: null,
   isPrivate: false,

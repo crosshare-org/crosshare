@@ -67,6 +67,7 @@ export default function CrosshareApp({
     authStatus = {
       loading: true,
       isAdmin: false,
+      isPatron: false,
       notifications: [],
     };
   }

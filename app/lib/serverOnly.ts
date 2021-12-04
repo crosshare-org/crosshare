@@ -1,16 +1,15 @@
 import { AdminApp, AdminTimestamp, getUser } from '../lib/firebaseWrapper';
-import { puzzleFromDB, ServerPuzzleResult } from './types';
+import {
+  convertComments,
+  puzzleFromDB,
+  PuzzleResultWithAugmentedComments,
+} from './types';
 import type firebaseAdminType from 'firebase-admin';
 
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import {
-  DBPuzzleV,
-  CategoryIndexT,
-  getDateString,
-  addZeros,
-} from './dbtypes';
+import { DBPuzzleV, CategoryIndexT, getDateString, addZeros } from './dbtypes';
 import { adminTimestamp } from './adminTimestamp';
 import { mapEachResult } from './dbUtils';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
@@ -33,6 +32,7 @@ import { GetServerSideProps } from 'next';
 import { getDailyMinis } from './dailyMinis';
 import { EmbedOptionsT } from './embedOptions';
 import { ArticleT, validate } from './article';
+import { isUserPatron } from './patron';
 
 export async function getStorageUrl(
   storageKey: string
@@ -396,7 +396,7 @@ export const getArticlePageProps: GetServerSideProps<ArticlePageProps> =
   };
 
 export interface PuzzlePageResultProps {
-  puzzle: ServerPuzzleResult;
+  puzzle: PuzzleResultWithAugmentedComments;
   profilePicture?: string | null;
   coverImage?: string | null;
   nextPuzzle?: NextPuzzleLink;
@@ -410,7 +410,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   params,
 }): Promise<{ props: PuzzlePageProps }> => {
   const db = AdminApp.firestore();
-  let puzzle: ServerPuzzleResult | null = null;
+  let puzzle: PuzzleResultWithAugmentedComments | null = null;
   if (!params?.puzzleId || Array.isArray(params.puzzleId)) {
     res.statusCode = 404;
     return { props: { error: 'bad puzzle params' } };
@@ -428,10 +428,13 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   const validationResult = DBPuzzleV.decode(dbres.data());
   if (isRight(validationResult)) {
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
+    const fromDB = puzzleFromDB(validationResult.right);
     puzzle = {
-      ...puzzleFromDB(validationResult.right),
+      ...fromDB,
       id: dbres.id,
       constructorPage: await userIdToPage(validationResult.right.a),
+      constructorIsPatron: await isUserPatron(validationResult.right.a),
+      comments: await convertComments(fromDB.comments),
     };
   } else {
     console.error(PathReporter.report(validationResult).join(','));
@@ -494,7 +497,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
       ...(todaysMini && {
         nextPuzzle: {
           puzzleId: todaysMini,
-          linkText: 'today\'s daily mini crossword',
+          linkText: "today's daily mini crossword",
         },
       }),
     },

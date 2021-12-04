@@ -30,6 +30,7 @@ const testComment: Comment = {
   authorSolveTime: 55.4,
   authorCheated: false,
   authorSolvedDownsOnly: false,
+  authorIsPatron: false,
   publishTime: new Date(Date.UTC(2020, 7, 1, 7)).getTime(),
 };
 

@@ -14,7 +14,9 @@ import { CreatePageForm } from '../components/ConstructorPage';
 import { ConstructorStats } from '../components/ConstructorStats';
 import { withStaticTranslation } from '../lib/translation';
 
-export const getStaticProps = withStaticTranslation(() => { return { props: {} }; });
+export const getStaticProps = withStaticTranslation(() => {
+  return { props: {} };
+});
 
 export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
   const db = App.firestore();
@@ -73,6 +75,7 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
                 showDate={true}
                 showPrivateStatus={true}
                 constructorPage={null}
+                constructorIsPatron={false}
               />
             ))}
             {loadingAuthored ? (
