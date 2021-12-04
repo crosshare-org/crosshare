@@ -28,10 +28,6 @@ exports[`basic comment display 1`] = `
 }
 
 .emotion-5 {
-  vertical-align: text-bottom;
-}
-
-.emotion-6 {
   font-size: 0.75em;
   background-color: var(--caption);
   color: white;
@@ -39,7 +35,7 @@ exports[`basic comment display 1`] = `
   padding: 0.1em 0.2em;
 }
 
-.emotion-7 {
+.emotion-6 {
   font-style: italic;
 }
 
@@ -73,114 +69,7 @@ exports[`basic comment display 1`] = `
         class="emotion-4"
       >
         <div>
-          <span
-            class="emotion-5"
-          >
-            <svg
-              fill="rgb(25,42,230)"
-              height="1em"
-              shape-rendering="crispEdges"
-              viewBox="0 0 5 5"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect
-                fill="rgba(140,140,140,0.2)"
-                height="100%"
-                width="100%"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="2"
-                y="0"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="2"
-                y="1"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="2"
-                y="3"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="1"
-                y="0"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="3"
-                y="0"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="1"
-                y="1"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="3"
-                y="1"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="1"
-                y="3"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="3"
-                y="3"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="0"
-                y="0"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="4"
-                y="0"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="0"
-                y="2"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="4"
-                y="2"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="0"
-                y="4"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="4"
-                y="4"
-              />
-            </svg>
-          </span>
+          
           <i>
              
             Mike D
@@ -194,13 +83,13 @@ exports[`basic comment display 1`] = `
             🤓
           </span>
           <span
-            class="emotion-6"
+            class="emotion-5"
           >
             55s
           </span>
            · 
           <span
-            class="emotion-7"
+            class="emotion-6"
             title="2020-08-01T07:00:00.000Z"
           >
             1 day ago
@@ -250,10 +139,6 @@ exports[`comment with username display 1`] = `
 }
 
 .emotion-5 {
-  vertical-align: text-bottom;
-}
-
-.emotion-6 {
   font-size: 0.75em;
   background-color: var(--caption);
   color: white;
@@ -261,7 +146,7 @@ exports[`comment with username display 1`] = `
   padding: 0.1em 0.2em;
 }
 
-.emotion-7 {
+.emotion-6 {
   font-style: italic;
 }
 
@@ -295,114 +180,7 @@ exports[`comment with username display 1`] = `
         class="emotion-4"
       >
         <div>
-          <span
-            class="emotion-5"
-          >
-            <svg
-              fill="rgb(25,42,230)"
-              height="1em"
-              shape-rendering="crispEdges"
-              viewBox="0 0 5 5"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect
-                fill="rgba(140,140,140,0.2)"
-                height="100%"
-                width="100%"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="2"
-                y="0"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="2"
-                y="1"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="2"
-                y="3"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="1"
-                y="0"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="3"
-                y="0"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="1"
-                y="1"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="3"
-                y="1"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="1"
-                y="3"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="3"
-                y="3"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="0"
-                y="0"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="4"
-                y="0"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="0"
-                y="2"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="4"
-                y="2"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="0"
-                y="4"
-              />
-              <rect
-                height="1"
-                width="1"
-                x="4"
-                y="4"
-              />
-            </svg>
-          </span>
+          
           <i>
              
             <a
@@ -420,13 +198,13 @@ exports[`comment with username display 1`] = `
             🤓
           </span>
           <span
-            class="emotion-6"
+            class="emotion-5"
           >
             55s
           </span>
            · 
           <span
-            class="emotion-7"
+            class="emotion-6"
             title="2020-08-01T07:00:00.000Z"
           >
             1 day ago

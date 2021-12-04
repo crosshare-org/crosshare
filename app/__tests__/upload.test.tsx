@@ -90,6 +90,11 @@ test('cannot upload if not logged in', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
+  await admin
+    .firestore()
+    .collection('donations')
+    .doc('donations')
+    .set({ d: [] });
 
   setApp(serverApp as firebase.app.App);
 
@@ -108,6 +113,11 @@ test('upload a puzzle', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
+  await admin
+    .firestore()
+    .collection('donations')
+    .doc('donations')
+    .set({ d: [] });
 
   setApp(app as firebase.app.App);
 
@@ -178,6 +188,11 @@ test('upload after editing', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
+  await admin
+    .firestore()
+    .collection('donations')
+    .doc('donations')
+    .set({ d: [] });
 
   setApp(app as firebase.app.App);
 
@@ -232,6 +247,11 @@ test('upload a puzzle with duplicate entries', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
+  await admin
+    .firestore()
+    .collection('donations')
+    .doc('donations')
+    .set({ d: [] });
 
   setApp(app as firebase.app.App);
 
