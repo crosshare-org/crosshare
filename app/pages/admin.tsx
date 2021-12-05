@@ -198,21 +198,6 @@ export default requiresAdmin(() => {
     setPagesForModeration([]);
   }
 
-  async function moderatePrivatePuzzles(e: FormEvent) {
-    e.preventDefault();
-    const db = App.firestore();
-    const privates = unmoderated?.filter((p) => p.isPrivate);
-    if (unmoderated && privates) {
-      await Promise.all(
-        privates.map((pr) => {
-          return db.collection('c').doc(pr.id).update({ m: true });
-        })
-      ).then(() => {
-        setUnmoderated(unmoderated.filter((p) => !p.isPrivate));
-      });
-    }
-  }
-
   async function doModerateComments(e: FormEvent) {
     e.preventDefault();
     if (!commentsForModeration) {
@@ -338,10 +323,6 @@ export default requiresAdmin(() => {
         ) : (
           <>
             <ul>{unmoderated.map(PuzzleListItem)}</ul>
-            <Button
-              onClick={moderatePrivatePuzzles}
-              text="Mark all private as moderated"
-            />
           </>
         )}
         {stats ? (
