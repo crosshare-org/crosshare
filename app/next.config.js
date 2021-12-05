@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const { PHASE_PRODUCTION_SERVER } =
   process.env.NODE_ENV === 'development' ? {} : require('next/constants');
 
@@ -8,7 +10,7 @@ const baseConfig = {
   i18n: {
     locales: ['en', 'es', 'it', 'fr', 'pseudo'],
     defaultLocale: 'en',
-  }
+  },
 };
 
 module.exports = (phase) => {
@@ -52,6 +54,13 @@ module.exports = (phase) => {
         NEXT_PUBLIC_SENTRY_RELEASE: sentryRelease,
       },
       webpack: (config, { isServer, dev }) => {
+        // https://github.com/vercel/next.js/issues/25484
+        _.set(
+          config,
+          'optimization.splitChunks.cacheGroups.commons.chunks',
+          'initial'
+        );
+
         // https://github.com/vercel/next.js/issues/22813
         config.output.chunkFilename = isServer
           ? `${dev ? '[name]' : '[name].[fullhash]'}.js`

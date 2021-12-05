@@ -149,7 +149,7 @@ export default function HomePage({
         <p>
           <Trans id="consider-donating">
             If you&apos;re enjoying Crosshare please consider{' '}
-            <a href="/donate">donating</a> to support its continuing
+            <Link href="/donate">donating</Link> to support its continuing
             development.
           </Trans>
         </p>
