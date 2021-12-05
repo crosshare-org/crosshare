@@ -22,10 +22,7 @@ interface DonateProps {
   }>;
 }
 
-
-const gssp: GetServerSideProps<DonateProps> = async ({
-  res,
-}) => {
+const gssp: GetServerSideProps<DonateProps> = async ({ res }) => {
   const db = AdminApp.firestore();
 
   return db
@@ -60,7 +57,9 @@ const gssp: GetServerSideProps<DonateProps> = async ({
 export const getServerSideProps = withTranslation(gssp);
 
 const PatronHeaderCSS: CSSInterpolation = {
-  fontSize: '3em', [SMALL_AND_UP]: { fontSize: '5em' }, flexShrink: 0
+  fontSize: '2em',
+  [SMALL_AND_UP]: { fontSize: '5em' },
+  flexShrink: 0,
 };
 
 export default function DonatePage({ donors }: DonateProps) {
@@ -71,38 +70,52 @@ export default function DonatePage({ donors }: DonateProps) {
         <title>Donate and Become a Crosshare Patron</title>
       </Head>
       <DefaultTopBar />
-      <div css={{
-        padding: '2em',
-        backgroundColor: 'var(--secondary)',
-        textAlign: 'center',
-        color: 'var(--text)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
+      <div
+        css={{
+          padding: '1em',
+          [SMALL_AND_UP]: {
+            padding: '2em',
+          },
+          backgroundColor: 'var(--secondary)',
+          textAlign: 'center',
+          color: 'var(--text)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <PatronIcon css={PatronHeaderCSS} />
-        <div css={{
-          maxWidth: 900,
-          margin: '0 2em',
-        }}>
-          <div css={{
-            fontFamily: 'Georgia, serif',
-            fontSize: 20,
+        <div
+          css={{
+            maxWidth: 900,
+            margin: '0 1em',
             [SMALL_AND_UP]: {
-              fontSize: 30,
+              margin: '0 2em',
             },
-            fontStyle: 'italic',
-            marginBottom: '0.5em',
-          }}>
+          }}
+        >
+          <div
+            css={{
+              fontFamily: 'Georgia, serif',
+              fontSize: 20,
+              [SMALL_AND_UP]: {
+                fontSize: 30,
+              },
+              fontStyle: 'italic',
+              marginBottom: '0.5em',
+            }}
+          >
             A free crossword community for everyone
           </div>
-          <div css={{
-            [SMALL_AND_UP]: {
-              fontSize: 20,
-            },
-          }}>
-            Crosshare is <b>free</b> and <b>ad-free</b>, but it isn&apos;t free to run.
-            We rely on support from people like you to make it possible.
+          <div
+            css={{
+              [SMALL_AND_UP]: {
+                fontSize: 20,
+              },
+            }}
+          >
+            Crosshare is <b>free</b> and <b>ad-free</b>, but it isn&apos;t free
+            to run. We rely on support from people like you to make it possible.
           </div>
         </div>
         <PatronIcon css={PatronHeaderCSS} />
@@ -110,19 +123,24 @@ export default function DonatePage({ donors }: DonateProps) {
       <div css={{ margin: 'auto', maxWidth: 900, padding: '1em' }}>
         <h2 css={{ textAlign: 'center' }}>Become a Crosshare Patron</h2>
         <p>
-          Crosshare is developed by a <b>very</b> small team of volunteers. Every donation,
-          no matter how small, makes a huge difference towards keeping this project
-          alive.
+          Crosshare is developed by a <b>very</b> small team of volunteers.
+          Every donation, no matter how small, makes a huge difference towards
+          keeping this project alive.
         </p>
         <p>
-          Monthly recurring donations are especially helpful, as they allow us to plan for
-          ever increasing server costs from new users and new features. To encourage recurring
-          donations, we&apos;ve added a new patron icon - <PatronIcon /> - which lasts
-          one month from the time of your last donation. Please consider making a recurring
-          donation and becoming a Crosshare patron!
+          Monthly recurring donations are especially helpful, as they allow us
+          to plan for ever increasing server costs from new users and new
+          features. To encourage recurring donations, we&apos;ve added a new
+          patron icon - <PatronIcon /> - which lasts one month from the time of
+          your last donation. Please consider making a recurring donation and
+          becoming a Crosshare patron!
         </p>
         <form
-          css={{ marginBottom: '0.5em', textAlign: 'center', fontSize: '1.3em' }}
+          css={{
+            marginBottom: '0.5em',
+            textAlign: 'center',
+            fontSize: '1.3em',
+          }}
           action="https://www.paypal.com/donate"
           method="post"
           target="_top"
@@ -146,17 +164,22 @@ export default function DonatePage({ donors }: DonateProps) {
       <h2 css={{ textAlign: 'center' }}>
         The contributors who make Crosshare possible
       </h2>
-      <p>
-      </p>
+      <p></p>
       <ul css={{ listStyleType: 'none', columnWidth: '20em', margin: 0 }}>
         {donors.map((d, i) => (
           <li key={i} css={{ fontWeight: d.above100 ? 'bold' : 'normal' }}>
-            {differenceInDays(now, new Date(d.date)) <= 32 ? <PatronIcon css={{ marginRight: '0.5em' }} /> : ''}
+            {differenceInDays(now, new Date(d.date)) <= 32 ? (
+              <PatronIcon css={{ marginRight: '0.5em' }} />
+            ) : (
+              ''
+            )}
             {d.page ? <a href={`/${d.page}`}>{d.name}</a> : d.name}
           </li>
         ))}
       </ul>
-      <div css={{ fontStyle: 'italic', textAlign: 'right', margin: '1em' }}>Contributors who have totaled $100 or more are in bold</div>
+      <div css={{ fontStyle: 'italic', textAlign: 'right', margin: '1em' }}>
+        Contributors who have totaled $100 or more are in bold
+      </div>
     </>
   );
 }
