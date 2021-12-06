@@ -82,31 +82,43 @@ const usernameMap: Record<string, ConstructorPageT> = {};
 let usernamesUpdated: number | null = null;
 const usernamesTTL = 1000 * 60 * 10;
 
+const updateUsernameMap = async (): Promise<void> => {
+  const now = Date.now();
+  console.log('updating username map');
+  const db = AdminApp.firestore();
+  let query: firebaseAdminType.firestore.Query = db.collection('cp');
+  if (usernamesUpdated) {
+    query = query.where('t', '>=', AdminTimestamp.fromMillis(usernamesUpdated));
+  }
+  try {
+    await mapEachResult(query, ConstructorPageV, (cp, docId) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { t, ...partial } = cp;
+      usernameMap[cp.u] = { ...partial, id: docId };
+    });
+    usernamesUpdated = now;
+  } catch (e) {
+    console.error('error updating constructor pages');
+    console.error(e);
+  }
+};
+
+let updateUsernameMapPromise: Promise<void> | null = null;
+const updateUsernameMapOnce = () => {
+  if (!updateUsernameMapPromise) {
+    updateUsernameMapPromise = updateUsernameMap();
+  }
+  return updateUsernameMapPromise;
+};
+
 export async function userIdToPage(
   userId: string
 ): Promise<ConstructorPageT | null> {
-  const now = Date.now();
-  if (usernamesUpdated === null || now - usernamesUpdated > usernamesTTL) {
-    const db = AdminApp.firestore();
-    let query: firebaseAdminType.firestore.Query = db.collection('cp');
-    if (usernamesUpdated) {
-      query = query.where(
-        't',
-        '>=',
-        AdminTimestamp.fromMillis(usernamesUpdated)
-      );
-    }
-    try {
-      await mapEachResult(query, ConstructorPageV, (cp, docId) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { t, ...partial } = cp;
-        usernameMap[cp.u] = { ...partial, id: docId };
-      });
-      usernamesUpdated = now;
-    } catch (e) {
-      console.error('error updating constructor pages');
-      console.error(e);
-    }
+  if (
+    usernamesUpdated === null ||
+    Date.now() - usernamesUpdated > usernamesTTL
+  ) {
+    await updateUsernameMapOnce();
   }
   return usernameMap[userId] || null;
 }
