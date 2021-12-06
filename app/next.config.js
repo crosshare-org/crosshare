@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const { PHASE_PRODUCTION_SERVER } =
   process.env.NODE_ENV === 'development' ? {} : require('next/constants');
 
@@ -54,18 +52,6 @@ module.exports = (phase) => {
         NEXT_PUBLIC_SENTRY_RELEASE: sentryRelease,
       },
       webpack: (config, { isServer, dev }) => {
-        // https://github.com/vercel/next.js/issues/25484
-        _.set(
-          config,
-          'optimization.splitChunks.cacheGroups.commons.chunks',
-          'initial'
-        );
-
-        // https://github.com/vercel/next.js/issues/22813
-        config.output.chunkFilename = isServer
-          ? `${dev ? '[name]' : '[name].[fullhash]'}.js`
-          : `static/chunks/${dev ? '[name]' : '[name].[fullhash]'}.js`;
-
         // Note: we provide webpack above so you should not `require` it
         // Perform customizations to webpack config
         // Important: return the modified config
