@@ -529,8 +529,8 @@ export interface ConstructorPageProps {
   constructor: ConstructorPageT;
   isPatron: boolean;
   followCount: number;
-  followers: Array<ConstructorPageT>;
-  following: Array<ConstructorPageT>;
+  followers: Array<ConstructorPageT & { isPatron: boolean }>;
+  following: Array<ConstructorPageT & { isPatron: boolean }>;
   profilePicture: string | null;
   coverPicture: string | null;
   puzzles: Array<LinkablePuzzle>;
@@ -543,7 +543,7 @@ const FollowersList = ({
   pages,
   close,
 }: {
-  pages: Array<ConstructorPageT>;
+  pages: Array<ConstructorPageT & { isPatron: boolean }>;
   close: () => void;
 }) => {
   return (
@@ -568,7 +568,7 @@ const FollowersListItem = ({
   page,
   close,
 }: {
-  page: ConstructorPageT;
+  page: ConstructorPageT & { isPatron: boolean };
   close: () => void;
 }) => {
   const router = useRouter();
@@ -604,7 +604,7 @@ const FollowersListItem = ({
                 '&:hover': { textDecoration: 'underline' },
               }}
             >
-              {page.n}
+              {page.isPatron ? <PatronIcon /> : ''} {page.n}
             </b>
           </div>
           <div>@{page.i}</div>

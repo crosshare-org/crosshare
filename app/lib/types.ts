@@ -3,7 +3,6 @@ import type { WordDBT } from './WordDB';
 
 import { DBPuzzleT, CommentWithRepliesT, GlickoScoreT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
-import { isUserPatron } from './patron';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -144,28 +143,6 @@ export interface ServerPuzzleResult extends Omit<PuzzleResult, 'comments'> {
 }
 export interface PuzzleResultWithAugmentedComments extends ServerPuzzleResult {
   comments: Array<Comment>;
-}
-
-export async function convertComments(
-  comments: Array<CommentWithRepliesT>
-): Promise<Array<Comment>> {
-  return Promise.all(
-    comments.map(async (c) => {
-      return {
-        commentText: c.c,
-        authorId: c.a,
-        authorDisplayName: c.n,
-        authorSolveTime: c.t,
-        authorCheated: c.ch,
-        authorSolvedDownsOnly: c.do || false,
-        publishTime: c.p.toMillis(),
-        id: c.i,
-        replies: await convertComments(c.r || []),
-        ...(c.un && { authorUsername: c.un }),
-        authorIsPatron: await isUserPatron(c.a),
-      };
-    })
-  );
 }
 
 export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {

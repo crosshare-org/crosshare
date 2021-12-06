@@ -1,7 +1,7 @@
 import { AdminApp, AdminTimestamp, getUser } from '../lib/firebaseWrapper';
 import {
-  convertComments,
   puzzleFromDB,
+  Comment,
   PuzzleResultWithAugmentedComments,
 } from './types';
 import type firebaseAdminType from 'firebase-admin';
@@ -9,7 +9,13 @@ import type firebaseAdminType from 'firebase-admin';
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { DBPuzzleV, CategoryIndexT, getDateString, addZeros } from './dbtypes';
+import {
+  DBPuzzleV,
+  CategoryIndexT,
+  getDateString,
+  addZeros,
+  CommentWithRepliesT,
+} from './dbtypes';
 import { adminTimestamp } from './adminTimestamp';
 import { mapEachResult } from './dbUtils';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
@@ -394,6 +400,28 @@ export const getArticlePageProps: GetServerSideProps<ArticlePageProps> =
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
     return { props: article };
   };
+
+export async function convertComments(
+  comments: Array<CommentWithRepliesT>
+): Promise<Array<Comment>> {
+  return Promise.all(
+    comments.map(async (c) => {
+      return {
+        commentText: c.c,
+        authorId: c.a,
+        authorDisplayName: c.n,
+        authorSolveTime: c.t,
+        authorCheated: c.ch,
+        authorSolvedDownsOnly: c.do || false,
+        publishTime: c.p.toMillis(),
+        id: c.i,
+        replies: await convertComments(c.r || []),
+        ...(c.un && { authorUsername: c.un }),
+        authorIsPatron: await isUserPatron(c.a),
+      };
+    })
+  );
+}
 
 export interface PuzzlePageResultProps {
   puzzle: PuzzleResultWithAugmentedComments;
