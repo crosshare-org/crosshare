@@ -219,8 +219,10 @@ export function initialBuilderState({
     gridIsComplete: false,
     repeats: new Set<string>(),
     hasNoShortWords: false,
-    isEditable() { return !this.alternates.length && editable; },
-    symmetry: width === 5 && height === 5 ? Symmetry.None : Symmetry.Rotational,
+    isEditable() {
+      return !this.alternates.length && editable;
+    },
+    symmetry: width * height < 49 ? Symmetry.None : Symmetry.Rotational,
     clues: Object.fromEntries(
       Object.entries(clues).map(([word, val]) =>
         typeof val === 'string' ? [word, [val]] : [word, val]
@@ -359,7 +361,9 @@ export interface AddAlternateAction extends PuzzleAction {
   type: 'ADDALT';
   alternate: Record<number, string>;
 }
-function isAddAlternateAction(action: PuzzleAction): action is AddAlternateAction {
+function isAddAlternateAction(
+  action: PuzzleAction
+): action is AddAlternateAction {
   return action.type === 'ADDALT';
 }
 
@@ -367,7 +371,9 @@ export interface DelAlternateAction extends PuzzleAction {
   type: 'DELALT';
   alternate: Record<number, string>;
 }
-function isDelAlternateAction(action: PuzzleAction): action is DelAlternateAction {
+function isDelAlternateAction(
+  action: PuzzleAction
+): action is DelAlternateAction {
   return action.type === 'DELALT';
 }
 
@@ -659,7 +665,10 @@ export function checkComplete(state: PuzzleState) {
 function postEdit(state: PuzzleState, cellIndex: number): PuzzleState;
 function postEdit(state: BuilderState, cellIndex: number): BuilderState;
 function postEdit<T extends GridInterfaceState>(state: T, cellIndex: number): T;
-function postEdit(state: GridInterfaceState, cellIndex: number): GridInterfaceState {
+function postEdit(
+  state: GridInterfaceState,
+  cellIndex: number
+): GridInterfaceState {
   if (isPuzzleState(state)) {
     state.wrongCells.delete(cellIndex);
     if (state.autocheck) {
@@ -749,7 +758,11 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
     };
   }
   if (isPasteAction(action)) {
-    const toPaste = action.content.split('').filter(x => x.match(ALLOWABLE_GRID_CHARS)).join('').toUpperCase();
+    const toPaste = action.content
+      .split('')
+      .filter((x) => x.match(ALLOWABLE_GRID_CHARS))
+      .join('')
+      .toUpperCase();
     if (!toPaste) {
       return state;
     }
@@ -1095,7 +1108,9 @@ export function builderReducer(
     };
   }
   if (isAddAlternateAction(action)) {
-    state.alternates = state.alternates.filter(a => !equal(a, action.alternate));
+    state.alternates = state.alternates.filter(
+      (a) => !equal(a, action.alternate)
+    );
     state.alternates.push(action.alternate);
     return {
       ...state,
@@ -1104,14 +1119,17 @@ export function builderReducer(
   if (isDelAlternateAction(action)) {
     return {
       ...state,
-      alternates: state.alternates.filter(a => !equal(a, action.alternate))
+      alternates: state.alternates.filter((a) => !equal(a, action.alternate)),
     };
   }
   if (isClickedFillAction(action)) {
-    return postEdit({
-      ...state,
-      grid: gridWithEntrySet(state.grid, action.entryIndex, action.value),
-    }, 0);
+    return postEdit(
+      {
+        ...state,
+        grid: gridWithEntrySet(state.grid, action.entryIndex, action.value),
+      },
+      0
+    );
   }
   if (action.type === 'CLEARPUBLISHERRORS') {
     return { ...state, publishErrors: [], publishWarnings: [] };
@@ -1240,26 +1258,24 @@ export function builderReducer(
         state.clues,
         true
       ),
-      ...(state.alternates && {alts: state.alternates}),
+      ...(state.alternates && { alts: state.alternates }),
       ...(state.notes && { cn: state.notes }),
       ...(state.blogPost && { bp: state.blogPost }),
       ...(state.guestConstructor && { gc: state.guestConstructor }),
-      ...(state.isPrivate && 
-           { pv: true } || 
-           {
-             pvu:
-               state.isPrivateUntil && state.isPrivateUntil > action.publishTimestamp
-                 ? state.isPrivateUntil
-                 : action.publishTimestamp,
-           }),
+      ...((state.isPrivate && { pv: true }) || {
+        pvu:
+          state.isPrivateUntil && state.isPrivateUntil > action.publishTimestamp
+            ? state.isPrivateUntil
+            : action.publishTimestamp,
+      }),
       ...(state.isContestPuzzle &&
         state.contestAnswers?.length && {
-        ct_ans: state.contestAnswers,
-        ct_prz: state.contestHasPrize || false,
-        ...(state.contestRevealDelay && {
-          ct_rv_dl: state.contestRevealDelay,
+          ct_ans: state.contestAnswers,
+          ct_prz: state.contestHasPrize || false,
+          ...(state.contestRevealDelay && {
+            ct_rv_dl: state.contestRevealDelay,
+          }),
         }),
-      }),
     };
     if (state.grid.highlighted.size) {
       puzzle.hs = Array.from(state.grid.highlighted);
@@ -1375,18 +1391,18 @@ export function puzzleReducer(
       cellsEverMarkedWrong: new Set<number>(play.we),
       ...(play &&
         play.ct_rv && {
-        contestRevealed: true,
-        contestSubmitTime: play.ct_t?.toMillis(),
-      }),
+          contestRevealed: true,
+          contestSubmitTime: play.ct_t?.toMillis(),
+        }),
       ...(play &&
         play.ct_sub && {
-        ranMetaSubmitEffects: true,
-        contestPriorSubmissions: play.ct_pr_subs,
-        contestDisplayName: play.ct_n,
-        contestSubmission: play.ct_sub,
-        contestEmail: play.ct_em,
-        contestSubmitTime: play.ct_t?.toMillis(),
-      }),
+          ranMetaSubmitEffects: true,
+          contestPriorSubmissions: play.ct_pr_subs,
+          contestDisplayName: play.ct_n,
+          contestSubmission: play.ct_sub,
+          contestEmail: play.ct_em,
+          contestSubmitTime: play.ct_t?.toMillis(),
+        }),
     };
   }
   if (isToggleClueViewAction(action)) {
