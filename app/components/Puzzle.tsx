@@ -49,7 +49,14 @@ import { AuthContext, AuthPropsOptional } from './AuthContext';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
-import { Direction, BLOCK, getClueText } from '../lib/types';
+import {
+  Direction,
+  BLOCK,
+  getClueText,
+  KeyK,
+  fromKeyboardEvent,
+  fromKeyString,
+} from '../lib/types';
 import {
   fromCells,
   addClues,
@@ -105,6 +112,7 @@ import {
 } from './PuzzleOverlay';
 import { I18nTags } from './I18nTags';
 import { t, Trans } from '@lingui/macro';
+import { isSome } from 'fp-ts/lib/Option';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -513,26 +521,24 @@ export const Puzzle = ({
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
-      // disable keyboard when paused / loading play
+      // Disable keyboard when paused / loading play
       if (!(state.success && state.dismissedSuccess)) {
         if (loadingPlayState || !state.currentTimeWindowStart) {
           return;
         }
       }
+
       const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
       if (tagName === 'textarea' || tagName === 'input') {
         return;
       }
-      if (e.metaKey || e.altKey || e.ctrlKey || e.key === 'CapsLock') {
-        return; // This way you can still do apple-R and such
+
+      const mkey = fromKeyboardEvent(e);
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        dispatch(kpa);
+        e.preventDefault();
       }
-      const kpa: KeypressAction = {
-        type: 'KEYPRESS',
-        key: e.key,
-        shift: e.shiftKey,
-      };
-      dispatch(kpa);
-      e.preventDefault();
     },
     [
       dispatch,
@@ -570,8 +576,11 @@ export const Puzzle = ({
 
   const keyboardHandler = useCallback(
     (key: string) => {
-      const kpa: KeypressAction = { type: 'KEYPRESS', key: key, shift: false };
-      dispatch(kpa);
+      const mkey = fromKeyString(key);
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        dispatch(kpa);
+      }
     },
     [dispatch]
   );
@@ -919,8 +928,7 @@ export const Puzzle = ({
                   onClick={() => {
                     const kpa: KeypressAction = {
                       type: 'KEYPRESS',
-                      key: 'Escape',
-                      shift: false,
+                      key: { k: KeyK.Escape }
                     };
                     dispatch(kpa);
                   }}

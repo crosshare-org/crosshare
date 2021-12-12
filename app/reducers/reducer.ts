@@ -4,6 +4,9 @@ import {
   Direction,
   BLOCK,
   PuzzleInProgressT,
+  Key,
+  KeyK,
+  ALLOWABLE_GRID_CHARS,
 } from '../lib/types';
 import { DBPuzzleT, PlayWithoutUserT } from '../lib/dbtypes';
 import {
@@ -254,8 +257,7 @@ export interface PuzzleAction {
 
 export interface KeypressAction extends PuzzleAction {
   type: 'KEYPRESS';
-  key: string;
-  shift: boolean;
+  key: Key;
 }
 function isKeypressAction(action: PuzzleAction): action is KeypressAction {
   return action.type === 'KEYPRESS';
@@ -714,8 +716,6 @@ function closeRebus<T extends GridInterfaceState>(state: T): T {
   };
 }
 
-const ALLOWABLE_GRID_CHARS = /^[A-Za-z0-9Ññ&]$/;
-
 export function gridInterfaceReducer<T extends GridInterfaceState>(
   state: T,
   action: PuzzleAction
@@ -783,16 +783,15 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
   }
   if (isKeypressAction(action)) {
     const key = action.key;
-    const shift = action.shift;
     if (!key) {
       // This seems dumb to check for but at least once we've had key == undefined here
       // https://sentry.io/organizations/m-d/issues/1915351332/
       return state;
     }
-    if (key === '{num}' || key === '{abc}') {
+    if (key.k === KeyK.NumLayout || key.k === KeyK.AbcLayout) {
       return { ...state, showExtraKeyLayout: !state.showExtraKeyLayout };
     }
-    if (key === '`' && isBuilderState(state)) {
+    if (key.k === KeyK.Backtick && isBuilderState(state)) {
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
         if (state.grid.highlighted.has(ci)) {
@@ -804,14 +803,14 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       return { ...state };
     }
     if (state.isEnteringRebus) {
-      if (key.match(ALLOWABLE_GRID_CHARS)) {
-        return { ...state, rebusValue: state.rebusValue + key.toUpperCase() };
-      } else if (key === 'Backspace' || key === '{bksp}') {
+      if (key.k === KeyK.AllowedCharacter) {
+        return { ...state, rebusValue: state.rebusValue + key.c.toUpperCase() };
+      } else if (key.k === KeyK.Backspace || key.k === KeyK.OskBackspace) {
         return {
           ...state,
           rebusValue: state.rebusValue ? state.rebusValue.slice(0, -1) : '',
         };
-      } else if (key === 'Enter') {
+      } else if (key.k === KeyK.Enter) {
         return {
           ...closeRebus(state),
           wasEntryClick: false,
@@ -822,18 +821,18 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
             isPuzzleState(state) ? state.prefs : undefined
           ),
         };
-      } else if (key === 'Escape') {
+      } else if (key.k === KeyK.Escape) {
         return { ...state, isEnteringRebus: false, rebusValue: '' };
       }
       return closeRebus(state);
     }
-    if (key === '{rebus}' || key === 'Escape') {
+    if (key.k === KeyK.Rebus || key.k === KeyK.Escape) {
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
         return { ...state, showExtraKeyLayout: false, isEnteringRebus: true };
       }
       return state;
-    } else if (key === ' ' || key === '{dir}') {
+    } else if (key.k === KeyK.Space || key.k === KeyK.Direction) {
       return {
         ...state,
         wasEntryClick: false,
@@ -842,35 +841,35 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           dir: (state.active.dir + 1) % 2,
         },
       };
-    } else if (key === '{prev}') {
+    } else if (key.k === KeyK.Prev) {
       return {
         ...state,
         wasEntryClick: false,
         active: retreatPosition(state.grid, state.active),
       };
-    } else if (key === '{next}') {
+    } else if (key.k === KeyK.Next) {
       return {
         ...state,
         wasEntryClick: false,
         active: nextCell(state.grid, state.active),
       };
     } else if (
-      (key === 'Tab' && !shift) ||
-      key === '{nextEntry}' ||
-      key === 'Enter'
+      key.k === KeyK.Tab ||
+      key.k === KeyK.NextEntry ||
+      key.k === KeyK.Enter
     ) {
       return {
         ...state,
         wasEntryClick: false,
         active: moveToNextEntry(state.grid, state.active),
       };
-    } else if ((key === 'Tab' && shift) || key === '{prevEntry}') {
+    } else if (key.k === KeyK.ShiftTab || key.k === KeyK.PrevEntry) {
       return {
         ...state,
         wasEntryClick: false,
         active: moveToPrevEntry(state.grid, state.active),
       };
-    } else if (key === 'ArrowRight') {
+    } else if (key.k === KeyK.ArrowRight) {
       return {
         ...state,
         wasEntryClick: false,
@@ -882,7 +881,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           dir: Direction.Across,
         },
       };
-    } else if (key === 'ArrowLeft') {
+    } else if (key.k === KeyK.ArrowLeft) {
       return {
         ...state,
         wasEntryClick: false,
@@ -894,7 +893,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           dir: Direction.Across,
         },
       };
-    } else if (key === 'ArrowUp') {
+    } else if (key.k === KeyK.ArrowUp) {
       return {
         ...state,
         wasEntryClick: false,
@@ -906,7 +905,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           dir: Direction.Down,
         },
       };
-    } else if (key === 'ArrowDown') {
+    } else if (key.k === KeyK.ArrowDown) {
       return {
         ...state,
         wasEntryClick: false,
@@ -919,7 +918,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         },
       };
     } else if (
-      (key === '.' || key === '{block}') &&
+      (key.k === KeyK.Dot || key.k === KeyK.Block) &&
       state.grid.allowBlockEditing
     ) {
       const ci = cellIndex(state.grid, state.active);
@@ -933,8 +932,8 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         };
       }
       return state;
-    } else if (key.match(ALLOWABLE_GRID_CHARS)) {
-      const char = key.toUpperCase();
+    } else if (key.k === KeyK.AllowedCharacter) {
+      const char = key.c.toUpperCase();
       state = enterText(state, char);
       return {
         ...state,
@@ -946,7 +945,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           isPuzzleState(state) ? state.prefs : undefined
         ),
       };
-    } else if (key === 'Backspace' || key === '{bksp}') {
+    } else if (key.k === KeyK.Backspace || key.k === KeyK.OskBackspace) {
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
@@ -962,7 +961,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         wasEntryClick: false,
         active: retreatPosition(state.grid, state.active),
       };
-    } else if (key === 'Delete') {
+    } else if (key.k === KeyK.Delete) {
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;

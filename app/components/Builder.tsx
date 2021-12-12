@@ -13,6 +13,7 @@ import {
 import { STORAGE_KEY } from '../lib/utils';
 import { ContactLinks } from './ContactLinks';
 import { isRight } from 'fp-ts/lib/Either';
+import { isSome } from 'fp-ts/lib/Option';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   FaRegNewspaper,
@@ -81,6 +82,9 @@ import {
   CancelAutofillMessage,
   PuzzleInProgressV,
   PuzzleInProgressT,
+  fromKeyString,
+  KeyK,
+  fromKeyboardEvent,
 } from '../lib/types';
 import {
   Symmetry,
@@ -1054,31 +1058,36 @@ const GridMode = ({
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
-      if (e.metaKey || e.altKey || e.ctrlKey || e.key === 'CapsLock') {
-        return; // This way you can still do apple-R and such
-      }
-      /* TODO this logic belongs in the reducer */
-      if (e.key === 'Enter' && !state.isEnteringRebus) {
-        reRunAutofill();
+      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (tagName === 'textarea' || tagName === 'input') {
         return;
       }
-      if (e.key === '!') {
-        const entry = getMostConstrainedEntry();
-        if (entry !== null) {
-          const ca: ClickedEntryAction = {
-            type: 'CLICKEDENTRY',
-            entryIndex: entry,
-          };
-          dispatch(ca);
+
+      const mkey = fromKeyboardEvent(e);
+      if (isSome(mkey)) {
+        /* TODO this logic belongs in the reducer */
+        if (mkey.value.k === KeyK.Enter && !state.isEnteringRebus) {
+          reRunAutofill();
+          e.preventDefault();
+          return;
         }
+        if (mkey.value.k === KeyK.Exclamation) {
+          const entry = getMostConstrainedEntry();
+          if (entry !== null) {
+            const ca: ClickedEntryAction = {
+              type: 'CLICKEDENTRY',
+              entryIndex: entry,
+            };
+            dispatch(ca);
+          }
+          e.preventDefault();
+          return;
+        }
+
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        dispatch(kpa);
+        e.preventDefault();
       }
-      const kpa: KeypressAction = {
-        type: 'KEYPRESS',
-        key: e.key,
-        shift: e.shiftKey,
-      };
-      dispatch(kpa);
-      e.preventDefault();
     },
     [dispatch, reRunAutofill, state.isEnteringRebus, getMostConstrainedEntry]
   );
@@ -1249,8 +1258,11 @@ const GridMode = ({
 
   const keyboardHandler = useCallback(
     (key: string) => {
-      const kpa: KeypressAction = { type: 'KEYPRESS', key: key, shift: false };
-      dispatch(kpa);
+      const mkey = fromKeyString(key);
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        dispatch(kpa);
+      }
     },
     [dispatch]
   );
@@ -1525,8 +1537,7 @@ const GridMode = ({
                 onClick={() => {
                   const a: KeypressAction = {
                     type: 'KEYPRESS',
-                    key: '.',
-                    shift: false,
+                    key: { k: KeyK.Dot },
                   };
                   dispatch(a);
                 }}
@@ -1538,8 +1549,7 @@ const GridMode = ({
                 onClick={() => {
                   const a: KeypressAction = {
                     type: 'KEYPRESS',
-                    key: 'Escape',
-                    shift: false,
+                    key: { k: KeyK.Escape },
                   };
                   dispatch(a);
                 }}
@@ -1557,8 +1567,7 @@ const GridMode = ({
                 onClick={() => {
                   const a: KeypressAction = {
                     type: 'KEYPRESS',
-                    key: '`',
-                    shift: false,
+                    key: { k: KeyK.Backtick },
                   };
                   dispatch(a);
                 }}
