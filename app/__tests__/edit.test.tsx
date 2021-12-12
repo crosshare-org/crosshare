@@ -9,7 +9,7 @@ import {
   waitForElementToBeRemoved,
 } from '../lib/testingUtils';
 import { getMockedPuzzle } from '../lib/getMockedPuzzle';
-import { PuzzleLoader } from '../pages/crosswords/[puzzleId]/edit';
+import { PuzzleLoader } from '../pages/edit/[puzzleId]';
 import type firebase from 'firebase/app';
 
 jest.mock(

@@ -4,42 +4,42 @@ import Head from 'next/head';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
-import { requiresAuth, AuthProps } from '../../../components/AuthContext';
-import { PuzzleResult, puzzleFromDB, Direction } from '../../../lib/types';
-import { DBPuzzleV, DBPuzzleT } from '../../../lib/dbtypes';
+import { requiresAuth, AuthProps } from '../../components/AuthContext';
+import { PuzzleResult, puzzleFromDB, Direction } from '../../lib/types';
+import { DBPuzzleV, DBPuzzleT } from '../../lib/dbtypes';
 import {
   App,
   DeleteSentinal,
   FieldValue,
   TimestampClass,
-} from '../../../lib/firebaseWrapper';
-import { DefaultTopBar } from '../../../components/TopBar';
-import { ErrorPage } from '../../../components/ErrorPage';
+} from '../../lib/firebaseWrapper';
+import { DefaultTopBar } from '../../components/TopBar';
+import { ErrorPage } from '../../components/ErrorPage';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { fromCells, CluedEntry, addClues } from '../../../lib/viewableGrid';
+import { fromCells, CluedEntry, addClues } from '../../lib/viewableGrid';
 import {
   MAX_META_SUBMISSION_LENGTH,
   MAX_STRING_LENGTH,
   MAX_BLOG_LENGTH,
-} from '../../../components/ClueMode';
-import { Button, ButtonAsLink } from '../../../components/Buttons';
-import { Overlay } from '../../../components/Overlay';
-import { COVER_PIC } from '../../../lib/style';
-import { LengthView, LengthLimitedInput } from '../../../components/Inputs';
+} from '../../components/ClueMode';
+import { Button, ButtonAsLink } from '../../components/Buttons';
+import { Overlay } from '../../components/Overlay';
+import { COVER_PIC } from '../../lib/style';
+import { LengthView, LengthLimitedInput } from '../../components/Inputs';
 import dynamic from 'next/dynamic';
-import type { ImageCropper as ImageCropperType } from '../../../components/ImageCropper';
-import { ContactLinks } from '../../../components/ContactLinks';
-import { useSnackbar } from '../../../components/Snackbar';
+import type { ImageCropper as ImageCropperType } from '../../components/ImageCropper';
+import { ContactLinks } from '../../components/ContactLinks';
+import { useSnackbar } from '../../components/Snackbar';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import lightFormat from 'date-fns/lightFormat';
-import { DateTimePicker } from '../../../components/DateTimePicker';
-import { isMetaSolution } from '../../../lib/utils';
-import { EditableText } from '../../../components/EditableText';
-import { AlternateSolutionEditor } from '../../../components/AlternateSolutionEditor';
+import { DateTimePicker } from '../../components/DateTimePicker';
+import { isMetaSolution } from '../../lib/utils';
+import { EditableText } from '../../components/EditableText';
+import { AlternateSolutionEditor } from '../../components/AlternateSolutionEditor';
 
 const ImageCropper = dynamic(
   () =>
-    import('../../../components/ImageCropper').then(
+    import('../../components/ImageCropper').then(
       (mod) => mod.ImageCropper as any // eslint-disable-line @typescript-eslint/no-explicit-any
     ),
   { ssr: false }

@@ -16,9 +16,9 @@ import type firebaseAdminType from 'firebase-admin';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import type firebase from 'firebase/app';
 import NextJSRouter from 'next/router';
-import PuzzlePage from '../pages/crosswords/[puzzleId]';
+import PuzzlePage from '../pages/crosswords/[[...puzzleId]]';
 import { getPuzzlePageProps as getServerSideProps } from '../lib/serverOnly';
-import { PuzzleLoader as StatsPuzzleLoader } from '../pages/crosswords/[puzzleId]/stats';
+import { PuzzleLoader as StatsPuzzleLoader } from '../pages/stats/[puzzleId]';
 import waitForExpect from 'wait-for-expect';
 import { getDateString, prettifyDateString } from '../lib/dbtypes';
 

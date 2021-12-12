@@ -35,8 +35,10 @@ import {
 const PuzzleListItem = (props: PuzzleResult) => {
   return (
     <li key={props.id}>
-      <Link href={`/crosswords/${props.id}/${slugify(props.title)}`}>{props.title}</Link> by{' '}
-      {props.authorName}
+      <Link href={`/crosswords/${props.id}/${slugify(props.title)}`}>
+        {props.title}
+      </Link>{' '}
+      by {props.authorName}
       <span css={{ color: 'var(--error)' }}>
         {props.isPrivate
           ? ' PRIVATE'
@@ -344,10 +346,7 @@ export default requiresAdmin(() => {
                         {titleForId(stats, crosswordId)}
                       </Link>
                       : {count}(
-                      <Link href={`/crosswords/${crosswordId}/stats`}>
-                        stats
-                      </Link>
-                      )
+                      <Link href={`/stats/${crosswordId}`}>stats</Link>)
                     </li>
                   );
                 })}
