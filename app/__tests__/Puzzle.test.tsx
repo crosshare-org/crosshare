@@ -11,7 +11,7 @@ import { Puzzle } from '../components/Puzzle';
 import { PuzzleResultWithAugmentedComments } from '../lib/types';
 import { PlayT } from '../lib/dbtypes';
 import * as plays from '../lib/plays';
-import PuzzlePage from '../pages/crosswords/[puzzleId]';
+import PuzzlePage from '../pages/crosswords/[[...puzzleId]]';
 import * as firebaseWrapper from '../lib/firebaseWrapper';
 import {
   setApp,

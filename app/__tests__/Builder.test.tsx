@@ -230,7 +230,7 @@ test('moderate as daily mini', async () => {
 
   const props1 = await getProps(
     await getServerSideProps({
-      params: { puzzleId: [puzzleId] },
+      params: { puzzleId: [puzzleId, 'our-title'] },
       res: { setHeader: jest.fn() },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
@@ -312,7 +312,7 @@ test('publish as default', async () => {
     expect(NextJSRouter.push).toHaveBeenCalledTimes(1)
   );
   expect(NextJSRouter.push).toHaveBeenCalledWith(
-    '/crosswords/' + puzzles.docs[0]?.id
+    `/crosswords/${puzzles.docs[0]?.id}/our-title`
   );
 
   // The stats page shouldn't error even though there aren't any yet
@@ -335,7 +335,7 @@ test('publish as default', async () => {
   setApp(serverApp as firebase.app.App);
   const props1 = await getProps(
     await getServerSideProps({
-      params: { puzzleId },
+      params: { puzzleId: [puzzleId, 'our-title'] },
       res: { setHeader: jest.fn() },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
@@ -488,7 +488,7 @@ test('publish custom / non-rectangular size', async () => {
     expect(NextJSRouter.push).toHaveBeenCalledTimes(1)
   );
   expect(NextJSRouter.push).toHaveBeenCalledWith(
-    '/crosswords/' + puzzles.docs[0]?.id
+    `/crosswords/${puzzles.docs[0]?.id}/our-title`
   );
 
   cleanup();
@@ -497,7 +497,7 @@ test('publish custom / non-rectangular size', async () => {
   setApp(serverApp as firebase.app.App);
   const props1 = await getProps(
     await getServerSideProps({
-      params: { puzzleId },
+      params: { puzzleId: [puzzleId, 'our-title'] },
       res: { setHeader: jest.fn() },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
