@@ -4,6 +4,7 @@ import { FaAngleDoubleRight, FaAngleDoubleLeft } from 'react-icons/fa';
 import { Square } from './Square';
 import { KeypressAction } from '../reducers/reducer';
 import { SMALL_AND_UP, LARGE_AND_UP, TINY_COL_MIN_HEIGHT } from '../lib/style';
+import { KeyK } from '../lib/types';
 
 interface TinyNavButtonProps {
   isLeft?: boolean;
@@ -32,8 +33,7 @@ const TinyNavButton = ({ isLeft, dispatch }: TinyNavButtonProps) => {
         e.preventDefault();
         dispatch({
           type: 'KEYPRESS',
-          key: isLeft ? '{prevEntry}' : '{nextEntry}',
-          shift: false,
+          key: { k: isLeft ? KeyK.PrevEntry : KeyK.NextEntry },
         });
       }}
     >

@@ -2,7 +2,7 @@ import useEventListener from '@use-it/event-listener';
 import { useRef, useCallback, useReducer, useMemo } from 'react';
 import { FaSave, FaWindowClose, FaEllipsisH, FaVolumeUp, FaVolumeMute, FaKeyboard } from 'react-icons/fa';
 import { usePersistedBoolean } from '../lib/hooks';
-import { Direction } from '../lib/types';
+import { Direction, fromKeyboardEvent, fromKeyString, KeyK } from '../lib/types';
 import { fromCells } from '../lib/viewableGrid';
 import { Rebus, EscapeKey } from './Icons';
 import { Keyboard } from './Keyboard';
@@ -10,6 +10,7 @@ import { TopBar, TopBarLink, TopBarDropDown, TopBarDropDownLink } from './TopBar
 import { gridInterfaceReducer, KeypressAction, PasteAction } from '../reducers/reducer';
 import { Square } from './Square';
 import { GridView } from './Grid';
+import { isSome } from 'fp-ts/lib/Option';
 
 export function AlternateSolutionEditor(props: { grid: string[], width: number, height: number, highlighted: Set<number>, highlight: 'circle' | 'shade', cancel: () => void, save: (alt: Record<number, string>) => Promise<void> }) {
   const initialGrid = fromCells({
@@ -50,16 +51,16 @@ export function AlternateSolutionEditor(props: { grid: string[], width: number, 
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
-      if (e.metaKey || e.altKey || e.ctrlKey || e.key === 'CapsLock') {
-        return; // This way you can still do apple-R and such
+      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (tagName === 'textarea' || tagName === 'input') {
+        return;
       }
-      const kpa: KeypressAction = {
-        type: 'KEYPRESS',
-        key: e.key,
-        shift: e.shiftKey,
-      };
-      dispatch(kpa);
-      e.preventDefault();
+      const mkey = fromKeyboardEvent(e);
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        dispatch(kpa);
+        e.preventDefault();
+      }
     },
     [dispatch]
   );
@@ -88,8 +89,11 @@ export function AlternateSolutionEditor(props: { grid: string[], width: number, 
 
   const keyboardHandler = useCallback(
     (key: string) => {
-      const kpa: KeypressAction = { type: 'KEYPRESS', key: key, shift: false };
-      dispatch(kpa);
+      const mkey = fromKeyString(key);
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        dispatch(kpa);
+      }
     },
     [dispatch]
   );
@@ -132,8 +136,7 @@ export function AlternateSolutionEditor(props: { grid: string[], width: number, 
                 onClick={() => {
                   const a: KeypressAction = {
                     type: 'KEYPRESS',
-                    key: 'Escape',
-                    shift: false,
+                    key: { k: KeyK.Escape },
                   };
                   dispatch(a);
                 }}

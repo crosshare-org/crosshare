@@ -1,3 +1,4 @@
+import { isSome, none, Option, some } from 'fp-ts/lib/Option';
 import * as t from 'io-ts';
 import type { WordDBT } from './WordDB';
 
@@ -258,3 +259,84 @@ export const PuzzleInProgressStrictV = t.intersection([
   }),
 ]);
 export type PuzzleInProgressStrictT = t.TypeOf<typeof PuzzleInProgressStrictV>;
+
+export type Key
+  = { k: KeyK.AllowedCharacter, c: string }
+  | { k: Exclude<KeyK, KeyK.AllowedCharacter> };
+
+export enum KeyK {
+  ArrowRight,
+  ArrowLeft,
+  ArrowUp,
+  ArrowDown,
+  Space,
+  Tab,
+  ShiftTab,
+  Enter,
+  Backspace,
+  Delete,
+  Escape,
+  Tilde,
+  Dot,
+  Exclamation,
+  AllowedCharacter,
+  // Keys specific to on-screen keyboard
+  NumLayout,
+  AbcLayout,
+  Direction,
+  Next,
+  Prev,
+  NextEntry,
+  PrevEntry,
+  OskBackspace,
+  Rebus,
+  Block,
+}
+
+export const ALLOWABLE_GRID_CHARS = /^[A-Za-z0-9Ññ&]$/;
+
+export function fromKeyString(string: string): Option<Key> {
+  return fromKeyboardEvent({ key: string, shiftKey: false });
+}
+
+export function fromKeyboardEvent(event: { key: string, shiftKey: boolean }): Option<Key> {
+  const basicKey: Option<Exclude<KeyK, KeyK.AllowedCharacter>> = (() => {
+    switch (event.key) {
+    case 'ArrowLeft': return some(KeyK.ArrowLeft);
+    case 'ArrowRight': return some(KeyK.ArrowRight);
+    case 'ArrowUp': return some(KeyK.ArrowUp);
+    case 'ArrowDown': return some(KeyK.ArrowDown);
+    case ' ': return some(KeyK.Space);
+    case 'Tab': return !event.shiftKey
+      ? some(KeyK.Tab)
+      : some(KeyK.ShiftTab);
+    case 'Enter': return some(KeyK.Enter);
+    case 'Backspace': return some(KeyK.Backspace);
+    case 'Delete': return some(KeyK.Delete);
+    case 'Escape': return some(KeyK.Escape);
+    case '`': return some(KeyK.Tilde);
+    case '.': return some(KeyK.Dot);
+    case '!': return some(KeyK.Exclamation);
+    // Keys specific to on-screen keyboard
+    case '{num}': return some(KeyK.NumLayout);
+    case '{abc}': return some(KeyK.AbcLayout);
+    case '{dir}': return some(KeyK.Direction);
+    case '{next}': return some(KeyK.Next);
+    case '{prev}': return some(KeyK.Prev);
+    case '{nextEntry}': return some(KeyK.NextEntry);
+    case '{prevEntry}': return some(KeyK.PrevEntry);
+    case '{bksp}': return some(KeyK.OskBackspace);
+    case '{rebus}': return some(KeyK.Rebus);
+    case '{block}': return some(KeyK.Block);
+    default: return none;
+    }
+  })();
+
+  if (isSome(basicKey)) {
+    return some({ k: basicKey.value });
+  }
+  if (event.key.match(ALLOWABLE_GRID_CHARS)) {
+    return some({ k: KeyK.AllowedCharacter, c: event.key });
+  }
+  return none;
+}

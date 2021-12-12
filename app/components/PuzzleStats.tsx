@@ -12,7 +12,7 @@ import {
   KeypressAction,
 } from '../reducers/reducer';
 import { SquareAndCols } from './Page';
-import { Direction, PuzzleResult } from '../lib/types';
+import { Direction, fromKeyboardEvent, PuzzleResult } from '../lib/types';
 import { PuzzleStatsViewT } from '../lib/dbtypes';
 import {
   fromCells,
@@ -32,6 +32,7 @@ import { Emoji } from './Emoji';
 import { CSVLink } from 'react-csv';
 import { App, FieldValue } from '../lib/firebaseWrapper';
 import { useSnackbar } from './Snackbar';
+import { isSome } from 'fp-ts/lib/Option';
 
 export enum StatsMode {
   AverageTime,
@@ -222,16 +223,12 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
       if (tagName === 'textarea' || tagName === 'input') {
         return;
       }
-      if (e.metaKey || e.altKey || e.ctrlKey) {
-        return; // This way you can still do apple-R and such
+      const mkey = fromKeyboardEvent(e);
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        dispatch(kpa);
+        e.preventDefault();
       }
-      const kpa: KeypressAction = {
-        type: 'KEYPRESS',
-        key: e.key,
-        shift: e.shiftKey,
-      };
-      dispatch(kpa);
-      e.preventDefault();
     },
     [dispatch]
   );

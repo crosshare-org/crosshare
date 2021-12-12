@@ -20,12 +20,13 @@ import {
   PublishAction,
 } from '../reducers/reducer';
 import { SquareAndCols } from './Page';
-import { PuzzleInProgressT, Direction } from '../lib/types';
+import { PuzzleInProgressT, Direction, fromKeyboardEvent } from '../lib/types';
 import { useMatchMedia } from '../lib/hooks';
 import { SMALL_AND_UP_RULES } from '../lib/style';
 import { ClueMode } from './ClueMode';
 import { ContactLinks } from './ContactLinks';
 import { getCluedAcrossAndDown } from '../lib/viewableGrid';
+import { isSome } from 'fp-ts/lib/Option';
 
 const initializeState = (
   props: PuzzleInProgressT & AuthProps
@@ -64,16 +65,12 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
       if (tagName === 'textarea' || tagName === 'input') {
         return;
       }
-      if (e.metaKey || e.altKey || e.ctrlKey) {
-        return; // This way you can still do apple-R and such
+      const mkey = fromKeyboardEvent(e);
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        dispatch(kpa);
+        e.preventDefault();
       }
-      const kpa: KeypressAction = {
-        type: 'KEYPRESS',
-        key: e.key,
-        shift: e.shiftKey,
-      };
-      dispatch(kpa);
-      e.preventDefault();
     },
     [dispatch]
   );
