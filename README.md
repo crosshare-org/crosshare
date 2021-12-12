@@ -74,6 +74,11 @@ Bootstrap some data that the app depends on:
 $ GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json ./scripts/bootstrapDatabase.ts
 ```
 
+Compile the i18n definitions:
+```shell
+$ yarn compileI18n
+```
+
 Then start the server:
 ```shell
 $ yarn dev

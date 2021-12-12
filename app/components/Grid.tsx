@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, useCallback } from 'react';
+import { Dispatch, ReactNode, useCallback, useEffect, useState } from 'react';
 
 import { PosAndDir, Position, BLOCK } from '../lib/types';
 import { Cell } from './Cell';
@@ -12,6 +12,7 @@ import {
 
 type GridViewProps = {
   grid: ViewableGrid<ViewableEntry>;
+  defaultGrid?: ViewableGrid<ViewableEntry>;  // This is used for the add alternate solution interface
   active: PosAndDir;
   dispatch: Dispatch<PuzzleAction>;
   revealedCells?: Set<number>;
@@ -25,6 +26,8 @@ type GridViewProps = {
   cellColors?: Array<number>;
   highlightEntry?: number;
   entryRefs?: Array<Set<number>>;
+  showAlternates?: Array<Array<[number, string]>> | null;
+  answers?: Array<string> | null;
 };
 
 export const GridView = ({
@@ -53,6 +56,16 @@ export const GridView = ({
     refedCells = [...refedCellsSet];
   }
 
+  // We use this counter to rotate through possible correct grids
+  // when there are multiple solutions
+  const [counter, setCounter] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCounter(counter + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [counter]);
+
   const noOp = useCallback(() => undefined, []);
   const changeActive = useCallback(
     (pos) => {
@@ -69,8 +82,20 @@ export const GridView = ({
     [dispatch]
   );
 
+  let altToShow: Array<string> = [];
+  if (props.answers && props.showAlternates?.length) {
+    altToShow = [...props.answers];
+    const altIndex = counter % (props.showAlternates.length + 1);
+    if (altIndex > 0) {
+      props.showAlternates[altIndex - 1]?.forEach(([n, s]) => {
+        altToShow[n] = s;
+      });
+    }
+  }
+
   const cells = new Array<ReactNode>();
   for (const [idx, cellValue] of grid.cells.entries()) {
+    const defaultCellValue = props.defaultGrid?.cells[idx];
     const number = grid.cellLabels.get(idx);
     const isActive = cellIndex(grid, active) === idx;
     let onClick = changeActive;
@@ -79,6 +104,19 @@ export const GridView = ({
     } else if (isActive) {
       onClick = changeDirection;
     }
+    let toDisplay = cellValue;
+    let showAsVerified = false;
+    if (defaultCellValue) {
+      if (cellValue.trim() && cellValue.trim() != defaultCellValue.trim()) {
+        showAsVerified = true;
+      } else {
+        toDisplay = defaultCellValue;
+      }
+    }
+    if (altToShow.length) {
+      toDisplay = altToShow[idx] || toDisplay;
+    }
+
     cells.push(
       <Cell
         isEnteringRebus={props.isEnteringRebus || false}
@@ -96,9 +134,9 @@ export const GridView = ({
         row={Math.floor(idx / grid.width)}
         column={idx % grid.width}
         onClick={onClick}
-        value={cellValue}
+        value={toDisplay}
         isBlock={cellValue === BLOCK}
-        isVerified={props.verifiedCells?.has(idx)}
+        isVerified={props.verifiedCells?.has(idx) || showAsVerified}
         isWrong={props.wrongCells?.has(idx)}
         wasRevealed={props.revealedCells?.has(idx)}
         highlight={grid.highlighted.has(idx) ? grid.highlight : undefined}

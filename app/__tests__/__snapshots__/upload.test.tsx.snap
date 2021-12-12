@@ -5211,6 +5211,7 @@ Object {
     "Fish",
     "Chain of fools?",
   ],
+  "alts": Array [],
   "an": Array [
     1,
     6,
@@ -5310,6 +5311,7 @@ Object {
     "Maker of robots",
     "Foul-mouthed comedian Bob",
   ],
+  "alts": Array [],
   "an": Array [
     1,
     6,

@@ -17,6 +17,7 @@ import useResizeObserver from 'use-resize-observer';
 import { AccountPrefsV } from './prefs';
 import type firebase from 'firebase/app';
 import { AuthContextValue } from '../components/AuthContext';
+import { parseUserInfo } from './userinfo';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {
@@ -75,7 +76,7 @@ const lightClass = 'light-mode';
 export function useDarkModeControl(): [
   DarkModePreference,
   (preference: DarkModePreference) => void
-  ] {
+] {
   const [pref, setPref] = useState<DarkModePreference>(null);
 
   useEffect(() => {
@@ -289,8 +290,31 @@ export function useAuth(): AuthContextValue {
     [user]
   );
 
+  const [isPatron, setIsPatron] = useState(false);
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+    let didCancel = false;
+    async function getUserInfo() {
+      const res = await (await fetch(`/api/userinfo/${user?.uid}`))
+        .json()
+        .catch((e) => {
+          console.log(e);
+        });
+      if (!didCancel && res) {
+        setIsPatron(parseUserInfo(res).isPatron);
+      }
+    }
+    getUserInfo();
+    return () => {
+      didCancel = true;
+    };
+  }, [user]);
+
   return {
     user: user || undefined,
+    isPatron,
     isAdmin,
     constructorPage,
     notifications,
@@ -314,7 +338,7 @@ export function useHover(): [
     onMouseLeave: (e: MouseEvent) => void;
   },
   () => void
-  ] {
+] {
   const [isHovered, setHovered] = useState(false);
   const [clickWhileHovered, setClickWhileHovered] = useState(false);
 

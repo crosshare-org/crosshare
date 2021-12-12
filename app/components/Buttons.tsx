@@ -1,8 +1,8 @@
-import { MouseEvent } from 'react';
+import { MouseEvent, ReactNode } from 'react';
 import { CSSInterpolation } from '@emotion/serialize';
 
 interface ButtonBaseProps {
-  text: string;
+  text: ReactNode;
   title?: string;
   disabled?: boolean;
   className?: string;

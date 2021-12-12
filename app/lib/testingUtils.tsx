@@ -27,27 +27,28 @@ const WithAllProviders: (
   includeSnackbar?: boolean
 ) => ComponentType =
   (opts: AuthOptions, includeSnackbar?: boolean) =>
-    ({ children }) => {
-      return (
-        <I18nProvider i18n={i18n} forceRenderOnLocaleChange={false}>
-          <AuthContext.Provider
-            value={{
-              user: undefined,
-              isAdmin: false,
-              loading: false,
-              error: undefined,
-              ...opts,
-            }}
-          >
-            {includeSnackbar ? (
-              <SnackbarProvider>{children}</SnackbarProvider>
-            ) : (
-              children
-            )}
-          </AuthContext.Provider>
-        </I18nProvider>
-      );
-    };
+  ({ children }) => {
+    return (
+      <I18nProvider i18n={i18n} forceRenderOnLocaleChange={false}>
+        <AuthContext.Provider
+          value={{
+            user: undefined,
+            isAdmin: false,
+            isPatron: false,
+            loading: false,
+            error: undefined,
+            ...opts,
+          }}
+        >
+          {includeSnackbar ? (
+            <SnackbarProvider>{children}</SnackbarProvider>
+          ) : (
+            children
+          )}
+        </AuthContext.Provider>
+      </I18nProvider>
+    );
+  };
 
 interface AuthOptions {
   user?: firebaseTypes.User;
@@ -78,9 +79,11 @@ export function renderWithSnackbar(
 }
 
 // re-export everything
+// eslint-disable-next-line import/export
 export * from '@testing-library/react';
 
 // override render method
+// eslint-disable-next-line import/export
 export { wrappedRender as render };
 
 function hasOwnProperty<

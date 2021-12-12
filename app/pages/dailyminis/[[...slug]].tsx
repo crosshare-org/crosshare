@@ -24,9 +24,10 @@ import { useRouter } from 'next/router';
 import { Trans, t } from '@lingui/macro';
 import { withTranslation } from '../../lib/translation';
 import { I18nTags } from '../../components/I18nTags';
+import { isUserPatron } from '../../lib/patron';
 
 export interface DailyMiniProps {
-  puzzles: Array<[string, PuzzleResult, ConstructorPageT | null]>;
+  puzzles: Array<[string, PuzzleResult, ConstructorPageT | null, boolean]>;
   year: number;
   month: number;
   olderLink?: string;
@@ -37,10 +38,7 @@ interface ErrorProps {
 }
 type PageProps = DailyMiniProps | ErrorProps;
 
-const gssp: GetServerSideProps<PageProps> = async ({
-  res,
-  params,
-}) => {
+const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
   const slug = params?.slug;
   let year: number;
   let month: number;
@@ -68,7 +66,7 @@ export const getServerSideProps = withTranslation(gssp);
 export async function puzzlesListForCategoryIndex(
   idx: CategoryIndexT,
   page: [number, number]
-): Promise<Array<[string, PuzzleResult, ConstructorPageT | null]>> {
+): Promise<Array<[string, PuzzleResult, ConstructorPageT | null, boolean]>> {
   const today = new Date();
   const prefix: string = page[0] + '-' + page[1] + '-';
   const ds = addZeros(getDateString(today));
@@ -80,7 +78,7 @@ export async function puzzlesListForCategoryIndex(
       .sort((a, b) => (a[0] > b[0] ? -1 : 1))
       .map(
         async ([dateString, puzzleId]): Promise<
-          [string, PuzzleResult, ConstructorPageT | null]
+          [string, PuzzleResult, ConstructorPageT | null, boolean]
         > => {
           const dbpuzzle = await getPuzzle(puzzleId);
           if (!dbpuzzle) {
@@ -88,11 +86,8 @@ export async function puzzlesListForCategoryIndex(
           }
           const puzzle = puzzleFromDB(dbpuzzle);
           const cp = await userIdToPage(dbpuzzle.a);
-          return [
-            dateString,
-            { ...puzzle, id: puzzleId },
-            cp,
-          ];
+          const isPatron = await isUserPatron(dbpuzzle.a);
+          return [dateString, { ...puzzle, id: puzzleId }, cp, isPatron];
         }
       )
   );
@@ -125,15 +120,15 @@ export async function propsForDailyMini(
       puzzles: puzzles,
       ...(today.getUTCFullYear() !== year || today.getUTCMonth() !== month
         ? {
-          newerLink:
-            month + 1 === 12 ? `${year + 1}/1` : `${year}/${month + 2}`,
-        }
+            newerLink:
+              month + 1 === 12 ? `${year + 1}/1` : `${year}/${month + 2}`,
+          }
         : null),
       ...(month === 0 && `${year - 1}-11-31` in validationResult.right
         ? { olderLink: `${year - 1}/12` }
         : `${year}-${month - 1}-28` in validationResult.right
-          ? { olderLink: `${year}/${month}` }
-          : null),
+        ? { olderLink: `${year}/${month}` }
+        : null),
     };
   } else {
     console.error(PathReporter.report(validationResult).join(','));
@@ -159,36 +154,46 @@ export default function DailyMiniPage(props: PageProps) {
     );
   }
   const description = t({
-    id: 'mini-explain', message: `Crosshare features a free daily mini crossword every day of the week.
+    id: 'mini-explain',
+    message: `Crosshare features a free daily mini crossword every day of the week.
   These puzzles are a great way to give your brain a bite-sized challenge, and to
   learn how crosswords work before taking on larger puzzles.
 
   Mini puzzles are most often 5x5, but can be other sizes as well - sometimes
   the weekend minis are a bit larger. Any small sized puzzle you publish publicly to Crosshare
-  will be eligible for selection as a daily mini!`});
+  will be eligible for selection as a daily mini!`,
+  });
 
-  const date = new Date(props.year, props.month, 1).toLocaleString(loc, { month: 'long', year: 'numeric' });
-  const title = t({ id: 'mini-title', message: `Daily Mini Puzzles for ${date}`, comment: 'The variable is a month and year like noviembre de 2021' });
+  const date = new Date(props.year, props.month, 1).toLocaleString(loc, {
+    month: 'long',
+    year: 'numeric',
+  });
+  const title = t({
+    id: 'mini-title',
+    message: `Daily Mini Puzzles for ${date}`,
+    comment: 'The variable is a month and year like noviembre de 2021',
+  });
   return (
     <>
       <Head>
         <title>{title} | Crosshare crosswords</title>
-        <meta
-          key="og:title"
-          property="og:title"
-          content={title}
-        />
+        <meta key="og:title" property="og:title" content={title} />
         <meta key="description" name="description" content={description} />
         <meta
           key="og:description"
           property="og:description"
           content={description}
         />
-        <I18nTags locale={loc} canonicalPath={`/dailyminis/${props.year}/${props.month + 1}`} />
+        <I18nTags
+          locale={loc}
+          canonicalPath={`/dailyminis/${props.year}/${props.month + 1}`}
+        />
         {props.olderLink ? (
           <link
             rel="next"
-            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/dailyminis/${props.olderLink}`}
+            href={`https://crosshare.org${
+              loc == 'en' ? '' : '/' + loc
+            }/dailyminis/${props.olderLink}`}
           />
         ) : (
           ''
@@ -196,7 +201,9 @@ export default function DailyMiniPage(props: PageProps) {
         {props.newerLink ? (
           <link
             rel="next"
-            href={`https://crosshare.org${loc == 'en' ? '' : '/' + loc}/dailyminis/${props.newerLink}`}
+            href={`https://crosshare.org${
+              loc == 'en' ? '' : '/' + loc
+            }/dailyminis/${props.newerLink}`}
           />
         ) : (
           ''
@@ -204,22 +211,28 @@ export default function DailyMiniPage(props: PageProps) {
       </Head>
       <DefaultTopBar />
       <div css={{ margin: '1em' }}>
-        <h2><Trans comment="the variable is a month and year like 'noviembre de 2021'">Crosshare Daily Mini Puzzles for {date}</Trans></h2>
+        <h2>
+          <Trans comment="the variable is a month and year like 'noviembre de 2021'">
+            Crosshare Daily Mini Puzzles for {date}
+          </Trans>
+        </h2>
         <div css={{ marginBottom: '2em' }}>
           <Markdown text={description} />
         </div>
-        {props.puzzles.map(([dateString, puzzle, cp]) => {
+        {props.puzzles.map(([dateString, puzzle, cp, isPatron]) => {
           const parts = parseDateString(dateString);
           const displayDate = new Date(...parts).toLocaleDateString(loc);
-          return <PuzzleResultLink
-            key={dateString}
-            puzzle={puzzle}
-            showAuthor={true}
-            constructorPage={cp}
-            title={t`Daily Mini for ${displayDate}`}
-          />;
-        }
-        )}
+          return (
+            <PuzzleResultLink
+              key={dateString}
+              puzzle={puzzle}
+              showAuthor={true}
+              constructorPage={cp}
+              constructorIsPatron={isPatron}
+              title={t`Daily Mini for ${displayDate}`}
+            />
+          );
+        })}
         <p css={{ textAlign: 'center', paddingBottom: '1em' }}>
           {props.newerLink ? (
             <Link
@@ -232,7 +245,9 @@ export default function DailyMiniPage(props: PageProps) {
             ''
           )}
           {props.olderLink ? (
-            <Link href={'/dailyminis/' + props.olderLink}><Trans>Older Minis</Trans></Link>
+            <Link href={'/dailyminis/' + props.olderLink}>
+              <Trans>Older Minis</Trans>
+            </Link>
           ) : (
             ''
           )}

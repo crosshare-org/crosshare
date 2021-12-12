@@ -88,26 +88,19 @@ export function getClueText(c: { clue: string }): string {
 }
 
 export interface Comment {
-  /** comment text */
   commentText: string;
-  /** author id */
   authorId: string;
-  /** author display name */
   authorDisplayName: string;
-  /** author username */
   authorUsername?: string;
   /** author solve time in fractional seconds */
   authorSolveTime: number;
-  /** author did cheat? */
   authorCheated: boolean;
-  /** author solved downs only? */
   authorSolvedDownsOnly: boolean;
   /** comment publish timestamp in millis since epoch*/
   publishTime: number;
-  /** comment id */
   id: string;
-  /** replies */
   replies?: Array<Comment>;
+  authorIsPatron: boolean;
 }
 
 export interface PuzzleT {
@@ -126,7 +119,7 @@ export interface PuzzleT {
   grid: Array<string>;
   highlighted: Array<number>;
   highlight: 'circle' | 'shade';
-  comments: Array<Comment>;
+  comments: Array<CommentWithRepliesT>;
   constructorNotes: string | null;
   blogPost: string | null;
   isPrivate: boolean | number;
@@ -144,25 +137,12 @@ export interface PuzzleResult extends PuzzleT {
 }
 
 // This is kind of a hack but it helps us to ensure we only query for constructorPages on server side
-export interface ServerPuzzleResult extends PuzzleResult {
+export interface ServerPuzzleResult extends Omit<PuzzleResult, 'comments'> {
   constructorPage: ConstructorPageT | null;
+  constructorIsPatron: boolean;
 }
-
-function convertComments(comments: Array<CommentWithRepliesT>): Array<Comment> {
-  return comments.map((c) => {
-    return {
-      commentText: c.c,
-      authorId: c.a,
-      authorDisplayName: c.n,
-      authorSolveTime: c.t,
-      authorCheated: c.ch,
-      authorSolvedDownsOnly: c.do || false,
-      publishTime: c.p.toMillis(),
-      id: c.i,
-      replies: convertComments(c.r || []),
-      ...(c.un && { authorUsername: c.un }),
-    };
-  });
+export interface PuzzleResultWithAugmentedComments extends ServerPuzzleResult {
+  comments: Array<Comment>;
 }
 
 export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
@@ -209,10 +189,13 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     grid: dbPuzzle.g,
     highlighted: dbPuzzle.hs || [],
     highlight: dbPuzzle.s ? 'shade' : 'circle',
-    comments: convertComments(dbPuzzle.cs || []),
+    comments: dbPuzzle.cs || [],
     constructorNotes: dbPuzzle.cn || null,
     blogPost: dbPuzzle.bp || null,
-    isPrivate: typeof dbPuzzle.pv === 'boolean' ? dbPuzzle.pv : dbPuzzle.pv?.toMillis() || false,
+    isPrivate:
+      typeof dbPuzzle.pv === 'boolean'
+        ? dbPuzzle.pv
+        : dbPuzzle.pv?.toMillis() || false,
     isPrivateUntil: dbPuzzle.pvu ? dbPuzzle.pvu.toMillis() : null,
     contestAnswers: dbPuzzle.ct_ans || null,
     contestHasPrize: dbPuzzle.ct_prz || false,
@@ -221,7 +204,10 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
       null,
     contestRevealDelay: dbPuzzle.ct_rv_dl || null,
     rating: dbPuzzle.rtg || null,
-    alternateSolutions: dbPuzzle.alts || [],
+    alternateSolutions:
+      dbPuzzle.alts?.map((alt) =>
+        Object.entries(alt).map(([n, s]) => [parseInt(n), s])
+      ) || [],
   };
 }
 
@@ -246,6 +232,7 @@ const PuzzleInProgressBaseV = t.intersection([
     contestAnswers: t.array(t.string),
     contestHasPrize: t.boolean,
     contestRevealDelay: t.number,
+    alternates: t.array(t.record(t.string, t.string)),
   }),
 ]);
 

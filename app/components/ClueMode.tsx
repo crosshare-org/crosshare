@@ -17,6 +17,8 @@ import {
   SetGuestConstructorAction,
   UpdateContestAction,
   PublishAction,
+  DelAlternateAction,
+  AddAlternateAction,
 } from '../reducers/reducer';
 import { TopBarLink, TopBar } from './TopBar';
 import { Direction } from '../lib/types';
@@ -35,6 +37,7 @@ import { DateTimePicker } from './DateTimePicker';
 import { MarkdownPreview } from './MarkdownPreview';
 import type firebase from 'firebase/app';
 import { isMetaSolution } from '../lib/utils';
+import { AlternateSolutionEditor } from './AlternateSolutionEditor';
 
 export const MAX_STRING_LENGTH = 2048;
 export const MAX_BLOG_LENGTH = 20000;
@@ -157,11 +160,12 @@ interface ClueModeProps {
 export const ClueMode = ({ state, ...props }: ClueModeProps) => {
   const [settingCoverPic, setSettingCoverPic] = useState(false);
   const [contestAnswerInProg, setContestAnswerInProg] = useState('');
+  const [addingAlternate, setAddingAlternate] = useState(false);
   const privateUntil = state.isPrivateUntil?.toDate();
 
   const contestAnswerError =
     state.contestAnswers &&
-    isMetaSolution(contestAnswerInProg, state.contestAnswers)
+      isMetaSolution(contestAnswerInProg, state.contestAnswers)
       ? 'Duplicate solution!'
       : '';
 
@@ -186,6 +190,18 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
         />
       );
     });
+
+  if (addingAlternate) {
+    return <>
+      <AlternateSolutionEditor grid={state.grid.cells} save={async (alt) => {
+        const act: AddAlternateAction = {
+          type: 'ADDALT',
+          alternate: alt
+        };
+        props.dispatch(act);
+      }} cancel={() => setAddingAlternate(false)} width={state.grid.width} height={state.grid.height} highlight={state.grid.highlight} highlighted={state.grid.highlighted} />
+    </>;
+  }
   return (
     <>
       <TopBar>
@@ -691,6 +707,52 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
             </p>
           </>
         )}
+        <h2 css={{ marginTop: '1em' }}>Advanced</h2>
+        <div>
+          {state.alternates.length ? <>
+            <h3>Alternate Solutions</h3>
+            <ul>
+              {state.alternates.map((a, i) => <li key={i}>
+                {Object.entries(a).map(([pos, str]) => <span css={{ '& + &:before': { content: '", "' } }} key={pos}>Cell {pos}: &quot;{str}&quot;</span>)} (
+                <ButtonAsLink
+                  onClick={() => {
+                    const delAlt: DelAlternateAction = {
+                      type: 'DELALT',
+                      alternate: a
+                    };
+                    props.dispatch(delAlt);
+                  }}
+                  text="remove"
+                />
+                )
+
+              </li>)}
+            </ul>
+          </> : ''}
+          <ButtonAsLink
+            disabled={!state.gridIsComplete}
+            text="Add an alternate solution"
+            onClick={() => {
+              setAddingAlternate(true);
+            }}
+          />
+          <ToolTipText
+            css={{ marginLeft: '0.5em' }}
+            text={<FaInfoCircle />}
+            tooltip={<>
+              <p>
+                Alternate solutions can be used if one or more entries in your puzzle
+                have multiple valid solutions (e.g. a Schrödinger&apos;s puzzle or a
+                puzzle with bi-directional rebuses).
+              </p>
+              <p>
+                Alternates can only be added once the grid is completely filled. Once
+                an alternate has been added the grid cannot be further edited unless
+                all alternates are deleted.
+              </p>
+            </>}
+          />
+        </div>
       </div>
     </>
   );

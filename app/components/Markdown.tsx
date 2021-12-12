@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { css } from '@emotion/react';
-import { ReactNode, Fragment } from 'react';
+import { ReactNode, Fragment, useState, useCallback } from 'react';
 import SimpleMarkdown, { SingleASTNode, ASTNode } from 'simple-markdown';
-import { useHover } from '../lib/hooks';
 import { Direction } from '../lib/types';
 import { ToolTipText } from './ToolTipText';
 
@@ -59,14 +58,31 @@ const output = SimpleMarkdown.outputFor(rules, 'react');
 export const htmlOutput = SimpleMarkdown.outputFor(rules, 'html');
 
 const SpoilerText = ({ children }: { children: ReactNode }) => {
-  const [isHovered, hoverBind] = useHover();
+  const [revealed, setRevealed] = useState(false);
+
+  const doReveal = useCallback((e) => {
+    if (!revealed) {
+      e.stopPropagation();
+      setRevealed(true);
+    }
+  }, [revealed]);
 
   return (
     <span
+      onClick={doReveal}
+      onKeyPress={doReveal}
+      role='button'
+      tabIndex={0}
       css={{
-        backgroundColor: isHovered ? 'var(--bg)' : 'var(--text)',
+        ...(!revealed && {
+          backgroundColor: 'var(--text)',
+          cursor: 'pointer',
+          userSelect: 'none',
+          '& *': {
+            visibility: 'hidden',
+          }
+        })
       }}
-      {...hoverBind}
     >
       {children}
     </span>
@@ -140,6 +156,7 @@ export const Markdown = ({
   inline?: boolean;
   className?: string;
 }) => {
+  text = text.replace(/[^\s\S]/g, '');
   if (clueMap && clueMap.size) {
     const fullClueMap = new Map<
       string,

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
 import { ReactNode } from 'react';
 
@@ -62,7 +63,7 @@ export const ProfilePicAndName = (props: {
   bonusMargin?: number;
   coverImage: string | null | undefined;
   profilePic: string | null | undefined;
-  topLine: string;
+  topLine: ReactNode;
   byLine: ReactNode;
 }) => {
   return (

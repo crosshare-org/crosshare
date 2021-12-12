@@ -50,6 +50,7 @@ const initializeState = (
     contestAnswers: null,
     contestHasPrize: false,
     contestRevealDelay: null,
+    alternates: null,
   });
 };
 

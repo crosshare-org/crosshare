@@ -29,9 +29,11 @@ import { ConstructorPageT } from '../lib/constructorPage';
 import { I18nTags } from '../components/I18nTags';
 import { useRouter } from 'next/router';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles';
+import { isUserPatron } from '../lib/patron';
 
 type HomepagePuz = LinkablePuzzle & {
   constructorPage: ConstructorPageT | null;
+  constructorIsPatron: boolean;
 };
 
 interface HomePageProps {
@@ -63,11 +65,17 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
     return i !== null;
   });
 
-  const [puzzlesWithoutConstructor] = await paginatedPuzzles(0, PAGE_SIZE, 'f', true);
+  const [puzzlesWithoutConstructor] = await paginatedPuzzles(
+    0,
+    PAGE_SIZE,
+    'f',
+    true
+  );
   const featured = await Promise.all(
     puzzlesWithoutConstructor.map(async (p) => ({
       ...p,
       constructorPage: await userIdToPage(p.authorId),
+      constructorIsPatron: await isUserPatron(p.authorId),
     }))
   );
 
@@ -86,6 +94,7 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
             id: dmResult.id,
           }),
           constructorPage: await userIdToPage(validationResult.right.a),
+          constructorIsPatron: await isUserPatron(validationResult.right.a),
         };
         return {
           props: { dailymini: dm, featured, articles },
@@ -115,12 +124,16 @@ export default function HomePage({
   const today = new Date();
   const router = useRouter();
   const { user } = useContext(AuthContext);
-  const title = t({ id: 'home-title', message: 'Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles' });
+  const title = t({
+    id: 'home-title',
+    message:
+      'Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles',
+  });
   return (
     <>
       <Head>
         <title>{title}</title>
-        <I18nTags locale={router.locale || 'en'} canonicalPath='/' />
+        <I18nTags locale={router.locale || 'en'} canonicalPath="/" />
       </Head>
 
       <DefaultTopBar />
@@ -136,7 +149,7 @@ export default function HomePage({
         <p>
           <Trans id="consider-donating">
             If you&apos;re enjoying Crosshare please consider{' '}
-            <a href="/donate">donating</a> to support its continuing
+            <Link href="/donate">donating</Link> to support its continuing
             development.
           </Trans>
         </p>
@@ -158,11 +171,14 @@ export default function HomePage({
               puzzle={dailymini}
               showAuthor={true}
               constructorPage={dailymini.constructorPage}
+              constructorIsPatron={dailymini.constructorIsPatron}
               title={t`Today's daily mini crossword`}
             />
             <p>
               <Link
-                href={`/dailyminis/${today.getUTCFullYear()}/${today.getUTCMonth() + 1}`}
+                href={`/dailyminis/${today.getUTCFullYear()}/${
+                  today.getUTCMonth() + 1
+                }`}
               >
                 <Trans>Previous daily minis</Trans> &rarr;
               </Link>
@@ -173,7 +189,14 @@ export default function HomePage({
           </div>
         </div>
         <hr css={{ margin: '2em 0' }} />
-        <h2><Trans>Featured Puzzles</Trans></h2>
+        <h2 css={{ marginBottom: 0 }}>
+          <Trans>Featured Puzzles</Trans>
+        </h2>
+        <div css={{ marginBottom: '1.5em' }}>
+          <Link href="/newest">
+            <Trans>View all puzzles</Trans> &rarr;
+          </Link>
+        </div>
         {featured.map((p, i) => (
           <PuzzleResultLink
             key={i}
@@ -181,10 +204,13 @@ export default function HomePage({
             showDate={true}
             constructorPage={p.constructorPage}
             showAuthor={true}
+            constructorIsPatron={p.constructorIsPatron}
           />
         ))}
         <p>
-          <Link href="/featured/1"><Trans>Previous featured puzzles</Trans> &rarr;</Link>
+          <Link href="/featured/1">
+            <Trans>Previous featured puzzles</Trans> &rarr;
+          </Link>
         </p>
         <hr css={{ margin: '2em 0' }} />
         <UnfinishedPuzzleList user={user} />
@@ -202,7 +228,11 @@ export default function HomePage({
           {articles.map(ArticleListItem)}
         </ul>
         <p css={{ marginTop: '1em', textAlign: 'center' }}>
-          <Trans id="questions" comment="the variable is a translated version of 'email or twitter'">If you have questions or suggestions please contact us via{' '}
+          <Trans
+            id="questions"
+            comment="the variable is a translated version of 'email or twitter'"
+          >
+            If you have questions or suggestions please contact us via{' '}
             <ContactLinks />.
           </Trans>
         </p>

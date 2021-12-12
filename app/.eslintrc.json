@@ -1,93 +1,38 @@
 {
   "env": {
     "browser": true,
-    "es6": true,
     "node": true
   },
   "extends": [
-    "plugin:@next/next/recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:import/typescript",
-    "plugin:jsx-a11y/recommended",
-    "plugin:react-hooks/recommended",
     "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:jsx-a11y/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "next",
+    "prettier"
   ],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly",
-    "React": "writable"
-  },
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    },
-    "ecmaVersion": 11,
-    "sourceType": "module"
-  },
-  "plugins": [
-    "@next/eslint-plugin-next",
-    "react",
-    "@typescript-eslint",
-    "@emotion"
-  ],
+  "plugins": ["@emotion"],
   "rules": {
     "@emotion/pkg-renaming": "error",
-    "react/prop-types": 0,
-    "@next/next/no-html-link-for-pages": "off",
-    "import/no-anonymous-default-export": [
-      "error"
-    ],
     "jsx-a11y/anchor-is-valid": [
       "error",
       {
-        "components": [
-          "Link"
-        ]
+        "components": ["Link"]
       }
     ],
     "jsx-a11y/anchor-has-content": [
       "error",
       {
-        "components": [
-          "Link"
-        ]
+        "components": ["Link"]
       }
     ],
     "react/display-name": "off",
-    "react/react-in-jsx-scope": "off",
-    "indent": [
-      "error",
-      2
-    ],
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
-    "quotes": [
-      "error",
-      "single"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
-    "no-unused-vars": "off",
-    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "linebreak-style": ["error", "unix"],
+    "semi": ["error", "always"],
     "@typescript-eslint/no-unused-vars": [
       "error",
       {
         "argsIgnorePattern": "^_"
       }
     ]
-  },
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
   }
 }

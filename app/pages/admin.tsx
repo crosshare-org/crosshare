@@ -18,6 +18,7 @@ import {
   prettifyDateString,
   CommentForModerationWithIdT,
   CommentForModerationV,
+  DonationsListT,
 } from '../lib/dbtypes';
 import { getFromSessionOrDB, mapEachResult } from '../lib/dbUtils';
 import { App, FieldValue, TimestampClass } from '../lib/firebaseWrapper';
@@ -30,7 +31,6 @@ import {
   useCollectionData,
   useDocumentDataOnce,
 } from 'react-firebase-hooks/firestore';
-import { DonationsListT } from './donate';
 
 const PuzzleListItem = (props: PuzzleResult) => {
   return (
@@ -41,8 +41,8 @@ const PuzzleListItem = (props: PuzzleResult) => {
         {props.isPrivate
           ? ' PRIVATE'
           : props.isPrivateUntil && props.isPrivateUntil > Date.now()
-            ? ' PRIVATE until ' + new Date(props.isPrivateUntil).toISOString()
-            : ''}
+          ? ' PRIVATE until ' + new Date(props.isPrivateUntil).toISOString()
+          : ''}
       </span>
     </li>
   );
@@ -91,7 +91,10 @@ export default requiresAdmin(() => {
         ttl: 24 * 60 * 60 * 1000,
       }),
       mapEachResult(
-        db.collection('c').where('m', '==', false).where('pvu', '<=', TimestampClass.now()),
+        db
+          .collection('c')
+          .where('m', '==', false)
+          .where('pvu', '<=', TimestampClass.now()),
         DBPuzzleV,
         (dbpuzz, docId) => {
           return { ...puzzleFromDB(dbpuzz), id: docId };
@@ -113,7 +116,9 @@ export default requiresAdmin(() => {
       ),
     ])
       .then(([mailErrors, stats, minis, unmoderated, cfm, cps]) => {
-        unmoderated.sort((a, b) => a.publishTime - b.publishTime);
+        unmoderated.sort(
+          (a, b) => (a.isPrivateUntil || 0) - (b.isPrivateUntil || 0)
+        );
         setMailErrors(mailErrors?.size || 0);
         setStats(stats);
         setMinis(minis);
@@ -192,21 +197,6 @@ export default requiresAdmin(() => {
       }
     }
     setPagesForModeration([]);
-  }
-
-  async function moderatePrivatePuzzles(e: FormEvent) {
-    e.preventDefault();
-    const db = App.firestore();
-    const privates = unmoderated?.filter((p) => p.isPrivate);
-    if (unmoderated && privates) {
-      await Promise.all(
-        privates.map((pr) => {
-          return db.collection('c').doc(pr.id).update({ m: true });
-        })
-      ).then(() => {
-        setUnmoderated(unmoderated.filter((p) => !p.isPrivate));
-      });
-    }
   }
 
   async function doModerateComments(e: FormEvent) {
@@ -334,10 +324,6 @@ export default requiresAdmin(() => {
         ) : (
           <>
             <ul>{unmoderated.map(PuzzleListItem)}</ul>
-            <Button
-              onClick={moderatePrivatePuzzles}
-              text="Mark all private as moderated"
-            />
           </>
         )}
         {stats ? (

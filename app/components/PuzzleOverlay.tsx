@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect, Dispatch, ReactNode } from 'react';
 import { Link } from './Link';
-import { Direction, ServerPuzzleResult } from '../lib/types';
+import { Direction, PuzzleResultWithAugmentedComments } from '../lib/types';
 import { PuzzleAction } from '../reducers/reducer';
 import { isMetaSolution, slugify, timeString } from '../lib/utils';
 import type firebase from 'firebase/app';
@@ -40,7 +40,7 @@ export interface PuzzleOverlayBaseProps {
   profilePicture?: string | null;
   clueMap: Map<string, [number, Direction, string]>;
   user?: firebase.User;
-  puzzle: ServerPuzzleResult;
+  puzzle: PuzzleResultWithAugmentedComments;
   nextPuzzle?: NextPuzzleLink;
   isMuted: boolean;
   solveTime: number;
@@ -180,6 +180,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         title={props.puzzle.title}
         authorName={props.puzzle.authorName}
         constructorPage={props.puzzle.constructorPage}
+        constructorIsPatron={props.puzzle.constructorIsPatron}
         guestConstructor={props.puzzle.guestConstructor}
       />
       <div css={{ textAlign: 'center' }}>
@@ -230,22 +231,22 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                 {props.puzzle.isPrivate ||
                 (props.puzzle.isPrivateUntil &&
                   props.puzzle.isPrivateUntil > Date.now()) ? (
-                    <p>
+                  <p>
                     Your puzzle is private
-                      {props.puzzle.isPrivateUntil && !props.puzzle.isPrivate
-                        ? ` until ${formatDistanceToNow(
+                    {props.puzzle.isPrivateUntil && !props.puzzle.isPrivate
+                      ? ` until ${formatDistanceToNow(
                           new Date(props.puzzle.isPrivateUntil)
                         )} from now. Until then, it `
-                        : '. It '}
+                      : '. It '}
                     won&apos;t appear on your Crosshare blog, isn&apos;t
                     eligible to be featured on the homepage, and notifications
                     won&apos;t get sent to any of your followers. It is still
                     viewable by anybody you send the link to or if you embed it
                     on another site.
-                    </p>
-                  ) : (
-                    <p>Your puzzle is live!</p>
-                  )}
+                  </p>
+                ) : (
+                  <p>Your puzzle is live!</p>
+                )}
                 <p>
                   {isEmbed
                     ? `Solvers
@@ -273,21 +274,21 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
       isContest &&
       props.puzzle.contestAnswers &&
       props.user?.uid !== props.puzzle.authorId ? (
-          <MetaSubmission
-            hasPrize={!!props.contestHasPrize}
-            contestSubmission={props.contestSubmission}
-            contestRevealed={props.contestRevealed}
-            revealDisabledUntil={
-              props.contestRevealDelay
-                ? new Date(props.publishTime + props.contestRevealDelay)
-                : null
-            }
-            dispatch={props.dispatch}
-            solutions={props.puzzle.contestAnswers}
-          />
-        ) : (
-          ''
-        )}
+        <MetaSubmission
+          hasPrize={!!props.contestHasPrize}
+          contestSubmission={props.contestSubmission}
+          contestRevealed={props.contestRevealed}
+          revealDisabledUntil={
+            props.contestRevealDelay
+              ? new Date(props.publishTime + props.contestRevealDelay)
+              : null
+          }
+          dispatch={props.dispatch}
+          solutions={props.puzzle.contestAnswers}
+        />
+      ) : (
+        ''
+      )}
       <div
         css={{
           ...((props.overlayType === OverlayType.BeginPause ||
@@ -329,7 +330,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                         key={i}
                       >
                         <strong>{w.n}</strong> solved at{' '}
-                        {lightFormat(w.t, 'H:mm \'on\' M/d/yyyy')}
+                        {lightFormat(w.t, "H:mm 'on' M/d/yyyy")}
                       </li>
                     ))}
                 </ul>

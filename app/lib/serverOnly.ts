@@ -1,5 +1,9 @@
 import { AdminApp, AdminTimestamp, getUser } from '../lib/firebaseWrapper';
-import { puzzleFromDB, ServerPuzzleResult } from './types';
+import {
+  puzzleFromDB,
+  Comment,
+  PuzzleResultWithAugmentedComments,
+} from './types';
 import type firebaseAdminType from 'firebase-admin';
 
 import * as t from 'io-ts';
@@ -10,6 +14,7 @@ import {
   CategoryIndexT,
   getDateString,
   addZeros,
+  CommentWithRepliesT,
 } from './dbtypes';
 import { adminTimestamp } from './adminTimestamp';
 import { mapEachResult } from './dbUtils';
@@ -33,6 +38,7 @@ import { GetServerSideProps } from 'next';
 import { getDailyMinis } from './dailyMinis';
 import { EmbedOptionsT } from './embedOptions';
 import { ArticleT, validate } from './article';
+import { isUserPatron } from './patron';
 
 export async function getStorageUrl(
   storageKey: string
@@ -76,31 +82,43 @@ const usernameMap: Record<string, ConstructorPageT> = {};
 let usernamesUpdated: number | null = null;
 const usernamesTTL = 1000 * 60 * 10;
 
+const updateUsernameMap = async (): Promise<void> => {
+  const now = Date.now();
+  console.log('updating username map');
+  const db = AdminApp.firestore();
+  let query: firebaseAdminType.firestore.Query = db.collection('cp');
+  if (usernamesUpdated) {
+    query = query.where('t', '>=', AdminTimestamp.fromMillis(usernamesUpdated));
+  }
+  try {
+    await mapEachResult(query, ConstructorPageV, (cp, docId) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { t, ...partial } = cp;
+      usernameMap[cp.u] = { ...partial, id: docId };
+    });
+    usernamesUpdated = now;
+  } catch (e) {
+    console.error('error updating constructor pages');
+    console.error(e);
+  }
+};
+
+let updateUsernameMapPromise: Promise<void> | null = null;
+const updateUsernameMapOnce = () => {
+  if (!updateUsernameMapPromise) {
+    updateUsernameMapPromise = updateUsernameMap();
+  }
+  return updateUsernameMapPromise;
+};
+
 export async function userIdToPage(
   userId: string
 ): Promise<ConstructorPageT | null> {
-  const now = Date.now();
-  if (usernamesUpdated === null || now - usernamesUpdated > usernamesTTL) {
-    const db = AdminApp.firestore();
-    let query: firebaseAdminType.firestore.Query = db.collection('cp');
-    if (usernamesUpdated) {
-      query = query.where(
-        't',
-        '>=',
-        AdminTimestamp.fromMillis(usernamesUpdated)
-      );
-    }
-    try {
-      await mapEachResult(query, ConstructorPageV, (cp, docId) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { t, ...partial } = cp;
-        usernameMap[cp.u] = { ...partial, id: docId };
-      });
-      usernamesUpdated = now;
-    } catch (e) {
-      console.error('error updating constructor pages');
-      console.error(e);
-    }
+  if (
+    usernamesUpdated === null ||
+    Date.now() - usernamesUpdated > usernamesTTL
+  ) {
+    await updateUsernameMapOnce();
   }
   return usernameMap[userId] || null;
 }
@@ -395,8 +413,30 @@ export const getArticlePageProps: GetServerSideProps<ArticlePageProps> =
     return { props: article };
   };
 
+export async function convertComments(
+  comments: Array<CommentWithRepliesT>
+): Promise<Array<Comment>> {
+  return Promise.all(
+    comments.map(async (c) => {
+      return {
+        commentText: c.c,
+        authorId: c.a,
+        authorDisplayName: c.n,
+        authorSolveTime: c.t,
+        authorCheated: c.ch,
+        authorSolvedDownsOnly: c.do || false,
+        publishTime: c.p.toMillis(),
+        id: c.i,
+        replies: await convertComments(c.r || []),
+        ...(c.un && { authorUsername: c.un }),
+        authorIsPatron: await isUserPatron(c.a),
+      };
+    })
+  );
+}
+
 export interface PuzzlePageResultProps {
-  puzzle: ServerPuzzleResult;
+  puzzle: PuzzleResultWithAugmentedComments;
   profilePicture?: string | null;
   coverImage?: string | null;
   nextPuzzle?: NextPuzzleLink;
@@ -410,9 +450,13 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   params,
 }): Promise<{ props: PuzzlePageProps }> => {
   const db = AdminApp.firestore();
-  let puzzle: ServerPuzzleResult | null = null;
-  const puzzleId = params?.puzzleId?.[0];
-  if (!puzzleId || Array.isArray(puzzleId)) {
+  let puzzle: PuzzleResultWithAugmentedComments | null = null;
+  if (!params?.puzzleId || !Array.isArray(params.puzzleId)) {
+    res.statusCode = 404;
+    return { props: { error: 'bad puzzle params' } };
+  }
+  const puzzleId = params.puzzleId[0];
+  if (!puzzleId) {
     res.statusCode = 404;
     return { props: { error: 'bad puzzle params' } };
   }
@@ -429,10 +473,13 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   const validationResult = DBPuzzleV.decode(dbres.data());
   if (isRight(validationResult)) {
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
+    const fromDB = puzzleFromDB(validationResult.right);
     puzzle = {
-      ...puzzleFromDB(validationResult.right),
+      ...fromDB,
       id: dbres.id,
       constructorPage: await userIdToPage(validationResult.right.a),
+      constructorIsPatron: await isUserPatron(validationResult.right.a),
+      comments: await convertComments(fromDB.comments),
     };
   } else {
     console.error(PathReporter.report(validationResult).join(','));
@@ -495,7 +542,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
       ...(todaysMini && {
         nextPuzzle: {
           puzzleId: todaysMini,
-          linkText: 'today\'s daily mini crossword',
+          linkText: "today's daily mini crossword",
         },
       }),
     },

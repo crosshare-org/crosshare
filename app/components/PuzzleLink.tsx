@@ -6,9 +6,9 @@ import { AuthContext } from './AuthContext';
 import { getPossiblyStalePlay } from '../lib/plays';
 import { PuzzleResult } from '../lib/types';
 import { SMALL_AND_UP } from '../lib/style';
-import { PuzzleSizeIcon } from '../components/Icons';
+import { PuzzleSizeIcon, PatronIcon } from './Icons';
 import { DifficultyBadge } from '../components/DifficultyBadge';
-import { Emoji } from '../components/Emoji';
+import { Emoji } from './Emoji';
 import { timeString } from '../lib/utils';
 import { PlayWithoutUserT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
@@ -53,15 +53,15 @@ const PuzzleLink = (props: {
       authored || (play && play.f)
         ? 'var(--text)'
         : play
-          ? 'var(--error)'
-          : 'var(--link)',
+        ? 'var(--error)'
+        : 'var(--link)',
     '&:hover': {
       color:
         authored || (play && play.f)
           ? 'var(--text)'
           : play
-            ? 'var(--error-hover)'
-            : 'var(--link-hover)',
+          ? 'var(--error-hover)'
+          : 'var(--link-hover)',
     },
   };
 
@@ -128,7 +128,9 @@ const PuzzleLink = (props: {
               play.f ? (
                 <i>({timeString(play.t, false)})</i>
               ) : (
-                <i>(<Trans>unfinished</Trans>)</i>
+                <i>
+                  (<Trans>unfinished</Trans>)
+                </i>
               )
             ) : (
               ''
@@ -156,12 +158,14 @@ export const AuthorLink = ({
   authorName,
   constructorPage,
   guestConstructor,
-  showFollowButton
+  showFollowButton,
+  isPatron,
 }: {
   authorName: string;
   constructorPage: ConstructorPageT | null;
   guestConstructor: string | null;
   showFollowButton?: boolean;
+  isPatron: boolean;
 }) => {
   let link: ReactNode = authorName;
   let followButton: ReactNode = <></>;
@@ -170,7 +174,25 @@ export const AuthorLink = ({
     link = <Link href={'/' + username}>{constructorPage.n}</Link>;
   }
   if (constructorPage && showFollowButton) {
-    followButton = <FollowButton css={{ marginLeft: '0.5em', padding: '0.25em', fontSize: '0.9em', boxShadow: 'none' }} page={constructorPage} />;
+    followButton = (
+      <FollowButton
+        css={{
+          marginLeft: '0.5em',
+          padding: '0.25em',
+          fontSize: '0.9em',
+          minWidth: '5.2em',
+          boxShadow: 'none',
+        }}
+        page={constructorPage}
+      />
+    );
+  }
+  if (isPatron) {
+    link = (
+      <>
+        <PatronIcon linkIt={true} /> {link}
+      </>
+    );
   }
   if (guestConstructor) {
     return (
@@ -246,6 +268,7 @@ export const PuzzleResultLink = ({
   showBlogPost,
   showAuthor,
   constructorPage,
+  constructorIsPatron,
   title,
   ...props
 }: {
@@ -257,6 +280,7 @@ export const PuzzleResultLink = ({
   showAuthor: boolean;
   title?: string;
   constructorPage?: ConstructorPageT | null;
+  constructorIsPatron: boolean;
 }) => {
   const difficulty = <DifficultyBadge puzzleRating={puzzle.rating} />;
   const authorLink = (
@@ -264,6 +288,7 @@ export const PuzzleResultLink = ({
       authorName={puzzle.authorName}
       guestConstructor={puzzle.guestConstructor}
       constructorPage={constructorPage || null}
+      isPatron={constructorIsPatron}
     />
   );
   const publishDate = puzzle.isPrivateUntil

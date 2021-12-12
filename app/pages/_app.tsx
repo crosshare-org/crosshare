@@ -52,6 +52,16 @@ export function reportWebVitals(metric: NextWebVitalsMetric) {
   ) {
     console.error('NONZERO CLS ', metric.value);
   }
+  gtag.event({
+    action: metric.name,
+    category:
+      metric.label === 'web-vital' ? 'Web Vitals' : 'Next.js custom metric',
+    label: metric.id,
+    value: Math.round(
+      metric.name === 'CLS' ? metric.value * 1000 : metric.value
+    ),
+    nonInteraction: true,
+  });
 }
 
 // `err` is a workaround for https://github.com/vercel/next.js/issues/8592
@@ -67,6 +77,7 @@ export default function CrosshareApp({
     authStatus = {
       loading: true,
       isAdmin: false,
+      isPatron: false,
       notifications: [],
     };
   }

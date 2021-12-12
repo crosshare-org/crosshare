@@ -145,6 +145,11 @@ async function publishPuzzle(
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
+  await admin
+    .firestore()
+    .collection('donations')
+    .doc('donations')
+    .set({ d: [] });
 
   setApp(app as firebase.app.App);
 
@@ -401,6 +406,11 @@ test('publish custom / non-rectangular size', async () => {
   localStorage.clear();
 
   await firebaseTesting.clearFirestoreData({ projectId });
+  await admin
+    .firestore()
+    .collection('donations')
+    .doc('donations')
+    .set({ d: [] });
 
   setApp(app as firebase.app.App);
 

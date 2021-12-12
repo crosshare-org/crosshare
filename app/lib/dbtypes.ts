@@ -160,7 +160,7 @@ export const FollowersV = t.partial({
 
 const DBPuzzleOptionalV = t.partial({
   /** array of alternate solutions */
-  alts: t.array(t.array(t.tuple([t.number, t.string]))),
+  alts: t.array(t.record(t.string, t.string)),
   /** highlighted cell indexes */
   hs: t.array(t.number),
   /** use shade instead of circle for highlight? */
@@ -219,6 +219,11 @@ export const DBPuzzleV = t.intersection([
   ])
 ]);
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
+
+export const AdminSettingsV = t.type({
+  automoderate: t.boolean,
+  noAuto: t.array(t.string)
+});
 
 const PlayBaseV = t.intersection([
   t.type({
@@ -450,3 +455,57 @@ export type CronStatusT = t.TypeOf<typeof CronStatusV>;
 /** date string -> puzzle id */
 export const CategoryIndexV = t.record(t.string, t.string);
 export type CategoryIndexT = t.TypeOf<typeof CategoryIndexV>;
+
+export const DonationsListV = t.type({
+  d: t.array(
+    t.type({
+      /** email */
+      e: t.string,
+      /** date */
+      d: timestamp,
+      /** donated amount */
+      a: t.number,
+      /** received amount */
+      r: t.number,
+      /** name */
+      n: t.union([t.string, t.null]),
+      /** page */
+      p: t.union([t.string, t.null]),
+    })
+  ),
+});
+export type DonationsListT = t.TypeOf<typeof DonationsListV>;
+
+export const donationsByEmail = (donations: DonationsListT) => {
+  const res = donations.d.reduce(
+    (
+      acc: Map<
+        string,
+        { name: string | null; page: string | null; total: number, date: Date }
+      >,
+      val
+    ) => {
+      const prev = acc.get(val.e);
+      if (prev) {
+        acc.set(val.e, {
+          name: val.n || prev.name,
+          page: val.p || prev.page,
+          total: val.a + prev.total,
+          date: val.d.toDate() < prev.date ? prev.date : val.d.toDate(),
+        });
+      } else {
+        acc.set(val.e, {
+          name: val.n || null,
+          page: val.p || null,
+          total: val.a,
+          date: val.d.toDate()
+        });
+      }
+      return acc;
+    },
+    new Map()
+  );
+  // manually add to account for server costs I don't record yet
+  res.set('mike@dirolf.com', {name: 'Mike D', page: 'mike', total: 100, date: new Date()});
+  return res;
+};

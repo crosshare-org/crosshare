@@ -1,7 +1,6 @@
-import { ReactNode } from 'react';
 import { FaEye, FaCheck } from 'react-icons/fa';
 import { CheatUnit, PrefillSquares, Symmetry } from '../reducers/reducer';
-import { fnv1a, hslToRgb } from '../lib/utils';
+import { Link } from './Link';
 
 const Square = (props: {
   cx: number;
@@ -569,18 +568,9 @@ export const SymmetryNone = (props: IconProps) => {
   return <SymmetryIcon type={Symmetry.None} {...props} />;
 };
 
-interface IconProps {
-  width?: string | number;
-  height?: string | number;
-}
-export const Logo = (props: IconProps & { notificationCount: number }) => {
+const BlankLogo = () => {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={props.width || '1em'}
-      height={props.height || '1em'}
-      viewBox="0 0 16 16"
-    >
+    <>
       <g fill="var(--logo-white)">
         <path d="M1 10h14v5H1z" />
         <path d="M3 9h10v1H3zm0-7h5v3H3z" />
@@ -596,11 +586,68 @@ export const Logo = (props: IconProps & { notificationCount: number }) => {
       <path d="M3 5h1v1H3zm8 0h1v4h-1zM4 8h1v1H4z" />
       <path d="M3 9h1v1H3zm5 0h1v1H8z" />
       <path d="M12 9h1v1h-1zM1 10h2v1H1z" />
-      <path d="M5 10h1v1H5zm8 0h2v1h-2z" />
-      <path d="M0 11h1v3H0zm15 0h1v3h-1zm-9 0h1v1H6z" />
-      <path d="M4 12h2v1H4z" />
-      <path d="M5 13h2v1H5zm4 0h2v1H9zm-8 1h3v1H1zm11 0h3v1h-3z" />
+      <path d="M13 10h2v1h-2zM0 11h1v3H0z" />
+      <path d="M15 11h1v3h-1z" />
+      <path d="M1 14h3v1H1zm11 0h3v1h-3z" />
       <path d="M4 15h8v1H4z" />
+    </>
+  );
+};
+
+export const PatronIcon = (props: { className?: string; linkIt?: boolean }) => {
+  const icon = (
+    <svg
+      css={{ verticalAlign: 'text-top' }}
+      xmlns="http://www.w3.org/2000/svg"
+      width={'1em'}
+      height={'1em'}
+      viewBox="0 0 16 16"
+      className={props.className}
+    >
+      <BlankLogo />
+      <g fill="#cb0">
+        <rect x="2" y="7" width="12" height="2" />
+        <rect x="1" y="6" width="2" height="2" />
+        <rect x="13" y="6" width="2" height="2" />
+        <rect x="4" y="5" width="1" height="1" />
+      </g>
+      <g fill="#980">
+        <rect x="8" y="4" width="1" height="2" />
+        <rect x="12" y="5" width="2" height="1" />
+      </g>
+      <rect fill="#fd0" x="2" y="7" width="6" height="1" />
+      <g fill="var(--logo-white)">
+        <rect x="4" y="10" width="8" height="4" />
+      </g>
+    </svg>
+  );
+  if (props.linkIt) {
+    return (
+      <Link title="Crosshare Patron" href="/donate">
+        {icon}
+      </Link>
+    );
+  }
+  return icon;
+};
+
+interface IconProps {
+  width?: string | number;
+  height?: string | number;
+}
+export const Logo = (props: IconProps & { notificationCount: number }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={props.width || '1em'}
+      height={props.height || '1em'}
+      viewBox="0 0 16 16"
+    >
+      <BlankLogo />
+      <path d="M5 10h1v1H5z" />
+      <path d="M6 11h1v1H6z" />
+      <path d="M4 12h2v1H4z" />
+      <path d="M5 13h2v1H5zm4 0h2v1H9z" />
       <rect x="10" y="10" width="1" height="1">
         <animate
           attributeName="width"
@@ -702,51 +749,6 @@ export const PuzzleSizeIcon = (props: { width?: number; height?: number }) => {
       ) : (
         ''
       )}
-    </svg>
-  );
-};
-
-export const Identicon = ({ id }: { id: string }) => {
-  const hash = fnv1a(id);
-  // foreground is rightmost 17 bits as hue at 80% saturation, 50% brightness
-  const hueNumBits = (1 << 17) - 1;
-  const hue = (hash & hueNumBits) / hueNumBits;
-  const foreground = hslToRgb(hue, 0.8, 0.5);
-
-  // leftmost 15 bits are which squares to show
-  const squares: Array<ReactNode> = [];
-  for (let i = 0; i < 15; i++) {
-    if (((1 << (17 + i)) & hash) !== 0) {
-      if (i < 5) {
-        squares.push(<rect key={i} x="2" y={i} width="1" height="1" />);
-      } else if (i < 10) {
-        squares.push(
-          <rect key={i + 'a'} x="1" y={i - 5} width="1" height="1" />
-        );
-        squares.push(
-          <rect key={i + 'b'} x="3" y={i - 5} width="1" height="1" />
-        );
-      } else {
-        squares.push(
-          <rect key={i + 'a'} x="0" y={i - 10} width="1" height="1" />
-        );
-        squares.push(
-          <rect key={i + 'b'} x="4" y={i - 10} width="1" height="1" />
-        );
-      }
-    }
-  }
-  return (
-    <svg
-      shapeRendering="crispEdges"
-      width="1em"
-      height="1em"
-      viewBox="0 0 5 5"
-      xmlns="http://www.w3.org/2000/svg"
-      fill={'rgb(' + foreground.join(',') + ')'}
-    >
-      <rect width="100%" height="100%" fill="rgba(140,140,140,0.2)" />
-      {squares}
     </svg>
   );
 };

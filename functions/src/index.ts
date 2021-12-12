@@ -12,7 +12,7 @@ import { handlePuzzleUpdate } from '../../app/lib/puzzleUpdate';
 import { doGlicko } from '../../app/lib/glicko';
 import { moderateComments } from '../../app/lib/comments';
 
-import { CronStatusV, CronStatusT, CommentForModerationV } from '../../app/lib/dbtypes';
+import { CronStatusV, CronStatusT, CommentForModerationV, AdminSettingsV } from '../../app/lib/dbtypes';
 
 import * as wrapper from '../../app/lib/firebaseWrapper';
 import { mapEachResult } from '../../app/lib/dbUtils';
@@ -28,7 +28,14 @@ export const autoModerator = functions.pubsub.schedule('every 30 minutes').onRun
   console.log('running automoderator');
   const db = admin.firestore();
   const settingsDoc = await db.doc('settings/settings').get();
-  if (!settingsDoc?.data()?.automoderate) {
+  const result = AdminSettingsV.decode(settingsDoc.data());
+  if (!isRight(result)) {
+    console.error(PathReporter.report(result).join(","));
+    throw new Error("Malformed admin settings");
+  }
+  const settings = result.right;
+
+  if (!settings.automoderate) {
     console.log('automoderation is turned off, done');
     return;
   }
@@ -41,9 +48,11 @@ export const autoModerator = functions.pubsub.schedule('every 30 minutes').onRun
     }
   );
 
-  console.log(`automoderating ${commentsForModeration.length} comments`);
+  const filtered = commentsForModeration.filter(cfm => !settings.noAuto.includes(cfm.a));
 
-  await moderateComments(db, commentsForModeration, new Set(), true);
+  console.log(`have ${commentsForModeration.length} comments, automoderating ${filtered.length} of them`);
+
+  await moderateComments(db, filtered, new Set(), true);
 
   console.log('done');
   return;
@@ -80,7 +89,19 @@ export const scheduledFirestoreExport = functions.pubsub.schedule('every day 00:
     // Leave collectionIds empty to export all collections
     // or set to a list of collection IDs to export,
     // collectionIds: ['users', 'posts']
-    collectionIds: []
+    collectionIds: [
+      'a',  // articles
+      'c',  // puzzles
+      'cp', // blogs
+      'cs', // constructor stats
+      'donations',
+      'ds', // daily stats
+      'em', // embed settings
+      'followers',
+      'prefs',
+      's',  // puzzle stats
+      'settings',
+    ]
   })
     .then((responses: any) => {
       const response = responses[0];

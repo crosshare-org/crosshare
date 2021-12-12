@@ -306,6 +306,7 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     contestAnswers: saved?.contestAnswers || null,
     contestHasPrize: saved?.contestHasPrize || false,
     contestRevealDelay: saved?.contestRevealDelay || null,
+    alternates: saved?.alternates || null,
   });
 };
 
@@ -765,6 +766,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       guestConstructor: state.guestConstructor,
       isPrivate: state.isPrivate,
       isPrivateUntil: state.isPrivateUntil?.toMillis(),
+      alternates: state.alternates,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(inProgress));
   }, [
@@ -781,6 +783,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     state.guestConstructor,
     state.isPrivate,
     state.isPrivateUntil,
+    state.alternates,
   ]);
 
   const reRunAutofill = useCallback(() => {
