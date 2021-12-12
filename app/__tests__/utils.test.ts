@@ -1,6 +1,6 @@
 import cases from 'jest-in-case';
 
-import { checkGrid, isMetaSolution } from '../lib/utils';
+import { checkGrid, isMetaSolution, slugify } from '../lib/utils';
 
 test('isMetaSolution', () => {
   expect(isMetaSolution('foo', ['FOO'])).toBeTruthy();
@@ -11,6 +11,32 @@ test('isMetaSolution', () => {
   expect(isMetaSolution('bar', ['FOO'])).not.toBeTruthy();
   expect(isMetaSolution('bar!', ['FOO', 'b a r'])).toBeTruthy();
 });
+
+cases(
+  'slugify',
+  (opts) => {
+    expect(slugify(opts.input)).toEqual(opts.output);
+  },
+  [
+    { input: '', output: '' },
+    { input: 'test', output: 'test' },
+    { input: 'TEST', output: 'test' },
+    { input: '  te st  ', output: 'te-st' },
+    { input: '  te-st  ', output: 'te-st' },
+    { input: 'te@st', output: 'test' },
+    { input: undefined, output: '' },
+    { input: null, output: '' },
+    { input: 'tè,é,ê,ëstÑ', output: 'teeeestn' },
+    { input: 'what about 😂', output: 'what-about' },
+    { input: 'what-----about', output: 'what-about' },
+    {
+      input:
+        'heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one heres a long one ',
+      output:
+        'heres-a-long-one-heres-a-long-one-heres-a-long-one-heres-a-long-one-heres-a-long-one-heres-a-long-on',
+    },
+  ]
+);
 
 cases(
   'checkGrid',
