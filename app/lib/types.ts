@@ -276,7 +276,7 @@ export enum KeyK {
   Backspace,
   Delete,
   Escape,
-  Tilde,
+  Backtick,
   Dot,
   Exclamation,
   AllowedCharacter,
@@ -314,7 +314,7 @@ export function fromKeyboardEvent(event: { key: string, shiftKey: boolean }): Op
     case 'Backspace': return some(KeyK.Backspace);
     case 'Delete': return some(KeyK.Delete);
     case 'Escape': return some(KeyK.Escape);
-    case '`': return some(KeyK.Tilde);
+    case '`': return some(KeyK.Backtick);
     case '.': return some(KeyK.Dot);
     case '!': return some(KeyK.Exclamation);
     // Keys specific to on-screen keyboard

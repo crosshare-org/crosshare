@@ -1567,7 +1567,7 @@ const GridMode = ({
                 onClick={() => {
                   const a: KeypressAction = {
                     type: 'KEYPRESS',
-                    key: { k: KeyK.Tilde },
+                    key: { k: KeyK.Backtick },
                   };
                   dispatch(a);
                 }}

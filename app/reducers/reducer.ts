@@ -778,7 +778,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
     if (key.k === KeyK.NumLayout || key.k === KeyK.AbcLayout) {
       return { ...state, showExtraKeyLayout: !state.showExtraKeyLayout };
     }
-    if (key.k === KeyK.Tilde && isBuilderState(state)) {
+    if (key.k === KeyK.Backtick && isBuilderState(state)) {
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
         if (state.grid.highlighted.has(ci)) {
