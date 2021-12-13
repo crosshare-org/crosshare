@@ -23,7 +23,11 @@ const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
     return <></>;
   }
   return (
-    <Link href={`/crosswords/${nextPuzzle.puzzleId}/slugify(${nextPuzzle.linkText})`}>
+    <Link
+      href={`/crosswords/${nextPuzzle.puzzleId}/${slugify(
+        nextPuzzle.puzzleTitle
+      )}`}
+    >
       Play {nextPuzzle.linkText}
     </Link>
   );
@@ -369,7 +373,11 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
             <Trans>Powered by crosshare.org</Trans>
           </Link>
           {' · '}
-          <Link href={`/crosswords/${props.puzzle.id}/${slugify(props.puzzle.title)}`}>
+          <Link
+            href={`/crosswords/${props.puzzle.id}/${slugify(
+              props.puzzle.title
+            )}`}
+          >
             <Trans>Open on crosshare.org</Trans>
           </Link>
         </div>

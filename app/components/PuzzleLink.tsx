@@ -21,6 +21,7 @@ const PuzzleLink = (props: {
   fullWidth?: boolean;
   showingBlog: boolean;
   id: string;
+  puzzleTitle: string;
   authorId: string;
   width?: number;
   height?: number;
@@ -86,7 +87,7 @@ const PuzzleLink = (props: {
             lineHeight: '1em',
           },
         ]}
-        href={`/crosswords/${props.id}/${slugify(props.title)}`}
+        href={`/crosswords/${props.id}/${slugify(props.puzzleTitle)}`}
       >
         <div css={{ position: 'relative' }}>
           <PuzzleSizeIcon width={props.width} height={props.height} />
@@ -117,7 +118,10 @@ const PuzzleLink = (props: {
         </div>
       </Link>
       <div css={{ flex: 1 }}>
-        <Link css={linkCss} href={`/crosswords/${props.id}/${slugify(props.title)}`}>
+        <Link
+          css={linkCss}
+          href={`/crosswords/${props.id}/${slugify(props.puzzleTitle)}`}
+        >
           <h3
             css={{
               marginBottom: 0,
@@ -375,6 +379,7 @@ export const PuzzleResultLink = ({
         showingBlog={showBlogPost && puzzle.blogPost ? true : false}
         authorId={puzzle.authorId}
         id={puzzle.id}
+        puzzleTitle={puzzle.title}
         width={puzzle.size.cols}
         height={puzzle.size.rows}
         title={title || puzzle.title}

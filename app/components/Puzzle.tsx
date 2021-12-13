@@ -118,6 +118,7 @@ const EmbedOverlay = dynamic(
 
 export interface NextPuzzleLink {
   puzzleId: string;
+  puzzleTitle: string;
   linkText: string;
 }
 

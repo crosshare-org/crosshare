@@ -9,13 +9,7 @@ import type firebaseAdminType from 'firebase-admin';
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import {
-  DBPuzzleV,
-  CategoryIndexT,
-  getDateString,
-  addZeros,
-  CommentWithRepliesT,
-} from './dbtypes';
+import { DBPuzzleV, CommentWithRepliesT } from './dbtypes';
 import { adminTimestamp } from './adminTimestamp';
 import { mapEachResult } from './dbUtils';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
@@ -35,10 +29,12 @@ import SimpleMarkdown from 'simple-markdown';
 import { AccountPrefsV, AccountPrefsT } from './prefs';
 import { NextPuzzleLink } from '../components/Puzzle';
 import { GetServerSideProps } from 'next';
-import { getDailyMinis } from './dailyMinis';
 import { EmbedOptionsT } from './embedOptions';
 import { ArticleT, validate } from './article';
 import { isUserPatron } from './patron';
+import { addDays } from 'date-fns';
+import { isSome } from 'fp-ts/lib/Option';
+import { getMiniForDate } from './dailyMinis';
 
 export async function getStorageUrl(
   storageKey: string
@@ -497,53 +493,45 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     );
   }
 
-  // Get puzzle to show as next link after this one is finished
-  let minis: CategoryIndexT;
-  try {
-    minis = await getDailyMinis();
-  } catch {
-    return {
-      props: {
-        puzzle,
-        profilePicture,
-        coverImage,
-      },
-    };
+  let nextPuzzle: NextPuzzleLink | null = null;
+  const today = new Date();
+
+  if (validationResult.right.dmd) {
+    // this puzzle is a daily mini, see if we show a previous instead of today's
+    const dt = new Date(validationResult.right.dmd);
+    let tryMiniDate = new Date(
+      dt.valueOf() - dt.getTimezoneOffset() * 60 * 1000
+    );
+    if (tryMiniDate <= today) {
+      tryMiniDate = addDays(tryMiniDate, -1);
+      const puzzle = await getMiniForDate(tryMiniDate);
+      if (isSome(puzzle)) {
+        nextPuzzle = {
+          puzzleId: puzzle.value.id,
+          linkText: 'the previous daily mini crossword',
+          puzzleTitle: puzzle.value.t,
+        };
+      }
+    }
   }
 
-  const today = getDateString(new Date());
-  const miniDate = Object.keys(minis).find((key) => minis[key] === puzzleId);
-  if (miniDate && addZeros(miniDate) <= addZeros(today)) {
-    const previous = Object.entries(minis)
-      .map(([k, v]): [string, string] => [addZeros(k), v])
-      .filter(([k, _v]) => k < addZeros(miniDate))
-      .sort((a, b) => (a[0] > b[0] ? -1 : 1));
-    if (previous.length && previous[0]) {
-      return {
-        props: {
-          puzzle,
-          profilePicture,
-          coverImage,
-          nextPuzzle: {
-            puzzleId: previous[0][1],
-            linkText: 'the previous daily mini crossword',
-          },
-        },
+  if (!nextPuzzle) {
+    const puzzle = await getMiniForDate(today);
+    if (isSome(puzzle)) {
+      nextPuzzle = {
+        puzzleId: puzzle.value.id,
+        linkText: "today's daily mini crossword",
+        puzzleTitle: puzzle.value.t,
       };
     }
   }
-  const todaysMini = minis[today];
-  // Didn't find a previous mini, link to today's
   return {
     props: {
       puzzle,
       profilePicture,
       coverImage,
-      ...(todaysMini && {
-        nextPuzzle: {
-          puzzleId: todaysMini,
-          linkText: "today's daily mini crossword",
-        },
+      ...(nextPuzzle && {
+        nextPuzzle,
       }),
     },
   };
