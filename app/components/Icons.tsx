@@ -328,6 +328,176 @@ export const ExclamationKey = () => {
   );
 };
 
+export const CtrlExclamationKey = () => {
+  return (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+    >
+      <rect
+        x="5"
+        y="12"
+        rx="10"
+        ry="10"
+        width="90"
+        height="76"
+        fill="transparent"
+        stroke="currentColor"
+        strokeWidth="5"
+      />
+      <text
+        x="50"
+        y="70"
+        textAnchor="middle"
+        fontSize="55"
+        fontWeight="bold"
+        textLength="75"
+      >
+        C-!
+      </text>
+    </svg>
+  );
+};
+
+export const AtSignKey = () => {
+  return (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+    >
+      <rect
+        x="5"
+        y="12"
+        rx="10"
+        ry="10"
+        width="90"
+        height="76"
+        fill="transparent"
+        stroke="currentColor"
+        strokeWidth="5"
+      />
+      <text
+        x="50"
+        y="77"
+        textAnchor="middle"
+        fontSize="80"
+        fontWeight="bold"
+        textLength="75"
+      >
+        @
+      </text>
+    </svg>
+  );
+};
+
+export const CtrlAtSignKey = () => {
+  return (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+    >
+      <rect
+        x="5"
+        y="12"
+        rx="10"
+        ry="10"
+        width="90"
+        height="76"
+        fill="transparent"
+        stroke="currentColor"
+        strokeWidth="5"
+      />
+      <text
+        x="50"
+        y="65"
+        textAnchor="middle"
+        fontSize="40"
+        fontWeight="bold"
+        textLength="75"
+      >
+        C-@
+      </text>
+    </svg>
+  );
+};
+
+export const HashKey = () => {
+  return (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+    >
+      <rect
+        x="5"
+        y="12"
+        rx="10"
+        ry="10"
+        width="90"
+        height="76"
+        fill="transparent"
+        stroke="currentColor"
+        strokeWidth="5"
+      />
+      <text
+        x="50"
+        y="77"
+        textAnchor="middle"
+        fontSize="80"
+        fontWeight="bold"
+        textLength="75"
+      >
+        #
+      </text>
+    </svg>
+  );
+};
+
+export const CtrlHashKey = () => {
+  return (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+    >
+      <rect
+        x="5"
+        y="12"
+        rx="10"
+        ry="10"
+        width="90"
+        height="76"
+        fill="transparent"
+        stroke="currentColor"
+        strokeWidth="5"
+      />
+      <text
+        x="50"
+        y="65"
+        textAnchor="middle"
+        fontSize="40"
+        fontWeight="bold"
+        textLength="75"
+      >
+        C-#
+      </text>
+    </svg>
+  );
+};
+
 const CheckOrReveal = ({
   x,
   y,

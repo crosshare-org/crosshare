@@ -44,6 +44,12 @@ import {
   RevealPuzzle,
   Rebus,
   SpinnerFinished,
+  CtrlExclamationKey,
+  CtrlAtSignKey,
+  CtrlHashKey,
+  ExclamationKey,
+  AtSignKey,
+  HashKey,
 } from './Icons';
 import { AuthContext, AuthPropsOptional } from './AuthContext';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
@@ -535,6 +541,72 @@ export const Puzzle = ({
 
       const mkey = fromKeyboardEvent(e);
       if (isSome(mkey)) {
+        const key = mkey.value;
+        /* TODO this logic belongs in the reducer */
+        if (key.k === KeyK.Pause) {
+          const t = state.success ? 'UNDISMISSSUCCESS' : 'PAUSEACTION';
+          dispatch({ type: t });
+          writePlayToDBIfNeeded();
+          e.preventDefault();
+          return;
+        }
+        if (key.k === KeyK.Exclamation) {
+          const ca: CheatAction = {
+            type: 'CHEAT',
+            unit: CheatUnit.Square,
+          };
+          dispatch(ca);
+          e.preventDefault();
+          return;
+        }
+        if (key.k === KeyK.CtrlExclamation) {
+          const ca: CheatAction = {
+            type: 'CHEAT',
+            unit: CheatUnit.Square,
+            isReveal: true,
+          };
+          dispatch(ca);
+          e.preventDefault();
+          return;
+        }
+        if (key.k === KeyK.AtSign) {
+          const ca: CheatAction = {
+            type: 'CHEAT',
+            unit: CheatUnit.Entry,
+          };
+          dispatch(ca);
+          e.preventDefault();
+          return;
+        }
+        if (key.k === KeyK.CtrlAtSign) {
+          const ca: CheatAction = {
+            type: 'CHEAT',
+            unit: CheatUnit.Entry,
+            isReveal: true,
+          };
+          dispatch(ca);
+          e.preventDefault();
+          return;
+        }
+        if (key.k === KeyK.Hash) {
+          const ca: CheatAction = {
+            type: 'CHEAT',
+            unit: CheatUnit.Puzzle,
+          };
+          dispatch(ca);
+          e.preventDefault();
+          return;
+        }
+        if (key.k === KeyK.CtrlHash) {
+          const ca: CheatAction = {
+            type: 'CHEAT',
+            unit: CheatUnit.Puzzle,
+            isReveal: true,
+          };
+          dispatch(ca);
+          e.preventDefault();
+          return;
+        }
         const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);
         e.preventDefault();
@@ -542,6 +614,7 @@ export const Puzzle = ({
     },
     [
       dispatch,
+      writePlayToDBIfNeeded,
       loadingPlayState,
       state.currentTimeWindowStart,
       state.success,
@@ -813,6 +886,7 @@ export const Puzzle = ({
               <TopBarDropDownLink
                 icon={<RevealSquare />}
                 text={t`Reveal Square`}
+                shortcutHint={<CtrlExclamationKey />}
                 onClick={() => {
                   const ca: CheatAction = {
                     type: 'CHEAT',
@@ -825,6 +899,7 @@ export const Puzzle = ({
               <TopBarDropDownLink
                 icon={<RevealEntry />}
                 text={t`Reveal Word`}
+                shortcutHint={<CtrlAtSignKey />}
                 onClick={() => {
                   const ca: CheatAction = {
                     type: 'CHEAT',
@@ -837,6 +912,7 @@ export const Puzzle = ({
               <TopBarDropDownLink
                 icon={<RevealPuzzle />}
                 text={t`Reveal Puzzle`}
+                shortcutHint={<CtrlHashKey />}
                 onClick={() => {
                   const ca: CheatAction = {
                     type: 'CHEAT',
@@ -866,6 +942,7 @@ export const Puzzle = ({
                 <TopBarDropDownLink
                   icon={<CheckSquare />}
                   text={t`Check Square`}
+                  shortcutHint={<ExclamationKey />}
                   onClick={() => {
                     const ca: CheatAction = {
                       type: 'CHEAT',
@@ -877,6 +954,7 @@ export const Puzzle = ({
                 <TopBarDropDownLink
                   icon={<CheckEntry />}
                   text={t`Check Word`}
+                  shortcutHint={<AtSignKey />}
                   onClick={() => {
                     const ca: CheatAction = {
                       type: 'CHEAT',
@@ -888,6 +966,7 @@ export const Puzzle = ({
                 <TopBarDropDownLink
                   icon={<CheckPuzzle />}
                   text={t`Check Puzzle`}
+                  shortcutHint={<HashKey />}
                   onClick={() => {
                     const ca: CheatAction = {
                       type: 'CHEAT',

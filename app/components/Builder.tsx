@@ -63,6 +63,7 @@ import {
   PuzzleSizeIcon,
   EnterKey,
   ExclamationKey,
+  AtSignKey,
 } from './Icons';
 import { AuthProps } from './AuthContext';
 import { Histogram } from './Histogram';
@@ -1056,6 +1057,14 @@ const GridMode = ({
     }
   }, []);
 
+  const { autofillEnabled, setAutofillEnabled } = props;
+  const toggleAutofillEnabled = useCallback(() => {
+    if (autofillEnabled) {
+      showSnackbar('Autofill Disabled');
+    }
+    setAutofillEnabled(!autofillEnabled);
+  }, [autofillEnabled, setAutofillEnabled, showSnackbar]);
+
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
       const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
@@ -1066,12 +1075,13 @@ const GridMode = ({
       const mkey = fromKeyboardEvent(e);
       if (isSome(mkey)) {
         /* TODO this logic belongs in the reducer */
-        if (mkey.value.k === KeyK.Enter && !state.isEnteringRebus) {
+        const key = mkey.value;
+        if (key.k === KeyK.Enter && !state.isEnteringRebus) {
           reRunAutofill();
           e.preventDefault();
           return;
         }
-        if (mkey.value.k === KeyK.Exclamation) {
+        if (key.k === KeyK.Exclamation) {
           const entry = getMostConstrainedEntry();
           if (entry !== null) {
             const ca: ClickedEntryAction = {
@@ -1083,13 +1093,29 @@ const GridMode = ({
           e.preventDefault();
           return;
         }
+        if (key.k === KeyK.AtSign) {
+          if (autofillEnabled) {
+            showSnackbar('Autofill Disabled');
+          }
+          setAutofillEnabled(!autofillEnabled);
+          e.preventDefault();
+          return;
+        }
 
         const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);
         e.preventDefault();
       }
     },
-    [dispatch, reRunAutofill, state.isEnteringRebus, getMostConstrainedEntry]
+    [
+      state.isEnteringRebus,
+      dispatch,
+      reRunAutofill,
+      getMostConstrainedEntry,
+      autofillEnabled,
+      setAutofillEnabled,
+      showSnackbar
+    ]
   );
   useEventListener(
     'keydown',
@@ -1200,14 +1226,6 @@ const GridMode = ({
     return { left, right };
   }, [state.grid, state.active, dispatch]);
 
-  const { autofillEnabled, setAutofillEnabled } = props;
-  const toggleAutofillEnabled = useCallback(() => {
-    if (autofillEnabled) {
-      showSnackbar('Autofill Disabled');
-    }
-    setAutofillEnabled(!autofillEnabled);
-  }, [autofillEnabled, setAutofillEnabled, showSnackbar]);
-
   const stats = useMemo(() => {
     let totalLength = 0;
     const lengthHistogram: Array<number> = new Array(
@@ -1297,11 +1315,6 @@ const GridMode = ({
           {() => (
             <>
               <TopBarDropDownLink
-                icon={autofillReverseIcon}
-                text={autofillReverseText}
-                onClick={toggleAutofillEnabled}
-              />
-              <TopBarDropDownLink
                 icon={<FaSignInAlt />}
                 text="Jump to Most Constrained"
                 shortcutHint={<ExclamationKey />}
@@ -1315,6 +1328,12 @@ const GridMode = ({
                     dispatch(ca);
                   }
                 }}
+              />
+              <TopBarDropDownLink
+                icon={autofillReverseIcon}
+                text={autofillReverseText}
+                shortcutHint={<AtSignKey />}
+                onClick={toggleAutofillEnabled}
               />
               <TopBarDropDownLink
                 icon={<MdRefresh />}

@@ -1,6 +1,18 @@
-import { useContext, useState, useEffect, Dispatch, ReactNode } from 'react';
+import {
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  Dispatch,
+  ReactNode,
+} from 'react';
 import { Link } from './Link';
-import { Direction, PuzzleResultWithAugmentedComments } from '../lib/types';
+import {
+  Direction,
+  fromKeyboardEvent,
+  KeyK,
+  PuzzleResultWithAugmentedComments
+} from '../lib/types';
 import { PuzzleAction } from '../reducers/reducer';
 import { isMetaSolution, timeString } from '../lib/utils';
 import type firebase from 'firebase/app';
@@ -17,6 +29,8 @@ import { GoScreenFull } from 'react-icons/go';
 import { AuthContext } from './AuthContext';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { t, Trans } from '@lingui/macro';
+import useEventListener from '@use-it/event-listener';
+import { isSome } from 'fp-ts/lib/Option';
 
 const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {
@@ -89,6 +103,36 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
       document.documentElement.requestFullscreen();
     }
   };
+
+  const { dispatch, overlayType } = props;
+  const physicalKeyboardHandler = useCallback(
+    (e: KeyboardEvent) => {
+      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (tagName === 'textarea' || tagName === 'input') {
+        return;
+      }
+
+      const mkey = fromKeyboardEvent(e);
+      if (isSome(mkey)) {
+        const key = mkey.value;
+        if (
+          key.k === KeyK.Pause ||
+          key.k === KeyK.Enter ||
+          key.k === KeyK.Escape ||
+          key.k === KeyK.Space
+        ) {
+          const t = overlayType === OverlayType.Success
+            ? 'DISMISSSUCCESS'
+            : 'RESUMEACTION';
+          dispatch({ type: t });
+          e.preventDefault();
+          return;
+        }
+      }
+    },
+    [dispatch, overlayType]
+  );
+  useEventListener('keydown', physicalKeyboardHandler);
 
   let loginButton: ReactNode = t`Login (via Google) to save your puzzle progress/stats`;
   if (!authContext.loading) {

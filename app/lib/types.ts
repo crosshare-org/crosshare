@@ -279,6 +279,12 @@ export enum KeyK {
   Backtick,
   Dot,
   Exclamation,
+  AtSign,
+  Hash,
+  CtrlExclamation,
+  CtrlAtSign,
+  CtrlHash,
+  Pause,
   AllowedCharacter,
   // Keys specific to on-screen keyboard
   NumLayout,
@@ -296,10 +302,10 @@ export enum KeyK {
 export const ALLOWABLE_GRID_CHARS = /^[A-Za-z0-9Ññ&]$/;
 
 export function fromKeyString(string: string): Option<Key> {
-  return fromKeyboardEvent({ key: string, shiftKey: false });
+  return fromKeyboardEvent({ key: string });
 }
 
-export function fromKeyboardEvent(event: { key: string, shiftKey: boolean }): Option<Key> {
+export function fromKeyboardEvent(event: { key: string, shiftKey?: boolean, ctrlKey?: boolean }): Option<Key> {
   const basicKey: Option<Exclude<KeyK, KeyK.AllowedCharacter>> = (() => {
     switch (event.key) {
     case 'ArrowLeft': return some(KeyK.ArrowLeft);
@@ -316,7 +322,16 @@ export function fromKeyboardEvent(event: { key: string, shiftKey: boolean }): Op
     case 'Escape': return some(KeyK.Escape);
     case '`': return some(KeyK.Backtick);
     case '.': return some(KeyK.Dot);
-    case '!': return some(KeyK.Exclamation);
+    case '!': return !event.ctrlKey
+      ? some(KeyK.Exclamation)
+      : some(KeyK.CtrlExclamation);
+    case '@': return !event.ctrlKey
+      ? some(KeyK.AtSign)
+      : some(KeyK.CtrlAtSign);
+    case '#': return !event.ctrlKey
+      ? some(KeyK.Hash)
+      : some(KeyK.CtrlHash);
+    case 'Pause': return some(KeyK.Pause);
     // Keys specific to on-screen keyboard
     case '{num}': return some(KeyK.NumLayout);
     case '{abc}': return some(KeyK.AbcLayout);
