@@ -389,14 +389,14 @@ interface PrefillSelectProps {
 
 const labelForPrefill = (p: PrefillSquares) => {
   switch (p) {
-  case PrefillSquares.OddOdd:
-    return 'Odd/Odd';
-  case PrefillSquares.EvenEven:
-    return 'Even/Even';
-  case PrefillSquares.OddEven:
-    return 'Odd/Even';
-  case PrefillSquares.EvenOdd:
-    return 'Even/Odd';
+    case PrefillSquares.OddOdd:
+      return 'Odd/Odd';
+    case PrefillSquares.EvenEven:
+      return 'Even/Even';
+    case PrefillSquares.OddEven:
+      return 'Odd/Even';
+    case PrefillSquares.EvenOdd:
+      return 'Even/Odd';
   }
 };
 
@@ -1058,11 +1058,6 @@ const GridMode = ({
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
-      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
-      if (tagName === 'textarea' || tagName === 'input') {
-        return;
-      }
-
       const mkey = fromKeyboardEvent(e);
       if (isSome(mkey)) {
         /* TODO this logic belongs in the reducer */
@@ -1097,22 +1092,22 @@ const GridMode = ({
     gridRef.current || undefined
   );
 
-  const pasteHandler = useCallback((e: ClipboardEvent) => {
-    const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
-    if (tagName === 'textarea' || tagName === 'input') {
-      return;
-    }
-    const pa: PasteAction = {
-      type: 'PASTE',
-      content: e.clipboardData?.getData('Text') || ''
-    };
-    dispatch(pa);
-    e.preventDefault();
-  }, [dispatch]);
-  useEventListener(
-    'paste',
-    pasteHandler
+  const pasteHandler = useCallback(
+    (e: ClipboardEvent) => {
+      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (tagName === 'textarea' || tagName === 'input') {
+        return;
+      }
+      const pa: PasteAction = {
+        type: 'PASTE',
+        content: e.clipboardData?.getData('Text') || '',
+      };
+      dispatch(pa);
+      e.preventDefault();
+    },
+    [dispatch]
   );
+  useEventListener('paste', pasteHandler);
 
   const fillLists = useMemo(() => {
     let left = <></>;
@@ -1283,7 +1278,7 @@ const GridMode = ({
         autofillText = 'Autofill complete';
       } else {
         autofillIcon = <SpinnerFailed />;
-        autofillText = 'Couldn\'t autofill this grid';
+        autofillText = "Couldn't autofill this grid";
       }
     }
     return (

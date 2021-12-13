@@ -1,18 +1,47 @@
 import useEventListener from '@use-it/event-listener';
 import { useRef, useCallback, useReducer, useMemo } from 'react';
-import { FaSave, FaWindowClose, FaEllipsisH, FaVolumeUp, FaVolumeMute, FaKeyboard } from 'react-icons/fa';
+import {
+  FaSave,
+  FaWindowClose,
+  FaEllipsisH,
+  FaVolumeUp,
+  FaVolumeMute,
+  FaKeyboard,
+} from 'react-icons/fa';
 import { usePersistedBoolean } from '../lib/hooks';
-import { Direction, fromKeyboardEvent, fromKeyString, KeyK } from '../lib/types';
+import {
+  Direction,
+  fromKeyboardEvent,
+  fromKeyString,
+  KeyK,
+} from '../lib/types';
 import { fromCells } from '../lib/viewableGrid';
 import { Rebus, EscapeKey } from './Icons';
 import { Keyboard } from './Keyboard';
-import { TopBar, TopBarLink, TopBarDropDown, TopBarDropDownLink } from './TopBar';
-import { gridInterfaceReducer, KeypressAction, PasteAction } from '../reducers/reducer';
+import {
+  TopBar,
+  TopBarLink,
+  TopBarDropDown,
+  TopBarDropDownLink,
+} from './TopBar';
+import {
+  gridInterfaceReducer,
+  KeypressAction,
+  PasteAction,
+} from '../reducers/reducer';
 import { Square } from './Square';
 import { GridView } from './Grid';
 import { isSome } from 'fp-ts/lib/Option';
 
-export function AlternateSolutionEditor(props: { grid: string[], width: number, height: number, highlighted: Set<number>, highlight: 'circle' | 'shade', cancel: () => void, save: (alt: Record<number, string>) => Promise<void> }) {
+export function AlternateSolutionEditor(props: {
+  grid: string[];
+  width: number;
+  height: number;
+  highlighted: Set<number>;
+  highlight: 'circle' | 'shade';
+  cancel: () => void;
+  save: (alt: Record<number, string>) => Promise<void>;
+}) {
   const initialGrid = fromCells({
     mapper: (e) => e,
     width: props.width,
@@ -51,10 +80,6 @@ export function AlternateSolutionEditor(props: { grid: string[], width: number, 
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
-      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
-      if (tagName === 'textarea' || tagName === 'input') {
-        return;
-      }
       const mkey = fromKeyboardEvent(e);
       if (isSome(mkey)) {
         const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
@@ -70,22 +95,22 @@ export function AlternateSolutionEditor(props: { grid: string[], width: number, 
     gridRef.current || undefined
   );
 
-  const pasteHandler = useCallback((e: ClipboardEvent) => {
-    const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
-    if (tagName === 'textarea' || tagName === 'input') {
-      return;
-    }
-    const pa: PasteAction = {
-      type: 'PASTE',
-      content: e.clipboardData?.getData('Text') || ''
-    };
-    dispatch(pa);
-    e.preventDefault();
-  }, [dispatch]);
-  useEventListener(
-    'paste',
-    pasteHandler
+  const pasteHandler = useCallback(
+    (e: ClipboardEvent) => {
+      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (tagName === 'textarea' || tagName === 'input') {
+        return;
+      }
+      const pa: PasteAction = {
+        type: 'PASTE',
+        content: e.clipboardData?.getData('Text') || '',
+      };
+      dispatch(pa);
+      e.preventDefault();
+    },
+    [dispatch]
   );
+  useEventListener('paste', pasteHandler);
 
   const keyboardHandler = useCallback(
     (key: string) => {
@@ -109,7 +134,10 @@ export function AlternateSolutionEditor(props: { grid: string[], width: number, 
             let hadAny = false;
             for (const [idx, cellValue] of state.grid.cells.entries()) {
               const defaultCellValue = initialGrid.cells[idx];
-              if (cellValue.trim() && cellValue.trim() != defaultCellValue?.trim()) {
+              if (
+                cellValue.trim() &&
+                cellValue.trim() != defaultCellValue?.trim()
+              ) {
                 hadAny = true;
                 alt[idx] = cellValue;
               }
@@ -164,7 +192,16 @@ export function AlternateSolutionEditor(props: { grid: string[], width: number, 
         </TopBarDropDown>
       </>
     );
-  }, [focusGrid, initialGrid.cells, muted, props, setMuted, setToggleKeyboard, state.grid.cells, toggleKeyboard]);
+  }, [
+    focusGrid,
+    initialGrid.cells,
+    muted,
+    props,
+    setMuted,
+    setToggleKeyboard,
+    state.grid.cells,
+    toggleKeyboard,
+  ]);
 
   const parentRef = useRef<HTMLDivElement | null>(null);
 

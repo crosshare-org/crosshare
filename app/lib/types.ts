@@ -260,8 +260,8 @@ export const PuzzleInProgressStrictV = t.intersection([
 ]);
 export type PuzzleInProgressStrictT = t.TypeOf<typeof PuzzleInProgressStrictV>;
 
-export type Key
-  = { k: KeyK.AllowedCharacter, c: string }
+export type Key =
+  | { k: KeyK.AllowedCharacter; c: string }
   | { k: Exclude<KeyK, KeyK.AllowedCharacter> };
 
 export enum KeyK {
@@ -296,39 +296,79 @@ export enum KeyK {
 export const ALLOWABLE_GRID_CHARS = /^[A-Za-z0-9Ññ&]$/;
 
 export function fromKeyString(string: string): Option<Key> {
-  return fromKeyboardEvent({ key: string, shiftKey: false });
+  return fromKeyboardEvent({ key: string });
 }
 
-export function fromKeyboardEvent(event: { key: string, shiftKey: boolean }): Option<Key> {
+export function fromKeyboardEvent(event: {
+  key: string;
+  shiftKey?: boolean;
+  metaKey?: boolean;
+  altKey?: boolean;
+  ctrlKey?: boolean;
+  target?: EventTarget | null;
+}): Option<Key> {
+  if (event.target) {
+    const tagName = (event.target as HTMLElement)?.tagName?.toLowerCase();
+    if (tagName === 'textarea' || tagName === 'input') {
+      return none;
+    }
+  }
+
+  if (event.metaKey || event.altKey || event.ctrlKey) {
+    return none;
+  }
+
   const basicKey: Option<Exclude<KeyK, KeyK.AllowedCharacter>> = (() => {
     switch (event.key) {
-    case 'ArrowLeft': return some(KeyK.ArrowLeft);
-    case 'ArrowRight': return some(KeyK.ArrowRight);
-    case 'ArrowUp': return some(KeyK.ArrowUp);
-    case 'ArrowDown': return some(KeyK.ArrowDown);
-    case ' ': return some(KeyK.Space);
-    case 'Tab': return !event.shiftKey
-      ? some(KeyK.Tab)
-      : some(KeyK.ShiftTab);
-    case 'Enter': return some(KeyK.Enter);
-    case 'Backspace': return some(KeyK.Backspace);
-    case 'Delete': return some(KeyK.Delete);
-    case 'Escape': return some(KeyK.Escape);
-    case '`': return some(KeyK.Backtick);
-    case '.': return some(KeyK.Dot);
-    case '!': return some(KeyK.Exclamation);
-    // Keys specific to on-screen keyboard
-    case '{num}': return some(KeyK.NumLayout);
-    case '{abc}': return some(KeyK.AbcLayout);
-    case '{dir}': return some(KeyK.Direction);
-    case '{next}': return some(KeyK.Next);
-    case '{prev}': return some(KeyK.Prev);
-    case '{nextEntry}': return some(KeyK.NextEntry);
-    case '{prevEntry}': return some(KeyK.PrevEntry);
-    case '{bksp}': return some(KeyK.OskBackspace);
-    case '{rebus}': return some(KeyK.Rebus);
-    case '{block}': return some(KeyK.Block);
-    default: return none;
+      case 'ArrowLeft':
+        return some(KeyK.ArrowLeft);
+      case 'ArrowRight':
+        return some(KeyK.ArrowRight);
+      case 'ArrowUp':
+        return some(KeyK.ArrowUp);
+      case 'ArrowDown':
+        return some(KeyK.ArrowDown);
+      case ' ':
+        return some(KeyK.Space);
+      case 'Tab':
+        return !event.shiftKey ? some(KeyK.Tab) : some(KeyK.ShiftTab);
+      case 'Enter':
+        return some(KeyK.Enter);
+      case 'Backspace':
+        return some(KeyK.Backspace);
+      case 'Delete':
+        return some(KeyK.Delete);
+      case 'Escape':
+        return some(KeyK.Escape);
+      case '`':
+        return some(KeyK.Backtick);
+      case '.':
+        return some(KeyK.Dot);
+      case '!':
+        return some(KeyK.Exclamation);
+      // Keys specific to on-screen keyboard
+      case '{num}':
+        return some(KeyK.NumLayout);
+      case '{abc}':
+        return some(KeyK.AbcLayout);
+      case '{dir}':
+        return some(KeyK.Direction);
+      case '{next}':
+        return some(KeyK.Next);
+      case '{prev}':
+        return some(KeyK.Prev);
+      case '{nextEntry}':
+        return some(KeyK.NextEntry);
+      case '{prevEntry}':
+        return some(KeyK.PrevEntry);
+      case '{bksp}':
+        return some(KeyK.OskBackspace);
+      case '{rebus}':
+        return some(KeyK.Rebus);
+      case '{block}':
+        return some(KeyK.Block);
+      default:
+        return none;
     }
   })();
 

@@ -61,10 +61,6 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
-      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
-      if (tagName === 'textarea' || tagName === 'input') {
-        return;
-      }
       const mkey = fromKeyboardEvent(e);
       if (isSome(mkey)) {
         const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };

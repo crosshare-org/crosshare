@@ -140,7 +140,9 @@ const KeepTryingOverlay = ({
         <Emoji symbol="🤔" /> <Trans>Almost there!</Trans>
       </h4>
       <p>
-        <Trans>You&apos;ve completed the puzzle, but there are one or more mistakes.</Trans>
+        <Trans>
+          You&apos;ve completed the puzzle, but there are one or more mistakes.
+        </Trans>
       </p>
       <Button
         css={{ width: '100%' }}
@@ -203,18 +205,18 @@ export const Puzzle = ({
       ranMetaSubmitEffects: false,
       ...(play &&
         play.ct_rv && {
-        contestRevealed: true,
-        contestSubmitTime: play.ct_t?.toMillis(),
-      }),
+          contestRevealed: true,
+          contestSubmitTime: play.ct_t?.toMillis(),
+        }),
       ...(play &&
         play.ct_sub && {
-        ranMetaSubmitEffects: true,
-        contestPriorSubmissions: play.ct_pr_subs,
-        contestDisplayName: play.ct_n,
-        contestSubmission: play.ct_sub,
-        contestEmail: play.ct_em,
-        contestSubmitTime: play.ct_t?.toMillis(),
-      }),
+          ranMetaSubmitEffects: true,
+          contestPriorSubmissions: play.ct_pr_subs,
+          contestDisplayName: play.ct_n,
+          contestSubmission: play.ct_sub,
+          contestEmail: play.ct_em,
+          contestSubmitTime: play.ct_t?.toMillis(),
+        }),
       currentTimeWindowStart: 0,
       didCheat: play ? play.ch : false,
       clueView: false,
@@ -366,7 +368,7 @@ export const Puzzle = ({
         state.currentTimeWindowStart === 0
           ? state.bankedSeconds
           : state.bankedSeconds +
-          (new Date().getTime() - state.currentTimeWindowStart) / 1000;
+            (new Date().getTime() - state.currentTimeWindowStart) / 1000;
 
       const playForUser: PlayWithoutUserT = {
         c: puzzle.id,
@@ -528,11 +530,6 @@ export const Puzzle = ({
         }
       }
 
-      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
-      if (tagName === 'textarea' || tagName === 'input') {
-        return;
-      }
-
       const mkey = fromKeyboardEvent(e);
       if (isSome(mkey)) {
         const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
@@ -550,23 +547,23 @@ export const Puzzle = ({
   );
   useEventListener('keydown', physicalKeyboardHandler);
 
-  const pasteHandler = useCallback((e: ClipboardEvent) => {
-    const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
-    if (tagName === 'textarea' || tagName === 'input') {
-      return;
-    }
+  const pasteHandler = useCallback(
+    (e: ClipboardEvent) => {
+      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (tagName === 'textarea' || tagName === 'input') {
+        return;
+      }
 
-    const pa: PasteAction = {
-      type: 'PASTE',
-      content: e.clipboardData?.getData('Text') || ''
-    };
-    dispatch(pa);
-    e.preventDefault();
-  }, [dispatch]);
-  useEventListener(
-    'paste',
-    pasteHandler
+      const pa: PasteAction = {
+        type: 'PASTE',
+        content: e.clipboardData?.getData('Text') || '',
+      };
+      dispatch(pa);
+      e.preventDefault();
+    },
+    [dispatch]
   );
+  useEventListener('paste', pasteHandler);
 
   let [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
   if (entry === null && cross !== null) {
@@ -928,7 +925,7 @@ export const Puzzle = ({
                   onClick={() => {
                     const kpa: KeypressAction = {
                       type: 'KEYPRESS',
-                      key: { k: KeyK.Escape }
+                      key: { k: KeyK.Escape },
                     };
                     dispatch(kpa);
                   }}
@@ -1106,9 +1103,9 @@ export const Puzzle = ({
                     text={
                       puzzle.contestAnswers?.length
                         ? !isMetaSolution(
-                          state.contestSubmission,
-                          puzzle.contestAnswers
-                        ) && !state.contestRevealed
+                            state.contestSubmission,
+                            puzzle.contestAnswers
+                          ) && !state.contestRevealed
                           ? t`Contest Prompt / Submission`
                           : t`Comments / Leaderboard`
                         : t`Show Comments`
@@ -1151,28 +1148,28 @@ export const Puzzle = ({
           ''
         )}
         {state.currentTimeWindowStart === 0 &&
-          !state.success &&
-          !(state.filled && !state.dismissedKeepTrying) ? (
-            state.bankedSeconds === 0 ? (
-              <PuzzleOverlay
-                {...overlayBaseProps}
-                overlayType={OverlayType.BeginPause}
-                dismissMessage={t`Begin Puzzle`}
-                message={t`Ready to get started?`}
-                loadingPlayState={loadingPlayState || !state.loadedPlayState}
-              />
-            ) : (
-              <PuzzleOverlay
-                {...overlayBaseProps}
-                overlayType={OverlayType.BeginPause}
-                dismissMessage={t`Resume`}
-                message={t`Your puzzle is paused`}
-                loadingPlayState={loadingPlayState || !state.loadedPlayState}
-              />
-            )
+        !state.success &&
+        !(state.filled && !state.dismissedKeepTrying) ? (
+          state.bankedSeconds === 0 ? (
+            <PuzzleOverlay
+              {...overlayBaseProps}
+              overlayType={OverlayType.BeginPause}
+              dismissMessage={t`Begin Puzzle`}
+              message={t`Ready to get started?`}
+              loadingPlayState={loadingPlayState || !state.loadedPlayState}
+            />
           ) : (
-            ''
-          )}
+            <PuzzleOverlay
+              {...overlayBaseProps}
+              overlayType={OverlayType.BeginPause}
+              dismissMessage={t`Resume`}
+              message={t`Your puzzle is paused`}
+              loadingPlayState={loadingPlayState || !state.loadedPlayState}
+            />
+          )
+        ) : (
+          ''
+        )}
         <div
           css={{
             flex: '1 1 auto',
