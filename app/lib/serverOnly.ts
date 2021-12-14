@@ -35,6 +35,7 @@ import { isUserPatron } from './patron';
 import { addDays } from 'date-fns';
 import { isSome } from 'fp-ts/lib/Option';
 import { getMiniForDate } from './dailyMinis';
+import { slugify } from './utils';
 
 export async function getStorageUrl(
   storageKey: string
@@ -381,7 +382,7 @@ export async function queueEmails() {
   );
 }
 
-interface PageErrorProps {
+export interface PageErrorProps {
   error: string;
 }
 
@@ -444,17 +445,19 @@ export type PuzzlePageProps = PuzzlePageResultProps | PageErrorProps;
 export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   res,
   params,
-}): Promise<{ props: PuzzlePageProps }> => {
+  locale,
+}) => {
   const db = AdminApp.firestore();
   let puzzle: PuzzleResultWithAugmentedComments | null = null;
-  if (!params?.puzzleId || !Array.isArray(params.puzzleId)) {
-    res.statusCode = 404;
-    return { props: { error: 'bad puzzle params' } };
+  let puzzleId = params?.puzzleId;
+  let titleSlug = '';
+  if (Array.isArray(puzzleId)) {
+    titleSlug = puzzleId[1] || '';
+    puzzleId = puzzleId[0];
   }
-  const puzzleId = params.puzzleId[0];
   if (!puzzleId) {
     res.statusCode = 404;
-    return { props: { error: 'bad puzzle params' } };
+    return { props: { error: 'missing puzzleId' } };
   }
   let dbres;
   try {
@@ -466,6 +469,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     res.statusCode = 404;
     return { props: { error: 'puzzle doesnt exist' } };
   }
+
   const validationResult = DBPuzzleV.decode(dbres.data());
   if (isRight(validationResult)) {
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
@@ -480,6 +484,19 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   } else {
     console.error(PathReporter.report(validationResult).join(','));
     return { props: { error: 'invalid puzzle' } };
+  }
+
+  // If the title slug is missing or not correct we need to redirect
+  const correctSlug = slugify(puzzle.title);
+  if (titleSlug !== correctSlug) {
+    return {
+      redirect: {
+        destination: `/${
+          locale && locale !== 'en' ? locale + '/' : ''
+        }crosswords/${puzzle.id}/${correctSlug}`,
+        permanent: true,
+      },
+    };
   }
 
   let profilePicture: string | null = null;

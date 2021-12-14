@@ -8,18 +8,29 @@ import {
 } from '../lib/testingUtils';
 import waitForExpect from 'wait-for-expect';
 import { Puzzle } from '../components/Puzzle';
-import { PuzzleResultWithAugmentedComments } from '../lib/types';
+import {
+  hasOwnProperty,
+  PuzzleResultWithAugmentedComments,
+} from '../lib/types';
 import { PlayT } from '../lib/dbtypes';
 import * as plays from '../lib/plays';
 import PuzzlePage from '../pages/crosswords/[[...puzzleId]]';
 import * as firebaseWrapper from '../lib/firebaseWrapper';
+import type firebaseAdminType from 'firebase-admin';
 import {
   setApp,
   setUpForSignInAnonymously,
   AdminTimestamp,
+  setAdminApp,
 } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import type firebase from 'firebase/app';
+import { getMockedPuzzle } from '../lib/getMockedPuzzle';
+import {
+  getPuzzlePageProps,
+  PageErrorProps,
+  PuzzlePageProps,
+} from '../lib/serverOnly';
 
 jest.mock(
   'next/link',
@@ -647,4 +658,259 @@ test('nonuser finishing a puzzle should cause creation of anonymous user and wri
   await admin.delete();
   await baseApp.delete();
   await anonApp.delete();
+});
+
+test('puzzle redirects', async () => {
+  await firebaseTesting.clearFirestoreData({ projectId: 'test1' });
+  const admin = firebaseTesting.initializeAdminApp({ projectId: 'test1' });
+  const puzId = 'testing';
+  const puzTitle = 'Here is our 😁 title';
+  await admin
+    .firestore()
+    .collection('c')
+    .doc(puzId)
+    .set(getMockedPuzzle({ t: puzTitle }));
+  await admin
+    .firestore()
+    .collection('donations')
+    .doc('donations')
+    .set({ d: [] });
+
+  setAdminApp(admin as unknown as firebaseAdminType.app.App);
+
+  function isErrorProps(props: PuzzlePageProps): props is PageErrorProps {
+    return (props as PageErrorProps).error !== undefined;
+  }
+
+  // Test correct request
+  let res = await getPuzzlePageProps({
+    params: { puzzleId: [puzId, 'here-is-our-title'] },
+    res: { setHeader: jest.fn() },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
+  if (!hasOwnProperty(res, 'props')) {
+    throw new Error('bad');
+  }
+  let props = await Promise.resolve(res.props);
+  if (isErrorProps(props)) {
+    throw new Error('bad 2');
+  }
+  expect(props.puzzle.title).toMatchInlineSnapshot(`"Here is our 😁 title"`);
+
+  // Test correct i18n request
+  res = await getPuzzlePageProps({
+    locale: 'es',
+    params: { puzzleId: [puzId, 'here-is-our-title'] },
+    res: { setHeader: jest.fn() },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
+  if (!hasOwnProperty(res, 'props')) {
+    throw new Error('bad');
+  }
+  props = await Promise.resolve(res.props);
+  if (isErrorProps(props)) {
+    throw new Error('bad 2');
+  }
+  expect(props.puzzle.title).toMatchInlineSnapshot(`"Here is our 😁 title"`);
+
+  // Test redirect from old style url
+  res = await getPuzzlePageProps({
+    params: { puzzleId: puzId },
+    res: { setHeader: jest.fn() },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
+  if (!hasOwnProperty(res, 'redirect')) {
+    throw new Error('bad');
+  }
+  expect(res.redirect).toMatchInlineSnapshot(`
+Object {
+  "destination": "/crosswords/testing/here-is-our-title",
+  "permanent": true,
+}
+`);
+
+  // And i18n
+  res = await getPuzzlePageProps({
+    locale: 'es',
+    params: { puzzleId: puzId },
+    res: { setHeader: jest.fn() },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
+  if (!hasOwnProperty(res, 'redirect')) {
+    throw new Error('bad');
+  }
+  expect(res.redirect).toMatchInlineSnapshot(`
+Object {
+  "destination": "/es/crosswords/testing/here-is-our-title",
+  "permanent": true,
+}
+`);
+
+  // Test redirect from missing title
+  res = await getPuzzlePageProps({
+    params: { puzzleId: [puzId] },
+    res: { setHeader: jest.fn() },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
+  if (!hasOwnProperty(res, 'redirect')) {
+    throw new Error('bad');
+  }
+  expect(res.redirect).toMatchInlineSnapshot(`
+Object {
+  "destination": "/crosswords/testing/here-is-our-title",
+  "permanent": true,
+}
+`);
+
+  // And i18n
+  res = await getPuzzlePageProps({
+    locale: 'es',
+    params: { puzzleId: [puzId] },
+    res: { setHeader: jest.fn() },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
+  if (!hasOwnProperty(res, 'redirect')) {
+    throw new Error('bad');
+  }
+  expect(res.redirect).toMatchInlineSnapshot(`
+Object {
+  "destination": "/es/crosswords/testing/here-is-our-title",
+  "permanent": true,
+}
+`);
+
+  // Test redirect from bad title
+  res = await getPuzzlePageProps({
+    params: { puzzleId: [puzId, 'foo-bar'] },
+    res: { setHeader: jest.fn() },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
+  if (!hasOwnProperty(res, 'redirect')) {
+    throw new Error('bad');
+  }
+  expect(res.redirect).toMatchInlineSnapshot(`
+Object {
+  "destination": "/crosswords/testing/here-is-our-title",
+  "permanent": true,
+}
+`);
+
+  // And i18n
+  res = await getPuzzlePageProps({
+    locale: 'es',
+    params: { puzzleId: [puzId, 'foo-bar'] },
+    res: { setHeader: jest.fn() },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
+  if (!hasOwnProperty(res, 'redirect')) {
+    throw new Error('bad');
+  }
+  expect(res.redirect).toMatchInlineSnapshot(`
+Object {
+  "destination": "/es/crosswords/testing/here-is-our-title",
+  "permanent": true,
+}
+`);
+});
+
+test('puzzle redirects with empty slug', async () => {
+  await firebaseTesting.clearFirestoreData({ projectId: 'test1' });
+  const admin = firebaseTesting.initializeAdminApp({ projectId: 'test1' });
+  const puzId = 'testing';
+  const puzTitle = '😁';
+  await admin
+    .firestore()
+    .collection('c')
+    .doc(puzId)
+    .set(getMockedPuzzle({ t: puzTitle }));
+  await admin
+    .firestore()
+    .collection('donations')
+    .doc('donations')
+    .set({ d: [] });
+
+  setAdminApp(admin as unknown as firebaseAdminType.app.App);
+
+  function isErrorProps(props: PuzzlePageProps): props is PageErrorProps {
+    return (props as PageErrorProps).error !== undefined;
+  }
+
+  // Test correct request
+  let res = await getPuzzlePageProps({
+    params: { puzzleId: [puzId, ''] },
+    res: { setHeader: jest.fn() },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
+  if (!hasOwnProperty(res, 'props')) {
+    throw new Error('bad');
+  }
+  let props = await Promise.resolve(res.props);
+  if (isErrorProps(props)) {
+    throw new Error('bad 2');
+  }
+  expect(props.puzzle.title).toMatchInlineSnapshot(`"😁"`);
+
+  // Test correct i18n request
+  res = await getPuzzlePageProps({
+    locale: 'es',
+    params: { puzzleId: [puzId] },
+    res: { setHeader: jest.fn() },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
+  if (!hasOwnProperty(res, 'props')) {
+    throw new Error('bad');
+  }
+  props = await Promise.resolve(res.props);
+  if (isErrorProps(props)) {
+    throw new Error('bad 2');
+  }
+  expect(props.puzzle.title).toMatchInlineSnapshot(`"😁"`);
+
+  // Test old style url - should still work for this title
+  res = await getPuzzlePageProps({
+    params: { puzzleId: puzId },
+    res: { setHeader: jest.fn() },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
+  if (!hasOwnProperty(res, 'props')) {
+    throw new Error('bad');
+  }
+  props = await Promise.resolve(res.props);
+  if (isErrorProps(props)) {
+    throw new Error('bad 2');
+  }
+  expect(props.puzzle.title).toMatchInlineSnapshot(`"😁"`);
+
+  // Test redirect from bad title
+  res = await getPuzzlePageProps({
+    params: { puzzleId: [puzId, 'foo-bar'] },
+    res: { setHeader: jest.fn() },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
+  if (!hasOwnProperty(res, 'redirect')) {
+    throw new Error('bad');
+  }
+  expect(res.redirect).toMatchInlineSnapshot(`
+Object {
+  "destination": "/crosswords/testing/",
+  "permanent": true,
+}
+`);
+
+  // And i18n
+  res = await getPuzzlePageProps({
+    locale: 'es',
+    params: { puzzleId: [puzId, 'foo-bar'] },
+    res: { setHeader: jest.fn() },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
+  if (!hasOwnProperty(res, 'redirect')) {
+    throw new Error('bad');
+  }
+  expect(res.redirect).toMatchInlineSnapshot(`
+Object {
+  "destination": "/es/crosswords/testing/",
+  "permanent": true,
+}
+`);
 });

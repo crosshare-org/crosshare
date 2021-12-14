@@ -83,7 +83,7 @@ import {
 } from './TopBar';
 import { SquareAndCols, TwoCol } from './Page';
 import { usePersistedBoolean, useMatchMedia } from '../lib/hooks';
-import { isMetaSolution, timeString } from '../lib/utils';
+import { isMetaSolution, slugify, timeString } from '../lib/utils';
 import { App, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
 import type firebase from 'firebase/app';
 import { Emoji } from './Emoji';
@@ -1040,7 +1040,7 @@ export const Puzzle = ({
         <title>{puzzle.title} | Crosshare crossword puzzle</title>
         <I18nTags
           locale={locale}
-          canonicalPath={`/crosswords/${puzzle.id}/${puzzle.title}`}
+          canonicalPath={`/crosswords/${puzzle.id}/${slugify(puzzle.title)}`}
         />
         <meta key="og:title" property="og:title" content={puzzle.title} />
         <meta
