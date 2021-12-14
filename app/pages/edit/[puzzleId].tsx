@@ -681,7 +681,7 @@ const PuzzleEditor = ({
           text="Add an alternate solution"
         />
         <h3 css={{ marginTop: '1em' }}>Delete</h3>
-        {puzzle.category ? (
+        {puzzle.dailyMiniDate ? (
           <p>
             This puzzle has been selected as a daily mini - please contact us
             via <ContactLinks /> if you need to delete it.

@@ -9,32 +9,31 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { none, some, Option, isSome } from 'fp-ts/Option';
 import { AnyFirestore } from './dbUtils';
 
-let dailyMiniIdsByDate: Map<string, string> = new Map();
-let queryTime: number = Date.now();
-const TTL = 1000 * 60 * 60 * 12; // 12 hours
+const dailyMiniIdsByDate: Map<string, string | null> = new Map();
 
 export async function getMiniIdForDate(
   db: AnyFirestore,
   d: Date
 ): Promise<Option<string>> {
-  const now = Date.now();
-
-  // Just reset the cache every 12 hrs, kind of a hack but *shrug*
-  if (now - queryTime > TTL) {
-    dailyMiniIdsByDate = new Map();
-    queryTime = now;
+  const key = 'dmid-' + prettifyDateString(getDateString(d));
+  const fromStorage = sessionStorage.getItem(key);
+  if (fromStorage) {
+    return some(fromStorage);
   }
-
-  const key = prettifyDateString(getDateString(d));
   const existing = dailyMiniIdsByDate.get(key);
   if (existing) {
     return some(existing);
   }
+  if (existing === null) {
+    return none;
+  }
   const puz = await getMiniForDate(db, d);
   if (!isSome(puz)) {
+    dailyMiniIdsByDate.set(key, null);
     return none;
   }
   dailyMiniIdsByDate.set(key, puz.value.id);
+  sessionStorage.setItem(key, puz.value.id);
   return some(puz.value.id);
 }
 

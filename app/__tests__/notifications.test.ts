@@ -299,7 +299,7 @@ test('when private until is marked as featured hold notification', async () => {
 test('should notify author when marked as dailymini', async () => {
   const notifications = await notificationsForPuzzleChange(
     basePuzzle,
-    { ...basePuzzle, c: 'dailymini', dmd: '10/29/2020' },
+    { ...basePuzzle, dmd: '10/29/2020' },
     'puzzle-id-here'
   );
   expect(notifications.length).toEqual(1);
@@ -455,7 +455,7 @@ describe('email queueing', () => {
   test('email for puzzle marked as daily mini', async () => {
     const notifications = await notificationsForPuzzleChange(
       basePuzzle,
-      { ...basePuzzle, c: 'dailymini', dmd: '10/20/2020' },
+      { ...basePuzzle, dmd: '10/20/2020' },
       'blast'
     );
     expect(notifications.length).toEqual(1);

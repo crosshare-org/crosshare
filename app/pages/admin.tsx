@@ -13,9 +13,6 @@ import {
   DailyStatsV,
   DBPuzzleV,
   getDateString,
-  CategoryIndexT,
-  CategoryIndexV,
-  prettifyDateString,
   CommentForModerationWithIdT,
   CommentForModerationV,
   DonationsListT,
@@ -56,7 +53,6 @@ export default requiresAdmin(() => {
   );
   const [commentsForModeration, setCommentsForModeration] =
     useState<Array<CommentForModerationWithIdT> | null>(null);
-  const [minis, setMinis] = useState<CategoryIndexT | null>(null);
   const [stats, setStats] = useState<DailyStatsT | null>(null);
   const [error, setError] = useState(false);
   const [mailErrors, setMailErrors] = useState(0);
@@ -86,12 +82,6 @@ export default requiresAdmin(() => {
         validator: DailyStatsV,
         ttl: 1000 * 60 * 30,
       }),
-      getFromSessionOrDB({
-        collection: 'categories',
-        docId: 'dailymini',
-        validator: CategoryIndexV,
-        ttl: 24 * 60 * 60 * 1000,
-      }),
       mapEachResult(
         db
           .collection('c')
@@ -117,13 +107,12 @@ export default requiresAdmin(() => {
         }
       ),
     ])
-      .then(([mailErrors, stats, minis, unmoderated, cfm, cps]) => {
+      .then(([mailErrors, stats, unmoderated, cfm, cps]) => {
         unmoderated.sort(
           (a, b) => (a.isPrivateUntil || 0) - (b.isPrivateUntil || 0)
         );
         setMailErrors(mailErrors?.size || 0);
         setStats(stats);
-        setMinis(minis);
         setUnmoderated(unmoderated);
         setCommentsForModeration(cfm);
         setPagesForModeration(cps);
@@ -161,14 +150,6 @@ export default requiresAdmin(() => {
   }
 
   function titleForId(stats: DailyStatsT, crosswordId: string): string {
-    if (minis) {
-      const dateString = Object.keys(minis).find(
-        (key) => minis[key] === crosswordId
-      );
-      if (dateString) {
-        return 'Daily mini for ' + prettifyDateString(dateString);
-      }
-    }
     const forPuzzle = stats.i?.[crosswordId];
     if (forPuzzle) {
       return forPuzzle[0] + ' by ' + forPuzzle[1];

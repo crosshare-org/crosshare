@@ -113,7 +113,6 @@ export interface Comment {
 
 export interface PuzzleT {
   authorId: string;
-  category: string | null;
   authorName: string;
   guestConstructor: string | null;
   moderated: boolean;
@@ -138,6 +137,7 @@ export interface PuzzleT {
   contestRevealDelay: number | null;
   rating: GlickoScoreT | null;
   alternateSolutions: Array<Array<[number, string]>>;
+  dailyMiniDate?: string;
 }
 
 export interface PuzzleResult extends PuzzleT {
@@ -183,7 +183,6 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
   }
   return {
     authorId: dbPuzzle.a,
-    category: dbPuzzle.c,
     authorName: dbPuzzle.n,
     guestConstructor: dbPuzzle.gc || null,
     moderated: dbPuzzle.m,
@@ -216,6 +215,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
       dbPuzzle.alts?.map((alt) =>
         Object.entries(alt).map(([n, s]) => [parseInt(n), s])
       ) || [],
+    ...(dbPuzzle.dmd && { dailyMiniDate: dbPuzzle.dmd }),
   };
 }
 

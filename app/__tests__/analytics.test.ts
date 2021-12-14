@@ -74,12 +74,12 @@ beforeEach(async () => {
   // Since play2 is a LegacyPlayT, getPlays() will look up the puzzle to get a title
   const puzzle: DBPuzzleT = {
     ct_ans: ['just A GUESS'],
-    c: 'dailymini',
+    c: null,
     m: true,
     t: 'Raises, as young',
     dn: [1, 2, 3, 4, 5],
     ac: [
-      ' Cobbler\'s forms',
+      " Cobbler's forms",
       'Absolutely perfect',
       'Spike Lee\'s "She\'s ___ Have It"',
       'English class assignment',
@@ -126,7 +126,7 @@ beforeEach(async () => {
     w: 5,
     cs: [
       {
-        c: 'A couple of two-worders today which I don\'t love, but I hope you all got it anyway!',
+        c: "A couple of two-worders today which I don't love, but I hope you all got it anyway!",
         i: 'LwgoVx0BAskM4wVJyoLj',
         t: 36.009,
         p: AdminTimestamp.now(),
@@ -136,7 +136,7 @@ beforeEach(async () => {
       },
     ],
     n: 'Mike D',
-    pv: true
+    pv: true,
   };
   await adminApp.firestore().collection('c').doc('mike').set(puzzle);
 

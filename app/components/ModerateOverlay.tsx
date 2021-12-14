@@ -2,7 +2,7 @@ import { useState, Dispatch, memo } from 'react';
 import { getDateString, prettifyDateString } from '../lib/dbtypes';
 import { ServerPuzzleResult } from '../lib/types';
 import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
-import { App, FieldValue } from '../lib/firebaseWrapper';
+import { App } from '../lib/firebaseWrapper';
 import { PuzzleAction } from '../reducers/reducer';
 import { Overlay } from './Overlay';
 
@@ -20,21 +20,16 @@ export const ModeratingOverlay = memo(
 
     function schedule() {
       if (!date) {
-        throw new Error('shouldn\'t be able to schedule w/o date');
+        throw new Error("shouldn't be able to schedule w/o date");
       }
       const ds = getDateString(date);
-      const update: { [k: string]: string | typeof FieldValue } = {
-        [ds]: puzzle.id,
-      };
       Promise.all([
-        db.collection('categories').doc('dailymini').update(update),
         db
           .collection('c')
           .doc(puzzle.id)
-          .update({ m: true, c: 'dailymini', dmd: prettifyDateString(ds) }),
+          .update({ m: true, dmd: prettifyDateString(ds) }),
       ]).then(() => {
         console.log('Scheduled mini');
-        sessionStorage.removeItem('categories/dailymini');
         setSuccess(true);
       });
     }
@@ -67,13 +62,13 @@ export const ModeratingOverlay = memo(
         )}
         {puzzle.isPrivateUntil &&
         puzzle.isPrivateUntil > new Date().getTime() ? (
-            <h4 css={{ color: 'var(--error)' }}>
+          <h4 css={{ color: 'var(--error)' }}>
             This puzzle is private until{' '}
-              {new Date(puzzle.isPrivateUntil).toISOString()}
-            </h4>
-          ) : (
-            ''
-          )}
+            {new Date(puzzle.isPrivateUntil).toISOString()}
+          </h4>
+        ) : (
+          ''
+        )}
         <div css={{ marginTop: '1em' }}>
           Pick a date to appear as daily mini:
         </div>

@@ -58,8 +58,8 @@ async function deletePuzzle() {
   }
   const dbpuz = validationResult.right;
 
-  if (dbpuz.c) {
-    console.error(`Can't delete for category ${dbpuz.c}`);
+  if (dbpuz.dmd) {
+    console.error(`Can't delete daily mini`);
     return;
   }
 

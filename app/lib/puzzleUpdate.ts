@@ -50,8 +50,8 @@ async function deletePuzzle(puzzleId: string, dbpuz: DBPuzzleT) {
   console.log(`deleting ${puzzleId}`);
   const db = AdminApp.firestore();
 
-  if (dbpuz.c) {
-    console.error(`Can't delete for category ${dbpuz.c}`);
+  if (dbpuz.dmd) {
+    console.error(`Can't delete daily mini`);
     return;
   }
 

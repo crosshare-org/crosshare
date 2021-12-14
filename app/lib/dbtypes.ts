@@ -79,7 +79,7 @@ const DBPuzzleMandatoryV = t.type({
   a: t.string,
   /** author's display name */
   n: t.string,
-  /** category */
+  /** category - obsolete! */
   c: t.union([t.string, t.null]),
   /** is this puzzle moderated? */
   m: t.boolean,
@@ -151,12 +151,10 @@ export const GlickoScoreV = t.type({
 });
 export type GlickoScoreT = t.TypeOf<typeof GlickoScoreV>;
 
-
 export const FollowersV = t.partial({
   /** follower user ids */
   f: t.array(t.string),
 });
-
 
 const DBPuzzleOptionalV = t.partial({
   /** array of alternate solutions */
@@ -200,29 +198,29 @@ export const DBPuzzleV = t.intersection([
   t.union([
     t.intersection([
       t.type({
-      /** isPrivate */
+        /** isPrivate */
         pv: t.union([t.literal(true), timestamp]),
       }),
       t.partial({
         pvu: t.undefined,
-      })
+      }),
     ]),
     t.intersection([
       t.type({
-      /** isPrivateUntil */
+        /** isPrivateUntil */
         pvu: timestamp,
       }),
       t.partial({
-        pv: t.union([t.undefined, t.literal(false) ]),
-      })
-    ])
-  ])
+        pv: t.union([t.undefined, t.literal(false)]),
+      }),
+    ]),
+  ]),
 ]);
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
 
 export const AdminSettingsV = t.type({
   automoderate: t.boolean,
-  noAuto: t.array(t.string)
+  noAuto: t.array(t.string),
 });
 
 const PlayBaseV = t.intersection([
@@ -344,7 +342,9 @@ export function getDateString(pd: Date): string {
   return pd.getUTCFullYear() + '-' + pd.getUTCMonth() + '-' + pd.getUTCDate();
 }
 
-export function parseDateString(dateString: string): [year: number, month: number, day: number] {
+export function parseDateString(
+  dateString: string
+): [year: number, month: number, day: number] {
   const groups = dateString.match(/^(\d+)-(\d+)-(\d+)$/);
   if (!groups) {
     throw new Error('Bad date string: ' + dateString);
@@ -361,7 +361,7 @@ export function parseDateString(dateString: string): [year: number, month: numbe
 
 export function prettifyDateString(dateString: string): string {
   const groups = parseDateString(dateString);
-  return (groups[1] + 1) + '/' + groups[2] + '/' + groups[0];
+  return groups[1] + 1 + '/' + groups[2] + '/' + groups[0];
 }
 
 const ConstructorStatsForPuzzleV = t.intersection([
@@ -451,10 +451,6 @@ export const CronStatusV = t.type({
   ranAt: timestamp,
 });
 export type CronStatusT = t.TypeOf<typeof CronStatusV>;
-
-/** date string -> puzzle id */
-export const CategoryIndexV = t.record(t.string, t.string);
-export type CategoryIndexT = t.TypeOf<typeof CategoryIndexV>;
 
 export const DonationsListV = t.type({
   d: t.array(

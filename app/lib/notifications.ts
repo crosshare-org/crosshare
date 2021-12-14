@@ -262,7 +262,7 @@ export async function notificationsForPuzzleChange(
 
   if (after.f && !before.f) {
     notifications.push(featuredNotification(withID, null));
-  } else if (after.c === 'dailymini' && !before.c && after.dmd) {
+  } else if (after.dmd && !before.dmd) {
     notifications.push(
       featuredNotification(withID, `the daily mini for ${after.dmd}`)
     );
