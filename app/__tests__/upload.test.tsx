@@ -317,7 +317,9 @@ test('upload a puzzle with duplicate entries', async () => {
   setApp(serverApp as firebase.app.App);
   const props1 = await getProps(
     await getServerSideProps({
-      params: { puzzleId: [puzzles.docs[0].id, 'qvxdupes'] },
+      params: {
+        puzzleId: [puzzles.docs[0].id, 'chain-of-fools-monday-mini-11'],
+      },
       res: { setHeader: jest.fn() },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
