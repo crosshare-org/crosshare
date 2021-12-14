@@ -229,6 +229,18 @@ export const BioEditor = (props: BioEditorProps) => {
       });
   }
 
+  function deleteBio() {
+    console.log('Removing bio');
+    const db = App.firestore();
+    db.collection('cp')
+      .doc(props.constructorPage.id)
+      .update({ b: '', m: true, t: ServerTimestamp })
+      .then(() => {
+        console.log('Updated');
+        setIsOpen(false);
+      });
+  }
+
   function submitPaypalInfo(event: FormEvent) {
     event.preventDefault();
     if (!paypalText.trim() || !paypalEmail || !paypalEmail.includes('@')) {
@@ -255,14 +267,11 @@ export const BioEditor = (props: BioEditorProps) => {
   function submitEdit(event: FormEvent) {
     event.preventDefault();
     const textToSubmit = bioText.trim();
-    if (!textToSubmit) {
-      return;
-    }
     console.log('Submitting bio');
     const db = App.firestore();
     db.collection('cp')
       .doc(props.constructorPage.id)
-      .update({ b: bioText, m: true, t: ServerTimestamp })
+      .update({ b: textToSubmit, m: true, t: ServerTimestamp })
       .then(() => {
         console.log('Updated');
         setIsOpen(false);
@@ -334,12 +343,7 @@ export const BioEditor = (props: BioEditorProps) => {
             >
               {bioText.length}/{BIO_LENGTH_LIMIT}
             </div>
-            <Button
-              type="submit"
-              css={{ marginRight: '0.5em' }}
-              disabled={bioText.trim().length === 0}
-              text="Save"
-            />
+            <Button type="submit" css={{ marginRight: '0.5em' }} text="Save" />
             <Button
               boring={true}
               css={{ marginRight: '0.5em' }}
@@ -357,7 +361,14 @@ export const BioEditor = (props: BioEditorProps) => {
             yourself to solvers!
           </p>
           {props.constructorPage.b ? (
-            <Button onClick={() => setIsOpen(true)} text="Edit bio" />
+            <>
+              <Button
+                css={{ marginRight: '1.5em' }}
+                onClick={() => setIsOpen(true)}
+                text="Edit bio"
+              />
+              <Button boring={true} onClick={deleteBio} text="Delete bio" />
+            </>
           ) : (
             <Button onClick={() => setIsOpen(true)} text="Add bio" />
           )}
