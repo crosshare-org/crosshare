@@ -1,12 +1,8 @@
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
-
-import { getDailyMinis } from '../lib/dailyMinis';
+import { getMiniForDate } from '../lib/dailyMinis';
 import { Link } from '../components/Link';
 import { puzzleFromDB } from '../lib/types';
-import { DBPuzzleV, getDateString } from '../lib/dbtypes';
 import { AdminApp } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import {
@@ -30,6 +26,7 @@ import { I18nTags } from '../components/I18nTags';
 import { useRouter } from 'next/router';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles';
 import { isUserPatron } from '../lib/patron';
+import { isSome } from 'fp-ts/lib/Option';
 
 type HomepagePuz = LinkablePuzzle & {
   constructorPage: ConstructorPageT | null;
@@ -37,21 +34,14 @@ type HomepagePuz = LinkablePuzzle & {
 };
 
 interface HomePageProps {
-  dailymini: HomepagePuz;
+  dailymini: HomepagePuz | null;
   featured: Array<HomepagePuz>;
   articles: Array<ArticleT>;
 }
 
 const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
   const db = AdminApp.firestore();
-  const minis = await getDailyMinis();
-  const today = getDateString(new Date());
-  const todaysMini = Object.entries(minis)
-    .filter(([date]) => date <= today)
-    .sort(([a], [b]) => b.localeCompare(a))?.[0]?.[1];
-  if (!todaysMini) {
-    throw new Error('no minis scheduled!');
-  }
+  const todaysMini = await getMiniForDate(db, new Date());
 
   const unfilteredArticles = await db
     .collection('a')
@@ -79,31 +69,21 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
     }))
   );
 
-  return db
-    .collection('c')
-    .doc(todaysMini)
-    .get()
-    .then(async (dmResult) => {
-      const data = dmResult.data();
-      const validationResult = DBPuzzleV.decode(data);
-      if (isRight(validationResult)) {
-        res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-        const dm: HomepagePuz = {
-          ...toLinkablePuzzle({
-            ...puzzleFromDB(validationResult.right),
-            id: dmResult.id,
-          }),
-          constructorPage: await userIdToPage(validationResult.right.a),
-          constructorIsPatron: await isUserPatron(validationResult.right.a),
-        };
-        return {
-          props: { dailymini: dm, featured, articles },
-        };
-      } else {
-        console.error(PathReporter.report(validationResult).join(','));
-        throw new Error('Malformed daily mini');
-      }
-    });
+  if (isSome(todaysMini)) {
+    res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
+    const dm: HomepagePuz = {
+      ...toLinkablePuzzle({
+        ...puzzleFromDB(todaysMini.value),
+        id: todaysMini.value.id,
+      }),
+      constructorPage: await userIdToPage(todaysMini.value.a),
+      constructorIsPatron: await isUserPatron(todaysMini.value.a),
+    };
+    return {
+      props: { dailymini: dm, featured, articles },
+    };
+  }
+  return { props: { dailymini: null, featured, articles } };
 };
 
 export const getServerSideProps = withTranslation(gssp);
@@ -162,28 +142,32 @@ export default function HomePage({
             },
           }}
         >
-          <div css={{ flex: '50%' }}>
-            <h2>
-              <Trans>Daily Mini</Trans>
-            </h2>
-            <PuzzleResultLink
-              fullWidth
-              puzzle={dailymini}
-              showAuthor={true}
-              constructorPage={dailymini.constructorPage}
-              constructorIsPatron={dailymini.constructorIsPatron}
-              title={t`Today's daily mini crossword`}
-            />
-            <p>
-              <Link
-                href={`/dailyminis/${today.getUTCFullYear()}/${
-                  today.getUTCMonth() + 1
-                }`}
-              >
-                <Trans>Previous daily minis</Trans> &rarr;
-              </Link>
-            </p>
-          </div>
+          {dailymini ? (
+            <div css={{ flex: '50%' }}>
+              <h2>
+                <Trans>Daily Mini</Trans>
+              </h2>
+              <PuzzleResultLink
+                fullWidth
+                puzzle={dailymini}
+                showAuthor={true}
+                constructorPage={dailymini.constructorPage}
+                constructorIsPatron={dailymini.constructorIsPatron}
+                title={t`Today's daily mini crossword`}
+              />
+              <p>
+                <Link
+                  href={`/dailyminis/${today.getUTCFullYear()}/${
+                    today.getUTCMonth() + 1
+                  }`}
+                >
+                  <Trans>Previous daily minis</Trans> &rarr;
+                </Link>
+              </p>
+            </div>
+          ) : (
+            ''
+          )}
           <div css={{ flex: '50%' }}>
             <CreateShareSection halfWidth={true} />
           </div>

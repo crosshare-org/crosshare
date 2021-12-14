@@ -1,21 +1,11 @@
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { Link } from '../../components/Link';
 import { ErrorPage } from '../../components/ErrorPage';
 import { App } from '../../lib/firebaseWrapper';
-import {
-  CategoryIndexV,
-  CategoryIndexT,
-  addZeros,
-  getDateString,
-  parseDateString,
-} from '../../lib/dbtypes';
 import { puzzleFromDB } from '../../lib/types';
 import { ConstructorPageT } from '../../lib/constructorPage';
-import { getPuzzle } from '../../lib/puzzleCache';
 import { Markdown } from '../../components/Markdown';
 import { DefaultTopBar } from '../../components/TopBar';
 import {
@@ -29,9 +19,13 @@ import { Trans, t } from '@lingui/macro';
 import { withTranslation } from '../../lib/translation';
 import { I18nTags } from '../../components/I18nTags';
 import { isUserPatron } from '../../lib/patron';
+import { AnyFirestore } from '../../lib/dbUtils';
+import { getMiniForDate } from '../../lib/dailyMinis';
+import { isSome } from 'fp-ts/lib/Option';
+import { notEmpty } from '../../lib/utils';
 
 export interface DailyMiniProps {
-  puzzles: Array<[string, LinkablePuzzle, ConstructorPageT | null, boolean]>;
+  puzzles: Array<[number, LinkablePuzzle, ConstructorPageT | null, boolean]>;
   year: number;
   month: number;
   olderLink?: string;
@@ -67,39 +61,40 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
 
 export const getServerSideProps = withTranslation(gssp);
 
-export async function puzzlesListForCategoryIndex(
-  idx: CategoryIndexT,
-  page: [number, number]
-): Promise<Array<[string, LinkablePuzzle, ConstructorPageT | null, boolean]>> {
-  const today = new Date();
-  const prefix: string = page[0] + '-' + page[1] + '-';
-  const ds = addZeros(getDateString(today));
+async function puzzlesListForMonth(
+  db: AnyFirestore,
+  year: number,
+  month: number,
+  maxDay: number
+): Promise<Array<[number, LinkablePuzzle, ConstructorPageT | null, boolean]>> {
   return Promise.all(
-    Object.entries(idx)
-      .filter(([k, _v]) => k.startsWith(prefix))
-      .map(([k, v]): [string, string] => [addZeros(k), v])
-      .filter(([k, _v]) => k <= ds)
-      .sort((a, b) => (a[0] > b[0] ? -1 : 1))
+    [...Array(maxDay).keys()]
+      .reverse()
       .map(
-        async ([dateString, puzzleId]): Promise<
-          [string, LinkablePuzzle, ConstructorPageT | null, boolean]
+        async (
+          day
+        ): Promise<
+          [number, LinkablePuzzle, ConstructorPageT | null, boolean] | null
         > => {
-          const dbpuzzle = await getPuzzle(puzzleId);
-          if (!dbpuzzle) {
-            throw new Error('bad puzzleId in index: ' + puzzleId);
+          const dbpuzzle = await getMiniForDate(
+            db,
+            new Date(year, month, day + 1)
+          );
+          if (!isSome(dbpuzzle)) {
+            return null;
           }
-          const puzzle = puzzleFromDB(dbpuzzle);
-          const cp = await userIdToPage(dbpuzzle.a);
-          const isPatron = await isUserPatron(dbpuzzle.a);
+          const puzzle = puzzleFromDB(dbpuzzle.value);
+          const cp = await userIdToPage(dbpuzzle.value.a);
+          const isPatron = await isUserPatron(dbpuzzle.value.a);
           return [
-            dateString,
-            toLinkablePuzzle({ ...puzzle, id: puzzleId }),
+            day + 1,
+            toLinkablePuzzle({ ...puzzle, id: dbpuzzle.value.id }),
             cp,
             isPatron,
           ];
         }
       )
-  );
+  ).then((a) => a.filter(notEmpty));
 }
 
 // We export this so we can use it for testing
@@ -109,40 +104,31 @@ export async function propsForDailyMini(
 ): Promise<PageProps> {
   const today = new Date();
   const db = App.firestore();
-  const dbres = await db.collection('categories').doc('dailymini').get();
-  if (!dbres.exists) {
-    return { error: 'Couldnt get category index' };
+
+  let lastDay = new Date(year, month + 1, 0).getUTCDate();
+  if (year === today.getUTCFullYear() && month === today.getUTCMonth()) {
+    lastDay = today.getUTCDate();
   }
-  const validationResult = CategoryIndexV.decode(dbres.data());
-  if (isRight(validationResult)) {
-    console.log('loaded category index from db');
-    const puzzles = await puzzlesListForCategoryIndex(validationResult.right, [
-      year,
-      month,
-    ]);
-    if (!puzzles.length) {
-      return { error: 'No minis for that month' };
-    }
-    return {
-      year: year,
-      month: month,
-      puzzles: puzzles,
-      ...(today.getUTCFullYear() !== year || today.getUTCMonth() !== month
-        ? {
-            newerLink:
-              month + 1 === 12 ? `${year + 1}/1` : `${year}/${month + 2}`,
-          }
-        : null),
-      ...(month === 0 && `${year - 1}-11-31` in validationResult.right
-        ? { olderLink: `${year - 1}/12` }
-        : `${year}-${month - 1}-28` in validationResult.right
-        ? { olderLink: `${year}/${month}` }
-        : null),
-    };
-  } else {
-    console.error(PathReporter.report(validationResult).join(','));
-    return { error: 'Invalid category index' };
+  const puzzles = await puzzlesListForMonth(db, year, month, lastDay);
+  if (!puzzles.length) {
+    return { error: 'No minis for that month' };
   }
+  return {
+    year: year,
+    month: month,
+    puzzles: puzzles,
+    ...(today.getUTCFullYear() !== year || today.getUTCMonth() !== month
+      ? {
+          newerLink:
+            month + 1 === 12 ? `${year + 1}/1` : `${year}/${month + 2}`,
+        }
+      : null),
+    ...(month === 0 && year > 2020
+      ? { olderLink: `${year - 1}/12` }
+      : year > 2020 || month >= 4
+      ? { olderLink: `${year}/${month}` }
+      : null),
+  };
 }
 
 export default function DailyMiniPage(props: PageProps) {
@@ -228,12 +214,15 @@ export default function DailyMiniPage(props: PageProps) {
         <div css={{ marginBottom: '2em' }}>
           <Markdown text={description} />
         </div>
-        {props.puzzles.map(([dateString, puzzle, cp, isPatron]) => {
-          const parts = parseDateString(dateString);
-          const displayDate = new Date(...parts).toLocaleDateString(loc);
+        {props.puzzles.map(([day, puzzle, cp, isPatron]) => {
+          const displayDate = new Date(
+            props.year,
+            props.month,
+            day
+          ).toLocaleDateString(loc);
           return (
             <PuzzleResultLink
-              key={dateString}
+              key={day}
               puzzle={puzzle}
               showAuthor={true}
               constructorPage={cp}

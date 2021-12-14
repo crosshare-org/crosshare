@@ -521,7 +521,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     );
     if (tryMiniDate <= today) {
       tryMiniDate = addDays(tryMiniDate, -1);
-      const puzzle = await getMiniForDate(tryMiniDate);
+      const puzzle = await getMiniForDate(db, tryMiniDate);
       if (isSome(puzzle)) {
         nextPuzzle = {
           puzzleId: puzzle.value.id,
@@ -533,7 +533,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   }
 
   if (!nextPuzzle) {
-    const puzzle = await getMiniForDate(today);
+    const puzzle = await getMiniForDate(db, today);
     if (isSome(puzzle)) {
       nextPuzzle = {
         puzzleId: puzzle.value.id,

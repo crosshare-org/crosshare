@@ -18,6 +18,7 @@ import {
   INITIAL_RATING,
   INITIAL_RD,
 } from './glickoUtil';
+import { notEmpty } from './utils';
 
 const MAX_RD = 350;
 const PLAYER_MIN_RD = 30;
@@ -33,10 +34,6 @@ export enum Result {
 
 type CrosswordId = string;
 type PlayerId = string;
-
-function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
-  return value !== null && value !== undefined;
-}
 
 export class GlickoRound {
   PLAYER_MIN_RD: number;

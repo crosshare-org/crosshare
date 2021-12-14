@@ -1,7 +1,4 @@
-import { AdminApp, App } from './firebaseWrapper';
 import {
-  CategoryIndexV,
-  CategoryIndexT,
   prettifyDateString,
   getDateString,
   DBPuzzleV,
@@ -9,37 +6,42 @@ import {
 } from './dbtypes';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { none, some, Option } from 'fp-ts/Option';
+import { none, some, Option, isSome } from 'fp-ts/Option';
+import { AnyFirestore } from './dbUtils';
 
-let dailyMinis: CategoryIndexT | null = null;
-let queryTime: number | null = null;
+let dailyMiniIdsByDate: Map<string, string> = new Map();
+let queryTime: number = Date.now();
 const TTL = 1000 * 60 * 60 * 12; // 12 hours
 
-export async function getDailyMinis() {
-  const now = new Date().getTime();
-  if (queryTime && dailyMinis && now - queryTime <= TTL) {
-    return dailyMinis;
+export async function getMiniIdForDate(
+  db: AnyFirestore,
+  d: Date
+): Promise<Option<string>> {
+  const now = Date.now();
+
+  // Just reset the cache every 12 hrs, kind of a hack but *shrug*
+  if (now - queryTime > TTL) {
+    dailyMiniIdsByDate = new Map();
+    queryTime = now;
   }
 
-  const db = App.firestore();
-  const dbres = await db.collection('categories').doc('dailymini').get();
-  if (!dbres.exists) {
-    throw new Error('error getting daily minis');
+  const key = prettifyDateString(getDateString(d));
+  const existing = dailyMiniIdsByDate.get(key);
+  if (existing) {
+    return some(existing);
   }
-  const validationResult = CategoryIndexV.decode(dbres.data());
-  if (!isRight(validationResult)) {
-    console.error(PathReporter.report(validationResult).join(','));
-    throw new Error('error parsing daily minis');
+  const puz = await getMiniForDate(db, d);
+  if (!isSome(puz)) {
+    return none;
   }
-  queryTime = now;
-  dailyMinis = validationResult.right;
-  return validationResult.right;
+  dailyMiniIdsByDate.set(key, puz.value.id);
+  return some(puz.value.id);
 }
 
 export async function getMiniForDate(
+  db: AnyFirestore,
   d: Date
 ): Promise<Option<DBPuzzleT & { id: string }>> {
-  const db = AdminApp.firestore();
   const dbres = await db
     .collection('c')
     .where('dmd', '==', prettifyDateString(getDateString(d)))
