@@ -8,7 +8,7 @@ import {
 } from '../lib/dbtypes';
 import { Link } from '../components/Link';
 import { getFromSessionOrDB } from '../lib/dbUtils';
-import { timeString } from '../lib/utils';
+import { slugify, timeString } from '../lib/utils';
 
 const usePuzzleDoc = (
   puzzleId: string | undefined
@@ -59,7 +59,7 @@ const PuzzleLink = ({
   }
   return (
     <li>
-      <Link href={'/crosswords/' + puzzleId}>
+      <Link href={`/crosswords/${puzzleId}/${slugify(puzzle?.t)}`}>
         {puzzle?.t || 'Loading title...'}
       </Link>{' '}
       ({valueDisplay ? valueDisplay(value) : value})

@@ -8,6 +8,7 @@ import type firebaseTypes from 'firebase';
 import { GetServerSidePropsResult } from 'next';
 import { I18nProvider } from '@lingui/react';
 import { i18n } from '@lingui/core';
+import { hasOwnProperty } from './types';
 
 export const getUser = (uid: string, isAnonymous: boolean) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -85,13 +86,6 @@ export * from '@testing-library/react';
 // override render method
 // eslint-disable-next-line import/export
 export { wrappedRender as render };
-
-function hasOwnProperty<
-  X extends Record<string, unknown>,
-  Y extends PropertyKey
->(obj: X, prop: Y): obj is X & Record<Y, unknown> {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
-}
 
 export async function getProps<T>(a: GetServerSidePropsResult<T>) {
   if (!hasOwnProperty(a, 'props')) {

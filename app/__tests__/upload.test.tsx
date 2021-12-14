@@ -16,7 +16,7 @@ import UploadPage from '../pages/upload';
 import { setApp, setAdminApp } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import NextJSRouter from 'next/router';
-import PuzzlePage from '../pages/crosswords/[puzzleId]';
+import PuzzlePage from '../pages/crosswords/[[...puzzleId]]';
 import { getPuzzlePageProps as getServerSideProps } from '../lib/serverOnly';
 import waitForExpect from 'wait-for-expect';
 import type firebase from 'firebase/app';
@@ -153,7 +153,7 @@ test('upload a puzzle', async () => {
     expect(NextJSRouter.push).toHaveBeenCalledTimes(1)
   );
   expect(NextJSRouter.push).toHaveBeenCalledWith(
-    '/crosswords/' + puzzles.docs[0].id
+    '/crosswords/' + puzzles.docs[0].id + '/av-club-xword-6-22-11'
   );
 
   cleanup();
@@ -162,7 +162,7 @@ test('upload a puzzle', async () => {
   setApp(serverApp as firebase.app.App);
   const props1 = await getProps(
     await getServerSideProps({
-      params: { puzzleId },
+      params: { puzzleId: [puzzleId, 'av-club-xword-6-22-11'] },
       res: { setHeader: jest.fn() },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
@@ -317,7 +317,9 @@ test('upload a puzzle with duplicate entries', async () => {
   setApp(serverApp as firebase.app.App);
   const props1 = await getProps(
     await getServerSideProps({
-      params: { puzzleId: puzzles.docs[0].id },
+      params: {
+        puzzleId: [puzzles.docs[0].id, 'chain-of-fools-monday-mini-11'],
+      },
       res: { setHeader: jest.fn() },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)

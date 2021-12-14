@@ -21,6 +21,7 @@ import {
 } from '../lib/style';
 import { ButtonResetCSS } from './Buttons';
 import { NotificationT } from '../lib/notifications';
+import { slugify } from '../lib/utils';
 import { App } from '../lib/firebaseWrapper';
 import { EmbedContext } from './EmbedContext';
 import { Trans, t } from '@lingui/macro';
@@ -599,28 +600,28 @@ const NotificationLink = ({
   switch (n.k) {
   case 'comment':
     link = (
-      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}`}>
+      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}/${slugify(n.pn)}`}>
         {n.cn} commented on <u>{n.pn}</u>
       </Link>
     );
     break;
   case 'reply':
     link = (
-      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}`}>
+      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}/${slugify(n.pn)}`}>
         {n.cn} replied to your comment on <u>{n.pn}</u>
       </Link>
     );
     break;
   case 'newpuzzle':
     link = (
-      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}`}>
+      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}/${slugify(n.pn)}`}>
         {n.an} published a new puzzle: <u>{n.pn}</u>
       </Link>
     );
     break;
   case 'featured':
     link = (
-      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}`}>
+      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}/${slugify(n.pn)}`}>
           Crosshare is featuring your puzzle <u>{n.pn}</u>
         {n.as ? ` as ${n.as}` : ' on the homepage'}!
       </Link>

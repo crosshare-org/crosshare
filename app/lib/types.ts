@@ -8,6 +8,13 @@ import { ConstructorPageT } from '../lib/constructorPage';
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
+export function hasOwnProperty<
+  X extends Record<string, unknown>,
+  Y extends PropertyKey
+>(obj: X, prop: Y): obj is X & Record<Y, unknown> {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
 export const BLOCK = '.';
 
 export enum Direction {

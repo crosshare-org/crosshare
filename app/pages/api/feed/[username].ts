@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { AdminApp } from '../../../lib/firebaseWrapper';
 import { validate } from '../../../lib/constructorPage';
 import { paginatedPuzzles } from '../../../lib/paginatedPuzzles';
+import { slugify } from '../../../lib/utils';
 import { Feed } from 'feed';
 import { htmlOutput, parser } from '../../../components/Markdown';
 
@@ -48,7 +49,7 @@ export default async function constructorFeed(req: NextApiRequest, res: NextApiR
   });
 
   puzzles.forEach(p => {
-    const link = `https://crosshare.org/crosswords/${p.id}`;
+    const link = `https://crosshare.org/crosswords/${p.id}/${slugify(p.title)}`;
     feed.addItem({
       title: p.title,
       id: link,

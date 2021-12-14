@@ -9,13 +9,7 @@ import type firebaseAdminType from 'firebase-admin';
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import {
-  DBPuzzleV,
-  CategoryIndexT,
-  getDateString,
-  addZeros,
-  CommentWithRepliesT,
-} from './dbtypes';
+import { DBPuzzleV, CommentWithRepliesT } from './dbtypes';
 import { adminTimestamp } from './adminTimestamp';
 import { mapEachResult } from './dbUtils';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
@@ -35,10 +29,13 @@ import SimpleMarkdown from 'simple-markdown';
 import { AccountPrefsV, AccountPrefsT } from './prefs';
 import { NextPuzzleLink } from '../components/Puzzle';
 import { GetServerSideProps } from 'next';
-import { getDailyMinis } from './dailyMinis';
 import { EmbedOptionsT } from './embedOptions';
 import { ArticleT, validate } from './article';
 import { isUserPatron } from './patron';
+import { addDays } from 'date-fns';
+import { isSome } from 'fp-ts/lib/Option';
+import { getMiniForDate } from './dailyMinis';
+import { slugify } from './utils';
 
 export async function getStorageUrl(
   storageKey: string
@@ -385,7 +382,7 @@ export async function queueEmails() {
   );
 }
 
-interface PageErrorProps {
+export interface PageErrorProps {
   error: string;
 }
 
@@ -448,16 +445,23 @@ export type PuzzlePageProps = PuzzlePageResultProps | PageErrorProps;
 export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   res,
   params,
-}): Promise<{ props: PuzzlePageProps }> => {
+  locale,
+}) => {
   const db = AdminApp.firestore();
   let puzzle: PuzzleResultWithAugmentedComments | null = null;
-  if (!params?.puzzleId || Array.isArray(params.puzzleId)) {
+  let puzzleId = params?.puzzleId;
+  let titleSlug = '';
+  if (Array.isArray(puzzleId)) {
+    titleSlug = puzzleId[1] || '';
+    puzzleId = puzzleId[0];
+  }
+  if (!puzzleId) {
     res.statusCode = 404;
-    return { props: { error: 'bad puzzle params' } };
+    return { props: { error: 'missing puzzleId' } };
   }
   let dbres;
   try {
-    dbres = await db.collection('c').doc(params.puzzleId).get();
+    dbres = await db.collection('c').doc(puzzleId).get();
   } catch {
     return { props: { error: 'error getting puzzle' } };
   }
@@ -465,6 +469,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     res.statusCode = 404;
     return { props: { error: 'puzzle doesnt exist' } };
   }
+
   const validationResult = DBPuzzleV.decode(dbres.data());
   if (isRight(validationResult)) {
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
@@ -481,6 +486,19 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     return { props: { error: 'invalid puzzle' } };
   }
 
+  // If the title slug is missing or not correct we need to redirect
+  const correctSlug = slugify(puzzle.title);
+  if (titleSlug !== correctSlug) {
+    return {
+      redirect: {
+        destination: `/${
+          locale && locale !== 'en' ? locale + '/' : ''
+        }crosswords/${puzzle.id}/${correctSlug}`,
+        permanent: true,
+      },
+    };
+  }
+
   let profilePicture: string | null = null;
   let coverImage: string | null = null;
   if (puzzle.constructorPage?.u) {
@@ -492,53 +510,45 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     );
   }
 
-  // Get puzzle to show as next link after this one is finished
-  let minis: CategoryIndexT;
-  try {
-    minis = await getDailyMinis();
-  } catch {
-    return {
-      props: {
-        puzzle,
-        profilePicture,
-        coverImage,
-      },
-    };
+  let nextPuzzle: NextPuzzleLink | null = null;
+  const today = new Date();
+
+  if (validationResult.right.dmd) {
+    // this puzzle is a daily mini, see if we show a previous instead of today's
+    const dt = new Date(validationResult.right.dmd);
+    let tryMiniDate = new Date(
+      dt.valueOf() - dt.getTimezoneOffset() * 60 * 1000
+    );
+    if (tryMiniDate <= today) {
+      tryMiniDate = addDays(tryMiniDate, -1);
+      const puzzle = await getMiniForDate(tryMiniDate);
+      if (isSome(puzzle)) {
+        nextPuzzle = {
+          puzzleId: puzzle.value.id,
+          linkText: 'the previous daily mini crossword',
+          puzzleTitle: puzzle.value.t,
+        };
+      }
+    }
   }
-  const puzzleId = puzzle.id;
-  const today = getDateString(new Date());
-  const miniDate = Object.keys(minis).find((key) => minis[key] === puzzleId);
-  if (miniDate && addZeros(miniDate) <= addZeros(today)) {
-    const previous = Object.entries(minis)
-      .map(([k, v]): [string, string] => [addZeros(k), v])
-      .filter(([k, _v]) => k < addZeros(miniDate))
-      .sort((a, b) => (a[0] > b[0] ? -1 : 1));
-    if (previous.length && previous[0]) {
-      return {
-        props: {
-          puzzle,
-          profilePicture,
-          coverImage,
-          nextPuzzle: {
-            puzzleId: previous[0][1],
-            linkText: 'the previous daily mini crossword',
-          },
-        },
+
+  if (!nextPuzzle) {
+    const puzzle = await getMiniForDate(today);
+    if (isSome(puzzle)) {
+      nextPuzzle = {
+        puzzleId: puzzle.value.id,
+        linkText: "today's daily mini crossword",
+        puzzleTitle: puzzle.value.t,
       };
     }
   }
-  const todaysMini = minis[today];
-  // Didn't find a previous mini, link to today's
   return {
     props: {
       puzzle,
       profilePicture,
       coverImage,
-      ...(todaysMini && {
-        nextPuzzle: {
-          puzzleId: todaysMini,
-          linkText: "today's daily mini crossword",
-        },
+      ...(nextPuzzle && {
+        nextPuzzle,
       }),
     },
   };

@@ -13,12 +13,16 @@ import {
   getDateString,
   parseDateString,
 } from '../../lib/dbtypes';
-import { PuzzleResult, puzzleFromDB } from '../../lib/types';
+import { puzzleFromDB } from '../../lib/types';
 import { ConstructorPageT } from '../../lib/constructorPage';
 import { getPuzzle } from '../../lib/puzzleCache';
 import { Markdown } from '../../components/Markdown';
 import { DefaultTopBar } from '../../components/TopBar';
-import { PuzzleResultLink } from '../../components/PuzzleLink';
+import {
+  LinkablePuzzle,
+  PuzzleResultLink,
+  toLinkablePuzzle,
+} from '../../components/PuzzleLink';
 import { userIdToPage } from '../../lib/serverOnly';
 import { useRouter } from 'next/router';
 import { Trans, t } from '@lingui/macro';
@@ -27,7 +31,7 @@ import { I18nTags } from '../../components/I18nTags';
 import { isUserPatron } from '../../lib/patron';
 
 export interface DailyMiniProps {
-  puzzles: Array<[string, PuzzleResult, ConstructorPageT | null, boolean]>;
+  puzzles: Array<[string, LinkablePuzzle, ConstructorPageT | null, boolean]>;
   year: number;
   month: number;
   olderLink?: string;
@@ -66,7 +70,7 @@ export const getServerSideProps = withTranslation(gssp);
 export async function puzzlesListForCategoryIndex(
   idx: CategoryIndexT,
   page: [number, number]
-): Promise<Array<[string, PuzzleResult, ConstructorPageT | null, boolean]>> {
+): Promise<Array<[string, LinkablePuzzle, ConstructorPageT | null, boolean]>> {
   const today = new Date();
   const prefix: string = page[0] + '-' + page[1] + '-';
   const ds = addZeros(getDateString(today));
@@ -78,7 +82,7 @@ export async function puzzlesListForCategoryIndex(
       .sort((a, b) => (a[0] > b[0] ? -1 : 1))
       .map(
         async ([dateString, puzzleId]): Promise<
-          [string, PuzzleResult, ConstructorPageT | null, boolean]
+          [string, LinkablePuzzle, ConstructorPageT | null, boolean]
         > => {
           const dbpuzzle = await getPuzzle(puzzleId);
           if (!dbpuzzle) {
@@ -87,7 +91,12 @@ export async function puzzlesListForCategoryIndex(
           const puzzle = puzzleFromDB(dbpuzzle);
           const cp = await userIdToPage(dbpuzzle.a);
           const isPatron = await isUserPatron(dbpuzzle.a);
-          return [dateString, { ...puzzle, id: puzzleId }, cp, isPatron];
+          return [
+            dateString,
+            toLinkablePuzzle({ ...puzzle, id: puzzleId }),
+            cp,
+            isPatron,
+          ];
         }
       )
   );

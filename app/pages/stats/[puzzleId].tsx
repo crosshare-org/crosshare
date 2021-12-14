@@ -3,13 +3,13 @@ import { useRouter } from 'next/router';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
-import { requiresAuth, AuthProps } from '../../../components/AuthContext';
-import { PuzzleResult, puzzleFromDB } from '../../../lib/types';
-import { PuzzleStatsT, PuzzleStatsV, DBPuzzleV } from '../../../lib/dbtypes';
-import { getFromSessionOrDB } from '../../../lib/dbUtils';
-import { App } from '../../../lib/firebaseWrapper';
-import { ErrorPage } from '../../../components/ErrorPage';
-import { StatsPage } from '../../../components/PuzzleStats';
+import { requiresAuth, AuthProps } from '../../components/AuthContext';
+import { PuzzleResult, puzzleFromDB } from '../../lib/types';
+import { PuzzleStatsT, PuzzleStatsV, DBPuzzleV } from '../../lib/dbtypes';
+import { getFromSessionOrDB } from '../../lib/dbUtils';
+import { App } from '../../lib/firebaseWrapper';
+import { ErrorPage } from '../../components/ErrorPage';
+import { StatsPage } from '../../components/PuzzleStats';
 import { useDocument } from 'react-firebase-hooks/firestore';
 
 export default requiresAuth((props: AuthProps) => {
