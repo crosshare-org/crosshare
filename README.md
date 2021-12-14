@@ -69,11 +69,6 @@ Now deploy the firestore rules and indexes:
 $ npx firebase deploy --only firestore
 ```
 
-Bootstrap some data that the app depends on:
-```shell
-$ GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json ./scripts/bootstrapDatabase.ts
-```
-
 Compile the i18n definitions:
 ```shell
 $ yarn compileI18n
