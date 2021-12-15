@@ -13,6 +13,9 @@ export const gssp: GetServerSideProps<PuzzlePageProps> = async ({
   params,
   ...rest
 }) => {
+  if (params) {
+    params.ignoreRedirect = 'true';
+  }
   const props = await getPuzzlePageProps({ params, ...rest });
   if (!('props' in props)) {
     return props;

@@ -469,7 +469,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
 
   // If the title slug is missing or not correct we need to redirect
   const correctSlug = slugify(puzzle.title);
-  if (titleSlug !== correctSlug) {
+  if (!params?.ignoreRedirect && titleSlug !== correctSlug) {
     return {
       redirect: {
         destination: `/${
