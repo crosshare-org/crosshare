@@ -6,11 +6,9 @@ import {
 } from './types';
 import type firebaseAdminType from 'firebase-admin';
 
-import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { DBPuzzleV, CommentWithRepliesT } from './dbtypes';
-import { adminTimestamp } from './adminTimestamp';
 import { mapEachResult } from './dbUtils';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
 import {
@@ -57,23 +55,6 @@ export async function getStorageUrl(
   }
   return null;
 }
-
-export const PuzzleIndexV = t.intersection([
-  t.type({
-    /** array of puzzle timestamps */
-    t: t.array(adminTimestamp),
-    /** array of puzzle ids */
-    i: t.array(t.string),
-  }),
-  t.partial({
-    /** array of private puzzle ids */
-    pv: t.array(t.string),
-    /** array of puzzle ids that are private until a timestamp */
-    pvui: t.array(t.string),
-    /** array of timestamps that the above puzzles become public */
-    pvut: t.array(adminTimestamp),
-  }),
-]);
 
 const usernameMap: Record<string, ConstructorPageT> = {};
 let usernamesUpdated: number | null = null;

@@ -137,11 +137,8 @@ export default function DailyMiniPage(props: PageProps) {
 
   if ('error' in props) {
     return (
-      <ErrorPage title="Category Not Found">
-        <p>
-          We&apos;re sorry, we couldn&apos;t find the category page you
-          requested: {props.error}
-        </p>
+      <ErrorPage title="Error loading minis">
+        <p>We&apos;re sorry, there was an error: {props.error}</p>
         <p>
           Try the <Link href="/">homepage</Link>.
         </p>
