@@ -27,7 +27,7 @@ export async function getMiniIdForDate(
   if (existing === null) {
     return none;
   }
-  const puz = await getMiniForDate(db, d);
+  const puz = await getMiniForDate(db, d, true);
   if (!isSome(puz)) {
     dailyMiniIdsByDate.set(key, null);
     return none;
@@ -39,7 +39,8 @@ export async function getMiniIdForDate(
 
 export async function getMiniForDate(
   db: AnyFirestore,
-  d: Date
+  d: Date,
+  allowMissing?: boolean
 ): Promise<Option<DBPuzzleT & { id: string }>> {
   const dbres = await db
     .collection('c')
@@ -49,7 +50,9 @@ export async function getMiniForDate(
 
   const doc = dbres.docs[0];
   if (!doc) {
-    console.error('no dm for date ', d);
+    if (!allowMissing) {
+      console.error('no dm for date ', d);
+    }
     return none;
   }
   const validationResult = DBPuzzleV.decode(doc.data());

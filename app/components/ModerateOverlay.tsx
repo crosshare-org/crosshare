@@ -27,7 +27,7 @@ export const ModeratingOverlay = memo(
         db
           .collection('c')
           .doc(puzzle.id)
-          .update({ m: true, dmd: prettifyDateString(ds) }),
+          .update({ m: true, c: 'dailymini', dmd: prettifyDateString(ds) }),
       ]).then(() => {
         console.log('Scheduled mini');
         setSuccess(true);

@@ -153,8 +153,6 @@ async function publishPuzzle(
 
   setApp(app as firebase.app.App);
 
-  await admin.firestore().collection('categories').doc('dailymini').set({});
-
   const r = render(<BuilderPage />, { user: mike, displayName: 'Mike' });
   const launchButton = (await r.findAllByText('Launch Constructor'))[0];
   if (!launchButton) {
@@ -212,13 +210,6 @@ async function publishPuzzle(
   await r.findByText(/Published Successfully/, undefined, { timeout: 3000 });
 
   cleanup();
-
-  const dailyMinis = await admin
-    .firestore()
-    .collection('categories')
-    .doc('dailymini')
-    .get();
-  expect(dailyMinis.data()).toEqual({});
 }
 
 test('moderate as daily mini', async () => {
@@ -250,6 +241,12 @@ test('moderate as daily mini', async () => {
   expect(r4.queryByText(/visible to others yet/i)).toBeNull();
   fireEvent.click(r4.getByText(/Moderate/i));
   await r4.findByText(/Schedule as Daily Mini/i);
+  await waitFor(
+    () => expect(r4.getByTestId('today-button')).not.toBeDisabled(),
+    {
+      timeout: 5000,
+    }
+  );
   fireEvent.click(r4.getByTestId('today-button'));
   await waitFor(
     () => expect(r4.getByText(/Schedule as Daily Mini/i)).not.toBeDisabled(),
@@ -277,13 +274,6 @@ test('moderate as daily mini', async () => {
   expect(updated['c']).toEqual('dailymini');
   expect(updated['dmd']).toEqual(prettifyDateString(ds));
   expect(updated['t']).toEqual('Our Title');
-
-  const dailyMinis = await admin
-    .firestore()
-    .collection('categories')
-    .doc('dailymini')
-    .get();
-  expect(dailyMinis.data()).toEqual({ [ds]: puzzleId });
 });
 
 test('publish as default', async () => {
@@ -392,13 +382,6 @@ test('publish as default', async () => {
   expect(updated['p']).not.toEqual(null);
   expect(updated['c']).toEqual(null);
   expect(updated['t']).toEqual('Our Title');
-
-  const dailyMinis = await admin
-    .firestore()
-    .collection('categories')
-    .doc('dailymini')
-    .get();
-  expect(dailyMinis.data()).toEqual({});
 });
 
 test('publish custom / non-rectangular size', async () => {
