@@ -146,7 +146,7 @@ export default function HomePage({
             new year, I&apos;m hoping to reach $100/month in new recurring
             donations to keep the site going through 2022 and beyond. Please
             consider contributing whatever you are able. All monthly
-            contributers get a new patron icon - <PatronIcon /> - so we all know
+            contributors get a new patron icon - <PatronIcon /> - so we all know
             who to thank for making the site possible!
           </div>
         </Link>
