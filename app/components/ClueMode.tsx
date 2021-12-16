@@ -96,6 +96,7 @@ const ClueRow = (props: {
       <td css={{ paddingBottom: '1em', display: 'flex' }}>
         <LengthLimitedInput
           id={props.entry.completedWord + '-' + props.idx + '-input'}
+          spellCheck="true"
           data-testid={props.entry.completedWord + '-' + props.idx + '-input'}
           type="text"
           css={{ flex: 1 }}

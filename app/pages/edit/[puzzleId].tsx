@@ -206,6 +206,7 @@ const ClueRow = (props: {
               value={value}
               updateValue={setValue}
               maxLength={MAX_STRING_LENGTH}
+              spellCheck="true"
             />
             <LengthView
               maxLength={MAX_STRING_LENGTH}
