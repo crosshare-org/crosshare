@@ -29,6 +29,12 @@ import {
   useDocumentDataOnce,
 } from 'react-firebase-hooks/firestore';
 
+function paypalConvert(input: string): string {
+  const donated = parseFloat(input);
+  const fee = 0.0289 * donated + 0.49;
+  return (donated - fee).toFixed(2);
+}
+
 const PuzzleListItem = (props: PuzzleResult) => {
   return (
     <li key={props.id}>
@@ -413,7 +419,10 @@ export default requiresAdmin(() => {
               css={{ margin: '0 0.5em' }}
               type="text"
               value={donationAmount}
-              onChange={(e) => setDonationAmount(e.target.value)}
+              onChange={(e) => {
+                setDonationAmount(e.target.value);
+                setDonationReceivedAmount(paypalConvert(e.target.value));
+              }}
             />
           </label>
           <label>
