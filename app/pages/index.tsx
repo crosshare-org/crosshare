@@ -145,10 +145,7 @@ export default function HomePage({
             pay for the ongoing costs of running the site. This holiday season /
             new year, I&apos;m hoping to reach $100/month in new recurring
             donations to keep the site going through 2022 and beyond. Please
-            consider contributing whatever you are able - think of it like a
-            Netflix subscription, but instead of helping a huge faceless
-            multinational provide mindless entertainment you&apos;re helping a
-            volunteer team of one provide mindful entertainment 😂. All monthly
+            consider contributing whatever you are able. All monthly
             contributers get a new patron icon - <PatronIcon /> - so we all know
             who to thank for making the site possible!
           </div>
