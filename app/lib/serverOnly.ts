@@ -84,7 +84,9 @@ const updateUsernameMap = async (): Promise<void> => {
 let updateUsernameMapPromise: Promise<void> | null = null;
 const updateUsernameMapOnce = () => {
   if (!updateUsernameMapPromise) {
-    updateUsernameMapPromise = updateUsernameMap();
+    updateUsernameMapPromise = updateUsernameMap().finally(() => {
+      updateUsernameMapPromise = null;
+    });
   }
   return updateUsernameMapPromise;
 };

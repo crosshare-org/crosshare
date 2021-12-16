@@ -56,7 +56,9 @@ const getPatronList = async (): Promise<Array<string>> => {
 let patronListPromise: Promise<Array<string>> | null = null;
 const getPatronListOnce = () => {
   if (!patronListPromise) {
-    patronListPromise = getPatronList();
+    patronListPromise = getPatronList().finally(() => {
+      patronListPromise = null;
+    });
   }
   return patronListPromise;
 };
