@@ -403,9 +403,11 @@ export function gridWithBarToggled<
 >(grid: Grid, pos: PosAndDir): Grid {
   const index = pos.row * grid.width + pos.col;
   if (pos.dir === Direction.Across) {
+    if (pos.col === grid.width - 1) return grid;
     if (grid.vBars.has(index)) grid.vBars.delete(index);
     else grid.vBars.add(index);
   } else {
+    if (pos.row === grid.height - 1) return grid;
     if (grid.hBars.has(index)) grid.hBars.delete(index);
     else grid.hBars.add(index);
   }

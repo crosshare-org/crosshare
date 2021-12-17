@@ -124,15 +124,17 @@ export const Cell = memo(function Cell(props: CellProps) {
           ...(props.row === props.gridHeight - 1 && {
             borderBottom: '1px solid var(--cell-wall)',
           }),
+          ...(props.barBottom &&
+            props.row !== props.gridHeight - 1 && {
+              borderBottom: '0.05em solid var(--cell-wall)',
+            }),
           ...(props.column === props.gridWidth - 1 && {
             borderRight: '1px solid var(--cell-wall)',
           }),
-          ...(props.barRight && {
-            borderRight: '0.05em solid var(--cell-wall)',
-          }),
-          ...(props.barBottom && {
-            borderBottom: '0.05em solid var(--cell-wall)',
-          }),
+          ...(props.barRight &&
+            props.column !== props.gridWidth - 1 && {
+              borderRight: '0.05em solid var(--cell-wall)',
+            }),
           background: bg,
           ...(boxShadow && { boxShadow }),
         }}
