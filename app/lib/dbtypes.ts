@@ -454,20 +454,26 @@ export type CronStatusT = t.TypeOf<typeof CronStatusV>;
 
 export const DonationsListV = t.type({
   d: t.array(
-    t.type({
-      /** email */
-      e: t.string,
-      /** date */
-      d: timestamp,
-      /** donated amount */
-      a: t.number,
-      /** received amount */
-      r: t.number,
-      /** name */
-      n: t.union([t.string, t.null]),
-      /** page */
-      p: t.union([t.string, t.null]),
-    })
+    t.intersection([
+      t.type({
+        /** email */
+        e: t.string,
+        /** date */
+        d: timestamp,
+        /** donated amount */
+        a: t.number,
+        /** received amount */
+        r: t.number,
+        /** name */
+        n: t.union([t.string, t.null]),
+        /** page */
+        p: t.union([t.string, t.null]),
+      }),
+      t.partial({
+        /** explicit user id for patron icon */
+        u: t.string,
+      }),
+    ])
   ),
 });
 export type DonationsListT = t.TypeOf<typeof DonationsListV>;
@@ -477,7 +483,13 @@ export const donationsByEmail = (donations: DonationsListT) => {
     (
       acc: Map<
         string,
-        { name: string | null; page: string | null; total: number, date: Date }
+        {
+          name: string | null;
+          page: string | null;
+          total: number;
+          date: Date;
+          userId?: string;
+        }
       >,
       val
     ) => {
@@ -488,13 +500,15 @@ export const donationsByEmail = (donations: DonationsListT) => {
           page: val.p || prev.page,
           total: val.a + prev.total,
           date: val.d.toDate() < prev.date ? prev.date : val.d.toDate(),
+          ...((val.u || prev.userId) && { userId: val.u || prev.userId }),
         });
       } else {
         acc.set(val.e, {
           name: val.n || null,
           page: val.p || null,
           total: val.a,
-          date: val.d.toDate()
+          date: val.d.toDate(),
+          ...(val.u && { userId: val.u }),
         });
       }
       return acc;
@@ -502,6 +516,11 @@ export const donationsByEmail = (donations: DonationsListT) => {
     new Map()
   );
   // manually add to account for server costs I don't record yet
-  res.set('mike@dirolf.com', {name: 'Mike D', page: 'mike', total: 100, date: new Date()});
+  res.set('mike@dirolf.com', {
+    name: 'Mike D',
+    page: 'mike',
+    total: 100,
+    date: new Date(),
+  });
   return res;
 };

@@ -32,7 +32,10 @@ const getPatronList = async (): Promise<Array<string>> => {
   });
   const auth = AdminApp.auth();
   const userIds = await Promise.allSettled(recents.map(async ([email, row]) => {
-    if (row.page) {
+    if (row.userId) {
+      // First use explicit userid if set.
+      return row.userId;
+    } else if (row.page) {
       // If we have a page, get the userId from that.
       const res = await db.doc(`cp/${row.page.toLowerCase()}`).get();
       const val = ConstructorPageV.decode(res.data());

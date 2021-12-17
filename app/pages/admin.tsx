@@ -73,6 +73,7 @@ export default requiresAdmin(() => {
   const [donationReceivedAmount, setDonationReceivedAmount] = useState('');
   const [donationName, setDonationName] = useState('');
   const [donationPage, setDonationPage] = useState('');
+  const [donationUserId, setDonationUserId] = useState('');
   const { showSnackbar } = useSnackbar();
   const db = App.firestore();
 
@@ -390,6 +391,7 @@ export default requiresAdmin(() => {
               r: parseFloat(donationReceivedAmount),
               n: donationName.trim() || null,
               p: donationPage.trim() || null,
+              ...(donationUserId.trim() && { u: donationUserId.trim() }),
             };
             App.firestore()
               .doc('donations/donations')
@@ -401,6 +403,7 @@ export default requiresAdmin(() => {
                 setDonationReceivedAmount('');
                 setDonationName('');
                 setDonationPage('');
+                setDonationUserId('');
               });
           }}
         >
@@ -450,6 +453,15 @@ export default requiresAdmin(() => {
               type="text"
               value={donationPage}
               onChange={(e) => setDonationPage(e.target.value)}
+            />
+          </label>
+          <label>
+            UserId
+            <input
+              css={{ margin: '0 0.5em' }}
+              type="text"
+              value={donationUserId}
+              onChange={(e) => setDonationUserId(e.target.value)}
             />
           </label>
           <Button type="submit" text="Record Donation" />
