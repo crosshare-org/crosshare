@@ -26,6 +26,7 @@ import {
   nextNonBlock,
   nextCell,
   fromCells,
+  gridWithBarToggled,
 } from '../lib/viewableGrid';
 import {
   cellIndex,
@@ -134,6 +135,8 @@ export function initialBuilderStateFromSaved(
     width: saved?.width || state.grid.width,
     height: saved?.height || state.grid.height,
     grid: saved?.grid || state.grid.cells,
+    vBars: saved?.vBars || Array.from(state.grid.vBars.values()),
+    hBars: saved?.hBars || Array.from(state.grid.hBars.values()),
     highlighted:
       saved?.highlighted || Array.from(state.grid.highlighted.values()),
     highlight: saved?.highlight || state.grid.highlight,
@@ -159,6 +162,8 @@ export function initialBuilderState({
   width,
   height,
   grid,
+  vBars,
+  hBars,
   highlighted,
   highlight,
   title,
@@ -180,6 +185,8 @@ export function initialBuilderState({
   width: number;
   height: number;
   grid: Array<string>;
+  vBars: Array<number>;
+  hBars: Array<number>;
   highlighted: Array<number>;
   highlight: 'circle' | 'shade';
   blogPost: string | null;
@@ -205,6 +212,8 @@ export function initialBuilderState({
     allowBlockEditing: true,
     highlighted: new Set(highlighted),
     highlight: highlight,
+    vBars: new Set(vBars),
+    hBars: new Set(hBars),
   });
   return validateGrid({
     id: id || App.firestore().collection('c').doc().id,
@@ -932,6 +941,16 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         };
       }
       return state;
+    } else if (key.k === KeyK.Comma && state.grid.allowBlockEditing) {
+      const ci = cellIndex(state.grid, state.active);
+      if (state.isEditable(ci)) {
+        state.grid = gridWithBarToggled(state.grid, state.active);
+        return {
+          ...postEdit(state, ci),
+          wasEntryClick: false,
+        };
+      }
+      return state;
     } else if (key.k === KeyK.AllowedCharacter) {
       const char = key.c.toUpperCase();
       state = enterText(state, char);
@@ -1170,6 +1189,8 @@ export function builderReducer(
       width: action.cols,
       height: action.rows,
       grid: initialFill,
+      vBars: [],
+      hBars: [],
       title: null,
       notes: null,
       blogPost: null,

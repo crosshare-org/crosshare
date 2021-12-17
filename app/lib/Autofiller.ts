@@ -63,10 +63,18 @@ export class Autofiller {
     public readonly grid: string[],
     public readonly width: number,
     public readonly height: number,
+    public readonly vBars: Set<number>,
+    public readonly hBars: Set<number>,
     public onResult: (input: string[], result: string[]) => void,
     public onComplete: () => void
   ) {
-    this.initialGrid = fromTemplate(this.grid, this.width, this.height);
+    this.initialGrid = fromTemplate(
+      this.grid,
+      this.width,
+      this.height,
+      this.vBars,
+      this.hBars
+    );
     this.completed = false;
     this.solnCost = null;
     this.solnGrid = null;

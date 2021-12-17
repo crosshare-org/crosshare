@@ -295,6 +295,8 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     width: saved?.width || props.size.cols,
     height: saved?.height || props.size.rows,
     grid: saved?.grid || props.grid,
+    vBars: saved?.vBars || props.vBars || [],
+    hBars: saved?.hBars || props.hBars || [],
     highlighted: saved?.highlighted || props.highlighted || [],
     highlight: saved?.highlight || props.highlight || 'circle',
     title: saved?.title || props.title || null,
@@ -747,6 +749,8 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       grid: state.grid.cells,
       width: state.grid.width,
       height: state.grid.height,
+      vBars: state.grid.vBars,
+      hBars: state.grid.hBars,
     };
     setAutofillInProgress(true);
     worker.postMessage(autofill);
@@ -761,6 +765,8 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       width: state.grid.width,
       height: state.grid.height,
       grid: state.grid.cells,
+      vBars: Array.from(state.grid.vBars),
+      hBars: Array.from(state.grid.hBars),
       highlight: state.grid.highlight,
       highlighted: Array.from(state.grid.highlighted),
       clues: state.clues,
@@ -788,6 +794,8 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     state.isPrivate,
     state.isPrivateUntil,
     state.alternates,
+    state.grid.vBars,
+    state.grid.hBars,
   ]);
 
   const reRunAutofill = useCallback(() => {

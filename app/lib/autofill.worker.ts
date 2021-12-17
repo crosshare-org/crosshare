@@ -46,7 +46,15 @@ ctx.onmessage = (e) => {
       throw new Error('Autofill error test');
     }
 
-    current = new Autofiller(data.grid, data.width, data.height, onResult, onComplete);
+    current = new Autofiller(
+      data.grid,
+      data.width,
+      data.height,
+      data.vBars,
+      data.hBars,
+      onResult,
+      onComplete
+    );
     msgChannel.port1.postMessage('');
   } else if (isCancelAutofillMessage(data)) {
     current = null;

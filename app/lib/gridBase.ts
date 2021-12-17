@@ -23,6 +23,8 @@ export interface GridBase<Entry extends EntryBase> {
   cells: string[];
   entriesByCell: Array<[Cross, Cross]>;
   entries: Entry[];
+  vBars: Set<number>;
+  hBars: Set<number>;
 }
 
 function entriesByCell<Entry extends EntryBase>(
@@ -162,7 +164,9 @@ export function getEntryCells<Entry extends EntryBase>(
 export function entriesFromCells(
   width: number,
   height: number,
-  cells: Array<string>
+  cells: Array<string>,
+  vBars: Set<number>,
+  hBars: Set<number>
 ): [Array<EntryWithPattern>, Array<[Cross, Cross]>] {
   const entriesByCell: Array<[Cross, Cross]> = [];
   cells.forEach(() => {
@@ -181,15 +185,17 @@ export function entriesFromCells(
         const xincr = dir === Direction.Across ? 1 : 0;
         const yincr = dir === Direction.Down ? 1 : 0;
         const iincr = xincr + yincr * width;
+        const iBars = dir === Direction.Across ? vBars : hBars;
         const isStartOfRow =
           (dir === Direction.Across && x === 0) ||
           (dir === Direction.Down && y === 0);
         const isStartOfEntry =
           cells[i] !== '.' &&
-          (isStartOfRow || cells[i - iincr] === '.') &&
+          (isStartOfRow || cells[i - iincr] === '.' || iBars.has(i - iincr)) &&
           x + xincr < width &&
           y + yincr < height &&
-          cells[i + iincr] !== '.';
+          cells[i + iincr] !== '.' &&
+          !iBars.has(i);
 
         if (!isStartOfEntry) {
           continue;
@@ -224,6 +230,10 @@ export function entriesFromCells(
           xt += xincr;
           yt += yincr;
           wordlen += 1;
+
+          if (iBars.has(cellId)) {
+            break;
+          }
         }
         entries.push({
           index: entries.length,

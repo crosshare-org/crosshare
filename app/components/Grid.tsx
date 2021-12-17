@@ -119,6 +119,8 @@ export const GridView = ({
 
     cells.push(
       <Cell
+        barRight={grid.vBars.has(idx)}
+        barBottom={grid.hBars.has(idx)}
         isEnteringRebus={props.isEnteringRebus || false}
         rebusValue={props.rebusValue}
         squareWidth={props.squareWidth}

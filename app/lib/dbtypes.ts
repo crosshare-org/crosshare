@@ -161,6 +161,10 @@ const DBPuzzleOptionalV = t.partial({
   alts: t.array(t.record(t.string, t.string)),
   /** highlighted cell indexes */
   hs: t.array(t.number),
+  /** vertical bar indexes */
+  vb: t.array(t.number),
+  /** horizontal bar indexes */
+  hb: t.array(t.number),
   /** use shade instead of circle for highlight? */
   s: t.boolean,
   /** comments */
