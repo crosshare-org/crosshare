@@ -143,6 +143,7 @@ function layoutPDFGrid(
     labelOffset: { x: squareSize / 24, y: squareSize / 4 },
     labelFontSize: squareSize / 3.5,
     innerLineWidth: 0.5,
+    barWidth: 4,
     outerLineWidth: 2,
   };
   // Draw grid
@@ -160,6 +161,8 @@ function layoutPDFGrid(
     for (let j = 0; j < puzzle.size.cols; j++) {
       const square = i * puzzle.size.cols + j;
       const highlighted = puzzle.highlighted.includes(square);
+      const barRight = puzzle.vBars.includes(square);
+      const barBottom = puzzle.hBars.includes(square);
       doc.setFillColor(
         puzzle.grid[square] === '.'
           ? '#555'
@@ -174,6 +177,26 @@ function layoutPDFGrid(
         format.squareSize,
         'FD'
       );
+      if (barRight) {
+        doc.setLineWidth(format.barWidth);
+        doc.line(
+          format.gridOrigin.x + (j + 1) * format.squareSize,
+          format.gridOrigin.y + i * format.squareSize,
+          format.gridOrigin.x + (j + 1) * format.squareSize,
+          format.gridOrigin.y + (i + 1) * format.squareSize
+        );
+        doc.setLineWidth(format.innerLineWidth);
+      }
+      if (barBottom) {
+        doc.setLineWidth(format.barWidth);
+        doc.line(
+          format.gridOrigin.x + j * format.squareSize,
+          format.gridOrigin.y + (i + 1) * format.squareSize,
+          format.gridOrigin.x + (j + 1) * format.squareSize,
+          format.gridOrigin.y + (i + 1) * format.squareSize
+        );
+        doc.setLineWidth(format.innerLineWidth);
+      }
       if (highlighted && puzzle.highlight === 'circle') {
         doc.circle(
           format.gridOrigin.x + (j + 0.5) * format.squareSize,
