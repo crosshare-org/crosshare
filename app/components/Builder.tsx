@@ -85,6 +85,7 @@ import {
   fromKeyString,
   KeyK,
   fromKeyboardEvent,
+  PartialBy,
 } from '../lib/types';
 import {
   Symmetry,
@@ -131,8 +132,7 @@ import { getAutofillWorker } from '../lib/workerLoader';
 
 let worker: Worker;
 
-type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-type BuilderProps = WithOptional<
+type BuilderProps = PartialBy<
   Omit<
     PuzzleT,
     | 'comments'

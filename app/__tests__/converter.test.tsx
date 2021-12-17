@@ -28,6 +28,8 @@ function toDBPuzzle(pip: PuzzleInProgressStrictT): DBPuzzleT {
     allowBlockEditing: false,
     highlighted: new Set(pip.highlighted),
     highlight: pip.highlight,
+    hBars: new Set(pip.hBars || []),
+    vBars: new Set(pip.vBars || []),
   });
   const puzzle: DBPuzzleT = {
     t: pip.title || 'Anonymous',

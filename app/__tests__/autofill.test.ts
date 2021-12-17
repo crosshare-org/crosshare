@@ -11,7 +11,9 @@ test('test basic autofill', async () => {
     lastResult = result;
     expect(input).toEqual(grid);
   };
-  const a = new Autofiller(grid, 2, 2, onResult, () => {/* noop */ });
+  const a = new Autofiller(grid, 2, 2, new Set(), new Set(), onResult, () => {
+    /* noop */
+  });
   while (!a.completed) {
     a.step();
   }
@@ -29,12 +31,42 @@ test('test unfillable', async () => {
     lastResult = result;
     expect(input).toEqual(grid);
   };
-  const a = new Autofiller(grid, 2, 2, onResult, () => {/* noop */ });
+  const a = new Autofiller(grid, 2, 2, new Set(), new Set(), onResult, () => {
+    /* noop */
+  });
   while (!a.completed) {
     a.step();
   }
   expect(callCount).toEqual(0);
   expect(lastResult).toEqual([]);
+});
+
+test('test unfillable is fillable with the right bars', async () => {
+  await build('AB;1\nAC;1\nBD;1\nDC;1');
+  const grid = ['A', 'B', ' ', ' '];
+  let callCount = 0;
+  let lastResult: Array<string> = [];
+  const onResult = (input: Array<string>, result: Array<string>) => {
+    callCount += 1;
+    lastResult = result;
+    expect(input).toEqual(grid);
+  };
+  const a = new Autofiller(
+    grid,
+    2,
+    2,
+    new Set([2]),
+    new Set(),
+    onResult,
+    () => {
+      /* noop */
+    }
+  );
+  while (!a.completed) {
+    a.step();
+  }
+  expect(callCount).toEqual(1);
+  expect(lastResult).toEqual(['A', 'B', 'C', 'D']);
 });
 
 test('test no repeats', async () => {
@@ -47,7 +79,9 @@ test('test no repeats', async () => {
     lastResult = result;
     expect(input).toEqual(grid);
   };
-  const a = new Autofiller(grid, 2, 2, onResult, () => {/* noop */ });
+  const a = new Autofiller(grid, 2, 2, new Set(), new Set(), onResult, () => {
+    /* noop */
+  });
   while (!a.completed) {
     a.step();
   }
@@ -65,7 +99,9 @@ test('test no repeats 2', async () => {
     lastResult = result;
     expect(input).toEqual(grid);
   };
-  const a = new Autofiller(grid, 2, 2, onResult, () => {/* noop */ });
+  const a = new Autofiller(grid, 2, 2, new Set(), new Set(), onResult, () => {
+    /* noop */
+  });
   while (!a.completed) {
     a.step();
   }
