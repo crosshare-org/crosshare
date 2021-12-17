@@ -311,6 +311,8 @@ const PuzzleEditor = ({
           height={puzzle.size.rows}
           highlight={puzzle.highlight}
           highlighted={new Set(puzzle.highlighted)}
+          vBars={new Set(puzzle.vBars)}
+          hBars={new Set(puzzle.hBars)}
         />
       </>
     );

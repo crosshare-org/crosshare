@@ -200,6 +200,8 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       cells: ['M', 'E', 'L', ' ', ' ', '.', 'O', 'T', ' '],
       allowBlockEditing: false,
       highlighted: new Set<number>(),
+      vBars: new Set<number>(),
+      hBars: new Set<number>(),
       highlight: 'circle',
       mapper: (x) => x,
     });

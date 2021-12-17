@@ -37,6 +37,8 @@ export function AlternateSolutionEditor(props: {
   grid: string[];
   width: number;
   height: number;
+  vBars: Set<number>;
+  hBars: Set<number>;
   highlighted: Set<number>;
   highlight: 'circle' | 'shade';
   cancel: () => void;
@@ -47,6 +49,8 @@ export function AlternateSolutionEditor(props: {
     width: props.width,
     height: props.height,
     cells: props.grid,
+    vBars: props.vBars,
+    hBars: props.hBars,
     allowBlockEditing: false,
     highlighted: props.highlighted,
     highlight: props.highlight,

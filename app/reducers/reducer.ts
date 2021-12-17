@@ -1272,6 +1272,8 @@ export function builderReducer(
       h: state.grid.height,
       w: state.grid.width,
       g: state.grid.cells,
+      ...(state.grid.vBars.size && { vb: Array.from(state.grid.vBars) }),
+      ...(state.grid.hBars.size && { hb: Array.from(state.grid.hBars) }),
       ...getClueProps(
         state.grid.sortedEntries,
         state.grid.entries,

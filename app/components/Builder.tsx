@@ -156,6 +156,8 @@ type BuilderProps = WithOptional<
   | 'isPrivate'
   | 'isPrivateUntil'
   | 'highlighted'
+  | 'vBars'
+  | 'hBars'
   | 'highlight'
 >;
 
@@ -1003,6 +1005,17 @@ const PuzDownloadOverlay = (props: {
   state: BuilderState;
   cancel: () => void;
 }) => {
+  if (props.state.grid.vBars.size || props.state.grid.hBars.size) {
+    return (
+      <Overlay closeCallback={props.cancel}>
+        <h2>Export unsupported</h2>
+        <p>
+          Barred grids currently cannot be exported (.puz does not support
+          bars).
+        </p>
+      </Overlay>
+    );
+  }
   return (
     <Overlay closeCallback={props.cancel}>
       <h2>Exporting .puz</h2>
