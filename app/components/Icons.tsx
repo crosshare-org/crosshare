@@ -209,6 +209,7 @@ export const BacktickKey = () => (
   <KeyIcon text="`" largeFont={true} textY={95} />
 );
 export const PeriodKey = () => <KeyIcon text="." largeFont={true} />;
+export const CommaKey = () => <KeyIcon text="," largeFont={true} textY={55} />;
 export const ExclamationKey = () => <KeyIcon text="!" />;
 export const HashKey = () => <KeyIcon text="#" />;
 export const AtSignKey = () => <KeyIcon text="@" />;

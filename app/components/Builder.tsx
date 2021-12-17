@@ -34,6 +34,7 @@ import {
   FaKeyboard,
   FaRegFile,
 } from 'react-icons/fa';
+import { CgSidebarRight } from 'react-icons/cg';
 import { MdRefresh } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
@@ -63,6 +64,7 @@ import {
   PuzzleSizeIcon,
   EnterKey,
   ExclamationKey,
+  CommaKey,
 } from './Icons';
 import { AuthProps } from './AuthContext';
 import { Histogram } from './Histogram';
@@ -1554,6 +1556,18 @@ const GridMode = ({
                   const a: KeypressAction = {
                     type: 'KEYPRESS',
                     key: { k: KeyK.Dot },
+                  };
+                  dispatch(a);
+                }}
+              />
+              <TopBarDropDownLink
+                icon={<CgSidebarRight />}
+                text="Toggle Bar"
+                shortcutHint={<CommaKey />}
+                onClick={() => {
+                  const a: KeypressAction = {
+                    type: 'KEYPRESS',
+                    key: { k: KeyK.Comma },
                   };
                   dispatch(a);
                 }}
