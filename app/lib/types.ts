@@ -27,7 +27,7 @@ export interface WorkerMessage {
 }
 export interface AutofillResultMessage extends WorkerMessage {
   type: 'autofill-result';
-  input: string[];
+  input: [string[], Set<number>, Set<number>];
   result: string[];
 }
 export function isAutofillResultMessage(

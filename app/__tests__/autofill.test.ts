@@ -6,10 +6,13 @@ test('test basic autofill', async () => {
   const grid = ['A', 'B', ' ', ' '];
   let callCount = 0;
   let lastResult: Array<string> = [];
-  const onResult = (input: Array<string>, result: Array<string>) => {
+  const onResult = (
+    input: [Array<string>, Set<number>, Set<number>],
+    result: Array<string>
+  ) => {
     callCount += 1;
     lastResult = result;
-    expect(input).toEqual(grid);
+    expect(input[0]).toEqual(grid);
   };
   const a = new Autofiller(grid, 2, 2, new Set(), new Set(), onResult, () => {
     /* noop */
@@ -26,10 +29,13 @@ test('test unfillable', async () => {
   const grid = ['A', 'B', ' ', ' '];
   let callCount = 0;
   let lastResult: Array<string> = [];
-  const onResult = (input: Array<string>, result: Array<string>) => {
+  const onResult = (
+    input: [Array<string>, Set<number>, Set<number>],
+    result: Array<string>
+  ) => {
     callCount += 1;
     lastResult = result;
-    expect(input).toEqual(grid);
+    expect(input[0]).toEqual(grid);
   };
   const a = new Autofiller(grid, 2, 2, new Set(), new Set(), onResult, () => {
     /* noop */
@@ -46,10 +52,13 @@ test('test unfillable is fillable with the right bars', async () => {
   const grid = ['A', 'B', ' ', ' '];
   let callCount = 0;
   let lastResult: Array<string> = [];
-  const onResult = (input: Array<string>, result: Array<string>) => {
+  const onResult = (
+    input: [Array<string>, Set<number>, Set<number>],
+    result: Array<string>
+  ) => {
     callCount += 1;
     lastResult = result;
-    expect(input).toEqual(grid);
+    expect(input[0]).toEqual(grid);
   };
   const a = new Autofiller(
     grid,
@@ -74,10 +83,13 @@ test('test no repeats', async () => {
   const grid = ['A', 'B', ' ', ' '];
   let callCount = 0;
   let lastResult: Array<string> = [];
-  const onResult = (input: Array<string>, result: Array<string>) => {
+  const onResult = (
+    input: [Array<string>, Set<number>, Set<number>],
+    result: Array<string>
+  ) => {
     callCount += 1;
     lastResult = result;
-    expect(input).toEqual(grid);
+    expect(input[0]).toEqual(grid);
   };
   const a = new Autofiller(grid, 2, 2, new Set(), new Set(), onResult, () => {
     /* noop */
@@ -94,10 +106,13 @@ test('test no repeats 2', async () => {
   const grid = ['A', ' ', ' ', ' '];
   let callCount = 0;
   let lastResult: Array<string> = [];
-  const onResult = (input: Array<string>, result: Array<string>) => {
+  const onResult = (
+    input: [Array<string>, Set<number>, Set<number>],
+    result: Array<string>
+  ) => {
     callCount += 1;
     lastResult = result;
-    expect(input).toEqual(grid);
+    expect(input[0]).toEqual(grid);
   };
   const a = new Autofiller(grid, 2, 2, new Set(), new Set(), onResult, () => {
     /* noop */

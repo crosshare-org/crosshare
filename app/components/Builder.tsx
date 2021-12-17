@@ -10,7 +10,7 @@ import {
   FormEvent,
   MutableRefObject,
 } from 'react';
-import { STORAGE_KEY } from '../lib/utils';
+import { eqSet, STORAGE_KEY } from '../lib/utils';
 import { ContactLinks } from './ContactLinks';
 import { isRight } from 'fp-ts/lib/Either';
 import { isSome } from 'fp-ts/lib/Option';
@@ -677,7 +677,11 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
 
   // We need a ref to the current grid so we can verify it in worker.onmessage
   const currentCells = useRef(state.grid.cells);
-  const priorSolves = useRef<Array<Array<string>>>([]);
+  const currentVBars = useRef(state.grid.vBars);
+  const currentHBars = useRef(state.grid.hBars);
+  const priorSolves = useRef<Array<[Array<string>, Set<number>, Set<number>]>>(
+    []
+  );
   const priorWidth = useRef(state.grid.width);
   const priorHeight = useRef(state.grid.height);
   const runAutofill = useCallback(() => {
@@ -693,6 +697,8 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       throw new Error('missing db!');
     }
     currentCells.current = state.grid.cells;
+    currentVBars.current = state.grid.vBars;
+    currentHBars.current = state.grid.hBars;
     if (
       priorWidth.current !== state.grid.width ||
       priorHeight.current !== state.grid.height
@@ -701,7 +707,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       priorHeight.current = state.grid.height;
       priorSolves.current = [];
     }
-    for (const priorSolve of priorSolves.current) {
+    for (const [priorSolve, vBars, hBars] of priorSolves.current) {
       let match = true;
       for (const [i, cell] of state.grid.cells.entries()) {
         if (priorSolve[i] === '.' && cell !== '.') {
@@ -712,6 +718,12 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
           match = false;
           break;
         }
+      }
+      if (!eqSet(vBars, state.grid.vBars)) {
+        match = false;
+      }
+      if (!eqSet(hBars, state.grid.hBars)) {
+        match = false;
       }
       if (match) {
         if (worker) {
@@ -732,10 +744,16 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       worker.onmessage = (e) => {
         const data = e.data as WorkerMessage;
         if (isAutofillResultMessage(data)) {
-          priorSolves.current.unshift(data.result);
+          priorSolves.current.unshift([
+            data.result,
+            data.input[1],
+            data.input[2],
+          ]);
           if (
-            currentCells.current.length === data.input.length &&
-            currentCells.current.every((c, i) => c === data.input[i])
+            currentCells.current.length === data.input[0].length &&
+            currentCells.current.every((c, i) => c === data.input[0][i]) &&
+            eqSet(currentVBars.current, data.input[1]) &&
+            eqSet(currentHBars.current, data.input[2])
           ) {
             setAutofilledGrid(data.result);
           }

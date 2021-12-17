@@ -16,8 +16,15 @@ msgChannel.port2.onmessage = _e => {
   msgChannel.port1.postMessage('');
 };
 
-function onResult(input: string[], result: string[]) {
-  const soln: AutofillResultMessage = { input, result, type: 'autofill-result' };
+function onResult(
+  input: [string[], Set<number>, Set<number>],
+  result: string[]
+) {
+  const soln: AutofillResultMessage = {
+    input,
+    result,
+    type: 'autofill-result',
+  };
   ctx.postMessage(soln);
 }
 

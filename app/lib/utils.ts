@@ -101,3 +101,9 @@ export function notEmpty<TValue>(
 ): value is TValue {
   return value !== null && value !== undefined;
 }
+
+export function eqSet<T>(as: Set<T>, bs: Set<T>) {
+  if (as.size !== bs.size) return false;
+  for (const a of as) if (!bs.has(a)) return false;
+  return true;
+}

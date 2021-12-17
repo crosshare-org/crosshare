@@ -65,7 +65,10 @@ export class Autofiller {
     public readonly height: number,
     public readonly vBars: Set<number>,
     public readonly hBars: Set<number>,
-    public onResult: (input: string[], result: string[]) => void,
+    public onResult: (
+      input: [string[], Set<number>, Set<number>],
+      result: string[]
+    ) => void,
     public onComplete: () => void
   ) {
     this.initialGrid = fromTemplate(
@@ -131,7 +134,7 @@ export class Autofiller {
     // If we have a solution that hasn't been posted yet, post it.
     if (this.solnGrid && !this.postedSoln) {
       this.postedSoln = true;
-      this.onResult(this.grid, this.solnGrid.cells);
+      this.onResult([this.grid, this.vBars, this.hBars], this.solnGrid.cells);
     }
   }
 
