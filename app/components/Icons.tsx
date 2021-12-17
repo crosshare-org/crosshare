@@ -156,14 +156,23 @@ export const Rebus = () => {
   );
 };
 
-export const EscapeKey = () => {
+const KeyIcon = (props: {
+  text: string;
+  width?: number;
+  stretchText?: boolean;
+  largeFont?: boolean;
+  className?: string;
+  textY?: number;
+}) => {
   return (
     <svg
-      width="1em"
+      width={props.width ? `${props.width}em` : '1em'}
       height="1em"
+      preserveAspectRatio="none"
       viewBox="0 0 100 100"
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
+      className={props.className}
     >
       <rect
         x="5"
@@ -178,155 +187,59 @@ export const EscapeKey = () => {
       />
       <text
         x="50"
-        y="70"
+        y={props.textY || 70}
         textAnchor="middle"
-        fontSize="60"
+        fontSize={props.largeFont ? 90 : 60}
         fontWeight="bold"
-        lengthAdjust="spacingAndGlyphs"
+        {...(props.stretchText && { lengthAdjust: 'spacingAndGlyphs' })}
         textLength="75"
       >
-        esc
+        {props.text}
       </text>
     </svg>
   );
 };
 
-export const EnterKey = () => {
-  return (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 100 100"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-    >
-      <rect
-        x="5"
-        y="12"
-        rx="10"
-        ry="10"
-        width="90"
-        height="76"
-        fill="transparent"
-        stroke="currentColor"
-        strokeWidth="5"
-      />
-      <text
-        x="50"
-        y="70"
-        textAnchor="middle"
-        fontSize="60"
-        fontWeight="bold"
-        lengthAdjust="spacingAndGlyphs"
-        textLength="75"
-      >
-        enter
-      </text>
-    </svg>
-  );
-};
+export const EscapeKey = () => <KeyIcon text="esc" stretchText={true} />;
+export const EnterKey = () => (
+  <KeyIcon text="enter" width={1.5} stretchText={true} />
+);
 
-export const BacktickKey = () => {
-  return (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 100 100"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-    >
-      <rect
-        x="5"
-        y="12"
-        rx="10"
-        ry="10"
-        width="90"
-        height="76"
-        fill="transparent"
-        stroke="currentColor"
-        strokeWidth="5"
-      />
-      <text
-        x="50"
-        y="95"
-        textAnchor="middle"
-        fontSize="90"
-        fontWeight="bold"
-        textLength="75"
-      >
-        `
-      </text>
-    </svg>
-  );
-};
+export const BacktickKey = () => (
+  <KeyIcon text="`" largeFont={true} textY={95} />
+);
+export const PeriodKey = () => <KeyIcon text="." largeFont={true} />;
+export const ExclamationKey = () => <KeyIcon text="!" />;
+export const HashKey = () => <KeyIcon text="#" />;
+export const AtSignKey = () => <KeyIcon text="@" />;
 
-export const PeriodKey = () => {
-  return (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 100 100"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-    >
-      <rect
-        x="5"
-        y="12"
-        rx="10"
-        ry="10"
-        width="90"
-        height="76"
-        fill="transparent"
-        stroke="currentColor"
-        strokeWidth="5"
-      />
-      <text
-        x="50"
-        y="70"
-        textAnchor="middle"
-        fontSize="90"
-        fontWeight="bold"
-        textLength="75"
-      >
-        .
-      </text>
-    </svg>
-  );
-};
+const CtrlKey = () => (
+  <KeyIcon
+    text="ctrl"
+    stretchText={true}
+    width={1.1}
+    css={{ marginRight: '0.1em' }}
+  />
+);
 
-export const ExclamationKey = () => {
-  return (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 100 100"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-    >
-      <rect
-        x="5"
-        y="12"
-        rx="10"
-        ry="10"
-        width="90"
-        height="76"
-        fill="transparent"
-        stroke="currentColor"
-        strokeWidth="5"
-      />
-      <text
-        x="50"
-        y="77"
-        textAnchor="middle"
-        fontSize="80"
-        fontWeight="bold"
-        textLength="75"
-      >
-        !
-      </text>
-    </svg>
-  );
-};
+export const CtrlHashKey = () => (
+  <>
+    <CtrlKey />
+    <HashKey />
+  </>
+);
+export const CtrlExclamationKey = () => (
+  <>
+    <CtrlKey />
+    <ExclamationKey />
+  </>
+);
+export const CtrlAtSignKey = () => (
+  <>
+    <CtrlKey />
+    <AtSignKey />
+  </>
+);
 
 const CheckOrReveal = ({
   x,
