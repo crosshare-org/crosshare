@@ -27,7 +27,7 @@ export interface WorkerMessage {
 }
 export interface AutofillResultMessage extends WorkerMessage {
   type: 'autofill-result';
-  input: string[];
+  input: [string[], Set<number>, Set<number>];
   result: string[];
 }
 export function isAutofillResultMessage(
@@ -63,6 +63,8 @@ export interface AutofillMessage extends WorkerMessage {
   grid: string[];
   width: number;
   height: number;
+  vBars: Set<number>;
+  hBars: Set<number>;
 }
 export function isAutofillMessage(msg: WorkerMessage): msg is AutofillMessage {
   return msg.type === 'autofill';
@@ -124,6 +126,8 @@ export interface PuzzleT {
   };
   clues: Array<ClueT>;
   grid: Array<string>;
+  vBars: Array<number>;
+  hBars: Array<number>;
   highlighted: Array<number>;
   highlight: 'circle' | 'shade';
   comments: Array<CommentWithRepliesT>;
@@ -194,6 +198,8 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     },
     clues: clues,
     grid: dbPuzzle.g,
+    vBars: dbPuzzle.vb || [],
+    hBars: dbPuzzle.hb || [],
     highlighted: dbPuzzle.hs || [],
     highlight: dbPuzzle.s ? 'shade' : 'circle',
     comments: dbPuzzle.cs || [],
@@ -231,6 +237,8 @@ const PuzzleInProgressBaseV = t.intersection([
     notes: t.union([t.string, t.null]),
   }),
   t.partial({
+    vBars: t.array(t.number),
+    hBars: t.array(t.number),
     blogPost: t.union([t.string, t.null]),
     guestConstructor: t.union([t.string, t.null]),
     id: t.string,
@@ -285,6 +293,7 @@ export enum KeyK {
   Escape,
   Backtick,
   Dot,
+  Comma,
   Exclamation,
   AllowedCharacter,
   // Keys specific to on-screen keyboard
@@ -351,6 +360,8 @@ export function fromKeyboardEvent(event: {
         return some(KeyK.Backtick);
       case '.':
         return some(KeyK.Dot);
+      case ',':
+        return some(KeyK.Comma);
       case '!':
         return some(KeyK.Exclamation);
       // Keys specific to on-screen keyboard

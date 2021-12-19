@@ -263,6 +263,8 @@ const PuzzleEditor = ({
         allowBlockEditing: false,
         highlighted: new Set(puzzle.highlighted),
         highlight: puzzle.highlight,
+        vBars: new Set(puzzle.vBars),
+        hBars: new Set(puzzle.hBars),
       }),
       puzzle.clues
     );
@@ -309,6 +311,8 @@ const PuzzleEditor = ({
           height={puzzle.size.rows}
           highlight={puzzle.highlight}
           highlighted={new Set(puzzle.highlighted)}
+          vBars={new Set(puzzle.vBars)}
+          hBars={new Set(puzzle.hBars)}
         />
       </>
     );

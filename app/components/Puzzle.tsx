@@ -178,6 +178,8 @@ export const Puzzle = ({
           cells: play
             ? play.g
             : puzzle.grid.map((s) => (s === BLOCK ? BLOCK : ' ')),
+          vBars: new Set(puzzle.vBars),
+          hBars: new Set(puzzle.hBars),
           allowBlockEditing: false,
           highlighted: new Set(puzzle.highlighted),
           highlight: puzzle.highlight,
@@ -998,11 +1000,15 @@ export const Puzzle = ({
                 icon={<FaPrint />}
                 text={t`Print Puzzle`}
               />
-              <TopBarDropDownLinkSimpleA
-                href={'/api/puz/' + puzzle.id}
-                icon={<FaRegFile />}
-                text={t`Download .puz File`}
-              />
+              {puzzle.hBars.length || puzzle.vBars.length ? (
+                ''
+              ) : (
+                <TopBarDropDownLinkSimpleA
+                  href={'/api/puz/' + puzzle.id}
+                  icon={<FaRegFile />}
+                  text={t`Download .puz File`}
+                />
+              )}
               <TopBarDropDownLinkA
                 href="/account"
                 icon={<FaUser />}

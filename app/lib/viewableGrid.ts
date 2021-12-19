@@ -358,22 +358,22 @@ function flipped<Entry extends ViewableEntry, Grid extends ViewableGrid<Entry>>(
   sym: Symmetry
 ): number | null {
   switch (sym) {
-  case Symmetry.None:
-    return null;
-  case Symmetry.Rotational:
-    return (
-      (grid.height - pos.row - 1) * grid.width + (grid.width - pos.col - 1)
-    );
-  case Symmetry.Horizontal:
-    return (grid.height - pos.row - 1) * grid.width + pos.col;
-  case Symmetry.Vertical:
-    return pos.row * grid.width + (grid.width - pos.col - 1);
-  case Symmetry.DiagonalNESW:
-    return (
-      (grid.height - pos.col - 1) * grid.width + (grid.width - pos.row - 1)
-    );
-  case Symmetry.DiagonalNWSE:
-    return pos.col * grid.width + pos.row;
+    case Symmetry.None:
+      return null;
+    case Symmetry.Rotational:
+      return (
+        (grid.height - pos.row - 1) * grid.width + (grid.width - pos.col - 1)
+      );
+    case Symmetry.Horizontal:
+      return (grid.height - pos.row - 1) * grid.width + pos.col;
+    case Symmetry.Vertical:
+      return pos.row * grid.width + (grid.width - pos.col - 1);
+    case Symmetry.DiagonalNESW:
+      return (
+        (grid.height - pos.col - 1) * grid.width + (grid.width - pos.row - 1)
+      );
+    case Symmetry.DiagonalNWSE:
+      return pos.col * grid.width + pos.row;
   }
 }
 
@@ -395,6 +395,23 @@ export function gridWithBlockToggled<
   }
 
   return fromCells({ ...grid, cells });
+}
+
+export function gridWithBarToggled<
+  Entry extends ViewableEntry,
+  Grid extends ViewableGrid<Entry>
+>(grid: Grid, pos: PosAndDir): Grid {
+  const index = pos.row * grid.width + pos.col;
+  if (pos.dir === Direction.Across) {
+    if (pos.col === grid.width - 1) return grid;
+    if (grid.vBars.has(index)) grid.vBars.delete(index);
+    else grid.vBars.add(index);
+  } else {
+    if (pos.row === grid.height - 1) return grid;
+    if (grid.hBars.has(index)) grid.hBars.delete(index);
+    else grid.hBars.add(index);
+  }
+  return fromCells({ ...grid });
 }
 
 export function getCluedAcrossAndDown<Entry extends ViewableEntry>(
@@ -587,7 +604,7 @@ export function addClues<
     const clue = cluesByDir.get(e.labelNumber);
     if (!clue) {
       throw new Error(
-        'Can\'t find clue for ' + e.labelNumber + ' ' + e.direction
+        "Can't find clue for " + e.labelNumber + ' ' + e.direction
       );
     }
     return { ...e, clue };
@@ -617,7 +634,9 @@ export function fromCells<
   const [baseEntries, entriesByCell] = entriesFromCells(
     input.width,
     input.height,
-    input.cells
+    input.cells,
+    input.vBars,
+    input.hBars
   );
 
   const cellLabels = new Map<number, number>();

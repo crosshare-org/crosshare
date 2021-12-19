@@ -193,6 +193,8 @@ class PuzReader {
       height: h,
       allowBlockEditing: false,
       highlighted: new Set<number>(),
+      vBars: new Set<number>(),
+      hBars: new Set<number>(),
       highlight: 'circle',
       mapper: (e) => e,
     });

@@ -38,6 +38,8 @@ const initializeState = (
     width: props.width,
     height: props.height,
     grid: props.grid,
+    vBars: props.vBars || [],
+    hBars: props.hBars || [],
     highlighted: props.highlighted,
     highlight: props.highlight,
     title: props.title,

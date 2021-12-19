@@ -10,6 +10,8 @@ test('Highlighting for different types of clues', async () => {
     cells: answers,
     allowBlockEditing: false,
     highlighted: new Set<number>(),
+    vBars: new Set<number>(),
+    hBars: new Set<number>(),
     highlight: 'circle',
     mapper: (x) => x,
   });

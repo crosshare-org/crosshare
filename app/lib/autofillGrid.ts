@@ -205,11 +205,19 @@ export function addAutofillFieldsToEntry<Entry extends EntryWithPattern>(
 export function fromTemplate(
   template: string[],
   width: number,
-  height: number
+  height: number,
+  vBars: Set<number>,
+  hBars: Set<number>
 ): AutofillGrid {
   const cells = template.map((c) => c.toUpperCase().replace('#', '.'));
   const usedWords = new Set<string>();
-  const [baseEntries, entriesByCell] = entriesFromCells(width, height, cells);
+  const [baseEntries, entriesByCell] = entriesFromCells(
+    width,
+    height,
+    cells,
+    vBars,
+    hBars
+  );
 
   const entries = baseEntries.map((baseEntry) => {
     if (baseEntry.completedWord) {
@@ -218,5 +226,14 @@ export function fromTemplate(
     return addAutofillFieldsToEntry(baseEntry);
   });
 
-  return { width, height, usedWords, cells, entriesByCell, entries };
+  return {
+    width,
+    height,
+    usedWords,
+    cells,
+    entriesByCell,
+    entries,
+    vBars,
+    hBars,
+  };
 }

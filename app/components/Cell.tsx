@@ -29,6 +29,8 @@ const Cursor = () => {
 };
 
 type CellProps = {
+  barRight: boolean;
+  barBottom: boolean;
   isEnteringRebus: boolean;
   rebusValue?: string;
   autofill: string;
@@ -122,9 +124,17 @@ export const Cell = memo(function Cell(props: CellProps) {
           ...(props.row === props.gridHeight - 1 && {
             borderBottom: '1px solid var(--cell-wall)',
           }),
+          ...(props.barBottom &&
+            props.row !== props.gridHeight - 1 && {
+              borderBottom: '0.05em solid var(--cell-wall)',
+            }),
           ...(props.column === props.gridWidth - 1 && {
             borderRight: '1px solid var(--cell-wall)',
           }),
+          ...(props.barRight &&
+            props.column !== props.gridWidth - 1 && {
+              borderRight: '0.05em solid var(--cell-wall)',
+            }),
           background: bg,
           ...(boxShadow && { boxShadow }),
         }}
@@ -164,10 +174,10 @@ export const Cell = memo(function Cell(props: CellProps) {
                 color: props.isVerified
                   ? 'var(--verified)'
                   : filledValue
-                    ? props.active && !props.isEnteringRebus
-                      ? 'var(--onprimary)'
-                      : 'var(--text)'
-                    : 'var(--autofill)',
+                  ? props.active && !props.isEnteringRebus
+                    ? 'var(--onprimary)'
+                    : 'var(--text)'
+                  : 'var(--autofill)',
                 textAlign: 'center',
                 lineHeight: '1.2em',
                 fontSize: '0.9em',

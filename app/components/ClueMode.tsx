@@ -193,15 +193,27 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
     });
 
   if (addingAlternate) {
-    return <>
-      <AlternateSolutionEditor grid={state.grid.cells} save={async (alt) => {
-        const act: AddAlternateAction = {
-          type: 'ADDALT',
-          alternate: alt
-        };
-        props.dispatch(act);
-      }} cancel={() => setAddingAlternate(false)} width={state.grid.width} height={state.grid.height} highlight={state.grid.highlight} highlighted={state.grid.highlighted} />
-    </>;
+    return (
+      <>
+        <AlternateSolutionEditor
+          grid={state.grid.cells}
+          save={async (alt) => {
+            const act: AddAlternateAction = {
+              type: 'ADDALT',
+              alternate: alt,
+            };
+            props.dispatch(act);
+          }}
+          cancel={() => setAddingAlternate(false)}
+          width={state.grid.width}
+          height={state.grid.height}
+          highlight={state.grid.highlight}
+          highlighted={state.grid.highlighted}
+          vBars={state.grid.vBars}
+          hBars={state.grid.hBars}
+        />
+      </>
+    );
   }
   return (
     <>
