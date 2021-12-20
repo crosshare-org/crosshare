@@ -18,6 +18,9 @@ import {
   FaComment,
   FaMagic,
   FaBicycle,
+  FaCat,
+  FaQuestionCircle,
+  FaCode,
 } from 'react-icons/fa';
 import { BigQuote } from '../components/BigQuote';
 import { Hero } from '../components/Hero';
@@ -26,8 +29,11 @@ import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
 import { Emoji } from '../components/Emoji';
 import { ContactLinks } from '../components/ContactLinks';
 import { withStaticTranslation } from '../lib/translation';
+import { CgSidebarRight } from 'react-icons/cg';
 
-export const getStaticProps = withStaticTranslation(() => { return { props: {} }; });
+export const getStaticProps = withStaticTranslation(() => {
+  return { props: {} };
+});
 
 export default function BuilderPage() {
   const [ready, error, loading, setLoaded] = useWordDB();
@@ -170,6 +176,26 @@ export default function BuilderPage() {
           icon={<FaComment />}
           heading="An instant crossword blog"
           text="After constructing your first puzzle you can reserve your own URL and instantly create a crossword blog. You get a centralized page to share and talk about all of your puzzles. Commenting is enabled from the start and Crosshare is the only place where comments feature solve times, clue tooltips, and other crossword specific features."
+        />
+        <FeatureListItem
+          icon={<FaQuestionCircle />}
+          heading="First class meta puzzle support"
+          text="Crosshare is the only puzzle host that has built in support for meta/contest crosswords including submission tracking, a leaderboard, and detailed statistics."
+        />
+        <FeatureListItem
+          icon={<FaCode />}
+          heading="Dead simple embedding"
+          text="Any of your puzzles can be embedded on another site with just a few clicks."
+        />
+        <FeatureListItem
+          icon={<CgSidebarRight />}
+          heading="Barred grids"
+          text="Barred crosswords (and combinations of bars and blocks) have first class support in the constructor and the solving interface."
+        />
+        <FeatureListItem
+          icon={<FaCat />}
+          heading="Schrödinger puzzles and bidirectional rebuses"
+          text="Crosshare also natively supports puzzles with an arbitrary number of valid solutions. The alternate solutions are shown to the solver after the grid is complete to make sure they have the aha moment."
         />
       </FeatureList>
       <div

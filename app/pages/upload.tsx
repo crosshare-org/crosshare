@@ -10,7 +10,14 @@ import {
 import { Preview } from '../components/Preview';
 import { Link, LinkButton } from '../components/Link';
 import { MdMoneyOff } from 'react-icons/md';
-import { FaShareSquare, FaChartBar, FaComment } from 'react-icons/fa';
+import {
+  FaShareSquare,
+  FaChartBar,
+  FaComment,
+  FaQuestionCircle,
+  FaCode,
+  FaCat,
+} from 'react-icons/fa';
 import { IoMdPhonePortrait, IoMdResize } from 'react-icons/io';
 import { RiPagesLine } from 'react-icons/ri';
 import { FeatureList, FeatureListItem } from '../components/FeatureList';
@@ -18,8 +25,11 @@ import { BigQuote } from '../components/BigQuote';
 import { Hero } from '../components/Hero';
 import { ContactLinks } from '../components/ContactLinks';
 import { withStaticTranslation } from '../lib/translation';
+import { CgSidebarRight } from 'react-icons/cg';
 
-export const getStaticProps = withStaticTranslation(() => { return { props: {} }; });
+export const getStaticProps = withStaticTranslation(() => {
+  return { props: {} };
+});
 
 export default function UploadPage() {
   const ctx = useContext(AuthContext);
@@ -170,6 +180,26 @@ export default function UploadPage() {
           icon={<FaComment />}
           heading="An instant crossword blog"
           text="After publishing a puzzle you can reserve your own URL and instantly create a crossword blog. You get a centralized page to share and talk about all of your puzzles. Commenting is enabled from the start and Crosshare is the only place where comments feature solve times, clue tooltips, and other crossword specific features."
+        />
+        <FeatureListItem
+          icon={<FaQuestionCircle />}
+          heading="First class meta puzzle support"
+          text="Crosshare is the only puzzle host that has built in support for meta/contest crosswords including submission tracking, a leaderboard, and detailed statistics."
+        />
+        <FeatureListItem
+          icon={<FaCode />}
+          heading="Dead simple embedding"
+          text="Any of your puzzles can be embedded on another site with just a few clicks."
+        />
+        <FeatureListItem
+          icon={<CgSidebarRight />}
+          heading="Barred grids"
+          text="Barred crosswords (and combinations of bars and blocks) have first class support in the constructor and the solving interface."
+        />
+        <FeatureListItem
+          icon={<FaCat />}
+          heading="Schrödinger puzzles and bidirectional rebuses"
+          text="Crosshare also natively supports puzzles with an arbitrary number of valid solutions. The alternate solutions are shown to the solver after the grid is complete to make sure they have the aha moment."
         />
       </FeatureList>
       <div css={{ textAlign: 'center', marginBottom: '2em' }}>
