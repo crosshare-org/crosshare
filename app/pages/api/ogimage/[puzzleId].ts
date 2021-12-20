@@ -51,17 +51,48 @@ async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
   }
   ctx.stroke();
 
+  const vBars = new Set(puzzle.vb || []);
+  const hBars = new Set(puzzle.hb || []);
   // Grid squares
+  ctx.lineWidth = 8;
+  ctx.beginPath();
   for (let i = 0; i < puzzle.g.length; i += 1) {
-    if (puzzle.g[i] !== '.') {
-      continue;
-    }
     const col = i % puzzle.w;
     const row = Math.floor(i / puzzle.w);
 
+    if (vBars.has(i)) {
+      ctx.moveTo(
+        300 + (col + 1) * widthDivision + xOffset,
+        15 + row * heightDivision + yOffset
+      );
+      ctx.lineTo(
+        300 + (col + 1) * widthDivision + xOffset,
+        15 + (row + 1) * heightDivision + yOffset
+      );
+    }
+    if (hBars.has(i)) {
+      ctx.moveTo(
+        300 + col * widthDivision + xOffset,
+        15 + (row + 1) * heightDivision + yOffset
+      );
+      ctx.lineTo(
+        300 + (col + 1) * widthDivision + xOffset,
+        15 + (row + 1) * heightDivision + yOffset
+      );
+    }
+    if (puzzle.g[i] !== '.') {
+      continue;
+    }
+
     ctx.fillStyle = 'black';
-    ctx.fillRect(300 + col * widthDivision + xOffset, 15 + row * heightDivision + yOffset, widthDivision, heightDivision);
+    ctx.fillRect(
+      300 + col * widthDivision + xOffset,
+      15 + row * heightDivision + yOffset,
+      widthDivision,
+      heightDivision
+    );
   }
+  ctx.stroke();
 
   // Center Logo - try loading constructor's profile pic
   let img: Image | null = null;
