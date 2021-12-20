@@ -377,6 +377,62 @@ function flipped<Entry extends ViewableEntry, Grid extends ViewableGrid<Entry>>(
   }
 }
 
+function flippedBar<
+  Entry extends ViewableEntry,
+  Grid extends ViewableGrid<Entry>
+>(
+  grid: Grid,
+  pos: PosAndDir,
+  sym: Symmetry
+): [vBar: number | null, hBar: number | null] {
+  switch (sym) {
+    case Symmetry.None:
+      return [null, null];
+    case Symmetry.Rotational: {
+      const flipCell =
+        (grid.height - pos.row - 1) * grid.width + (grid.width - pos.col - 1);
+      if (pos.dir === Direction.Across) {
+        return [flipCell - 1, null];
+      } else {
+        return [null, flipCell - grid.width];
+      }
+    }
+    case Symmetry.Horizontal: {
+      const flipCell = (grid.height - pos.row - 1) * grid.width + pos.col;
+      if (pos.dir === Direction.Across) {
+        return [flipCell, null];
+      } else {
+        return [null, flipCell - grid.width];
+      }
+    }
+    case Symmetry.Vertical: {
+      const flipCell = pos.row * grid.width + (grid.width - pos.col - 1);
+      if (pos.dir === Direction.Across) {
+        return [flipCell - 1, null];
+      } else {
+        return [null, flipCell];
+      }
+    }
+    case Symmetry.DiagonalNESW: {
+      const flipCell =
+        (grid.height - pos.col - 1) * grid.width + (grid.width - pos.row - 1);
+      if (pos.dir === Direction.Across) {
+        return [null, flipCell - grid.width];
+      } else {
+        return [flipCell - 1, null];
+      }
+    }
+    case Symmetry.DiagonalNWSE: {
+      const flipCell = pos.col * grid.width + pos.row;
+      if (pos.dir === Direction.Across) {
+        return [null, flipCell];
+      } else {
+        return [flipCell, null];
+      }
+    }
+  }
+}
+
 export function gridWithBlockToggled<
   Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>
@@ -400,16 +456,31 @@ export function gridWithBlockToggled<
 export function gridWithBarToggled<
   Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>
->(grid: Grid, pos: PosAndDir): Grid {
+>(grid: Grid, pos: PosAndDir, sym: Symmetry): Grid {
   const index = pos.row * grid.width + pos.col;
+  const [flippedVBar, flippedHBar] = flippedBar(grid, pos, sym);
   if (pos.dir === Direction.Across) {
     if (pos.col === grid.width - 1) return grid;
-    if (grid.vBars.has(index)) grid.vBars.delete(index);
-    else grid.vBars.add(index);
+    if (grid.vBars.has(index)) {
+      grid.vBars.delete(index);
+      if (flippedVBar !== null) grid.vBars.delete(flippedVBar);
+      if (flippedHBar !== null) grid.hBars.delete(flippedHBar);
+    } else {
+      grid.vBars.add(index);
+      if (flippedVBar !== null) grid.vBars.add(flippedVBar);
+      if (flippedHBar !== null) grid.hBars.add(flippedHBar);
+    }
   } else {
     if (pos.row === grid.height - 1) return grid;
-    if (grid.hBars.has(index)) grid.hBars.delete(index);
-    else grid.hBars.add(index);
+    if (grid.hBars.has(index)) {
+      grid.hBars.delete(index);
+      if (flippedVBar !== null) grid.vBars.delete(flippedVBar);
+      if (flippedHBar !== null) grid.hBars.delete(flippedHBar);
+    } else {
+      grid.hBars.add(index);
+      if (flippedVBar !== null) grid.vBars.add(flippedVBar);
+      if (flippedHBar !== null) grid.hBars.add(flippedHBar);
+    }
   }
   return fromCells({ ...grid });
 }

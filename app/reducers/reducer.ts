@@ -944,7 +944,8 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
     } else if (key.k === KeyK.Comma && state.grid.allowBlockEditing) {
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
-        state.grid = gridWithBarToggled(state.grid, state.active);
+        const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
+        state.grid = gridWithBarToggled(state.grid, state.active, symmetry);
         return {
           ...postEdit(state, ci),
           wasEntryClick: false,
