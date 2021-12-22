@@ -14,7 +14,16 @@ export default class CrosshareDocument extends Document {
             sizes="32x32"
             href="/favicon-32x32.png"
           />
-          <meta name="theme-color" content="#EB984E" />
+          <meta
+            name="theme-color"
+            content="#eb984e"
+            media="(prefers-color-scheme: light)"
+          />
+          <meta
+            name="theme-color"
+            content="#764c27"
+            media="(prefers-color-scheme: dark)"
+          />
           <link rel="manifest" href="/manifest.json" />
           <link
             rel="apple-touch-icon"
