@@ -25,6 +25,7 @@ export const ButtonResetCSS: CSSInterpolation = {
   border: 'none',
   backgroundColor: 'transparent',
   fontFamily: 'inherit',
+  fontWeight: 'normal',
   padding: '0',
   color: 'inherit',
   cursor: 'pointer',

@@ -255,7 +255,7 @@ export default requiresAdmin(() => {
                 </label>
               </div>
             ))}
-            <input type="submit" value="Moderate" />
+            <Button type="submit" text="Moderate" />
           </form>
         )}
         {automoderated ? (
