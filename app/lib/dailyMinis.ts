@@ -11,6 +11,12 @@ import { AnyFirestore } from './dbUtils';
 
 const dailyMiniIdsByDate: Map<string, string | null> = new Map();
 
+export function setMiniForDate(pds: string, id: string) {
+  const key = 'dmid-' + pds;
+  dailyMiniIdsByDate.set(key, id);
+  sessionStorage.setItem(key, id);
+}
+
 export async function getMiniIdForDate(
   db: AnyFirestore,
   d: Date

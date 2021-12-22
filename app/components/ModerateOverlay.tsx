@@ -5,6 +5,7 @@ import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 import { App } from '../lib/firebaseWrapper';
 import { PuzzleAction } from '../reducers/reducer';
 import { Overlay } from './Overlay';
+import { setMiniForDate } from '../lib/dailyMinis';
 
 export const ModeratingOverlay = memo(
   ({
@@ -22,16 +23,15 @@ export const ModeratingOverlay = memo(
       if (!date) {
         throw new Error("shouldn't be able to schedule w/o date");
       }
-      const ds = getDateString(date);
-      Promise.all([
-        db
-          .collection('c')
-          .doc(puzzle.id)
-          .update({ m: true, c: 'dailymini', dmd: prettifyDateString(ds) }),
-      ]).then(() => {
-        console.log('Scheduled mini');
-        setSuccess(true);
-      });
+      const pds = prettifyDateString(getDateString(date));
+      setMiniForDate(pds, puzzle.id);
+      db.collection('c')
+        .doc(puzzle.id)
+        .update({ m: true, c: 'dailymini', dmd: pds })
+        .then(() => {
+          console.log('Scheduled mini');
+          setSuccess(true);
+        });
     }
 
     function markAsModerated(featured: boolean) {
