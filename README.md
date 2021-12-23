@@ -40,9 +40,9 @@ Now click "Continue to console" and click "Service accounts" at the top of the P
 
 ### Install dependencies
 
-Crosshare is currently deployed on node 12 - on Fedora it's:
+Crosshare is currently deployed on node 14 - on Fedora it's:
 ```shell
-$ sudo dnf module install nodejs:12
+$ sudo dnf module install nodejs:14
 ```
 
 We use `yarn` for package management:
