@@ -6,6 +6,8 @@
 // eslint-disable-next-line
 const JSDomEnvironment = require('jest-environment-jsdom');
 
+import { TextEncoder, TextDecoder } from 'util';
+
 class MyEnvironment extends JSDomEnvironment {
   constructor(config) {
     super(
@@ -15,17 +17,20 @@ class MyEnvironment extends JSDomEnvironment {
           Uint8Array: Uint8Array,
           ArrayBuffer: ArrayBuffer,
           setImmediate: setImmediate,
+          TextEncoder: TextEncoder,
+          TextDecoder: TextDecoder,
         }),
-      }),
+      })
     );
   }
 
   async setup() {
-    /* noop */ }
+    /* noop */
+  }
 
   async teardown() {
-    /* noop */ }
-
+    /* noop */
+  }
 }
 
 module.exports = MyEnvironment;

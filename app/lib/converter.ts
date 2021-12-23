@@ -11,7 +11,6 @@ const MAX_STRING_LENGTH = 2048;
 function isPuz(bytes: Uint8Array) {
   return magicIndex(bytes) !== -1;
 }
-
 function magicIndex(bytes: Uint8Array) {
   const initialChars = String.fromCodePoint.apply(
     null,
@@ -25,9 +24,14 @@ class PuzReader {
   public highlighted: Array<number>;
   public rebusMap: Uint8Array | null;
   public rebusKey: Record<number, string>;
+  private encoding = 'ISO-8859-1';
 
   constructor(public buf: Uint8Array) {
     this.buf = this.buf.slice(magicIndex(this.buf) - 2);
+    // Check for version >= 2.0
+    if ((this.buf[0x18] || 1) >= 50) {
+      this.encoding = 'UTF-8';
+    }
     this.ix = 0;
     this.highlighted = [];
     this.rebusMap = null;
@@ -55,9 +59,11 @@ class PuzReader {
       const c = this.buf[this.ix++];
       count += 1;
       if (!c) break; // null terminated
-      result.push(String.fromCodePoint(c));
+      result.push(c);
     }
-    return result.join('').substring(0, MAX_STRING_LENGTH);
+    return new TextDecoder(this.encoding)
+      .decode(new Uint8Array(result))
+      .substring(0, MAX_STRING_LENGTH);
   }
 
   readBytes(length: number) {
@@ -276,22 +282,8 @@ class PuzWriter {
 
   writeString(s: string | undefined, nullTerminated = true) {
     if (s === undefined) s = '';
-    for (let i = 0; i < s.length; i++) {
-      const cp = s.codePointAt(i);
-      if (cp === undefined) {
-        throw new Error('bad code point at index ' + i);
-      }
-      if (cp < 0x100 && cp > 0) {
-        this.buf.push(cp);
-      } else {
-        // TODO: expose this warning through the UI
-        console.error(
-          'string "' + s + '" has non-ISO-8859-1 codepoint at offset ' + i
-        );
-        this.buf.push(this.questionCP);
-      }
-      if (cp >= 0x10000) i++; // advance by one codepoint
-    }
+    const bytes = new TextEncoder().encode(s);
+    this.buf.push(...bytes);
     if (nullTerminated) {
       this.buf.push(0);
     }
@@ -302,7 +294,7 @@ class PuzWriter {
     this.writeString('ACROSS&DOWN');
     this.pad(2); // placeholder for cib checksum
     this.pad(8); // placeholder for masked checksum
-    this.writeString('1.3'); // version
+    this.writeString('2.0'); // version
     this.pad(2); // probably extra space for version string
     this.writeShort(0); // scrambled checksum
     this.pad(12); // reserved

@@ -85,6 +85,7 @@ const CASES = [
   { name: 'qvxdupes' },
   { name: 'washpost' },
   { name: 'wsj110624' },
+  { name: 'incognito' },
 ];
 
 cases(
