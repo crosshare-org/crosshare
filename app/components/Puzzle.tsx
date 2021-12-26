@@ -1039,7 +1039,7 @@ export const Puzzle = ({
 
   const description = puzzle.blogPost
     ? puzzle.blogPost.slice(0, 160) + '...'
-    : puzzle.clues.map(getClueText).sort().slice(0, 10).join('; ');
+    : puzzle.clues.map(getClueText).slice(0, 10).join('; ');
 
   const locale = router.locale || 'en';
 
