@@ -3,13 +3,15 @@
 import { css } from '@emotion/react';
 import { ReactNode, Fragment, useState, useCallback } from 'react';
 import SimpleMarkdown, { SingleASTNode, ASTNode } from 'simple-markdown';
-import { Direction } from '../lib/types';
+import { Direction, removeClueSpecials } from '../lib/types';
 import { ToolTipText } from './ToolTipText';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { image, refimage, ...baseRules } = { ...SimpleMarkdown.defaultRules };
 
-const rules: SimpleMarkdown.Rules<SimpleMarkdown.ReactOutputRule & SimpleMarkdown.HtmlOutputRule> = {
+const rules: SimpleMarkdown.Rules<
+  SimpleMarkdown.ReactOutputRule & SimpleMarkdown.HtmlOutputRule
+> = {
   ...baseRules,
   blockQuote: {
     ...SimpleMarkdown.defaultRules.blockQuote,
@@ -49,7 +51,7 @@ const rules: SimpleMarkdown.Rules<SimpleMarkdown.ReactOutputRule & SimpleMarkdow
     },
     html() {
       return '<b>Spoiler omitted</b>';
-    }
+    },
   },
 };
 
@@ -60,18 +62,21 @@ export const htmlOutput = SimpleMarkdown.outputFor(rules, 'html');
 const SpoilerText = ({ children }: { children: ReactNode }) => {
   const [revealed, setRevealed] = useState(false);
 
-  const doReveal = useCallback((e) => {
-    if (!revealed) {
-      e.stopPropagation();
-      setRevealed(true);
-    }
-  }, [revealed]);
+  const doReveal = useCallback(
+    (e) => {
+      if (!revealed) {
+        e.stopPropagation();
+        setRevealed(true);
+      }
+    },
+    [revealed]
+  );
 
   return (
     <span
       onClick={doReveal}
       onKeyPress={doReveal}
-      role='button'
+      role="button"
       tabIndex={0}
       css={{
         ...(!revealed && {
@@ -80,8 +85,8 @@ const SpoilerText = ({ children }: { children: ReactNode }) => {
           userSelect: 'none',
           '& *': {
             visibility: 'hidden',
-          }
-        })
+          },
+        }),
       }}
     >
       {children}
@@ -208,7 +213,7 @@ export const Markdown = ({
                     <b css={marginRight}>
                       {mouseover.fullClueNumber} <code>{mouseover.answer}</code>
                     </b>
-                    {mouseover.clue}
+                    {removeClueSpecials(mouseover.clue)}
                   </>
                 }
               />
