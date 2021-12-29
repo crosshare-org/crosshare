@@ -45,7 +45,8 @@ $ ./scripts/buildGinsberg.ts ../cluedata
 # Build wordlist:
 # Download expanded names: https://sites.google.com/view/expandedcrosswordnamedatabase/home
 # Download peter's wordlist: https://peterbroda.me/crosswords/wordlist/
-$ ./scripts/buildWordlist.ts ../peter-broda-wordlist__scored.txt ../cluedata.txt ../ExpandedNames_unscored.txt worddb.json
+# Download spread the wordlist: https://www.spreadthewordlist.com/wordlist
+$ ./scripts/buildWordlist.ts ../peter-broda-wordlist__scored.txt ../cluedata.txt ../ExpandedNames_unscored.txt ../spreadthewordlist.txt worddb.json
 
 # Upload wordlist:
 $ GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json ./scripts/uploadWordlist.ts

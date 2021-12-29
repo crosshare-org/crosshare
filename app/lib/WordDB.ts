@@ -25,7 +25,7 @@ let dbStatus: DBStatus = DBStatus.uninitialized;
 const STORAGE_KEY = 'db';
 
 const VERSION_KEY = 'db_version';
-const VERSION = '1';
+const VERSION = '2';
 
 export const useWordDB = (
   validate?: boolean

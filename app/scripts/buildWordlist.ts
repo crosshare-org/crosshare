@@ -9,31 +9,39 @@ import { rawBuild } from '../lib/WordDB';
 const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);
 
-if (process.argv.length !== 6) {
+if (process.argv.length !== 7) {
   throw Error(
-    'Invalid use of buildWordlist.\nUsage: `buildWordlist.ts <path to peter brodas list> <path to cluedata> <path to expanded wordlist> <output filename>`'
+    'Invalid use of buildWordlist.\nUsage: `buildWordlist.ts <path to peter brodas list> <path to cluedata> <path to expanded wordlist> <path to spread the wordlist> <output filename>`'
   );
 }
 
 const peters = process.argv[2];
 const cluedata = process.argv[3];
 const expanded = process.argv[4];
-const out = process.argv[5];
+const spread = process.argv[5];
+const out = process.argv[6];
 
-if (!peters || !cluedata || !expanded || !out) {
+if (!peters || !cluedata || !expanded || !spread || !out) {
   throw new Error('bad args');
 }
 
 const wordlist: Record<string, 0 | 1 | 2 | 3> = {};
 
 const peterScoreMap = (petersScore: number): 0 | 1 | 2 | 3 => {
-  if (petersScore < 50) {
+  if (petersScore < 60) {
     return 0;
   }
-  if (petersScore < 60) {
+  return 1;
+};
+
+const spreadScoreMap = (spreadScore: number): 0 | 1 | 2 | 3 => {
+  if (spreadScore < 30) {
+    return 0;
+  }
+  if (spreadScore < 40) {
     return 1;
   }
-  if (petersScore < 80) {
+  if (spreadScore < 50) {
     return 2;
   }
   return 3;
@@ -70,52 +78,65 @@ function fileContentsToWords(contents: string): Array<[string, number]> {
     .map((s): [string, number] => [s[0], parseInt(s[1])]);
 }
 
-readFile(peters, 'utf8').then((pc: string) => {
-  const peterWords = fileContentsToWords(pc);
-  peterWords.forEach(([word, score]) => {
-    if (score >= 35 && word.length <= 15) {
-      wordlist[word] = peterScoreMap(score);
-    } else {
-      console.log('skipping ' + word);
-    }
-  });
-
-  readFile(cluedata, 'utf8').then((cc: string) => {
-    const cluedataWords = fileContentsToWords(cc);
-    cluedataWords.forEach(([word, score]) => {
-      if (!wordlist[word]) {
-        const newScore = cluedataScoreMap(score);
-        if (newScore > 1) {
-          console.log('Adding ' + word);
-        }
-        if (word.length <= 15) {
-          wordlist[word] = newScore;
-        } else {
-          console.log('skipping ' + word);
-        }
+async function buildWordlist(
+  peters: string,
+  cluedata: string,
+  expanded: string,
+  spread: string
+) {
+  await readFile(spread, 'utf8').then((sc: string) => {
+    const spreadWords = fileContentsToWords(sc);
+    spreadWords.forEach(([word, score]) => {
+      if (word.length <= 15) {
+        wordlist[word] = spreadScoreMap(score);
       }
     });
+  });
 
-    readFile(expanded, 'utf8').then((ec: string) => {
-      const expandedWords = fileContentsToWords(ec);
-      expandedWords.forEach(([word]) => {
-        if (!wordlist[word]) {
-          if (word.length <= 15) {
-            wordlist[word] = 1;
-          } else {
-            console.log('skipping ' + word);
-          }
-        }
-      });
-
-      console.log('starting build');
-      const db = rawBuild(Object.entries(wordlist));
-      console.log('built');
-
-      const outContent = JSON.stringify(db);
-      writeFile(out, outContent).then(() => {
-        console.log('wrote result to ' + out);
-      });
+  await readFile(peters, 'utf8').then((pc: string) => {
+    const peterWords = fileContentsToWords(pc);
+    peterWords.forEach(([word, score]) => {
+      const newScore = peterScoreMap(score);
+      if (
+        score >= 50 &&
+        word.length <= 15 &&
+        newScore >= (wordlist[word] || 0)
+      ) {
+        console.log('adding from peter: ', word);
+        wordlist[word] = newScore;
+      }
     });
+  });
+
+  await readFile(cluedata, 'utf8').then((cc: string) => {
+    const cluedataWords = fileContentsToWords(cc);
+    cluedataWords.forEach(([word, score]) => {
+      const newScore = cluedataScoreMap(score);
+      if (word.length <= 15 && newScore > (wordlist[word] || 0)) {
+        console.log('adding from cluedata: ', word);
+        wordlist[word] = newScore;
+      }
+    });
+  });
+
+  await readFile(expanded, 'utf8').then((ec: string) => {
+    const expandedWords = fileContentsToWords(ec);
+    expandedWords.forEach(([word]) => {
+      if (word.length <= 15 && 1 > (wordlist[word] || 0)) {
+        console.log('adding from expanded: ', word);
+        wordlist[word] = 1;
+      }
+    });
+  });
+}
+
+buildWordlist(peters, cluedata, expanded, spread).then(() => {
+  console.log('starting build');
+  const db = rawBuild(Object.entries(wordlist));
+  console.log('built');
+
+  const outContent = JSON.stringify(db);
+  writeFile(out, outContent).then(() => {
+    console.log('wrote result to ' + out);
   });
 });

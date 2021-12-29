@@ -376,15 +376,23 @@ export default function BuilderPage() {
           </p>
           <h3>Where does the wordlist come from?</h3>
           <p>
-            Crosshare uses a custom wordlist that’s mostly based off of{' '}
+            Crosshare uses a custom wordlist that’s mostly based off{' '}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://www.spreadthewordlist.com/"
+            >
+              spread the word(list)
+            </a>
+            , with additions from{' '}
             <a
               target="_blank"
               rel="noopener noreferrer"
               href="https://peterbroda.me/crosswords/wordlist/"
             >
               Peter Broda’s list
-            </a>{' '}
-            and{' '}
+            </a>
+            ,{' '}
             <a
               target="_blank"
               rel="noopener noreferrer"
@@ -392,7 +400,7 @@ export default function BuilderPage() {
             >
               Erica’s
             </a>{' '}
-            expanded name list with some additional words that have frequently
+            expanded name list, and some additional words that have frequently
             appeared in NYT puzzles.
           </p>
           <h3>Can I use my own wordlist?</h3>

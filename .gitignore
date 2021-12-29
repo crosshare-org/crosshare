@@ -6,6 +6,7 @@ _db.json
 cluedata
 peter-broda-wordlist__scored.txt
 ExpandedNames_unscored.txt
+spreadthewordlist.txt
 cluedata.txt
 .DS*
 .firebase
