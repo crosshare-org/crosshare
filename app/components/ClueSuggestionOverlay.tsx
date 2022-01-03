@@ -13,6 +13,19 @@ const NYTIcon = ({ row }: { row: any }) => {
   return <></>;
 };
 
+const ExternalSite = {
+  WIKIPEDIA: ['Wikipedia', 'https://en.wikipedia.org/w/index.php?search=%s'],
+  WIKTIONARY: ['Wiktionary', 'https://en.wiktionary.org/w/index.php?search=%s'],
+  // Not sure about the terms of services on these, commented out for now:
+  /*
+  THESAURUS: ['Thesaurus', 'https://www.thesaurus.com/browse/%s'],
+  MERRIAM_WEBSTER: ['Merriam-Webster', 'https://www.merriam-webster.com/dictionary/%s'],
+  FREE_DICTIONARY: ['The Free Dictionary', 'https://www.thefreedictionary.com/%s'],
+  URBAN_DICTIONARY: ['Urban Dictionary', 'https://www.urbandictionary.com/define.php?term=%s'],
+  BULBAPEDIA: ['Bulbapedia', 'https://bulbapedia.bulbagarden.net/wiki/index.php?search=%s'],
+  */
+} as const;
+
 const Weekday = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Difficulty = ({ row }: { row: any }) => {
@@ -28,6 +41,7 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
   const [clueList, setClueList] = useState<ClueListT | null>(null);
   const [error, setError] = useState(false);
   const [onlyNYT, setOnlyNYT] = useState(false);
+  const [externalSite, setExternalSite] = useState<keyof typeof ExternalSite>('WIKIPEDIA');
   const loading = clueList === null && error === false;
 
   const onSort = (col: string | null, dir: string | null) => {
@@ -99,7 +113,7 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
             Remember, the best constructors use original clues - try not to rely
             on suggestions for all of your cluing!
           </h3>
-          <div>
+          <div css={{ display: 'flex', justifyContent: 'space-between' }}>
             <label>
               <input
                 css={{ marginRight: '1em' }}
@@ -108,6 +122,18 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
                 onChange={(e) => setOnlyNYT(e.target.checked)}
               />
               Only show clues that have appeared in the NYT
+            </label>
+            <label>
+              External site for suggestions
+              <select
+                css={{ marginLeft: '1em' }}
+                value={externalSite}
+                onChange={x => setExternalSite(x.target.value as keyof typeof ExternalSite)}
+              >
+                {Object.entries(ExternalSite).map(([key, [name]]) =>
+                  <option key={key} value={key}>{name}</option>
+                )}
+              </select>
             </label>
           </div>
           <Table
@@ -133,6 +159,12 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
               },
             }}
           />
+          <iframe
+            css={{ height: '600px', width: '100%' }}
+            src={ExternalSite[externalSite][1].replace('%s', encodeURIComponent(props.word.toLowerCase()))}
+            frameBorder="0"
+            title="External Suggestion"
+          ></iframe>
         </>
       ) : (
         ''
