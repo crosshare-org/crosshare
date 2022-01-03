@@ -433,6 +433,43 @@ function flippedBar<
   }
 }
 
+function removeExtraneousBars<
+  I extends {
+    width: number;
+    height: number;
+    cells: string[];
+    vBars: Set<number>;
+    hBars: Set<number>;
+  }
+>(g: I): I {
+  const vBars = new Set(g.vBars);
+  const hBars = new Set(g.hBars);
+
+  for (const i of g.vBars) {
+    const col = i % g.width;
+    if (
+      col === g.width - 1 ||
+      g.cells[i + 1] === BLOCK ||
+      g.cells[i] === BLOCK
+    ) {
+      vBars.delete(i);
+    }
+  }
+
+  for (const i of g.hBars) {
+    const row = Math.floor(i / g.width);
+    if (
+      row === g.height - 1 ||
+      g.cells[i + g.width] === BLOCK ||
+      g.cells[i] === BLOCK
+    ) {
+      hBars.delete(i);
+    }
+  }
+
+  return { ...g, hBars, vBars };
+}
+
 export function gridWithBlockToggled<
   Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>
@@ -450,7 +487,7 @@ export function gridWithBlockToggled<
     cells[flippedCell] = char;
   }
 
-  return fromCells({ ...grid, cells });
+  return fromCells(removeExtraneousBars({ ...grid, cells }));
 }
 
 export function gridWithBarToggled<
@@ -482,7 +519,7 @@ export function gridWithBarToggled<
       if (flippedHBar !== null) grid.hBars.add(flippedHBar);
     }
   }
-  return fromCells({ ...grid });
+  return fromCells(removeExtraneousBars({ ...grid }));
 }
 
 export function getCluedAcrossAndDown<Entry extends ViewableEntry>(
