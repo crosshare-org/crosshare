@@ -66,6 +66,7 @@ import {
   EnterKey,
   ExclamationKey,
   CommaKey,
+  KeyIcon,
 } from './Icons';
 import { AuthProps } from './AuthContext';
 import { Histogram } from './Histogram';
@@ -1107,10 +1108,9 @@ const GridMode = ({
     (e: KeyboardEvent) => {
       const mkey = fromKeyboardEvent(e);
       if (isSome(mkey)) {
-        /* TODO this logic belongs in the reducer */
+        e.preventDefault();
         if (mkey.value.k === KeyK.Enter && !state.isEnteringRebus) {
           reRunAutofill();
-          e.preventDefault();
           return;
         }
         if (mkey.value.k === KeyK.Exclamation) {
@@ -1122,13 +1122,15 @@ const GridMode = ({
             };
             dispatch(ca);
           }
-          e.preventDefault();
           return;
+        }
+        if (mkey.value.k === KeyK.Octothorp) {
+          const a: ToggleHiddenAction = { type: 'TOGGLEHIDDEN' };
+          dispatch(a);
         }
 
         const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);
-        e.preventDefault();
       }
     },
     [dispatch, reRunAutofill, state.isEnteringRebus, getMostConstrainedEntry]
@@ -1599,6 +1601,7 @@ const GridMode = ({
               <TopBarDropDownLink
                 icon={<FaEyeSlash />}
                 text="Toggle Cell Visibility"
+                shortcutHint={<KeyIcon text="#" />}
                 onClick={() => {
                   const a: ToggleHiddenAction = {
                     type: 'TOGGLEHIDDEN',

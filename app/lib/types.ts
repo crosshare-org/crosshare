@@ -298,6 +298,7 @@ export enum KeyK {
   Dot,
   Comma,
   Exclamation,
+  Octothorp,
   AllowedCharacter,
   // Keys specific to on-screen keyboard
   NumLayout,
@@ -367,6 +368,8 @@ export function fromKeyboardEvent(event: {
         return some(KeyK.Comma);
       case '!':
         return some(KeyK.Exclamation);
+      case '#':
+        return some(KeyK.Octothorp);
       // Keys specific to on-screen keyboard
       case '{num}':
         return some(KeyK.NumLayout);

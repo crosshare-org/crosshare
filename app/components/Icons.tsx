@@ -156,7 +156,7 @@ export const Rebus = () => {
   );
 };
 
-const KeyIcon = (props: {
+export const KeyIcon = (props: {
   text: string;
   width?: number;
   stretchText?: boolean;
@@ -211,9 +211,6 @@ export const BacktickKey = () => (
 export const PeriodKey = () => <KeyIcon text="." largeFont={true} />;
 export const CommaKey = () => <KeyIcon text="," largeFont={true} textY={55} />;
 export const ExclamationKey = () => <KeyIcon text="!" />;
-export const HashKey = () => <KeyIcon text="#" />;
-export const AtSignKey = () => <KeyIcon text="@" />;
-
 const CtrlKey = () => (
   <KeyIcon
     text="ctrl"
@@ -222,23 +219,10 @@ const CtrlKey = () => (
     css={{ marginRight: '0.1em' }}
   />
 );
-
-export const CtrlHashKey = () => (
-  <>
-    <CtrlKey />
-    <HashKey />
-  </>
-);
 export const CtrlExclamationKey = () => (
   <>
     <CtrlKey />
     <ExclamationKey />
-  </>
-);
-export const CtrlAtSignKey = () => (
-  <>
-    <CtrlKey />
-    <AtSignKey />
   </>
 );
 
