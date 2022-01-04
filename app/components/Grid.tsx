@@ -117,10 +117,18 @@ export const GridView = ({
       toDisplay = altToShow[idx] || toDisplay;
     }
 
+    const col = idx % grid.width;
+    const row = Math.floor(idx / grid.height);
+
     cells.push(
       <Cell
         barRight={grid.vBars.has(idx)}
         barBottom={grid.hBars.has(idx)}
+        hidden={grid.hidden.has(idx)}
+        hiddenRight={col < grid.width - 1 && grid.hidden.has(idx + 1)}
+        hiddenBottom={
+          row < grid.height - 1 && grid.hidden.has(idx + grid.width)
+        }
         isEnteringRebus={props.isEnteringRebus || false}
         rebusValue={props.rebusValue}
         squareWidth={props.squareWidth}

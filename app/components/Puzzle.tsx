@@ -183,6 +183,7 @@ export const Puzzle = ({
           allowBlockEditing: false,
           highlighted: new Set(puzzle.highlighted),
           highlight: puzzle.highlight,
+          hidden: new Set(puzzle.hidden),
         }),
         puzzle.clues
       ),

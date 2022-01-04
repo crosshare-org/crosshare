@@ -161,6 +161,8 @@ const DBPuzzleOptionalV = t.partial({
   alts: t.array(t.record(t.string, t.string)),
   /** highlighted cell indexes */
   hs: t.array(t.number),
+  /** hidden cell indexes */
+  hdn: t.array(t.number),
   /** vertical bar indexes */
   vb: t.array(t.number),
   /** horizontal bar indexes */

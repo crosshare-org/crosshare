@@ -199,6 +199,7 @@ class PuzReader {
       height: h,
       allowBlockEditing: false,
       highlighted: new Set<number>(),
+      hidden: new Set<number>(),
       vBars: new Set<number>(),
       hBars: new Set<number>(),
       highlight: 'circle',

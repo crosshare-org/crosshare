@@ -31,6 +31,9 @@ const Cursor = () => {
 type CellProps = {
   barRight: boolean;
   barBottom: boolean;
+  hidden: boolean;
+  hiddenRight: boolean;
+  hiddenBottom: boolean;
   isEnteringRebus: boolean;
   rebusValue?: string;
   autofill: string;
@@ -119,24 +122,31 @@ export const Cell = memo(function Cell(props: CellProps) {
           width: '100%',
           height: '100%',
           fontSize: cellSize,
-          borderLeft: '1px solid var(--cell-wall)',
-          borderTop: '1px solid var(--cell-wall)',
-          ...(props.row === props.gridHeight - 1 && {
-            borderBottom: '1px solid var(--cell-wall)',
-          }),
-          ...(props.barBottom &&
-            props.row !== props.gridHeight - 1 && {
-              borderBottom: '0.05em solid var(--cell-wall)',
+          ...(props.hidden &&
+            props.active && {
+              background:
+                'repeating-linear-gradient(-45deg,var(--cell-bg),var(--cell-bg) 10px,var(--primary) 10px,var(--primary) 20px)',
             }),
-          ...(props.column === props.gridWidth - 1 && {
-            borderRight: '1px solid var(--cell-wall)',
-          }),
-          ...(props.barRight &&
-            props.column !== props.gridWidth - 1 && {
-              borderRight: '0.05em solid var(--cell-wall)',
+          ...(!props.hidden && {
+            borderLeft: '1px solid var(--cell-wall)',
+            borderTop: '1px solid var(--cell-wall)',
+            ...((props.row === props.gridHeight - 1 || props.hiddenBottom) && {
+              borderBottom: '1px solid var(--cell-wall)',
             }),
-          background: bg,
-          ...(boxShadow && { boxShadow }),
+            ...(props.barBottom &&
+              props.row !== props.gridHeight - 1 && {
+                borderBottom: '0.05em solid var(--cell-wall)',
+              }),
+            ...((props.column === props.gridWidth - 1 || props.hiddenRight) && {
+              borderRight: '1px solid var(--cell-wall)',
+            }),
+            ...(props.barRight &&
+              props.column !== props.gridWidth - 1 && {
+                borderRight: '0.05em solid var(--cell-wall)',
+              }),
+            background: bg,
+            ...(boxShadow && { boxShadow }),
+          }),
         }}
       >
         {!props.isBlock || (props.isEnteringRebus && props.active) ? (

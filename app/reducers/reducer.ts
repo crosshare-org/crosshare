@@ -27,6 +27,7 @@ import {
   nextCell,
   fromCells,
   gridWithBarToggled,
+  gridWithHiddenToggled,
 } from '../lib/viewableGrid';
 import {
   cellIndex,
@@ -140,6 +141,7 @@ export function initialBuilderStateFromSaved(
     highlighted:
       saved?.highlighted || Array.from(state.grid.highlighted.values()),
     highlight: saved?.highlight || state.grid.highlight,
+    hidden: saved?.hidden || Array.from(state.grid.hidden),
     title: saved?.title || state.title,
     notes: saved?.notes || state.notes,
     clues: saved?.clues || {},
@@ -164,6 +166,7 @@ export function initialBuilderState({
   grid,
   vBars,
   hBars,
+  hidden,
   highlighted,
   highlight,
   title,
@@ -187,6 +190,7 @@ export function initialBuilderState({
   grid: Array<string>;
   vBars: Array<number>;
   hBars: Array<number>;
+  hidden: Array<number>;
   highlighted: Array<number>;
   highlight: 'circle' | 'shade';
   blogPost: string | null;
@@ -214,6 +218,7 @@ export function initialBuilderState({
     highlight: highlight,
     vBars: new Set(vBars),
     hBars: new Set(hBars),
+    hidden: new Set(hidden),
   });
   return validateGrid({
     id: id || App.firestore().collection('c').doc().id,
@@ -386,6 +391,13 @@ function isDelAlternateAction(
   action: PuzzleAction
 ): action is DelAlternateAction {
   return action.type === 'DELALT';
+}
+
+export interface ToggleHiddenAction extends PuzzleAction {
+  type: 'TOGGLEHIDDEN';
+}
+function isToggleHiddenAction(action: PuzzleAction): action is ToggleHiddenAction {
+  return action.type === 'TOGGLEHIDDEN';
 }
 
 export interface SetHighlightAction extends PuzzleAction {
@@ -1192,6 +1204,7 @@ export function builderReducer(
       grid: initialFill,
       vBars: [],
       hBars: [],
+      hidden: [],
       title: null,
       notes: null,
       blogPost: null,
@@ -1212,6 +1225,18 @@ export function builderReducer(
   }
   if (isImportPuzAction(action)) {
     return initialBuilderStateFromSaved(action.puz, state);
+  }
+  if (isToggleHiddenAction(action)) {
+    const ci = cellIndex(state.grid, state.active);
+    if (state.isEditable(ci)) {
+      const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
+      state.grid = gridWithHiddenToggled(state.grid, state.active, symmetry);
+      return {
+        ...postEdit(state, ci),
+        wasEntryClick: false,
+      };
+    }
+    return state;
   }
   if (isPublishAction(action)) {
     const errors = [];
@@ -1275,6 +1300,7 @@ export function builderReducer(
       g: state.grid.cells,
       ...(state.grid.vBars.size && { vb: Array.from(state.grid.vBars) }),
       ...(state.grid.hBars.size && { hb: Array.from(state.grid.hBars) }),
+      ...(state.grid.hidden.size && { hdn: Array.from(state.grid.hidden )}),
       ...getClueProps(
         state.grid.sortedEntries,
         state.grid.entries,

@@ -142,25 +142,17 @@ function layoutPDFGrid(
     gridOrigin: { x: x, y: y },
     labelOffset: { x: squareSize / 24, y: squareSize / 4 },
     labelFontSize: squareSize / 3.5,
-    innerLineWidth: 0.5,
+    lineWidth: 0.5,
     barWidth: 4,
-    outerLineWidth: 2,
   };
   // Draw grid
   doc.setDrawColor(0);
-  doc.setLineWidth(format.outerLineWidth);
-  doc.rect(
-    format.gridOrigin.x,
-    format.gridOrigin.y,
-    puzzle.size.cols * format.squareSize,
-    puzzle.size.rows * format.squareSize,
-    'D'
-  );
-  doc.setLineWidth(format.innerLineWidth);
+  doc.setLineWidth(format.lineWidth);
   for (let i = 0; i < puzzle.size.rows; i++) {
     for (let j = 0; j < puzzle.size.cols; j++) {
       const square = i * puzzle.size.cols + j;
       const highlighted = puzzle.highlighted.includes(square);
+      const hidden = puzzle.hidden.includes(square);
       const barRight = puzzle.vBars.includes(square);
       const barBottom = puzzle.hBars.includes(square);
       doc.setFillColor(
@@ -170,13 +162,15 @@ function layoutPDFGrid(
           ? '#DDD'
           : 'white'
       );
-      doc.rect(
-        format.gridOrigin.x + j * format.squareSize,
-        format.gridOrigin.y + i * format.squareSize,
-        format.squareSize,
-        format.squareSize,
-        'FD'
-      );
+      if (!hidden) {
+        doc.rect(
+          format.gridOrigin.x + j * format.squareSize,
+          format.gridOrigin.y + i * format.squareSize,
+          format.squareSize,
+          format.squareSize,
+          'FD'
+        );
+      }
       if (barRight) {
         doc.setLineWidth(format.barWidth);
         doc.line(
@@ -185,7 +179,7 @@ function layoutPDFGrid(
           format.gridOrigin.x + (j + 1) * format.squareSize,
           format.gridOrigin.y + (i + 1) * format.squareSize
         );
-        doc.setLineWidth(format.innerLineWidth);
+        doc.setLineWidth(format.lineWidth);
       }
       if (barBottom) {
         doc.setLineWidth(format.barWidth);
@@ -195,7 +189,7 @@ function layoutPDFGrid(
           format.gridOrigin.x + (j + 1) * format.squareSize,
           format.gridOrigin.y + (i + 1) * format.squareSize
         );
-        doc.setLineWidth(format.innerLineWidth);
+        doc.setLineWidth(format.lineWidth);
       }
       if (highlighted && puzzle.highlight === 'circle') {
         doc.circle(
@@ -250,6 +244,7 @@ function getPdf(puzzle: PuzzleT): ArrayBuffer {
     highlight: puzzle.highlight,
     vBars: new Set(puzzle.vBars),
     hBars: new Set(puzzle.hBars),
+    hidden: new Set(puzzle.hidden),
   });
 
   const pdf = new jsPDF('p', 'pt');

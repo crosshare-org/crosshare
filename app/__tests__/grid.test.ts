@@ -229,6 +229,7 @@ test('test getEntryToClueMap', () => {
     height: 2,
     cells: answers,
     allowBlockEditing: false,
+    hidden: new Set<number>(),
     highlighted: new Set<number>(),
     vBars: new Set<number>(),
     hBars: new Set<number>(),
@@ -255,6 +256,7 @@ test('test getClueRefs for puzzle without any', () => {
     cells: answers,
     vBars: new Set<number>(),
     hBars: new Set<number>(),
+    hidden: new Set<number>(),
     allowBlockEditing: false,
     highlighted: new Set<number>(),
     highlight: 'circle',
@@ -279,6 +281,7 @@ test('test getClueRefs for puzzle with refs', () => {
     cells: answers,
     vBars: new Set<number>(),
     hBars: new Set<number>(),
+    hidden: new Set<number>(),
     allowBlockEditing: false,
     highlighted: new Set<number>(),
     highlight: 'circle',
@@ -314,6 +317,7 @@ test('test getClueRefs for puzzle with starred clues', () => {
     allowBlockEditing: false,
     highlighted: new Set<number>(),
     highlight: 'circle',
+    hidden: new Set<number>(),
     mapper: (x) => x,
   });
 
@@ -349,6 +353,7 @@ test('test getClueRefs for 35-downs', () => {
     vBars: new Set<number>(),
     hBars: new Set<number>(),
     allowBlockEditing: false,
+    hidden: new Set<number>(),
     highlighted: new Set<number>(),
     highlight: 'circle',
     mapper: (x) => x,
@@ -383,6 +388,7 @@ test('test getClueRefs for 35-downs with !@', () => {
     allowBlockEditing: false,
     highlighted: new Set<number>(),
     highlight: 'circle',
+    hidden: new Set<number>(),
     mapper: (x) => x,
   });
 

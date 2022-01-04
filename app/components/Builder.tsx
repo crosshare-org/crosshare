@@ -33,6 +33,7 @@ import {
   FaSignInAlt,
   FaKeyboard,
   FaRegFile,
+  FaEyeSlash,
 } from 'react-icons/fa';
 import { CgSidebarRight } from 'react-icons/cg';
 import { MdRefresh } from 'react-icons/md';
@@ -108,6 +109,7 @@ import {
   getClueProps,
   SetShowDownloadLink,
   PasteAction,
+  ToggleHiddenAction,
 } from '../reducers/reducer';
 import {
   NestedDropDown,
@@ -160,6 +162,7 @@ type BuilderProps = PartialBy<
   | 'highlighted'
   | 'vBars'
   | 'hBars'
+  | 'hidden'
   | 'highlight'
 >;
 
@@ -301,6 +304,7 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     grid: saved?.grid || props.grid,
     vBars: saved?.vBars || props.vBars || [],
     hBars: saved?.hBars || props.hBars || [],
+    hidden: saved?.hidden || props.hidden || [],
     highlighted: saved?.highlighted || props.highlighted || [],
     highlight: saved?.highlight || props.highlight || 'circle',
     title: saved?.title || props.title || null,
@@ -789,6 +793,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       grid: state.grid.cells,
       vBars: Array.from(state.grid.vBars),
       hBars: Array.from(state.grid.hBars),
+      hidden: Array.from(state.grid.hidden),
       highlight: state.grid.highlight,
       highlighted: Array.from(state.grid.highlighted),
       clues: state.clues,
@@ -809,6 +814,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     state.grid.height,
     state.grid.highlight,
     state.grid.highlighted,
+    state.grid.hidden,
     state.title,
     state.notes,
     state.blogPost,
@@ -1586,6 +1592,16 @@ const GridMode = ({
                   const a: KeypressAction = {
                     type: 'KEYPRESS',
                     key: { k: KeyK.Comma },
+                  };
+                  dispatch(a);
+                }}
+              />
+              <TopBarDropDownLink
+                icon={<FaEyeSlash />}
+                text="Toggle Cell Visibility"
+                onClick={() => {
+                  const a: ToggleHiddenAction = {
+                    type: 'TOGGLEHIDDEN',
                   };
                   dispatch(a);
                 }}

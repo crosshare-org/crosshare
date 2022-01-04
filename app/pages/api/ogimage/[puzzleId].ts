@@ -22,34 +22,32 @@ async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
 
   if (puzzle.w !== puzzle.h) {
     if (puzzle.w > puzzle.h) {
-      gridHeight = 600 * puzzle.h / puzzle.w;
+      gridHeight = (600 * puzzle.h) / puzzle.w;
       yOffset = (600 - gridHeight) / 2;
     } else {
-      gridWidth = 600 * puzzle.w / puzzle.h;
+      gridWidth = (600 * puzzle.w) / puzzle.h;
       xOffset = (600 - gridWidth) / 2;
     }
   }
 
-  // Puzzle outline
+  // Cell outlines
   ctx.strokeStyle = 'black';
-  ctx.lineWidth = 3;
-  ctx.lineJoin = 'round';
-  ctx.strokeRect(300 + xOffset, 15 + yOffset, gridWidth, gridHeight);
-
-  // Grid lines
   ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
   const widthDivision = gridWidth / puzzle.w;
   const heightDivision = gridHeight / puzzle.h;
-  ctx.beginPath();
-  for (let i = 1; i < puzzle.w; i += 1) {
-    ctx.moveTo(300 + i * widthDivision + xOffset, 15 + yOffset);
-    ctx.lineTo(300 + i * widthDivision + xOffset, 15 + gridHeight + yOffset);
+  for (let i = 0; i < puzzle.g.length; i += 1) {
+    if (!puzzle.hdn?.includes(i)) {
+      const col = i % puzzle.w;
+      const row = Math.floor(i / puzzle.w);
+      ctx.strokeRect(
+        300 + col * widthDivision + xOffset,
+        15 + row * heightDivision + yOffset,
+        widthDivision,
+        heightDivision
+      );
+    }
   }
-  for (let i = 1; i < puzzle.h; i += 1) {
-    ctx.moveTo(300 + xOffset, 15 + i * heightDivision + yOffset);
-    ctx.lineTo(300 + gridWidth + xOffset, 15 + i * heightDivision + yOffset);
-  }
-  ctx.stroke();
 
   const vBars = new Set(puzzle.vb || []);
   const hBars = new Set(puzzle.hb || []);
@@ -80,7 +78,7 @@ async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
         15 + (row + 1) * heightDivision + yOffset
       );
     }
-    if (puzzle.g[i] !== '.') {
+    if (puzzle.g[i] !== '.' || puzzle.hdn?.includes(i)) {
       continue;
     }
 
@@ -96,7 +94,9 @@ async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
 
   // Center Logo - try loading constructor's profile pic
   let img: Image | null = null;
-  const profilePic = AdminApp.storage().bucket().file(`users/${puzzle.a}/profile.jpg`);
+  const profilePic = AdminApp.storage()
+    .bucket()
+    .file(`users/${puzzle.a}/profile.jpg`);
   if ((await profilePic.exists())[0]) {
     try {
       img = await loadImage((await profilePic.download())[0]);

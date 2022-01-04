@@ -128,6 +128,7 @@ export interface PuzzleT {
   grid: Array<string>;
   vBars: Array<number>;
   hBars: Array<number>;
+  hidden: Array<number>;
   highlighted: Array<number>;
   highlight: 'circle' | 'shade';
   comments: Array<CommentWithRepliesT>;
@@ -200,6 +201,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     grid: dbPuzzle.g,
     vBars: dbPuzzle.vb || [],
     hBars: dbPuzzle.hb || [],
+    hidden: dbPuzzle.hdn || [],
     highlighted: dbPuzzle.hs || [],
     highlight: dbPuzzle.s ? 'shade' : 'circle',
     comments: dbPuzzle.cs || [],
@@ -239,6 +241,7 @@ const PuzzleInProgressBaseV = t.intersection([
   t.partial({
     vBars: t.array(t.number),
     hBars: t.array(t.number),
+    hidden: t.array(t.number),
     blogPost: t.union([t.string, t.null]),
     guestConstructor: t.union([t.string, t.null]),
     id: t.string,

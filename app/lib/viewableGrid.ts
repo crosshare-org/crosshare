@@ -25,6 +25,7 @@ export interface ViewableGrid<Entry extends ViewableEntry>
   cellLabels: Map<number, number>;
   allowBlockEditing: boolean;
   highlighted: Set<number>;
+  hidden: Set<number>;
   highlight: 'circle' | 'shade';
   mapper(entry: ViewableEntry): Entry;
 }
@@ -468,6 +469,34 @@ function removeExtraneousBars<
   }
 
   return { ...g, hBars, vBars };
+}
+
+export function gridWithHiddenToggled<
+  Entry extends ViewableEntry,
+  Grid extends ViewableGrid<Entry>
+>(grid: Grid, pos: Position, sym: Symmetry): Grid {
+  const index = pos.row * grid.width + pos.col;
+  const wasHidden = grid.hidden.has(index);
+  const cells = [...grid.cells];
+
+  if (wasHidden) {
+    grid.hidden.delete(index);
+  } else {
+    cells[index] = BLOCK;
+    grid.hidden.add(index);
+  }
+
+  const flippedCell = flipped(grid, pos, sym);
+  if (flippedCell !== null) {
+    if (wasHidden) {
+      grid.hidden.delete(flippedCell);
+    } else {
+      cells[flippedCell] = BLOCK;
+      grid.hidden.add(flippedCell);
+    }
+  }
+
+  return fromCells(removeExtraneousBars({ ...grid, cells }));
 }
 
 export function gridWithBlockToggled<

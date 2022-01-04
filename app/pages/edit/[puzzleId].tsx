@@ -265,6 +265,7 @@ const PuzzleEditor = ({
         highlight: puzzle.highlight,
         vBars: new Set(puzzle.vBars),
         hBars: new Set(puzzle.hBars),
+        hidden: new Set(puzzle.hidden),
       }),
       puzzle.clues
     );
@@ -313,6 +314,7 @@ const PuzzleEditor = ({
           highlighted={new Set(puzzle.highlighted)}
           vBars={new Set(puzzle.vBars)}
           hBars={new Set(puzzle.hBars)}
+          hidden={new Set(puzzle.hidden)}
         />
       </>
     );

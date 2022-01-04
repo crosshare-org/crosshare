@@ -39,6 +39,7 @@ export function AlternateSolutionEditor(props: {
   height: number;
   vBars: Set<number>;
   hBars: Set<number>;
+  hidden: Set<number>;
   highlighted: Set<number>;
   highlight: 'circle' | 'shade';
   cancel: () => void;
@@ -54,6 +55,7 @@ export function AlternateSolutionEditor(props: {
     allowBlockEditing: false,
     highlighted: props.highlighted,
     highlight: props.highlight,
+    hidden: props.hidden,
   });
 
   const [state, dispatch] = useReducer(gridInterfaceReducer, {

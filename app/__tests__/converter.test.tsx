@@ -26,6 +26,7 @@ function toDBPuzzle(pip: PuzzleInProgressStrictT): DBPuzzleT {
     height: pip.height,
     cells: pip.grid,
     allowBlockEditing: false,
+    hidden: new Set(pip.hidden),
     highlighted: new Set(pip.highlighted),
     highlight: pip.highlight,
     hBars: new Set(pip.hBars || []),

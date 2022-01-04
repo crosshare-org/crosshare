@@ -12,6 +12,7 @@ test('Highlighting for different types of clues', async () => {
     highlighted: new Set<number>(),
     vBars: new Set<number>(),
     hBars: new Set<number>(),
+    hidden: new Set<number>(),
     highlight: 'circle',
     mapper: (x) => x,
   });

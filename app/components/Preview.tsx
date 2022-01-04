@@ -40,6 +40,7 @@ const initializeState = (
     grid: props.grid,
     vBars: props.vBars || [],
     hBars: props.hBars || [],
+    hidden: props.hidden || [],
     highlighted: props.highlighted,
     highlight: props.highlight,
     title: props.title,
