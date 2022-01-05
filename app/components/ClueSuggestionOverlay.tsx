@@ -105,15 +105,17 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
             Remember, the best constructors use original clues - try not to rely
             on suggestions for all of your cluing!
           </h3>
-          <label>
-            <input
-              css={{ marginRight: '1em' }}
-              type="checkbox"
-              checked={onlyNYT}
-              onChange={(e) => setOnlyNYT(e.target.checked)}
-            />
-            Only show clues that have appeared in the NYT
-          </label>
+          <div>
+            <label>
+              <input
+                css={{ marginRight: '1em' }}
+                type="checkbox"
+                checked={onlyNYT}
+                onChange={(e) => setOnlyNYT(e.target.checked)}
+              />
+              Only show clues that have appeared in the NYT
+            </label>
+          </div>
           <Table
             data={displayList}
             columns={columns}
