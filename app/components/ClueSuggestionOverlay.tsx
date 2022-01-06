@@ -13,6 +13,11 @@ const NYTIcon = ({ row }: { row: any }) => {
   return <></>;
 };
 
+const ExternalSites: Array<[string, string]> = [
+  ['Wikipedia', 'https://en.wikipedia.org/w/index.php?search=%s'],
+  ['Wiktionary', 'https://en.wiktionary.org/w/index.php?search=%s'],
+];
+
 const Weekday = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Difficulty = ({ row }: { row: any }) => {
@@ -133,6 +138,20 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
               },
             }}
           />
+          <h3 css={{ marginTop: '1em' }}>External Sources</h3>
+          <ul>
+            {ExternalSites.map(x =>
+              <li key={x[0]}>
+                <a
+                  target="_blank"
+                  rel="noreferrer"
+                  href={x[1].replace('%s', encodeURIComponent(props.word.toLowerCase()))}
+                >
+                  Search {x[0]}
+                </a>
+              </li>
+            )}
+          </ul>
         </>
       ) : (
         ''
