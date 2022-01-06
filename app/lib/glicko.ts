@@ -263,7 +263,8 @@ export class CrosshareGlickoRound extends GlickoRound {
     PLAYER_SCORE_CACHE.set(playerId, score);
     const scores = SCORES_CACHE.get(playerId) || [];
     scores.push(score);
-    SCORES_CACHE.set(playerId, scores);
+    // For now just keep the last 10 rtgs - we aren't even using these for anything right now
+    SCORES_CACHE.set(playerId, scores.slice(-10));
     return;
   };
 
