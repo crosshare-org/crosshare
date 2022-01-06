@@ -13,11 +13,10 @@ const NYTIcon = ({ row }: { row: any }) => {
   return <></>;
 };
 
-const ExternalSites = [
+const ExternalSites: Array<[string, string]> = [
   ['Wikipedia', 'https://en.wikipedia.org/w/index.php?search=%s'],
   ['Wiktionary', 'https://en.wiktionary.org/w/index.php?search=%s'],
-  ['Wordnerd', 'https://wordnerd.fun/%s'],
-] as const;
+];
 
 const Weekday = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
