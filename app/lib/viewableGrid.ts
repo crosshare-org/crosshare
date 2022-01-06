@@ -346,9 +346,13 @@ export function gridWithNewChar<
 
     const flippedCell = flipped(grid, pos, sym);
     if (flippedCell !== null && cells[flippedCell] === BLOCK) {
+      if (grid.hidden.has(index)) {
+        grid.hidden.delete(flippedCell);
+      }
       cells[flippedCell] = ' ';
     }
   }
+  grid.hidden.delete(index);
   cells[index] = char;
   return fromCells({ ...grid, cells });
 }
@@ -509,10 +513,12 @@ export function gridWithBlockToggled<
   }
   const index = pos.row * grid.width + pos.col;
   const cells = [...grid.cells];
+  grid.hidden.delete(index);
   cells[index] = char;
 
   const flippedCell = flipped(grid, pos, sym);
   if (flippedCell !== null) {
+    grid.hidden.delete(flippedCell);
     cells[flippedCell] = char;
   }
 
