@@ -123,12 +123,19 @@ class PuzReader {
       throw new Error('Cannot import scrambled .puz files');
     }
     const grid: Array<string> = [];
+    const hidden: Array<number> = [];
     for (let i = 0; i < w * h; i++) {
       const gridCell = this.buf[0x34 + i];
       if (gridCell === undefined) {
         throw new Error('oob');
       }
-      grid.push(String.fromCodePoint(gridCell));
+      const val = String.fromCodePoint(gridCell);
+      if (val === ':') {
+        hidden.push(i);
+        grid.push('.');
+      } else {
+        grid.push(val);
+      }
     }
 
     this.ix = 0x34 + 2 * w * h;
@@ -199,7 +206,7 @@ class PuzReader {
       height: h,
       allowBlockEditing: false,
       highlighted: new Set<number>(),
-      hidden: new Set<number>(),
+      hidden: new Set(hidden),
       vBars: new Set<number>(),
       hBars: new Set<number>(),
       highlight: 'circle',
@@ -214,6 +221,7 @@ class PuzReader {
       notes,
       clues: getClueMap(viewableGrid, clues),
       highlighted: this.highlighted,
+      ...(hidden.length && { hidden }),
       highlight: 'circle',
     };
   }
@@ -244,6 +252,8 @@ export interface ExportProps {
   cn?: string;
   /** guest constructor */
   gc?: string;
+  /** hidden cells */
+  hdn?: Array<number>;
 }
 
 class PuzWriter {
@@ -310,7 +320,14 @@ class PuzWriter {
   writeFill(puzzle: ExportProps): [solutionLoc: number, gridLoc: number] {
     const grid = puzzle.g;
     const solutionLoc = this.buf.length;
-    for (const cell of grid) {
+    for (let i = 0; i < grid.length; i += 1) {
+      let cell = grid[i];
+      if (cell === undefined) {
+        continue;
+      }
+      if (puzzle.hdn?.includes(i)) {
+        cell = ':';
+      }
       const char = cell.codePointAt(0);
       if (char === undefined) {
         throw new Error('cannot encode ' + cell);

@@ -43,6 +43,7 @@ function toDBPuzzle(pip: PuzzleInProgressStrictT): DBPuzzleT {
     w: pip.width,
     g: pip.grid,
     pv: true,
+    hdn: pip.hidden,
     ...getClueProps(grid.sortedEntries, grid.entries, pip.clues, true),
     ...(pip.notes && { cn: pip.notes }),
   };
@@ -87,6 +88,7 @@ const CASES = [
   { name: 'washpost' },
   { name: 'wsj110624' },
   { name: 'incognito' },
+  { name: 'Its_All_Wrong' },
 ];
 
 cases(

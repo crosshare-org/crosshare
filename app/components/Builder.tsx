@@ -1054,6 +1054,7 @@ const PuzDownloadOverlay = (props: {
           n={props.state.authorName}
           t={props.state.title || 'Crosshare puzzle'}
           hs={Array.from(props.state.grid.highlighted)}
+          hdn={Array.from(props.state.grid.hidden)}
           cn={props.state.notes || undefined}
           gc={props.state.guestConstructor || undefined}
           {...getClueProps(
