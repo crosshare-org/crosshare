@@ -1,7 +1,7 @@
 import { GlickoScoreT } from '../lib/dbtypes';
 import { AuthContext } from './AuthContext';
 import { useContext, useState } from 'react';
-import { gFunc, expectedOutcome } from '../lib/glickoUtil';
+import { twoPlayerExpectation } from '../lib/glickoUtil';
 import { Overlay } from './Overlay';
 import { GoogleButton } from './GoogleButtons';
 import { Link } from './Link';
@@ -25,13 +25,7 @@ export const DifficultyBadge = (props: {
   const userRating = prefs?.rtg || { r: 1500, d: 350, u: 0 };
 
   if (props.puzzleRating && props.puzzleRating.d < 200) {
-    const g = gFunc(
-      Math.sqrt(
-        props.puzzleRating.d * props.puzzleRating.d +
-          userRating.d * userRating.d
-      )
-    );
-    const expectation = expectedOutcome(g, userRating.r, props.puzzleRating.r);
+    const expectation = twoPlayerExpectation(userRating, props.puzzleRating);
     if (expectation < 0.25) {
       symbol = (
         <span

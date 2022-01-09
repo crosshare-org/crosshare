@@ -2,13 +2,24 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { AdminApp, AdminTimestamp } from '../lib/firebaseWrapper';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
-import { isNewPuzzleNotification, notificationsForPuzzleChange, NotificationT, NotificationV } from './notifications';
+import { twoPlayerExpectation } from './glickoUtil';
+import {
+  isNewPuzzleNotification,
+  notificationsForPuzzleChange,
+  NotificationT,
+  NotificationV,
+} from './notifications';
+import { buildTagIndex } from './utils';
 
-async function deleteNotifications(puzzleId: string, shouldDelete?: (n: NotificationT) => boolean) {
+async function deleteNotifications(
+  puzzleId: string,
+  shouldDelete?: (n: NotificationT) => boolean
+) {
   const db = AdminApp.firestore();
 
   console.log('deleting notifications');
-  await db.collection('n')
+  await db
+    .collection('n')
     .where('p', '==', puzzleId)
     .get()
     .then((snap) => {
@@ -24,11 +35,15 @@ async function deleteNotifications(puzzleId: string, shouldDelete?: (n: Notifica
     });
 }
 
-async function updateNotifications(puzzleId: string, update: (n: NotificationT) => Partial<NotificationT> | null) {
+async function updateNotifications(
+  puzzleId: string,
+  update: (n: NotificationT) => Partial<NotificationT> | null
+) {
   const db = AdminApp.firestore();
 
   console.log('updating notifications');
-  await db.collection('n')
+  await db
+    .collection('n')
     .where('p', '==', puzzleId)
     .get()
     .then((snap) => {
@@ -42,7 +57,8 @@ async function updateNotifications(puzzleId: string, update: (n: NotificationT) 
               await res.ref.update(toUpdate);
             }
           }
-        }));
+        })
+      );
     });
 }
 
@@ -58,7 +74,8 @@ async function deletePuzzle(puzzleId: string, dbpuz: DBPuzzleT) {
   await deleteNotifications(puzzleId);
 
   console.log('deleting plays');
-  await db.collection('p')
+  await db
+    .collection('p')
     .where('c', '==', puzzleId)
     .get()
     .then((snap) => {
@@ -82,6 +99,72 @@ function parsePuzzle(docdata: any): DBPuzzleT | null {
   } else {
     console.error(PathReporter.report(validationResult).join(','));
     return null;
+  }
+}
+
+function autoTag(p: DBPuzzleT) {
+  const auto = [];
+
+  // Size tags
+  const size = p.w * p.h - (p.hdn?.length || 0);
+  if (size < 50) {
+    auto.push('mini');
+  } else if (size < 12 * 12) {
+    auto.push('midi');
+  } else if (size < 17 * 17) {
+    auto.push('full');
+  } else {
+    auto.push('jumbo');
+  }
+
+  if (p.ct_ans?.length) {
+    auto.push('meta');
+  }
+
+  if (p.f) {
+    auto.push('featured');
+  }
+
+  if (p.dmd) {
+    auto.push('dailymini');
+  }
+
+  if (p.rtg && p.rtg.d < 200) {
+    const expectation = twoPlayerExpectation({ r: 1500, d: 350, u: 0 }, p.rtg);
+    if (expectation < 0.25) {
+      auto.push('very-difficult');
+    } else if (expectation < 0.5) {
+      auto.push('difficult');
+    } else if (expectation < 0.8) {
+      auto.push('medium');
+    } else {
+      auto.push('easy');
+    }
+  }
+
+  return auto;
+}
+
+async function updateTagsIfNeeded(puzzleId: string, dbpuz: DBPuzzleT) {
+  const db = AdminApp.firestore();
+
+  let doUpdate = false;
+  const update: { tg_a?: string[]; tg_i?: string[] } = {};
+
+  const autoTags = autoTag(dbpuz);
+  if (new Set(autoTags) !== new Set(dbpuz.tg_a || [])) {
+    doUpdate = true;
+    update['tg_a'] = autoTags;
+  }
+
+  const tagIndex = buildTagIndex(dbpuz.tg_u, autoTags);
+  if (new Set(tagIndex) !== new Set(dbpuz.tg_i)) {
+    doUpdate = true;
+    update['tg_i'] = tagIndex;
+  }
+
+  if (doUpdate) {
+    await db.collection('c').doc(puzzleId).update(update);
   }
 }
 
@@ -113,6 +196,8 @@ export async function handlePuzzleUpdate(
     return;
   }
 
+  updateTagsIfNeeded(puzzleId, after);
+
   if (before) {
     if (after.pv) {
       if (!before.pv) {
@@ -122,9 +207,9 @@ export async function handlePuzzleUpdate(
     } else {
       if (after.pvu.toMillis() !== before.pvu?.toMillis()) {
         // been marked private until or updated privateUntil
-        await updateNotifications(puzzleId, n => {
+        await updateNotifications(puzzleId, (n) => {
           if (isNewPuzzleNotification(n)) {
-            return {t: AdminTimestamp.fromMillis(after.pvu.toMillis())};
+            return { t: AdminTimestamp.fromMillis(after.pvu.toMillis()) };
           }
           return null;
         });

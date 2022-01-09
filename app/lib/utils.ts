@@ -1,6 +1,9 @@
 export const STORAGE_KEY = 'puzzleInProgress';
 
-export const slugify = (value: string | null | undefined): string => {
+export const slugify = (
+  value: string | null | undefined,
+  lengthLimit = 100
+): string => {
   if (!value) {
     return '';
   }
@@ -13,8 +16,38 @@ export const slugify = (value: string | null | undefined): string => {
     .replace(/[^a-z0-9 ]/g, '') // remove all chars not letters, numbers and spaces (to be replaced)
     .trim()
     .replace(/\s+/g, '-') // separator
-    .slice(0, 100); // length limit
+    .slice(0, lengthLimit);
 };
+
+export const TAG_LENGTH_LIMIT = 20;
+export const TAG_QUERY_LIMIT = 3;
+
+export const normalizeTag = (value: string): string => {
+  return slugify(value, TAG_LENGTH_LIMIT);
+};
+
+function getIndex(tags: string[]): string[] {
+  const index: string[][] = [[]];
+  for (const tag of tags) {
+    index.forEach((entry) => {
+      if (entry.length < 3) {
+        index.push([...entry, tag]);
+      }
+    });
+  }
+  return index.slice(1).map((a) => a.join(' '));
+}
+
+export function buildTagIndex(
+  userTags: string[] | undefined,
+  autoTags: string[] | undefined
+): string[] {
+  const allTags = (userTags || []).concat(autoTags || []);
+  const normalized = Array.from(
+    new Set(allTags.map(normalizeTag).filter((s) => s.length > 0))
+  ).sort();
+  return getIndex(normalized);
+}
 
 export function timeString(elapsed: number, fixedSize: boolean): string {
   const hours = Math.floor(elapsed / 3600);

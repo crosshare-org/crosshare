@@ -195,6 +195,12 @@ const DBPuzzleOptionalV = t.partial({
   ct_rv_dl: t.number,
   /** puzzle rating */
   rtg: GlickoScoreV,
+  /** user added tags */
+  tg_u: t.array(t.string),
+  /** auto added tags */
+  tg_a: t.array(t.string),
+  /** tag index */
+  tg_i: t.array(t.string),
 });
 
 export const DBPuzzleV = t.intersection([
