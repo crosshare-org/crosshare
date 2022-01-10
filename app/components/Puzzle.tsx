@@ -32,6 +32,7 @@ import {
 import { ClueText } from './ClueText';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
+import { Global, css } from '@emotion/react';
 
 import { ClueList } from './ClueList';
 import {
@@ -1046,6 +1047,24 @@ export const Puzzle = ({
 
   return (
     <>
+      <Global
+        styles={css`
+          html,
+          body {
+            overflow: hidden;
+          }
+          html {
+            overscroll-behavior: none;
+          }
+          body {
+            height: calc(
+              var(--vh, 100vh) - env(safe-area-inset-bottom) -
+                env(safe-area-inset-top)
+            );
+            min-height: 0;
+          }
+        `}
+      />
       <Head>
         <title>{puzzle.title} | Crosshare crossword puzzle</title>
         <I18nTags

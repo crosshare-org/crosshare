@@ -134,6 +134,20 @@ export default function CrosshareApp({
     }
   }, [locale, pageProps.translation]);
 
+  useEffect(() => {
+    const resize = () => {
+      document.documentElement.style.setProperty(
+        '--vh',
+        `${window.innerHeight}px`
+      );
+    };
+    resize();
+    window.addEventListener('resize', resize);
+    return () => {
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
   return (
     <>
       <Head>
