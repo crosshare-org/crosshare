@@ -28,6 +28,7 @@ import {
   useCollectionData,
   useDocumentDataOnce,
 } from 'react-firebase-hooks/firestore';
+import { ErrorPage } from '../components/ErrorPage';
 
 function paypalConvert(input: string): string {
   const donated = parseFloat(input);
@@ -146,7 +147,7 @@ export default requiresAdmin(() => {
   );
 
   if (error) {
-    return <div>Error loading admin content</div>;
+    return <ErrorPage title="Error loading admin content" />;
   }
   if (
     unmoderated === null ||

@@ -11,6 +11,8 @@ import { App } from '../../lib/firebaseWrapper';
 import { ErrorPage } from '../../components/ErrorPage';
 import { StatsPage } from '../../components/PuzzleStats';
 import { useDocument } from 'react-firebase-hooks/firestore';
+import { Link } from '../../components/Link';
+import { slugify } from '../../lib/utils';
 
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();
@@ -128,6 +130,11 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
           Either something went wrong, or we don&apos;t have stats for this
           puzzle yet. Stats are updated once per hour, and won&apos;t be
           available until after a non-author has solved the puzzle.
+        </p>
+        <p>
+          <Link href={`/crosswords/${puzzle.id}/${slugify(puzzle.title)}`}>
+            Take me to the puzzle page
+          </Link>
         </p>
       </ErrorPage>
     );
