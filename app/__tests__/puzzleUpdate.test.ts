@@ -473,7 +473,11 @@ Array [
     { ...puzzleWithComments, del: true },
     toDeleteId
   );
-  await handlePuzzleUpdate(puzzleWithComments2, puzzleWithComments2, toKeepId);
+  await handlePuzzleUpdate(
+    puzzleWithComments2,
+    { ...puzzleWithComments2, tg_u: ['superman', 'test'] },
+    toKeepId
+  );
 
   // and check results
   expect(
@@ -633,6 +637,17 @@ Array [
       "featured",
       "mini",
       "featured mini",
+      "superman",
+      "featured superman",
+      "mini superman",
+      "featured mini superman",
+      "test",
+      "featured test",
+      "mini test",
+      "featured mini test",
+      "superman test",
+      "featured superman test",
+      "mini superman test",
     ],
     "w": 5,
   },
