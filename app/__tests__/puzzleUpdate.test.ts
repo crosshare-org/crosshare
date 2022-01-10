@@ -100,7 +100,6 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
     .doc('mike-anonymous-user-id')
     .set(play2);
 
-  // create some notifications
   const puzzleWithComments = {
     ...basePuzzle,
     cs: [getComment({ a: 'dummy-author-id' })],
@@ -109,8 +108,6 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
     ...basePuzzle,
     cs: [getComment({ a: 'dummy-author-id', i: 'randomCommentId' })],
   };
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments, toDeleteId);
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments2, toKeepId);
 
   // create the actual puzzles
   await adminApp
@@ -124,20 +121,24 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
     .doc(toKeepId)
     .set(puzzleWithComments);
 
+  // create some notifications
+  await handlePuzzleUpdate(basePuzzle, puzzleWithComments, toDeleteId);
+  await handlePuzzleUpdate(basePuzzle, puzzleWithComments2, toKeepId);
+
   expect(
-    await adminApp.
-      firestore().
-      collection('n').
-      get().
-      then((r) =>
-        r.docs.
-          map((d) => d.data()).
-          map((d) => {
+    await adminApp
+      .firestore()
+      .collection('n')
+      .get()
+      .then((r) =>
+        r.docs
+          .map((d) => d.data())
+          .map((d) => {
             delete d['t'];
             return d;
-          }))).
-
-    toMatchInlineSnapshot(`
+          })
+      )
+  ).toMatchInlineSnapshot(`
 Array [
   Object {
     "c": "LwgoVx0BAskM4wVJyoLj",
@@ -164,12 +165,12 @@ Array [
 ]
 `);
   expect(
-    await adminApp.
-      firestore().
-      collection('p').
-      get().
-      then((r) => r.docs.map((d) => d.data()))).
-    toMatchInlineSnapshot(`
+    await adminApp
+      .firestore()
+      .collection('p')
+      .get()
+      .then((r) => r.docs.map((d) => d.data()))
+  ).toMatchInlineSnapshot(`
 Array [
   Object {
     "c": "puzzletokeep",
@@ -263,12 +264,12 @@ Array [
 ]
 `);
   expect(
-    await adminApp.
-      firestore().
-      collection('c').
-      get().
-      then((r) => r.docs.map((d) => d.data()))).
-    toMatchInlineSnapshot(`
+await adminApp.
+firestore().
+collection('c').
+get().
+then((r) => r.docs.map((d) => d.data()))).
+toMatchInlineSnapshot(`
 Array [
   Object {
     "a": "fSEwJorvqOMK5UhNMHa4mu48izl1",
@@ -356,6 +357,15 @@ Array [
       "_seconds": 1604966400,
     },
     "t": "Raises, as young",
+    "tg_a": Array [
+      "mini",
+      "featured",
+    ],
+    "tg_i": Array [
+      "featured",
+      "mini",
+      "featured mini",
+    ],
     "w": 5,
   },
   Object {
@@ -443,6 +453,15 @@ Array [
       "_seconds": 1604966400,
     },
     "t": "Raises, as young",
+    "tg_a": Array [
+      "mini",
+      "featured",
+    ],
+    "tg_i": Array [
+      "featured",
+      "mini",
+      "featured mini",
+    ],
     "w": 5,
   },
 ]
@@ -458,19 +477,19 @@ Array [
 
   // and check results
   expect(
-    await adminApp.
-      firestore().
-      collection('n').
-      get().
-      then((r) =>
-        r.docs.
-          map((d) => d.data()).
-          map((d) => {
+    await adminApp
+      .firestore()
+      .collection('n')
+      .get()
+      .then((r) =>
+        r.docs
+          .map((d) => d.data())
+          .map((d) => {
             delete d['t'];
             return d;
-          }))).
-
-    toMatchInlineSnapshot(`
+          })
+      )
+  ).toMatchInlineSnapshot(`
 Array [
   Object {
     "c": "randomCommentId",
@@ -486,12 +505,12 @@ Array [
 ]
 `);
   expect(
-    await adminApp.
-      firestore().
-      collection('p').
-      get().
-      then((r) => r.docs.map((d) => d.data()))).
-    toMatchInlineSnapshot(`
+    await adminApp
+      .firestore()
+      .collection('p')
+      .get()
+      .then((r) => r.docs.map((d) => d.data()))
+  ).toMatchInlineSnapshot(`
 Array [
   Object {
     "c": "puzzletokeep",
@@ -514,12 +533,12 @@ Array [
 ]
 `);
   expect(
-    await adminApp.
-      firestore().
-      collection('c').
-      get().
-      then((r) => r.docs.map((d) => d.data()))).
-    toMatchInlineSnapshot(`
+await adminApp.
+firestore().
+collection('c').
+get().
+then((r) => r.docs.map((d) => d.data()))).
+toMatchInlineSnapshot(`
 Array [
   Object {
     "a": "fSEwJorvqOMK5UhNMHa4mu48izl1",
@@ -606,6 +625,15 @@ Array [
       "_seconds": 1604966400,
     },
     "t": "Raises, as young",
+    "tg_a": Array [
+      "mini",
+      "featured",
+    ],
+    "tg_i": Array [
+      "featured",
+      "mini",
+      "featured mini",
+    ],
     "w": 5,
   },
 ]
@@ -625,8 +653,14 @@ test('should remove from notifications when a public puzzle is marked private', 
     cs: [getComment({ a: 'dummy-author-id', i: 'randomCommentId' })],
   };
 
-  const note1 = newPuzzleNotification({...puzzleWithComments, id: toDeleteId}, 'fSEwJorvqOMK5UhNMHa4mu48izl1');
-  const note2 = newPuzzleNotification({...puzzleWithComments2, id: toKeepId}, 'fSEwJorvqOMK5UhNMHa4mu48izl1');
+  const note1 = newPuzzleNotification(
+    { ...puzzleWithComments, id: toDeleteId },
+    'fSEwJorvqOMK5UhNMHa4mu48izl1'
+  );
+  const note2 = newPuzzleNotification(
+    { ...puzzleWithComments2, id: toKeepId },
+    'fSEwJorvqOMK5UhNMHa4mu48izl1'
+  );
   await adminApp.firestore().collection('n').doc(note1.id).set(note1);
   await adminApp.firestore().collection('n').doc(note2.id).set(note2);
 
@@ -643,19 +677,19 @@ test('should remove from notifications when a public puzzle is marked private', 
     .set(puzzleWithComments2);
 
   expect(
-    await adminApp.
-      firestore().
-      collection('n').
-      get().
-      then((r) =>
-        r.docs.
-          map((d) => d.data()).
-          map((d) => {
+    await adminApp
+      .firestore()
+      .collection('n')
+      .get()
+      .then((r) =>
+        r.docs
+          .map((d) => d.data())
+          .map((d) => {
             delete d['t'];
             return d;
-          }))).
-
-    toMatchInlineSnapshot(`
+          })
+      )
+  ).toMatchInlineSnapshot(`
 Array [
   Object {
     "an": "Mike D",
@@ -682,7 +716,7 @@ Array [
 
   // mark as private
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const {pvu, ...withoutPVU} = puzzleWithComments;
+  const { pvu, ...withoutPVU } = puzzleWithComments;
   await handlePuzzleUpdate(
     puzzleWithComments,
     { ...withoutPVU, pv: true },
@@ -692,19 +726,19 @@ Array [
 
   // and check results
   expect(
-    await adminApp.
-      firestore().
-      collection('n').
-      get().
-      then((r) =>
-        r.docs.
-          map((d) => d.data()).
-          map((d) => {
+    await adminApp
+      .firestore()
+      .collection('n')
+      .get()
+      .then((r) =>
+        r.docs
+          .map((d) => d.data())
+          .map((d) => {
             delete d['t'];
             return d;
-          }))).
-
-    toMatchInlineSnapshot(`
+          })
+      )
+  ).toMatchInlineSnapshot(`
 Array [
   Object {
     "an": "Mike D",
@@ -723,7 +757,6 @@ Array [
 test('should remove from notifications when a public puzzle is marked private until', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
 
-  // create some notifications
   const puzzleWithComments = {
     ...basePuzzle,
     cs: [getComment({ a: 'dummy-author-id' })],
@@ -732,8 +765,6 @@ test('should remove from notifications when a public puzzle is marked private un
     ...basePuzzle,
     cs: [getComment({ a: 'dummy-author-id', i: 'randomCommentId' })],
   };
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments, toDeleteId);
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments2, toKeepId);
 
   // create the actual puzzles
   await adminApp
@@ -747,20 +778,24 @@ test('should remove from notifications when a public puzzle is marked private un
     .doc(toKeepId)
     .set(puzzleWithComments2);
 
+  // create some notifications
+  await handlePuzzleUpdate(basePuzzle, puzzleWithComments, toDeleteId);
+  await handlePuzzleUpdate(basePuzzle, puzzleWithComments2, toKeepId);
+
   expect(
-    await adminApp.
-      firestore().
-      collection('n').
-      get().
-      then((r) =>
-        r.docs.
-          map((d) => d.data()).
-          map((d) => {
+    await adminApp
+      .firestore()
+      .collection('n')
+      .get()
+      .then((r) =>
+        r.docs
+          .map((d) => d.data())
+          .map((d) => {
             delete d['t'];
             return d;
-          }))).
-
-    toMatchInlineSnapshot(`
+          })
+      )
+  ).toMatchInlineSnapshot(`
 Array [
   Object {
     "c": "LwgoVx0BAskM4wVJyoLj",
@@ -797,19 +832,19 @@ Array [
 
   // and check results
   expect(
-    await adminApp.
-      firestore().
-      collection('n').
-      get().
-      then((r) =>
-        r.docs.
-          map((d) => d.data()).
-          map((d) => {
+    await adminApp
+      .firestore()
+      .collection('n')
+      .get()
+      .then((r) =>
+        r.docs
+          .map((d) => d.data())
+          .map((d) => {
             delete d['t'];
             return d;
-          }))).
-
-    toMatchInlineSnapshot(`
+          })
+      )
+  ).toMatchInlineSnapshot(`
 Array [
   Object {
     "c": "LwgoVx0BAskM4wVJyoLj",
@@ -840,7 +875,6 @@ Array [
 test('should update indexes when a private puzzle is marked public', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
 
-  // create some notifications
   const puzzleWithComments = {
     ...basePuzzle,
     cs: [getComment({ a: 'dummy-author-id' })],
@@ -849,8 +883,6 @@ test('should update indexes when a private puzzle is marked public', async () =>
     ...basePuzzle,
     cs: [getComment({ a: 'dummy-author-id', i: 'randomCommentId' })],
   };
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments, toDeleteId);
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments2, toKeepId);
 
   // create the actual puzzles
   await adminApp
@@ -864,20 +896,24 @@ test('should update indexes when a private puzzle is marked public', async () =>
     .doc(toKeepId)
     .set({ ...puzzleWithComments2, pv: true });
 
+  // create some notifications
+  await handlePuzzleUpdate(basePuzzle, puzzleWithComments, toDeleteId);
+  await handlePuzzleUpdate(basePuzzle, puzzleWithComments2, toKeepId);
+
   expect(
-    await adminApp.
-      firestore().
-      collection('n').
-      get().
-      then((r) =>
-        r.docs.
-          map((d) => d.data()).
-          map((d) => {
+    await adminApp
+      .firestore()
+      .collection('n')
+      .get()
+      .then((r) =>
+        r.docs
+          .map((d) => d.data())
+          .map((d) => {
             delete d['t'];
             return d;
-          }))).
-
-    toMatchInlineSnapshot(`
+          })
+      )
+  ).toMatchInlineSnapshot(`
 Array [
   Object {
     "c": "LwgoVx0BAskM4wVJyoLj",
@@ -918,19 +954,19 @@ Array [
 
   // and check results
   expect(
-    await adminApp.
-      firestore().
-      collection('n').
-      get().
-      then((r) =>
-        r.docs.
-          map((d) => d.data()).
-          map((d) => {
+    await adminApp
+      .firestore()
+      .collection('n')
+      .get()
+      .then((r) =>
+        r.docs
+          .map((d) => d.data())
+          .map((d) => {
             delete d['t'];
             return d;
-          }))).
-
-    toMatchInlineSnapshot(`
+          })
+      )
+  ).toMatchInlineSnapshot(`
 Array [
   Object {
     "c": "LwgoVx0BAskM4wVJyoLj",
@@ -961,7 +997,6 @@ Array [
 test('should update indexes when a private until puzzle is marked public', async () => {
   await firebaseTesting.clearFirestoreData({ projectId });
 
-  // create some notifications
   const puzzleWithComments = {
     ...basePuzzle,
     pvu: AdminTimestamp.fromDate(baseTime),
@@ -972,8 +1007,6 @@ test('should update indexes when a private until puzzle is marked public', async
     pvu: AdminTimestamp.fromDate(baseTime),
     cs: [getComment({ a: 'dummy-author-id', i: 'randomCommentId' })],
   };
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments, toDeleteId);
-  await handlePuzzleUpdate(basePuzzle, puzzleWithComments2, toKeepId);
 
   // create the actual puzzles
   await adminApp
@@ -987,20 +1020,24 @@ test('should update indexes when a private until puzzle is marked public', async
     .doc(toKeepId)
     .set(puzzleWithComments2);
 
+  // create some notifications
+  await handlePuzzleUpdate(basePuzzle, puzzleWithComments, toDeleteId);
+  await handlePuzzleUpdate(basePuzzle, puzzleWithComments2, toKeepId);
+
   expect(
-    await adminApp.
-      firestore().
-      collection('n').
-      get().
-      then((r) =>
-        r.docs.
-          map((d) => d.data()).
-          map((d) => {
+    await adminApp
+      .firestore()
+      .collection('n')
+      .get()
+      .then((r) =>
+        r.docs
+          .map((d) => d.data())
+          .map((d) => {
             delete d['t'];
             return d;
-          }))).
-
-    toMatchInlineSnapshot(`
+          })
+      )
+  ).toMatchInlineSnapshot(`
 Array [
   Object {
     "c": "LwgoVx0BAskM4wVJyoLj",
@@ -1035,19 +1072,19 @@ Array [
 
   // and check results
   expect(
-    await adminApp.
-      firestore().
-      collection('n').
-      get().
-      then((r) =>
-        r.docs.
-          map((d) => d.data()).
-          map((d) => {
+    await adminApp
+      .firestore()
+      .collection('n')
+      .get()
+      .then((r) =>
+        r.docs
+          .map((d) => d.data())
+          .map((d) => {
             delete d['t'];
             return d;
-          }))).
-
-    toMatchInlineSnapshot(`
+          })
+      )
+  ).toMatchInlineSnapshot(`
 Array [
   Object {
     "c": "LwgoVx0BAskM4wVJyoLj",
