@@ -136,14 +136,18 @@ const ClueRow = (props: {
   }
 
   function handleSubmit(e: React.FormEvent) {
-    setSubmitting(true);
     e.preventDefault();
+    const toSubmit = value.trim();
+    if (toSubmit.length === 0) {
+      return;
+    }
+    setSubmitting(true);
     let update: Record<string, Array<string>>;
     if (props.entry.direction === Direction.Across) {
       update = {
         ac: props.ac.map((v, i) => {
           if (props.an[i] === props.entry.labelNumber) {
-            return value.trim();
+            return toSubmit;
           }
           return v;
         }),
@@ -152,7 +156,7 @@ const ClueRow = (props: {
       update = {
         dc: props.dc.map((v, i) => {
           if (props.dn[i] === props.entry.labelNumber) {
-            return value.trim();
+            return toSubmit;
           }
           return v;
         }),

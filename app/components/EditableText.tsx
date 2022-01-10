@@ -40,9 +40,13 @@ export const EditableText = (
         className={props.className}
         css={{ display: 'flex', flexWrap: 'wrap' }}
         onSubmit={(e: React.FormEvent) => {
-          setSubmitting(true);
           e.preventDefault();
-          props.handleSubmit(value.trim()).then(() => {
+          const toSubmit = value.trim();
+          if (toSubmit.length === 0) {
+            return;
+          }
+          setSubmitting(true);
+          props.handleSubmit(toSubmit).then(() => {
             setSubmitting(false);
             setEditing(false);
           });
