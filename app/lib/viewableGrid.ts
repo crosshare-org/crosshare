@@ -745,7 +745,7 @@ export function addClues<
       throw new Error('oob');
     }
     const clue = cluesByDir.get(e.labelNumber);
-    if (!clue) {
+    if (clue === undefined) {
       throw new Error(
         "Can't find clue for " + e.labelNumber + ' ' + e.direction
       );
