@@ -78,7 +78,7 @@ service cloud.firestore {
         && request.resource.data.w == resource.data.w
         && request.resource.data.h == resource.data.h
         && (!request.resource.data.keys().hasAny(["tg_u"]) || request.resource.data.tg_u.size() < 6)
-        && request.resource.data.tg_a == resource.data.tg_a
+        && (!request.resource.data.keys().hasAny(["tg_a"]) || request.resource.data.tg_a == resource.data.tg_a)
         && (!request.resource.data.keys().hasAny(["cs"]) || request.resource.data.cs == resource.data.cs)
         && (!request.resource.data.keys().hasAny(["dmd"]) || request.resource.data.dmd == resource.data.dmd)
         && (!request.resource.data.keys().hasAny(["f"]) || request.resource.data.f == resource.data.f)
