@@ -62,10 +62,8 @@ service cloud.firestore {
     match /c/{crosswordId} {
       allow get: if true;
 
-      allow list: if isAdmin();
-
-      // This supports the dashboard recently published list
-      allow list: if isAuthor() && request.query.limit <= 10;
+      allow list: if isAdmin() || isAuthor();
+      allow list: if request.query.limit <= 30;
 
       allow update: if isAdmin();
 
