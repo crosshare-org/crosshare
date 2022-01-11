@@ -758,7 +758,11 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                   <div css={{ textAlign: 'center' }}>
                     {overlayIsFollowing ? (
                       <>
-                        <h2>Following</h2>
+                        <h2>
+                          <Trans id="following-count">
+                            {props.following.length} Following
+                          </Trans>
+                        </h2>
                         <FollowersList
                           pages={props.following}
                           close={() => setShowOverlay(false)}
@@ -766,7 +770,22 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                       </>
                     ) : (
                       <>
-                        <h2>Followers</h2>
+                        <h2>
+                          <Plural
+                            id="follower-count"
+                            value={props.followCount}
+                            one="1 Follower"
+                            other="# Followers"
+                          />
+                        </h2>
+                        <h3>
+                          <Plural
+                            id="follower-blog-count"
+                            value={props.followers.length}
+                            one="1 with a Crosshare blog:"
+                            other="# with Crosshare blogs:"
+                          />
+                        </h3>
                         <FollowersList
                           pages={props.followers}
                           close={() => setShowOverlay(false)}
