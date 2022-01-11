@@ -62,11 +62,10 @@ service cloud.firestore {
     match /c/{crosswordId} {
       allow get: if true;
 
-      // Account page
-      allow list: if isAdmin() || isAuthor();
+      allow list: if isAdmin();
 
-      // This supports the homepage 'featured puzzles' list and author pages
-      allow list: if request.query.limit <= 30;
+      // This supports the dashboard recently published list
+      allow list: if isAuthor() && request.query.limit <= 10;
 
       allow update: if isAdmin();
 
@@ -78,7 +77,10 @@ service cloud.firestore {
         && request.resource.data.p == resource.data.p
         && request.resource.data.w == resource.data.w
         && request.resource.data.h == resource.data.h
+        && (!request.resource.data.keys().hasAny(["tg_u"]) || request.resource.data.tg_u.size() < 6)
+        && request.resource.data.tg_a == resource.data.tg_a
         && (!request.resource.data.keys().hasAny(["cs"]) || request.resource.data.cs == resource.data.cs)
+        && (!request.resource.data.keys().hasAny(["dmd"]) || request.resource.data.dmd == resource.data.dmd)
         && (!request.resource.data.keys().hasAny(["f"]) || request.resource.data.f == resource.data.f)
         && (!request.resource.data.keys().hasAny(["hs"]) || request.resource.data.hs == resource.data.hs)
         && (!request.resource.data.keys().hasAny(["s"]) || request.resource.data.s == resource.data.s)
@@ -89,6 +91,9 @@ service cloud.firestore {
         && (!request.resource.data.keys().hasAny(["cs"]) || request.resource.data.cs.size() == 0)
         && request.resource.data.m == false
         && (!request.resource.data.keys().hasAny(["f"]) || request.resource.data.f == false)
+        && (!request.resource.data.keys().hasAny(["dmd"]))
+        && (!request.resource.data.keys().hasAny(["tg_a"]))
+        && (!request.resource.data.keys().hasAny(["tg_u"]) || request.resource.data.tg_u.size() < 6)
         && request.resource.data.c == null
         && request.time >= request.resource.data.p;
     }
