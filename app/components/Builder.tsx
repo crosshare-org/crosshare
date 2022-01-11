@@ -10,6 +10,7 @@ import {
   FormEvent,
   MutableRefObject,
 } from 'react';
+import { Global } from '@emotion/react';
 import { eqSet, STORAGE_KEY } from '../lib/utils';
 import { ContactLinks } from './ContactLinks';
 import { isRight } from 'fp-ts/lib/Either';
@@ -129,7 +130,7 @@ import { Overlay } from './Overlay';
 import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
 
 import { Keyboard } from './Keyboard';
-import { SMALL_AND_UP } from '../lib/style';
+import { FULLSCREEN_CSS, SMALL_AND_UP } from '../lib/style';
 import { ButtonReset } from './Buttons';
 import { useSnackbar } from './Snackbar';
 import { importFile, exportFile, ExportProps } from '../lib/converter';
@@ -1733,6 +1734,7 @@ const GridMode = ({
 
   return (
     <>
+      <Global styles={FULLSCREEN_CSS} />
       <div
         css={{
           display: 'flex',

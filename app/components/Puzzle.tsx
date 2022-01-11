@@ -32,7 +32,7 @@ import {
 import { ClueText } from './ClueText';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
-import { Global, css } from '@emotion/react';
+import { Global } from '@emotion/react';
 
 import { ClueList } from './ClueList';
 import {
@@ -95,7 +95,7 @@ import { isMetaSolution, slugify, timeString } from '../lib/utils';
 import { App, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
 import type firebase from 'firebase/app';
 import { Emoji } from './Emoji';
-import { SMALL_AND_UP_RULES, SQUARE_HEADER_HEIGHT } from '../lib/style';
+import { FULLSCREEN_CSS, SMALL_AND_UP_RULES, SQUARE_HEADER_HEIGHT } from '../lib/style';
 import { Keyboard } from './Keyboard';
 import { useRouter } from 'next/router';
 import { Button } from './Buttons';
@@ -1048,22 +1048,7 @@ export const Puzzle = ({
   return (
     <>
       <Global
-        styles={css`
-          html,
-          body {
-            overflow: hidden;
-          }
-          html {
-            overscroll-behavior: none;
-          }
-          body {
-            height: calc(
-              var(--vh, 100vh) - env(safe-area-inset-bottom) -
-                env(safe-area-inset-top)
-            );
-            min-height: 0;
-          }
-        `}
+        styles={FULLSCREEN_CSS}
       />
       <Head>
         <title>{puzzle.title} | Crosshare crossword puzzle</title>

@@ -1,4 +1,5 @@
 import { CSSInterpolation } from '@emotion/serialize';
+import { css } from '@emotion/react';
 import { adjustHue, mix, readableColorIsBlack } from 'color2k';
 
 export const KEYBOARD_HEIGHT = 164;
@@ -17,6 +18,13 @@ export const LARGE_AND_UP = '@media (min-width: ' + LARGE_BREAKPOINT + 'px)';
 export const HUGE_AND_UP = '@media (min-width: 1240px)';
 export const HAS_PHYSICAL_KEYBOARD =
   '@media (hover: hover) and (pointer: fine)';
+
+export const FULLSCREEN_CSS = css`
+  html,
+  body {
+    overflow: hidden;
+  }
+`;
 
 export const PRIMARY = '#eb984e';
 export const LINK = '#2874a6';
