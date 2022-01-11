@@ -135,6 +135,20 @@
       ]
     },
     {
+      "collectionGroup": "c",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "tg_i",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "pvu",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "n",
       "queryScope": "COLLECTION",
       "fields": [
