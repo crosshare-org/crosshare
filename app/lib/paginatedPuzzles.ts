@@ -7,6 +7,7 @@ import { adminTimestamp } from './adminTimestamp';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
 import { mapEachResult } from './dbUtils';
 import { puzzleFromDB } from './types';
+import { WhereFilterOp } from '@firebase/firestore-types';
 
 const NewPuzzleIndexV = t.type({
   /** Array of timestamps when each page begins. Off by 1 so page 1 is element 0 (page 0 always begins at current time). */
@@ -19,16 +20,20 @@ export async function paginatedPuzzles(
   page: number,
   pageSize: number,
   queryField?: string,
-  queryValue?: string | boolean
+  queryValue?: string | boolean,
+  queryOperator: WhereFilterOp = '=='
 ): Promise<[Array<LinkablePuzzle>, boolean]> {
   const db = AdminApp.firestore();
 
   if (queryField && queryValue === undefined) {
     throw new Error(`Missing queryValue for "${queryField}"`);
   }
-  const indexDocId = queryField
+  let indexDocId = queryField
     ? `${queryField}-${queryValue}-${pageSize}`
     : `public-${pageSize}`;
+  if (queryOperator !== '==') {
+    indexDocId += `-${queryOperator}`;
+  }
   const indexDoc = await db.collection('in').doc(indexDocId).get();
   let index: NewPuzzleIndexT | null = null;
   if (indexDoc.exists) {
@@ -58,7 +63,7 @@ export async function paginatedPuzzles(
   let q: FirebaseFirestore.Query = db.collection('c');
 
   if (queryField) {
-    q = q.where(queryField, '==', queryValue);
+    q = q.where(queryField, queryOperator, queryValue);
   }
   q = q
     .where('pvu', '<=', startTimestamp)

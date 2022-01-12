@@ -140,7 +140,7 @@
       "fields": [
         {
           "fieldPath": "tg_i",
-          "order": "ASCENDING"
+          "arrayConfig": "CONTAINS"
         },
         {
           "fieldPath": "pvu",
