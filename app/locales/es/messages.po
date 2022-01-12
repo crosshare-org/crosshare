@@ -227,6 +227,7 @@ msgstr "Minis más nuevos"
 #: pages/featured/[pageNumber].tsx:166
 #: pages/featured/[pageNumber].tsx:176
 #: pages/newest/[[...pageNumber]].tsx:167
+#: pages/tags/[...path].tsx:195
 msgid "Newer Puzzles"
 msgstr "Crucigramas más nuevos"
 
@@ -250,6 +251,7 @@ msgstr "Minis más viejos"
 #: components/ConstructorPage.tsx:893
 #: pages/featured/[pageNumber].tsx:183
 #: pages/newest/[[...pageNumber]].tsx:174
+#: pages/tags/[...path].tsx:202
 msgid "Older Puzzles"
 msgstr "Crucigramas más viejos"
 
@@ -262,6 +264,7 @@ msgid "Open on crosshare.org"
 msgstr "Abrir en crosshare.org"
 
 #: pages/newest/[[...pageNumber]].tsx:90
+#: pages/tags/[...path].tsx:116
 msgid "Page {page}"
 msgstr ""
 
@@ -367,6 +370,14 @@ msgstr "Resuelto en"
 #: components/Puzzle.tsx:980
 msgid "Stats"
 msgstr "Estadísticas"
+
+#: pages/tags/[...path].tsx:113
+msgid "Tagged Puzzles"
+msgstr ""
+
+#: pages/tags/[...path].tsx:173
+msgid "Tagged {displayTags}"
+msgstr ""
 
 #. The variable is the name of the user who will recieve the $ tip
 #: components/ConstructorPage.tsx:847
@@ -533,6 +544,10 @@ msgstr "publicador"
 #: pages/index.tsx:215
 msgid "questions"
 msgstr "Si tienes preguntas o sugerencias, por favor contáctanos a través de <0/>."
+
+#: pages/tags/[...path].tsx:118
+msgid "tagged-desc"
+msgstr ""
 
 #: components/PuzzleHeading.tsx:112
 msgid "tip-hover"
