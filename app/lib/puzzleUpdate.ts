@@ -2,7 +2,6 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { AdminApp, AdminTimestamp } from '../lib/firebaseWrapper';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
-import { twoPlayerExpectation } from './glickoUtil';
 import {
   isNewPuzzleNotification,
   notificationsForPuzzleChange,
@@ -130,15 +129,14 @@ function autoTag(p: DBPuzzleT) {
   }
 
   if (p.rtg && p.rtg.d < 200) {
-    const expectation = twoPlayerExpectation({ r: 1500, d: 350, u: 0 }, p.rtg);
-    if (expectation < 0.25) {
-      auto.push('very-difficult');
-    } else if (expectation < 0.5) {
-      auto.push('difficult');
-    } else if (expectation < 0.8) {
-      auto.push('medium');
+    if (p.rtg.r < 1200) {
+      auto.push('rating-0-1200');
+    } else if (p.rtg.r < 1500) {
+      auto.push('rating-1200-1500');
+    } else if (p.rtg.r < 1800) {
+      auto.push('rating-1500-1800');
     } else {
-      auto.push('easy');
+      auto.push('rating-1800-up');
     }
   }
 
