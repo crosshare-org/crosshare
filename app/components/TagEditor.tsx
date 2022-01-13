@@ -120,18 +120,20 @@ export function TagEditor(props: TagEditorProps) {
             text="Add tag"
             disabled={newTag.length < TAG_LENGTH_MIN}
           />
-          <h5>Frequently used tags:</h5>
+          <h5>Example tags:</h5>
           <ul css={{ listStyleType: 'none', padding: 0 }}>
-            {['themeless', 'themed', 'cryptic', 'grid-art'].map((t) => (
-              <li css={{ display: 'inline', marginRight: '0.5em' }} key={t}>
-                <Tag
-                  tagName={t}
-                  onClick={() => {
-                    addTag(t);
-                  }}
-                />
-              </li>
-            ))}
+            {['themeless', 'themed', 'cryptic', 'grid-art', 'lang-es'].map(
+              (t) => (
+                <li css={{ display: 'inline', marginRight: '0.5em' }} key={t}>
+                  <Tag
+                    tagName={t}
+                    onClick={() => {
+                      addTag(t);
+                    }}
+                  />
+                </li>
+              )
+            )}
           </ul>
         </>
       ) : (
