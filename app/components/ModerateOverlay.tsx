@@ -6,6 +6,7 @@ import { App } from '../lib/firebaseWrapper';
 import { PuzzleAction } from '../reducers/reducer';
 import { Overlay } from './Overlay';
 import { setMiniForDate } from '../lib/dailyMinis';
+import { TagEditor } from './TagEditor';
 
 export const ModeratingOverlay = memo(
   ({
@@ -55,6 +56,13 @@ export const ModeratingOverlay = memo(
     return (
       <Overlay closeCallback={() => dispatch({ type: 'TOGGLEMODERATING' })}>
         <h4>Moderate this Puzzle</h4>
+        <TagEditor
+          userTags={puzzle.userTags || []}
+          autoTags={puzzle.autoTags || []}
+          save={async (newTags: string[]) =>
+            db.collection('c').doc(puzzle.id).update({ tg_u: newTags })
+          }
+        />
         {puzzle.isPrivate ? (
           <h4 css={{ color: 'var(--error)' }}>This puzzle is private</h4>
         ) : (

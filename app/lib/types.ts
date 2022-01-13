@@ -143,7 +143,8 @@ export interface PuzzleT {
   rating: GlickoScoreT | null;
   alternateSolutions: Array<Array<[number, string]>>;
   dailyMiniDate?: string;
-  tags?: Array<string>;
+  userTags?: Array<string>;
+  autoTags?: Array<string>;
 }
 
 export interface PuzzleResult extends PuzzleT {
@@ -225,7 +226,8 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
         Object.entries(alt).map(([n, s]) => [parseInt(n), s])
       ) || [],
     ...(dbPuzzle.dmd && { dailyMiniDate: dbPuzzle.dmd }),
-    tags: (dbPuzzle.tg_u || []).concat(dbPuzzle.tg_a || []),
+    userTags: dbPuzzle.tg_u || [],
+    autoTags: dbPuzzle.tg_a || [],
   };
 }
 

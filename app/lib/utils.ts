@@ -20,6 +20,7 @@ export const slugify = (
 };
 
 export const TAG_LENGTH_LIMIT = 20;
+export const TAG_LENGTH_MIN = 3;
 export const TAG_QUERY_LIMIT = 3;
 
 export const normalizeTag = (value: string): string => {
@@ -44,7 +45,7 @@ export function buildTagIndex(
 ): string[] {
   const allTags = (userTags || []).concat(autoTags || []);
   const normalized = Array.from(
-    new Set(allTags.map(normalizeTag).filter((s) => s.length > 0))
+    new Set(allTags.map(normalizeTag).filter((s) => s.length >= TAG_LENGTH_MIN))
   ).sort();
   return getIndex(normalized);
 }
@@ -68,6 +69,17 @@ export function timeString(elapsed: number, fixedSize: boolean): string {
     (seconds < 10 ? '0' : '') +
     seconds
   );
+}
+
+export function fnv1a(input: string) {
+  let hash = 2166136261;
+  for (let i = 0; i < input.length; i++) {
+    const characterCode = input.charCodeAt(i);
+    hash ^= characterCode;
+    hash +=
+      (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+  }
+  return hash >>> 0;
 }
 
 function normalize(n: string) {

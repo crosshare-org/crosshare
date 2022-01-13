@@ -51,13 +51,14 @@ export const colorTheme = (
   const cellBG = darkMode ? '#353535' : 'white';
   const hover = darkMode ? 'white' : 'black';
   const hoverRatio = 0.1;
-  const bg = darkMode ? '#121212' : '#fff';
+  const bg = darkMode ? '#222' : '#fff';
   const linkLightBG = mix(link, bg, 0.9);
   const linkLightBGHover = mix(link, bg, 0.8);
   const text = darkMode ? DARK_MODE_WHITE : 'black';
   const secondary = darkMode ? '#505050' : '#ccc';
   const error = mix(adjustHue(p, 280), 'white', darkMode ? 0.3 : 0);
   return {
+    '--tag-l': darkMode ? '30%' : '85%',
     '--bg': bg,
     '--primary': p,
     '--blue': darkMode ? mix('blue', 'white', 0.5) : 'blue',

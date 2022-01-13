@@ -8,7 +8,7 @@ import {
   NotificationT,
   NotificationV,
 } from './notifications';
-import { buildTagIndex } from './utils';
+import { buildTagIndex, eqSet } from './utils';
 
 async function deleteNotifications(
   puzzleId: string,
@@ -150,13 +150,13 @@ async function updateTagsIfNeeded(puzzleId: string, dbpuz: DBPuzzleT) {
   const update: { tg_a?: string[]; tg_i?: string[] } = {};
 
   const autoTags = autoTag(dbpuz);
-  if (new Set(autoTags) !== new Set(dbpuz.tg_a || [])) {
+  if (!eqSet(new Set(autoTags), new Set(dbpuz.tg_a))) {
     doUpdate = true;
     update['tg_a'] = autoTags;
   }
 
   const tagIndex = buildTagIndex(dbpuz.tg_u, autoTags);
-  if (new Set(tagIndex) !== new Set(dbpuz.tg_i)) {
+  if (!eqSet(new Set(tagIndex), new Set(dbpuz.tg_i))) {
     doUpdate = true;
     update['tg_i'] = tagIndex;
   }
