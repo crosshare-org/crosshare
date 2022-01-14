@@ -66,6 +66,19 @@ const BANNED_USERNAMES = {
   easy: 1,
   medium: 1,
   beginner: 1,
+  tags: 1,
+  edit: 1,
+  clues: 1,
+  entries: 1,
+  clue: 1,
+  feed: 1,
+  articles: 1,
+  article: 1,
+  dailyminis: 1,
+  embed: 1,
+  newest: 1,
+  stats: 1,
+  dashboard: 1,
 };
 
 export const CreatePageForm = (props: { className?: string }) => {

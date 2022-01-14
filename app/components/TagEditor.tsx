@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getFromSessionOrDB } from '../lib/dbUtils';
 import {
   eqSet,
   fnv1a,
@@ -9,14 +10,47 @@ import {
 import { Button, ButtonReset } from './Buttons';
 import { LengthView } from './Inputs';
 import { useSnackbar } from './Snackbar';
+import * as t from 'io-ts';
 
-interface TagProps {
-  tagName: string;
-  remove?: () => void;
-  onClick?: () => void;
+interface TagPropsBase {
+  remove?: (t: string) => void;
+  onClick?: (t: string) => void;
 }
-export function Tag(props: TagProps) {
-  const hash = fnv1a(props.tagName);
+
+interface TagListProps extends TagPropsBase {
+  tags: string[];
+}
+
+export function TagList(props: TagListProps) {
+  return (
+    <ul
+      css={{
+        listStyleType: 'none',
+        padding: 0,
+        gap: '0.5em',
+        display: 'flex',
+        flexWrap: 'wrap',
+      }}
+    >
+      {props.tags.map((t) => (
+        <li
+          css={{
+            display: 'inline',
+          }}
+          key={t}
+        >
+          <Tag tagName={t} {...props} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+interface TagProps extends TagPropsBase {
+  tagName: string;
+}
+export function Tag({ tagName, onClick, remove }: TagProps) {
+  const hash = fnv1a(tagName);
   // foreground is rightmost 17 bits as hue at 80% saturation, 50% brightness
   const hueNumBits = (1 << 17) - 1;
   const hue = (hash & hueNumBits) / hueNumBits;
@@ -24,26 +58,34 @@ export function Tag(props: TagProps) {
   return (
     <span
       css={{
+        whiteSpace: 'nowrap',
         backgroundColor: `hsl(${hue * 360}, 30%, var(--tag-l))`,
         color: 'var(--text)',
         borderRadius: 5,
         padding: '0.2em 0.5em',
       }}
     >
-      {props.onClick ? (
-        <ButtonReset onClick={props.onClick} text={props.tagName} />
+      {onClick ? (
+        <ButtonReset
+          onClick={() => {
+            onClick(tagName);
+          }}
+          text={tagName}
+        />
       ) : (
-        props.tagName
+        tagName
       )}
-      {props.remove ? (
+      {remove ? (
         <ButtonReset
           css={{
             marginLeft: '0.4em',
             paddingLeft: '0.4em',
             borderLeft: '1px solid var(--text)',
           }}
-          onClick={props.remove}
-          text="🗙"
+          onClick={() => {
+            remove(tagName);
+          }}
+          text="&#x2715;"
         />
       ) : (
         ''
@@ -65,76 +107,111 @@ export function TagEditor(props: TagEditorProps) {
   const [tags, setTags] = useState(props.userTags);
   const [newTag, setNewTag] = useState('');
 
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [disallowed, setDisallowed] = useState<string[]>([]);
+
+  useEffect(() => {
+    let didCancel = false;
+
+    const fetchData = async () => {
+      getFromSessionOrDB({
+        collection: 'settings',
+        docId: 'tags',
+        validator: t.type({ disallowed: t.array(t.string) }),
+        ttl: 30 * 60 * 1000,
+      })
+        .then((s) => {
+          if (didCancel) {
+            return;
+          }
+          if (!s) {
+            setError('Could not load settings');
+            setLoading(false);
+          } else {
+            setDisallowed(s.disallowed);
+            setLoading(false);
+          }
+        })
+        .catch((e) => {
+          if (didCancel) {
+            return;
+          }
+          console.log(e);
+          setError(e);
+          setLoading(false);
+        });
+    };
+    fetchData();
+    return () => {
+      didCancel = true;
+    };
+  }, []);
+
   function addTag(t: string) {
-    setTags((prv) => (prv.includes(t) ? prv : [...prv, t]));
+    if (disallowed.includes(t)) {
+      showSnackbar('Sorry, that tag is reserved.');
+    } else {
+      setTags((prv) => (prv.includes(t) ? prv : [...prv, t]));
+    }
   }
 
   function removeTag(t: string) {
     setTags((prv) => prv.filter((x) => x !== t));
   }
 
+  if (loading) {
+    return <p>Loading tag editor</p>;
+  }
+  if (error) {
+    return <p>Failed to load tag editor: {error}. Please try again</p>;
+  }
+
   return (
     <>
       <h4>Auto-tags:</h4>
-      <ul css={{ listStyleType: 'none', padding: 0 }}>
-        {props.autoTags.map((t) => (
-          <li css={{ display: 'inline', marginRight: '1em' }} key={t}>
-            <Tag tagName={t} />
-          </li>
-        ))}
-      </ul>
+      <TagList tags={props.autoTags} />
+
       <h4>Add or Remove Tags (max 5 per puzzle, other than auto-tags):</h4>
-      <ul css={{ listStyleType: 'none', padding: 0 }}>
-        {tags.map((t) => (
-          <li css={{ display: 'inline', marginRight: '0.5em' }} key={t}>
-            <Tag
-              tagName={t}
-              remove={() => {
-                removeTag(t);
-              }}
-            />
-          </li>
-        ))}
-      </ul>
+      <TagList
+        tags={tags}
+        remove={(t) => {
+          removeTag(t);
+        }}
+      />
       {tags.length < 5 ? (
         <>
-          <input
-            type="text"
-            placeholder={`New tag name`}
-            value={newTag}
-            onChange={(e) =>
-              setNewTag(
-                e.target.value
-                  .toLowerCase()
-                  .replace(/[^a-z0-9-]/g, '')
-                  .slice(0, TAG_LENGTH_LIMIT)
-              )
-            }
-          />
-          <LengthView value={newTag} maxLength={TAG_LENGTH_LIMIT} />
-          <Button
-            onClick={() => {
-              addTag(normalizeTag(newTag));
-              setNewTag('');
+          <div css={{ marginTop: '1em' }}>
+            <input
+              type="text"
+              placeholder={`New tag name`}
+              value={newTag}
+              onChange={(e) =>
+                setNewTag(
+                  e.target.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9-]/g, '')
+                    .slice(0, TAG_LENGTH_LIMIT)
+                )
+              }
+            />
+            <LengthView value={newTag} maxLength={TAG_LENGTH_LIMIT} />
+            <Button
+              onClick={() => {
+                addTag(normalizeTag(newTag));
+                setNewTag('');
+              }}
+              text="Add tag"
+              disabled={newTag.length < TAG_LENGTH_MIN}
+            />
+          </div>
+          <h5 css={{ marginTop: '1em' }}>Example tags:</h5>
+          <TagList
+            tags={['themeless', 'themed', 'cryptic', 'grid-art', 'lang-es']}
+            onClick={(t) => {
+              addTag(t);
             }}
-            text="Add tag"
-            disabled={newTag.length < TAG_LENGTH_MIN}
           />
-          <h5>Example tags:</h5>
-          <ul css={{ listStyleType: 'none', padding: 0 }}>
-            {['themeless', 'themed', 'cryptic', 'grid-art', 'lang-es'].map(
-              (t) => (
-                <li css={{ display: 'inline', marginRight: '0.5em' }} key={t}>
-                  <Tag
-                    tagName={t}
-                    onClick={() => {
-                      addTag(t);
-                    }}
-                  />
-                </li>
-              )
-            )}
-          </ul>
         </>
       ) : (
         <p>You must remove an existing tag if you want to add any new ones.</p>
