@@ -39,7 +39,7 @@ export const PuzzleHeading = (props: {
         bonusMargin={1}
         topLine={props.title}
         byLine={
-          <p>
+          <p css={{ overflowWrap: 'break-word' }}>
             <DifficultyBadge puzzleRating={props.rating} />
             {' · '}
             <AuthorLink
@@ -65,7 +65,7 @@ export const PuzzleHeading = (props: {
         }
       />
       {props.constructorNotes ? (
-        <div css={{ textAlign: 'center' }}>
+        <div css={{ textAlign: 'center', overflowWrap: 'break-word' }}>
           <ConstructorNotes
             isContest={props.isContest}
             notes={props.constructorNotes}
@@ -75,14 +75,14 @@ export const PuzzleHeading = (props: {
         ''
       )}
       {props.blogPost ? (
-        <div css={{ margin: '1em 0' }}>
+        <div css={{ margin: '1em 0', overflowWrap: 'break-word' }}>
           <Markdown css={{ textAlign: 'left' }} text={props.blogPost} />
         </div>
       ) : (
         ''
       )}
       {props.constructorPage?.sig ? (
-        <div css={{ margin: '1em 0' }}>
+        <div css={{ margin: '1em 0', overflowWrap: 'break-word' }}>
           <Markdown
             inline={true}
             css={{ textAlign: 'left' }}

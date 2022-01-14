@@ -179,16 +179,19 @@ export const AuthorLink = ({
   }
   if (constructorPage && showFollowButton) {
     followButton = (
-      <FollowButton
-        css={{
-          marginLeft: '0.5em',
-          padding: '0.25em',
-          fontSize: '0.9em',
-          minWidth: '5.2em',
-          boxShadow: 'none',
-        }}
-        page={constructorPage}
-      />
+      <>
+        {' '}
+        <FollowButton
+          css={{
+            marginLeft: '0.5em',
+            padding: '0.25em',
+            fontSize: '0.9em',
+            minWidth: '5.2em',
+            boxShadow: 'none',
+          }}
+          page={constructorPage}
+        />
+      </>
     );
   }
   if (isPatron) {
