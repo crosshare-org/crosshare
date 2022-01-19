@@ -880,6 +880,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
             showBlogPost={true}
             showAuthor={false}
             constructorIsPatron={props.isPatron}
+            filterTags={[]}
           />
         ))}
         {props.nextPage || props.prevPage !== null ? (

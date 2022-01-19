@@ -76,6 +76,7 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
                 showPrivateStatus={true}
                 constructorPage={null}
                 constructorIsPatron={false}
+                filterTags={[]}
               />
             ))}
             {loadingAuthored ? (

@@ -225,6 +225,7 @@ export default function DailyMiniPage(props: PageProps) {
               constructorPage={cp}
               constructorIsPatron={isPatron}
               title={t`Daily Mini for ${displayDate}`}
+              filterTags={[]}
             />
           );
         })}

@@ -61,6 +61,7 @@ export function UnfinishedPuzzleList({
             showAuthor={false}
             constructorPage={null}
             constructorIsPatron={false}
+            filterTags={[]}
           />
         ))}
         {loadingUnfinished ? (

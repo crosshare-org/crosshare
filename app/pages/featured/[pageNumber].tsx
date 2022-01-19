@@ -157,6 +157,7 @@ export default function FeaturedPageHandler(props: PageProps) {
             constructorPage={p.constructorPage}
             constructorIsPatron={p.constructorIsPatron}
             showAuthor={true}
+            filterTags={[]}
           />
         ))}
         {props.nextPage || props.prevPage !== null ? (

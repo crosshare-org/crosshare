@@ -30,7 +30,7 @@ msgstr "Account / Impostazioni"
 msgid "Across"
 msgstr "Orizzontali"
 
-#: components/ConstructorPage.tsx:855
+#: components/ConstructorPage.tsx:868
 msgid "All donations go directly to the constructor via PayPal"
 msgstr ""
 
@@ -51,12 +51,12 @@ msgid "Begin Puzzle"
 msgstr "Inizia il Cruciverba"
 
 #. The variable is the name of the puzzle's constructor
-#: components/PuzzleLink.tsx:204
+#: components/PuzzleLink.tsx:233
 msgid "By {guestConstructor}"
 msgstr "Di {guestConstructor}"
 
 #. The variable is the name of the puzzle's constructor
-#: components/PuzzleLink.tsx:217
+#: components/PuzzleLink.tsx:246
 msgid "By {link}"
 msgstr "Di {link}"
 
@@ -81,7 +81,7 @@ msgstr "Controlla la Casella"
 msgid "Check Word"
 msgstr "Controlla la Parola"
 
-#: components/PuzzleOverlay.tsx:195
+#: components/PuzzleOverlay.tsx:196
 msgid "Checking for previous play data..."
 msgstr "Controllo se esistono file di gioco salvati..."
 
@@ -159,7 +159,7 @@ msgstr "Inserisci Rebus"
 msgid "Enter your reply"
 msgstr "Inserisci la tua risposta"
 
-#: pages/index.tsx:177
+#: pages/index.tsx:178
 msgid "Featured Puzzles"
 msgstr "Cruciverba in Evidenza"
 
@@ -181,7 +181,7 @@ msgstr "Griglia"
 msgid "Keep Trying"
 msgstr "Riprova"
 
-#: components/PuzzleOverlay.tsx:314
+#: components/PuzzleOverlay.tsx:315
 msgid "Leaderboard (updated hourly)"
 msgstr "Classifica (aggiornata ogni ora)"
 
@@ -193,7 +193,7 @@ msgstr "Lascia un commento"
 msgid "Live Preview:"
 msgstr "Anteprima:"
 
-#: components/UnfinishedPuzzleList.tsx:68
+#: components/UnfinishedPuzzleList.tsx:69
 msgid "Loading..."
 msgstr "Caricamento..."
 
@@ -218,16 +218,16 @@ msgstr "Di più"
 msgid "Mute"
 msgstr "Silenzia"
 
-#: pages/dailyminis/[[...slug]].tsx:237
+#: pages/dailyminis/[[...slug]].tsx:238
 msgid "Newer Minis"
 msgstr "Mini Più Nuovi"
 
-#: components/ConstructorPage.tsx:876
-#: components/ConstructorPage.tsx:886
-#: pages/featured/[pageNumber].tsx:166
-#: pages/featured/[pageNumber].tsx:176
-#: pages/newest/[[...pageNumber]].tsx:167
-#: pages/tags/[...path].tsx:195
+#: components/ConstructorPage.tsx:890
+#: components/ConstructorPage.tsx:900
+#: pages/featured/[pageNumber].tsx:167
+#: pages/featured/[pageNumber].tsx:177
+#: pages/newest/[[...pageNumber]].tsx:168
+#: pages/tags/[...path].tsx:204
 msgid "Newer Puzzles"
 msgstr "Cruciverba Più Nuovi"
 
@@ -240,31 +240,31 @@ msgstr ""
 msgid "No longer following {0}"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:343
+#: components/PuzzleOverlay.tsx:344
 msgid "Nobody is on the leaderboard yet"
 msgstr "La classifica è vuota per ora."
 
-#: pages/dailyminis/[[...slug]].tsx:244
+#: pages/dailyminis/[[...slug]].tsx:245
 msgid "Older Minis"
 msgstr "Mini Più Vecchi"
 
-#: components/ConstructorPage.tsx:893
-#: pages/featured/[pageNumber].tsx:183
-#: pages/newest/[[...pageNumber]].tsx:174
-#: pages/tags/[...path].tsx:202
+#: components/ConstructorPage.tsx:907
+#: pages/featured/[pageNumber].tsx:184
+#: pages/newest/[[...pageNumber]].tsx:175
+#: pages/tags/[...path].tsx:211
 msgid "Older Puzzles"
 msgstr "Cruciverba Più Vecchi"
 
-#: components/UnfinishedPuzzleList.tsx:74
+#: components/UnfinishedPuzzleList.tsx:75
 msgid "Older unfinished solves"
 msgstr "Altri tentativi non completati"
 
-#: components/PuzzleOverlay.tsx:381
+#: components/PuzzleOverlay.tsx:382
 msgid "Open on crosshare.org"
 msgstr "Apri su crosshare.org"
 
 #: pages/newest/[[...pageNumber]].tsx:90
-#: pages/tags/[...path].tsx:116
+#: pages/tags/[...path].tsx:117
 msgid "Page {page}"
 msgstr ""
 
@@ -272,15 +272,15 @@ msgstr ""
 msgid "Pause Game"
 msgstr "Metti in pausa il gioco"
 
-#: components/PuzzleOverlay.tsx:373
+#: components/PuzzleOverlay.tsx:374
 msgid "Powered by crosshare.org"
 msgstr "Realizzato da crosshare.org"
 
-#: pages/index.tsx:164
+#: pages/index.tsx:165
 msgid "Previous daily minis"
 msgstr "Mini dei giorni scorsi"
 
-#: pages/index.tsx:196
+#: pages/index.tsx:198
 msgid "Previous featured puzzles"
 msgstr "Cruciverba precedentemente in evidenza"
 
@@ -289,26 +289,30 @@ msgid "Print Puzzle"
 msgstr "Stampa Puzzle"
 
 #. The variable is a timestamp like 'in 4 days' or 'en 4 dias'
-#: components/PuzzleLink.tsx:323
+#: components/PuzzleLink.tsx:359
 msgid "Private, going public <0/>"
 msgstr "<0/> privati, che diventeranno pubblici"
 
 #. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
 #. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
-#: components/PuzzleHeading.tsx:58
-#: components/PuzzleLink.tsx:303
+#: components/PuzzleHeading.tsx:60
+#: components/PuzzleLink.tsx:339
 msgid "Published <0/>"
 msgstr "<0/> pubblicati "
 
 #. The variable is the name of the user who published the puzzle
-#: components/PuzzleLink.tsx:208
+#: components/PuzzleLink.tsx:237
 msgid "Published by {link}"
 msgstr "Pubblicato da {link}"
 
 #. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
-#: components/PuzzleLink.tsx:312
+#: components/PuzzleLink.tsx:348
 msgid "Published privately <0/>"
 msgstr "<0/> pubblicati privatamente "
+
+#: pages/tags/[...path].tsx:174
+msgid "Puzzles tagged"
+msgstr ""
 
 #: components/Puzzle.tsx:1173
 msgid "Ready to get started?"
@@ -371,16 +375,16 @@ msgstr "Risolto in"
 msgid "Stats"
 msgstr "Statistiche"
 
-#: pages/tags/[...path].tsx:113
+#: pages/tags/[...path].tsx:114
 msgid "Tagged Puzzles"
 msgstr ""
 
 #: pages/tags/[...path].tsx:173
-msgid "Tagged {displayTags}"
-msgstr ""
+#~ msgid "Tagged {displayTags}"
+#~ msgstr ""
 
 #. The variable is the name of the user who will recieve the $ tip
-#: components/ConstructorPage.tsx:847
+#: components/ConstructorPage.tsx:860
 msgid "Tip {0}"
 msgstr ""
 
@@ -408,11 +412,11 @@ msgstr "Riattiva il suono"
 msgid "Update display name:"
 msgstr "Aggiorna il tuo nome:"
 
-#: pages/index.tsx:181
+#: pages/index.tsx:182
 msgid "View all puzzles"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:207
+#: components/PuzzleOverlay.tsx:208
 msgid "You are currently solving downs-only:"
 msgstr "Al momento stai risolvendo con solo le verticali:"
 
@@ -461,11 +465,11 @@ msgstr "Crosshare è un luogo per creare, condividere e risolvere cruciverba ed 
 msgid "ctor"
 msgstr "costruttore"
 
-#: components/PuzzleOverlay.tsx:210
+#: components/PuzzleOverlay.tsx:211
 msgid "enable across clues"
 msgstr "abilita le definizioni orizzontali"
 
-#: pages/index.tsx:202
+#: pages/index.tsx:204
 msgid "faq"
 msgstr "Domande frequenti e informazioni"
 
@@ -478,29 +482,29 @@ msgid "featured-title"
 msgstr "Cruciverba in Evidenza | Pagina {0} | Crosshare"
 
 #. js-lingui:pluralize_on=0
-#: components/ConstructorPage.tsx:782
+#: components/ConstructorPage.tsx:795
 msgid "follower-blog-count"
 msgid_plural "follower-blog-count_plural"
 msgstr[0] ""
 msgstr[1] ""
 
 #. js-lingui:pluralize_on=0
-#: components/ConstructorPage.tsx:774
-#: components/ConstructorPage.tsx:821
+#: components/ConstructorPage.tsx:787
+#: components/ConstructorPage.tsx:834
 msgid "follower-count"
 msgid_plural "follower-count_plural"
 msgstr[0] ""
 msgstr[1] ""
 
-#: components/ConstructorPage.tsx:762
-#: components/ConstructorPage.tsx:808
+#: components/ConstructorPage.tsx:775
+#: components/ConstructorPage.tsx:821
 msgid "following-count"
 msgstr ""
 
 #. The variable is the guest constructor's name
 #. The variable is the guest constructor's name
-#: components/PuzzleLink.tsx:341
-#: components/PuzzleLink.tsx:366
+#: components/PuzzleLink.tsx:377
+#: components/PuzzleLink.tsx:402
 msgid "guest-attrib"
 msgstr "Del costruttore ospite {0}"
 
@@ -516,7 +520,7 @@ msgstr "tasto di scelta rapida"
 msgid "just now"
 msgstr "ora"
 
-#: components/PuzzleOverlay.tsx:219
+#: components/PuzzleOverlay.tsx:220
 msgid "meta-explanation"
 msgstr "Questo è un concorso/meta puzzle. Per inviare la tua risposta, prima finisci di risolvere la griglia (o rivelala se rimani bloccato o risolvi offline)."
 
@@ -541,15 +545,15 @@ msgid "publisher"
 msgstr "editore"
 
 #. the variable is a translated version of 'email or twitter'
-#: pages/index.tsx:215
+#: pages/index.tsx:217
 msgid "questions"
 msgstr "Se hai domande o suggerimenti, per favore contattaci tramite <0/>"
 
-#: pages/tags/[...path].tsx:118
+#: pages/tags/[...path].tsx:119
 msgid "tagged-desc"
 msgstr ""
 
-#: components/PuzzleHeading.tsx:112
+#: components/PuzzleHeading.tsx:119
 msgid "tip-hover"
 msgstr "Tutte le donazioni sono effettuate direttamente al costruttore tramite PayPal"
 
@@ -558,7 +562,7 @@ msgstr "Tutte le donazioni sono effettuate direttamente al costruttore tramite P
 msgid "to save your puzzle progress/stats"
 msgstr "per salvare progressi e statistiche sui cruciverba"
 
-#: components/PuzzleLink.tsx:136
+#: components/PuzzleLink.tsx:157
 msgid "unfinished"
 msgstr "non completato"
 

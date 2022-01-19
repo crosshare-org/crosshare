@@ -154,6 +154,7 @@ export default function HomePage({
                 constructorPage={dailymini.constructorPage}
                 constructorIsPatron={dailymini.constructorIsPatron}
                 title={t`Today's daily mini crossword`}
+                filterTags={[]}
               />
               <p>
                 <Link
@@ -189,6 +190,7 @@ export default function HomePage({
             constructorPage={p.constructorPage}
             showAuthor={true}
             constructorIsPatron={p.constructorIsPatron}
+            filterTags={[]}
           />
         ))}
         <p>

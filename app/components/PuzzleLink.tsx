@@ -16,6 +16,7 @@ import { Markdown } from './Markdown';
 import { Trans } from '@lingui/macro';
 import { PastDistanceToNow, DistanceToNow } from './TimeDisplay';
 import { FollowButton } from './FollowButton';
+import { TagList } from './TagList';
 
 const PuzzleLink = (props: {
   fullWidth?: boolean;
@@ -28,6 +29,8 @@ const PuzzleLink = (props: {
   title: string;
   subTitle?: string;
   children?: ReactNode;
+  tags: string[];
+  filterTags: string[];
 }) => {
   const { user } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
@@ -65,6 +68,24 @@ const PuzzleLink = (props: {
           : 'var(--link-hover)',
     },
   };
+
+  const filteredTags = props.tags.filter(
+    (t) =>
+      ![
+        'featured',
+        'dailymini',
+        'mini',
+        'midi',
+        'full',
+        'jumbo',
+        'rating-0-1200',
+        'rating-1200-1500',
+        'rating-1500-1800',
+        'rating-1800-up',
+      ]
+        .concat(props.filterTags)
+        .includes(t)
+  );
 
   return (
     <div
@@ -153,6 +174,11 @@ const PuzzleLink = (props: {
           )}
         </Link>
         {props.children}
+        {filteredTags.length ? (
+          <TagList css={{ fontSize: '0.9em' }} tags={filteredTags} link />
+        ) : (
+          ''
+        )}
       </div>
     </div>
   );
@@ -238,6 +264,8 @@ export type LinkablePuzzle = Pick<
   | 'authorId'
   | 'id'
   | 'size'
+  | 'userTags'
+  | 'autoTags'
 >;
 
 export function toLinkablePuzzle({
@@ -252,6 +280,8 @@ export function toLinkablePuzzle({
   authorId,
   id,
   size,
+  userTags,
+  autoTags,
 }: LinkablePuzzle): LinkablePuzzle {
   return {
     title,
@@ -265,6 +295,8 @@ export function toLinkablePuzzle({
     authorId,
     id,
     size,
+    userTags,
+    autoTags,
   };
 }
 
@@ -288,6 +320,7 @@ export const PuzzleResultLink = ({
   title?: string;
   constructorPage?: ConstructorPageT | null;
   constructorIsPatron: boolean;
+  filterTags: string[];
 }) => {
   const difficulty = <DifficultyBadge puzzleRating={puzzle.rating} />;
   const authorLink = (
@@ -387,6 +420,8 @@ export const PuzzleResultLink = ({
         height={puzzle.size.rows}
         title={title || puzzle.title}
         subTitle={title ? puzzle.title : undefined}
+        tags={(puzzle.userTags || []).concat(puzzle.autoTags || [])}
+        filterTags={props.filterTags}
       >
         {contents}
       </PuzzleLink>

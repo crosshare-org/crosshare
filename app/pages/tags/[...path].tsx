@@ -15,6 +15,7 @@ import { ConstructorPageT } from '../../lib/constructorPage';
 import { paginatedPuzzles } from '../../lib/paginatedPuzzles';
 import { isUserPatron } from '../../lib/patron';
 import { normalizeTag } from '../../lib/utils';
+import { TagList } from '../../components/TagList';
 
 interface TagPageProps {
   tags: string[];
@@ -169,10 +170,17 @@ export default function TagPageHandler(props: PageProps) {
           },
         }}
       >
-        <h1 css={{ fontSize: '1.4em', marginBottom: 0 }}>
-          <Trans>Tagged {displayTags}</Trans>
+        <h1 css={{ fontSize: '1.4em', marginBottom: '1em' }}>
+          <Trans>Puzzles tagged</Trans>
+          <TagList
+            css={{
+              fontWeight: 'normal',
+              display: 'inline-flex',
+              margin: '0 0 0 0.5em',
+            }}
+            tags={props.tags}
+          />
         </h1>
-        <p>{description}</p>
         {props.puzzles.map((p, i) => (
           <PuzzleResultLink
             key={i}
@@ -181,6 +189,7 @@ export default function TagPageHandler(props: PageProps) {
             constructorPage={p.constructorPage}
             constructorIsPatron={p.constructorIsPatron}
             showAuthor={true}
+            filterTags={props.tags}
           />
         ))}
         {props.nextPage || props.prevPage !== null ? (

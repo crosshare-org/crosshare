@@ -153,6 +153,7 @@ export default function NewestPageHandler(props: PageProps) {
             constructorPage={p.constructorPage}
             constructorIsPatron={p.constructorIsPatron}
             showAuthor={true}
+            filterTags={[]}
           />
         ))}
         {props.nextPage || props.prevPage !== null ? (

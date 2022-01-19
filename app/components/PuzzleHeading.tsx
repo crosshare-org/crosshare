@@ -13,6 +13,7 @@ import { EmbedContext } from './EmbedContext';
 import { GlickoScoreT } from '../lib/dbtypes';
 import { DifficultyBadge } from './DifficultyBadge';
 import { Trans } from '@lingui/macro';
+import { TagList } from './TagList';
 
 export const PuzzleHeading = (props: {
   rating: GlickoScoreT | null;
@@ -28,6 +29,7 @@ export const PuzzleHeading = (props: {
   constructorPage: ConstructorPageT | null;
   constructorIsPatron: boolean;
   blogPost: string | null;
+  tags: string[];
 }) => {
   const isEmbed = useContext(EmbedContext);
 
@@ -63,6 +65,11 @@ export const PuzzleHeading = (props: {
             )}
           </p>
         }
+      />
+      <TagList
+        css={{ justifyContent: 'center', fontSize: '0.9em' }}
+        tags={props.tags}
+        link
       />
       {props.constructorNotes ? (
         <div css={{ textAlign: 'center', overflowWrap: 'break-word' }}>
