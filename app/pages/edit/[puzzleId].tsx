@@ -36,6 +36,8 @@ import { DateTimePicker } from '../../components/DateTimePicker';
 import { isMetaSolution } from '../../lib/utils';
 import { EditableText } from '../../components/EditableText';
 import { AlternateSolutionEditor } from '../../components/AlternateSolutionEditor';
+import { TagList } from '../../components/TagList';
+import { TagEditor } from '../../components/TagEditor';
 
 const ImageCropper = dynamic(
   () =>
@@ -300,6 +302,7 @@ const PuzzleEditor = ({
   const [isPrivate, setIsPrivate] = useState(puzzle.isPrivate);
   const [isPrivateUntil, setIsPrivateUntil] = useState(puzzle.isPrivateUntil);
   const [addingAlternate, setAddingAlternate] = useState(false);
+  const [editingTags, setEditingTags] = useState(false);
 
   if (addingAlternate) {
     return (
@@ -349,6 +352,36 @@ const PuzzleEditor = ({
         <table css={{ width: '100%' }}>
           <tbody>{clueRows}</tbody>
         </table>
+        <h3>Tags</h3>
+        <p>
+          Tags are shown any time a puzzle is displayed on the site, and help
+          solvers quickly find puzzles with a particular attribute or theme.
+        </p>
+        {editingTags ? (
+          <div css={{ marginBottom: '1.5em' }}>
+            <TagEditor
+              userTags={puzzle.userTags || []}
+              autoTags={puzzle.autoTags || []}
+              cancel={() => setEditingTags(false)}
+              save={async (newTags) =>
+                App.firestore()
+                  .doc(`c/${puzzle.id}`)
+                  .update({ tg_u: newTags })
+                  .then(() => setEditingTags(false))
+              }
+            />
+          </div>
+        ) : (
+          <>
+            <h4>Current tags:</h4>
+            <TagList
+              tags={(puzzle.userTags || []).concat(puzzle.autoTags || [])}
+            />
+            <p>
+              <Button onClick={() => setEditingTags(true)} text="Edit Tags" />
+            </p>
+          </>
+        )}
         <h3>Post</h3>
         <h4>Constructor&apos;s Note</h4>
         <p>
