@@ -19,6 +19,7 @@ import {
   PublishAction,
   DelAlternateAction,
   AddAlternateAction,
+  SetTagsAction,
 } from '../reducers/reducer';
 import { TopBarLink, TopBar } from './TopBar';
 import { Direction } from '../lib/types';
@@ -38,6 +39,9 @@ import { MarkdownPreview } from './MarkdownPreview';
 import type firebase from 'firebase/app';
 import { isMetaSolution } from '../lib/utils';
 import { AlternateSolutionEditor } from './AlternateSolutionEditor';
+import { TagEditor } from './TagEditor';
+import { TagList } from './TagList';
+import { sizeTag } from '../lib/puzzleUpdate';
 
 export const MAX_STRING_LENGTH = 2048;
 export const MAX_BLOG_LENGTH = 20000;
@@ -63,7 +67,7 @@ const ClueRow = (props: {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const word = props.entry.completedWord;
   if (word === null) {
-    throw new Error('shouldn\'t ever get here');
+    throw new Error("shouldn't ever get here");
   }
   return (
     <tr>
@@ -144,6 +148,16 @@ const ClueRow = (props: {
   );
 };
 
+function autoTag(state: BuilderState): string[] {
+  const auto = [
+    sizeTag(state.grid.width * state.grid.height - state.grid.hidden.size),
+  ];
+  if (state.contestAnswers?.length) {
+    auto.push('meta');
+  }
+  return auto;
+}
+
 interface ClueModeProps {
   title: string | null;
   notes: string | null;
@@ -162,11 +176,13 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
   const [settingCoverPic, setSettingCoverPic] = useState(false);
   const [contestAnswerInProg, setContestAnswerInProg] = useState('');
   const [addingAlternate, setAddingAlternate] = useState(false);
+  const [editingTags, setEditingTags] = useState(false);
   const privateUntil = state.isPrivateUntil?.toDate();
+  const autoTags = autoTag(state);
 
   const contestAnswerError =
     state.contestAnswers &&
-      isMetaSolution(contestAnswerInProg, state.contestAnswers)
+    isMetaSolution(contestAnswerInProg, state.contestAnswers)
       ? 'Duplicate solution!'
       : '';
 
@@ -680,7 +696,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
           </label>
           {privateUntil ? (
             <p css={{ marginLeft: '1.5em' }}>
-              Visible after {lightFormat(privateUntil, 'M/d/y\' at \'h:mma')}:
+              Visible after {lightFormat(privateUntil, "M/d/y' at 'h:mma")}:
               <DateTimePicker
                 picked={privateUntil}
                 setPicked={(d) => {
@@ -696,6 +712,37 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
             ''
           )}
         </div>
+        <h3>Tags</h3>
+        <p>
+          Tags are shown any time a puzzle is displayed on the site, and help
+          solvers quickly find puzzles with a particular attribute or theme.
+        </p>
+        {editingTags ? (
+          <div css={{ marginBottom: '1.5em' }}>
+            <TagEditor
+              userTags={state.userTags}
+              autoTags={autoTags}
+              cancel={() => setEditingTags(false)}
+              save={async (newTags) => {
+                const st: SetTagsAction = {
+                  type: 'SETTAGS',
+                  tags: newTags,
+                };
+                props.dispatch(st);
+                setEditingTags(false);
+              }}
+            />
+          </div>
+        ) : (
+          <>
+            <h4>Current tags:</h4>
+            <TagList tags={state.userTags.concat(autoTags)} />
+            <p>
+              <Button onClick={() => setEditingTags(true)} text="Edit Tags" />
+            </p>
+          </>
+        )}
+
         <h2 css={{ marginTop: '1em' }}>Clues</h2>
         {props.completedEntries.length ? (
           <table css={{ width: '100%' }}>
@@ -723,26 +770,39 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
         )}
         <h2 css={{ marginTop: '1em' }}>Advanced</h2>
         <div>
-          {state.alternates.length ? <>
-            <h3>Alternate Solutions</h3>
-            <ul>
-              {state.alternates.map((a, i) => <li key={i}>
-                {Object.entries(a).map(([pos, str]) => <span css={{ '& + &:before': { content: '", "' } }} key={pos}>Cell {pos}: &quot;{str}&quot;</span>)} (
-                <ButtonAsLink
-                  onClick={() => {
-                    const delAlt: DelAlternateAction = {
-                      type: 'DELALT',
-                      alternate: a
-                    };
-                    props.dispatch(delAlt);
-                  }}
-                  text="remove"
-                />
-                )
-
-              </li>)}
-            </ul>
-          </> : ''}
+          {state.alternates.length ? (
+            <>
+              <h3>Alternate Solutions</h3>
+              <ul>
+                {state.alternates.map((a, i) => (
+                  <li key={i}>
+                    {Object.entries(a).map(([pos, str]) => (
+                      <span
+                        css={{ '& + &:before': { content: '", "' } }}
+                        key={pos}
+                      >
+                        Cell {pos}: &quot;{str}&quot;
+                      </span>
+                    ))}{' '}
+                    (
+                    <ButtonAsLink
+                      onClick={() => {
+                        const delAlt: DelAlternateAction = {
+                          type: 'DELALT',
+                          alternate: a,
+                        };
+                        props.dispatch(delAlt);
+                      }}
+                      text="remove"
+                    />
+                    )
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            ''
+          )}
           <ButtonAsLink
             disabled={!state.gridIsComplete}
             text="Add an alternate solution"
@@ -753,18 +813,21 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
           <ToolTipText
             css={{ marginLeft: '0.5em' }}
             text={<FaInfoCircle />}
-            tooltip={<>
-              <p>
-                Alternate solutions can be used if one or more entries in your puzzle
-                have multiple valid solutions (e.g. a Schrödinger&apos;s puzzle or a
-                puzzle with bi-directional rebuses).
-              </p>
-              <p>
-                Alternates can only be added once the grid is completely filled. Once
-                an alternate has been added the grid cannot be further edited unless
-                all alternates are deleted.
-              </p>
-            </>}
+            tooltip={
+              <>
+                <p>
+                  Alternate solutions can be used if one or more entries in your
+                  puzzle have multiple valid solutions (e.g. a
+                  Schrödinger&apos;s puzzle or a puzzle with bi-directional
+                  rebuses).
+                </p>
+                <p>
+                  Alternates can only be added once the grid is completely
+                  filled. Once an alternate has been added the grid cannot be
+                  further edited unless all alternates are deleted.
+                </p>
+              </>
+            }
           />
         </div>
       </div>

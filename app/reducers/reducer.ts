@@ -122,6 +122,7 @@ export interface BuilderState extends GridInterfaceState {
   contestRevealDelay: number | null;
   showDownloadLink: boolean;
   alternates: Array<Record<number, string>>;
+  userTags: Array<string>;
 }
 function isBuilderState(state: GridInterfaceState): state is BuilderState {
   return state.type === 'builder';
@@ -156,6 +157,7 @@ export function initialBuilderStateFromSaved(
     contestHasPrize: saved?.contestHasPrize || false,
     contestRevealDelay: saved?.contestRevealDelay || null,
     alternates: saved?.alternates || null,
+    userTags: saved?.userTags || [],
   });
 }
 
@@ -183,6 +185,7 @@ export function initialBuilderState({
   contestHasPrize,
   contestRevealDelay,
   alternates,
+  userTags,
 }: {
   id: string | null;
   width: number;
@@ -207,6 +210,7 @@ export function initialBuilderState({
   contestHasPrize: boolean;
   contestRevealDelay: number | null;
   alternates: Array<Record<number, string>> | null;
+  userTags: Array<string>;
 }) {
   const initialGrid = fromCells({
     mapper: (e) => e,
@@ -262,6 +266,7 @@ export function initialBuilderState({
     showDownloadLink: false,
     downsOnly: false,
     alternates: alternates || [],
+    userTags,
   });
 }
 
@@ -373,6 +378,14 @@ function isUpdateContestAction(
   return action.type === 'CONTEST';
 }
 
+export interface SetTagsAction extends PuzzleAction {
+  type: 'SETTAGS';
+  tags: string[];
+}
+function isSetTagsAction(action: PuzzleAction): action is SetTagsAction {
+  return action.type === 'SETTAGS';
+}
+
 export interface AddAlternateAction extends PuzzleAction {
   type: 'ADDALT';
   alternate: Record<number, string>;
@@ -396,7 +409,9 @@ function isDelAlternateAction(
 export interface ToggleHiddenAction extends PuzzleAction {
   type: 'TOGGLEHIDDEN';
 }
-function isToggleHiddenAction(action: PuzzleAction): action is ToggleHiddenAction {
+function isToggleHiddenAction(
+  action: PuzzleAction
+): action is ToggleHiddenAction {
   return action.type === 'TOGGLEHIDDEN';
 }
 
@@ -1138,6 +1153,11 @@ export function builderReducer(
       }),
     };
   }
+  if (isSetTagsAction(action)) {
+    return {
+      ...state, userTags: action.tags
+    };
+  }
   if (isAddAlternateAction(action)) {
     state.alternates = state.alternates.filter(
       (a) => !equal(a, action.alternate)
@@ -1221,6 +1241,7 @@ export function builderReducer(
       contestHasPrize: false,
       contestRevealDelay: null,
       alternates: null,
+      userTags: [],
     });
   }
   if (isImportPuzAction(action)) {
@@ -1298,9 +1319,10 @@ export function builderReducer(
       h: state.grid.height,
       w: state.grid.width,
       g: state.grid.cells,
+      ...(state.userTags.length > 0 && { tg_u: state.userTags }),
       ...(state.grid.vBars.size && { vb: Array.from(state.grid.vBars) }),
       ...(state.grid.hBars.size && { hb: Array.from(state.grid.hBars) }),
-      ...(state.grid.hidden.size && { hdn: Array.from(state.grid.hidden )}),
+      ...(state.grid.hidden.size && { hdn: Array.from(state.grid.hidden) }),
       ...getClueProps(
         state.grid.sortedEntries,
         state.grid.entries,

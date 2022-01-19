@@ -55,6 +55,7 @@ const initializeState = (
     contestHasPrize: false,
     contestRevealDelay: null,
     alternates: null,
+    userTags: [],
   });
 };
 

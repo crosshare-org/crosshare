@@ -166,6 +166,7 @@ type BuilderProps = PartialBy<
   | 'hBars'
   | 'hidden'
   | 'highlight'
+  | 'userTags'
 >;
 
 interface PotentialFillItemProps {
@@ -323,6 +324,7 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     contestHasPrize: saved?.contestHasPrize || false,
     contestRevealDelay: saved?.contestRevealDelay || null,
     alternates: saved?.alternates || null,
+    userTags: saved?.userTags || [],
   });
 };
 
@@ -806,6 +808,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       isPrivate: state.isPrivate,
       isPrivateUntil: state.isPrivateUntil?.toMillis(),
       alternates: state.alternates,
+      userTags: state.userTags,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(inProgress));
   }, [
@@ -826,6 +829,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     state.alternates,
     state.grid.vBars,
     state.grid.hBars,
+    state.userTags,
   ]);
 
   const reRunAutofill = useCallback(() => {

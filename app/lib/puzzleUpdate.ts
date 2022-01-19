@@ -101,20 +101,20 @@ function parsePuzzle(docdata: any): DBPuzzleT | null {
   }
 }
 
-function autoTag(p: DBPuzzleT) {
-  const auto = [];
-
-  // Size tags
-  const size = p.w * p.h - (p.hdn?.length || 0);
+export function sizeTag(size: number): string {
   if (size < 50) {
-    auto.push('mini');
+    return 'mini';
   } else if (size < 12 * 12) {
-    auto.push('midi');
+    return 'midi';
   } else if (size < 17 * 17) {
-    auto.push('full');
+    return 'full';
   } else {
-    auto.push('jumbo');
+    return 'jumbo';
   }
+}
+
+function autoTag(p: DBPuzzleT) {
+  const auto = [sizeTag(p.w * p.h - (p.hdn?.length || 0))];
 
   if (p.ct_ans?.length) {
     auto.push('meta');
