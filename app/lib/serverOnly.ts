@@ -365,33 +365,43 @@ export async function queueEmails() {
   );
 }
 
+export async function getArticle(
+  slug: string
+): Promise<string | ArticleT | null> {
+  const db = AdminApp.firestore();
+  let dbres;
+  try {
+    dbres = await db.collection('a').where('s', '==', slug).get();
+  } catch {
+    return 'error getting article';
+  }
+  return validate(dbres.docs[0]?.data());
+}
+
 export interface PageErrorProps {
   error: string;
 }
 
 export type ArticlePageProps = PageErrorProps | ArticleT;
 
-export const getArticlePageProps: GetServerSideProps<ArticlePageProps> =
-  async ({ res, params }): Promise<{ props: ArticlePageProps }> => {
-    const db = AdminApp.firestore();
-    if (!params?.slug || Array.isArray(params.slug)) {
-      res.statusCode = 404;
-      return { props: { error: 'bad article params' } };
-    }
-    let dbres;
-    try {
-      dbres = await db.collection('a').where('s', '==', params.slug).get();
-    } catch {
-      return { props: { error: 'error getting article' } };
-    }
-    const article = validate(dbres.docs[0]?.data());
-    if (!article) {
-      res.statusCode = 404;
-      return { props: { error: 'article doesnt exist' } };
-    }
-    res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-    return { props: article };
-  };
+export const getArticlePageProps: GetServerSideProps<
+  ArticlePageProps
+> = async ({ res, params }): Promise<{ props: ArticlePageProps }> => {
+  if (!params?.slug || Array.isArray(params.slug)) {
+    res.statusCode = 404;
+    return { props: { error: 'bad article params' } };
+  }
+  const article = await getArticle(params.slug);
+  if (typeof article === 'string') {
+    return { props: { error: article } };
+  }
+  if (!article) {
+    res.statusCode = 404;
+    return { props: { error: 'article doesnt exist' } };
+  }
+  res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
+  return { props: article };
+};
 
 export async function convertComments(
   comments: Array<CommentWithRepliesT>

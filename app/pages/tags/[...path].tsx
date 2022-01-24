@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 
 import { ErrorPage } from '../../components/ErrorPage';
-import { userIdToPage } from '../../lib/serverOnly';
+import { getArticle, userIdToPage } from '../../lib/serverOnly';
 import Head from 'next/head';
 import { DefaultTopBar } from '../../components/TopBar';
 import { HUGE_AND_UP, MAX_WIDTH } from '../../lib/style';
@@ -16,9 +16,12 @@ import { paginatedPuzzles } from '../../lib/paginatedPuzzles';
 import { isUserPatron } from '../../lib/patron';
 import { normalizeTag } from '../../lib/utils';
 import { TagList } from '../../components/TagList';
+import { ArticleT } from '../../lib/article';
+import { Markdown } from '../../components/Markdown';
 
 interface TagPageProps {
   tags: string[];
+  article?: ArticleT;
   puzzles: Array<
     LinkablePuzzle & {
       constructorPage: ConstructorPageT | null;
@@ -57,6 +60,14 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
     return { props: { error: 'Maximum of 3 tags per query' } };
   }
 
+  let article: ArticleT | undefined = undefined;
+  if (tags.length === 1) {
+    const articleRes = await getArticle(`tag:${tags[0]}`);
+    if (articleRes && typeof articleRes !== 'string') {
+      article = articleRes;
+    }
+  }
+
   let page = 0;
   if (params.path.length === 3 && params.path[1] === 'page' && params.path[2]) {
     page = parseInt(params.path[2]) || 0;
@@ -83,6 +94,7 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
   return {
     props: {
       tags,
+      article,
       puzzles,
       currentPage: page,
       prevPage: page > 0 ? page - 1 : null,
@@ -125,7 +137,7 @@ export default function TagPageHandler(props: PageProps) {
     <>
       <Head>
         <title>{title}</title>
-        <meta name="robots" content="noindex" />
+        {props.article ? '' : <meta name="robots" content="noindex" />}
         <meta key="og:title" property="og:title" content={title} />
         <meta
           key="og:description"
@@ -181,6 +193,11 @@ export default function TagPageHandler(props: PageProps) {
             tags={props.tags}
           />
         </h1>
+        {props.article ? (
+          <Markdown css={{ marginBottom: '2em' }} text={props.article.c} />
+        ) : (
+          ''
+        )}
         {props.puzzles.map((p, i) => (
           <PuzzleResultLink
             key={i}

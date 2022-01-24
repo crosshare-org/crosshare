@@ -73,7 +73,7 @@ const ArticleEditor = ({
           text={article.s}
           maxLength={100}
           handleSubmit={async (newSlug) => {
-            const slug = slugify(newSlug);
+            const slug = slugify(newSlug, 100, true);
             App.firestore()
               .doc(`a/${articleId}`)
               .update({ s: slug, ua: TimestampClass.now() })

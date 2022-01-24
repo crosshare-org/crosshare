@@ -2,10 +2,16 @@ export const STORAGE_KEY = 'puzzleInProgress';
 
 export const slugify = (
   value: string | null | undefined,
-  lengthLimit = 100
+  lengthLimit = 100,
+  allowColon = false
 ): string => {
   if (!value) {
     return '';
+  }
+
+  let replaceRegex = /[^a-z0-9 ]/g;
+  if (allowColon) {
+    replaceRegex = /[^a-z0-9 :]/g;
   }
 
   return value
@@ -13,7 +19,7 @@ export const slugify = (
     .normalize('NFD') // split an accented letter in the base letter and the acent
     .replace(/[\u0300-\u036f]/g, '') // remove all previously split accents
     .toLowerCase()
-    .replace(/[^a-z0-9 ]/g, '') // remove all chars not letters, numbers and spaces (to be replaced)
+    .replace(replaceRegex, '') // remove all chars not letters, numbers and spaces (to be replaced)
     .trim()
     .replace(/\s+/g, '-') // separator
     .slice(0, lengthLimit);
