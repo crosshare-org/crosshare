@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 import { ReactNode, Fragment, useState, useCallback } from 'react';
 import SimpleMarkdown, { SingleASTNode, ASTNode } from 'simple-markdown';
 import { Direction, removeClueSpecials } from '../lib/types';
+import { Link } from './Link';
 import { ToolTipText } from './ToolTipText';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,6 +28,27 @@ const rules: SimpleMarkdown.Rules<
         title: node.title,
         children: output(node.content, state),
       });
+    },
+  },
+  tag: {
+    order: SimpleMarkdown.defaultRules.em.order - 0.5,
+    match(source: any) {
+      return /^#([a-zA-Z0-9][a-zA-Z0-9-]+)/.exec(source);
+    },
+    parse(capture: any) {
+      return {
+        content: capture[1],
+      };
+    },
+    react(node: any, _recurseOutput: any, state: any) {
+      return (
+        <Link key={state.key} href={`/tags/${node.content}`}>
+          #{node.content}
+        </Link>
+      );
+    },
+    html(node: any) {
+      return `<a href="https://crosshare.org/tags/${node.content}">#${node.content}</b>`;
     },
   },
   spoiler: {
