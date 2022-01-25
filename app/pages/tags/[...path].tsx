@@ -21,7 +21,7 @@ import { Markdown } from '../../components/Markdown';
 
 interface TagPageProps {
   tags: string[];
-  article?: ArticleT;
+  article: ArticleT | null;
   puzzles: Array<
     LinkablePuzzle & {
       constructorPage: ConstructorPageT | null;
@@ -60,10 +60,10 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
     return { props: { error: 'Maximum of 3 tags per query' } };
   }
 
-  let article: ArticleT | undefined = undefined;
+  let article: ArticleT | null = null;
   if (tags.length === 1) {
     const articleRes = await getArticle(`tag:${tags[0]}`);
-    if (articleRes && typeof articleRes !== 'string') {
+    if (typeof articleRes !== 'string') {
       article = articleRes;
     }
   }
