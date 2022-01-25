@@ -199,6 +199,8 @@ const DBPuzzleOptionalV = t.partial({
   tg_u: t.array(t.string),
   /** auto added tags */
   tg_a: t.array(t.string),
+  /** forced tags (admin added) */
+  tg_f: t.array(t.string),
   /** tag index */
   tg_i: t.array(t.string),
 });

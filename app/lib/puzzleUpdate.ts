@@ -116,6 +116,10 @@ export function sizeTag(size: number): string {
 function autoTag(p: DBPuzzleT) {
   const auto = [sizeTag(p.w * p.h - (p.hdn?.length || 0))];
 
+  if (p.tg_f?.length) {
+    auto.push(...p.tg_f);
+  }
+
   if (p.ct_ans?.length) {
     auto.push('meta');
   }
