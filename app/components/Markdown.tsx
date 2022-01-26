@@ -30,7 +30,28 @@ const rules: SimpleMarkdown.Rules<
       });
     },
   },
-  tag: {
+  atMention: {
+    order: SimpleMarkdown.defaultRules.em.order - 0.5,
+    match(source: any) {
+      return /^@([a-zA-Z]\w+)/.exec(source);
+    },
+    parse(capture: any) {
+      return {
+        content: capture[1],
+      };
+    },
+    react(node: any, _recurseOutput: any, state: any) {
+      return (
+        <Link key={state.key} href={`/${node.content}`}>
+          @{node.content}
+        </Link>
+      );
+    },
+    html(node: any) {
+      return `<a href="https://crosshare.org/${node.content}">@${node.content}</b>`;
+    },
+  },
+  tagMention: {
     order: SimpleMarkdown.defaultRules.em.order - 0.5,
     match(source: any) {
       return /^#([a-zA-Z0-9][a-zA-Z0-9-]+)/.exec(source);
