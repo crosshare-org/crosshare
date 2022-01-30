@@ -6,6 +6,7 @@ import SimpleMarkdown, { SingleASTNode, ASTNode } from 'simple-markdown';
 import { Direction, removeClueSpecials } from '../lib/types';
 import { Link } from './Link';
 import { ToolTipText } from './ToolTipText';
+import { parse } from 'twemoji-parser';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { image, refimage, ...baseRules } = { ...SimpleMarkdown.defaultRules };
@@ -94,6 +95,37 @@ const rules: SimpleMarkdown.Rules<
     },
     html() {
       return '<b>Spoiler omitted</b>';
+    },
+  },
+  text: {
+    ...SimpleMarkdown.defaultRules.text,
+    react(node: any, _output: any, _state: any) {
+      const content: string = node.content;
+      const emoji = parse(content, { assetType: 'png' });
+      const out: Array<ReactNode> = [];
+      let startIndex = 0;
+      while (emoji.length) {
+        const current = emoji.shift();
+        if (!current) break;
+        out.push(content.substring(startIndex, current.indices[0]));
+        out.push(
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            draggable={false}
+            css={{
+              width: '1em',
+              height: '1em',
+              margin: '0 .05em 0 .1em',
+              verticalAlign: '-0.1em',
+            }}
+            src={current.url}
+            alt={current.text}
+          />
+        );
+        startIndex = current.indices[1];
+      }
+      out.push(content.substring(startIndex));
+      return out;
     },
   },
 };

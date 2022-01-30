@@ -3,35 +3,245 @@ import { render, waitFor } from '../lib/testingUtils';
 import { Markdown } from '../components/Markdown';
 import { Direction } from '../lib/types';
 
+test('emoji rendering', () => {
+  let r = render(<Markdown text="😂🐅" />, {});
+  expect(r.container).toMatchInlineSnapshot(`
+.emotion-0 {
+  width: 1em;
+  height: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
+}
+
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      
+      <img
+        alt="😂"
+        class="emotion-0"
+        draggable="false"
+        src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+      />
+      
+      <img
+        alt="🐅"
+        class="emotion-0"
+        draggable="false"
+        src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
+      />
+      
+    </div>
+  </div>
+</div>
+`);
+
+  r = render(<Markdown text="😂 abc" />, {});
+  expect(r.container).toMatchInlineSnapshot(`
+.emotion-0 {
+  width: 1em;
+  height: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
+}
+
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      
+      <img
+        alt="😂"
+        class="emotion-0"
+        draggable="false"
+        src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+      />
+       abc
+    </div>
+  </div>
+</div>
+`);
+
+  r = render(<Markdown text="abc 😂" />, {});
+  expect(r.container).toMatchInlineSnapshot(`
+.emotion-0 {
+  width: 1em;
+  height: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
+}
+
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      abc 
+      <img
+        alt="😂"
+        class="emotion-0"
+        draggable="false"
+        src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+      />
+      
+    </div>
+  </div>
+</div>
+`);
+
+  r = render(<Markdown text="abc 😂 def" />, {});
+  expect(r.container).toMatchInlineSnapshot(`
+.emotion-0 {
+  width: 1em;
+  height: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
+}
+
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      abc 
+      <img
+        alt="😂"
+        class="emotion-0"
+        draggable="false"
+        src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+      />
+       def
+    </div>
+  </div>
+</div>
+`);
+
+  r = render(<Markdown text="😂 abc 🐅" />, {});
+  expect(r.container).toMatchInlineSnapshot(`
+.emotion-0 {
+  width: 1em;
+  height: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
+}
+
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      
+      <img
+        alt="😂"
+        class="emotion-0"
+        draggable="false"
+        src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+      />
+       abc 
+      <img
+        alt="🐅"
+        class="emotion-0"
+        draggable="false"
+        src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
+      />
+      
+    </div>
+  </div>
+</div>
+`);
+
+  r = render(<Markdown text="abc 😂 def 🐅 hij" />, {});
+  expect(r.container).toMatchInlineSnapshot(`
+.emotion-0 {
+  width: 1em;
+  height: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
+}
+
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      abc 
+      <img
+        alt="😂"
+        class="emotion-0"
+        draggable="false"
+        src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+      />
+       def 
+      <img
+        alt="🐅"
+        class="emotion-0"
+        draggable="false"
+        src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
+      />
+       hij
+    </div>
+  </div>
+</div>
+`);
+});
+
 test('spoiler text rendering', () => {
-  let r = render(<Markdown text='foo bar >!baz' />, {});
+  let r = render(<Markdown text="foo bar >!baz" />, {});
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown text='foo bar >!baz!<' />, {});
+  r = render(<Markdown text="foo bar >!baz!<" />, {});
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown text='>!baz foo bam ! >> fooey!<' />, {});
+  r = render(<Markdown text=">!baz foo bam ! >> fooey!<" />, {});
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown text='>!baz foo bam ! >> fooey!< with after text' />, {});
+  r = render(
+    <Markdown text=">!baz foo bam ! >> fooey!< with after text" />,
+    {}
+  );
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown text='before ||baz foo bam >! fooey|| with after text' />, {});
+  r = render(
+    <Markdown text="before ||baz foo bam >! fooey|| with after text" />,
+    {}
+  );
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown text='before >!baz foo bam || fooey!< with after text' />, {});
+  r = render(
+    <Markdown text="before >!baz foo bam || fooey!< with after text" />,
+    {}
+  );
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown text='before >!baz foo bam || fooey!< with ||after|| text' />, {});
+  r = render(
+    <Markdown text="before >!baz foo bam || fooey!< with ||after|| text" />,
+    {}
+  );
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown text='before ||baz foo bam >! not! !< fooey|| with >!after!< text' />, {});
+  r = render(
+    <Markdown text="before ||baz foo bam >! not! !< fooey|| with >!after!< text" />,
+    {}
+  );
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown text={'before ||baz foo bam \n\n>! not! !< fooey|| with >!after!< text'} />, {});
+  r = render(
+    <Markdown
+      text={'before ||baz foo bam \n\n>! not! !< fooey|| with >!after!< text'}
+    />,
+    {}
+  );
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown text={'before baz foo bam \n\n>! not! !< fooey|| with >!after!< text'} />, {});
+  r = render(
+    <Markdown
+      text={'before baz foo bam \n\n>! not! !< fooey|| with >!after!< text'}
+    />,
+    {}
+  );
   expect(r.container).toMatchSnapshot();
 });
 
