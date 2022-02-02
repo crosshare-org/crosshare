@@ -87,7 +87,7 @@ export interface ClueT {
 }
 
 export function removeClueSpecials(c: string): string {
-  if (c.startsWith('!@')) {
+  if (c.startsWith('!@') || c.startsWith('!#')) {
     return c.substring(2).trim();
   }
   return c;
