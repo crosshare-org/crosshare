@@ -2,14 +2,26 @@
 
 import { css } from '@emotion/react';
 import { ReactNode, Fragment, useState, useCallback } from 'react';
-import SimpleMarkdown, { SingleASTNode, ASTNode } from 'simple-markdown';
+import SimpleMarkdown, {
+  SingleASTNode,
+  ASTNode,
+  anyScopeRegex,
+} from 'simple-markdown';
 import { Direction, removeClueSpecials } from '../lib/types';
 import { Link } from './Link';
 import { ToolTipText } from './ToolTipText';
 import { parse } from 'twemoji-parser';
+import { ClueReference } from './ClueReference';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { image, refimage, ...baseRules } = { ...SimpleMarkdown.defaultRules };
+
+interface ReferenceData {
+  direction: Direction;
+  labelNumber: number;
+  start: number;
+  end: number;
+}
 
 const rules: SimpleMarkdown.Rules<
   SimpleMarkdown.ReactOutputRule & SimpleMarkdown.HtmlOutputRule
@@ -18,6 +30,10 @@ const rules: SimpleMarkdown.Rules<
   blockQuote: {
     ...SimpleMarkdown.defaultRules.blockQuote,
     match: SimpleMarkdown.blockRegex(/^( *>[^!\n]+(\n[^\n]+)*\n*)+\n{2,}/),
+  },
+  u: {
+    ...SimpleMarkdown.defaultRules.u,
+    match: SimpleMarkdown.inlineRegex(/^__([^_](?:\\[\s\S]|[^\\])*?)__(?!_)/),
   },
   link: {
     ...SimpleMarkdown.defaultRules.link,
@@ -97,8 +113,86 @@ const rules: SimpleMarkdown.Rules<
       return '<b>Spoiler omitted</b>';
     },
   },
+  clueRefs: {
+    order: SimpleMarkdown.defaultRules.text.order - 0.5,
+    match(source: any, state: any) {
+      console.log('here', state.noRefs);
+      if (state.noRefs) {
+        return null;
+      }
+      return /^(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>a(cross(es)?)?|d(owns?)?)\b/i.exec(
+        source
+      );
+    },
+    parse(capture: any) {
+      const refs: Array<ReferenceData> = [];
+      const dirString = capture.groups?.dir?.toLowerCase();
+      if (!dirString) {
+        throw new Error('missing dir string');
+      }
+      const dir = dirString.startsWith('a') ? Direction.Across : Direction.Down;
+      const numSection = capture.groups?.numSection;
+      if (!numSection) {
+        throw new Error('missing numSection');
+      }
+      let numMatch: RegExpExecArray | null;
+      const numRe = /\d+/g;
+      while ((numMatch = numRe.exec(numSection)) !== null && numMatch[0]) {
+        const labelNumber = parseInt(numMatch[0]);
+        refs.push({
+          direction: dir,
+          labelNumber,
+          start: numMatch.index,
+          end: numMatch.index + numMatch[0].length,
+        });
+      }
+      const last = refs[refs.length - 1];
+      if (last && capture[0]) {
+        last['end'] = capture[0].length;
+      }
+
+      return {
+        content: capture[0],
+        refs,
+      };
+    },
+    react(node: any, _recurseOutput: any, _state: any) {
+      const text = node.content as string;
+      const refs = node.refs as Array<ReferenceData>;
+      let offset = 0;
+      const parts: Array<ReactNode> = [];
+      let i = 0;
+      for (const ref of refs) {
+        if (offset < ref.start) {
+          parts.push(text.slice(offset, ref.start));
+        }
+        parts.push(
+          <ClueReference
+            key={i++}
+            text={text.slice(ref.start, ref.end)}
+            {...ref}
+          />
+        );
+        offset = ref.end;
+      }
+      if (offset < text.length) {
+        parts.push(text.slice(offset));
+      }
+      return parts;
+    },
+    html(node: any) {
+      return node.content;
+    },
+  },
   text: {
     ...SimpleMarkdown.defaultRules.text,
+    // Here we look for anything followed by non-symbols,
+    // double newlines, or double-space-newlines
+    // We break on any symbol characters so that this grammar
+    // is easy to extend without needing to modify this regex
+    match: anyScopeRegex(
+      /^[\s\S]+?(?=[^A-Za-z\s\u00c0-\uffff]|\n\n| {2,}\n|\w+:\S|$)/
+    ),
     react(node: any, _output: any, _state: any) {
       const content: string = node.content;
       const emoji = parse(content, { assetType: 'png' });
@@ -111,6 +205,7 @@ const rules: SimpleMarkdown.Rules<
         out.push(
           // eslint-disable-next-line @next/next/no-img-element
           <img
+            key={current.indices[0]}
             draggable={false}
             css={{
               width: '1em',
@@ -226,6 +321,7 @@ export const Markdown = ({
   inline,
   preview,
   className,
+  noRefs,
 }: {
   text: string;
   // If this is included, references to clues by answer or full clue number will
@@ -235,8 +331,12 @@ export const Markdown = ({
   preview?: number;
   inline?: boolean;
   className?: string;
+  noRefs?: boolean;
 }) => {
   text = text.replace(/[^\s\S]/g, '');
+  if (!inline) {
+    text += '\n\n';
+  }
   if (clueMap && clueMap.size) {
     const fullClueMap = new Map<
       string,
@@ -304,7 +404,9 @@ export const Markdown = ({
           'react'
         )(
           chopTo(
-            SimpleMarkdown.parserFor(newRules)(text + '\n\n', { inline }),
+            SimpleMarkdown.parserFor(newRules, { noRefs })(text, {
+              inline,
+            }),
             preview
           )
         )}
@@ -313,7 +415,7 @@ export const Markdown = ({
   }
   return (
     <div className={className}>
-      {output(chopTo(parser(text + '\n\n', { inline }), preview))}
+      {output(chopTo(parser(text, { inline, noRefs }), preview))}
     </div>
   );
 };

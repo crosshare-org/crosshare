@@ -1,64 +1,27 @@
-import { ReactNode, Fragment } from 'react';
+import { useContext } from 'react';
 
-import { CluedEntry, RefPosition } from '../lib/viewableGrid';
-import { GridBase, valAt, EntryBase } from '../lib/gridBase';
+import { CluedEntry } from '../lib/viewableGrid';
 
-import { ToolTipText } from './ToolTipText';
 import { Direction, getClueText } from '../lib/types';
+import { Markdown } from './Markdown';
+import { DownsOnlyContext } from './DownsOnlyContext';
 
 interface ClueTextProps {
-  entryIndex: number;
-  allEntries: Array<CluedEntry>;
-  refPositions: Array<Array<RefPosition>>;
-  grid: GridBase<EntryBase>;
-  downsOnly: boolean;
+  entry: CluedEntry;
 }
 export const ClueText = (props: ClueTextProps) => {
-  const entry = props.allEntries[props.entryIndex];
-  if (!entry) {
-    throw new Error('oob');
-  }
-  if (props.downsOnly && entry.direction === Direction.Across) {
+  const downsOnly = useContext(DownsOnlyContext);
+  if (downsOnly && props.entry.direction === Direction.Across) {
     return <span>-</span>;
   }
-  const text = getClueText(entry);
-  let offset = 0;
-  const parts: Array<ReactNode> = [];
-  let i = 0;
-  for (const [refIndex, start, end] of props.refPositions[props.entryIndex] ||
-    []) {
-    if (offset < start) {
-      parts.push(<Fragment key={i++}>{text.slice(offset, start)}</Fragment>);
-    }
-    const e = props.allEntries[refIndex];
-    if (!e) {
-      throw new Error('oob');
-    }
-    parts.push(
-      <ToolTipText
-        key={i++}
-        text={text.slice(start, end)}
-        tooltip={
-          <>
-            {props.downsOnly && e.direction === Direction.Across
-              ? '-'
-              : getClueText(e)}
-            <b
-              css={{
-                marginLeft: '0.5em',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              [{e.cells.map((a) => valAt(props.grid, a).trim() || '-')}]
-            </b>
-          </>
-        }
-      />
-    );
-    offset = end;
+  const text = getClueText(props.entry);
+  if (props.entry.clue.startsWith('!#')) {
+    return <span>{text}</span>;
   }
-  if (offset < text.length) {
-    parts.push(<Fragment key={i++}>{text.slice(offset)}</Fragment>);
+  let noRefs = false;
+  if (props.entry.clue.startsWith('!@')) {
+    console.log('setting norefs');
+    noRefs = true;
   }
-  return <>{parts}</>;
+  return <Markdown text={text} inline={true} noRefs={noRefs} />;
 };

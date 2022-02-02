@@ -1,6 +1,13 @@
 import { act, render } from '../lib/testingUtils';
-import { addClues, CluedGrid, fromCells, getRefs } from '../lib/viewableGrid';
+import { addClues, CluedGrid, fromCells } from '../lib/viewableGrid';
 import { ClueText } from '../components/ClueText';
+import { GridContext } from '../components/GridContext';
+
+/*
+"What's a Grecian ___?" "About $25 a week!"
+_____ Ha'i, from South Pacific
+
+*/
 
 test('Highlighting for different types of clues', async () => {
   const answers = ['U', 'P', 'S', 'O'];
@@ -24,23 +31,104 @@ test('Highlighting for different types of clues', async () => {
     { num: 2, dir: 1, clue: '3A Post office abbr.', explanation: null },
   ]);
 
-  const [, refPositions] = getRefs(cluedGrid);
-
-  console.log(refPositions);
   for (let i = 0; i < 4; i += 1) {
+    const entry = cluedGrid.entries[i];
+    if (!entry) {
+      throw new Error('oob');
+    }
     const { container } = render(
       <div>
-        <ClueText
-          grid={cluedGrid}
-          allEntries={cluedGrid.entries}
-          entryIndex={i}
-          refPositions={refPositions}
-          downsOnly={false}
-        />
+        <GridContext.Provider value={cluedGrid}>
+          <ClueText entry={entry} />
+        </GridContext.Provider>
       </div>,
       {}
     );
     expect(container).toMatchSnapshot();
     await act(async () => Promise.resolve()); // Popper update() - https://github.com/popperjs/react-popper/issues/350
   }
+
+  const first = cluedGrid.entries[0];
+  if (!first) {
+    throw new Error('oob');
+  }
+
+  let { container } = render(
+    <GridContext.Provider value={cluedGrid}>
+      <ClueText entry={{ ...first, clue: 'Try 3-a' }} />
+    </GridContext.Provider>,
+    {}
+  );
+  expect(container).toMatchSnapshot();
+
+  ({ container } = render(
+    <GridContext.Provider value={cluedGrid}>
+      <ClueText entry={{ ...first, clue: '!@ Try 3-a' }} />
+    </GridContext.Provider>,
+    {}
+  ));
+  expect(container).toMatchSnapshot();
+
+  ({ container } = render(
+    <GridContext.Provider value={cluedGrid}>
+      <ClueText entry={{ ...first, clue: 'Try 3-a in **bold**!' }} />
+    </GridContext.Provider>,
+    {}
+  ));
+  expect(container).toMatchSnapshot();
+
+  ({ container } = render(
+    <GridContext.Provider value={cluedGrid}>
+      <ClueText entry={{ ...first, clue: '!@ Try 3-a in **bold**!' }} />
+    </GridContext.Provider>,
+    {}
+  ));
+  expect(container).toMatchSnapshot();
+
+  ({ container } = render(
+    <GridContext.Provider value={cluedGrid}>
+      <ClueText entry={{ ...first, clue: '!#Try 3-a in **bold**!' }} />
+    </GridContext.Provider>,
+    {}
+  ));
+  expect(container).toMatchSnapshot();
+
+  ({ container } = render(
+    <GridContext.Provider value={cluedGrid}>
+      <ClueText
+        entry={{ ...first, clue: 'Something like 3As or 1Ds should ref' }}
+      />
+    </GridContext.Provider>,
+    {}
+  ));
+  expect(container).toMatchSnapshot();
+
+  ({ container } = render(
+    <GridContext.Provider value={cluedGrid}>
+      <ClueText entry={{ ...first, clue: '#1 grossing movie of all time' }} />
+    </GridContext.Provider>,
+    {}
+  ));
+  expect(container).toMatchSnapshot();
+
+  ({ container } = render(
+    <GridContext.Provider value={cluedGrid}>
+      <ClueText entry={{ ...first, clue: "_____ Ha'i, from South Pacific" }} />
+    </GridContext.Provider>,
+    {}
+  ));
+  expect(container).toMatchSnapshot();
+
+  ({ container } = render(
+    <GridContext.Provider value={cluedGrid}>
+      <ClueText
+        entry={{
+          ...first,
+          clue: '"What\'s a Grecian ___?" "About $3 a week!"',
+        }}
+      />
+    </GridContext.Provider>,
+    {}
+  ));
+  expect(container).toMatchSnapshot();
 });

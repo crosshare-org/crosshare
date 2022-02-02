@@ -662,7 +662,8 @@ exports[`clueMap rendering 6`] = `
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
-       and unknown 11A
+       and unknown 
+      11A
     </div>
   </div>
 </div>

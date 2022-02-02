@@ -114,6 +114,8 @@ import {
 import { I18nTags } from './I18nTags';
 import { t, Trans } from '@lingui/macro';
 import { isSome } from 'fp-ts/lib/Option';
+import { GridContext } from './GridContext';
+import { DownsOnlyContext } from './DownsOnlyContext';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -730,22 +732,36 @@ export const Puzzle = ({
             }}
           >
             {entry ? (
-              <div css={{ margin: 'auto 1em' }}>
-                <span
+              <div
+                css={{
+                  margin: 'auto 1em',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  flexWrap: 'nowrap',
+                  alignItems: 'center',
+                }}
+              >
+                <div
                   css={{
                     fontWeight: 'bold',
                     paddingRight: '0.5em',
+                    flaxShrink: 0,
+                    width: '2.5em',
+                    height: '100%',
+                    textAlign: 'right',
                   }}
                 >
                   {entry.labelNumber}
                   {entry.direction === Direction.Across ? 'A' : 'D'}
-                </span>
-                <span
+                </div>
+                <div
                   css={{
                     color: shouldConceal ? 'transparent' : 'var(--text)',
                     textShadow: shouldConceal
                       ? '0 0 1em var(--conceal-text)'
                       : '',
+                    flex: '1 1 auto',
+                    height: '100%',
                   }}
                 >
                   <ClueText
@@ -755,7 +771,7 @@ export const Puzzle = ({
                     grid={state.grid}
                     downsOnly={state.downsOnly && !state.success}
                   />
-                </span>
+                </div>
               </div>
             ) : (
               ''
@@ -1047,9 +1063,7 @@ export const Puzzle = ({
 
   return (
     <>
-      <Global
-        styles={FULLSCREEN_CSS}
-      />
+      <Global styles={FULLSCREEN_CSS} />
       <Head>
         <title>{puzzle.title} | Crosshare crossword puzzle</title>
         <I18nTags
@@ -1193,7 +1207,11 @@ export const Puzzle = ({
             position: 'relative',
           }}
         >
-          {puzzleView}
+          <GridContext.Provider value={state.grid}>
+            <DownsOnlyContext.Provider value={state.downsOnly}>
+              {puzzleView}
+            </DownsOnlyContext.Provider>
+          </GridContext.Provider>
         </div>
         <div css={{ flex: 'none', width: '100%' }}>
           <Keyboard
