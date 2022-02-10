@@ -1,7 +1,28 @@
 import { render, waitFor } from '../lib/testingUtils';
 
 import { Markdown } from '../components/Markdown';
-import { Direction } from '../lib/types';
+import { addClues, CluedGrid, fromCells } from '../lib/viewableGrid';
+import { GridContext } from '../components/GridContext';
+
+test('email priority over at mention', () => {
+  const r = render(
+    <Markdown
+      text={'Reach out anytime at example@gmail.com to talk about crosswords!'}
+    />,
+    {}
+  );
+  expect(r.container).toMatchInlineSnapshot(`
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      Reach out anytime at example@gmail.com to talk about crosswords!
+    </div>
+  </div>
+</div>
+`);
+});
 
 test('emoji rendering', () => {
   let r = render(<Markdown text="😂🐅" />, {});
@@ -246,10 +267,13 @@ test('spoiler text rendering', () => {
 });
 
 test('images should not be allowed', () => {
-  let r = render(<Markdown text='![](http://example.com/test.png)' />, {});
+  let r = render(<Markdown text="![](http://example.com/test.png)" />, {});
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown text='![aaalt][1]\n\n[1]: http://example.com/test.gif\n\n' />, {});
+  r = render(
+    <Markdown text="![aaalt][1]\n\n[1]: http://example.com/test.gif\n\n" />,
+    {}
+  );
   expect(r.container).toMatchSnapshot();
 });
 
@@ -264,43 +288,109 @@ Morbi posuere nisl id odio suscipit, et hendrerit nibh consequat. Vivamus at odi
 Nullam aliquam sapien a efficitur luctus. Nullam vulputate tempor est, eu fermentum nunc vulputate id. Proin congue, nulla quis imperdiet sagittis, purus erat ullamcorper sapien, ullamcorper placerat neque mauris vitae lorem. Phasellus eu urna a eros vestibulum rutrum. In sed tempor sapien. Cras in elit venenatis, venenatis quam ac, dignissim est. Sed lacus tortor, maximus sed purus nec, venenatis fermentum tortor. Donec id lectus ut lectus gravida aliquet. Pellentesque posuere et dui ac vehicula. Proin purus neque, dictum sed sem tristique, suscipit viverra velit. Mauris ut posuere massa. Phasellus efficitur mattis velit sed ultrices.`;
 
 test('markdown preview mode', () => {
-  let r = render(<Markdown preview={1000} text='foo bar >!baz' />, {});
+  let r = render(<Markdown preview={1000} text="foo bar >!baz" />, {});
   expect(r.container).toMatchSnapshot();
 
   r = render(<Markdown preview={1000} text={longText} />, {});
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown preview={100} text='||Lorem **ipsum** dolor sit amet, consectetur _adipiscing_ elit. Phasellus tellus ante, dictum feugiat luctus quis, gravida id nibh. Sed tortor sem, pulvinar ut lacus nec, ornare consectetur ligula. Nam suscipit posuere vulputate. Proin ultricies dictum viverra. Cras tincidunt nec nulla non convallis. Nullam eget arcu mattis sapien ultricies varius nec ac mi. Duis dictum justo est, id tempus mi vestibulum eget. Nam posuere, nibh quis pharetra condimentum, leo ante tempor nibh, vitae facilisis sem elit at tellus. **Etiam** in tellus sagittis, lacinia enim ut, maximus ipsum. Ut sit amet mi tellus. Nulla a aliquam quam, vitae ultricies metus.||' />, {});
+  r = render(
+    <Markdown
+      preview={100}
+      text="||Lorem **ipsum** dolor sit amet, consectetur _adipiscing_ elit. Phasellus tellus ante, dictum feugiat luctus quis, gravida id nibh. Sed tortor sem, pulvinar ut lacus nec, ornare consectetur ligula. Nam suscipit posuere vulputate. Proin ultricies dictum viverra. Cras tincidunt nec nulla non convallis. Nullam eget arcu mattis sapien ultricies varius nec ac mi. Duis dictum justo est, id tempus mi vestibulum eget. Nam posuere, nibh quis pharetra condimentum, leo ante tempor nibh, vitae facilisis sem elit at tellus. **Etiam** in tellus sagittis, lacinia enim ut, maximus ipsum. Ut sit amet mi tellus. Nulla a aliquam quam, vitae ultricies metus.||"
+    />,
+    {}
+  );
   expect(r.container).toMatchSnapshot();
 });
 
 test('clueMap rendering', async () => {
-  const clueMap = new Map<string, [number, Direction, string]>([
-    ['BAM', [2, 1, 'here is the clue?']],
-    ['12ACLUE1', [45, 0, 'Well now']],
+  const answers = ['12ACLUE', '1', 'BA', 'M'];
+  const grid = fromCells({
+    width: 2,
+    height: 2,
+    cells: answers,
+    allowBlockEditing: false,
+    highlighted: new Set<number>(),
+    vBars: new Set<number>(),
+    hBars: new Set<number>(),
+    hidden: new Set<number>(),
+    highlight: 'circle',
+    mapper: (x) => x,
+  });
+
+  const cluedGrid: CluedGrid = addClues(grid, [
+    { num: 1, dir: 0, clue: 'Well now', explanation: null },
+    { num: 3, dir: 0, clue: '2-down Then...', explanation: null },
+    { num: 1, dir: 1, clue: '1- and 3- acrosses You and I', explanation: null },
+    { num: 2, dir: 1, clue: 'here is the clue?', explanation: null },
   ]);
 
-  let r = render(<Markdown text='before ||baz BOOM foo BAM >! not! !< fooey|| with >!after!< text' />, {});
-  await waitFor(() => {/* noop */ });
+  let r = render(
+    <Markdown text="before ||baz BOOM foo BAM >! not! !< fooey|| with >!after!< text" />,
+    {}
+  );
+  await waitFor(() => {
+    /* noop */
+  });
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown clueMap={clueMap} text='before ||baz BOOM foo BAM >! not! !< fooey|| with >!after!< text' />, {});
-  await waitFor(() => {/* noop */ });
+  r = render(
+    <GridContext.Provider value={cluedGrid}>
+      <Markdown text="before ||baz BOOM foo BAM >! not! !< fooey|| with >!after!< text" />
+    </GridContext.Provider>,
+    {}
+  );
+  await waitFor(() => {
+    /* noop */
+  });
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown clueMap={clueMap} text='12ACLUE1 BAM' />, {});
-  await waitFor(() => {/* noop */ });
+  r = render(
+    <GridContext.Provider value={cluedGrid}>
+      <Markdown text="12ACLUE1 BAM" />
+    </GridContext.Provider>,
+    {}
+  );
+  await waitFor(() => {
+    /* noop */
+  });
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown clueMap={clueMap} text='||BAM||' />, {});
-  await waitFor(() => {/* noop */ });
+  r = render(
+    <GridContext.Provider value={cluedGrid}>
+      <Markdown text="||BAM||" />
+    </GridContext.Provider>,
+    {}
+  );
+  await waitFor(() => {
+    /* noop */
+  });
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown clueMap={clueMap} text={'You got it!! Glad the clues pointed you in the right direction. That\'s what they\'re there for. Also, it was Brian\'s suggestion to include >! BAM !< which I think is such an awesome addition. Cheers!'} />, {});
-  await waitFor(() => {/* noop */ });
+  r = render(
+    <GridContext.Provider value={cluedGrid}>
+      <Markdown
+        text={
+          "You got it!! Glad the clues pointed you in the right direction. That's what they're there for. Also, it was Brian's suggestion to include >! BAM !< which I think is such an awesome addition. Cheers!"
+        }
+      />
+    </GridContext.Provider>,
+    {}
+  );
+  await waitFor(() => {
+    /* noop */
+  });
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown clueMap={clueMap} text='Reference 45A and 2-D and 45-Across and 2Down and unknown 11A' />, {});
-  await waitFor(() => {/* noop */ });
+  r = render(
+    <GridContext.Provider value={cluedGrid}>
+      <Markdown text="Reference 1A and 2-D and 1-Across and 2Down and unknown 11A" />
+    </GridContext.Provider>,
+    {}
+  );
+  await waitFor(() => {
+    /* noop */
+  });
   expect(r.container).toMatchSnapshot();
 });

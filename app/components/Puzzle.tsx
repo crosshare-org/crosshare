@@ -761,7 +761,7 @@ export const Puzzle = ({
                       ? '0 0 1em var(--conceal-text)'
                       : '',
                     flex: '1 1 auto',
-                    height: '100%',
+                    height: '100%', 
                   }}
                 >
                   <ClueText

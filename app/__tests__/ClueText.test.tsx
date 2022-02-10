@@ -40,7 +40,7 @@ test('Highlighting for different types of clues', async () => {
       <div>
         <GridContext.Provider value={cluedGrid}>
           <ClueText entry={entry} />
-        </GridContext.Provider>
+          </GridContext.Provider>
       </div>,
       {}
     );

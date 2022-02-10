@@ -1,4 +1,4 @@
-#!/usr/bin/env -S npx ts-node-script
+#!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm' npx ts-node-script
 
 import fs from 'fs';
 import util from 'util';

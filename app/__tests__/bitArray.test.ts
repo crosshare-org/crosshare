@@ -2,6 +2,7 @@ import cases from 'jest-in-case';
 
 import * as BA from '../lib/bitArray';
 import { BigInteger } from '@modern-dev/jsbn';
+import { performance } from 'perf_hooks';
 
 const B32 = '0123456789abcdefghijklmnopqrstuv';
 function randomB32() {

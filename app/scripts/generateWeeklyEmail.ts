@@ -1,4 +1,4 @@
-#!/usr/bin/env -S npx ts-node-script
+#!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
 
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isRight } from 'fp-ts/lib/Either';
@@ -44,7 +44,7 @@ function replaceOnto<T>(
 
 async function topPuzzlesForWeek(): Promise<
   [Array<[string, string]>, Array<[string, string]>]
-  > {
+> {
   const totalC: Record<string, number> = {};
   const allIs: Record<string, [string, string, string]> = {};
   const d = new Date();
@@ -69,20 +69,18 @@ async function topPuzzlesForWeek(): Promise<
     Object.entries(totalC)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 25)
-      .map(
-        async ([id]): Promise<(DBPuzzleT & { id: string }) | null> => {
-          const dbres = await db.collection('c').doc(id).get();
-          if (!dbres.exists) {
-            return null;
-          }
-          const validationResult = DBPuzzleV.decode(dbres.data());
-          if (isRight(validationResult)) {
-            return { ...validationResult.right, id };
-          } else {
-            return null;
-          }
+      .map(async ([id]): Promise<(DBPuzzleT & { id: string }) | null> => {
+        const dbres = await db.collection('c').doc(id).get();
+        if (!dbres.exists) {
+          return null;
         }
-      )
+        const validationResult = DBPuzzleV.decode(dbres.data());
+        if (isRight(validationResult)) {
+          return { ...validationResult.right, id };
+        } else {
+          return null;
+        }
+      })
   ).then((puzzles) => {
     return puzzles
       .filter((p) => {
