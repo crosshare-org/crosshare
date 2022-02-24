@@ -24,7 +24,7 @@ import {
   setAdminApp,
 } from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import { getMockedPuzzle } from '../lib/getMockedPuzzle';
 import {
   getPuzzlePageProps,

@@ -2,7 +2,7 @@
 
 import * as t from 'io-ts';
 import { either } from 'fp-ts/lib/Either';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 
 import { TimestampClass } from './firebaseWrapper';
 

@@ -9,7 +9,7 @@ import {
 import { Direction, ServerPuzzleResult } from '../lib/types';
 import { PuzzleAction } from '../reducers/reducer';
 import { Overlay } from './Overlay';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import { CopyableInput } from './CopyableInput';
 import { EmbedOptionsT, validate } from '../lib/embedOptions';
 import { colorTheme, LINK, PRIMARY } from '../lib/style';

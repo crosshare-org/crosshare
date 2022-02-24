@@ -2,18 +2,25 @@ import { LegacyPlayV } from '../lib/dbtypes';
 import { getValidatedAndDelete, setInCache } from '../lib/dbUtils';
 import { App, AuthProvider } from '../lib/firebaseWrapper';
 import { event } from '../lib/gtag';
-import type firebase from 'firebase/app';
+import {
+  getAuth,
+  linkWithPopup,
+  OAuthProvider,
+  signInWithCredential,
+  signInWithPopup,
+} from 'firebase/auth';
+import type { User, AuthError, UserCredential } from 'firebase/auth';
 import { ButtonAsLink } from './Buttons';
 
 interface GoogleButtonProps {
-  postSignIn?: (user: firebase.User) => Promise<void>;
+  postSignIn?: (user: User) => Promise<void>;
   text?: string;
 }
 
 export const GoogleButton = ({
   user,
   ...props
-}: { user: firebase.User | undefined } & GoogleButtonProps) => {
+}: { user: User | undefined } & GoogleButtonProps) => {
   if (user) {
     return <GoogleLinkButton user={user} {...props} />;
   }
@@ -22,9 +29,8 @@ export const GoogleButton = ({
 
 export const GoogleSignInButton = ({ postSignIn, text }: GoogleButtonProps) => {
   function signin() {
-    App.auth()
-      .signInWithPopup(AuthProvider)
-      .then(async (userCredential) => {
+    signInWithPopup(getAuth(App), AuthProvider).then(
+      async (userCredential: UserCredential) => {
         event({
           action: 'login',
           category: 'engagement',
@@ -36,7 +42,8 @@ export const GoogleSignInButton = ({ postSignIn, text }: GoogleButtonProps) => {
         return () => {
           /* noop */
         };
-      });
+      }
+    );
   }
   if (text) {
     return <ButtonAsLink text={text} onClick={signin} />;
@@ -57,10 +64,9 @@ export const GoogleLinkButton = ({
   user,
   postSignIn,
   text,
-}: { user: firebase.User } & GoogleButtonProps) => {
+}: { user: User } & GoogleButtonProps) => {
   function signin() {
-    user
-      .linkWithPopup(AuthProvider)
+    linkWithPopup(user, AuthProvider)
       .then(async (userCredential) => {
         console.log('linked w/o needing a merge');
         event({
@@ -75,12 +81,13 @@ export const GoogleLinkButton = ({
           /* noop */
         };
       })
-      .catch(async (error: firebase.auth.AuthError) => {
+      .catch(async (error: AuthError) => {
         if (error.code !== 'auth/credential-already-in-use') {
           console.log(error);
           return;
         }
-        if (!error.credential) {
+        const credential = OAuthProvider.credentialFromError(error);
+        if (!credential) {
           throw new Error('missing new user after link');
         }
         // Get anonymous user plays
@@ -89,9 +96,8 @@ export const GoogleLinkButton = ({
           db.collection('p').where('u', '==', user.uid),
           LegacyPlayV
         );
-        return App.auth()
-          .signInWithCredential(error.credential)
-          .then(async (value: firebase.auth.UserCredential) => {
+        return signInWithCredential(getAuth(App), credential).then(
+          async (value: UserCredential) => {
             console.log('signed in as new user ' + value.user?.uid);
             const newUser = value.user;
             if (!newUser) {
@@ -117,7 +123,8 @@ export const GoogleLinkButton = ({
             if (postSignIn) {
               return postSignIn(newUser);
             }
-          });
+          }
+        );
       });
   }
   if (text) {

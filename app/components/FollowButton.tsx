@@ -8,7 +8,7 @@ import { FaInfoCircle } from 'react-icons/fa';
 import { useSnackbar } from './Snackbar';
 import { App, FieldValue } from '../lib/firebaseWrapper';
 import { useCallback, useState, useContext } from 'react';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import { t } from '@lingui/macro';
 
 export const FollowButton = ({ page, ...props }: { page: ConstructorPageT, className?: string }) => {

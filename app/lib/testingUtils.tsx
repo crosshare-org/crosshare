@@ -4,11 +4,11 @@ import { render, RenderOptions, RenderResult } from '@testing-library/react';
 import { AuthContext } from '../components/AuthContext';
 import { SnackbarProvider } from '../components/Snackbar';
 
-import type firebaseTypes from 'firebase';
 import { GetServerSidePropsResult } from 'next';
 import { I18nProvider } from '@lingui/react';
 import { i18n } from '@lingui/core';
 import { hasOwnProperty } from './types';
+import type { User } from 'firebase/auth';
 
 export const getUser = (uid: string, isAnonymous: boolean) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,7 +18,7 @@ export const getUser = (uid: string, isAnonymous: boolean) => {
     u.displayName = _profile.displayName;
     return Promise.resolve();
   };
-  return u as firebaseTypes.User;
+  return u as User;
 };
 
 export const anonymousUser = getUser('anonymous-user-id', true);
@@ -52,7 +52,7 @@ const WithAllProviders: (
   };
 
 interface AuthOptions {
-  user?: firebaseTypes.User;
+  user?: User;
   isAdmin?: boolean;
   displayName?: string;
 }

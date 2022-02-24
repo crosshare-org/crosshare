@@ -1,15 +1,16 @@
 #!/usr/bin/env -S npx ts-node-script
 
+import { getFirestore } from 'firebase-admin/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { DBPuzzleV } from '../lib/dbtypes';
-import { AdminApp } from '../lib/firebaseWrapper';
+import { AdminApp } from '../lib/firebaseAdminWrapper';
 export {};
 
 if (process.argv.length !== 2) {
   throw Error('Invalid use of migrate. Usage: ./scripts/migrate.ts');
 }
 
-const db = AdminApp.firestore();
+const db = getFirestore(AdminApp);
 
 async function runMigration() {
   console.log('Run migration here...');

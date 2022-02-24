@@ -1,6 +1,6 @@
 import { useState, useCallback, FormEvent, ReactNode } from 'react';
 import NextJSRouter from 'next/router';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 
 import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
 import { Overlay } from './Overlay';

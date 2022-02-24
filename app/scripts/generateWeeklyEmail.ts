@@ -9,7 +9,8 @@ import {
   DBPuzzleV,
 } from '../lib/dbtypes';
 
-import { AdminApp } from '../lib/firebaseWrapper';
+import { AdminApp } from '../lib/firebaseAdminWrapper';
+import { getFirestore } from 'firebase-admin/firestore';
 import { slugify } from '../lib/utils';
 
 if (process.argv.length !== 2) {
@@ -18,7 +19,7 @@ if (process.argv.length !== 2) {
   );
 }
 
-const db = AdminApp.firestore();
+const db = getFirestore(AdminApp);
 
 function sumOnto(
   a: Record<string, number>,

@@ -1,45 +1,18 @@
 // On client side we include firebase via script tags.
 // The 'externals' field in package.json tells it not to bundle these.
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/performance';
-import 'firebase/auth';
-import 'firebase/storage';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+import 'firebase/compat/auth';
+import 'firebase/compat/storage';
 import { firebaseConfig } from '../firebaseConfig';
-
-import type firebaseAdminType from 'firebase-admin';
 
 // Initialize Firebase
 export let App: firebase.app.App;
-export let AdminApp: firebaseAdminType.app.App;
-export let AdminTimestamp: typeof firebaseAdminType.firestore.Timestamp;
-
-if (typeof window === 'undefined') {
-  const firebaseAdmin: typeof firebaseAdminType = require('firebase-admin'); // eslint-disable-line @typescript-eslint/no-var-requires
-  AdminTimestamp = firebaseAdmin.firestore.Timestamp;
-  if (firebaseAdmin.apps.length && firebaseAdmin.apps[0]) {
-    AdminApp = firebaseAdmin.apps[0];
-  } else {
-    AdminApp = firebaseAdmin.initializeApp({
-      ...firebaseConfig,
-      credential: firebaseAdmin.credential.applicationDefault(),
-    });
-  }
-}
 
 if (firebase.apps.length && firebase.apps[0]) {
   App = firebase.apps[0];
 } else {
   App = firebase.initializeApp(firebaseConfig);
-  if (typeof window !== 'undefined') {
-    if (process.env.NODE_ENV === 'production') {
-      try {
-        App.performance();
-      } catch {
-        console.error('failed to load firebase.performance');
-      }
-    }
-  }
   if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR) {
     const db = App.firestore();
     db.settings({
@@ -52,10 +25,6 @@ if (firebase.apps.length && firebase.apps[0]) {
 export const setApp = (app: firebase.app.App) => {
   App = app;
 };
-export const setAdminApp = (app: firebaseAdminType.app.App) => {
-  AdminApp = app;
-};
-
 export const setUpForSignInAnonymously = (
   _app: firebase.app.App,
   _user: firebase.User
@@ -74,7 +43,6 @@ export const signInAnonymously = async () => {
 export const setUserMap = (_map: Record<string, firebase.User>) => {
   /* noop */
 };
-export const getUser = (userId: string) => AdminApp.auth().getUser(userId);
 
 export const AuthProvider = new firebase.auth.GoogleAuthProvider();
 

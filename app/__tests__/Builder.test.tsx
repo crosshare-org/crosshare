@@ -11,27 +11,27 @@ import {
   waitFor,
 } from '../lib/testingUtils';
 import BuilderPage from '../pages/construct';
-import { setApp, setAdminApp } from '../lib/firebaseWrapper';
+import { setApp } from '../lib/firebaseWrapper';
 import type firebaseAdminType from 'firebase-admin';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import NextJSRouter from 'next/router';
 import PuzzlePage from '../pages/crosswords/[[...puzzleId]]';
 import { getPuzzlePageProps as getServerSideProps } from '../lib/serverOnly';
 import { PuzzleLoader as StatsPuzzleLoader } from '../pages/stats/[puzzleId]';
 import waitForExpect from 'wait-for-expect';
 import { getDateString, prettifyDateString } from '../lib/dbtypes';
+import { jest } from '@jest/globals';
 
-jest.mock(
+/*jest.mock(
   'next/link',
   () =>
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ({ children }) =>
       children
-); // https://github.com/vercel/next.js/issues/16864
+); // https://github.com/vercel/next.js/issues/16864*/
 
-jest.mock('../lib/firebaseWrapper');
 jest.mock('../lib/WordDB');
 jest.mock('../lib/workerLoader');
 

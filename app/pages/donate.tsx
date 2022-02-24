@@ -5,13 +5,14 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { Button } from '../components/Buttons';
 import { ContactLinks } from '../components/ContactLinks';
 import { DefaultTopBar } from '../components/TopBar';
-import { AdminApp } from '../lib/firebaseWrapper';
+import { AdminApp } from '../lib/firebaseAdminWrapper';
 import { withTranslation } from '../lib/translation';
 import { donationsByEmail, DonationsListV } from '../lib/dbtypes';
 import { differenceInDays } from 'date-fns';
 import { PatronIcon } from '../components/Icons';
 import { SMALL_AND_UP } from '../lib/style';
 import { CSSInterpolation } from '@emotion/serialize';
+import { getFirestore } from 'firebase-admin/firestore';
 
 interface DonateProps {
   donors: Array<{
@@ -23,7 +24,7 @@ interface DonateProps {
 }
 
 const gssp: GetServerSideProps<DonateProps> = async ({ res }) => {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
 
   return db
     .doc('donations/donations')

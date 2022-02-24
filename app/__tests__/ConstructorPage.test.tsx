@@ -6,7 +6,7 @@ import { getMockedPuzzle } from '../lib/getMockedPuzzle';
 import { AccountPage } from '../pages/account';
 import waitForExpect from 'wait-for-expect';
 jest.mock('../lib/firebaseWrapper');
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import { userIdToPage } from '../lib/serverOnly';
 import firebaseAdmin from 'firebase-admin';
 

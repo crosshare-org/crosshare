@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react';
 
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import { LegacyPlayT, LegacyPlayV } from '../lib/dbtypes';
 import { App } from '../lib/firebaseWrapper';
 import { PuzzleResultLink } from '../components/PuzzleLink';

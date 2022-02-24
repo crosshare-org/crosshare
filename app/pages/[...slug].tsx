@@ -7,7 +7,7 @@ import {
 } from '../components/ConstructorPage';
 import { validate } from '../lib/constructorPage';
 import { ErrorPage } from '../components/ErrorPage';
-import { AdminApp, App } from '../lib/firebaseWrapper';
+import { AdminApp } from '../lib/firebaseAdminWrapper';
 import { getStorageUrl, userIdToPage } from '../lib/serverOnly';
 import { useRouter } from 'next/router';
 import { withTranslation } from '../lib/translation';
@@ -17,6 +17,7 @@ import { FollowersV } from '../lib/dbtypes';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles';
 import { AccountPrefsV } from '../lib/prefs';
 import { isUserPatron } from '../lib/patron';
+import { getFirestore } from 'firebase-admin/firestore';
 
 interface ErrorProps {
   error: string;
@@ -26,7 +27,7 @@ type PageProps = ConstructorPageProps | ErrorProps;
 const PAGE_SIZE = 10;
 
 const getFollowerIds = async (userId: string) => {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
   const followersRes = await db.doc(`followers/${userId}`).get();
   if (!followersRes.exists) {
     console.log('no followers doc');
@@ -48,7 +49,7 @@ const getFollowerIds = async (userId: string) => {
 };
 
 const getFollowingIds = async (userId: string) => {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
   const prefsRes = await db.doc(`prefs/${userId}`).get();
   if (!prefsRes.exists) {
     console.log('no prefs doc');
@@ -87,7 +88,7 @@ export const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
 
   const username = params.slug[0].toLowerCase();
 
-  const db = App.firestore();
+  const db = getFirestore(AdminApp);
   let dbres;
   try {
     dbres = await db.collection('cp').doc(username).get();

@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 import { useEffect, useState } from 'react';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 

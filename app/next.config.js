@@ -58,10 +58,6 @@ module.exports = (phase) => {
         if (!isServer) {
           config.externals = config.externals || [];
           config.externals.push(function ({ request }, callback) {
-            // Ignore firebase/sentry imports on the client side - we're using a script tag
-            if (/^firebase\/.*$/i.test(request)) {
-              return callback(null, 'firebase');
-            }
             if (/^@sentry\/.*$/i.test(request)) {
               return callback(null, 'Sentry');
             }

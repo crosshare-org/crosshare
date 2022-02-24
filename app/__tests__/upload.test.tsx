@@ -19,7 +19,7 @@ import NextJSRouter from 'next/router';
 import PuzzlePage from '../pages/crosswords/[[...puzzleId]]';
 import { getPuzzlePageProps as getServerSideProps } from '../lib/serverOnly';
 import waitForExpect from 'wait-for-expect';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 
 const readFile = util.promisify(fs.readFile);
 

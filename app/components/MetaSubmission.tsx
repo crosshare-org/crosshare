@@ -2,7 +2,7 @@ import { FormEvent, useContext, useState, Dispatch } from 'react';
 import { AuthContext } from './AuthContext';
 import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
-import type firebase from 'firebase/app';
+import type { User } from 'firebase/auth';
 import { Button, ButtonAsLink } from './Buttons';
 import { useSnackbar } from './Snackbar';
 import { Emoji } from './Emoji';
@@ -13,7 +13,7 @@ import { ContestRevealAction, ContestSubmitAction } from '../reducers/reducer';
 import { formatDistanceToNow } from 'date-fns';
 
 export const MetaSubmissionForm = (props: {
-  user: firebase.User;
+  user: User;
   revealDisabledUntil: Date | null;
   hasPrize: boolean;
   dispatch: Dispatch<ContestSubmitAction | ContestRevealAction>;

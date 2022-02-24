@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useMemo } from 'react';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import { AuthContext } from './AuthContext';
 import { Puzzle } from './Puzzle';
 import { App } from '../lib/firebaseWrapper';

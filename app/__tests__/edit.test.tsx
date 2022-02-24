@@ -10,7 +10,7 @@ import {
 } from '../lib/testingUtils';
 import { getMockedPuzzle } from '../lib/getMockedPuzzle';
 import { PuzzleLoader } from '../pages/edit/[puzzleId]';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 
 jest.mock(
   'next/link',

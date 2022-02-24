@@ -4,6 +4,7 @@ import { ToolTipText } from './ToolTipText';
 import { Direction, getClueText } from '../lib/types';
 import { GridContext } from './GridContext';
 import { DownsOnlyContext } from './DownsOnlyContext';
+import { ShowRefsContext } from './ShowRefsContext';
 
 interface ClueReferenceProps {
   direction: Direction;
@@ -12,7 +13,13 @@ interface ClueReferenceProps {
 }
 export const ClueReference = (props: ClueReferenceProps): JSX.Element => {
   const grid = useContext(GridContext);
+  const showRefs = useContext(ShowRefsContext);
   const downsOnly = useContext(DownsOnlyContext);
+
+  if (!showRefs) {
+    return <>{props.text}</>;
+  }
+
   const entry = grid?.entries.find(
     (e) =>
       e.labelNumber === props.labelNumber && e.direction === props.direction

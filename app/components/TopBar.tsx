@@ -20,7 +20,7 @@ import {
   HAS_PHYSICAL_KEYBOARD,
 } from '../lib/style';
 import { ButtonResetCSS } from './Buttons';
-import { NotificationT } from '../lib/notifications';
+import { NotificationT } from "../lib/notificationTypes";
 import { slugify } from '../lib/utils';
 import { App } from '../lib/firebaseWrapper';
 import { EmbedContext } from './EmbedContext';

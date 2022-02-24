@@ -1,20 +1,21 @@
+import { getFirestore } from 'firebase-admin/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { AdminApp, AdminTimestamp } from '../lib/firebaseWrapper';
+import { AdminApp, AdminTimestamp } from '../lib/firebaseAdminWrapper';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
+import { notificationsForPuzzleChange } from './notifications';
 import {
   isNewPuzzleNotification,
-  notificationsForPuzzleChange,
   NotificationT,
   NotificationV,
-} from './notifications';
+} from './notificationTypes';
 import { buildTagIndex, eqSet } from './utils';
 
 async function deleteNotifications(
   puzzleId: string,
   shouldDelete?: (n: NotificationT) => boolean
 ) {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
 
   console.log('deleting notifications');
   await db
@@ -38,7 +39,7 @@ async function updateNotifications(
   puzzleId: string,
   update: (n: NotificationT) => Partial<NotificationT> | null
 ) {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
 
   console.log('updating notifications');
   await db
@@ -63,7 +64,7 @@ async function updateNotifications(
 
 async function deletePuzzle(puzzleId: string, dbpuz: DBPuzzleT) {
   console.log(`deleting ${puzzleId}`);
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
 
   if (dbpuz.dmd) {
     console.error(`Can't delete daily mini`);
@@ -148,7 +149,7 @@ function autoTag(p: DBPuzzleT) {
 }
 
 async function updateTagsIfNeeded(puzzleId: string, dbpuz: DBPuzzleT) {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
 
   let doUpdate = false;
   const update: { tg_a?: string[]; tg_i?: string[] } = {};
@@ -175,7 +176,7 @@ export async function handlePuzzleUpdate(
   afterData: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   puzzleId: string
 ): Promise<void> {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
 
   const after = parsePuzzle(afterData);
   if (!after) {

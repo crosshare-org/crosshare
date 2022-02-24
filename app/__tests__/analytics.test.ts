@@ -2,28 +2,25 @@
  * @jest-environment node
  */
 
-import { AdminTimestamp } from '../lib/firebaseWrapper';
-import * as firebaseTesting from '@firebase/rules-unit-testing';
+import {
+  AdminTimestamp,
+  setAdminApp,
+  firestore,
+} from '../lib/firebaseAdminWrapper';
+import { initializeTestEnvironment } from '@firebase/rules-unit-testing';
 import { PlayT, LegacyPlayT, DBPuzzleT } from '../lib/dbtypes';
 import { runAnalytics } from '../lib/analytics';
-import type firebaseAdminType from 'firebase-admin';
+import { initializeApp } from 'firebase-admin/app';
+import { beforeAll, beforeEach } from '@jest/globals';
 
 let play1: PlayT;
 let play2: LegacyPlayT;
 let play3: LegacyPlayT;
 
-jest.mock('../lib/firebaseWrapper');
-
 const projectId = 'analyticstest';
-let adminApp: firebaseAdminType.app.App;
 beforeAll(async () => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  adminApp = firebaseTesting.initializeAdminApp({ projectId });
+  setAdminApp(initializeApp({ projectId }, projectId));
 });
-afterAll(async () =>
-  Promise.all(firebaseTesting.apps().map((app) => app.delete()))
-);
 
 const thirtyAgo = new Date();
 thirtyAgo.setMinutes(thirtyAgo.getMinutes() - 30);
@@ -31,7 +28,8 @@ const twentyAgo = new Date();
 twentyAgo.setMinutes(twentyAgo.getMinutes() - 20);
 
 beforeEach(async () => {
-  await firebaseTesting.clearFirestoreData({ projectId });
+  const testEnv = await initializeTestEnvironment({ projectId });
+  await testEnv.clearFirestore();
 
   play1 = {
     c: 'mike',
@@ -49,7 +47,7 @@ beforeEach(async () => {
     f: true,
     n: 'Puzzle title',
   };
-  await adminApp.firestore().collection('p').doc('mike-blah').set(play1);
+  await firestore().collection('p').doc('mike-blah').set(play1);
 
   play2 = {
     c: 'mike',
@@ -66,11 +64,7 @@ beforeEach(async () => {
     ch: false,
     f: true,
   };
-  await adminApp
-    .firestore()
-    .collection('p')
-    .doc('mike-anonymous-user-id')
-    .set(play2);
+  await firestore().collection('p').doc('mike-anonymous-user-id').set(play2);
   // Since play2 is a LegacyPlayT, getPlays() will look up the puzzle to get a title
   const puzzle: DBPuzzleT = {
     ct_ans: ['just A GUESS'],
@@ -138,7 +132,7 @@ beforeEach(async () => {
     n: 'Mike D',
     pv: true,
   };
-  await adminApp.firestore().collection('c').doc('mike').set(puzzle);
+  await firestore().collection('c').doc('mike').set(puzzle);
 
   play3 = {
     c: 'mike',
@@ -155,11 +149,7 @@ beforeEach(async () => {
     ch: false,
     f: true,
   };
-  await adminApp
-    .firestore()
-    .collection('p')
-    .doc('mike-other-user-id')
-    .set(play3);
+  await firestore().collection('p').doc('mike-other-user-id').set(play3);
 });
 
 test('run for all time w/o initial state', async () => {
@@ -167,12 +157,12 @@ test('run for all time w/o initial state', async () => {
   hourAgo.setMinutes(hourAgo.getMinutes() - 60);
 
   await runAnalytics(
-    adminApp.firestore(),
+    firestore(),
     AdminTimestamp.fromDate(hourAgo),
     AdminTimestamp.fromDate(new Date())
   );
 
-  const res = await adminApp.firestore().collection('ds').get();
+  const res = await firestore().collection('ds').get();
   expect(res.size).toEqual(1);
   // Can't snapshot updatedAt or playcount by hour
   const { ua, h, ...toSnapshot } = res.docs[0]?.data() || {};
@@ -180,7 +170,7 @@ test('run for all time w/o initial state', async () => {
   expect(h.length).toEqual(24);
   expect(toSnapshot).toMatchSnapshot();
 
-  const pres = await adminApp.firestore().collection('s').doc('mike').get();
+  const pres = await firestore().collection('s').doc('mike').get();
   const data = pres.data();
   if (data === undefined) {
     throw new Error('botch');
@@ -190,7 +180,7 @@ test('run for all time w/o initial state', async () => {
   expect(sct).not.toBeFalsy();
   expect(pToSnapshot).toMatchSnapshot();
 
-  const cres = await adminApp.firestore().collection('cs').get();
+  const cres = await firestore().collection('cs').get();
   expect(cres.size).toEqual(1);
   // Can't snapshot updatedAt or playcount by hour
   const ctoSnapshot = cres.docs[0]?.data() || {};
@@ -202,8 +192,7 @@ test('run for all time w/ some meta submissions', async () => {
   const hourAgo = new Date();
   hourAgo.setMinutes(hourAgo.getMinutes() - 60);
 
-  await adminApp
-    .firestore()
+  await firestore()
     .collection('p')
     .doc('mike-other-user-id')
     .update({
@@ -212,8 +201,7 @@ test('run for all time w/ some meta submissions', async () => {
       ct_n: 'Mike D',
     });
 
-  await adminApp
-    .firestore()
+  await firestore()
     .collection('p')
     .doc('mike-blah')
     .update({
@@ -224,12 +212,12 @@ test('run for all time w/ some meta submissions', async () => {
     });
 
   await runAnalytics(
-    adminApp.firestore(),
+    firestore(),
     AdminTimestamp.fromDate(hourAgo),
     AdminTimestamp.fromDate(new Date())
   );
 
-  const res = await adminApp.firestore().collection('ds').get();
+  const res = await firestore().collection('ds').get();
   expect(res.size).toEqual(1);
   // Can't snapshot updatedAt or playcount by hour
   const { ua, h, ...toSnapshot } = res.docs[0]?.data() || {};
@@ -237,7 +225,7 @@ test('run for all time w/ some meta submissions', async () => {
   expect(h.length).toEqual(24);
   expect(toSnapshot).toMatchSnapshot();
 
-  const pres = await adminApp.firestore().collection('s').doc('mike').get();
+  const pres = await firestore().collection('s').doc('mike').get();
   const data = pres.data();
   if (data === undefined) {
     throw new Error('botch');
@@ -251,7 +239,7 @@ test('run for all time w/ some meta submissions', async () => {
   });
   expect(pToSnapshot).toMatchSnapshot();
 
-  const puzres = await adminApp.firestore().collection('c').doc('mike').get();
+  const puzres = await firestore().collection('c').doc('mike').get();
   const puzdata = puzres.data();
   if (puzdata === undefined) {
     throw new Error('botch');
@@ -263,20 +251,20 @@ test('run for all time w/ some meta submissions', async () => {
   expect(puzdata.ct_subs).toMatchSnapshot();
 
   // Just run it again w/ new submission values:
-  await adminApp.firestore().collection('p').doc('mike-other-user-id').update({
+  await firestore().collection('p').doc('mike-other-user-id').update({
     ct_sub: 'my submission 2',
   });
 
-  await adminApp.firestore().collection('p').doc('mike-blah').update({
+  await firestore().collection('p').doc('mike-blah').update({
     ct_sub: 'just a guess 2',
   });
   await runAnalytics(
-    adminApp.firestore(),
+    firestore(),
     AdminTimestamp.fromDate(hourAgo),
     AdminTimestamp.fromDate(new Date())
   );
 
-  const pres1 = await adminApp.firestore().collection('s').doc('mike').get();
+  const pres1 = await firestore().collection('s').doc('mike').get();
   const data1 = pres1.data();
   if (data1 === undefined) {
     throw new Error('botch');
@@ -290,7 +278,7 @@ test('run for all time w/ some meta submissions', async () => {
   });
   expect(pToSnapshot1).toMatchSnapshot();
 
-  const puzres1 = await adminApp.firestore().collection('c').doc('mike').get();
+  const puzres1 = await firestore().collection('c').doc('mike').get();
   const puzdata1 = puzres1.data();
   if (puzdata1 === undefined) {
     throw new Error('botch');
@@ -301,7 +289,7 @@ test('run for all time w/ some meta submissions', async () => {
   });
   expect(puzdata1.ct_subs).toMatchSnapshot();
 
-  const cres = await adminApp.firestore().collection('cs').get();
+  const cres = await firestore().collection('cs').get();
   expect(cres.size).toEqual(1);
   // Can't snapshot updatedAt or playcount by hour
   const ctoSnapshot = cres.docs[0]?.data() || {};
@@ -309,8 +297,7 @@ test('run for all time w/ some meta submissions', async () => {
   expect(cres.docs[0]?.id).toMatchSnapshot();
 
   // Now add one more correct, change one to correct, and add a reveal:
-  await adminApp
-    .firestore()
+  await firestore()
     .collection('p')
     .doc('mike-foo-bar')
     .set({
@@ -333,12 +320,11 @@ test('run for all time w/ some meta submissions', async () => {
       ct_n: 'FOOBAR',
     });
 
-  await adminApp.firestore().collection('p').doc('mike-blah').update({
+  await firestore().collection('p').doc('mike-blah').update({
     ct_sub: 'just a guess',
   });
 
-  await adminApp
-    .firestore()
+  await firestore()
     .collection('p')
     .doc('mike-i-revealed')
     .set({
@@ -361,12 +347,12 @@ test('run for all time w/ some meta submissions', async () => {
     });
 
   await runAnalytics(
-    adminApp.firestore(),
+    firestore(),
     AdminTimestamp.fromDate(hourAgo),
     AdminTimestamp.fromDate(new Date())
   );
 
-  const pres2 = await adminApp.firestore().collection('s').doc('mike').get();
+  const pres2 = await firestore().collection('s').doc('mike').get();
   const data2 = pres2.data();
   if (data2 === undefined) {
     throw new Error('botch');
@@ -380,7 +366,7 @@ test('run for all time w/ some meta submissions', async () => {
   });
   expect(pToSnapshot2).toMatchSnapshot();
 
-  const puzres2 = await adminApp.firestore().collection('c').doc('mike').get();
+  const puzres2 = await firestore().collection('c').doc('mike').get();
   const puzdata2 = puzres2.data();
   if (puzdata2 === undefined) {
     throw new Error('botch');
@@ -391,7 +377,7 @@ test('run for all time w/ some meta submissions', async () => {
   });
   expect(puzdata2.ct_subs).toMatchSnapshot();
 
-  const cres2 = await adminApp.firestore().collection('cs').get();
+  const cres2 = await firestore().collection('cs').get();
   expect(cres2.size).toEqual(1);
   // Can't snapshot updatedAt or playcount by hour
   const ctoSnapshot2 = cres2.docs[0]?.data() || {};
@@ -404,12 +390,12 @@ test('run for more recent w/o initial state', async () => {
   twentyFive.setMinutes(twentyFive.getMinutes() - 25);
 
   await runAnalytics(
-    adminApp.firestore(),
+    firestore(),
     AdminTimestamp.fromDate(twentyFive),
     AdminTimestamp.fromDate(new Date())
   );
 
-  const res = await adminApp.firestore().collection('ds').get();
+  const res = await firestore().collection('ds').get();
   expect(res.size).toEqual(1);
   // Can't snapshot updatedAt or playcount by hour
   const { ua, h, ...toSnapshot } = res.docs[0]?.data() || {};
@@ -417,7 +403,7 @@ test('run for more recent w/o initial state', async () => {
   expect(h.length).toEqual(24);
   expect(toSnapshot).toMatchSnapshot();
 
-  const pres = await adminApp.firestore().collection('s').doc('mike').get();
+  const pres = await firestore().collection('s').doc('mike').get();
   const data = pres.data();
   if (data === undefined) {
     throw new Error('botch');
@@ -434,17 +420,17 @@ test('run w/ initial state', async () => {
 
   // Just run twice in a row w/ same timestamp so we read each play twice.
   await runAnalytics(
-    adminApp.firestore(),
+    firestore(),
     AdminTimestamp.fromDate(hourAgo),
     AdminTimestamp.fromDate(new Date())
   );
   await runAnalytics(
-    adminApp.firestore(),
+    firestore(),
     AdminTimestamp.fromDate(hourAgo),
     AdminTimestamp.fromDate(new Date())
   );
 
-  const res = await adminApp.firestore().collection('ds').get();
+  const res = await firestore().collection('ds').get();
   expect(res.size).toEqual(1);
   // Can't snapshot updatedAt or playcount by hour
   const { ua, h, ...toSnapshot } = res.docs[0]?.data() || {};
@@ -452,7 +438,7 @@ test('run w/ initial state', async () => {
   expect(h.length).toEqual(24);
   expect(toSnapshot).toMatchSnapshot();
 
-  const pres = await adminApp.firestore().collection('s').doc('mike').get();
+  const pres = await firestore().collection('s').doc('mike').get();
   const data = pres.data();
   if (data === undefined) {
     throw new Error('botch');

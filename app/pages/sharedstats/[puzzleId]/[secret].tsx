@@ -8,7 +8,8 @@ import {
 import { puzzleFromDB, PuzzleResult } from '../../../lib/types';
 import { StatsPage } from '../../../components/PuzzleStats';
 import { GetServerSideProps } from 'next';
-import { AdminApp } from '../../../lib/firebaseWrapper';
+import { AdminApp } from '../../../lib/firebaseAdminWrapper';
+import { getFirestore } from 'firebase-admin/firestore';
 
 interface PageProps {
   puzzle: PuzzleResult;
@@ -19,7 +20,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   res,
   params,
 }) => {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
   const secret = params?.secret;
   if (
     !params?.puzzleId ||

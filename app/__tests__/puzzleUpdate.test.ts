@@ -9,7 +9,7 @@ import { CommentWithRepliesT, DBPuzzleT } from '../lib/dbtypes';
 import { AdminTimestamp, setAdminApp } from '../lib/firebaseWrapper';
 import type firebaseAdminType from 'firebase-admin';
 import { handlePuzzleUpdate } from '../lib/puzzleUpdate';
-import { newPuzzleNotification } from '../lib/notifications';
+import { newPuzzleNotification } from "../lib/notificationTypes";
 
 jest.mock('../lib/firebaseWrapper');
 

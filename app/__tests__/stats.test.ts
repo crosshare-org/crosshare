@@ -1,5 +1,5 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import type firebaseAdminType from 'firebase-admin';
 
 jest.mock('../lib/firebaseWrapper');

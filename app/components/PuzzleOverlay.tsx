@@ -3,7 +3,7 @@ import { Link } from './Link';
 import { Direction, PuzzleResultWithAugmentedComments } from '../lib/types';
 import { PuzzleAction } from '../reducers/reducer';
 import { isMetaSolution, slugify, timeString } from '../lib/utils';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import { Comments } from './Comments';
 import { EmbedContext } from './EmbedContext';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';

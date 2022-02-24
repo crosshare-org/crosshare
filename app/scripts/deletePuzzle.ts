@@ -4,7 +4,8 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isRight } from 'fp-ts/lib/Either';
 import { DBPuzzleV } from '../lib/dbtypes';
 
-import { AdminApp } from '../lib/firebaseWrapper';
+import { AdminApp } from '../lib/firebaseAdminWrapper';
+import { getFirestore } from 'firebase-admin/firestore';
 
 if (process.argv.length !== 3) {
   throw Error(
@@ -12,7 +13,7 @@ if (process.argv.length !== 3) {
   );
 }
 
-const db = AdminApp.firestore();
+const db = getFirestore(AdminApp);
 
 async function deletePuzzle() {
   console.log(`deleting ${process.argv[2]}`);

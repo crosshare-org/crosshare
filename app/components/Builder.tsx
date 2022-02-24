@@ -41,7 +41,7 @@ import { MdRefresh } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { FixedSizeList as List } from 'react-window';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 
 import {
   addAutofillFieldsToEntry,

@@ -9,7 +9,7 @@ import {
 } from '../lib/testingUtils';
 import { FollowButton } from '../components/FollowButton';
 jest.mock('../lib/firebaseWrapper');
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import type firebaseAdminType from 'firebase-admin';
 
 import { ConstructorPageT } from '../lib/constructorPage';

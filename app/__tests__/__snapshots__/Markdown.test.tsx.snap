@@ -25,7 +25,15 @@ exports[`clueMap rendering 1`] = `
         role="button"
         tabindex="0"
       >
-        baz BOOM foo BAM &gt;! not! !&lt; fooey
+        baz BOOM foo BAM 
+        <span
+          class="emotion-0"
+          role="button"
+          tabindex="0"
+        >
+           not! 
+        </span>
+         fooey
       </span>
        with 
       <span
@@ -76,7 +84,8 @@ exports[`clueMap rendering 2`] = `
 }
 
 .emotion-3 {
-  margin-right: 0.5em;
+  margin-left: 0.5em;
+  white-space: nowrap;
 }
 
 .emotion-4 {
@@ -129,22 +138,29 @@ exports[`clueMap rendering 2`] = `
           data-popper-reference-hidden="true"
           style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
         >
+          here is the clue?
           <b
             class="emotion-3"
           >
-            2D
-             
-            <code>
-              BAM
-            </code>
+            [
+            1
+            M
+            ]
           </b>
-          here is the clue?
           <div
             class="emotion-4"
             style="position: absolute; left: 0px; transform: translate(0px, 0px);"
           />
         </div>
-         &gt;! not! !&lt; fooey
+         
+        <span
+          class="emotion-0"
+          role="button"
+          tabindex="0"
+        >
+           not! 
+        </span>
+         fooey
       </span>
        with 
       <span
@@ -182,7 +198,8 @@ exports[`clueMap rendering 3`] = `
 }
 
 .emotion-2 {
-  margin-right: 0.5em;
+  margin-left: 0.5em;
+  white-space: nowrap;
 }
 
 .emotion-3 {
@@ -228,16 +245,15 @@ exports[`clueMap rendering 3`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
+        Well now
         <b
           class="emotion-2"
         >
-          45A
-           
-          <code>
-            12ACLUE1
-          </code>
+          [
+          12ACLUE
+          1
+          ]
         </b>
-        Well now
         <div
           class="emotion-3"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
@@ -256,16 +272,15 @@ exports[`clueMap rendering 3`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
+        here is the clue?
         <b
           class="emotion-2"
         >
-          2D
-           
-          <code>
-            BAM
-          </code>
+          [
+          1
+          M
+          ]
         </b>
-        here is the clue?
         <div
           class="emotion-3"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
@@ -311,7 +326,8 @@ exports[`clueMap rendering 4`] = `
 }
 
 .emotion-3 {
-  margin-right: 0.5em;
+  margin-left: 0.5em;
+  white-space: nowrap;
 }
 
 .emotion-4 {
@@ -362,16 +378,15 @@ exports[`clueMap rendering 4`] = `
           data-popper-reference-hidden="true"
           style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
         >
+          here is the clue?
           <b
             class="emotion-3"
           >
-            2D
-             
-            <code>
-              BAM
-            </code>
+            [
+            1
+            M
+            ]
           </b>
-          here is the clue?
           <div
             class="emotion-4"
             style="position: absolute; left: 0px; transform: translate(0px, 0px);"
@@ -418,7 +433,8 @@ exports[`clueMap rendering 5`] = `
 }
 
 .emotion-3 {
-  margin-right: 0.5em;
+  margin-left: 0.5em;
+  white-space: nowrap;
 }
 
 .emotion-4 {
@@ -471,16 +487,15 @@ exports[`clueMap rendering 5`] = `
           data-popper-reference-hidden="true"
           style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
         >
+          here is the clue?
           <b
             class="emotion-3"
           >
-            2D
-             
-            <code>
-              BAM
-            </code>
+            [
+            1
+            M
+            ]
           </b>
-          here is the clue?
           <div
             class="emotion-4"
             style="position: absolute; left: 0px; transform: translate(0px, 0px);"
@@ -516,7 +531,8 @@ exports[`clueMap rendering 6`] = `
 }
 
 .emotion-2 {
-  margin-right: 0.5em;
+  margin-left: 0.5em;
+  white-space: nowrap;
 }
 
 .emotion-3 {
@@ -554,7 +570,7 @@ exports[`clueMap rendering 6`] = `
       <span
         class="emotion-0"
       >
-        45A
+        1A
       </span>
       <div
         class="emotion-1"
@@ -563,16 +579,15 @@ exports[`clueMap rendering 6`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
+        Well now
         <b
           class="emotion-2"
         >
-          45A
-           
-          <code>
-            12ACLUE1
-          </code>
+          [
+          12ACLUE
+          1
+          ]
         </b>
-        Well now
         <div
           class="emotion-3"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
@@ -591,16 +606,15 @@ exports[`clueMap rendering 6`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
+        here is the clue?
         <b
           class="emotion-2"
         >
-          2D
-           
-          <code>
-            BAM
-          </code>
+          [
+          1
+          M
+          ]
         </b>
-        here is the clue?
         <div
           class="emotion-3"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
@@ -610,7 +624,7 @@ exports[`clueMap rendering 6`] = `
       <span
         class="emotion-0"
       >
-        45-Across
+        1-Across
       </span>
       <div
         class="emotion-1"
@@ -619,16 +633,15 @@ exports[`clueMap rendering 6`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
+        Well now
         <b
           class="emotion-2"
         >
-          45A
-           
-          <code>
-            12ACLUE1
-          </code>
+          [
+          12ACLUE
+          1
+          ]
         </b>
-        Well now
         <div
           class="emotion-3"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
@@ -647,16 +660,15 @@ exports[`clueMap rendering 6`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
+        here is the clue?
         <b
           class="emotion-2"
         >
-          2D
-           
-          <code>
-            BAM
-          </code>
+          [
+          1
+          M
+          ]
         </b>
-        here is the clue?
         <div
           class="emotion-3"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
@@ -692,21 +704,7 @@ exports[`images should not be allowed 2`] = `
     <div
       class="paragraph"
     >
-      !
-      <a
-        rel="nofollow ugc noopener noreferrer"
-        target="_blank"
-      >
-        aaalt
-      </a>
-      \\n\\n[1]: 
-      <a
-        href="http://example.com/test.gif\\\\n\\\\n"
-        rel="nofollow ugc noopener noreferrer"
-        target="_blank"
-      >
-        http://example.com/test.gif\\n\\n
-      </a>
+      ![aaalt][1]\\n\\n[1]: http://example.com/test.gif\\n\\n
     </div>
   </div>
 </div>
@@ -732,10 +730,12 @@ exports[`markdown preview mode 2`] = `
     >
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tellus ante, dictum feugiat luctus quis, gravida id nibh. Sed tortor sem, pulvinar ut lacus nec, ornare consectetur ligula. Nam suscipit posuere vulputate. Proin ultricies dictum viverra. Cras tincidunt nec nulla non convallis. Nullam eget arcu mattis sapien ultricies varius nec ac mi. Duis dictum justo est, id tempus mi vestibulum eget. Nam posuere, nibh quis pharetra condimentum, leo ante tempor nibh, vitae facilisis sem elit at tellus. Etiam in tellus sagittis, lacinia enim ut, maximus ipsum. Ut sit amet mi tellus. Nulla a aliquam quam, vitae ultricies metus.
     </div>
+    
+
     <div
       class="paragraph"
     >
-      Mauris elit metus, scelerisque in sollicitudin et, bibendum in nulla. Praesent ex sem, tempus quis diam id, lobortis tempor ante. Ut sit amet bibendum purus. Vestibulum vulputate commodo faucibus. Donec dictum id ex eu mattis. Praesent id neque quis purus varius scelerisque. Cras hendrerit metus sed faucibus vestibulum. Ut in elementum mauris. Aenean faucibus tem...
+      Mauris elit metus, scelerisque in sollicitudin et, bibendum in nulla. Praesent ex sem, tempus quis diam id, lobortis tempor ante. Ut sit amet bibendum purus. Vestibulum vulputate commodo faucibus. Donec dictum id ex eu mattis. Praesent id neque quis purus varius scelerisque. Cras hendrerit metus sed faucibus vestibulum. Ut in elementum mauris. Aenean faucibus…
     </div>
   </div>
 </div>
@@ -773,7 +773,7 @@ exports[`markdown preview mode 3`] = `
         <em>
           adipiscing
         </em>
-         elit. Phasellus tellus ante, dictum feugiat luctu...
+         elit. Phasellus tellus ante, dictum feugiat…
       </span>
     </div>
   </div>
@@ -1019,7 +1019,15 @@ exports[`spoiler text rendering 8`] = `
         role="button"
         tabindex="0"
       >
-        baz foo bam &gt;! not! !&lt; fooey
+        baz foo bam 
+        <span
+          class="emotion-0"
+          role="button"
+          tabindex="0"
+        >
+           not! 
+        </span>
+         fooey
       </span>
        with 
       <span
@@ -1054,8 +1062,10 @@ exports[`spoiler text rendering 9`] = `
     <div
       class="paragraph"
     >
-      before ||baz foo bam 
+      before ||baz foo bam
     </div>
+    
+
     <div
       class="paragraph"
     >
@@ -1099,8 +1109,10 @@ exports[`spoiler text rendering 10`] = `
     <div
       class="paragraph"
     >
-      before baz foo bam 
+      before baz foo bam
     </div>
+    
+
     <div
       class="paragraph"
     >

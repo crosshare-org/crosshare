@@ -2,12 +2,13 @@ import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { LinkablePuzzle, toLinkablePuzzle } from '../components/PuzzleLink';
-import { AdminApp, AdminTimestamp } from './firebaseWrapper';
+import { AdminApp, AdminTimestamp } from './firebaseAdminWrapper';
 import { adminTimestamp } from './adminTimestamp';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
 import { mapEachResult } from './dbUtils';
 import { puzzleFromDB } from './types';
 import { WhereFilterOp } from '@firebase/firestore-types';
+import { getFirestore } from 'firebase-admin/firestore';
 
 const NewPuzzleIndexV = t.type({
   /** Array of timestamps when each page begins. Off by 1 so page 1 is element 0 (page 0 always begins at current time). */
@@ -23,7 +24,7 @@ export async function paginatedPuzzles(
   queryValue?: string | boolean,
   queryOperator: WhereFilterOp = '=='
 ): Promise<[Array<LinkablePuzzle>, boolean]> {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
 
   if (queryField && queryValue === undefined) {
     throw new Error(`Missing queryValue for "${queryField}"`);

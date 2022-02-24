@@ -12,12 +12,20 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { App } from './firebaseWrapper';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
-import { NotificationV, NotificationT } from './notifications';
+import { NotificationV, NotificationT } from './notificationTypes';
 import useResizeObserver from 'use-resize-observer';
 import { AccountPrefsV } from './prefs';
-import type firebase from 'firebase/app';
 import { AuthContextValue } from '../components/AuthContext';
 import { parseUserInfo } from './userinfo';
+import { getAuth, updateProfile } from 'firebase/auth';
+import type { User } from 'firebase/auth';
+import {
+  collection,
+  doc,
+  getFirestore,
+  query,
+  where,
+} from 'firebase/firestore';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {
@@ -150,7 +158,7 @@ export function usePersistedBoolean(
 }
 
 const getDisplayName = (
-  user: firebase.User | undefined,
+  user: User | undefined,
   constructorPage: ConstructorPageT | undefined
 ) => {
   return constructorPage?.n || user?.displayName || null;
@@ -161,7 +169,7 @@ export function useAuth(): AuthContextValue {
   const [isLoading, setIsLoading] = useState(true);
 
   // Current user
-  const [user, loadingUser, authError] = useAuthState(App.auth());
+  const [user, loadingUser, authError] = useAuthState(getAuth(App));
 
   // Is admin
   useEffect(() => {
@@ -182,17 +190,20 @@ export function useAuth(): AuthContextValue {
     }
   }, [user]);
 
+  const firestore = getFirestore(App);
+
   // Constructor page + notifications + prefs
   const [cpDocRef, notificationsDocRef, prefsDocRef] = useMemo(() => {
     if (user && user.email && !user.isAnonymous) {
       setIsLoading(true);
       return [
-        App.firestore().collection('cp').where('u', '==', user.uid),
-        App.firestore()
-          .collection('n')
-          .where('u', '==', user.uid)
-          .where('r', '==', false),
-        App.firestore().doc(`prefs/${user.uid}`),
+        query(collection(firestore, 'cp'), where('u', '==', user.uid)),
+        query(
+          collection(firestore, 'n'),
+          where('u', '==', user.uid),
+          where('r', '==', false)
+        ),
+        doc(firestore, `prefs/${user.uid}`),
       ];
     }
     if (!loadingUser) {
@@ -282,7 +293,7 @@ export function useAuth(): AuthContextValue {
       if (user) {
         setDisplayName(newDN);
         setDidUpdateDN(true);
-        return user.updateProfile({
+        return updateProfile(user, {
           displayName: newDN,
         });
       }

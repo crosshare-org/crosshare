@@ -1,4 +1,4 @@
-import { AdminApp, AdminTimestamp, getUser } from '../lib/firebaseWrapper';
+import { AdminApp, AdminTimestamp, getUser } from '../lib/firebaseAdminWrapper';
 import {
   puzzleFromDB,
   Comment,
@@ -21,8 +21,8 @@ import {
   NewPuzzleNotificationT,
   isNewPuzzleNotification,
   isFeaturedNotification,
-  FeaturedNotificationT,
-} from './notifications';
+  FeaturedNotificationT
+} from "./notificationTypes";
 import SimpleMarkdown from 'simple-markdown';
 import { AccountPrefsV, AccountPrefsT } from './prefs';
 import { NextPuzzleLink } from '../components/Puzzle';
@@ -34,11 +34,13 @@ import { addDays } from 'date-fns';
 import { isSome } from 'fp-ts/lib/Option';
 import { getMiniForDate } from './dailyMinis';
 import { slugify } from './utils';
+import { getFirestore } from 'firebase-admin/firestore';
+import { getStorage } from 'firebase-admin/storage';
 
 export async function getStorageUrl(
   storageKey: string
 ): Promise<string | null> {
-  const profilePic = AdminApp.storage().bucket().file(storageKey);
+  const profilePic = getStorage(AdminApp).bucket().file(storageKey);
   if ((await profilePic.exists())[0]) {
     try {
       return (
@@ -63,7 +65,7 @@ const usernamesTTL = 1000 * 60 * 10;
 const updateUsernameMap = async (): Promise<void> => {
   const now = Date.now();
   console.log('updating username map');
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
   let query: firebaseAdminType.firestore.Query = db.collection('cp');
   if (usernamesUpdated) {
     query = query.where('t', '>=', AdminTimestamp.fromMillis(usernamesUpdated));
@@ -114,7 +116,7 @@ export async function sendEmail({
   text: string;
   html: string;
 }) {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
   return db.collection('mail').add({
     to: [toAddress],
     message: { subject, text, html },
@@ -155,7 +157,7 @@ async function queueEmailForUser(
   userId: string,
   notifications: Array<NotificationT>
 ) {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
   const sorted = notifications.sort((n1, n2) => n1.id.localeCompare(n2.id));
   const prefsRes = await db.doc(`prefs/${userId}`).get();
   let prefs: AccountPrefsT | null = null;
@@ -337,7 +339,7 @@ ${SimpleMarkdown.defaultHtmlOutput(SimpleMarkdown.defaultBlockParse(markdown))}
 }
 
 export async function queueEmails() {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
   const unread = await mapEachResult(
     db
       .collection('n')
@@ -368,7 +370,7 @@ export async function queueEmails() {
 export async function getArticle(
   slug: string
 ): Promise<string | ArticleT | null> {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
   let dbres;
   try {
     dbres = await db.collection('a').where('s', '==', slug).get();
@@ -440,7 +442,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   params,
   locale,
 }) => {
-  const db = AdminApp.firestore();
+  const db = getFirestore(AdminApp);
   let puzzle: PuzzleResultWithAugmentedComments | null = null;
   let puzzleId = params?.puzzleId;
   let titleSlug = '';

@@ -2,7 +2,7 @@ import { useState, useEffect, useContext, ReactNode, FormEvent } from 'react';
 import * as iot from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import { AuthContext } from './AuthContext';
 import { PartialBy, Comment, Direction } from '../lib/types';
 import { PatronIcon } from './Icons';

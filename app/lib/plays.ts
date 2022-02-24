@@ -2,7 +2,7 @@ import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import equal from 'fast-deep-equal';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import { App } from './firebaseWrapper';
 import {
   PlayWithoutUserT,

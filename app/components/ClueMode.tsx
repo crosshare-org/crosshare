@@ -36,7 +36,7 @@ import type { ImageCropper as ImageCropperType } from './ImageCropper';
 import type { SuggestOverlay as SuggestOverlayType } from './ClueSuggestionOverlay';
 import { DateTimePicker } from './DateTimePicker';
 import { MarkdownPreview } from './MarkdownPreview';
-import type firebase from 'firebase/app';
+import type firebase from 'firebase/compat/app';
 import { isMetaSolution } from '../lib/utils';
 import { AlternateSolutionEditor } from './AlternateSolutionEditor';
 import { TagEditor } from './TagEditor';

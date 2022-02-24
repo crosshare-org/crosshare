@@ -1,23 +1,23 @@
 import { ReactNode, createContext, useContext } from 'react';
 import { ErrorPage } from '../components/ErrorPage';
-import type firebase from 'firebase/app';
+import type { User } from 'firebase/auth';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { TopBar } from './TopBar';
 import { ConstructorPageT } from '../lib/constructorPage';
-import { NotificationT } from '../lib/notifications';
+import { NotificationT } from '../lib/notificationTypes';
 import { AccountPrefsT } from '../lib/prefs';
 import { WithConditionalCSSProp } from '@emotion/react/types/jsx-namespace';
 
 export interface AuthProps {
   isAdmin: boolean;
-  user: firebase.User;
+  user: User;
   constructorPage?: ConstructorPageT;
   prefs?: AccountPrefsT;
 }
 
 export interface AuthPropsOptional {
   isAdmin: boolean;
-  user?: firebase.User;
+  user?: User;
   constructorPage?: ConstructorPageT;
   prefs?: AccountPrefsT;
 }
@@ -134,7 +134,7 @@ export function requiresAdmin<T>(WrappedComponent: React.ComponentType<T>) {
 }
 
 export interface AuthContextValue {
-  user?: firebase.User;
+  user?: User;
   notifications?: Array<NotificationT>;
   isAdmin: boolean;
   isPatron: boolean;

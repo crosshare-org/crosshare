@@ -36,7 +36,7 @@ import {
   entryWord,
   gridWithEntrySet,
 } from '../lib/gridBase';
-import type firebase from 'firebase';
+import type firebase from 'firebase/compat';
 import { App, TimestampType, TimestampClass } from '../lib/firebaseWrapper';
 import { AccountPrefsFlagsT } from '../lib/prefs';
 import { checkGrid } from '../lib/utils';

@@ -1,152 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Plugin } from 'unified';
-
 import { Direction } from '../lib/types';
-import { parse } from 'twemoji-parser';
 import ReactMarkdown from 'react-markdown';
-import { Node, Parent } from 'unist';
-import { Text, Element } from 'hast';
-import { is } from 'unist-util-is';
 import { ClueReference } from './ClueReference';
+import { clueReferencer } from '../lib/markdown/clueReferencer';
+import { twemojify } from '../lib/markdown/twemojify';
+import { remarkSpoilers } from '../lib/markdown/spoilers';
+import { all } from 'mdast-util-to-hast';
+import { SpoilerText } from './SpoilerText';
+import rehypeExternalLinks from 'rehype-external-links';
+import { PluggableList } from 'react-markdown/lib/react-markdown';
+import { truncate, Options as TruncateOptions } from 'hast-util-truncate';
+import { ShowRefsContext } from './ShowRefsContext';
+import { entryReferencer } from '../lib/markdown/entryReferencer';
 
-function flatMap(ast: Node | Parent, fn: (x: Node) => Node[]) {
-  return transform(ast)[0];
-
-  function transform(node: Node | Parent) {
-    if (is<Parent>(node, (node: Node): node is Parent => 'children' in node)) {
-      const out: Node[] = [];
-      for (const child of node.children) {
-        const xs = transform(child);
-        if (xs) {
-          out.push(...xs);
-        }
-      }
-      node.children = out;
-    }
-
-    return fn(node);
-  }
+function rehypeTruncate(options: TruncateOptions) {
+  // @ts-expect-error: assume input `root` matches output root.
+  return (tree) => truncate(tree, options);
 }
-
-const twemojify: Plugin = () => {
-  return (tree) => {
-    flatMap(tree, (node: Node) => {
-      if (!is<Text>(node, 'text')) {
-        return [node];
-      }
-      const value = node.value;
-      const emoji = parse(value, { assetType: 'png' });
-      if (emoji.length === 0) {
-        return [node];
-      }
-      const out = [];
-      let startIndex = 0;
-      while (emoji.length) {
-        const current = emoji.shift();
-        if (!current) break;
-        out.push({
-          type: 'text',
-          value: value.substring(startIndex, current.indices[0]),
-        });
-        out.push({
-          type: 'element',
-          tagName: 'img',
-          properties: {
-            draggable: 'false',
-            alt: current.text,
-            src: current.url,
-            className: 'twemoji',
-          },
-          children: [],
-        });
-        startIndex = current.indices[1];
-      }
-      out.push({ type: 'text', value: value.substring(startIndex) });
-      return out;
-    });
-  };
-};
-
-interface ReferenceData {
-    direction: Direction;
-    labelNumber: number;
-    start: number;
-    end: number;
-  }
-  
-const clueReferencer: Plugin = () => {
-  return (tree) => {
-    flatMap(tree, (node: Node): Node[] => {
-      if (!is<Text>(node, 'text')) {
-        return [node];
-      }
-      const value = node.value;
-      const refs: Array<ReferenceData> = [];
-      let match;
-      const re =
-        /\b(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
-      while ((match = re.exec(value)) !== null) {
-        const dirString = match.groups?.dir?.toLowerCase();
-        if (!dirString) {
-          throw new Error('missing dir string');
-        }
-        const direction = dirString.startsWith('a') ? Direction.Across : Direction.Down;
-        const numSection = match.groups?.numSection;
-        if (!numSection) {
-          throw new Error('missing numSection');
-        }
-        let numMatch: RegExpExecArray | null;
-        const numRe = /\d+/g;
-        while ((numMatch = numRe.exec(numSection)) !== null && numMatch[0]) {
-          const labelNumber = parseInt(numMatch[0]);
-          refs.push({
-            direction,
-            labelNumber,
-            start: match.index + numMatch.index,
-            end: match.index + numMatch.index + numMatch[0].length,
-          });
-        }
-        const last = refs[refs.length - 1];
-        if (last && match[0]) {
-          last['end'] = match.index + match[0].length;
-        }
-      }
-      if (!refs.length) {
-        return [node];
-      }
-
-      let offset = 0;
-      const out: Node[] = [];
-      for (const ref of refs) {
-        if (offset < ref.start) {
-          out.push({
-            type: 'text',
-            value: value.slice(offset, ref.start),
-          } as Text);
-        }
-        const text = value.slice(ref.start, ref.end);
-        out.push({
-          type: 'element',
-          tagName: 'span',
-          data: {...ref, text },
-          properties: {
-            className: 'clueref',
-          },
-          children: [{type: 'text', value: text}],
-        } as Element);
-        offset = ref.end;
-      }
-      if (offset < value.length) {
-        out.push({
-          type: 'text',
-          value: value.slice(offset),
-        } as Text);
-      }
-      return out;
-    });
-  };
-};
 
 export const Markdown = (props: {
   text: string;
@@ -160,10 +31,40 @@ export const Markdown = (props: {
   noRefs?: boolean;
 }) => {
   const text = props.text.replace(/[^\s\S]/g, '');
-  return (
-    <div className={props.className}>
+  const rehypePlugins: PluggableList = [
+    twemojify,
+    clueReferencer,
+    [
+      rehypeExternalLinks,
+      {
+        target: '_blank',
+        rel: ['nofollow', 'ugc', 'noopener', 'noreferrer'],
+      },
+    ],
+  ];
+  if (props.preview) {
+    rehypePlugins.push([
+      rehypeTruncate,
+      { size: props.preview, ellipsis: '…' },
+    ]);
+  }
+  if (props.clueMap) {
+    rehypePlugins.push([entryReferencer, { clueMap: props.clueMap }]);
+  }
+
+  const rendered = (
+    <ShowRefsContext.Provider value={!props.noRefs}>
       <ReactMarkdown
-        rehypePlugins={[twemojify, clueReferencer]}
+        remarkPlugins={[remarkSpoilers]}
+        remarkRehypeOptions={{
+          handlers: {
+            spoiler(h, node) {
+              const props = { className: 'spoiler' };
+              return h(node, 'span', props, all(h, node));
+            },
+          },
+        }}
+        rehypePlugins={rehypePlugins}
         components={{
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           p({ node, children, ...props }) {
@@ -173,28 +74,37 @@ export const Markdown = (props: {
               </div>
             );
           },
-          span({node, children, className, ...props}) {
+          span({ node, children, className, ...props }) {
             const ref = node.data;
             if (className === 'clueref' && ref) {
-              return <ClueReference
-                          key={ref.start as string}
-                          text={ref.text as string}
-                          direction={parseInt(ref.direction as string)}
-                          labelNumber={parseInt(ref.labelNumber as string)}
-                        />;
-              
+              return (
+                <ClueReference
+                  key={ref.start as string}
+                  text={ref.text as string}
+                  direction={parseInt(ref.direction as string)}
+                  labelNumber={parseInt(ref.labelNumber as string)}
+                />
+              );
+            } else if (className === 'spoiler') {
+              return <SpoilerText>{children}</SpoilerText>;
             } else {
-              return <span className={className} {...props}>
-              {children}
-            </span>;
+              return (
+                <span className={className} {...props}>
+                  {children}
+                </span>
+              );
             }
-          }
+          },
         }}
       >
         {text}
       </ReactMarkdown>
-    </div>
+    </ShowRefsContext.Provider>
   );
+
+  if (props.className || !props.inline)
+    return <div className={props.className}>{rendered}</div>;
+  return rendered;
 };
 /**
   if (!inline) {

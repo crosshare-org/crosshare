@@ -3,6 +3,7 @@ import { render, waitFor } from '../lib/testingUtils';
 import { Markdown } from '../components/Markdown';
 import { addClues, CluedGrid, fromCells } from '../lib/viewableGrid';
 import { GridContext } from '../components/GridContext';
+import { Direction } from '../lib/types';
 
 test('email priority over at mention', () => {
   const r = render(
@@ -27,13 +28,6 @@ test('email priority over at mention', () => {
 test('emoji rendering', () => {
   let r = render(<Markdown text="😂🐅" />, {});
   expect(r.container).toMatchInlineSnapshot(`
-.emotion-0 {
-  width: 1em;
-  height: 1em;
-  margin: 0 .05em 0 .1em;
-  vertical-align: -0.1em;
-}
-
 <div>
   <div>
     <div
@@ -42,14 +36,14 @@ test('emoji rendering', () => {
       
       <img
         alt="😂"
-        class="emotion-0"
+        class="twemoji"
         draggable="false"
         src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
       />
       
       <img
         alt="🐅"
-        class="emotion-0"
+        class="twemoji"
         draggable="false"
         src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
       />
@@ -61,13 +55,6 @@ test('emoji rendering', () => {
 
   r = render(<Markdown text="😂 abc" />, {});
   expect(r.container).toMatchInlineSnapshot(`
-.emotion-0 {
-  width: 1em;
-  height: 1em;
-  margin: 0 .05em 0 .1em;
-  vertical-align: -0.1em;
-}
-
 <div>
   <div>
     <div
@@ -76,7 +63,7 @@ test('emoji rendering', () => {
       
       <img
         alt="😂"
-        class="emotion-0"
+        class="twemoji"
         draggable="false"
         src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
       />
@@ -88,13 +75,6 @@ test('emoji rendering', () => {
 
   r = render(<Markdown text="abc 😂" />, {});
   expect(r.container).toMatchInlineSnapshot(`
-.emotion-0 {
-  width: 1em;
-  height: 1em;
-  margin: 0 .05em 0 .1em;
-  vertical-align: -0.1em;
-}
-
 <div>
   <div>
     <div
@@ -103,7 +83,7 @@ test('emoji rendering', () => {
       abc 
       <img
         alt="😂"
-        class="emotion-0"
+        class="twemoji"
         draggable="false"
         src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
       />
@@ -115,13 +95,6 @@ test('emoji rendering', () => {
 
   r = render(<Markdown text="abc 😂 def" />, {});
   expect(r.container).toMatchInlineSnapshot(`
-.emotion-0 {
-  width: 1em;
-  height: 1em;
-  margin: 0 .05em 0 .1em;
-  vertical-align: -0.1em;
-}
-
 <div>
   <div>
     <div
@@ -130,7 +103,7 @@ test('emoji rendering', () => {
       abc 
       <img
         alt="😂"
-        class="emotion-0"
+        class="twemoji"
         draggable="false"
         src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
       />
@@ -142,13 +115,6 @@ test('emoji rendering', () => {
 
   r = render(<Markdown text="😂 abc 🐅" />, {});
   expect(r.container).toMatchInlineSnapshot(`
-.emotion-0 {
-  width: 1em;
-  height: 1em;
-  margin: 0 .05em 0 .1em;
-  vertical-align: -0.1em;
-}
-
 <div>
   <div>
     <div
@@ -157,14 +123,14 @@ test('emoji rendering', () => {
       
       <img
         alt="😂"
-        class="emotion-0"
+        class="twemoji"
         draggable="false"
         src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
       />
        abc 
       <img
         alt="🐅"
-        class="emotion-0"
+        class="twemoji"
         draggable="false"
         src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
       />
@@ -176,13 +142,6 @@ test('emoji rendering', () => {
 
   r = render(<Markdown text="abc 😂 def 🐅 hij" />, {});
   expect(r.container).toMatchInlineSnapshot(`
-.emotion-0 {
-  width: 1em;
-  height: 1em;
-  margin: 0 .05em 0 .1em;
-  vertical-align: -0.1em;
-}
-
 <div>
   <div>
     <div
@@ -191,14 +150,14 @@ test('emoji rendering', () => {
       abc 
       <img
         alt="😂"
-        class="emotion-0"
+        class="twemoji"
         draggable="false"
         src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
       />
        def 
       <img
         alt="🐅"
-        class="emotion-0"
+        class="twemoji"
         draggable="false"
         src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
       />
@@ -318,6 +277,10 @@ test('clueMap rendering', async () => {
     highlight: 'circle',
     mapper: (x) => x,
   });
+  const clueMap = new Map<string, [number, Direction, string]>([
+    ['BAM', [2, 1, 'here is the clue?']],
+    ['12ACLUE1', [1, 0, 'Well now']],
+  ]);
 
   const cluedGrid: CluedGrid = addClues(grid, [
     { num: 1, dir: 0, clue: 'Well now', explanation: null },
@@ -337,7 +300,10 @@ test('clueMap rendering', async () => {
 
   r = render(
     <GridContext.Provider value={cluedGrid}>
-      <Markdown text="before ||baz BOOM foo BAM >! not! !< fooey|| with >!after!< text" />
+      <Markdown
+        clueMap={clueMap}
+        text="before ||baz BOOM foo BAM >! not! !< fooey|| with >!after!< text"
+      />
     </GridContext.Provider>,
     {}
   );
@@ -348,7 +314,7 @@ test('clueMap rendering', async () => {
 
   r = render(
     <GridContext.Provider value={cluedGrid}>
-      <Markdown text="12ACLUE1 BAM" />
+      <Markdown clueMap={clueMap} text="12ACLUE1 BAM" />
     </GridContext.Provider>,
     {}
   );
@@ -359,7 +325,7 @@ test('clueMap rendering', async () => {
 
   r = render(
     <GridContext.Provider value={cluedGrid}>
-      <Markdown text="||BAM||" />
+      <Markdown clueMap={clueMap} text="||BAM||" />
     </GridContext.Provider>,
     {}
   );
@@ -371,6 +337,7 @@ test('clueMap rendering', async () => {
   r = render(
     <GridContext.Provider value={cluedGrid}>
       <Markdown
+        clueMap={clueMap}
         text={
           "You got it!! Glad the clues pointed you in the right direction. That's what they're there for. Also, it was Brian's suggestion to include >! BAM !< which I think is such an awesome addition. Cheers!"
         }
@@ -385,7 +352,10 @@ test('clueMap rendering', async () => {
 
   r = render(
     <GridContext.Provider value={cluedGrid}>
-      <Markdown text="Reference 1A and 2-D and 1-Across and 2Down and unknown 11A" />
+      <Markdown
+        clueMap={clueMap}
+        text="Reference 1A and 2-D and 1-Across and 2Down and unknown 11A"
+      />
     </GridContext.Provider>,
     {}
   );
