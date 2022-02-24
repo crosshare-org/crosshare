@@ -2,7 +2,7 @@ import { useState, useEffect, useContext, ReactNode, FormEvent } from 'react';
 import * as iot from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import type firebase from 'firebase/compat/app';
+import type { User } from 'firebase/auth';
 import { AuthContext } from './AuthContext';
 import { PartialBy, Comment, Direction } from '../lib/types';
 import { PatronIcon } from './Icons';
@@ -249,7 +249,7 @@ interface CommentFormProps {
   puzzlePublishTime: number;
   puzzleAuthorId: string;
   hasGuestConstructor: boolean;
-  user: firebase.User;
+  user: User;
   solveTime: number;
   didCheat: boolean;
   downsOnly: boolean;

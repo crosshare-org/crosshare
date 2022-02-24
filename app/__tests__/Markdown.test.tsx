@@ -18,7 +18,15 @@ test('email priority over at mention', () => {
     <div
       class="paragraph"
     >
-      Reach out anytime at example@gmail.com to talk about crosswords!
+      Reach out anytime at 
+      <a
+        href="mailto:example@gmail.com"
+        rel="nofollow ugc noopener noreferrer"
+        target="_blank"
+      >
+        example@gmail.com
+      </a>
+       to talk about crosswords!
     </div>
   </div>
 </div>
@@ -363,4 +371,125 @@ test('clueMap rendering', async () => {
     /* noop */
   });
   expect(r.container).toMatchSnapshot();
+});
+
+test('autolink full url', () => {
+  let r = render(
+    <Markdown text="Here is a link http://www.google.com to test" />,
+    {}
+  );
+  expect(r.container).toMatchInlineSnapshot(`
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      Here is a link 
+      <a
+        href="http://www.google.com"
+        rel="nofollow ugc noopener noreferrer"
+        target="_blank"
+      >
+        http://www.google.com
+      </a>
+       to test
+    </div>
+  </div>
+</div>
+`);
+});
+
+test('autolink partial url', () => {
+  let r = render(<Markdown text="Here is a link crosshare.org to test" />, {});
+  expect(r.container).toMatchInlineSnapshot(`
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      Here is a link crosshare.org to test
+    </div>
+  </div>
+</div>
+`);
+});
+
+test('autolink email', () => {
+  let r = render(
+    <Markdown text="Here is an email mike@crosshare.org to test" />,
+    {}
+  );
+  expect(r.container).toMatchInlineSnapshot(`
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      Here is an email 
+      <a
+        href="mailto:mike@crosshare.org"
+        rel="nofollow ugc noopener noreferrer"
+        target="_blank"
+      >
+        mike@crosshare.org
+      </a>
+       to test
+    </div>
+  </div>
+</div>
+`);
+});
+
+test('auto tagger', () => {
+  let r = render(<Markdown text="Here is an tag #lang-es to test" />, {});
+  expect(r.container).toMatchInlineSnapshot(`
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      Here is an tag 
+      <a
+        href="/tags/lang-es"
+      >
+        #lang-es
+      </a>
+       to test
+    </div>
+  </div>
+</div>
+`);
+
+  r = render(<Markdown text="Here is not a tag #1" />, {});
+  expect(r.container).toMatchInlineSnapshot(`
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      Here is not a tag #1
+    </div>
+  </div>
+</div>
+`);
+});
+
+test('profile link', () => {
+  let r = render(<Markdown text="Here is my profile @mike" />, {});
+  expect(r.container).toMatchInlineSnapshot(`
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      Here is my profile 
+      <a
+        href="/mike"
+      >
+        @mike
+      </a>
+    </div>
+  </div>
+</div>
+`);
 });

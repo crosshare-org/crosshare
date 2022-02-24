@@ -13,6 +13,8 @@ import { PluggableList } from 'react-markdown/lib/react-markdown';
 import { truncate, Options as TruncateOptions } from 'hast-util-truncate';
 import { ShowRefsContext } from './ShowRefsContext';
 import { entryReferencer } from '../lib/markdown/entryReferencer';
+import remarkGfm from 'remark-gfm';
+import { mentionsAndTags } from '../lib/markdown/mentionsAndTags';
 
 function rehypeTruncate(options: TruncateOptions) {
   // @ts-expect-error: assume input `root` matches output root.
@@ -39,6 +41,7 @@ export const Markdown = (props: {
       {
         target: '_blank',
         rel: ['nofollow', 'ugc', 'noopener', 'noreferrer'],
+        protocols: ['http', 'https', 'mailto'],
       },
     ],
   ];
@@ -55,7 +58,7 @@ export const Markdown = (props: {
   const rendered = (
     <ShowRefsContext.Provider value={!props.noRefs}>
       <ReactMarkdown
-        remarkPlugins={[remarkSpoilers]}
+        remarkPlugins={[remarkSpoilers, remarkGfm, mentionsAndTags]}
         remarkRehypeOptions={{
           handlers: {
             spoiler(h, node) {

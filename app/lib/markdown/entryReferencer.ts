@@ -29,7 +29,6 @@ export const entryReferencer: Plugin = (options: {
       const value = node.value;
       let match;
       while ((match = regex.exec(value)) !== null) {
-        console.log('Got a match', match[1]);
         const entry = match[1];
         if (!entry) {
           throw new Error('missing entry');

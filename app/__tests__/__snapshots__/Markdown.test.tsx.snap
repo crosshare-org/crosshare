@@ -704,7 +704,14 @@ exports[`images should not be allowed 2`] = `
     <div
       class="paragraph"
     >
-      ![aaalt][1]\\n\\n[1]: http://example.com/test.gif\\n\\n
+      ![aaalt][1]\\n\\n[1]: 
+      <a
+        href="http://example.com/test.gif%5Cn%5Cn"
+        rel="nofollow ugc noopener noreferrer"
+        target="_blank"
+      >
+        http://example.com/test.gif\\n\\n
+      </a>
     </div>
   </div>
 </div>

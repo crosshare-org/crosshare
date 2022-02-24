@@ -6,7 +6,6 @@ import { is } from 'unist-util-is';
 import { flatMap } from './utils';
 
 export const twemojify: Plugin = () => {
-  console.log('TWEMOJI');
   return (tree) => {
     flatMap(tree, (node: Node) => {
       if (!is<Text>(node, 'text')) {
