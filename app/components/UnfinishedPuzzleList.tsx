@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react';
 
-import type firebase from 'firebase/compat/app';
+import type { User } from 'firebase/auth';
 import { LegacyPlayT, LegacyPlayV } from '../lib/dbtypes';
 import { App } from '../lib/firebaseWrapper';
 import { PuzzleResultLink } from '../components/PuzzleLink';
@@ -11,11 +11,7 @@ import { Trans, t } from '@lingui/macro';
 
 import { usePaginatedQuery } from '../lib/usePagination';
 
-export function UnfinishedPuzzleList({
-  user,
-}: {
-  user: firebase.User | undefined;
-}) {
+export function UnfinishedPuzzleList({ user }: { user: User | undefined }) {
   const db = App.firestore();
   const unfinishedQuery = useMemo(
     () =>

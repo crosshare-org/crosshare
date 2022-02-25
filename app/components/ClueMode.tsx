@@ -36,7 +36,7 @@ import type { ImageCropper as ImageCropperType } from './ImageCropper';
 import type { SuggestOverlay as SuggestOverlayType } from './ClueSuggestionOverlay';
 import { DateTimePicker } from './DateTimePicker';
 import { MarkdownPreview } from './MarkdownPreview';
-import type firebase from 'firebase/compat/app';
+import type { User } from 'firebase/auth';
 import { isMetaSolution } from '../lib/utils';
 import { AlternateSolutionEditor } from './AlternateSolutionEditor';
 import { TagEditor } from './TagEditor';
@@ -170,7 +170,7 @@ interface ClueModeProps {
   clues: Record<string, Array<string>>;
   state: BuilderState;
   dispatch: Dispatch<PuzzleAction>;
-  user: firebase.User;
+  user: User;
 }
 export const ClueMode = ({ state, ...props }: ClueModeProps) => {
   const [settingCoverPic, setSettingCoverPic] = useState(false);

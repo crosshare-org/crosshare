@@ -2,17 +2,20 @@ import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { LinkablePuzzle, toLinkablePuzzle } from '../components/PuzzleLink';
-import { AdminApp, AdminTimestamp } from './firebaseAdminWrapper';
-import { adminTimestamp } from './adminTimestamp';
+import { AdminApp, collectionWithConverter } from './firebaseAdminWrapper';
+import { timestamp, Timestamp } from './timestamp';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
 import { mapEachResult } from './dbUtils';
 import { puzzleFromDB } from './types';
 import { WhereFilterOp } from '@firebase/firestore-types';
-import { getFirestore } from 'firebase-admin/firestore';
+import {
+  Timestamp as FBTimestamp,
+  getFirestore,
+} from 'firebase-admin/firestore';
 
 const NewPuzzleIndexV = t.type({
   /** Array of timestamps when each page begins. Off by 1 so page 1 is element 0 (page 0 always begins at current time). */
-  p: t.array(adminTimestamp),
+  p: t.array(timestamp),
 });
 type NewPuzzleIndexT = t.TypeOf<typeof NewPuzzleIndexV>;
 
@@ -51,7 +54,7 @@ export async function paginatedPuzzles(
     index = { p: [] };
   }
 
-  let startTimestamp = AdminTimestamp.now();
+  let startTimestamp = Timestamp.now();
   if (page) {
     const fromIndex = index.p[page - 1];
     if (!fromIndex) {
@@ -67,7 +70,7 @@ export async function paginatedPuzzles(
     q = q.where(queryField, queryOperator, queryValue);
   }
   q = q
-    .where('pvu', '<=', startTimestamp)
+    .where('pvu', '<=', FBTimestamp.fromMillis(startTimestamp.toMillis()))
     .orderBy('pvu', 'desc')
     .limit(pageSize + 1);
 
@@ -83,8 +86,8 @@ export async function paginatedPuzzles(
   let hasMore = false;
   if (lastPuz && lastPuz.pvu) {
     hasMore = true;
-    index.p[page] = AdminTimestamp.fromMillis(lastPuz.pvu.toMillis());
-    await db.collection('in').doc(indexDocId).set(index);
+    index.p[page] = lastPuz.pvu;
+    await collectionWithConverter('in').doc(indexDocId).set(index);
   }
 
   return [

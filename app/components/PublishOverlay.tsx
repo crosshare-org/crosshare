@@ -1,6 +1,6 @@
 import { useState, useCallback, FormEvent, ReactNode } from 'react';
 import NextJSRouter from 'next/router';
-import type firebase from 'firebase/compat/app';
+import type { User } from 'firebase/auth';
 
 import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
 import { Overlay } from './Overlay';
@@ -14,7 +14,7 @@ export function PublishOverlay(props: {
   id: string;
   toPublish: DBPuzzleT;
   warnings: Array<string>;
-  user: firebase.User;
+  user: User;
   cancelPublish: () => void;
 }) {
   const [inProgress, setInProgress] = useState(false);

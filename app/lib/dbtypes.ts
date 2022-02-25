@@ -1,9 +1,5 @@
 import * as t from 'io-ts';
-import { TimestampType } from './firebaseWrapper';
-
-// We import this instead of defining it here so that we can define it
-// differently for the main react app and the 'functions' subdirectory
-import { timestamp } from './timestamp';
+import { timestamp, Timestamp } from './timestamp';
 
 const CommentV = t.intersection([
   t.type({
@@ -139,7 +135,7 @@ export type MetaSubmissionForPuzzleT = t.TypeOf<
 type MetaSubmissionForStatsViewT = Omit<
   t.TypeOf<typeof MetaSubmissionForStatsV>,
   't'
-> & { t: number | TimestampType };
+> & { t: number | Timestamp };
 
 export const GlickoScoreV = t.type({
   /** rating */

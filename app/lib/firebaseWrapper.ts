@@ -51,10 +51,3 @@ export const DeleteSentinal = firebase.firestore.FieldValue.delete();
 export const ServerTimestamp = firebase.firestore.FieldValue.serverTimestamp();
 
 export const FieldValue = firebase.firestore.FieldValue;
-
-export let TimestampClass = firebase.firestore.Timestamp;
-//eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function setTimestampClass(cls: any) {
-  TimestampClass = cls;
-}
-export type TimestampType = firebase.firestore.Timestamp;

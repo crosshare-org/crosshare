@@ -1,5 +1,7 @@
-const { PHASE_PRODUCTION_SERVER } =
-  process.env.NODE_ENV === 'development' ? {} : require('next/constants');
+import { PHASE_PRODUCTION_SERVER } from 'next/constants.js';
+import bundleAnalyzer from '@next/bundle-analyzer';
+import nextSourceMaps from '@zeit/next-source-maps';
+import SentryWebpackPlugin from '@sentry/webpack-plugin';
 
 const distDir = 'nextjs';
 const baseConfig = {
@@ -11,24 +13,19 @@ const baseConfig = {
   },
 };
 
-module.exports = (phase) => {
+export default (phase) => {
   if (phase === PHASE_PRODUCTION_SERVER) {
     return baseConfig;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  const withBundleAnalyzer = bundleAnalyzer({
     enabled: process.env.ANALYZE === 'true',
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const withSourceMaps = require('@zeit/next-source-maps')({
+  const withSourceMaps = nextSourceMaps({
     devtool: 'hidden-source-map',
   });
 
-  // Use the SentryWebpack plugin to upload the source maps during build step
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const SentryWebpackPlugin = require('@sentry/webpack-plugin');
   const {
     NEXT_PUBLIC_SENTRY_DSN: SENTRY_DSN,
     SENTRY_ORG,

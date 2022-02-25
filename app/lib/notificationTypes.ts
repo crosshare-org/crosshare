@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
 import { timestamp } from './timestamp';
 import { DBPuzzleT, CommentWithRepliesT } from './dbtypes';
-import { AdminTimestamp } from './firebaseAdminWrapper';
+import { Timestamp } from './timestamp';
 import add from 'date-fns/add';
 
 const NotificationBaseV = t.type({
@@ -110,7 +110,7 @@ export function commentNotification(
   return {
     id: `${puzzle.a}-comment-${comment.i}`,
     u: puzzle.a,
-    t: AdminTimestamp.fromDate(add(new Date(), COMMENT_DELAY)),
+    t: Timestamp.fromDate(add(new Date(), COMMENT_DELAY)),
     r: false,
     e: false,
     k: 'comment',
@@ -129,7 +129,7 @@ export function replyNotification(
   return {
     id: `${parent.a}-reply-${comment.i}`,
     u: parent.a,
-    t: AdminTimestamp.fromDate(add(new Date(), COMMENT_DELAY)),
+    t: Timestamp.fromDate(add(new Date(), COMMENT_DELAY)),
     r: false,
     e: false,
     k: 'reply',
@@ -148,8 +148,8 @@ export function newPuzzleNotification(
     id: `${followerId}-newpuzzle-${puzzle.id}`,
     u: followerId,
     t: puzzle.pvu
-      ? AdminTimestamp.fromMillis(puzzle.pvu.toMillis())
-      : AdminTimestamp.now(),
+      ? Timestamp.fromMillis(puzzle.pvu.toMillis())
+      : Timestamp.now(),
     r: false,
     e: false,
     k: 'newpuzzle',
@@ -166,7 +166,7 @@ export function featuredNotification(
   return {
     id: `featured-${puzzle.id}`,
     u: puzzle.a,
-    t: puzzle.pvu || AdminTimestamp.now(),
+    t: puzzle.pvu || Timestamp.now(),
     r: false,
     e: false,
     k: 'featured',

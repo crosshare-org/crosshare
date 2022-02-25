@@ -7,7 +7,7 @@ import {
   RefObject,
 } from 'react';
 
-import { Position, Direction, getClueText } from '../lib/types';
+import { Position, Direction } from '../lib/types';
 import { CluedEntry, RefPosition } from '../lib/viewableGrid';
 import { GridBase, valAt, EntryBase } from '../lib/gridBase';
 
@@ -28,12 +28,9 @@ interface ClueListItemProps {
   active: Position | null;
   wasEntryClick: boolean;
   showEntry: boolean;
-  allEntries?: Array<CluedEntry>;
-  refPositions?: Array<Array<RefPosition>>;
   grid: GridBase<EntryBase>;
   scrollToCross: boolean;
   listRef: RefObject<HTMLDivElement>;
-  downsOnly: boolean;
 }
 
 const ClueListItem = memo(function ClueListItem({
@@ -73,16 +70,16 @@ const ClueListItem = memo(function ClueListItem({
         backgroundColor: isActive
           ? 'var(--lighter)'
           : props.isRefed
-            ? 'var(--secondary)'
-            : 'var(--bg)',
+          ? 'var(--secondary)'
+          : 'var(--bg)',
         listStyleType: 'none',
         cursor: 'pointer',
         '&:hover': {
           backgroundColor: isActive
             ? 'var(--lighter)'
             : props.isRefed
-              ? 'var(--secondary-hover)'
-              : 'var(--bg-hover)',
+            ? 'var(--secondary-hover)'
+            : 'var(--bg-hover)',
         },
         width: '100%',
       }}
@@ -143,24 +140,14 @@ const ClueListItem = memo(function ClueListItem({
               color: props.conceal
                 ? 'transparent'
                 : props.entry.completedWord && props.dimCompleted
-                  ? 'var(--completed-clue)'
-                  : 'var(--text)',
+                ? 'var(--completed-clue)'
+                : 'var(--text)',
               textShadow: props.conceal ? '0 0 1em var(--conceal-text)' : '',
             }}
           >
-            {props.allEntries && props.refPositions ? (
-              <div>
-                <ClueText
-                  refPositions={props.refPositions}
-                  entryIndex={props.entry.index}
-                  allEntries={props.allEntries}
-                  grid={props.grid}
-                  downsOnly={props.downsOnly}
-                />
-              </div>
-            ) : (
-              <div>{getClueText(props.entry)}</div>
-            )}
+            <div>
+              <ClueText entry={props.entry} />
+            </div>
             {props.showEntry ? (
               <div>
                 {props.entry.cells.map((a) => {
@@ -218,7 +205,6 @@ interface ClueListProps {
   rebusValue?: string;
   grid: GridBase<EntryBase>;
   scrollToCross: boolean;
-  downsOnly: boolean;
 }
 
 export const ClueList = (props: ClueListProps): JSX.Element => {
@@ -237,8 +223,6 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
         rebusValue={props.rebusValue}
         grid={props.grid}
         showEntry={props.showEntries}
-        allEntries={props.allEntries}
-        refPositions={props.refPositions}
         entry={entry}
         conceal={props.conceal}
         key={entry.index}
@@ -246,7 +230,6 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
         isActive={isActive}
         isCross={isCross}
         isRefed={isRefed}
-        downsOnly={props.downsOnly}
         active={
           props.showEntries && (isActive || isCross) ? props.active : null
         }

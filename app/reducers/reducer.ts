@@ -36,8 +36,8 @@ import {
   entryWord,
   gridWithEntrySet,
 } from '../lib/gridBase';
-import type firebase from 'firebase/compat';
-import { App, TimestampType, TimestampClass } from '../lib/firebaseWrapper';
+import { Timestamp } from '../lib/timestamp';
+import { App } from '../lib/firebaseWrapper';
 import { AccountPrefsFlagsT } from '../lib/prefs';
 import { checkGrid } from '../lib/utils';
 import equal from 'fast-deep-equal';
@@ -115,7 +115,7 @@ export interface BuilderState extends GridInterfaceState {
   authorId: string;
   authorName: string;
   isPrivate: boolean;
-  isPrivateUntil: TimestampType | null;
+  isPrivateUntil: Timestamp | null;
   isContestPuzzle: boolean;
   contestAnswers: Array<string> | null;
   contestHasPrize: boolean;
@@ -256,9 +256,7 @@ export function initialBuilderState({
     authorName: authorName,
     isPrivate: isPrivate,
     isPrivateUntil:
-      isPrivateUntil !== null
-        ? TimestampClass.fromMillis(isPrivateUntil)
-        : null,
+      isPrivateUntil !== null ? Timestamp.fromMillis(isPrivateUntil) : null,
     isContestPuzzle: contestAnswers ? contestAnswers.length > 0 : false,
     contestAnswers,
     contestHasPrize,
@@ -320,7 +318,7 @@ function isSetTitleAction(action: PuzzleAction): action is SetTitleAction {
 
 export interface SetPrivateAction extends PuzzleAction {
   type: 'SETPRIVATE';
-  value: boolean | TimestampType;
+  value: boolean | Timestamp;
 }
 function isSetPrivateAction(action: PuzzleAction): action is SetPrivateAction {
   return action.type === 'SETPRIVATE';
@@ -438,7 +436,7 @@ export function isClickedFillAction(
 
 export interface PublishAction extends PuzzleAction {
   type: 'PUBLISH';
-  publishTimestamp: firebase.firestore.Timestamp;
+  publishTimestamp: Timestamp;
 }
 export function isPublishAction(action: PuzzleAction): action is PublishAction {
   return action.type === 'PUBLISH';

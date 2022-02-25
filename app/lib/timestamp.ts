@@ -1,30 +1,62 @@
-/* this is the firebase timestamp type for the main react project! */
-
 import * as t from 'io-ts';
 import { either } from 'fp-ts/lib/Either';
-import type firebase from 'firebase/compat/app';
 
-import { TimestampClass } from './firebaseWrapper';
+export class Timestamp {
+  constructor(private millis: number) {}
 
-const isFirestoreTimestamp = (u: unknown): u is firebase.firestore.Timestamp =>
-  u ? u instanceof TimestampClass : false;
+  toMillis() {
+    return this.millis;
+  }
 
-const validateTimestamp: t.Validate<unknown, firebase.firestore.Timestamp> = (
-  i,
-  c
-) => {
-  if (isFirestoreTimestamp(i)) {
-    return t.success(i);
+  toDate() {
+    return new Date(this.millis);
+  }
+
+  toJSON() {
+    return {
+      nanoseconds: (this.millis % 1000) * 1000,
+      seconds: Math.floor(this.millis / 1000),
+    };
+  }
+
+  /**
+   * Converts this object to a primitive string, which allows `Timestamp` objects
+   * to be compared using the `>`, `<=`, `>=` and `>` operators.
+   */
+  valueOf(): string {
+    return String(this.millis).padStart(21, '0');
+  }
+
+  static now() {
+    return new this(Date.now());
+  }
+
+  static fromDate(d: Date) {
+    return new this(d.getTime());
+  }
+
+  static fromMillis(n: number) {
+    return new this(n);
+  }
+}
+
+export const isTimestamp = (u: unknown): u is Timestamp =>
+  u ? (u as Timestamp).toMillis !== undefined : false;
+
+const validateTimestamp: t.Validate<unknown, Timestamp> = (i, c) => {
+  if (isTimestamp(i)) {
+    return t.success(new Timestamp(i.toMillis()));
   }
   return either.chain(
     t.type({ seconds: t.number, nanoseconds: t.number }).validate(i, c),
-    (obj) => t.success(new TimestampClass(obj.seconds, obj.nanoseconds))
+    (obj) =>
+      t.success(new Timestamp(obj.seconds * 1000 + obj.nanoseconds / 1000))
   );
 };
 
-export const timestamp = new t.Type<firebase.firestore.Timestamp>(
+export const timestamp = new t.Type<Timestamp, Timestamp, unknown>(
   'Timestamp',
-  isFirestoreTimestamp,
+  isTimestamp,
   validateTimestamp,
   t.identity
 );

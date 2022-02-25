@@ -23,9 +23,7 @@ function rehypeTruncate(options: TruncateOptions) {
 
 export const Markdown = (props: {
   text: string;
-  // If this is included, references to clues by answer or full clue number will
-  // get a tooltip describing the referenced clues. This popup includes the
-  // answer, so only include this in a context where spoilers are OK!
+  // If this is included, references to clues by entry will get tooltips
   clueMap?: Map<string, [number, Direction, string]>;
   preview?: number;
   inline?: boolean;

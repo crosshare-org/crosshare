@@ -1,5 +1,4 @@
 {
-  "type": "module",
   "name": "crosshare-next",
   "version": "0.1",
   "description": "Crosshare ported to next.js",

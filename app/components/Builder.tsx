@@ -41,7 +41,6 @@ import { MdRefresh } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
 import { FixedSizeList as List } from 'react-window';
-import type firebase from 'firebase/compat/app';
 
 import {
   addAutofillFieldsToEntry,
@@ -135,6 +134,7 @@ import { ButtonReset } from './Buttons';
 import { useSnackbar } from './Snackbar';
 import { importFile, exportFile, ExportProps } from '../lib/converter';
 import { getAutofillWorker } from '../lib/workerLoader';
+import type { User } from 'firebase/auth';
 
 let worker: Worker;
 
@@ -1075,7 +1075,7 @@ const PuzDownloadOverlay = (props: {
 };
 
 interface GridModeProps {
-  user: firebase.User;
+  user: User;
   isAdmin: boolean;
   reRunAutofill: () => void;
   autofillEnabled: boolean;
