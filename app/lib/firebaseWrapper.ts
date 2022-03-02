@@ -15,7 +15,7 @@ import {
   SnapshotOptions,
   Timestamp as FBTimestamp,
 } from 'firebase/firestore';
-import { cloneDeepWith } from 'lodash';
+import cloneDeepWith from 'lodash/cloneDeepWith';
 import { isTimestamp } from './timestamp';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';

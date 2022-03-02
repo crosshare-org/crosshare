@@ -15,12 +15,16 @@ import {
   getDateString,
   CommentForModerationWithIdT,
   CommentForModerationV,
-  DonationsListT,
   CommentForModerationWithIdV,
   DonationsListV,
 } from '../lib/dbtypes';
 import { getFromSessionOrDB, mapEachResult } from '../lib/dbUtils';
-import { FieldValue, getCollection, getDocRef, getValidatedCollection } from '../lib/firebaseWrapper';
+import {
+  FieldValue,
+  getCollection,
+  getDocRef,
+  getValidatedCollection,
+} from '../lib/firebaseWrapper';
 import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
 import { ConstructorPageV, ConstructorPageT } from '../lib/constructorPage';
 import { useSnackbar } from '../components/Snackbar';
@@ -31,7 +35,16 @@ import {
   useDocumentDataOnce,
 } from 'react-firebase-hooks/firestore';
 import { ErrorPage } from '../components/ErrorPage';
-import { doc, getDocs, query, Timestamp, where } from 'firebase/firestore';
+import {
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  Timestamp,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 
 function paypalConvert(input: string): string {
   const donated = parseFloat(input);
@@ -146,7 +159,9 @@ export default requiresAdmin(() => {
     getValidatedCollection('automoderated', CommentForModerationWithIdV, 'i')
   );
 
-  const [donations] = useDocumentDataOnce(doc(getValidatedCollection('donations', DonationsListV), 'donations');
+  const [donations] = useDocumentDataOnce(
+    doc(getValidatedCollection('donations', DonationsListV), 'donations')
+  );
 
   if (error) {
     return <ErrorPage title="Error loading admin content" />;
@@ -169,21 +184,21 @@ export default requiresAdmin(() => {
 
   async function retryMail(e: FormEvent) {
     e.preventDefault();
-    getDocs(query(getCollection('mail'), where('delivery.error', '!=', null)))
-      .then((r) => {
-        r.forEach((s) => {
-          console.log('retrying', s.id);
-          db.collection('mail').doc(s.id).update({ 'delivery.state': 'RETRY' });
-        });
+    getDocs(
+      query(getCollection('mail'), where('delivery.error', '!=', null))
+    ).then((r) => {
+      r.forEach((s) => {
+        console.log('retrying', s.id);
+        updateDoc(s.ref, { 'delivery.state': 'RETRY' });
       });
+    });
   }
 
   async function moderatePages(e: FormEvent) {
     e.preventDefault();
-    const db = App.firestore();
     if (pagesForModeration) {
       for (const cp of pagesForModeration) {
-        await db.collection('cp').doc(cp.id).set({ m: false }, { merge: true });
+        await setDoc(getDocRef('cp', cp.id), { m: false }, { merge: true });
       }
     }
     setPagesForModeration([]);
@@ -194,12 +209,11 @@ export default requiresAdmin(() => {
     if (!commentsForModeration) {
       return;
     }
-    const db = App.firestore();
     moderateComments(
-      db as unknown as FirebaseFirestore.Firestore,
       commentsForModeration,
       commentIdsForDeletion,
-      false
+      (cid) => deleteDoc(getDocRef('cfm', cid)),
+      (puzzleId, update) => updateDoc(getDocRef('c', puzzleId), update)
     );
     setCommentsForModeration([]);
   }
@@ -275,9 +289,8 @@ export default requiresAdmin(() => {
                 ))}
                 <Button
                   onClick={() => {
-                    const db = App.firestore();
                     automoderated.forEach((cfm) => {
-                      db.doc(`automoderated/${cfm.i}`).delete();
+                      deleteDoc(getDocRef('automoderated', cfm.i));
                     });
                   }}
                   text="Mark as Seen"
@@ -355,12 +368,13 @@ export default requiresAdmin(() => {
             const toSubmit = uidToUnsub.trim();
             setUidToUnsub('');
             if (toSubmit) {
-              App.firestore()
-                .doc(`prefs/${uidToUnsub}`)
-                .set({ unsubs: FieldValue.arrayUnion('all') }, { merge: true })
-                .then(() => {
-                  showSnackbar('Unsubscribed');
-                });
+              setDoc(
+                getDocRef('prefs', uidToUnsub),
+                { unsubs: FieldValue.arrayUnion('all') },
+                { merge: true }
+              ).then(() => {
+                showSnackbar('Unsubscribed');
+              });
             }
           }}
         >
@@ -386,25 +400,26 @@ export default requiresAdmin(() => {
             }
             const toAdd = {
               e: donationEmail.trim(),
-              d: TimestampClass.now(),
+              d: Timestamp.now(),
               a: parseFloat(donationAmount),
               r: parseFloat(donationReceivedAmount),
               n: donationName.trim() || null,
               p: donationPage.trim() || null,
               ...(donationUserId.trim() && { u: donationUserId.trim() }),
             };
-            App.firestore()
-              .doc('donations/donations')
-              .set({ d: FieldValue.arrayUnion(toAdd) }, { merge: true })
-              .then(() => {
-                showSnackbar('Added Donation');
-                setDonationEmail('');
-                setDonationAmount('');
-                setDonationReceivedAmount('');
-                setDonationName('');
-                setDonationPage('');
-                setDonationUserId('');
-              });
+            setDoc(
+              getDocRef('donations', 'donations'),
+              { d: FieldValue.arrayUnion(toAdd) },
+              { merge: true }
+            ).then(() => {
+              showSnackbar('Added Donation');
+              setDonationEmail('');
+              setDonationAmount('');
+              setDonationReceivedAmount('');
+              setDonationName('');
+              setDonationPage('');
+              setDonationUserId('');
+            });
           }}
         >
           <label>

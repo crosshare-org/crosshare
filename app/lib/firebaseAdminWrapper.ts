@@ -9,7 +9,7 @@ import {
   Query,
   Timestamp as FBTimestamp,
 } from 'firebase-admin/firestore';
-import { cloneDeepWith } from 'lodash';
+import cloneDeepWith from 'lodash/cloneDeepWith';
 import { isTimestamp } from './timestamp';
 
 export function getAdminApp() {

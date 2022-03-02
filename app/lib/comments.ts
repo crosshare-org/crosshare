@@ -25,10 +25,11 @@ function findCommentById(
 }
 
 export async function moderateComments(
-  db: FirebaseFirestore.Firestore,
   commentsForModeration: Array<CommentForModerationWithIdT>,
   commentIdsForDeletion: Set<string>,
-  autoModerating: boolean
+  deleteCfm: (commentId: string) => Promise<any>,
+  updatePuzzle: (puzzleId: string, update: any) => Promise<any>,
+  addToAutomoderated?: (commentId: string, comment: any) => Promise<any>
 ) {
   const puzzles: Record<string, DBPuzzleT> = {};
   if (commentsForModeration) {
@@ -70,15 +71,15 @@ export async function moderateComments(
           }
         }
       }
-      await db.collection('cfm').doc(comment.i).delete();
-      if (autoModerating) {
-        db.collection('automoderated').doc(comment.i).create(comment);
+      await deleteCfm(comment.i);
+      if (addToAutomoderated) {
+        await addToAutomoderated(comment.i, comment);
       }
     }
   }
 
   // Now we've merged in all the comments, so update the puzzles:
   for (const [puzzleId, dbPuzzle] of Object.entries(puzzles)) {
-    await db.collection('c').doc(puzzleId).update({ cs: dbPuzzle.cs });
+    await updatePuzzle(puzzleId, { cs: dbPuzzle.cs });
   }
 }

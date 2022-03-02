@@ -1,25 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Direction } from '../lib/types';
-import ReactMarkdown from 'react-markdown';
 import { ClueReference } from './ClueReference';
-import { clueReferencer } from '../lib/markdown/clueReferencer';
-import { twemojify } from '../lib/markdown/twemojify';
-import { remarkSpoilers } from '../lib/markdown/spoilers';
-import { all } from 'mdast-util-to-hast';
 import { SpoilerText } from './SpoilerText';
-import rehypeExternalLinks from 'rehype-external-links';
-import { PluggableList } from 'react-markdown/lib/react-markdown';
-import { truncate, Options as TruncateOptions } from 'hast-util-truncate';
 import { ShowRefsContext } from './ShowRefsContext';
-import { entryReferencer } from '../lib/markdown/entryReferencer';
-import remarkGfm from 'remark-gfm';
-import { mentionsAndTags } from '../lib/markdown/mentionsAndTags';
-
-function rehypeTruncate(options: TruncateOptions) {
-  // @ts-expect-error: assume input `root` matches output root.
-  return (tree) => truncate(tree, options);
-}
+import { markdownToHast } from '../lib/markdown/markdown';
+import rehypeReact from 'rehype-react';
+import { unified } from 'unified';
+import { createElement, Fragment } from 'react';
 
 export const Markdown = (props: {
   text: string;
@@ -30,76 +16,48 @@ export const Markdown = (props: {
   className?: string;
   noRefs?: boolean;
 }) => {
-  const text = props.text.replace(/[^\s\S]/g, '');
-  const rehypePlugins: PluggableList = [
-    twemojify,
-    clueReferencer,
-    [
-      rehypeExternalLinks,
-      {
-        target: '_blank',
-        rel: ['nofollow', 'ugc', 'noopener', 'noreferrer'],
-        protocols: ['http', 'https', 'mailto'],
+  const hast = markdownToHast(props);
+  const reactContent = unified()
+    .use(rehypeReact, {
+      createElement,
+      Fragment,
+      passNode: true,
+      components: {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        p: ({ node, children, ...props }) => {
+          return (
+            <div className="paragraph" {...props}>
+              {children}
+            </div>
+          );
+        },
+        span: ({ node, children, className, ...props }) => {
+          const ref = node.data;
+          if (className === 'clueref' && ref) {
+            return (
+              <ClueReference
+                key={ref.start as string}
+                text={ref.text as string}
+                direction={parseInt(ref.direction as string)}
+                labelNumber={parseInt(ref.labelNumber as string)}
+              />
+            );
+          } else if (className === 'spoiler') {
+            return <SpoilerText>{children}</SpoilerText>;
+          } else {
+            return (
+              <span className={className} {...props}>
+                {children}
+              </span>
+            );
+          }
+        },
       },
-    ],
-  ];
-  if (props.preview) {
-    rehypePlugins.push([
-      rehypeTruncate,
-      { size: props.preview, ellipsis: '…' },
-    ]);
-  }
-  if (props.clueMap) {
-    rehypePlugins.push([entryReferencer, { clueMap: props.clueMap }]);
-  }
-
+    })
+    .stringify(hast);
   const rendered = (
     <ShowRefsContext.Provider value={!props.noRefs}>
-      <ReactMarkdown
-        remarkPlugins={[remarkSpoilers, remarkGfm, mentionsAndTags]}
-        remarkRehypeOptions={{
-          handlers: {
-            spoiler(h, node) {
-              const props = { className: 'spoiler' };
-              return h(node, 'span', props, all(h, node));
-            },
-          },
-        }}
-        rehypePlugins={rehypePlugins}
-        components={{
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          p({ node, children, ...props }) {
-            return (
-              <div className="paragraph" {...props}>
-                {children}
-              </div>
-            );
-          },
-          span({ node, children, className, ...props }) {
-            const ref = node.data;
-            if (className === 'clueref' && ref) {
-              return (
-                <ClueReference
-                  key={ref.start as string}
-                  text={ref.text as string}
-                  direction={parseInt(ref.direction as string)}
-                  labelNumber={parseInt(ref.labelNumber as string)}
-                />
-              );
-            } else if (className === 'spoiler') {
-              return <SpoilerText>{children}</SpoilerText>;
-            } else {
-              return (
-                <span className={className} {...props}>
-                  {children}
-                </span>
-              );
-            }
-          },
-        }}
-      >
-        {text}
-      </ReactMarkdown>
+      {reactContent}
     </ShowRefsContext.Provider>
   );
 
