@@ -2,7 +2,6 @@ import { useMemo, useCallback } from 'react';
 
 import type { User } from 'firebase/auth';
 import { LegacyPlayT, LegacyPlayV } from '../lib/dbtypes';
-import { App } from '../lib/firebaseWrapper';
 import { PuzzleResultLink } from '../components/PuzzleLink';
 import { getPuzzle } from '../lib/puzzleCache';
 import { puzzleFromDB } from '../lib/types';
@@ -10,33 +9,32 @@ import { ButtonAsLink } from '../components/Buttons';
 import { Trans, t } from '@lingui/macro';
 
 import { usePaginatedQuery } from '../lib/usePagination';
+import { deleteDoc, orderBy, query, where } from 'firebase/firestore';
+import { getCollection, getDocRef } from '../lib/firebaseWrapper';
 
 export function UnfinishedPuzzleList({ user }: { user: User | undefined }) {
-  const db = App.firestore();
   const unfinishedQuery = useMemo(
     () =>
       user &&
-      db
-        .collection('p')
-        .where('u', '==', user.uid)
-        .where('f', '==', false)
-        .orderBy('ua', 'desc'),
-    [db, user]
+      query(
+        getCollection('p'),
+        where('u', '==', user.uid),
+        where('f', '==', false),
+        orderBy('ua', 'desc')
+      ),
+    [user]
   );
-  const playMapper = useCallback(
-    async (play: LegacyPlayT) => {
-      const puzzleId = play.c;
-      const puzzle = await getPuzzle(puzzleId);
-      if (!puzzle || puzzle.a === play.u) {
-        console.log('deleting invalid play');
-        await db.collection('p').doc(`${puzzleId}-${play.u}`).delete();
-        return undefined;
-      } else {
-        return { ...puzzleFromDB(puzzle), id: puzzleId };
-      }
-    },
-    [db]
-  );
+  const playMapper = useCallback(async (play: LegacyPlayT) => {
+    const puzzleId = play.c;
+    const puzzle = await getPuzzle(puzzleId);
+    if (!puzzle || puzzle.a === play.u) {
+      console.log('deleting invalid play');
+      await deleteDoc(getDocRef('p', `${puzzleId}-${play.u}`));
+      return undefined;
+    } else {
+      return { ...puzzleFromDB(puzzle), id: puzzleId };
+    }
+  }, []);
   const {
     loading: loadingUnfinished,
     docs: unfinishedPuzzles,

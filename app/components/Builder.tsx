@@ -71,7 +71,7 @@ import {
 import { AuthProps } from './AuthContext';
 import { Histogram } from './Histogram';
 import { PublishOverlay } from './PublishOverlay';
-import { TimestampClass } from '../lib/firebaseWrapper';
+import { Timestamp } from '../lib/timestamp';
 import { GridView } from './Grid';
 import { getCrosses, valAt, entryAndCrossAtPosition } from '../lib/gridBase';
 import {
@@ -1388,7 +1388,7 @@ const GridMode = ({
           onClick={() => {
             const a: PublishAction = {
               type: 'PUBLISH',
-              publishTimestamp: TimestampClass.now(),
+              publishTimestamp: Timestamp.now(),
             };
             dispatch(a);
           }}

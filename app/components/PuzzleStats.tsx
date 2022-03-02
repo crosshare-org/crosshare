@@ -30,9 +30,10 @@ import { ButtonAsLink } from './Buttons';
 import { ColumnProps, Table } from 'react-fluid-table';
 import { Emoji } from './Emoji';
 import { CSVLink } from 'react-csv';
-import { App, FieldValue } from '../lib/firebaseWrapper';
+import { FieldValue, getDocRef } from '../lib/firebaseWrapper';
 import { useSnackbar } from './Snackbar';
 import { isSome } from 'fp-ts/lib/Option';
+import { updateDoc } from 'firebase/firestore';
 
 export enum StatsMode {
   AverageTime,
@@ -88,14 +89,13 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
                 <ButtonAsLink
                   text="Accept as solution"
                   onClick={() => {
-                    App.firestore()
-                      .doc(`c/${props.puzzle.id}`)
-                      .update({ ct_ans: FieldValue.arrayUnion(row.s) })
-                      .then(() => {
-                        showSnackbar(
-                          'Solution marked as accepted - it may take up to an hour for the leaderboard to update'
-                        );
-                      });
+                    updateDoc(getDocRef('c', props.puzzle.id), {
+                      ct_ans: FieldValue.arrayUnion(row.s),
+                    }).then(() => {
+                      showSnackbar(
+                        'Solution marked as accepted - it may take up to an hour for the leaderboard to update'
+                      );
+                    });
                   }}
                 />
                 )
@@ -296,7 +296,6 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
           cross={cross?.index}
           scrollToCross={scrollToCross}
           dispatch={dispatch}
-          downsOnly={false}
         />
       }
       right={
@@ -314,7 +313,6 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
           cross={cross?.index}
           scrollToCross={scrollToCross}
           dispatch={dispatch}
-          downsOnly={false}
         />
       }
     />

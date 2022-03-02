@@ -2,16 +2,12 @@ import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { LinkablePuzzle, toLinkablePuzzle } from '../components/PuzzleLink';
-import { AdminApp, collectionWithConverter } from './firebaseAdminWrapper';
+import { getCollection, mapEachResult } from './firebaseAdminWrapper';
 import { timestamp, Timestamp } from './timestamp';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
-import { mapEachResult } from './dbUtils';
 import { puzzleFromDB } from './types';
 import { WhereFilterOp } from '@firebase/firestore-types';
-import {
-  Timestamp as FBTimestamp,
-  getFirestore,
-} from 'firebase-admin/firestore';
+import { Query, Timestamp as FBTimestamp } from 'firebase-admin/firestore';
 
 const NewPuzzleIndexV = t.type({
   /** Array of timestamps when each page begins. Off by 1 so page 1 is element 0 (page 0 always begins at current time). */
@@ -27,8 +23,6 @@ export async function paginatedPuzzles(
   queryValue?: string | boolean,
   queryOperator: WhereFilterOp = '=='
 ): Promise<[Array<LinkablePuzzle>, boolean]> {
-  const db = getFirestore(AdminApp);
-
   if (queryField && queryValue === undefined) {
     throw new Error(`Missing queryValue for "${queryField}"`);
   }
@@ -38,7 +32,7 @@ export async function paginatedPuzzles(
   if (queryOperator !== '==') {
     indexDocId += `-${queryOperator}`;
   }
-  const indexDoc = await db.collection('in').doc(indexDocId).get();
+  const indexDoc = await getCollection('in').doc(indexDocId).get();
   let index: NewPuzzleIndexT | null = null;
   if (indexDoc.exists) {
     const validationResult = NewPuzzleIndexV.decode(indexDoc.data());
@@ -64,7 +58,7 @@ export async function paginatedPuzzles(
     startTimestamp = fromIndex;
   }
 
-  let q: FirebaseFirestore.Query = db.collection('c');
+  let q: Query = getCollection('c');
 
   if (queryField) {
     q = q.where(queryField, queryOperator, queryValue);
@@ -87,7 +81,7 @@ export async function paginatedPuzzles(
   if (lastPuz && lastPuz.pvu) {
     hasMore = true;
     index.p[page] = lastPuz.pvu;
-    await collectionWithConverter('in').doc(indexDocId).set(index);
+    await getCollection('in').doc(indexDocId).set(index);
   }
 
   return [

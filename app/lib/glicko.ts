@@ -6,7 +6,6 @@ import {
   LegacyPlayT,
   LegacyPlayV,
 } from './dbtypes';
-import admin from 'firebase-admin';
 import { AccountPrefsV } from './prefs';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -19,6 +18,9 @@ import {
   INITIAL_RD,
 } from './glickoUtil';
 import { notEmpty } from './utils';
+import { Timestamp } from './timestamp';
+import { Timestamp as FBTimestamp } from 'firebase-admin/firestore';
+import { getCollection } from './firebaseAdminWrapper';
 
 const MAX_RD = 350;
 const PLAYER_MIN_RD = 30;
@@ -86,8 +88,8 @@ export class GlickoRound {
       result === Result.Win
         ? Result.Loss
         : result === Result.Loss
-          ? Result.Win
-          : Result.Tie;
+        ? Result.Win
+        : Result.Tie;
 
     let matchesForPlayer = this.playerMatches.get(playerId);
     if (!matchesForPlayer) {
@@ -232,11 +234,11 @@ const PLAYER_SCORE_CACHE: Map<string, GlickoScoreT> = new Map();
 const PUZZLE_SCORE_CACHE: Map<string, GlickoScoreT> = new Map();
 const SCORES_CACHE: Map<string, Array<GlickoScoreT>> = new Map();
 
-export async function writeCacheToDB(db: FirebaseFirestore.Firestore) {
+export async function writeCacheToDB() {
   for (const [playerId, score] of PLAYER_SCORE_CACHE.entries()) {
     const scores = SCORES_CACHE.get(playerId) || [];
 
-    await db.collection('prefs').doc(playerId).set(
+    await getCollection('prefs').doc(playerId).set(
       {
         rtg: score,
         rtgs: scores,
@@ -246,12 +248,11 @@ export async function writeCacheToDB(db: FirebaseFirestore.Firestore) {
   }
 
   for (const [puzzleId, score] of PUZZLE_SCORE_CACHE.entries()) {
-    await db.collection('c').doc(puzzleId).set({ rtg: score }, { merge: true });
+    await getCollection('c').doc(puzzleId).set({ rtg: score }, { merge: true });
   }
 }
 
 export class CrosshareGlickoRound extends GlickoRound {
-  db = admin.firestore();
   readFromCacheOnly: boolean;
 
   constructor(roundNumber: number, readFromCacheOnly: boolean) {
@@ -279,7 +280,7 @@ export class CrosshareGlickoRound extends GlickoRound {
       return score;
     }
 
-    const res = await this.db.collection('prefs').doc(playerId).get();
+    const res = await getCollection('prefs').doc(playerId).get();
     if (!res.exists) return undefined;
     const vr = AccountPrefsV.decode(res.data());
     if (isRight(vr) && vr.right.rtg) {
@@ -299,7 +300,7 @@ export class CrosshareGlickoRound extends GlickoRound {
       return score;
     }
 
-    const res = await this.db.collection('c').doc(puzzleId).get();
+    const res = await getCollection('c').doc(puzzleId).get();
     if (!res.exists) {
       throw new Error('puzzle does not exist');
     }
@@ -331,11 +332,11 @@ export class CrosshareGlickoRound extends GlickoRound {
   }
 }
 
-export async function doGlicko(db: FirebaseFirestore.Firestore) {
+export async function doGlicko() {
   const runBegin = new Date().getTime();
-  let startTimestamp: FirebaseFirestore.Timestamp | null = null;
-  const endTimestamp = admin.firestore.Timestamp.now();
-  const value = await db.collection('cron_status').doc('ratings').get();
+  let startTimestamp: Timestamp | null = null;
+  const endTimestamp = Timestamp.now();
+  const value = await getCollection('cron_status').doc('ratings').get();
   const data = value.data();
   if (data) {
     const result = CronStatusV.decode(data);
@@ -359,7 +360,7 @@ export async function doGlicko(db: FirebaseFirestore.Firestore) {
 
   const endRound = Math.floor(endTimestamp.toMillis() / (1000 * 60 * 60 * 24));
 
-  let queryEndTimestamp: FirebaseFirestore.Timestamp | null = null;
+  let queryEndTimestamp: FBTimestamp | null = null;
   for (let roundNumber = startRound; roundNumber < endRound; roundNumber += 1) {
     if (new Date().getTime() - runBegin > 1000 * 60 * 2) {
       console.log('run has taken too long, breaking out');
@@ -367,14 +368,13 @@ export async function doGlicko(db: FirebaseFirestore.Firestore) {
     }
     const round = new CrosshareGlickoRound(roundNumber, readFromCacheOnly);
 
-    const queryStartTimestamp = admin.firestore.Timestamp.fromMillis(
+    const queryStartTimestamp = FBTimestamp.fromMillis(
       roundNumber * 60 * 60 * 1000 * 24
     );
-    queryEndTimestamp = admin.firestore.Timestamp.fromMillis(
+    queryEndTimestamp = FBTimestamp.fromMillis(
       (roundNumber + 1) * 60 * 60 * 1000 * 24
     );
-    const value = await db
-      .collection('p')
+    const value = await getCollection('p')
       .where('f', '==', true)
       .where('ua', '>=', queryStartTimestamp)
       .where('ua', '<', queryEndTimestamp)
@@ -399,11 +399,13 @@ export async function doGlicko(db: FirebaseFirestore.Firestore) {
   }
 
   console.log('writing results to db');
-  await writeCacheToDB(db);
+  await writeCacheToDB();
   if (queryEndTimestamp) {
-    const status: CronStatusT = { ranAt: queryEndTimestamp };
+    const status: CronStatusT = {
+      ranAt: Timestamp.fromMillis(queryEndTimestamp.toMillis()),
+    };
     console.log('Done, logging ratings timestamp');
-    await db.collection('cron_status').doc('ratings').set(status);
+    await getCollection('cron_status').doc('ratings').set(status);
   }
   console.log('Finished');
 }

@@ -2,8 +2,7 @@ import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import equal from 'fast-deep-equal';
-import type firebase from 'firebase/compat/app';
-import { App } from './firebaseWrapper';
+import type { User } from 'firebase/auth';
 import {
   PlayWithoutUserT,
   PlayWithoutUserV,
@@ -11,6 +10,8 @@ import {
   downloadOptionallyTimestamped,
   PlayT,
 } from './dbtypes';
+import { getDocRef } from './firebaseWrapper';
+import { getDoc, setDoc } from 'firebase/firestore';
 
 const PlayMapV = t.record(t.string, t.union([PlayWithoutUserV, t.null]));
 export type PlayMapT = t.TypeOf<typeof PlayMapV>;
@@ -20,7 +21,7 @@ export type TimestampedPlayMapT = t.TypeOf<typeof TimestampedPlayMapV>;
 
 const dirtyPlays = new Set<string>();
 
-export function isDirty(user: firebase.User, puzzleId: string) {
+export function isDirty(user: User, puzzleId: string) {
   const docId = puzzleId + '-' + user.uid;
   return dirtyPlays.has(docId);
 }
@@ -31,7 +32,7 @@ export function resetMemoryStore() {
   memoryStore = {};
 }
 
-function getStorageKey(user: firebase.User | undefined) {
+function getStorageKey(user: User | undefined) {
   return user ? 'plays/' + user.uid : 'plays/logged-out';
 }
 
@@ -57,14 +58,14 @@ function getStore(storageKey: string): PlayMapT {
       return valid.data;
     } else {
       console.error(PathReporter.report(validationResult).join(','));
-      throw new Error('Couldn\'t parse object in local storage');
+      throw new Error("Couldn't parse object in local storage");
     }
   }
   return {};
 }
 
 export function getPlayFromCache(
-  user: firebase.User | undefined,
+  user: User | undefined,
   puzzleId: string
 ): PlayWithoutUserT | null | undefined {
   const storageKey = getStorageKey(user);
@@ -73,7 +74,7 @@ export function getPlayFromCache(
 }
 
 export async function getPossiblyStalePlay(
-  user: firebase.User | undefined,
+  user: User | undefined,
   puzzleId: string
 ): Promise<PlayWithoutUserT | null> {
   const cached = getPlayFromCache(user, puzzleId);
@@ -87,12 +88,11 @@ export async function getPossiblyStalePlay(
 }
 
 export async function getPlayFromDB(
-  user: firebase.User,
+  user: User,
   puzzleId: string
 ): Promise<PlayWithoutUserT | null> {
   console.log(`getting play p/${puzzleId}-${user.uid} from db`);
-  const db = App.firestore();
-  const dbres = await db.doc(`p/${puzzleId}-${user.uid}`).get();
+  const dbres = await getDoc(getDocRef('p', `${puzzleId}-${user.uid}`));
 
   if (!dbres.exists) {
     cachePlay(user, puzzleId, null, true);
@@ -114,7 +114,7 @@ export async function getPlayFromDB(
 }
 
 export async function writePlayToDB(
-  user: firebase.User,
+  user: User,
   puzzleId: string
 ): Promise<void> {
   if (!isDirty(user, puzzleId)) {
@@ -131,12 +131,11 @@ export async function writePlayToDB(
   const docId = puzzleId + '-' + user.uid;
   dirtyPlays.delete(docId);
   const dbPlay: PlayT = { ...play, u: user.uid };
-  const db = App.firestore();
-  return db.collection('p').doc(docId).set(dbPlay);
+  return setDoc(getDocRef('p', docId), dbPlay);
 }
 
 export function cachePlay(
-  user: firebase.User | undefined,
+  user: User | undefined,
   puzzleId: string,
   play: PlayWithoutUserT | null,
   isClean?: boolean

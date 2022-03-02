@@ -9,7 +9,6 @@ import { PatronIcon } from './Icons';
 import { timeString } from '../lib/utils';
 import { Emoji } from './Emoji';
 import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
-import { App, TimestampClass } from '../lib/firebaseWrapper';
 import {
   CommentForModerationT,
   CommentForModerationWithIdV,
@@ -23,6 +22,9 @@ import { ButtonAsLink, Button } from './Buttons';
 import { LengthLimitedTextarea, LengthView } from './Inputs';
 import { Trans, t } from '@lingui/macro';
 import { PastDistanceToNow } from './TimeDisplay';
+import { Timestamp } from '../lib/timestamp';
+import { getCollection, getDocRef } from '../lib/firebaseWrapper';
+import { addDoc, updateDoc } from 'firebase/firestore';
 
 const COMMENT_LENGTH_LIMIT = 2048;
 
@@ -288,7 +290,7 @@ const CommentForm = ({
       t: props.solveTime,
       ch: props.didCheat,
       do: props.downsOnly,
-      p: TimestampClass.now(),
+      p: Timestamp.now(),
       pid: props.puzzleId,
       rt: props.replyToId !== undefined ? props.replyToId : null,
     };
@@ -296,41 +298,38 @@ const CommentForm = ({
       comment.un = props.username;
     }
     console.log('Submitting comment', comment);
-    const db = App.firestore();
     // Add to moderation queue for long term
-    db.collection('cfm')
-      .add(comment)
-      .then((ref) => {
-        console.log('Uploaded', ref.id);
-        setSaving(false);
+    addDoc(getCollection('cfm'), comment).then((ref) => {
+      console.log('Uploaded', ref.id);
+      setSaving(false);
 
-        // Replace this form w/ the comment for the short term
-        setSubmittedComment({
-          isLocal: true,
-          id: ref.id,
-          commentText: comment.c,
-          authorId: comment.a,
-          authorUsername: comment.un,
-          authorDisplayName: comment.n,
-          authorSolveTime: comment.t,
-          authorCheated: comment.ch,
-          authorSolvedDownsOnly: comment.do || false,
-          publishTime: comment.p.toMillis(),
-          authorIsPatron: props.isPatron,
-        });
-        // Add the comment to localStorage for the medium term
-        const forSession = commentsFromStorage(props.puzzleId);
-        forSession.push({ i: ref.id, ...comment });
-        try {
-          localStorage.setItem(
-            commentsKey(props.puzzleId),
-            JSON.stringify(forSession)
-          );
-        } catch {
-          /* happens on incognito when iframed */
-          console.warn('not saving comment in LS');
-        }
+      // Replace this form w/ the comment for the short term
+      setSubmittedComment({
+        isLocal: true,
+        id: ref.id,
+        commentText: comment.c,
+        authorId: comment.a,
+        authorUsername: comment.un,
+        authorDisplayName: comment.n,
+        authorSolveTime: comment.t,
+        authorCheated: comment.ch,
+        authorSolvedDownsOnly: comment.do || false,
+        publishTime: comment.p.toMillis(),
+        authorIsPatron: props.isPatron,
       });
+      // Add the comment to localStorage for the medium term
+      const forSession = commentsFromStorage(props.puzzleId);
+      forSession.push({ i: ref.id, ...comment });
+      try {
+        localStorage.setItem(
+          commentsKey(props.puzzleId),
+          JSON.stringify(forSession)
+        );
+      } catch {
+        /* happens on incognito when iframed */
+        console.warn('not saving comment in LS');
+      }
+    });
   }
 
   if (submittedComment) {
@@ -499,10 +498,7 @@ export const Comments = ({
         continue;
       }
       if (findCommentById(comments, notification.c)) {
-        App.firestore()
-          .collection('n')
-          .doc(notification.id)
-          .update({ r: true });
+        updateDoc(getDocRef('n', notification.id), { r: true });
       }
     }
   }, [comments, authContext.notifications]);

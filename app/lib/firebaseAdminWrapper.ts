@@ -1,8 +1,12 @@
+import * as t from 'io-ts';
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import { initializeApp, applicationDefault, getApps } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { firebaseConfig } from '../firebaseConfig';
 import {
   getFirestore,
+  Query,
   Timestamp as FBTimestamp,
 } from 'firebase-admin/firestore';
 import { cloneDeepWith } from 'lodash';
@@ -22,9 +26,9 @@ export function getAdminApp() {
 export const getUser = (userId: string) =>
   getAuth(getAdminApp()).getUser(userId);
 
-export const firestore = () => getFirestore(getAdminApp());
+const firestore = () => getFirestore(getAdminApp());
 
-export const collectionWithConverter = (c: string) => {
+export const getCollection = (c: string) => {
   const db = firestore();
   return db.collection(c).withConverter({
     toFirestore: (data: any) =>
@@ -37,3 +41,24 @@ export const collectionWithConverter = (c: string) => {
     fromFirestore: (s: any) => s,
   });
 };
+
+export async function mapEachResult<N, A>(
+  query: Query,
+  validator: t.Decoder<unknown, A>,
+  mapper: (val: A, docid: string) => N
+): Promise<Array<N>> {
+  const value = await query.get();
+  const results: Array<N> = [];
+  for (const doc of value.docs) {
+    const data = doc.data();
+    const validationResult = validator.decode(data);
+    if (isRight(validationResult)) {
+      results.push(mapper(validationResult.right, doc.id));
+    } else {
+      console.error('bad doc: ', doc.id);
+      console.error(PathReporter.report(validationResult).join(','));
+      return Promise.reject('Malformed content');
+    }
+  }
+  return results;
+}

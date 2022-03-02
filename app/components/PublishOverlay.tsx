@@ -5,10 +5,11 @@ import type { User } from 'firebase/auth';
 import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
 import { Overlay } from './Overlay';
 import { Emoji } from './Emoji';
-import { App, ServerTimestamp } from '../lib/firebaseWrapper';
+import { getDocRef, ServerTimestamp } from '../lib/firebaseWrapper';
 import { DBPuzzleT } from '../lib/dbtypes';
 import { slugify, STORAGE_KEY } from '../lib/utils';
 import { ButtonAsLink, Button } from './Buttons';
+import { setDoc } from 'firebase/firestore';
 
 export function PublishOverlay(props: {
   id: string;
@@ -32,7 +33,6 @@ export function PublishOverlay(props: {
       setInProgress(true);
 
       console.log('Uploading');
-      const db = App.firestore();
 
       const hourAgo = new Date();
       hourAgo.setHours(hourAgo.getHours() - 1);
@@ -42,15 +42,12 @@ export function PublishOverlay(props: {
         p: ServerTimestamp,
       };
 
-      db.collection('c')
-        .doc(props.id)
-        .set(toPublish)
-        .then(async () => {
-          console.log('Uploaded', props.id);
-          localStorage.removeItem(STORAGE_KEY);
-          setDone(true);
-          NextJSRouter.push(`/crosswords/${props.id}/${slugify(toPublish.t)}`);
-        });
+      setDoc(getDocRef('c', props.id), toPublish).then(async () => {
+        console.log('Uploaded', props.id);
+        localStorage.removeItem(STORAGE_KEY);
+        setDone(true);
+        NextJSRouter.push(`/crosswords/${props.id}/${slugify(toPublish.t)}`);
+      });
     },
     [props.id, inProgress, done, displayName, props.toPublish]
   );

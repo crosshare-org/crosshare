@@ -3,7 +3,7 @@ import { Link } from './Link';
 import { Direction, PuzzleResultWithAugmentedComments } from '../lib/types';
 import { PuzzleAction } from '../reducers/reducer';
 import { isMetaSolution, slugify, timeString } from '../lib/utils';
-import type firebase from 'firebase/compat/app';
+import type { User } from 'firebase/auth';
 import { Comments } from './Comments';
 import { EmbedContext } from './EmbedContext';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
@@ -43,7 +43,7 @@ export interface PuzzleOverlayBaseProps {
   coverImage?: string | null;
   profilePicture?: string | null;
   clueMap: Map<string, [number, Direction, string]>;
-  user?: firebase.User;
+  user?: User;
   puzzle: PuzzleResultWithAugmentedComments;
   nextPuzzle?: NextPuzzleLink;
   isMuted: boolean;

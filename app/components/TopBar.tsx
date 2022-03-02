@@ -22,9 +22,10 @@ import {
 import { ButtonResetCSS } from './Buttons';
 import { NotificationT } from "../lib/notificationTypes";
 import { slugify } from '../lib/utils';
-import { App } from '../lib/firebaseWrapper';
 import { EmbedContext } from './EmbedContext';
 import { Trans, t } from '@lingui/macro';
+import { updateDoc } from 'firebase/firestore';
+import { getDocRef } from '../lib/firebaseWrapper';
 
 export const TopBarDropDown = (props: {
   onClose?: () => void;
@@ -384,24 +385,24 @@ export const TopBar = ({
             /* Pride month */
             ...(!isEmbed &&
               today.getUTCMonth() === 5 && {
-              background:
-                  'linear-gradient(to right, indianred,orange,gold,darkseagreen,deepskyblue,violet)',
-              '@media (prefers-color-scheme: dark)': {
                 background:
+                  'linear-gradient(to right, indianred,orange,gold,darkseagreen,deepskyblue,violet)',
+                '@media (prefers-color-scheme: dark)': {
+                  background:
                     'linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)), linear-gradient(to right, indianred,orange,gold,darkseagreen,deepskyblue,violet)',
-              },
-            }),
+                },
+              }),
             /* Transgender day of remembrance */
             ...(!isEmbed &&
               today.getUTCMonth() === 10 &&
               today.getUTCDate() === 20 && {
-              background:
-                  'linear-gradient(to right, #50DFE4 0% 15%,#FFA6D6 25% 35%,#FFFFFF 45% 55%,#FFA6D6 65% 75%,#50DFE4 85% 100%)',
-              '@media (prefers-color-scheme: dark)': {
                 background:
+                  'linear-gradient(to right, #50DFE4 0% 15%,#FFA6D6 25% 35%,#FFFFFF 45% 55%,#FFA6D6 65% 75%,#50DFE4 85% 100%)',
+                '@media (prefers-color-scheme: dark)': {
+                  background:
                     'linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)), linear-gradient(to right, #50DFE4 0% 15%,#FFA6D6 25% 35%,#FFFFFF 45% 55%,#FFA6D6 65% 75%,#50DFE4 85% 100%)',
-              },
-            }),
+                },
+              }),
           }}
         >
           <div
@@ -592,41 +593,53 @@ const NotificationLink = ({
     setClosing(true);
     // After shrink vertically we remove the toast
     setTimeout(() => {
-      App.firestore().collection('n').doc(n.id).update({ r: true });
+      updateDoc(getDocRef('n', n.id), { r: true });
     }, ANIMATION_DELAY);
   }, [n.id]);
 
   let link: JSX.Element;
   switch (n.k) {
-  case 'comment':
-    link = (
-      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}/${slugify(n.pn)}`}>
-        {n.cn} commented on <u>{n.pn}</u>
-      </Link>
-    );
-    break;
-  case 'reply':
-    link = (
-      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}/${slugify(n.pn)}`}>
-        {n.cn} replied to your comment on <u>{n.pn}</u>
-      </Link>
-    );
-    break;
-  case 'newpuzzle':
-    link = (
-      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}/${slugify(n.pn)}`}>
-        {n.an} published a new puzzle: <u>{n.pn}</u>
-      </Link>
-    );
-    break;
-  case 'featured':
-    link = (
-      <Link css={NotificationLinkCSS} href={`/crosswords/${n.p}/${slugify(n.pn)}`}>
+    case 'comment':
+      link = (
+        <Link
+          css={NotificationLinkCSS}
+          href={`/crosswords/${n.p}/${slugify(n.pn)}`}
+        >
+          {n.cn} commented on <u>{n.pn}</u>
+        </Link>
+      );
+      break;
+    case 'reply':
+      link = (
+        <Link
+          css={NotificationLinkCSS}
+          href={`/crosswords/${n.p}/${slugify(n.pn)}`}
+        >
+          {n.cn} replied to your comment on <u>{n.pn}</u>
+        </Link>
+      );
+      break;
+    case 'newpuzzle':
+      link = (
+        <Link
+          css={NotificationLinkCSS}
+          href={`/crosswords/${n.p}/${slugify(n.pn)}`}
+        >
+          {n.an} published a new puzzle: <u>{n.pn}</u>
+        </Link>
+      );
+      break;
+    case 'featured':
+      link = (
+        <Link
+          css={NotificationLinkCSS}
+          href={`/crosswords/${n.p}/${slugify(n.pn)}`}
+        >
           Crosshare is featuring your puzzle <u>{n.pn}</u>
-        {n.as ? ` as ${n.as}` : ' on the homepage'}!
-      </Link>
-    );
-    break;
+          {n.as ? ` as ${n.as}` : ' on the homepage'}!
+        </Link>
+      );
+      break;
   }
   return (
     <div

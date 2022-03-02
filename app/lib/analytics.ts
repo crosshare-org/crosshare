@@ -1,10 +1,8 @@
 /* This gets used by the analytics cron function in the `functions` directory.
 
 It lives here so we can test it. */
-import type firebase from 'firebase-admin';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isRight } from 'fp-ts/lib/Either';
-import admin from 'firebase-admin';
 
 import {
   LegacyPlayV,
@@ -19,13 +17,13 @@ import {
   ConstructorStatsForPuzzleT,
 } from './dbtypes';
 
-import { TimestampType } from './firebaseWrapper';
+import { Timestamp } from './timestamp';
 import { isMetaSolution } from './utils';
+import { getCollection } from './firebaseAdminWrapper';
 
 export async function runAnalytics(
-  db: firebase.firestore.Firestore,
-  startTimestamp: TimestampType,
-  endTimestamp: TimestampType
+  startTimestamp: Timestamp,
+  endTimestamp: Timestamp
 ) {
   console.log(
     'Updating analytics btwn',
@@ -44,7 +42,7 @@ export async function runAnalytics(
     if (puzzle) {
       return puzzle;
     }
-    const puzzleRes = await db.collection('c').doc(puzzleId).get();
+    const puzzleRes = await getCollection('c').doc(puzzleId).get();
     if (!puzzleRes.exists) {
       console.log('Missing puzzle but have play: ' + puzzleId);
       return null;
@@ -66,7 +64,7 @@ export async function runAnalytics(
     let puzzleStats = puzzleStatsMap.get(puzzleId);
     if (!puzzleStats) {
       // get puzzle stats from db or create a new stats object
-      const psvalue = await db.collection('s').doc(puzzleId).get();
+      const psvalue = await getCollection('s').doc(puzzleId).get();
       if (psvalue.exists) {
         const result = PuzzleStatsV.decode(psvalue.data());
         if (!isRight(result)) {
@@ -75,7 +73,7 @@ export async function runAnalytics(
         }
         puzzleStats = result.right;
         puzzleStats.ct_subs?.forEach(
-          (x) => (x.t = admin.firestore.Timestamp.fromMillis(x.t.toMillis()))
+          (x) => (x.t = Timestamp.fromMillis(x.t.toMillis()))
         );
         puzzleStatsMap.set(puzzleId, puzzleStats);
       } else {
@@ -103,8 +101,7 @@ export async function runAnalytics(
     return puzzleStats;
   }
 
-  const value = await db
-    .collection('p')
+  const value = await getCollection('p')
     .where('f', '==', true)
     .where('ua', '>=', startTimestamp)
     .where('ua', '<', endTimestamp)
@@ -161,7 +158,7 @@ export async function runAnalytics(
     let dailyStats = dailyStatsMap.get(dateString);
     if (!dailyStats) {
       // get daily stats from db or create a new stats object
-      const dsvalue = await db.collection('ds').doc(dateString).get();
+      const dsvalue = await getCollection('ds').doc(dateString).get();
       if (dsvalue.exists) {
         const result = DailyStatsV.decode(dsvalue.data());
         if (!isRight(result)) {
@@ -199,8 +196,7 @@ export async function runAnalytics(
     dailyStats.h[hour] = (dailyStats.h[hour] || 0) + 1;
   }
 
-  const metaSubmissions = await db
-    .collection('p')
+  const metaSubmissions = await getCollection('p')
     .where('ct_t', '>=', startTimestamp)
     .where('ct_t', '<', endTimestamp)
     .orderBy('ct_t', 'asc')
@@ -242,7 +238,7 @@ export async function runAnalytics(
       ...(play.ct_pr_subs && {
         gs: play.ct_pr_subs,
       }),
-      t: admin.firestore.Timestamp.fromMillis(play.ct_t.toMillis()),
+      t: Timestamp.fromMillis(play.ct_t.toMillis()),
     });
 
     const puzzle = await getPuzzle(play.c);
@@ -258,7 +254,7 @@ export async function runAnalytics(
       subs = subs.filter((x) => x.u !== play.u);
       subs.push({
         n: play.ct_n,
-        t: admin.firestore.Timestamp.fromMillis(play.ct_t.toMillis()),
+        t: Timestamp.fromMillis(play.ct_t.toMillis()),
         s: play.ct_sub,
         u: play.u,
       });
@@ -268,17 +264,17 @@ export async function runAnalytics(
 
   console.log('Done, writing ' + puzzleStatsMap.size + ' puzzle stats objects');
   for (const [crosswordId, puzzleStats] of puzzleStatsMap.entries()) {
-    await db.collection('s').doc(crosswordId).set(puzzleStats);
+    await getCollection('s').doc(crosswordId).set(puzzleStats);
   }
   console.log('Writing ' + dailyStatsMap.size + ' daily stats objects');
   for (const [dateString, dailyStats] of dailyStatsMap.entries()) {
-    await db.collection('ds').doc(dateString).set(dailyStats);
+    await getCollection('ds').doc(dateString).set(dailyStats);
   }
   console.log(
     'Writing ' + puzzleNewSubs.size + ' new puzzle submission arrays'
   );
   for (const [crosswordId, subs] of puzzleNewSubs.entries()) {
-    await db.collection('c').doc(crosswordId).update({
+    await getCollection('c').doc(crosswordId).update({
       ct_subs: subs,
     });
   }
@@ -304,8 +300,7 @@ export async function runAnalytics(
         isMetaSolution(sub.s, solutions)
       ).length;
     }
-    await db
-      .collection('cs')
+    await getCollection('cs')
       .doc(puzzleStats.a)
       .set({ [crosswordId]: puzzleStatsForConstructor }, { merge: true });
   }

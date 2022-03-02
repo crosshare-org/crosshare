@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext, useMemo } from 'react';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import type firebase from 'firebase/compat/app';
+import type { User } from 'firebase/auth';
 import { AuthContext } from './AuthContext';
 import { Puzzle } from './Puzzle';
-import { App } from '../lib/firebaseWrapper';
+import { getDocRef } from '../lib/firebaseWrapper';
 import { PlayWithoutUserV, PlayWithoutUserT } from '../lib/dbtypes';
 import { getPlayFromCache, cachePlay } from '../lib/plays';
 import { ErrorPage } from './ErrorPage';
@@ -116,14 +116,14 @@ const CachePlayLoader = (props: PuzzlePageResultProps) => {
 
 const DBPlayLoader = (
   props: {
-    user: firebase.User;
+    user: User;
     isAdmin: boolean;
     prefs?: AccountPrefsT;
   } & PuzzlePageResultProps
 ) => {
   // Load from db
   const [doc, loading, error] = useDocument(
-    App.firestore().doc(`p/${props.puzzle.id}-${props.user.uid}`)
+    getDocRef('p', `${props.puzzle.id}-${props.user.uid}`)
   );
   const [play, playDecodeError] = useMemo(() => {
     if (doc === undefined) {

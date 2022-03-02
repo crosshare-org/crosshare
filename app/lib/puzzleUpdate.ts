@@ -1,25 +1,22 @@
-import { getFirestore } from 'firebase-admin/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { AdminApp, AdminTimestamp } from '../lib/firebaseAdminWrapper';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
+import { getCollection } from './firebaseAdminWrapper';
 import { notificationsForPuzzleChange } from './notifications';
 import {
   isNewPuzzleNotification,
   NotificationT,
   NotificationV,
 } from './notificationTypes';
+import { Timestamp } from './timestamp';
 import { buildTagIndex, eqSet } from './utils';
 
 async function deleteNotifications(
   puzzleId: string,
   shouldDelete?: (n: NotificationT) => boolean
 ) {
-  const db = getFirestore(AdminApp);
-
   console.log('deleting notifications');
-  await db
-    .collection('n')
+  await getCollection('n')
     .where('p', '==', puzzleId)
     .get()
     .then((snap) => {
@@ -39,11 +36,8 @@ async function updateNotifications(
   puzzleId: string,
   update: (n: NotificationT) => Partial<NotificationT> | null
 ) {
-  const db = getFirestore(AdminApp);
-
   console.log('updating notifications');
-  await db
-    .collection('n')
+  await getCollection('n')
     .where('p', '==', puzzleId)
     .get()
     .then((snap) => {
@@ -64,8 +58,6 @@ async function updateNotifications(
 
 async function deletePuzzle(puzzleId: string, dbpuz: DBPuzzleT) {
   console.log(`deleting ${puzzleId}`);
-  const db = getFirestore(AdminApp);
-
   if (dbpuz.dmd) {
     console.error(`Can't delete daily mini`);
     return;
@@ -74,8 +66,7 @@ async function deletePuzzle(puzzleId: string, dbpuz: DBPuzzleT) {
   await deleteNotifications(puzzleId);
 
   console.log('deleting plays');
-  await db
-    .collection('p')
+  await getCollection('p')
     .where('c', '==', puzzleId)
     .get()
     .then((snap) => {
@@ -88,7 +79,7 @@ async function deletePuzzle(puzzleId: string, dbpuz: DBPuzzleT) {
     });
 
   console.log('deleting puzzle');
-  await db.doc(`c/${puzzleId}`).delete();
+  await getCollection('c').doc(puzzleId).delete();
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -149,8 +140,6 @@ function autoTag(p: DBPuzzleT) {
 }
 
 async function updateTagsIfNeeded(puzzleId: string, dbpuz: DBPuzzleT) {
-  const db = getFirestore(AdminApp);
-
   let doUpdate = false;
   const update: { tg_a?: string[]; tg_i?: string[] } = {};
 
@@ -167,7 +156,7 @@ async function updateTagsIfNeeded(puzzleId: string, dbpuz: DBPuzzleT) {
   }
 
   if (doUpdate) {
-    await db.collection('c').doc(puzzleId).update(update);
+    await getCollection('c').doc(puzzleId).update(update);
   }
 }
 
@@ -176,8 +165,6 @@ export async function handlePuzzleUpdate(
   afterData: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   puzzleId: string
 ): Promise<void> {
-  const db = getFirestore(AdminApp);
-
   const after = parsePuzzle(afterData);
   if (!after) {
     console.error('Missing/invalid after doc', afterData);
@@ -212,7 +199,7 @@ export async function handlePuzzleUpdate(
         // been marked private until or updated privateUntil
         await updateNotifications(puzzleId, (n) => {
           if (isNewPuzzleNotification(n)) {
-            return { t: AdminTimestamp.fromMillis(after.pvu.toMillis()) };
+            return { t: Timestamp.fromMillis(after.pvu.toMillis()) };
           }
           return null;
         });
@@ -226,7 +213,7 @@ export async function handlePuzzleUpdate(
     puzzleId
   );
   for (const notification of notifications) {
-    await db.doc(`n/${notification.id}`).set(notification);
+    await getCollection('n').doc(notification.id).set(notification);
   }
   console.log(`Created ${notifications.length} notifications`);
 }

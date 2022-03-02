@@ -1,16 +1,10 @@
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { App } from './firebaseWrapper';
-import type firebase from 'firebase/compat/app';
-import type firebaseAdmin from 'firebase-admin';
-
 import { downloadTimestamped } from './dbtypes';
 import { Timestamp } from './timestamp';
-
-export type AnyFirestore =
-  | firebase.firestore.Firestore
-  | firebaseAdmin.firestore.Firestore;
+import { getDocRef } from './firebaseWrapper';
+import { deleteDoc, getDoc, getDocs, Query, setDoc } from 'firebase/firestore';
 
 interface CacheSetOptionsRequired<A> {
   collection: string;
@@ -52,42 +46,19 @@ export async function setInCache<A>({
     data: value,
   };
   sessionStorage.setItem(sessionKey, JSON.stringify(forLS));
-  if (sendToDB) {
-    const db = App.firestore();
-    return db
-      .collection(collection)
-      .doc(docId)
-      .set(value)
-      .then(() => {
-        console.log('Set new value for ' + collection + '/' + docId);
-      });
+  if (sendToDB && docId) {
+    return setDoc(getDocRef(collection, docId), value).then(() => {
+      console.log('Set new value for ' + collection + '/' + docId);
+    });
   }
 }
 
-interface docRef {
-  delete: () => Promise<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-}
-
-interface docSnapshot {
-  id: string;
-  ref: docRef;
-  data: () => any; // eslint-disable-line @typescript-eslint/no-explicit-any
-}
-
-interface queryResult {
-  docs: Array<docSnapshot>;
-}
-
-interface firebaseQuery {
-  get: () => Promise<queryResult>;
-}
-
 export async function mapEachResult<N, A>(
-  query: firebaseQuery,
+  query: Query,
   validator: t.Decoder<unknown, A>,
   mapper: (val: A, docid: string) => N
 ): Promise<Array<N>> {
-  const value = await query.get();
+  const value = await getDocs(query);
   const results: Array<N> = [];
   for (const doc of value.docs) {
     const data = doc.data();
@@ -103,12 +74,11 @@ export async function mapEachResult<N, A>(
   return results;
 }
 
-// TODO WHERE ARE THESE firebase TYPES COMING FROM?
 export async function getValidatedAndDelete<A>(
-  query: firebaseQuery,
+  query: Query,
   validator: t.Type<A>
 ): Promise<Array<A>> {
-  const value = await query.get();
+  const value = await getDocs(query);
   const results: Array<A> = [];
   const deletes: Array<Promise<void>> = [];
   for (const doc of value.docs) {
@@ -116,7 +86,7 @@ export async function getValidatedAndDelete<A>(
     const validationResult = validator.decode(data);
     if (isRight(validationResult)) {
       results.push(validationResult.right);
-      deletes.push(doc.ref.delete());
+      deletes.push(deleteDoc(doc.ref));
     } else {
       console.error(PathReporter.report(validationResult).join(','));
       return Promise.reject('Malformed content');
@@ -131,8 +101,7 @@ export async function getFromDB<A>(
   docId: string,
   validator: t.Type<A>
 ): Promise<A> {
-  const db = App.firestore();
-  const dbres = await db.collection(collection).doc(docId).get();
+  const dbres = await getDoc(getDocRef(collection, docId));
   if (!dbres.exists) {
     return Promise.reject('Missing doc');
   }
@@ -185,8 +154,7 @@ export async function getFromSessionOrDB<A>({
     }
   }
   console.log('loading ' + sessionKey + ' from db');
-  const db = App.firestore();
-  const dbres = await db.collection(collection).doc(docId).get();
+  const dbres = await getDoc(getDocRef(collection, docId));
   if (!dbres.exists) {
     console.log(sessionKey + ' is non existent');
     return null;

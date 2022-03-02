@@ -1,8 +1,6 @@
 import { DBPuzzleT, CommentWithRepliesT, FollowersV } from './dbtypes';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { AdminApp } from './firebaseAdminWrapper';
-import { getFirestore } from 'firebase-admin/firestore';
 import {
   PuzzleWithID,
   NotificationT,
@@ -12,6 +10,7 @@ import {
   newPuzzleNotification,
   featuredNotification,
 } from './notificationTypes';
+import { getCollection } from './firebaseAdminWrapper';
 
 function checkComments(
   after: Array<CommentWithRepliesT>,
@@ -50,8 +49,7 @@ async function notificationsForPuzzleCreation(
   if (puzzle.pv) {
     return [];
   }
-  const db = getFirestore(AdminApp);
-  const followersRes = await db.doc(`followers/${puzzle.a}`).get();
+  const followersRes = await getCollection('followers').doc(puzzle.a).get();
   if (!followersRes.exists) {
     console.log('no followers doc');
     return [];

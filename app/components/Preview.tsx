@@ -2,7 +2,7 @@ import { useReducer, useCallback, useMemo, useState } from 'react';
 import useEventListener from '@use-it/event-listener';
 import { FaRegNewspaper, FaListOl } from 'react-icons/fa';
 
-import { TimestampClass } from '../lib/firebaseWrapper';
+import { Timestamp } from '../lib/timestamp';
 import { Emoji } from './Emoji';
 import { TopBarLink, DefaultTopBar } from './TopBar';
 import { ClueList } from './ClueList';
@@ -130,7 +130,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
               onClick={() => {
                 const a: PublishAction = {
                   type: 'PUBLISH',
-                  publishTimestamp: TimestampClass.now(),
+                  publishTimestamp: Timestamp.now(),
                 };
                 dispatch(a);
               }}
@@ -240,7 +240,6 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
                 cross={cross?.index}
                 scrollToCross={scrollToCross}
                 dispatch={dispatch}
-                downsOnly={false}
               />
             }
             right={
@@ -258,7 +257,6 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
                 cross={cross?.index}
                 scrollToCross={scrollToCross}
                 dispatch={dispatch}
-                downsOnly={false}
               />
             }
           />

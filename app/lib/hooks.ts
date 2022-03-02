@@ -10,22 +10,16 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { App } from './firebaseWrapper';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
 import { NotificationV, NotificationT } from './notificationTypes';
 import useResizeObserver from 'use-resize-observer';
 import { AccountPrefsV } from './prefs';
 import { AuthContextValue } from '../components/AuthContext';
 import { parseUserInfo } from './userinfo';
-import { getAuth, updateProfile } from 'firebase/auth';
+import { updateProfile } from 'firebase/auth';
 import type { User } from 'firebase/auth';
-import {
-  collection,
-  doc,
-  getFirestore,
-  query,
-  where,
-} from 'firebase/firestore';
+import { query, where } from 'firebase/firestore';
+import { getAuth, getCollection, getDocRef } from './firebaseWrapper';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {
@@ -169,7 +163,7 @@ export function useAuth(): AuthContextValue {
   const [isLoading, setIsLoading] = useState(true);
 
   // Current user
-  const [user, loadingUser, authError] = useAuthState(getAuth(App));
+  const [user, loadingUser, authError] = useAuthState(getAuth());
 
   // Is admin
   useEffect(() => {
@@ -190,20 +184,18 @@ export function useAuth(): AuthContextValue {
     }
   }, [user]);
 
-  const firestore = getFirestore(App);
-
   // Constructor page + notifications + prefs
   const [cpDocRef, notificationsDocRef, prefsDocRef] = useMemo(() => {
     if (user && user.email && !user.isAnonymous) {
       setIsLoading(true);
       return [
-        query(collection(firestore, 'cp'), where('u', '==', user.uid)),
+        query(getCollection('cp'), where('u', '==', user.uid)),
         query(
-          collection(firestore, 'n'),
+          getCollection('n'),
           where('u', '==', user.uid),
           where('r', '==', false)
         ),
-        doc(firestore, `prefs/${user.uid}`),
+        getDocRef('prefs', user.uid),
       ];
     }
     if (!loadingUser) {

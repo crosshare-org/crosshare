@@ -1,7 +1,6 @@
 import { isSome } from 'fp-ts/lib/Option';
 import { useEffect, useState } from 'react';
 import { getMiniIdForDate } from '../lib/dailyMinis';
-import { App } from '../lib/firebaseWrapper';
 import { ButtonReset } from './Buttons';
 
 const daysToDisplay = 42;
@@ -36,14 +35,13 @@ interface DayProps {
   onChange: (date: Date, crosswordId: string | null) => void;
 }
 const Day = (props: DayProps) => {
-  const db = App.firestore();
   const today = new Date();
   const [disabled, setDisabled] = useState(true);
   const [miniId, setMiniId] = useState<string | null>(null);
   useEffect(() => {
     let finished = false;
     (async function () {
-      const lookup = await getMiniIdForDate(db, props.day);
+      const lookup = await getMiniIdForDate(props.day);
       if (finished) {
         return;
       }

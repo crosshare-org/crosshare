@@ -7,7 +7,11 @@ import { LinkablePuzzle, PuzzleResultLink } from './PuzzleLink';
 import { Link, LinkButtonSimpleA } from './Link';
 import { Markdown } from './Markdown';
 import { AuthContext } from './AuthContext';
-import { App, ServerTimestamp, DeleteSentinal } from '../lib/firebaseWrapper';
+import {
+  ServerTimestamp,
+  DeleteSentinal,
+  getDocRef,
+} from '../lib/firebaseWrapper';
 import { Button, ButtonAsLink } from './Buttons';
 import { HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
 import { CoverPic, ProfilePicAndName } from './Images';
@@ -20,6 +24,7 @@ import { Trans, t, Plural } from '@lingui/macro';
 import { I18nTags } from './I18nTags';
 import { useRouter } from 'next/router';
 import { PatronIcon } from './Icons';
+import { setDoc, updateDoc } from 'firebase/firestore';
 
 const BANNED_USERNAMES = {
   api: 1,
@@ -125,10 +130,7 @@ export const CreatePageForm = (props: { className?: string }) => {
       m: true,
       t: ServerTimestamp,
     };
-    return App.firestore()
-      .collection('cp')
-      .doc(lower)
-      .set(cp)
+    return setDoc(getDocRef('cp', lower), cp)
       .then(() => {
         setCreated(true);
       })
@@ -215,43 +217,39 @@ export const BioEditor = (props: BioEditorProps) => {
 
   function deleteTipButton() {
     console.log('Removing tip button');
-    const db = App.firestore();
-    db.collection('cp')
-      .doc(props.constructorPage.id)
-      .update({
-        pp: DeleteSentinal,
-        pt: DeleteSentinal,
-        m: true,
-        t: ServerTimestamp,
-      })
-      .then(() => {
-        console.log('Updated');
-        setIsOpen(false);
-      });
+    updateDoc(getDocRef('cp', props.constructorPage.id), {
+      pp: DeleteSentinal,
+      pt: DeleteSentinal,
+      m: true,
+      t: ServerTimestamp,
+    }).then(() => {
+      console.log('Updated');
+      setIsOpen(false);
+    });
   }
 
   function deleteSig() {
     console.log('Removing sig');
-    const db = App.firestore();
-    db.collection('cp')
-      .doc(props.constructorPage.id)
-      .update({ sig: DeleteSentinal, m: true, t: ServerTimestamp })
-      .then(() => {
-        console.log('Updated');
-        setIsOpen(false);
-      });
+    updateDoc(getDocRef('cp', props.constructorPage.id), {
+      sig: DeleteSentinal,
+      m: true,
+      t: ServerTimestamp,
+    }).then(() => {
+      console.log('Updated');
+      setIsOpen(false);
+    });
   }
 
   function deleteBio() {
     console.log('Removing bio');
-    const db = App.firestore();
-    db.collection('cp')
-      .doc(props.constructorPage.id)
-      .update({ b: '', m: true, t: ServerTimestamp })
-      .then(() => {
-        console.log('Updated');
-        setIsOpen(false);
-      });
+    updateDoc(getDocRef('cp', props.constructorPage.id), {
+      b: '',
+      m: true,
+      t: ServerTimestamp,
+    }).then(() => {
+      console.log('Updated');
+      setIsOpen(false);
+    });
   }
 
   function submitPaypalInfo(event: FormEvent) {
@@ -261,34 +259,30 @@ export const BioEditor = (props: BioEditorProps) => {
     }
     setSubmitting(true);
     console.log('Submitting new paypal info');
-    const db = App.firestore();
-    db.collection('cp')
-      .doc(props.constructorPage.id)
-      .update({
-        pp: paypalEmail,
-        pt: paypalText.trim(),
-        m: true,
-        t: ServerTimestamp,
-      })
-      .then(() => {
-        console.log('Updated');
-        setShowPaypalEditor(false);
-        setSubmitting(false);
-      });
+    updateDoc(getDocRef('cp', props.constructorPage.id), {
+      pp: paypalEmail,
+      pt: paypalText.trim(),
+      m: true,
+      t: ServerTimestamp,
+    }).then(() => {
+      console.log('Updated');
+      setShowPaypalEditor(false);
+      setSubmitting(false);
+    });
   }
 
   function submitEdit(event: FormEvent) {
     event.preventDefault();
     const textToSubmit = bioText.trim();
     console.log('Submitting bio');
-    const db = App.firestore();
-    db.collection('cp')
-      .doc(props.constructorPage.id)
-      .update({ b: textToSubmit, m: true, t: ServerTimestamp })
-      .then(() => {
-        console.log('Updated');
-        setIsOpen(false);
-      });
+    updateDoc(getDocRef('cp', props.constructorPage.id), {
+      b: textToSubmit,
+      m: true,
+      t: ServerTimestamp,
+    }).then(() => {
+      console.log('Updated');
+      setIsOpen(false);
+    });
   }
 
   function submitSigEdit(event: FormEvent) {
@@ -298,14 +292,14 @@ export const BioEditor = (props: BioEditorProps) => {
       return;
     }
     console.log('Submitting sig');
-    const db = App.firestore();
-    db.collection('cp')
-      .doc(props.constructorPage.id)
-      .update({ sig: textToSubmit, m: true, t: ServerTimestamp })
-      .then(() => {
-        console.log('Updated');
-        setIsSigOpen(false);
-      });
+    updateDoc(getDocRef('cp', props.constructorPage.id), {
+      sig: textToSubmit,
+      m: true,
+      t: ServerTimestamp,
+    }).then(() => {
+      console.log('Updated');
+      setIsSigOpen(false);
+    });
   }
 
   return (

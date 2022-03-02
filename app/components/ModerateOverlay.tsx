@@ -2,11 +2,12 @@ import { useState, Dispatch, memo } from 'react';
 import { getDateString, prettifyDateString } from '../lib/dbtypes';
 import { ServerPuzzleResult } from '../lib/types';
 import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
-import { App } from '../lib/firebaseWrapper';
 import { PuzzleAction } from '../reducers/reducer';
 import { Overlay } from './Overlay';
 import { setMiniForDate } from '../lib/dailyMinis';
 import { TagEditor } from './TagEditor';
+import { updateDoc } from 'firebase/firestore';
+import { getDocRef } from '../lib/firebaseWrapper';
 
 export const ModeratingOverlay = memo(
   ({
@@ -16,7 +17,6 @@ export const ModeratingOverlay = memo(
     puzzle: ServerPuzzleResult;
     dispatch: Dispatch<PuzzleAction>;
   }) => {
-    const db = App.firestore();
     const [date, setDate] = useState<Date | undefined>();
     const [success, setSuccess] = useState(false);
 
@@ -26,23 +26,21 @@ export const ModeratingOverlay = memo(
       }
       const pds = prettifyDateString(getDateString(date));
       setMiniForDate(pds, puzzle.id);
-      db.collection('c')
-        .doc(puzzle.id)
-        .update({ m: true, c: 'dailymini', dmd: pds })
-        .then(() => {
-          console.log('Scheduled mini');
-          setSuccess(true);
-        });
+      updateDoc(getDocRef('c', puzzle.id), {
+        m: true,
+        c: 'dailymini',
+        dmd: pds,
+      }).then(() => {
+        console.log('Scheduled mini');
+        setSuccess(true);
+      });
     }
 
     function markAsModerated(featured: boolean) {
       const update = { m: true, c: null, f: featured };
-      db.collection('c')
-        .doc(puzzle.id)
-        .update(update)
-        .then(() => {
-          setSuccess(true);
-        });
+      updateDoc(getDocRef('c', puzzle.id), update).then(() => {
+        setSuccess(true);
+      });
     }
 
     if (success) {
@@ -60,7 +58,7 @@ export const ModeratingOverlay = memo(
           userTags={puzzle.userTags || []}
           autoTags={puzzle.autoTags || []}
           save={async (newTags: string[]) =>
-            db.collection('c').doc(puzzle.id).update({ tg_u: newTags })
+            updateDoc(getDocRef('c', puzzle.id), { tg_u: newTags })
           }
         />
         {puzzle.isPrivate ? (

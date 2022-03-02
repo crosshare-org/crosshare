@@ -1,9 +1,10 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from './AuthContext';
-import { App, ServerTimestamp } from '../lib/firebaseWrapper';
+import { getDocRef, ServerTimestamp } from '../lib/firebaseWrapper';
 import { Button } from './Buttons';
 import { useSnackbar } from './Snackbar';
 import { t } from '@lingui/macro';
+import { updateDoc } from 'firebase/firestore';
 
 export const useDisplayName = () => {
   const ctx = useContext(AuthContext);
@@ -33,8 +34,6 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
     return <>Must be logged in</>;
   }
 
-  const db = App.firestore();
-
   const handleSubmit = (e: React.FormEvent) => {
     setSubmitting(true);
     e.preventDefault();
@@ -43,10 +42,11 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
       const updates = [ctx.updateDisplayName(toSubmit)];
       if (ctx.constructorPage) {
         updates.push(
-          db
-            .collection('cp')
-            .doc(ctx.constructorPage.id)
-            .update({ m: true, n: toSubmit, t: ServerTimestamp })
+          updateDoc(getDocRef('cp', ctx.constructorPage.id), {
+            m: true,
+            n: toSubmit,
+            t: ServerTimestamp,
+          })
         );
       }
       Promise.all(updates).then(() => {

@@ -6,28 +6,38 @@ import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { Overlay } from './Overlay';
 import { FaInfoCircle } from 'react-icons/fa';
 import { useSnackbar } from './Snackbar';
-import { App, FieldValue } from '../lib/firebaseWrapper';
+import { FieldValue, getDocRef } from '../lib/firebaseWrapper';
 import { useCallback, useState, useContext } from 'react';
-import type firebase from 'firebase/compat/app';
+import type { User } from 'firebase/auth';
 import { t } from '@lingui/macro';
+import { setDoc } from 'firebase/firestore';
 
-export const FollowButton = ({ page, ...props }: { page: ConstructorPageT, className?: string }) => {
+export const FollowButton = ({
+  page,
+  ...props
+}: {
+  page: ConstructorPageT;
+  className?: string;
+}) => {
   const authCtx = useContext(AuthContext);
   const user = authCtx.user;
   const isFollowing = authCtx.prefs?.following?.includes(page.u);
   const { showSnackbar } = useSnackbar();
   const [showOverlay, setShowOverlay] = useState(false);
   const doFollow = useCallback(
-    async (loggedInAs: firebase.User) => {
-      const db = App.firestore();
+    async (loggedInAs: User) => {
       setShowOverlay(false);
       return Promise.all([
-        db
-          .doc(`prefs/${loggedInAs.uid}`)
-          .set({ following: FieldValue.arrayUnion(page.u) }, { merge: true }),
-        db
-          .doc(`followers/${page.u}`)
-          .set({ f: FieldValue.arrayUnion(loggedInAs.uid) }, { merge: true }),
+        setDoc(
+          getDocRef('prefs', loggedInAs.uid),
+          { following: FieldValue.arrayUnion(page.u) },
+          { merge: true }
+        ),
+        setDoc(
+          getDocRef('followers', page.u),
+          { f: FieldValue.arrayUnion(loggedInAs.uid) },
+          { merge: true }
+        ),
       ]).then(() => {
         showSnackbar(t`You'll be notified when ${page.n} posts a new puzzle`);
       });
@@ -61,7 +71,10 @@ export const FollowButton = ({ page, ...props }: { page: ConstructorPageT, class
           css={css}
           hollow
           disabled={authCtx.loading}
-          onClick={(e) => { e.stopPropagation(); setShowOverlay(true); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowOverlay(true);
+          }}
           text={t`Follow`}
           {...props}
         />
@@ -71,18 +84,26 @@ export const FollowButton = ({ page, ...props }: { page: ConstructorPageT, class
   if (user.uid === page.u) {
     return (
       <>
-        <Button css={css} hollow disabled text={<>{t`Follow`}
-          <ToolTipText
-            css={{ marginLeft: '0.5em' }}
-            text={<FaInfoCircle />}
-            tooltip={t`You can't follow yourself!`}
-          />
-        </>} {...props} />
+        <Button
+          css={css}
+          hollow
+          disabled
+          text={
+            <>
+              {t`Follow`}
+              <ToolTipText
+                css={{ marginLeft: '0.5em' }}
+                text={<FaInfoCircle />}
+                tooltip={t`You can't follow yourself!`}
+              />
+            </>
+          }
+          {...props}
+        />
       </>
     );
   }
   if (isFollowing) {
-    const db = App.firestore();
     return (
       <>
         <Button
@@ -90,20 +111,20 @@ export const FollowButton = ({ page, ...props }: { page: ConstructorPageT, class
           onClick={(e) => {
             e.stopPropagation();
             return Promise.all([
-              db
-                .doc(`prefs/${user.uid}`)
-                .set(
-                  { following: FieldValue.arrayRemove(page.u) },
-                  { merge: true }
-                ),
-              db
-                .doc(`followers/${page.u}`)
-                .set({ f: FieldValue.arrayRemove(user.uid) }, { merge: true }),
+              setDoc(
+                getDocRef('prefs', user.uid),
+                { following: FieldValue.arrayRemove(page.u) },
+                { merge: true }
+              ),
+              setDoc(
+                getDocRef('followers', page.u),
+                { f: FieldValue.arrayRemove(user.uid) },
+                { merge: true }
+              ),
             ]).then(() => {
               showSnackbar(t`No longer following ${page.n}`);
             });
-          }
-          }
+          }}
           text={t`Following`}
           hoverText={t`Unfollow`}
           hoverCSS={{ backgroundColor: 'var(--error)' }}
@@ -112,5 +133,16 @@ export const FollowButton = ({ page, ...props }: { page: ConstructorPageT, class
       </>
     );
   }
-  return <Button css={css} hollow onClick={(e) => { e.stopPropagation(); doFollow(user); }} text={t`Follow`} {...props} />;
+  return (
+    <Button
+      css={css}
+      hollow
+      onClick={(e) => {
+        e.stopPropagation();
+        doFollow(user);
+      }}
+      text={t`Follow`}
+      {...props}
+    />
+  );
 };

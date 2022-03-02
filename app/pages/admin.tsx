@@ -16,9 +16,11 @@ import {
   CommentForModerationWithIdT,
   CommentForModerationV,
   DonationsListT,
+  CommentForModerationWithIdV,
+  DonationsListV,
 } from '../lib/dbtypes';
 import { getFromSessionOrDB, mapEachResult } from '../lib/dbUtils';
-import { App, FieldValue, TimestampClass } from '../lib/firebaseWrapper';
+import { FieldValue, getCollection, getDocRef, getValidatedCollection } from '../lib/firebaseWrapper';
 import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
 import { ConstructorPageV, ConstructorPageT } from '../lib/constructorPage';
 import { useSnackbar } from '../components/Snackbar';
@@ -29,6 +31,7 @@ import {
   useDocumentDataOnce,
 } from 'react-firebase-hooks/firestore';
 import { ErrorPage } from '../components/ErrorPage';
+import { doc, getDocs, query, Timestamp, where } from 'firebase/firestore';
 
 function paypalConvert(input: string): string {
   const donated = parseFloat(input);
@@ -76,14 +79,15 @@ export default requiresAdmin(() => {
   const [donationPage, setDonationPage] = useState('');
   const [donationUserId, setDonationUserId] = useState('');
   const { showSnackbar } = useSnackbar();
-  const db = App.firestore();
 
   useEffect(() => {
     console.log('loading admin content');
     const now = new Date();
     const dateString = getDateString(now);
     Promise.all([
-      db.collection('mail').where('delivery.error', '!=', null).get(),
+      getDocs(
+        query(getCollection('mail'), where('delivery.error', '!=', null))
+      ),
       getFromSessionOrDB({
         collection: 'ds',
         docId: dateString,
@@ -91,24 +95,25 @@ export default requiresAdmin(() => {
         ttl: 1000 * 60 * 30,
       }),
       mapEachResult(
-        db
-          .collection('c')
-          .where('m', '==', false)
-          .where('pvu', '<=', TimestampClass.now()),
+        query(
+          getCollection('c'),
+          where('m', '==', false),
+          where('pvu', '<=', Timestamp.now())
+        ),
         DBPuzzleV,
         (dbpuzz, docId) => {
           return { ...puzzleFromDB(dbpuzz), id: docId };
         }
       ),
       mapEachResult(
-        db.collection('cfm'),
+        getCollection('cfm'),
         CommentForModerationV,
         (cfm, docId) => {
           return { ...cfm, i: docId };
         }
       ),
       mapEachResult(
-        db.collection('cp').where('m', '==', true),
+        query(getCollection('cp'), where('m', '==', true)),
         ConstructorPageV,
         (cp, docId) => {
           return { ...cp, id: docId };
@@ -129,7 +134,7 @@ export default requiresAdmin(() => {
         console.error(reason);
         setError(true);
       });
-  }, [db]);
+  }, []);
 
   const goToPuzzle = useCallback((_date: Date, puzzle: string | null) => {
     if (puzzle) {
@@ -137,14 +142,11 @@ export default requiresAdmin(() => {
     }
   }, []);
 
-  const [automoderated] = useCollectionData<CommentForModerationWithIdT>(
-    db.collection('automoderated'),
-    { idField: 'i' }
+  const [automoderated] = useCollectionData(
+    getValidatedCollection('automoderated', CommentForModerationWithIdV, 'i')
   );
 
-  const [donations] = useDocumentDataOnce<DonationsListT>(
-    db.doc('donations/donations')
-  );
+  const [donations] = useDocumentDataOnce(doc(getValidatedCollection('donations', DonationsListV), 'donations');
 
   if (error) {
     return <ErrorPage title="Error loading admin content" />;
@@ -167,10 +169,7 @@ export default requiresAdmin(() => {
 
   async function retryMail(e: FormEvent) {
     e.preventDefault();
-    const db = App.firestore();
-    db.collection('mail')
-      .where('delivery.error', '!=', null)
-      .get()
+    getDocs(query(getCollection('mail'), where('delivery.error', '!=', null)))
       .then((r) => {
         r.forEach((s) => {
           console.log('retrying', s.id);

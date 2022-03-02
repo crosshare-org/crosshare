@@ -3,7 +3,6 @@ import { GetServerSideProps } from 'next';
 
 import { Link } from '../../components/Link';
 import { ErrorPage } from '../../components/ErrorPage';
-import { App } from '../../lib/firebaseWrapper';
 import { puzzleFromDB } from '../../lib/types';
 import { ConstructorPageT } from '../../lib/constructorPage';
 import { Markdown } from '../../components/Markdown';
@@ -19,7 +18,6 @@ import { Trans, t } from '@lingui/macro';
 import { withTranslation } from '../../lib/translation';
 import { I18nTags } from '../../components/I18nTags';
 import { isUserPatron } from '../../lib/patron';
-import { AnyFirestore } from '../../lib/dbUtils';
 import { getMiniForDate } from '../../lib/dailyMinis';
 import { isSome } from 'fp-ts/lib/Option';
 import { notEmpty } from '../../lib/utils';
@@ -62,7 +60,6 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
 export const getServerSideProps = withTranslation(gssp);
 
 async function puzzlesListForMonth(
-  db: AnyFirestore,
   year: number,
   month: number,
   maxDay: number
@@ -76,10 +73,7 @@ async function puzzlesListForMonth(
         ): Promise<
           [number, LinkablePuzzle, ConstructorPageT | null, boolean] | null
         > => {
-          const dbpuzzle = await getMiniForDate(
-            db,
-            new Date(year, month, day + 1)
-          );
+          const dbpuzzle = await getMiniForDate(new Date(year, month, day + 1));
           if (!isSome(dbpuzzle)) {
             return null;
           }
@@ -103,13 +97,12 @@ export async function propsForDailyMini(
   month: number
 ): Promise<PageProps> {
   const today = new Date();
-  const db = App.firestore();
 
   let lastDay = new Date(year, month + 1, 0).getUTCDate();
   if (year === today.getUTCFullYear() && month === today.getUTCMonth()) {
     lastDay = today.getUTCDate();
   }
-  const puzzles = await puzzlesListForMonth(db, year, month, lastDay);
+  const puzzles = await puzzlesListForMonth(year, month, lastDay);
   if (!puzzles.length) {
     return { error: 'No minis for that month' };
   }

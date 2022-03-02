@@ -1,4 +1,9 @@
-import { AdminApp, AdminTimestamp, getUser } from '../lib/firebaseAdminWrapper';
+import {
+  getAdminApp,
+  getUser,
+  mapEachResult,
+} from '../lib/firebaseAdminWrapper';
+import { Timestamp as AdminTimestamp } from 'firebase-admin/firestore';
 import {
   puzzleFromDB,
   Comment,
@@ -9,7 +14,6 @@ import type firebaseAdminType from 'firebase-admin';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { DBPuzzleV, CommentWithRepliesT } from './dbtypes';
-import { mapEachResult } from './dbUtils';
 import { ConstructorPageT, ConstructorPageV } from './constructorPage';
 import {
   NotificationV,
@@ -21,8 +25,8 @@ import {
   NewPuzzleNotificationT,
   isNewPuzzleNotification,
   isFeaturedNotification,
-  FeaturedNotificationT
-} from "./notificationTypes";
+  FeaturedNotificationT,
+} from './notificationTypes';
 import SimpleMarkdown from 'simple-markdown';
 import { AccountPrefsV, AccountPrefsT } from './prefs';
 import { NextPuzzleLink } from '../components/Puzzle';
@@ -40,7 +44,7 @@ import { getStorage } from 'firebase-admin/storage';
 export async function getStorageUrl(
   storageKey: string
 ): Promise<string | null> {
-  const profilePic = getStorage(AdminApp).bucket().file(storageKey);
+  const profilePic = getStorage(getAdminApp()).bucket().file(storageKey);
   if ((await profilePic.exists())[0]) {
     try {
       return (
@@ -65,7 +69,7 @@ const usernamesTTL = 1000 * 60 * 10;
 const updateUsernameMap = async (): Promise<void> => {
   const now = Date.now();
   console.log('updating username map');
-  const db = getFirestore(AdminApp);
+  const db = getFirestore(getAdminApp());
   let query: firebaseAdminType.firestore.Query = db.collection('cp');
   if (usernamesUpdated) {
     query = query.where('t', '>=', AdminTimestamp.fromMillis(usernamesUpdated));
@@ -116,7 +120,7 @@ export async function sendEmail({
   text: string;
   html: string;
 }) {
-  const db = getFirestore(AdminApp);
+  const db = getFirestore(getAdminApp());
   return db.collection('mail').add({
     to: [toAddress],
     message: { subject, text, html },
@@ -157,7 +161,7 @@ async function queueEmailForUser(
   userId: string,
   notifications: Array<NotificationT>
 ) {
-  const db = getFirestore(AdminApp);
+  const db = getFirestore(getAdminApp());
   const sorted = notifications.sort((n1, n2) => n1.id.localeCompare(n2.id));
   const prefsRes = await db.doc(`prefs/${userId}`).get();
   let prefs: AccountPrefsT | null = null;
@@ -339,7 +343,7 @@ ${SimpleMarkdown.defaultHtmlOutput(SimpleMarkdown.defaultBlockParse(markdown))}
 }
 
 export async function queueEmails() {
-  const db = getFirestore(AdminApp);
+  const db = getFirestore(getAdminApp());
   const unread = await mapEachResult(
     db
       .collection('n')
@@ -370,7 +374,7 @@ export async function queueEmails() {
 export async function getArticle(
   slug: string
 ): Promise<string | ArticleT | null> {
-  const db = getFirestore(AdminApp);
+  const db = getFirestore(getAdminApp());
   let dbres;
   try {
     dbres = await db.collection('a').where('s', '==', slug).get();
@@ -442,7 +446,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   params,
   locale,
 }) => {
-  const db = getFirestore(AdminApp);
+  const db = getFirestore(getAdminApp());
   let puzzle: PuzzleResultWithAugmentedComments | null = null;
   let puzzleId = params?.puzzleId;
   let titleSlug = '';
@@ -516,7 +520,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     );
     if (tryMiniDate <= today) {
       tryMiniDate = addDays(tryMiniDate, -1);
-      const puzzle = await getMiniForDate(db, tryMiniDate);
+      const puzzle = await getMiniForDate(tryMiniDate);
       if (isSome(puzzle)) {
         nextPuzzle = {
           puzzleId: puzzle.value.id,
@@ -528,7 +532,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   }
 
   if (!nextPuzzle) {
-    const puzzle = await getMiniForDate(db, today);
+    const puzzle = await getMiniForDate(today);
     if (isSome(puzzle)) {
       nextPuzzle = {
         puzzleId: puzzle.value.id,

@@ -25,7 +25,7 @@ import { TopBarLink, TopBar } from './TopBar';
 import { Direction } from '../lib/types';
 import { ButtonAsLink, Button } from './Buttons';
 import { COVER_PIC } from '../lib/style';
-import { TimestampClass } from '../lib/firebaseWrapper';
+import { Timestamp } from '../lib/timestamp';
 import { ToolTipText } from './ToolTipText';
 import { FaInfoCircle, FaRegNewspaper } from 'react-icons/fa';
 import lightFormat from 'date-fns/lightFormat';
@@ -241,7 +241,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
           onClick={() => {
             const a: PublishAction = {
               type: 'PUBLISH',
-              publishTimestamp: TimestampClass.now(),
+              publishTimestamp: Timestamp.now(),
             };
             props.dispatch(a);
           }}
@@ -682,7 +682,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               onChange={(e) => {
                 const spa: SetPrivateAction = {
                   type: 'SETPRIVATE',
-                  value: e.target.checked && TimestampClass.now(),
+                  value: e.target.checked && Timestamp.now(),
                 };
                 props.dispatch(spa);
               }}
@@ -702,7 +702,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                 setPicked={(d) => {
                   const spa: SetPrivateAction = {
                     type: 'SETPRIVATE',
-                    value: TimestampClass.fromDate(d),
+                    value: Timestamp.fromDate(d),
                   };
                   props.dispatch(spa);
                 }}

@@ -2,9 +2,10 @@ import { useState, useCallback, useRef, ChangeEvent } from 'react';
 import ReactCrop, { Crop } from 'react-image-crop';
 import { Overlay } from './Overlay';
 import { Button } from './Buttons';
-import { App } from '../lib/firebaseWrapper';
 import { useSnackbar } from './Snackbar';
 import 'react-image-crop/dist/ReactCrop.css';
+import { ref, uploadBytes } from 'firebase/storage';
+import { getStorage } from '../lib/firebaseWrapper';
 
 function downsample(
   image: HTMLImageElement,
@@ -129,15 +130,11 @@ function upload(
         onComplete('something went wrong');
         return;
       }
-      App.storage()
-        .ref()
-        .child(storageKey)
-        .put(blob)
-        .then(() => {
-          onComplete(
-            'Pic updated. It can take up to several hours to appear on the site.'
-          );
-        });
+      uploadBytes(ref(getStorage(), storageKey), blob).then(() => {
+        onComplete(
+          'Pic updated. It can take up to several hours to appear on the site.'
+        );
+      });
     },
     'image/jpeg',
     0.85

@@ -1,9 +1,8 @@
 import { LegacyPlayV } from '../lib/dbtypes';
 import { getValidatedAndDelete, setInCache } from '../lib/dbUtils';
-import { App, AuthProvider } from '../lib/firebaseWrapper';
+import { AuthProvider, getAuth, getCollection } from '../lib/firebaseWrapper';
 import { event } from '../lib/gtag';
 import {
-  getAuth,
   linkWithPopup,
   OAuthProvider,
   signInWithCredential,
@@ -11,6 +10,7 @@ import {
 } from 'firebase/auth';
 import type { User, AuthError, UserCredential } from 'firebase/auth';
 import { ButtonAsLink } from './Buttons';
+import { query, where } from 'firebase/firestore';
 
 interface GoogleButtonProps {
   postSignIn?: (user: User) => Promise<void>;
@@ -29,7 +29,7 @@ export const GoogleButton = ({
 
 export const GoogleSignInButton = ({ postSignIn, text }: GoogleButtonProps) => {
   function signin() {
-    signInWithPopup(getAuth(App), AuthProvider).then(
+    signInWithPopup(getAuth(), AuthProvider).then(
       async (userCredential: UserCredential) => {
         event({
           action: 'login',
@@ -91,12 +91,11 @@ export const GoogleLinkButton = ({
           throw new Error('missing new user after link');
         }
         // Get anonymous user plays
-        const db = App.firestore();
         const plays = await getValidatedAndDelete(
-          db.collection('p').where('u', '==', user.uid),
+          query(getCollection('p'), where('u', '==', user.uid)),
           LegacyPlayV
         );
-        return signInWithCredential(getAuth(App), credential).then(
+        return signInWithCredential(getAuth(), credential).then(
           async (value: UserCredential) => {
             console.log('signed in as new user ' + value.user?.uid);
             const newUser = value.user;

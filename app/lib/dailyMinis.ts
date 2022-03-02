@@ -7,7 +7,7 @@ import {
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { none, some, Option, isSome } from 'fp-ts/Option';
-import { AnyFirestore } from './dbUtils';
+import { getCollection } from './firebaseAdminWrapper';
 
 const dailyMiniIdsByDate: Map<string, string | null> = new Map();
 
@@ -17,10 +17,7 @@ export function setMiniForDate(pds: string, id: string) {
   sessionStorage.setItem(key, id);
 }
 
-export async function getMiniIdForDate(
-  db: AnyFirestore,
-  d: Date
-): Promise<Option<string>> {
+export async function getMiniIdForDate(d: Date): Promise<Option<string>> {
   const key = 'dmid-' + prettifyDateString(getDateString(d));
   const fromStorage = sessionStorage.getItem(key);
   if (fromStorage) {
@@ -33,7 +30,7 @@ export async function getMiniIdForDate(
   if (existing === null) {
     return none;
   }
-  const puz = await getMiniForDate(db, d, true);
+  const puz = await getMiniForDate(d, true);
   if (!isSome(puz)) {
     dailyMiniIdsByDate.set(key, null);
     return none;
@@ -44,12 +41,10 @@ export async function getMiniIdForDate(
 }
 
 export async function getMiniForDate(
-  db: AnyFirestore,
   d: Date,
   allowMissing?: boolean
 ): Promise<Option<DBPuzzleT & { id: string }>> {
-  const dbres = await db
-    .collection('c')
+  const dbres = await getCollection('c')
     .where('dmd', '==', prettifyDateString(getDateString(d)))
     .limit(1)
     .get();

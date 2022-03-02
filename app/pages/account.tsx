@@ -3,7 +3,12 @@ import Head from 'next/head';
 
 import { DisplayNameForm, useDisplayName } from '../components/DisplayNameForm';
 import { requiresAuth, AuthProps } from '../components/AuthContext';
-import { App, FieldValue } from '../lib/firebaseWrapper';
+import {
+  FieldValue,
+  getAuth,
+  getCollection,
+  getDocRef,
+} from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import { Link } from '../components/Link';
 import { CreatePageForm, BioEditor } from '../components/ConstructorPage';
@@ -27,8 +32,12 @@ const ImageCropper = dynamic(
 ) as typeof ImageCropperType;
 
 import { withStaticTranslation } from '../lib/translation';
+import { limit, query, setDoc, where } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
 
-export const getStaticProps = withStaticTranslation(() => { return { props: {} }; });
+export const getStaticProps = withStaticTranslation(() => {
+  return { props: {} };
+});
 
 interface UnsubSettingProps {
   prefs: AccountPrefsT | undefined;
@@ -51,20 +60,18 @@ const UnsubSetting = (props: UnsubSettingProps) => {
         disabled={!props.neverDisable && unsubbedAll}
         checked={props.invert ? unsubbed : !unsubbed && !unsubbedAll}
         onChange={(e) =>
-          App.firestore()
-            .doc(`prefs/${props.userId}`)
-            .set(
-              {
-                unsubs:
-                  e.target.checked !== !!props.invert
-                    ? FieldValue.arrayRemove(props.flag)
-                    : FieldValue.arrayUnion(props.flag),
-              },
-              { merge: true }
-            )
-            .then(() => {
-              showSnackbar('Email Preferences Updated');
-            })
+          setDoc(
+            getDocRef('prefs', props.userId),
+            {
+              unsubs:
+                e.target.checked !== !!props.invert
+                  ? FieldValue.arrayRemove(props.flag)
+                  : FieldValue.arrayUnion(props.flag),
+            },
+            { merge: true }
+          ).then(() => {
+            showSnackbar('Email Preferences Updated');
+          })
         }
       />
       {props.text}
@@ -90,19 +97,15 @@ const PrefSetting = (props: PrefSettingProps) => {
         type="checkbox"
         checked={props.invert ? !prefSet : prefSet}
         onChange={(e) =>
-          App.firestore()
-            .doc(`prefs/${props.userId}`)
-            .set(
-              {
-                [props.flag]: props.invert
-                  ? !e.target.checked
-                  : e.target.checked,
-              },
-              { merge: true }
-            )
-            .then(() => {
-              showSnackbar('Preferences Updated');
-            })
+          setDoc(
+            getDocRef('prefs', props.userId),
+            {
+              [props.flag]: props.invert ? !e.target.checked : e.target.checked,
+            },
+            { merge: true }
+          ).then(() => {
+            showSnackbar('Preferences Updated');
+          })
         }
       />
       {props.text}
@@ -116,10 +119,9 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
   const [hasAuthoredPuzzle, setHasAuthoredPuzzle] = useState(false);
   const displayName = useDisplayName();
 
-  const db = App.firestore();
   const authoredQuery = useMemo(
-    () => db.collection('c').where('a', '==', user.uid).limit(1),
-    [db, user.uid]
+    () => query(getCollection('c'), where('a', '==', user.uid), limit(1)),
+    [user.uid]
   );
   const [authoredSnap] = useCollection(authoredQuery);
   const [colorPref, setColorPref] = useDarkModeControl();
@@ -142,7 +144,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         <h2>Account</h2>
         <p>
           You&apos;re logged in as <b>{user.email}</b>.{' '}
-          <Button onClick={() => App.auth().signOut()} text="Log out" />
+          <Button onClick={() => signOut(getAuth())} text="Log out" />
         </p>
         <p>
           Your display name{' '}

@@ -37,10 +37,10 @@ import {
   gridWithEntrySet,
 } from '../lib/gridBase';
 import { Timestamp } from '../lib/timestamp';
-import { App } from '../lib/firebaseWrapper';
 import { AccountPrefsFlagsT } from '../lib/prefs';
 import { checkGrid } from '../lib/utils';
 import equal from 'fast-deep-equal';
+import { getDocId } from '../lib/firebaseWrapper';
 
 interface GridInterfaceState {
   type: string;
@@ -225,7 +225,7 @@ export function initialBuilderState({
     hidden: new Set(hidden),
   });
   return validateGrid({
-    id: id || App.firestore().collection('c').doc().id,
+    id: id || getDocId('c'),
     type: 'builder',
     title: title,
     notes: notes,

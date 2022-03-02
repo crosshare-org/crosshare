@@ -92,15 +92,19 @@ import {
 import { SquareAndCols, TwoCol } from './Page';
 import { usePersistedBoolean, useMatchMedia } from '../lib/hooks';
 import { isMetaSolution, slugify, timeString } from '../lib/utils';
-import { App, TimestampClass, signInAnonymously } from '../lib/firebaseWrapper';
-import type firebase from 'firebase/compat/app';
+import { getDocRef, signInAnonymously } from '../lib/firebaseWrapper';
+import type { User } from 'firebase/auth';
 import { Emoji } from './Emoji';
-import { FULLSCREEN_CSS, SMALL_AND_UP_RULES, SQUARE_HEADER_HEIGHT } from '../lib/style';
+import {
+  FULLSCREEN_CSS,
+  SMALL_AND_UP_RULES,
+  SQUARE_HEADER_HEIGHT,
+} from '../lib/style';
 import { Keyboard } from './Keyboard';
 import { useRouter } from 'next/router';
 import { Button } from './Buttons';
 import { useSnackbar } from './Snackbar';
-import { isNewPuzzleNotification } from "../lib/notificationTypes";
+import { isNewPuzzleNotification } from '../lib/notificationTypes';
 import { PuzzlePageResultProps } from '../lib/serverOnly';
 import { EmbedContext } from './EmbedContext';
 import dynamic from 'next/dynamic';
@@ -116,6 +120,8 @@ import { t, Trans } from '@lingui/macro';
 import { isSome } from 'fp-ts/lib/Option';
 import { GridContext } from './GridContext';
 import { DownsOnlyContext } from './DownsOnlyContext';
+import { Timestamp } from '../lib/timestamp';
+import { updateDoc } from 'firebase/firestore';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -253,10 +259,7 @@ export const Puzzle = ({
         continue;
       }
       if (notification.p === puzzle.id) {
-        App.firestore()
-          .collection('n')
-          .doc(notification.id)
-          .update({ r: true });
+        updateDoc(getDocRef('n', notification.id), { r: true });
         return;
       }
     }
@@ -324,7 +327,7 @@ export const Puzzle = ({
   }, [muted, audioContext, initAudioContext]);
 
   const writePlayToDBIfNeeded = useCallback(
-    async (user?: firebase.User) => {
+    async (user?: User) => {
       console.log('doing write play');
       if (!state.loadedPlayState) {
         return;
@@ -366,11 +369,11 @@ export const Puzzle = ({
   );
 
   const cachePlayForUser = useCallback(
-    (user: firebase.User | undefined) => {
+    (user: User | undefined) => {
       if (!state.loadedPlayState) {
         return;
       }
-      const updatedAt = TimestampClass.now();
+      const updatedAt = Timestamp.now();
       const playTime =
         state.currentTimeWindowStart === 0
           ? state.bankedSeconds
@@ -396,7 +399,7 @@ export const Puzzle = ({
           ct_rv: state.contestRevealed,
           ct_t:
             state.contestSubmitTime !== undefined
-              ? TimestampClass.fromMillis(state.contestSubmitTime)
+              ? Timestamp.fromMillis(state.contestSubmitTime)
               : undefined,
           ct_n: state.contestDisplayName,
         }),
@@ -405,7 +408,7 @@ export const Puzzle = ({
           ct_pr_subs: state.contestPriorSubmissions || [],
           ct_t:
             state.contestSubmitTime !== undefined
-              ? TimestampClass.fromMillis(state.contestSubmitTime)
+              ? Timestamp.fromMillis(state.contestSubmitTime)
               : undefined,
           ct_n: state.contestDisplayName,
           ...(state.contestEmail && {
@@ -667,7 +670,6 @@ export const Puzzle = ({
             cross={cross?.index}
             scrollToCross={scrollToCross}
             dispatch={dispatch}
-            downsOnly={state.downsOnly && !state.success}
           />
         }
         right={
@@ -689,7 +691,6 @@ export const Puzzle = ({
             cross={cross?.index}
             scrollToCross={scrollToCross}
             dispatch={dispatch}
-            downsOnly={state.downsOnly && !state.success}
           />
         }
       />
@@ -761,16 +762,10 @@ export const Puzzle = ({
                       ? '0 0 1em var(--conceal-text)'
                       : '',
                     flex: '1 1 auto',
-                    height: '100%', 
+                    height: '100%',
                   }}
                 >
-                  <ClueText
-                    refPositions={refPositions}
-                    entryIndex={entry.index}
-                    allEntries={state.grid.entries}
-                    grid={state.grid}
-                    downsOnly={state.downsOnly && !state.success}
-                  />
+                  <ClueText entry={entry} />
                 </div>
               </div>
             ) : (
@@ -795,7 +790,6 @@ export const Puzzle = ({
             current={entry?.index}
             cross={cross?.index}
             dispatch={dispatch}
-            downsOnly={state.downsOnly && !state.success}
           />
         }
         right={
@@ -815,7 +809,6 @@ export const Puzzle = ({
             current={entry?.index}
             cross={cross?.index}
             dispatch={dispatch}
-            downsOnly={state.downsOnly && !state.success}
           />
         }
       />
@@ -1208,7 +1201,9 @@ export const Puzzle = ({
           }}
         >
           <GridContext.Provider value={state.grid}>
-            <DownsOnlyContext.Provider value={state.downsOnly}>
+            <DownsOnlyContext.Provider
+              value={state.downsOnly && !state.success}
+            >
               {puzzleView}
             </DownsOnlyContext.Provider>
           </GridContext.Provider>

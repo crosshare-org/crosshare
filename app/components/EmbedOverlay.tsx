@@ -9,7 +9,7 @@ import {
 import { Direction, ServerPuzzleResult } from '../lib/types';
 import { PuzzleAction } from '../reducers/reducer';
 import { Overlay } from './Overlay';
-import type firebase from 'firebase/compat/app';
+import { User } from 'firebase/auth';
 import { CopyableInput } from './CopyableInput';
 import { EmbedOptionsT, validate } from '../lib/embedOptions';
 import { colorTheme, LINK, PRIMARY } from '../lib/style';
@@ -17,7 +17,8 @@ import { adjustHue, parseToRgba, guard } from 'color2k';
 import { GridView } from './Grid';
 import { fromCells } from '../lib/viewableGrid';
 import { Button, ButtonAsLink } from './Buttons';
-import { App } from '../lib/firebaseWrapper';
+import { getDoc, setDoc } from 'firebase/firestore';
+import { getDocRef } from '../lib/firebaseWrapper';
 
 export const EmbedOverlay = ({
   dispatch,
@@ -26,7 +27,7 @@ export const EmbedOverlay = ({
 }: {
   puzzle: ServerPuzzleResult;
   dispatch: Dispatch<PuzzleAction>;
-  user: firebase.User;
+  user: User;
 }) => {
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [embedOptions, setEmbedOptions] = useState<EmbedOptionsT | null>(null);
@@ -34,7 +35,7 @@ export const EmbedOverlay = ({
   useEffect(() => {
     let didCancel = false;
     async function getEmbedOptions() {
-      const res = await App.firestore().doc(`em/${user.uid}`).get();
+      const res = await getDoc(getDocRef('em', user.uid));
       if (didCancel) {
         return;
       }
@@ -184,13 +185,10 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       pp: preservePrimary,
     };
     setSaving(true);
-    App.firestore()
-      .doc(`em/${props.userId}`)
-      .set(theme)
-      .then(() => {
-        setSaving(false);
-        setDirty(false);
-      });
+    setDoc(getDocRef('em', props.userId), theme).then(() => {
+      setSaving(false);
+      setDirty(false);
+    });
   }, [isDark, primary, link, preservePrimary, props.userId]);
 
   const dummyGrid = useMemo(() => {
