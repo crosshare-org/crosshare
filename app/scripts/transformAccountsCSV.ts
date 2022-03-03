@@ -16,8 +16,8 @@ readFile('accounts.csv').then((binary) => {
     relax_column_count: true,
   });
   const out = csv
-    .filter((r) => r[1])
-    .map((r) => r[1])
+    .filter((r: string[]) => r[1])
+    .map((r: string[]) => r[1])
     .join('\n');
   writeFile('accountsTransformed.csv', out).then(() => {
     console.log('done');

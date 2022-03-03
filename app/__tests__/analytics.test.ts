@@ -2,16 +2,12 @@
  * @jest-environment node
  */
 
-import {
-  AdminTimestamp,
-  setAdminApp,
-  firestore,
-} from '../lib/firebaseAdminWrapper';
 import { initializeTestEnvironment } from '@firebase/rules-unit-testing';
 import { PlayT, LegacyPlayT, DBPuzzleT } from '../lib/dbtypes';
 import { runAnalytics } from '../lib/analytics';
 import { initializeApp } from 'firebase-admin/app';
 import { beforeAll, beforeEach } from '@jest/globals';
+import { Timestamp } from '../lib/timestamp';
 
 let play1: PlayT;
 let play2: LegacyPlayT;
@@ -157,9 +153,8 @@ test('run for all time w/o initial state', async () => {
   hourAgo.setMinutes(hourAgo.getMinutes() - 60);
 
   await runAnalytics(
-    firestore(),
-    AdminTimestamp.fromDate(hourAgo),
-    AdminTimestamp.fromDate(new Date())
+    Timestamp.fromDate(hourAgo),
+    Timestamp.fromDate(new Date())
   );
 
   const res = await firestore().collection('ds').get();
@@ -212,9 +207,8 @@ test('run for all time w/ some meta submissions', async () => {
     });
 
   await runAnalytics(
-    firestore(),
-    AdminTimestamp.fromDate(hourAgo),
-    AdminTimestamp.fromDate(new Date())
+    Timestamp.fromDate(hourAgo),
+    Timestamp.fromDate(new Date())
   );
 
   const res = await firestore().collection('ds').get();
@@ -259,9 +253,8 @@ test('run for all time w/ some meta submissions', async () => {
     ct_sub: 'just a guess 2',
   });
   await runAnalytics(
-    firestore(),
-    AdminTimestamp.fromDate(hourAgo),
-    AdminTimestamp.fromDate(new Date())
+    Timestamp.fromDate(hourAgo),
+    Timestamp.fromDate(new Date())
   );
 
   const pres1 = await firestore().collection('s').doc('mike').get();
@@ -347,9 +340,8 @@ test('run for all time w/ some meta submissions', async () => {
     });
 
   await runAnalytics(
-    firestore(),
-    AdminTimestamp.fromDate(hourAgo),
-    AdminTimestamp.fromDate(new Date())
+    Timestamp.fromDate(hourAgo),
+    Timestamp.fromDate(new Date())
   );
 
   const pres2 = await firestore().collection('s').doc('mike').get();
@@ -390,9 +382,8 @@ test('run for more recent w/o initial state', async () => {
   twentyFive.setMinutes(twentyFive.getMinutes() - 25);
 
   await runAnalytics(
-    firestore(),
-    AdminTimestamp.fromDate(twentyFive),
-    AdminTimestamp.fromDate(new Date())
+    Timestamp.fromDate(twentyFive),
+    Timestamp.fromDate(new Date())
   );
 
   const res = await firestore().collection('ds').get();
@@ -420,14 +411,12 @@ test('run w/ initial state', async () => {
 
   // Just run twice in a row w/ same timestamp so we read each play twice.
   await runAnalytics(
-    firestore(),
-    AdminTimestamp.fromDate(hourAgo),
-    AdminTimestamp.fromDate(new Date())
+    Timestamp.fromDate(hourAgo),
+    Timestamp.fromDate(new Date())
   );
   await runAnalytics(
-    firestore(),
-    AdminTimestamp.fromDate(hourAgo),
-    AdminTimestamp.fromDate(new Date())
+    Timestamp.fromDate(hourAgo),
+    Timestamp.fromDate(new Date())
   );
 
   const res = await firestore().collection('ds').get();

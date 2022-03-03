@@ -1,4 +1,10 @@
-import { useState, useCallback, useRef, ChangeEvent } from 'react';
+import {
+  useState,
+  useCallback,
+  useRef,
+  ChangeEvent,
+  ReactEventHandler,
+} from 'react';
 import ReactCrop, { Crop } from 'react-image-crop';
 import { Overlay } from './Overlay';
 import { Button } from './Buttons';
@@ -150,10 +156,12 @@ export function ImageCropper(props: {
   const [upImg, setUpImg] = useState<string>();
   const { showSnackbar } = useSnackbar();
   const imgRef = useRef<HTMLImageElement | null>(null);
-  const [crop, setCrop] = useState<Partial<Crop>>({
+  const [crop, setCrop] = useState<Crop>({
     unit: 'px',
     width: props.targetSize[0],
-    aspect: props.targetSize[0] / props.targetSize[1],
+    height: props.targetSize[1],
+    x: 0,
+    y: 0,
   });
   const [completedCrop, setCompletedCrop] = useState<Crop | null>(null);
   const [minWidth, setMinWidth] = useState(props.targetSize[0]);
@@ -170,8 +178,9 @@ export function ImageCropper(props: {
     }
   };
 
-  const onLoad = useCallback(
-    (img: HTMLImageElement) => {
+  const onLoad: ReactEventHandler<HTMLImageElement> = useCallback(
+    (e) => {
+      const img = e.currentTarget;
       if (
         img.naturalWidth < props.targetSize[0] ||
         img.naturalHeight < props.targetSize[1]
@@ -203,15 +212,16 @@ export function ImageCropper(props: {
       <div css={{ margin: '1em 0' }}>
         {upImg ? (
           <ReactCrop
+            aspect={props.targetSize[0] / props.targetSize[1]}
             minWidth={minWidth}
             circularCrop={props.isCircle}
-            src={upImg}
             keepSelection={true}
-            onImageLoaded={onLoad}
             crop={crop}
             onChange={(c) => setCrop(c)}
             onComplete={(c) => setCompletedCrop(c)}
-          />
+          >
+            <img src={upImg} onLoad={onLoad} />
+          </ReactCrop>
         ) : (
           ''
         )}
