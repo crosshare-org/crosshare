@@ -8,10 +8,9 @@ import { requiresAuth, AuthProps } from '../../components/AuthContext';
 import { PuzzleResult, puzzleFromDB, Direction } from '../../lib/types';
 import { DBPuzzleV, DBPuzzleT } from '../../lib/dbtypes';
 import {
-  App,
   DeleteSentinal,
   FieldValue,
-  TimestampClass,
+  getDocRef,
 } from '../../lib/firebaseWrapper';
 import { DefaultTopBar } from '../../components/TopBar';
 import { ErrorPage } from '../../components/ErrorPage';
@@ -38,6 +37,7 @@ import { EditableText } from '../../components/EditableText';
 import { AlternateSolutionEditor } from '../../components/AlternateSolutionEditor';
 import { TagList } from '../../components/TagList';
 import { TagEditor } from '../../components/TagEditor';
+import { Timestamp, updateDoc } from 'firebase/firestore';
 
 const ImageCropper = dynamic(
   () =>
@@ -67,9 +67,7 @@ export const PuzzleLoader = ({
   puzzleId: string;
   auth: AuthProps;
 }) => {
-  const [doc, loading, error] = useDocument(
-    App.firestore().doc(`c/${puzzleId}`)
-  );
+  const [doc, loading, error] = useDocument(getDocRef('c', puzzleId));
   const [puzzle, puzzleDecodeError] = useMemo(() => {
     if (doc === undefined) {
       return [undefined, undefined];
@@ -164,13 +162,10 @@ const ClueRow = (props: {
         }),
       };
     }
-    App.firestore()
-      .doc(`c/${props.puzzleId}`)
-      .update(update)
-      .then(() => {
-        setSubmitting(false);
-        setEditing(false);
-      });
+    updateDoc(getDocRef('c', props.puzzleId), update).then(() => {
+      setSubmitting(false);
+      setEditing(false);
+    });
   }
 
   return (
@@ -310,9 +305,9 @@ const PuzzleEditor = ({
         <AlternateSolutionEditor
           grid={puzzle.grid}
           save={async (alt) =>
-            App.firestore()
-              .doc(`c/${puzzle.id}`)
-              .update({ alts: FieldValue.arrayUnion(alt) })
+            updateDoc(getDocRef('c', puzzle.id), {
+              alts: FieldValue.arrayUnion(alt),
+            })
           }
           cancel={() => setAddingAlternate(false)}
           width={puzzle.size.cols}
@@ -345,7 +340,7 @@ const PuzzleEditor = ({
           text={puzzle.title}
           maxLength={MAX_STRING_LENGTH}
           handleSubmit={(newTitle) =>
-            App.firestore().doc(`c/${puzzle.id}`).update({ t: newTitle })
+            updateDoc(getDocRef('c', puzzle.id), { t: newTitle })
           }
         />
         <h3>Clues</h3>
@@ -364,10 +359,9 @@ const PuzzleEditor = ({
               autoTags={puzzle.autoTags || []}
               cancel={() => setEditingTags(false)}
               save={async (newTags) =>
-                App.firestore()
-                  .doc(`c/${puzzle.id}`)
-                  .update({ tg_u: newTags })
-                  .then(() => setEditingTags(false))
+                updateDoc(getDocRef('c', puzzle.id), { tg_u: newTags }).then(
+                  () => setEditingTags(false)
+                )
               }
             />
           </div>
@@ -395,10 +389,10 @@ const PuzzleEditor = ({
           text={puzzle.constructorNotes}
           maxLength={MAX_STRING_LENGTH}
           handleSubmit={(notes) =>
-            App.firestore().doc(`c/${puzzle.id}`).update({ cn: notes })
+            updateDoc(getDocRef('c', puzzle.id), { cn: notes })
           }
           handleDelete={() =>
-            App.firestore().doc(`c/${puzzle.id}`).update({ cn: DeleteSentinal })
+            updateDoc(getDocRef('c', puzzle.id), { cn: DeleteSentinal })
           }
         />
         <h4>Guest Constructor</h4>
@@ -409,10 +403,10 @@ const PuzzleEditor = ({
           text={puzzle.guestConstructor}
           maxLength={MAX_STRING_LENGTH}
           handleSubmit={(gc) =>
-            App.firestore().doc(`c/${puzzle.id}`).update({ gc: gc })
+            updateDoc(getDocRef('c', puzzle.id), { gc: gc })
           }
           handleDelete={() =>
-            App.firestore().doc(`c/${puzzle.id}`).update({ gc: DeleteSentinal })
+            updateDoc(getDocRef('c', puzzle.id), { gc: DeleteSentinal })
           }
         />
         <h4>Blog Post</h4>
@@ -430,10 +424,10 @@ const PuzzleEditor = ({
           text={puzzle.blogPost}
           maxLength={MAX_BLOG_LENGTH}
           handleSubmit={(post) =>
-            App.firestore().doc(`c/${puzzle.id}`).update({ bp: post })
+            updateDoc(getDocRef('c', puzzle.id), { bp: post })
           }
           handleDelete={() =>
-            App.firestore().doc(`c/${puzzle.id}`).update({ bp: DeleteSentinal })
+            updateDoc(getDocRef('c', puzzle.id), { bp: DeleteSentinal })
           }
         />
         <h4>Cover Image</h4>
@@ -541,24 +535,21 @@ const PuzzleEditor = ({
             isPrivateUntil === puzzle.isPrivateUntil
           }
           onClick={() => {
-            App.firestore()
-              .doc(`c/${puzzle.id}`)
-              .update({
-                pv:
-                  typeof isPrivate === 'number'
-                    ? TimestampClass.fromMillis(isPrivate)
-                    : isPrivate,
-                pvu: isPrivate
-                  ? DeleteSentinal
-                  : isPrivateUntil
-                  ? TimestampClass.fromMillis(isPrivateUntil)
-                  : TimestampClass.now(),
-              })
-              .then(() => {
-                showSnackbar(
-                  'Privacy settings updated - it may take up to an hour for updates to be visible on the site.'
-                );
-              });
+            updateDoc(getDocRef('c', puzzle.id), {
+              pv:
+                typeof isPrivate === 'number'
+                  ? Timestamp.fromMillis(isPrivate)
+                  : isPrivate,
+              pvu: isPrivate
+                ? DeleteSentinal
+                : isPrivateUntil
+                ? Timestamp.fromMillis(isPrivateUntil)
+                : Timestamp.now(),
+            }).then(() => {
+              showSnackbar(
+                'Privacy settings updated - it may take up to an hour for updates to be visible on the site.'
+              );
+            });
           }}
         />
         <Button
@@ -590,11 +581,9 @@ const PuzzleEditor = ({
                       {a} (
                       <ButtonAsLink
                         onClick={() => {
-                          App.firestore()
-                            .doc(`c/${puzzle.id}`)
-                            .update({
-                              ct_ans: FieldValue.arrayRemove(a),
-                            });
+                          updateDoc(getDocRef('c', puzzle.id), {
+                            ct_ans: FieldValue.arrayRemove(a),
+                          });
                         }}
                         text="remove"
                       />
@@ -628,11 +617,9 @@ const PuzzleEditor = ({
                   : ''
               }
               handleSubmit={(sol) =>
-                App.firestore()
-                  .doc(`c/${puzzle.id}`)
-                  .update({
-                    ct_ans: FieldValue.arrayUnion(sol.trim()),
-                  })
+                updateDoc(getDocRef('c', puzzle.id), {
+                  ct_ans: FieldValue.arrayUnion(sol.trim()),
+                })
               }
             />
             {puzzle.contestAnswers?.length ? (
@@ -646,9 +633,7 @@ const PuzzleEditor = ({
                     </p>
                     <Button
                       onClick={() => {
-                        App.firestore()
-                          .doc(`c/${puzzle.id}`)
-                          .update({ ct_prz: false });
+                        updateDoc(getDocRef('c', puzzle.id), { ct_prz: false });
                       }}
                       text="Remove Prize"
                     />
@@ -663,9 +648,7 @@ const PuzzleEditor = ({
                     </p>
                     <Button
                       onClick={() => {
-                        App.firestore()
-                          .doc(`c/${puzzle.id}`)
-                          .update({ ct_prz: true });
+                        updateDoc(getDocRef('c', puzzle.id), { ct_prz: true });
                       }}
                       text="Add a Prize"
                     />
@@ -705,9 +688,9 @@ const PuzzleEditor = ({
                       return prev;
                     }, {} as Record<number, string>);
                     console.log(toRemove);
-                    App.firestore()
-                      .doc(`c/${puzzle.id}`)
-                      .update({ alts: FieldValue.arrayRemove(toRemove) });
+                    updateDoc(getDocRef('c', puzzle.id), {
+                      alts: FieldValue.arrayRemove(toRemove),
+                    });
                   }}
                   text="remove"
                 />
@@ -761,15 +744,14 @@ const PuzzleEditor = ({
                   text="Confirm Delete"
                   disabled={deleteConfirmation.toLowerCase() !== 'delete'}
                   onClick={() => {
-                    App.firestore()
-                      .doc(`c/${puzzle.id}`)
-                      .update({ del: true })
-                      .then(() => {
+                    updateDoc(getDocRef('c', puzzle.id), { del: true }).then(
+                      () => {
                         showSnackbar(
                           'Your puzzle has been deleted - it may take up to an hour to be fully removed from the site.'
                         );
                         router.push('/');
-                      });
+                      }
+                    );
                   }}
                 />
               </Overlay>

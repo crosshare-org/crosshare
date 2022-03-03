@@ -3,7 +3,6 @@ import Head from 'next/head';
 import { DefaultTopBar } from '../components/TopBar';
 import { CreateShareSection } from '../components/CreateShareSection';
 import { useCallback, useMemo } from 'react';
-import { App } from '../lib/firebaseWrapper';
 import { puzzleFromDB } from '../lib/types';
 import { usePaginatedQuery } from '../lib/usePagination';
 import { DBPuzzleV } from '../lib/dbtypes';
@@ -13,16 +12,22 @@ import { Link } from '../components/Link';
 import { CreatePageForm } from '../components/ConstructorPage';
 import { ConstructorStats } from '../components/ConstructorStats';
 import { withStaticTranslation } from '../lib/translation';
+import { query, where, orderBy } from 'firebase/firestore';
+import { getCollection } from '../lib/firebaseWrapper';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };
 });
 
 export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
-  const db = App.firestore();
   const authoredQuery = useMemo(
-    () => db.collection('c').where('a', '==', user.uid).orderBy('p', 'desc'),
-    [db, user.uid]
+    () =>
+      query(
+        getCollection('c'),
+        where('a', '==', user.uid),
+        orderBy('p', 'desc')
+      ),
+    [user.uid]
   );
   const authoredMapper = useCallback(
     async (dbres, id) => ({ ...puzzleFromDB(dbres), id }),

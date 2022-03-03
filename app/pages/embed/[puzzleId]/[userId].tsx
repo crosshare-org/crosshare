@@ -5,9 +5,9 @@ import { colorTheme, LINK, PRIMARY } from '../../../lib/style';
 import { parseToRgba } from 'color2k';
 import { EmbedContext } from '../../../components/EmbedContext';
 import { GetServerSideProps } from 'next';
-import { App } from '../../../lib/firebaseWrapper';
 import { validate } from '../../../lib/embedOptions';
 import { withTranslation } from '../../../lib/translation';
+import { getCollection } from '../../../lib/firebaseAdminWrapper';
 
 export const gssp: GetServerSideProps<PuzzlePageProps> = async ({
   params,
@@ -25,9 +25,7 @@ export const gssp: GetServerSideProps<PuzzlePageProps> = async ({
     return props;
   }
 
-  const embedOptionsRes = await App.firestore()
-    .doc(`em/${params.userId}`)
-    .get();
+  const embedOptionsRes = await getCollection('em').doc(params.userId).get();
   if (!embedOptionsRes.exists) {
     return props;
   }

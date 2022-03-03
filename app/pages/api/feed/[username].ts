@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { AdminApp } from '../../../lib/firebaseAdminWrapper';
 import { validate } from '../../../lib/constructorPage';
 import { paginatedPuzzles } from '../../../lib/paginatedPuzzles';
 import { slugify } from '../../../lib/utils';
 import { Feed } from 'feed';
-import { htmlOutput, parser } from '../../../components/Markdown';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getCollection } from '../../../lib/firebaseAdminWrapper';
+import { toHtml } from 'hast-util-to-html';
+import { markdownToHast } from '../../../lib/markdown/markdown';
 
 export default async function constructorFeed(
   req: NextApiRequest,
@@ -15,10 +15,9 @@ export default async function constructorFeed(
   if (!username || Array.isArray(username)) {
     return res.status(404).json({ statusCode: 404, message: 'bad params' });
   }
-  const db = getFirestore(AdminApp);
   let dbres;
   try {
-    dbres = await db.collection('cp').doc(username.toLowerCase()).get();
+    dbres = await getCollection('cp').doc(username.toLowerCase()).get();
   } catch {
     return res
       .status(404)
@@ -61,7 +60,11 @@ export default async function constructorFeed(
       link: link,
       date: new Date(p.isPrivateUntil || p.publishTime),
       description: p.blogPost
-        ? htmlOutput(parser(p.blogPost + `\n\n[Solve on Crosshare](${link})`))
+        ? toHtml(
+            markdownToHast({
+              text: p.blogPost + `\n\n[Solve on Crosshare](${link})`,
+            })
+          )
         : `<a href='${link}'>Solve on Crosshare</a>`,
     });
   });

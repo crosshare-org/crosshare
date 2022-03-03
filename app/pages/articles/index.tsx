@@ -1,3 +1,4 @@
+import { addDoc, Timestamp } from 'firebase/firestore';
 import Head from 'next/head';
 import { useMemo } from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
@@ -7,7 +8,7 @@ import { Link } from '../../components/Link';
 import { useSnackbar } from '../../components/Snackbar';
 import { DefaultTopBar } from '../../components/TopBar';
 import { ArticleT, validate } from '../../lib/article';
-import { App, TimestampClass } from '../../lib/firebaseWrapper';
+import { getCollection } from '../../lib/firebaseWrapper';
 
 const ArticleListItem = (props: ArticleT | null) => {
   if (!props) {
@@ -22,8 +23,7 @@ const ArticleListItem = (props: ArticleT | null) => {
 };
 
 export default requiresAdmin(() => {
-  const db = App.firestore();
-  const [articlesSnapshot] = useCollection(db.collection('a'));
+  const [articlesSnapshot] = useCollection(getCollection('a'));
   const { showSnackbar } = useSnackbar();
 
   const articles: Array<ArticleT | null> = useMemo(() => {
@@ -53,11 +53,12 @@ export default requiresAdmin(() => {
               c: 'article content',
               f: false,
             };
-            db.collection('a')
-              .add({ ...newArticle, ua: TimestampClass.now() })
-              .then(() => {
-                showSnackbar('Article created');
-              });
+            addDoc(getCollection('a'), {
+              ...newArticle,
+              ua: Timestamp.now(),
+            }).then(() => {
+              showSnackbar('Article created');
+            });
           }}
         />
         <h4>All Articles:</h4>

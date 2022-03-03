@@ -3,10 +3,9 @@ import { createCanvas, loadImage, PNGStream, Image } from 'canvas';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
-import { AdminApp } from '../../../lib/firebaseAdminWrapper';
 import { DBPuzzleV, DBPuzzleT } from '../../../lib/dbtypes';
 import { getStorage } from 'firebase-admin/storage';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getAdminApp, getCollection } from '../../../lib/firebaseAdminWrapper';
 
 async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
   console.log('Generating png for ' + puzzle.t);
@@ -96,7 +95,7 @@ async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
 
   // Center Logo - try loading constructor's profile pic
   let img: Image | null = null;
-  const profilePic = getStorage(AdminApp)
+  const profilePic = getStorage(getAdminApp())
     .bucket()
     .file(`users/${puzzle.a}/profile.jpg`);
   if ((await profilePic.exists())[0]) {
@@ -140,10 +139,9 @@ async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
 }
 
 async function getPuzzle(puzzleId: string): Promise<DBPuzzleT | null> {
-  const db = getFirestore(AdminApp);
   let dbres;
   try {
-    dbres = await db.collection('c').doc(puzzleId).get();
+    dbres = await getCollection('c').doc(puzzleId).get();
   } catch {
     return null;
   }

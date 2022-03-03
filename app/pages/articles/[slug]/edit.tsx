@@ -1,3 +1,4 @@
+import { where, query, updateDoc, Timestamp } from 'firebase/firestore';
 import Head from 'next/head';
 import NextJSRouter, { useRouter } from 'next/router';
 import { useMemo } from 'react';
@@ -8,7 +9,7 @@ import { ErrorPage } from '../../../components/ErrorPage';
 import { useSnackbar } from '../../../components/Snackbar';
 import { DefaultTopBar } from '../../../components/TopBar';
 import { validate, ArticleT } from '../../../lib/article';
-import { App, TimestampClass } from '../../../lib/firebaseWrapper';
+import { getCollection, getDocRef } from '../../../lib/firebaseWrapper';
 import { slugify } from '../../../lib/utils';
 
 export default requiresAdmin(() => {
@@ -25,7 +26,7 @@ export default requiresAdmin(() => {
 
 const ArticleLoader = ({ slug }: { slug: string }) => {
   const [snapshot, loading, error] = useCollection(
-    App.firestore().collection('a').where('s', '==', slug)
+    query(getCollection('a'), where('s', '==', slug))
   );
   const doc = useMemo(() => {
     return snapshot?.docs[0];
@@ -74,12 +75,12 @@ const ArticleEditor = ({
           maxLength={100}
           handleSubmit={async (newSlug) => {
             const slug = slugify(newSlug, 100, true);
-            App.firestore()
-              .doc(`a/${articleId}`)
-              .update({ s: slug, ua: TimestampClass.now() })
-              .then(() => {
-                NextJSRouter.push(`/articles/${slug}/edit`);
-              });
+            updateDoc(getDocRef('a', articleId), {
+              s: slug,
+              ua: Timestamp.now(),
+            }).then(() => {
+              NextJSRouter.push(`/articles/${slug}/edit`);
+            });
           }}
         />
         <h3>Title</h3>
@@ -89,9 +90,10 @@ const ArticleEditor = ({
           text={article.t}
           maxLength={300}
           handleSubmit={(newTitle) =>
-            App.firestore()
-              .doc(`a/${articleId}`)
-              .update({ t: newTitle, ua: TimestampClass.now() })
+            updateDoc(getDocRef('a', articleId), {
+              t: newTitle,
+              ua: Timestamp.now(),
+            })
           }
         />
         <h3>Content</h3>
@@ -102,9 +104,10 @@ const ArticleEditor = ({
           text={article.c}
           maxLength={1000000}
           handleSubmit={(post) =>
-            App.firestore()
-              .doc(`a/${articleId}`)
-              .update({ c: post, ua: TimestampClass.now() })
+            updateDoc(getDocRef('a', articleId), {
+              c: post,
+              ua: Timestamp.now(),
+            })
           }
         />
         <h3>Featured</h3>
@@ -115,12 +118,12 @@ const ArticleEditor = ({
               type="checkbox"
               checked={article.f}
               onChange={(e) => {
-                App.firestore()
-                  .doc(`a/${articleId}`)
-                  .update({ f: e.target.checked, ua: TimestampClass.now() })
-                  .then(() => {
-                    showSnackbar('updated');
-                  });
+                updateDoc(getDocRef('a', articleId), {
+                  f: e.target.checked,
+                  ua: Timestamp.now(),
+                }).then(() => {
+                  showSnackbar('updated');
+                });
               }}
             />{' '}
             Featured

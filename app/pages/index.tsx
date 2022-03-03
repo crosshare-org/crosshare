@@ -3,7 +3,6 @@ import { GetServerSideProps } from 'next';
 import { getMiniForDate } from '../lib/dailyMinis';
 import { Link } from '../components/Link';
 import { puzzleFromDB } from '../lib/types';
-import { firestore } from '../lib/firebaseAdminWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import {
   toLinkablePuzzle,
@@ -27,6 +26,7 @@ import { useRouter } from 'next/router';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles';
 import { isUserPatron } from '../lib/patron';
 import { isSome } from 'fp-ts/lib/Option';
+import { getCollection } from '../lib/firebaseAdminWrapper';
 
 type HomepagePuz = LinkablePuzzle & {
   constructorPage: ConstructorPageT | null;
@@ -40,11 +40,9 @@ interface HomePageProps {
 }
 
 const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
-  const db = firestore();
-  const todaysMini = await getMiniForDate(db, new Date());
+  const todaysMini = await getMiniForDate(new Date());
 
-  const unfilteredArticles = await db
-    .collection('a')
+  const unfilteredArticles = await getCollection('a')
     .where('f', '==', true)
     .get()
     .then((articlesResult) => {

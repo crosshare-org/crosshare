@@ -7,12 +7,12 @@ import { requiresAuth, AuthProps } from '../../components/AuthContext';
 import { PuzzleResult, puzzleFromDB } from '../../lib/types';
 import { PuzzleStatsT, PuzzleStatsV, DBPuzzleV } from '../../lib/dbtypes';
 import { getFromSessionOrDB } from '../../lib/dbUtils';
-import { App } from '../../lib/firebaseWrapper';
 import { ErrorPage } from '../../components/ErrorPage';
 import { StatsPage } from '../../components/PuzzleStats';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { Link } from '../../components/Link';
 import { slugify } from '../../lib/utils';
+import { getDocRef } from '../../lib/firebaseWrapper';
 
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();
@@ -34,9 +34,7 @@ export const PuzzleLoader = ({
   puzzleId: string;
   auth: AuthProps;
 }) => {
-  const [doc, loading, error] = useDocument(
-    App.firestore().doc(`c/${puzzleId}`)
-  );
+  const [doc, loading, error] = useDocument(getDocRef('c', puzzleId));
   const [puzzle, puzzleDecodeError] = useMemo(() => {
     if (doc === undefined) {
       return [undefined, undefined];

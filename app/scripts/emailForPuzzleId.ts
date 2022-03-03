@@ -3,7 +3,7 @@
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isRight } from 'fp-ts/lib/Either';
 import { DBPuzzleV } from '../lib/dbtypes';
-import { AdminApp } from '../lib/firebaseAdminWrapper';
+import { getAdminApp } from '../lib/firebaseAdminWrapper';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 
@@ -13,7 +13,7 @@ if (process.argv.length !== 3) {
   );
 }
 
-const db = getFirestore(AdminApp);
+const db = getFirestore(getAdminApp());
 
 async function generatePuzFile() {
   console.log(`getting puzzle ${process.argv[2]}`);
@@ -28,7 +28,7 @@ async function generatePuzFile() {
     return;
   }
   const dbpuz = validationResult.right;
-  const user = await getAuth(AdminApp).getUser(dbpuz.a);
+  const user = await getAuth(getAdminApp()).getUser(dbpuz.a);
   console.log(`email: ${user.email}`);
 }
 

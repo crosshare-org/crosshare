@@ -8,8 +8,7 @@ import {
 import { puzzleFromDB, PuzzleResult } from '../../../lib/types';
 import { StatsPage } from '../../../components/PuzzleStats';
 import { GetServerSideProps } from 'next';
-import { AdminApp } from '../../../lib/firebaseAdminWrapper';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getCollection } from '../../../lib/firebaseAdminWrapper';
 
 interface PageProps {
   puzzle: PuzzleResult;
@@ -20,7 +19,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   res,
   params,
 }) => {
-  const db = getFirestore(AdminApp);
   const secret = params?.secret;
   if (
     !params?.puzzleId ||
@@ -33,7 +31,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   }
   let dbres;
   try {
-    dbres = await db.collection('c').doc(params.puzzleId).get();
+    dbres = await getCollection('c').doc(params.puzzleId).get();
   } catch {
     console.error('error getting puzzle');
     return { notFound: true };
@@ -53,7 +51,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   };
 
   try {
-    dbres = await db.collection('s').doc(params.puzzleId).get();
+    dbres = await getCollection('s').doc(params.puzzleId).get();
   } catch {
     console.error('error getting stats');
     return { notFound: true };
