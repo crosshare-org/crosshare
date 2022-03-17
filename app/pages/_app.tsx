@@ -39,6 +39,9 @@ if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
       'cancelled due to another conflicting popup being opened',
       'installations/app-offline',
       'Error: Network Error',
+      'Non-Error promise rejection captured with value: Object Not Found Matching',
+      'Failed to fetch',
+      'Illegal invocation',
     ],
   });
 }
