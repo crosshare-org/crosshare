@@ -19,6 +19,9 @@ if (process.argv.length !== 4) {
   );
 }
 
+// TODO we migrate followers but should we also migrate following?
+// TODO what about migrating solver prefs, etc.?
+
 const db = getFirestore(getAdminApp());
 
 async function migrateAccount() {
@@ -32,6 +35,7 @@ async function migrateAccount() {
   const auth = getAuth(getAdminApp());
   const fromUser = await auth.getUserByEmail(fromEmail);
   const toUser = await auth.getUserByEmail(toEmail);
+  console.log(`migrating from ${fromUser.uid} to ${toUser.uid}`);
 
   // move puzzles
   await db
@@ -115,6 +119,10 @@ async function migrateAccount() {
         return validationResult.right;
       });
     if (followers && followers.f?.length) {
+      await db
+        .collection('followers')
+        .doc(toUser.uid)
+        .set({ f: FieldValue.arrayUnion(followers.f) }, { merge: true });
       console.log(`moving ${followers.f.length} followers`);
       for (const follower of followers.f) {
         await db
