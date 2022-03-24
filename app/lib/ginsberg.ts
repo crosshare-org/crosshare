@@ -1,11 +1,11 @@
-import { LevelUp } from 'levelup';
+import levelup, { LevelUp } from 'levelup';
 import rocksdb from 'rocksdb';
 import { ClueListT, parseClueList } from './ginsbergCommon';
 
 export const CLUEDB = './cluedb';
 
 export const getDB = (readOnly: boolean) => {
-  return LevelUp(rocksdb(CLUEDB), { readOnly: readOnly });
+  return levelup(rocksdb(CLUEDB), { readOnly: readOnly });
 };
 
 export const getClues = async (
