@@ -94,7 +94,7 @@ export const MetaSubmissionForm = (props: {
               <Button
                 type="submit"
                 css={{ marginRight: '0.5em' }}
-                disabled={submission.length === 0}
+                disabled={!/\S/.test(submission)}
                 text="Submit"
               />
               submitting as {displayName} (
