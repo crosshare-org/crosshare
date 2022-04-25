@@ -7,7 +7,8 @@ import {
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { none, some, Option, isSome } from 'fp-ts/Option';
-import { getCollection } from './firebaseAdminWrapper';
+import { getCollection } from './firebaseWrapper';
+import { getDocs, limit, query, where } from 'firebase/firestore';
 
 const dailyMiniIdsByDate: Map<string, string | null> = new Map();
 
@@ -44,10 +45,13 @@ export async function getMiniForDate(
   d: Date,
   allowMissing?: boolean
 ): Promise<Option<DBPuzzleT & { id: string }>> {
-  const dbres = await getCollection('c')
-    .where('dmd', '==', prettifyDateString(getDateString(d)))
-    .limit(1)
-    .get();
+  const dbres = await getDocs(
+    query(
+      getCollection('c'),
+      where('dmd', '==', prettifyDateString(getDateString(d))),
+      limit(1)
+    )
+  );
 
   const doc = dbres.docs[0];
   if (!doc) {

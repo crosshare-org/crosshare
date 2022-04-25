@@ -91,8 +91,7 @@ async function puzzlesListForMonth(
   ).then((a) => a.filter(notEmpty));
 }
 
-// We export this so we can use it for testing
-export async function propsForDailyMini(
+async function propsForDailyMini(
   year: number,
   month: number
 ): Promise<PageProps> {

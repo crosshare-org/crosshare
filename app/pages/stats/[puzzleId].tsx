@@ -57,7 +57,7 @@ export const PuzzleLoader = ({
   if (error || puzzleDecodeError) {
     return (
       <ErrorPage title="Something Went Wrong">
-        <p>{error || puzzleDecodeError}</p>
+        <p>{error?.message || puzzleDecodeError}</p>
       </ErrorPage>
     );
   }

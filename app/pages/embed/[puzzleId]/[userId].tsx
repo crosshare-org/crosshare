@@ -9,7 +9,7 @@ import { validate } from '../../../lib/embedOptions';
 import { withTranslation } from '../../../lib/translation';
 import { getCollection } from '../../../lib/firebaseAdminWrapper';
 
-export const gssp: GetServerSideProps<PuzzlePageProps> = async ({
+const gssp: GetServerSideProps<PuzzlePageProps> = async ({
   params,
   ...rest
 }) => {

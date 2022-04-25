@@ -41,7 +41,7 @@ import { isMetaSolution } from '../lib/utils';
 import { AlternateSolutionEditor } from './AlternateSolutionEditor';
 import { TagEditor } from './TagEditor';
 import { TagList } from './TagList';
-import { sizeTag } from '../lib/puzzleUpdate';
+import { sizeTag } from '../lib/sizeTag';
 
 export const MAX_STRING_LENGTH = 2048;
 export const MAX_BLOG_LENGTH = 20000;

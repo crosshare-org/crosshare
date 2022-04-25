@@ -1,4 +1,4 @@
-import { ReactElement, ComponentType } from 'react';
+import { ReactElement, ComponentType, ReactNode } from 'react';
 import { render, RenderOptions, RenderResult } from '@testing-library/react';
 
 import { AuthContext } from '../components/AuthContext';
@@ -28,7 +28,7 @@ const WithAllProviders: (
   includeSnackbar?: boolean
 ) => ComponentType =
   (opts: AuthOptions, includeSnackbar?: boolean) =>
-  ({ children }) => {
+  ({ children }: { children?: ReactNode }) => {
     return (
       <I18nProvider i18n={i18n} forceRenderOnLocaleChange={false}>
         <AuthContext.Provider

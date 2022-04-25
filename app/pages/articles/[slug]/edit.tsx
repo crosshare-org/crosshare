@@ -41,7 +41,7 @@ const ArticleLoader = ({ slug }: { slug: string }) => {
   if (error || !article || !doc) {
     return (
       <ErrorPage title="Something Went Wrong">
-        <p>{error || 'Missing / invalid article'}</p>
+        <p>{error?.message || 'Missing / invalid article'}</p>
       </ErrorPage>
     );
   }

@@ -5,7 +5,7 @@ import { CreateShareSection } from '../components/CreateShareSection';
 import { useCallback, useMemo } from 'react';
 import { puzzleFromDB } from '../lib/types';
 import { usePaginatedQuery } from '../lib/usePagination';
-import { DBPuzzleV } from '../lib/dbtypes';
+import { DBPuzzleT, DBPuzzleV } from '../lib/dbtypes';
 import { PuzzleResultLink } from '../components/PuzzleLink';
 import { ButtonAsLink } from '../components/Buttons';
 import { Link } from '../components/Link';
@@ -30,7 +30,7 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
     [user.uid]
   );
   const authoredMapper = useCallback(
-    async (dbres, id) => ({ ...puzzleFromDB(dbres), id }),
+    async (dbres: DBPuzzleT, id: string) => ({ ...puzzleFromDB(dbres), id }),
     []
   );
   const {

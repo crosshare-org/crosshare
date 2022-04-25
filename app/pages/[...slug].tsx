@@ -76,7 +76,7 @@ async function followIdToInfo(id: string) {
   return { ...page, isPatron };
 }
 
-export const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
+const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
   if (!params || !Array.isArray(params.slug) || !params.slug[0]) {
     console.error('bad constructor page params');
     res.statusCode = 404;

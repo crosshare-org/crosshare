@@ -150,7 +150,7 @@ const DBPlayLoader = (
   if (error) {
     return (
       <>
-        <p>Error loading user: {error}</p>
+        <p>Error loading user: {error.message}</p>
         <p>Please refresh the page to try again.</p>
       </>
     );

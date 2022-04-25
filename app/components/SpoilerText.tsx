@@ -1,10 +1,16 @@
-import { ReactNode, useState, useCallback } from 'react';
+import {
+  ReactNode,
+  useState,
+  useCallback,
+  MouseEvent,
+  KeyboardEvent,
+} from 'react';
 
 export const SpoilerText = ({ children }: { children: ReactNode }) => {
   const [revealed, setRevealed] = useState(false);
 
   const doReveal = useCallback(
-    (e) => {
+    (e: MouseEvent | KeyboardEvent) => {
       if (!revealed) {
         e.stopPropagation();
         setRevealed(true);

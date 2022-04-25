@@ -69,7 +69,7 @@ async function topPuzzlesForWeek(): Promise<
   return Promise.all(
     Object.entries(totalC)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 25)
+      .slice(0, 40)
       .map(async ([id]): Promise<(DBPuzzleT & { id: string }) | null> => {
         const dbres = await db.collection('c').doc(id).get();
         if (!dbres.exists) {

@@ -68,7 +68,7 @@ export const GridView = ({
 
   const noOp = useCallback(() => undefined, []);
   const changeActive = useCallback(
-    (pos) => {
+    (pos: Position) => {
       const a: SetActivePositionAction = {
         type: 'SETACTIVEPOSITION',
         newActive: pos,
