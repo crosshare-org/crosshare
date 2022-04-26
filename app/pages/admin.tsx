@@ -20,7 +20,6 @@ import {
 } from '../lib/dbtypes';
 import { getFromSessionOrDB, mapEachResult } from '../lib/dbUtils';
 import {
-  FieldValue,
   getCollection,
   getDocRef,
   getValidatedCollection,
@@ -36,6 +35,7 @@ import {
 } from 'react-firebase-hooks/firestore';
 import { ErrorPage } from '../components/ErrorPage';
 import {
+  arrayUnion,
   deleteDoc,
   doc,
   getDocs,
@@ -370,7 +370,7 @@ export default requiresAdmin(() => {
             if (toSubmit) {
               setDoc(
                 getDocRef('prefs', uidToUnsub),
-                { unsubs: FieldValue.arrayUnion('all') },
+                { unsubs: arrayUnion('all') },
                 { merge: true }
               ).then(() => {
                 showSnackbar('Unsubscribed');
@@ -409,7 +409,7 @@ export default requiresAdmin(() => {
             };
             setDoc(
               getDocRef('donations', 'donations'),
-              { d: FieldValue.arrayUnion(toAdd) },
+              { d: arrayUnion(toAdd) },
               { merge: true }
             ).then(() => {
               showSnackbar('Added Donation');

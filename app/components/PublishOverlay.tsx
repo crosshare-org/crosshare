@@ -5,11 +5,11 @@ import type { User } from 'firebase/auth';
 import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
 import { Overlay } from './Overlay';
 import { Emoji } from './Emoji';
-import { getDocRef, ServerTimestamp } from '../lib/firebaseWrapper';
+import { getDocRef } from '../lib/firebaseWrapper';
 import { DBPuzzleT } from '../lib/dbtypes';
 import { slugify, STORAGE_KEY } from '../lib/utils';
 import { ButtonAsLink, Button } from './Buttons';
-import { setDoc } from 'firebase/firestore';
+import { serverTimestamp, setDoc } from 'firebase/firestore';
 
 export function PublishOverlay(props: {
   id: string;
@@ -39,7 +39,7 @@ export function PublishOverlay(props: {
       const toPublish = {
         ...props.toPublish,
         n: displayName || 'Anonymous Crossharer',
-        p: ServerTimestamp,
+        p: serverTimestamp(),
       };
 
       setDoc(getDocRef('c', props.id), toPublish).then(async () => {

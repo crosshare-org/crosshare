@@ -7,11 +7,7 @@ import { LinkablePuzzle, PuzzleResultLink } from './PuzzleLink';
 import { Link, LinkButtonSimpleA } from './Link';
 import { Markdown } from './Markdown';
 import { AuthContext } from './AuthContext';
-import {
-  ServerTimestamp,
-  DeleteSentinal,
-  getDocRef,
-} from '../lib/firebaseWrapper';
+import { getDocRef } from '../lib/firebaseWrapper';
 import { Button, ButtonAsLink } from './Buttons';
 import { HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
 import { CoverPic, ProfilePicAndName } from './Images';
@@ -24,7 +20,12 @@ import { Trans, t, Plural } from '@lingui/macro';
 import { I18nTags } from './I18nTags';
 import { useRouter } from 'next/router';
 import { PatronIcon } from './Icons';
-import { setDoc, updateDoc } from 'firebase/firestore';
+import {
+  deleteField,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
 
 const BANNED_USERNAMES = {
   api: 1,
@@ -128,7 +129,7 @@ export const CreatePageForm = (props: { className?: string }) => {
       n: user.displayName || 'Anonymous Crossharer',
       b: '',
       m: true,
-      t: ServerTimestamp,
+      t: serverTimestamp(),
     };
     return setDoc(getDocRef('cp', lower), cp)
       .then(() => {
@@ -218,10 +219,10 @@ export const BioEditor = (props: BioEditorProps) => {
   function deleteTipButton() {
     console.log('Removing tip button');
     updateDoc(getDocRef('cp', props.constructorPage.id), {
-      pp: DeleteSentinal,
-      pt: DeleteSentinal,
+      pp: deleteField(),
+      pt: deleteField(),
       m: true,
-      t: ServerTimestamp,
+      t: serverTimestamp(),
     }).then(() => {
       console.log('Updated');
       setIsOpen(false);
@@ -231,9 +232,9 @@ export const BioEditor = (props: BioEditorProps) => {
   function deleteSig() {
     console.log('Removing sig');
     updateDoc(getDocRef('cp', props.constructorPage.id), {
-      sig: DeleteSentinal,
+      sig: deleteField(),
       m: true,
-      t: ServerTimestamp,
+      t: serverTimestamp(),
     }).then(() => {
       console.log('Updated');
       setIsOpen(false);
@@ -245,7 +246,7 @@ export const BioEditor = (props: BioEditorProps) => {
     updateDoc(getDocRef('cp', props.constructorPage.id), {
       b: '',
       m: true,
-      t: ServerTimestamp,
+      t: serverTimestamp(),
     }).then(() => {
       console.log('Updated');
       setIsOpen(false);
@@ -263,7 +264,7 @@ export const BioEditor = (props: BioEditorProps) => {
       pp: paypalEmail,
       pt: paypalText.trim(),
       m: true,
-      t: ServerTimestamp,
+      t: serverTimestamp(),
     }).then(() => {
       console.log('Updated');
       setShowPaypalEditor(false);
@@ -278,7 +279,7 @@ export const BioEditor = (props: BioEditorProps) => {
     updateDoc(getDocRef('cp', props.constructorPage.id), {
       b: textToSubmit,
       m: true,
-      t: ServerTimestamp,
+      t: serverTimestamp(),
     }).then(() => {
       console.log('Updated');
       setIsOpen(false);
@@ -295,7 +296,7 @@ export const BioEditor = (props: BioEditorProps) => {
     updateDoc(getDocRef('cp', props.constructorPage.id), {
       sig: textToSubmit,
       m: true,
-      t: ServerTimestamp,
+      t: serverTimestamp(),
     }).then(() => {
       console.log('Updated');
       setIsSigOpen(false);

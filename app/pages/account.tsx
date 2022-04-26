@@ -3,12 +3,7 @@ import Head from 'next/head';
 
 import { DisplayNameForm, useDisplayName } from '../components/DisplayNameForm';
 import { requiresAuth, AuthProps } from '../components/AuthContext';
-import {
-  FieldValue,
-  getAuth,
-  getCollection,
-  getDocRef,
-} from '../lib/firebaseWrapper';
+import { getAuth, getCollection, getDocRef } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import { Link } from '../components/Link';
 import { CreatePageForm, BioEditor } from '../components/ConstructorPage';
@@ -32,7 +27,14 @@ const ImageCropper = dynamic(
 ) as typeof ImageCropperType;
 
 import { withStaticTranslation } from '../lib/translation';
-import { limit, query, setDoc, where } from 'firebase/firestore';
+import {
+  arrayRemove,
+  arrayUnion,
+  limit,
+  query,
+  setDoc,
+  where,
+} from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 
 export const getStaticProps = withStaticTranslation(() => {
@@ -65,8 +67,8 @@ const UnsubSetting = (props: UnsubSettingProps) => {
             {
               unsubs:
                 e.target.checked !== !!props.invert
-                  ? FieldValue.arrayRemove(props.flag)
-                  : FieldValue.arrayUnion(props.flag),
+                  ? arrayRemove(props.flag)
+                  : arrayUnion(props.flag),
             },
             { merge: true }
           ).then(() => {

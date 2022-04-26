@@ -1,19 +1,18 @@
 import * as t from 'io-ts';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
-import 'firebase/compat/auth';
-import 'firebase/compat/storage';
+import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { firebaseConfig } from '../firebaseConfig';
 import { getStorage as gS } from 'firebase/storage';
-import { getAuth as gA, signInAnonymously as sIA } from 'firebase/auth';
+import { getAuth as gA, signInAnonymously as sIA, User } from 'firebase/auth';
 import {
   collection,
   doc,
   DocumentData,
+  Firestore,
   getFirestore,
   QueryDocumentSnapshot,
   SnapshotOptions,
   Timestamp as FBTimestamp,
+  connectFirestoreEmulator,
 } from 'firebase/firestore';
 import cloneDeepWith from 'lodash/cloneDeepWith';
 import { isTimestamp } from './timestamp';
@@ -21,29 +20,28 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 // Initialize Firebase
-let App: firebase.app.App;
+let App: FirebaseApp;
+let db: Firestore;
 
-if (firebase.apps.length && firebase.apps[0]) {
-  App = firebase.apps[0];
+const apps = getApps();
+if (apps.length && apps[0]) {
+  App = apps[0];
+  db = getFirestore(App);
 } else {
-  App = firebase.initializeApp(firebaseConfig);
-  if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR) {
-    const db = App.firestore();
-    db.settings({
-      host: 'localhost:8080',
-      ssl: false,
-    });
-  }
+  App = initializeApp(firebaseConfig);
+  db = getFirestore(App);
+}
+if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR) {
+  connectFirestoreEmulator(db, 'localhost', 8080);
 }
 
-export const getDocId = (collection: string) =>
-  doc(getFirestore(App), collection).id;
+export const getDocId = (collection: string) => doc(db, collection).id;
 
 export const getAuth = () => gA(App);
 export const getStorage = () => gS(App);
 
 export const getCollection = (collectionName: string) =>
-  collection(getFirestore(App), collectionName).withConverter({
+  collection(db, collectionName).withConverter({
     toFirestore: (data: any) =>
       cloneDeepWith(data, (val) => {
         if (isTimestamp(val)) {
@@ -59,7 +57,7 @@ export function getValidatedCollection<V>(
   validator: t.Decoder<unknown, V>,
   idField: string | null = null
 ) {
-  return collection(getFirestore(App), collectionName).withConverter({
+  return collection(db, collectionName).withConverter({
     toFirestore: (data: any) =>
       cloneDeepWith(data, (val) => {
         if (isTimestamp(val)) {
@@ -91,13 +89,10 @@ export function getValidatedCollection<V>(
 export const getDocRef = (collectionName: string, docId: string) =>
   doc(getCollection(collectionName), docId);
 
-export const setApp = (app: firebase.app.App) => {
+export const setApp = (app: FirebaseApp) => {
   App = app;
 };
-export const setUpForSignInAnonymously = (
-  _app: firebase.app.App,
-  _user: firebase.User
-) => {
+export const setUpForSignInAnonymously = (_app: FirebaseApp, _user: User) => {
   throw new Error('For testing only');
 };
 
@@ -109,14 +104,6 @@ export const signInAnonymously = async () => {
   return userCredential.user;
 };
 
-export const setUserMap = (_map: Record<string, firebase.User>) => {
+export const setUserMap = (_map: Record<string, User>) => {
   /* noop */
 };
-
-export const AuthProvider = new firebase.auth.GoogleAuthProvider();
-
-export const DeleteSentinal = firebase.firestore.FieldValue.delete();
-
-export const ServerTimestamp = firebase.firestore.FieldValue.serverTimestamp();
-
-export const FieldValue = firebase.firestore.FieldValue;

@@ -7,11 +7,7 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { requiresAuth, AuthProps } from '../../components/AuthContext';
 import { PuzzleResult, puzzleFromDB, Direction } from '../../lib/types';
 import { DBPuzzleV, DBPuzzleT } from '../../lib/dbtypes';
-import {
-  DeleteSentinal,
-  FieldValue,
-  getDocRef,
-} from '../../lib/firebaseWrapper';
+import { getDocRef } from '../../lib/firebaseWrapper';
 import { DefaultTopBar } from '../../components/TopBar';
 import { ErrorPage } from '../../components/ErrorPage';
 import { useDocument } from 'react-firebase-hooks/firestore';
@@ -37,7 +33,13 @@ import { EditableText } from '../../components/EditableText';
 import { AlternateSolutionEditor } from '../../components/AlternateSolutionEditor';
 import { TagList } from '../../components/TagList';
 import { TagEditor } from '../../components/TagEditor';
-import { Timestamp, updateDoc } from 'firebase/firestore';
+import {
+  arrayRemove,
+  arrayUnion,
+  deleteField,
+  Timestamp,
+  updateDoc,
+} from 'firebase/firestore';
 
 const ImageCropper = dynamic(
   () =>
@@ -306,7 +308,7 @@ const PuzzleEditor = ({
           grid={puzzle.grid}
           save={async (alt) =>
             updateDoc(getDocRef('c', puzzle.id), {
-              alts: FieldValue.arrayUnion(alt),
+              alts: arrayUnion(alt),
             })
           }
           cancel={() => setAddingAlternate(false)}
@@ -392,7 +394,7 @@ const PuzzleEditor = ({
             updateDoc(getDocRef('c', puzzle.id), { cn: notes })
           }
           handleDelete={() =>
-            updateDoc(getDocRef('c', puzzle.id), { cn: DeleteSentinal })
+            updateDoc(getDocRef('c', puzzle.id), { cn: deleteField() })
           }
         />
         <h4>Guest Constructor</h4>
@@ -406,7 +408,7 @@ const PuzzleEditor = ({
             updateDoc(getDocRef('c', puzzle.id), { gc: gc })
           }
           handleDelete={() =>
-            updateDoc(getDocRef('c', puzzle.id), { gc: DeleteSentinal })
+            updateDoc(getDocRef('c', puzzle.id), { gc: deleteField() })
           }
         />
         <h4>Blog Post</h4>
@@ -427,7 +429,7 @@ const PuzzleEditor = ({
             updateDoc(getDocRef('c', puzzle.id), { bp: post })
           }
           handleDelete={() =>
-            updateDoc(getDocRef('c', puzzle.id), { bp: DeleteSentinal })
+            updateDoc(getDocRef('c', puzzle.id), { bp: deleteField() })
           }
         />
         <h4>Cover Image</h4>
@@ -541,7 +543,7 @@ const PuzzleEditor = ({
                   ? Timestamp.fromMillis(isPrivate)
                   : isPrivate,
               pvu: isPrivate
-                ? DeleteSentinal
+                ? deleteField()
                 : isPrivateUntil
                 ? Timestamp.fromMillis(isPrivateUntil)
                 : Timestamp.now(),
@@ -582,7 +584,7 @@ const PuzzleEditor = ({
                       <ButtonAsLink
                         onClick={() => {
                           updateDoc(getDocRef('c', puzzle.id), {
-                            ct_ans: FieldValue.arrayRemove(a),
+                            ct_ans: arrayRemove(a),
                           });
                         }}
                         text="remove"
@@ -618,7 +620,7 @@ const PuzzleEditor = ({
               }
               handleSubmit={(sol) =>
                 updateDoc(getDocRef('c', puzzle.id), {
-                  ct_ans: FieldValue.arrayUnion(sol.trim()),
+                  ct_ans: arrayUnion(sol.trim()),
                 })
               }
             />
@@ -689,7 +691,7 @@ const PuzzleEditor = ({
                     }, {} as Record<number, string>);
                     console.log(toRemove);
                     updateDoc(getDocRef('c', puzzle.id), {
-                      alts: FieldValue.arrayRemove(toRemove),
+                      alts: arrayRemove(toRemove),
                     });
                   }}
                   text="remove"

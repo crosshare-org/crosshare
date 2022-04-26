@@ -6,11 +6,11 @@ import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { Overlay } from './Overlay';
 import { FaInfoCircle } from 'react-icons/fa';
 import { useSnackbar } from './Snackbar';
-import { FieldValue, getDocRef } from '../lib/firebaseWrapper';
+import { getDocRef } from '../lib/firebaseWrapper';
 import { useCallback, useState, useContext } from 'react';
 import type { User } from 'firebase/auth';
 import { t } from '@lingui/macro';
-import { setDoc } from 'firebase/firestore';
+import { arrayRemove, arrayUnion, setDoc } from 'firebase/firestore';
 
 export const FollowButton = ({
   page,
@@ -30,12 +30,12 @@ export const FollowButton = ({
       return Promise.all([
         setDoc(
           getDocRef('prefs', loggedInAs.uid),
-          { following: FieldValue.arrayUnion(page.u) },
+          { following: arrayUnion(page.u) },
           { merge: true }
         ),
         setDoc(
           getDocRef('followers', page.u),
-          { f: FieldValue.arrayUnion(loggedInAs.uid) },
+          { f: arrayUnion(loggedInAs.uid) },
           { merge: true }
         ),
       ]).then(() => {
@@ -113,12 +113,12 @@ export const FollowButton = ({
             return Promise.all([
               setDoc(
                 getDocRef('prefs', user.uid),
-                { following: FieldValue.arrayRemove(page.u) },
+                { following: arrayRemove(page.u) },
                 { merge: true }
               ),
               setDoc(
                 getDocRef('followers', page.u),
-                { f: FieldValue.arrayRemove(user.uid) },
+                { f: arrayRemove(user.uid) },
                 { merge: true }
               ),
             ]).then(() => {

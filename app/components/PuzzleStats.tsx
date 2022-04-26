@@ -30,10 +30,10 @@ import { ButtonAsLink } from './Buttons';
 import { ColumnProps, Table } from 'react-fluid-table';
 import { Emoji } from './Emoji';
 import { CSVLink } from 'react-csv';
-import { FieldValue, getDocRef } from '../lib/firebaseWrapper';
+import { getDocRef } from '../lib/firebaseWrapper';
 import { useSnackbar } from './Snackbar';
 import { isSome } from 'fp-ts/lib/Option';
-import { updateDoc } from 'firebase/firestore';
+import { arrayUnion, updateDoc } from 'firebase/firestore';
 
 export enum StatsMode {
   AverageTime,
@@ -90,7 +90,7 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
                   text="Accept as solution"
                   onClick={() => {
                     updateDoc(getDocRef('c', props.puzzle.id), {
-                      ct_ans: FieldValue.arrayUnion(row.s),
+                      ct_ans: arrayUnion(row.s),
                     }).then(() => {
                       showSnackbar(
                         'Solution marked as accepted - it may take up to an hour for the leaderboard to update'

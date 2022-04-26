@@ -1,8 +1,9 @@
 import { LegacyPlayV } from '../lib/dbtypes';
 import { getValidatedAndDelete, setInCache } from '../lib/dbUtils';
-import { AuthProvider, getAuth, getCollection } from '../lib/firebaseWrapper';
+import { getAuth, getCollection } from '../lib/firebaseWrapper';
 import { event } from '../lib/gtag';
 import {
+  GoogleAuthProvider,
   linkWithPopup,
   OAuthProvider,
   signInWithCredential,
@@ -26,6 +27,8 @@ export const GoogleButton = ({
   }
   return <GoogleSignInButton {...props} />;
 };
+
+const AuthProvider = new GoogleAuthProvider();
 
 export const GoogleSignInButton = ({ postSignIn, text }: GoogleButtonProps) => {
   function signin() {

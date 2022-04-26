@@ -1,10 +1,10 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from './AuthContext';
-import { getDocRef, ServerTimestamp } from '../lib/firebaseWrapper';
+import { getDocRef } from '../lib/firebaseWrapper';
 import { Button } from './Buttons';
 import { useSnackbar } from './Snackbar';
 import { t } from '@lingui/macro';
-import { updateDoc } from 'firebase/firestore';
+import { serverTimestamp, updateDoc } from 'firebase/firestore';
 
 export const useDisplayName = () => {
   const ctx = useContext(AuthContext);
@@ -45,7 +45,7 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
           updateDoc(getDocRef('cp', ctx.constructorPage.id), {
             m: true,
             n: toSubmit,
-            t: ServerTimestamp,
+            t: serverTimestamp(),
           })
         );
       }
