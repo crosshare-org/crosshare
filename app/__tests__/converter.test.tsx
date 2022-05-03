@@ -2,13 +2,17 @@ import cases from 'jest-in-case';
 import fs from 'fs';
 import util from 'util';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { importFile, exportFile } from '../lib/converter';
 import { PuzzleInProgressStrictT } from '../lib/types';
 import { DBPuzzleT } from '../lib/dbtypes';
-import { TimestampClass } from '../lib/__mocks__/firebaseWrapper';
 import { fromCells } from '../lib/viewableGrid';
 import { getClueProps } from '../reducers/reducer';
+import { Timestamp } from '../lib/timestamp';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const readFile = util.promisify(fs.readFile);
 
@@ -37,7 +41,7 @@ function toDBPuzzle(pip: PuzzleInProgressStrictT): DBPuzzleT {
     a: 'Author Id',
     n: 'Author Name',
     m: false,
-    p: TimestampClass.now(),
+    p: Timestamp.now(),
     c: null,
     h: pip.height,
     w: pip.width,
