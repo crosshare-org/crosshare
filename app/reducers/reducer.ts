@@ -899,7 +899,11 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         wasEntryClick: false,
         active: moveToNextEntry(state.grid, state.active),
       };
-    } else if (key.k === KeyK.ShiftTab || key.k === KeyK.PrevEntry) {
+    } else if (
+      key.k === KeyK.ShiftTab ||
+      key.k === KeyK.PrevEntry ||
+      key.k === KeyK.ShiftEnter
+    ) {
       return {
         ...state,
         wasEntryClick: false,
@@ -1268,8 +1272,8 @@ export function builderReducer(
     if (state.repeats.size > 0) {
       warnings.push(
         'Some words are repeated (' +
-          Array.from(state.repeats).sort().join(', ') +
-          ')'
+        Array.from(state.repeats).sort().join(', ') +
+        ')'
       );
     }
     if (!state.title) {
@@ -1341,12 +1345,12 @@ export function builderReducer(
       }),
       ...(state.isContestPuzzle &&
         state.contestAnswers?.length && {
-          ct_ans: state.contestAnswers,
-          ct_prz: state.contestHasPrize || false,
-          ...(state.contestRevealDelay && {
-            ct_rv_dl: state.contestRevealDelay,
-          }),
+        ct_ans: state.contestAnswers,
+        ct_prz: state.contestHasPrize || false,
+        ...(state.contestRevealDelay && {
+          ct_rv_dl: state.contestRevealDelay,
         }),
+      }),
     };
     if (state.grid.highlighted.size) {
       puzzle.hs = Array.from(state.grid.highlighted);
@@ -1462,18 +1466,18 @@ export function puzzleReducer(
       cellsEverMarkedWrong: new Set<number>(play.we),
       ...(play &&
         play.ct_rv && {
-          contestRevealed: true,
-          contestSubmitTime: play.ct_t?.toMillis(),
-        }),
+        contestRevealed: true,
+        contestSubmitTime: play.ct_t?.toMillis(),
+      }),
       ...(play &&
         play.ct_sub && {
-          ranMetaSubmitEffects: true,
-          contestPriorSubmissions: play.ct_pr_subs,
-          contestDisplayName: play.ct_n,
-          contestSubmission: play.ct_sub,
-          contestEmail: play.ct_em,
-          contestSubmitTime: play.ct_t?.toMillis(),
-        }),
+        ranMetaSubmitEffects: true,
+        contestPriorSubmissions: play.ct_pr_subs,
+        contestDisplayName: play.ct_n,
+        contestSubmission: play.ct_sub,
+        contestEmail: play.ct_em,
+        contestSubmitTime: play.ct_t?.toMillis(),
+      }),
     };
   }
   if (isToggleClueViewAction(action)) {

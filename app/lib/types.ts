@@ -296,6 +296,7 @@ export enum KeyK {
   Tab,
   ShiftTab,
   Enter,
+  ShiftEnter,
   Backspace,
   Delete,
   Escape,
@@ -358,7 +359,7 @@ export function fromKeyboardEvent(event: {
       case 'Tab':
         return !event.shiftKey ? some(KeyK.Tab) : some(KeyK.ShiftTab);
       case 'Enter':
-        return some(KeyK.Enter);
+        return !event.shiftKey ? some(KeyK.Enter) : some(KeyK.ShiftEnter);
       case 'Backspace':
         return some(KeyK.Backspace);
       case 'Delete':
