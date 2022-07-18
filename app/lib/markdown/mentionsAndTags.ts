@@ -1,5 +1,5 @@
 import { Plugin } from 'unified';
-import { findAndReplace, PhrasingContent } from 'mdast-util-find-and-replace';
+import { findAndReplace, Replace } from 'mdast-util-find-and-replace';
 
 export const mentionsAndTags: Plugin = () => {
   return (tree) => {
@@ -16,10 +16,7 @@ export const mentionsAndTags: Plugin = () => {
   };
 };
 
-function replaceMention(
-  value: string,
-  username: string
-): PhrasingContent | string | false {
+let replaceMention: Replace = (value: string, username: string) => {
   const url = `/${username}`;
   return {
     type: 'link',
@@ -27,12 +24,9 @@ function replaceMention(
     url,
     children: [{ type: 'text', value }],
   };
-}
+};
 
-function replaceTag(
-  value: string,
-  tag: string
-): PhrasingContent | string | false {
+const replaceTag: Replace = (value: string, tag: string) => {
   const url = `/tags/${tag}`;
   return {
     type: 'link',
@@ -40,4 +34,4 @@ function replaceTag(
     url,
     children: [{ type: 'text', value }],
   };
-}
+};

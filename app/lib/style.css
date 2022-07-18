@@ -323,8 +323,8 @@ div.paragraph + div.paragraph {
   width: 100%;
 }
 .twemoji {
-  width: '1em';
-  height: '1em';
-  margin: '0 .05em 0 .1em';
-  vertical-align: '-0.1em';
+  width: 1em;
+  height: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
 }

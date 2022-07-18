@@ -38,7 +38,7 @@ export const getCollection = (c: string) => {
         }
         return undefined;
       }),
-    fromFirestore: (s: any) => s,
+    fromFirestore: (s: any) => s.data(),
   });
 };
 

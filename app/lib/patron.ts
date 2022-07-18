@@ -10,23 +10,17 @@ let lastUpdated: number | null = null;
 
 const getPatronList = async (): Promise<Array<string>> => {
   console.log('updating patron list');
-  const donations = await getCollection('donations')
-    .doc('donations')
-    .get()
-    .then(async (result) => {
-      const data = result.data();
-      const validationResult = DonationsListV.decode(data);
-      if (isRight(validationResult)) {
-        return validationResult.right;
-      } else {
-        console.error(PathReporter.report(validationResult).join(','));
-        throw new Error('Malformed donations list');
-      }
-    });
+  const donations = await getCollection('donations').doc('donations').get();
+  const data = donations.data();
+  const validationResult = DonationsListV.decode(data);
+  if (!isRight(validationResult)) {
+    console.error(PathReporter.report(validationResult).join(','));
+    throw new Error('Malformed donations list');
+  }
   const now = Date.now();
   lastUpdated = now;
 
-  const byEmail = donationsByEmail(donations);
+  const byEmail = donationsByEmail(validationResult.right);
   const recents = Array.from(byEmail.entries()).filter(([_email, row]) => {
     return now - row.date.getTime() <= 32 * 24 * 60 * 60 * 1000;
   });

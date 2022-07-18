@@ -49,7 +49,7 @@ export const getCollection = (collectionName: string) =>
         }
         return undefined;
       }),
-    fromFirestore: (s: any) => s,
+    fromFirestore: (s: any) => s.data(),
   });
 
 export function getValidatedCollection<V>(
