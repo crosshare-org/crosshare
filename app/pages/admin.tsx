@@ -1,4 +1,4 @@
-import { FormEvent, useState, useEffect, useCallback } from 'react';
+import { FormEvent, useState, useCallback, useRef } from 'react';
 import Head from 'next/head';
 import NextJSRouter from 'next/router';
 
@@ -11,21 +11,18 @@ import { PuzzleResult, puzzleFromDB } from '../lib/types';
 import {
   DailyStatsT,
   DailyStatsV,
-  DBPuzzleV,
   getDateString,
-  CommentForModerationWithIdT,
-  CommentForModerationV,
   CommentForModerationWithIdV,
   DonationsListV,
+  DBPuzzleWithIdV,
 } from '../lib/dbtypes';
-import { getFromSessionOrDB, mapEachResult } from '../lib/dbUtils';
 import {
   getCollection,
   getDocRef,
   getValidatedCollection,
 } from '../lib/firebaseWrapper';
 import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
-import { ConstructorPageV, ConstructorPageT } from '../lib/constructorPage';
+import { ConstructorPageWithIdV } from '../lib/constructorPage';
 import { useSnackbar } from '../components/Snackbar';
 import { moderateComments } from '../lib/comments';
 import { slugify } from '../lib/utils';
@@ -33,7 +30,6 @@ import {
   useCollectionData,
   useDocumentDataOnce,
 } from 'react-firebase-hooks/firestore';
-import { ErrorPage } from '../components/ErrorPage';
 import {
   arrayUnion,
   deleteDoc,
@@ -45,6 +41,8 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import { TagList } from '../components/TagList';
+import { ConstructorNotes } from '../components/ConstructorNotes';
 
 function paypalConvert(input: string): string {
   const donated = parseFloat(input);
@@ -53,37 +51,55 @@ function paypalConvert(input: string): string {
 }
 
 const PuzzleListItem = (props: PuzzleResult) => {
+  function markAsModerated(featured: boolean) {
+    const update = { m: true, c: null, f: featured };
+    updateDoc(getDocRef('c', props.id), update).then(() => {
+      console.log('moderated');
+    });
+  }
+
   return (
-    <li key={props.id}>
+    <li key={props.id} css={{ marginBottom: '2em' }}>
       <Link href={`/crosswords/${props.id}/${slugify(props.title)}`}>
         {props.title}
       </Link>{' '}
       by {props.authorName}
-      <span css={{ color: 'var(--error)' }}>
-        {props.isPrivate
-          ? ' PRIVATE'
-          : props.isPrivateUntil && props.isPrivateUntil > Date.now()
-          ? ' PRIVATE until ' + new Date(props.isPrivateUntil).toISOString()
-          : ''}
-      </span>
+      <TagList tags={(props.userTags || []).concat(props.autoTags || [])} />
+      {props.constructorNotes ? (
+        <div css={{ textAlign: 'center', overflowWrap: 'break-word' }}>
+          <ConstructorNotes notes={props.constructorNotes} />
+        </div>
+      ) : (
+        ''
+      )}
+      {props.blogPost ? (
+        <div css={{ margin: '1em 0', overflowWrap: 'break-word' }}>
+          <Markdown css={{ textAlign: 'left' }} text={props.blogPost} />
+        </div>
+      ) : (
+        ''
+      )}
+      <div css={{ marginBottom: '1em' }}>
+        <button
+          disabled={!!props.isPrivate}
+          onClick={() => markAsModerated(true)}
+        >
+          Set as Featured
+        </button>
+      </div>
+      <div css={{ marginBottom: '1em' }}>
+        <button onClick={() => markAsModerated(false)}>
+          Mark as Moderated
+        </button>
+      </div>
     </li>
   );
 };
 
 export default requiresAdmin(() => {
-  const [unmoderated, setUnmoderated] = useState<Array<PuzzleResult> | null>(
-    null
-  );
-  const [commentsForModeration, setCommentsForModeration] =
-    useState<Array<CommentForModerationWithIdT> | null>(null);
-  const [stats, setStats] = useState<DailyStatsT | null>(null);
-  const [error, setError] = useState(false);
-  const [mailErrors, setMailErrors] = useState(0);
   const [commentIdsForDeletion, setCommentIdsForDeletion] = useState<
     Set<string>
   >(new Set());
-  const [pagesForModeration, setPagesForModeration] =
-    useState<Array<ConstructorPageT> | null>(null);
   const [uidToUnsub, setUidToUnsub] = useState('');
   const [donationEmail, setDonationEmail] = useState('');
   const [donationAmount, setDonationAmount] = useState('');
@@ -93,86 +109,60 @@ export default requiresAdmin(() => {
   const [donationUserId, setDonationUserId] = useState('');
   const { showSnackbar } = useSnackbar();
 
-  useEffect(() => {
-    console.log('loading admin content');
-    const now = new Date();
-    const dateString = getDateString(now);
-    Promise.all([
-      getDocs(
-        query(getCollection('mail'), where('delivery.error', '!=', null))
-      ),
-      getFromSessionOrDB({
-        collection: 'ds',
-        docId: dateString,
-        validator: DailyStatsV,
-        ttl: 1000 * 60 * 30,
-      }),
-      mapEachResult(
-        query(
-          getCollection('c'),
-          where('m', '==', false),
-          where('pvu', '<=', Timestamp.now())
-        ),
-        DBPuzzleV,
-        (dbpuzz, docId) => {
-          return { ...puzzleFromDB(dbpuzz), id: docId };
-        }
-      ),
-      mapEachResult(
-        getCollection('cfm'),
-        CommentForModerationV,
-        (cfm, docId) => {
-          return { ...cfm, i: docId };
-        }
-      ),
-      mapEachResult(
-        query(getCollection('cp'), where('m', '==', true)),
-        ConstructorPageV,
-        (cp, docId) => {
-          return { ...cp, id: docId };
-        }
-      ),
-    ])
-      .then(([mailErrors, stats, unmoderated, cfm, cps]) => {
-        unmoderated.sort(
-          (a, b) => (a.isPrivateUntil || 0) - (b.isPrivateUntil || 0)
-        );
-        setMailErrors(mailErrors?.size || 0);
-        setStats(stats);
-        setUnmoderated(unmoderated);
-        setCommentsForModeration(cfm);
-        setPagesForModeration(cps);
-      })
-      .catch((reason) => {
-        console.error(reason);
-        setError(true);
-      });
-  }, []);
+  const puzzleCollection = useRef(
+    query(
+      getValidatedCollection('c', DBPuzzleWithIdV, 'id'),
+      where('m', '==', false),
+      where('pvu', '<=', Timestamp.now())
+    )
+  );
+  const [dbUnmoderated] = useCollectionData(puzzleCollection.current);
+  const unmoderated: PuzzleResult[] = (dbUnmoderated || [])
+    .map((x) => ({ ...puzzleFromDB(x), id: x.id }))
+    .sort((a, b) => (a.isPrivateUntil || 0) - (b.isPrivateUntil || 0));
+
+  const now = new Date();
+  const dateString = getDateString(now);
+  const statsCollection = useRef(
+    doc(getValidatedCollection('ds', DailyStatsV), dateString)
+  );
+  const [stats] = useDocumentDataOnce(statsCollection.current);
+
+  const pagesCollection = useRef(
+    query(
+      getValidatedCollection('cp', ConstructorPageWithIdV, 'id'),
+      where('m', '==', true)
+    )
+  );
+  const [pagesForModeration] = useCollectionData(pagesCollection.current);
+
+  const forModerationCollection = useRef(
+    getValidatedCollection('cfm', CommentForModerationWithIdV, 'i')
+  );
+  const [commentsForModeration] = useCollectionData(
+    forModerationCollection.current
+  );
+
+  const mailCollection = useRef(
+    query(getCollection('mail'), where('delivery.error', '!=', null))
+  );
+  const [mailErrors] = useCollectionData(mailCollection.current);
+
+  const automoderatedCollection = useRef(
+    getValidatedCollection('automoderated', CommentForModerationWithIdV, 'i')
+  );
+  const [automoderated] = useCollectionData(automoderatedCollection.current);
+
+  const donationsCollection = useRef(
+    doc(getValidatedCollection('donations', DonationsListV), 'donations')
+  );
+  const [donations] = useDocumentDataOnce(donationsCollection.current);
 
   const goToPuzzle = useCallback((_date: Date, puzzle: string | null) => {
     if (puzzle) {
       NextJSRouter.push('/crosswords/' + puzzle);
     }
   }, []);
-
-  const [automoderated] = useCollectionData(
-    getValidatedCollection('automoderated', CommentForModerationWithIdV, 'i')
-  );
-
-  const [donations] = useDocumentDataOnce(
-    doc(getValidatedCollection('donations', DonationsListV), 'donations')
-  );
-
-  if (error) {
-    return <ErrorPage title="Error loading admin content" />;
-  }
-  if (
-    unmoderated === null ||
-    commentsForModeration === null ||
-    pagesForModeration === null
-  ) {
-    return <div>Loading admin content...</div>;
-  }
 
   function titleForId(stats: DailyStatsT, crosswordId: string): string {
     const forPuzzle = stats.i?.[crosswordId];
@@ -201,7 +191,6 @@ export default requiresAdmin(() => {
         await setDoc(getDocRef('cp', cp.id), { m: false }, { merge: true });
       }
     }
-    setPagesForModeration([]);
   }
 
   async function doModerateComments(e: FormEvent) {
@@ -215,7 +204,6 @@ export default requiresAdmin(() => {
       (cid) => deleteDoc(getDocRef('cfm', cid)),
       (puzzleId, update) => updateDoc(getDocRef('c', puzzleId), update)
     );
-    setCommentsForModeration([]);
   }
 
   function setCommentForDeletion(commentId: string, checked: boolean) {
@@ -235,9 +223,9 @@ export default requiresAdmin(() => {
       </Head>
       <DefaultTopBar />
       <div css={{ margin: '1em' }}>
-        {mailErrors ? (
+        {mailErrors?.length ? (
           <div>
-            <h4>There are {mailErrors} mail errors!</h4>
+            <h4>There are {mailErrors.length} mail errors!</h4>
             <Button onClick={retryMail} text="Retry send" />
           </div>
         ) : (
@@ -246,7 +234,7 @@ export default requiresAdmin(() => {
         <h4 css={{ borderBottom: '1px solid var(--black)' }}>
           Comment Moderation
         </h4>
-        {commentsForModeration.length === 0 ? (
+        {!commentsForModeration || commentsForModeration.length === 0 ? (
           <div>No comments are currently awaiting moderation.</div>
         ) : (
           <form onSubmit={doModerateComments}>
@@ -304,7 +292,7 @@ export default requiresAdmin(() => {
         <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>
           Page Moderation
         </h4>
-        {pagesForModeration.length === 0 ? (
+        {!pagesForModeration || pagesForModeration.length === 0 ? (
           <div>No pages need moderation.</div>
         ) : (
           <form onSubmit={moderatePages}>
@@ -322,7 +310,7 @@ export default requiresAdmin(() => {
         <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>
           Unmoderated (oldest first)
         </h4>
-        {unmoderated.length === 0 ? (
+        {!unmoderated || unmoderated.length === 0 ? (
           <div>No puzzles are currently awaiting moderation.</div>
         ) : (
           <>

@@ -28,6 +28,10 @@ export const ConstructorPageV = t.intersection([
     sig: t.string,
   }),
 ]);
+export const ConstructorPageWithIdV = t.intersection([
+  ConstructorPageV,
+  t.type({ id: t.string }),
+]);
 export interface ConstructorPageT
   extends Omit<t.TypeOf<typeof ConstructorPageV>, 't'> {
   id: string;

@@ -226,6 +226,11 @@ export const DBPuzzleV = t.intersection([
     ]),
   ]),
 ]);
+export const DBPuzzleWithIdV = t.intersection([
+  DBPuzzleV,
+  t.type({ id: t.string }),
+]);
+
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
 
 export const AdminSettingsV = t.type({
