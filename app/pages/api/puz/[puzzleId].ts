@@ -4,7 +4,7 @@ import { getPuzzle } from '../../../lib/puzzleCache';
 
 export default async function puz(req: NextApiRequest, res: NextApiResponse) {
   const { puzzleId } = req.query;
-  if (!puzzleId || Array.isArray(puzzleId)) {
+  if (Array.isArray(puzzleId) || !puzzleId) {
     return res
       .status(404)
       .json({ statusCode: 404, message: 'bad puzzle params' });

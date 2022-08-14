@@ -5,7 +5,7 @@ const db = getDB(true);
 
 export default async function clues(req: NextApiRequest, res: NextApiResponse) {
   const { word } = req.query;
-  if (!word || Array.isArray(word)) {
+  if (Array.isArray(word) || !word) {
     return res.status(404).json({ statusCode: 404, message: 'bad word params' });
   }
   const clues = await getClues(db, word.toUpperCase());

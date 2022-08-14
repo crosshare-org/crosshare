@@ -39,7 +39,7 @@ export const EmbedOverlay = ({
       if (didCancel) {
         return;
       }
-      if (!res.exists) {
+      if (!res.exists()) {
         setLoadingOptions(false);
         return;
       }

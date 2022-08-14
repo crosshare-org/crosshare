@@ -89,7 +89,7 @@ export default function CrosshareApp({
   const initAudioContext = useCallback(() => {
     if (!audioContext) {
       const constructor =
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/strict-boolean-expressions
         window.AudioContext || (window as any).webkitAudioContext;
       setAudioContext(new constructor());
     }
@@ -122,6 +122,7 @@ export default function CrosshareApp({
   const firstRender = useRef(true);
   if (firstRender.current) {
     firstRender.current = false;
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (pageProps.translation) {
       i18n.load(locale || 'en', pageProps.translation);
       i18n.activate(locale || 'en');
@@ -131,6 +132,7 @@ export default function CrosshareApp({
   }
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (pageProps.translation && locale) {
       i18n.load(locale, pageProps.translation);
       i18n.activate(locale);

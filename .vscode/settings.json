@@ -1,7 +1,10 @@
 {
-    "typescript.tsdk": "./app/node_modules/typescript/lib",
-    "editor.formatOnSave": false,
-    "editor.codeActionsOnSave": {
-        "source.fixAll": true
-    }
+  "typescript.tsdk": "./app/node_modules/typescript/lib",
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "eslint.workingDirectories": [
+    { "directory": "./app", "changeProcessCWD": true }
+  ]
 }

@@ -41,6 +41,7 @@ export class Timestamp {
 }
 
 export const isTimestamp = (u: unknown): u is Timestamp =>
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   u ? (u as Timestamp).toMillis !== undefined : false;
 
 const validateTimestamp: t.Validate<unknown, Timestamp> = (i, c) => {

@@ -12,7 +12,7 @@ export default async function constructorFeed(
   res: NextApiResponse
 ) {
   const { username } = req.query;
-  if (!username || Array.isArray(username)) {
+  if (Array.isArray(username) || !username) {
     return res.status(404).json({ statusCode: 404, message: 'bad params' });
   }
   let dbres;

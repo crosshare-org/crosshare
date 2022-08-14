@@ -78,11 +78,11 @@ export async function getPossiblyStalePlay(
   puzzleId: string
 ): Promise<PlayWithoutUserT | null> {
   const cached = getPlayFromCache(user, puzzleId);
-  if (cached !== undefined) {
+  if (cached !== undefined && cached !== null) {
     return cached;
   }
   if (!user) {
-    return cached || null;
+    return null;
   }
   return getPlayFromDB(user, puzzleId);
 }
@@ -94,7 +94,7 @@ export async function getPlayFromDB(
   console.log(`getting play p/${puzzleId}-${user.uid} from db`);
   const dbres = await getDoc(getDocRef('p', `${puzzleId}-${user.uid}`));
 
-  if (!dbres.exists) {
+  if (!dbres.exists()) {
     cachePlay(user, puzzleId, null, true);
     return null;
   }

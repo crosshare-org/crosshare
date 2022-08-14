@@ -129,7 +129,7 @@ const DBPlayLoader = (
     if (doc === undefined) {
       return [undefined, undefined];
     }
-    if (!doc.exists) {
+    if (!doc.exists()) {
       return [null, undefined];
     }
     const validationResult = PlayWithoutUserV.decode(doc.data());

@@ -393,6 +393,7 @@ export type ArticlePageProps = PageErrorProps | ArticleT;
 export const getArticlePageProps: GetServerSideProps<
   ArticlePageProps
 > = async ({ res, params }): Promise<{ props: ArticlePageProps }> => {
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!params?.slug || Array.isArray(params.slug)) {
     res.statusCode = 404;
     return { props: { error: 'bad article params' } };
@@ -487,6 +488,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
 
   // If the title slug is missing or not correct we need to redirect
   const correctSlug = slugify(puzzle.title);
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!params?.ignoreRedirect && titleSlug !== correctSlug) {
     return {
       redirect: {
@@ -504,10 +506,10 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     profilePicture = await getStorageUrl(
       `users/${puzzle.constructorPage.u}/profile.jpg`
     );
-    coverImage = await getStorageUrl(
-      `users/${puzzle.constructorPage.u}/${puzzle.id}/cover.jpg`
-    );
   }
+  coverImage = await getStorageUrl(
+    `users/${puzzle.authorId}/${puzzle.id}/cover.jpg`
+  );
 
   let nextPuzzle: NextPuzzleLink | null = null;
   const today = new Date();

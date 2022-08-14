@@ -206,7 +206,7 @@ export function useAuth(): AuthContextValue {
   const [accountPrefsDoc, loadingAccountPrefs, accountPrefsDBError] =
     useDocument(prefsDocRef);
   const [accountPrefs, accountPrefsDecodeError] = useMemo(() => {
-    if (!accountPrefsDoc?.exists) {
+    if (!accountPrefsDoc?.exists()) {
       return [undefined, undefined];
     }
     const validationResult = AccountPrefsV.decode(accountPrefsDoc.data());

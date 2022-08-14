@@ -178,7 +178,9 @@ export async function handlePuzzleUpdate(
   updateTagsIfNeeded(puzzleId, after);
 
   if (before) {
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (after.pv) {
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (!before.pv) {
         // been marked private
         await deleteNotifications(puzzleId, isNewPuzzleNotification);

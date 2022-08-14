@@ -46,6 +46,7 @@ async function notificationsForPuzzleCreation(
   puzzleId: string
 ): Promise<Array<NewPuzzleNotificationT>> {
   console.log('checking for puzzle creation', `followers/${puzzle.a}`);
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (puzzle.pv) {
     return [];
   }
@@ -77,6 +78,7 @@ export async function notificationsForPuzzleChange(
   after: DBPuzzleT,
   puzzleId: string
 ): Promise<Array<NotificationT>> {
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (before === null || (before.pv === true && !after.pv)) {
     return notificationsForPuzzleCreation(after, puzzleId);
   }

@@ -8,9 +8,10 @@
     "plugin:jsx-a11y/recommended",
     "plugin:@typescript-eslint/recommended",
     "next",
-    "next/babel",
     "prettier"
   ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": { "project": "./tsconfig.json"},
   "plugins": ["@emotion"],
   "rules": {
     "@emotion/pkg-renaming": "error",
@@ -29,6 +30,14 @@
     "react/display-name": "off",
     "linebreak-style": ["error", "unix"],
     "semi": ["error", "always"],
+    "@typescript-eslint/strict-boolean-expressions": [
+      "error",
+      {
+        "allowNullableBoolean": true,
+        "allowNullableNumber": true,
+        "allowNullableString": true
+      }
+    ],
     "@typescript-eslint/no-unused-vars": [
       "error",
       {

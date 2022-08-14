@@ -7,7 +7,7 @@ export default async function userinfo(
   res: NextApiResponse
 ) {
   const { userId } = req.query;
-  if (!userId || Array.isArray(userId)) {
+  if (Array.isArray(userId) || !userId) {
     return res
       .status(404)
       .json({ statusCode: 404, message: 'bad userid param' });

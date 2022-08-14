@@ -102,7 +102,7 @@ export async function getFromDB<A>(
   validator: t.Type<A>
 ): Promise<A> {
   const dbres = await getDoc(getDocRef(collection, docId));
-  if (!dbres.exists) {
+  if (!dbres.exists()) {
     return Promise.reject('Missing doc');
   }
   const validationResult = validator.decode(dbres.data());
@@ -155,7 +155,7 @@ export async function getFromSessionOrDB<A>({
   }
   console.log('loading ' + sessionKey + ' from db');
   const dbres = await getDoc(getDocRef(collection, docId));
-  if (!dbres.exists) {
+  if (!dbres.exists()) {
     console.log(sessionKey + ' is non existent');
     return null;
   }

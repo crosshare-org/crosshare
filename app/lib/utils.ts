@@ -122,7 +122,7 @@ export function checkGrid(
       break;
     }
 
-    if (answers && cell !== answers[i]) {
+    if (answers.length && cell !== answers[i]) {
       success = false;
       // This cell is wrong, but see if any alternate solutions that have it are satisfied
       for (const alt of alts) {

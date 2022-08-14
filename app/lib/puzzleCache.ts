@@ -19,7 +19,7 @@ export async function getPuzzle(
   }
   console.log(`loading ${puzzleId} from db`);
   const dbres = await getDoc(getDocRef('c', puzzleId));
-  if (!dbres.exists) {
+  if (!dbres.exists()) {
     return undefined;
   }
   const validationResult = DBPuzzleV.decode(dbres.data());

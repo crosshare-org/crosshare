@@ -37,6 +37,7 @@ const MyError = ({
   if (isLocalStorageError(err)) {
     return <LocalStorageErrorPage />;
   }
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!hasGetInitialPropsRun && err && typeof Sentry !== 'undefined') {
     // getInitialProps is not called in case of
     // https://github.com/vercel/next.js/issues/8592. As a workaround, we pass

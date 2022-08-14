@@ -52,6 +52,7 @@ const ImageCropper = dynamic(
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();
   const { puzzleId } = router.query;
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!puzzleId) {
     return <div />;
   }
@@ -74,7 +75,7 @@ export const PuzzleLoader = ({
     if (doc === undefined) {
       return [undefined, undefined];
     }
-    if (!doc.exists) {
+    if (!doc.exists()) {
       return [null, undefined];
     }
     const validationResult = DBPuzzleV.decode(
@@ -448,16 +449,19 @@ const PuzzleEditor = ({
           ''
         )}
         <h3 css={{ marginTop: '1em' }}>Privacy</h3>
-        {puzzle.isPrivate ? (
-          <p>This puzzle is currently private.</p>
-        ) : puzzle.isPrivateUntil && puzzle.isPrivateUntil > Date.now() ? (
-          <p>
-            This puzzle is currently private until{' '}
-            {formatDistanceToNow(new Date(puzzle.isPrivateUntil))} from now.
-          </p>
-        ) : (
-          <p>This puzzle is currently public.</p>
-        )}
+        {
+          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+          puzzle.isPrivate ? (
+            <p>This puzzle is currently private.</p>
+          ) : puzzle.isPrivateUntil && puzzle.isPrivateUntil > Date.now() ? (
+            <p>
+              This puzzle is currently private until{' '}
+              {formatDistanceToNow(new Date(puzzle.isPrivateUntil))} from now.
+            </p>
+          ) : (
+            <p>This puzzle is currently public.</p>
+          )
+        }
         <p>
           Private puzzles don&apos;t appear on your constructor blog and
           aren&apos;t eligible to be featured on the Crosshare homepage or in
@@ -469,6 +473,7 @@ const PuzzleEditor = ({
             <input
               css={{ marginRight: '1em' }}
               type="checkbox"
+              // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
               checked={isPrivate ? true : false}
               onChange={(e) => {
                 if (!e.target.checked) {
@@ -542,6 +547,7 @@ const PuzzleEditor = ({
                 typeof isPrivate === 'number'
                   ? Timestamp.fromMillis(isPrivate)
                   : isPrivate,
+              // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
               pvu: isPrivate
                 ? deleteField()
                 : isPrivateUntil

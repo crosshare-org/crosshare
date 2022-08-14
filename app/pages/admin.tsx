@@ -81,6 +81,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
       )}
       <div css={{ marginBottom: '1em' }}>
         <button
+          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
           disabled={!!props.isPrivate}
           onClick={() => markAsModerated(true)}
         >
@@ -310,7 +311,7 @@ export default requiresAdmin(() => {
         <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>
           Unmoderated (oldest first)
         </h4>
-        {!unmoderated || unmoderated.length === 0 ? (
+        {unmoderated.length === 0 ? (
           <div>No puzzles are currently awaiting moderation.</div>
         ) : (
           <>
