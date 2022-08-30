@@ -7,6 +7,9 @@ cluedata
 peter-broda-wordlist__scored.txt
 ExpandedNames_unscored.txt
 spreadthewordlist.txt
+email.txt
+accounts.csv
+accountsTransformed.csv
 cluedata.txt
 .DS*
 .firebase
