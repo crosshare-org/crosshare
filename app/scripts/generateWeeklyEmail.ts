@@ -154,7 +154,7 @@ ${topMinis.slice(0,7).map(([_, text, mdLink]) =>
   ).join('\n\n')}
 
 ONE SENTENCE SIGN OFF / SIGNATURE`;
-  writeFile('email.md', md).then(() => {
+  writeFile('email.txt', md).then(() => {
     console.log('wrote md');
   });
 }
