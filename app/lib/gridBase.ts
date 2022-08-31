@@ -27,6 +27,18 @@ export interface GridBase<Entry extends EntryBase> {
   hBars: Set<number>;
 }
 
+export function hasUnches<Entry extends EntryBase>(grid: GridBase<Entry>): boolean {
+  for (const crosses of grid.entriesByCell) {
+    if (crosses[0].entryIndex !== null && crosses[1].entryIndex === null) {
+      return true;
+    }
+    if (crosses[0].entryIndex === null && crosses[1].entryIndex !== null) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function entriesByCell<Entry extends EntryBase>(
   grid: GridBase<Entry>,
   pos: Position
@@ -133,9 +145,6 @@ export function entryAndCrossAtPosition<Entry extends EntryBase>(
   pos: PosAndDir
 ): [Entry | null, Entry | null] {
   const entries = entriesByCell(grid, pos);
-  if (!entries) {
-    return [null, null];
-  }
   const currentEntry = entries[pos.dir];
   const currentCross =
     entries[pos.dir === Direction.Across ? Direction.Down : Direction.Across];

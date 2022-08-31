@@ -136,7 +136,7 @@ import { importFile, exportFile, ExportProps } from '../lib/converter';
 import { getAutofillWorker } from '../lib/workerLoader';
 import type { User } from 'firebase/auth';
 
-let worker: Worker;
+let worker: Worker | null = null;
 
 type BuilderProps = PartialBy<
   Omit<
@@ -454,6 +454,7 @@ const ImportPuzForm = (props: { dispatch: Dispatch<ImportPuzAction> }) => {
     }
     const fileReader = new FileReader();
     fileReader.onloadend = () => {
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (!fileReader.result) {
         setError('No file result');
       } else if (typeof fileReader.result === 'string') {

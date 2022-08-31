@@ -61,6 +61,7 @@ export default function BuilderPage() {
   let heroContent: ReactNode;
   if (ctx.loading) {
     heroContent = <p>Checking if you have an existing account...</p>;
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   } else if (loginButton) {
     heroContent = (
       <>

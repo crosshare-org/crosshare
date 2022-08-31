@@ -34,6 +34,7 @@ type PageProps = FeaturedPageProps | ErrorProps;
 export const PAGE_SIZE = 20;
 
 const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!params?.pageNumber || Array.isArray(params.pageNumber)) {
     return { props: { error: 'Bad params' } };
   }

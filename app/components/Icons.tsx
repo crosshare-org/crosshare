@@ -347,8 +347,8 @@ export const PrefillIcon = ({
   }
   return (
     <svg
-      width={props.width || '1em'}
-      height={props.height || '1em'}
+      width={props.width !== undefined ? props.width : '1em'}
+      height={props.height !== undefined ? props.height : '1em'}
       viewBox="0 0 100 100"
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
@@ -373,8 +373,8 @@ export const SymmetryIcon = ({
 }: IconProps & { type: Symmetry }) => {
   return (
     <svg
-      width={props.width || '1em'}
-      height={props.height || '1em'}
+      width={props.width !== undefined ? props.width : '1em'}
+      height={props.height !== undefined ? props.height : '1em'}
       viewBox="0 0 100 100"
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
@@ -537,8 +537,8 @@ export const Logo = (props: IconProps & { notificationCount: number }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.width || '1em'}
-      height={props.height || '1em'}
+      width={props.width !== undefined ? props.width : '1em'}
+      height={props.height !== undefined ? props.height : '1em'}
       viewBox="0 0 16 16"
     >
       <BlankLogo />

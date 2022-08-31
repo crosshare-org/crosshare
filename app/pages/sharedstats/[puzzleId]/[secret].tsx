@@ -21,8 +21,10 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 }) => {
   const secret = params?.secret;
   if (
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     !params?.puzzleId ||
     Array.isArray(params.puzzleId) ||
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     !secret ||
     Array.isArray(secret)
   ) {

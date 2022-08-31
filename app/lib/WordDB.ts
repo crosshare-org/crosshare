@@ -65,6 +65,7 @@ export const useWordDB = (
         if (didCancel) {
           return;
         }
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         if (db) {
           console.log('loaded');
           if (validate) {

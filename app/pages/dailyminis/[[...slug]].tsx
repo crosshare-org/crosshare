@@ -38,6 +38,7 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
   const slug = params?.slug;
   let year: number;
   let month: number;
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!slug) {
     const today = new Date();
     year = today.getUTCFullYear();

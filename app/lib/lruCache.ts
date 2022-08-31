@@ -27,7 +27,7 @@ export class LruCache<T> {
 
   public get(key: string): T | undefined {
     const entry = this.values.get(key);
-    if (entry) {
+    if (entry !== undefined) {
       // re-insert for LRU strategy
       this.values.delete(key);
       this.values.set(key, entry);

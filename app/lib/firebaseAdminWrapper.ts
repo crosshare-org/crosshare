@@ -31,13 +31,15 @@ const firestore = () => getFirestore(getAdminApp());
 export const getCollection = (c: string) => {
   const db = firestore();
   return db.collection(c).withConverter({
-    toFirestore: (data: any) =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    toFirestore: (data: any): Record<string, unknown> =>
       cloneDeepWith(data, (val) => {
         if (isTimestamp(val)) {
           return FBTimestamp.fromMillis(val.toMillis());
         }
         return undefined;
       }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fromFirestore: (s: any) => s.data(),
   });
 };

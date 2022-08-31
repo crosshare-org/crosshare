@@ -7,6 +7,7 @@ import { ClueListT, parseClueList } from '../lib/ginsbergCommon';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const NYTIcon = ({ row }: { row: any }) => {
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (row?.n) {
     return <FaCheck />;
   }
@@ -58,6 +59,7 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
           console.log(e);
           setError(true);
         });
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (!didCancel && res) {
         const clues = orderBy(
           parseClueList(res).map((c) => {

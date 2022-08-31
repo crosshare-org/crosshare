@@ -39,6 +39,7 @@ export const GoogleSignInButton = ({ postSignIn, text }: GoogleButtonProps) => {
           category: 'engagement',
           label: 'google',
         });
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         if (userCredential.user && postSignIn) {
           return postSignIn(userCredential.user);
         }
@@ -77,6 +78,7 @@ export const GoogleLinkButton = ({
           category: 'engagement',
           label: 'google',
         });
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         if (userCredential.user && postSignIn) {
           return postSignIn(userCredential.user);
         }
@@ -102,6 +104,7 @@ export const GoogleLinkButton = ({
           async (value: UserCredential) => {
             console.log('signed in as new user ' + value.user?.uid);
             const newUser = value.user;
+            // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
             if (!newUser) {
               throw new Error('missing new user after link');
             }

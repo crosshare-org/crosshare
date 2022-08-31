@@ -17,6 +17,7 @@ import { getDocRef } from '../../lib/firebaseWrapper';
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();
   const { puzzleId } = router.query;
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!puzzleId) {
     return <div />;
   }
@@ -39,7 +40,7 @@ export const PuzzleLoader = ({
     if (doc === undefined) {
       return [undefined, undefined];
     }
-    if (!doc.exists) {
+    if (!doc.exists()) {
       return [null, undefined];
     }
     const validationResult = DBPuzzleV.decode(

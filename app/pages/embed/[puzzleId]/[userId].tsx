@@ -21,6 +21,7 @@ const gssp: GetServerSideProps<PuzzlePageProps> = async ({
     return props;
   }
 
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!params?.userId || Array.isArray(params.userId)) {
     return props;
   }

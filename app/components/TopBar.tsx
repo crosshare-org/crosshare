@@ -113,7 +113,7 @@ const TopBarDropDownLinkContents = (props: TopBarDropDownLinkCommonProps) => {
         }}
       >
         {props.text}
-        {props.shortcutHint ? (
+        {props.shortcutHint !== undefined ? (
           <span
             css={{
               display: 'none',
@@ -346,13 +346,14 @@ export const TopBar = ({
   const filtered = notifications?.filter((n) => n.t.toDate() <= now);
   const [showingNotifications, setShowingNotifications] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
+  const notificationsButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleClickOutside = useCallback(
     (event: Event) => {
       if (
         showingNotifications &&
-        notificationsRef.current &&
-        !notificationsRef.current.contains(event.target as Node)
+        !notificationsRef.current?.contains(event.target as Node) &&
+        !notificationsButtonRef.current?.contains(event.target as Node)
       ) {
         setShowingNotifications(false);
       }
@@ -367,9 +368,9 @@ export const TopBar = ({
   }, [filtered]);
 
   useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [handleClickOutside]);
 
@@ -436,6 +437,7 @@ export const TopBar = ({
             ) : filtered?.length && !showingNotifications ? (
               <button
                 type="button"
+                ref={notificationsButtonRef}
                 onClick={() => setShowingNotifications(true)}
                 css={[
                   ButtonResetCSS,

@@ -191,7 +191,7 @@ class PuzReader {
       tryAnotherExtension = this.readExtension();
     }
 
-    if (this.rebusKey && this.rebusMap) {
+    if (this.rebusMap) {
       for (let i = 0; i < this.rebusMap.length; i += 1) {
         if (this.rebusMap[i]) {
           // @ts-expect-error

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as t from 'io-ts';
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { firebaseConfig } from '../firebaseConfig';
@@ -35,7 +36,7 @@ if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR) {
   connectFirestoreEmulator(db, 'localhost', 8080);
 }
 
-export const getDocId = (collection: string) => doc(db, collection).id;
+export const getDocId = (collectionName: string) => doc(collection(db, collectionName)).id;
 
 export const getAuth = () => gA(App);
 export const getStorage = () => gS(App);
@@ -58,7 +59,7 @@ export function getValidatedCollection<V>(
   idField: string | null = null
 ) {
   return collection(db, collectionName).withConverter({
-    toFirestore: (data: any) =>
+    toFirestore: (data: any): Record<string, unknown> =>
       cloneDeepWith(data, (val) => {
         if (isTimestamp(val)) {
           return FBTimestamp.fromMillis(val.toMillis());
@@ -98,6 +99,7 @@ export const setUpForSignInAnonymously = (_app: FirebaseApp, _user: User) => {
 
 export const signInAnonymously = async () => {
   const userCredential = await sIA(getAuth());
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!userCredential.user) {
     throw new Error('Logged in anonymously but no user in result');
   }

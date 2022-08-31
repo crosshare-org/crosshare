@@ -15,6 +15,7 @@ import { slugify } from '../../../lib/utils';
 export default requiresAdmin(() => {
   const router = useRouter();
   const { slug } = router.query;
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!slug) {
     return <div />;
   }

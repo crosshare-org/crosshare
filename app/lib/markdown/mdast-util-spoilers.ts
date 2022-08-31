@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Extension } from 'mdast-util-from-markdown';
 
 const enterSpoiler = function (this: any, token: any) {

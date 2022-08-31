@@ -91,6 +91,7 @@ export function requiresAuth<T>(WrappedComponent: React.ComponentType<T>) {
   return (props: T & WithConditionalCSSProp<T>): ReactNode => {
     const ctx = useContext(AuthContext);
     const login = renderLoginIfNeeded(ctx);
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (login) {
       return login;
     }
@@ -111,6 +112,7 @@ export function requiresAdmin<T>(WrappedComponent: React.ComponentType<T>) {
   return (props: T & WithConditionalCSSProp<T>): ReactNode => {
     const ctx = useContext(AuthContext);
     const login = renderLoginIfNeeded(ctx);
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (login) {
       return login;
     }

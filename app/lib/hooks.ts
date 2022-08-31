@@ -171,6 +171,7 @@ export function useAuth(): AuthContextValue {
       user
         .getIdTokenResult()
         .then((idTokenResult) => {
+          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
           if (idTokenResult.claims.admin) {
             setIsAdmin(true);
           } else {
@@ -305,6 +306,7 @@ export function useAuth(): AuthContextValue {
         .catch((e) => {
           console.log(e);
         });
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (!didCancel && res) {
         setIsPatron(parseUserInfo(res).isPatron);
       }

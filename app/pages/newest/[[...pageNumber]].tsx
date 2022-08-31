@@ -36,7 +36,7 @@ export const PAGE_SIZE = 20;
 const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
   const pn = params?.pageNumber;
   let page: number;
-  if (!pn) {
+  if (pn === undefined) {
     page = 0;
   } else if (Array.isArray(pn) && pn.length === 1 && pn[0]) {
     page = parseInt(pn[0]);

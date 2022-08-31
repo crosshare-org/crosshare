@@ -310,7 +310,7 @@ export const Puzzle = ({
     if (!audioContext) {
       return initAudioContext();
     }
-    if (!playSuccess.current && !muted && audioContext) {
+    if (!playSuccess.current && !muted) {
       fetch('/success.mp3')
         .then((response) => response.arrayBuffer())
         .then((buffer) => {

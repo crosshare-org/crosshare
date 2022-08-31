@@ -1,4 +1,9 @@
 {
+  "ts-node": {
+    "compilerOptions": {
+      "types": ["node", "@emotion/react/types/css-prop"]
+    }
+  },
   "compilerOptions": {
     "target": "ES6",
     "lib": [

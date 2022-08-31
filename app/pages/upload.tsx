@@ -46,6 +46,7 @@ export default function UploadPage() {
     }
     const fileReader = new FileReader();
     fileReader.onloadend = () => {
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (!fileReader.result) {
         setError('No file result');
       } else if (typeof fileReader.result === 'string') {
@@ -109,7 +110,7 @@ export default function UploadPage() {
           <>
             <p>Checking if you have an exisiting account...</p>
           </>
-        ) : loginButton ? (
+        ) : loginButton !== undefined ? (
           <>
             <p>
               To upload a puzzle, you need to log in with Google first. We use

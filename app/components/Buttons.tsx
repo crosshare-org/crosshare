@@ -53,7 +53,7 @@ export function ButtonReset({
         ButtonResetCSS,
         subCSS,
         {
-          ...(hoverCSS && {
+          ...(hoverCSS !== undefined && {
             '&:hover': hoverCSS,
           }),
           ...(hoverText && {

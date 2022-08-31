@@ -231,7 +231,7 @@ const CommentFlair = (props: CommentFlairProps) => {
           </span>
         </>
       )}
-      {publishDate ? (
+      {publishDate !== false ? (
         <>
           &nbsp;·&nbsp;
           <span css={{ fontStyle: 'italic' }} title={publishDate.toISOString()}>

@@ -122,7 +122,7 @@ const Key = (props: KeyProps) => {
         e.preventDefault();
       }}
     >
-      {props.display || props.keyStroke}
+      {props.display !== undefined ? props.display : props.keyStroke}
     </button>
   );
 };
@@ -146,6 +146,7 @@ export const Keyboard = memo(function Keyboard({
     if (!audioContext) {
       return initAudioContext();
     }
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (!playKeystrokeSound.current && !muted && audioContext) {
       fetch('/keypress.mp3')
         .then((response) => response.arrayBuffer())
@@ -170,6 +171,7 @@ export const Keyboard = memo(function Keyboard({
       if (!muted && playKeystrokeSound.current) {
         playKeystrokeSound.current();
       }
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (keyboardHandler) {
         keyboardHandler(key);
       }

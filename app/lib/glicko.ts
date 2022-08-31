@@ -337,15 +337,12 @@ export async function doGlicko() {
   let startTimestamp: Timestamp | null = null;
   const endTimestamp = Timestamp.now();
   const value = await getCollection('cron_status').doc('ratings').get();
-  const data = value.data();
-  if (data) {
-    const result = CronStatusV.decode(data);
-    if (!isRight(result)) {
-      console.error(PathReporter.report(result).join(','));
-      throw new Error('Malformed cron_status');
-    }
-    startTimestamp = result.right.ranAt;
+  const result = CronStatusV.decode(value.data());
+  if (!isRight(result)) {
+    console.error(PathReporter.report(result).join(','));
+    throw new Error('Malformed cron_status');
   }
+  startTimestamp = result.right.ranAt;
 
   console.log('start', startTimestamp);
   console.log('end', endTimestamp);

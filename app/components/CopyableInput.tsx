@@ -16,6 +16,7 @@ export function CopyableInput({ text }: { text: string }) {
         e.target.select();
       }}
       onClick={() => {
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         if (navigator.clipboard) {
           navigator.clipboard.writeText(text).then(
             function () {

@@ -817,6 +817,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
   }
   if (isKeypressAction(action)) {
     const key = action.key;
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (!key) {
       // This seems dumb to check for but at least once we've had key == undefined here
       // https://sentry.io/organizations/m-d/issues/1915351332/
@@ -1153,7 +1154,8 @@ export function builderReducer(
   }
   if (isSetTagsAction(action)) {
     return {
-      ...state, userTags: action.tags
+      ...state,
+      userTags: action.tags,
     };
   }
   if (isAddAlternateAction(action)) {
@@ -1327,6 +1329,7 @@ export function builderReducer(
         state.clues,
         true
       ),
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       ...(state.alternates && { alts: state.alternates }),
       ...(state.notes && { cn: state.notes }),
       ...(state.blogPost && { bp: state.blogPost }),
@@ -1458,20 +1461,18 @@ export function puzzleReducer(
       cellsUpdatedAt: play.ct,
       cellsIterationCount: play.uc,
       cellsEverMarkedWrong: new Set<number>(play.we),
-      ...(play &&
-        play.ct_rv && {
-          contestRevealed: true,
-          contestSubmitTime: play.ct_t?.toMillis(),
-        }),
-      ...(play &&
-        play.ct_sub && {
-          ranMetaSubmitEffects: true,
-          contestPriorSubmissions: play.ct_pr_subs,
-          contestDisplayName: play.ct_n,
-          contestSubmission: play.ct_sub,
-          contestEmail: play.ct_em,
-          contestSubmitTime: play.ct_t?.toMillis(),
-        }),
+      ...(play.ct_rv && {
+        contestRevealed: true,
+        contestSubmitTime: play.ct_t?.toMillis(),
+      }),
+      ...(play.ct_sub && {
+        ranMetaSubmitEffects: true,
+        contestPriorSubmissions: play.ct_pr_subs,
+        contestDisplayName: play.ct_n,
+        contestSubmission: play.ct_sub,
+        contestEmail: play.ct_em,
+        contestSubmitTime: play.ct_t?.toMillis(),
+      }),
     };
   }
   if (isToggleClueViewAction(action)) {

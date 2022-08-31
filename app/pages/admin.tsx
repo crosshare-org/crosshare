@@ -43,11 +43,24 @@ import {
 } from 'firebase/firestore';
 import { TagList } from '../components/TagList';
 import { ConstructorNotes } from '../components/ConstructorNotes';
+import { hasUnches } from '../lib/gridBase';
+import { fromCells, getClueMap } from '../lib/viewableGrid';
+import spam from '../lib/spam.json';
 
 function paypalConvert(input: string): string {
   const donated = parseFloat(input);
   const fee = 0.0289 * donated + 0.49;
   return (donated - fee).toFixed(2);
+}
+
+function checkSpam(input: string): boolean {
+  const lower = input.toLowerCase();
+  for (const spamWord of spam) {
+    if (lower.indexOf(spamWord) !== -1) {
+      return true;
+    }
+  }
+  return false;
 }
 
 const PuzzleListItem = (props: PuzzleResult) => {
@@ -58,6 +71,28 @@ const PuzzleListItem = (props: PuzzleResult) => {
     });
   }
 
+  const grid = fromCells({
+    mapper: (e) => e,
+    width: props.size.cols,
+    height: props.size.rows,
+    cells: props.grid,
+    vBars: new Set(props.vBars),
+    hBars: new Set(props.hBars),
+    allowBlockEditing: false,
+    highlighted: new Set(props.highlighted),
+    highlight: props.highlight,
+    hidden: new Set(props.hidden),
+  });
+  const puzHasUnches = hasUnches(grid);
+  const clueMap = getClueMap(grid, props.clues);
+  const spamAlerts = Object.keys(clueMap).map(entry => {
+    const clues = clueMap[entry];
+    const merged = entry + ' ' + clues?.join('; ');
+    if (checkSpam(merged)) {
+      return <div css={{color: 'red'}}>Alert: {merged}</div>;
+    }
+    return <></>;
+  });
   return (
     <li key={props.id} css={{ marginBottom: '2em' }}>
       <Link href={`/crosswords/${props.id}/${slugify(props.title)}`}>
@@ -79,6 +114,8 @@ const PuzzleListItem = (props: PuzzleResult) => {
       ) : (
         ''
       )}
+      {puzHasUnches ? <div css={{color: 'red'}}>Puzzle has unches</div> : ''}
+      {spamAlerts}
       <div css={{ marginBottom: '1em' }}>
         <button
           // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions

@@ -4,6 +4,7 @@ import { findAndReplace, Replace } from 'mdast-util-find-and-replace';
 export const mentionsAndTags: Plugin = () => {
   return (tree) => {
     findAndReplace(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       tree as any,
       [
         [/(?<=^|\s)@([a-z]\w+)\b/gi, replaceMention],
@@ -16,7 +17,7 @@ export const mentionsAndTags: Plugin = () => {
   };
 };
 
-let replaceMention: Replace = (value: string, username: string) => {
+const replaceMention: Replace = (value: string, username: string) => {
   const url = `/${username}`;
   return {
     type: 'link',

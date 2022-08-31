@@ -69,6 +69,7 @@ export function getMockedPuzzle(fields?: Partial<DBPuzzleT>): DBPuzzleT {
       n: 'Mike D',
     },
     ...rest,
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     ...((pvu && { pvu }) || { pv: pv || true }),
   };
 }

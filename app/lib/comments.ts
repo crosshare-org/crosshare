@@ -27,12 +27,15 @@ function findCommentById(
 export async function moderateComments(
   commentsForModeration: Array<CommentForModerationWithIdT>,
   commentIdsForDeletion: Set<string>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   deleteCfm: (commentId: string) => Promise<any>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updatePuzzle: (puzzleId: string, update: any) => Promise<any>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addToAutomoderated?: (commentId: string, comment: any) => Promise<any>
 ) {
   const puzzles: Record<string, DBPuzzleT> = {};
-  if (commentsForModeration) {
+  if (commentsForModeration.length) {
     for (const comment of commentsForModeration) {
       // Don't need to do anything for any comment that has been marked for deletion
       if (!commentIdsForDeletion.has(comment.i)) {

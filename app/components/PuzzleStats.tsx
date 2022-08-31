@@ -61,7 +61,7 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
   }
 
   const onSort = (col: string | null, dir: string | null) => {
-    if (!subs || !col || !dir) {
+    if (!col || !dir) {
       return;
     }
     setSubs(

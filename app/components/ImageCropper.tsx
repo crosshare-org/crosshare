@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import {
   useState,
   useCallback,
@@ -18,7 +19,7 @@ function downsample(
   targetSize: [number, number],
   crop: Crop
 ) {
-  if (!crop || !crop.width || !crop.height) {
+  if (!crop.width || !crop.height) {
     return null;
   }
   const scaleX = image.naturalWidth / image.width;
@@ -220,7 +221,7 @@ export function ImageCropper(props: {
             onChange={(c) => setCrop(c)}
             onComplete={(c) => setCompletedCrop(c)}
           >
-            <img src={upImg} onLoad={onLoad} />
+            <img alt="Your upload" src={upImg} onLoad={onLoad} />
           </ReactCrop>
         ) : (
           ''
