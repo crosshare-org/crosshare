@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useMemo } from 'react';
+import { useState, useEffect, useContext, useMemo, useRef } from 'react';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import type { User } from 'firebase/auth';
@@ -122,9 +122,8 @@ const DBPlayLoader = (
   } & PuzzlePageResultProps
 ) => {
   // Load from db
-  const [doc, loading, error] = useDocument(
-    getDocRef('p', `${props.puzzle.id}-${props.user.uid}`)
-  );
+  const playRef = useRef(getDocRef('p', `${props.puzzle.id}-${props.user.uid}`));
+  const [doc, loading, error] = useDocument(playRef.current);
   const [play, playDecodeError] = useMemo(() => {
     if (doc === undefined) {
       return [undefined, undefined];

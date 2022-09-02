@@ -233,12 +233,12 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           <>
             {props.user?.uid === props.puzzle.authorId ? (
               <>
-                {props.puzzle.isPrivate ||
+                {props.puzzle.isPrivate !== false ||
                 (props.puzzle.isPrivateUntil &&
                   props.puzzle.isPrivateUntil > Date.now()) ? (
                   <p>
                     Your puzzle is private
-                    {props.puzzle.isPrivateUntil && !props.puzzle.isPrivate
+                    {props.puzzle.isPrivateUntil && props.puzzle.isPrivate === false
                       ? ` until ${formatDistanceToNow(
                           new Date(props.puzzle.isPrivateUntil)
                         )} from now. Until then, it `

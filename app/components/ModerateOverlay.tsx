@@ -61,7 +61,7 @@ export const ModeratingOverlay = memo(
             updateDoc(getDocRef('c', puzzle.id), { tg_u: newTags })
           }
         />
-        {puzzle.isPrivate ? (
+        {puzzle.isPrivate !== false ? (
           <h4 css={{ color: 'var(--error)' }}>This puzzle is private</h4>
         ) : (
           ''
@@ -85,7 +85,7 @@ export const ModeratingOverlay = memo(
         />
         <div css={{ marginTop: '1em' }}>
           <button
-            disabled={!date || puzzle.moderated || !!puzzle.isPrivate}
+            disabled={!date || puzzle.moderated || puzzle.isPrivate !== false}
             onClick={schedule}
           >
             Schedule As Daily Mini
@@ -93,7 +93,7 @@ export const ModeratingOverlay = memo(
         </div>
         <div css={{ marginTop: '1em' }}>
           <button
-            disabled={!!puzzle.isPrivate}
+            disabled={puzzle.isPrivate !== false}
             onClick={() => markAsModerated(true)}
           >
             Set as Featured

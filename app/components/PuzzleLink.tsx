@@ -342,7 +342,7 @@ export const PuzzleResultLink = ({
     </span>
   );
   if (props.showPrivateStatus) {
-    if (puzzle.isPrivate) {
+    if (puzzle.isPrivate !== false) {
       date = (
         <span css={{ color: 'var(--error)' }} title={publishDate.toISOString()}>
           <Trans comment="The variable is a timestamp like '4 days ago' or 'hace 4 dias'">

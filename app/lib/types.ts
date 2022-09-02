@@ -134,7 +134,7 @@ export interface PuzzleT {
   comments: Array<CommentWithRepliesT>;
   constructorNotes: string | null;
   blogPost: string | null;
-  isPrivate: boolean;
+  isPrivate: boolean | number;
   isPrivateUntil: number | null;
   contestAnswers: Array<string> | null;
   contestHasPrize: boolean;
@@ -209,7 +209,10 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     comments: dbPuzzle.cs || [],
     constructorNotes: dbPuzzle.cn || null,
     blogPost: dbPuzzle.bp || null,
-    isPrivate: Boolean(dbPuzzle.pv),
+    isPrivate:
+      typeof dbPuzzle.pv === 'boolean'
+        ? dbPuzzle.pv
+        : dbPuzzle.pv?.toMillis() || false,
     isPrivateUntil: dbPuzzle.pvu ? dbPuzzle.pvu.toMillis() : null,
     contestAnswers: dbPuzzle.ct_ans || null,
     contestHasPrize: dbPuzzle.ct_prz || false,

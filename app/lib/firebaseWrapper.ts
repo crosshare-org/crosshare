@@ -41,15 +41,16 @@ export const getDocId = (collectionName: string) => doc(collection(db, collectio
 export const getAuth = () => gA(App);
 export const getStorage = () => gS(App);
 
+export const convertTimestamps = (data: any): Record<string, unknown> => cloneDeepWith(data, (val) => {
+  if (isTimestamp(val)) {
+    return FBTimestamp.fromMillis(val.toMillis());
+  }
+  return undefined;
+});
+
 export const getCollection = (collectionName: string) =>
   collection(db, collectionName).withConverter({
-    toFirestore: (data: any) =>
-      cloneDeepWith(data, (val) => {
-        if (isTimestamp(val)) {
-          return FBTimestamp.fromMillis(val.toMillis());
-        }
-        return undefined;
-      }),
+    toFirestore: convertTimestamps,
     fromFirestore: (s: any) => s.data(),
   });
 
@@ -59,13 +60,7 @@ export function getValidatedCollection<V>(
   idField: string | null = null
 ) {
   return collection(db, collectionName).withConverter({
-    toFirestore: (data: any): Record<string, unknown> =>
-      cloneDeepWith(data, (val) => {
-        if (isTimestamp(val)) {
-          return FBTimestamp.fromMillis(val.toMillis());
-        }
-        return undefined;
-      }),
+    toFirestore: convertTimestamps,
     fromFirestore: (
       s: QueryDocumentSnapshot<DocumentData>,
       options: SnapshotOptions

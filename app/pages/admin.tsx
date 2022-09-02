@@ -17,6 +17,7 @@ import {
   DBPuzzleWithIdV,
 } from '../lib/dbtypes';
 import {
+  convertTimestamps,
   getCollection,
   getDocRef,
   getValidatedCollection,
@@ -85,11 +86,11 @@ const PuzzleListItem = (props: PuzzleResult) => {
   });
   const puzHasUnches = hasUnches(grid);
   const clueMap = getClueMap(grid, props.clues);
-  const spamAlerts = Object.keys(clueMap).map(entry => {
+  const spamAlerts = Object.keys(clueMap).map((entry) => {
     const clues = clueMap[entry];
     const merged = entry + ' ' + clues?.join('; ');
     if (checkSpam(merged)) {
-      return <div css={{color: 'red'}}>Alert: {merged}</div>;
+      return <div css={{ color: 'red' }}>Alert: {merged}</div>;
     }
     return <></>;
   });
@@ -114,7 +115,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
       ) : (
         ''
       )}
-      {puzHasUnches ? <div css={{color: 'red'}}>Puzzle has unches</div> : ''}
+      {puzHasUnches ? <div css={{ color: 'red' }}>Puzzle has unches</div> : ''}
       {spamAlerts}
       <div css={{ marginBottom: '1em' }}>
         <button
@@ -240,7 +241,8 @@ export default requiresAdmin(() => {
       commentsForModeration,
       commentIdsForDeletion,
       (cid) => deleteDoc(getDocRef('cfm', cid)),
-      (puzzleId, update) => updateDoc(getDocRef('c', puzzleId), update)
+      (puzzleId, update) =>
+        updateDoc(getDocRef('c', puzzleId), convertTimestamps(update))
     );
   }
 
