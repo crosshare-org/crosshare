@@ -349,5 +349,11 @@ cases(
       alts: [[<[number, string]>[0, 'B']], [<[number, string]>[3, 'C']]],
       res: [true, true],
     },
+    {
+      grid: ['B', 'B', 'C', 'E'],
+      answers: ['A', 'B', 'C', 'D'],
+      alts: [[<[number, string]>[3, 'E']]],
+      res: [true, false],
+    },
   ]
 );

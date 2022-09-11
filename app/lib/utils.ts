@@ -113,17 +113,14 @@ export function checkGrid(
   answers: Array<string>,
   alts: Array<Array<[index: number, value: string]>>
 ): [filled: boolean, success: boolean] {
-  let filled = true;
-  let success = true;
-  for (const [i, cell] of grid.entries()) {
+  for (const cell of grid) {
     if (cell.trim() === '') {
-      filled = false;
-      success = false;
-      break;
+      return [false, false];
     }
-
+  }
+  for (const [i, cell] of grid.entries()) {
     if (answers.length && cell !== answers[i]) {
-      success = false;
+      let success = false;
       // This cell is wrong, but see if any alternate solutions that have it are satisfied
       for (const alt of alts) {
         let containsOurs = false;
@@ -141,10 +138,13 @@ export function checkGrid(
           break;
         }
       }
+      if (!success) {
+        return [true, false];
+      }
     }
   }
 
-  return [filled, success];
+  return [true, true];
 }
 
 export function notEmpty<TValue>(
