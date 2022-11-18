@@ -53,7 +53,7 @@ async function topPuzzlesForWeek(): Promise<
   const totalC: Record<string, number> = {};
   const allIs: Record<string, [string, string, string]> = {};
   const d = new Date();
-  for (let i = 0; i < 8; i += 1) {
+  for (let i = 0; i < 7; i += 1) {
     const dateString = getDateString(d);
     console.log(dateString);
     const dbres = await db.collection('ds').doc(dateString).get();
