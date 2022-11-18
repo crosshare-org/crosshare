@@ -57,19 +57,21 @@ async function topPuzzlesForWeek(): Promise<
     const dateString = getDateString(d);
     console.log(dateString);
     const dbres = await db.collection('ds').doc(dateString).get();
-    if (!dbres.exists) {
-      continue;
-    }
-    const validationResult = DailyStatsV.decode(dbres.data());
-    if (isRight(validationResult)) {
-      sumOnto(totalC, validationResult.right.c);
-      replaceOnto(allIs, validationResult.right.i);
-    } else {
-      console.error(PathReporter.report(validationResult).join(','));
+    if (dbres.exists) {
+      const validationResult = DailyStatsV.decode(dbres.data());
+      if (isRight(validationResult)) {
+        sumOnto(totalC, validationResult.right.c);
+        replaceOnto(allIs, validationResult.right.i);
+      } else {
+        console.error(PathReporter.report(validationResult).join(','));
+      }
     }
     d.setDate(d.getDate() - 1);
   }
-  const initVal: [Array<[string, string, string]>, Array<[string, string, string]>] = [[], []];
+  const initVal: [
+    Array<[string, string, string]>,
+    Array<[string, string, string]>
+  ] = [[], []];
   return Promise.all(
     Object.entries(totalC)
       .sort((a, b) => b[1] - a[1])
@@ -114,7 +116,7 @@ async function topPuzzlesForWeek(): Promise<
             '#utm_source=mailchimp&utm_medium=email&utm_campaign=weekly',
           `${p.t} by ${p.n}`,
           p.w <= 8 && p.h <= 8,
-          `/crosswords/${p.id}/${slugify(p.t)}`
+          `/crosswords/${p.id}/${slugify(p.t)}`,
         ];
       })
       .reduce((res, val) => {
@@ -131,11 +133,11 @@ async function topPuzzlesForWeek(): Promise<
 async function generateWeeklyEmail() {
   const [topForWeek, topMinis] = await topPuzzlesForWeek();
   console.log('<strong>Top puzzles this week:</strong><br /><br />');
-  topForWeek.slice(0,7).forEach(([link, text]) => {
+  topForWeek.slice(0, 7).forEach(([link, text]) => {
     console.log('<a href="' + link + '">' + text + '</a> - <br /><br />');
   });
   console.log('<strong>Top minis this week:</strong><br /><br />');
-  topMinis.slice(0,7).forEach(([link, text]) => {
+  topMinis.slice(0, 7).forEach(([link, text]) => {
     console.log('<a href="' + link + '">' + text + '</a> - <br /><br />');
   });
 
@@ -143,15 +145,17 @@ async function generateWeeklyEmail() {
 
 **Top puzzles this week:**
 
-${topForWeek.slice(0,7).map(([_, text, mdLink]) =>
-    `[${text}](${mdLink}) - `
-  ).join('\n\n')}
+${topForWeek
+  .slice(0, 7)
+  .map(([_, text, mdLink]) => `[${text}](${mdLink}) - `)
+  .join('\n\n')}
 
 **Top minis this week:**
 
-${topMinis.slice(0,7).map(([_, text, mdLink]) =>
-    `[${text}](${mdLink}) - `
-  ).join('\n\n')}
+${topMinis
+  .slice(0, 7)
+  .map(([_, text, mdLink]) => `[${text}](${mdLink}) - `)
+  .join('\n\n')}
 
 ONE SENTENCE SIGN OFF / SIGNATURE`;
   writeFile('email.txt', md).then(() => {
