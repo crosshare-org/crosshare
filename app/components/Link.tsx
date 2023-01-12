@@ -61,8 +61,8 @@ export const Link = ({ href, children, ...rest }: LinkProps) => {
     );
   }
   return (
-    <NextLink href={href} passHref>
-      <a {...rest}>{children}</a>
+    <NextLink href={href} {...rest}> 
+      {children}
     </NextLink>
   );
 };
