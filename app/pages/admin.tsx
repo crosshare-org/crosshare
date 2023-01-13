@@ -117,6 +117,13 @@ const PuzzleListItem = (props: PuzzleResult) => {
       )}
       {puzHasUnches ? <div css={{ color: 'red' }}>Puzzle has unches</div> : ''}
       {spamAlerts}
+      <ul>
+      {props.comments.map((c,i) => (
+        <li key={i}>
+          <b>{c.n}</b>: {c.c}
+        </li>
+      ))}
+      </ul>
       <div css={{ marginBottom: '1em' }}>
         <button
           // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
