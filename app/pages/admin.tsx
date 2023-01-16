@@ -86,11 +86,11 @@ const PuzzleListItem = (props: PuzzleResult) => {
   });
   const puzHasUnches = hasUnches(grid);
   const clueMap = getClueMap(grid, props.clues);
-  const spamAlerts = Object.keys(clueMap).map((entry) => {
+  const spamAlerts = Object.keys(clueMap).map((entry, i) => {
     const clues = clueMap[entry];
     const merged = entry + ' ' + clues?.join('; ');
     if (checkSpam(merged)) {
-      return <div css={{ color: 'red' }}>Alert: {merged}</div>;
+      return <div key={i} css={{ color: 'red' }}>Alert: {merged}</div>;
     }
     return <></>;
   });

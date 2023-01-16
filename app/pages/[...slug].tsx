@@ -128,7 +128,7 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
       followCount: followerIds.length,
       followers,
       following,
-      constructor: cp,
+      constructorData: cp,
       isPatron,
       profilePicture,
       coverPicture,
@@ -149,8 +149,8 @@ export default function ConstructorPageHandler(props: PageProps) {
       return;
     }
     const desiredRoute = props.currentPage
-      ? `/${props.constructor.i}/page/${props.currentPage}`
-      : `/${props.constructor.i}`;
+      ? `/${props.constructorData.i}/page/${props.currentPage}`
+      : `/${props.constructorData.i}`;
     if (router.asPath !== desiredRoute) {
       console.log('auto changing route');
       router.replace(desiredRoute, undefined, { shallow: true });

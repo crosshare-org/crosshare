@@ -11,6 +11,16 @@ const baseConfig = {
     locales: ['en', 'es', 'it', 'fr', 'pseudo'],
     defaultLocale: 'en',
   },
+  experimental: {
+    swcPlugins: [
+      ['@lingui/swc-plugin', {
+       // the same options as in .swcrc
+      }],
+    ],
+  },
+  compiler: {
+    emotion: true,
+  }
 };
 
 export default (phase) => {

@@ -545,7 +545,7 @@ export const BioEditor = (props: BioEditorProps) => {
 };
 
 export interface ConstructorPageProps {
-  constructor: ConstructorPageT;
+  constructorData: ConstructorPageT;
   isPatron: boolean;
   followCount: number;
   followers: Array<ConstructorPageT & { isPatron: boolean }>;
@@ -641,18 +641,18 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
   const [overlayIsFollowing, setOverlayIsFollowing] = useState(false);
   const coverPic = props.coverPicture;
   const profilePic = props.profilePicture;
-  const username = props.constructor.i || props.constructor.id;
+  const username = props.constructorData.i || props.constructorData.id;
   const description =
     'The latest crossword puzzles from ' +
-    props.constructor.n +
+    props.constructorData.n +
     ' (@' +
     username +
     '). ' +
-    props.constructor.b;
+    props.constructorData.b;
   const title =
-    props.constructor.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
-  const paypalEmail = props.constructor.pp;
-  const paypalText = props.constructor.pt;
+    props.constructorData.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
+  const paypalEmail = props.constructorData.pp;
+  const paypalText = props.constructorData.pt;
   const loc = locale || 'en';
 
   return (
@@ -747,7 +747,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
               ) : (
                 ''
               )}
-              {props.constructor.n}
+              {props.constructorData.n}
             </>
           }
           byLine={
@@ -839,10 +839,10 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
           }
         />
         <div css={{ textAlign: 'center', marginBottom: '1.5em' }}>
-          <FollowButton page={props.constructor} />
+          <FollowButton page={props.constructorData} />
         </div>
         <div css={{ marginBottom: '1.5em' }}>
-          <Markdown text={props.constructor.b} />
+          <Markdown text={props.constructorData.b} />
           {paypalEmail && paypalText ? (
             <div>
               <LinkButtonSimpleA
@@ -853,7 +853,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                   paypalText
                 )}&currency_code=USD&source=url`}
                 text={t({
-                  message: `Tip ${props.constructor.n}`,
+                  message: `Tip ${props.constructorData.n}`,
                   comment:
                     'The variable is the name of the user who will recieve the $ tip',
                 })}
@@ -908,7 +908,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
         ) : (
           ''
         )}
-        {isAdmin ? <ConstructorStats userId={props.constructor.u} /> : ''}
+        {isAdmin ? <ConstructorStats userId={props.constructorData.u} /> : ''}
       </div>
     </>
   );
