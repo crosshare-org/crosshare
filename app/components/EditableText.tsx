@@ -6,7 +6,13 @@ import {
   LengthLimitedInput,
   LengthLimitedTextarea,
 } from './Inputs';
-import { MarkdownPreview } from './MarkdownPreview';
+import dynamic from 'next/dynamic';
+import type { MarkdownPreview as MarkdownPreviewType } from './MarkdownPreview';
+import type { Root } from 'hast';
+
+const MarkdownPreview = dynamic(
+  () => import('./MarkdownPreview').then((mod) => mod.MarkdownPreview as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+) as typeof MarkdownPreviewType;
 
 interface EditableTextPropsBase {
   title: string;
@@ -19,10 +25,12 @@ interface EditableTextPropsBase {
 interface EditableTextProps extends EditableTextPropsBase {
   deletable?: false;
   text: string;
+  hast: Root;
 }
 interface DeletableEditableTextProps extends EditableTextPropsBase {
   deletable: true;
   text: string | null;
+  hast: Root | null;
   handleDelete: () => Promise<void>;
 }
 export const EditableText = (
@@ -112,7 +120,7 @@ export const EditableText = (
 
   return (
     <div className={props.className}>
-      {!props.text ? (
+      {!props.hast ? (
         <Button
           text="Add"
           title={`Add ${props.title}`}
@@ -132,7 +140,7 @@ export const EditableText = (
                   margin: '1em 0',
                 }}
               >
-                <Markdown text={props.text} />
+                <Markdown hast={props.hast} />
               </div>
               <Button
                 text="edit"
@@ -154,7 +162,7 @@ export const EditableText = (
             </>
           ) : (
             <>
-              <span>{props.text}</span>
+              <Markdown inline hast={props.hast} />
               <ButtonAsLink
                 css={{ marginLeft: '1em' }}
                 text="edit"

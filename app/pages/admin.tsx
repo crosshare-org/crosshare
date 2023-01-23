@@ -47,6 +47,7 @@ import { ConstructorNotes } from '../components/ConstructorNotes';
 import { hasUnches } from '../lib/gridBase';
 import { fromCells, getClueMap } from '../lib/viewableGrid';
 import spam from '../lib/spam.json';
+import { markdownToHast } from '../lib/markdown/markdown';
 
 function paypalConvert(input: string): string {
   const donated = parseFloat(input);
@@ -103,14 +104,14 @@ const PuzzleListItem = (props: PuzzleResult) => {
       <TagList tags={(props.userTags || []).concat(props.autoTags || [])} />
       {props.constructorNotes ? (
         <div css={{ textAlign: 'center', overflowWrap: 'break-word' }}>
-          <ConstructorNotes notes={props.constructorNotes} />
+          <ConstructorNotes notes={markdownToHast({text: props.constructorNotes})} />
         </div>
       ) : (
         ''
       )}
       {props.blogPost ? (
         <div css={{ margin: '1em 0', overflowWrap: 'break-word' }}>
-          <Markdown css={{ textAlign: 'left' }} text={props.blogPost} />
+          <Markdown css={{ textAlign: 'left' }} hast={markdownToHast({text: props.blogPost})} />
         </div>
       ) : (
         ''
@@ -300,7 +301,7 @@ export default requiresAdmin(() => {
                     }
                   />
                   <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
-                  <Markdown text={cfm.c} />
+                  <Markdown hast={markdownToHast({text: cfm.c})} />
                 </label>
               </div>
             ))}
@@ -319,7 +320,7 @@ export default requiresAdmin(() => {
                 {automoderated.map((cfm) => (
                   <div key={cfm.i}>
                     <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
-                    <Markdown text={cfm.c} />
+                    <Markdown hast={markdownToHast({text: cfm.c})} />
                   </div>
                 ))}
                 <Button
@@ -348,7 +349,7 @@ export default requiresAdmin(() => {
                 <p>
                   {cp.n} - <Link href={`/${cp.i}`}>@{cp.i}</Link>
                 </p>
-                <Markdown text={cp.b} />
+                <Markdown hast={markdownToHast({text: cp.b})} />
               </div>
             ))}
             <input type="submit" value="Mark as moderated" />

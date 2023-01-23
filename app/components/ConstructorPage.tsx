@@ -26,6 +26,7 @@ import {
   setDoc,
   updateDoc,
 } from 'firebase/firestore';
+import type { Root } from 'hast';
 
 const BANNED_USERNAMES = {
   api: 1,
@@ -546,6 +547,7 @@ export const BioEditor = (props: BioEditorProps) => {
 
 export interface ConstructorPageProps {
   constructorData: ConstructorPageT;
+  bioHast: Root;
   isPatron: boolean;
   followCount: number;
   followers: Array<ConstructorPageT & { isPatron: boolean }>;
@@ -842,7 +844,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
           <FollowButton page={props.constructorData} />
         </div>
         <div css={{ marginBottom: '1.5em' }}>
-          <Markdown text={props.constructorData.b} />
+          <Markdown hast={props.bioHast} />
           {paypalEmail && paypalText ? (
             <div>
               <LinkButtonSimpleA

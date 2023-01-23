@@ -51,7 +51,7 @@ export function UnfinishedPuzzleList({ user }: { user: User | undefined }) {
         {unfinishedPuzzles.map((puzzle) => (
           <PuzzleResultLink
             key={puzzle.id}
-            puzzle={puzzle}
+            puzzle={{...puzzle, blogPostPreview: null}}
             showAuthor={false}
             constructorPage={null}
             constructorIsPatron={false}

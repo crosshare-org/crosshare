@@ -4,6 +4,7 @@ import type { WordDBT } from './WordDB';
 
 import { DBPuzzleT, CommentWithRepliesT, GlickoScoreT } from '../lib/dbtypes';
 import { ConstructorPageT } from '../lib/constructorPage';
+import type { Root } from 'hast';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -99,6 +100,7 @@ export function getClueText(c: { clue: string }): string {
 
 export interface Comment {
   commentText: string;
+  commentHast: Root;
   authorId: string;
   authorDisplayName: string;
   authorUsername?: string;
@@ -155,6 +157,7 @@ export interface PuzzleResult extends PuzzleT {
 export interface ServerPuzzleResult extends Omit<PuzzleResult, 'comments'> {
   constructorPage: ConstructorPageT | null;
   constructorIsPatron: boolean;
+  clueHasts: Array<Root>;
 }
 export interface PuzzleResultWithAugmentedComments extends ServerPuzzleResult {
   comments: Array<Comment>;

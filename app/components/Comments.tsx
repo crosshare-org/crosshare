@@ -25,6 +25,7 @@ import { PastDistanceToNow } from './TimeDisplay';
 import { Timestamp } from '../lib/timestamp';
 import { getCollection, getDocRef } from '../lib/firebaseWrapper';
 import { addDoc, updateDoc } from 'firebase/firestore';
+import type { Root } from 'hast';
 
 const COMMENT_LENGTH_LIMIT = 2048;
 
@@ -71,7 +72,7 @@ const CommentView = (props: CommentProps) => {
           isPatron={props.comment.authorIsPatron}
         />
       </div>
-      <Markdown text={props.comment.commentText} clueMap={props.clueMap} />
+      <Markdown hast={props.comment.commentHast} />
       {props.children}
     </div>
   );
@@ -265,6 +266,10 @@ const CommentForm = ({
   ...props
 }: CommentFormProps & { onCancel?: () => void }) => {
   const [commentText, setCommentText] = useState('');
+  const [commentHast, setCommentHast] = useState<Root>({
+    type: 'root',
+    children: [],
+  });
   const displayName = useDisplayName();
   const [editingDisplayName, setEditingDisplayName] = useState(false);
   const [submittedComment, setSubmittedComment] = useState<LocalComment | null>(
@@ -308,6 +313,7 @@ const CommentForm = ({
         isLocal: true,
         id: ref.id,
         commentText: comment.c,
+        commentHast: commentHast,
         authorId: comment.a,
         authorUsername: comment.un,
         authorDisplayName: comment.n,
@@ -358,7 +364,14 @@ const CommentForm = ({
               css={{ width: '100%', display: 'block' }}
               maxLength={COMMENT_LENGTH_LIMIT}
               value={commentText}
-              updateValue={setCommentText}
+              updateValue={(newVal) => {
+                setCommentText(newVal);
+                import('../lib/markdown/markdown').then((mod) => {
+                  setCommentHast(
+                    mod.markdownToHast({ text: newVal, clueMap: props.clueMap })
+                  );
+                });
+              }}
             />
           </label>
           <div css={{ textAlign: 'right' }}>
@@ -422,7 +435,7 @@ const CommentForm = ({
             <h4>
               <Trans>Live Preview:</Trans>
             </h4>
-            <Markdown text={commentText} clueMap={props.clueMap} />
+            <Markdown hast={commentHast} />
           </div>
         ) : (
           ''
@@ -507,67 +520,75 @@ export const Comments = ({
     const rebuiltComments: Array<CommentOrLocalComment> = [...comments];
     const unmoderatedComments = commentsFromStorage(props.puzzleId);
     const toKeepInStorage: Array<CommentForModerationWithIdT> = [];
-    for (const c of unmoderatedComments) {
-      const moderatedVersion = findCommentById(rebuiltComments, c.i);
-      // The comment we saved in LS has already made it through moderation
-      // so we don't need to merge it - by not adding to `toKeepInStorage` this
-      // will also remove from LS
-      if (moderatedVersion !== null) {
-        console.log('found existing version, skipping one from LS');
-        if (!isComment(moderatedVersion)) {
-          toKeepInStorage.push(c);
-        }
-        continue;
-      }
+    if (unmoderatedComments.length > 0) {
+      import('../lib/markdown/markdown').then((mod) => {
+        for (const c of unmoderatedComments) {
+          const moderatedVersion = findCommentById(rebuiltComments, c.i);
+          // The comment we saved in LS has already made it through moderation
+          // so we don't need to merge it - by not adding to `toKeepInStorage` this
+          // will also remove from LS
+          if (moderatedVersion !== null) {
+            console.log('found existing version, skipping one from LS');
+            if (!isComment(moderatedVersion)) {
+              toKeepInStorage.push(c);
+            }
+            continue;
+          }
 
-      toKeepInStorage.push(c);
-      const localComment: LocalComment = {
-        isLocal: true,
-        id: c.i,
-        commentText: c.c,
-        authorId: c.a,
-        authorDisplayName: c.n,
-        authorUsername: c.un,
-        authorSolveTime: c.t,
-        authorCheated: c.ch,
-        authorSolvedDownsOnly: c.do || false,
-        publishTime: c.p.toMillis(),
-        authorIsPatron: authContext.isPatron,
-      };
-      if (c.rt === null) {
-        rebuiltComments.push(localComment);
-      } else {
-        const parent = findCommentById(rebuiltComments, c.rt);
-        if (parent === null) {
-          /* TODO figure out better behaivior here?
-           * One possibility is that we saw the comment originally when
-           * loading the puzzle via client side link but are now loading via
-           * page refresh. If the content is cached at a different time the
-           * parent comment might not be here yet. */
-          continue;
+          toKeepInStorage.push(c);
+          const localComment: LocalComment = {
+            isLocal: true,
+            id: c.i,
+            commentText: c.c,
+            commentHast: mod.markdownToHast({
+              text: c.c,
+              clueMap: props.clueMap,
+            }),
+            authorId: c.a,
+            authorDisplayName: c.n,
+            authorUsername: c.un,
+            authorSolveTime: c.t,
+            authorCheated: c.ch,
+            authorSolvedDownsOnly: c.do || false,
+            publishTime: c.p.toMillis(),
+            authorIsPatron: authContext.isPatron,
+          };
+          if (c.rt === null) {
+            rebuiltComments.push(localComment);
+          } else {
+            const parent = findCommentById(rebuiltComments, c.rt);
+            if (parent === null) {
+              /* TODO figure out better behaivior here?
+               * One possibility is that we saw the comment originally when
+               * loading the puzzle via client side link but are now loading via
+               * page refresh. If the content is cached at a different time the
+               * parent comment might not be here yet. */
+              continue;
+            }
+            if (parent.replies) {
+              parent.replies.push(localComment);
+            } else {
+              parent.replies = [localComment];
+            }
+          }
         }
-        if (parent.replies) {
-          parent.replies.push(localComment);
-        } else {
-          parent.replies = [localComment];
+        /* This means one or more have made it through moderation - update LS.
+         * We don't need to try/catch this LS access as we only do it if we
+         * read from LS successfully above */
+        if (toKeepInStorage.length !== unmoderatedComments.length) {
+          if (toKeepInStorage.length === 0) {
+            localStorage.removeItem(commentsKey(props.puzzleId));
+          } else {
+            localStorage.setItem(
+              commentsKey(props.puzzleId),
+              JSON.stringify(toKeepInStorage)
+            );
+          }
         }
-      }
+        setToShow(rebuiltComments);
+      });
     }
-    /* This means one or more have made it through moderation - update LS.
-     * We don't need to try/catch this LS access as we only do it if we
-     * read from LS successfully above */
-    if (toKeepInStorage.length !== unmoderatedComments.length) {
-      if (toKeepInStorage.length === 0) {
-        localStorage.removeItem(commentsKey(props.puzzleId));
-      } else {
-        localStorage.setItem(
-          commentsKey(props.puzzleId),
-          JSON.stringify(toKeepInStorage)
-        );
-      }
-    }
-    setToShow(rebuiltComments);
-  }, [props.puzzleId, comments, authContext.isPatron]);
+  }, [props.puzzleId, props.clueMap, comments, authContext.isPatron]);
   return (
     <div css={{ marginTop: '1em' }}>
       <h4 css={{ borderBottom: '1px solid var(--black)' }}>

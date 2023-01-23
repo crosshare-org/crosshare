@@ -4,11 +4,13 @@ import { Markdown } from '../components/Markdown';
 import { addClues, CluedGrid, fromCells } from '../lib/viewableGrid';
 import { GridContext } from '../components/GridContext';
 import { Direction } from '../lib/types';
+import { markdownToHast } from '../lib/markdown/markdown';
 
 test('email priority over at mention', () => {
   const r = render(
     <Markdown
-      text={'Reach out anytime at example@gmail.com to talk about crosswords!'}
+      hast={(markdownToHast({text: 'Reach out anytime at example@gmail.com to talk about crosswords!'}))}
+      
     />,
     {}
   );
@@ -34,41 +36,37 @@ test('email priority over at mention', () => {
 });
 
 test('emoji rendering', () => {
-  let r = render(<Markdown text="😂🐅" />, {});
+  let r = render(<Markdown hast={(markdownToHast({text: "😂🐅"}))} />, {});
   expect(r.container).toMatchInlineSnapshot(`
 <div>
   <div>
     <div
       class="paragraph"
     >
-      
       <img
         alt="😂"
         class="twemoji"
         draggable="false"
         src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
       />
-      
       <img
         alt="🐅"
         class="twemoji"
         draggable="false"
         src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
       />
-      
     </div>
   </div>
 </div>
 `);
 
-  r = render(<Markdown text="😂 abc" />, {});
+  r = render(<Markdown hast={(markdownToHast({text: "😂 abc"}))} />, {});
   expect(r.container).toMatchInlineSnapshot(`
 <div>
   <div>
     <div
       class="paragraph"
     >
-      
       <img
         alt="😂"
         class="twemoji"
@@ -81,7 +79,7 @@ test('emoji rendering', () => {
 </div>
 `);
 
-  r = render(<Markdown text="abc 😂" />, {});
+  r = render(<Markdown hast={(markdownToHast({text: "abc 😂"}))} />, {});
   expect(r.container).toMatchInlineSnapshot(`
 <div>
   <div>
@@ -95,13 +93,12 @@ test('emoji rendering', () => {
         draggable="false"
         src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
       />
-      
     </div>
   </div>
 </div>
 `);
 
-  r = render(<Markdown text="abc 😂 def" />, {});
+  r = render(<Markdown hast={(markdownToHast({text: "abc 😂 def"}))} />, {});
   expect(r.container).toMatchInlineSnapshot(`
 <div>
   <div>
@@ -121,14 +118,13 @@ test('emoji rendering', () => {
 </div>
 `);
 
-  r = render(<Markdown text="😂 abc 🐅" />, {});
+  r = render(<Markdown hast={(markdownToHast({text: "😂 abc 🐅"}))} />, {});
   expect(r.container).toMatchInlineSnapshot(`
 <div>
   <div>
     <div
       class="paragraph"
     >
-      
       <img
         alt="😂"
         class="twemoji"
@@ -142,13 +138,12 @@ test('emoji rendering', () => {
         draggable="false"
         src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
       />
-      
     </div>
   </div>
 </div>
 `);
 
-  r = render(<Markdown text="abc 😂 def 🐅 hij" />, {});
+  r = render(<Markdown hast={(markdownToHast({text: "abc 😂 def 🐅 hij"}))} />, {});
   expect(r.container).toMatchInlineSnapshot(`
 <div>
   <div>
@@ -177,48 +172,48 @@ test('emoji rendering', () => {
 });
 
 test('spoiler text rendering', () => {
-  let r = render(<Markdown text="foo bar >!baz" />, {});
+  let r = render(<Markdown hast={(markdownToHast({text: "foo bar >!baz"}))} />, {});
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown text="foo bar >!baz!<" />, {});
+  r = render(<Markdown hast={(markdownToHast({text: "foo bar >!baz!<"}))} />, {});
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown text=">!baz foo bam ! >> fooey!<" />, {});
+  r = render(<Markdown hast={(markdownToHast({text: ">!baz foo bam ! >> fooey!<"}))} />, {});
   expect(r.container).toMatchSnapshot();
 
   r = render(
-    <Markdown text=">!baz foo bam ! >> fooey!< with after text" />,
+    <Markdown hast={(markdownToHast({text: ">!baz foo bam ! >> fooey!< with after text"}))} />,
     {}
   );
   expect(r.container).toMatchSnapshot();
 
   r = render(
-    <Markdown text="before ||baz foo bam >! fooey|| with after text" />,
+    <Markdown hast={(markdownToHast({text: "before ||baz foo bam >! fooey|| with after text"}))} />,
     {}
   );
   expect(r.container).toMatchSnapshot();
 
   r = render(
-    <Markdown text="before >!baz foo bam || fooey!< with after text" />,
+    <Markdown hast={(markdownToHast({text: "before >!baz foo bam || fooey!< with after text"}))} />,
     {}
   );
   expect(r.container).toMatchSnapshot();
 
   r = render(
-    <Markdown text="before >!baz foo bam || fooey!< with ||after|| text" />,
+    <Markdown hast={(markdownToHast({text: "before >!baz foo bam || fooey!< with ||after|| text"}))} />,
     {}
   );
   expect(r.container).toMatchSnapshot();
 
   r = render(
-    <Markdown text="before ||baz foo bam >! not! !< fooey|| with >!after!< text" />,
+    <Markdown hast={(markdownToHast({text: "before ||baz foo bam >! not! !< fooey|| with >!after!< text"}))} />,
     {}
   );
   expect(r.container).toMatchSnapshot();
 
   r = render(
     <Markdown
-      text={'before ||baz foo bam \n\n>! not! !< fooey|| with >!after!< text'}
+    hast={(markdownToHast({text: 'before ||baz foo bam \n\n>! not! !< fooey|| with >!after!< text'}))}
     />,
     {}
   );
@@ -226,7 +221,7 @@ test('spoiler text rendering', () => {
 
   r = render(
     <Markdown
-      text={'before baz foo bam \n\n>! not! !< fooey|| with >!after!< text'}
+    hast={(markdownToHast({text: 'before baz foo bam \n\n>! not! !< fooey|| with >!after!< text'}))}
     />,
     {}
   );
@@ -234,11 +229,11 @@ test('spoiler text rendering', () => {
 });
 
 test('images should not be allowed', () => {
-  let r = render(<Markdown text="![](http://example.com/test.png)" />, {});
+  let r = render(<Markdown hast={(markdownToHast({text: "![](http://example.com/test.png)"}))} />, {});
   expect(r.container).toMatchSnapshot();
 
   r = render(
-    <Markdown text="![aaalt][1]\n\n[1]: http://example.com/test.gif\n\n" />,
+    <Markdown hast={(markdownToHast({text: "![aaalt][1]\\n\\n[1]: http://example.com/test.gif\\n\\n"}))} />,
     {}
   );
   expect(r.container).toMatchSnapshot();
@@ -255,16 +250,15 @@ Morbi posuere nisl id odio suscipit, et hendrerit nibh consequat. Vivamus at odi
 Nullam aliquam sapien a efficitur luctus. Nullam vulputate tempor est, eu fermentum nunc vulputate id. Proin congue, nulla quis imperdiet sagittis, purus erat ullamcorper sapien, ullamcorper placerat neque mauris vitae lorem. Phasellus eu urna a eros vestibulum rutrum. In sed tempor sapien. Cras in elit venenatis, venenatis quam ac, dignissim est. Sed lacus tortor, maximus sed purus nec, venenatis fermentum tortor. Donec id lectus ut lectus gravida aliquet. Pellentesque posuere et dui ac vehicula. Proin purus neque, dictum sed sem tristique, suscipit viverra velit. Mauris ut posuere massa. Phasellus efficitur mattis velit sed ultrices.`;
 
 test('markdown preview mode', () => {
-  let r = render(<Markdown preview={1000} text="foo bar >!baz" />, {});
+  let r = render(<Markdown hast={(markdownToHast({text: "foo bar >!baz", preview: 1000}))} />, {});
   expect(r.container).toMatchSnapshot();
 
-  r = render(<Markdown preview={1000} text={longText} />, {});
+  r = render(<Markdown hast={(markdownToHast({text: longText, preview: 1000}))} />, {});
   expect(r.container).toMatchSnapshot();
 
   r = render(
     <Markdown
-      preview={100}
-      text="||Lorem **ipsum** dolor sit amet, consectetur _adipiscing_ elit. Phasellus tellus ante, dictum feugiat luctus quis, gravida id nibh. Sed tortor sem, pulvinar ut lacus nec, ornare consectetur ligula. Nam suscipit posuere vulputate. Proin ultricies dictum viverra. Cras tincidunt nec nulla non convallis. Nullam eget arcu mattis sapien ultricies varius nec ac mi. Duis dictum justo est, id tempus mi vestibulum eget. Nam posuere, nibh quis pharetra condimentum, leo ante tempor nibh, vitae facilisis sem elit at tellus. **Etiam** in tellus sagittis, lacinia enim ut, maximus ipsum. Ut sit amet mi tellus. Nulla a aliquam quam, vitae ultricies metus.||"
+      hast={(markdownToHast({text: "||Lorem **ipsum** dolor sit amet, consectetur _adipiscing_ elit. Phasellus tellus ante, dictum feugiat luctus quis, gravida id nibh. Sed tortor sem, pulvinar ut lacus nec, ornare consectetur ligula. Nam suscipit posuere vulputate. Proin ultricies dictum viverra. Cras tincidunt nec nulla non convallis. Nullam eget arcu mattis sapien ultricies varius nec ac mi. Duis dictum justo est, id tempus mi vestibulum eget. Nam posuere, nibh quis pharetra condimentum, leo ante tempor nibh, vitae facilisis sem elit at tellus. **Etiam** in tellus sagittis, lacinia enim ut, maximus ipsum. Ut sit amet mi tellus. Nulla a aliquam quam, vitae ultricies metus.||", preview: 100}))}
     />,
     {}
   );
@@ -298,7 +292,7 @@ test('clueMap rendering', async () => {
   ]);
 
   let r = render(
-    <Markdown text="before ||baz BOOM foo BAM >! not! !< fooey|| with >!after!< text" />,
+    <Markdown hast={(markdownToHast({text: "before ||baz BOOM foo BAM >! not! !< fooey|| with >!after!< text"}))} />,
     {}
   );
   await waitFor(() => {
@@ -309,8 +303,7 @@ test('clueMap rendering', async () => {
   r = render(
     <GridContext.Provider value={cluedGrid}>
       <Markdown
-        clueMap={clueMap}
-        text="before ||baz BOOM foo BAM >! not! !< fooey|| with >!after!< text"
+        hast={(markdownToHast({clueMap, text: "before ||baz BOOM foo BAM >! not! !< fooey|| with >!after!< text"}))}
       />
     </GridContext.Provider>,
     {}
@@ -322,7 +315,7 @@ test('clueMap rendering', async () => {
 
   r = render(
     <GridContext.Provider value={cluedGrid}>
-      <Markdown clueMap={clueMap} text="12ACLUE1 BAM" />
+      <Markdown hast={(markdownToHast({clueMap, text: "12ACLUE1 BAM"}))} />
     </GridContext.Provider>,
     {}
   );
@@ -333,7 +326,7 @@ test('clueMap rendering', async () => {
 
   r = render(
     <GridContext.Provider value={cluedGrid}>
-      <Markdown clueMap={clueMap} text="||BAM||" />
+      <Markdown hast={(markdownToHast({clueMap, text: "||BAM||"}))} />
     </GridContext.Provider>,
     {}
   );
@@ -345,10 +338,9 @@ test('clueMap rendering', async () => {
   r = render(
     <GridContext.Provider value={cluedGrid}>
       <Markdown
-        clueMap={clueMap}
-        text={
+        hast={(markdownToHast({clueMap, text:
           "You got it!! Glad the clues pointed you in the right direction. That's what they're there for. Also, it was Brian's suggestion to include >! BAM !< which I think is such an awesome addition. Cheers!"
-        }
+        }))}
       />
     </GridContext.Provider>,
     {}
@@ -361,8 +353,7 @@ test('clueMap rendering', async () => {
   r = render(
     <GridContext.Provider value={cluedGrid}>
       <Markdown
-        clueMap={clueMap}
-        text="Reference 1A and 2-D and 1-Across and 2Down and unknown 11A"
+        hast={(markdownToHast({clueMap, text: "Reference 1A and 2-D and 1-Across and 2Down and unknown 11A"}))}
       />
     </GridContext.Provider>,
     {}
@@ -374,8 +365,8 @@ test('clueMap rendering', async () => {
 });
 
 test('autolink full url', () => {
-  let r = render(
-    <Markdown text="Here is a link http://www.google.com to test" />,
+  const r = render(
+    <Markdown hast={(markdownToHast({text: "Here is a link http://www.google.com to test"}))} />,
     {}
   );
   expect(r.container).toMatchInlineSnapshot(`
@@ -400,7 +391,7 @@ test('autolink full url', () => {
 });
 
 test('autolink partial url', () => {
-  let r = render(<Markdown text="Here is a link crosshare.org to test" />, {});
+  const r = render(<Markdown hast={(markdownToHast({text: "Here is a link crosshare.org to test"}))} />, {});
   expect(r.container).toMatchInlineSnapshot(`
 <div>
   <div>
@@ -415,8 +406,8 @@ test('autolink partial url', () => {
 });
 
 test('autolink email', () => {
-  let r = render(
-    <Markdown text="Here is an email mike@crosshare.org to test" />,
+  const r = render(
+    <Markdown hast={(markdownToHast({text: "Here is an email mike@crosshare.org to test"}))} />,
     {}
   );
   expect(r.container).toMatchInlineSnapshot(`
@@ -441,7 +432,7 @@ test('autolink email', () => {
 });
 
 test('auto tagger', () => {
-  let r = render(<Markdown text="Here is an tag #lang-es to test" />, {});
+  let r = render(<Markdown hast={(markdownToHast({text: "Here is an tag #lang-es to test"}))} />, {});
   expect(r.container).toMatchInlineSnapshot(`
 <div>
   <div>
@@ -460,7 +451,7 @@ test('auto tagger', () => {
 </div>
 `);
 
-  r = render(<Markdown text="Here is not a tag #1" />, {});
+  r = render(<Markdown hast={(markdownToHast({text: "Here is not a tag #1"}))} />, {});
   expect(r.container).toMatchInlineSnapshot(`
 <div>
   <div>
@@ -475,7 +466,7 @@ test('auto tagger', () => {
 });
 
 test('profile link', () => {
-  let r = render(<Markdown text="Here is my profile @mike" />, {});
+  const r = render(<Markdown hast={(markdownToHast({text: "Here is my profile @mike"}))} />, {});
   expect(r.container).toMatchInlineSnapshot(`
 <div>
   <div>

@@ -657,6 +657,7 @@ export const Puzzle = ({
             rebusValue={state.rebusValue}
             wasEntryClick={state.wasEntryClick}
             allEntries={state.grid.entries}
+            hasts={puzzle.clueHasts}
             refPositions={refPositions}
             refed={refed}
             dimCompleted={true}
@@ -678,6 +679,7 @@ export const Puzzle = ({
             rebusValue={state.rebusValue}
             wasEntryClick={state.wasEntryClick}
             allEntries={state.grid.entries}
+            hasts={puzzle.clueHasts}
             refPositions={refPositions}
             refed={refed}
             dimCompleted={true}
@@ -696,6 +698,7 @@ export const Puzzle = ({
       />
     );
   } else {
+    const hast = entry && puzzle.clueHasts[entry.index];
     puzzleView = (
       <SquareAndCols
         leftIsActive={state.active.dir === Direction.Across}
@@ -732,7 +735,7 @@ export const Puzzle = ({
               display: 'flex',
             }}
           >
-            {entry ? (
+            {entry && hast ? (
               <div
                 css={{
                   margin: 'auto 1em',
@@ -765,7 +768,7 @@ export const Puzzle = ({
                     height: '100%',
                   }}
                 >
-                  <ClueText entry={entry} />
+                  <ClueText entry={entry} hast={hast} />
                 </div>
               </div>
             ) : (
@@ -778,6 +781,7 @@ export const Puzzle = ({
             wasEntryClick={state.wasEntryClick}
             scrollToCross={scrollToCross}
             allEntries={state.grid.entries}
+            hasts={puzzle.clueHasts}
             refPositions={refPositions}
             refed={refed}
             dimCompleted={true}
@@ -797,6 +801,7 @@ export const Puzzle = ({
             wasEntryClick={state.wasEntryClick}
             scrollToCross={scrollToCross}
             allEntries={state.grid.entries}
+            hasts={puzzle.clueHasts}
             refPositions={refPositions}
             refed={refed}
             dimCompleted={true}

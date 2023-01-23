@@ -8,6 +8,7 @@ import {
   puzzleFromDB,
   Comment,
   PuzzleResultWithAugmentedComments,
+  Direction,
 } from './types';
 import type firebaseAdminType from 'firebase-admin';
 
@@ -40,6 +41,9 @@ import { getMiniForDate } from './dailyMinis';
 import { slugify } from './utils';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
+import type { Root } from 'hast';
+import { markdownToHast } from './markdown/markdown';
+import { addClues, fromCells, getEntryToClueMap } from './viewableGrid';
 
 export async function getStorageUrl(
   storageKey: string
@@ -388,7 +392,7 @@ export interface PageErrorProps {
   error: string;
 }
 
-export type ArticlePageProps = PageErrorProps | ArticleT;
+export type ArticlePageProps = PageErrorProps | ArticleT & {hast: Root};
 
 export const getArticlePageProps: GetServerSideProps<
   ArticlePageProps
@@ -407,16 +411,18 @@ export const getArticlePageProps: GetServerSideProps<
     return { props: { error: 'article doesnt exist' } };
   }
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-  return { props: article };
+  return { props: {...article, hast: markdownToHast({text: article.c})} };
 };
 
 export async function convertComments(
-  comments: Array<CommentWithRepliesT>
+  comments: Array<CommentWithRepliesT>,
+  clueMap: Map<string, [number, Direction, string]>
 ): Promise<Array<Comment>> {
   return Promise.all(
     comments.map(async (c) => {
       return {
         commentText: c.c,
+        commentHast: markdownToHast({text: c.c, clueMap}),
         authorId: c.a,
         authorDisplayName: c.n,
         authorSolveTime: c.t,
@@ -424,7 +430,7 @@ export async function convertComments(
         authorSolvedDownsOnly: c.do || false,
         publishTime: c.p.toMillis(),
         id: c.i,
-        replies: await convertComments(c.r || []),
+        replies: await convertComments(c.r || [], clueMap),
         ...(c.un && { authorUsername: c.un }),
         authorIsPatron: await isUserPatron(c.a),
       };
@@ -474,12 +480,26 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   if (isRight(validationResult)) {
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
     const fromDB = puzzleFromDB(validationResult.right);
+    const grid = addClues(fromCells({
+      mapper: (e) => e,
+      width: fromDB.size.cols,
+      height: fromDB.size.rows,
+      cells: fromDB.grid,
+      allowBlockEditing: true,
+      highlighted: new Set(fromDB.highlighted),
+      highlight: fromDB.highlight,
+      vBars: new Set(fromDB.vBars),
+      hBars: new Set(fromDB.hBars),
+      hidden: new Set(fromDB.hidden),
+    }), fromDB.clues);
+    const clueMap = getEntryToClueMap(grid, fromDB.grid);
     puzzle = {
       ...fromDB,
       id: dbres.id,
       constructorPage: await userIdToPage(validationResult.right.a),
       constructorIsPatron: await isUserPatron(validationResult.right.a),
-      comments: await convertComments(fromDB.comments),
+      comments: await convertComments(fromDB.comments, clueMap),
+      clueHasts: fromDB.clues.map(c => markdownToHast({text: c.clue, clueMap}))
     };
   } else {
     console.error(PathReporter.report(validationResult).join(','));

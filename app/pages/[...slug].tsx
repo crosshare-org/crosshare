@@ -17,6 +17,7 @@ import { paginatedPuzzles } from '../lib/paginatedPuzzles';
 import { AccountPrefsV } from '../lib/prefs';
 import { isUserPatron } from '../lib/patron';
 import { getCollection } from '../lib/firebaseAdminWrapper';
+import { markdownToHast } from '../lib/markdown/markdown';
 
 interface ErrorProps {
   error: string;
@@ -129,6 +130,7 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
       followers,
       following,
       constructorData: cp,
+      bioHast: markdownToHast({text: cp.b}),
       isPatron,
       profilePicture,
       coverPicture,

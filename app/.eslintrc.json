@@ -10,6 +10,10 @@
     "next",
     "prettier"
   ],
+  "ignorePatterns": [
+    "next.config.mjs",
+    "jest.config.mjs"
+  ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": { "project": "./tsconfig.json"},
   "plugins": ["@emotion"],

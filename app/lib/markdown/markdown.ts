@@ -23,9 +23,6 @@ export function markdownToHast(props: {
   // If this is included, references to clues by entry will get tooltips
   clueMap?: Map<string, [number, Direction, string]>;
   preview?: number;
-  inline?: boolean;
-  className?: string;
-  noRefs?: boolean;
 }): Root {
   const text = props.text.replace(/[^\s\S]/g, '');
   const rehypePlugins: PluggableList = [

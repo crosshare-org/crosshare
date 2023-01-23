@@ -1,3 +1,4 @@
+import type { Root } from 'hast';
 import Head from 'next/head';
 import { ArticleT } from '../lib/article';
 import { ArticlePageProps } from '../lib/serverOnly';
@@ -25,7 +26,7 @@ export function ArticlePage(props: ArticlePageProps) {
   return <Article key={props.s} {...props} />;
 }
 
-function Article(props: ArticleT) {
+function Article(props: ArticleT & {hast: Root}) {
   return (
     <>
       <Head>
@@ -48,7 +49,7 @@ function Article(props: ArticleT) {
       >
         <Markdown
           css={{ marginBottom: '2em', '& h2': { marginTop: '1em' } }}
-          text={props.c}
+          hast={props.hast}
         />
         <p>
           This article is part of a series of posts designed to teach visitors

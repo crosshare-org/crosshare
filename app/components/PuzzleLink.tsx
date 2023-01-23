@@ -17,6 +17,8 @@ import { Trans } from '@lingui/macro';
 import { PastDistanceToNow, DistanceToNow } from './TimeDisplay';
 import { FollowButton } from './FollowButton';
 import { TagList } from './TagList';
+import type { Root } from 'hast';
+import { markdownToHast } from '../lib/markdown/markdown';
 
 const PuzzleLink = (props: {
   fullWidth?: boolean;
@@ -266,7 +268,7 @@ export type LinkablePuzzle = Pick<
   | 'size'
   | 'userTags'
   | 'autoTags'
->;
+> & {blogPostPreview: Root|null};
 
 export function toLinkablePuzzle({
   title,
@@ -282,7 +284,7 @@ export function toLinkablePuzzle({
   size,
   userTags,
   autoTags,
-}: LinkablePuzzle): LinkablePuzzle {
+}: Omit<LinkablePuzzle, 'blogPostPreview'>): LinkablePuzzle {
   return {
     title,
     rating,
@@ -297,6 +299,7 @@ export function toLinkablePuzzle({
     size,
     userTags,
     autoTags,
+    blogPostPreview: blogPost ? markdownToHast({text: blogPost, preview: 250}) : null
   };
 }
 
@@ -412,7 +415,7 @@ export const PuzzleResultLink = ({
     <>
       <PuzzleLink
         fullWidth={fullWidth}
-        showingBlog={showBlogPost && puzzle.blogPost ? true : false}
+        showingBlog={showBlogPost && puzzle.blogPostPreview ? true : false}
         authorId={puzzle.authorId}
         id={puzzle.id}
         puzzleTitle={puzzle.title}
@@ -425,9 +428,9 @@ export const PuzzleResultLink = ({
       >
         {contents}
       </PuzzleLink>
-      {showBlogPost && puzzle.blogPost ? (
+      {showBlogPost && puzzle.blogPostPreview ? (
         <div css={{ width: '100%', marginBottom: '2em' }}>
-          <Markdown text={puzzle.blogPost} preview={250} />
+          <Markdown hast={puzzle.blogPostPreview} />
         </div>
       ) : (
         ''

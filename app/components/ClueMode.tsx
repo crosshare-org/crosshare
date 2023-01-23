@@ -35,17 +35,21 @@ import dynamic from 'next/dynamic';
 import type { ImageCropper as ImageCropperType } from './ImageCropper';
 import type { SuggestOverlay as SuggestOverlayType } from './ClueSuggestionOverlay';
 import { DateTimePicker } from './DateTimePicker';
-import { MarkdownPreview } from './MarkdownPreview';
 import type { User } from 'firebase/auth';
 import { isMetaSolution } from '../lib/utils';
 import { AlternateSolutionEditor } from './AlternateSolutionEditor';
 import { TagEditor } from './TagEditor';
 import { TagList } from './TagList';
 import { sizeTag } from '../lib/sizeTag';
+import type { MarkdownPreview as MarkdownPreviewType } from './MarkdownPreview';
 
 export const MAX_STRING_LENGTH = 2048;
 export const MAX_BLOG_LENGTH = 20000;
 export const MAX_META_SUBMISSION_LENGTH = 100;
+
+const MarkdownPreview = dynamic(
+  () => import('./MarkdownPreview').then((mod) => mod.MarkdownPreview as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+) as typeof MarkdownPreviewType;
 
 const ImageCropper = dynamic(
   () => import('./ImageCropper').then((mod) => mod.ImageCropper as any), // eslint-disable-line @typescript-eslint/no-explicit-any

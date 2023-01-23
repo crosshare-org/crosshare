@@ -1,14 +1,14 @@
 import { addDoc, Timestamp } from 'firebase/firestore';
 import Head from 'next/head';
-import { useMemo } from 'react';
-import { useCollection } from 'react-firebase-hooks/firestore';
+import { useRef } from 'react';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { requiresAdmin } from '../../components/AuthContext';
 import { Button } from '../../components/Buttons';
 import { Link } from '../../components/Link';
 import { useSnackbar } from '../../components/Snackbar';
 import { DefaultTopBar } from '../../components/TopBar';
-import { ArticleT, validate } from '../../lib/article';
-import { getCollection } from '../../lib/firebaseWrapper';
+import { ArticleT, ArticleV } from '../../lib/article';
+import { getCollection, getValidatedCollection } from '../../lib/firebaseWrapper';
 
 const ArticleListItem = (props: ArticleT | null) => {
   if (!props) {
@@ -23,17 +23,9 @@ const ArticleListItem = (props: ArticleT | null) => {
 };
 
 export default requiresAdmin(() => {
-  const [articlesSnapshot] = useCollection(getCollection('a'));
+  const articleQuery = useRef(getValidatedCollection('a', ArticleV));
+  const [articles] = useCollectionData(articleQuery.current);
   const { showSnackbar } = useSnackbar();
-
-  const articles: Array<ArticleT | null> = useMemo(() => {
-    if (articlesSnapshot === undefined || articlesSnapshot.empty) {
-      return [];
-    }
-    return articlesSnapshot.docs.map((a) => {
-      return validate(a.data());
-    });
-  }, [articlesSnapshot]);
 
   return (
     <>
@@ -62,7 +54,7 @@ export default requiresAdmin(() => {
           }}
         />
         <h4>All Articles:</h4>
-        <ul>{articles.map(ArticleListItem)}</ul>
+        <ul>{articles?.map(ArticleListItem)}</ul>
       </div>
     </>
   );

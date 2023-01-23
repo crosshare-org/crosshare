@@ -75,7 +75,7 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
             {authoredPuzzles.map((puzzle) => (
               <PuzzleResultLink
                 key={puzzle.id}
-                puzzle={puzzle}
+                puzzle={{...puzzle, blogPostPreview: null}}
                 showAuthor={false}
                 showDate={true}
                 showPrivateStatus={true}

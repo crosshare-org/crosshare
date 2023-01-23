@@ -14,6 +14,7 @@ import { GridBase, valAt, EntryBase } from '../lib/gridBase';
 import { PuzzleAction, ClickedEntryAction } from '../reducers/reducer';
 import { SMALL_AND_UP } from '../lib/style';
 import { ClueText } from './ClueText';
+import type { Root } from 'hast';
 
 interface ClueListItemProps {
   dimCompleted: boolean;
@@ -21,6 +22,7 @@ interface ClueListItemProps {
   rebusValue?: string;
   conceal: boolean;
   entry: CluedEntry;
+  hast: Root;
   dispatch: Dispatch<PuzzleAction>;
   isActive: boolean;
   isCross: boolean;
@@ -146,7 +148,7 @@ const ClueListItem = memo(function ClueListItem({
             }}
           >
             <div>
-              <ClueText entry={props.entry} />
+              <ClueText entry={props.entry} hast={props.hast} />
             </div>
             {props.showEntry ? (
               <div>
@@ -197,6 +199,7 @@ interface ClueListProps {
   cross?: number;
   refed: Set<number>;
   entries: Array<CluedEntry>;
+  hasts: Array<Root>;
   allEntries?: Array<CluedEntry>;
   refPositions?: Array<Array<RefPosition>>;
   dispatch: Dispatch<PuzzleAction>;
@@ -209,7 +212,11 @@ interface ClueListProps {
 
 export const ClueList = (props: ClueListProps): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
-  const clues = props.entries.map((entry) => {
+  const clues = props.entries.map((entry, i) => {
+    const hast = props.hasts[i];
+    if (!hast) {
+      throw new Error(`missing hast for clue ${i}`);
+    }
     const isActive = props.current === entry.index;
     const isCross = props.cross === entry.index;
     const isRefed = props.refed.has(entry.index);
@@ -224,6 +231,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
         grid={props.grid}
         showEntry={props.showEntries}
         entry={entry}
+        hast={hast}
         conceal={props.conceal}
         key={entry.index}
         dispatch={props.dispatch}

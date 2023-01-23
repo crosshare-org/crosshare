@@ -18,10 +18,12 @@ import { normalizeTag } from '../../lib/utils';
 import { TagList } from '../../components/TagList';
 import { ArticleT } from '../../lib/article';
 import { Markdown } from '../../components/Markdown';
+import type { Root } from 'hast';
+import { markdownToHast } from '../../lib/markdown/markdown';
 
 interface TagPageProps {
   tags: string[];
-  article: ArticleT | null;
+  article: (ArticleT & { hast: Root }) | null;
   puzzles: Array<
     LinkablePuzzle & {
       constructorPage: ConstructorPageT | null;
@@ -60,11 +62,11 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
     return { props: { error: 'Maximum of 3 tags per query' } };
   }
 
-  let article: ArticleT | null = null;
+  let article: ArticleT & { hast: Root } | null = null;
   if (tags.length === 1) {
     const articleRes = await getArticle(`tag:${tags[0]}`);
-    if (typeof articleRes !== 'string') {
-      article = articleRes;
+    if (articleRes !== null && typeof articleRes !== 'string') {
+      article = {...articleRes, hast: markdownToHast({text: articleRes.c})};
     }
   }
 
@@ -122,13 +124,13 @@ export default function TagPageHandler(props: PageProps) {
   const displayTags = props.tags.join(', ');
 
   const page = props.currentPage;
-  const title =
+  const title = props.article?.t ? `${props.article.t} | Crosshare` :
     t`Tagged Puzzles` +
     ' | ' +
     displayTags +
     (page > 0 ? ' | ' + t`Page ${page}` : '') +
     ' | Crosshare';
-  const description = t({
+  const description = props.article?.c ? props.article.c : t({
     id: 'tagged-desc',
     message: `The latest public puzzles tagged with ${displayTags}`,
   });
@@ -194,7 +196,7 @@ export default function TagPageHandler(props: PageProps) {
           />
         </h1>
         {props.article ? (
-          <Markdown css={{ marginBottom: '2em' }} text={props.article.c} />
+          <Markdown css={{ marginBottom: '2em' }} hast={props.article.hast} />
         ) : (
           ''
         )}
