@@ -43,7 +43,7 @@ export enum StatsMode {
 }
 
 interface MetaSubmissionListProps {
-  puzzle: PuzzleResult;
+  puzzle: Omit<PuzzleResult, 'comments'>;
   stats: PuzzleStatsViewT;
 }
 
@@ -323,7 +323,7 @@ export const StatsPage = ({
   stats,
   hideShare,
 }: {
-  puzzle: PuzzleResult;
+  puzzle: Omit<PuzzleResult, 'comments'>;
   stats: PuzzleStatsViewT | null;
   hideShare?: boolean;
 }) => {

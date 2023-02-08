@@ -11,7 +11,7 @@ import { GetServerSideProps } from 'next';
 import { getCollection } from '../../../lib/firebaseAdminWrapper';
 
 interface PageProps {
-  puzzle: PuzzleResult;
+  puzzle: Omit<PuzzleResult, 'comments'>;
   stats: PuzzleStatsViewT;
 }
 
@@ -47,7 +47,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     console.error(PathReporter.report(validationResult).join(','));
     return { notFound: true };
   }
-  const puzzle = {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {comments, ...puzzle} = {
     ...puzzleFromDB(validationResult.right),
     id: dbres.id,
   };
@@ -80,10 +81,10 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   return {
     props: {
       stats: {
-        ct_subs: ct_subs?.map((n) => ({
+        ...(ct_subs?.length && {ct_subs: ct_subs.map((n) => ({
           ...n,
           t: typeof n.t === 'number' ? n.t : n.t.toMillis(),
-        })),
+        }))}),
         ...statsRem,
       },
       puzzle,
