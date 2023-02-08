@@ -139,3 +139,5 @@ temp/
 # End of https://www.gitignore.io/api/node,firebase
 
 .env.local
+
+.swc

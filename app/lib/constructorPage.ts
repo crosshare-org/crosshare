@@ -3,6 +3,7 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { timestamp } from './timestamp';
+import type { Root } from 'hast';
 
 export const ConstructorPageV = t.intersection([
   t.type({
@@ -35,6 +36,14 @@ export const ConstructorPageWithIdV = t.intersection([
 export interface ConstructorPageT
   extends Omit<t.TypeOf<typeof ConstructorPageV>, 't'> {
   id: string;
+}
+
+// Omit any markdown fields
+
+export type ConstructorPageBase = Omit<ConstructorPageT, 'sig'|'b'>;
+export interface ConstructorPageWithMarkdown extends ConstructorPageBase {
+  b: Root,
+  sig?: Root
 }
 
 export function validate(

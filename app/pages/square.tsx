@@ -1,18 +1,72 @@
-import { useState } from 'react';
+import { forwardRef, SyntheticEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 
-import { SquareAndCols } from '../components/Page';
 import { DefaultTopBar } from '../components/TopBar';
 
-export default function SquareTestPage() {
-  const [ratio, setRatio] = useState(1.0);
+const getViewportHeight = () => {
+  if (typeof window !== 'undefined') {
+    return window.visualViewport?.height || 0;
+  }
+  return 0;
+};
 
+const useViewportHeight = () => {
+  const [state, setState] = useState(getViewportHeight);
+  useEffect(() => {
+    const handleResize = () => setState(getViewportHeight);
+    window.visualViewport?.addEventListener('resize', handleResize);
+    return () =>
+      window.visualViewport?.removeEventListener('resize', handleResize);
+  }, []);
+  return state;
+};
+
+const useScrollLock = () => {
+  useEffect(() => {
+    const handleScroll = (e) => {e.preventDefault(); window.scrollTo(0, 0); return false;};
+    window.addEventListener('scroll', handleScroll);
+    return () =>
+      window.removeEventListener('scroll', handleScroll);
+  }, []);
+};
+
+interface BeforeInputEvent extends SyntheticEvent {
+  data ?: string
+}
+const HiddenInput = forwardRef<HTMLInputElement, {handleKeyDown?: (e: KeyboardEvent) => void}>((props, ref) => {
+  return <input autoCapitalize='characters' css={{
+    width: 1,
+    height: 1,
+    padding: 0,
+    margin: -1,
+    overflow: 'hidden',
+    clip: 'rect(0, 0, 0, 0)',
+    whiteSpace: 'nowrap',
+    border: 0,
+    position: 'absolute',
+    zIndex: 99
+  }}
+  enterKeyHint={'next'}
+  tabIndex={0}
+  ref={ref}
+  onKeyDown={props.handleKeyDown}
+  />;
+});
+
+export default function SquareTestPage() {
+  const [input, setInput] = useState('');
+
+  const height = useViewportHeight();
+  useScrollLock();
+
+  const inputRef = useRef<HTMLInputElement>(null);
   return (
     <>
       <div
         css={{
           display: 'flex',
           flexDirection: 'column',
-          height: '100%',
+          height: height > 0 ? height : '100dvh',
+          overflow: 'hidden',
         }}
       >
         <div css={{ flex: 'none' }}>
@@ -21,103 +75,23 @@ export default function SquareTestPage() {
         <div
           css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}
         >
-          <SquareAndCols
-            leftIsActive={true}
-            dispatch={() => {
-              /* empty*/
+          <HiddenInput ref={inputRef} handleData={setInput}/>
+          <div
+            css={{
+              color: 'red',
+              background: 'blue',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '50%',
             }}
-            aspectRatio={ratio}
-            square={(width: number, height: number) => (
-              <div
-                css={{
-                  border: '1px solid black',
-                  backgroundColor: 'blue',
-                  height: '100%',
-                }}
-              >
-                <div>
-                  {width}x{height}
-                </div>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0.1"
-                  max="10"
-                  value={ratio}
-                  onChange={(e) => setRatio(parseFloat(e.target.value))}
-                />
-              </div>
-            )}
-            left={
-              <div
-                css={{ border: '1px solid black', backgroundColor: 'green' }}
-              >
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-                b<br />
-              </div>
-            }
-            right={
-              <div
-                css={{ border: '1px solid black', backgroundColor: 'yellow' }}
-              >
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-                c<br />
-              </div>
-            }
-          />
+            onClick={() => {
+              inputRef.current?.focus();
+            }}
+          >
+            {input}
+          </div>
         </div>
       </div>
     </>

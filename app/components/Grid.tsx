@@ -22,7 +22,6 @@ type GridViewProps = {
   wrongCells?: Set<number>;
   allowBlockEditing?: boolean;
   autofill?: Array<string>;
-  squareWidth: number;
   cellColors?: Array<number>;
   highlightEntry?: number;
   entryRefs?: Array<Set<number>>;
@@ -131,7 +130,6 @@ export const GridView = ({
         }
         isEnteringRebus={props.isEnteringRebus || false}
         rebusValue={props.rebusValue}
-        squareWidth={props.squareWidth}
         autofill={props.autofill?.[idx] ?? ''}
         gridWidth={grid.width}
         gridHeight={grid.height}

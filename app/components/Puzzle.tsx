@@ -56,7 +56,6 @@ import {
   getClueText,
   KeyK,
   fromKeyboardEvent,
-  fromKeyString,
 } from '../lib/types';
 import {
   fromCells,
@@ -79,7 +78,6 @@ import {
   LoadPlayAction,
   RanSuccessEffectsAction,
   RanMetaSubmitEffectsAction,
-  PasteAction,
 } from '../reducers/reducer';
 import {
   TopBar,
@@ -100,7 +98,6 @@ import {
   SMALL_AND_UP_RULES,
   SQUARE_HEADER_HEIGHT,
 } from '../lib/style';
-import { Keyboard } from './Keyboard';
 import { useRouter } from 'next/router';
 import { Button } from './Buttons';
 import { useSnackbar } from './Snackbar';
@@ -122,6 +119,7 @@ import { GridContext } from './GridContext';
 import { DownsOnlyContext } from './DownsOnlyContext';
 import { Timestamp } from '../lib/timestamp';
 import { updateDoc } from 'firebase/firestore';
+import { HiddenInput, useKeyboard } from './HiddenInput';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -531,6 +529,31 @@ export const Puzzle = ({
     writePlayToDBIfNeeded,
   ]);
 
+  const [hiddenInputRef, showKeyboard] = useKeyboard();
+
+  const lastClueView = useRef(false);
+  useEffect(() => {
+    if (state.clueView !== lastClueView.current) {
+      showKeyboard();
+      lastClueView.current = state.clueView;
+    }
+  }, [showKeyboard, state.clueView]);
+
+  const unpaused = useRef(false);
+  useEffect(() => {
+    if (!(state.success && state.dismissedSuccess)) {
+      if (loadingPlayState || !state.currentTimeWindowStart) {
+        unpaused.current = false;
+        return;
+      }
+    }
+    if (unpaused.current === true) {
+      return;
+    }
+    unpaused.current = true;
+    showKeyboard();
+  }, [showKeyboard, loadingPlayState, state]);
+
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
       // Disable keyboard when paused / loading play
@@ -555,42 +578,13 @@ export const Puzzle = ({
       state.dismissedSuccess,
     ]
   );
-  useEventListener('keydown', physicalKeyboardHandler);
-
-  const pasteHandler = useCallback(
-    (e: ClipboardEvent) => {
-      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
-      if (tagName === 'textarea' || tagName === 'input') {
-        return;
-      }
-
-      const pa: PasteAction = {
-        type: 'PASTE',
-        content: e.clipboardData?.getData('Text') || '',
-      };
-      dispatch(pa);
-      e.preventDefault();
-    },
-    [dispatch]
-  );
-  useEventListener('paste', pasteHandler);
+  //useEventListener('keydown', physicalKeyboardHandler);
 
   let [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
   if (entry === null && cross !== null) {
     dispatch({ type: 'CHANGEDIRECTION' });
     [entry, cross] = [cross, entry];
   }
-
-  const keyboardHandler = useCallback(
-    (key: string) => {
-      const mkey = fromKeyString(key);
-      if (isSome(mkey)) {
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
-        dispatch(kpa);
-      }
-    },
-    [dispatch]
-  );
 
   const { acrossEntries, downEntries } = useMemo(() => {
     return {
@@ -644,7 +638,6 @@ export const Puzzle = ({
   if (entryIdx !== null) {
     refed = refs[entryIdx] || new Set();
   }
-
   const shouldConceal =
     state.currentTimeWindowStart === 0 &&
     !(state.success && state.dismissedSuccess);
@@ -702,27 +695,23 @@ export const Puzzle = ({
     puzzleView = (
       <SquareAndCols
         leftIsActive={state.active.dir === Direction.Across}
-        waitToResize={state.waitToResize}
         dispatch={dispatch}
         aspectRatio={state.grid.width / state.grid.height}
-        square={(width: number, _height: number) => {
-          return (
-            <GridView
-              isEnteringRebus={state.isEnteringRebus}
-              rebusValue={state.rebusValue}
-              squareWidth={width}
-              grid={state.grid}
-              active={state.active}
-              entryRefs={refs}
-              dispatch={dispatch}
-              revealedCells={state.revealedCells}
-              verifiedCells={state.verifiedCells}
-              wrongCells={state.wrongCells}
-              showAlternates={state.success ? state.alternateSolutions : null}
-              answers={state.answers}
-            />
-          );
-        }}
+        square={
+          <GridView
+            isEnteringRebus={state.isEnteringRebus}
+            rebusValue={state.rebusValue}
+            grid={state.grid}
+            active={state.active}
+            entryRefs={refs}
+            dispatch={dispatch}
+            revealedCells={state.revealedCells}
+            verifiedCells={state.verifiedCells}
+            wrongCells={state.wrongCells}
+            showAlternates={state.success ? state.alternateSolutions : null}
+            answers={state.answers}
+          />
+        }
         header={
           <div
             css={{
@@ -823,7 +812,11 @@ export const Puzzle = ({
   const checkRevealMenus = useMemo(
     () => (
       <>
-        <TopBarDropDown icon={<FaEye />} text={t`Reveal`}>
+        <TopBarDropDown
+          onClose={showKeyboard}
+          icon={<FaEye />}
+          text={t`Reveal`}
+        >
           {() => (
             <>
               <TopBarDropDownLink
@@ -866,7 +859,11 @@ export const Puzzle = ({
           )}
         </TopBarDropDown>
         {!state.autocheck ? (
-          <TopBarDropDown icon={<FaCheck />} text={t`Check`}>
+          <TopBarDropDown
+            onClose={showKeyboard}
+            icon={<FaCheck />}
+            text={t`Check`}
+          >
             {() => (
               <>
                 <TopBarDropDownLink
@@ -927,13 +924,17 @@ export const Puzzle = ({
         )}
       </>
     ),
-    [state.autocheck]
+    [state.autocheck, showKeyboard]
   );
 
   const moreMenu = useMemo(
     () => (
       <>
-        <TopBarDropDown icon={<FaEllipsisH />} text={t`More`}>
+        <TopBarDropDown
+          onClose={showKeyboard}
+          icon={<FaEllipsisH />}
+          text={t`More`}
+        >
           {() => (
             <>
               {!state.success ? (
@@ -1050,11 +1051,12 @@ export const Puzzle = ({
       toggleKeyboard,
       setToggleKeyboard,
       isEmbed,
+      showKeyboard,
     ]
   );
 
-  const description = puzzle.blogPost
-    ? puzzle.blogPost.slice(0, 160) + '...'
+  const description = puzzle.blogPostRaw
+    ? puzzle.blogPostRaw.slice(0, 160) + '...'
     : puzzle.clues.map(getClueText).slice(0, 10).join('; ');
 
   const locale = router.locale || 'en';
@@ -1197,7 +1199,16 @@ export const Puzzle = ({
         ) : (
           ''
         )}
+        {state.success ? (
+          ''
+        ) : (
+          <HiddenInput ref={hiddenInputRef} dispatch={dispatch} />
+        )}
         <div
+          onClick={showKeyboard}
+          onKeyDown={showKeyboard}
+          tabIndex={0}
+          role={'textbox'}
           css={{
             flex: '1 1 auto',
             overflow: 'scroll',
@@ -1212,15 +1223,6 @@ export const Puzzle = ({
               {puzzleView}
             </DownsOnlyContext.Provider>
           </GridContext.Provider>
-        </div>
-        <div css={{ flex: 'none', width: '100%' }}>
-          <Keyboard
-            toggleKeyboard={toggleKeyboard}
-            keyboardHandler={keyboardHandler}
-            muted={muted}
-            showExtraKeyLayout={state.showExtraKeyLayout}
-            includeBlockKey={false}
-          />
         </div>
       </div>
     </>

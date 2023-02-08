@@ -33,6 +33,9 @@ body {
   text-align: left;
   background-color: var(--bg);
 }
+:root {
+  accent-color: var(--primary);
+}
 :root:fullscreen {
   background-color: var(--bg) !important;
 }

@@ -8,7 +8,7 @@ export const MAX_WIDTH = 1200;
 export const PROFILE_PIC: [number, number] = [200, 200];
 export const COVER_PIC: [number, number] = [1200, 400];
 
-export const TINY_COL_MIN_HEIGHT = 75;
+export const TINY_COL_MIN_HEIGHT = 50;
 export const SQUARE_HEADER_HEIGHT = 68;
 export const SMALL_BREAKPOINT = 576;
 export const LARGE_BREAKPOINT = 992;

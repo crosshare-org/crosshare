@@ -39,7 +39,6 @@ type CellProps = {
   autofill: string;
   gridWidth: number;
   gridHeight: number;
-  squareWidth: number;
   isBlock: boolean;
   active: boolean;
   entryCell: boolean;
@@ -78,7 +77,6 @@ export const Cell = memo(function Cell(props: CellProps) {
     bg = 'var(--secondary)';
   }
 
-  const cellSize = props.squareWidth / props.gridWidth;
   const filledValue =
     props.active && props.isEnteringRebus
       ? props.rebusValue || ''
@@ -110,6 +108,7 @@ export const Cell = memo(function Cell(props: CellProps) {
         position: 'relative',
         margin: 0,
         overflow: 'hidden',
+        containerType: 'size',
       }}
     >
       {/* eslint-disable-next-line */}
@@ -121,7 +120,7 @@ export const Cell = memo(function Cell(props: CellProps) {
           position: 'absolute',
           width: '100%',
           height: '100%',
-          fontSize: cellSize,
+          fontSize: '100cqw',
           ...(props.hidden &&
             props.active && {
               background:

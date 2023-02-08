@@ -11,7 +11,7 @@ import { DifficultyBadge } from '../components/DifficultyBadge';
 import { Emoji } from './Emoji';
 import { timeString } from '../lib/utils';
 import { PlayWithoutUserT } from '../lib/dbtypes';
-import { ConstructorPageT } from '../lib/constructorPage';
+import { ConstructorPageBase, ConstructorPageT } from '../lib/constructorPage';
 import { Markdown } from './Markdown';
 import { Trans } from '@lingui/macro';
 import { PastDistanceToNow, DistanceToNow } from './TimeDisplay';
@@ -194,7 +194,7 @@ export const AuthorLink = ({
   isPatron,
 }: {
   authorName: string;
-  constructorPage: ConstructorPageT | null;
+  constructorPage: ConstructorPageBase | null;
   guestConstructor: string | null;
   showFollowButton?: boolean;
   isPatron: boolean;

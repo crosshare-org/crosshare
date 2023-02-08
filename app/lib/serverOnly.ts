@@ -15,7 +15,7 @@ import type firebaseAdminType from 'firebase-admin';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { DBPuzzleV, CommentWithRepliesT } from './dbtypes';
-import { ConstructorPageT, ConstructorPageV } from './constructorPage';
+import { ConstructorPageV, ConstructorPageWithMarkdown } from './constructorPage';
 import {
   NotificationV,
   NotificationT,
@@ -66,7 +66,7 @@ export async function getStorageUrl(
   return null;
 }
 
-const usernameMap: Record<string, ConstructorPageT> = {};
+const usernameMap: Record<string, ConstructorPageWithMarkdown> = {};
 let usernamesUpdated: number | null = null;
 const usernamesTTL = 1000 * 60 * 10;
 
@@ -82,7 +82,8 @@ const updateUsernameMap = async (): Promise<void> => {
     await mapEachResult(query, ConstructorPageV, (cp, docId) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { t, ...partial } = cp;
-      usernameMap[cp.u] = { ...partial, id: docId };
+      const { sig, ...res} = { ...partial, id: docId, b: markdownToHast({text: partial.b}) };
+      usernameMap[cp.u] = { ...res, ...(sig !== undefined && {sig: markdownToHast({text: sig})})};
     });
     usernamesUpdated = now;
   } catch (e) {
@@ -103,7 +104,7 @@ const updateUsernameMapOnce = () => {
 
 export async function userIdToPage(
   userId: string
-): Promise<ConstructorPageT | null> {
+): Promise<ConstructorPageWithMarkdown | null> {
   if (
     usernamesUpdated === null ||
     Date.now() - usernamesUpdated > usernamesTTL
@@ -454,7 +455,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   locale,
 }) => {
   const db = getFirestore(getAdminApp());
-  let puzzle: PuzzleResultWithAugmentedComments | null = null;
+  let puzzle: PuzzleResultWithAugmentedComments;
   let puzzleId = params?.puzzleId;
   let titleSlug = '';
   if (Array.isArray(puzzleId)) {
@@ -496,10 +497,13 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     puzzle = {
       ...fromDB,
       id: dbres.id,
+      blogPostRaw: fromDB.blogPost,
+      blogPost: fromDB.blogPost ? markdownToHast({text: fromDB.blogPost}) : null,
+      constructorNotes: fromDB.constructorNotes ? markdownToHast({text: fromDB.constructorNotes}) : null,
       constructorPage: await userIdToPage(validationResult.right.a),
       constructorIsPatron: await isUserPatron(validationResult.right.a),
       comments: await convertComments(fromDB.comments, clueMap),
-      clueHasts: fromDB.clues.map(c => markdownToHast({text: c.clue, clueMap}))
+      clueHasts: grid.entries.map(c => markdownToHast({text: c.clue, clueMap}))
     };
   } else {
     console.error(PathReporter.report(validationResult).join(','));

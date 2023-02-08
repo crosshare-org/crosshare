@@ -212,10 +212,10 @@ interface ClueListProps {
 
 export const ClueList = (props: ClueListProps): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
-  const clues = props.entries.map((entry, i) => {
-    const hast = props.hasts[i];
+  const clues = props.entries.map((entry) => {
+    const hast = props.hasts[entry.index];
     if (!hast) {
-      throw new Error(`missing hast for clue ${i}`);
+      throw new Error(`missing hast for clue ${entry.index}`);
     }
     const isActive = props.current === entry.index;
     const isCross = props.cross === entry.index;

@@ -1,4 +1,4 @@
-import { ConstructorPageT } from '../lib/constructorPage';
+import { ConstructorPageBase } from '../lib/constructorPage';
 import { AuthContext } from './AuthContext';
 import { Button } from './Buttons';
 import { ToolTipText } from './ToolTipText';
@@ -16,7 +16,7 @@ export const FollowButton = ({
   page,
   ...props
 }: {
-  page: ConstructorPageT;
+  page: ConstructorPageBase;
   className?: string;
 }) => {
   const authCtx = useContext(AuthContext);

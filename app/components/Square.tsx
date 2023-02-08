@@ -1,57 +1,28 @@
-import { ReactNode, RefObject, useState, useEffect } from 'react';
-import { usePolyfilledResizeObserver } from '../lib/hooks';
+import { ReactNode } from 'react';
 import {
-  TINY_COL_MIN_HEIGHT,
-  SMALL_BREAKPOINT,
-  LARGE_BREAKPOINT,
   SQUARE_HEADER_HEIGHT,
   SMALL_AND_UP,
+  LARGE_AND_UP,
+  TINY_COL_MIN_HEIGHT,
 } from '../lib/style';
 
 interface SquareProps {
   header?: ReactNode;
   aspectRatio: number;
-  contents: (width: number, height: number) => ReactNode;
-  parentRef: RefObject<HTMLElement>;
-  waitToResize?: boolean;
-  noColumns?: boolean;
+  children?: ReactNode;
 }
 export const Square = (props: SquareProps) => {
-  const { width, height } = usePolyfilledResizeObserver(props.parentRef);
-  const [outWidth, setOutWidth] = useState(320);
-  const [outHeight, setOutHeight] = useState(320);
-  useEffect(() => {
-    if (!width || !height || props.waitToResize) {
-      return;
-    }
-    let newHeight = height - TINY_COL_MIN_HEIGHT;
-    let newWidth = width;
-    if (width >= LARGE_BREAKPOINT) {
-      newHeight =
-        height - (props.header !== undefined ? SQUARE_HEADER_HEIGHT : 0);
-      newWidth = width * 0.5;
-    } else if (width >= SMALL_BREAKPOINT) {
-      newHeight =
-        height - (props.header !== undefined ? SQUARE_HEADER_HEIGHT : 0);
-      newWidth = width * 0.66;
-    }
-    if (props.noColumns) {
-      newWidth = width;
-      newHeight = height;
-    }
-    setOutWidth(Math.min(newWidth, props.aspectRatio * newHeight));
-    setOutHeight(Math.min(newWidth / props.aspectRatio, newHeight));
-  }, [width, height, props.aspectRatio, props.waitToResize, props.header, props.noColumns]);
-
   return (
     <div
       css={{
         flex: 'none',
-        width: outWidth,
-        height: outHeight,
+        maxHeight: '100%',
+        width: '100%',
         [SMALL_AND_UP]: {
-          height:
-            outHeight + (props.header !== undefined ? SQUARE_HEADER_HEIGHT : 0),
+          width: '66vw',
+        },
+        [LARGE_AND_UP]: {
+          width: '50vw',
         },
       }}
     >
@@ -69,9 +40,20 @@ export const Square = (props: SquareProps) => {
       </div>
       <div
         aria-label="grid"
-        css={{ flex: 'none', width: outWidth, height: outHeight }}
+        css={{
+          flex: 'none',
+          maxWidth: '100%',
+          maxHeight: `calc(100% - ${TINY_COL_MIN_HEIGHT}px)`,
+          [SMALL_AND_UP]: {
+            maxHeight:
+              props.header !== undefined
+                ? `calc(100% - ${SQUARE_HEADER_HEIGHT}px)`
+                : '100%',
+          },
+          aspectRatio: `${props.aspectRatio}`,
+        }}
       >
-        {props.contents(outWidth, outHeight)}
+        {props.children}
       </div>
     </div>
   );

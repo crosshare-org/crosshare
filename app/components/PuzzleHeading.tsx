@@ -4,7 +4,7 @@ import { FaInfoCircle } from 'react-icons/fa';
 import { LinkButtonSimpleA } from './Link';
 import { PastDistanceToNow } from './TimeDisplay';
 import { ConstructorNotes } from './ConstructorNotes';
-import { ConstructorPageT } from '../lib/constructorPage';
+import { ConstructorPageWithMarkdown } from '../lib/constructorPage';
 import { ProfilePicAndName } from './Images';
 import { Markdown } from './Markdown';
 import { ToolTipText } from './ToolTipText';
@@ -14,21 +14,22 @@ import { GlickoScoreT } from '../lib/dbtypes';
 import { DifficultyBadge } from './DifficultyBadge';
 import { Trans } from '@lingui/macro';
 import { TagList } from './TagList';
+import type { Root } from 'hast';
 
 export const PuzzleHeading = (props: {
   rating: GlickoScoreT | null;
   publishTime: number;
   showTip: boolean;
   isContest: boolean;
-  constructorNotes: string | null;
+  constructorNotes: Root | null;
   coverImage: string | null | undefined;
   profilePic: string | null | undefined;
   title: string;
   authorName: string;
   guestConstructor: string | null;
-  constructorPage: ConstructorPageT | null;
+  constructorPage: ConstructorPageWithMarkdown | null;
   constructorIsPatron: boolean;
-  blogPost: string | null;
+  blogPost: Root | null;
   tags: string[];
 }) => {
   const isEmbed = useContext(EmbedContext);
@@ -83,7 +84,7 @@ export const PuzzleHeading = (props: {
       )}
       {props.blogPost ? (
         <div css={{ margin: '1em 0', overflowWrap: 'break-word' }}>
-          <Markdown css={{ textAlign: 'left' }} text={props.blogPost} />
+          <Markdown css={{ textAlign: 'left' }} hast={props.blogPost} />
         </div>
       ) : (
         ''
@@ -93,7 +94,7 @@ export const PuzzleHeading = (props: {
           <Markdown
             inline={true}
             css={{ textAlign: 'left' }}
-            text={props.constructorPage.sig}
+            hast={props.constructorPage.sig}
           />
         </div>
       ) : (

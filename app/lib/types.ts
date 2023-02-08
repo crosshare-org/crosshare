@@ -3,7 +3,7 @@ import * as t from 'io-ts';
 import type { WordDBT } from './WordDB';
 
 import { DBPuzzleT, CommentWithRepliesT, GlickoScoreT } from '../lib/dbtypes';
-import { ConstructorPageT } from '../lib/constructorPage';
+import { ConstructorPageWithMarkdown } from '../lib/constructorPage';
 import type { Root } from 'hast';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
@@ -154,8 +154,11 @@ export interface PuzzleResult extends PuzzleT {
 }
 
 // This is kind of a hack but it helps us to ensure we only query for constructorPages on server side
-export interface ServerPuzzleResult extends Omit<PuzzleResult, 'comments'> {
-  constructorPage: ConstructorPageT | null;
+export interface ServerPuzzleResult extends Omit<PuzzleResult, 'comments'|'constructorNotes'|'blogPost'> {
+  blogPost: Root | null;
+  blogPostRaw: string | null;
+  constructorNotes: Root | null;
+  constructorPage: ConstructorPageWithMarkdown | null;
   constructorIsPatron: boolean;
   clueHasts: Array<Root>;
 }
@@ -288,7 +291,8 @@ export type PuzzleInProgressStrictT = t.TypeOf<typeof PuzzleInProgressStrictV>;
 
 export type Key =
   | { k: KeyK.AllowedCharacter; c: string }
-  | { k: Exclude<KeyK, KeyK.AllowedCharacter> };
+  | { k: Exclude<KeyK, KeyK.AllowedCharacter|KeyK.SwipeEntry> }
+  | { k: KeyK.SwipeEntry; t: string };
 
 export enum KeyK {
   ArrowRight,
@@ -319,6 +323,7 @@ export enum KeyK {
   OskBackspace,
   Rebus,
   Block,
+  SwipeEntry,
 }
 
 export const ALLOWABLE_GRID_CHARS = /^[A-Za-z0-9Ññ&]$/;
@@ -334,8 +339,8 @@ export function fromKeyboardEvent(event: {
   altKey?: boolean;
   ctrlKey?: boolean;
   target?: EventTarget | null;
-}): Option<Key> {
-  if (event.target) {
+}, checkTarget=false): Option<Key> {
+  if (checkTarget && event.target) {
     const tagName = (event.target as HTMLElement)?.tagName?.toLowerCase();
     if (tagName === 'textarea' || tagName === 'input') {
       return none;
@@ -346,7 +351,7 @@ export function fromKeyboardEvent(event: {
     return none;
   }
 
-  const basicKey: Option<Exclude<KeyK, KeyK.AllowedCharacter>> = (() => {
+  const basicKey: Option<Exclude<KeyK, KeyK.AllowedCharacter|KeyK.SwipeEntry>> = (() => {
     switch (event.key) {
       case 'ArrowLeft':
         return some(KeyK.ArrowLeft);

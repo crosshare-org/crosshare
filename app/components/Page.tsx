@@ -1,9 +1,19 @@
-import { Dispatch, ReactNode, useRef, forwardRef } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  useEffect,
+  useState,
+} from 'react';
 import { FaAngleDoubleRight, FaAngleDoubleLeft } from 'react-icons/fa';
 
-import { Square } from './Square';
-import { KeypressAction } from '../reducers/reducer';
-import { SMALL_AND_UP, LARGE_AND_UP, TINY_COL_MIN_HEIGHT } from '../lib/style';
+import { KeypressAction, PasteAction } from '../reducers/reducer';
+import {
+  SMALL_AND_UP,
+  LARGE_AND_UP,
+  TINY_COL_MIN_HEIGHT,
+  SQUARE_HEADER_HEIGHT,
+  HEADER_HEIGHT,
+} from '../lib/style';
 import { KeyK } from '../lib/types';
 
 interface TinyNavButtonProps {
@@ -46,138 +56,196 @@ const TinyNavButton = ({ isLeft, dispatch }: TinyNavButtonProps) => {
   );
 };
 
+const getViewportHeight = () => {
+  if (typeof window !== 'undefined') {
+    if ('virtualKeyboard' in navigator) {
+      // If the virtualKeyboard API is supported then we calculate display height in CSS
+      return 0;
+    }
+    return window.visualViewport?.height || 0;
+  }
+  return 0;
+};
+
+const useViewportHeight = () => {
+  const [state, setState] = useState(getViewportHeight);
+  useEffect(() => {
+    const handleResize = () => setState(getViewportHeight);
+    window.visualViewport?.addEventListener('resize', handleResize);
+    return () =>
+      window.visualViewport?.removeEventListener('resize', handleResize);
+  }, []);
+  return state;
+};
+
+const useScrollLock = () => {
+  useEffect(() => {
+    const handleScroll = (e) => {
+      e.preventDefault();
+      window.scrollTo(0, 0);
+      return false;
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+};
+
 interface SquareAndColsProps {
-  square: (width: number, height: number) => ReactNode;
+  square: ReactNode;
   aspectRatio?: number;
   left: ReactNode;
   right: ReactNode;
   header?: ReactNode;
   leftIsActive: boolean;
-  dispatch: Dispatch<KeypressAction>;
-  waitToResize?: boolean;
+  dispatch: Dispatch<KeypressAction|PasteAction>;
 }
-export const SquareAndCols = forwardRef<HTMLDivElement, SquareAndColsProps>(
-  (props: SquareAndColsProps, fwdedRef) => {
-    const parentRef = useRef<HTMLDivElement | null>(null);
+export const SquareAndCols = (props: SquareAndColsProps) => {
+  const height = useViewportHeight();
+  useScrollLock();
 
-    return (
-      <>
+  return (
+    <>
+      <div
+        css={{
+          outline: 'none',
+          display: 'flex',
+          flex: '1 1 auto',
+          flexDirection: 'column',
+          height:
+            height !== 0
+              ? height - HEADER_HEIGHT
+              : `calc(100dvh - env(keyboard-inset-height, 0px) - ${HEADER_HEIGHT}px)`,
+          width: '100%',
+          position: 'absolute',
+          [SMALL_AND_UP]: {
+            flexDirection: 'row',
+          },
+          flexWrap: 'nowrap',
+          containerType: 'size',
+        }}
+      >
         <div
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-          tabIndex={0}
-          ref={(instance) => {
-            parentRef.current = instance;
-            if (fwdedRef) {
-              if (typeof fwdedRef === 'function') {
-                fwdedRef(instance);
-              } else {
-                fwdedRef.current = instance;
-              }
-            }
-          }}
           css={{
-            outline: 'none',
-            display: 'flex',
-            flex: '1 1 auto',
-            flexDirection: 'column',
-            alignItems: 'center',
-            height: '100%',
-            width: '100%',
-            position: 'absolute',
+            flex: '0',
+            width: '100vw',
             [SMALL_AND_UP]: {
-              flexDirection: 'row',
-              alignItems: 'start',
+              width: '66vw',
             },
-            flexWrap: 'nowrap',
+            [LARGE_AND_UP]: {
+              width: '50vw',
+            },
           }}
         >
-          <Square
-            header={props.header}
-            waitToResize={props.waitToResize}
-            parentRef={parentRef}
-            aspectRatio={props.aspectRatio || 1}
-            contents={props.square}
-          />
           <div
             css={{
-              display: 'flex',
-              flex: '1 0 auto',
-              width: '100vw',
-              height: TINY_COL_MIN_HEIGHT,
-              flexWrap: 'nowrap',
-              alignItems: 'stretch',
-              flexDirection: 'row',
-              backgroundColor: 'var(--lighter)',
+              height: SQUARE_HEADER_HEIGHT,
+              display: 'none',
+              overflow: 'hidden',
               [SMALL_AND_UP]: {
-                backgroundColor: 'transparent',
-                height: '100%',
-                width: '34vw',
-              },
-              [LARGE_AND_UP]: {
-                width: '50vw',
+                display: props.header !== undefined ? 'block' : 'none',
               },
             }}
           >
-            <TinyNavButton isLeft dispatch={props.dispatch} />
-            <div
-              css={{
-                display: 'flex',
-                flex: '1 1 auto',
-                flexDirection: 'column',
-                [LARGE_AND_UP]: {
-                  flexDirection: 'row',
-                },
-                height: '100%',
-                overflowY: 'scroll',
-                scrollbarWidth: 'none',
-              }}
-            >
-              <div
-                css={{
-                  width: '100%',
-                  height: '100%',
-                  display: props.leftIsActive ? 'block' : 'none',
-                  [SMALL_AND_UP]: {
-                    display: 'block',
-                    height: '50%',
-                    overflowY: 'scroll',
-                    scrollbarWidth: 'none',
-                  },
-                  [LARGE_AND_UP]: {
-                    width: '50%',
-                    height: '100%',
-                  },
-                }}
-              >
-                {props.left}
-              </div>
-              <div
-                css={{
-                  width: '100%',
-                  height: '100%',
-                  display: props.leftIsActive ? 'none' : 'block',
-                  [SMALL_AND_UP]: {
-                    display: 'block',
-                    height: '50%',
-                    overflowY: 'scroll',
-                    scrollbarWidth: 'none',
-                  },
-                  [LARGE_AND_UP]: {
-                    width: '50%',
-                    height: '100%',
-                  },
-                }}
-              >
-                {props.right}
-              </div>
-            </div>
-            <TinyNavButton dispatch={props.dispatch} />
+            {props.header}
+          </div>
+          <div
+            aria-label="grid"
+            css={{
+              margin: 'auto',
+              width: `min(100cqw, 100cqh * ${props.aspectRatio} - ${TINY_COL_MIN_HEIGHT}px * ${props.aspectRatio})`,
+              height: `min(100cqh - ${TINY_COL_MIN_HEIGHT}px, 100cqw / ${props.aspectRatio})`,
+              [SMALL_AND_UP]: {
+                width: `min(66cqw, 100cqh * ${props.aspectRatio} - ${SQUARE_HEADER_HEIGHT}px * ${props.aspectRatio})`,
+                height: `min(100cqh - ${SQUARE_HEADER_HEIGHT}px, 66cqw / ${props.aspectRatio})`,
+              },
+              [LARGE_AND_UP]: {
+                width: `min(50cqw, 100cqh * ${props.aspectRatio} - ${SQUARE_HEADER_HEIGHT}px * ${props.aspectRatio})`,
+                height: `min(100cqh - ${SQUARE_HEADER_HEIGHT}px, 50cqw / ${props.aspectRatio})`,
+              },
+            }}
+          >
+            {props.square}
           </div>
         </div>
-      </>
-    );
-  }
-);
+        <div
+          css={{
+            display: 'flex',
+            flex: '1 0 auto',
+            width: '100vw',
+            height: TINY_COL_MIN_HEIGHT,
+            flexWrap: 'nowrap',
+            alignItems: 'stretch',
+            flexDirection: 'row',
+            backgroundColor: 'var(--lighter)',
+            [SMALL_AND_UP]: {
+              backgroundColor: 'transparent',
+              height: '100%',
+              width: '34vw',
+            },
+            [LARGE_AND_UP]: {
+              width: '50vw',
+            },
+          }}
+        >
+          <TinyNavButton isLeft dispatch={props.dispatch} />
+          <div
+            css={{
+              display: 'flex',
+              flex: '1 1 auto',
+              flexDirection: 'column',
+              [LARGE_AND_UP]: {
+                flexDirection: 'row',
+              },
+              height: '100%',
+              overflowY: 'scroll',
+              scrollbarWidth: 'none',
+            }}
+          >
+            <div
+              css={{
+                width: '100%',
+                height: '100%',
+                display: props.leftIsActive ? 'block' : 'none',
+                [SMALL_AND_UP]: {
+                  display: 'block',
+                  height: '50%',
+                  overflowY: 'scroll',
+                  scrollbarWidth: 'none',
+                },
+                [LARGE_AND_UP]: {
+                  width: '50%',
+                  height: '100%',
+                },
+              }}
+            >
+              {props.left}
+            </div>
+            <div
+              css={{
+                width: '100%',
+                height: '100%',
+                display: props.leftIsActive ? 'none' : 'block',
+                [SMALL_AND_UP]: {
+                  display: 'block',
+                  height: '50%',
+                  overflowY: 'scroll',
+                  scrollbarWidth: 'none',
+                },
+                [LARGE_AND_UP]: {
+                  width: '50%',
+                  height: '100%',
+                },
+              }}
+            >
+              {props.right}
+            </div>
+          </div>
+          <TinyNavButton dispatch={props.dispatch} />
+        </div>
+      </div>
+    </>
+  );
+};
 
 SquareAndCols.displayName = 'SquareAndCols';
 
