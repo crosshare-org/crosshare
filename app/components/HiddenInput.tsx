@@ -25,7 +25,8 @@ export const HiddenInput = forwardRef<
   HTMLInputElement,
   {
     dispatch: Dispatch<KeypressAction|PasteAction>,
-    handleKeypress?: (k: Key) => boolean
+    handleKeypress?: (k: Key) => boolean,
+    enterKeyHint?: 'next' | 'go',
   }
 >((props, ref) => {
   return (
@@ -44,7 +45,7 @@ export const HiddenInput = forwardRef<
         position: 'absolute',
         zIndex: 99,
       }}
-      enterKeyHint={'next'}
+      enterKeyHint={props.enterKeyHint || 'next'}
       tabIndex={0}
       ref={ref}
       onKeyDown={(e: KeyboardEvent) => {

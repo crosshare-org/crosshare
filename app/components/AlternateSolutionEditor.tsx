@@ -1,23 +1,19 @@
 import useEventListener from '@use-it/event-listener';
-import { useRef, useCallback, useReducer, useMemo } from 'react';
+import { useCallback, useReducer, useMemo } from 'react';
 import {
   FaSave,
   FaWindowClose,
   FaEllipsisH,
   FaVolumeUp,
   FaVolumeMute,
-  FaKeyboard,
 } from 'react-icons/fa';
 import { usePersistedBoolean } from '../lib/hooks';
 import {
   Direction,
-  fromKeyboardEvent,
-  fromKeyString,
   KeyK,
 } from '../lib/types';
 import { fromCells } from '../lib/viewableGrid';
 import { Rebus, EscapeKey } from './Icons';
-import { Keyboard } from './Keyboard';
 import {
   TopBar,
   TopBarLink,
@@ -29,9 +25,8 @@ import {
   KeypressAction,
   PasteAction,
 } from '../reducers/reducer';
-import { Square } from './Square';
 import { GridView } from './Grid';
-import { isSome } from 'fp-ts/lib/Option';
+import { HiddenInput, useKeyboard } from './HiddenInput';
 
 export function AlternateSolutionEditor(props: {
   grid: string[];
@@ -71,35 +66,8 @@ export function AlternateSolutionEditor(props: {
   });
 
   const [muted, setMuted] = usePersistedBoolean('muted', false);
-  const [toggleKeyboard, setToggleKeyboard] = usePersistedBoolean(
-    'keyboard',
-    false
-  );
 
-  const gridRef = useRef<HTMLDivElement | null>(null);
-
-  const focusGrid = useCallback(() => {
-    if (gridRef.current) {
-      gridRef.current.focus();
-    }
-  }, []);
-
-  const physicalKeyboardHandler = useCallback(
-    (e: KeyboardEvent) => {
-      const mkey = fromKeyboardEvent(e);
-      if (isSome(mkey)) {
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
-        dispatch(kpa);
-        e.preventDefault();
-      }
-    },
-    [dispatch]
-  );
-  useEventListener(
-    'keydown',
-    physicalKeyboardHandler,
-    gridRef.current || undefined
-  );
+  const [hiddenInputRef, focusGrid] = useKeyboard();
 
   const pasteHandler = useCallback(
     (e: ClipboardEvent) => {
@@ -117,17 +85,6 @@ export function AlternateSolutionEditor(props: {
     [dispatch]
   );
   useEventListener('paste', pasteHandler);
-
-  const keyboardHandler = useCallback(
-    (key: string) => {
-      const mkey = fromKeyString(key);
-      if (isSome(mkey)) {
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
-        dispatch(kpa);
-      }
-    },
-    [dispatch]
-  );
 
   const topBarChildren = useMemo(() => {
     return (
@@ -188,28 +145,14 @@ export function AlternateSolutionEditor(props: {
                   onClick={() => setMuted(true)}
                 />
               )}
-              <TopBarDropDownLink
-                icon={<FaKeyboard />}
-                text="Toggle Keyboard"
-                onClick={() => setToggleKeyboard(!toggleKeyboard)}
-              />
             </>
           )}
         </TopBarDropDown>
       </>
     );
-  }, [
-    focusGrid,
-    initialGrid.cells,
-    muted,
-    props,
-    setMuted,
-    setToggleKeyboard,
-    state.grid.cells,
-    toggleKeyboard,
-  ]);
+  }, [focusGrid, initialGrid.cells, muted, props, setMuted, state.grid.cells]);
 
-  const parentRef = useRef<HTMLDivElement | null>(null);
+  const aspectRatio = props.width / props.height;
 
   return (
     <>
@@ -223,15 +166,15 @@ export function AlternateSolutionEditor(props: {
         <div css={{ flex: 'none' }}>
           <TopBar>{topBarChildren}</TopBar>
         </div>
+        <HiddenInput ref={hiddenInputRef} dispatch={dispatch} />
         <div
+          onClick={focusGrid}
+          onKeyDown={focusGrid}
+          tabIndex={0}
+          role={'textbox'}
           css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}
         >
           <div
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-            tabIndex={0}
-            ref={(instance) => {
-              parentRef.current = instance;
-            }}
             css={{
               outline: 'none',
               display: 'flex',
@@ -242,39 +185,29 @@ export function AlternateSolutionEditor(props: {
               width: '100%',
               position: 'absolute',
               flexWrap: 'nowrap',
+              containerType: 'size',
             }}
           >
-            <Square
-              noColumns={true}
-              waitToResize={false}
-              parentRef={parentRef}
-              aspectRatio={props.width / props.height}
-              contents={(width: number, _height: number) => {
-                return (
-                  <GridView
-                    isEnteringRebus={state.isEnteringRebus}
-                    rebusValue={state.rebusValue}
-                    squareWidth={width}
-                    grid={state.grid}
-                    defaultGrid={initialGrid}
-                    active={state.active}
-                    dispatch={dispatch}
-                    allowBlockEditing={false}
-                    autofill={[]}
-                  />
-                );
+            <div
+              aria-label="grid"
+              css={{
+                margin: 'auto',
+                width: `min(100cqw, 100cqh * ${aspectRatio})`,
+                height: `min(100cqh, 100cqw / ${aspectRatio})`,
               }}
-            />
+            >
+              <GridView
+                isEnteringRebus={state.isEnteringRebus}
+                rebusValue={state.rebusValue}
+                grid={state.grid}
+                defaultGrid={initialGrid}
+                active={state.active}
+                dispatch={dispatch}
+                allowBlockEditing={false}
+                autofill={[]}
+              />
+            </div>
           </div>
-        </div>
-        <div css={{ flex: 'none', width: '100%' }}>
-          <Keyboard
-            toggleKeyboard={toggleKeyboard}
-            keyboardHandler={keyboardHandler}
-            muted={muted}
-            showExtraKeyLayout={state.showExtraKeyLayout}
-            includeBlockKey={false}
-          />
         </div>
       </div>
     </>

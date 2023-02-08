@@ -11,14 +11,14 @@ import { withTranslation } from '../../lib/translation';
 import { Trans, t } from '@lingui/macro';
 import { useRouter } from 'next/router';
 import { I18nTags } from '../../components/I18nTags';
-import { ConstructorPageT } from '../../lib/constructorPage';
+import { ConstructorPageBase } from '../../lib/constructorPage';
 import { paginatedPuzzles } from '../../lib/paginatedPuzzles';
 import { isUserPatron } from '../../lib/patron';
 
 interface NewestPageProps {
   puzzles: Array<
     LinkablePuzzle & {
-      constructorPage: ConstructorPageT | null;
+      constructorPage: ConstructorPageBase | null;
       constructorIsPatron: boolean;
     }
   >;

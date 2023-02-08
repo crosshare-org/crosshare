@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -35,7 +35,8 @@ export const PuzzleLoader = ({
   puzzleId: string;
   auth: AuthProps;
 }) => {
-  const [doc, loading, error] = useDocument(getDocRef('c', puzzleId));
+  const puzRef = useRef(getDocRef('c', puzzleId));
+  const [doc, loading, error] = useDocument(puzRef.current);
   const [puzzle, puzzleDecodeError] = useMemo(() => {
     if (doc === undefined) {
       return [undefined, undefined];

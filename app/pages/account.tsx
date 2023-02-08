@@ -6,7 +6,7 @@ import { requiresAuth, AuthProps } from '../components/AuthContext';
 import { getAuth, getCollection, getDocRef } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import { Link } from '../components/Link';
-import { CreatePageForm, BioEditor } from '../components/ConstructorPage';
+import { CreatePageForm } from '../components/ConstructorPage';
 import { Button } from '../components/Buttons';
 import { PROFILE_PIC, COVER_PIC } from '../lib/style';
 import {
@@ -36,6 +36,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
+import { BioEditor } from '../components/BioEditor';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };

@@ -21,7 +21,7 @@ function layoutPDFClues(
   grid: ViewableGrid<ViewableEntry>,
   squareSize: number
 ) {
-  const clued = addClues(grid, puzzle.clues);
+  const clued = addClues(grid, puzzle.clues, (_c) => {return {type: 'root', children: []};});
   const acrossEntries = clued.entries.filter(
     (e) => e.direction === Direction.Across
   );

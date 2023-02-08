@@ -17,7 +17,6 @@ import {
   FaVolumeUp,
   FaVolumeMute,
   FaPause,
-  FaKeyboard,
   FaCheck,
   FaEye,
   FaEllipsisH,
@@ -297,10 +296,6 @@ export const Puzzle = ({
   useEventListener('blur', prodPause);
 
   const [muted, setMuted] = usePersistedBoolean('muted', false);
-  const [toggleKeyboard, setToggleKeyboard] = usePersistedBoolean(
-    'keyboard',
-    false
-  );
 
   // Set up music player for success song
   const [audioContext, initAudioContext] = useContext(CrosshareAudioContext);
@@ -955,11 +950,6 @@ export const Puzzle = ({
                   onClick={() => setMuted(true)}
                 />
               )}
-              <TopBarDropDownLink
-                icon={<FaKeyboard />}
-                text={t`Toggle Keyboard`}
-                onClick={() => setToggleKeyboard(!toggleKeyboard)}
-              />
               {props.isAdmin ? (
                 <>
                   <TopBarDropDownLink
@@ -1037,8 +1027,6 @@ export const Puzzle = ({
       puzzle,
       setMuted,
       state.success,
-      toggleKeyboard,
-      setToggleKeyboard,
       isEmbed,
       showKeyboard,
     ]

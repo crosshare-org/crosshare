@@ -20,7 +20,7 @@ import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList';
 import { ArticleT, validate } from '../lib/article';
 import { Trans, t } from '@lingui/macro';
 import { withTranslation } from '../lib/translation';
-import { ConstructorPageT } from '../lib/constructorPage';
+import { ConstructorPageBase } from '../lib/constructorPage';
 import { I18nTags } from '../components/I18nTags';
 import { useRouter } from 'next/router';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles';
@@ -29,7 +29,7 @@ import { isSome } from 'fp-ts/lib/Option';
 import { getCollection } from '../lib/firebaseAdminWrapper';
 
 type HomepagePuz = LinkablePuzzle & {
-  constructorPage: ConstructorPageT | null;
+  constructorPage: ConstructorPageBase | null;
   constructorIsPatron: boolean;
 };
 

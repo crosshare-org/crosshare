@@ -30,7 +30,6 @@ import {
   FaUserLock,
   FaRegPlusSquare,
   FaSignInAlt,
-  FaKeyboard,
   FaRegFile,
   FaEyeSlash,
 } from 'react-icons/fa';
@@ -1088,10 +1087,6 @@ const GridMode = ({
   ...props
 }: GridModeProps) => {
   const [muted, setMuted] = usePersistedBoolean('muted', false);
-  const [toggleKeyboard, setToggleKeyboard] = usePersistedBoolean(
-    'keyboard',
-    false
-  );
   const { showSnackbar } = useSnackbar();
 
   const handleKeypress = useCallback(
@@ -1636,11 +1631,6 @@ const GridMode = ({
                   onClick={() => setMuted(true)}
                 />
               )}
-              <TopBarDropDownLink
-                icon={<FaKeyboard />}
-                text="Toggle Keyboard"
-                onClick={() => setToggleKeyboard(!toggleKeyboard)}
-              />
               {props.isAdmin ? (
                 <>
                   <TopBarDropDownLinkA
@@ -1688,8 +1678,6 @@ const GridMode = ({
     reRunAutofill,
     dispatch,
     muted,
-    toggleKeyboard,
-    setToggleKeyboard,
   ]);
 
   return (
@@ -1764,6 +1752,7 @@ const GridMode = ({
           ref={hiddenInputRef}
           dispatch={dispatch}
           handleKeypress={handleKeypress}
+          enterKeyHint={'go'}
         />
         <div
           onClick={focusGrid}

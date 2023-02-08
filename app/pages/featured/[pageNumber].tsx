@@ -12,13 +12,13 @@ import { Trans, t } from '@lingui/macro';
 import { useRouter } from 'next/router';
 import { I18nTags } from '../../components/I18nTags';
 import { paginatedPuzzles } from '../../lib/paginatedPuzzles';
-import { ConstructorPageT } from '../../lib/constructorPage';
+import { ConstructorPageBase } from '../../lib/constructorPage';
 import { isUserPatron } from '../../lib/patron';
 
 interface FeaturedPageProps {
   puzzles: Array<
     LinkablePuzzle & {
-      constructorPage: ConstructorPageT | null;
+      constructorPage: ConstructorPageBase | null;
       constructorIsPatron: boolean;
     }
   >;

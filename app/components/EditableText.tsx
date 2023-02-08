@@ -25,12 +25,12 @@ interface EditableTextPropsBase {
 interface EditableTextProps extends EditableTextPropsBase {
   deletable?: false;
   text: string;
-  hast: Root;
+  hast: Root | false;
 }
 interface DeletableEditableTextProps extends EditableTextPropsBase {
   deletable: true;
   text: string | null;
-  hast: Root | null;
+  hast: Root | false | null;
   handleDelete: () => Promise<void>;
 }
 export const EditableText = (
@@ -120,7 +120,7 @@ export const EditableText = (
 
   return (
     <div className={props.className}>
-      {!props.hast ? (
+      {!props.text ? (
         <Button
           text="Add"
           title={`Add ${props.title}`}
@@ -140,7 +140,11 @@ export const EditableText = (
                   margin: '1em 0',
                 }}
               >
-                <Markdown hast={props.hast} />
+                {props.hast !== null && props.hast !== false ? (
+                  <Markdown hast={props.hast} />
+                ) : (
+                  <span>{props.text}</span>
+                )}
               </div>
               <Button
                 text="edit"
@@ -162,7 +166,11 @@ export const EditableText = (
             </>
           ) : (
             <>
-              <Markdown inline hast={props.hast} />
+              {props.hast !== null && props.hast !== false ? (
+                <Markdown inline hast={props.hast} />
+              ) : (
+                <span>{props.text}</span>
+              )}
               <ButtonAsLink
                 css={{ marginLeft: '1em' }}
                 text="edit"

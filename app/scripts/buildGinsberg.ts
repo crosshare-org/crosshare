@@ -124,7 +124,7 @@ const build = async (cluedata: Buffer): Promise<void> => {
   let entries: Array<ClueEntry> = [];
   let currentWordIndex = 0;
 
-  await util.promisify(rimraf)(CLUEDB);
+  await rimraf(CLUEDB);
   const db = getDB(false);
 
   while (offset < cluedata.length) {

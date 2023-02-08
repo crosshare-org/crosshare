@@ -4,8 +4,7 @@ import { GetServerSideProps } from 'next';
 import { Link } from '../../components/Link';
 import { ErrorPage } from '../../components/ErrorPage';
 import { puzzleFromDB } from '../../lib/types';
-import { ConstructorPageT } from '../../lib/constructorPage';
-import { Markdown } from '../../components/Markdown';
+import { ConstructorPageBase } from '../../lib/constructorPage';
 import { DefaultTopBar } from '../../components/TopBar';
 import {
   LinkablePuzzle,
@@ -23,7 +22,7 @@ import { isSome } from 'fp-ts/lib/Option';
 import { notEmpty } from '../../lib/utils';
 
 export interface DailyMiniProps {
-  puzzles: Array<[number, LinkablePuzzle, ConstructorPageT | null, boolean]>;
+  puzzles: Array<[number, LinkablePuzzle, ConstructorPageBase | null, boolean]>;
   year: number;
   month: number;
   olderLink?: string;
@@ -64,7 +63,7 @@ async function puzzlesListForMonth(
   year: number,
   month: number,
   maxDay: number
-): Promise<Array<[number, LinkablePuzzle, ConstructorPageT | null, boolean]>> {
+): Promise<Array<[number, LinkablePuzzle, ConstructorPageBase | null, boolean]>> {
   return Promise.all(
     [...Array(maxDay).keys()]
       .reverse()
@@ -72,7 +71,7 @@ async function puzzlesListForMonth(
         async (
           day
         ): Promise<
-          [number, LinkablePuzzle, ConstructorPageT | null, boolean] | null
+          [number, LinkablePuzzle, ConstructorPageBase | null, boolean] | null
         > => {
           const dbpuzzle = await getMiniForDate(new Date(year, month, day + 1));
           if (!isSome(dbpuzzle)) {
@@ -202,7 +201,7 @@ export default function DailyMiniPage(props: PageProps) {
           </Trans>
         </h2>
         <div css={{ marginBottom: '2em' }}>
-          <Markdown text={description} />
+          {description}
         </div>
         {props.puzzles.map(([day, puzzle, cp, isPatron]) => {
           const displayDate = new Date(

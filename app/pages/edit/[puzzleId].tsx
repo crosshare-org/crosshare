@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { isRight } from 'fp-ts/lib/Either';
@@ -40,6 +40,7 @@ import {
   Timestamp,
   updateDoc,
 } from 'firebase/firestore';
+import { markdownToHast } from '../../lib/markdown/markdown';
 
 const ImageCropper = dynamic(
   () =>
@@ -70,7 +71,8 @@ export const PuzzleLoader = ({
   puzzleId: string;
   auth: AuthProps;
 }) => {
-  const [doc, loading, error] = useDocument(getDocRef('c', puzzleId));
+  const puzRef = useRef(getDocRef('c', puzzleId));
+  const [doc, loading, error] = useDocument(puzRef.current);
   const [puzzle, puzzleDecodeError] = useMemo(() => {
     if (doc === undefined) {
       return [undefined, undefined];
@@ -271,7 +273,8 @@ const PuzzleEditor = ({
         hBars: new Set(puzzle.hBars),
         hidden: new Set(puzzle.hidden),
       }),
-      puzzle.clues
+      puzzle.clues,
+      (c: string) => markdownToHast({text: c})
     );
   }, [puzzle]);
   const clueRows = grid.entries
@@ -341,6 +344,7 @@ const PuzzleEditor = ({
           title="Title"
           css={{ marginBottom: '1em' }}
           text={puzzle.title}
+          hast={false}
           maxLength={MAX_STRING_LENGTH}
           handleSubmit={(newTitle) =>
             updateDoc(getDocRef('c', puzzle.id), { t: newTitle })
@@ -390,6 +394,7 @@ const PuzzleEditor = ({
           deletable={true}
           css={{ marginBottom: '1em' }}
           text={puzzle.constructorNotes}
+          hast={markdownToHast({text: puzzle.constructorNotes || ''})}
           maxLength={MAX_STRING_LENGTH}
           handleSubmit={(notes) =>
             updateDoc(getDocRef('c', puzzle.id), { cn: notes })
@@ -404,6 +409,7 @@ const PuzzleEditor = ({
           deletable={true}
           css={{ marginBottom: '1em' }}
           text={puzzle.guestConstructor}
+          hast={false}
           maxLength={MAX_STRING_LENGTH}
           handleSubmit={(gc) =>
             updateDoc(getDocRef('c', puzzle.id), { gc: gc })
@@ -425,6 +431,7 @@ const PuzzleEditor = ({
           deletable={true}
           css={{ marginBottom: '1em' }}
           text={puzzle.blogPost}
+          hast={markdownToHast({text: puzzle.blogPost || ''})}
           maxLength={MAX_BLOG_LENGTH}
           handleSubmit={(post) =>
             updateDoc(getDocRef('c', puzzle.id), { bp: post })
@@ -617,6 +624,7 @@ const PuzzleEditor = ({
               title="Solution"
               css={{ marginBottom: '1em' }}
               text={''}
+              hast={false}
               maxLength={MAX_META_SUBMISSION_LENGTH}
               hasError={(sol) =>
                 puzzle.contestAnswers &&

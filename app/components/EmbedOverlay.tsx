@@ -288,7 +288,6 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       >
         <div css={{ width: 200, height: 200 }}>
           <GridView
-            squareWidth={200}
             grid={dummyGrid}
             active={{ row: 2, col: 1, dir: Direction.Across }}
             dispatch={() => {

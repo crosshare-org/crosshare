@@ -11,7 +11,7 @@ import { DifficultyBadge } from '../components/DifficultyBadge';
 import { Emoji } from './Emoji';
 import { timeString } from '../lib/utils';
 import { PlayWithoutUserT } from '../lib/dbtypes';
-import { ConstructorPageBase, ConstructorPageT } from '../lib/constructorPage';
+import { ConstructorPageBase } from '../lib/constructorPage';
 import { Markdown } from './Markdown';
 import { Trans } from '@lingui/macro';
 import { PastDistanceToNow, DistanceToNow } from './TimeDisplay';
@@ -321,7 +321,7 @@ export const PuzzleResultLink = ({
   showPrivateStatus?: boolean;
   showAuthor: boolean;
   title?: string;
-  constructorPage?: ConstructorPageT | null;
+  constructorPage?: ConstructorPageBase | null;
   constructorIsPatron: boolean;
   filterTags: string[];
 }) => {
