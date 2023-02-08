@@ -8,13 +8,11 @@ import {
   Dispatch,
   MouseEvent,
   FormEvent,
-  MutableRefObject,
 } from 'react';
 import { Global } from '@emotion/react';
 import { eqSet, STORAGE_KEY } from '../lib/utils';
 import { ContactLinks } from './ContactLinks';
 import { isRight } from 'fp-ts/lib/Either';
-import { isSome } from 'fp-ts/lib/Option';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   FaRegNewspaper,
@@ -86,10 +84,9 @@ import {
   CancelAutofillMessage,
   PuzzleInProgressV,
   PuzzleInProgressT,
-  fromKeyString,
   KeyK,
-  fromKeyboardEvent,
   PartialBy,
+  Key,
 } from '../lib/types';
 import {
   Symmetry,
@@ -128,13 +125,13 @@ import * as WordDB from '../lib/WordDB';
 import { Overlay } from './Overlay';
 import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
 
-import { Keyboard } from './Keyboard';
 import { FULLSCREEN_CSS, SMALL_AND_UP } from '../lib/style';
 import { ButtonReset } from './Buttons';
 import { useSnackbar } from './Snackbar';
 import { importFile, exportFile, ExportProps } from '../lib/converter';
 import { getAutofillWorker } from '../lib/workerLoader';
 import type { User } from 'firebase/auth';
+import { HiddenInput, useKeyboard } from './HiddenInput';
 
 let worker: Worker | null = null;
 
@@ -173,7 +170,6 @@ interface PotentialFillItemProps {
   entryIndex: number;
   value: [string, number];
   dispatch: Dispatch<ClickedFillAction>;
-  gridRef: MutableRefObject<HTMLDivElement | null>;
 }
 const PotentialFillItem = (props: PotentialFillItemProps) => {
   function click(e: MouseEvent) {
@@ -183,9 +179,6 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
       entryIndex: props.entryIndex,
       value: props.value[0],
     });
-    if (props.gridRef.current) {
-      props.gridRef.current.focus();
-    }
   }
   return (
     <ButtonReset
@@ -211,7 +204,6 @@ interface PotentialFillListProps {
   selected: boolean;
   values: Array<[string, number]>;
   dispatch: Dispatch<ClickedFillAction>;
-  gridRef: MutableRefObject<HTMLDivElement | null>;
 }
 const PotentialFillList = (props: PotentialFillListProps) => {
   const listRef = useRef<List>(null);
@@ -271,7 +263,6 @@ const PotentialFillList = (props: PotentialFillListProps) => {
             return (
               <div style={style}>
                 <PotentialFillItem
-                  gridRef={props.gridRef}
                   key={index}
                   entryIndex={props.entryIndex}
                   dispatch={props.dispatch}
@@ -1103,49 +1094,26 @@ const GridMode = ({
   );
   const { showSnackbar } = useSnackbar();
 
-  const gridRef = useRef<HTMLDivElement | null>(null);
-
-  const focusGrid = useCallback(() => {
-    if (gridRef.current) {
-      gridRef.current.focus();
-    }
-  }, []);
-
-  const physicalKeyboardHandler = useCallback(
-    (e: KeyboardEvent) => {
-      const mkey = fromKeyboardEvent(e);
-      if (isSome(mkey)) {
-        e.preventDefault();
-        if (mkey.value.k === KeyK.Enter && !state.isEnteringRebus) {
-          reRunAutofill();
-          return;
-        }
-        if (mkey.value.k === KeyK.Exclamation) {
-          const entry = getMostConstrainedEntry();
-          if (entry !== null) {
-            const ca: ClickedEntryAction = {
-              type: 'CLICKEDENTRY',
-              entryIndex: entry,
-            };
-            dispatch(ca);
-          }
-          return;
-        }
-        if (mkey.value.k === KeyK.Octothorp) {
-          const a: ToggleHiddenAction = { type: 'TOGGLEHIDDEN' };
-          dispatch(a);
-        }
-
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
-        dispatch(kpa);
+  const handleKeypress = useCallback(
+    (mkey: Key) => {
+      if (mkey.k === KeyK.Enter && !state.isEnteringRebus) {
+        reRunAutofill();
+        return true;
       }
+      if (mkey.k === KeyK.Exclamation) {
+        const entry = getMostConstrainedEntry();
+        if (entry !== null) {
+          const ca: ClickedEntryAction = {
+            type: 'CLICKEDENTRY',
+            entryIndex: entry,
+          };
+          dispatch(ca);
+        }
+        return true;
+      }
+      return false;
     },
     [dispatch, reRunAutofill, state.isEnteringRebus, getMostConstrainedEntry]
-  );
-  useEventListener(
-    'keydown',
-    physicalKeyboardHandler,
-    gridRef.current || undefined
   );
 
   const pasteHandler = useCallback(
@@ -1203,7 +1171,6 @@ const GridMode = ({
         left = (
           <PotentialFillList
             selected={false}
-            gridRef={gridRef}
             header="Across"
             values={crossMatches}
             entryIndex={cross.index}
@@ -1214,7 +1181,6 @@ const GridMode = ({
         right = (
           <PotentialFillList
             selected={false}
-            gridRef={gridRef}
             header="Down"
             values={crossMatches}
             entryIndex={cross.index}
@@ -1228,7 +1194,6 @@ const GridMode = ({
         left = (
           <PotentialFillList
             selected={true}
-            gridRef={gridRef}
             header="Across"
             values={entryMatches}
             entryIndex={entry.index}
@@ -1239,7 +1204,6 @@ const GridMode = ({
         right = (
           <PotentialFillList
             selected={true}
-            gridRef={gridRef}
             header="Down"
             values={entryMatches}
             entryIndex={entry.index}
@@ -1307,16 +1271,7 @@ const GridMode = ({
     state.grid.cells,
   ]);
 
-  const keyboardHandler = useCallback(
-    (key: string) => {
-      const mkey = fromKeyString(key);
-      if (isSome(mkey)) {
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
-        dispatch(kpa);
-      }
-    },
-    [dispatch]
-  );
+  const [hiddenInputRef, focusGrid] = useKeyboard();
 
   const topBarChildren = useMemo(() => {
     let autofillIcon = <SpinnerDisabled />;
@@ -1805,39 +1760,35 @@ const GridMode = ({
         ) : (
           ''
         )}
+        <HiddenInput
+          ref={hiddenInputRef}
+          dispatch={dispatch}
+          handleKeypress={handleKeypress}
+        />
         <div
+          onClick={focusGrid}
+          onKeyDown={focusGrid}
+          tabIndex={0}
+          role={'textbox'}
           css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}
         >
           <SquareAndCols
             leftIsActive={state.active.dir === Direction.Across}
-            ref={gridRef}
             aspectRatio={state.grid.width / state.grid.height}
-            square={(width: number, _height: number) => {
-              return (
-                <GridView
-                  isEnteringRebus={state.isEnteringRebus}
-                  rebusValue={state.rebusValue}
-                  squareWidth={width}
-                  grid={state.grid}
-                  active={state.active}
-                  dispatch={dispatch}
-                  allowBlockEditing={true}
-                  autofill={props.autofillEnabled ? props.autofilledGrid : []}
-                />
-              );
-            }}
+            square={
+              <GridView
+                isEnteringRebus={state.isEnteringRebus}
+                rebusValue={state.rebusValue}
+                grid={state.grid}
+                active={state.active}
+                dispatch={dispatch}
+                allowBlockEditing={true}
+                autofill={props.autofillEnabled ? props.autofilledGrid : []}
+              />
+            }
             left={fillLists.left}
             right={fillLists.right}
             dispatch={dispatch}
-          />
-        </div>
-        <div css={{ flex: 'none', width: '100%' }}>
-          <Keyboard
-            toggleKeyboard={toggleKeyboard}
-            keyboardHandler={keyboardHandler}
-            muted={muted}
-            showExtraKeyLayout={state.showExtraKeyLayout}
-            includeBlockKey={true}
           />
         </div>
       </div>

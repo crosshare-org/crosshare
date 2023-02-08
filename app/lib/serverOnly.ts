@@ -492,7 +492,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
       vBars: new Set(fromDB.vBars),
       hBars: new Set(fromDB.hBars),
       hidden: new Set(fromDB.hidden),
-    }), fromDB.clues);
+    }), fromDB.clues, (c: string) => markdownToHast({text: c}));
     const clueMap = getEntryToClueMap(grid, fromDB.grid);
     puzzle = {
       ...fromDB,

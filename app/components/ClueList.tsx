@@ -199,7 +199,6 @@ interface ClueListProps {
   cross?: number;
   refed: Set<number>;
   entries: Array<CluedEntry>;
-  hasts: Array<Root>;
   allEntries?: Array<CluedEntry>;
   refPositions?: Array<Array<RefPosition>>;
   dispatch: Dispatch<PuzzleAction>;
@@ -213,10 +212,6 @@ interface ClueListProps {
 export const ClueList = (props: ClueListProps): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
   const clues = props.entries.map((entry) => {
-    const hast = props.hasts[entry.index];
-    if (!hast) {
-      throw new Error(`missing hast for clue ${entry.index}`);
-    }
     const isActive = props.current === entry.index;
     const isCross = props.cross === entry.index;
     const isRefed = props.refed.has(entry.index);
@@ -231,7 +226,7 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
         grid={props.grid}
         showEntry={props.showEntries}
         entry={entry}
-        hast={hast}
+        hast={entry.clueHast}
         conceal={props.conceal}
         key={entry.index}
         dispatch={props.dispatch}

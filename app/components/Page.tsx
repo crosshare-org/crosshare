@@ -80,7 +80,7 @@ const useViewportHeight = () => {
 
 const useScrollLock = () => {
   useEffect(() => {
-    const handleScroll = (e) => {
+    const handleScroll = (e: Event) => {
       e.preventDefault();
       window.scrollTo(0, 0);
       return false;

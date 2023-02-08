@@ -9,7 +9,7 @@ import {
 } from 'react';
 
 import { KeypressAction, PasteAction } from '../reducers/reducer';
-import { fromKeyboardEvent, KeyK } from '../lib/types';
+import { fromKeyboardEvent, Key, KeyK } from '../lib/types';
 import { isSome } from 'fp-ts/lib/Option';
 
 interface BeforeInputEvent extends SyntheticEvent {
@@ -23,7 +23,10 @@ export const useKeyboard = (): [RefObject<HTMLInputElement>, () => void] => {
 
 export const HiddenInput = forwardRef<
   HTMLInputElement,
-  { dispatch: Dispatch<KeypressAction|PasteAction> }
+  {
+    dispatch: Dispatch<KeypressAction|PasteAction>,
+    handleKeypress?: (k: Key) => boolean
+  }
 >((props, ref) => {
   return (
     <input
@@ -47,9 +50,14 @@ export const HiddenInput = forwardRef<
       onKeyDown={(e: KeyboardEvent) => {
         const mkey = fromKeyboardEvent(e, false);
         if (isSome(mkey)) {
+          e.preventDefault();
+          if (props.handleKeypress) {
+            if (props.handleKeypress(mkey.value)) {
+              return;
+            }
+          }
           const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
           props.dispatch(kpa);
-          e.preventDefault();
         }
       }}
       onPaste={(e: ClipboardEvent) => {

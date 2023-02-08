@@ -27,6 +27,7 @@ import { ClueMode } from './ClueMode';
 import { ContactLinks } from './ContactLinks';
 import { getCluedAcrossAndDown } from '../lib/viewableGrid';
 import { isSome } from 'fp-ts/lib/Option';
+import { markdownToHast } from '../lib/markdown/markdown';
 
 const initializeState = (
   props: PuzzleInProgressT & AuthProps
@@ -84,11 +85,12 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
     }
   }
 
-  const { acrossEntries, downEntries } = useMemo(() => {
+  const [ acrossEntries, downEntries ] = useMemo(() => {
     return getCluedAcrossAndDown(
       state.clues,
       state.grid.entries,
-      state.grid.sortedEntries
+      state.grid.sortedEntries,
+      (c: string) => markdownToHast({text: c})
     );
   }, [state.grid.entries, state.grid.sortedEntries, state.clues]);
   const scrollToCross = useMatchMedia(SMALL_AND_UP_RULES);
@@ -189,7 +191,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
               <Emoji symbol="🎉" /> Successfully Imported{' '}
               {props.title ? <>&lsquo;{props.title}&rsquo;</> : ''}
             </h2>
-            {props.notes ? <ConstructorNotes notes={props.notes} /> : ''}
+            {props.notes ? <ConstructorNotes notes={markdownToHast({text: props.notes})} /> : ''}
             <p>
               Please look over your grid and clues to make sure everything is
               correct. If something didn&apos;t import correctly, get in touch
@@ -214,17 +216,14 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
             leftIsActive={state.active.dir === Direction.Across}
             dispatch={dispatch}
             aspectRatio={state.grid.width / state.grid.height}
-            square={(width: number, _height: number) => {
-              return (
+            square={
                 <GridView
-                  squareWidth={width}
                   grid={state.grid}
                   active={state.active}
                   dispatch={dispatch}
                   allowBlockEditing={true}
                 />
-              );
-            }}
+            }
             left={
               <ClueList
                 wasEntryClick={state.wasEntryClick}

@@ -192,7 +192,8 @@ export const Puzzle = ({
           highlight: puzzle.highlight,
           hidden: new Set(puzzle.hidden),
         }),
-        puzzle.clues
+        puzzle.clues,
+        puzzle.clueHasts
       ),
       showExtraKeyLayout: false,
       answers: puzzle.grid,
@@ -556,11 +557,9 @@ export const Puzzle = ({
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
-      // Disable keyboard when paused / loading play
-      if (!(state.success && state.dismissedSuccess)) {
-        if (loadingPlayState || !state.currentTimeWindowStart) {
-          return;
-        }
+      // We now only need this handler for completed grids, when the mobile soft keyboard shouldn't be shown anymore so "HiddenInput" is removed
+      if (!state.success || !state.dismissedSuccess) {
+        return;
       }
 
       const mkey = fromKeyboardEvent(e);
@@ -570,15 +569,9 @@ export const Puzzle = ({
         e.preventDefault();
       }
     },
-    [
-      dispatch,
-      loadingPlayState,
-      state.currentTimeWindowStart,
-      state.success,
-      state.dismissedSuccess,
-    ]
+    [dispatch, state.success, state.dismissedSuccess]
   );
-  //useEventListener('keydown', physicalKeyboardHandler);
+  useEventListener('keydown', physicalKeyboardHandler);
 
   let [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
   if (entry === null && cross !== null) {
@@ -650,7 +643,6 @@ export const Puzzle = ({
             rebusValue={state.rebusValue}
             wasEntryClick={state.wasEntryClick}
             allEntries={state.grid.entries}
-            hasts={puzzle.clueHasts}
             refPositions={refPositions}
             refed={refed}
             dimCompleted={true}
@@ -672,7 +664,6 @@ export const Puzzle = ({
             rebusValue={state.rebusValue}
             wasEntryClick={state.wasEntryClick}
             allEntries={state.grid.entries}
-            hasts={puzzle.clueHasts}
             refPositions={refPositions}
             refed={refed}
             dimCompleted={true}
@@ -770,7 +761,6 @@ export const Puzzle = ({
             wasEntryClick={state.wasEntryClick}
             scrollToCross={scrollToCross}
             allEntries={state.grid.entries}
-            hasts={puzzle.clueHasts}
             refPositions={refPositions}
             refed={refed}
             dimCompleted={true}
@@ -790,7 +780,6 @@ export const Puzzle = ({
             wasEntryClick={state.wasEntryClick}
             scrollToCross={scrollToCross}
             allEntries={state.grid.entries}
-            hasts={puzzle.clueHasts}
             refPositions={refPositions}
             refed={refed}
             dimCompleted={true}

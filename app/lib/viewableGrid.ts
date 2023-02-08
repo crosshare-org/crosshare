@@ -10,6 +10,7 @@ import {
 import { ClueT, Position, Direction, PosAndDir, BLOCK } from './types';
 import { Symmetry } from '../reducers/reducer';
 import { AccountPrefsFlagsT } from './prefs';
+import type { Root } from 'hast';
 
 export interface ViewableEntry extends EntryBase {
   labelNumber: number;
@@ -17,6 +18,7 @@ export interface ViewableEntry extends EntryBase {
 
 export interface CluedEntry extends ViewableEntry {
   clue: string;
+  clueHast: Root;
 }
 
 export interface ViewableGrid<Entry extends ViewableEntry>
@@ -560,8 +562,9 @@ export function gridWithBarToggled<
 export function getCluedAcrossAndDown<Entry extends ViewableEntry>(
   clueMap: Record<string, Array<string>>,
   entries: Array<Entry>,
-  sortedEntries: Array<number>
-) {
+  sortedEntries: Array<number>,
+  markdownToHast: (text: string) => Root,
+): [CluedEntry[], CluedEntry[]] {
   const wordCounts: Record<string, number> = {};
   const cluedEntries = sortedEntries.map((entryidx) => {
     const e = entries[entryidx];
@@ -574,12 +577,12 @@ export function getCluedAcrossAndDown<Entry extends ViewableEntry>(
     wordCounts[word] = idx + 1;
     const clueString = clueArray[idx] || '';
 
-    return { ...e, clue: clueString };
+    return { ...e, clue: clueString, clueHast: markdownToHast(clueString) };
   });
-  return {
-    acrossEntries: cluedEntries.filter((e) => e.direction === Direction.Across),
-    downEntries: cluedEntries.filter((e) => e.direction === Direction.Down),
-  };
+  return [
+    cluedEntries.filter((e) => e.direction === Direction.Across),
+    cluedEntries.filter((e) => e.direction === Direction.Down),
+  ];
 }
 
 export function getClueMap<
@@ -736,7 +739,7 @@ export function getRefs(
 export function addClues<
   Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>
->(grid: Grid, rawClues: Array<ClueT>): CluedGrid {
+>(grid: Grid, rawClues: Array<ClueT>, clueHasts: Array<Root>|((c: string) => Root)): CluedGrid {
   const clues = cluesByDirection(rawClues);
 
   function mapper(e: Entry): CluedEntry {
@@ -750,7 +753,14 @@ export function addClues<
         "Can't find clue for " + e.labelNumber + ' ' + e.direction
       );
     }
-    return { ...e, clue };
+    const clueHast = Array.isArray(clueHasts) ? clueHasts[e.index] : clueHasts(clue);
+    if (clueHast === undefined) {
+      throw new Error(
+        "Can't find hast for " + e.labelNumber + ' ' + e.direction
+      );
+
+    }
+    return { ...e, clue, clueHast };
   }
 
   const entries: Array<CluedEntry> = [];

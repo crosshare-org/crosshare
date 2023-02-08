@@ -34,6 +34,7 @@ import { getDocRef } from '../lib/firebaseWrapper';
 import { useSnackbar } from './Snackbar';
 import { isSome } from 'fp-ts/lib/Option';
 import { arrayUnion, updateDoc } from 'firebase/firestore';
+import { markdownToHast } from '../lib/markdown/markdown';
 
 export enum StatsMode {
   AverageTime,
@@ -245,11 +246,12 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
     }
   }
 
-  const { acrossEntries, downEntries } = useMemo(() => {
+  const [ acrossEntries, downEntries ] = useMemo(() => {
     return getCluedAcrossAndDown(
       state.clues,
       state.grid.entries,
-      state.grid.sortedEntries
+      state.grid.sortedEntries,
+      (c: string) => markdownToHast({text: c})
     );
   }, [state.grid.entries, state.grid.sortedEntries, state.clues]);
 
@@ -269,18 +271,15 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
       leftIsActive={state.active.dir === Direction.Across}
       aspectRatio={state.grid.width / state.grid.height}
       dispatch={dispatch}
-      square={(width: number, _height: number) => {
-        return (
-          <GridView
-            squareWidth={width}
-            grid={state.grid}
-            cellColors={normalizedColors}
-            active={state.active}
-            dispatch={dispatch}
-            allowBlockEditing={true}
-          />
-        );
-      }}
+      square={
+        <GridView
+          grid={state.grid}
+          cellColors={normalizedColors}
+          active={state.active}
+          dispatch={dispatch}
+          allowBlockEditing={true}
+        />
+      }
       left={
         <ClueList
           wasEntryClick={state.wasEntryClick}

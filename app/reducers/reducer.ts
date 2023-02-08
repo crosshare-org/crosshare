@@ -1043,6 +1043,17 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         wasEntryClick: false,
         active: nextCell(state.grid, state.active),
       };
+    } else if (key.k === KeyK.Octothorp && state.type === 'builder') {
+      const ci = cellIndex(state.grid, state.active);
+      if (state.isEditable(ci)) {
+        const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
+        state.grid = gridWithHiddenToggled(state.grid, state.active, symmetry);
+        return {
+          ...postEdit(state, ci),
+          wasEntryClick: false,
+        };
+      }
+      return state;
     }
   }
   return state;
@@ -1354,7 +1365,7 @@ export function builderReducer(
       ...(state.notes && { cn: state.notes }),
       ...(state.blogPost && { bp: state.blogPost }),
       ...(state.guestConstructor && { gc: state.guestConstructor }),
-      ...((state.isPrivate && { pv: true }) || {
+      ...(state.isPrivate ? { pv: true } : {
         pvu:
           state.isPrivateUntil && state.isPrivateUntil > action.publishTimestamp
             ? state.isPrivateUntil
@@ -1481,13 +1492,11 @@ export function puzzleReducer(
       cellsUpdatedAt: play.ct,
       cellsIterationCount: play.uc,
       cellsEverMarkedWrong: new Set<number>(play.we),
-      ...(play &&
-        play.ct_rv && {
+      ...(play.ct_rv && {
         contestRevealed: true,
         contestSubmitTime: play.ct_t?.toMillis(),
       }),
-      ...(play &&
-        play.ct_sub && {
+      ...(play.ct_sub && {
         ranMetaSubmitEffects: true,
         contestPriorSubmissions: play.ct_pr_subs,
         contestDisplayName: play.ct_n,
