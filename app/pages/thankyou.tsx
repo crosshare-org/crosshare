@@ -9,7 +9,7 @@ export default function ThankYouPage() {
   return (
     <>
       <Head>
-        <title>Thank you | Crosshare Crossword Constructor and Puzzles</title>
+        <title>{`Thank you | Crosshare Crossword Constructor and Puzzles`}</title>
       </Head>
       <DefaultTopBar />
       <div css={{ margin: '1em' }}>

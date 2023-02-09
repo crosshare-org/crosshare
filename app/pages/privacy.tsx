@@ -8,7 +8,7 @@ export default function PrivacyPage() {
   return (
     <>
       <Head>
-        <title>Privacy Policy | Crosshare Crossword Constructor and Puzzles</title>
+        <title>{`Privacy Policy | Crosshare Crossword Constructor and Puzzles`}</title>
       </Head>
       <DefaultTopBar />
       <h2>Privacy Policy</h2>

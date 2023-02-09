@@ -331,7 +331,7 @@ const PuzzleEditor = ({
   return (
     <>
       <Head>
-        <title>Editing | {puzzle.title} | Crosshare</title>
+        <title>{`Editing | ${puzzle.title} | Crosshare`}</title>
       </Head>
       <DefaultTopBar />
       <div css={{ margin: '1em' }}>

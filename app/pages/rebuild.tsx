@@ -6,7 +6,7 @@ import { DBLoader } from '../components/DBLoader';
 export const RebuildPage = () => {
   return <>
     <Head>
-      <title>Rebuild Word Database | Crosshare | crossword puzzle builder</title>
+      <title>{`Rebuild Word Database | Crosshare | crossword puzzle builder`}</title>
     </Head>
     <DBLoader />
   </>;

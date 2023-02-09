@@ -65,7 +65,7 @@ export default function DonatePage({ donors }: DonateProps) {
   return (
     <>
       <Head>
-        <title>Donate and Become a Crosshare Patron</title>
+        <title>{`Donate and Become a Crosshare Patron`}</title>
       </Head>
       <DefaultTopBar />
       <div

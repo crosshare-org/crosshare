@@ -160,7 +160,7 @@ export default function DailyMiniPage(props: PageProps) {
   return (
     <>
       <Head>
-        <title>{title} | Crosshare crosswords</title>
+        <title>{`${title} | Crosshare crosswords`}</title>
         <meta key="og:title" property="og:title" content={title} />
         <meta key="description" name="description" content={description} />
         <meta

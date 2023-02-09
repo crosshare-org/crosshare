@@ -30,7 +30,7 @@ export default requiresAdmin(() => {
   return (
     <>
       <Head>
-        <title>Articles | Crosshare</title>
+        <title>{`Articles | Crosshare`}</title>
         <meta name="robots" content="noindex" />
       </Head>
       <DefaultTopBar />

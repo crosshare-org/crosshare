@@ -334,7 +334,7 @@ export const StatsPage = ({
   return (
     <>
       <Head>
-        <title>Stats | {puzzle.title} | Crosshare</title>
+        <title>{`Stats | ${puzzle.title} | Crosshare`}</title>
       </Head>
       <div
         css={{

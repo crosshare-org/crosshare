@@ -266,7 +266,7 @@ export default requiresAdmin(() => {
   return (
     <>
       <Head>
-        <title>Admin | Crosshare</title>
+        <title>{`Admin | Crosshare`}</title>
         <meta name="robots" content="noindex" />
       </Head>
       <DefaultTopBar />

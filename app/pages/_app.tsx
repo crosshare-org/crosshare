@@ -168,9 +168,7 @@ export default function CrosshareApp({
   return (
     <>
       <Head>
-        <title>
-          Crosshare - Free Crossword Constructor and Daily Mini Crossword
-          Puzzles
+        <title>{`Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles`}
         </title>
         <meta
           key="og:title"

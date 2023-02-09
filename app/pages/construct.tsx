@@ -112,7 +112,7 @@ export default function BuilderPage() {
   return (
     <>
       <Head>
-        <title>Constructor | Crosshare | crossword puzzle builder</title>
+        <title>{`Constructor | Crosshare | crossword puzzle builder`}</title>
         <meta
           key="og:title"
           property="og:title"

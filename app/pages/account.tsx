@@ -139,7 +139,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
   return (
     <>
       <Head>
-        <title>Account | Crosshare</title>
+        <title>{`Account | Crosshare`}</title>
         <meta name="robots" content="noindex" />
       </Head>
       <DefaultTopBar accountSelected />

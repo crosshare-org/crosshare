@@ -83,7 +83,7 @@ const ArticleEditor = ({
   return (
     <>
       <Head>
-        <title>Editing | {article.t} | Crosshare</title>
+        <title>{`Editing | ${article.t} | Crosshare`}</title>
       </Head>
       <DefaultTopBar />
       <div css={{ margin: '1em' }}>

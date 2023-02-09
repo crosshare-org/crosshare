@@ -8,7 +8,7 @@ export const ErrorPage = (props: { title: string; children?: ReactNode }) => {
   return (
     <>
       <Head>
-        <title>{props.title} | Crosshare</title>
+        <title>{`${props.title} | Crosshare`}</title>
       </Head>
       <div
         css={{

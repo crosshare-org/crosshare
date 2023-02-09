@@ -81,7 +81,7 @@ export default function UploadPage() {
   return (
     <>
       <Head>
-        <title>Upload/Import Crossword Puzzles | Crosshare</title>
+        <title>{`Upload/Import Crossword Puzzles | Crosshare`}</title>
         <meta
           key="og:title"
           property="og:title"
