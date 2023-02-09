@@ -2,6 +2,7 @@
 export function inlineOnly(this: any) {
   const data = this.data();
 
+  // https://github.com/micromark/micromark/blob/main/packages/micromark/dev/lib/constructs.js#L5
   add('micromarkExtensions', {disable: {null: ['list']}});
   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

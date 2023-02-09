@@ -6,6 +6,29 @@ import { GridContext } from '../components/GridContext';
 import { Direction } from '../lib/types';
 import { markdownToHast } from '../lib/markdown/markdown';
 
+test('escape html', () => {
+  const r = render(
+    <Markdown
+      hast={(markdownToHast({text: 'This should get <b>escaped</b>!'}))}
+      
+    />,
+    {}
+  );
+  expect(r.container).toMatchInlineSnapshot(`
+<div>
+  <div>
+    <div
+      class="paragraph"
+    >
+      This should get 
+      escaped
+      !
+    </div>
+  </div>
+</div>
+`);
+});
+
 test('email priority over at mention', () => {
   const r = render(
     <Markdown
