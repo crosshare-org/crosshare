@@ -492,18 +492,18 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
       vBars: new Set(fromDB.vBars),
       hBars: new Set(fromDB.hBars),
       hidden: new Set(fromDB.hidden),
-    }), fromDB.clues, (c: string) => markdownToHast({text: c}));
+    }), fromDB.clues, (c: string) => markdownToHast({text: c, inline: true}));
     const clueMap = getEntryToClueMap(grid, fromDB.grid);
     puzzle = {
       ...fromDB,
       id: dbres.id,
       blogPostRaw: fromDB.blogPost,
       blogPost: fromDB.blogPost ? markdownToHast({text: fromDB.blogPost}) : null,
-      constructorNotes: fromDB.constructorNotes ? markdownToHast({text: fromDB.constructorNotes}) : null,
+      constructorNotes: fromDB.constructorNotes ? markdownToHast({text: fromDB.constructorNotes, inline: true}) : null,
       constructorPage: await userIdToPage(validationResult.right.a),
       constructorIsPatron: await isUserPatron(validationResult.right.a),
       comments: await convertComments(fromDB.comments, clueMap),
-      clueHasts: grid.entries.map(c => markdownToHast({text: c.clue, clueMap}))
+      clueHasts: grid.entries.map(c => markdownToHast({text: c.clue, clueMap, inline: true}))
     };
   } else {
     console.error(PathReporter.report(validationResult).join(','));

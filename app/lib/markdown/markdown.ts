@@ -12,6 +12,7 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { Direction } from '../types';
 import { Root } from 'hast';
+import { inlineOnly } from './inlineOnly';
 
 function rehypeTruncate(options: TruncateOptions) {
   // @ts-expect-error: assume input `root` matches output root.
@@ -23,6 +24,7 @@ export function markdownToHast(props: {
   // If this is included, references to clues by entry will get tooltips
   clueMap?: Map<string, [number, Direction, string]>;
   preview?: number;
+  inline?: boolean;
 }): Root {
   const text = props.text.replace(/[^\s\S]/g, '');
   const rehypePlugins: PluggableList = [
@@ -61,5 +63,10 @@ export function markdownToHast(props: {
       },
     })
     .use(rehypePlugins);
+
+  if (props.inline) {
+    processor.use(inlineOnly);
+  }
+  
   return processor.runSync(processor.parse(text)) as Root;
 }

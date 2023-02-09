@@ -289,7 +289,7 @@ test('clueMap rendering', async () => {
     { num: 3, dir: 0, clue: '2-down Then...', explanation: null },
     { num: 1, dir: 1, clue: '1- and 3- acrosses You and I', explanation: null },
     { num: 2, dir: 1, clue: 'here is the clue?', explanation: null },
-  ]);
+  ], (_c: string) => {return {type: 'root', children: []};} );
 
   let r = render(
     <Markdown hast={(markdownToHast({text: "before ||baz BOOM foo BAM >! not! !< fooey|| with >!after!< text"}))} />,
@@ -362,6 +362,40 @@ test('clueMap rendering', async () => {
     /* noop */
   });
   expect(r.container).toMatchSnapshot();
+});
+
+test('inline', () => {
+  const r = render(
+    <Markdown inline={true} hast={(markdownToHast({text: "* This is the starred clue"}))} />,
+    {}
+  );
+  expect(r.container).toMatchInlineSnapshot(`
+<div>
+  <ul>
+    
+
+    <li>
+      This is the starred clue
+    </li>
+    
+
+  </ul>
+</div>
+`);
+
+const rInline = render(
+  <Markdown inline={true} hast={(markdownToHast({inline: true, text: "* This is the starred clue"}))} />,
+  {}
+);
+expect(rInline.container).toMatchInlineSnapshot(`
+<div>
+  <div
+    class="paragraph"
+  >
+    * This is the starred clue
+  </div>
+</div>
+`);
 });
 
 test('autolink full url', () => {

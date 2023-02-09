@@ -1040,168 +1040,176 @@ export const Puzzle = ({
 
   return (
     <>
-      <Global styles={FULLSCREEN_CSS} />
-      <Head>
-        <title>{puzzle.title} | Crosshare crossword puzzle</title>
-        <I18nTags
-          locale={locale}
-          canonicalPath={`/crosswords/${puzzle.id}/${slugify(puzzle.title)}`}
-        />
-        <meta key="og:title" property="og:title" content={puzzle.title} />
-        <meta
-          key="og:description"
-          property="og:description"
-          content={description}
-        />
-        <meta
-          key="og:image"
-          property="og:image"
-          content={'https://crosshare.org/api/ogimage/' + puzzle.id}
-        />
-        <meta key="og:image:width" property="og:image:width" content="1200" />
-        <meta key="og:image:height" property="og:image:height" content="630" />
-        <meta
-          key="og:image:alt"
-          property="og:image:alt"
-          content="An image of the puzzle grid"
-        />
-        <meta key="description" name="description" content={description} />
-      </Head>
-      <div
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-        }}
-      >
-        <div css={{ flex: 'none' }}>
-          <TopBar title={puzzle.title}>
-            {!loadingPlayState ? (
-              !state.success ? (
-                <>
-                  <TopBarLink
-                    icon={<FaPause />}
-                    hoverText={t`Pause Game`}
-                    text={timeString(state.displaySeconds, true)}
-                    onClick={() => {
-                      dispatch({ type: 'PAUSEACTION' });
-                      writePlayToDBIfNeeded();
-                    }}
-                    keepText={true}
-                  />
-                  <TopBarLink
-                    icon={state.clueView ? <SpinnerFinished /> : <FaListOl />}
-                    text={state.clueView ? t`Grid` : t`Clues`}
-                    onClick={() => {
-                      const a: ToggleClueViewAction = {
-                        type: 'TOGGLECLUEVIEW',
-                      };
-                      dispatch(a);
-                    }}
-                  />
-                  {checkRevealMenus}
-                  {moreMenu}
-                </>
-              ) : (
-                <>
-                  <TopBarLink
-                    icon={<FaComment />}
-                    text={
-                      puzzle.contestAnswers?.length
-                        ? !isMetaSolution(
-                            state.contestSubmission,
-                            puzzle.contestAnswers
-                          ) && !state.contestRevealed
-                          ? t`Contest Prompt / Submission`
-                          : t`Comments / Leaderboard`
-                        : t`Show Comments`
-                    }
-                    onClick={() => dispatch({ type: 'UNDISMISSSUCCESS' })}
-                  />
-                  {moreMenu}
-                </>
-              )
-            ) : (
-              moreMenu
-            )}
-          </TopBar>
-        </div>
-        {state.filled && !state.success && !state.dismissedKeepTrying ? (
-          <KeepTryingOverlay dispatch={dispatch} />
-        ) : (
-          ''
-        )}
-        {state.success && !state.dismissedSuccess ? (
-          <PuzzleOverlay
-            {...overlayBaseProps}
-            overlayType={OverlayType.Success}
-            contestSubmission={state.contestSubmission}
-            contestHasPrize={puzzle.contestHasPrize}
-            contestRevealed={state.contestRevealed}
-            contestRevealDelay={puzzle.contestRevealDelay}
+      <GridContext.Provider value={state.grid}>
+        <Global styles={FULLSCREEN_CSS} />
+        <Head>
+          <title>{puzzle.title} | Crosshare crossword puzzle</title>
+          <I18nTags
+            locale={locale}
+            canonicalPath={`/crosswords/${puzzle.id}/${slugify(puzzle.title)}`}
           />
-        ) : (
-          ''
-        )}
-        {state.moderating ? (
-          <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />
-        ) : (
-          ''
-        )}
-        {state.showingEmbedOverlay && props.user ? (
-          <EmbedOverlay user={props.user} puzzle={puzzle} dispatch={dispatch} />
-        ) : (
-          ''
-        )}
-        {state.currentTimeWindowStart === 0 &&
-        !state.success &&
-        !(state.filled && !state.dismissedKeepTrying) ? (
-          state.bankedSeconds === 0 ? (
-            <PuzzleOverlay
-              {...overlayBaseProps}
-              overlayType={OverlayType.BeginPause}
-              dismissMessage={t`Begin Puzzle`}
-              message={t`Ready to get started?`}
-              loadingPlayState={loadingPlayState || !state.loadedPlayState}
-            />
-          ) : (
-            <PuzzleOverlay
-              {...overlayBaseProps}
-              overlayType={OverlayType.BeginPause}
-              dismissMessage={t`Resume`}
-              message={t`Your puzzle is paused`}
-              loadingPlayState={loadingPlayState || !state.loadedPlayState}
-            />
-          )
-        ) : (
-          ''
-        )}
-        {state.success ? (
-          ''
-        ) : (
-          <HiddenInput ref={hiddenInputRef} dispatch={dispatch} />
-        )}
+          <meta key="og:title" property="og:title" content={puzzle.title} />
+          <meta
+            key="og:description"
+            property="og:description"
+            content={description}
+          />
+          <meta
+            key="og:image"
+            property="og:image"
+            content={'https://crosshare.org/api/ogimage/' + puzzle.id}
+          />
+          <meta key="og:image:width" property="og:image:width" content="1200" />
+          <meta
+            key="og:image:height"
+            property="og:image:height"
+            content="630"
+          />
+          <meta
+            key="og:image:alt"
+            property="og:image:alt"
+            content="An image of the puzzle grid"
+          />
+          <meta key="description" name="description" content={description} />
+        </Head>
         <div
-          onClick={showKeyboard}
-          onKeyDown={showKeyboard}
-          tabIndex={0}
-          role={'textbox'}
           css={{
-            flex: '1 1 auto',
-            overflow: 'scroll',
-            scrollbarWidth: 'none',
-            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
           }}
         >
-          <GridContext.Provider value={state.grid}>
+          <div css={{ flex: 'none' }}>
+            <TopBar title={puzzle.title}>
+              {!loadingPlayState ? (
+                !state.success ? (
+                  <>
+                    <TopBarLink
+                      icon={<FaPause />}
+                      hoverText={t`Pause Game`}
+                      text={timeString(state.displaySeconds, true)}
+                      onClick={() => {
+                        dispatch({ type: 'PAUSEACTION' });
+                        writePlayToDBIfNeeded();
+                      }}
+                      keepText={true}
+                    />
+                    <TopBarLink
+                      icon={state.clueView ? <SpinnerFinished /> : <FaListOl />}
+                      text={state.clueView ? t`Grid` : t`Clues`}
+                      onClick={() => {
+                        const a: ToggleClueViewAction = {
+                          type: 'TOGGLECLUEVIEW',
+                        };
+                        dispatch(a);
+                      }}
+                    />
+                    {checkRevealMenus}
+                    {moreMenu}
+                  </>
+                ) : (
+                  <>
+                    <TopBarLink
+                      icon={<FaComment />}
+                      text={
+                        puzzle.contestAnswers?.length
+                          ? !isMetaSolution(
+                              state.contestSubmission,
+                              puzzle.contestAnswers
+                            ) && !state.contestRevealed
+                            ? t`Contest Prompt / Submission`
+                            : t`Comments / Leaderboard`
+                          : t`Show Comments`
+                      }
+                      onClick={() => dispatch({ type: 'UNDISMISSSUCCESS' })}
+                    />
+                    {moreMenu}
+                  </>
+                )
+              ) : (
+                moreMenu
+              )}
+            </TopBar>
+          </div>
+          {state.filled && !state.success && !state.dismissedKeepTrying ? (
+            <KeepTryingOverlay dispatch={dispatch} />
+          ) : (
+            ''
+          )}
+          {state.success && !state.dismissedSuccess ? (
+            <PuzzleOverlay
+              {...overlayBaseProps}
+              overlayType={OverlayType.Success}
+              contestSubmission={state.contestSubmission}
+              contestHasPrize={puzzle.contestHasPrize}
+              contestRevealed={state.contestRevealed}
+              contestRevealDelay={puzzle.contestRevealDelay}
+            />
+          ) : (
+            ''
+          )}
+          {state.moderating ? (
+            <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />
+          ) : (
+            ''
+          )}
+          {state.showingEmbedOverlay && props.user ? (
+            <EmbedOverlay
+              user={props.user}
+              puzzle={puzzle}
+              dispatch={dispatch}
+            />
+          ) : (
+            ''
+          )}
+          {state.currentTimeWindowStart === 0 &&
+          !state.success &&
+          !(state.filled && !state.dismissedKeepTrying) ? (
+            state.bankedSeconds === 0 ? (
+              <PuzzleOverlay
+                {...overlayBaseProps}
+                overlayType={OverlayType.BeginPause}
+                dismissMessage={t`Begin Puzzle`}
+                message={t`Ready to get started?`}
+                loadingPlayState={loadingPlayState || !state.loadedPlayState}
+              />
+            ) : (
+              <PuzzleOverlay
+                {...overlayBaseProps}
+                overlayType={OverlayType.BeginPause}
+                dismissMessage={t`Resume`}
+                message={t`Your puzzle is paused`}
+                loadingPlayState={loadingPlayState || !state.loadedPlayState}
+              />
+            )
+          ) : (
+            ''
+          )}
+          {state.success ? (
+            ''
+          ) : (
+            <HiddenInput ref={hiddenInputRef} dispatch={dispatch} />
+          )}
+          <div
+            onClick={showKeyboard}
+            onKeyDown={showKeyboard}
+            tabIndex={0}
+            role={'textbox'}
+            css={{
+              flex: '1 1 auto',
+              overflow: 'scroll',
+              scrollbarWidth: 'none',
+              position: 'relative',
+            }}
+          >
             <DownsOnlyContext.Provider
               value={state.downsOnly && !state.success}
             >
               {puzzleView}
             </DownsOnlyContext.Provider>
-          </GridContext.Provider>
+          </div>
         </div>
-      </div>
+      </GridContext.Provider>
     </>
   );
 };

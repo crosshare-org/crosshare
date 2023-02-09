@@ -25,6 +25,7 @@ export const ClueReference = (props: ClueReferenceProps): JSX.Element => {
       e.labelNumber === props.labelNumber && e.direction === props.direction
   );
   if (!grid || !entry) {
+    console.log('missing grid or entry', grid, entry);
     return <>{props.text}</>;
   }
 
