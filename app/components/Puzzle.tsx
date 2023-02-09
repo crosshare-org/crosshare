@@ -1043,7 +1043,7 @@ export const Puzzle = ({
       <GridContext.Provider value={state.grid}>
         <Global styles={FULLSCREEN_CSS} />
         <Head>
-          <title>{puzzle.title} | Crosshare crossword puzzle</title>
+          <title>{`${puzzle.title} | Crosshare crossword puzzle`}</title>
           <I18nTags
             locale={locale}
             canonicalPath={`/crosswords/${puzzle.id}/${slugify(puzzle.title)}`}
