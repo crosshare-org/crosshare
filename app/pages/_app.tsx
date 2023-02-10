@@ -19,32 +19,6 @@ import { I18nProvider } from '@lingui/react';
 
 initTranslation(i18n);
 
-/*if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
-  Sentry.init({
-    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-    release: process.env.NEXT_PUBLIC_SENTRY_RELEASE,
-    ignoreErrors: [
-      'ResizeObserver loop completed with undelivered notifications',
-      'ResizeObserver loop limit exceeded',
-      'A mutation operation was attempted on a database that did not allow mutations',
-      'is not a valid value for enumeration ScrollLogicalPosition',
-      'Extension context invalidated',
-      'entryTypes contained only unsupported types',
-      'The popup has been closed by the user before finalizing the operation',
-      'SecurityError: Blocked a frame with origin "https://crosshare.org"',
-      'LPContentScriptFeatures',
-      'because the client is offline',
-      'Object.fromEntries is not a function',
-      'cancelled due to another conflicting popup being opened',
-      'installations/app-offline',
-      'Error: Network Error',
-      'Non-Error promise rejection captured with value: Object Not Found Matching',
-      'Failed to fetch',
-      'Illegal invocation',
-    ],
-  });
-}*/
-
 export function reportWebVitals(metric: NextWebVitalsMetric) {
   console.log(metric);
   if (
