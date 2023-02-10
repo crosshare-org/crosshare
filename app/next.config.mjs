@@ -1,6 +1,6 @@
 import { PHASE_PRODUCTION_SERVER } from 'next/constants.js';
 import bundleAnalyzer from '@next/bundle-analyzer';
-const { withSentryConfig } = require('@sentry/nextjs');
+import { withSentryConfig } from '@sentry/nextjs';
 
 const distDir = 'nextjs';
 const baseConfig = {
@@ -56,15 +56,15 @@ export default (phase) => {
     enabled: process.env.ANALYZE === 'true',
   });
 
-  return (
+  return withBundleAnalyzer(
     withSentryConfig(
-      withBundleAnalyzer({
+      {
         ...baseConfig,
         env: {
           FIREBASE_PROJECT_ID: 'mdcrosshare',
         },
-      })
-    ),
-    sentryWebpackPluginOptions
+      },
+      sentryWebpackPluginOptions
+    )
   );
 };
