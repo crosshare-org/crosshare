@@ -110,7 +110,8 @@ export default function UploadPage() {
           <>
             <p>Checking if you have an exisiting account...</p>
           </>
-        ) : loginButton !== undefined ? (
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        ) : loginButton ? (
           <>
             <p>
               To upload a puzzle, you need to log in with Google first. We use

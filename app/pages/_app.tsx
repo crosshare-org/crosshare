@@ -1,5 +1,4 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
-import * as Sentry from '@sentry/node';
 import { AppProps, NextWebVitalsMetric } from 'next/app';
 import NextJSRouter, { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -20,7 +19,7 @@ import { I18nProvider } from '@lingui/react';
 
 initTranslation(i18n);
 
-if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
+/*if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
   Sentry.init({
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
     release: process.env.NEXT_PUBLIC_SENTRY_RELEASE,
@@ -44,7 +43,7 @@ if (process.env.NODE_ENV === 'production' && typeof Sentry !== 'undefined') {
       'Illegal invocation',
     ],
   });
-}
+}*/
 
 export function reportWebVitals(metric: NextWebVitalsMetric) {
   console.log(metric);

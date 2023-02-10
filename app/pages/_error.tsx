@@ -1,6 +1,5 @@
 import NextErrorComponent, { ErrorProps } from 'next/error';
 import { NextPageContext } from 'next';
-import * as Sentry from '@sentry/node';
 
 import { ErrorPage } from '../components/ErrorPage';
 import { ContactLinks } from '../components/ContactLinks';
@@ -26,7 +25,6 @@ const isLocalStorageError = (err: Error): boolean => {
 const MyError = ({
   title,
   statusCode,
-  hasGetInitialPropsRun,
   err,
 }: {
   title?: string;
@@ -36,13 +34,6 @@ const MyError = ({
 }) => {
   if (isLocalStorageError(err)) {
     return <LocalStorageErrorPage />;
-  }
-  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-  if (!hasGetInitialPropsRun && err && typeof Sentry !== 'undefined') {
-    // getInitialProps is not called in case of
-    // https://github.com/vercel/next.js/issues/8592. As a workaround, we pass
-    // err via _app.js so it can be captured
-    Sentry.captureException(err);
   }
 
   return (
@@ -58,7 +49,7 @@ const MyError = ({
   );
 };
 
-MyError.getInitialProps = async ({ res, err, asPath }: NextPageContext) => {
+MyError.getInitialProps = async ({ res, err }: NextPageContext) => {
   const errorInitialProps: ErrorProps = await NextErrorComponent.getInitialProps(
     { res, err } as NextPageContext
   );
@@ -78,21 +69,6 @@ MyError.getInitialProps = async ({ res, err, asPath }: NextPageContext) => {
 
   if (res?.statusCode === 404) {
     return { statusCode: 404 };
-  }
-  if (err && typeof Sentry !== 'undefined') {
-    if (!isLocalStorageError(err)) {
-      Sentry.captureException(err);
-    }
-    return { ...errorInitialProps, hasGetInitialPropsRun: true };
-  }
-
-  // If this point is reached, getInitialProps was called without any
-  // information about what the error might be. This is unexpected and may
-  // indicate a bug introduced in Next.js, so record it in Sentry
-  if (typeof Sentry !== 'undefined') {
-    Sentry.captureException(
-      new Error(`_error.js getInitialProps missing data at path: ${asPath}`)
-    );
   }
 
   return { ...errorInitialProps, hasGetInitialPropsRun: true };
