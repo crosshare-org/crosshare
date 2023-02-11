@@ -25,7 +25,7 @@ RUN apk add cairo pango libjpeg-turbo giflib librsvg
 WORKDIR /app
 ENV NODE_ENV=production PATH=$PATH:/app/node_modules/.bin NEXT_TELEMETRY_DISABLED=1
 COPY --from=builder /src/app/cluedb ./cluedb
-COPY --from=builder /src/app/next.config.js ./
+COPY --from=builder /src/app/next.config.mjs ./
 COPY --from=builder /src/app/public ./public
 COPY --from=builder /src/app/locales ./locales
 COPY --from=builder /src/node_modules ./node_modules

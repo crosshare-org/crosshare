@@ -1,5 +1,4 @@
 import { PHASE_PRODUCTION_SERVER } from 'next/constants.js';
-import bundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
 
 const distDir = 'nextjs';
@@ -47,12 +46,15 @@ const sentryWebpackPluginOptions = {
   // https://github.com/getsentry/sentry-webpack-plugin#options.
 };
 
-export default (phase) => {
+export default async (phase) => {
   if (phase === PHASE_PRODUCTION_SERVER) {
     return withSentryConfig(baseConfig, sentryWebpackPluginOptions);
   }
 
-  const withBundleAnalyzer = bundleAnalyzer({
+  const bundleAnalyzer = await import('@next/bundle-analyzer');
+
+
+  const withBundleAnalyzer = bundleAnalyzer.default({
     enabled: process.env.ANALYZE === 'true',
   });
 

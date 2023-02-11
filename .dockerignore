@@ -5,12 +5,16 @@
 !app/firebaseConfig.ts
 !app/.eslintrc.json
 !app/.sentryclirc
+!app/sentry.client.config.js
+!app/sentry.edge.config.js
+!app/sentry.server.config.js
+!app/sentry.properties
 !app/package.json
 !app/yarn.lock
 !app/firebase.json
 !app/firestore.rules
 !app/tsconfig.json
-!app/next.config.js
+!app/next.config.mjs
 !app/.babelrc
 !app/.linguirc
 !app/typings

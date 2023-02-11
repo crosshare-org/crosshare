@@ -23,8 +23,9 @@ export const clueReferencer: Plugin = () => {
       const refs: Array<ReferenceData> = [];
       let match;
       const re =
-        /(?<=^|\s)(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
+        /(^|\s)(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
       while ((match = re.exec(value)) !== null) {
+        const preLength = match[1]?.length || 0;
         const dirString = match.groups?.dir?.toLowerCase();
         if (!dirString) {
           throw new Error('missing dir string');
@@ -43,8 +44,8 @@ export const clueReferencer: Plugin = () => {
           refs.push({
             direction,
             labelNumber,
-            start: match.index + numMatch.index,
-            end: match.index + numMatch.index + numMatch[0].length,
+            start: match.index + numMatch.index + preLength,
+            end: match.index + numMatch.index + numMatch[0].length + preLength,
           });
         }
         const last = refs[refs.length - 1];

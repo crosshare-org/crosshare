@@ -496,7 +496,8 @@ test('auto tagger', () => {
     <div
       class="paragraph"
     >
-      Here is an tag 
+      Here is an tag
+       
       <a
         href="/tags/lang-es"
       >
@@ -530,7 +531,8 @@ test('profile link', () => {
     <div
       class="paragraph"
     >
-      Here is my profile 
+      Here is my profile
+       
       <a
         href="/mike"
       >
