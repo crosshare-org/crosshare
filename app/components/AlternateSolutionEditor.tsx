@@ -1,5 +1,12 @@
 import useEventListener from '@use-it/event-listener';
-import { useCallback, useReducer, useMemo } from 'react';
+import {
+  useCallback,
+  useReducer,
+  useMemo,
+  useRef,
+  useState,
+  useEffect,
+} from 'react';
 import {
   FaSave,
   FaWindowClose,
@@ -7,11 +14,8 @@ import {
   FaVolumeUp,
   FaVolumeMute,
 } from 'react-icons/fa';
-import { usePersistedBoolean } from '../lib/hooks';
-import {
-  Direction,
-  KeyK,
-} from '../lib/types';
+import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
+import { Direction, KeyK } from '../lib/types';
 import { fromCells } from '../lib/viewableGrid';
 import { Rebus, EscapeKey } from './Icons';
 import {
@@ -68,6 +72,15 @@ export function AlternateSolutionEditor(props: {
   const [muted, setMuted] = usePersistedBoolean('muted', false);
 
   const [hiddenInputRef, focusGrid] = useKeyboard();
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const { width: cqw, height: cqh } = usePolyfilledResizeObserver(containerRef);
+  const [useCQ, setUseCQ] = useState(true);
+  useEffect(() => {
+    if (!('container' in document.documentElement.style)) {
+      setUseCQ(false);
+    }
+  }, []);
 
   const pasteHandler = useCallback(
     (e: ClipboardEvent) => {
@@ -187,13 +200,18 @@ export function AlternateSolutionEditor(props: {
               flexWrap: 'nowrap',
               containerType: 'size',
             }}
+            ref={containerRef}
           >
             <div
               aria-label="grid"
               css={{
                 margin: 'auto',
-                width: `min(100cqw, 100cqh * ${aspectRatio})`,
-                height: `min(100cqh, 100cqw / ${aspectRatio})`,
+                width: useCQ
+                  ? `min(100cqw, 100cqh * ${aspectRatio})`
+                  : `min(${cqw}px, ${cqh}px * ${aspectRatio})`,
+                height: useCQ
+                  ? `min(100cqh, 100cqw / ${aspectRatio})`
+                  : `min(${cqh}px, ${cqw}px / ${aspectRatio})`,
               }}
             >
               <GridView
