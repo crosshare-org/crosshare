@@ -1,7 +1,8 @@
 import { keyframes } from '@emotion/react';
-import { memo } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 
 import { FaSlash, FaEye } from 'react-icons/fa';
+import { usePolyfilledResizeObserver } from '../lib/hooks';
 
 const blink = keyframes`
 from, to {
@@ -57,6 +58,15 @@ type CellProps = {
 };
 
 export const Cell = memo(function Cell(props: CellProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const { width: cqw } = usePolyfilledResizeObserver(containerRef);
+  const [useCQ, setUseCQ] = useState(true);
+  useEffect(() => {
+    if (!('container' in document.documentElement.style)) {
+      setUseCQ(false);
+    }
+  }, []);
+
   let bg = 'var(--cell-bg)';
   if (props.isEnteringRebus && props.active) {
     /* noop */
@@ -110,6 +120,7 @@ export const Cell = memo(function Cell(props: CellProps) {
         overflow: 'hidden',
         containerType: 'size',
       }}
+      ref={containerRef}
     >
       {/* eslint-disable-next-line */}
       <div
@@ -120,7 +131,7 @@ export const Cell = memo(function Cell(props: CellProps) {
           position: 'absolute',
           width: '100%',
           height: '100%',
-          fontSize: '100cqw',
+          fontSize: useCQ ? '100cqw' : `${cqw}px`,
           ...(props.hidden &&
             props.active && {
               background:

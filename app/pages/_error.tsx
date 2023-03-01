@@ -29,11 +29,11 @@ const MyError = ({
   err,
 }: {
   title?: string;
-  err: Error;
+  err: Error|undefined;
   statusCode: number;
   hasGetInitialPropsRun: boolean;
 }) => {
-  if (isLocalStorageError(err)) {
+  if (err && isLocalStorageError(err)) {
     return <LocalStorageErrorPage />;
   }
 

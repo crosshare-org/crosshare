@@ -69,12 +69,6 @@ export default function CrosshareApp({
   }, [audioContext, setAudioContext]);
 
   useEffect(() => {
-    if (!("container" in document.documentElement.style)) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      import('container-query-polyfill');
-    }
-
     if ("virtualKeyboard" in navigator) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore

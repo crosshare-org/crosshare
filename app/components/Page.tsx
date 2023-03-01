@@ -1,9 +1,4 @@
-import {
-  Dispatch,
-  ReactNode,
-  useEffect,
-  useState,
-} from 'react';
+import { Dispatch, ReactNode, useEffect, useRef, useState } from 'react';
 import { FaAngleDoubleRight, FaAngleDoubleLeft } from 'react-icons/fa';
 
 import { KeypressAction, PasteAction } from '../reducers/reducer';
@@ -15,6 +10,7 @@ import {
   HEADER_HEIGHT,
 } from '../lib/style';
 import { KeyK } from '../lib/types';
+import { usePolyfilledResizeObserver } from '../lib/hooks';
 
 interface TinyNavButtonProps {
   isLeft?: boolean;
@@ -68,7 +64,7 @@ const getViewportHeight = () => {
 };
 
 const useViewportHeight = () => {
-  const [state, setState] = useState(getViewportHeight);
+  const [state, setState] = useState(0);
   useEffect(() => {
     const handleResize = () => setState(getViewportHeight);
     window.visualViewport?.addEventListener('resize', handleResize);
@@ -97,11 +93,20 @@ interface SquareAndColsProps {
   right: ReactNode;
   header?: ReactNode;
   leftIsActive: boolean;
-  dispatch: Dispatch<KeypressAction|PasteAction>;
+  dispatch: Dispatch<KeypressAction | PasteAction>;
 }
 export const SquareAndCols = (props: SquareAndColsProps) => {
   const height = useViewportHeight();
   useScrollLock();
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const { width: cqw, height: cqh } = usePolyfilledResizeObserver(containerRef);
+  const [useCQ, setUseCQ] = useState(true);
+  useEffect(() => {
+    if (!('container' in document.documentElement.style)) {
+      setUseCQ(false);
+    }
+  }, []);
 
   return (
     <>
@@ -123,6 +128,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           flexWrap: 'nowrap',
           containerType: 'size',
         }}
+        ref={containerRef}
       >
         <div
           css={{
@@ -152,15 +158,27 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
             aria-label="grid"
             css={{
               margin: 'auto',
-              width: `min(100cqw, 100cqh * ${props.aspectRatio} - ${TINY_COL_MIN_HEIGHT}px * ${props.aspectRatio})`,
-              height: `min(100cqh - ${TINY_COL_MIN_HEIGHT}px, 100cqw / ${props.aspectRatio})`,
+              width: useCQ
+                ? `min(100cqw, 100cqh * ${props.aspectRatio} - ${TINY_COL_MIN_HEIGHT}px * ${props.aspectRatio})`
+                : `min(${cqw}px, ${cqh}px * ${props.aspectRatio} - ${TINY_COL_MIN_HEIGHT}px * ${props.aspectRatio})`,
+              height: useCQ
+                ? `min(100cqh - ${TINY_COL_MIN_HEIGHT}px, 100cqw / ${props.aspectRatio})`
+                : `min(${cqh}px - ${TINY_COL_MIN_HEIGHT}px, ${cqw}px / ${props.aspectRatio})`,
               [SMALL_AND_UP]: {
-                width: `min(66cqw, 100cqh * ${props.aspectRatio} - ${SQUARE_HEADER_HEIGHT}px * ${props.aspectRatio})`,
-                height: `min(100cqh - ${SQUARE_HEADER_HEIGHT}px, 66cqw / ${props.aspectRatio})`,
+                width: useCQ
+                  ? `min(66cqw, 100cqh * ${props.aspectRatio} - ${SQUARE_HEADER_HEIGHT}px * ${props.aspectRatio})`
+                  : `min(0.66 * ${cqw}px, ${cqh}px * ${props.aspectRatio} - ${SQUARE_HEADER_HEIGHT}px * ${props.aspectRatio})`,
+                height: useCQ
+                  ? `min(100cqh - ${SQUARE_HEADER_HEIGHT}px, 66cqw / ${props.aspectRatio})`
+                  : `min(${cqh}px - ${SQUARE_HEADER_HEIGHT}px, 0.66 * ${cqw}px / ${props.aspectRatio})`,
               },
               [LARGE_AND_UP]: {
-                width: `min(50cqw, 100cqh * ${props.aspectRatio} - ${SQUARE_HEADER_HEIGHT}px * ${props.aspectRatio})`,
-                height: `min(100cqh - ${SQUARE_HEADER_HEIGHT}px, 50cqw / ${props.aspectRatio})`,
+                width: useCQ
+                  ? `min(50cqw, 100cqh * ${props.aspectRatio} - ${SQUARE_HEADER_HEIGHT}px * ${props.aspectRatio})`
+                  : `min(0.5 * ${cqw}px, ${cqh}px * ${props.aspectRatio} - ${SQUARE_HEADER_HEIGHT}px * ${props.aspectRatio})`,
+                height: useCQ
+                  ? `min(100cqh - ${SQUARE_HEADER_HEIGHT}px, 50cqw / ${props.aspectRatio})`
+                  : `min(${cqh}px - ${SQUARE_HEADER_HEIGHT}px, 0.5 * ${cqw}px / ${props.aspectRatio})`,
               },
             }}
           >

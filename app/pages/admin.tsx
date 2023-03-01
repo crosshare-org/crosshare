@@ -48,6 +48,7 @@ import { hasUnches } from '../lib/gridBase';
 import { fromCells, getClueMap } from '../lib/viewableGrid';
 import spam from '../lib/spam.json';
 import { markdownToHast } from '../lib/markdown/markdown';
+import { css } from '@emotion/react';
 
 function paypalConvert(input: string): string {
   const donated = parseFloat(input);
@@ -64,6 +65,8 @@ function checkSpam(input: string): boolean {
   }
   return false;
 }
+
+const red = css({color: 'red'});
 
 const PuzzleListItem = (props: PuzzleResult) => {
   function markAsModerated(featured: boolean) {
@@ -87,13 +90,10 @@ const PuzzleListItem = (props: PuzzleResult) => {
   });
   const puzHasUnches = hasUnches(grid);
   const clueMap = getClueMap(grid, props.clues);
-  const spamAlerts = Object.keys(clueMap).map((entry, i) => {
+  const clues = Object.keys(clueMap).map((entry, i) => {
     const clues = clueMap[entry];
     const merged = entry + ' ' + clues?.join('; ');
-    if (checkSpam(merged)) {
-      return <div key={i} css={{ color: 'red' }}>Alert: {merged}</div>;
-    }
-    return <></>;
+    return <div key={i} css={checkSpam(merged) ? red : {}}>{merged}</div>;
   });
   return (
     <li key={props.id} css={{ marginBottom: '2em' }}>
@@ -117,7 +117,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
         ''
       )}
       {puzHasUnches ? <div css={{ color: 'red' }}>Puzzle has unches</div> : ''}
-      {spamAlerts}
+      {clues}
       <ul>
       {props.comments.map((c,i) => (
         <li key={i}>
