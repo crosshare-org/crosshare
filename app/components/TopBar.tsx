@@ -346,14 +346,12 @@ export const TopBar = ({
   const filtered = notifications?.filter((n) => n.t.toDate() <= now);
   const [showingNotifications, setShowingNotifications] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
-  const notificationsButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleClickOutside = useCallback(
     (event: Event) => {
       if (
         showingNotifications &&
-        !notificationsRef.current?.contains(event.target as Node) &&
-        !notificationsButtonRef.current?.contains(event.target as Node)
+        !notificationsRef.current?.contains(event.target as Node)
       ) {
         setShowingNotifications(false);
       }
@@ -368,9 +366,9 @@ export const TopBar = ({
   }, [filtered]);
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
     };
   }, [handleClickOutside]);
 
@@ -437,8 +435,10 @@ export const TopBar = ({
             ) : filtered?.length && !showingNotifications ? (
               <button
                 type="button"
-                ref={notificationsButtonRef}
-                onClick={() => setShowingNotifications(true)}
+                onClick={(e) => {
+                  setShowingNotifications(true);
+                  e.stopPropagation();
+                }}
                 css={[
                   ButtonResetCSS,
                   {
