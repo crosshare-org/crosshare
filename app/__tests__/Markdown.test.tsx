@@ -385,6 +385,19 @@ test('clueMap rendering', async () => {
     /* noop */
   });
   expect(r.container).toMatchSnapshot();
+
+  r = render(
+    <GridContext.Provider value={cluedGrid}>
+      <Markdown
+        hast={(markdownToHast({clueMap, text: "Reference 1A/2D/11A"}))}
+      />
+    </GridContext.Provider>,
+    {}
+  );
+  await waitFor(() => {
+    /* noop */
+  });
+  expect(r.container).toMatchSnapshot();
 });
 
 test('inline', () => {

@@ -23,7 +23,7 @@ export const clueReferencer: Plugin = () => {
       const refs: Array<ReferenceData> = [];
       let match;
       const re =
-        /(^|\s)(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
+        /(^|\s|\/)(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
       while ((match = re.exec(value)) !== null) {
         const preLength = match[1]?.length || 0;
         const dirString = match.groups?.dir?.toLowerCase();
