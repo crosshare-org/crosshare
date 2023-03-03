@@ -115,7 +115,7 @@ async function topPuzzlesForWeek(): Promise<
             slugify(p.t) +
             '#utm_source=mailchimp&utm_medium=email&utm_campaign=weekly',
           `${p.t} by ${p.n}`,
-          p.w <= 8 && p.h <= 8,
+          (p.w * p.h - (p.hdn?.length || 0)) < 50,
           `/crosswords/${p.id}/${slugify(p.t)}`,
         ];
       })
