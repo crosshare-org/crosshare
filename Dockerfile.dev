@@ -1,4 +1,4 @@
-FROM node:10-alpine as emulators
+FROM node:18-alpine as emulators
 RUN apk add openjdk11-jre-headless
 RUN npm i -g firebase-tools
 RUN firebase --version
@@ -10,7 +10,7 @@ WORKDIR /src
 EXPOSE  8080
 CMD ["firebase", "emulators:start", "--only", "firestore"]
 
-FROM node:10-alpine as base
+FROM node:18-alpine as base
 RUN apk add --no-cache git build-base g++ cairo-dev \
     jpeg-dev \
     pango-dev \
