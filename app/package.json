@@ -31,7 +31,7 @@
     "ci": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=localhost:8080 npx firebase emulators:exec --project=mdcrosshare --only firestore 'jest --ci --runInBand --forceExit'"
   },
   "engines": {
-    "node": "14"
+    "node": "18"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
