@@ -8,6 +8,7 @@ import { Emoji } from './Emoji';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { DBPuzzleT } from '../lib/dbtypes';
 import { slugify, STORAGE_KEY } from '../lib/utils';
+import lightFormat from 'date-fns/lightFormat';
 import { ButtonAsLink, Button } from './Buttons';
 import { serverTimestamp, setDoc } from 'firebase/firestore';
 
@@ -93,6 +94,18 @@ export function PublishOverlay(props: {
         <p>
           Thanks for constructing a puzzle! <Emoji symbol="😎" />
         </p>
+        {(!(props.toPublish.pv === undefined || props.toPublish.pv === false) && (props.toPublish.pvu === undefined)) ? (
+          <p>
+            This puzzle will be posted as private.
+          </p>
+          ) : null
+        }
+        {(props.toPublish.pvu && (props.toPublish.pvu.toMillis() > Date.now()))? (
+          <p>
+            This puzzle will be posted as private until {lightFormat(props.toPublish.pvu.toDate(), "M/d/y' at 'h:mma")}.
+          </p>
+          ) : null
+        }
         <p css={{ color: 'var(--error)' }}>
           All puzzles are reviewed and subject to removal at any time for any
           reason (e.g. if the content is deemed offensive or if it is found to
