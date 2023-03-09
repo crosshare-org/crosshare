@@ -273,126 +273,151 @@
     {
       "collectionGroup": "c",
       "fieldPath": "ac",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "c",
       "fieldPath": "an",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "c",
       "fieldPath": "dc",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "c",
       "fieldPath": "dn",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "c",
       "fieldPath": "g",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "c",
       "fieldPath": "h",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "c",
       "fieldPath": "hs",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "c",
       "fieldPath": "n",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "c",
       "fieldPath": "s",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "c",
       "fieldPath": "w",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "p",
       "fieldPath": "ch",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "p",
       "fieldPath": "ct",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "p",
       "fieldPath": "f",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "p",
       "fieldPath": "g",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "p",
       "fieldPath": "n",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "p",
       "fieldPath": "rc",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "p",
       "fieldPath": "t",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "p",
       "fieldPath": "uc",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "p",
       "fieldPath": "vc",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "p",
       "fieldPath": "wc",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "p",
       "fieldPath": "we",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "s",
       "fieldPath": "a",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "s",
       "fieldPath": "ct",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "s",
       "fieldPath": "ua",
+      "ttl": false,
       "indexes": []
     },
     {
       "collectionGroup": "s",
       "fieldPath": "uc",
+      "ttl": false,
       "indexes": []
     }
   ]
