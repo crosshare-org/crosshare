@@ -38,6 +38,8 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
     docs: authoredPuzzles,
     loadMore: loadMoreAuthored,
     hasMore: hasMoreAuthored,
+    hasPrevious: hasPreviousAuthored,
+    loadPrevious: loadPreviousAuthored
   } = usePaginatedQuery(authoredQuery, DBPuzzleV, 8, authoredMapper);
 
   return (
@@ -87,12 +89,21 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
             {loadingAuthored ? (
               <p>Loading...</p>
             ) : (
-              hasMoreAuthored && (
-                <ButtonAsLink
-                  onClick={loadMoreAuthored}
-                  text="Older puzzles &rarr;"
-                />
-              )
+              <>
+                {hasPreviousAuthored && (
+                  <ButtonAsLink
+                    onClick={loadPreviousAuthored}
+                    text="&larr; Newer puzzles"
+                  />
+                )}
+                {hasPreviousAuthored && hasMoreAuthored && <>&nbsp;|&nbsp;</>}
+                {hasMoreAuthored && (
+                  <ButtonAsLink
+                    onClick={loadMoreAuthored}
+                    text="Older puzzles &rarr;"
+                  />
+                )}
+              </>
             )}
           </div>
         ) : (
