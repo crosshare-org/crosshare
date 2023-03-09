@@ -159,6 +159,8 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
             ''
           )}
           is displayed next to any comments you make or puzzles you create.
+          
+          If set, it will also be used in the pause/resume modal on each puzzle&apos;s page instead of your email address.
         </p>
         <DisplayNameForm />
         <h3>Notification Settings</h3>
