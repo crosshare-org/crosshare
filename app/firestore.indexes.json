@@ -10,6 +10,20 @@
         },
         {
           "fieldPath": "p",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "c",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "a",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "p",
           "order": "DESCENDING"
         }
       ]
