@@ -5,9 +5,11 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   Query,
   QueryDocumentSnapshot,
+  endBefore,
   startAfter,
   query as fbQuery,
   limit as fbLimit,
+  limitToLast as fbLimitToLast,
   getDocs,
 } from 'firebase/firestore';
 
@@ -17,10 +19,16 @@ export function usePaginatedQuery<A, N>(
   limit: number,
   mapper: (val: A, docid: string) => Promise<N | undefined>
 ) {
+  const [before, setBefore] = useState<QueryDocumentSnapshot | null>(null);
   const [after, setAfter] = useState<QueryDocumentSnapshot | null>(null);
   const [docs, setDocs] = useState<Array<N>>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
+  const [hasPrevious, setHasPrevious] = useState(false);
+  const [previousPages, setPreviousPages] = useState(0);
+  const [firstLoaded, setFirstLoaded] = useState<QueryDocumentSnapshot | null>(
+    null
+  );
   const [lastLoaded, setLastLoaded] = useState<QueryDocumentSnapshot | null>(
     null
   );
@@ -38,17 +46,27 @@ export function usePaginatedQuery<A, N>(
       console.log('Doing fetch');
       let q = query;
       if (after) {
-        q = fbQuery(q, startAfter(after));
+        q = fbQuery(fbQuery(q, startAfter(after)), fbLimit(limit));
+      }
+      if (before) {
+        q = fbQuery(fbQuery(q, endBefore(before)), fbLimitToLast(limit));
+      }
+      if (!after && !before) {
+        q = fbQuery(q, fbLimit(limit));
       }
 
-      getDocs(fbQuery(q, fbLimit(limit))).then(async (dbres) => {
+      getDocs(q).then(async (dbres) => {
         if (didCancel) {
           return;
         }
         if (dbres.docs.length < limit) {
           setHasMore(false);
         }
+        if (previousPages === 0) {
+          setHasPrevious(false);
+        }
         setLastLoaded(dbres.docs[dbres.docs.length - 1] || null);
+        setFirstLoaded(dbres.docs[0] || null);
         const results: Array<N> = [];
         for (const doc of dbres.docs) {
           const data = doc.data();
@@ -72,11 +90,22 @@ export function usePaginatedQuery<A, N>(
     return () => {
       didCancel = true;
     };
-  }, [after, limit, query, validator, mapper]);
+  }, [after, before, limit, query, validator, mapper, previousPages]);
 
   function loadMore() {
     setAfter(lastLoaded);
+    setBefore(null);
     setLoading(true);
+    setHasPrevious(true);
+    setPreviousPages(previousPages + 1);
+  }
+
+  function loadPrevious() {
+    setBefore(firstLoaded);
+    setAfter(null);
+    setLoading(true);
+    setPreviousPages(Math.max(previousPages - 1, 0));
+    setHasMore(true);
   }
 
   return {
@@ -84,5 +113,7 @@ export function usePaginatedQuery<A, N>(
     docs,
     hasMore,
     loadMore,
+    hasPrevious,
+    loadPrevious,
   };
 }
