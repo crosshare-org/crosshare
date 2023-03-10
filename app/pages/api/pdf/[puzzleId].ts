@@ -14,6 +14,7 @@ import {
   Direction,
   getClueText,
 } from '../../../lib/types';
+import { userIdToPage } from '../../../lib/serverOnly';
 
 function layoutPDFClues(
   doc: jsPDF,
@@ -219,19 +220,44 @@ function layoutPDFGrid(
   return squareSize;
 }
 
-function layoutPDFInfo(doc: jsPDF, puzzle: PuzzleT) {
+function layoutPDFInfo(doc: jsPDF, puzzle: PuzzleT, constructorUsername: string|null) {
   doc.setFont('helvetica');
   doc.setFontSize(18);
   doc.text(puzzle.title, 50, 50 + 8);
   doc.setFontSize(9);
-  let authorText = `By ${puzzle.authorName}`;
-  if (puzzle.guestConstructor) {
-    authorText = `By ${puzzle.guestConstructor} - Published by ${puzzle.authorName}`;
-  }
-  doc.text(`${authorText} - Published on crosshare.org`, 50, 50 + 20);
+
+  const publishedByLine = createPublishedByLine(puzzle, constructorUsername);
+  doc.text(publishedByLine, 50, 50 + 20);
 }
 
-function getPdf(puzzle: PuzzleT): ArrayBuffer {
+async function getConstructor(authorId: string) : Promise<string|null>{
+  const res = await userIdToPage(authorId);
+  
+  return res?.i || null;
+}
+
+function createPublishedByLine(puzzle: PuzzleT, constructorUsername: string|null) {
+  let authorText;
+  const urlText = createAttributionLink(puzzle, constructorUsername);
+  if (puzzle.guestConstructor) {
+    authorText = `By ${puzzle.guestConstructor} - Published by ${puzzle.authorName}${urlText}`;
+  } else {
+    authorText = `By ${puzzle.authorName} - Published${urlText}`;
+  }
+  return authorText;
+}
+
+function createAttributionLink(puzzle: PuzzleT, constructorUsername: string|null) {
+  let urlText;
+  if (constructorUsername && (puzzle.isPrivate === false || (puzzle.isPrivateUntil && puzzle.isPrivateUntil < Date.now()))) {
+    urlText = ` on https://crosshare.org/${constructorUsername}`;
+  } else {
+    urlText = ` on https://crosshare.org`;
+  }
+  return urlText;
+};
+
+function getPdf(puzzle: PuzzleT, constructorUsername: string|null): ArrayBuffer {
   console.log('Generating pdf for ' + puzzle.title);
 
   const grid = fromCells({
@@ -253,7 +279,7 @@ function getPdf(puzzle: PuzzleT): ArrayBuffer {
     creator: 'crosshare.org',
     author: puzzle.authorName,
   });
-  layoutPDFInfo(pdf, puzzle);
+  layoutPDFInfo(pdf, puzzle, constructorUsername);
   const squareSize = layoutPDFGrid(pdf, 50, 80, puzzle, grid);
   layoutPDFClues(pdf, puzzle, grid, squareSize);
   return pdf.output('arraybuffer');
@@ -273,6 +299,7 @@ export default async function pdf(req: NextApiRequest, res: NextApiResponse) {
       .json({ statusCode: 404, message: 'failed to get puzzle' });
   }
   const fromDB = puzzleFromDB(puzzle);
+  const constructorUsername = await getConstructor(fromDB.authorId);
   res.setHeader('X-Robots-Tag', 'noindex');
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
   res.setHeader(
@@ -280,5 +307,5 @@ export default async function pdf(req: NextApiRequest, res: NextApiResponse) {
     'inline; filename="' + puzzle.t.replace(/[^\w ]/g, '') + '.pdf"'
   );
   res.writeHead(200, { 'Content-Type': 'application/pdf' });
-  res.end(Buffer.from(getPdf(fromDB)));
+  res.end(Buffer.from(getPdf(fromDB, constructorUsername)));
 }
