@@ -40,6 +40,8 @@ export function UnfinishedPuzzleList({ user }: { user: User | undefined }) {
     docs: unfinishedPuzzles,
     loadMore: loadMoreUnfinished,
     hasMore: hasMoreUnfinished,
+    hasPrevious: hasPreviousUnfinished,
+    loadPrevious: loadPreviousUnfinished,
   } = usePaginatedQuery(unfinishedQuery, LegacyPlayV, 4, playMapper);
 
   if (unfinishedPuzzles.length) {
@@ -63,12 +65,21 @@ export function UnfinishedPuzzleList({ user }: { user: User | undefined }) {
             <Trans>Loading...</Trans>
           </p>
         ) : (
-          hasMoreUnfinished && (
+          <>
+          {hasPreviousUnfinished && (
+            <ButtonAsLink
+              onClick={loadPreviousUnfinished}
+              text={'← ' + t`Newer unfinished solves`}
+            />
+            )}
+          {hasPreviousUnfinished && hasMoreUnfinished && <>&nbsp;|&nbsp;</>}
+          {hasMoreUnfinished && (
             <ButtonAsLink
               onClick={loadMoreUnfinished}
               text={t`Older unfinished solves` + ' →'}
             />
-          )
+          )}
+          </>
         )}
       </>
     );
