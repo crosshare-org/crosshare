@@ -301,7 +301,7 @@ export const Puzzle = ({
 
   const toggleColorPref = useCallback(
     () => {
-    setColorPref(colorPref === 'light' ? 'dark' : 'light');
+      setColorPref(colorPref === 'light' ? 'dark' : 'light');
     },
     [colorPref, setColorPref]
   );
@@ -1000,7 +1000,6 @@ export const Puzzle = ({
               ) : (
                 ''
               )}
-              {/* TODO: what's the difference between TopBarDropDownLink and LinkA? */}
               <TopBarDropDownLinkSimpleA
                 href={'/api/pdf/' + puzzle.id}
                 icon={<FaPrint />}
