@@ -27,6 +27,7 @@ import {
   FaPrint,
   FaEdit,
   FaRegFile,
+  FaMoon
 } from 'react-icons/fa';
 import { ClueText } from './ClueText';
 import { IoMdStats } from 'react-icons/io';
@@ -87,7 +88,7 @@ import {
   TopBarDropDownLinkSimpleA,
 } from './TopBar';
 import { SquareAndCols, TwoCol } from './Page';
-import { usePersistedBoolean, useMatchMedia } from '../lib/hooks';
+import { usePersistedBoolean, useMatchMedia, useDarkModeControl } from '../lib/hooks';
 import { isMetaSolution, slugify, timeString } from '../lib/utils';
 import { getDocRef, signInAnonymously } from '../lib/firebaseWrapper';
 import type { User } from 'firebase/auth';
@@ -296,6 +297,14 @@ export const Puzzle = ({
   useEventListener('blur', prodPause);
 
   const [muted, setMuted] = usePersistedBoolean('muted', false);
+  const [colorPref, setColorPref] = useDarkModeControl();
+
+  const toggleColorPref = useCallback(
+    () => {
+    setColorPref(colorPref === 'light' ? 'dark' : 'light');
+    },
+    [colorPref, setColorPref]
+  );
 
   // Set up music player for success song
   const [audioContext, initAudioContext] = useContext(CrosshareAudioContext);
@@ -991,6 +1000,7 @@ export const Puzzle = ({
               ) : (
                 ''
               )}
+              {/* TODO: what's the difference between TopBarDropDownLink and LinkA? */}
               <TopBarDropDownLinkSimpleA
                 href={'/api/pdf/' + puzzle.id}
                 icon={<FaPrint />}
@@ -1005,6 +1015,16 @@ export const Puzzle = ({
                   text={t`Download .puz File`}
                 />
               )}
+              <TopBarDropDownLink
+                icon={<FaMoon />}
+                text={t`Toggle Light/Dark Mode`}
+                onClick={() => toggleColorPref()}
+              />
+              <TopBarDropDownLink
+                icon={<FaMoon />}
+                text={t`Use browser/OS setting for Color Theme`}
+                onClick={() => setColorPref(null)}
+              />
               <TopBarDropDownLinkA
                 href="/account"
                 icon={<FaUser />}
@@ -1029,6 +1049,7 @@ export const Puzzle = ({
       state.success,
       isEmbed,
       showKeyboard,
+      toggleColorPref,
     ]
   );
 
