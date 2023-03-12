@@ -1,7 +1,7 @@
 {
   "name": "functions",
   "scripts": {
-    "lint": "echo 'FIXME'",
+    "lint": "yarn eslint .",
     "build": "tsc",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
@@ -26,9 +26,12 @@
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
+    "@typescript-eslint/eslint-plugin": "^5.54.1",
+    "@typescript-eslint/parser": "^5.54.1",
+    "eslint": "^8.36.0",
     "firebase-functions-test": "^3.0.0",
     "firebase-tools": "^11.24.1",
-    "typescript": "4.9.5"
+    "typescript": "^4.9.5"
   },
   "private": true
 }
