@@ -4,13 +4,13 @@
 
 Crosshare is a free community for crossword constructors and solvers. Crosshare is written in TypeScript using Next.js, React, and firebase.
 
-Use [GitHub issues](https://github.com/mdirolf/crosshare/issues) for bug reports and feature requests.
+Use [GitHub issues](https://github.com/crosshare-org/crosshare/issues) for bug reports and feature requests.
 
 ## Contributing
 
 Contributions are very much encouraged! It's recommended that you comment on (or create) the relevant issue before starting work so that we don't have multiple folks duplicating efforts simultaneously. Once you're happy with your changes please submit a pull request describing the change, any concerns, etc. PRs that include tests for the changed behavior are much more likely to be swiftly merged.
 
-If you're looking for good issues to start out on check the [good first issue](https://github.com/mdirolf/crosshare/issues?q=is%3Aissue+is%3Aopen+label%3A"good+first+issue") tag.
+If you're looking for good issues to start out on check the [good first issue](https://github.com/crosshare-org/crosshare/issues?q=is%3Aissue+is%3Aopen+label%3A"good+first+issue") tag.
 
 ## Developing Locally
 
@@ -112,7 +112,7 @@ $ yarn test
 
 ## Credits
 
-See the [contributors](https://github.com/mdirolf/crosshare/graphs/contributors) on this repository and [crosshare.org/donate](https://crosshare.org/donate).
+See the [contributors](https://github.com/crosshare-org/crosshare/graphs/contributors) on this repository and [crosshare.org/donate](https://crosshare.org/donate).
 
 ## License
 
