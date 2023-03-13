@@ -1,4 +1,4 @@
-FROM node:18-alpine as builder
+FROM node:18-alpine as deps
 RUN apk add --no-cache git build-base g++ cairo-dev \
     jpeg-dev \
     pango-dev \
@@ -11,6 +11,19 @@ WORKDIR /src
 COPY app/package.json app/yarn.lock ./
 RUN yarn --frozen-lockfile
 ENV PATH=$PATH:/src/node_modules/.bin NEXT_TELEMETRY_DISABLED=1
+
+FROM deps as dev
+RUN apk add openjdk11-jre-headless
+RUN apk --no-cache add gcompat
+ENV LD_PRELOAD=/lib/libgcompat.so.0
+RUN npm i -g firebase-tools
+RUN firebase --version
+RUN firebase setup:emulators:firestore
+RUN firebase setup:emulators:storage
+RUN firebase setup:emulators:ui
+RUN firebase setup:emulators:pubsub
+
+FROM deps as builder
 COPY . .
 WORKDIR /src/app
 RUN yarn compileI18n
