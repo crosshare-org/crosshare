@@ -14,6 +14,18 @@ If you're looking for good issues to start out on check the [good first issue](h
 
 ## Developing Locally
 
+### Building the dev container
+
+> $ podman build . --format docker --target dev -t crosshare-dev --isolation=rootless
+
+### Developing against a live firebase instance
+
+> $ podman run -it -v ./serviceAccountKey.json:/src/serviceAccountKey.json:Z -v ./app:/src/app:Z -v /src/app/node_modules -v /src/app/nextjs -w /src/app -p 3000:3000 crosshare-dev yarn dev
+
+### Developing against the firebase emulators
+
+> $ podman run -it -v ./app:/src/app:Z -v /src/app/node_modules -v /src/app/nextjs -w /src/app -p 3000:3000 -p 9199:9199 -p 9099:9099 -p 9005:9005 -p 9000:9000 -p 8085:8085 -p 8080:8080 -p 5001:5001 -p 5000:5000 -p 4500:4500 -p 4000:4000 -p 9150:9150 crosshare-dev firebase emulators:start --only auth,firestore,functions,storage --project demo-crosshare
+
 #### Windows
 
 Most of these instructions are written for unix-like OSes - folks have had success using [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/about) to follow them on Windows, though.
