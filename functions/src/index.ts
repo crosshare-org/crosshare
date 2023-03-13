@@ -3,11 +3,10 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isRight } from 'fp-ts/lib/Either';
 
 import { runAnalytics } from '../../app/lib/analytics';
-import { queueEmails } from '../../app/lib/serverOnly';
+import { queueEmails } from './queueEmails';
 import { handlePuzzleUpdate } from '../../app/lib/puzzleUpdate';
 import { doGlicko } from '../../app/lib/glicko';
 import { moderateComments } from '../../app/lib/comments';
-import * as firestore from '@google-cloud/firestore';
 
 import {
   CronStatusV,
@@ -99,9 +98,13 @@ export const analytics = functions.pubsub
     return getCollection('cron_status').doc('hourlyanalytics').set(status);
   });
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const firestore = require('@google-cloud/firestore');
 const client = new firestore.v1.FirestoreAdminClient();
+
 export const scheduledFirestoreExport = functions.pubsub
   .schedule('every day 00:00')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   .onRun((_context) => {
     const projectId =
       process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT || 'mdcrosshare';
