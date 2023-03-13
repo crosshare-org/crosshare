@@ -120,7 +120,7 @@ export default function HomePage({
         <p css={{ marginBottom: '1em' }}>
           <Trans id="crosshare-intro">
             Crosshare is a <b>free</b>, <b>ad-free</b>, and{' '}
-            <a href="https://github.com/mdirolf/crosshare/">open-source</a>{' '}
+            <a href="https://github.com/crosshare-org/crosshare">open-source</a>{' '}
             place to create, share and solve crossword puzzles.
           </Trans>
         </p>
