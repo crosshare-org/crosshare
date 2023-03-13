@@ -19,7 +19,8 @@ import {
 
 import { Timestamp } from './timestamp';
 import { isMetaSolution } from './utils';
-import { getCollection } from './firebaseAdminWrapper';
+import { getCollection, toFirestore } from './firebaseAdminWrapper';
+import { Timestamp as FBTimestamp } from 'firebase-admin/firestore';
 
 export async function runAnalytics(
   startTimestamp: Timestamp,
@@ -30,6 +31,9 @@ export async function runAnalytics(
     startTimestamp.toDate().toLocaleString(),
     endTimestamp.toDate().toLocaleString()
   );
+
+  const adminStartTimestamp = FBTimestamp.fromMillis(startTimestamp.toMillis());
+  const adminEndTimestamp = FBTimestamp.fromMillis(endTimestamp.toMillis());
 
   const puzzleMap: Map<string, DBPuzzleT> = new Map();
   const puzzleNewSubs: Map<string, Array<MetaSubmissionForPuzzleT>> = new Map();
@@ -103,8 +107,8 @@ export async function runAnalytics(
 
   const value = await getCollection('p')
     .where('f', '==', true)
-    .where('ua', '>=', startTimestamp)
-    .where('ua', '<', endTimestamp)
+    .where('ua', '>=', adminStartTimestamp)
+    .where('ua', '<', adminEndTimestamp)
     .orderBy('ua', 'asc')
     .get();
   console.log('Updating analytics for ' + value.size + ' plays');
@@ -197,8 +201,8 @@ export async function runAnalytics(
   }
 
   const metaSubmissions = await getCollection('p')
-    .where('ct_t', '>=', startTimestamp)
-    .where('ct_t', '<', endTimestamp)
+    .where('ct_t', '>=', adminStartTimestamp)
+    .where('ct_t', '<', adminEndTimestamp)
     .orderBy('ct_t', 'asc')
     .get();
   console.log('Now updating meta stats for ' + metaSubmissions.size + ' plays');
@@ -274,9 +278,9 @@ export async function runAnalytics(
     'Writing ' + puzzleNewSubs.size + ' new puzzle submission arrays'
   );
   for (const [crosswordId, subs] of puzzleNewSubs.entries()) {
-    await getCollection('c').doc(crosswordId).update({
+    await getCollection('c').doc(crosswordId).update(toFirestore({
       ct_subs: subs,
-    });
+    }));
   }
   console.log(
     'Done, writing ' +

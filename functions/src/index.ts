@@ -18,6 +18,7 @@ import {
 import {
   getCollection,
   mapEachResult,
+  toFirestore,
 } from '../../app/lib/firebaseAdminWrapper';
 import { Timestamp } from '../../app/lib/timestamp';
 
@@ -66,7 +67,7 @@ export const autoModerator = functions.pubsub
       filtered,
       new Set(),
       (cid) => getCollection('cfm').doc(cid).delete(),
-      (puzzleId, update) => getCollection('c').doc(puzzleId).update(update),
+      (puzzleId, update) => getCollection('c').doc(puzzleId).update(toFirestore(update)),
       (commentId, comment) =>
         getCollection('automoderated').doc(commentId).create(comment)
     );
