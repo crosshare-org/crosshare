@@ -1,0 +1,40 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow write: if false;
+      
+      allow read: if request.auth != null;
+    }
+    match /users/{userId}/profile.png {
+      allow write: if request.auth.uid == userId
+        && request.resource.size < 1 * 1024 * 1024
+        && request.resource.contentType.matches('image/png')
+      allow read;
+    }
+    match /users/{userId}/cover.png {
+      allow write: if request.auth.uid == userId
+        && request.resource.size < 2 * 1024 * 1024
+        && request.resource.contentType.matches('image/png')
+      allow read;
+    }
+    match /users/{userId}/profile.jpg {
+      allow write: if request.auth.uid == userId
+        && request.resource.size < 1 * 1024 * 1024
+        && request.resource.contentType.matches('image/jpeg')
+      allow read;
+    }
+    match /users/{userId}/cover.jpg {
+      allow write: if request.auth.uid == userId
+        && request.resource.size < 2 * 1024 * 1024
+        && request.resource.contentType.matches('image/jpeg')
+      allow read;
+    }
+    match /users/{userId}/{puzzleId}/cover.jpg {
+      allow write: if request.auth.uid == userId
+        && request.resource.size < 2 * 1024 * 1024
+        && request.resource.contentType.matches('image/jpeg')
+      allow read;
+    }
+  }
+}
