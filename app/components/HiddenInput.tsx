@@ -31,6 +31,7 @@ export const HiddenInput = forwardRef<
 >((props, ref) => {
   return (
     <input
+      autoComplete="off"
       autoCapitalize="characters"
       autoCorrect="off"
       css={{

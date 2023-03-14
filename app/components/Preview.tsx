@@ -106,7 +106,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
       clueProps.dn
     );
     return addClues(state.grid, clueArray, (c: string) =>
-      markdownToHast({ text: c })
+      markdownToHast({ text: c, inline: true })
     );
   }, [state.grid, state.clues]);
 
