@@ -166,11 +166,11 @@ export interface PuzzleResultWithAugmentedComments extends ServerPuzzleResult {
   comments: Array<Comment>;
 }
 
-export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
+export function dbCluesToClueTArray(ac: string[], an: number[], dc: string[], dn: number[], cx?: {[x: number]: string}): Array<ClueT> {
   const clues: Array<ClueT> = [];
-  for (const [i, clue] of dbPuzzle.ac.entries()) {
-    const explanation = dbPuzzle.cx?.[i] || null;
-    const num = dbPuzzle.an[i];
+  for (const [i, clue] of ac.entries()) {
+    const explanation = cx?.[i] || null;
+    const num = an[i];
     if (num === undefined) {
       throw new Error('oob');
     }
@@ -181,9 +181,9 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
       explanation,
     });
   }
-  for (const [i, clue] of dbPuzzle.dc.entries()) {
-    const explanation = dbPuzzle.cx?.[i + dbPuzzle.ac.length] || null;
-    const num = dbPuzzle.dn[i];
+  for (const [i, clue] of dc.entries()) {
+    const explanation = cx?.[i + ac.length] || null;
+    const num = dn[i];
     if (num === undefined) {
       throw new Error('oob');
     }
@@ -194,6 +194,11 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
       explanation,
     });
   }
+  return clues;
+}
+
+export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
+  const clues = dbCluesToClueTArray(dbPuzzle.ac, dbPuzzle.an, dbPuzzle.dc, dbPuzzle.dn, dbPuzzle.cx);
   return {
     authorId: dbPuzzle.a,
     authorName: dbPuzzle.n,
@@ -205,7 +210,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
       rows: dbPuzzle.h,
       cols: dbPuzzle.w,
     },
-    clues: clues,
+    clues,
     grid: dbPuzzle.g,
     vBars: dbPuzzle.vb || [],
     hBars: dbPuzzle.hb || [],
