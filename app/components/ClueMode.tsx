@@ -23,7 +23,11 @@ import {
   getClueProps,
 } from '../reducers/reducer';
 import { TopBarLink, TopBar } from './TopBar';
-import { dbCluesToClueTArray, Direction } from '../lib/types';
+import {
+  dbCluesToClueTArray,
+  Direction,
+  removeClueSpecials,
+} from '../lib/types';
 import { ButtonAsLink, Button } from './Buttons';
 import { COVER_PIC } from '../lib/style';
 import { Timestamp } from '../lib/timestamp';
@@ -78,6 +82,7 @@ const ClueRow = (props: {
   if (word === null) {
     throw new Error("shouldn't ever get here");
   }
+  const clueText = props.clues[word]?.[props.idx] || '';
   return (
     <>
       <tr>
@@ -115,7 +120,7 @@ const ClueRow = (props: {
             type="text"
             css={{ flex: 1 }}
             placeholder="Enter a clue"
-            value={props.clues[word]?.[props.idx] || ''}
+            value={clueText}
             maxLength={MAX_STRING_LENGTH}
             updateValue={(s: string) => {
               const sca: SetClueAction = {
@@ -162,11 +167,16 @@ const ClueRow = (props: {
         <td></td>
         <td></td>
         <td css={{ paddingBottom: '1em' }}>
-          <Markdown
-            hast={markdownToHast({
-              text: props.clues[word]?.[props.idx] || '',
-            })}
-          />
+          {clueText.startsWith('!#') ? (
+            removeClueSpecials(clueText)
+          ) : (
+            <Markdown
+              hast={markdownToHast({
+                text: clueText,
+              })}
+              noRefs={clueText.startsWith('!@')}
+            />
+          )}
         </td>
         <td></td>
       </tr>

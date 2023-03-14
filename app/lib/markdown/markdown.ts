@@ -26,7 +26,7 @@ export function markdownToHast(props: {
   preview?: number;
   inline?: boolean;
 }): Root {
-  const text = props.text.replace(/[^\s\S]/g, '');
+  const text = props.text.replace(/[^\s\S]/g, '').replace(/^![@#]/, '');
   const rehypePlugins: PluggableList = [
     twemojify,
     clueReferencer,
