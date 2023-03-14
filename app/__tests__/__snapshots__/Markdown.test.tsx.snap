@@ -84,25 +84,30 @@ exports[`clueMap rendering 2`] = `
 }
 
 .emotion-3 {
-  margin-left: 0.5em;
+  margin-right: 0.5em;
   white-space: nowrap;
 }
 
 .emotion-4 {
+  margin-left: 0.5em;
+  white-space: nowrap;
+}
+
+.emotion-5 {
   position: absolute;
   width: 10px;
   height: 10px;
 }
 
-[data-popper-placement^="bottom"] .emotion-4 {
+[data-popper-placement^="bottom"] .emotion-5 {
   top: -5px;
 }
 
-[data-popper-placement^="top"] .emotion-4 {
+[data-popper-placement^="top"] .emotion-5 {
   bottom: -5px;
 }
 
-.emotion-4::after {
+.emotion-5::after {
   content: " ";
   position: absolute;
   -webkit-transform: rotate(45deg);
@@ -138,9 +143,15 @@ exports[`clueMap rendering 2`] = `
           data-popper-reference-hidden="true"
           style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
         >
-          here is the clue?
           <b
             class="emotion-3"
+          >
+            2
+            D
+          </b>
+          here is the clue?
+          <b
+            class="emotion-4"
           >
             [
             1
@@ -148,7 +159,7 @@ exports[`clueMap rendering 2`] = `
             ]
           </b>
           <div
-            class="emotion-4"
+            class="emotion-5"
             style="position: absolute; left: 0px; transform: translate(0px, 0px);"
           />
         </div>
@@ -198,25 +209,30 @@ exports[`clueMap rendering 3`] = `
 }
 
 .emotion-2 {
-  margin-left: 0.5em;
+  margin-right: 0.5em;
   white-space: nowrap;
 }
 
 .emotion-3 {
+  margin-left: 0.5em;
+  white-space: nowrap;
+}
+
+.emotion-4 {
   position: absolute;
   width: 10px;
   height: 10px;
 }
 
-[data-popper-placement^="bottom"] .emotion-3 {
+[data-popper-placement^="bottom"] .emotion-4 {
   top: -5px;
 }
 
-[data-popper-placement^="top"] .emotion-3 {
+[data-popper-placement^="top"] .emotion-4 {
   bottom: -5px;
 }
 
-.emotion-3::after {
+.emotion-4::after {
   content: " ";
   position: absolute;
   -webkit-transform: rotate(45deg);
@@ -245,9 +261,15 @@ exports[`clueMap rendering 3`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
-        Well now
         <b
           class="emotion-2"
+        >
+          1
+          A
+        </b>
+        Well now
+        <b
+          class="emotion-3"
         >
           [
           12ACLUE
@@ -255,7 +277,7 @@ exports[`clueMap rendering 3`] = `
           ]
         </b>
         <div
-          class="emotion-3"
+          class="emotion-4"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
@@ -272,9 +294,15 @@ exports[`clueMap rendering 3`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
-        here is the clue?
         <b
           class="emotion-2"
+        >
+          2
+          D
+        </b>
+        here is the clue?
+        <b
+          class="emotion-3"
         >
           [
           1
@@ -282,7 +310,7 @@ exports[`clueMap rendering 3`] = `
           ]
         </b>
         <div
-          class="emotion-3"
+          class="emotion-4"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
@@ -326,25 +354,30 @@ exports[`clueMap rendering 4`] = `
 }
 
 .emotion-3 {
-  margin-left: 0.5em;
+  margin-right: 0.5em;
   white-space: nowrap;
 }
 
 .emotion-4 {
+  margin-left: 0.5em;
+  white-space: nowrap;
+}
+
+.emotion-5 {
   position: absolute;
   width: 10px;
   height: 10px;
 }
 
-[data-popper-placement^="bottom"] .emotion-4 {
+[data-popper-placement^="bottom"] .emotion-5 {
   top: -5px;
 }
 
-[data-popper-placement^="top"] .emotion-4 {
+[data-popper-placement^="top"] .emotion-5 {
   bottom: -5px;
 }
 
-.emotion-4::after {
+.emotion-5::after {
   content: " ";
   position: absolute;
   -webkit-transform: rotate(45deg);
@@ -378,9 +411,15 @@ exports[`clueMap rendering 4`] = `
           data-popper-reference-hidden="true"
           style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
         >
-          here is the clue?
           <b
             class="emotion-3"
+          >
+            2
+            D
+          </b>
+          here is the clue?
+          <b
+            class="emotion-4"
           >
             [
             1
@@ -388,7 +427,7 @@ exports[`clueMap rendering 4`] = `
             ]
           </b>
           <div
-            class="emotion-4"
+            class="emotion-5"
             style="position: absolute; left: 0px; transform: translate(0px, 0px);"
           />
         </div>
@@ -433,25 +472,30 @@ exports[`clueMap rendering 5`] = `
 }
 
 .emotion-3 {
-  margin-left: 0.5em;
+  margin-right: 0.5em;
   white-space: nowrap;
 }
 
 .emotion-4 {
+  margin-left: 0.5em;
+  white-space: nowrap;
+}
+
+.emotion-5 {
   position: absolute;
   width: 10px;
   height: 10px;
 }
 
-[data-popper-placement^="bottom"] .emotion-4 {
+[data-popper-placement^="bottom"] .emotion-5 {
   top: -5px;
 }
 
-[data-popper-placement^="top"] .emotion-4 {
+[data-popper-placement^="top"] .emotion-5 {
   bottom: -5px;
 }
 
-.emotion-4::after {
+.emotion-5::after {
   content: " ";
   position: absolute;
   -webkit-transform: rotate(45deg);
@@ -487,9 +531,15 @@ exports[`clueMap rendering 5`] = `
           data-popper-reference-hidden="true"
           style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
         >
-          here is the clue?
           <b
             class="emotion-3"
+          >
+            2
+            D
+          </b>
+          here is the clue?
+          <b
+            class="emotion-4"
           >
             [
             1
@@ -497,7 +547,7 @@ exports[`clueMap rendering 5`] = `
             ]
           </b>
           <div
-            class="emotion-4"
+            class="emotion-5"
             style="position: absolute; left: 0px; transform: translate(0px, 0px);"
           />
         </div>
@@ -531,25 +581,30 @@ exports[`clueMap rendering 6`] = `
 }
 
 .emotion-2 {
-  margin-left: 0.5em;
+  margin-right: 0.5em;
   white-space: nowrap;
 }
 
 .emotion-3 {
+  margin-left: 0.5em;
+  white-space: nowrap;
+}
+
+.emotion-4 {
   position: absolute;
   width: 10px;
   height: 10px;
 }
 
-[data-popper-placement^="bottom"] .emotion-3 {
+[data-popper-placement^="bottom"] .emotion-4 {
   top: -5px;
 }
 
-[data-popper-placement^="top"] .emotion-3 {
+[data-popper-placement^="top"] .emotion-4 {
   bottom: -5px;
 }
 
-.emotion-3::after {
+.emotion-4::after {
   content: " ";
   position: absolute;
   -webkit-transform: rotate(45deg);
@@ -579,9 +634,15 @@ exports[`clueMap rendering 6`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
-        Well now
         <b
           class="emotion-2"
+        >
+          1
+          A
+        </b>
+        Well now
+        <b
+          class="emotion-3"
         >
           [
           12ACLUE
@@ -589,7 +650,7 @@ exports[`clueMap rendering 6`] = `
           ]
         </b>
         <div
-          class="emotion-3"
+          class="emotion-4"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
@@ -606,9 +667,15 @@ exports[`clueMap rendering 6`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
-        here is the clue?
         <b
           class="emotion-2"
+        >
+          2
+          D
+        </b>
+        here is the clue?
+        <b
+          class="emotion-3"
         >
           [
           1
@@ -616,7 +683,7 @@ exports[`clueMap rendering 6`] = `
           ]
         </b>
         <div
-          class="emotion-3"
+          class="emotion-4"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
@@ -633,9 +700,15 @@ exports[`clueMap rendering 6`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
-        Well now
         <b
           class="emotion-2"
+        >
+          1
+          A
+        </b>
+        Well now
+        <b
+          class="emotion-3"
         >
           [
           12ACLUE
@@ -643,7 +716,7 @@ exports[`clueMap rendering 6`] = `
           ]
         </b>
         <div
-          class="emotion-3"
+          class="emotion-4"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
@@ -660,9 +733,15 @@ exports[`clueMap rendering 6`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
-        here is the clue?
         <b
           class="emotion-2"
+        >
+          2
+          D
+        </b>
+        here is the clue?
+        <b
+          class="emotion-3"
         >
           [
           1
@@ -670,7 +749,7 @@ exports[`clueMap rendering 6`] = `
           ]
         </b>
         <div
-          class="emotion-3"
+          class="emotion-4"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
@@ -703,25 +782,30 @@ exports[`clueMap rendering 7`] = `
 }
 
 .emotion-2 {
-  margin-left: 0.5em;
+  margin-right: 0.5em;
   white-space: nowrap;
 }
 
 .emotion-3 {
+  margin-left: 0.5em;
+  white-space: nowrap;
+}
+
+.emotion-4 {
   position: absolute;
   width: 10px;
   height: 10px;
 }
 
-[data-popper-placement^="bottom"] .emotion-3 {
+[data-popper-placement^="bottom"] .emotion-4 {
   top: -5px;
 }
 
-[data-popper-placement^="top"] .emotion-3 {
+[data-popper-placement^="top"] .emotion-4 {
   bottom: -5px;
 }
 
-.emotion-3::after {
+.emotion-4::after {
   content: " ";
   position: absolute;
   -webkit-transform: rotate(45deg);
@@ -751,9 +835,15 @@ exports[`clueMap rendering 7`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
-        Well now
         <b
           class="emotion-2"
+        >
+          1
+          A
+        </b>
+        Well now
+        <b
+          class="emotion-3"
         >
           [
           12ACLUE
@@ -761,7 +851,7 @@ exports[`clueMap rendering 7`] = `
           ]
         </b>
         <div
-          class="emotion-3"
+          class="emotion-4"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
@@ -778,9 +868,15 @@ exports[`clueMap rendering 7`] = `
         data-popper-reference-hidden="true"
         style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
       >
-        here is the clue?
         <b
           class="emotion-2"
+        >
+          2
+          D
+        </b>
+        here is the clue?
+        <b
+          class="emotion-3"
         >
           [
           1
@@ -788,7 +884,7 @@ exports[`clueMap rendering 7`] = `
           ]
         </b>
         <div
-          class="emotion-3"
+          class="emotion-4"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
       </div>
