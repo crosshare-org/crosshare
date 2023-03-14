@@ -71,6 +71,13 @@ export function usePolyfilledResizeObserver(ref: RefObject<HTMLElement>) {
   return useResizeObserver({ ref: hasResizeObserver ? ref : null });
 }
 
+/*
+  This hook is used to determine if the browser is in dark mode
+*/
+export function useIsExistingDarkMode(): boolean {
+  return useMatchMedia('(prefers-color-scheme: dark)');
+}
+
 type DarkModePreference = 'dark' | 'light' | null;
 const darkModeKey = 'colorScheme';
 const darkClass = 'dark-mode';

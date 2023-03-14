@@ -27,6 +27,7 @@ import {
   FaPrint,
   FaEdit,
   FaRegFile,
+  FaMoon
 } from 'react-icons/fa';
 import { ClueText } from './ClueText';
 import { IoMdStats } from 'react-icons/io';
@@ -87,7 +88,7 @@ import {
   TopBarDropDownLinkSimpleA,
 } from './TopBar';
 import { SquareAndCols, TwoCol } from './Page';
-import { usePersistedBoolean, useMatchMedia } from '../lib/hooks';
+import { usePersistedBoolean, useMatchMedia, useDarkModeControl, useIsExistingDarkMode } from '../lib/hooks';
 import { isMetaSolution, slugify, timeString } from '../lib/utils';
 import { getDocRef, signInAnonymously } from '../lib/firebaseWrapper';
 import type { User } from 'firebase/auth';
@@ -296,6 +297,19 @@ export const Puzzle = ({
   useEventListener('blur', prodPause);
 
   const [muted, setMuted] = usePersistedBoolean('muted', false);
+  const [color, setColorPref] = useDarkModeControl();
+  const isExistingDarkMode = useIsExistingDarkMode();
+
+  const toggleColorPref = useCallback(
+    () => {
+      if (color === null) {
+        setColorPref(isExistingDarkMode ? 'light' : 'dark');
+      } else {
+        setColorPref(color === 'dark' ? 'light' : 'dark');
+      }
+    },
+    [color, setColorPref, isExistingDarkMode]
+  );
 
   // Set up music player for success song
   const [audioContext, initAudioContext] = useContext(CrosshareAudioContext);
@@ -1005,6 +1019,13 @@ export const Puzzle = ({
                   text={t`Download .puz File`}
                 />
               )}
+              {!isEmbed ? (
+                <TopBarDropDownLink
+                  icon={<FaMoon />}
+                  text={t`Toggle Light/Dark Mode`}
+                  onClick={() => toggleColorPref()}
+                />
+              ) : null}
               <TopBarDropDownLinkA
                 href="/account"
                 icon={<FaUser />}
@@ -1029,6 +1050,7 @@ export const Puzzle = ({
       state.success,
       isEmbed,
       showKeyboard,
+      toggleColorPref,
     ]
   );
 
