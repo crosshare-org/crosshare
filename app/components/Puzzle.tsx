@@ -88,7 +88,7 @@ import {
   TopBarDropDownLinkSimpleA,
 } from './TopBar';
 import { SquareAndCols, TwoCol } from './Page';
-import { usePersistedBoolean, useMatchMedia, useDarkModeControl } from '../lib/hooks';
+import { usePersistedBoolean, useMatchMedia, useDarkModeControl, useExistingColorScheme } from '../lib/hooks';
 import { isMetaSolution, slugify, timeString } from '../lib/utils';
 import { getDocRef, signInAnonymously } from '../lib/firebaseWrapper';
 import type { User } from 'firebase/auth';
@@ -297,13 +297,18 @@ export const Puzzle = ({
   useEventListener('blur', prodPause);
 
   const [muted, setMuted] = usePersistedBoolean('muted', false);
-  const [colorPref, setColorPref] = useDarkModeControl();
+  const [color, setColorPref] = useDarkModeControl();
+  const existingColorScheme = useExistingColorScheme();
 
   const toggleColorPref = useCallback(
     () => {
-      setColorPref(colorPref === 'light' ? 'dark' : 'light');
+      if (color === null) {
+        setColorPref(existingColorScheme === 'light' ? 'dark' : 'light');
+      } else {
+        setColorPref(color === 'dark' ? 'light' : 'dark');
+      }
     },
-    [colorPref, setColorPref]
+    [color, setColorPref, existingColorScheme]
   );
 
   // Set up music player for success song
@@ -1014,16 +1019,13 @@ export const Puzzle = ({
                   text={t`Download .puz File`}
                 />
               )}
-              <TopBarDropDownLink
-                icon={<FaMoon />}
-                text={t`Toggle Light/Dark Mode`}
-                onClick={() => toggleColorPref()}
-              />
-              <TopBarDropDownLink
-                icon={<FaMoon />}
-                text={t`Use browser/OS setting for Color Theme`}
-                onClick={() => setColorPref(null)}
-              />
+              {!isEmbed ? (
+                <TopBarDropDownLink
+                  icon={<FaMoon />}
+                  text={t`Toggle Light/Dark Mode`}
+                  onClick={() => toggleColorPref()}
+                />
+              ) : null}
               <TopBarDropDownLinkA
                 href="/account"
                 icon={<FaUser />}
