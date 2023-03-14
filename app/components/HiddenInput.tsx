@@ -34,6 +34,7 @@ export const HiddenInput = forwardRef<
       autoComplete="off"
       autoCapitalize="characters"
       autoCorrect="off"
+      spellCheck={false}
       css={{
         width: 1,
         height: 1,
