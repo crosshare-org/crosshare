@@ -72,18 +72,10 @@ export function usePolyfilledResizeObserver(ref: RefObject<HTMLElement>) {
 }
 
 /*
-  This hook is used to get the existing color scheme of the browser
+  This hook is used to determine if the browser is in dark mode
 */
-export function useExistingColorScheme(): DarkModePreference {
-  const isDarkMode = useMatchMedia('(prefers-color-scheme: dark)');
-  const isLightMode = useMatchMedia('(prefers-color-scheme: light)');
-  if (isDarkMode) {
-    return 'dark';
-  }
-  if (isLightMode) {
-    return 'light';
-  }
-  return null;
+export function useIsExistingDarkMode(): boolean {
+  return useMatchMedia('(prefers-color-scheme: dark)');
 }
 
 type DarkModePreference = 'dark' | 'light' | null;

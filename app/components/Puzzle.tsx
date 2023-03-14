@@ -88,7 +88,7 @@ import {
   TopBarDropDownLinkSimpleA,
 } from './TopBar';
 import { SquareAndCols, TwoCol } from './Page';
-import { usePersistedBoolean, useMatchMedia, useDarkModeControl, useExistingColorScheme } from '../lib/hooks';
+import { usePersistedBoolean, useMatchMedia, useDarkModeControl, useIsExistingDarkMode } from '../lib/hooks';
 import { isMetaSolution, slugify, timeString } from '../lib/utils';
 import { getDocRef, signInAnonymously } from '../lib/firebaseWrapper';
 import type { User } from 'firebase/auth';
@@ -298,17 +298,17 @@ export const Puzzle = ({
 
   const [muted, setMuted] = usePersistedBoolean('muted', false);
   const [color, setColorPref] = useDarkModeControl();
-  const existingColorScheme = useExistingColorScheme();
+  const isExistingDarkMode = useIsExistingDarkMode();
 
   const toggleColorPref = useCallback(
     () => {
       if (color === null) {
-        setColorPref(existingColorScheme === 'light' ? 'dark' : 'light');
+        setColorPref(isExistingDarkMode ? 'light' : 'dark');
       } else {
         setColorPref(color === 'dark' ? 'light' : 'dark');
       }
     },
-    [color, setColorPref, existingColorScheme]
+    [color, setColorPref, isExistingDarkMode]
   );
 
   // Set up music player for success song
