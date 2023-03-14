@@ -6,11 +6,13 @@ $ podman build . --format docker --target prod -t gcr.io/mdcrosshare/prod:latest
 $ toolbox run gcloud auth print-access-token | podman login -u oauth2accesstoken --password-stdin gcr.io
 $ podman push gcr.io/mdcrosshare/prod:latest --remove-signatures
 $ toolbox run gcloud run deploy staging --image gcr.io/mdcrosshare/prod
+$ git tag staging && git push --tags
 ```
 
 ## Deploying to prod
 ```shell
 $ toolbox run gcloud run deploy prod --image gcr.io/mdcrosshare/prod
+$ git tag prod && git push --tags
 ```
 
 ## Updating datastore rules
@@ -23,7 +25,11 @@ $ npx firebase deploy --only firestore
 ## Deploying functions
 ```shell
 $ cd functions
-# Deploy import/export:
+# Deploy all functions:
+$ npx firebase deploy --only functions
+$ git tag functions && git push --tags
+
+# Or, e.g. deploy import/export:
 $ npx firebase deploy --only functions:scheduledFirestoreExport
 # Deploy analytics:
 $ npx firebase deploy --only functions:analytics
