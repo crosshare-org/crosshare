@@ -3,7 +3,6 @@ import {
   forwardRef,
   KeyboardEvent,
   ClipboardEvent,
-  SyntheticEvent,
   useRef,
   RefObject,
 } from 'react';
@@ -11,10 +10,8 @@ import {
 import { KeypressAction, PasteAction } from '../reducers/reducer';
 import { fromKeyboardEvent, Key, KeyK } from '../lib/types';
 import { isSome } from 'fp-ts/lib/Option';
-
-interface BeforeInputEvent extends SyntheticEvent {
-  data?: string;
-}
+import useEventListener from '@use-it/event-listener';
+import { useForwardRef } from '../lib/hooks';
 
 export const useKeyboard = (): [RefObject<HTMLInputElement>, () => void] => {
   const hiddenInputRef = useRef<HTMLInputElement>(null);
@@ -24,13 +21,50 @@ export const useKeyboard = (): [RefObject<HTMLInputElement>, () => void] => {
 export const HiddenInput = forwardRef<
   HTMLInputElement,
   {
-    dispatch: Dispatch<KeypressAction|PasteAction>,
-    handleKeypress?: (k: Key) => boolean,
-    enterKeyHint?: 'next' | 'go',
+    dispatch: Dispatch<KeypressAction | PasteAction>;
+    handleKeypress?: (k: Key) => boolean;
+    enterKeyHint?: 'next' | 'go';
   }
->((props, ref) => {
+>((props, fwdRef) => {
+  const ref = useForwardRef(fwdRef);
+  /* React doesn't seem to use the native beforeinput event for onBeforeInput
+   * and as a result it wasn't working on android. The event should already have
+   * been swallowed by onKeyDown anytime we get that event (i.e. non android). */
+  useEventListener(
+    'beforeinput',
+    (e: InputEvent) => {
+      e.preventDefault();
+      if (e.data?.length) {
+        // Input of more than one char is a swipe, otherwise keypress.
+        if (e.data.length > 1) {
+          props.dispatch({
+            type: 'KEYPRESS',
+            key: { k: KeyK.SwipeEntry, t: e.data },
+          });
+        } else {
+          const mkey = fromKeyboardEvent({ key: e.data }, false);
+          if (isSome(mkey)) {
+            e.preventDefault();
+            if (props.handleKeypress) {
+              if (props.handleKeypress(mkey.value)) {
+                return;
+              }
+            }
+            const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+            props.dispatch(kpa);
+          }
+        }
+      }
+    },
+    ref?.current
+  );
   return (
     <input
+      // Don't ever let this input change - the onChange handler is just to keep react from yelling at us.
+      value={''}
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      onChange={() => {}}
+
       autoComplete="off"
       autoCapitalize="characters"
       autoCorrect="off"
@@ -70,16 +104,6 @@ export const HiddenInput = forwardRef<
         };
         props.dispatch(pa);
         e.preventDefault();
-  
-      }}
-      onBeforeInput={(e: BeforeInputEvent) => {
-        e.preventDefault();
-        if (e.data?.length) {
-          props.dispatch({
-            type: 'KEYPRESS',
-            key: { k: KeyK.SwipeEntry, t: e.data },
-          });
-        }
       }}
     />
   );
