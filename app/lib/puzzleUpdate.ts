@@ -1,7 +1,7 @@
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
-import { getCollection } from './firebaseAdminWrapper';
+import { getCollection, toFirestore } from './firebaseAdminWrapper';
 import { notificationsForPuzzleChange } from './notifications';
 import {
   isNewPuzzleNotification,
@@ -49,7 +49,7 @@ async function updateNotifications(
             const toUpdate = update(n.right);
             if (toUpdate) {
               console.log('updating notification');
-              await res.ref.update(toUpdate);
+              await res.ref.update(toFirestore(toUpdate));
             }
           }
         })
