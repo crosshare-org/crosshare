@@ -27,6 +27,13 @@ export const HiddenInput = forwardRef<
   }
 >((props, fwdRef) => {
   const ref = useForwardRef(fwdRef);
+
+  // Android chrome/ff don't give us useable keydown events but rather before input
+  // FF is sending 2 beforeinput events per keystroke, so we use this ref to 
+  // debounce. Only accept a single char beforeinput event if it was preceeded by
+  // a keydown with keyCode 229 since the last beforeinput.
+  const acceptBeforeInputSingle = useRef(false);
+
   /* React doesn't seem to use the native beforeinput event for onBeforeInput
    * and as a result it wasn't working on android. The event should already have
    * been swallowed by onKeyDown anytime we get that event (i.e. non android). */
@@ -42,6 +49,10 @@ export const HiddenInput = forwardRef<
             key: { k: KeyK.SwipeEntry, t: e.data },
           });
         } else {
+          if (!acceptBeforeInputSingle.current) {
+            return;
+          }
+          acceptBeforeInputSingle.current = false;
           const mkey = fromKeyboardEvent({ key: e.data }, false);
           if (isSome(mkey)) {
             e.preventDefault();
@@ -85,6 +96,10 @@ export const HiddenInput = forwardRef<
       tabIndex={0}
       ref={ref}
       onKeyDown={(e: KeyboardEvent) => {
+        if (e.keyCode === 229) {
+          acceptBeforeInputSingle.current = true;
+          return;
+        }
         const mkey = fromKeyboardEvent(e, false);
         if (isSome(mkey)) {
           e.preventDefault();
