@@ -16,6 +16,10 @@ interface ReferenceData {
 export const entryReferencer: Plugin = (options: {
   clueMap: Map<string, [number, Direction, string]>;
 }) => {
+  if (options.clueMap.size === 0) {
+    console.log('No clues? Skipping entryReferencer');
+    return (tree) => tree;
+  }
   const regex = new RegExp(
     '\\b(' + Array.from(options.clueMap.keys()).join('|') + ')\\b',
     'g'
