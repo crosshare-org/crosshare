@@ -33,6 +33,8 @@ const PuzzleLink = (props: {
   children?: ReactNode;
   tags: string[];
   filterTags: string[];
+  noTargetBlank?: boolean;
+  fromEmbedPage?: number;
 }) => {
   const { user } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
@@ -89,6 +91,10 @@ const PuzzleLink = (props: {
         .includes(t)
   );
 
+  const url =
+    props.fromEmbedPage !== undefined
+      ? `/embed/${props.id}/${props.authorId}?backToListPage=${props.fromEmbedPage}`
+      : `/crosswords/${props.id}/${slugify(props.puzzleTitle)}`;
   return (
     <div
       css={{
@@ -102,6 +108,7 @@ const PuzzleLink = (props: {
       }}
     >
       <Link
+        noTargetBlank={props.noTargetBlank}
         css={[
           linkCss,
           {
@@ -110,7 +117,7 @@ const PuzzleLink = (props: {
             lineHeight: '1em',
           },
         ]}
-        href={`/crosswords/${props.id}/${slugify(props.puzzleTitle)}`}
+        href={url}
       >
         <div css={{ position: 'relative' }}>
           <PuzzleSizeIcon width={props.width} height={props.height} />
@@ -141,10 +148,7 @@ const PuzzleLink = (props: {
         </div>
       </Link>
       <div css={{ flex: 1 }}>
-        <Link
-          css={linkCss}
-          href={`/crosswords/${props.id}/${slugify(props.puzzleTitle)}`}
-        >
+        <Link noTargetBlank={props.noTargetBlank} css={linkCss} href={url}>
           <h3
             css={{
               marginBottom: 0,
@@ -268,7 +272,7 @@ export type LinkablePuzzle = Pick<
   | 'size'
   | 'userTags'
   | 'autoTags'
-> & {blogPostPreview: Root|null};
+> & { blogPostPreview: Root | null };
 
 export function toLinkablePuzzle({
   title,
@@ -299,7 +303,9 @@ export function toLinkablePuzzle({
     size,
     userTags,
     autoTags,
-    blogPostPreview: blogPost ? markdownToHast({text: blogPost, preview: 250}) : null
+    blogPostPreview: blogPost
+      ? markdownToHast({ text: blogPost, preview: 250 })
+      : null,
   };
 }
 
@@ -312,6 +318,8 @@ export const PuzzleResultLink = ({
   constructorPage,
   constructorIsPatron,
   title,
+  noTargetBlank,
+  fromEmbedPage,
   ...props
 }: {
   fullWidth?: boolean;
@@ -324,6 +332,8 @@ export const PuzzleResultLink = ({
   constructorPage?: ConstructorPageBase | null;
   constructorIsPatron: boolean;
   filterTags: string[];
+  noTargetBlank?: boolean;
+  fromEmbedPage?: number;
 }) => {
   const difficulty = <DifficultyBadge puzzleRating={puzzle.rating} />;
   const authorLink = (
@@ -425,6 +435,8 @@ export const PuzzleResultLink = ({
         subTitle={title ? puzzle.title : undefined}
         tags={(puzzle.userTags || []).concat(puzzle.autoTags || [])}
         filterTags={props.filterTags}
+        noTargetBlank={noTargetBlank}
+        fromEmbedPage={fromEmbedPage}
       >
         {contents}
       </PuzzleLink>

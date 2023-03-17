@@ -17,6 +17,7 @@ import { GoScreenFull } from 'react-icons/go';
 import { AuthContext } from './AuthContext';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { t, Trans } from '@lingui/macro';
+import { useRouter } from 'next/router';
 
 const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {
@@ -79,6 +80,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
     );
 
   const [showFullscreen, setShowFullscreen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (isEmbed && document.fullscreenEnabled) {
@@ -369,6 +371,12 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         )}
       </div>
       {isEmbed ? (
+        <>
+        {typeof router.query.backToListPage === "string" ? (
+          <div css={{ marginTop: '2em', textAlign: 'center'}}>
+            <Link noTargetBlank={true} href={`/embed/list/${props.puzzle.authorId}/${router.query.backToListPage}`}>⮨ All Puzzles</Link>
+          </div>
+        ) : ''}
         <div css={{ marginTop: '2em', textAlign: 'center' }}>
           <Link href="/">
             <Trans>Powered by crosshare.org</Trans>
@@ -382,6 +390,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
             <Trans>Open on crosshare.org</Trans>
           </Link>
         </div>
+        </>
       ) : (
         ''
       )}

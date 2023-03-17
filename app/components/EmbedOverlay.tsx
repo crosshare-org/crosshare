@@ -72,6 +72,13 @@ export const EmbedOverlay = ({
       ) : (
         <ThemePicker userId={user.uid} {...embedOptions} />
       )}
+      <h3 css={{marginTop: '1em'}}>Puzzle List</h3>
+      <p>
+        Alternatively, you can embed a list of your recent public puzzles all at once:
+      </p>
+      <CopyableInput
+        text={`<iframe style="height: 90vh; width: 100%;" src="https://crosshare.org/embed/list/${user.uid}" frameborder="0" allowfullscreen="true" allowtransparency="true"></iframe>`}
+      />
     </Overlay>
   );
 };
