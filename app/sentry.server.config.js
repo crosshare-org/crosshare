@@ -9,7 +9,7 @@ const SENTRY_DSN = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
 Sentry.init({
   dsn: SENTRY_DSN || 'https://aef749dfcec64668bf922b8fbe4c0b41@o117398.ingest.sentry.io/5192748',
   // Adjust this value in production, or use tracesSampler for greater control
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 0.1,
   ignoreErrors: [
     'ResizeObserver loop completed with undelivered notifications',
     'ResizeObserver loop limit exceeded',
