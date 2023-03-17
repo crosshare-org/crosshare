@@ -22,13 +22,13 @@ const TinyNavButton = ({ isLeft, dispatch }: TinyNavButtonProps) => {
       css={{
         background: 'none',
         border: 'none',
-        padding: 'none',
+        paddingTop: '1em',
         width: '2em',
         textAlign: 'center',
         flexShrink: 0,
         color: 'var(--text)',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'start',
         justifyContent: 'center',
         [SMALL_AND_UP]: {
           display: 'none',
