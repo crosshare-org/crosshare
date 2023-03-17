@@ -77,7 +77,7 @@ export const HiddenInput = forwardRef<
       onChange={() => {}}
 
       autoComplete="off"
-      autoCapitalize="characters"
+      autoCapitalize="off"
       autoCorrect="off"
       spellCheck={false}
       css={{
