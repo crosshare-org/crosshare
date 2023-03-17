@@ -102,7 +102,7 @@ Note: The indexes you created with `firebase deploy --only firestore` can take a
 
 #### Wordlists
 
-When running the constructor locally you'll get an error trying to download the word database. You can follow the [instructions in the deployment guide](/DEPLOY.md#updating-wordlist--clue-database) to build and upload a version to your firebase app. (TODO - we should probably provide the wordlist (maybe not the clue db) pregenerated for developers, this is a lot of work)
+When running the constructor locally you'll get an error trying to download the word database. You can follow the [instructions in the deployment guide](/DEPLOY.md#updating-wordlist--clue-database) to build and upload a version to your firebase app, or you can download a pregenerated [`worddb.json`](https://drive.google.com/file/d/1bIjSwDDmMhX8u_xoyfs5PVxKuBD0ChhQ/view?usp=share_link) (generated March 16, 2023) and upload it using the final command in [the deployment guide](/DEPLOY.md#updating-wordlist--clue-database).
 
 Once the wordlist has been updated you need to update your cloud storage CORS settings so it can be downloaded in the browser. This [stackoverflow post](https://stackoverflow.com/a/58613527) gives a step-by-step run down.
 
