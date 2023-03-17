@@ -109,7 +109,9 @@ const ClueListItem = memo(function ClueListItem({
             borderLeft: isCross
               ? '0.6em solid var(--lighter)'
               : '0.6em solid transparent',
-            padding: '0.5em 0.5em 0.5em 0',
+            [SMALL_AND_UP]: {
+              padding: '0.5em 0.5em 0.5em 0',
+            }
           }}
         >
           <div
