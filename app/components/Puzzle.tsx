@@ -290,6 +290,7 @@ export const Puzzle = ({
   // Pause when page goes out of focus
   function prodPause() {
     if (process.env.NODE_ENV !== 'development') {
+      hiddenInputRef.current?.blur(); // hide the keyboard
       dispatch({ type: 'PAUSEACTION' });
       writePlayToDBIfNeeded();
     }
