@@ -58,3 +58,5 @@ $ GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json ./scripts/uploadWordl
 ```
 
 _n.b._ if you're developing on your own Firebase project, you'll need to create Storage before you upload the wordlist: Build > Storage > Get Started > Start in production mode > Save. You don't need to create anything in there, it just needs to be set up before you can upload the wordlist otherwise you'll get a "bucket does not exist" error.
+
+Then you'll need to set read permission on your storage by going to Rules > Edit rules and changing `allow read, write: if false;` to `allow read: if true;`.
