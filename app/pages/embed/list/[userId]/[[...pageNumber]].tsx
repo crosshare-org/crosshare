@@ -117,7 +117,7 @@ export default function ThemedPage(props: PageProps | PageErrorProps) {
         }}
       />
       <EmbedContext.Provider value={true}>
-        <div css={{ margin: '1em' }}>
+        <div css={{ padding: '1em', backgroundColor: 'var(--bg)' }}>
           {props.puzzles.map((p, i) => (
             <PuzzleResultLink
               noTargetBlank={true}
