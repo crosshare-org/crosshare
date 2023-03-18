@@ -1,15 +1,8 @@
-// This file configures the initialization of Sentry on the browser.
-// The config you add here will be used whenever a page is visited.
-// https://docs.sentry.io/platforms/javascript/guides/nextjs/
-
-import * as Sentry from '@sentry/nextjs';
-
 const SENTRY_DSN = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
 
-Sentry.init({
+export const config = {
   dsn: SENTRY_DSN || 'https://aef749dfcec64668bf922b8fbe4c0b41@o117398.ingest.sentry.io/5192748',
-  // Adjust this value in production, or use tracesSampler for greater control
-  tracesSampleRate: 0.1,
+  tracesSampleRate: 0.05,
   ignoreErrors: [
     'ResizeObserver loop completed with undelivered notifications',
     'ResizeObserver loop limit exceeded',
@@ -28,8 +21,10 @@ Sentry.init({
     'Non-Error promise rejection captured with value: Object Not Found Matching',
     'Failed to fetch',
     'Illegal invocation',
+    'auth/popup-blocked',
+    'auth/popup-closed-by-user'
   ],
   // Note: if you want to override the automatic release value, do not set a
   // `release` value here - use the environment variable `SENTRY_RELEASE`, so
   // that it will also get attached to your source maps
-});
+};
