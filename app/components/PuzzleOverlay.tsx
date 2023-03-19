@@ -18,6 +18,7 @@ import { AuthContext } from './AuthContext';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { t, Trans } from '@lingui/macro';
 import { useRouter } from 'next/router';
+import { SharingButtons } from './SharingButtons';
 
 const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {
@@ -60,6 +61,7 @@ interface SuccessOverlayProps extends PuzzleOverlayBaseProps {
   contestHasPrize?: boolean;
   contestRevealed?: boolean;
   contestRevealDelay?: number | null;
+  shareButtonText?: string;
 }
 interface BeginPauseProps extends PuzzleOverlayBaseProps {
   overlayType: OverlayType.BeginPause;
@@ -99,7 +101,9 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
   let loginButton: ReactNode = t`Login (via Google) to save your puzzle progress/stats`;
   if (!authContext.loading) {
     if (authContext.user?.email) {
-      loginButton = t`Logged in as ${authContext.user.displayName || authContext.user.email}`;
+      loginButton = t`Logged in as ${
+        authContext.user.displayName || authContext.user.email
+      }`;
     } else if (authContext.user) {
       loginButton = (
         <>
@@ -240,7 +244,8 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                   props.puzzle.isPrivateUntil > Date.now()) ? (
                   <p>
                     Your puzzle is private
-                    {props.puzzle.isPrivateUntil && props.puzzle.isPrivate === false
+                    {props.puzzle.isPrivateUntil &&
+                    props.puzzle.isPrivate === false
                       ? ` until ${formatDistanceToNow(
                           new Date(props.puzzle.isPrivateUntil)
                         )} from now. Until then, it `
@@ -272,6 +277,18 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                 <p css={{ marginBottom: 0, fontSize: '1.5em' }}>
                   {solvedMessage} {solveTimeString}
                 </p>
+                {props.shareButtonText ? (
+                  <SharingButtons
+                    text={props.shareButtonText
+                      .replace('{title}', props.puzzle.title.slice(0, 40))
+                      .replace('{time}', timeString(props.solveTime, false))}
+                    path={`/crosswords/${props.puzzle.id}/${slugify(
+                      props.puzzle.title
+                    )}`}
+                  />
+                ) : (
+                  ''
+                )}
               </>
             )}
           </>
@@ -372,24 +389,31 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
       </div>
       {isEmbed ? (
         <>
-        {typeof router.query.backToListPage === "string" ? (
-          <div css={{ marginTop: '2em', textAlign: 'center'}}>
-            <Link noTargetBlank={true} href={`/embed/list/${props.puzzle.authorId}/${router.query.backToListPage}`}>⮨ All Puzzles</Link>
+          {typeof router.query.backToListPage === 'string' ? (
+            <div css={{ marginTop: '2em', textAlign: 'center' }}>
+              <Link
+                noTargetBlank={true}
+                href={`/embed/list/${props.puzzle.authorId}/${router.query.backToListPage}`}
+              >
+                ⮨ All Puzzles
+              </Link>
+            </div>
+          ) : (
+            ''
+          )}
+          <div css={{ marginTop: '2em', textAlign: 'center' }}>
+            <Link href="/">
+              <Trans>Powered by crosshare.org</Trans>
+            </Link>
+            {' · '}
+            <Link
+              href={`/crosswords/${props.puzzle.id}/${slugify(
+                props.puzzle.title
+              )}`}
+            >
+              <Trans>Open on crosshare.org</Trans>
+            </Link>
           </div>
-        ) : ''}
-        <div css={{ marginTop: '2em', textAlign: 'center' }}>
-          <Link href="/">
-            <Trans>Powered by crosshare.org</Trans>
-          </Link>
-          {' · '}
-          <Link
-            href={`/crosswords/${props.puzzle.id}/${slugify(
-              props.puzzle.title
-            )}`}
-          >
-            <Trans>Open on crosshare.org</Trans>
-          </Link>
-        </div>
         </>
       ) : (
         ''

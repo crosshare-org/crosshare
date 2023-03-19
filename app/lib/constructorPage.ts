@@ -27,6 +27,8 @@ export const ConstructorPageV = t.intersection([
     pt: t.string,
     /** constructor signature */
     sig: t.string,
+    /** text to use for social share buttons */
+    sharetxt: t.string,
   }),
 ]);
 export const ConstructorPageWithIdV = t.intersection([
