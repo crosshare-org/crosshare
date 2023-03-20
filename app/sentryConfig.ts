@@ -22,7 +22,8 @@ export const config = {
     'Failed to fetch',
     'Illegal invocation',
     'auth/popup-blocked',
-    'auth/popup-closed-by-user'
+    'auth/popup-closed-by-user',
+    'auth/network-request-failed'
   ],
   // Note: if you want to override the automatic release value, do not set a
   // `release` value here - use the environment variable `SENTRY_RELEASE`, so
