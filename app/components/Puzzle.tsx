@@ -1167,7 +1167,7 @@ export const Puzzle = ({
               contestHasPrize={puzzle.contestHasPrize}
               contestRevealed={state.contestRevealed}
               contestRevealDelay={puzzle.contestRevealDelay}
-              shareButtonText={puzzle.constructorPage?.sharetxt}
+              shareButtonText={puzzle.constructorPage?.st}
             />
           ) : (
             ''
