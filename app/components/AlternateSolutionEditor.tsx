@@ -13,11 +13,18 @@ import {
   FaEllipsisH,
   FaVolumeUp,
   FaVolumeMute,
+  FaKeyboard,
 } from 'react-icons/fa';
 import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
-import { Direction, KeyK } from '../lib/types';
+import {
+  Direction,
+  fromKeyboardEvent,
+  fromKeyString,
+  KeyK,
+} from '../lib/types';
 import { fromCells } from '../lib/viewableGrid';
 import { Rebus, EscapeKey } from './Icons';
+import { Keyboard } from './Keyboard';
 import {
   TopBar,
   TopBarLink,
@@ -29,8 +36,8 @@ import {
   KeypressAction,
   PasteAction,
 } from '../reducers/reducer';
+import { isSome } from 'fp-ts/lib/Option';
 import { GridView } from './Grid';
-import { HiddenInput, useKeyboard } from './HiddenInput';
 
 export function AlternateSolutionEditor(props: {
   grid: string[];
@@ -70,8 +77,23 @@ export function AlternateSolutionEditor(props: {
   });
 
   const [muted, setMuted] = usePersistedBoolean('muted', false);
+  const [toggleKeyboard, setToggleKeyboard] = usePersistedBoolean(
+    'keyboard',
+    false
+  );
 
-  const [hiddenInputRef, focusGrid] = useKeyboard();
+  const physicalKeyboardHandler = useCallback(
+    (e: KeyboardEvent) => {
+      const mkey = fromKeyboardEvent(e);
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        dispatch(kpa);
+        e.preventDefault();
+      }
+    },
+    [dispatch]
+  );
+  useEventListener('keydown', physicalKeyboardHandler);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { width: cqw, height: cqh } = usePolyfilledResizeObserver(containerRef);
@@ -98,6 +120,17 @@ export function AlternateSolutionEditor(props: {
     [dispatch]
   );
   useEventListener('paste', pasteHandler);
+
+  const keyboardHandler = useCallback(
+    (key: string) => {
+      const mkey = fromKeyString(key);
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        dispatch(kpa);
+      }
+    },
+    [dispatch]
+  );
 
   const topBarChildren = useMemo(() => {
     return (
@@ -130,7 +163,7 @@ export function AlternateSolutionEditor(props: {
           text="Cancel"
           onClick={props.cancel}
         />
-        <TopBarDropDown onClose={focusGrid} icon={<FaEllipsisH />} text="More">
+        <TopBarDropDown icon={<FaEllipsisH />} text="More">
           {() => (
             <>
               <TopBarDropDownLink
@@ -158,12 +191,25 @@ export function AlternateSolutionEditor(props: {
                   onClick={() => setMuted(true)}
                 />
               )}
+              <TopBarDropDownLink
+                icon={<FaKeyboard />}
+                text="Toggle Keyboard"
+                onClick={() => setToggleKeyboard(!toggleKeyboard)}
+              />
             </>
           )}
         </TopBarDropDown>
       </>
     );
-  }, [focusGrid, initialGrid.cells, muted, props, setMuted, state.grid.cells]);
+  }, [
+    initialGrid.cells,
+    muted,
+    props,
+    setMuted,
+    setToggleKeyboard,
+    state.grid.cells,
+    toggleKeyboard,
+  ]);
 
   const aspectRatio = props.width / props.height;
 
@@ -179,15 +225,12 @@ export function AlternateSolutionEditor(props: {
         <div css={{ flex: 'none' }}>
           <TopBar>{topBarChildren}</TopBar>
         </div>
-        <HiddenInput ref={hiddenInputRef} dispatch={dispatch} />
         <div
-          onClick={focusGrid}
-          onKeyDown={focusGrid}
-          tabIndex={0}
-          role={'textbox'}
           css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}
         >
           <div
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+            tabIndex={0}
             css={{
               outline: 'none',
               display: 'flex',
@@ -226,6 +269,15 @@ export function AlternateSolutionEditor(props: {
               />
             </div>
           </div>
+        </div>
+        <div css={{ flex: 'none', width: '100%' }}>
+          <Keyboard
+            toggleKeyboard={toggleKeyboard}
+            keyboardHandler={keyboardHandler}
+            muted={muted}
+            showExtraKeyLayout={state.showExtraKeyLayout}
+            includeBlockKey={false}
+          />
         </div>
       </div>
     </>

@@ -17,6 +17,7 @@ import {
   FaVolumeUp,
   FaVolumeMute,
   FaPause,
+  FaKeyboard,
   FaCheck,
   FaEye,
   FaEllipsisH,
@@ -27,7 +28,7 @@ import {
   FaPrint,
   FaEdit,
   FaRegFile,
-  FaMoon
+  FaMoon,
 } from 'react-icons/fa';
 import { ClueText } from './ClueText';
 import { IoMdStats } from 'react-icons/io';
@@ -56,6 +57,7 @@ import {
   getClueText,
   KeyK,
   fromKeyboardEvent,
+  fromKeyString,
 } from '../lib/types';
 import {
   fromCells,
@@ -78,6 +80,7 @@ import {
   LoadPlayAction,
   RanSuccessEffectsAction,
   RanMetaSubmitEffectsAction,
+  PasteAction,
 } from '../reducers/reducer';
 import {
   TopBar,
@@ -88,7 +91,12 @@ import {
   TopBarDropDownLinkSimpleA,
 } from './TopBar';
 import { SquareAndCols, TwoCol } from './Page';
-import { usePersistedBoolean, useMatchMedia, useDarkModeControl, useIsExistingDarkMode } from '../lib/hooks';
+import {
+  usePersistedBoolean,
+  useMatchMedia,
+  useDarkModeControl,
+  useIsExistingDarkMode,
+} from '../lib/hooks';
 import { isMetaSolution, slugify, timeString } from '../lib/utils';
 import { getDocRef, signInAnonymously } from '../lib/firebaseWrapper';
 import type { User } from 'firebase/auth';
@@ -98,6 +106,7 @@ import {
   SMALL_AND_UP_RULES,
   SQUARE_HEADER_HEIGHT,
 } from '../lib/style';
+import { Keyboard } from './Keyboard';
 import { useRouter } from 'next/router';
 import { Button } from './Buttons';
 import { useSnackbar } from './Snackbar';
@@ -119,7 +128,6 @@ import { GridContext } from './GridContext';
 import { DownsOnlyContext } from './DownsOnlyContext';
 import { Timestamp } from '../lib/timestamp';
 import { updateDoc } from 'firebase/firestore';
-import { HiddenInput, useKeyboard } from './HiddenInput';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -236,7 +244,6 @@ export const Puzzle = ({
       cellsIterationCount: play ? play.uc : puzzle.grid.map(() => 0),
       cellsEverMarkedWrong: new Set<number>(play ? play.we : []),
       loadedPlayState: !loadingPlayState,
-      waitToResize: true,
       isEditable(cellIndex) {
         return !this.verifiedCells.has(cellIndex) && !this.success;
       },
@@ -290,7 +297,6 @@ export const Puzzle = ({
   // Pause when page goes out of focus
   function prodPause() {
     if (process.env.NODE_ENV !== 'development') {
-      hiddenInputRef.current?.blur(); // hide the keyboard
       dispatch({ type: 'PAUSEACTION' });
       writePlayToDBIfNeeded();
     }
@@ -301,15 +307,17 @@ export const Puzzle = ({
   const [color, setColorPref] = useDarkModeControl();
   const isExistingDarkMode = useIsExistingDarkMode();
 
-  const toggleColorPref = useCallback(
-    () => {
-      if (color === null) {
-        setColorPref(isExistingDarkMode ? 'light' : 'dark');
-      } else {
-        setColorPref(color === 'dark' ? 'light' : 'dark');
-      }
-    },
-    [color, setColorPref, isExistingDarkMode]
+  const toggleColorPref = useCallback(() => {
+    if (color === null) {
+      setColorPref(isExistingDarkMode ? 'light' : 'dark');
+    } else {
+      setColorPref(color === 'dark' ? 'light' : 'dark');
+    }
+  }, [color, setColorPref, isExistingDarkMode]);
+
+  const [toggleKeyboard, setToggleKeyboard] = usePersistedBoolean(
+    'keyboard',
+    false
   );
 
   // Set up music player for success song
@@ -540,36 +548,13 @@ export const Puzzle = ({
     writePlayToDBIfNeeded,
   ]);
 
-  const [hiddenInputRef, showKeyboard] = useKeyboard();
-
-  const lastClueView = useRef(false);
-  useEffect(() => {
-    if (state.clueView !== lastClueView.current) {
-      showKeyboard();
-      lastClueView.current = state.clueView;
-    }
-  }, [showKeyboard, state.clueView]);
-
-  const unpaused = useRef(false);
-  useEffect(() => {
-    if (!(state.success && state.dismissedSuccess)) {
-      if (loadingPlayState || !state.currentTimeWindowStart) {
-        unpaused.current = false;
-        return;
-      }
-    }
-    if (unpaused.current === true) {
-      return;
-    }
-    unpaused.current = true;
-    showKeyboard();
-  }, [showKeyboard, loadingPlayState, state]);
-
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
-      // We now only need this handler for completed grids, when the mobile soft keyboard shouldn't be shown anymore so "HiddenInput" is removed
-      if (!state.success || !state.dismissedSuccess) {
-        return;
+      // Disable keyboard when paused / loading play
+      if (!(state.success && state.dismissedSuccess)) {
+        if (loadingPlayState || !state.currentTimeWindowStart) {
+          return;
+        }
       }
 
       const mkey = fromKeyboardEvent(e);
@@ -579,15 +564,50 @@ export const Puzzle = ({
         e.preventDefault();
       }
     },
-    [dispatch, state.success, state.dismissedSuccess]
+    [
+      dispatch,
+      loadingPlayState,
+      state.currentTimeWindowStart,
+      state.success,
+      state.dismissedSuccess,
+    ]
   );
   useEventListener('keydown', physicalKeyboardHandler);
+
+  const pasteHandler = useCallback(
+    (e: ClipboardEvent) => {
+      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (tagName === 'textarea' || tagName === 'input') {
+        return;
+      }
+
+      const pa: PasteAction = {
+        type: 'PASTE',
+        content: e.clipboardData?.getData('Text') || '',
+      };
+      dispatch(pa);
+      e.preventDefault();
+    },
+    [dispatch]
+  );
+  useEventListener('paste', pasteHandler);
 
   let [entry, cross] = entryAndCrossAtPosition(state.grid, state.active);
   if (entry === null && cross !== null) {
     dispatch({ type: 'CHANGEDIRECTION' });
     [entry, cross] = [cross, entry];
   }
+
+  const keyboardHandler = useCallback(
+    (key: string) => {
+      const mkey = fromKeyString(key);
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        dispatch(kpa);
+      }
+    },
+    [dispatch]
+  );
 
   const { acrossEntries, downEntries } = useMemo(() => {
     return {
@@ -641,6 +661,7 @@ export const Puzzle = ({
   if (entryIdx !== null) {
     refed = refs[entryIdx] || new Set();
   }
+
   const shouldConceal =
     state.currentTimeWindowStart === 0 &&
     !(state.success && state.dismissedSuccess);
@@ -811,11 +832,7 @@ export const Puzzle = ({
   const checkRevealMenus = useMemo(
     () => (
       <>
-        <TopBarDropDown
-          onClose={showKeyboard}
-          icon={<FaEye />}
-          text={t`Reveal`}
-        >
+        <TopBarDropDown icon={<FaEye />} text={t`Reveal`}>
           {() => (
             <>
               <TopBarDropDownLink
@@ -858,11 +875,7 @@ export const Puzzle = ({
           )}
         </TopBarDropDown>
         {!state.autocheck ? (
-          <TopBarDropDown
-            onClose={showKeyboard}
-            icon={<FaCheck />}
-            text={t`Check`}
-          >
+          <TopBarDropDown icon={<FaCheck />} text={t`Check`}>
             {() => (
               <>
                 <TopBarDropDownLink
@@ -923,17 +936,13 @@ export const Puzzle = ({
         )}
       </>
     ),
-    [state.autocheck, showKeyboard]
+    [state.autocheck]
   );
 
   const moreMenu = useMemo(
     () => (
       <>
-        <TopBarDropDown
-          onClose={showKeyboard}
-          icon={<FaEllipsisH />}
-          text={t`More`}
-        >
+        <TopBarDropDown icon={<FaEllipsisH />} text={t`More`}>
           {() => (
             <>
               {!state.success ? (
@@ -965,6 +974,11 @@ export const Puzzle = ({
                   onClick={() => setMuted(true)}
                 />
               )}
+              <TopBarDropDownLink
+                icon={<FaKeyboard />}
+                text={t`Toggle Keyboard`}
+                onClick={() => setToggleKeyboard(!toggleKeyboard)}
+              />
               {props.isAdmin ? (
                 <>
                   <TopBarDropDownLink
@@ -1049,8 +1063,9 @@ export const Puzzle = ({
       puzzle,
       setMuted,
       state.success,
+      toggleKeyboard,
+      setToggleKeyboard,
       isEmbed,
-      showKeyboard,
       toggleColorPref,
     ]
   );
@@ -1063,176 +1078,170 @@ export const Puzzle = ({
 
   return (
     <>
-      <GridContext.Provider value={state.grid}>
-        <Global styles={FULLSCREEN_CSS} />
-        <Head>
-          <title>{`${puzzle.title} | Crosshare crossword puzzle`}</title>
-          <I18nTags
-            locale={locale}
-            canonicalPath={`/crosswords/${puzzle.id}/${slugify(puzzle.title)}`}
-          />
-          <meta key="og:title" property="og:title" content={puzzle.title} />
-          <meta
-            key="og:description"
-            property="og:description"
-            content={description}
-          />
-          <meta
-            key="og:image"
-            property="og:image"
-            content={'https://crosshare.org/api/ogimage/' + puzzle.id}
-          />
-          <meta key="og:image:width" property="og:image:width" content="1200" />
-          <meta
-            key="og:image:height"
-            property="og:image:height"
-            content="630"
-          />
-          <meta
-            key="og:image:alt"
-            property="og:image:alt"
-            content="An image of the puzzle grid"
-          />
-          <meta key="description" name="description" content={description} />
-        </Head>
-        <div
-          css={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-          }}
-        >
-          <div css={{ flex: 'none' }}>
-            <TopBar title={puzzle.title}>
-              {!loadingPlayState ? (
-                !state.success ? (
-                  <>
-                    <TopBarLink
-                      icon={<FaPause />}
-                      hoverText={t`Pause Game`}
-                      text={timeString(state.displaySeconds, true)}
-                      onClick={() => {
-                        dispatch({ type: 'PAUSEACTION' });
-                        writePlayToDBIfNeeded();
-                      }}
-                      keepText={true}
-                    />
-                    <TopBarLink
-                      icon={state.clueView ? <SpinnerFinished /> : <FaListOl />}
-                      text={state.clueView ? t`Grid` : t`Clues`}
-                      onClick={() => {
-                        const a: ToggleClueViewAction = {
-                          type: 'TOGGLECLUEVIEW',
-                        };
-                        dispatch(a);
-                      }}
-                    />
-                    {checkRevealMenus}
-                    {moreMenu}
-                  </>
-                ) : (
-                  <>
-                    <TopBarLink
-                      icon={<FaComment />}
-                      text={
-                        puzzle.contestAnswers?.length
-                          ? !isMetaSolution(
-                              state.contestSubmission,
-                              puzzle.contestAnswers
-                            ) && !state.contestRevealed
-                            ? t`Contest Prompt / Submission`
-                            : t`Comments / Leaderboard`
-                          : t`Show Comments`
-                      }
-                      onClick={() => dispatch({ type: 'UNDISMISSSUCCESS' })}
-                    />
-                    {moreMenu}
-                  </>
-                )
+      <Global styles={FULLSCREEN_CSS} />
+      <Head>
+        <title>{`${puzzle.title} | Crosshare crossword puzzle`}</title>
+        <I18nTags
+          locale={locale}
+          canonicalPath={`/crosswords/${puzzle.id}/${slugify(puzzle.title)}`}
+        />
+        <meta key="og:title" property="og:title" content={puzzle.title} />
+        <meta
+          key="og:description"
+          property="og:description"
+          content={description}
+        />
+        <meta
+          key="og:image"
+          property="og:image"
+          content={'https://crosshare.org/api/ogimage/' + puzzle.id}
+        />
+        <meta key="og:image:width" property="og:image:width" content="1200" />
+        <meta key="og:image:height" property="og:image:height" content="630" />
+        <meta
+          key="og:image:alt"
+          property="og:image:alt"
+          content="An image of the puzzle grid"
+        />
+        <meta key="description" name="description" content={description} />
+      </Head>
+      <div
+        css={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+        }}
+      >
+        <div css={{ flex: 'none' }}>
+          <TopBar title={puzzle.title}>
+            {!loadingPlayState ? (
+              !state.success ? (
+                <>
+                  <TopBarLink
+                    icon={<FaPause />}
+                    hoverText={t`Pause Game`}
+                    text={timeString(state.displaySeconds, true)}
+                    onClick={() => {
+                      dispatch({ type: 'PAUSEACTION' });
+                      writePlayToDBIfNeeded();
+                    }}
+                    keepText={true}
+                  />
+                  <TopBarLink
+                    icon={state.clueView ? <SpinnerFinished /> : <FaListOl />}
+                    text={state.clueView ? t`Grid` : t`Clues`}
+                    onClick={() => {
+                      const a: ToggleClueViewAction = {
+                        type: 'TOGGLECLUEVIEW',
+                      };
+                      dispatch(a);
+                    }}
+                  />
+                  {checkRevealMenus}
+                  {moreMenu}
+                </>
               ) : (
-                moreMenu
-              )}
-            </TopBar>
-          </div>
-          {state.filled && !state.success && !state.dismissedKeepTrying ? (
-            <KeepTryingOverlay dispatch={dispatch} />
-          ) : (
-            ''
-          )}
-          {state.success && !state.dismissedSuccess ? (
+                <>
+                  <TopBarLink
+                    icon={<FaComment />}
+                    text={
+                      puzzle.contestAnswers?.length
+                        ? !isMetaSolution(
+                            state.contestSubmission,
+                            puzzle.contestAnswers
+                          ) && !state.contestRevealed
+                          ? t`Contest Prompt / Submission`
+                          : t`Comments / Leaderboard`
+                        : t`Show Comments`
+                    }
+                    onClick={() => dispatch({ type: 'UNDISMISSSUCCESS' })}
+                  />
+                  {moreMenu}
+                </>
+              )
+            ) : (
+              moreMenu
+            )}
+          </TopBar>
+        </div>
+        {state.filled && !state.success && !state.dismissedKeepTrying ? (
+          <KeepTryingOverlay dispatch={dispatch} />
+        ) : (
+          ''
+        )}
+        {state.success && !state.dismissedSuccess ? (
+          <PuzzleOverlay
+            {...overlayBaseProps}
+            overlayType={OverlayType.Success}
+            contestSubmission={state.contestSubmission}
+            contestHasPrize={puzzle.contestHasPrize}
+            contestRevealed={state.contestRevealed}
+            contestRevealDelay={puzzle.contestRevealDelay}
+          />
+        ) : (
+          ''
+        )}
+        {state.moderating ? (
+          <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />
+        ) : (
+          ''
+        )}
+        {state.showingEmbedOverlay && props.user ? (
+          <EmbedOverlay user={props.user} puzzle={puzzle} dispatch={dispatch} />
+        ) : (
+          ''
+        )}
+        {state.currentTimeWindowStart === 0 &&
+        !state.success &&
+        !(state.filled && !state.dismissedKeepTrying) ? (
+          state.bankedSeconds === 0 ? (
             <PuzzleOverlay
               {...overlayBaseProps}
-              overlayType={OverlayType.Success}
-              contestSubmission={state.contestSubmission}
-              contestHasPrize={puzzle.contestHasPrize}
-              contestRevealed={state.contestRevealed}
-              contestRevealDelay={puzzle.contestRevealDelay}
+              overlayType={OverlayType.BeginPause}
+              dismissMessage={t`Begin Puzzle`}
+              message={t`Ready to get started?`}
+              loadingPlayState={loadingPlayState || !state.loadedPlayState}
             />
           ) : (
-            ''
-          )}
-          {state.moderating ? (
-            <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />
-          ) : (
-            ''
-          )}
-          {state.showingEmbedOverlay && props.user ? (
-            <EmbedOverlay
-              user={props.user}
-              puzzle={puzzle}
-              dispatch={dispatch}
+            <PuzzleOverlay
+              {...overlayBaseProps}
+              overlayType={OverlayType.BeginPause}
+              dismissMessage={t`Resume`}
+              message={t`Your puzzle is paused`}
+              loadingPlayState={loadingPlayState || !state.loadedPlayState}
             />
-          ) : (
-            ''
-          )}
-          {state.currentTimeWindowStart === 0 &&
-          !state.success &&
-          !(state.filled && !state.dismissedKeepTrying) ? (
-            state.bankedSeconds === 0 ? (
-              <PuzzleOverlay
-                {...overlayBaseProps}
-                overlayType={OverlayType.BeginPause}
-                dismissMessage={t`Begin Puzzle`}
-                message={t`Ready to get started?`}
-                loadingPlayState={loadingPlayState || !state.loadedPlayState}
-              />
-            ) : (
-              <PuzzleOverlay
-                {...overlayBaseProps}
-                overlayType={OverlayType.BeginPause}
-                dismissMessage={t`Resume`}
-                message={t`Your puzzle is paused`}
-                loadingPlayState={loadingPlayState || !state.loadedPlayState}
-              />
-            )
-          ) : (
-            ''
-          )}
-          {state.success ? (
-            ''
-          ) : (
-            <HiddenInput ref={hiddenInputRef} dispatch={dispatch} />
-          )}
-          <div
-            onClick={showKeyboard}
-            onKeyDown={showKeyboard}
-            tabIndex={0}
-            role={'textbox'}
-            css={{
-              flex: '1 1 auto',
-              overflow: 'scroll',
-              scrollbarWidth: 'none',
-              position: 'relative',
-            }}
-          >
+          )
+        ) : (
+          ''
+        )}
+        <div
+          tabIndex={0}
+          role={'textbox'}
+          css={{
+            flex: '1 1 auto',
+            overflow: 'scroll',
+            scrollbarWidth: 'none',
+            position: 'relative',
+          }}
+        >
+          <GridContext.Provider value={state.grid}>
             <DownsOnlyContext.Provider
               value={state.downsOnly && !state.success}
             >
               {puzzleView}
             </DownsOnlyContext.Provider>
-          </div>
+          </GridContext.Provider>
         </div>
-      </GridContext.Provider>
+        <div css={{ flex: 'none', width: '100%' }}>
+          <Keyboard
+            toggleKeyboard={toggleKeyboard}
+            keyboardHandler={keyboardHandler}
+            muted={muted}
+            showExtraKeyLayout={state.showExtraKeyLayout}
+            includeBlockKey={false}
+          />
+        </div>
+      </div>
     </>
   );
 };

@@ -7,7 +7,6 @@ import {
   LARGE_AND_UP,
   TINY_COL_MIN_HEIGHT,
   SQUARE_HEADER_HEIGHT,
-  HEADER_HEIGHT,
 } from '../lib/style';
 import { KeyK } from '../lib/types';
 import { usePolyfilledResizeObserver } from '../lib/hooks';
@@ -52,40 +51,6 @@ const TinyNavButton = ({ isLeft, dispatch }: TinyNavButtonProps) => {
   );
 };
 
-const getViewportHeight = () => {
-  if (typeof window !== 'undefined') {
-    if ('virtualKeyboard' in navigator) {
-      // If the virtualKeyboard API is supported then we calculate display height in CSS
-      return 0;
-    }
-    return window.visualViewport?.height || 0;
-  }
-  return 0;
-};
-
-const useViewportHeight = () => {
-  const [state, setState] = useState(0);
-  useEffect(() => {
-    const handleResize = () => setState(getViewportHeight);
-    window.visualViewport?.addEventListener('resize', handleResize);
-    return () =>
-      window.visualViewport?.removeEventListener('resize', handleResize);
-  }, []);
-  return state;
-};
-
-const useScrollLock = () => {
-  useEffect(() => {
-    const handleScroll = (e: Event) => {
-      e.preventDefault();
-      window.scrollTo(0, 0);
-      return false;
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-};
-
 interface SquareAndColsProps {
   square: ReactNode;
   aspectRatio?: number;
@@ -96,9 +61,6 @@ interface SquareAndColsProps {
   dispatch: Dispatch<KeypressAction | PasteAction>;
 }
 export const SquareAndCols = (props: SquareAndColsProps) => {
-  const height = useViewportHeight();
-  useScrollLock();
-
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { width: cqw, height: cqh } = usePolyfilledResizeObserver(containerRef);
   const [useCQ, setUseCQ] = useState(true);
@@ -116,10 +78,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           display: 'flex',
           flex: '1 1 auto',
           flexDirection: 'column',
-          height:
-            height !== 0
-              ? height - HEADER_HEIGHT
-              : `calc(100dvh - env(keyboard-inset-height, 0px) - ${HEADER_HEIGHT}px)`,
+          height: ['100svh', '100%'],
           width: '100%',
           position: 'absolute',
           [SMALL_AND_UP]: {
