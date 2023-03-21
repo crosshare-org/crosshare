@@ -73,7 +73,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
-      const mkey = fromKeyboardEvent(e, true);
+      const mkey = fromKeyboardEvent(e);
       if (isSome(mkey)) {
         const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);

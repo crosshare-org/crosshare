@@ -296,8 +296,7 @@ export type PuzzleInProgressStrictT = t.TypeOf<typeof PuzzleInProgressStrictV>;
 
 export type Key =
   | { k: KeyK.AllowedCharacter; c: string }
-  | { k: Exclude<KeyK, KeyK.AllowedCharacter|KeyK.SwipeEntry> }
-  | { k: KeyK.SwipeEntry; t: string };
+  | { k: Exclude<KeyK, KeyK.AllowedCharacter> };
 
 export enum KeyK {
   ArrowRight,
@@ -329,7 +328,6 @@ export enum KeyK {
   OskBackspace,
   Rebus,
   Block,
-  SwipeEntry,
 }
 
 export const ALLOWABLE_GRID_CHARS = /^[A-Za-z0-9Ññ&]$/;
@@ -345,8 +343,8 @@ export function fromKeyboardEvent(event: {
   altKey?: boolean;
   ctrlKey?: boolean;
   target?: EventTarget | null;
-}, checkTarget=false): Option<Key> {
-  if (checkTarget && event.target) {
+}): Option<Key> {
+  if (event.target) {
     const tagName = (event.target as HTMLElement)?.tagName?.toLowerCase();
     if (tagName === 'textarea' || tagName === 'input') {
       return none;
@@ -357,7 +355,7 @@ export function fromKeyboardEvent(event: {
     return none;
   }
 
-  const basicKey: Option<Exclude<KeyK, KeyK.AllowedCharacter|KeyK.SwipeEntry>> = (() => {
+  const basicKey: Option<Exclude<KeyK, KeyK.AllowedCharacter>> = (() => {
     switch (event.key) {
       case 'ArrowLeft':
         return some(KeyK.ArrowLeft);

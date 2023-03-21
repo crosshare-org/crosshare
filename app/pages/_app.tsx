@@ -69,12 +69,6 @@ export default function CrosshareApp({
   }, [audioContext, setAudioContext]);
 
   useEffect(() => {
-    if ("virtualKeyboard" in navigator) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      navigator.virtualKeyboard.overlaysContent = true;
-    }
-
     const handleStart = () => {
       setLoading(true);
     };
