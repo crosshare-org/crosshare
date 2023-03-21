@@ -5,9 +5,10 @@
 !app/firebaseConfig.ts
 !app/.eslintrc.json
 !app/.sentryclirc
-!app/sentry.client.config.js
-!app/sentry.edge.config.js
-!app/sentry.server.config.js
+!app/sentryConfig.ts
+!app/sentry.client.config.ts
+!app/sentry.edge.config.ts
+!app/sentry.server.config.ts
 !app/sentry.properties
 !app/package.json
 !app/yarn.lock

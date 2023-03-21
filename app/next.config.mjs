@@ -3,7 +3,7 @@ import { withSentryConfig } from '@sentry/nextjs';
 
 const distDir = 'nextjs';
 const baseConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false, // TODO When this is on reducers intentionally run twice to detect impure reducers. This is causing issues w/ block editing in constructor (but not text entry, for some reason?). I just don't have time to look into it now.
   distDir: distDir,
   poweredByHeader: false,
   i18n: {
@@ -52,7 +52,6 @@ export default async (phase) => {
   }
 
   const bundleAnalyzer = await import('@next/bundle-analyzer');
-
 
   const withBundleAnalyzer = bundleAnalyzer.default({
     enabled: process.env.ANALYZE === 'true',

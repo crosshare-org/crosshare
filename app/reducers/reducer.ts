@@ -81,7 +81,6 @@ interface PuzzleState extends GridInterfaceState {
   bankedSeconds: number;
   currentTimeWindowStart: number;
   loadedPlayState: boolean;
-  waitToResize: boolean;  // TODO this is probably not needed anymore
   contestSubmission?: string;
   contestPriorSubmissions?: Array<string>;
   contestRevealed?: boolean;
@@ -995,22 +994,6 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           isPuzzleState(state) ? state.prefs : undefined
         ),
       };
-    } else if (key.k === KeyK.SwipeEntry) {
-      const chars = key.t.toUpperCase().split('').filter(c => c.match(ALLOWABLE_GRID_CHARS));
-      for (const char of chars) {
-        state = enterText(state, char);
-        state = {
-          ...state,
-          wasEntryClick: false,
-          active: advancePosition(
-            state.grid,
-            state.active,
-            isPuzzleState(state) ? state.wrongCells : new Set(),
-            isPuzzleState(state) ? state.prefs : undefined
-          ),
-        };
-      }
-      return state;
     } else if (key.k === KeyK.Backspace || key.k === KeyK.OskBackspace) {
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
@@ -1519,7 +1502,6 @@ export function puzzleReducer(
     }
     return {
       ...state,
-      waitToResize: false,
       currentTimeWindowStart: new Date().getTime(),
     };
   }
@@ -1541,13 +1523,12 @@ export function puzzleReducer(
       state.currentTimeWindowStart || new Date().getTime();
     return {
       ...state,
-      waitToResize: false,
       currentTimeWindowStart,
       dismissedKeepTrying: true,
     };
   }
   if (action.type === 'DISMISSSUCCESS') {
-    return { ...state, waitToResize: false, dismissedSuccess: true };
+    return { ...state, dismissedSuccess: true };
   }
   if (action.type === 'UNDISMISSSUCCESS') {
     return { ...state, dismissedSuccess: false };

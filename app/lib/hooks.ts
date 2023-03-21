@@ -5,8 +5,6 @@ import {
   useMemo,
   MouseEvent,
   RefObject,
-  ForwardedRef,
-  useRef,
 } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
@@ -343,26 +341,6 @@ export function useAuth(): AuthContextValue {
     updateDisplayName,
   };
 }
-
-export const useForwardRef = <T,>(
-  ref: ForwardedRef<T>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialValue: any = null
-) => {
-  const targetRef = useRef<T>(initialValue);
-
-  useEffect(() => {
-    if (!ref) return;
-
-    if (typeof ref === 'function') {
-      ref(targetRef.current);
-    } else {
-      ref.current = targetRef.current;
-    }
-  }, [ref]);
-
-  return targetRef;
-};
 
 export function useHover(): [
   boolean,

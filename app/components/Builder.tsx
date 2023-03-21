@@ -13,6 +13,7 @@ import { Global } from '@emotion/react';
 import { eqSet, STORAGE_KEY } from '../lib/utils';
 import { ContactLinks } from './ContactLinks';
 import { isRight } from 'fp-ts/lib/Either';
+import { isSome } from 'fp-ts/lib/Option';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   FaRegNewspaper,
@@ -30,6 +31,7 @@ import {
   FaUserLock,
   FaRegPlusSquare,
   FaSignInAlt,
+  FaKeyboard,
   FaRegFile,
   FaEyeSlash,
 } from 'react-icons/fa';
@@ -83,9 +85,10 @@ import {
   CancelAutofillMessage,
   PuzzleInProgressV,
   PuzzleInProgressT,
+  fromKeyString,
   KeyK,
+  fromKeyboardEvent,
   PartialBy,
-  Key,
 } from '../lib/types';
 import {
   Symmetry,
@@ -124,13 +127,13 @@ import * as WordDB from '../lib/WordDB';
 import { Overlay } from './Overlay';
 import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
 
+import { Keyboard } from './Keyboard';
 import { FULLSCREEN_CSS, SMALL_AND_UP } from '../lib/style';
 import { ButtonReset } from './Buttons';
 import { useSnackbar } from './Snackbar';
 import { importFile, exportFile, ExportProps } from '../lib/converter';
 import { getAutofillWorker } from '../lib/workerLoader';
 import type { User } from 'firebase/auth';
-import { HiddenInput, useKeyboard } from './HiddenInput';
 
 let worker: Worker | null = null;
 
@@ -1087,28 +1090,41 @@ const GridMode = ({
   ...props
 }: GridModeProps) => {
   const [muted, setMuted] = usePersistedBoolean('muted', false);
+  const [toggleKeyboard, setToggleKeyboard] = usePersistedBoolean(
+    'keyboard',
+    false
+  );
   const { showSnackbar } = useSnackbar();
 
-  const handleKeypress = useCallback(
-    (mkey: Key) => {
-      if (mkey.k === KeyK.Enter && !state.isEnteringRebus) {
-        reRunAutofill();
-        return true;
-      }
-      if (mkey.k === KeyK.Exclamation) {
-        const entry = getMostConstrainedEntry();
-        if (entry !== null) {
-          const ca: ClickedEntryAction = {
-            type: 'CLICKEDENTRY',
-            entryIndex: entry,
-          };
-          dispatch(ca);
+  const physicalKeyboardHandler = useCallback(
+    (e: KeyboardEvent) => {
+      const mkey = fromKeyboardEvent(e);
+      if (isSome(mkey)) {
+        e.preventDefault();
+        if (mkey.value.k === KeyK.Enter && !state.isEnteringRebus) {
+          reRunAutofill();
+          return;
         }
-        return true;
+        if (mkey.value.k === KeyK.Exclamation) {
+          const entry = getMostConstrainedEntry();
+          if (entry !== null) {
+            const ca: ClickedEntryAction = {
+              type: 'CLICKEDENTRY',
+              entryIndex: entry,
+            };
+            dispatch(ca);
+          }
+          return;
+        }
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        dispatch(kpa);
       }
-      return false;
     },
     [dispatch, reRunAutofill, state.isEnteringRebus, getMostConstrainedEntry]
+  );
+  useEventListener(
+    'keydown',
+    physicalKeyboardHandler,
   );
 
   const pasteHandler = useCallback(
@@ -1266,7 +1282,16 @@ const GridMode = ({
     state.grid.cells,
   ]);
 
-  const [hiddenInputRef, focusGrid] = useKeyboard();
+  const keyboardHandler = useCallback(
+    (key: string) => {
+      const mkey = fromKeyString(key);
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        dispatch(kpa);
+      }
+    },
+    [dispatch]
+  );
 
   const topBarChildren = useMemo(() => {
     let autofillIcon = <SpinnerDisabled />;
@@ -1290,7 +1315,6 @@ const GridMode = ({
     return (
       <>
         <TopBarDropDown
-          onClose={focusGrid}
           icon={autofillIcon}
           text="Autofill"
           hoverText={autofillText}
@@ -1344,11 +1368,10 @@ const GridMode = ({
             dispatch(a);
           }}
         />
-        <TopBarDropDown onClose={focusGrid} icon={<FaEllipsisH />} text="More">
+        <TopBarDropDown icon={<FaEllipsisH />} text="More">
           {(closeDropdown) => (
             <>
               <NestedDropDown
-                onClose={focusGrid}
                 closeParent={closeDropdown}
                 icon={<FaRegPlusSquare />}
                 text="New Puzzle"
@@ -1356,7 +1379,6 @@ const GridMode = ({
                 {() => <NewPuzzleForm dispatch={dispatch} />}
               </NestedDropDown>
               <NestedDropDown
-                onClose={focusGrid}
                 closeParent={closeDropdown}
                 icon={<FaFileImport />}
                 text="Import .puz File"
@@ -1375,7 +1397,6 @@ const GridMode = ({
                 }}
               />
               <NestedDropDown
-                onClose={focusGrid}
                 closeParent={closeDropdown}
                 icon={<IoMdStats />}
                 text="Stats"
@@ -1449,7 +1470,6 @@ const GridMode = ({
                 )}
               </NestedDropDown>
               <NestedDropDown
-                onClose={focusGrid}
                 closeParent={closeDropdown}
                 icon={<SymmetryIcon type={state.symmetry} />}
                 text="Change Symmetry"
@@ -1631,6 +1651,11 @@ const GridMode = ({
                   onClick={() => setMuted(true)}
                 />
               )}
+              <TopBarDropDownLink
+                icon={<FaKeyboard />}
+                text="Toggle Keyboard"
+                onClick={() => setToggleKeyboard(!toggleKeyboard)}
+              />
               {props.isAdmin ? (
                 <>
                   <TopBarDropDownLinkA
@@ -1658,7 +1683,6 @@ const GridMode = ({
       </>
     );
   }, [
-    focusGrid,
     getMostConstrainedEntry,
     props.autofillEnabled,
     props.autofillInProgress,
@@ -1678,6 +1702,8 @@ const GridMode = ({
     reRunAutofill,
     dispatch,
     muted,
+    toggleKeyboard,
+    setToggleKeyboard,
   ]);
 
   return (
@@ -1748,17 +1774,7 @@ const GridMode = ({
         ) : (
           ''
         )}
-        <HiddenInput
-          ref={hiddenInputRef}
-          dispatch={dispatch}
-          handleKeypress={handleKeypress}
-          enterKeyHint={'go'}
-        />
         <div
-          onClick={focusGrid}
-          onKeyDown={focusGrid}
-          tabIndex={0}
-          role={'textbox'}
           css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}
         >
           <SquareAndCols
@@ -1778,6 +1794,15 @@ const GridMode = ({
             left={fillLists.left}
             right={fillLists.right}
             dispatch={dispatch}
+          />
+        </div>
+        <div css={{ flex: 'none', width: '100%' }}>
+          <Keyboard
+            toggleKeyboard={toggleKeyboard}
+            keyboardHandler={keyboardHandler}
+            muted={muted}
+            showExtraKeyLayout={state.showExtraKeyLayout}
+            includeBlockKey={true}
           />
         </div>
       </div>
