@@ -7,7 +7,6 @@ import {
   LARGE_AND_UP,
   TINY_COL_MIN_HEIGHT,
   SQUARE_HEADER_HEIGHT,
-  HEADER_HEIGHT,
 } from '../lib/style';
 import { KeyK } from '../lib/types';
 import { usePolyfilledResizeObserver } from '../lib/hooks';
