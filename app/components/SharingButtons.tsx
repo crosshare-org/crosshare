@@ -1,3 +1,4 @@
+import { mix } from 'color2k';
 import { ReactNode } from 'react';
 import { FaTwitter, FaFacebook, FaEnvelope } from 'react-icons/fa';
 
@@ -18,14 +19,14 @@ function linkName(network: Network): string {
   }
 }
 
-function colors(network: Network): [string, string] {
+function colors(network: Network): string {
   switch (network) {
   case Network.Facebook:
-    return ['#3b5998', '#2d4373'];
+    return '#3b5998';
   case Network.Twitter:
-    return ['#55acee', '#2795e9'];
+    return '#55acee';
   case Network.Email:
-    return ['#777777', '#5e5e5e'];
+    return '#777777';
   }
 }
 
@@ -63,12 +64,11 @@ function SharingButton({ network, path, text }: SharingButtonProps) {
     margin: '0 0.2em',
     padding: '0.2em 0.5em',
     borderRadius: '0.3em',
-    color: 'var(--social-text)',
-    //textShadow: '1px 1px 1px #333',
-    backgroundColor: colors(network)[0],
+    color: '#fff',
+    backgroundColor: mix(colors(network), 'black', 0.3),
     ['&:hover, &:active']: {
-      backgroundColor: colors(network)[1],
-      color: 'var(--social-text)',
+      backgroundColor: mix(colors(network), 'black', 0.4),
+      color: '#fff',
       textDecoration: 'none',
     }
   }} href={url(network, path, text)} target='_blank' rel='noopener noreferrer' aria-label={linkName(network)}>
