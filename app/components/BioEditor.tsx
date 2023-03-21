@@ -5,12 +5,9 @@ import { Markdown } from './Markdown';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { Button } from './Buttons';
 import { Overlay } from './Overlay';
-import {
-  deleteField,
-  serverTimestamp,
-  updateDoc,
-} from 'firebase/firestore';
+import { deleteField, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { markdownToHast } from '../lib/markdown/markdown';
+import { LengthLimitedInput, LengthView } from './Inputs';
 
 interface BioEditorProps {
   constructorPage: ConstructorPageT;
@@ -21,13 +18,18 @@ interface BioEditorProps {
 const BIO_LENGTH_LIMIT = 1500;
 const PAYPAL_LENGTH_LIMIT = 140;
 const SIG_LENGTH_LIMIT = 500;
+const SHARE_BUTTONS_LENGTH_LIMIT = 120;
 
 export const BioEditor = (props: BioEditorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSigOpen, setIsSigOpen] = useState(false);
+  const [isShareButtonsOpen, setIsShareButtonsOpen] = useState(false);
   const [showPaypalEditor, setShowPaypalEditor] = useState(false);
   const [bioText, setBioText] = useState(props.constructorPage.b);
   const [sigText, setSigText] = useState(props.constructorPage.sig || '');
+  const [shareButtonsText, setShareButtonsText] = useState(
+    props.constructorPage.st || ''
+  );
   const [paypalEmail, setPaypalEmail] = useState(
     props.constructorPage.pp || ''
   );
@@ -51,6 +53,18 @@ export const BioEditor = (props: BioEditorProps) => {
     console.log('Removing sig');
     updateDoc(getDocRef('cp', props.constructorPage.id), {
       sig: deleteField(),
+      m: true,
+      t: serverTimestamp(),
+    }).then(() => {
+      console.log('Updated');
+      setIsOpen(false);
+    });
+  }
+
+  function deleteShareButtonsText() {
+    console.log('Removing share button text');
+    updateDoc(getDocRef('cp', props.constructorPage.id), {
+      st: deleteField(),
       m: true,
       t: serverTimestamp(),
     }).then(() => {
@@ -121,6 +135,23 @@ export const BioEditor = (props: BioEditorProps) => {
     });
   }
 
+  function submitShareButtonsEdit(event: FormEvent) {
+    event.preventDefault();
+    const textToSubmit = shareButtonsText.trim();
+    if (!textToSubmit) {
+      return;
+    }
+    console.log('Submitting share button text');
+    updateDoc(getDocRef('cp', props.constructorPage.id), {
+      st: textToSubmit,
+      m: true,
+      t: serverTimestamp(),
+    }).then(() => {
+      console.log('Updated');
+      setIsShareButtonsOpen(false);
+    });
+  }
+
   return (
     <div
       css={{
@@ -145,7 +176,7 @@ export const BioEditor = (props: BioEditorProps) => {
             }}
           >
             <h4>Live Preview:</h4>
-            <Markdown hast={markdownToHast({text: bioText})} />
+            <Markdown hast={markdownToHast({ text: bioText })} />
           </div>
           <form css={{ margin: '1em 0' }} onSubmit={submitEdit}>
             <label css={{ width: '100%', margin: 0 }}>
@@ -252,7 +283,7 @@ export const BioEditor = (props: BioEditorProps) => {
             }}
           >
             <h4>Live Preview:</h4>
-            <Markdown inline={true} hast={markdownToHast({text: sigText})} />
+            <Markdown inline={true} hast={markdownToHast({ text: sigText })} />
           </div>
           <form css={{ margin: '1em 0' }} onSubmit={submitSigEdit}>
             <label css={{ width: '100%', margin: 0 }}>
@@ -357,6 +388,77 @@ export const BioEditor = (props: BioEditorProps) => {
         </Overlay>
       ) : (
         ''
+      )}
+      <h4>Social sharing buttons</h4>
+      {isShareButtonsOpen ? (
+        <>
+          <form css={{ margin: '1em 0' }} onSubmit={submitShareButtonsEdit}>
+            <p>
+              Enter the text that will show up in share dialogs on sites
+              that support custom text (the variable <strong>{'{time}'}</strong>{' '}
+              will get replaced with the sharer&apos;s solve time and{' '}
+              <strong>{'{title}'}</strong> with the puzzle&apos;s title):
+            </p>
+            <div css={{ margin: '1em 0' }}>
+              <LengthLimitedInput
+                css={{ width: '50%' }}
+                updateValue={setShareButtonsText}
+                maxLength={SHARE_BUTTONS_LENGTH_LIMIT}
+                value={shareButtonsText}
+              />
+              <LengthView
+                maxLength={SHARE_BUTTONS_LENGTH_LIMIT}
+                value={shareButtonsText}
+              />
+            </div>
+            <Button
+              type="submit"
+              css={{ marginRight: '0.5em' }}
+              disabled={shareButtonsText.trim().length === 0}
+              text="Save"
+            />
+            <Button
+              boring={true}
+              css={{ marginRight: '0.5em' }}
+              onClick={() => {
+                setIsShareButtonsOpen(false);
+              }}
+              text="Cancel"
+            />
+          </form>
+        </>
+      ) : (
+        <>
+          <p>
+            If enabled, sharing buttons for popular social media sites will
+            appear after a user solves one of your puzzles. You can customize
+            the text that will be used for shares.
+          </p>
+          {props.constructorPage.st ? (
+            <>
+              <Button
+                css={{ marginRight: '1.5em' }}
+                onClick={() => setIsShareButtonsOpen(true)}
+                text="Edit sharing text"
+              />
+              <Button
+                boring={true}
+                onClick={deleteShareButtonsText}
+                text="Remove sharing buttons"
+              />
+            </>
+          ) : (
+            <Button
+              onClick={() => {
+                setShareButtonsText(
+                  `I solved ${props.constructorPage.n}'s puzzle "{title}" in {time}!`
+                );
+                setIsShareButtonsOpen(true);
+              }}
+              text="Add sharing buttons"
+            />
+          )}
+        </>
       )}
     </div>
   );
