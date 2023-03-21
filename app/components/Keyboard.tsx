@@ -84,6 +84,9 @@ const Key = (props: KeyProps) => {
     <button
       className={props.className}
       css={{
+        '&:focus': {
+          outline: 'none',
+        },
         padding: 0,
         border: 'none',
         fontSize: props.smallFont ? '90%' : '100%',
