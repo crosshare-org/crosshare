@@ -20,6 +20,16 @@ export const HAS_PHYSICAL_KEYBOARD =
   '@media (hover: hover) and (pointer: fine)';
 
 export const FULLSCREEN_CSS = css`
+  html {
+    -ms-overflow-style: none;
+    scrollbar-color: transparent transparent;
+    scrollbar-width: none;
+    overscroll-behavior: none;
+  }
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
   html,
   body {
     overflow: hidden;

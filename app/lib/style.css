@@ -290,14 +290,6 @@ html {
   min-height: 100%;
   height: 100%;
   position: relative;
-  -ms-overflow-style: none;
-  scrollbar-color: transparent transparent;
-  scrollbar-width: none;
-  overscroll-behavior: none;
-}
-::-webkit-scrollbar {
-  width: 0;
-  height: 0;
 }
 body {
   height: calc(var(--vh, 100vh) - env(safe-area-inset-bottom) - env(safe-area-inset-top));
