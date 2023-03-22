@@ -403,15 +403,6 @@ function isDelAlternateAction(
   return action.type === 'DELALT';
 }
 
-export interface ToggleHiddenAction extends PuzzleAction {
-  type: 'TOGGLEHIDDEN';
-}
-function isToggleHiddenAction(
-  action: PuzzleAction
-): action is ToggleHiddenAction {
-  return action.type === 'TOGGLEHIDDEN';
-}
-
 export interface SetHighlightAction extends PuzzleAction {
   type: 'SETHIGHLIGHT';
   highlight: 'circle' | 'shade';
@@ -726,13 +717,13 @@ function enterText<T extends GridInterfaceState>(state: T, text: string): T {
       state.cellsIterationCount[ci] += 1;
     }
     const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-    state.grid = gridWithNewChar(
+    const grid = gridWithNewChar(
       state.grid,
       state.active,
       text || ' ',
       symmetry
     );
-    state = postEdit(state, ci);
+    state = postEdit({...state, grid}, ci);
   }
   return state;
 }
@@ -962,9 +953,9 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-        state.grid = gridWithBlockToggled(state.grid, state.active, symmetry);
+        const grid = gridWithBlockToggled(state.grid, state.active, symmetry);
         return {
-          ...postEdit(state, ci),
+          ...postEdit({...state, grid}, ci),
           wasEntryClick: false,
           active: nextCell(state.grid, state.active),
         };
@@ -974,9 +965,9 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-        state.grid = gridWithBarToggled(state.grid, state.active, symmetry);
+        const grid = gridWithBarToggled(state.grid, state.active, symmetry);
         return {
-          ...postEdit(state, ci),
+          ...postEdit({...state, grid}, ci),
           wasEntryClick: false,
         };
       }
@@ -1002,8 +993,8 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           const elapsed = getCurrentTime(state);
           state.cellsUpdatedAt[ci] = elapsed;
         }
-        state.grid = gridWithNewChar(state.grid, state.active, ' ', symmetry);
-        state = postEdit(state, ci);
+        const grid = gridWithNewChar(state.grid, state.active, ' ', symmetry);
+        state = postEdit({...state, grid}, ci);
       }
       return {
         ...state,
@@ -1018,8 +1009,8 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           const elapsed = getCurrentTime(state);
           state.cellsUpdatedAt[ci] = elapsed;
         }
-        state.grid = gridWithNewChar(state.grid, state.active, ' ', symmetry);
-        state = postEdit(state, ci);
+        const grid = gridWithNewChar(state.grid, state.active, ' ', symmetry);
+        state = postEdit({...state, grid}, ci);
       }
       return {
         ...state,
@@ -1030,9 +1021,9 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-        state.grid = gridWithHiddenToggled(state.grid, state.active, symmetry);
+        const grid = gridWithHiddenToggled(state.grid, state.active, symmetry);
         return {
-          ...postEdit(state, ci),
+          ...postEdit({...state, grid}, ci),
           wasEntryClick: false,
         };
       }
@@ -1260,18 +1251,6 @@ export function builderReducer(
   }
   if (isImportPuzAction(action)) {
     return initialBuilderStateFromSaved(action.puz, state);
-  }
-  if (isToggleHiddenAction(action)) {
-    const ci = cellIndex(state.grid, state.active);
-    if (state.isEditable(ci)) {
-      const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-      state.grid = gridWithHiddenToggled(state.grid, state.active, symmetry);
-      return {
-        ...postEdit(state, ci),
-        wasEntryClick: false,
-      };
-    }
-    return state;
   }
   if (isPublishAction(action)) {
     const errors = [];

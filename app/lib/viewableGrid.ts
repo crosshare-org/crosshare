@@ -341,6 +341,7 @@ export function gridWithNewChar<
 >(grid: Grid, pos: Position, char: string, sym: Symmetry): Grid {
   const index = pos.row * grid.width + pos.col;
   const cells = [...grid.cells];
+  const hidden = new Set(grid.hidden);
   if (valAt(grid, pos) === BLOCK) {
     if (!grid.allowBlockEditing) {
       return grid;
@@ -348,15 +349,15 @@ export function gridWithNewChar<
 
     const flippedCell = flipped(grid, pos, sym);
     if (flippedCell !== null && cells[flippedCell] === BLOCK) {
-      if (grid.hidden.has(index)) {
-        grid.hidden.delete(flippedCell);
+      if (hidden.has(index)) {
+        hidden.delete(flippedCell);
       }
       cells[flippedCell] = ' ';
     }
   }
-  grid.hidden.delete(index);
+  hidden.delete(index);
   cells[index] = char;
-  return fromCells({ ...grid, cells });
+  return fromCells({ ...grid, cells, hidden });
 }
 
 function flipped<Entry extends ViewableEntry, Grid extends ViewableGrid<Entry>>(
@@ -484,25 +485,26 @@ export function gridWithHiddenToggled<
   const index = pos.row * grid.width + pos.col;
   const wasHidden = grid.hidden.has(index);
   const cells = [...grid.cells];
+  const hidden = new Set(grid.hidden);
 
   if (wasHidden) {
-    grid.hidden.delete(index);
+    hidden.delete(index);
   } else {
     cells[index] = BLOCK;
-    grid.hidden.add(index);
+    hidden.add(index);
   }
 
   const flippedCell = flipped(grid, pos, sym);
   if (flippedCell !== null) {
     if (wasHidden) {
-      grid.hidden.delete(flippedCell);
+      hidden.delete(flippedCell);
     } else {
       cells[flippedCell] = BLOCK;
-      grid.hidden.add(flippedCell);
+      hidden.add(flippedCell);
     }
   }
 
-  return fromCells(removeExtraneousBars({ ...grid, cells }));
+  return fromCells(removeExtraneousBars({ ...grid, cells, hidden }));
 }
 
 export function gridWithBlockToggled<
@@ -515,16 +517,17 @@ export function gridWithBlockToggled<
   }
   const index = pos.row * grid.width + pos.col;
   const cells = [...grid.cells];
-  grid.hidden.delete(index);
+  const hidden = new Set(grid.hidden);
+  hidden.delete(index);
   cells[index] = char;
 
   const flippedCell = flipped(grid, pos, sym);
   if (flippedCell !== null) {
-    grid.hidden.delete(flippedCell);
+    hidden.delete(flippedCell);
     cells[flippedCell] = char;
   }
 
-  return fromCells(removeExtraneousBars({ ...grid, cells }));
+  return fromCells(removeExtraneousBars({ ...grid, cells, hidden }));
 }
 
 export function gridWithBarToggled<
@@ -533,30 +536,33 @@ export function gridWithBarToggled<
 >(grid: Grid, pos: PosAndDir, sym: Symmetry): Grid {
   const index = pos.row * grid.width + pos.col;
   const [flippedVBar, flippedHBar] = flippedBar(grid, pos, sym);
+
+  const vBars = new Set(grid.vBars);
+  const hBars = new Set(grid.hBars);
   if (pos.dir === Direction.Across) {
     if (pos.col === grid.width - 1) return grid;
-    if (grid.vBars.has(index)) {
-      grid.vBars.delete(index);
-      if (flippedVBar !== null) grid.vBars.delete(flippedVBar);
-      if (flippedHBar !== null) grid.hBars.delete(flippedHBar);
+    if (vBars.has(index)) {
+      vBars.delete(index);
+      if (flippedVBar !== null) vBars.delete(flippedVBar);
+      if (flippedHBar !== null) hBars.delete(flippedHBar);
     } else {
-      grid.vBars.add(index);
-      if (flippedVBar !== null) grid.vBars.add(flippedVBar);
-      if (flippedHBar !== null) grid.hBars.add(flippedHBar);
+      vBars.add(index);
+      if (flippedVBar !== null) vBars.add(flippedVBar);
+      if (flippedHBar !== null) hBars.add(flippedHBar);
     }
   } else {
     if (pos.row === grid.height - 1) return grid;
-    if (grid.hBars.has(index)) {
-      grid.hBars.delete(index);
-      if (flippedVBar !== null) grid.vBars.delete(flippedVBar);
-      if (flippedHBar !== null) grid.hBars.delete(flippedHBar);
+    if (hBars.has(index)) {
+      hBars.delete(index);
+      if (flippedVBar !== null) vBars.delete(flippedVBar);
+      if (flippedHBar !== null) hBars.delete(flippedHBar);
     } else {
-      grid.hBars.add(index);
-      if (flippedVBar !== null) grid.vBars.add(flippedVBar);
-      if (flippedHBar !== null) grid.hBars.add(flippedHBar);
+      hBars.add(index);
+      if (flippedVBar !== null) vBars.add(flippedVBar);
+      if (flippedHBar !== null) hBars.add(flippedHBar);
     }
   }
-  return fromCells(removeExtraneousBars({ ...grid }));
+  return fromCells(removeExtraneousBars({ ...grid, vBars, hBars }));
 }
 
 export function getCluedAcrossAndDown<Entry extends ViewableEntry>(

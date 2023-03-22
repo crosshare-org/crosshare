@@ -109,7 +109,6 @@ import {
   getClueProps,
   SetShowDownloadLink,
   PasteAction,
-  ToggleHiddenAction,
 } from '../reducers/reducer';
 import {
   NestedDropDown,
@@ -1580,8 +1579,9 @@ const GridMode = ({
                 text="Toggle Cell Visibility"
                 shortcutHint={<KeyIcon text="#" />}
                 onClick={() => {
-                  const a: ToggleHiddenAction = {
-                    type: 'TOGGLEHIDDEN',
+                  const a: KeypressAction = {
+                    type: 'KEYPRESS',
+                    key: { k: KeyK.Octothorp },
                   };
                   dispatch(a);
                 }}
