@@ -51,6 +51,9 @@ const ClueListItem = memo(function ClueListItem({
     }
   }
   function click(e: MouseEvent | KeyboardEvent) {
+    if ((e.target as HTMLElement)?.tagName?.toLowerCase() === 'a') {
+      return;
+    }
     e.preventDefault();
     if (isActive) {
       props.dispatch({ type: 'CHANGEDIRECTION' });
