@@ -106,5 +106,6 @@ export const colorTheme = (
     '--text-input-border': darkMode ? '#000' : '#777',
     '--snackbar-bg': darkMode ? '#ddd' : '#121212',
     '--snackbar-text': darkMode ? 'black' : '#ddd',
+    '--social-text': darkMode ? '#ddd' : '#fff',
   };
 };
