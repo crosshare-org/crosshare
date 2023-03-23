@@ -5,9 +5,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
+          cache-dependency-path: 'app/yarn.lock'
     - name: Install modules
       working-directory: ./app
-      run: yarn
+      run: yarn install --frozen-lockfile
     - name: Run tests
       working-directory: ./app
       run: NODE_OPTIONS='--experimental-vm-modules'  npx jest --ci
