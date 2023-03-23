@@ -27,8 +27,7 @@
     "predeploy": "tsc && yarn clean && next build",
     "prodDeploy": "npx firebase deploy --only hosting:prod",
     "stagingDeploy": "npx firebase deploy --only hosting:staging",
-    "test": "NODE_OPTIONS='--experimental-vm-modules' NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=localhost:8080 npx firebase emulators:exec --only firestore 'jest --watch'",
-    "ci": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=localhost:8080 npx firebase emulators:exec --project=mdcrosshare --only firestore 'jest --ci --runInBand --forceExit'"
+    "test": "NODE_OPTIONS='--experimental-vm-modules' NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 FIRESTORE_EMULATOR_HOST=localhost:8080 npx firebase emulators:exec --only firestore 'jest --watch'"
   },
   "engines": {
     "node": "18"
