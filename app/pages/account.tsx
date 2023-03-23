@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Head from 'next/head';
 
 import { DisplayNameForm, useDisplayName } from '../components/DisplayNameForm';
-import { requiresAuth, AuthProps } from '../components/AuthContext';
+import { requiresAuth, AuthProps } from '../components/AuthHelpers';
 import { getAuth, getCollection, getDocRef } from '../lib/firebaseWrapper';
 import { DefaultTopBar } from '../components/TopBar';
 import { Link } from '../components/Link';

@@ -67,7 +67,7 @@ import {
   CommaKey,
   KeyIcon,
 } from './Icons';
-import { AuthProps } from './AuthContext';
+import { AuthProps } from './AuthHelpers';
 import { Histogram } from './Histogram';
 import { PublishOverlay } from './PublishOverlay';
 import { Timestamp } from '../lib/timestamp';
@@ -89,9 +89,10 @@ import {
   KeyK,
   fromKeyboardEvent,
   PartialBy,
+  Symmetry,
+  PrefillSquares,
 } from '../lib/types';
 import {
-  Symmetry,
   BuilderState,
   builderReducer,
   KeypressAction,
@@ -104,7 +105,6 @@ import {
   initialBuilderState,
   BuilderGrid,
   ClickedEntryAction,
-  PrefillSquares,
   ImportPuzAction,
   getClueProps,
   SetShowDownloadLink,

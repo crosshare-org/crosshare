@@ -1,9 +1,8 @@
 import Head from 'next/head';
 
 import {
-  AuthContext,
   renderLoginButtonIfNeeded,
-} from '../components/AuthContext';
+} from '../components/AuthHelpers';
 import { Builder } from '../components/Builder';
 import { LoadButton } from '../components/DBLoader';
 import { useWordDB } from '../lib/WordDB';
@@ -30,6 +29,7 @@ import { Emoji } from '../components/Emoji';
 import { ContactLinks } from '../components/ContactLinks';
 import { withStaticTranslation } from '../lib/translation';
 import { CgSidebarRight } from 'react-icons/cg';
+import { AuthContext } from '../components/AuthContext';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };

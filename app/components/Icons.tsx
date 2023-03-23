@@ -1,5 +1,5 @@
 import { FaEye, FaCheck } from 'react-icons/fa';
-import { CheatUnit, PrefillSquares, Symmetry } from '../reducers/reducer';
+import { CheatUnit, PrefillSquares, Symmetry } from '../lib/types';
 import { Link } from './Link';
 
 const Square = (props: {

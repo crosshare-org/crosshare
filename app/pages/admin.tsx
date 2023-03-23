@@ -5,7 +5,7 @@ import NextJSRouter from 'next/router';
 import { Markdown } from '../components/Markdown';
 import { Link } from '../components/Link';
 import { Button } from '../components/Buttons';
-import { requiresAdmin } from '../components/AuthContext';
+import { requiresAdmin } from '../components/AuthHelpers';
 import { DefaultTopBar } from '../components/TopBar';
 import { PuzzleResult, puzzleFromDB } from '../lib/types';
 import {

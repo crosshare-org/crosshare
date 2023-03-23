@@ -7,6 +7,9 @@ import {
   Key,
   KeyK,
   ALLOWABLE_GRID_CHARS,
+  Symmetry,
+  PrefillSquares,
+  CheatUnit,
 } from '../lib/types';
 import { DBPuzzleT, PlayWithoutUserT } from '../lib/dbtypes';
 import {
@@ -441,12 +444,6 @@ export function isCancelPublishAction(
   return action.type === 'CANCELPUBLISH';
 }
 
-export enum PrefillSquares {
-  EvenEven,
-  OddOdd,
-  EvenOdd,
-  OddEven,
-}
 export interface ImportPuzAction extends PuzzleAction {
   type: 'IMPORTPUZ';
   puz: PuzzleInProgressT;
@@ -498,20 +495,6 @@ function isSetActivePositionAction(
   return action.type === 'SETACTIVEPOSITION';
 }
 
-export enum Symmetry {
-  Rotational,
-  Horizontal,
-  Vertical,
-  None,
-  DiagonalNESW,
-  DiagonalNWSE,
-}
-
-export enum CheatUnit {
-  Square,
-  Entry,
-  Puzzle,
-}
 export interface CheatAction extends PuzzleAction {
   type: 'CHEAT';
   unit: CheatUnit;

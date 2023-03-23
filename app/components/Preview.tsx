@@ -6,7 +6,7 @@ import { Timestamp } from '../lib/timestamp';
 import { Emoji } from './Emoji';
 import { TopBarLink, DefaultTopBar } from './TopBar';
 import { ClueList } from './ClueList';
-import { AuthProps } from './AuthContext';
+import { AuthProps } from './AuthHelpers';
 import { ConstructorNotes } from './ConstructorNotes';
 import { GridView } from './Grid';
 import { Overlay } from './Overlay';

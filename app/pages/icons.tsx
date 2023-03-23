@@ -1,5 +1,5 @@
 import { SymmetryIcon } from '../components/Icons';
-import { Symmetry } from '../reducers/reducer';
+import { Symmetry } from '../lib/types';
 
 export default function IconsTestPage() {
   return (

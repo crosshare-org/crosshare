@@ -7,8 +7,7 @@ import {
   entryAtPosition,
   entriesFromCells,
 } from './gridBase';
-import { ClueT, Position, Direction, PosAndDir, BLOCK } from './types';
-import { Symmetry } from '../reducers/reducer';
+import { ClueT, Position, Direction, PosAndDir, BLOCK, Symmetry } from './types';
 import { AccountPrefsFlagsT } from './prefs';
 import type { Root } from 'hast';
 

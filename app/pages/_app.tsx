@@ -4,7 +4,7 @@ import NextJSRouter, { useRouter } from 'next/router';
 import Head from 'next/head';
 
 import * as gtag from '../lib/gtag';
-import { useAuth } from '../lib/hooks';
+import { useAuth } from "../lib/useAuth";
 import { AuthContext } from '../components/AuthContext';
 import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
 import { Snackbar, SnackbarProvider } from '../components/Snackbar';

@@ -1,4 +1,4 @@
-import { AuthProps, requiresAuth } from '../components/AuthContext';
+import { AuthProps, requiresAuth } from '../components/AuthHelpers';
 import Head from 'next/head';
 import { DefaultTopBar } from '../components/TopBar';
 import { CreateShareSection } from '../components/CreateShareSection';

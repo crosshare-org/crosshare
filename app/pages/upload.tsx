@@ -4,9 +4,8 @@ import Head from 'next/head';
 import { PuzzleInProgressT } from '../lib/types';
 import { importFile } from '../lib/converter';
 import {
-  AuthContext,
   renderLoginButtonIfNeeded,
-} from '../components/AuthContext';
+} from '../components/AuthHelpers';
 import { Preview } from '../components/Preview';
 import { Link, LinkButton } from '../components/Link';
 import { MdMoneyOff } from 'react-icons/md';
@@ -26,6 +25,7 @@ import { Hero } from '../components/Hero';
 import { ContactLinks } from '../components/ContactLinks';
 import { withStaticTranslation } from '../lib/translation';
 import { CgSidebarRight } from 'react-icons/cg';
+import { AuthContext } from '../components/AuthContext';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };

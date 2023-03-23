@@ -3,7 +3,7 @@ import Head from 'next/head';
 import NextJSRouter, { useRouter } from 'next/router';
 import { useRef } from 'react';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
-import { requiresAdmin } from '../../../components/AuthContext';
+import { requiresAdmin } from '../../../components/AuthHelpers';
 import { Button } from '../../../components/Buttons';
 import { EditableText } from '../../../components/EditableText';
 import { ErrorPage } from '../../../components/ErrorPage';

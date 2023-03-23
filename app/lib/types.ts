@@ -18,6 +18,28 @@ export function hasOwnProperty<
 
 export const BLOCK = '.';
 
+export enum Symmetry {
+  Rotational,
+  Horizontal,
+  Vertical,
+  None,
+  DiagonalNESW,
+  DiagonalNWSE,
+}
+
+export enum CheatUnit {
+  Square,
+  Entry,
+  Puzzle,
+}
+
+export enum PrefillSquares {
+  EvenEven,
+  OddOdd,
+  EvenOdd,
+  OddEven,
+}
+
 export enum Direction {
   Across,
   Down,

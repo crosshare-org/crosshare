@@ -47,7 +47,7 @@ import {
   Rebus,
   SpinnerFinished,
 } from './Icons';
-import { AuthContext, AuthPropsOptional } from './AuthContext';
+import { AuthPropsOptional } from './AuthHelpers';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 import { Overlay } from './Overlay';
 import { GridView } from './Grid';
@@ -58,6 +58,7 @@ import {
   KeyK,
   fromKeyboardEvent,
   fromKeyString,
+  CheatUnit,
 } from '../lib/types';
 import {
   fromCells,
@@ -72,7 +73,6 @@ import {
   puzzleReducer,
   advanceActiveToNonBlock,
   PuzzleAction,
-  CheatUnit,
   CheatAction,
   KeypressAction,
   ToggleAutocheckAction,
@@ -128,6 +128,7 @@ import { GridContext } from './GridContext';
 import { DownsOnlyContext } from './DownsOnlyContext';
 import { Timestamp } from '../lib/timestamp';
 import { updateDoc } from 'firebase/firestore';
+import { AuthContext } from './AuthContext';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any

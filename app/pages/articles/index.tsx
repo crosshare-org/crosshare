@@ -2,7 +2,7 @@ import { addDoc, Timestamp } from 'firebase/firestore';
 import Head from 'next/head';
 import { useRef } from 'react';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
-import { requiresAdmin } from '../../components/AuthContext';
+import { requiresAdmin } from '../../components/AuthHelpers';
 import { Button } from '../../components/Buttons';
 import { Link } from '../../components/Link';
 import { useSnackbar } from '../../components/Snackbar';

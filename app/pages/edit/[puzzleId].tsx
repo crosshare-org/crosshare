@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
-import { requiresAuth, AuthProps } from '../../components/AuthContext';
+import { requiresAuth, AuthProps } from '../../components/AuthHelpers';
 import {
   PuzzleResult,
   puzzleFromDB,

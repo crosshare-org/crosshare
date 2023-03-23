@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
-import { requiresAuth, AuthProps } from '../../components/AuthContext';
+import { requiresAuth, AuthProps } from '../../components/AuthHelpers';
 import { PuzzleResult, puzzleFromDB } from '../../lib/types';
 import { PuzzleStatsT, PuzzleStatsV, DBPuzzleV } from '../../lib/dbtypes';
 import { getFromSessionOrDB } from '../../lib/dbUtils';
