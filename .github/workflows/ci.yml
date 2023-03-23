@@ -6,6 +6,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install modules
+      working-directory: ./app
       run: yarn
     - name: Run tests
+      working-directory: ./app
       run: NODE_OPTIONS='--experimental-vm-modules'  npx jest --ci
