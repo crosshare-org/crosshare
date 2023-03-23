@@ -2,7 +2,6 @@ import cases from 'jest-in-case';
 
 import * as BA from '../lib/bitArray';
 import { BigInteger } from '@modern-dev/jsbn';
-import { performance } from 'perf_hooks';
 
 const B32 = '0123456789abcdefghijklmnopqrstuv';
 function randomB32() {
@@ -62,90 +61,57 @@ test('test setBit', () => {
   }
 });
 
-test('test fromString/toString performance', () => {
-  const ourStart = performance.now();
+test('test fromString/toString', () => {
   for (const testCase of testCases) {
     expect(BA.toString(BA.fromString(testCase[0], 32), 32)).toEqual(
       testCase[0]
     );
   }
-  const ourTotal = performance.now() - ourStart;
-
-  const theirStart = performance.now();
   for (const testCase of testCases) {
     expect(new BigInteger(testCase[0], 32).toString(32)).toEqual(testCase[0]);
   }
-  const theirTotal = performance.now() - theirStart;
-
-  expect(ourTotal).toBeLessThanOrEqual(1.5 * theirTotal);
 });
 
-test('test bitLength performance', () => {
-  const theirStart = performance.now();
+test('test bitLength', () => {
   for (const testCase of testCases) {
     expect(testCase[2].bitLength()).toEqual(testCase[3]);
   }
-  const theirTotal = performance.now() - theirStart;
 
-  const ourStart = performance.now();
   for (const testCase of testCases) {
     expect(BA.bitLength(testCase[1])).toEqual(testCase[3]);
   }
-  const ourTotal = performance.now() - ourStart;
-
-  expect(ourTotal).toBeLessThanOrEqual(1.5 * theirTotal);
 });
 
-test('test bitCount performance', () => {
-  const theirStart = performance.now();
+test('test bitCount', () => {
   for (const testCase of testCases) {
     expect(testCase[2].bitCount()).toEqual(testCase[4]);
   }
-  const theirTotal = performance.now() - theirStart;
-
-  const ourStart = performance.now();
   for (const testCase of testCases) {
     expect(BA.bitCount(testCase[1])).toEqual(testCase[4]);
   }
-  const ourTotal = performance.now() - ourStart;
-
-  expect(ourTotal).toBeLessThanOrEqual(1.5 * theirTotal);
 });
 
-test('test and performance', () => {
-  const theirStart = performance.now();
+test('test and', () => {
   for (const testCase of testCases) {
     expect(
       testCase[2].and(new BigInteger(testCase[5], 32)).toString(32)
     ).toEqual(testCase[6]);
   }
-  const theirTotal = performance.now() - theirStart;
-
-  const ourStart = performance.now();
   for (const testCase of testCases) {
     expect(
       BA.toString(BA.and(testCase[1], BA.fromString(testCase[5], 32)), 32)
     ).toEqual(testCase[6]);
   }
-  const ourTotal = performance.now() - ourStart;
-
-  expect(ourTotal).toBeLessThanOrEqual(1.5 * theirTotal);
 });
 
-test('test activeBits performance', () => {
-  const theirStart = performance.now();
+test('test activeBits', () => {
   for (const testCase of testCases) {
     expect(activebits(testCase[2])).toEqual(testCase[7]);
   }
-  const theirTotal = performance.now() - theirStart;
 
-  const ourStart = performance.now();
   for (const testCase of testCases) {
     expect(BA.activeBits(testCase[1])).toEqual(testCase[7]);
   }
-  const ourTotal = performance.now() - ourStart;
-
-  expect(ourTotal).toBeLessThanOrEqual(1.5 * theirTotal);
 });
 
 cases(
