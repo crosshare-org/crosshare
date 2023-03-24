@@ -7,10 +7,8 @@ export const ToolTipText = (props: {
   tooltip: ReactNode;
   className?: string;
 }) => {
-  const [
-    referenceElement,
-    setReferenceElement,
-  ] = useState<HTMLSpanElement | null>(null);
+  const [referenceElement, setReferenceElement] =
+    useState<HTMLSpanElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null
   );

@@ -14,15 +14,18 @@ const db = getFirestore(getAdminApp());
 
 async function runMigration() {
   console.log('Run migration here...');
-  return db.collection('c').get().then(snap => {
-    snap.forEach(async doc => {
-      const validationResult = DBPuzzleV.decode(doc.data());
-      if (!isRight(validationResult)) {
-        console.log('INVALID', doc.id);
-        return;
-      }
+  return db
+    .collection('c')
+    .get()
+    .then((snap) => {
+      snap.forEach(async (doc) => {
+        const validationResult = DBPuzzleV.decode(doc.data());
+        if (!isRight(validationResult)) {
+          console.log('INVALID', doc.id);
+          return;
+        }
+      });
     });
-  });
 }
 
 runMigration().then(() => {

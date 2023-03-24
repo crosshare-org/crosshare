@@ -1121,10 +1121,7 @@ const GridMode = ({
     },
     [dispatch, reRunAutofill, state.isEnteringRebus, getMostConstrainedEntry]
   );
-  useEventListener(
-    'keydown',
-    physicalKeyboardHandler,
-  );
+  useEventListener('keydown', physicalKeyboardHandler);
 
   const pasteHandler = useCallback(
     (e: ClipboardEvent) => {

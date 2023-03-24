@@ -88,9 +88,9 @@ export function Snackbar({
         transition: 'all ' + ANIMATION_DELAY + 'ms ease-in-out 0s',
         ...(message &&
           isOpen && {
-          opacity: 1,
-          visibility: 'visible',
-        }),
+            opacity: 1,
+            visibility: 'visible',
+          }),
       }}
     >
       {message}
@@ -153,8 +153,8 @@ function Toast({ id, message }: { id: number; message: string }) {
           transition: 'all ' + ANIMATION_DELAY + 'ms ease-in-out 0s',
           ...(message &&
             !closing && {
-            marginLeft: 0,
-          }),
+              marginLeft: 0,
+            }),
         }}
         onClick={close}
         onKeyPress={close}
@@ -172,28 +172,28 @@ function Toast({ id, message }: { id: number; message: string }) {
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-  case ActionTypes.ShowSnackbar:
-    return {
-      ...state,
-      isOpen: true,
-      message: action.message,
-    };
-  case ActionTypes.CloseSnackbar:
-    return {
-      ...state,
-      isOpen: false,
-    };
-  case ActionTypes.AddToast:
-    state.toasts.push({
-      message: action.message,
-      id: action.id,
-    });
-    return { ...state };
-  case ActionTypes.RemoveToast:
-    return {
-      ...state,
-      toasts: state.toasts.filter((i) => i.id !== action.id),
-    };
+    case ActionTypes.ShowSnackbar:
+      return {
+        ...state,
+        isOpen: true,
+        message: action.message,
+      };
+    case ActionTypes.CloseSnackbar:
+      return {
+        ...state,
+        isOpen: false,
+      };
+    case ActionTypes.AddToast:
+      state.toasts.push({
+        message: action.message,
+        id: action.id,
+      });
+      return { ...state };
+    case ActionTypes.RemoveToast:
+      return {
+        ...state,
+        toasts: state.toasts.filter((i) => i.id !== action.id),
+      };
   }
 };
 

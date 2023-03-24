@@ -39,7 +39,10 @@ export const ClueReference = (props: ClueReferenceProps): JSX.Element => {
               marginRight: '0.5em',
               whiteSpace: 'nowrap',
             }}
-          >{props.labelNumber}{props.direction === Direction.Across ? 'A' : 'D'}</b>
+          >
+            {props.labelNumber}
+            {props.direction === Direction.Across ? 'A' : 'D'}
+          </b>
           {downsOnly && props.direction === Direction.Across
             ? '-'
             : getClueText(entry)}

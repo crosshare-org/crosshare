@@ -29,12 +29,13 @@ export const getUser = (userId: string) =>
 const firestore = () => getFirestore(getAdminApp());
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const toFirestore = (data: any): Record<string, unknown> => cloneDeepWith(data, (val) => {
-  if (isTimestamp(val)) {
-    return FBTimestamp.fromMillis(val.toMillis());
-  }
-  return undefined;
-});
+export const toFirestore = (data: any): Record<string, unknown> =>
+  cloneDeepWith(data, (val) => {
+    if (isTimestamp(val)) {
+      return FBTimestamp.fromMillis(val.toMillis());
+    }
+    return undefined;
+  });
 
 export const getCollection = (c: string) => {
   const db = firestore();

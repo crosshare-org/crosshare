@@ -24,7 +24,9 @@ export function CreateShareSection(props: { halfWidth: boolean }) {
 
   return (
     <>
-      <h2><Trans>Create or Share a Puzzle</Trans></h2>
+      <h2>
+        <Trans>Create or Share a Puzzle</Trans>
+      </h2>
       <div
         css={{
           display: 'flex',

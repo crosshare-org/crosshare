@@ -122,7 +122,9 @@ const DBPlayLoader = (
   } & PuzzlePageResultProps
 ) => {
   // Load from db
-  const playRef = useRef(getDocRef('p', `${props.puzzle.id}-${props.user.uid}`));
+  const playRef = useRef(
+    getDocRef('p', `${props.puzzle.id}-${props.user.uid}`)
+  );
   const [doc, loading, error] = useDocument(playRef.current);
   const [play, playDecodeError] = useMemo(() => {
     if (doc === undefined) {

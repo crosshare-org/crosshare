@@ -3,9 +3,7 @@ import Head from 'next/head';
 
 import { PuzzleInProgressT } from '../lib/types';
 import { importFile } from '../lib/converter';
-import {
-  renderLoginButtonIfNeeded,
-} from '../components/AuthHelpers';
+import { renderLoginButtonIfNeeded } from '../components/AuthHelpers';
 import { Preview } from '../components/Preview';
 import { Link, LinkButton } from '../components/Link';
 import { MdMoneyOff } from 'react-icons/md';
@@ -110,8 +108,8 @@ export default function UploadPage() {
           <>
             <p>Checking if you have an exisiting account...</p>
           </>
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-        ) : loginButton ? (
+        ) : // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        loginButton ? (
           <>
             <p>
               To upload a puzzle, you need to log in with Google first. We use

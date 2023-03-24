@@ -63,7 +63,9 @@ async function puzzlesListForMonth(
   year: number,
   month: number,
   maxDay: number
-): Promise<Array<[number, LinkablePuzzle, ConstructorPageBase | null, boolean]>> {
+): Promise<
+  Array<[number, LinkablePuzzle, ConstructorPageBase | null, boolean]>
+> {
   return Promise.all(
     [...Array(maxDay).keys()]
       .reverse()
@@ -200,9 +202,7 @@ export default function DailyMiniPage(props: PageProps) {
             Crosshare Daily Mini Puzzles for {date}
           </Trans>
         </h2>
-        <div css={{ marginBottom: '2em' }}>
-          {description}
-        </div>
+        <div css={{ marginBottom: '2em' }}>{description}</div>
         {props.puzzles.map(([day, puzzle, cp, isPatron]) => {
           const displayDate = new Date(
             props.year,

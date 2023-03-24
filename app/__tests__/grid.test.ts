@@ -131,8 +131,8 @@ Array [
 `);
 
   expect(
-entriesFromCells(2, 2, ['A', 'B', 'C', 'D'], new Set([0]), new Set([1]))).
-toMatchInlineSnapshot(`
+    entriesFromCells(2, 2, ['A', 'B', 'C', 'D'], new Set([0]), new Set([1]))
+  ).toMatchInlineSnapshot(`
 Array [
   Array [
     Object {

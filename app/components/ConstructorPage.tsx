@@ -20,10 +20,7 @@ import { Trans, t, Plural } from '@lingui/macro';
 import { I18nTags } from './I18nTags';
 import { useRouter } from 'next/router';
 import { PatronIcon } from './Icons';
-import {
-  serverTimestamp,
-  setDoc,
-} from 'firebase/firestore';
+import { serverTimestamp, setDoc } from 'firebase/firestore';
 import type { Root } from 'hast';
 
 const BANNED_USERNAMES = {
@@ -300,7 +297,10 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
     '). ' +
     props.constructorData.b;
   const title =
-    props.constructorData.n + ' (@' + username + ') | Crosshare Crossword Puzzles';
+    props.constructorData.n +
+    ' (@' +
+    username +
+    ') | Crosshare Crossword Puzzles';
   const paypalEmail = props.constructorData.pp;
   const paypalText = props.constructorData.pt;
   const loc = locale || 'en';

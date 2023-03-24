@@ -26,7 +26,7 @@ export function ArticlePage(props: ArticlePageProps) {
   return <Article key={props.s} {...props} />;
 }
 
-function Article(props: ArticleT & {hast: Root}) {
+function Article(props: ArticleT & { hast: Root }) {
   return (
     <>
       <Head>

@@ -10,15 +10,16 @@ export function ContactLinks() {
           href="mailto:mike@crosshare.org"
         >
           email
-        </a>,{' '}
+        </a>
+        ,{' '}
         <a
           target="_blank"
           rel="noopener noreferrer"
           href="https://twitter.com/crosshareapp"
         >
           twitter
-        </a>,
-        or{' '}
+        </a>
+        , or{' '}
         <a
           target="_blank"
           rel="noopener noreferrer"

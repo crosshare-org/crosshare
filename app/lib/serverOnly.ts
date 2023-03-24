@@ -1,7 +1,4 @@
-import {
-  getAdminApp,
-  mapEachResult,
-} from '../lib/firebaseAdminWrapper';
+import { getAdminApp, mapEachResult } from '../lib/firebaseAdminWrapper';
 import { Timestamp as AdminTimestamp } from 'firebase-admin/firestore';
 import {
   puzzleFromDB,
@@ -14,7 +11,10 @@ import type firebaseAdminType from 'firebase-admin';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { DBPuzzleV, CommentWithRepliesT } from './dbtypes';
-import { ConstructorPageV, ConstructorPageWithMarkdown } from './constructorPage';
+import {
+  ConstructorPageV,
+  ConstructorPageWithMarkdown,
+} from './constructorPage';
 import { NextPuzzleLink } from '../components/Puzzle';
 import { GetServerSideProps } from 'next';
 import { EmbedOptionsT } from './embedOptions';
@@ -67,8 +67,15 @@ const updateUsernameMap = async (): Promise<void> => {
     await mapEachResult(query, ConstructorPageV, (cp, docId) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { t, ...partial } = cp;
-      const { sig, ...res} = { ...partial, id: docId, b: markdownToHast({text: partial.b}) };
-      usernameMap[cp.u] = { ...res, ...(sig !== undefined && {sig: markdownToHast({text: sig})})};
+      const { sig, ...res } = {
+        ...partial,
+        id: docId,
+        b: markdownToHast({ text: partial.b }),
+      };
+      usernameMap[cp.u] = {
+        ...res,
+        ...(sig !== undefined && { sig: markdownToHast({ text: sig }) }),
+      };
     });
     usernamesUpdated = now;
   } catch (e) {
@@ -116,7 +123,7 @@ export interface PageErrorProps {
   error: string;
 }
 
-export type ArticlePageProps = PageErrorProps | ArticleT & {hast: Root};
+export type ArticlePageProps = PageErrorProps | (ArticleT & { hast: Root });
 
 export const getArticlePageProps: GetServerSideProps<
   ArticlePageProps
@@ -135,7 +142,7 @@ export const getArticlePageProps: GetServerSideProps<
     return { props: { error: 'article doesnt exist' } };
   }
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-  return { props: {...article, hast: markdownToHast({text: article.c})} };
+  return { props: { ...article, hast: markdownToHast({ text: article.c }) } };
 };
 
 export async function convertComments(
@@ -146,7 +153,7 @@ export async function convertComments(
     comments.map(async (c) => {
       return {
         commentText: c.c,
-        commentHast: markdownToHast({text: c.c, clueMap}),
+        commentHast: markdownToHast({ text: c.c, clueMap }),
         authorId: c.a,
         authorDisplayName: c.n,
         authorSolveTime: c.t,
@@ -204,29 +211,39 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   if (isRight(validationResult)) {
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
     const fromDB = puzzleFromDB(validationResult.right);
-    const grid = addClues(fromCells({
-      mapper: (e) => e,
-      width: fromDB.size.cols,
-      height: fromDB.size.rows,
-      cells: fromDB.grid,
-      allowBlockEditing: true,
-      highlighted: new Set(fromDB.highlighted),
-      highlight: fromDB.highlight,
-      vBars: new Set(fromDB.vBars),
-      hBars: new Set(fromDB.hBars),
-      hidden: new Set(fromDB.hidden),
-    }), fromDB.clues, (c: string) => markdownToHast({text: c, inline: true}));
+    const grid = addClues(
+      fromCells({
+        mapper: (e) => e,
+        width: fromDB.size.cols,
+        height: fromDB.size.rows,
+        cells: fromDB.grid,
+        allowBlockEditing: true,
+        highlighted: new Set(fromDB.highlighted),
+        highlight: fromDB.highlight,
+        vBars: new Set(fromDB.vBars),
+        hBars: new Set(fromDB.hBars),
+        hidden: new Set(fromDB.hidden),
+      }),
+      fromDB.clues,
+      (c: string) => markdownToHast({ text: c, inline: true })
+    );
     const clueMap = getEntryToClueMap(grid, fromDB.grid);
     puzzle = {
       ...fromDB,
       id: dbres.id,
       blogPostRaw: fromDB.blogPost,
-      blogPost: fromDB.blogPost ? markdownToHast({text: fromDB.blogPost}) : null,
-      constructorNotes: fromDB.constructorNotes ? markdownToHast({text: fromDB.constructorNotes, inline: true}) : null,
+      blogPost: fromDB.blogPost
+        ? markdownToHast({ text: fromDB.blogPost })
+        : null,
+      constructorNotes: fromDB.constructorNotes
+        ? markdownToHast({ text: fromDB.constructorNotes, inline: true })
+        : null,
       constructorPage: await userIdToPage(validationResult.right.a),
       constructorIsPatron: await isUserPatron(validationResult.right.a),
       comments: await convertComments(fromDB.comments, clueMap),
-      clueHasts: grid.entries.map(c => markdownToHast({text: c.clue, clueMap, inline: true}))
+      clueHasts: grid.entries.map((c) =>
+        markdownToHast({ text: c.clue, clueMap, inline: true })
+      ),
     };
   } else {
     console.error(PathReporter.report(validationResult).join(','));

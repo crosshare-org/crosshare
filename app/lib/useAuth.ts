@@ -1,9 +1,4 @@
-import {
-  useState,
-  useCallback,
-  useEffect,
-  useMemo
-} from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 import { isRight } from 'fp-ts/lib/Either';
@@ -11,13 +6,12 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { ConstructorPageV } from './constructorPage';
 import { NotificationV, NotificationT } from './notificationTypes';
 import { AccountPrefsV } from './prefs';
-import { AuthContextValue } from "../components/AuthContext";
+import { AuthContextValue } from '../components/AuthContext';
 import { parseUserInfo } from './userinfo';
 import { updateProfile } from 'firebase/auth';
 import { query, where } from 'firebase/firestore';
 import { getAuth, getCollection, getDocRef } from './firebaseWrapper';
 import { getDisplayName } from './hooks';
-
 
 export function useAuth(): AuthContextValue {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -65,7 +59,8 @@ export function useAuth(): AuthContextValue {
     }
     return [null, null, null];
   }, [user, loadingUser]);
-  const [accountPrefsDoc, loadingAccountPrefs, accountPrefsDBError] = useDocument(prefsDocRef);
+  const [accountPrefsDoc, loadingAccountPrefs, accountPrefsDBError] =
+    useDocument(prefsDocRef);
   const [accountPrefs, accountPrefsDecodeError] = useMemo(() => {
     if (!accountPrefsDoc?.exists()) {
       return [undefined, undefined];
@@ -78,9 +73,11 @@ export function useAuth(): AuthContextValue {
       return [undefined, 'failed to decode account prefs'];
     }
   }, [accountPrefsDoc]);
-  const accountPrefsError = accountPrefsDBError?.message || accountPrefsDecodeError;
+  const accountPrefsError =
+    accountPrefsDBError?.message || accountPrefsDecodeError;
 
-  const [notificationsSnapshot, , notificationError] = useCollection(notificationsDocRef);
+  const [notificationsSnapshot, , notificationError] =
+    useCollection(notificationsDocRef);
   if (notificationError) {
     console.log(notificationError);
   }
@@ -183,7 +180,8 @@ export function useAuth(): AuthContextValue {
     notifications,
     prefs: accountPrefs,
     loading: isLoading || loadingUser || loadingCP || loadingAccountPrefs,
-    error: authError?.message ||
+    error:
+      authError?.message ||
       cpError?.message ||
       cpDecodeError ||
       accountPrefsError,

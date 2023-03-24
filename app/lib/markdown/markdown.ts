@@ -67,6 +67,6 @@ export function markdownToHast(props: {
   if (props.inline) {
     processor.use(inlineOnly);
   }
-  
+
   return processor.runSync(processor.parse(text)) as Root;
 }

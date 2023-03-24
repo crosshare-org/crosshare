@@ -16,3 +16,9 @@ jobs:
     - name: Run tests
       working-directory: ./app
       run: NODE_OPTIONS='--experimental-vm-modules'  npx jest --ci
+    - name: Lint
+      working-directory: ./app
+      run: yarn lint
+    - name: Check formatting
+      working-directory: ./app
+      run: yarn checkFormat

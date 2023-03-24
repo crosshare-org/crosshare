@@ -6,10 +6,8 @@ import * as firebaseTesting from '@firebase/rules-unit-testing';
 import type firebase from 'firebase/compat/app';
 
 import { getMockedPuzzle } from '../lib/getMockedPuzzle';
-import {
-  notificationsForPuzzleChange,
-} from '../lib/notifications';
-import { NotificationT } from "../lib/notificationTypes";
+import { notificationsForPuzzleChange } from '../lib/notifications';
+import { NotificationT } from '../lib/notificationTypes';
 import { CommentWithRepliesT } from '../lib/dbtypes';
 import {
   TimestampClass,
@@ -24,14 +22,17 @@ import MockDate from 'mockdate';
 
 jest.mock('../lib/firebaseWrapper');
 
-const basePuzzle = getMockedPuzzle({ cs: undefined, pvu: AdminTimestamp.now() });
+const basePuzzle = getMockedPuzzle({
+  cs: undefined,
+  pvu: AdminTimestamp.now(),
+});
 
 function getComment(
   fields?: Partial<CommentWithRepliesT>
 ): CommentWithRepliesT {
   return {
     ...{
-      c: 'A couple of two-worders today which I don\'t love, but I hope you all got it anyway!',
+      c: "A couple of two-worders today which I don't love, but I hope you all got it anyway!",
       i: 'LwgoVx0BAskM4wVJyoLj',
       t: 36.009,
       p: TimestampClass.now(),

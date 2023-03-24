@@ -4,7 +4,6 @@ import { ConstructorPageT } from '../lib/constructorPage';
 import { NotificationT } from '../lib/notificationTypes';
 import { AccountPrefsT } from '../lib/prefs';
 
-
 export interface AuthContextValue {
   user?: User;
   notifications?: Array<NotificationT>;

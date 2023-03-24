@@ -8,7 +8,10 @@ import { Link } from '../../components/Link';
 import { useSnackbar } from '../../components/Snackbar';
 import { DefaultTopBar } from '../../components/TopBar';
 import { ArticleT, ArticleV } from '../../lib/article';
-import { getCollection, getValidatedCollection } from '../../lib/firebaseWrapper';
+import {
+  getCollection,
+  getValidatedCollection,
+} from '../../lib/firebaseWrapper';
 
 const ArticleListItem = (props: ArticleT | null) => {
   if (!props) {

@@ -42,10 +42,10 @@ export interface ConstructorPageT
 
 // Omit any markdown fields
 
-export type ConstructorPageBase = Omit<ConstructorPageT, 'sig'|'b'>;
+export type ConstructorPageBase = Omit<ConstructorPageT, 'sig' | 'b'>;
 export interface ConstructorPageWithMarkdown extends ConstructorPageBase {
-  b: Root,
-  sig?: Root
+  b: Root;
+  sig?: Root;
 }
 
 export function validate(

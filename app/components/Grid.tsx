@@ -12,7 +12,7 @@ import {
 
 type GridViewProps = {
   grid: ViewableGrid<ViewableEntry>;
-  defaultGrid?: ViewableGrid<ViewableEntry>;  // This is used for the add alternate solution interface
+  defaultGrid?: ViewableGrid<ViewableEntry>; // This is used for the add alternate solution interface
   active: PosAndDir;
   dispatch: Dispatch<PuzzleAction>;
   revealedCells?: Set<number>;

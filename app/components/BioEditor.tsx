@@ -394,9 +394,9 @@ export const BioEditor = (props: BioEditorProps) => {
         <>
           <form css={{ margin: '1em 0' }} onSubmit={submitShareButtonsEdit}>
             <p>
-              Enter the text that will show up in share dialogs on sites
-              that support custom text (the variable <strong>{'{time}'}</strong>{' '}
-              will get replaced with the sharer&apos;s solve time and{' '}
+              Enter the text that will show up in share dialogs on sites that
+              support custom text (the variable <strong>{'{time}'}</strong> will
+              get replaced with the sharer&apos;s solve time and{' '}
               <strong>{'{title}'}</strong> with the puzzle&apos;s title):
             </p>
             <div css={{ margin: '1em 0' }}>

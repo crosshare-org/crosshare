@@ -114,7 +114,7 @@ const ClueListItem = memo(function ClueListItem({
               : '0.6em solid transparent',
             [SMALL_AND_UP]: {
               padding: '0.5em 0.5em 0.5em 0',
-            }
+            },
           }}
         >
           <div

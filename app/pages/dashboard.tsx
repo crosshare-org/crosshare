@@ -39,7 +39,7 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
     loadMore: loadMoreAuthored,
     hasMore: hasMoreAuthored,
     hasPrevious: hasPreviousAuthored,
-    loadPrevious: loadPreviousAuthored
+    loadPrevious: loadPreviousAuthored,
   } = usePaginatedQuery(authoredQuery, DBPuzzleV, 8, authoredMapper);
 
   return (
@@ -77,7 +77,7 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
             {authoredPuzzles.map((puzzle) => (
               <PuzzleResultLink
                 key={puzzle.id}
-                puzzle={{...puzzle, blogPostPreview: null}}
+                puzzle={{ ...puzzle, blogPostPreview: null }}
                 showAuthor={false}
                 showDate={true}
                 showPrivateStatus={true}

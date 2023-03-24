@@ -173,7 +173,7 @@ const ClueRow = (props: {
             <Markdown
               hast={markdownToHast({
                 text: clueText,
-                inline: true
+                inline: true,
               })}
               noRefs={clueText.startsWith('!@')}
               inline={true}

@@ -22,7 +22,9 @@ function layoutPDFClues(
   grid: ViewableGrid<ViewableEntry>,
   squareSize: number
 ) {
-  const clued = addClues(grid, puzzle.clues, (_c) => {return {type: 'root', children: []};});
+  const clued = addClues(grid, puzzle.clues, (_c) => {
+    return { type: 'root', children: [] };
+  });
   const acrossEntries = clued.entries.filter(
     (e) => e.direction === Direction.Across
   );
@@ -220,7 +222,11 @@ function layoutPDFGrid(
   return squareSize;
 }
 
-function layoutPDFInfo(doc: jsPDF, puzzle: PuzzleT, constructorUsername: string|null) {
+function layoutPDFInfo(
+  doc: jsPDF,
+  puzzle: PuzzleT,
+  constructorUsername: string | null
+) {
   doc.setFont('helvetica');
   doc.setFontSize(18);
   doc.text(puzzle.title, 50, 50 + 8);
@@ -230,13 +236,16 @@ function layoutPDFInfo(doc: jsPDF, puzzle: PuzzleT, constructorUsername: string|
   doc.text(publishedByLine, 50, 50 + 20);
 }
 
-async function getConstructor(authorId: string) : Promise<string|null>{
+async function getConstructor(authorId: string): Promise<string | null> {
   const res = await userIdToPage(authorId);
-  
+
   return res?.i || null;
 }
 
-function createPublishedByLine(puzzle: PuzzleT, constructorUsername: string|null) {
+function createPublishedByLine(
+  puzzle: PuzzleT,
+  constructorUsername: string | null
+) {
   let authorText;
   const urlText = createAttributionLink(puzzle, constructorUsername);
   if (puzzle.guestConstructor) {
@@ -247,17 +256,27 @@ function createPublishedByLine(puzzle: PuzzleT, constructorUsername: string|null
   return authorText;
 }
 
-function createAttributionLink(puzzle: PuzzleT, constructorUsername: string|null) {
+function createAttributionLink(
+  puzzle: PuzzleT,
+  constructorUsername: string | null
+) {
   let urlText;
-  if (constructorUsername && (puzzle.isPrivate === false || (puzzle.isPrivateUntil && puzzle.isPrivateUntil < Date.now()))) {
+  if (
+    constructorUsername &&
+    (puzzle.isPrivate === false ||
+      (puzzle.isPrivateUntil && puzzle.isPrivateUntil < Date.now()))
+  ) {
     urlText = ` on https://crosshare.org/${constructorUsername}`;
   } else {
     urlText = ` on https://crosshare.org`;
   }
   return urlText;
-};
+}
 
-function getPdf(puzzle: PuzzleT, constructorUsername: string|null): ArrayBuffer {
+function getPdf(
+  puzzle: PuzzleT,
+  constructorUsername: string | null
+): ArrayBuffer {
   console.log('Generating pdf for ' + puzzle.title);
 
   const grid = fromCells({

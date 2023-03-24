@@ -1,6 +1,4 @@
-import {
-  useState
-} from 'react';
+import { useState } from 'react';
 
 import { DefaultTopBar } from './TopBar';
 
@@ -74,23 +72,31 @@ export const LoadButton = (props: {
 export const DBLoader = (): JSX.Element => {
   const [ready, error, loading, setLoaded] = useWordDB();
 
-  if (loading) {  // initial loading
-    return <div>Checking for / validating existing database, this can take a minute...</div>;
+  if (loading) {
+    // initial loading
+    return (
+      <div>
+        Checking for / validating existing database, this can take a minute...
+      </div>
+    );
   }
 
-  return <>
-    <DefaultTopBar />
-    <div css={{ margin: '1em' }}>
-      <h2>Database Rebuilder</h2>
-      {error ?
-        <p>Error loading existing database.</p>
-        : ''}
-      {ready ?
-        <p>Found an existing database.</p>
-        :
-        <p>No existing database found.</p>
-      }
-      <LoadButton buttonText={'Build Database'} onComplete={() => setLoaded()} />
-    </div>
-  </>;
+  return (
+    <>
+      <DefaultTopBar />
+      <div css={{ margin: '1em' }}>
+        <h2>Database Rebuilder</h2>
+        {error ? <p>Error loading existing database.</p> : ''}
+        {ready ? (
+          <p>Found an existing database.</p>
+        ) : (
+          <p>No existing database found.</p>
+        )}
+        <LoadButton
+          buttonText={'Build Database'}
+          onComplete={() => setLoaded()}
+        />
+      </div>
+    </>
+  );
 };

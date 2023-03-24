@@ -20,7 +20,7 @@ const LocalStorageErrorPage = () => (
 );
 
 const isLocalStorageError = (err: Error): boolean => {
-  return err.message.includes('Failed to read the \'localStorage\' property');
+  return err.message.includes("Failed to read the 'localStorage' property");
 };
 
 const MyError = ({
@@ -29,7 +29,7 @@ const MyError = ({
   err,
 }: {
   title?: string;
-  err: Error|undefined;
+  err: Error | undefined;
   statusCode: number;
   hasGetInitialPropsRun: boolean;
 }) => {
@@ -51,7 +51,7 @@ const MyError = ({
 };
 
 MyError.getInitialProps = async (contextData: NextPageContext) => {
-    // In case this is running in a serverless function, await this in order to give Sentry
+  // In case this is running in a serverless function, await this in order to give Sentry
   // time to send the error before the lambda exits
   await Sentry.captureUnderscoreErrorException(contextData);
 

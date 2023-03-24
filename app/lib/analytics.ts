@@ -278,9 +278,13 @@ export async function runAnalytics(
     'Writing ' + puzzleNewSubs.size + ' new puzzle submission arrays'
   );
   for (const [crosswordId, subs] of puzzleNewSubs.entries()) {
-    await getCollection('c').doc(crosswordId).update(toFirestore({
-      ct_subs: subs,
-    }));
+    await getCollection('c')
+      .doc(crosswordId)
+      .update(
+        toFirestore({
+          ct_subs: subs,
+        })
+      );
   }
   console.log(
     'Done, writing ' +

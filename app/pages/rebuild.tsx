@@ -4,12 +4,14 @@ import { requiresAuth } from '../components/AuthHelpers';
 import { DBLoader } from '../components/DBLoader';
 
 export const RebuildPage = () => {
-  return <>
-    <Head>
-      <title>{`Rebuild Word Database | Crosshare | crossword puzzle builder`}</title>
-    </Head>
-    <DBLoader />
-  </>;
+  return (
+    <>
+      <Head>
+        <title>{`Rebuild Word Database | Crosshare | crossword puzzle builder`}</title>
+      </Head>
+      <DBLoader />
+    </>
+  );
 };
 
 export default requiresAuth(RebuildPage);

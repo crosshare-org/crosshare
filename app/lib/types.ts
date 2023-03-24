@@ -176,7 +176,8 @@ export interface PuzzleResult extends PuzzleT {
 }
 
 // This is kind of a hack but it helps us to ensure we only query for constructorPages on server side
-export interface ServerPuzzleResult extends Omit<PuzzleResult, 'comments'|'constructorNotes'|'blogPost'> {
+export interface ServerPuzzleResult
+  extends Omit<PuzzleResult, 'comments' | 'constructorNotes' | 'blogPost'> {
   blogPost: Root | null;
   blogPostRaw: string | null;
   constructorNotes: Root | null;
@@ -188,7 +189,13 @@ export interface PuzzleResultWithAugmentedComments extends ServerPuzzleResult {
   comments: Array<Comment>;
 }
 
-export function dbCluesToClueTArray(ac: string[], an: number[], dc: string[], dn: number[], cx?: {[x: number]: string}): Array<ClueT> {
+export function dbCluesToClueTArray(
+  ac: string[],
+  an: number[],
+  dc: string[],
+  dn: number[],
+  cx?: { [x: number]: string }
+): Array<ClueT> {
   const clues: Array<ClueT> = [];
   for (const [i, clue] of ac.entries()) {
     const explanation = cx?.[i] || null;
@@ -220,7 +227,13 @@ export function dbCluesToClueTArray(ac: string[], an: number[], dc: string[], dn
 }
 
 export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
-  const clues = dbCluesToClueTArray(dbPuzzle.ac, dbPuzzle.an, dbPuzzle.dc, dbPuzzle.dn, dbPuzzle.cx);
+  const clues = dbCluesToClueTArray(
+    dbPuzzle.ac,
+    dbPuzzle.an,
+    dbPuzzle.dc,
+    dbPuzzle.dn,
+    dbPuzzle.cx
+  );
   return {
     authorId: dbPuzzle.a,
     authorName: dbPuzzle.n,

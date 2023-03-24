@@ -246,12 +246,12 @@ export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
     }
   }
 
-  const [ acrossEntries, downEntries ] = useMemo(() => {
+  const [acrossEntries, downEntries] = useMemo(() => {
     return getCluedAcrossAndDown(
       state.clues,
       state.grid.entries,
       state.grid.sortedEntries,
-      (c: string) => markdownToHast({text: c})
+      (c: string) => markdownToHast({ text: c })
     );
   }, [state.grid.entries, state.grid.sortedEntries, state.clues]);
 

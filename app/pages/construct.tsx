@@ -1,8 +1,6 @@
 import Head from 'next/head';
 
-import {
-  renderLoginButtonIfNeeded,
-} from '../components/AuthHelpers';
+import { renderLoginButtonIfNeeded } from '../components/AuthHelpers';
 import { Builder } from '../components/Builder';
 import { LoadButton } from '../components/DBLoader';
 import { useWordDB } from '../lib/WordDB';
@@ -61,7 +59,7 @@ export default function BuilderPage() {
   let heroContent: ReactNode;
   if (ctx.loading) {
     heroContent = <p>Checking if you have an existing account...</p>;
-  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   } else if (loginButton) {
     heroContent = (
       <>

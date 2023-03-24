@@ -7,7 +7,14 @@ import {
   entryAtPosition,
   entriesFromCells,
 } from './gridBase';
-import { ClueT, Position, Direction, PosAndDir, BLOCK, Symmetry } from './types';
+import {
+  ClueT,
+  Position,
+  Direction,
+  PosAndDir,
+  BLOCK,
+  Symmetry,
+} from './types';
 import { AccountPrefsFlagsT } from './prefs';
 import type { Root } from 'hast';
 
@@ -568,7 +575,7 @@ export function getCluedAcrossAndDown<Entry extends ViewableEntry>(
   clueMap: Record<string, Array<string>>,
   entries: Array<Entry>,
   sortedEntries: Array<number>,
-  markdownToHast: (text: string) => Root,
+  markdownToHast: (text: string) => Root
 ): [CluedEntry[], CluedEntry[]] {
   const wordCounts: Record<string, number> = {};
   const cluedEntries = sortedEntries.map((entryidx) => {
@@ -744,7 +751,11 @@ export function getRefs(
 export function addClues<
   Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>
->(grid: Grid, rawClues: Array<ClueT>, clueHasts: Array<Root>|((c: string) => Root)): CluedGrid {
+>(
+  grid: Grid,
+  rawClues: Array<ClueT>,
+  clueHasts: Array<Root> | ((c: string) => Root)
+): CluedGrid {
   const clues = cluesByDirection(rawClues);
 
   function mapper(e: Entry): CluedEntry {
@@ -758,12 +769,13 @@ export function addClues<
         "Can't find clue for " + e.labelNumber + ' ' + e.direction
       );
     }
-    const clueHast = Array.isArray(clueHasts) ? clueHasts[e.index] : clueHasts(clue);
+    const clueHast = Array.isArray(clueHasts)
+      ? clueHasts[e.index]
+      : clueHasts(clue);
     if (clueHast === undefined) {
       throw new Error(
         "Can't find hast for " + e.labelNumber + ' ' + e.direction
       );
-
     }
     return { ...e, clue, clueHast };
   }

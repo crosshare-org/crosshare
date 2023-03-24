@@ -36,17 +36,19 @@ if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR) {
   connectFirestoreEmulator(db, 'localhost', 8080);
 }
 
-export const getDocId = (collectionName: string) => doc(collection(db, collectionName)).id;
+export const getDocId = (collectionName: string) =>
+  doc(collection(db, collectionName)).id;
 
 export const getAuth = () => gA(App);
 export const getStorage = () => gS(App);
 
-export const convertTimestamps = (data: any): Record<string, unknown> => cloneDeepWith(data, (val) => {
-  if (isTimestamp(val)) {
-    return FBTimestamp.fromMillis(val.toMillis());
-  }
-  return undefined;
-});
+export const convertTimestamps = (data: any): Record<string, unknown> =>
+  cloneDeepWith(data, (val) => {
+    if (isTimestamp(val)) {
+      return FBTimestamp.fromMillis(val.toMillis());
+    }
+    return undefined;
+  });
 
 export const getCollection = (collectionName: string) =>
   collection(db, collectionName).withConverter({

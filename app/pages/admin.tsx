@@ -66,7 +66,7 @@ function checkSpam(input: string): boolean {
   return false;
 }
 
-const red = css({color: 'red'});
+const red = css({ color: 'red' });
 
 const PuzzleListItem = (props: PuzzleResult) => {
   function markAsModerated(featured: boolean) {
@@ -93,7 +93,11 @@ const PuzzleListItem = (props: PuzzleResult) => {
   const clues = Object.keys(clueMap).map((entry, i) => {
     const clues = clueMap[entry];
     const merged = entry + ' ' + clues?.join('; ');
-    return <div key={i} css={checkSpam(merged) ? red : {}}>{merged}</div>;
+    return (
+      <div key={i} css={checkSpam(merged) ? red : {}}>
+        {merged}
+      </div>
+    );
   });
   return (
     <li key={props.id} css={{ marginBottom: '2em' }}>
@@ -104,14 +108,19 @@ const PuzzleListItem = (props: PuzzleResult) => {
       <TagList tags={(props.userTags || []).concat(props.autoTags || [])} />
       {props.constructorNotes ? (
         <div css={{ textAlign: 'center', overflowWrap: 'break-word' }}>
-          <ConstructorNotes notes={markdownToHast({text: props.constructorNotes})} />
+          <ConstructorNotes
+            notes={markdownToHast({ text: props.constructorNotes })}
+          />
         </div>
       ) : (
         ''
       )}
       {props.blogPost ? (
         <div css={{ margin: '1em 0', overflowWrap: 'break-word' }}>
-          <Markdown css={{ textAlign: 'left' }} hast={markdownToHast({text: props.blogPost})} />
+          <Markdown
+            css={{ textAlign: 'left' }}
+            hast={markdownToHast({ text: props.blogPost })}
+          />
         </div>
       ) : (
         ''
@@ -119,11 +128,11 @@ const PuzzleListItem = (props: PuzzleResult) => {
       {puzHasUnches ? <div css={{ color: 'red' }}>Puzzle has unches</div> : ''}
       {clues}
       <ul>
-      {props.comments.map((c,i) => (
-        <li key={i}>
-          <b>{c.n}</b>: {c.c}
-        </li>
-      ))}
+        {props.comments.map((c, i) => (
+          <li key={i}>
+            <b>{c.n}</b>: {c.c}
+          </li>
+        ))}
       </ul>
       <div css={{ marginBottom: '1em' }}>
         <button
@@ -301,7 +310,7 @@ export default requiresAdmin(() => {
                     }
                   />
                   <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
-                  <Markdown hast={markdownToHast({text: cfm.c})} />
+                  <Markdown hast={markdownToHast({ text: cfm.c })} />
                 </label>
               </div>
             ))}
@@ -320,7 +329,7 @@ export default requiresAdmin(() => {
                 {automoderated.map((cfm) => (
                   <div key={cfm.i}>
                     <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
-                    <Markdown hast={markdownToHast({text: cfm.c})} />
+                    <Markdown hast={markdownToHast({ text: cfm.c })} />
                   </div>
                 ))}
                 <Button
@@ -349,7 +358,7 @@ export default requiresAdmin(() => {
                 <p>
                   {cp.n} - <Link href={`/${cp.i}`}>@{cp.i}</Link>
                 </p>
-                <Markdown hast={markdownToHast({text: cp.b})} />
+                <Markdown hast={markdownToHast({ text: cp.b })} />
               </div>
             ))}
             <input type="submit" value="Mark as moderated" />

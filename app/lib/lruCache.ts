@@ -3,7 +3,6 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 export class LruCache<T> {
-
   private values: Map<string, T> = new Map<string, T>();
 
   constructor(
@@ -19,7 +18,7 @@ export class LruCache<T> {
       if (isRight(validationResult)) {
         this.values = new Map(validationResult.right);
       } else {
-        console.error('Couldn\'t parse object in local storage');
+        console.error("Couldn't parse object in local storage");
         console.error(PathReporter.report(validationResult).join(','));
       }
     }
@@ -43,6 +42,9 @@ export class LruCache<T> {
       this.values.delete(keyToDelete);
     }
     this.values.set(key, value);
-    localStorage.setItem(this.localStorageKey, JSON.stringify(Array.from(this.values.entries())));
+    localStorage.setItem(
+      this.localStorageKey,
+      JSON.stringify(Array.from(this.values.entries()))
+    );
   }
 }

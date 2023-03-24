@@ -706,7 +706,7 @@ function enterText<T extends GridInterfaceState>(state: T, text: string): T {
       text || ' ',
       symmetry
     );
-    state = postEdit({...state, grid}, ci);
+    state = postEdit({ ...state, grid }, ci);
   }
   return state;
 }
@@ -938,7 +938,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
         const grid = gridWithBlockToggled(state.grid, state.active, symmetry);
         return {
-          ...postEdit({...state, grid}, ci),
+          ...postEdit({ ...state, grid }, ci),
           wasEntryClick: false,
           active: nextCell(state.grid, state.active),
         };
@@ -950,7 +950,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
         const grid = gridWithBarToggled(state.grid, state.active, symmetry);
         return {
-          ...postEdit({...state, grid}, ci),
+          ...postEdit({ ...state, grid }, ci),
           wasEntryClick: false,
         };
       }
@@ -977,7 +977,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           state.cellsUpdatedAt[ci] = elapsed;
         }
         const grid = gridWithNewChar(state.grid, state.active, ' ', symmetry);
-        state = postEdit({...state, grid}, ci);
+        state = postEdit({ ...state, grid }, ci);
       }
       return {
         ...state,
@@ -993,7 +993,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           state.cellsUpdatedAt[ci] = elapsed;
         }
         const grid = gridWithNewChar(state.grid, state.active, ' ', symmetry);
-        state = postEdit({...state, grid}, ci);
+        state = postEdit({ ...state, grid }, ci);
       }
       return {
         ...state,
@@ -1006,7 +1006,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
         const grid = gridWithHiddenToggled(state.grid, state.active, symmetry);
         return {
-          ...postEdit({...state, grid}, ci),
+          ...postEdit({ ...state, grid }, ci),
           wasEntryClick: false,
         };
       }
@@ -1244,8 +1244,8 @@ export function builderReducer(
     if (state.repeats.size > 0) {
       warnings.push(
         'Some words are repeated (' +
-        Array.from(state.repeats).sort().join(', ') +
-        ')'
+          Array.from(state.repeats).sort().join(', ') +
+          ')'
       );
     }
     if (!state.title) {
@@ -1310,20 +1310,23 @@ export function builderReducer(
       ...(state.notes && { cn: state.notes }),
       ...(state.blogPost && { bp: state.blogPost }),
       ...(state.guestConstructor && { gc: state.guestConstructor }),
-      ...(state.isPrivate ? { pv: true } : {
-        pvu:
-          state.isPrivateUntil && state.isPrivateUntil > action.publishTimestamp
-            ? state.isPrivateUntil
-            : action.publishTimestamp,
-      }),
+      ...(state.isPrivate
+        ? { pv: true }
+        : {
+            pvu:
+              state.isPrivateUntil &&
+              state.isPrivateUntil > action.publishTimestamp
+                ? state.isPrivateUntil
+                : action.publishTimestamp,
+          }),
       ...(state.isContestPuzzle &&
         state.contestAnswers?.length && {
-        ct_ans: state.contestAnswers,
-        ct_prz: state.contestHasPrize || false,
-        ...(state.contestRevealDelay && {
-          ct_rv_dl: state.contestRevealDelay,
+          ct_ans: state.contestAnswers,
+          ct_prz: state.contestHasPrize || false,
+          ...(state.contestRevealDelay && {
+            ct_rv_dl: state.contestRevealDelay,
+          }),
         }),
-      }),
     };
     if (state.grid.highlighted.size) {
       puzzle.hs = Array.from(state.grid.highlighted);

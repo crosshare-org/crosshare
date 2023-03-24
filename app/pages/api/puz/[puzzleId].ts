@@ -16,12 +16,10 @@ export default async function puz(req: NextApiRequest, res: NextApiResponse) {
       .json({ statusCode: 404, message: 'failed to get puzzle' });
   }
   if (puzzle.vb?.length || puzzle.hb?.length) {
-    return res
-      .status(400)
-      .json({
-        statusCode: 400,
-        message: '.puz is currently unsupported for barred grids',
-      });
+    return res.status(400).json({
+      statusCode: 400,
+      message: '.puz is currently unsupported for barred grids',
+    });
   }
   res.setHeader('X-Robots-Tag', 'noindex');
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');

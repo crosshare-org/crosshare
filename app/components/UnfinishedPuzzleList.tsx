@@ -53,7 +53,7 @@ export function UnfinishedPuzzleList({ user }: { user: User | undefined }) {
         {unfinishedPuzzles.map((puzzle) => (
           <PuzzleResultLink
             key={puzzle.id}
-            puzzle={{...puzzle, blogPostPreview: null}}
+            puzzle={{ ...puzzle, blogPostPreview: null }}
             showAuthor={false}
             constructorPage={null}
             constructorIsPatron={false}
@@ -66,19 +66,19 @@ export function UnfinishedPuzzleList({ user }: { user: User | undefined }) {
           </p>
         ) : (
           <>
-          {hasPreviousUnfinished && (
-            <ButtonAsLink
-              onClick={loadPreviousUnfinished}
-              text={'← ' + t`Newer unfinished solves`}
-            />
+            {hasPreviousUnfinished && (
+              <ButtonAsLink
+                onClick={loadPreviousUnfinished}
+                text={'← ' + t`Newer unfinished solves`}
+              />
             )}
-          {hasPreviousUnfinished && hasMoreUnfinished && <>&nbsp;|&nbsp;</>}
-          {hasMoreUnfinished && (
-            <ButtonAsLink
-              onClick={loadMoreUnfinished}
-              text={t`Older unfinished solves` + ' →'}
-            />
-          )}
+            {hasPreviousUnfinished && hasMoreUnfinished && <>&nbsp;|&nbsp;</>}
+            {hasMoreUnfinished && (
+              <ButtonAsLink
+                onClick={loadMoreUnfinished}
+                text={t`Older unfinished solves` + ' →'}
+              />
+            )}
           </>
         )}
       </>

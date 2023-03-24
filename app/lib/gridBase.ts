@@ -27,7 +27,9 @@ export interface GridBase<Entry extends EntryBase> {
   hBars: Set<number>;
 }
 
-export function hasUnches<Entry extends EntryBase>(grid: GridBase<Entry>): boolean {
+export function hasUnches<Entry extends EntryBase>(
+  grid: GridBase<Entry>
+): boolean {
   for (const crosses of grid.entriesByCell) {
     if (crosses[0].entryIndex !== null && crosses[1].entryIndex === null) {
       return true;

@@ -10,7 +10,11 @@ import { ErrorPage } from '../../../components/ErrorPage';
 import { useSnackbar } from '../../../components/Snackbar';
 import { DefaultTopBar } from '../../../components/TopBar';
 import { ArticleT, ArticleV } from '../../../lib/article';
-import { getValidatedCollection, getDocRef, getCollection } from '../../../lib/firebaseWrapper';
+import {
+  getValidatedCollection,
+  getDocRef,
+  getCollection,
+} from '../../../lib/firebaseWrapper';
 import { markdownToHast } from '../../../lib/markdown/markdown';
 import { slugify } from '../../../lib/utils';
 import * as t from 'io-ts';
@@ -31,12 +35,21 @@ export default requiresAdmin(() => {
 const ArticleLoader = ({ slug }: { slug: string }) => {
   const { showSnackbar } = useSnackbar();
 
-  const articleQuery = useRef(query(getValidatedCollection('a', t.intersection([
-    ArticleV,
-    t.type({
-      i: t.string,
-    }),
-  ]), "i"), where('s', '==', slug)));
+  const articleQuery = useRef(
+    query(
+      getValidatedCollection(
+        'a',
+        t.intersection([
+          ArticleV,
+          t.type({
+            i: t.string,
+          }),
+        ]),
+        'i'
+      ),
+      where('s', '==', slug)
+    )
+  );
   const [articles, loading, error] = useCollectionData(articleQuery.current);
   if (loading) {
     return <div>loading...</div>;
@@ -50,24 +63,28 @@ const ArticleLoader = ({ slug }: { slug: string }) => {
   }
   const article = articles?.[0];
   if (!article) {
-    return <div>
-      <h1>No article exists</h1>
-      <Button onClick={() => {
-                    const newArticle: ArticleT = {
-                      s: slug,
-                      t: 'New Article',
-                      c: 'article content',
-                      f: false,
-                    };
-                    addDoc(getCollection('a'), {
-                      ...newArticle,
-                      ua: Timestamp.now(),
-                    }).then(() => {
-                      showSnackbar('Article created');
-                    });
-        
-      }} text="Create" />
-    </div>;
+    return (
+      <div>
+        <h1>No article exists</h1>
+        <Button
+          onClick={() => {
+            const newArticle: ArticleT = {
+              s: slug,
+              t: 'New Article',
+              c: 'article content',
+              f: false,
+            };
+            addDoc(getCollection('a'), {
+              ...newArticle,
+              ua: Timestamp.now(),
+            }).then(() => {
+              showSnackbar('Article created');
+            });
+          }}
+          text="Create"
+        />
+      </div>
+    );
   }
   return <ArticleEditor key={slug} article={article} articleId={article.i} />;
 };
@@ -96,7 +113,7 @@ const ArticleEditor = ({
           title="Slug"
           css={{ marginBottom: '1em' }}
           text={article.s}
-          hast={markdownToHast({text: article.s})}
+          hast={markdownToHast({ text: article.s })}
           maxLength={100}
           handleSubmit={async (newSlug) => {
             const slug = slugify(newSlug, 100, true);
@@ -113,7 +130,7 @@ const ArticleEditor = ({
           title="Title"
           css={{ marginBottom: '1em' }}
           text={article.t}
-          hast={markdownToHast({text: article.t})}
+          hast={markdownToHast({ text: article.t })}
           maxLength={300}
           handleSubmit={(newTitle) =>
             updateDoc(getDocRef('a', articleId), {
@@ -128,7 +145,7 @@ const ArticleEditor = ({
           title="Content"
           css={{ marginBottom: '1em' }}
           text={article.c}
-          hast={markdownToHast({text: article.c})}
+          hast={markdownToHast({ text: article.c })}
           maxLength={1000000}
           handleSubmit={(post) =>
             updateDoc(getDocRef('a', articleId), {

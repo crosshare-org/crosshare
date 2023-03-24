@@ -1,4 +1,11 @@
-import { AutofillResultMessage, AutofillCompleteMessage, WorkerMessage, isLoadDBMessage, isAutofillMessage, isCancelAutofillMessage } from './types';
+import {
+  AutofillResultMessage,
+  AutofillCompleteMessage,
+  WorkerMessage,
+  isLoadDBMessage,
+  isAutofillMessage,
+  isCancelAutofillMessage,
+} from './types';
 import { Autofiller } from './Autofiller';
 import { setDb } from './WordDB';
 
@@ -8,7 +15,7 @@ const ctx: Worker = self as any;
 const msgChannel = new MessageChannel();
 let current: Autofiller | null;
 
-msgChannel.port2.onmessage = _e => {
+msgChannel.port2.onmessage = (_e) => {
   if (current === null || current.completed) {
     return;
   }

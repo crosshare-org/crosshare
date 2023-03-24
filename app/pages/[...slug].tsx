@@ -130,7 +130,7 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
       followers,
       following,
       constructorData: cp,
-      bioHast: markdownToHast({text: cp.b}),
+      bioHast: markdownToHast({ text: cp.b }),
       isPatron,
       profilePicture,
       coverPicture,

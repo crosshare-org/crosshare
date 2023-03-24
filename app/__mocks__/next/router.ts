@@ -6,7 +6,7 @@ export function useRouter() {
     events: {
       on: () => null,
       off: () => null,
-      emit: () => null
-    }
+      emit: () => null,
+    },
   };
 }

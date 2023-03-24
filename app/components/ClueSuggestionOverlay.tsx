@@ -142,17 +142,20 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
           />
           <h3 css={{ marginTop: '1em' }}>External Sources</h3>
           <ul>
-            {ExternalSites.map(x =>
+            {ExternalSites.map((x) => (
               <li key={x[0]}>
                 <a
                   target="_blank"
                   rel="noreferrer"
-                  href={x[1].replace('%s', encodeURIComponent(props.word.toLowerCase()))}
+                  href={x[1].replace(
+                    '%s',
+                    encodeURIComponent(props.word.toLowerCase())
+                  )}
                 >
                   Search {x[0]}
                 </a>
               </li>
-            )}
+            ))}
           </ul>
         </>
       ) : (
