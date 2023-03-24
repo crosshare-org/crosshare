@@ -2,7 +2,11 @@
 version: '3.8'
 services:
   devLive:
-    command: yarn dev
+    profiles:
+      - devLive
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json
+    command: next dev
     build:
       context: .
       target: dev
@@ -15,3 +19,31 @@ services:
     working_dir: /src/app
     ports:
       - 3000:3000
+
+  dev:
+    profiles:
+      - dev
+    command: firebase emulators:exec --only auth,firestore,functions,storage,pubsub --project demo-crosshare --ui 'next dev'
+    build:
+      context: .
+      target: dev
+    image: dev
+    volumes:
+      - "./app:/src/app:Z"
+      - "./functions:/src/functions:Z"
+      - "/src/app/node_modules"
+      - "/src/app/nextjs"
+    working_dir: /src/app
+    ports:
+      - 3000:3000
+      - 9199:9199
+      - 9099:9099
+      - 9005:9005
+      - 9000:9000
+      - 8085:8085
+      - 8080:8080
+      - 5001:5001
+      - 5000:5000
+      - 4500:4500
+      - 4000:4000
+      - 9150:9150
