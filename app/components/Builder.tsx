@@ -129,7 +129,7 @@ import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
 import { Keyboard } from './Keyboard';
 import { FULLSCREEN_CSS, SMALL_AND_UP } from '../lib/style';
 import { ButtonReset } from './Buttons';
-import { useSnackbar } from './Snackbar';
+import { Snackbar, useSnackbar } from './Snackbar';
 import { importFile, exportFile, ExportProps } from '../lib/converter';
 import { getAutofillWorker } from '../lib/workerLoader';
 import type { User } from 'firebase/auth';
@@ -1706,6 +1706,14 @@ const GridMode = ({
   return (
     <>
       <Global styles={FULLSCREEN_CSS} />
+      {state.alternates.length > 0 ? (
+        <Snackbar
+          message="The grid can't be edited if any alternate solutions are specified"
+          isOpen
+        />
+      ) : (
+        ''
+      )}
       <div
         css={{
           display: 'flex',
