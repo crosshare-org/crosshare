@@ -67,8 +67,8 @@ function SharingButton({ network, path, text }: SharingButtonProps) {
   return (
     <a
       css={{
-        display: 'inline-block',
-        margin: '0 0.2em',
+        whiteSpace: 'nowrap',
+        margin: '1em 0.2em 0',
         padding: '0.2em 0.5em',
         borderRadius: '0.3em',
         color: '#fff',
@@ -97,8 +97,15 @@ interface SharingButtonsProps {
 
 export function SharingButtons(props: SharingButtonsProps) {
   return (
-    <div css={{ maxHeight: '1.9em', overflow: 'hidden', margin: '1em 0' }}>
-      <b css={{ marginRight: '0.3em' }}>Share:</b>
+    <div
+      css={{
+        justifyContent: 'center',
+        marginBottom: '1em',
+        display: 'flex',
+        flexWrap: 'wrap',
+      }}
+    >
+      <b css={{ marginRight: '0.3em', marginTop: '1.2em' }}>Share:</b>
       <SharingButton network={Network.Facebook} {...props} />
       <SharingButton network={Network.Twitter} {...props} />
       <SharingButton network={Network.Email} {...props} />
