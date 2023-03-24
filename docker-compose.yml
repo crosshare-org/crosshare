@@ -1,0 +1,17 @@
+
+version: '3.8'
+services:
+  devLive:
+    command: yarn dev
+    build:
+      context: .
+      target: dev
+    image: dev
+    volumes:
+      - "./serviceAccountKey.json:/src/serviceAccountKey.json:Z"
+      - "./app:/src/app:Z"
+      - "/src/app/node_modules"
+      - "/src/app/nextjs"
+    working_dir: /src/app
+    ports:
+      - 3000:3000
