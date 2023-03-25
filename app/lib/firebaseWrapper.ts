@@ -3,7 +3,12 @@ import * as t from 'io-ts';
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { firebaseConfig } from '../firebaseConfig';
 import { getStorage as gS } from 'firebase/storage';
-import { getAuth as gA, signInAnonymously as sIA, User } from 'firebase/auth';
+import {
+  connectAuthEmulator,
+  getAuth as gA,
+  signInAnonymously as sIA,
+  User,
+} from 'firebase/auth';
 import {
   collection,
   doc,
@@ -31,9 +36,15 @@ if (apps.length && apps[0]) {
 } else {
   App = initializeApp(firebaseConfig);
   db = getFirestore(App);
-}
-if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR) {
-  connectFirestoreEmulator(db, 'localhost', 8080);
+
+  // Init emulator
+  if (process.env.NEXT_PUBLIC_USE_EMULATORS) {
+    console.log('Connecting to emulators');
+    connectFirestoreEmulator(db, 'localhost', 8080);
+
+    const auth = gA(App);
+    connectAuthEmulator(auth, 'http://localhost:9099');
+  }
 }
 
 export const getDocId = (collectionName: string) =>

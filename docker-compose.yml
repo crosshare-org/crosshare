@@ -12,8 +12,8 @@ services:
       target: dev
     image: dev
     volumes:
-      - "./serviceAccountKey.json:/src/serviceAccountKey.json:Z"
-      - "./app:/src/app:Z"
+      - "./serviceAccountKey.json:/src/serviceAccountKey.json:z"
+      - "./app:/src/app:z"
       - "/src/app/node_modules"
       - "/src/app/nextjs"
     working_dir: /src/app
@@ -23,14 +23,17 @@ services:
   dev:
     profiles:
       - dev
+    environment:
+      - NEXT_PUBLIC_USE_EMULATORS=1
     command: firebase emulators:exec --only auth,firestore,functions,storage,pubsub --project demo-crosshare --ui 'next dev'
     build:
       context: .
       target: dev
     image: dev
     volumes:
-      - "./app:/src/app:Z"
-      - "./functions:/src/functions:Z"
+      - "./app:/src/app:z"
+      - "./functions:/src/functions:z"
+      - "./firebaseConfig.emulators.ts:/src/app/firebaseConfig.ts:z"
       - "/src/app/node_modules"
       - "/src/app/nextjs"
     working_dir: /src/app
