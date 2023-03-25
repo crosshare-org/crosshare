@@ -20,6 +20,8 @@ We are in the process of moving to a container based dev workflow. These instruc
 
 > $ podman-compose up dev
 
+Once everything is up and running the site should be visible at http://localhost:3000 and the emulator admin at http://localhost:4000
+
 ### Developing against your own firebase project
 
 You'll need to have a firebase project set up and `firebaseConfig.ts` and `serviceAccountKey.json` created in the correct locations - see "Developing Locally" for details.
