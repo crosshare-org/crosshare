@@ -14,19 +14,17 @@ If you're looking for good issues to start out on check the [good first issue](h
 
 ## Developing Locally (Container Based)
 
-We are in the process of moving to a container based dev workflow. The following steps probably won't "just work" currently, but you're welcome to try them as starting points if you're interested. If you're just trying to get up and running ASAP please scroll down to "Developing Locally"
-
-### Building the dev container
-
-> $ podman build . --format docker --target dev -t crosshare-dev --isolation=rootless
-
-### Developing against a live firebase instance
-
-> $ podman run -it -v ./serviceAccountKey.json:/src/serviceAccountKey.json:Z -v ./app:/src/app:Z -v /src/app/node_modules -v /src/app/nextjs -w /src/app -p 3000:3000 crosshare-dev yarn dev
+We are in the process of moving to a container based dev workflow. These instructions are written for `podman-compose` but will hopefully work with `docker-compose` as well - get in touch with us if you run into any issues!
 
 ### Developing against the firebase emulators
 
-> $ podman run -it -v ./app:/src/app:Z -v /src/app/node_modules -v /src/app/nextjs -w /src/app -p 3000:3000 -p 9199:9199 -p 9099:9099 -p 9005:9005 -p 9000:9000 -p 8085:8085 -p 8080:8080 -p 5001:5001 -p 5000:5000 -p 4500:4500 -p 4000:4000 -p 9150:9150 crosshare-dev firebase emulators:start --only auth,firestore,functions,storage --project demo-crosshare
+> $ podman-compose up dev
+
+### Developing against your own firebase project
+
+You'll need to have a firebase project set up and `firebaseConfig.ts` and `serviceAccountKey.json` created in the correct locations - see "Developing Locally" for details.
+
+> $ podman-compose up devLive
 
 ## Developing Locally
 
