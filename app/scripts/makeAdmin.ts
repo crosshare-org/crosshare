@@ -1,19 +1,18 @@
-#!/usr/bin/env -S npx ts-node-script
+#!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
 
-import * as admin from 'firebase-admin';
+import { getAuth } from 'firebase-admin/auth';
+import { getAdminApp } from '../lib/firebaseAdminWrapper';
 
-import serviceAccount from '../../serviceAccountKey.json';
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-});
+const adminApp = getAdminApp();
+const auth = getAuth(adminApp);
 
 async function grantAdminRole(userEmail: string): Promise<void> {
-  const user = await admin.auth().getUserByEmail(userEmail);
+  const user = await auth.getUserByEmail(userEmail);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (user.customClaims && (user.customClaims as any).admin === true) {
     return;
   }
-  return admin.auth().setCustomUserClaims(user.uid, {
+  return auth.setCustomUserClaims(user.uid, {
     admin: true,
   });
 }
