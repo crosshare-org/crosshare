@@ -36,6 +36,9 @@ export async function getStorageUrl(
   const profilePic = getStorage(getAdminApp()).bucket().file(storageKey);
   if ((await profilePic.exists())[0]) {
     try {
+      if (process.env.NEXT_PUBLIC_USE_EMULATORS) {
+        return profilePic.publicUrl();
+      }
       return (
         await profilePic.getSignedUrl({
           action: 'read',

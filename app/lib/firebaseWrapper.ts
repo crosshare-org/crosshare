@@ -2,7 +2,7 @@
 import * as t from 'io-ts';
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { firebaseConfig } from '../firebaseConfig';
-import { getStorage as gS } from 'firebase/storage';
+import { connectStorageEmulator, getStorage as gS } from 'firebase/storage';
 import {
   connectAuthEmulator,
   getAuth as gA,
@@ -43,7 +43,12 @@ if (apps.length && apps[0]) {
     connectFirestoreEmulator(db, 'localhost', 8080);
 
     const auth = gA(App);
-    connectAuthEmulator(auth, 'http://localhost:9099');
+    connectAuthEmulator(auth, 'http://localhost:9099', {
+      disableWarnings: true,
+    });
+
+    const storage = gS(App);
+    connectStorageEmulator(storage, 'localhost', 9199);
   }
 }
 
