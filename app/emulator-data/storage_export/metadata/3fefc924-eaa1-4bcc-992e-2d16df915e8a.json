@@ -1,0 +1,19 @@
+{
+  "name": "users/EG47MbykR7uy5lRgIYtxVPN57IM7/profile.jpg",
+  "bucket": "demo-crosshare.appspot.com",
+  "metageneration": 1,
+  "generation": 1679858736094,
+  "contentType": "image/jpeg",
+  "storageClass": "STANDARD",
+  "contentDisposition": "inline",
+  "downloadTokens": [
+    "28c45fe7-180b-4a0e-b847-bc228d7f3eca"
+  ],
+  "etag": "mQnuKgMmDKDV5lV7lKUI1Uk1g8Q",
+  "customMetadata": {},
+  "timeCreated": "2023-03-26T19:25:36.094Z",
+  "updated": "2023-03-26T19:25:36.094Z",
+  "size": 7556,
+  "md5Hash": "5hdmNaidOi9/SPNs+n/mBw==",
+  "crc32c": "151873569"
+}

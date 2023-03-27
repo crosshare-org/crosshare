@@ -25,7 +25,7 @@ services:
       - dev
     environment:
       - NEXT_PUBLIC_USE_EMULATORS=1
-    command: firebase emulators:exec --only auth,firestore,functions,storage,pubsub --project demo-crosshare --ui 'next dev'
+    command: firebase emulators:exec --import=./emulator-data --only auth,firestore,functions,storage,pubsub --project demo-crosshare --ui 'next dev'
     build:
       context: .
       target: dev
