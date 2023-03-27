@@ -34,5 +34,8 @@ COPY --from=builder /src/app/public ./public
 COPY --from=builder /src/app/locales ./locales
 COPY --from=builder /src/node_modules ./node_modules
 COPY --from=builder /src/app/nextjs ./nextjs
+
+# This is a runtime depency of node canvas
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libuuid.so.1 /usr/lib/x86_64-linux-gnu/libuuid.so.1
+
 CMD ["./node_modules/next/dist/bin/next", "start", "-p", "8080"]

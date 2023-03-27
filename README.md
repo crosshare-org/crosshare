@@ -12,107 +12,49 @@ Contributions are very much encouraged! It's recommended that you comment on (or
 
 If you're looking for good issues to start out on check the [good first issue](https://github.com/crosshare-org/crosshare/issues?q=is%3Aissue+is%3Aopen+label%3A"good+first+issue") tag.
 
-## Developing Locally (Container Based)
+### Linting / Formatting
 
-We are in the process of moving to a container based dev workflow. These instructions are written for `podman-compose` but will hopefully work with `docker-compose` as well - get in touch with us if you run into any issues!
+In addition to the test suites, all PRs are checked to match our [eslint](https://eslint.org/) and [prettier](https://prettier.io/) rules. You can run `$ yarn lint` and `$ yarn format` before committing to make sure your PR will pass. 
 
-### Developing against the firebase emulators
+## Running the site locally
+
+We are in the process of moving to a container based dev workflow. These instructions are written for [podman](https://podman.io/) and [podman-compose](https://github.com/containers/podman-compose) but will hopefully work with `docker` as well - if you try it please let us know to confirm it works or report any issues. If you'd rather not use containers there are old instructions for running on your machine directly [here](/RUNNING_CONTAINERLESS.md).
+
+### Developing against the firebase emulators (recommended)
+
+After checking out the codebase run the following in the root of the repository:
 
 > $ podman-compose up dev
 
-Once everything is up and running the site should be visible at http://localhost:3000 and the emulator admin at http://localhost:4000
+The first run will take a while as it will build the development container - future runs will be quicker. Once everything is up and running the site should be visible at http://localhost:3000 and the emulator admin at http://localhost:4000
+
+### Demo data
+
+The emulators will start with some demo data. We try to keep the demo dataset small but would like for it to cover basic use/test cases. Each time you start the dev server any auth/database changes are reset to match the demo dataset. If you need to alter the demo data to expand what's available please do so!
+
+While the dev server is running make any changes you need, either through the user interface itself or through the emulator admin. Then run:
+
+> $ podman exec --latest firebase emulators:export --force --project demo-crosshare emulator-data
+
+If you feel your change to the demo data will be generally useful please feel free to include it in your PR with a description of what has been added.
+
+### Stopping the dev server
+
+> $ podman-compose down dev
 
 ### Developing against your own firebase project
 
-You'll need to have a firebase project set up and `firebaseConfig.ts` and `serviceAccountKey.json` created in the correct locations - see "Developing Locally" for details.
+If you'd rather not use the firebase emulators you can use the same container but connect to a live firebase project instead.
+
+You'll need to have a firebase project set up and `firebaseConfig.ts` and `serviceAccountKey.json` created in the correct locations - see ("Running Containerless)[/RUNNING_CONTAINERLESS.md] for details on setting up firebase and creating those files. Then in the root of the repo run:
 
 > $ podman-compose up devLive
 
-## Developing Locally
-
-#### Windows
-
-Most of these instructions are written for unix-like OSes - folks have had success using [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/about) to follow them on Windows, though.
-
-### Set up a new firebase project
-
-Visit http://console.firebase.google.com/, click "add project" or "create a project". Use whatever name you'd like. You don't need to enable google analytics.
-
-#### Set up authentication
-
-Click "Build" in the side bar, then "Authentication". Click "Get started". Click on the "Google" sign-in provider and toggle to "Enabled". Use anything you like for public facing name and enter your email as the project support email. Click "Save".
-
-#### Set up the database
-
-Click "Firestore Database" in the side bar. Click "Create database". Choose "start in production mode" and any storage location.
-
-#### Download credentials
-
-Click the little gear icon in the side bar and select "Project settings". Scroll to the "Your apps" section and click "</>" to create a web app. Register an app using whatever name you'd like. You don't need to set up hosting. 
-
-Copy the `const firebaseConfig = {...}` lines from the Add Firebase SDK dialog that pops up and paste them into a new file at `app/firebaseConfig.ts`. Change `const firebaseConfig` to `export const firebaseConfig`. These are the credentials used by the Crosshare frontend.
-
-Now click "Continue to console" and click "Service accounts" at the top of the Project Settings page. Under "Firebase Admin SDK" click "Generate new private key". Save the resultant file as `serviceAccountKey.json` in the root of this repository. This is the credential file for the Crosshare server.
-
-### Install dependencies
-
-Crosshare is currently deployed on node 18 - on Fedora it's:
-
-```shell
-$ sudo dnf module install nodejs:18
-```
-
-We use `yarn` for package management:
-```shell
-$ sudo npm install --global yarn
-```
-
-Install dependencies:
-```shell
-$ cd app
-$ yarn
-```
-
-### Now you can run crosshare locally
-
-While still in the `app/` directory, connect to your firebase project:
-```shell
-$ npx firebase login
-$ npx firebase use --add
-```
-
-Now deploy the firestore rules and indexes:
-```shell
-$ npx firebase deploy --only firestore
-```
-
-Compile the i18n definitions:
-```shell
-$ yarn compileI18n
-```
-
-Then start the server:
-```shell
-$ yarn dev
-```
-
-You should now be able to view Crosshare locally at http://localhost:3000
-
-Note: The indexes you created with `firebase deploy --only firestore` can take a while to finish building. You might get related errors when viewing the site until they are done.
-
-#### Wordlists
-
-When running the constructor locally you'll get an error trying to download the word database. You can follow the [instructions in the deployment guide](/DEPLOY.md#updating-wordlist--clue-database) to build and upload a version to your firebase app, or you can download a pregenerated [`worddb.json`](https://drive.google.com/file/d/1bIjSwDDmMhX8u_xoyfs5PVxKuBD0ChhQ/view?usp=share_link) (generated March 16, 2023) and upload it using the final command in [the deployment guide](/DEPLOY.md#updating-wordlist--clue-database).
-
-Once the wordlist has been updated you need to update your cloud storage CORS settings so it can be downloaded in the browser. This [stackoverflow post](https://stackoverflow.com/a/58613527) gives a step-by-step run down.
-
 ## Running Tests
 
-You'll need Java installed to run the firebase emulators. Once you've done the steps above to set up local development do:
+While the dev container is running use the following command to run the suite of jest unit tests:
 
-```shell
-$ yarn test
-```
+> $ podman exec --latest -e NODE_OPTIONS='--experimental-vm-modules' npx jest --ci
 
 ## Credits
 
