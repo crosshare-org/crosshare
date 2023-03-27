@@ -46,7 +46,7 @@ If you feel your change to the demo data will be generally useful please feel fr
 
 If you'd rather not use the firebase emulators you can use the same container but connect to a live firebase project instead.
 
-You'll need to have a firebase project set up and `firebaseConfig.ts` and `serviceAccountKey.json` created in the correct locations - see ("Running Containerless)[/RUNNING_CONTAINERLESS.md] for details on setting up firebase and creating those files. Then in the root of the repo run:
+You'll need to have a firebase project set up and `firebaseConfig.ts` and `serviceAccountKey.json` created in the correct locations - see ["Running Containerless](/RUNNING_CONTAINERLESS.md) for details on setting up firebase and creating those files. Then in the root of the repo run:
 
 > $ podman-compose up devLive
 
