@@ -18,7 +18,7 @@ In addition to the test suites, all PRs are checked to match our [eslint](https:
 
 ## Running the site locally
 
-We are in the process of moving to a container based dev workflow. These instructions are written for [podman](https://podman.io/) and `docker-compose`(https://brandonrozek.com/blog/rootless-docker-compose-podman/) but will hopefully work with `docker` as well - if you try it please let us know to confirm it works or report any issues. If you'd rather not use containers there are old instructions for running on your machine directly [here](/RUNNING_CONTAINERLESS.md).
+We are in the process of moving to a container based dev workflow. These instructions are written for [podman](https://podman.io/) and [docker-compose](https://brandonrozek.com/blog/rootless-docker-compose-podman/) but will hopefully work with `docker` as well - if you try it please let us know to confirm it works or report any issues. If you'd rather not use containers there are old instructions for running on your machine directly [here](/RUNNING_CONTAINERLESS.md).
 
 ### Developing against the firebase emulators (recommended)
 

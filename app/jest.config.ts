@@ -46,6 +46,7 @@ const customJestConfig = {
 
   testEnvironment: 'jest-environment-jsdom',
   setupFilesAfterEnv: ['<rootDir>/setupTestsAfterEnv.ts'],
+  roots: ['<rootDir>/__tests__'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
 };
 
