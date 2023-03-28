@@ -74,6 +74,8 @@ services:
         condition: service_healthy
     volumes:
       - "./app/e2e:/src/e2e:z"
+      - "./app/playwright.config.ts:/src/playwright.config.ts:z"
+      - "./app/playwright-report:/src/playwright-report:z"
     working_dir: /src
     tty: true
     command: /bin/bash
