@@ -39,6 +39,7 @@
     "@juggle/resize-observer": "^3.4.0",
     "@lingui/react": "^3.17.2",
     "@lingui/swc-plugin": "^0.2.3",
+    "@playwright/test": "1.32.1",
     "@popperjs/core": "^2.11.6",
     "@sentry/nextjs": "^7.40.0",
     "@use-it/event-listener": "^0.1.7",

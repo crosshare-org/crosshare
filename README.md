@@ -18,15 +18,15 @@ In addition to the test suites, all PRs are checked to match our [eslint](https:
 
 ## Running the site locally
 
-We are in the process of moving to a container based dev workflow. These instructions are written for [podman](https://podman.io/) and [podman-compose](https://github.com/containers/podman-compose) but will hopefully work with `docker` as well - if you try it please let us know to confirm it works or report any issues. If you'd rather not use containers there are old instructions for running on your machine directly [here](/RUNNING_CONTAINERLESS.md).
+We are in the process of moving to a container based dev workflow. These instructions are written for [podman](https://podman.io/) and `docker-compose`(https://brandonrozek.com/blog/rootless-docker-compose-podman/) but will hopefully work with `docker` as well - if you try it please let us know to confirm it works or report any issues. If you'd rather not use containers there are old instructions for running on your machine directly [here](/RUNNING_CONTAINERLESS.md).
 
 ### Developing against the firebase emulators (recommended)
 
 After checking out the codebase run the following in the root of the repository:
 
-> $ podman-compose up dev
+> $ docker-compose --profile dev up
 
-The first run will take a while as it will build the development container - future runs will be quicker. Once everything is up and running the site should be visible at http://localhost:3000 and the emulator admin at http://localhost:4000
+The first run will take a while as it will build the development containers - future runs will be quicker. Once everything is up and running the site should be visible at http://localhost:3000 and the emulator admin at http://localhost:4000
 
 ### Demo data
 
@@ -34,13 +34,13 @@ The emulators will start with some demo data. We try to keep the demo dataset sm
 
 While the dev server is running make any changes you need, either through the user interface itself or through the emulator admin. Then run:
 
-> $ podman exec --latest firebase emulators:export --force --project demo-crosshare emulator-data
+> $ podman exec crosshare-dev firebase emulators:export --force --project demo-crosshare emulator-data
 
 If you feel your change to the demo data will be generally useful please feel free to include it in your PR with a description of what has been added.
 
-### Stopping the dev server
+### Stopping the dev containers
 
-> $ podman-compose down dev
+> $ docker-compose --profile dev down
 
 ### Developing against your own firebase project
 
@@ -48,13 +48,17 @@ If you'd rather not use the firebase emulators you can use the same container bu
 
 You'll need to have a firebase project set up and `firebaseConfig.ts` and `serviceAccountKey.json` created in the correct locations - see [Running Containerless](/RUNNING_CONTAINERLESS.md) for details on setting up firebase and creating those files. Then in the root of the repo run:
 
-> $ podman-compose up devLive
+> $ docker-compose up devLive
 
 ## Running Tests
 
 While the dev container is running use the following command to run the suite of jest unit tests:
 
-> $ podman exec --latest -e NODE_OPTIONS='--experimental-vm-modules' npx jest --ci
+> $ podman exec -e NODE_OPTIONS='--experimental-vm-modules' crosshare-dev npx jest --ci
+
+And to run playwright tests:
+
+> $ podman exec crosshare-playwright npx playwright test
 
 ## Credits
 
