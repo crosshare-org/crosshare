@@ -37,6 +37,8 @@ export function useAuth(): AuthContextValue {
           setIsAdmin(false);
           console.error(error);
         });
+    } else {
+      setIsAdmin(false);
     }
   }, [user]);
 
