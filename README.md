@@ -24,9 +24,9 @@ We are in the process of moving to a container based dev workflow. These instruc
 
 After checking out the codebase run the following in the root of the repository:
 
-> $ docker-compose --profile dev up
+> $ docker-compose up dev
 
-The first run will take a while as it will build the development containers - future runs will be quicker. Once everything is up and running the site should be visible at http://localhost:3000 and the emulator admin at http://localhost:4000
+The first run will take a while as it will build the development container - future runs will be quicker. Once everything is up and running the site should be visible at http://localhost:3000 and the emulator admin at http://localhost:4000
 
 ### Demo data
 
@@ -40,7 +40,7 @@ If you feel your change to the demo data will be generally useful please feel fr
 
 ### Stopping the dev containers
 
-> $ docker-compose --profile dev down
+> $ docker-compose down dev
 
 ### Developing against your own firebase project
 
@@ -58,7 +58,7 @@ While the dev container is running use the following command to run the suite of
 
 And to run playwright tests:
 
-> $ podman exec crosshare-playwright npx playwright test
+> $ podman exec crosshare-dev npx playwright test
 
 ## Credits
 

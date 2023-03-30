@@ -1,11 +1,9 @@
-FROM node:18-slim as deps
+FROM mcr.microsoft.com/playwright:v1.32.1-jammy as dev
 RUN mkdir /src
 WORKDIR /src
 COPY app/package.json app/yarn.lock ./
 RUN yarn --frozen-lockfile
 ENV PATH=$PATH:/src/node_modules/.bin NEXT_TELEMETRY_DISABLED=1
-
-FROM deps as dev
 RUN apt-get update && apt-get install -y --no-install-recommends openjdk-11-jre-headless curl
 RUN npm i -g firebase-tools
 RUN firebase --version
@@ -14,12 +12,12 @@ RUN firebase setup:emulators:storage
 RUN firebase setup:emulators:ui
 RUN firebase setup:emulators:pubsub
 
-FROM mcr.microsoft.com/playwright:v1.32.1-jammy as playwright
+FROM node:18-slim as builder
 RUN mkdir /src
 WORKDIR /src
-RUN yarn add @playwright/test@1.32.1
-
-FROM deps as builder
+COPY app/package.json app/yarn.lock ./
+RUN yarn --frozen-lockfile
+ENV PATH=$PATH:/src/node_modules/.bin NEXT_TELEMETRY_DISABLED=1
 COPY . .
 WORKDIR /src/app
 RUN yarn compileI18n

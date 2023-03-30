@@ -32,6 +32,7 @@ services:
       context: .
       target: dev
     image: dev
+    ipc: host
     volumes:
       - "./app:/src/app:z"
       - "./functions:/src/functions:z"
@@ -58,24 +59,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  playwright:
-    container_name: crosshare-playwright
-    profiles:
-      - dev
-    build:
-      context: .
-      target: playwright
-    image: playwright
-    ipc: host
-    init: true
-    depends_on:
-      dev:
-        condition: service_healthy
-    volumes:
-      - "./app/e2e:/src/e2e:z"
-      - "./app/playwright.config.ts:/src/playwright.config.ts:z"
-      - "./app/playwright-report:/src/playwright-report:z"
-    working_dir: /src
-    tty: true
-    command: /bin/bash
