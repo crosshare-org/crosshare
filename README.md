@@ -40,7 +40,7 @@ If you feel your change to the demo data will be generally useful please feel fr
 
 ### Stopping the dev containers
 
-> $ docker-compose down dev
+> $ docker-compose down
 
 ### Developing against your own firebase project
 
