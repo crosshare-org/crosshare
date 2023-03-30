@@ -156,6 +156,7 @@ export interface PuzzleT {
   highlighted: Array<number>;
   highlight: 'circle' | 'shade';
   comments: Array<CommentWithRepliesT>;
+  commentsDisabled: boolean;
   constructorNotes: string | null;
   blogPost: string | null;
   isPrivate: boolean | number;
@@ -253,6 +254,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     highlighted: dbPuzzle.hs || [],
     highlight: dbPuzzle.s ? 'shade' : 'circle',
     comments: dbPuzzle.cs || [],
+    commentsDisabled: dbPuzzle.no_cs || false,
     constructorNotes: dbPuzzle.cn || null,
     blogPost: dbPuzzle.bp || null,
     isPrivate:

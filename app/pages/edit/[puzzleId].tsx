@@ -755,6 +755,22 @@ const PuzzleEditor = ({
             }}
             text="Add an alternate solution"
           />
+          <h3 css={{ marginTop: '1em' }}>Comments</h3>
+          <label>
+            <input
+              css={{ marginRight: '1em' }}
+              type="checkbox"
+              checked={puzzle.commentsDisabled}
+              onChange={(e) =>
+                updateDoc(getDocRef('c', puzzle.id), {
+                  no_cs: e.target.checked,
+                }).then(() => {
+                  showSnackbar('comment setting updated');
+                })
+              }
+            />{' '}
+            Disable comments for this puzzle
+          </label>
           <h3 css={{ marginTop: '1em' }}>Delete</h3>
           {puzzle.dailyMiniDate ? (
             <p>
