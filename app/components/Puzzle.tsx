@@ -7,6 +7,7 @@ import {
   useContext,
   Dispatch,
   ReactNode,
+  memo,
 } from 'react';
 import Head from 'next/head';
 import { ImEmbed } from 'react-icons/im';
@@ -65,6 +66,7 @@ import {
   addClues,
   getEntryToClueMap,
   getRefs,
+  type CluedEntry,
 } from '../lib/viewableGrid';
 import { entryAndCrossAtPosition, entryIndexAtPosition } from '../lib/gridBase';
 import { cachePlay, writePlayToDB, isDirty } from '../lib/plays';
@@ -129,6 +131,7 @@ import { DownsOnlyContext } from './DownsOnlyContext';
 import { Timestamp } from '../lib/timestamp';
 import { updateDoc } from 'firebase/firestore';
 import { AuthContext } from './AuthContext';
+import { type Root } from 'hast';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -169,6 +172,68 @@ const KeepTryingOverlay = ({
     </Overlay>
   );
 };
+
+const AboveTheGridClue = memo(function AboveTheGridClue({
+  entry,
+  hast,
+  shouldConceal,
+}: {
+  entry: CluedEntry | null;
+  hast: Root | null | undefined;
+  shouldConceal: boolean;
+}) {
+  return (
+    <div
+      css={{
+        height: SQUARE_HEADER_HEIGHT,
+        fontSize: 18,
+        lineHeight: '24px',
+        backgroundColor: 'var(--lighter)',
+        overflowY: 'scroll',
+        scrollbarWidth: 'none',
+        display: 'flex',
+      }}
+    >
+      {entry && hast ? (
+        <div
+          css={{
+            margin: 'auto 1em',
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'nowrap',
+            alignItems: 'center',
+          }}
+        >
+          <div
+            css={{
+              fontWeight: 'bold',
+              paddingRight: '0.5em',
+              flaxShrink: 0,
+              width: '2.5em',
+              height: '100%',
+              textAlign: 'right',
+            }}
+          >
+            {entry.labelNumber}
+            {entry.direction === Direction.Across ? 'A' : 'D'}
+          </div>
+          <div
+            css={{
+              color: shouldConceal ? 'transparent' : 'var(--text)',
+              textShadow: shouldConceal ? '0 0 1em var(--conceal-text)' : '',
+              flex: '1 1 auto',
+              height: '100%',
+            }}
+          >
+            <ClueText entry={entry} hast={hast} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
+    </div>
+  );
+});
 
 interface PuzzleProps extends PuzzlePageResultProps {
   play: PlayWithoutUserT | null;
@@ -736,57 +801,11 @@ export const Puzzle = ({
           />
         }
         header={
-          <div
-            css={{
-              height: SQUARE_HEADER_HEIGHT,
-              fontSize: 18,
-              lineHeight: '24px',
-              backgroundColor: 'var(--lighter)',
-              overflowY: 'scroll',
-              scrollbarWidth: 'none',
-              display: 'flex',
-            }}
-          >
-            {entry && hast ? (
-              <div
-                css={{
-                  margin: 'auto 1em',
-                  display: 'flex',
-                  flexDirection: 'row',
-                  flexWrap: 'nowrap',
-                  alignItems: 'center',
-                }}
-              >
-                <div
-                  css={{
-                    fontWeight: 'bold',
-                    paddingRight: '0.5em',
-                    flaxShrink: 0,
-                    width: '2.5em',
-                    height: '100%',
-                    textAlign: 'right',
-                  }}
-                >
-                  {entry.labelNumber}
-                  {entry.direction === Direction.Across ? 'A' : 'D'}
-                </div>
-                <div
-                  css={{
-                    color: shouldConceal ? 'transparent' : 'var(--text)',
-                    textShadow: shouldConceal
-                      ? '0 0 1em var(--conceal-text)'
-                      : '',
-                    flex: '1 1 auto',
-                    height: '100%',
-                  }}
-                >
-                  <ClueText entry={entry} hast={hast} />
-                </div>
-              </div>
-            ) : (
-              ''
-            )}
-          </div>
+          <AboveTheGridClue
+            entry={entry}
+            hast={hast}
+            shouldConceal={shouldConceal}
+          />
         }
         left={
           <ClueList
