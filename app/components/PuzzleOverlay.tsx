@@ -267,9 +267,11 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                     : `Copy the link to share with solvers (solvers
                 will see an empty grid, yours is complete since you authored the
                 puzzle).`}{' '}
-                  Comments posted below will be visible to anyone who finishes
+                  {props.puzzle.commentsDisabled
+                    ? `Comments are disabled for this puzzle`
+                    : `Comments posted below will be visible to anyone who finishes
                   solving the puzzle
-                  {isContest ? ' and submits a solution to the meta' : ''}.
+                  ${isContest ? ' and submits a solution to the meta' : ''}.`}
                 </p>
               </>
             ) : (
@@ -368,17 +370,27 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         ) : (
           ''
         )}
-        <Comments
-          downsOnly={props.downsOnly}
-          hasGuestConstructor={props.puzzle.guestConstructor !== null}
-          clueMap={props.clueMap}
-          solveTime={props.solveTime}
-          didCheat={props.didCheat}
-          puzzleId={props.puzzle.id}
-          puzzlePublishTime={props.publishTime}
-          puzzleAuthorId={props.puzzle.authorId}
-          comments={props.puzzle.comments}
-        />
+        {props.puzzle.commentsDisabled ? (
+          isEmbed ? (
+            ''
+          ) : (
+            <div css={{ textAlign: 'center', marginTop: '2em' }}>
+              The constructor has disabled comments for this puzzle
+            </div>
+          )
+        ) : (
+          <Comments
+            downsOnly={props.downsOnly}
+            hasGuestConstructor={props.puzzle.guestConstructor !== null}
+            clueMap={props.clueMap}
+            solveTime={props.solveTime}
+            didCheat={props.didCheat}
+            puzzleId={props.puzzle.id}
+            puzzlePublishTime={props.publishTime}
+            puzzleAuthorId={props.puzzle.authorId}
+            comments={props.puzzle.comments}
+          />
+        )}
         {isEmbed ? (
           ''
         ) : (
