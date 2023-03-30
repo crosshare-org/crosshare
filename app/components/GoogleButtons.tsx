@@ -29,6 +29,7 @@ export const GoogleButton = ({
 };
 
 const AuthProvider = new GoogleAuthProvider();
+AuthProvider.setCustomParameters({ prompt: 'select_account' });
 
 export const GoogleSignInButton = ({ postSignIn, text }: GoogleButtonProps) => {
   function signin() {
@@ -123,7 +124,6 @@ export const GoogleLinkButton = ({
                 });
               })
             );
-            user.delete();
             console.log('linked and merged plays');
             if (postSignIn) {
               return postSignIn(newUser);
