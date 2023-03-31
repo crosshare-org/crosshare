@@ -201,6 +201,7 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
 
 interface PotentialFillListProps {
   header: string;
+  entryLength: number;
   entryIndex: number;
   selected: boolean;
   values: Array<[string, number]>;
@@ -238,7 +239,8 @@ const PotentialFillList = (props: PotentialFillListProps) => {
           },
         }}
       >
-        {props.header}
+        {props.header}{' '}
+        <span css={{ fontWeight: 'normal' }}>({props.entryLength})</span>
       </div>
       <div
         ref={listParent}
@@ -1180,6 +1182,7 @@ const GridMode = ({
             selected={false}
             header="Across"
             values={crossMatches}
+            entryLength={cross.cells.length}
             entryIndex={cross.index}
             dispatch={dispatch}
           />
@@ -1190,6 +1193,7 @@ const GridMode = ({
             selected={false}
             header="Down"
             values={crossMatches}
+            entryLength={cross.cells.length}
             entryIndex={cross.index}
             dispatch={dispatch}
           />
@@ -1203,6 +1207,7 @@ const GridMode = ({
             selected={true}
             header="Across"
             values={entryMatches}
+            entryLength={entry.cells.length}
             entryIndex={entry.index}
             dispatch={dispatch}
           />
@@ -1213,6 +1218,7 @@ const GridMode = ({
             selected={true}
             header="Down"
             values={entryMatches}
+            entryLength={entry.cells.length}
             entryIndex={entry.index}
             dispatch={dispatch}
           />
