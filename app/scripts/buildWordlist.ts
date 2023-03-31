@@ -21,6 +21,8 @@ const expanded = process.argv[4];
 const spread = process.argv[5];
 const out = process.argv[6];
 
+const MAX_LENGTH = 15;
+
 if (!peters || !cluedata || !expanded || !spread || !out) {
   throw new Error('bad args');
 }
@@ -87,7 +89,7 @@ async function buildWordlist(
   await readFile(spread, 'utf8').then((sc: string) => {
     const spreadWords = fileContentsToWords(sc);
     spreadWords.forEach(([word, score]) => {
-      if (word.length <= 15) {
+      if (word.length <= MAX_LENGTH) {
         wordlist[word] = spreadScoreMap(score);
       }
     });
@@ -99,7 +101,7 @@ async function buildWordlist(
       const newScore = peterScoreMap(score);
       if (
         score >= 50 &&
-        word.length <= 15 &&
+        word.length <= MAX_LENGTH &&
         newScore >= (wordlist[word] || 0)
       ) {
         console.log('adding from peter: ', word);
@@ -112,7 +114,7 @@ async function buildWordlist(
     const cluedataWords = fileContentsToWords(cc);
     cluedataWords.forEach(([word, score]) => {
       const newScore = cluedataScoreMap(score);
-      if (word.length <= 15 && newScore > (wordlist[word] || 0)) {
+      if (word.length <= MAX_LENGTH && newScore > (wordlist[word] || 0)) {
         console.log('adding from cluedata: ', word);
         wordlist[word] = newScore;
       }
@@ -122,7 +124,7 @@ async function buildWordlist(
   await readFile(expanded, 'utf8').then((ec: string) => {
     const expandedWords = fileContentsToWords(ec);
     expandedWords.forEach(([word]) => {
-      if (word.length <= 15 && 1 > (wordlist[word] || 0)) {
+      if (word.length <= MAX_LENGTH && 1 > (wordlist[word] || 0)) {
         console.log('adding from expanded: ', word);
         wordlist[word] = 1;
       }
