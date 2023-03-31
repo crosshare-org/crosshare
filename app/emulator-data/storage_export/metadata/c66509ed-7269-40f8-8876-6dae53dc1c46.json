@@ -1,0 +1,19 @@
+{
+  "name": "worddb.json",
+  "bucket": "demo-crosshare.appspot.com",
+  "metageneration": 1,
+  "generation": 1680293657319,
+  "contentType": "application/json",
+  "storageClass": "STANDARD",
+  "contentDisposition": "inline",
+  "downloadTokens": [
+    "b6f6d11d-3b92-4433-8893-ed1585951f67"
+  ],
+  "etag": "YNKYR3W18G3LT0a/UBrJyefaPEA",
+  "customMetadata": {},
+  "timeCreated": "2023-03-31T20:14:17.320Z",
+  "updated": "2023-03-31T20:14:17.320Z",
+  "size": 1002949,
+  "md5Hash": "WnNfqPeNCIxXoy2HXeXTTw==",
+  "crc32c": "2083712979"
+}

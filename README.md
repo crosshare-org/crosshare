@@ -30,9 +30,9 @@ The first run will take a while as it will build the development container - fut
 
 ### Demo data
 
-The emulators will start with some demo data. We try to keep the demo dataset small but would like for it to cover basic use/test cases. Each time you start the dev server any auth/database changes are reset to match the demo dataset. If you need to alter the demo data to expand what's available please do so!
+The emulators will start with some demo data. We try to keep the demo dataset small but would like for it to cover basic use/test cases. Note that the word database (used for autofill) included in the demo dataset only includes words w/ <= 5 characters, to keep the filesize down. Each time you start the dev server any auth/database changes are reset to match the demo dataset.
 
-While the dev server is running make any changes you need, either through the user interface itself or through the emulator admin. Then run:
+If you need to alter the demo data to expand what's available please do so. While the dev server is running make any changes you need, either through the user interface itself or through the emulator admin. Then run:
 
 > $ podman exec crosshare-dev firebase emulators:export --force --project demo-crosshare emulator-data
 
