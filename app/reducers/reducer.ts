@@ -104,6 +104,7 @@ export interface BuilderState extends GridInterfaceState {
   title: string | null;
   notes: string | null;
   guestConstructor: string | null;
+  commentsDisabled?: boolean;
   blogPost: string | null;
   grid: BuilderGrid;
   gridIsComplete: boolean;
@@ -155,6 +156,7 @@ export function initialBuilderStateFromSaved(
     isPrivateUntil: saved?.isPrivateUntil || null,
     blogPost: saved?.blogPost || null,
     guestConstructor: saved?.guestConstructor || null,
+    commentsDisabled: saved?.commentsDisabled,
     contestAnswers: saved?.contestAnswers || null,
     contestHasPrize: saved?.contestHasPrize || false,
     contestRevealDelay: saved?.contestRevealDelay || null,
@@ -183,6 +185,7 @@ export function initialBuilderState({
   isPrivateUntil,
   blogPost,
   guestConstructor,
+  commentsDisabled,
   contestAnswers,
   contestHasPrize,
   contestRevealDelay,
@@ -200,6 +203,7 @@ export function initialBuilderState({
   highlight: 'circle' | 'shade';
   blogPost: string | null;
   guestConstructor: string | null;
+  commentsDisabled?: boolean;
   title: string | null;
   notes: string | null;
   clues: Record<string, string> | Record<string, Array<string>>;
@@ -229,10 +233,11 @@ export function initialBuilderState({
   return validateGrid({
     id: id || getDocId('c'),
     type: 'builder',
-    title: title,
-    notes: notes,
-    blogPost: blogPost,
-    guestConstructor: guestConstructor,
+    title,
+    notes,
+    blogPost,
+    guestConstructor,
+    commentsDisabled,
     wasEntryClick: false,
     active: { col: 0, row: 0, dir: Direction.Across },
     grid: initialGrid,
@@ -254,9 +259,9 @@ export function initialBuilderState({
     publishErrors: [],
     publishWarnings: [],
     toPublish: null,
-    authorId: authorId,
-    authorName: authorName,
-    isPrivate: isPrivate,
+    authorId,
+    authorName,
+    isPrivate,
     isPrivateUntil:
       isPrivateUntil !== null ? Timestamp.fromMillis(isPrivateUntil) : null,
     isContestPuzzle: contestAnswers ? contestAnswers.length > 0 : false,
@@ -362,6 +367,16 @@ function isSetGuestConstructorAction(
   action: PuzzleAction
 ): action is SetGuestConstructorAction {
   return action.type === 'SETGC';
+}
+
+export interface SetCommentsDisabledAction extends PuzzleAction {
+  type: 'SETCD';
+  value: boolean;
+}
+function isSetCommentsDisabledAction(
+  action: PuzzleAction
+): action is SetCommentsDisabledAction {
+  return action.type === 'SETCD';
 }
 
 export interface UpdateContestAction extends PuzzleAction {
@@ -1119,6 +1134,9 @@ export function builderReducer(
   if (isSetGuestConstructorAction(action)) {
     return { ...state, guestConstructor: action.value };
   }
+  if (isSetCommentsDisabledAction(action)) {
+    return { ...state, commentsDisabled: action.value };
+  }
   if (isUpdateContestAction(action)) {
     return {
       ...state,
@@ -1310,6 +1328,7 @@ export function builderReducer(
       ...(state.notes && { cn: state.notes }),
       ...(state.blogPost && { bp: state.blogPost }),
       ...(state.guestConstructor && { gc: state.guestConstructor }),
+      ...(state.commentsDisabled && { no_cs: true }),
       ...(state.isPrivate
         ? { pv: true }
         : {

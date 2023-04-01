@@ -268,7 +268,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                 will see an empty grid, yours is complete since you authored the
                 puzzle).`}{' '}
                   {props.puzzle.commentsDisabled
-                    ? `Comments are disabled for this puzzle`
+                    ? ''
                     : `Comments posted below will be visible to anyone who finishes
                   solving the puzzle
                   ${isContest ? ' and submits a solution to the meta' : ''}.`}

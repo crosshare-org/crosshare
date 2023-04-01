@@ -21,6 +21,7 @@ import {
   AddAlternateAction,
   SetTagsAction,
   getClueProps,
+  SetCommentsDisabledAction,
 } from '../reducers/reducer';
 import { TopBarLink, TopBar } from './TopBar';
 import {
@@ -835,9 +836,9 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
           )}
           <h2 css={{ marginTop: '1em' }}>Advanced</h2>
           <div>
+            <h3>Alternate Solutions</h3>
             {state.alternates.length ? (
               <>
-                <h3>Alternate Solutions</h3>
                 <ul>
                   {state.alternates.map((a, i) => (
                     <li key={i}>
@@ -894,6 +895,24 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                 </>
               }
             />
+          </div>
+          <div css={{ marginTop: '1em' }}>
+            <h3>Comments</h3>
+            <label>
+              <input
+                css={{ marginRight: '1em' }}
+                type="checkbox"
+                checked={state.commentsDisabled}
+                onChange={(e) => {
+                  const scd: SetCommentsDisabledAction = {
+                    type: 'SETCD',
+                    value: e.target.checked,
+                  };
+                  props.dispatch(scd);
+                }}
+              />{' '}
+              Disable comments for this puzzle (not recommended)
+            </label>
           </div>
         </div>
       </GridContext.Provider>

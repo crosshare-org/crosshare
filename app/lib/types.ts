@@ -305,6 +305,7 @@ const PuzzleInProgressBaseV = t.intersection([
     contestRevealDelay: t.number,
     alternates: t.array(t.record(t.string, t.string)),
     userTags: t.array(t.string),
+    commentsDisabled: t.boolean,
   }),
 ]);
 
