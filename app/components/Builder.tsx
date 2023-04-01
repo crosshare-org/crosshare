@@ -8,6 +8,7 @@ import {
   Dispatch,
   MouseEvent,
   FormEvent,
+  useContext,
 } from 'react';
 import { Global } from '@emotion/react';
 import { eqSet, STORAGE_KEY } from '../lib/utils';
@@ -133,6 +134,7 @@ import { Snackbar, useSnackbar } from './Snackbar';
 import { importFile, exportFile, ExportProps } from '../lib/converter';
 import { getAutofillWorker } from '../lib/workerLoader';
 import type { User } from 'firebase/auth';
+import { AuthContext } from './AuthContext';
 
 let worker: Worker | null = null;
 
@@ -314,7 +316,10 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     isPrivateUntil: saved?.isPrivateUntil || null,
     blogPost: saved?.blogPost || null,
     guestConstructor: saved?.guestConstructor || null,
-    commentsDisabled: saved?.commentsDisabled,
+    commentsDisabled:
+      saved?.commentsDisabled !== undefined
+        ? saved.commentsDisabled
+        : props.prefs?.disableCommentsByDefault,
     contestAnswers: saved?.contestAnswers || null,
     contestHasPrize: saved?.contestHasPrize || false,
     contestRevealDelay: saved?.contestRevealDelay || null,
@@ -514,6 +519,7 @@ const NewPuzzleForm = (props: { dispatch: Dispatch<NewPuzzleAction> }) => {
   const [customRows, setCustomRows] = useState<number | null>(null);
   const [customCols, setCustomCols] = useState<number | null>(null);
   const [prefill, setPrefill] = useState<PrefillSquares | undefined>(undefined);
+  const authContext = useContext(AuthContext);
 
   let errorMsg = '';
   if (!customRows || !customCols) {
@@ -530,7 +536,13 @@ const NewPuzzleForm = (props: { dispatch: Dispatch<NewPuzzleAction> }) => {
     // Clear current puzzle
     localStorage.removeItem(STORAGE_KEY);
 
-    props.dispatch({ type: 'NEWPUZZLE', cols, rows, prefill });
+    props.dispatch({
+      type: 'NEWPUZZLE',
+      cols,
+      rows,
+      prefill,
+      commentsDisabled: authContext.prefs?.disableCommentsByDefault,
+    });
   }
 
   return (

@@ -43,6 +43,7 @@ const initializeState = (
     id: null,
     blogPost: null,
     guestConstructor: null,
+    commentsDisabled: props.prefs?.disableCommentsByDefault,
     width: props.width,
     height: props.height,
     grid: props.grid,

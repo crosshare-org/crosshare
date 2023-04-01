@@ -337,6 +337,22 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         ) : (
           ''
         )}
+        <h2>Constructor Preferences</h2>
+        <ul
+          css={{
+            listStyleType: 'none',
+            padding: '0 0',
+          }}
+        >
+          <li>
+            <PrefSetting
+              prefs={prefs}
+              userId={user.uid}
+              flag={'disableCommentsByDefault'}
+              text="Disable comments by default on newly constructed/uploaded puzzles (not recommended)"
+            />
+          </li>
+        </ul>
       </div>
       {settingProfilePic ? (
         <ImageCropper

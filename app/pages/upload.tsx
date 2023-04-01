@@ -71,7 +71,14 @@ export default function UploadPage() {
   }
 
   if (puzzle && ctx.user) {
-    return <Preview user={ctx.user} isAdmin={ctx.isAdmin} {...puzzle} />;
+    return (
+      <Preview
+        user={ctx.user}
+        isAdmin={ctx.isAdmin}
+        prefs={ctx.prefs}
+        {...puzzle}
+      />
+    );
   }
 
   const description =

@@ -13,6 +13,7 @@ const AccountPrefsFlagsV = t.partial({
   dontSkipCompleted: t.boolean,
   dontAdvanceWordAfterCompletion: t.boolean,
   solveDownsOnly: t.boolean,
+  disableCommentsByDefault: t.boolean,
 });
 export type AccountPrefsFlagsT = t.TypeOf<typeof AccountPrefsFlagsV>;
 

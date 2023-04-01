@@ -131,7 +131,7 @@ function isBuilderState(state: GridInterfaceState): state is BuilderState {
   return state.type === 'builder';
 }
 
-export function initialBuilderStateFromSaved(
+function initialBuilderStateFromSaved(
   saved: PuzzleInProgressT | null,
   state: BuilderState
 ) {
@@ -474,6 +474,7 @@ export interface NewPuzzleAction extends PuzzleAction {
   rows: number;
   cols: number;
   prefill?: PrefillSquares;
+  commentsDisabled?: boolean;
 }
 export function isNewPuzzleAction(
   action: PuzzleAction
@@ -1235,6 +1236,7 @@ export function builderReducer(
       notes: null,
       blogPost: null,
       guestConstructor: null,
+      commentsDisabled: action.commentsDisabled,
       highlight: 'circle',
       highlighted: [],
       clues: {},
