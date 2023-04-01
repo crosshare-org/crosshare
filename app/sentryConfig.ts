@@ -26,6 +26,7 @@ export const config = {
     'auth/popup-blocked',
     'auth/popup-closed-by-user',
     'auth/network-request-failed',
+    'auth/cancelled-popup-request',
   ],
   // Note: if you want to override the automatic release value, do not set a
   // `release` value here - use the environment variable `SENTRY_RELEASE`, so
