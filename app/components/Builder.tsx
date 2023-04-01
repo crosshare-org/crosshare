@@ -159,6 +159,7 @@ type BuilderProps = PartialBy<
   | 'contestRevealDelay'
   | 'alternateSolutions'
   | 'guestConstructor'
+  | 'commentsDisabled'
   | 'isPrivate'
   | 'isPrivateUntil'
   | 'highlighted'

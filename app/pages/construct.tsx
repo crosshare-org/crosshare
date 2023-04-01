@@ -50,7 +50,14 @@ export default function BuilderPage() {
   };
 
   if (ready && ctx.user && showBuilder) {
-    return <Builder {...props} user={ctx.user} isAdmin={ctx.isAdmin} />;
+    return (
+      <Builder
+        {...props}
+        user={ctx.user}
+        isAdmin={ctx.isAdmin}
+        prefs={ctx.prefs}
+      />
+    );
   }
   if (error) {
     console.error(error);
