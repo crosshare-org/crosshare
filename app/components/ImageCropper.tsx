@@ -195,7 +195,17 @@ export function ImageCropper(props: {
       }
       setDisabled(false);
       imgRef.current = img;
-      setMinWidth((props.targetSize[0] * img.width) / img.naturalWidth);
+      const minWidth = (props.targetSize[0] * img.width) / img.naturalWidth;
+      setMinWidth(minWidth);
+      const crop: Crop = {
+        unit: 'px',
+        width: minWidth,
+        height: (props.targetSize[1] * img.height) / img.naturalHeight,
+        x: 0,
+        y: 0,
+      };
+      setCrop(crop);
+      setCompletedCrop(crop);
     },
     [props.targetSize]
   );
