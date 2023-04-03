@@ -348,16 +348,14 @@ export const PuzzleResultLink = ({
     ? new Date(puzzle.isPrivateUntil)
     : new Date(puzzle.publishTime);
   let date = (
-    <span title={publishDate.toISOString()}>
-      <Trans comment="The variable is a timestamp like '4 days ago' or 'hace 4 dias'">
-        Published <PastDistanceToNow date={publishDate} />
-      </Trans>
-    </span>
+    <Trans comment="The variable is a timestamp like '4 days ago' or 'hace 4 dias'">
+      Published <PastDistanceToNow date={publishDate} />
+    </Trans>
   );
   if (props.showPrivateStatus) {
     if (puzzle.isPrivate !== false) {
       date = (
-        <span css={{ color: 'var(--error)' }} title={publishDate.toISOString()}>
+        <span css={{ color: 'var(--error)' }}>
           <Trans comment="The variable is a timestamp like '4 days ago' or 'hace 4 dias'">
             Published privately <PastDistanceToNow date={publishDate} />
           </Trans>
@@ -368,7 +366,7 @@ export const PuzzleResultLink = ({
       new Date(puzzle.isPrivateUntil) > new Date()
     ) {
       date = (
-        <span css={{ color: 'var(--error)' }} title={publishDate.toISOString()}>
+        <span css={{ color: 'var(--error)' }}>
           <Trans comment="The variable is a timestamp like 'in 4 days' or 'en 4 dias'">
             Private, going public <DistanceToNow date={publishDate} />
           </Trans>

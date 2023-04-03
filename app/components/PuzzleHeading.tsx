@@ -57,11 +57,9 @@ export const PuzzleHeading = (props: {
             ) : (
               <>
                 {' · '}
-                <span title={publishDate.toISOString()}>
-                  <Trans comment="The variable is a timestamp like '4 days ago' or 'hace 4 dias'">
-                    Published <PastDistanceToNow date={publishDate} />
-                  </Trans>
-                </span>
+                <Trans comment="The variable is a timestamp like '4 days ago' or 'hace 4 dias'">
+                  Published <PastDistanceToNow date={publishDate} />
+                </Trans>
               </>
             )}
           </p>
