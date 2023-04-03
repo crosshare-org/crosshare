@@ -27,7 +27,8 @@ export const fromEnum = <T extends string, TEnumValue extends string | number>(
   return new t.Type<TEnumValue>(
     enumName,
     isEnumValue,
-    (input, context) => (isEnumValue(input) ? t.success(input) : t.failure(input, context)),
+    (input, context) =>
+      isEnumValue(input) ? t.success(input) : t.failure(input, context),
     t.identity
   );
 };

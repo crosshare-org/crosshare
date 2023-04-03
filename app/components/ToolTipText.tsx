@@ -12,7 +12,9 @@ export const ToolTipText = (props: {
   const [popperElement, setPopperElement] = useState<HTMLSpanElement | null>(
     null
   );
-  const [arrowElement, setArrowElement] = useState<HTMLSpanElement | null>(null);
+  const [arrowElement, setArrowElement] = useState<HTMLSpanElement | null>(
+    null
+  );
   const [isHovered, hoverBind, unhover] = useHover();
   const { styles, attributes, update } = usePopper(
     referenceElement,
