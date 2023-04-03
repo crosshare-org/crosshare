@@ -9,10 +9,10 @@ export const ToolTipText = (props: {
 }) => {
   const [referenceElement, setReferenceElement] =
     useState<HTMLSpanElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
+  const [popperElement, setPopperElement] = useState<HTMLSpanElement | null>(
     null
   );
-  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+  const [arrowElement, setArrowElement] = useState<HTMLSpanElement | null>(null);
   const [isHovered, hoverBind, unhover] = useHover();
   const { styles, attributes, update } = usePopper(
     referenceElement,
@@ -46,8 +46,9 @@ export const ToolTipText = (props: {
       >
         {props.text}
       </span>
-      <div
+      <span
         css={{
+          display: 'block',
           zIndex: 100000,
           borderRadius: '5px',
           backgroundColor: 'var(--black)',
@@ -69,8 +70,9 @@ export const ToolTipText = (props: {
         {...attributes.popper}
       >
         {props.tooltip}
-        <div
+        <span
           css={{
+            display: 'block',
             position: 'absolute',
             width: '10px',
             height: '10px',
@@ -92,7 +94,7 @@ export const ToolTipText = (props: {
           ref={setArrowElement}
           style={styles.arrow}
         />
-      </div>
+      </span>
     </>
   );
 };
