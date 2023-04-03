@@ -162,6 +162,7 @@ function initialBuilderStateFromSaved(
     contestRevealDelay: saved?.contestRevealDelay || null,
     alternates: saved?.alternates || null,
     userTags: saved?.userTags || [],
+    symmetry: saved?.symmetry,
   });
 }
 
@@ -191,6 +192,7 @@ export function initialBuilderState({
   contestRevealDelay,
   alternates,
   userTags,
+  symmetry,
 }: {
   id: string | null;
   width: number;
@@ -217,6 +219,7 @@ export function initialBuilderState({
   contestRevealDelay: number | null;
   alternates: Array<Record<number, string>> | null;
   userTags: Array<string>;
+  symmetry?: Symmetry;
 }) {
   const initialGrid = fromCells({
     mapper: (e) => e,
@@ -250,7 +253,12 @@ export function initialBuilderState({
     isEditable() {
       return !this.alternates.length && editable;
     },
-    symmetry: width * height < 49 ? Symmetry.None : Symmetry.Rotational,
+    symmetry:
+      symmetry !== undefined
+        ? symmetry
+        : width * height < 49
+        ? Symmetry.None
+        : Symmetry.Rotational,
     clues: Object.fromEntries(
       Object.entries(clues).map(([word, val]) =>
         typeof val === 'string' ? [word, [val]] : [word, val]

@@ -321,6 +321,7 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     contestRevealDelay: saved?.contestRevealDelay || null,
     alternates: saved?.alternates || null,
     userTags: saved?.userTags || [],
+    symmetry: saved?.symmetry,
   });
 };
 
@@ -557,6 +558,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       isPrivateUntil: state.isPrivateUntil?.toMillis(),
       alternates: state.alternates,
       userTags: state.userTags,
+      symmetry: state.symmetry,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(inProgress));
   }, [
@@ -579,6 +581,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     state.grid.vBars,
     state.grid.hBars,
     state.userTags,
+    state.symmetry,
   ]);
 
   const reRunAutofill = useCallback(() => {
