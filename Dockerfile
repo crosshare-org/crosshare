@@ -26,7 +26,6 @@ RUN yarn predeploy
 RUN rm -rf nextjs/cache
 WORKDIR /src
 RUN yarn install --production --ignore-scripts --prefer-offline
-RUN find . -name \*.map -type f -delete
 
 FROM gcr.io/distroless/nodejs18-debian11 as prod
 WORKDIR /app
