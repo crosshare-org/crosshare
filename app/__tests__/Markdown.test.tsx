@@ -14,18 +14,18 @@ test('escape html', () => {
     {}
   );
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      This should get 
-      escaped
-      !
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          This should get 
+          escaped
+          !
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 });
 
 test('email priority over at mention', () => {
@@ -38,163 +38,163 @@ test('email priority over at mention', () => {
     {}
   );
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      Reach out anytime at 
-      <a
-        href="mailto:example@gmail.com"
-        rel="nofollow ugc noopener noreferrer"
-        target="_blank"
-      >
-        example@gmail.com
-      </a>
-       to talk about crosswords!
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          Reach out anytime at 
+          <a
+            href="mailto:example@gmail.com"
+            rel="nofollow ugc noopener noreferrer"
+            target="_blank"
+          >
+            example@gmail.com
+          </a>
+           to talk about crosswords!
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 });
 
 test('emoji rendering', () => {
   let r = render(<Markdown hast={markdownToHast({ text: '😂🐅' })} />, {});
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      <img
-        alt="😂"
-        class="twemoji"
-        draggable="false"
-        src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
-      />
-      <img
-        alt="🐅"
-        class="twemoji"
-        draggable="false"
-        src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
-      />
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          <img
+            alt="😂"
+            class="twemoji"
+            draggable="false"
+            src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+          />
+          <img
+            alt="🐅"
+            class="twemoji"
+            draggable="false"
+            src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
+          />
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 
   r = render(<Markdown hast={markdownToHast({ text: '😂 abc' })} />, {});
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      <img
-        alt="😂"
-        class="twemoji"
-        draggable="false"
-        src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
-      />
-       abc
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          <img
+            alt="😂"
+            class="twemoji"
+            draggable="false"
+            src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+          />
+           abc
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 
   r = render(<Markdown hast={markdownToHast({ text: 'abc 😂' })} />, {});
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      abc 
-      <img
-        alt="😂"
-        class="twemoji"
-        draggable="false"
-        src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
-      />
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          abc 
+          <img
+            alt="😂"
+            class="twemoji"
+            draggable="false"
+            src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+          />
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 
   r = render(<Markdown hast={markdownToHast({ text: 'abc 😂 def' })} />, {});
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      abc 
-      <img
-        alt="😂"
-        class="twemoji"
-        draggable="false"
-        src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
-      />
-       def
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          abc 
+          <img
+            alt="😂"
+            class="twemoji"
+            draggable="false"
+            src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+          />
+           def
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 
   r = render(<Markdown hast={markdownToHast({ text: '😂 abc 🐅' })} />, {});
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      <img
-        alt="😂"
-        class="twemoji"
-        draggable="false"
-        src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
-      />
-       abc 
-      <img
-        alt="🐅"
-        class="twemoji"
-        draggable="false"
-        src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
-      />
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          <img
+            alt="😂"
+            class="twemoji"
+            draggable="false"
+            src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+          />
+           abc 
+          <img
+            alt="🐅"
+            class="twemoji"
+            draggable="false"
+            src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
+          />
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 
   r = render(
     <Markdown hast={markdownToHast({ text: 'abc 😂 def 🐅 hij' })} />,
     {}
   );
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      abc 
-      <img
-        alt="😂"
-        class="twemoji"
-        draggable="false"
-        src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
-      />
-       def 
-      <img
-        alt="🐅"
-        class="twemoji"
-        draggable="false"
-        src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
-      />
-       hij
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          abc 
+          <img
+            alt="😂"
+            class="twemoji"
+            draggable="false"
+            src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+          />
+           def 
+          <img
+            alt="🐅"
+            class="twemoji"
+            draggable="false"
+            src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
+          />
+           hij
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 });
 
 test('spoiler text rendering', () => {
@@ -492,140 +492,140 @@ test('clueMap rendering', async () => {
     /* noop */
   });
   expect(r.container).toMatchInlineSnapshot(`
-.emotion-0 {
-  border-bottom: 1px dotted;
-  white-space: nowrap;
-}
+    .emotion-0 {
+      border-bottom: 1px dotted;
+      white-space: nowrap;
+    }
 
-.emotion-1 {
+    .emotion-1 {
       display: block;
-  z-index: 100000;
-  border-radius: 5px;
-  background-color: var(--black);
-  color: var(--white);
-  text-align: center;
-  max-width: 30em;
-  padding: 10px;
-  visibility: hidden;
-}
+      z-index: 100000;
+      border-radius: 5px;
+      background-color: var(--black);
+      color: var(--white);
+      text-align: center;
+      max-width: 30em;
+      padding: 10px;
+      visibility: hidden;
+    }
 
-.emotion-1[data-popper-reference-hidden=true] {
-  visibility: hidden;
-}
+    .emotion-1[data-popper-reference-hidden=true] {
+      visibility: hidden;
+    }
 
-.emotion-2 {
-  margin-right: 0.5em;
-  white-space: nowrap;
-}
+    .emotion-2 {
+      margin-right: 0.5em;
+      white-space: nowrap;
+    }
 
-.emotion-3 {
-  margin-left: 0.5em;
-  white-space: nowrap;
-}
+    .emotion-3 {
+      margin-left: 0.5em;
+      white-space: nowrap;
+    }
 
-.emotion-4 {
+    .emotion-4 {
       display: block;
-  position: absolute;
-  width: 10px;
-  height: 10px;
-}
+      position: absolute;
+      width: 10px;
+      height: 10px;
+    }
 
-[data-popper-placement^="bottom"] .emotion-4 {
-  top: -5px;
-}
+    [data-popper-placement^="bottom"] .emotion-4 {
+      top: -5px;
+    }
 
-[data-popper-placement^="top"] .emotion-4 {
-  bottom: -5px;
-}
+    [data-popper-placement^="top"] .emotion-4 {
+      bottom: -5px;
+    }
 
-.emotion-4::after {
-  content: " ";
-  position: absolute;
-  -webkit-transform: rotate(45deg);
-  -moz-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
-  width: 10px;
-  height: 10px;
-  background-color: var(--black);
-}
+    .emotion-4::after {
+      content: " ";
+      position: absolute;
+      -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
+      width: 10px;
+      height: 10px;
+      background-color: var(--black);
+    }
 
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      Shout Out to 
-      <span
-        class="emotion-0"
-      >
-        1A
-      </span>
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          Shout Out to 
           <span
-        class="emotion-1"
-        data-popper-escaped="true"
-        data-popper-placement="bottom"
-        data-popper-reference-hidden="true"
-        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
-      >
-        <b
-          class="emotion-2"
-        >
-          1
-          A
-        </b>
-        Well now
-        <b
-          class="emotion-3"
-        >
-          [
-          12ACLUE
-          1
-          ]
-        </b>
-            <span
-          class="emotion-4"
-          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
-        />
+            class="emotion-0"
+          >
+            1A
           </span>
-      ! (
-      <span
-        class="emotion-0"
-      >
-        2D
-      </span>
           <span
-        class="emotion-1"
-        data-popper-escaped="true"
-        data-popper-placement="bottom"
-        data-popper-reference-hidden="true"
-        style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
-      >
-        <b
-          class="emotion-2"
-        >
-          2
-          D
-        </b>
-        here is the clue?
-        <b
-          class="emotion-3"
-        >
-          [
-          1
-          M
-          ]
-        </b>
+            class="emotion-1"
+            data-popper-escaped="true"
+            data-popper-placement="bottom"
+            data-popper-reference-hidden="true"
+            style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+          >
+            <b
+              class="emotion-2"
+            >
+              1
+              A
+            </b>
+            Well now
+            <b
+              class="emotion-3"
+            >
+              [
+              12ACLUE
+              1
+              ]
+            </b>
             <span
-          class="emotion-4"
-          style="position: absolute; left: 0px; transform: translate(0px, 0px);"
-        />
+              class="emotion-4"
+              style="position: absolute; left: 0px; transform: translate(0px, 0px);"
+            />
           </span>
-      ... not so much)
+          ! (
+          <span
+            class="emotion-0"
+          >
+            2D
+          </span>
+          <span
+            class="emotion-1"
+            data-popper-escaped="true"
+            data-popper-placement="bottom"
+            data-popper-reference-hidden="true"
+            style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+          >
+            <b
+              class="emotion-2"
+            >
+              2
+              D
+            </b>
+            here is the clue?
+            <b
+              class="emotion-3"
+            >
+              [
+              1
+              M
+              ]
+            </b>
+            <span
+              class="emotion-4"
+              style="position: absolute; left: 0px; transform: translate(0px, 0px);"
+            />
+          </span>
+          ... not so much)
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 });
 
 test('inline', () => {
@@ -637,18 +637,18 @@ test('inline', () => {
     {}
   );
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <ul>
-    
+    <div>
+      <ul>
+        
 
-    <li>
-      This is the starred clue
-    </li>
-    
+        <li>
+          This is the starred clue
+        </li>
+        
 
-  </ul>
-</div>
-`);
+      </ul>
+    </div>
+  `);
 
   const rInline = render(
     <Markdown
@@ -661,14 +661,14 @@ test('inline', () => {
     {}
   );
   expect(rInline.container).toMatchInlineSnapshot(`
-<div>
-  <div
-    class="paragraph"
-  >
-    * This is the starred clue
-  </div>
-</div>
-`);
+    <div>
+      <div
+        class="paragraph"
+      >
+        * This is the starred clue
+      </div>
+    </div>
+  `);
 });
 
 test('autolink full url', () => {
@@ -681,24 +681,24 @@ test('autolink full url', () => {
     {}
   );
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      Here is a link 
-      <a
-        href="http://www.google.com"
-        rel="nofollow ugc noopener noreferrer"
-        target="_blank"
-      >
-        http://www.google.com
-      </a>
-       to test
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          Here is a link 
+          <a
+            href="http://www.google.com"
+            rel="nofollow ugc noopener noreferrer"
+            target="_blank"
+          >
+            http://www.google.com
+          </a>
+           to test
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 });
 
 test('autolink partial url', () => {
@@ -709,16 +709,16 @@ test('autolink partial url', () => {
     {}
   );
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      Here is a link crosshare.org to test
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          Here is a link crosshare.org to test
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 });
 
 test('autolink email', () => {
@@ -731,24 +731,24 @@ test('autolink email', () => {
     {}
   );
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      Here is an email 
-      <a
-        href="mailto:mike@crosshare.org"
-        rel="nofollow ugc noopener noreferrer"
-        target="_blank"
-      >
-        mike@crosshare.org
-      </a>
-       to test
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          Here is an email 
+          <a
+            href="mailto:mike@crosshare.org"
+            rel="nofollow ugc noopener noreferrer"
+            target="_blank"
+          >
+            mike@crosshare.org
+          </a>
+           to test
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 });
 
 test('auto tagger', () => {
@@ -759,39 +759,39 @@ test('auto tagger', () => {
     {}
   );
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      Here is an tag
-       
-      <a
-        href="/tags/lang-es"
-      >
-        #lang-es
-      </a>
-       to test
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          Here is an tag
+           
+          <a
+            href="/tags/lang-es"
+          >
+            #lang-es
+          </a>
+           to test
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 
   r = render(
     <Markdown hast={markdownToHast({ text: 'Here is not a tag #1' })} />,
     {}
   );
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      Here is not a tag #1
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          Here is not a tag #1
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 });
 
 test('profile link', () => {
@@ -800,20 +800,20 @@ test('profile link', () => {
     {}
   );
   expect(r.container).toMatchInlineSnapshot(`
-<div>
-  <div>
-    <div
-      class="paragraph"
-    >
-      Here is my profile
-       
-      <a
-        href="/mike"
-      >
-        @mike
-      </a>
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          Here is my profile
+           
+          <a
+            href="/mike"
+          >
+            @mike
+          </a>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-`);
+  `);
 });
