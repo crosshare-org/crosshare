@@ -498,6 +498,7 @@ test('clueMap rendering', async () => {
 }
 
 .emotion-1 {
+      display: block;
   z-index: 100000;
   border-radius: 5px;
   background-color: var(--black);
@@ -523,6 +524,7 @@ test('clueMap rendering', async () => {
 }
 
 .emotion-4 {
+      display: block;
   position: absolute;
   width: 10px;
   height: 10px;
@@ -559,7 +561,7 @@ test('clueMap rendering', async () => {
       >
         1A
       </span>
-      <div
+          <span
         class="emotion-1"
         data-popper-escaped="true"
         data-popper-placement="bottom"
@@ -581,18 +583,18 @@ test('clueMap rendering', async () => {
           1
           ]
         </b>
-        <div
+            <span
           class="emotion-4"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
-      </div>
+          </span>
       ! (
       <span
         class="emotion-0"
       >
         2D
       </span>
-      <div
+          <span
         class="emotion-1"
         data-popper-escaped="true"
         data-popper-placement="bottom"
@@ -614,11 +616,11 @@ test('clueMap rendering', async () => {
           M
           ]
         </b>
-        <div
+            <span
           class="emotion-4"
           style="position: absolute; left: 0px; transform: translate(0px, 0px);"
         />
-      </div>
+          </span>
       ... not so much)
     </div>
   </div>
