@@ -3,6 +3,7 @@ import { Trans } from '@lingui/macro';
 import { useRouter } from 'next/router';
 import { es, it } from 'date-fns/locale';
 import { ToolTipText } from './ToolTipText';
+import { useEffect, useState } from 'react';
 
 const localeMap: Record<string, Locale> = { es, it, pseudo: es };
 
@@ -15,6 +16,13 @@ export const DistanceToNow = (props: {
   isPast?: boolean;
 }): JSX.Element => {
   const { locale } = useRouter();
+
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+
+  if (!hydrated) {
+    return <>{props.date.toISOString()}</>;
+  }
 
   const dateFnsLocale = locale ? localeMap[locale] : undefined;
 
