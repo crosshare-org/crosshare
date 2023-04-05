@@ -6,6 +6,7 @@ const baseConfig = {
   reactStrictMode: true,
   distDir: distDir,
   poweredByHeader: false,
+  productionBrowserSourceMaps: true,
   i18n: {
     locales: ['en', 'es', 'it', 'fr', 'pseudo'],
     defaultLocale: 'en',
