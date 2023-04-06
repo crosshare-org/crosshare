@@ -5,10 +5,7 @@ export const remarkNoRefs: Plugin = () => {
   return (tree) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     visit(tree, (node: any) => {
-      if (
-        node.type !== 'textDirective' ||
-        node.name !== 'no-refs'
-      ) {
+      if (node.type !== 'textDirective' || node.name !== 'no-refs') {
         return;
       }
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions

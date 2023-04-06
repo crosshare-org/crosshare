@@ -41,9 +41,11 @@ export const Markdown = (props: {
           } else if (className === 'spoiler') {
             return <SpoilerText>{children}</SpoilerText>;
           } else if (className === 'no-refs') {
-            return <ShowRefsContext.Provider value={false}>
-              {children}
-            </ShowRefsContext.Provider>;
+            return (
+              <ShowRefsContext.Provider value={false}>
+                {children}
+              </ShowRefsContext.Provider>
+            );
           } else {
             return (
               <span className={className} {...props}>
