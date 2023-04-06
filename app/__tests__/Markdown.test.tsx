@@ -606,6 +606,34 @@ test('clueMap rendering', async () => {
       <Markdown
         hast={markdownToHast({
           clueMap,
+          text: '!@Shout Out to 1A! (2D... not so much)',
+        })}
+      />
+    </GridContext.Provider>,
+    {}
+  );
+  await waitFor(() => {
+    /* noop */
+  });
+  expect(r.container).toMatchInlineSnapshot(
+    `
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          Shout Out to 1A! (2D... not so much)
+        </div>
+      </div>
+    </div>
+  `
+  );
+
+  r = render(
+    <GridContext.Provider value={cluedGrid}>
+      <Markdown
+        hast={markdownToHast({
+          clueMap,
           text: 'Shout Out to 1A! (2D... not so much)',
         })}
       />

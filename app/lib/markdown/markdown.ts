@@ -28,10 +28,13 @@ export function markdownToHast(props: {
   preview?: number;
   inline?: boolean;
 }): Root {
+  let allowRefs = true;
+  if (props.text.startsWith('!@')) {
+    allowRefs = false;
+  }
   const text = props.text.replace(/[^\s\S]/g, '').replace(/^![@#]/, '');
   const rehypePlugins: PluggableList = [
     twemojify,
-    clueReferencer,
     [
       rehypeExternalLinks,
       {
@@ -47,8 +50,11 @@ export function markdownToHast(props: {
       { size: props.preview, ellipsis: '…' },
     ]);
   }
-  if (props.clueMap) {
-    rehypePlugins.push([entryReferencer, { clueMap: props.clueMap }]);
+  if (allowRefs) {
+    rehypePlugins.push(clueReferencer);
+    if (props.clueMap) {
+      rehypePlugins.push([entryReferencer, { clueMap: props.clueMap }]);
+    }
   }
 
   const processor = unified()
