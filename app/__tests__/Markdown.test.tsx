@@ -482,6 +482,130 @@ test('clueMap rendering', async () => {
       <Markdown
         hast={markdownToHast({
           clueMap,
+          text: `This should be a ref 1A, but :no-refs[this **shouldn't** 1A be one]`,
+        })}
+      />
+    </GridContext.Provider>,
+    {}
+  );
+  await waitFor(() => {
+    /* noop */
+  });
+  expect(r.container).toMatchInlineSnapshot(`
+    .emotion-0 {
+      border-bottom: 1px dotted;
+      white-space: nowrap;
+    }
+
+    .emotion-1 {
+      display: block;
+      z-index: 100000;
+      border-radius: 5px;
+      background-color: var(--black);
+      color: var(--white);
+      text-align: center;
+      max-width: 30em;
+      padding: 10px;
+      visibility: hidden;
+    }
+
+    .emotion-1[data-popper-reference-hidden=true] {
+      visibility: hidden;
+    }
+
+    .emotion-2 {
+      margin-right: 0.5em;
+      white-space: nowrap;
+    }
+
+    .emotion-3 {
+      margin-left: 0.5em;
+      white-space: nowrap;
+    }
+
+    .emotion-4 {
+      display: block;
+      position: absolute;
+      width: 10px;
+      height: 10px;
+    }
+
+    [data-popper-placement^="bottom"] .emotion-4 {
+      top: -5px;
+    }
+
+    [data-popper-placement^="top"] .emotion-4 {
+      bottom: -5px;
+    }
+
+    .emotion-4::after {
+      content: " ";
+      position: absolute;
+      -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
+      width: 10px;
+      height: 10px;
+      background-color: var(--black);
+    }
+
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          This should be a ref 
+          <span
+            class="emotion-0"
+          >
+            1A
+          </span>
+          <span
+            class="emotion-1"
+            data-popper-escaped="true"
+            data-popper-placement="bottom"
+            data-popper-reference-hidden="true"
+            style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+          >
+            <b
+              class="emotion-2"
+            >
+              1
+              A
+            </b>
+            Well now
+            <b
+              class="emotion-3"
+            >
+              [
+              12ACLUE
+              1
+              ]
+            </b>
+            <span
+              class="emotion-4"
+              style="position: absolute; left: 0px; transform: translate(0px, 0px);"
+            />
+          </span>
+          , but 
+          this 
+          <strong>
+            shouldn't
+          </strong>
+           
+          1A
+           be one
+        </div>
+      </div>
+    </div>
+  `);
+
+  r = render(
+    <GridContext.Provider value={cluedGrid}>
+      <Markdown
+        hast={markdownToHast({
+          clueMap,
           text: 'Shout Out to 1A! (2D... not so much)',
         })}
       />

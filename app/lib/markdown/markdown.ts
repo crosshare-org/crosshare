@@ -6,6 +6,7 @@ import rehypeExternalLinks from 'rehype-external-links';
 import { truncate, Options as TruncateOptions } from 'hast-util-truncate';
 import { entryReferencer } from './entryReferencer';
 import remarkGfm from 'remark-gfm';
+import remarkDirective from 'remark-directive';
 import { mentionsAndTags } from './mentionsAndTags';
 import { unified, PluggableList } from 'unified';
 import remarkParse from 'remark-parse';
@@ -13,6 +14,7 @@ import remarkRehype from 'remark-rehype';
 import { Direction } from '../types';
 import { Root } from 'hast';
 import { inlineOnly } from './inlineOnly';
+import { remarkNoRefs } from './noRefs';
 
 function rehypeTruncate(options: TruncateOptions) {
   // @ts-expect-error: assume input `root` matches output root.
@@ -51,9 +53,11 @@ export function markdownToHast(props: {
 
   const processor = unified()
     .use(remarkParse)
+    .use(remarkDirective)
     .use(remarkSpoilers)
     .use(remarkGfm)
     .use(mentionsAndTags)
+    .use(remarkNoRefs)
     .use(remarkRehype, {
       handlers: {
         spoiler(h, node) {
