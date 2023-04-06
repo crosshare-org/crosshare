@@ -66,7 +66,11 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
       return;
     }
     setSubs(
-      orderBy(subs, [col], [dir.toLowerCase() === 'asc' ? 'asc' : 'desc'])
+      orderBy(
+        subs,
+        [col as keyof (typeof subs)[number]],
+        [dir.toLowerCase() === 'asc' ? 'asc' : 'desc']
+      )
     );
   };
 

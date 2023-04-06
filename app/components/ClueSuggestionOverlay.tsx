@@ -3,7 +3,7 @@ import { Overlay } from './Overlay';
 import { FaCheck } from 'react-icons/fa';
 import { Table } from 'react-fluid-table';
 import orderBy from 'lodash/orderBy';
-import { ClueListT, parseClueList } from '../lib/ginsbergCommon';
+import { ClueListT, parseClueList, ClueEntryT } from '../lib/ginsbergCommon';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const NYTIcon = ({ row }: { row: any }) => {
@@ -41,7 +41,11 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
       return;
     }
     setClueList(
-      orderBy(clueList, [col], [dir.toLowerCase() === 'asc' ? 'asc' : 'desc'])
+      orderBy(
+        clueList,
+        [col as keyof ClueEntryT],
+        [dir.toLowerCase() === 'asc' ? 'asc' : 'desc']
+      )
     );
   };
 
