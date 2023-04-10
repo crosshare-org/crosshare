@@ -60,6 +60,7 @@
     "make-plural": "^7.2.0",
     "mdast-util-find-and-replace": "^2.2.2",
     "next": "13.2.3",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-csv": "^2.2.2",
     "react-dom": "^18.2.0",
@@ -82,6 +83,9 @@
     "unist-util-is": "^5.2.1",
     "unist-util-visit": "^4.1.2",
     "use-resize-observer": "^9.1.0"
+  },
+  "dependencyComments": {
+    "prop-types": "Needed by react-csv and apparently not specified. Breaks sharedstats when missing"
   },
   "devDependencies": {
     "@emotion/eslint-plugin": "^11.10.0",
