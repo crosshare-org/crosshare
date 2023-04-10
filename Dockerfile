@@ -11,6 +11,8 @@ RUN firebase setup:emulators:firestore
 RUN firebase setup:emulators:storage
 RUN firebase setup:emulators:ui
 RUN firebase setup:emulators:pubsub
+ARG COMMIT=dev
+ENV NEXT_PUBLIC_COMMIT_HASH $COMMIT
 
 FROM node:18-slim as builder
 RUN mkdir /src
@@ -26,10 +28,13 @@ RUN yarn predeploy
 RUN rm -rf nextjs/cache
 WORKDIR /src
 RUN yarn install --production --ignore-scripts --prefer-offline
+ARG COMMIT
+RUN test -n "$COMMIT"
 
 FROM gcr.io/distroless/nodejs18-debian11 as prod
+ARG COMMIT
+ENV NEXT_PUBLIC_COMMIT_HASH=$COMMIT NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
-ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
 COPY --from=builder /src/app/cluedb ./cluedb
 COPY --from=builder /src/app/next.config.mjs ./
 COPY --from=builder /src/app/public ./public
