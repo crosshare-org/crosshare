@@ -33,7 +33,7 @@ import { CSVLink } from 'react-csv';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { useSnackbar } from './Snackbar';
 import { isSome } from 'fp-ts/lib/Option';
-import { arrayUnion, updateDoc } from 'firebase/firestore';
+import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
 import { markdownToHast } from '../lib/markdown/markdown';
 
 export enum StatsMode {
@@ -98,7 +98,21 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
                       ct_ans: arrayUnion(row.s),
                     }).then(() => {
                       showSnackbar(
-                        'Solution marked as accepted - it may take up to an hour for the leaderboard to update'
+                        <>
+                          Solution marked as accepted (
+                          <ButtonAsLink
+                            text="undo"
+                            onClick={() => {
+                              updateDoc(getDocRef('c', props.puzzle.id), {
+                                ct_ans: arrayRemove(row.s),
+                              }).then(() => {
+                                showSnackbar('Undo was successful');
+                              });
+                            }}
+                          />
+                          ) - it may take up to an hour for the leaderboard to
+                          update
+                        </>
                       );
                     });
                   }}

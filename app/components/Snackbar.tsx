@@ -1,5 +1,5 @@
 import { IoMdCloseCircleOutline } from 'react-icons/io';
-import {
+import React, {
   createContext,
   Dispatch,
   ReactNode,
@@ -29,14 +29,14 @@ enum ActionTypes {
   RemoveToast,
 }
 type Action =
-  | { type: ActionTypes.ShowSnackbar; message: string }
+  | { type: ActionTypes.ShowSnackbar; message: string | ReactNode }
   | { type: ActionTypes.CloseSnackbar }
   | { type: ActionTypes.AddToast; id: number; message: string }
   | { type: ActionTypes.RemoveToast; id: number };
 
 interface SnackbarState {
   isOpen: boolean;
-  message: string;
+  message: string | ReactNode | null;
 }
 
 interface ToastState {
@@ -50,7 +50,7 @@ interface State extends SnackbarState {
 
 const initialState = {
   isOpen: false,
-  message: '',
+  message: null,
   toasts: [],
 };
 
@@ -66,7 +66,7 @@ export function Snackbar({
   message,
   isOpen,
 }: {
-  message: string;
+  message: string | ReactNode | null;
   isOpen: boolean;
 }) {
   return (
@@ -86,7 +86,7 @@ export function Snackbar({
         opacity: 0,
         visibility: 'hidden',
         transition: 'all ' + ANIMATION_DELAY + 'ms ease-in-out 0s',
-        ...(message &&
+        ...(message !== null &&
           isOpen && {
             opacity: 1,
             visibility: 'visible',
@@ -239,7 +239,7 @@ export function useSnackbar() {
   const [snackbarTimeout, setSnackbarTimeout] = useState<ReturnType<
     typeof setTimeout
   > | null>(null);
-  function openSnackbar(message: string) {
+  function openSnackbar(message: string | ReactNode) {
     context.dispatch({ type: ActionTypes.ShowSnackbar, message });
     setSnackbarTimeout(
       setTimeout(() => {
@@ -248,7 +248,7 @@ export function useSnackbar() {
     );
   }
 
-  function showSnackbar(message: string) {
+  function showSnackbar(message: string | ReactNode) {
     if (context.state.isOpen) {
       close();
       setTimeout(() => {
