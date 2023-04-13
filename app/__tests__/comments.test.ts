@@ -69,12 +69,18 @@ test('security rules should only allow commenting with username if it matches yo
 });
 
 test('security rules should only allow commenting if non-anonymous', async () => {
-  const firestore = testEnv.authenticatedContext('mike', {firebase: {sign_in_provider: 'anonymous'}}).firestore();
-  const firestoreNonAnon = testEnv.authenticatedContext('mike', {firebase: {sign_in_provider: 'google.com'}}).firestore();
+  const firestore = testEnv
+    .authenticatedContext('mike', {
+      firebase: { sign_in_provider: 'anonymous' },
+    })
+    .firestore();
+  const firestoreNonAnon = testEnv
+    .authenticatedContext('mike', {
+      firebase: { sign_in_provider: 'google.com' },
+    })
+    .firestore();
 
-  await assertFails(
-    firestore.collection('cfm').add({ c: 'comment text' })
-  );
+  await assertFails(firestore.collection('cfm').add({ c: 'comment text' }));
   await assertFails(
     firestore.collection('cfm').add({ c: 'comment text', a: 'jared' })
   );
@@ -83,5 +89,18 @@ test('security rules should only allow commenting if non-anonymous', async () =>
   );
   await assertSucceeds(
     firestoreNonAnon.collection('cfm').add({ c: 'comment text', a: 'mike' })
+  );
+});
+
+test('security rules should allow an admin to add cfm', async () => {
+  const adminFirestore = testEnv
+    .authenticatedContext('mike', {
+      firebase: { sign_in_provider: 'google.com' },
+      admin: true,
+    })
+    .firestore();
+
+  await assertSucceeds(
+    adminFirestore.collection('cfm').add({ c: 'comment text', a: 'any-user' })
   );
 });
