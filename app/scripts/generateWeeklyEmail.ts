@@ -102,6 +102,10 @@ async function topPuzzlesForWeek(): Promise<
         if (p.pvu && p.pvu.toDate() > new Date()) {
           return false;
         }
+        // Don't include puzzles with comments disabled
+        if (p.no_cs) {
+          return false;
+        }
         return true;
       })
       .map((p): [string, string, boolean, string] => {
