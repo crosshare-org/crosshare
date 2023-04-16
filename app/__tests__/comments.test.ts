@@ -32,6 +32,13 @@ test('security rules should only allow commenting as onesself', async () => {
   await assertSucceeds(
     addDoc(collection(firestore, 'cfm'), { c: 'comment text', a: 'mike' })
   );
+  /** Should fail when trying to mark approved, though */
+  await assertFails(
+    firestore
+      .collection('cfm')
+      .add({ c: 'comment text', a: 'mike' })
+      .then((dr) => dr.update({ approved: true }))
+  );
 });
 
 test('security rules should only allow commenting with username if it matches your account', async () => {
@@ -100,7 +107,11 @@ test('security rules should allow an admin to add cfm', async () => {
     })
     .firestore();
 
+  // make sure we can post as any user and mark approved
   await assertSucceeds(
-    adminFirestore.collection('cfm').add({ c: 'comment text', a: 'any-user' })
+    adminFirestore
+      .collection('cfm')
+      .add({ c: 'comment text', a: 'any-user' })
+      .then((dr) => dr.update({ approved: true }))
   );
 });

@@ -158,6 +158,7 @@ service cloud.firestore {
       allow write: if request.auth.uid != null
         && isNonAnonymous()
         && request.auth.uid == request.resource.data.a
+        && !request.resource.data.keys().hasAny(["approved"])
         && (
           !request.resource.data.keys().hasAny(["un"]) ||
           get(/databases/$(database)/documents/cp/$(request.resource.data.un.lower())).data.u == request.auth.uid
