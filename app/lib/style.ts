@@ -10,6 +10,9 @@ export const COVER_PIC: [number, number] = [1200, 400];
 
 export const TINY_COL_MIN_HEIGHT = 50;
 export const SQUARE_HEADER_HEIGHT = 68;
+export const SQUARE_TITLEBAR_HEIGHT = 60;
+export const TINY_TOTAL_MIN_HEIGHT = TINY_COL_MIN_HEIGHT+SQUARE_TITLEBAR_HEIGHT;
+export const SQUARE_TOTAL_HEADER_HEIGHT = SQUARE_HEADER_HEIGHT+SQUARE_TITLEBAR_HEIGHT;
 export const SMALL_BREAKPOINT = 576;
 export const LARGE_BREAKPOINT = 992;
 export const SMALL_AND_UP_RULES = '(min-width: ' + SMALL_BREAKPOINT + 'px)';

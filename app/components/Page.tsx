@@ -7,6 +7,9 @@ import {
   LARGE_AND_UP,
   TINY_COL_MIN_HEIGHT,
   SQUARE_HEADER_HEIGHT,
+  SQUARE_TITLEBAR_HEIGHT,
+  TINY_TOTAL_MIN_HEIGHT,
+  SQUARE_TOTAL_HEADER_HEIGHT
 } from '../lib/style';
 import { KeyK } from '../lib/types';
 import { usePolyfilledResizeObserver } from '../lib/hooks';
@@ -57,6 +60,7 @@ interface SquareAndColsProps {
   left: ReactNode;
   right: ReactNode;
   header?: ReactNode;
+  titlebar?: ReactNode;
   leftIsActive: boolean;
   dispatch: Dispatch<KeypressAction | PasteAction>;
 }
@@ -103,6 +107,15 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
         >
           <div
             css={{
+              height: SQUARE_TITLEBAR_HEIGHT,
+              display: 'block',
+              overflow: 'hidden'
+            }}
+          >
+            {props.titlebar}
+          </div>
+          <div
+            css={{
               height: SQUARE_HEADER_HEIGHT,
               display: 'none',
               overflow: 'hidden',
@@ -118,26 +131,26 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
             css={{
               margin: 'auto',
               width: useCQ
-                ? `min(100cqw, 100cqh * ${props.aspectRatio} - ${TINY_COL_MIN_HEIGHT}px * ${props.aspectRatio})`
-                : `min(${cqw}px, ${cqh}px * ${props.aspectRatio} - ${TINY_COL_MIN_HEIGHT}px * ${props.aspectRatio})`,
+                ? `min(100cqw, 100cqh * ${props.aspectRatio} - ${TINY_TOTAL_MIN_HEIGHT}px * ${props.aspectRatio})`
+                : `min(${cqw}px, ${cqh}px * ${props.aspectRatio} - ${TINY_TOTAL_MIN_HEIGHT}px * ${props.aspectRatio})`,
               height: useCQ
-                ? `min(100cqh - ${TINY_COL_MIN_HEIGHT}px, 100cqw / ${props.aspectRatio})`
-                : `min(${cqh}px - ${TINY_COL_MIN_HEIGHT}px, ${cqw}px / ${props.aspectRatio})`,
+                ? `min(100cqh - ${TINY_TOTAL_MIN_HEIGHT}px, 100cqw / ${props.aspectRatio})`
+                : `min(${cqh}px - ${TINY_TOTAL_MIN_HEIGHT}px, ${cqw}px / ${props.aspectRatio})`,
               [SMALL_AND_UP]: {
                 width: useCQ
-                  ? `min(66cqw, 100cqh * ${props.aspectRatio} - ${SQUARE_HEADER_HEIGHT}px * ${props.aspectRatio})`
-                  : `min(0.66 * ${cqw}px, ${cqh}px * ${props.aspectRatio} - ${SQUARE_HEADER_HEIGHT}px * ${props.aspectRatio})`,
+                  ? `min(66cqw, 100cqh * ${props.aspectRatio} - ${SQUARE_TOTAL_HEADER_HEIGHT}px * ${props.aspectRatio})`
+                  : `min(0.66 * ${cqw}px, ${cqh}px * ${props.aspectRatio} - ${SQUARE_TOTAL_HEADER_HEIGHT}px * ${props.aspectRatio})`,
                 height: useCQ
-                  ? `min(100cqh - ${SQUARE_HEADER_HEIGHT}px, 66cqw / ${props.aspectRatio})`
-                  : `min(${cqh}px - ${SQUARE_HEADER_HEIGHT}px, 0.66 * ${cqw}px / ${props.aspectRatio})`,
+                  ? `min(100cqh - ${SQUARE_TOTAL_HEADER_HEIGHT}px, 66cqw / ${props.aspectRatio})`
+                  : `min(${cqh}px - ${SQUARE_TOTAL_HEADER_HEIGHT}px, 0.66 * ${cqw}px / ${props.aspectRatio})`,
               },
               [LARGE_AND_UP]: {
                 width: useCQ
-                  ? `min(50cqw, 100cqh * ${props.aspectRatio} - ${SQUARE_HEADER_HEIGHT}px * ${props.aspectRatio})`
-                  : `min(0.5 * ${cqw}px, ${cqh}px * ${props.aspectRatio} - ${SQUARE_HEADER_HEIGHT}px * ${props.aspectRatio})`,
+                  ? `min(50cqw, 100cqh * ${props.aspectRatio} - ${SQUARE_TOTAL_HEADER_HEIGHT}px * ${props.aspectRatio})`
+                  : `min(0.5 * ${cqw}px, ${cqh}px * ${props.aspectRatio} - ${SQUARE_TOTAL_HEADER_HEIGHT}px * ${props.aspectRatio})`,
                 height: useCQ
-                  ? `min(100cqh - ${SQUARE_HEADER_HEIGHT}px, 50cqw / ${props.aspectRatio})`
-                  : `min(${cqh}px - ${SQUARE_HEADER_HEIGHT}px, 0.5 * ${cqw}px / ${props.aspectRatio})`,
+                  ? `min(100cqh - ${SQUARE_TOTAL_HEADER_HEIGHT}px, 50cqw / ${props.aspectRatio})`
+                  : `min(${cqh}px - ${SQUARE_TOTAL_HEADER_HEIGHT}px, 0.5 * ${cqw}px / ${props.aspectRatio})`,
               },
             }}
           >
