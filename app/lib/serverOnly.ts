@@ -195,8 +195,6 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     titleSlug = puzzleId[1] || '';
     puzzleId = puzzleId[0];
   }
-  //console.log('hi');
-  //console.log(puzzleId);
   if (!puzzleId) {
     res.statusCode = 404;
     return { props: { error: 'missing puzzleId' } };
