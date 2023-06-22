@@ -108,8 +108,8 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           <div
             css={{
               height: SQUARE_TITLEBAR_HEIGHT,
-              display: 'block',
-              overflow: 'hidden'
+              display: props.header !== undefined ? 'block' : 'none',
+              overflow: 'hidden',
             }}
           >
             {props.titlebar}
