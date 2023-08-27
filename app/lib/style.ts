@@ -67,6 +67,7 @@ export const colorTheme = (
   const text = darkMode ? DARK_MODE_WHITE : 'black';
   const secondary = darkMode ? '#505050' : '#ccc';
   const error = mix(adjustHue(p, 280), 'white', darkMode ? 0.3 : 0);
+  const lighter = mix(p, cellBG, 0.6);
   return {
     '--tag-l': darkMode ? '30%' : '85%',
     '--bg': bg,
@@ -74,8 +75,11 @@ export const colorTheme = (
     '--blue': darkMode ? mix('blue', 'white', 0.5) : 'blue',
     '--green': darkMode ? mix('green', 'white', 0.5) : 'green',
     '--onprimary': readableColor(p, darkMode),
-    '--lighter': mix(p, cellBG, 0.6),
+    '--lighter': lighter,
     '--secondary': secondary,
+    // TODO: Better colors
+    '--has-opposite': mix(p, 'orange', 0.2),
+    '--opposite': mix(secondary, lighter, 0.2),
     '--bg-hover': mix(bg, hover, hoverRatio),
     '--secondary-hover': mix(secondary, hover, hoverRatio),
     '--boring-bg': darkMode ? '#b5b5b5' : '#555',

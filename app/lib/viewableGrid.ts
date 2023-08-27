@@ -366,7 +366,7 @@ export function gridWithNewChar<
   return fromCells({ ...grid, cells, hidden });
 }
 
-function flipped<Entry extends ViewableEntry, Grid extends ViewableGrid<Entry>>(
+export function flipped<Entry extends ViewableEntry, Grid extends ViewableGrid<Entry>>(
   grid: Grid,
   pos: Position,
   sym: Symmetry

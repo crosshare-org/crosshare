@@ -1,9 +1,9 @@
 import { Dispatch, ReactNode, useCallback, useEffect, useState } from 'react';
 
-import { PosAndDir, Position, BLOCK } from '../lib/types';
+import { PosAndDir, Position, BLOCK, Symmetry } from '../lib/types';
 import { Cell } from './Cell';
 import { PuzzleAction, SetActivePositionAction } from '../reducers/reducer';
-import { ViewableGrid, ViewableEntry } from '../lib/viewableGrid';
+import { ViewableGrid, ViewableEntry, flipped } from '../lib/viewableGrid';
 import {
   cellIndex,
   getEntryCells,
@@ -27,12 +27,14 @@ type GridViewProps = {
   entryRefs?: Array<Set<number>>;
   showAlternates?: Array<Array<[number, string]>> | null;
   answers?: Array<string> | null;
+  symmetry?: Symmetry | null;
 };
 
 export const GridView = ({
   active,
   dispatch,
   grid,
+  symmetry,
   ...props
 }: GridViewProps) => {
   const entryCells = getEntryCells(grid, active);
@@ -119,6 +121,12 @@ export const GridView = ({
     const col = idx % grid.width;
     const row = Math.floor(idx / grid.height);
 
+    const entryCell = entryCells.some((p) => cellIndex(grid, p) === idx);
+    const symmetricalCell = symmetry ? flipped(grid, active, symmetry) : false;
+    const isOpposite = (entryCell) && ((symmetricalCell === idx) && (toDisplay !== ' '));
+    const hasOpposite = isActive && (symmetricalCell as boolean) ? (grid.cells[symmetricalCell as number] !== " " && grid.cells[symmetricalCell as number] !== BLOCK) : false;
+    // eslint is rightfully unhappy without the type assertions
+
     cells.push(
       <Cell
         barRight={grid.vBars.has(idx)}
@@ -134,7 +142,7 @@ export const GridView = ({
         gridWidth={grid.width}
         gridHeight={grid.height}
         active={isActive}
-        entryCell={entryCells.some((p) => cellIndex(grid, p) === idx)}
+        entryCell={entryCell}
         refedCell={refedCells.some((p) => cellIndex(grid, p) === idx)}
         highlightCell={highlightCells.some((p) => cellIndex(grid, p) === idx)}
         key={idx}
@@ -144,6 +152,8 @@ export const GridView = ({
         onClick={onClick}
         value={toDisplay}
         isBlock={cellValue === BLOCK}
+        isOpposite={isOpposite}
+        hasOpposite={hasOpposite}
         isVerified={props.verifiedCells?.has(idx) || showAsVerified}
         isWrong={props.wrongCells?.has(idx)}
         wasRevealed={props.revealedCells?.has(idx)}
