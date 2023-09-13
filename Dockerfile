@@ -5,6 +5,7 @@ COPY app/package.json app/yarn.lock ./
 RUN yarn --frozen-lockfile
 ENV PATH=$PATH:/src/node_modules/.bin NEXT_TELEMETRY_DISABLED=1
 RUN apt-get update && apt-get install -y --no-install-recommends openjdk-11-jre-headless curl
+RUN yarn compileI18n
 RUN npm i -g firebase-tools
 RUN firebase --version
 RUN firebase setup:emulators:firestore
