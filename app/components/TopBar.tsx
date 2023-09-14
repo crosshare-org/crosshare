@@ -26,6 +26,7 @@ import { EmbedContext } from './EmbedContext';
 import { Trans, t } from '@lingui/macro';
 import { updateDoc } from 'firebase/firestore';
 import { getDocRef } from '../lib/firebaseWrapper';
+import { ButtonAsLink } from './Buttons';
 
 export const TopBarDropDown = (props: {
   onClose?: () => void;
@@ -547,6 +548,15 @@ export const TopBar = ({
               }}
             >
               Notifications
+              <ButtonAsLink
+                css={{ float: 'right', marginRight: '1em' }}
+                text="Dismiss all"
+                onClick={() => {
+                  filtered.forEach((n) =>
+                    updateDoc(getDocRef('n', n.id), { r: true })
+                  );
+                }}
+              />
             </h3>
             <div css={{ margin: '0 1em' }}>
               {filtered.map((n) => (
