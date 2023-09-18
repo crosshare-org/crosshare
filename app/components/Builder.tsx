@@ -557,8 +557,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       isPrivate: state.isPrivate,
       isPrivateUntil: state.isPrivateUntil?.toMillis(),
       alternates: state.alternates,
-      userTags: state.userTags,
-      symmetry: state.symmetry,
+      userTags: state.userTags
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(inProgress));
   }, [
@@ -1571,6 +1570,7 @@ const GridMode = ({
                 dispatch={dispatch}
                 allowBlockEditing={true}
                 autofill={props.autofillEnabled ? props.autofilledGrid : []}
+                symmetry={state.symmetry}
               />
             }
             left={fillLists.left}

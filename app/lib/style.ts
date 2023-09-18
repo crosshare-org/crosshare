@@ -77,9 +77,6 @@ export const colorTheme = (
     '--onprimary': readableColor(p, darkMode),
     '--lighter': lighter,
     '--secondary': secondary,
-    // TODO: Better colors
-    '--has-opposite': mix(p, 'orange', 0.2),
-    '--opposite': mix(secondary, lighter, 0.2),
     '--bg-hover': mix(bg, hover, hoverRatio),
     '--secondary-hover': mix(secondary, hover, hoverRatio),
     '--boring-bg': darkMode ? '#b5b5b5' : '#555',

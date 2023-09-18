@@ -34,7 +34,6 @@ export const GridView = ({
   active,
   dispatch,
   grid,
-  symmetry,
   ...props
 }: GridViewProps) => {
   const entryCells = getEntryCells(grid, active);
@@ -122,11 +121,9 @@ export const GridView = ({
     const row = Math.floor(idx / grid.height);
 
     const entryCell = entryCells.some((p) => cellIndex(grid, p) === idx);
-    const symmetricalCell = symmetry ? flipped(grid, active, symmetry) : false;
-    const isOpposite = (entryCell) && ((symmetricalCell === idx) && (toDisplay !== ' '));
-    const hasOpposite = isActive && (symmetricalCell as boolean) ? (grid.cells[symmetricalCell as number] !== " " && grid.cells[symmetricalCell as number] !== BLOCK) : false;
-    // eslint is rightfully unhappy without the type assertions
-
+    const symmetricalCell = (props.symmetry != Symmetry.None) ? flipped(grid, active, props.symmetry as Symmetry) : null;
+    const isOpposite = !isActive && (symmetricalCell === idx)
+    
     cells.push(
       <Cell
         barRight={grid.vBars.has(idx)}
@@ -153,7 +150,6 @@ export const GridView = ({
         value={toDisplay}
         isBlock={cellValue === BLOCK}
         isOpposite={isOpposite}
-        hasOpposite={hasOpposite}
         isVerified={props.verifiedCells?.has(idx) || showAsVerified}
         isWrong={props.wrongCells?.has(idx)}
         wasRevealed={props.revealedCells?.has(idx)}

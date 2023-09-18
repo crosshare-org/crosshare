@@ -56,7 +56,6 @@ type CellProps = {
   wasRevealed: boolean | undefined;
   cellColor?: number;
   isOpposite: boolean;
-  hasOpposite: boolean;
 };
 
 export const Cell = memo(function Cell(props: CellProps) {
@@ -77,10 +76,6 @@ export const Cell = memo(function Cell(props: CellProps) {
       'repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px,var(--primary) 10px,var(--primary) 20px);';
   } else if (props.isBlock) {
     bg = 'var(--cell-wall)';
-  } else if (props.isOpposite) {
-    bg = 'var(--is-opposite)';
-  } else if (props.hasOpposite) {
-    bg = 'var(--has-opposite)';
   } else if (props.cellColor !== undefined) {
     bg = 'rgba(241, 167, 45, ' + props.cellColor + ')';
   } else if (props.isEnteringRebus) {
@@ -271,6 +266,20 @@ export const Cell = memo(function Cell(props: CellProps) {
               </div>
             </div>
           </>
+        ) : (
+          ''
+        )}
+        {props.isOpposite ? (
+          <div className="oppositeIcon"
+            css={{
+              position: 'absolute',
+              top: '0%',
+              right: '0%',
+              borderTop: '.3em solid var(--primary)',
+              borderLeft: '.3em solid rgba(0, 0, 0, 0)',
+            }}
+          >
+          </div>
         ) : (
           ''
         )}
