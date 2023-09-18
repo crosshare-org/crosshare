@@ -10,16 +10,6 @@ const createJestConfig = nextJest({
 
 /** @type {import('jest').Config} */
 const customJestConfig = {
-  moduleDirectories: ['node_modules', '<rootDir>/'],
-  moduleNameMapper: {
-    '^@firebase/auth$': require.resolve('@firebase/auth'),
-    '^@firebase/util$': require.resolve('@firebase/util'),
-    '^@firebase/firestore$': require.resolve('@firebase/firestore'),
-    '^@firebase/storage$': require.resolve('@firebase/storage'),
-    '^firebase/auth$': require.resolve('firebase/auth'),
-    '^firebase/firestore$': require.resolve('firebase/firestore'),
-  },
-
   testPathIgnorePatterns: [
     '<rootDir>/pages',
     '<rootDir>/nextjs',
@@ -27,7 +17,6 @@ const customJestConfig = {
     // TODO These are tests that are failing after the firebase/ESM upgrade.
     // We should rewrite/remove each of them.
     '<rootDir>/__tests__/FollowButton.test.tsx',
-    '<rootDir>/__tests__/Comments.test.tsx',
     '<rootDir>/__tests__/Builder.test.tsx',
     '<rootDir>/__tests__/ClueText.test.tsx',
     '<rootDir>/__tests__/ConstructorPage.test.tsx',
@@ -43,6 +32,7 @@ const customJestConfig = {
     '<rootDir>/__tests__/publishRules.test.tsx',
     '<rootDir>/__tests__/follow.test.tsx',
   ],
+  transform: {},
 
   testEnvironment: 'jest-environment-jsdom',
   setupFilesAfterEnv: ['<rootDir>/setupTestsAfterEnv.ts'],

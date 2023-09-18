@@ -10,6 +10,7 @@ import {
   DBPuzzleT,
   DBPuzzleV,
 } from '../lib/dbtypes';
+import { sizeTag } from '../lib/sizeTag';
 
 import { getAdminApp } from '../lib/firebaseAdminWrapper';
 import { getFirestore } from 'firebase-admin/firestore';
@@ -47,8 +48,16 @@ function replaceOnto<T>(
   Object.assign(a, b);
 }
 
+enum Category {
+  Meta,
+  Cryptic,
+  Mini,
+  Midi,
+  Full,
+}
+
 async function topPuzzlesForWeek(): Promise<
-  [Array<[string, string, string]>, Array<[string, string, string]>]
+  Record<Category, Array<[string, string, string]>>
 > {
   const totalC: Record<string, number> = {};
   const allIs: Record<string, [string, string, string]> = {};
@@ -68,14 +77,17 @@ async function topPuzzlesForWeek(): Promise<
     }
     d.setDate(d.getDate() - 1);
   }
-  const initVal: [
-    Array<[string, string, string]>,
-    Array<[string, string, string]>
-  ] = [[], []];
+  const initVal: Record<Category, Array<[string, string, string]>> = {
+    [Category.Mini]: [],
+    [Category.Midi]: [],
+    [Category.Full]: [],
+    [Category.Meta]: [],
+    [Category.Cryptic]: [],
+  };
   return Promise.all(
     Object.entries(totalC)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 40)
+      .slice(0, 100)
       .map(async ([id]): Promise<(DBPuzzleT & { id: string }) | null> => {
         const dbres = await db.collection('c').doc(id).get();
         if (!dbres.exists) {
@@ -102,12 +114,35 @@ async function topPuzzlesForWeek(): Promise<
         if (p.pvu && p.pvu.toDate() > new Date()) {
           return false;
         }
+        // Don't include puzzles with comments disabled
+        if (p.no_cs) {
+          return false;
+        }
         return true;
       })
-      .map((p): [string, string, boolean, string] => {
+      .map((p): [string, string, Category | undefined, string] => {
         if (!p) {
           throw new Error('impossible');
         }
+        const category = (() => {
+          if (p.ct_ans?.length) {
+            return Category.Meta;
+          }
+          if (p.tg_u?.find((s) => s === 'cryptic')) {
+            return Category.Cryptic;
+          }
+          const size = sizeTag(p.w * p.h - (p.hdn?.length || 0));
+          if (size === 'mini') {
+            return Category.Mini;
+          }
+          if (size === 'midi') {
+            return Category.Midi;
+          }
+          if (size === 'full') {
+            return Category.Full;
+          }
+          return undefined;
+        })();
         return [
           'https://crosshare.org/crosswords/' +
             p.id +
@@ -115,15 +150,14 @@ async function topPuzzlesForWeek(): Promise<
             slugify(p.t) +
             '#utm_source=mailchimp&utm_medium=email&utm_campaign=weekly',
           `${p.t} by ${p.n}`,
-          p.w * p.h - (p.hdn?.length || 0) < 50,
+          category,
           `/crosswords/${p.id}/${slugify(p.t)}`,
         ];
       })
       .reduce((res, val) => {
-        if (val[2]) {
-          res[1].push([val[0], val[1], val[3]]);
-        } else {
-          res[0].push([val[0], val[1], val[3]]);
+        const category = val[2];
+        if (category !== undefined) {
+          res[category].push([val[0], val[1], val[3]]);
         }
         return res;
       }, initVal);
@@ -131,33 +165,38 @@ async function topPuzzlesForWeek(): Promise<
 }
 
 async function generateWeeklyEmail() {
-  const [topForWeek, topMinis] = await topPuzzlesForWeek();
-  console.log('<strong>Top puzzles this week:</strong><br /><br />');
-  topForWeek.slice(0, 7).forEach(([link, text]) => {
-    console.log('<a href="' + link + '">' + text + '</a> - <br /><br />');
-  });
-  console.log('<strong>Top minis this week:</strong><br /><br />');
-  topMinis.slice(0, 7).forEach(([link, text]) => {
-    console.log('<a href="' + link + '">' + text + '</a> - <br /><br />');
-  });
+  const topPuzzles = await topPuzzlesForWeek();
 
-  const md = `This week's email is written by [YOUR NAME](/YOUR_CROSSHARE_USERNAME). CAN ADD A ONE SENTENCE BIO HERE OR NOT - UP TO YOU.
+  let md = `This week's email is written by [YOUR NAME](/YOUR_CROSSHARE_USERNAME). CAN ADD A ONE SENTENCE BIO HERE OR NOT - UP TO YOU.
 
-**Top puzzles this week:**
+`;
 
-${topForWeek
-  .slice(0, 7)
-  .map(([_, text, mdLink]) => `[${text}](${mdLink}) - `)
-  .join('\n\n')}
+  for (const [cat, name, count] of [
+    [Category.Full, 'full-size puzzles', 2],
+    [Category.Midi, 'midis', 2],
+    [Category.Mini, 'minis', 2],
+    [Category.Meta, 'metas', 2],
+    [Category.Cryptic, 'cryptics', 1],
+  ] as const) {
+    const puzzles = topPuzzles[cat];
+    if (puzzles.length) {
+      console.log(`<strong>Top ${name} this week:</strong><br /><br />`);
+      puzzles.slice(0, count * 2).forEach(([link, text]) => {
+        console.log('<a href="' + link + '">' + text + '</a> - <br /><br />');
+      });
 
-**Top minis this week:**
+      md += `**Top ${name} this week:**
 
-${topMinis
-  .slice(0, 7)
-  .map(([_, text, mdLink]) => `[${text}](${mdLink}) - `)
-  .join('\n\n')}
+    ${puzzles
+      .slice(0, count * 2)
+      .map(([_, text, mdLink]) => `[${text}](${mdLink}) - `)
+      .join('\n\n')}
 
-ONE SENTENCE SIGN OFF / SIGNATURE`;
+`;
+    }
+  }
+
+  md += `ONE SENTENCE SIGN OFF / SIGNATURE`;
   writeFile('email.txt', md).then(() => {
     console.log('wrote md');
   });
