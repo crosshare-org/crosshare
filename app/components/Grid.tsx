@@ -120,8 +120,7 @@ export const GridView = ({
     const col = idx % grid.width;
     const row = Math.floor(idx / grid.height);
 
-    const entryCell = entryCells.some((p) => cellIndex(grid, p) === idx);
-    const symmetricalCell = (props.symmetry != Symmetry.None) ? flipped(grid, active, props.symmetry as Symmetry) : null;
+    const symmetricalCell = (props.symmetry != Symmetry.None && props.symmetry != null) ? flipped(grid, active, props.symmetry) : null;
     const isOpposite = !isActive && (symmetricalCell === idx)
     
     cells.push(
@@ -139,7 +138,7 @@ export const GridView = ({
         gridWidth={grid.width}
         gridHeight={grid.height}
         active={isActive}
-        entryCell={entryCell}
+        entryCell={entryCells.some((p) => cellIndex(grid, p) === idx)}
         refedCell={refedCells.some((p) => cellIndex(grid, p) === idx)}
         highlightCell={highlightCells.some((p) => cellIndex(grid, p) === idx)}
         key={idx}

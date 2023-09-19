@@ -557,7 +557,8 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       isPrivate: state.isPrivate,
       isPrivateUntil: state.isPrivateUntil?.toMillis(),
       alternates: state.alternates,
-      userTags: state.userTags
+      userTags: state.userTags,
+      symmetry: state.symmetry,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(inProgress));
   }, [
