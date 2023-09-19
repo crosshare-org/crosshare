@@ -55,6 +55,7 @@ type CellProps = {
   isWrong: boolean | undefined;
   wasRevealed: boolean | undefined;
   cellColor?: number;
+  isOpposite: boolean;
 };
 
 export const Cell = memo(function Cell(props: CellProps) {
@@ -265,6 +266,19 @@ export const Cell = memo(function Cell(props: CellProps) {
               </div>
             </div>
           </>
+        ) : (
+          ''
+        )}
+        {props.isOpposite ? (
+          <div
+            css={{
+              position: 'absolute',
+              top: '0%',
+              right: '0%',
+              borderTop: '.3em solid var(--primary)',
+              borderLeft: '.3em solid rgba(0, 0, 0, 0)',
+            }}
+          ></div>
         ) : (
           ''
         )}

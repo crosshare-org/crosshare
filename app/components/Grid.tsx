@@ -1,9 +1,9 @@
 import { Dispatch, ReactNode, useCallback, useEffect, useState } from 'react';
 
-import { PosAndDir, Position, BLOCK } from '../lib/types';
+import { PosAndDir, Position, BLOCK, Symmetry } from '../lib/types';
 import { Cell } from './Cell';
 import { PuzzleAction, SetActivePositionAction } from '../reducers/reducer';
-import { ViewableGrid, ViewableEntry } from '../lib/viewableGrid';
+import { ViewableGrid, ViewableEntry, flipped } from '../lib/viewableGrid';
 import {
   cellIndex,
   getEntryCells,
@@ -27,6 +27,7 @@ type GridViewProps = {
   entryRefs?: Array<Set<number>>;
   showAlternates?: Array<Array<[number, string]>> | null;
   answers?: Array<string> | null;
+  symmetry?: Symmetry | null;
 };
 
 export const GridView = ({
@@ -119,6 +120,12 @@ export const GridView = ({
     const col = idx % grid.width;
     const row = Math.floor(idx / grid.height);
 
+    const symmetricalCell =
+      props.symmetry != Symmetry.None && props.symmetry != null
+        ? flipped(grid, active, props.symmetry)
+        : null;
+    const isOpposite = !isActive && symmetricalCell === idx;
+
     cells.push(
       <Cell
         barRight={grid.vBars.has(idx)}
@@ -144,6 +151,7 @@ export const GridView = ({
         onClick={onClick}
         value={toDisplay}
         isBlock={cellValue === BLOCK}
+        isOpposite={isOpposite}
         isVerified={props.verifiedCells?.has(idx) || showAsVerified}
         isWrong={props.wrongCells?.has(idx)}
         wasRevealed={props.revealedCells?.has(idx)}

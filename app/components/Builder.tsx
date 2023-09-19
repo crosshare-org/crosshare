@@ -1571,6 +1571,7 @@ const GridMode = ({
                 dispatch={dispatch}
                 allowBlockEditing={true}
                 autofill={props.autofillEnabled ? props.autofilledGrid : []}
+                symmetry={state.symmetry}
               />
             }
             left={fillLists.left}
