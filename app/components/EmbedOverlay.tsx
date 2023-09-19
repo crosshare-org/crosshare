@@ -64,7 +64,7 @@ export const EmbedOverlay = ({
         interface).
       </p>
       <CopyableInput
-        text={`<iframe style="height: 90vh; width: 100%;" src="https://crosshare.org/embed/${puzzle.id}/${user.uid}" frameborder="0" allowfullscreen="true" allowtransparency="true"></iframe>`}
+        text={`<iframe style="height: 90vh; width: 100%;" src="https://crosshare.org/embed/${puzzle.id}/${user.uid}" frameborder="0" allowfullscreen="true" allowtransparency="true" allow="clipboard-write *"></iframe>`}
       />
       <h3 css={{ marginTop: '1em' }}>Theme</h3>
       {loadingOptions ? (
@@ -78,7 +78,7 @@ export const EmbedOverlay = ({
         once:
       </p>
       <CopyableInput
-        text={`<iframe style="height: 90vh; width: 100%;" src="https://crosshare.org/embed/list/${user.uid}" frameborder="0" allowfullscreen="true" allowtransparency="true"></iframe>`}
+        text={`<iframe style="height: 90vh; width: 100%;" src="https://crosshare.org/embed/list/${user.uid}" frameborder="0" allowfullscreen="true" allowtransparency="true" allow="clipboard-write *"></iframe>`}
       />
     </Overlay>
   );

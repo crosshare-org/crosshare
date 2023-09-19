@@ -22,8 +22,9 @@ import {
 } from '../../app/lib/firebaseAdminWrapper';
 import { Timestamp } from '../../app/lib/timestamp';
 
-export const ratings = functions.pubsub
-  .schedule('every day 00:05')
+export const ratings = functions
+  .runWith({ timeoutSeconds: 540, memory: '512MB' })
+  .pubsub.schedule('every day 00:05')
   .timeZone('UTC')
   .onRun(async (_context) => {
     await doGlicko();
