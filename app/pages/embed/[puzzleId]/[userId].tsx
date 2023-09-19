@@ -8,6 +8,8 @@ import { GetServerSideProps } from 'next';
 import { validate } from '../../../lib/embedOptions';
 import { withTranslation } from '../../../lib/translation';
 import { getCollection } from '../../../lib/firebaseAdminWrapper';
+import { useCallback, useState } from 'react';
+import useEventListener from '@use-it/event-listener';
 
 const gssp: GetServerSideProps<PuzzlePageProps> = async ({
   params,
@@ -27,31 +29,49 @@ const gssp: GetServerSideProps<PuzzlePageProps> = async ({
   }
 
   const embedOptionsRes = await getCollection('em').doc(params.userId).get();
-  if (!embedOptionsRes.exists) {
-    return props;
-  }
-  const embedOptions = validate(embedOptionsRes.data());
+  let embedOptions = validate(embedOptionsRes.data());
   if (!embedOptions) {
-    return props;
+    embedOptions = {};
+  }
+  if (rest.query['color-mode'] === 'dark') {
+    embedOptions.d = true;
+  }
+  if (rest.query['color-mode'] === 'light') {
+    embedOptions.d = false;
   }
   return { ...props, props: { ...props.props, embedOptions } };
 };
 
 export const getServerSideProps = withTranslation(gssp);
 
+type Message = {
+  type: string;
+  value: string;
+}
+
 export default function ThemedPage(props: PuzzlePageProps) {
   let primary = PRIMARY;
   let link = LINK;
-  let darkMode = false;
   let preservePrimary = false;
+
+  const [darkMode, setDarkMode] = useState('embedOptions' in props && props.embedOptions?.d || false);
+
   if ('embedOptions' in props) {
     primary = props.embedOptions?.p || PRIMARY;
     link = props.embedOptions?.l || LINK;
-    darkMode = props.embedOptions?.d || false;
     preservePrimary = props.embedOptions?.pp || false;
     // Just ensure color is parseable, this'll throw if not:
     parseToRgba(primary);
   }
+
+  const handleMessage = useCallback((e: MessageEvent) => {
+    const message: Message = e.data;
+
+    if (message.type === 'set-color-mode') {
+      setDarkMode(message.value === 'dark');
+    }
+  }, []);
+  useEventListener('message', handleMessage);
 
   return (
     <>
