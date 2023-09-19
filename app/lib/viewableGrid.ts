@@ -366,11 +366,10 @@ export function gridWithNewChar<
   return fromCells({ ...grid, cells, hidden });
 }
 
-export function flipped<Entry extends ViewableEntry, Grid extends ViewableGrid<Entry>>(
-  grid: Grid,
-  pos: Position,
-  sym: Symmetry
-): number | null {
+export function flipped<
+  Entry extends ViewableEntry,
+  Grid extends ViewableGrid<Entry>
+>(grid: Grid, pos: Position, sym: Symmetry): number | null {
   switch (sym) {
     case Symmetry.None:
       return null;

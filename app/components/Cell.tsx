@@ -270,7 +270,7 @@ export const Cell = memo(function Cell(props: CellProps) {
           ''
         )}
         {props.isOpposite ? (
-          <div className="oppositeIcon"
+          <div
             css={{
               position: 'absolute',
               top: '0%',
@@ -278,8 +278,7 @@ export const Cell = memo(function Cell(props: CellProps) {
               borderTop: '.3em solid var(--primary)',
               borderLeft: '.3em solid rgba(0, 0, 0, 0)',
             }}
-          >
-          </div>
+          ></div>
         ) : (
           ''
         )}

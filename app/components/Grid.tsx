@@ -120,9 +120,12 @@ export const GridView = ({
     const col = idx % grid.width;
     const row = Math.floor(idx / grid.height);
 
-    const symmetricalCell = (props.symmetry != Symmetry.None && props.symmetry != null) ? flipped(grid, active, props.symmetry) : null;
-    const isOpposite = !isActive && (symmetricalCell === idx)
-    
+    const symmetricalCell =
+      props.symmetry != Symmetry.None && props.symmetry != null
+        ? flipped(grid, active, props.symmetry)
+        : null;
+    const isOpposite = !isActive && symmetricalCell === idx;
+
     cells.push(
       <Cell
         barRight={grid.vBars.has(idx)}
