@@ -123,31 +123,45 @@ export function useDarkModeControl(): [
 
 export function usePersistedBoolean(
   key: string,
-  defaultValue: boolean
+  defaultValue: boolean,
+  storeInSession = false,
+  persistInitial = false
 ): [boolean, (b: boolean) => void] {
   const [state, setState] = useState<boolean>(defaultValue);
-
-  useEffect(() => {
-    try {
-      const initialValue = localStorage.getItem(key);
-      setState(initialValue !== null ? initialValue === 'true' : defaultValue);
-    } catch {
-      /* happens on incognito when iframed */
-      console.warn('not loading setting from LS');
-    }
-  }, [defaultValue, key]);
 
   const setStateAndPersist = useCallback(
     (newValue: boolean) => {
       try {
-        localStorage.setItem(key, newValue ? 'true' : 'false');
+        (storeInSession ? sessionStorage : localStorage).setItem(
+          key,
+          newValue ? 'true' : 'false'
+        );
       } catch {
         console.warn('failed to store setting in LS');
       }
       setState(newValue);
     },
-    [key, setState]
+    [key, setState, storeInSession]
   );
+
+  useEffect(() => {
+    try {
+      const initialValue = (
+        storeInSession ? sessionStorage : localStorage
+      ).getItem(key);
+      const initialState =
+        initialValue !== null ? initialValue === 'true' : defaultValue;
+      if (persistInitial) {
+        setStateAndPersist(initialState);
+      } else {
+        setState(initialState);
+      }
+    } catch {
+      /* happens on incognito when iframed */
+      console.warn('not loading setting from LS');
+    }
+  }, [defaultValue, key, storeInSession, persistInitial, setStateAndPersist]);
+
   return [state, setStateAndPersist];
 }
 
@@ -206,7 +220,12 @@ export function useColorThemeForEmbed(
   let link = LINK;
   let preservePrimary = false;
 
-  const [darkMode, setDarkMode] = useState(embedOptions?.d || false);
+  const [darkMode, setDarkMode] = usePersistedBoolean(
+    'embedDarkMode',
+    embedOptions?.d || false,
+    true,
+    true
+  );
 
   primary = embedOptions?.p || PRIMARY;
   link = embedOptions?.l || LINK;
@@ -214,13 +233,16 @@ export function useColorThemeForEmbed(
   // Just ensure color is parseable, this'll throw if not:
   parseToRgba(primary);
 
-  const handleMessage = useCallback((e: MessageEvent) => {
-    const message: Message = e.data;
+  const handleMessage = useCallback(
+    (e: MessageEvent) => {
+      const message: Message = e.data;
 
-    if (message.type === 'set-color-mode') {
-      setDarkMode(message.value === 'dark');
-    }
-  }, []);
+      if (message.type === 'set-color-mode') {
+        setDarkMode(message.value === 'dark');
+      }
+    },
+    [setDarkMode]
+  );
   useEventListener('message', handleMessage);
 
   return { primary, link, darkMode, preservePrimary };
