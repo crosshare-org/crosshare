@@ -1297,11 +1297,19 @@ export function builderReducer(
           return counts;
         }, {})
     )
-      .filter(
-        ([entry, count]) =>
-          state.clues[entry]?.filter((c) => c.trim().length > 0)?.length !==
-          count
-      )
+      .filter(([entry, count]) => {
+        const clues = state.clues[entry];
+        if (!clues) {
+          return true;
+        }
+
+        // Only count clues at the front of the array that have content
+        let numCluesForEntry = clues.findIndex((c) => c.trim().length === 0);
+        if (numCluesForEntry === -1) {
+          numCluesForEntry = clues.length;
+        }
+        return numCluesForEntry < count;
+      })
       .map(([entry]) => entry);
     if (missingClues.length) {
       errors.push(
