@@ -1,19 +1,18 @@
-import { PageErrorProps } from '../../../../lib/serverOnly';
+import { getEmbedProps, PageErrorProps } from '../../../../lib/serverOnly';
 import { Global } from '@emotion/react';
-import { colorTheme, LINK, PRIMARY } from '../../../../lib/style';
-import { parseToRgba } from 'color2k';
+import { colorTheme } from '../../../../lib/style';
 import { EmbedContext } from '../../../../components/EmbedContext';
 import { GetServerSideProps } from 'next';
-import { EmbedOptionsT, validate } from '../../../../lib/embedOptions';
+import { EmbedOptionsT } from '../../../../lib/embedOptions';
 import {
   LinkablePuzzle,
   PuzzleResultLink,
 } from '../../../../components/PuzzleLink';
-import { getCollection } from '../../../../lib/firebaseAdminWrapper';
 import { withTranslation } from '../../../../lib/translation';
 import { paginatedPuzzles } from '../../../../lib/paginatedPuzzles';
 import { ErrorPage } from '../../../../components/ErrorPage';
 import { Link } from '../../../../components/Link';
+import { useColorThemeForEmbed } from '../../../../lib/hooks';
 
 interface PageProps {
   userId: string;
@@ -26,6 +25,7 @@ interface PageProps {
 
 const gssp: GetServerSideProps<PageProps | PageErrorProps> = async ({
   params,
+  query,
 }) => {
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!params?.userId || Array.isArray(params.userId)) {
@@ -62,20 +62,18 @@ const gssp: GetServerSideProps<PageProps | PageErrorProps> = async ({
     },
   };
 
-  const embedOptionsRes = await getCollection('em').doc(params.userId).get();
-  if (!embedOptionsRes.exists) {
-    return props;
-  }
-  const embedOptions = validate(embedOptionsRes.data());
-  if (!embedOptions) {
-    return props;
-  }
+  const embedOptions = await getEmbedProps({ params, query });
+
   return { ...props, props: { ...props.props, embedOptions } };
 };
 
 export const getServerSideProps = withTranslation(gssp);
 
 export default function ThemedPage(props: PageProps | PageErrorProps) {
+  const colorThemeProps = useColorThemeForEmbed(
+    ('embedOptions' in props && props.embedOptions) || undefined
+  );
+
   if ('error' in props) {
     return (
       <ErrorPage title="Error loading list">
@@ -88,19 +86,6 @@ export default function ThemedPage(props: PageProps | PageErrorProps) {
     );
   }
 
-  let primary = PRIMARY;
-  let link = LINK;
-  let darkMode = false;
-  let preservePrimary = false;
-  if ('embedOptions' in props) {
-    primary = props.embedOptions?.p || PRIMARY;
-    link = props.embedOptions?.l || LINK;
-    darkMode = props.embedOptions?.d || false;
-    preservePrimary = props.embedOptions?.pp || false;
-    // Just ensure color is parseable, this'll throw if not:
-    parseToRgba(primary);
-  }
-
   return (
     <>
       <Global
@@ -108,12 +93,7 @@ export default function ThemedPage(props: PageProps | PageErrorProps) {
           body: {
             backgroundColor: 'transparent !important',
           },
-          'html, body.light-mode, body.dark-mode': colorTheme({
-            primary,
-            link,
-            darkMode,
-            preservePrimary,
-          }),
+          'html, body.light-mode, body.dark-mode': colorTheme(colorThemeProps),
         }}
       />
       <EmbedContext.Provider value={true}>

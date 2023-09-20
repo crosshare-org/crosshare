@@ -1,4 +1,8 @@
-import { getAdminApp, mapEachResult } from '../lib/firebaseAdminWrapper';
+import {
+  getAdminApp,
+  getCollection,
+  mapEachResult,
+} from '../lib/firebaseAdminWrapper';
 import { Timestamp as AdminTimestamp } from 'firebase-admin/firestore';
 import {
   puzzleFromDB,
@@ -19,6 +23,7 @@ import { NextPuzzleLink } from '../components/Puzzle';
 import { GetServerSideProps } from 'next';
 import { EmbedOptionsT } from './embedOptions';
 import { ArticleT, validate } from './article';
+import { validate as validateEmbedOptions } from './embedOptions';
 import { isUserPatron } from './patron';
 import { addDays } from 'date-fns';
 import { isSome } from 'fp-ts/lib/Option';
@@ -29,6 +34,7 @@ import { getStorage } from 'firebase-admin/storage';
 import type { Root } from 'hast';
 import { markdownToHast } from './markdown/markdown';
 import { addClues, fromCells, getEntryToClueMap } from './viewableGrid';
+import { ParsedUrlQuery } from 'querystring';
 
 export async function getStorageUrl(
   storageKey: string
@@ -320,4 +326,30 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
       }),
     },
   };
+};
+
+export const getEmbedProps = async ({
+  params,
+  query,
+}: {
+  params?: ParsedUrlQuery;
+  query: ParsedUrlQuery;
+}): Promise<EmbedOptionsT> => {
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  if (!params?.userId || Array.isArray(params.userId)) {
+    return {};
+  }
+
+  const embedOptionsRes = await getCollection('em').doc(params.userId).get();
+  let embedOptions = validateEmbedOptions(embedOptionsRes.data());
+  if (!embedOptions) {
+    embedOptions = {};
+  }
+  if (query['color-mode'] === 'dark') {
+    embedOptions.d = true;
+  }
+  if (query['color-mode'] === 'light') {
+    embedOptions.d = false;
+  }
+  return embedOptions;
 };
