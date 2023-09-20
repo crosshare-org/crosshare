@@ -50,7 +50,7 @@ export const readableColor = (color: string, darkMode: boolean) => {
   }
 };
 
-interface ColorThemeProps {
+export interface ColorThemeProps {
   primary: string;
   link: string;
   darkMode: boolean;

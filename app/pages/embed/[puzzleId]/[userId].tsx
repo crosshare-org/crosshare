@@ -1,15 +1,13 @@
 import { getPuzzlePageProps, PuzzlePageProps } from '../../../lib/serverOnly';
 import { PuzzlePage } from '../../../components/PuzzlePage';
 import { Global } from '@emotion/react';
-import { colorTheme, LINK, PRIMARY } from '../../../lib/style';
-import { parseToRgba } from 'color2k';
+import { colorTheme } from '../../../lib/style';
 import { EmbedContext } from '../../../components/EmbedContext';
 import { GetServerSideProps } from 'next';
 import { validate } from '../../../lib/embedOptions';
 import { withTranslation } from '../../../lib/translation';
 import { getCollection } from '../../../lib/firebaseAdminWrapper';
-import { useCallback, useState } from 'react';
-import useEventListener from '@use-it/event-listener';
+import { useColorThemeForEmbed } from '../../../lib/hooks';
 
 const gssp: GetServerSideProps<PuzzlePageProps> = async ({
   params,
@@ -44,36 +42,8 @@ const gssp: GetServerSideProps<PuzzlePageProps> = async ({
 
 export const getServerSideProps = withTranslation(gssp);
 
-type Message = {
-  type: string;
-  value: string;
-};
-
 export default function ThemedPage(props: PuzzlePageProps) {
-  let primary = PRIMARY;
-  let link = LINK;
-  let preservePrimary = false;
-
-  const [darkMode, setDarkMode] = useState(
-    ('embedOptions' in props && props.embedOptions?.d) || false
-  );
-
-  if ('embedOptions' in props) {
-    primary = props.embedOptions?.p || PRIMARY;
-    link = props.embedOptions?.l || LINK;
-    preservePrimary = props.embedOptions?.pp || false;
-    // Just ensure color is parseable, this'll throw if not:
-    parseToRgba(primary);
-  }
-
-  const handleMessage = useCallback((e: MessageEvent) => {
-    const message: Message = e.data;
-
-    if (message.type === 'set-color-mode') {
-      setDarkMode(message.value === 'dark');
-    }
-  }, []);
-  useEventListener('message', handleMessage);
+  const colorThemeProps = useColorThemeForEmbed("embedOptions" in props && props.embedOptions || undefined);
 
   return (
     <>
@@ -82,12 +52,7 @@ export default function ThemedPage(props: PuzzlePageProps) {
           body: {
             backgroundColor: 'transparent !important',
           },
-          'html, body.light-mode, body.dark-mode': colorTheme({
-            primary,
-            link,
-            darkMode,
-            preservePrimary,
-          }),
+          'html, body.light-mode, body.dark-mode': colorTheme(colorThemeProps),
         }}
       />
       <EmbedContext.Provider value={true}>

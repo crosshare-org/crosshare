@@ -9,6 +9,10 @@ import {
 import { ConstructorPageT } from './constructorPage';
 import useResizeObserver from 'use-resize-observer';
 import type { User } from 'firebase/auth';
+import { ColorThemeProps, LINK, PRIMARY } from './style';
+import { parseToRgba } from 'color2k';
+import { EmbedOptionsT } from './embedOptions';
+import useEventListener from '@use-it/event-listener';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {
@@ -187,4 +191,37 @@ export function useHover(): [
   );
 
   return [isHovered, bind, () => setHovered(false)];
+}
+
+export function useColorThemeForEmbed(
+  embedOptions: EmbedOptionsT | undefined
+): ColorThemeProps {
+  /** TODO use a validator instead */
+  type Message = {
+    type: string;
+    value: string;
+  };
+
+  let primary = PRIMARY;
+  let link = LINK;
+  let preservePrimary = false;
+
+  const [darkMode, setDarkMode] = useState(embedOptions?.d || false);
+
+  primary = embedOptions?.p || PRIMARY;
+  link = embedOptions?.l || LINK;
+  preservePrimary = embedOptions?.pp || false;
+  // Just ensure color is parseable, this'll throw if not:
+  parseToRgba(primary);
+
+  const handleMessage = useCallback((e: MessageEvent) => {
+    const message: Message = e.data;
+
+    if (message.type === 'set-color-mode') {
+      setDarkMode(message.value === 'dark');
+    }
+  }, []);
+  useEventListener('message', handleMessage);
+
+  return { primary, link, darkMode, preservePrimary };
 }
