@@ -148,6 +148,7 @@ export const MetaSubmission = (props: {
   hasPrize: boolean;
   dispatch: Dispatch<ContestSubmitAction | ContestRevealAction>;
   solutions: Array<string>;
+  isAuthor: boolean;
 }) => {
   const authContext = useContext(AuthContext);
   if (!authContext.user || authContext.user.isAnonymous) {
@@ -171,7 +172,8 @@ export const MetaSubmission = (props: {
 
   const isComplete =
     props.contestRevealed ||
-    isMetaSolution(props.contestSubmission, props.solutions);
+    isMetaSolution(props.contestSubmission, props.solutions) ||
+    props.isAuthor;
 
   return (
     <div css={{ marginTop: '1em' }}>
@@ -193,7 +195,7 @@ export const MetaSubmission = (props: {
         ''
       )}
 
-      {props.contestRevealed ? (
+      {props.contestRevealed || props.isAuthor ? (
         props.solutions.length === 1 ? (
           <p>
             The solution is: <strong>{props.solutions[0]}</strong>

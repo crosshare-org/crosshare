@@ -298,8 +298,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
       </div>
       {props.overlayType === OverlayType.Success &&
       isContest &&
-      props.puzzle.contestAnswers &&
-      props.user?.uid !== props.puzzle.authorId ? (
+      props.puzzle.contestAnswers ? (
         <MetaSubmission
           hasPrize={!!props.contestHasPrize}
           contestSubmission={props.contestSubmission}
@@ -311,6 +310,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           }
           dispatch={props.dispatch}
           solutions={props.puzzle.contestAnswers}
+          isAuthor={props.user?.uid === props.puzzle.authorId}
         />
       ) : (
         ''
