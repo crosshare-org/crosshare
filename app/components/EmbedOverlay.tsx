@@ -291,7 +291,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
             color: 'var(--text)',
             padding: '1em',
           },
-          colorTheme(primary, link, isDark, preservePrimary),
+          colorTheme({ primary, link, darkMode: isDark, preservePrimary }),
         ]}
       >
         <div css={{ width: 200, height: 200 }}>

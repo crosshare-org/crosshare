@@ -171,18 +171,33 @@ export default function CrosshareApp({
       <Global
         styles={{
           html: [
-            colorTheme(PRIMARY, LINK, false, false),
+            colorTheme({
+              primary: PRIMARY,
+              link: LINK,
+              darkMode: false,
+              preservePrimary: false,
+            }),
             {
-              '@media (prefers-color-scheme: dark)': colorTheme(
-                PRIMARY,
-                LINK,
-                true,
-                false
-              ),
+              '@media (prefers-color-scheme: dark)': colorTheme({
+                primary: PRIMARY,
+                link: LINK,
+                darkMode: true,
+                preservePrimary: false,
+              }),
             },
           ],
-          'body.dark-mode': colorTheme(PRIMARY, LINK, true, false),
-          'body.light-mode': colorTheme(PRIMARY, LINK, false, false),
+          'body.dark-mode': colorTheme({
+            primary: PRIMARY,
+            link: LINK,
+            darkMode: true,
+            preservePrimary: false,
+          }),
+          'body.light-mode': colorTheme({
+            primary: PRIMARY,
+            link: LINK,
+            darkMode: false,
+            preservePrimary: false,
+          }),
         }}
       />
       <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>

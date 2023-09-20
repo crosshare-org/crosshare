@@ -47,14 +47,16 @@ export const getServerSideProps = withTranslation(gssp);
 type Message = {
   type: string;
   value: string;
-}
+};
 
 export default function ThemedPage(props: PuzzlePageProps) {
   let primary = PRIMARY;
   let link = LINK;
   let preservePrimary = false;
 
-  const [darkMode, setDarkMode] = useState('embedOptions' in props && props.embedOptions?.d || false);
+  const [darkMode, setDarkMode] = useState(
+    ('embedOptions' in props && props.embedOptions?.d) || false
+  );
 
   if ('embedOptions' in props) {
     primary = props.embedOptions?.p || PRIMARY;
@@ -80,12 +82,12 @@ export default function ThemedPage(props: PuzzlePageProps) {
           body: {
             backgroundColor: 'transparent !important',
           },
-          'html, body.light-mode, body.dark-mode': colorTheme(
+          'html, body.light-mode, body.dark-mode': colorTheme({
             primary,
             link,
             darkMode,
-            preservePrimary
-          ),
+            preservePrimary,
+          }),
         }}
       />
       <EmbedContext.Provider value={true}>

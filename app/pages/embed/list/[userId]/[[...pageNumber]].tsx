@@ -108,12 +108,12 @@ export default function ThemedPage(props: PageProps | PageErrorProps) {
           body: {
             backgroundColor: 'transparent !important',
           },
-          'html, body.light-mode, body.dark-mode': colorTheme(
+          'html, body.light-mode, body.dark-mode': colorTheme({
             primary,
             link,
             darkMode,
-            preservePrimary
-          ),
+            preservePrimary,
+          }),
         }}
       />
       <EmbedContext.Provider value={true}>
