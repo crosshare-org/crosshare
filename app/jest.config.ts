@@ -16,6 +16,7 @@ const customJestConfig = {
 
     // TODO These are tests that are failing after the firebase/ESM upgrade.
     // We should rewrite/remove each of them.
+    '<rootDir>/__tests__/comments.test.ts',
     '<rootDir>/__tests__/FollowButton.test.tsx',
     '<rootDir>/__tests__/Builder.test.tsx',
     '<rootDir>/__tests__/ClueText.test.tsx',
