@@ -1,7 +1,10 @@
 import { getEmbedProps, PageErrorProps } from '../../../../lib/serverOnly';
 import { Global } from '@emotion/react';
 import { colorTheme } from '../../../../lib/style';
-import { EmbedContext } from '../../../../components/EmbedContext';
+import {
+  EmbedColorMode,
+  EmbedContext,
+} from '../../../../components/EmbedContext';
 import { GetServerSideProps } from 'next';
 import { EmbedOptionsT } from '../../../../lib/embedOptions';
 import {
@@ -12,7 +15,7 @@ import { withTranslation } from '../../../../lib/translation';
 import { paginatedPuzzles } from '../../../../lib/paginatedPuzzles';
 import { ErrorPage } from '../../../../components/ErrorPage';
 import { Link } from '../../../../components/Link';
-import { useColorThemeForEmbed } from '../../../../lib/hooks';
+import { useEmbedOptions } from '../../../../lib/hooks';
 
 interface PageProps {
   userId: string;
@@ -70,7 +73,7 @@ const gssp: GetServerSideProps<PageProps | PageErrorProps> = async ({
 export const getServerSideProps = withTranslation(gssp);
 
 export default function ThemedPage(props: PageProps | PageErrorProps) {
-  const colorThemeProps = useColorThemeForEmbed(
+  const [colorThemeProps, embedContext] = useEmbedOptions(
     ('embedOptions' in props && props.embedOptions) || undefined
   );
 
@@ -86,6 +89,15 @@ export default function ThemedPage(props: PageProps | PageErrorProps) {
     );
   }
 
+  let colorModeQuery = '';
+  if (embedContext.colorMode !== EmbedColorMode.Default) {
+    if (embedContext.colorMode === EmbedColorMode.Light) {
+      colorModeQuery = 'color-mode=light';
+    } else {
+      colorModeQuery = 'color-mode=dark';
+    }
+  }
+
   return (
     <>
       <Global
@@ -96,12 +108,13 @@ export default function ThemedPage(props: PageProps | PageErrorProps) {
           'html, body.light-mode, body.dark-mode': colorTheme(colorThemeProps),
         }}
       />
-      <EmbedContext.Provider value={true}>
+      <EmbedContext.Provider value={embedContext}>
         <div css={{ padding: '1em', backgroundColor: 'var(--bg)' }}>
           {props.puzzles.map((p, i) => (
             <PuzzleResultLink
               noTargetBlank={true}
               fromEmbedPage={props.currentPage}
+              addQueryString={colorModeQuery}
               fullWidth={true}
               key={i}
               puzzle={p}
@@ -117,7 +130,9 @@ export default function ThemedPage(props: PageProps | PageErrorProps) {
               {props.prevPage === 0 ? (
                 <Link
                   css={{ marginRight: '2em' }}
-                  href={`/embed/list/${props.userId}`}
+                  href={`/embed/list/${props.userId}${
+                    colorModeQuery ? '?' + colorModeQuery : ''
+                  }`}
                   noTargetBlank={true}
                 >
                   ← Newer Puzzles
@@ -128,7 +143,9 @@ export default function ThemedPage(props: PageProps | PageErrorProps) {
               {props.prevPage ? (
                 <Link
                   css={{ marginRight: '2em' }}
-                  href={`/embed/list/${props.userId}/${props.prevPage}`}
+                  href={`/embed/list/${props.userId}/${props.prevPage}${
+                    colorModeQuery ? '?' + colorModeQuery : ''
+                  }`}
                   noTargetBlank={true}
                 >
                   ← Newer Puzzles
@@ -138,7 +155,9 @@ export default function ThemedPage(props: PageProps | PageErrorProps) {
               )}
               {props.nextPage !== null ? (
                 <Link
-                  href={`/embed/list/${props.userId}/${props.nextPage}`}
+                  href={`/embed/list/${props.userId}/${props.nextPage}${
+                    colorModeQuery ? '?' + colorModeQuery : ''
+                  }`}
                   noTargetBlank={true}
                 >
                   Older Puzzles →

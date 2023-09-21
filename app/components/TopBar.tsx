@@ -196,7 +196,7 @@ export const TopBarDropDownLinkA = (props: TopBarDropDownLinkAProps) => {
 };
 
 export const TopBarDropDownLinkSimpleA = (props: TopBarDropDownLinkAProps) => {
-  const isEmbed = useContext(EmbedContext);
+  const { isEmbed } = useContext(EmbedContext);
   return (
     <a
       {...(isEmbed && { target: '_blank', rel: 'noreferrer' })}
@@ -342,7 +342,7 @@ export const TopBar = ({
   title?: string;
 }) => {
   const { notifications } = useContext(AuthContext);
-  const isEmbed = useContext(EmbedContext);
+  const { isEmbed } = useContext(EmbedContext);
   const now = new Date();
   const filtered = notifications?.filter((n) => n.t.toDate() <= now);
   const [showingNotifications, setShowingNotifications] = useState(false);

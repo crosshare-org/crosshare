@@ -53,7 +53,7 @@ export function LinkButtonSimpleA(props: {
 }
 
 export const Link = ({ href, children, noTargetBlank, ...rest }: LinkProps) => {
-  const isEmbed = useContext(EmbedContext);
+  const { isEmbed } = useContext(EmbedContext);
   if (isEmbed && !noTargetBlank) {
     return (
       <a target="_blank" rel="noreferrer" href={href} {...rest}>

@@ -5,7 +5,7 @@ import { PuzzleAction } from '../reducers/reducer';
 import { isMetaSolution, slugify, timeString } from '../lib/utils';
 import type { User } from 'firebase/auth';
 import { Comments } from './Comments';
-import { EmbedContext } from './EmbedContext';
+import { EmbedColorMode, EmbedContext } from './EmbedContext';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { NextPuzzleLink } from './Puzzle';
 import { Overlay } from './Overlay';
@@ -72,7 +72,7 @@ interface BeginPauseProps extends PuzzleOverlayBaseProps {
 
 export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
   const authContext = useContext(AuthContext);
-  const isEmbed = useContext(EmbedContext);
+  const { isEmbed, colorMode } = useContext(EmbedContext);
   const contestAnswers = props.puzzle.contestAnswers;
   const isContest = contestAnswers ? contestAnswers.length > 0 : false;
   const winningSubmissions =
@@ -405,7 +405,15 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
             <div css={{ marginTop: '2em', textAlign: 'center' }}>
               <Link
                 noTargetBlank={true}
-                href={`/embed/list/${props.puzzle.authorId}/${router.query.backToListPage}`}
+                href={`/embed/list/${props.puzzle.authorId}/${
+                  router.query.backToListPage
+                }${
+                  colorMode !== EmbedColorMode.Default
+                    ? `?color-mode=${
+                        colorMode === EmbedColorMode.Light ? 'light' : 'dark'
+                      }`
+                    : ''
+                }`}
               >
                 ⮨ All Puzzles
               </Link>

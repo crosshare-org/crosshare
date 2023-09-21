@@ -35,6 +35,7 @@ const PuzzleLink = (props: {
   filterTags: string[];
   noTargetBlank?: boolean;
   fromEmbedPage?: number;
+  addQueryString?: string;
 }) => {
   const { user } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
@@ -93,7 +94,9 @@ const PuzzleLink = (props: {
 
   const url =
     props.fromEmbedPage !== undefined
-      ? `/embed/${props.id}/${props.authorId}?backToListPage=${props.fromEmbedPage}`
+      ? `/embed/${props.id}/${props.authorId}?backToListPage=${
+          props.fromEmbedPage
+        }${props.addQueryString ? '&' + props.addQueryString : ''}`
       : `/crosswords/${props.id}/${slugify(props.puzzleTitle)}`;
   return (
     <div
@@ -320,6 +323,7 @@ export const PuzzleResultLink = ({
   title,
   noTargetBlank,
   fromEmbedPage,
+  addQueryString,
   ...props
 }: {
   fullWidth?: boolean;
@@ -334,6 +338,7 @@ export const PuzzleResultLink = ({
   filterTags: string[];
   noTargetBlank?: boolean;
   fromEmbedPage?: number;
+  addQueryString?: string;
 }) => {
   const difficulty = <DifficultyBadge puzzleRating={puzzle.rating} />;
   const authorLink = (
@@ -435,6 +440,7 @@ export const PuzzleResultLink = ({
         filterTags={props.filterTags}
         noTargetBlank={noTargetBlank}
         fromEmbedPage={fromEmbedPage}
+        addQueryString={addQueryString}
       >
         {contents}
       </PuzzleLink>

@@ -55,11 +55,14 @@ export interface ColorThemeProps {
   link: string;
   darkMode: boolean;
   preservePrimary: boolean;
-};
+}
 
-export const colorTheme = (
-  {primary, link, darkMode, preservePrimary}: ColorThemeProps
-): CSSInterpolation => {
+export const colorTheme = ({
+  primary,
+  link,
+  darkMode,
+  preservePrimary,
+}: ColorThemeProps): CSSInterpolation => {
   const p = darkMode && !preservePrimary ? mix(primary, 'black', 0.5) : primary;
   const l = darkMode && !preservePrimary ? mix(link, 'white', 0.5) : link;
   const cellBG = darkMode ? '#353535' : 'white';

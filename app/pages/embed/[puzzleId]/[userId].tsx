@@ -9,7 +9,7 @@ import { colorTheme } from '../../../lib/style';
 import { EmbedContext } from '../../../components/EmbedContext';
 import { GetServerSideProps } from 'next';
 import { withTranslation } from '../../../lib/translation';
-import { useColorThemeForEmbed } from '../../../lib/hooks';
+import { useEmbedOptions } from '../../../lib/hooks';
 
 const gssp: GetServerSideProps<PuzzlePageProps> = async ({
   params,
@@ -30,7 +30,7 @@ const gssp: GetServerSideProps<PuzzlePageProps> = async ({
 export const getServerSideProps = withTranslation(gssp);
 
 export default function ThemedPage(props: PuzzlePageProps) {
-  const colorThemeProps = useColorThemeForEmbed(
+  const [colorThemeProps, embedContext] = useEmbedOptions(
     ('embedOptions' in props && props.embedOptions) || undefined
   );
 
@@ -44,7 +44,7 @@ export default function ThemedPage(props: PuzzlePageProps) {
           'html, body.light-mode, body.dark-mode': colorTheme(colorThemeProps),
         }}
       />
-      <EmbedContext.Provider value={true}>
+      <EmbedContext.Provider value={embedContext}>
         <PuzzlePage {...props} />
       </EmbedContext.Provider>
     </>

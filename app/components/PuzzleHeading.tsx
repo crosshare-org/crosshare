@@ -32,7 +32,7 @@ export const PuzzleHeading = (props: {
   blogPost: Root | null;
   tags: string[];
 }) => {
-  const isEmbed = useContext(EmbedContext);
+  const { isEmbed } = useContext(EmbedContext);
 
   const publishDate = new Date(props.publishTime);
   return (

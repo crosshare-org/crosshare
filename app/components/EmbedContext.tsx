@@ -1,3 +1,17 @@
 import { createContext } from 'react';
 
-export const EmbedContext = createContext(false);
+export enum EmbedColorMode {
+  Default,
+  Light,
+  Dark,
+}
+
+export interface EmbedContextValue {
+  isEmbed: boolean;
+  colorMode: EmbedColorMode;
+}
+
+export const EmbedContext = createContext<EmbedContextValue>({
+  isEmbed: false,
+  colorMode: EmbedColorMode.Default,
+});

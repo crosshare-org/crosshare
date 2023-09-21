@@ -13,6 +13,7 @@ import { ColorThemeProps, LINK, PRIMARY } from './style';
 import { parseToRgba } from 'color2k';
 import { EmbedOptionsT } from './embedOptions';
 import useEventListener from '@use-it/event-listener';
+import { EmbedColorMode, EmbedContextValue } from '../components/EmbedContext';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {
@@ -123,44 +124,31 @@ export function useDarkModeControl(): [
 
 export function usePersistedBoolean(
   key: string,
-  defaultValue: boolean,
-  storeInSession = false,
-  persistInitial = false
+  defaultValue: boolean
 ): [boolean, (b: boolean) => void] {
   const [state, setState] = useState<boolean>(defaultValue);
 
   const setStateAndPersist = useCallback(
     (newValue: boolean) => {
       try {
-        (storeInSession ? sessionStorage : localStorage).setItem(
-          key,
-          newValue ? 'true' : 'false'
-        );
+        localStorage.setItem(key, newValue ? 'true' : 'false');
       } catch {
         console.warn('failed to store setting in LS');
       }
       setState(newValue);
     },
-    [key, setState, storeInSession]
+    [key, setState]
   );
 
   useEffect(() => {
     try {
-      const initialValue = (
-        storeInSession ? sessionStorage : localStorage
-      ).getItem(key);
-      const initialState =
-        initialValue !== null ? initialValue === 'true' : defaultValue;
-      if (persistInitial) {
-        setStateAndPersist(initialState);
-      } else {
-        setState(initialState);
-      }
+      const initialValue = localStorage.getItem(key);
+      setState(initialValue !== null ? initialValue === 'true' : defaultValue);
     } catch {
       /* happens on incognito when iframed */
       console.warn('not loading setting from LS');
     }
-  }, [defaultValue, key, storeInSession, persistInitial, setStateAndPersist]);
+  }, [defaultValue, key, setStateAndPersist]);
 
   return [state, setStateAndPersist];
 }
@@ -207,9 +195,9 @@ export function useHover(): [
   return [isHovered, bind, () => setHovered(false)];
 }
 
-export function useColorThemeForEmbed(
+export function useEmbedOptions(
   embedOptions: EmbedOptionsT | undefined
-): ColorThemeProps {
+): [ColorThemeProps, EmbedContextValue] {
   /** TODO use a validator instead */
   type Message = {
     type: string;
@@ -220,12 +208,15 @@ export function useColorThemeForEmbed(
   let link = LINK;
   let preservePrimary = false;
 
-  const [darkMode, setDarkMode] = usePersistedBoolean(
-    'embedDarkMode',
-    embedOptions?.d || false,
-    true,
-    true
+  const [colorMode, setColorMode] = useState<EmbedColorMode>(
+    embedOptions?.d ? EmbedColorMode.Dark : EmbedColorMode.Light
   );
+  const embedContext: EmbedContextValue = {
+    isEmbed: true,
+    colorMode,
+  };
+
+  const darkMode = embedContext.colorMode === EmbedColorMode.Dark;
 
   primary = embedOptions?.p || PRIMARY;
   link = embedOptions?.l || LINK;
@@ -238,12 +229,14 @@ export function useColorThemeForEmbed(
       const message: Message = e.data;
 
       if (message.type === 'set-color-mode') {
-        setDarkMode(message.value === 'dark');
+        setColorMode?.(
+          message.value === 'dark' ? EmbedColorMode.Dark : EmbedColorMode.Light
+        );
       }
     },
-    [setDarkMode]
+    [setColorMode]
   );
   useEventListener('message', handleMessage);
 
-  return { primary, link, darkMode, preservePrimary };
+  return [{ primary, link, darkMode, preservePrimary }, embedContext];
 }

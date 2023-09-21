@@ -686,7 +686,7 @@ export const Puzzle = ({
     };
   }, [state.grid.entries]);
 
-  const isEmbed = useContext(EmbedContext);
+  const { isEmbed } = useContext(EmbedContext);
 
   /* `clueMap` is a map from ENTRYWORD => '5D: This is the clue' - we use this
    *    for comment clue tooltips. */
