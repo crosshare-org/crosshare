@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.32.2-jammy as dev
+FROM mcr.microsoft.com/playwright:v1.38.1-jammy as dev
 RUN mkdir /src
 WORKDIR /src
 COPY app/package.json app/yarn.lock app/lingui.config.ts ./
