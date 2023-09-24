@@ -1,10 +1,15 @@
 import { ClueReference } from './ClueReference';
 import { SpoilerText } from './SpoilerText';
 import { ShowRefsContext } from './ShowRefsContext';
-import rehypeReact from 'rehype-react';
+import rehypeReact, { Components } from 'rehype-react';
 import { unified } from 'unified';
-import { createElement, Fragment } from 'react';
+
 import type { Root } from 'hast';
+import { ReferenceData } from '../lib/markdown/clueReferencer';
+
+import * as prod from 'react/jsx-runtime';
+// @ts-expect-error: the react types are missing.
+const production = { Fragment: prod.Fragment, jsx: prod.jsx, jsxs: prod.jsxs };
 
 export const Markdown = (props: {
   hast: Root;
@@ -13,48 +18,49 @@ export const Markdown = (props: {
   noRefs?: boolean;
 }) => {
   const hast = props.hast;
+  const components: Partial<Components> = {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    p: ({ node, children, ...props }) => {
+      return (
+        <div className="paragraph" {...props}>
+          {children}
+        </div>
+      );
+    },
+    span: ({ node, children, className, ...props }) => {
+      const ref = node?.data as (ReferenceData & { text: string }) | undefined;
+      if (className === 'clueref' && ref !== undefined) {
+        return (
+          <ClueReference
+            key={ref.start}
+            text={ref.text}
+            direction={ref.direction}
+            labelNumber={ref.labelNumber}
+          />
+        );
+      } else if (className === 'spoiler') {
+        return <SpoilerText>{children}</SpoilerText>;
+      } else if (className === 'no-refs') {
+        return (
+          <ShowRefsContext.Provider value={false}>
+            {children}
+          </ShowRefsContext.Provider>
+        );
+      } else {
+        return (
+          <span className={className} {...props}>
+            {children}
+          </span>
+        );
+      }
+    },
+  };
+
   const reactContent = unified()
     .use(rehypeReact, {
-      createElement,
-      Fragment,
+      ...production,
       passNode: true,
-      components: {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        p: ({ node, children, ...props }) => {
-          return (
-            <div className="paragraph" {...props}>
-              {children}
-            </div>
-          );
-        },
-        span: ({ node, children, className, ...props }) => {
-          const ref = node.data;
-          if (className === 'clueref' && ref) {
-            return (
-              <ClueReference
-                key={ref.start as string}
-                text={ref.text as string}
-                direction={parseInt(ref.direction as string)}
-                labelNumber={parseInt(ref.labelNumber as string)}
-              />
-            );
-          } else if (className === 'spoiler') {
-            return <SpoilerText>{children}</SpoilerText>;
-          } else if (className === 'no-refs') {
-            return (
-              <ShowRefsContext.Provider value={false}>
-                {children}
-              </ShowRefsContext.Provider>
-            );
-          } else {
-            return (
-              <span className={className} {...props}>
-                {children}
-              </span>
-            );
-          }
-        },
-      },
+      components,
     })
     .stringify(hast);
   const rendered = (

@@ -615,8 +615,7 @@ test('clueMap rendering', async () => {
   await waitFor(() => {
     /* noop */
   });
-  expect(r.container).toMatchInlineSnapshot(
-    `
+  expect(r.container).toMatchInlineSnapshot(`
     <div>
       <div>
         <div
@@ -626,8 +625,7 @@ test('clueMap rendering', async () => {
         </div>
       </div>
     </div>
-  `
-  );
+  `);
 
   r = render(
     <GridContext.Provider value={cluedGrid}>

@@ -17,7 +17,7 @@
 !app/tsconfig.json
 !app/next.config.mjs
 !app/.babelrc
-!app/.linguirc
+!app/lingui.config.ts
 !app/typings
 !app/reducers
 !app/public

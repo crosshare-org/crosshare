@@ -71,7 +71,8 @@ const red = css({ color: 'red' });
 const PuzzleListItem = (props: PuzzleResult) => {
   function markAsModerated(featured: boolean) {
     const update = { m: true, c: null, f: featured };
-    updateDoc(getDocRef('c', props.id), update).then(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    updateDoc(getDocRef('c', props.id), update as any).then(() => {
       console.log('moderated');
     });
   }
@@ -259,7 +260,8 @@ export default requiresAdmin(() => {
       commentIdsForDeletion,
       (cid) => deleteDoc(getDocRef('cfm', cid)),
       (puzzleId, update) =>
-        updateDoc(getDocRef('c', puzzleId), convertTimestamps(update))
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        updateDoc(getDocRef('c', puzzleId), convertTimestamps(update) as any)
     );
   }
 

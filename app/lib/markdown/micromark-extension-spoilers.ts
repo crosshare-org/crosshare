@@ -14,15 +14,25 @@ import { resolveAll } from 'micromark-util-resolve-all';
 
 import { HtmlExtension } from 'micromark-util-types';
 
+declare module 'micromark-util-types' {
+  interface TokenTypeMap {
+    spoilerSequence: 'spoilerSequence';
+    spoiler: 'spoiler';
+    spoilerText: 'spoilerText';
+    spoilerSequenceTemporary: 'spoilerSequenceTemporary';
+    redditSequenceTemporary: 'redditSequenceTemporary';
+  }
+}
+
 export const spoilersHtml: HtmlExtension = {
   enter: {
     spoiler(this: any) {
-      this.tag('<span class="spoiler">');
+      return this.tag('<span class="spoiler">');
     },
   },
   exit: {
     spoiler(this: any) {
-      this.tag('</span>');
+      return this.tag('</span>');
     },
   },
 };
@@ -99,7 +109,8 @@ export const spoilersSyntax = function (): Extension {
                 nextEvents.length,
                 0,
                 resolveAll(
-                  context.parser.constructs.insideSpan.null,
+                  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+                  context.parser.constructs.insideSpan.null || [],
                   events.slice(open + 1, index),
                   context
                 )

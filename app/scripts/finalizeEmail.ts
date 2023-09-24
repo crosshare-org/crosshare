@@ -10,7 +10,7 @@ import { unified } from 'unified';
 import { Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
 import { Node } from 'unist';
-import type { Visitor } from 'unist-util-visit/complex-types';
+import type { Visitor } from 'unist-util-visit';
 
 type LinkNode = {
   url: string;
@@ -46,6 +46,7 @@ async function finalizeEmail() {
       .process(binary, (err, file) => {
         if (err) throw err;
         console.log(String(file));
+        return undefined;
       });
   });
 }

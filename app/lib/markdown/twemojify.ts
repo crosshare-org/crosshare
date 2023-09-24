@@ -8,7 +8,11 @@ import { flatMap } from './utils';
 export const twemojify: Plugin = () => {
   return (tree) => {
     flatMap(tree, (node: Node) => {
-      if (!is<Text>(node, 'text')) {
+      if (
+        !is(node, (n): n is Text => {
+          return n.type === 'text';
+        })
+      ) {
         return [node];
       }
       const value = node.value;

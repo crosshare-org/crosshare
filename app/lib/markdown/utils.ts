@@ -5,7 +5,7 @@ export function flatMap(ast: Node | Parent, fn: (x: Node) => Node[]) {
   return transform(ast)[0];
 
   function transform(node: Node | Parent) {
-    if (is<Parent>(node, (node: Node): node is Parent => 'children' in node)) {
+    if (is(node, (node: Node): node is Parent => 'children' in node)) {
       const out: Node[] = [];
       for (const child of node.children) {
         const xs = transform(child);

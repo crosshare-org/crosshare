@@ -6,7 +6,7 @@ import { Text, Element } from 'hast';
 import { is } from 'unist-util-is';
 import { flatMap } from './utils';
 
-interface ReferenceData {
+export interface ReferenceData {
   direction: Direction;
   labelNumber: number;
   start: number;
@@ -16,7 +16,11 @@ interface ReferenceData {
 export const clueReferencer: Plugin = () => {
   return (tree) => {
     flatMap(tree, (node: Node): Node[] => {
-      if (!is<Text>(node, 'text')) {
+      if (
+        !is(node, (n): n is Text => {
+          return n.type === 'text';
+        })
+      ) {
         return [node];
       }
       const value = node.value;

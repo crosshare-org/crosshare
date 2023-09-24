@@ -1,7 +1,6 @@
 import { clueReferencer } from './clueReferencer';
 import { twemojify } from './twemojify';
 import { remarkSpoilers } from './spoilers';
-import { all } from 'mdast-util-to-hast';
 import rehypeExternalLinks from 'rehype-external-links';
 import { truncate, Options as TruncateOptions } from 'hast-util-truncate';
 import { entryReferencer } from './entryReferencer';
@@ -15,6 +14,7 @@ import { Direction } from '../types';
 import { Root } from 'hast';
 import { inlineOnly } from './inlineOnly';
 import { remarkNoRefs } from './noRefs';
+import { Handler } from 'mdast-util-to-hast';
 
 function rehypeTruncate(options: TruncateOptions) {
   // @ts-expect-error: assume input `root` matches output root.
@@ -57,6 +57,18 @@ export function markdownToHast(props: {
     }
   }
 
+  const handlers: Record<string, Handler> = {
+    spoiler: (state, node) => {
+      const props = { className: 'spoiler' };
+      return {
+        type: 'element',
+        tagName: 'span',
+        properties: props,
+        children: state.all(node),
+      };
+    },
+  };
+
   const processor = unified()
     .use(remarkParse)
     .use(remarkDirective)
@@ -65,12 +77,7 @@ export function markdownToHast(props: {
     .use(mentionsAndTags)
     .use(remarkNoRefs)
     .use(remarkRehype, {
-      handlers: {
-        spoiler(h, node) {
-          const props = { className: 'spoiler' };
-          return h(node, 'span', props, all(h, node));
-        },
-      },
+      handlers: handlers,
     })
     .use(rehypePlugins);
 

@@ -13,9 +13,11 @@ interface ReferenceData {
   end: number;
 }
 
-export const entryReferencer: Plugin = (options: {
+interface EntryReferencerOptions {
   clueMap: Map<string, [number, Direction, string]>;
-}) => {
+}
+
+export const entryReferencer: Plugin<[EntryReferencerOptions]> = (options) => {
   if (options.clueMap.size === 0) {
     console.log('No clues? Skipping entryReferencer');
     return (tree) => tree;
@@ -26,7 +28,11 @@ export const entryReferencer: Plugin = (options: {
   );
   return (tree) => {
     flatMap(tree, (node: Node): Node[] => {
-      if (!is<Text>(node, 'text')) {
+      if (
+        !is(node, (n): n is Text => {
+          return n.type === 'text';
+        })
+      ) {
         return [node];
       }
       const refs: Array<ReferenceData> = [];

@@ -7,13 +7,12 @@ import { removePosition } from 'unist-util-remove-position';
 cases(
   'test spoilers syntax',
   (opts) => {
-    const tree = removePosition(
-      fromMarkdown(opts.markdown, 'utf-8', {
-        extensions: [spoilersSyntax()],
-        mdastExtensions: [fromMarkdownExtension],
-      }),
-      true
-    );
+    const tree = fromMarkdown(opts.markdown, 'utf-8', {
+      extensions: [spoilersSyntax()],
+      mdastExtensions: [fromMarkdownExtension],
+    });
+
+    removePosition(tree, { force: false });
 
     expect(tree).toEqual(opts.mdast);
   },

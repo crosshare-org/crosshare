@@ -38,7 +38,11 @@ export const ModeratingOverlay = memo(
 
     function markAsModerated(featured: boolean) {
       const update = { m: true, c: null, f: featured };
-      updateDoc(getDocRef('c', puzzle.id), update).then(() => {
+
+      // The right fix for this (and the other two places we do it) is here:
+      //   https://github.com/firebase/firebase-js-sdk/pull/7310
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      updateDoc(getDocRef('c', puzzle.id), update as any).then(() => {
         setSuccess(true);
       });
     }

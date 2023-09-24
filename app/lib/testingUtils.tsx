@@ -23,6 +23,13 @@ export const getUser = (uid: string, isAnonymous: boolean) => {
 
 export const anonymousUser = getUser('anonymous-user-id', true);
 
+import { messages as messagesEn } from '../locales/en/messages';
+
+i18n.load({
+  en: messagesEn,
+});
+i18n.activate('en');
+
 const WithAllProviders: (
   opts: AuthOptions,
   includeSnackbar?: boolean
@@ -30,7 +37,7 @@ const WithAllProviders: (
   (opts: AuthOptions, includeSnackbar?: boolean) =>
   ({ children }: { children?: ReactNode }) => {
     return (
-      <I18nProvider i18n={i18n} forceRenderOnLocaleChange={false}>
+      <I18nProvider i18n={i18n}>
         <AuthContext.Provider
           value={{
             user: undefined,

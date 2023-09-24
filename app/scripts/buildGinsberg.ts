@@ -3,7 +3,7 @@
 import fs from 'fs';
 import util from 'util';
 
-import rimraf from 'rimraf';
+import { rimraf } from 'rimraf';
 
 import { ClueListT } from '../lib/ginsbergCommon';
 import { CLUEDB, getDB } from '../lib/ginsberg';
