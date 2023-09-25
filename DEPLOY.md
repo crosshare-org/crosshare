@@ -2,7 +2,7 @@ This document is only useful for site admins to keep track of deploy steps. Cont
 
 ## Deploying a new version of the site (to staging)
 ```shell
-$ podman build . --format docker --target prod -t gcr.io/mdcrosshare/prod:latest --isolation=rootless
+$ podman build . --format docker --target prod -t gcr.io/mdcrosshare/prod:latest --isolation=rootless --build-arg COMMIT=$(git rev-parse HEAD)
 $ toolbox run gcloud auth print-access-token | podman login -u oauth2accesstoken --password-stdin gcr.io
 $ podman push gcr.io/mdcrosshare/prod:latest --remove-signatures
 $ toolbox run gcloud run deploy staging --image gcr.io/mdcrosshare/prod
