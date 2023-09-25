@@ -417,9 +417,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                     {overlayIsFollowing ? (
                       <>
                         <h2>
-                          <Trans>
-                            {props.following.length} Following
-                          </Trans>
+                          <Trans>{props.following.length} Following</Trans>
                         </h2>
                         <FollowersList
                           pages={props.following}
@@ -462,11 +460,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                     setShowOverlay(true);
                     setOverlayIsFollowing(true);
                   }}
-                  text={
-                    <Trans>
-                      {props.following.length} Following
-                    </Trans>
-                  }
+                  text={<Trans>{props.following.length} Following</Trans>}
                 />
                 {' · '}
                 <ButtonAsLink

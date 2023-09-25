@@ -208,9 +208,7 @@ export default function HomePage({
           {articles.map(ArticleListItem)}
         </ul>
         <p css={{ marginTop: '1em', textAlign: 'center' }}>
-          <Trans
-            comment="the variable is a translated version of 'email or twitter'"
-          >
+          <Trans comment="the variable is a translated version of 'email or twitter'">
             If you have questions or suggestions please contact us via{' '}
             <ContactLinks />.
           </Trans>

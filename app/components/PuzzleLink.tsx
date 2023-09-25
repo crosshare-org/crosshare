@@ -390,9 +390,7 @@ export const PuzzleResultLink = ({
     contents = (
       <p>
         {difficulty} ·{' '}
-        <Trans
-          comment="The variable is the guest constructor's name"
-        >
+        <Trans comment="The variable is the guest constructor's name">
           By guest constructor {puzzle.guestConstructor}
         </Trans>{' '}
         · {date}
@@ -414,9 +412,7 @@ export const PuzzleResultLink = ({
     contents = (
       <p>
         {difficulty} ·{' '}
-        <Trans
-          comment="The variable is the guest constructor's name"
-        >
+        <Trans comment="The variable is the guest constructor's name">
           By guest constructor {puzzle.guestConstructor}
         </Trans>
       </p>
