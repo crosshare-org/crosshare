@@ -13,6 +13,9 @@ jobs:
     - name: Install modules
       working-directory: ./app
       run: yarn install --frozen-lockfile
+    - name: Build i18n files
+      working-directory: ./app
+      run: yarn compileI18n
     - name: Run tests
       working-directory: ./app
       run: NODE_OPTIONS='--experimental-vm-modules'  npx jest --ci
