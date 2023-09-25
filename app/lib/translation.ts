@@ -1,14 +1,4 @@
-import type { I18n } from '@lingui/core';
-import { en, es } from 'make-plural/plurals';
 import { GetServerSideProps, GetStaticProps } from 'next';
-
-export function initTranslation(i18n: I18n): void {
-  i18n.loadLocaleData({
-    en: { plurals: en },
-    es: { plurals: es },
-    pseudo: { plurals: en },
-  });
-}
 
 export function withTranslation(gssp: GetServerSideProps): GetServerSideProps {
   return async (ctx) => {

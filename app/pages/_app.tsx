@@ -14,10 +14,7 @@ import '../lib/style.css';
 import { colorTheme, LINK, PRIMARY } from '../lib/style';
 import { BrowserWarning } from '../components/BrowserWarning';
 import { i18n } from '@lingui/core';
-import { initTranslation } from '../lib/translation';
 import { I18nProvider } from '@lingui/react';
-
-initTranslation(i18n);
 
 export function reportWebVitals(metric: NextWebVitalsMetric) {
   console.log(metric);

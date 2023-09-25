@@ -13,518 +13,203 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: components/Comments.tsx:357
+#: components/Comments.tsx:362
 msgid "(please be nice!):"
 msgstr ""
 
-#: components/TopBar.tsx:695
-msgid "Account"
-msgstr ""
-
-#: components/Puzzle.tsx:1017
-msgid "Account / Settings"
-msgstr ""
-
-#: components/Puzzle.tsx:662
-#: components/Puzzle.tsx:777
-msgid "Across"
-msgstr ""
-
-#: components/ConstructorPage.tsx:868
-msgid "All donations go directly to the constructor via PayPal"
-msgstr ""
-
-#: components/Puzzle.tsx:142
-msgid "Almost there!"
-msgstr ""
-
-#: components/Puzzle.tsx:860
-msgid "Autocheck"
-msgstr ""
-
-#: components/Puzzle.tsx:907
-msgid "Autochecking"
-msgstr ""
-
-#: components/Puzzle.tsx:1172
-msgid "Begin Puzzle"
-msgstr ""
-
-#. The variable is the name of the puzzle's constructor
-#: components/PuzzleLink.tsx:233
-msgid "By {guestConstructor}"
-msgstr ""
-
-#. The variable is the name of the puzzle's constructor
-#: components/PuzzleLink.tsx:246
-msgid "By {link}"
-msgstr ""
-
-#: components/Comments.tsx:389
-#: components/DisplayNameForm.tsx:81
-msgid "Cancel"
-msgstr ""
-
-#: components/Puzzle.tsx:855
-msgid "Check"
-msgstr ""
-
-#: components/Puzzle.tsx:892
-msgid "Check Puzzle"
-msgstr ""
-
-#: components/Puzzle.tsx:870
-msgid "Check Square"
-msgstr ""
-
-#: components/Puzzle.tsx:881
-msgid "Check Word"
-msgstr ""
-
-#: components/PuzzleOverlay.tsx:196
-msgid "Checking for previous play data..."
-msgstr ""
-
-#: components/Puzzle.tsx:1103
-msgid "Clues"
-msgstr ""
-
-#: components/Comments.tsx:578
-msgid "Comments"
-msgstr ""
-
-#: components/Puzzle.tsx:1125
-msgid "Comments / Leaderboard"
-msgstr ""
-
-#: components/Puzzle.tsx:1022
-msgid "Construct a Puzzle"
-msgstr ""
-
-#: components/TopBar.tsx:686
-msgid "Constructor Dashboard"
-msgstr ""
-
-#: components/Puzzle.tsx:1124
-msgid "Contest Prompt / Submission"
-msgstr ""
-
-#: components/CreateShareSection.tsx:27
-msgid "Create or Share a Puzzle"
-msgstr ""
-
-#. the variable is a month and year like 'noviembre de 2021'
-#: pages/dailyminis/[[...slug]].tsx:207
-msgid "Crosshare Daily Mini Puzzles for {date}"
-msgstr ""
-
-#: pages/featured/[pageNumber].tsx:149
-msgid "Crosshare Featured Puzzles"
-msgstr ""
-
-#: pages/index.tsx:148
-msgid "Daily Mini"
-msgstr ""
-
-#: pages/dailyminis/[[...slug]].tsx:227
-msgid "Daily Mini for {displayDate}"
-msgstr ""
-
-#: components/DisplayNameForm.tsx:54
-msgid "Display name updated"
-msgstr ""
-
-#: components/Puzzle.tsx:684
-#: components/Puzzle.tsx:797
-msgid "Down"
-msgstr ""
-
-#: components/Puzzle.tsx:1011
-msgid "Download .puz File"
-msgstr ""
-
-#: components/Puzzle.tsx:985
-msgid "Edit"
-msgstr ""
-
-#: components/Puzzle.tsx:990
-msgid "Embed"
-msgstr ""
-
-#: components/Puzzle.tsx:928
-msgid "Enter Rebus"
-msgstr ""
-
-#: components/Comments.tsx:354
-msgid "Enter your reply"
-msgstr ""
-
-#: pages/index.tsx:178
-msgid "Featured Puzzles"
-msgstr ""
-
-#: components/FollowButton.tsx:65
-#: components/FollowButton.tsx:74
-#: components/FollowButton.tsx:115
-msgid "Follow"
-msgstr ""
-
-#: components/FollowButton.tsx:107
-msgid "Following"
-msgstr ""
-
-#: components/Puzzle.tsx:1103
-msgid "Grid"
-msgstr ""
-
-#: components/Puzzle.tsx:152
-msgid "Keep Trying"
-msgstr ""
-
-#: components/PuzzleOverlay.tsx:315
-msgid "Leaderboard (updated hourly)"
-msgstr ""
-
-#: components/Comments.tsx:355
-msgid "Leave a comment"
-msgstr ""
-
-#: components/Comments.tsx:424
-msgid "Live Preview:"
-msgstr ""
-
-#: components/UnfinishedPuzzleList.tsx:69
-msgid "Loading..."
-msgstr ""
-
-#: components/PuzzleOverlay.tsx:100
-msgid "Logged in as {0}"
-msgstr ""
-
-#: components/PuzzleOverlay.tsx:106
-#: components/PuzzleOverlay.tsx:114
-msgid "Login (via Google)"
-msgstr ""
-
-#: components/PuzzleOverlay.tsx:97
-msgid "Login (via Google) to save your puzzle progress/stats"
-msgstr ""
-
-#: components/Puzzle.tsx:922
-msgid "More"
-msgstr ""
-
-#: components/Puzzle.tsx:950
-msgid "Mute"
-msgstr ""
-
-#: pages/dailyminis/[[...slug]].tsx:238
-msgid "Newer Minis"
-msgstr ""
-
-#: components/ConstructorPage.tsx:890
-#: components/ConstructorPage.tsx:900
-#: pages/featured/[pageNumber].tsx:167
-#: pages/featured/[pageNumber].tsx:177
-#: pages/newest/[[...pageNumber]].tsx:168
-#: pages/tags/[...path].tsx:204
-msgid "Newer Puzzles"
-msgstr ""
-
-#: pages/newest/[[...pageNumber]].tsx:89
-#: pages/newest/[[...pageNumber]].tsx:145
-msgid "Newest Puzzles"
-msgstr "Newest Puzzles"
-
-#: components/FollowButton.tsx:103
-msgid "No longer following {0}"
-msgstr ""
-
-#: components/PuzzleOverlay.tsx:344
-msgid "Nobody is on the leaderboard yet"
-msgstr ""
-
-#: pages/dailyminis/[[...slug]].tsx:245
-msgid "Older Minis"
-msgstr ""
-
-#: components/ConstructorPage.tsx:907
-#: pages/featured/[pageNumber].tsx:184
-#: pages/newest/[[...pageNumber]].tsx:175
-#: pages/tags/[...path].tsx:211
-msgid "Older Puzzles"
-msgstr ""
-
-#: components/UnfinishedPuzzleList.tsx:75
-msgid "Older unfinished solves"
-msgstr ""
-
-#: components/PuzzleOverlay.tsx:382
-msgid "Open on crosshare.org"
-msgstr ""
-
-#: pages/newest/[[...pageNumber]].tsx:90
-#: pages/tags/[...path].tsx:117
-msgid "Page {page}"
-msgstr "Page {page}"
-
-#: components/Puzzle.tsx:1093
-msgid "Pause Game"
-msgstr ""
-
-#: components/PuzzleOverlay.tsx:374
-msgid "Powered by crosshare.org"
-msgstr ""
-
-#: pages/index.tsx:165
-msgid "Previous daily minis"
-msgstr ""
-
-#: pages/index.tsx:198
-msgid "Previous featured puzzles"
-msgstr ""
-
-#: components/Puzzle.tsx:1003
-msgid "Print Puzzle"
-msgstr ""
-
-#. The variable is a timestamp like 'in 4 days' or 'en 4 dias'
-#: components/PuzzleLink.tsx:359
-msgid "Private, going public <0/>"
-msgstr ""
-
-#. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
-#. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
-#: components/PuzzleHeading.tsx:60
-#: components/PuzzleLink.tsx:339
-msgid "Published <0/>"
-msgstr ""
-
-#. The variable is the name of the user who published the puzzle
-#: components/PuzzleLink.tsx:237
-msgid "Published by {link}"
-msgstr ""
-
-#. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
-#: components/PuzzleLink.tsx:348
-msgid "Published privately <0/>"
-msgstr ""
-
-#: pages/tags/[...path].tsx:174
-msgid "Puzzles tagged"
-msgstr "Puzzles tagged"
-
-#: components/Puzzle.tsx:1173
-msgid "Ready to get started?"
-msgstr ""
-
-#: components/Comments.tsx:109
-msgid "Reply"
-msgstr ""
-
-#: components/Puzzle.tsx:1180
-msgid "Resume"
-msgstr ""
-
-#: components/Puzzle.tsx:812
-msgid "Reveal"
-msgstr ""
-
-#: components/Puzzle.tsx:841
-msgid "Reveal Puzzle"
-msgstr ""
-
-#: components/Puzzle.tsx:817
-msgid "Reveal Square"
-msgstr ""
-
-#: components/Puzzle.tsx:829
-msgid "Reveal Word"
-msgstr ""
-
-#: components/Comments.tsx:381
-#: components/DisplayNameForm.tsx:73
-msgid "Save"
-msgstr ""
-
-#: components/DisplayNameForm.tsx:63
-msgid "Set your display name:"
-msgstr ""
-
-#: components/Puzzle.tsx:1126
-msgid "Show Comments"
-msgstr ""
-
-#: components/Comments.tsx:583
-msgid "Sign in with google to leave a comment of your own:"
-msgstr ""
-
-#: components/PuzzleOverlay.tsx:126
-msgid "Solved <0>downs-only</0> in"
-msgstr ""
-
-#: components/PuzzleOverlay.tsx:132
-msgid "Solved <0>without check/reveal</0> in"
-msgstr ""
-
-#: components/PuzzleOverlay.tsx:122
-msgid "Solved in"
-msgstr ""
-
-#: components/Puzzle.tsx:980
-msgid "Stats"
-msgstr ""
-
-#: pages/tags/[...path].tsx:114
-msgid "Tagged Puzzles"
-msgstr "Tagged Puzzles"
-
-#: pages/tags/[...path].tsx:173
-#~ msgid "Tagged {displayTags}"
-#~ msgstr "Tagged {displayTags}"
-
-#. The variable is the name of the user who will recieve the $ tip
-#: components/ConstructorPage.tsx:860
-msgid "Tip {0}"
-msgstr ""
-
-#: pages/index.tsx:156
-msgid "Today's daily mini crossword"
-msgstr ""
-
-#: components/Puzzle.tsx:956
-msgid "Toggle Keyboard"
-msgstr ""
-
-#: components/UnfinishedPuzzleList.tsx:55
-msgid "Unfinished Solves"
-msgstr ""
-
-#: components/FollowButton.tsx:108
-msgid "Unfollow"
-msgstr ""
-
-#: components/Puzzle.tsx:944
-msgid "Unmute"
-msgstr ""
-
-#: components/DisplayNameForm.tsx:63
-msgid "Update display name:"
-msgstr ""
-
-#: pages/index.tsx:182
-msgid "View all puzzles"
-msgstr "View all puzzles"
-
-#: components/PuzzleOverlay.tsx:208
-msgid "You are currently solving downs-only:"
-msgstr ""
-
-#: components/FollowButton.tsx:78
-msgid "You can't follow yourself!"
-msgstr ""
-
-#: components/FollowButton.tsx:32
-#: components/FollowButton.tsx:32
-msgid "You'll be notified when {0} posts a new puzzle"
-msgstr ""
-
-#: components/Puzzle.tsx:145
-msgid "You've completed the puzzle, but there are one or more mistakes."
-msgstr ""
-
-#: components/Puzzle.tsx:1181
-msgid "Your puzzle is paused"
-msgstr ""
-
-#: components/Comments.tsx:409
-msgid "change name"
-msgstr ""
-
-#: components/Comments.tsx:394
-msgid "commenting as"
-msgstr ""
-
-#: pages/index.tsx:130
-msgid "consider-donating"
-msgstr "If you're enjoying Crosshare please consider <0>donating</0> to support its continuing development."
-
-#: components/ContactLinks.tsx:6
-msgid "contact"
-msgstr "<0>email</0>, <1>twitter</1>, or <2>discord</2>"
-
-#: components/CreateShareSection.tsx:44
-msgid "create-button"
-msgstr "<0>Create a new puzzle</0><1>Build a crossword puzzle with the Crosshare constructor</1>"
-
-#: pages/index.tsx:123
-msgid "crosshare-intro"
-msgstr "Crosshare is a <0>free</0>, <1>ad-free</1>, and <2>open-source</2> place to create, share and solve crossword puzzles."
-
-#: components/Comments.tsx:207
-msgid "ctor"
-msgstr "constructor"
-
-#: components/PuzzleOverlay.tsx:211
-msgid "enable across clues"
-msgstr ""
-
-#: pages/index.tsx:204
-msgid "faq"
-msgstr "Frequently asked questions and information"
-
-#: pages/featured/[pageNumber].tsx:88
-msgid "feat-desc"
-msgstr "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
-
-#: pages/featured/[pageNumber].tsx:84
-msgid "featured-title"
-msgstr "Featured Puzzles | Page {0} | Crosshare"
-
+#. js-lingui-explicit-id
 #. js-lingui:pluralize_on=0
-#: components/ConstructorPage.tsx:795
-msgid "follower-blog-count"
-msgid_plural "follower-blog-count_plural"
-msgstr[0] "1 with a Crosshare blog:"
-msgstr[1] "# with Crosshare blogs:"
-
-#. js-lingui:pluralize_on=0
-#: components/ConstructorPage.tsx:787
-#: components/ConstructorPage.tsx:834
+#: components/ConstructorPage.tsx:432
+#: components/ConstructorPage.tsx:479
 msgid "follower-count"
 msgid_plural "follower-count_plural"
 msgstr[0] "1 Follower"
 msgstr[1] "# Followers"
 
-#: components/ConstructorPage.tsx:775
-#: components/ConstructorPage.tsx:821
+#. js-lingui-explicit-id
+#. js-lingui:pluralize_on=0
+#: components/ConstructorPage.tsx:440
+msgid "follower-blog-count"
+msgid_plural "follower-blog-count_plural"
+msgstr[0] "1 with a Crosshare blog:"
+msgstr[1] "# with Crosshare blogs:"
+
+#. js-lingui-explicit-id
+#: components/ConstructorPage.tsx:420
+#: components/ConstructorPage.tsx:466
 msgid "following-count"
 msgstr "{0} Following"
 
+#. js-lingui-explicit-id
+#: components/CreateShareSection.tsx:46
+msgid "create-button"
+msgstr "<0>Create a new puzzle</0><1>Build a crossword puzzle with the Crosshare constructor</1>"
+
+#. js-lingui-explicit-id
+#: components/ContactLinks.tsx:6
+msgid "contact"
+msgstr "<0>email</0>, <1>twitter</1>, or <2>discord</2>"
+
+#. js-lingui-explicit-id
+#: components/CreateShareSection.tsx:65
+msgid "upload-button"
+msgstr "<0>Upload a .puz file</0><1>Get a Crosshare link to share with solvers</1>"
+
+#: components/TopBar.tsx:720
+msgid "Account"
+msgstr ""
+
+#: components/Puzzle.tsx:1067
+msgid "Account / Settings"
+msgstr ""
+
+#: components/Puzzle.tsx:750
+#: components/Puzzle.tsx:822
+msgid "Across"
+msgstr ""
+
+#: components/ConstructorPage.tsx:513
+msgid "All donations go directly to the constructor via PayPal"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: components/PuzzleHeading.tsx:118
+msgid "tip-hover"
+msgstr "All donations go directly to the constructor via PayPal"
+
+#. js-lingui-explicit-id
+#: pages/newest/[[...pageNumber]].tsx:92
+msgid "newest-desc"
+msgstr "All of the latest public puzzles on Crosshare, as they are posted. Enjoy!"
+
+#: components/Puzzle.tsx:160
+msgid "Almost there!"
+msgstr ""
+
+#: components/Puzzle.tsx:903
+msgid "Autocheck"
+msgstr ""
+
+#: components/Puzzle.tsx:950
+msgid "Autochecking"
+msgstr ""
+
+#: components/Puzzle.tsx:1231
+msgid "Begin Puzzle"
+msgstr ""
+
+#. The variable is the name of the puzzle's constructor
+#: components/PuzzleLink.tsx:242
+msgid "By {guestConstructor}"
+msgstr ""
+
+#. The variable is the name of the puzzle's constructor
+#: components/PuzzleLink.tsx:255
+msgid "By {link}"
+msgstr ""
+
 #. The variable is the guest constructor's name
 #. The variable is the guest constructor's name
-#: components/PuzzleLink.tsx:377
-#: components/PuzzleLink.tsx:402
+#. js-lingui-explicit-id
+#: components/PuzzleLink.tsx:393
+#: components/PuzzleLink.tsx:418
 msgid "guest-attrib"
 msgstr "By guest constructor {0}"
 
-#: pages/index.tsx:107
+#: components/Comments.tsx:401
+#: components/DisplayNameForm.tsx:81
+msgid "Cancel"
+msgstr ""
+
+#: components/Comments.tsx:421
+msgid "change name"
+msgstr ""
+
+#: components/Puzzle.tsx:898
+msgid "Check"
+msgstr ""
+
+#: components/Puzzle.tsx:935
+msgid "Check Puzzle"
+msgstr ""
+
+#: components/Puzzle.tsx:913
+msgid "Check Square"
+msgstr ""
+
+#: components/Puzzle.tsx:924
+msgid "Check Word"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:202
+msgid "Checking for previous play data..."
+msgstr ""
+
+#: components/Puzzle.tsx:1157
+msgid "Clues"
+msgstr ""
+
+#: components/Comments.tsx:406
+msgid "commenting as"
+msgstr ""
+
+#: components/Comments.tsx:595
+msgid "Comments"
+msgstr ""
+
+#: components/Puzzle.tsx:1179
+msgid "Comments / Leaderboard"
+msgstr ""
+
+#: pages/index.tsx:130
+#~ msgid "consider-donating"
+#~ msgstr "If you're enjoying Crosshare please consider <0>donating</0> to support its continuing development."
+
+#: components/Puzzle.tsx:1072
+msgid "Construct a Puzzle"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: components/Comments.tsx:210
+msgid "ctor"
+msgstr "constructor"
+
+#: components/TopBar.tsx:711
+msgid "Constructor Dashboard"
+msgstr ""
+
+#: components/ContactLinks.tsx:6
+#~ msgid "contact"
+#~ msgstr "<0>email</0>, <1>twitter</1>, or <2>discord</2>"
+
+#: components/Puzzle.tsx:1178
+msgid "Contest Prompt / Submission"
+msgstr ""
+
+#: components/CreateShareSection.tsx:28
+msgid "Create or Share a Puzzle"
+msgstr ""
+
+#: components/CreateShareSection.tsx:44
+#~ msgid "create-button"
+#~ msgstr "<0>Create a new puzzle</0><1>Build a crossword puzzle with the Crosshare constructor</1>"
+
+#. js-lingui-explicit-id
+#: pages/index.tsx:105
 msgid "home-title"
 msgstr "Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles"
 
-#: components/TopBar.tsx:123
-msgid "hotkey"
+#. the variable is a month and year like 'noviembre de 2021'
+#: pages/dailyminis/[[...slug]].tsx:201
+msgid "Crosshare Daily Mini Puzzles for {date}"
 msgstr ""
 
-#: components/TimeDisplay.tsx:21
-msgid "just now"
+#: pages/featured/[pageNumber].tsx:150
+msgid "Crosshare Featured Puzzles"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:220
-msgid "meta-explanation"
-msgstr "This is a contest/meta puzzle. To submit your answer, first finish solving the grid (or reveal it if you get stuck or solved offline)."
-
-#: pages/dailyminis/[[...slug]].tsx:148
+#. js-lingui-explicit-id
+#: pages/dailyminis/[[...slug]].tsx:142
 msgid "mini-explain"
 msgstr ""
 "Crosshare features a free daily mini crossword every day of the week.\n"
@@ -534,41 +219,481 @@ msgstr ""
 "the weekend minis are a bit larger. Any small sized puzzle you publish publicly to Crosshare\n"
 "will be eligible for selection as a daily mini!"
 
+#. js-lingui-explicit-id
+#: pages/index.tsx:121
+msgid "crosshare-intro"
+msgstr "Crosshare is a <0>free</0>, <1>ad-free</1>, and <2>open-source</2> place to create, share and solve crossword puzzles."
+
+#: pages/index.tsx:123
+#~ msgid "crosshare-intro"
+#~ msgstr "Crosshare is a <0>free</0>, <1>ad-free</1>, and <2>open-source</2> place to create, share and solve crossword puzzles."
+
+#: components/Comments.tsx:207
+#~ msgid "ctor"
+#~ msgstr "constructor"
+
+#: pages/index.tsx:146
+msgid "Daily Mini"
+msgstr ""
+
+#: pages/dailyminis/[[...slug]].tsx:219
+msgid "Daily Mini for {displayDate}"
+msgstr ""
+
 #. The variable is a month and year like noviembre de 2021
-#: pages/dailyminis/[[...slug]].tsx:163
+#. js-lingui-explicit-id
+#: pages/dailyminis/[[...slug]].tsx:157
 msgid "mini-title"
 msgstr "Daily Mini Puzzles for {date}"
 
-#: pages/newest/[[...pageNumber]].tsx:92
-msgid "newest-desc"
-msgstr "All of the latest public puzzles on Crosshare, as they are posted. Enjoy!"
+#: components/DisplayNameForm.tsx:54
+msgid "Display name updated"
+msgstr ""
 
-#: components/Comments.tsx:205
-msgid "publisher"
+#: components/Puzzle.tsx:771
+#: components/Puzzle.tsx:841
+msgid "Down"
+msgstr ""
+
+#: components/Puzzle.tsx:1054
+msgid "Download .puz File"
+msgstr ""
+
+#: components/Puzzle.tsx:1028
+msgid "Edit"
+msgstr ""
+
+#: components/Puzzle.tsx:1033
+msgid "Embed"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:217
+msgid "enable across clues"
+msgstr ""
+
+#: components/Puzzle.tsx:971
+msgid "Enter Rebus"
+msgstr ""
+
+#: components/Comments.tsx:359
+msgid "Enter your reply"
+msgstr ""
+
+#: pages/index.tsx:204
+#~ msgid "faq"
+#~ msgstr "Frequently asked questions and information"
+
+#: pages/featured/[pageNumber].tsx:88
+#~ msgid "feat-desc"
+#~ msgstr "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
+
+#: pages/index.tsx:176
+msgid "Featured Puzzles"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: pages/featured/[pageNumber].tsx:85
+msgid "featured-title"
+msgstr "Featured Puzzles | Page {0} | Crosshare"
+
+#. js-lingui-explicit-id
+#: pages/featured/[pageNumber].tsx:89
+msgid "feat-desc"
+msgstr "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
+
+#: pages/featured/[pageNumber].tsx:84
+#~ msgid "featured-title"
+#~ msgstr "Featured Puzzles | Page {0} | Crosshare"
+
+#: components/FollowButton.tsx:78
+#: components/FollowButton.tsx:93
+#: components/FollowButton.tsx:144
+msgid "Follow"
+msgstr ""
+
+#: components/ConstructorPage.tsx:795
+#~ msgid "follower-blog-count"
+#~ msgstr "{0, plural, one {1 with a Crosshare blog:} other {# with Crosshare blogs:}}"
+
+#: components/ConstructorPage.tsx:787
+#: components/ConstructorPage.tsx:834
+#~ msgid "follower-count"
+#~ msgstr "{0, plural, one {1 Follower} other {# Followers}}"
+
+#: components/FollowButton.tsx:128
+msgid "Following"
+msgstr ""
+
+#: components/ConstructorPage.tsx:775
+#: components/ConstructorPage.tsx:821
+#~ msgid "following-count"
+#~ msgstr "{0} Following"
+
+#. js-lingui-explicit-id
+#: pages/index.tsx:202
+msgid "faq"
+msgstr "Frequently asked questions and information"
+
+#: components/Puzzle.tsx:1157
+msgid "Grid"
+msgstr ""
+
+#. The variable is the guest constructor's name
+#. The variable is the guest constructor's name
+#: components/PuzzleLink.tsx:377
+#: components/PuzzleLink.tsx:402
+#~ msgid "guest-attrib"
+#~ msgstr "By guest constructor {0}"
+
+#: pages/index.tsx:107
+#~ msgid "home-title"
+#~ msgstr "Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles"
+
+#: components/TopBar.tsx:125
+msgid "hotkey"
 msgstr ""
 
 #. the variable is a translated version of 'email or twitter'
-#: pages/index.tsx:217
+#. js-lingui-explicit-id
+#: pages/index.tsx:215
 msgid "questions"
 msgstr "If you have questions or suggestions please contact us via <0/>."
 
+#. js-lingui-explicit-id
+#: pages/index.tsx:128
+msgid "consider-donating"
+msgstr "If you're enjoying Crosshare please consider <0>donating</0> to support its continuing development."
+
+#: components/TimeDisplay.tsx:32
+msgid "just now"
+msgstr ""
+
+#: components/Puzzle.tsx:170
+msgid "Keep Trying"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:336
+msgid "Leaderboard (updated hourly)"
+msgstr ""
+
+#: components/Comments.tsx:360
+msgid "Leave a comment"
+msgstr ""
+
+#: components/Comments.tsx:436
+msgid "Live Preview:"
+msgstr ""
+
+#: components/UnfinishedPuzzleList.tsx:65
+msgid "Loading..."
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:104
+msgid "Logged in as {0}"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:112
+#: components/PuzzleOverlay.tsx:120
+msgid "Login (via Google)"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:101
+msgid "Login (via Google) to save your puzzle progress/stats"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:220
+#~ msgid "meta-explanation"
+#~ msgstr "This is a contest/meta puzzle. To submit your answer, first finish solving the grid (or reveal it if you get stuck or solved offline)."
+
+#: pages/dailyminis/[[...slug]].tsx:148
+#~ msgid "mini-explain"
+#~ msgstr ""
+#~ "Crosshare features a free daily mini crossword every day of the week.\n"
+#~ "These puzzles are a great way to give your brain a bite-sized challenge, and to\n"
+#~ "learn how crosswords work before taking on larger puzzles.\n"
+#~ "Mini puzzles are most often 5x5, but can be other sizes as well - sometimes\n"
+#~ "the weekend minis are a bit larger. Any small sized puzzle you publish publicly to Crosshare\n"
+#~ "will be eligible for selection as a daily mini!"
+
+#. The variable is a month and year like noviembre de 2021
+#: pages/dailyminis/[[...slug]].tsx:163
+#~ msgid "mini-title"
+#~ msgstr "Daily Mini Puzzles for {date}"
+
+#: components/Puzzle.tsx:965
+msgid "More"
+msgstr ""
+
+#: components/Puzzle.tsx:993
+msgid "Mute"
+msgstr ""
+
+#: pages/dailyminis/[[...slug]].tsx:230
+msgid "Newer Minis"
+msgstr ""
+
+#: components/ConstructorPage.tsx:535
+#: components/ConstructorPage.tsx:545
+#: pages/featured/[pageNumber].tsx:168
+#: pages/featured/[pageNumber].tsx:178
+#: pages/newest/[[...pageNumber]].tsx:168
+#: pages/tags/[...path].tsx:226
+msgid "Newer Puzzles"
+msgstr ""
+
+#: components/UnfinishedPuzzleList.tsx:72
+msgid "Newer unfinished solves"
+msgstr "Newer unfinished solves"
+
+#: pages/newest/[[...pageNumber]].tsx:89
+#: pages/newest/[[...pageNumber]].tsx:145
+msgid "Newest Puzzles"
+msgstr "Newest Puzzles"
+
+#: pages/newest/[[...pageNumber]].tsx:92
+#~ msgid "newest-desc"
+#~ msgstr "All of the latest public puzzles on Crosshare, as they are posted. Enjoy!"
+
+#: components/FollowButton.tsx:125
+msgid "No longer following {0}"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:365
+msgid "Nobody is on the leaderboard yet"
+msgstr ""
+
+#: pages/dailyminis/[[...slug]].tsx:237
+msgid "Older Minis"
+msgstr ""
+
+#: components/ConstructorPage.tsx:552
+#: pages/featured/[pageNumber].tsx:185
+#: pages/newest/[[...pageNumber]].tsx:175
+#: pages/tags/[...path].tsx:233
+msgid "Older Puzzles"
+msgstr ""
+
+#: components/UnfinishedPuzzleList.tsx:79
+msgid "Older unfinished solves"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:434
+msgid "Open on crosshare.org"
+msgstr ""
+
+#: pages/newest/[[...pageNumber]].tsx:90
+#: pages/tags/[...path].tsx:132
+msgid "Page {page}"
+msgstr "Page {page}"
+
+#: components/Puzzle.tsx:1147
+msgid "Pause Game"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:426
+msgid "Powered by crosshare.org"
+msgstr ""
+
+#: pages/index.tsx:163
+msgid "Previous daily minis"
+msgstr ""
+
+#: pages/index.tsx:196
+msgid "Previous featured puzzles"
+msgstr ""
+
+#: components/Puzzle.tsx:1046
+msgid "Print Puzzle"
+msgstr ""
+
+#. The variable is a timestamp like 'in 4 days' or 'en 4 dias'
+#: components/PuzzleLink.tsx:375
+msgid "Private, going public <0/>"
+msgstr ""
+
+#. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
+#. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
+#: components/PuzzleHeading.tsx:60
+#: components/PuzzleLink.tsx:356
+msgid "Published <0/>"
+msgstr ""
+
+#. The variable is the name of the user who published the puzzle
+#: components/PuzzleLink.tsx:246
+msgid "Published by {link}"
+msgstr ""
+
+#. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
+#: components/PuzzleLink.tsx:364
+msgid "Published privately <0/>"
+msgstr ""
+
+#: components/Comments.tsx:208
+msgid "publisher"
+msgstr ""
+
+#: pages/tags/[...path].tsx:191
+msgid "Puzzles tagged"
+msgstr "Puzzles tagged"
+
+#. the variable is a translated version of 'email or twitter'
+#: pages/index.tsx:217
+#~ msgid "questions"
+#~ msgstr "If you have questions or suggestions please contact us via <0/>."
+
+#: components/Puzzle.tsx:1232
+msgid "Ready to get started?"
+msgstr ""
+
+#: components/Comments.tsx:112
+msgid "Reply"
+msgstr ""
+
+#: components/Puzzle.tsx:1239
+msgid "Resume"
+msgstr ""
+
+#: components/Puzzle.tsx:855
+msgid "Reveal"
+msgstr ""
+
+#: components/Puzzle.tsx:884
+msgid "Reveal Puzzle"
+msgstr ""
+
+#: components/Puzzle.tsx:860
+msgid "Reveal Square"
+msgstr ""
+
+#: components/Puzzle.tsx:872
+msgid "Reveal Word"
+msgstr ""
+
+#: components/Comments.tsx:393
+#: components/DisplayNameForm.tsx:73
+msgid "Save"
+msgstr ""
+
+#: components/DisplayNameForm.tsx:63
+msgid "Set your display name:"
+msgstr ""
+
+#: components/Puzzle.tsx:1180
+msgid "Show Comments"
+msgstr ""
+
+#: components/Comments.tsx:600
+msgid "Sign in with google to leave a comment of your own:"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:132
+msgid "Solved <0>downs-only</0> in"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:138
+msgid "Solved <0>without check/reveal</0> in"
+msgstr ""
+
+#: components/PuzzleOverlay.tsx:128
+msgid "Solved in"
+msgstr ""
+
+#: components/Puzzle.tsx:1023
+msgid "Stats"
+msgstr ""
+
+#: pages/tags/[...path].tsx:173
+#~ msgid "Tagged {displayTags}"
+#~ msgstr "Tagged {displayTags}"
+
+#: pages/tags/[...path].tsx:129
+msgid "Tagged Puzzles"
+msgstr "Tagged Puzzles"
+
 #: pages/tags/[...path].tsx:119
+#~ msgid "tagged-desc"
+#~ msgstr "The latest public puzzles tagged with {displayTags}"
+
+#. js-lingui-explicit-id
+#: pages/tags/[...path].tsx:136
 msgid "tagged-desc"
 msgstr "The latest public puzzles tagged with {displayTags}"
 
-#: components/PuzzleHeading.tsx:119
-msgid "tip-hover"
-msgstr "All donations go directly to the constructor via PayPal"
+#. js-lingui-explicit-id
+#: components/PuzzleOverlay.tsx:226
+msgid "meta-explanation"
+msgstr "This is a contest/meta puzzle. To submit your answer, first finish solving the grid (or reveal it if you get stuck or solved offline)."
 
-#: components/PuzzleOverlay.tsx:108
-#: components/PuzzleOverlay.tsx:115
+#. The variable is the name of the user who will recieve the $ tip
+#: components/ConstructorPage.tsx:505
+msgid "Tip {0}"
+msgstr ""
+
+#: components/PuzzleHeading.tsx:119
+#~ msgid "tip-hover"
+#~ msgstr "All donations go directly to the constructor via PayPal"
+
+#: components/PuzzleOverlay.tsx:114
+#: components/PuzzleOverlay.tsx:121
 msgid "to save your puzzle progress/stats"
 msgstr ""
 
-#: components/PuzzleLink.tsx:157
+#: pages/index.tsx:154
+msgid "Today's daily mini crossword"
+msgstr ""
+
+#: components/Puzzle.tsx:999
+msgid "Toggle Keyboard"
+msgstr ""
+
+#: components/Puzzle.tsx:1060
+msgid "Toggle Light/Dark Mode"
+msgstr "Toggle Light/Dark Mode"
+
+#: components/PuzzleLink.tsx:166
 msgid "unfinished"
 msgstr ""
 
+#: components/UnfinishedPuzzleList.tsx:51
+msgid "Unfinished Solves"
+msgstr ""
+
+#: components/FollowButton.tsx:129
+msgid "Unfollow"
+msgstr ""
+
+#: components/Puzzle.tsx:987
+msgid "Unmute"
+msgstr ""
+
+#: components/DisplayNameForm.tsx:63
+msgid "Update display name:"
+msgstr ""
+
 #: components/CreateShareSection.tsx:63
-msgid "upload-button"
-msgstr "<0>Upload a .puz file</0><1>Get a Crosshare link to share with solvers</1>"
+#~ msgid "upload-button"
+#~ msgstr "<0>Upload a .puz file</0><1>Get a Crosshare link to share with solvers</1>"
+
+#: pages/index.tsx:180
+msgid "View all puzzles"
+msgstr "View all puzzles"
+
+#: components/PuzzleOverlay.tsx:214
+msgid "You are currently solving downs-only:"
+msgstr ""
+
+#: components/FollowButton.tsx:97
+msgid "You can't follow yourself!"
+msgstr ""
+
+#: components/FollowButton.tsx:42
+msgid "You'll be notified when {0} posts a new puzzle"
+msgstr ""
+
+#: components/Puzzle.tsx:163
+msgid "You've completed the puzzle, but there are one or more mistakes."
+msgstr ""
+
+#: components/Puzzle.tsx:1240
+msgid "Your puzzle is paused"
+msgstr ""
