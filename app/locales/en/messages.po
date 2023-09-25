@@ -34,26 +34,22 @@ msgid_plural "follower-blog-count_plural"
 msgstr[0] "1 with a Crosshare blog:"
 msgstr[1] "# with Crosshare blogs:"
 
-#. js-lingui-explicit-id
 #: components/ConstructorPage.tsx:420
 #: components/ConstructorPage.tsx:466
-msgid "following-count"
-msgstr "{0} Following"
+msgid "{0} Following"
+msgstr ""
 
-#. js-lingui-explicit-id
 #: components/CreateShareSection.tsx:46
-msgid "create-button"
-msgstr "<0>Create a new puzzle</0><1>Build a crossword puzzle with the Crosshare constructor</1>"
+msgid "<0>Create a new puzzle</0><1>Build a crossword puzzle with the Crosshare constructor</1>"
+msgstr ""
 
-#. js-lingui-explicit-id
 #: components/ContactLinks.tsx:6
-msgid "contact"
-msgstr "<0>email</0>, <1>twitter</1>, or <2>discord</2>"
+msgid "<0>email</0>, <1>twitter</1>, or <2>discord</2>"
+msgstr ""
 
-#. js-lingui-explicit-id
 #: components/CreateShareSection.tsx:65
-msgid "upload-button"
-msgstr "<0>Upload a .puz file</0><1>Get a Crosshare link to share with solvers</1>"
+msgid "<0>Upload a .puz file</0><1>Get a Crosshare link to share with solvers</1>"
+msgstr ""
 
 #: components/TopBar.tsx:720
 msgid "Account"
@@ -69,18 +65,13 @@ msgid "Across"
 msgstr ""
 
 #: components/ConstructorPage.tsx:513
+#: components/PuzzleHeading.tsx:118
 msgid "All donations go directly to the constructor via PayPal"
 msgstr ""
 
-#. js-lingui-explicit-id
-#: components/PuzzleHeading.tsx:118
-msgid "tip-hover"
-msgstr "All donations go directly to the constructor via PayPal"
-
-#. js-lingui-explicit-id
 #: pages/newest/[[...pageNumber]].tsx:92
-msgid "newest-desc"
-msgstr "All of the latest public puzzles on Crosshare, as they are posted. Enjoy!"
+msgid "All of the latest public puzzles on Crosshare, as they are posted. Enjoy!"
+msgstr ""
 
 #: components/Puzzle.tsx:160
 msgid "Almost there!"
@@ -110,11 +101,10 @@ msgstr ""
 
 #. The variable is the guest constructor's name
 #. The variable is the guest constructor's name
-#. js-lingui-explicit-id
 #: components/PuzzleLink.tsx:393
-#: components/PuzzleLink.tsx:418
-msgid "guest-attrib"
-msgstr "By guest constructor {0}"
+#: components/PuzzleLink.tsx:417
+msgid "By guest constructor {0}"
+msgstr ""
 
 #: components/Comments.tsx:401
 #: components/DisplayNameForm.tsx:81
@@ -161,26 +151,17 @@ msgstr ""
 msgid "Comments / Leaderboard"
 msgstr ""
 
-#: pages/index.tsx:130
-#~ msgid "consider-donating"
-#~ msgstr "If you're enjoying Crosshare please consider <0>donating</0> to support its continuing development."
-
 #: components/Puzzle.tsx:1072
 msgid "Construct a Puzzle"
 msgstr ""
 
-#. js-lingui-explicit-id
 #: components/Comments.tsx:210
-msgid "ctor"
-msgstr "constructor"
+msgid "constructor"
+msgstr ""
 
 #: components/TopBar.tsx:711
 msgid "Constructor Dashboard"
 msgstr ""
-
-#: components/ContactLinks.tsx:6
-#~ msgid "contact"
-#~ msgstr "<0>email</0>, <1>twitter</1>, or <2>discord</2>"
 
 #: components/Puzzle.tsx:1178
 msgid "Contest Prompt / Submission"
@@ -190,61 +171,45 @@ msgstr ""
 msgid "Create or Share a Puzzle"
 msgstr ""
 
-#: components/CreateShareSection.tsx:44
-#~ msgid "create-button"
-#~ msgstr "<0>Create a new puzzle</0><1>Build a crossword puzzle with the Crosshare constructor</1>"
-
-#. js-lingui-explicit-id
 #: pages/index.tsx:105
-msgid "home-title"
-msgstr "Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles"
+msgid "Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles"
+msgstr ""
 
 #. the variable is a month and year like 'noviembre de 2021'
-#: pages/dailyminis/[[...slug]].tsx:201
+#: pages/dailyminis/[[...slug]].tsx:199
 msgid "Crosshare Daily Mini Puzzles for {date}"
 msgstr ""
 
-#: pages/featured/[pageNumber].tsx:150
+#: pages/featured/[pageNumber].tsx:143
 msgid "Crosshare Featured Puzzles"
 msgstr ""
 
-#. js-lingui-explicit-id
 #: pages/dailyminis/[[...slug]].tsx:142
-msgid "mini-explain"
-msgstr ""
+msgid ""
 "Crosshare features a free daily mini crossword every day of the week.\n"
 "These puzzles are a great way to give your brain a bite-sized challenge, and to\n"
 "learn how crosswords work before taking on larger puzzles.\n"
 "Mini puzzles are most often 5x5, but can be other sizes as well - sometimes\n"
 "the weekend minis are a bit larger. Any small sized puzzle you publish publicly to Crosshare\n"
 "will be eligible for selection as a daily mini!"
+msgstr ""
 
-#. js-lingui-explicit-id
-#: pages/index.tsx:121
-msgid "crosshare-intro"
-msgstr "Crosshare is a <0>free</0>, <1>ad-free</1>, and <2>open-source</2> place to create, share and solve crossword puzzles."
+#: pages/index.tsx:117
+msgid "Crosshare is a <0>free</0>, <1>ad-free</1>, and <2>open-source</2> place to create, share and solve crossword puzzles."
+msgstr ""
 
-#: pages/index.tsx:123
-#~ msgid "crosshare-intro"
-#~ msgstr "Crosshare is a <0>free</0>, <1>ad-free</1>, and <2>open-source</2> place to create, share and solve crossword puzzles."
-
-#: components/Comments.tsx:207
-#~ msgid "ctor"
-#~ msgstr "constructor"
-
-#: pages/index.tsx:146
+#: pages/index.tsx:142
 msgid "Daily Mini"
 msgstr ""
 
-#: pages/dailyminis/[[...slug]].tsx:219
+#: pages/dailyminis/[[...slug]].tsx:217
 msgid "Daily Mini for {displayDate}"
 msgstr ""
 
 #. The variable is a month and year like noviembre de 2021
-#. js-lingui-explicit-id
-#: pages/dailyminis/[[...slug]].tsx:157
-msgid "mini-title"
-msgstr "Daily Mini Puzzles for {date}"
+#: pages/dailyminis/[[...slug]].tsx:156
+msgid "Daily Mini Puzzles for {date}"
+msgstr ""
 
 #: components/DisplayNameForm.tsx:54
 msgid "Display name updated"
@@ -279,31 +244,17 @@ msgstr ""
 msgid "Enter your reply"
 msgstr ""
 
-#: pages/index.tsx:204
-#~ msgid "faq"
-#~ msgstr "Frequently asked questions and information"
-
-#: pages/featured/[pageNumber].tsx:88
-#~ msgid "feat-desc"
-#~ msgstr "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
-
-#: pages/index.tsx:176
+#: pages/index.tsx:172
 msgid "Featured Puzzles"
 msgstr ""
 
-#. js-lingui-explicit-id
 #: pages/featured/[pageNumber].tsx:85
-msgid "featured-title"
-msgstr "Featured Puzzles | Page {0} | Crosshare"
+msgid "Featured Puzzles | Page {0} | Crosshare"
+msgstr ""
 
-#. js-lingui-explicit-id
-#: pages/featured/[pageNumber].tsx:89
-msgid "feat-desc"
-msgstr "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
-
-#: pages/featured/[pageNumber].tsx:84
-#~ msgid "featured-title"
-#~ msgstr "Featured Puzzles | Page {0} | Crosshare"
+#: pages/featured/[pageNumber].tsx:86
+msgid "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
+msgstr ""
 
 #: components/FollowButton.tsx:78
 #: components/FollowButton.tsx:93
@@ -311,58 +262,30 @@ msgstr "Featured puzzles are puzzles selected by Crosshare that we found to be p
 msgid "Follow"
 msgstr ""
 
-#: components/ConstructorPage.tsx:795
-#~ msgid "follower-blog-count"
-#~ msgstr "{0, plural, one {1 with a Crosshare blog:} other {# with Crosshare blogs:}}"
-
-#: components/ConstructorPage.tsx:787
-#: components/ConstructorPage.tsx:834
-#~ msgid "follower-count"
-#~ msgstr "{0, plural, one {1 Follower} other {# Followers}}"
-
 #: components/FollowButton.tsx:128
 msgid "Following"
 msgstr ""
 
-#: components/ConstructorPage.tsx:775
-#: components/ConstructorPage.tsx:821
-#~ msgid "following-count"
-#~ msgstr "{0} Following"
-
-#. js-lingui-explicit-id
-#: pages/index.tsx:202
-msgid "faq"
-msgstr "Frequently asked questions and information"
+#: pages/index.tsx:198
+msgid "Frequently asked questions and information"
+msgstr ""
 
 #: components/Puzzle.tsx:1157
 msgid "Grid"
 msgstr ""
-
-#. The variable is the guest constructor's name
-#. The variable is the guest constructor's name
-#: components/PuzzleLink.tsx:377
-#: components/PuzzleLink.tsx:402
-#~ msgid "guest-attrib"
-#~ msgstr "By guest constructor {0}"
-
-#: pages/index.tsx:107
-#~ msgid "home-title"
-#~ msgstr "Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles"
 
 #: components/TopBar.tsx:125
 msgid "hotkey"
 msgstr ""
 
 #. the variable is a translated version of 'email or twitter'
-#. js-lingui-explicit-id
-#: pages/index.tsx:215
-msgid "questions"
-msgstr "If you have questions or suggestions please contact us via <0/>."
+#: pages/index.tsx:211
+msgid "If you have questions or suggestions please contact us via <0/>."
+msgstr ""
 
-#. js-lingui-explicit-id
-#: pages/index.tsx:128
-msgid "consider-donating"
-msgstr "If you're enjoying Crosshare please consider <0>donating</0> to support its continuing development."
+#: pages/index.tsx:124
+msgid "If you're enjoying Crosshare please consider <0>donating</0> to support its continuing development."
+msgstr ""
 
 #: components/TimeDisplay.tsx:32
 msgid "just now"
@@ -401,25 +324,6 @@ msgstr ""
 msgid "Login (via Google) to save your puzzle progress/stats"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:220
-#~ msgid "meta-explanation"
-#~ msgstr "This is a contest/meta puzzle. To submit your answer, first finish solving the grid (or reveal it if you get stuck or solved offline)."
-
-#: pages/dailyminis/[[...slug]].tsx:148
-#~ msgid "mini-explain"
-#~ msgstr ""
-#~ "Crosshare features a free daily mini crossword every day of the week.\n"
-#~ "These puzzles are a great way to give your brain a bite-sized challenge, and to\n"
-#~ "learn how crosswords work before taking on larger puzzles.\n"
-#~ "Mini puzzles are most often 5x5, but can be other sizes as well - sometimes\n"
-#~ "the weekend minis are a bit larger. Any small sized puzzle you publish publicly to Crosshare\n"
-#~ "will be eligible for selection as a daily mini!"
-
-#. The variable is a month and year like noviembre de 2021
-#: pages/dailyminis/[[...slug]].tsx:163
-#~ msgid "mini-title"
-#~ msgstr "Daily Mini Puzzles for {date}"
-
 #: components/Puzzle.tsx:965
 msgid "More"
 msgstr ""
@@ -428,16 +332,16 @@ msgstr ""
 msgid "Mute"
 msgstr ""
 
-#: pages/dailyminis/[[...slug]].tsx:230
+#: pages/dailyminis/[[...slug]].tsx:228
 msgid "Newer Minis"
 msgstr ""
 
 #: components/ConstructorPage.tsx:535
 #: components/ConstructorPage.tsx:545
-#: pages/featured/[pageNumber].tsx:168
-#: pages/featured/[pageNumber].tsx:178
-#: pages/newest/[[...pageNumber]].tsx:168
-#: pages/tags/[...path].tsx:226
+#: pages/featured/[pageNumber].tsx:161
+#: pages/featured/[pageNumber].tsx:171
+#: pages/newest/[[...pageNumber]].tsx:164
+#: pages/tags/[...path].tsx:223
 msgid "Newer Puzzles"
 msgstr ""
 
@@ -446,13 +350,9 @@ msgid "Newer unfinished solves"
 msgstr "Newer unfinished solves"
 
 #: pages/newest/[[...pageNumber]].tsx:89
-#: pages/newest/[[...pageNumber]].tsx:145
+#: pages/newest/[[...pageNumber]].tsx:141
 msgid "Newest Puzzles"
-msgstr "Newest Puzzles"
-
-#: pages/newest/[[...pageNumber]].tsx:92
-#~ msgid "newest-desc"
-#~ msgstr "All of the latest public puzzles on Crosshare, as they are posted. Enjoy!"
+msgstr ""
 
 #: components/FollowButton.tsx:125
 msgid "No longer following {0}"
@@ -462,14 +362,14 @@ msgstr ""
 msgid "Nobody is on the leaderboard yet"
 msgstr ""
 
-#: pages/dailyminis/[[...slug]].tsx:237
+#: pages/dailyminis/[[...slug]].tsx:235
 msgid "Older Minis"
 msgstr ""
 
 #: components/ConstructorPage.tsx:552
-#: pages/featured/[pageNumber].tsx:185
-#: pages/newest/[[...pageNumber]].tsx:175
-#: pages/tags/[...path].tsx:233
+#: pages/featured/[pageNumber].tsx:178
+#: pages/newest/[[...pageNumber]].tsx:171
+#: pages/tags/[...path].tsx:230
 msgid "Older Puzzles"
 msgstr ""
 
@@ -484,7 +384,7 @@ msgstr ""
 #: pages/newest/[[...pageNumber]].tsx:90
 #: pages/tags/[...path].tsx:132
 msgid "Page {page}"
-msgstr "Page {page}"
+msgstr ""
 
 #: components/Puzzle.tsx:1147
 msgid "Pause Game"
@@ -494,11 +394,11 @@ msgstr ""
 msgid "Powered by crosshare.org"
 msgstr ""
 
-#: pages/index.tsx:163
+#: pages/index.tsx:159
 msgid "Previous daily minis"
 msgstr ""
 
-#: pages/index.tsx:196
+#: pages/index.tsx:192
 msgid "Previous featured puzzles"
 msgstr ""
 
@@ -532,14 +432,9 @@ msgstr ""
 msgid "publisher"
 msgstr ""
 
-#: pages/tags/[...path].tsx:191
+#: pages/tags/[...path].tsx:188
 msgid "Puzzles tagged"
-msgstr "Puzzles tagged"
-
-#. the variable is a translated version of 'email or twitter'
-#: pages/index.tsx:217
-#~ msgid "questions"
-#~ msgstr "If you have questions or suggestions please contact us via <0/>."
+msgstr ""
 
 #: components/Puzzle.tsx:1232
 msgid "Ready to get started?"
@@ -602,43 +497,29 @@ msgstr ""
 msgid "Stats"
 msgstr ""
 
-#: pages/tags/[...path].tsx:173
-#~ msgid "Tagged {displayTags}"
-#~ msgstr "Tagged {displayTags}"
-
 #: pages/tags/[...path].tsx:129
 msgid "Tagged Puzzles"
-msgstr "Tagged Puzzles"
+msgstr ""
 
-#: pages/tags/[...path].tsx:119
-#~ msgid "tagged-desc"
-#~ msgstr "The latest public puzzles tagged with {displayTags}"
-
-#. js-lingui-explicit-id
 #: pages/tags/[...path].tsx:136
-msgid "tagged-desc"
-msgstr "The latest public puzzles tagged with {displayTags}"
+msgid "The latest public puzzles tagged with {displayTags}"
+msgstr ""
 
-#. js-lingui-explicit-id
 #: components/PuzzleOverlay.tsx:226
-msgid "meta-explanation"
-msgstr "This is a contest/meta puzzle. To submit your answer, first finish solving the grid (or reveal it if you get stuck or solved offline)."
+msgid "This is a contest/meta puzzle. To submit your answer, first finish solving the grid (or reveal it if you get stuck or solved offline)."
+msgstr ""
 
 #. The variable is the name of the user who will recieve the $ tip
 #: components/ConstructorPage.tsx:505
 msgid "Tip {0}"
 msgstr ""
 
-#: components/PuzzleHeading.tsx:119
-#~ msgid "tip-hover"
-#~ msgstr "All donations go directly to the constructor via PayPal"
-
 #: components/PuzzleOverlay.tsx:114
 #: components/PuzzleOverlay.tsx:121
 msgid "to save your puzzle progress/stats"
 msgstr ""
 
-#: pages/index.tsx:154
+#: pages/index.tsx:150
 msgid "Today's daily mini crossword"
 msgstr ""
 
@@ -670,13 +551,9 @@ msgstr ""
 msgid "Update display name:"
 msgstr ""
 
-#: components/CreateShareSection.tsx:63
-#~ msgid "upload-button"
-#~ msgstr "<0>Upload a .puz file</0><1>Get a Crosshare link to share with solvers</1>"
-
-#: pages/index.tsx:180
+#: pages/index.tsx:176
 msgid "View all puzzles"
-msgstr "View all puzzles"
+msgstr ""
 
 #: components/PuzzleOverlay.tsx:214
 msgid "You are currently solving downs-only:"

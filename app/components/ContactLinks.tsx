@@ -3,7 +3,7 @@ import { Trans } from '@lingui/macro';
 export function ContactLinks() {
   return (
     <>
-      <Trans id="contact">
+      <Trans>
         <a
           target="_blank"
           rel="noopener noreferrer"

@@ -391,7 +391,6 @@ export const PuzzleResultLink = ({
       <p>
         {difficulty} ·{' '}
         <Trans
-          id="guest-attrib"
           comment="The variable is the guest constructor's name"
         >
           By guest constructor {puzzle.guestConstructor}
@@ -416,7 +415,6 @@ export const PuzzleResultLink = ({
       <p>
         {difficulty} ·{' '}
         <Trans
-          id="guest-attrib"
           comment="The variable is the guest constructor's name"
         >
           By guest constructor {puzzle.guestConstructor}

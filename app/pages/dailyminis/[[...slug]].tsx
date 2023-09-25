@@ -140,7 +140,6 @@ export default function DailyMiniPage(props: PageProps) {
     );
   }
   const description = t({
-    id: 'mini-explain',
     message: `Crosshare features a free daily mini crossword every day of the week.
   These puzzles are a great way to give your brain a bite-sized challenge, and to
   learn how crosswords work before taking on larger puzzles.
@@ -155,7 +154,6 @@ export default function DailyMiniPage(props: PageProps) {
     year: 'numeric',
   });
   const title = t({
-    id: 'mini-title',
     message: `Daily Mini Puzzles for ${date}`,
     comment: 'The variable is a month and year like noviembre de 2021',
   });

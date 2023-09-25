@@ -207,7 +207,7 @@ const CommentFlair = (props: CommentFlairProps) => {
           {props.hasGuestConstructor ? (
             <Trans>publisher</Trans>
           ) : (
-            <Trans id="ctor">constructor</Trans>
+            <Trans>constructor</Trans>
           )}
         </span>
       ) : (

@@ -82,15 +82,8 @@ export default function FeaturedPageHandler(props: PageProps) {
     );
   }
 
-  const title = t({
-    id: 'featured-title',
-    message: `Featured Puzzles | Page ${props.currentPage} | Crosshare`,
-  });
-  const description = t({
-    id: 'feat-desc',
-    message:
-      'Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!',
-  });
+  const title = t`Featured Puzzles | Page ${props.currentPage} | Crosshare`;
+  const description = t`Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!`;
 
   return (
     <>

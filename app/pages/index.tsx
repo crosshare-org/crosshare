@@ -102,11 +102,7 @@ export default function HomePage({
   const today = new Date();
   const router = useRouter();
   const { user } = useContext(AuthContext);
-  const title = t({
-    id: 'home-title',
-    message:
-      'Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles',
-  });
+  const title = t`Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles`;
   return (
     <>
       <Head>
@@ -118,14 +114,14 @@ export default function HomePage({
 
       <div css={{ margin: '1em' }}>
         <p css={{ marginBottom: '1em' }}>
-          <Trans id="crosshare-intro">
+          <Trans>
             Crosshare is a <b>free</b>, <b>ad-free</b>, and{' '}
             <a href="https://github.com/crosshare-org/crosshare">open-source</a>{' '}
             place to create, share and solve crossword puzzles.
           </Trans>
         </p>
         <p>
-          <Trans id="consider-donating">
+          <Trans>
             If you&apos;re enjoying Crosshare please consider{' '}
             <Link href="/donate">donating</Link> to support its continuing
             development.
@@ -199,7 +195,7 @@ export default function HomePage({
         <hr css={{ margin: '2em 0' }} />
         <UnfinishedPuzzleList user={user} />
         <h4 css={{ marginTop: '2em' }}>
-          <Trans id="faq">Frequently asked questions and information</Trans>
+          <Trans>Frequently asked questions and information</Trans>
         </h4>
         <ul
           css={{
@@ -213,7 +209,6 @@ export default function HomePage({
         </ul>
         <p css={{ marginTop: '1em', textAlign: 'center' }}>
           <Trans
-            id="questions"
             comment="the variable is a translated version of 'email or twitter'"
           >
             If you have questions or suggestions please contact us via{' '}

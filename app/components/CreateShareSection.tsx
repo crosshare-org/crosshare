@@ -43,7 +43,7 @@ export function CreateShareSection(props: { halfWidth: boolean }) {
             css={{ alignSelf: 'center', marginRight: '0.5em', fontSize: '2em' }}
           />
           <div css={{ flex: 1 }}>
-            <Trans id="create-button">
+            <Trans>
               <h4>Create a new puzzle</h4>
               <p
                 css={{
@@ -62,7 +62,7 @@ export function CreateShareSection(props: { halfWidth: boolean }) {
             css={{ alignSelf: 'center', marginRight: '0.5em', fontSize: '2em' }}
           />
           <div css={{ flex: 1 }}>
-            <Trans id="upload-button">
+            <Trans>
               <h4>Upload a .puz file</h4>
               <p
                 css={{

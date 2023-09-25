@@ -115,7 +115,7 @@ export const PuzzleHeading = (props: {
           <ToolTipText
             text={<FaInfoCircle />}
             tooltip={
-              <Trans id="tip-hover">
+              <Trans>
                 All donations go directly to the constructor via PayPal
               </Trans>
             }

@@ -133,10 +133,7 @@ export default function TagPageHandler(props: PageProps) {
       ' | Crosshare';
   const description = props.article?.c
     ? props.article.c
-    : t({
-        id: 'tagged-desc',
-        message: `The latest public puzzles tagged with ${displayTags}`,
-      });
+    : t`The latest public puzzles tagged with ${displayTags}`;
 
   return (
     <>

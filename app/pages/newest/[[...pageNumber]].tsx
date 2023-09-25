@@ -89,11 +89,7 @@ export default function NewestPageHandler(props: PageProps) {
     t`Newest Puzzles` +
     (page > 0 ? ' | ' + t`Page ${page}` : '') +
     ' | Crosshare';
-  const description = t({
-    id: 'newest-desc',
-    message:
-      'All of the latest public puzzles on Crosshare, as they are posted. Enjoy!',
-  });
+  const description = t`All of the latest public puzzles on Crosshare, as they are posted. Enjoy!`;
 
   return (
     <>
