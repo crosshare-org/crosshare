@@ -415,7 +415,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                     : ''
                 }`}
               >
-                ⮨ All Puzzles
+                ⏎ All Puzzles
               </Link>
             </div>
           ) : (
