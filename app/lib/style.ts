@@ -1,6 +1,7 @@
 import { CSSInterpolation } from '@emotion/serialize';
 import { css } from '@emotion/react';
 import { adjustHue, mix, readableColorIsBlack } from 'color2k';
+import { EmbedStylingProps } from '../components/EmbedStyling';
 
 export const KEYBOARD_HEIGHT = 164;
 export const HEADER_HEIGHT = 35;
@@ -50,19 +51,12 @@ export const readableColor = (color: string, darkMode: boolean) => {
   }
 };
 
-export interface ColorThemeProps {
-  primary: string;
-  link: string;
-  darkMode: boolean;
-  preservePrimary: boolean;
-}
-
 export const colorTheme = ({
   primary,
   link,
   darkMode,
   preservePrimary,
-}: ColorThemeProps): CSSInterpolation => {
+}: EmbedStylingProps): CSSInterpolation => {
   const p = darkMode && !preservePrimary ? mix(primary, 'black', 0.5) : primary;
   const l = darkMode && !preservePrimary ? mix(link, 'white', 0.5) : link;
   const cellBG = darkMode ? '#353535' : 'white';

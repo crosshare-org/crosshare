@@ -4,12 +4,11 @@ import {
   PuzzlePageProps,
 } from '../../../lib/serverOnly';
 import { PuzzlePage } from '../../../components/PuzzlePage';
-import { Global } from '@emotion/react';
-import { colorTheme } from '../../../lib/style';
 import { EmbedContext } from '../../../components/EmbedContext';
 import { GetServerSideProps } from 'next';
 import { withTranslation } from '../../../lib/translation';
 import { useEmbedOptions } from '../../../lib/hooks';
+import { EmbedStyling } from '../../../components/EmbedStyling';
 
 const gssp: GetServerSideProps<PuzzlePageProps> = async ({
   params,
@@ -30,20 +29,13 @@ const gssp: GetServerSideProps<PuzzlePageProps> = async ({
 export const getServerSideProps = withTranslation(gssp);
 
 export default function ThemedPage(props: PuzzlePageProps) {
-  const [colorThemeProps, embedContext] = useEmbedOptions(
+  const [embedStyleProps, embedContext] = useEmbedOptions(
     ('embedOptions' in props && props.embedOptions) || undefined
   );
 
   return (
     <>
-      <Global
-        styles={{
-          body: {
-            backgroundColor: 'transparent !important',
-          },
-          'html, body.light-mode, body.dark-mode': colorTheme(colorThemeProps),
-        }}
-      />
+      <EmbedStyling {...embedStyleProps} />
       <EmbedContext.Provider value={embedContext}>
         <PuzzlePage {...props} />
       </EmbedContext.Provider>

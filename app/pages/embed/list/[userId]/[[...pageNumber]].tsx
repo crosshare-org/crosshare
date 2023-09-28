@@ -1,6 +1,4 @@
 import { getEmbedProps, PageErrorProps } from '../../../../lib/serverOnly';
-import { Global } from '@emotion/react';
-import { colorTheme } from '../../../../lib/style';
 import {
   EmbedColorMode,
   EmbedContext,
@@ -16,6 +14,7 @@ import { paginatedPuzzles } from '../../../../lib/paginatedPuzzles';
 import { ErrorPage } from '../../../../components/ErrorPage';
 import { Link } from '../../../../components/Link';
 import { useEmbedOptions } from '../../../../lib/hooks';
+import { EmbedStyling } from '../../../../components/EmbedStyling';
 
 interface PageProps {
   userId: string;
@@ -73,7 +72,7 @@ const gssp: GetServerSideProps<PageProps | PageErrorProps> = async ({
 export const getServerSideProps = withTranslation(gssp);
 
 export default function ThemedPage(props: PageProps | PageErrorProps) {
-  const [colorThemeProps, embedContext] = useEmbedOptions(
+  const [embedStyleProps, embedContext] = useEmbedOptions(
     ('embedOptions' in props && props.embedOptions) || undefined
   );
 
@@ -100,14 +99,7 @@ export default function ThemedPage(props: PageProps | PageErrorProps) {
 
   return (
     <>
-      <Global
-        styles={{
-          body: {
-            backgroundColor: 'transparent !important',
-          },
-          'html, body.light-mode, body.dark-mode': colorTheme(colorThemeProps),
-        }}
-      />
+      <EmbedStyling {...embedStyleProps} />
       <EmbedContext.Provider value={embedContext}>
         <div css={{ padding: '1em', backgroundColor: 'var(--bg)' }}>
           {props.puzzles.map((p, i) => (

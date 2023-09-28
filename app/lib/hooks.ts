@@ -9,11 +9,12 @@ import {
 import { ConstructorPageT } from './constructorPage';
 import useResizeObserver from 'use-resize-observer';
 import type { User } from 'firebase/auth';
-import { ColorThemeProps, LINK, PRIMARY } from './style';
+import { LINK, PRIMARY } from './style';
 import { parseToRgba } from 'color2k';
 import { EmbedOptionsT } from './embedOptions';
 import useEventListener from '@use-it/event-listener';
 import { EmbedColorMode, EmbedContextValue } from '../components/EmbedContext';
+import { EmbedStylingProps } from '../components/EmbedStyling';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {
@@ -197,7 +198,7 @@ export function useHover(): [
 
 export function useEmbedOptions(
   embedOptions: EmbedOptionsT | undefined
-): [ColorThemeProps, EmbedContextValue] {
+): [EmbedStylingProps, EmbedContextValue] {
   /** TODO use a validator instead */
   type Message = {
     type: string;
@@ -238,5 +239,14 @@ export function useEmbedOptions(
   );
   useEventListener('message', handleMessage);
 
-  return [{ primary, link, darkMode, preservePrimary }, embedContext];
+  return [
+    {
+      primary,
+      link,
+      darkMode,
+      preservePrimary,
+      ...(embedOptions?.fu && { fontUrl: embedOptions.fu }),
+    },
+    embedContext,
+  ];
 }

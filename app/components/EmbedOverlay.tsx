@@ -19,6 +19,7 @@ import { fromCells } from '../lib/viewableGrid';
 import { Button, ButtonAsLink } from './Buttons';
 import { getDoc, setDoc } from 'firebase/firestore';
 import { getDocRef } from '../lib/firebaseWrapper';
+import { Global } from '@emotion/react';
 
 export const EmbedOverlay = ({
   dispatch,
@@ -182,6 +183,10 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
   const [link, setLink] = useState(props.l || LINK);
   const [preservePrimary, setPreservePrimary] = useState(props.pp || false);
   const [dirty, setDirty] = useState(false);
+  const [customFontEnabled, setCustomFontEnabled] = useState<boolean>(
+    !!props.fu
+  );
+  const [fontUrl, setFontUrl] = useState(props.fu || '');
 
   const [saving, setSaving] = useState(false);
 
@@ -191,13 +196,25 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       l: link,
       d: isDark,
       pp: preservePrimary,
+      ...(customFontEnabled &&
+        fontUrl !== '' && {
+          fu: fontUrl,
+        }),
     };
     setSaving(true);
     setDoc(getDocRef('em', props.userId), theme).then(() => {
       setSaving(false);
       setDirty(false);
     });
-  }, [isDark, primary, link, preservePrimary, props.userId]);
+  }, [
+    isDark,
+    primary,
+    link,
+    preservePrimary,
+    props.userId,
+    fontUrl,
+    customFontEnabled,
+  ]);
 
   const dummyGrid = useMemo(() => {
     return fromCells({
@@ -276,12 +293,57 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
           </span>
         </label>
       </div>
+      <h4>Font</h4>
+      <div>
+        <label>
+          <input
+            css={{ marginRight: '1em' }}
+            type="checkbox"
+            checked={customFontEnabled}
+            onChange={(e) => {
+              setCustomFontEnabled(e.target.checked);
+              setDirty(true);
+            }}
+          />
+          Specify a custom font url (advanced)
+        </label>
+      </div>
+      <div>
+        <label>
+          <input
+            disabled={!customFontEnabled}
+            css={{ marginRight: '1em' }}
+            placeholder="Font URL"
+            type="text"
+            value={fontUrl}
+            onChange={(e) => {
+              setFontUrl(e.target.value);
+              setDirty(true);
+            }}
+          />
+        </label>
+      </div>
       <Button
         onClick={saveTheme}
         disabled={saving || !dirty}
         text={saving ? 'Saving...' : 'Save Theme Choices'}
       />
       <h4 css={{ marginTop: '1em' }}>Preview</h4>
+      {customFontEnabled && fontUrl ? (
+        <Global
+          styles={{
+            '@font-face': {
+              fontFamily: 'CrossharePreview',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              fontDisplay: 'swap',
+              src: `url(${encodeURI(fontUrl)})`,
+            },
+          }}
+        />
+      ) : (
+        ''
+      )}
       <div
         css={[
           {
@@ -290,6 +352,10 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
             backgroundColor: 'var(--bg)',
             color: 'var(--text)',
             padding: '1em',
+            ...(customFontEnabled &&
+              fontUrl && {
+                fontFamily: 'CrossharePreview',
+              }),
           },
           colorTheme({ primary, link, darkMode: isDark, preservePrimary }),
         ]}

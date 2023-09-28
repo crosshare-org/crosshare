@@ -12,6 +12,8 @@ const EmbedOptionsV = t.partial({
   d: t.boolean,
   /** don't transform colors for dark theme? */
   pp: t.boolean,
+  /** custom font url */
+  fu: t.string,
 });
 
 export type EmbedOptionsT = t.TypeOf<typeof EmbedOptionsV>;
