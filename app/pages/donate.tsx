@@ -152,10 +152,17 @@ export default function DonatePage({ donors }: DonateProps) {
           <input type="hidden" name="currency_code" value="USD" />
           <Button type="submit" text="Donate (via credit card / paypal)" />
         </form>
+        <p css={{marginTop: '1.5em'}}>
+          We also accept donations via Zelle. Zelle is great because 100% of
+          your donation goes to Crosshare! Please send your donation to{' '}
+          <b>mike@crosshare.org</b>. Be sure to follow up with an email so we
+          know which account to give a patron icon to and how you&apos;d like to
+          be listed on the contributors list!
+        </p>
         <p css={{ textAlign: 'center' }}>
           <i>
-            If you&apos;d like to donate but not via paypal, please contact us
-            via <ContactLinks />.
+            If you&apos;d like to donate but not via paypal/zelle, please
+            contact us via <ContactLinks />.
           </i>
         </p>
       </div>
