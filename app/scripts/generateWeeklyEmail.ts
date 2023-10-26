@@ -87,7 +87,7 @@ async function topPuzzlesForWeek(): Promise<
   return Promise.all(
     Object.entries(totalC)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 100)
+      .slice(0, 150)
       .map(async ([id]): Promise<(DBPuzzleT & { id: string }) | null> => {
         const dbres = await db.collection('c').doc(id).get();
         if (!dbres.exists) {
@@ -184,7 +184,7 @@ async function generateWeeklyEmail() {
       puzzles.slice(0, count * 2).forEach(([link, text]) => {
         console.log('<a href="' + link + '">' + text + '</a> - <br /><br />');
       });
-
+      console.log('\n\n');
       md += `**Top ${name} this week:**
 
     ${puzzles
