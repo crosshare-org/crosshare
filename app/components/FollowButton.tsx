@@ -40,7 +40,9 @@ export const FollowButton = ({
           { merge: true }
         ),
       ]).then(() => {
-        showSnackbar(t`You'll be notified when ${constructorName} posts a new puzzle`);
+        showSnackbar(
+          t`You'll be notified when ${constructorName} posts a new puzzle`
+        );
       });
     },
     [constructorName, page.u, showSnackbar]
