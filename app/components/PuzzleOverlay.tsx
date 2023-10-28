@@ -101,8 +101,9 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
   let loginButton: ReactNode = t`Login (via Google) to save your puzzle progress/stats`;
   if (!authContext.loading) {
     if (authContext.user?.email) {
+      const displayNameOrEmail = authContext.user.displayName || authContext.user.email;
       loginButton = t`Logged in as ${
-        authContext.user.displayName || authContext.user.email
+        displayNameOrEmail
       }`;
     } else if (authContext.user) {
       loginButton = (

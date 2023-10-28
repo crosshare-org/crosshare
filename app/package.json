@@ -116,6 +116,7 @@
     "eslint": "^8.50.0",
     "eslint-config-next": "^14.0.0",
     "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-lingui": "^0.2.0",
     "firebase-tools": "^12.7.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",

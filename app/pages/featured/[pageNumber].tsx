@@ -82,7 +82,8 @@ export default function FeaturedPageHandler(props: PageProps) {
     );
   }
 
-  const title = t`Featured Puzzles | Page ${props.currentPage} | Crosshare`;
+  const currentPageNumber = props.currentPage;
+  const title = t`Featured Puzzles | Page ${currentPageNumber} | Crosshare`;
   const description = t`Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!`;
 
   return (

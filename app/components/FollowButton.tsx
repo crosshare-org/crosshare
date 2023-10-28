@@ -24,6 +24,7 @@ export const FollowButton = ({
   const isFollowing = authCtx.prefs?.following?.includes(page.u);
   const { showSnackbar } = useSnackbar();
   const [showOverlay, setShowOverlay] = useState(false);
+  const constructorName = page.n;
   const doFollow = useCallback(
     async (loggedInAs: User) => {
       setShowOverlay(false);
@@ -39,10 +40,10 @@ export const FollowButton = ({
           { merge: true }
         ),
       ]).then(() => {
-        showSnackbar(t`You'll be notified when ${page.n} posts a new puzzle`);
+        showSnackbar(t`You'll be notified when ${constructorName} posts a new puzzle`);
       });
     },
-    [page.n, page.u, showSnackbar]
+    [constructorName, page.u, showSnackbar]
   );
 
   const css = { minWidth: '7em' };
@@ -122,7 +123,7 @@ export const FollowButton = ({
                 { merge: true }
               ),
             ]).then(() => {
-              showSnackbar(t`No longer following ${page.n}`);
+              showSnackbar(t`No longer following ${constructorName}`);
             });
           }}
           text={t`Following`}
