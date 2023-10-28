@@ -248,10 +248,6 @@ msgstr ""
 msgid "Featured Puzzles"
 msgstr ""
 
-#: pages/featured/[pageNumber].tsx:85
-#~ msgid "Featured Puzzles | Page {0} | Crosshare"
-#~ msgstr ""
-
 #: pages/featured/[pageNumber].tsx:86
 msgid "Featured Puzzles | Page {currentPageNumber} | Crosshare"
 msgstr "Featured Puzzles | Page {currentPageNumber} | Crosshare"
@@ -315,10 +311,6 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:104
-#~ msgid "Logged in as {0}"
-#~ msgstr ""
-
 #: components/PuzzleOverlay.tsx:105
 msgid "Logged in as {displayNameOrEmail}"
 msgstr "Logged in as {displayNameOrEmail}"
@@ -361,10 +353,6 @@ msgstr "Newer unfinished solves"
 #: pages/newest/[[...pageNumber]].tsx:141
 msgid "Newest Puzzles"
 msgstr ""
-
-#: components/FollowButton.tsx:125
-#~ msgid "No longer following {0}"
-#~ msgstr ""
 
 #: components/FollowButton.tsx:126
 msgid "No longer following {constructorName}"
@@ -574,10 +562,6 @@ msgstr ""
 #: components/FollowButton.tsx:98
 msgid "You can't follow yourself!"
 msgstr ""
-
-#: components/FollowButton.tsx:42
-#~ msgid "You'll be notified when {0} posts a new puzzle"
-#~ msgstr ""
 
 #: components/FollowButton.tsx:43
 msgid "You'll be notified when {constructorName} posts a new puzzle"
