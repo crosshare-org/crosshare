@@ -51,7 +51,7 @@ interface TableData extends MetaSubmissionForStatsViewT {
   d: string;
   r: string;
   p: string;
-};
+}
 
 const MetaSubmissionList = (props: MetaSubmissionListProps) => {
   const { showSnackbar } = useSnackbar();
