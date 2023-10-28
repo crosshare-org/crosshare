@@ -132,7 +132,7 @@ export type MetaSubmissionForPuzzleT = t.TypeOf<
   typeof MetaSubmissionForPuzzleV
 >;
 
-type MetaSubmissionForStatsViewT = Omit<
+export type MetaSubmissionForStatsViewT = Omit<
   t.TypeOf<typeof MetaSubmissionForStatsV>,
   't'
 > & { t: number | Timestamp };

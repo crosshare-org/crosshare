@@ -13,7 +13,7 @@ import {
 } from '../reducers/reducer';
 import { SquareAndCols } from './Page';
 import { Direction, fromKeyboardEvent, PuzzleResult } from '../lib/types';
-import { PuzzleStatsViewT } from '../lib/dbtypes';
+import { MetaSubmissionForStatsViewT, PuzzleStatsViewT } from '../lib/dbtypes';
 import {
   fromCells,
   getCluedAcrossAndDown,
@@ -47,6 +47,12 @@ interface MetaSubmissionListProps {
   stats: PuzzleStatsViewT;
 }
 
+interface TableData extends MetaSubmissionForStatsViewT {
+  d: string;
+  r: string;
+  p: string;
+};
+
 const MetaSubmissionList = (props: MetaSubmissionListProps) => {
   const { showSnackbar } = useSnackbar();
   const [subs, setSubs] = useState(
@@ -74,7 +80,7 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
     );
   };
 
-  const columns: ColumnProps[] = [
+  const columns: ColumnProps<TableData>[] = [
     { key: 'n', header: 'Submitter', sortable: true },
     {
       key: 's',
