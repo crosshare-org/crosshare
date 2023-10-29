@@ -3,7 +3,6 @@ import { NextPageContext } from 'next';
 import * as Sentry from '@sentry/nextjs';
 
 import { ErrorPage } from '../components/ErrorPage';
-import { ContactLinks } from '../components/ContactLinks';
 
 const LocalStorageErrorPage = () => (
   <ErrorPage title="Couldn't Store Data">
@@ -13,8 +12,14 @@ const LocalStorageErrorPage = () => (
       settings (e.g. in settings/cookies for Chrome).
     </p>
     <p>
-      If you&apos;re having trouble figuring this out please get in touch via{' '}
-      <ContactLinks />
+      If you&apos;re having trouble figuring this out please send us an{' '}
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="mailto:help@crosshare.org"
+      >
+        email
+      </a>
     </p>
   </ErrorPage>
 );
@@ -41,7 +46,15 @@ const MyError = ({
     <ErrorPage title="Something Went Wrong">
       <p>
         Sorry! An error with Crosshare occurred - you can get in touch for help
-        via <ContactLinks />.
+        via{' '}
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="mailto:help@crosshare.org"
+        >
+          email
+        </a>
+        .
       </p>
       <p>
         {statusCode} {title}

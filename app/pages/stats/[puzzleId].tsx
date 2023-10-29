@@ -13,6 +13,11 @@ import { useDocument } from 'react-firebase-hooks/firestore';
 import { Link } from '../../components/Link';
 import { slugify } from '../../lib/utils';
 import { getDocRef } from '../../lib/firebaseWrapper';
+import { withStaticTranslation } from '../../lib/translation';
+
+export const getStaticProps = withStaticTranslation(() => {
+  return { props: {} };
+});
 
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();

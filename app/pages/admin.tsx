@@ -49,6 +49,11 @@ import { fromCells, getClueMap } from '../lib/viewableGrid';
 import spam from '../lib/spam.json';
 import { markdownToHast } from '../lib/markdown/markdown';
 import { css } from '@emotion/react';
+import { withStaticTranslation } from '../lib/translation';
+
+export const getStaticProps = withStaticTranslation(() => {
+  return { props: {} };
+});
 
 function paypalConvert(input: string): string {
   const donated = parseFloat(input);
