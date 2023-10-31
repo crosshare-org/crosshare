@@ -967,3 +967,29 @@ test('profile link', () => {
     </div>
   `);
 });
+
+test('unused directives', () => {
+  const r = render(
+    <Markdown
+      hast={markdownToHast({
+        text: 'Here is my smiley :D and another di:rective',
+      })}
+    />,
+    {}
+  );
+  // TODO ideally we'd output `di:rective` without the newline
+  expect(r.container).toMatchInlineSnapshot(`
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          Here is my smiley 
+          :D
+           and another di
+          :rective
+        </div>
+      </div>
+    </div>
+  `);
+});

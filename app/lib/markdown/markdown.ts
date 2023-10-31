@@ -15,10 +15,12 @@ import { Root } from 'hast';
 import { inlineOnly } from './inlineOnly';
 import { remarkNoRefs } from './noRefs';
 import { Handler } from 'mdast-util-to-hast';
+import { Nodes } from 'mdast-util-from-markdown/lib';
+import unusedDirectives from './unusedDirectives';
 
 function rehypeTruncate(options: TruncateOptions) {
-  // @ts-expect-error: assume input `root` matches output root.
-  return (tree) => truncate(tree, options);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return
+  return (tree: any) => truncate(tree, options);
 }
 
 export function markdownToHast(props: {
@@ -58,7 +60,7 @@ export function markdownToHast(props: {
   }
 
   const handlers: Record<string, Handler> = {
-    spoiler: (state, node) => {
+    spoiler: (state, node: Nodes) => {
       const props = { className: 'spoiler' };
       return {
         type: 'element',
@@ -76,6 +78,7 @@ export function markdownToHast(props: {
     .use(remarkGfm)
     .use(mentionsAndTags)
     .use(remarkNoRefs)
+    .use(unusedDirectives)
     .use(remarkRehype, {
       handlers: handlers,
     })
@@ -85,5 +88,5 @@ export function markdownToHast(props: {
     processor.use(inlineOnly);
   }
 
-  return processor.runSync(processor.parse(text)) as Root;
+  return processor.runSync(processor.parse(text));
 }
