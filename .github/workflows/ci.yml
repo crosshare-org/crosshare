@@ -19,6 +19,9 @@ jobs:
     - name: Run tests
       working-directory: ./app
       run: NODE_OPTIONS='--experimental-vm-modules'  npx jest --ci
+    - name: Copy dummy fb config
+      working-directory: ./app
+      run: cp ../firebaseConfig.emulators.ts ./firebaseConfig.ts
     - name: Lint
       working-directory: ./app
       run: yarn lint
