@@ -5,6 +5,7 @@ import { Button } from './Buttons';
 import { useSnackbar } from './Snackbar';
 import { t } from '@lingui/macro';
 import { serverTimestamp, updateDoc } from 'firebase/firestore';
+import { logAsyncErrors } from '../lib/utils';
 
 export const useDisplayName = () => {
   const ctx = useContext(AuthContext);
@@ -23,7 +24,7 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
   const user = ctx.user;
 
   function sanitize(input: string | null | undefined) {
-    return input && input.replace(/[^0-9a-zA-Z ]/g, '');
+    return input?.replace(/[^0-9a-zA-Z ]/g, '');
   }
 
   const [newDisplayName, setNewDisplayName] = useState(
@@ -34,7 +35,7 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
     return <>Must be logged in</>;
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     setSubmitting(true);
     e.preventDefault();
     const toSubmit = newDisplayName?.trim();
@@ -49,7 +50,7 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
           })
         );
       }
-      Promise.all(updates).then(() => {
+      await Promise.all(updates).then(() => {
         setSubmitting(false);
         showSnackbar(t`Display name updated`);
         onCancel?.();
@@ -58,14 +59,16 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={logAsyncErrors(handleSubmit)}>
       <label>
         {ctx.displayName ? t`Update display name:` : t`Set your display name:`}
         <input
           css={{ margin: '0 0.5em' }}
           type="text"
           value={newDisplayName || ''}
-          onChange={(e) => setNewDisplayName(sanitize(e.target.value))}
+          onChange={(e) => {
+            setNewDisplayName(sanitize(e.target.value));
+          }}
         />
       </label>
       <Button

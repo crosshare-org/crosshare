@@ -29,7 +29,7 @@ const Cursor = () => {
   );
 };
 
-type CellProps = {
+interface CellProps {
   barRight: boolean;
   barBottom: boolean;
   hidden: boolean;
@@ -56,7 +56,7 @@ type CellProps = {
   wasRevealed: boolean | undefined;
   cellColor?: number;
   isOpposite: boolean;
-};
+}
 
 export const Cell = memo(function Cell(props: CellProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -90,7 +90,7 @@ export const Cell = memo(function Cell(props: CellProps) {
 
   const filledValue =
     props.active && props.isEnteringRebus
-      ? props.rebusValue || ''
+      ? props.rebusValue ?? ''
       : props.value.trim();
   const value =
     props.active && props.isEnteringRebus
@@ -126,7 +126,9 @@ export const Cell = memo(function Cell(props: CellProps) {
       {/* eslint-disable-next-line */}
       <div
         aria-label={'cell' + props.row + 'x' + props.column}
-        onClick={() => props.onClick({ row: props.row, col: props.column })}
+        onClick={() => {
+          props.onClick({ row: props.row, col: props.column });
+        }}
         css={{
           userSelect: 'none',
           position: 'absolute',

@@ -10,7 +10,7 @@ import { none, some, Option, isSome } from 'fp-ts/Option';
 import { getCollection } from './firebaseWrapper';
 import { getDocs, limit, query, where } from 'firebase/firestore';
 
-const dailyMiniIdsByDate: Map<string, string | null> = new Map();
+const dailyMiniIdsByDate = new Map<string, string | null>();
 
 export function setMiniForDate(pds: string, id: string) {
   const key = 'dmid-' + pds;

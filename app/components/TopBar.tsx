@@ -7,7 +7,6 @@ import {
   useEffect,
   useCallback,
 } from 'react';
-import { FaHammer, FaUser, FaUserLock } from 'react-icons/fa';
 
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 import { AuthContext } from './AuthContext';
@@ -21,12 +20,13 @@ import {
 } from '../lib/style';
 import { ButtonResetCSS } from './Buttons';
 import { NotificationT } from '../lib/notificationTypes';
-import { slugify } from '../lib/utils';
+import { logAsyncErrors, slugify } from '../lib/utils';
 import { EmbedContext } from './EmbedContext';
 import { Trans, t } from '@lingui/macro';
 import { updateDoc } from 'firebase/firestore';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { ButtonAsLink } from './Buttons';
+import { FaHammer, FaUser, FaUserLock } from 'react-icons/fa';
 
 export const TopBarDropDown = (props: {
   onClose?: () => void;
@@ -43,7 +43,9 @@ export const TopBarDropDown = (props: {
   return (
     <>
       <TopBarLink
-        onClick={() => setDropped(!dropped)}
+        onClick={() => {
+          setDropped(!dropped);
+        }}
         text={props.text}
         icon={props.icon}
         hoverText={props.hoverText}
@@ -270,6 +272,7 @@ interface TopBarLinkProps extends TopBarLinkCommonProps {
 export const TopBarLink = (props: TopBarLinkProps) => {
   return (
     <button
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       title={props.hoverText || props.text}
       css={{
         backgroundColor: 'transparent',
@@ -305,6 +308,7 @@ export const TopBarLinkA = (props: TopBarLinkAProps) => {
   return (
     <Link
       href={props.href}
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       title={props.hoverText || props.text}
       css={{
         whiteSpace: 'nowrap',
@@ -551,11 +555,13 @@ export const TopBar = ({
               <ButtonAsLink
                 css={{ float: 'right', marginRight: '1em' }}
                 text="Dismiss all"
-                onClick={() => {
-                  filtered.forEach((n) =>
-                    updateDoc(getDocRef('n', n.id), { r: true })
+                onClick={logAsyncErrors(async () => {
+                  await Promise.all(
+                    filtered.map((n) =>
+                      updateDoc(getDocRef('n', n.id), { r: true })
+                    )
                   );
-                }}
+                })}
               />
             </h3>
             <div css={{ margin: '0 1em' }}>
@@ -604,9 +610,12 @@ const NotificationLink = ({
     // Close the toast which causes it to start shrinking
     setClosing(true);
     // After shrink vertically we remove the toast
-    setTimeout(() => {
-      updateDoc(getDocRef('n', n.id), { r: true });
-    }, ANIMATION_DELAY);
+    setTimeout(
+      logAsyncErrors(async () => {
+        await updateDoc(getDocRef('n', n.id), { r: true });
+      }),
+      ANIMATION_DELAY
+    );
   }, [n.id]);
 
   let link: JSX.Element;
@@ -703,7 +712,7 @@ export const DefaultTopBar = ({
       ) : (
         ''
       )}
-      {ctxt.user && ctxt.user.email ? (
+      {ctxt.user?.email ? (
         <TopBarLinkA
           disabled={dashboardSelected}
           href="/dashboard"

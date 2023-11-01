@@ -138,7 +138,9 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
         notes={state.notes}
         clues={state.clues}
         completedEntries={state.grid.entries.filter((e) => e.completedWord)}
-        exitClueMode={() => setClueMode(false)}
+        exitClueMode={() => {
+          setClueMode(false);
+        }}
         user={props.user}
       />
     );
@@ -170,7 +172,9 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
               <TopBarLink
                 icon={<FaListOl />}
                 text="Edit"
-                onClick={() => setClueMode(true)}
+                onClick={() => {
+                  setClueMode(true);
+                }}
               />
             </DefaultTopBar>
           </div>
@@ -180,14 +184,18 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
               toPublish={state.toPublish}
               warnings={state.publishWarnings}
               user={props.user}
-              cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })}
+              cancelPublish={() => {
+                dispatch({ type: 'CANCELPUBLISH' });
+              }}
             />
           ) : (
             ''
           )}
           {state.publishErrors.length ? (
             <Overlay
-              closeCallback={() => dispatch({ type: 'CLEARPUBLISHERRORS' })}
+              closeCallback={() => {
+                dispatch({ type: 'CLEARPUBLISHERRORS' });
+              }}
             >
               <>
                 <div>
@@ -216,7 +224,11 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
             ''
           )}
           {!dismissedIntro ? (
-            <Overlay closeCallback={() => setDismissedIntro(true)}>
+            <Overlay
+              closeCallback={() => {
+                setDismissedIntro(true);
+              }}
+            >
               <h2>
                 <Emoji symbol="🎉" /> Successfully Imported{' '}
                 {props.title ? <>&lsquo;{props.title}&rsquo;</> : ''}

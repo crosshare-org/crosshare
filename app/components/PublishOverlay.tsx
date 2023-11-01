@@ -15,7 +15,7 @@ import { serverTimestamp, setDoc } from 'firebase/firestore';
 export function PublishOverlay(props: {
   id: string;
   toPublish: DBPuzzleT;
-  warnings: Array<string>;
+  warnings: string[];
   user: User;
   cancelPublish: () => void;
 }) {
@@ -43,12 +43,18 @@ export function PublishOverlay(props: {
         p: serverTimestamp(),
       };
 
-      setDoc(getDocRef('c', props.id), toPublish).then(async () => {
-        console.log('Uploaded', props.id);
-        localStorage.removeItem(STORAGE_KEY);
-        setDone(true);
-        NextJSRouter.push(`/crosswords/${props.id}/${slugify(toPublish.t)}`);
-      });
+      setDoc(getDocRef('c', props.id), toPublish)
+        .then(async () => {
+          console.log('Uploaded', props.id);
+          localStorage.removeItem(STORAGE_KEY);
+          setDone(true);
+          await NextJSRouter.push(
+            `/crosswords/${props.id}/${slugify(toPublish.t)}`
+          );
+        })
+        .catch((e) => {
+          console.error('error publishing', e);
+        });
     },
     [props.id, inProgress, done, displayName, props.toPublish]
   );
@@ -70,7 +76,11 @@ export function PublishOverlay(props: {
     contents = (
       <>
         {editingDisplayName || !displayName ? (
-          <DisplayNameForm onCancel={() => setEditingDisplayName(false)} />
+          <DisplayNameForm
+            onCancel={() => {
+              setEditingDisplayName(false);
+            }}
+          />
         ) : (
           <h3>
             {props.toPublish.gc ? (
@@ -85,7 +95,9 @@ export function PublishOverlay(props: {
             )}{' '}
             (
             <ButtonAsLink
-              onClick={() => setEditingDisplayName(true)}
+              onClick={() => {
+                setEditingDisplayName(true);
+              }}
               text="change your display name"
             />
             )

@@ -122,7 +122,7 @@ function upload(
   crop: Crop | null,
   onComplete: (msg: string) => void
 ) {
-  if (!image || !crop || !crop.width || !crop.height) {
+  if (!image || !crop?.width || !crop.height) {
     return;
   }
 
@@ -137,11 +137,15 @@ function upload(
         onComplete('something went wrong');
         return;
       }
-      uploadBytes(ref(getStorage(), storageKey), blob).then(() => {
-        onComplete(
-          'Pic updated. It can take up to several hours to appear on the site.'
-        );
-      });
+      uploadBytes(ref(getStorage(), storageKey), blob)
+        .then(() => {
+          onComplete(
+            'Pic updated. It can take up to several hours to appear on the site.'
+          );
+        })
+        .catch((e) => {
+          console.error('error uploading image', e);
+        });
     },
     'image/jpeg',
     0.85
@@ -172,9 +176,9 @@ export function ImageCropper(props: {
   const onSelectFile = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0 && e.target.files[0]) {
       const reader = new FileReader();
-      reader.addEventListener('load', () =>
-        setUpImg(reader.result?.toString())
-      );
+      reader.addEventListener('load', () => {
+        setUpImg(reader.result?.toString());
+      });
       reader.readAsDataURL(e.target.files[0]);
     }
   };
@@ -228,8 +232,12 @@ export function ImageCropper(props: {
             circularCrop={props.isCircle}
             keepSelection={true}
             crop={crop}
-            onChange={(c) => setCrop(c)}
-            onComplete={(c) => setCompletedCrop(c)}
+            onChange={(c) => {
+              setCrop(c);
+            }}
+            onComplete={(c) => {
+              setCompletedCrop(c);
+            }}
           >
             <img alt="Your upload" src={upImg} onLoad={onLoad} />
           </ReactCrop>
@@ -241,12 +249,7 @@ export function ImageCropper(props: {
         <p>Uploading...</p>
       ) : (
         <Button
-          disabled={
-            uploading ||
-            disabled ||
-            !completedCrop?.width ||
-            !completedCrop?.height
-          }
+          disabled={disabled || !completedCrop?.width || !completedCrop.height}
           onClick={() => {
             setUploading(true);
             upload(

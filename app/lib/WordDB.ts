@@ -5,6 +5,7 @@ import { set, get } from 'idb-keyval';
 
 import * as BA from './bitArray';
 import { useEffect, useState } from 'react';
+import { logAsyncErrors } from './utils';
 
 const WordDBV = t.type({
   words: t.record(t.string, t.array(t.tuple([t.string, t.number]))),
@@ -91,7 +92,7 @@ export const useWordDB = (
         setLoading(false);
       });
     };
-    fetchData();
+    logAsyncErrors(fetchData)();
     return () => {
       didCancel = true;
     };
@@ -100,14 +101,14 @@ export const useWordDB = (
   return [present, error, loading, setLoaded];
 };
 
-export const rawBuild = (wordlist: Array<[string, number]>): WordDBT => {
+export const rawBuild = (wordlist: [string, number][]): WordDBT => {
   const words = wordlist.sort(
     (s1, s2) => s1[1] - s2[1] || s2[0].localeCompare(s1[0])
   );
 
   console.log('building words by length');
-  const wordsByLength: Record<number, Array<[string, number]>> = words.reduce(
-    (acc: Record<number, Array<[string, number]>>, [word, score]) => {
+  const wordsByLength: Record<number, [string, number][]> = words.reduce(
+    (acc: Record<number, [string, number][]>, [word, score]) => {
       const wfl = acc[word.length];
       if (wfl) {
         wfl.push([word, score]);
@@ -169,7 +170,7 @@ export const build = async (wordlist: string): Promise<void> => {
     throw new Error('malformed wordlist');
   }
 
-  const words: Array<[string, number]> = wordLines
+  const words: [string, number][] = wordLines
     .map((s) => s.toUpperCase().split(';'))
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
@@ -260,7 +261,7 @@ export function updateBitmap(
   return BA.and(bitmap, match);
 }
 
-const memoMatchingWords: Map<string, [string, number][]> = new Map();
+const memoMatchingWords = new Map<string, [string, number][]>();
 export function matchingWords(length: number, bitmap: BA.BitArray | null) {
   const key: string =
     length + ':' + (bitmap === null ? 'null' : BA.toString(bitmap, 64));
@@ -289,7 +290,7 @@ export function matchingWords(length: number, bitmap: BA.BitArray | null) {
   return rv;
 }
 
-const memoMatchingBitmap: Map<string, BA.BitArray | null> = new Map();
+const memoMatchingBitmap = new Map<string, BA.BitArray | null>();
 export function matchingBitmap(pattern: string) {
   const memoed = memoMatchingBitmap.get(pattern);
   if (memoed) {

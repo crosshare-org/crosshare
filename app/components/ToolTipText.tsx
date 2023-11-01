@@ -31,7 +31,9 @@ export const ToolTipText = (props: {
 
   useEffect(() => {
     if (isHovered) {
-      update?.();
+      update?.().catch((e) => {
+        console.error(e);
+      });
     }
   }, [update, isHovered]);
 

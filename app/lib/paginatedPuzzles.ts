@@ -22,7 +22,7 @@ export async function paginatedPuzzles(
   queryField?: string,
   queryValue?: string | boolean,
   queryOperator: WhereFilterOp = '=='
-): Promise<[Array<LinkablePuzzle>, boolean]> {
+): Promise<[LinkablePuzzle[], boolean]> {
   if (queryField && queryValue === undefined) {
     throw new Error(`Missing queryValue for "${queryField}"`);
   }
@@ -68,7 +68,7 @@ export async function paginatedPuzzles(
     .orderBy('pvu', 'desc')
     .limit(pageSize + 1);
 
-  const results: Array<DBPuzzleT & { id: string }> = await mapEachResult(
+  const results: (DBPuzzleT & { id: string })[] = await mapEachResult(
     q,
     DBPuzzleV,
     (dbpuzz, docId) => {

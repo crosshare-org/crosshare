@@ -52,7 +52,9 @@ const SizeSelectInput = (props: SizeSelectProps) => {
               css={{ fontSize: '0.75em', marginLeft: '1em', width: '5em' }}
               value={props.cols || ''}
               placeholder="Columns"
-              onChange={(e) => props.setCols(parseInt(e.target.value))}
+              onChange={(e) => {
+                props.setCols(parseInt(e.target.value));
+              }}
             />
             <span css={{ marginLeft: '0.5em', marginRight: '0.5em' }}>x</span>
             <input
@@ -61,7 +63,9 @@ const SizeSelectInput = (props: SizeSelectProps) => {
               width="3em"
               value={props.rows || ''}
               placeholder="Rows"
-              onChange={(e) => props.setRows(parseInt(e.target.value))}
+              onChange={(e) => {
+                props.setRows(parseInt(e.target.value));
+              }}
             />
           </>
         ) : (
@@ -102,6 +106,7 @@ const PrefillSelectInput = (props: PrefillSelectProps) => {
           value={props.option}
           checked={props.current === props.option}
           onChange={(e) => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
             if (parseInt(e.currentTarget.value) !== props.option) return;
             props.setCurrent(props.option);
           }}

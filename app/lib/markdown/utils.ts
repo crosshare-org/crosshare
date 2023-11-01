@@ -9,8 +9,7 @@ export function flatMap(ast: Node | Parent, fn: (x: Node) => Node[]) {
       const out: Node[] = [];
       for (const child of node.children) {
         const xs = transform(child);
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-        if (xs) {
+        if (xs.length) {
           out.push(...xs);
         }
       }

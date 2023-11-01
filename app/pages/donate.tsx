@@ -14,21 +14,20 @@ import { CSSInterpolation } from '@emotion/serialize';
 import { getCollection } from '../lib/firebaseAdminWrapper';
 
 interface DonateProps {
-  donors: Array<{
+  donors: {
     name: string | null;
     page: string | null;
     above100: boolean;
     date: number;
-  }>;
+  }[];
 }
 
 const gssp: GetServerSideProps<DonateProps> = async ({ res }) => {
   return getCollection('donations')
     .doc('donations')
     .get()
-    .then(async (result) => {
-      const data = result.data();
-      const validationResult = DonationsListV.decode(data);
+    .then((result) => {
+      const validationResult = DonationsListV.decode(result.data());
       if (isRight(validationResult)) {
         res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
         const groupedByEmail = donationsByEmail(validationResult.right);
@@ -42,7 +41,7 @@ const gssp: GetServerSideProps<DonateProps> = async ({ res }) => {
                 date: v.date.getTime(),
               }))
               .filter((v) => v.name)
-              .sort((a, b) => a.name?.localeCompare(b.name || '') || 0),
+              .sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0),
           },
         };
       } else {

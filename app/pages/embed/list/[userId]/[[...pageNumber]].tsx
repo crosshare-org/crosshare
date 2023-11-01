@@ -18,7 +18,7 @@ import { EmbedStyling } from '../../../../components/EmbedStyling';
 
 interface PageProps {
   userId: string;
-  puzzles: Array<LinkablePuzzle>;
+  puzzles: LinkablePuzzle[];
   nextPage: number | null;
   currentPage: number;
   prevPage: number | null;
@@ -34,7 +34,7 @@ const gssp: GetServerSideProps<PageProps | PageErrorProps> = async ({
     return { props: { error: 'No userId supplied' } };
   }
 
-  const pn = params?.pageNumber;
+  const pn = params.pageNumber;
   let page: number;
   if (pn === undefined) {
     page = 0;

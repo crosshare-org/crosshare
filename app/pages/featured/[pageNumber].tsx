@@ -16,12 +16,10 @@ import { ConstructorPageBase } from '../../lib/constructorPage';
 import { isUserPatron } from '../../lib/patron';
 
 interface FeaturedPageProps {
-  puzzles: Array<
-    LinkablePuzzle & {
-      constructorPage: ConstructorPageBase | null;
-      constructorIsPatron: boolean;
-    }
-  >;
+  puzzles: (LinkablePuzzle & {
+    constructorPage: ConstructorPageBase | null;
+    constructorIsPatron: boolean;
+  })[];
   nextPage: number | null;
   currentPage: number;
   prevPage: number | null;
@@ -71,6 +69,7 @@ export const getServerSideProps = withTranslation(gssp);
 
 export default function FeaturedPageHandler(props: PageProps) {
   const { locale } = useRouter();
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const loc = locale || 'en';
 
   if ('error' in props) {
@@ -155,7 +154,7 @@ export default function FeaturedPageHandler(props: PageProps) {
             filterTags={[]}
           />
         ))}
-        {props.nextPage || props.prevPage !== null ? (
+        {props.nextPage !== null || props.prevPage !== null ? (
           <p css={{ textAlign: 'center' }}>
             {props.prevPage === 0 ? (
               <Link css={{ marginRight: '2em' }} href="/">

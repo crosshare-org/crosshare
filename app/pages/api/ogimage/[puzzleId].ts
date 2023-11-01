@@ -50,8 +50,8 @@ async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
     }
   }
 
-  const vBars = new Set(puzzle.vb || []);
-  const hBars = new Set(puzzle.hb || []);
+  const vBars = new Set(puzzle.vb ?? []);
+  const hBars = new Set(puzzle.hb ?? []);
   // Grid squares
   ctx.lineWidth = 8;
   ctx.beginPath();
@@ -163,15 +163,13 @@ export default async function ogImage(
 ) {
   const { puzzleId } = req.query;
   if (Array.isArray(puzzleId) || !puzzleId) {
-    return res
-      .status(404)
-      .json({ statusCode: 404, message: 'bad puzzle params' });
+    res.status(404).json({ statusCode: 404, message: 'bad puzzle params' });
+    return;
   }
   const puzzle = await getPuzzle(puzzleId);
   if (!puzzle) {
-    return res
-      .status(404)
-      .json({ statusCode: 404, message: 'failed to get puzzle' });
+    res.status(404).json({ statusCode: 404, message: 'failed to get puzzle' });
+    return;
   }
   res.setHeader('Cache-Control', 'public, max-age=172800, s-maxage=172800');
   res.writeHead(200, { 'Content-Type': 'image/png' });

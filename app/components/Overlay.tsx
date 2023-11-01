@@ -29,7 +29,7 @@ export const Overlay = (props: {
   const overlay = (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
     <div
-      onClick={props.onClick || (() => undefined)}
+      onClick={props.onClick ?? (() => undefined)}
       css={{
         display: props.hidden ? 'none' : 'block',
         position: 'fixed',

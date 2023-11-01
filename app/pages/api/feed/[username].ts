@@ -13,27 +13,29 @@ export default async function constructorFeed(
 ) {
   const { username } = req.query;
   if (Array.isArray(username) || !username) {
-    return res.status(404).json({ statusCode: 404, message: 'bad params' });
+    res.status(404).json({ statusCode: 404, message: 'bad params' });
+    return;
   }
   let dbres;
   try {
     dbres = await getCollection('cp').doc(username.toLowerCase()).get();
   } catch {
-    return res
+    res
       .status(404)
       .json({ statusCode: 404, message: 'error loading constructor' });
+    return;
   }
   if (!dbres.exists) {
-    return res
+    res
       .status(404)
       .json({ statusCode: 404, message: 'constructor does not exist' });
+    return;
   }
 
   const cp = validate(dbres.data(), username.toLowerCase());
   if (!cp) {
-    return res
-      .status(404)
-      .json({ statusCode: 404, message: 'invalid constructor' });
+    res.status(404).json({ statusCode: 404, message: 'invalid constructor' });
+    return;
   }
 
   const [puzzles] = await paginatedPuzzles(0, 10, 'a', cp.u);
@@ -58,7 +60,7 @@ export default async function constructorFeed(
       title: p.title,
       id: link,
       link: link,
-      date: new Date(p.isPrivateUntil || p.publishTime),
+      date: new Date(p.isPrivateUntil ?? p.publishTime),
       description: p.blogPost
         ? toHtml(
             markdownToHast({

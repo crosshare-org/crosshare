@@ -13,12 +13,12 @@ import {
 import { getCollection } from './firebaseAdminWrapper';
 
 function checkComments(
-  after: Array<CommentWithRepliesT>,
-  before: Array<CommentWithRepliesT> | undefined,
+  after: CommentWithRepliesT[],
+  before: CommentWithRepliesT[] | undefined,
   puzzle: PuzzleWithID,
   parent?: CommentWithRepliesT
-): Array<NotificationT> {
-  const notifications: Array<NotificationT> = [];
+): NotificationT[] {
+  const notifications: NotificationT[] = [];
   for (const comment of after) {
     const beforeComment = before?.find(
       (beforeComment) => beforeComment.i === comment.i
@@ -44,7 +44,7 @@ function checkComments(
 async function notificationsForPuzzleCreation(
   puzzle: DBPuzzleT,
   puzzleId: string
-): Promise<Array<NewPuzzleNotificationT>> {
+): Promise<NewPuzzleNotificationT[]> {
   console.log('checking for puzzle creation', `followers/${puzzle.a}`);
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (puzzle.pv) {
@@ -77,7 +77,7 @@ export async function notificationsForPuzzleChange(
   before: DBPuzzleT | null,
   after: DBPuzzleT,
   puzzleId: string
-): Promise<Array<NotificationT>> {
+): Promise<NotificationT[]> {
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (before === null || (before.pv === true && !after.pv)) {
     return notificationsForPuzzleCreation(after, puzzleId);

@@ -8,9 +8,8 @@ export default async function userinfo(
 ) {
   const { userId } = req.query;
   if (Array.isArray(userId) || !userId) {
-    return res
-      .status(404)
-      .json({ statusCode: 404, message: 'bad userid param' });
+    res.status(404).json({ statusCode: 404, message: 'bad userid param' });
+    return;
   }
   const isPatron = await isUserPatron(userId);
   const ui: UserInfoT = { isPatron };

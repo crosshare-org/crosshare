@@ -6,7 +6,7 @@ import type { User } from 'firebase/auth';
 import { AuthContext } from './AuthContext';
 import { PartialBy, Comment, Direction } from '../lib/types';
 import { PatronIcon } from './Icons';
-import { timeString } from '../lib/utils';
+import { logAsyncErrors, timeString } from '../lib/utils';
 import { Emoji } from './Emoji';
 import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
 import {
@@ -33,7 +33,7 @@ interface LocalComment extends Omit<Comment, 'replies'> {
   isLocal: true;
 }
 type CommentWithPossibleLocalReplies = Omit<Comment, 'replies'> & {
-  replies?: Array<CommentOrLocalComment>;
+  replies?: CommentOrLocalComment[];
 };
 type CommentOrLocalComment = CommentWithPossibleLocalReplies | LocalComment;
 
@@ -102,14 +102,21 @@ const CommentWithReplies = (
           <CommentForm
             {...props}
             username={props.constructorPage?.i}
-            onCancel={() => setShowingForm(false)}
+            onCancel={() => {
+              setShowingForm(false);
+            }}
             replyToId={commentId}
             user={props.user}
           />
         </div>
       ) : (
         <div>
-          <ButtonAsLink onClick={() => setShowingForm(true)} text={t`Reply`} />
+          <ButtonAsLink
+            onClick={() => {
+              setShowingForm(true);
+            }}
+            text={t`Reply`}
+          />
         </div>
       )}
       {replies ? (
@@ -137,9 +144,7 @@ function commentsKey(puzzleId: string) {
   return 'comments/' + puzzleId;
 }
 
-function commentsFromStorage(
-  puzzleId: string
-): Array<CommentForModerationWithIdT> {
+function commentsFromStorage(puzzleId: string): CommentForModerationWithIdT[] {
   let inSession: string | null;
   try {
     inSession = localStorage.getItem(commentsKey(puzzleId));
@@ -277,11 +282,7 @@ const CommentForm = ({
   );
   const [saving, setSaving] = useState(false);
 
-  if (props.user === null) {
-    throw new Error('displaying comment form w/ no user');
-  }
-
-  function submitComment(event: FormEvent) {
+  async function submitComment(event: FormEvent) {
     event.preventDefault();
     const textToSubmit = commentText.trim();
     if (!textToSubmit) {
@@ -304,7 +305,7 @@ const CommentForm = ({
     }
     console.log('Submitting comment', comment);
     // Add to moderation queue for long term
-    addDoc(getCollection('cfm'), comment).then((ref) => {
+    await addDoc(getCollection('cfm'), comment).then((ref) => {
       console.log('Uploaded', ref.id);
       setSaving(false);
 
@@ -352,7 +353,7 @@ const CommentForm = ({
 
   return (
     <>
-      <form onSubmit={submitComment}>
+      <form onSubmit={logAsyncErrors(submitComment)}>
         <div css={{ marginBottom: '1em' }}>
           <label css={{ width: '100%', margin: 0 }}>
             {(props.replyToId !== undefined
@@ -364,14 +365,14 @@ const CommentForm = ({
               css={{ width: '100%', display: 'block' }}
               maxLength={COMMENT_LENGTH_LIMIT}
               value={commentText}
-              updateValue={(newVal) => {
+              updateValue={logAsyncErrors(async (newVal) => {
                 setCommentText(newVal);
-                import('../lib/markdown/markdown').then((mod) => {
+                await import('../lib/markdown/markdown').then((mod) => {
                   setCommentHast(
                     mod.markdownToHast({ text: newVal, clueMap: props.clueMap })
                   );
                 });
-              }}
+              })}
             />
           </label>
           <div css={{ textAlign: 'right' }}>
@@ -417,7 +418,9 @@ const CommentForm = ({
             />{' '}
             (
             <ButtonAsLink
-              onClick={() => setEditingDisplayName(true)}
+              onClick={() => {
+                setEditingDisplayName(true);
+              }}
               text={t`change name`}
             />
             )
@@ -443,7 +446,11 @@ const CommentForm = ({
       </form>
       {editingDisplayName || !displayName ? (
         <>
-          <DisplayNameForm onCancel={() => setEditingDisplayName(false)} />
+          <DisplayNameForm
+            onCancel={() => {
+              setEditingDisplayName(false);
+            }}
+          />
         </>
       ) : (
         ''
@@ -460,7 +467,7 @@ interface CommentsProps {
   puzzleAuthorId: string;
   hasGuestConstructor: boolean;
   puzzlePublishTime: number;
-  comments: Array<Comment>;
+  comments: Comment[];
   clueMap: Map<string, [number, Direction, string]>;
 }
 
@@ -471,7 +478,7 @@ function isComment(
 }
 
 function findCommentById(
-  comments: Array<CommentOrLocalComment>,
+  comments: CommentOrLocalComment[],
   id: string
 ): CommentWithPossibleLocalReplies | null {
   for (const comment of comments) {
@@ -496,7 +503,7 @@ export const Comments = ({
   ...props
 }: CommentsProps): JSX.Element => {
   const authContext = useContext(AuthContext);
-  const [toShow, setToShow] = useState<Array<CommentOrLocalComment>>(comments);
+  const [toShow, setToShow] = useState<CommentOrLocalComment[]>(comments);
 
   useEffect(() => {
     if (!authContext.notifications?.length) {
@@ -511,82 +518,88 @@ export const Comments = ({
         continue;
       }
       if (findCommentById(comments, notification.c)) {
-        updateDoc(getDocRef('n', notification.id), { r: true });
+        updateDoc(getDocRef('n', notification.id), { r: true }).catch((e) => {
+          console.log('error updating', e);
+        });
       }
     }
   }, [comments, authContext.notifications]);
 
   useEffect(() => {
-    const rebuiltComments: Array<CommentOrLocalComment> = [...comments];
+    const rebuiltComments: CommentOrLocalComment[] = [...comments];
     const unmoderatedComments = commentsFromStorage(props.puzzleId);
-    const toKeepInStorage: Array<CommentForModerationWithIdT> = [];
+    const toKeepInStorage: CommentForModerationWithIdT[] = [];
     if (unmoderatedComments.length > 0) {
-      import('../lib/markdown/markdown').then((mod) => {
-        for (const c of unmoderatedComments) {
-          const moderatedVersion = findCommentById(rebuiltComments, c.i);
-          // The comment we saved in LS has already made it through moderation
-          // so we don't need to merge it - by not adding to `toKeepInStorage` this
-          // will also remove from LS
-          if (moderatedVersion !== null) {
-            console.log('found existing version, skipping one from LS');
-            if (!isComment(moderatedVersion)) {
-              toKeepInStorage.push(c);
-            }
-            continue;
-          }
-
-          toKeepInStorage.push(c);
-          const localComment: LocalComment = {
-            isLocal: true,
-            id: c.i,
-            commentText: c.c,
-            commentHast: mod.markdownToHast({
-              text: c.c,
-              clueMap: props.clueMap,
-            }),
-            authorId: c.a,
-            authorDisplayName: c.n,
-            authorUsername: c.un,
-            authorSolveTime: c.t,
-            authorCheated: c.ch,
-            authorSolvedDownsOnly: c.do || false,
-            publishTime: c.p.toMillis(),
-            authorIsPatron: authContext.isPatron,
-          };
-          if (c.rt === null) {
-            rebuiltComments.push(localComment);
-          } else {
-            const parent = findCommentById(rebuiltComments, c.rt);
-            if (parent === null) {
-              /* TODO figure out better behaivior here?
-               * One possibility is that we saw the comment originally when
-               * loading the puzzle via client side link but are now loading via
-               * page refresh. If the content is cached at a different time the
-               * parent comment might not be here yet. */
+      import('../lib/markdown/markdown')
+        .then((mod) => {
+          for (const c of unmoderatedComments) {
+            const moderatedVersion = findCommentById(rebuiltComments, c.i);
+            // The comment we saved in LS has already made it through moderation
+            // so we don't need to merge it - by not adding to `toKeepInStorage` this
+            // will also remove from LS
+            if (moderatedVersion !== null) {
+              console.log('found existing version, skipping one from LS');
+              if (!isComment(moderatedVersion)) {
+                toKeepInStorage.push(c);
+              }
               continue;
             }
-            if (parent.replies) {
-              parent.replies.push(localComment);
+
+            toKeepInStorage.push(c);
+            const localComment: LocalComment = {
+              isLocal: true,
+              id: c.i,
+              commentText: c.c,
+              commentHast: mod.markdownToHast({
+                text: c.c,
+                clueMap: props.clueMap,
+              }),
+              authorId: c.a,
+              authorDisplayName: c.n,
+              authorUsername: c.un,
+              authorSolveTime: c.t,
+              authorCheated: c.ch,
+              authorSolvedDownsOnly: c.do || false,
+              publishTime: c.p.toMillis(),
+              authorIsPatron: authContext.isPatron,
+            };
+            if (c.rt === null) {
+              rebuiltComments.push(localComment);
             } else {
-              parent.replies = [localComment];
+              const parent = findCommentById(rebuiltComments, c.rt);
+              if (parent === null) {
+                /* TODO figure out better behaivior here?
+                 * One possibility is that we saw the comment originally when
+                 * loading the puzzle via client side link but are now loading via
+                 * page refresh. If the content is cached at a different time the
+                 * parent comment might not be here yet. */
+                continue;
+              }
+              if (parent.replies) {
+                parent.replies.push(localComment);
+              } else {
+                parent.replies = [localComment];
+              }
             }
           }
-        }
-        /* This means one or more have made it through moderation - update LS.
-         * We don't need to try/catch this LS access as we only do it if we
-         * read from LS successfully above */
-        if (toKeepInStorage.length !== unmoderatedComments.length) {
-          if (toKeepInStorage.length === 0) {
-            localStorage.removeItem(commentsKey(props.puzzleId));
-          } else {
-            localStorage.setItem(
-              commentsKey(props.puzzleId),
-              JSON.stringify(toKeepInStorage)
-            );
+          /* This means one or more have made it through moderation - update LS.
+           * We don't need to try/catch this LS access as we only do it if we
+           * read from LS successfully above */
+          if (toKeepInStorage.length !== unmoderatedComments.length) {
+            if (toKeepInStorage.length === 0) {
+              localStorage.removeItem(commentsKey(props.puzzleId));
+            } else {
+              localStorage.setItem(
+                commentsKey(props.puzzleId),
+                JSON.stringify(toKeepInStorage)
+              );
+            }
           }
-        }
-        setToShow(rebuiltComments);
-      });
+          setToShow(rebuiltComments);
+        })
+        .catch((e) => {
+          console.error('error rebuilding comments', e);
+        });
     }
   }, [props.puzzleId, props.clueMap, comments, authContext.isPatron]);
   return (

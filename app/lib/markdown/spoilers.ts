@@ -1,17 +1,15 @@
 import { spoilersSyntax } from './micromark-extension-spoilers';
 import { fromMarkdownExtension } from './mdast-util-spoilers';
+import { Plugin, Processor } from 'unified';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function remarkSpoilers(this: any) {
+export const remarkSpoilers: Plugin = function (this: Processor) {
   const data = this.data();
 
-  add('micromarkExtensions', spoilersSyntax());
-  add('fromMarkdownExtensions', fromMarkdownExtension);
+  const micromarkExtensions =
+    data.micromarkExtensions ?? (data.micromarkExtensions = []);
+  const fromMarkdownExtensions =
+    data.fromMarkdownExtensions ?? (data.fromMarkdownExtensions = []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function add(field: string, value: any) {
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    const list = data[field] ? data[field] : (data[field] = []);
-    list.push(value);
-  }
-}
+  micromarkExtensions.push(spoilersSyntax());
+  fromMarkdownExtensions.push(fromMarkdownExtension);
+};

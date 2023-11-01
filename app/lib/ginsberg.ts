@@ -13,8 +13,7 @@ export const getClues = async (
   word: string
 ): Promise<ClueListT> => {
   try {
-    const res = JSON.parse(await db.get(word));
-    return parseClueList(res);
+    return parseClueList(JSON.parse((await db.get(word)) as string));
   } catch {
     return [];
   }

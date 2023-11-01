@@ -12,16 +12,17 @@ import {
   limitToLast as fbLimitToLast,
   getDocs,
 } from 'firebase/firestore';
+import { logAsyncErrors } from './utils';
 
 export function usePaginatedQuery<A, N>(
   query: Query | undefined,
   validator: t.Type<A>,
   limit: number,
-  mapper: (val: A, docid: string) => Promise<N | undefined>
+  mapper: (val: A, docid: string) => N | undefined | Promise<N | undefined>
 ) {
   const [before, setBefore] = useState<QueryDocumentSnapshot | null>(null);
   const [after, setAfter] = useState<QueryDocumentSnapshot | null>(null);
-  const [docs, setDocs] = useState<Array<N>>([]);
+  const [docs, setDocs] = useState<N[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [hasPrevious, setHasPrevious] = useState(false);
@@ -55,7 +56,7 @@ export function usePaginatedQuery<A, N>(
         q = fbQuery(q, fbLimit(limit));
       }
 
-      getDocs(q).then(async (dbres) => {
+      await getDocs(q).then(async (dbres) => {
         if (didCancel) {
           return;
         }
@@ -65,9 +66,9 @@ export function usePaginatedQuery<A, N>(
         if (previousPages === 0) {
           setHasPrevious(false);
         }
-        setLastLoaded(dbres.docs[dbres.docs.length - 1] || null);
-        setFirstLoaded(dbres.docs[0] || null);
-        const results: Array<N> = [];
+        setLastLoaded(dbres.docs[dbres.docs.length - 1] ?? null);
+        setFirstLoaded(dbres.docs[0] ?? null);
+        const results: N[] = [];
         for (const doc of dbres.docs) {
           const data = doc.data();
           const validationResult = validator.decode(data);
@@ -86,7 +87,7 @@ export function usePaginatedQuery<A, N>(
         return;
       });
     };
-    fetchData();
+    logAsyncErrors(fetchData)();
     return () => {
       didCancel = true;
     };

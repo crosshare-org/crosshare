@@ -71,8 +71,12 @@ export const DifficultyBadge = (props: {
   return (
     <>
       <span
-        onClick={() => setShowingExplainer(true)}
-        onKeyPress={() => setShowingExplainer(true)}
+        onClick={() => {
+          setShowingExplainer(true);
+        }}
+        onKeyPress={() => {
+          setShowingExplainer(true);
+        }}
         role={'button'}
         tabIndex={-1}
         css={{ cursor: 'pointer' }}
@@ -80,13 +84,17 @@ export const DifficultyBadge = (props: {
         {symbol}
       </span>
       {showingExplainer ? (
-        <Overlay closeCallback={() => setShowingExplainer(false)}>
+        <Overlay
+          closeCallback={() => {
+            setShowingExplainer(false);
+          }}
+        >
           {props.puzzleRating && props.puzzleRating.d < 200 ? (
             <>
               <p>
                 This puzzle&apos;s rating is{' '}
                 <strong>{Math.round(props.puzzleRating.r)}</strong>.{' '}
-                {user && user.email ? (
+                {user?.email ? (
                   <>
                     Based on your prior solves we predict it will be{' '}
                     <strong>{text}</strong> for you to solve without
@@ -99,7 +107,7 @@ export const DifficultyBadge = (props: {
                   </>
                 )}
               </p>
-              {user && user.email ? (
+              {user?.email ? (
                 <p>
                   The difficulty symbols shown are specific to you based on your
                   solve history. As you solve more puzzles Crosshare will be

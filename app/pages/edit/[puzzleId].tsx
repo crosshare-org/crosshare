@@ -27,13 +27,12 @@ import { Overlay } from '../../components/Overlay';
 import { COVER_PIC } from '../../lib/style';
 import { LengthView, LengthLimitedInput } from '../../components/Inputs';
 import dynamic from 'next/dynamic';
-import type { ImageCropper as ImageCropperType } from '../../components/ImageCropper';
 import { ContactLinks } from '../../components/ContactLinks';
 import { useSnackbar } from '../../components/Snackbar';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import lightFormat from 'date-fns/lightFormat';
 import { DateTimePicker } from '../../components/DateTimePicker';
-import { isMetaSolution } from '../../lib/utils';
+import { isMetaSolution, logAsyncErrors } from '../../lib/utils';
 import { EditableText } from '../../components/EditableText';
 import { AlternateSolutionEditor } from '../../components/AlternateSolutionEditor';
 import { TagList } from '../../components/TagList';
@@ -50,12 +49,9 @@ import { Markdown } from '../../components/Markdown';
 import { GridContext } from '../../components/GridContext';
 
 const ImageCropper = dynamic(
-  () =>
-    import('../../components/ImageCropper').then(
-      (mod) => mod.ImageCropper as any // eslint-disable-line @typescript-eslint/no-explicit-any
-    ),
+  () => import('../../components/ImageCropper').then((mod) => mod.ImageCropper),
   { ssr: false }
-) as typeof ImageCropperType;
+);
 
 export default requiresAuth((props: AuthProps) => {
   const router = useRouter();
@@ -99,9 +95,11 @@ export const PuzzleLoader = ({
     }
   }, [doc]);
 
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   if (error || puzzleDecodeError) {
     return (
       <ErrorPage title="Something Went Wrong">
+        {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
         <p>{error?.message || puzzleDecodeError}</p>
       </ErrorPage>
     );
@@ -132,10 +130,10 @@ export const PuzzleLoader = ({
 
 const ClueRow = (props: {
   puzzleId: string;
-  ac: Array<string>;
-  an: Array<number>;
-  dc: Array<string>;
-  dn: Array<number>;
+  ac: string[];
+  an: number[];
+  dc: string[];
+  dn: number[];
   entry: CluedEntry;
 }) => {
   const [editing, setEditing] = useState(false);
@@ -147,14 +145,14 @@ const ClueRow = (props: {
     throw new Error("shouldn't ever get here");
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const toSubmit = value.trim();
     if (toSubmit.length === 0) {
       return;
     }
     setSubmitting(true);
-    let update: Record<string, Array<string>>;
+    let update: Record<string, string[]>;
     if (props.entry.direction === Direction.Across) {
       update = {
         ac: props.ac.map((v, i) => {
@@ -174,7 +172,7 @@ const ClueRow = (props: {
         }),
       };
     }
-    updateDoc(getDocRef('c', props.puzzleId), update).then(() => {
+    await updateDoc(getDocRef('c', props.puzzleId), update).then(() => {
       setSubmitting(false);
       setEditing(false);
     });
@@ -209,7 +207,7 @@ const ClueRow = (props: {
         {editing ? (
           <form
             css={{ display: 'flex', flexWrap: 'wrap' }}
-            onSubmit={handleSubmit}
+            onSubmit={logAsyncErrors(handleSubmit)}
           >
             <LengthLimitedInput
               id={word + '-input'}
@@ -305,7 +303,7 @@ const PuzzleEditor = ({
     .map((e) => (
       <ClueRow
         puzzleId={puzzle.id}
-        key={e.completedWord || ''}
+        key={e.completedWord ?? ''}
         entry={e}
         ac={dbPuzzle.ac}
         an={dbPuzzle.an}
@@ -334,7 +332,9 @@ const PuzzleEditor = ({
               alts: arrayUnion(alt),
             })
           }
-          cancel={() => setAddingAlternate(false)}
+          cancel={() => {
+            setAddingAlternate(false);
+          }}
           width={puzzle.size.cols}
           height={puzzle.size.rows}
           highlight={puzzle.highlight}
@@ -382,12 +382,16 @@ const PuzzleEditor = ({
           {editingTags ? (
             <div css={{ marginBottom: '1.5em' }}>
               <TagEditor
-                userTags={puzzle.userTags || []}
-                autoTags={puzzle.autoTags || []}
-                cancel={() => setEditingTags(false)}
+                userTags={puzzle.userTags ?? []}
+                autoTags={puzzle.autoTags ?? []}
+                cancel={() => {
+                  setEditingTags(false);
+                }}
                 save={async (newTags) =>
                   updateDoc(getDocRef('c', puzzle.id), { tg_u: newTags }).then(
-                    () => setEditingTags(false)
+                    () => {
+                      setEditingTags(false);
+                    }
                   )
                 }
               />
@@ -396,10 +400,15 @@ const PuzzleEditor = ({
             <>
               <h4>Current tags:</h4>
               <TagList
-                tags={(puzzle.userTags || []).concat(puzzle.autoTags || [])}
+                tags={(puzzle.userTags ?? []).concat(puzzle.autoTags ?? [])}
               />
               <p>
-                <Button onClick={() => setEditingTags(true)} text="Edit Tags" />
+                <Button
+                  onClick={() => {
+                    setEditingTags(true);
+                  }}
+                  text="Edit Tags"
+                />
               </p>
             </>
           )}
@@ -414,7 +423,7 @@ const PuzzleEditor = ({
             deletable={true}
             css={{ marginBottom: '1em' }}
             text={puzzle.constructorNotes}
-            hast={markdownToHast({ text: puzzle.constructorNotes || '' })}
+            hast={markdownToHast({ text: puzzle.constructorNotes ?? '' })}
             maxLength={MAX_STRING_LENGTH}
             handleSubmit={(notes) =>
               updateDoc(getDocRef('c', puzzle.id), { cn: notes })
@@ -451,7 +460,7 @@ const PuzzleEditor = ({
             deletable={true}
             css={{ marginBottom: '1em' }}
             text={puzzle.blogPost}
-            hast={markdownToHast({ text: puzzle.blogPost || '' })}
+            hast={markdownToHast({ text: puzzle.blogPost ?? '' })}
             maxLength={MAX_BLOG_LENGTH}
             handleSubmit={(post) =>
               updateDoc(getDocRef('c', puzzle.id), { bp: post })
@@ -462,7 +471,9 @@ const PuzzleEditor = ({
           />
           <h4>Cover Image</h4>
           <Button
-            onClick={() => setSettingCoverPic(true)}
+            onClick={() => {
+              setSettingCoverPic(true);
+            }}
             text="Add/edit cover pic"
           />
           {settingCoverPic ? (
@@ -470,7 +481,9 @@ const PuzzleEditor = ({
               targetSize={COVER_PIC}
               isCircle={false}
               storageKey={`/users/${puzzle.authorId}/${puzzle.id}/cover.jpg`}
-              cancelCrop={() => setSettingCoverPic(false)}
+              cancelCrop={() => {
+                setSettingCoverPic(false);
+              }}
             />
           ) : (
             ''
@@ -516,7 +529,8 @@ const PuzzleEditor = ({
                         (puzzle.isPrivateUntil &&
                           puzzle.isPrivateUntil > Date.now())
                         ? true
-                        : puzzle.isPrivateUntil || puzzle.publishTime
+                        : // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+                          puzzle.isPrivateUntil || puzzle.publishTime
                     );
                     setIsPrivateUntil(null);
                   }
@@ -538,11 +552,7 @@ const PuzzleEditor = ({
                   onChange={(e) => {
                     if (e.target.checked) {
                       setIsPrivate(false);
-                      setIsPrivateUntil(
-                        e.target.checked
-                          ? Date.now() + 24 * 60 * 60 * 1000
-                          : null
-                      );
+                      setIsPrivateUntil(Date.now() + 24 * 60 * 60 * 1000);
                     } else {
                       setIsPrivateUntil(Date.now() - 10);
                     }
@@ -556,7 +566,9 @@ const PuzzleEditor = ({
                   {lightFormat(isPrivateUntil, "M/d/y' at 'h:mma")}:
                   <DateTimePicker
                     picked={isPrivateUntil}
-                    setPicked={(d) => setIsPrivateUntil(d.getTime())}
+                    setPicked={(d) => {
+                      setIsPrivateUntil(d.getTime());
+                    }}
                   />
                 </p>
               ) : (
@@ -573,8 +585,8 @@ const PuzzleEditor = ({
               isPrivate === puzzle.isPrivate &&
               isPrivateUntil === puzzle.isPrivateUntil
             }
-            onClick={() => {
-              updateDoc(getDocRef('c', puzzle.id), {
+            onClick={logAsyncErrors(async () => {
+              await updateDoc(getDocRef('c', puzzle.id), {
                 pv:
                   typeof isPrivate === 'number'
                     ? Timestamp.fromMillis(isPrivate)
@@ -590,7 +602,7 @@ const PuzzleEditor = ({
                   'Privacy settings updated - it may take up to an hour for updates to be visible on the site.'
                 );
               });
-            }}
+            })}
           />
           <Button
             text="Cancel"
@@ -620,11 +632,11 @@ const PuzzleEditor = ({
                       <li key={a}>
                         {a} (
                         <ButtonAsLink
-                          onClick={() => {
-                            updateDoc(getDocRef('c', puzzle.id), {
+                          onClick={logAsyncErrors(async () => {
+                            await updateDoc(getDocRef('c', puzzle.id), {
                               ct_ans: arrayRemove(a),
                             });
-                          }}
+                          })}
                           text="remove"
                         />
                         )
@@ -673,11 +685,11 @@ const PuzzleEditor = ({
                         submission to be eligible to win.
                       </p>
                       <Button
-                        onClick={() => {
-                          updateDoc(getDocRef('c', puzzle.id), {
+                        onClick={logAsyncErrors(async () => {
+                          await updateDoc(getDocRef('c', puzzle.id), {
                             ct_prz: false,
                           });
-                        }}
+                        })}
                         text="Remove Prize"
                       />
                     </>
@@ -690,11 +702,11 @@ const PuzzleEditor = ({
                         eligible to win.
                       </p>
                       <Button
-                        onClick={() => {
-                          updateDoc(getDocRef('c', puzzle.id), {
+                        onClick={logAsyncErrors(async () => {
+                          await updateDoc(getDocRef('c', puzzle.id), {
                             ct_prz: true,
                           });
-                        }}
+                        })}
                         text="Add a Prize"
                       />
                     </>
@@ -716,7 +728,7 @@ const PuzzleEditor = ({
             puzzle have multiple valid solutions (e.g. a Schrödinger&apos;s
             puzzle or a puzzle with bi-directional rebuses).
           </p>
-          {puzzle.alternateSolutions?.length ? (
+          {puzzle.alternateSolutions.length ? (
             <ul>
               {puzzle.alternateSolutions.map((a, i) => (
                 <li key={i}>
@@ -730,16 +742,19 @@ const PuzzleEditor = ({
                   ))}{' '}
                   (
                   <ButtonAsLink
-                    onClick={() => {
-                      const toRemove = a.reduce((prev, [n, s]) => {
-                        prev[n] = s;
-                        return prev;
-                      }, {} as Record<number, string>);
+                    onClick={logAsyncErrors(async () => {
+                      const toRemove = a.reduce<Record<number, string>>(
+                        (prev, [n, s]) => {
+                          prev[n] = s;
+                          return prev;
+                        },
+                        {}
+                      );
                       console.log(toRemove);
-                      updateDoc(getDocRef('c', puzzle.id), {
+                      await updateDoc(getDocRef('c', puzzle.id), {
                         alts: arrayRemove(toRemove),
                       });
-                    }}
+                    })}
                     text="remove"
                   />
                   )
@@ -761,13 +776,13 @@ const PuzzleEditor = ({
               css={{ marginRight: '1em' }}
               type="checkbox"
               checked={puzzle.commentsDisabled}
-              onChange={(e) =>
-                updateDoc(getDocRef('c', puzzle.id), {
+              onChange={logAsyncErrors(async (e) => {
+                await updateDoc(getDocRef('c', puzzle.id), {
                   no_cs: e.target.checked,
                 }).then(() => {
                   showSnackbar('comment setting updated');
-                })
-              }
+                });
+              })}
             />{' '}
             Disable comments for this puzzle
           </label>
@@ -789,10 +804,16 @@ const PuzzleEditor = ({
                 }}
                 hoverCSS={{ backgroundColor: 'var(--error-hover)' }}
                 text="Delete"
-                onClick={() => setShowingDeleteOverlay(true)}
+                onClick={() => {
+                  setShowingDeleteOverlay(true);
+                }}
               />
               {showingDeleteOverlay ? (
-                <Overlay closeCallback={() => setShowingDeleteOverlay(false)}>
+                <Overlay
+                  closeCallback={() => {
+                    setShowingDeleteOverlay(false);
+                  }}
+                >
                   <p>Type DELETE to confirm deletion</p>
                   <input
                     type="text"
@@ -810,16 +831,16 @@ const PuzzleEditor = ({
                     hoverCSS={{ backgroundColor: 'var(--error-hover)' }}
                     text="Confirm Delete"
                     disabled={deleteConfirmation.toLowerCase() !== 'delete'}
-                    onClick={() => {
-                      updateDoc(getDocRef('c', puzzle.id), { del: true }).then(
-                        () => {
-                          showSnackbar(
-                            'Your puzzle has been deleted - it may take up to an hour to be fully removed from the site.'
-                          );
-                          router.push('/');
-                        }
-                      );
-                    }}
+                    onClick={logAsyncErrors(async () => {
+                      await updateDoc(getDocRef('c', puzzle.id), {
+                        del: true,
+                      }).then(async () => {
+                        showSnackbar(
+                          'Your puzzle has been deleted - it may take up to an hour to be fully removed from the site.'
+                        );
+                        await router.push('>/');
+                      });
+                    })}
                   />
                 </Overlay>
               ) : (

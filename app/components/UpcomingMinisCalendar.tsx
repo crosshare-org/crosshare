@@ -2,6 +2,7 @@ import { isSome } from 'fp-ts/lib/Option';
 import { useEffect, useState } from 'react';
 import { getMiniIdForDate } from '../lib/dailyMinis';
 import { ButtonReset } from './Buttons';
+import { logAsyncErrors } from '../lib/utils';
 
 const daysToDisplay = 42;
 const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
@@ -40,7 +41,7 @@ const Day = (props: DayProps) => {
   const [miniId, setMiniId] = useState<string | null>(null);
   useEffect(() => {
     let finished = false;
-    (async function () {
+    logAsyncErrors(async function () {
       const lookup = await getMiniIdForDate(props.day);
       if (finished) {
         return;
@@ -136,7 +137,9 @@ export const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
           css={{
             flexGrow: 1,
           }}
-          onClick={() => changeMonth(-1)}
+          onClick={() => {
+            changeMonth(-1);
+          }}
           text={'<'}
         />
         <div
@@ -150,7 +153,9 @@ export const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
           css={{
             flexGrow: 1,
           }}
-          onClick={() => changeMonth(1)}
+          onClick={() => {
+            changeMonth(1);
+          }}
           text={'>'}
         />
       </div>

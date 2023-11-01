@@ -12,7 +12,6 @@ import {
 import {
   collection,
   doc,
-  DocumentData,
   Firestore,
   getFirestore,
   QueryDocumentSnapshot,
@@ -59,6 +58,7 @@ export const getAuth = () => gA(App);
 export const getStorage = () => gS(App);
 
 export const convertTimestamps = (data: any): Record<string, unknown> =>
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   cloneDeepWith(data, (val) => {
     if (isTimestamp(val)) {
       return FBTimestamp.fromMillis(val.toMillis());
@@ -69,6 +69,7 @@ export const convertTimestamps = (data: any): Record<string, unknown> =>
 export const getCollection = (collectionName: string) =>
   collection(db, collectionName).withConverter({
     toFirestore: convertTimestamps,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     fromFirestore: (s: any) => s.data(),
   });
 
@@ -79,10 +80,7 @@ export function getValidatedCollection<V>(
 ) {
   return collection(db, collectionName).withConverter({
     toFirestore: convertTimestamps,
-    fromFirestore: (
-      s: QueryDocumentSnapshot<DocumentData>,
-      options: SnapshotOptions
-    ): V => {
+    fromFirestore: (s: QueryDocumentSnapshot, options: SnapshotOptions): V => {
       let data = s.data(options);
       if (idField) {
         data = { ...data, [idField]: s.id };
@@ -112,7 +110,7 @@ export const setUpForSignInAnonymously = (_app: FirebaseApp, _user: User) => {
 
 export const signInAnonymously = async () => {
   const userCredential = await sIA(getAuth());
-  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unnecessary-condition
   if (!userCredential.user) {
     throw new Error('Logged in anonymously but no user in result');
   }

@@ -20,6 +20,7 @@ import { Button, ButtonAsLink } from './Buttons';
 import { getDoc, setDoc } from 'firebase/firestore';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { Global } from '@emotion/react';
+import { logAsyncErrors } from '../lib/utils';
 
 export const EmbedOverlay = ({
   dispatch,
@@ -48,14 +49,18 @@ export const EmbedOverlay = ({
       setEmbedOptions(validated);
       setLoadingOptions(false);
     }
-    getEmbedOptions();
+    logAsyncErrors(getEmbedOptions)();
     return () => {
       didCancel = true;
     };
   }, [user.uid]);
 
   return (
-    <Overlay closeCallback={() => dispatch({ type: 'TOGGLEEMBEDOVERLAY' })}>
+    <Overlay
+      closeCallback={() => {
+        dispatch({ type: 'TOGGLEEMBEDOVERLAY' });
+      }}
+    >
       <h2>Embed this Puzzle</h2>
       <p>
         To embed your puzzle copy and paste the following HTML into your
@@ -202,10 +207,14 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
         }),
     };
     setSaving(true);
-    setDoc(getDocRef('em', props.userId), theme).then(() => {
-      setSaving(false);
-      setDirty(false);
-    });
+    setDoc(getDocRef('em', props.userId), theme)
+      .then(() => {
+        setSaving(false);
+        setDirty(false);
+      })
+      .catch((e) => {
+        console.log('error updating embed prefs', e);
+      });
   }, [
     isDark,
     primary,

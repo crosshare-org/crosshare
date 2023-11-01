@@ -30,7 +30,7 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
     [user.uid]
   );
   const authoredMapper = useCallback(
-    async (dbres: DBPuzzleT, id: string) => ({ ...puzzleFromDB(dbres), id }),
+    (dbres: DBPuzzleT, id: string) => ({ ...puzzleFromDB(dbres), id }),
     []
   );
   const {

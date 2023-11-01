@@ -17,10 +17,16 @@ export function MarkdownPreview(props: MarkdownPreviewProps) {
         css={{ marginRight: '1em' }}
         text="Preview"
         disabled={!props.markdown}
-        onClick={() => setShowing(true)}
+        onClick={() => {
+          setShowing(true);
+        }}
       />
       {showing && props.markdown ? (
-        <Overlay closeCallback={() => setShowing(false)}>
+        <Overlay
+          closeCallback={() => {
+            setShowing(false);
+          }}
+        >
           <Markdown hast={markdownToHast({ text: props.markdown })} />
         </Overlay>
       ) : (

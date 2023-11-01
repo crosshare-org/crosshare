@@ -38,8 +38,6 @@ import lightFormat from 'date-fns/lightFormat';
 import { PublishOverlay } from './PublishOverlay';
 import { Overlay } from './Overlay';
 import dynamic from 'next/dynamic';
-import type { ImageCropper as ImageCropperType } from './ImageCropper';
-import type { SuggestOverlay as SuggestOverlayType } from './ClueSuggestionOverlay';
 import { DateTimePicker } from './DateTimePicker';
 import type { User } from 'firebase/auth';
 import { isMetaSolution } from '../lib/utils';
@@ -47,7 +45,6 @@ import { AlternateSolutionEditor } from './AlternateSolutionEditor';
 import { TagEditor } from './TagEditor';
 import { TagList } from './TagList';
 import { sizeTag } from '../lib/sizeTag';
-import type { MarkdownPreview as MarkdownPreviewType } from './MarkdownPreview';
 import { markdownToHast } from '../lib/markdown/markdown';
 import { Markdown } from './Markdown';
 import { GridContext } from './GridContext';
@@ -57,26 +54,25 @@ export const MAX_STRING_LENGTH = 2048;
 export const MAX_BLOG_LENGTH = 20000;
 export const MAX_META_SUBMISSION_LENGTH = 100;
 
-const MarkdownPreview = dynamic(
-  () => import('./MarkdownPreview').then((mod) => mod.MarkdownPreview as any) // eslint-disable-line @typescript-eslint/no-explicit-any
-) as typeof MarkdownPreviewType;
+const MarkdownPreview = dynamic(() =>
+  import('./MarkdownPreview').then((mod) => mod.MarkdownPreview)
+);
 
 const ImageCropper = dynamic(
-  () => import('./ImageCropper').then((mod) => mod.ImageCropper as any), // eslint-disable-line @typescript-eslint/no-explicit-any
+  () => import('./ImageCropper').then((mod) => mod.ImageCropper),
   { ssr: false }
-) as typeof ImageCropperType;
+);
 
 const SuggestOverlay = dynamic(
-  () =>
-    import('./ClueSuggestionOverlay').then((mod) => mod.SuggestOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
+  () => import('./ClueSuggestionOverlay').then((mod) => mod.SuggestOverlay),
   { ssr: false }
-) as typeof SuggestOverlayType;
+);
 
 const ClueRow = (props: {
   idx: number;
   dispatch: Dispatch<PuzzleAction>;
   entry: BuilderEntry;
-  clues: Record<string, Array<string>>;
+  clues: Record<string, string[]>;
 }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const word = props.entry.completedWord;
@@ -141,13 +137,17 @@ const ClueRow = (props: {
         </td>
         <td css={{ width: '1px', paddingLeft: '1em', paddingBottom: '1em' }}>
           <ButtonAsLink
-            onClick={() => setShowSuggestions(true)}
+            onClick={() => {
+              setShowSuggestions(true);
+            }}
             text="Suggest"
           />
           {showSuggestions ? (
             <SuggestOverlay
               word={word}
-              close={() => setShowSuggestions(false)}
+              close={() => {
+                setShowSuggestions(false);
+              }}
               select={(clue) => {
                 const sca: SetClueAction = {
                   type: 'SETCLUE',
@@ -205,8 +205,8 @@ interface ClueModeProps {
   exitClueMode: () => void;
   authorId: string;
   puzzleId: string;
-  completedEntries: Array<BuilderEntry>;
-  clues: Record<string, Array<string>>;
+  completedEntries: BuilderEntry[];
+  clues: Record<string, string[]>;
   state: BuilderState;
   dispatch: Dispatch<PuzzleAction>;
   user: User;
@@ -270,14 +270,17 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
       <>
         <AlternateSolutionEditor
           grid={state.grid.cells}
-          save={async (alt) => {
+          save={(alt) => {
             const act: AddAlternateAction = {
               type: 'ADDALT',
               alternate: alt,
             };
             props.dispatch(act);
+            return Promise.resolve();
           }}
-          cancel={() => setAddingAlternate(false)}
+          cancel={() => {
+            setAddingAlternate(false);
+          }}
           width={state.grid.width}
           height={state.grid.height}
           highlight={state.grid.highlight}
@@ -316,14 +319,18 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
             toPublish={state.toPublish}
             warnings={state.publishWarnings}
             user={props.user}
-            cancelPublish={() => props.dispatch({ type: 'CANCELPUBLISH' })}
+            cancelPublish={() => {
+              props.dispatch({ type: 'CANCELPUBLISH' });
+            }}
           />
         ) : (
           ''
         )}
         {state.publishErrors.length ? (
           <Overlay
-            closeCallback={() => props.dispatch({ type: 'CLEARPUBLISHERRORS' })}
+            closeCallback={() => {
+              props.dispatch({ type: 'CLEARPUBLISHERRORS' });
+            }}
           >
             <>
               <div>
@@ -381,7 +388,9 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
           <h2 css={{ marginTop: '1em' }}>Metadata</h2>
           <div>
             <ButtonAsLink
-              onClick={() => setSettingCoverPic(true)}
+              onClick={() => {
+                setSettingCoverPic(true);
+              }}
               text="Add/edit cover pic"
             />
           </div>
@@ -390,7 +399,9 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               targetSize={COVER_PIC}
               isCircle={false}
               storageKey={`/users/${props.authorId}/${props.puzzleId}/cover.jpg`}
-              cancelCrop={() => setSettingCoverPic(false)}
+              cancelCrop={() => {
+                setSettingCoverPic(false);
+              }}
             />
           ) : (
             ''
@@ -786,14 +797,17 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               <TagEditor
                 userTags={state.userTags}
                 autoTags={autoTags}
-                cancel={() => setEditingTags(false)}
-                save={async (newTags) => {
+                cancel={() => {
+                  setEditingTags(false);
+                }}
+                save={(newTags) => {
                   const st: SetTagsAction = {
                     type: 'SETTAGS',
                     tags: newTags,
                   };
                   props.dispatch(st);
                   setEditingTags(false);
+                  return Promise.resolve();
                 }}
               />
             </div>
@@ -802,7 +816,12 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               <h4>Current tags:</h4>
               <TagList tags={state.userTags.concat(autoTags)} />
               <p>
-                <Button onClick={() => setEditingTags(true)} text="Edit Tags" />
+                <Button
+                  onClick={() => {
+                    setEditingTags(true);
+                  }}
+                  text="Edit Tags"
+                />
               </p>
             </>
           )}

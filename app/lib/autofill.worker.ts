@@ -9,7 +9,7 @@ import {
 import { Autofiller } from './Autofiller';
 import { setDb } from './WordDB';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
 const ctx: Worker = self as any;
 
 const msgChannel = new MessageChannel();

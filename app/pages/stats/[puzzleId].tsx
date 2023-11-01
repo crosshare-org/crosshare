@@ -11,7 +11,7 @@ import { ErrorPage } from '../../components/ErrorPage';
 import { StatsPage } from '../../components/PuzzleStats';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { Link } from '../../components/Link';
-import { slugify } from '../../lib/utils';
+import { logAsyncErrors, slugify } from '../../lib/utils';
 import { getDocRef } from '../../lib/firebaseWrapper';
 import { withStaticTranslation } from '../../lib/translation';
 
@@ -61,9 +61,11 @@ export const PuzzleLoader = ({
     }
   }, [doc]);
 
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   if (error || puzzleDecodeError) {
     return (
       <ErrorPage title="Something Went Wrong">
+        {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
         <p>{error?.message || puzzleDecodeError}</p>
       </ErrorPage>
     );
@@ -94,14 +96,14 @@ export const PuzzleLoader = ({
 
 const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
   const [stats, setStats] = useState<PuzzleStatsT | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<boolean>(false);
   const [didLoad, setDidLoad] = useState<boolean>(false);
 
   useEffect(() => {
     let didCancel = false;
 
     const fetchData = async () => {
-      getFromSessionOrDB({
+      await getFromSessionOrDB({
         collection: 's',
         docId: puzzle.id,
         validator: PuzzleStatsV,
@@ -118,11 +120,12 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
           if (didCancel) {
             return;
           }
-          setError(e);
+          console.error('error fetching stats', e);
+          setError(true);
           setDidLoad(true);
         });
     };
-    fetchData();
+    logAsyncErrors(fetchData)();
     return () => {
       didCancel = true;
     };

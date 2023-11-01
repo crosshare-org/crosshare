@@ -17,7 +17,7 @@ export const MetaSubmissionForm = (props: {
   revealDisabledUntil: Date | null;
   hasPrize: boolean;
   dispatch: Dispatch<ContestSubmitAction | ContestRevealAction>;
-  solutions: Array<string>;
+  solutions: string[];
 }) => {
   const [submission, setSubmission] = useState('');
   const displayName = useDisplayName();
@@ -99,7 +99,9 @@ export const MetaSubmissionForm = (props: {
               />
               submitting as {displayName} (
               <ButtonAsLink
-                onClick={() => setEditingDisplayName(true)}
+                onClick={() => {
+                  setEditingDisplayName(true);
+                }}
                 text="change name"
               />
               )
@@ -109,7 +111,11 @@ export const MetaSubmissionForm = (props: {
       </form>
       {editingDisplayName || !displayName ? (
         <>
-          <DisplayNameForm onCancel={() => setEditingDisplayName(false)} />
+          <DisplayNameForm
+            onCancel={() => {
+              setEditingDisplayName(false);
+            }}
+          />
         </>
       ) : (
         ''
@@ -147,7 +153,7 @@ export const MetaSubmission = (props: {
   revealDisabledUntil: Date | null;
   hasPrize: boolean;
   dispatch: Dispatch<ContestSubmitAction | ContestRevealAction>;
-  solutions: Array<string>;
+  solutions: string[];
   isAuthor: boolean;
 }) => {
   const authContext = useContext(AuthContext);

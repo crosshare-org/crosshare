@@ -3,7 +3,7 @@ import { Position, Direction, PosAndDir } from './types';
 export interface EntryBase {
   index: number;
   direction: Direction;
-  cells: Array<Position>;
+  cells: Position[];
   completedWord: string | null;
 }
 
@@ -21,7 +21,7 @@ export interface GridBase<Entry extends EntryBase> {
   width: number;
   height: number;
   cells: string[];
-  entriesByCell: Array<[Cross, Cross]>;
+  entriesByCell: [Cross, Cross][];
   entries: Entry[];
   vBars: Set<number>;
   hBars: Set<number>;
@@ -60,10 +60,10 @@ function entriesByCell<Entry extends EntryBase>(
 export function getCrosses<Entry extends EntryBase>(
   grid: GridBase<Entry>,
   entry: Entry
-): Array<Cross> {
+): Cross[] {
   const crossDir =
     entry.direction === Direction.Across ? Direction.Down : Direction.Across;
-  const crosses: Array<Cross> = [];
+  const crosses: Cross[] = [];
   entry.cells.forEach((cellIndex) => {
     crosses.push(entriesByCell(grid, cellIndex)[crossDir]);
   });
@@ -164,7 +164,7 @@ export function getEntryCells<Entry extends EntryBase>(
   grid: GridBase<Entry>,
   pos: PosAndDir
 ) {
-  let highlights: Array<Position> = [];
+  let highlights: Position[] = [];
   const entry = entryAtPosition(grid, pos);
   if (entry[0] !== null) {
     highlights = entry[0].cells;
@@ -175,11 +175,11 @@ export function getEntryCells<Entry extends EntryBase>(
 export function entriesFromCells(
   width: number,
   height: number,
-  cells: Array<string>,
+  cells: string[],
   vBars: Set<number>,
   hBars: Set<number>
-): [Array<EntryWithPattern>, Array<[Cross, Cross]>] {
-  const entriesByCell: Array<[Cross, Cross]> = [];
+): [EntryWithPattern[], [Cross, Cross][]] {
+  const entriesByCell: [Cross, Cross][] = [];
   cells.forEach(() => {
     entriesByCell.push([
       { entryIndex: null, wordIndex: 0, cellIndex: 0 },
@@ -187,7 +187,7 @@ export function entriesFromCells(
     ]);
   });
 
-  const entries: Array<EntryWithPattern> = [];
+  const entries: EntryWithPattern[] = [];
 
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {

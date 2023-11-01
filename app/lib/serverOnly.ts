@@ -155,9 +155,9 @@ export const getArticlePageProps: GetServerSideProps<
 };
 
 export async function convertComments(
-  comments: Array<CommentWithRepliesT>,
+  comments: CommentWithRepliesT[],
   clueMap: Map<string, [number, Direction, string]>
-): Promise<Array<Comment>> {
+): Promise<Comment[]> {
   return Promise.all(
     comments.map(async (c) => {
       return {

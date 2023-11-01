@@ -16,15 +16,13 @@ import {
 } from '../lib/prefs';
 
 import dynamic from 'next/dynamic';
-import type { ImageCropper as ImageCropperType } from '../components/ImageCropper';
 import { useSnackbar } from '../components/Snackbar';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { useDarkModeControl, usePersistedBoolean } from '../lib/hooks';
 const ImageCropper = dynamic(
-  () =>
-    import('../components/ImageCropper').then((mod) => mod.ImageCropper as any), // eslint-disable-line @typescript-eslint/no-explicit-any
+  () => import('../components/ImageCropper').then((mod) => mod.ImageCropper),
   { ssr: false }
-) as typeof ImageCropperType;
+);
 
 import { withStaticTranslation } from '../lib/translation';
 import {
@@ -37,6 +35,7 @@ import {
 } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { BioEditor } from '../components/BioEditor';
+import { logAsyncErrors } from '../lib/utils';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };
@@ -62,8 +61,8 @@ const UnsubSetting = (props: UnsubSettingProps) => {
         type="checkbox"
         disabled={!props.neverDisable && unsubbedAll}
         checked={props.invert ? unsubbed : !unsubbed && !unsubbedAll}
-        onChange={(e) =>
-          setDoc(
+        onChange={logAsyncErrors(async (e) => {
+          await setDoc(
             getDocRef('prefs', props.userId),
             {
               unsubs:
@@ -74,8 +73,8 @@ const UnsubSetting = (props: UnsubSettingProps) => {
             { merge: true }
           ).then(() => {
             showSnackbar('Email Preferences Updated');
-          })
-        }
+          });
+        })}
       />
       {props.text}
     </label>
@@ -92,15 +91,15 @@ interface PrefSettingProps {
 
 const PrefSetting = (props: PrefSettingProps) => {
   const { showSnackbar } = useSnackbar();
-  const prefSet = props.prefs?.[props.flag] || false;
+  const prefSet = props.prefs?.[props.flag] ?? false;
   return (
     <label>
       <input
         css={{ marginRight: '1em' }}
         type="checkbox"
         checked={props.invert ? !prefSet : prefSet}
-        onChange={(e) =>
-          setDoc(
+        onChange={logAsyncErrors(async (e) => {
+          await setDoc(
             getDocRef('prefs', props.userId),
             {
               [props.flag]: props.invert ? !e.target.checked : e.target.checked,
@@ -108,8 +107,8 @@ const PrefSetting = (props: PrefSettingProps) => {
             { merge: true }
           ).then(() => {
             showSnackbar('Preferences Updated');
-          })
-        }
+          });
+        })}
       />
       {props.text}
     </label>
@@ -147,7 +146,10 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         <h2>Account</h2>
         <p>
           You&apos;re logged in as <b>{user.email}</b>.{' '}
-          <Button onClick={() => signOut(getAuth())} text="Log out" />
+          <Button
+            onClick={logAsyncErrors(async () => signOut(getAuth()))}
+            text="Log out"
+          />
         </p>
         <p>
           Your display name{' '}
@@ -330,8 +332,12 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
             </p>
             <BioEditor
               constructorPage={constructorPage}
-              addProfilePic={() => setSettingProfilePic(true)}
-              addCoverPic={() => setSettingCoverPic(true)}
+              addProfilePic={() => {
+                setSettingProfilePic(true);
+              }}
+              addCoverPic={() => {
+                setSettingCoverPic(true);
+              }}
             />
           </>
         ) : (
@@ -359,7 +365,9 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
           targetSize={PROFILE_PIC}
           isCircle={true}
           storageKey={`/users/${user.uid}/profile.jpg`}
-          cancelCrop={() => setSettingProfilePic(false)}
+          cancelCrop={() => {
+            setSettingProfilePic(false);
+          }}
         />
       ) : (
         ''
@@ -369,7 +377,9 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
           targetSize={COVER_PIC}
           isCircle={false}
           storageKey={`/users/${user.uid}/cover.jpg`}
-          cancelCrop={() => setSettingCoverPic(false)}
+          cancelCrop={() => {
+            setSettingCoverPic(false);
+          }}
         />
       ) : (
         ''

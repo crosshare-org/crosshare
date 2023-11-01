@@ -33,22 +33,23 @@ AuthProvider.setCustomParameters({ prompt: 'select_account' });
 
 export const GoogleSignInButton = ({ postSignIn, text }: GoogleButtonProps) => {
   function signin() {
-    signInWithPopup(getAuth(), AuthProvider).then(
-      async (userCredential: UserCredential) => {
+    signInWithPopup(getAuth(), AuthProvider)
+      .then(async (userCredential: UserCredential) => {
         event({
           action: 'login',
           category: 'engagement',
           label: 'google',
         });
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-        if (userCredential.user && postSignIn) {
+        if (postSignIn !== undefined) {
           return postSignIn(userCredential.user);
         }
         return () => {
           /* noop */
         };
-      }
-    );
+      })
+      .catch((e) => {
+        console.error('error signing in', e);
+      });
   }
   if (text) {
     return <ButtonAsLink text={text} onClick={signin} />;
@@ -79,8 +80,7 @@ export const GoogleLinkButton = ({
           category: 'engagement',
           label: 'google',
         });
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-        if (userCredential.user && postSignIn) {
+        if (postSignIn !== undefined) {
           return postSignIn(userCredential.user);
         }
         return () => {
@@ -98,14 +98,15 @@ export const GoogleLinkButton = ({
         }
         // Get anonymous user plays
         const plays = await getValidatedAndDelete(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           query(getCollection('p'), where('u', '==', user.uid)),
           LegacyPlayV
         );
         return signInWithCredential(getAuth(), credential).then(
           async (value: UserCredential) => {
-            console.log('signed in as new user ' + value.user?.uid);
+            console.log('signed in as new user ' + value.user.uid);
             const newUser = value.user;
-            // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+            // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unnecessary-condition
             if (!newUser) {
               throw new Error('missing new user after link');
             }

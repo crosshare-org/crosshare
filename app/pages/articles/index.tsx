@@ -12,6 +12,7 @@ import {
   getCollection,
   getValidatedCollection,
 } from '../../lib/firebaseWrapper';
+import { logAsyncErrors } from '../../lib/utils';
 
 const ArticleListItem = (props: ArticleT | null) => {
   if (!props) {
@@ -41,20 +42,20 @@ export default requiresAdmin(() => {
         <Button
           css={{ marginBottom: '2em' }}
           text="New Article"
-          onClick={() => {
+          onClick={logAsyncErrors(async () => {
             const newArticle: ArticleT = {
               s: `new-article-${Math.round(Math.random() * 10000)}`,
               t: 'New Article',
               c: 'article content',
               f: false,
             };
-            addDoc(getCollection('a'), {
+            await addDoc(getCollection('a'), {
               ...newArticle,
               ua: Timestamp.now(),
             }).then(() => {
               showSnackbar('Article created');
             });
-          }}
+          })}
         />
         <h4>All Articles:</h4>
         <ul>{articles?.map(ArticleListItem)}</ul>

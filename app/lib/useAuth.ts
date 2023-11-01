@@ -12,6 +12,7 @@ import { updateProfile } from 'firebase/auth';
 import { query, where } from 'firebase/firestore';
 import { getAuth, getCollection, getDocRef } from './firebaseWrapper';
 import { getDisplayName } from './hooks';
+import { logAsyncErrors } from './utils';
 
 export function useAuth(): AuthContextValue {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -22,7 +23,7 @@ export function useAuth(): AuthContextValue {
 
   // Is admin
   useEffect(() => {
-    if (user && user.email) {
+    if (user?.email) {
       user
         .getIdTokenResult()
         .then((idTokenResult) => {
@@ -44,7 +45,7 @@ export function useAuth(): AuthContextValue {
 
   // Constructor page + notifications + prefs
   const [cpDocRef, notificationsDocRef, prefsDocRef] = useMemo(() => {
-    if (user && user.email && !user.isAnonymous) {
+    if (user?.email && !user.isAnonymous) {
       setIsLoading(true);
       return [
         query(getCollection('cp'), where('u', '==', user.uid)),
@@ -83,7 +84,7 @@ export function useAuth(): AuthContextValue {
   if (notificationError) {
     console.log(notificationError);
   }
-  const notifications: Array<NotificationT> = useMemo(() => {
+  const notifications: NotificationT[] = useMemo(() => {
     if (notificationsSnapshot === undefined || notificationsSnapshot.empty) {
       return [];
     }
@@ -158,6 +159,7 @@ export function useAuth(): AuthContextValue {
     }
     let didCancel = false;
     async function getUserInfo() {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const res = await (await fetch(`/api/userinfo/${user?.uid}`))
         .json()
         .catch((e) => {
@@ -168,7 +170,7 @@ export function useAuth(): AuthContextValue {
         setIsPatron(parseUserInfo(res).isPatron);
       }
     }
-    getUserInfo();
+    logAsyncErrors(getUserInfo)();
     return () => {
       didCancel = true;
     };

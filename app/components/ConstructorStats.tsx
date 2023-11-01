@@ -8,7 +8,7 @@ import {
 } from '../lib/dbtypes';
 import { Link } from '../components/Link';
 import { getFromSessionOrDB } from '../lib/dbUtils';
-import { slugify, timeString } from '../lib/utils';
+import { logAsyncErrors, slugify, timeString } from '../lib/utils';
 
 const usePuzzleDoc = (
   puzzleId: string | undefined
@@ -23,7 +23,7 @@ const usePuzzleDoc = (
     }
 
     const fetchData = async () => {
-      getFromSessionOrDB({
+      await getFromSessionOrDB({
         collection: 'c',
         docId: puzzleId,
         validator: DBPuzzleV,
@@ -36,7 +36,7 @@ const usePuzzleDoc = (
         setDone(true);
       });
     };
-    fetchData();
+    logAsyncErrors(fetchData)();
     return () => {
       didCancel = true;
     };
@@ -118,7 +118,7 @@ export const ConstructorStats = (props: { userId: string }) => {
   useEffect(() => {
     let didCancel = false;
 
-    const fetchData = async () => {
+    const fetchData = () => {
       getFromSessionOrDB({
         collection: 'cs',
         docId: props.userId,
@@ -137,6 +137,7 @@ export const ConstructorStats = (props: { userId: string }) => {
             return;
           }
           console.log(e);
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           setError(e);
           setLoading(false);
         });

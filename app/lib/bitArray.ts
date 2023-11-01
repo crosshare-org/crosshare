@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-const b64ToI: Array<number> = [];
-const iToB64: Array<string> = [];
+const b64ToI: number[] = [];
+const iToB64: string[] = [];
 const numBase = '0'.charCodeAt(0);
 const lowerCaseBase = 'a'.charCodeAt(0);
 const upperCaseBase = 'A'.charCodeAt(0);
@@ -26,7 +26,7 @@ function popCount(v: number): number {
   return (((v + (v >>> 4)) & 0xf0f0f0f) * 0x1010101) >>> 24;
 }
 
-export type BitArray = Array<number>;
+export type BitArray = number[];
 
 export function zero() {
   return [0];
@@ -40,7 +40,7 @@ export function fromString(input: string, base: 32 | 64): BitArray {
   const bitsPerChar = base === 32 ? 5 : 6;
   const charsPerNum = base === 32 ? 6 : 5;
 
-  const nums: Array<number> = [];
+  const nums: number[] = [];
   let usedInts = 0;
 
   for (let i = 0; i < input.length; ++i) {
@@ -104,17 +104,16 @@ export function bitLength(ba: BitArray): number {
 /** TODO we can make a faster version if we expect bit array to be sparse */
 export function bitCount(ba: BitArray): number {
   let sum = 0;
-  for (let i = 0; i < ba.length; i += 1) {
-    if (ba[i]) {
-      // @ts-expect-error
-      sum += popCount(ba[i]);
+  for (const bit of ba) {
+    if (bit) {
+      sum += popCount(bit);
     }
   }
   return sum;
 }
 
 export function and(ba: BitArray, other: BitArray) {
-  const nums: Array<number> = [];
+  const nums: number[] = [];
   const usedInts = Math.min(ba.length, other.length);
 
   for (let i = 0; i < usedInts; ++i) {
@@ -138,7 +137,7 @@ export function inPlaceAnd(ba: BitArray, other: BitArray) {
   clamp(ba);
 }
 
-export function activeBits(ba: BitArray): Array<number> {
+export function activeBits(ba: BitArray): number[] {
   const ret = [];
   for (let i = ba.length - 1; i >= 0; i--) {
     let num = ba[i];

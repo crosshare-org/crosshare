@@ -38,8 +38,10 @@ export class LruCache<T> {
   public set(key: string, value: T) {
     if (this.values.size >= this.maxEntries) {
       // least-recently used cache eviction strategy
-      const keyToDelete = this.values.keys().next().value;
-      this.values.delete(keyToDelete);
+      const keyToDelete = this.values.keys().next();
+      if (!keyToDelete.done) {
+        this.values.delete(keyToDelete.value);
+      }
     }
     this.values.set(key, value);
     localStorage.setItem(

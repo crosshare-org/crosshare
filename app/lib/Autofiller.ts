@@ -200,11 +200,11 @@ export class Autofiller {
       let secondBestCost: number | null = null;
 
       let skipEntry = false;
-      const failingLetters: Array<string> = [];
+      const failingLetters: string[] = [];
       entry.cells.forEach(() => {
         failingLetters.push('');
       });
-      const succeedingLetters: Array<string> = [];
+      const succeedingLetters: string[] = [];
       entry.cells.forEach(() => {
         succeedingLetters.push('');
       });

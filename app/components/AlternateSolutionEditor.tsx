@@ -38,6 +38,7 @@ import {
 } from '../reducers/reducer';
 import { isSome } from 'fp-ts/lib/Option';
 import { GridView } from './Grid';
+import { logAsyncErrors } from '../lib/utils';
 
 export function AlternateSolutionEditor(props: {
   grid: string[];
@@ -106,13 +107,13 @@ export function AlternateSolutionEditor(props: {
 
   const pasteHandler = useCallback(
     (e: ClipboardEvent) => {
-      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      const tagName = (e.target as HTMLElement).tagName.toLowerCase();
       if (tagName === 'textarea' || tagName === 'input') {
         return;
       }
       const pa: PasteAction = {
         type: 'PASTE',
-        content: e.clipboardData?.getData('Text') || '',
+        content: e.clipboardData?.getData('Text') ?? '',
       };
       dispatch(pa);
       e.preventDefault();
@@ -138,7 +139,7 @@ export function AlternateSolutionEditor(props: {
         <TopBarLink
           icon={<FaSave />}
           text="Add Alternate"
-          onClick={async () => {
+          onClick={logAsyncErrors(async () => {
             const alt: Record<number, string> = {};
             let hadAny = false;
             for (const [idx, cellValue] of state.grid.cells.entries()) {
@@ -155,8 +156,10 @@ export function AlternateSolutionEditor(props: {
               props.cancel();
               return;
             }
-            return props.save(alt).then(() => props.cancel());
-          }}
+            return props.save(alt).then(() => {
+              props.cancel();
+            });
+          })}
         />
         <TopBarLink
           icon={<FaWindowClose />}
@@ -182,19 +185,25 @@ export function AlternateSolutionEditor(props: {
                 <TopBarDropDownLink
                   icon={<FaVolumeUp />}
                   text="Unmute"
-                  onClick={() => setMuted(false)}
+                  onClick={() => {
+                    setMuted(false);
+                  }}
                 />
               ) : (
                 <TopBarDropDownLink
                   icon={<FaVolumeMute />}
                   text="Mute"
-                  onClick={() => setMuted(true)}
+                  onClick={() => {
+                    setMuted(true);
+                  }}
                 />
               )}
               <TopBarDropDownLink
                 icon={<FaKeyboard />}
                 text="Toggle Keyboard"
-                onClick={() => setToggleKeyboard(!toggleKeyboard)}
+                onClick={() => {
+                  setToggleKeyboard(!toggleKeyboard);
+                }}
               />
             </>
           )}

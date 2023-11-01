@@ -113,7 +113,7 @@ export function gridWithEntryDecided(
       return null;
     }
 
-    if (crossWord.indexOf(' ') === -1) {
+    if (!crossWord.includes(' ')) {
       newGrid.usedWords.add(crossWord);
     } else {
       crossWord = null;
@@ -154,7 +154,12 @@ export function stableSubsets(
       return;
     }
     if (prelimSubset !== null && !prelimSubset.has(entry.index)) {
-      throw new Error('Bad assignment ' + entry.index + ':' + prelimSubset);
+      throw new Error(
+        'Bad assignment ' +
+          entry.index +
+          ':' +
+          Array.from(prelimSubset.values()).join(',')
+      );
     }
     assignments.set(entry.index, num);
     getCrosses(grid, entry).forEach((c) => {

@@ -22,6 +22,7 @@ import { useRouter } from 'next/router';
 import { PatronIcon } from './Icons';
 import { serverTimestamp, setDoc } from 'firebase/firestore';
 import type { Root } from 'hast';
+import { logAsyncErrors } from '../lib/utils';
 
 const BANNED_USERNAMES = {
   api: 1,
@@ -146,7 +147,7 @@ export const CreatePageForm = (props: { className?: string }) => {
 
   return (
     <div className={props.className}>
-      <form onSubmit={createPage}>
+      <form onSubmit={logAsyncErrors(createPage)}>
         <label css={{ width: '100%', margin: 0 }}>
           <p>
             Create a constructor blog to keep all of your public puzzles on one
@@ -195,11 +196,11 @@ export interface ConstructorPageProps {
   bioHast: Root;
   isPatron: boolean;
   followCount: number;
-  followers: Array<ConstructorPageBase & { isPatron: boolean }>;
-  following: Array<ConstructorPageBase & { isPatron: boolean }>;
+  followers: (ConstructorPageBase & { isPatron: boolean })[];
+  following: (ConstructorPageBase & { isPatron: boolean })[];
   profilePicture: string | null;
   coverPicture: string | null;
-  puzzles: Array<LinkablePuzzle>;
+  puzzles: LinkablePuzzle[];
   nextPage: number | null;
   currentPage: number;
   prevPage: number | null;
@@ -209,7 +210,7 @@ const FollowersList = ({
   pages,
   close,
 }: {
-  pages: Array<ConstructorPageBase & { isPatron: boolean }>;
+  pages: (ConstructorPageBase & { isPatron: boolean })[];
   close: () => void;
 }) => {
   return (
@@ -239,9 +240,9 @@ const FollowersListItem = ({
 }) => {
   const router = useRouter();
 
-  const click = useCallback(() => {
+  const click = useCallback(async () => {
     close();
-    router.push(`/${page.i}`);
+    await router.push(`/${page.i}`);
   }, [page.i, router, close]);
 
   return (
@@ -249,8 +250,8 @@ const FollowersListItem = ({
       <div
         tabIndex={0}
         role="button"
-        onClick={click}
-        onKeyPress={click}
+        onClick={logAsyncErrors(click)}
+        onKeyPress={logAsyncErrors(click)}
         css={{
           padding: '1.5em 1em',
           display: 'flex',
@@ -412,7 +413,11 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                 <Link href={'/' + username}>@{username}</Link>
               </h2>
               {showOverlay ? (
-                <Overlay closeCallback={() => setShowOverlay(false)}>
+                <Overlay
+                  closeCallback={() => {
+                    setShowOverlay(false);
+                  }}
+                >
                   <div css={{ textAlign: 'center' }}>
                     {overlayIsFollowing ? (
                       <>
@@ -421,7 +426,9 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                         </h2>
                         <FollowersList
                           pages={props.following}
-                          close={() => setShowOverlay(false)}
+                          close={() => {
+                            setShowOverlay(false);
+                          }}
                         />
                       </>
                     ) : (
@@ -444,7 +451,9 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                         </h3>
                         <FollowersList
                           pages={props.followers}
-                          close={() => setShowOverlay(false)}
+                          close={() => {
+                            setShowOverlay(false);
+                          }}
                         />
                       </>
                     )}

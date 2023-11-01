@@ -150,7 +150,7 @@ export interface Comment {
   /** comment publish timestamp in millis since epoch*/
   publishTime: number;
   id: string;
-  replies?: Array<Comment>;
+  replies?: Comment[];
   authorIsPatron: boolean;
 }
 
@@ -165,28 +165,28 @@ export interface PuzzleT {
     rows: number;
     cols: number;
   };
-  clues: Array<ClueT>;
-  grid: Array<string>;
-  vBars: Array<number>;
-  hBars: Array<number>;
-  hidden: Array<number>;
-  highlighted: Array<number>;
+  clues: ClueT[];
+  grid: string[];
+  vBars: number[];
+  hBars: number[];
+  hidden: number[];
+  highlighted: number[];
   highlight: 'circle' | 'shade';
-  comments: Array<CommentWithRepliesT>;
+  comments: CommentWithRepliesT[];
   commentsDisabled: boolean;
   constructorNotes: string | null;
   blogPost: string | null;
   isPrivate: boolean | number;
   isPrivateUntil: number | null;
-  contestAnswers: Array<string> | null;
+  contestAnswers: string[] | null;
   contestHasPrize: boolean;
-  contestSubmissions: Array<{ n: string; t: number; s: string }> | null;
+  contestSubmissions: { n: string; t: number; s: string }[] | null;
   contestRevealDelay: number | null;
   rating: GlickoScoreT | null;
-  alternateSolutions: Array<Array<[number, string]>>;
+  alternateSolutions: [number, string][][];
   dailyMiniDate?: string;
-  userTags?: Array<string>;
-  autoTags?: Array<string>;
+  userTags?: string[];
+  autoTags?: string[];
 }
 
 export interface PuzzleResult extends PuzzleT {
@@ -201,10 +201,10 @@ export interface ServerPuzzleResult
   constructorNotes: Root | null;
   constructorPage: ConstructorPageWithMarkdown | null;
   constructorIsPatron: boolean;
-  clueHasts: Array<Root>;
+  clueHasts: Root[];
 }
 export interface PuzzleResultWithAugmentedComments extends ServerPuzzleResult {
-  comments: Array<Comment>;
+  comments: Comment[];
 }
 
 export function dbCluesToClueTArray(
@@ -212,9 +212,9 @@ export function dbCluesToClueTArray(
   an: number[],
   dc: string[],
   dn: number[],
-  cx?: { [x: number]: string }
-): Array<ClueT> {
-  const clues: Array<ClueT> = [];
+  cx?: Record<number, string>
+): ClueT[] {
+  const clues: ClueT[] = [];
   for (const [i, clue] of ac.entries()) {
     const explanation = cx?.[i] || null;
     const num = an[i];
@@ -401,7 +401,7 @@ export function fromKeyboardEvent(event: {
   target?: EventTarget | null;
 }): Option<Key> {
   if (event.target) {
-    const tagName = (event.target as HTMLElement)?.tagName?.toLowerCase();
+    const tagName = (event.target as HTMLElement).tagName.toLowerCase();
     if (tagName === 'textarea' || tagName === 'input') {
       return none;
     }

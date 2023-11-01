@@ -38,7 +38,7 @@ export default function UploadPage() {
   const loginButton = renderLoginButtonIfNeeded(ctx);
 
   function handleFile(f: FileList | null) {
-    if (!f || !f[0]) {
+    if (!f?.[0]) {
       setError('No file selected');
       return;
     }
@@ -135,7 +135,9 @@ export default function UploadPage() {
                 css={{ overflow: 'hidden', maxWidth: '70vw' }}
                 type="file"
                 accept=".puz"
-                onChange={(e) => handleFile(e.target.files)}
+                onChange={(e) => {
+                  handleFile(e.target.files);
+                }}
               />
             </label>
           </>

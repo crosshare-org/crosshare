@@ -35,7 +35,7 @@ export const entryReferencer: Plugin<[EntryReferencerOptions]> = (options) => {
       ) {
         return [node];
       }
-      const refs: Array<ReferenceData> = [];
+      const refs: ReferenceData[] = [];
       const value = node.value;
       let match;
       while ((match = regex.exec(value)) !== null) {
@@ -57,7 +57,7 @@ export const entryReferencer: Plugin<[EntryReferencerOptions]> = (options) => {
         });
         const last = refs[refs.length - 1];
         if (last && match[0]) {
-          last['end'] = match.index + match[0].length;
+          last.end = match.index + match[0].length;
         }
       }
       if (!refs.length) {

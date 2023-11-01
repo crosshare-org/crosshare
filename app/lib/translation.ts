@@ -7,10 +7,13 @@ export function withTranslation(gssp: GetServerSideProps): GetServerSideProps {
     if (!locale) {
       return ssp;
     }
-    const translation = (await import(`../locales/${ctx.locale}/messages`))
-      .messages;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const translation =
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      (await import(`../locales/${ctx.locale}/messages`)).messages;
     if ('props' in ssp) {
-      return { ...ssp, props: { ...ssp.props, translation } };
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      return { ...ssp, props: { ...(await ssp.props), translation } };
     }
     return ssp;
   };
@@ -24,9 +27,12 @@ export function withStaticTranslation(gsp: GetStaticProps): GetStaticProps {
     if (!locale) {
       return ssp;
     }
-    const translation = (await import(`../locales/${ctx.locale}/messages`))
-      .messages;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const translation =
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      (await import(`../locales/${ctx.locale}/messages`)).messages;
     if ('props' in ssp) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       return { ...ssp, props: { ...ssp.props, translation } };
     }
     return ssp;

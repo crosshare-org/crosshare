@@ -1,14 +1,11 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function inlineOnly(this: any) {
+import { Plugin, Processor } from 'unified';
+
+export const inlineOnly: Plugin = function (this: Processor) {
   const data = this.data();
 
-  // https://github.com/micromark/micromark/blob/main/packages/micromark/dev/lib/constructs.js#L5
-  add('micromarkExtensions', { disable: { null: ['list'] } });
+  const micromarkExtensions =
+    data.micromarkExtensions ?? (data.micromarkExtensions = []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function add(field: string, value: any) {
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    const list = data[field] ? data[field] : (data[field] = []);
-    list.push(value);
-  }
-}
+  // https://github.com/micromark/micromark/blob/main/packages/micromark/dev/lib/constructs.js#L5
+  micromarkExtensions.push({ disable: { null: ['list'] } });
+};

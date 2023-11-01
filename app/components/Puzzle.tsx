@@ -99,7 +99,12 @@ import {
   useDarkModeControl,
   useIsExistingDarkMode,
 } from '../lib/hooks';
-import { isMetaSolution, slugify, timeString } from '../lib/utils';
+import {
+  isMetaSolution,
+  logAsyncErrors,
+  slugify,
+  timeString,
+} from '../lib/utils';
 import { getDocRef, signInAnonymously } from '../lib/firebaseWrapper';
 import type { User } from 'firebase/auth';
 import { Emoji } from './Emoji';
@@ -116,8 +121,6 @@ import { isNewPuzzleNotification } from '../lib/notificationTypes';
 import { PuzzlePageResultProps } from '../lib/serverOnly';
 import { EmbedContext } from './EmbedContext';
 import dynamic from 'next/dynamic';
-import type { ModeratingOverlay as ModeratingOverlayType } from './ModerateOverlay';
-import type { EmbedOverlay as EmbedOverlayType } from './EmbedOverlay';
 import {
   OverlayType,
   PuzzleOverlay,
@@ -134,14 +137,14 @@ import { AuthContext } from './AuthContext';
 import { type Root } from 'hast';
 
 const ModeratingOverlay = dynamic(
-  () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
+  () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay),
   { ssr: false }
-) as typeof ModeratingOverlayType;
+);
 
 const EmbedOverlay = dynamic(
-  () => import('./EmbedOverlay').then((mod) => mod.EmbedOverlay as any), // eslint-disable-line @typescript-eslint/no-explicit-any
+  () => import('./EmbedOverlay').then((mod) => mod.EmbedOverlay),
   { ssr: false }
-) as typeof EmbedOverlayType;
+);
 
 export interface NextPuzzleLink {
   puzzleId: string;
@@ -155,7 +158,11 @@ const KeepTryingOverlay = ({
   dispatch: Dispatch<PuzzleAction>;
 }) => {
   return (
-    <Overlay closeCallback={() => dispatch({ type: 'DISMISSKEEPTRYING' })}>
+    <Overlay
+      closeCallback={() => {
+        dispatch({ type: 'DISMISSKEEPTRYING' });
+      }}
+    >
       <h4>
         <Emoji symbol="🤔" /> <Trans>Almost there!</Trans>
       </h4>
@@ -166,7 +173,9 @@ const KeepTryingOverlay = ({
       </p>
       <Button
         css={{ width: '100%' }}
-        onClick={() => dispatch({ type: 'DISMISSKEEPTRYING' })}
+        onClick={() => {
+          dispatch({ type: 'DISMISSKEEPTRYING' });
+        }}
         text={t`Keep Trying`}
       />
     </Overlay>
@@ -275,7 +284,7 @@ export const Puzzle = ({
       verifiedCells: new Set<number>(play ? play.vc : []),
       wrongCells: new Set<number>(play ? play.wc : []),
       revealedCells: new Set<number>(play ? play.rc : []),
-      downsOnly: play?.do || false,
+      downsOnly: play?.do ?? false,
       isEnteringRebus: false,
       rebusValue: '',
       success: play ? play.f : false,
@@ -331,14 +340,16 @@ export const Puzzle = ({
         continue;
       }
       if (notification.p === puzzle.id) {
-        updateDoc(getDocRef('n', notification.id), { r: true });
+        logAsyncErrors(async () =>
+          updateDoc(getDocRef('n', notification.id), { r: true })
+        );
         return;
       }
     }
   }, [authContext.notifications, puzzle.id]);
 
   useEffect(() => {
-    if (loadingPlayState === false) {
+    if (!loadingPlayState) {
       const action: LoadPlayAction = {
         type: 'LOADPLAY',
         play: play,
@@ -357,7 +368,9 @@ export const Puzzle = ({
       }
     }
     const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
+    return () => {
+      clearInterval(id);
+    };
   }, [state.currentTimeWindowStart, dispatch]);
 
   // Pause when page goes out of focus
@@ -390,27 +403,31 @@ export const Puzzle = ({
   const [audioContext, initAudioContext] = useContext(CrosshareAudioContext);
   const playSuccess = useRef<(() => void) | null>(null);
   useEffect(() => {
-    if (!audioContext) {
-      return initAudioContext();
-    }
-    if (!playSuccess.current && !muted) {
-      fetch('/success.mp3')
-        .then((response) => response.arrayBuffer())
-        .then((buffer) => {
-          audioContext.decodeAudioData(buffer, (audioBuffer) => {
-            playSuccess.current = () => {
-              const source = audioContext.createBufferSource();
-              source.buffer = audioBuffer;
-              source.connect(audioContext.destination);
-              source.start();
-            };
+    async function initAudio() {
+      if (!audioContext) {
+        initAudioContext();
+        return;
+      }
+      if (!playSuccess.current && !muted) {
+        await fetch('/success.mp3')
+          .then((response) => response.arrayBuffer())
+          .then(async (buffer) => {
+            await audioContext.decodeAudioData(buffer, (audioBuffer) => {
+              playSuccess.current = () => {
+                const source = audioContext.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(audioContext.destination);
+                source.start();
+              };
+            });
           });
-        });
+      }
     }
+    logAsyncErrors(initAudio)();
   }, [muted, audioContext, initAudioContext]);
 
   const writePlayToDBIfNeeded = useCallback(
-    async (user?: User) => {
+    (user?: User) => {
       console.log('doing write play');
       if (!state.loadedPlayState) {
         return;
@@ -426,7 +443,7 @@ export const Puzzle = ({
           return;
         }
       }
-      const u = user || props.user;
+      const u = user ?? props.user;
       if (!u) {
         return;
       }
@@ -488,7 +505,7 @@ export const Puzzle = ({
         }),
         ...(state.contestSubmission && {
           ct_sub: state.contestSubmission,
-          ct_pr_subs: state.contestPriorSubmissions || [],
+          ct_pr_subs: state.contestPriorSubmissions ?? [],
           ct_t:
             state.contestSubmitTime !== undefined
               ? Timestamp.fromMillis(state.contestSubmitTime)
@@ -548,7 +565,8 @@ export const Puzzle = ({
 
   useEffect(() => {
     if (
-      (state.contestSubmission || state.contestRevealed) &&
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      (state.contestSubmission ?? state.contestRevealed) &&
       !state.ranMetaSubmitEffects
     ) {
       const action: RanMetaSubmitEffectsAction = { type: 'RANMETASUBMIT' };
@@ -557,10 +575,14 @@ export const Puzzle = ({
         cachePlayForUser(props.user);
         writePlayToDBIfNeeded(props.user);
       } else {
-        signInAnonymously().then((u) => {
-          cachePlayForUser(u);
-          writePlayToDBIfNeeded(u);
-        });
+        signInAnonymously()
+          .then((u) => {
+            cachePlayForUser(u);
+            writePlayToDBIfNeeded(u);
+          })
+          .catch((e) => {
+            console.error('error signing in anonymously', e);
+          });
       }
     }
   }, [
@@ -581,10 +603,14 @@ export const Puzzle = ({
         cachePlayForUser(props.user);
         writePlayToDBIfNeeded(props.user);
       } else {
-        signInAnonymously().then((u) => {
-          cachePlayForUser(u);
-          writePlayToDBIfNeeded(u);
-        });
+        signInAnonymously()
+          .then((u) => {
+            cachePlayForUser(u);
+            writePlayToDBIfNeeded(u);
+          })
+          .catch((e) => {
+            console.error('error signing in anonymously', e);
+          });
       }
 
       let delay = 0;
@@ -642,14 +668,14 @@ export const Puzzle = ({
 
   const pasteHandler = useCallback(
     (e: ClipboardEvent) => {
-      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      const tagName = (e.target as HTMLElement).tagName.toLowerCase();
       if (tagName === 'textarea' || tagName === 'input') {
         return;
       }
 
       const pa: PasteAction = {
         type: 'PASTE',
-        content: e.clipboardData?.getData('Text') || '',
+        content: e.clipboardData?.getData('Text') ?? '',
       };
       dispatch(pa);
       e.preventDefault();
@@ -706,7 +732,7 @@ export const Puzzle = ({
   const scrollToCross = useMatchMedia(SMALL_AND_UP_RULES);
 
   const overlayBaseProps: PuzzleOverlayBaseProps = {
-    publishTime: puzzle.isPrivateUntil || puzzle.publishTime,
+    publishTime: puzzle.isPrivateUntil ?? puzzle.publishTime,
     coverImage: props.coverImage,
     profilePicture: props.profilePicture,
     downsOnly: state.downsOnly,
@@ -723,9 +749,9 @@ export const Puzzle = ({
   let puzzleView: ReactNode;
 
   const entryIdx = entryIndexAtPosition(state.grid, state.active);
-  let refed: Set<number> = new Set();
+  let refed = new Set<number>();
   if (entryIdx !== null) {
-    refed = refs[entryIdx] || new Set();
+    refed = refs[entryIdx] ?? new Set();
   }
 
   const shouldConceal =
@@ -985,26 +1011,34 @@ export const Puzzle = ({
                 <TopBarDropDownLink
                   icon={<FaVolumeUp />}
                   text={t`Unmute`}
-                  onClick={() => setMuted(false)}
+                  onClick={() => {
+                    setMuted(false);
+                  }}
                 />
               ) : (
                 <TopBarDropDownLink
                   icon={<FaVolumeMute />}
                   text={t`Mute`}
-                  onClick={() => setMuted(true)}
+                  onClick={() => {
+                    setMuted(true);
+                  }}
                 />
               )}
               <TopBarDropDownLink
                 icon={<FaKeyboard />}
                 text={t`Toggle Keyboard`}
-                onClick={() => setToggleKeyboard(!toggleKeyboard)}
+                onClick={() => {
+                  setToggleKeyboard(!toggleKeyboard);
+                }}
               />
               {props.isAdmin ? (
                 <>
                   <TopBarDropDownLink
                     icon={<FaGlasses />}
                     text="Moderate"
-                    onClick={() => dispatch({ type: 'TOGGLEMODERATING' })}
+                    onClick={() => {
+                      dispatch({ type: 'TOGGLEMODERATING' });
+                    }}
                   />
                   <TopBarDropDownLinkA
                     href="/admin"
@@ -1031,7 +1065,9 @@ export const Puzzle = ({
                     <TopBarDropDownLink
                       icon={<ImEmbed />}
                       text={t`Embed`}
-                      onClick={() => dispatch({ type: 'TOGGLEEMBEDOVERLAY' })}
+                      onClick={() => {
+                        dispatch({ type: 'TOGGLEEMBEDOVERLAY' });
+                      }}
                     />
                   ) : (
                     ''
@@ -1058,7 +1094,9 @@ export const Puzzle = ({
                 <TopBarDropDownLink
                   icon={<FaMoon />}
                   text={t`Toggle Light/Dark Mode`}
-                  onClick={() => toggleColorPref()}
+                  onClick={() => {
+                    toggleColorPref();
+                  }}
                 />
               ) : null}
               <TopBarDropDownLinkA
@@ -1094,6 +1132,7 @@ export const Puzzle = ({
     ? puzzle.blogPostRaw.slice(0, 160) + '...'
     : puzzle.clues.map(getClueText).slice(0, 10).join('; ');
 
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const locale = router.locale || 'en';
 
   return (
@@ -1179,7 +1218,9 @@ export const Puzzle = ({
                             : t`Comments / Leaderboard`
                           : t`Show Comments`
                       }
-                      onClick={() => dispatch({ type: 'UNDISMISSSUCCESS' })}
+                      onClick={() => {
+                        dispatch({ type: 'UNDISMISSSUCCESS' });
+                      }}
                     />
                     {moreMenu}
                   </>

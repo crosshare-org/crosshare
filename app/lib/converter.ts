@@ -21,7 +21,7 @@ function magicIndex(bytes: Uint8Array) {
 
 class PuzReader {
   public ix: number;
-  public highlighted: Array<number>;
+  public highlighted: number[];
   public rebusMap: Uint8Array | null;
   public rebusKey: Record<number, string>;
   private encoding = 'ISO-8859-1';
@@ -122,8 +122,8 @@ class PuzReader {
     if (scrambled & 0x0004) {
       throw new Error('Cannot import scrambled .puz files');
     }
-    const grid: Array<string> = [];
-    const hidden: Array<number> = [];
+    const grid: string[] = [];
+    const hidden: number[] = [];
     for (let i = 0; i < w * h; i++) {
       const gridCell = this.buf[0x34 + i];
       if (gridCell === undefined) {
@@ -142,11 +142,11 @@ class PuzReader {
     const title = this.readString();
     this.readString(); // author
     const copyright = this.readString();
-    if (copyright.indexOf('New York Times') !== -1) {
+    if (copyright.includes('New York Times')) {
       throw new Error('Cannot import copyrighted puzzles');
     }
 
-    const clues: Array<ClueT> = [];
+    const clues: ClueT[] = [];
     let label = 1;
     for (let i = 0; i < w * h; i++) {
       if (grid[i] == '.') continue;
@@ -233,31 +233,31 @@ export interface ExportProps {
   /** grid height / rows */
   h: number;
   /** across clue strings */
-  ac: Array<string>;
+  ac: string[];
   /** across clue display numbers */
-  an: Array<number>;
+  an: number[];
   /** down clue strings */
-  dc: Array<string>;
+  dc: string[];
   /** down clue display numbers */
-  dn: Array<number>;
+  dn: number[];
   /** grid (solution) */
-  g: Array<string>;
+  g: string[];
   /** author's display name */
   n: string;
   /** title */
   t: string;
   /** highlighted cell indexes */
-  hs?: Array<number>;
+  hs?: number[];
   /** constructor notes */
   cn?: string;
   /** guest constructor */
   gc?: string;
   /** hidden cells */
-  hdn?: Array<number>;
+  hdn?: number[];
 }
 
 class PuzWriter {
-  public buf: Array<number>;
+  public buf: number[];
   public questionCP: number;
   public blackCP: number;
   public dashCP: number;
@@ -353,7 +353,7 @@ class PuzWriter {
     this.writeString(puzzle.t);
     this.writeString(author);
     this.writeString(`Copyright ${author}, all rights reserved`);
-    const clues: Array<[number, string]> = [];
+    const clues: [number, string][] = [];
     for (const [i, clue] of puzzle.ac.entries()) {
       const clueNumber = puzzle.an[i];
       if (clueNumber === undefined) {
@@ -444,7 +444,7 @@ class PuzWriter {
     this.setMaskedChecksum(3, 0x45, 0x44, c_part);
   }
 
-  addExtension(name: string, data: Array<number>) {
+  addExtension(name: string, data: number[]) {
     this.writeString(name, false);
     this.writeShort(data.length);
     const checksumLoc = this.buf.length;
@@ -458,23 +458,23 @@ class PuzWriter {
     this.setShort(checksumLoc, cksum);
   }
 
-  addGext(highlighted: Array<number>, size: number) {
-    const data: Array<number> = [];
+  addGext(highlighted: number[], size: number) {
+    const data: number[] = [];
     for (let i = 0; i < size; i++) {
       data.push(highlighted.includes(i) ? 0x80 : 0);
     }
     this.addExtension('GEXT', data);
   }
 
-  addGrbs(grid: Array<string>, rtbl: Array<string>) {
-    const data: Array<number> = [];
+  addGrbs(grid: string[], rtbl: string[]) {
+    const data: number[] = [];
     for (const cell of grid) {
       data.push(rtbl.indexOf(cell) + 1);
     }
     this.addExtension('GRBS', data);
   }
 
-  addRtbl(rtbl: Array<string>) {
+  addRtbl(rtbl: string[]) {
     let data = '';
     for (let i = 0; i < rtbl.length; i += 1) {
       const iStr = i.toString();
@@ -505,7 +505,7 @@ class PuzWriter {
       puzzle.dc.length + puzzle.ac.length
     );
 
-    const rebi: Set<string> = new Set();
+    const rebi = new Set<string>();
     for (const s of puzzle.g) {
       if (s.length > 1) {
         rebi.add(s);

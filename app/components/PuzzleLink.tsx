@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, ReactNode } from 'react';
-import { slugify } from '../lib/utils';
+import { logAsyncErrors, slugify } from '../lib/utils';
 
 import { Link } from './Link';
 import { AuthContext } from './AuthContext';
@@ -51,7 +51,7 @@ const PuzzleLink = (props: {
       }
       setPlay(p);
     }
-    fetchData();
+    logAsyncErrors(fetchData)();
     return () => {
       ignore = true;
     };
@@ -345,7 +345,7 @@ export const PuzzleResultLink = ({
     <AuthorLink
       authorName={puzzle.authorName}
       guestConstructor={puzzle.guestConstructor}
-      constructorPage={constructorPage || null}
+      constructorPage={constructorPage ?? null}
       isPatron={constructorIsPatron}
     />
   );
@@ -428,9 +428,9 @@ export const PuzzleResultLink = ({
         puzzleTitle={puzzle.title}
         width={puzzle.size.cols}
         height={puzzle.size.rows}
-        title={title || puzzle.title}
+        title={title ?? puzzle.title}
         subTitle={title ? puzzle.title : undefined}
-        tags={(puzzle.userTags || []).concat(puzzle.autoTags || [])}
+        tags={(puzzle.userTags ?? []).concat(puzzle.autoTags ?? [])}
         filterTags={props.filterTags}
         noTargetBlank={noTargetBlank}
         fromEmbedPage={fromEmbedPage}

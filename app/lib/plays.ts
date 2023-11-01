@@ -103,6 +103,7 @@ export async function getPlayFromDB(
   if (isRight(playResult)) {
     const play = {
       ...playResult.right,
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       n: playResult.right.n || 'Title unknown',
     };
     cachePlay(user, puzzleId, play, true);

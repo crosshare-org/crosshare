@@ -11,6 +11,7 @@ import { useCallback, useState, useContext } from 'react';
 import type { User } from 'firebase/auth';
 import { t } from '@lingui/macro';
 import { arrayRemove, arrayUnion, setDoc } from 'firebase/firestore';
+import { logAsyncErrors } from '../lib/utils';
 
 export const FollowButton = ({
   page,
@@ -54,7 +55,11 @@ export const FollowButton = ({
     return (
       <>
         {showOverlay ? (
-          <Overlay closeCallback={() => setShowOverlay(false)}>
+          <Overlay
+            closeCallback={() => {
+              setShowOverlay(false);
+            }}
+          >
             <div css={{ textAlign: 'center' }}>
               <h2>
                 Follow {page.n} to get notified when they post a new puzzle
@@ -111,9 +116,9 @@ export const FollowButton = ({
       <>
         <Button
           css={css}
-          onClick={(e) => {
+          onClick={logAsyncErrors(async (e) => {
             e.stopPropagation();
-            return Promise.all([
+            await Promise.all([
               setDoc(
                 getDocRef('prefs', user.uid),
                 { following: arrayRemove(page.u) },
@@ -127,7 +132,7 @@ export const FollowButton = ({
             ]).then(() => {
               showSnackbar(t`No longer following ${constructorName}`);
             });
-          }}
+          })}
           text={t`Following`}
           hoverText={t`Unfollow`}
           hoverCSS={{ backgroundColor: 'var(--error)' }}
@@ -142,7 +147,7 @@ export const FollowButton = ({
       hollow
       onClick={(e) => {
         e.stopPropagation();
-        doFollow(user);
+        logAsyncErrors(doFollow)(user);
       }}
       text={t`Follow`}
       {...props}

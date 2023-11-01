@@ -61,8 +61,8 @@ interface PuzzleState extends GridInterfaceState {
   type: 'puzzle';
   grid: CluedGrid;
   prefs?: AccountPrefsFlagsT;
-  answers: Array<string>;
-  alternateSolutions: Array<Array<[number, string]>>;
+  answers: string[];
+  alternateSolutions: [number, string][][];
   verifiedCells: Set<number>;
   revealedCells: Set<number>;
   wrongCells: Set<number>;
@@ -77,15 +77,15 @@ interface PuzzleState extends GridInterfaceState {
   showingEmbedOverlay: boolean;
   didCheat: boolean;
   clueView: boolean;
-  cellsUpdatedAt: Array<number>;
-  cellsIterationCount: Array<number>;
+  cellsUpdatedAt: number[];
+  cellsIterationCount: number[];
   cellsEverMarkedWrong: Set<number>;
   displaySeconds: number;
   bankedSeconds: number;
   currentTimeWindowStart: number;
   loadedPlayState: boolean;
   contestSubmission?: string;
-  contestPriorSubmissions?: Array<string>;
+  contestPriorSubmissions?: string[];
   contestRevealed?: boolean;
   contestSubmitTime?: number;
   contestDisplayName?: string;
@@ -110,22 +110,22 @@ export interface BuilderState extends GridInterfaceState {
   gridIsComplete: boolean;
   repeats: Set<string>;
   hasNoShortWords: boolean;
-  clues: Record<string, Array<string>>;
+  clues: Record<string, string[]>;
   symmetry: Symmetry;
-  publishErrors: Array<string>;
-  publishWarnings: Array<string>;
+  publishErrors: string[];
+  publishWarnings: string[];
   toPublish: DBPuzzleT | null;
   authorId: string;
   authorName: string;
   isPrivate: boolean;
   isPrivateUntil: Timestamp | null;
   isContestPuzzle: boolean;
-  contestAnswers: Array<string> | null;
+  contestAnswers: string[] | null;
   contestHasPrize: boolean;
   contestRevealDelay: number | null;
   showDownloadLink: boolean;
-  alternates: Array<Record<number, string>>;
-  userTags: Array<string>;
+  alternates: Record<number, string>[];
+  userTags: string[];
 }
 function isBuilderState(state: GridInterfaceState): state is BuilderState {
   return state.type === 'builder';
@@ -136,32 +136,34 @@ function initialBuilderStateFromSaved(
   state: BuilderState
 ) {
   return initialBuilderState({
-    id: saved?.id || null,
-    width: saved?.width || state.grid.width,
-    height: saved?.height || state.grid.height,
-    grid: saved?.grid || state.grid.cells,
-    vBars: saved?.vBars || Array.from(state.grid.vBars.values()),
-    hBars: saved?.hBars || Array.from(state.grid.hBars.values()),
+    id: saved?.id ?? null,
+    width: saved?.width ?? state.grid.width,
+    height: saved?.height ?? state.grid.height,
+    grid: saved?.grid ?? state.grid.cells,
+    vBars: saved?.vBars ?? Array.from(state.grid.vBars.values()),
+    hBars: saved?.hBars ?? Array.from(state.grid.hBars.values()),
     highlighted:
-      saved?.highlighted || Array.from(state.grid.highlighted.values()),
-    highlight: saved?.highlight || state.grid.highlight,
-    hidden: saved?.hidden || Array.from(state.grid.hidden),
+      saved?.highlighted ?? Array.from(state.grid.highlighted.values()),
+    highlight: saved?.highlight ?? state.grid.highlight,
+    hidden: saved?.hidden ?? Array.from(state.grid.hidden),
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     title: saved?.title || state.title,
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     notes: saved?.notes || state.notes,
-    clues: saved?.clues || {},
+    clues: saved?.clues ?? {},
     authorId: state.authorId,
     authorName: state.authorName,
     editable: true,
-    isPrivate: saved?.isPrivate || false,
-    isPrivateUntil: saved?.isPrivateUntil || null,
-    blogPost: saved?.blogPost || null,
-    guestConstructor: saved?.guestConstructor || null,
+    isPrivate: saved?.isPrivate ?? false,
+    isPrivateUntil: saved?.isPrivateUntil ?? null,
+    blogPost: saved?.blogPost ?? null,
+    guestConstructor: saved?.guestConstructor ?? null,
     commentsDisabled: saved?.commentsDisabled,
-    contestAnswers: saved?.contestAnswers || null,
-    contestHasPrize: saved?.contestHasPrize || false,
-    contestRevealDelay: saved?.contestRevealDelay || null,
-    alternates: saved?.alternates || null,
-    userTags: saved?.userTags || [],
+    contestAnswers: saved?.contestAnswers ?? null,
+    contestHasPrize: saved?.contestHasPrize ?? false,
+    contestRevealDelay: saved?.contestRevealDelay ?? null,
+    alternates: saved?.alternates ?? null,
+    userTags: saved?.userTags ?? [],
     symmetry: saved?.symmetry,
   });
 }
@@ -197,28 +199,28 @@ export function initialBuilderState({
   id: string | null;
   width: number;
   height: number;
-  grid: Array<string>;
-  vBars: Array<number>;
-  hBars: Array<number>;
-  hidden: Array<number>;
-  highlighted: Array<number>;
+  grid: string[];
+  vBars: number[];
+  hBars: number[];
+  hidden: number[];
+  highlighted: number[];
   highlight: 'circle' | 'shade';
   blogPost: string | null;
   guestConstructor: string | null;
   commentsDisabled?: boolean;
   title: string | null;
   notes: string | null;
-  clues: Record<string, string> | Record<string, Array<string>>;
+  clues: Record<string, string> | Record<string, string[]>;
   authorId: string;
   authorName: string;
   editable: boolean;
   isPrivate: boolean;
   isPrivateUntil: number | null;
-  contestAnswers: Array<string> | null;
+  contestAnswers: string[] | null;
   contestHasPrize: boolean;
   contestRevealDelay: number | null;
-  alternates: Array<Record<number, string>> | null;
-  userTags: Array<string>;
+  alternates: Record<number, string>[] | null;
+  userTags: string[];
   symmetry?: Symmetry;
 }) {
   const initialGrid = fromCells({
@@ -234,6 +236,7 @@ export function initialBuilderState({
     hidden: new Set(hidden),
   });
   return validateGrid({
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     id: id || getDocId('c'),
     type: 'builder',
     title,
@@ -254,11 +257,7 @@ export function initialBuilderState({
       return !this.alternates.length && editable;
     },
     symmetry:
-      symmetry !== undefined
-        ? symmetry
-        : width * height < 49
-        ? Symmetry.None
-        : Symmetry.Rotational,
+      symmetry ?? (width * height < 49 ? Symmetry.None : Symmetry.Rotational),
     clues: Object.fromEntries(
       Object.entries(clues).map(([word, val]) =>
         typeof val === 'string' ? [word, [val]] : [word, val]
@@ -278,7 +277,7 @@ export function initialBuilderState({
     contestRevealDelay,
     showDownloadLink: false,
     downsOnly: false,
-    alternates: alternates || [],
+    alternates: alternates ?? [],
     userTags,
   });
 }
@@ -599,7 +598,7 @@ function isLoadPlayAction(action: PuzzleAction): action is LoadPlayAction {
 function cheatCells(
   elapsed: number,
   state: PuzzleState,
-  cellsToCheck: Array<Position>,
+  cellsToCheck: Position[],
   isReveal: boolean
 ) {
   const revealedCells = new Set(state.revealedCells);
@@ -646,7 +645,7 @@ export function cheat(
   isReveal: boolean
 ) {
   const elapsed = getCurrentTime(state);
-  let cellsToCheck: Array<Position> = [];
+  let cellsToCheck: Position[] = [];
   if (cheatUnit === CheatUnit.Square) {
     cellsToCheck = [state.active];
   } else if (cheatUnit === CheatUnit.Entry) {
@@ -656,7 +655,8 @@ export function cheat(
       return state;
     }
     cellsToCheck = entry.cells;
-  } else if (cheatUnit === CheatUnit.Puzzle) {
+  } else {
+    // Puzzle
     for (let rowidx = 0; rowidx < state.grid.height; rowidx += 1) {
       for (let colidx = 0; colidx < state.grid.width; colidx += 1) {
         cellsToCheck.push({ row: rowidx, col: colidx });
@@ -814,12 +814,6 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
   }
   if (isKeypressAction(action)) {
     const key = action.key;
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    if (!key) {
-      // This seems dumb to check for but at least once we've had key == undefined here
-      // https://sentry.io/organizations/m-d/issues/1915351332/
-      return state;
-    }
     if (key.k === KeyK.NumLayout || key.k === KeyK.AbcLayout) {
       return { ...state, showExtraKeyLayout: !state.showExtraKeyLayout };
     }
@@ -1044,28 +1038,28 @@ function normalizeAnswer(answer: string): string {
   return answer.trim();
 }
 
-function addAnswer(answers: Array<string>, newAnswer: string): Array<string> {
+function addAnswer(answers: string[], newAnswer: string): string[] {
   const updated = new Set(answers);
   updated.add(normalizeAnswer(newAnswer));
   return Array.from(updated.values());
 }
 
-function removeAnswer(answers: Array<string>, toRemove: string): Array<string> {
+function removeAnswer(answers: string[], toRemove: string): string[] {
   const updated = new Set(answers);
   updated.delete(normalizeAnswer(toRemove));
   return Array.from(updated.values());
 }
 
 export function getClueProps(
-  sortedEntries: Array<number>,
+  sortedEntries: number[],
   entries: ViewableEntry[],
-  clues: Record<string, Array<string>>,
+  clues: Record<string, string[]>,
   requireComplete: boolean
 ) {
-  const ac: Array<string> = [];
-  const an: Array<number> = [];
-  const dc: Array<string> = [];
-  const dn: Array<number> = [];
+  const ac: string[] = [];
+  const an: number[] = [];
+  const dc: string[] = [];
+  const dn: number[] = [];
 
   const wordCounts: Record<string, number> = {};
 
@@ -1077,11 +1071,11 @@ export function getClueProps(
     if (requireComplete && !e.completedWord) {
       throw new Error('Publish unfinished grid');
     }
-    const word = e.completedWord || '';
-    const clueArray = clues[word] || [];
-    const idx = wordCounts[word] || 0;
+    const word = e.completedWord ?? '';
+    const clueArray = clues[word] ?? [];
+    const idx = wordCounts[word] ?? 0;
     wordCounts[word] = idx + 1;
-    const clueString = clueArray[idx] || '';
+    const clueString = clueArray[idx] ?? '';
 
     if (requireComplete && !clueString) {
       throw new Error('Bad clue for ' + e.completedWord);
@@ -1118,7 +1112,7 @@ export function builderReducer(
     return { ...state };
   }
   if (isSetClueAction(action)) {
-    const newVal = state.clues[action.word] || [];
+    const newVal = state.clues[action.word] ?? [];
     newVal[action.idx] = action.clue;
     return { ...state, clues: { ...state.clues, [action.word]: newVal } };
   }
@@ -1151,11 +1145,11 @@ export function builderReducer(
       ...state,
       ...(action.enabled !== undefined && { isContestPuzzle: action.enabled }),
       ...(action.addAnswer !== undefined && {
-        contestAnswers: addAnswer(state.contestAnswers || [], action.addAnswer),
+        contestAnswers: addAnswer(state.contestAnswers ?? [], action.addAnswer),
       }),
       ...(action.removeAnswer !== undefined && {
         contestAnswers: removeAnswer(
-          state.contestAnswers || [],
+          state.contestAnswers ?? [],
           action.removeAnswer
         ),
       }),
@@ -1201,7 +1195,7 @@ export function builderReducer(
     return { ...state, publishErrors: [], publishWarnings: [] };
   }
   if (isNewPuzzleAction(action)) {
-    const initialFill = Array(action.cols * action.rows).fill(' ');
+    const initialFill = Array<string>(action.cols * action.rows).fill(' ');
     if (action.prefill !== undefined) {
       for (let i = 0; i < action.rows; i++) {
         const iOdd = i % 2 === 0;
@@ -1291,9 +1285,9 @@ export function builderReducer(
     }
     const missingClues = Object.entries(
       state.grid.entries
-        .map((e) => e.completedWord || '')
+        .map((e) => e.completedWord ?? '')
         .reduce((counts: Record<string, number>, entry) => {
-          counts[entry] = (counts[entry] || 0) + 1;
+          counts[entry] = (counts[entry] ?? 0) + 1;
           return counts;
         }, {})
     )
@@ -1322,6 +1316,7 @@ export function builderReducer(
     }
 
     const puzzle: DBPuzzleT = {
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       t: state.title || 'Anonymous',
       a: state.authorId,
       n: state.authorName,
@@ -1342,7 +1337,7 @@ export function builderReducer(
         true
       ),
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-      ...(state.alternates && { alts: state.alternates }),
+      ...(state.alternates.length && { alts: state.alternates }),
       ...(state.notes && { cn: state.notes }),
       ...(state.blogPost && { bp: state.blogPost }),
       ...(state.guestConstructor && { gc: state.guestConstructor }),
@@ -1401,7 +1396,7 @@ export function puzzleReducer(
     return {
       ...state,
       ...(state.contestSubmission && {
-        contestPriorSubmissions: (state.contestPriorSubmissions || []).concat([
+        contestPriorSubmissions: (state.contestPriorSubmissions ?? []).concat([
           state.contestSubmission,
         ]),
       }),
@@ -1443,7 +1438,7 @@ export function puzzleReducer(
     }
     const play = action.play;
     if (play === null) {
-      const downsOnly = action.prefs?.solveDownsOnly || false;
+      const downsOnly = action.prefs?.solveDownsOnly ?? false;
       return {
         ...state,
         downsOnly,
@@ -1455,7 +1450,7 @@ export function puzzleReducer(
         loadedPlayState: true,
       };
     }
-    const downsOnly = play.do || false;
+    const downsOnly = play.do ?? false;
     return {
       ...state,
       prefs: action.prefs,

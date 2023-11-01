@@ -16,7 +16,7 @@ import {
   getCollection,
 } from '../../../lib/firebaseWrapper';
 import { markdownToHast } from '../../../lib/markdown/markdown';
-import { slugify } from '../../../lib/utils';
+import { logAsyncErrors, slugify } from '../../../lib/utils';
 import * as t from 'io-ts';
 
 export default requiresAdmin(() => {
@@ -57,7 +57,7 @@ const ArticleLoader = ({ slug }: { slug: string }) => {
   if (error) {
     return (
       <ErrorPage title="Something Went Wrong">
-        <p>{error?.message || 'Missing / invalid article'}</p>
+        <p>{error.message || 'Missing / invalid article'}</p>
       </ErrorPage>
     );
   }
@@ -67,20 +67,20 @@ const ArticleLoader = ({ slug }: { slug: string }) => {
       <div>
         <h1>No article exists</h1>
         <Button
-          onClick={() => {
+          onClick={logAsyncErrors(async () => {
             const newArticle: ArticleT = {
               s: slug,
               t: 'New Article',
               c: 'article content',
               f: false,
             };
-            addDoc(getCollection('a'), {
+            await addDoc(getCollection('a'), {
               ...newArticle,
               ua: Timestamp.now(),
             }).then(() => {
               showSnackbar('Article created');
             });
-          }}
+          })}
           text="Create"
         />
       </div>
@@ -117,11 +117,11 @@ const ArticleEditor = ({
           maxLength={100}
           handleSubmit={async (newSlug) => {
             const slug = slugify(newSlug, 100, true);
-            updateDoc(getDocRef('a', articleId), {
+            await updateDoc(getDocRef('a', articleId), {
               s: slug,
               ua: Timestamp.now(),
-            }).then(() => {
-              NextJSRouter.push(`/articles/${slug}/edit`);
+            }).then(async () => {
+              await NextJSRouter.push(`/articles/${slug}/edit`);
             });
           }}
         />
@@ -161,14 +161,14 @@ const ArticleEditor = ({
               css={{ marginRight: '1em' }}
               type="checkbox"
               checked={article.f}
-              onChange={(e) => {
-                updateDoc(getDocRef('a', articleId), {
+              onChange={logAsyncErrors(async (e) => {
+                await updateDoc(getDocRef('a', articleId), {
                   f: e.target.checked,
                   ua: Timestamp.now(),
                 }).then(() => {
                   showSnackbar('updated');
                 });
-              }}
+              })}
             />{' '}
             Featured
           </label>

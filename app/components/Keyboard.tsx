@@ -147,17 +147,18 @@ export const Keyboard = memo(function Keyboard({
 
   useEffect(() => {
     if (!audioContext) {
-      return initAudioContext();
+      initAudioContext();
+      return;
     }
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unnecessary-condition
     if (!playKeystrokeSound.current && !muted && audioContext) {
       fetch('/keypress.mp3')
         .then((response) => response.arrayBuffer())
-        .then((buffer) => {
+        .then(async (buffer) => {
           const gainNode = audioContext.createGain();
           gainNode.gain.value = 0.7;
           gainNode.connect(audioContext.destination);
-          audioContext.decodeAudioData(buffer, (audioBuffer) => {
+          await audioContext.decodeAudioData(buffer, (audioBuffer) => {
             playKeystrokeSound.current = () => {
               const source = audioContext.createBufferSource();
               source.buffer = audioBuffer;
@@ -165,6 +166,9 @@ export const Keyboard = memo(function Keyboard({
               source.start();
             };
           });
+        })
+        .catch((e) => {
+          console.error('error loading keypress', e);
         });
     }
   }, [muted, audioContext, initAudioContext]);
@@ -174,10 +178,7 @@ export const Keyboard = memo(function Keyboard({
       if (!muted && playKeystrokeSound.current) {
         playKeystrokeSound.current();
       }
-      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-      if (keyboardHandler) {
-        keyboardHandler(key);
-      }
+      keyboardHandler(key);
     },
     [muted, keyboardHandler]
   );

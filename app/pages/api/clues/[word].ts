@@ -6,9 +6,8 @@ const db = getDB(true);
 export default async function clues(req: NextApiRequest, res: NextApiResponse) {
   const { word } = req.query;
   if (Array.isArray(word) || !word) {
-    return res
-      .status(404)
-      .json({ statusCode: 404, message: 'bad word params' });
+    res.status(404).json({ statusCode: 404, message: 'bad word params' });
+    return;
   }
   const clues = await getClues(db, word.toUpperCase());
   res.setHeader('X-Robots-Tag', 'noindex');

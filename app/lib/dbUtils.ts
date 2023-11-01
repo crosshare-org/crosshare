@@ -57,9 +57,9 @@ export async function mapEachResult<N, A>(
   query: Query,
   validator: t.Decoder<unknown, A>,
   mapper: (val: A, docid: string) => N
-): Promise<Array<N>> {
+): Promise<N[]> {
   const value = await getDocs(query);
-  const results: Array<N> = [];
+  const results: N[] = [];
   for (const doc of value.docs) {
     const data = doc.data();
     const validationResult = validator.decode(data);
@@ -77,10 +77,10 @@ export async function mapEachResult<N, A>(
 export async function getValidatedAndDelete<A>(
   query: Query,
   validator: t.Type<A>
-): Promise<Array<A>> {
+): Promise<A[]> {
   const value = await getDocs(query);
-  const results: Array<A> = [];
-  const deletes: Array<Promise<void>> = [];
+  const results: A[] = [];
+  const deletes: Promise<void>[] = [];
   for (const doc of value.docs) {
     const data = doc.data();
     const validationResult = validator.decode(data);

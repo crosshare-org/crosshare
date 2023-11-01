@@ -23,13 +23,14 @@ const gssp: GetServerSideProps<PuzzlePageProps> = async ({
   }
 
   const embedOptions = await getEmbedProps({ params, ...rest });
-  return { ...props, props: { ...props.props, embedOptions } };
+  return { ...props, props: { ...(await props.props), embedOptions } };
 };
 
 export const getServerSideProps = withTranslation(gssp);
 
 export default function ThemedPage(props: PuzzlePageProps) {
   const [embedStyleProps, embedContext] = useEmbedOptions(
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     ('embedOptions' in props && props.embedOptions) || undefined
   );
 

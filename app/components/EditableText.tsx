@@ -7,12 +7,12 @@ import {
   LengthLimitedTextarea,
 } from './Inputs';
 import dynamic from 'next/dynamic';
-import type { MarkdownPreview as MarkdownPreviewType } from './MarkdownPreview';
 import type { Root } from 'hast';
+import { logAsyncErrors } from '../lib/utils';
 
-const MarkdownPreview = dynamic(
-  () => import('./MarkdownPreview').then((mod) => mod.MarkdownPreview as any) // eslint-disable-line @typescript-eslint/no-explicit-any
-) as typeof MarkdownPreviewType;
+const MarkdownPreview = dynamic(() =>
+  import('./MarkdownPreview').then((mod) => mod.MarkdownPreview)
+);
 
 interface EditableTextPropsBase {
   title: string;
@@ -38,27 +38,27 @@ export const EditableText = (
 ) => {
   const [editing, setEditing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [value, setValue] = useState(props.text || '');
+  const [value, setValue] = useState(props.text ?? '');
 
-  const error = props.hasError?.(value) || '';
+  const error = props.hasError?.(value) ?? '';
 
   if (editing) {
     return (
       <form
         className={props.className}
         css={{ display: 'flex', flexWrap: 'wrap' }}
-        onSubmit={(e: React.FormEvent) => {
+        onSubmit={logAsyncErrors(async (e: React.FormEvent) => {
           e.preventDefault();
           const toSubmit = value.trim();
           if (toSubmit.length === 0) {
             return;
           }
           setSubmitting(true);
-          props.handleSubmit(toSubmit).then(() => {
+          await props.handleSubmit(toSubmit).then(() => {
             setSubmitting(false);
             setEditing(false);
           });
-        }}
+        })}
       >
         {props.textarea ? (
           <>
@@ -110,7 +110,7 @@ export const EditableText = (
           css={{ marginLeft: '0.5em' }}
           onClick={() => {
             setEditing(false);
-            setValue(props.text || '');
+            setValue(props.text ?? '');
           }}
           text="Cancel"
         />
@@ -158,7 +158,7 @@ export const EditableText = (
                   css={{ marginLeft: '1em' }}
                   text="delete"
                   title={`Delete ${props.title}`}
-                  onClick={props.handleDelete}
+                  onClick={logAsyncErrors(props.handleDelete)}
                 />
               ) : (
                 ''
@@ -184,7 +184,7 @@ export const EditableText = (
                   css={{ marginLeft: '1em' }}
                   text="delete"
                   title={`Delete ${props.title}`}
-                  onClick={props.handleDelete}
+                  onClick={logAsyncErrors(props.handleDelete)}
                 />
               ) : (
                 ''

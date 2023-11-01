@@ -51,7 +51,7 @@ const ClueListItem = memo(function ClueListItem({
     }
   }
   function click(e: MouseEvent | KeyboardEvent) {
-    if ((e.target as HTMLElement)?.tagName?.toLowerCase() === 'a') {
+    if ((e.target as HTMLElement).tagName.toLowerCase() === 'a') {
       return;
     }
     e.preventDefault();
@@ -178,7 +178,8 @@ const ClueListItem = memo(function ClueListItem({
                       }}
                     >
                       {props.isEnteringRebus && isActiveCell
-                        ? props.rebusValue || '|'
+                        ? // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+                          props.rebusValue || '|'
                         : valAt(props.grid, a).trim() || '-'}
                     </span>
                   );
@@ -203,9 +204,9 @@ interface ClueListProps {
   wasEntryClick: boolean;
   cross?: number;
   refed: Set<number>;
-  entries: Array<CluedEntry>;
-  allEntries?: Array<CluedEntry>;
-  refPositions?: Array<Array<RefPosition>>;
+  entries: CluedEntry[];
+  allEntries?: CluedEntry[];
+  refPositions?: RefPosition[][];
   dispatch: Dispatch<PuzzleAction>;
   showEntries: boolean;
   isEnteringRebus?: boolean;

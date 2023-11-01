@@ -5,14 +5,13 @@ import { ConstructorPageV } from './constructorPage';
 import { donationsByEmail, DonationsListV } from './dbtypes';
 import { getAdminApp, getCollection } from './firebaseAdminWrapper';
 
-let patronList: Array<string> | null = null;
+let patronList: string[] | null = null;
 let lastUpdated: number | null = null;
 
-const getPatronList = async (): Promise<Array<string>> => {
+const getPatronList = async (): Promise<string[]> => {
   console.log('updating patron list');
   const donations = await getCollection('donations').doc('donations').get();
-  const data = donations.data();
-  const validationResult = DonationsListV.decode(data);
+  const validationResult = DonationsListV.decode(donations.data());
   if (!isRight(validationResult)) {
     console.error(PathReporter.report(validationResult).join(','));
     throw new Error('Malformed donations list');
@@ -54,7 +53,7 @@ const getPatronList = async (): Promise<Array<string>> => {
     .filter((n) => n);
 };
 
-let patronListPromise: Promise<Array<string>> | null = null;
+let patronListPromise: Promise<string[]> | null = null;
 const getPatronListOnce = () => {
   if (!patronListPromise) {
     patronListPromise = getPatronList().finally(() => {
@@ -72,5 +71,5 @@ export const isUserPatron = async (userId: string) => {
   ) {
     patronList = await getPatronListOnce();
   }
-  return patronList?.includes(userId) || false;
+  return patronList.includes(userId) || false;
 };

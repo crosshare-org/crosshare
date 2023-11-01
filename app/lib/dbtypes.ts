@@ -29,7 +29,7 @@ export interface CommentWithRepliesT extends CommentT {
   /** comment id */
   i: string;
   /** replies */
-  r?: Array<CommentWithRepliesT>;
+  r?: CommentWithRepliesT[];
 }
 
 const CommentWithRepliesV: t.Type<CommentWithRepliesT> = t.recursion(
@@ -336,8 +336,7 @@ export function downloadOptionallyTimestamped<A>(type: t.Type<A>) {
 export function addZeros(dateString: string) {
   const groups = dateString.match(/^(\d+)-(\d+)-(\d+)$/);
   if (
-    !groups ||
-    groups[1] === undefined ||
+    groups?.[1] === undefined ||
     groups[2] === undefined ||
     groups[3] === undefined
   ) {
@@ -433,7 +432,7 @@ export const PuzzleStatsV = t.intersection([
 export type PuzzleStatsT = t.TypeOf<typeof PuzzleStatsV>;
 
 export type PuzzleStatsViewT = Omit<Omit<PuzzleStatsT, 'ct_subs'>, 'ua'> & {
-  ct_subs?: Array<MetaSubmissionForStatsViewT>;
+  ct_subs?: MetaSubmissionForStatsViewT[];
 };
 
 const PuzzleInfoV = t.tuple([
@@ -513,16 +512,19 @@ export const donationsByEmail = (donations: DonationsListT) => {
       const prev = acc.get(val.e);
       if (prev) {
         acc.set(val.e, {
+          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           name: val.n || prev.name,
+          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           page: val.p || prev.page,
           total: val.a + prev.total,
           date: val.d.toDate() < prev.date ? prev.date : val.d.toDate(),
+          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           ...((val.u || prev.userId) && { userId: val.u || prev.userId }),
         });
       } else {
         acc.set(val.e, {
-          name: val.n || null,
-          page: val.p || null,
+          name: val.n ?? null,
+          page: val.p ?? null,
           total: val.a,
           date: val.d.toDate(),
           ...(val.u && { userId: val.u }),

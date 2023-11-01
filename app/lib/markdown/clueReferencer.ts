@@ -24,12 +24,12 @@ export const clueReferencer: Plugin = () => {
         return [node];
       }
       const value = node.value;
-      const refs: Array<ReferenceData> = [];
+      const refs: ReferenceData[] = [];
       let match;
       const re =
         /(^|\s|\/|\()(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
       while ((match = re.exec(value)) !== null) {
-        const preLength = match[1]?.length || 0;
+        const preLength = match[1]?.length ?? 0;
         const dirString = match.groups?.dir?.toLowerCase();
         if (!dirString) {
           throw new Error('missing dir string');
@@ -54,7 +54,7 @@ export const clueReferencer: Plugin = () => {
         }
         const last = refs[refs.length - 1];
         if (last && match[0]) {
-          last['end'] = match.index + match[0].length;
+          last.end = match.index + match[0].length;
         }
       }
       if (!refs.length) {

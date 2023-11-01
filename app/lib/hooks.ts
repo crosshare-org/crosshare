@@ -15,6 +15,7 @@ import { EmbedOptionsT } from './embedOptions';
 import useEventListener from '@use-it/event-listener';
 import { EmbedColorMode, EmbedContextValue } from '../components/EmbedContext';
 import { EmbedStylingProps } from '../components/EmbedStyling';
+import { logAsyncErrors } from './utils';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {
@@ -24,13 +25,17 @@ export function useMatchMedia(query: string) {
 
   useEffect(() => {
     const mediaQueryList = matchMedia(query);
-    const onChange = (event: MediaQueryListEvent) => setMatches(event.matches);
+    const onChange = (event: MediaQueryListEvent) => {
+      setMatches(event.matches);
+    };
 
     // note 1: safari currently doesn't support add/removeEventListener so we use add/removeListener
     // note 2: add/removeListener are maybe marked as deprecated, but that could be wrong
     //         see https://github.com/microsoft/TypeScript/issues/32210
     mediaQueryList.addListener(onChange);
-    return () => mediaQueryList.removeListener(onChange);
+    return () => {
+      mediaQueryList.removeListener(onChange);
+    };
   }, [query]);
 
   return matches;
@@ -58,7 +63,7 @@ export function usePolyfilledResizeObserver(ref: RefObject<HTMLElement>) {
         });
       }
     };
-    loadRO();
+    logAsyncErrors(loadRO)();
     return () => {
       didCancel = true;
     };
@@ -188,22 +193,30 @@ export function useHover(): [
         }
         setHovered(true);
       },
-      onMouseLeave: () => setHovered(false),
+      onMouseLeave: () => {
+        setHovered(false);
+      },
     }),
     [isHovered, clickWhileHovered]
   );
 
-  return [isHovered, bind, () => setHovered(false)];
+  return [
+    isHovered,
+    bind,
+    () => {
+      setHovered(false);
+    },
+  ];
 }
 
 export function useEmbedOptions(
   embedOptions: EmbedOptionsT | undefined
 ): [EmbedStylingProps, EmbedContextValue] {
   /** TODO use a validator instead */
-  type Message = {
+  interface Message {
     type: string;
     value: string;
-  };
+  }
 
   let primary = PRIMARY;
   let link = LINK;
@@ -227,10 +240,11 @@ export function useEmbedOptions(
 
   const handleMessage = useCallback(
     (e: MessageEvent) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const message: Message = e.data;
 
       if (message.type === 'set-color-mode') {
-        setColorMode?.(
+        setColorMode(
           message.value === 'dark' ? EmbedColorMode.Dark : EmbedColorMode.Light
         );
       }

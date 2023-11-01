@@ -1,11 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Extension } from 'mdast-util-from-markdown';
+import { Handle, Parent } from 'mdast-util-from-markdown/lib';
 
-const enterSpoiler = function (this: any, token: any) {
+export interface Spoiler extends Parent {
+  type: 'spoiler';
+}
+
+declare module 'mdast' {
+  interface RootContentMap {
+    spoiler: Spoiler;
+  }
+}
+const enterSpoiler: Handle = function (this, token) {
   this.enter({ type: 'spoiler', children: [] }, token);
 };
 
-const exitSpoiler = function (this: any, token: any) {
+const exitSpoiler: Handle = function (this, token) {
   this.exit(token);
 };
 

@@ -103,7 +103,7 @@ function SharingButton({ network, path, text }: SharingButtonProps) {
         }
         e.preventDefault();
 
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unnecessary-condition
         if (navigator.clipboard) {
           navigator.clipboard
             .writeText(`${text} https://crosshare.org${path}`)

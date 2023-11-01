@@ -155,7 +155,7 @@ export default function ConstructorPageHandler(props: PageProps) {
       : `/${props.constructorData.i}`;
     if (router.asPath !== desiredRoute) {
       console.log('auto changing route');
-      router.replace(desiredRoute, undefined, { shallow: true });
+      void router.replace(desiredRoute, undefined, { shallow: true });
     }
   }, [router, props]);
 

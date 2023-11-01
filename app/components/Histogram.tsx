@@ -1,8 +1,8 @@
 import { Fragment } from 'react';
 
 interface HistogramProps {
-  data: Array<number>;
-  names: Array<string>;
+  data: number[];
+  names: string[];
 }
 
 export const Histogram = (props: HistogramProps) => {

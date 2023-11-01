@@ -50,6 +50,7 @@ import spam from '../lib/spam.json';
 import { markdownToHast } from '../lib/markdown/markdown';
 import { css } from '@emotion/react';
 import { withStaticTranslation } from '../lib/translation';
+import { logAsyncErrors } from '../lib/utils';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };
@@ -64,7 +65,7 @@ function paypalConvert(input: string): string {
 function checkSpam(input: string): boolean {
   const lower = input.toLowerCase();
   for (const spamWord of spam) {
-    if (lower.indexOf(spamWord) !== -1) {
+    if (lower.includes(spamWord)) {
       return true;
     }
   }
@@ -74,10 +75,10 @@ function checkSpam(input: string): boolean {
 const red = css({ color: 'red' });
 
 const PuzzleListItem = (props: PuzzleResult) => {
-  function markAsModerated(featured: boolean) {
+  async function markAsModerated(featured: boolean) {
     const update = { m: true, c: null, f: featured };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    updateDoc(getDocRef('c', props.id), update as any).then(() => {
+    await updateDoc(getDocRef('c', props.id), update as any).then(() => {
       console.log('moderated');
     });
   }
@@ -111,7 +112,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
         {props.title}
       </Link>{' '}
       by {props.authorName}
-      <TagList tags={(props.userTags || []).concat(props.autoTags || [])} />
+      <TagList tags={(props.userTags ?? []).concat(props.autoTags ?? [])} />
       {props.constructorNotes ? (
         <div css={{ textAlign: 'center', overflowWrap: 'break-word' }}>
           <ConstructorNotes
@@ -144,13 +145,19 @@ const PuzzleListItem = (props: PuzzleResult) => {
         <button
           // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
           disabled={!!props.isPrivate}
-          onClick={() => markAsModerated(true)}
+          onClick={logAsyncErrors(async () => {
+            return markAsModerated(true);
+          })}
         >
           Set as Featured
         </button>
       </div>
       <div css={{ marginBottom: '1em' }}>
-        <button onClick={() => markAsModerated(false)}>
+        <button
+          onClick={logAsyncErrors(async () => {
+            return markAsModerated(false);
+          })}
+        >
           Mark as Moderated
         </button>
       </div>
@@ -179,9 +186,9 @@ export default requiresAdmin(() => {
     )
   );
   const [dbUnmoderated] = useCollectionData(puzzleCollection.current);
-  const unmoderated: PuzzleResult[] = (dbUnmoderated || [])
+  const unmoderated: PuzzleResult[] = (dbUnmoderated ?? [])
     .map((x) => ({ ...puzzleFromDB(x), id: x.id }))
-    .sort((a, b) => (a.isPrivateUntil || 0) - (b.isPrivateUntil || 0));
+    .sort((a, b) => (a.isPrivateUntil ?? 0) - (b.isPrivateUntil ?? 0));
 
   const now = new Date();
   const dateString = getDateString(now);
@@ -222,7 +229,7 @@ export default requiresAdmin(() => {
 
   const goToPuzzle = useCallback((_date: Date, puzzle: string | null) => {
     if (puzzle) {
-      NextJSRouter.push('/crosswords/' + puzzle);
+      void NextJSRouter.push('/crosswords/' + puzzle);
     }
   }, []);
 
@@ -236,13 +243,15 @@ export default requiresAdmin(() => {
 
   async function retryMail(e: FormEvent) {
     e.preventDefault();
-    getDocs(
+    await getDocs(
       query(getCollection('mail'), where('delivery.error', '!=', null))
-    ).then((r) => {
-      r.forEach((s) => {
-        console.log('retrying', s.id);
-        updateDoc(s.ref, { 'delivery.state': 'RETRY' });
-      });
+    ).then(async (r) => {
+      await Promise.all(
+        r.docs.map(async (s) => {
+          console.log('retrying', s.id);
+          await updateDoc(s.ref, { 'delivery.state': 'RETRY' });
+        })
+      );
     });
   }
 
@@ -260,7 +269,7 @@ export default requiresAdmin(() => {
     if (!commentsForModeration) {
       return;
     }
-    moderateComments(
+    await moderateComments(
       commentsForModeration,
       commentIdsForDeletion,
       (cid) => deleteDoc(getDocRef('cfm', cid)),
@@ -290,7 +299,7 @@ export default requiresAdmin(() => {
         {mailErrors?.length ? (
           <div>
             <h4>There are {mailErrors.length} mail errors!</h4>
-            <Button onClick={retryMail} text="Retry send" />
+            <Button onClick={logAsyncErrors(retryMail)} text="Retry send" />
           </div>
         ) : (
           ''
@@ -301,7 +310,7 @@ export default requiresAdmin(() => {
         {!commentsForModeration || commentsForModeration.length === 0 ? (
           <div>No comments are currently awaiting moderation.</div>
         ) : (
-          <form onSubmit={doModerateComments}>
+          <form onSubmit={logAsyncErrors(doModerateComments)}>
             <p>Check comments to disallow them:</p>
             {commentsForModeration.map((cfm) => (
               <div key={cfm.i}>
@@ -312,9 +321,9 @@ export default requiresAdmin(() => {
                     }}
                     type="checkbox"
                     checked={commentIdsForDeletion.has(cfm.i)}
-                    onChange={(e) =>
-                      setCommentForDeletion(cfm.i, e.target.checked)
-                    }
+                    onChange={(e) => {
+                      setCommentForDeletion(cfm.i, e.target.checked);
+                    }}
                   />
                   <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
                   <Markdown hast={markdownToHast({ text: cfm.c })} />
@@ -340,11 +349,13 @@ export default requiresAdmin(() => {
                   </div>
                 ))}
                 <Button
-                  onClick={() => {
-                    automoderated.forEach((cfm) => {
-                      deleteDoc(getDocRef('automoderated', cfm.i));
-                    });
-                  }}
+                  onClick={logAsyncErrors(async () => {
+                    await Promise.all(
+                      automoderated.map((cfm) => {
+                        return deleteDoc(getDocRef('automoderated', cfm.i));
+                      })
+                    );
+                  })}
                   text="Mark as Seen"
                 />
               </>
@@ -359,7 +370,7 @@ export default requiresAdmin(() => {
         {!pagesForModeration || pagesForModeration.length === 0 ? (
           <div>No pages need moderation.</div>
         ) : (
-          <form onSubmit={moderatePages}>
+          <form onSubmit={logAsyncErrors(moderatePages)}>
             {pagesForModeration.map((cp) => (
               <div key={cp.id}>
                 <p>
@@ -415,12 +426,12 @@ export default requiresAdmin(() => {
           Unsubscribe User
         </h4>
         <form
-          onSubmit={(e: React.FormEvent) => {
+          onSubmit={logAsyncErrors(async (e: React.FormEvent) => {
             e.preventDefault();
             const toSubmit = uidToUnsub.trim();
             setUidToUnsub('');
             if (toSubmit) {
-              setDoc(
+              await setDoc(
                 getDocRef('prefs', uidToUnsub),
                 { unsubs: arrayUnion('all') },
                 { merge: true }
@@ -428,7 +439,7 @@ export default requiresAdmin(() => {
                 showSnackbar('Unsubscribed');
               });
             }
-          }}
+          })}
         >
           <label>
             Unsubscribe by user id:
@@ -436,7 +447,9 @@ export default requiresAdmin(() => {
               css={{ margin: '0 0.5em' }}
               type="text"
               value={uidToUnsub}
-              onChange={(e) => setUidToUnsub(e.target.value)}
+              onChange={(e) => {
+                setUidToUnsub(e.target.value);
+              }}
             />
           </label>
           <Button type="submit" text="Unsubscribe" />
@@ -445,7 +458,7 @@ export default requiresAdmin(() => {
           Record Donation
         </h4>
         <form
-          onSubmit={(e: React.FormEvent) => {
+          onSubmit={logAsyncErrors(async (e: React.FormEvent) => {
             e.preventDefault();
             if (!donationEmail.trim()) {
               return;
@@ -459,7 +472,7 @@ export default requiresAdmin(() => {
               p: donationPage.trim() || null,
               ...(donationUserId.trim() && { u: donationUserId.trim() }),
             };
-            setDoc(
+            await setDoc(
               getDocRef('donations', 'donations'),
               { d: arrayUnion(toAdd) },
               { merge: true }
@@ -472,7 +485,7 @@ export default requiresAdmin(() => {
               setDonationPage('');
               setDonationUserId('');
             });
-          }}
+          })}
         >
           <label>
             Email
@@ -480,7 +493,9 @@ export default requiresAdmin(() => {
               css={{ margin: '0 0.5em' }}
               type="text"
               value={donationEmail}
-              onChange={(e) => setDonationEmail(e.target.value)}
+              onChange={(e) => {
+                setDonationEmail(e.target.value);
+              }}
             />
           </label>
           <label>
@@ -501,7 +516,9 @@ export default requiresAdmin(() => {
               css={{ margin: '0 0.5em' }}
               type="text"
               value={donationReceivedAmount}
-              onChange={(e) => setDonationReceivedAmount(e.target.value)}
+              onChange={(e) => {
+                setDonationReceivedAmount(e.target.value);
+              }}
             />
           </label>
           <label>
@@ -510,7 +527,9 @@ export default requiresAdmin(() => {
               css={{ margin: '0 0.5em' }}
               type="text"
               value={donationName}
-              onChange={(e) => setDonationName(e.target.value)}
+              onChange={(e) => {
+                setDonationName(e.target.value);
+              }}
             />
           </label>
           <label>
@@ -519,7 +538,9 @@ export default requiresAdmin(() => {
               css={{ margin: '0 0.5em' }}
               type="text"
               value={donationPage}
-              onChange={(e) => setDonationPage(e.target.value)}
+              onChange={(e) => {
+                setDonationPage(e.target.value);
+              }}
             />
           </label>
           <label>
@@ -528,7 +549,9 @@ export default requiresAdmin(() => {
               css={{ margin: '0 0.5em' }}
               type="text"
               value={donationUserId}
-              onChange={(e) => setDonationUserId(e.target.value)}
+              onChange={(e) => {
+                setDonationUserId(e.target.value);
+              }}
             />
           </label>
           <Button type="submit" text="Record Donation" />

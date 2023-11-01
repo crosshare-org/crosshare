@@ -19,6 +19,7 @@ const BIO_LENGTH_LIMIT = 1500;
 const PAYPAL_LENGTH_LIMIT = 140;
 const SIG_LENGTH_LIMIT = 500;
 const SHARE_BUTTONS_LENGTH_LIMIT = 120;
+const ASYNC_ERROR = 'Error thrown asynchronously while editing bio';
 
 export const BioEditor = (props: BioEditorProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,14 +27,14 @@ export const BioEditor = (props: BioEditorProps) => {
   const [isShareButtonsOpen, setIsShareButtonsOpen] = useState(false);
   const [showPaypalEditor, setShowPaypalEditor] = useState(false);
   const [bioText, setBioText] = useState(props.constructorPage.b);
-  const [sigText, setSigText] = useState(props.constructorPage.sig || '');
+  const [sigText, setSigText] = useState(props.constructorPage.sig ?? '');
   const [shareButtonsText, setShareButtonsText] = useState(
-    props.constructorPage.st || ''
+    props.constructorPage.st ?? ''
   );
   const [paypalEmail, setPaypalEmail] = useState(
-    props.constructorPage.pp || ''
+    props.constructorPage.pp ?? ''
   );
-  const [paypalText, setPaypalText] = useState(props.constructorPage.pt || '');
+  const [paypalText, setPaypalText] = useState(props.constructorPage.pt ?? '');
   const [submitting, setSubmitting] = useState(false);
 
   function deleteTipButton() {
@@ -43,10 +44,14 @@ export const BioEditor = (props: BioEditorProps) => {
       pt: deleteField(),
       m: true,
       t: serverTimestamp(),
-    }).then(() => {
-      console.log('Updated');
-      setIsOpen(false);
-    });
+    })
+      .then(() => {
+        console.log('Updated');
+        setIsOpen(false);
+      })
+      .catch((err) => {
+        console.error(ASYNC_ERROR, err);
+      });
   }
 
   function deleteSig() {
@@ -55,10 +60,14 @@ export const BioEditor = (props: BioEditorProps) => {
       sig: deleteField(),
       m: true,
       t: serverTimestamp(),
-    }).then(() => {
-      console.log('Updated');
-      setIsOpen(false);
-    });
+    })
+      .then(() => {
+        console.log('Updated');
+        setIsOpen(false);
+      })
+      .catch((err) => {
+        console.error(ASYNC_ERROR, err);
+      });
   }
 
   function deleteShareButtonsText() {
@@ -67,10 +76,14 @@ export const BioEditor = (props: BioEditorProps) => {
       st: deleteField(),
       m: true,
       t: serverTimestamp(),
-    }).then(() => {
-      console.log('Updated');
-      setIsOpen(false);
-    });
+    })
+      .then(() => {
+        console.log('Updated');
+        setIsOpen(false);
+      })
+      .catch((err) => {
+        console.error(ASYNC_ERROR, err);
+      });
   }
 
   function deleteBio() {
@@ -79,10 +92,14 @@ export const BioEditor = (props: BioEditorProps) => {
       b: '',
       m: true,
       t: serverTimestamp(),
-    }).then(() => {
-      console.log('Updated');
-      setIsOpen(false);
-    });
+    })
+      .then(() => {
+        console.log('Updated');
+        setIsOpen(false);
+      })
+      .catch((err) => {
+        console.error(ASYNC_ERROR, err);
+      });
   }
 
   function submitPaypalInfo(event: FormEvent) {
@@ -97,11 +114,15 @@ export const BioEditor = (props: BioEditorProps) => {
       pt: paypalText.trim(),
       m: true,
       t: serverTimestamp(),
-    }).then(() => {
-      console.log('Updated');
-      setShowPaypalEditor(false);
-      setSubmitting(false);
-    });
+    })
+      .then(() => {
+        console.log('Updated');
+        setShowPaypalEditor(false);
+        setSubmitting(false);
+      })
+      .catch((err) => {
+        console.error(ASYNC_ERROR, err);
+      });
   }
 
   function submitEdit(event: FormEvent) {
@@ -112,10 +133,14 @@ export const BioEditor = (props: BioEditorProps) => {
       b: textToSubmit,
       m: true,
       t: serverTimestamp(),
-    }).then(() => {
-      console.log('Updated');
-      setIsOpen(false);
-    });
+    })
+      .then(() => {
+        console.log('Updated');
+        setIsOpen(false);
+      })
+      .catch((err) => {
+        console.error(ASYNC_ERROR, err);
+      });
   }
 
   function submitSigEdit(event: FormEvent) {
@@ -129,10 +154,14 @@ export const BioEditor = (props: BioEditorProps) => {
       sig: textToSubmit,
       m: true,
       t: serverTimestamp(),
-    }).then(() => {
-      console.log('Updated');
-      setIsSigOpen(false);
-    });
+    })
+      .then(() => {
+        console.log('Updated');
+        setIsSigOpen(false);
+      })
+      .catch((err) => {
+        console.error(ASYNC_ERROR, err);
+      });
   }
 
   function submitShareButtonsEdit(event: FormEvent) {
@@ -146,10 +175,14 @@ export const BioEditor = (props: BioEditorProps) => {
       st: textToSubmit,
       m: true,
       t: serverTimestamp(),
-    }).then(() => {
-      console.log('Updated');
-      setIsShareButtonsOpen(false);
-    });
+    })
+      .then(() => {
+        console.log('Updated');
+        setIsShareButtonsOpen(false);
+      })
+      .catch((err) => {
+        console.error(ASYNC_ERROR, err);
+      });
   }
 
   return (
@@ -184,9 +217,9 @@ export const BioEditor = (props: BioEditorProps) => {
               <textarea
                 css={{ width: '100%', display: 'block', height: '5em' }}
                 value={bioText}
-                onChange={(e) =>
-                  setBioText(e.target.value.substring(0, BIO_LENGTH_LIMIT))
-                }
+                onChange={(e) => {
+                  setBioText(e.target.value.substring(0, BIO_LENGTH_LIMIT));
+                }}
               />
             </label>
             <div
@@ -221,13 +254,20 @@ export const BioEditor = (props: BioEditorProps) => {
             <>
               <Button
                 css={{ marginRight: '1.5em' }}
-                onClick={() => setIsOpen(true)}
+                onClick={() => {
+                  setIsOpen(true);
+                }}
                 text="Edit bio"
               />
               <Button boring={true} onClick={deleteBio} text="Delete bio" />
             </>
           ) : (
-            <Button onClick={() => setIsOpen(true)} text="Add bio" />
+            <Button
+              onClick={() => {
+                setIsOpen(true);
+              }}
+              text="Add bio"
+            />
           )}
         </>
       )}
@@ -254,7 +294,9 @@ export const BioEditor = (props: BioEditorProps) => {
         <>
           <Button
             css={{ marginRight: '1.5em' }}
-            onClick={() => setShowPaypalEditor(true)}
+            onClick={() => {
+              setShowPaypalEditor(true);
+            }}
             text="Edit tip button"
           />
           <Button
@@ -265,7 +307,9 @@ export const BioEditor = (props: BioEditorProps) => {
         </>
       ) : (
         <Button
-          onClick={() => setShowPaypalEditor(true)}
+          onClick={() => {
+            setShowPaypalEditor(true);
+          }}
           text="Add tip button"
         />
       )}
@@ -291,9 +335,9 @@ export const BioEditor = (props: BioEditorProps) => {
               <textarea
                 css={{ width: '100%', display: 'block', height: '5em' }}
                 value={sigText}
-                onChange={(e) =>
-                  setSigText(e.target.value.substring(0, SIG_LENGTH_LIMIT))
-                }
+                onChange={(e) => {
+                  setSigText(e.target.value.substring(0, SIG_LENGTH_LIMIT));
+                }}
               />
             </label>
             <div
@@ -334,18 +378,29 @@ export const BioEditor = (props: BioEditorProps) => {
             <>
               <Button
                 css={{ marginRight: '1.5em' }}
-                onClick={() => setIsSigOpen(true)}
+                onClick={() => {
+                  setIsSigOpen(true);
+                }}
                 text="Edit sig"
               />
               <Button boring={true} onClick={deleteSig} text="Delete sig" />
             </>
           ) : (
-            <Button onClick={() => setIsSigOpen(true)} text="Add sig" />
+            <Button
+              onClick={() => {
+                setIsSigOpen(true);
+              }}
+              text="Add sig"
+            />
           )}
         </>
       )}
       {showPaypalEditor ? (
-        <Overlay closeCallback={() => setShowPaypalEditor(false)}>
+        <Overlay
+          closeCallback={() => {
+            setShowPaypalEditor(false);
+          }}
+        >
           <form onSubmit={submitPaypalInfo}>
             <div>
               <label>
@@ -353,7 +408,9 @@ export const BioEditor = (props: BioEditorProps) => {
                 <input
                   type="text"
                   value={paypalEmail}
-                  onChange={(e) => setPaypalEmail(e.target.value.trim())}
+                  onChange={(e) => {
+                    setPaypalEmail(e.target.value.trim());
+                  }}
                 />
               </label>
             </div>
@@ -364,11 +421,11 @@ export const BioEditor = (props: BioEditorProps) => {
                   css={{ width: '100%' }}
                   type="text"
                   value={paypalText}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setPaypalText(
                       e.target.value.substring(0, PAYPAL_LENGTH_LIMIT)
-                    )
-                  }
+                    );
+                  }}
                 />
                 <div
                   css={{
@@ -438,7 +495,9 @@ export const BioEditor = (props: BioEditorProps) => {
             <>
               <Button
                 css={{ marginRight: '1.5em' }}
-                onClick={() => setIsShareButtonsOpen(true)}
+                onClick={() => {
+                  setIsShareButtonsOpen(true);
+                }}
                 text="Edit sharing text"
               />
               <Button

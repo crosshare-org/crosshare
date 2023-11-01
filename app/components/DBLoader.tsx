@@ -94,7 +94,9 @@ export const DBLoader = (): JSX.Element => {
         )}
         <LoadButton
           buttonText={'Build Database'}
-          onComplete={() => setLoaded()}
+          onComplete={() => {
+            setLoaded();
+          }}
         />
       </div>
     </>

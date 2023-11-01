@@ -6,7 +6,7 @@ import { AccountPrefsT } from '../lib/prefs';
 
 export interface AuthContextValue {
   user?: User;
-  notifications?: Array<NotificationT>;
+  notifications?: NotificationT[];
   isAdmin: boolean;
   isPatron: boolean;
   loading: boolean;

@@ -2,7 +2,12 @@ import { useContext, useState, useEffect, Dispatch, ReactNode } from 'react';
 import { Link } from './Link';
 import { Direction, PuzzleResultWithAugmentedComments } from '../lib/types';
 import { PuzzleAction } from '../reducers/reducer';
-import { isMetaSolution, slugify, timeString } from '../lib/utils';
+import {
+  isMetaSolution,
+  logAsyncErrors,
+  slugify,
+  timeString,
+} from '../lib/utils';
 import type { User } from 'firebase/auth';
 import { Comments } from './Comments';
 import { EmbedColorMode, EmbedContext } from './EmbedContext';
@@ -90,11 +95,11 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
     }
   }, [isEmbed]);
 
-  const toggleFullscreen = () => {
+  const toggleFullscreen = async () => {
     if (document.fullscreenElement) {
-      document.exitFullscreen();
+      await document.exitFullscreen();
     } else {
-      document.documentElement.requestFullscreen();
+      await document.documentElement.requestFullscreen();
     }
   };
 
@@ -102,6 +107,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
   if (!authContext.loading) {
     if (authContext.user?.email) {
       const displayNameOrEmail =
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         authContext.user.displayName || authContext.user.email;
       loginButton = t`Logged in as ${displayNameOrEmail}`;
     } else if (authContext.user) {
@@ -147,7 +153,9 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
       coverImage={props.coverImage}
       closeCallback={
         props.overlayType === OverlayType.Success
-          ? () => props.dispatch({ type: 'DISMISSSUCCESS' })
+          ? () => {
+              props.dispatch({ type: 'DISMISSSUCCESS' });
+            }
           : undefined
       }
     >
@@ -167,7 +175,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
             top: '1em',
             left: '1em',
           }}
-          onClick={toggleFullscreen}
+          onClick={logAsyncErrors(toggleFullscreen)}
         >
           <GoScreenFull
             aria-label="toggle fullscreen"
@@ -179,7 +187,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         ''
       )}
       <PuzzleHeading
-        tags={(props.puzzle.userTags || []).concat(props.puzzle.autoTags || [])}
+        tags={(props.puzzle.userTags ?? []).concat(props.puzzle.autoTags ?? [])}
         rating={props.puzzle.rating}
         publishTime={props.publishTime}
         showTip={props.overlayType === OverlayType.Success}
@@ -205,7 +213,9 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
               <>
                 <div css={{ marginBottom: '1em' }}>{props.message}</div>
                 <Button
-                  onClick={() => props.dispatch({ type: 'RESUMEACTION' })}
+                  onClick={() => {
+                    props.dispatch({ type: 'RESUMEACTION' });
+                  }}
                   text={props.dismissMessage}
                 />
                 <p css={{ marginTop: '1em' }}>{loginButton}</p>
@@ -213,7 +223,9 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                   <p css={{ marginTop: '1em' }}>
                     <Trans>You are currently solving downs-only:</Trans> (
                     <ButtonAsLink
-                      onClick={() => props.dispatch({ type: 'STOPDOWNSONLY' })}
+                      onClick={() => {
+                        props.dispatch({ type: 'STOPDOWNSONLY' });
+                      }}
                       text={t`enable across clues`}
                     />
                     ).
@@ -322,7 +334,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
               !props.contestRevealed &&
               !isMetaSolution(
                 props.contestSubmission,
-                props.puzzle.contestAnswers || []
+                props.puzzle.contestAnswers ?? []
               ) &&
               props.user?.uid !== props.puzzle.authorId)) && {
             display: 'none',

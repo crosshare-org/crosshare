@@ -1,7 +1,7 @@
 export {};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const WordDB = jest.genMockFromModule('../WordDB') as any;
+const WordDB = jest.genMockFromModule('../WordDB');
 
 WordDB.useWordDB = () => {
   return [

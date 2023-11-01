@@ -5,5 +5,14 @@
   "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
-  "ignorePatterns": ["node_modules", "**/*.js"]
+  "ignorePatterns": ["node_modules", "**/*.js"],
+  "rules": {
+  "@typescript-eslint/no-unused-vars": [
+    "error",
+    {
+      "argsIgnorePattern": "^_"
+    }
+  ]
+}
+
 }

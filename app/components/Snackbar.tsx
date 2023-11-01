@@ -45,7 +45,7 @@ interface ToastState {
 }
 
 interface State extends SnackbarState {
-  toasts: Array<ToastState>;
+  toasts: ToastState[];
 }
 
 const initialState = {
@@ -122,7 +122,9 @@ function Toast({ id, message }: { id: number; message: string }) {
     const timer = setTimeout(() => {
       close();
     }, DURATION);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [close]);
 
   return (

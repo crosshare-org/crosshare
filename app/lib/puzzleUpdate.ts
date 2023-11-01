@@ -135,13 +135,13 @@ async function updateTagsIfNeeded(puzzleId: string, dbpuz: DBPuzzleT) {
   const autoTags = autoTag(dbpuz);
   if (!eqSet(new Set(autoTags), new Set(dbpuz.tg_a))) {
     doUpdate = true;
-    update['tg_a'] = autoTags;
+    update.tg_a = autoTags;
   }
 
   const tagIndex = buildTagIndex(dbpuz.tg_u, autoTags);
   if (!eqSet(new Set(tagIndex), new Set(dbpuz.tg_i))) {
     doUpdate = true;
-    update['tg_i'] = tagIndex;
+    update.tg_i = tagIndex;
   }
 
   if (doUpdate) {
@@ -175,7 +175,7 @@ export async function handlePuzzleUpdate(
     return;
   }
 
-  updateTagsIfNeeded(puzzleId, after);
+  await updateTagsIfNeeded(puzzleId, after);
 
   if (before) {
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions

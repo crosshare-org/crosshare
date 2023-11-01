@@ -22,7 +22,7 @@ import { isSome } from 'fp-ts/lib/Option';
 import { notEmpty } from '../../lib/utils';
 
 export interface DailyMiniProps {
-  puzzles: Array<[number, LinkablePuzzle, ConstructorPageBase | null, boolean]>;
+  puzzles: [number, LinkablePuzzle, ConstructorPageBase | null, boolean][];
   year: number;
   month: number;
   olderLink?: string;
@@ -63,9 +63,7 @@ async function puzzlesListForMonth(
   year: number,
   month: number,
   maxDay: number
-): Promise<
-  Array<[number, LinkablePuzzle, ConstructorPageBase | null, boolean]>
-> {
+): Promise<[number, LinkablePuzzle, ConstructorPageBase | null, boolean][]> {
   return Promise.all(
     [...Array(maxDay).keys()]
       .reverse()
@@ -127,6 +125,7 @@ async function propsForDailyMini(
 
 export default function DailyMiniPage(props: PageProps) {
   const { locale } = useRouter();
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const loc = locale || 'en';
 
   if ('error' in props) {

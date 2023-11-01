@@ -1,18 +1,19 @@
 import { Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
+import 'mdast-util-directive';
+import { Root } from 'mdast-util-from-markdown/lib';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 export const remarkNoRefs: Plugin = () => {
-  return (tree) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    visit(tree, (node: any) => {
+  return (tree: Root) => {
+    visit(tree, { type: 'textDirective' }, (node) => {
       if (node.type !== 'textDirective' || node.name !== 'no-refs') {
         return;
       }
-      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-      const data = node.data || (node.data = {});
+      const data = node.data ?? (node.data = {});
       data.hName = 'span';
-      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-      const properties = data.hProperties || (data.hProperties = {});
+      const properties = data.hProperties ?? (data.hProperties = {});
       properties.className = 'no-refs';
     });
   };

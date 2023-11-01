@@ -46,23 +46,19 @@ export class GlickoRound {
   currentRound: number;
   playerBeforeScores: Map<PlayerId, GlickoScoreT>;
   puzzleBeforeScores: Map<CrosswordId, GlickoScoreT>;
-  playerMatches: Map<PlayerId, Array<[CrosswordId, Result]>>;
-  puzzleMatches: Map<CrosswordId, Array<[PlayerId, Result]>>;
+  playerMatches: Map<PlayerId, [CrosswordId, Result][]>;
+  puzzleMatches: Map<CrosswordId, [PlayerId, Result][]>;
 
   loadPlayerScore: (playerId: string) => Promise<GlickoScoreT | undefined> =
-    async () => undefined;
+    async () => Promise.resolve(undefined);
   loadPuzzleScore: (puzzleId: string) => Promise<GlickoScoreT | undefined> =
-    async () => undefined;
-  savePlayerScore: (
-    playerId: string,
-    score: GlickoScoreT
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  ) => Promise<void> = async () => {};
-  savePuzzleScore: (
-    puzzleId: string,
-    score: GlickoScoreT
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  ) => Promise<void> = async () => {};
+    async () => Promise.resolve(undefined);
+  savePlayerScore: (playerId: string, score: GlickoScoreT) => void = () => {
+    /* noop */
+  };
+  savePuzzleScore: (puzzleId: string, score: GlickoScoreT) => void = () => {
+    /* noop */
+  };
 
   constructor(
     roundNumber: number,
@@ -107,7 +103,7 @@ export class GlickoRound {
 
   computeNewScore(
     prevScore: GlickoScoreT,
-    matches: Array<GlickoScoreT & { s: Result }>,
+    matches: (GlickoScoreT & { s: Result })[],
     minRD: number
   ): GlickoScoreT {
     const withCalcs = matches.map((match) => {
@@ -156,7 +152,7 @@ export class GlickoRound {
         matches,
         this.PLAYER_MIN_RD
       );
-      await this.savePlayerScore(userId, newScore);
+      this.savePlayerScore(userId, newScore);
     }
     for (const [puzzleId, puzzleMatches] of this.puzzleMatches.entries()) {
       try {
@@ -172,7 +168,7 @@ export class GlickoRound {
           matches,
           this.PUZZLE_MIN_RD
         );
-        await this.savePuzzleScore(puzzleId, newScore);
+        this.savePuzzleScore(puzzleId, newScore);
       } catch {
         continue;
       }
@@ -230,9 +226,9 @@ export class GlickoRound {
   }
 }
 
-const PLAYER_SCORE_CACHE: Map<string, GlickoScoreT> = new Map();
-const PUZZLE_SCORE_CACHE: Map<string, GlickoScoreT> = new Map();
-const SCORES_CACHE: Map<string, Array<GlickoScoreT>> = new Map();
+const PLAYER_SCORE_CACHE = new Map<string, GlickoScoreT>();
+const PUZZLE_SCORE_CACHE = new Map<string, GlickoScoreT>();
+const SCORES_CACHE = new Map<string, GlickoScoreT[]>();
 
 export async function writeCacheToDB() {
   for (const [playerId, score] of PLAYER_SCORE_CACHE.entries()) {
@@ -260,7 +256,7 @@ export class CrosshareGlickoRound extends GlickoRound {
     this.readFromCacheOnly = readFromCacheOnly;
   }
 
-  savePlayerScore = async (playerId: string, score: GlickoScoreT) => {
+  savePlayerScore = (playerId: string, score: GlickoScoreT) => {
     PLAYER_SCORE_CACHE.set(playerId, score);
     const scores = SCORES_CACHE.get(playerId) || [];
     scores.push(score);
@@ -269,7 +265,7 @@ export class CrosshareGlickoRound extends GlickoRound {
     return;
   };
 
-  savePuzzleScore = async (puzzleId: string, score: GlickoScoreT) => {
+  savePuzzleScore = (puzzleId: string, score: GlickoScoreT) => {
     PUZZLE_SCORE_CACHE.set(puzzleId, score);
     return;
   };
@@ -350,10 +346,8 @@ export async function doGlicko() {
   let startRound = Math.floor(1586895805 / (60 * 60 * 24));
 
   let readFromCacheOnly = true;
-  if (startTimestamp !== null) {
-    startRound = Math.floor(startTimestamp.toMillis() / (1000 * 60 * 60 * 24));
-    readFromCacheOnly = false;
-  }
+  startRound = Math.floor(startTimestamp.toMillis() / (1000 * 60 * 60 * 24));
+  readFromCacheOnly = false;
 
   const endRound = Math.floor(endTimestamp.toMillis() / (1000 * 60 * 60 * 24));
 
@@ -379,7 +373,7 @@ export async function doGlicko() {
       .get();
     console.log(
       'doing round ' +
-        queryStartTimestamp.toDate() +
+        queryStartTimestamp.toDate().toString() +
         ' for ' +
         value.size +
         ' plays'

@@ -10,7 +10,7 @@ import {
   entryIndexAtPosition,
 } from '../lib/gridBase';
 
-type GridViewProps = {
+interface GridViewProps {
   grid: ViewableGrid<ViewableEntry>;
   defaultGrid?: ViewableGrid<ViewableEntry>; // This is used for the add alternate solution interface
   active: PosAndDir;
@@ -21,14 +21,14 @@ type GridViewProps = {
   rebusValue?: string;
   wrongCells?: Set<number>;
   allowBlockEditing?: boolean;
-  autofill?: Array<string>;
-  cellColors?: Array<number>;
+  autofill?: string[];
+  cellColors?: number[];
   highlightEntry?: number;
-  entryRefs?: Array<Set<number>>;
-  showAlternates?: Array<Array<[number, string]>> | null;
-  answers?: Array<string> | null;
+  entryRefs?: Set<number>[];
+  showAlternates?: [number, string][][] | null;
+  answers?: string[] | null;
   symmetry?: Symmetry | null;
-};
+}
 
 export const GridView = ({
   active,
@@ -38,11 +38,11 @@ export const GridView = ({
 }: GridViewProps) => {
   const entryCells = getEntryCells(grid, active);
   const entryIdx = entryIndexAtPosition(grid, active);
-  const highlightCells: Array<Position> =
+  const highlightCells: Position[] =
     props.highlightEntry !== undefined
       ? grid.entries[props.highlightEntry]?.cells || []
       : [];
-  let refedCells: Array<Position> = [];
+  let refedCells: Position[] = [];
   if (entryIdx !== null) {
     const refedCellsSet = new Set(entryCells);
     if (props.entryRefs) {
@@ -63,7 +63,9 @@ export const GridView = ({
     const interval = setInterval(() => {
       setCounter(counter + 1);
     }, 1000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+    };
   }, [counter]);
 
   const noOp = useCallback(() => undefined, []);
@@ -77,12 +79,11 @@ export const GridView = ({
     },
     [dispatch]
   );
-  const changeDirection = useCallback(
-    () => dispatch({ type: 'CHANGEDIRECTION' }),
-    [dispatch]
-  );
+  const changeDirection = useCallback(() => {
+    dispatch({ type: 'CHANGEDIRECTION' });
+  }, [dispatch]);
 
-  let altToShow: Array<string> = [];
+  let altToShow: string[] = [];
   if (props.answers && props.showAlternates?.length) {
     altToShow = [...props.answers];
     const altIndex = counter % (props.showAlternates.length + 1);

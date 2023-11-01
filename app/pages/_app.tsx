@@ -59,7 +59,7 @@ export default function CrosshareApp({
   const initAudioContext = useCallback(() => {
     if (!audioContext) {
       const constructor =
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/strict-boolean-expressions
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-explicit-any
         window.AudioContext || (window as any).webkitAudioContext;
       setAudioContext(new constructor());
     }
@@ -92,9 +92,11 @@ export default function CrosshareApp({
   const firstRender = useRef(true);
   if (firstRender.current) {
     firstRender.current = false;
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unsafe-member-access
     if (pageProps.translation) {
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       i18n.load(locale || 'en', pageProps.translation);
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       i18n.activate(locale || 'en');
     } else {
       i18n.activate('en');
@@ -102,11 +104,13 @@ export default function CrosshareApp({
   }
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unsafe-member-access
     if (pageProps.translation && locale) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       i18n.load(locale, pageProps.translation);
       i18n.activate(locale);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   }, [locale, pageProps.translation]);
 
   useEffect(() => {

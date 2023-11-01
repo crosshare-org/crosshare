@@ -13,9 +13,9 @@ import * as t from 'io-ts';
 import { TagList } from './TagList';
 
 interface TagEditorProps {
-  userTags: Array<string>;
-  autoTags: Array<string>;
-  save: (newTags: Array<string>) => Promise<void>;
+  userTags: string[];
+  autoTags: string[];
+  save: (newTags: string[]) => Promise<void>;
   cancel?: () => void;
 }
 
@@ -31,36 +31,33 @@ export function TagEditor(props: TagEditorProps) {
 
   useEffect(() => {
     let didCancel = false;
-
-    const fetchData = async () => {
-      getFromSessionOrDB({
-        collection: 'settings',
-        docId: 'tags',
-        validator: t.type({ disallowed: t.array(t.string) }),
-        ttl: 30 * 60 * 1000,
-      })
-        .then((s) => {
-          if (didCancel) {
-            return;
-          }
-          if (!s) {
-            setError('Could not load settings');
-            setLoading(false);
-          } else {
-            setDisallowed(s.disallowed);
-            setLoading(false);
-          }
-        })
-        .catch((e) => {
-          if (didCancel) {
-            return;
-          }
-          console.log(e);
-          setError(e);
+    getFromSessionOrDB({
+      collection: 'settings',
+      docId: 'tags',
+      validator: t.type({ disallowed: t.array(t.string) }),
+      ttl: 30 * 60 * 1000,
+    })
+      .then((s) => {
+        if (didCancel) {
+          return;
+        }
+        if (!s) {
+          setError('Could not load settings');
           setLoading(false);
-        });
-    };
-    fetchData();
+        } else {
+          setDisallowed(s.disallowed);
+          setLoading(false);
+        }
+      })
+      .catch((e) => {
+        if (didCancel) {
+          return;
+        }
+        console.log(e);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        setError(e);
+        setLoading(false);
+      });
     return () => {
       didCancel = true;
     };
@@ -104,14 +101,14 @@ export function TagEditor(props: TagEditorProps) {
               type="text"
               placeholder={`New tag name`}
               value={newTag}
-              onChange={(e) =>
+              onChange={(e) => {
                 setNewTag(
                   e.target.value
                     .toLowerCase()
                     .replace(/[^a-z0-9-]/g, '')
                     .slice(0, TAG_LENGTH_LIMIT)
-                )
-              }
+                );
+              }}
             />
             <LengthView value={newTag} maxLength={TAG_LENGTH_LIMIT} />
             <Button
@@ -146,6 +143,9 @@ export function TagEditor(props: TagEditorProps) {
               .then(() => {
                 setSavedTags(tags);
                 showSnackbar('Saved tags');
+              })
+              .catch((e) => {
+                console.error('error saving tags', e);
               });
           }}
           disabled={eqSet(new Set(tags), new Set(savedTags))}

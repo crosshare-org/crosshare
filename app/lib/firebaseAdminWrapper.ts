@@ -30,6 +30,7 @@ const firestore = () => getFirestore(getAdminApp());
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toFirestore = (data: any): Record<string, unknown> =>
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   cloneDeepWith(data, (val) => {
     if (isTimestamp(val)) {
       return FBTimestamp.fromMillis(val.toMillis());
@@ -41,7 +42,7 @@ export const getCollection = (c: string) => {
   const db = firestore();
   return db.collection(c).withConverter({
     toFirestore: toFirestore,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     fromFirestore: (s: any) => s.data(),
   });
 };
@@ -50,9 +51,9 @@ export async function mapEachResult<N, A>(
   query: Query,
   validator: t.Decoder<unknown, A>,
   mapper: (val: A, docid: string) => N
-): Promise<Array<N>> {
+): Promise<N[]> {
   const value = await query.get();
-  const results: Array<N> = [];
+  const results: N[] = [];
   for (const doc of value.docs) {
     const data = doc.data();
     const validationResult = validator.decode(data);

@@ -35,8 +35,8 @@ type HomepagePuz = LinkablePuzzle & {
 
 interface HomePageProps {
   dailymini: HomepagePuz | null;
-  featured: Array<HomepagePuz>;
-  articles: Array<ArticleT>;
+  featured: HomepagePuz[];
+  articles: ArticleT[];
 }
 
 const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
@@ -107,6 +107,7 @@ export default function HomePage({
     <>
       <Head>
         <title>{title}</title>
+        {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
         <I18nTags locale={router.locale || 'en'} canonicalPath="/" />
       </Head>
 

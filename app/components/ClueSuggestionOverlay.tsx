@@ -4,17 +4,18 @@ import { FaCheck } from 'react-icons/fa';
 import { Table } from 'react-fluid-table';
 import orderBy from 'lodash/orderBy';
 import { ClueListT, parseClueList, ClueEntryT } from '../lib/ginsbergCommon';
+import { logAsyncErrors } from '../lib/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const NYTIcon = ({ row }: { row: any }) => {
-  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unsafe-member-access
   if (row?.n) {
     return <FaCheck />;
   }
   return <></>;
 };
 
-const ExternalSites: Array<[string, string]> = [
+const ExternalSites: [string, string][] = [
   ['Wikipedia', 'https://en.wikipedia.org/w/index.php?search=%s'],
   ['Wiktionary', 'https://en.wiktionary.org/w/index.php?search=%s'],
 ];
@@ -22,6 +23,7 @@ const ExternalSites: Array<[string, string]> = [
 const Weekday = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Difficulty = ({ row }: { row: any }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
   return <>{Weekday[Math.round(row.d)] || '-'}</>;
 };
 
@@ -34,7 +36,7 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
   const [clueList, setClueList] = useState<ClueListT | null>(null);
   const [error, setError] = useState(false);
   const [onlyNYT, setOnlyNYT] = useState(false);
-  const loading = clueList === null && error === false;
+  const loading = clueList === null && !error;
 
   const onSort = (col: string | null, dir: string | null) => {
     if (!clueList || !col || !dir) {
@@ -57,6 +59,7 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
   useEffect(() => {
     let didCancel = false;
     async function getClues() {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const res = await (await fetch(`/api/clues/${props.word}`))
         .json()
         .catch((e) => {
@@ -79,7 +82,7 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
         setClueList(clues);
       }
     }
-    getClues();
+    logAsyncErrors(getClues)();
     return () => {
       didCancel = true;
     };
@@ -116,7 +119,9 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
                 css={{ marginRight: '1em' }}
                 type="checkbox"
                 checked={onlyNYT}
-                onChange={(e) => setOnlyNYT(e.target.checked)}
+                onChange={(e) => {
+                  setOnlyNYT(e.target.checked);
+                }}
               />
               Only show clues that have appeared in the NYT
             </label>

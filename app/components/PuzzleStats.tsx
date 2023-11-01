@@ -25,7 +25,7 @@ import { DefaultTopBar, TopBarLink } from './TopBar';
 import { FaShareSquare } from 'react-icons/fa';
 import { Overlay } from './Overlay';
 import { CopyableInput } from './CopyableInput';
-import { isMetaSolution, timeString } from '../lib/utils';
+import { isMetaSolution, logAsyncErrors, timeString } from '../lib/utils';
 import { ButtonAsLink } from './Buttons';
 import { ColumnProps, Table } from 'react-fluid-table';
 import { Emoji } from './Emoji';
@@ -59,7 +59,7 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
     props.stats.ct_subs?.map((n) => ({
       d: (typeof n.t === 'number' ? new Date(n.t) : n.t.toDate()).toISOString(),
       r: n.rv ? 'Yes' : 'No',
-      p: (n.gs || []).length.toString(),
+      p: (n.gs ?? []).length.toString(),
       ...n,
     }))
   );
@@ -89,7 +89,7 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
       content: ({ row }) => {
         const isSolution = isMetaSolution(
           row.s,
-          props.puzzle.contestAnswers || []
+          props.puzzle.contestAnswers ?? []
         );
         return (
           <>
@@ -99,8 +99,8 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
                 (
                 <ButtonAsLink
                   text="Accept as solution"
-                  onClick={() => {
-                    updateDoc(getDocRef('c', props.puzzle.id), {
+                  onClick={logAsyncErrors(async () => {
+                    await updateDoc(getDocRef('c', props.puzzle.id), {
                       ct_ans: arrayUnion(row.s),
                     }).then(() => {
                       showSnackbar(
@@ -108,20 +108,20 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
                           Solution marked as accepted (
                           <ButtonAsLink
                             text="undo"
-                            onClick={() => {
-                              updateDoc(getDocRef('c', props.puzzle.id), {
+                            onClick={logAsyncErrors(async () => {
+                              await updateDoc(getDocRef('c', props.puzzle.id), {
                                 ct_ans: arrayRemove(row.s),
                               }).then(() => {
                                 showSnackbar('Undo was successful');
                               });
-                            }}
+                            })}
                           />
                           ) - it may take up to an hour for the leaderboard to
                           update
                         </>
                       );
                     });
-                  }}
+                  })}
                 />
                 )
               </>
@@ -159,8 +159,8 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
           data={subs.map((s) => ({
             ...s,
             r: s.rv ? 'Yes' : 'No',
-            p: (s.gs || []).length.toString(),
-            c: isMetaSolution(s.s, props.puzzle.contestAnswers || [])
+            p: (s.gs ?? []).length.toString(),
+            c: isMetaSolution(s.s, props.puzzle.contestAnswers ?? [])
               ? 'true'
               : 'false',
           }))}
@@ -353,7 +353,7 @@ export const StatsPage = ({
 }) => {
   const [mode, setMode] = useState(StatsMode.AverageTime);
   const [dropped, setDropped] = useState(false);
-  const isMeta = (puzzle.contestAnswers?.length || 0) > 0;
+  const isMeta = (puzzle.contestAnswers?.length ?? 0) > 0;
 
   return (
     <>
@@ -372,12 +372,16 @@ export const StatsPage = ({
             {!hideShare && stats?.sct ? (
               <>
                 <TopBarLink
-                  onClick={() => setDropped(!dropped)}
+                  onClick={() => {
+                    setDropped(!dropped);
+                  }}
                   text="Share"
                   icon={<FaShareSquare />}
                 />
                 <Overlay
-                  closeCallback={() => setDropped(false)}
+                  closeCallback={() => {
+                    setDropped(false);
+                  }}
                   hidden={!dropped}
                 >
                   <>
@@ -454,12 +458,12 @@ export const StatsPage = ({
                     <div>
                       Correct contest submissions:{' '}
                       {stats.ct_subs?.filter((sub) =>
-                        isMetaSolution(sub.s, puzzle.contestAnswers || [])
-                      ).length || 0}
+                        isMetaSolution(sub.s, puzzle.contestAnswers ?? [])
+                      ).length ?? 0}
                     </div>
                     <div>
                       Total contest submissions:
-                      {stats.ct_subs?.length || 0}
+                      {stats.ct_subs?.length ?? 0}
                     </div>
                   </div>
                 ) : (

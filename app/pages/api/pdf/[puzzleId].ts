@@ -63,7 +63,7 @@ function layoutPDFClues(
   let x = format.marginLeft;
   let y = marginTop(x, false);
   let addedPage = false;
-  const constructorNote: Array<{ label: string; clue: string }> = [];
+  const constructorNote: { label: string; clue: string }[] = [];
   if (puzzle.constructorNotes) {
     constructorNote.push(
       { label: '', clue: puzzle.constructorNotes },
@@ -85,7 +85,9 @@ function layoutPDFClues(
     const width = clue.label
       ? format.clueWidth
       : format.clueWidth + format.labelWidth;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const clueText = doc.splitTextToSize(getClueText(clue), width);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const adjustY = clueText.length * (format.fontSize + 3);
 
     // If we have an across/down heading make sure the first clue will fit in this column too
@@ -98,10 +100,12 @@ function layoutPDFClues(
       const nextWidth = nextClue.label
         ? format.clueWidth
         : format.clueWidth + format.labelWidth;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const nextClueText = doc.splitTextToSize(
         getClueText(nextClue),
         nextWidth
       );
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       testAdjustY += nextClueText.length * (format.fontSize + 3);
     }
     if (y + testAdjustY > format.marginBottom) {
@@ -122,6 +126,7 @@ function layoutPDFClues(
       doc.text(clue.label, x + format.labelWidth - 5, y, {
         align: 'right',
       });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       doc.text(clueText, x + (clue.label ? format.labelWidth : 0), y);
     }
     y += adjustY;
@@ -239,7 +244,7 @@ function layoutPDFInfo(
 async function getConstructor(authorId: string): Promise<string | null> {
   const res = await userIdToPage(authorId);
 
-  return res?.i || null;
+  return res?.i ?? null;
 }
 
 function createPublishedByLine(
@@ -307,15 +312,13 @@ function getPdf(
 export default async function pdf(req: NextApiRequest, res: NextApiResponse) {
   const { puzzleId } = req.query;
   if (Array.isArray(puzzleId) || !puzzleId) {
-    return res
-      .status(404)
-      .json({ statusCode: 404, message: 'bad puzzle params' });
+    res.status(404).json({ statusCode: 404, message: 'bad puzzle params' });
+    return;
   }
   const puzzle = await getPuzzle(puzzleId);
   if (!puzzle) {
-    return res
-      .status(404)
-      .json({ statusCode: 404, message: 'failed to get puzzle' });
+    res.status(404).json({ statusCode: 404, message: 'failed to get puzzle' });
+    return;
   }
   const fromDB = puzzleFromDB(puzzle);
   const constructorUsername = await getConstructor(fromDB.authorId);

@@ -7,7 +7,7 @@ import {
 import { getFromDB } from './dbUtils';
 
 function findCommentById(
-  comments: Array<CommentWithRepliesT>,
+  comments: CommentWithRepliesT[],
   id: string
 ): CommentWithRepliesT | null {
   for (const comment of comments) {
@@ -25,7 +25,7 @@ function findCommentById(
 }
 
 export async function moderateComments(
-  commentsForModeration: Array<CommentForModerationWithIdT>,
+  commentsForModeration: CommentForModerationWithIdT[],
   commentIdsForDeletion: Set<string>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   deleteCfm: (commentId: string) => Promise<any>,

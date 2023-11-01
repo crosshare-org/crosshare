@@ -26,13 +26,13 @@ declare module 'micromark-util-types' {
 
 export const spoilersHtml: HtmlExtension = {
   enter: {
-    spoiler(this: any) {
-      return this.tag('<span class="spoiler">');
+    spoiler(this) {
+      this.tag('<span class="spoiler">');
     },
   },
   exit: {
-    spoiler(this: any) {
-      return this.tag('</span>');
+    spoiler(this) {
+      this.tag('</span>');
     },
   },
 };
@@ -110,7 +110,7 @@ export const spoilersSyntax = function (): Extension {
                 0,
                 resolveAll(
                   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-                  context.parser.constructs.insideSpan.null || [],
+                  context.parser.constructs.insideSpan.null ?? [],
                   events.slice(open + 1, index),
                   context
                 )
@@ -156,6 +156,7 @@ export const spoilersSyntax = function (): Extension {
     let size = 0;
 
     const more: State = function (code) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const before = classifyCharacter(previous);
 
       if (code === PIPE) {
@@ -168,6 +169,7 @@ export const spoilersSyntax = function (): Extension {
 
       if (size < 2) return nok(code);
       const token = effects.exit('spoilerSequenceTemporary');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const after = classifyCharacter(code);
       token._open = Boolean(before); // before is whitespace or punctuation
       token._close = Boolean(after); // after is whitespace or punctuation
@@ -192,6 +194,7 @@ export const spoilersSyntax = function (): Extension {
 
   const tokenizeRedditOpen: Tokenizer = function (effects, ok, nok) {
     const previous = this.previous;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const before = classifyCharacter(previous);
     const events = this.events;
 
@@ -237,6 +240,7 @@ export const spoilersSyntax = function (): Extension {
 
     const finalize: State = function (code) {
       const token = effects.exit('redditSequenceTemporary');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const after = classifyCharacter(code);
       token._open = false;
       token._close = Boolean(after);

@@ -49,7 +49,7 @@ export function buildTagIndex(
   userTags: string[] | undefined,
   autoTags: string[] | undefined
 ): string[] {
-  const allTags = (userTags || []).concat(autoTags || []);
+  const allTags = (userTags ?? []).concat(autoTags ?? []);
   const normalized = Array.from(
     new Set(allTags.map(normalizeTag).filter((s) => s.length >= TAG_LENGTH_MIN))
   ).sort();
@@ -94,7 +94,7 @@ function normalize(n: string) {
 
 export function isMetaSolution(
   submission: string | undefined,
-  solutions: Array<string>
+  solutions: string[]
 ) {
   if (submission === undefined) {
     return false;
@@ -109,9 +109,9 @@ export function isMetaSolution(
 }
 
 export function checkGrid(
-  grid: Array<string>,
-  answers: Array<string>,
-  alts: Array<Array<[index: number, value: string]>>
+  grid: string[],
+  answers: string[],
+  alts: [index: number, value: string][][]
 ): [filled: boolean, success: boolean] {
   for (const cell of grid) {
     if (cell.trim() === '') {
@@ -157,4 +157,18 @@ export function eqSet<T>(as: Set<T>, bs: Set<T>) {
   if (as.size !== bs.size) return false;
   for (const a of as) if (!bs.has(a)) return false;
   return true;
+}
+
+export function logAsyncErrors<A extends unknown[]>(
+  p: (...args: A) => Promise<void>
+): (...args: A) => void {
+  return (...args: A) => {
+    try {
+      p(...args).catch((err) => {
+        console.error('Error thrown asynchronously', err);
+      });
+    } catch (err) {
+      console.error('Error thrown synchronously', err);
+    }
+  };
 }

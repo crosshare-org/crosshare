@@ -18,7 +18,9 @@ export const DistanceToNow = (props: {
   const { locale } = useRouter();
 
   const [hydrated, setHydrated] = useState(false);
-  useEffect(() => setHydrated(true), []);
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   if (!hydrated) {
     return <>{props.date.toISOString()}</>;

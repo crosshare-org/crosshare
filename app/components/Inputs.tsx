@@ -21,7 +21,9 @@ export const LengthLimitedInput = ({
   return (
     <input
       {...props}
-      onChange={(e) => updateValue(e.target.value.substring(0, maxLength))}
+      onChange={(e) => {
+        updateValue(e.target.value.substring(0, maxLength));
+      }}
     />
   );
 };
@@ -38,7 +40,9 @@ export const LengthLimitedTextarea = ({
   return (
     <textarea
       {...props}
-      onChange={(e) => updateValue(e.target.value.substring(0, maxLength))}
+      onChange={(e) => {
+        updateValue(e.target.value.substring(0, maxLength));
+      }}
     />
   );
 };

@@ -202,7 +202,7 @@ interface PotentialFillListProps {
   entryLength: number;
   entryIndex: number;
   selected: boolean;
-  values: Array<[string, number]>;
+  values: [string, number][];
   dispatch: Dispatch<ClickedFillAction>;
 }
 const PotentialFillList = (props: PotentialFillListProps) => {
@@ -293,34 +293,35 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
   }
 
   return initialBuilderState({
-    id: saved?.id || null,
-    width: saved?.width || props.size.cols,
-    height: saved?.height || props.size.rows,
-    grid: saved?.grid || props.grid,
-    vBars: saved?.vBars || props.vBars || [],
-    hBars: saved?.hBars || props.hBars || [],
-    hidden: saved?.hidden || props.hidden || [],
-    highlighted: saved?.highlighted || props.highlighted || [],
-    highlight: saved?.highlight || props.highlight || 'circle',
-    title: saved?.title || props.title || null,
-    notes: saved?.notes || props.constructorNotes || null,
-    clues: saved?.clues || {},
+    id: saved?.id ?? null,
+    width: saved?.width ?? props.size.cols,
+    height: saved?.height ?? props.size.rows,
+    grid: saved?.grid ?? props.grid,
+    vBars: saved?.vBars ?? props.vBars ?? [],
+    hBars: saved?.hBars ?? props.hBars ?? [],
+    hidden: saved?.hidden ?? props.hidden ?? [],
+    highlighted: saved?.highlighted ?? props.highlighted ?? [],
+    highlight: saved?.highlight ?? props.highlight ?? 'circle',
+    title: saved?.title ?? props.title ?? null,
+    notes: saved?.notes ?? props.constructorNotes ?? null,
+    clues: saved?.clues ?? {},
     authorId: props.user.uid,
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     authorName: props.user.displayName || 'Anonymous',
     editable: true,
-    isPrivate: saved?.isPrivate || false,
-    isPrivateUntil: saved?.isPrivateUntil || null,
-    blogPost: saved?.blogPost || null,
-    guestConstructor: saved?.guestConstructor || null,
+    isPrivate: saved?.isPrivate ?? false,
+    isPrivateUntil: saved?.isPrivateUntil ?? null,
+    blogPost: saved?.blogPost ?? null,
+    guestConstructor: saved?.guestConstructor ?? null,
     commentsDisabled:
       saved?.commentsDisabled !== undefined
         ? saved.commentsDisabled
         : props.prefs?.disableCommentsByDefault,
-    contestAnswers: saved?.contestAnswers || null,
-    contestHasPrize: saved?.contestHasPrize || false,
-    contestRevealDelay: saved?.contestRevealDelay || null,
-    alternates: saved?.alternates || null,
-    userTags: saved?.userTags || [],
+    contestAnswers: saved?.contestAnswers ?? null,
+    contestHasPrize: saved?.contestHasPrize ?? false,
+    contestRevealDelay: saved?.contestRevealDelay ?? null,
+    alternates: saved?.alternates ?? null,
+    userTags: saved?.userTags ?? [],
     symmetry: saved?.symmetry,
   });
 };
@@ -329,7 +330,7 @@ const ImportPuzForm = (props: { dispatch: Dispatch<ImportPuzAction> }) => {
   const [error, setError] = useState<string | null>(null);
 
   function handleFile(f: FileList | null) {
-    if (!f || !f[0]) {
+    if (!f?.[0]) {
       setError('No file selected');
       return;
     }
@@ -386,7 +387,9 @@ const ImportPuzForm = (props: { dispatch: Dispatch<ImportPuzAction> }) => {
           css={{ overflow: 'hidden', maxWidth: '70vw' }}
           type="file"
           accept=".puz"
-          onChange={(e) => handleFile(e.target.files)}
+          onChange={(e) => {
+            handleFile(e.target.files);
+          }}
         />
       </label>
     </>
@@ -435,9 +438,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   const currentCells = useRef(state.grid.cells);
   const currentVBars = useRef(state.grid.vBars);
   const currentHBars = useRef(state.grid.hBars);
-  const priorSolves = useRef<Array<[Array<string>, Set<number>, Set<number>]>>(
-    []
-  );
+  const priorSolves = useRef<[string[], Set<number>, Set<number>][]>([]);
   const priorWidth = useRef(state.grid.width);
   const priorHeight = useRef(state.grid.height);
   const runAutofill = useCallback(() => {
@@ -597,7 +598,9 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
         <div css={{ margin: '1em 2em' }}>
           <NewPuzzleForm
             dispatch={dispatch}
-            onCreate={() => setFirstLaunch(false)}
+            onCreate={() => {
+              setFirstLaunch(false);
+            }}
             hideWarning
           />
         </div>
@@ -618,7 +621,9 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
         notes={state.notes}
         clues={state.clues}
         completedEntries={state.grid.entries.filter((e) => e.completedWord)}
-        exitClueMode={() => setClueMode(false)}
+        exitClueMode={() => {
+          setClueMode(false);
+        }}
       />
     );
   }
@@ -659,17 +664,14 @@ const activeIndex = (
   throw new Error('active not in entry');
 };
 
-const lettersAtIndex = (
-  fill: Array<[string, number]>,
-  index: number
-): string => {
+const lettersAtIndex = (fill: [string, number][], index: number): string => {
   let seen = '';
   for (const [word] of fill) {
     const char = word[index];
     if (char === undefined) {
       continue;
     }
-    if (seen.indexOf(char) === -1) {
+    if (!seen.includes(char)) {
       seen += word[index];
     }
   }
@@ -679,7 +681,7 @@ const lettersAtIndex = (
 const potentialFill = (
   entry: ViewableEntry,
   grid: BuilderGrid
-): Array<[string, number]> => {
+): [string, number][] => {
   let pattern = '';
   const crosses = getCrosses(grid, entry);
   for (const [index, cell] of entry.cells.entries()) {
@@ -723,10 +725,10 @@ const potentialFill = (
       if (letter === undefined) {
         throw new Error('out of bounds on ' + word);
       }
-      if (successLetters[i]?.indexOf(letter) !== -1) {
+      if (successLetters[i]?.includes(letter)) {
         continue;
       }
-      if (failLetters[i]?.indexOf(letter) !== -1) {
+      if (failLetters[i]?.includes(letter)) {
         return false;
       }
       const crossObj = crosses[i];
@@ -823,11 +825,12 @@ const PuzDownloadOverlay = (props: {
           h={props.state.grid.height}
           g={props.state.grid.cells}
           n={props.state.authorName}
+          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           t={props.state.title || 'Crosshare puzzle'}
           hs={Array.from(props.state.grid.highlighted)}
           hdn={Array.from(props.state.grid.hidden)}
-          cn={props.state.notes || undefined}
-          gc={props.state.guestConstructor || undefined}
+          cn={props.state.notes ?? undefined}
+          gc={props.state.guestConstructor ?? undefined}
           {...getClueProps(
             props.state.grid.sortedEntries,
             props.state.grid.entries,
@@ -898,13 +901,13 @@ const GridMode = ({
 
   const pasteHandler = useCallback(
     (e: ClipboardEvent) => {
-      const tagName = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      const tagName = (e.target as HTMLElement).tagName.toLowerCase();
       if (tagName === 'textarea' || tagName === 'input') {
         return;
       }
       const pa: PasteAction = {
         type: 'PASTE',
-        content: e.clipboardData?.getData('Text') || '',
+        content: e.clipboardData?.getData('Text') ?? '',
       };
       dispatch(pa);
       e.preventDefault();
@@ -934,15 +937,15 @@ const GridMode = ({
       const validLetters = (
         entryValidLetters.match(
           new RegExp('[' + crossValidLetters + ']', 'g')
-        ) || []
+        ) ?? []
       ).join('');
       entryMatches = entryMatches.filter(([word]) => {
         const l = word[entryActiveIndex];
-        return l && validLetters.indexOf(l) !== -1;
+        return l && validLetters.includes(l);
       });
       crossMatches = crossMatches.filter(([word]) => {
         const l = word[crossActiveIndex];
-        return l && validLetters.indexOf(l) !== -1;
+        return l && validLetters.includes(l);
       });
     }
 
@@ -1009,7 +1012,7 @@ const GridMode = ({
 
   const stats = useMemo(() => {
     let totalLength = 0;
-    const lengthHistogram: Array<number> = new Array(
+    const lengthHistogram: number[] = new Array<number>(
       Math.max(state.grid.width, state.grid.height) - 1
     ).fill(0);
     const lengthHistogramNames = lengthHistogram.map((_, i) =>
@@ -1022,7 +1025,7 @@ const GridMode = ({
     });
     const numEntries = state.grid.entries.length;
     const averageLength = totalLength / numEntries;
-    const lettersHistogram: Array<number> = new Array(26).fill(0);
+    const lettersHistogram: number[] = new Array<number>(26).fill(0);
     const lettersHistogramNames = lettersHistogram.map((_, i) =>
       String.fromCharCode(i + 65)
     );
@@ -1128,7 +1131,9 @@ const GridMode = ({
         <TopBarLink
           icon={<FaListOl />}
           text="Clues"
-          onClick={() => setClueMode(true)}
+          onClick={() => {
+            setClueMode(true);
+          }}
         />
         <TopBarLink
           icon={<FaRegNewspaper />}
@@ -1416,19 +1421,25 @@ const GridMode = ({
                 <TopBarDropDownLink
                   icon={<FaVolumeUp />}
                   text="Unmute"
-                  onClick={() => setMuted(false)}
+                  onClick={() => {
+                    setMuted(false);
+                  }}
                 />
               ) : (
                 <TopBarDropDownLink
                   icon={<FaVolumeMute />}
                   text="Mute"
-                  onClick={() => setMuted(true)}
+                  onClick={() => {
+                    setMuted(true);
+                  }}
                 />
               )}
               <TopBarDropDownLink
                 icon={<FaKeyboard />}
                 text="Toggle Keyboard"
-                onClick={() => setToggleKeyboard(!toggleKeyboard)}
+                onClick={() => {
+                  setToggleKeyboard(!toggleKeyboard);
+                }}
               />
               {props.isAdmin ? (
                 <>
@@ -1521,14 +1532,18 @@ const GridMode = ({
             toPublish={state.toPublish}
             warnings={state.publishWarnings}
             user={props.user}
-            cancelPublish={() => dispatch({ type: 'CANCELPUBLISH' })}
+            cancelPublish={() => {
+              dispatch({ type: 'CANCELPUBLISH' });
+            }}
           />
         ) : (
           ''
         )}
         {state.publishErrors.length ? (
           <Overlay
-            closeCallback={() => dispatch({ type: 'CLEARPUBLISHERRORS' })}
+            closeCallback={() => {
+              dispatch({ type: 'CLEARPUBLISHERRORS' });
+            }}
           >
             <>
               <div>

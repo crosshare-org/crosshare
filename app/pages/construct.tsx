@@ -89,7 +89,9 @@ export default function BuilderPage() {
         </p>
         <LoadButton
           buttonText="Build Database"
-          onComplete={() => setLoaded()}
+          onComplete={() => {
+            setLoaded();
+          }}
         />
       </>
     );
@@ -102,7 +104,9 @@ export default function BuilderPage() {
               fontSize: '1.5em',
               marginTop: '0.75em',
             }}
-            onClick={() => setShowBuilder(true)}
+            onClick={() => {
+              setShowBuilder(true);
+            }}
             text="Launch Constructor"
           />
         </p>

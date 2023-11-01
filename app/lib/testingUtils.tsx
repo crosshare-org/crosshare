@@ -11,10 +11,11 @@ import { hasOwnProperty } from './types';
 import type { User } from 'firebase/auth';
 
 export const getUser = (uid: string, isAnonymous: boolean) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
   const u = { uid, isAnonymous } as any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
   u.updateProfile = (_profile: { displayName?: string }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     u.displayName = _profile.displayName;
     return Promise.resolve();
   };
@@ -26,6 +27,7 @@ export const anonymousUser = getUser('anonymous-user-id', true);
 import { messages as messagesEn } from '../locales/en/messages';
 
 i18n.load({
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   en: messagesEn,
 });
 i18n.activate('en');
@@ -33,9 +35,8 @@ i18n.activate('en');
 const WithAllProviders: (
   opts: AuthOptions,
   includeSnackbar?: boolean
-) => ComponentType =
-  (opts: AuthOptions, includeSnackbar?: boolean) =>
-  ({ children }: { children?: ReactNode }) => {
+) => ComponentType = (opts: AuthOptions, includeSnackbar?: boolean) =>
+  function WithAllProviders({ children }: { children?: ReactNode }) {
     return (
       <I18nProvider i18n={i18n}>
         <AuthContext.Provider

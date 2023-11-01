@@ -29,7 +29,7 @@ export interface CluedEntry extends ViewableEntry {
 
 export interface ViewableGrid<Entry extends ViewableEntry>
   extends GridBase<Entry> {
-  sortedEntries: Array<number>;
+  sortedEntries: number[];
   cellLabels: Map<number, number>;
   allowBlockEditing: boolean;
   highlighted: Set<number>;
@@ -39,10 +39,10 @@ export interface ViewableGrid<Entry extends ViewableEntry>
 }
 
 export interface CluedGrid extends ViewableGrid<CluedEntry> {
-  clues: Array<ClueT>;
+  clues: ClueT[];
 }
 
-function getSortedEntries<Entry extends EntryBase>(entries: Array<Entry>) {
+function getSortedEntries<Entry extends EntryBase>(entries: Entry[]) {
   return [...entries]
     .sort((a, b) => {
       if (a.direction !== b.direction) {
@@ -571,9 +571,9 @@ export function gridWithBarToggled<
 }
 
 export function getCluedAcrossAndDown<Entry extends ViewableEntry>(
-  clueMap: Record<string, Array<string>>,
-  entries: Array<Entry>,
-  sortedEntries: Array<number>,
+  clueMap: Record<string, string[]>,
+  entries: Entry[],
+  sortedEntries: number[],
   markdownToHast: (text: string) => Root
 ): [CluedEntry[], CluedEntry[]] {
   const wordCounts: Record<string, number> = {};
@@ -582,11 +582,11 @@ export function getCluedAcrossAndDown<Entry extends ViewableEntry>(
     if (!e) {
       throw new Error('Bad clue idx');
     }
-    const word = e.completedWord || '';
-    const clueArray = clueMap[word] || [];
-    const idx = wordCounts[word] || 0;
+    const word = e.completedWord ?? '';
+    const clueArray = clueMap[word] ?? [];
+    const idx = wordCounts[word] ?? 0;
     wordCounts[word] = idx + 1;
-    const clueString = clueArray[idx] || '';
+    const clueString = clueArray[idx] ?? '';
 
     return { ...e, clue: clueString, clueHast: markdownToHast(clueString) };
   });
@@ -599,8 +599,8 @@ export function getCluedAcrossAndDown<Entry extends ViewableEntry>(
 export function getClueMap<
   Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>
->(grid: Grid, rawClues: Array<ClueT>): Record<string, Array<string>> {
-  const result: Record<string, Array<string>> = {};
+>(grid: Grid, rawClues: ClueT[]): Record<string, string[]> {
+  const result: Record<string, string[]> = {};
   const clues = cluesByDirection(rawClues);
 
   for (const entryIndex of grid.sortedEntries) {
@@ -627,7 +627,7 @@ export function getClueMap<
   return result;
 }
 
-function cluesByDirection(rawClues: Array<ClueT>) {
+function cluesByDirection(rawClues: ClueT[]) {
   const clues = [new Map<number, string>(), new Map<number, string>()];
   for (const clue of rawClues) {
     const cluesByDir = clues[clue.dir];
@@ -644,9 +644,9 @@ function cluesByDirection(rawClues: Array<ClueT>) {
  * We use this for comment clue tooltips. */
 export function getEntryToClueMap(
   grid: CluedGrid,
-  answers: Array<string>
+  answers: string[]
 ): Map<string, [number, Direction, string]> {
-  const asList: Array<[string, [number, Direction, string]]> = grid.entries.map(
+  const asList: [string, [number, Direction, string]][] = grid.entries.map(
     (e) => {
       return [
         e.cells.map((p) => answers[cellIndex(grid, p)]).join(''),
@@ -662,15 +662,13 @@ export type RefPosition = [entryIndex: number, start: number, end: number];
 /* `refs` is a set of referenced entry indexes for each entry in the grid - we use this
  *    for grid highlights when an entry is selected.
  */
-export function getRefs(
-  grid: CluedGrid
-): [Array<Set<number>>, Array<Array<RefPosition>>] {
-  const refsList: Array<Set<number>> = [];
-  const refPositions: Array<Array<RefPosition>> = [];
+export function getRefs(grid: CluedGrid): [Set<number>[], RefPosition[][]] {
+  const refsList: Set<number>[] = [];
+  const refPositions: RefPosition[][] = [];
 
   for (const e of grid.entries) {
     const refs = new Set<number>();
-    const refPos: Array<RefPosition> = [];
+    const refPos: RefPosition[] = [];
     let match;
     const re =
       /(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
@@ -752,8 +750,8 @@ export function addClues<
   Grid extends ViewableGrid<Entry>
 >(
   grid: Grid,
-  rawClues: Array<ClueT>,
-  clueHasts: Array<Root> | ((c: string) => Root)
+  rawClues: ClueT[],
+  clueHasts: Root[] | ((c: string) => Root)
 ): CluedGrid {
   const clues = cluesByDirection(rawClues);
 
@@ -779,7 +777,7 @@ export function addClues<
     return { ...e, clue, clueHast };
   }
 
-  const entries: Array<CluedEntry> = [];
+  const entries: CluedEntry[] = [];
   for (const entry of grid.entries) {
     entries.push(mapper(entry));
   }
@@ -810,14 +808,14 @@ export function fromCells<
 
   const cellLabels = new Map<number, number>();
   let currentCellLabel = 1;
-  const entries: Array<Entry> = [];
+  const entries: Entry[] = [];
   for (const baseEntry of baseEntries) {
     const startPos = baseEntry.cells[0];
     if (startPos === undefined) {
       throw new Error('oob');
     }
     const i = startPos.row * input.width + startPos.col;
-    const entryLabel = cellLabels.get(i) || currentCellLabel;
+    const entryLabel = cellLabels.get(i) ?? currentCellLabel;
     if (!cellLabels.has(i)) {
       cellLabels.set(i, currentCellLabel);
       currentCellLabel += 1;

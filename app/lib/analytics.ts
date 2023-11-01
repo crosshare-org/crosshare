@@ -35,10 +35,10 @@ export async function runAnalytics(
   const adminStartTimestamp = FBTimestamp.fromMillis(startTimestamp.toMillis());
   const adminEndTimestamp = FBTimestamp.fromMillis(endTimestamp.toMillis());
 
-  const puzzleMap: Map<string, DBPuzzleT> = new Map();
-  const puzzleNewSubs: Map<string, Array<MetaSubmissionForPuzzleT>> = new Map();
-  const puzzleStatsMap: Map<string, PuzzleStatsT> = new Map();
-  const dailyStatsMap: Map<string, DailyStatsT> = new Map();
+  const puzzleMap = new Map<string, DBPuzzleT>();
+  const puzzleNewSubs = new Map<string, MetaSubmissionForPuzzleT[]>();
+  const puzzleStatsMap = new Map<string, PuzzleStatsT>();
+  const dailyStatsMap = new Map<string, DailyStatsT>();
 
   // Get puzzle obj from cache or db
   async function getPuzzle(puzzleId: string): Promise<DBPuzzleT | null> {
@@ -146,7 +146,7 @@ export async function runAnalytics(
       if (updateTime === undefined || updateIters === undefined) {
         throw new Error('oob');
       }
-      if (play.rc.indexOf(i) !== -1 || play.we.indexOf(i) !== -1) {
+      if (play.rc.includes(i) || play.we.includes(i)) {
         /* If a cell was revealed or checked & wrong, make it's update time the
          * end of the play. This way cheat cells always show as taking the
          * longest for the user in question. */
@@ -185,7 +185,7 @@ export async function runAnalytics(
     }
     dailyStats.ua = endTimestamp;
     dailyStats.n += 1;
-    if (dailyStats.u.indexOf(play.u) === -1) {
+    if (!dailyStats.u.includes(play.u)) {
       dailyStats.u.push(play.u);
     }
     dailyStats.c[play.c] = (dailyStats.c[play.c] || 0) + 1;

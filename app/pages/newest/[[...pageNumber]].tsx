@@ -16,12 +16,10 @@ import { paginatedPuzzles } from '../../lib/paginatedPuzzles';
 import { isUserPatron } from '../../lib/patron';
 
 interface NewestPageProps {
-  puzzles: Array<
-    LinkablePuzzle & {
-      constructorPage: ConstructorPageBase | null;
-      constructorIsPatron: boolean;
-    }
-  >;
+  puzzles: (LinkablePuzzle & {
+    constructorPage: ConstructorPageBase | null;
+    constructorIsPatron: boolean;
+  })[];
   nextPage: number | null;
   currentPage: number;
   prevPage: number | null;
@@ -73,6 +71,7 @@ export const getServerSideProps = withTranslation(gssp);
 
 export default function NewestPageHandler(props: PageProps) {
   const { locale } = useRouter();
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const loc = locale || 'en';
 
   if ('error' in props) {
@@ -152,6 +151,7 @@ export default function NewestPageHandler(props: PageProps) {
             filterTags={[]}
           />
         ))}
+        {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
         {props.nextPage || props.prevPage !== null ? (
           <p css={{ textAlign: 'center' }}>
             {props.prevPage !== null ? (
