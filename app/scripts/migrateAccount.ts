@@ -71,7 +71,7 @@ async function migrateAccount() {
     .collection('cp')
     .where('u', '==', fromUser.uid)
     .get()
-    .then(async (snap) => {
+    .then((snap) => {
       const doc = snap.docs[0];
       if (!doc) {
         return null;
@@ -92,7 +92,7 @@ async function migrateAccount() {
       .collection('cs')
       .doc(fromUser.uid)
       .get()
-      .then(async (snap) => {
+      .then((snap) => {
         const validationResult = ConstructorStatsV.decode(snap.data());
         if (!isRight(validationResult)) {
           console.log('INVALID', snap.id);
@@ -110,7 +110,7 @@ async function migrateAccount() {
       .collection('followers')
       .doc(fromUser.uid)
       .get()
-      .then(async (snap) => {
+      .then((snap) => {
         const validationResult = FollowersV.decode(snap.data());
         if (!isRight(validationResult)) {
           console.log('INVALID', snap.id);
@@ -118,7 +118,7 @@ async function migrateAccount() {
         }
         return validationResult.right;
       });
-    if (followers && followers.f?.length) {
+    if (followers?.f?.length) {
       await db
         .collection('followers')
         .doc(toUser.uid)
@@ -141,6 +141,10 @@ async function migrateAccount() {
   }
 }
 
-migrateAccount().then(() => {
-  console.log('Migrated');
-});
+migrateAccount()
+  .then(() => {
+    console.log('Migrated');
+  })
+  .catch((e) => {
+    console.error('migration failed', e);
+  });
