@@ -318,19 +318,17 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
         </label>
       </div>
       <div>
-        <label>
-          <input
-            disabled={!customFontEnabled}
-            css={{ marginRight: '1em' }}
-            placeholder="Font URL"
-            type="text"
-            value={fontUrl}
-            onChange={(e) => {
-              setFontUrl(e.target.value);
-              setDirty(true);
-            }}
-          />
-        </label>
+        <input
+          disabled={!customFontEnabled}
+          css={{ marginRight: '1em' }}
+          placeholder="Font URL"
+          type="text"
+          value={fontUrl}
+          onChange={(e) => {
+            setFontUrl(e.target.value);
+            setDirty(true);
+          }}
+        />
       </div>
       <Button
         onClick={saveTheme}
