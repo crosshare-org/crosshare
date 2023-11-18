@@ -127,11 +127,9 @@ import { FULLSCREEN_CSS, SMALL_AND_UP } from '../lib/style';
 import { ButtonReset } from './Buttons';
 import { Snackbar, useSnackbar } from './Snackbar';
 import { importFile, exportFile, ExportProps } from '../lib/converter';
-import { getAutofillWorker } from '../lib/workerLoader';
 import type { User } from 'firebase/auth';
 import { NewPuzzleForm } from './NewPuzzleForm';
-
-let worker: Worker | null = null;
+import { getAutofillWorker } from '../lib/workerLoader';
 
 type BuilderProps = PartialBy<
   Omit<
@@ -441,17 +439,65 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   const priorSolves = useRef<[string[], Set<number>, Set<number>][]>([]);
   const priorWidth = useRef(state.grid.width);
   const priorHeight = useRef(state.grid.height);
-  const runAutofill = useCallback(() => {
-    if (!autofillEnabled) {
-      if (worker) {
-        const msg: CancelAutofillMessage = { type: 'cancel' };
-        setAutofillInProgress(false);
-        worker.postMessage(msg);
+
+  const worker = useRef<Worker | null>(null);
+
+  useEffect(() => {
+    if (!worker.current) {
+      console.log('initializing autofill worker');
+
+      if (!WordDB.wordDB) {
+        throw new Error('missing db!');
       }
-      return;
+
+      worker.current = getAutofillWorker();
+      worker.current.onmessage = (e) => {
+        const data = e.data as WorkerMessage;
+        if (isAutofillResultMessage(data)) {
+          priorSolves.current.unshift([
+            data.result,
+            data.input[1],
+            data.input[2],
+          ]);
+          if (
+            currentCells.current.length === data.input[0].length &&
+            currentCells.current.every((c, i) => c === data.input[0][i]) &&
+            eqSet(currentVBars.current, data.input[1]) &&
+            eqSet(currentHBars.current, data.input[2])
+          ) {
+            setAutofilledGrid(Array.from(data.result));
+          }
+        } else if (isAutofillCompleteMessage(data)) {
+          setAutofillInProgress(false);
+        } else {
+          console.error('unhandled msg in builder: ', e.data);
+        }
+      };
+      const loaddb: LoadDBMessage = { type: 'loaddb', db: WordDB.wordDB };
+      worker.current.postMessage(loaddb);
     }
-    if (!WordDB.wordDB) {
-      throw new Error('missing db!');
+
+    worker.current.onerror = (error) => {
+      console.error('Autofill error:', error);
+    };
+
+    return () => {
+      console.log('tearing down autofill worker');
+      worker.current?.terminate();
+      worker.current = null;
+    };
+  }, []);
+
+  const runAutofill = useCallback(() => {
+    if (!worker.current) {
+      throw new Error('no autofill worker!');
+    }
+
+    if (!autofillEnabled) {
+      const msg: CancelAutofillMessage = { type: 'cancel' };
+      setAutofillInProgress(false);
+      worker.current.postMessage(msg);
+      return;
     }
     currentCells.current = state.grid.cells;
     currentVBars.current = state.grid.vBars;
@@ -483,46 +529,14 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
         match = false;
       }
       if (match) {
-        if (worker) {
-          const msg: CancelAutofillMessage = { type: 'cancel' };
-          setAutofillInProgress(false);
-          worker.postMessage(msg);
-        }
+        const msg: CancelAutofillMessage = { type: 'cancel' };
+        setAutofillInProgress(false);
+        worker.current.postMessage(msg);
         setAutofilledGrid(priorSolve);
         return;
       }
     }
     setAutofilledGrid([]);
-    if (!worker) {
-      console.log('initializing worker');
-
-      worker = getAutofillWorker();
-
-      worker.onmessage = (e) => {
-        const data = e.data as WorkerMessage;
-        if (isAutofillResultMessage(data)) {
-          priorSolves.current.unshift([
-            data.result,
-            data.input[1],
-            data.input[2],
-          ]);
-          if (
-            currentCells.current.length === data.input[0].length &&
-            currentCells.current.every((c, i) => c === data.input[0][i]) &&
-            eqSet(currentVBars.current, data.input[1]) &&
-            eqSet(currentHBars.current, data.input[2])
-          ) {
-            setAutofilledGrid(data.result);
-          }
-        } else if (isAutofillCompleteMessage(data)) {
-          setAutofillInProgress(false);
-        } else {
-          console.error('unhandled msg in builder: ', e.data);
-        }
-      };
-      const loaddb: LoadDBMessage = { type: 'loaddb', db: WordDB.wordDB };
-      worker.postMessage(loaddb);
-    }
     const autofill: AutofillMessage = {
       type: 'autofill',
       grid: state.grid.cells,
@@ -532,8 +546,8 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       hBars: state.grid.hBars,
     };
     setAutofillInProgress(true);
-    worker.postMessage(autofill);
-  }, [state.grid, autofillEnabled]);
+    worker.current.postMessage(autofill);
+  }, [state.grid, autofillEnabled, setAutofilledGrid, setAutofillInProgress]);
   useEffect(() => {
     runAutofill();
   }, [runAutofill]);
