@@ -13,13 +13,13 @@ import { useDocument } from 'react-firebase-hooks/firestore';
 import { Link } from '../../components/Link';
 import { logAsyncErrors, slugify } from '../../lib/utils';
 import { getDocRef } from '../../lib/firebaseWrapper';
-import { withStaticTranslation } from '../../lib/translation';
+import { withTranslation } from '../../lib/translation';
 
-export const getStaticProps = withStaticTranslation(() => {
-  return { props: {} };
+export const getServerSideProps = withTranslation(() => {
+  return Promise.resolve({ props: {} });
 });
 
-export default requiresAuth((props: AuthProps) => {
+const PuzzleStatsPage = (props: AuthProps) => {
   const router = useRouter();
   const { puzzleId } = router.query;
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
@@ -30,7 +30,9 @@ export default requiresAuth((props: AuthProps) => {
     return <ErrorPage title="Bad Puzzle Id" />;
   }
   return <PuzzleLoader key={puzzleId} puzzleId={puzzleId} auth={props} />;
-});
+};
+
+export default requiresAuth(PuzzleStatsPage);
 
 // export for testing
 export const PuzzleLoader = ({
