@@ -115,6 +115,7 @@ export const colorTheme = ({
     '--kb-bg-click': darkMode ? 'black' : '#ddd',
     '--text-input-bg': darkMode ? '#333' : '#f5f5f5',
     '--text-input-border': darkMode ? '#000' : '#777',
+    '--text-input-border-disabled': darkMode ? '#333' : '#BBB',
     '--snackbar-bg': darkMode ? '#ddd' : '#121212',
     '--snackbar-text': darkMode ? 'black' : '#ddd',
     '--social-text': darkMode ? '#ddd' : '#fff',

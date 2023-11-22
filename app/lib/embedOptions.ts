@@ -14,6 +14,12 @@ const EmbedOptionsV = t.partial({
   pp: t.boolean,
   /** custom font url */
   fu: t.string,
+  /** custom font url (bold) */
+  fub: t.string,
+  /** custom font url (italic) */
+  fui: t.string,
+  /** custom font url (bold + italic) */
+  fubi: t.string,
 });
 
 export type EmbedOptionsT = t.TypeOf<typeof EmbedOptionsV>;

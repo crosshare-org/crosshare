@@ -21,6 +21,16 @@ import { getDoc, setDoc } from 'firebase/firestore';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { Global } from '@emotion/react';
 import { logAsyncErrors } from '../lib/utils';
+import { css } from '@emotion/react';
+import type { CSSInterpolation } from '@emotion/serialize';
+import { fontFace } from './EmbedStyling';
+
+const fontUrlInputCss = css({
+  width: '100%',
+  marginBottom: '0.5em',
+});
+
+const fontInputLabelCss = css({ display: 'block' });
 
 export const EmbedOverlay = ({
   dispatch,
@@ -192,6 +202,9 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
     !!props.fu
   );
   const [fontUrl, setFontUrl] = useState(props.fu || '');
+  const [fontUrlBold, setFontUrlBold] = useState(props.fub || '');
+  const [fontUrlItalic, setFontUrlItalic] = useState(props.fui || '');
+  const [fontUrlBoldItalic, setFontUrlBoldItalic] = useState(props.fubi || '');
 
   const [saving, setSaving] = useState(false);
 
@@ -204,6 +217,9 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       ...(customFontEnabled &&
         fontUrl !== '' && {
           fu: fontUrl,
+          ...(fontUrlBold && { fub: fontUrlBold }),
+          ...(fontUrlItalic && { fui: fontUrlItalic }),
+          ...(fontUrlBoldItalic && { fubi: fontUrlBoldItalic }),
         }),
     };
     setSaving(true);
@@ -222,6 +238,9 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
     preservePrimary,
     props.userId,
     fontUrl,
+    fontUrlBold,
+    fontUrlItalic,
+    fontUrlBoldItalic,
     customFontEnabled,
   ]);
 
@@ -239,6 +258,26 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       mapper: (x) => x,
     });
   }, []);
+
+  const fontStyles: CSSInterpolation[] = [];
+  if (fontUrl) {
+    fontStyles.push(fontFace(fontUrl, 'CrossharePreview', 'normal', 'normal'));
+    if (fontUrlBold) {
+      fontStyles.push(
+        fontFace(fontUrlBold, 'CrossharePreview', 'normal', 'bold')
+      );
+    }
+    if (fontUrlItalic) {
+      fontStyles.push(
+        fontFace(fontUrlItalic, 'CrossharePreview', 'italic', 'normal')
+      );
+    }
+    if (fontUrlBoldItalic) {
+      fontStyles.push(
+        fontFace(fontUrlBoldItalic, 'CrossharePreview', 'italic', 'bold')
+      );
+    }
+  }
 
   return (
     <>
@@ -317,11 +356,11 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
           Specify a custom font url (advanced)
         </label>
       </div>
-      <div>
+      <label css={fontInputLabelCss}>
+        Font URL:
         <input
           disabled={!customFontEnabled}
-          css={{ marginRight: '1em' }}
-          placeholder="Font URL"
+          css={fontUrlInputCss}
           type="text"
           value={fontUrl}
           onChange={(e) => {
@@ -329,25 +368,55 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
             setDirty(true);
           }}
         />
-      </div>
+      </label>
+      <label css={fontInputLabelCss}>
+        Optional Font URL (Bold):
+        <input
+          disabled={!customFontEnabled || !fontUrl}
+          css={fontUrlInputCss}
+          type="text"
+          value={fontUrlBold}
+          onChange={(e) => {
+            setFontUrlBold(e.target.value);
+            setDirty(true);
+          }}
+        />
+      </label>
+      <label css={fontInputLabelCss}>
+        Optional Font URL (Italic):
+        <input
+          disabled={!customFontEnabled || !fontUrl}
+          css={fontUrlInputCss}
+          type="text"
+          value={fontUrlItalic}
+          onChange={(e) => {
+            setFontUrlItalic(e.target.value);
+            setDirty(true);
+          }}
+        />
+      </label>
+      <label css={fontInputLabelCss}>
+        Optional Font URL (Bold + Italic):
+        <input
+          disabled={!customFontEnabled || !fontUrl}
+          css={fontUrlInputCss}
+          type="text"
+          value={fontUrlBoldItalic}
+          onChange={(e) => {
+            setFontUrlBoldItalic(e.target.value);
+            setDirty(true);
+          }}
+        />
+      </label>
       <Button
+        css={{ marginTop: '1em' }}
         onClick={saveTheme}
         disabled={saving || !dirty}
         text={saving ? 'Saving...' : 'Save Theme Choices'}
       />
-      <h4 css={{ marginTop: '1em' }}>Preview</h4>
-      {customFontEnabled && fontUrl ? (
-        <Global
-          styles={{
-            '@font-face': {
-              fontFamily: 'CrossharePreview',
-              fontStyle: 'normal',
-              fontWeight: 400,
-              fontDisplay: 'swap',
-              src: `url(${encodeURI(fontUrl)})`,
-            },
-          }}
-        />
+      <h4 css={{ marginTop: '2em' }}>Preview</h4>
+      {customFontEnabled && fontStyles.length ? (
+        <Global styles={fontStyles} />
       ) : (
         ''
       )}
@@ -377,7 +446,13 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
           />
         </div>
         <div css={{ width: 200, height: 200, padding: '1em' }}>
-          <div>Example text</div>
+          <div>
+            Example text (<strong>bold</strong>, <em>italic</em>, and{' '}
+            <strong>
+              <em>bold italic</em>
+            </strong>
+            )
+          </div>
           <ButtonAsLink
             text="Example Link"
             onClick={() => {

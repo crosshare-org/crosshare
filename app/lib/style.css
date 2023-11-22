@@ -307,6 +307,10 @@ textarea {
   border: 1px solid var(--text-input-border);
   padding: 0.25em;
 }
+input[type='text']:disabled,
+textarea:disabled {
+  border: 1px solid var(--text-input-border-disabled);
+}
 div.paragraph {
   overflow-wrap: break-word;
 }

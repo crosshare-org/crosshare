@@ -260,6 +260,12 @@ export function useEmbedOptions(
       darkMode,
       preservePrimary,
       ...(embedOptions?.fu && { fontUrl: embedOptions.fu }),
+      ...(embedOptions?.fu &&
+        embedOptions.fub && { fontUrlBold: embedOptions.fub }),
+      ...(embedOptions?.fu &&
+        embedOptions.fui && { fontUrlItalic: embedOptions.fui }),
+      ...(embedOptions?.fu &&
+        embedOptions.fubi && { fontUrlBoldItalic: embedOptions.fubi }),
     },
     embedContext,
   ];
