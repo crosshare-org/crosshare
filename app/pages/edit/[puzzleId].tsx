@@ -838,7 +838,7 @@ const PuzzleEditor = ({
                         showSnackbar(
                           'Your puzzle has been deleted - it may take up to an hour to be fully removed from the site.'
                         );
-                        await router.push('>/');
+                        await router.push('/');
                       });
                     })}
                   />
