@@ -95,7 +95,6 @@ const ClueListItem = memo(function ClueListItem({
         css={{
           outline: 'none',
           width: '100%',
-          paddingLeft: '0.4em',
         }}
         role="button"
         tabIndex={0}
@@ -110,8 +109,8 @@ const ClueListItem = memo(function ClueListItem({
             flexWrap: 'nowrap',
             alignItems: 'center',
             borderLeft: isCross
-              ? '0.6em solid var(--lighter)'
-              : '0.6em solid transparent',
+              ? '1em solid var(--lighter)'
+              : '1em solid transparent',
             [SMALL_AND_UP]: {
               padding: '0.5em 0.5em 0.5em 0',
             },
