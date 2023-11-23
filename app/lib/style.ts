@@ -62,7 +62,7 @@ const makeReadable = (background: string, color: string) => {
   const bgLum = getLuminance(background);
   let foreground = color;
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, no-constant-condition
-  while (true) {
+  for (let i = 0; i < 10; i += 1) {
     const fgLum = getLuminance(foreground);
 
     const contrast = (fgLum + 0.05) / (bgLum + 0.05);
@@ -75,6 +75,7 @@ const makeReadable = (background: string, color: string) => {
       foreground = lighten(foreground, 0.1);
     }
   }
+  return foreground;
 };
 
 export const colorTheme = ({
