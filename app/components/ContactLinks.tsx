@@ -11,15 +11,7 @@ export function ContactLinks() {
         >
           email
         </a>
-        ,{' '}
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://twitter.com/crosshareapp"
-        >
-          twitter
-        </a>
-        , or{' '}
+        or{' '}
         <a
           target="_blank"
           rel="noopener noreferrer"
