@@ -1,7 +1,5 @@
 ## [crosshare.org](https://crosshare.org)
 
-[![Twitter](https://img.shields.io/twitter/follow/crosshareapp?style=social)](https://twitter.com/crosshareapp)
-
 Crosshare is a free community for crossword constructors and solvers. Crosshare is written in TypeScript using Next.js, React, and firebase.
 
 Use [GitHub issues](https://github.com/crosshare-org/crosshare/issues) for bug reports and feature requests.
