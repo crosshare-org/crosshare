@@ -263,6 +263,9 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
           height: '1.5em',
           paddingLeft: '0.5em',
           backgroundColor: 'var(--bg)',
+          textTransform: 'uppercase',
+          letterSpacing: '1.36px',
+          color: 'var(--readable-primary)',
         }}
       >
         {props.header}

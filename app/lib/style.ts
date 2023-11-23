@@ -1,6 +1,13 @@
 import { CSSInterpolation } from '@emotion/serialize';
 import { css } from '@emotion/react';
-import { adjustHue, mix, readableColorIsBlack } from 'color2k';
+import {
+  adjustHue,
+  darken,
+  getLuminance,
+  lighten,
+  mix,
+  readableColorIsBlack,
+} from 'color2k';
 import { EmbedStylingProps } from '../components/EmbedStyling';
 
 export const KEYBOARD_HEIGHT = 164;
@@ -51,6 +58,25 @@ export const readableColor = (color: string, darkMode: boolean) => {
   }
 };
 
+const makeReadable = (background: string, color: string) => {
+  const bgLum = getLuminance(background);
+  let foreground = color;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, no-constant-condition
+  while (true) {
+    const fgLum = getLuminance(foreground);
+
+    const contrast = (fgLum + 0.05) / (bgLum + 0.05);
+    if (contrast > 3 || contrast < 1 / 3) {
+      return foreground;
+    }
+    if (contrast < 1) {
+      foreground = darken(foreground, 0.1);
+    } else {
+      foreground = lighten(foreground, 0.1);
+    }
+  }
+};
+
 export const colorTheme = ({
   primary,
   link,
@@ -72,6 +98,7 @@ export const colorTheme = ({
     '--tag-l': darkMode ? '30%' : '85%',
     '--bg': bg,
     '--primary': p,
+    '--readable-primary': makeReadable(bg, p),
     '--blue': darkMode ? mix('blue', 'white', 0.5) : 'blue',
     '--green': darkMode ? mix('green', 'white', 0.5) : 'green',
     '--onprimary': readableColor(p, darkMode),
