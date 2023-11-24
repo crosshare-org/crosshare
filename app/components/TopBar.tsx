@@ -213,9 +213,9 @@ export const TopBarDropDownLinkSimpleA = (props: TopBarDropDownLinkAProps) => {
         margin: 0,
         padding: '0.5em',
         width: '100%',
-        color: 'var(--onprimary)',
+        color: 'var(--text)',
         '&:hover, &:focus': {
-          color: 'var(--onprimary)',
+          color: 'var(--text)',
           textDecoration: 'none',
           backgroundColor: 'var(--top-bar-hover)',
         },
