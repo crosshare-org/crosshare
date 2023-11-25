@@ -1182,13 +1182,21 @@ export const Puzzle = ({
             ...(isSlate && {
               backgroundColor: 'var(--bg)',
               border: '1px solid var(--slate-container-border)',
-              borderRadius: '4px',
+              borderRadius: '0.25rem',
               padding: '50px',
             }),
           }}
         >
           <div css={{ flex: 'none' }}>
-            {isSlate ? <SlateHeader /> : ''}
+            {isSlate ? (
+              <SlateHeader
+                title={puzzle.title}
+                author={puzzle.guestConstructor || 'Slate Crosswords'}
+                publishTime={puzzle.isPrivateUntil ?? puzzle.publishTime}
+              />
+            ) : (
+              ''
+            )}
             <TopBar title={puzzle.title}>
               {!loadingPlayState ? (
                 !state.success ? (

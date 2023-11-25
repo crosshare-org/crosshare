@@ -6,6 +6,8 @@ const colorTheme = (darkMode: boolean) => {
   return {
     '--bg': darkMode ? 'red' : '#F8F8F8',
     '--slate-container-border': darkMode ? 'red' : '#E9E6EA',
+    '--slate-title': darkMode ? 'red' : '#222222',
+    '--slate-subtitle': darkMode ? 'red' : '#666',
   };
 };
 
