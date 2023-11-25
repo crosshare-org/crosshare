@@ -135,6 +135,8 @@ import { Timestamp } from '../lib/timestamp';
 import { updateDoc } from 'firebase/firestore';
 import { AuthContext } from './AuthContext';
 import { type Root } from 'hast';
+import { SlateHeader } from './SlateHeader';
+import { SlateColorTheme } from './SlateColorTheme';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay),
@@ -1135,6 +1137,8 @@ export const Puzzle = ({
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const locale = router.locale || 'en';
 
+  const { isSlate } = useContext(EmbedContext);
+
   return (
     <>
       <GridContext.Provider value={state.grid}>
@@ -1169,14 +1173,22 @@ export const Puzzle = ({
           />
           <meta key="description" name="description" content={description} />
         </Head>
+        <SlateColorTheme />
         <div
           css={{
             display: 'flex',
             flexDirection: 'column',
             height: '100%',
+            ...(isSlate && {
+              backgroundColor: 'var(--slate-container-bg)',
+              border: '1px solid var(--slate-container-border)',
+              borderRadius: '4px',
+              padding: '50px',
+            }),
           }}
         >
           <div css={{ flex: 'none' }}>
+            {isSlate ? <SlateHeader /> : ''}
             <TopBar title={puzzle.title}>
               {!loadingPlayState ? (
                 !state.success ? (

@@ -228,6 +228,7 @@ export function useEmbedOptions(
   const embedContext: EmbedContextValue = {
     isEmbed: true,
     colorMode,
+    isSlate: embedOptions?.slate || false,
   };
 
   const darkMode = embedContext.colorMode === EmbedColorMode.Dark;

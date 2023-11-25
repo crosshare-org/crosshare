@@ -9,9 +9,11 @@ export enum EmbedColorMode {
 export interface EmbedContextValue {
   isEmbed: boolean;
   colorMode: EmbedColorMode;
+  isSlate: boolean;
 }
 
 export const EmbedContext = createContext<EmbedContextValue>({
   isEmbed: false,
   colorMode: EmbedColorMode.Default,
+  isSlate: false,
 });

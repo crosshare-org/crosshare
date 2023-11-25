@@ -1,10 +1,11 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useContext } from 'react';
 import { createPortal } from 'react-dom';
 
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 
 import { SMALL_AND_UP } from '../lib/style';
 import { CoverPic } from './Images';
+import { EmbedContext } from './EmbedContext';
 
 export const Overlay = (props: {
   coverImage?: string | null;
@@ -15,6 +16,8 @@ export const Overlay = (props: {
 }) => {
   const ref = useRef<HTMLElement | null>(null);
   const [mounted, setMounted] = useState(false);
+
+  const { isSlate } = useContext(EmbedContext);
 
   useEffect(() => {
     ref.current = document.getElementById('modal');
@@ -55,6 +58,9 @@ export const Overlay = (props: {
           maxWidth: '1200px',
           backgroundColor: 'var(--overlay-inner)',
           border: '1px solid black',
+          ...(isSlate && {
+            borderRadius: '7px',
+          }),
         }}
       >
         {props.coverImage ? <CoverPic coverPicture={props.coverImage} /> : ''}

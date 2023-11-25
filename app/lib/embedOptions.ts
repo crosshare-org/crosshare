@@ -20,6 +20,8 @@ const EmbedOptionsV = t.partial({
   fui: t.string,
   /** custom font url (bold + italic) */
   fubi: t.string,
+  /** use slate custom UI */
+  slate: t.boolean,
 });
 
 export type EmbedOptionsT = t.TypeOf<typeof EmbedOptionsV>;
