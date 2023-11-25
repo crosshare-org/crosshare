@@ -1,4 +1,11 @@
-import { Dispatch, ReactNode, useEffect, useRef, useState } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { FaAngleDoubleRight, FaAngleDoubleLeft } from 'react-icons/fa';
 
 import { KeypressAction, PasteAction } from '../reducers/reducer';
@@ -10,6 +17,37 @@ import {
 } from '../lib/style';
 import { KeyK } from '../lib/types';
 import { usePolyfilledResizeObserver } from '../lib/hooks';
+import { css } from '@emotion/react';
+import { EmbedContext } from './EmbedContext';
+
+const clueAreaCss = css({
+  display: 'flex',
+  flex: '1 0 auto',
+  width: '100vw',
+  height: TINY_COL_MIN_HEIGHT,
+  flexWrap: 'nowrap',
+  alignItems: 'stretch',
+  flexDirection: 'row',
+  backgroundColor: 'var(--lighter)',
+  [SMALL_AND_UP]: {
+    backgroundColor: 'transparent',
+    height: '100%',
+    width: '34vw',
+  },
+  [LARGE_AND_UP]: {
+    width: '50vw',
+  },
+});
+
+const slateClueAreaCss = css({
+  width: 'calc(100vw - 100px)',
+  [SMALL_AND_UP]: {
+    width: 'calc(34vw - 100px)',
+  },
+  [LARGE_AND_UP]: {
+    width: 'calc(50vw - 100px)',
+  },
+});
 
 interface TinyNavButtonProps {
   isLeft?: boolean;
@@ -64,6 +102,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { width: cqw, height: cqh } = usePolyfilledResizeObserver(containerRef);
   const [useCQ, setUseCQ] = useState(true);
+  const { isSlate } = useContext(EmbedContext);
   useEffect(() => {
     if (!('container' in document.documentElement.style)) {
       setUseCQ(false);
@@ -93,6 +132,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           css={{
             flex: '0',
             width: '100vw',
+            ...(isSlate && { width: 'calc(100vw - 100px)' }),
             [SMALL_AND_UP]: {
               width: '66vw',
             },
@@ -144,26 +184,7 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
             {props.square}
           </div>
         </div>
-        <div
-          css={{
-            display: 'flex',
-            flex: '1 0 auto',
-            width: '100vw',
-            height: TINY_COL_MIN_HEIGHT,
-            flexWrap: 'nowrap',
-            alignItems: 'stretch',
-            flexDirection: 'row',
-            backgroundColor: 'var(--lighter)',
-            [SMALL_AND_UP]: {
-              backgroundColor: 'transparent',
-              height: '100%',
-              width: '34vw',
-            },
-            [LARGE_AND_UP]: {
-              width: '50vw',
-            },
-          }}
-        >
+        <div css={[clueAreaCss, ...(isSlate ? [slateClueAreaCss] : [])]}>
           <TinyNavButton isLeft dispatch={props.dispatch} />
           <div
             css={{

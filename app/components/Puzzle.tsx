@@ -1180,7 +1180,7 @@ export const Puzzle = ({
             flexDirection: 'column',
             height: '100%',
             ...(isSlate && {
-              backgroundColor: 'var(--slate-container-bg)',
+              backgroundColor: 'var(--bg)',
               border: '1px solid var(--slate-container-border)',
               borderRadius: '4px',
               padding: '50px',
