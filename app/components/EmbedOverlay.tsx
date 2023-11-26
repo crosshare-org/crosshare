@@ -221,6 +221,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
           ...(fontUrlItalic && { fui: fontUrlItalic }),
           ...(fontUrlBoldItalic && { fubi: fontUrlBoldItalic }),
         }),
+      ...(props.slate && { slate: true }),
     };
     setSaving(true);
     setDoc(getDocRef('em', props.userId), theme)
@@ -237,6 +238,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
     link,
     preservePrimary,
     props.userId,
+    props.slate,
     fontUrl,
     fontUrlBold,
     fontUrlItalic,
