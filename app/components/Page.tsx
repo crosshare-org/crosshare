@@ -39,13 +39,17 @@ const clueAreaCss = css({
   },
 });
 
+export const SLATE_PADDING_SMALL = 5;
+export const SLATE_PADDING_MED = 20;
+export const SLATE_PADDING_LARGE = 50;
+
 const slateClueAreaCss = css({
-  width: 'calc(100vw - 100px)',
+  width: `calc(100vw - ${2 * SLATE_PADDING_SMALL}px)`,
   [SMALL_AND_UP]: {
-    width: 'calc(34vw - 100px)',
+    width: `calc(34vw - ${2 * SLATE_PADDING_MED}px)`,
   },
   [LARGE_AND_UP]: {
-    width: 'calc(50vw - 100px)',
+    width: `calc(50vw - ${2 * SLATE_PADDING_LARGE}px)`,
   },
 });
 
@@ -132,7 +136,9 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           css={{
             flex: '0',
             width: '100vw',
-            ...(isSlate && { width: 'calc(100vw - 100px)' }),
+            ...(isSlate && {
+              width: `calc(100vw - ${2 * SLATE_PADDING_SMALL}px)`,
+            }),
             [SMALL_AND_UP]: {
               width: '66vw',
             },

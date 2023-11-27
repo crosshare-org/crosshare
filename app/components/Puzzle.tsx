@@ -92,7 +92,13 @@ import {
   TopBarDropDown,
   TopBarDropDownLinkSimpleA,
 } from './TopBar';
-import { SquareAndCols, TwoCol } from './Page';
+import {
+  SLATE_PADDING_LARGE,
+  SLATE_PADDING_MED,
+  SLATE_PADDING_SMALL,
+  SquareAndCols,
+  TwoCol,
+} from './Page';
 import {
   usePersistedBoolean,
   useMatchMedia,
@@ -110,6 +116,8 @@ import type { User } from 'firebase/auth';
 import { Emoji } from './Emoji';
 import {
   FULLSCREEN_CSS,
+  LARGE_AND_UP,
+  SMALL_AND_UP,
   SMALL_AND_UP_RULES,
   SQUARE_HEADER_HEIGHT,
 } from '../lib/style';
@@ -246,6 +254,10 @@ const AboveTheGridClue = memo(function AboveTheGridClue({
     </div>
   );
 });
+
+const SlateButtonMargin = () => {
+  return <div css={{ flexGrow: 1, maxWidth: '1.5rem' }}></div>;
+};
 
 interface PuzzleProps extends PuzzlePageResultProps {
   play: PlayWithoutUserT | null;
@@ -928,6 +940,7 @@ export const Puzzle = ({
             </>
           )}
         </TopBarDropDown>
+        {isSlate ? <SlateButtonMargin /> : ''}
         {!state.autocheck ? (
           <TopBarDropDown
             icon={isSlate ? <Check /> : <FaCheck />}
@@ -1194,7 +1207,13 @@ export const Puzzle = ({
               backgroundColor: 'var(--bg)',
               border: '1px solid var(--slate-container-border)',
               borderRadius: '0.25rem',
-              padding: '50px',
+              padding: SLATE_PADDING_SMALL,
+              [SMALL_AND_UP]: {
+                padding: SLATE_PADDING_MED,
+              },
+              [LARGE_AND_UP]: {
+                padding: SLATE_PADDING_LARGE,
+              },
             }),
           }}
         >
@@ -1229,7 +1248,7 @@ export const Puzzle = ({
                           <strong
                             css={{
                               verticalAlign: 'middle',
-                              marginRight: '0.5em',
+                              marginRight: '0.75rem',
                             }}
                           >
                             {timeString(state.displaySeconds, true)}
@@ -1250,9 +1269,10 @@ export const Puzzle = ({
                           dispatch({ type: 'PAUSEACTION' });
                           writePlayToDBIfNeeded();
                         }}
-                        keepText={true}
+                        keepText={!isSlate}
                       />
                     </div>
+                    {isSlate ? <SlateButtonMargin /> : ''}
                     <TopBarLink
                       icon={
                         state.clueView ? (
@@ -1275,7 +1295,9 @@ export const Puzzle = ({
                         dispatch(a);
                       }}
                     />
+                    {isSlate ? <SlateButtonMargin /> : ''}
                     {checkRevealMenus}
+                    {isSlate ? <SlateButtonMargin /> : ''}
                     {moreMenu}
                   </>
                 ) : (

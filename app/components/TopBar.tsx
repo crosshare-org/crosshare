@@ -241,8 +241,11 @@ const TopBarLinkContents = (props: TopBarLinkCommonProps) => {
       <span
         css={{
           verticalAlign: isSlate ? 'middle' : 'baseline',
-          fontSize: isSlate ? 20 : HEADER_HEIGHT - 10,
-          ...(isSlate && { display: 'inline-block', marginRight: '0.25rem' }),
+          fontSize: isSlate ? 15 : HEADER_HEIGHT - 10,
+          ...(isSlate && {
+            display: 'inline-block',
+            [SMALL_AND_UP]: { fontSize: 20, marginRight: '0.25rem' },
+          }),
         }}
       >
         {props.icon}
@@ -276,19 +279,11 @@ const SlateButtonCss = css({
   color: 'var(--slate-button-text)',
   backgroundColor: 'var(--slate-button-bg)',
   border: '1px solid var(--slate-button-border)',
-  margin: '0 0.75rem',
-  '&:last-child': {
-    marginRight: 0,
-  },
-  '&:first-child': {
-    marginLeft: 0,
-  },
   borderRadius: '3px',
-  padding: '0 0.45rem 0.2rem',
+  padding: '0 0.45rem',
   '&:hover, &:focus': {
     backgroundColor: 'var(--slate-button-bg-hover)',
   },
-  lineHeight: '1.75rem',
 });
 
 export const TopBarLink = (props: TopBarLinkProps) => {
@@ -411,7 +406,7 @@ export const TopBar = ({
       <>
         <header
           css={{
-            height: HEADER_HEIGHT,
+            height: isSlate ? 30 : HEADER_HEIGHT,
             background: 'var(--primary)',
             color: 'var(--onprimary)',
             /* Pride month */
@@ -437,7 +432,11 @@ export const TopBar = ({
               }),
             ...(isSlate && {
               background: 'none',
-              marginBottom: '2rem',
+              marginBottom: '1rem',
+              [SMALL_AND_UP]: {
+                height: HEADER_HEIGHT,
+                marginBottom: '2rem',
+              },
             }),
           }}
         >
