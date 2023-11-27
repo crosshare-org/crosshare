@@ -21,6 +21,7 @@ export const SlateHeader = (props: SlateHeaderProps) => {
         }}
       >
         <Image
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           src={slateLogo}
           alt="Slate Crosswords"
           css={{ objectFit: 'contain', maxHeight: '2.89rem', maxWidth: '100%' }}
