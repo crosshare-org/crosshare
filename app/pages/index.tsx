@@ -27,6 +27,7 @@ import { paginatedPuzzles } from '../lib/paginatedPuzzles';
 import { isUserPatron } from '../lib/patron';
 import { isSome } from 'fp-ts/lib/Option';
 import { getCollection } from '../lib/firebaseAdminWrapper';
+import { PatronIcon } from '../components/Icons';
 
 type HomepagePuz = LinkablePuzzle & {
   constructorPage: ConstructorPageBase | null;
@@ -37,10 +38,12 @@ interface HomePageProps {
   dailymini: HomepagePuz | null;
   featured: HomepagePuz[];
   articles: ArticleT[];
+  showCampaignForYear: number | null;
 }
 
 const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
-  const todaysMini = await getMiniForDate(new Date());
+  const today = new Date();
+  const todaysMini = await getMiniForDate(today);
 
   const unfilteredArticles = await getCollection('a')
     .where('f', '==', true)
@@ -52,6 +55,9 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
   const articles: ArticleT[] = unfilteredArticles.filter((i): i is ArticleT => {
     return i !== null;
   });
+
+  const showCampaignForYear =
+    today.getUTCMonth() === 11 ? today.getUTCFullYear() + 1 : null;
 
   const [puzzlesWithoutConstructor] = await paginatedPuzzles(
     0,
@@ -78,10 +84,12 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
       constructorIsPatron: await isUserPatron(todaysMini.value.a),
     };
     return {
-      props: { dailymini: dm, featured, articles },
+      props: { dailymini: dm, featured, articles, showCampaignForYear },
     };
   }
-  return { props: { dailymini: null, featured, articles } };
+  return {
+    props: { dailymini: null, featured, articles, showCampaignForYear },
+  };
 };
 
 export const getServerSideProps = withTranslation(gssp);
@@ -98,6 +106,7 @@ export default function HomePage({
   dailymini,
   featured,
   articles,
+  showCampaignForYear,
 }: HomePageProps) {
   const today = new Date();
   const router = useRouter();
@@ -114,6 +123,41 @@ export default function HomePage({
       <DefaultTopBar />
 
       <div css={{ margin: '1em' }}>
+        {showCampaignForYear ? (
+          <Link
+            css={{
+              display: 'block',
+              textDecoration: 'none',
+              color: 'var(--text)',
+              border: '1px solid var(--error)',
+              borderRadius: '0.5em',
+              padding: '1em',
+              marginBottom: '1em',
+              '&:hover': {
+                color: 'var(--text)',
+                textDecoration: 'none',
+              },
+            }}
+            href="/donate"
+          >
+            <h3>
+              <span css={{ color: 'var(--error)' }}>Read this</span> - we need
+              your help!
+            </h3>
+            <div>
+              As Crosshare continues to grow (and add new features) I need help
+              to pay for the ongoing costs of running the site. This holiday
+              season / new year, I&apos;m hoping to reach $100/month in new
+              recurring donations to keep the site going through{' '}
+              {showCampaignForYear} and beyond. Please consider contributing
+              whatever you are able. All monthly contributors get a patron icon
+              - <PatronIcon /> - so we all know who to thank for making the site
+              possible!
+            </div>
+          </Link>
+        ) : (
+          ''
+        )}
         <p css={{ marginBottom: '1em' }}>
           <Trans>
             Crosshare is a <b>free</b>, <b>ad-free</b>, and{' '}
