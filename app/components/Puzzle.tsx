@@ -1240,6 +1240,7 @@ export const Puzzle = ({
                         <span
                           css={{
                             verticalAlign: 'middle',
+                            color: 'var(--text)',
                           }}
                         >
                           <Timer
@@ -1248,7 +1249,8 @@ export const Puzzle = ({
                           <strong
                             css={{
                               verticalAlign: 'middle',
-                              marginRight: '0.75rem',
+                              display: 'inline-block',
+                              width: '5rem',
                             }}
                           >
                             {timeString(state.displaySeconds, true)}
@@ -1302,6 +1304,12 @@ export const Puzzle = ({
                   </>
                 ) : (
                   <>
+                    <div
+                      css={{
+                        ...(isSlate && { flexGrow: 1 }),
+                      }}
+                    />
+
                     <TopBarLink
                       icon={<FaComment />}
                       text={
@@ -1318,11 +1326,19 @@ export const Puzzle = ({
                         dispatch({ type: 'UNDISMISSSUCCESS' });
                       }}
                     />
+                    {isSlate ? <SlateButtonMargin /> : ''}
                     {moreMenu}
                   </>
                 )
               ) : (
-                moreMenu
+                <>
+                  <div
+                    css={{
+                      ...(isSlate && { flexGrow: 1 }),
+                    }}
+                  />
+                  moreMenu
+                </>
               )}
             </TopBar>
           </div>
