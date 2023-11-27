@@ -38,6 +38,7 @@
     "node_modules"
   ],
   "include": [
+    "index.d.ts",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"

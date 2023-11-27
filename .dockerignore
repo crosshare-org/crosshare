@@ -15,6 +15,7 @@
 !app/firebase.json
 !app/firestore.rules
 !app/tsconfig.json
+!app/index.d.ts
 !app/next.config.mjs
 !app/.babelrc
 !app/lingui.config.ts
