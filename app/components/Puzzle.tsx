@@ -137,6 +137,7 @@ import { AuthContext } from './AuthContext';
 import { type Root } from 'hast';
 import { SlateHeader } from './SlateHeader';
 import { SlateColorTheme } from './SlateColorTheme';
+import { Check, Clues, Grid, More, Pause, Reveal, Timer } from './SlateIcons';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay),
@@ -756,6 +757,8 @@ export const Puzzle = ({
     refed = refs[entryIdx] ?? new Set();
   }
 
+  const { isSlate } = useContext(EmbedContext);
+
   const shouldConceal =
     state.currentTimeWindowStart === 0 &&
     !(state.success && state.dismissedSuccess);
@@ -880,7 +883,10 @@ export const Puzzle = ({
   const checkRevealMenus = useMemo(
     () => (
       <>
-        <TopBarDropDown icon={<FaEye />} text={t`Reveal`}>
+        <TopBarDropDown
+          icon={isSlate ? <Reveal /> : <FaEye />}
+          text={t`Reveal`}
+        >
           {() => (
             <>
               <TopBarDropDownLink
@@ -923,7 +929,10 @@ export const Puzzle = ({
           )}
         </TopBarDropDown>
         {!state.autocheck ? (
-          <TopBarDropDown icon={<FaCheck />} text={t`Check`}>
+          <TopBarDropDown
+            icon={isSlate ? <Check /> : <FaCheck />}
+            text={t`Check`}
+          >
             {() => (
               <>
                 <TopBarDropDownLink
@@ -984,13 +993,16 @@ export const Puzzle = ({
         )}
       </>
     ),
-    [state.autocheck]
+    [state.autocheck, isSlate]
   );
 
   const moreMenu = useMemo(
     () => (
       <>
-        <TopBarDropDown icon={<FaEllipsisH />} text={t`More`}>
+        <TopBarDropDown
+          icon={isSlate ? <More /> : <FaEllipsisH />}
+          text={t`More`}
+        >
           {() => (
             <>
               {!state.success ? (
@@ -1126,6 +1138,7 @@ export const Puzzle = ({
       toggleKeyboard,
       setToggleKeyboard,
       isEmbed,
+      isSlate,
       toggleColorPref,
     ]
   );
@@ -1136,8 +1149,6 @@ export const Puzzle = ({
 
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const locale = router.locale || 'en';
-
-  const { isSlate } = useContext(EmbedContext);
 
   return (
     <>
@@ -1201,18 +1212,61 @@ export const Puzzle = ({
               {!loadingPlayState ? (
                 !state.success ? (
                   <>
-                    <TopBarLink
-                      icon={<FaPause />}
-                      hoverText={t`Pause Game`}
-                      text={timeString(state.displaySeconds, true)}
-                      onClick={() => {
-                        dispatch({ type: 'PAUSEACTION' });
-                        writePlayToDBIfNeeded();
+                    <div
+                      css={{
+                        ...(isSlate && { flexGrow: 1 }),
                       }}
-                      keepText={true}
-                    />
+                    >
+                      {isSlate ? (
+                        <span
+                          css={{
+                            verticalAlign: 'middle',
+                          }}
+                        >
+                          <Timer
+                            css={{ fontSize: 20, marginRight: '0.5rem' }}
+                          />
+                          <strong
+                            css={{
+                              verticalAlign: 'middle',
+                              marginRight: '0.5em',
+                            }}
+                          >
+                            {timeString(state.displaySeconds, true)}
+                          </strong>
+                        </span>
+                      ) : (
+                        ''
+                      )}
+                      <TopBarLink
+                        icon={isSlate ? <Pause /> : <FaPause />}
+                        hoverText={t`Pause Game`}
+                        text={
+                          isSlate
+                            ? 'Pause'
+                            : timeString(state.displaySeconds, true)
+                        }
+                        onClick={() => {
+                          dispatch({ type: 'PAUSEACTION' });
+                          writePlayToDBIfNeeded();
+                        }}
+                        keepText={true}
+                      />
+                    </div>
                     <TopBarLink
-                      icon={state.clueView ? <SpinnerFinished /> : <FaListOl />}
+                      icon={
+                        state.clueView ? (
+                          isSlate ? (
+                            <Grid />
+                          ) : (
+                            <SpinnerFinished />
+                          )
+                        ) : isSlate ? (
+                          <Clues />
+                        ) : (
+                          <FaListOl />
+                        )
+                      }
                       text={state.clueView ? t`Grid` : t`Clues`}
                       onClick={() => {
                         const a: ToggleClueViewAction = {

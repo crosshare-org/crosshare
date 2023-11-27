@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { EmbedColorMode, EmbedContext } from './EmbedContext';
 import { Global } from '@emotion/react';
+import { darken } from 'color2k';
 
 const colorTheme = (darkMode: boolean) => {
   return {
@@ -8,6 +9,10 @@ const colorTheme = (darkMode: boolean) => {
     '--slate-container-border': darkMode ? 'red' : '#E9E6EA',
     '--slate-title': darkMode ? 'red' : '#222222',
     '--slate-subtitle': darkMode ? 'red' : '#666',
+    '--slate-button-text': darkMode ? 'red' : '#000',
+    '--slate-button-bg': darkMode ? 'red' : '#F0F0F0',
+    '--slate-button-bg-hover': darkMode ? 'red' : darken('#F0F0F0', 0.1),
+    '--slate-button-border': darkMode ? 'red' : '#DDD',
   };
 };
 

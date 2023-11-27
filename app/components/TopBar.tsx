@@ -27,6 +27,7 @@ import { updateDoc } from 'firebase/firestore';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { ButtonAsLink } from './Buttons';
 import { FaHammer, FaUser, FaUserLock } from 'react-icons/fa';
+import { css } from '@emotion/react';
 
 export const TopBarDropDown = (props: {
   onClose?: () => void;
@@ -234,12 +235,14 @@ interface TopBarLinkCommonProps {
   onClick?: () => void;
 }
 const TopBarLinkContents = (props: TopBarLinkCommonProps) => {
+  const { isSlate } = useContext(EmbedContext);
   return (
     <>
       <span
         css={{
-          verticalAlign: 'baseline',
-          fontSize: HEADER_HEIGHT - 10,
+          verticalAlign: isSlate ? 'middle' : 'baseline',
+          fontSize: isSlate ? 20 : HEADER_HEIGHT - 10,
+          ...(isSlate && { display: 'inline-block', marginRight: '0.25rem' }),
         }}
       >
         {props.icon}
@@ -269,28 +272,51 @@ interface TopBarLinkProps extends TopBarLinkCommonProps {
   onClick?: () => void;
 }
 
+const SlateButtonCss = css({
+  color: 'var(--slate-button-text)',
+  backgroundColor: 'var(--slate-button-bg)',
+  border: '1px solid var(--slate-button-border)',
+  margin: '0 0.75rem',
+  '&:last-child': {
+    marginRight: 0,
+  },
+  '&:first-child': {
+    marginLeft: 0,
+  },
+  borderRadius: '3px',
+  padding: '0 0.45rem 0.2rem',
+  '&:hover, &:focus': {
+    backgroundColor: 'var(--slate-button-bg-hover)',
+  },
+  lineHeight: '1.75rem',
+});
+
 export const TopBarLink = (props: TopBarLinkProps) => {
+  const { isSlate } = useContext(EmbedContext);
   return (
     <button
       // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       title={props.hoverText || props.text}
-      css={{
-        backgroundColor: 'transparent',
-        border: 'none',
-        cursor: 'pointer',
-        textDecoration: 'none',
-        display: 'inline',
-        margin: 0,
-        padding: '0 0.45em',
-        color: 'var(--onprimary)',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'clip',
-        '&:hover, &:focus': {
+      css={[
+        {
+          backgroundColor: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
           textDecoration: 'none',
-          backgroundColor: 'var(--top-bar-hover)',
+          display: 'inline',
+          margin: 0,
+          padding: '0 0.45em',
+          color: 'var(--onprimary)',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'clip',
+          '&:hover, &:focus': {
+            textDecoration: 'none',
+            backgroundColor: 'var(--top-bar-hover)',
+          },
         },
-      }}
+        ...(isSlate ? [SlateButtonCss] : []),
+      ]}
       onClick={props.onClick}
     >
       <TopBarLinkContents {...props} />
@@ -377,6 +403,8 @@ export const TopBar = ({
     };
   }, [handleClickOutside]);
 
+  const { isSlate } = useContext(EmbedContext);
+
   return useMemo(() => {
     const today = new Date();
     return (
@@ -407,11 +435,15 @@ export const TopBar = ({
                     'linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)), linear-gradient(to right, #50DFE4 0% 15%,#FFA6D6 25% 35%,#FFFFFF 45% 55%,#FFA6D6 65% 75%,#50DFE4 85% 100%)',
                 },
               }),
+            ...(isSlate && {
+              background: 'none',
+              marginBottom: '2rem',
+            }),
           }}
         >
           <div
             css={{
-              padding: '0 10px',
+              padding: isSlate ? 0 : '0 10px',
               height: '100%',
               position: 'relative',
               display: 'flex',
@@ -420,23 +452,27 @@ export const TopBar = ({
             }}
           >
             {isEmbed ? (
-              <div
-                title={title}
-                css={{
-                  flexGrow: 1,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  marginLeft: '5px',
-                  color: 'var(--onprimary)',
-                  fontSize: HEADER_HEIGHT - 10,
-                  [SMALL_AND_UP]: {
-                    display: 'inline-block',
-                  },
-                }}
-              >
-                {title}
-              </div>
+              isSlate ? (
+                ''
+              ) : (
+                <div
+                  title={title}
+                  css={{
+                    flexGrow: 1,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    marginLeft: '5px',
+                    color: 'var(--onprimary)',
+                    fontSize: HEADER_HEIGHT - 10,
+                    [SMALL_AND_UP]: {
+                      display: 'inline-block',
+                    },
+                  }}
+                >
+                  {title}
+                </div>
+              )
             ) : filtered?.length && !showingNotifications ? (
               <button
                 type="button"
@@ -581,6 +617,7 @@ export const TopBar = ({
     showingNotifications,
     setShowingNotifications,
     isEmbed,
+    isSlate,
     title,
   ]);
 };
