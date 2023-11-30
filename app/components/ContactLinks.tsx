@@ -10,7 +10,7 @@ export function ContactLinks() {
           href="mailto:mike@crosshare.org"
         >
           email
-        </a>
+        </a>{' '}
         or{' '}
         <a
           target="_blank"
