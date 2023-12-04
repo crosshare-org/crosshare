@@ -357,7 +357,7 @@ export const Puzzle = ({
       if (notification.p === puzzle.id) {
         logAsyncErrors(async () =>
           updateDoc(getDocRef('n', notification.id), { r: true })
-        );
+        )();
         return;
       }
     }
