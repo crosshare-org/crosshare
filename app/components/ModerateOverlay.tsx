@@ -20,6 +20,8 @@ export const ModeratingOverlay = memo(function ModeratingOverlay({
   const [date, setDate] = useState<Date | undefined>();
   const [success, setSuccess] = useState(false);
 
+  const [forcedTagEditor, setForcedTagEditor] = useState(false);
+
   async function schedule() {
     if (!date) {
       throw new Error("shouldn't be able to schedule w/o date");
@@ -66,13 +68,42 @@ export const ModeratingOverlay = memo(function ModeratingOverlay({
       }}
     >
       <h4>Moderate this Puzzle</h4>
-      <TagEditor
-        userTags={puzzle.userTags || []}
-        autoTags={puzzle.autoTags || []}
-        save={async (newTags: string[]) =>
-          updateDoc(getDocRef('c', puzzle.id), { tg_u: newTags })
-        }
-      />
+      {forcedTagEditor ? (
+        <>
+          {' '}
+          <TagEditor
+            forcedTags={puzzle.forcedTags || []}
+            forced={true}
+            save={async (newTags: string[]) =>
+              updateDoc(getDocRef('c', puzzle.id), { tg_f: newTags })
+            }
+          />
+          <button
+            onClick={() => {
+              setForcedTagEditor(false);
+            }}
+          >
+            Edit normal tags
+          </button>
+        </>
+      ) : (
+        <>
+          <TagEditor
+            userTags={puzzle.userTags || []}
+            autoTags={puzzle.autoTags || []}
+            save={async (newTags: string[]) =>
+              updateDoc(getDocRef('c', puzzle.id), { tg_u: newTags })
+            }
+          />
+          <button
+            onClick={() => {
+              setForcedTagEditor(true);
+            }}
+          >
+            Edit forced tags
+          </button>
+        </>
+      )}
       {puzzle.isPrivate !== false ? (
         <h4 css={{ color: 'var(--error)' }}>This puzzle is private</h4>
       ) : (

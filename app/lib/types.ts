@@ -187,6 +187,7 @@ export interface PuzzleT {
   dailyMiniDate?: string;
   userTags?: string[];
   autoTags?: string[];
+  forcedTags?: string[];
 }
 
 export interface PuzzleResult extends PuzzleT {
@@ -293,6 +294,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     ...(dbPuzzle.dmd && { dailyMiniDate: dbPuzzle.dmd }),
     userTags: dbPuzzle.tg_u || [],
     autoTags: dbPuzzle.tg_a || [],
+    forcedTags: dbPuzzle.tg_f || [],
   };
 }
 

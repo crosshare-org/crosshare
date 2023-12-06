@@ -12,6 +12,7 @@ services:
       context: .
       target: dev
     image: dev
+    ipc: host
     volumes:
       - "./serviceAccountKey.json:/src/serviceAccountKey.json:z"
       - "./app:/src/app:z"

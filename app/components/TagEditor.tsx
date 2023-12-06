@@ -12,24 +12,43 @@ import { useSnackbar } from './Snackbar';
 import * as t from 'io-ts';
 import { TagList } from './TagList';
 
-interface TagEditorProps {
-  userTags: string[];
-  autoTags: string[];
+interface TagEditorBaseProps {
   save: (newTags: string[]) => Promise<void>;
   cancel?: () => void;
 }
 
+interface TagEditorUserProps extends TagEditorBaseProps {
+  userTags: string[];
+  autoTags: string[];
+  forced?: false;
+}
+
+interface TagEditorForcedProps extends TagEditorBaseProps {
+  forcedTags: string[];
+  forced: true;
+}
+
+type TagEditorProps = TagEditorForcedProps | TagEditorUserProps;
+
 export function TagEditor(props: TagEditorProps) {
   const { showSnackbar } = useSnackbar();
-  const [savedTags, setSavedTags] = useState(props.userTags);
-  const [tags, setTags] = useState(props.userTags);
+  const [savedTags, setSavedTags] = useState(
+    props.forced ? props.forcedTags : props.userTags
+  );
+  const [tags, setTags] = useState(
+    props.forced ? props.forcedTags : props.userTags
+  );
   const [newTag, setNewTag] = useState('');
 
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!props.forced);
   const [disallowed, setDisallowed] = useState<string[]>([]);
 
   useEffect(() => {
+    if (props.forced) {
+      // If we're editing forced tags then anything goes!
+      return;
+    }
     let didCancel = false;
     getFromSessionOrDB({
       collection: 'settings',
@@ -61,7 +80,7 @@ export function TagEditor(props: TagEditorProps) {
     return () => {
       didCancel = true;
     };
-  }, []);
+  }, [props.forced]);
 
   function addTag(t: string) {
     if (disallowed.includes(t)) {
@@ -84,8 +103,14 @@ export function TagEditor(props: TagEditorProps) {
 
   return (
     <>
-      <h4>Auto-tags:</h4>
-      <TagList tags={props.autoTags} />
+      {props.forced ? (
+        <></>
+      ) : (
+        <>
+          <h4>Auto-tags:</h4>
+          <TagList tags={props.autoTags} />
+        </>
+      )}
 
       <h4>Add or Remove Tags (max 5 per puzzle, other than auto-tags):</h4>
       <TagList
@@ -120,13 +145,19 @@ export function TagEditor(props: TagEditorProps) {
               disabled={newTag.length < TAG_LENGTH_MIN}
             />
           </div>
-          <h5 css={{ marginTop: '1em' }}>Example tags:</h5>
-          <TagList
-            tags={['themeless', 'themed', 'cryptic', 'grid-art', 'lang-es']}
-            onClick={(t) => {
-              addTag(t);
-            }}
-          />
+          {props.forced ? (
+            ''
+          ) : (
+            <>
+              <h5 css={{ marginTop: '1em' }}>Example tags:</h5>
+              <TagList
+                tags={['themeless', 'themed', 'cryptic', 'grid-art', 'lang-es']}
+                onClick={(t) => {
+                  addTag(t);
+                }}
+              />
+            </>
+          )}
         </>
       ) : (
         <p>You must remove an existing tag if you want to add any new ones.</p>
