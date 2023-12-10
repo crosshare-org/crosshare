@@ -146,6 +146,7 @@ import { type Root } from 'hast';
 import { SlateHeader } from './SlateHeader';
 import { SlateColorTheme } from './SlateColorTheme';
 import { Check, Clues, Grid, More, Pause, Reveal, Timer } from './SlateIcons';
+import { removeSpoilers } from '../lib/markdown/markdown';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay),
@@ -1157,8 +1158,8 @@ export const Puzzle = ({
   );
 
   const description = puzzle.blogPostRaw
-    ? puzzle.blogPostRaw.slice(0, 160) + '...'
-    : puzzle.clues.map(getClueText).slice(0, 10).join('; ');
+    ? removeSpoilers(puzzle.blogPostRaw).slice(0, 160) + '...'
+    : removeSpoilers(puzzle.clues.map(getClueText).slice(0, 10).join('; '));
 
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const locale = router.locale || 'en';
