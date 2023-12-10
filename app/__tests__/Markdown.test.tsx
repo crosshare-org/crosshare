@@ -4,7 +4,24 @@ import { Markdown } from '../components/Markdown';
 import { addClues, CluedGrid, fromCells } from '../lib/viewableGrid';
 import { GridContext } from '../components/GridContext';
 import { Direction } from '../lib/types';
-import { markdownToHast } from '../lib/markdown/markdown';
+import { markdownToHast, removeSpoilers } from '../lib/markdown/markdown';
+
+test('remove spoilers', () => {
+  expect(removeSpoilers('Testing **something bold**')).toMatch(
+    'Testing **something bold**'
+  );
+  expect(
+    removeSpoilers('Testing **something ||hide this bit!|| bold**')
+  ).toMatch('Testing **something [spoiler] bold**');
+  expect(
+    removeSpoilers(
+      'Here >!are some spoilers *test*!< that || should get removed || foo'
+    )
+  ).toMatchInlineSnapshot(`
+    "Here [spoiler] that [spoiler] foo
+    "
+  `);
+});
 
 test('escape html', () => {
   const r = render(

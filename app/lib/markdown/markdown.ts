@@ -17,10 +17,26 @@ import { remarkNoRefs } from './noRefs';
 import { Handler } from 'mdast-util-to-hast';
 import { Nodes } from 'mdast-util-from-markdown/lib';
 import unusedDirectives from './unusedDirectives';
+import remarkStringify from 'remark-stringify';
 
 function rehypeTruncate(options: TruncateOptions) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return
   return (tree: any) => truncate(tree, options);
+}
+
+export function removeSpoilers(text: string): string {
+  const processor = unified()
+    .use(remarkParse)
+    .use(remarkSpoilers)
+    .use(remarkStringify, {
+      handlers: {
+        spoiler: () => {
+          return '[spoiler]';
+        },
+      },
+    });
+
+  return String(processor.processSync(text));
 }
 
 export function markdownToHast(props: {
