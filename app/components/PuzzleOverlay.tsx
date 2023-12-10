@@ -17,13 +17,13 @@ import { Overlay } from './Overlay';
 import { PuzzleHeading } from './PuzzleHeading';
 import { Button, ButtonAsLink } from './Buttons';
 import { MetaSubmission } from './MetaSubmission';
-import { lightFormat } from 'date-fns';
 import { GoScreenFull } from 'react-icons/go';
 import { AuthContext } from './AuthContext';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { t, Trans } from '@lingui/macro';
 import { useRouter } from 'next/router';
 import { SharingButtons } from './SharingButtons';
+import { PastDistanceToNow } from './TimeDisplay';
 
 const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {
@@ -367,8 +367,8 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                         }}
                         key={i}
                       >
-                        <strong>{w.n}</strong> solved at{' '}
-                        {lightFormat(w.t, "H:mm 'on' M/d/yyyy")}
+                        <strong>{w.n}</strong> solved{' '}
+                        <PastDistanceToNow date={new Date(w.t)} />{' '}
                       </li>
                     ))}
                 </ul>
