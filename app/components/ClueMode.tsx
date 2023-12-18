@@ -771,7 +771,13 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
             </label>
             {privateUntil ? (
               <p css={{ marginLeft: '1.5em' }}>
-                Visible after {lightFormat(privateUntil, "M/d/y' at 'h:mma")}:
+                Visible after {lightFormat(privateUntil, "M/d/y' at 'h:mma")} (
+                {
+                  privateUntil
+                    .toLocaleTimeString('en-us', { timeZoneName: 'short' })
+                    .split(' ')[2]
+                }
+                ):
                 <DateTimePicker
                   picked={privateUntil}
                   setPicked={(d) => {

@@ -563,7 +563,13 @@ const PuzzleEditor = ({
               {isPrivateUntil && isPrivateUntil > Date.now() ? (
                 <p>
                   Visible after{' '}
-                  {lightFormat(isPrivateUntil, "M/d/y' at 'h:mma")}:
+                  {lightFormat(isPrivateUntil, "M/d/y' at 'h:mma")} (
+                  {
+                    new Date(isPrivateUntil)
+                      .toLocaleTimeString('en-us', { timeZoneName: 'short' })
+                      .split(' ')[2]
+                  }
+                  ):
                   <DateTimePicker
                     picked={isPrivateUntil}
                     setPicked={(d) => {
