@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import slateLogo from '../public/slate/Logo.png';
+import slateLogoDark from '../public/slate/Logo-Dark.png';
 
 interface SlateHeaderProps {
   title: string;
@@ -22,9 +23,25 @@ export const SlateHeader = (props: SlateHeaderProps) => {
       >
         <Image
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          src={slateLogoDark}
+          alt="Slate Crosswords"
+          css={{
+            display: 'var(--dark-image-display)',
+            objectFit: 'contain',
+            maxHeight: '2.89rem',
+            maxWidth: '100%',
+          }}
+        />
+        <Image
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           src={slateLogo}
           alt="Slate Crosswords"
-          css={{ objectFit: 'contain', maxHeight: '2.89rem', maxWidth: '100%' }}
+          css={{
+            display: 'var(--light-image-display)',
+            objectFit: 'contain',
+            maxHeight: '2.89rem',
+            maxWidth: '100%',
+          }}
         />
       </div>
       <h1
