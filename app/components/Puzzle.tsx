@@ -392,6 +392,10 @@ export const Puzzle = ({
   // Pause when page goes out of focus
   function prodPause() {
     if (process.env.NODE_ENV !== 'development') {
+      window.parent.postMessage({
+        type: 'pause',
+        elapsed: state.displaySeconds,
+      });
       dispatch({ type: 'PAUSEACTION' });
       writePlayToDBIfNeeded();
     }
@@ -609,6 +613,16 @@ export const Puzzle = ({
     props.user,
     writePlayToDBIfNeeded,
   ]);
+
+  useEffect(() => {
+    if (state.success) {
+      window.parent.postMessage({
+        type: 'complete',
+        elapsed: state.bankedSeconds,
+        didCheat: state.didCheat,
+      });
+    }
+  }, [state.success, state.bankedSeconds, state.didCheat]);
 
   useEffect(() => {
     if (state.success && !state.ranSuccessEffects) {
@@ -1269,6 +1283,10 @@ export const Puzzle = ({
                             : timeString(state.displaySeconds, true)
                         }
                         onClick={() => {
+                          window.parent.postMessage({
+                            type: 'pause',
+                            elapsed: state.displaySeconds,
+                          });
                           dispatch({ type: 'PAUSEACTION' });
                           writePlayToDBIfNeeded();
                         }}

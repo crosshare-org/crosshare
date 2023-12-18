@@ -214,6 +214,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                 <div css={{ marginBottom: '1em' }}>{props.message}</div>
                 <Button
                   onClick={() => {
+                    window.parent.postMessage({ type: 'resume' });
                     props.dispatch({ type: 'RESUMEACTION' });
                   }}
                   text={props.dismissMessage}
