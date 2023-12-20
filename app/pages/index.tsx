@@ -124,37 +124,66 @@ export default function HomePage({
 
       <div css={{ margin: '1em' }}>
         {showCampaignForYear ? (
-          <Link
-            css={{
-              display: 'block',
-              textDecoration: 'none',
-              color: 'var(--text)',
-              border: '1px solid var(--error)',
-              borderRadius: '0.5em',
-              padding: '1em',
-              marginBottom: '1em',
-              '&:hover': {
-                color: 'var(--text)',
+          showCampaignForYear <= 2024 ? (
+            <Link
+              css={{
+                display: 'block',
                 textDecoration: 'none',
-              },
-            }}
-            href="/donate"
-          >
-            <h3>
-              <span css={{ color: 'var(--error)' }}>Read this</span> - we need
-              your help!
-            </h3>
-            <div>
-              As Crosshare continues to grow (and add new features) I need help
-              to pay for the ongoing costs of running the site. This holiday
-              season / new year, I&apos;m hoping to reach $100/month in new
-              recurring donations to keep the site going through{' '}
-              {showCampaignForYear} and beyond. Please consider contributing
-              whatever you are able. All monthly contributors get a patron icon
-              - <PatronIcon /> - so we all know who to thank for making the site
-              possible!
-            </div>
-          </Link>
+                color: 'var(--text)',
+                border: '1px solid var(--error)',
+                borderRadius: '0.5em',
+                padding: '1em',
+                marginBottom: '1em',
+                '&:hover': {
+                  color: 'var(--text)',
+                  textDecoration: 'none',
+                },
+              }}
+              href="/donate"
+            >
+              <div>
+                <h3>
+                  <span css={{ color: 'var(--error)' }}>Thank you!</span>
+                </h3>
+                Thanks to the generous support of all of our patrons,
+                Crosshare&apos;s {showCampaignForYear - 1} fundraising campaign
+                was a success. Here&apos;s to a crossword-filled{' '}
+                {showCampaignForYear}!
+              </div>
+            </Link>
+          ) : (
+            <Link
+              css={{
+                display: 'block',
+                textDecoration: 'none',
+                color: 'var(--text)',
+                border: '1px solid var(--error)',
+                borderRadius: '0.5em',
+                padding: '1em',
+                marginBottom: '1em',
+                '&:hover': {
+                  color: 'var(--text)',
+                  textDecoration: 'none',
+                },
+              }}
+              href="/donate"
+            >
+              <h3>
+                <span css={{ color: 'var(--error)' }}>Read this</span> - we need
+                your help!
+              </h3>
+              <div>
+                As Crosshare continues to grow (and add new features) I need
+                help to pay for the ongoing costs of running the site. This
+                holiday season / new year, I&apos;m hoping to reach $100/month
+                in new recurring donations to keep the site going through{' '}
+                {showCampaignForYear} and beyond. Please consider contributing
+                whatever you are able. All monthly contributors get a patron
+                icon - <PatronIcon /> - so we all know who to thank for making
+                the site possible!
+              </div>
+            </Link>
+          )
         ) : (
           ''
         )}
