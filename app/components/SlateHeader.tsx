@@ -26,7 +26,8 @@ export const SlateLogo = (props: { className?: string }) => {
           display: 'var(--dark-image-display)',
           objectFit: 'contain',
           maxHeight: '2.89rem',
-          maxWidth: '100%',
+          maxWidth: '90%',
+          margin: 'auto',
         }}
       />
       <Image
@@ -37,7 +38,8 @@ export const SlateLogo = (props: { className?: string }) => {
           display: 'var(--light-image-display)',
           objectFit: 'contain',
           maxHeight: '2.89rem',
-          maxWidth: '100%',
+          maxWidth: '90%',
+          margin: 'auto',
         }}
       />
     </div>

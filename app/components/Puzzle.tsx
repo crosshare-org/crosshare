@@ -147,7 +147,7 @@ import { SlateHeader } from './SlateHeader';
 import { SlateColorTheme } from './SlateColorTheme';
 import { Check, Clues, Grid, More, Pause, Reveal, Timer } from './SlateIcons';
 import { removeSpoilers } from '../lib/markdown/markdown';
-import { SlatePause, SlateSuccess } from './SlateOverlays';
+import { SlateBegin, SlatePause, SlateSuccess } from './SlateOverlays';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay),
@@ -1184,6 +1184,22 @@ export const Puzzle = ({
 
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const locale = router.locale || 'en';
+
+  if (
+    isSlate &&
+    state.currentTimeWindowStart === 0 &&
+    !state.success &&
+    !(state.filled && !state.dismissedKeepTrying) &&
+    state.bankedSeconds === 0
+  ) {
+    return (
+      <SlateBegin
+        dispatch={dispatch}
+        puzzle={puzzle}
+        loadingPlayState={loadingPlayState || !state.loadedPlayState}
+      />
+    );
+  }
 
   return (
     <>
