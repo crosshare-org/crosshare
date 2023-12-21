@@ -32,9 +32,18 @@ const SlateOverlayHeader = () => {
   );
 };
 
-export const SlateSuccess = () => {
+export const SlateSuccess = ({
+  dispatch,
+}: {
+  dispatch: Dispatch<PuzzleAction>;
+}) => {
   return (
-    <Overlay innerPadding="3em 0 0 0">
+    <Overlay
+      innerPadding="3em 0 0 0"
+      closeCallback={() => {
+        dispatch({ type: 'DISMISSSUCCESS' });
+      }}
+    >
       <SlateOverlayHeader />
       <div
         css={{

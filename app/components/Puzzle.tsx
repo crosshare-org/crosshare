@@ -1378,7 +1378,7 @@ export const Puzzle = ({
           )}
           {state.success && !state.dismissedSuccess ? (
             isSlate ? (
-              <SlateSuccess />
+              <SlateSuccess dispatch={dispatch} />
             ) : (
               <PuzzleOverlay
                 {...overlayBaseProps}
