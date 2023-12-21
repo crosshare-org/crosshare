@@ -147,6 +147,7 @@ import { SlateHeader } from './SlateHeader';
 import { SlateColorTheme } from './SlateColorTheme';
 import { Check, Clues, Grid, More, Pause, Reveal, Timer } from './SlateIcons';
 import { removeSpoilers } from '../lib/markdown/markdown';
+import { SlatePause, SlateSuccess } from './SlateOverlays';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay),
@@ -1376,15 +1377,19 @@ export const Puzzle = ({
             ''
           )}
           {state.success && !state.dismissedSuccess ? (
-            <PuzzleOverlay
-              {...overlayBaseProps}
-              overlayType={OverlayType.Success}
-              contestSubmission={state.contestSubmission}
-              contestHasPrize={puzzle.contestHasPrize}
-              contestRevealed={state.contestRevealed}
-              contestRevealDelay={puzzle.contestRevealDelay}
-              shareButtonText={puzzle.constructorPage?.st}
-            />
+            isSlate ? (
+              <SlateSuccess />
+            ) : (
+              <PuzzleOverlay
+                {...overlayBaseProps}
+                overlayType={OverlayType.Success}
+                contestSubmission={state.contestSubmission}
+                contestHasPrize={puzzle.contestHasPrize}
+                contestRevealed={state.contestRevealed}
+                contestRevealDelay={puzzle.contestRevealDelay}
+                shareButtonText={puzzle.constructorPage?.st}
+              />
+            )
           ) : (
             ''
           )}
@@ -1413,6 +1418,8 @@ export const Puzzle = ({
                 message={t`Ready to get started?`}
                 loadingPlayState={loadingPlayState || !state.loadedPlayState}
               />
+            ) : isSlate ? (
+              <SlatePause dispatch={dispatch} />
             ) : (
               <PuzzleOverlay
                 {...overlayBaseProps}

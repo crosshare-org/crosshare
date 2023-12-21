@@ -8,42 +8,48 @@ interface SlateHeaderProps {
   publishTime: number;
 }
 
+export const SlateLogo = (props: { className?: string }) => {
+  return (
+    <div
+      className={props.className}
+      css={{
+        maxHeight: '3.115rem',
+        width: '100%',
+        overflow: 'hidden',
+      }}
+    >
+      <Image
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        src={slateLogoDark}
+        alt="Slate Crosswords"
+        css={{
+          display: 'var(--dark-image-display)',
+          objectFit: 'contain',
+          maxHeight: '2.89rem',
+          maxWidth: '100%',
+        }}
+      />
+      <Image
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        src={slateLogo}
+        alt="Slate Crosswords"
+        css={{
+          display: 'var(--light-image-display)',
+          objectFit: 'contain',
+          maxHeight: '2.89rem',
+          maxWidth: '100%',
+        }}
+      />
+    </div>
+  );
+};
+
 export const SlateHeader = (props: SlateHeaderProps) => {
   const publishDate = new Date(props.publishTime);
 
   return (
     <div css={{ width: '100%', textAlign: 'center' }}>
-      <div
-        css={{
-          maxHeight: '3.115rem',
-          width: '100%',
-          overflow: 'hidden',
-          marginBottom: '2.27rem',
-        }}
-      >
-        <Image
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          src={slateLogoDark}
-          alt="Slate Crosswords"
-          css={{
-            display: 'var(--dark-image-display)',
-            objectFit: 'contain',
-            maxHeight: '2.89rem',
-            maxWidth: '100%',
-          }}
-        />
-        <Image
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          src={slateLogo}
-          alt="Slate Crosswords"
-          css={{
-            display: 'var(--light-image-display)',
-            objectFit: 'contain',
-            maxHeight: '2.89rem',
-            maxWidth: '100%',
-          }}
-        />
-      </div>
+      <SlateLogo css={{ marginBottom: '2.27rem' }} />
       <h1
         css={{
           fontSize: '1.647rem',

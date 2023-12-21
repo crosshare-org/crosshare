@@ -17,6 +17,9 @@ const colorTheme = (darkMode: boolean) => {
       ? lighten('#4C2643', 0.1)
       : darken('#F0F0F0', 0.1),
     '--slate-button-border': darkMode ? '#56334E' : '#DDD',
+    '--overlay-inner': darkMode ? '#2C0022' : 'white',
+    '--overlay-stroke': darkMode ? '#80667A' : 'black',
+    '--slate-hover-filter': darkMode ? 'brightness(120%)' : 'brightness(80%)',
   };
 };
 

@@ -58,7 +58,7 @@ export const More = () => {
   );
 };
 
-export const Pause = () => {
+export const Pause = (props: { className?: string }) => {
   return (
     <svg
       viewBox="0 0 496 496"
@@ -66,6 +66,7 @@ export const Pause = () => {
       height="1em"
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
+      className={props.className}
     >
       <path d="M423 73a246 246 0 0 0-350 0 246 246 0 0 0 0 350 246 246 0 0 0 350 0 246 246 0 0 0 0-350Zm-23 327a213 213 0 0 1-304 0 213 213 0 0 1 0-304 213 213 0 0 1 304 0 213 213 0 0 1 0 304Z" />
       <path d="M201 127c-9 0-16 8-16 17v204a17 17 0 0 0 33 0V144c0-9-8-17-17-17Zm100 0c-9 0-17 8-17 17v204a17 17 0 0 0 33 0V144c0-9-7-17-16-17Z" />
@@ -73,7 +74,7 @@ export const Pause = () => {
   );
 };
 
-export const Play = () => {
+export const Play = (props: { className?: string }) => {
   return (
     <svg
       viewBox="0 0 500 500"
@@ -81,6 +82,7 @@ export const Play = () => {
       height="1em"
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
+      className={props.className}
     >
       <path
         fill-rule="evenodd"

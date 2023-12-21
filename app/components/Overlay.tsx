@@ -57,16 +57,18 @@ export const Overlay = (props: {
           },
           maxWidth: '1200px',
           backgroundColor: 'var(--overlay-inner)',
-          border: '1px solid black',
+          border: '1px solid var(--overlay-stroke)',
           ...(isSlate && {
             borderRadius: '7px',
+            top: '50%',
+            transform: 'translateY(-50%)',
           }),
         }}
       >
         {props.coverImage ? <CoverPic coverPicture={props.coverImage} /> : ''}
         <div
           css={{
-            padding: '3em 1.5em',
+            padding: isSlate ? '3em 0 0 0' : '3em 1.5em',
           }}
         >
           {props.closeCallback ? (
