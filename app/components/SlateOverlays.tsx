@@ -6,17 +6,9 @@ import { SlateLogo } from './SlateHeader';
 import { Pause, Play } from './SlateIcons';
 import { Link } from './Link';
 
-export const SlateSuccess = () => {
-  return <Overlay>Success</Overlay>;
-};
-
-export const SlatePause = ({
-  dispatch,
-}: {
-  dispatch: Dispatch<PuzzleAction>;
-}) => {
+const SlateOverlayHeader = () => {
   return (
-    <Overlay>
+    <>
       <SlateLogo css={{ marginBottom: '1rem' }} />
       <div
         css={{
@@ -27,7 +19,7 @@ export const SlatePause = ({
       >
         <Link
           css={{
-            '&:hover': { color: 'var(--slate-title)', textDecoration: 'none' },
+            '&:hover': { color: 'var(--slate-title)' },
             opacity: '0.3',
             color: 'var(--slate-title)',
           }}
@@ -36,6 +28,37 @@ export const SlatePause = ({
           Powered by crosshare.org
         </Link>
       </div>
+    </>
+  );
+};
+
+export const SlateSuccess = () => {
+  return (
+    <Overlay innerPadding="3em 0 0 0">
+      <SlateOverlayHeader />
+      <div
+        css={{
+          fontSize: '1.383rem',
+          textAlign: 'center',
+          fontWeight: 'bold',
+          margin: '2rem 0 2.82rem 0',
+          color: 'var(--slate-title)',
+        }}
+      >
+        You solved today&apos;s puzzle - congratulations!
+      </div>
+    </Overlay>
+  );
+};
+
+export const SlatePause = ({
+  dispatch,
+}: {
+  dispatch: Dispatch<PuzzleAction>;
+}) => {
+  return (
+    <Overlay innerPadding="3em 0 0 0">
+      <SlateOverlayHeader />
       <Pause
         css={{
           opacity: '0.3',

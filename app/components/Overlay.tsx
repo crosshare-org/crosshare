@@ -13,6 +13,7 @@ export const Overlay = (props: {
   hidden?: boolean;
   closeCallback?: () => void;
   children: React.ReactNode;
+  innerPadding?: string;
 }) => {
   const ref = useRef<HTMLElement | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -68,7 +69,7 @@ export const Overlay = (props: {
         {props.coverImage ? <CoverPic coverPicture={props.coverImage} /> : ''}
         <div
           css={{
-            padding: isSlate ? '3em 0 0 0' : '3em 1.5em',
+            padding: props.innerPadding ?? '3em 1.5em',
           }}
         >
           {props.closeCallback ? (
