@@ -878,7 +878,7 @@ const GridMode = ({
   setClueMode,
   ...props
 }: GridModeProps) => {
-  const [muted, setMuted] = usePersistedBoolean('muted', false);
+  const [muted, setMuted] = usePersistedBoolean('muted', true);
   const [toggleKeyboard, setToggleKeyboard] = usePersistedBoolean(
     'keyboard',
     false

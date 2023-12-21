@@ -406,7 +406,7 @@ export const Puzzle = ({
   }
   useEventListener('blur', prodPause);
 
-  const [muted, setMuted] = usePersistedBoolean('muted', false);
+  const [muted, setMuted] = usePersistedBoolean('muted', true);
   const [color, setColorPref] = useDarkModeControl();
   const isExistingDarkMode = useIsExistingDarkMode();
 

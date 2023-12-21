@@ -127,7 +127,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
   );
   const [authoredSnap] = useCollection(authoredQuery);
   const [colorPref, setColorPref] = useDarkModeControl();
-  const [muted, setMuted] = usePersistedBoolean('muted', false);
+  const [muted, setMuted] = usePersistedBoolean('muted', true);
 
   useEffect(() => {
     if (authoredSnap && authoredSnap.size >= 0) {

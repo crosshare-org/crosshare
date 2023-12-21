@@ -77,7 +77,7 @@ export function AlternateSolutionEditor(props: {
     isEditable: () => true,
   });
 
-  const [muted, setMuted] = usePersistedBoolean('muted', false);
+  const [muted, setMuted] = usePersistedBoolean('muted', true);
   const [toggleKeyboard, setToggleKeyboard] = usePersistedBoolean(
     'keyboard',
     false
