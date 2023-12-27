@@ -24,7 +24,7 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
   const user = ctx.user;
 
   function sanitize(input: string | null | undefined) {
-    return input?.replace(/[^0-9a-zA-Z ]/g, '');
+    return input?.replace(/[^0-9a-zA-Z'\- ]/g, '');
   }
 
   const [newDisplayName, setNewDisplayName] = useState(
