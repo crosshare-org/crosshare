@@ -89,7 +89,7 @@ export function fnv1a(input: string) {
 }
 
 function normalize(n: string) {
-  return n.toLowerCase().replace(/[\s!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g, '');
+  return n.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
 export function isMetaSolution(
