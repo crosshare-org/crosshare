@@ -1125,39 +1125,45 @@ export const Puzzle = ({
               ) : (
                 ''
               )}
-              <TopBarDropDownLinkSimpleA
-                href={'/api/pdf/' + puzzle.id}
-                icon={<FaPrint />}
-                text={t`Print Puzzle`}
-              />
-              {puzzle.hBars.length || puzzle.vBars.length ? (
+              {isSlate ? (
                 ''
               ) : (
-                <TopBarDropDownLinkSimpleA
-                  href={'/api/puz/' + puzzle.id}
-                  icon={<FaRegFile />}
-                  text={t`Download .puz File`}
-                />
+                <>
+                  <TopBarDropDownLinkSimpleA
+                    href={'/api/pdf/' + puzzle.id}
+                    icon={<FaPrint />}
+                    text={t`Print Puzzle`}
+                  />
+                  {puzzle.hBars.length || puzzle.vBars.length ? (
+                    ''
+                  ) : (
+                    <TopBarDropDownLinkSimpleA
+                      href={'/api/puz/' + puzzle.id}
+                      icon={<FaRegFile />}
+                      text={t`Download .puz File`}
+                    />
+                  )}
+                  {!isEmbed ? (
+                    <TopBarDropDownLink
+                      icon={<FaMoon />}
+                      text={t`Toggle Light/Dark Mode`}
+                      onClick={() => {
+                        toggleColorPref();
+                      }}
+                    />
+                  ) : null}
+                  <TopBarDropDownLinkA
+                    href="/account"
+                    icon={<FaUser />}
+                    text={t`Account / Settings`}
+                  />
+                  <TopBarDropDownLinkA
+                    href="/construct"
+                    icon={<FaHammer />}
+                    text={t`Construct a Puzzle`}
+                  />
+                </>
               )}
-              {!isEmbed ? (
-                <TopBarDropDownLink
-                  icon={<FaMoon />}
-                  text={t`Toggle Light/Dark Mode`}
-                  onClick={() => {
-                    toggleColorPref();
-                  }}
-                />
-              ) : null}
-              <TopBarDropDownLinkA
-                href="/account"
-                icon={<FaUser />}
-                text={t`Account / Settings`}
-              />
-              <TopBarDropDownLinkA
-                href="/construct"
-                icon={<FaHammer />}
-                text={t`Construct a Puzzle`}
-              />
             </>
           )}
         </TopBarDropDown>
