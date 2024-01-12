@@ -17,6 +17,7 @@ import {
   HEADER_HEIGHT,
   SMALL_AND_UP,
   HAS_PHYSICAL_KEYBOARD,
+  LARGE_AND_UP,
 } from '../lib/style';
 import { ButtonResetCSS } from './Buttons';
 import { NotificationT } from '../lib/notificationTypes';
@@ -244,7 +245,8 @@ const TopBarLinkContents = (props: TopBarLinkCommonProps) => {
           fontSize: isSlate ? 15 : HEADER_HEIGHT - 10,
           ...(isSlate && {
             display: 'inline-block',
-            [SMALL_AND_UP]: { fontSize: 20, marginRight: '0.25rem' },
+            [SMALL_AND_UP]: { fontSize: 20 },
+            [LARGE_AND_UP]: { marginRight: '0.25rem' },
           }),
         }}
       >
@@ -258,6 +260,9 @@ const TopBarLinkContents = (props: TopBarLinkCommonProps) => {
             display: props.keepText ? 'inline-block' : 'none',
             fontSize: HEADER_HEIGHT - 20,
             [SMALL_AND_UP]: {
+              ...(!isSlate && { display: 'inline-block' }),
+            },
+            [LARGE_AND_UP]: {
               display: 'inline-block',
             },
           }}
