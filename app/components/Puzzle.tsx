@@ -1244,7 +1244,8 @@ export const Puzzle = ({
             ...(isSlate && {
               backgroundColor: 'var(--bg)',
               border: '1px solid var(--slate-container-border)',
-              borderRadius: '0.25rem',
+              borderRadius: '4px',
+              overflow: 'hidden',
               padding: SLATE_PADDING_SMALL,
               [SMALL_AND_UP]: {
                 padding: SLATE_PADDING_MED,

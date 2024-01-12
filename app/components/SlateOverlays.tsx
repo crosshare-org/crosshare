@@ -104,7 +104,7 @@ export const SlatePause = ({
         Your puzzle is paused
       </div>
 
-      <BigButton text={'Resume'} dispatch={dispatch} />
+      <BigButton text={'Resume'} dispatch={dispatch} radius={7} />
     </Overlay>
   );
 };
@@ -126,7 +126,8 @@ export const SlateBegin = ({
         css={{
           backgroundColor: 'var(--bg)',
           border: '1px solid var(--slate-container-border)',
-          borderRadius: '0.25rem',
+          borderRadius: '4px',
+          overflow: 'hidden',
           padding: `${SLATE_PADDING_SMALL}px 0 0 0`,
           [SMALL_AND_UP]: {
             padding: `${SLATE_PADDING_MED}px 0 0 0`,
@@ -161,7 +162,7 @@ export const SlateBegin = ({
         {loadingPlayState ? (
           <div css={{ height: '85px' }} />
         ) : (
-          <BigButton dispatch={dispatch} text={'Begin Puzzle'} />
+          <BigButton dispatch={dispatch} text={'Begin Puzzle'} radius={4} />
         )}
       </div>
     </>
@@ -171,9 +172,11 @@ export const SlateBegin = ({
 const BigButton = ({
   dispatch,
   text,
+  radius,
 }: {
   dispatch: Dispatch<PuzzleAction>;
   text: string;
+  radius: number;
 }) => {
   return (
     <button
@@ -184,9 +187,9 @@ const BigButton = ({
           width: '100%',
           color: 'white',
           height: '85px',
-          borderRadius: '7px',
+          borderRadius: `${radius}px ${radius}px 0 0`,
           '&:hover': {
-            filter: 'var(--slate-hover-filter)',
+            backgroundColor: 'var(--slate-primary-hover)',
           },
         },
       ]}

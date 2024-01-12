@@ -61,6 +61,7 @@ export const Overlay = (props: {
           border: '1px solid var(--overlay-stroke)',
           ...(isSlate && {
             borderRadius: '7px',
+            overflow: 'hidden',
             top: '50%',
             transform: 'translateY(-50%)',
           }),

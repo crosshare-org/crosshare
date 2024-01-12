@@ -218,22 +218,24 @@ export function useEmbedOptions(
     value: string;
   }
 
+  const primary = embedOptions?.p || PRIMARY;
+  const link = embedOptions?.l || LINK;
+  const preservePrimary = embedOptions?.pp || false;
+  const errorColor = embedOptions?.e || ERROR_COLOR;
+  const verifiedColor = embedOptions?.v || VERIFIED_COLOR;
+
   const [colorMode, setColorMode] = useState<EmbedColorMode>(
     embedOptions?.d ? EmbedColorMode.Dark : EmbedColorMode.Light
   );
   const embedContext: EmbedContextValue = {
+    primaryColor: primary,
+    preservePrimary,
     isEmbed: true,
     colorMode,
     isSlate: embedOptions?.slate || false,
   };
 
   const darkMode = embedContext.colorMode === EmbedColorMode.Dark;
-
-  const primary = embedOptions?.p || PRIMARY;
-  const link = embedOptions?.l || LINK;
-  const preservePrimary = embedOptions?.pp || false;
-  const errorColor = embedOptions?.e || ERROR_COLOR;
-  const verifiedColor = embedOptions?.v || VERIFIED_COLOR;
 
   // Just ensure color is parseable, this'll throw if not:
   parseToRgba(primary);
