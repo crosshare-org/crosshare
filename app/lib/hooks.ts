@@ -9,7 +9,7 @@ import {
 import { ConstructorPageT } from './constructorPage';
 import useResizeObserver from 'use-resize-observer';
 import type { User } from 'firebase/auth';
-import { LINK, PRIMARY } from './style';
+import { ERROR_COLOR, LINK, PRIMARY, VERIFIED_COLOR } from './style';
 import { parseToRgba } from 'color2k';
 import { EmbedOptionsT } from './embedOptions';
 import useEventListener from '@use-it/event-listener';
@@ -218,10 +218,6 @@ export function useEmbedOptions(
     value: string;
   }
 
-  let primary = PRIMARY;
-  let link = LINK;
-  let preservePrimary = false;
-
   const [colorMode, setColorMode] = useState<EmbedColorMode>(
     embedOptions?.d ? EmbedColorMode.Dark : EmbedColorMode.Light
   );
@@ -233,11 +229,17 @@ export function useEmbedOptions(
 
   const darkMode = embedContext.colorMode === EmbedColorMode.Dark;
 
-  primary = embedOptions?.p || PRIMARY;
-  link = embedOptions?.l || LINK;
-  preservePrimary = embedOptions?.pp || false;
+  const primary = embedOptions?.p || PRIMARY;
+  const link = embedOptions?.l || LINK;
+  const preservePrimary = embedOptions?.pp || false;
+  const errorColor = embedOptions?.e || ERROR_COLOR;
+  const verifiedColor = embedOptions?.v || VERIFIED_COLOR;
+
   // Just ensure color is parseable, this'll throw if not:
   parseToRgba(primary);
+  parseToRgba(link);
+  parseToRgba(errorColor);
+  parseToRgba(verifiedColor);
 
   const handleMessage = useCallback(
     (e: MessageEvent) => {
@@ -258,6 +260,8 @@ export function useEmbedOptions(
     {
       primary,
       link,
+      errorColor,
+      verifiedColor,
       darkMode,
       preservePrimary,
       ...(embedOptions?.fu && { fontUrl: embedOptions.fu }),

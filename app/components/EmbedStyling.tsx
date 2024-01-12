@@ -5,6 +5,8 @@ import type { CSSInterpolation } from '@emotion/serialize';
 export interface EmbedStylingProps {
   primary: string;
   link: string;
+  errorColor: string;
+  verifiedColor: string;
   darkMode: boolean;
   preservePrimary: boolean;
   fontUrl?: string;

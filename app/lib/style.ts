@@ -46,6 +46,9 @@ export const FULLSCREEN_CSS = css`
 
 export const PRIMARY = '#eb984e';
 export const LINK = '#2874a6';
+export const ERROR_COLOR = adjustHue(PRIMARY, 280);
+export const VERIFIED_COLOR = mix(adjustHue(PRIMARY, 180), 'black', 0.3);
+
 const DARK_MODE_WHITE = '#d0d0d0';
 
 export const readableColor = (color: string, darkMode: boolean) => {
@@ -81,11 +84,20 @@ const makeReadable = (background: string, color: string) => {
 export const colorTheme = ({
   primary,
   link,
+  errorColor,
+  verifiedColor,
   darkMode,
   preservePrimary,
 }: EmbedStylingProps): CSSInterpolation => {
   const p = darkMode && !preservePrimary ? mix(primary, 'black', 0.5) : primary;
   const l = darkMode && !preservePrimary ? mix(link, 'white', 0.5) : link;
+  const error =
+    darkMode && !preservePrimary ? mix(errorColor, 'white', 0.3) : errorColor;
+  const verified =
+    darkMode && !preservePrimary
+      ? mix(verifiedColor, 'white', 0.4)
+      : verifiedColor;
+
   const cellBG = darkMode ? '#353535' : 'white';
   const hover = darkMode ? 'white' : 'black';
   const hoverRatio = 0.1;
@@ -94,7 +106,7 @@ export const colorTheme = ({
   const linkLightBGHover = mix(link, bg, 0.8);
   const text = darkMode ? DARK_MODE_WHITE : 'black';
   const secondary = darkMode ? '#505050' : '#ccc';
-  const error = mix(adjustHue(p, 280), 'white', darkMode ? 0.3 : 0);
+
   return {
     '--tag-l': darkMode ? '30%' : '85%',
     '--bg': bg,
@@ -125,7 +137,7 @@ export const colorTheme = ({
     '--default-text': darkMode ? '#777' : '#999',
     '--caption': '#6c757d',
     '--black': darkMode ? '#eee' : 'black',
-    '--verified': mix(adjustHue(p, 180), hover, darkMode ? 0.4 : 0.3),
+    '--verified': verified,
     '--autofill': darkMode ? '#999' : '#bbb',
     '--top-bar-hover': 'rgba(0, 0, 0, 0.1)',
     '--shade-highlight': darkMode

@@ -8,6 +8,10 @@ const EmbedOptionsV = t.partial({
   p: t.string,
   /** link color */
   l: t.string,
+  /** error color */
+  e: t.string,
+  /** verified color */
+  v: t.string,
   /** use dark theme? */
   d: t.boolean,
   /** don't transform colors for dark theme? */

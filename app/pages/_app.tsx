@@ -11,7 +11,13 @@ import { Snackbar, SnackbarProvider } from '../components/Snackbar';
 import { Global } from '@emotion/react';
 
 import '../lib/style.css';
-import { colorTheme, LINK, PRIMARY } from '../lib/style';
+import {
+  colorTheme,
+  ERROR_COLOR,
+  LINK,
+  PRIMARY,
+  VERIFIED_COLOR,
+} from '../lib/style';
 import { BrowserWarning } from '../components/BrowserWarning';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -175,6 +181,8 @@ export default function CrosshareApp({
             colorTheme({
               primary: PRIMARY,
               link: LINK,
+              errorColor: ERROR_COLOR,
+              verifiedColor: VERIFIED_COLOR,
               darkMode: false,
               preservePrimary: false,
             }),
@@ -182,6 +190,8 @@ export default function CrosshareApp({
               '@media (prefers-color-scheme: dark)': colorTheme({
                 primary: PRIMARY,
                 link: LINK,
+                errorColor: ERROR_COLOR,
+                verifiedColor: VERIFIED_COLOR,
                 darkMode: true,
                 preservePrimary: false,
               }),
@@ -190,12 +200,16 @@ export default function CrosshareApp({
           'body.dark-mode': colorTheme({
             primary: PRIMARY,
             link: LINK,
+            errorColor: ERROR_COLOR,
+            verifiedColor: VERIFIED_COLOR,
             darkMode: true,
             preservePrimary: false,
           }),
           'body.light-mode': colorTheme({
             primary: PRIMARY,
             link: LINK,
+            errorColor: ERROR_COLOR,
+            verifiedColor: VERIFIED_COLOR,
             darkMode: false,
             preservePrimary: false,
           }),

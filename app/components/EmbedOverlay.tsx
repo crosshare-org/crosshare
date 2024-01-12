@@ -12,7 +12,13 @@ import { Overlay } from './Overlay';
 import { User } from 'firebase/auth';
 import { CopyableInput } from './CopyableInput';
 import { EmbedOptionsT, validate } from '../lib/embedOptions';
-import { colorTheme, LINK, PRIMARY } from '../lib/style';
+import {
+  colorTheme,
+  ERROR_COLOR,
+  LINK,
+  PRIMARY,
+  VERIFIED_COLOR,
+} from '../lib/style';
 import { adjustHue, parseToRgba, guard } from 'color2k';
 import { GridView } from './Grid';
 import { fromCells } from '../lib/viewableGrid';
@@ -194,8 +200,10 @@ const ColorPicker = (props: ColorPickerProps) => {
 
 const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
   const [isDark, setIsDark] = useState(props.d || false);
-  const [primary, setPrimary] = useState(props.p || PRIMARY);
-  const [link, setLink] = useState(props.l || LINK);
+  const [primaryColor, setPrimaryColor] = useState(props.p || PRIMARY);
+  const [linkColor, setLinkColor] = useState(props.l || LINK);
+  const [errorColor, setErrorColor] = useState(props.e || ERROR_COLOR);
+  const [verifiedColor, setVerifiedColor] = useState(props.v || VERIFIED_COLOR);
   const [preservePrimary, setPreservePrimary] = useState(props.pp || false);
   const [dirty, setDirty] = useState(false);
   const [customFontEnabled, setCustomFontEnabled] = useState<boolean>(
@@ -210,8 +218,10 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
 
   const saveTheme = useCallback(() => {
     const theme: EmbedOptionsT = {
-      p: primary,
-      l: link,
+      p: primaryColor,
+      l: linkColor,
+      e: errorColor,
+      v: verifiedColor,
       d: isDark,
       pp: preservePrimary,
       ...(customFontEnabled &&
@@ -234,8 +244,10 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       });
   }, [
     isDark,
-    primary,
-    link,
+    primaryColor,
+    linkColor,
+    errorColor,
+    verifiedColor,
     preservePrimary,
     props.userId,
     props.slate,
@@ -292,19 +304,37 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       <h4>Colors</h4>
       <h5>Primary Color</h5>
       <ColorPicker
-        initial={primary}
+        initial={primaryColor}
         swatchBase={PRIMARY}
         onChange={(c) => {
-          setPrimary(c);
+          setPrimaryColor(c);
           setDirty(true);
         }}
       />
       <h5>Link/Button Color</h5>
       <ColorPicker
-        initial={link}
+        initial={linkColor}
         swatchBase={LINK}
         onChange={(c) => {
-          setLink(c);
+          setLinkColor(c);
+          setDirty(true);
+        }}
+      />
+      <h5>Incorrect Cell Color</h5>
+      <ColorPicker
+        initial={errorColor}
+        swatchBase={ERROR_COLOR}
+        onChange={(c) => {
+          setErrorColor(c);
+          setDirty(true);
+        }}
+      />
+      <h5>Verified Cell Color</h5>
+      <ColorPicker
+        initial={verifiedColor}
+        swatchBase={VERIFIED_COLOR}
+        onChange={(c) => {
+          setVerifiedColor(c);
           setDirty(true);
         }}
       />
@@ -435,12 +465,22 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
                 fontFamily: 'CrossharePreview',
               }),
           },
-          colorTheme({ primary, link, darkMode: isDark, preservePrimary }),
+          colorTheme({
+            primary: primaryColor,
+            link: linkColor,
+            errorColor,
+            verifiedColor,
+            darkMode: isDark,
+            preservePrimary,
+          }),
         ]}
       >
         <div css={{ width: 200, height: 200 }}>
           <GridView
             grid={dummyGrid}
+            revealedCells={new Set([1])}
+            verifiedCells={new Set([1])}
+            wrongCells={new Set([2])}
             active={{ row: 2, col: 1, dir: Direction.Across }}
             dispatch={() => {
               /* noop */
