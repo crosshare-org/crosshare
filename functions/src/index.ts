@@ -144,8 +144,9 @@ export const scheduledFirestoreExport = functions.pubsub
       });
   });
 
-export const notificationsSend = functions.pubsub
-  .schedule('every day 16:00')
+export const notificationsSend = functions
+  .runWith({ timeoutSeconds: 540 })
+  .pubsub.schedule('every day 16:00')
   .onRun(async () => {
     console.log('queuing emails');
     await queueEmails();
