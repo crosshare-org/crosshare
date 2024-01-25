@@ -74,7 +74,8 @@ async function getEmail(userId: string): Promise<string | undefined> {
   try {
     const user = await getUser(userId);
     return user.email;
-  } catch {
+  } catch (e) {
+    console.log(e);
     console.warn('error getting user ', userId);
     return undefined;
   }
