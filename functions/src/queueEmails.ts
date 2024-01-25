@@ -70,6 +70,16 @@ function safeForHtml(str: string) {
   return str.replace(/[&<>]/g, replaceTag);
 }
 
+async function getEmail(userId: string): Promise<string | undefined> {
+  try {
+    const user = await getUser(userId);
+    return user.email;
+  } catch {
+    console.warn('error getting user ', userId);
+    return undefined;
+  }
+}
+
 async function queueEmailForUser(
   userId: string,
   notifications: Array<NotificationT>
@@ -88,10 +98,9 @@ async function queueEmailForUser(
     }
   }
 
-  const user = await getUser(userId);
-  const toAddress = user?.email;
+  const toAddress = await getEmail(userId);
   if (!toAddress) {
-    console.error('no to address', userId);
+    console.warn('missing to address for ', userId);
     return;
   }
 
