@@ -395,7 +395,8 @@ export const Puzzle = ({
 
   // Pause when page goes out of focus
   function prodPause() {
-    if (process.env.NODE_ENV !== 'development') {
+      if (process.env.NODE_ENV !== 'development' && !props.prefs?.dontPauseOnLostFocus) {
+
       window.parent.postMessage(
         {
           type: 'pause',
@@ -1204,7 +1205,15 @@ export const Puzzle = ({
                             text="Start puzzles in downs-only mode"
                           />
                         </li>
-                        
+                        <li>
+                          <PrefSetting
+                            prefs={props.prefs}
+                            userId={props.user!.uid}
+                            flag={'dontPauseOnLostFocus'}
+                            invert={true}
+                            text="Pause solving when clicking away from the page"
+                          />
+                        </li>
                       </ul>
                     }
                     </NestedDropDown>

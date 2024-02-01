@@ -243,6 +243,15 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
               text="Start puzzles in downs-only mode"
             />
           </li>
+          <li>
+            <PrefSetting
+              prefs={prefs}
+              userId={user.uid}
+              flag={'dontPauseOnLostFocus'}
+              invert={true}
+              text="Pause solving when clicking away from the page"
+            />
+          </li>
         </ul>
         <hr css={{ margin: '2em 0' }} />
         <h2>Browser-specific Settings</h2>
