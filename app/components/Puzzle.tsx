@@ -150,7 +150,7 @@ import { SlateColorTheme } from './SlateColorTheme';
 import { Check, Clues, Grid, More, Pause, Reveal, Timer } from './SlateIcons';
 import { removeSpoilers } from '../lib/markdown/markdown';
 import { SlateBegin, SlatePause, SlateSuccess } from './SlateOverlays';
-import { PrefSetting } from '../pages/account';
+import { SolverPreferencesList } from './SolverPreferencesList';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay),
@@ -699,7 +699,6 @@ export const Puzzle = ({
     [
       dispatch,
       loadingPlayState,
-      state.currentTimeWindowStart,
       state.success,
       state.dismissedSuccess,
     ]
@@ -1033,7 +1032,8 @@ export const Puzzle = ({
     ),
     [state.autocheck, isSlate]
   );
-
+  
+  const user = props.user;
   const moreMenu = useMemo(
     () => (
       <>
@@ -1155,64 +1155,23 @@ export const Puzzle = ({
                       }}
                     />
                   ) : null}
-                  {props.user ? (
+                  {user !== undefined ? (
                     <NestedDropDown
                     closeParent={closeDropdown}
                     icon={<FaCog /> }
                     text={"Solver Preferences"}
                     >
                     {() =>
-                      <ul css={{
+                      <ul
+                      css={{
                         listStyleType: 'none',
                         padding: '0 10vw',
                       }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
                       >
-                        <li>
-                          <PrefSetting
-                            prefs={props.prefs}
-                            userId={props.user!.uid}
-                            flag={'advanceOnPerpendicular'}
-                            text="Advance to next square when changing direction with arrow keys"
-                          />
-                        </li>
-                        <li>
-                          <PrefSetting
-                            prefs={props.prefs}
-                            userId={props.user!.uid}
-                            flag={'dontSkipCompleted'}
-                            invert={true}
-                            text="Skip over completed squares after entering a letter"
-                          />
-                        </li>
-                        <li>
-                          <PrefSetting
-                            prefs={props.prefs}
-                            userId={props.user!.uid!}
-                            flag={'dontAdvanceWordAfterCompletion'}
-                            invert={true}
-                            text="Move to next clue after completing an entry"
-                          />
-                        </li>
-                        <li>
-                          <PrefSetting
-                            prefs={props.prefs}
-                            userId={props.user!.uid}
-                            flag={'solveDownsOnly'}
-                            text="Start puzzles in downs-only mode"
-                          />
-                        </li>
-                        <li>
-                          <PrefSetting
-                            prefs={props.prefs}
-                            userId={props.user!.uid}
-                            flag={'dontPauseOnLostFocus'}
-                            invert={true}
-                            text="Pause solving when clicking away from the page"
-                          />
-                        </li>
+                        <SolverPreferencesList 
+                          prefs={props.prefs}
+                          userId={user.uid}
+                        />
                       </ul>
                     }
                     </NestedDropDown>
@@ -1238,8 +1197,9 @@ export const Puzzle = ({
     [
       muted,
       props.isAdmin,
-      props.user?.uid,
+      props.user,
       props.prefs,
+      user,
       puzzle,
       setMuted,
       state.success,
