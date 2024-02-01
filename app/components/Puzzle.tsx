@@ -396,7 +396,6 @@ export const Puzzle = ({
   // Pause when page goes out of focus
   function prodPause() {
       if (process.env.NODE_ENV !== 'development' && !props.prefs?.dontPauseOnLostFocus) {
-
       window.parent.postMessage(
         {
           type: 'pause',
@@ -683,9 +682,9 @@ export const Puzzle = ({
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
-      // Disable keyboard when paused / loading play
+      // Disable keyboard when loading play
       if (!(state.success && state.dismissedSuccess)) {
-        if (loadingPlayState || !state.currentTimeWindowStart) {
+        if (loadingPlayState) {
           return;
         }
       }
