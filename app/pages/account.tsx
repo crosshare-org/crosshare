@@ -89,7 +89,7 @@ interface PrefSettingProps {
   invert?: boolean;
 }
 
-const PrefSetting = (props: PrefSettingProps) => {
+export const PrefSetting = (props: PrefSettingProps) => {
   const { showSnackbar } = useSnackbar();
   const prefSet = props.prefs?.[props.flag] ?? false;
   return (
