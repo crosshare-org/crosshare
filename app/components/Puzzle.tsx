@@ -1165,6 +1165,10 @@ export const Puzzle = ({
                             listStyleType: 'none',
                             padding: '0 10vw',
                           }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                          role="presentation"
                         >
                           <SolverPreferencesList
                             prefs={props.prefs}
