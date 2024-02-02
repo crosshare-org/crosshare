@@ -9,10 +9,7 @@ import { Link } from '../components/Link';
 import { CreatePageForm } from '../components/ConstructorPage';
 import { Button } from '../components/Buttons';
 import { PROFILE_PIC, COVER_PIC } from '../lib/style';
-import {
-  UnsubscribeFlags,
-  AccountPrefsT,
-} from '../lib/prefs';
+import { UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
 
 import dynamic from 'next/dynamic';
 import { useSnackbar } from '../components/Snackbar';
@@ -35,7 +32,10 @@ import {
 import { signOut } from 'firebase/auth';
 import { BioEditor } from '../components/BioEditor';
 import { logAsyncErrors } from '../lib/utils';
-import { PrefSetting, SolverPreferencesList } from '../components/SolverPreferencesList';
+import {
+  PrefSetting,
+  SolverPreferencesList,
+} from '../components/SolverPreferencesList';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };
@@ -175,10 +175,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
             padding: '0 0',
           }}
         >
-          <SolverPreferencesList 
-            prefs={prefs}
-            userId={user.uid}
-          />
+          <SolverPreferencesList prefs={prefs} userId={user.uid} />
         </ul>
         <hr css={{ margin: '2em 0' }} />
         <h2>Browser-specific Settings</h2>

@@ -395,7 +395,10 @@ export const Puzzle = ({
 
   // Pause when page goes out of focus
   function prodPause() {
-      if (process.env.NODE_ENV !== 'development' && !props.prefs?.dontPauseOnLostFocus) {
+    if (
+      process.env.NODE_ENV !== 'development' &&
+      !props.prefs?.dontPauseOnLostFocus
+    ) {
       window.parent.postMessage(
         {
           type: 'pause',
@@ -696,12 +699,7 @@ export const Puzzle = ({
         e.preventDefault();
       }
     },
-    [
-      dispatch,
-      loadingPlayState,
-      state.success,
-      state.dismissedSuccess,
-    ]
+    [dispatch, loadingPlayState, state.success, state.dismissedSuccess]
   );
   useEventListener('keydown', physicalKeyboardHandler);
 
@@ -1032,7 +1030,7 @@ export const Puzzle = ({
     ),
     [state.autocheck, isSlate]
   );
-  
+
   const user = props.user;
   const moreMenu = useMemo(
     () => (
@@ -1157,25 +1155,26 @@ export const Puzzle = ({
                   ) : null}
                   {user !== undefined ? (
                     <NestedDropDown
-                    closeParent={closeDropdown}
-                    icon={<FaCog /> }
-                    text={"Solver Preferences"}
+                      closeParent={closeDropdown}
+                      icon={<FaCog />}
+                      text={'Solver Preferences'}
                     >
-                    {() =>
-                      <ul
-                      css={{
-                        listStyleType: 'none',
-                        padding: '0 10vw',
-                      }}
-                      >
-                        <SolverPreferencesList 
-                          prefs={props.prefs}
-                          userId={user.uid}
-                        />
-                      </ul>
-                    }
+                      {() => (
+                        <ul
+                          css={{
+                            listStyleType: 'none',
+                            padding: '0 10vw',
+                          }}
+                        >
+                          <SolverPreferencesList
+                            prefs={props.prefs}
+                            userId={user.uid}
+                          />
+                        </ul>
+                      )}
                     </NestedDropDown>
-                  ) : (''
+                  ) : (
+                    ''
                   )}
                   <TopBarDropDownLinkA
                     href="/account"

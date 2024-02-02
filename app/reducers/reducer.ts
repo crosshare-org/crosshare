@@ -822,8 +822,8 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       if (key.k === KeyK.Escape) {
         return {
           ...state,
-          currentTimeWindowStart: new Date().getTime()
-        }
+          currentTimeWindowStart: new Date().getTime(),
+        };
       }
       return state;
     }
