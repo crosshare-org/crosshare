@@ -20,7 +20,8 @@ function layoutPDFClues(
   doc: jsPDF,
   puzzle: PuzzleT,
   grid: ViewableGrid<ViewableEntry>,
-  squareSize: number
+  squareSize: number,
+  yOffset: number
 ) {
   const clued = addClues(grid, puzzle.clues, (_c) => {
     return { type: 'root', children: [] };
@@ -61,7 +62,7 @@ function layoutPDFClues(
   doc.setFont(format.font);
   doc.setFontSize(format.fontSize);
   let x = format.marginLeft;
-  let y = marginTop(x, false);
+  let y = marginTop(x, false) + yOffset;
   let addedPage = false;
   const constructorNote: { label: string; clue: string }[] = [];
   if (puzzle.constructorNotes) {
@@ -231,14 +232,38 @@ function layoutPDFInfo(
   doc: jsPDF,
   puzzle: PuzzleT,
   constructorUsername: string | null
-) {
+): number {
   doc.setFont('helvetica');
   doc.setFontSize(18);
-  doc.text(puzzle.title, 50, 50 + 8);
+  // text wrapping logic
+  const maxWidth = doc.internal.pageSize.width - 100;
+  let lineWidth = doc.getStringUnitWidth(puzzle.title) * doc.getFontSize();
+  let startY = 58;
+  let extraLines = 0;
+  if (lineWidth > maxWidth) {
+    const words = puzzle.title.split(' ');
+    let currentLine = '';
+    words.forEach((word) => {
+      lineWidth =
+        doc.getStringUnitWidth(currentLine + word) * doc.getFontSize();
+      if (lineWidth < maxWidth) {
+        currentLine += word + ' ';
+      } else {
+        doc.text(currentLine, 50, startY);
+        startY += 18;
+        currentLine = word + ' ';
+        extraLines++;
+      }
+      doc.text(currentLine, 50, startY);
+    });
+  } else {
+    doc.text(puzzle.title, 50, 50 + 8);
+  }
   doc.setFontSize(9);
 
   const publishedByLine = createPublishedByLine(puzzle, constructorUsername);
-  doc.text(publishedByLine, 50, 50 + 20);
+  doc.text(publishedByLine, 50, 50 + 20 + extraLines * 18);
+  return extraLines;
 }
 
 async function getConstructor(authorId: string): Promise<string | null> {
@@ -303,9 +328,9 @@ function getPdf(
     creator: 'crosshare.org',
     author: puzzle.authorName,
   });
-  layoutPDFInfo(pdf, puzzle, constructorUsername);
-  const squareSize = layoutPDFGrid(pdf, 50, 80, puzzle, grid);
-  layoutPDFClues(pdf, puzzle, grid, squareSize);
+  const extraLines = layoutPDFInfo(pdf, puzzle, constructorUsername);
+  const squareSize = layoutPDFGrid(pdf, 50, 80 + extraLines * 18, puzzle, grid);
+  layoutPDFClues(pdf, puzzle, grid, squareSize, extraLines * 18);
   return pdf.output('arraybuffer');
 }
 
