@@ -48,9 +48,6 @@ export const SolverPreferencesList = ({
   prefs?: AccountPrefsT;
   userId: string;
 }) => {
-  if (!prefs) {
-    return null; // or some default content
-  }
   return (
     <>
       <li>
