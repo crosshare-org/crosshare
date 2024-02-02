@@ -30,6 +30,7 @@ import {
   FaEdit,
   FaRegFile,
   FaMoon,
+  FaCog,
 } from 'react-icons/fa';
 import { ClueText } from './ClueText';
 import { IoMdStats } from 'react-icons/io';
@@ -91,6 +92,7 @@ import {
   TopBarDropDownLinkA,
   TopBarDropDown,
   TopBarDropDownLinkSimpleA,
+  NestedDropDown,
 } from './TopBar';
 import {
   SLATE_PADDING_LARGE,
@@ -148,6 +150,7 @@ import { SlateColorTheme } from './SlateColorTheme';
 import { Check, Clues, Grid, More, Pause, Reveal, Timer } from './SlateIcons';
 import { removeSpoilers } from '../lib/markdown/markdown';
 import { SlateBegin, SlatePause, SlateSuccess } from './SlateOverlays';
+import { SolverPreferencesList } from './SolverPreferencesList';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay),
@@ -392,7 +395,10 @@ export const Puzzle = ({
 
   // Pause when page goes out of focus
   function prodPause() {
-    if (process.env.NODE_ENV !== 'development') {
+    if (
+      process.env.NODE_ENV !== 'development' &&
+      !props.prefs?.dontPauseOnLostFocus
+    ) {
       window.parent.postMessage(
         {
           type: 'pause',
@@ -679,9 +685,9 @@ export const Puzzle = ({
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
-      // Disable keyboard when paused / loading play
+      // Disable keyboard when loading play
       if (!(state.success && state.dismissedSuccess)) {
-        if (loadingPlayState || !state.currentTimeWindowStart) {
+        if (loadingPlayState) {
           return;
         }
       }
@@ -693,13 +699,7 @@ export const Puzzle = ({
         e.preventDefault();
       }
     },
-    [
-      dispatch,
-      loadingPlayState,
-      state.currentTimeWindowStart,
-      state.success,
-      state.dismissedSuccess,
-    ]
+    [dispatch, loadingPlayState, state.success, state.dismissedSuccess]
   );
   useEventListener('keydown', physicalKeyboardHandler);
 
@@ -1031,6 +1031,7 @@ export const Puzzle = ({
     [state.autocheck, isSlate]
   );
 
+  const user = props.user;
   const moreMenu = useMemo(
     () => (
       <>
@@ -1038,7 +1039,7 @@ export const Puzzle = ({
           icon={isSlate ? <More /> : <FaEllipsisH />}
           text={t`More`}
         >
-          {() => (
+          {(closeDropdown) => (
             <>
               {!state.success ? (
                 <TopBarDropDownLink
@@ -1152,6 +1153,33 @@ export const Puzzle = ({
                       }}
                     />
                   ) : null}
+                  {user !== undefined ? (
+                    <NestedDropDown
+                      closeParent={closeDropdown}
+                      icon={<FaCog />}
+                      text={'Solver Preferences'}
+                    >
+                      {() => (
+                        <ul
+                          css={{
+                            listStyleType: 'none',
+                            padding: '0 10vw',
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                          role="presentation"
+                        >
+                          <SolverPreferencesList
+                            prefs={props.prefs}
+                            userId={user.uid}
+                          />
+                        </ul>
+                      )}
+                    </NestedDropDown>
+                  ) : (
+                    ''
+                  )}
                   <TopBarDropDownLinkA
                     href="/account"
                     icon={<FaUser />}
@@ -1172,7 +1200,9 @@ export const Puzzle = ({
     [
       muted,
       props.isAdmin,
-      props.user?.uid,
+      props.user,
+      props.prefs,
+      user,
       puzzle,
       setMuted,
       state.success,

@@ -9,11 +9,7 @@ import { Link } from '../components/Link';
 import { CreatePageForm } from '../components/ConstructorPage';
 import { Button } from '../components/Buttons';
 import { PROFILE_PIC, COVER_PIC } from '../lib/style';
-import {
-  UnsubscribeFlags,
-  AccountPrefsT,
-  AccountPrefsFlagsT,
-} from '../lib/prefs';
+import { UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
 
 import dynamic from 'next/dynamic';
 import { useSnackbar } from '../components/Snackbar';
@@ -36,6 +32,10 @@ import {
 import { signOut } from 'firebase/auth';
 import { BioEditor } from '../components/BioEditor';
 import { logAsyncErrors } from '../lib/utils';
+import {
+  PrefSetting,
+  SolverPreferencesList,
+} from '../components/SolverPreferencesList';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };
@@ -73,40 +73,6 @@ const UnsubSetting = (props: UnsubSettingProps) => {
             { merge: true }
           ).then(() => {
             showSnackbar('Email Preferences Updated');
-          });
-        })}
-      />
-      {props.text}
-    </label>
-  );
-};
-
-interface PrefSettingProps {
-  prefs: AccountPrefsT | undefined;
-  userId: string;
-  flag: keyof AccountPrefsFlagsT;
-  text: string;
-  invert?: boolean;
-}
-
-const PrefSetting = (props: PrefSettingProps) => {
-  const { showSnackbar } = useSnackbar();
-  const prefSet = props.prefs?.[props.flag] ?? false;
-  return (
-    <label>
-      <input
-        css={{ marginRight: '1em' }}
-        type="checkbox"
-        checked={props.invert ? !prefSet : prefSet}
-        onChange={logAsyncErrors(async (e) => {
-          await setDoc(
-            getDocRef('prefs', props.userId),
-            {
-              [props.flag]: props.invert ? !e.target.checked : e.target.checked,
-            },
-            { merge: true }
-          ).then(() => {
-            showSnackbar('Preferences Updated');
           });
         })}
       />
@@ -209,40 +175,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
             padding: '0 0',
           }}
         >
-          <li>
-            <PrefSetting
-              prefs={prefs}
-              userId={user.uid}
-              flag={'advanceOnPerpendicular'}
-              text="Advance to next square when changing direction with arrow keys"
-            />
-          </li>
-          <li>
-            <PrefSetting
-              prefs={prefs}
-              userId={user.uid}
-              flag={'dontSkipCompleted'}
-              invert={true}
-              text="Skip over completed squares after entering a letter"
-            />
-          </li>
-          <li>
-            <PrefSetting
-              prefs={prefs}
-              userId={user.uid}
-              flag={'dontAdvanceWordAfterCompletion'}
-              invert={true}
-              text="Move to next clue after completing an entry"
-            />
-          </li>
-          <li>
-            <PrefSetting
-              prefs={prefs}
-              userId={user.uid}
-              flag={'solveDownsOnly'}
-              text="Start puzzles in downs-only mode"
-            />
-          </li>
+          <SolverPreferencesList prefs={prefs} userId={user.uid} />
         </ul>
         <hr css={{ margin: '2em 0' }} />
         <h2>Browser-specific Settings</h2>

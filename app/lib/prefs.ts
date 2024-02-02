@@ -14,6 +14,7 @@ const AccountPrefsFlagsV = t.partial({
   dontAdvanceWordAfterCompletion: t.boolean,
   solveDownsOnly: t.boolean,
   disableCommentsByDefault: t.boolean,
+  dontPauseOnLostFocus: t.boolean,
 });
 export type AccountPrefsFlagsT = t.TypeOf<typeof AccountPrefsFlagsV>;
 

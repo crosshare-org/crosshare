@@ -814,6 +814,19 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
   }
   if (isKeypressAction(action)) {
     const key = action.key;
+    // Resume on Esc, but only during midgame pause
+    if (isPuzzleState(state) && !state.currentTimeWindowStart) {
+      if (state.bankedSeconds === 0) {
+        return state;
+      }
+      if (key.k === KeyK.Escape) {
+        return {
+          ...state,
+          currentTimeWindowStart: new Date().getTime(),
+        };
+      }
+      return state;
+    }
     if (key.k === KeyK.NumLayout || key.k === KeyK.AbcLayout) {
       return { ...state, showExtraKeyLayout: !state.showExtraKeyLayout };
     }
