@@ -116,7 +116,7 @@ function layoutPDFClues(
         x = format.marginLeft;
         addedPage = true;
       }
-      y = marginTop(x, addedPage);
+      y = marginTop(x, addedPage) + yOffset;
     }
     if (['across', 'down'].includes(clue.label.toLowerCase())) {
       // Make Across, Down headings bold
@@ -235,35 +235,20 @@ function layoutPDFInfo(
 ): number {
   doc.setFont('helvetica');
   doc.setFontSize(18);
-  // text wrapping logic
-  const maxWidth = doc.internal.pageSize.width - 100;
-  let lineWidth = doc.getStringUnitWidth(puzzle.title) * doc.getFontSize();
-  let startY = 58;
-  let extraLines = 0;
-  if (lineWidth > maxWidth) {
-    const words = puzzle.title.split(' ');
-    let currentLine = '';
-    words.forEach((word) => {
-      lineWidth =
-        doc.getStringUnitWidth(currentLine + word) * doc.getFontSize();
-      if (lineWidth < maxWidth) {
-        currentLine += word + ' ';
-      } else {
-        doc.text(currentLine, 50, startY);
-        startY += 18;
-        currentLine = word + ' ';
-        extraLines++;
-      }
-      doc.text(currentLine, 50, startY);
-    });
-  } else {
-    doc.text(puzzle.title, 50, 50 + 8);
-  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const title: string[] = doc.splitTextToSize(
+    puzzle.title,
+    doc.internal.pageSize.width - 100
+  );
+  const extraLines = title.length - 1;
+  doc.text(title, 50, 58);
+
   doc.setFontSize(9);
 
   const publishedByLine = createPublishedByLine(puzzle, constructorUsername);
-  doc.text(publishedByLine, 50, 50 + 20 + extraLines * 18);
-  return extraLines;
+  doc.text(publishedByLine, 50, 50 + 20 + extraLines * 21);
+  return extraLines * 21;
 }
 
 async function getConstructor(authorId: string): Promise<string | null> {
@@ -328,9 +313,9 @@ function getPdf(
     creator: 'crosshare.org',
     author: puzzle.authorName,
   });
-  const extraLines = layoutPDFInfo(pdf, puzzle, constructorUsername);
-  const squareSize = layoutPDFGrid(pdf, 50, 80 + extraLines * 18, puzzle, grid);
-  layoutPDFClues(pdf, puzzle, grid, squareSize, extraLines * 18);
+  const extraPaddingTop = layoutPDFInfo(pdf, puzzle, constructorUsername);
+  const squareSize = layoutPDFGrid(pdf, 50, 80 + extraPaddingTop, puzzle, grid);
+  layoutPDFClues(pdf, puzzle, grid, squareSize, extraPaddingTop);
   return pdf.output('arraybuffer');
 }
 
