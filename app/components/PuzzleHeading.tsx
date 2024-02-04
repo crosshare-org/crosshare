@@ -31,6 +31,7 @@ export const PuzzleHeading = (props: {
   constructorIsPatron: boolean;
   blogPost: Root | null;
   tags: string[];
+  dailyMiniDate?: string;
 }) => {
   const { isEmbed } = useContext(EmbedContext);
 
@@ -61,6 +62,14 @@ export const PuzzleHeading = (props: {
                   Published <PastDistanceToNow date={publishDate} />
                 </Trans>
               </>
+            )}
+            {props.dailyMiniDate ? (
+              <>
+                {' · '}
+                Crosshare&apos;s Daily Mini for {props.dailyMiniDate}
+              </>
+            ) : (
+              ''
             )}
           </p>
         }

@@ -187,6 +187,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         ''
       )}
       <PuzzleHeading
+        dailyMiniDate={props.puzzle.dailyMiniDate}
         tags={(props.puzzle.userTags ?? []).concat(props.puzzle.autoTags ?? [])}
         rating={props.puzzle.rating}
         publishTime={props.publishTime}
