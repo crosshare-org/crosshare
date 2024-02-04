@@ -39,7 +39,7 @@ const clueAreaCss = css({
   },
 });
 
-export const SLATE_PADDING_SMALL = 5;
+export const SLATE_PADDING_SMALL = 15;
 export const SLATE_PADDING_MED = 50;
 export const SLATE_PADDING_LARGE = 50;
 

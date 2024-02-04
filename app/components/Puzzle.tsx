@@ -1395,7 +1395,9 @@ export const Puzzle = ({
                     <TopBarLink
                       icon={<FaComment />}
                       text={
-                        puzzle.contestAnswers?.length
+                        isSlate
+                          ? 'Show Stats'
+                          : puzzle.contestAnswers?.length
                           ? !isMetaSolution(
                               state.contestSubmission,
                               puzzle.contestAnswers
