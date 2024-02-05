@@ -685,6 +685,11 @@ export const Puzzle = ({
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
+      // Don't capture keyboard on success overlay
+      if (state.success && !state.dismissedSuccess) {
+        return;
+      }
+
       // Disable keyboard when loading play
       if (!(state.success && state.dismissedSuccess)) {
         if (loadingPlayState) {
