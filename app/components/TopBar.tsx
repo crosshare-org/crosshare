@@ -27,7 +27,15 @@ import { Trans, t } from '@lingui/macro';
 import { updateDoc } from 'firebase/firestore';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { ButtonAsLink } from './Buttons';
-import { FaHammer, FaUser, FaUserLock } from 'react-icons/fa';
+import {
+  FaComment,
+  FaComments,
+  FaHammer,
+  FaRegGrinStars,
+  FaRegNewspaper,
+  FaUser,
+  FaUserLock,
+} from 'react-icons/fa';
 import { css } from '@emotion/react';
 
 export const TopBarDropDown = (props: {
@@ -674,7 +682,8 @@ const NotificationLink = ({
           css={NotificationLinkCSS}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
-          {n.cn} commented on <u>{n.pn}</u>
+          <FaComment css={{ marginRight: '0.5em' }} /> {n.cn} commented on{' '}
+          <u>{n.pn}</u>
         </Link>
       );
       break;
@@ -684,7 +693,8 @@ const NotificationLink = ({
           css={NotificationLinkCSS}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
-          {n.cn} replied to your comment on <u>{n.pn}</u>
+          <FaComments css={{ marginRight: '0.5em' }} /> {n.cn} replied to your
+          comment on <u>{n.pn}</u>
         </Link>
       );
       break;
@@ -694,7 +704,8 @@ const NotificationLink = ({
           css={NotificationLinkCSS}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
-          {n.an} published a new puzzle: <u>{n.pn}</u>
+          <FaRegNewspaper css={{ marginRight: '0.5em' }} /> {n.an} published a
+          new puzzle: <u>{n.pn}</u>
         </Link>
       );
       break;
@@ -704,7 +715,8 @@ const NotificationLink = ({
           css={NotificationLinkCSS}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
-          Crosshare is featuring your puzzle <u>{n.pn}</u>
+          <FaRegGrinStars css={{ marginRight: '0.5em' }} /> Crosshare is
+          featuring your puzzle <u>{n.pn}</u>
           {n.as ? ` as ${n.as}` : ' on the homepage'}!
         </Link>
       );
