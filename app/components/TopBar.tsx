@@ -604,7 +604,14 @@ export const TopBar = ({
                 })}
               />
             </h3>
-            <div css={{ margin: '0 1em' }}>
+            <div
+              css={{
+                padding: '0 1em',
+                maxHeight: '80vh',
+                overflow: 'scroll',
+                scrollbarColor: 'auto',
+              }}
+            >
               {filtered.map((n) => (
                 <NotificationLink key={n.id} notification={n} />
               ))}
