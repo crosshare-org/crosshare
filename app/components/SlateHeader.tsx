@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import slateLogo from '../public/slate/Logo.png';
 import slateLogoDark from '../public/slate/Logo-Dark.png';
+import { useEffect, useState } from 'react';
 
 interface SlateHeaderProps {
   title: string;
@@ -46,6 +47,32 @@ export const SlateLogo = (props: { className?: string }) => {
   );
 };
 
+function LocalDateString(props: { date: Date }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return <></>;
+
+  return (
+    <>
+      {props.date.toLocaleDateString('en-us', {
+        month: 'long',
+        day: '2-digit',
+        year: 'numeric',
+      })}
+      &emsp;&emsp;
+      {props.date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: 'EST',
+      })}
+    </>
+  );
+}
+
 export const SlateHeader = (props: SlateHeaderProps) => {
   const publishDate = new Date(props.publishTime);
 
@@ -72,19 +99,7 @@ export const SlateHeader = (props: SlateHeaderProps) => {
           marginBottom: '2.24rem',
         }}
       >
-        By {props.author} &bull;{' '}
-        {publishDate.toLocaleDateString('en-us', {
-          month: 'long',
-          day: '2-digit',
-          year: 'numeric',
-        })}
-        &emsp;&emsp;
-        {publishDate.toLocaleTimeString('en-US', {
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true,
-          timeZone: 'EST',
-        })}
+        By {props.author} &bull; <LocalDateString date={publishDate} />
       </h2>
     </div>
   );
