@@ -85,7 +85,7 @@ export const Play = (props: { className?: string }) => {
       className={props.className}
     >
       <path
-        fill-rule="evenodd"
+        fillRule="evenodd"
         d="M250 500a250 250 0 1 0 0-500 250 250 0 0 0 0 500Zm-33-154 118-70c20-11 20-41 0-52l-118-70c-19-11-42 3-42 26v140c0 23 23 37 42 26Z"
       />
     </svg>
