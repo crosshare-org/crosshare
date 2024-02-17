@@ -1,4 +1,4 @@
-import { Dispatch } from 'react';
+import { Dispatch, useEffect, useRef } from 'react';
 import { PuzzleAction } from '../reducers/reducer';
 import { Overlay } from './Overlay';
 import { ButtonResetCSS } from './Buttons';
@@ -118,11 +118,25 @@ export const SlateBegin = ({
   loadingPlayState: boolean;
   dispatch: Dispatch<PuzzleAction>;
 }) => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      window.parent.postMessage(
+        {
+          type: 'load',
+          scrollHeight: containerRef.current.scrollHeight,
+        },
+        '*'
+      );
+    }
+  });
   return (
     <>
       <Global styles={FULLSCREEN_CSS} />
       <SlateColorTheme />
       <div
+        ref={containerRef}
         css={{
           backgroundColor: 'var(--bg)',
           border: '1px solid var(--slate-container-border)',

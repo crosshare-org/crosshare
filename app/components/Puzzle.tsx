@@ -377,6 +377,15 @@ export const Puzzle = ({
         isAuthor: props.user ? props.user.uid === puzzle.authorId : false,
       };
       dispatch(action);
+      if (play?.t) {
+        window.parent.postMessage(
+          {
+            type: 'pause',
+            elapsed: play.t,
+          },
+          '*'
+        );
+      }
     }
   }, [loadingPlayState, play, props.user, props.prefs, puzzle.authorId]);
 
