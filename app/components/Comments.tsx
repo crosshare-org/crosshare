@@ -139,7 +139,7 @@ const CommentWithReplies = (
             onClick={() => {
               setShowingReportOverlay(true);
             }}
-            text={t`Report`}
+            text={'Report'}
           />
         </div>
       )}
