@@ -26,8 +26,9 @@ import { Timestamp } from '../lib/timestamp';
 import { getCollection, getDocRef } from '../lib/firebaseWrapper';
 import { addDoc, updateDoc } from 'firebase/firestore';
 import type { Root } from 'hast';
+import { ReportOverlay } from './ReportOverlay';
 
-const COMMENT_LENGTH_LIMIT = 2048;
+export const COMMENT_LENGTH_LIMIT = 2048;
 
 interface LocalComment extends Omit<Comment, 'replies'> {
   isLocal: true;
@@ -85,6 +86,7 @@ const CommentWithReplies = (
   }
 ) => {
   const [showingForm, setShowingForm] = useState(false);
+  const [showingReportOverlay, setShowingReportOverlay] = useState(false);
   const commentId = isComment(props.comment) ? props.comment.id : null;
   const replies = isComment(props.comment) ? props.comment.replies : undefined;
   return (
@@ -95,9 +97,18 @@ const CommentWithReplies = (
       puzzleAuthorId={props.puzzleAuthorId}
       comment={props.comment}
     >
-      {!props.user || props.user.isAnonymous || !commentId ? (
+      {showingReportOverlay ? (
+        <ReportOverlay
+          puzzleId={props.puzzleId}
+          comment={props.comment}
+          closeOverlay={() => {
+            setShowingReportOverlay(false);
+          }}
+        />
+      ) : (
         ''
-      ) : showingForm ? (
+      )}
+      {showingForm && props.user && !props.user.isAnonymous && commentId ? (
         <div css={{ marginLeft: '2em' }}>
           <CommentForm
             {...props}
@@ -111,14 +122,28 @@ const CommentWithReplies = (
         </div>
       ) : (
         <div>
+          {!props.user || props.user.isAnonymous || !commentId ? (
+            ''
+          ) : (
+            <>
+              <ButtonAsLink
+                onClick={() => {
+                  setShowingForm(true);
+                }}
+                text={t`Reply`}
+              />{' '}
+              &middot;{' '}
+            </>
+          )}
           <ButtonAsLink
             onClick={() => {
-              setShowingForm(true);
+              setShowingReportOverlay(true);
             }}
-            text={t`Reply`}
+            text={t`Report`}
           />
         </div>
       )}
+
       {replies ? (
         <ul
           css={{

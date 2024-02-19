@@ -52,6 +52,7 @@ import { markdownToHast } from '../lib/markdown/markdown';
 import { css } from '@emotion/react';
 import { withStaticTranslation } from '../lib/translation';
 import { logAsyncErrors } from '../lib/utils';
+import { CommentReportV } from '../components/ReportOverlay';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };
@@ -240,6 +241,13 @@ export default requiresAdmin(() => {
   );
   const [automoderated] = useCollectionData(automoderatedCollection.current);
 
+  const reportedCommentsCollection = useRef(
+    query(getValidatedCollection('cr', CommentReportV), where('h', '==', false))
+  );
+  const [reportedComments] = useCollectionData(
+    reportedCommentsCollection.current
+  );
+
   const donationsCollection = useRef(
     doc(getValidatedCollection('donations', DonationsListV), 'donations')
   );
@@ -319,6 +327,40 @@ export default requiresAdmin(() => {
             <h4>There are {mailErrors.length} mail errors!</h4>
             <Button onClick={logAsyncErrors(retryMail)} text="Retry send" />
           </div>
+        ) : (
+          ''
+        )}
+        {reportedComments?.length ? (
+          <>
+            <h4 css={{ borderBottom: '1px solid var(--black)' }}>
+              Reported Comments:
+            </h4>
+            <ul>
+              {reportedComments.map((rc) => (
+                <li key={`${rc.cid}-${rc.u}`}>
+                  <div>{rc.ct}</div>
+                  <div>
+                    <i>- {rc.cn}</i>
+                  </div>
+                  <div>
+                    <Link href={`/crosswords/${rc.pid}`}>puzzle</Link> -{' '}
+                    {rc.pid}
+                  </div>
+                  <button
+                    onClick={logAsyncErrors(async () => {
+                      await updateDoc(getDocRef('cr', `${rc.cid}-${rc.u}`), {
+                        h: true,
+                      }).then(() => {
+                        console.log('marked as handled');
+                      });
+                    })}
+                  >
+                    Mark as Handled
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </>
         ) : (
           ''
         )}
