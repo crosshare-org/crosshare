@@ -37,6 +37,10 @@ module.exports = {
         components: ['Link'],
       },
     ],
+    'jsx-a11y/label-has-associated-control': [
+      'error',
+      { controlComponents: ['LengthLimitedTextarea'] },
+    ],
     'jsx-a11y/anchor-has-content': [
       'error',
       {
@@ -61,6 +65,6 @@ module.exports = {
     ],
 
     // TODO get this turned on, it's just a lot to update all at once.
-    '@typescript-eslint/prefer-nullish-coalescing': 'off'
+    '@typescript-eslint/prefer-nullish-coalescing': 'off',
   },
 };
