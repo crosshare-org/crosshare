@@ -34,6 +34,7 @@ import {
 import {
   arrayUnion,
   deleteDoc,
+  deleteField,
   doc,
   getDocs,
   query,
@@ -80,6 +81,14 @@ const PuzzleListItem = (props: PuzzleResult) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await updateDoc(getDocRef('c', props.id), update as any).then(() => {
       console.log('moderated');
+    });
+  }
+
+  async function makePrivate() {
+    const update = { pv: true, pvu: deleteField() };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await updateDoc(getDocRef('c', props.id), update as any).then(() => {
+      console.log('marked private');
     });
   }
 
@@ -150,6 +159,15 @@ const PuzzleListItem = (props: PuzzleResult) => {
           })}
         >
           Set as Featured
+        </button>
+      </div>
+      <div css={{ marginBottom: '1em' }}>
+        <button
+          onClick={logAsyncErrors(async () => {
+            return makePrivate();
+          })}
+        >
+          Make Private
         </button>
       </div>
       <div css={{ marginBottom: '1em' }}>
