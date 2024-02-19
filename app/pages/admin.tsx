@@ -342,6 +342,7 @@ export default requiresAdmin(() => {
                   <div>
                     <i>- {rc.cn}</i>
                   </div>
+                  <div>Notes: {rc.n}</div>
                   <div>
                     <Link href={`/crosswords/${rc.pid}`}>puzzle</Link> -{' '}
                     {rc.pid}
