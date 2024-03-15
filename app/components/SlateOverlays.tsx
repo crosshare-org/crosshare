@@ -48,34 +48,6 @@ const SlateOverlayHeader = () => {
   );
 };
 
-export const SlateSuccess = ({
-  dispatch,
-}: {
-  dispatch: Dispatch<PuzzleAction>;
-}) => {
-  return (
-    <Overlay
-      innerPadding="3em 0 0 0"
-      closeCallback={() => {
-        dispatch({ type: 'DISMISSSUCCESS' });
-      }}
-    >
-      <SlateOverlayHeader />
-      <div
-        css={{
-          fontSize: '1.383rem',
-          textAlign: 'center',
-          fontWeight: 'bold',
-          margin: '2rem 0 2.82rem 0',
-          color: 'var(--slate-title)',
-        }}
-      >
-        You solved today&apos;s puzzle - congratulations!
-      </div>
-    </Overlay>
-  );
-};
-
 export const SlatePause = ({
   dispatch,
 }: {
