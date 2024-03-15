@@ -147,7 +147,16 @@ import { AuthContext } from './AuthContext';
 import { type Root } from 'hast';
 import { SlateHeader } from './SlateHeader';
 import { SlateColorTheme } from './SlateColorTheme';
-import { Check, Clues, Grid, More, Pause, Reveal, Timer } from './SlateIcons';
+import {
+  Check,
+  Clues,
+  Grid,
+  More,
+  Pause,
+  Reveal,
+  Stats,
+  Timer,
+} from './SlateIcons';
 import { removeSpoilers } from '../lib/markdown/markdown';
 import { SlateBegin, SlatePause } from './SlateOverlays';
 import { SolverPreferencesList } from './SolverPreferencesList';
@@ -274,6 +283,8 @@ export const Puzzle = ({
   play,
   ...props
 }: PuzzleProps & AuthPropsOptional) => {
+  const { isSlate } = useContext(EmbedContext);
+
   const [state, dispatch] = useReducer(
     puzzleReducer,
     {
@@ -695,7 +706,7 @@ export const Puzzle = ({
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
       // Don't capture keyboard on success overlay
-      if (state.success && !state.dismissedSuccess) {
+      if (state.success && !state.dismissedSuccess && !isSlate) {
         return;
       }
 
@@ -713,7 +724,7 @@ export const Puzzle = ({
         e.preventDefault();
       }
     },
-    [dispatch, loadingPlayState, state.success, state.dismissedSuccess]
+    [dispatch, loadingPlayState, state.success, state.dismissedSuccess, isSlate]
   );
   useEventListener('keydown', physicalKeyboardHandler);
 
@@ -805,11 +816,7 @@ export const Puzzle = ({
     refed = refs[entryIdx] ?? new Set();
   }
 
-  const { isSlate } = useContext(EmbedContext);
-
-  const shouldConceal =
-    state.currentTimeWindowStart === 0 &&
-    !(state.success && state.dismissedSuccess);
+  const shouldConceal = state.currentTimeWindowStart === 0 && !state.success;
   if (state.clueView) {
     puzzleView = (
       <TwoCol
@@ -1407,7 +1414,7 @@ export const Puzzle = ({
                     />
 
                     <TopBarLink
-                      icon={<FaComment />}
+                      icon={isSlate ? <Stats /> : <FaComment />}
                       text={
                         isSlate
                           ? 'Show Stats'
@@ -1421,6 +1428,13 @@ export const Puzzle = ({
                           : t`Show Comments`
                       }
                       onClick={() => {
+                        window.parent.postMessage(
+                          {
+                            type: 'show-completion-modal',
+                          },
+                          '*'
+                        );
+
                         dispatch({ type: 'UNDISMISSSUCCESS' });
                       }}
                     />
