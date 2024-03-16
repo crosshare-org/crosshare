@@ -23,6 +23,7 @@ import cloneDeepWith from 'lodash/cloneDeepWith';
 import { isTimestamp } from './timestamp';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
+import { CollectionReference } from 'firebase/firestore';
 
 // Initialize Firebase
 let App: FirebaseApp;
@@ -77,7 +78,7 @@ export function getValidatedCollection<V>(
   collectionName: string,
   validator: t.Decoder<unknown, V>,
   idField: string | null = null
-) {
+): CollectionReference<V, Record<string, unknown>> {
   return collection(db, collectionName).withConverter({
     toFirestore: convertTimestamps,
     fromFirestore: (s: QueryDocumentSnapshot, options: SnapshotOptions): V => {
@@ -95,7 +96,8 @@ export function getValidatedCollection<V>(
         throw new Error('Malformed content');
       }
     },
-  });
+    // TODO not sure why this cast became necessary w/ the latest firebase+typescript upgrade. Try reverting next update.
+  }) as CollectionReference<V, Record<string, unknown>>;
 }
 
 export const getDocRef = (collectionName: string, docId: string) =>

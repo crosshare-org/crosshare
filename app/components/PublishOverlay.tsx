@@ -8,7 +8,7 @@ import { Emoji } from './Emoji';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { DBPuzzleT } from '../lib/dbtypes';
 import { slugify, STORAGE_KEY } from '../lib/utils';
-import lightFormat from 'date-fns/lightFormat';
+import { lightFormat } from 'date-fns/lightFormat';
 import { ButtonAsLink, Button } from './Buttons';
 import { serverTimestamp, setDoc } from 'firebase/firestore';
 

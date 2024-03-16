@@ -11,7 +11,7 @@ import {
 import type { User } from 'firebase/auth';
 import { Comments } from './Comments';
 import { EmbedColorMode, EmbedContext } from './EmbedContext';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { NextPuzzleLink } from './Puzzle';
 import { Overlay } from './Overlay';
 import { PuzzleHeading } from './PuzzleHeading';

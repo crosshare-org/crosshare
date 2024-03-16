@@ -1,5 +1,5 @@
-import lightFormat from 'date-fns/lightFormat';
-import set from 'date-fns/set';
+import { lightFormat } from 'date-fns/lightFormat';
+import { set } from 'date-fns/set';
 
 interface DateTimePickerProps {
   picked: Date | number;
@@ -32,7 +32,7 @@ export const DateTimePicker = (props: DateTimePickerProps) => {
           ) {
             throw new Error('bad date ' + e.target.value);
           }
-          const newDate = set(props.picked, {
+          const newDate: Date = set(props.picked, {
             year: parseInt(split[0]),
             month: parseInt(split[1]) - 1,
             date: parseInt(split[2]),

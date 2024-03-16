@@ -110,7 +110,7 @@ export async function getPlayFromDB(
     return play;
   } else {
     console.error(PathReporter.report(playResult).join(','));
-    return Promise.reject('Malformed play');
+    return Promise.reject(new Error('Malformed play'));
   }
 }
 
@@ -119,14 +119,14 @@ export async function writePlayToDB(
   puzzleId: string
 ): Promise<void> {
   if (!isDirty(user, puzzleId)) {
-    return Promise.reject('trying to write to db but play is clean');
+    return Promise.reject(new Error('trying to write to db but play is clean'));
   }
 
   const storageKey = getStorageKey(user);
   const store = getStore(storageKey);
   const play: PlayWithoutUserT | null | undefined = store[puzzleId];
   if (!play) {
-    return Promise.reject('no cached play!');
+    return Promise.reject(new Error('no cached play!'));
   }
 
   const docId = puzzleId + '-' + user.uid;

@@ -68,7 +68,7 @@ export async function mapEachResult<N, A>(
     } else {
       console.error('bad doc: ', doc.id);
       console.error(PathReporter.report(validationResult).join(','));
-      return Promise.reject('Malformed content');
+      return Promise.reject(new Error('Malformed content'));
     }
   }
   return results;
@@ -89,7 +89,7 @@ export async function getValidatedAndDelete<A>(
       deletes.push(deleteDoc(doc.ref));
     } else {
       console.error(PathReporter.report(validationResult).join(','));
-      return Promise.reject('Malformed content');
+      return Promise.reject(new Error('Malformed content'));
     }
   }
   await Promise.all(deletes);
@@ -103,14 +103,14 @@ export async function getFromDB<A>(
 ): Promise<A> {
   const dbres = await getDoc(getDocRef(collection, docId));
   if (!dbres.exists()) {
-    return Promise.reject('Missing doc');
+    return Promise.reject(new Error('Missing doc'));
   }
   const validationResult = validator.decode(dbres.data());
   if (isRight(validationResult)) {
     return validationResult.right;
   } else {
     console.error(PathReporter.report(validationResult).join(','));
-    return Promise.reject('Malformed content');
+    return Promise.reject(new Error('Malformed content'));
   }
 }
 
@@ -170,6 +170,6 @@ export async function getFromSessionOrDB<A>({
     return validationResult.right;
   } else {
     console.error(PathReporter.report(validationResult).join(','));
-    return Promise.reject('Malformed content');
+    return Promise.reject(new Error('Malformed content'));
   }
 }

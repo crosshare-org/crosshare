@@ -62,7 +62,7 @@ export async function mapEachResult<N, A>(
     } else {
       console.error('bad doc: ', doc.id);
       console.error(PathReporter.report(validationResult).join(','));
-      return Promise.reject('Malformed content');
+      return Promise.reject(new Error('Malformed content'));
     }
   }
   return results;

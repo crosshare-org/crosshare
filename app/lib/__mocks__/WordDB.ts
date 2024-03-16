@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 export {};
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const WordDB = jest.genMockFromModule('../WordDB');
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+const WordDB: any = jest.genMockFromModule('../WordDB');
 
 WordDB.useWordDB = () => {
   return [
@@ -18,4 +19,5 @@ WordDB.wordDB = true;
 
 WordDB.matchingWords = () => [];
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 module.exports = WordDB;

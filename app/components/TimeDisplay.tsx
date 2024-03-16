@@ -1,7 +1,7 @@
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { Trans } from '@lingui/macro';
 import { useRouter } from 'next/router';
-import { es, it } from 'date-fns/locale';
+import { Locale, es, it } from 'date-fns/locale';
 import { ToolTipText } from './ToolTipText';
 import { useEffect, useState } from 'react';
 

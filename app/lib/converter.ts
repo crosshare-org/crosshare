@@ -182,9 +182,8 @@ class PuzReader {
 
     let notes = this.readString().trim() || null;
     notes =
-      notes
-        ?.replace(/(- )?created (on|with) \w+\.(com|org|net)/i, '')
-        ?.trim() || null;
+      notes?.replace(/(- )?created (on|with) \w+\.(com|org|net)/i, '').trim() ||
+      null;
 
     let tryAnotherExtension = true;
     while (tryAnotherExtension) {

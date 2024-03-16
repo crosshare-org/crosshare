@@ -492,14 +492,14 @@ export const TopBar = ({
                   setShowingNotifications(true);
                   e.stopPropagation();
                 }}
-                css={[
+                css={css([
                   ButtonResetCSS,
                   {
                     flexGrow: 1,
                     display: 'flex',
                     alignItems: 'center',
                   },
-                ]}
+                ])}
                 title="View Notifications"
               >
                 <Logo

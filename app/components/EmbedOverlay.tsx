@@ -448,12 +448,12 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       />
       <h4 css={{ marginTop: '2em' }}>Preview</h4>
       {customFontEnabled && fontStyles.length ? (
-        <Global styles={fontStyles} />
+        <Global styles={css(fontStyles)} />
       ) : (
         ''
       )}
       <div
-        css={[
+        css={css([
           {
             display: 'flex',
             flexWrap: 'wrap',
@@ -473,7 +473,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
             darkMode: isDark,
             preservePrimary,
           }),
-        ]}
+        ])}
       >
         <div css={{ width: 200, height: 200 }}>
           <GridView

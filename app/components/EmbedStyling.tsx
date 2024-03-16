@@ -1,4 +1,4 @@
-import { Global } from '@emotion/react';
+import { Global, css } from '@emotion/react';
 import { colorTheme } from '../lib/style';
 import type { CSSInterpolation } from '@emotion/serialize';
 
@@ -56,7 +56,7 @@ export function EmbedStyling(props: EmbedStylingProps) {
   }
   return (
     <Global
-      styles={[
+      styles={css([
         fontStyles,
         {
           body: {
@@ -64,7 +64,7 @@ export function EmbedStyling(props: EmbedStylingProps) {
           },
           'html, body.light-mode, body.dark-mode': colorTheme(props),
         },
-      ]}
+      ])}
     />
   );
 }

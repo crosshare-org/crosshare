@@ -5,7 +5,7 @@ import { ButtonResetCSS } from './Buttons';
 import { SlateHeader, SlateLogo } from './SlateHeader';
 import { Illustration, Pause, Play } from './SlateIcons';
 import { Link } from './Link';
-import { Global } from '@emotion/react';
+import { Global, css } from '@emotion/react';
 import { FULLSCREEN_CSS, LARGE_AND_UP, SMALL_AND_UP } from '../lib/style';
 import { SlateColorTheme } from './SlateColorTheme';
 import { PuzzleResultWithAugmentedComments } from '../lib/types';
@@ -166,7 +166,7 @@ const BigButton = ({
 }) => {
   return (
     <button
-      css={[
+      css={css([
         ButtonResetCSS,
         {
           backgroundColor: 'var(--primary)',
@@ -178,7 +178,7 @@ const BigButton = ({
             backgroundColor: 'var(--slate-primary-hover)',
           },
         },
-      ]}
+      ])}
       onClick={() => {
         window.parent.postMessage({ type: 'resume' }, '*');
         dispatch({ type: 'RESUMEACTION' });

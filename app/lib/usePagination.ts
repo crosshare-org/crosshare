@@ -79,7 +79,7 @@ export function usePaginatedQuery<A, N>(
             }
           } else {
             console.error(PathReporter.report(validationResult).join(','));
-            return Promise.reject('Malformed content');
+            return Promise.reject(new Error('Malformed content'));
           }
         }
         setLoading(false);

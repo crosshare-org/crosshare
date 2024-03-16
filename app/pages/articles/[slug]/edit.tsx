@@ -61,7 +61,7 @@ const ArticleLoader = ({ slug }: { slug: string }) => {
       </ErrorPage>
     );
   }
-  const article = articles?.[0];
+  const article: (ArticleT & { i: string }) | undefined = articles?.[0];
   if (!article) {
     return (
       <div>

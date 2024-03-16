@@ -8,8 +8,6 @@ import type { Root } from 'hast';
 import { ReferenceData } from '../lib/markdown/clueReferencer';
 
 import * as prod from 'react/jsx-runtime';
-// @ts-expect-error: the react types are missing.
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const production = { Fragment: prod.Fragment, jsx: prod.jsx, jsxs: prod.jsxs };
 
 export const Markdown = (props: {
@@ -58,6 +56,8 @@ export const Markdown = (props: {
   };
 
   const reactContent = unified()
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     .use(rehypeReact, {
       ...production,
       passNode: true,

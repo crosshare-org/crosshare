@@ -34,7 +34,6 @@ import { COVER_PIC } from '../lib/style';
 import { Timestamp } from '../lib/timestamp';
 import { ToolTipText } from './ToolTipText';
 import { FaInfoCircle, FaRegNewspaper } from 'react-icons/fa';
-import lightFormat from 'date-fns/lightFormat';
 import { PublishOverlay } from './PublishOverlay';
 import { Overlay } from './Overlay';
 import dynamic from 'next/dynamic';
@@ -49,6 +48,7 @@ import { markdownToHast } from '../lib/markdown/markdown';
 import { Markdown } from './Markdown';
 import { GridContext } from './GridContext';
 import { addClues } from '../lib/viewableGrid';
+import { lightFormat } from 'date-fns/lightFormat';
 
 export const MAX_STRING_LENGTH = 2048;
 export const MAX_BLOG_LENGTH = 20000;

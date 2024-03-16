@@ -1,5 +1,6 @@
 import { MouseEvent, ReactNode } from 'react';
 import { CSSInterpolation } from '@emotion/serialize';
+import { css } from '@emotion/react';
 
 interface ButtonBaseProps {
   text: ReactNode;
@@ -49,7 +50,7 @@ export function ButtonReset({
   return (
     <button
       type="button"
-      css={[
+      css={css([
         ButtonResetCSS,
         subCSS,
         {
@@ -65,7 +66,7 @@ export function ButtonReset({
             },
           }),
         },
-      ]}
+      ])}
       {...props}
     >
       <span>{text}</span>

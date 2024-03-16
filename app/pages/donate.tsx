@@ -10,8 +10,8 @@ import { donationsByEmail, DonationsListV } from '../lib/dbtypes';
 import { differenceInDays } from 'date-fns';
 import { PatronIcon } from '../components/Icons';
 import { SMALL_AND_UP } from '../lib/style';
-import { CSSInterpolation } from '@emotion/serialize';
 import { getCollection } from '../lib/firebaseAdminWrapper';
+import { css } from '@emotion/react';
 
 interface DonateProps {
   donors: {
@@ -53,11 +53,11 @@ const gssp: GetServerSideProps<DonateProps> = async ({ res }) => {
 
 export const getServerSideProps = withTranslation(gssp);
 
-const PatronHeaderCSS: CSSInterpolation = {
+const PatronHeaderCSS = css({
   fontSize: '2em',
   [SMALL_AND_UP]: { fontSize: '5em' },
   flexShrink: 0,
-};
+});
 
 export default function DonatePage({ donors }: DonateProps) {
   const now = new Date();

@@ -2,6 +2,7 @@ import NextLink from 'next/link';
 import { ReactNode, useContext } from 'react';
 import { ButtonResetCSS, ButtonCSS } from './Buttons';
 import { EmbedContext } from './EmbedContext';
+import { css } from '@emotion/react';
 
 interface LinkProps {
   href: string;
@@ -16,13 +17,13 @@ export function LinkButton(props: LinkProps) {
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-has-content */
     <Link
-      css={[
+      css={css([
         ButtonResetCSS,
         ButtonCSS,
         {
           display: 'inline-block',
         },
-      ]}
+      ])}
       {...props}
     />
   );
@@ -36,13 +37,13 @@ export function LinkButtonSimpleA(props: {
   return (
     <a
       className={props.className}
-      css={[
+      css={css([
         ButtonResetCSS,
         ButtonCSS,
         {
           display: 'inline-block',
         },
-      ]}
+      ])}
       target="_blank"
       rel="noopener noreferrer"
       href={props.href}
