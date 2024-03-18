@@ -249,6 +249,8 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
       css={{
         height: '100% !important',
         position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
       }}
     >
       <div
