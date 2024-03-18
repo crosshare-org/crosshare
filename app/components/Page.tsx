@@ -44,7 +44,6 @@ export const SLATE_PADDING_MED = 50;
 export const SLATE_PADDING_LARGE = 50;
 
 const slateClueAreaCss = css({
-  width: `calc(100vw - ${2 * SLATE_PADDING_SMALL}px)`,
   [SMALL_AND_UP]: {
     width: `calc(34vw - ${2 * SLATE_PADDING_MED}px)`,
   },
@@ -136,9 +135,6 @@ export const SquareAndCols = (props: SquareAndColsProps) => {
           css={{
             flex: '0',
             width: '100vw',
-            ...(isSlate && {
-              width: `calc(100vw - ${2 * SLATE_PADDING_SMALL}px)`,
-            }),
             [SMALL_AND_UP]: {
               width: '66vw',
             },

@@ -1303,7 +1303,6 @@ export const Puzzle = ({
               border: '1px solid var(--slate-container-border)',
               borderRadius: '4px',
               overflow: 'hidden',
-              padding: SLATE_PADDING_SMALL,
               [SMALL_AND_UP]: {
                 padding: SLATE_PADDING_MED,
               },
@@ -1313,7 +1312,17 @@ export const Puzzle = ({
             }),
           }}
         >
-          <div css={{ flex: 'none' }}>
+          <div
+            css={{
+              flex: 'none',
+              ...(isSlate && {
+                padding: `${SLATE_PADDING_SMALL}px ${SLATE_PADDING_SMALL}px 0 ${SLATE_PADDING_SMALL}px`,
+                [SMALL_AND_UP]: {
+                  padding: 'unset',
+                },
+              }),
+            }}
+          >
             {isSlate ? (
               <SlateHeader
                 title={puzzle.title}
