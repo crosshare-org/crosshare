@@ -251,6 +251,10 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
         position: 'relative',
         display: 'flex',
         alignItems: 'center',
+        [SMALL_AND_UP]: {
+          display: 'unset',
+          alignItems: 'unset',
+        },
       }}
     >
       <div
