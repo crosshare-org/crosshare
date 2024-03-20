@@ -3,6 +3,7 @@
 exports[`clueMap rendering 1`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -52,6 +53,7 @@ exports[`clueMap rendering 1`] = `
 exports[`clueMap rendering 2`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -326,6 +328,7 @@ exports[`clueMap rendering 3`] = `
 exports[`clueMap rendering 4`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -446,6 +449,7 @@ exports[`clueMap rendering 4`] = `
 exports[`clueMap rendering 5`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -977,6 +981,7 @@ exports[`markdown preview mode 2`] = `
 exports[`markdown preview mode 3`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1028,6 +1033,7 @@ exports[`spoiler text rendering 1`] = `
 exports[`spoiler text rendering 2`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1060,6 +1066,7 @@ exports[`spoiler text rendering 2`] = `
 exports[`spoiler text rendering 3`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1091,6 +1098,7 @@ exports[`spoiler text rendering 3`] = `
 exports[`spoiler text rendering 4`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1123,6 +1131,7 @@ exports[`spoiler text rendering 4`] = `
 exports[`spoiler text rendering 5`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1156,6 +1165,7 @@ exports[`spoiler text rendering 5`] = `
 exports[`spoiler text rendering 6`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1189,6 +1199,7 @@ exports[`spoiler text rendering 6`] = `
 exports[`spoiler text rendering 7`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1230,6 +1241,7 @@ exports[`spoiler text rendering 7`] = `
 exports[`spoiler text rendering 8`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1279,6 +1291,7 @@ exports[`spoiler text rendering 8`] = `
 exports[`spoiler text rendering 9`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1326,6 +1339,7 @@ exports[`spoiler text rendering 9`] = `
 exports[`spoiler text rendering 10`] = `
 .emotion-0 {
   background-color: var(--text);
+  color: rgba(0,0,0,0);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
