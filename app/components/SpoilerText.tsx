@@ -28,6 +28,7 @@ export const SpoilerText = ({ children }: { children: ReactNode }) => {
       css={{
         ...(!revealed && {
           backgroundColor: 'var(--text)',
+          color: 'rgba(0,0,0,0)',
           cursor: 'pointer',
           userSelect: 'none',
           '& *': {
