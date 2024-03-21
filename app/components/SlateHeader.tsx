@@ -2,11 +2,14 @@ import Image from 'next/image';
 import slateLogo from '../public/slate/Logo.png';
 import slateLogoDark from '../public/slate/Logo-Dark.png';
 import { useEffect, useState } from 'react';
+import { type Root } from 'hast';
+import { Markdown } from './Markdown';
 
 interface SlateHeaderProps {
   title: string;
   author: string;
   publishTime: number;
+  note?: Root | null;
 }
 
 export const SlateLogo = (props: { className?: string }) => {
@@ -89,6 +92,14 @@ export const SlateHeader = (props: SlateHeaderProps) => {
       >
         {props.title}
       </h1>
+      {props.note ? (
+        <Markdown
+          css={{ fontSize: '19px', margin: ' 0 3rem 1.41rem 3rem' }}
+          hast={props.note}
+        />
+      ) : (
+        ''
+      )}
       <h2
         css={{
           textTransform: 'uppercase',

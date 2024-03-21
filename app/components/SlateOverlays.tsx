@@ -129,6 +129,7 @@ export const SlateBegin = ({
           title={puzzle.title}
           author={puzzle.guestConstructor || puzzle.authorName}
           publishTime={puzzle.isPrivateUntil ?? puzzle.publishTime}
+          note={puzzle.constructorNotes}
         />
         <Illustration
           css={{
