@@ -169,6 +169,7 @@ const ClueListItem = memo(function ClueListItem({
                         textAlign: 'center',
                         fontWeight: 'bold',
                         minWidth: '1em',
+                        color: 'var(--text)',
                         border: isActiveCell
                           ? props.isEnteringRebus
                             ? '1px solid var(--primary)'
