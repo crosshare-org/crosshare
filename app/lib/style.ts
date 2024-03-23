@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import {
   adjustHue,
   darken,
-  getLuminance,
+  hasBadContrast,
   lighten,
   mix,
   readableColorIsBlack,
@@ -62,23 +62,20 @@ export const readableColor = (color: string, darkMode: boolean) => {
 };
 
 const makeReadable = (background: string, color: string) => {
-  const bgLum = getLuminance(background);
-  let foreground = color;
+  let modify;
+  if (readableColorIsBlack(background)) {
+    modify = darken;
+  } else {
+    modify = lighten;
+  }
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, no-constant-condition
   for (let i = 0; i < 10; i += 1) {
-    const fgLum = getLuminance(foreground);
-
-    const contrast = (fgLum + 0.05) / (bgLum + 0.05);
-    if (contrast > 3 || contrast < 1 / 3) {
-      return foreground;
+    if (!hasBadContrast(color, 'aa', background)) {
+      return color;
     }
-    if (contrast < 1) {
-      foreground = darken(foreground, 0.1);
-    } else {
-      foreground = lighten(foreground, 0.1);
-    }
+    color = modify(color, 0.1);
   }
-  return foreground;
+  return color;
 };
 
 export const colorTheme = ({
@@ -106,6 +103,7 @@ export const colorTheme = ({
   const linkLightBGHover = mix(link, bg, 0.8);
   const text = darkMode ? DARK_MODE_WHITE : 'black';
   const secondary = darkMode ? '#505050' : '#ccc';
+  const lighter = mix(p, cellBG, 0.6);
 
   return {
     '--tag-l': darkMode ? '30%' : '85%',
@@ -115,8 +113,10 @@ export const colorTheme = ({
     '--blue': darkMode ? mix('blue', 'white', 0.5) : 'blue',
     '--green': darkMode ? mix('green', 'white', 0.5) : 'green',
     '--onprimary': readableColor(p, darkMode),
-    '--lighter': mix(p, cellBG, 0.6),
+    '--lighter': lighter,
+    '--on-lighter': readableColor(lighter, darkMode),
     '--secondary': secondary,
+    '--on-secondary': readableColor(secondary, darkMode),
     '--bg-hover': mix(bg, hover, hoverRatio),
     '--secondary-hover': mix(secondary, hover, hoverRatio),
     '--boring-bg': darkMode ? '#b5b5b5' : '#555',
@@ -137,7 +137,10 @@ export const colorTheme = ({
     '--default-text': darkMode ? '#777' : '#999',
     '--caption': '#6c757d',
     '--black': darkMode ? '#eee' : 'black',
-    '--verified': verified,
+    '--verified-on-primary': makeReadable(p, verified),
+    '--verified-on-lighter': makeReadable(lighter, verified),
+    '--verified-on-bg': makeReadable(cellBG, verified),
+    '--verified-on-secondary': makeReadable(secondary, verified),
     '--autofill': darkMode ? '#999' : '#bbb',
     '--top-bar-hover': 'rgba(0, 0, 0, 0.1)',
     '--shade-highlight': darkMode

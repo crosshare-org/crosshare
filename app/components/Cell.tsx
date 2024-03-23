@@ -69,6 +69,8 @@ export const Cell = memo(function Cell(props: CellProps) {
   }, []);
 
   let bg = 'var(--cell-bg)';
+  let text = 'var(--text)';
+  let verified = 'var(--verified-on-bg)';
   if (props.isEnteringRebus && props.active) {
     /* noop */
   } else if (props.isBlock && props.active) {
@@ -82,10 +84,16 @@ export const Cell = memo(function Cell(props: CellProps) {
     /* noop */
   } else if (props.active) {
     bg = 'var(--primary)';
+    text = 'var(--onprimary)';
+    verified = 'var(--verified-on-primary)';
   } else if (props.entryCell) {
     bg = 'var(--lighter)';
+    text = 'var(--on-lighter)';
+    verified = 'var(--verified-on-lighter)';
   } else if (props.refedCell) {
     bg = 'var(--secondary)';
+    text = 'var(--on-secondary)';
+    verified = 'var(--verified-on-secondary)';
   }
 
   const filledValue =
@@ -171,7 +179,7 @@ export const Cell = memo(function Cell(props: CellProps) {
                 top: 0,
                 fontWeight: 'bold',
                 lineHeight: '1em',
-                color: props.active ? 'var(--onprimary)' : 'var(--text)',
+                color: text,
                 fontSize: '0.25em',
               }}
             >
@@ -182,7 +190,7 @@ export const Cell = memo(function Cell(props: CellProps) {
                     left: '1.85em',
                     top: '-0.1em',
                     fontSize: '1.2em',
-                    color: 'var(--verified)',
+                    color: verified,
                   }}
                 >
                   <FaEye />
@@ -195,11 +203,9 @@ export const Cell = memo(function Cell(props: CellProps) {
             <div
               css={{
                 color: props.isVerified
-                  ? 'var(--verified)'
+                  ? verified
                   : filledValue
-                  ? props.active && !props.isEnteringRebus
-                    ? 'var(--onprimary)'
-                    : 'var(--text)'
+                  ? text
                   : 'var(--autofill)',
                 textAlign: 'center',
                 lineHeight: '1.2em',
