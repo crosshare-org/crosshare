@@ -31,6 +31,7 @@ import {
   FaRegFile,
   FaMoon,
   FaCog,
+  FaRegSquare,
 } from 'react-icons/fa';
 import { ClueText } from './ClueText';
 import { IoMdStats } from 'react-icons/io';
@@ -993,7 +994,7 @@ export const Puzzle = ({
             {() => (
               <>
                 <TopBarDropDownLink
-                  icon={<FaCheckSquare />}
+                  icon={isSlate ? <FaRegSquare /> : <FaCheckSquare />}
                   text={t`Autocheck`}
                   onClick={() => {
                     const action: ToggleAutocheckAction = {
