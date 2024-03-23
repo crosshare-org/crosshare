@@ -148,6 +148,7 @@ import { type Root } from 'hast';
 import { SlateHeader } from './SlateHeader';
 import { SlateColorTheme } from './SlateColorTheme';
 import {
+  AutoCheckActive,
   Check,
   Clues,
   Grid,
@@ -1039,7 +1040,7 @@ export const Puzzle = ({
           </TopBarDropDown>
         ) : (
           <TopBarLink
-            icon={<FaCheckSquare />}
+            icon={isSlate ? <AutoCheckActive /> : <FaCheckSquare />}
             text={t`Autochecking`}
             onClick={() => {
               const action: ToggleAutocheckAction = { type: 'TOGGLEAUTOCHECK' };
