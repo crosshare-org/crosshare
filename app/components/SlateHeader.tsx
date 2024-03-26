@@ -58,22 +58,27 @@ function LocalDateString(props: { date: Date }) {
 
   if (!mounted) return <></>;
 
-  return (
-    <>
-      {props.date.toLocaleDateString('en-us', {
-        month: 'long',
-        day: '2-digit',
-        year: 'numeric',
-      })}
-      &emsp;&emsp;
-      {props.date.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-        timeZone: 'EST',
-      })}
-    </>
-  );
+  return props.date.toLocaleDateString('en-us', {
+    month: 'long',
+    day: '2-digit',
+    year: 'numeric',
+  });
+}
+
+function LocalTimeString(props: { date: Date }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return <></>;
+
+  return props.date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'EST',
+  });
 }
 
 export const SlateHeader = (props: SlateHeaderProps) => {
@@ -108,9 +113,18 @@ export const SlateHeader = (props: SlateHeaderProps) => {
           color: 'var(--slate-subtitle)',
           letterSpacing: '0.08rem',
           marginBottom: '2.24rem',
+          display: 'flex',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+          columnGap: '2.15rem',
         }}
       >
-        By {props.author} &bull; <LocalDateString date={publishDate} />
+        <span>
+          By {props.author} &bull; <LocalDateString date={publishDate} />
+        </span>
+        <span>
+          <LocalTimeString date={publishDate} />
+        </span>
       </h2>
     </div>
   );
