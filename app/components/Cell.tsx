@@ -63,7 +63,11 @@ export const Cell = memo(function Cell(props: CellProps) {
   const { width: cqw } = usePolyfilledResizeObserver(containerRef);
   const [useCQ, setUseCQ] = useState(true);
   useEffect(() => {
-    if (!('container' in document.documentElement.style)) {
+    // Can't use container query on chrome until this is fixed - https://issues.chromium.org/issues/331221743
+    if (
+      !('container' in document.documentElement.style) ||
+      navigator.userAgent.includes('Chrome')
+    ) {
       setUseCQ(false);
     }
   }, []);
@@ -127,7 +131,9 @@ export const Cell = memo(function Cell(props: CellProps) {
         position: 'relative',
         margin: 0,
         overflow: 'hidden',
-        containerType: 'size',
+        ...(useCQ && {
+          containerType: 'size',
+        }),
       }}
       ref={containerRef}
     >
