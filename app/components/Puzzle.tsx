@@ -123,7 +123,9 @@ import {
   SMALL_AND_UP,
   SMALL_AND_UP_RULES,
   SQUARE_HEADER_HEIGHT,
+  SQUARE_TITLEBAR_HEIGHT,
 } from '../lib/style';
+import { PatronIcon } from './Icons';
 import { Keyboard } from './Keyboard';
 import { useRouter } from 'next/router';
 import { Button } from './Buttons';
@@ -208,6 +210,48 @@ const KeepTryingOverlay = ({
     </Overlay>
   );
 };
+
+const PuzzleTitlebar = memo(function PuzzleTitlebar({
+  puzzleTitle,
+  puzzleAuthor,
+  isPatron
+}: {
+  puzzleTitle: string;
+  puzzleAuthor: string;
+  isPatron: boolean;
+}) {
+  let byline;
+  if (isPatron) {
+    byline = (<div>By <PatronIcon linkIt={false} /> {puzzleAuthor}</div>)
+  }
+  else {
+    byline = (<div>By {puzzleAuthor}</div>)
+  }
+  return (
+    <div
+      css={{
+        height: SQUARE_TITLEBAR_HEIGHT,
+        fontSize: 18,
+        lineHeight: '24px',
+        backgroundColor: 'var(--lighter)',
+        overflowY: 'scroll',
+        scrollbarWidth: 'none',
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottom: '1px dotted black'
+      }}
+    >
+      <div css={{textAlign:'center',width:'100%',paddingTop:'5px'}}><b>
+        {puzzleTitle}
+      </b></div>
+      <div css={{textAlign:'center',paddingBottom:'5px'}}><i>
+        {byline}
+      </i></div>
+    </div>
+  );
+});
 
 const AboveTheGridClue = memo(function AboveTheGridClue({
   entry,
@@ -886,6 +930,13 @@ export const Puzzle = ({
             wrongCells={state.wrongCells}
             showAlternates={state.success ? state.alternateSolutions : null}
             answers={state.answers}
+          />
+        }
+        titlebar={
+          <PuzzleTitlebar
+            puzzleTitle={puzzle.title}
+            puzzleAuthor={puzzle.authorName}
+            isPatron={puzzle.constructorIsPatron}
           />
         }
         header={
