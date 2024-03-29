@@ -16,7 +16,10 @@ export const twemojify: Plugin = () => {
         return [node];
       }
       const value = node.value;
-      const emoji = parse(value, { assetType: 'png' });
+      const emoji = parse(value, {
+        buildUrl: (codepoints) =>
+          `https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/${codepoints}.png`,
+      });
       if (emoji.length === 0) {
         return [node];
       }
