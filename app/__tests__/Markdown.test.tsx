@@ -583,7 +583,7 @@ test('clueMap rendering', async () => {
             data-popper-escaped="true"
             data-popper-placement="bottom"
             data-popper-reference-hidden="true"
-            style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+            style="position: absolute; left: 0px; top: 0px; transform: translate(0px, 10px);"
           >
             <b
               class="emotion-2"
@@ -733,7 +733,7 @@ test('clueMap rendering', async () => {
             data-popper-escaped="true"
             data-popper-placement="bottom"
             data-popper-reference-hidden="true"
-            style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+            style="position: absolute; left: 0px; top: 0px; transform: translate(0px, 10px);"
           >
             <b
               class="emotion-2"
@@ -766,7 +766,7 @@ test('clueMap rendering', async () => {
             data-popper-escaped="true"
             data-popper-placement="bottom"
             data-popper-reference-hidden="true"
-            style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 10px);"
+            style="position: absolute; left: 0px; top: 0px; transform: translate(0px, 10px);"
           >
             <b
               class="emotion-2"
