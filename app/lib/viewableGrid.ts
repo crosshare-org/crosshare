@@ -671,7 +671,7 @@ export function getRefs(grid: CluedGrid): [Set<number>[], RefPosition[][]] {
     const refPos: RefPosition[] = [];
     let match;
     const re =
-      /(?<numSection>(,? ?(and)? ?\b\d+-? ?)+)(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
+      /(?=(?<numSection>(,? ?(and)? ?\b\d+-? ?)+))\k<numSection>(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
     while (!e.clue.startsWith('!@') && (match = re.exec(e.clue)) !== null) {
       const dirString = match.groups?.dir?.toLowerCase();
       if (!dirString) {
