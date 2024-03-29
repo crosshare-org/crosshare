@@ -87,13 +87,13 @@ test('emoji rendering', () => {
             alt="😂"
             class="twemoji"
             draggable="false"
-            src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+            src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/1f602.png"
           />
           <img
             alt="🐅"
             class="twemoji"
             draggable="false"
-            src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
+            src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/1f405.png"
           />
         </div>
       </div>
@@ -111,7 +111,7 @@ test('emoji rendering', () => {
             alt="😂"
             class="twemoji"
             draggable="false"
-            src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+            src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/1f602.png"
           />
            abc
         </div>
@@ -131,7 +131,7 @@ test('emoji rendering', () => {
             alt="😂"
             class="twemoji"
             draggable="false"
-            src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+            src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/1f602.png"
           />
         </div>
       </div>
@@ -150,7 +150,7 @@ test('emoji rendering', () => {
             alt="😂"
             class="twemoji"
             draggable="false"
-            src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+            src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/1f602.png"
           />
            def
         </div>
@@ -169,14 +169,14 @@ test('emoji rendering', () => {
             alt="😂"
             class="twemoji"
             draggable="false"
-            src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+            src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/1f602.png"
           />
            abc 
           <img
             alt="🐅"
             class="twemoji"
             draggable="false"
-            src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
+            src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/1f405.png"
           />
         </div>
       </div>
@@ -198,14 +198,14 @@ test('emoji rendering', () => {
             alt="😂"
             class="twemoji"
             draggable="false"
-            src="https://twemoji.maxcdn.com/v/latest/72x72/1f602.png"
+            src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/1f602.png"
           />
            def 
           <img
             alt="🐅"
             class="twemoji"
             draggable="false"
-            src="https://twemoji.maxcdn.com/v/latest/72x72/1f405.png"
+            src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/1f405.png"
           />
            hij
         </div>
