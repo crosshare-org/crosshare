@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import slateLogo from '../public/slate/Logo.png';
 import slateLogoDark from '../public/slate/Logo-Dark.png';
-import { useEffect, useState } from 'react';
 import { type Root } from 'hast';
 import { Markdown } from './Markdown';
 
@@ -50,35 +49,7 @@ export const SlateLogo = (props: { className?: string }) => {
   );
 };
 
-function LocalDateString(props: { date: Date }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return <></>;
-
-  return (
-    <span css={{ whiteSpace: 'nowrap' }}>
-      {props.date.toLocaleDateString('en-us', {
-        month: 'long',
-        day: '2-digit',
-        year: 'numeric',
-      })}
-      &emsp;&emsp;
-      {props.date.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-        timeZone: 'EST',
-      })}
-    </span>
-  );
-}
-
 export const SlateHeader = (props: SlateHeaderProps) => {
-  const publishDate = new Date(props.publishTime);
-
   return (
     <div css={{ width: '100%', textAlign: 'center' }}>
       <SlateLogo css={{ marginBottom: '2.27rem' }} />
@@ -110,7 +81,7 @@ export const SlateHeader = (props: SlateHeaderProps) => {
           marginBottom: '2.24rem',
         }}
       >
-        By {props.author} &bull; <LocalDateString date={publishDate} />
+        By {props.author}
       </h2>
     </div>
   );
