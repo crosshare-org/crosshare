@@ -20,7 +20,7 @@ export const ToolTipText = (props: {
     referenceElement,
     popperElement,
     {
-      strategy: 'fixed',
+      strategy: 'absolute',
       modifiers: [
         { name: 'hide' },
         { name: 'arrow', options: { element: arrowElement } },
