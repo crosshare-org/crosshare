@@ -59,7 +59,7 @@ const cluedataScoreMap = (score: number): 0 | 1 | 2 | 3 => {
   return 2;
 };
 
-function fileContentsToWords(contents: string): Array<[string, number]> {
+function fileContentsToWords(contents: string): [string, number][] {
   const wordLines = contents.match(/[^\r\n]+/g);
   if (!wordLines) {
     throw new Error('malformed wordlist');
@@ -132,13 +132,17 @@ async function buildWordlist(
   });
 }
 
-buildWordlist(peters, cluedata, expanded, spread).then(() => {
-  console.log('starting build');
-  const db = rawBuild(Object.entries(wordlist));
-  console.log('built');
+buildWordlist(peters, cluedata, expanded, spread)
+  .then(async () => {
+    console.log('starting build');
+    const db = rawBuild(Object.entries(wordlist));
+    console.log('built');
 
-  const outContent = JSON.stringify(db);
-  writeFile(out, outContent).then(() => {
-    console.log('wrote result to ' + out);
+    const outContent = JSON.stringify(db);
+    await writeFile(out, outContent).then(() => {
+      console.log('wrote result to ' + out);
+    });
+  })
+  .catch((e) => {
+    console.log(e);
   });
-});
