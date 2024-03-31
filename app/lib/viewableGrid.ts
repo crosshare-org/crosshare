@@ -17,6 +17,7 @@ import {
 } from './types';
 import { AccountPrefsFlagsT } from './prefs';
 import type { Root } from 'hast';
+import { toString } from 'hast-util-to-string';
 
 export interface ViewableEntry extends EntryBase {
   labelNumber: number;
@@ -715,11 +716,12 @@ export function getRefs(grid: CluedGrid): [Set<number>[], RefPosition[][]] {
       ]) {
         if (lowerClue.includes(` ${starTerm} ${entryTerm}`)) {
           for (const [idx, otherE] of grid.entries.entries()) {
+            const clueText = toString(otherE.clueHast);
             if (
-              otherE.clue.startsWith('*') ||
-              otherE.clue.endsWith('*') ||
-              otherE.clue.startsWith('(*)') ||
-              otherE.clue.endsWith('(*)')
+              clueText.startsWith('*') ||
+              clueText.endsWith('*') ||
+              clueText.startsWith('(*)') ||
+              clueText.endsWith('(*)')
             ) {
               refs.add(idx);
             }

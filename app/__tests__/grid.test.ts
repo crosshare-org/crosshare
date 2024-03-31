@@ -246,7 +246,7 @@ test('test getEntryToClueMap', () => {
       { num: 1, dir: 1, clue: 'You and I', explanation: null },
       { num: 2, dir: 1, clue: 'Post office abbr.', explanation: null },
     ],
-    (c: string) => markdownToHast({ text: c })
+    (c: string) => markdownToHast({ text: c, inline: true })
   );
 
   const res = getEntryToClueMap(cluedGrid, answers);
@@ -276,7 +276,7 @@ test('test getClueRefs for puzzle without any', () => {
       { num: 1, dir: 1, clue: 'You and I', explanation: null },
       { num: 2, dir: 1, clue: 'Post office abbr.', explanation: null },
     ],
-    (c: string) => markdownToHast({ text: c })
+    (c: string) => markdownToHast({ text: c, inline: true })
   );
 
   expect(getRefs(cluedGrid)).toMatchSnapshot();
@@ -305,7 +305,7 @@ test('test getClueRefs for puzzle with refs', () => {
       { num: 1, dir: 1, clue: '1- and 3- across You and I', explanation: null },
       { num: 2, dir: 1, clue: '3A Post office abbr.', explanation: null },
     ],
-    (c: string) => markdownToHast({ text: c })
+    (c: string) => markdownToHast({ text: c, inline: true })
   );
 
   const res = getRefs(cluedGrid)[0].map((s) => {
@@ -338,7 +338,7 @@ test('test getClueRefs for puzzle with starred clues', () => {
     grid,
     [
       { num: 1, dir: 0, clue: '*Not down', explanation: null },
-      { num: 3, dir: 0, clue: 'Then...', explanation: null },
+      { num: 3, dir: 0, clue: '**But not this one!**', explanation: null },
       { num: 1, dir: 1, clue: '* You and I', explanation: null },
       {
         num: 2,
@@ -347,7 +347,7 @@ test('test getClueRefs for puzzle with starred clues', () => {
         explanation: null,
       },
     ],
-    (c: string) => markdownToHast({ text: c })
+    (c: string) => markdownToHast({ text: c, inline: true })
   );
 
   const res = getRefs(cluedGrid)[0].map((s) => {
@@ -389,7 +389,7 @@ test('test getClueRefs for 35-downs', () => {
       },
       { num: 2, dir: 1, clue: '1-A Post office abbr.', explanation: null },
     ],
-    (c: string) => markdownToHast({ text: c })
+    (c: string) => markdownToHast({ text: c, inline: true })
   );
 
   const res = getRefs(cluedGrid)[0].map((s) => {
@@ -431,7 +431,7 @@ test('test getClueRefs for 35-downs with !@', () => {
       },
       { num: 2, dir: 1, clue: '1-A Post office abbr.', explanation: null },
     ],
-    (c: string) => markdownToHast({ text: c })
+    (c: string) => markdownToHast({ text: c, inline: true })
   );
   expect(getRefs(cluedGrid)).toMatchSnapshot();
 });
