@@ -26,7 +26,6 @@ const customJestConfig = {
     '<rootDir>/__tests__/edit.test.tsx',
     '<rootDir>/__tests__/converter.test.tsx',
     '<rootDir>/__tests__/analytics.test.ts',
-    '<rootDir>/__tests__/grid.test.ts',
     '<rootDir>/__tests__/stats.test.ts',
     '<rootDir>/__tests__/puzzleUpdate.test.ts',
     '<rootDir>/__tests__/notifications.test.ts',

@@ -1,43 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`test getClueRefs for 35-downs 1`] = `
-Array [
-  Array [
-    Array [
+[
+  [
+    [
       1,
       1,
     ],
-    Array [
+    [
       2,
       1,
     ],
   ],
-  Array [
-    Array [
+  [
+    [
       1,
       0,
     ],
-    Array [
+    [
       3,
       0,
     ],
   ],
-  Array [
-    Array [
+  [
+    [
       1,
       0,
     ],
-    Array [
+    [
       3,
       0,
     ],
   ],
-  Array [
-    Array [
+  [
+    [
       2,
       1,
     ],
-    Array [
+    [
       1,
       1,
     ],
@@ -46,8 +46,8 @@ Array [
 `;
 
 exports[`test getClueRefs for 35-downs with !@ 1`] = `
-Array [
-  Array [
+[
+  [
     Set {
       2,
     },
@@ -60,18 +60,18 @@ Array [
       2,
     },
   ],
-  Array [
-    Array [],
-    Array [],
-    Array [
-      Array [
+  [
+    [],
+    [],
+    [
+      [
         0,
         0,
         3,
       ],
     ],
-    Array [
-      Array [
+    [
+      [
         2,
         0,
         7,
@@ -82,35 +82,35 @@ Array [
 `;
 
 exports[`test getClueRefs for puzzle with refs 1`] = `
-Array [
-  Array [
-    Array [
+[
+  [
+    [
       1,
       1,
     ],
   ],
-  Array [
-    Array [
+  [
+    [
       1,
       0,
     ],
-    Array [
+    [
       3,
       0,
     ],
   ],
-  Array [
-    Array [
+  [
+    [
       3,
       0,
     ],
   ],
-  Array [
-    Array [
+  [
+    [
       2,
       1,
     ],
-    Array [
+    [
       1,
       1,
     ],
@@ -119,68 +119,68 @@ Array [
 `;
 
 exports[`test getClueRefs for puzzle with starred clues 1`] = `
-Array [
-  Array [
-    Array [
+[
+  [
+    [
       2,
       1,
     ],
   ],
-  Array [
-    Array [
+  [
+    [
       2,
       1,
     ],
   ],
-  Array [
-    Array [
+  [
+    [
       1,
       0,
     ],
-    Array [
+    [
       1,
       1,
     ],
   ],
-  Array [],
+  [],
 ]
 `;
 
 exports[`test getClueRefs for puzzle without any 1`] = `
-Array [
-  Array [
+[
+  [
     Set {},
     Set {},
     Set {},
     Set {},
   ],
-  Array [
-    Array [],
-    Array [],
-    Array [],
-    Array [],
+  [
+    [],
+    [],
+    [],
+    [],
   ],
 ]
 `;
 
 exports[`test getEntryToClueMap 1`] = `
 Map {
-  "UP" => Array [
+  "UP" => [
     1,
     0,
     "Not down",
   ],
-  "US" => Array [
+  "US" => [
     1,
     1,
     "You and I",
   ],
-  "PO" => Array [
+  "PO" => [
     2,
     1,
     "Post office abbr.",
   ],
-  "SO" => Array [
+  "SO" => [
     3,
     0,
     "Then...",
