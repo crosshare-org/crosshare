@@ -18,6 +18,7 @@ import {
 import { AccountPrefsFlagsT } from './prefs';
 import type { Root } from 'hast';
 import { toString } from 'hast-util-to-string';
+import { parseClueReferences } from './parse';
 
 export interface ViewableEntry extends EntryBase {
   labelNumber: number;
@@ -670,40 +671,19 @@ export function getRefs(grid: CluedGrid): [Set<number>[], RefPosition[][]] {
   for (const e of grid.entries) {
     const refs = new Set<number>();
     const refPos: RefPosition[] = [];
-    let match;
-    const re =
-      /(?=(?<numSection>(,? ?(and)? ?\b\d+-? ?)+))\k<numSection>(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
-    while (!e.clue.startsWith('!@') && (match = re.exec(e.clue)) !== null) {
-      const dirString = match.groups?.dir?.toLowerCase();
-      if (!dirString) {
-        throw new Error('missing dir string');
-      }
-      const dir = dirString.startsWith('a') ? Direction.Across : Direction.Down;
-      const numSection = match.groups?.numSection;
-      if (!numSection) {
-        throw new Error('missing numSection');
-      }
-      let numMatch: RegExpExecArray | null;
-      const numRe = /\d+/g;
-      while ((numMatch = numRe.exec(numSection)) !== null && numMatch[0]) {
-        const labelNumber = parseInt(numMatch[0]);
+    if (!e.clue.startsWith('!@')) {
+      for (const res of parseClueReferences(e.clue)) {
         const entryIndex = grid.entries.findIndex(
-          (e) => e.labelNumber === labelNumber && e.direction === dir
+          (e) =>
+            e.labelNumber === res.labelNumber && e.direction === res.direction
         );
         if (entryIndex !== -1) {
           refs.add(entryIndex);
-          refPos.push([
-            entryIndex,
-            match.index + numMatch.index,
-            match.index + numMatch.index + numMatch[0].length,
-          ]);
+          refPos.push([entryIndex, res.start, res.end]);
         }
       }
-      const last = refPos[refPos.length - 1];
-      if (last && match[0]) {
-        last[2] = match.index + match[0].length;
-      }
     }
+
     const lowerClue = e.clue.toLowerCase();
     for (const starTerm of ['starred', '*ed', '*']) {
       for (const entryTerm of [

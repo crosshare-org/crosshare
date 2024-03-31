@@ -5,13 +5,7 @@ import { Node } from 'unist';
 import { Text, Element } from 'hast';
 import { is } from 'unist-util-is';
 import { flatMap } from './utils';
-
-interface ReferenceData {
-  direction: Direction;
-  labelNumber: number;
-  start: number;
-  end: number;
-}
+import { ClueReferenceData } from '../parse';
 
 interface EntryReferencerOptions {
   clueMap: Map<string, [number, Direction, string]>;
@@ -35,7 +29,7 @@ export const entryReferencer: Plugin<[EntryReferencerOptions]> = (options) => {
       ) {
         return [node];
       }
-      const refs: ReferenceData[] = [];
+      const refs: ClueReferenceData[] = [];
       const value = node.value;
       let match;
       while ((match = regex.exec(value)) !== null) {

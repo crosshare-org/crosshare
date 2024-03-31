@@ -1,6 +1,6 @@
 import { Direction } from './types';
 
-export interface ClueReference {
+export interface ClueReferenceData {
   direction: Direction;
   labelNumber: number;
   start: number;
@@ -8,10 +8,10 @@ export interface ClueReference {
 }
 
 const re =
-  /(^|\s|\/|\()(?=(?<numSection>(,? ?(and)? ?\b\d+-? ?)+))\k<numSection>(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
+  /(^|\s|\/|\()(?<numSection>(,? ?(and)? ?\b\d{1,3}-? ?){1,7})(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
 
-export const parseClueReferences = (text: string): ClueReference[] => {
-  const refs: ClueReference[] = [];
+export const parseClueReferences = (text: string): ClueReferenceData[] => {
+  const refs: ClueReferenceData[] = [];
   let match;
   re.lastIndex = 0;
 
@@ -36,8 +36,7 @@ export const parseClueReferences = (text: string): ClueReference[] => {
         direction,
         labelNumber,
         start: match.index + numMatch.index + preLength,
-        end:
-          match.index + numMatch.index + numMatch[0].length + preLength,
+        end: match.index + numMatch.index + numMatch[0].length + preLength,
       });
     }
 

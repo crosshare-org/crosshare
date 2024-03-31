@@ -5,9 +5,9 @@ import rehypeReact, { Components } from 'rehype-react';
 import { unified } from 'unified';
 
 import type { Root } from 'hast';
-import { ReferenceData } from '../lib/markdown/clueReferencer';
 
 import * as prod from 'react/jsx-runtime';
+import { ClueReferenceData } from '../lib/parse';
 const production = { Fragment: prod.Fragment, jsx: prod.jsx, jsxs: prod.jsxs };
 
 export const Markdown = (props: {
@@ -27,7 +27,9 @@ export const Markdown = (props: {
       );
     },
     span: ({ node, children, className, ...props }) => {
-      const ref = node?.data as (ReferenceData & { text: string }) | undefined;
+      const ref = node?.data as
+        | (ClueReferenceData & { text: string })
+        | undefined;
       if (className === 'clueref' && ref !== undefined) {
         return (
           <ClueReference
