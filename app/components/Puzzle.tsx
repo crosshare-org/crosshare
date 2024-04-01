@@ -1327,7 +1327,7 @@ export const Puzzle = ({
             {isSlate ? (
               <SlateHeader
                 title={puzzle.title}
-                author={puzzle.guestConstructor || 'Slate Crosswords'}
+                author={puzzle.guestConstructor || puzzle.authorName}
                 publishTime={puzzle.isPrivateUntil ?? puzzle.publishTime}
               />
             ) : (
