@@ -22,7 +22,6 @@ import {
   FaCheck,
   FaEye,
   FaEllipsisH,
-  FaCheckSquare,
   FaUserLock,
   FaComment,
   FaHammer,
@@ -31,7 +30,6 @@ import {
   FaRegFile,
   FaMoon,
   FaCog,
-  FaRegSquare,
 } from 'react-icons/fa';
 import { ClueText } from './ClueText';
 import { IoMdStats } from 'react-icons/io';
@@ -49,6 +47,7 @@ import {
   RevealPuzzle,
   Rebus,
   SpinnerFinished,
+  AutoCheck,
 } from './Icons';
 import { AuthPropsOptional } from './AuthHelpers';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
@@ -994,7 +993,7 @@ export const Puzzle = ({
             {() => (
               <>
                 <TopBarDropDownLink
-                  icon={isSlate ? <FaRegSquare /> : <FaCheckSquare />}
+                  icon={<AutoCheck />}
                   text={t`Autocheck`}
                   onClick={() => {
                     const action: ToggleAutocheckAction = {
@@ -1041,7 +1040,7 @@ export const Puzzle = ({
           </TopBarDropDown>
         ) : (
           <TopBarLink
-            icon={isSlate ? <AutoCheckActive /> : <FaCheckSquare />}
+            icon={isSlate ? <AutoCheckActive /> : <AutoCheck />}
             text={t`Autochecking`}
             onClick={() => {
               const action: ToggleAutocheckAction = { type: 'TOGGLEAUTOCHECK' };
