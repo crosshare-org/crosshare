@@ -128,8 +128,10 @@ export default function CrosshareApp({
     };
     resize();
     window.addEventListener('resize', resize);
+    const interval = setInterval(resize, 250);
     return () => {
       window.removeEventListener('resize', resize);
+      clearInterval(interval);
     };
   }, []);
 
