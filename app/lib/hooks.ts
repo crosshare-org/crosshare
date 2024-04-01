@@ -1,11 +1,4 @@
-import {
-  useState,
-  useCallback,
-  useEffect,
-  useMemo,
-  MouseEvent,
-  RefObject,
-} from 'react';
+import { useState, useCallback, useEffect, RefObject } from 'react';
 import { ConstructorPageT } from './constructorPage';
 import useResizeObserver from 'use-resize-observer';
 import type { User } from 'firebase/auth';
@@ -165,49 +158,6 @@ export const getDisplayName = (
 ) => {
   return constructorPage?.n || user?.displayName || null;
 };
-
-export function useHover(): [
-  boolean,
-  {
-    onClick: (e: MouseEvent) => void;
-    onMouseMove: (e: MouseEvent) => void;
-    onMouseLeave: (e: MouseEvent) => void;
-  },
-  () => void
-] {
-  const [isHovered, setHovered] = useState(false);
-  const [clickWhileHovered, setClickWhileHovered] = useState(false);
-
-  const bind = useMemo(
-    () => ({
-      onClick: (e: MouseEvent) => {
-        if (clickWhileHovered) {
-          setHovered(false);
-          setClickWhileHovered(false);
-        }
-        e.stopPropagation();
-      },
-      onMouseMove: () => {
-        if (isHovered) {
-          setClickWhileHovered(true);
-        }
-        setHovered(true);
-      },
-      onMouseLeave: () => {
-        setHovered(false);
-      },
-    }),
-    [isHovered, clickWhileHovered]
-  );
-
-  return [
-    isHovered,
-    bind,
-    () => {
-      setHovered(false);
-    },
-  ];
-}
 
 export function useEmbedOptions(
   embedOptions: EmbedOptionsT | undefined

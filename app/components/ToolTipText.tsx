@@ -1,41 +1,54 @@
-import { ReactNode, useState, useEffect } from 'react';
-import { useHover } from '../lib/hooks';
-import { usePopper } from 'react-popper';
+import { ReactNode, useState, useRef } from 'react';
+import {
+  useHover,
+  useClick,
+  useDismiss,
+  useFloating,
+  offset,
+  shift,
+  limitShift,
+  flip,
+  hide,
+  useInteractions,
+  autoUpdate,
+  FloatingPortal,
+  FloatingArrow,
+  arrow,
+} from '@floating-ui/react';
 
 export const ToolTipText = (props: {
   text: ReactNode;
   tooltip: ReactNode;
   className?: string;
 }) => {
-  const [referenceElement, setReferenceElement] =
-    useState<HTMLSpanElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLSpanElement | null>(
-    null
-  );
-  const [arrowElement, setArrowElement] = useState<HTMLSpanElement | null>(
-    null
-  );
-  const [isHovered, hoverBind, unhover] = useHover();
-  const { styles, attributes, update } = usePopper(
-    referenceElement,
-    popperElement,
-    {
-      strategy: 'absolute',
-      modifiers: [
-        { name: 'hide' },
-        { name: 'arrow', options: { element: arrowElement } },
-        { name: 'offset', options: { offset: [0, 10] } },
-      ],
-    }
-  );
+  const [isOpen, setIsOpen] = useState(false);
+  const arrowRef = useRef(null);
+  const { refs, floatingStyles, context, middlewareData } = useFloating({
+    open: isOpen,
+    onOpenChange: setIsOpen,
+    whileElementsMounted: autoUpdate,
+    middleware: [
+      offset(10),
+      flip(),
+      shift({
+        limiter: limitShift(),
+      }),
+      arrow({
+        element: arrowRef,
+      }),
+      hide(),
+    ],
+  });
 
-  useEffect(() => {
-    if (isHovered) {
-      update?.().catch((e) => {
-        console.error(e);
-      });
-    }
-  }, [update, isHovered]);
+  const click = useClick(context);
+  const hover = useHover(context);
+  const dismiss = useDismiss(context);
+
+  const { getReferenceProps, getFloatingProps } = useInteractions([
+    hover,
+    click,
+    dismiss,
+  ]);
 
   return (
     <>
@@ -45,60 +58,44 @@ export const ToolTipText = (props: {
           ...(typeof props.text === 'string' && { borderBottom: '1px dotted' }),
           whiteSpace: 'nowrap',
         }}
-        ref={setReferenceElement}
-        {...hoverBind}
+        ref={refs.setReference}
+        {...getReferenceProps({
+          onClick: (e) => {
+            e.stopPropagation();
+          },
+        })}
       >
         {props.text}
       </span>
-      <span
-        css={{
-          display: 'block',
-          zIndex: 100000,
-          borderRadius: '5px',
-          backgroundColor: 'var(--black)',
-          color: 'var(--white)',
-          textAlign: 'center',
-          maxWidth: '30em',
-          padding: '10px',
-          visibility: isHovered ? 'visible' : 'hidden',
-          '&[data-popper-reference-hidden=true]': {
-            visibility: 'hidden',
-          },
-        }}
-        ref={setPopperElement}
-        onTouchEnd={(e) => {
-          e.preventDefault();
-          unhover();
-        }}
-        style={styles.popper}
-        {...attributes.popper}
-      >
-        {props.tooltip}
-        <span
-          css={{
-            display: 'block',
-            position: 'absolute',
-            width: '10px',
-            height: '10px',
-            '[data-popper-placement^="bottom"] &': {
-              top: '-5px',
-            },
-            '[data-popper-placement^="top"] &': {
-              bottom: '-5px',
-            },
-            '&::after': {
-              content: '" "',
-              position: 'absolute',
-              transform: 'rotate(45deg)',
-              width: '10px',
-              height: '10px',
+      {isOpen && (
+        <FloatingPortal>
+          <span
+            css={{
+              display: 'block',
+              zIndex: 100000,
+              borderRadius: '5px',
               backgroundColor: 'var(--black)',
-            },
-          }}
-          ref={setArrowElement}
-          style={styles.arrow}
-        />
-      </span>
+              color: 'var(--white)',
+              textAlign: 'center',
+              maxWidth: '30em',
+              padding: '10px',
+              visibility: middlewareData.hide?.referenceHidden
+                ? 'hidden'
+                : 'visible',
+            }}
+            ref={refs.setFloating}
+            style={floatingStyles}
+            {...getFloatingProps()}
+          >
+            <FloatingArrow
+              ref={arrowRef}
+              context={context}
+              fill={'var(--black)'}
+            />
+            {props.tooltip}
+          </span>
+        </FloatingPortal>
+      )}
     </>
   );
 };
