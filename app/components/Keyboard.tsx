@@ -167,7 +167,7 @@ export const Keyboard = memo(function Keyboard({
             };
           });
         })
-        .catch((e) => {
+        .catch((e: unknown) => {
           console.error('error loading keypress', e);
         });
     }

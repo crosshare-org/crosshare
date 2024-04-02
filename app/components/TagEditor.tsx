@@ -68,13 +68,12 @@ export function TagEditor(props: TagEditorProps) {
           setLoading(false);
         }
       })
-      .catch((e) => {
+      .catch((e: unknown) => {
         if (didCancel) {
           return;
         }
         console.log(e);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        setError(e);
+        setError(String(e));
         setLoading(false);
       });
     return () => {
@@ -175,7 +174,7 @@ export function TagEditor(props: TagEditorProps) {
                 setSavedTags(tags);
                 showSnackbar('Saved tags');
               })
-              .catch((e) => {
+              .catch((e: unknown) => {
                 console.error('error saving tags', e);
               });
           }}

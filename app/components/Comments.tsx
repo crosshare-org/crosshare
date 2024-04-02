@@ -543,9 +543,11 @@ export const Comments = ({
         continue;
       }
       if (findCommentById(comments, notification.c)) {
-        updateDoc(getDocRef('n', notification.id), { r: true }).catch((e) => {
-          console.log('error updating', e);
-        });
+        updateDoc(getDocRef('n', notification.id), { r: true }).catch(
+          (e: unknown) => {
+            console.log('error updating', e);
+          }
+        );
       }
     }
   }, [comments, authContext.notifications]);
@@ -622,7 +624,7 @@ export const Comments = ({
           }
           setToShow(rebuiltComments);
         })
-        .catch((e) => {
+        .catch((e: unknown) => {
           console.error('error rebuilding comments', e);
         });
     }

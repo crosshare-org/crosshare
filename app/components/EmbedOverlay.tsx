@@ -239,7 +239,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
         setSaving(false);
         setDirty(false);
       })
-      .catch((e) => {
+      .catch((e: unknown) => {
         console.log('error updating embed prefs', e);
       });
   }, [

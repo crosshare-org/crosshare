@@ -132,7 +132,7 @@ export const CreatePageForm = (props: { className?: string }) => {
       .then(() => {
         setCreated(true);
       })
-      .catch((e) => {
+      .catch((e: unknown) => {
         console.log(e);
         setShowError(true);
       })

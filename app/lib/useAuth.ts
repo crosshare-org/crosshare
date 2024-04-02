@@ -34,7 +34,7 @@ export function useAuth(): AuthContextValue {
             setIsAdmin(false);
           }
         })
-        .catch((error) => {
+        .catch((error: unknown) => {
           setIsAdmin(false);
           console.error(error);
         });
@@ -162,7 +162,7 @@ export function useAuth(): AuthContextValue {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const res = await (await fetch(`/api/userinfo/${user?.uid}`))
         .json()
-        .catch((e) => {
+        .catch((e: unknown) => {
           console.log(e);
         });
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions

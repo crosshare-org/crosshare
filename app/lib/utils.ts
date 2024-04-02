@@ -164,7 +164,7 @@ export function logAsyncErrors<A extends unknown[]>(
 ): (...args: A) => void {
   return (...args: A) => {
     try {
-      p(...args).catch((err) => {
+      p(...args).catch((err: unknown) => {
         console.error('Error thrown asynchronously', err);
       });
     } catch (err) {

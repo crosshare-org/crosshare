@@ -83,7 +83,7 @@ export const Cell = memo(function Cell(props: CellProps) {
   } else if (props.isBlock) {
     bg = 'var(--cell-wall)';
   } else if (props.cellColor !== undefined) {
-    bg = 'rgba(241, 167, 45, ' + props.cellColor + ')';
+    bg = `rgba(241, 167, 45, ${props.cellColor})`;
   } else if (props.isEnteringRebus) {
     /* noop */
   } else if (props.active) {
@@ -125,8 +125,8 @@ export const Cell = memo(function Cell(props: CellProps) {
   return (
     <div
       css={{
-        width: 100 / props.gridWidth + '%',
-        paddingBottom: 100 / props.gridWidth + '%',
+        width: `${100 / props.gridWidth}%`,
+        paddingBottom: `${100 / props.gridWidth}%`,
         float: 'left',
         position: 'relative',
         margin: 0,
@@ -139,7 +139,7 @@ export const Cell = memo(function Cell(props: CellProps) {
     >
       {/* eslint-disable-next-line */}
       <div
-        aria-label={'cell' + props.row + 'x' + props.column}
+        aria-label={`cell${props.row}x${props.column}`}
         onClick={() => {
           props.onClick({ row: props.row, col: props.column });
         }}
@@ -266,7 +266,7 @@ export const Cell = memo(function Cell(props: CellProps) {
               )}
               <div
                 css={{
-                  fontSize: 1.0 / Math.max(value.length - 0.4, 1) + 'em',
+                  fontSize: `${1.0 / Math.max(value.length - 0.4, 1)}em`,
                 }}
               >
                 {props.active && props.isEnteringRebus ? (

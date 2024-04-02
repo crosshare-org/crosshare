@@ -505,7 +505,7 @@ export const Puzzle = ({
         .then(() => {
           console.log('Finished writing play state to db');
         })
-        .catch((reason) => {
+        .catch((reason: unknown) => {
           console.error('Failed to write play: ', reason);
         });
     },
@@ -631,7 +631,7 @@ export const Puzzle = ({
             cachePlayForUser(u);
             writePlayToDBIfNeeded(u);
           })
-          .catch((e) => {
+          .catch((e: unknown) => {
             console.error('error signing in anonymously', e);
           });
       }
@@ -672,7 +672,7 @@ export const Puzzle = ({
             cachePlayForUser(u);
             writePlayToDBIfNeeded(u);
           })
-          .catch((e) => {
+          .catch((e: unknown) => {
             console.error('error signing in anonymously', e);
           });
       }

@@ -47,7 +47,7 @@ export const GoogleSignInButton = ({ postSignIn, text }: GoogleButtonProps) => {
           /* noop */
         };
       })
-      .catch((e) => {
+      .catch((e: unknown) => {
         console.error('error signing in', e);
       });
   }
@@ -87,12 +87,14 @@ export const GoogleLinkButton = ({
           /* noop */
         };
       })
-      .catch(async (error: AuthError) => {
-        if (error.code !== 'auth/credential-already-in-use') {
+      .catch(async (error: unknown) => {
+        if ((error as AuthError).code !== 'auth/credential-already-in-use') {
           console.log(error);
           return;
         }
-        const credential = OAuthProvider.credentialFromError(error);
+        const credential = OAuthProvider.credentialFromError(
+          error as AuthError
+        );
         if (!credential) {
           throw new Error('missing new user after link');
         }

@@ -143,6 +143,6 @@ buildWordlist(peters, cluedata, expanded, spread)
       console.log('wrote result to ' + out);
     });
   })
-  .catch((e) => {
+  .catch((e: unknown) => {
     console.log(e);
   });

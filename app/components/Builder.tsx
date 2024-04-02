@@ -686,7 +686,7 @@ const lettersAtIndex = (fill: [string, number][], index: number): string => {
       continue;
     }
     if (!seen.includes(char)) {
-      seen += word[index];
+      seen += char;
     }
   }
   return seen;
@@ -766,7 +766,7 @@ const potentialFill = (
       let crossPattern = '';
       for (const crossCell of cross.cells) {
         if (crossCell.row === cellPos.row && crossCell.col === cellPos.col) {
-          crossPattern += word[j];
+          crossPattern += letter;
         } else {
           crossPattern += valAt(grid, crossCell);
         }

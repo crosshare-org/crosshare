@@ -64,7 +64,19 @@ module.exports = {
         argsIgnorePattern: '^_',
       },
     ],
-
+    '@typescript-eslint/restrict-template-expressions': [
+      'error',
+      {
+        allowNumber: true,
+      },
+    ],
+    // TODO might be nice to disallow number/string combos but there are way too many places it's used currently
+    '@typescript-eslint/restrict-plus-operands': [
+      'error',
+      {
+        allowNumberAndString: true,
+      },
+    ],
     // TODO get this turned on, it's just a lot to update all at once.
     '@typescript-eslint/prefer-nullish-coalescing': 'off',
   },

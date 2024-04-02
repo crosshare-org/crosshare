@@ -143,7 +143,7 @@ function upload(
             'Pic updated. It can take up to several hours to appear on the site.'
           );
         })
-        .catch((e) => {
+        .catch((e: unknown) => {
           console.error('error uploading image', e);
         });
     },

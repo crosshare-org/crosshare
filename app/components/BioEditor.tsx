@@ -49,7 +49,7 @@ export const BioEditor = (props: BioEditorProps) => {
         console.log('Updated');
         setIsOpen(false);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error(ASYNC_ERROR, err);
       });
   }
@@ -65,7 +65,7 @@ export const BioEditor = (props: BioEditorProps) => {
         console.log('Updated');
         setIsOpen(false);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error(ASYNC_ERROR, err);
       });
   }
@@ -81,7 +81,7 @@ export const BioEditor = (props: BioEditorProps) => {
         console.log('Updated');
         setIsOpen(false);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error(ASYNC_ERROR, err);
       });
   }
@@ -97,14 +97,18 @@ export const BioEditor = (props: BioEditorProps) => {
         console.log('Updated');
         setIsOpen(false);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error(ASYNC_ERROR, err);
       });
   }
 
   function submitPaypalInfo(event: FormEvent) {
     event.preventDefault();
-    if (!paypalText.trim() || !paypalEmail || !paypalEmail.includes('@')) {
+    if (
+      !paypalText.trim() ||
+      paypalEmail === '' ||
+      !paypalEmail.includes('@')
+    ) {
       return;
     }
     setSubmitting(true);
@@ -120,7 +124,7 @@ export const BioEditor = (props: BioEditorProps) => {
         setShowPaypalEditor(false);
         setSubmitting(false);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error(ASYNC_ERROR, err);
       });
   }
@@ -138,7 +142,7 @@ export const BioEditor = (props: BioEditorProps) => {
         console.log('Updated');
         setIsOpen(false);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error(ASYNC_ERROR, err);
       });
   }
@@ -159,7 +163,7 @@ export const BioEditor = (props: BioEditorProps) => {
         console.log('Updated');
         setIsSigOpen(false);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error(ASYNC_ERROR, err);
       });
   }
@@ -180,7 +184,7 @@ export const BioEditor = (props: BioEditorProps) => {
         console.log('Updated');
         setIsShareButtonsOpen(false);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error(ASYNC_ERROR, err);
       });
   }

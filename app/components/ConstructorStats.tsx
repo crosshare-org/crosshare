@@ -132,13 +132,12 @@ export const ConstructorStats = (props: { userId: string }) => {
           setStats(s);
           setLoading(false);
         })
-        .catch((e) => {
+        .catch((e: unknown) => {
           if (didCancel) {
             return;
           }
           console.log(e);
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          setError(e);
+          setError(String(e));
           setLoading(false);
         });
     };

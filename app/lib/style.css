@@ -208,6 +208,7 @@ select {
 [type='submit'],
 button {
   -webkit-appearance: button;
+  appearance: button;
 }
 [type='button']:not(:disabled),
 [type='reset']:not(:disabled),
@@ -232,6 +233,7 @@ input[type='datetime-local'],
 input[type='month'],
 input[type='time'] {
   -webkit-appearance: listbox;
+  appearance: listbox;
 }
 textarea {
   overflow: auto;
@@ -264,6 +266,7 @@ progress {
 [type='search'] {
   outline-offset: -2px;
   -webkit-appearance: none;
+  appearance: none;
 }
 [type='search']::-webkit-search-decoration {
   -webkit-appearance: none;

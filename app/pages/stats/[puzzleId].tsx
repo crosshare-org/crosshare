@@ -118,7 +118,7 @@ const StatsLoader = ({ puzzle }: { puzzle: PuzzleResult }) => {
           setStats(s);
           setDidLoad(true);
         })
-        .catch((e) => {
+        .catch((e: unknown) => {
           if (didCancel) {
             return;
           }

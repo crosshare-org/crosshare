@@ -52,7 +52,7 @@ export function PublishOverlay(props: {
             `/crosswords/${props.id}/${slugify(toPublish.t)}`
           );
         })
-        .catch((e) => {
+        .catch((e: unknown) => {
           console.error('error publishing', e);
         });
     },
