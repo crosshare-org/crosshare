@@ -154,12 +154,45 @@ export const getArticlePageProps: GetServerSideProps<
   return { props: { ...article, hast: markdownToHast({ text: article.c }) } };
 };
 
+function filterDeletedWithoutChildren(
+  comments: CommentWithRepliesT[]
+): CommentWithRepliesT[] {
+  const filtered = comments.filter((x) => x.r?.length || !x.deleted);
+  return filtered
+    .map(
+      (c: CommentWithRepliesT): CommentWithRepliesT => ({
+        ...c,
+        r: filterDeletedWithoutChildren(c.r || []),
+      })
+    )
+    .map((c) => {
+      if (!c.r?.length) {
+        delete c.r;
+      }
+      return c;
+    });
+}
+
+export function filterDeletedComments(
+  comments: CommentWithRepliesT[]
+): CommentWithRepliesT[] {
+  const childlessRemoved = filterDeletedWithoutChildren(comments);
+  return childlessRemoved.map((comment) => ({
+    ...comment,
+    c: comment.deleted
+      ? comment.removed
+        ? '*Comment removed*'
+        : '*Comment deleted*'
+      : comment.c,
+  }));
+}
+
 export async function convertComments(
   comments: CommentWithRepliesT[],
   clueMap: Map<string, [number, Direction, string]>
 ): Promise<Comment[]> {
   return Promise.all(
-    comments.map(async (c) => {
+    filterDeletedComments(comments).map(async (c) => {
       return {
         commentText: c.c,
         commentHast: markdownToHast({ text: c.c, clueMap }),

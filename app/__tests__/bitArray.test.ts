@@ -24,9 +24,16 @@ function activebits(a: BigInteger) {
   return active;
 }
 
-const testCases: Array<
-  [string, BA.BitArray, BigInteger, number, number, string, string, number[]]
-> = [];
+const testCases: [
+  string,
+  BA.BitArray,
+  BigInteger,
+  number,
+  number,
+  string,
+  string,
+  number[]
+][] = [];
 for (let i = 0; i < 1000; i += 1) {
   const a = randomB32();
   const b = BA.fromString(a, 32);
@@ -49,9 +56,6 @@ test('test setBit', () => {
   for (const testCase of testCases) {
     const s32 = testCase[0];
     const activeBits = testCase[7];
-    if (s32 === undefined || activeBits === undefined) {
-      throw new Error();
-    }
     const bitmap = BA.zero();
     for (const activeBit of activeBits) {
       BA.setBit(bitmap, activeBit);

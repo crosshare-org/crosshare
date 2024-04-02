@@ -21,6 +21,10 @@ const CommentV = t.intersection([
     un: t.string,
     /** solved downs-only */
     do: t.boolean,
+    /** has this comment been deleted? */
+    deleted: t.boolean,
+    /** was the deletion done by a moderator? */
+    removed: t.boolean,
   }),
 ]);
 type CommentT = t.TypeOf<typeof CommentV>;
