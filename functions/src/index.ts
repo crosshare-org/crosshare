@@ -134,10 +134,12 @@ export const scheduledFirestoreExport = functions.pubsub
           'settings',
         ],
       })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((responses: any) => {
         const response = responses[0];
         console.log(`Operation Name: ${response['name']}`);
       })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .catch((err: any) => {
         console.error(err);
         throw new Error('Export operation failed');
