@@ -113,37 +113,39 @@ export const scheduledFirestoreExport = functions.pubsub
       process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT || 'mdcrosshare';
     const databaseName = client.databasePath(projectId, '(default)');
 
-    return client
-      .exportDocuments({
-        name: databaseName,
-        outputUriPrefix: 'gs://crosshare-backups',
-        // Leave collectionIds empty to export all collections
-        // or set to a list of collection IDs to export,
-        // collectionIds: ['users', 'posts']
-        collectionIds: [
-          'a', // articles
-          'c', // puzzles
-          'cp', // blogs
-          'cs', // constructor stats
-          'donations',
-          'ds', // daily stats
-          'em', // embed settings
-          'followers',
-          'prefs',
-          's', // puzzle stats
-          'settings',
-        ],
-      })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .then((responses: any) => {
-        const response = responses[0];
-        console.log(`Operation Name: ${response['name']}`);
-      })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .catch((err: any) => {
-        console.error(err);
-        throw new Error('Export operation failed');
-      });
+    return (
+      client
+        .exportDocuments({
+          name: databaseName,
+          outputUriPrefix: 'gs://crosshare-backups',
+          // Leave collectionIds empty to export all collections
+          // or set to a list of collection IDs to export,
+          // collectionIds: ['users', 'posts']
+          collectionIds: [
+            'a', // articles
+            'c', // puzzles
+            'cp', // blogs
+            'cs', // constructor stats
+            'donations',
+            'ds', // daily stats
+            'em', // embed settings
+            'followers',
+            'prefs',
+            's', // puzzle stats
+            'settings',
+          ],
+        })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .then((responses: any) => {
+          const response = responses[0];
+          console.log(`Operation Name: ${response['name']}`);
+        })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .catch((err: any) => {
+          console.error(err);
+          throw new Error('Export operation failed');
+        })
+    );
   });
 
 export const notificationsSend = functions
