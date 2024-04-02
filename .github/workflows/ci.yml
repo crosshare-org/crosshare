@@ -16,15 +16,15 @@ jobs:
     - name: Build i18n files
       working-directory: ./app
       run: yarn compileI18n
+    - name: Copy dummy fb config
+      working-directory: ./app
+      run: cp ../firebaseConfig.emulators.ts ./firebaseConfig.ts
     - name: Lint
       working-directory: ./app
       run: yarn lint
     - name: Check formatting
       working-directory: ./app
       run: yarn checkFormat
-    - name: Copy dummy fb config
-      working-directory: ./app
-      run: cp ../firebaseConfig.emulators.ts ./firebaseConfig.ts
     - name: Run tests
       working-directory: ./app
       run: |
