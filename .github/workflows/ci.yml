@@ -29,4 +29,4 @@ jobs:
       working-directory: ./app
       run: |
         npm install -g firebase-tools
-        firebase emulators:exec --only database --project demo-crosshare 'NODE_OPTIONS='--experimental-vm-modules'  npx jest --ci'
+        firebase emulators:exec --only firestore --project demo-crosshare 'NODE_OPTIONS='--experimental-vm-modules'  npx jest --ci'
