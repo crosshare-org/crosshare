@@ -57,7 +57,7 @@ enum Category {
 }
 
 async function topPuzzlesForWeek(): Promise<
-  Record<Category, Array<[string, string, string]>>
+  Record<Category, [string, string, string][]>
 > {
   const totalC: Record<string, number> = {};
   const allIs: Record<string, [string, string, string]> = {};
@@ -77,7 +77,7 @@ async function topPuzzlesForWeek(): Promise<
     }
     d.setDate(d.getDate() - 1);
   }
-  const initVal: Record<Category, Array<[string, string, string]>> = {
+  const initVal: Record<Category, [string, string, string][]> = {
     [Category.Mini]: [],
     [Category.Midi]: [],
     [Category.Full]: [],
@@ -110,7 +110,7 @@ async function topPuzzlesForWeek(): Promise<
         if (p.pv) {
           return false;
         }
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unnecessary-condition
         if (p.pvu && p.pvu.toDate() > new Date()) {
           return false;
         }
@@ -197,11 +197,19 @@ async function generateWeeklyEmail() {
   }
 
   md += `ONE SENTENCE SIGN OFF / SIGNATURE`;
-  writeFile('email.txt', md).then(() => {
-    console.log('wrote md');
-  });
+  writeFile('email.txt', md)
+    .then(() => {
+      console.log('wrote md');
+    })
+    .catch((e: unknown) => {
+      console.error(e);
+    });
 }
 
-generateWeeklyEmail().then(() => {
-  console.log('Finished generation');
-});
+generateWeeklyEmail()
+  .then(() => {
+    console.log('Finished generation');
+  })
+  .catch((e: unknown) => {
+    console.error(e);
+  });
