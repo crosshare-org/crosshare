@@ -4,6 +4,8 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { initializeApp, applicationDefault, getApps } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { firebaseConfig } from '../firebaseConfig';
+import { firebaseConfig as firebaseEmulatorConfig } from '../firebaseConfig.emulators';
+
 import {
   getFirestore,
   Query,
@@ -16,6 +18,10 @@ export function getAdminApp() {
   const app = getApps()[0];
   if (app) {
     return app;
+  }
+  if (process.env.NEXT_PUBLIC_USE_EMULATORS) {
+    console.log('Initializing admin app for emulators');
+    return initializeApp(firebaseEmulatorConfig);
   }
   return initializeApp({
     ...firebaseConfig,

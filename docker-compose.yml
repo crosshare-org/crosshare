@@ -28,6 +28,10 @@ services:
       - dev
     environment:
       - NEXT_PUBLIC_USE_EMULATORS=1
+      - METADATA_SERVER_DETECTION=none
+      - GCE_METADATA_HOST=0.0.0.0
+      - FIRESTORE_EMULATOR_HOST="127.0.0.1:8080"
+      - GCLOUD_PROJECT="demo-crosshare"
     command: firebase emulators:exec --import=./emulator-data --only auth,firestore,functions,storage,pubsub --project demo-crosshare --ui 'next dev'
     build:
       context: .
@@ -37,7 +41,7 @@ services:
     volumes:
       - "./app:/src/app:z"
       - "./functions:/src/functions:z"
-      - "./firebaseConfig.emulators.ts:/src/app/firebaseConfig.ts:z"
+      - "./app/firebaseConfig.emulators.ts:/src/app/firebaseConfig.ts:z"
       - "/src/app/node_modules"
       - "/src/app/nextjs"
     working_dir: /src/app

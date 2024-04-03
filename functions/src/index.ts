@@ -7,12 +7,14 @@ import { queueEmails } from './queueEmails';
 import { handlePuzzleUpdate } from '../../app/lib/puzzleUpdate';
 import { doGlicko } from '../../app/lib/glicko';
 import { moderateComments } from '../../app/lib/comments';
+import { checkSpam } from '../../app/lib/spam';
 
 import {
   CronStatusV,
   CronStatusT,
   CommentForModerationV,
   AdminSettingsV,
+  CommentForModerationWithIdT,
 } from '../../app/lib/dbtypes';
 
 import {
@@ -48,6 +50,7 @@ export const autoModerator = functions.pubsub
       return;
     }
 
+    console.log('getting cfms');
     const commentsForModeration = await mapEachResult(
       getCollection('cfm'),
       CommentForModerationV,
@@ -56,22 +59,35 @@ export const autoModerator = functions.pubsub
       }
     );
 
-    const filtered = commentsForModeration.filter(
-      (cfm) => !settings.noAuto.includes(cfm.a)
-    );
+    console.log(`Got ${commentsForModeration.length} cfms`);
 
-    console.log(
-      `have ${commentsForModeration.length} comments, automoderating ${filtered.length} of them`
-    );
+    const filtered: CommentForModerationWithIdT[] = [];
+    for (const cfm of commentsForModeration) {
+      // If it's been approved or rejected already then we can automod it
+      if (cfm.approved || cfm.rejected) {
+        filtered.push(cfm);
+        break;
+      }
+      // We've already automodded it and it needs approval
+      if (cfm.needsModeration) {
+        break;
+      }
+      // Check if we need to send it off for manual moderation
+      if (settings.noAuto.includes(cfm.a) || checkSpam(cfm.c)) {
+        await getCollection('cfm').doc(cfm.i).update({ needsModeration: true });
+        break;
+      }
+      // Otherwise we are good to automod it
+      filtered.push(cfm);
+    }
+
+    console.log(`done filtering, automoderating ${filtered.length} of them`);
 
     await moderateComments(
       filtered,
-      new Set(),
       (cid) => getCollection('cfm').doc(cid).delete(),
       (puzzleId, update) =>
-        getCollection('c').doc(puzzleId).update(toFirestore(update)),
-      (commentId, comment) =>
-        getCollection('automoderated').doc(commentId).create(comment)
+        getCollection('c').doc(puzzleId).update(toFirestore(update))
     );
 
     console.log('done');

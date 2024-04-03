@@ -60,6 +60,14 @@ export const CommentForModerationV = t.intersection([
     /** id of the comment this is a reply to */
     rt: t.union([t.string, t.null]),
   }),
+  t.partial({
+    /** needs to be explicitly moderated */
+    needsModeration: t.boolean,
+    /** has been explicitly approved by moderator */
+    approved: t.boolean,
+    /** has been explicitly rejected by moderator */
+    rejected: t.boolean,
+  }),
 ]);
 export type CommentForModerationT = t.TypeOf<typeof CommentForModerationV>;
 

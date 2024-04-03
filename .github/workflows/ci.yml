@@ -18,7 +18,7 @@ jobs:
       run: yarn compileI18n
     - name: Copy dummy fb config
       working-directory: ./app
-      run: cp ../firebaseConfig.emulators.ts ./firebaseConfig.ts
+      run: cp ./firebaseConfig.emulators.ts ./firebaseConfig.ts
     - name: Lint
       working-directory: ./app
       run: yarn lint

@@ -17,7 +17,6 @@ import {
   DBPuzzleWithIdV,
 } from '../lib/dbtypes';
 import {
-  convertTimestamps,
   getCollection,
   getDocRef,
   getValidatedCollection,
@@ -25,7 +24,6 @@ import {
 import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
 import { ConstructorPageWithIdV } from '../lib/constructorPage';
 import { useSnackbar } from '../components/Snackbar';
-import { moderateComments } from '../lib/comments';
 import { slugify } from '../lib/utils';
 import {
   useCollectionData,
@@ -33,7 +31,6 @@ import {
 } from 'react-firebase-hooks/firestore';
 import {
   arrayUnion,
-  deleteDoc,
   deleteField,
   doc,
   getDocs,
@@ -47,12 +44,12 @@ import { TagList } from '../components/TagList';
 import { ConstructorNotes } from '../components/ConstructorNotes';
 import { hasUnches } from '../lib/gridBase';
 import { fromCells, getClueMap } from '../lib/viewableGrid';
-import spam from '../lib/spam.json';
 import { markdownToHast } from '../lib/markdown/markdown';
 import { css } from '@emotion/react';
 import { withStaticTranslation } from '../lib/translation';
 import { logAsyncErrors } from '../lib/utils';
 import { CommentReportV } from '../components/ReportOverlay';
+import { checkSpam } from '../lib/spam';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };
@@ -62,16 +59,6 @@ function paypalConvert(input: string): string {
   const donated = parseFloat(input);
   const fee = 0.0289 * donated + 0.49;
   return (donated - fee).toFixed(2);
-}
-
-function checkSpam(input: string): boolean {
-  const lower = input.toLowerCase();
-  for (const spamWord of spam) {
-    if (lower.includes(spamWord)) {
-      return true;
-    }
-  }
-  return false;
 }
 
 const red = css({ color: 'red' });
@@ -185,9 +172,6 @@ const PuzzleListItem = (props: PuzzleResult) => {
 };
 
 export default requiresAdmin(() => {
-  const [commentIdsForDeletion, setCommentIdsForDeletion] = useState<
-    Set<string>
-  >(new Set());
   const [uidToUnsub, setUidToUnsub] = useState('');
   const [donationEmail, setDonationEmail] = useState('');
   const [donationAmount, setDonationAmount] = useState('');
@@ -225,7 +209,10 @@ export default requiresAdmin(() => {
   const [pagesForModeration] = useCollectionData(pagesCollection.current);
 
   const forModerationCollection = useRef(
-    getValidatedCollection('cfm', CommentForModerationWithIdV, 'i')
+    query(
+      getValidatedCollection('cfm', CommentForModerationWithIdV, 'i'),
+      where('needsModeration', '==', true)
+    )
   );
   const [commentsForModeration] = useCollectionData(
     forModerationCollection.current
@@ -235,11 +222,6 @@ export default requiresAdmin(() => {
     query(getCollection('mail'), where('delivery.error', '!=', null))
   );
   const [mailErrors] = useCollectionData(mailCollection.current);
-
-  const automoderatedCollection = useRef(
-    getValidatedCollection('automoderated', CommentForModerationWithIdV, 'i')
-  );
-  const [automoderated] = useCollectionData(automoderatedCollection.current);
 
   const reportedCommentsCollection = useRef(
     query(getValidatedCollection('cr', CommentReportV), where('h', '==', false))
@@ -288,30 +270,6 @@ export default requiresAdmin(() => {
         await setDoc(getDocRef('cp', cp.id), { m: false }, { merge: true });
       }
     }
-  }
-
-  async function doModerateComments(e: FormEvent) {
-    e.preventDefault();
-    if (!commentsForModeration) {
-      return;
-    }
-    await moderateComments(
-      commentsForModeration,
-      commentIdsForDeletion,
-      (cid) => deleteDoc(getDocRef('cfm', cid)),
-      (puzzleId, update) =>
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        updateDoc(getDocRef('c', puzzleId), convertTimestamps(update) as any)
-    );
-  }
-
-  function setCommentForDeletion(commentId: string, checked: boolean) {
-    if (!checked) {
-      commentIdsForDeletion.delete(commentId);
-    } else {
-      commentIdsForDeletion.add(commentId);
-    }
-    setCommentIdsForDeletion(new Set(commentIdsForDeletion));
   }
 
   return (
@@ -371,59 +329,39 @@ export default requiresAdmin(() => {
         {!commentsForModeration || commentsForModeration.length === 0 ? (
           <div>No comments are currently awaiting moderation.</div>
         ) : (
-          <form onSubmit={logAsyncErrors(doModerateComments)}>
-            <p>Check comments to disallow them:</p>
-            {commentsForModeration.map((cfm) => (
-              <div key={cfm.i}>
-                <label>
-                  <input
-                    css={{
-                      marginRight: '1em',
-                    }}
-                    type="checkbox"
-                    checked={commentIdsForDeletion.has(cfm.i)}
-                    onChange={(e) => {
-                      setCommentForDeletion(cfm.i, e.target.checked);
-                    }}
-                  />
-                  <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
-                  <Markdown hast={markdownToHast({ text: cfm.c })} />
-                </label>
-              </div>
-            ))}
-            <Button type="submit" text="Moderate" />
-          </form>
-        )}
-        {automoderated ? (
-          <>
-            <h4 css={{ borderBottom: '1px solid var(--black)' }}>
-              Auto-moderated Comments
-            </h4>
-            {automoderated.length === 0 ? (
-              <div>No automoderated comments.</div>
-            ) : (
-              <>
-                {automoderated.map((cfm) => (
-                  <div key={cfm.i}>
-                    <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
-                    <Markdown hast={markdownToHast({ text: cfm.c })} />
-                  </div>
-                ))}
-                <Button
+          commentsForModeration.map((cfm) => (
+            <div key={cfm.i}>
+              <label>
+                <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
+                <Markdown hast={markdownToHast({ text: cfm.c })} />
+                <button
+                  css={{ marginRight: '2em' }}
                   onClick={logAsyncErrors(async () => {
-                    await Promise.all(
-                      automoderated.map((cfm) => {
-                        return deleteDoc(getDocRef('automoderated', cfm.i));
-                      })
-                    );
+                    await updateDoc(getDocRef('cfm', cfm.i), {
+                      approved: true,
+                      needsModeration: deleteField(),
+                    }).then(() => {
+                      console.log('approved');
+                    });
                   })}
-                  text="Mark as Seen"
-                />
-              </>
-            )}
-          </>
-        ) : (
-          ''
+                >
+                  Approve
+                </button>
+                <button
+                  onClick={logAsyncErrors(async () => {
+                    await updateDoc(getDocRef('cfm', cfm.i), {
+                      rejected: true,
+                      needsModeration: deleteField(),
+                    }).then(() => {
+                      console.log('rejected');
+                    });
+                  })}
+                >
+                  Reject
+                </button>
+              </label>
+            </div>
+          ))
         )}
         <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>
           Page Moderation

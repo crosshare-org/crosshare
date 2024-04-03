@@ -3,6 +3,7 @@
 
 # White list only the required files
 !app/firebaseConfig.ts
+!app/firebaseConfig.emulators.ts
 !app/.eslintrc.json
 !app/.sentryclirc
 !app/sentryConfig.ts

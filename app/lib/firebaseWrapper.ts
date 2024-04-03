@@ -24,6 +24,7 @@ import { isTimestamp } from './timestamp';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { CollectionReference } from 'firebase/firestore';
+import { firebaseConfig as firebaseEmulatorConfig } from '../firebaseConfig.emulators';
 
 // Initialize Firebase
 let App: FirebaseApp;
@@ -34,11 +35,11 @@ if (apps.length && apps[0]) {
   App = apps[0];
   db = getFirestore(App);
 } else {
-  App = initializeApp(firebaseConfig);
-  db = getFirestore(App);
-
   // Init emulator
   if (process.env.NEXT_PUBLIC_USE_EMULATORS) {
+    App = initializeApp(firebaseEmulatorConfig);
+    db = getFirestore(App);
+
     console.log('Connecting to emulators');
     connectFirestoreEmulator(db, 'localhost', 8080);
 
@@ -49,6 +50,9 @@ if (apps.length && apps[0]) {
 
     const storage = gS(App);
     connectStorageEmulator(storage, 'localhost', 9199);
+  } else {
+    App = initializeApp(firebaseConfig);
+    db = getFirestore(App);
   }
 }
 

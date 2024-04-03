@@ -26,58 +26,57 @@ function findCommentById(
 
 export async function moderateComments(
   commentsForModeration: CommentForModerationWithIdT[],
-  commentIdsForDeletion: Set<string>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   deleteCfm: (commentId: string) => Promise<any>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  updatePuzzle: (puzzleId: string, update: any) => Promise<any>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  addToAutomoderated?: (commentId: string, comment: any) => Promise<any>
+  updatePuzzle: (puzzleId: string, update: any) => Promise<any>
 ) {
   const puzzles: Record<string, DBPuzzleT> = {};
   if (commentsForModeration.length) {
     for (const comment of commentsForModeration) {
-      // Don't need to do anything for any comment that has been marked for deletion
-      if (!commentIdsForDeletion.has(comment.i)) {
-        let puzzle: DBPuzzleT | null = null;
-        const fromCache = puzzles[comment.pid];
-        if (fromCache) {
-          puzzle = fromCache;
-        } else {
-          try {
-            puzzle = await getFromDB('c', comment.pid, DBPuzzleV);
-            puzzles[comment.pid] = puzzle;
-          } catch {
-            puzzle = null;
-          }
+      delete comment.approved;
+      delete comment.needsModeration;
+      if (comment.rejected) {
+        comment.deleted = true;
+        comment.removed = true;
+      }
+      delete comment.rejected;
+      let puzzle: DBPuzzleT | null = null;
+      const fromCache = puzzles[comment.pid];
+      if (fromCache) {
+        puzzle = fromCache;
+      } else {
+        try {
+          puzzle = await getFromDB('c', comment.pid, DBPuzzleV);
+          console.log('got from db', comment.pid, puzzle.cs);
+          puzzles[comment.pid] = puzzle;
+        } catch {
+          puzzle = null;
         }
-        if (puzzle) {
-          if (puzzle.cs === undefined) {
-            puzzle.cs = [];
+      }
+      if (puzzle) {
+        if (puzzle.cs === undefined) {
+          puzzle.cs = [];
+        }
+        if (comment.rt === null) {
+          if (!puzzle.cs.find((existing) => existing.i === comment.i)) {
+            puzzle.cs.push(comment);
           }
-          if (comment.rt === null) {
-            if (!puzzle.cs.find((existing) => existing.i === comment.i)) {
-              puzzle.cs.push(comment);
+        } else {
+          const parent = findCommentById(puzzle.cs, comment.rt);
+          if (parent === null) {
+            throw new Error('parent comment not found');
+          }
+          if (parent.r) {
+            if (!parent.r.find((existing) => existing.i === comment.i)) {
+              parent.r.push(comment);
             }
           } else {
-            const parent = findCommentById(puzzle.cs, comment.rt);
-            if (parent === null) {
-              throw new Error('parent comment not found');
-            }
-            if (parent.r) {
-              if (!parent.r.find((existing) => existing.i === comment.i)) {
-                parent.r.push(comment);
-              }
-            } else {
-              parent.r = [comment];
-            }
+            parent.r = [comment];
           }
         }
       }
       await deleteCfm(comment.i);
-      if (addToAutomoderated) {
-        await addToAutomoderated(comment.i, comment);
-      }
     }
   }
 
