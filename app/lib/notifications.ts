@@ -23,7 +23,7 @@ function checkComments(
     const beforeComment = before?.find(
       (beforeComment) => beforeComment.i === comment.i
     );
-    if (!beforeComment) {
+    if (!comment.deleted && !beforeComment) {
       // Don't notify on your own comment
       if (comment.a !== puzzle.a) {
         notifications.push(commentNotification(comment, puzzle));
@@ -32,7 +32,7 @@ function checkComments(
       if (parent && comment.a !== parent.a && parent.a !== puzzle.a) {
         notifications.push(replyNotification(comment, parent, puzzle));
       }
-    } else if (comment.r) {
+    } else if (beforeComment && comment.r) {
       notifications.push(
         ...checkComments(comment.r, beforeComment.r, puzzle, comment)
       );
