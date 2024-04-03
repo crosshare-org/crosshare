@@ -48,7 +48,6 @@ export async function moderateComments(
       } else {
         try {
           puzzle = await getFromDB('c', comment.pid, DBPuzzleV);
-          console.log('got from db', comment.pid, puzzle.cs);
           puzzles[comment.pid] = puzzle;
         } catch {
           puzzle = null;
