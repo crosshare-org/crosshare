@@ -2,13 +2,23 @@ import { Dispatch, ReactNode, useCallback, useEffect, useState } from 'react';
 
 import { PosAndDir, Position, BLOCK, Symmetry } from '../lib/types';
 import { Cell } from './Cell';
-import { PuzzleAction, SetActivePositionAction } from '../reducers/reducer';
+import {
+  PuzzleAction,
+  SetActivePositionAction,
+  StartSelectionAction,
+  UpdateSelectionAction,
+} from '../reducers/reducer';
 import { ViewableGrid, ViewableEntry, flipped } from '../lib/viewableGrid';
 import {
   cellIndex,
   getEntryCells,
   entryIndexAtPosition,
 } from '../lib/gridBase';
+import {
+  GridSelection,
+  getSelectionCells,
+  hasMultipleCells,
+} from '../lib/selection';
 
 interface GridViewProps {
   grid: ViewableGrid<ViewableEntry>;
@@ -28,6 +38,7 @@ interface GridViewProps {
   showAlternates?: [number, string][][] | null;
   answers?: string[] | null;
   symmetry?: Symmetry | null;
+  selection?: GridSelection;
 }
 
 export const GridView = ({
@@ -42,6 +53,8 @@ export const GridView = ({
     props.highlightEntry !== undefined
       ? grid.entries[props.highlightEntry]?.cells || []
       : [];
+  const hasSelection = hasMultipleCells(props.selection);
+  const selectedCells = getSelectionCells(props.selection);
   let refedCells: Position[] = [];
   if (entryIdx !== null) {
     const refedCellsSet = new Set(entryCells);
@@ -70,10 +83,11 @@ export const GridView = ({
 
   const noOp = useCallback(() => undefined, []);
   const changeActive = useCallback(
-    (pos: Position) => {
+    (pos: Position, shiftKey: boolean) => {
       const a: SetActivePositionAction = {
         type: 'SETACTIVEPOSITION',
         newActive: pos,
+        shiftKey,
       };
       dispatch(a);
     },
@@ -82,6 +96,18 @@ export const GridView = ({
   const changeDirection = useCallback(() => {
     dispatch({ type: 'CHANGEDIRECTION' });
   }, [dispatch]);
+  const startSelection = useCallback(
+    (position: Position) => {
+      dispatch({ type: 'STARTSELECTION', position } as StartSelectionAction);
+    },
+    [dispatch]
+  );
+  const updateSelection = useCallback(
+    (position: Position) => {
+      dispatch({ type: 'UPDATESELECTION', position } as UpdateSelectionAction);
+    },
+    [dispatch]
+  );
 
   let altToShow: string[] = [];
   if (props.answers && props.showAlternates?.length) {
@@ -145,11 +171,15 @@ export const GridView = ({
         entryCell={entryCells.some((p) => cellIndex(grid, p) === idx)}
         refedCell={refedCells.some((p) => cellIndex(grid, p) === idx)}
         highlightCell={highlightCells.some((p) => cellIndex(grid, p) === idx)}
+        selected={selectedCells.some((p) => cellIndex(grid, p) === idx)}
+        isSelecting={hasSelection}
         key={idx}
         number={number ? number.toString() : ''}
         row={Math.floor(idx / grid.width)}
         column={idx % grid.width}
         onClick={onClick}
+        onMouseDown={startSelection}
+        onMouseEnter={updateSelection}
         value={toDisplay}
         isBlock={cellValue === BLOCK}
         isOpposite={isOpposite}

@@ -5,6 +5,7 @@ import type { WordDBT } from './WordDB';
 import { DBPuzzleT, CommentWithRepliesT, GlickoScoreT } from '../lib/dbtypes';
 import { ConstructorPageWithMarkdown } from '../lib/constructorPage';
 import type { Root } from 'hast';
+import { isTextInput } from './domUtils';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -34,6 +35,8 @@ export const fromEnum = <T extends string, TEnumValue extends string | number>(
 };
 
 export const BLOCK = '.';
+export const EMPTY = ' ';
+export const DELIMETER = ',';
 
 export enum Symmetry {
   Rotational,
@@ -117,6 +120,14 @@ export interface Position {
 
 export interface PosAndDir extends Position {
   dir: Direction;
+}
+
+export function asPosition({ row, col }: PosAndDir): Position {
+  return { row, col };
+}
+
+export function isSamePosition(a: Position, b: Position): boolean {
+  return a.row === b.row && a.col === b.col;
 }
 
 export interface ClueT {
@@ -403,8 +414,7 @@ export function fromKeyboardEvent(event: {
   target?: EventTarget | null;
 }): Option<Key> {
   if (event.target) {
-    const tagName = (event.target as HTMLElement).tagName.toLowerCase();
-    if (tagName === 'textarea' || tagName === 'input') {
+    if (isTextInput(event.target)) {
       return none;
     }
   }

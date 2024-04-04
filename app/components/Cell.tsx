@@ -3,6 +3,7 @@ import { memo, useEffect, useRef, useState } from 'react';
 
 import { FaSlash, FaEye } from 'react-icons/fa';
 import { usePolyfilledResizeObserver } from '../lib/hooks';
+import { Position } from '../lib/types';
 
 const blink = keyframes`
 from, to {
@@ -45,12 +46,16 @@ interface CellProps {
   entryCell: boolean;
   refedCell: boolean;
   highlightCell: boolean;
+  selected: boolean;
+  isSelecting: boolean;
   highlight: 'circle' | 'shade' | undefined;
   value: string;
   number: string;
   row: number;
   column: number;
-  onClick: (pos: { row: number; col: number }) => void;
+  onClick: (pos: Position, shiftKey: boolean) => void;
+  onMouseDown: (pos: Position) => void;
+  onMouseEnter: (pos: Position) => void;
   isVerified: boolean | undefined;
   isWrong: boolean | undefined;
   wasRevealed: boolean | undefined;
@@ -90,7 +95,11 @@ export const Cell = memo(function Cell(props: CellProps) {
     bg = 'var(--primary)';
     text = 'var(--onprimary)';
     verified = 'var(--verified-on-primary)';
-  } else if (props.entryCell) {
+  } else if (props.selected) {
+    bg = 'var(--highlight)';
+    text = 'var(--on-highlight)';
+    verified = 'var(--verified-on-highlight)';
+  } else if (props.entryCell && !props.isSelecting) {
     bg = 'var(--lighter)';
     text = 'var(--on-lighter)';
     verified = 'var(--verified-on-lighter)';
@@ -140,8 +149,18 @@ export const Cell = memo(function Cell(props: CellProps) {
       {/* eslint-disable-next-line */}
       <div
         aria-label={`cell${props.row}x${props.column}`}
-        onClick={() => {
-          props.onClick({ row: props.row, col: props.column });
+        onClick={(evt) => {
+          props.onClick({ row: props.row, col: props.column }, evt.shiftKey);
+        }}
+        onMouseDown={(evt) => {
+          if (evt.buttons === 1) {
+            props.onMouseDown({ row: props.row, col: props.column });
+          }
+        }}
+        onMouseEnter={(evt) => {
+          if (evt.buttons === 1) {
+            props.onMouseEnter({ row: props.row, col: props.column });
+          }
         }}
         css={{
           userSelect: 'none',

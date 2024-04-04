@@ -104,6 +104,8 @@ import {
   getClueProps,
   SetShowDownloadLink,
   PasteAction,
+  CutAction,
+  CopyAction,
 } from '../reducers/reducer';
 import {
   NestedDropDown,
@@ -130,6 +132,7 @@ import { importFile, exportFile, ExportProps } from '../lib/converter';
 import type { User } from 'firebase/auth';
 import { NewPuzzleForm } from './NewPuzzleForm';
 import { getAutofillWorker } from '../lib/workerLoader';
+import { isTextInput } from '../lib/domUtils';
 
 type BuilderProps = PartialBy<
   Omit<
@@ -905,7 +908,11 @@ const GridMode = ({
           }
           return;
         }
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
+        const kpa: KeypressAction = {
+          type: 'KEYPRESS',
+          key: mkey.value,
+          shiftKey: e.shiftKey,
+        };
         dispatch(kpa);
       }
     },
@@ -913,10 +920,33 @@ const GridMode = ({
   );
   useEventListener('keydown', physicalKeyboardHandler);
 
+  const copyHandler = useCallback(
+    (e: ClipboardEvent) => {
+      if (isTextInput(e.target)) {
+        return;
+      }
+      dispatch({ type: 'COPY' } as CopyAction);
+      e.preventDefault();
+    },
+    [dispatch]
+  );
+  useEventListener('copy', copyHandler);
+
+  const cutHandler = useCallback(
+    (e: ClipboardEvent) => {
+      if (isTextInput(e.target)) {
+        return;
+      }
+      dispatch({ type: 'CUT' } as CutAction);
+      e.preventDefault();
+    },
+    [dispatch]
+  );
+  useEventListener('cut', cutHandler);
+
   const pasteHandler = useCallback(
     (e: ClipboardEvent) => {
-      const tagName = (e.target as HTMLElement).tagName.toLowerCase();
-      if (tagName === 'textarea' || tagName === 'input') {
+      if (isTextInput(e.target)) {
         return;
       }
       const pa: PasteAction = {
@@ -1601,6 +1631,7 @@ const GridMode = ({
                 allowBlockEditing={true}
                 autofill={props.autofillEnabled ? props.autofilledGrid : []}
                 symmetry={state.symmetry}
+                selection={state.selection}
               />
             }
             left={fillLists.left}
