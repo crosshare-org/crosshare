@@ -166,6 +166,14 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow delete: if isAdmin();
     }
+    match /deleteComment/{deletionId} {
+      allow write: if isAdmin();
+      allow write: if request.auth.uid != null
+        && isNonAnonymous()
+        && request.auth.uid == request.resource.data.a;
+      allow read: if isAdmin();
+      allow delete: if isAdmin();
+    }
     match /cr/{reportId} {
       allow write: if isAdmin();
       allow write: if request.auth.uid != null
