@@ -15,12 +15,13 @@ import {
   CommentForModerationV,
   AdminSettingsV,
   CommentForModerationWithIdT,
+  CommentDeletionV,
+  CommentDeletionWithIdT,
 } from '../../app/lib/dbtypes';
 
 import {
   getCollection,
   mapEachResult,
-  toFirestore,
 } from '../../app/lib/firebaseAdminWrapper';
 import { Timestamp } from '../../app/lib/timestamp';
 
@@ -66,29 +67,36 @@ export const autoModerator = functions.pubsub
       // If it's been approved or rejected already then we can automod it
       if (cfm.approved || cfm.rejected) {
         filtered.push(cfm);
-        break;
+        continue;
       }
       // We've already automodded it and it needs approval
       if (cfm.needsModeration) {
-        break;
+        continue;
       }
       // Check if we need to send it off for manual moderation
       if (settings.noAuto.includes(cfm.a) || checkSpam(cfm.c)) {
         await getCollection('cfm').doc(cfm.i).update({ needsModeration: true });
-        break;
+        continue;
       }
       // Otherwise we are good to automod it
       filtered.push(cfm);
     }
 
-    console.log(`done filtering, automoderating ${filtered.length} of them`);
-
-    await moderateComments(
-      filtered,
-      (cid) => getCollection('cfm').doc(cid).delete(),
-      (puzzleId, update) =>
-        getCollection('c').doc(puzzleId).update(toFirestore(update))
+    console.log(
+      `done filtering, automoderating ${filtered.length} of them. Getting deletions`
     );
+
+    const deletions: CommentDeletionWithIdT[] = await mapEachResult(
+      getCollection('deleteComment'),
+      CommentDeletionV,
+      (cd, docId) => {
+        return { ...cd, i: docId };
+      }
+    );
+
+    console.log(`Got ${deletions.length} deletions`);
+
+    await moderateComments(filtered, deletions);
 
     console.log('done');
     return;

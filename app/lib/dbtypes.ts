@@ -82,6 +82,27 @@ export type CommentForModerationWithIdT = t.TypeOf<
   typeof CommentForModerationWithIdV
 >;
 
+export const CommentDeletionV = t.type({
+  /** puzzle id */
+  pid: t.string,
+  /** comment id */
+  cid: t.string,
+  /** author id */
+  a: t.string,
+  /** was the deletion done by a moderator? */
+  removed: t.boolean,
+});
+export type CommentDeletionT = t.TypeOf<typeof CommentDeletionV>;
+
+export const CommentDeletionWithIdV = t.intersection([
+  CommentDeletionV,
+  t.type({
+    /** deletion id */
+    i: t.string,
+  }),
+]);
+export type CommentDeletionWithIdT = t.TypeOf<typeof CommentDeletionWithIdV>;
+
 const DBPuzzleMandatoryV = t.type({
   /** author's user id */
   a: t.string,

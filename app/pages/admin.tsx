@@ -15,6 +15,7 @@ import {
   CommentForModerationWithIdV,
   DonationsListV,
   DBPuzzleWithIdV,
+  CommentDeletionT,
 } from '../lib/dbtypes';
 import {
   getCollection,
@@ -30,6 +31,7 @@ import {
   useDocumentDataOnce,
 } from 'react-firebase-hooks/firestore';
 import {
+  addDoc,
   arrayUnion,
   deleteField,
   doc,
@@ -305,6 +307,34 @@ export default requiresAdmin(() => {
                     <Link href={`/crosswords/${rc.pid}`}>puzzle</Link> -{' '}
                     {rc.pid}
                   </div>
+                  <button
+                    disabled={rc.d || !rc.ca}
+                    css={{ marginRight: '2em' }}
+                    onClick={logAsyncErrors(async () => {
+                      if (!rc.ca) {
+                        return;
+                      }
+                      const deletion: CommentDeletionT = {
+                        pid: rc.pid,
+                        cid: rc.cid,
+                        a: rc.ca,
+                        removed: true,
+                      };
+                      await addDoc(
+                        getCollection('deleteComment'),
+                        deletion
+                      ).then(() => {
+                        console.log('delete comment');
+                      });
+                      await updateDoc(getDocRef('cr', `${rc.cid}-${rc.u}`), {
+                        d: true,
+                      }).then(() => {
+                        console.log('marked as deleted');
+                      });
+                    })}
+                  >
+                    Delete Comment
+                  </button>
                   <button
                     onClick={logAsyncErrors(async () => {
                       await updateDoc(getDocRef('cr', `${rc.cid}-${rc.u}`), {

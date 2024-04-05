@@ -14,24 +14,32 @@ import { useSnackbar } from './Snackbar';
 import { Button } from './Buttons';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 
-export const CommentReportV = t.type({
-  /** comment id */
-  cid: t.string,
-  /** comment author display name */
-  cn: t.string,
-  /** comment text */
-  ct: t.string,
-  /** puzzle id */
-  pid: t.string,
-  /** reporter user id */
-  u: t.string,
-  /** reporter notes */
-  n: t.string,
-  /** report timestamp */
-  t: timestamp,
-  /** handled? */
-  h: t.boolean,
-});
+export const CommentReportV = t.intersection([
+  t.type({
+    /** comment id */
+    cid: t.string,
+    /** comment author display name */
+    cn: t.string,
+    /** comment text */
+    ct: t.string,
+    /** puzzle id */
+    pid: t.string,
+    /** reporter user id */
+    u: t.string,
+    /** reporter notes */
+    n: t.string,
+    /** report timestamp */
+    t: timestamp,
+    /** handled? */
+    h: t.boolean,
+  }),
+  t.partial({
+    /** comment author id */
+    ca: t.string,
+    /** deleted? */
+    d: t.boolean,
+  }),
+]);
 type CommentReportT = t.TypeOf<typeof CommentReportV>;
 
 export const ReportOverlay = (props: {
@@ -57,6 +65,7 @@ export const ReportOverlay = (props: {
     const report: CommentReportT = {
       cid: props.comment.id,
       cn: props.comment.authorDisplayName,
+      ca: props.comment.authorId,
       ct: props.comment.commentText,
       pid: props.puzzleId,
       u: uid,
