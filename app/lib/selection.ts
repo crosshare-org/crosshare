@@ -36,8 +36,8 @@ export function forEachPosition(
 
 export function getSelectionCells(selection?: GridSelection): Position[] {
   const res: Position[] = [];
-  if (hasMultipleCells(selection)) {
-    forEachPosition(selection!, (pos) => res.push(pos));
+  if (!!selection && hasMultipleCells(selection)) {
+    forEachPosition(selection, (pos) => res.push(pos));
   }
   return res;
 }
