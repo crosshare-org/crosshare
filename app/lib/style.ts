@@ -104,7 +104,7 @@ export const colorTheme = ({
   const text = darkMode ? DARK_MODE_WHITE : 'black';
   const secondary = darkMode ? '#505050' : '#ccc';
   const lighter = mix(p, cellBG, 0.6);
-  const highlight = darkMode ? '#a880ff' : '#c484ff';
+  const selectedCell = darkMode ? '#a880ff' : '#c484ff';
 
   return {
     '--tag-l': darkMode ? '30%' : '85%',
@@ -118,8 +118,8 @@ export const colorTheme = ({
     '--on-lighter': readableColor(lighter, darkMode),
     '--secondary': secondary,
     '--on-secondary': readableColor(secondary, darkMode),
-    '--highlight': highlight,
-    '--on-highlight': readableColor(highlight, darkMode),
+    '--selected-cell': selectedCell,
+    '--on-selected-cell': readableColor(selectedCell, darkMode),
     '--bg-hover': mix(bg, hover, hoverRatio),
     '--secondary-hover': mix(secondary, hover, hoverRatio),
     '--boring-bg': darkMode ? '#b5b5b5' : '#555',
@@ -144,7 +144,7 @@ export const colorTheme = ({
     '--verified-on-lighter': makeReadable(lighter, verified),
     '--verified-on-bg': makeReadable(cellBG, verified),
     '--verified-on-secondary': makeReadable(secondary, verified),
-    '--verified-on-highlight': makeReadable(highlight, verified),
+    '--verified-on-selected-cell': makeReadable(selectedCell, verified),
     '--autofill': darkMode ? '#999' : '#bbb',
     '--top-bar-hover': 'rgba(0, 0, 0, 0.1)',
     '--shade-highlight': darkMode
