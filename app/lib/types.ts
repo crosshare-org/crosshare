@@ -36,8 +36,8 @@ export const fromEnum = <T extends string, TEnumValue extends string | number>(
 
 export const BLOCK = '.';
 export const EMPTY = ' ';
-export const CELL_DELIMETER = ',';
-export const ROW_DELIMETER = '\n';
+export const CELL_DELIMITER = ',';
+export const ROW_DELIMITER = '\n';
 
 export enum Symmetry {
   Rotational,

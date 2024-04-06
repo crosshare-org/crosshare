@@ -11,8 +11,8 @@ import {
   PrefillSquares,
   CheatUnit,
   EMPTY,
-  CELL_DELIMETER,
-  ROW_DELIMETER,
+  CELL_DELIMITER,
+  ROW_DELIMITER,
 } from '../lib/types';
 import { DBPuzzleT, PlayWithoutUserT } from '../lib/dbtypes';
 import {
@@ -913,11 +913,11 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       let row: number;
       forEachPosition(state.selection, (pos) => {
         if (row != null && row !== pos.row) {
-          toCopy += ROW_DELIMETER;
+          toCopy += ROW_DELIMITER;
         }
         row = pos.row;
         const val = valAt(grid, pos);
-        toCopy += val + CELL_DELIMETER;
+        toCopy += val + CELL_DELIMITER;
         if (isCutAction(action)) {
           state = enterCharAt(state, pos, EMPTY);
         }
@@ -937,9 +937,9 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
     return state;
   }
   if (isPasteAction(action)) {
-    const toPaste = action.content.split(ROW_DELIMETER).map((r) =>
+    const toPaste = action.content.split(ROW_DELIMITER).map((r) =>
       r
-        .split(CELL_DELIMETER)
+        .split(CELL_DELIMITER)
         .filter((s) => s.length > 0)
         .map((s) =>
           s
