@@ -303,7 +303,6 @@ export interface PuzzleAction {
 export interface KeypressAction extends PuzzleAction {
   type: 'KEYPRESS';
   key: Key;
-  shiftKey?: boolean;
 }
 function isKeypressAction(action: PuzzleAction): action is KeypressAction {
   return action.type === 'KEYPRESS';
@@ -1088,20 +1087,19 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         wasEntryClick: false,
         active: moveToPrevEntry(state.grid, state.active),
       };
-    } else if (key.k === KeyK.ArrowRight) {
-      if (isBuilderState(state) && action.shiftKey) {
-        const { start, end } = hasSelection(state)
-          ? state.selection
-          : emptySelection(state.active);
-        return {
-          ...state,
-          wasEntryClick: false,
-          selection: {
-            start,
-            end: moveRight(state.grid, end),
-          },
-        };
-      }
+    } else if (key.k === KeyK.ShiftArrowRight && isBuilderState(state)) {
+      const { start, end } = hasSelection(state)
+        ? state.selection
+        : emptySelection(state.active);
+      return {
+        ...state,
+        wasEntryClick: false,
+        selection: {
+          start,
+          end: moveRight(state.grid, end),
+        },
+      };
+    } else if (key.k === KeyK.ArrowRight || key.k === KeyK.ShiftArrowRight) {
       state = clearSelection(state);
       return {
         ...state,
@@ -1114,20 +1112,19 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           dir: Direction.Across,
         },
       };
-    } else if (key.k === KeyK.ArrowLeft) {
-      if (isBuilderState(state) && action.shiftKey) {
-        const { start, end } = hasSelection(state)
-          ? state.selection
-          : emptySelection(state.active);
-        return {
-          ...state,
-          wasEntryClick: false,
-          selection: {
-            start,
-            end: moveLeft(state.grid, end),
-          },
-        };
-      }
+    } else if (key.k === KeyK.ShiftArrowLeft && isBuilderState(state)) {
+      const { start, end } = hasSelection(state)
+        ? state.selection
+        : emptySelection(state.active);
+      return {
+        ...state,
+        wasEntryClick: false,
+        selection: {
+          start,
+          end: moveLeft(state.grid, end),
+        },
+      };
+    } else if (key.k === KeyK.ArrowLeft || key.k === KeyK.ShiftArrowLeft) {
       state = clearSelection(state);
       return {
         ...state,
@@ -1140,20 +1137,19 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           dir: Direction.Across,
         },
       };
-    } else if (key.k === KeyK.ArrowUp) {
-      if (isBuilderState(state) && action.shiftKey) {
-        const { start, end } = hasSelection(state)
-          ? state.selection
-          : emptySelection(state.active);
-        return {
-          ...state,
-          wasEntryClick: false,
-          selection: {
-            start,
-            end: moveUp(state.grid, end),
-          },
-        };
-      }
+    } else if (key.k === KeyK.ShiftArrowUp && isBuilderState(state)) {
+      const { start, end } = hasSelection(state)
+        ? state.selection
+        : emptySelection(state.active);
+      return {
+        ...state,
+        wasEntryClick: false,
+        selection: {
+          start,
+          end: moveUp(state.grid, end),
+        },
+      };
+    } else if (key.k === KeyK.ArrowUp || key.k === KeyK.ShiftArrowUp) {
       state = clearSelection(state);
       return {
         ...state,
@@ -1166,20 +1162,19 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           dir: Direction.Down,
         },
       };
-    } else if (key.k === KeyK.ArrowDown) {
-      if (isBuilderState(state) && action.shiftKey) {
-        const { start, end } = hasSelection(state)
-          ? state.selection
-          : emptySelection(state.active);
-        return {
-          ...state,
-          wasEntryClick: false,
-          selection: {
-            start,
-            end: moveDown(state.grid, end),
-          },
-        };
-      }
+    } else if (key.k === KeyK.ShiftArrowDown && isBuilderState(state)) {
+      const { start, end } = hasSelection(state)
+        ? state.selection
+        : emptySelection(state.active);
+      return {
+        ...state,
+        wasEntryClick: false,
+        selection: {
+          start,
+          end: moveDown(state.grid, end),
+        },
+      };
+    } else if (key.k === KeyK.ArrowDown || key.k === KeyK.ShiftArrowDown) {
       state = clearSelection(state);
       return {
         ...state,

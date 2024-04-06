@@ -908,11 +908,7 @@ const GridMode = ({
           }
           return;
         }
-        const kpa: KeypressAction = {
-          type: 'KEYPRESS',
-          key: mkey.value,
-          shiftKey: e.shiftKey,
-        };
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);
       }
     },

@@ -369,6 +369,10 @@ export enum KeyK {
   ArrowLeft,
   ArrowUp,
   ArrowDown,
+  ShiftArrowRight,
+  ShiftArrowLeft,
+  ShiftArrowUp,
+  ShiftArrowDown,
   Space,
   Tab,
   ShiftTab,
@@ -423,13 +427,19 @@ export function fromKeyboardEvent(event: {
   const basicKey: Option<Exclude<KeyK, KeyK.AllowedCharacter>> = (() => {
     switch (event.key) {
       case 'ArrowLeft':
-        return some(KeyK.ArrowLeft);
+        return !event.shiftKey
+          ? some(KeyK.ArrowLeft)
+          : some(KeyK.ShiftArrowLeft);
       case 'ArrowRight':
-        return some(KeyK.ArrowRight);
+        return !event.shiftKey
+          ? some(KeyK.ArrowRight)
+          : some(KeyK.ShiftArrowRight);
       case 'ArrowUp':
-        return some(KeyK.ArrowUp);
+        return !event.shiftKey ? some(KeyK.ArrowUp) : some(KeyK.ShiftArrowUp);
       case 'ArrowDown':
-        return some(KeyK.ArrowDown);
+        return !event.shiftKey
+          ? some(KeyK.ArrowDown)
+          : some(KeyK.ShiftArrowDown);
       case ' ':
         return some(KeyK.Space);
       case 'Tab':
