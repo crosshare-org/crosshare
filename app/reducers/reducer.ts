@@ -785,7 +785,7 @@ function enterCharAt<T extends GridInterfaceState>(
     const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
     let grid = state.grid;
     if (char === BLOCK) {
-      if (valAt(grid, pos) !== BLOCK) {
+      if (valAt(grid, pos) !== BLOCK && grid.allowBlockEditing) {
         grid = gridWithBlockToggled(grid, pos, symmetry);
       }
     } else {
