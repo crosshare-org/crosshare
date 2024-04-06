@@ -11,8 +11,8 @@ import {
   PrefillSquares,
   CheatUnit,
   EMPTY,
-  DELIMETER,
-  asPosition,
+  CELL_DELIMETER,
+  ROW_DELIMETER,
 } from '../lib/types';
 import { DBPuzzleT, PlayWithoutUserT } from '../lib/dbtypes';
 import {
@@ -41,6 +41,8 @@ import {
   entryAtPosition,
   entryWord,
   gridWithEntrySet,
+  isInBounds,
+  clampInBounds,
 } from '../lib/gridBase';
 import { Timestamp } from '../lib/timestamp';
 import { AccountPrefsFlagsT } from '../lib/prefs';
@@ -766,7 +768,15 @@ function postEdit(
 }
 
 function enterText<T extends GridInterfaceState>(state: T, text: string): T {
-  const ci = cellIndex(state.grid, state.active);
+  return enterCharAt(state, state.active, text);
+}
+
+function enterCharAt<T extends GridInterfaceState>(
+  state: T,
+  pos: Position,
+  char: string
+): T {
+  const ci = cellIndex(state.grid, pos);
   if (state.isEditable(ci)) {
     if (isPuzzleState(state)) {
       const elapsed = getCurrentTime(state);
@@ -774,12 +784,14 @@ function enterText<T extends GridInterfaceState>(state: T, text: string): T {
       state.cellsIterationCount[ci] += 1;
     }
     const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-    const grid = gridWithNewChar(
-      state.grid,
-      state.active,
-      text || EMPTY,
-      symmetry
-    );
+    let grid = state.grid;
+    if (char === BLOCK) {
+      if (valAt(grid, pos) !== BLOCK) {
+        grid = gridWithBlockToggled(grid, pos, symmetry);
+      }
+    } else {
+      grid = gridWithNewChar(grid, pos, char || EMPTY, symmetry);
+    }
     state = clearSelection(state);
     state = postEdit({ ...state, grid }, ci);
   }
@@ -856,7 +868,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       return {
         ...state,
         selection: {
-          start: asPosition(state.active),
+          start: { ...state.active },
           end: { ...action.newActive },
         },
       };
@@ -899,29 +911,24 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
     let toCopy = '';
     if (isBuilderState(state) && hasSelection(state)) {
       let grid = state.grid;
-      const { selection, symmetry } = state;
-      forEachPosition(selection, (pos) => {
-        const ci = cellIndex(grid, pos);
-        if (state.isEditable(ci)) {
-          const val = valAt(grid, pos);
-          if (val !== BLOCK) {
-            toCopy += val + DELIMETER;
-            if (isCutAction(action)) {
-              grid = gridWithNewChar(grid, pos, EMPTY, symmetry);
-              state = postEdit({ ...state, grid }, ci);
-            }
-          }
+      let row: number;
+      forEachPosition(state.selection, (pos) => {
+        if (row != null && row !== pos.row) {
+          toCopy += ROW_DELIMETER;
+        }
+        row = pos.row;
+        const val = valAt(grid, pos);
+        toCopy += val + CELL_DELIMETER;
+        if (isCutAction(action)) {
+          state = enterCharAt(state, pos, EMPTY);
         }
       });
     } else {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        const val = valAt(state.grid, state.active);
-        if (val !== BLOCK && val !== EMPTY) {
-          toCopy = val;
-          if (isCutAction(action)) {
-            state = enterText(state, EMPTY);
-          }
+      const val = valAt(state.grid, state.active);
+      if (val !== BLOCK && val !== EMPTY) {
+        toCopy = val;
+        if (isCutAction(action)) {
+          state = enterText(state, EMPTY);
         }
       }
     }
@@ -931,38 +938,48 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
     return state;
   }
   if (isPasteAction(action)) {
-    const toPaste = action.content
-      .split(DELIMETER)
-      .filter((s) => s.length > 0)
-      .map((s) =>
-        s
-          .split('')
-          .filter((x) => x.match(ALLOWABLE_GRID_CHARS))
-          .join('')
-          .toUpperCase()
-      );
+    const toPaste = action.content.split(ROW_DELIMETER).map((r) =>
+      r
+        .split(CELL_DELIMETER)
+        .filter((s) => s.length > 0)
+        .map((s) =>
+          s
+            .split('')
+            .filter((x) => x.match(ALLOWABLE_GRID_CHARS) || x === BLOCK)
+            .join('')
+            .toUpperCase()
+        )
+    );
     if (toPaste.length === 0) {
       return state;
     }
     if (state.isEnteringRebus) {
-      return { ...state, rebusValue: state.rebusValue + toPaste.join('') };
-    }
-    toPaste.forEach((substr) => {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        state = enterText(state, substr);
-      }
-      state = {
+      return {
         ...state,
-        wasEntryClick: false,
-        active: advancePosition(
-          state.grid,
-          state.active,
-          isPuzzleState(state) ? state.wrongCells : new Set(),
-          isPuzzleState(state) ? state.prefs : undefined
-        ),
+        rebusValue: state.rebusValue + toPaste.flat().join(''),
       };
+    }
+    const start = state.active;
+    const current = { ...start };
+    toPaste.forEach((rowStrs, dRow) => {
+      rowStrs.forEach((cellStr, dCol) => {
+        current.row = start.row + dRow;
+        current.col = start.col + dCol;
+        if (isInBounds(state.grid, current)) {
+          state = enterCharAt(state, current, cellStr);
+        }
+      });
     });
+    state = {
+      ...state,
+      wasEntryClick: false,
+      active: advancePosition(
+        state.grid,
+        clampInBounds(state.grid, current),
+        isPuzzleState(state) ? state.wrongCells : new Set(),
+        isPuzzleState(state) ? state.prefs : undefined
+      ),
+    };
     return state;
   }
   if (isKeypressAction(action)) {
@@ -1075,7 +1092,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       if (isBuilderState(state) && action.shiftKey) {
         const { start, end } = hasSelection(state)
           ? state.selection
-          : emptySelection(asPosition(state.active));
+          : emptySelection(state.active);
         return {
           ...state,
           wasEntryClick: false,
@@ -1101,7 +1118,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       if (isBuilderState(state) && action.shiftKey) {
         const { start, end } = hasSelection(state)
           ? state.selection
-          : emptySelection(asPosition(state.active));
+          : emptySelection(state.active);
         return {
           ...state,
           wasEntryClick: false,
@@ -1127,7 +1144,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       if (isBuilderState(state) && action.shiftKey) {
         const { start, end } = hasSelection(state)
           ? state.selection
-          : emptySelection(asPosition(state.active));
+          : emptySelection(state.active);
         return {
           ...state,
           wasEntryClick: false,
@@ -1153,7 +1170,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       if (isBuilderState(state) && action.shiftKey) {
         const { start, end } = hasSelection(state)
           ? state.selection
-          : emptySelection(asPosition(state.active));
+          : emptySelection(state.active);
         return {
           ...state,
           wasEntryClick: false,
@@ -1235,6 +1252,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           state = postEdit({ ...state, grid }, ci);
         }
       }
+      state = clearSelection(state);
       return {
         ...state,
         wasEntryClick: false,
@@ -1259,6 +1277,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           state = postEdit({ ...state, grid }, ci);
         }
       }
+      state = clearSelection(state);
       return {
         ...state,
         wasEntryClick: false,

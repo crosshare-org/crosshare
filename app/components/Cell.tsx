@@ -85,6 +85,9 @@ export const Cell = memo(function Cell(props: CellProps) {
   } else if (props.isBlock && props.active) {
     bg =
       'repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px,var(--primary) 10px,var(--primary) 20px);';
+  } else if (props.isBlock && props.selected) {
+    bg =
+      'repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px,var(--highlight) 10px,var(--highlight) 20px);';
   } else if (props.isBlock) {
     bg = 'var(--cell-wall)';
   } else if (props.cellColor !== undefined) {

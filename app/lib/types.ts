@@ -36,7 +36,8 @@ export const fromEnum = <T extends string, TEnumValue extends string | number>(
 
 export const BLOCK = '.';
 export const EMPTY = ' ';
-export const DELIMETER = ',';
+export const CELL_DELIMETER = ',';
+export const ROW_DELIMETER = '\n';
 
 export enum Symmetry {
   Rotational,
@@ -120,10 +121,6 @@ export interface Position {
 
 export interface PosAndDir extends Position {
   dir: Direction;
-}
-
-export function asPosition({ row, col }: PosAndDir): Position {
-  return { row, col };
 }
 
 export function isSamePosition(a: Position, b: Position): boolean {
