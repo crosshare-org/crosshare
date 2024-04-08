@@ -244,7 +244,7 @@ const AboveTheGridClue = memo(function AboveTheGridClue({
             css={{
               fontWeight: 'bold',
               paddingRight: '0.5em',
-              flaxShrink: 0,
+              flexShrink: 0,
               width: '2.5em',
               height: '100%',
               textAlign: 'right',
