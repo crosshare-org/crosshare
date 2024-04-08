@@ -59,11 +59,30 @@ export const autoModerator = functions.pubsub
         return { ...cfm, i: docId };
       }
     );
-
     console.log(`Got ${commentsForModeration.length} cfms`);
+
+    const deletions: CommentDeletionWithIdT[] = await mapEachResult(
+      getCollection('deleteComment'),
+      CommentDeletionV,
+      (cd, docId) => {
+        return { ...cd, i: docId };
+      }
+    );
+    console.log(`Got ${deletions.length} deletions`);
 
     const filtered: CommentForModerationWithIdT[] = [];
     for (const cfm of commentsForModeration) {
+      // If it's been deleted already then mark it as such and automod it (even if it has needsModeration set!)
+      const del = deletions.find(
+        (del) => del.pid === cfm.pid && del.cid === cfm.i && del.a === cfm.a
+      );
+      if (del) {
+        cfm.deleted = true;
+        cfm.rejected = cfm.rejected || del.removed;
+        filtered.push(cfm);
+        continue;
+      }
+
       // If it's been approved or rejected already then we can automod it
       if (cfm.approved || cfm.rejected) {
         filtered.push(cfm);
@@ -85,16 +104,6 @@ export const autoModerator = functions.pubsub
     console.log(
       `done filtering, automoderating ${filtered.length} of them. Getting deletions`
     );
-
-    const deletions: CommentDeletionWithIdT[] = await mapEachResult(
-      getCollection('deleteComment'),
-      CommentDeletionV,
-      (cd, docId) => {
-        return { ...cd, i: docId };
-      }
-    );
-
-    console.log(`Got ${deletions.length} deletions`);
 
     await moderateComments(filtered, deletions);
 
