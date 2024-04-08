@@ -767,13 +767,15 @@ function postEdit(
 }
 
 function enterText<T extends GridInterfaceState>(state: T, text: string): T {
-  return enterCharAt(state, state.active, text);
+  const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
+  return enterCharAt(state, state.active, text, symmetry);
 }
 
 function enterCharAt<T extends GridInterfaceState>(
   state: T,
   pos: Position,
-  char: string
+  char: string,
+  symmetry: Symmetry,
 ): T {
   const ci = cellIndex(state.grid, pos);
   if (state.isEditable(ci)) {
@@ -782,7 +784,6 @@ function enterCharAt<T extends GridInterfaceState>(
       state.cellsUpdatedAt[ci] = elapsed;
       state.cellsIterationCount[ci] += 1;
     }
-    const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
     let grid = state.grid;
     if (char === BLOCK) {
       if (valAt(grid, pos) !== BLOCK && grid.allowBlockEditing) {
@@ -919,7 +920,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         const val = valAt(grid, pos);
         toCopy += val + CELL_DELIMITER;
         if (isCutAction(action)) {
-          state = enterCharAt(state, pos, EMPTY);
+          state = enterCharAt(state, pos, EMPTY, Symmetry.None);
         }
       });
     } else {
@@ -965,7 +966,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         current.row = start.row + dRow;
         current.col = start.col + dCol;
         if (isInBounds(state.grid, current)) {
-          state = enterCharAt(state, current, cellStr);
+          state = enterCharAt(state, current, cellStr, Symmetry.None);
         }
       });
     });
