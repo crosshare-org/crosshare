@@ -361,35 +361,33 @@ export default requiresAdmin(() => {
         ) : (
           commentsForModeration.map((cfm) => (
             <div key={cfm.i}>
-              <label>
-                <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
-                <Markdown hast={markdownToHast({ text: cfm.c })} />
-                <button
-                  css={{ marginRight: '2em' }}
-                  onClick={logAsyncErrors(async () => {
-                    await updateDoc(getDocRef('cfm', cfm.i), {
-                      approved: true,
-                      needsModeration: deleteField(),
-                    }).then(() => {
-                      console.log('approved');
-                    });
-                  })}
-                >
-                  Approve
-                </button>
-                <button
-                  onClick={logAsyncErrors(async () => {
-                    await updateDoc(getDocRef('cfm', cfm.i), {
-                      rejected: true,
-                      needsModeration: deleteField(),
-                    }).then(() => {
-                      console.log('rejected');
-                    });
-                  })}
-                >
-                  Reject
-                </button>
-              </label>
+              <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
+              <Markdown hast={markdownToHast({ text: cfm.c })} />
+              <button
+                css={{ marginRight: '2em' }}
+                onClick={logAsyncErrors(async () => {
+                  await updateDoc(getDocRef('cfm', cfm.i), {
+                    approved: true,
+                    needsModeration: deleteField(),
+                  }).then(() => {
+                    console.log('approved');
+                  });
+                })}
+              >
+                Approve
+              </button>
+              <button
+                onClick={logAsyncErrors(async () => {
+                  await updateDoc(getDocRef('cfm', cfm.i), {
+                    rejected: true,
+                    needsModeration: deleteField(),
+                  }).then(() => {
+                    console.log('rejected');
+                  });
+                })}
+              >
+                Reject
+              </button>
             </div>
           ))
         )}
