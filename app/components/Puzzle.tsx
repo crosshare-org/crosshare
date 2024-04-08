@@ -161,6 +161,7 @@ import {
 import { removeSpoilers } from '../lib/markdown/markdown';
 import { SlateBegin, SlatePause } from './SlateOverlays';
 import { SolverPreferencesList } from './SolverPreferencesList';
+import { isTextInput } from '../lib/domUtils';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay),
@@ -731,8 +732,7 @@ export const Puzzle = ({
 
   const pasteHandler = useCallback(
     (e: ClipboardEvent) => {
-      const tagName = (e.target as HTMLElement).tagName.toLowerCase();
-      if (tagName === 'textarea' || tagName === 'input') {
+      if (isTextInput(e.target)) {
         return;
       }
 

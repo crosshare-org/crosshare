@@ -39,6 +39,7 @@ import {
 import { isSome } from 'fp-ts/lib/Option';
 import { GridView } from './Grid';
 import { logAsyncErrors } from '../lib/utils';
+import { isTextInput } from '../lib/domUtils';
 
 export function AlternateSolutionEditor(props: {
   grid: string[];
@@ -107,8 +108,7 @@ export function AlternateSolutionEditor(props: {
 
   const pasteHandler = useCallback(
     (e: ClipboardEvent) => {
-      const tagName = (e.target as HTMLElement).tagName.toLowerCase();
-      if (tagName === 'textarea' || tagName === 'input') {
+      if (isTextInput(e.target)) {
         return;
       }
       const pa: PasteAction = {

@@ -117,6 +117,29 @@ export function posForIndex<Entry extends EntryBase>(
   };
 }
 
+export function isInBounds<Entry extends EntryBase>(
+  grid: GridBase<Entry>,
+  pos: Position
+): boolean {
+  return (
+    pos.col >= 0 &&
+    pos.col < grid.width &&
+    pos.row >= 0 &&
+    pos.row < grid.height
+  );
+}
+
+export function clampInBounds<Entry extends EntryBase>(
+  grid: GridBase<Entry>,
+  pos: PosAndDir
+): PosAndDir {
+  return {
+    row: Math.min(grid.height - 1, Math.max(0, pos.row)),
+    col: Math.min(grid.width - 1, Math.max(0, pos.col)),
+    dir: pos.dir,
+  };
+}
+
 export function entryIndexAtPosition<Entry extends EntryBase>(
   grid: GridBase<Entry>,
   pos: PosAndDir

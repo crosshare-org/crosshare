@@ -5,6 +5,7 @@ import type { WordDBT } from './WordDB';
 import { DBPuzzleT, CommentWithRepliesT, GlickoScoreT } from '../lib/dbtypes';
 import { ConstructorPageWithMarkdown } from '../lib/constructorPage';
 import type { Root } from 'hast';
+import { isTextInput } from './domUtils';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -34,6 +35,9 @@ export const fromEnum = <T extends string, TEnumValue extends string | number>(
 };
 
 export const BLOCK = '.';
+export const EMPTY = ' ';
+export const CELL_DELIMITER = ',';
+export const ROW_DELIMITER = '\n';
 
 export enum Symmetry {
   Rotational,
@@ -117,6 +121,10 @@ export interface Position {
 
 export interface PosAndDir extends Position {
   dir: Direction;
+}
+
+export function isSamePosition(a: Position, b: Position): boolean {
+  return a.row === b.row && a.col === b.col;
 }
 
 export interface ClueT {
@@ -361,6 +369,10 @@ export enum KeyK {
   ArrowLeft,
   ArrowUp,
   ArrowDown,
+  ShiftArrowRight,
+  ShiftArrowLeft,
+  ShiftArrowUp,
+  ShiftArrowDown,
   Space,
   Tab,
   ShiftTab,
@@ -403,8 +415,7 @@ export function fromKeyboardEvent(event: {
   target?: EventTarget | null;
 }): Option<Key> {
   if (event.target) {
-    const tagName = (event.target as HTMLElement).tagName.toLowerCase();
-    if (tagName === 'textarea' || tagName === 'input') {
+    if (isTextInput(event.target)) {
       return none;
     }
   }
@@ -416,13 +427,19 @@ export function fromKeyboardEvent(event: {
   const basicKey: Option<Exclude<KeyK, KeyK.AllowedCharacter>> = (() => {
     switch (event.key) {
       case 'ArrowLeft':
-        return some(KeyK.ArrowLeft);
+        return !event.shiftKey
+          ? some(KeyK.ArrowLeft)
+          : some(KeyK.ShiftArrowLeft);
       case 'ArrowRight':
-        return some(KeyK.ArrowRight);
+        return !event.shiftKey
+          ? some(KeyK.ArrowRight)
+          : some(KeyK.ShiftArrowRight);
       case 'ArrowUp':
-        return some(KeyK.ArrowUp);
+        return !event.shiftKey ? some(KeyK.ArrowUp) : some(KeyK.ShiftArrowUp);
       case 'ArrowDown':
-        return some(KeyK.ArrowDown);
+        return !event.shiftKey
+          ? some(KeyK.ArrowDown)
+          : some(KeyK.ShiftArrowDown);
       case ' ':
         return some(KeyK.Space);
       case 'Tab':
