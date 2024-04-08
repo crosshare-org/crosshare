@@ -775,7 +775,7 @@ function enterCharAt<T extends GridInterfaceState>(
   state: T,
   pos: Position,
   char: string,
-  symmetry: Symmetry,
+  symmetry: Symmetry
 ): T {
   const ci = cellIndex(state.grid, pos);
   if (state.isEditable(ci)) {
