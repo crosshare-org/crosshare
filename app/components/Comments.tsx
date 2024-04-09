@@ -31,6 +31,7 @@ import { ReportOverlay } from './ReportOverlay';
 export const COMMENT_LENGTH_LIMIT = 2048;
 
 interface LocalComment extends Omit<Comment, 'replies'> {
+  replyTo: string | null;
   isLocal: true;
 }
 type CommentWithPossibleLocalReplies = Omit<Comment, 'replies'> & {
@@ -118,6 +119,10 @@ const CommentWithReplies = (
             }}
             replyToId={commentId}
             user={props.user}
+            onSubmit={(s) => {
+              props.onSubmit(s);
+              setShowingForm(false);
+            }}
           />
         </div>
       ) : (
@@ -289,9 +294,11 @@ interface CommentFormProps {
   puzzleId: string;
   replyToId?: string;
   clueMap: Map<string, [number, Direction, string]>;
+  onSubmit: (comment: LocalComment) => void;
 }
 
 const CommentForm = ({
+  onSubmit,
   onCancel,
   ...props
 }: CommentFormProps & { onCancel?: () => void }) => {
@@ -302,9 +309,6 @@ const CommentForm = ({
   });
   const displayName = useDisplayName();
   const [editingDisplayName, setEditingDisplayName] = useState(false);
-  const [submittedComment, setSubmittedComment] = useState<LocalComment | null>(
-    null
-  );
   const [saving, setSaving] = useState(false);
 
   async function submitComment(event: FormEvent) {
@@ -334,8 +338,8 @@ const CommentForm = ({
       console.log('Uploaded', ref.id);
       setSaving(false);
 
-      // Replace this form w/ the comment for the short term
-      setSubmittedComment({
+      // Store the comment in memory to display immediately
+      onSubmit({
         isLocal: true,
         id: ref.id,
         commentText: comment.c,
@@ -348,7 +352,9 @@ const CommentForm = ({
         authorSolvedDownsOnly: comment.do || false,
         publishTime: comment.p.toMillis(),
         authorIsPatron: props.isPatron,
+        replyTo: comment.rt,
       });
+
       // Add the comment to localStorage for the medium term
       const forSession = commentsFromStorage(props.puzzleId);
       forSession.push({ i: ref.id, ...comment });
@@ -361,19 +367,14 @@ const CommentForm = ({
         /* happens on incognito when iframed */
         console.warn('not saving comment in LS');
       }
-    });
-  }
 
-  if (submittedComment) {
-    return (
-      <CommentView
-        hasGuestConstructor={props.hasGuestConstructor}
-        clueMap={props.clueMap}
-        puzzlePublishTime={props.puzzlePublishTime}
-        puzzleAuthorId={props.puzzleAuthorId}
-        comment={submittedComment}
-      />
-    );
+      // Reset the form
+      setCommentText('');
+      setCommentHast({
+        type: 'root',
+        children: [],
+      });
+    });
   }
 
   return (
@@ -529,6 +530,9 @@ export const Comments = ({
 }: CommentsProps): JSX.Element => {
   const authContext = useContext(AuthContext);
   const [toShow, setToShow] = useState<CommentOrLocalComment[]>(comments);
+  const [submittedComments, setSubmittedComments] = useState<LocalComment[]>(
+    []
+  );
 
   useEffect(() => {
     if (!authContext.notifications?.length) {
@@ -553,7 +557,40 @@ export const Comments = ({
   }, [comments, authContext.notifications]);
 
   useEffect(() => {
+    function cmp(a: CommentOrLocalComment, b: CommentOrLocalComment) {
+      return a.publishTime - b.publishTime;
+    }
+
     const rebuiltComments: CommentOrLocalComment[] = [...comments];
+
+    function mergeComment(localComment: LocalComment) {
+      if (localComment.replyTo === null) {
+        rebuiltComments.push(localComment);
+      } else {
+        const parent = findCommentById(rebuiltComments, localComment.replyTo);
+        if (parent === null) {
+          /* TODO figure out better behaivior here?
+           * One possibility is that we saw the comment originally when
+           * loading the puzzle via client side link but are now loading via
+           * page refresh. If the content is cached at a different time the
+           * parent comment might not be here yet. */
+          return;
+        }
+        if (parent.replies) {
+          parent.replies.push(localComment);
+        } else {
+          parent.replies = [localComment];
+        }
+        parent.replies.sort(cmp);
+      }
+    }
+
+    for (const submittedComment of submittedComments) {
+      if (!findCommentById(rebuiltComments, submittedComment.id)) {
+        mergeComment(submittedComment);
+      }
+    }
+
     const unmoderatedComments = commentsFromStorage(props.puzzleId);
     const toKeepInStorage: CommentForModerationWithIdT[] = [];
     if (unmoderatedComments.length > 0) {
@@ -567,6 +604,7 @@ export const Comments = ({
             if (moderatedVersion !== null) {
               console.log('found existing version, skipping one from LS');
               if (!isComment(moderatedVersion)) {
+                // This is still a local comment so keep it in storage
                 toKeepInStorage.push(c);
               }
               continue;
@@ -589,25 +627,9 @@ export const Comments = ({
               authorSolvedDownsOnly: c.do || false,
               publishTime: c.p.toMillis(),
               authorIsPatron: authContext.isPatron,
+              replyTo: c.rt,
             };
-            if (c.rt === null) {
-              rebuiltComments.push(localComment);
-            } else {
-              const parent = findCommentById(rebuiltComments, c.rt);
-              if (parent === null) {
-                /* TODO figure out better behaivior here?
-                 * One possibility is that we saw the comment originally when
-                 * loading the puzzle via client side link but are now loading via
-                 * page refresh. If the content is cached at a different time the
-                 * parent comment might not be here yet. */
-                continue;
-              }
-              if (parent.replies) {
-                parent.replies.push(localComment);
-              } else {
-                parent.replies = [localComment];
-              }
-            }
+            mergeComment(localComment);
           }
           /* This means one or more have made it through moderation - update LS.
            * We don't need to try/catch this LS access as we only do it if we
@@ -622,13 +644,21 @@ export const Comments = ({
               );
             }
           }
+
+          rebuiltComments.sort(cmp);
           setToShow(rebuiltComments);
         })
         .catch((e: unknown) => {
           console.error('error rebuilding comments', e);
         });
     }
-  }, [props.puzzleId, props.clueMap, comments, authContext.isPatron]);
+  }, [
+    props.puzzleId,
+    props.clueMap,
+    comments,
+    authContext.isPatron,
+    submittedComments,
+  ]);
   return (
     <div css={{ marginTop: '1em' }}>
       <h4 css={{ borderBottom: '1px solid var(--black)' }}>
@@ -651,6 +681,9 @@ export const Comments = ({
           username={authContext.constructorPage?.i}
           user={authContext.user}
           isPatron={authContext.isPatron}
+          onSubmit={(newComment) => {
+            setSubmittedComments([...submittedComments, newComment]);
+          }}
         />
       )}
       <ul
@@ -667,6 +700,9 @@ export const Comments = ({
               constructorPage={authContext.constructorPage}
               isPatron={authContext.isPatron}
               comment={a}
+              onSubmit={(newComment) => {
+                setSubmittedComments([...submittedComments, newComment]);
+              }}
               {...props}
             />
           </li>
