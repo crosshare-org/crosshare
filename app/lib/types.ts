@@ -160,6 +160,9 @@ export interface Comment {
   id: string;
   replies?: Comment[];
   authorIsPatron: boolean;
+  /** has the comment been deleted/removed (might still be in thread if there were replies) */
+  deleted?: boolean;
+  removed?: boolean;
 }
 
 export interface PuzzleT {

@@ -157,8 +157,7 @@ export const getArticlePageProps: GetServerSideProps<
 function filterDeletedWithoutChildren(
   comments: CommentWithRepliesT[]
 ): CommentWithRepliesT[] {
-  const filtered = comments.filter((x) => x.r?.length || !x.deleted);
-  return filtered
+  return comments
     .map(
       (c: CommentWithRepliesT): CommentWithRepliesT => ({
         ...c,
@@ -170,21 +169,28 @@ function filterDeletedWithoutChildren(
         delete c.r;
       }
       return c;
-    });
+    })
+    .filter((x) => x.r?.length || !x.deleted);
 }
 
-export function filterDeletedComments(
+function modifyRemainingDeleted(
   comments: CommentWithRepliesT[]
 ): CommentWithRepliesT[] {
-  const childlessRemoved = filterDeletedWithoutChildren(comments);
-  return childlessRemoved.map((comment) => ({
+  return comments.map((comment) => ({
     ...comment,
+    ...(comment.r?.length && { r: modifyRemainingDeleted(comment.r) }),
     c: comment.deleted
       ? comment.removed
         ? '*Comment removed*'
         : '*Comment deleted*'
       : comment.c,
   }));
+}
+
+export function filterDeletedComments(
+  comments: CommentWithRepliesT[]
+): CommentWithRepliesT[] {
+  return modifyRemainingDeleted(filterDeletedWithoutChildren(comments));
 }
 
 export async function convertComments(
@@ -206,6 +212,8 @@ export async function convertComments(
         replies: await convertComments(c.r || [], clueMap),
         ...(c.un && { authorUsername: c.un }),
         authorIsPatron: await isUserPatron(c.a),
+        ...(c.deleted && { deleted: true }),
+        ...(c.removed && { removed: true }),
       };
     })
   );

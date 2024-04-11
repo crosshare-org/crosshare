@@ -1,7 +1,12 @@
-import { useState, useEffect, useContext, ReactNode, FormEvent } from 'react';
+import {
+  useState,
+  useEffect,
+  useContext,
+  ReactNode,
+  FormEvent,
+  Fragment,
+} from 'react';
 import * as iot from 'io-ts';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import type { User } from 'firebase/auth';
 import { AuthContext } from './AuthContext';
 import { PartialBy, Comment, Direction } from '../lib/types';
@@ -13,6 +18,7 @@ import {
   CommentForModerationT,
   CommentForModerationWithIdV,
   CommentForModerationWithIdT,
+  CommentDeletionT,
 } from '../lib/dbtypes';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { Markdown } from './Markdown';
@@ -27,6 +33,8 @@ import { getCollection, getDocRef } from '../lib/firebaseWrapper';
 import { addDoc, updateDoc } from 'firebase/firestore';
 import type { Root } from 'hast';
 import { ReportOverlay } from './ReportOverlay';
+import { Overlay } from './Overlay';
+import { arrayFromLocalStorage } from '../lib/storage';
 
 export const COMMENT_LENGTH_LIMIT = 2048;
 
@@ -38,6 +46,84 @@ type CommentWithPossibleLocalReplies = Omit<Comment, 'replies'> & {
   replies?: CommentOrLocalComment[];
 };
 type CommentOrLocalComment = CommentWithPossibleLocalReplies | LocalComment;
+
+function isComment(
+  comment: CommentOrLocalComment
+): comment is CommentWithPossibleLocalReplies {
+  return !('isLocal' in comment);
+}
+
+function filterDeletedWithoutChildren<T extends CommentOrLocalComment>(
+  comments: T[]
+): T[] {
+  return comments
+    .map(
+      (c: T): T => ({
+        ...c,
+        replies: filterDeletedWithoutChildren(
+          (isComment(c) && c.replies) || []
+        ),
+      })
+    )
+    .map((c) => {
+      if (isComment(c)) {
+        if (!c.replies?.length) {
+          delete c.replies;
+        }
+      }
+      return c;
+    })
+    .filter((x) => (isComment(x) && x.replies?.length) || !x.deleted);
+}
+
+function getHast(text: string): Root {
+  return {
+    type: 'root',
+    children: [
+      {
+        type: 'element',
+        tagName: 'p',
+        properties: {},
+        children: [
+          {
+            type: 'element',
+            tagName: 'em',
+            properties: {},
+            children: [{ type: 'text', value: text }],
+          },
+        ],
+      },
+    ],
+  };
+}
+
+function modifyRemainingDeleted<T extends CommentOrLocalComment>(
+  comments: T[]
+): T[] {
+  return comments.map((comment) => ({
+    ...comment,
+    ...(isComment(comment) &&
+      comment.replies?.length && {
+        replies: modifyRemainingDeleted(comment.replies),
+      }),
+    commentText: comment.deleted
+      ? comment.removed
+        ? '*Comment removed*'
+        : '*Comment deleted*'
+      : comment.commentText,
+    commentHast: comment.deleted
+      ? comment.removed
+        ? getHast('Comment removed')
+        : getHast('Comment deleted')
+      : comment.commentHast,
+  }));
+}
+
+function filterDeletedComments<T extends CommentOrLocalComment>(
+  comments: T[]
+): T[] {
+  return modifyRemainingDeleted(filterDeletedWithoutChildren(comments));
+}
 
 interface CommentProps {
   puzzlePublishTime: number;
@@ -88,8 +174,71 @@ const CommentWithReplies = (
 ) => {
   const [showingForm, setShowingForm] = useState(false);
   const [showingReportOverlay, setShowingReportOverlay] = useState(false);
+  const [showingDeleteOverlay, setShowingDeleteOverlay] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
   const commentId = isComment(props.comment) ? props.comment.id : null;
   const replies = isComment(props.comment) ? props.comment.replies : undefined;
+
+  const { isAdmin } = useContext(AuthContext);
+
+  const actionButtons: ReactNode[] = [];
+  if (!props.comment.deleted) {
+    if (props.user && !props.user.isAnonymous && commentId) {
+      actionButtons.push(
+        <ButtonAsLink
+          onClick={() => {
+            setShowingForm(true);
+          }}
+          text={t`Reply`}
+        />
+      );
+    }
+    if (props.comment.authorId === props.user?.uid || isAdmin) {
+      actionButtons.push(
+        <ButtonAsLink
+          onClick={() => {
+            setShowingDeleteOverlay(true);
+          }}
+          text={'Delete'}
+        />
+      );
+    }
+    if (props.user?.uid !== props.comment.authorId) {
+      actionButtons.push(
+        <ButtonAsLink
+          onClick={() => {
+            setShowingReportOverlay(true);
+          }}
+          text={'Report'}
+        />
+      );
+    }
+  }
+
+  async function deleteComment(event: FormEvent) {
+    event.preventDefault();
+    if (deleting) {
+      return;
+    }
+    setDeleting(true);
+
+    props.onDelete(props.comment.id);
+
+    const deletion: CommentDeletionT = {
+      pid: props.puzzleId,
+      cid: props.comment.id,
+      a: props.comment.authorId,
+      // This will only be possible if user is admin and is removing a comment by somebody else
+      removed: props.comment.authorId !== props.user?.uid,
+    };
+
+    await addDoc(getCollection('deleteComment'), deletion).then(() => {
+      setShowingDeleteOverlay(false);
+      setDeleting(false);
+    });
+  }
+
   return (
     <CommentView
       hasGuestConstructor={props.hasGuestConstructor}
@@ -98,6 +247,33 @@ const CommentWithReplies = (
       puzzleAuthorId={props.puzzleAuthorId}
       comment={props.comment}
     >
+      {showingDeleteOverlay ? (
+        <Overlay
+          closeCallback={() => {
+            setShowingDeleteOverlay(false);
+          }}
+        >
+          <h2>Are you sure you want to delete your comment?</h2>
+          <form onSubmit={logAsyncErrors(deleteComment)}>
+            <Button
+              type="submit"
+              css={{ marginRight: '0.5em' }}
+              disabled={deleting}
+              text={'Delete'}
+            />
+            <Button
+              boring={true}
+              disabled={deleting}
+              onClick={() => {
+                setShowingDeleteOverlay(false);
+              }}
+              text={'Cancel'}
+            />
+          </form>
+        </Overlay>
+      ) : (
+        ''
+      )}
       {showingReportOverlay ? (
         <ReportOverlay
           puzzleId={props.puzzleId}
@@ -127,28 +303,14 @@ const CommentWithReplies = (
         </div>
       ) : (
         <div>
-          {!props.user || props.user.isAnonymous || !commentId ? (
-            ''
-          ) : (
-            <>
-              <ButtonAsLink
-                onClick={() => {
-                  setShowingForm(true);
-                }}
-                text={t`Reply`}
-              />{' '}
-              &middot;{' '}
-            </>
-          )}
-          <ButtonAsLink
-            onClick={() => {
-              setShowingReportOverlay(true);
-            }}
-            text={'Report'}
-          />
+          {actionButtons.map((btn, idx) => (
+            <Fragment key={idx}>
+              {!!idx && <> &middot; </>}
+              {btn}
+            </Fragment>
+          ))}
         </div>
       )}
-
       {replies ? (
         <ul
           css={{
@@ -171,30 +333,22 @@ const CommentWithReplies = (
 };
 
 function commentsKey(puzzleId: string) {
-  return 'comments/' + puzzleId;
+  return `comments/${puzzleId}`;
+}
+
+function deletesKey(puzzleId: string) {
+  return `deletions/${puzzleId}`;
 }
 
 function commentsFromStorage(puzzleId: string): CommentForModerationWithIdT[] {
-  let inSession: string | null;
-  try {
-    inSession = localStorage.getItem(commentsKey(puzzleId));
-  } catch {
-    /* happens on incognito when iframed */
-    console.warn('not loading comments from LS');
-    inSession = null;
-  }
-  if (inSession) {
-    const res = iot
-      .array(CommentForModerationWithIdV)
-      .decode(JSON.parse(inSession));
-    if (isRight(res)) {
-      return res.right;
-    } else {
-      console.error("Couldn't parse object in local storage");
-      console.error(PathReporter.report(res).join(','));
-    }
-  }
-  return [];
+  return arrayFromLocalStorage(
+    commentsKey(puzzleId),
+    CommentForModerationWithIdV
+  );
+}
+
+function deletesFromStorage(puzzleId: string) {
+  return arrayFromLocalStorage(deletesKey(puzzleId), iot.string);
 }
 
 const CommentAuthor = (props: { username?: string; displayName: string }) => {
@@ -295,6 +449,7 @@ interface CommentFormProps {
   replyToId?: string;
   clueMap: Map<string, [number, Direction, string]>;
   onSubmit: (comment: LocalComment) => void;
+  onDelete: (commentId: string) => void;
 }
 
 const CommentForm = ({
@@ -497,12 +652,6 @@ interface CommentsProps {
   clueMap: Map<string, [number, Direction, string]>;
 }
 
-function isComment(
-  comment: CommentOrLocalComment
-): comment is CommentWithPossibleLocalReplies {
-  return !('isLocal' in comment);
-}
-
 function findCommentById(
   comments: CommentOrLocalComment[],
   id: string
@@ -533,6 +682,7 @@ export const Comments = ({
   const [submittedComments, setSubmittedComments] = useState<LocalComment[]>(
     []
   );
+  const [submittedDeletes, setSubmittedDeletes] = useState<string[]>([]);
 
   useEffect(() => {
     if (!authContext.notifications?.length) {
@@ -592,7 +742,20 @@ export const Comments = ({
     }
 
     const unmoderatedComments = commentsFromStorage(props.puzzleId);
+    const storedDeletes = deletesFromStorage(props.puzzleId);
     const toKeepInStorage: CommentForModerationWithIdT[] = [];
+
+    rebuiltComments.sort(cmp);
+    // Mark comments that have been deleted
+    for (const deletion of submittedDeletes.concat(storedDeletes)) {
+      const comment = findCommentById(rebuiltComments, deletion);
+      if (comment) {
+        comment.deleted = true;
+      }
+    }
+    const filtered = filterDeletedComments(rebuiltComments);
+    setToShow(filtered);
+
     if (unmoderatedComments.length > 0) {
       import('../lib/markdown/markdown')
         .then((mod) => {
@@ -646,7 +809,15 @@ export const Comments = ({
           }
 
           rebuiltComments.sort(cmp);
-          setToShow(rebuiltComments);
+          // Mark comments that have been deleted
+          for (const deletion of submittedDeletes.concat(storedDeletes)) {
+            const comment = findCommentById(rebuiltComments, deletion);
+            if (comment) {
+              comment.deleted = true;
+            }
+          }
+          const filtered = filterDeletedComments(rebuiltComments);
+          setToShow(filtered);
         })
         .catch((e: unknown) => {
           console.error('error rebuilding comments', e);
@@ -658,7 +829,24 @@ export const Comments = ({
     comments,
     authContext.isPatron,
     submittedComments,
+    submittedDeletes,
   ]);
+
+  function deleteLocally(commentId: string) {
+    setSubmittedDeletes([...submittedDeletes, commentId]);
+    const forStorage = deletesFromStorage(props.puzzleId);
+    forStorage.push(commentId);
+    try {
+      localStorage.setItem(
+        deletesKey(props.puzzleId),
+        JSON.stringify(forStorage)
+      );
+    } catch {
+      /* happens on incognito when iframed */
+      console.warn('not saving delete in LS');
+    }
+  }
+
   return (
     <div css={{ marginTop: '1em' }}>
       <h4 css={{ borderBottom: '1px solid var(--black)' }}>
@@ -684,6 +872,7 @@ export const Comments = ({
           onSubmit={(newComment) => {
             setSubmittedComments([...submittedComments, newComment]);
           }}
+          onDelete={deleteLocally}
         />
       )}
       <ul
@@ -703,6 +892,7 @@ export const Comments = ({
               onSubmit={(newComment) => {
                 setSubmittedComments([...submittedComments, newComment]);
               }}
+              onDelete={deleteLocally}
               {...props}
             />
           </li>
