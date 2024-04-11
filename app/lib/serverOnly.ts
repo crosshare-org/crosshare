@@ -154,43 +154,35 @@ export const getArticlePageProps: GetServerSideProps<
   return { props: { ...article, hast: markdownToHast({ text: article.c }) } };
 };
 
-function filterDeletedWithoutChildren(
+// TODO this is identical to the function in `Comments.tsx` but operates on a different format of Comment - unify if possible
+export function filterDeletedComments(
   comments: CommentWithRepliesT[]
 ): CommentWithRepliesT[] {
   return comments
     .map(
+      // First do the recursion on any children
       (c: CommentWithRepliesT): CommentWithRepliesT => ({
         ...c,
-        r: filterDeletedWithoutChildren(c.r || []),
+        r: filterDeletedComments(c.r || []),
       })
     )
     .map((c) => {
       if (!c.r?.length) {
         delete c.r;
+        return c;
+      } else {
+        // Not childless, so change comment text if it's deleted
+        return {
+          ...c,
+          c: c.deleted
+            ? c.removed
+              ? '*Comment removed*'
+              : '*Comment deleted*'
+            : c.c,
+        };
       }
-      return c;
     })
-    .filter((x) => x.r?.length || !x.deleted);
-}
-
-function modifyRemainingDeleted(
-  comments: CommentWithRepliesT[]
-): CommentWithRepliesT[] {
-  return comments.map((comment) => ({
-    ...comment,
-    ...(comment.r?.length && { r: modifyRemainingDeleted(comment.r) }),
-    c: comment.deleted
-      ? comment.removed
-        ? '*Comment removed*'
-        : '*Comment deleted*'
-      : comment.c,
-  }));
-}
-
-export function filterDeletedComments(
-  comments: CommentWithRepliesT[]
-): CommentWithRepliesT[] {
-  return modifyRemainingDeleted(filterDeletedWithoutChildren(comments));
+    .filter((x) => x.r?.length || !x.deleted); // Remove any childless deleted comments
 }
 
 export async function convertComments(

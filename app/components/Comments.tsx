@@ -53,29 +53,7 @@ function isComment(
   return !('isLocal' in comment);
 }
 
-function filterDeletedWithoutChildren<T extends CommentOrLocalComment>(
-  comments: T[]
-): T[] {
-  return comments
-    .map(
-      (c: T): T => ({
-        ...c,
-        replies: filterDeletedWithoutChildren(
-          (isComment(c) && c.replies) || []
-        ),
-      })
-    )
-    .map((c) => {
-      if (isComment(c)) {
-        if (!c.replies?.length) {
-          delete c.replies;
-        }
-      }
-      return c;
-    })
-    .filter((x) => (isComment(x) && x.replies?.length) || !x.deleted);
-}
-
+// Get a dummy hast tree for the comments we need to modify to mark deleted
 function getHast(text: string): Root {
   return {
     type: 'root',
@@ -97,32 +75,38 @@ function getHast(text: string): Root {
   };
 }
 
-function modifyRemainingDeleted<T extends CommentOrLocalComment>(
-  comments: T[]
-): T[] {
-  return comments.map((comment) => ({
-    ...comment,
-    ...(isComment(comment) &&
-      comment.replies?.length && {
-        replies: modifyRemainingDeleted(comment.replies),
-      }),
-    commentText: comment.deleted
-      ? comment.removed
-        ? '*Comment removed*'
-        : '*Comment deleted*'
-      : comment.commentText,
-    commentHast: comment.deleted
-      ? comment.removed
-        ? getHast('Comment removed')
-        : getHast('Comment deleted')
-      : comment.commentHast,
-  }));
-}
-
+// TODO this is identical to the function in `serverOnly.ts` but operates on a different format of Comment - unify if possible
 function filterDeletedComments<T extends CommentOrLocalComment>(
   comments: T[]
 ): T[] {
-  return modifyRemainingDeleted(filterDeletedWithoutChildren(comments));
+  return comments
+    .map(
+      (c: T): T => ({
+        ...c,
+        replies: filterDeletedComments((isComment(c) && c.replies) || []),
+      })
+    )
+    .map((c) => {
+      if (isComment(c) && !c.replies?.length) {
+        delete c.replies;
+        return c;
+      } else {
+        return {
+          ...c,
+          commentText: c.deleted
+            ? c.removed
+              ? '*Comment removed*'
+              : '*Comment deleted*'
+            : c.commentText,
+          commentHast: c.deleted
+            ? c.removed
+              ? getHast('Comment removed')
+              : getHast('Comment deleted')
+            : c.commentHast,
+        };
+      }
+    })
+    .filter((x) => (isComment(x) && x.replies?.length) || !x.deleted);
 }
 
 interface CommentProps {
