@@ -156,6 +156,11 @@ const CommentWithReplies = (
     constructorPage: ConstructorPageT | undefined;
   }
 ) => {
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const [showingForm, setShowingForm] = useState(false);
   const [showingReportOverlay, setShowingReportOverlay] = useState(false);
   const [showingDeleteOverlay, setShowingDeleteOverlay] = useState(false);
@@ -168,7 +173,7 @@ const CommentWithReplies = (
 
   const actionButtons: ReactNode[] = [];
   if (!props.comment.deleted) {
-    if (props.user && !props.user.isAnonymous && commentId) {
+    if (isMounted && props.user && !props.user.isAnonymous && commentId) {
       actionButtons.push(
         <ButtonAsLink
           onClick={() => {
@@ -178,7 +183,7 @@ const CommentWithReplies = (
         />
       );
     }
-    if (props.comment.authorId === props.user?.uid || isAdmin) {
+    if (isMounted && (props.comment.authorId === props.user?.uid || isAdmin)) {
       actionButtons.push(
         <ButtonAsLink
           onClick={() => {
@@ -188,7 +193,7 @@ const CommentWithReplies = (
         />
       );
     }
-    if (props.user?.uid !== props.comment.authorId) {
+    if (!isMounted || props.user?.uid !== props.comment.authorId) {
       actionButtons.push(
         <ButtonAsLink
           onClick={() => {
@@ -661,6 +666,11 @@ export const Comments = ({
   comments,
   ...props
 }: CommentsProps): JSX.Element => {
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const authContext = useContext(AuthContext);
   const [toShow, setToShow] = useState<CommentOrLocalComment[]>(comments);
   const [submittedComments, setSubmittedComments] = useState<LocalComment[]>(
@@ -836,7 +846,7 @@ export const Comments = ({
       <h4 css={{ borderBottom: '1px solid var(--black)' }}>
         <Trans>Comments</Trans>
       </h4>
-      {!authContext.user || authContext.user.isAnonymous ? (
+      {!isMounted || !authContext.user || authContext.user.isAnonymous ? (
         <div css={{ textAlign: 'center' }}>
           <p>
             <Trans>Sign in with google to leave a comment of your own:</Trans>

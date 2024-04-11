@@ -7,7 +7,7 @@ import { Overlay } from './Overlay';
 import { FaInfoCircle } from 'react-icons/fa';
 import { useSnackbar } from './Snackbar';
 import { getDocRef } from '../lib/firebaseWrapper';
-import { useCallback, useState, useContext } from 'react';
+import { useCallback, useState, useContext, useEffect } from 'react';
 import type { User } from 'firebase/auth';
 import { t } from '@lingui/macro';
 import { arrayRemove, arrayUnion, setDoc } from 'firebase/firestore';
@@ -20,6 +20,10 @@ export const FollowButton = ({
   page: ConstructorPageBase;
   className?: string;
 }) => {
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   const authCtx = useContext(AuthContext);
   const user = authCtx.user;
   const isFollowing = authCtx.prefs?.following?.includes(page.u);
@@ -51,7 +55,7 @@ export const FollowButton = ({
 
   const css = { minWidth: '7em' };
 
-  if (!user || user.isAnonymous) {
+  if (!isMounted || !user || user.isAnonymous) {
     return (
       <>
         {showOverlay ? (
@@ -65,7 +69,7 @@ export const FollowButton = ({
                 Follow {page.n} to get notified when they post a new puzzle
               </h2>
               <p>Login with Google to follow</p>
-              {user ? (
+              {isMounted && user ? (
                 <GoogleLinkButton user={user} postSignIn={doFollow} />
               ) : (
                 <GoogleSignInButton postSignIn={doFollow} />
@@ -78,7 +82,7 @@ export const FollowButton = ({
         <Button
           css={css}
           hollow
-          disabled={authCtx.loading}
+          disabled={!isMounted || authCtx.loading}
           onClick={(e) => {
             e.stopPropagation();
             setShowOverlay(true);
