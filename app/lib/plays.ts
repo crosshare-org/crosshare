@@ -12,6 +12,7 @@ import {
 } from './dbtypes';
 import { getDocRef } from './firebaseWrapper';
 import { getDoc, setDoc } from 'firebase/firestore';
+import { fromLocalStorage } from './storage';
 
 const PlayMapV = t.record(t.string, t.union([PlayWithoutUserV, t.null]));
 export type PlayMapT = t.TypeOf<typeof PlayMapV>;
@@ -41,25 +42,10 @@ function getStore(storageKey: string): PlayMapT {
   if (store) {
     return store.data;
   }
-  let inStorage: string | null;
-  try {
-    inStorage = localStorage.getItem(storageKey);
-  } catch {
-    /* happens on incognito when iframed */
-    console.warn('not loading plays from LS');
-    inStorage = null;
-  }
-  if (inStorage) {
-    const validationResult = TimestampedPlayMapV.decode(JSON.parse(inStorage));
-    if (isRight(validationResult)) {
-      console.log('loaded ' + storageKey + ' from local storage');
-      const valid = validationResult.right;
-      memoryStore[storageKey] = valid;
-      return valid.data;
-    } else {
-      console.error(PathReporter.report(validationResult).join(','));
-      throw new Error("Couldn't parse object in local storage");
-    }
+  const valid = fromLocalStorage(storageKey, TimestampedPlayMapV);
+  if (valid) {
+    memoryStore[storageKey] = valid;
+    return valid.data;
   }
   return {};
 }

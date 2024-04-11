@@ -1,6 +1,5 @@
 import * as t from 'io-ts';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
+import { fromLocalStorage } from './storage';
 
 export class LruCache<T> {
   private values: Map<string, T> = new Map<string, T>();
@@ -10,17 +9,12 @@ export class LruCache<T> {
     public readonly maxEntries: number,
     public readonly validator: t.Type<T>
   ) {
-    const initValue = localStorage.getItem(localStorageKey);
-
-    if (initValue) {
-      const valuesV = t.array(t.tuple([t.string, validator]));
-      const validationResult = valuesV.decode(JSON.parse(initValue));
-      if (isRight(validationResult)) {
-        this.values = new Map(validationResult.right);
-      } else {
-        console.error("Couldn't parse object in local storage");
-        console.error(PathReporter.report(validationResult).join(','));
-      }
+    const fromStorage = fromLocalStorage(
+      localStorageKey,
+      t.array(t.tuple([t.string, validator]))
+    );
+    if (fromStorage) {
+      this.values = new Map(fromStorage);
     }
   }
 

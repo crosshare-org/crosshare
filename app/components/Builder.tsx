@@ -11,9 +11,7 @@ import {
 import { Global } from '@emotion/react';
 import { eqSet, STORAGE_KEY } from '../lib/utils';
 import { ContactLinks } from './ContactLinks';
-import { isRight } from 'fp-ts/lib/Either';
 import { isSome } from 'fp-ts/lib/Option';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   FaRegNewspaper,
   FaHammer,
@@ -133,6 +131,7 @@ import type { User } from 'firebase/auth';
 import { NewPuzzleForm } from './NewPuzzleForm';
 import { getAutofillWorker } from '../lib/workerLoader';
 import { isTextInput } from '../lib/domUtils';
+import { fromLocalStorage } from '../lib/storage';
 
 type BuilderProps = PartialBy<
   Omit<
@@ -280,18 +279,7 @@ const PotentialFillList = (props: PotentialFillListProps) => {
 };
 
 const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
-  const inStorage = localStorage.getItem(STORAGE_KEY);
-  let saved: PuzzleInProgressT | null = null;
-  if (inStorage) {
-    const validationResult = PuzzleInProgressV.decode(JSON.parse(inStorage));
-    if (isRight(validationResult)) {
-      console.log('loaded puzzle in progress from local storage');
-      saved = validationResult.right;
-    } else {
-      console.error('failed to load puzzle in progress!');
-      console.error(PathReporter.report(validationResult).join(','));
-    }
-  }
+  const saved = fromLocalStorage(STORAGE_KEY, PuzzleInProgressV);
 
   return initialBuilderState({
     id: saved?.id ?? null,
