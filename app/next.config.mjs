@@ -5,6 +5,9 @@ const distDir = 'nextjs';
 const baseConfig = {
   reactStrictMode: true,
   distDir: distDir,
+  eslint: {
+    dirs: ["components", "lib", "pages", "reducers"], // TODO add "scripts"
+  },
   poweredByHeader: false,
   productionBrowserSourceMaps: true,
   i18n: {

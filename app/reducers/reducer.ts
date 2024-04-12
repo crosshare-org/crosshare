@@ -910,8 +910,8 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
     }
     let toCopy = '';
     if (isBuilderState(state) && hasSelection(state)) {
-      let grid = state.grid;
-      let row: number;
+      const grid = state.grid;
+      let row: number | null = null;
       forEachPosition(state.selection, (pos) => {
         if (row != null && row !== pos.row) {
           toCopy += ROW_DELIMITER;
@@ -932,7 +932,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         }
       }
     }
-    navigator.clipboard.writeText(toCopy).catch((e) => {
+    navigator.clipboard.writeText(toCopy).catch((e: unknown) => {
       console.log('There was a problem copying to clipboard:', e);
     });
     return state;
