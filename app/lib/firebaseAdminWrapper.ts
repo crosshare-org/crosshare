@@ -32,17 +32,35 @@ export function getAdminApp() {
 export const getUser = (userId: string) =>
   getAuth(getAdminApp()).getUser(userId);
 
-const firestore = () => getFirestore(getAdminApp());
+let OVERRIDE_FIRESTORE: FirebaseFirestore.Firestore | null = null;
+export function overrideFirestore(f: FirebaseFirestore.Firestore | null) {
+  OVERRIDE_FIRESTORE = f;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/strict-boolean-expressions
+const firestore = () => OVERRIDE_FIRESTORE || getFirestore(getAdminApp());
+
+let OVERRIDE_TO_FIRESTORE: ((data: unknown) => Record<string, unknown>) | null;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const toFirestore = (data: any): Record<string, unknown> =>
+export const toFirestore = (data: any): Record<string, unknown> => {
+  if (OVERRIDE_TO_FIRESTORE) {
+    return OVERRIDE_TO_FIRESTORE(data);
+  }
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  cloneDeepWith(data, (val) => {
+  return cloneDeepWith(data, (val) => {
     if (isTimestamp(val)) {
       return FBTimestamp.fromMillis(val.toMillis());
     }
     return undefined;
   });
+};
+
+export function overrideToFirestore(
+  c: ((data: unknown) => Record<string, unknown>) | null
+) {
+  OVERRIDE_TO_FIRESTORE = c;
+}
 
 export const getCollection = (c: string) => {
   const db = firestore();

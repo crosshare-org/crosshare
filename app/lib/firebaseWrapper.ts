@@ -71,12 +71,14 @@ export const convertTimestamps = (data: any): Record<string, unknown> =>
     return undefined;
   });
 
+export const converter = {
+  toFirestore: convertTimestamps,
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  fromFirestore: (s: any) => s.data(),
+};
+
 export const getCollection = (collectionName: string) =>
-  collection(db, collectionName).withConverter({
-    toFirestore: convertTimestamps,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    fromFirestore: (s: any) => s.data(),
-  });
+  collection(db, collectionName).withConverter(converter);
 
 export function getValidatedCollection<V>(
   collectionName: string,
