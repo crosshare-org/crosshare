@@ -19,7 +19,7 @@ import {
   gridInterfaceReducer,
 } from './gridReducer';
 import { PuzzleAction } from './commonActions';
-import { postEdit, validateGrid } from './builderUtils';
+import { postEdit, pushToHistory, validateGrid } from './builderUtils';
 
 export type BuilderEntry = ViewableEntry;
 export type BuilderGrid = ViewableGrid<BuilderEntry>;
@@ -53,6 +53,8 @@ export interface BuilderState extends GridInterfaceState {
   showDownloadLink: boolean;
   alternates: Record<number, string>[];
   userTags: string[];
+  undoHistory: BuilderGrid[];
+  undoIndex: number;
 }
 
 function initialBuilderStateFromSaved(
@@ -204,7 +206,23 @@ export function initialBuilderState({
     downsOnly: false,
     alternates: alternates ?? [],
     userTags,
+    undoHistory: [fromCells(initialGrid)],
+    undoIndex: 0,
   });
+}
+
+export interface UndoAction extends PuzzleAction {
+  type: 'UNDO';
+}
+function isUndoAction(action: PuzzleAction): action is UndoAction {
+  return action.type === 'UNDO';
+}
+
+export interface RedoAction extends PuzzleAction {
+  type: 'REDO';
+}
+function isRedoAction(action: PuzzleAction): action is RedoAction {
+  return action.type === 'REDO';
 }
 
 export interface SymmetryAction extends PuzzleAction {
@@ -500,7 +518,7 @@ export function builderReducer(
   }
   if (isSetHighlightAction(action)) {
     state.grid.highlight = action.highlight;
-    return { ...state };
+    return pushToHistory(state);
   }
   if (isSetClueAction(action)) {
     const newVal = state.clues[action.word] ?? [];
@@ -574,13 +592,10 @@ export function builderReducer(
     };
   }
   if (isClickedFillAction(action)) {
-    return postEdit(
-      {
-        ...state,
-        grid: gridWithEntrySet(state.grid, action.entryIndex, action.value),
-      },
-      0
-    );
+    const grid = gridWithEntrySet(state.grid, action.entryIndex, action.value);
+    state = postEdit({ ...state, grid }, 0);
+    state = pushToHistory(state);
+    return state;
   }
   if (action.type === 'CLEARPUBLISHERRORS') {
     return { ...state, publishErrors: [], publishWarnings: [] };
@@ -761,6 +776,18 @@ export function builderReducer(
   }
   if (isCancelPublishAction(action)) {
     return { ...state, toPublish: null };
+  }
+  if (isUndoAction(action)) {
+    let { undoHistory, undoIndex } = state;
+    undoIndex = Math.max(state.undoIndex - 1, 0);
+    const grid = undoHistory[undoIndex];
+    return grid == null ? state : { ...state, grid, undoIndex };
+  }
+  if (isRedoAction(action)) {
+    let { undoHistory, undoIndex } = state;
+    undoIndex = Math.min(state.undoIndex + 1, state.undoHistory.length - 1);
+    const grid = undoHistory[undoIndex];
+    return grid == null ? state : { ...state, grid, undoIndex };
   }
   return state;
 }

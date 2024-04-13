@@ -1,5 +1,6 @@
 import { entryWord } from '../lib/gridBase';
 import { emptySelection, hasMultipleCells } from '../lib/selection';
+import { fromCells } from '../lib/viewableGrid';
 import type { BuilderState } from './builderReducer';
 import type { GridInterfaceState } from './gridReducer';
 
@@ -64,4 +65,15 @@ export function clearSelection<T extends GridInterfaceState>(state: T): T {
     ...state,
     selection: emptySelection(),
   };
+}
+
+export function pushToHistory<T extends GridInterfaceState>(state: T): T {
+  if (!isBuilderState(state)) {
+    return state;
+  }
+
+  const undoHistory = [...state.undoHistory.slice(0, state.undoIndex + 1), fromCells(state.grid)]
+  const undoIndex = undoHistory.length - 1;
+
+  return { ...state, undoHistory, undoIndex };
 }

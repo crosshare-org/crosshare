@@ -40,6 +40,7 @@ import {
   postEdit as builderPostEdit,
   clearSelection,
   hasSelection,
+  pushToHistory,
 } from './builderUtils';
 import type { PuzzleState } from './puzzleReducer';
 import { isPuzzleState, postEdit as puzzlePostEdit } from './puzzleUtils';
@@ -243,12 +244,16 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           state = enterCharAt(state, pos, EMPTY, Symmetry.None);
         }
       });
+      if (isCutAction(action)) {
+        state = pushToHistory(state);
+      }
     } else {
       const val = valAt(state.grid, state.active);
       if (val !== BLOCK && val !== EMPTY) {
         toCopy = val;
         if (isCutAction(action)) {
           state = enterText(state, EMPTY);
+          state = pushToHistory(state);
         }
       }
     }
@@ -290,6 +295,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         }
       });
     });
+    state = pushToHistory(state);
     state = {
       ...state,
       wasEntryClick: false,
@@ -330,6 +336,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         } else {
           state.grid.highlighted.add(ci);
         }
+        state = pushToHistory(state);
       }
       return { ...state };
     }
@@ -342,7 +349,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           rebusValue: state.rebusValue ? state.rebusValue.slice(0, -1) : '',
         };
       } else if (key.k === KeyK.Enter) {
-        return {
+        state = {
           ...closeRebus(state),
           wasEntryClick: false,
           active: advancePosition(
@@ -352,6 +359,8 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
             isPuzzleState(state) ? state.prefs : undefined
           ),
         };
+        state = pushToHistory(state);
+        return state;
       } else if (key.k === KeyK.Escape) {
         return { ...state, isEnteringRebus: false, rebusValue: '' };
       }
@@ -517,11 +526,13 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
         const grid = gridWithBlockToggled(state.grid, state.active, symmetry);
         state = clearSelection(state);
-        return {
+        state = {
           ...postEdit({ ...state, grid }, ci),
           wasEntryClick: false,
           active: nextCell(state.grid, state.active),
         };
+        state = pushToHistory(state);
+        return state;
       }
       return state;
     } else if (key.k === KeyK.Comma && state.grid.allowBlockEditing) {
@@ -530,15 +541,18 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
         const grid = gridWithBarToggled(state.grid, state.active, symmetry);
         state = clearSelection(state);
-        return {
+        state = {
           ...postEdit({ ...state, grid }, ci),
           wasEntryClick: false,
         };
+        state = pushToHistory(state);
+        return state;
       }
       return state;
     } else if (key.k === KeyK.AllowedCharacter) {
       const char = key.c.toUpperCase();
       state = enterText(state, char);
+      state = pushToHistory(state);
       return {
         ...state,
         wasEntryClick: false,
@@ -569,6 +583,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         }
       }
       state = clearSelection(state);
+      state = pushToHistory(state);
       return {
         ...state,
         wasEntryClick: false,
@@ -594,6 +609,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         }
       }
       state = clearSelection(state);
+      state = pushToHistory(state);
       return {
         ...state,
         wasEntryClick: false,
@@ -604,10 +620,12 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       if (state.isEditable(ci)) {
         const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
         const grid = gridWithHiddenToggled(state.grid, state.active, symmetry);
-        return {
+        state = {
           ...postEdit({ ...state, grid }, ci),
           wasEntryClick: false,
         };
+        state = pushToHistory(state);
+        return state;
       }
       return state;
     }
