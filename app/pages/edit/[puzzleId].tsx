@@ -47,6 +47,11 @@ import {
 import { markdownToHast } from '../../lib/markdown/markdown';
 import { Markdown } from '../../components/Markdown';
 import { GridContext } from '../../components/GridContext';
+import { withTranslation } from '../../lib/translation';
+
+export const getServerSideProps = withTranslation(() => {
+  return Promise.resolve({ props: {} });
+});
 
 const ImageCropper = dynamic(
   () => import('../../components/ImageCropper').then((mod) => mod.ImageCropper),
