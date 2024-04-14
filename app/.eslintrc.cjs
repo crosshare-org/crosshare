@@ -11,6 +11,7 @@ module.exports = {
     'plugin:@typescript-eslint/strict-type-checked',
     'plugin:@typescript-eslint/stylistic-type-checked',
     'plugin:redos/recommended',
+    "plugin:css-modules/recommended",
     'next/core-web-vitals',
     'prettier',
   ],
@@ -23,7 +24,7 @@ module.exports = {
   ignorePatterns: ['next.config.mjs', 'jest.config.mjs'],
   parser: '@typescript-eslint/parser',
   parserOptions: { project: true, tsconfigRootDir: __dirname },
-  plugins: ['@emotion', 'lingui'],
+  plugins: ['@emotion', 'lingui', "css-modules"],
   rules: {
     // someday?... "lingui/no-unlocalized-strings": 2,
     'lingui/t-call-in-function': 2,

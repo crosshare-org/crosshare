@@ -32,7 +32,8 @@
     "types": [
       "@emotion/react/types/css-prop"
     ],
-    "incremental": true
+    "incremental": true,
+    "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
   "exclude": [
     "node_modules"
