@@ -83,7 +83,7 @@ export const Cell = memo(function Cell(props: CellProps) {
       ? filledValue
       : filledValue || props.autofill;
 
-  let boxShadow = '';
+  let boxShadow: string | undefined;
   if (props.isEnteringRebus && props.active) {
     boxShadow = styles.enteringRebus;
   } else if (props.cellColor !== undefined) {

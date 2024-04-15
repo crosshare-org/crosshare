@@ -1,0 +1,80 @@
+.commentWrapper {
+  margin-top: 1em;
+}
+
+.leftButton {
+  margin-right: 0.5em !important;
+}
+
+.formWrapper {
+  margin-left: 2em;
+}
+
+.commentsList {
+  list-style-type: none;
+  margin: 2em 0 0 0;
+  padding: 0;
+}
+
+.repliesList {
+  list-style-type: none;
+  margin: 0 0 0 2em;
+  padding: 0;
+}
+
+.constructorTag {
+  font-size: 0.75em;
+  background-color: var(--primary);
+  color: var(--onprimary);
+  border-radius: 5px;
+  padding: 0.1em 0.2em;
+}
+
+.solveTime {
+  font-size: 0.75em;
+  background-color: var(--caption);
+  color: white;
+  border-radius: 5px;
+  padding: 0.1em 0.2em;
+}
+
+.preview {
+  background-color: var(--secondary);
+  border-radius: 0.5em;
+  padding: 1em;
+  margin-top: 1em;
+}
+
+.publishDate {
+  font-style: italic;
+}
+
+.formLabel {
+  width: 100%;
+  margin: 0;
+}
+
+.lengthView {
+  text-align: right;
+}
+
+.header {
+  border-bottom: 1px solid var(--black);
+}
+
+.center {
+  text-align: center;
+}
+
+.marginTop {
+  margin-top: 1em;
+}
+
+.marginBottom {
+  margin-bottom: 1em;
+}
+
+.textarea {
+  width: 100%;
+  display: block;
+}

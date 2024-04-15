@@ -35,6 +35,7 @@ import type { Root } from 'hast';
 import { ReportOverlay } from './ReportOverlay';
 import { Overlay } from './Overlay';
 import { arrayFromLocalStorage } from '../lib/storage';
+import styles from './Comments.module.css';
 
 export const COMMENT_LENGTH_LIMIT = 2048;
 
@@ -119,14 +120,7 @@ interface CommentProps {
 }
 const CommentView = (props: CommentProps) => {
   return (
-    <div
-      css={{
-        marginTop: '1em',
-        ['p:last-of-type']: {
-          marginBottom: 0,
-        },
-      }}
-    >
+    <div className={styles.commentWrapper}>
       <div>
         <CommentFlair
           publishTime={Math.max(
@@ -246,7 +240,7 @@ const CommentWithReplies = (
           <form onSubmit={logAsyncErrors(deleteComment)}>
             <Button
               type="submit"
-              css={{ marginRight: '0.5em' }}
+              className={styles.leftButton}
               disabled={deleting}
               text={'Delete'}
             />
@@ -275,7 +269,7 @@ const CommentWithReplies = (
         ''
       )}
       {showingForm && props.user && !props.user.isAnonymous && commentId ? (
-        <div css={{ marginLeft: '2em' }}>
+        <div className={styles.formWrapper}>
           <CommentForm
             {...props}
             username={props.constructorPage?.i}
@@ -301,13 +295,7 @@ const CommentWithReplies = (
         </div>
       )}
       {replies ? (
-        <ul
-          css={{
-            listStyleType: 'none',
-            margin: '0 0 0 2em',
-            padding: 0,
-          }}
-        >
+        <ul className={styles.repliesList}>
           {replies.map((a, i) => (
             <li key={i}>
               <CommentWithReplies {...{ ...props, comment: a }} />
@@ -373,15 +361,7 @@ const CommentFlair = (props: CommentFlairProps) => {
         />{' '}
       </i>
       {props.userId === props.puzzleAuthorId ? (
-        <span
-          css={{
-            fontSize: '0.75em',
-            backgroundColor: 'var(--primary)',
-            color: 'var(--onprimary)',
-            borderRadius: 5,
-            padding: '0.1em 0.2em',
-          }}
-        >
+        <span className={styles.constructorTag}>
           {props.hasGuestConstructor ? (
             <Trans>publisher</Trans>
           ) : (
@@ -397,15 +377,7 @@ const CommentFlair = (props: CommentFlairProps) => {
           ) : (
             <Emoji title="Solved without helpers" symbol="🤓" />
           )}
-          <span
-            css={{
-              fontSize: '0.75em',
-              backgroundColor: 'var(--caption)',
-              color: 'white',
-              borderRadius: 5,
-              padding: '0.1em 0.2em',
-            }}
-          >
+          <span className={styles.solveTime}>
             {timeString(props.solveTime, false)}
           </span>
         </>
@@ -413,7 +385,7 @@ const CommentFlair = (props: CommentFlairProps) => {
       {publishDate !== false ? (
         <>
           &nbsp;·&nbsp;
-          <span css={{ fontStyle: 'italic' }}>
+          <span className={styles.publishDate}>
             <PastDistanceToNow date={publishDate} />{' '}
           </span>
         </>
@@ -524,15 +496,15 @@ const CommentForm = ({
   return (
     <>
       <form onSubmit={logAsyncErrors(submitComment)}>
-        <div css={{ marginBottom: '1em' }}>
-          <label css={{ width: '100%', margin: 0 }}>
+        <div className={styles.marginBottom}>
+          <label className={styles.formLabel}>
             {(props.replyToId !== undefined
               ? t`Enter your reply`
               : t`Leave a comment`) +
               ' ' +
               t`(please be nice!):`}
             <LengthLimitedTextarea
-              css={{ width: '100%', display: 'block' }}
+              className={styles.textarea}
               maxLength={COMMENT_LENGTH_LIMIT}
               value={commentText}
               updateValue={logAsyncErrors(async (newVal) => {
@@ -545,7 +517,7 @@ const CommentForm = ({
               })}
             />
           </label>
-          <div css={{ textAlign: 'right' }}>
+          <div className={styles.lengthView}>
             <LengthView
               maxLength={COMMENT_LENGTH_LIMIT}
               value={commentText}
@@ -559,7 +531,7 @@ const CommentForm = ({
           <>
             <Button
               type="submit"
-              css={{ marginRight: '0.5em' }}
+              className={styles.leftButton}
               disabled={commentText.length === 0 || saving}
               text={t`Save`}
             />
@@ -567,7 +539,7 @@ const CommentForm = ({
               <Button
                 boring={true}
                 disabled={saving}
-                css={{ marginRight: '0.5em' }}
+                className={styles.leftButton}
                 onClick={onCancel}
                 text={t`Cancel`}
               />
@@ -597,14 +569,7 @@ const CommentForm = ({
           </>
         )}
         {commentText.trim() ? (
-          <div
-            css={{
-              backgroundColor: 'var(--secondary)',
-              borderRadius: '0.5em',
-              padding: '1em',
-              marginTop: '1em',
-            }}
-          >
+          <div className={styles.preview}>
             <h4>
               <Trans>Live Preview:</Trans>
             </h4>
@@ -842,12 +807,12 @@ export const Comments = ({
   }
 
   return (
-    <div css={{ marginTop: '1em' }}>
-      <h4 css={{ borderBottom: '1px solid var(--black)' }}>
+    <div className={styles.marginTop}>
+      <h4 className={styles.header}>
         <Trans>Comments</Trans>
       </h4>
       {!isMounted || !authContext.user || authContext.user.isAnonymous ? (
-        <div css={{ textAlign: 'center' }}>
+        <div className={styles.center}>
           <p>
             <Trans>Sign in with google to leave a comment of your own:</Trans>
           </p>
@@ -869,13 +834,7 @@ export const Comments = ({
           onDelete={deleteLocally}
         />
       )}
-      <ul
-        css={{
-          listStyleType: 'none',
-          margin: '2em 0 0 0',
-          padding: 0,
-        }}
-      >
+      <ul className={styles.commentsList}>
         {toShow.map((a, i) => (
           <li key={i}>
             <CommentWithReplies
