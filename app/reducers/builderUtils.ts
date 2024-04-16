@@ -72,7 +72,10 @@ export function pushToHistory<T extends GridInterfaceState>(state: T): T {
     return state;
   }
 
-  const undoHistory = [...state.undoHistory.slice(0, state.undoIndex + 1), fromCells(state.grid)]
+  const MAX_HISTORY_LENGTH = 20;
+  const start = state.undoIndex === MAX_HISTORY_LENGTH - 1 ? 1 : 0;
+  const end = state.undoIndex + 1;
+  const undoHistory = [...state.undoHistory.slice(start, end), fromCells(state.grid)]
   const undoIndex = undoHistory.length - 1;
 
   return { ...state, undoHistory, undoIndex };
