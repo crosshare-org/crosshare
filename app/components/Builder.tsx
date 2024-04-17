@@ -8,7 +8,6 @@ import {
   Dispatch,
   MouseEvent,
 } from 'react';
-import { Global } from '@emotion/react';
 import { eqSet, STORAGE_KEY } from '../lib/utils';
 import { ContactLinks } from './ContactLinks';
 import { isSome } from 'fp-ts/lib/Option';
@@ -123,7 +122,7 @@ import { Overlay } from './Overlay';
 import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
 
 import { Keyboard } from './Keyboard';
-import { FULLSCREEN_CSS, SMALL_AND_UP } from '../lib/style';
+import { SMALL_AND_UP } from '../lib/style';
 import { ButtonReset } from './Buttons';
 import { Snackbar, useSnackbar } from './Snackbar';
 import { importFile, exportFile, ExportProps } from '../lib/converter';
@@ -132,6 +131,7 @@ import { NewPuzzleForm } from './NewPuzzleForm';
 import { getAutofillWorker } from '../lib/workerLoader';
 import { isTextInput } from '../lib/domUtils';
 import { fromLocalStorage } from '../lib/storage';
+import { FullscreenCSS } from './FullscreenCSS';
 
 type BuilderProps = PartialBy<
   Omit<
@@ -1521,7 +1521,7 @@ const GridMode = ({
 
   return (
     <>
-      <Global styles={FULLSCREEN_CSS} />
+      <FullscreenCSS />
       {state.alternates.length > 0 ? (
         <Snackbar
           message="The grid can't be edited if any alternate solutions are specified"

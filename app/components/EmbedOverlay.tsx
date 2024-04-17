@@ -25,10 +25,8 @@ import { fromCells } from '../lib/viewableGrid';
 import { Button, ButtonAsLink } from './Buttons';
 import { getDoc, setDoc } from 'firebase/firestore';
 import { getDocRef } from '../lib/firebaseWrapper';
-import { Global } from '@emotion/react';
 import { logAsyncErrors } from '../lib/utils';
 import { css } from '@emotion/react';
-import type { CSSInterpolation } from '@emotion/serialize';
 import { fontFace } from './EmbedStyling';
 
 const fontUrlInputCss = css({
@@ -273,7 +271,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
     });
   }, []);
 
-  const fontStyles: CSSInterpolation[] = [];
+  const fontStyles: string[] = [];
   if (fontUrl) {
     fontStyles.push(fontFace(fontUrl, 'CrossharePreview', 'normal', 'normal'));
     if (fontUrlBold) {
@@ -448,7 +446,11 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       />
       <h4 css={{ marginTop: '2em' }}>Preview</h4>
       {customFontEnabled && fontStyles.length ? (
-        <Global styles={css(fontStyles)} />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: fontStyles.join('\n'),
+          }}
+        />
       ) : (
         ''
       )}
@@ -465,15 +467,15 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
                 fontFamily: 'CrossharePreview',
               }),
           },
-          colorTheme({
-            primary: primaryColor,
-            link: linkColor,
-            errorColor,
-            verifiedColor,
-            darkMode: isDark,
-            preservePrimary,
-          }),
         ])}
+        style={colorTheme({
+          primary: primaryColor,
+          link: linkColor,
+          errorColor,
+          verifiedColor,
+          darkMode: isDark,
+          preservePrimary,
+        })}
       >
         <div css={{ width: 200, height: 200 }}>
           <GridView

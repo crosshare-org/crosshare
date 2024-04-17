@@ -5,8 +5,8 @@ import { ButtonResetCSS } from './Buttons';
 import { SlateHeader, SlateLogo } from './SlateHeader';
 import { Illustration, Pause, Play } from './SlateIcons';
 import { Link } from './Link';
-import { Global, css } from '@emotion/react';
-import { FULLSCREEN_CSS, LARGE_AND_UP, SMALL_AND_UP } from '../lib/style';
+import { css } from '@emotion/react';
+import { LARGE_AND_UP, SMALL_AND_UP } from '../lib/style';
 import { SlateColorTheme } from './SlateColorTheme';
 import { PuzzleResultWithAugmentedComments } from '../lib/types';
 import {
@@ -14,6 +14,7 @@ import {
   SLATE_PADDING_MED,
   SLATE_PADDING_LARGE,
 } from './Page';
+import { FullscreenCSS } from './FullscreenCSS';
 
 const PoweredByLink = () => {
   return (
@@ -105,7 +106,7 @@ export const SlateBegin = ({
   });
   return (
     <>
-      <Global styles={FULLSCREEN_CSS} />
+      <FullscreenCSS />
       <SlateColorTheme />
       <div
         ref={containerRef}

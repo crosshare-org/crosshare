@@ -1,6 +1,5 @@
-import { Global, css } from '@emotion/react';
-import { colorTheme } from '../lib/style';
-import type { CSSInterpolation } from '@emotion/serialize';
+import { colorThemeString } from '../lib/style';
+import Head from 'next/head';
 
 export interface EmbedStylingProps {
   primary: string;
@@ -21,19 +20,17 @@ export function fontFace(
   style: 'normal' | 'italic',
   weight: 'normal' | 'bold'
 ) {
-  return {
-    '@font-face': {
-      fontFamily: family,
-      fontStyle: style,
-      fontWeight: weight,
-      fontDisplay: 'swap',
-      src: `url(${encodeURI(url)})`,
-    },
-  };
+  return `@font-face {
+  font-family: "${family}";
+  font-style: ${style};
+  font-weight: ${weight};
+  font-display: swap;
+  src: url("${encodeURI(url)}");
+}`;
 }
 
 export function EmbedStyling(props: EmbedStylingProps) {
-  const fontStyles: CSSInterpolation[] = [];
+  const fontStyles: string[] = [];
   if (props.fontUrl) {
     fontStyles.push(
       fontFace(props.fontUrl, 'CrosshareCustom', 'normal', 'normal')
@@ -55,16 +52,19 @@ export function EmbedStyling(props: EmbedStylingProps) {
     }
   }
   return (
-    <Global
-      styles={css([
-        fontStyles,
-        {
-          body: {
-            backgroundColor: 'transparent !important',
-          },
-          'html, body.light-mode, body.dark-mode': colorTheme(props),
-        },
-      ])}
-    />
+    <Head>
+      <style
+        key="theme"
+        dangerouslySetInnerHTML={{
+          __html: `
+${fontStyles.join('\n')}
+body {
+  background-color: transparent !important;
+}
+html, body.light-mode, body.dark-mode {${colorThemeString(props)}}
+`,
+        }}
+      />
+    </Head>
   );
 }
