@@ -16,8 +16,8 @@
   "scripts": {
     "supportedBrowsers": "echo \"export const browserRegex = $(browserslist-useragent-regexp --allowHigherVersions);\" > lib/supportedBrowsers.ts",
     "lint": "npx next lint",
-    "format": "npx prettier \"../**/*.ts(x)?\" --write",
-    "checkFormat": "npx prettier \"../**/*.ts(x)?\" --check",
+    "format": "npx prettier \"../**/*\\.(ts(x)?|module\\.css)\" --write",
+    "checkFormat": "npx prettier \"../**/*\\.(ts(x)?|module\\.css)\" --check",
     "clean": "rimraf nextjs/",
     "dev": "GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json next dev",
     "analyze": "ANALYZE=true next build",
