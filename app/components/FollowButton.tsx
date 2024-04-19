@@ -64,7 +64,7 @@ export const FollowButton = ({
               setShowOverlay(false);
             }}
           >
-            <div css={{ textAlign: 'center' }}>
+            <div className="textAlignCenter">
               <h2>
                 Follow {page.n} to get notified when they post a new puzzle
               </h2>
@@ -104,7 +104,7 @@ export const FollowButton = ({
             <>
               {t`Follow`}
               <ToolTipText
-                css={{ marginLeft: '0.5em' }}
+                className="marginLeft0-5em"
                 text={<FaInfoCircle />}
                 tooltip={t`You can't follow yourself!`}
               />

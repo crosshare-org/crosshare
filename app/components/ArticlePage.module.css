@@ -1,0 +1,21 @@
+@value huge-and-up from '../lib/definitions.module.css';
+@value max-width from '../lib/definitions.module.css';
+
+.page {
+  margin: 2em 1em;
+}
+
+@media (huge-and-up) {
+  .page {
+    max-width: max-width;
+    margin: 2em auto;
+  }
+}
+
+.markdown {
+  margin-bottom: 2em;
+}
+
+.markdown h2 {
+  margin-top: 1em;
+}

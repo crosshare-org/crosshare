@@ -14,7 +14,7 @@ export default function ThankYouPage() {
         <title>{`Thank you | Crosshare Crossword Constructor and Puzzles`}</title>
       </Head>
       <DefaultTopBar />
-      <div css={{ margin: '1em' }}>
+      <div className="margin1em">
         <h2>
           Thank you! <Emoji symbol="🥰" />
         </h2>

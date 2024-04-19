@@ -215,7 +215,7 @@ export const BioEditor = (props: BioEditorProps) => {
             <h4>Live Preview:</h4>
             <Markdown hast={markdownToHast({ text: bioText })} />
           </div>
-          <form css={{ margin: '1em 0' }} onSubmit={submitEdit}>
+          <form className="margin1em0" onSubmit={submitEdit}>
             <label css={{ width: '100%', margin: 0 }}>
               Enter new bio text:
               <textarea
@@ -237,10 +237,10 @@ export const BioEditor = (props: BioEditorProps) => {
             >
               {bioText.length}/{BIO_LENGTH_LIMIT}
             </div>
-            <Button type="submit" css={{ marginRight: '0.5em' }} text="Save" />
+            <Button type="submit" className="marginRight0-5em" text="Save" />
             <Button
               boring={true}
-              css={{ marginRight: '0.5em' }}
+              className="marginRight0-5em"
               onClick={() => {
                 setIsOpen(false);
               }}
@@ -257,7 +257,7 @@ export const BioEditor = (props: BioEditorProps) => {
           {props.constructorPage.b ? (
             <>
               <Button
-                css={{ marginRight: '1.5em' }}
+                className="marginRight1-5em"
                 onClick={() => {
                   setIsOpen(true);
                 }}
@@ -282,7 +282,7 @@ export const BioEditor = (props: BioEditorProps) => {
         cover pic is a large photo that appears at the top of your blog page.
       </p>
       <Button
-        css={{ marginRight: '1.5em' }}
+        className="marginRight1-5em"
         onClick={props.addProfilePic}
         text="Edit profile pic"
       />
@@ -297,7 +297,7 @@ export const BioEditor = (props: BioEditorProps) => {
       {props.constructorPage.pp && props.constructorPage.pt ? (
         <>
           <Button
-            css={{ marginRight: '1.5em' }}
+            className="marginRight1-5em"
             onClick={() => {
               setShowPaypalEditor(true);
             }}
@@ -333,7 +333,7 @@ export const BioEditor = (props: BioEditorProps) => {
             <h4>Live Preview:</h4>
             <Markdown inline={true} hast={markdownToHast({ text: sigText })} />
           </div>
-          <form css={{ margin: '1em 0' }} onSubmit={submitSigEdit}>
+          <form className="margin1em0" onSubmit={submitSigEdit}>
             <label css={{ width: '100%', margin: 0 }}>
               Enter new signature:
               <textarea
@@ -357,13 +357,13 @@ export const BioEditor = (props: BioEditorProps) => {
             </div>
             <Button
               type="submit"
-              css={{ marginRight: '0.5em' }}
+              className="marginRight0-5em"
               disabled={sigText.trim().length === 0}
               text="Save"
             />
             <Button
               boring={true}
-              css={{ marginRight: '0.5em' }}
+              className="marginRight0-5em"
               onClick={() => {
                 setIsSigOpen(false);
               }}
@@ -381,7 +381,7 @@ export const BioEditor = (props: BioEditorProps) => {
           {props.constructorPage.sig ? (
             <>
               <Button
-                css={{ marginRight: '1.5em' }}
+                className="marginRight1-5em"
                 onClick={() => {
                   setIsSigOpen(true);
                 }}
@@ -418,11 +418,11 @@ export const BioEditor = (props: BioEditorProps) => {
                 />
               </label>
             </div>
-            <div css={{ marginTop: '2em' }}>
-              <label css={{ width: '100%' }}>
+            <div className="marginTop2em">
+              <label className="width100">
                 <p>Message to show in paypal dialogue:</p>
                 <input
-                  css={{ width: '100%' }}
+                  className="width100"
                   type="text"
                   value={paypalText}
                   onChange={(e) => {
@@ -453,14 +453,14 @@ export const BioEditor = (props: BioEditorProps) => {
       <h4>Social sharing buttons</h4>
       {isShareButtonsOpen ? (
         <>
-          <form css={{ margin: '1em 0' }} onSubmit={submitShareButtonsEdit}>
+          <form className="margin1em0" onSubmit={submitShareButtonsEdit}>
             <p>
               Enter the text that will show up in share dialogs on sites that
               support custom text (the variable <strong>{'{time}'}</strong> will
               get replaced with the sharer&apos;s solve time and{' '}
               <strong>{'{title}'}</strong> with the puzzle&apos;s title):
             </p>
-            <div css={{ margin: '1em 0' }}>
+            <div className="margin1em0">
               <LengthLimitedInput
                 css={{ width: '50%' }}
                 updateValue={setShareButtonsText}
@@ -474,13 +474,13 @@ export const BioEditor = (props: BioEditorProps) => {
             </div>
             <Button
               type="submit"
-              css={{ marginRight: '0.5em' }}
+              className="marginRight0-5em"
               disabled={shareButtonsText.trim().length === 0}
               text="Save"
             />
             <Button
               boring={true}
-              css={{ marginRight: '0.5em' }}
+              className="marginRight0-5em"
               onClick={() => {
                 setIsShareButtonsOpen(false);
               }}
@@ -498,7 +498,7 @@ export const BioEditor = (props: BioEditorProps) => {
           {props.constructorPage.st ? (
             <>
               <Button
-                css={{ marginRight: '1.5em' }}
+                className="marginRight1-5em"
                 onClick={() => {
                   setIsShareButtonsOpen(true);
                 }}

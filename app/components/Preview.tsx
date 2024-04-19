@@ -156,7 +156,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
             height: '100%',
           }}
         >
-          <div css={{ flex: 'none' }}>
+          <div className="flexNone">
             <DefaultTopBar>
               <TopBarLink
                 icon={<FaRegNewspaper />}

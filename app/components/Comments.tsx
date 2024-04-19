@@ -120,7 +120,7 @@ interface CommentProps {
 }
 const CommentView = (props: CommentProps) => {
   return (
-    <div className={styles.commentWrapper}>
+    <div className="marginTop1em">
       <div>
         <CommentFlair
           publishTime={Math.max(
@@ -496,15 +496,15 @@ const CommentForm = ({
   return (
     <>
       <form onSubmit={logAsyncErrors(submitComment)}>
-        <div className={styles.marginBottom}>
-          <label className={styles.formLabel}>
+        <div className="marginBottom1em">
+          <label className="width100 margin0">
             {(props.replyToId !== undefined
               ? t`Enter your reply`
               : t`Leave a comment`) +
               ' ' +
               t`(please be nice!):`}
             <LengthLimitedTextarea
-              className={styles.textarea}
+              className="width100 displayBlock"
               maxLength={COMMENT_LENGTH_LIMIT}
               value={commentText}
               updateValue={logAsyncErrors(async (newVal) => {
@@ -517,7 +517,7 @@ const CommentForm = ({
               })}
             />
           </label>
-          <div className={styles.lengthView}>
+          <div className="textAlignRight">
             <LengthView
               maxLength={COMMENT_LENGTH_LIMIT}
               value={commentText}
@@ -807,12 +807,12 @@ export const Comments = ({
   }
 
   return (
-    <div className={styles.marginTop}>
-      <h4 className={styles.header}>
+    <div className="marginTop1em">
+      <h4 className="borderBottom1pxSolidBlack">
         <Trans>Comments</Trans>
       </h4>
       {!isMounted || !authContext.user || authContext.user.isAnonymous ? (
-        <div className={styles.center}>
+        <div className="textAlignCenter">
           <p>
             <Trans>Sign in with google to leave a comment of your own:</Trans>
           </p>

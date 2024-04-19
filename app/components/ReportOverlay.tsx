@@ -119,7 +119,7 @@ export const ReportOverlay = (props: {
           </div>
           <h3>Notes</h3>
           <form onSubmit={logAsyncErrors(submitReport)}>
-            <div css={{ marginBottom: '1em' }}>
+            <div className="marginBottom1em">
               <label css={{ width: '100%', margin: 0 }}>
                 <p>
                   (Optional) Add any notes that you think might be helpful to
@@ -132,7 +132,7 @@ export const ReportOverlay = (props: {
                   updateValue={setNotes}
                 />
               </label>
-              <div css={{ textAlign: 'right' }}>
+              <div className="textAlignRight">
                 <LengthView
                   maxLength={COMMENT_LENGTH_LIMIT}
                   value={notes}
@@ -142,20 +142,20 @@ export const ReportOverlay = (props: {
             </div>
             <Button
               type="submit"
-              css={{ marginRight: '0.5em' }}
+              className="marginRight0-5em"
               disabled={submitting}
               text={'Report comment'}
             />
             <Button
               boring={true}
               disabled={submitting}
-              css={{ marginRight: '0.5em' }}
+              className="marginRight0-5em"
               onClick={props.closeOverlay}
               text={'Cancel'}
             />
           </form>
 
-          <p css={{ marginTop: '2em' }}>
+          <p className="marginTop2em">
             <i>
               False reports waste our moderators&apos;s time and will eventually
               lead to your account being banned.

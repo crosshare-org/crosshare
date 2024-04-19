@@ -1,7 +1,3 @@
-.commentWrapper {
-  margin-top: 1em;
-}
-
 .leftButton {
   margin-right: 0.5em !important;
 }
@@ -47,34 +43,4 @@
 
 .publishDate {
   font-style: italic;
-}
-
-.formLabel {
-  width: 100%;
-  margin: 0;
-}
-
-.lengthView {
-  text-align: right;
-}
-
-.header {
-  border-bottom: 1px solid var(--black);
-}
-
-.center {
-  text-align: center;
-}
-
-.marginTop {
-  margin-top: 1em;
-}
-
-.marginBottom {
-  margin-bottom: 1em;
-}
-
-.textarea {
-  width: 100%;
-  display: block;
 }

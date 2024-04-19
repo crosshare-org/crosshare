@@ -106,7 +106,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
     );
   });
   return (
-    <li key={props.id} css={{ marginBottom: '2em' }}>
+    <li key={props.id} className="marginBottom2em">
       <Link href={`/crosswords/${props.id}/${slugify(props.title)}`}>
         {props.title}
       </Link>{' '}
@@ -124,7 +124,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
       {props.blogPost ? (
         <div css={{ margin: '1em 0', overflowWrap: 'break-word' }}>
           <Markdown
-            css={{ textAlign: 'left' }}
+            className="textAlignLeft"
             hast={markdownToHast({ text: props.blogPost })}
           />
         </div>
@@ -140,7 +140,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
           </li>
         ))}
       </ul>
-      <div css={{ marginBottom: '1em' }}>
+      <div className="marginBottom1em">
         <button
           // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
           disabled={!!props.isPrivate}
@@ -151,7 +151,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
           Set as Featured
         </button>
       </div>
-      <div css={{ marginBottom: '1em' }}>
+      <div className="marginBottom1em">
         <button
           onClick={logAsyncErrors(async () => {
             return makePrivate();
@@ -160,7 +160,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
           Make Private
         </button>
       </div>
-      <div css={{ marginBottom: '1em' }}>
+      <div className="marginBottom1em">
         <button
           onClick={logAsyncErrors(async () => {
             return markAsModerated(false);
@@ -281,7 +281,7 @@ export default requiresAdmin(() => {
         <meta name="robots" content="noindex" />
       </Head>
       <DefaultTopBar />
-      <div css={{ margin: '1em' }}>
+      <div className="margin1em">
         {mailErrors?.length ? (
           <div>
             <h4>There are {mailErrors.length} mail errors!</h4>
@@ -292,9 +292,7 @@ export default requiresAdmin(() => {
         )}
         {reportedComments?.length ? (
           <>
-            <h4 css={{ borderBottom: '1px solid var(--black)' }}>
-              Reported Comments:
-            </h4>
+            <h4 className="borderBottom1pxSolidBlack">Reported Comments:</h4>
             <ul>
               {reportedComments.map((rc) => (
                 <li key={`${rc.cid}-${rc.u}`}>
@@ -309,7 +307,7 @@ export default requiresAdmin(() => {
                   </div>
                   <button
                     disabled={rc.d || !rc.ca}
-                    css={{ marginRight: '2em' }}
+                    className="marginRight2em"
                     onClick={logAsyncErrors(async () => {
                       if (!rc.ca) {
                         return;
@@ -353,9 +351,7 @@ export default requiresAdmin(() => {
         ) : (
           ''
         )}
-        <h4 css={{ borderBottom: '1px solid var(--black)' }}>
-          Comment Moderation
-        </h4>
+        <h4 className="borderBottom1pxSolidBlack">Comment Moderation</h4>
         {!commentsForModeration || commentsForModeration.length === 0 ? (
           <div>No comments are currently awaiting moderation.</div>
         ) : (
@@ -364,7 +360,7 @@ export default requiresAdmin(() => {
               <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
               <Markdown hast={markdownToHast({ text: cfm.c })} />
               <button
-                css={{ marginRight: '2em' }}
+                className="marginRight2em"
                 onClick={logAsyncErrors(async () => {
                   await updateDoc(getDocRef('cfm', cfm.i), {
                     approved: true,
@@ -421,9 +417,7 @@ export default requiresAdmin(() => {
         )}
         {stats ? (
           <>
-            <h4 css={{ borderBottom: '1px solid var(--black)' }}>
-              Today&apos;s Stats
-            </h4>
+            <h4 className="borderBottom1pxSolidBlack">Today&apos;s Stats</h4>
             <div>Total completions: {stats.n}</div>
             <div>Users w/ completions: {stats.u.length}</div>
             <h5>Top Puzzles</h5>
@@ -446,12 +440,10 @@ export default requiresAdmin(() => {
         ) : (
           ''
         )}
-        <h4 css={{ borderBottom: '1px solid var(--black)' }}>Upcoming Minis</h4>
+        <h4 className="borderBottom1pxSolidBlack">Upcoming Minis</h4>
 
         <UpcomingMinisCalendar disableExisting={false} onChange={goToPuzzle} />
-        <h4 css={{ borderBottom: '1px solid var(--black)' }}>
-          Unsubscribe User
-        </h4>
+        <h4 className="borderBottom1pxSolidBlack">Unsubscribe User</h4>
         <form
           onSubmit={logAsyncErrors(async (e: React.FormEvent) => {
             e.preventDefault();
@@ -471,7 +463,7 @@ export default requiresAdmin(() => {
           <label>
             Unsubscribe by user id:
             <input
-              css={{ margin: '0 0.5em' }}
+              className="margin0-0-5em"
               type="text"
               value={uidToUnsub}
               onChange={(e) => {
@@ -481,9 +473,7 @@ export default requiresAdmin(() => {
           </label>
           <Button type="submit" text="Unsubscribe" />
         </form>
-        <h4 css={{ borderBottom: '1px solid var(--black)' }}>
-          Record Donation
-        </h4>
+        <h4 className="borderBottom1pxSolidBlack">Record Donation</h4>
         <form
           onSubmit={logAsyncErrors(async (e: React.FormEvent) => {
             e.preventDefault();
@@ -517,7 +507,7 @@ export default requiresAdmin(() => {
           <label>
             Email
             <input
-              css={{ margin: '0 0.5em' }}
+              className="margin0-0-5em"
               type="text"
               value={donationEmail}
               onChange={(e) => {
@@ -528,7 +518,7 @@ export default requiresAdmin(() => {
           <label>
             Amount
             <input
-              css={{ margin: '0 0.5em' }}
+              className="margin0-0-5em"
               type="text"
               value={donationAmount}
               onChange={(e) => {
@@ -540,7 +530,7 @@ export default requiresAdmin(() => {
           <label>
             Received Amount
             <input
-              css={{ margin: '0 0.5em' }}
+              className="margin0-0-5em"
               type="text"
               value={donationReceivedAmount}
               onChange={(e) => {
@@ -551,7 +541,7 @@ export default requiresAdmin(() => {
           <label>
             Name
             <input
-              css={{ margin: '0 0.5em' }}
+              className="margin0-0-5em"
               type="text"
               value={donationName}
               onChange={(e) => {
@@ -562,7 +552,7 @@ export default requiresAdmin(() => {
           <label>
             Page
             <input
-              css={{ margin: '0 0.5em' }}
+              className="margin0-0-5em"
               type="text"
               value={donationPage}
               onChange={(e) => {
@@ -573,7 +563,7 @@ export default requiresAdmin(() => {
           <label>
             UserId
             <input
-              css={{ margin: '0 0.5em' }}
+              className="margin0-0-5em"
               type="text"
               value={donationUserId}
               onChange={(e) => {
@@ -585,9 +575,7 @@ export default requiresAdmin(() => {
         </form>
         {donations ? (
           <>
-            <h4 css={{ borderBottom: '1px solid var(--black)' }}>
-              Donation Totals
-            </h4>
+            <h4 className="borderBottom1pxSolidBlack">Donation Totals</h4>
             <p>
               Total given:{' '}
               {Math.floor(donations.d.reduce((prev, cur) => prev + cur.a, 0))}

@@ -57,7 +57,7 @@ const UnsubSetting = (props: UnsubSettingProps) => {
   return (
     <label>
       <input
-        css={{ marginRight: '1em' }}
+        className="marginRight1em"
         type="checkbox"
         disabled={!props.neverDisable && unsubbedAll}
         checked={props.invert ? unsubbed : !unsubbed && !unsubbedAll}
@@ -108,7 +108,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         <meta name="robots" content="noindex" />
       </Head>
       <DefaultTopBar accountSelected />
-      <div css={{ margin: '1em' }}>
+      <div className="margin1em">
         <h2>Account</h2>
         <p>
           You&apos;re logged in as <b>{user.email}</b>.{' '}
@@ -131,7 +131,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         <DisplayNameForm />
         <h3>Notification Settings</h3>
         <p>Email me (to {user.email}, at most once per day) when:</p>
-        <ul css={{ listStyleType: 'none' }}>
+        <ul className="listStyleTypeNone">
           <li>
             <UnsubSetting
               prefs={prefs}
@@ -167,7 +167,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
             />
           </li>
         </ul>
-        <hr css={{ margin: '2em 0' }} />
+        <hr className="margin2em0" />
         <h2>Solving Preferences</h2>
         <ul
           css={{
@@ -177,12 +177,12 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         >
           <SolverPreferencesList prefs={prefs} userId={user.uid} />
         </ul>
-        <hr css={{ margin: '2em 0' }} />
+        <hr className="margin2em0" />
         <h2>Browser-specific Settings</h2>
         <h3>Color Theme</h3>
         <label>
           <input
-            css={{ marginRight: '0.5em' }}
+            className="marginRight0-5em"
             type="radio"
             name="theme"
             value="default"
@@ -197,7 +197,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         <br />
         <label>
           <input
-            css={{ marginRight: '0.5em' }}
+            className="marginRight0-5em"
             type="radio"
             name="theme"
             value="dark"
@@ -212,7 +212,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         <br />
         <label>
           <input
-            css={{ marginRight: '0.5em' }}
+            className="marginRight0-5em"
             type="radio"
             name="theme"
             value="light"
@@ -227,7 +227,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         <h3>Audio</h3>
         <label>
           <input
-            css={{ marginRight: '1em' }}
+            className="marginRight1em"
             type="checkbox"
             checked={muted}
             onChange={(e) => {
@@ -237,7 +237,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
           Mute success music
         </label>
 
-        <hr css={{ margin: '2em 0' }} />
+        <hr className="margin2em0" />
         <h2>Crossword Blog</h2>
         {hasAuthoredPuzzle ? (
           <CreatePageForm

@@ -195,7 +195,7 @@ export default function TagPageHandler(props: PageProps) {
           />
         </h1>
         {props.article ? (
-          <Markdown css={{ marginBottom: '2em' }} hast={props.article.hast} />
+          <Markdown className="marginBottom2em" hast={props.article.hast} />
         ) : (
           ''
         )}
@@ -212,10 +212,10 @@ export default function TagPageHandler(props: PageProps) {
         ))}
         {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
         {props.nextPage || props.prevPage !== null ? (
-          <p css={{ textAlign: 'center' }}>
+          <p className="textAlignCenter">
             {props.prevPage !== null ? (
               <Link
-                css={{ marginRight: '2em' }}
+                className="marginRight2em"
                 href={`/tags/${urlTags}/${
                   props.prevPage !== 0 ? `/page/${props.prevPage}` : ''
                 }`}

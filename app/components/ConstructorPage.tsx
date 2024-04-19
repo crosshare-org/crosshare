@@ -263,7 +263,7 @@ const FollowersListItem = ({
           cursor: 'pointer',
         }}
       >
-        <div css={{ marginRight: '1em' }}>
+        <div className="marginRight1em">
           <div>
             <b
               css={{
@@ -418,7 +418,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                     setShowOverlay(false);
                   }}
                 >
-                  <div css={{ textAlign: 'center' }}>
+                  <div className="textAlignCenter">
                     {overlayIsFollowing ? (
                       <>
                         <h2>
@@ -494,12 +494,12 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
         <div css={{ textAlign: 'center', marginBottom: '1.5em' }}>
           <FollowButton page={props.constructorData} />
         </div>
-        <div css={{ marginBottom: '1.5em' }}>
+        <div className="marginBottom1-5em">
           <Markdown hast={props.bioHast} />
           {paypalEmail && paypalText ? (
             <div>
               <LinkButtonSimpleA
-                css={{ marginRight: '0.5em' }}
+                className="marginRight0-5em"
                 href={`https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=${encodeURIComponent(
                   paypalEmail
                 )}&item_name=${encodeURIComponent(
@@ -532,9 +532,9 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
           />
         ))}
         {props.nextPage || props.prevPage !== null ? (
-          <p css={{ textAlign: 'center' }}>
+          <p className="textAlignCenter">
             {props.prevPage === 0 ? (
-              <Link css={{ marginRight: '2em' }} href={'/' + username}>
+              <Link className="marginRight2em" href={'/' + username}>
                 ← <Trans>Newer Puzzles</Trans>
               </Link>
             ) : (
@@ -542,7 +542,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
             )}
             {props.prevPage ? (
               <Link
-                css={{ marginRight: '2em' }}
+                className="marginRight2em"
                 href={'/' + username + '/page/' + props.prevPage}
               >
                 ← <Trans>Newer Puzzles</Trans>

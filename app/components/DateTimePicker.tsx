@@ -41,7 +41,7 @@ export const DateTimePicker = (props: DateTimePickerProps) => {
         }}
       />
       <input
-        css={{ marginLeft: '0.5em' }}
+        className="marginLeft0-5em"
         type="time"
         defaultValue={lightFormat(props.picked, 'HH:mm')}
         required

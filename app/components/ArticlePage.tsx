@@ -2,12 +2,12 @@ import type { Root } from 'hast';
 import Head from 'next/head';
 import { ArticleT } from '../lib/article';
 import { ArticlePageProps } from '../lib/serverOnly';
-import { HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
 import { ContactLinks } from './ContactLinks';
 import { ErrorPage } from './ErrorPage';
 import { Link } from './Link';
 import { Markdown } from './Markdown';
 import { DefaultTopBar } from './TopBar';
+import styles from './ArticlePage.module.css';
 
 export function ArticlePage(props: ArticlePageProps) {
   if ('error' in props) {
@@ -38,19 +38,8 @@ function Article(props: ArticleT & { hast: Root }) {
         />
       </Head>
       <DefaultTopBar />
-      <div
-        css={{
-          margin: '2em 1em',
-          [HUGE_AND_UP]: {
-            maxWidth: MAX_WIDTH,
-            margin: '2em auto',
-          },
-        }}
-      >
-        <Markdown
-          css={{ marginBottom: '2em', '& h2': { marginTop: '1em' } }}
-          hast={props.hast}
-        />
+      <div className={styles.page}>
+        <Markdown className={styles.markdown} hast={props.hast} />
         <p>
           This article is part of a series of posts designed to teach visitors
           about crosswords in general as well as some Crosshare specific

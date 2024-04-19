@@ -11,7 +11,7 @@ export default function TwoColTestPage() {
           height: '100%',
         }}
       >
-        <div css={{ flex: 'none' }}>
+        <div className="flexNone">
           <DefaultTopBar />
         </div>
         <div

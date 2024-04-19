@@ -120,7 +120,7 @@ export function TagEditor(props: TagEditorProps) {
       />
       {tags.length < 5 ? (
         <>
-          <div css={{ marginTop: '1em' }}>
+          <div className="marginTop1em">
             <input
               type="text"
               placeholder={`New tag name`}
@@ -148,7 +148,7 @@ export function TagEditor(props: TagEditorProps) {
             ''
           ) : (
             <>
-              <h5 css={{ marginTop: '1em' }}>Example tags:</h5>
+              <h5 className="marginTop1em">Example tags:</h5>
               <TagList
                 tags={['themeless', 'themed', 'cryptic', 'grid-art', 'lang-es']}
                 onClick={(t) => {
@@ -161,7 +161,7 @@ export function TagEditor(props: TagEditorProps) {
       ) : (
         <p>You must remove an existing tag if you want to add any new ones.</p>
       )}
-      <div css={{ marginTop: '1em' }}>
+      <div className="marginTop1em">
         <Button
           onClick={() => {
             props
@@ -184,7 +184,7 @@ export function TagEditor(props: TagEditorProps) {
         {props.cancel ? (
           <Button
             boring={true}
-            css={{ marginLeft: '0.5em' }}
+            className="marginLeft0-5em"
             onClick={props.cancel}
             text="Cancel"
           />

@@ -63,7 +63,7 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
       <label>
         {ctx.displayName ? t`Update display name:` : t`Set your display name:`}
         <input
-          css={{ margin: '0 0.5em' }}
+          className="margin0-0-5em"
           type="text"
           value={newDisplayName || ''}
           onChange={(e) => {
@@ -79,7 +79,7 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
       {onCancel ? (
         <Button
           boring={true}
-          css={{ marginLeft: '0.5em' }}
+          className="marginLeft0-5em"
           onClick={onCancel}
           text={t`Cancel`}
         />

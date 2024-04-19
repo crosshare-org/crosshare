@@ -17,10 +17,10 @@ interface SizeSelectProps {
 
 const SizeSelectInput = (props: SizeSelectProps) => {
   return (
-    <div css={{ fontSize: '1.5em' }}>
+    <div className="fontSize1-5em">
       <label>
         <input
-          css={{ marginRight: '1em' }}
+          className="marginRight1em"
           type="radio"
           name="size"
           value={props.label}
@@ -97,10 +97,10 @@ const labelForPrefill = (p: PrefillSquares) => {
 
 const PrefillSelectInput = (props: PrefillSelectProps) => {
   return (
-    <div css={{ fontSize: '1.5em' }}>
+    <div className="fontSize1-5em">
       <label>
         <input
-          css={{ marginRight: '1em' }}
+          className="marginRight1em"
           type="radio"
           name="prefill"
           value={props.option}
@@ -171,7 +171,7 @@ export function NewPuzzleForm(props: {
       {props.hideWarning ? (
         ''
       ) : (
-        <p css={{ color: 'var(--error)' }}>
+        <p className="colorError">
           WARNING: all progress on your current puzzle will be permanently lost.
           If you want to keep it, please publish the current puzzle or export a
           .puz file first.
@@ -226,14 +226,14 @@ export function NewPuzzleForm(props: {
             setCurrent={setCurrent}
           />
           {current === 'Custom' && errorMsg ? (
-            <p css={{ color: 'var(--error)' }}>{errorMsg}</p>
+            <p className="colorError">{errorMsg}</p>
           ) : (
             ''
           )}
           <div>
             <label>
               <input
-                css={{ marginRight: '1em' }}
+                className="marginRight1em"
                 type="checkbox"
                 checked={prefill !== undefined}
                 onChange={(e) => {

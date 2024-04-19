@@ -1,0 +1,34 @@
+@value small-and-up from '../lib/definitions.module.css';
+
+.outer {
+  padding: 2em;
+  background-color: var(--secondary);
+  text-align: center;
+  color: var(--text);
+}
+.wrapper {
+  max-width: 900px;
+  margin: auto;
+}
+
+.wrapper:before {
+  font-family: georgia, serif;
+  content: open-quote;
+  font-size: 6em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+.quote {
+  font-family: georgia, serif;
+  font-size: 20px;
+  font-style: italic;
+}
+@media (small-and-up) {
+  .quote {
+    font-size: 30px;
+  }
+  .attrib {
+    font-size: 20px;
+  }
+}

@@ -13,10 +13,7 @@ export const DifficultyBadge = (props: {
   const { user, prefs } = useContext(AuthContext);
 
   let symbol = (
-    <span
-      css={{ color: 'var(--primary)' }}
-      title="Unsure (not enough solves yet)"
-    >
+    <span className="colorPrimary" title="Unsure (not enough solves yet)">
       ●
     </span>
   );
@@ -29,7 +26,7 @@ export const DifficultyBadge = (props: {
     if (expectation < 0.25) {
       symbol = (
         <span
-          css={{ color: 'var(--text)' }}
+          className="colorText"
           title={`Very Difficult (${Math.round(props.puzzleRating.r)})`}
         >
           ◆◆
@@ -39,7 +36,7 @@ export const DifficultyBadge = (props: {
     } else if (expectation < 0.5) {
       symbol = (
         <span
-          css={{ color: 'var(--text)' }}
+          className="colorText"
           title={`Difficult (${Math.round(props.puzzleRating.r)})`}
         >
           ◆

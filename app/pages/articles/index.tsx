@@ -38,9 +38,9 @@ export default requiresAdmin(() => {
         <meta name="robots" content="noindex" />
       </Head>
       <DefaultTopBar />
-      <div css={{ margin: '1em' }}>
+      <div className="margin1em">
         <Button
-          css={{ marginBottom: '2em' }}
+          className="marginBottom2em"
           text="New Article"
           onClick={logAsyncErrors(async () => {
             const newArticle: ArticleT = {

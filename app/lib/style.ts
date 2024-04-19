@@ -10,12 +10,14 @@ import { EmbedStylingProps } from '../components/EmbedStyling';
 
 export const KEYBOARD_HEIGHT = 164;
 export const HEADER_HEIGHT = 35;
-export const MAX_WIDTH = 1200;
 export const PROFILE_PIC: [number, number] = [200, 200];
 export const COVER_PIC: [number, number] = [1200, 400];
 
 export const TINY_COL_MIN_HEIGHT = 50;
 export const SQUARE_HEADER_HEIGHT = 68;
+
+// make any changes in concert w/ definitions.module.css
+export const MAX_WIDTH = 1200;
 export const SMALL_BREAKPOINT = 576;
 export const LARGE_BREAKPOINT = 992;
 export const SMALL_AND_UP_RULES = '(min-width: ' + SMALL_BREAKPOINT + 'px)';

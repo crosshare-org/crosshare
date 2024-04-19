@@ -1237,7 +1237,7 @@ const GridMode = ({
                       )}{' '}
                       No words should be repeated
                     </div>
-                    <h2 css={{ marginTop: '1.5em' }}>Fill</h2>
+                    <h2 className="marginTop1-5em">Fill</h2>
                     <div>Number of words: {stats.numEntries}</div>
                     <div>
                       Mean word length: {stats.averageLength.toPrecision(3)}
@@ -1537,7 +1537,7 @@ const GridMode = ({
           height: '100%',
         }}
       >
-        <div css={{ flex: 'none' }}>
+        <div className="flexNone">
           <TopBar>{topBarChildren}</TopBar>
         </div>
         {state.showDownloadLink ? (

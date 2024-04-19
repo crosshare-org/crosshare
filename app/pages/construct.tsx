@@ -243,7 +243,7 @@ export default function BuilderPage() {
             },
           }}
         >
-          <h2 css={{ textAlign: 'center' }}>New to making crosswords?</h2>
+          <h2 className="textAlignCenter">New to making crosswords?</h2>
           <p>
             Don’t be intimidated! Constructing great crosswords takes a lot of
             practice, but it’s easy to get started. When you first launch the
@@ -353,7 +353,7 @@ export default function BuilderPage() {
             },
           }}
         >
-          <h2 css={{ textAlign: 'center' }}>FAQ</h2>
+          <h2 className="textAlignCenter">FAQ</h2>
           <h3>What if I have an existing puzzle I’d like to upload?</h3>
           <p>
             Crosshare supports .puz uploading <Link href="/upload">here</Link>.

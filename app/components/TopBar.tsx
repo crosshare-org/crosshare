@@ -682,7 +682,7 @@ const NotificationLink = ({
           css={NotificationLinkCSS}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
-          <FaComment css={{ marginRight: '0.5em' }} /> {n.cn} commented on{' '}
+          <FaComment className="marginRight0-5em" /> {n.cn} commented on{' '}
           <u>{n.pn}</u>
         </Link>
       );
@@ -693,7 +693,7 @@ const NotificationLink = ({
           css={NotificationLinkCSS}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
-          <FaComments css={{ marginRight: '0.5em' }} /> {n.cn} replied to your
+          <FaComments className="marginRight0-5em" /> {n.cn} replied to your
           comment on <u>{n.pn}</u>
         </Link>
       );
@@ -704,8 +704,8 @@ const NotificationLink = ({
           css={NotificationLinkCSS}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
-          <FaRegNewspaper css={{ marginRight: '0.5em' }} /> {n.an} published a
-          new puzzle: <u>{n.pn}</u>
+          <FaRegNewspaper className="marginRight0-5em" /> {n.an} published a new
+          puzzle: <u>{n.pn}</u>
         </Link>
       );
       break;
@@ -715,8 +715,8 @@ const NotificationLink = ({
           css={NotificationLinkCSS}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
-          <FaRegGrinStars css={{ marginRight: '0.5em' }} /> Crosshare is
-          featuring your puzzle <u>{n.pn}</u>
+          <FaRegGrinStars className="marginRight0-5em" /> Crosshare is featuring
+          your puzzle <u>{n.pn}</u>
           {n.as ? ` as ${n.as}` : ' on the homepage'}!
         </Link>
       );

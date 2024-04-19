@@ -86,13 +86,13 @@ export const EmbedOverlay = ({
       <CopyableInput
         text={`<iframe style="height: 90vh; width: 100%;" src="https://crosshare.org/embed/${puzzle.id}/${user.uid}" frameborder="0" allowfullscreen="true" allowtransparency="true" allow="clipboard-write *"></iframe>`}
       />
-      <h3 css={{ marginTop: '1em' }}>Theme</h3>
+      <h3 className="marginTop1em">Theme</h3>
       {loadingOptions ? (
         <p>Loading your embed settings...</p>
       ) : (
         <ThemePicker userId={user.uid} {...embedOptions} />
       )}
-      <h3 css={{ marginTop: '1em' }}>Puzzle List</h3>
+      <h3 className="marginTop1em">Puzzle List</h3>
       <p>
         Alternatively, you can embed a list of your recent public puzzles all at
         once:
@@ -187,7 +187,7 @@ const ColorPicker = (props: ColorPickerProps) => {
   }
 
   return (
-    <div css={{ marginBottom: '1em' }}>
+    <div className="marginBottom1em">
       {swatches}
       <div>
         <input type="text" value={hexColor} onChange={updateHexColor} />
@@ -339,7 +339,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       <div>
         <label>
           <input
-            css={{ marginRight: '1em' }}
+            className="marginRight1em"
             type="checkbox"
             checked={isDark}
             onChange={(e) => {
@@ -353,7 +353,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       <div>
         <label>
           <input
-            css={{ marginRight: '1em' }}
+            className="marginRight1em"
             disabled={!isDark}
             type="checkbox"
             checked={preservePrimary}
@@ -375,7 +375,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
       <div>
         <label>
           <input
-            css={{ marginRight: '1em' }}
+            className="marginRight1em"
             type="checkbox"
             checked={customFontEnabled}
             onChange={(e) => {
@@ -439,12 +439,12 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
         />
       </label>
       <Button
-        css={{ marginTop: '1em' }}
+        className="marginTop1em"
         onClick={saveTheme}
         disabled={saving || !dirty}
         text={saving ? 'Saving...' : 'Save Theme Choices'}
       />
-      <h4 css={{ marginTop: '2em' }}>Preview</h4>
+      <h4 className="marginTop2em">Preview</h4>
       {customFontEnabled && fontStyles.length ? (
         <style
           dangerouslySetInnerHTML={{

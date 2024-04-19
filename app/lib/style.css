@@ -330,3 +330,116 @@ div.paragraph + div.paragraph {
   margin: 0 .05em 0 .1em;
   vertical-align: -0.1em;
 }
+
+/* atomic styles */
+.flexNone {
+  flex: none;
+}
+.flex1 {
+  flex: 1;
+}
+.flex50 {
+  flex: 50%;
+}
+.width100 {
+  width: 100%;
+}
+.displayBlock {
+  display: block;
+}
+.margin0 {
+  margin: 0;
+}
+.margin1em {
+  margin: 1em;
+}
+.marginTop1em {
+  margin-top: 1em;
+}
+.marginTop1-5em {
+  margin-top: 1.5em;
+}
+.marginTop2em {
+  margin-top: 2em;
+}
+.marginRight0-5em {
+  margin-right: 0.5em;
+}
+.marginRight1em {
+  margin-right: 1em;
+}
+.marginRight1-5em {
+  margin-right: 1.5em;
+}
+.marginRight2em {
+  margin-right: 2em;
+}
+.marginLeft0-5em {
+  margin-left: 0.5em;
+}
+.marginLeft1em {
+  margin-left: 1em;
+}
+.marginBottom0 {
+  margin-bottom: 0;
+}
+.marginBottom1em {
+  margin-bottom: 1em;
+}
+.marginBottom1-5em {
+  margin-bottom: 1.5em;
+}
+.marginBottom2em {
+  margin-bottom: 2em;
+}
+.marginAuto {
+  margin: auto;
+}
+.margin1em0 {
+  margin: 1em 0;
+}
+.margin2em0 {
+  margin: 2em 0;
+}
+.margin0-0-5em {
+  margin: 0 0.5em;
+}
+.paddingBottom1em {
+  padding-bottom: 1em;
+}
+.textAlignLeft {
+  text-align: left;
+}
+.textAlignRight {
+  text-align: right;
+}
+.textAlignCenter {
+  text-align: center;
+}
+.listStyleTypeNone {
+  list-style-type: none;
+}
+.colorPrimary {
+  color: var(--primary);
+}
+.colorText {
+  color: var(--text);
+}
+.colorError {
+  color: var(--error);
+}
+.fontSize1-5em{
+  font-size: 1.5em;
+}
+.positionAbsolute {
+  position: absolute;
+}
+.positionRelative {
+  position: relative;
+}
+.borderBottom1pxSolidBlack {
+  border-bottom: 1px solid var(--black);
+}
+.verticalAlignTextBottom {
+  vertical-align: text-bottom;
+}

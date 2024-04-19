@@ -83,9 +83,9 @@ const TinyNavButton = ({ isLeft, dispatch }: TinyNavButtonProps) => {
       }}
     >
       {isLeft ? (
-        <FaAngleDoubleLeft css={{ position: 'absolute' }} />
+        <FaAngleDoubleLeft className="positionAbsolute" />
       ) : (
-        <FaAngleDoubleRight css={{ position: 'absolute' }} />
+        <FaAngleDoubleRight className="positionAbsolute" />
       )}
     </button>
   );

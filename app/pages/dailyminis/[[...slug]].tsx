@@ -193,13 +193,13 @@ export default function DailyMiniPage(props: PageProps) {
         )}
       </Head>
       <DefaultTopBar />
-      <div css={{ margin: '1em' }}>
+      <div className="margin1em">
         <h2>
           <Trans comment="the variable is a month and year like 'noviembre de 2021'">
             Crosshare Daily Mini Puzzles for {date}
           </Trans>
         </h2>
-        <div css={{ marginBottom: '2em' }}>{description}</div>
+        <div className="marginBottom2em">{description}</div>
         {props.puzzles.map(([day, puzzle, cp, isPatron]) => {
           const displayDate = new Date(
             props.year,
@@ -221,7 +221,7 @@ export default function DailyMiniPage(props: PageProps) {
         <p css={{ textAlign: 'center', paddingBottom: '1em' }}>
           {props.newerLink ? (
             <Link
-              css={{ marginRight: '1em' }}
+              className="marginRight1em"
               href={'/dailyminis/' + props.newerLink}
             >
               <Trans>Newer Minis</Trans>

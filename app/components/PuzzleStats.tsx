@@ -154,7 +154,7 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
 
   return (
     <>
-      <p css={{ margin: '1em' }}>
+      <p className="margin1em">
         <CSVLink
           data={subs.map((s) => ({
             ...s,
@@ -179,7 +179,7 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
           Download submission table as CSV
         </CSVLink>
       </p>
-      <div css={{ margin: '1em' }}>
+      <div className="margin1em">
         <Table
           css={{
             '& .cell': {
@@ -367,7 +367,7 @@ export const StatsPage = ({
           height: '100%',
         }}
       >
-        <div css={{ flex: 'none' }}>
+        <div className="flexNone">
           <DefaultTopBar>
             {!hideShare && stats?.sct ? (
               <>
@@ -409,7 +409,7 @@ export const StatsPage = ({
         >
           {stats ? (
             <>
-              <h3 css={{ width: '100%' }}>
+              <h3 className="width100">
                 Stats for <b>{puzzle.title}</b>
               </h3>
               <div
@@ -472,7 +472,7 @@ export const StatsPage = ({
               </div>
               <div css={{ paddingTop: '1em', textAlign: 'center' }}>
                 <ButtonAsLink
-                  css={{ marginRight: '0.5em' }}
+                  className="marginRight0-5em"
                   disabled={mode === StatsMode.AverageTime}
                   onClick={() => {
                     setMode(StatsMode.AverageTime);
@@ -492,7 +492,7 @@ export const StatsPage = ({
                 />
                 {isMeta ? (
                   <ButtonAsLink
-                    css={{ marginLeft: '0.5em' }}
+                    className="marginLeft0-5em"
                     disabled={mode === StatsMode.MetaSubmissions}
                     onClick={() => {
                       setMode(StatsMode.MetaSubmissions);

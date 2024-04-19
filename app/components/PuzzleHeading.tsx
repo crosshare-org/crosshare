@@ -91,7 +91,7 @@ export const PuzzleHeading = (props: {
       )}
       {props.blogPost ? (
         <div css={{ margin: '1em 0', overflowWrap: 'break-word' }}>
-          <Markdown css={{ textAlign: 'left' }} hast={props.blogPost} />
+          <Markdown className="textAlignLeft" hast={props.blogPost} />
         </div>
       ) : (
         ''
@@ -100,7 +100,7 @@ export const PuzzleHeading = (props: {
         <div css={{ margin: '1em 0', overflowWrap: 'break-word' }}>
           <Markdown
             inline={true}
-            css={{ textAlign: 'left' }}
+            className="textAlignLeft"
             hast={props.constructorPage.sig}
           />
         </div>
@@ -111,9 +111,9 @@ export const PuzzleHeading = (props: {
       {props.showTip &&
       props.constructorPage?.pp &&
       props.constructorPage.pt ? (
-        <div css={{ textAlign: 'center' }}>
+        <div className="textAlignCenter">
           <LinkButtonSimpleA
-            css={{ marginRight: '0.5em' }}
+            className="marginRight0-5em"
             href={`https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=${encodeURIComponent(
               props.constructorPage.pp
             )}&item_name=${encodeURIComponent(

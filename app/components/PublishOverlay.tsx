@@ -116,14 +116,14 @@ export function PublishOverlay(props: {
             {lightFormat(props.toPublish.pvu.toDate(), "M/d/y' at 'h:mma")}.
           </p>
         ) : null}
-        <p css={{ color: 'var(--error)' }}>
+        <p className="colorError">
           All puzzles are reviewed and subject to removal at any time for any
           reason (e.g. if the content is deemed offensive or if it is found to
           be copyright infringement)
         </p>
         {props.warnings.length ? (
           <>
-            <p css={{ color: 'var(--error)' }}>Warnings:</p>
+            <p className="colorError">Warnings:</p>
             <ul>
               {props.warnings.map((s, i) => (
                 <li key={i}>{s}</li>

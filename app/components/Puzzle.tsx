@@ -198,7 +198,7 @@ const KeepTryingOverlay = ({
         </Trans>
       </p>
       <Button
-        css={{ width: '100%' }}
+        className="width100"
         onClick={() => {
           dispatch({ type: 'DISMISSKEEPTRYING' });
         }}

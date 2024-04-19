@@ -204,11 +204,11 @@ const ClueRow = (props: {
           width: '1px',
         }}
       >
-        <label css={{ marginBottom: 0 }} htmlFor={word + '-input'}>
+        <label className="marginBottom0" htmlFor={word + '-input'}>
           {word}
         </label>
       </td>
-      <td css={{ paddingBottom: '1em' }}>
+      <td className="paddingBottom1em">
         {editing ? (
           <form
             css={{ display: 'flex', flexWrap: 'wrap' }}
@@ -236,7 +236,7 @@ const ClueRow = (props: {
             />
             <Button
               boring={true}
-              css={{ marginLeft: '0.5em' }}
+              className="marginLeft0-5em"
               onClick={() => {
                 setEditing(false);
                 setValue(props.entry.clue);
@@ -260,7 +260,7 @@ const ClueRow = (props: {
               />
             )}
             <ButtonAsLink
-              css={{ marginLeft: '1em' }}
+              className="marginLeft1em"
               text="edit"
               title={`Edit ${word}`}
               onClick={() => {
@@ -359,7 +359,7 @@ const PuzzleEditor = ({
           <title>{`Editing | ${puzzle.title} | Crosshare`}</title>
         </Head>
         <DefaultTopBar />
-        <div css={{ margin: '1em' }}>
+        <div className="margin1em">
           <p>
             Note: changes may take up to an hour to appear on the site - we
             cache pages to keep Crosshare fast!
@@ -367,7 +367,7 @@ const PuzzleEditor = ({
           <h3>Title</h3>
           <EditableText
             title="Title"
-            css={{ marginBottom: '1em' }}
+            className="marginBottom1em"
             text={puzzle.title}
             hast={false}
             maxLength={MAX_STRING_LENGTH}
@@ -376,7 +376,7 @@ const PuzzleEditor = ({
             }
           />
           <h3>Clues</h3>
-          <table css={{ width: '100%' }}>
+          <table className="width100">
             <tbody>{clueRows}</tbody>
           </table>
           <h3>Tags</h3>
@@ -385,7 +385,7 @@ const PuzzleEditor = ({
             solvers quickly find puzzles with a particular attribute or theme.
           </p>
           {editingTags ? (
-            <div css={{ marginBottom: '1.5em' }}>
+            <div className="marginBottom1-5em">
               <TagEditor
                 userTags={puzzle.userTags ?? []}
                 autoTags={puzzle.autoTags ?? []}
@@ -426,7 +426,7 @@ const PuzzleEditor = ({
           <EditableText
             title="Constructor Note"
             deletable={true}
-            css={{ marginBottom: '1em' }}
+            className="marginBottom1em"
             text={puzzle.constructorNotes}
             hast={markdownToHast({ text: puzzle.constructorNotes ?? '' })}
             maxLength={MAX_STRING_LENGTH}
@@ -441,7 +441,7 @@ const PuzzleEditor = ({
           <EditableText
             title="Constructor's Name"
             deletable={true}
-            css={{ marginBottom: '1em' }}
+            className="marginBottom1em"
             text={puzzle.guestConstructor}
             hast={false}
             maxLength={MAX_STRING_LENGTH}
@@ -463,7 +463,7 @@ const PuzzleEditor = ({
             textarea={true}
             title="Blog Post"
             deletable={true}
-            css={{ marginBottom: '1em' }}
+            className="marginBottom1em"
             text={puzzle.blogPost}
             hast={markdownToHast({ text: puzzle.blogPost ?? '' })}
             maxLength={MAX_BLOG_LENGTH}
@@ -493,7 +493,7 @@ const PuzzleEditor = ({
           ) : (
             ''
           )}
-          <h3 css={{ marginTop: '1em' }}>Privacy</h3>
+          <h3 className="marginTop1em">Privacy</h3>
           {
             // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
             puzzle.isPrivate ? (
@@ -516,7 +516,7 @@ const PuzzleEditor = ({
           <p>
             <label>
               <input
-                css={{ marginRight: '1em' }}
+                className="marginRight1em"
                 type="checkbox"
                 // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
                 checked={isPrivate ? true : false}
@@ -549,7 +549,7 @@ const PuzzleEditor = ({
             <p>
               <label>
                 <input
-                  css={{ marginRight: '1em' }}
+                  className="marginRight1em"
                   type="checkbox"
                   checked={
                     isPrivateUntil !== null && isPrivateUntil > Date.now()
@@ -590,7 +590,7 @@ const PuzzleEditor = ({
             <p>Private until is unavailable if a puzzle has ever been public</p>
           )}
           <Button
-            css={{ marginRight: '1em' }}
+            className="marginRight1em"
             text="Update Privacy Settings"
             disabled={
               isPrivate === puzzle.isPrivate &&
@@ -626,7 +626,7 @@ const PuzzleEditor = ({
               setIsPrivateUntil(puzzle.isPrivateUntil);
             }}
           />
-          <h3 css={{ marginTop: '1em' }}>Contest / meta puzzle</h3>
+          <h3 className="marginTop1em">Contest / meta puzzle</h3>
           <p>
             A meta puzzle has an extra puzzle embedded in the grid for after
             solvers have finished solving. Solvers can submit their solution,
@@ -670,7 +670,7 @@ const PuzzleEditor = ({
               )}
               <EditableText
                 title="Solution"
-                css={{ marginBottom: '1em' }}
+                className="marginBottom1em"
                 text={''}
                 hast={false}
                 maxLength={MAX_META_SUBMISSION_LENGTH}
@@ -733,7 +733,7 @@ const PuzzleEditor = ({
               above to add a prompt for the contest.
             </p>
           )}
-          <h3 css={{ marginTop: '1em' }}>Alternate Solutions</h3>
+          <h3 className="marginTop1em">Alternate Solutions</h3>
           <p>
             Alternate solutions can be used if one or more entries in your
             puzzle have multiple valid solutions (e.g. a Schrödinger&apos;s
@@ -781,10 +781,10 @@ const PuzzleEditor = ({
             }}
             text="Add an alternate solution"
           />
-          <h3 css={{ marginTop: '1em' }}>Comments</h3>
+          <h3 className="marginTop1em">Comments</h3>
           <label>
             <input
-              css={{ marginRight: '1em' }}
+              className="marginRight1em"
               type="checkbox"
               checked={puzzle.commentsDisabled}
               onChange={logAsyncErrors(async (e) => {
@@ -797,7 +797,7 @@ const PuzzleEditor = ({
             />{' '}
             Disable comments for this puzzle
           </label>
-          <h3 css={{ marginTop: '1em' }}>Delete</h3>
+          <h3 className="marginTop1em">Delete</h3>
           {puzzle.dailyMiniDate ? (
             <p>
               This puzzle has been selected as a daily mini - please contact us
