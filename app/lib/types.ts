@@ -430,10 +430,15 @@ export function fromKeyboardEvent(event: {
   }
 
   if (event.metaKey || event.ctrlKey) {
-    if (event.key === 'z') {
-      return some({ k: event.shiftKey ? KeyK.Redo : KeyK.Undo });
+    const key = event.key.toLowerCase();
+    switch (key) {
+      case 'z':
+        return some({ k: event.shiftKey ? KeyK.Redo : KeyK.Undo });
+      case 'y':
+        return some({ k: KeyK.Redo });
+      default:
+        return none;
     }
-    return none;
   }
 
   const basicKey: Option<Exclude<KeyK, KeyK.AllowedCharacter>> = (() => {
