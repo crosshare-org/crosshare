@@ -1,3 +1,4 @@
+import equal from 'fast-deep-equal/es6';
 import { entryWord } from '../lib/gridBase';
 import { emptySelection, hasMultipleCells } from '../lib/selection';
 import { fromCells } from '../lib/viewableGrid';
@@ -69,6 +70,11 @@ export function clearSelection<T extends GridInterfaceState>(state: T): T {
 
 export function pushToHistory<T extends GridInterfaceState>(state: T): T {
   if (!isBuilderState(state)) {
+    return state;
+  }
+
+  const prevGrid = state.undoHistory[state.undoIndex];
+  if (equal(prevGrid, state.grid)) {
     return state;
   }
 
