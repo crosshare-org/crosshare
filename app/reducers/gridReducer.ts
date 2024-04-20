@@ -40,12 +40,12 @@ import {
   postEdit as builderPostEdit,
   clearSelection,
   hasSelection,
-} from './builderReducer';
+} from './builderUtils';
 import type { PuzzleState } from './puzzleReducer';
 import {
   isPuzzleState,
   postEdit as puzzlePostEdit,
-} from './puzzleReducer';
+} from './puzzleUtils';
 import type { PuzzleAction } from './commonActions';
 
 export interface GridInterfaceState {

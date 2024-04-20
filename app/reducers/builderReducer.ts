@@ -8,17 +8,18 @@ import {
 } from '../lib/types';
 import { DBPuzzleT } from '../lib/dbtypes';
 import { ViewableGrid, ViewableEntry, fromCells } from '../lib/viewableGrid';
-import { entryWord, gridWithEntrySet } from '../lib/gridBase';
+import { gridWithEntrySet } from '../lib/gridBase';
 import { Timestamp } from '../lib/timestamp';
 import equal from 'fast-deep-equal';
 import { getDocId } from '../lib/firebaseWrapper';
-import { GridSelection, emptySelection, hasMultipleCells } from '../lib/selection';
+import { GridSelection, emptySelection } from '../lib/selection';
 import {
   GridInterfaceState,
   closeRebus,
   gridInterfaceReducer,
 } from './gridReducer';
 import { PuzzleAction } from './commonActions';
+import { isBuilderState, postEdit, validateGrid } from './builderUtils';
 
 export type BuilderEntry = ViewableEntry;
 export type BuilderGrid = ViewableGrid<BuilderEntry>;
@@ -52,12 +53,6 @@ export interface BuilderState extends GridInterfaceState {
   showDownloadLink: boolean;
   alternates: Record<number, string>[];
   userTags: string[];
-}
-
-export function isBuilderState(
-  state: GridInterfaceState
-): state is BuilderState {
-  return state.type === 'builder';
 }
 
 function initialBuilderStateFromSaved(
@@ -411,30 +406,6 @@ function isUpdateSelectionAction(
   action: PuzzleAction
 ): action is UpdateSelectionAction {
   return action.type === 'UPDATESELECTION';
-}
-
-export function postEdit(
-  state: BuilderState,
-  _cellIndex: number
-): BuilderState {
-  return validateGrid(state);
-}
-
-export function clearSelection<T extends GridInterfaceState>(state: T): T {
-  if (!isBuilderState(state)) {
-    return state;
-  }
-  if (!hasSelection(state)) {
-    return state;
-  }
-  return {
-    ...state,
-    selection: emptySelection(),
-  };
-}
-
-export function hasSelection<T extends GridInterfaceState>(state: T): boolean {
-  return isBuilderState(state) && hasMultipleCells(state.selection);
 }
 
 function normalizeAnswer(answer: string): string {
@@ -798,37 +769,4 @@ export function builderReducer(
     return { ...state, toPublish: null };
   }
   return state;
-}
-
-function validateGrid(state: BuilderState) {
-  let gridIsComplete = true;
-  const repeats = new Set<string>();
-  let hasNoShortWords = true;
-
-  for (const cell of state.grid.cells) {
-    if (cell.trim() === '') {
-      gridIsComplete = false;
-      break;
-    }
-  }
-
-  for (const [i, entry] of state.grid.entries.entries()) {
-    if (entry.cells.length <= 2) {
-      hasNoShortWords = false;
-    }
-    for (let j = 0; j < state.grid.entries.length; j += 1) {
-      if (entry.completedWord === null) continue;
-      if (i === j) continue;
-      if (entryWord(state.grid, i) === entryWord(state.grid, j)) {
-        repeats.add(entryWord(state.grid, i));
-      }
-    }
-  }
-
-  return {
-    ...state,
-    gridIsComplete,
-    repeats,
-    hasNoShortWords,
-  };
 }
