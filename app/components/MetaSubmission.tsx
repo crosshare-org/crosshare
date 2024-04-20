@@ -9,7 +9,10 @@ import { Emoji } from './Emoji';
 import { isMetaSolution } from '../lib/utils';
 import { LengthLimitedInput, LengthView } from './Inputs';
 import { MAX_META_SUBMISSION_LENGTH } from './ClueMode';
-import { ContestRevealAction, ContestSubmitAction } from '../reducers/reducer';
+import {
+  ContestRevealAction,
+  ContestSubmitAction,
+} from '../reducers/puzzleReducer';
 import { formatDistanceToNow } from 'date-fns';
 
 export const MetaSubmissionForm = (props: {

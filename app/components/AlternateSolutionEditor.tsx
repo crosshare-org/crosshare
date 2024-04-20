@@ -35,7 +35,7 @@ import {
   gridInterfaceReducer,
   KeypressAction,
   PasteAction,
-} from '../reducers/reducer';
+} from '../reducers/gridReducer';
 import { isSome } from 'fp-ts/lib/Option';
 import { GridView } from './Grid';
 import { logAsyncErrors } from '../lib/utils';

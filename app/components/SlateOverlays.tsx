@@ -1,5 +1,5 @@
 import { Dispatch, useEffect, useRef } from 'react';
-import { PuzzleAction } from '../reducers/reducer';
+import { PuzzleAction } from '../reducers/commonActions';
 import { Overlay } from './Overlay';
 import { ButtonResetCSS } from './Buttons';
 import { SlateHeader, SlateLogo } from './SlateHeader';

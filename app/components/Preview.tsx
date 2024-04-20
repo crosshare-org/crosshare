@@ -16,10 +16,10 @@ import {
   builderReducer,
   initialBuilderState,
   BuilderState,
-  KeypressAction,
   PublishAction,
   getClueProps,
-} from '../reducers/reducer';
+} from '../reducers/builderReducer';
+import { KeypressAction } from '../reducers/gridReducer';
 import { SquareAndCols } from './Page';
 import {
   PuzzleInProgressT,

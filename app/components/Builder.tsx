@@ -89,22 +89,24 @@ import {
 import {
   BuilderState,
   builderReducer,
-  KeypressAction,
   SymmetryAction,
   ClickedFillAction,
-  PuzzleAction,
   SetHighlightAction,
   PublishAction,
   initialBuilderState,
   BuilderGrid,
-  ClickedEntryAction,
   ImportPuzAction,
-  getClueProps,
   SetShowDownloadLink,
+  getClueProps,
+} from '../reducers/builderReducer';
+import {
+  KeypressAction,
+  ClickedEntryAction,
+  CopyAction,
   PasteAction,
   CutAction,
-  CopyAction,
-} from '../reducers/reducer';
+} from '../reducers/gridReducer';
+import { PuzzleAction } from '../reducers/commonActions';
 import {
   NestedDropDown,
   TopBarLink,

@@ -2,7 +2,7 @@ import { useState, Dispatch, memo } from 'react';
 import { getDateString, prettifyDateString } from '../lib/dbtypes';
 import { ServerPuzzleResult } from '../lib/types';
 import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
-import { PuzzleAction } from '../reducers/reducer';
+import { PuzzleAction } from '../reducers/commonActions';
 import { Overlay } from './Overlay';
 import { setMiniForDate } from '../lib/dailyMinis';
 import { TagEditor } from './TagEditor';

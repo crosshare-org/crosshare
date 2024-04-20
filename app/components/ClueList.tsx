@@ -11,7 +11,8 @@ import { Position, Direction } from '../lib/types';
 import { CluedEntry, RefPosition } from '../lib/viewableGrid';
 import { GridBase, valAt, EntryBase } from '../lib/gridBase';
 
-import { PuzzleAction, ClickedEntryAction } from '../reducers/reducer';
+import { PuzzleAction } from '../reducers/commonActions';
+import { ClickedEntryAction } from '../reducers/gridReducer';
 import { SMALL_AND_UP } from '../lib/style';
 import { ClueText } from './ClueText';
 import type { Root } from 'hast';
