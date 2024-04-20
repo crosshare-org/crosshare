@@ -32,7 +32,7 @@ import { useSnackbar } from '../../components/Snackbar';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { lightFormat } from 'date-fns/lightFormat';
 import { DateTimePicker } from '../../components/DateTimePicker';
-import { isMetaSolution, logAsyncErrors } from '../../lib/utils';
+import { clsx, isMetaSolution, logAsyncErrors } from '../../lib/utils';
 import { EditableText } from '../../components/EditableText';
 import { AlternateSolutionEditor } from '../../components/AlternateSolutionEditor';
 import { TagList } from '../../components/TagList';
@@ -48,6 +48,7 @@ import { markdownToHast } from '../../lib/markdown/markdown';
 import { Markdown } from '../../components/Markdown';
 import { GridContext } from '../../components/GridContext';
 import { withTranslation } from '../../lib/translation';
+import styles from './editPuzzle.module.css';
 
 export const getServerSideProps = withTranslation(() => {
   return Promise.resolve({ props: {} });
@@ -809,11 +810,7 @@ const PuzzleEditor = ({
                 Puzzle deletion is <b>permanent</b>.
               </p>
               <Button
-                css={{
-                  backgroundColor: 'var(--error)',
-                  color: 'var(--onerror)',
-                }}
-                hoverCSS={{ backgroundColor: 'var(--error-hover)' }}
+                className={styles.deleteBtn}
                 text="Delete"
                 onClick={() => {
                   setShowingDeleteOverlay(true);
@@ -834,12 +831,7 @@ const PuzzleEditor = ({
                     }}
                   />
                   <Button
-                    css={{
-                      marginLeft: '1em',
-                      backgroundColor: 'var(--error)',
-                      color: 'var(--onerror)',
-                    }}
-                    hoverCSS={{ backgroundColor: 'var(--error-hover)' }}
+                    className={clsx(styles.deleteBtn, 'marginLeft1em')}
                     text="Confirm Delete"
                     disabled={deleteConfirmation.toLowerCase() !== 'delete'}
                     onClick={logAsyncErrors(async () => {

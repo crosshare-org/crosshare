@@ -8,6 +8,7 @@ import { Overlay } from './Overlay';
 import { deleteField, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { markdownToHast } from '../lib/markdown/markdown';
 import { LengthLimitedInput, LengthView } from './Inputs';
+import styles from './BioEditor.module.css';
 
 interface BioEditorProps {
   constructorPage: ConstructorPageT;
@@ -190,36 +191,19 @@ export const BioEditor = (props: BioEditorProps) => {
   }
 
   return (
-    <div
-      css={{
-        marginBottom: '1em',
-        ['p:last-of-type']: {
-          marginBottom: '0.25em',
-        },
-        '& h4': {
-          marginTop: '1.5em',
-        },
-      }}
-    >
+    <div className={styles.page}>
       <h4>Bio</h4>
       {isOpen ? (
         <>
-          <div
-            css={{
-              backgroundColor: 'var(--secondary)',
-              borderRadius: '0.5em',
-              padding: '1em',
-              marginTop: '1em',
-            }}
-          >
+          <div className={styles.editingWrapper}>
             <h4>Live Preview:</h4>
             <Markdown hast={markdownToHast({ text: bioText })} />
           </div>
           <form className="margin1em0" onSubmit={submitEdit}>
-            <label css={{ width: '100%', margin: 0 }}>
+            <label className={styles.label}>
               Enter new bio text:
               <textarea
-                css={{ width: '100%', display: 'block', height: '5em' }}
+                className={styles.textarea}
                 value={bioText}
                 onChange={(e) => {
                   setBioText(e.target.value.substring(0, BIO_LENGTH_LIMIT));
@@ -227,13 +211,8 @@ export const BioEditor = (props: BioEditorProps) => {
               />
             </label>
             <div
-              css={{
-                textAlign: 'right',
-                color:
-                  BIO_LENGTH_LIMIT - bioText.length > 10
-                    ? 'var(--default-text)'
-                    : 'var(--error)',
-              }}
+              className={styles.length}
+              data-long={BIO_LENGTH_LIMIT - bioText.length <= 10}
             >
               {bioText.length}/{BIO_LENGTH_LIMIT}
             </div>
@@ -322,22 +301,15 @@ export const BioEditor = (props: BioEditorProps) => {
       {isSigOpen ? (
         /* Todo share this w/ bio editor above */
         <>
-          <div
-            css={{
-              backgroundColor: 'var(--secondary)',
-              borderRadius: '0.5em',
-              padding: '1em',
-              marginTop: '1em',
-            }}
-          >
+          <div className={styles.editingWrapper}>
             <h4>Live Preview:</h4>
             <Markdown inline={true} hast={markdownToHast({ text: sigText })} />
           </div>
           <form className="margin1em0" onSubmit={submitSigEdit}>
-            <label css={{ width: '100%', margin: 0 }}>
+            <label className={styles.label}>
               Enter new signature:
               <textarea
-                css={{ width: '100%', display: 'block', height: '5em' }}
+                className={styles.textarea}
                 value={sigText}
                 onChange={(e) => {
                   setSigText(e.target.value.substring(0, SIG_LENGTH_LIMIT));
@@ -345,13 +317,8 @@ export const BioEditor = (props: BioEditorProps) => {
               />
             </label>
             <div
-              css={{
-                textAlign: 'right',
-                color:
-                  SIG_LENGTH_LIMIT - sigText.length > 10
-                    ? 'var(--default-text)'
-                    : 'var(--error)',
-              }}
+              className={styles.length}
+              data-long={SIG_LENGTH_LIMIT - sigText.length <= 10}
             >
               {sigText.length}/{SIG_LENGTH_LIMIT}
             </div>
@@ -432,13 +399,8 @@ export const BioEditor = (props: BioEditorProps) => {
                   }}
                 />
                 <div
-                  css={{
-                    textAlign: 'right',
-                    color:
-                      PAYPAL_LENGTH_LIMIT - paypalText.length > 10
-                        ? 'var(--default-text)'
-                        : 'var(--error)',
-                  }}
+                  className={styles.length}
+                  data-long={PAYPAL_LENGTH_LIMIT - paypalText.length <= 10}
                 >
                   {paypalText.length}/{PAYPAL_LENGTH_LIMIT}
                 </div>
@@ -462,7 +424,7 @@ export const BioEditor = (props: BioEditorProps) => {
             </p>
             <div className="margin1em0">
               <LengthLimitedInput
-                css={{ width: '50%' }}
+                className={styles.width50}
                 updateValue={setShareButtonsText}
                 maxLength={SHARE_BUTTONS_LENGTH_LIMIT}
                 value={shareButtonsText}

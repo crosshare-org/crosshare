@@ -1,0 +1,86 @@
+.reset {
+  border: none;
+  background-color: transparent;
+  font-family: inherit;
+  font-weight: normal;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+.reset:disabled {
+  cursor: default;
+  color: var(--default-text);
+}
+@media screen and (-ms-high-contrast: active) : {
+  .reset {
+    border: 2px solid currentcolor;
+  }
+}
+.reset[data-hover-text]:not([data-hover-text='']):hover span {
+  display: none;
+}
+.reset[data-hover-text]:not([data-hover-text='']):hover:after {
+  content: attr(data-hover-text);
+}
+
+.link {
+  color: var(--link);
+}
+.link:hover {
+  text-decoration: underline;
+  color: var(--link-hover);
+}
+.link:disabled {
+  text-decoration: none;
+}
+.link:hover:disabled {
+  color: var(--default-text);
+}
+
+.btn {
+  overflow: wrap;
+  max-width: 100%;
+  /* create a small space when buttons wrap on 2 lines */
+  margin: 2px 0;
+  /* invisible border (will be colored on hover/focus) */
+  border: solid 1px transparent;
+  border-radius: 4px;
+  padding: 0.5em 1em;
+  color: var(--onlink);
+  background-color: var(--link);
+  line-height: 1.1;
+  text-align: center;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
+}
+.btn:disabled {
+  color: var(--default-text);
+  border-color: var(--default-text);
+  background-color: transparent;
+}
+.btn:active {
+  transform: translate-y(1px);
+}
+.btn:hover {
+  text-decoration: none;
+  color: var(--onlink);
+  background-color: var(--link-hover);
+}
+.btn:hover:disabled {
+  color: var(--default-text);
+  border-color: var(--default-text);
+  background-color: transparent;
+}
+.btn[data-boring='true'] {
+  background-color: var(--boring-bg);
+  color: var(--onboring);
+}
+.btn[data-boring='true']:hover:enabled {
+  background-color: var(--boring-bg-hover);
+  color: var(--onboring);
+}
+.btn[data-hollow='true'] {
+  border-color: var(--link);
+  color: var(--link);
+  background-color: transparent;
+}

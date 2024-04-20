@@ -1,0 +1,7 @@
+.deleteBtn {
+  background-color: var(--error);
+  color: var(--onerror);
+}
+.deleteBtn:hover {
+  background-color: var(--error-hover);
+}

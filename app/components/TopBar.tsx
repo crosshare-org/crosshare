@@ -19,14 +19,13 @@ import {
   HAS_PHYSICAL_KEYBOARD,
   LARGE_AND_UP,
 } from '../lib/style';
-import { ButtonResetCSS } from './Buttons';
 import { NotificationT } from '../lib/notificationTypes';
 import { logAsyncErrors, slugify } from '../lib/utils';
 import { EmbedContext } from './EmbedContext';
 import { Trans, t } from '@lingui/macro';
 import { updateDoc } from 'firebase/firestore';
 import { getDocRef } from '../lib/firebaseWrapper';
-import { ButtonAsLink } from './Buttons';
+import { ButtonAsLink, ButtonReset } from './Buttons';
 import {
   FaComment,
   FaComments,
@@ -37,6 +36,7 @@ import {
   FaUserLock,
 } from 'react-icons/fa';
 import { css } from '@emotion/react';
+import styles from './TopBar.module.css';
 
 export const TopBarDropDown = (props: {
   onClose?: () => void;
@@ -486,20 +486,12 @@ export const TopBar = ({
                 </div>
               )
             ) : filtered?.length && !showingNotifications ? (
-              <button
-                type="button"
+              <ButtonReset
                 onClick={(e) => {
                   setShowingNotifications(true);
                   e.stopPropagation();
                 }}
-                css={css([
-                  ButtonResetCSS,
-                  {
-                    flexGrow: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                  },
-                ])}
+                className={styles.notificationsBtn}
                 title="View Notifications"
               >
                 <Logo
@@ -520,7 +512,7 @@ export const TopBar = ({
                 >
                   CROSSHARE
                 </span>
-              </button>
+              </ButtonReset>
             ) : (
               <Link
                 href="/"

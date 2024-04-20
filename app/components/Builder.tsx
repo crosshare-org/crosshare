@@ -122,7 +122,6 @@ import { Overlay } from './Overlay';
 import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
 
 import { Keyboard } from './Keyboard';
-import { SMALL_AND_UP } from '../lib/style';
 import { ButtonReset } from './Buttons';
 import { Snackbar, useSnackbar } from './Snackbar';
 import { importFile, exportFile, ExportProps } from '../lib/converter';
@@ -132,6 +131,7 @@ import { getAutofillWorker } from '../lib/workerLoader';
 import { isTextInput } from '../lib/domUtils';
 import { fromLocalStorage } from '../lib/storage';
 import { FullscreenCSS } from './FullscreenCSS';
+import styles from './Builder.module.css';
 
 type BuilderProps = PartialBy<
   Omit<
@@ -181,16 +181,7 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
   }
   return (
     <ButtonReset
-      css={{
-        width: '100%',
-        padding: '0.5em 1em',
-        color: 'var(--text)',
-        '&:hover': {
-          backgroundColor: 'var(--bg-hover)',
-        },
-        alignItems: 'center',
-        height: 35,
-      }}
+      className={styles.fillItem}
       onClick={click}
       text={props.value[0]}
     />
@@ -215,40 +206,12 @@ const PotentialFillList = (props: PotentialFillListProps) => {
     }
   }, [props.entryIndex, props.values]);
   return (
-    <div
-      css={{
-        height: '100% !important',
-        position: 'relative',
-        display: props.selected ? 'block' : 'none',
-        [SMALL_AND_UP]: {
-          display: 'block',
-        },
-      }}
-    >
-      <div
-        css={{
-          fontWeight: 'bold',
-          borderBottom: '1px solid #AAA',
-          height: '1.5em',
-          paddingLeft: '0.5em',
-          display: 'none',
-          [SMALL_AND_UP]: {
-            display: 'block',
-          },
-        }}
-      >
+    <div className={styles.fillListWrapper} data-selected={props.selected}>
+      <div className={styles.fillListHeader}>
         {props.header}{' '}
-        <span css={{ fontWeight: 'normal' }}>({props.entryLength})</span>
+        <span className={styles.entryLength}>({props.entryLength})</span>
       </div>
-      <div
-        ref={listParent}
-        css={{
-          height: '100%',
-          [SMALL_AND_UP]: {
-            height: 'calc(100% - 1.5em)',
-          },
-        }}
-      >
+      <div ref={listParent} className={styles.listParent}>
         <List
           ref={listRef}
           height={height}
@@ -373,7 +336,7 @@ const ImportPuzForm = (props: { dispatch: Dispatch<ImportPuzAction> }) => {
           construction will be overwritten!
         </p>
         <input
-          css={{ overflow: 'hidden', maxWidth: '70vw' }}
+          className={styles.fileInput}
           type="file"
           accept=".puz"
           onChange={(e) => {
@@ -600,7 +563,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     return (
       <>
         <DefaultTopBar />
-        <div css={{ margin: '1em 2em' }}>
+        <div className={styles.newPuzzleWrapper}>
           <NewPuzzleForm
             dispatch={dispatch}
             onCreate={() => {
@@ -1246,28 +1209,12 @@ const GridMode = ({
                       Number of blocks: {stats.numBlocks} (
                       {((100 * stats.numBlocks) / stats.numTotal).toFixed(1)}%)
                     </div>
-                    <div
-                      css={{
-                        marginTop: '1em',
-                        textDecoration: 'underline',
-                        textAlign: 'center',
-                      }}
-                    >
-                      Word Lengths
-                    </div>
+                    <div className={styles.statsHeader}>Word Lengths</div>
                     <Histogram
                       data={stats.lengthHistogram}
                       names={stats.lengthHistogramNames}
                     />
-                    <div
-                      css={{
-                        marginTop: '1em',
-                        textDecoration: 'underline',
-                        textAlign: 'center',
-                      }}
-                    >
-                      Letter Counts
-                    </div>
+                    <div className={styles.statsHeader}>Letter Counts</div>
                     <Histogram
                       data={stats.lettersHistogram}
                       names={stats.lettersHistogramNames}
@@ -1530,13 +1477,7 @@ const GridMode = ({
       ) : (
         ''
       )}
-      <div
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-        }}
-      >
+      <div className={styles.page}>
         <div className="flexNone">
           <TopBar>{topBarChildren}</TopBar>
         </div>
@@ -1599,9 +1540,7 @@ const GridMode = ({
         ) : (
           ''
         )}
-        <div
-          css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}
-        >
+        <div className={styles.squareAndColsWrap}>
           <SquareAndCols
             leftIsActive={state.active.dir === Direction.Across}
             aspectRatio={state.grid.width / state.grid.height}
@@ -1623,7 +1562,7 @@ const GridMode = ({
             dispatch={dispatch}
           />
         </div>
-        <div css={{ flex: 'none', width: '100%' }}>
+        <div className="flexNone width100">
           <Keyboard
             toggleKeyboard={toggleKeyboard}
             keyboardHandler={keyboardHandler}
