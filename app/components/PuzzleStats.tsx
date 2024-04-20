@@ -9,8 +9,8 @@ import {
   builderReducer,
   initialBuilderState,
   BuilderState,
-  KeypressAction,
-} from '../reducers/reducer';
+} from '../reducers/builderReducer';
+import { KeypressAction } from '../reducers/gridReducer';
 import { SquareAndCols } from './Page';
 import { Direction, fromKeyboardEvent, PuzzleResult } from '../lib/types';
 import { MetaSubmissionForStatsViewT, PuzzleStatsViewT } from '../lib/dbtypes';

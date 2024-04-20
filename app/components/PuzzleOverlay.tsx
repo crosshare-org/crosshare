@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect, Dispatch, ReactNode } from 'react';
 import { Link } from './Link';
 import { Direction, PuzzleResultWithAugmentedComments } from '../lib/types';
-import { PuzzleAction } from '../reducers/reducer';
+import { PuzzleAction } from '../reducers/commonActions';
 import {
   isMetaSolution,
   logAsyncErrors,

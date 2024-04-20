@@ -10,7 +10,6 @@ import {
   SetClueAction,
   SetTitleAction,
   SetNotesAction,
-  PuzzleAction,
   SetBlogPostAction,
   BuilderState,
   SetPrivateAction,
@@ -22,7 +21,8 @@ import {
   SetTagsAction,
   getClueProps,
   SetCommentsDisabledAction,
-} from '../reducers/reducer';
+} from '../reducers/builderReducer';
+import { PuzzleAction } from '../reducers/commonActions';
 import { TopBarLink, TopBar } from './TopBar';
 import {
   dbCluesToClueTArray,

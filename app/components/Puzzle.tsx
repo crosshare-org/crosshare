@@ -73,18 +73,17 @@ import { entryAndCrossAtPosition, entryIndexAtPosition } from '../lib/gridBase';
 import { cachePlay, writePlayToDB, isDirty } from '../lib/plays';
 import { PlayWithoutUserT } from '../lib/dbtypes';
 import {
-  puzzleReducer,
-  advanceActiveToNonBlock,
-  PuzzleAction,
   CheatAction,
-  KeypressAction,
   ToggleAutocheckAction,
   ToggleClueViewAction,
   LoadPlayAction,
   RanSuccessEffectsAction,
   RanMetaSubmitEffectsAction,
-  PasteAction,
-} from '../reducers/reducer';
+  puzzleReducer,
+  advanceActiveToNonBlock,
+} from '../reducers/puzzleReducer';
+import { KeypressAction, PasteAction } from '../reducers/gridReducer';
+import { PuzzleAction } from '../reducers/commonActions';
 import {
   TopBar,
   TopBarLink,

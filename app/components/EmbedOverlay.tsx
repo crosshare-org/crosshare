@@ -7,7 +7,7 @@ import {
   ChangeEvent,
 } from 'react';
 import { Direction, ServerPuzzleResult } from '../lib/types';
-import { PuzzleAction } from '../reducers/reducer';
+import { PuzzleAction } from '../reducers/commonActions';
 import { Overlay } from './Overlay';
 import { User } from 'firebase/auth';
 import { CopyableInput } from './CopyableInput';

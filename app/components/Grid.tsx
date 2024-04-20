@@ -3,11 +3,11 @@ import { Dispatch, ReactNode, useCallback, useEffect, useState } from 'react';
 import { PosAndDir, Position, BLOCK, Symmetry } from '../lib/types';
 import { Cell } from './Cell';
 import {
-  PuzzleAction,
-  SetActivePositionAction,
   StartSelectionAction,
   UpdateSelectionAction,
-} from '../reducers/reducer';
+} from '../reducers/builderReducer';
+import { PuzzleAction } from '../reducers/commonActions';
+import { SetActivePositionAction } from '../reducers/gridReducer';
 import { ViewableGrid, ViewableEntry, flipped } from '../lib/viewableGrid';
 import {
   cellIndex,

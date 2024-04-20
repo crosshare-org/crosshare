@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { FaAngleDoubleRight, FaAngleDoubleLeft } from 'react-icons/fa';
 
-import { KeypressAction, PasteAction } from '../reducers/reducer';
+import { KeypressAction, PasteAction } from '../reducers/gridReducer';
 import {
   SMALL_AND_UP,
   LARGE_AND_UP,
