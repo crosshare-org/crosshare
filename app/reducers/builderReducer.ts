@@ -19,7 +19,7 @@ import {
   gridInterfaceReducer,
 } from './gridReducer';
 import { PuzzleAction } from './commonActions';
-import { isBuilderState, postEdit, validateGrid } from './builderUtils';
+import { postEdit, validateGrid } from './builderUtils';
 
 export type BuilderEntry = ViewableEntry;
 export type BuilderGrid = ViewableGrid<BuilderEntry>;
@@ -471,18 +471,12 @@ export function builderReducer(
 ): BuilderState {
   state = gridInterfaceReducer(state, action);
   if (isStartSelectionAction(action)) {
-    if (!isBuilderState(state)) {
-      return state;
-    }
     return {
       ...closeRebus(state),
       selection: emptySelection(action.position),
     };
   }
   if (isUpdateSelectionAction(action)) {
-    if (!isBuilderState(state)) {
-      return state;
-    }
     return {
       ...closeRebus(state),
       wasEntryClick: false,
