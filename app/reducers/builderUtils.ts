@@ -1,7 +1,7 @@
-import { entryWord } from "../lib/gridBase";
-import { emptySelection, hasMultipleCells } from "../lib/selection";
-import type { BuilderState } from "./builderReducer";
-import type { GridInterfaceState } from "./gridReducer";
+import { entryWord } from '../lib/gridBase';
+import { emptySelection, hasMultipleCells } from '../lib/selection';
+import type { BuilderState } from './builderReducer';
+import type { GridInterfaceState } from './gridReducer';
 
 export function isBuilderState(
   state: GridInterfaceState

@@ -42,10 +42,7 @@ import {
   hasSelection,
 } from './builderUtils';
 import type { PuzzleState } from './puzzleReducer';
-import {
-  isPuzzleState,
-  postEdit as puzzlePostEdit,
-} from './puzzleUtils';
+import { isPuzzleState, postEdit as puzzlePostEdit } from './puzzleUtils';
 import type { PuzzleAction } from './commonActions';
 
 export interface GridInterfaceState {

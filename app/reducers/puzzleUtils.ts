@@ -1,9 +1,9 @@
-import { cellIndex, entryAtPosition, valAt } from "../lib/gridBase";
-import { BLOCK, CheatUnit, Position, Symmetry } from "../lib/types";
-import { checkGrid } from "../lib/utils";
-import { gridWithNewChar } from "../lib/viewableGrid";
-import type { GridInterfaceState } from "./gridReducer";
-import type { PuzzleState } from "./puzzleReducer";
+import { cellIndex, entryAtPosition, valAt } from '../lib/gridBase';
+import { BLOCK, CheatUnit, Position, Symmetry } from '../lib/types';
+import { checkGrid } from '../lib/utils';
+import { gridWithNewChar } from '../lib/viewableGrid';
+import type { GridInterfaceState } from './gridReducer';
+import type { PuzzleState } from './puzzleReducer';
 
 export function isPuzzleState(state: GridInterfaceState): state is PuzzleState {
   return state.type === 'puzzle';
@@ -53,7 +53,11 @@ function cheatCells(
   });
 }
 
-export function cheat(state: PuzzleState, cheatUnit: CheatUnit, isReveal: boolean) {
+export function cheat(
+  state: PuzzleState,
+  cheatUnit: CheatUnit,
+  isReveal: boolean
+) {
   const elapsed = getCurrentTime(state);
   let cellsToCheck: Position[] = [];
   if (cheatUnit === CheatUnit.Square) {
