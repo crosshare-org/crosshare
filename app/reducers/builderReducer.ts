@@ -1,111 +1,24 @@
 import {
-  PosAndDir,
-  Position,
   Direction,
-  BLOCK,
   PuzzleInProgressT,
-  Key,
-  KeyK,
-  ALLOWABLE_GRID_CHARS,
   Symmetry,
   PrefillSquares,
-  CheatUnit,
   EMPTY,
-  CELL_DELIMITER,
-  ROW_DELIMITER,
+  Position,
 } from '../lib/types';
-import { DBPuzzleT, PlayWithoutUserT } from '../lib/dbtypes';
-import {
-  ViewableGrid,
-  ViewableEntry,
-  CluedGrid,
-  gridWithNewChar,
-  gridWithBlockToggled,
-  advancePosition,
-  retreatPosition,
-  moveToNextEntry,
-  moveToPrevEntry,
-  moveUp,
-  moveDown,
-  moveLeft,
-  moveRight,
-  nextNonBlock,
-  nextCell,
-  fromCells,
-  gridWithBarToggled,
-  gridWithHiddenToggled,
-} from '../lib/viewableGrid';
-import {
-  cellIndex,
-  valAt,
-  entryAtPosition,
-  entryWord,
-  gridWithEntrySet,
-  isInBounds,
-  clampInBounds,
-} from '../lib/gridBase';
+import { DBPuzzleT } from '../lib/dbtypes';
+import { ViewableGrid, ViewableEntry, fromCells } from '../lib/viewableGrid';
+import { entryWord, gridWithEntrySet } from '../lib/gridBase';
 import { Timestamp } from '../lib/timestamp';
-import { AccountPrefsFlagsT } from '../lib/prefs';
-import { checkGrid } from '../lib/utils';
 import equal from 'fast-deep-equal';
 import { getDocId } from '../lib/firebaseWrapper';
+import { GridSelection, emptySelection, hasMultipleCells } from '../lib/selection';
 import {
-  GridSelection,
-  emptySelection,
-  forEachPosition,
-  getSelectionCells,
-  hasMultipleCells,
-} from '../lib/selection';
-
-interface GridInterfaceState {
-  type: string;
-  active: PosAndDir;
-  grid: ViewableGrid<ViewableEntry>;
-  wasEntryClick: false;
-  showExtraKeyLayout: boolean;
-  isEnteringRebus: boolean;
-  rebusValue: string;
-  downsOnly: boolean;
-  isEditable(cellIndex: number): boolean;
-}
-
-interface PuzzleState extends GridInterfaceState {
-  type: 'puzzle';
-  grid: CluedGrid;
-  prefs?: AccountPrefsFlagsT;
-  answers: string[];
-  alternateSolutions: [number, string][][];
-  verifiedCells: Set<number>;
-  revealedCells: Set<number>;
-  wrongCells: Set<number>;
-  success: boolean;
-  ranSuccessEffects: boolean;
-  ranMetaSubmitEffects: boolean;
-  filled: boolean;
-  autocheck: boolean;
-  dismissedKeepTrying: boolean;
-  dismissedSuccess: boolean;
-  moderating: boolean;
-  showingEmbedOverlay: boolean;
-  didCheat: boolean;
-  clueView: boolean;
-  cellsUpdatedAt: number[];
-  cellsIterationCount: number[];
-  cellsEverMarkedWrong: Set<number>;
-  displaySeconds: number;
-  bankedSeconds: number;
-  currentTimeWindowStart: number;
-  loadedPlayState: boolean;
-  contestSubmission?: string;
-  contestPriorSubmissions?: string[];
-  contestRevealed?: boolean;
-  contestSubmitTime?: number;
-  contestDisplayName?: string;
-  contestEmail?: string;
-}
-function isPuzzleState(state: GridInterfaceState): state is PuzzleState {
-  return state.type === 'puzzle';
-}
+  GridInterfaceState,
+  closeRebus,
+  gridInterfaceReducer,
+} from './gridReducer';
+import { PuzzleAction } from './commonActions';
 
 export type BuilderEntry = ViewableEntry;
 export type BuilderGrid = ViewableGrid<BuilderEntry>;
@@ -140,7 +53,10 @@ export interface BuilderState extends GridInterfaceState {
   alternates: Record<number, string>[];
   userTags: string[];
 }
-function isBuilderState(state: GridInterfaceState): state is BuilderState {
+
+export function isBuilderState(
+  state: GridInterfaceState
+): state is BuilderState {
   return state.type === 'builder';
 }
 
@@ -296,49 +212,11 @@ export function initialBuilderState({
   });
 }
 
-export interface PuzzleAction {
-  type: string;
-}
-
-export interface KeypressAction extends PuzzleAction {
-  type: 'KEYPRESS';
-  key: Key;
-}
-function isKeypressAction(action: PuzzleAction): action is KeypressAction {
-  return action.type === 'KEYPRESS';
-}
-
-export interface CopyAction extends PuzzleAction {
-  type: 'COPY';
-  content: string;
-}
-function isCopyAction(action: PuzzleAction): action is CopyAction {
-  return action.type === 'COPY';
-}
-
-export interface CutAction extends PuzzleAction {
-  type: 'CUT';
-  content: string;
-}
-function isCutAction(action: PuzzleAction): action is CutAction {
-  return action.type === 'CUT';
-}
-
-export interface PasteAction extends PuzzleAction {
-  type: 'PASTE';
-  content: string;
-}
-function isPasteAction(action: PuzzleAction): action is PasteAction {
-  return action.type === 'PASTE';
-}
-
 export interface SymmetryAction extends PuzzleAction {
   type: 'CHANGESYMMETRY';
   symmetry: Symmetry;
 }
-export function isSymmetryAction(
-  action: PuzzleAction
-): action is SymmetryAction {
+function isSymmetryAction(action: PuzzleAction): action is SymmetryAction {
   return action.type === 'CHANGESYMMETRY';
 }
 
@@ -473,7 +351,7 @@ export interface ClickedFillAction extends PuzzleAction {
   entryIndex: number;
   value: string;
 }
-export function isClickedFillAction(
+function isClickedFillAction(
   action: PuzzleAction
 ): action is ClickedFillAction {
   return action.type === 'CLICKEDFILL';
@@ -483,14 +361,14 @@ export interface PublishAction extends PuzzleAction {
   type: 'PUBLISH';
   publishTimestamp: Timestamp;
 }
-export function isPublishAction(action: PuzzleAction): action is PublishAction {
+function isPublishAction(action: PuzzleAction): action is PublishAction {
   return action.type === 'PUBLISH';
 }
 
 export interface CancelPublishAction extends PuzzleAction {
   type: 'CANCELPUBLISH';
 }
-export function isCancelPublishAction(
+function isCancelPublishAction(
   action: PuzzleAction
 ): action is CancelPublishAction {
   return action.type === 'CANCELPUBLISH';
@@ -500,9 +378,7 @@ export interface ImportPuzAction extends PuzzleAction {
   type: 'IMPORTPUZ';
   puz: PuzzleInProgressT;
 }
-export function isImportPuzAction(
-  action: PuzzleAction
-): action is ImportPuzAction {
+function isImportPuzAction(action: PuzzleAction): action is ImportPuzAction {
   return action.type === 'IMPORTPUZ';
 }
 
@@ -513,40 +389,8 @@ export interface NewPuzzleAction extends PuzzleAction {
   prefill?: PrefillSquares;
   commentsDisabled?: boolean;
 }
-export function isNewPuzzleAction(
-  action: PuzzleAction
-): action is NewPuzzleAction {
+function isNewPuzzleAction(action: PuzzleAction): action is NewPuzzleAction {
   return action.type === 'NEWPUZZLE';
-}
-
-export interface ClickedEntryAction extends PuzzleAction {
-  type: 'CLICKEDENTRY';
-  entryIndex: number;
-}
-function isClickedEntryAction(
-  action: PuzzleAction
-): action is ClickedEntryAction {
-  return action.type === 'CLICKEDENTRY';
-}
-
-export interface StopDownsOnlyAction extends PuzzleAction {
-  type: 'STOPDOWNSONLY';
-}
-function isStopDownsOnlyAction(
-  action: PuzzleAction
-): action is StopDownsOnlyAction {
-  return action.type === 'STOPDOWNSONLY';
-}
-
-export interface SetActivePositionAction extends PuzzleAction {
-  type: 'SETACTIVEPOSITION';
-  newActive: Position;
-  shiftKey: boolean;
-}
-function isSetActivePositionAction(
-  action: PuzzleAction
-): action is SetActivePositionAction {
-  return action.type === 'SETACTIVEPOSITION';
 }
 
 export interface StartSelectionAction extends PuzzleAction {
@@ -569,248 +413,14 @@ function isUpdateSelectionAction(
   return action.type === 'UPDATESELECTION';
 }
 
-export interface CheatAction extends PuzzleAction {
-  type: 'CHEAT';
-  unit: CheatUnit;
-  isReveal?: boolean;
-}
-function isCheatAction(action: PuzzleAction): action is CheatAction {
-  return action.type === 'CHEAT';
+export function postEdit(
+  state: BuilderState,
+  _cellIndex: number
+): BuilderState {
+  return validateGrid(state);
 }
 
-export interface ContestSubmitAction extends PuzzleAction {
-  type: 'CONTESTSUBMIT';
-  submission: string;
-  displayName: string;
-  email?: string;
-}
-function isContestSubmitAction(
-  action: PuzzleAction
-): action is ContestSubmitAction {
-  return action.type === 'CONTESTSUBMIT';
-}
-
-export interface ContestRevealAction extends PuzzleAction {
-  type: 'CONTESTREVEAL';
-  displayName: string;
-}
-function isContestRevealAction(
-  action: PuzzleAction
-): action is ContestRevealAction {
-  return action.type === 'CONTESTREVEAL';
-}
-
-export interface ToggleAutocheckAction extends PuzzleAction {
-  type: 'TOGGLEAUTOCHECK';
-}
-function isToggleAutocheckAction(
-  action: PuzzleAction
-): action is ToggleAutocheckAction {
-  return action.type === 'TOGGLEAUTOCHECK';
-}
-
-export interface ToggleClueViewAction extends PuzzleAction {
-  type: 'TOGGLECLUEVIEW';
-}
-function isToggleClueViewAction(
-  action: PuzzleAction
-): action is ToggleClueViewAction {
-  return action.type === 'TOGGLECLUEVIEW';
-}
-
-export interface RanSuccessEffectsAction extends PuzzleAction {
-  type: 'RANSUCCESS';
-}
-function isRanSuccessEffectsAction(
-  action: PuzzleAction
-): action is RanSuccessEffectsAction {
-  return action.type === 'RANSUCCESS';
-}
-
-export interface RanMetaSubmitEffectsAction extends PuzzleAction {
-  type: 'RANMETASUBMIT';
-}
-function isRanMetaSubmitEffectsAction(
-  action: PuzzleAction
-): action is RanMetaSubmitEffectsAction {
-  return action.type === 'RANMETASUBMIT';
-}
-
-export interface LoadPlayAction extends PuzzleAction {
-  type: 'LOADPLAY';
-  play: PlayWithoutUserT | null;
-  prefs?: AccountPrefsFlagsT;
-  isAuthor: boolean;
-}
-function isLoadPlayAction(action: PuzzleAction): action is LoadPlayAction {
-  return action.type === 'LOADPLAY';
-}
-
-function cheatCells(
-  elapsed: number,
-  state: PuzzleState,
-  cellsToCheck: Position[],
-  isReveal: boolean
-) {
-  const revealedCells = new Set(state.revealedCells);
-  const verifiedCells = new Set(state.verifiedCells);
-  const wrongCells = new Set(state.wrongCells);
-  let grid = state.grid;
-
-  for (const cell of cellsToCheck) {
-    const ci = cellIndex(state.grid, cell);
-    const shouldBe = state.answers[ci];
-    if (shouldBe === undefined) {
-      throw new Error('oob');
-    }
-    if (shouldBe === BLOCK) {
-      continue;
-    }
-    const currentVal = valAt(state.grid, cell);
-    if (shouldBe === currentVal) {
-      verifiedCells.add(ci);
-    } else if (isReveal) {
-      revealedCells.add(ci);
-      wrongCells.delete(ci);
-      verifiedCells.add(ci);
-      grid = gridWithNewChar(grid, cell, shouldBe, Symmetry.None);
-      state.cellsUpdatedAt[ci] = elapsed;
-      state.cellsIterationCount[ci] += 1;
-    } else if (currentVal.trim()) {
-      wrongCells.add(ci);
-      state.cellsEverMarkedWrong.add(ci);
-    }
-  }
-  return checkComplete({
-    ...state,
-    grid,
-    wrongCells,
-    revealedCells,
-    verifiedCells,
-  });
-}
-
-export function cheat(
-  state: PuzzleState,
-  cheatUnit: CheatUnit,
-  isReveal: boolean
-) {
-  const elapsed = getCurrentTime(state);
-  let cellsToCheck: Position[] = [];
-  if (cheatUnit === CheatUnit.Square) {
-    cellsToCheck = [state.active];
-  } else if (cheatUnit === CheatUnit.Entry) {
-    const entry = entryAtPosition(state.grid, state.active)[0];
-    if (!entry) {
-      //block?
-      return state;
-    }
-    cellsToCheck = entry.cells;
-  } else {
-    // Puzzle
-    for (let rowidx = 0; rowidx < state.grid.height; rowidx += 1) {
-      for (let colidx = 0; colidx < state.grid.width; colidx += 1) {
-        cellsToCheck.push({ row: rowidx, col: colidx });
-      }
-    }
-  }
-  const newState = cheatCells(elapsed, state, cellsToCheck, isReveal);
-  return { ...newState, didCheat: true };
-}
-
-export function checkComplete(state: PuzzleState) {
-  const [filled, success] = checkGrid(
-    state.grid.cells,
-    state.answers,
-    state.alternateSolutions
-  );
-  if (filled !== state.filled || success !== state.success) {
-    let currentTimeWindowStart = state.currentTimeWindowStart;
-    let dismissedKeepTrying = state.dismissedKeepTrying;
-    let bankedSeconds = state.bankedSeconds;
-    // Pause if success or newly filled
-    if (currentTimeWindowStart && (success || (filled && !state.filled))) {
-      bankedSeconds = getCurrentTime(state);
-      currentTimeWindowStart = 0;
-      dismissedKeepTrying = false;
-    }
-    return {
-      ...state,
-      filled,
-      success,
-      bankedSeconds,
-      currentTimeWindowStart,
-      dismissedKeepTrying,
-    };
-  }
-  return state;
-}
-
-function postEdit(state: PuzzleState, cellIndex: number): PuzzleState;
-function postEdit(state: BuilderState, cellIndex: number): BuilderState;
-function postEdit<T extends GridInterfaceState>(state: T, cellIndex: number): T;
-function postEdit(
-  state: GridInterfaceState,
-  cellIndex: number
-): GridInterfaceState {
-  if (isPuzzleState(state)) {
-    state.wrongCells.delete(cellIndex);
-    if (state.autocheck) {
-      return checkComplete(cheat(state, CheatUnit.Square, false));
-    }
-    return checkComplete(state);
-  }
-  if (isBuilderState(state)) {
-    return validateGrid(state);
-  }
-  return state;
-}
-
-function enterText<T extends GridInterfaceState>(state: T, text: string): T {
-  const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-  return enterCharAt(state, state.active, text, symmetry);
-}
-
-function enterCharAt<T extends GridInterfaceState>(
-  state: T,
-  pos: Position,
-  char: string,
-  symmetry: Symmetry
-): T {
-  const ci = cellIndex(state.grid, pos);
-  if (state.isEditable(ci)) {
-    if (isPuzzleState(state)) {
-      const elapsed = getCurrentTime(state);
-      state.cellsUpdatedAt[ci] = elapsed;
-      state.cellsIterationCount[ci] += 1;
-    }
-    let grid = state.grid;
-    if (char === BLOCK) {
-      if (valAt(grid, pos) !== BLOCK && grid.allowBlockEditing) {
-        grid = gridWithBlockToggled(grid, pos, symmetry);
-      }
-    } else {
-      grid = gridWithNewChar(grid, pos, char || EMPTY, symmetry);
-    }
-    state = clearSelection(state);
-    state = postEdit({ ...state, grid }, ci);
-  }
-  return state;
-}
-
-function closeRebus<T extends GridInterfaceState>(state: T): T {
-  if (!state.isEnteringRebus) {
-    return state;
-  }
-  state = enterText(state, state.rebusValue);
-  return {
-    ...state,
-    isEnteringRebus: false,
-    rebusValue: '',
-  };
-}
-
-function clearSelection<T extends GridInterfaceState>(state: T): T {
+export function clearSelection<T extends GridInterfaceState>(state: T): T {
   if (!isBuilderState(state)) {
     return state;
   }
@@ -823,476 +433,8 @@ function clearSelection<T extends GridInterfaceState>(state: T): T {
   };
 }
 
-function hasSelection<T extends GridInterfaceState>(state: T): boolean {
+export function hasSelection<T extends GridInterfaceState>(state: T): boolean {
   return isBuilderState(state) && hasMultipleCells(state.selection);
-}
-
-export function gridInterfaceReducer<T extends GridInterfaceState>(
-  state: T,
-  action: PuzzleAction
-): T {
-  if (action.type === 'CHANGEDIRECTION') {
-    return {
-      ...closeRebus(state),
-      wasEntryClick: false,
-      active: {
-        ...state.active,
-        dir: (state.active.dir + 1) % 2,
-      },
-    };
-  }
-  if (isClickedEntryAction(action)) {
-    const clickedEntry = state.grid.entries[action.entryIndex];
-    if (clickedEntry === undefined) {
-      throw new Error('oob');
-    }
-    for (const cell of clickedEntry.cells) {
-      if (valAt(state.grid, cell) === EMPTY) {
-        return {
-          ...closeRebus(state),
-          wasEntryClick: true,
-          active: { ...cell, dir: clickedEntry.direction },
-        };
-      }
-    }
-    state = closeRebus(state);
-    state = clearSelection(state);
-    return {
-      ...state,
-      wasEntryClick: true,
-      active: { ...clickedEntry.cells[0], dir: clickedEntry.direction },
-    };
-  }
-  if (isSetActivePositionAction(action)) {
-    if (isBuilderState(state) && action.shiftKey) {
-      return {
-        ...state,
-        selection: {
-          start: { ...state.active },
-          end: { ...action.newActive },
-        },
-      };
-    }
-    state = closeRebus(state);
-    state = clearSelection(state);
-    return {
-      ...state,
-      wasEntryClick: false,
-      active: { ...action.newActive, dir: state.active.dir },
-    };
-  }
-  if (isStartSelectionAction(action)) {
-    if (!isBuilderState(state)) {
-      return state;
-    }
-    return {
-      ...closeRebus(state),
-      selection: emptySelection(action.position),
-    };
-  }
-  if (isUpdateSelectionAction(action)) {
-    if (!isBuilderState(state)) {
-      return state;
-    }
-    return {
-      ...closeRebus(state),
-      wasEntryClick: false,
-      active: { ...state.selection.start, dir: state.active.dir },
-      selection: {
-        ...state.selection,
-        end: { ...action.position },
-      },
-    };
-  }
-  if (isCopyAction(action) || isCutAction(action)) {
-    if (state.isEnteringRebus) {
-      return state;
-    }
-    let toCopy = '';
-    if (isBuilderState(state) && hasSelection(state)) {
-      const grid = state.grid;
-      let row: number | null = null;
-      forEachPosition(state.selection, (pos) => {
-        if (row != null && row !== pos.row) {
-          toCopy += ROW_DELIMITER;
-        }
-        row = pos.row;
-        const val = valAt(grid, pos);
-        toCopy += val + CELL_DELIMITER;
-        if (isCutAction(action)) {
-          state = enterCharAt(state, pos, EMPTY, Symmetry.None);
-        }
-      });
-    } else {
-      const val = valAt(state.grid, state.active);
-      if (val !== BLOCK && val !== EMPTY) {
-        toCopy = val;
-        if (isCutAction(action)) {
-          state = enterText(state, EMPTY);
-        }
-      }
-    }
-    navigator.clipboard.writeText(toCopy).catch((e: unknown) => {
-      console.log('There was a problem copying to clipboard:', e);
-    });
-    return state;
-  }
-  if (isPasteAction(action)) {
-    const toPaste = action.content.split(ROW_DELIMITER).map((r) =>
-      r
-        .split(CELL_DELIMITER)
-        .filter((s) => s.length > 0)
-        .map((s) =>
-          s
-            .split('')
-            .filter((x) => x.match(ALLOWABLE_GRID_CHARS) || x === BLOCK)
-            .join('')
-            .toUpperCase()
-        )
-    );
-    if (toPaste.length === 0) {
-      return state;
-    }
-    if (state.isEnteringRebus) {
-      return {
-        ...state,
-        rebusValue: state.rebusValue + toPaste.flat().join(''),
-      };
-    }
-    const start = state.active;
-    const current = { ...start };
-    toPaste.forEach((rowStrs, dRow) => {
-      rowStrs.forEach((cellStr, dCol) => {
-        current.row = start.row + dRow;
-        current.col = start.col + dCol;
-        if (isInBounds(state.grid, current)) {
-          state = enterCharAt(state, current, cellStr, Symmetry.None);
-        }
-      });
-    });
-    state = {
-      ...state,
-      wasEntryClick: false,
-      active: advancePosition(
-        state.grid,
-        clampInBounds(state.grid, current),
-        isPuzzleState(state) ? state.wrongCells : new Set(),
-        isPuzzleState(state) ? state.prefs : undefined
-      ),
-    };
-    return state;
-  }
-  if (isKeypressAction(action)) {
-    const key = action.key;
-    // Resume on Esc, but only during midgame pause
-    if (
-      isPuzzleState(state) &&
-      !state.success &&
-      !state.currentTimeWindowStart &&
-      state.bankedSeconds !== 0
-    ) {
-      if (key.k === KeyK.Escape) {
-        return {
-          ...state,
-          currentTimeWindowStart: new Date().getTime(),
-        };
-      }
-      return state;
-    }
-    if (key.k === KeyK.NumLayout || key.k === KeyK.AbcLayout) {
-      return { ...state, showExtraKeyLayout: !state.showExtraKeyLayout };
-    }
-    if (key.k === KeyK.Backtick && isBuilderState(state)) {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        if (state.grid.highlighted.has(ci)) {
-          state.grid.highlighted.delete(ci);
-        } else {
-          state.grid.highlighted.add(ci);
-        }
-      }
-      return { ...state };
-    }
-    if (state.isEnteringRebus) {
-      if (key.k === KeyK.AllowedCharacter) {
-        return { ...state, rebusValue: state.rebusValue + key.c.toUpperCase() };
-      } else if (key.k === KeyK.Backspace || key.k === KeyK.OskBackspace) {
-        return {
-          ...state,
-          rebusValue: state.rebusValue ? state.rebusValue.slice(0, -1) : '',
-        };
-      } else if (key.k === KeyK.Enter) {
-        return {
-          ...closeRebus(state),
-          wasEntryClick: false,
-          active: advancePosition(
-            state.grid,
-            state.active,
-            isPuzzleState(state) ? state.wrongCells : new Set(),
-            isPuzzleState(state) ? state.prefs : undefined
-          ),
-        };
-      } else if (key.k === KeyK.Escape) {
-        return { ...state, isEnteringRebus: false, rebusValue: '' };
-      }
-      return closeRebus(state);
-    }
-    if (key.k === KeyK.Rebus || key.k === KeyK.Escape) {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        return { ...state, showExtraKeyLayout: false, isEnteringRebus: true };
-      }
-      return state;
-    } else if (key.k === KeyK.Space || key.k === KeyK.Direction) {
-      return {
-        ...state,
-        wasEntryClick: false,
-        active: {
-          ...state.active,
-          dir: (state.active.dir + 1) % 2,
-        },
-      };
-    } else if (key.k === KeyK.Prev) {
-      state = clearSelection(state);
-      return {
-        ...state,
-        wasEntryClick: false,
-        active: retreatPosition(state.grid, state.active),
-      };
-    } else if (key.k === KeyK.Next) {
-      state = clearSelection(state);
-      return {
-        ...state,
-        wasEntryClick: false,
-        active: nextCell(state.grid, state.active),
-      };
-    } else if (
-      key.k === KeyK.Tab ||
-      key.k === KeyK.NextEntry ||
-      key.k === KeyK.Enter
-    ) {
-      state = clearSelection(state);
-      return {
-        ...state,
-        wasEntryClick: false,
-        active: moveToNextEntry(state.grid, state.active),
-      };
-    } else if (
-      key.k === KeyK.ShiftTab ||
-      key.k === KeyK.PrevEntry ||
-      key.k === KeyK.ShiftEnter
-    ) {
-      state = clearSelection(state);
-      return {
-        ...state,
-        wasEntryClick: false,
-        active: moveToPrevEntry(state.grid, state.active),
-      };
-    } else if (key.k === KeyK.ShiftArrowRight && isBuilderState(state)) {
-      const { start, end } = hasSelection(state)
-        ? state.selection
-        : emptySelection(state.active);
-      return {
-        ...state,
-        wasEntryClick: false,
-        selection: {
-          start,
-          end: moveRight(state.grid, end),
-        },
-      };
-    } else if (key.k === KeyK.ArrowRight || key.k === KeyK.ShiftArrowRight) {
-      state = clearSelection(state);
-      return {
-        ...state,
-        wasEntryClick: false,
-        active: {
-          ...state.active,
-          ...((state.active.dir === Direction.Across ||
-            (isPuzzleState(state) && state.prefs?.advanceOnPerpendicular)) &&
-            moveRight(state.grid, state.active)),
-          dir: Direction.Across,
-        },
-      };
-    } else if (key.k === KeyK.ShiftArrowLeft && isBuilderState(state)) {
-      const { start, end } = hasSelection(state)
-        ? state.selection
-        : emptySelection(state.active);
-      return {
-        ...state,
-        wasEntryClick: false,
-        selection: {
-          start,
-          end: moveLeft(state.grid, end),
-        },
-      };
-    } else if (key.k === KeyK.ArrowLeft || key.k === KeyK.ShiftArrowLeft) {
-      state = clearSelection(state);
-      return {
-        ...state,
-        wasEntryClick: false,
-        active: {
-          ...state.active,
-          ...((state.active.dir === Direction.Across ||
-            (isPuzzleState(state) && state.prefs?.advanceOnPerpendicular)) &&
-            moveLeft(state.grid, state.active)),
-          dir: Direction.Across,
-        },
-      };
-    } else if (key.k === KeyK.ShiftArrowUp && isBuilderState(state)) {
-      const { start, end } = hasSelection(state)
-        ? state.selection
-        : emptySelection(state.active);
-      return {
-        ...state,
-        wasEntryClick: false,
-        selection: {
-          start,
-          end: moveUp(state.grid, end),
-        },
-      };
-    } else if (key.k === KeyK.ArrowUp || key.k === KeyK.ShiftArrowUp) {
-      state = clearSelection(state);
-      return {
-        ...state,
-        wasEntryClick: false,
-        active: {
-          ...state.active,
-          ...((state.active.dir === Direction.Down ||
-            (isPuzzleState(state) && state.prefs?.advanceOnPerpendicular)) &&
-            moveUp(state.grid, state.active)),
-          dir: Direction.Down,
-        },
-      };
-    } else if (key.k === KeyK.ShiftArrowDown && isBuilderState(state)) {
-      const { start, end } = hasSelection(state)
-        ? state.selection
-        : emptySelection(state.active);
-      return {
-        ...state,
-        wasEntryClick: false,
-        selection: {
-          start,
-          end: moveDown(state.grid, end),
-        },
-      };
-    } else if (key.k === KeyK.ArrowDown || key.k === KeyK.ShiftArrowDown) {
-      state = clearSelection(state);
-      return {
-        ...state,
-        wasEntryClick: false,
-        active: {
-          ...state.active,
-          ...((state.active.dir === Direction.Down ||
-            (isPuzzleState(state) && state.prefs?.advanceOnPerpendicular)) &&
-            moveDown(state.grid, state.active)),
-          dir: Direction.Down,
-        },
-      };
-    } else if (
-      (key.k === KeyK.Dot || key.k === KeyK.Block) &&
-      state.grid.allowBlockEditing
-    ) {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-        const grid = gridWithBlockToggled(state.grid, state.active, symmetry);
-        state = clearSelection(state);
-        return {
-          ...postEdit({ ...state, grid }, ci),
-          wasEntryClick: false,
-          active: nextCell(state.grid, state.active),
-        };
-      }
-      return state;
-    } else if (key.k === KeyK.Comma && state.grid.allowBlockEditing) {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-        const grid = gridWithBarToggled(state.grid, state.active, symmetry);
-        state = clearSelection(state);
-        return {
-          ...postEdit({ ...state, grid }, ci),
-          wasEntryClick: false,
-        };
-      }
-      return state;
-    } else if (key.k === KeyK.AllowedCharacter) {
-      const char = key.c.toUpperCase();
-      state = enterText(state, char);
-      return {
-        ...state,
-        wasEntryClick: false,
-        active: advancePosition(
-          state.grid,
-          state.active,
-          isPuzzleState(state) ? state.wrongCells : new Set(),
-          isPuzzleState(state) ? state.prefs : undefined
-        ),
-      };
-    } else if (key.k === KeyK.Backspace || key.k === KeyK.OskBackspace) {
-      const positions =
-        isBuilderState(state) && hasSelection(state)
-          ? getSelectionCells(state.selection)
-          : [state.active];
-      for (const position of positions) {
-        const ci = cellIndex(state.grid, position);
-        if (state.isEditable(ci)) {
-          const symmetry = isBuilderState(state)
-            ? state.symmetry
-            : Symmetry.None;
-          if (isPuzzleState(state)) {
-            const elapsed = getCurrentTime(state);
-            state.cellsUpdatedAt[ci] = elapsed;
-          }
-          const grid = gridWithNewChar(state.grid, position, EMPTY, symmetry);
-          state = postEdit({ ...state, grid }, ci);
-        }
-      }
-      state = clearSelection(state);
-      return {
-        ...state,
-        wasEntryClick: false,
-        active: retreatPosition(state.grid, state.active),
-      };
-    } else if (key.k === KeyK.Delete) {
-      const positions =
-        isBuilderState(state) && hasSelection(state)
-          ? getSelectionCells(state.selection)
-          : [state.active];
-      for (const position of positions) {
-        const ci = cellIndex(state.grid, position);
-        if (state.isEditable(ci)) {
-          const symmetry = isBuilderState(state)
-            ? state.symmetry
-            : Symmetry.None;
-          if (isPuzzleState(state)) {
-            const elapsed = getCurrentTime(state);
-            state.cellsUpdatedAt[ci] = elapsed;
-          }
-          const grid = gridWithNewChar(state.grid, position, EMPTY, symmetry);
-          state = postEdit({ ...state, grid }, ci);
-        }
-      }
-      state = clearSelection(state);
-      return {
-        ...state,
-        wasEntryClick: false,
-        active: nextCell(state.grid, state.active),
-      };
-    } else if (key.k === KeyK.Octothorp && state.type === 'builder') {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-        const grid = gridWithHiddenToggled(state.grid, state.active, symmetry);
-        return {
-          ...postEdit({ ...state, grid }, ci),
-          wasEntryClick: false,
-        };
-      }
-      return state;
-    }
-  }
-  return state;
 }
 
 function normalizeAnswer(answer: string): string {
@@ -1357,6 +499,29 @@ export function builderReducer(
   action: PuzzleAction
 ): BuilderState {
   state = gridInterfaceReducer(state, action);
+  if (isStartSelectionAction(action)) {
+    if (!isBuilderState(state)) {
+      return state;
+    }
+    return {
+      ...closeRebus(state),
+      selection: emptySelection(action.position),
+    };
+  }
+  if (isUpdateSelectionAction(action)) {
+    if (!isBuilderState(state)) {
+      return state;
+    }
+    return {
+      ...closeRebus(state),
+      wasEntryClick: false,
+      active: { ...state.selection.start, dir: state.active.dir },
+      selection: {
+        ...state.selection,
+        end: { ...action.position },
+      },
+    };
+  }
   if (isSymmetryAction(action)) {
     if (
       (action.symmetry === Symmetry.DiagonalNESW ||
@@ -1635,172 +800,7 @@ export function builderReducer(
   return state;
 }
 
-function getCurrentTime(state: PuzzleState) {
-  if (state.currentTimeWindowStart === 0) {
-    return state.bankedSeconds;
-  }
-  return (
-    state.bankedSeconds +
-    (new Date().getTime() - state.currentTimeWindowStart) / 1000
-  );
-}
-
-export function puzzleReducer(
-  state: PuzzleState,
-  action: PuzzleAction
-): PuzzleState {
-  state = gridInterfaceReducer(state, action);
-  if (isCheatAction(action)) {
-    return cheat(state, action.unit, action.isReveal === true);
-  }
-  if (isContestSubmitAction(action)) {
-    return {
-      ...state,
-      ...(state.contestSubmission && {
-        contestPriorSubmissions: (state.contestPriorSubmissions ?? []).concat([
-          state.contestSubmission,
-        ]),
-      }),
-      ranMetaSubmitEffects: false,
-      contestSubmission: action.submission,
-      contestEmail: action.email,
-      contestDisplayName: action.displayName,
-      contestSubmitTime: new Date().getTime(),
-    };
-  }
-  if (isContestRevealAction(action)) {
-    return {
-      ...state,
-      ranMetaSubmitEffects: false,
-      contestRevealed: true,
-      contestDisplayName: action.displayName,
-      contestSubmitTime: new Date().getTime(),
-    };
-  }
-  if (isRanSuccessEffectsAction(action)) {
-    return { ...state, ranSuccessEffects: true };
-  }
-  if (isStopDownsOnlyAction(action)) {
-    return { ...state, downsOnly: false };
-  }
-  if (isRanMetaSubmitEffectsAction(action)) {
-    return { ...state, ranMetaSubmitEffects: true };
-  }
-  if (isLoadPlayAction(action)) {
-    if (action.isAuthor) {
-      return {
-        ...state,
-        prefs: action.prefs,
-        success: true,
-        ranSuccessEffects: true,
-        ranMetaSubmitEffects: true,
-        grid: { ...state.grid, cells: state.answers },
-      };
-    }
-    const play = action.play;
-    if (play === null) {
-      const downsOnly = action.prefs?.solveDownsOnly ?? false;
-      return {
-        ...state,
-        downsOnly,
-        active: {
-          ...state.active,
-          dir: downsOnly ? Direction.Down : state.active.dir,
-        },
-        prefs: action.prefs,
-        loadedPlayState: true,
-      };
-    }
-    const downsOnly = play.do ?? false;
-    return {
-      ...state,
-      prefs: action.prefs,
-      loadedPlayState: true,
-      grid: { ...state.grid, cells: play.g },
-      verifiedCells: new Set<number>(play.vc),
-      wrongCells: new Set<number>(play.wc),
-      revealedCells: new Set<number>(play.rc),
-      success: play.f,
-      ranSuccessEffects: play.f,
-      downsOnly,
-      active: {
-        ...state.active,
-        dir: downsOnly ? Direction.Down : state.active.dir,
-      },
-      displaySeconds: play.t,
-      bankedSeconds: play.t,
-      didCheat: play.ch,
-      cellsUpdatedAt: play.ct,
-      cellsIterationCount: play.uc,
-      cellsEverMarkedWrong: new Set<number>(play.we),
-      ...(play.ct_rv && {
-        contestRevealed: true,
-        contestSubmitTime: play.ct_t?.toMillis(),
-      }),
-      ...(play.ct_sub && {
-        ranMetaSubmitEffects: true,
-        contestPriorSubmissions: play.ct_pr_subs,
-        contestDisplayName: play.ct_n,
-        contestSubmission: play.ct_sub,
-        contestEmail: play.ct_em,
-        contestSubmitTime: play.ct_t?.toMillis(),
-      }),
-    };
-  }
-  if (isToggleClueViewAction(action)) {
-    return { ...state, clueView: !state.clueView };
-  }
-  if (isToggleAutocheckAction(action)) {
-    state = cheat(state, CheatUnit.Puzzle, false);
-    return { ...state, autocheck: !state.autocheck };
-  }
-  if (action.type === 'RESUMEACTION') {
-    if (state.currentTimeWindowStart !== 0) {
-      return state;
-    }
-    return {
-      ...state,
-      currentTimeWindowStart: new Date().getTime(),
-    };
-  }
-  if (action.type === 'PAUSEACTION') {
-    if (state.currentTimeWindowStart === 0) {
-      return state;
-    }
-    return {
-      ...state,
-      bankedSeconds: getCurrentTime(state),
-      currentTimeWindowStart: 0,
-    };
-  }
-  if (action.type === 'TICKACTION') {
-    return { ...state, displaySeconds: getCurrentTime(state) };
-  }
-  if (action.type === 'DISMISSKEEPTRYING') {
-    const currentTimeWindowStart =
-      state.currentTimeWindowStart || new Date().getTime();
-    return {
-      ...state,
-      currentTimeWindowStart,
-      dismissedKeepTrying: true,
-    };
-  }
-  if (action.type === 'DISMISSSUCCESS') {
-    return { ...state, dismissedSuccess: true };
-  }
-  if (action.type === 'UNDISMISSSUCCESS') {
-    return { ...state, dismissedSuccess: false };
-  }
-  if (action.type === 'TOGGLEMODERATING') {
-    return { ...state, moderating: !state.moderating };
-  }
-  if (action.type === 'TOGGLEEMBEDOVERLAY') {
-    return { ...state, showingEmbedOverlay: !state.showingEmbedOverlay };
-  }
-  return state;
-}
-
-export function validateGrid(state: BuilderState) {
+function validateGrid(state: BuilderState) {
   let gridIsComplete = true;
   const repeats = new Set<string>();
   let hasNoShortWords = true;
@@ -1830,15 +830,5 @@ export function validateGrid(state: BuilderState) {
     gridIsComplete,
     repeats,
     hasNoShortWords,
-  };
-}
-
-export function advanceActiveToNonBlock(state: PuzzleState) {
-  return {
-    ...state,
-    active: {
-      ...nextNonBlock(state.grid, state.active),
-      dir: Direction.Across,
-    },
   };
 }
