@@ -19,6 +19,7 @@ import { AccountPrefsFlagsT } from './prefs';
 import type { Root } from 'hast';
 import { toString } from 'hast-util-to-string';
 import { parseClueReferences } from './parse';
+import equal from 'fast-deep-equal/es6';
 
 export interface ViewableEntry extends EntryBase {
   labelNumber: number;
@@ -816,4 +817,17 @@ export function fromCells<
     entries,
     cellLabels,
   } as Grid; // TODO remove assertion after this is fixed: https://github.com/microsoft/TypeScript/issues/28884#issuecomment-448356158
+}
+
+export function gridEqual(
+  a?: ViewableGrid<ViewableEntry>,
+  b?: ViewableGrid<ViewableEntry>
+): boolean {
+  return (
+    equal(a?.cells, b?.cells) &&
+    equal(a?.vBars, b?.vBars) &&
+    equal(a?.hBars, b?.hBars) &&
+    equal(a?.highlighted, b?.highlighted) &&
+    equal(a?.hidden, b?.hidden)
+  );
 }
