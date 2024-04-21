@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import { WithConditionalCSSProp } from '@emotion/react/types/jsx-namespace';
 import type { User } from 'firebase/auth';
 import { ReactNode, useContext } from 'react';

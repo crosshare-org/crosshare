@@ -48,8 +48,7 @@ import { markdownToHast } from '../lib/markdown/markdown';
 import { checkSpam } from '../lib/spam';
 import { withStaticTranslation } from '../lib/translation';
 import { PuzzleResult, puzzleFromDB } from '../lib/types';
-import { slugify } from '../lib/utils';
-import { logAsyncErrors } from '../lib/utils';
+import { logAsyncErrors, slugify } from '../lib/utils';
 import { fromCells, getClueMap } from '../lib/viewableGrid';
 
 export const getStaticProps = withStaticTranslation(() => {

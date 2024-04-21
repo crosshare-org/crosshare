@@ -14,6 +14,8 @@ module.exports = {
     'plugin:css-modules/recommended',
     'next/core-web-vitals',
     'prettier',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
   ],
   overrides: [
     {
@@ -94,5 +96,11 @@ module.exports = {
         warnOnUnassignedImports: true,
       },
     ],
+  },
+  settings: {
+    'import/resolver': {
+      typescript: true,
+      node: true,
+    },
   },
 };

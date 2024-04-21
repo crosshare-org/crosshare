@@ -1,8 +1,10 @@
 import { ParsedUrlQuery } from 'querystring';
 import { addDays } from 'date-fns';
 import type firebaseAdminType from 'firebase-admin';
-import { Timestamp as AdminTimestamp } from 'firebase-admin/firestore';
-import { getFirestore } from 'firebase-admin/firestore';
+import {
+  Timestamp as AdminTimestamp,
+  getFirestore,
+} from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import { isRight } from 'fp-ts/lib/Either';
 import { isSome } from 'fp-ts/lib/Option';
@@ -22,8 +24,10 @@ import {
 } from './constructorPage';
 import { getMiniForDate } from './dailyMinis';
 import { CommentWithRepliesT, DBPuzzleV } from './dbtypes';
-import { EmbedOptionsT } from './embedOptions';
-import { validate as validateEmbedOptions } from './embedOptions';
+import {
+  EmbedOptionsT,
+  validate as validateEmbedOptions,
+} from './embedOptions';
 import { markdownToHast } from './markdown/markdown';
 import { isUserPatron } from './patron';
 import {

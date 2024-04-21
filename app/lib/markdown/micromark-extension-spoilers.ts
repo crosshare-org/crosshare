@@ -6,12 +6,12 @@ import { resolveAll } from 'micromark-util-resolve-all';
 import {
   Event,
   Extension,
+  HtmlExtension,
   Resolver,
   State,
   Token,
   Tokenizer,
 } from 'micromark-util-types';
-import { HtmlExtension } from 'micromark-util-types';
 
 declare module 'micromark-util-types' {
   interface TokenTypeMap {

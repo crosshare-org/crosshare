@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import ReactCrop, { Crop } from 'react-image-crop';
+import ReactImageCrop, { Crop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { getStorage } from '../lib/firebaseWrapper';
 import { Button } from './Buttons';
@@ -226,7 +226,7 @@ export function ImageCropper(props: {
       </div>
       <div className="margin1em0">
         {upImg ? (
-          <ReactCrop
+          <ReactImageCrop
             aspect={props.targetSize[0] / props.targetSize[1]}
             minWidth={minWidth}
             circularCrop={props.isCircle}
@@ -240,7 +240,7 @@ export function ImageCropper(props: {
             }}
           >
             <img alt="Your upload" src={upImg} onLoad={onLoad} />
-          </ReactCrop>
+          </ReactImageCrop>
         ) : (
           ''
         )}

@@ -7,6 +7,7 @@ import {
   signInAnonymously as sIA,
 } from 'firebase/auth';
 import {
+  CollectionReference,
   Timestamp as FBTimestamp,
   Firestore,
   QueryDocumentSnapshot,
@@ -16,7 +17,6 @@ import {
   doc,
   getFirestore,
 } from 'firebase/firestore';
-import { CollectionReference } from 'firebase/firestore';
 import { connectStorageEmulator, getStorage as gS } from 'firebase/storage';
 import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
