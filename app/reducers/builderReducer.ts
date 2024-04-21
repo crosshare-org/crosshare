@@ -10,7 +10,7 @@ import { DBPuzzleT } from '../lib/dbtypes';
 import { ViewableGrid, ViewableEntry, fromCells } from '../lib/viewableGrid';
 import { gridWithEntrySet } from '../lib/gridBase';
 import { Timestamp } from '../lib/timestamp';
-import equal from 'fast-deep-equal';
+import equal from 'fast-deep-equal/es6';
 import { getDocId } from '../lib/firebaseWrapper';
 import { GridSelection, emptySelection } from '../lib/selection';
 import {
@@ -19,7 +19,7 @@ import {
   gridInterfaceReducer,
 } from './gridReducer';
 import { PuzzleAction } from './commonActions';
-import { postEdit, pushToHistory, validateGrid } from './builderUtils';
+import { postEdit, validateGrid } from './builderUtils';
 
 export type BuilderEntry = ViewableEntry;
 export type BuilderGrid = ViewableGrid<BuilderEntry>;
@@ -442,6 +442,24 @@ function removeAnswer(answers: string[], toRemove: string): string[] {
   return Array.from(updated.values());
 }
 
+function pushToHistory(state: BuilderState): BuilderState {
+  const prevGrid = state.undoHistory[state.undoIndex];
+  if (equal(prevGrid, state.grid)) {
+    return state;
+  }
+
+  const MAX_HISTORY_LENGTH = 20;
+  const start = state.undoIndex === MAX_HISTORY_LENGTH - 1 ? 1 : 0;
+  const end = state.undoIndex + 1;
+  const undoHistory = [
+    ...state.undoHistory.slice(start, end),
+    fromCells(state.grid),
+  ];
+  const undoIndex = undoHistory.length - 1;
+
+  return { ...state, undoHistory, undoIndex };
+}
+
 export function getClueProps(
   sortedEntries: number[],
   entries: ViewableEntry[],
@@ -483,11 +501,10 @@ export function getClueProps(
   return { ac, an, dc, dn };
 }
 
-export function builderReducer(
+function _builderReducer(
   state: BuilderState,
   action: PuzzleAction
 ): BuilderState {
-  state = gridInterfaceReducer(state, action);
   if (isStartSelectionAction(action)) {
     return {
       ...closeRebus(state),
@@ -518,7 +535,6 @@ export function builderReducer(
   }
   if (isSetHighlightAction(action)) {
     state.grid.highlight = action.highlight;
-    return pushToHistory(state);
   }
   if (isSetClueAction(action)) {
     const newVal = state.clues[action.word] ?? [];
@@ -594,7 +610,6 @@ export function builderReducer(
   if (isClickedFillAction(action)) {
     const grid = gridWithEntrySet(state.grid, action.entryIndex, action.value);
     state = postEdit({ ...state, grid }, 0);
-    state = pushToHistory(state);
     return state;
   }
   if (action.type === 'CLEARPUBLISHERRORS') {
@@ -789,5 +804,15 @@ export function builderReducer(
     const grid = undoHistory[undoIndex];
     return grid == null ? state : { ...state, grid, undoIndex };
   }
+  return state;
+}
+
+export function builderReducer(
+  state: BuilderState,
+  action: PuzzleAction
+): BuilderState {
+  state = gridInterfaceReducer(state, action);
+  state = _builderReducer(state, action);
+  state = pushToHistory(state);
   return state;
 }
