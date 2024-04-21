@@ -448,7 +448,7 @@ function pushToHistory(state: BuilderState): BuilderState {
     return state;
   }
 
-  const MAX_HISTORY_LENGTH = 20;
+  const MAX_HISTORY_LENGTH = 21;
   const start = state.undoIndex === MAX_HISTORY_LENGTH - 1 ? 1 : 0;
   const end = state.undoIndex + 1;
   const undoHistory = [
@@ -793,15 +793,16 @@ function _builderReducer(
     return { ...state, toPublish: null };
   }
   if (isUndoAction(action)) {
-    let { undoHistory, undoIndex } = state;
-    undoIndex = Math.max(state.undoIndex - 1, 0);
-    const grid = undoHistory[undoIndex];
+    const undoIndex = Math.max(state.undoIndex - 1, 0);
+    const grid = state.undoHistory[undoIndex];
     return grid == null ? state : { ...state, grid, undoIndex };
   }
   if (isRedoAction(action)) {
-    let { undoHistory, undoIndex } = state;
-    undoIndex = Math.min(state.undoIndex + 1, state.undoHistory.length - 1);
-    const grid = undoHistory[undoIndex];
+    const undoIndex = Math.min(
+      state.undoIndex + 1,
+      state.undoHistory.length - 1
+    );
+    const grid = state.undoHistory[undoIndex];
     return grid == null ? state : { ...state, grid, undoIndex };
   }
   return state;
