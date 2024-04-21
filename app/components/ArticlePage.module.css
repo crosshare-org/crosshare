@@ -5,6 +5,7 @@
   margin: 2em 1em;
 }
 
+/* stylelint-disable-next-line media-feature-name-no-unknown */
 @media (huge-and-up) {
   .page {
     max-width: max-width;

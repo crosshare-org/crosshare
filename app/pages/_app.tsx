@@ -10,6 +10,7 @@ import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
 import { Snackbar, SnackbarProvider } from '../components/Snackbar';
 
 import '../lib/style.css';
+import '../lib/atoms.css';
 import {
   colorThemeString,
   ERROR_COLOR,

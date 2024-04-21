@@ -12,7 +12,7 @@ If you're looking for good issues to start out on check the [good first issue](h
 
 ### Linting / Formatting
 
-In addition to the test suites, all PRs are checked to match our [eslint](https://eslint.org/) and [prettier](https://prettier.io/) rules. You can run `$ yarn lint` and `$ yarn format` before committing to make sure your PR will pass. 
+In addition to the test suites, all PRs are checked to match our [eslint](https://eslint.org/)/[stylelint](https://stylelint.io/) and [prettier](https://prettier.io/) rules. You can run `$ yarn lint` and `$ yarn format` before committing to make sure your PR will pass.
 
 ## Running the site locally
 

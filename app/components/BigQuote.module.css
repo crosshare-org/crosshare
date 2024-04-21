@@ -2,32 +2,39 @@
 
 .outer {
   padding: 2em;
-  background-color: var(--secondary);
-  text-align: center;
   color: var(--text);
+  text-align: center;
+  background-color: var(--secondary);
 }
+
 .wrapper {
   max-width: 900px;
   margin: auto;
 }
 
-.wrapper:before {
-  font-family: georgia, serif;
+.wrapper::before {
   content: open-quote;
+
+  margin-right: 0.25em;
+
+  font-family: georgia, serif;
   font-size: 6em;
   line-height: 0.1em;
-  margin-right: 0.25em;
   vertical-align: -0.4em;
 }
+
 .quote {
   font-family: georgia, serif;
   font-size: 20px;
   font-style: italic;
 }
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
 @media (small-and-up) {
   .quote {
     font-size: 30px;
   }
+
   .attrib {
     font-size: 20px;
   }

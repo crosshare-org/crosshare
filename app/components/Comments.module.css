@@ -7,38 +7,42 @@
 }
 
 .commentsList {
-  list-style-type: none;
-  margin: 2em 0 0 0;
+  margin: 2em 0 0;
   padding: 0;
+  list-style-type: none;
 }
 
 .repliesList {
-  list-style-type: none;
   margin: 0 0 0 2em;
   padding: 0;
+  list-style-type: none;
 }
 
 .constructorTag {
-  font-size: 0.75em;
-  background-color: var(--primary);
-  color: var(--onprimary);
-  border-radius: 5px;
   padding: 0.1em 0.2em;
+
+  font-size: 0.75em;
+  color: var(--onprimary);
+
+  background-color: var(--primary);
+  border-radius: 5px;
 }
 
 .solveTime {
-  font-size: 0.75em;
-  background-color: var(--caption);
-  color: white;
-  border-radius: 5px;
   padding: 0.1em 0.2em;
+
+  font-size: 0.75em;
+  color: white;
+
+  background-color: var(--caption);
+  border-radius: 5px;
 }
 
 .preview {
+  margin-top: 1em;
+  padding: 1em;
   background-color: var(--secondary);
   border-radius: 0.5em;
-  padding: 1em;
-  margin-top: 1em;
 }
 
 .publishDate {

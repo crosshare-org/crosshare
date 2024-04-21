@@ -1,6 +1,7 @@
 .btn {
   min-width: 7em;
 }
+
 .hoverError:hover {
   background-color: var(--error);
 }

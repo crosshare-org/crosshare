@@ -5,20 +5,22 @@
 }
 
 .main {
-  flex: 1 1 auto;
-  overflow: scroll;
   position: relative;
+  overflow: scroll;
+  flex: 1 1 auto;
 }
 
 .container {
-  outline: none;
+  position: absolute;
+
+  container-type: size;
   display: flex;
   flex: 1 1 auto;
-  flex-direction: column;
+  flex-flow: column nowrap;
   align-items: center;
-  height: 100%;
+
   width: 100%;
-  position: absolute;
-  flex-wrap: nowrap;
-  container-type: size;
+  height: 100%;
+
+  outline: none;
 }
