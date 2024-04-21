@@ -5,7 +5,7 @@
  */
 import type { Directives, TextDirective } from 'mdast-util-directive';
 import { Plugin } from 'unified';
-import type { Transformer, Processor, Parent } from 'unified';
+import type { Parent, Processor, Transformer } from 'unified';
 import type { Node } from 'unist';
 import { visit } from 'unist-util-visit';
 

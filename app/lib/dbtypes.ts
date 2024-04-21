@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { timestamp, Timestamp } from './timestamp';
+import { Timestamp, timestamp } from './timestamp';
 
 const CommentV = t.intersection([
   t.type({

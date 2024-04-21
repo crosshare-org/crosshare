@@ -7,9 +7,9 @@ import { FullscreenCSS } from './FullscreenCSS';
 import { Link } from './Link';
 import { Overlay } from './Overlay';
 import {
-  SLATE_PADDING_SMALL,
-  SLATE_PADDING_MED,
   SLATE_PADDING_LARGE,
+  SLATE_PADDING_MED,
+  SLATE_PADDING_SMALL,
 } from './Page';
 import { SlateColorTheme } from './SlateColorTheme';
 import { SlateHeader, SlateLogo } from './SlateHeader';

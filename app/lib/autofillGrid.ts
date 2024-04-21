@@ -1,13 +1,13 @@
-import { matchingBitmap, minCost, updateBitmap, numMatches } from './WordDB';
+import { matchingBitmap, minCost, numMatches, updateBitmap } from './WordDB';
 import * as BA from './bitArray';
 import {
-  GridBase,
   EntryBase,
   EntryWithPattern,
-  valAt,
-  setVal,
+  GridBase,
   entriesFromCells,
   getCrosses,
+  setVal,
+  valAt,
 } from './gridBase';
 
 interface AutofillEntry extends EntryBase {

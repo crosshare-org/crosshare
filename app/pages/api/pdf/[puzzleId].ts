@@ -3,16 +3,16 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getPuzzle } from '../../../lib/puzzleCache';
 import { userIdToPage } from '../../../lib/serverOnly';
 import {
-  puzzleFromDB,
-  PuzzleT,
   Direction,
+  PuzzleT,
   getClueText,
+  puzzleFromDB,
 } from '../../../lib/types';
 import {
-  fromCells,
-  ViewableGrid,
   ViewableEntry,
+  ViewableGrid,
   addClues,
+  fromCells,
 } from '../../../lib/viewableGrid';
 
 function layoutPDFClues(

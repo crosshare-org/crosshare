@@ -1,7 +1,7 @@
 import useEventListener from '@use-it/event-listener';
 import { parseToRgba } from 'color2k';
 import type { User } from 'firebase/auth';
-import { useState, useCallback, useEffect, RefObject } from 'react';
+import { RefObject, useCallback, useEffect, useState } from 'react';
 import useResizeObserver from 'use-resize-observer';
 import { EmbedColorMode, EmbedContextValue } from '../components/EmbedContext';
 import { EmbedStylingProps } from '../components/EmbedStyling';

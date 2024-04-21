@@ -3,12 +3,12 @@ import { Trans, t } from '@lingui/macro';
 import { updateDoc } from 'firebase/firestore';
 import {
   ReactNode,
-  useState,
+  useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
-  useEffect,
-  useCallback,
+  useState,
 } from 'react';
 import {
   FaComment,
@@ -23,10 +23,10 @@ import { IoMdCloseCircleOutline } from 'react-icons/io';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { NotificationT } from '../lib/notificationTypes';
 import {
-  HEADER_HEIGHT,
-  SMALL_AND_UP,
   HAS_PHYSICAL_KEYBOARD,
+  HEADER_HEIGHT,
   LARGE_AND_UP,
+  SMALL_AND_UP,
 } from '../lib/style';
 import { logAsyncErrors, slugify } from '../lib/utils';
 import { AuthContext } from './AuthContext';

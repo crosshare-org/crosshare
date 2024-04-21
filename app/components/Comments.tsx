@@ -4,27 +4,27 @@ import { addDoc, updateDoc } from 'firebase/firestore';
 import type { Root } from 'hast';
 import * as iot from 'io-ts';
 import {
-  useState,
-  useEffect,
-  useContext,
-  ReactNode,
   FormEvent,
   Fragment,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
 } from 'react';
 import { ConstructorPageT } from '../lib/constructorPage';
 import {
-  CommentForModerationT,
-  CommentForModerationWithIdV,
-  CommentForModerationWithIdT,
   CommentDeletionT,
+  CommentForModerationT,
+  CommentForModerationWithIdT,
+  CommentForModerationWithIdV,
 } from '../lib/dbtypes';
 import { getCollection, getDocRef } from '../lib/firebaseWrapper';
 import { arrayFromLocalStorage } from '../lib/storage';
 import { Timestamp } from '../lib/timestamp';
-import { PartialBy, Comment, Direction } from '../lib/types';
+import { Comment, Direction, PartialBy } from '../lib/types';
 import { logAsyncErrors, timeString } from '../lib/utils';
 import { AuthContext } from './AuthContext';
-import { ButtonAsLink, Button } from './Buttons';
+import { Button, ButtonAsLink } from './Buttons';
 import styles from './Comments.module.css';
 import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
 import { Emoji } from './Emoji';

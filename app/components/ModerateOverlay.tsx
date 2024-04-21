@@ -1,5 +1,5 @@
 import { updateDoc } from 'firebase/firestore';
-import { useState, Dispatch, memo } from 'react';
+import { Dispatch, memo, useState } from 'react';
 import { setMiniForDate } from '../lib/dailyMinis';
 import { getDateString, prettifyDateString } from '../lib/dbtypes';
 import { getDocRef } from '../lib/firebaseWrapper';

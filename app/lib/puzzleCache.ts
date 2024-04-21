@@ -1,7 +1,7 @@
 import { getDoc } from 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { DBPuzzleV, DBPuzzleT } from './dbtypes';
+import { DBPuzzleT, DBPuzzleV } from './dbtypes';
 import { getDocRef } from './firebaseWrapper';
 import { LruCache } from './lruCache';
 

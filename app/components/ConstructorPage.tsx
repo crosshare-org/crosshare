@@ -1,9 +1,9 @@
-import { Trans, t, Plural } from '@lingui/macro';
+import { Plural, Trans, t } from '@lingui/macro';
 import { serverTimestamp, setDoc } from 'firebase/firestore';
 import type { Root } from 'hast';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useState, FormEvent, useContext, useCallback } from 'react';
+import { FormEvent, useCallback, useContext, useState } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
 import { ConstructorPageBase, ConstructorPageT } from '../lib/constructorPage';
 import { getDocRef } from '../lib/firebaseWrapper';

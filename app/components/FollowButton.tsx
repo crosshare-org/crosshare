@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import type { User } from 'firebase/auth';
 import { arrayRemove, arrayUnion, setDoc } from 'firebase/firestore';
-import { useCallback, useState, useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
 import { ConstructorPageBase } from '../lib/constructorPage';
 import { getDocRef } from '../lib/firebaseWrapper';

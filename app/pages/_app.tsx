@@ -3,7 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { AppProps, NextWebVitalsMetric } from 'next/app';
 import Head from 'next/head';
 import NextJSRouter, { useRouter } from 'next/router';
-import { useCallback, useState, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AuthContext } from '../components/AuthContext';
 import { BrowserWarning } from '../components/BrowserWarning';
 import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
@@ -11,11 +11,11 @@ import { Snackbar, SnackbarProvider } from '../components/Snackbar';
 import '../lib/atoms.css';
 import * as gtag from '../lib/gtag';
 import {
-  colorThemeString,
   ERROR_COLOR,
   LINK,
   PRIMARY,
   VERIFIED_COLOR,
+  colorThemeString,
 } from '../lib/style';
 import '../lib/style.css';
 import { useAuth } from '../lib/useAuth';

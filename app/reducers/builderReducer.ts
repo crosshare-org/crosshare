@@ -6,15 +6,15 @@ import { GridSelection, emptySelection } from '../lib/selection';
 import { Timestamp } from '../lib/timestamp';
 import {
   Direction,
-  PuzzleInProgressT,
-  Symmetry,
-  PrefillSquares,
   EMPTY,
   Position,
+  PrefillSquares,
+  PuzzleInProgressT,
+  Symmetry,
 } from '../lib/types';
 import {
-  ViewableGrid,
   ViewableEntry,
+  ViewableGrid,
   fromCells,
   gridEqual,
 } from '../lib/viewableGrid';

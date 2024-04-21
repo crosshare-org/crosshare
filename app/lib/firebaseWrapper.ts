@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
+import { FirebaseApp, getApps, initializeApp } from 'firebase/app';
 import {
+  User,
   connectAuthEmulator,
   getAuth as gA,
   signInAnonymously as sIA,
-  User,
 } from 'firebase/auth';
 import {
-  collection,
-  doc,
+  Timestamp as FBTimestamp,
   Firestore,
-  getFirestore,
   QueryDocumentSnapshot,
   SnapshotOptions,
-  Timestamp as FBTimestamp,
+  collection,
   connectFirestoreEmulator,
+  doc,
+  getFirestore,
 } from 'firebase/firestore';
 import { CollectionReference } from 'firebase/firestore';
 import { connectStorageEmulator, getStorage as gS } from 'firebase/storage';

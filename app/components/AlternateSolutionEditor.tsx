@@ -2,44 +2,44 @@ import useEventListener from '@use-it/event-listener';
 import { isSome } from 'fp-ts/lib/Option';
 import {
   useCallback,
-  useReducer,
+  useEffect,
   useMemo,
+  useReducer,
   useRef,
   useState,
-  useEffect,
 } from 'react';
 import {
-  FaSave,
-  FaWindowClose,
   FaEllipsisH,
-  FaVolumeUp,
-  FaVolumeMute,
   FaKeyboard,
+  FaSave,
+  FaVolumeMute,
+  FaVolumeUp,
+  FaWindowClose,
 } from 'react-icons/fa';
 import { isTextInput } from '../lib/domUtils';
 import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
 import {
   Direction,
-  fromKeyboardEvent,
-  fromKeyString,
   KeyK,
+  fromKeyString,
+  fromKeyboardEvent,
 } from '../lib/types';
 import { logAsyncErrors } from '../lib/utils';
 import { fromCells } from '../lib/viewableGrid';
 import {
-  gridInterfaceReducer,
   KeypressAction,
   PasteAction,
+  gridInterfaceReducer,
 } from '../reducers/gridReducer';
 import styles from './AlternateSolutionEditor.module.css';
 import { GridView } from './Grid';
-import { Rebus, EscapeKey } from './Icons';
+import { EscapeKey, Rebus } from './Icons';
 import { Keyboard } from './Keyboard';
 import {
   TopBar,
-  TopBarLink,
   TopBarDropDown,
   TopBarDropDownLink,
+  TopBarLink,
 } from './TopBar';
 
 export function AlternateSolutionEditor(props: {

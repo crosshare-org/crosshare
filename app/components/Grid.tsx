@@ -1,16 +1,16 @@
 import { Dispatch, ReactNode, useCallback, useEffect, useState } from 'react';
 import {
   cellIndex,
-  getEntryCells,
   entryIndexAtPosition,
+  getEntryCells,
 } from '../lib/gridBase';
 import {
   GridSelection,
   getSelectionCells,
   hasMultipleCells,
 } from '../lib/selection';
-import { PosAndDir, Position, BLOCK, Symmetry } from '../lib/types';
-import { ViewableGrid, ViewableEntry, flipped } from '../lib/viewableGrid';
+import { BLOCK, PosAndDir, Position, Symmetry } from '../lib/types';
+import { ViewableEntry, ViewableGrid, flipped } from '../lib/viewableGrid';
 import {
   StartSelectionAction,
   UpdateSelectionAction,

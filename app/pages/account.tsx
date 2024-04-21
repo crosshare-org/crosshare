@@ -9,9 +9,9 @@ import {
 } from 'firebase/firestore';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
-import { requiresAuth, AuthProps } from '../components/AuthHelpers';
+import { AuthProps, requiresAuth } from '../components/AuthHelpers';
 import { BioEditor } from '../components/BioEditor';
 import { Button } from '../components/Buttons';
 import { CreatePageForm } from '../components/ConstructorPage';
@@ -25,8 +25,8 @@ import {
 import { DefaultTopBar } from '../components/TopBar';
 import { getAuth, getCollection, getDocRef } from '../lib/firebaseWrapper';
 import { useDarkModeControl, usePersistedBoolean } from '../lib/hooks';
-import { UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
-import { PROFILE_PIC, COVER_PIC } from '../lib/style';
+import { AccountPrefsT, UnsubscribeFlags } from '../lib/prefs';
+import { COVER_PIC, PROFILE_PIC } from '../lib/style';
 import { withStaticTranslation } from '../lib/translation';
 import { logAsyncErrors } from '../lib/utils';
 

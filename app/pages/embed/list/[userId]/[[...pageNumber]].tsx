@@ -13,7 +13,7 @@ import {
 import { EmbedOptionsT } from '../../../../lib/embedOptions';
 import { useEmbedOptions } from '../../../../lib/hooks';
 import { paginatedPuzzles } from '../../../../lib/paginatedPuzzles';
-import { getEmbedProps, PageErrorProps } from '../../../../lib/serverOnly';
+import { PageErrorProps, getEmbedProps } from '../../../../lib/serverOnly';
 import { withTranslation } from '../../../../lib/translation';
 
 interface PageProps {

@@ -1,4 +1,4 @@
-import { TagPropsBase, Tag } from './Tag';
+import { Tag, TagPropsBase } from './Tag';
 
 interface TagListProps extends TagPropsBase {
   tags: string[];

@@ -1,8 +1,8 @@
-import { t, Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import type { User } from 'firebase/auth';
 import { useRouter } from 'next/router';
-import { useContext, useState, useEffect, Dispatch, ReactNode } from 'react';
+import { Dispatch, ReactNode, useContext, useEffect, useState } from 'react';
 import { GoScreenFull } from 'react-icons/go';
 import { Direction, PuzzleResultWithAugmentedComments } from '../lib/types';
 import {

@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { serverTimestamp, updateDoc } from 'firebase/firestore';
-import { useState, useContext } from 'react';
+import { useContext, useState } from 'react';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { logAsyncErrors } from '../lib/utils';
 import { AuthContext } from './AuthContext';

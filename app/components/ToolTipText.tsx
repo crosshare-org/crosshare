@@ -1,20 +1,20 @@
 import {
-  useHover,
+  FloatingArrow,
+  FloatingPortal,
+  arrow,
+  autoUpdate,
+  flip,
+  hide,
+  limitShift,
+  offset,
+  shift,
   useClick,
   useDismiss,
   useFloating,
-  offset,
-  shift,
-  limitShift,
-  flip,
-  hide,
+  useHover,
   useInteractions,
-  autoUpdate,
-  FloatingPortal,
-  FloatingArrow,
-  arrow,
 } from '@floating-ui/react';
-import { ReactNode, useState, useRef } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 
 export const ToolTipText = (props: {
   text: ReactNode;

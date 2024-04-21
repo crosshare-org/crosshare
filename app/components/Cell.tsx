@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, useState } from 'react';
-import { FaSlash, FaEye } from 'react-icons/fa';
+import { FaEye, FaSlash } from 'react-icons/fa';
 import { usePolyfilledResizeObserver } from '../lib/hooks';
 import { Position } from '../lib/types';
 import { clsx } from '../lib/utils';

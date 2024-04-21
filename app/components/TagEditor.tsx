@@ -2,10 +2,10 @@ import * as t from 'io-ts';
 import { useEffect, useState } from 'react';
 import { getFromSessionOrDB } from '../lib/dbUtils';
 import {
-  eqSet,
-  normalizeTag,
   TAG_LENGTH_LIMIT,
   TAG_LENGTH_MIN,
+  eqSet,
+  normalizeTag,
 } from '../lib/utils';
 import { Button } from './Buttons';
 import { LengthView } from './Inputs';

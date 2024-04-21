@@ -1,8 +1,8 @@
-import { isSome, none, Option, some } from 'fp-ts/lib/Option';
+import { Option, isSome, none, some } from 'fp-ts/lib/Option';
 import type { Root } from 'hast';
 import * as t from 'io-ts';
 import { ConstructorPageWithMarkdown } from '../lib/constructorPage';
-import { DBPuzzleT, CommentWithRepliesT, GlickoScoreT } from '../lib/dbtypes';
+import { CommentWithRepliesT, DBPuzzleT, GlickoScoreT } from '../lib/dbtypes';
 import type { WordDBT } from './WordDB';
 import { isTextInput } from './domUtils';
 

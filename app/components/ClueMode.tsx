@@ -8,39 +8,39 @@ import { sizeTag } from '../lib/sizeTag';
 import { COVER_PIC } from '../lib/style';
 import { Timestamp } from '../lib/timestamp';
 import {
-  dbCluesToClueTArray,
   Direction,
+  dbCluesToClueTArray,
   removeClueSpecials,
 } from '../lib/types';
 import { isMetaSolution } from '../lib/utils';
 import { addClues } from '../lib/viewableGrid';
 import {
-  BuilderEntry,
-  SetClueAction,
-  SetTitleAction,
-  SetNotesAction,
-  SetBlogPostAction,
-  BuilderState,
-  SetPrivateAction,
-  SetGuestConstructorAction,
-  UpdateContestAction,
-  PublishAction,
-  DelAlternateAction,
   AddAlternateAction,
-  SetTagsAction,
-  getClueProps,
+  BuilderEntry,
+  BuilderState,
+  DelAlternateAction,
+  PublishAction,
+  SetBlogPostAction,
+  SetClueAction,
   SetCommentsDisabledAction,
+  SetGuestConstructorAction,
+  SetNotesAction,
+  SetPrivateAction,
+  SetTagsAction,
+  SetTitleAction,
+  UpdateContestAction,
+  getClueProps,
 } from '../reducers/builderReducer';
 import { PuzzleAction } from '../reducers/commonActions';
 import { AlternateSolutionEditor } from './AlternateSolutionEditor';
-import { ButtonAsLink, Button } from './Buttons';
+import { Button, ButtonAsLink } from './Buttons';
 import { DateTimePicker } from './DateTimePicker';
 import { GridContext } from './GridContext';
 import { SpinnerFinished } from './Icons';
 import {
-  LengthView,
   LengthLimitedInput,
   LengthLimitedTextarea,
+  LengthView,
 } from './Inputs';
 import { Markdown } from './Markdown';
 import { Overlay } from './Overlay';
@@ -48,7 +48,7 @@ import { PublishOverlay } from './PublishOverlay';
 import { TagEditor } from './TagEditor';
 import { TagList } from './TagList';
 import { ToolTipText } from './ToolTipText';
-import { TopBarLink, TopBar } from './TopBar';
+import { TopBar, TopBarLink } from './TopBar';
 
 export const MAX_STRING_LENGTH = 2048;
 export const MAX_BLOG_LENGTH = 20000;

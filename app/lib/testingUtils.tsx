@@ -1,9 +1,9 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, RenderOptions, RenderResult } from '@testing-library/react';
+import { RenderOptions, RenderResult, render } from '@testing-library/react';
 import type { User } from 'firebase/auth';
 import { GetServerSidePropsResult } from 'next';
-import { ReactElement, ComponentType, ReactNode } from 'react';
+import { ComponentType, ReactElement, ReactNode } from 'react';
 import { AuthContext } from '../components/AuthContext';
 import { SnackbarProvider } from '../components/Snackbar';
 import { messages as messagesEn } from '../locales/en/messages';

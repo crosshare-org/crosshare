@@ -1,17 +1,17 @@
 import Head from 'next/head';
-import { useContext, useState, ReactNode } from 'react';
+import { ReactNode, useContext, useState } from 'react';
 import { CgSidebarRight } from 'react-icons/cg';
 import {
-  FaShareSquare,
-  FaChartBar,
-  FaComment,
-  FaMagic,
   FaBicycle,
   FaCat,
-  FaQuestionCircle,
+  FaChartBar,
   FaCode,
+  FaComment,
+  FaMagic,
+  FaQuestionCircle,
+  FaShareSquare,
 } from 'react-icons/fa';
-import { IoMdResize, IoMdPhonePortrait } from 'react-icons/io';
+import { IoMdPhonePortrait, IoMdResize } from 'react-icons/io';
 import { MdMoneyOff } from 'react-icons/md';
 import { AuthContext } from '../components/AuthContext';
 import { renderLoginButtonIfNeeded } from '../components/AuthHelpers';
@@ -25,7 +25,7 @@ import { FeatureList, FeatureListItem } from '../components/FeatureList';
 import { Hero } from '../components/Hero';
 import { Link } from '../components/Link';
 import { useWordDB } from '../lib/WordDB';
-import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
+import { LARGE_AND_UP, SMALL_AND_UP } from '../lib/style';
 import { withStaticTranslation } from '../lib/translation';
 
 export const getStaticProps = withStaticTranslation(() => {

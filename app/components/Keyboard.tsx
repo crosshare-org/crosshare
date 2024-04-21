@@ -1,23 +1,23 @@
 import {
   ReactNode,
   memo,
-  useRef,
-  useEffect,
-  useContext,
   useCallback,
+  useContext,
+  useEffect,
+  useRef,
 } from 'react';
 import { AiOutlineEnter } from 'react-icons/ai';
 import {
-  FaBackspace,
-  FaAngleRight,
-  FaAngleLeft,
-  FaAngleDoubleRight,
   FaAngleDoubleLeft,
+  FaAngleDoubleRight,
+  FaAngleLeft,
+  FaAngleRight,
+  FaBackspace,
 } from 'react-icons/fa';
 import {
+  HAS_PHYSICAL_KEYBOARD,
   KEYBOARD_HEIGHT,
   SMALL_AND_UP,
-  HAS_PHYSICAL_KEYBOARD,
 } from '../lib/style';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
 

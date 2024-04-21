@@ -8,7 +8,7 @@ import {
   PuzzleStatsViewT,
 } from '../../../lib/dbtypes';
 import { getCollection } from '../../../lib/firebaseAdminWrapper';
-import { puzzleFromDB, PuzzleResult } from '../../../lib/types';
+import { PuzzleResult, puzzleFromDB } from '../../../lib/types';
 
 interface PageProps {
   puzzle: Omit<PuzzleResult, 'comments'>;

@@ -1,4 +1,4 @@
-import { FaEye, FaCheck } from 'react-icons/fa';
+import { FaCheck, FaEye } from 'react-icons/fa';
 import { CheatUnit, PrefillSquares, Symmetry } from '../lib/types';
 import { Link } from './Link';
 

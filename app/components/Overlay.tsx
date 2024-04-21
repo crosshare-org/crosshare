@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useContext } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 import { SMALL_AND_UP } from '../lib/style';

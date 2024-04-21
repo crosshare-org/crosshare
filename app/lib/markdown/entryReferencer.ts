@@ -1,4 +1,4 @@
-import { Text, Element } from 'hast';
+import { Element, Text } from 'hast';
 import { Plugin } from 'unified';
 import { Node } from 'unist';
 import { is } from 'unist-util-is';

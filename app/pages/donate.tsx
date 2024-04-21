@@ -8,7 +8,7 @@ import { Button } from '../components/Buttons';
 import { ContactLinks } from '../components/ContactLinks';
 import { PatronIcon } from '../components/Icons';
 import { DefaultTopBar } from '../components/TopBar';
-import { donationsByEmail, DonationsListV } from '../lib/dbtypes';
+import { DonationsListV, donationsByEmail } from '../lib/dbtypes';
 import { getCollection } from '../lib/firebaseAdminWrapper';
 import { SMALL_AND_UP } from '../lib/style';
 import { withTranslation } from '../lib/translation';

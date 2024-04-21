@@ -2,13 +2,13 @@ import * as WordDB from './WordDB';
 import {
   AutofillGrid,
   fromTemplate,
-  minGridCost,
-  stableSubsets,
-  numMatchesForEntry,
   gridWithEntryDecided,
+  minGridCost,
+  numMatchesForEntry,
+  stableSubsets,
 } from './autofillGrid';
 import * as BA from './bitArray';
-import { valAt, getCrosses } from './gridBase';
+import { getCrosses, valAt } from './gridBase';
 
 enum ResultTag {
   Recur,

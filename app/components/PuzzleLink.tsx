@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 import type { Root } from 'hast';
-import { useState, useEffect, useContext, ReactNode } from 'react';
+import { ReactNode, useContext, useEffect, useState } from 'react';
 import { DifficultyBadge } from '../components/DifficultyBadge';
 import { ConstructorPageBase } from '../lib/constructorPage';
 import { PlayWithoutUserT } from '../lib/dbtypes';
@@ -13,11 +13,11 @@ import { timeString } from '../lib/utils';
 import { AuthContext } from './AuthContext';
 import { Emoji } from './Emoji';
 import { FollowButton } from './FollowButton';
-import { PuzzleSizeIcon, PatronIcon } from './Icons';
+import { PatronIcon, PuzzleSizeIcon } from './Icons';
 import { Link } from './Link';
 import { Markdown } from './Markdown';
 import { TagList } from './TagList';
-import { PastDistanceToNow, DistanceToNow } from './TimeDisplay';
+import { DistanceToNow, PastDistanceToNow } from './TimeDisplay';
 
 const PuzzleLink = (props: {
   fullWidth?: boolean;

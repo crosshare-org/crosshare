@@ -1,45 +1,45 @@
-import { cellIndex, valAt, isInBounds, clampInBounds } from '../lib/gridBase';
+import { cellIndex, clampInBounds, isInBounds, valAt } from '../lib/gridBase';
 import {
   emptySelection,
   forEachPosition,
   getSelectionCells,
 } from '../lib/selection';
 import {
-  PosAndDir,
-  Position,
-  Direction,
+  ALLOWABLE_GRID_CHARS,
   BLOCK,
+  CELL_DELIMITER,
+  Direction,
+  EMPTY,
   Key,
   KeyK,
-  ALLOWABLE_GRID_CHARS,
-  Symmetry,
-  EMPTY,
-  CELL_DELIMITER,
+  PosAndDir,
+  Position,
   ROW_DELIMITER,
+  Symmetry,
 } from '../lib/types';
 import {
-  ViewableGrid,
   ViewableEntry,
-  gridWithNewChar,
-  gridWithBlockToggled,
+  ViewableGrid,
   advancePosition,
-  retreatPosition,
-  moveToNextEntry,
-  moveToPrevEntry,
-  moveUp,
+  gridWithBarToggled,
+  gridWithBlockToggled,
+  gridWithHiddenToggled,
+  gridWithNewChar,
   moveDown,
   moveLeft,
   moveRight,
+  moveToNextEntry,
+  moveToPrevEntry,
+  moveUp,
   nextCell,
-  gridWithBarToggled,
-  gridWithHiddenToggled,
+  retreatPosition,
 } from '../lib/viewableGrid';
 import type { BuilderState } from './builderReducer';
 import {
-  isBuilderState,
   postEdit as builderPostEdit,
   clearSelection,
   hasSelection,
+  isBuilderState,
 } from './builderUtils';
 import type { PuzzleAction } from './commonActions';
 import type { PuzzleState } from './puzzleReducer';

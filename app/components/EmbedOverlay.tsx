@@ -1,23 +1,23 @@
 import { css } from '@emotion/react';
-import { adjustHue, parseToRgba, guard } from 'color2k';
+import { adjustHue, guard, parseToRgba } from 'color2k';
 import { User } from 'firebase/auth';
 import { getDoc, setDoc } from 'firebase/firestore';
 import {
+  ChangeEvent,
   Dispatch,
-  useMemo,
-  useState,
   useCallback,
   useEffect,
-  ChangeEvent,
+  useMemo,
+  useState,
 } from 'react';
 import { EmbedOptionsT, validate } from '../lib/embedOptions';
 import { getDocRef } from '../lib/firebaseWrapper';
 import {
-  colorTheme,
   ERROR_COLOR,
   LINK,
   PRIMARY,
   VERIFIED_COLOR,
+  colorTheme,
 } from '../lib/style';
 import { Direction, ServerPuzzleResult } from '../lib/types';
 import { logAsyncErrors } from '../lib/utils';

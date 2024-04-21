@@ -5,16 +5,16 @@ import { Timestamp as FBTimestamp } from 'firebase-admin/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
+  ConstructorStatsForPuzzleT,
+  DBPuzzleT,
+  DBPuzzleV,
+  DailyStatsT,
+  DailyStatsV,
   LegacyPlayV,
+  MetaSubmissionForPuzzleT,
   PuzzleStatsT,
   PuzzleStatsV,
-  DailyStatsV,
-  DailyStatsT,
-  DBPuzzleV,
-  DBPuzzleT,
   getDateString,
-  MetaSubmissionForPuzzleT,
-  ConstructorStatsForPuzzleT,
 } from './dbtypes';
 import { getCollection, toFirestore } from './firebaseAdminWrapper';
 import { Timestamp } from './timestamp';

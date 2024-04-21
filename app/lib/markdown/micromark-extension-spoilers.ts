@@ -4,12 +4,12 @@ import { splice } from 'micromark-util-chunked';
 import { classifyCharacter } from 'micromark-util-classify-character';
 import { resolveAll } from 'micromark-util-resolve-all';
 import {
+  Event,
   Extension,
   Resolver,
-  Tokenizer,
   State,
   Token,
-  Event,
+  Tokenizer,
 } from 'micromark-util-types';
 import { HtmlExtension } from 'micromark-util-types';
 

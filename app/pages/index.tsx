@@ -11,9 +11,9 @@ import { I18nTags } from '../components/I18nTags';
 import { PatronIcon } from '../components/Icons';
 import { Link } from '../components/Link';
 import {
-  toLinkablePuzzle,
   LinkablePuzzle,
   PuzzleResultLink,
+  toLinkablePuzzle,
 } from '../components/PuzzleLink';
 import { DefaultTopBar } from '../components/TopBar';
 import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList';

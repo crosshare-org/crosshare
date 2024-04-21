@@ -1,13 +1,13 @@
 import Head from 'next/head';
-import { useState, useContext } from 'react';
+import { useContext, useState } from 'react';
 import { CgSidebarRight } from 'react-icons/cg';
 import {
-  FaShareSquare,
+  FaCat,
   FaChartBar,
+  FaCode,
   FaComment,
   FaQuestionCircle,
-  FaCode,
-  FaCat,
+  FaShareSquare,
 } from 'react-icons/fa';
 import { IoMdPhonePortrait, IoMdResize } from 'react-icons/io';
 import { MdMoneyOff } from 'react-icons/md';

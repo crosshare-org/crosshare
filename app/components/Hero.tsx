@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
+import { LARGE_AND_UP, SMALL_AND_UP } from '../lib/style';
 import { Logo } from './Icons';
 import { Link } from './Link';
 

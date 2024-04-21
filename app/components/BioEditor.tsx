@@ -1,5 +1,5 @@
 import { deleteField, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { useState, FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 import { ConstructorPageT } from '../lib/constructorPage';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { markdownToHast } from '../lib/markdown/markdown';

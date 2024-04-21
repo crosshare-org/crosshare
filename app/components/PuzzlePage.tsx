@@ -1,11 +1,11 @@
 import type { User } from 'firebase/auth';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { useState, useEffect, useContext, useMemo, useRef } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { PlayWithoutUserV, PlayWithoutUserT } from '../lib/dbtypes';
+import { PlayWithoutUserT, PlayWithoutUserV } from '../lib/dbtypes';
 import { getDocRef } from '../lib/firebaseWrapper';
-import { getPlayFromCache, cachePlay } from '../lib/plays';
+import { cachePlay, getPlayFromCache } from '../lib/plays';
 import { AccountPrefsT } from '../lib/prefs';
 import { PuzzlePageProps, PuzzlePageResultProps } from '../lib/serverOnly';
 import { isMetaSolution } from '../lib/utils';

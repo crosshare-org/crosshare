@@ -5,11 +5,11 @@ import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
+  LegacyPlayV,
+  PlayT,
   PlayWithoutUserT,
   PlayWithoutUserV,
-  LegacyPlayV,
   downloadOptionallyTimestamped,
-  PlayT,
 } from './dbtypes';
 import { getDocRef } from './firebaseWrapper';
 import { fromLocalStorage } from './storage';

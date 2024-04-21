@@ -1,10 +1,10 @@
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { lightFormat } from 'date-fns/lightFormat';
 import {
+  Timestamp,
   arrayRemove,
   arrayUnion,
   deleteField,
-  Timestamp,
   updateDoc,
 } from 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
@@ -15,38 +15,38 @@ import { useRouter } from 'next/router';
 import { useMemo, useRef, useState } from 'react';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { AlternateSolutionEditor } from '../../components/AlternateSolutionEditor';
-import { requiresAuth, AuthProps } from '../../components/AuthHelpers';
+import { AuthProps, requiresAuth } from '../../components/AuthHelpers';
 import { Button, ButtonAsLink } from '../../components/Buttons';
 import {
+  MAX_BLOG_LENGTH,
   MAX_META_SUBMISSION_LENGTH,
   MAX_STRING_LENGTH,
-  MAX_BLOG_LENGTH,
 } from '../../components/ClueMode';
 import { ContactLinks } from '../../components/ContactLinks';
 import { DateTimePicker } from '../../components/DateTimePicker';
 import { EditableText } from '../../components/EditableText';
 import { ErrorPage } from '../../components/ErrorPage';
 import { GridContext } from '../../components/GridContext';
-import { LengthView, LengthLimitedInput } from '../../components/Inputs';
+import { LengthLimitedInput, LengthView } from '../../components/Inputs';
 import { Markdown } from '../../components/Markdown';
 import { Overlay } from '../../components/Overlay';
 import { useSnackbar } from '../../components/Snackbar';
 import { TagEditor } from '../../components/TagEditor';
 import { TagList } from '../../components/TagList';
 import { DefaultTopBar } from '../../components/TopBar';
-import { DBPuzzleV, DBPuzzleT } from '../../lib/dbtypes';
+import { DBPuzzleT, DBPuzzleV } from '../../lib/dbtypes';
 import { getDocRef } from '../../lib/firebaseWrapper';
 import { markdownToHast } from '../../lib/markdown/markdown';
 import { COVER_PIC } from '../../lib/style';
 import { withTranslation } from '../../lib/translation';
 import {
+  Direction,
   PuzzleResult,
   puzzleFromDB,
-  Direction,
   removeClueSpecials,
 } from '../../lib/types';
 import { clsx, isMetaSolution, logAsyncErrors } from '../../lib/utils';
-import { fromCells, CluedEntry, addClues } from '../../lib/viewableGrid';
+import { CluedEntry, addClues, fromCells } from '../../lib/viewableGrid';
 import styles from './editPuzzle.module.css';
 
 export const getServerSideProps = withTranslation(() => {

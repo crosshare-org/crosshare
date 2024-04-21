@@ -2,7 +2,7 @@ import { setDoc } from 'firebase/firestore';
 import * as t from 'io-ts';
 import { FormEvent, useContext, useState } from 'react';
 import { getDocRef } from '../lib/firebaseWrapper';
-import { timestamp, Timestamp } from '../lib/timestamp';
+import { Timestamp, timestamp } from '../lib/timestamp';
 import { Comment } from '../lib/types';
 import { logAsyncErrors } from '../lib/utils';
 import { AuthContext } from './AuthContext';

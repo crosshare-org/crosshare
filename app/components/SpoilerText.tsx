@@ -1,9 +1,9 @@
 import {
-  ReactNode,
-  useState,
-  useCallback,
-  MouseEvent,
   KeyboardEvent,
+  MouseEvent,
+  ReactNode,
+  useCallback,
+  useState,
 } from 'react';
 
 export const SpoilerText = ({ children }: { children: ReactNode }) => {

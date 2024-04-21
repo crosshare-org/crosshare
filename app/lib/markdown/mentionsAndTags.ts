@@ -1,4 +1,4 @@
-import { findAndReplace, Replace } from 'mdast-util-find-and-replace';
+import { Replace, findAndReplace } from 'mdast-util-find-and-replace';
 import { Plugin } from 'unified';
 
 export const mentionsAndTags: Plugin = () => {

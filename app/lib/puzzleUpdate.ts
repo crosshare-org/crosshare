@@ -3,9 +3,9 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
 import { getCollection, toFirestore } from './firebaseAdminWrapper';
 import {
-  isNewPuzzleNotification,
   NotificationT,
   NotificationV,
+  isNewPuzzleNotification,
 } from './notificationTypes';
 import { notificationsForPuzzleChange } from './notifications';
 import { sizeTag } from './sizeTag';

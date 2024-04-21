@@ -1,4 +1,4 @@
-import { t, Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import useEventListener from '@use-it/event-listener';
 import type { User } from 'firebase/auth';
 import { updateDoc } from 'firebase/firestore';
@@ -8,35 +8,35 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import {
-  useReducer,
-  useEffect,
-  useCallback,
-  useMemo,
-  useRef,
-  useContext,
   Dispatch,
   ReactNode,
   memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
 } from 'react';
 import {
-  FaListOl,
-  FaGlasses,
-  FaUser,
-  FaVolumeUp,
-  FaVolumeMute,
-  FaPause,
-  FaKeyboard,
   FaCheck,
-  FaEye,
-  FaEllipsisH,
-  FaUserLock,
-  FaComment,
-  FaHammer,
-  FaPrint,
-  FaEdit,
-  FaRegFile,
-  FaMoon,
   FaCog,
+  FaComment,
+  FaEdit,
+  FaEllipsisH,
+  FaEye,
+  FaGlasses,
+  FaHammer,
+  FaKeyboard,
+  FaListOl,
+  FaMoon,
+  FaPause,
+  FaPrint,
+  FaRegFile,
+  FaUser,
+  FaUserLock,
+  FaVolumeMute,
+  FaVolumeUp,
 } from 'react-icons/fa';
 import { ImEmbed } from 'react-icons/im';
 import { IoMdStats } from 'react-icons/io';
@@ -45,14 +45,14 @@ import { isTextInput } from '../lib/domUtils';
 import { getDocRef, signInAnonymously } from '../lib/firebaseWrapper';
 import { entryAndCrossAtPosition, entryIndexAtPosition } from '../lib/gridBase';
 import {
-  usePersistedBoolean,
-  useMatchMedia,
   useDarkModeControl,
   useIsExistingDarkMode,
+  useMatchMedia,
+  usePersistedBoolean,
 } from '../lib/hooks';
 import { removeSpoilers } from '../lib/markdown/markdown';
 import { isNewPuzzleNotification } from '../lib/notificationTypes';
-import { cachePlay, writePlayToDB, isDirty } from '../lib/plays';
+import { cachePlay, isDirty, writePlayToDB } from '../lib/plays';
 import { PuzzlePageResultProps } from '../lib/serverOnly';
 import {
   LARGE_AND_UP,
@@ -62,13 +62,13 @@ import {
 } from '../lib/style';
 import { Timestamp } from '../lib/timestamp';
 import {
-  Direction,
   BLOCK,
-  getClueText,
-  KeyK,
-  fromKeyboardEvent,
-  fromKeyString,
   CheatUnit,
+  Direction,
+  KeyK,
+  fromKeyString,
+  fromKeyboardEvent,
+  getClueText,
 } from '../lib/types';
 import {
   isMetaSolution,
@@ -77,23 +77,23 @@ import {
   timeString,
 } from '../lib/utils';
 import {
-  fromCells,
+  type CluedEntry,
   addClues,
+  fromCells,
   getEntryToClueMap,
   getRefs,
-  type CluedEntry,
 } from '../lib/viewableGrid';
 import { PuzzleAction } from '../reducers/commonActions';
 import { KeypressAction, PasteAction } from '../reducers/gridReducer';
 import {
   CheatAction,
+  LoadPlayAction,
+  RanMetaSubmitEffectsAction,
+  RanSuccessEffectsAction,
   ToggleAutocheckAction,
   ToggleClueViewAction,
-  LoadPlayAction,
-  RanSuccessEffectsAction,
-  RanMetaSubmitEffectsAction,
-  puzzleReducer,
   advanceActiveToNonBlock,
+  puzzleReducer,
 } from '../reducers/puzzleReducer';
 import { AuthContext } from './AuthContext';
 import { AuthPropsOptional } from './AuthHelpers';
@@ -109,16 +109,16 @@ import { GridView } from './Grid';
 import { GridContext } from './GridContext';
 import { I18nTags } from './I18nTags';
 import {
-  EscapeKey,
-  CheckSquare,
-  RevealSquare,
-  CheckEntry,
-  RevealEntry,
-  CheckPuzzle,
-  RevealPuzzle,
-  Rebus,
-  SpinnerFinished,
   AutoCheck,
+  CheckEntry,
+  CheckPuzzle,
+  CheckSquare,
+  EscapeKey,
+  Rebus,
+  RevealEntry,
+  RevealPuzzle,
+  RevealSquare,
+  SpinnerFinished,
 } from './Icons';
 import { Keyboard } from './Keyboard';
 import { Overlay } from './Overlay';
@@ -151,13 +151,13 @@ import { SlateBegin, SlatePause } from './SlateOverlays';
 import { useSnackbar } from './Snackbar';
 import { SolverPreferencesList } from './SolverPreferencesList';
 import {
+  NestedDropDown,
   TopBar,
-  TopBarLink,
+  TopBarDropDown,
   TopBarDropDownLink,
   TopBarDropDownLinkA,
-  TopBarDropDown,
   TopBarDropDownLinkSimpleA,
-  NestedDropDown,
+  TopBarLink,
 } from './TopBar';
 
 const ModeratingOverlay = dynamic(

@@ -1,9 +1,9 @@
-import { initializeApp, applicationDefault, getApps } from 'firebase-admin/app';
+import { applicationDefault, getApps, initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import {
-  getFirestore,
-  Query,
   Timestamp as FBTimestamp,
+  Query,
+  getFirestore,
 } from 'firebase-admin/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';

@@ -1,15 +1,15 @@
 import type { Root } from 'hast';
 import {
-  useRef,
   Dispatch,
-  memo,
-  MouseEvent,
   KeyboardEvent,
+  MouseEvent,
   RefObject,
+  memo,
+  useRef,
 } from 'react';
-import { GridBase, valAt, EntryBase } from '../lib/gridBase';
+import { EntryBase, GridBase, valAt } from '../lib/gridBase';
 import { SMALL_AND_UP } from '../lib/style';
-import { Position, Direction } from '../lib/types';
+import { Direction, Position } from '../lib/types';
 import { CluedEntry, RefPosition } from '../lib/viewableGrid';
 import { PuzzleAction } from '../reducers/commonActions';
 import { ClickedEntryAction } from '../reducers/gridReducer';

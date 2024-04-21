@@ -1,4 +1,4 @@
-import { addDoc, Timestamp } from 'firebase/firestore';
+import { Timestamp, addDoc } from 'firebase/firestore';
 import Head from 'next/head';
 import { useRef } from 'react';
 import { useCollectionData } from 'react-firebase-hooks/firestore';

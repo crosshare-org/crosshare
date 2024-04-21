@@ -1,25 +1,25 @@
 import useEventListener from '@use-it/event-listener';
 import { isSome } from 'fp-ts/lib/Option';
-import { useReducer, useCallback, useMemo, useState } from 'react';
-import { FaRegNewspaper, FaListOl } from 'react-icons/fa';
+import { useCallback, useMemo, useReducer, useState } from 'react';
+import { FaListOl, FaRegNewspaper } from 'react-icons/fa';
 import { entryAndCrossAtPosition } from '../lib/gridBase';
 import { useMatchMedia } from '../lib/hooks';
 import { markdownToHast } from '../lib/markdown/markdown';
 import { SMALL_AND_UP_RULES } from '../lib/style';
 import { Timestamp } from '../lib/timestamp';
 import {
-  PuzzleInProgressT,
   Direction,
-  fromKeyboardEvent,
+  PuzzleInProgressT,
   dbCluesToClueTArray,
+  fromKeyboardEvent,
 } from '../lib/types';
 import { addClues } from '../lib/viewableGrid';
 import {
-  builderReducer,
-  initialBuilderState,
   BuilderState,
   PublishAction,
+  builderReducer,
   getClueProps,
+  initialBuilderState,
 } from '../reducers/builderReducer';
 import { KeypressAction } from '../reducers/gridReducer';
 import { AuthProps } from './AuthHelpers';
@@ -33,7 +33,7 @@ import { GridContext } from './GridContext';
 import { Overlay } from './Overlay';
 import { SquareAndCols } from './Page';
 import { PublishOverlay } from './PublishOverlay';
-import { TopBarLink, DefaultTopBar } from './TopBar';
+import { DefaultTopBar, TopBarLink } from './TopBar';
 
 const initializeState = (
   props: PuzzleInProgressT & AuthProps

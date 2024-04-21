@@ -1,4 +1,4 @@
-import { deleteDoc, getDoc, getDocs, Query, setDoc } from 'firebase/firestore';
+import { Query, deleteDoc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';

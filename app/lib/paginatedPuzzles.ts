@@ -1,12 +1,12 @@
 import { WhereFilterOp } from '@firebase/firestore-types';
-import { Query, Timestamp as FBTimestamp } from 'firebase-admin/firestore';
+import { Timestamp as FBTimestamp, Query } from 'firebase-admin/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { LinkablePuzzle, toLinkablePuzzle } from '../components/PuzzleLink';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
 import { getCollection, mapEachResult } from './firebaseAdminWrapper';
-import { timestamp, Timestamp } from './timestamp';
+import { Timestamp, timestamp } from './timestamp';
 import { puzzleFromDB } from './types';
 
 const NewPuzzleIndexV = t.type({

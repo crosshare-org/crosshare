@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { PuzzleInProgressStrictT, ClueT, removeClueSpecials } from './types';
+import { ClueT, PuzzleInProgressStrictT, removeClueSpecials } from './types';
 import { fromCells, getClueMap } from './viewableGrid';
 
 const EXTENSION_HEADER_LENGTH = 8;

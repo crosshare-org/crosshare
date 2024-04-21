@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getDB, getClues } from '../../../lib/ginsberg';
+import { getClues, getDB } from '../../../lib/ginsberg';
 
 const db = getDB(true);
 

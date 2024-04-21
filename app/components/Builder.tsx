@@ -2,35 +2,35 @@ import useEventListener from '@use-it/event-listener';
 import type { User } from 'firebase/auth';
 import { isSome } from 'fp-ts/lib/Option';
 import {
-  useState,
-  useReducer,
-  useRef,
-  useEffect,
-  useCallback,
-  useMemo,
   Dispatch,
   MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
 } from 'react';
 import { CgSidebarRight } from 'react-icons/cg';
 import {
-  FaRegNewspaper,
-  FaHammer,
-  FaFileImport,
-  FaUser,
-  FaListOl,
-  FaRegCircle,
-  FaRegCheckCircle,
-  FaSquare,
   FaEllipsisH,
-  FaVolumeUp,
-  FaVolumeMute,
+  FaEyeSlash,
+  FaFileImport,
   FaFillDrip,
-  FaUserLock,
+  FaHammer,
+  FaKeyboard,
+  FaListOl,
+  FaRegCheckCircle,
+  FaRegCircle,
+  FaRegFile,
+  FaRegNewspaper,
   FaRegPlusSquare,
   FaSignInAlt,
-  FaKeyboard,
-  FaRegFile,
-  FaEyeSlash,
+  FaSquare,
+  FaUser,
+  FaUserLock,
+  FaVolumeMute,
+  FaVolumeUp,
 } from 'react-icons/fa';
 import { IoMdStats } from 'react-icons/io';
 import { MdRefresh } from 'react-icons/md';
@@ -41,53 +41,53 @@ import {
   numMatchesForEntry,
 } from '../lib/autofillGrid';
 import * as BA from '../lib/bitArray';
-import { importFile, exportFile, ExportProps } from '../lib/converter';
+import { ExportProps, exportFile, importFile } from '../lib/converter';
 import { isTextInput } from '../lib/domUtils';
-import { getCrosses, valAt, entryAndCrossAtPosition } from '../lib/gridBase';
+import { entryAndCrossAtPosition, getCrosses, valAt } from '../lib/gridBase';
 import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
 import { fromLocalStorage } from '../lib/storage';
 import { Timestamp } from '../lib/timestamp';
 import {
-  Position,
-  Direction,
-  PuzzleT,
-  isAutofillCompleteMessage,
-  isAutofillResultMessage,
-  WorkerMessage,
-  LoadDBMessage,
   AutofillMessage,
   CancelAutofillMessage,
-  PuzzleInProgressV,
-  PuzzleInProgressT,
-  fromKeyString,
+  Direction,
   KeyK,
-  fromKeyboardEvent,
+  LoadDBMessage,
   PartialBy,
+  Position,
+  PuzzleInProgressT,
+  PuzzleInProgressV,
+  PuzzleT,
   Symmetry,
+  WorkerMessage,
+  fromKeyString,
+  fromKeyboardEvent,
+  isAutofillCompleteMessage,
+  isAutofillResultMessage,
 } from '../lib/types';
-import { eqSet, STORAGE_KEY } from '../lib/utils';
+import { STORAGE_KEY, eqSet } from '../lib/utils';
 import { ViewableEntry } from '../lib/viewableGrid';
 import { getAutofillWorker } from '../lib/workerLoader';
 import {
-  BuilderState,
-  builderReducer,
-  SymmetryAction,
-  ClickedFillAction,
-  SetHighlightAction,
-  PublishAction,
-  initialBuilderState,
   BuilderGrid,
+  BuilderState,
+  ClickedFillAction,
   ImportPuzAction,
+  PublishAction,
+  SetHighlightAction,
   SetShowDownloadLink,
+  SymmetryAction,
+  builderReducer,
   getClueProps,
+  initialBuilderState,
 } from '../reducers/builderReducer';
 import { PuzzleAction } from '../reducers/commonActions';
 import {
-  KeypressAction,
   ClickedEntryAction,
   CopyAction,
-  PasteAction,
   CutAction,
+  KeypressAction,
+  PasteAction,
 } from '../reducers/gridReducer';
 import { AuthProps } from './AuthHelpers';
 import styles from './Builder.module.css';
@@ -98,23 +98,23 @@ import { FullscreenCSS } from './FullscreenCSS';
 import { GridView } from './Grid';
 import { Histogram } from './Histogram';
 import {
+  BacktickKey,
+  CommaKey,
+  EnterKey,
+  EscapeKey,
+  ExclamationKey,
+  KeyIcon,
+  PeriodKey,
   Rebus,
-  SpinnerWorking,
-  SpinnerFinished,
-  SpinnerFailed,
   SpinnerDisabled,
+  SpinnerFailed,
+  SpinnerFinished,
+  SpinnerWorking,
+  SymmetryHorizontal,
   SymmetryIcon,
+  SymmetryNone,
   SymmetryRotational,
   SymmetryVertical,
-  SymmetryHorizontal,
-  SymmetryNone,
-  EscapeKey,
-  BacktickKey,
-  PeriodKey,
-  EnterKey,
-  ExclamationKey,
-  CommaKey,
-  KeyIcon,
 } from './Icons';
 import { Keyboard } from './Keyboard';
 import { NewPuzzleForm } from './NewPuzzleForm';
@@ -123,13 +123,13 @@ import { SquareAndCols } from './Page';
 import { PublishOverlay } from './PublishOverlay';
 import { Snackbar, useSnackbar } from './Snackbar';
 import {
+  DefaultTopBar,
   NestedDropDown,
-  TopBarLink,
   TopBar,
+  TopBarDropDown,
   TopBarDropDownLink,
   TopBarDropDownLinkA,
-  TopBarDropDown,
-  DefaultTopBar,
+  TopBarLink,
 } from './TopBar';
 
 type BuilderProps = PartialBy<

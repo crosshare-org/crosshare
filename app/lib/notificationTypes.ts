@@ -1,6 +1,6 @@
 import { add } from 'date-fns/add';
 import * as t from 'io-ts';
-import { DBPuzzleT, CommentWithRepliesT } from './dbtypes';
+import { CommentWithRepliesT, DBPuzzleT } from './dbtypes';
 import { timestamp } from './timestamp';
 import { Timestamp } from './timestamp';
 

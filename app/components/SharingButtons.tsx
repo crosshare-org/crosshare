@@ -1,10 +1,10 @@
 import { mix } from 'color2k';
 import { ReactNode } from 'react';
 import {
-  FaTwitter,
-  FaFacebook,
   FaEnvelope,
+  FaFacebook,
   FaRegClipboard,
+  FaTwitter,
 } from 'react-icons/fa';
 import { useSnackbar } from './Snackbar';
 

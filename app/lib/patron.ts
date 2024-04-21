@@ -2,7 +2,7 @@ import { getAuth } from 'firebase-admin/auth';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { ConstructorPageV } from './constructorPage';
-import { donationsByEmail, DonationsListV } from './dbtypes';
+import { DonationsListV, donationsByEmail } from './dbtypes';
 import { getAdminApp, getCollection } from './firebaseAdminWrapper';
 
 let patronList: string[] | null = null;

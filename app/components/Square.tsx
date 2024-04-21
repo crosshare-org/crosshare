@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 import {
-  SQUARE_HEADER_HEIGHT,
-  SMALL_AND_UP,
   LARGE_AND_UP,
+  SMALL_AND_UP,
+  SQUARE_HEADER_HEIGHT,
   TINY_COL_MIN_HEIGHT,
 } from '../lib/style';
 

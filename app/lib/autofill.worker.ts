@@ -1,12 +1,12 @@
 import { Autofiller } from './Autofiller';
 import { setDb } from './WordDB';
 import {
-  AutofillResultMessage,
   AutofillCompleteMessage,
+  AutofillResultMessage,
   WorkerMessage,
-  isLoadDBMessage,
   isAutofillMessage,
   isCancelAutofillMessage,
+  isLoadDBMessage,
 } from './types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment

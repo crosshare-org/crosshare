@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import {
+  Timestamp,
   addDoc,
   arrayUnion,
   deleteField,
@@ -7,13 +8,12 @@ import {
   getDocs,
   query,
   setDoc,
-  Timestamp,
   updateDoc,
   where,
 } from 'firebase/firestore';
 import Head from 'next/head';
 import NextJSRouter from 'next/router';
-import { FormEvent, useState, useCallback, useRef } from 'react';
+import { FormEvent, useCallback, useRef, useState } from 'react';
 import {
   useCollectionData,
   useDocumentDataOnce,
@@ -30,13 +30,13 @@ import { DefaultTopBar } from '../components/TopBar';
 import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
 import { ConstructorPageWithIdV } from '../lib/constructorPage';
 import {
+  CommentDeletionT,
+  CommentForModerationWithIdV,
+  DBPuzzleWithIdV,
   DailyStatsT,
   DailyStatsV,
-  getDateString,
-  CommentForModerationWithIdV,
   DonationsListV,
-  DBPuzzleWithIdV,
-  CommentDeletionT,
+  getDateString,
 } from '../lib/dbtypes';
 import {
   getCollection,

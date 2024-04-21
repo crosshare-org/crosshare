@@ -1,5 +1,5 @@
 import { Root } from 'hast';
-import { truncate, Options as TruncateOptions } from 'hast-util-truncate';
+import { Options as TruncateOptions, truncate } from 'hast-util-truncate';
 import { Nodes } from 'mdast-util-from-markdown/lib';
 import { Handler } from 'mdast-util-to-hast';
 import rehypeExternalLinks from 'rehype-external-links';
@@ -8,7 +8,7 @@ import remarkGfm from 'remark-gfm';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import remarkStringify from 'remark-stringify';
-import { unified, PluggableList } from 'unified';
+import { PluggableList, unified } from 'unified';
 import { Direction } from '../types';
 import { clueReferencer } from './clueReferencer';
 import { entryReferencer } from './entryReferencer';

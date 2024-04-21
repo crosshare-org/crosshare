@@ -1,6 +1,6 @@
 import { PlayWithoutUserT } from '../lib/dbtypes';
 import { AccountPrefsFlagsT } from '../lib/prefs';
-import { Direction, CheatUnit } from '../lib/types';
+import { CheatUnit, Direction } from '../lib/types';
 import { CluedGrid, nextNonBlock } from '../lib/viewableGrid';
 import { PuzzleAction } from './commonActions';
 import { GridInterfaceState, gridInterfaceReducer } from './gridReducer';

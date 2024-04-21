@@ -1,4 +1,4 @@
-import { Position, Direction, PosAndDir } from './types';
+import { Direction, PosAndDir, Position } from './types';
 
 export interface EntryBase {
   index: number;

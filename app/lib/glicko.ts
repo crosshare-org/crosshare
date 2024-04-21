@@ -11,12 +11,12 @@ import {
 } from './dbtypes';
 import { getCollection } from './firebaseAdminWrapper';
 import {
-  gFunc,
-  expectedOutcome,
-  Q,
-  Q_SQ,
   INITIAL_RATING,
   INITIAL_RD,
+  Q,
+  Q_SQ,
+  expectedOutcome,
+  gFunc,
 } from './glickoUtil';
 import { AccountPrefsV } from './prefs';
 import { Timestamp } from './timestamp';

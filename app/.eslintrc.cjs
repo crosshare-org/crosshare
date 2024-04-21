@@ -80,6 +80,12 @@ module.exports = {
     ],
     // TODO get this turned on, it's just a lot to update all at once.
     '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    'sort-imports': [
+      'error',
+      {
+        ignoreDeclarationSort: true,
+      },
+    ],
     'import/order': [
       'error',
       {

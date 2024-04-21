@@ -2,7 +2,7 @@ import orderBy from 'lodash/orderBy';
 import { useEffect, useMemo, useState } from 'react';
 import { Table } from 'react-fluid-table';
 import { FaCheck } from 'react-icons/fa';
-import { ClueListT, parseClueList, ClueEntryT } from '../lib/ginsbergCommon';
+import { ClueEntryT, ClueListT, parseClueList } from '../lib/ginsbergCommon';
 import { logAsyncErrors } from '../lib/utils';
 import { Overlay } from './Overlay';
 

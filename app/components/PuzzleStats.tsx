@@ -3,7 +3,7 @@ import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
 import { isSome } from 'fp-ts/lib/Option';
 import orderBy from 'lodash/orderBy';
 import Head from 'next/head';
-import { useReducer, useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useReducer, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { ColumnProps, Table } from 'react-fluid-table';
 import { FaShareSquare } from 'react-icons/fa';
@@ -13,17 +13,17 @@ import { entryAndCrossAtPosition } from '../lib/gridBase';
 import { useMatchMedia } from '../lib/hooks';
 import { markdownToHast } from '../lib/markdown/markdown';
 import { SMALL_AND_UP, SMALL_AND_UP_RULES } from '../lib/style';
-import { Direction, fromKeyboardEvent, PuzzleResult } from '../lib/types';
+import { Direction, PuzzleResult, fromKeyboardEvent } from '../lib/types';
 import { isMetaSolution, logAsyncErrors, timeString } from '../lib/utils';
 import {
   fromCells,
-  getCluedAcrossAndDown,
   getClueMap,
+  getCluedAcrossAndDown,
 } from '../lib/viewableGrid';
 import {
+  BuilderState,
   builderReducer,
   initialBuilderState,
-  BuilderState,
 } from '../reducers/builderReducer';
 import { KeypressAction } from '../reducers/gridReducer';
 import { ButtonAsLink } from './Buttons';

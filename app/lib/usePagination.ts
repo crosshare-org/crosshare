@@ -2,11 +2,11 @@ import {
   Query,
   QueryDocumentSnapshot,
   endBefore,
-  startAfter,
-  query as fbQuery,
   limit as fbLimit,
   limitToLast as fbLimitToLast,
+  query as fbQuery,
   getDocs,
+  startAfter,
 } from 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';

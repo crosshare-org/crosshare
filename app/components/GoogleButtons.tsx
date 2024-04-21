@@ -1,11 +1,11 @@
 import {
   GoogleAuthProvider,
-  linkWithPopup,
   OAuthProvider,
+  linkWithPopup,
   signInWithCredential,
   signInWithPopup,
 } from 'firebase/auth';
-import type { User, AuthError, UserCredential } from 'firebase/auth';
+import type { AuthError, User, UserCredential } from 'firebase/auth';
 import { query, where } from 'firebase/firestore';
 import { getValidatedAndDelete, setInCache } from '../lib/dbUtils';
 import { LegacyPlayV } from '../lib/dbtypes';

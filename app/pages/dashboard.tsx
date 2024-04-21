@@ -1,4 +1,4 @@
-import { query, where, orderBy } from 'firebase/firestore';
+import { orderBy, query, where } from 'firebase/firestore';
 import Head from 'next/head';
 import { useCallback, useMemo } from 'react';
 import { AuthProps, requiresAuth } from '../components/AuthHelpers';

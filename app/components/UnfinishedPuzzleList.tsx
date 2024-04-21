@@ -1,7 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import type { User } from 'firebase/auth';
 import { deleteDoc, orderBy, query, where } from 'firebase/firestore';
-import { useMemo, useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { ButtonAsLink } from '../components/Buttons';
 import { PuzzleResultLink } from '../components/PuzzleLink';
 import { LegacyPlayT, LegacyPlayV } from '../lib/dbtypes';

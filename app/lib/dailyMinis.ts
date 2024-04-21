@@ -1,12 +1,12 @@
 import { getDocs, limit, query, where } from 'firebase/firestore';
-import { none, some, Option, isSome } from 'fp-ts/Option';
+import { Option, isSome, none, some } from 'fp-ts/Option';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
-  prettifyDateString,
-  getDateString,
-  DBPuzzleV,
   DBPuzzleT,
+  DBPuzzleV,
+  getDateString,
+  prettifyDateString,
 } from './dbtypes';
 import { getCollection } from './firebaseWrapper';
 

@@ -7,13 +7,13 @@ import {
   useRef,
   useState,
 } from 'react';
-import { FaAngleDoubleRight, FaAngleDoubleLeft } from 'react-icons/fa';
+import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
 import { usePolyfilledResizeObserver } from '../lib/hooks';
 import {
-  SMALL_AND_UP,
   LARGE_AND_UP,
-  TINY_COL_MIN_HEIGHT,
+  SMALL_AND_UP,
   SQUARE_HEADER_HEIGHT,
+  TINY_COL_MIN_HEIGHT,
 } from '../lib/style';
 import { KeyK } from '../lib/types';
 import { KeypressAction, PasteAction } from '../reducers/gridReducer';

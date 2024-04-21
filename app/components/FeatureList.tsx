@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { MAX_WIDTH, HUGE_AND_UP } from '../lib/style';
+import { HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
 
 export function FeatureList(props: { children: ReactNode }) {
   return (

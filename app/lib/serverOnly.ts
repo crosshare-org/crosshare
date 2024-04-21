@@ -21,16 +21,16 @@ import {
   ConstructorPageWithMarkdown,
 } from './constructorPage';
 import { getMiniForDate } from './dailyMinis';
-import { DBPuzzleV, CommentWithRepliesT } from './dbtypes';
+import { CommentWithRepliesT, DBPuzzleV } from './dbtypes';
 import { EmbedOptionsT } from './embedOptions';
 import { validate as validateEmbedOptions } from './embedOptions';
 import { markdownToHast } from './markdown/markdown';
 import { isUserPatron } from './patron';
 import {
-  puzzleFromDB,
   Comment,
-  PuzzleResultWithAugmentedComments,
   Direction,
+  PuzzleResultWithAugmentedComments,
+  puzzleFromDB,
 } from './types';
 import { slugify } from './utils';
 import { addClues, fromCells, getEntryToClueMap } from './viewableGrid';

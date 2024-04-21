@@ -1,15 +1,15 @@
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { DBPuzzleT, CommentWithRepliesT, FollowersV } from './dbtypes';
+import { CommentWithRepliesT, DBPuzzleT, FollowersV } from './dbtypes';
 import { getCollection } from './firebaseAdminWrapper';
 import {
-  PuzzleWithID,
-  NotificationT,
-  commentNotification,
-  replyNotification,
   NewPuzzleNotificationT,
-  newPuzzleNotification,
+  NotificationT,
+  PuzzleWithID,
+  commentNotification,
   featuredNotification,
+  newPuzzleNotification,
+  replyNotification,
 } from './notificationTypes';
 
 function checkComments(

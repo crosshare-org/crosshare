@@ -1,4 +1,4 @@
-import { where, query, updateDoc, Timestamp, addDoc } from 'firebase/firestore';
+import { Timestamp, addDoc, query, updateDoc, where } from 'firebase/firestore';
 import * as t from 'io-ts';
 import Head from 'next/head';
 import NextJSRouter, { useRouter } from 'next/router';
@@ -12,9 +12,9 @@ import { useSnackbar } from '../../../components/Snackbar';
 import { DefaultTopBar } from '../../../components/TopBar';
 import { ArticleT, ArticleV } from '../../../lib/article';
 import {
-  getValidatedCollection,
-  getDocRef,
   getCollection,
+  getDocRef,
+  getValidatedCollection,
 } from '../../../lib/firebaseWrapper';
 import { markdownToHast } from '../../../lib/markdown/markdown';
 import { logAsyncErrors, slugify } from '../../../lib/utils';

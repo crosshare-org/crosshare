@@ -2,22 +2,22 @@ import equal from 'fast-deep-equal/es6';
 import type { Root } from 'hast';
 import { toString } from 'hast-util-to-string';
 import {
-  GridBase,
   EntryBase,
-  posForIndex,
+  GridBase,
   cellIndex,
-  valAt,
-  entryAtPosition,
   entriesFromCells,
+  entryAtPosition,
+  posForIndex,
+  valAt,
 } from './gridBase';
 import { parseClueReferences } from './parse';
 import { AccountPrefsFlagsT } from './prefs';
 import {
+  BLOCK,
   ClueT,
-  Position,
   Direction,
   PosAndDir,
-  BLOCK,
+  Position,
   Symmetry,
 } from './types';
 

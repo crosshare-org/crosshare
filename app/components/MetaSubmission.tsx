@@ -1,6 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 import type { User } from 'firebase/auth';
-import { FormEvent, useContext, useState, Dispatch } from 'react';
+import { Dispatch, FormEvent, useContext, useState } from 'react';
 import { isMetaSolution } from '../lib/utils';
 import {
   ContestRevealAction,

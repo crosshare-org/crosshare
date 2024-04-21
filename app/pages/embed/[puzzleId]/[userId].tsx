@@ -4,9 +4,9 @@ import { EmbedStyling } from '../../../components/EmbedStyling';
 import { PuzzlePage } from '../../../components/PuzzlePage';
 import { useEmbedOptions } from '../../../lib/hooks';
 import {
+  PuzzlePageProps,
   getEmbedProps,
   getPuzzlePageProps,
-  PuzzlePageProps,
 } from '../../../lib/serverOnly';
 import { withTranslation } from '../../../lib/translation';
 
