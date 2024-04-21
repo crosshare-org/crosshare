@@ -609,6 +609,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           wasEntryClick: false,
         };
       }
+      return state;
     }
   }
   return state;
