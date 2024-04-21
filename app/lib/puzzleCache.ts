@@ -1,9 +1,9 @@
-import { LruCache } from './lruCache';
-import { DBPuzzleV, DBPuzzleT } from './dbtypes';
+import { getDoc } from 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { getDoc } from 'firebase/firestore';
+import { DBPuzzleV, DBPuzzleT } from './dbtypes';
 import { getDocRef } from './firebaseWrapper';
+import { LruCache } from './lruCache';
 
 const cache =
   typeof window === 'undefined'

@@ -1,7 +1,7 @@
-import Image from 'next/image';
-import slateLogo from '../public/slate/Logo.png';
-import slateLogoDark from '../public/slate/Logo-Dark.png';
 import { type Root } from 'hast';
+import Image from 'next/image';
+import slateLogoDark from '../public/slate/Logo-Dark.png';
+import slateLogo from '../public/slate/Logo.png';
 import { Markdown } from './Markdown';
 
 interface SlateHeaderProps {

@@ -1,10 +1,9 @@
-import { Plugin } from 'unified';
-
-import { Node } from 'unist';
 import { Text, Element } from 'hast';
+import { Plugin } from 'unified';
+import { Node } from 'unist';
 import { is } from 'unist-util-is';
-import { flatMap } from './utils';
 import { parseClueReferences } from '../parse';
+import { flatMap } from './utils';
 
 export const clueReferencer: Plugin = () => {
   return (tree) => {

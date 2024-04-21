@@ -1,4 +1,3 @@
-import { ReactNode, useState, useRef } from 'react';
 import {
   useHover,
   useClick,
@@ -15,6 +14,7 @@ import {
   FloatingArrow,
   arrow,
 } from '@floating-ui/react';
+import { ReactNode, useState, useRef } from 'react';
 
 export const ToolTipText = (props: {
   text: ReactNode;

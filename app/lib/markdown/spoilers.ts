@@ -1,6 +1,6 @@
-import { spoilersSyntax } from './micromark-extension-spoilers';
-import { fromMarkdownExtension } from './mdast-util-spoilers';
 import { Plugin, Processor } from 'unified';
+import { fromMarkdownExtension } from './mdast-util-spoilers';
+import { spoilersSyntax } from './micromark-extension-spoilers';
 
 export const remarkSpoilers: Plugin = function (this: Processor) {
   const data = this.data();

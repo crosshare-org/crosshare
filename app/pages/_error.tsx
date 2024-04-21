@@ -1,7 +1,6 @@
-import NextErrorComponent from 'next/error';
-import { NextPageContext } from 'next';
 import * as Sentry from '@sentry/nextjs';
-
+import { NextPageContext } from 'next';
+import NextErrorComponent from 'next/error';
 import { ErrorPage } from '../components/ErrorPage';
 
 const LocalStorageErrorPage = () => (

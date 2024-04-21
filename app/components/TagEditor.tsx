@@ -1,3 +1,4 @@
+import * as t from 'io-ts';
 import { useEffect, useState } from 'react';
 import { getFromSessionOrDB } from '../lib/dbUtils';
 import {
@@ -9,7 +10,6 @@ import {
 import { Button } from './Buttons';
 import { LengthView } from './Inputs';
 import { useSnackbar } from './Snackbar';
-import * as t from 'io-ts';
 import { TagList } from './TagList';
 
 interface TagEditorBaseProps {

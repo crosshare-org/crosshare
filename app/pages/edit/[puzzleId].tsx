@@ -1,42 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
-
-import { requiresAuth, AuthProps } from '../../components/AuthHelpers';
-import {
-  PuzzleResult,
-  puzzleFromDB,
-  Direction,
-  removeClueSpecials,
-} from '../../lib/types';
-import { DBPuzzleV, DBPuzzleT } from '../../lib/dbtypes';
-import { getDocRef } from '../../lib/firebaseWrapper';
-import { DefaultTopBar } from '../../components/TopBar';
-import { ErrorPage } from '../../components/ErrorPage';
-import { useDocument } from 'react-firebase-hooks/firestore';
-import { fromCells, CluedEntry, addClues } from '../../lib/viewableGrid';
-import {
-  MAX_META_SUBMISSION_LENGTH,
-  MAX_STRING_LENGTH,
-  MAX_BLOG_LENGTH,
-} from '../../components/ClueMode';
-import { Button, ButtonAsLink } from '../../components/Buttons';
-import { Overlay } from '../../components/Overlay';
-import { COVER_PIC } from '../../lib/style';
-import { LengthView, LengthLimitedInput } from '../../components/Inputs';
-import dynamic from 'next/dynamic';
-import { ContactLinks } from '../../components/ContactLinks';
-import { useSnackbar } from '../../components/Snackbar';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { lightFormat } from 'date-fns/lightFormat';
-import { DateTimePicker } from '../../components/DateTimePicker';
-import { clsx, isMetaSolution, logAsyncErrors } from '../../lib/utils';
-import { EditableText } from '../../components/EditableText';
-import { AlternateSolutionEditor } from '../../components/AlternateSolutionEditor';
-import { TagList } from '../../components/TagList';
-import { TagEditor } from '../../components/TagEditor';
 import {
   arrayRemove,
   arrayUnion,
@@ -44,10 +7,46 @@ import {
   Timestamp,
   updateDoc,
 } from 'firebase/firestore';
-import { markdownToHast } from '../../lib/markdown/markdown';
-import { Markdown } from '../../components/Markdown';
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
+import dynamic from 'next/dynamic';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { useMemo, useRef, useState } from 'react';
+import { useDocument } from 'react-firebase-hooks/firestore';
+import { AlternateSolutionEditor } from '../../components/AlternateSolutionEditor';
+import { requiresAuth, AuthProps } from '../../components/AuthHelpers';
+import { Button, ButtonAsLink } from '../../components/Buttons';
+import {
+  MAX_META_SUBMISSION_LENGTH,
+  MAX_STRING_LENGTH,
+  MAX_BLOG_LENGTH,
+} from '../../components/ClueMode';
+import { ContactLinks } from '../../components/ContactLinks';
+import { DateTimePicker } from '../../components/DateTimePicker';
+import { EditableText } from '../../components/EditableText';
+import { ErrorPage } from '../../components/ErrorPage';
 import { GridContext } from '../../components/GridContext';
+import { LengthView, LengthLimitedInput } from '../../components/Inputs';
+import { Markdown } from '../../components/Markdown';
+import { Overlay } from '../../components/Overlay';
+import { useSnackbar } from '../../components/Snackbar';
+import { TagEditor } from '../../components/TagEditor';
+import { TagList } from '../../components/TagList';
+import { DefaultTopBar } from '../../components/TopBar';
+import { DBPuzzleV, DBPuzzleT } from '../../lib/dbtypes';
+import { getDocRef } from '../../lib/firebaseWrapper';
+import { markdownToHast } from '../../lib/markdown/markdown';
+import { COVER_PIC } from '../../lib/style';
 import { withTranslation } from '../../lib/translation';
+import {
+  PuzzleResult,
+  puzzleFromDB,
+  Direction,
+  removeClueSpecials,
+} from '../../lib/types';
+import { clsx, isMetaSolution, logAsyncErrors } from '../../lib/utils';
+import { fromCells, CluedEntry, addClues } from '../../lib/viewableGrid';
 import styles from './editPuzzle.module.css';
 
 export const getServerSideProps = withTranslation(() => {

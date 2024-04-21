@@ -1,5 +1,5 @@
-import * as t from 'io-ts';
 import { either } from 'fp-ts/lib/Either';
+import * as t from 'io-ts';
 
 export class Timestamp {
   constructor(private millis: number) {}

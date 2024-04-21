@@ -1,8 +1,8 @@
-import * as t from 'io-ts';
-import { timestamp } from './timestamp';
-import { DBPuzzleT, CommentWithRepliesT } from './dbtypes';
-import { Timestamp } from './timestamp';
 import { add } from 'date-fns/add';
+import * as t from 'io-ts';
+import { DBPuzzleT, CommentWithRepliesT } from './dbtypes';
+import { timestamp } from './timestamp';
+import { Timestamp } from './timestamp';
 
 const NotificationBaseV = t.type({
   /** doc id for this notification. should be idempotent since function might trigger multiple times */

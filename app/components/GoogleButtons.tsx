@@ -1,7 +1,3 @@
-import { LegacyPlayV } from '../lib/dbtypes';
-import { getValidatedAndDelete, setInCache } from '../lib/dbUtils';
-import { getAuth, getCollection } from '../lib/firebaseWrapper';
-import { event } from '../lib/gtag';
 import {
   GoogleAuthProvider,
   linkWithPopup,
@@ -10,8 +6,12 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import type { User, AuthError, UserCredential } from 'firebase/auth';
-import { ButtonAsLink } from './Buttons';
 import { query, where } from 'firebase/firestore';
+import { getValidatedAndDelete, setInCache } from '../lib/dbUtils';
+import { LegacyPlayV } from '../lib/dbtypes';
+import { getAuth, getCollection } from '../lib/firebaseWrapper';
+import { event } from '../lib/gtag';
+import { ButtonAsLink } from './Buttons';
 
 interface GoogleButtonProps {
   postSignIn?: (user: User) => Promise<void>;

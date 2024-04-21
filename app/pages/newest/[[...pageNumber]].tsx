@@ -1,19 +1,18 @@
-import { GetServerSideProps } from 'next';
-
-import { ErrorPage } from '../../components/ErrorPage';
-import { userIdToPage } from '../../lib/serverOnly';
-import Head from 'next/head';
-import { DefaultTopBar } from '../../components/TopBar';
-import { HUGE_AND_UP, MAX_WIDTH } from '../../lib/style';
-import { LinkablePuzzle, PuzzleResultLink } from '../../components/PuzzleLink';
-import { Link } from '../../components/Link';
-import { withTranslation } from '../../lib/translation';
 import { Trans, t } from '@lingui/macro';
+import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { ErrorPage } from '../../components/ErrorPage';
 import { I18nTags } from '../../components/I18nTags';
+import { Link } from '../../components/Link';
+import { LinkablePuzzle, PuzzleResultLink } from '../../components/PuzzleLink';
+import { DefaultTopBar } from '../../components/TopBar';
 import { ConstructorPageBase } from '../../lib/constructorPage';
 import { paginatedPuzzles } from '../../lib/paginatedPuzzles';
 import { isUserPatron } from '../../lib/patron';
+import { userIdToPage } from '../../lib/serverOnly';
+import { HUGE_AND_UP, MAX_WIDTH } from '../../lib/style';
+import { withTranslation } from '../../lib/translation';
 
 interface NewestPageProps {
   puzzles: (LinkablePuzzle & {

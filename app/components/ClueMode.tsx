@@ -1,10 +1,19 @@
+import { lightFormat } from 'date-fns/lightFormat';
+import type { User } from 'firebase/auth';
+import dynamic from 'next/dynamic';
 import { Dispatch, useMemo, useState } from 'react';
+import { FaInfoCircle, FaRegNewspaper } from 'react-icons/fa';
+import { markdownToHast } from '../lib/markdown/markdown';
+import { sizeTag } from '../lib/sizeTag';
+import { COVER_PIC } from '../lib/style';
+import { Timestamp } from '../lib/timestamp';
 import {
-  LengthView,
-  LengthLimitedInput,
-  LengthLimitedTextarea,
-} from './Inputs';
-import { SpinnerFinished } from './Icons';
+  dbCluesToClueTArray,
+  Direction,
+  removeClueSpecials,
+} from '../lib/types';
+import { isMetaSolution } from '../lib/utils';
+import { addClues } from '../lib/viewableGrid';
 import {
   BuilderEntry,
   SetClueAction,
@@ -23,32 +32,23 @@ import {
   SetCommentsDisabledAction,
 } from '../reducers/builderReducer';
 import { PuzzleAction } from '../reducers/commonActions';
-import { TopBarLink, TopBar } from './TopBar';
-import {
-  dbCluesToClueTArray,
-  Direction,
-  removeClueSpecials,
-} from '../lib/types';
-import { ButtonAsLink, Button } from './Buttons';
-import { COVER_PIC } from '../lib/style';
-import { Timestamp } from '../lib/timestamp';
-import { ToolTipText } from './ToolTipText';
-import { FaInfoCircle, FaRegNewspaper } from 'react-icons/fa';
-import { PublishOverlay } from './PublishOverlay';
-import { Overlay } from './Overlay';
-import dynamic from 'next/dynamic';
-import { DateTimePicker } from './DateTimePicker';
-import type { User } from 'firebase/auth';
-import { isMetaSolution } from '../lib/utils';
 import { AlternateSolutionEditor } from './AlternateSolutionEditor';
+import { ButtonAsLink, Button } from './Buttons';
+import { DateTimePicker } from './DateTimePicker';
+import { GridContext } from './GridContext';
+import { SpinnerFinished } from './Icons';
+import {
+  LengthView,
+  LengthLimitedInput,
+  LengthLimitedTextarea,
+} from './Inputs';
+import { Markdown } from './Markdown';
+import { Overlay } from './Overlay';
+import { PublishOverlay } from './PublishOverlay';
 import { TagEditor } from './TagEditor';
 import { TagList } from './TagList';
-import { sizeTag } from '../lib/sizeTag';
-import { markdownToHast } from '../lib/markdown/markdown';
-import { Markdown } from './Markdown';
-import { GridContext } from './GridContext';
-import { addClues } from '../lib/viewableGrid';
-import { lightFormat } from 'date-fns/lightFormat';
+import { ToolTipText } from './ToolTipText';
+import { TopBarLink, TopBar } from './TopBar';
 
 export const MAX_STRING_LENGTH = 2048;
 export const MAX_BLOG_LENGTH = 20000;

@@ -1,5 +1,5 @@
-import { Timestamp } from './timestamp';
 import { DBPuzzleT } from './dbtypes';
+import { Timestamp } from './timestamp';
 
 export function getMockedPuzzle(fields?: Partial<DBPuzzleT>): DBPuzzleT {
   const { pv, pvu, ...rest } = fields || {};

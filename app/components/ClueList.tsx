@@ -1,3 +1,4 @@
+import type { Root } from 'hast';
 import {
   useRef,
   Dispatch,
@@ -6,16 +7,13 @@ import {
   KeyboardEvent,
   RefObject,
 } from 'react';
-
+import { GridBase, valAt, EntryBase } from '../lib/gridBase';
+import { SMALL_AND_UP } from '../lib/style';
 import { Position, Direction } from '../lib/types';
 import { CluedEntry, RefPosition } from '../lib/viewableGrid';
-import { GridBase, valAt, EntryBase } from '../lib/gridBase';
-
 import { PuzzleAction } from '../reducers/commonActions';
 import { ClickedEntryAction } from '../reducers/gridReducer';
-import { SMALL_AND_UP } from '../lib/style';
 import { ClueText } from './ClueText';
-import type { Root } from 'hast';
 
 interface ClueListItemProps {
   dimCompleted: boolean;

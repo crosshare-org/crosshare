@@ -1,27 +1,27 @@
+import { t, Trans } from '@lingui/macro';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
+import type { User } from 'firebase/auth';
+import { useRouter } from 'next/router';
 import { useContext, useState, useEffect, Dispatch, ReactNode } from 'react';
-import { Link } from './Link';
+import { GoScreenFull } from 'react-icons/go';
 import { Direction, PuzzleResultWithAugmentedComments } from '../lib/types';
-import { PuzzleAction } from '../reducers/commonActions';
 import {
   isMetaSolution,
   logAsyncErrors,
   slugify,
   timeString,
 } from '../lib/utils';
-import type { User } from 'firebase/auth';
+import { PuzzleAction } from '../reducers/commonActions';
+import { AuthContext } from './AuthContext';
+import { Button, ButtonAsLink } from './Buttons';
 import { Comments } from './Comments';
 import { EmbedColorMode, EmbedContext } from './EmbedContext';
-import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
-import { NextPuzzleLink } from './Puzzle';
-import { Overlay } from './Overlay';
-import { PuzzleHeading } from './PuzzleHeading';
-import { Button, ButtonAsLink } from './Buttons';
-import { MetaSubmission } from './MetaSubmission';
-import { GoScreenFull } from 'react-icons/go';
-import { AuthContext } from './AuthContext';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
-import { t, Trans } from '@lingui/macro';
-import { useRouter } from 'next/router';
+import { Link } from './Link';
+import { MetaSubmission } from './MetaSubmission';
+import { Overlay } from './Overlay';
+import { NextPuzzleLink } from './Puzzle';
+import { PuzzleHeading } from './PuzzleHeading';
 import { SharingButtons } from './SharingButtons';
 import { PastDistanceToNow } from './TimeDisplay';
 

@@ -1,3 +1,6 @@
+import useEventListener from '@use-it/event-listener';
+import type { User } from 'firebase/auth';
+import { isSome } from 'fp-ts/lib/Option';
 import {
   useState,
   useReducer,
@@ -8,9 +11,7 @@ import {
   Dispatch,
   MouseEvent,
 } from 'react';
-import { eqSet, STORAGE_KEY } from '../lib/utils';
-import { ContactLinks } from './ContactLinks';
-import { isSome } from 'fp-ts/lib/Option';
+import { CgSidebarRight } from 'react-icons/cg';
 import {
   FaRegNewspaper,
   FaHammer,
@@ -31,17 +32,71 @@ import {
   FaRegFile,
   FaEyeSlash,
 } from 'react-icons/fa';
-import { CgSidebarRight } from 'react-icons/cg';
-import { MdRefresh } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
-import useEventListener from '@use-it/event-listener';
+import { MdRefresh } from 'react-icons/md';
 import { FixedSizeList as List } from 'react-window';
-
+import * as WordDB from '../lib/WordDB';
 import {
   addAutofillFieldsToEntry,
   numMatchesForEntry,
 } from '../lib/autofillGrid';
+import * as BA from '../lib/bitArray';
+import { importFile, exportFile, ExportProps } from '../lib/converter';
+import { isTextInput } from '../lib/domUtils';
+import { getCrosses, valAt, entryAndCrossAtPosition } from '../lib/gridBase';
+import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
+import { fromLocalStorage } from '../lib/storage';
+import { Timestamp } from '../lib/timestamp';
+import {
+  Position,
+  Direction,
+  PuzzleT,
+  isAutofillCompleteMessage,
+  isAutofillResultMessage,
+  WorkerMessage,
+  LoadDBMessage,
+  AutofillMessage,
+  CancelAutofillMessage,
+  PuzzleInProgressV,
+  PuzzleInProgressT,
+  fromKeyString,
+  KeyK,
+  fromKeyboardEvent,
+  PartialBy,
+  Symmetry,
+} from '../lib/types';
+import { eqSet, STORAGE_KEY } from '../lib/utils';
 import { ViewableEntry } from '../lib/viewableGrid';
+import { getAutofillWorker } from '../lib/workerLoader';
+import {
+  BuilderState,
+  builderReducer,
+  SymmetryAction,
+  ClickedFillAction,
+  SetHighlightAction,
+  PublishAction,
+  initialBuilderState,
+  BuilderGrid,
+  ImportPuzAction,
+  SetShowDownloadLink,
+  getClueProps,
+} from '../reducers/builderReducer';
+import { PuzzleAction } from '../reducers/commonActions';
+import {
+  KeypressAction,
+  ClickedEntryAction,
+  CopyAction,
+  PasteAction,
+  CutAction,
+} from '../reducers/gridReducer';
+import { AuthProps } from './AuthHelpers';
+import styles from './Builder.module.css';
+import { ButtonReset } from './Buttons';
+import { ClueMode } from './ClueMode';
+import { ContactLinks } from './ContactLinks';
+import { FullscreenCSS } from './FullscreenCSS';
+import { GridView } from './Grid';
+import { Histogram } from './Histogram';
 import {
   Rebus,
   SpinnerWorking,
@@ -61,51 +116,12 @@ import {
   CommaKey,
   KeyIcon,
 } from './Icons';
-import { AuthProps } from './AuthHelpers';
-import { Histogram } from './Histogram';
+import { Keyboard } from './Keyboard';
+import { NewPuzzleForm } from './NewPuzzleForm';
+import { Overlay } from './Overlay';
+import { SquareAndCols } from './Page';
 import { PublishOverlay } from './PublishOverlay';
-import { Timestamp } from '../lib/timestamp';
-import { GridView } from './Grid';
-import { getCrosses, valAt, entryAndCrossAtPosition } from '../lib/gridBase';
-import {
-  Position,
-  Direction,
-  PuzzleT,
-  isAutofillCompleteMessage,
-  isAutofillResultMessage,
-  WorkerMessage,
-  LoadDBMessage,
-  AutofillMessage,
-  CancelAutofillMessage,
-  PuzzleInProgressV,
-  PuzzleInProgressT,
-  fromKeyString,
-  KeyK,
-  fromKeyboardEvent,
-  PartialBy,
-  Symmetry,
-} from '../lib/types';
-import {
-  BuilderState,
-  builderReducer,
-  SymmetryAction,
-  ClickedFillAction,
-  SetHighlightAction,
-  PublishAction,
-  initialBuilderState,
-  BuilderGrid,
-  ImportPuzAction,
-  SetShowDownloadLink,
-  getClueProps,
-} from '../reducers/builderReducer';
-import {
-  KeypressAction,
-  ClickedEntryAction,
-  CopyAction,
-  PasteAction,
-  CutAction,
-} from '../reducers/gridReducer';
-import { PuzzleAction } from '../reducers/commonActions';
+import { Snackbar, useSnackbar } from './Snackbar';
 import {
   NestedDropDown,
   TopBarLink,
@@ -115,25 +131,6 @@ import {
   TopBarDropDown,
   DefaultTopBar,
 } from './TopBar';
-import { SquareAndCols } from './Page';
-import { ClueMode } from './ClueMode';
-
-import * as BA from '../lib/bitArray';
-import * as WordDB from '../lib/WordDB';
-import { Overlay } from './Overlay';
-import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
-
-import { Keyboard } from './Keyboard';
-import { ButtonReset } from './Buttons';
-import { Snackbar, useSnackbar } from './Snackbar';
-import { importFile, exportFile, ExportProps } from '../lib/converter';
-import type { User } from 'firebase/auth';
-import { NewPuzzleForm } from './NewPuzzleForm';
-import { getAutofillWorker } from '../lib/workerLoader';
-import { isTextInput } from '../lib/domUtils';
-import { fromLocalStorage } from '../lib/storage';
-import { FullscreenCSS } from './FullscreenCSS';
-import styles from './Builder.module.css';
 
 type BuilderProps = PartialBy<
   Omit<

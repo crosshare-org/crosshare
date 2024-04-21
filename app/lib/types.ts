@@ -1,10 +1,9 @@
 import { isSome, none, Option, some } from 'fp-ts/lib/Option';
-import * as t from 'io-ts';
-import type { WordDBT } from './WordDB';
-
-import { DBPuzzleT, CommentWithRepliesT, GlickoScoreT } from '../lib/dbtypes';
-import { ConstructorPageWithMarkdown } from '../lib/constructorPage';
 import type { Root } from 'hast';
+import * as t from 'io-ts';
+import { ConstructorPageWithMarkdown } from '../lib/constructorPage';
+import { DBPuzzleT, CommentWithRepliesT, GlickoScoreT } from '../lib/dbtypes';
+import type { WordDBT } from './WordDB';
 import { isTextInput } from './domUtils';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;

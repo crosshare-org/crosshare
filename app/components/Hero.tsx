@@ -1,7 +1,7 @@
-import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
-import { Link } from './Link';
-import { Logo } from './Icons';
 import { ReactNode } from 'react';
+import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
+import { Logo } from './Icons';
+import { Link } from './Link';
 
 export function Hero(props: { text: string; children?: ReactNode }) {
   return (

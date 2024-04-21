@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as t from 'io-ts';
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { firebaseConfig } from '../firebaseConfig';
-import { connectStorageEmulator, getStorage as gS } from 'firebase/storage';
 import {
   connectAuthEmulator,
   getAuth as gA,
@@ -19,12 +16,15 @@ import {
   Timestamp as FBTimestamp,
   connectFirestoreEmulator,
 } from 'firebase/firestore';
-import cloneDeepWith from 'lodash/cloneDeepWith';
-import { isTimestamp } from './timestamp';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { CollectionReference } from 'firebase/firestore';
+import { connectStorageEmulator, getStorage as gS } from 'firebase/storage';
+import { isRight } from 'fp-ts/lib/Either';
+import * as t from 'io-ts';
+import { PathReporter } from 'io-ts/lib/PathReporter';
+import cloneDeepWith from 'lodash/cloneDeepWith';
+import { firebaseConfig } from '../firebaseConfig';
 import { firebaseConfig as firebaseEmulatorConfig } from '../firebaseConfig.emulators';
+import { isTimestamp } from './timestamp';
 
 // Initialize Firebase
 let App: FirebaseApp;

@@ -1,14 +1,13 @@
-import { ReactElement, ComponentType, ReactNode } from 'react';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { render, RenderOptions, RenderResult } from '@testing-library/react';
-
+import type { User } from 'firebase/auth';
+import { GetServerSidePropsResult } from 'next';
+import { ReactElement, ComponentType, ReactNode } from 'react';
 import { AuthContext } from '../components/AuthContext';
 import { SnackbarProvider } from '../components/Snackbar';
-
-import { GetServerSidePropsResult } from 'next';
-import { I18nProvider } from '@lingui/react';
-import { i18n } from '@lingui/core';
+import { messages as messagesEn } from '../locales/en/messages';
 import { hasOwnProperty } from './types';
-import type { User } from 'firebase/auth';
 
 export const getUser = (uid: string, isAnonymous: boolean) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
@@ -23,8 +22,6 @@ export const getUser = (uid: string, isAnonymous: boolean) => {
 };
 
 export const anonymousUser = getUser('anonymous-user-id', true);
-
-import { messages as messagesEn } from '../locales/en/messages';
 
 i18n.load({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

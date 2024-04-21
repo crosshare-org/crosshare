@@ -1,3 +1,6 @@
+import { css } from '@emotion/react';
+import { Trans, t } from '@lingui/macro';
+import { updateDoc } from 'firebase/firestore';
 import {
   ReactNode,
   useState,
@@ -7,25 +10,6 @@ import {
   useEffect,
   useCallback,
 } from 'react';
-
-import { IoMdCloseCircleOutline } from 'react-icons/io';
-import { AuthContext } from './AuthContext';
-import { Link } from './Link';
-import { Overlay } from './Overlay';
-import { Logo } from './Icons';
-import {
-  HEADER_HEIGHT,
-  SMALL_AND_UP,
-  HAS_PHYSICAL_KEYBOARD,
-  LARGE_AND_UP,
-} from '../lib/style';
-import { NotificationT } from '../lib/notificationTypes';
-import { logAsyncErrors, slugify } from '../lib/utils';
-import { EmbedContext } from './EmbedContext';
-import { Trans, t } from '@lingui/macro';
-import { updateDoc } from 'firebase/firestore';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { ButtonAsLink, ButtonReset } from './Buttons';
 import {
   FaComment,
   FaComments,
@@ -35,7 +19,22 @@ import {
   FaUser,
   FaUserLock,
 } from 'react-icons/fa';
-import { css } from '@emotion/react';
+import { IoMdCloseCircleOutline } from 'react-icons/io';
+import { getDocRef } from '../lib/firebaseWrapper';
+import { NotificationT } from '../lib/notificationTypes';
+import {
+  HEADER_HEIGHT,
+  SMALL_AND_UP,
+  HAS_PHYSICAL_KEYBOARD,
+  LARGE_AND_UP,
+} from '../lib/style';
+import { logAsyncErrors, slugify } from '../lib/utils';
+import { AuthContext } from './AuthContext';
+import { ButtonAsLink, ButtonReset } from './Buttons';
+import { EmbedContext } from './EmbedContext';
+import { Logo } from './Icons';
+import { Link } from './Link';
+import { Overlay } from './Overlay';
 import styles from './TopBar.module.css';
 
 export const TopBarDropDown = (props: {

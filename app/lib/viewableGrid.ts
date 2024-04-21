@@ -1,3 +1,6 @@
+import equal from 'fast-deep-equal/es6';
+import type { Root } from 'hast';
+import { toString } from 'hast-util-to-string';
 import {
   GridBase,
   EntryBase,
@@ -7,6 +10,8 @@ import {
   entryAtPosition,
   entriesFromCells,
 } from './gridBase';
+import { parseClueReferences } from './parse';
+import { AccountPrefsFlagsT } from './prefs';
 import {
   ClueT,
   Position,
@@ -15,11 +20,6 @@ import {
   BLOCK,
   Symmetry,
 } from './types';
-import { AccountPrefsFlagsT } from './prefs';
-import type { Root } from 'hast';
-import { toString } from 'hast-util-to-string';
-import { parseClueReferences } from './parse';
-import equal from 'fast-deep-equal/es6';
 
 export interface ViewableEntry extends EntryBase {
   labelNumber: number;

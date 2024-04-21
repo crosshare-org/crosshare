@@ -1,3 +1,5 @@
+import { Autofiller } from './Autofiller';
+import { setDb } from './WordDB';
 import {
   AutofillResultMessage,
   AutofillCompleteMessage,
@@ -6,8 +8,6 @@ import {
   isAutofillMessage,
   isCancelAutofillMessage,
 } from './types';
-import { Autofiller } from './Autofiller';
-import { setDb } from './WordDB';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
 const ctx: Worker = self as any;

@@ -1,16 +1,15 @@
-import { useState, useCallback, FormEvent, ReactNode } from 'react';
-import NextJSRouter from 'next/router';
-import type { User } from 'firebase/auth';
-
-import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
-import { Overlay } from './Overlay';
-import { Emoji } from './Emoji';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { DBPuzzleT } from '../lib/dbtypes';
-import { slugify, STORAGE_KEY } from '../lib/utils';
 import { lightFormat } from 'date-fns/lightFormat';
-import { ButtonAsLink, Button } from './Buttons';
+import type { User } from 'firebase/auth';
 import { serverTimestamp, setDoc } from 'firebase/firestore';
+import NextJSRouter from 'next/router';
+import { useState, useCallback, FormEvent, ReactNode } from 'react';
+import { DBPuzzleT } from '../lib/dbtypes';
+import { getDocRef } from '../lib/firebaseWrapper';
+import { slugify, STORAGE_KEY } from '../lib/utils';
+import { ButtonAsLink, Button } from './Buttons';
+import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
+import { Emoji } from './Emoji';
+import { Overlay } from './Overlay';
 
 export function PublishOverlay(props: {
   id: string;

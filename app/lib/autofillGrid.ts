@@ -1,3 +1,4 @@
+import { matchingBitmap, minCost, updateBitmap, numMatches } from './WordDB';
 import * as BA from './bitArray';
 import {
   GridBase,
@@ -8,7 +9,6 @@ import {
   entriesFromCells,
   getCrosses,
 } from './gridBase';
-import { matchingBitmap, minCost, updateBitmap, numMatches } from './WordDB';
 
 interface AutofillEntry extends EntryBase {
   length: number; // Length in chars - might be different than cells.length due to rebus

@@ -1,3 +1,9 @@
+import equal from 'fast-deep-equal';
+import { DBPuzzleT } from '../lib/dbtypes';
+import { getDocId } from '../lib/firebaseWrapper';
+import { gridWithEntrySet } from '../lib/gridBase';
+import { GridSelection, emptySelection } from '../lib/selection';
+import { Timestamp } from '../lib/timestamp';
 import {
   Direction,
   PuzzleInProgressT,
@@ -6,25 +12,19 @@ import {
   EMPTY,
   Position,
 } from '../lib/types';
-import { DBPuzzleT } from '../lib/dbtypes';
 import {
   ViewableGrid,
   ViewableEntry,
   fromCells,
   gridEqual,
 } from '../lib/viewableGrid';
-import { gridWithEntrySet } from '../lib/gridBase';
-import { Timestamp } from '../lib/timestamp';
-import equal from 'fast-deep-equal';
-import { getDocId } from '../lib/firebaseWrapper';
-import { GridSelection, emptySelection } from '../lib/selection';
+import { postEdit, validateGrid } from './builderUtils';
+import { PuzzleAction } from './commonActions';
 import {
   GridInterfaceState,
   closeRebus,
   gridInterfaceReducer,
 } from './gridReducer';
-import { PuzzleAction } from './commonActions';
-import { postEdit, validateGrid } from './builderUtils';
 
 export type BuilderEntry = ViewableEntry;
 export type BuilderGrid = ViewableGrid<BuilderEntry>;

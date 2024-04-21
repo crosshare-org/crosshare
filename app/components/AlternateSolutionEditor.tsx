@@ -1,4 +1,5 @@
 import useEventListener from '@use-it/event-listener';
+import { isSome } from 'fp-ts/lib/Option';
 import {
   useCallback,
   useReducer,
@@ -15,6 +16,7 @@ import {
   FaVolumeMute,
   FaKeyboard,
 } from 'react-icons/fa';
+import { isTextInput } from '../lib/domUtils';
 import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
 import {
   Direction,
@@ -22,7 +24,15 @@ import {
   fromKeyString,
   KeyK,
 } from '../lib/types';
+import { logAsyncErrors } from '../lib/utils';
 import { fromCells } from '../lib/viewableGrid';
+import {
+  gridInterfaceReducer,
+  KeypressAction,
+  PasteAction,
+} from '../reducers/gridReducer';
+import styles from './AlternateSolutionEditor.module.css';
+import { GridView } from './Grid';
 import { Rebus, EscapeKey } from './Icons';
 import { Keyboard } from './Keyboard';
 import {
@@ -31,16 +41,6 @@ import {
   TopBarDropDown,
   TopBarDropDownLink,
 } from './TopBar';
-import {
-  gridInterfaceReducer,
-  KeypressAction,
-  PasteAction,
-} from '../reducers/gridReducer';
-import { isSome } from 'fp-ts/lib/Option';
-import { GridView } from './Grid';
-import { logAsyncErrors } from '../lib/utils';
-import { isTextInput } from '../lib/domUtils';
-import styles from './AlternateSolutionEditor.module.css';
 
 export function AlternateSolutionEditor(props: {
   grid: string[];

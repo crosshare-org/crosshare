@@ -1,11 +1,9 @@
 import { useRef, useEffect, useState, useContext } from 'react';
 import { createPortal } from 'react-dom';
-
 import { IoMdCloseCircleOutline } from 'react-icons/io';
-
 import { SMALL_AND_UP } from '../lib/style';
-import { CoverPic } from './Images';
 import { EmbedContext } from './EmbedContext';
+import { CoverPic } from './Images';
 
 export const Overlay = (props: {
   coverImage?: string | null;

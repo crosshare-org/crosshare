@@ -1,33 +1,33 @@
-import Head from 'next/head';
+import { Trans, t } from '@lingui/macro';
+import { isSome } from 'fp-ts/lib/Option';
 import { GetServerSideProps } from 'next';
-import { getMiniForDate } from '../lib/dailyMinis';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { useContext } from 'react';
+import { AuthContext } from '../components/AuthContext';
+import { ContactLinks } from '../components/ContactLinks';
+import { CreateShareSection } from '../components/CreateShareSection';
+import { I18nTags } from '../components/I18nTags';
+import { PatronIcon } from '../components/Icons';
 import { Link } from '../components/Link';
-import { puzzleFromDB } from '../lib/types';
-import { DefaultTopBar } from '../components/TopBar';
 import {
   toLinkablePuzzle,
   LinkablePuzzle,
   PuzzleResultLink,
 } from '../components/PuzzleLink';
-import { userIdToPage } from '../lib/serverOnly';
-import { PAGE_SIZE } from './featured/[pageNumber]';
-import { useContext } from 'react';
-import { AuthContext } from '../components/AuthContext';
-import { ContactLinks } from '../components/ContactLinks';
-import { CreateShareSection } from '../components/CreateShareSection';
-import { SMALL_AND_UP } from '../lib/style';
+import { DefaultTopBar } from '../components/TopBar';
 import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList';
 import { ArticleT, validate } from '../lib/article';
-import { Trans, t } from '@lingui/macro';
-import { withTranslation } from '../lib/translation';
 import { ConstructorPageBase } from '../lib/constructorPage';
-import { I18nTags } from '../components/I18nTags';
-import { useRouter } from 'next/router';
+import { getMiniForDate } from '../lib/dailyMinis';
+import { getCollection } from '../lib/firebaseAdminWrapper';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles';
 import { isUserPatron } from '../lib/patron';
-import { isSome } from 'fp-ts/lib/Option';
-import { getCollection } from '../lib/firebaseAdminWrapper';
-import { PatronIcon } from '../components/Icons';
+import { userIdToPage } from '../lib/serverOnly';
+import { SMALL_AND_UP } from '../lib/style';
+import { withTranslation } from '../lib/translation';
+import { puzzleFromDB } from '../lib/types';
+import { PAGE_SIZE } from './featured/[pageNumber]';
 
 type HomepagePuz = LinkablePuzzle & {
   constructorPage: ConstructorPageBase | null;

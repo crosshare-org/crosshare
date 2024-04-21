@@ -1,17 +1,17 @@
+import { updateProfile } from 'firebase/auth';
+import { query, where } from 'firebase/firestore';
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
-import { ConstructorPageV } from './constructorPage';
-import { NotificationV, NotificationT } from './notificationTypes';
-import { AccountPrefsV } from './prefs';
 import { AuthContextValue } from '../components/AuthContext';
-import { parseUserInfo } from './userinfo';
-import { updateProfile } from 'firebase/auth';
-import { query, where } from 'firebase/firestore';
+import { ConstructorPageV } from './constructorPage';
 import { getAuth, getCollection, getDocRef } from './firebaseWrapper';
 import { getDisplayName } from './hooks';
+import { NotificationV, NotificationT } from './notificationTypes';
+import { AccountPrefsV } from './prefs';
+import { parseUserInfo } from './userinfo';
 import { logAsyncErrors } from './utils';
 
 export function useAuth(): AuthContextValue {

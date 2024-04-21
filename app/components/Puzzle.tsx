@@ -1,3 +1,12 @@
+import { t, Trans } from '@lingui/macro';
+import useEventListener from '@use-it/event-listener';
+import type { User } from 'firebase/auth';
+import { updateDoc } from 'firebase/firestore';
+import { isSome } from 'fp-ts/lib/Option';
+import { type Root } from 'hast';
+import dynamic from 'next/dynamic';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
 import {
   useReducer,
   useEffect,
@@ -9,8 +18,6 @@ import {
   ReactNode,
   memo,
 } from 'react';
-import Head from 'next/head';
-import { ImEmbed } from 'react-icons/im';
 import {
   FaListOl,
   FaGlasses,
@@ -31,11 +38,76 @@ import {
   FaMoon,
   FaCog,
 } from 'react-icons/fa';
-import { ClueText } from './ClueText';
+import { ImEmbed } from 'react-icons/im';
 import { IoMdStats } from 'react-icons/io';
-import useEventListener from '@use-it/event-listener';
-
+import { PlayWithoutUserT } from '../lib/dbtypes';
+import { isTextInput } from '../lib/domUtils';
+import { getDocRef, signInAnonymously } from '../lib/firebaseWrapper';
+import { entryAndCrossAtPosition, entryIndexAtPosition } from '../lib/gridBase';
+import {
+  usePersistedBoolean,
+  useMatchMedia,
+  useDarkModeControl,
+  useIsExistingDarkMode,
+} from '../lib/hooks';
+import { removeSpoilers } from '../lib/markdown/markdown';
+import { isNewPuzzleNotification } from '../lib/notificationTypes';
+import { cachePlay, writePlayToDB, isDirty } from '../lib/plays';
+import { PuzzlePageResultProps } from '../lib/serverOnly';
+import {
+  LARGE_AND_UP,
+  SMALL_AND_UP,
+  SMALL_AND_UP_RULES,
+  SQUARE_HEADER_HEIGHT,
+} from '../lib/style';
+import { Timestamp } from '../lib/timestamp';
+import {
+  Direction,
+  BLOCK,
+  getClueText,
+  KeyK,
+  fromKeyboardEvent,
+  fromKeyString,
+  CheatUnit,
+} from '../lib/types';
+import {
+  isMetaSolution,
+  logAsyncErrors,
+  slugify,
+  timeString,
+} from '../lib/utils';
+import {
+  fromCells,
+  addClues,
+  getEntryToClueMap,
+  getRefs,
+  type CluedEntry,
+} from '../lib/viewableGrid';
+import { PuzzleAction } from '../reducers/commonActions';
+import { KeypressAction, PasteAction } from '../reducers/gridReducer';
+import {
+  CheatAction,
+  ToggleAutocheckAction,
+  ToggleClueViewAction,
+  LoadPlayAction,
+  RanSuccessEffectsAction,
+  RanMetaSubmitEffectsAction,
+  puzzleReducer,
+  advanceActiveToNonBlock,
+} from '../reducers/puzzleReducer';
+import { AuthContext } from './AuthContext';
+import { AuthPropsOptional } from './AuthHelpers';
+import { Button } from './Buttons';
 import { ClueList } from './ClueList';
+import { ClueText } from './ClueText';
+import { CrosshareAudioContext } from './CrosshareAudioContext';
+import { DownsOnlyContext } from './DownsOnlyContext';
+import { EmbedContext } from './EmbedContext';
+import { Emoji } from './Emoji';
+import { FullscreenCSS } from './FullscreenCSS';
+import { GridView } from './Grid';
+import { GridContext } from './GridContext';
+import { I18nTags } from './I18nTags';
 import {
   EscapeKey,
   CheckSquare,
@@ -48,50 +120,8 @@ import {
   SpinnerFinished,
   AutoCheck,
 } from './Icons';
-import { AuthPropsOptional } from './AuthHelpers';
-import { CrosshareAudioContext } from './CrosshareAudioContext';
+import { Keyboard } from './Keyboard';
 import { Overlay } from './Overlay';
-import { GridView } from './Grid';
-import {
-  Direction,
-  BLOCK,
-  getClueText,
-  KeyK,
-  fromKeyboardEvent,
-  fromKeyString,
-  CheatUnit,
-} from '../lib/types';
-import {
-  fromCells,
-  addClues,
-  getEntryToClueMap,
-  getRefs,
-  type CluedEntry,
-} from '../lib/viewableGrid';
-import { entryAndCrossAtPosition, entryIndexAtPosition } from '../lib/gridBase';
-import { cachePlay, writePlayToDB, isDirty } from '../lib/plays';
-import { PlayWithoutUserT } from '../lib/dbtypes';
-import {
-  CheatAction,
-  ToggleAutocheckAction,
-  ToggleClueViewAction,
-  LoadPlayAction,
-  RanSuccessEffectsAction,
-  RanMetaSubmitEffectsAction,
-  puzzleReducer,
-  advanceActiveToNonBlock,
-} from '../reducers/puzzleReducer';
-import { KeypressAction, PasteAction } from '../reducers/gridReducer';
-import { PuzzleAction } from '../reducers/commonActions';
-import {
-  TopBar,
-  TopBarLink,
-  TopBarDropDownLink,
-  TopBarDropDownLinkA,
-  TopBarDropDown,
-  TopBarDropDownLinkSimpleA,
-  NestedDropDown,
-} from './TopBar';
 import {
   SLATE_PADDING_LARGE,
   SLATE_PADDING_MED,
@@ -100,50 +130,12 @@ import {
   TwoCol,
 } from './Page';
 import {
-  usePersistedBoolean,
-  useMatchMedia,
-  useDarkModeControl,
-  useIsExistingDarkMode,
-} from '../lib/hooks';
-import {
-  isMetaSolution,
-  logAsyncErrors,
-  slugify,
-  timeString,
-} from '../lib/utils';
-import { getDocRef, signInAnonymously } from '../lib/firebaseWrapper';
-import type { User } from 'firebase/auth';
-import { Emoji } from './Emoji';
-import {
-  LARGE_AND_UP,
-  SMALL_AND_UP,
-  SMALL_AND_UP_RULES,
-  SQUARE_HEADER_HEIGHT,
-} from '../lib/style';
-import { Keyboard } from './Keyboard';
-import { useRouter } from 'next/router';
-import { Button } from './Buttons';
-import { useSnackbar } from './Snackbar';
-import { isNewPuzzleNotification } from '../lib/notificationTypes';
-import { PuzzlePageResultProps } from '../lib/serverOnly';
-import { EmbedContext } from './EmbedContext';
-import dynamic from 'next/dynamic';
-import {
   OverlayType,
   PuzzleOverlay,
   PuzzleOverlayBaseProps,
 } from './PuzzleOverlay';
-import { I18nTags } from './I18nTags';
-import { t, Trans } from '@lingui/macro';
-import { isSome } from 'fp-ts/lib/Option';
-import { GridContext } from './GridContext';
-import { DownsOnlyContext } from './DownsOnlyContext';
-import { Timestamp } from '../lib/timestamp';
-import { updateDoc } from 'firebase/firestore';
-import { AuthContext } from './AuthContext';
-import { type Root } from 'hast';
-import { SlateHeader } from './SlateHeader';
 import { SlateColorTheme } from './SlateColorTheme';
+import { SlateHeader } from './SlateHeader';
 import {
   AutoCheckActive,
   Check,
@@ -155,11 +147,18 @@ import {
   Stats,
   Timer,
 } from './SlateIcons';
-import { removeSpoilers } from '../lib/markdown/markdown';
 import { SlateBegin, SlatePause } from './SlateOverlays';
+import { useSnackbar } from './Snackbar';
 import { SolverPreferencesList } from './SolverPreferencesList';
-import { isTextInput } from '../lib/domUtils';
-import { FullscreenCSS } from './FullscreenCSS';
+import {
+  TopBar,
+  TopBarLink,
+  TopBarDropDownLink,
+  TopBarDropDownLinkA,
+  TopBarDropDown,
+  TopBarDropDownLinkSimpleA,
+  NestedDropDown,
+} from './TopBar';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay),

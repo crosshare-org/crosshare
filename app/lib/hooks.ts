@@ -1,13 +1,13 @@
-import { useState, useCallback, useEffect, RefObject } from 'react';
-import { ConstructorPageT } from './constructorPage';
-import useResizeObserver from 'use-resize-observer';
-import type { User } from 'firebase/auth';
-import { ERROR_COLOR, LINK, PRIMARY, VERIFIED_COLOR } from './style';
-import { parseToRgba } from 'color2k';
-import { EmbedOptionsT } from './embedOptions';
 import useEventListener from '@use-it/event-listener';
+import { parseToRgba } from 'color2k';
+import type { User } from 'firebase/auth';
+import { useState, useCallback, useEffect, RefObject } from 'react';
+import useResizeObserver from 'use-resize-observer';
 import { EmbedColorMode, EmbedContextValue } from '../components/EmbedContext';
 import { EmbedStylingProps } from '../components/EmbedStyling';
+import { ConstructorPageT } from './constructorPage';
+import { EmbedOptionsT } from './embedOptions';
+import { ERROR_COLOR, LINK, PRIMARY, VERIFIED_COLOR } from './style';
 import { logAsyncErrors } from './utils';
 
 // pass a query like `(min-width: 768px)`

@@ -1,18 +1,18 @@
-import { useState, useEffect, useContext, useMemo, useRef } from 'react';
+import type { User } from 'firebase/auth';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import type { User } from 'firebase/auth';
-import { AuthContext } from './AuthContext';
-import { Puzzle } from './Puzzle';
-import { getDocRef } from '../lib/firebaseWrapper';
+import { useState, useEffect, useContext, useMemo, useRef } from 'react';
+import { useDocument } from 'react-firebase-hooks/firestore';
 import { PlayWithoutUserV, PlayWithoutUserT } from '../lib/dbtypes';
+import { getDocRef } from '../lib/firebaseWrapper';
 import { getPlayFromCache, cachePlay } from '../lib/plays';
+import { AccountPrefsT } from '../lib/prefs';
+import { PuzzlePageProps, PuzzlePageResultProps } from '../lib/serverOnly';
+import { isMetaSolution } from '../lib/utils';
+import { AuthContext } from './AuthContext';
 import { ErrorPage } from './ErrorPage';
 import { Link } from './Link';
-import { useDocument } from 'react-firebase-hooks/firestore';
-import { PuzzlePageProps, PuzzlePageResultProps } from '../lib/serverOnly';
-import { AccountPrefsT } from '../lib/prefs';
-import { isMetaSolution } from '../lib/utils';
+import { Puzzle } from './Puzzle';
 
 export function PuzzlePage(props: PuzzlePageProps) {
   if ('error' in props) {

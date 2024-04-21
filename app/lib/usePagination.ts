@@ -1,7 +1,3 @@
-import * as t from 'io-ts';
-import { useEffect, useState } from 'react';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   Query,
   QueryDocumentSnapshot,
@@ -12,6 +8,10 @@ import {
   limitToLast as fbLimitToLast,
   getDocs,
 } from 'firebase/firestore';
+import { isRight } from 'fp-ts/lib/Either';
+import * as t from 'io-ts';
+import { PathReporter } from 'io-ts/lib/PathReporter';
+import { useEffect, useState } from 'react';
 import { logAsyncErrors } from './utils';
 
 export function usePaginatedQuery<A, N>(

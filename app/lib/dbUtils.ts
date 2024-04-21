@@ -1,10 +1,10 @@
-import * as t from 'io-ts';
+import { deleteDoc, getDoc, getDocs, Query, setDoc } from 'firebase/firestore';
 import { isRight } from 'fp-ts/lib/Either';
+import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { downloadTimestamped } from './dbtypes';
-import { Timestamp } from './timestamp';
 import { getDocRef } from './firebaseWrapper';
-import { deleteDoc, getDoc, getDocs, Query, setDoc } from 'firebase/firestore';
+import { Timestamp } from './timestamp';
 
 interface CacheSetOptionsRequired<A> {
   collection: string;

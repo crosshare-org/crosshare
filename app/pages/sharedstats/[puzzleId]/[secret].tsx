@@ -1,14 +1,14 @@
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
+import { GetServerSideProps } from 'next';
+import { StatsPage } from '../../../components/PuzzleStats';
 import {
   DBPuzzleV,
   PuzzleStatsV,
   PuzzleStatsViewT,
 } from '../../../lib/dbtypes';
-import { puzzleFromDB, PuzzleResult } from '../../../lib/types';
-import { StatsPage } from '../../../components/PuzzleStats';
-import { GetServerSideProps } from 'next';
 import { getCollection } from '../../../lib/firebaseAdminWrapper';
+import { puzzleFromDB, PuzzleResult } from '../../../lib/types';
 
 interface PageProps {
   puzzle: Omit<PuzzleResult, 'comments'>;

@@ -1,5 +1,5 @@
-import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/These';
+import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 const ClueEntryV = t.type({

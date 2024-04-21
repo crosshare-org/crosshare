@@ -2,12 +2,12 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
 import { getCollection, toFirestore } from './firebaseAdminWrapper';
-import { notificationsForPuzzleChange } from './notifications';
 import {
   isNewPuzzleNotification,
   NotificationT,
   NotificationV,
 } from './notificationTypes';
+import { notificationsForPuzzleChange } from './notifications';
 import { sizeTag } from './sizeTag';
 import { Timestamp } from './timestamp';
 import { buildTagIndex, eqSet } from './utils';

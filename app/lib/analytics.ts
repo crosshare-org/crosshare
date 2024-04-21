@@ -1,9 +1,9 @@
 /* This gets used by the analytics cron function in the `functions` directory.
 
 It lives here so we can test it. */
-import { PathReporter } from 'io-ts/lib/PathReporter';
+import { Timestamp as FBTimestamp } from 'firebase-admin/firestore';
 import { isRight } from 'fp-ts/lib/Either';
-
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   LegacyPlayV,
   PuzzleStatsT,
@@ -16,11 +16,9 @@ import {
   MetaSubmissionForPuzzleT,
   ConstructorStatsForPuzzleT,
 } from './dbtypes';
-
+import { getCollection, toFirestore } from './firebaseAdminWrapper';
 import { Timestamp } from './timestamp';
 import { isMetaSolution } from './utils';
-import { getCollection, toFirestore } from './firebaseAdminWrapper';
-import { Timestamp as FBTimestamp } from 'firebase-admin/firestore';
 
 export async function runAnalytics(
   startTimestamp: Timestamp,

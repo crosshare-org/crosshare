@@ -1,9 +1,9 @@
-import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { Trans } from '@lingui/macro';
-import { useRouter } from 'next/router';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { Locale, es, it } from 'date-fns/locale';
-import { ToolTipText } from './ToolTipText';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { ToolTipText } from './ToolTipText';
 
 const localeMap: Record<string, Locale> = { es, it, pseudo: es };
 

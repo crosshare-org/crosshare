@@ -1,24 +1,23 @@
-import { useState, useEffect, useContext, ReactNode } from 'react';
-import { logAsyncErrors, slugify } from '../lib/utils';
-
-import { Link } from './Link';
-import { AuthContext } from './AuthContext';
-import { getPossiblyStalePlay } from '../lib/plays';
-import { PuzzleResult } from '../lib/types';
-import { SMALL_AND_UP } from '../lib/style';
-import { PuzzleSizeIcon, PatronIcon } from './Icons';
-import { DifficultyBadge } from '../components/DifficultyBadge';
-import { Emoji } from './Emoji';
-import { timeString } from '../lib/utils';
-import { PlayWithoutUserT } from '../lib/dbtypes';
-import { ConstructorPageBase } from '../lib/constructorPage';
-import { Markdown } from './Markdown';
 import { Trans } from '@lingui/macro';
-import { PastDistanceToNow, DistanceToNow } from './TimeDisplay';
-import { FollowButton } from './FollowButton';
-import { TagList } from './TagList';
 import type { Root } from 'hast';
+import { useState, useEffect, useContext, ReactNode } from 'react';
+import { DifficultyBadge } from '../components/DifficultyBadge';
+import { ConstructorPageBase } from '../lib/constructorPage';
+import { PlayWithoutUserT } from '../lib/dbtypes';
 import { markdownToHast } from '../lib/markdown/markdown';
+import { getPossiblyStalePlay } from '../lib/plays';
+import { SMALL_AND_UP } from '../lib/style';
+import { PuzzleResult } from '../lib/types';
+import { logAsyncErrors, slugify } from '../lib/utils';
+import { timeString } from '../lib/utils';
+import { AuthContext } from './AuthContext';
+import { Emoji } from './Emoji';
+import { FollowButton } from './FollowButton';
+import { PuzzleSizeIcon, PatronIcon } from './Icons';
+import { Link } from './Link';
+import { Markdown } from './Markdown';
+import { TagList } from './TagList';
+import { PastDistanceToNow, DistanceToNow } from './TimeDisplay';
 
 const PuzzleLink = (props: {
   fullWidth?: boolean;

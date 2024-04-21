@@ -1,14 +1,4 @@
 import { Dispatch, ReactNode, useCallback, useEffect, useState } from 'react';
-
-import { PosAndDir, Position, BLOCK, Symmetry } from '../lib/types';
-import { Cell } from './Cell';
-import {
-  StartSelectionAction,
-  UpdateSelectionAction,
-} from '../reducers/builderReducer';
-import { PuzzleAction } from '../reducers/commonActions';
-import { SetActivePositionAction } from '../reducers/gridReducer';
-import { ViewableGrid, ViewableEntry, flipped } from '../lib/viewableGrid';
 import {
   cellIndex,
   getEntryCells,
@@ -19,6 +9,15 @@ import {
   getSelectionCells,
   hasMultipleCells,
 } from '../lib/selection';
+import { PosAndDir, Position, BLOCK, Symmetry } from '../lib/types';
+import { ViewableGrid, ViewableEntry, flipped } from '../lib/viewableGrid';
+import {
+  StartSelectionAction,
+  UpdateSelectionAction,
+} from '../reducers/builderReducer';
+import { PuzzleAction } from '../reducers/commonActions';
+import { SetActivePositionAction } from '../reducers/gridReducer';
+import { Cell } from './Cell';
 
 interface GridViewProps {
   grid: ViewableGrid<ViewableEntry>;

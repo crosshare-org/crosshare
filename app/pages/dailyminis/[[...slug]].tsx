@@ -1,24 +1,23 @@
-import Head from 'next/head';
+import { Trans, t } from '@lingui/macro';
+import { isSome } from 'fp-ts/lib/Option';
 import { GetServerSideProps } from 'next';
-
-import { Link } from '../../components/Link';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { ErrorPage } from '../../components/ErrorPage';
-import { puzzleFromDB } from '../../lib/types';
-import { ConstructorPageBase } from '../../lib/constructorPage';
-import { DefaultTopBar } from '../../components/TopBar';
+import { I18nTags } from '../../components/I18nTags';
+import { Link } from '../../components/Link';
 import {
   LinkablePuzzle,
   PuzzleResultLink,
   toLinkablePuzzle,
 } from '../../components/PuzzleLink';
-import { userIdToPage } from '../../lib/serverOnly';
-import { useRouter } from 'next/router';
-import { Trans, t } from '@lingui/macro';
-import { withTranslation } from '../../lib/translation';
-import { I18nTags } from '../../components/I18nTags';
-import { isUserPatron } from '../../lib/patron';
+import { DefaultTopBar } from '../../components/TopBar';
+import { ConstructorPageBase } from '../../lib/constructorPage';
 import { getMiniForDate } from '../../lib/dailyMinis';
-import { isSome } from 'fp-ts/lib/Option';
+import { isUserPatron } from '../../lib/patron';
+import { userIdToPage } from '../../lib/serverOnly';
+import { withTranslation } from '../../lib/translation';
+import { puzzleFromDB } from '../../lib/types';
 import { notEmpty } from '../../lib/utils';
 
 export interface DailyMiniProps {

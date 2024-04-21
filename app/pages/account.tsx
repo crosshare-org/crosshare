@@ -1,26 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
-import Head from 'next/head';
-
-import { DisplayNameForm, useDisplayName } from '../components/DisplayNameForm';
-import { requiresAuth, AuthProps } from '../components/AuthHelpers';
-import { getAuth, getCollection, getDocRef } from '../lib/firebaseWrapper';
-import { DefaultTopBar } from '../components/TopBar';
-import { Link } from '../components/Link';
-import { CreatePageForm } from '../components/ConstructorPage';
-import { Button } from '../components/Buttons';
-import { PROFILE_PIC, COVER_PIC } from '../lib/style';
-import { UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
-
-import dynamic from 'next/dynamic';
-import { useSnackbar } from '../components/Snackbar';
-import { useCollection } from 'react-firebase-hooks/firestore';
-import { useDarkModeControl, usePersistedBoolean } from '../lib/hooks';
-const ImageCropper = dynamic(
-  () => import('../components/ImageCropper').then((mod) => mod.ImageCropper),
-  { ssr: false }
-);
-
-import { withStaticTranslation } from '../lib/translation';
+import { signOut } from 'firebase/auth';
 import {
   arrayRemove,
   arrayUnion,
@@ -29,13 +7,33 @@ import {
   setDoc,
   where,
 } from 'firebase/firestore';
-import { signOut } from 'firebase/auth';
+import dynamic from 'next/dynamic';
+import Head from 'next/head';
+import { useState, useEffect, useMemo } from 'react';
+import { useCollection } from 'react-firebase-hooks/firestore';
+import { requiresAuth, AuthProps } from '../components/AuthHelpers';
 import { BioEditor } from '../components/BioEditor';
-import { logAsyncErrors } from '../lib/utils';
+import { Button } from '../components/Buttons';
+import { CreatePageForm } from '../components/ConstructorPage';
+import { DisplayNameForm, useDisplayName } from '../components/DisplayNameForm';
+import { Link } from '../components/Link';
+import { useSnackbar } from '../components/Snackbar';
 import {
   PrefSetting,
   SolverPreferencesList,
 } from '../components/SolverPreferencesList';
+import { DefaultTopBar } from '../components/TopBar';
+import { getAuth, getCollection, getDocRef } from '../lib/firebaseWrapper';
+import { useDarkModeControl, usePersistedBoolean } from '../lib/hooks';
+import { UnsubscribeFlags, AccountPrefsT } from '../lib/prefs';
+import { PROFILE_PIC, COVER_PIC } from '../lib/style';
+import { withStaticTranslation } from '../lib/translation';
+import { logAsyncErrors } from '../lib/utils';
+
+const ImageCropper = dynamic(
+  () => import('../components/ImageCropper').then((mod) => mod.ImageCropper),
+  { ssr: false }
+);
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };

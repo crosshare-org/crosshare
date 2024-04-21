@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from '../components/Link';
+import { getFromSessionOrDB } from '../lib/dbUtils';
 import {
   ConstructorStatsForPuzzleT,
   ConstructorStatsT,
@@ -6,8 +8,6 @@ import {
   DBPuzzleT,
   DBPuzzleV,
 } from '../lib/dbtypes';
-import { Link } from '../components/Link';
-import { getFromSessionOrDB } from '../lib/dbUtils';
 import { logAsyncErrors, slugify, timeString } from '../lib/utils';
 
 const usePuzzleDoc = (

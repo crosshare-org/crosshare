@@ -1,23 +1,23 @@
-import { clueReferencer } from './clueReferencer';
-import { twemojify } from './twemojify';
-import { remarkSpoilers } from './spoilers';
-import rehypeExternalLinks from 'rehype-external-links';
+import { Root } from 'hast';
 import { truncate, Options as TruncateOptions } from 'hast-util-truncate';
-import { entryReferencer } from './entryReferencer';
-import remarkGfm from 'remark-gfm';
+import { Nodes } from 'mdast-util-from-markdown/lib';
+import { Handler } from 'mdast-util-to-hast';
+import rehypeExternalLinks from 'rehype-external-links';
 import remarkDirective from 'remark-directive';
-import { mentionsAndTags } from './mentionsAndTags';
-import { unified, PluggableList } from 'unified';
+import remarkGfm from 'remark-gfm';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
-import { Direction } from '../types';
-import { Root } from 'hast';
-import { inlineOnly } from './inlineOnly';
-import { remarkNoRefs } from './noRefs';
-import { Handler } from 'mdast-util-to-hast';
-import { Nodes } from 'mdast-util-from-markdown/lib';
-import unusedDirectives from './unusedDirectives';
 import remarkStringify from 'remark-stringify';
+import { unified, PluggableList } from 'unified';
+import { Direction } from '../types';
+import { clueReferencer } from './clueReferencer';
+import { entryReferencer } from './entryReferencer';
+import { inlineOnly } from './inlineOnly';
+import { mentionsAndTags } from './mentionsAndTags';
+import { remarkNoRefs } from './noRefs';
+import { remarkSpoilers } from './spoilers';
+import { twemojify } from './twemojify';
+import unusedDirectives from './unusedDirectives';
 
 function rehypeTruncate(options: TruncateOptions) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return

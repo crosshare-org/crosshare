@@ -1,6 +1,5 @@
-import * as t from 'io-ts';
-
 import { isRight } from 'fp-ts/lib/Either';
+import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 const EmbedOptionsV = t.partial({

@@ -1,11 +1,10 @@
-import { Plugin } from 'unified';
-
-import { Direction } from '../../lib/types';
-import { Node } from 'unist';
 import { Text, Element } from 'hast';
+import { Plugin } from 'unified';
+import { Node } from 'unist';
 import { is } from 'unist-util-is';
-import { flatMap } from './utils';
+import { Direction } from '../../lib/types';
 import { ClueReferenceData } from '../parse';
+import { flatMap } from './utils';
 
 interface EntryReferencerOptions {
   clueMap: Map<string, [number, Direction, string]>;

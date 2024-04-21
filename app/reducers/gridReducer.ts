@@ -1,3 +1,9 @@
+import { cellIndex, valAt, isInBounds, clampInBounds } from '../lib/gridBase';
+import {
+  emptySelection,
+  forEachPosition,
+  getSelectionCells,
+} from '../lib/selection';
 import {
   PosAndDir,
   Position,
@@ -28,12 +34,6 @@ import {
   gridWithBarToggled,
   gridWithHiddenToggled,
 } from '../lib/viewableGrid';
-import { cellIndex, valAt, isInBounds, clampInBounds } from '../lib/gridBase';
-import {
-  emptySelection,
-  forEachPosition,
-  getSelectionCells,
-} from '../lib/selection';
 import type { BuilderState } from './builderReducer';
 import {
   isBuilderState,
@@ -41,9 +41,9 @@ import {
   clearSelection,
   hasSelection,
 } from './builderUtils';
+import type { PuzzleAction } from './commonActions';
 import type { PuzzleState } from './puzzleReducer';
 import { isPuzzleState, postEdit as puzzlePostEdit } from './puzzleUtils';
-import type { PuzzleAction } from './commonActions';
 
 export interface GridInterfaceState {
   type: string;

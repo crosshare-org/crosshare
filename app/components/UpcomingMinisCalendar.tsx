@@ -1,8 +1,8 @@
 import { isSome } from 'fp-ts/lib/Option';
 import { useEffect, useState } from 'react';
 import { getMiniIdForDate } from '../lib/dailyMinis';
-import { ButtonReset } from './Buttons';
 import { logAsyncErrors } from '../lib/utils';
+import { ButtonReset } from './Buttons';
 
 const daysToDisplay = 42;
 const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];

@@ -1,12 +1,6 @@
-import { useState, useContext } from 'react';
 import Head from 'next/head';
-
-import { PuzzleInProgressT } from '../lib/types';
-import { importFile } from '../lib/converter';
-import { renderLoginButtonIfNeeded } from '../components/AuthHelpers';
-import { Preview } from '../components/Preview';
-import { Link, LinkButton } from '../components/Link';
-import { MdMoneyOff } from 'react-icons/md';
+import { useState, useContext } from 'react';
+import { CgSidebarRight } from 'react-icons/cg';
 import {
   FaShareSquare,
   FaChartBar,
@@ -16,14 +10,19 @@ import {
   FaCat,
 } from 'react-icons/fa';
 import { IoMdPhonePortrait, IoMdResize } from 'react-icons/io';
+import { MdMoneyOff } from 'react-icons/md';
 import { RiPagesLine } from 'react-icons/ri';
-import { FeatureList, FeatureListItem } from '../components/FeatureList';
-import { BigQuote } from '../components/BigQuote';
-import { Hero } from '../components/Hero';
-import { ContactLinks } from '../components/ContactLinks';
-import { withStaticTranslation } from '../lib/translation';
-import { CgSidebarRight } from 'react-icons/cg';
 import { AuthContext } from '../components/AuthContext';
+import { renderLoginButtonIfNeeded } from '../components/AuthHelpers';
+import { BigQuote } from '../components/BigQuote';
+import { ContactLinks } from '../components/ContactLinks';
+import { FeatureList, FeatureListItem } from '../components/FeatureList';
+import { Hero } from '../components/Hero';
+import { Link, LinkButton } from '../components/Link';
+import { Preview } from '../components/Preview';
+import { importFile } from '../lib/converter';
+import { withStaticTranslation } from '../lib/translation';
+import { PuzzleInProgressT } from '../lib/types';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };

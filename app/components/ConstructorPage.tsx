@@ -1,28 +1,27 @@
-import Head from 'next/head';
-import { useState, FormEvent, useContext, useCallback } from 'react';
-
-import { DefaultTopBar } from './TopBar';
-import { ConstructorPageBase, ConstructorPageT } from '../lib/constructorPage';
-import { LinkablePuzzle, PuzzleResultLink } from './PuzzleLink';
-import { Link, LinkButtonSimpleA } from './Link';
-import { Markdown } from './Markdown';
-import { AuthContext } from './AuthContext';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { ButtonAsLink } from './Buttons';
-import { HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
-import { CoverPic, ProfilePicAndName } from './Images';
-import { ToolTipText } from './ToolTipText';
-import { FollowButton } from './FollowButton';
-import { FaInfoCircle } from 'react-icons/fa';
-import { Overlay } from './Overlay';
-import { ConstructorStats } from './ConstructorStats';
 import { Trans, t, Plural } from '@lingui/macro';
-import { I18nTags } from './I18nTags';
-import { useRouter } from 'next/router';
-import { PatronIcon } from './Icons';
 import { serverTimestamp, setDoc } from 'firebase/firestore';
 import type { Root } from 'hast';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { useState, FormEvent, useContext, useCallback } from 'react';
+import { FaInfoCircle } from 'react-icons/fa';
+import { ConstructorPageBase, ConstructorPageT } from '../lib/constructorPage';
+import { getDocRef } from '../lib/firebaseWrapper';
+import { HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
 import { logAsyncErrors } from '../lib/utils';
+import { AuthContext } from './AuthContext';
+import { ButtonAsLink } from './Buttons';
+import { ConstructorStats } from './ConstructorStats';
+import { FollowButton } from './FollowButton';
+import { I18nTags } from './I18nTags';
+import { PatronIcon } from './Icons';
+import { CoverPic, ProfilePicAndName } from './Images';
+import { Link, LinkButtonSimpleA } from './Link';
+import { Markdown } from './Markdown';
+import { Overlay } from './Overlay';
+import { LinkablePuzzle, PuzzleResultLink } from './PuzzleLink';
+import { ToolTipText } from './ToolTipText';
+import { DefaultTopBar } from './TopBar';
 
 const BANNED_USERNAMES = {
   api: 1,

@@ -1,18 +1,18 @@
-import { Markdown } from './Markdown';
-import { Overlay } from './Overlay';
-import { LengthLimitedTextarea, LengthView } from './Inputs';
-import { COMMENT_LENGTH_LIMIT } from './Comments';
-import { FormEvent, useContext, useState } from 'react';
-import { logAsyncErrors } from '../lib/utils';
+import { setDoc } from 'firebase/firestore';
 import * as t from 'io-ts';
+import { FormEvent, useContext, useState } from 'react';
+import { getDocRef } from '../lib/firebaseWrapper';
 import { timestamp, Timestamp } from '../lib/timestamp';
 import { Comment } from '../lib/types';
+import { logAsyncErrors } from '../lib/utils';
 import { AuthContext } from './AuthContext';
-import { setDoc } from 'firebase/firestore';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { useSnackbar } from './Snackbar';
 import { Button } from './Buttons';
+import { COMMENT_LENGTH_LIMIT } from './Comments';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
+import { LengthLimitedTextarea, LengthView } from './Inputs';
+import { Markdown } from './Markdown';
+import { Overlay } from './Overlay';
+import { useSnackbar } from './Snackbar';
 
 export const CommentReportV = t.intersection([
   t.type({

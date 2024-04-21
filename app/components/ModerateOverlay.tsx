@@ -1,14 +1,14 @@
+import { updateDoc } from 'firebase/firestore';
 import { useState, Dispatch, memo } from 'react';
+import { setMiniForDate } from '../lib/dailyMinis';
 import { getDateString, prettifyDateString } from '../lib/dbtypes';
+import { getDocRef } from '../lib/firebaseWrapper';
 import { ServerPuzzleResult } from '../lib/types';
-import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
+import { logAsyncErrors } from '../lib/utils';
 import { PuzzleAction } from '../reducers/commonActions';
 import { Overlay } from './Overlay';
-import { setMiniForDate } from '../lib/dailyMinis';
 import { TagEditor } from './TagEditor';
-import { updateDoc } from 'firebase/firestore';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { logAsyncErrors } from '../lib/utils';
+import { UpcomingMinisCalendar } from './UpcomingMinisCalendar';
 
 export const ModeratingOverlay = memo(function ModeratingOverlay({
   dispatch,

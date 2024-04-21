@@ -1,8 +1,9 @@
-import * as t from 'io-ts';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import equal from 'fast-deep-equal';
 import type { User } from 'firebase/auth';
+import { getDoc, setDoc } from 'firebase/firestore';
+import { isRight } from 'fp-ts/lib/Either';
+import * as t from 'io-ts';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   PlayWithoutUserT,
   PlayWithoutUserV,
@@ -11,7 +12,6 @@ import {
   PlayT,
 } from './dbtypes';
 import { getDocRef } from './firebaseWrapper';
-import { getDoc, setDoc } from 'firebase/firestore';
 import { fromLocalStorage } from './storage';
 
 const PlayMapV = t.record(t.string, t.union([PlayWithoutUserV, t.null]));

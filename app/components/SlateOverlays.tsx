@@ -1,20 +1,20 @@
 import { Dispatch, useEffect, useRef } from 'react';
-import { PuzzleAction } from '../reducers/commonActions';
-import { Overlay } from './Overlay';
-import { SlateHeader, SlateLogo } from './SlateHeader';
-import { Illustration, Pause, Play } from './SlateIcons';
-import { Link } from './Link';
 import { LARGE_AND_UP, SMALL_AND_UP } from '../lib/style';
-import { SlateColorTheme } from './SlateColorTheme';
 import { PuzzleResultWithAugmentedComments } from '../lib/types';
+import { PuzzleAction } from '../reducers/commonActions';
+import { ButtonReset } from './Buttons';
+import { FullscreenCSS } from './FullscreenCSS';
+import { Link } from './Link';
+import { Overlay } from './Overlay';
 import {
   SLATE_PADDING_SMALL,
   SLATE_PADDING_MED,
   SLATE_PADDING_LARGE,
 } from './Page';
-import { FullscreenCSS } from './FullscreenCSS';
+import { SlateColorTheme } from './SlateColorTheme';
+import { SlateHeader, SlateLogo } from './SlateHeader';
+import { Illustration, Pause, Play } from './SlateIcons';
 import styles from './SlateOverlays.module.css';
-import { ButtonReset } from './Buttons';
 
 const PoweredByLink = () => {
   return (

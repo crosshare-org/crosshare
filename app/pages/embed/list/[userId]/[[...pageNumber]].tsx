@@ -1,20 +1,20 @@
-import { getEmbedProps, PageErrorProps } from '../../../../lib/serverOnly';
+import { GetServerSideProps } from 'next';
 import {
   EmbedColorMode,
   EmbedContext,
 } from '../../../../components/EmbedContext';
-import { GetServerSideProps } from 'next';
-import { EmbedOptionsT } from '../../../../lib/embedOptions';
+import { EmbedStyling } from '../../../../components/EmbedStyling';
+import { ErrorPage } from '../../../../components/ErrorPage';
+import { Link } from '../../../../components/Link';
 import {
   LinkablePuzzle,
   PuzzleResultLink,
 } from '../../../../components/PuzzleLink';
-import { withTranslation } from '../../../../lib/translation';
-import { paginatedPuzzles } from '../../../../lib/paginatedPuzzles';
-import { ErrorPage } from '../../../../components/ErrorPage';
-import { Link } from '../../../../components/Link';
+import { EmbedOptionsT } from '../../../../lib/embedOptions';
 import { useEmbedOptions } from '../../../../lib/hooks';
-import { EmbedStyling } from '../../../../components/EmbedStyling';
+import { paginatedPuzzles } from '../../../../lib/paginatedPuzzles';
+import { getEmbedProps, PageErrorProps } from '../../../../lib/serverOnly';
+import { withTranslation } from '../../../../lib/translation';
 
 interface PageProps {
   userId: string;

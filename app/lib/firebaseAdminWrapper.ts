@@ -1,17 +1,16 @@
-import * as t from 'io-ts';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { initializeApp, applicationDefault, getApps } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
-import { firebaseConfig } from '../firebaseConfig';
-import { firebaseConfig as firebaseEmulatorConfig } from '../firebaseConfig.emulators';
-
 import {
   getFirestore,
   Query,
   Timestamp as FBTimestamp,
 } from 'firebase-admin/firestore';
+import { isRight } from 'fp-ts/lib/Either';
+import * as t from 'io-ts';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import cloneDeepWith from 'lodash/cloneDeepWith';
+import { firebaseConfig } from '../firebaseConfig';
+import { firebaseConfig as firebaseEmulatorConfig } from '../firebaseConfig.emulators';
 import { isTimestamp } from './timestamp';
 
 export function getAdminApp() {

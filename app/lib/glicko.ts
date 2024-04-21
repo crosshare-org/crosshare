@@ -1,3 +1,6 @@
+import { Timestamp as FBTimestamp } from 'firebase-admin/firestore';
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   CronStatusT,
   CronStatusV,
@@ -6,9 +9,7 @@ import {
   LegacyPlayT,
   LegacyPlayV,
 } from './dbtypes';
-import { AccountPrefsV } from './prefs';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
+import { getCollection } from './firebaseAdminWrapper';
 import {
   gFunc,
   expectedOutcome,
@@ -17,10 +18,9 @@ import {
   INITIAL_RATING,
   INITIAL_RD,
 } from './glickoUtil';
-import { notEmpty } from './utils';
+import { AccountPrefsV } from './prefs';
 import { Timestamp } from './timestamp';
-import { Timestamp as FBTimestamp } from 'firebase-admin/firestore';
-import { getCollection } from './firebaseAdminWrapper';
+import { notEmpty } from './utils';
 
 const MAX_RD = 350;
 const PLAYER_MIN_RD = 30;

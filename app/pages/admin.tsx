@@ -1,13 +1,34 @@
-import { FormEvent, useState, useCallback, useRef } from 'react';
+import { css } from '@emotion/react';
+import {
+  addDoc,
+  arrayUnion,
+  deleteField,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  Timestamp,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import Head from 'next/head';
 import NextJSRouter from 'next/router';
-
-import { Markdown } from '../components/Markdown';
-import { Link } from '../components/Link';
-import { Button } from '../components/Buttons';
+import { FormEvent, useState, useCallback, useRef } from 'react';
+import {
+  useCollectionData,
+  useDocumentDataOnce,
+} from 'react-firebase-hooks/firestore';
 import { requiresAdmin } from '../components/AuthHelpers';
+import { Button } from '../components/Buttons';
+import { ConstructorNotes } from '../components/ConstructorNotes';
+import { Link } from '../components/Link';
+import { Markdown } from '../components/Markdown';
+import { CommentReportV } from '../components/ReportOverlay';
+import { useSnackbar } from '../components/Snackbar';
+import { TagList } from '../components/TagList';
 import { DefaultTopBar } from '../components/TopBar';
-import { PuzzleResult, puzzleFromDB } from '../lib/types';
+import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
+import { ConstructorPageWithIdV } from '../lib/constructorPage';
 import {
   DailyStatsT,
   DailyStatsV,
@@ -22,36 +43,14 @@ import {
   getDocRef,
   getValidatedCollection,
 } from '../lib/firebaseWrapper';
-import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
-import { ConstructorPageWithIdV } from '../lib/constructorPage';
-import { useSnackbar } from '../components/Snackbar';
-import { slugify } from '../lib/utils';
-import {
-  useCollectionData,
-  useDocumentDataOnce,
-} from 'react-firebase-hooks/firestore';
-import {
-  addDoc,
-  arrayUnion,
-  deleteField,
-  doc,
-  getDocs,
-  query,
-  setDoc,
-  Timestamp,
-  updateDoc,
-  where,
-} from 'firebase/firestore';
-import { TagList } from '../components/TagList';
-import { ConstructorNotes } from '../components/ConstructorNotes';
 import { hasUnches } from '../lib/gridBase';
-import { fromCells, getClueMap } from '../lib/viewableGrid';
 import { markdownToHast } from '../lib/markdown/markdown';
-import { css } from '@emotion/react';
-import { withStaticTranslation } from '../lib/translation';
-import { logAsyncErrors } from '../lib/utils';
-import { CommentReportV } from '../components/ReportOverlay';
 import { checkSpam } from '../lib/spam';
+import { withStaticTranslation } from '../lib/translation';
+import { PuzzleResult, puzzleFromDB } from '../lib/types';
+import { slugify } from '../lib/utils';
+import { logAsyncErrors } from '../lib/utils';
+import { fromCells, getClueMap } from '../lib/viewableGrid';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };

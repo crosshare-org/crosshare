@@ -6,6 +6,7 @@ import {
   useContext,
   useCallback,
 } from 'react';
+import { AiOutlineEnter } from 'react-icons/ai';
 import {
   FaBackspace,
   FaAngleRight,
@@ -13,14 +14,12 @@ import {
   FaAngleDoubleRight,
   FaAngleDoubleLeft,
 } from 'react-icons/fa';
-import { AiOutlineEnter } from 'react-icons/ai';
-
-import { CrosshareAudioContext } from './CrosshareAudioContext';
 import {
   KEYBOARD_HEIGHT,
   SMALL_AND_UP,
   HAS_PHYSICAL_KEYBOARD,
 } from '../lib/style';
+import { CrosshareAudioContext } from './CrosshareAudioContext';
 
 interface KeyRowsProps {
   children: ReactNode;

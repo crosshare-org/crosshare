@@ -1,10 +1,9 @@
-import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { set, get } from 'idb-keyval';
-
-import * as BA from './bitArray';
+import * as t from 'io-ts';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import { useEffect, useState } from 'react';
+import * as BA from './bitArray';
 import { logAsyncErrors } from './utils';
 
 const WordDBV = t.type({

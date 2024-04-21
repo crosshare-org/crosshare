@@ -1,16 +1,15 @@
-import { useCallback, useState, useEffect, useRef } from 'react';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { AppProps, NextWebVitalsMetric } from 'next/app';
-import NextJSRouter, { useRouter } from 'next/router';
 import Head from 'next/head';
-
-import * as gtag from '../lib/gtag';
-import { useAuth } from '../lib/useAuth';
+import NextJSRouter, { useRouter } from 'next/router';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { AuthContext } from '../components/AuthContext';
+import { BrowserWarning } from '../components/BrowserWarning';
 import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
 import { Snackbar, SnackbarProvider } from '../components/Snackbar';
-
-import '../lib/style.css';
 import '../lib/atoms.css';
+import * as gtag from '../lib/gtag';
 import {
   colorThemeString,
   ERROR_COLOR,
@@ -18,9 +17,8 @@ import {
   PRIMARY,
   VERIFIED_COLOR,
 } from '../lib/style';
-import { BrowserWarning } from '../components/BrowserWarning';
-import { i18n } from '@lingui/core';
-import { I18nProvider } from '@lingui/react';
+import '../lib/style.css';
+import { useAuth } from '../lib/useAuth';
 
 export function reportWebVitals(metric: NextWebVitalsMetric) {
   console.log(metric);

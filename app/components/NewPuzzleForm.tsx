@@ -1,6 +1,6 @@
 import { useState, Dispatch, FormEvent, useContext } from 'react';
-import { STORAGE_KEY } from '../lib/utils';
 import { PrefillSquares } from '../lib/types';
+import { STORAGE_KEY } from '../lib/utils';
 import { NewPuzzleAction } from '../reducers/builderReducer';
 import { AuthContext } from './AuthContext';
 import { PrefillIcon, PuzzleSizeIcon } from './Icons';

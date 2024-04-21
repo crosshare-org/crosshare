@@ -1,4 +1,5 @@
 import { where, query, updateDoc, Timestamp, addDoc } from 'firebase/firestore';
+import * as t from 'io-ts';
 import Head from 'next/head';
 import NextJSRouter, { useRouter } from 'next/router';
 import { useRef } from 'react';
@@ -17,7 +18,6 @@ import {
 } from '../../../lib/firebaseWrapper';
 import { markdownToHast } from '../../../lib/markdown/markdown';
 import { logAsyncErrors, slugify } from '../../../lib/utils';
-import * as t from 'io-ts';
 
 export default requiresAdmin(() => {
   const router = useRouter();

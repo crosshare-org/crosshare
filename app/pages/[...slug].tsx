@@ -1,23 +1,22 @@
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-
 import {
   ConstructorPage,
   ConstructorPageProps,
 } from '../components/ConstructorPage';
-import { validate } from '../lib/constructorPage';
 import { ErrorPage } from '../components/ErrorPage';
-import { getStorageUrl, userIdToPage } from '../lib/serverOnly';
-import { useRouter } from 'next/router';
-import { withTranslation } from '../lib/translation';
-import { isRight } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
+import { validate } from '../lib/constructorPage';
 import { FollowersV } from '../lib/dbtypes';
-import { paginatedPuzzles } from '../lib/paginatedPuzzles';
-import { AccountPrefsV } from '../lib/prefs';
-import { isUserPatron } from '../lib/patron';
 import { getCollection } from '../lib/firebaseAdminWrapper';
 import { markdownToHast } from '../lib/markdown/markdown';
+import { paginatedPuzzles } from '../lib/paginatedPuzzles';
+import { isUserPatron } from '../lib/patron';
+import { AccountPrefsV } from '../lib/prefs';
+import { getStorageUrl, userIdToPage } from '../lib/serverOnly';
+import { withTranslation } from '../lib/translation';
 
 interface ErrorProps {
   error: string;

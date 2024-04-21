@@ -1,3 +1,7 @@
+import { css } from '@emotion/react';
+import { adjustHue, parseToRgba, guard } from 'color2k';
+import { User } from 'firebase/auth';
+import { getDoc, setDoc } from 'firebase/firestore';
 import {
   Dispatch,
   useMemo,
@@ -6,12 +10,8 @@ import {
   useEffect,
   ChangeEvent,
 } from 'react';
-import { Direction, ServerPuzzleResult } from '../lib/types';
-import { PuzzleAction } from '../reducers/commonActions';
-import { Overlay } from './Overlay';
-import { User } from 'firebase/auth';
-import { CopyableInput } from './CopyableInput';
 import { EmbedOptionsT, validate } from '../lib/embedOptions';
+import { getDocRef } from '../lib/firebaseWrapper';
 import {
   colorTheme,
   ERROR_COLOR,
@@ -19,15 +19,15 @@ import {
   PRIMARY,
   VERIFIED_COLOR,
 } from '../lib/style';
-import { adjustHue, parseToRgba, guard } from 'color2k';
-import { GridView } from './Grid';
-import { fromCells } from '../lib/viewableGrid';
-import { Button, ButtonAsLink } from './Buttons';
-import { getDoc, setDoc } from 'firebase/firestore';
-import { getDocRef } from '../lib/firebaseWrapper';
+import { Direction, ServerPuzzleResult } from '../lib/types';
 import { logAsyncErrors } from '../lib/utils';
-import { css } from '@emotion/react';
+import { fromCells } from '../lib/viewableGrid';
+import { PuzzleAction } from '../reducers/commonActions';
+import { Button, ButtonAsLink } from './Buttons';
+import { CopyableInput } from './CopyableInput';
 import { fontFace } from './EmbedStyling';
+import { GridView } from './Grid';
+import { Overlay } from './Overlay';
 
 const fontUrlInputCss = css({
   width: '100%',

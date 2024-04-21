@@ -1,40 +1,40 @@
+import useEventListener from '@use-it/event-listener';
+import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
+import { isSome } from 'fp-ts/lib/Option';
+import orderBy from 'lodash/orderBy';
 import Head from 'next/head';
 import { useReducer, useCallback, useMemo, useState } from 'react';
-import useEventListener from '@use-it/event-listener';
-import orderBy from 'lodash/orderBy';
-import { ClueList } from './ClueList';
-import { GridView } from './Grid';
+import { CSVLink } from 'react-csv';
+import { ColumnProps, Table } from 'react-fluid-table';
+import { FaShareSquare } from 'react-icons/fa';
+import { MetaSubmissionForStatsViewT, PuzzleStatsViewT } from '../lib/dbtypes';
+import { getDocRef } from '../lib/firebaseWrapper';
 import { entryAndCrossAtPosition } from '../lib/gridBase';
+import { useMatchMedia } from '../lib/hooks';
+import { markdownToHast } from '../lib/markdown/markdown';
+import { SMALL_AND_UP, SMALL_AND_UP_RULES } from '../lib/style';
+import { Direction, fromKeyboardEvent, PuzzleResult } from '../lib/types';
+import { isMetaSolution, logAsyncErrors, timeString } from '../lib/utils';
+import {
+  fromCells,
+  getCluedAcrossAndDown,
+  getClueMap,
+} from '../lib/viewableGrid';
 import {
   builderReducer,
   initialBuilderState,
   BuilderState,
 } from '../reducers/builderReducer';
 import { KeypressAction } from '../reducers/gridReducer';
-import { SquareAndCols } from './Page';
-import { Direction, fromKeyboardEvent, PuzzleResult } from '../lib/types';
-import { MetaSubmissionForStatsViewT, PuzzleStatsViewT } from '../lib/dbtypes';
-import {
-  fromCells,
-  getCluedAcrossAndDown,
-  getClueMap,
-} from '../lib/viewableGrid';
-import { useMatchMedia } from '../lib/hooks';
-import { SMALL_AND_UP, SMALL_AND_UP_RULES } from '../lib/style';
-import { DefaultTopBar, TopBarLink } from './TopBar';
-import { FaShareSquare } from 'react-icons/fa';
-import { Overlay } from './Overlay';
-import { CopyableInput } from './CopyableInput';
-import { isMetaSolution, logAsyncErrors, timeString } from '../lib/utils';
 import { ButtonAsLink } from './Buttons';
-import { ColumnProps, Table } from 'react-fluid-table';
+import { ClueList } from './ClueList';
+import { CopyableInput } from './CopyableInput';
 import { Emoji } from './Emoji';
-import { CSVLink } from 'react-csv';
-import { getDocRef } from '../lib/firebaseWrapper';
+import { GridView } from './Grid';
+import { Overlay } from './Overlay';
+import { SquareAndCols } from './Page';
 import { useSnackbar } from './Snackbar';
-import { isSome } from 'fp-ts/lib/Option';
-import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
-import { markdownToHast } from '../lib/markdown/markdown';
+import { DefaultTopBar, TopBarLink } from './TopBar';
 
 export enum StatsMode {
   AverageTime,

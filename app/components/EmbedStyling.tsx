@@ -1,5 +1,5 @@
-import { colorThemeString } from '../lib/style';
 import Head from 'next/head';
+import { colorThemeString } from '../lib/style';
 
 export interface EmbedStylingProps {
   primary: string;

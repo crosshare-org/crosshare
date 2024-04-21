@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import {
   Dispatch,
   ReactNode,
@@ -7,8 +8,7 @@ import {
   useState,
 } from 'react';
 import { FaAngleDoubleRight, FaAngleDoubleLeft } from 'react-icons/fa';
-
-import { KeypressAction, PasteAction } from '../reducers/gridReducer';
+import { usePolyfilledResizeObserver } from '../lib/hooks';
 import {
   SMALL_AND_UP,
   LARGE_AND_UP,
@@ -16,8 +16,7 @@ import {
   SQUARE_HEADER_HEIGHT,
 } from '../lib/style';
 import { KeyK } from '../lib/types';
-import { usePolyfilledResizeObserver } from '../lib/hooks';
-import { css } from '@emotion/react';
+import { KeypressAction, PasteAction } from '../reducers/gridReducer';
 import { EmbedContext } from './EmbedContext';
 
 const clueAreaCss = css({

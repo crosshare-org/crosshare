@@ -1,16 +1,14 @@
-import { useMemo, useCallback } from 'react';
-
+import { Trans, t } from '@lingui/macro';
 import type { User } from 'firebase/auth';
-import { LegacyPlayT, LegacyPlayV } from '../lib/dbtypes';
+import { deleteDoc, orderBy, query, where } from 'firebase/firestore';
+import { useMemo, useCallback } from 'react';
+import { ButtonAsLink } from '../components/Buttons';
 import { PuzzleResultLink } from '../components/PuzzleLink';
+import { LegacyPlayT, LegacyPlayV } from '../lib/dbtypes';
+import { getCollection, getDocRef } from '../lib/firebaseWrapper';
 import { getPuzzle } from '../lib/puzzleCache';
 import { puzzleFromDB } from '../lib/types';
-import { ButtonAsLink } from '../components/Buttons';
-import { Trans, t } from '@lingui/macro';
-
 import { usePaginatedQuery } from '../lib/usePagination';
-import { deleteDoc, orderBy, query, where } from 'firebase/firestore';
-import { getCollection, getDocRef } from '../lib/firebaseWrapper';
 
 export function UnfinishedPuzzleList({ user }: { user: User | undefined }) {
   const unfinishedQuery = useMemo(

@@ -1,20 +1,19 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { jsPDF } from 'jspdf';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { getPuzzle } from '../../../lib/puzzleCache';
-
-import {
-  fromCells,
-  ViewableGrid,
-  ViewableEntry,
-  addClues,
-} from '../../../lib/viewableGrid';
+import { userIdToPage } from '../../../lib/serverOnly';
 import {
   puzzleFromDB,
   PuzzleT,
   Direction,
   getClueText,
 } from '../../../lib/types';
-import { userIdToPage } from '../../../lib/serverOnly';
+import {
+  fromCells,
+  ViewableGrid,
+  ViewableEntry,
+  addClues,
+} from '../../../lib/viewableGrid';
 
 function layoutPDFClues(
   doc: jsPDF,

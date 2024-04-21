@@ -2,8 +2,8 @@ import { memo, useEffect, useRef, useState } from 'react';
 import { FaSlash, FaEye } from 'react-icons/fa';
 import { usePolyfilledResizeObserver } from '../lib/hooks';
 import { Position } from '../lib/types';
-import styles from './Cell.module.css';
 import { clsx } from '../lib/utils';
+import styles from './Cell.module.css';
 
 interface CellProps {
   barRight: boolean;

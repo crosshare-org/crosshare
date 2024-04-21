@@ -1,19 +1,18 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { useRouter } from 'next/router';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-
-import { requiresAuth, AuthProps } from '../../components/AuthHelpers';
-import { PuzzleResult, puzzleFromDB } from '../../lib/types';
-import { PuzzleStatsT, PuzzleStatsV, DBPuzzleV } from '../../lib/dbtypes';
-import { getFromSessionOrDB } from '../../lib/dbUtils';
-import { ErrorPage } from '../../components/ErrorPage';
-import { StatsPage } from '../../components/PuzzleStats';
+import { useRouter } from 'next/router';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useDocument } from 'react-firebase-hooks/firestore';
+import { requiresAuth, AuthProps } from '../../components/AuthHelpers';
+import { ErrorPage } from '../../components/ErrorPage';
 import { Link } from '../../components/Link';
-import { logAsyncErrors, slugify } from '../../lib/utils';
+import { StatsPage } from '../../components/PuzzleStats';
+import { getFromSessionOrDB } from '../../lib/dbUtils';
+import { PuzzleStatsT, PuzzleStatsV, DBPuzzleV } from '../../lib/dbtypes';
 import { getDocRef } from '../../lib/firebaseWrapper';
 import { withTranslation } from '../../lib/translation';
+import { PuzzleResult, puzzleFromDB } from '../../lib/types';
+import { logAsyncErrors, slugify } from '../../lib/utils';
 
 export const getServerSideProps = withTranslation(() => {
   return Promise.resolve({ props: {} });

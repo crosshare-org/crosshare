@@ -1,18 +1,18 @@
+import { t } from '@lingui/macro';
+import type { User } from 'firebase/auth';
+import { arrayRemove, arrayUnion, setDoc } from 'firebase/firestore';
+import { useCallback, useState, useContext, useEffect } from 'react';
+import { FaInfoCircle } from 'react-icons/fa';
 import { ConstructorPageBase } from '../lib/constructorPage';
+import { getDocRef } from '../lib/firebaseWrapper';
+import { clsx, logAsyncErrors } from '../lib/utils';
 import { AuthContext } from './AuthContext';
 import { Button } from './Buttons';
-import { ToolTipText } from './ToolTipText';
+import styles from './FollowButton.module.css';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { Overlay } from './Overlay';
-import { FaInfoCircle } from 'react-icons/fa';
 import { useSnackbar } from './Snackbar';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { useCallback, useState, useContext, useEffect } from 'react';
-import type { User } from 'firebase/auth';
-import { t } from '@lingui/macro';
-import { arrayRemove, arrayUnion, setDoc } from 'firebase/firestore';
-import { clsx, logAsyncErrors } from '../lib/utils';
-import styles from './FollowButton.module.css';
+import { ToolTipText } from './ToolTipText';
 
 export const FollowButton = ({
   page,

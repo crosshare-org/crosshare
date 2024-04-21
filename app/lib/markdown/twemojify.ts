@@ -1,7 +1,7 @@
-import { Plugin } from 'unified';
-import { parse } from 'twemoji-parser';
-import { Node } from 'unist';
 import { Text } from 'hast';
+import { parse } from 'twemoji-parser';
+import { Plugin } from 'unified';
+import { Node } from 'unist';
 import { is } from 'unist-util-is';
 import { flatMap } from './utils';
 

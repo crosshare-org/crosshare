@@ -1,4 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { splice } from 'micromark-util-chunked';
+import { classifyCharacter } from 'micromark-util-classify-character';
+import { resolveAll } from 'micromark-util-resolve-all';
 import {
   Extension,
   Resolver,
@@ -7,11 +11,6 @@ import {
   Token,
   Event,
 } from 'micromark-util-types';
-
-import { splice } from 'micromark-util-chunked';
-import { classifyCharacter } from 'micromark-util-classify-character';
-import { resolveAll } from 'micromark-util-resolve-all';
-
 import { HtmlExtension } from 'micromark-util-types';
 
 declare module 'micromark-util-types' {

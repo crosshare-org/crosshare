@@ -1,3 +1,4 @@
+import { getFromDB } from './dbUtils';
 import {
   CommentDeletionWithIdT,
   CommentForModerationWithIdT,
@@ -5,7 +6,6 @@ import {
   DBPuzzleT,
   DBPuzzleV,
 } from './dbtypes';
-import { getFromDB } from './dbUtils';
 import { getCollection, toFirestore } from './firebaseAdminWrapper';
 
 function findCommentById(

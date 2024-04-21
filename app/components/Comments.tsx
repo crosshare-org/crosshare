@@ -1,3 +1,8 @@
+import { Trans, t } from '@lingui/macro';
+import type { User } from 'firebase/auth';
+import { addDoc, updateDoc } from 'firebase/firestore';
+import type { Root } from 'hast';
+import * as iot from 'io-ts';
 import {
   useState,
   useEffect,
@@ -6,36 +11,31 @@ import {
   FormEvent,
   Fragment,
 } from 'react';
-import * as iot from 'io-ts';
-import type { User } from 'firebase/auth';
-import { AuthContext } from './AuthContext';
-import { PartialBy, Comment, Direction } from '../lib/types';
-import { PatronIcon } from './Icons';
-import { logAsyncErrors, timeString } from '../lib/utils';
-import { Emoji } from './Emoji';
-import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
+import { ConstructorPageT } from '../lib/constructorPage';
 import {
   CommentForModerationT,
   CommentForModerationWithIdV,
   CommentForModerationWithIdT,
   CommentDeletionT,
 } from '../lib/dbtypes';
-import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
-import { Markdown } from './Markdown';
-import { ConstructorPageT } from '../lib/constructorPage';
-import { Link } from './Link';
-import { ButtonAsLink, Button } from './Buttons';
-import { LengthLimitedTextarea, LengthView } from './Inputs';
-import { Trans, t } from '@lingui/macro';
-import { PastDistanceToNow } from './TimeDisplay';
-import { Timestamp } from '../lib/timestamp';
 import { getCollection, getDocRef } from '../lib/firebaseWrapper';
-import { addDoc, updateDoc } from 'firebase/firestore';
-import type { Root } from 'hast';
-import { ReportOverlay } from './ReportOverlay';
-import { Overlay } from './Overlay';
 import { arrayFromLocalStorage } from '../lib/storage';
+import { Timestamp } from '../lib/timestamp';
+import { PartialBy, Comment, Direction } from '../lib/types';
+import { logAsyncErrors, timeString } from '../lib/utils';
+import { AuthContext } from './AuthContext';
+import { ButtonAsLink, Button } from './Buttons';
 import styles from './Comments.module.css';
+import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
+import { Emoji } from './Emoji';
+import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
+import { PatronIcon } from './Icons';
+import { LengthLimitedTextarea, LengthView } from './Inputs';
+import { Link } from './Link';
+import { Markdown } from './Markdown';
+import { Overlay } from './Overlay';
+import { ReportOverlay } from './ReportOverlay';
+import { PastDistanceToNow } from './TimeDisplay';
 
 export const COMMENT_LENGTH_LIMIT = 2048;
 

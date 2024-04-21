@@ -1,11 +1,11 @@
-import { useState, useContext } from 'react';
-import { AuthContext } from './AuthContext';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { Button } from './Buttons';
-import { useSnackbar } from './Snackbar';
 import { t } from '@lingui/macro';
 import { serverTimestamp, updateDoc } from 'firebase/firestore';
+import { useState, useContext } from 'react';
+import { getDocRef } from '../lib/firebaseWrapper';
 import { logAsyncErrors } from '../lib/utils';
+import { AuthContext } from './AuthContext';
+import { Button } from './Buttons';
+import { useSnackbar } from './Snackbar';
 
 export const useDisplayName = () => {
   const ctx = useContext(AuthContext);

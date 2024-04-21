@@ -3,13 +3,13 @@
  *
  * This source code is licensed under the MIT license.
  */
+import type { Directives, TextDirective } from 'mdast-util-directive';
 import { Plugin } from 'unified';
-import { visit } from 'unist-util-visit';
+import type { Transformer, Processor, Parent } from 'unified';
 import type { Node } from 'unist';
+import { visit } from 'unist-util-visit';
 
 // @ts-expect-error: TODO see https://github.com/microsoft/TypeScript/issues/49721
-import type { Transformer, Processor, Parent } from 'unified';
-import type { Directives, TextDirective } from 'mdast-util-directive';
 
 type DirectiveType = Directives['type'];
 

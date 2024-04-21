@@ -1,17 +1,17 @@
-import Head from 'next/head';
-import { GetServerSideProps } from 'next';
+import { css } from '@emotion/react';
+import { differenceInDays } from 'date-fns';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
+import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { Button } from '../components/Buttons';
 import { ContactLinks } from '../components/ContactLinks';
-import { DefaultTopBar } from '../components/TopBar';
-import { withTranslation } from '../lib/translation';
-import { donationsByEmail, DonationsListV } from '../lib/dbtypes';
-import { differenceInDays } from 'date-fns';
 import { PatronIcon } from '../components/Icons';
-import { SMALL_AND_UP } from '../lib/style';
+import { DefaultTopBar } from '../components/TopBar';
+import { donationsByEmail, DonationsListV } from '../lib/dbtypes';
 import { getCollection } from '../lib/firebaseAdminWrapper';
-import { css } from '@emotion/react';
+import { SMALL_AND_UP } from '../lib/style';
+import { withTranslation } from '../lib/translation';
 
 interface DonateProps {
   donors: {

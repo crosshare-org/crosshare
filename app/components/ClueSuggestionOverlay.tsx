@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Overlay } from './Overlay';
-import { FaCheck } from 'react-icons/fa';
-import { Table } from 'react-fluid-table';
 import orderBy from 'lodash/orderBy';
+import { useEffect, useMemo, useState } from 'react';
+import { Table } from 'react-fluid-table';
+import { FaCheck } from 'react-icons/fa';
 import { ClueListT, parseClueList, ClueEntryT } from '../lib/ginsbergCommon';
 import { logAsyncErrors } from '../lib/utils';
+import { Overlay } from './Overlay';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const NYTIcon = ({ row }: { row: any }) => {

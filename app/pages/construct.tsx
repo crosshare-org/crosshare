@@ -1,14 +1,6 @@
 import Head from 'next/head';
-
-import { renderLoginButtonIfNeeded } from '../components/AuthHelpers';
-import { Builder } from '../components/Builder';
-import { LoadButton } from '../components/DBLoader';
-import { useWordDB } from '../lib/WordDB';
 import { useContext, useState, ReactNode } from 'react';
-import { FeatureList, FeatureListItem } from '../components/FeatureList';
-import { Link } from '../components/Link';
-import { MdMoneyOff } from 'react-icons/md';
-import { IoMdResize, IoMdPhonePortrait } from 'react-icons/io';
+import { CgSidebarRight } from 'react-icons/cg';
 import {
   FaShareSquare,
   FaChartBar,
@@ -19,15 +11,22 @@ import {
   FaQuestionCircle,
   FaCode,
 } from 'react-icons/fa';
-import { BigQuote } from '../components/BigQuote';
-import { Hero } from '../components/Hero';
-import { Button } from '../components/Buttons';
-import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
-import { Emoji } from '../components/Emoji';
-import { ContactLinks } from '../components/ContactLinks';
-import { withStaticTranslation } from '../lib/translation';
-import { CgSidebarRight } from 'react-icons/cg';
+import { IoMdResize, IoMdPhonePortrait } from 'react-icons/io';
+import { MdMoneyOff } from 'react-icons/md';
 import { AuthContext } from '../components/AuthContext';
+import { renderLoginButtonIfNeeded } from '../components/AuthHelpers';
+import { BigQuote } from '../components/BigQuote';
+import { Builder } from '../components/Builder';
+import { Button } from '../components/Buttons';
+import { ContactLinks } from '../components/ContactLinks';
+import { LoadButton } from '../components/DBLoader';
+import { Emoji } from '../components/Emoji';
+import { FeatureList, FeatureListItem } from '../components/FeatureList';
+import { Hero } from '../components/Hero';
+import { Link } from '../components/Link';
+import { useWordDB } from '../lib/WordDB';
+import { SMALL_AND_UP, LARGE_AND_UP } from '../lib/style';
+import { withStaticTranslation } from '../lib/translation';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };

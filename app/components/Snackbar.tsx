@@ -1,4 +1,4 @@
-import { IoMdCloseCircleOutline } from 'react-icons/io';
+import { keyframes } from '@emotion/react';
 import React, {
   createContext,
   Dispatch,
@@ -9,8 +9,8 @@ import React, {
   useReducer,
   useState,
 } from 'react';
+import { IoMdCloseCircleOutline } from 'react-icons/io';
 import { SMALL_AND_UP } from '../lib/style';
-import { keyframes } from '@emotion/react';
 
 const slidein = keyframes`
 from {

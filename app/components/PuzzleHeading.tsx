@@ -1,20 +1,19 @@
+import { Trans } from '@lingui/macro';
+import type { Root } from 'hast';
 import { useContext } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
-
-import { LinkButtonSimpleA } from './Link';
-import { PastDistanceToNow } from './TimeDisplay';
-import { ConstructorNotes } from './ConstructorNotes';
 import { ConstructorPageWithMarkdown } from '../lib/constructorPage';
-import { ProfilePicAndName } from './Images';
-import { Markdown } from './Markdown';
-import { ToolTipText } from './ToolTipText';
-import { AuthorLink } from './PuzzleLink';
-import { EmbedContext } from './EmbedContext';
 import { GlickoScoreT } from '../lib/dbtypes';
+import { ConstructorNotes } from './ConstructorNotes';
 import { DifficultyBadge } from './DifficultyBadge';
-import { Trans } from '@lingui/macro';
+import { EmbedContext } from './EmbedContext';
+import { ProfilePicAndName } from './Images';
+import { LinkButtonSimpleA } from './Link';
+import { Markdown } from './Markdown';
+import { AuthorLink } from './PuzzleLink';
 import { TagList } from './TagList';
-import type { Root } from 'hast';
+import { PastDistanceToNow } from './TimeDisplay';
+import { ToolTipText } from './ToolTipText';
 
 export const PuzzleHeading = (props: {
   rating: GlickoScoreT | null;

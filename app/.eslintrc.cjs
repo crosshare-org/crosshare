@@ -11,7 +11,7 @@ module.exports = {
     'plugin:@typescript-eslint/strict-type-checked',
     'plugin:@typescript-eslint/stylistic-type-checked',
     'plugin:redos/recommended',
-    "plugin:css-modules/recommended",
+    'plugin:css-modules/recommended',
     'next/core-web-vitals',
     'prettier',
   ],
@@ -24,7 +24,7 @@ module.exports = {
   ignorePatterns: ['next.config.mjs', 'jest.config.mjs'],
   parser: '@typescript-eslint/parser',
   parserOptions: { project: true, tsconfigRootDir: __dirname },
-  plugins: ['@emotion', 'lingui', "css-modules"],
+  plugins: ['@emotion', 'lingui', 'css-modules', 'import'],
   rules: {
     // someday?... "lingui/no-unlocalized-strings": 2,
     'lingui/t-call-in-function': 2,
@@ -80,5 +80,13 @@ module.exports = {
     ],
     // TODO get this turned on, it's just a lot to update all at once.
     '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    'import/order': [
+      'error',
+      {
+        'newlines-between': 'never',
+        alphabetize: { order: 'asc' },
+        warnOnUnassignedImports: true,
+      },
+    ],
   },
 };

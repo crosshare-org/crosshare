@@ -1,4 +1,4 @@
-import { valAt, getCrosses } from './gridBase';
+import * as WordDB from './WordDB';
 import {
   AutofillGrid,
   fromTemplate,
@@ -7,8 +7,8 @@ import {
   numMatchesForEntry,
   gridWithEntryDecided,
 } from './autofillGrid';
-import * as WordDB from './WordDB';
 import * as BA from './bitArray';
+import { valAt, getCrosses } from './gridBase';
 
 enum ResultTag {
   Recur,

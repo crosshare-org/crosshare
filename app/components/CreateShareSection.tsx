@@ -1,7 +1,7 @@
+import { Trans } from '@lingui/macro';
 import { FaCloudUploadAlt, FaHammer } from 'react-icons/fa';
 import { Link } from '../components/Link';
 import { LARGE_AND_UP, SMALL_AND_UP } from '../lib/style';
-import { Trans } from '@lingui/macro';
 
 const getCreateShareButtonCss = (halfWidth: boolean) => ({
   width: '100%',
