@@ -898,6 +898,14 @@ const GridMode = ({
           }
           return;
         }
+        if (mkey.value.k === KeyK.Undo) {
+          dispatch({ type: 'UNDO' });
+          return;
+        }
+        if (mkey.value.k === KeyK.Redo) {
+          dispatch({ type: 'REDO' });
+          return;
+        }
         const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);
       }

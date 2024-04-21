@@ -401,6 +401,8 @@ export enum KeyK {
   OskBackspace,
   Rebus,
   Block,
+  Undo,
+  Redo,
 }
 
 export const ALLOWABLE_GRID_CHARS = /^[A-Za-z0-9Ññ&]$/;
@@ -423,8 +425,20 @@ export function fromKeyboardEvent(event: {
     }
   }
 
-  if (event.metaKey || event.altKey || event.ctrlKey) {
+  if (event.altKey) {
     return none;
+  }
+
+  if (event.metaKey || event.ctrlKey) {
+    const key = event.key.toLowerCase();
+    switch (key) {
+      case 'z':
+        return some({ k: event.shiftKey ? KeyK.Redo : KeyK.Undo });
+      case 'y':
+        return some({ k: KeyK.Redo });
+      default:
+        return none;
+    }
   }
 
   const basicKey: Option<Exclude<KeyK, KeyK.AllowedCharacter>> = (() => {
