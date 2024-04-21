@@ -57,7 +57,7 @@ function renderLoginIfNeeded({
     return (
       <>
         <TopBar />
-        <div css={{ margin: '1em' }}>
+        <div className="margin1em">
           <p>
             Please sign-in with your Google account to continue. We use your
             account to keep track of the puzzles you&apos;ve played and your
@@ -72,7 +72,7 @@ function renderLoginIfNeeded({
     return (
       <>
         <TopBar />
-        <div css={{ margin: '1em' }}>
+        <div className="margin1em">
           <p>
             Please sign-in with your Google account to continue. We use your
             account to keep track of the puzzles you&apos;ve played and your

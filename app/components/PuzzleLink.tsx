@@ -122,7 +122,7 @@ const PuzzleLink = (props: {
         ]}
         href={url}
       >
-        <div css={{ position: 'relative' }}>
+        <div className="positionRelative">
           <PuzzleSizeIcon width={props.width} height={props.height} />
           {authored || (play && play.f) ? (
             <div
@@ -150,7 +150,7 @@ const PuzzleLink = (props: {
           )}
         </div>
       </Link>
-      <div css={{ flex: 1 }}>
+      <div className="flex1">
         <Link noTargetBlank={props.noTargetBlank} css={linkCss} href={url}>
           <h3
             css={{
@@ -360,7 +360,7 @@ export const PuzzleResultLink = ({
   if (props.showPrivateStatus) {
     if (puzzle.isPrivate !== false) {
       date = (
-        <span css={{ color: 'var(--error)' }}>
+        <span className="colorError">
           <Trans comment="The variable is a timestamp like '4 days ago' or 'hace 4 dias'">
             Published privately <PastDistanceToNow date={publishDate} />
           </Trans>
@@ -371,7 +371,7 @@ export const PuzzleResultLink = ({
       new Date(puzzle.isPrivateUntil) > new Date()
     ) {
       date = (
-        <span css={{ color: 'var(--error)' }}>
+        <span className="colorError">
           <Trans comment="The variable is a timestamp like 'in 4 days' or 'en 4 dias'">
             Private, going public <DistanceToNow date={publishDate} />
           </Trans>

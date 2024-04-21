@@ -11,7 +11,8 @@ import { useCallback, useState, useContext, useEffect } from 'react';
 import type { User } from 'firebase/auth';
 import { t } from '@lingui/macro';
 import { arrayRemove, arrayUnion, setDoc } from 'firebase/firestore';
-import { logAsyncErrors } from '../lib/utils';
+import { clsx, logAsyncErrors } from '../lib/utils';
+import styles from './FollowButton.module.css';
 
 export const FollowButton = ({
   page,
@@ -53,8 +54,6 @@ export const FollowButton = ({
     [constructorName, page.u, showSnackbar]
   );
 
-  const css = { minWidth: '7em' };
-
   if (!isMounted || !user || user.isAnonymous) {
     return (
       <>
@@ -64,7 +63,7 @@ export const FollowButton = ({
               setShowOverlay(false);
             }}
           >
-            <div css={{ textAlign: 'center' }}>
+            <div className="textAlignCenter">
               <h2>
                 Follow {page.n} to get notified when they post a new puzzle
               </h2>
@@ -80,7 +79,7 @@ export const FollowButton = ({
           ''
         )}
         <Button
-          css={css}
+          className={styles.btn}
           hollow
           disabled={!isMounted || authCtx.loading}
           onClick={(e) => {
@@ -97,14 +96,14 @@ export const FollowButton = ({
     return (
       <>
         <Button
-          css={css}
+          className={styles.btn}
           hollow
           disabled
           text={
             <>
               {t`Follow`}
               <ToolTipText
-                css={{ marginLeft: '0.5em' }}
+                className="marginLeft0-5em"
                 text={<FaInfoCircle />}
                 tooltip={t`You can't follow yourself!`}
               />
@@ -119,7 +118,7 @@ export const FollowButton = ({
     return (
       <>
         <Button
-          css={css}
+          className={clsx(styles.btn, styles.hoverError)}
           onClick={logAsyncErrors(async (e) => {
             e.stopPropagation();
             await Promise.all([
@@ -139,7 +138,6 @@ export const FollowButton = ({
           })}
           text={t`Following`}
           hoverText={t`Unfollow`}
-          hoverCSS={{ backgroundColor: 'var(--error)' }}
           {...props}
         />
       </>
@@ -147,7 +145,7 @@ export const FollowButton = ({
   }
   return (
     <Button
-      css={css}
+      className={styles.btn}
       hollow
       onClick={(e) => {
         e.stopPropagation();

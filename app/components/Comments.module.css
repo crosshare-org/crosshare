@@ -1,0 +1,50 @@
+.leftButton {
+  margin-right: 0.5em !important;
+}
+
+.formWrapper {
+  margin-left: 2em;
+}
+
+.commentsList {
+  margin: 2em 0 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.repliesList {
+  margin: 0 0 0 2em;
+  padding: 0;
+  list-style-type: none;
+}
+
+.constructorTag {
+  padding: 0.1em 0.2em;
+
+  font-size: 0.75em;
+  color: var(--onprimary);
+
+  background-color: var(--primary);
+  border-radius: 5px;
+}
+
+.solveTime {
+  padding: 0.1em 0.2em;
+
+  font-size: 0.75em;
+  color: white;
+
+  background-color: var(--caption);
+  border-radius: 5px;
+}
+
+.preview {
+  margin-top: 1em;
+  padding: 1em;
+  background-color: var(--secondary);
+  border-radius: 0.5em;
+}
+
+.publishDate {
+  font-style: italic;
+}

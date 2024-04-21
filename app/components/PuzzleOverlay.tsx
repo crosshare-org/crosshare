@@ -203,7 +203,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         constructorIsPatron={props.puzzle.constructorIsPatron}
         guestConstructor={props.puzzle.guestConstructor}
       />
-      <div css={{ textAlign: 'center' }}>
+      <div className="textAlignCenter">
         {props.overlayType === OverlayType.BeginPause ? (
           <>
             {props.loadingPlayState ? (
@@ -212,7 +212,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
               </div>
             ) : (
               <>
-                <div css={{ marginBottom: '1em' }}>{props.message}</div>
+                <div className="marginBottom1em">{props.message}</div>
                 <Button
                   onClick={() => {
                     window.parent.postMessage({ type: 'resume' }, '*');
@@ -220,9 +220,9 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                   }}
                   text={props.dismissMessage}
                 />
-                <p css={{ marginTop: '1em' }}>{loginButton}</p>
+                <p className="marginTop1em">{loginButton}</p>
                 {props.downsOnly ? (
-                  <p css={{ marginTop: '1em' }}>
+                  <p className="marginTop1em">
                     <Trans>You are currently solving downs-only:</Trans> (
                     <ButtonAsLink
                       onClick={() => {
@@ -236,7 +236,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                   ''
                 )}
                 {isContest ? (
-                  <p css={{ marginTop: '1em' }}>
+                  <p className="marginTop1em">
                     <Trans>
                       This is a contest/meta puzzle. To submit your answer,
                       first finish solving the grid (or reveal it if you get
@@ -345,8 +345,8 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
       >
         {isContest && props.puzzle.contestAnswers ? (
           <>
-            <div css={{ marginTop: '1em' }}>
-              <h4 css={{ borderBottom: '1px solid var(--black)' }}>
+            <div className="marginTop1em">
+              <h4 className="borderBottom1pxSolidBlack">
                 <Trans>Leaderboard (updated hourly)</Trans>
               </h4>
               {winningSubmissions?.length ? (

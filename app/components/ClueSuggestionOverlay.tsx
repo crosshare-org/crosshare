@@ -116,7 +116,7 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
           <div>
             <label>
               <input
-                css={{ marginRight: '1em' }}
+                className="marginRight1em"
                 type="checkbox"
                 checked={onlyNYT}
                 onChange={(e) => {
@@ -149,7 +149,7 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
               },
             }}
           />
-          <h3 css={{ marginTop: '1em' }}>External Sources</h3>
+          <h3 className="marginTop1em">External Sources</h3>
           <ul>
             {ExternalSites.map((x) => (
               <li key={x[0]}>

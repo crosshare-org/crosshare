@@ -1,8 +1,9 @@
 import NextLink from 'next/link';
 import { ReactNode, useContext } from 'react';
-import { ButtonResetCSS, ButtonCSS } from './Buttons';
 import { EmbedContext } from './EmbedContext';
-import { css } from '@emotion/react';
+// eslint-disable-next-line css-modules/no-unused-class
+import styles from './Buttons.module.css'; // TODO refactor Link/Button components so we aren't importing the same CSS module in both (which next.js recommends against)
+import { clsx } from '../lib/utils';
 
 interface LinkProps {
   href: string;
@@ -13,17 +14,16 @@ interface LinkProps {
   noTargetBlank?: boolean;
 }
 
-export function LinkButton(props: LinkProps) {
+export function LinkButton({ className, ...props }: LinkProps) {
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-has-content */
     <Link
-      css={css([
-        ButtonResetCSS,
-        ButtonCSS,
-        {
-          display: 'inline-block',
-        },
-      ])}
+      className={clsx(
+        styles.reset,
+        styles.btn,
+        'displayInlineBlock',
+        className
+      )}
       {...props}
     />
   );
@@ -36,14 +36,12 @@ export function LinkButtonSimpleA(props: {
 }) {
   return (
     <a
-      className={props.className}
-      css={css([
-        ButtonResetCSS,
-        ButtonCSS,
-        {
-          display: 'inline-block',
-        },
-      ])}
+      className={clsx(
+        styles.reset,
+        styles.btn,
+        'displayInlineBlock',
+        props.className
+      )}
       target="_blank"
       rel="noopener noreferrer"
       href={props.href}

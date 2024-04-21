@@ -49,7 +49,7 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
         <meta name="robots" content="noindex" />
       </Head>
       <DefaultTopBar dashboardSelected />
-      <div css={{ margin: '1em' }}>
+      <div className="margin1em">
         <CreateShareSection halfWidth={false} />
         <ConstructorStats userId={user.uid} />
         {authoredPuzzles.length ? (

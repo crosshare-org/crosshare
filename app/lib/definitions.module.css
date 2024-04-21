@@ -1,0 +1,5 @@
+/* make any changes in concert w/ style.ts */
+@value small-and-up: min-width: 576px;
+@value large-and-up: min-width: 992px;
+@value huge-and-up: min-width: 1240px;
+@value max-width: 1200px;

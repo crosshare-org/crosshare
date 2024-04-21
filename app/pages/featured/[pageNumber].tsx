@@ -155,9 +155,9 @@ export default function FeaturedPageHandler(props: PageProps) {
           />
         ))}
         {props.nextPage !== null || props.prevPage !== null ? (
-          <p css={{ textAlign: 'center' }}>
+          <p className="textAlignCenter">
             {props.prevPage === 0 ? (
-              <Link css={{ marginRight: '2em' }} href="/">
+              <Link className="marginRight2em" href="/">
                 ← <Trans>Newer Puzzles</Trans>
               </Link>
             ) : (
@@ -165,7 +165,7 @@ export default function FeaturedPageHandler(props: PageProps) {
             )}
             {props.prevPage ? (
               <Link
-                css={{ marginRight: '2em' }}
+                className="marginRight2em"
                 href={'/featured/' + props.prevPage}
               >
                 ← <Trans>Newer Puzzles</Trans>

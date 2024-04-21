@@ -40,6 +40,7 @@ import { isSome } from 'fp-ts/lib/Option';
 import { GridView } from './Grid';
 import { logAsyncErrors } from '../lib/utils';
 import { isTextInput } from '../lib/domUtils';
+import styles from './AlternateSolutionEditor.module.css';
 
 export function AlternateSolutionEditor(props: {
   grid: string[];
@@ -224,40 +225,21 @@ export function AlternateSolutionEditor(props: {
 
   return (
     <>
-      <div
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-        }}
-      >
-        <div css={{ flex: 'none' }}>
+      <div className={styles.page}>
+        <div className="flexNone">
           <TopBar>{topBarChildren}</TopBar>
         </div>
-        <div
-          css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}
-        >
+        <div className={styles.main}>
           <div
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
             tabIndex={0}
-            css={{
-              outline: 'none',
-              display: 'flex',
-              flex: '1 1 auto',
-              flexDirection: 'column',
-              alignItems: 'center',
-              height: '100%',
-              width: '100%',
-              position: 'absolute',
-              flexWrap: 'nowrap',
-              containerType: 'size',
-            }}
+            className={styles.container}
             ref={containerRef}
           >
             <div
               aria-label="grid"
-              css={{
-                margin: 'auto',
+              className="marginAuto"
+              style={{
                 width: useCQ
                   ? `min(100cqw, 100cqh * ${aspectRatio})`
                   : `min(${cqw}px, ${cqh}px * ${aspectRatio})`,
@@ -279,7 +261,7 @@ export function AlternateSolutionEditor(props: {
             </div>
           </div>
         </div>
-        <div css={{ flex: 'none', width: '100%' }}>
+        <div className="flexNone width100">
           <Keyboard
             toggleKeyboard={toggleKeyboard}
             keyboardHandler={keyboardHandler}

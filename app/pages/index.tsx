@@ -122,7 +122,7 @@ export default function HomePage({
 
       <DefaultTopBar />
 
-      <div css={{ margin: '1em' }}>
+      <div className="margin1em">
         {showCampaignForYear ? (
           showCampaignForYear <= 2024 ? (
             <Link
@@ -143,7 +143,7 @@ export default function HomePage({
             >
               <div>
                 <h3>
-                  <span css={{ color: 'var(--error)' }}>Thank you!</span>
+                  <span className="colorError">Thank you!</span>
                 </h3>
                 Thanks to the generous support of all of our patrons,
                 Crosshare&apos;s {showCampaignForYear - 1} fundraising campaign
@@ -169,8 +169,8 @@ export default function HomePage({
               href="/donate"
             >
               <h3>
-                <span css={{ color: 'var(--error)' }}>Read this</span> - we need
-                your help!
+                <span className="colorError">Read this</span> - we need your
+                help!
               </h3>
               <div>
                 As Crosshare continues to grow (and add new features) I need
@@ -187,7 +187,7 @@ export default function HomePage({
         ) : (
           ''
         )}
-        <p css={{ marginBottom: '1em' }}>
+        <p className="marginBottom1em">
           <Trans>
             Crosshare is a <b>free</b>, <b>ad-free</b>, and{' '}
             <a href="https://github.com/crosshare-org/crosshare">open-source</a>{' '}
@@ -211,7 +211,7 @@ export default function HomePage({
           }}
         >
           {dailymini ? (
-            <div css={{ flex: '50%' }}>
+            <div className="flex50">
               <h2>
                 <Trans>Daily Mini</Trans>
               </h2>
@@ -237,15 +237,15 @@ export default function HomePage({
           ) : (
             ''
           )}
-          <div css={{ flex: '50%' }}>
+          <div className="flex50">
             <CreateShareSection halfWidth={true} />
           </div>
         </div>
-        <hr css={{ margin: '2em 0' }} />
-        <h2 css={{ marginBottom: 0 }}>
+        <hr className="margin2em0" />
+        <h2 className="marginBottom0">
           <Trans>Featured Puzzles</Trans>
         </h2>
-        <div css={{ marginBottom: '1.5em' }}>
+        <div className="marginBottom1-5em">
           <Link href="/newest">
             <Trans>View all puzzles</Trans> &rarr;
           </Link>
@@ -266,9 +266,9 @@ export default function HomePage({
             <Trans>Previous featured puzzles</Trans> &rarr;
           </Link>
         </p>
-        <hr css={{ margin: '2em 0' }} />
+        <hr className="margin2em0" />
         <UnfinishedPuzzleList user={user} />
-        <h4 css={{ marginTop: '2em' }}>
+        <h4 className="marginTop2em">
           <Trans>Frequently asked questions and information</Trans>
         </h4>
         <ul

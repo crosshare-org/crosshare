@@ -1,0 +1,18 @@
+.bigButton {
+  width: 100%;
+  height: 85px;
+  color: white;
+  background-color: var(--primary);
+}
+
+.bigButton[data-radius='4'] {
+  border-radius: 4px 4px 0 0;
+}
+
+.bigButton[data-radius='7'] {
+  border-radius: 7px 7px 0 0;
+}
+
+.bigButton:hover {
+  background-color: var(--slate-primary-hover);
+}

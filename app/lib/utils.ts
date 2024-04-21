@@ -172,3 +172,18 @@ export function logAsyncErrors<A extends unknown[]>(
     }
   };
 }
+
+export function clsx(...args: unknown[]) {
+  let i = 0,
+    tmp,
+    str = '';
+  for (; i < args.length; i++) {
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, no-cond-assign
+    if ((tmp = args[i])) {
+      if (typeof tmp === 'string') {
+        str += (str && ' ') + tmp;
+      }
+    }
+  }
+  return str;
+}

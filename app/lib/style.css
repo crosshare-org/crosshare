@@ -320,6 +320,7 @@ div.paragraph {
 div.paragraph + div.paragraph {
   margin-top: 1em;
 }
+/* stylelint-disable-next-line selector-id-pattern */
 #__next {
   height: 100%;
   width: 100%;

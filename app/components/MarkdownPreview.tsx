@@ -14,7 +14,7 @@ export function MarkdownPreview(props: MarkdownPreviewProps) {
   return (
     <>
       <ButtonAsLink
-        css={{ marginRight: '1em' }}
+        className="marginRight1em"
         text="Preview"
         disabled={!props.markdown}
         onClick={() => {

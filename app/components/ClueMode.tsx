@@ -103,7 +103,7 @@ const ClueRow = (props: {
           }}
         >
           <label
-            css={{ marginBottom: 0 }}
+            className="marginBottom0"
             htmlFor={props.entry.completedWord + '-' + props.idx + '-input'}
           >
             {props.entry.completedWord}
@@ -115,7 +115,7 @@ const ClueRow = (props: {
             spellCheck="true"
             data-testid={props.entry.completedWord + '-' + props.idx + '-input'}
             type="text"
-            css={{ flex: 1 }}
+            className="flex1"
             placeholder="Enter a clue"
             value={clueText}
             maxLength={MAX_STRING_LENGTH}
@@ -167,7 +167,7 @@ const ClueRow = (props: {
       <tr>
         <td></td>
         <td></td>
-        <td css={{ paddingBottom: '1em' }}>
+        <td className="paddingBottom1em">
           {clueText.startsWith('!#') ? (
             removeClueSpecials(clueText)
           ) : (
@@ -361,11 +361,11 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
 
         <div css={{ padding: '1em' }}>
           {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-          <label css={{ width: '100%' }}>
+          <label className="width100">
             <h2>Title</h2>
             <LengthLimitedInput
               type="text"
-              css={{ width: '100%' }}
+              className="width100"
               placeholder="Give your puzzle a title"
               value={props.title || ''}
               maxLength={MAX_STRING_LENGTH}
@@ -377,7 +377,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                 props.dispatch(sta);
               }}
             />
-            <div css={{ textAlign: 'right' }}>
+            <div className="textAlignRight">
               <LengthView
                 maxLength={MAX_STRING_LENGTH}
                 value={props.title || ''}
@@ -385,7 +385,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               />
             </div>
           </label>
-          <h2 css={{ marginTop: '1em' }}>Metadata</h2>
+          <h2 className="marginTop1em">Metadata</h2>
           <div>
             <ButtonAsLink
               onClick={() => {
@@ -411,7 +411,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               <h3>Note:</h3>
               <LengthLimitedInput
                 type="text"
-                css={{ width: '100%' }}
+                className="width100"
                 placeholder="Add a note"
                 value={props.notes}
                 maxLength={MAX_STRING_LENGTH}
@@ -423,7 +423,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                   props.dispatch(sta);
                 }}
               />
-              <div css={{ textAlign: 'right' }}>
+              <div className="textAlignRight">
                 <LengthView
                   maxLength={MAX_STRING_LENGTH}
                   value={props.notes}
@@ -453,7 +453,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                 }}
               />
               <ToolTipText
-                css={{ marginLeft: '0.5em' }}
+                className="marginLeft0-5em"
                 text={<FaInfoCircle />}
                 tooltip="Notes are shown before a puzzle is started and should be used if you need a short explainer of the theme or how the puzzle works"
               />
@@ -480,7 +480,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                   props.dispatch(sta);
                 }}
               />
-              <div css={{ textAlign: 'right' }}>
+              <div className="textAlignRight">
                 <LengthView
                   maxLength={MAX_BLOG_LENGTH}
                   value={props.blogPost || ''}
@@ -514,16 +514,16 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                 }}
               />
               <ToolTipText
-                css={{ marginLeft: '0.5em' }}
+                className="marginLeft0-5em"
                 text={<FaInfoCircle />}
                 tooltip="Blog posts are shown before and after the puzzle is solved - describe how you came up with the puzzle, talk about your day, whatever you want!"
               />
             </div>
           )}
-          <div css={{ marginTop: '1em' }}>
+          <div className="marginTop1em">
             <label>
               <input
-                css={{ marginRight: '1em' }}
+                className="marginRight1em"
                 type="checkbox"
                 checked={props.guestConstructor !== null}
                 onChange={(e) => {
@@ -541,7 +541,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
             <div css={{ marginLeft: '1.5em', marginBottom: '1em' }}>
               <LengthLimitedInput
                 type="text"
-                css={{ width: '100%' }}
+                className="width100"
                 placeholder="Guest constructor's name"
                 value={props.guestConstructor}
                 maxLength={MAX_STRING_LENGTH}
@@ -553,7 +553,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                   props.dispatch(sta);
                 }}
               />
-              <div css={{ textAlign: 'right' }}>
+              <div className="textAlignRight">
                 <LengthView
                   maxLength={MAX_STRING_LENGTH}
                   value={props.guestConstructor}
@@ -567,7 +567,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
           <div>
             <label>
               <input
-                css={{ marginRight: '1em' }}
+                className="marginRight1em"
                 type="checkbox"
                 checked={state.isContestPuzzle}
                 onChange={(e) => {
@@ -580,7 +580,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               />{' '}
               This is a meta/contest puzzle{' '}
               <ToolTipText
-                css={{ marginLeft: '0.5em' }}
+                className="marginLeft0-5em"
                 text={<FaInfoCircle />}
                 tooltip="A meta puzzle has an extra puzzle embedded in the grid for after solvers have finished solving. Solvers can submit their solution, find out if they were right or wrong, and view a leaderboard of those who've solved the contest correctly."
               />
@@ -655,7 +655,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                 )}
                 <Button
                   type="submit"
-                  css={{ marginLeft: '0.5em' }}
+                  className="marginLeft0-5em"
                   disabled={
                     contestAnswerError !== '' ||
                     contestAnswerInProg.trim().length === 0
@@ -663,13 +663,13 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                   text="Add Solution"
                 />
               </form>
-              <h4 css={{ marginTop: '1em' }}>Contest explanation</h4>
+              <h4 className="marginTop1em">Contest explanation</h4>
               <p>
                 After publishing, you can use a comment to explain how the
                 meta/contest works - comments are only visible to solvers who
                 have submitted or revealed the correct solution.
               </p>
-              <h4 css={{ marginTop: '1em' }}>Delay before allowing reveal</h4>
+              <h4 className="marginTop1em">Delay before allowing reveal</h4>
               <p>
                 Solvers get unlimited submission attempts and can optionally
                 reveal the answer if they aren&apos;t able to figure it out. You
@@ -679,7 +679,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               <div>
                 <label>
                   <input
-                    css={{ marginRight: '1em' }}
+                    className="marginRight1em"
                     type="checkbox"
                     checked={
                       state.contestRevealDelay
@@ -700,7 +700,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                 </label>
               </div>
 
-              <h4 css={{ marginTop: '1em' }}>Contest prize</h4>
+              <h4 className="marginTop1em">Contest prize</h4>
               <p>
                 If the contest has a prize solvers can choose to include their
                 email address in their submission to be eligible to win.
@@ -708,7 +708,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               <div>
                 <label>
                   <input
-                    css={{ marginRight: '1em' }}
+                    className="marginRight1em"
                     type="checkbox"
                     checked={state.contestHasPrize}
                     onChange={(e) => {
@@ -729,7 +729,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
           <div>
             <label>
               <input
-                css={{ marginRight: '1em' }}
+                className="marginRight1em"
                 type="checkbox"
                 checked={state.isPrivate}
                 onChange={(e) => {
@@ -742,7 +742,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               />{' '}
               This puzzle is private
               <ToolTipText
-                css={{ marginLeft: '0.5em' }}
+                className="marginLeft0-5em"
                 text={<FaInfoCircle />}
                 tooltip="Private puzzles are still visible to anybody you share the link with. They do not appear on your constructor blog, they aren't eligible to be featured on the Crosshare homepage, and your followers won't be notified when they are published."
               />
@@ -751,7 +751,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
           <div>
             <label>
               <input
-                css={{ marginRight: '1em' }}
+                className="marginRight1em"
                 type="checkbox"
                 checked={state.isPrivateUntil !== null}
                 onChange={(e) => {
@@ -764,7 +764,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               />{' '}
               This puzzle should be private until a specified date/time
               <ToolTipText
-                css={{ marginLeft: '0.5em' }}
+                className="marginLeft0-5em"
                 text={<FaInfoCircle />}
                 tooltip="The puzzle won't appear on your constructor blog and your followers won't be notified until after the specified time."
               />
@@ -799,7 +799,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
             solvers quickly find puzzles with a particular attribute or theme.
           </p>
           {editingTags ? (
-            <div css={{ marginBottom: '1.5em' }}>
+            <div className="marginBottom1-5em">
               <TagEditor
                 userTags={state.userTags}
                 autoTags={autoTags}
@@ -832,11 +832,9 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
             </>
           )}
 
-          <h2 css={{ marginTop: '1em' }}>
-            Clues (use markdown for formatting):
-          </h2>
+          <h2 className="marginTop1em">Clues (use markdown for formatting):</h2>
           {props.completedEntries.length ? (
-            <table css={{ width: '100%' }}>
+            <table className="width100">
               <tbody>{clueRows}</tbody>
             </table>
           ) : (
@@ -859,7 +857,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               </p>
             </>
           )}
-          <h2 css={{ marginTop: '1em' }}>Advanced</h2>
+          <h2 className="marginTop1em">Advanced</h2>
           <div>
             <h3>Alternate Solutions</h3>
             {state.alternates.length ? (
@@ -902,7 +900,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               }}
             />
             <ToolTipText
-              css={{ marginLeft: '0.5em' }}
+              className="marginLeft0-5em"
               text={<FaInfoCircle />}
               tooltip={
                 <>
@@ -921,11 +919,11 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               }
             />
           </div>
-          <div css={{ marginTop: '1em' }}>
+          <div className="marginTop1em">
             <h3>Comments</h3>
             <label>
               <input
-                css={{ marginRight: '1em' }}
+                className="marginRight1em"
                 type="checkbox"
                 checked={state.commentsDisabled}
                 onChange={(e) => {

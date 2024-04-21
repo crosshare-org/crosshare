@@ -64,13 +64,13 @@ function url(network: Network, path: string, text: string): string {
 function icon(network: Network): ReactNode {
   switch (network) {
     case Network.Facebook:
-      return <FaFacebook css={{ verticalAlign: 'text-bottom' }} />;
+      return <FaFacebook className="verticalAlignTextBottom" />;
     case Network.Twitter:
-      return <FaTwitter css={{ verticalAlign: 'text-bottom' }} />;
+      return <FaTwitter className="verticalAlignTextBottom" />;
     case Network.Email:
-      return <FaEnvelope css={{ verticalAlign: 'text-bottom' }} />;
+      return <FaEnvelope className="verticalAlignTextBottom" />;
     case Network.Clipboard:
-      return <FaRegClipboard css={{ verticalAlign: 'text-bottom' }} />;
+      return <FaRegClipboard className="verticalAlignTextBottom" />;
   }
 }
 

@@ -22,7 +22,7 @@ export const ErrorPage = (props: { title: string; children?: ReactNode }) => {
         <Link href="/">
           <Logo notificationCount={0} width="15em" height="15em" />
         </Link>
-        <h1 css={{ marginTop: '1em' }}>{props.title}</h1>
+        <h1 className="marginTop1em">{props.title}</h1>
         {props.children}
         <p>
           Click the angry bunny (or <Link href="/">here</Link>) to try the

@@ -1,0 +1,26 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.main {
+  position: relative;
+  overflow: scroll;
+  flex: 1 1 auto;
+}
+
+.container {
+  position: absolute;
+
+  container-type: size;
+  display: flex;
+  flex: 1 1 auto;
+  flex-flow: column nowrap;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+
+  outline: none;
+}

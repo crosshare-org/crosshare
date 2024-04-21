@@ -224,7 +224,7 @@ export function ImageCropper(props: {
           onChange={onSelectFile}
         />
       </div>
-      <div css={{ margin: '1em 0' }}>
+      <div className="margin1em0">
         {upImg ? (
           <ReactCrop
             aspect={props.targetSize[0] / props.targetSize[1]}

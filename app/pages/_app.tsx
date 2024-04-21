@@ -8,11 +8,11 @@ import { useAuth } from '../lib/useAuth';
 import { AuthContext } from '../components/AuthContext';
 import { CrosshareAudioContext } from '../components/CrosshareAudioContext';
 import { Snackbar, SnackbarProvider } from '../components/Snackbar';
-import { Global } from '@emotion/react';
 
 import '../lib/style.css';
+import '../lib/atoms.css';
 import {
-  colorTheme,
+  colorThemeString,
   ERROR_COLOR,
   LINK,
   PRIMARY,
@@ -176,47 +176,42 @@ export default function CrosshareApp({
           property="og:image:alt"
           content="The crosshare logo"
         />
+        <style
+          key="theme"
+          dangerouslySetInnerHTML={{
+            __html: `
+html, body.light-mode {
+  ${colorThemeString({
+    primary: PRIMARY,
+    link: LINK,
+    errorColor: ERROR_COLOR,
+    verifiedColor: VERIFIED_COLOR,
+    darkMode: false,
+    preservePrimary: false,
+  })}}
+@media (prefers-color-scheme: dark) {
+  html {${colorThemeString({
+    primary: PRIMARY,
+    link: LINK,
+    errorColor: ERROR_COLOR,
+    verifiedColor: VERIFIED_COLOR,
+    darkMode: true,
+    preservePrimary: false,
+  })}}
+}
+body.dark-mode {
+  ${colorThemeString({
+    primary: PRIMARY,
+    link: LINK,
+    errorColor: ERROR_COLOR,
+    verifiedColor: VERIFIED_COLOR,
+    darkMode: true,
+    preservePrimary: false,
+  })}}
+`,
+          }}
+        />
       </Head>
-      <Global
-        styles={{
-          html: [
-            colorTheme({
-              primary: PRIMARY,
-              link: LINK,
-              errorColor: ERROR_COLOR,
-              verifiedColor: VERIFIED_COLOR,
-              darkMode: false,
-              preservePrimary: false,
-            }),
-            {
-              '@media (prefers-color-scheme: dark)': colorTheme({
-                primary: PRIMARY,
-                link: LINK,
-                errorColor: ERROR_COLOR,
-                verifiedColor: VERIFIED_COLOR,
-                darkMode: true,
-                preservePrimary: false,
-              }),
-            },
-          ],
-          'body.dark-mode': colorTheme({
-            primary: PRIMARY,
-            link: LINK,
-            errorColor: ERROR_COLOR,
-            verifiedColor: VERIFIED_COLOR,
-            darkMode: true,
-            preservePrimary: false,
-          }),
-          'body.light-mode': colorTheme({
-            primary: PRIMARY,
-            link: LINK,
-            errorColor: ERROR_COLOR,
-            verifiedColor: VERIFIED_COLOR,
-            darkMode: false,
-            preservePrimary: false,
-          }),
-        }}
-      />
       <CrosshareAudioContext.Provider value={[audioContext, initAudioContext]}>
         <AuthContext.Provider value={authStatus}>
           <SnackbarProvider>

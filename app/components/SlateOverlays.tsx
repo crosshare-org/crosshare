@@ -1,12 +1,10 @@
 import { Dispatch, useEffect, useRef } from 'react';
 import { PuzzleAction } from '../reducers/commonActions';
 import { Overlay } from './Overlay';
-import { ButtonResetCSS } from './Buttons';
 import { SlateHeader, SlateLogo } from './SlateHeader';
 import { Illustration, Pause, Play } from './SlateIcons';
 import { Link } from './Link';
-import { Global, css } from '@emotion/react';
-import { FULLSCREEN_CSS, LARGE_AND_UP, SMALL_AND_UP } from '../lib/style';
+import { LARGE_AND_UP, SMALL_AND_UP } from '../lib/style';
 import { SlateColorTheme } from './SlateColorTheme';
 import { PuzzleResultWithAugmentedComments } from '../lib/types';
 import {
@@ -14,6 +12,9 @@ import {
   SLATE_PADDING_MED,
   SLATE_PADDING_LARGE,
 } from './Page';
+import { FullscreenCSS } from './FullscreenCSS';
+import styles from './SlateOverlays.module.css';
+import { ButtonReset } from './Buttons';
 
 const PoweredByLink = () => {
   return (
@@ -105,7 +106,7 @@ export const SlateBegin = ({
   });
   return (
     <>
-      <Global styles={FULLSCREEN_CSS} />
+      <FullscreenCSS />
       <SlateColorTheme />
       <div
         ref={containerRef}
@@ -163,23 +164,12 @@ const BigButton = ({
 }: {
   dispatch: Dispatch<PuzzleAction>;
   text: string;
-  radius: number;
+  radius: 4 | 7;
 }) => {
   return (
-    <button
-      css={css([
-        ButtonResetCSS,
-        {
-          backgroundColor: 'var(--primary)',
-          width: '100%',
-          color: 'white',
-          height: '85px',
-          borderRadius: `${radius}px ${radius}px 0 0`,
-          '&:hover': {
-            backgroundColor: 'var(--slate-primary-hover)',
-          },
-        },
-      ])}
+    <ButtonReset
+      data-radius={radius.toString()}
+      className={styles.bigButton}
       onClick={() => {
         window.parent.postMessage({ type: 'resume' }, '*');
         dispatch({ type: 'RESUMEACTION' });
@@ -195,6 +185,6 @@ const BigButton = ({
       >
         {text}
       </span>
-    </button>
+    </ButtonReset>
   );
 };

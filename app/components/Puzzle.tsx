@@ -34,7 +34,6 @@ import {
 import { ClueText } from './ClueText';
 import { IoMdStats } from 'react-icons/io';
 import useEventListener from '@use-it/event-listener';
-import { Global } from '@emotion/react';
 
 import { ClueList } from './ClueList';
 import {
@@ -116,7 +115,6 @@ import { getDocRef, signInAnonymously } from '../lib/firebaseWrapper';
 import type { User } from 'firebase/auth';
 import { Emoji } from './Emoji';
 import {
-  FULLSCREEN_CSS,
   LARGE_AND_UP,
   SMALL_AND_UP,
   SMALL_AND_UP_RULES,
@@ -161,6 +159,7 @@ import { removeSpoilers } from '../lib/markdown/markdown';
 import { SlateBegin, SlatePause } from './SlateOverlays';
 import { SolverPreferencesList } from './SolverPreferencesList';
 import { isTextInput } from '../lib/domUtils';
+import { FullscreenCSS } from './FullscreenCSS';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay),
@@ -198,7 +197,7 @@ const KeepTryingOverlay = ({
         </Trans>
       </p>
       <Button
-        css={{ width: '100%' }}
+        className="width100"
         onClick={() => {
           dispatch({ type: 'DISMISSKEEPTRYING' });
         }}
@@ -1261,7 +1260,7 @@ export const Puzzle = ({
   return (
     <>
       <GridContext.Provider value={state.grid}>
-        <Global styles={FULLSCREEN_CSS} />
+        <FullscreenCSS />
         <Head>
           <title>{`${puzzle.title} | Crosshare crossword puzzle`}</title>
           <I18nTags

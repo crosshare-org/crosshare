@@ -19,14 +19,13 @@ import {
   HAS_PHYSICAL_KEYBOARD,
   LARGE_AND_UP,
 } from '../lib/style';
-import { ButtonResetCSS } from './Buttons';
 import { NotificationT } from '../lib/notificationTypes';
 import { logAsyncErrors, slugify } from '../lib/utils';
 import { EmbedContext } from './EmbedContext';
 import { Trans, t } from '@lingui/macro';
 import { updateDoc } from 'firebase/firestore';
 import { getDocRef } from '../lib/firebaseWrapper';
-import { ButtonAsLink } from './Buttons';
+import { ButtonAsLink, ButtonReset } from './Buttons';
 import {
   FaComment,
   FaComments,
@@ -37,6 +36,7 @@ import {
   FaUserLock,
 } from 'react-icons/fa';
 import { css } from '@emotion/react';
+import styles from './TopBar.module.css';
 
 export const TopBarDropDown = (props: {
   onClose?: () => void;
@@ -486,20 +486,12 @@ export const TopBar = ({
                 </div>
               )
             ) : filtered?.length && !showingNotifications ? (
-              <button
-                type="button"
+              <ButtonReset
                 onClick={(e) => {
                   setShowingNotifications(true);
                   e.stopPropagation();
                 }}
-                css={css([
-                  ButtonResetCSS,
-                  {
-                    flexGrow: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                  },
-                ])}
+                className={styles.notificationsBtn}
                 title="View Notifications"
               >
                 <Logo
@@ -520,7 +512,7 @@ export const TopBar = ({
                 >
                   CROSSHARE
                 </span>
-              </button>
+              </ButtonReset>
             ) : (
               <Link
                 href="/"
@@ -682,7 +674,7 @@ const NotificationLink = ({
           css={NotificationLinkCSS}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
-          <FaComment css={{ marginRight: '0.5em' }} /> {n.cn} commented on{' '}
+          <FaComment className="marginRight0-5em" /> {n.cn} commented on{' '}
           <u>{n.pn}</u>
         </Link>
       );
@@ -693,7 +685,7 @@ const NotificationLink = ({
           css={NotificationLinkCSS}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
-          <FaComments css={{ marginRight: '0.5em' }} /> {n.cn} replied to your
+          <FaComments className="marginRight0-5em" /> {n.cn} replied to your
           comment on <u>{n.pn}</u>
         </Link>
       );
@@ -704,8 +696,8 @@ const NotificationLink = ({
           css={NotificationLinkCSS}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
-          <FaRegNewspaper css={{ marginRight: '0.5em' }} /> {n.an} published a
-          new puzzle: <u>{n.pn}</u>
+          <FaRegNewspaper className="marginRight0-5em" /> {n.an} published a new
+          puzzle: <u>{n.pn}</u>
         </Link>
       );
       break;
@@ -715,8 +707,8 @@ const NotificationLink = ({
           css={NotificationLinkCSS}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
-          <FaRegGrinStars css={{ marginRight: '0.5em' }} /> Crosshare is
-          featuring your puzzle <u>{n.pn}</u>
+          <FaRegGrinStars className="marginRight0-5em" /> Crosshare is featuring
+          your puzzle <u>{n.pn}</u>
           {n.as ? ` as ${n.as}` : ' on the homepage'}!
         </Link>
       );

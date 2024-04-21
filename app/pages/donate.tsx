@@ -118,7 +118,7 @@ export default function DonatePage({ donors }: DonateProps) {
         <PatronIcon css={PatronHeaderCSS} />
       </div>
       <div css={{ margin: 'auto', maxWidth: 900, padding: '1em' }}>
-        <h2 css={{ textAlign: 'center' }}>Become a Crosshare Patron</h2>
+        <h2 className="textAlignCenter">Become a Crosshare Patron</h2>
         <p>
           Crosshare is developed by a <b>very</b> small team of volunteers.
           Every donation, no matter how small, makes a huge difference towards
@@ -151,21 +151,21 @@ export default function DonatePage({ donors }: DonateProps) {
           <input type="hidden" name="currency_code" value="USD" />
           <Button type="submit" text="Donate (via credit card / paypal)" />
         </form>
-        <p css={{ marginTop: '1.5em' }}>
+        <p className="marginTop1-5em">
           We also accept donations via Zelle. Zelle is great because 100% of
           your donation goes to Crosshare! Please send your donation to{' '}
           <b>mike@crosshare.org</b>. Be sure to follow up with an email so we
           know which account to give a patron icon to and how you&apos;d like to
           be listed on the contributors list!
         </p>
-        <p css={{ textAlign: 'center' }}>
+        <p className="textAlignCenter">
           <i>
             If you&apos;d like to donate but not via paypal/zelle, please
             contact us via <ContactLinks />.
           </i>
         </p>
       </div>
-      <h2 css={{ textAlign: 'center' }}>
+      <h2 className="textAlignCenter">
         The contributors who make Crosshare possible
       </h2>
       <p></p>
@@ -173,7 +173,7 @@ export default function DonatePage({ donors }: DonateProps) {
         {donors.map((d, i) => (
           <li key={i} css={{ fontWeight: d.above100 ? 'bold' : 'normal' }}>
             {differenceInDays(now, new Date(d.date)) <= 32 ? (
-              <PatronIcon css={{ marginRight: '0.5em' }} />
+              <PatronIcon className="marginRight0-5em" />
             ) : (
               ''
             )}

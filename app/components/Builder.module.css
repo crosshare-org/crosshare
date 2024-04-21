@@ -1,0 +1,86 @@
+@value small-and-up from '../lib/definitions.module.css';
+
+.fillItem {
+  align-items: center;
+
+  width: 100%;
+  height: 35px;
+  padding: 0.5em 1em;
+
+  color: var(--text);
+}
+
+.fillItem:hover {
+  background-color: var(--bg-hover);
+}
+
+.fillListWrapper {
+  position: relative;
+  display: none;
+  height: 100% !important;
+}
+
+.fillListWrapper[data-selected='true'] {
+  display: block;
+}
+
+.fillListHeader {
+  display: none;
+
+  height: 1.5em;
+  padding-left: 0.5em;
+
+  font-weight: bold;
+
+  border-bottom: 1px solid #aaa;
+}
+
+.listParent {
+  height: 100%;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .fillListWrapper {
+    display: block;
+  }
+
+  .fillListHeader {
+    display: block;
+  }
+
+  .listParent {
+    height: calc(100% - 1.5em);
+  }
+}
+
+.entryLength {
+  font-weight: normal;
+}
+
+.fileInput {
+  overflow: hidden;
+  max-width: 70vw;
+}
+
+.newPuzzleWrapper {
+  margin: 1em 2em;
+}
+
+.statsHeader {
+  margin-top: 1em;
+  text-align: center;
+  text-decoration: underline;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.squareAndColsWrap {
+  position: relative;
+  overflow: scroll;
+  flex: 1 1 auto;
+}

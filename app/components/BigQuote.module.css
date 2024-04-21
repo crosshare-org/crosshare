@@ -1,0 +1,41 @@
+@value small-and-up from '../lib/definitions.module.css';
+
+.outer {
+  padding: 2em;
+  color: var(--text);
+  text-align: center;
+  background-color: var(--secondary);
+}
+
+.wrapper {
+  max-width: 900px;
+  margin: auto;
+}
+
+.wrapper::before {
+  content: open-quote;
+
+  margin-right: 0.25em;
+
+  font-family: georgia, serif;
+  font-size: 6em;
+  line-height: 0.1em;
+  vertical-align: -0.4em;
+}
+
+.quote {
+  font-family: georgia, serif;
+  font-size: 20px;
+  font-style: italic;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .quote {
+    font-size: 30px;
+  }
+
+  .attrib {
+    font-size: 20px;
+  }
+}

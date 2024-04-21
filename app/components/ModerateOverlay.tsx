@@ -105,25 +105,25 @@ export const ModeratingOverlay = memo(function ModeratingOverlay({
         </>
       )}
       {puzzle.isPrivate !== false ? (
-        <h4 css={{ color: 'var(--error)' }}>This puzzle is private</h4>
+        <h4 className="colorError">This puzzle is private</h4>
       ) : (
         ''
       )}
       {puzzle.isPrivateUntil && puzzle.isPrivateUntil > new Date().getTime() ? (
-        <h4 css={{ color: 'var(--error)' }}>
+        <h4 className="colorError">
           This puzzle is private until{' '}
           {new Date(puzzle.isPrivateUntil).toISOString()}
         </h4>
       ) : (
         ''
       )}
-      <div css={{ marginTop: '1em' }}>Pick a date to appear as daily mini:</div>
+      <div className="marginTop1em">Pick a date to appear as daily mini:</div>
       <UpcomingMinisCalendar
         disableExisting={true}
         value={date}
         onChange={setDate}
       />
-      <div css={{ marginTop: '1em' }}>
+      <div className="marginTop1em">
         <button
           disabled={!date || puzzle.moderated || puzzle.isPrivate !== false}
           onClick={logAsyncErrors(schedule)}
@@ -131,7 +131,7 @@ export const ModeratingOverlay = memo(function ModeratingOverlay({
           Schedule As Daily Mini
         </button>
       </div>
-      <div css={{ marginTop: '1em' }}>
+      <div className="marginTop1em">
         <button
           disabled={puzzle.isPrivate !== false}
           onClick={() => {
@@ -141,7 +141,7 @@ export const ModeratingOverlay = memo(function ModeratingOverlay({
           Set as Featured
         </button>
       </div>
-      <div css={{ marginTop: '1em' }}>
+      <div className="marginTop1em">
         <button
           onClick={() => {
             logAsyncErrors(markAsModerated)(false);

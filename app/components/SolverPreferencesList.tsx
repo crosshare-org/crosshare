@@ -18,7 +18,7 @@ export const PrefSetting = (props: PrefSettingProps) => {
   return (
     <label>
       <input
-        css={{ marginRight: '1em' }}
+        className="marginRight1em"
         type="checkbox"
         checked={props.invert ? !prefSet : prefSet}
         onChange={logAsyncErrors(async (e) => {

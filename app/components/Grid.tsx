@@ -33,7 +33,6 @@ interface GridViewProps {
   allowBlockEditing?: boolean;
   autofill?: string[];
   cellColors?: number[];
-  highlightEntry?: number;
   entryRefs?: Set<number>[];
   showAlternates?: [number, string][][] | null;
   answers?: string[] | null;
@@ -49,10 +48,6 @@ export const GridView = ({
 }: GridViewProps) => {
   const entryCells = getEntryCells(grid, active);
   const entryIdx = entryIndexAtPosition(grid, active);
-  const highlightCells: Position[] =
-    props.highlightEntry !== undefined
-      ? grid.entries[props.highlightEntry]?.cells || []
-      : [];
   const hasSelection = hasMultipleCells(props.selection);
   const selectedCells = getSelectionCells(props.selection);
   let refedCells: Position[] = [];
@@ -170,7 +165,6 @@ export const GridView = ({
         active={isActive}
         entryCell={entryCells.some((p) => cellIndex(grid, p) === idx)}
         refedCell={refedCells.some((p) => cellIndex(grid, p) === idx)}
-        highlightCell={highlightCells.some((p) => cellIndex(grid, p) === idx)}
         selected={selectedCells.some((p) => cellIndex(grid, p) === idx)}
         isSelecting={hasSelection}
         key={idx}

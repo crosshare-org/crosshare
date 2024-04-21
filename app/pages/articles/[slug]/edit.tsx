@@ -103,7 +103,7 @@ const ArticleEditor = ({
         <title>{`Editing | ${article.t} | Crosshare`}</title>
       </Head>
       <DefaultTopBar />
-      <div css={{ margin: '1em' }}>
+      <div className="margin1em">
         <p>
           Note: changes may take up to an hour to appear on the site - we cache
           pages to keep Crosshare fast!
@@ -111,7 +111,7 @@ const ArticleEditor = ({
         <h3>Slug</h3>
         <EditableText
           title="Slug"
-          css={{ marginBottom: '1em' }}
+          className="marginBottom1em"
           text={article.s}
           hast={markdownToHast({ text: article.s })}
           maxLength={100}
@@ -128,7 +128,7 @@ const ArticleEditor = ({
         <h3>Title</h3>
         <EditableText
           title="Title"
-          css={{ marginBottom: '1em' }}
+          className="marginBottom1em"
           text={article.t}
           hast={markdownToHast({ text: article.t })}
           maxLength={300}
@@ -143,7 +143,7 @@ const ArticleEditor = ({
         <EditableText
           textarea={true}
           title="Content"
-          css={{ marginBottom: '1em' }}
+          className="marginBottom1em"
           text={article.c}
           hast={markdownToHast({ text: article.c })}
           maxLength={1000000}
@@ -158,7 +158,7 @@ const ArticleEditor = ({
         <p>
           <label>
             <input
-              css={{ marginRight: '1em' }}
+              className="marginRight1em"
               type="checkbox"
               checked={article.f}
               onChange={logAsyncErrors(async (e) => {

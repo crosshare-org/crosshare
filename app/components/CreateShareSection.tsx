@@ -42,7 +42,7 @@ export function CreateShareSection(props: { halfWidth: boolean }) {
           <FaHammer
             css={{ alignSelf: 'center', marginRight: '0.5em', fontSize: '2em' }}
           />
-          <div css={{ flex: 1 }}>
+          <div className="flex1">
             <Trans>
               <h4>Create a new puzzle</h4>
               <p
@@ -61,7 +61,7 @@ export function CreateShareSection(props: { halfWidth: boolean }) {
           <FaCloudUploadAlt
             css={{ alignSelf: 'center', marginRight: '0.5em', fontSize: '2em' }}
           />
-          <div css={{ flex: 1 }}>
+          <div className="flex1">
             <Trans>
               <h4>Upload a .puz file</h4>
               <p

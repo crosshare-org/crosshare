@@ -153,10 +153,10 @@ export default function NewestPageHandler(props: PageProps) {
         ))}
         {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
         {props.nextPage || props.prevPage !== null ? (
-          <p css={{ textAlign: 'center' }}>
+          <p className="textAlignCenter">
             {props.prevPage !== null ? (
               <Link
-                css={{ marginRight: '2em' }}
+                className="marginRight2em"
                 href={`/newest/${
                   props.prevPage !== 0 ? `/${props.prevPage}` : ''
                 }`}

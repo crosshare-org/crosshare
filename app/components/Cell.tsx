@@ -1,34 +1,9 @@
-import { keyframes } from '@emotion/react';
 import { memo, useEffect, useRef, useState } from 'react';
-
 import { FaSlash, FaEye } from 'react-icons/fa';
 import { usePolyfilledResizeObserver } from '../lib/hooks';
 import { Position } from '../lib/types';
-
-const blink = keyframes`
-from, to {
-  background-color: transparent;
-}
-50% {
-  background-color: var(--text);
-}
-`;
-
-const Cursor = () => {
-  return (
-    <span
-      css={{
-        width: '0.05em',
-        height: '0.8em',
-        position: 'relative',
-        backgroundColor: 'var(--text)',
-        top: '0.03em',
-        display: 'inline-block',
-        animation: `1s ${blink} step-end infinite`,
-      }}
-    ></span>
-  );
-};
+import styles from './Cell.module.css';
+import { clsx } from '../lib/utils';
 
 interface CellProps {
   barRight: boolean;
@@ -45,7 +20,6 @@ interface CellProps {
   active: boolean;
   entryCell: boolean;
   refedCell: boolean;
-  highlightCell: boolean;
   selected: boolean;
   isSelecting: boolean;
   highlight: 'circle' | 'shade' | undefined;
@@ -77,39 +51,28 @@ export const Cell = memo(function Cell(props: CellProps) {
     }
   }, []);
 
-  let bg = 'var(--cell-bg)';
-  let text = 'var(--text)';
-  let verified = 'var(--verified-on-bg)';
+  // TODO replace this w/ data attributes and do all of this in CSS
+  let containerClass: string | undefined;
   if (props.isEnteringRebus && props.active) {
     /* noop */
   } else if (props.isBlock && props.active) {
-    bg =
-      'repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px,var(--primary) 10px,var(--primary) 20px);';
+    containerClass = styles.cellContainerActiveBlock;
   } else if (props.isBlock && props.selected) {
-    bg =
-      'repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px,var(--selected-cell) 10px,var(--selected-cell) 20px);';
+    containerClass = styles.cellContainerSelectedBlock;
   } else if (props.isBlock) {
-    bg = 'var(--cell-wall)';
+    containerClass = styles.cellContainerBlock;
   } else if (props.cellColor !== undefined) {
-    bg = `rgba(241, 167, 45, ${props.cellColor})`;
+    containerClass = styles.cellContainerShaded;
   } else if (props.isEnteringRebus) {
     /* noop */
   } else if (props.active) {
-    bg = 'var(--primary)';
-    text = 'var(--onprimary)';
-    verified = 'var(--verified-on-primary)';
+    containerClass = styles.cellContainerActive;
   } else if (props.selected) {
-    bg = 'var(--selected-cell)';
-    text = 'var(--on-selected-cell)';
-    verified = 'var(--verified-on-selected-cell)';
+    containerClass = styles.cellContainerSelected;
   } else if (props.entryCell && !props.isSelecting) {
-    bg = 'var(--lighter)';
-    text = 'var(--on-lighter)';
-    verified = 'var(--verified-on-lighter)';
+    containerClass = styles.cellContainerEntryCell;
   } else if (props.refedCell) {
-    bg = 'var(--secondary)';
-    text = 'var(--on-secondary)';
-    verified = 'var(--verified-on-secondary)';
+    containerClass = styles.cellContainerRefed;
   }
 
   const filledValue =
@@ -121,31 +84,24 @@ export const Cell = memo(function Cell(props: CellProps) {
       ? filledValue
       : filledValue || props.autofill;
 
-  let boxShadow = '';
+  let boxShadow: string | undefined;
   if (props.isEnteringRebus && props.active) {
-    boxShadow = 'inset 0 0 0 0.1em var(--primary)';
-  } else if (props.highlightCell) {
-    boxShadow = 'inset 0 0 0 0.02em var(--black)';
+    boxShadow = styles.enteringRebus;
   } else if (props.cellColor !== undefined) {
     if (props.active) {
-      boxShadow = 'inset 0 0 0 0.05em var(--black)';
+      boxShadow = styles.statsActive;
     } else if (props.entryCell) {
-      boxShadow = 'inset 0 0 0 0.02em var(--black)';
+      boxShadow = styles.statsEntry;
     }
   }
 
   return (
     <div
-      css={{
+      className={clsx(styles.cellContainer, useCQ && styles.cq, containerClass)}
+      style={{
         width: `${100 / props.gridWidth}%`,
         paddingBottom: `${100 / props.gridWidth}%`,
-        float: 'left',
-        position: 'relative',
-        margin: 0,
-        overflow: 'hidden',
-        ...(useCQ && {
-          containerType: 'size',
-        }),
+        ...(props.cellColor && { '--cell-alpha': props.cellColor }),
       }}
       ref={containerRef}
     >
@@ -165,62 +121,33 @@ export const Cell = memo(function Cell(props: CellProps) {
             props.onMouseEnter({ row: props.row, col: props.column });
           }
         }}
-        css={{
-          userSelect: 'none',
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          fontSize: useCQ ? '100cqw' : `${cqw}px`,
-          ...(props.hidden &&
-            props.active && {
-              background:
-                'repeating-linear-gradient(-45deg,var(--cell-bg),var(--cell-bg) 10px,var(--primary) 10px,var(--primary) 20px)',
-            }),
-          ...(!props.hidden && {
-            borderLeft: '1px solid var(--cell-wall)',
-            borderTop: '1px solid var(--cell-wall)',
-            ...((props.row === props.gridHeight - 1 || props.hiddenBottom) && {
-              borderBottom: '1px solid var(--cell-wall)',
-            }),
-            ...(props.barBottom &&
-              props.row !== props.gridHeight - 1 && {
-                borderBottom: '0.05em solid var(--cell-wall)',
-              }),
-            ...((props.column === props.gridWidth - 1 || props.hiddenRight) && {
-              borderRight: '1px solid var(--cell-wall)',
-            }),
-            ...(props.barRight &&
-              props.column !== props.gridWidth - 1 && {
-                borderRight: '0.05em solid var(--cell-wall)',
-              }),
-            background: bg,
-            ...(boxShadow && { boxShadow }),
-          }),
-        }}
+        style={{ ...(!useCQ && { fontSize: `${cqw}px` }) }}
+        className={clsx(
+          styles.cell,
+          props.hidden && props.active && styles.cellHiddenActive,
+          !props.hidden && styles.cellVisible,
+          !props.hidden &&
+            (props.row === props.gridHeight - 1 || props.hiddenBottom) &&
+            styles.borderBottom,
+          !props.hidden &&
+            (props.column === props.gridWidth - 1 || props.hiddenRight) &&
+            styles.borderRight,
+          !props.hidden &&
+            props.barBottom &&
+            props.row !== props.gridHeight - 1 &&
+            styles.barBottom,
+          !props.hidden &&
+            props.barRight &&
+            props.column !== props.gridWidth - 1 &&
+            styles.barRight,
+          boxShadow
+        )}
       >
         {!props.isBlock || (props.isEnteringRebus && props.active) ? (
           <>
-            <div
-              css={{
-                position: 'absolute',
-                left: '0.1em',
-                top: 0,
-                fontWeight: 'bold',
-                lineHeight: '1em',
-                color: text,
-                fontSize: '0.25em',
-              }}
-            >
+            <div className={styles.number}>
               {props.wasRevealed ? (
-                <div
-                  css={{
-                    position: 'absolute',
-                    left: '1.85em',
-                    top: '-0.1em',
-                    fontSize: '1.2em',
-                    color: verified,
-                  }}
-                >
+                <div className={styles.eye}>
                   <FaEye />
                 </div>
               ) : (
@@ -229,72 +156,41 @@ export const Cell = memo(function Cell(props: CellProps) {
               {props.number}
             </div>
             <div
-              css={{
-                color: props.isVerified
-                  ? verified
+              className={clsx(
+                styles.contents,
+                props.isVerified
+                  ? styles.contentsVerified
                   : filledValue
-                  ? text
-                  : 'var(--autofill)',
-                textAlign: 'center',
-                lineHeight: '1.2em',
-                fontSize: '0.9em',
-              }}
+                  ? styles.contentsFilled
+                  : null
+              )}
             >
               {props.isWrong ? (
-                <div
-                  css={{
-                    position: 'absolute',
-                    zIndex: 2,
-                    left: '0.03em',
-                    top: '-0.1em',
-                    color: 'var(--error)',
-                    fontSize: '1em',
-                  }}
-                >
+                <div className={styles.slash}>
                   <FaSlash />
                 </div>
               ) : (
                 ''
               )}
               {props.highlight === 'circle' ? (
-                <div
-                  css={{
-                    zIndex: 0,
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    right: 0,
-                    bottom: 0,
-                    border: '1px solid var(--black)',
-                    borderRadius: '50%',
-                  }}
-                ></div>
+                <div className={styles.circle} />
               ) : (
                 ''
               )}
               {props.highlight === 'shade' ? (
-                <div
-                  css={{
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundColor: 'var(--shade-highlight)',
-                  }}
-                ></div>
+                <div className={styles.shade} />
               ) : (
                 ''
               )}
               <div
-                css={{
+                style={{
                   fontSize: `${1.0 / Math.max(value.length - 0.4, 1)}em`,
                 }}
               >
                 {props.active && props.isEnteringRebus ? (
                   <>
                     {value}
-                    <Cursor />
+                    <span className={styles.cursor} />
                   </>
                 ) : (
                   value
@@ -305,19 +201,7 @@ export const Cell = memo(function Cell(props: CellProps) {
         ) : (
           ''
         )}
-        {props.isOpposite ? (
-          <div
-            css={{
-              position: 'absolute',
-              top: '0%',
-              right: '0%',
-              borderTop: '.3em solid var(--primary)',
-              borderLeft: '.3em solid rgba(0, 0, 0, 0)',
-            }}
-          ></div>
-        ) : (
-          ''
-        )}
+        {props.isOpposite ? <div className={styles.symmetricCellTag} /> : ''}
       </div>
     </div>
   );

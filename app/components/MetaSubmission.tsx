@@ -76,7 +76,7 @@ export const MetaSubmissionForm = (props: {
             <br />
             <label>
               <input
-                css={{ marginRight: '1em' }}
+                className="marginRight1em"
                 type="checkbox"
                 checked={enteringForPrize}
                 onChange={(e) => {
@@ -96,7 +96,7 @@ export const MetaSubmissionForm = (props: {
             <p>
               <Button
                 type="submit"
-                css={{ marginRight: '0.5em' }}
+                className="marginRight0-5em"
                 disabled={!/\S/.test(submission)}
                 text="Submit"
               />
@@ -125,7 +125,7 @@ export const MetaSubmissionForm = (props: {
       )}
       <p>
         <Button
-          css={{ marginRight: '0.5em' }}
+          className="marginRight0-5em"
           onClick={() => {
             props.dispatch({
               type: 'CONTESTREVEAL',
@@ -162,13 +162,13 @@ export const MetaSubmission = (props: {
   const authContext = useContext(AuthContext);
   if (!authContext.user || authContext.user.isAnonymous) {
     return (
-      <div css={{ marginTop: '1em' }}>
-        <h4 css={{ borderBottom: '1px solid var(--black)' }}>Contest</h4>
+      <div className="marginTop1em">
+        <h4 className="borderBottom1pxSolidBlack">Contest</h4>
         <p>
           This is a meta puzzle! Sign in with google to submit your solution,
           view the solution, view the leaderboard, and read or submit comments:
         </p>
-        <div css={{ textAlign: 'center' }}>
+        <div className="textAlignCenter">
           {authContext.user ? (
             <GoogleLinkButton user={authContext.user} />
           ) : (
@@ -185,8 +185,8 @@ export const MetaSubmission = (props: {
     props.isAuthor;
 
   return (
-    <div css={{ marginTop: '1em' }}>
-      <h4 css={{ borderBottom: '1px solid var(--black)' }}>Contest</h4>
+    <div className="marginTop1em">
+      <h4 className="borderBottom1pxSolidBlack">Contest</h4>
 
       {props.contestSubmission ? (
         isMetaSolution(props.contestSubmission, props.solutions) ? (

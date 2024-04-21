@@ -32,7 +32,7 @@
     "types": [
       "@emotion/react/types/css-prop"
     ],
-    "incremental": true
+    "incremental": true,
   },
   "exclude": [
     "node_modules"

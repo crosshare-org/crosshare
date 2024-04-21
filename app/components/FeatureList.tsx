@@ -32,7 +32,7 @@ export function FeatureListItem(props: {
         width: '100%',
       }}
     >
-      <h3 css={{ textAlign: 'center' }}>{props.heading}</h3>
+      <h3 className="textAlignCenter">{props.heading}</h3>
       <div
         css={{
           display: 'flex',
@@ -40,7 +40,7 @@ export function FeatureListItem(props: {
         }}
       >
         <div css={{ marginRight: '0.5em', fontSize: '200%' }}>{props.icon}</div>
-        <p css={{ flex: 1 }}>{props.text}</p>
+        <p className="flex1">{props.text}</p>
       </div>
     </div>
   );

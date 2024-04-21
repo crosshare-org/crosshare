@@ -107,7 +107,7 @@ export const EditableText = (
         />
         <Button
           boring={true}
-          css={{ marginLeft: '0.5em' }}
+          className="marginLeft0-5em"
           onClick={() => {
             setEditing(false);
             setValue(props.text ?? '');
@@ -155,7 +155,7 @@ export const EditableText = (
               />
               {props.deletable ? (
                 <Button
-                  css={{ marginLeft: '1em' }}
+                  className="marginLeft1em"
                   text="delete"
                   title={`Delete ${props.title}`}
                   onClick={logAsyncErrors(props.handleDelete)}
@@ -172,7 +172,7 @@ export const EditableText = (
                 <span>{props.text}</span>
               )}
               <ButtonAsLink
-                css={{ marginLeft: '1em' }}
+                className="marginLeft1em"
                 text="edit"
                 title={`Edit ${props.title}`}
                 onClick={() => {
@@ -181,7 +181,7 @@ export const EditableText = (
               />
               {props.deletable ? (
                 <ButtonAsLink
-                  css={{ marginLeft: '1em' }}
+                  className="marginLeft1em"
                   text="delete"
                   title={`Delete ${props.title}`}
                   onClick={logAsyncErrors(props.handleDelete)}

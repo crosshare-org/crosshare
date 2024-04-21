@@ -118,10 +118,10 @@ export default function ThemedPage(props: PageProps | PageErrorProps) {
             />
           ))}
           {props.nextPage || props.prevPage !== null ? (
-            <p css={{ textAlign: 'center' }}>
+            <p className="textAlignCenter">
               {props.prevPage === 0 ? (
                 <Link
-                  css={{ marginRight: '2em' }}
+                  className="marginRight2em"
                   href={`/embed/list/${props.userId}${
                     colorModeQuery ? '?' + colorModeQuery : ''
                   }`}
@@ -134,7 +134,7 @@ export default function ThemedPage(props: PageProps | PageErrorProps) {
               )}
               {props.prevPage ? (
                 <Link
-                  css={{ marginRight: '2em' }}
+                  className="marginRight2em"
                   href={`/embed/list/${props.userId}/${props.prevPage}${
                     colorModeQuery ? '?' + colorModeQuery : ''
                   }`}

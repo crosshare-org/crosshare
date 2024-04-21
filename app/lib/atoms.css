@@ -1,0 +1,153 @@
+/* stylelint-disable selector-class-pattern */
+
+.flexNone {
+  flex: none !important;
+}
+
+.flex1 {
+  flex: 1 !important;
+}
+
+.flex50 {
+  flex: 50% !important;
+}
+
+.width100 {
+  width: 100% !important;
+}
+
+.displayBlock {
+  display: block !important;
+}
+
+.displayInlineBlock {
+  display: inline-block !important;
+}
+
+.margin0 {
+  margin: 0 !important;
+}
+
+.margin1em {
+  margin: 1em !important;
+}
+
+.marginTop1em {
+  margin-top: 1em !important;
+}
+
+.marginTop1-5em {
+  margin-top: 1.5em !important;
+}
+
+.marginTop2em {
+  margin-top: 2em !important;
+}
+
+.marginRight0-5em {
+  margin-right: 0.5em !important;
+}
+
+.marginRight1em {
+  margin-right: 1em !important;
+}
+
+.marginRight1-5em {
+  margin-right: 1.5em !important;
+}
+
+.marginRight2em {
+  margin-right: 2em !important;
+}
+
+.marginLeft0-5em {
+  margin-left: 0.5em !important;
+}
+
+.marginLeft1em {
+  margin-left: 1em !important;
+}
+
+.marginBottom0 {
+  margin-bottom: 0 !important;
+}
+
+.marginBottom1em {
+  margin-bottom: 1em !important;
+}
+
+.marginBottom1-5em {
+  margin-bottom: 1.5em !important;
+}
+
+.marginBottom2em {
+  margin-bottom: 2em !important;
+}
+
+.marginAuto {
+  margin: auto !important;
+}
+
+.margin1em0 {
+  margin: 1em 0 !important;
+}
+
+.margin2em0 {
+  margin: 2em 0 !important;
+}
+
+.margin0-0-5em {
+  margin: 0 0.5em !important;
+}
+
+.paddingBottom1em {
+  padding-bottom: 1em !important;
+}
+
+.textAlignLeft {
+  text-align: left !important;
+}
+
+.textAlignRight {
+  text-align: right !important;
+}
+
+.textAlignCenter {
+  text-align: center !important;
+}
+
+.listStyleTypeNone {
+  list-style-type: none !important;
+}
+
+.colorPrimary {
+  color: var(--primary) !important;
+}
+
+.colorText {
+  color: var(--text) !important;
+}
+
+.colorError {
+  color: var(--error) !important;
+}
+
+.fontSize1-5em{
+  font-size: 1.5em !important;
+}
+
+.positionAbsolute {
+  position: absolute !important;
+}
+
+.positionRelative {
+  position: relative !important;
+}
+
+.borderBottom1pxSolidBlack {
+  border-bottom: 1px solid var(--black) !important;
+}
+
+.verticalAlignTextBottom {
+  vertical-align: text-bottom !important;
+}

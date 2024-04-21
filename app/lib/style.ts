@@ -1,5 +1,3 @@
-import { CSSInterpolation } from '@emotion/serialize';
-import { css } from '@emotion/react';
 import {
   adjustHue,
   darken,
@@ -12,12 +10,14 @@ import { EmbedStylingProps } from '../components/EmbedStyling';
 
 export const KEYBOARD_HEIGHT = 164;
 export const HEADER_HEIGHT = 35;
-export const MAX_WIDTH = 1200;
 export const PROFILE_PIC: [number, number] = [200, 200];
 export const COVER_PIC: [number, number] = [1200, 400];
 
 export const TINY_COL_MIN_HEIGHT = 50;
 export const SQUARE_HEADER_HEIGHT = 68;
+
+// make any changes in concert w/ definitions.module.css
+export const MAX_WIDTH = 1200;
 export const SMALL_BREAKPOINT = 576;
 export const LARGE_BREAKPOINT = 992;
 export const SMALL_AND_UP_RULES = '(min-width: ' + SMALL_BREAKPOINT + 'px)';
@@ -26,23 +26,6 @@ export const LARGE_AND_UP = '@media (min-width: ' + LARGE_BREAKPOINT + 'px)';
 export const HUGE_AND_UP = '@media (min-width: 1240px)';
 export const HAS_PHYSICAL_KEYBOARD =
   '@media (hover: hover) and (pointer: fine)';
-
-export const FULLSCREEN_CSS = css`
-  html {
-    -ms-overflow-style: none;
-    scrollbar-color: transparent transparent;
-    scrollbar-width: none;
-    overscroll-behavior: none;
-  }
-  ::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-  }
-  html,
-  body {
-    overflow: hidden;
-  }
-`;
 
 export const PRIMARY = '#eb984e';
 export const LINK = '#2874a6';
@@ -85,7 +68,7 @@ export const colorTheme = ({
   verifiedColor,
   darkMode,
   preservePrimary,
-}: EmbedStylingProps): CSSInterpolation => {
+}: EmbedStylingProps): Record<string, string> => {
   const p = darkMode && !preservePrimary ? mix(primary, 'black', 0.5) : primary;
   const l = darkMode && !preservePrimary ? mix(link, 'white', 0.5) : link;
   const error =
@@ -168,4 +151,16 @@ export const colorTheme = ({
     '--snackbar-text': darkMode ? 'black' : '#ddd',
     '--social-text': darkMode ? '#ddd' : '#fff',
   };
+};
+
+export const styleObjectToString = (obj: Record<string, string>): string => {
+  return (
+    Object.entries(obj)
+      .map(([k, v]) => `${k}:${v}`)
+      .join(';') + ';'
+  );
+};
+
+export const colorThemeString = (props: EmbedStylingProps): string => {
+  return styleObjectToString(colorTheme(props));
 };

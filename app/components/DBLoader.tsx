@@ -62,7 +62,7 @@ export const LoadButton = (props: {
   }
   return (
     <Button
-      css={{ fontSize: '1.5em' }}
+      className="fontSize1-5em"
       onClick={startBuild}
       text={props.buttonText}
     />
@@ -84,7 +84,7 @@ export const DBLoader = (): JSX.Element => {
   return (
     <>
       <DefaultTopBar />
-      <div css={{ margin: '1em' }}>
+      <div className="margin1em">
         <h2>Database Rebuilder</h2>
         {error ? <p>Error loading existing database.</p> : ''}
         {ready ? (

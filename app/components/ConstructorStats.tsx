@@ -96,7 +96,7 @@ const PuzzleList = ({
   return (
     <>
       <h4>{title}:</h4>
-      <ul css={{ listStyleType: 'none' }}>
+      <ul className="listStyleTypeNone">
         {matches.map((v, i) => (
           <PuzzleLink
             key={i}
