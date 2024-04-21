@@ -51,6 +51,7 @@ export const Cell = memo(function Cell(props: CellProps) {
     }
   }, []);
 
+  // TODO replace this w/ data attributes and do all of this in CSS
   let containerClass: string | undefined;
   if (props.isEnteringRebus && props.active) {
     /* noop */
