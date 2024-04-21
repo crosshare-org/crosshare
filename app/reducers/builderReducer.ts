@@ -7,10 +7,15 @@ import {
   Position,
 } from '../lib/types';
 import { DBPuzzleT } from '../lib/dbtypes';
-import { ViewableGrid, ViewableEntry, fromCells } from '../lib/viewableGrid';
+import {
+  ViewableGrid,
+  ViewableEntry,
+  fromCells,
+  gridEqual,
+} from '../lib/viewableGrid';
 import { gridWithEntrySet } from '../lib/gridBase';
 import { Timestamp } from '../lib/timestamp';
-import equal from 'fast-deep-equal/es6';
+import equal from 'fast-deep-equal';
 import { getDocId } from '../lib/firebaseWrapper';
 import { GridSelection, emptySelection } from '../lib/selection';
 import {
@@ -444,7 +449,7 @@ function removeAnswer(answers: string[], toRemove: string): string[] {
 
 function pushToHistory(state: BuilderState): BuilderState {
   const prevGrid = state.undoHistory[state.undoIndex];
-  if (equal(prevGrid, state.grid)) {
+  if (gridEqual(prevGrid, state.grid)) {
     return state;
   }
 
