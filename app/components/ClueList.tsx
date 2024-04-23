@@ -13,6 +13,7 @@ import { Direction, Position } from '../lib/types';
 import { CluedEntry, RefPosition } from '../lib/viewableGrid';
 import { PuzzleAction } from '../reducers/commonActions';
 import { ClickedEntryAction } from '../reducers/gridReducer';
+import styles from './ClueList.module.css';
 import { ClueText } from './ClueText';
 
 interface ClueListItemProps {
@@ -66,75 +67,25 @@ const ClueListItem = memo(function ClueListItem({
   }
   return (
     <li
-      css={{
-        display: isActive || props.showEntry ? 'list-item' : 'none',
-        [SMALL_AND_UP]: {
-          display: 'list-item',
-        },
-        backgroundColor: isActive
-          ? 'var(--lighter)'
-          : props.isRefed
-          ? 'var(--secondary)'
-          : 'var(--bg)',
-        listStyleType: 'none',
-        cursor: 'pointer',
-        '&:hover': {
-          backgroundColor: isActive
-            ? 'var(--lighter)'
-            : props.isRefed
-            ? 'var(--secondary-hover)'
-            : 'var(--bg-hover)',
-        },
-        width: '100%',
-      }}
+      data-active={isActive}
+      data-cross={isCross}
+      data-show-entry={props.showEntry}
+      data-refed={props.isRefed}
+      className={styles.item}
       ref={ref}
       key={props.entry.index}
     >
       <div
-        css={{
-          outline: 'none',
-          width: '100%',
-        }}
+        className="outlineNone width100"
         role="button"
         tabIndex={0}
         onClick={click}
         onKeyPress={click}
       >
-        <div
-          css={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'nowrap',
-            alignItems: 'center',
-            borderLeft: isCross
-              ? '1em solid var(--lighter)'
-              : '1em solid transparent',
-            [SMALL_AND_UP]: {
-              padding: '0.5em 0.5em 0.5em 0',
-            },
-          }}
-        >
-          <div
-            css={{
-              display: props.showEntry ? 'block' : 'none',
-              [SMALL_AND_UP]: {
-                display: 'block',
-              },
-              flexShrink: 0,
-              width: '2.5em',
-              height: '100%',
-              fontWeight: 'bold',
-              textAlign: 'right',
-              paddingRight: '0.5em',
-            }}
-          >
+        <div className={styles.outer}>
+          <div className={styles.label}>
             {props.entry.labelNumber}
-            <span
-              css={{
-                [SMALL_AND_UP]: { display: 'none' },
-              }}
-            >
+            <span className={styles.direction}>
               {props.entry.direction === Direction.Across ? 'A' : 'D'}
             </span>
           </div>

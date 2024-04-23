@@ -1,0 +1,84 @@
+@value small-and-up from '../lib/definitions.module.css';
+
+.item {
+  cursor: pointer;
+
+  display: none;
+
+  width: 100%;
+
+  list-style-type: none;
+
+  background-color: var(--bg);
+}
+
+.item[data-active='true'],
+.item[data-show-entry='true'] {
+  display: list-item;
+}
+
+.item:hover {
+  background-color: var(--bg-hover);
+}
+
+.item[data-active='true'],
+.item[data-active='true']:hover {
+  background-color: var(--lighter);
+}
+
+.item[data-refed='true'] {
+  background-color: var(--secondary);
+}
+
+.item[data-refed='true']:hover {
+  background-color: var(--secondary-hover);
+}
+
+.outer {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+
+  width: 100%;
+
+  border-left: 1em solid transparent;
+}
+
+.item[data-cross='true'] .outer {
+  border-left: 1em solid var(--lighter);
+}
+
+.label {
+  display: none;
+  flex-shrink: 0;
+
+  width: 2.5em;
+  height: 100%;
+  padding-right: 0.5em;
+
+  font-weight: bold;
+  text-align: right;
+}
+
+.item[data-show-entry='true'] .label {
+  display: block;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .item {
+    display: list-item;
+  }
+
+  .outer {
+    padding: 0.5em 0.5em 0.5em 0;
+  }
+
+  .label {
+    display: block;
+  }
+
+  .direction {
+    display: none;
+  }
+}

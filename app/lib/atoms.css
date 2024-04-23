@@ -151,3 +151,7 @@
 .verticalAlignTextBottom {
   vertical-align: text-bottom !important;
 }
+
+.outlineNone {
+  outline: none !important;
+}
