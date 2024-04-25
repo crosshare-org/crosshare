@@ -5,11 +5,10 @@
  */
 import type { Directives, TextDirective } from 'mdast-util-directive';
 import { Plugin } from 'unified';
+// @ts-expect-error: TODO see https://github.com/microsoft/TypeScript/issues/49721
 import type { Parent, Processor, Transformer } from 'unified';
 import type { Node } from 'unist';
 import { visit } from 'unist-util-visit';
-
-// @ts-expect-error: TODO see https://github.com/microsoft/TypeScript/issues/49721
 
 type DirectiveType = Directives['type'];
 
