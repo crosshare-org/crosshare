@@ -64,6 +64,69 @@
   display: block;
 }
 
+.clueText {
+  flex: 1 1 auto;
+  height: 100%;
+  color: var(--text);
+}
+
+.item[data-dim='true'] .clueText {
+  color: var(--completed-clue);
+}
+
+.item[data-conceal='true'] .clueText {
+  color: transparent;
+  text-shadow: 0 0 1em var(--conceal-text);
+}
+
+.clueModeCell {
+  display: inline-block;
+
+  min-width: 1em;
+
+  font-weight: bold;
+  color: var(--text);
+  text-align: center;
+
+  border: 1px solid transparent;
+}
+
+.clueModeCell[data-active-cell='true'] {
+  border: 1px solid var(--black);
+}
+
+.item[data-entering-rebus='true'] .clueModeCell[data-active-cell='true'] {
+  border: 1px solid var(--primary);
+}
+
+.listWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100% !important;
+}
+
+.listHeader {
+  display: none;
+
+  height: 1.5em;
+  padding-left: 0.5em;
+
+  font-weight: bold;
+  color: var(--readable-primary);
+  text-transform: uppercase;
+  letter-spacing: 1.36px;
+
+  background-color: var(--bg);
+  border-bottom: 1px solid var(--autofill);
+}
+
+.list {
+  scrollbar-width: none;
+  overflow-y: scroll;
+  max-height: 100%;
+}
+
 /* stylelint-disable-next-line media-feature-name-no-unknown */
 @media (small-and-up) {
   .item {
@@ -80,5 +143,18 @@
 
   .direction {
     display: none;
+  }
+
+  .listWrapper {
+    display: unset;
+    align-items: unset;
+  }
+
+  .listHeader {
+    display: block;
+  }
+
+  .list {
+    max-height: calc(100% - 1.5em);
   }
 }

@@ -8,7 +8,6 @@ import {
   useRef,
 } from 'react';
 import { EntryBase, GridBase, valAt } from '../lib/gridBase';
-import { SMALL_AND_UP } from '../lib/style';
 import { Direction, Position } from '../lib/types';
 import { CluedEntry, RefPosition } from '../lib/viewableGrid';
 import { PuzzleAction } from '../reducers/commonActions';
@@ -71,6 +70,9 @@ const ClueListItem = memo(function ClueListItem({
       data-cross={isCross}
       data-show-entry={props.showEntry}
       data-refed={props.isRefed}
+      data-conceal={props.conceal}
+      data-dim={Boolean(props.entry.completedWord && props.dimCompleted)}
+      data-entering-rebus={props.isEnteringRebus}
       className={styles.item}
       ref={ref}
       key={props.entry.index}
@@ -89,18 +91,7 @@ const ClueListItem = memo(function ClueListItem({
               {props.entry.direction === Direction.Across ? 'A' : 'D'}
             </span>
           </div>
-          <div
-            css={{
-              flex: '1 1 auto',
-              height: '100%',
-              color: props.conceal
-                ? 'transparent'
-                : props.entry.completedWord && props.dimCompleted
-                ? 'var(--completed-clue)'
-                : 'var(--text)',
-              textShadow: props.conceal ? '0 0 1em var(--conceal-text)' : '',
-            }}
-          >
+          <div className={styles.clueText}>
             <div>
               <ClueText entry={props.entry} hast={props.hast} />
             </div>
@@ -114,18 +105,8 @@ const ClueListItem = memo(function ClueListItem({
                   return (
                     <span
                       key={a.col + '-' + a.row}
-                      css={{
-                        display: 'inline-block',
-                        textAlign: 'center',
-                        fontWeight: 'bold',
-                        minWidth: '1em',
-                        color: 'var(--text)',
-                        border: isActiveCell
-                          ? props.isEnteringRebus
-                            ? '1px solid var(--primary)'
-                            : '1px solid var(--black)'
-                          : '1px solid transparent',
-                      }}
+                      data-active-cell={isActiveCell}
+                      className={styles.clueModeCell}
                     >
                       {props.isEnteringRebus && isActiveCell
                         ? // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
@@ -196,55 +177,10 @@ export const ClueList = (props: ClueListProps): JSX.Element => {
     );
   });
   return (
-    <div
-      css={{
-        height: '100% !important',
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'center',
-        [SMALL_AND_UP]: {
-          display: 'unset',
-          alignItems: 'unset',
-        },
-      }}
-    >
-      <div
-        css={{
-          display: 'none',
-          [SMALL_AND_UP]: {
-            display: 'block',
-          },
-          fontWeight: 'bold',
-          borderBottom: '1px solid var(--autofill)',
-          height: '1.5em',
-          paddingLeft: '0.5em',
-          backgroundColor: 'var(--bg)',
-          textTransform: 'uppercase',
-          letterSpacing: '1.36px',
-          color: 'var(--readable-primary)',
-        }}
-      >
-        {props.header}
-      </div>
-      <div
-        ref={ref}
-        css={{
-          maxHeight: '100%',
-          [SMALL_AND_UP]: {
-            maxHeight: 'calc(100% - 1.5em)',
-          },
-          overflowY: 'scroll',
-          scrollbarWidth: 'none',
-        }}
-      >
-        <ol
-          css={{
-            margin: 0,
-            padding: 0,
-          }}
-        >
-          {clues}
-        </ol>
+    <div className={styles.listWrapper}>
+      <div className={styles.listHeader}>{props.header}</div>
+      <div ref={ref} className={styles.list}>
+        <ol className="margin0 padding0">{clues}</ol>
       </div>
     </div>
   );

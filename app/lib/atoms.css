@@ -100,6 +100,10 @@
   margin: 0 0.5em !important;
 }
 
+.padding0 {
+  padding: 0 !important;
+}
+
 .paddingBottom1em {
   padding-bottom: 1em !important;
 }
