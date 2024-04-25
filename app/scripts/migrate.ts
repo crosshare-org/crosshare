@@ -1,8 +1,6 @@
-#!/usr/bin/env -S npx ts-node-script
+#!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
 
 import { getFirestore } from 'firebase-admin/firestore';
-import { isRight } from 'fp-ts/lib/Either';
-import { DBPuzzleV } from '../lib/dbtypes';
 import { getAdminApp } from '../lib/firebaseAdminWrapper';
 export {};
 
@@ -15,19 +13,22 @@ const db = getFirestore(getAdminApp());
 async function runMigration() {
   console.log('Run migration here...');
   return db
-    .collection('c')
+    .collection('n')
+    .where('u', '==', 'caC9qBPqHxhcOOkIzoac6CTSRds2')
     .get()
     .then((snap) => {
-      snap.forEach(async (doc) => {
-        const validationResult = DBPuzzleV.decode(doc.data());
-        if (!isRight(validationResult)) {
-          console.log('INVALID', doc.id);
-          return;
-        }
+      const batch = db.batch();
+      snap.forEach((doc) => {
+        batch.delete(doc.ref);
       });
+      return batch.commit();
     });
 }
 
-runMigration().then(() => {
-  console.log('Finished migration');
-});
+runMigration()
+  .then((c) => {
+    console.log('Finished migration', c);
+  })
+  .catch((e: unknown) => {
+    console.error(e);
+  });
