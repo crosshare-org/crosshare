@@ -1,0 +1,14 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "../functions/src/index.ts!",
+    "lib/autofill.worker.ts!",
+    "scripts/*.ts"
+  ],
+  "project": [
+    "**/*.{js,jsx,ts,tsx}!",
+    "../functions/src/*.ts!",
+    "!**/__mocks__/**",
+    "!lingui.config.ts"
+  ]
+}
