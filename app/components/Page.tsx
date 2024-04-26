@@ -11,7 +11,8 @@ import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
 import { usePolyfilledResizeObserver } from '../lib/hooks';
 import { KeyK } from '../lib/types';
 import { clsx } from '../lib/utils';
-import { KeypressAction, PasteAction } from '../reducers/gridReducer';
+import { KeypressAction } from '../reducers/commonActions';
+import { PasteAction } from '../reducers/gridReducer';
 import { EmbedContext } from './EmbedContext';
 import styles from './Page.module.css';
 

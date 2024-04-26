@@ -7,6 +7,8 @@ import {
   cellIndex,
   entriesFromCells,
   entryAtPosition,
+  isInDirection,
+  isIndexInBounds,
   posForIndex,
   valAt,
 } from './gridBase';
@@ -16,9 +18,11 @@ import {
   BLOCK,
   ClueT,
   Direction,
+  EMPTY,
   PosAndDir,
   Position,
   Symmetry,
+  isSamePosition,
 } from './types';
 
 export interface ViewableEntry extends EntryBase {
@@ -342,6 +346,67 @@ export function moveToNextEntry<Entry extends ViewableEntry>(
     ...firstCell,
     dir: nextEntry.direction,
   };
+}
+
+export function moveToNextEntryInDirection<Entry extends ViewableEntry>(
+  grid: ViewableGrid<Entry>,
+  pos: PosAndDir,
+  reverse = false
+): Position {
+  const [currentEntry] = entryAtPosition(grid, pos);
+  if (!currentEntry) {
+    return pos;
+  }
+
+  const { cells } = currentEntry;
+  const startCell = reverse ? cells[0] : cells[cells.length - 1];
+  if (!startCell) {
+    return pos;
+  }
+
+  const xincr = pos.dir === Direction.Across ? 1 : 0;
+  const yincr = pos.dir === Direction.Down ? 1 : 0;
+  let iincr = xincr + yincr * grid.width;
+  if (reverse) {
+    iincr *= -1;
+  }
+
+  let ci = cellIndex(grid, startCell) + iincr;
+  let newPos = posForIndex(grid, ci);
+  while (isIndexInBounds(grid, ci) && isInDirection(pos, newPos)) {
+    const [newEntry] = entryAtPosition(grid, { ...newPos, dir: pos.dir });
+    if (newEntry && newEntry !== currentEntry) {
+      return newPos;
+    }
+    newPos = posForIndex(grid, (ci += iincr));
+  }
+
+  return pos;
+}
+
+export function advanceTo<Entry extends ViewableEntry>(
+  grid: ViewableGrid<Entry>,
+  pos: PosAndDir,
+  newPos: Position,
+  wrongCells: Set<number>
+): PosAndDir {
+  if (isSamePosition(pos, newPos)) {
+    return pos;
+  }
+
+  const { dir } = pos;
+  const [entry] = entryAtPosition(grid, { ...newPos, dir });
+  if (!entry) {
+    return pos;
+  }
+
+  for (const cell of entry.cells) {
+    if (valAt(grid, cell) === EMPTY || wrongCells.has(cellIndex(grid, cell))) {
+      return { ...cell, dir };
+    }
+  }
+
+  return { ...newPos, dir };
 }
 
 export function gridWithNewChar<

@@ -26,11 +26,8 @@ import {
 } from '../lib/types';
 import { logAsyncErrors } from '../lib/utils';
 import { fromCells } from '../lib/viewableGrid';
-import {
-  KeypressAction,
-  PasteAction,
-  gridInterfaceReducer,
-} from '../reducers/gridReducer';
+import { KeypressAction } from '../reducers/commonActions';
+import { PasteAction, gridInterfaceReducer } from '../reducers/gridReducer';
 import styles from './AlternateSolutionEditor.module.css';
 import { GridView } from './Grid';
 import { EscapeKey, Rebus } from './Icons';

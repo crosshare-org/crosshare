@@ -1,8 +1,17 @@
 import { PlayWithoutUserT } from '../lib/dbtypes';
 import { AccountPrefsFlagsT } from '../lib/prefs';
-import { CheatUnit, Direction } from '../lib/types';
-import { CluedGrid, nextNonBlock } from '../lib/viewableGrid';
-import { PuzzleAction } from './commonActions';
+import { CheatUnit, Direction, KeyK } from '../lib/types';
+import {
+  CluedGrid,
+  advanceTo,
+  moveDown,
+  moveLeft,
+  moveRight,
+  moveToNextEntryInDirection,
+  moveUp,
+  nextNonBlock,
+} from '../lib/viewableGrid';
+import { PuzzleAction, isKeypressAction } from './commonActions';
 import { GridInterfaceState, gridInterfaceReducer } from './gridReducer';
 import { cheat, getCurrentTime } from './puzzleUtils';
 
@@ -132,6 +141,63 @@ export function puzzleReducer(
   action: PuzzleAction
 ): PuzzleState {
   state = gridInterfaceReducer(state, action);
+  if (isKeypressAction(action)) {
+    const key = action.key;
+    if (key.k === KeyK.ShiftArrowRight) {
+      return {
+        ...state,
+        wasEntryClick: false,
+        active: advanceTo(
+          state.grid,
+          state.active,
+          state.active.dir === Direction.Across
+            ? moveToNextEntryInDirection(state.grid, state.active)
+            : moveRight(state.grid, state.active),
+          state.wrongCells
+        ),
+      };
+    } else if (key.k === KeyK.ShiftArrowLeft) {
+      return {
+        ...state,
+        wasEntryClick: false,
+        active: advanceTo(
+          state.grid,
+          state.active,
+          state.active.dir === Direction.Across
+            ? moveToNextEntryInDirection(state.grid, state.active, true)
+            : moveLeft(state.grid, state.active),
+          state.wrongCells
+        ),
+      };
+    } else if (key.k === KeyK.ShiftArrowUp) {
+      return {
+        ...state,
+        wasEntryClick: false,
+        active: advanceTo(
+          state.grid,
+          state.active,
+          state.active.dir === Direction.Down
+            ? moveToNextEntryInDirection(state.grid, state.active, true)
+            : moveUp(state.grid, state.active),
+          state.wrongCells
+        ),
+      };
+    } else if (key.k === KeyK.ShiftArrowDown) {
+      return {
+        ...state,
+        wasEntryClick: false,
+        active: advanceTo(
+          state.grid,
+          state.active,
+          state.active.dir === Direction.Down
+            ? moveToNextEntryInDirection(state.grid, state.active)
+            : moveDown(state.grid, state.active),
+          state.wrongCells
+        ),
+      };
+    }
+    return state;
+  }
   if (isCheatAction(action)) {
     return cheat(state, action.unit, action.isReveal === true);
   }
@@ -181,17 +247,17 @@ export function puzzleReducer(
     }
     const play = action.play;
     if (play === null) {
-      const downsOnly = action.prefs?.solveDownsOnly ?? false;
-      return {
-        ...state,
-        downsOnly,
-        active: {
-          ...state.active,
-          dir: downsOnly ? Direction.Down : state.active.dir,
-        },
-        prefs: action.prefs,
-        loadedPlayState: true,
-      };
+    const downsOnly = action.prefs?.solveDownsOnly ?? false;
+    return {
+      ...state,
+      downsOnly,
+      active: {
+        ...state.active,
+        dir: downsOnly ? Direction.Down : state.active.dir,
+      },
+      prefs: action.prefs,
+      loadedPlayState: true,
+    };
     }
     const downsOnly = play.do ?? false;
     return {
