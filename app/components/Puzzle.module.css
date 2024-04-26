@@ -1,0 +1,120 @@
+@value square-header-height from '../lib/definitions.module.css';
+@value slate-padding-small from '../lib/definitions.module.css';
+@value slate-padding-med from '../lib/definitions.module.css';
+@value slate-padding-large from '../lib/definitions.module.css';
+@value small-and-up from '../lib/definitions.module.css';
+@value large-and-up from '../lib/definitions.module.css';
+
+.aboveGridClue {
+  scrollbar-width: none;
+
+  overflow-y: scroll;
+  display: flex;
+
+  height: square-header-height;
+
+  font-size: 18px;
+  line-height: 24px;
+
+  background-color: var(--lighter);
+}
+
+.agcWrap {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin: auto 1em;
+}
+
+.agcLabel {
+  flex-shrink: 0;
+
+  width: 2.5em;
+  height: 100%;
+  padding-right: 0.5em;
+
+  font-weight: bold;
+  text-align: right;
+}
+
+.agcClue {
+  flex: 1 1 auto;
+  height: 100%;
+  color: var(--text);
+}
+
+.agcClue[data-conceal='true'] {
+  color: transparent;
+  text-shadow: 0 0 1em var(--conceal-text);
+}
+
+.slateButtonMargin {
+  flex-grow: 1;
+  max-width: 1.5rem;
+}
+
+.solverPrefList {
+  padding: 0 10vw;
+  list-style-type: none;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.wrapper[data-slate='true'] {
+  overflow: hidden;
+  background-color: var(--bg);
+  border: 1px solid var(--slate-container-border);
+  border-radius: 4px;
+}
+
+.headerWrap {
+  flex: none;
+}
+
+.wrapper[data-slate='true'] .headerWrap {
+  padding: slate-padding-small slate-padding-small 0;
+}
+
+.wrapper[data-slate='true'] .topBarInner {
+  flex-grow: 1;
+}
+
+.slateTimeIcon {
+  margin-right: 0.5rem;
+  font-size: 20px;
+}
+
+.slateTime {
+  display: inline-block;
+  width: 5rem;
+  vertical-align: middle;
+}
+
+.puzzleWrap {
+  scrollbar-width: none;
+  position: relative;
+  overflow: scroll;
+  flex: 1 1 auto;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .wrapper[data-slate='true'] {
+    padding: slate-padding-med;
+  }
+
+  .wrapper[data-slate='true'] .headerWrap {
+    padding: unset;
+  }
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (large-and-up) {
+  .wrapper[data-slate='true'] {
+    padding: slate-padding-large;
+  }
+}

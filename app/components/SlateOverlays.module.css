@@ -1,3 +1,9 @@
+@value slate-padding-small from '../lib/definitions.module.css';
+@value slate-padding-med from '../lib/definitions.module.css';
+@value slate-padding-large from '../lib/definitions.module.css';
+@value small-and-up from '../lib/definitions.module.css';
+@value large-and-up from '../lib/definitions.module.css';
+
 .bigButton {
   width: 100%;
   height: 85px;
@@ -15,4 +21,31 @@
 
 .bigButton:hover {
   background-color: var(--slate-primary-hover);
+}
+
+.beginContainer {
+  overflow: hidden;
+
+  padding: slate-padding-small 0 0;
+
+  color: var(--slate-subtitle);
+  text-align: center;
+
+  background-color: var(--bg);
+  border: 1px solid var(--slate-container-border);
+  border-radius: 4px;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .beginContainer {
+    padding: slate-padding-med 0 0;
+  }
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (large-and-up) {
+  .beginContainer {
+    padding: slate-padding-large 0 0;
+  }
 }

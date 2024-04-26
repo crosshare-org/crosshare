@@ -1,16 +1,10 @@
 import { Dispatch, useEffect, useRef } from 'react';
-import { LARGE_AND_UP, SMALL_AND_UP } from '../lib/style';
 import { PuzzleResultWithAugmentedComments } from '../lib/types';
 import { PuzzleAction } from '../reducers/commonActions';
 import { ButtonReset } from './Buttons';
 import { FullscreenCSS } from './FullscreenCSS';
 import { Link } from './Link';
 import { Overlay } from './Overlay';
-import {
-  SLATE_PADDING_LARGE,
-  SLATE_PADDING_MED,
-  SLATE_PADDING_SMALL,
-} from './Page';
 import { SlateColorTheme } from './SlateColorTheme';
 import { SlateHeader, SlateLogo } from './SlateHeader';
 import { Illustration, Pause, Play } from './SlateIcons';
@@ -108,24 +102,7 @@ export const SlateBegin = ({
     <>
       <FullscreenCSS />
       <SlateColorTheme />
-      <div
-        ref={containerRef}
-        css={{
-          backgroundColor: 'var(--bg)',
-          border: '1px solid var(--slate-container-border)',
-          borderRadius: '4px',
-          overflow: 'hidden',
-          padding: `${SLATE_PADDING_SMALL}px 0 0 0`,
-          [SMALL_AND_UP]: {
-            padding: `${SLATE_PADDING_MED}px 0 0 0`,
-          },
-          [LARGE_AND_UP]: {
-            padding: `${SLATE_PADDING_LARGE}px 0 0 0`,
-          },
-          color: 'var(--slate-subtitle)',
-          textAlign: 'center',
-        }}
-      >
+      <div ref={containerRef} className={styles.beginContainer}>
         <SlateHeader
           title={puzzle.title}
           author={puzzle.guestConstructor || puzzle.authorName}

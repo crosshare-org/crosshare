@@ -54,12 +54,7 @@ import { removeSpoilers } from '../lib/markdown/markdown';
 import { isNewPuzzleNotification } from '../lib/notificationTypes';
 import { cachePlay, isDirty, writePlayToDB } from '../lib/plays';
 import { PuzzlePageResultProps } from '../lib/serverOnly';
-import {
-  LARGE_AND_UP,
-  SMALL_AND_UP,
-  SMALL_AND_UP_RULES,
-  SQUARE_HEADER_HEIGHT,
-} from '../lib/style';
+import { SMALL_AND_UP_RULES } from '../lib/style';
 import { Timestamp } from '../lib/timestamp';
 import {
   BLOCK,
@@ -122,13 +117,8 @@ import {
 } from './Icons';
 import { Keyboard } from './Keyboard';
 import { Overlay } from './Overlay';
-import {
-  SLATE_PADDING_LARGE,
-  SLATE_PADDING_MED,
-  SLATE_PADDING_SMALL,
-  SquareAndCols,
-  TwoCol,
-} from './Page';
+import { SquareAndCols, TwoCol } from './Page';
+import styles from './Puzzle.module.css';
 import {
   OverlayType,
   PuzzleOverlay,
@@ -216,48 +206,14 @@ const AboveTheGridClue = memo(function AboveTheGridClue({
   shouldConceal: boolean;
 }) {
   return (
-    <div
-      css={{
-        height: SQUARE_HEADER_HEIGHT,
-        fontSize: 18,
-        lineHeight: '24px',
-        backgroundColor: 'var(--lighter)',
-        overflowY: 'scroll',
-        scrollbarWidth: 'none',
-        display: 'flex',
-      }}
-    >
+    <div className={styles.aboveGridClue}>
       {entry && hast ? (
-        <div
-          css={{
-            margin: 'auto 1em',
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'nowrap',
-            alignItems: 'center',
-          }}
-        >
-          <div
-            css={{
-              fontWeight: 'bold',
-              paddingRight: '0.5em',
-              flexShrink: 0,
-              width: '2.5em',
-              height: '100%',
-              textAlign: 'right',
-            }}
-          >
+        <div className={styles.agcWrap}>
+          <div className={styles.agcLabel}>
             {entry.labelNumber}
             {entry.direction === Direction.Across ? 'A' : 'D'}
           </div>
-          <div
-            css={{
-              color: shouldConceal ? 'transparent' : 'var(--text)',
-              textShadow: shouldConceal ? '0 0 1em var(--conceal-text)' : '',
-              flex: '1 1 auto',
-              height: '100%',
-            }}
-          >
+          <div data-conceal={shouldConceal} className={styles.agcClue}>
             <ClueText entry={entry} hast={hast} />
           </div>
         </div>
@@ -269,7 +225,7 @@ const AboveTheGridClue = memo(function AboveTheGridClue({
 });
 
 const SlateButtonMargin = () => {
-  return <div css={{ flexGrow: 1, maxWidth: '1.5rem' }}></div>;
+  return <div className={styles.slateButtonMargin}></div>;
 };
 
 interface PuzzleProps extends PuzzlePageResultProps {
@@ -1180,10 +1136,7 @@ export const Puzzle = ({
                     >
                       {() => (
                         <ul
-                          css={{
-                            listStyleType: 'none',
-                            padding: '0 10vw',
-                          }}
+                          className={styles.solverPrefList}
                           onClick={(e) => {
                             e.stopPropagation();
                           }}
@@ -1291,36 +1244,8 @@ export const Puzzle = ({
           <meta key="description" name="description" content={description} />
         </Head>
         <SlateColorTheme />
-        <div
-          css={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-            ...(isSlate && {
-              backgroundColor: 'var(--bg)',
-              border: '1px solid var(--slate-container-border)',
-              borderRadius: '4px',
-              overflow: 'hidden',
-              [SMALL_AND_UP]: {
-                padding: SLATE_PADDING_MED,
-              },
-              [LARGE_AND_UP]: {
-                padding: SLATE_PADDING_LARGE,
-              },
-            }),
-          }}
-        >
-          <div
-            css={{
-              flex: 'none',
-              ...(isSlate && {
-                padding: `${SLATE_PADDING_SMALL}px ${SLATE_PADDING_SMALL}px 0 ${SLATE_PADDING_SMALL}px`,
-                [SMALL_AND_UP]: {
-                  padding: 'unset',
-                },
-              }),
-            }}
-          >
+        <div data-slate={isSlate} className={styles.wrapper}>
+          <div className={styles.headerWrap}>
             {isSlate ? (
               <SlateHeader
                 title={puzzle.title}
@@ -1334,28 +1259,11 @@ export const Puzzle = ({
               {!loadingPlayState ? (
                 !state.success ? (
                   <>
-                    <div
-                      css={{
-                        ...(isSlate && { flexGrow: 1 }),
-                      }}
-                    >
+                    <div className={styles.topBarInner}>
                       {isSlate ? (
-                        <span
-                          css={{
-                            verticalAlign: 'middle',
-                            color: 'var(--text)',
-                          }}
-                        >
-                          <Timer
-                            css={{ fontSize: 20, marginRight: '0.5rem' }}
-                          />
-                          <strong
-                            css={{
-                              verticalAlign: 'middle',
-                              display: 'inline-block',
-                              width: '5rem',
-                            }}
-                          >
+                        <span className="colorText verticalAlignMiddle">
+                          <Timer className={styles.slateTimeIcon} />
+                          <strong className={styles.slateTime}>
                             {timeString(state.displaySeconds, true)}
                           </strong>
                         </span>
@@ -1414,11 +1322,7 @@ export const Puzzle = ({
                   </>
                 ) : (
                   <>
-                    <div
-                      css={{
-                        ...(isSlate && { flexGrow: 1 }),
-                      }}
-                    />
+                    <div className={styles.topBarInner} />
 
                     <TopBarLink
                       icon={isSlate ? <Stats /> : <FaComment />}
@@ -1451,12 +1355,8 @@ export const Puzzle = ({
                 )
               ) : (
                 <>
-                  <div
-                    css={{
-                      ...(isSlate && { flexGrow: 1 }),
-                    }}
-                  />
-                  moreMenu
+                  <div className={styles.topBarInner} />
+                  {moreMenu}
                 </>
               )}
             </TopBar>
@@ -1518,23 +1418,14 @@ export const Puzzle = ({
           ) : (
             ''
           )}
-          <div
-            tabIndex={0}
-            role={'textbox'}
-            css={{
-              flex: '1 1 auto',
-              overflow: 'scroll',
-              scrollbarWidth: 'none',
-              position: 'relative',
-            }}
-          >
+          <div tabIndex={0} role={'textbox'} className={styles.puzzleWrap}>
             <DownsOnlyContext.Provider
               value={state.downsOnly && !state.success}
             >
               {puzzleView}
             </DownsOnlyContext.Provider>
           </div>
-          <div css={{ flex: 'none', width: '100%' }}>
+          <div className="flexNone width100">
             <Keyboard
               toggleKeyboard={toggleKeyboard}
               keyboardHandler={keyboardHandler}

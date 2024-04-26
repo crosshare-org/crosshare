@@ -152,6 +152,10 @@
   border-bottom: 1px solid var(--black) !important;
 }
 
+.verticalAlignMiddle {
+  vertical-align: middle !important;
+}
+
 .verticalAlignTextBottom {
   vertical-align: text-bottom !important;
 }

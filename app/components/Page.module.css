@@ -1,0 +1,233 @@
+@value slate-padding-small from '../lib/definitions.module.css';
+@value slate-padding-med from '../lib/definitions.module.css';
+@value slate-padding-large from '../lib/definitions.module.css';
+@value small-and-up from '../lib/definitions.module.css';
+@value large-and-up from '../lib/definitions.module.css';
+@value square-header-height from '../lib/definitions.module.css';
+@value tiny-col-min-height from '../lib/definitions.module.css';
+
+.tinyNav {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+
+  width: 2em;
+
+  color: var(--text);
+  text-align: center;
+
+  background: none;
+  border: none;
+}
+
+.clueArea {
+  display: flex;
+  flex: 1 0 auto;
+  flex-flow: row nowrap;
+  align-items: stretch;
+
+  width: 100vw;
+  height: tiny-col-min-height;
+
+  background-color: var(--lighter);
+}
+
+.twoCol {
+  scrollbar-width: none;
+
+  position: absolute;
+
+  overflow: scroll;
+  display: block;
+  flex: 1 1 auto;
+
+  width: 100%;
+  height: 100%;
+}
+
+.container {
+  position: absolute;
+
+  container-type: size;
+  display: flex;
+  flex: 1 1 auto;
+  flex-flow: column nowrap;
+
+  width: 100%;
+  height: 100%;
+  height: 100svh;
+
+  outline: none;
+}
+
+.gridArea {
+  flex: 0;
+  width: 100vw;
+}
+
+.gridHeader {
+  overflow: hidden;
+  display: none;
+  height: square-header-height;
+}
+
+.grid {
+  width: min(
+    100cqw,
+    100cqh * var(--aspect-ratio) - tiny-col-min-height * var(--aspect-ratio)
+  );
+  height: min(100cqh - tiny-col-min-height, 100cqw / var(--aspect-ratio));
+  margin: auto;
+}
+
+.grid[data-no-cq='true'] {
+  width: min(
+    var(--cqw),
+    var(--cqh) * var(--aspect-ratio) - tiny-col-min-height * var(--aspect-ratio)
+  );
+  height: min(
+    var(--cqh) - tiny-col-min-height,
+    var(--cqw) / var(--aspect-ratio)
+  );
+}
+
+.clueWrapper {
+  scrollbar-width: none;
+
+  overflow-y: scroll;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+
+  height: 100%;
+}
+
+.clueCol {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+.clueCol[data-active='true'] {
+  display: 'block';
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .clueCol {
+    scrollbar-width: none;
+    overflow-y: scroll;
+    display: block;
+    height: 50%;
+  }
+
+  .grid {
+    width: min(
+      66cqw,
+      100cqh * var(--aspect-ratio) - square-header-height * var(--aspect-ratio)
+    );
+    height: min(100cqh - square-header-height, 66cqw / var(--aspect-ratio));
+  }
+
+  .grid[data-no-cq='true'] {
+    width: min(
+      0.66 * var(--cqw),
+      var(--cqh) * var(--aspect-ratio) - square-header-height *
+        var(--aspect-ratio)
+    );
+    height: min(
+      var(--cqh) - square-header-height,
+      0.66 * var(--cqw) / var(--aspect-ratio)
+    );
+  }
+
+  .gridArea {
+    width: 66vw;
+  }
+
+  .gridHeader[data-show-header='true'] {
+    display: block;
+  }
+
+  .container {
+    flex-direction: row;
+  }
+
+  .tinyNav {
+    display: none;
+  }
+
+  .clueArea {
+    width: 34vw;
+    height: 100%;
+    background-color: transparent;
+  }
+
+  .clueArea[data-slate='true'] {
+    width: calc(34vw - 2 * slate-padding-med);
+  }
+
+  .twoCol {
+    display: flex;
+  }
+
+  .twoColCol {
+    scrollbar-width: none;
+    overflow: scroll;
+    flex: 1 1 auto;
+    width: 50%;
+  }
+
+  .twoColColL {
+    padding-right: 2px;
+  }
+
+  .twoColColR {
+    padding-left: 2px;
+  }
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (large-and-up) {
+  .clueCol {
+    width: 50%;
+    height: 100%;
+  }
+
+  .clueWrapper {
+    flex-direction: row;
+  }
+
+  .grid {
+    width: min(
+      50cqw,
+      100cqh * var(--aspect-ratio) - square-header-height * var(--aspect-ratio)
+    );
+    height: min(100cqh - square-header-height, 50cqw / var(--aspect-ratio));
+  }
+
+  .grid[data-no-cq='true'] {
+    width: min(
+      0.5 * var(--cqw),
+      var(--cqh) * var(--aspect-ratio) - square-header-height *
+        var(--aspect-ratio)
+    );
+    height: min(
+      var(--cqh) - square-header-height,
+      0.5 * var(--cqw) / var(--aspect-ratio)
+    );
+  }
+
+  .gridArea {
+    width: 50vw;
+  }
+
+  .clueArea {
+    width: 50vw;
+  }
+
+  .clueArea[data-slate='true'] {
+    width: calc(50vw - 2 * slate-padding-large);
+  }
+}
