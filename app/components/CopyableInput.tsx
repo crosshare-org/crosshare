@@ -5,10 +5,7 @@ export function CopyableInput({ text }: { text: string }) {
 
   return (
     <input
-      css={{
-        cursor: 'pointer',
-        width: '100%',
-      }}
+      className="cursorPointer width100"
       type="text"
       readOnly
       value={text}

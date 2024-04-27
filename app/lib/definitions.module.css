@@ -5,6 +5,7 @@
 @value max-width: 1200px;
 @value square-header-height: 68px;
 @value tiny-col-min-height: 50px;
+@value header-height: 35px;
 
 @value slate-padding-small: 15px;
 @value slate-padding-med: 50px;

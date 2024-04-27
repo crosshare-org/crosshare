@@ -1,4 +1,5 @@
 import type { Root } from 'hast';
+import styles from './ConstructorNotes.module.css';
 import { Markdown } from './Markdown';
 
 export const ConstructorNotes = (props: {
@@ -6,14 +7,7 @@ export const ConstructorNotes = (props: {
   notes: Root;
 }) => {
   return (
-    <div
-      css={{
-        backgroundColor: 'var(--secondary)',
-        padding: '0.5em',
-        margin: '1em 0 2em',
-        borderRadius: '0.5em',
-      }}
-    >
+    <div className={styles.note}>
       <b>{props.isContest ? 'Meta Prompt' : "Constructor's Note"}</b>
       <Markdown hast={props.notes} />
     </div>

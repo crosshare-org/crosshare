@@ -1,5 +1,6 @@
 import { FaCheck, FaEye } from 'react-icons/fa';
 import { CheatUnit, PrefillSquares, Symmetry } from '../lib/types';
+import { clsx } from '../lib/utils';
 import { Link } from './Link';
 
 const Square = (props: {
@@ -211,20 +212,6 @@ export const BacktickKey = () => (
 export const PeriodKey = () => <KeyIcon text="." largeFont={true} />;
 export const CommaKey = () => <KeyIcon text="," largeFont={true} textY={55} />;
 export const ExclamationKey = () => <KeyIcon text="!" />;
-const CtrlKey = () => (
-  <KeyIcon
-    text="ctrl"
-    stretchText={true}
-    width={1.1}
-    css={{ marginRight: '0.1em' }}
-  />
-);
-export const CtrlExclamationKey = () => (
-  <>
-    <CtrlKey />
-    <ExclamationKey />
-  </>
-);
 
 const CheckOrReveal = ({
   x,
@@ -513,12 +500,11 @@ const BlankLogo = () => {
 export const PatronIcon = (props: { className?: string; linkIt?: boolean }) => {
   const icon = (
     <svg
-      css={{ verticalAlign: 'text-top' }}
       xmlns="http://www.w3.org/2000/svg"
       width={'1em'}
       height={'1em'}
       viewBox="0 0 16 16"
-      className={props.className}
+      className={clsx(props.className, 'verticalAlignTextTop')}
     >
       <BlankLogo />
       <g fill="#cb0">
@@ -611,7 +597,7 @@ export const Logo = (props: IconProps & { notificationCount: number }) => {
 export const PuzzleSizeIcon = (props: { width?: number; height?: number }) => {
   return (
     <svg
-      css={{ verticalAlign: 'top' }}
+      className="verticalAlignTop"
       width="1em"
       height="1em"
       viewBox="0 0 100 100"

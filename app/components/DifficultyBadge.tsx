@@ -46,7 +46,7 @@ export const DifficultyBadge = (props: {
     } else if (expectation < 0.8) {
       symbol = (
         <span
-          css={{ color: 'var(--blue)' }}
+          className="colorBlue"
           title={`Medium (${Math.round(props.puzzleRating.r)})`}
         >
           ■
@@ -56,7 +56,7 @@ export const DifficultyBadge = (props: {
     } else {
       symbol = (
         <span
-          css={{ color: 'var(--green)' }}
+          className="colorGreen"
           title={`Easy (${Math.round(props.puzzleRating.r)})`}
         >
           ●
@@ -76,7 +76,7 @@ export const DifficultyBadge = (props: {
         }}
         role={'button'}
         tabIndex={-1}
-        css={{ cursor: 'pointer' }}
+        className="cursorPointer"
       >
         {symbol}
       </span>

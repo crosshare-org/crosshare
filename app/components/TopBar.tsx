@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import { Trans, t } from '@lingui/macro';
 import { updateDoc } from 'firebase/firestore';
 import {
@@ -22,12 +21,7 @@ import {
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { NotificationT } from '../lib/notificationTypes';
-import {
-  HAS_PHYSICAL_KEYBOARD,
-  HEADER_HEIGHT,
-  LARGE_AND_UP,
-  SMALL_AND_UP,
-} from '../lib/style';
+import { HEADER_HEIGHT } from '../lib/style';
 import { logAsyncErrors, slugify } from '../lib/utils';
 import { AuthContext } from './AuthContext';
 import { ButtonAsLink, ButtonReset } from './Buttons';
@@ -103,41 +97,14 @@ interface TopBarDropDownLinkCommonProps {
 const TopBarDropDownLinkContents = (props: TopBarDropDownLinkCommonProps) => {
   return (
     <>
-      <div
-        css={{
-          verticalAlign: 'baseline',
-          fontSize: HEADER_HEIGHT - 10,
-          display: 'inline-block',
-          width: '35%',
-          textAlign: 'right',
-          marginRight: '5%',
-        }}
-      >
-        {props.icon}
-      </div>
-      <div
-        css={{
-          verticalAlign: 'baseline',
-          fontSize: HEADER_HEIGHT - 20,
-          display: 'inline-block',
-          width: '60%',
-          textAlign: 'left',
-        }}
-      >
+      <div className={styles.dropdownLinkIcon}>{props.icon}</div>
+      <div className={styles.dropdownLinkText}>
         {props.text}
         {props.shortcutHint !== undefined ? (
-          <span
-            css={{
-              display: 'none',
-              [HAS_PHYSICAL_KEYBOARD]: { display: 'inline' },
-            }}
-          >
+          <span className={styles.dropdownLinkShortcut}>
             {' '}
             (<Trans>hotkey</Trans>:{' '}
-            <span css={{ fontSize: HEADER_HEIGHT - 10 }}>
-              {props.shortcutHint}
-            </span>{' '}
-            )
+            <span className={styles.shortcutHint}>{props.shortcutHint}</span> )
           </span>
         ) : (
           ''
@@ -154,21 +121,7 @@ export const TopBarDropDownLink = (props: TopBarDropDownLinkProps) => {
   return (
     <button
       title={props.text}
-      css={{
-        backgroundColor: 'transparent',
-        border: 'none',
-        cursor: 'pointer',
-        textDecoration: 'none',
-        display: 'inline-block',
-        margin: 0,
-        padding: '0.5em',
-        width: '100%',
-        color: 'var(--text)',
-        '&:hover, &:focus': {
-          textDecoration: 'none',
-          backgroundColor: 'var(--top-bar-hover)',
-        },
-      }}
+      className={styles.dropdownLink}
       onClick={props.onClick}
     >
       <TopBarDropDownLinkContents {...props} />
@@ -181,26 +134,7 @@ interface TopBarDropDownLinkAProps extends TopBarDropDownLinkCommonProps {
 }
 export const TopBarDropDownLinkA = (props: TopBarDropDownLinkAProps) => {
   return (
-    <Link
-      href={props.href}
-      title={props.text}
-      css={{
-        backgroundColor: 'transparent',
-        border: 'none',
-        cursor: 'pointer',
-        textDecoration: 'none',
-        display: 'inline-block',
-        margin: 0,
-        padding: '0.5em',
-        width: '100%',
-        color: 'var(--text)',
-        '&:hover, &:focus': {
-          color: 'var(--text)',
-          textDecoration: 'none',
-          backgroundColor: 'var(--top-bar-hover)',
-        },
-      }}
-    >
+    <Link href={props.href} title={props.text} className={styles.dropdownLink}>
       <TopBarDropDownLinkContents {...props} />
     </Link>
   );
@@ -213,22 +147,7 @@ export const TopBarDropDownLinkSimpleA = (props: TopBarDropDownLinkAProps) => {
       {...(isEmbed && { target: '_blank', rel: 'noreferrer' })}
       href={props.href}
       title={props.text}
-      css={{
-        backgroundColor: 'transparent',
-        border: 'none',
-        cursor: 'pointer',
-        textDecoration: 'none',
-        display: 'inline-block',
-        margin: 0,
-        padding: '0.5em',
-        width: '100%',
-        color: 'var(--text)',
-        '&:hover, &:focus': {
-          color: 'var(--text)',
-          textDecoration: 'none',
-          backgroundColor: 'var(--top-bar-hover)',
-        },
-      }}
+      className={styles.dropdownLink}
     >
       <TopBarDropDownLinkContents {...props} />
     </a>
@@ -246,33 +165,14 @@ const TopBarLinkContents = (props: TopBarLinkCommonProps) => {
   const { isSlate } = useContext(EmbedContext);
   return (
     <>
-      <span
-        css={{
-          verticalAlign: isSlate ? 'middle' : 'baseline',
-          fontSize: isSlate ? 15 : HEADER_HEIGHT - 10,
-          ...(isSlate && {
-            display: 'inline-block',
-            [SMALL_AND_UP]: { fontSize: 20 },
-            [LARGE_AND_UP]: { marginRight: '0.25rem' },
-          }),
-        }}
-      >
+      <span data-slate={isSlate} className={styles.linkContentsIcon}>
         {props.icon}
       </span>
       {props.text ? (
         <span
-          css={{
-            marginLeft: '5px',
-            verticalAlign: 'middle',
-            display: props.keepText ? 'inline-block' : 'none',
-            fontSize: HEADER_HEIGHT - 20,
-            [SMALL_AND_UP]: {
-              ...(!isSlate && { display: 'inline-block' }),
-            },
-            [LARGE_AND_UP]: {
-              display: 'inline-block',
-            },
-          }}
+          data-keep-text={props.keepText}
+          data-slate={isSlate}
+          className={styles.linkContentsText}
         >
           {props.text}
         </span>
@@ -287,43 +187,14 @@ interface TopBarLinkProps extends TopBarLinkCommonProps {
   onClick?: () => void;
 }
 
-const SlateButtonCss = css({
-  color: 'var(--slate-button-text)',
-  backgroundColor: 'var(--slate-button-bg)',
-  border: '1px solid var(--slate-button-border)',
-  borderRadius: '3px',
-  padding: '0 0.45rem',
-  '&:hover, &:focus': {
-    backgroundColor: 'var(--slate-button-bg-hover)',
-  },
-});
-
 export const TopBarLink = (props: TopBarLinkProps) => {
   const { isSlate } = useContext(EmbedContext);
   return (
     <button
       // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       title={props.hoverText || props.text}
-      css={[
-        {
-          backgroundColor: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          textDecoration: 'none',
-          display: 'inline',
-          margin: 0,
-          padding: '0 0.45em',
-          color: 'var(--onprimary)',
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'clip',
-          '&:hover, &:focus': {
-            textDecoration: 'none',
-            backgroundColor: 'var(--top-bar-hover)',
-          },
-        },
-        ...(isSlate ? [SlateButtonCss] : []),
-      ]}
+      data-slate={isSlate}
+      className={styles.topBarLink}
       onClick={props.onClick}
     >
       <TopBarLinkContents {...props} />
@@ -340,30 +211,11 @@ interface TopBarLinkAProps extends TopBarLinkCommonProps {
 export const TopBarLinkA = (props: TopBarLinkAProps) => {
   return (
     <Link
+      data-disabled={props.disabled}
       href={props.href}
       // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       title={props.hoverText || props.text}
-      css={{
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'clip',
-        height: '100%',
-        backgroundColor: props.disabled ? 'var(--bg)' : 'transparent',
-        border: 'none',
-        cursor: props.disabled ? 'default' : 'pointer',
-        pointerEvents: props.disabled ? 'none' : 'auto',
-        textDecoration: 'none',
-        margin: 0,
-        padding: '0 0.45em',
-        color: 'var(--onprimary)',
-        '&:hover, &:focus': {
-          color: 'var(--onprimary)',
-          textDecoration: 'none',
-          backgroundColor: props.disabled
-            ? 'var(--bg)'
-            : 'var(--top-bar-hover)',
-        },
-      }}
+      className={styles.topBarLinkA}
       onClick={props.onClick}
     >
       <TopBarLinkContents {...props} />
@@ -417,70 +269,19 @@ export const TopBar = ({
     return (
       <>
         <header
-          css={{
-            height: isSlate ? 30 : HEADER_HEIGHT,
-            background: 'var(--primary)',
-            color: 'var(--onprimary)',
-            /* Pride month */
-            ...(!isEmbed &&
-              today.getUTCMonth() === 5 && {
-                background:
-                  'linear-gradient(to right, indianred,orange,gold,darkseagreen,deepskyblue,violet)',
-                '@media (prefers-color-scheme: dark)': {
-                  background:
-                    'linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)), linear-gradient(to right, indianred,orange,gold,darkseagreen,deepskyblue,violet)',
-                },
-              }),
-            /* Transgender day of remembrance */
-            ...(!isEmbed &&
-              today.getUTCMonth() === 10 &&
-              today.getUTCDate() === 20 && {
-                background:
-                  'linear-gradient(to right, #50DFE4 0% 15%,#FFA6D6 25% 35%,#FFFFFF 45% 55%,#FFA6D6 65% 75%,#50DFE4 85% 100%)',
-                '@media (prefers-color-scheme: dark)': {
-                  background:
-                    'linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)), linear-gradient(to right, #50DFE4 0% 15%,#FFA6D6 25% 35%,#FFFFFF 45% 55%,#FFA6D6 65% 75%,#50DFE4 85% 100%)',
-                },
-              }),
-            ...(isSlate && {
-              background: 'none',
-              marginBottom: '1rem',
-              [SMALL_AND_UP]: {
-                height: HEADER_HEIGHT,
-                marginBottom: '2rem',
-              },
-            }),
-          }}
+          data-slate={isSlate}
+          data-pride={!isEmbed && today.getUTCMonth() === 5}
+          data-tgdr={
+            !isEmbed && today.getUTCMonth() === 10 && today.getUTCDate() === 20
+          }
+          className={styles.header}
         >
-          <div
-            css={{
-              padding: isSlate ? 0 : '0 10px',
-              height: '100%',
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              lineHeight: HEADER_HEIGHT - 4 + 'px',
-            }}
-          >
+          <div className={styles.headerInner}>
             {isEmbed ? (
               isSlate ? (
                 ''
               ) : (
-                <div
-                  title={title}
-                  css={{
-                    flexGrow: 1,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    marginLeft: '5px',
-                    color: 'var(--onprimary)',
-                    fontSize: HEADER_HEIGHT - 10,
-                    [SMALL_AND_UP]: {
-                      display: 'inline-block',
-                    },
-                  }}
-                >
+                <div title={title} className={styles.embedTitle}>
                   {title}
                 </div>
               )
@@ -498,101 +299,27 @@ export const TopBar = ({
                   width={HEADER_HEIGHT - 4}
                   height={HEADER_HEIGHT - 4}
                 />
-                <span
-                  css={{
-                    marginLeft: '5px',
-                    display: 'none',
-                    color: 'var(--onprimary)',
-                    fontSize: HEADER_HEIGHT - 10,
-                    [SMALL_AND_UP]: {
-                      display: 'inline-block',
-                    },
-                  }}
-                >
-                  CROSSHARE
-                </span>
+                <span className={styles.logoText}>CROSSHARE</span>
               </ButtonReset>
             ) : (
-              <Link
-                href="/"
-                css={{
-                  flexGrow: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  textDecoration: 'none !important',
-                  cursor: 'pointer',
-                }}
-                title="Crosshare Home"
-              >
+              <Link href="/" className={styles.logoLink} title="Crosshare Home">
                 <Logo
                   notificationCount={0}
                   width={HEADER_HEIGHT - 4}
                   height={HEADER_HEIGHT - 4}
                 />
-                <span
-                  css={{
-                    marginLeft: '5px',
-                    display: 'none',
-                    color: 'var(--onprimary)',
-                    fontSize: HEADER_HEIGHT - 10,
-                    [SMALL_AND_UP]: {
-                      display: 'inline-block',
-                    },
-                  }}
-                >
-                  CROSSHARE
-                </span>
+                <span className={styles.logoText}>CROSSHARE</span>
               </Link>
             )}
             <>{children}</>
           </div>
         </header>
         {filtered?.length && showingNotifications ? (
-          <div
-            ref={notificationsRef}
-            css={{
-              position: 'absolute',
-              top: HEADER_HEIGHT + 10,
-              left: 5,
-              border: '1px solid var(--text-input-border)',
-              boxShadow: '0 0 5px 5px rgba(0,0,0,0.5)',
-              backgroundColor: 'var(--overlay-inner)',
-              width: 'calc(100vw - 10px)',
-              maxWidth: '30em',
-              borderRadius: 5,
-              zIndex: 102,
-              '&:before': {
-                content: '""',
-                position: 'absolute',
-                top: -19,
-                left: 10,
-                zIndex: 101,
-                border: 'solid 10px transparent',
-                borderBottomColor: 'var(--overlay-inner)',
-              },
-              '&:after': {
-                content: '""',
-                position: 'absolute',
-                top: -20,
-                left: 10,
-                zIndex: 100,
-                border: 'solid 10px transparent',
-                borderBottomColor: 'var(--text-input-border)',
-              },
-            }}
-          >
-            <h3
-              css={{
-                borderBottom: '1px solid var(--text-input-border)',
-                margin: '0.5em 0 0 0',
-                paddingLeft: '1em',
-                fontSize: '1em',
-                fontWeight: 'bold',
-              }}
-            >
+          <div ref={notificationsRef} className={styles.notifications}>
+            <h3 className={styles.notificationsHeader}>
               Notifications
               <ButtonAsLink
-                css={{ float: 'right', marginRight: '1em' }}
+                className="floatRight marginRight1em"
                 text="Dismiss all"
                 onClick={logAsyncErrors(async () => {
                   await Promise.all(
@@ -603,14 +330,7 @@ export const TopBar = ({
                 })}
               />
             </h3>
-            <div
-              css={{
-                padding: '0 1em',
-                maxHeight: '80vh',
-                overflow: 'scroll',
-                scrollbarColor: 'auto',
-              }}
-            >
+            <div className={styles.notificationsList}>
               {filtered.map((n) => (
                 <NotificationLink key={n.id} notification={n} />
               ))}
@@ -644,6 +364,7 @@ const NotificationLinkCSS = {
   },
 };
 
+// Note change this in the css for notificationLink as well!
 const ANIMATION_DELAY = 250;
 
 const NotificationLink = ({
@@ -714,29 +435,14 @@ const NotificationLink = ({
       break;
   }
   return (
-    <div
-      css={{
-        transition: 'all ' + ANIMATION_DELAY + 'ms ease-in-out 0s',
-        maxHeight: 500,
-        overflow: 'hidden',
-        ...(closing && { maxHeight: 0 }),
-        display: 'flex',
-        alignItems: 'center',
-        '& + &': {
-          borderTop: '1px solid var(--text-input-border)',
-        },
-      }}
-    >
+    <div data-closing={closing} className={styles.notificationLink}>
       {link}
       <div
         role="button"
         tabIndex={0}
         onClick={close}
         onKeyPress={close}
-        css={{
-          paddingLeft: '1em',
-          cursor: 'pointer',
-        }}
+        className="paddingLeft1em cursorPointer"
       >
         <IoMdCloseCircleOutline />
       </div>

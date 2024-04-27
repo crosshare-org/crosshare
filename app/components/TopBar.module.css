@@ -1,5 +1,377 @@
+@value header-height from '../lib/definitions.module.css';
+@value small-and-up from '../lib/definitions.module.css';
+@value large-and-up from '../lib/definitions.module.css';
+
 .notificationsBtn {
   display: flex;
   flex-grow: 1;
   align-items: center;
+}
+
+.dropdownLinkIcon {
+  display: inline-block;
+
+  width: 35%;
+  margin-right: 5%;
+
+  font-size: calc(header-height - 10px);
+  text-align: right;
+  vertical-align: baseline;
+}
+
+.dropdownLinkText {
+  display: inline-block;
+
+  width: 60%;
+
+  font-size: calc(header-height - 20px);
+  text-align: left;
+  vertical-align: baseline;
+}
+
+.dropdownLinkShortcut {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dropdownLinkShortcut {
+    display: inline;
+  }
+}
+
+.shortcutHint {
+  font-size: calc(header-height - 10px);
+}
+
+.dropdownLink {
+  cursor: pointer;
+
+  display: inline-block;
+
+  width: 100%;
+  margin: 0;
+  padding: 0.5em;
+
+  color: var(--text);
+  text-decoration: none;
+
+  background-color: transparent;
+  border: none;
+}
+
+.dropdownLink:hover,
+.dropdownLink:focus {
+  color: var(--text);
+  text-decoration: none;
+  background-color: var(--top-bar-hover);
+}
+
+.linkContentsIcon {
+  font-size: calc(header-height - 10px);
+  vertical-align: baseline;
+}
+
+.linkContentsIcon[data-slate='true'] {
+  display: inline-block;
+  font-size: 15px;
+  vertical-align: middle;
+}
+
+.linkContentsText {
+  display: none;
+  margin-left: 5px;
+  font-size: calc(header-height - 20px);
+  vertical-align: middle;
+}
+
+.linkContentsText[data-keep-text='true'] {
+  display: inline-block;
+}
+
+.topBarLink {
+  cursor: pointer;
+
+  overflow: hidden;
+  display: inline;
+
+  margin: 0;
+  padding: 0 0.45em;
+
+  font-variant-numeric: tabular-nums;
+  color: var(--onprimary);
+  text-decoration: none;
+  text-overflow: clip;
+  white-space: nowrap;
+
+  background-color: transparent;
+  border: none;
+}
+
+.topBarLink[data-slate='true'] {
+  padding: 0 0.45rem;
+
+  color: var(--slate-button-text);
+
+  background-color: var(--slate-button-bg);
+  border: 1px solid var(--slate-button-border);
+  border-radius: 3px;
+}
+
+.topBarLink:hover,
+.topBarLink:focus {
+  text-decoration: none;
+  background-color: var(--top-bar-hover);
+}
+
+.topBarLink[data-slate='true']:hover,
+.topBarLink[data-slate='true']:focus {
+  background-color: var(--slate-button-bg-hover);
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .linkContentsIcon[data-slate='true'] {
+    font-size: 20px;
+  }
+
+  .linkContentsText[data-slate='true'],
+  .embedTitle,
+  .logoText {
+    display: inline-block;
+  }
+
+  .header[data-slate='true'] {
+    height: header-height;
+    margin-bottom: 2rem;
+  }
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (large-and-up) {
+  .linkContentsIcon[data-slate='true'] {
+    margin-right: 0.25rem;
+  }
+
+  .linkContentsText {
+    display: inline-block;
+  }
+}
+
+.topBarLinkA {
+  pointer-events: auto;
+  cursor: pointer;
+
+  overflow: hidden;
+
+  height: 100%;
+  margin: 0;
+  padding: 0 0.45em;
+
+  color: var(--onprimary);
+  text-decoration: none;
+  text-overflow: clip;
+  white-space: nowrap;
+
+  background-color: transparent;
+  border: none;
+}
+
+.topBarLinkA[data-disabled='true'] {
+  pointer-events: none;
+  cursor: default;
+  background-color: var(--bg);
+}
+
+.topBarLinkA:hover,
+.topBarLinkA:focus {
+  color: var(--onprimary);
+  text-decoration: none;
+  background-color: var(--top-bar-hover);
+}
+
+.topBarLinkA[data-disabled='true']:hover,
+.topBarLinkA[data-disabled='true']:focus {
+  background-color: var(--bg);
+}
+
+.header {
+  height: header-height;
+  color: var(--onprimary);
+  background: var(--primary);
+}
+
+/* Pride month */
+.header[data-pride='true'] {
+  background: linear-gradient(
+    to right,
+    indianred,
+    orange,
+    gold,
+    darkseagreen,
+    deepskyblue,
+    violet
+  );
+}
+
+/* Transgender day of remembrance */
+.header[data-tgdr='true'] {
+  background: linear-gradient(
+    to right,
+    #50dfe4 0% 15%,
+    #ffa6d6 25% 35%,
+    #fff 45% 55%,
+    #ffa6d6 65% 75%,
+    #50dfe4 85% 100%
+  );
+}
+
+@media (prefers-color-scheme: dark) {
+  .header[data-pride='true'] {
+    background: linear-gradient(rgb(0 0 0 / 50%), rgb(0 0 0 / 50%)),
+      linear-gradient(
+        to right,
+        indianred,
+        orange,
+        gold,
+        darkseagreen,
+        deepskyblue,
+        violet
+      );
+    background: linear-gradient(rgb(0 0 0 / 50%), rgb(0 0 0 / 50%)),
+      linear-gradient(
+        to right,
+        #50dfe4 0% 15%,
+        #ffa6d6 25% 35%,
+        #fff 45% 55%,
+        #ffa6d6 65% 75%,
+        #50dfe4 85% 100%
+      );
+  }
+}
+
+.header[data-slate='true'] {
+  height: 30px;
+  margin-bottom: 1rem;
+  background: none;
+}
+
+.headerInner {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  height: 100%;
+  padding: 0 10px;
+
+  line-height: calc(header-height - 4px);
+}
+
+.header[data-slate='true'] .headerInner {
+  padding: 0;
+}
+
+.embedTitle {
+  overflow: hidden;
+  display: none;
+  flex-grow: 1;
+
+  margin-left: 5px;
+
+  font-size: calc(header-height - 10px);
+  color: var(--onprimary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logoText {
+  display: none;
+  margin-left: 5px;
+  font-size: calc(header-height - 10px);
+  color: var(--onprimary);
+}
+
+.logoLink {
+  cursor: pointer;
+
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+
+  text-decoration: none !important;
+}
+
+.notifications {
+  position: absolute;
+  z-index: 102;
+  top: calc(header-height + 10px);
+  left: 5px;
+
+  width: calc(100vw - 10px);
+  max-width: 30em;
+
+  background-color: var(--overlay-inner);
+  border: 1px solid var(--text-input-border);
+  border-radius: 5;
+  box-shadow: 0 0 5px 5px rgb(0 0 0 / 50%);
+}
+
+.notifications::before {
+  content: '';
+
+  position: absolute;
+  z-index: 101;
+  top: -19px;
+  left: 10px;
+
+  border: solid 10px transparent;
+  border-bottom-color: var(--overlay-inner);
+}
+
+.notifications::after {
+  content: '';
+
+  position: absolute;
+  z-index: 100;
+  top: -20px;
+  left: 10px;
+
+  border: solid 10px transparent;
+  border-bottom-color: var(--text-input-border);
+}
+
+.notificationsHeader {
+  margin: 0.5em 0 0;
+  padding-left: 1em;
+
+  font-size: 1em;
+  font-weight: bold;
+
+  border-bottom: 1px solid var(--text-input-border);
+}
+
+.notificationsList {
+  scrollbar-color: auto;
+  overflow: scroll;
+  max-height: 80vh;
+  padding: 0 1em;
+}
+
+.notificationLink {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+
+  max-height: 500px;
+
+  /* note change ANIMATION_DELAY in TopBar.tsx if changing this */
+  transition: all 250ms ease-in-out 0s;
+}
+
+.notificationLink[data-closing='true'] {
+  max-height: 0;
+}
+
+.notificationLink + .notificationLink {
+  border-top: 1px solid var(--text-input-border);
 }

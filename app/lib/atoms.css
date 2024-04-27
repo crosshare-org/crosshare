@@ -12,6 +12,10 @@
   flex: 50% !important;
 }
 
+.floatRight {
+  float: right !important;
+}
+
 .width100 {
   width: 100% !important;
 }
@@ -104,6 +108,10 @@
   padding: 0 !important;
 }
 
+.paddingLeft1em {
+  padding-left: 1em !important;
+}
+
 .paddingBottom1em {
   padding-bottom: 1em !important;
 }
@@ -136,6 +144,14 @@
   color: var(--error) !important;
 }
 
+.colorBlue {
+  color: var(--blue) !important;
+}
+
+.colorGreen {
+  color: var(--green) !important;
+}
+
 .fontSize1-5em{
   font-size: 1.5em !important;
 }
@@ -160,6 +176,22 @@
   vertical-align: text-bottom !important;
 }
 
+.verticalAlignTextTop {
+  vertical-align: text-top !important;
+}
+
+.verticalAlignTop {
+  vertical-align: top !important;
+}
+
 .outlineNone {
   outline: none !important;
+}
+
+.whiteSpaceNowrap {
+  white-space: nowrap !important;
+}
+
+.cursorPointer {
+  cursor: pointer !important;
 }

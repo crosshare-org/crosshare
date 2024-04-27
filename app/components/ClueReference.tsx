@@ -34,24 +34,14 @@ export const ClueReference = (props: ClueReferenceProps): JSX.Element => {
       text={props.text}
       tooltip={
         <>
-          <b
-            css={{
-              marginRight: '0.5em',
-              whiteSpace: 'nowrap',
-            }}
-          >
+          <b className="marginRight0-5em whiteSpaceNowrap">
             {props.labelNumber}
             {props.direction === Direction.Across ? 'A' : 'D'}
           </b>
           {downsOnly && props.direction === Direction.Across
             ? '-'
             : getClueText(entry)}
-          <b
-            css={{
-              marginLeft: '0.5em',
-              whiteSpace: 'nowrap',
-            }}
-          >
+          <b className="marginRight0-5em whiteSpaceNowrap">
             [{entry.cells.map((a) => valAt(grid, a).trim() || '-')}]
           </b>
         </>
