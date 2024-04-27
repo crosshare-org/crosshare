@@ -321,6 +321,7 @@ export const TopBarLink = (props: TopBarLinkProps) => {
             textDecoration: 'none',
             backgroundColor: 'var(--top-bar-hover)',
           },
+          fontVariantNumeric: 'tabular-nums',
         },
         ...(isSlate ? [SlateButtonCss] : []),
       ]}
