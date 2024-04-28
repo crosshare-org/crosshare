@@ -1,0 +1,100 @@
+@value small-and-up from '../lib/definitions.module.css';
+@value animation-delay from '../lib/definitions.module.css';
+
+@keyframes slidein {
+  0% {
+    margin-left: 100%;
+  }
+
+  100% {
+    margin-left: 0%;
+  }
+}
+
+.snackbar {
+  position: fixed;
+  z-index: 10000000;
+  bottom: 1em;
+  left: 1em;
+
+  max-width: calc(100vw - 2em);
+  min-height: 32px;
+  padding: 0.5em;
+
+  color: var(--snackbar-text);
+
+  visibility: hidden;
+  opacity: 0;
+  background-color: var(--snackbar-bg);
+  border-radius: 3px;
+  box-shadow: 0 0 3px 3px rgb(0 0 0 / 50%);
+
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  transition: all animation-delay ease-in-out 0s;
+}
+
+.snackbar[data-showing='true'] {
+  visibility: visible;
+  opacity: 1;
+}
+
+.toast {
+  max-height: 500px;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  transition: all animation-delay ease-in-out 0s;
+}
+
+.toast[data-closed='true'] {
+  max-height: 0;
+}
+
+.toastInner {
+  cursor: pointer;
+
+  width: 100%;
+  margin-left: 110%;
+  padding: 1em;
+
+  color: var(--text);
+
+  background-color: var(--overlay-inner);
+  box-shadow: 0 0 3px 3px rgb(0 0 0 / 50%);
+
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  transition: all animation-delay ease-in-out 0s;
+  animation: slidein 0.3s ease-in-out;
+}
+
+.toastInner[data-showing='true'] {
+  margin-left: 0;
+}
+
+.toastList {
+  position: fixed;
+  z-index: 10000000;
+  top: 0;
+  right: 0;
+
+  overflow: hidden;
+
+  width: 100vw;
+  padding-bottom: 4px;
+}
+
+.toastList[data-empty='true'] {
+  display: none;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .toast + .toast {
+    margin-top: 1em;
+  }
+
+  .toastList {
+    top: 1em;
+    right: 1em;
+    width: 320px;
+    padding: 4px;
+  }
+}

@@ -43,8 +43,6 @@
 }
 
 .btn {
-  overflow: wrap;
-
   max-width: 100%;
 
   /* create a small space when buttons wrap on 2 lines */

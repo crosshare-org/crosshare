@@ -13,6 +13,7 @@ export const PROFILE_PIC: [number, number] = [200, 200];
 export const COVER_PIC: [number, number] = [1200, 400];
 
 // make any changes in concert w/ definitions.module.css
+export const ANIMATION_DELAY = 250;
 export const HEADER_HEIGHT = 35;
 export const TINY_COL_MIN_HEIGHT = 50;
 export const SQUARE_HEADER_HEIGHT = 68;

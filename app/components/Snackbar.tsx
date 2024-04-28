@@ -1,4 +1,3 @@
-import { keyframes } from '@emotion/react';
 import React, {
   Dispatch,
   ReactNode,
@@ -10,17 +9,8 @@ import React, {
   useState,
 } from 'react';
 import { IoMdCloseCircleOutline } from 'react-icons/io';
-import { SMALL_AND_UP } from '../lib/style';
-
-const slidein = keyframes`
-from {
-  margin-left: 100%;
-}
-
-to {
-  margin-left: 0%;
-}
-`;
+import { ANIMATION_DELAY } from '../lib/style';
+import styles from './Snackbar.module.css';
 
 enum ActionTypes {
   ShowSnackbar,
@@ -70,29 +60,7 @@ export function Snackbar({
   isOpen: boolean;
 }) {
   return (
-    <div
-      css={{
-        zIndex: 10000000,
-        position: 'fixed',
-        bottom: '1em',
-        left: '1em',
-        backgroundColor: 'var(--snackbar-bg)',
-        color: 'var(--snackbar-text)',
-        padding: '0.5em',
-        borderRadius: 3,
-        minHeight: 32,
-        maxWidth: 'calc(100vw - 2em)',
-        boxShadow: '0px 0px 3px 3px rgba(0,0,0,0.5)',
-        opacity: 0,
-        visibility: 'hidden',
-        transition: 'all ' + ANIMATION_DELAY + 'ms ease-in-out 0s',
-        ...(message !== null &&
-          isOpen && {
-            opacity: 1,
-            visibility: 'visible',
-          }),
-      }}
-    >
+    <div data-showing={message !== null && isOpen} className={styles.snackbar}>
       {message}
     </div>
   );
@@ -128,44 +96,16 @@ function Toast({ id, message }: { id: number; message: string }) {
   }, [close]);
 
   return (
-    <div
-      css={{
-        transition: 'all ' + ANIMATION_DELAY + 'ms ease-in-out 0s',
-        maxHeight: 500,
-        ...(closed && { maxHeight: 0 }),
-        [SMALL_AND_UP]: {
-          '& + &': {
-            marginTop: '1em',
-          },
-        },
-      }}
-    >
+    <div data-closed={closed} className={styles.toast}>
       <div
         role="button"
         tabIndex={0}
-        css={{
-          cursor: 'pointer',
-          backgroundColor: 'var(--overlay-inner)',
-          color: 'var(--text)',
-          padding: '1em',
-          width: '100%',
-          marginLeft: '110%',
-          boxShadow: '0px 0px 3px 3px rgba(0, 0, 0, 0.5)',
-          animation: `${slidein} 0.3s ease-in-out`,
-          transition: 'all ' + ANIMATION_DELAY + 'ms ease-in-out 0s',
-          ...(message &&
-            !closing && {
-              marginLeft: 0,
-            }),
-        }}
+        data-showing={message && !closing}
+        className={styles.toastInner}
         onClick={close}
         onKeyPress={close}
       >
-        <IoMdCloseCircleOutline
-          css={{
-            float: 'right',
-          }}
-        />
+        <IoMdCloseCircleOutline className="floatRight" />
         {message}
       </div>
     </div>
@@ -205,24 +145,7 @@ export function SnackbarProvider(props: { children?: ReactNode }) {
     <SnackbarContext.Provider value={{ state, dispatch }}>
       {props.children}
       <Snackbar {...state} />
-      <div
-        css={{
-          zIndex: 10000000,
-          position: 'fixed',
-          overflow: 'hidden',
-          width: '100vw',
-          paddingBottom: 4,
-          top: 0,
-          right: 0,
-          ...(state.toasts.length === 0 && { display: 'none' }),
-          [SMALL_AND_UP]: {
-            padding: 4,
-            top: '1em',
-            right: '1em',
-            width: 320,
-          },
-        }}
-      >
+      <div data-empty={state.toasts.length === 0} className={styles.toastList}>
         {state.toasts.map((t) => (
           <Toast key={t.id} {...t} />
         ))}
@@ -232,7 +155,6 @@ export function SnackbarProvider(props: { children?: ReactNode }) {
 }
 
 const DURATION = 4000;
-const ANIMATION_DELAY = 250;
 
 const toastId = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 

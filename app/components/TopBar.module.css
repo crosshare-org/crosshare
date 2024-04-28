@@ -1,6 +1,7 @@
 @value header-height from '../lib/definitions.module.css';
 @value small-and-up from '../lib/definitions.module.css';
 @value large-and-up from '../lib/definitions.module.css';
+@value animation-delay from '../lib/definitions.module.css';
 
 .notificationsBtn {
   display: flex;
@@ -166,6 +167,7 @@
 }
 
 .header {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   height: header-height;
   color: var(--onprimary);
   background: var(--primary);
@@ -283,7 +285,7 @@
 
   background-color: var(--overlay-inner);
   border: 1px solid var(--text-input-border);
-  border-radius: 5;
+  border-radius: 5px;
   box-shadow: 0 0 5px 5px rgb(0 0 0 / 50%);
 }
 
@@ -335,8 +337,8 @@
 
   max-height: 500px;
 
-  /* note change ANIMATION_DELAY in TopBar.tsx if changing this */
-  transition: all 250ms ease-in-out 0s;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  transition: all animation-delay ease-in-out 0s;
 }
 
 .notificationLink[data-closing='true'] {
@@ -360,6 +362,7 @@
   }
 
   .header[data-slate='true'] {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     height: header-height;
     margin-bottom: 2rem;
   }

@@ -8,6 +8,7 @@
 /* stylelint-disable-next-line media-feature-name-no-unknown */
 @media (huge-and-up) {
   .page {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     max-width: max-width;
     margin: 2em auto;
   }

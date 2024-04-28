@@ -26,6 +26,7 @@
 .beginContainer {
   overflow: hidden;
 
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   padding: slate-padding-small 0 0;
 
   color: var(--slate-subtitle);
@@ -39,6 +40,7 @@
 /* stylelint-disable-next-line media-feature-name-no-unknown */
 @media (small-and-up) {
   .beginContainer {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     padding: slate-padding-med 0 0;
   }
 }
@@ -46,6 +48,7 @@
 /* stylelint-disable-next-line media-feature-name-no-unknown */
 @media (large-and-up) {
   .beginContainer {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     padding: slate-padding-large 0 0;
   }
 }

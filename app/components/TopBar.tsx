@@ -21,7 +21,7 @@ import {
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { NotificationT } from '../lib/notificationTypes';
-import { HEADER_HEIGHT } from '../lib/style';
+import { ANIMATION_DELAY, HEADER_HEIGHT } from '../lib/style';
 import { logAsyncErrors, slugify } from '../lib/utils';
 import { AuthContext } from './AuthContext';
 import { ButtonAsLink, ButtonReset } from './Buttons';
@@ -363,9 +363,6 @@ const NotificationLinkCSS = {
     backgroundColor: 'var(--top-bar-hover)',
   },
 };
-
-// Note change this in the css for notificationLink as well!
-const ANIMATION_DELAY = 250;
 
 const NotificationLink = ({
   notification: n,
