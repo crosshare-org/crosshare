@@ -7,7 +7,6 @@ import {
   cellIndex,
   entriesFromCells,
   entryAtPosition,
-  isInBounds,
   isInDirection,
   isIndexInBounds,
   posForIndex,
@@ -390,13 +389,15 @@ export function moveToEntry<Entry extends ViewableEntry>(
   pos: PosAndDir,
   move: (grid: ViewableGrid<Entry>, active: Position) => Position
 ): Position {
-  let newPos = move(grid, pos);
-  while (isInBounds(grid, newPos)) {
+  let oldPos: Position = { ...pos };
+  let newPos = move(grid, oldPos);
+  while (!isSamePosition(newPos, oldPos)) {
     const [newEntry] = entryAtPosition(grid, { ...newPos, dir: pos.dir });
     if (newEntry) {
       return newPos;
     }
-    newPos = move(grid, newPos);
+    oldPos = newPos;
+    newPos = move(grid, oldPos);
   }
 
   return pos;
