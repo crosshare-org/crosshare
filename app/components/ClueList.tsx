@@ -8,7 +8,7 @@ import {
   useRef,
 } from 'react';
 import { EntryBase, GridBase, valAt } from '../lib/gridBase';
-import { Direction, Position } from '../lib/types';
+import { Position, directionString } from '../lib/types';
 import { CluedEntry } from '../lib/viewableGrid';
 import { PuzzleAction } from '../reducers/commonActions';
 import { ClickedEntryAction } from '../reducers/gridReducer';
@@ -88,7 +88,7 @@ const ClueListItem = memo(function ClueListItem({
           <div className={styles.label}>
             {props.entry.labelNumber}
             <span className={styles.direction}>
-              {props.entry.direction === Direction.Across ? 'A' : 'D'}
+              {directionString(props.entry.direction)}
             </span>
           </div>
           <div className={styles.clueText}>

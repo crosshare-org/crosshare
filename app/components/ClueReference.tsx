@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { valAt } from '../lib/gridBase';
-import { Direction, getClueText } from '../lib/types';
+import { Direction, directionString, getClueText } from '../lib/types';
 import { DownsOnlyContext } from './DownsOnlyContext';
 import { GridContext } from './GridContext';
 import { ShowRefsContext } from './ShowRefsContext';
@@ -36,7 +36,7 @@ export const ClueReference = (props: ClueReferenceProps): JSX.Element => {
         <>
           <b className="marginRight0-5em whiteSpaceNowrap">
             {props.labelNumber}
-            {props.direction === Direction.Across ? 'A' : 'D'}
+            {directionString(props.direction)}
           </b>
           {downsOnly && props.direction === Direction.Across
             ? '-'

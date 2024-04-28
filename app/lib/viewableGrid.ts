@@ -22,6 +22,7 @@ import {
   PosAndDir,
   Position,
   Symmetry,
+  directionString,
   isSamePosition,
 } from './types';
 
@@ -47,6 +48,13 @@ export interface ViewableGrid<Entry extends ViewableEntry>
 
 export interface CluedGrid extends ViewableGrid<CluedEntry> {
   clues: ClueT[];
+}
+
+export function entryString(entry: {
+  labelNumber: number;
+  direction: Direction;
+}): string {
+  return `${entry.labelNumber}${directionString(entry.direction)}`;
 }
 
 function getSortedEntries<Entry extends EntryBase>(entries: Entry[]) {

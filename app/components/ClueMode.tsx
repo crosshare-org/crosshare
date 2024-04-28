@@ -8,8 +8,8 @@ import { sizeTag } from '../lib/sizeTag';
 import { COVER_PIC } from '../lib/style';
 import { Timestamp } from '../lib/timestamp';
 import {
-  Direction,
   dbCluesToClueTArray,
+  directionString,
   removeClueSpecials,
 } from '../lib/types';
 import { isMetaSolution } from '../lib/utils';
@@ -86,7 +86,7 @@ const ClueRow = (props: {
       <tr>
         <td className={styles.fixedCell}>
           {props.entry.labelNumber}
-          {props.entry.direction === Direction.Down ? 'D' : 'A'}
+          {directionString(props.entry.direction)}
         </td>
         <td className={styles.fixedCell}>
           <label
