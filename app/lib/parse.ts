@@ -48,3 +48,22 @@ export const parseClueReferences = (text: string): ClueReferenceData[] => {
   }
   return refs;
 };
+
+export function parseClueEnumeration(str: string): string | null {
+  str = str.trim();
+  let res = '';
+  for (let i = str.length - 1, depth = 0; i >= 0; i--) {
+    const char = str[i];
+    if (char === ')') {
+      depth++;
+    } else if (char === '(') {
+      depth--;
+    }
+    if (depth > 0 || (depth === 0 && char === '(')) {
+      res = char + res;
+    } else {
+      break;
+    }
+  }
+  return /\d/.test(res) || res === '()' ? res : null;
+}

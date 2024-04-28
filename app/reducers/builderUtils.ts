@@ -1,4 +1,5 @@
-import { entryWord } from '../lib/gridBase';
+import { entryWord, hasUnches } from '../lib/gridBase';
+import { parseClueEnumeration, parseClueReferences } from '../lib/parse';
 import { emptySelection, hasMultipleCells } from '../lib/selection';
 import type { BuilderState } from './builderReducer';
 import type { GridInterfaceState } from './gridReducer';
@@ -46,6 +47,60 @@ export function validateGrid(state: BuilderState) {
     gridIsComplete,
     repeats,
     hasNoShortWords,
+  };
+}
+
+export function getWarningStats(state: BuilderState) {
+  const shortWords = new Set<string>();
+
+  for (const [i, entry] of state.grid.entries.entries()) {
+    if (entry.cells.length <= 2) {
+      shortWords.add(entryWord(state.grid, i));
+    }
+  }
+
+  const unmatchedRefs = new Set<string>();
+  const missingEnums = new Set<string>();
+  const wrongEnums = new Set<string>();
+
+  const digitsRegex = /(\d+)/g;
+  for (const [word, clues] of Object.entries(state.clues)) {
+    for (const clue of clues) {
+      const refs = parseClueReferences(clue);
+      if (
+        !refs.every((ref) =>
+          state.grid.entries.some(
+            (entry) =>
+              ref.direction === entry.direction &&
+              ref.labelNumber === entry.labelNumber
+          )
+        )
+      ) {
+        unmatchedRefs.add(word);
+      }
+
+      const clueEnum = parseClueEnumeration(clue);
+      if (clueEnum == null) {
+        missingEnums.add(word);
+      } else {
+        const length = clueEnum.match(digitsRegex)?.reduce((sum, str) => {
+          const val = +str;
+          return isNaN(val) ? sum : sum + val;
+        }, 0);
+        if (length == null || length !== word.length) {
+          wrongEnums.add(word);
+        }
+      }
+    }
+  }
+  const enumsExpected = missingEnums.size < Object.keys(state.clues).length;
+
+  return {
+    shortWords,
+    hasUnches: hasUnches(state.grid) && !state.userTags.includes('cryptic'),
+    unmatchedRefs,
+    missingEnums: enumsExpected ? missingEnums : null,
+    wrongEnums: enumsExpected ? wrongEnums : null,
   };
 }
 
