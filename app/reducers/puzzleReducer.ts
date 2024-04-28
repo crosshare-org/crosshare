@@ -247,17 +247,17 @@ export function puzzleReducer(
     }
     const play = action.play;
     if (play === null) {
-    const downsOnly = action.prefs?.solveDownsOnly ?? false;
-    return {
-      ...state,
-      downsOnly,
-      active: {
-        ...state.active,
-        dir: downsOnly ? Direction.Down : state.active.dir,
-      },
-      prefs: action.prefs,
-      loadedPlayState: true,
-    };
+      const downsOnly = action.prefs?.solveDownsOnly ?? false;
+      return {
+        ...state,
+        downsOnly,
+        active: {
+          ...state.active,
+          dir: downsOnly ? Direction.Down : state.active.dir,
+        },
+        prefs: action.prefs,
+        loadedPlayState: true,
+      };
     }
     const downsOnly = play.do ?? false;
     return {
