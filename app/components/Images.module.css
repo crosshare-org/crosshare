@@ -1,0 +1,79 @@
+@value small-and-up from '../lib/definitions.module.css';
+@value large-and-up from '../lib/definitions.module.css';
+
+.profilePicWrapper {
+  position: relative;
+
+  overflow: hidden;
+
+  box-sizing: content-box;
+
+  border: 4px solid var(--bg);
+  border-radius: 50%;
+}
+
+.profilePicImage,
+.profilePicWrapper {
+  width: 75px;
+  height: 75px;
+}
+
+.coverPic {
+  width: 100%;
+  height: 150px;
+  background-position: center;
+  background-size: cover;
+}
+
+.pic {
+  display: inline-block;
+  margin-top: -0.5em;
+  margin-right: 1em;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .profilePicImage,
+  .profilePicWrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .coverPic {
+    height: 225px;
+  }
+
+  .pic {
+    margin-top: -1.5em;
+  }
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (large-and-up) {
+  .coverPic {
+    height: 300px;
+  }
+}
+
+.picWrap {
+  flex: 1 1 auto;
+  text-align: right;
+}
+
+.textArea {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.textArea[data-has-pic='true'] {
+  text-align: left;
+}
+
+.topLine {
+  font-size: 1.5em;
+}
+
+.topLine[data-has-cover='true'] {
+  color: white;
+  mix-blend-mode: difference;
+}

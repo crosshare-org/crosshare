@@ -61,6 +61,22 @@
   box-shadow: 0 3px 5px rgb(0 0 0 / 50%);
 }
 
+.btn[data-boring='true'] {
+  color: var(--onboring);
+  background-color: var(--boring-bg);
+}
+
+.btn[data-boring='true']:hover:enabled {
+  color: var(--onboring);
+  background-color: var(--boring-bg-hover);
+}
+
+.btn[data-hollow='true'] {
+  color: var(--link);
+  background-color: transparent;
+  border-color: var(--link);
+}
+
 .btn:disabled {
   color: var(--default-text);
   background-color: transparent;
@@ -81,20 +97,4 @@
   color: var(--default-text);
   background-color: transparent;
   border-color: var(--default-text);
-}
-
-.btn[data-boring='true'] {
-  color: var(--onboring);
-  background-color: var(--boring-bg);
-}
-
-.btn[data-boring='true']:hover:enabled {
-  color: var(--onboring);
-  background-color: var(--boring-bg-hover);
-}
-
-.btn[data-hollow='true'] {
-  color: var(--link);
-  background-color: transparent;
-  border-color: var(--link);
 }
