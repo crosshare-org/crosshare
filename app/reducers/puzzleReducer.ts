@@ -7,7 +7,8 @@ import {
   moveDown,
   moveLeft,
   moveRight,
-  moveToNextEntryInDirection,
+  moveToEntry,
+  moveToEntryInActiveDirection,
   moveUp,
   nextNonBlock,
 } from '../lib/viewableGrid';
@@ -151,8 +152,8 @@ export function puzzleReducer(
           state.grid,
           state.active,
           state.active.dir === Direction.Across
-            ? moveToNextEntryInDirection(state.grid, state.active)
-            : moveRight(state.grid, state.active),
+            ? moveToEntryInActiveDirection(state.grid, state.active)
+            : moveToEntry(state.grid, state.active, moveRight),
           state.wrongCells
         ),
       };
@@ -164,8 +165,8 @@ export function puzzleReducer(
           state.grid,
           state.active,
           state.active.dir === Direction.Across
-            ? moveToNextEntryInDirection(state.grid, state.active, true)
-            : moveLeft(state.grid, state.active),
+            ? moveToEntryInActiveDirection(state.grid, state.active, true)
+            : moveToEntry(state.grid, state.active, moveLeft),
           state.wrongCells
         ),
       };
@@ -177,8 +178,8 @@ export function puzzleReducer(
           state.grid,
           state.active,
           state.active.dir === Direction.Down
-            ? moveToNextEntryInDirection(state.grid, state.active, true)
-            : moveUp(state.grid, state.active),
+            ? moveToEntryInActiveDirection(state.grid, state.active, true)
+            : moveToEntry(state.grid, state.active, moveUp),
           state.wrongCells
         ),
       };
@@ -190,8 +191,8 @@ export function puzzleReducer(
           state.grid,
           state.active,
           state.active.dir === Direction.Down
-            ? moveToNextEntryInDirection(state.grid, state.active)
-            : moveDown(state.grid, state.active),
+            ? moveToEntryInActiveDirection(state.grid, state.active)
+            : moveToEntry(state.grid, state.active, moveDown),
           state.wrongCells
         ),
       };

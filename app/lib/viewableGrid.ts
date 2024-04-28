@@ -7,6 +7,7 @@ import {
   cellIndex,
   entriesFromCells,
   entryAtPosition,
+  isInBounds,
   isInDirection,
   isIndexInBounds,
   posForIndex,
@@ -348,7 +349,7 @@ export function moveToNextEntry<Entry extends ViewableEntry>(
   };
 }
 
-export function moveToNextEntryInDirection<Entry extends ViewableEntry>(
+export function moveToEntryInActiveDirection<Entry extends ViewableEntry>(
   grid: ViewableGrid<Entry>,
   pos: PosAndDir,
   reverse = false
@@ -379,6 +380,23 @@ export function moveToNextEntryInDirection<Entry extends ViewableEntry>(
       return newPos;
     }
     newPos = posForIndex(grid, (ci += iincr));
+  }
+
+  return pos;
+}
+
+export function moveToEntry<Entry extends ViewableEntry>(
+  grid: ViewableGrid<Entry>,
+  pos: PosAndDir,
+  move: (grid: ViewableGrid<Entry>, active: Position) => Position
+): Position {
+  let newPos = move(grid, pos);
+  while (isInBounds(grid, newPos)) {
+    const [newEntry] = entryAtPosition(grid, { ...newPos, dir: pos.dir });
+    if (newEntry) {
+      return newPos;
+    }
+    newPos = move(grid, newPos);
   }
 
   return pos;
