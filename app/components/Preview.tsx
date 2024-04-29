@@ -21,7 +21,7 @@ import {
   getClueProps,
   initialBuilderState,
 } from '../reducers/builderReducer';
-import { KeypressAction } from '../reducers/gridReducer';
+import { KeypressAction } from '../reducers/commonActions';
 import { AuthProps } from './AuthHelpers';
 import { ClueList } from './ClueList';
 import { ClueMode } from './ClueMode';
