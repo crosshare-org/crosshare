@@ -1,0 +1,56 @@
+.logoWrap {
+  overflow: hidden;
+  width: 100%;
+  max-height: 3.115rem;
+}
+
+.logoDark {
+  display: var(--dark-image-display);
+
+  max-width: 90%;
+  max-height: 2.89rem;
+  margin: auto;
+
+  object-fit: contain;
+}
+
+.logoLight {
+  display: var(--light-image-display);
+
+  max-width: 90%;
+  max-height: 2.89rem;
+  margin: auto;
+
+  object-fit: contain;
+}
+
+.headerWrap {
+  width: 100%;
+  text-align: center;
+}
+
+.logo {
+  margin-bottom: 2.27rem;
+}
+
+.title {
+  margin-bottom: 1.41rem;
+  font-size: 1.647rem;
+  font-weight: bold;
+  color: var(--slate-title);
+}
+
+.note {
+  margin: 0 3rem 1.41rem;
+  font-size: 19px;
+}
+
+.byline {
+  margin-bottom: 2.24rem;
+
+  font-size: 1rem;
+  font-weight: normal;
+  color: var(--slate-subtitle);
+  text-transform: uppercase;
+  letter-spacing: 0.08rem;
+}

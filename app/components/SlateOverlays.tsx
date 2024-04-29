@@ -12,16 +12,7 @@ import styles from './SlateOverlays.module.css';
 
 const PoweredByLink = () => {
   return (
-    <Link
-      css={{
-        '&:hover': { color: 'var(--slate-subtitle)' },
-        color: 'var(--slate-subtitle)',
-        letterSpacing: '1.36px',
-        fontSize: '0.9rem',
-        textTransform: 'uppercase',
-      }}
-      href="/"
-    >
+    <Link className={styles.poweredBy} href="/">
       Powered by crosshare.org
     </Link>
   );
@@ -30,13 +21,8 @@ const PoweredByLink = () => {
 const SlateOverlayHeader = () => {
   return (
     <>
-      <SlateLogo css={{ marginBottom: '1rem' }} />
-      <div
-        css={{
-          textAlign: 'center',
-          marginBottom: '2rem',
-        }}
-      >
+      <SlateLogo className={styles.logo} />
+      <div className={styles.poweredByWrap}>
         <PoweredByLink />
       </div>
     </>
@@ -51,25 +37,8 @@ export const SlatePause = ({
   return (
     <Overlay innerPadding="3em 0 0 0">
       <SlateOverlayHeader />
-      <Pause
-        css={{
-          opacity: '0.3',
-          display: 'block',
-          margin: 'auto',
-          fontSize: '4rem',
-        }}
-      />
-      <div
-        css={{
-          fontSize: '1.383rem',
-          textAlign: 'center',
-          fontWeight: 'bold',
-          margin: '2rem 0 2.82rem 0',
-          color: 'var(--slate-title)',
-        }}
-      >
-        Your puzzle is paused
-      </div>
+      <Pause className={styles.pauseIcon} />
+      <div className={styles.pauseText}>Your puzzle is paused</div>
 
       <BigButton text={'Resume'} dispatch={dispatch} radius={7} />
     </Overlay>
@@ -109,23 +78,12 @@ export const SlateBegin = ({
           publishTime={puzzle.isPrivateUntil ?? puzzle.publishTime}
           note={puzzle.constructorNotes}
         />
-        <Illustration
-          css={{
-            color: 'var(--slate-button-text)',
-            fontSize: '10rem',
-            opacity: '0.3',
-          }}
-        />
-        <div
-          css={{
-            textAlign: 'center',
-            margin: '2rem 0',
-          }}
-        >
+        <Illustration className={styles.illustration} />
+        <div className={styles.poweredByWrap2}>
           <PoweredByLink />
         </div>
         {loadingPlayState ? (
-          <div css={{ height: '85px' }} />
+          <div className={styles.buttonPlaceholder} />
         ) : (
           <BigButton dispatch={dispatch} text={'Begin Puzzle'} radius={4} />
         )}
@@ -152,16 +110,8 @@ const BigButton = ({
         dispatch({ type: 'RESUMEACTION' });
       }}
     >
-      <Play css={{ fontSize: '35px', marginRight: '1rem' }} />
-      <span
-        css={{
-          fontSize: '1.383rem',
-          fontWeight: 'bold',
-          verticalAlign: 'middle',
-        }}
-      >
-        {text}
-      </span>
+      <Play className={styles.playIcon} />
+      <span className={styles.buttonText}>{text}</span>
     </ButtonReset>
   );
 };
