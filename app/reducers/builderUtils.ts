@@ -67,7 +67,9 @@ export function getWarningStats(state: BuilderState) {
   const digitsRegex = /(\d+)/g;
 
   const gridEntries = new Set<string>();
-  state.grid.entries.forEach((entry) => { gridEntries.add(entryString(entry)); });
+  state.grid.entries.forEach((entry) => {
+    gridEntries.add(entryString(entry));
+  });
 
   for (const [word, clues] of Object.entries(state.clues)) {
     for (const clue of clues) {
