@@ -192,6 +192,10 @@ service cloud.firestore {
       allow write: if isAdmin();
       allow read: if isAdmin();
     }
+    match /settings/settings {
+      allow write: if isAdmin();
+      allow read: if isAdmin();
+    }
     match /settings/tags {
       allow read: if true;
     }

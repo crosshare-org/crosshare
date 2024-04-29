@@ -332,6 +332,16 @@ export default requiresAdmin(() => {
                     Delete Comment
                   </button>
                   <button
+                    className="marginRight2em"
+                    onClick={logAsyncErrors(async () => {
+                      await updateDoc(getDocRef('settings', 'settings'), {
+                        noAuto: arrayUnion(rc.ca),
+                      });
+                    })}
+                  >
+                    Set No Automod
+                  </button>
+                  <button
                     onClick={logAsyncErrors(async () => {
                       await updateDoc(getDocRef('cr', `${rc.cid}-${rc.u}`), {
                         h: true,
