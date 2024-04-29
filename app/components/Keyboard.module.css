@@ -39,10 +39,6 @@
   padding-top: 10px;
 }
 
-.block {
-  border: 1px solid var(--cell-wall);
-}
-
 .key {
   cursor: pointer;
 
@@ -94,11 +90,6 @@
   background: var(--key-bg-click);
 }
 
-.key[data-has-bg='true'],
-.key[data-has-bg='true']:active {
-  background: var(--key-bg-override);
-}
-
 /* stylelint-disable-next-line media-feature-name-no-unknown */
 @media (small-and-up) {
   .key {
@@ -108,4 +99,15 @@
   .key[data-not-on-tablet='true'] {
     display: none;
   }
+}
+
+.block {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--cell-wall),
+    var(--cell-wall) 10px,
+    var(--primary) 10px,
+    var(--primary) 20px
+  ) !important;
+  border: 1px solid var(--cell-wall);
 }

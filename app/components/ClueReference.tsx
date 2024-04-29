@@ -41,7 +41,7 @@ export const ClueReference = (props: ClueReferenceProps): JSX.Element => {
           {downsOnly && props.direction === Direction.Across
             ? '-'
             : getClueText(entry)}
-          <b className="marginRight0-5em whiteSpaceNowrap">
+          <b className="marginLeft0-5em whiteSpaceNowrap">
             [{entry.cells.map((a) => valAt(grid, a).trim() || '-')}]
           </b>
         </>

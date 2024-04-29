@@ -1,5 +1,4 @@
 import {
-  type CSSProperties,
   type ReactNode,
   memo,
   useCallback,
@@ -46,7 +45,6 @@ interface KeyProps {
   smallSize?: boolean;
   largeSize?: boolean;
   smallFont?: boolean;
-  backgroundColor?: string;
   onlyOnTablet?: boolean;
   notOnTablet?: boolean;
   className?: string;
@@ -54,20 +52,12 @@ interface KeyProps {
 const Key = (props: KeyProps) => {
   return (
     <button
-      data-has-bg={Boolean(props.backgroundColor)}
       data-small-font={props.smallFont}
       data-small-size={props.smallSize}
       data-large-size={props.largeSize}
       data-only-on-tablet={props.onlyOnTablet}
       data-not-on-tablet={props.notOnTablet}
       className={clsx(styles.key, props.className)}
-      style={
-        {
-          ...(props.backgroundColor && {
-            '--key-bg-override': props.backgroundColor,
-          }),
-        } as CSSProperties
-      }
       onClick={(e) => {
         props.onKeypress(props.keyStroke);
         e.preventDefault();
@@ -203,7 +193,6 @@ export const Keyboard = memo(function Keyboard({
           <Key
             className={styles.block}
             keyStroke="{block}"
-            backgroundColor="repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px,var(--primary) 10px,var(--primary) 20px);"
             display=" "
             onKeypress={keypress}
           />
