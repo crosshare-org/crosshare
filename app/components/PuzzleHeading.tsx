@@ -10,6 +10,7 @@ import { EmbedContext } from './EmbedContext';
 import { ProfilePicAndName } from './Images';
 import { LinkButtonSimpleA } from './Link';
 import { Markdown } from './Markdown';
+import styles from './PuzzleHeading.module.css';
 import { AuthorLink } from './PuzzleLink';
 import { TagList } from './TagList';
 import { PastDistanceToNow } from './TimeDisplay';
@@ -42,7 +43,7 @@ export const PuzzleHeading = (props: {
         bonusMargin={1}
         topLine={props.title}
         byLine={
-          <p css={{ overflowWrap: 'break-word' }}>
+          <p className="overflowWrapBreakWord">
             <DifficultyBadge puzzleRating={props.rating} />
             {' · '}
             <AuthorLink
@@ -73,13 +74,9 @@ export const PuzzleHeading = (props: {
           </p>
         }
       />
-      <TagList
-        css={{ justifyContent: 'center', fontSize: '0.9em' }}
-        tags={props.tags}
-        link
-      />
+      <TagList className={styles.taglist} tags={props.tags} link />
       {props.constructorNotes ? (
-        <div css={{ textAlign: 'center', overflowWrap: 'break-word' }}>
+        <div className="textAlignCenter overflowWrapBreakWord">
           <ConstructorNotes
             isContest={props.isContest}
             notes={props.constructorNotes}
@@ -89,14 +86,14 @@ export const PuzzleHeading = (props: {
         ''
       )}
       {props.blogPost ? (
-        <div css={{ margin: '1em 0', overflowWrap: 'break-word' }}>
+        <div className="margin1em0 overflowWrapBreakWord">
           <Markdown className="textAlignLeft" hast={props.blogPost} />
         </div>
       ) : (
         ''
       )}
       {props.constructorPage?.sig ? (
-        <div css={{ margin: '1em 0', overflowWrap: 'break-word' }}>
+        <div className="margin1em0 overflowWrapBreakWord">
           <Markdown
             inline={true}
             className="textAlignLeft"

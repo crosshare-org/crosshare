@@ -199,3 +199,7 @@
 .cursorPointer {
   cursor: pointer !important;
 }
+
+.overflowWrapBreakWord {
+  overflow-wrap: break-word !important;
+}

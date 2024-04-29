@@ -1,0 +1,33 @@
+.link {
+  margin: 1em 0.2em 0;
+  padding: 0.2em 0.5em;
+
+  color: #fff;
+  white-space: nowrap;
+
+  background-color: var(--share-link-bg);
+  border-radius: 0.3em;
+}
+
+.link:hover,
+.link:active {
+  color: #fff;
+  text-decoration: none;
+  background-color: var(--share-link-bg-hover);
+}
+
+.linkName {
+  margin-left: 0.3em;
+}
+
+.buttonWrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1em;
+}
+
+.shareText {
+  margin-top: 1.2em;
+  margin-right: 0.3em;
+}

@@ -1,0 +1,47 @@
+.section {
+  margin-top: 2em;
+  text-align: center;
+}
+
+.fullscreen {
+  position: absolute;
+  top: 1em;
+  left: 1em;
+
+  width: 1em;
+  height: 1em;
+  padding: 0;
+
+  font-size: 2em;
+  color: var(--text);
+  vertical-align: text-top;
+
+  background: transparent;
+  border: none;
+}
+
+.fullscreen[data-has-cover='true'] {
+  color: var(--social-text);
+}
+
+.fullscreenIcon {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.leaderboard {
+  overflow: scroll;
+  max-height: 10em;
+  padding: 0.5em;
+  list-style-type: none;
+}
+
+.leaderboardEntry {
+  padding: 0.5em 0;
+  border-bottom: 1px solid var(--bg-hover);
+}
+
+.leaderboardEntry:last-child {
+  border-bottom: none;
+}

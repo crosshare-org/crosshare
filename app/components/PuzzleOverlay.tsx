@@ -22,6 +22,7 @@ import { MetaSubmission } from './MetaSubmission';
 import { Overlay } from './Overlay';
 import { NextPuzzleLink } from './Puzzle';
 import { PuzzleHeading } from './PuzzleHeading';
+import styles from './PuzzleOverlay.module.css';
 import { SharingButtons } from './SharingButtons';
 import { PastDistanceToNow } from './TimeDisplay';
 
@@ -161,26 +162,14 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
     >
       {showFullscreen ? (
         <button
-          css={{
-            background: 'transparent',
-            color: 'var(--text)',
-            ...(props.coverImage && { color: 'var(--social-text)' }),
-            border: 'none',
-            position: 'absolute',
-            padding: 0,
-            fontSize: '2em',
-            verticalAlign: 'text-top',
-            width: '1em',
-            height: '1em',
-            top: '1em',
-            left: '1em',
-          }}
+          data-has-cover={Boolean(props.coverImage)}
+          className={styles.fullscreen}
           onClick={logAsyncErrors(toggleFullscreen)}
         >
           <GoScreenFull
             aria-label="toggle fullscreen"
             title="Toggle Fullscreen"
-            css={{ position: 'absolute', top: 0, left: 0 }}
+            className={styles.fullscreenIcon}
           />
         </button>
       ) : (
@@ -290,7 +279,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
               </>
             ) : (
               <>
-                <p css={{ marginBottom: 0, fontSize: '1.5em' }}>
+                <p className="marginBottom0 fontSize1-5em">
                   {solvedMessage} {solveTimeString}
                 </p>
                 {props.shareButtonText ? (
@@ -330,7 +319,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         ''
       )}
       <div
-        css={{
+        style={{
           ...((props.overlayType === OverlayType.BeginPause ||
             (isContest &&
               !props.contestRevealed &&
@@ -350,25 +339,11 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                 <Trans>Leaderboard (updated hourly)</Trans>
               </h4>
               {winningSubmissions?.length ? (
-                <ul
-                  css={{
-                    maxHeight: '10em',
-                    listStyleType: 'none',
-                    padding: '0.5em',
-                    overflow: 'scroll',
-                  }}
-                >
+                <ul className={styles.leaderboard}>
                   {winningSubmissions
                     .sort((w1, w2) => w1.t - w2.t)
                     .map((w, i) => (
-                      <li
-                        css={{
-                          padding: '0.5em 0',
-                          borderBottom: '1px solid var(--bg-hover)',
-                          '&:last-child': { borderBottom: 'none' },
-                        }}
-                        key={i}
-                      >
+                      <li className={styles.leaderboardEntry} key={i}>
                         <strong>{w.n}</strong> solved{' '}
                         <PastDistanceToNow date={new Date(w.t)} />{' '}
                       </li>
@@ -388,7 +363,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           isEmbed ? (
             ''
           ) : (
-            <div css={{ textAlign: 'center', marginTop: '2em' }}>
+            <div className={styles.section}>
               The constructor has disabled comments for this puzzle
             </div>
           )
@@ -408,7 +383,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         {isEmbed ? (
           ''
         ) : (
-          <div css={{ textAlign: 'center', marginTop: '2em' }}>
+          <div className={styles.section}>
             <PrevDailyMiniLink nextPuzzle={props.nextPuzzle} />
           </div>
         )}
@@ -416,7 +391,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
       {isEmbed ? (
         <>
           {typeof router.query.backToListPage === 'string' ? (
-            <div css={{ marginTop: '2em', textAlign: 'center' }}>
+            <div className={styles.section}>
               <Link
                 noTargetBlank={true}
                 href={`/embed/list/${props.puzzle.authorId}/${
@@ -435,7 +410,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           ) : (
             ''
           )}
-          <div css={{ marginTop: '2em', textAlign: 'center' }}>
+          <div className={styles.section}>
             <Link href="/">
               <Trans>Powered by crosshare.org</Trans>
             </Link>

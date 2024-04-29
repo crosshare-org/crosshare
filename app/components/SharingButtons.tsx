@@ -1,11 +1,12 @@
 import { mix } from 'color2k';
-import { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import {
   FaEnvelope,
   FaFacebook,
   FaRegClipboard,
   FaTwitter,
 } from 'react-icons/fa';
+import styles from './SharingButtons.module.css';
 import { useSnackbar } from './Snackbar';
 
 enum Network {
@@ -83,19 +84,13 @@ function SharingButton({ network, path, text }: SharingButtonProps) {
 
   return (
     <a
-      css={{
-        whiteSpace: 'nowrap',
-        margin: '1em 0.2em 0',
-        padding: '0.2em 0.5em',
-        borderRadius: '0.3em',
-        color: '#fff',
-        backgroundColor: mix(colors(network), 'black', 0.3),
-        ['&:hover, &:active']: {
-          backgroundColor: mix(colors(network), 'black', 0.4),
-          color: '#fff',
-          textDecoration: 'none',
-        },
-      }}
+      style={
+        {
+          '--share-link-bg': mix(colors(network), 'black', 0.3),
+          '--share-link-bg-hover': mix(colors(network), 'black', 0.4),
+        } as CSSProperties
+      }
+      className={styles.link}
       href={url(network, path, text)}
       onClick={(e) => {
         if (network !== Network.Clipboard) {
@@ -124,7 +119,7 @@ function SharingButton({ network, path, text }: SharingButtonProps) {
       aria-label={linkName(network)}
     >
       {icon(network)}
-      <span css={{ marginLeft: '0.3em' }}>{linkName(network)}</span>
+      <span className={styles.linkName}>{linkName(network)}</span>
     </a>
   );
 }
@@ -136,15 +131,8 @@ interface SharingButtonsProps {
 
 export function SharingButtons(props: SharingButtonsProps) {
   return (
-    <div
-      css={{
-        justifyContent: 'center',
-        marginBottom: '1em',
-        display: 'flex',
-        flexWrap: 'wrap',
-      }}
-    >
-      <b css={{ marginRight: '0.3em', marginTop: '1.2em' }}>Share:</b>
+    <div className={styles.buttonWrap}>
+      <b className={styles.shareText}>Share:</b>
       <SharingButton network={Network.Facebook} {...props} />
       <SharingButton network={Network.Twitter} {...props} />
       <SharingButton network={Network.Email} {...props} />
