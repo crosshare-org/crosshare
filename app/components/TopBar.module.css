@@ -210,6 +210,9 @@
         deepskyblue,
         violet
       );
+  }
+
+  .header[data-tgdr='true'] {
     background: linear-gradient(rgb(0 0 0 / 50%), rgb(0 0 0 / 50%)),
       linear-gradient(
         to right,
