@@ -8,11 +8,11 @@ import {
 } from 'color2k';
 import { EmbedStylingProps } from '../components/EmbedStyling';
 
-export const KEYBOARD_HEIGHT = 164;
 export const PROFILE_PIC: [number, number] = [200, 200];
 export const COVER_PIC: [number, number] = [1200, 400];
 
 // make any changes in concert w/ definitions.module.css
+export const KEYBOARD_HEIGHT = 164;
 export const ANIMATION_DELAY = 250;
 export const HEADER_HEIGHT = 35;
 export const TINY_COL_MIN_HEIGHT = 50;

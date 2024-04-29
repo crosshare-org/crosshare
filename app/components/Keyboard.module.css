@@ -1,0 +1,111 @@
+@value keyboard-height from '../lib/definitions.module.css';
+@value small-and-up from '../lib/definitions.module.css';
+
+.keyRows {
+  user-select: none;
+
+  overflow: hidden;
+  display: none;
+
+  width: 100%;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  height: keyboard-height;
+  padding: 4px;
+
+  font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue',
+    Helvetica, Arial, 'Lucida Grande', sans-serif;
+
+  background: var(--kb-bg);
+  border-radius: 5px;
+}
+
+.keyRows[data-toggled='true'] {
+  display: block;
+}
+
+/* Our attempt to detect a physical keyboard */
+@media (hover: hover) and (pointer: fine) {
+  .keyRows {
+    display: block;
+  }
+
+  .keyRows[data-toggled='true'] {
+    display: none;
+  }
+}
+
+.keyRow {
+  display: flex;
+  padding-top: 10px;
+}
+
+.block {
+  border: 1px solid var(--cell-wall);
+}
+
+.key {
+  cursor: pointer;
+
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+
+  height: 40px;
+  padding: 0;
+
+  font-size: 100%;
+  color: var(--black);
+
+  background: var(--key-bg);
+  border: none;
+  border-bottom: 1px solid var(--key-ul);
+  border-radius: 5px;
+  box-shadow: 0 0 3px -1px rgb(0 0 0 / 30%);
+
+  -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
+}
+
+.key[data-only-on-tablet='true'] {
+  display: none;
+}
+
+.key[data-large-size='true'] {
+  flex: 1.6 1 0;
+}
+
+.key[data-small-size='true'] {
+  flex: 0.5 1 0;
+}
+
+.key[data-small-font='true'] {
+  font-size: 90%;
+}
+
+.key:focus {
+  outline: none;
+}
+
+.key:not(:last-child) {
+  margin-right: 5px;
+}
+
+.key:active {
+  background: var(--key-bg-click);
+}
+
+.key[data-has-bg='true'],
+.key[data-has-bg='true']:active {
+  background: var(--key-bg-override);
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .key {
+    display: flex;
+  }
+
+  .key[data-not-on-tablet='true'] {
+    display: none;
+  }
+}

@@ -1,5 +1,6 @@
 import {
-  ReactNode,
+  type CSSProperties,
+  type ReactNode,
   memo,
   useCallback,
   useContext,
@@ -14,12 +15,9 @@ import {
   FaAngleRight,
   FaBackspace,
 } from 'react-icons/fa';
-import {
-  HAS_PHYSICAL_KEYBOARD,
-  KEYBOARD_HEIGHT,
-  SMALL_AND_UP,
-} from '../lib/style';
+import { clsx } from '../lib/utils';
 import { CrosshareAudioContext } from './CrosshareAudioContext';
+import styles from './Keyboard.module.css';
 
 interface KeyRowsProps {
   children: ReactNode;
@@ -28,23 +26,7 @@ interface KeyRowsProps {
 
 const KeyRows = (props: KeyRowsProps) => {
   return (
-    <div
-      css={{
-        display: props.toggleKeyboard ? 'none' : 'block',
-        [HAS_PHYSICAL_KEYBOARD]: {
-          display: props.toggleKeyboard ? 'block' : 'none',
-        },
-        fontFamily:
-          '"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif',
-        width: '100%',
-        height: KEYBOARD_HEIGHT,
-        overflow: 'hidden',
-        padding: '4px',
-        borderRadius: '5px',
-        userSelect: 'none',
-        background: 'var(--kb-bg)',
-      }}
-    >
+    <div data-toggled={props.toggleKeyboard} className={styles.keyRows}>
       {props.children}
     </div>
   );
@@ -54,16 +36,7 @@ interface KeyRowProps {
   children: ReactNode;
 }
 const KeyRow = (props: KeyRowProps) => {
-  return (
-    <div
-      css={{
-        display: 'flex',
-        paddingTop: 10,
-      }}
-    >
-      {props.children}
-    </div>
-  );
+  return <div className={styles.keyRow}>{props.children}</div>;
 };
 
 interface KeyProps {
@@ -81,44 +54,20 @@ interface KeyProps {
 const Key = (props: KeyProps) => {
   return (
     <button
-      className={props.className}
-      css={{
-        '&:focus': {
-          outline: 'none',
-        },
-        padding: 0,
-        border: 'none',
-        fontSize: props.smallFont ? '90%' : '100%',
-        background: props.backgroundColor
-          ? props.backgroundColor
-          : 'var(--key-bg)',
-        flex: props.smallSize
-          ? '0.5 1 0 '
-          : props.largeSize
-          ? '1.6 1 0 '
-          : '1 1 0',
-        cursor: 'pointer',
-        color: 'var(--black)',
-        boxShadow: '0 0 3px -1px rgba(0,0,0,.3)',
-        height: '40px',
-        borderRadius: '5px',
-        borderBottom: '1px solid var(--key-ul)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        display: props.onlyOnTablet ? 'none' : 'flex',
-        [SMALL_AND_UP]: {
-          display: props.notOnTablet ? 'none' : 'flex',
-        },
-        '&:not(:last-child)': {
-          marginRight: '5px',
-        },
-        WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
-        '&:active': {
-          background: props.backgroundColor
-            ? props.backgroundColor
-            : 'var(--key-bg-click)',
-        },
-      }}
+      data-has-bg={Boolean(props.backgroundColor)}
+      data-small-font={props.smallFont}
+      data-small-size={props.smallSize}
+      data-large-size={props.largeSize}
+      data-only-on-tablet={props.onlyOnTablet}
+      data-not-on-tablet={props.notOnTablet}
+      className={clsx(styles.key, props.className)}
+      style={
+        {
+          ...(props.backgroundColor && {
+            '--key-bg-override': props.backgroundColor,
+          }),
+        } as CSSProperties
+      }
       onClick={(e) => {
         props.onKeypress(props.keyStroke);
         e.preventDefault();
@@ -252,7 +201,7 @@ export const Keyboard = memo(function Keyboard({
         <Key keyStroke="L" onKeypress={keypress} />
         {props.includeBlockKey ? (
           <Key
-            css={{ border: '1px solid var(--cell-wall)' }}
+            className={styles.block}
             keyStroke="{block}"
             backgroundColor="repeating-linear-gradient(-45deg,var(--cell-wall),var(--cell-wall) 10px,var(--primary) 10px,var(--primary) 20px);"
             display=" "
