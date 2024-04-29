@@ -349,6 +349,20 @@
   border-top: 1px solid var(--text-input-border);
 }
 
+.notificationLinkInner {
+  display: block;
+  flex: 1;
+  padding: 1em;
+  color: var(--text);
+}
+
+.notificationLinkInner:hover,
+.notificationLinkInner:focus {
+  color: var(--text);
+  text-decoration: none;
+  background-color: var(--top-bar-hover);
+}
+
 /* stylelint-disable-next-line media-feature-name-no-unknown */
 @media (small-and-up) {
   .linkContentsIcon[data-slate='true'] {

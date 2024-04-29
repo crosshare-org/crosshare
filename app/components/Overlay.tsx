@@ -1,9 +1,9 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { IoMdCloseCircleOutline } from 'react-icons/io';
-import { SMALL_AND_UP } from '../lib/style';
 import { EmbedContext } from './EmbedContext';
 import { CoverPic } from './Images';
+import styles from './Overlay.module.css';
 
 export const Overlay = (props: {
   coverImage?: string | null;
@@ -31,67 +31,23 @@ export const Overlay = (props: {
   const overlay = (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
     <div
+      data-slate={isSlate}
+      data-hidden={props.hidden}
+      data-cover={Boolean(props.coverImage)}
       onClick={props.onClick ?? (() => undefined)}
-      css={{
-        display: props.hidden ? 'none' : 'block',
-        position: 'fixed',
-        backgroundColor: 'var(--overlay-bg)',
-        top: 0,
-        left: 0,
-        width: '100%',
-        overflowY: 'scroll',
-        overscrollBehavior: 'contain',
-        height: '100%',
-        zIndex: 10000,
-      }}
+      className={styles.overlay}
     >
-      <div
-        css={{
-          position: 'relative',
-          width: '95%',
-          margin: '1em auto',
-          [SMALL_AND_UP]: {
-            width: '90%',
-            margin: '2em auto',
-          },
-          maxWidth: '1200px',
-          backgroundColor: 'var(--overlay-inner)',
-          border: '1px solid var(--overlay-stroke)',
-          ...(isSlate && {
-            borderRadius: '7px',
-            overflow: 'hidden',
-            top: '50%',
-            transform: 'translateY(-50%)',
-          }),
-        }}
-      >
+      <div className={styles.inner}>
         {props.coverImage ? <CoverPic coverPicture={props.coverImage} /> : ''}
-        <div
-          css={{
-            padding: props.innerPadding ?? '3em 1.5em',
-          }}
-        >
+        <div style={{ padding: props.innerPadding ?? '3em 1.5em' }}>
           {props.closeCallback ? (
             <button
-              css={{
-                background: 'transparent',
-                color: 'var(--text)',
-                ...(props.coverImage && { color: 'var(--social-text)' }),
-                border: 'none',
-                position: 'absolute',
-                padding: 0,
-                fontSize: '2.5em',
-                verticalAlign: 'text-top',
-                width: '1em',
-                height: '1em',
-                top: '0.5em',
-                right: '0.5em',
-              }}
+              className={styles.closeButton}
               onClick={props.closeCallback}
             >
               <IoMdCloseCircleOutline
                 aria-label="close"
-                css={{ position: 'absolute', top: 0, right: 0 }}
+                className={styles.closeIcon}
               />
             </button>
           ) : (

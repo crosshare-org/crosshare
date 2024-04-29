@@ -352,18 +352,6 @@ export const TopBar = ({
   ]);
 };
 
-const NotificationLinkCSS = {
-  display: 'block',
-  flex: 1,
-  color: 'var(--text)',
-  padding: '1em',
-  '&:hover, &:focus': {
-    color: 'var(--text)',
-    textDecoration: 'none',
-    backgroundColor: 'var(--top-bar-hover)',
-  },
-};
-
 const NotificationLink = ({
   notification: n,
 }: {
@@ -388,7 +376,7 @@ const NotificationLink = ({
     case 'comment':
       link = (
         <Link
-          css={NotificationLinkCSS}
+          className={styles.notificationLinkInner}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
           <FaComment className="marginRight0-5em" /> {n.cn} commented on{' '}
@@ -399,7 +387,7 @@ const NotificationLink = ({
     case 'reply':
       link = (
         <Link
-          css={NotificationLinkCSS}
+          className={styles.notificationLinkInner}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
           <FaComments className="marginRight0-5em" /> {n.cn} replied to your
@@ -410,7 +398,7 @@ const NotificationLink = ({
     case 'newpuzzle':
       link = (
         <Link
-          css={NotificationLinkCSS}
+          className={styles.notificationLinkInner}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
           <FaRegNewspaper className="marginRight0-5em" /> {n.an} published a new
@@ -421,7 +409,7 @@ const NotificationLink = ({
     case 'featured':
       link = (
         <Link
-          css={NotificationLinkCSS}
+          className={styles.notificationLinkInner}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
         >
           <FaRegGrinStars className="marginRight0-5em" /> Crosshare is featuring
