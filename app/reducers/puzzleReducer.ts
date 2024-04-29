@@ -1,8 +1,18 @@
 import { PlayWithoutUserT } from '../lib/dbtypes';
 import { AccountPrefsFlagsT } from '../lib/prefs';
-import { CheatUnit, Direction } from '../lib/types';
-import { CluedGrid, nextNonBlock } from '../lib/viewableGrid';
-import { PuzzleAction } from './commonActions';
+import { CheatUnit, Direction, KeyK } from '../lib/types';
+import {
+  CluedGrid,
+  advanceTo,
+  moveDown,
+  moveLeft,
+  moveRight,
+  moveToEntry,
+  moveToEntryInActiveDirection,
+  moveUp,
+  nextNonBlock,
+} from '../lib/viewableGrid';
+import { PuzzleAction, isKeypressAction } from './commonActions';
 import { GridInterfaceState, gridInterfaceReducer } from './gridReducer';
 import { cheat, getCurrentTime } from './puzzleUtils';
 
@@ -132,6 +142,63 @@ export function puzzleReducer(
   action: PuzzleAction
 ): PuzzleState {
   state = gridInterfaceReducer(state, action);
+  if (isKeypressAction(action)) {
+    const key = action.key;
+    if (key.k === KeyK.ShiftArrowRight) {
+      return {
+        ...state,
+        wasEntryClick: false,
+        active: advanceTo(
+          state.grid,
+          state.active,
+          state.active.dir === Direction.Across
+            ? moveToEntryInActiveDirection(state.grid, state.active)
+            : moveToEntry(state.grid, state.active, moveRight),
+          state.wrongCells
+        ),
+      };
+    } else if (key.k === KeyK.ShiftArrowLeft) {
+      return {
+        ...state,
+        wasEntryClick: false,
+        active: advanceTo(
+          state.grid,
+          state.active,
+          state.active.dir === Direction.Across
+            ? moveToEntryInActiveDirection(state.grid, state.active, true)
+            : moveToEntry(state.grid, state.active, moveLeft),
+          state.wrongCells
+        ),
+      };
+    } else if (key.k === KeyK.ShiftArrowUp) {
+      return {
+        ...state,
+        wasEntryClick: false,
+        active: advanceTo(
+          state.grid,
+          state.active,
+          state.active.dir === Direction.Down
+            ? moveToEntryInActiveDirection(state.grid, state.active, true)
+            : moveToEntry(state.grid, state.active, moveUp),
+          state.wrongCells
+        ),
+      };
+    } else if (key.k === KeyK.ShiftArrowDown) {
+      return {
+        ...state,
+        wasEntryClick: false,
+        active: advanceTo(
+          state.grid,
+          state.active,
+          state.active.dir === Direction.Down
+            ? moveToEntryInActiveDirection(state.grid, state.active)
+            : moveToEntry(state.grid, state.active, moveDown),
+          state.wrongCells
+        ),
+      };
+    }
+    return state;
+  }
   if (isCheatAction(action)) {
     return cheat(state, action.unit, action.isReveal === true);
   }

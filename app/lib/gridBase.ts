@@ -129,6 +129,22 @@ export function isInBounds<Entry extends EntryBase>(
   );
 }
 
+export function isIndexInBounds<Entry extends EntryBase>(
+  grid: GridBase<Entry>,
+  index: number
+): boolean {
+  return index >= 0 && index < grid.width * grid.height;
+}
+
+export function isInDirection(posA: PosAndDir, posB: Position): boolean {
+  switch (posA.dir) {
+    case Direction.Across:
+      return posA.row === posB.row;
+    case Direction.Down:
+      return posA.col === posB.col;
+  }
+}
+
 export function clampInBounds<Entry extends EntryBase>(
   grid: GridBase<Entry>,
   pos: PosAndDir

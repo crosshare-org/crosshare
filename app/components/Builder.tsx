@@ -81,12 +81,11 @@ import {
   getClueProps,
   initialBuilderState,
 } from '../reducers/builderReducer';
-import { PuzzleAction } from '../reducers/commonActions';
+import { KeypressAction, PuzzleAction } from '../reducers/commonActions';
 import {
   ClickedEntryAction,
   CopyAction,
   CutAction,
-  KeypressAction,
   PasteAction,
 } from '../reducers/gridReducer';
 import { AuthProps } from './AuthHelpers';

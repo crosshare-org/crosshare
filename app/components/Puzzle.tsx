@@ -78,8 +78,8 @@ import {
   getEntryToClueMap,
   getRefs,
 } from '../lib/viewableGrid';
-import { PuzzleAction } from '../reducers/commonActions';
-import { KeypressAction, PasteAction } from '../reducers/gridReducer';
+import { KeypressAction, PuzzleAction } from '../reducers/commonActions';
+import { PasteAction } from '../reducers/gridReducer';
 import {
   CheatAction,
   LoadPlayAction,

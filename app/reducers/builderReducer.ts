@@ -7,6 +7,7 @@ import { Timestamp } from '../lib/timestamp';
 import {
   Direction,
   EMPTY,
+  KeyK,
   Position,
   PrefillSquares,
   PuzzleInProgressT,
@@ -17,9 +18,13 @@ import {
   ViewableGrid,
   fromCells,
   gridEqual,
+  moveDown,
+  moveLeft,
+  moveRight,
+  moveUp,
 } from '../lib/viewableGrid';
-import { postEdit, validateGrid } from './builderUtils';
-import { PuzzleAction } from './commonActions';
+import { hasSelection, postEdit, validateGrid } from './builderUtils';
+import { PuzzleAction, isKeypressAction } from './commonActions';
 import {
   GridInterfaceState,
   closeRebus,
@@ -510,6 +515,59 @@ function _builderReducer(
   state: BuilderState,
   action: PuzzleAction
 ): BuilderState {
+  if (isKeypressAction(action)) {
+    const key = action.key;
+    if (key.k === KeyK.ShiftArrowRight) {
+      const { start, end } = hasSelection(state)
+        ? state.selection
+        : emptySelection(state.active);
+      return {
+        ...state,
+        wasEntryClick: false,
+        selection: {
+          start,
+          end: moveRight(state.grid, end),
+        },
+      };
+    } else if (key.k === KeyK.ShiftArrowLeft) {
+      const { start, end } = hasSelection(state)
+        ? state.selection
+        : emptySelection(state.active);
+      return {
+        ...state,
+        wasEntryClick: false,
+        selection: {
+          start,
+          end: moveLeft(state.grid, end),
+        },
+      };
+    } else if (key.k === KeyK.ShiftArrowUp) {
+      const { start, end } = hasSelection(state)
+        ? state.selection
+        : emptySelection(state.active);
+      return {
+        ...state,
+        wasEntryClick: false,
+        selection: {
+          start,
+          end: moveUp(state.grid, end),
+        },
+      };
+    } else if (key.k === KeyK.ShiftArrowDown) {
+      const { start, end } = hasSelection(state)
+        ? state.selection
+        : emptySelection(state.active);
+      return {
+        ...state,
+        wasEntryClick: false,
+        selection: {
+          start,
+          end: moveDown(state.grid, end),
+        },
+      };
+    }
+    return state;
+  }
   if (isStartSelectionAction(action)) {
     return {
       ...closeRebus(state),

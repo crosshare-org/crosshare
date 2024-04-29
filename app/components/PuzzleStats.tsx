@@ -25,7 +25,7 @@ import {
   builderReducer,
   initialBuilderState,
 } from '../reducers/builderReducer';
-import { KeypressAction } from '../reducers/gridReducer';
+import { KeypressAction } from '../reducers/commonActions';
 import { ButtonAsLink } from './Buttons';
 import { ClueList } from './ClueList';
 import { CopyableInput } from './CopyableInput';
