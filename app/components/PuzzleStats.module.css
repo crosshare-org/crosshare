@@ -1,0 +1,52 @@
+@value small-and-up from '../lib/definitions.module.css';
+
+.metaTable :global(.cell) {
+  overflow: hidden;
+  display: block !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.main {
+  flex: none;
+  padding-top: 0.5em;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .stats {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .col {
+    width: 48%;
+  }
+
+  .stats[data-is-meta='true'] .col {
+    width: 31%;
+  }
+}
+
+.switcher {
+  padding-top: 1em;
+  text-align: center;
+}
+
+.submissionsList {
+  position: relative;
+  flex: 1 1 auto;
+}
+
+.statsArea {
+  position: relative;
+  overflow: hidden;
+  flex: 1 1 auto;
+}

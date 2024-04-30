@@ -1,0 +1,33 @@
+@value huge-and-up from '../lib/definitions.module.css';
+@value max-width from '../lib/definitions.module.css';
+
+.featureList {
+  columns: 3 300px;
+  column-gap: 1em;
+  margin: 1em;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (huge-and-up) {
+  .featureList {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
+    max-width: max-width;
+    margin: 1em auto;
+  }
+}
+
+.item {
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 1em;
+}
+
+.itemBody {
+  display: flex;
+  align-items: flex-start;
+}
+
+.icon {
+  margin-right: 0.5em;
+  font-size: 200%;
+}

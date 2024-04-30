@@ -12,9 +12,9 @@ import { getDocRef } from '../lib/firebaseWrapper';
 import { entryAndCrossAtPosition } from '../lib/gridBase';
 import { useMatchMedia } from '../lib/hooks';
 import { markdownToHast } from '../lib/markdown/markdown';
-import { SMALL_AND_UP, SMALL_AND_UP_RULES } from '../lib/style';
+import { SMALL_AND_UP_RULES } from '../lib/style';
 import { Direction, PuzzleResult, fromKeyboardEvent } from '../lib/types';
-import { isMetaSolution, logAsyncErrors, timeString } from '../lib/utils';
+import { clsx, isMetaSolution, logAsyncErrors, timeString } from '../lib/utils';
 import {
   fromCells,
   getClueMap,
@@ -33,6 +33,7 @@ import { Emoji } from './Emoji';
 import { GridView } from './Grid';
 import { Overlay } from './Overlay';
 import { SquareAndCols } from './Page';
+import styles from './PuzzleStats.module.css';
 import { useSnackbar } from './Snackbar';
 import { DefaultTopBar, TopBarLink } from './TopBar';
 
@@ -182,14 +183,7 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
       </p>
       <div className="margin1em">
         <Table
-          css={{
-            '& .cell': {
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              display: 'block !important',
-            },
-          }}
+          className={styles.metaTable}
           data={subs}
           columns={columns}
           onSort={onSort}
@@ -361,13 +355,7 @@ export const StatsPage = ({
       <Head>
         <title>{`Stats | ${puzzle.title} | Crosshare`}</title>
       </Head>
-      <div
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-        }}
-      >
+      <div className={styles.page}>
         <div className="flexNone">
           <DefaultTopBar>
             {!hideShare && stats?.sct ? (
@@ -402,46 +390,21 @@ export const StatsPage = ({
             )}
           </DefaultTopBar>
         </div>
-        <div
-          css={{
-            paddingTop: '0.5em',
-            flex: 'none',
-          }}
-        >
+        <div className={styles.main}>
           {stats ? (
             <>
               <h3 className="width100">
                 Stats for <b>{puzzle.title}</b>
               </h3>
-              <div
-                css={{
-                  [SMALL_AND_UP]: {
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  },
-                }}
-              >
-                <div
-                  css={{
-                    [SMALL_AND_UP]: {
-                      width: isMeta ? '31%' : '48%',
-                    },
-                  }}
-                >
+              <div data-is-meta={isMeta} className={styles.stats}>
+                <div className={styles.col}>
                   <div>Total completions: {stats.n}</div>
                   <div>
                     Average completion time:{' '}
                     {stats.n && timeString(stats.nt / stats.n, true)}
                   </div>
                 </div>
-                <div
-                  css={{
-                    [SMALL_AND_UP]: {
-                      width: isMeta ? '31%' : '48%',
-                    },
-                  }}
-                >
+                <div className={styles.col}>
                   <div>Completions without helpers: {stats.s}</div>
                   <div>
                     Average time without helpers:{' '}
@@ -449,13 +412,7 @@ export const StatsPage = ({
                   </div>
                 </div>
                 {isMeta ? (
-                  <div
-                    css={{
-                      [SMALL_AND_UP]: {
-                        width: '31%',
-                      },
-                    }}
-                  >
+                  <div className={styles.col}>
                     <div>
                       Correct contest submissions:{' '}
                       {stats.ct_subs?.filter((sub) =>
@@ -471,7 +428,7 @@ export const StatsPage = ({
                   ''
                 )}
               </div>
-              <div css={{ paddingTop: '1em', textAlign: 'center' }}>
+              <div className={styles.switcher}>
                 <ButtonAsLink
                   className="marginRight0-5em"
                   disabled={mode === StatsMode.AverageTime}
@@ -481,10 +438,10 @@ export const StatsPage = ({
                   text="Time to Correct"
                 />
                 <ButtonAsLink
-                  css={{
-                    marginLeft: '0.5em',
-                    marginRight: isMeta ? '0.5em' : 0,
-                  }}
+                  className={clsx(
+                    'marginLeft0-5em',
+                    isMeta && 'marginRight0-5em'
+                  )}
                   disabled={mode === StatsMode.AverageEditCount}
                   onClick={() => {
                     setMode(StatsMode.AverageEditCount);
@@ -515,22 +472,11 @@ export const StatsPage = ({
         </div>
         {stats ? (
           mode === StatsMode.MetaSubmissions ? (
-            <div
-              css={{
-                flex: '1 1 auto',
-                position: 'relative',
-              }}
-            >
+            <div className={styles.submissionsList}>
               <MetaSubmissionList puzzle={puzzle} stats={stats} />
             </div>
           ) : (
-            <div
-              css={{
-                flex: '1 1 auto',
-                overflow: 'hidden',
-                position: 'relative',
-              }}
-            >
+            <div className={styles.statsArea}>
               <PuzzleStats puzzle={puzzle} stats={stats} mode={mode} />
             </div>
           )
