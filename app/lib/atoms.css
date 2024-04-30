@@ -24,6 +24,10 @@
   display: block !important;
 }
 
+.displayInline {
+  display: inline !important;
+}
+
 .displayFlex {
   display: flex !important;
 }

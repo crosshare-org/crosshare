@@ -5,6 +5,7 @@ import {
   useCallback,
   useState,
 } from 'react';
+import styles from './SpoilerText.module.css';
 
 export const SpoilerText = ({ children }: { children: ReactNode }) => {
   const [revealed, setRevealed] = useState(false);
@@ -25,17 +26,8 @@ export const SpoilerText = ({ children }: { children: ReactNode }) => {
       onKeyPress={doReveal}
       role="button"
       tabIndex={0}
-      css={{
-        ...(!revealed && {
-          backgroundColor: 'var(--text)',
-          color: 'rgba(0,0,0,0)',
-          cursor: 'pointer',
-          userSelect: 'none',
-          '& *': {
-            visibility: 'hidden',
-          },
-        }),
-      }}
+      data-hidden={!revealed}
+      className={styles.spoiler}
     >
       {children}
     </span>

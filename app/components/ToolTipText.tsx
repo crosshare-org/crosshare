@@ -15,6 +15,8 @@ import {
   useInteractions,
 } from '@floating-ui/react';
 import { ReactNode, useRef, useState } from 'react';
+import { clsx } from '../lib/utils';
+import styles from './ToolTipText.module.css';
 
 export const ToolTipText = (props: {
   text: ReactNode;
@@ -53,11 +55,8 @@ export const ToolTipText = (props: {
   return (
     <>
       <span
-        className={props.className}
-        css={{
-          ...(typeof props.text === 'string' && { borderBottom: '1px dotted' }),
-          whiteSpace: 'nowrap',
-        }}
+        data-is-string={typeof props.text === 'string'}
+        className={clsx(props.className, styles.text)}
         ref={refs.setReference}
         {...getReferenceProps({
           onClick: (e) => {
@@ -70,19 +69,8 @@ export const ToolTipText = (props: {
       {isOpen && (
         <FloatingPortal>
           <span
-            css={{
-              display: 'block',
-              zIndex: 100000,
-              borderRadius: '5px',
-              backgroundColor: 'var(--black)',
-              color: 'var(--white)',
-              textAlign: 'center',
-              maxWidth: '30em',
-              padding: '10px',
-              visibility: middlewareData.hide?.referenceHidden
-                ? 'hidden'
-                : 'visible',
-            }}
+            data-hidden={middlewareData.hide?.referenceHidden}
+            className={styles.tip}
             ref={refs.setFloating}
             style={floatingStyles}
             {...getFloatingProps()}

@@ -1,0 +1,10 @@
+.spoiler[data-hidden='true'] {
+  cursor: pointer;
+  user-select: none;
+  color: rgb(0 0 0 / 0%);
+  background-color: var(--text);
+}
+
+.spoiler * {
+  visibility: hidden;
+}

@@ -1,6 +1,8 @@
+import type { CSSProperties } from 'react';
 import { fnv1a } from '../lib/utils';
 import { ButtonReset } from './Buttons';
 import { Link } from './Link';
+import styles from './Tag.module.css';
 
 export interface TagPropsBase {
   link?: boolean;
@@ -20,18 +22,13 @@ export function Tag({ tagName, onClick, remove, ...props }: TagProps) {
 
   const tag = (
     <span
-      css={{
-        whiteSpace: 'nowrap',
-        backgroundColor: `hsl(${hue * 360}, 30%, var(--tag-l))`,
-        color: 'var(--text)',
-        borderRadius: 5,
-        padding: '0.2em 0.5em',
-        ...((props.link || onClick) && {
-          '&:hover': {
-            backgroundColor: `hsl(${hue * 360}, 60%, var(--tag-l))`,
-          },
-        }),
-      }}
+      style={
+        {
+          '--hue': hue * 360,
+        } as CSSProperties
+      }
+      data-has-hover={Boolean(props.link || onClick)}
+      className={styles.tag}
     >
       {onClick ? (
         <ButtonReset
@@ -45,11 +42,7 @@ export function Tag({ tagName, onClick, remove, ...props }: TagProps) {
       )}
       {remove ? (
         <ButtonReset
-          css={{
-            marginLeft: '0.4em',
-            paddingLeft: '0.4em',
-            borderLeft: '1px solid var(--text)',
-          }}
+          className={styles.removeBtn}
           onClick={() => {
             remove(tagName);
           }}
@@ -62,10 +55,7 @@ export function Tag({ tagName, onClick, remove, ...props }: TagProps) {
   );
   if (props.link) {
     return (
-      <Link
-        css={{ '&:hover': { textDecoration: 'none' } }}
-        href={`/tags/${tagName}`}
-      >
+      <Link className={styles.link} href={`/tags/${tagName}`}>
         {tag}
       </Link>
     );

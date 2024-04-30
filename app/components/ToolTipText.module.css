@@ -1,0 +1,27 @@
+.text {
+  white-space: nowrap;
+}
+
+.text[data-is-string='true'] {
+  border-bottom: 1px dotted;
+}
+
+.tip {
+  z-index: 100000;
+
+  display: block;
+
+  max-width: 30em;
+  padding: 10px;
+
+  color: var(--white);
+  text-align: center;
+
+  visibility: visible;
+  background-color: var(--black);
+  border-radius: 5px;
+}
+
+.tip[data-hidden='true'] {
+  visibility: hidden;
+}

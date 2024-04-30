@@ -1,4 +1,6 @@
+import { clsx } from '../lib/utils';
 import { Tag, TagPropsBase } from './Tag';
+import styles from './TagList.module.css';
 
 interface TagListProps extends TagPropsBase {
   tags: string[];
@@ -7,23 +9,9 @@ interface TagListProps extends TagPropsBase {
 
 export function TagList(props: TagListProps) {
   return (
-    <ul
-      className={props.className}
-      css={{
-        listStyleType: 'none',
-        padding: 0,
-        gap: '0.5em',
-        display: 'flex',
-        flexWrap: 'wrap',
-      }}
-    >
+    <ul className={clsx(props.className, styles.taglist)}>
       {props.tags.map((t) => (
-        <li
-          css={{
-            display: 'inline',
-          }}
-          key={t}
-        >
+        <li className="displayInline" key={t}>
           <Tag tagName={t} {...props} />
         </li>
       ))}
