@@ -92,7 +92,7 @@ export function getWarningStats(state: BuilderState) {
       }
     }
   }
-  const enumsExpected = missingEnums.size < Object.keys(state.clues).length;
+  const enumsExpected = missingEnums.size < Object.keys(state.clues).length / 2;
 
   return {
     shortWords,
