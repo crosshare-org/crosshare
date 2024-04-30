@@ -61,6 +61,7 @@ import {
   CheatUnit,
   Direction,
   KeyK,
+  directionString,
   fromKeyString,
   fromKeyboardEvent,
   getClueText,
@@ -211,7 +212,7 @@ const AboveTheGridClue = memo(function AboveTheGridClue({
         <div className={styles.agcWrap}>
           <div className={styles.agcLabel}>
             {entry.labelNumber}
-            {entry.direction === Direction.Across ? 'A' : 'D'}
+            {directionString(entry.direction)}
           </div>
           <div data-conceal={shouldConceal} className={styles.agcClue}>
             <ClueText entry={entry} hast={hast} />

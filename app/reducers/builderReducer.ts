@@ -23,7 +23,12 @@ import {
   moveRight,
   moveUp,
 } from '../lib/viewableGrid';
-import { hasSelection, postEdit, validateGrid } from './builderUtils';
+import {
+  getWarningStats,
+  hasSelection,
+  postEdit,
+  validateGrid,
+} from './builderUtils';
 import { PuzzleAction, isKeypressAction } from './commonActions';
 import {
   GridInterfaceState,
@@ -747,13 +752,6 @@ function _builderReducer(
     if (!state.gridIsComplete) {
       errors.push('All squares in the grid must be filled in');
     }
-    if (state.repeats.size > 0) {
-      warnings.push(
-        'Some words are repeated (' +
-          Array.from(state.repeats).sort().join(', ') +
-          ')'
-      );
-    }
     if (!state.title) {
       errors.push('Puzzle must have a title set');
     }
@@ -792,6 +790,52 @@ function _builderReducer(
     if (missingClues.length) {
       errors.push(
         'Some words are missing clues: ' + missingClues.sort().join(', ')
+      );
+    }
+
+    if (state.repeats.size > 0) {
+      warnings.push(
+        'Some words are repeated (' +
+          Array.from(state.repeats).sort().join(', ') +
+          ')'
+      );
+    }
+    const stats = getWarningStats(state);
+    if (stats.shortWords.size > 0) {
+      warnings.push(
+        'Some words are only two letters long (' +
+          Array.from(stats.shortWords).sort().join(', ') +
+          ')'
+      );
+    }
+    if (stats.hasUnches) {
+      warnings.push(
+        'Some letters are unchecked and the puzzle is not tagged as cryptic'
+      );
+    }
+    if (stats.unmatchedRefs.size > 0) {
+      warnings.push(
+        `Some clues reference entries that don't exist: (${Array.from(
+          stats.unmatchedRefs
+        )
+          .sort()
+          .join(', ')})`
+      );
+    }
+    if (stats.missingEnums) {
+      warnings.push(
+        `Some clues are missing enumerations: (${Array.from(stats.missingEnums)
+          .sort()
+          .join(', ')})`
+      );
+    }
+    if (stats.wrongEnums) {
+      warnings.push(
+        `Some clues have enumerations that don't match the answer length: (${Array.from(
+          stats.wrongEnums
+        )
+          .sort()
+          .join(', ')})`
       );
     }
 

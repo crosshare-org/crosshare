@@ -65,6 +65,10 @@ export enum Direction {
   Down,
 }
 
+export function directionString(dir: Direction): string {
+  return dir === Direction.Across ? 'A' : 'D';
+}
+
 export interface WorkerMessage {
   type: string;
 }
