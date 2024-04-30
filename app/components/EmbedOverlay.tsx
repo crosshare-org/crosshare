@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import { adjustHue, guard, parseToRgba } from 'color2k';
 import { User } from 'firebase/auth';
 import { getDoc, setDoc } from 'firebase/firestore';
@@ -25,16 +24,10 @@ import { fromCells } from '../lib/viewableGrid';
 import { PuzzleAction } from '../reducers/commonActions';
 import { Button, ButtonAsLink } from './Buttons';
 import { CopyableInput } from './CopyableInput';
+import styles from './EmbedOverlay.module.css';
 import { fontFace } from './EmbedStyling';
 import { GridView } from './Grid';
 import { Overlay } from './Overlay';
-
-const fontUrlInputCss = css({
-  width: '100%',
-  marginBottom: '0.5em',
-});
-
-const fontInputLabelCss = css({ display: 'block' });
 
 export const EmbedOverlay = ({
   dispatch,
@@ -113,22 +106,11 @@ const Swatch = (props: SwatchProps) => {
   const isSelected = props.color === props.selected;
   return (
     <div
+      style={{ backgroundColor: props.color }}
+      data-selected={isSelected}
       role="button"
       tabIndex={0}
-      css={{
-        display: 'inline-block',
-        width: isSelected ? '1.5em' : '1em',
-        height: isSelected ? '1.5em' : '1em',
-        margin: isSelected ? 0 : '0.25em 0.25em',
-        borderRadius: '0.25em',
-        backgroundColor: props.color,
-        cursor: 'pointer',
-        '&: hover': {
-          width: isSelected ? '1.5em' : '1.25em',
-          height: isSelected ? '1.5em' : '1.25em',
-          margin: isSelected ? 0 : '0.125em 0.125em',
-        },
-      }}
+      className={styles.swatch}
       onClick={props.select}
       onKeyPress={props.select}
     />
@@ -362,11 +344,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
               setDirty(true);
             }}
           />
-          <span
-            css={{
-              color: isDark ? 'var(--text)' : 'var(--autofill)',
-            }}
-          >
+          <span data-is-dark={isDark} className={styles.darkModeText}>
             Use exact colors in Dark Mode (default is to dim color choices)
           </span>
         </label>
@@ -386,11 +364,11 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
           Specify a custom font url (advanced)
         </label>
       </div>
-      <label css={fontInputLabelCss}>
+      <label className="displayBlock">
         Font URL:
         <input
           disabled={!customFontEnabled}
-          css={fontUrlInputCss}
+          className="width100 marginBottom0-5em"
           type="text"
           value={fontUrl}
           onChange={(e) => {
@@ -399,11 +377,11 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
           }}
         />
       </label>
-      <label css={fontInputLabelCss}>
+      <label className="displayBlock">
         Optional Font URL (Bold):
         <input
           disabled={!customFontEnabled || !fontUrl}
-          css={fontUrlInputCss}
+          className="width100 marginBottom0-5em"
           type="text"
           value={fontUrlBold}
           onChange={(e) => {
@@ -412,11 +390,11 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
           }}
         />
       </label>
-      <label css={fontInputLabelCss}>
+      <label className="displayBlock">
         Optional Font URL (Italic):
         <input
           disabled={!customFontEnabled || !fontUrl}
-          css={fontUrlInputCss}
+          className="width100 marginBottom0-5em"
           type="text"
           value={fontUrlItalic}
           onChange={(e) => {
@@ -425,11 +403,11 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
           }}
         />
       </label>
-      <label css={fontInputLabelCss}>
+      <label className="displayBlock">
         Optional Font URL (Bold + Italic):
         <input
           disabled={!customFontEnabled || !fontUrl}
-          css={fontUrlInputCss}
+          className="width100 marginBottom0-5em"
           type="text"
           value={fontUrlBoldItalic}
           onChange={(e) => {
@@ -455,19 +433,8 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
         ''
       )}
       <div
-        css={css([
-          {
-            display: 'flex',
-            flexWrap: 'wrap',
-            backgroundColor: 'var(--bg)',
-            color: 'var(--text)',
-            padding: '1em',
-            ...(customFontEnabled &&
-              fontUrl && {
-                fontFamily: 'CrossharePreview',
-              }),
-          },
-        ])}
+        data-use-custom-font={Boolean(customFontEnabled && fontUrl)}
+        className={styles.preview}
         style={colorTheme({
           primary: primaryColor,
           link: linkColor,
@@ -477,7 +444,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
           preservePrimary,
         })}
       >
-        <div css={{ width: 200, height: 200 }}>
+        <div className={styles.grid}>
           <GridView
             grid={dummyGrid}
             revealedCells={new Set([1])}
@@ -489,7 +456,7 @@ const ThemePicker = (props: EmbedOptionsT & { userId: string }) => {
             }}
           />
         </div>
-        <div css={{ width: 200, height: 200, padding: '1em' }}>
+        <div className={styles.text}>
           <div>
             Example text (<strong>bold</strong>, <em>italic</em>, and{' '}
             <strong>

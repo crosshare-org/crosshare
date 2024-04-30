@@ -34,6 +34,7 @@ import {
 import { PuzzleAction } from '../reducers/commonActions';
 import { AlternateSolutionEditor } from './AlternateSolutionEditor';
 import { Button, ButtonAsLink } from './Buttons';
+import styles from './ClueMode.module.css';
 import { DateTimePicker } from './DateTimePicker';
 import { GridContext } from './GridContext';
 import { SpinnerFinished } from './Icons';
@@ -83,25 +84,11 @@ const ClueRow = (props: {
   return (
     <>
       <tr>
-        <td
-          css={{
-            paddingRight: '1em',
-            paddingBottom: '1em',
-            textAlign: 'right',
-            width: '1px',
-          }}
-        >
+        <td className={styles.fixedCell}>
           {props.entry.labelNumber}
           {props.entry.direction === Direction.Down ? 'D' : 'A'}
         </td>
-        <td
-          css={{
-            paddingRight: '1em',
-            paddingBottom: '1em',
-            textAlign: 'right',
-            width: '1px',
-          }}
-        >
+        <td className={styles.fixedCell}>
           <label
             className="marginBottom0"
             htmlFor={props.entry.completedWord + '-' + props.idx + '-input'}
@@ -109,7 +96,7 @@ const ClueRow = (props: {
             {props.entry.completedWord}
           </label>
         </td>
-        <td css={{ paddingBottom: '1em', display: 'flex' }}>
+        <td className={styles.clueCell}>
           <LengthLimitedInput
             id={props.entry.completedWord + '-' + props.idx + '-input'}
             spellCheck="true"
@@ -135,7 +122,7 @@ const ClueRow = (props: {
             hideUntilWithin={30}
           />
         </td>
-        <td css={{ width: '1px', paddingLeft: '1em', paddingBottom: '1em' }}>
+        <td className={styles.suggestCell}>
           <ButtonAsLink
             onClick={() => {
               setShowSuggestions(true);
@@ -358,7 +345,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
           ''
         )}
 
-        <div css={{ padding: '1em' }}>
+        <div className={styles.metadata}>
           {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label className="width100">
             <h2>Title</h2>
@@ -467,7 +454,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                 <code>||like this||</code>.
               </p>
               <LengthLimitedTextarea
-                css={{ width: '100%', display: 'block' }}
+                className="width100 displayBlock"
                 placeholder="Your post text (markdown format)"
                 value={props.blogPost}
                 maxLength={MAX_BLOG_LENGTH}
@@ -537,7 +524,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
             </label>
           </div>
           {props.guestConstructor !== null ? (
-            <div css={{ marginLeft: '1.5em', marginBottom: '1em' }}>
+            <div className="marginLeft1-5em marginBottom1em">
               <LengthLimitedInput
                 type="text"
                 className="width100"
@@ -586,7 +573,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
             </label>
           </div>
           {state.isContestPuzzle ? (
-            <div css={{ marginLeft: '1.5em', marginBottom: '1em' }}>
+            <div className="marginLeft1-5em marginBottom1em">
               <h4>Contest prompt (required):</h4>
               <p>
                 Use the notes field above to give solvers a prompt for the
@@ -646,7 +633,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                   hideUntilWithin={30}
                 />
                 {contestAnswerError ? (
-                  <span css={{ color: 'var(--error)', margin: 'auto 0.5em' }}>
+                  <span className={styles.contestError}>
                     {contestAnswerError}
                   </span>
                 ) : (
@@ -769,7 +756,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
               />
             </label>
             {privateUntil ? (
-              <p css={{ marginLeft: '1.5em' }}>
+              <p className="marginLeft1-5em">
                 Visible after {lightFormat(privateUntil, "M/d/y' at 'h:mma")} (
                 {
                   privateUntil
@@ -865,10 +852,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                   {state.alternates.map((a, i) => (
                     <li key={i}>
                       {Object.entries(a).map(([pos, str]) => (
-                        <span
-                          css={{ '& + &:before': { content: '", "' } }}
-                          key={pos}
-                        >
+                        <span className={styles.alternate} key={pos}>
                           Cell {pos}: &quot;{str}&quot;
                         </span>
                       ))}{' '}

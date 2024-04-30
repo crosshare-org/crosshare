@@ -1,8 +1,9 @@
 import type { Root } from 'hast';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
-import { logAsyncErrors } from '../lib/utils';
+import { clsx, logAsyncErrors } from '../lib/utils';
 import { Button, ButtonAsLink } from './Buttons';
+import styles from './EditableText.module.css';
 import {
   LengthLimitedInput,
   LengthLimitedTextarea,
@@ -45,8 +46,7 @@ export const EditableText = (
   if (editing) {
     return (
       <form
-        className={props.className}
-        css={{ display: 'flex', flexWrap: 'wrap' }}
+        className={clsx(props.className, styles.form)}
         onSubmit={logAsyncErrors(async (e: React.FormEvent) => {
           e.preventDefault();
           const toSubmit = value.trim();
@@ -63,7 +63,7 @@ export const EditableText = (
         {props.textarea ? (
           <>
             <LengthLimitedTextarea
-              css={{ width: '100%', display: 'block', marginBottom: '0.5em' }}
+              className={styles.textarea}
               placeholder={`Enter ${props.title} (markdown formatted)`}
               value={value}
               maxLength={props.maxLength}
@@ -80,7 +80,7 @@ export const EditableText = (
           <>
             <LengthLimitedInput
               type="text"
-              css={{ marginRight: '0.5em', flex: '1 1 auto' }}
+              className={styles.input}
               placeholder={`Enter ${props.title}`}
               value={value}
               maxLength={props.maxLength}
@@ -93,13 +93,7 @@ export const EditableText = (
             />
           </>
         )}
-        {error ? (
-          <span css={{ color: 'var(--error)', margin: 'auto 0.5em' }}>
-            {error}
-          </span>
-        ) : (
-          ''
-        )}
+        {error ? <span className={styles.error}>{error}</span> : ''}
         <Button
           type="submit"
           text="Save"
@@ -132,14 +126,7 @@ export const EditableText = (
         <>
           {props.textarea ? (
             <>
-              <div
-                css={{
-                  backgroundColor: 'var(--secondary)',
-                  borderRadius: '0.5em',
-                  padding: '1em',
-                  margin: '1em 0',
-                }}
-              >
+              <div className={styles.text}>
                 {props.hast !== null && props.hast !== false ? (
                   <Markdown hast={props.hast} />
                 ) : (

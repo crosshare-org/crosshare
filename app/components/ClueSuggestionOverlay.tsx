@@ -4,6 +4,7 @@ import { Table } from 'react-fluid-table';
 import { FaCheck } from 'react-icons/fa';
 import { ClueEntryT, ClueListT, parseClueList } from '../lib/ginsbergCommon';
 import { logAsyncErrors } from '../lib/utils';
+import styles from './ClueSuggestionOverlay.module.css';
 import { Overlay } from './Overlay';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -139,15 +140,7 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
                 props.select(clicked.c);
               }
             }}
-            css={{
-              backgroundColor: 'var(--overlay-inner) !important',
-              '& .row-container': {
-                cursor: 'pointer',
-              },
-              '& .row-container:hover': {
-                backgroundColor: 'var(--secondary)',
-              },
-            }}
+            className={styles.table}
           />
           <h3 className="marginTop1em">External Sources</h3>
           <ul>

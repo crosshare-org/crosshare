@@ -7,10 +7,10 @@ import { FormEvent, useCallback, useContext, useState } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
 import { ConstructorPageBase, ConstructorPageT } from '../lib/constructorPage';
 import { getDocRef } from '../lib/firebaseWrapper';
-import { HUGE_AND_UP, MAX_WIDTH } from '../lib/style';
 import { logAsyncErrors } from '../lib/utils';
 import { AuthContext } from './AuthContext';
 import { ButtonAsLink } from './Buttons';
+import styles from './ConstructorPage.module.css';
 import { ConstructorStats } from './ConstructorStats';
 import { FollowButton } from './FollowButton';
 import { I18nTags } from './I18nTags';
@@ -147,7 +147,7 @@ export const CreatePageForm = (props: { className?: string }) => {
   return (
     <div className={props.className}>
       <form onSubmit={logAsyncErrors(createPage)}>
-        <label css={{ width: '100%', margin: 0 }}>
+        <label className="width100 margin0">
           <p>
             Create a constructor blog to keep all of your public puzzles on one
             page.
@@ -157,9 +157,7 @@ export const CreatePageForm = (props: { className?: string }) => {
             later):
           </p>
           <p>
-            <span css={{ fontWeight: 'bold', marginRight: '0.15em' }}>
-              https://crosshare.org/
-            </span>
+            <span className={styles.baseurl}>https://crosshare.org/</span>
             <input
               type="text"
               value={username}
@@ -178,7 +176,7 @@ export const CreatePageForm = (props: { className?: string }) => {
             value="Create"
           />
           {showError ? (
-            <span css={{ color: 'var(--error)', marginLeft: '1em' }}>
+            <span className="colorError marginLeft1em">
               That username is unavailable. Please try something different.
             </span>
           ) : (
@@ -213,16 +211,7 @@ const FollowersList = ({
   close: () => void;
 }) => {
   return (
-    <ul
-      css={{
-        width: '100%',
-        maxWidth: '40em',
-        listStyleType: 'none',
-        padding: 0,
-        margin: 'auto',
-        textAlign: 'left',
-      }}
-    >
+    <ul className={styles.followersList}>
       {pages.map((f) => (
         <FollowersListItem key={f.i} page={f} close={close} />
       ))}
@@ -251,31 +240,17 @@ const FollowersListItem = ({
         role="button"
         onClick={logAsyncErrors(click)}
         onKeyPress={logAsyncErrors(click)}
-        css={{
-          padding: '1.5em 1em',
-          display: 'flex',
-          alignItems: 'flex-start',
-          flexWrap: 'wrap',
-          '&:hover': {
-            backgroundColor: 'var(--secondary)',
-          },
-          cursor: 'pointer',
-        }}
+        className={styles.follower}
       >
         <div className="marginRight1em">
           <div>
-            <b
-              css={{
-                fontSize: '1.1em',
-                '&:hover': { textDecoration: 'underline' },
-              }}
-            >
+            <b className={styles.pageName}>
               {page.isPatron ? <PatronIcon /> : ''} {page.n}
             </b>
           </div>
           <div>@{page.i}</div>
         </div>
-        <FollowButton css={{ marginLeft: 'auto' }} page={page} />
+        <FollowButton className={styles.followBtn} page={page} />
       </div>
     </li>
   );
@@ -378,22 +353,14 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
       </Head>
       <DefaultTopBar />
       {coverPic ? <CoverPic coverPicture={coverPic} /> : ''}
-      <div
-        css={{
-          margin: '2em 1em',
-          [HUGE_AND_UP]: {
-            maxWidth: MAX_WIDTH,
-            margin: '2em auto',
-          },
-        }}
-      >
+      <div className={styles.header}>
         <ProfilePicAndName
           coverImage={coverPic}
           profilePic={profilePic}
           topLine={
             <>
               {props.isPatron ? (
-                <PatronIcon css={{ marginRight: '0.3em' }} linkIt={true} />
+                <PatronIcon className={styles.patronicon} linkIt={true} />
               ) : (
                 ''
               )}
@@ -402,13 +369,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
           }
           byLine={
             <>
-              <h2
-                css={{
-                  fontSize: '1em',
-                  fontWeight: 'normal',
-                  marginBottom: '0.25em',
-                }}
-              >
+              <h2 className={styles.byline}>
                 <Link href={'/' + username}>@{username}</Link>
               </h2>
               {showOverlay ? (
@@ -490,7 +451,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
             </>
           }
         />
-        <div css={{ textAlign: 'center', marginBottom: '1.5em' }}>
+        <div className="textAlignCenter marginBottom1-5em">
           <FollowButton page={props.constructorData} />
         </div>
         <div className="marginBottom1-5em">

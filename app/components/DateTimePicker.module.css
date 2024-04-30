@@ -1,0 +1,7 @@
+.picker {
+  margin-left: 0.5em;
+}
+
+.picker:invalid {
+  border-color: var(--error);
+}

@@ -1,0 +1,66 @@
+@value huge-and-up from '../lib/definitions.module.css';
+@value max-width from '../lib/definitions.module.css';
+
+.baseurl {
+  margin-right: 0.15em;
+  font-weight: bold;
+}
+
+.followersList {
+  width: 100%;
+  max-width: 40em;
+  margin: auto;
+  padding: 0;
+
+  text-align: left;
+  list-style-type: none;
+}
+
+.follower {
+  cursor: pointer;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+
+  padding: 1.5em 1em;
+}
+
+.follower:hover {
+  background-color: var(--secondary);
+}
+
+.pageName {
+  font-size: 1.1em;
+}
+
+.pageName:hover {
+  text-decoration: underline;
+}
+
+.followBtn {
+  margin-left: auto;
+}
+
+.header {
+  margin: 2em 1em;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (huge-and-up) {
+  .header {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
+    max-width: max-width;
+    margin: 2em auto;
+  }
+}
+
+.patronicon {
+  margin-right: 0.3em;
+}
+
+.byline {
+  margin-bottom: 0.25em;
+  font-size: 1em;
+  font-weight: normal;
+}

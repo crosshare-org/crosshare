@@ -1,0 +1,30 @@
+.fixedCell {
+  width: 1px;
+  padding-right: 1em;
+  padding-bottom: 1em;
+  text-align: right;
+}
+
+.clueCell {
+  display: flex;
+  padding-bottom: 1em;
+}
+
+.suggestCell {
+  width: 1px;
+  padding-bottom: 1em;
+  padding-left: 1em;
+}
+
+.metadata {
+  padding: 1em;
+}
+
+.contestError {
+  margin: auto 0.5em;
+  color: var(--error);
+}
+
+.alternate + .alternate::before {
+  content: ', ';
+}

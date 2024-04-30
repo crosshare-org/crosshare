@@ -1,5 +1,6 @@
 import { lightFormat } from 'date-fns/lightFormat';
 import { set } from 'date-fns/set';
+import styles from './DateTimePicker.module.css';
 
 interface DateTimePickerProps {
   picked: Date | number;
@@ -10,12 +11,7 @@ export const DateTimePicker = (props: DateTimePickerProps) => {
   return (
     <>
       <input
-        css={{
-          marginLeft: '0.5em',
-          '&:invalid': {
-            borderColor: 'var(--error)',
-          },
-        }}
+        className={styles.picker}
         type="date"
         defaultValue={lightFormat(props.picked, 'yyyy-MM-dd')}
         required

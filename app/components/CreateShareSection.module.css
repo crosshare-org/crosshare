@@ -1,0 +1,67 @@
+@value small-and-up from '../lib/definitions.module.css';
+@value large-and-up from '../lib/definitions.module.css';
+
+.button {
+  display: flex;
+  align-items: flex-start;
+
+  width: 100%;
+  margin-bottom: 1em;
+  padding: 1em;
+
+  background-color: var(--link-light-bg);
+  border-radius: 0.5em;
+}
+
+.button:hover {
+  background-color: var(--link-light-bg-hover);
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .button {
+    width: calc(50% - 0.5em);
+  }
+
+  .wrapper[data-half-width='true'] .button {
+    width: 100%;
+  }
+
+  .wrapper {
+    flex-direction: row;
+  }
+
+  .wrapper[data-half-width='true'] {
+    flex-direction: column;
+  }
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (large-and-up) {
+  .wrapper[data-half-width='true'] .button {
+    width: calc(50% - 0.5em);
+  }
+
+  .wrapper[data-half-width='true'] {
+    flex-direction: row;
+  }
+}
+
+.icon {
+  align-self: center;
+  margin-right: 0.5em;
+  font-size: 2em;
+}
+
+.subtext {
+  display: inline-block;
+  color: var(--text);
+  text-decoration: none !important;
+}

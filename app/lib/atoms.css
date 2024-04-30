@@ -80,8 +80,16 @@
   margin-left: 1em !important;
 }
 
+.marginLeft1-5em {
+  margin-left: 1.5em !important;
+}
+
 .marginBottom0 {
   margin-bottom: 0 !important;
+}
+
+.marginBottom0-5em {
+  margin-bottom: 0.5em !important;
 }
 
 .marginBottom1em {

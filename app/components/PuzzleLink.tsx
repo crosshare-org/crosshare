@@ -6,15 +6,15 @@ import { ConstructorPageBase } from '../lib/constructorPage';
 import { PlayWithoutUserT } from '../lib/dbtypes';
 import { markdownToHast } from '../lib/markdown/markdown';
 import { getPossiblyStalePlay } from '../lib/plays';
-import { SMALL_AND_UP } from '../lib/style';
 import { PuzzleResult } from '../lib/types';
-import { logAsyncErrors, slugify, timeString } from '../lib/utils';
+import { clsx, logAsyncErrors, slugify, timeString } from '../lib/utils';
 import { AuthContext } from './AuthContext';
 import { Emoji } from './Emoji';
 import { FollowButton } from './FollowButton';
 import { PatronIcon, PuzzleSizeIcon } from './Icons';
 import { Link } from './Link';
 import { Markdown } from './Markdown';
+import styles from './PuzzleLink.module.css';
 import { TagList } from './TagList';
 import { DistanceToNow, PastDistanceToNow } from './TimeDisplay';
 
@@ -55,23 +55,6 @@ const PuzzleLink = (props: {
     };
   }, [user, props.id]);
 
-  const linkCss = {
-    color:
-      authored || (play && play.f)
-        ? 'var(--text)'
-        : play
-        ? 'var(--error)'
-        : 'var(--link)',
-    '&:hover': {
-      color:
-        authored || (play && play.f)
-          ? 'var(--text)'
-          : play
-          ? 'var(--error-hover)'
-          : 'var(--link-hover)',
-    },
-  };
-
   const filteredTags = props.tags.filter(
     (t) =>
       ![
@@ -98,43 +81,21 @@ const PuzzleLink = (props: {
       : `/crosswords/${props.id}/${slugify(props.puzzleTitle)}`;
   return (
     <div
-      css={{
-        marginBottom: props.showingBlog ? 0 : '1.5em',
-        display: 'inline-flex',
-        alignItems: 'flex-start',
-        width: '100%',
-        [SMALL_AND_UP]: {
-          width: props.showingBlog || props.fullWidth ? '100%' : '50%',
-        },
-      }}
+      data-completed={authored || play?.f}
+      data-started={Boolean(play)}
+      data-showing-blog={props.showingBlog}
+      data-full-width={props.fullWidth}
+      className={styles.link}
     >
       <Link
         noTargetBlank={props.noTargetBlank}
-        css={[
-          linkCss,
-          {
-            marginRight: '0.3em',
-            fontSize: '4em',
-            lineHeight: '1em',
-          },
-        ]}
+        className={clsx(styles.linkColor, styles.icon)}
         href={url}
       >
         <div className="positionRelative">
           <PuzzleSizeIcon width={props.width} height={props.height} />
           {authored || (play && play.f) ? (
-            <div
-              css={{
-                textShadow:
-                  '2px 0 0 white, -2px 0 0 white, 0 2px 0 white, 0 -2px 0 white',
-                position: 'absolute',
-                top: 0,
-                width: '1.66em',
-                textAlign: 'center',
-                left: 0,
-                fontSize: '0.6em',
-              }}
-            >
+            <div className={styles.emoji}>
               {authored ? (
                 <Emoji title="Authored Puzzle" symbol="🖋️" />
               ) : play && play.ch ? (
@@ -149,12 +110,12 @@ const PuzzleLink = (props: {
         </div>
       </Link>
       <div className="flex1">
-        <Link noTargetBlank={props.noTargetBlank} css={linkCss} href={url}>
-          <h3
-            css={{
-              marginBottom: 0,
-            }}
-          >
+        <Link
+          noTargetBlank={props.noTargetBlank}
+          className={styles.linkColor}
+          href={url}
+        >
+          <h3 className="marginBottom0">
             {props.title}{' '}
             {!authored && play ? (
               play.f ? (
@@ -169,20 +130,14 @@ const PuzzleLink = (props: {
             )}
           </h3>
           {props.subTitle ? (
-            <h4
-              css={{
-                marginBottom: 0,
-              }}
-            >
-              {props.subTitle}
-            </h4>
+            <h4 className="marginBottom0">{props.subTitle}</h4>
           ) : (
             ''
           )}
         </Link>
         {props.children}
         {filteredTags.length ? (
-          <TagList css={{ fontSize: '0.9em' }} tags={filteredTags} link />
+          <TagList className={styles.taglist} tags={filteredTags} link />
         ) : (
           ''
         )}
@@ -214,16 +169,7 @@ export const AuthorLink = ({
     followButton = (
       <>
         {' '}
-        <FollowButton
-          css={{
-            marginLeft: '0.5em',
-            padding: '0.25em',
-            fontSize: '0.9em',
-            minWidth: '5.2em',
-            boxShadow: 'none',
-          }}
-          page={constructorPage}
-        />
+        <FollowButton className={styles.follow} page={constructorPage} />
       </>
     );
   }
@@ -437,7 +383,7 @@ export const PuzzleResultLink = ({
         {contents}
       </PuzzleLink>
       {showBlogPost && puzzle.blogPostPreview ? (
-        <div css={{ width: '100%', marginBottom: '2em' }}>
+        <div className={styles.blog}>
           <Markdown hast={puzzle.blogPostPreview} />
         </div>
       ) : (
