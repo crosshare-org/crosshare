@@ -5,7 +5,7 @@
   user-select: none;
 
   overflow: hidden;
-  display: none;
+  display: block;
 
   width: 100%;
   /* stylelint-disable-next-line declaration-property-value-no-unknown */
@@ -20,17 +20,17 @@
 }
 
 .keyRows[data-toggled='true'] {
-  display: block;
+  display: none;
 }
 
 /* Our attempt to detect a physical keyboard */
 @media (hover: hover) and (pointer: fine) {
   .keyRows {
-    display: block;
+    display: none;
   }
 
   .keyRows[data-toggled='true'] {
-    display: none;
+    display: block;
   }
 }
 
