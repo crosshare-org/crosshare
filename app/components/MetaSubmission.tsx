@@ -15,7 +15,7 @@ import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { LengthLimitedInput, LengthView } from './Inputs';
 import { useSnackbar } from './Snackbar';
 
-export const MetaSubmissionForm = (props: {
+const MetaSubmissionForm = (props: {
   user: User;
   revealDisabledUntil: Date | null;
   hasPrize: boolean;

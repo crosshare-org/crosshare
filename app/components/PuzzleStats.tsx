@@ -247,7 +247,7 @@ const initializeState = (props: PuzzleStatsProps): BuilderState => {
   });
 };
 
-export const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
+const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
   const [state, dispatch] = useReducer(builderReducer, props, initializeState);
 
   const physicalKeyboardHandler = useCallback(

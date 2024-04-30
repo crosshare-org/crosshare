@@ -17,7 +17,7 @@ export function hasOwnProperty<
 }
 
 // io-ts enum support
-export const fromEnum = <T extends string, TEnumValue extends string | number>(
+const fromEnum = <T extends string, TEnumValue extends string | number>(
   enumName: string,
   theEnum: { [key in T]: TEnumValue }
 ): t.Type<TEnumValue> => {

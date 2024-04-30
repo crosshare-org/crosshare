@@ -37,7 +37,7 @@ export enum Result {
 type CrosswordId = string;
 type PlayerId = string;
 
-export class GlickoRound {
+class GlickoRound {
   PLAYER_MIN_RD: number;
   PUZZLE_MIN_RD: number;
   PLAYER_C_SQ: number;
@@ -230,7 +230,7 @@ const PLAYER_SCORE_CACHE = new Map<string, GlickoScoreT>();
 const PUZZLE_SCORE_CACHE = new Map<string, GlickoScoreT>();
 const SCORES_CACHE = new Map<string, GlickoScoreT[]>();
 
-export async function writeCacheToDB() {
+async function writeCacheToDB() {
   for (const [playerId, score] of PLAYER_SCORE_CACHE.entries()) {
     const scores = SCORES_CACHE.get(playerId) || [];
 
@@ -248,7 +248,7 @@ export async function writeCacheToDB() {
   }
 }
 
-export class CrosshareGlickoRound extends GlickoRound {
+class CrosshareGlickoRound extends GlickoRound {
   readFromCacheOnly: boolean;
 
   constructor(roundNumber: number, readFromCacheOnly: boolean) {

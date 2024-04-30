@@ -207,7 +207,7 @@ interface TopBarLinkAProps extends TopBarLinkProps {
   as?: string;
 }
 
-export const TopBarLinkA = (props: TopBarLinkAProps) => {
+const TopBarLinkA = (props: TopBarLinkAProps) => {
   return (
     <Link
       data-disabled={props.disabled}

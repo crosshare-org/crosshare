@@ -53,27 +53,6 @@ export async function setInCache<A>({
   }
 }
 
-export async function mapEachResult<N, A>(
-  query: Query,
-  validator: t.Decoder<unknown, A>,
-  mapper: (val: A, docid: string) => N
-): Promise<N[]> {
-  const value = await getDocs(query);
-  const results: N[] = [];
-  for (const doc of value.docs) {
-    const data = doc.data();
-    const validationResult = validator.decode(data);
-    if (isRight(validationResult)) {
-      results.push(mapper(validationResult.right, doc.id));
-    } else {
-      console.error('bad doc: ', doc.id);
-      console.error(PathReporter.report(validationResult).join(','));
-      return Promise.reject(new Error('Malformed content'));
-    }
-  }
-  return results;
-}
-
 export async function getValidatedAndDelete<A>(
   query: Query,
   validator: t.Type<A>

@@ -11,11 +11,8 @@ export const PROFILE_PIC: [number, number] = [200, 200];
 export const COVER_PIC: [number, number] = [1200, 400];
 
 // make any changes in concert w/ definitions.module.css
-export const KEYBOARD_HEIGHT = 164;
 export const ANIMATION_DELAY = 250;
 export const HEADER_HEIGHT = 35;
-export const TINY_COL_MIN_HEIGHT = 50;
-export const SQUARE_HEADER_HEIGHT = 68;
 export const MAX_WIDTH = 1200;
 export const SMALL_BREAKPOINT = 576;
 export const LARGE_BREAKPOINT = 992;
@@ -26,8 +23,6 @@ export const SMALL_AND_UP_RULES = '(min-width: ' + SMALL_BREAKPOINT + 'px)';
 export const SMALL_AND_UP = '@media ' + SMALL_AND_UP_RULES;
 export const LARGE_AND_UP = '@media (min-width: ' + LARGE_BREAKPOINT + 'px)';
 export const HUGE_AND_UP = `@media (min-width: ${HUGE_BREAKPOINT}px)`;
-export const HAS_PHYSICAL_KEYBOARD =
-  '@media (hover: hover) and (pointer: fine)';
 
 export const PRIMARY = '#eb984e';
 export const LINK = '#2874a6';
@@ -36,7 +31,7 @@ export const VERIFIED_COLOR = mix(adjustHue(PRIMARY, 180), 'black', 0.3);
 
 const DARK_MODE_WHITE = '#d0d0d0';
 
-export const readableColor = (color: string, darkMode: boolean) => {
+const readableColor = (color: string, darkMode: boolean) => {
   if (readableColorIsBlack(color)) {
     return '#000';
   } else if (darkMode) {

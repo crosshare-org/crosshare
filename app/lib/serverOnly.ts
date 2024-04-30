@@ -188,7 +188,7 @@ export function filterDeletedComments(
     .filter((x) => x.r?.length || !x.deleted); // Remove any childless deleted comments
 }
 
-export async function convertComments(
+async function convertComments(
   comments: CommentWithRepliesT[],
   clueMap: Map<string, [number, Direction, string]>
 ): Promise<Comment[]> {
