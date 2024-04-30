@@ -30,8 +30,6 @@ const customJestConfig = {
     '<rootDir>/__tests__/publishRules.test.tsx',
     '<rootDir>/__tests__/follow.test.tsx',
   ],
-  transform: {},
-
   testEnvironment: 'jest-environment-jsdom',
   setupFilesAfterEnv: ['<rootDir>/setupTestsAfterEnv.ts'],
   roots: ['<rootDir>/__tests__'],

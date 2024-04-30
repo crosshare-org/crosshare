@@ -1,10 +1,5 @@
-import '@testing-library/jest-dom';
-import { matchers, createSerializer } from '@emotion/jest';
 import { jest } from '@jest/globals';
-
-// Add the custom matchers provided by 'jest-emotion'
-expect.extend(matchers);
-expect.addSnapshotSerializer(createSerializer());
+import '@testing-library/jest-dom';
 
 // Give tests a blank slate
 if (

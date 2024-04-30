@@ -509,11 +509,6 @@ test('clueMap rendering', async () => {
     /* noop */
   });
   expect(r.container).toMatchInlineSnapshot(`
-    .emotion-0 {
-      border-bottom: 1px dotted;
-      white-space: nowrap;
-    }
-
     <div>
       <div>
         <div
@@ -521,7 +516,8 @@ test('clueMap rendering', async () => {
         >
           This should be a ref 
           <span
-            class="emotion-0"
+            class=""
+            data-is-string="true"
           >
             1A
           </span>
@@ -579,11 +575,6 @@ test('clueMap rendering', async () => {
     /* noop */
   });
   expect(r.container).toMatchInlineSnapshot(`
-    .emotion-0 {
-      border-bottom: 1px dotted;
-      white-space: nowrap;
-    }
-
     <div>
       <div>
         <div
@@ -591,13 +582,15 @@ test('clueMap rendering', async () => {
         >
           Shout Out to 
           <span
-            class="emotion-0"
+            class=""
+            data-is-string="true"
           >
             1A
           </span>
           ! (
           <span
-            class="emotion-0"
+            class=""
+            data-is-string="true"
           >
             2D
           </span>

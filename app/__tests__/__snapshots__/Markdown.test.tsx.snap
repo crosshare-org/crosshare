@@ -1,20 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`clueMap rendering 1`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
 <div>
   <div>
     <div
@@ -22,13 +8,13 @@ exports[`clueMap rendering 1`] = `
     >
       before 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
         baz BOOM foo BAM 
         <span
-          class="emotion-0"
+          data-hidden="true"
           role="button"
           tabindex="0"
         >
@@ -38,7 +24,7 @@ exports[`clueMap rendering 1`] = `
       </span>
        with 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -51,25 +37,6 @@ exports[`clueMap rendering 1`] = `
 `;
 
 exports[`clueMap rendering 2`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
-.emotion-1 {
-  border-bottom: 1px dotted;
-  white-space: nowrap;
-}
-
 <div>
   <div>
     <div
@@ -77,19 +44,20 @@ exports[`clueMap rendering 2`] = `
     >
       before 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
         baz BOOM foo 
         <span
-          class="emotion-1"
+          class=""
+          data-is-string="true"
         >
           BAM
         </span>
          
         <span
-          class="emotion-0"
+          data-hidden="true"
           role="button"
           tabindex="0"
         >
@@ -99,7 +67,7 @@ exports[`clueMap rendering 2`] = `
       </span>
        with 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -112,24 +80,21 @@ exports[`clueMap rendering 2`] = `
 `;
 
 exports[`clueMap rendering 3`] = `
-.emotion-0 {
-  border-bottom: 1px dotted;
-  white-space: nowrap;
-}
-
 <div>
   <div>
     <div
       class="paragraph"
     >
       <span
-        class="emotion-0"
+        class=""
+        data-is-string="true"
       >
         12ACLUE1
       </span>
        
       <span
-        class="emotion-0"
+        class=""
+        data-is-string="true"
       >
         BAM
       </span>
@@ -139,37 +104,19 @@ exports[`clueMap rendering 3`] = `
 `;
 
 exports[`clueMap rendering 4`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
-.emotion-1 {
-  border-bottom: 1px dotted;
-  white-space: nowrap;
-}
-
 <div>
   <div>
     <div
       class="paragraph"
     >
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
         <span
-          class="emotion-1"
+          class=""
+          data-is-string="true"
         >
           BAM
         </span>
@@ -180,25 +127,6 @@ exports[`clueMap rendering 4`] = `
 `;
 
 exports[`clueMap rendering 5`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
-.emotion-1 {
-  border-bottom: 1px dotted;
-  white-space: nowrap;
-}
-
 <div>
   <div>
     <div
@@ -206,13 +134,14 @@ exports[`clueMap rendering 5`] = `
     >
       You got it!! Glad the clues pointed you in the right direction. That's what they're there for. Also, it was Brian's suggestion to include 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
          
         <span
-          class="emotion-1"
+          class=""
+          data-is-string="true"
         >
           BAM
         </span>
@@ -225,11 +154,6 @@ exports[`clueMap rendering 5`] = `
 `;
 
 exports[`clueMap rendering 6`] = `
-.emotion-0 {
-  border-bottom: 1px dotted;
-  white-space: nowrap;
-}
-
 <div>
   <div>
     <div
@@ -237,25 +161,29 @@ exports[`clueMap rendering 6`] = `
     >
       Reference 
       <span
-        class="emotion-0"
+        class=""
+        data-is-string="true"
       >
         1A
       </span>
        and 
       <span
-        class="emotion-0"
+        class=""
+        data-is-string="true"
       >
         2-D
       </span>
        and 
       <span
-        class="emotion-0"
+        class=""
+        data-is-string="true"
       >
         1-Across
       </span>
        and 
       <span
-        class="emotion-0"
+        class=""
+        data-is-string="true"
       >
         2Down
       </span>
@@ -267,11 +195,6 @@ exports[`clueMap rendering 6`] = `
 `;
 
 exports[`clueMap rendering 7`] = `
-.emotion-0 {
-  border-bottom: 1px dotted;
-  white-space: nowrap;
-}
-
 <div>
   <div>
     <div
@@ -279,13 +202,15 @@ exports[`clueMap rendering 7`] = `
     >
       Reference 
       <span
-        class="emotion-0"
+        class=""
+        data-is-string="true"
       >
         1A
       </span>
       /
       <span
-        class="emotion-0"
+        class=""
+        data-is-string="true"
       >
         2D
       </span>
@@ -364,27 +289,13 @@ exports[`markdown preview mode 2`] = `
 `;
 
 exports[`markdown preview mode 3`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
 <div>
   <div>
     <div
       class="paragraph"
     >
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -416,20 +327,6 @@ exports[`spoiler text rendering 1`] = `
 `;
 
 exports[`spoiler text rendering 2`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
 <div>
   <div>
     <div
@@ -437,7 +334,7 @@ exports[`spoiler text rendering 2`] = `
     >
       foo bar 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -449,27 +346,13 @@ exports[`spoiler text rendering 2`] = `
 `;
 
 exports[`spoiler text rendering 3`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
 <div>
   <div>
     <div
       class="paragraph"
     >
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -481,27 +364,13 @@ exports[`spoiler text rendering 3`] = `
 `;
 
 exports[`spoiler text rendering 4`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
 <div>
   <div>
     <div
       class="paragraph"
     >
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -514,20 +383,6 @@ exports[`spoiler text rendering 4`] = `
 `;
 
 exports[`spoiler text rendering 5`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
 <div>
   <div>
     <div
@@ -535,7 +390,7 @@ exports[`spoiler text rendering 5`] = `
     >
       before 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -548,20 +403,6 @@ exports[`spoiler text rendering 5`] = `
 `;
 
 exports[`spoiler text rendering 6`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
 <div>
   <div>
     <div
@@ -569,7 +410,7 @@ exports[`spoiler text rendering 6`] = `
     >
       before 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -582,20 +423,6 @@ exports[`spoiler text rendering 6`] = `
 `;
 
 exports[`spoiler text rendering 7`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
 <div>
   <div>
     <div
@@ -603,7 +430,7 @@ exports[`spoiler text rendering 7`] = `
     >
       before 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -611,7 +438,7 @@ exports[`spoiler text rendering 7`] = `
       </span>
        with 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -624,20 +451,6 @@ exports[`spoiler text rendering 7`] = `
 `;
 
 exports[`spoiler text rendering 8`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
 <div>
   <div>
     <div
@@ -645,13 +458,13 @@ exports[`spoiler text rendering 8`] = `
     >
       before 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
         baz foo bam 
         <span
-          class="emotion-0"
+          data-hidden="true"
           role="button"
           tabindex="0"
         >
@@ -661,7 +474,7 @@ exports[`spoiler text rendering 8`] = `
       </span>
        with 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -674,20 +487,6 @@ exports[`spoiler text rendering 8`] = `
 `;
 
 exports[`spoiler text rendering 9`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
 <div>
   <div>
     <div
@@ -701,7 +500,7 @@ exports[`spoiler text rendering 9`] = `
       class="paragraph"
     >
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -709,7 +508,7 @@ exports[`spoiler text rendering 9`] = `
       </span>
        fooey|| with 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -722,20 +521,6 @@ exports[`spoiler text rendering 9`] = `
 `;
 
 exports[`spoiler text rendering 10`] = `
-.emotion-0 {
-  background-color: var(--text);
-  color: rgba(0,0,0,0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.emotion-0 * {
-  visibility: hidden;
-}
-
 <div>
   <div>
     <div
@@ -749,7 +534,7 @@ exports[`spoiler text rendering 10`] = `
       class="paragraph"
     >
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >
@@ -757,7 +542,7 @@ exports[`spoiler text rendering 10`] = `
       </span>
        fooey|| with 
       <span
-        class="emotion-0"
+        data-hidden="true"
         role="button"
         tabindex="0"
       >

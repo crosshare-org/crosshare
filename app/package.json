@@ -91,7 +91,6 @@
   },
   "devDependencies": {
     "@emotion/eslint-plugin": "^11.11.0",
-    "@emotion/jest": "^11.11.0",
     "@firebase/rules-unit-testing": "^3.0.2",
     "@google-cloud/pubsub": "^4.3.3",
     "@lingui/cli": "^4.7.2",
