@@ -23,7 +23,12 @@ import {
   moveRight,
   moveUp,
 } from '../lib/viewableGrid';
-import { getWarningStats, hasSelection, postEdit, validateGrid } from './builderUtils';
+import {
+  getWarningStats,
+  hasSelection,
+  postEdit,
+  validateGrid,
+} from './builderUtils';
 import { PuzzleAction, isKeypressAction } from './commonActions';
 import {
   GridInterfaceState,
