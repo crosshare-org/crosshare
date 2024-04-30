@@ -116,7 +116,6 @@ interface CommentProps {
   hasGuestConstructor: boolean;
   comment: CommentOrLocalComment;
   children?: ReactNode;
-  clueMap: Map<string, [number, Direction, string]>;
 }
 const CommentView = (props: CommentProps) => {
   return (
@@ -226,7 +225,6 @@ const CommentWithReplies = (
     <CommentView
       hasGuestConstructor={props.hasGuestConstructor}
       puzzlePublishTime={props.puzzlePublishTime}
-      clueMap={props.clueMap}
       puzzleAuthorId={props.puzzleAuthorId}
       comment={props.comment}
     >

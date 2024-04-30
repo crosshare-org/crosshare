@@ -1506,7 +1506,6 @@ const GridMode = ({
             id={state.id}
             toPublish={state.toPublish}
             warnings={state.publishWarnings}
-            user={props.user}
             cancelPublish={() => {
               dispatch({ type: 'CANCELPUBLISH' });
             }}

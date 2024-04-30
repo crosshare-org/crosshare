@@ -9,7 +9,6 @@ import styles from './SlateHeader.module.css';
 interface SlateHeaderProps {
   title: string;
   author: string;
-  publishTime: number;
   note?: Root | null;
 }
 

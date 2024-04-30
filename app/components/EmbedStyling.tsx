@@ -1,13 +1,7 @@
 import Head from 'next/head';
-import { colorThemeString } from '../lib/style';
+import { ColorThemeProps, colorThemeString } from '../lib/style';
 
-export interface EmbedStylingProps {
-  primary: string;
-  link: string;
-  errorColor: string;
-  verifiedColor: string;
-  darkMode: boolean;
-  preservePrimary: boolean;
+export interface EmbedStylingProps extends ColorThemeProps {
   fontUrl?: string;
   fontUrlBold?: string;
   fontUrlItalic?: string;
@@ -51,6 +45,7 @@ export function EmbedStyling(props: EmbedStylingProps) {
       );
     }
   }
+  const colorTheme = colorThemeString(props);
   return (
     <Head>
       <style
@@ -61,7 +56,7 @@ ${fontStyles.join('\n')}
 body {
   background-color: transparent !important;
 }
-html, body.light-mode, body.dark-mode {${colorThemeString(props)}}
+html, body.light-mode, body.dark-mode {${colorTheme}}
 `,
         }}
       />

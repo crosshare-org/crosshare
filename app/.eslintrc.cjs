@@ -53,6 +53,7 @@ module.exports = {
     ],
     'linebreak-style': ['error', 'unix'],
     semi: ['error', 'always'],
+    'react/no-unused-prop-types': 2,
     '@typescript-eslint/strict-boolean-expressions': [
       'error',
       {

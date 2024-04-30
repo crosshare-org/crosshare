@@ -75,7 +75,6 @@ export const SlateBegin = ({
         <SlateHeader
           title={puzzle.title}
           author={puzzle.guestConstructor || puzzle.authorName}
-          publishTime={puzzle.isPrivateUntil ?? puzzle.publishTime}
           note={puzzle.constructorNotes}
         />
         <Illustration className={styles.illustration} />

@@ -738,10 +738,8 @@ export const Puzzle = ({
 
   /* `refs` is a set of referenced entry indexes for each entry in the grid - we use this
    * for grid highlights when an entry is selected.
-   *
-   * `refPositions` is an array for each entry of [reffedEntry, clueTextStart, clueTextEnd] tuples
    */
-  const [refs, refPositions] = useMemo(() => {
+  const refs = useMemo(() => {
     return getRefs(state.grid);
   }, [state.grid]);
 
@@ -779,8 +777,6 @@ export const Puzzle = ({
             isEnteringRebus={state.isEnteringRebus}
             rebusValue={state.rebusValue}
             wasEntryClick={state.wasEntryClick}
-            allEntries={state.grid.entries}
-            refPositions={refPositions}
             refed={refed}
             dimCompleted={true}
             active={state.active}
@@ -800,8 +796,6 @@ export const Puzzle = ({
             isEnteringRebus={state.isEnteringRebus}
             rebusValue={state.rebusValue}
             wasEntryClick={state.wasEntryClick}
-            allEntries={state.grid.entries}
-            refPositions={refPositions}
             refed={refed}
             dimCompleted={true}
             active={state.active}
@@ -851,8 +845,6 @@ export const Puzzle = ({
           <ClueList
             wasEntryClick={state.wasEntryClick}
             scrollToCross={scrollToCross}
-            allEntries={state.grid.entries}
-            refPositions={refPositions}
             refed={refed}
             dimCompleted={true}
             active={state.active}
@@ -870,8 +862,6 @@ export const Puzzle = ({
           <ClueList
             wasEntryClick={state.wasEntryClick}
             scrollToCross={scrollToCross}
-            allEntries={state.grid.entries}
-            refPositions={refPositions}
             refed={refed}
             dimCompleted={true}
             active={state.active}
@@ -1250,7 +1240,6 @@ export const Puzzle = ({
               <SlateHeader
                 title={puzzle.title}
                 author={puzzle.guestConstructor || puzzle.authorName}
-                publishTime={puzzle.isPrivateUntil ?? puzzle.publishTime}
               />
             ) : (
               ''

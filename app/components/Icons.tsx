@@ -44,7 +44,7 @@ const Square = (props: {
   );
 };
 
-const X = (props: { cx: number; cy: number }) => {
+const X = (props: { cx: number }) => {
   return (
     <>
       <line
@@ -87,7 +87,7 @@ const Spinner = ({ animate, filled, centerX }: SpinnerProps) => {
       <Square cx={15} cy={50} beginMs={100} {...squareProps} />
       <Square cx={50} cy={15} beginMs={300} {...squareProps} />
       {centerX ? (
-        <X cx={50} cy={50} />
+        <X cx={50} />
       ) : (
         <Square cx={50} cy={50} beginMs={600} {...squareProps} />
       )}

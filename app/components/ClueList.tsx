@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { EntryBase, GridBase, valAt } from '../lib/gridBase';
 import { Direction, Position } from '../lib/types';
-import { CluedEntry, RefPosition } from '../lib/viewableGrid';
+import { CluedEntry } from '../lib/viewableGrid';
 import { PuzzleAction } from '../reducers/commonActions';
 import { ClickedEntryAction } from '../reducers/gridReducer';
 import styles from './ClueList.module.css';
@@ -136,8 +136,6 @@ interface ClueListProps {
   cross?: number;
   refed: Set<number>;
   entries: CluedEntry[];
-  allEntries?: CluedEntry[];
-  refPositions?: RefPosition[][];
   dispatch: Dispatch<PuzzleAction>;
   showEntries: boolean;
   isEnteringRebus?: boolean;

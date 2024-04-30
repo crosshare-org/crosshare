@@ -47,37 +47,17 @@ exports[`test getClueRefs for 35-downs 1`] = `
 
 exports[`test getClueRefs for 35-downs with !@ 1`] = `
 [
-  [
-    Set {
-      2,
-    },
-    Set {},
-    Set {
-      0,
-      3,
-    },
-    Set {
-      2,
-    },
-  ],
-  [
-    [],
-    [],
-    [
-      [
-        0,
-        0,
-        3,
-      ],
-    ],
-    [
-      [
-        2,
-        0,
-        7,
-      ],
-    ],
-  ],
+  Set {
+    2,
+  },
+  Set {},
+  Set {
+    0,
+    3,
+  },
+  Set {
+    2,
+  },
 ]
 `;
 
@@ -148,18 +128,10 @@ exports[`test getClueRefs for puzzle with starred clues 1`] = `
 
 exports[`test getClueRefs for puzzle without any 1`] = `
 [
-  [
-    Set {},
-    Set {},
-    Set {},
-    Set {},
-  ],
-  [
-    [],
-    [],
-    [],
-    [],
-  ],
+  Set {},
+  Set {},
+  Set {},
+  Set {},
 ]
 `;
 

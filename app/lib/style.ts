@@ -6,7 +6,6 @@ import {
   mix,
   readableColorIsBlack,
 } from 'color2k';
-import { EmbedStylingProps } from '../components/EmbedStyling';
 
 export const PROFILE_PIC: [number, number] = [200, 200];
 export const COVER_PIC: [number, number] = [1200, 400];
@@ -64,6 +63,15 @@ const makeReadable = (background: string, color: string) => {
   return color;
 };
 
+export interface ColorThemeProps {
+  primary: string;
+  link: string;
+  errorColor: string;
+  verifiedColor: string;
+  darkMode: boolean;
+  preservePrimary: boolean;
+}
+
 export const colorTheme = ({
   primary,
   link,
@@ -71,7 +79,7 @@ export const colorTheme = ({
   verifiedColor,
   darkMode,
   preservePrimary,
-}: EmbedStylingProps): Record<string, string> => {
+}: ColorThemeProps): Record<string, string> => {
   const p = darkMode && !preservePrimary ? mix(primary, 'black', 0.5) : primary;
   const l = darkMode && !preservePrimary ? mix(link, 'white', 0.5) : link;
   const error =
@@ -164,6 +172,6 @@ export const styleObjectToString = (obj: Record<string, string>): string => {
   );
 };
 
-export const colorThemeString = (props: EmbedStylingProps): string => {
+export const colorThemeString = (props: ColorThemeProps): string => {
   return styleObjectToString(colorTheme(props));
 };

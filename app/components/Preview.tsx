@@ -182,7 +182,6 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
               id={state.id}
               toPublish={state.toPublish}
               warnings={state.publishWarnings}
-              user={props.user}
               cancelPublish={() => {
                 dispatch({ type: 'CANCELPUBLISH' });
               }}

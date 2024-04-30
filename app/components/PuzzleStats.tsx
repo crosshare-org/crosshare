@@ -43,6 +43,7 @@ export enum StatsMode {
 }
 
 interface MetaSubmissionListProps {
+  // eslint-disable-next-line react/no-unused-prop-types
   puzzle: Omit<PuzzleResult, 'comments'>;
   stats: PuzzleStatsViewT;
 }

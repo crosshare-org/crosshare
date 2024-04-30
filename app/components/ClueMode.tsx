@@ -318,7 +318,6 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
             id={state.id}
             toPublish={state.toPublish}
             warnings={state.publishWarnings}
-            user={props.user}
             cancelPublish={() => {
               props.dispatch({ type: 'CANCELPUBLISH' });
             }}

@@ -1,8 +1,8 @@
 import { entriesFromCells } from '../lib/gridBase';
 import { markdownToHast } from '../lib/markdown/markdown';
 import {
-  addClues,
   CluedGrid,
+  addClues,
   fromCells,
   getEntryToClueMap,
   getRefs,
@@ -308,7 +308,7 @@ test('test getClueRefs for puzzle with refs', () => {
     (c: string) => markdownToHast({ text: c, inline: true })
   );
 
-  const res = getRefs(cluedGrid)[0].map((s) => {
+  const res = getRefs(cluedGrid).map((s) => {
     return [...s].map((e): [number | undefined, number | undefined] => {
       return [
         cluedGrid.entries[e]?.labelNumber,
@@ -350,7 +350,7 @@ test('test getClueRefs for puzzle with starred clues', () => {
     (c: string) => markdownToHast({ text: c, inline: true })
   );
 
-  const res = getRefs(cluedGrid)[0].map((s) => {
+  const res = getRefs(cluedGrid).map((s) => {
     return [...s].map((e): [number | undefined, number | undefined] => {
       return [
         cluedGrid.entries[e]?.labelNumber,
@@ -392,7 +392,7 @@ test('test getClueRefs for 35-downs', () => {
     (c: string) => markdownToHast({ text: c, inline: true })
   );
 
-  const res = getRefs(cluedGrid)[0].map((s) => {
+  const res = getRefs(cluedGrid).map((s) => {
     return [...s].map((e): [number | undefined, number | undefined] => {
       return [
         cluedGrid.entries[e]?.labelNumber,

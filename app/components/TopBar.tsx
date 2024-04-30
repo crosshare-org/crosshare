@@ -156,10 +156,8 @@ export const TopBarDropDownLinkSimpleA = (props: TopBarDropDownLinkAProps) => {
 
 interface TopBarLinkCommonProps {
   text?: string;
-  hoverText?: string;
   keepText?: boolean;
   icon: ReactNode;
-  onClick?: () => void;
 }
 const TopBarLinkContents = (props: TopBarLinkCommonProps) => {
   const { isSlate } = useContext(EmbedContext);
@@ -185,6 +183,7 @@ const TopBarLinkContents = (props: TopBarLinkCommonProps) => {
 
 interface TopBarLinkProps extends TopBarLinkCommonProps {
   onClick?: () => void;
+  hoverText?: string;
 }
 
 export const TopBarLink = (props: TopBarLinkProps) => {
@@ -202,7 +201,7 @@ export const TopBarLink = (props: TopBarLinkProps) => {
   );
 };
 
-interface TopBarLinkAProps extends TopBarLinkCommonProps {
+interface TopBarLinkAProps extends TopBarLinkProps {
   disabled?: boolean;
   href: string;
   as?: string;

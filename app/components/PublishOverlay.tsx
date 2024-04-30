@@ -1,5 +1,4 @@
 import { lightFormat } from 'date-fns/lightFormat';
-import type { User } from 'firebase/auth';
 import { serverTimestamp, setDoc } from 'firebase/firestore';
 import NextJSRouter from 'next/router';
 import { FormEvent, ReactNode, useCallback, useState } from 'react';
@@ -15,7 +14,6 @@ export function PublishOverlay(props: {
   id: string;
   toPublish: DBPuzzleT;
   warnings: string[];
-  user: User;
   cancelPublish: () => void;
 }) {
   const [inProgress, setInProgress] = useState(false);
