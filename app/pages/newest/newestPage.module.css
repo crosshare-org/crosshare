@@ -1,5 +1,5 @@
-@value huge-and-up from '../lib/definitions.module.css';
-@value max-width from '../lib/definitions.module.css';
+@value huge-and-up from '../../lib/definitions.module.css';
+@value max-width from '../../lib/definitions.module.css';
 
 .page {
   margin: 1em;
