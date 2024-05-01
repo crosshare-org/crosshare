@@ -5,12 +5,6 @@
 !app/firebaseConfig.ts
 !app/firebaseConfig.emulators.ts
 !app/.eslintrc.json
-!app/.sentryclirc
-!app/sentryConfig.ts
-!app/sentry.client.config.ts
-!app/sentry.edge.config.ts
-!app/sentry.server.config.ts
-!app/sentry.properties
 !app/package.json
 !app/yarn.lock
 !app/firebase.json

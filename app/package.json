@@ -34,8 +34,8 @@
   "engines": {
     "node": "18"
   },
- "resolutions": {
-  "@types/mime": "3.0.4"
+  "resolutions": {
+    "@types/mime": "3.0.4"
   },
   "resolutionsComments": {
     "@types/mime": "https://github.com/firebase/firebase-admin-node/issues/2512"
@@ -46,7 +46,6 @@
     "@lingui/format-po-gettext": "^4.7.2",
     "@lingui/react": "^4.7.2",
     "@lingui/swc-plugin": "^4.0.6",
-    "@sentry/nextjs": "^7.109.0",
     "@use-it/event-listener": "^0.1.7",
     "canvas": "^2.11.2",
     "color2k": "^2.0.3",
