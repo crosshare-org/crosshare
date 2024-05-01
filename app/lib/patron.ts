@@ -1,5 +1,4 @@
 import { getAuth } from 'firebase-admin/auth';
-import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { ConstructorPageV } from './constructorPage';
 import { DonationsListV, donationsByEmail } from './dbtypes';
@@ -12,7 +11,7 @@ const getPatronList = async (): Promise<string[]> => {
   console.log('updating patron list');
   const donations = await getCollection('donations').doc('donations').get();
   const validationResult = DonationsListV.decode(donations.data());
-  if (!isRight(validationResult)) {
+  if (validationResult._tag !== 'Right') {
     console.error(PathReporter.report(validationResult).join(','));
     throw new Error('Malformed donations list');
   }
@@ -33,7 +32,7 @@ const getPatronList = async (): Promise<string[]> => {
         // If we have a page, get the userId from that.
         const res = await getCollection('cp').doc(row.page.toLowerCase()).get();
         const val = ConstructorPageV.decode(res.data());
-        if (isRight(val)) {
+        if (val._tag === 'Right') {
           return val.right.u;
         } else {
           const error = `Malformed constructor page for ${row.page}`;

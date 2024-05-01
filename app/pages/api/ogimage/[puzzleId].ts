@@ -1,6 +1,5 @@
 import { Image, PNGStream, createCanvas, loadImage } from 'canvas';
 import { getStorage } from 'firebase-admin/storage';
-import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { DBPuzzleT, DBPuzzleV } from '../../../lib/dbtypes';
@@ -148,7 +147,7 @@ async function getPuzzle(puzzleId: string): Promise<DBPuzzleT | null> {
     return null;
   }
   const validationResult = DBPuzzleV.decode(dbres.data());
-  if (isRight(validationResult)) {
+  if (validationResult._tag === 'Right') {
     return validationResult.right;
   } else {
     console.error(PathReporter.report(validationResult).join(','));

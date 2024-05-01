@@ -1,15 +1,13 @@
 #!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
 
+import { getFirestore } from 'firebase-admin/firestore';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { isRight } from 'fp-ts/lib/Either';
 import {
   ConstructorStatsForPuzzleT,
   ConstructorStatsT,
   ConstructorStatsV,
 } from '../lib/dbtypes';
-
 import { getAdminApp } from '../lib/firebaseAdminWrapper';
-import { getFirestore } from 'firebase-admin/firestore';
 import { timeString } from '../lib/utils';
 
 if (process.argv.length < 4) {
@@ -57,7 +55,7 @@ async function summarizeStats() {
     throw new Error('no constructor stats');
   }
   const validationResult = ConstructorStatsV.decode(dbres.data());
-  if (!isRight(validationResult)) {
+  if (validationResult._tag !== 'Right') {
     console.error(PathReporter.report(validationResult).join(','));
     return;
   }

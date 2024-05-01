@@ -1,4 +1,3 @@
-import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { GetServerSideProps } from 'next';
 import { StatsPage } from '../../../components/PuzzleStats';
@@ -43,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     return { notFound: true };
   }
   const validationResult = DBPuzzleV.decode(dbres.data());
-  if (!isRight(validationResult)) {
+  if (validationResult._tag !== 'Right') {
     console.error(PathReporter.report(validationResult).join(','));
     return { notFound: true };
   }
@@ -64,7 +63,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     return { notFound: true };
   }
   const statsVR = PuzzleStatsV.decode(dbres.data());
-  if (!isRight(statsVR)) {
+  if (statsVR._tag !== 'Right') {
     console.error(PathReporter.report(statsVR).join(','));
     return { notFound: true };
   }

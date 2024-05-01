@@ -1,4 +1,3 @@
-import { isRight } from 'fp-ts/lib/These';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
@@ -25,7 +24,7 @@ export type ClueListT = t.TypeOf<typeof ClueListV>;
 
 export const parseClueList = (cl: unknown): ClueListT => {
   const validationResult = ClueListV.decode(cl);
-  if (!isRight(validationResult)) {
+  if (validationResult._tag !== 'Right') {
     console.error(PathReporter.report(validationResult).join(','));
     return [];
   }

@@ -1,4 +1,3 @@
-import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
@@ -16,7 +15,7 @@ export function fromLocalStorage<A>(
   }
   if (inSession) {
     const res = validator.decode(JSON.parse(inSession));
-    if (isRight(res)) {
+    if (res._tag === 'Right') {
       return res.right;
     } else {
       console.error("Couldn't parse object in local storage");

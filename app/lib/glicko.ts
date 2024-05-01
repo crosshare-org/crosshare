@@ -1,5 +1,4 @@
 import { Timestamp as FBTimestamp } from 'firebase-admin/firestore';
-import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   CronStatusT,
@@ -279,7 +278,7 @@ class CrosshareGlickoRound extends GlickoRound {
     const res = await getCollection('prefs').doc(playerId).get();
     if (!res.exists) return undefined;
     const vr = AccountPrefsV.decode(res.data());
-    if (isRight(vr) && vr.right.rtg) {
+    if (vr._tag === 'Right' && vr.right.rtg) {
       if (vr.right.rtg.u >= this.currentRound) {
         return undefined;
       }
@@ -301,7 +300,7 @@ class CrosshareGlickoRound extends GlickoRound {
       throw new Error('puzzle does not exist');
     }
     const vr = DBPuzzleV.decode(res.data());
-    if (isRight(vr) && vr.right.rtg) {
+    if (vr._tag === 'Right' && vr.right.rtg) {
       if (vr.right.rtg.u >= this.currentRound) {
         return undefined;
       }
@@ -334,7 +333,7 @@ export async function doGlicko() {
   const endTimestamp = Timestamp.now();
   const value = await getCollection('cron_status').doc('ratings').get();
   const result = CronStatusV.decode(value.data());
-  if (!isRight(result)) {
+  if (result._tag !== 'Right') {
     console.error(PathReporter.report(result).join(','));
     throw new Error('Malformed cron_status');
   }
@@ -380,7 +379,7 @@ export async function doGlicko() {
     );
     for (const doc of value.docs) {
       const validationResult = LegacyPlayV.decode(doc.data());
-      if (!isRight(validationResult)) {
+      if (validationResult._tag !== 'Right') {
         throw new Error('Malformed play');
       }
       const play = validationResult.right;

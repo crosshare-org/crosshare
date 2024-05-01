@@ -1,4 +1,3 @@
-import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { timestamp } from './timestamp';
@@ -19,7 +18,7 @@ export type ArticleT = Omit<t.TypeOf<typeof ArticleV>, 'ua'>;
 
 export function validate(a: unknown): ArticleT | null {
   const validationResult = ArticleV.decode(a);
-  if (isRight(validationResult)) {
+  if (validationResult._tag === 'Right') {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { ua, ...partial } = validationResult.right;
     return partial;

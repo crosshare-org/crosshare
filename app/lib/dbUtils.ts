@@ -1,5 +1,4 @@
 import { Query, deleteDoc, getDoc, getDocs, setDoc } from 'firebase/firestore';
-import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { downloadTimestamped } from './dbtypes';
@@ -63,7 +62,7 @@ export async function getValidatedAndDelete<A>(
   for (const doc of value.docs) {
     const data = doc.data();
     const validationResult = validator.decode(data);
-    if (isRight(validationResult)) {
+    if (validationResult._tag === 'Right') {
       results.push(validationResult.right);
       deletes.push(deleteDoc(doc.ref));
     } else {
@@ -85,7 +84,7 @@ export async function getFromDB<A>(
     return Promise.reject(new Error('Missing doc'));
   }
   const validationResult = validator.decode(dbres.data());
-  if (isRight(validationResult)) {
+  if (validationResult._tag === 'Right') {
     return validationResult.right;
   } else {
     console.error(PathReporter.report(validationResult).join(','));
@@ -116,7 +115,7 @@ export async function getFromSessionOrDB<A>({
   const TimestampedV = downloadTimestamped(validator);
   if (inSession) {
     const validationResult = TimestampedV.decode(JSON.parse(inSession));
-    if (isRight(validationResult)) {
+    if (validationResult._tag === 'Right') {
       const valid = validationResult.right;
       if (
         ttl === -1 ||
@@ -139,7 +138,7 @@ export async function getFromSessionOrDB<A>({
     return null;
   }
   const validationResult = validator.decode(dbres.data());
-  if (isRight(validationResult)) {
+  if (validationResult._tag === 'Right') {
     console.log('loaded, and caching in storage');
     const forLS: t.TypeOf<typeof TimestampedV> = {
       downloadedAt: Timestamp.now(),

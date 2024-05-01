@@ -1,5 +1,4 @@
 import { getDoc } from 'firebase/firestore';
-import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
 import { getDocRef } from './firebaseWrapper';
@@ -23,7 +22,7 @@ export async function getPuzzle(
     return undefined;
   }
   const validationResult = DBPuzzleV.decode(dbres.data());
-  if (isRight(validationResult)) {
+  if (validationResult._tag === 'Right') {
     cache?.set(puzzleId, validationResult.right);
     return validationResult.right;
   } else {

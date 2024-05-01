@@ -1,4 +1,3 @@
-import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
 import { getCollection, toFirestore } from './firebaseAdminWrapper';
@@ -24,7 +23,7 @@ async function deleteNotifications(
       return Promise.all(
         snap.docs.map(async (res) => {
           const n = NotificationV.decode(res.data());
-          if (!shouldDelete || !isRight(n) || shouldDelete(n.right)) {
+          if (!shouldDelete || n._tag !== 'Right' || shouldDelete(n.right)) {
             console.log('deleting notification');
             await res.ref.delete();
           }
@@ -45,7 +44,7 @@ async function updateNotifications(
       return Promise.all(
         snap.docs.map(async (res) => {
           const n = NotificationV.decode(res.data());
-          if (isRight(n)) {
+          if (n._tag === 'Right') {
             const toUpdate = update(n.right);
             if (toUpdate) {
               console.log('updating notification');
@@ -86,7 +85,7 @@ async function deletePuzzle(puzzleId: string, dbpuz: DBPuzzleT) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parsePuzzle(docdata: any): DBPuzzleT | null {
   const validationResult = DBPuzzleV.decode(docdata);
-  if (isRight(validationResult)) {
+  if (validationResult._tag === 'Right') {
     return validationResult.right;
   } else {
     console.error(PathReporter.report(validationResult).join(','));

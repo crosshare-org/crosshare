@@ -1,7 +1,6 @@
 import equal from 'fast-deep-equal';
 import type { User } from 'firebase/auth';
 import { getDoc, setDoc } from 'firebase/firestore';
-import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
@@ -86,7 +85,7 @@ export async function getPlayFromDB(
   }
 
   const playResult = LegacyPlayV.decode(dbres.data());
-  if (isRight(playResult)) {
+  if (playResult._tag === 'Right') {
     const play = {
       ...playResult.right,
       // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing

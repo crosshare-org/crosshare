@@ -6,7 +6,6 @@ import {
   getFirestore,
 } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
-import { isRight } from 'fp-ts/lib/Either';
 import { isSome } from 'fp-ts/lib/Option';
 import type { Root } from 'hast';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -253,7 +252,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   }
 
   const validationResult = DBPuzzleV.decode(dbres.data());
-  if (isRight(validationResult)) {
+  if (validationResult._tag === 'Right') {
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
     const fromDB = puzzleFromDB(validationResult.right);
     const grid = addClues(
