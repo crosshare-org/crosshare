@@ -1,5 +1,4 @@
 import { Trans, t } from '@lingui/macro';
-import { isSome } from 'fp-ts/lib/Option';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -73,15 +72,15 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
     }))
   );
 
-  if (isSome(todaysMini)) {
+  if (todaysMini !== null) {
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
     const dm: HomepagePuz = {
       ...toLinkablePuzzle({
-        ...puzzleFromDB(todaysMini.value),
-        id: todaysMini.value.id,
+        ...puzzleFromDB(todaysMini),
+        id: todaysMini.id,
       }),
-      constructorPage: await userIdToPage(todaysMini.value.a),
-      constructorIsPatron: await isUserPatron(todaysMini.value.a),
+      constructorPage: await userIdToPage(todaysMini.a),
+      constructorIsPatron: await isUserPatron(todaysMini.a),
     };
     return {
       props: { dailymini: dm, featured, articles, showCampaignForYear },

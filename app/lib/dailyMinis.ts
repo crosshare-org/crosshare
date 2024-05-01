@@ -1,5 +1,4 @@
 import { getDocs, limit, query, where } from 'firebase/firestore';
-import { Option, isSome, none, some } from 'fp-ts/Option';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   DBPuzzleT,
@@ -17,33 +16,33 @@ export function setMiniForDate(pds: string, id: string) {
   sessionStorage.setItem(key, id);
 }
 
-export async function getMiniIdForDate(d: Date): Promise<Option<string>> {
+export async function getMiniIdForDate(d: Date): Promise<string | null> {
   const key = 'dmid-' + prettifyDateString(getDateString(d));
   const fromStorage = sessionStorage.getItem(key);
   if (fromStorage) {
-    return some(fromStorage);
+    return fromStorage;
   }
   const existing = dailyMiniIdsByDate.get(key);
   if (existing) {
-    return some(existing);
+    return existing;
   }
   if (existing === null) {
-    return none;
+    return null;
   }
   const puz = await getMiniForDate(d, true);
-  if (!isSome(puz)) {
+  if (puz === null) {
     dailyMiniIdsByDate.set(key, null);
-    return none;
+    return null;
   }
-  dailyMiniIdsByDate.set(key, puz.value.id);
-  sessionStorage.setItem(key, puz.value.id);
-  return some(puz.value.id);
+  dailyMiniIdsByDate.set(key, puz.id);
+  sessionStorage.setItem(key, puz.id);
+  return puz.id;
 }
 
 export async function getMiniForDate(
   d: Date,
   allowMissing?: boolean
-): Promise<Option<DBPuzzleT & { id: string }>> {
+): Promise<(DBPuzzleT & { id: string }) | null> {
   const dbres = await getDocs(
     query(
       getCollection('c'),
@@ -57,13 +56,13 @@ export async function getMiniForDate(
     if (!allowMissing) {
       console.error('no dm for date ', d);
     }
-    return none;
+    return null;
   }
   const validationResult = DBPuzzleV.decode(doc.data());
   if (validationResult._tag === 'Right') {
-    return some({ ...validationResult.right, id: doc.id });
+    return { ...validationResult.right, id: doc.id };
   }
   console.error('invalid puzzle ', doc.id);
   console.error(PathReporter.report(validationResult).join(','));
-  return none;
+  return null;
 }

@@ -1,4 +1,3 @@
-import { Option, isSome, none, some } from 'fp-ts/lib/Option';
 import type { Root } from 'hast';
 import * as t from 'io-ts';
 import { ConstructorPageWithMarkdown } from '../lib/constructorPage';
@@ -410,7 +409,7 @@ export enum KeyK {
 
 export const ALLOWABLE_GRID_CHARS = /^[A-Za-z0-9Ññ&]$/;
 
-export function fromKeyString(string: string): Option<Key> {
+export function fromKeyString(string: string): Key | null {
   return fromKeyboardEvent({ key: string });
 }
 
@@ -421,98 +420,92 @@ export function fromKeyboardEvent(event: {
   altKey?: boolean;
   ctrlKey?: boolean;
   target?: EventTarget | null;
-}): Option<Key> {
+}): Key | null {
   if (event.target) {
     if (isTextInput(event.target)) {
-      return none;
+      return null;
     }
   }
 
   if (event.altKey) {
-    return none;
+    return null;
   }
 
   if (event.metaKey || event.ctrlKey) {
     const key = event.key.toLowerCase();
     switch (key) {
       case 'z':
-        return some({ k: event.shiftKey ? KeyK.Redo : KeyK.Undo });
+        return { k: event.shiftKey ? KeyK.Redo : KeyK.Undo };
       case 'y':
-        return some({ k: KeyK.Redo });
+        return { k: KeyK.Redo };
       default:
-        return none;
+        return null;
     }
   }
 
-  const basicKey: Option<Exclude<KeyK, KeyK.AllowedCharacter>> = (() => {
+  const basicKey: Exclude<KeyK, KeyK.AllowedCharacter> | null = (() => {
     switch (event.key) {
       case 'ArrowLeft':
-        return !event.shiftKey
-          ? some(KeyK.ArrowLeft)
-          : some(KeyK.ShiftArrowLeft);
+        return !event.shiftKey ? KeyK.ArrowLeft : KeyK.ShiftArrowLeft;
       case 'ArrowRight':
-        return !event.shiftKey
-          ? some(KeyK.ArrowRight)
-          : some(KeyK.ShiftArrowRight);
+        return !event.shiftKey ? KeyK.ArrowRight : KeyK.ShiftArrowRight;
       case 'ArrowUp':
-        return !event.shiftKey ? some(KeyK.ArrowUp) : some(KeyK.ShiftArrowUp);
+        return !event.shiftKey ? KeyK.ArrowUp : KeyK.ShiftArrowUp;
       case 'ArrowDown':
-        return !event.shiftKey
-          ? some(KeyK.ArrowDown)
-          : some(KeyK.ShiftArrowDown);
+        return !event.shiftKey ? KeyK.ArrowDown : KeyK.ShiftArrowDown;
       case ' ':
-        return some(KeyK.Space);
+        return KeyK.Space;
       case 'Tab':
-        return !event.shiftKey ? some(KeyK.Tab) : some(KeyK.ShiftTab);
+        return !event.shiftKey ? KeyK.Tab : KeyK.ShiftTab;
       case 'Enter':
-        return !event.shiftKey ? some(KeyK.Enter) : some(KeyK.ShiftEnter);
+        return !event.shiftKey ? KeyK.Enter : KeyK.ShiftEnter;
       case 'Backspace':
-        return some(KeyK.Backspace);
+        return KeyK.Backspace;
       case 'Delete':
-        return some(KeyK.Delete);
+        return KeyK.Delete;
       case 'Escape':
-        return some(KeyK.Escape);
+        return KeyK.Escape;
       case '`':
-        return some(KeyK.Backtick);
+        return KeyK.Backtick;
       case '.':
-        return some(KeyK.Dot);
+        return KeyK.Dot;
       case ',':
-        return some(KeyK.Comma);
+        return KeyK.Comma;
       case '!':
-        return some(KeyK.Exclamation);
+        return KeyK.Exclamation;
       case '#':
-        return some(KeyK.Octothorp);
+        return KeyK.Octothorp;
       // Keys specific to on-screen keyboard
       case '{num}':
-        return some(KeyK.NumLayout);
+        return KeyK.NumLayout;
       case '{abc}':
-        return some(KeyK.AbcLayout);
+        return KeyK.AbcLayout;
       case '{dir}':
-        return some(KeyK.Direction);
+        return KeyK.Direction;
       case '{next}':
-        return some(KeyK.Next);
+        return KeyK.Next;
       case '{prev}':
-        return some(KeyK.Prev);
+        return KeyK.Prev;
       case '{nextEntry}':
-        return some(KeyK.NextEntry);
+        return KeyK.NextEntry;
       case '{prevEntry}':
-        return some(KeyK.PrevEntry);
+        return KeyK.PrevEntry;
       case '{bksp}':
-        return some(KeyK.OskBackspace);
+        return KeyK.OskBackspace;
       case '{rebus}':
-        return some(KeyK.Rebus);
+        return KeyK.Rebus;
       case '{block}':
-        return some(KeyK.Block);
+        return KeyK.Block;
       default:
-        return none;
+        return null;
     }
   })();
 
-  if (isSome(basicKey)) {
-    return some({ k: basicKey.value });
+  if (basicKey !== null) {
+    return { k: basicKey };
   }
   if (event.key.match(ALLOWABLE_GRID_CHARS)) {
-    return some({ k: KeyK.AllowedCharacter, c: event.key });
+    return { k: KeyK.AllowedCharacter, c: event.key };
   }
-  return none;
+  return null;
 }
