@@ -1,11 +1,11 @@
 /* make any changes in concert w/ style.ts */
 @value small-and-up: min-width: 576px;
-@value large-and-up: min-width: 992px;
-@value huge-and-up: min-width: 1240px;
-@value max-width: 1200px;
 @value header-height: 35px;
 @value animation-delay: 250ms;
 
+@value large-and-up: min-width: 992px;
+@value huge-and-up: min-width: 1240px;
+@value max-width: 1200px;
 @value square-header-height: 68px;
 @value tiny-col-min-height: 50px;
 @value keyboard-height: 164px;
