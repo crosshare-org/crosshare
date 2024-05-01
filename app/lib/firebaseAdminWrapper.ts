@@ -5,13 +5,12 @@ import {
   Query,
   getFirestore,
 } from 'firebase-admin/firestore';
-import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import cloneDeepWith from 'lodash/cloneDeepWith';
 import { firebaseConfig } from '../firebaseConfig';
 import { firebaseConfig as firebaseEmulatorConfig } from '../firebaseConfig.emulators';
 import { isTimestamp } from './timestamp';
+import { cloneDeepWith } from './utils';
 
 export function getAdminApp() {
   const app = getApps()[0];
@@ -80,7 +79,7 @@ export async function mapEachResult<N, A>(
   for (const doc of value.docs) {
     const data = doc.data();
     const validationResult = validator.decode(data);
-    if (isRight(validationResult)) {
+    if (validationResult._tag === 'Right') {
       results.push(mapper(validationResult.right, doc.id));
     } else {
       console.error('bad doc: ', doc.id);
