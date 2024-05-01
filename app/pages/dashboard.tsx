@@ -72,7 +72,7 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
               <></>
             )}
             <CreatePageForm
-              css={{ display: constructorPage ? 'none' : 'block' }}
+              className={constructorPage ? 'displayNone' : 'displayBlock'}
             />
             {authoredPuzzles.map((puzzle) => (
               <PuzzleResultLink

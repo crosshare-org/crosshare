@@ -25,8 +25,8 @@ import { FeatureList, FeatureListItem } from '../components/FeatureList';
 import { Hero } from '../components/Hero';
 import { Link } from '../components/Link';
 import { useWordDB } from '../lib/WordDB';
-import { LARGE_AND_UP, SMALL_AND_UP } from '../lib/style';
 import { withStaticTranslation } from '../lib/translation';
+import styles from './construct.module.css';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };
@@ -99,10 +99,7 @@ export default function BuilderPage() {
       <>
         <p>
           <Button
-            css={{
-              fontSize: '1.5em',
-              marginTop: '0.75em',
-            }}
+            className={styles.launch}
             onClick={() => {
               setShowBuilder(true);
             }}
@@ -207,41 +204,9 @@ export default function BuilderPage() {
           text="Crosshare also natively supports puzzles with an arbitrary number of valid solutions. The alternate solutions are shown to the solver after the grid is complete to make sure they have the aha moment."
         />
       </FeatureList>
-      <div
-        css={{
-          padding: '0 0.5em',
-          backgroundColor: 'var(--primary)',
-          textAlign: 'center',
-          color: 'var(--text)',
-          paddingTop: '1em',
-          minHeight: 225,
-          [SMALL_AND_UP]: {
-            minHeight: 175,
-          },
-          [LARGE_AND_UP]: {
-            minHeight: 125,
-          },
-        }}
-      >
-        {heroContent}
-      </div>
-      <div
-        css={{
-          display: 'flex',
-          margin: '1em',
-          flexWrap: 'wrap',
-        }}
-      >
-        <div
-          css={{
-            width: '100%',
-            flex: 'none',
-            [LARGE_AND_UP]: {
-              flex: '1 1 0',
-              marginRight: '1em',
-            },
-          }}
-        >
+      <div className={styles.heroWrap}>{heroContent}</div>
+      <div className={styles.main}>
+        <div className={styles.starting}>
           <h2 className="textAlignCenter">New to making crosswords?</h2>
           <p>
             Don’t be intimidated! Constructing great crosswords takes a lot of
@@ -342,16 +307,7 @@ export default function BuilderPage() {
             has a lot of good information.
           </p>
         </div>
-        <div
-          css={{
-            width: '100%',
-            flex: 'none',
-            [LARGE_AND_UP]: {
-              flex: '1 1 0',
-              marginLeft: '1em',
-            },
-          }}
-        >
+        <div className={styles.faq}>
           <h2 className="textAlignCenter">FAQ</h2>
           <h3>What if I have an existing puzzle I’d like to upload?</h3>
           <p>

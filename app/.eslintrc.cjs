@@ -26,7 +26,7 @@ module.exports = {
   ignorePatterns: ['next.config.mjs', 'jest.config.mjs'],
   parser: '@typescript-eslint/parser',
   parserOptions: { project: true, tsconfigRootDir: __dirname },
-  plugins: ['@emotion', 'lingui', 'css-modules', 'import'],
+  plugins: ['lingui', 'css-modules', 'import'],
   rules: {
     // someday?... "lingui/no-unlocalized-strings": 2,
     'lingui/t-call-in-function': 2,
@@ -34,7 +34,6 @@ module.exports = {
     'lingui/no-expression-in-message': 2,
     'lingui/no-single-tag-to-translate': 2,
     'lingui/no-trans-inside-trans': 2,
-    '@emotion/pkg-renaming': 'error',
     'jsx-a11y/anchor-is-valid': [
       'error',
       {

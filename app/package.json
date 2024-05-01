@@ -34,8 +34,13 @@
   "engines": {
     "node": "18"
   },
+ "resolutions": {
+  "@types/mime": "3.0.4"
+  },
+  "resolutionsComments": {
+    "@types/mime": "https://github.com/firebase/firebase-admin-node/issues/2512"
+  },
   "dependencies": {
-    "@emotion/react": "^11.11.4",
     "@floating-ui/react": "^0.26.10",
     "@juggle/resize-observer": "^3.4.0",
     "@lingui/format-po-gettext": "^4.7.2",
@@ -90,7 +95,6 @@
     "prop-types": "Needed by react-csv and apparently not specified. Breaks sharedstats when missing"
   },
   "devDependencies": {
-    "@emotion/eslint-plugin": "^11.11.0",
     "@firebase/rules-unit-testing": "^3.0.2",
     "@google-cloud/pubsub": "^4.3.3",
     "@lingui/cli": "^4.7.2",

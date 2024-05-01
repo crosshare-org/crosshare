@@ -1,0 +1,82 @@
+@value small-and-up from '../lib/definitions.module.css';
+
+.patronHeader {
+  flex-shrink: 0;
+  font-size: 2em;
+}
+
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 1em;
+
+  color: var(--text);
+  text-align: center;
+
+  background-color: var(--secondary);
+}
+
+.bannerWrap {
+  max-width: 900px;
+  margin: 0 1em;
+}
+
+.tag {
+  margin-bottom: 0.5em;
+  font-family: georgia, serif;
+  font-size: 20px;
+  font-style: italic;
+}
+
+.text {
+  max-width: 900px;
+  margin: auto;
+  padding: 1em;
+}
+
+.paypalForm {
+  margin-bottom: 0.5em;
+  font-size: 1.3em;
+  text-align: center;
+}
+
+.list {
+  column-width: 20em;
+  margin: 0;
+  list-style-type: none;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.exp {
+  margin: 1em;
+  font-style: italic;
+  text-align: right;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .patronHeader {
+    font-size: 5em;
+  }
+
+  .page {
+    padding: 2em;
+  }
+
+  .bannerWrap {
+    margin: 0 2em;
+  }
+
+  .tag {
+    font-size: 30px;
+  }
+
+  .subtitle {
+    font-size: 20px;
+  }
+}

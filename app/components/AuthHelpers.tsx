@@ -1,5 +1,4 @@
 // eslint-disable-next-line import/no-unresolved
-import { WithConditionalCSSProp } from '@emotion/react/types/jsx-namespace';
 import type { User } from 'firebase/auth';
 import { ReactNode, useContext } from 'react';
 import { ConstructorPageT } from '../lib/constructorPage';
@@ -89,9 +88,7 @@ function renderLoginIfNeeded({
 
 /* Ensure we have a non-anonymous user, upgrading an anonymous user if we have one. */
 export function requiresAuth<T>(WrappedComponent: React.ComponentType<T>) {
-  return function AuthRequired(
-    props: T & WithConditionalCSSProp<T>
-  ): ReactNode {
+  return function AuthRequired(props: T): ReactNode {
     const ctx = useContext(AuthContext);
     const login = renderLoginIfNeeded(ctx);
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
@@ -112,9 +109,7 @@ export function requiresAuth<T>(WrappedComponent: React.ComponentType<T>) {
 
 /* Ensure we have an admin user, upgrading an anonymous user if we have one. */
 export function requiresAdmin<T>(WrappedComponent: React.ComponentType<T>) {
-  return function AdminRequired(
-    props: T & WithConditionalCSSProp<T>
-  ): ReactNode {
+  return function AdminRequired(props: T): ReactNode {
     const ctx = useContext(AuthContext);
     const login = renderLoginIfNeeded(ctx);
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions

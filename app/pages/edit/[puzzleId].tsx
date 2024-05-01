@@ -185,25 +185,11 @@ const ClueRow = (props: {
 
   return (
     <tr>
-      <td
-        css={{
-          paddingRight: '0.5em',
-          paddingBottom: '1em',
-          textAlign: 'right',
-          width: '1px',
-        }}
-      >
+      <td className={styles.label}>
         {props.entry.labelNumber}
         {props.entry.direction === Direction.Down ? 'D' : 'A'}
       </td>
-      <td
-        css={{
-          paddingRight: '0.5em',
-          paddingBottom: '1em',
-          textAlign: 'right',
-          width: '1px',
-        }}
-      >
+      <td className={styles.label}>
         <label className="marginBottom0" htmlFor={word + '-input'}>
           {word}
         </label>
@@ -211,13 +197,13 @@ const ClueRow = (props: {
       <td className="paddingBottom1em">
         {editing ? (
           <form
-            css={{ display: 'flex', flexWrap: 'wrap' }}
+            className={styles.editForm}
             onSubmit={logAsyncErrors(handleSubmit)}
           >
             <LengthLimitedInput
               id={word + '-input'}
               type="text"
-              css={{ marginRight: '0.5em', flex: '1 1 auto' }}
+              className={styles.clueInput}
               placeholder="Enter a clue"
               value={value}
               updateValue={setValue}
@@ -250,10 +236,7 @@ const ClueRow = (props: {
               <span>{removeClueSpecials(props.entry.clue)}</span>
             ) : (
               <Markdown
-                css={{
-                  display: 'inline',
-                  '& .paragraph': { display: 'inline' },
-                }}
+                className={styles.preview}
                 hast={props.entry.clueHast}
                 noRefs={props.entry.clue.startsWith('!@')}
                 inline={true}
@@ -744,10 +727,7 @@ const PuzzleEditor = ({
               {puzzle.alternateSolutions.map((a, i) => (
                 <li key={i}>
                   {a.map(([pos, str]) => (
-                    <span
-                      css={{ '& + &:before': { content: '", "' } }}
-                      key={pos}
-                    >
+                    <span className={styles.altCell} key={pos}>
                       Cell {pos}: &quot;{str}&quot;
                     </span>
                   ))}{' '}

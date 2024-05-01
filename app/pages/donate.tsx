@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import { differenceInDays } from 'date-fns';
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -10,8 +9,9 @@ import { PatronIcon } from '../components/Icons';
 import { DefaultTopBar } from '../components/TopBar';
 import { DonationsListV, donationsByEmail } from '../lib/dbtypes';
 import { getCollection } from '../lib/firebaseAdminWrapper';
-import { SMALL_AND_UP } from '../lib/style';
 import { withTranslation } from '../lib/translation';
+import { clsx } from '../lib/utils';
+import styles from './donate.module.css';
 
 interface DonateProps {
   donors: {
@@ -53,12 +53,6 @@ const gssp: GetServerSideProps<DonateProps> = async ({ res }) => {
 
 export const getServerSideProps = withTranslation(gssp);
 
-const PatronHeaderCSS = css({
-  fontSize: '2em',
-  [SMALL_AND_UP]: { fontSize: '5em' },
-  flexShrink: 0,
-});
-
 export default function DonatePage({ donors }: DonateProps) {
   const now = new Date();
   return (
@@ -67,57 +61,20 @@ export default function DonatePage({ donors }: DonateProps) {
         <title>{`Donate and Become a Crosshare Patron`}</title>
       </Head>
       <DefaultTopBar />
-      <div
-        css={{
-          padding: '1em',
-          [SMALL_AND_UP]: {
-            padding: '2em',
-          },
-          backgroundColor: 'var(--secondary)',
-          textAlign: 'center',
-          color: 'var(--text)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <PatronIcon css={PatronHeaderCSS} />
-        <div
-          css={{
-            maxWidth: 900,
-            margin: '0 1em',
-            [SMALL_AND_UP]: {
-              margin: '0 2em',
-            },
-          }}
-        >
-          <div
-            css={{
-              fontFamily: 'Georgia, serif',
-              fontSize: 20,
-              [SMALL_AND_UP]: {
-                fontSize: 30,
-              },
-              fontStyle: 'italic',
-              marginBottom: '0.5em',
-            }}
-          >
+      <div className={styles.page}>
+        <PatronIcon className={styles.patronHeader} />
+        <div className={styles.bannerWrap}>
+          <div className={styles.tag}>
             A free crossword community for everyone
           </div>
-          <div
-            css={{
-              [SMALL_AND_UP]: {
-                fontSize: 20,
-              },
-            }}
-          >
+          <div className={styles.subtitle}>
             Crosshare is <b>free</b> and <b>ad-free</b>, but it isn&apos;t free
             to run. We rely on support from people like you to make it possible.
           </div>
         </div>
-        <PatronIcon css={PatronHeaderCSS} />
+        <PatronIcon className={styles.patronHeader} />
       </div>
-      <div css={{ margin: 'auto', maxWidth: 900, padding: '1em' }}>
+      <div className={styles.text}>
         <h2 className="textAlignCenter">Become a Crosshare Patron</h2>
         <p>
           Crosshare is developed by a <b>very</b> small team of volunteers.
@@ -133,11 +90,7 @@ export default function DonatePage({ donors }: DonateProps) {
           becoming a Crosshare patron!
         </p>
         <form
-          css={{
-            marginBottom: '0.5em',
-            textAlign: 'center',
-            fontSize: '1.3em',
-          }}
+          className={styles.paypalForm}
           action="https://www.paypal.com/donate"
           method="post"
           target="_top"
@@ -169,9 +122,9 @@ export default function DonatePage({ donors }: DonateProps) {
         The contributors who make Crosshare possible
       </h2>
       <p></p>
-      <ul css={{ listStyleType: 'none', columnWidth: '20em', margin: 0 }}>
+      <ul className={styles.list}>
         {donors.map((d, i) => (
-          <li key={i} css={{ fontWeight: d.above100 ? 'bold' : 'normal' }}>
+          <li key={i} className={clsx(d.above100 && styles.bold)}>
             {differenceInDays(now, new Date(d.date)) <= 32 ? (
               <PatronIcon className="marginRight0-5em" />
             ) : (
@@ -181,7 +134,7 @@ export default function DonatePage({ donors }: DonateProps) {
           </li>
         ))}
       </ul>
-      <div css={{ fontStyle: 'italic', textAlign: 'right', margin: '1em' }}>
+      <div className={styles.exp}>
         Contributors who have totaled $100 or more are in bold
       </div>
     </>

@@ -23,6 +23,7 @@ import { Preview } from '../components/Preview';
 import { importFile } from '../lib/converter';
 import { withStaticTranslation } from '../lib/translation';
 import { PuzzleInProgressT } from '../lib/types';
+import styles from './upload.module.css';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };
@@ -131,7 +132,7 @@ export default function UploadPage() {
                 puzzle before publishing
               </p>
               <input
-                css={{ overflow: 'hidden', maxWidth: '70vw' }}
+                className={styles.fileInput}
                 type="file"
                 accept=".puz"
                 onChange={(e) => {
@@ -210,7 +211,7 @@ export default function UploadPage() {
           text="Crosshare also natively supports puzzles with an arbitrary number of valid solutions. The alternate solutions are shown to the solver after the grid is complete to make sure they have the aha moment."
         />
       </FeatureList>
-      <div css={{ textAlign: 'center', marginBottom: '2em' }}>
+      <div className={styles.construct}>
         <p>Don’t have a .puz file to upload?</p>
         <LinkButton href="/construct">
           Make your own puzzle with the Crosshare constructor

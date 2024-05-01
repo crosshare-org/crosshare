@@ -16,9 +16,9 @@ import { markdownToHast } from '../../lib/markdown/markdown';
 import { paginatedPuzzles } from '../../lib/paginatedPuzzles';
 import { isUserPatron } from '../../lib/patron';
 import { getArticle, userIdToPage } from '../../lib/serverOnly';
-import { HUGE_AND_UP, MAX_WIDTH } from '../../lib/style';
 import { withTranslation } from '../../lib/translation';
 import { normalizeTag } from '../../lib/utils';
+import styles from './tagPage.module.css';
 
 interface TagPageProps {
   tags: string[];
@@ -173,25 +173,10 @@ export default function TagPageHandler(props: PageProps) {
         )}
       </Head>
       <DefaultTopBar />
-      <div
-        css={{
-          margin: '1em',
-          [HUGE_AND_UP]: {
-            maxWidth: MAX_WIDTH,
-            margin: '1em auto',
-          },
-        }}
-      >
-        <h1 css={{ fontSize: '1.4em', marginBottom: '1em' }}>
+      <div className={styles.page}>
+        <h1 className={styles.head}>
           <Trans>Puzzles tagged</Trans>
-          <TagList
-            css={{
-              fontWeight: 'normal',
-              display: 'inline-flex',
-              margin: '0 0 0 0.5em',
-            }}
-            tags={props.tags}
-          />
+          <TagList className={styles.taglist} tags={props.tags} />
         </h1>
         {props.article ? (
           <Markdown className="marginBottom2em" hast={props.article.hast} />

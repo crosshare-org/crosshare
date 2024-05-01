@@ -1,0 +1,9 @@
+.fileInput {
+  overflow: hidden;
+  max-width: 70vw;
+}
+
+.construct {
+  margin-bottom: 2em;
+  text-align: center;
+}

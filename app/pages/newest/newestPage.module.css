@@ -1,0 +1,20 @@
+@value huge-and-up from '../lib/definitions.module.css';
+@value max-width from '../lib/definitions.module.css';
+
+.page {
+  margin: 1em;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (huge-and-up) {
+  .page {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
+    max-width: max-width;
+    margin: 1em auto;
+  }
+}
+
+.head {
+  margin-bottom: 0;
+  font-size: 1.4em;
+}

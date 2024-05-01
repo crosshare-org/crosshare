@@ -217,7 +217,7 @@ export default function DailyMiniPage(props: PageProps) {
             />
           );
         })}
-        <p css={{ textAlign: 'center', paddingBottom: '1em' }}>
+        <p className="textAlignCenter paddingBottom1em">
           {props.newerLink ? (
             <Link
               className="marginRight1em"

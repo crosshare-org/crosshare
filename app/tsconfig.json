@@ -1,7 +1,7 @@
 {
   "ts-node": {
     "compilerOptions": {
-      "types": ["node", "@emotion/react/types/css-prop"]
+      "types": ["node"]
     }
   },
   "compilerOptions": {
@@ -29,9 +29,6 @@
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "jsx": "preserve",
-    "types": [
-      "@emotion/react/types/css-prop"
-    ],
     "incremental": true,
   },
   "exclude": [

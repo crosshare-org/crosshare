@@ -11,8 +11,8 @@ import { ConstructorPageBase } from '../../lib/constructorPage';
 import { paginatedPuzzles } from '../../lib/paginatedPuzzles';
 import { isUserPatron } from '../../lib/patron';
 import { userIdToPage } from '../../lib/serverOnly';
-import { HUGE_AND_UP, MAX_WIDTH } from '../../lib/style';
 import { withTranslation } from '../../lib/translation';
+import styles from './featuredPage.module.css';
 
 interface FeaturedPageProps {
   puzzles: (LinkablePuzzle & {
@@ -129,16 +129,8 @@ export default function FeaturedPageHandler(props: PageProps) {
         )}
       </Head>
       <DefaultTopBar />
-      <div
-        css={{
-          margin: '1em',
-          [HUGE_AND_UP]: {
-            maxWidth: MAX_WIDTH,
-            margin: '1em auto',
-          },
-        }}
-      >
-        <h1 css={{ fontSize: '1.4em', marginBottom: 0 }}>
+      <div className={styles.page}>
+        <h1 className={styles.head}>
           <Trans>Crosshare Featured Puzzles</Trans>
         </h1>
         <p>{description}</p>

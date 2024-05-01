@@ -24,10 +24,10 @@ import { getCollection } from '../lib/firebaseAdminWrapper';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles';
 import { isUserPatron } from '../lib/patron';
 import { userIdToPage } from '../lib/serverOnly';
-import { SMALL_AND_UP } from '../lib/style';
 import { withTranslation } from '../lib/translation';
 import { puzzleFromDB } from '../lib/types';
 import { PAGE_SIZE } from './featured/[pageNumber]';
+import styles from './index.module.css';
 
 type HomepagePuz = LinkablePuzzle & {
   constructorPage: ConstructorPageBase | null;
@@ -125,22 +125,7 @@ export default function HomePage({
       <div className="margin1em">
         {showCampaignForYear ? (
           showCampaignForYear <= 2024 ? (
-            <Link
-              css={{
-                display: 'block',
-                textDecoration: 'none',
-                color: 'var(--text)',
-                border: '1px solid var(--error)',
-                borderRadius: '0.5em',
-                padding: '1em',
-                marginBottom: '1em',
-                '&:hover': {
-                  color: 'var(--text)',
-                  textDecoration: 'none',
-                },
-              }}
-              href="/donate"
-            >
+            <Link className={styles.campaign} href="/donate">
               <div>
                 <h3>
                   <span className="colorError">Thank you!</span>
@@ -152,22 +137,7 @@ export default function HomePage({
               </div>
             </Link>
           ) : (
-            <Link
-              css={{
-                display: 'block',
-                textDecoration: 'none',
-                color: 'var(--text)',
-                border: '1px solid var(--error)',
-                borderRadius: '0.5em',
-                padding: '1em',
-                marginBottom: '1em',
-                '&:hover': {
-                  color: 'var(--text)',
-                  textDecoration: 'none',
-                },
-              }}
-              href="/donate"
-            >
+            <Link className={styles.campaign} href="/donate">
               <h3>
                 <span className="colorError">Read this</span> - we need your
                 help!
@@ -201,15 +171,7 @@ export default function HomePage({
             development.
           </Trans>
         </p>
-        <div
-          css={{
-            display: 'flex',
-            flexDirection: 'column',
-            [SMALL_AND_UP]: {
-              flexDirection: 'row',
-            },
-          }}
-        >
+        <div className={styles.top}>
           {dailymini ? (
             <div className="flex50">
               <h2>
@@ -271,17 +233,8 @@ export default function HomePage({
         <h4 className="marginTop2em">
           <Trans>Frequently asked questions and information</Trans>
         </h4>
-        <ul
-          css={{
-            listStyleType: 'none',
-            padding: 0,
-            margin: 0,
-            columnWidth: '30em',
-          }}
-        >
-          {articles.map(ArticleListItem)}
-        </ul>
-        <p css={{ marginTop: '1em', textAlign: 'center' }}>
+        <ul className={styles.articles}>{articles.map(ArticleListItem)}</ul>
+        <p className={styles.contact}>
           <Trans comment="the variable is a translated version of 'email or twitter'">
             If you have questions or suggestions please contact us via{' '}
             <ContactLinks />.

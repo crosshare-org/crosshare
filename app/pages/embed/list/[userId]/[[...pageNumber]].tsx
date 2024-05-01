@@ -15,6 +15,7 @@ import { useEmbedOptions } from '../../../../lib/hooks';
 import { paginatedPuzzles } from '../../../../lib/paginatedPuzzles';
 import { PageErrorProps, getEmbedProps } from '../../../../lib/serverOnly';
 import { withTranslation } from '../../../../lib/translation';
+import styles from './pageNumber.module.css';
 
 interface PageProps {
   userId: string;
@@ -101,7 +102,7 @@ export default function ThemedPage(props: PageProps | PageErrorProps) {
     <>
       <EmbedStyling {...embedStyleProps} />
       <EmbedContext.Provider value={embedContext}>
-        <div css={{ padding: '1em', backgroundColor: 'var(--bg)' }}>
+        <div className={styles.wrap}>
           {props.puzzles.map((p, i) => (
             <PuzzleResultLink
               noTargetBlank={true}

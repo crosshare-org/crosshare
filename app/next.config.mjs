@@ -24,9 +24,6 @@ const baseConfig = {
       ],
     ],
   },
-  compiler: {
-    emotion: true,
-  },
   sentry: {
     hideSourceMaps: false,
   },

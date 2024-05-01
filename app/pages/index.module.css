@@ -1,0 +1,43 @@
+@value small-and-up from '../lib/definitions.module.css';
+
+.campaign {
+  display: block;
+
+  margin-bottom: 1em;
+  padding: 1em;
+
+  color: var(--text);
+  text-decoration: none;
+
+  border: 1px solid var(--error);
+  border-radius: 0.5em;
+}
+
+.campaign:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.top {
+  display: flex;
+  flex-direction: column;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .top {
+    flex-direction: row;
+  }
+}
+
+.articles {
+  column-width: 30em;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.contact {
+  margin-top: 1em;
+  text-align: center;
+}

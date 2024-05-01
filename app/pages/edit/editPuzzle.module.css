@@ -6,3 +6,32 @@
 .deleteBtn:hover {
   background-color: var(--error-hover);
 }
+
+.label {
+  width: 1px;
+  padding-right: 0.5em;
+  padding-bottom: 1em;
+  text-align: right;
+}
+
+.editForm {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.clueInput {
+  flex: 1 1 auto;
+  margin-right: 0.5em;
+}
+
+.preview {
+  display: inline;
+}
+
+.preview :global(.paragraph) {
+  display: inline;
+}
+
+.altCell + .altCell::before {
+  content: ', ';
+}
