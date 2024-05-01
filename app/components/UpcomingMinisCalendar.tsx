@@ -1,4 +1,3 @@
-import { isSome } from 'fp-ts/lib/Option';
 import { useEffect, useState } from 'react';
 import { getMiniIdForDate } from '../lib/dailyMinis';
 import { logAsyncErrors } from '../lib/utils';
@@ -47,8 +46,8 @@ const Day = (props: DayProps) => {
       if (finished) {
         return;
       }
-      if (isSome(lookup)) {
-        setMiniId(lookup.value);
+      if (lookup !== null) {
+        setMiniId(lookup);
         setDisabled(props.disableExisting);
       } else {
         setDisabled(!props.disableExisting);

@@ -6,7 +6,6 @@ import {
   getFirestore,
 } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
-import { isSome } from 'fp-ts/lib/Option';
 import type { Root } from 'hast';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { GetServerSideProps } from 'next';
@@ -331,11 +330,11 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     if (tryMiniDate <= today) {
       tryMiniDate = addDays(tryMiniDate, -1);
       const puzzle = await getMiniForDate(tryMiniDate);
-      if (isSome(puzzle)) {
+      if (puzzle !== null) {
         nextPuzzle = {
-          puzzleId: puzzle.value.id,
+          puzzleId: puzzle.id,
           linkText: 'the previous daily mini crossword',
-          puzzleTitle: puzzle.value.t,
+          puzzleTitle: puzzle.t,
         };
       }
     }
@@ -343,11 +342,11 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
 
   if (!nextPuzzle) {
     const puzzle = await getMiniForDate(today);
-    if (isSome(puzzle)) {
+    if (puzzle !== null) {
       nextPuzzle = {
-        puzzleId: puzzle.value.id,
+        puzzleId: puzzle.id,
         linkText: "today's daily mini crossword",
-        puzzleTitle: puzzle.value.t,
+        puzzleTitle: puzzle.t,
       };
     }
   }
