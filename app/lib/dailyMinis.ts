@@ -1,6 +1,5 @@
 import { getDocs, limit, query, where } from 'firebase/firestore';
 import { Option, isSome, none, some } from 'fp-ts/Option';
-import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   DBPuzzleT,
@@ -61,7 +60,7 @@ export async function getMiniForDate(
     return none;
   }
   const validationResult = DBPuzzleV.decode(doc.data());
-  if (isRight(validationResult)) {
+  if (validationResult._tag === 'Right') {
     return some({ ...validationResult.right, id: doc.id });
   }
   console.error('invalid puzzle ', doc.id);

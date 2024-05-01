@@ -1,4 +1,3 @@
-import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
@@ -31,7 +30,7 @@ export type EmbedOptionsT = t.TypeOf<typeof EmbedOptionsV>;
 
 export function validate(eo: unknown): EmbedOptionsT | null {
   const validationResult = EmbedOptionsV.decode(eo);
-  if (isRight(validationResult)) {
+  if (validationResult._tag === 'Right') {
     return validationResult.right;
   } else {
     console.error(PathReporter.report(validationResult).join(','));

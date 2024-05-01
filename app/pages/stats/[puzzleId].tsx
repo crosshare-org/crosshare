@@ -1,4 +1,3 @@
-import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -53,7 +52,7 @@ export const PuzzleLoader = ({
     const validationResult = DBPuzzleV.decode(
       doc.data({ serverTimestamps: 'previous' })
     );
-    if (isRight(validationResult)) {
+    if (validationResult._tag === 'Right') {
       const puzzle = validationResult.right;
       return [puzzle, undefined];
     } else {

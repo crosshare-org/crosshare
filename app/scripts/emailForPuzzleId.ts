@@ -1,11 +1,10 @@
 #!/usr/bin/env -S npx ts-node-script
 
-import { PathReporter } from 'io-ts/lib/PathReporter';
-import { isRight } from 'fp-ts/lib/Either';
-import { DBPuzzleV } from '../lib/dbtypes';
-import { getAdminApp } from '../lib/firebaseAdminWrapper';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
+import { PathReporter } from 'io-ts/lib/PathReporter';
+import { DBPuzzleV } from '../lib/dbtypes';
+import { getAdminApp } from '../lib/firebaseAdminWrapper';
 
 if (process.argv.length !== 3) {
   throw Error(
@@ -23,7 +22,7 @@ async function generatePuzFile() {
     return;
   }
   const validationResult = DBPuzzleV.decode(dbres.data());
-  if (!isRight(validationResult)) {
+  if (validationResult._tag !== 'Right') {
     console.error(PathReporter.report(validationResult).join(','));
     return;
   }

@@ -1,10 +1,9 @@
 #!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
 
+import { getFirestore } from 'firebase-admin/firestore';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { isRight } from 'fp-ts/lib/Either';
 import { DonationsListV } from '../lib/dbtypes';
 import { getAdminApp } from '../lib/firebaseAdminWrapper';
-import { getFirestore } from 'firebase-admin/firestore';
 
 if (process.argv.length !== 3) {
   throw Error(
@@ -23,7 +22,7 @@ async function getTotal() {
     return;
   }
   const validationResult = DonationsListV.decode(dbres.data());
-  if (!isRight(validationResult)) {
+  if (validationResult._tag !== 'Right') {
     console.error(PathReporter.report(validationResult).join(','));
     return;
   }

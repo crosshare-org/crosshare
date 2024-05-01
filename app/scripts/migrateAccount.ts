@@ -1,17 +1,15 @@
 #!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
 
-import { isRight } from 'fp-ts/lib/Either';
+import { getAuth } from 'firebase-admin/auth';
+import { FieldValue, getFirestore } from 'firebase-admin/firestore';
+import { ConstructorPageV } from '../lib/constructorPage';
 import {
   ConstructorStatsV,
   DBPuzzleV,
   FollowersV,
   PuzzleStatsV,
 } from '../lib/dbtypes';
-
 import { getAdminApp } from '../lib/firebaseAdminWrapper';
-import { FieldValue, getFirestore } from 'firebase-admin/firestore';
-import { getAuth } from 'firebase-admin/auth';
-import { ConstructorPageV } from '../lib/constructorPage';
 
 if (process.argv.length !== 4) {
   throw Error(
@@ -46,7 +44,7 @@ async function migrateAccount() {
       await Promise.all(
         snap.docs.map(async (doc) => {
           const validationResult = DBPuzzleV.decode(doc.data());
-          if (!isRight(validationResult)) {
+          if (validationResult._tag !== 'Right') {
             console.log('INVALID', doc.id);
             return;
           }
@@ -56,7 +54,7 @@ async function migrateAccount() {
           // move puzzle stats
           const puzzleStatsRes = await db.collection('s').doc(doc.id).get();
           const vr = PuzzleStatsV.decode(puzzleStatsRes.data());
-          if (!isRight(vr)) {
+          if (vr._tag !== 'Right') {
             console.log('INVALID STATS', doc.id);
             return;
           }
@@ -77,7 +75,7 @@ async function migrateAccount() {
         return null;
       }
       const validationResult = ConstructorPageV.decode(doc.data());
-      if (!isRight(validationResult)) {
+      if (validationResult._tag !== 'Right') {
         console.log('INVALID', doc.id);
         return null;
       }
@@ -94,7 +92,7 @@ async function migrateAccount() {
       .get()
       .then((snap) => {
         const validationResult = ConstructorStatsV.decode(snap.data());
-        if (!isRight(validationResult)) {
+        if (validationResult._tag !== 'Right') {
           console.log('INVALID', snap.id);
           return null;
         }
@@ -112,7 +110,7 @@ async function migrateAccount() {
       .get()
       .then((snap) => {
         const validationResult = FollowersV.decode(snap.data());
-        if (!isRight(validationResult)) {
+        if (validationResult._tag !== 'Right') {
           console.log('INVALID', snap.id);
           return null;
         }

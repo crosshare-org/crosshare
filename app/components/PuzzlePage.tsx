@@ -1,5 +1,4 @@
 import type { User } from 'firebase/auth';
-import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDocument } from 'react-firebase-hooks/firestore';
@@ -134,7 +133,7 @@ const DBPlayLoader = (
       return [null, undefined];
     }
     const validationResult = PlayWithoutUserV.decode(doc.data());
-    if (isRight(validationResult)) {
+    if (validationResult._tag === 'Right') {
       cachePlay(
         props.user,
         validationResult.right.c,

@@ -1,4 +1,3 @@
-import { isRight } from 'fp-ts/lib/Either';
 import type { Root } from 'hast';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -52,7 +51,7 @@ export function validate(
   username: string
 ): ConstructorPageT | null {
   const validationResult = ConstructorPageV.decode(cp);
-  if (isRight(validationResult)) {
+  if (validationResult._tag === 'Right') {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { t, ...partial } = validationResult.right;
     return { ...partial, id: username };
