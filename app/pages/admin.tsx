@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import {
   Timestamp,
   addDoc,
@@ -61,8 +60,6 @@ function paypalConvert(input: string): string {
   return (donated - fee).toFixed(2);
 }
 
-const red = css({ color: 'red' });
-
 const PuzzleListItem = (props: PuzzleResult) => {
   async function markAsModerated(featured: boolean) {
     const update = { m: true, c: null, f: featured };
@@ -98,7 +95,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
     const clues = clueMap[entry];
     const merged = entry + ' ' + clues?.join('; ');
     return (
-      <div key={i} css={checkSpam(merged) ? red : {}}>
+      <div key={i} className={checkSpam(merged) ? 'colorError' : ''}>
         {merged}
       </div>
     );
@@ -111,7 +108,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
       by {props.authorName}
       <TagList tags={(props.userTags ?? []).concat(props.autoTags ?? [])} />
       {props.constructorNotes ? (
-        <div css={{ textAlign: 'center', overflowWrap: 'break-word' }}>
+        <div className="textAlignCenter overflowWrapBreakWord">
           <ConstructorNotes
             notes={markdownToHast({ text: props.constructorNotes })}
           />
@@ -120,7 +117,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
         ''
       )}
       {props.blogPost ? (
-        <div css={{ margin: '1em 0', overflowWrap: 'break-word' }}>
+        <div className="margin1em0 overflowWrapBreakWord">
           <Markdown
             className="textAlignLeft"
             hast={markdownToHast({ text: props.blogPost })}
@@ -129,7 +126,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
       ) : (
         ''
       )}
-      {puzHasUnches ? <div css={{ color: 'red' }}>Puzzle has unches</div> : ''}
+      {puzHasUnches ? <div className="colorError">Puzzle has unches</div> : ''}
       {clues}
       <ul>
         {props.comments.map((c, i) => (
@@ -395,7 +392,7 @@ export default requiresAdmin(() => {
             </div>
           ))
         )}
-        <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>
+        <h4 className="marginTop2em borderBottom1pxSolidBlack">
           Page Moderation
         </h4>
         {!pagesForModeration || pagesForModeration.length === 0 ? (
@@ -413,7 +410,7 @@ export default requiresAdmin(() => {
             <input type="submit" value="Mark as moderated" />
           </form>
         )}
-        <h4 css={{ marginTop: '2em', borderBottom: '1px solid var(--black)' }}>
+        <h4 className="marginTop2em borderBottom1pxSolidBlack">
           Unmoderated (oldest first)
         </h4>
         {unmoderated.length === 0 ? (

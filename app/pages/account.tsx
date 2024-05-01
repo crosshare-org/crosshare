@@ -29,6 +29,7 @@ import { AccountPrefsT, UnsubscribeFlags } from '../lib/prefs';
 import { COVER_PIC, PROFILE_PIC } from '../lib/style';
 import { withStaticTranslation } from '../lib/translation';
 import { logAsyncErrors } from '../lib/utils';
+import styles from './account.module.css';
 
 const ImageCropper = dynamic(
   () => import('../components/ImageCropper').then((mod) => mod.ImageCropper),
@@ -167,12 +168,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         </ul>
         <hr className="margin2em0" />
         <h2>Solving Preferences</h2>
-        <ul
-          css={{
-            listStyleType: 'none',
-            padding: '0 0',
-          }}
-        >
+        <ul className={styles.list}>
           <SolverPreferencesList prefs={prefs} userId={user.uid} />
         </ul>
         <hr className="margin2em0" />
@@ -239,7 +235,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
         <h2>Crossword Blog</h2>
         {hasAuthoredPuzzle ? (
           <CreatePageForm
-            css={{ display: constructorPage ? 'none' : 'block' }}
+            className={constructorPage ? 'displayNone' : 'displayBlock'}
           />
         ) : (
           <p>
@@ -275,12 +271,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
           ''
         )}
         <h2>Constructor Preferences</h2>
-        <ul
-          css={{
-            listStyleType: 'none',
-            padding: '0 0',
-          }}
-        >
+        <ul className={styles.list}>
           <li>
             <PrefSetting
               prefs={prefs}
