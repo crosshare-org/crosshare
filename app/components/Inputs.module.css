@@ -1,0 +1,8 @@
+.length {
+  margin: auto 0.5em;
+  color: var(--default-text);
+}
+
+.length[data-warn='true'] {
+  color: var(--error);
+}

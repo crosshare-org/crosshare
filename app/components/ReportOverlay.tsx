@@ -12,6 +12,7 @@ import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { LengthLimitedTextarea, LengthView } from './Inputs';
 import { Markdown } from './Markdown';
 import { Overlay } from './Overlay';
+import styles from './ReportOverlay.module.css';
 import { useSnackbar } from './Snackbar';
 
 export const CommentReportV = t.intersection([
@@ -104,14 +105,7 @@ export const ReportOverlay = (props: {
       ) : (
         <>
           <h3>Comment you&apos;re reporting</h3>
-          <div
-            css={{
-              borderRadius: '0.5em',
-              backgroundColor: 'var(--secondary)',
-              padding: '1em',
-              margin: '1em 0 2em',
-            }}
-          >
+          <div className={styles.comment}>
             <Markdown hast={props.comment.commentHast} />
             <div>
               <i>- {props.comment.authorDisplayName}</i>
@@ -120,13 +114,13 @@ export const ReportOverlay = (props: {
           <h3>Notes</h3>
           <form onSubmit={logAsyncErrors(submitReport)}>
             <div className="marginBottom1em">
-              <label css={{ width: '100%', margin: 0 }}>
+              <label className="width100 margin0">
                 <p>
                   (Optional) Add any notes that you think might be helpful to
                   our moderation team:
                 </p>
                 <LengthLimitedTextarea
-                  css={{ width: '100%', display: 'block' }}
+                  className="width100 displayBlock"
                   maxLength={COMMENT_LENGTH_LIMIT}
                   value={notes}
                   updateValue={setNotes}

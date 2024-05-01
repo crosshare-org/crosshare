@@ -1,0 +1,41 @@
+@value small-and-up from '../lib/definitions.module.css';
+@value large-and-up from '../lib/definitions.module.css';
+
+.header {
+  min-height: 350px;
+  padding: 0 0.5em;
+  padding-top: 1em;
+
+  color: var(--text);
+  text-align: center;
+
+  background-color: var(--primary);
+}
+
+.link {
+  cursor: pointer;
+  text-decoration: none !important;
+}
+
+.text {
+  font-size: 30px;
+  line-height: 1.1em;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .header {
+    min-height: 300px;
+  }
+
+  .text {
+    font-size: 40px;
+  }
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (large-and-up) {
+  .header {
+    min-height: 250px;
+  }
+}

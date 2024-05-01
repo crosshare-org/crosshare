@@ -32,6 +32,7 @@ import { GridView } from './Grid';
 import { GridContext } from './GridContext';
 import { Overlay } from './Overlay';
 import { SquareAndCols } from './Page';
+import styles from './Preview.module.css';
 import { PublishOverlay } from './PublishOverlay';
 import { DefaultTopBar, TopBarLink } from './TopBar';
 
@@ -148,13 +149,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
   return (
     <>
       <GridContext.Provider value={cluedGrid}>
-        <div
-          css={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-          }}
-        >
+        <div className={styles.outer}>
           <div className="flexNone">
             <DefaultTopBar>
               <TopBarLink
@@ -255,9 +250,7 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
           ) : (
             ''
           )}
-          <div
-            css={{ flex: '1 1 auto', overflow: 'scroll', position: 'relative' }}
-          >
+          <div className={styles.wrap}>
             <SquareAndCols
               leftIsActive={state.active.dir === Direction.Across}
               dispatch={dispatch}

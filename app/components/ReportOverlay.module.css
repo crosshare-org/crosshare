@@ -1,0 +1,6 @@
+.comment {
+  margin: 1em 0 2em;
+  padding: 1em;
+  background-color: var(--secondary);
+  border-radius: 0.5em;
+}

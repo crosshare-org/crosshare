@@ -3,6 +3,7 @@ import {
   InputHTMLAttributes,
   TextareaHTMLAttributes,
 } from 'react';
+import styles from './Inputs.module.css';
 
 interface LengthLimitedProps {
   maxLength: number;
@@ -61,13 +62,8 @@ export const LengthView = (props: LengthViewProps) => {
   }
   return (
     <span
-      css={{
-        margin: 'auto 0.5em',
-        color:
-          props.maxLength - props.value.length > 10
-            ? 'var(--default-text)'
-            : 'var(--error)',
-      }}
+      data-warn={props.maxLength - props.value.length <= 10}
+      className={styles.length}
     >
       {props.value.length}/{props.maxLength}
     </span>

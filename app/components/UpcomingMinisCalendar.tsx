@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { getMiniIdForDate } from '../lib/dailyMinis';
 import { logAsyncErrors } from '../lib/utils';
 import { ButtonReset } from './Buttons';
+import styles from './UpcomingMinisCalendar.module.css';
 
 const daysToDisplay = 42;
 const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
@@ -61,27 +62,9 @@ const Day = (props: DayProps) => {
   const isSelected = sameDate(props.day, props.selected);
   return (
     <ButtonReset
-      css={{
-        display: 'inline-block',
-        width: '14%',
-        textAlign: 'center',
-        padding: '0.5em 0',
-        color: disabled ? 'var(--default-text)' : 'var(--text)',
-        backgroundColor: isSelected
-          ? 'var(--primary)'
-          : isToday
-          ? 'var(--lighter)'
-          : disabled
-          ? 'var(--secondary)'
-          : 'var(--bg)',
-        '&:hover': {
-          backgroundColor: isSelected
-            ? 'var(--primary)'
-            : isToday
-            ? 'var(--lighter)'
-            : 'var(--secondary)',
-        },
-      }}
+      data-is-selected={isSelected}
+      data-is-today={isToday}
+      className={styles.day}
       {...(isToday && { 'data-testid': 'today-button' })}
       disabled={disabled}
       onClick={() => {
@@ -117,65 +100,29 @@ export const UpcomingMinisCalendar = (props: UpcomingMinisCalendarProps) => {
   }
 
   return (
-    <div
-      css={{
-        border: '1px solid var(--black)',
-        userSelect: 'none',
-      }}
-    >
-      <div
-        css={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          borderBottom: '1px solid var(--black)',
-          padding: '0.5em 0',
-          textAlign: 'center',
-        }}
-      >
+    <div className={styles.cal}>
+      <div className={styles.head}>
         <ButtonReset
-          css={{
-            flexGrow: 1,
-          }}
+          className={styles.monthNav}
           onClick={() => {
             changeMonth(-1);
           }}
           text={'<'}
         />
-        <div
-          css={{
-            flexGrow: 2,
-          }}
-        >
+        <div className={styles.month}>
           {monthLabels[month]} <span>{year}</span>
         </div>
         <ButtonReset
-          css={{
-            flexGrow: 1,
-          }}
+          className={styles.monthNav}
           onClick={() => {
             changeMonth(1);
           }}
           text={'>'}
         />
       </div>
-      <div
-        css={{
-          width: '100%',
-          marginLeft: '1%',
-        }}
-      >
+      <div className={styles.body}>
         {dayLabels.map((label) => (
-          <div
-            css={{
-              display: 'inline-block',
-              width: '14%',
-              textAlign: 'center',
-              margin: '0.5em 0',
-              fontWeight: 'bold',
-            }}
-            key={label}
-          >
+          <div className={styles.dayLabel} key={label}>
             {label}
           </div>
         ))}

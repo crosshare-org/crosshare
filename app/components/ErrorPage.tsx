@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { ReactNode } from 'react';
 import { Logo } from '../components/Icons';
 import { Link } from '../components/Link';
+import styles from './ErrorPage.module.css';
 
 export const ErrorPage = (props: { title: string; children?: ReactNode }) => {
   return (
@@ -9,15 +10,7 @@ export const ErrorPage = (props: { title: string; children?: ReactNode }) => {
       <Head>
         <title>{`${props.title} | Crosshare`}</title>
       </Head>
-      <div
-        css={{
-          backgroundColor: 'var(--primary)',
-          width: '100%',
-          height: '100%',
-          textAlign: 'center',
-          paddingTop: '5em',
-        }}
-      >
+      <div className={styles.page}>
         <Link href="/">
           <Logo notificationCount={0} width="15em" height="15em" />
         </Link>

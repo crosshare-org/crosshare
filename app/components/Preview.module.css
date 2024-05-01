@@ -1,0 +1,11 @@
+.outer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.wrap {
+  position: relative;
+  overflow: scroll;
+  flex: 1 1 auto;
+}

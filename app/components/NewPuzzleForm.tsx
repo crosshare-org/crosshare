@@ -1,9 +1,10 @@
 import { Dispatch, FormEvent, useContext, useState } from 'react';
 import { PrefillSquares } from '../lib/types';
-import { STORAGE_KEY } from '../lib/utils';
+import { STORAGE_KEY, clsx } from '../lib/utils';
 import { NewPuzzleAction } from '../reducers/builderReducer';
 import { AuthContext } from './AuthContext';
 import { PrefillIcon, PuzzleSizeIcon } from './Icons';
+import styles from './NewPuzzleForm.module.css';
 
 interface SizeSelectProps {
   cols: number | null;
@@ -32,13 +33,7 @@ const SizeSelectInput = (props: SizeSelectProps) => {
             props.setCurrent(props.label);
           }}
         />
-        <span
-          css={{
-            verticalAlign: 'top !important',
-            fontSize: '2em',
-            marginRight: '0.3em',
-          }}
-        >
+        <span className={styles.icon}>
           <PuzzleSizeIcon
             width={props.cols || undefined}
             height={props.rows || undefined}
@@ -49,17 +44,17 @@ const SizeSelectInput = (props: SizeSelectProps) => {
           <>
             <input
               type="text"
-              css={{ fontSize: '0.75em', marginLeft: '1em', width: '5em' }}
+              className={clsx(styles.sizeInput, 'marginLeft1em')}
               value={props.cols || ''}
               placeholder="Columns"
               onChange={(e) => {
                 props.setCols(parseInt(e.target.value));
               }}
             />
-            <span css={{ marginLeft: '0.5em', marginRight: '0.5em' }}>x</span>
+            <span className="marginLeft0-5em marginRight0-5em">x</span>
             <input
               type="text"
-              css={{ fontSize: '0.75em', width: '5em' }}
+              className={styles.sizeInput}
               width="3em"
               value={props.rows || ''}
               placeholder="Rows"
@@ -111,13 +106,7 @@ const PrefillSelectInput = (props: PrefillSelectProps) => {
             props.setCurrent(props.option);
           }}
         />
-        <span
-          css={{
-            verticalAlign: 'top !important',
-            fontSize: '2em',
-            marginRight: '0.3em',
-          }}
-        >
+        <span className={styles.icon}>
           <PrefillIcon type={props.option} />
         </span>
         {labelForPrefill(props.option)}

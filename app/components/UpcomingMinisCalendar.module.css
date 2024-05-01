@@ -1,0 +1,70 @@
+.day {
+  display: inline-block;
+
+  width: 14%;
+  padding: 0.5em 0;
+
+  color: var(--text);
+  text-align: center;
+
+  background-color: var(--bg);
+}
+
+.day:disabled {
+  color: var(--default-text);
+  background-color: var(--secondary);
+}
+
+.day[data-is-today='true'],
+.day[data-is-today='true']:hover {
+  background-color: var(--lighter);
+}
+
+.day[data-is-selected='true'],
+.day[data-is-selected='true']:hover {
+  background-color: var(--primary);
+}
+
+.day:hover {
+  background-color: var(--secondary);
+}
+
+.cal {
+  user-select: none;
+  border: 1px solid var(--black);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0.5em 0;
+
+  text-align: center;
+
+  border-bottom: 1px solid var(--black);
+}
+
+.monthNav {
+  flex-grow: 1;
+}
+
+.month {
+  flex-grow: 2;
+}
+
+.body {
+  width: 100%;
+  margin-left: 1%;
+}
+
+.dayLabel {
+  display: inline-block;
+
+  width: 14%;
+  margin: 0.5em 0;
+
+  font-weight: bold;
+  text-align: center;
+}
