@@ -1,3 +1,4 @@
+import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { CommentWithRepliesT, DBPuzzleT, FollowersV } from './dbtypes';
 import { getCollection } from './firebaseAdminWrapper';
@@ -56,7 +57,7 @@ async function notificationsForPuzzleCreation(
   }
 
   const validationResult = FollowersV.decode(followersRes.data());
-  if (validationResult._tag !== 'Right') {
+  if (!isRight(validationResult)) {
     console.error('could not decode followers for', puzzle.a);
     console.error(PathReporter.report(validationResult).join(','));
     return [];

@@ -8,6 +8,7 @@ import {
   getDocs,
   startAfter,
 } from 'firebase/firestore';
+import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { useEffect, useState } from 'react';
@@ -71,7 +72,7 @@ export function usePaginatedQuery<A, N>(
         for (const doc of dbres.docs) {
           const data = doc.data();
           const validationResult = validator.decode(data);
-          if (validationResult._tag === 'Right') {
+          if (isRight(validationResult)) {
             const res = await mapper(validationResult.right, doc.id);
             if (res !== undefined) {
               results.push(res);

@@ -7,6 +7,7 @@ import {
   deleteField,
   updateDoc,
 } from 'firebase/firestore';
+import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
@@ -90,7 +91,7 @@ export const PuzzleLoader = ({
     const validationResult = DBPuzzleV.decode(
       doc.data({ serverTimestamps: 'previous' })
     );
-    if (validationResult._tag === 'Right') {
+    if (isRight(validationResult)) {
       const puzzle = validationResult.right;
       return [puzzle, undefined];
     } else {

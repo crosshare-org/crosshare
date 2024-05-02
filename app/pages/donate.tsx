@@ -1,4 +1,5 @@
 import { differenceInDays } from 'date-fns';
+import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -27,7 +28,7 @@ const gssp: GetServerSideProps<DonateProps> = async ({ res }) => {
     .get()
     .then((result) => {
       const validationResult = DonationsListV.decode(result.data());
-      if (validationResult._tag === 'Right') {
+      if (isRight(validationResult)) {
         res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
         const groupedByEmail = donationsByEmail(validationResult.right);
         return {

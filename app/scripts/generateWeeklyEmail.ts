@@ -2,16 +2,18 @@
 
 import fs from 'fs';
 import util from 'util';
-import { getFirestore } from 'firebase-admin/firestore';
 import { PathReporter } from 'io-ts/lib/PathReporter';
+import { isRight } from 'fp-ts/lib/Either';
 import {
+  getDateString,
+  DailyStatsV,
   DBPuzzleT,
   DBPuzzleV,
-  DailyStatsV,
-  getDateString,
 } from '../lib/dbtypes';
-import { getAdminApp } from '../lib/firebaseAdminWrapper';
 import { sizeTag } from '../lib/sizeTag';
+
+import { getAdminApp } from '../lib/firebaseAdminWrapper';
+import { getFirestore } from 'firebase-admin/firestore';
 import { slugify } from '../lib/utils';
 
 if (process.argv.length !== 2) {
@@ -66,7 +68,7 @@ async function topPuzzlesForWeek(): Promise<
     const dbres = await db.collection('ds').doc(dateString).get();
     if (dbres.exists) {
       const validationResult = DailyStatsV.decode(dbres.data());
-      if (validationResult._tag === 'Right') {
+      if (isRight(validationResult)) {
         sumOnto(totalC, validationResult.right.c);
         replaceOnto(allIs, validationResult.right.i);
       } else {
@@ -92,7 +94,7 @@ async function topPuzzlesForWeek(): Promise<
           return null;
         }
         const validationResult = DBPuzzleV.decode(dbres.data());
-        if (validationResult._tag === 'Right') {
+        if (isRight(validationResult)) {
           return { ...validationResult.right, id };
         } else {
           return null;

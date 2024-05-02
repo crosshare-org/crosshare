@@ -5,6 +5,7 @@ import {
 } from '../../app/lib/firebaseAdminWrapper';
 import { Timestamp as AdminTimestamp } from 'firebase-admin/firestore';
 
+import { isRight } from 'fp-ts/lib/Either';
 import {
   NotificationV,
   NotificationT,
@@ -90,7 +91,7 @@ async function queueEmailForUser(
   let prefs: AccountPrefsT | null = null;
   if (prefsRes.exists) {
     const validationResult = AccountPrefsV.decode(prefsRes.data());
-    if (validationResult._tag === 'Right') {
+    if (isRight(validationResult)) {
       prefs = validationResult.right;
       if (prefs.unsubs?.includes('all')) {
         return;

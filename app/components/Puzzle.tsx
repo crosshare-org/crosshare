@@ -2,6 +2,7 @@ import { Trans, t } from '@lingui/macro';
 import useEventListener from '@use-it/event-listener';
 import type { User } from 'firebase/auth';
 import { updateDoc } from 'firebase/firestore';
+import { isSome } from 'fp-ts/lib/Option';
 import { type Root } from 'hast';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
@@ -673,8 +674,8 @@ export const Puzzle = ({
       }
 
       const mkey = fromKeyboardEvent(e);
-      if (mkey) {
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey };
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);
         e.preventDefault();
       }
@@ -709,8 +710,8 @@ export const Puzzle = ({
   const keyboardHandler = useCallback(
     (key: string) => {
       const mkey = fromKeyString(key);
-      if (mkey !== null) {
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey };
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);
       }
     },

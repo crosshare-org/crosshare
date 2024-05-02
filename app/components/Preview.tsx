@@ -1,4 +1,5 @@
 import useEventListener from '@use-it/event-listener';
+import { isSome } from 'fp-ts/lib/Option';
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { FaListOl, FaRegNewspaper } from 'react-icons/fa';
 import { entryAndCrossAtPosition } from '../lib/gridBase';
@@ -74,8 +75,8 @@ export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
       const mkey = fromKeyboardEvent(e);
-      if (mkey !== null) {
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey };
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);
         e.preventDefault();
       }

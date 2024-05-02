@@ -1,5 +1,6 @@
 import useEventListener from '@use-it/event-listener';
 import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
+import { isSome } from 'fp-ts/lib/Option';
 import orderBy from 'lodash/orderBy';
 import Head from 'next/head';
 import { useCallback, useMemo, useReducer, useState } from 'react';
@@ -246,8 +247,8 @@ const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
       const mkey = fromKeyboardEvent(e);
-      if (mkey !== null) {
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey };
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);
         e.preventDefault();
       }

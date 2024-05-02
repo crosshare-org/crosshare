@@ -1,4 +1,5 @@
 import { Trans, t } from '@lingui/macro';
+import { isSome } from 'fp-ts/lib/Option';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -72,15 +73,15 @@ async function puzzlesListForMonth(
           [number, LinkablePuzzle, ConstructorPageBase | null, boolean] | null
         > => {
           const dbpuzzle = await getMiniForDate(new Date(year, month, day + 1));
-          if (dbpuzzle === null) {
+          if (!isSome(dbpuzzle)) {
             return null;
           }
-          const puzzle = puzzleFromDB(dbpuzzle);
-          const cp = await userIdToPage(dbpuzzle.a);
-          const isPatron = await isUserPatron(dbpuzzle.a);
+          const puzzle = puzzleFromDB(dbpuzzle.value);
+          const cp = await userIdToPage(dbpuzzle.value.a);
+          const isPatron = await isUserPatron(dbpuzzle.value.a);
           return [
             day + 1,
-            toLinkablePuzzle({ ...puzzle, id: dbpuzzle.id }),
+            toLinkablePuzzle({ ...puzzle, id: dbpuzzle.value.id }),
             cp,
             isPatron,
           ];

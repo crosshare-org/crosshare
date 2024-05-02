@@ -1,4 +1,5 @@
 import useEventListener from '@use-it/event-listener';
+import { isSome } from 'fp-ts/lib/Option';
 import {
   useCallback,
   useEffect,
@@ -84,8 +85,8 @@ export function AlternateSolutionEditor(props: {
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
       const mkey = fromKeyboardEvent(e);
-      if (mkey !== null) {
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey };
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);
         e.preventDefault();
       }
@@ -122,8 +123,8 @@ export function AlternateSolutionEditor(props: {
   const keyboardHandler = useCallback(
     (key: string) => {
       const mkey = fromKeyString(key);
-      if (mkey !== null) {
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey };
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);
       }
     },

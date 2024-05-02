@@ -1,11 +1,12 @@
 import { PHASE_PRODUCTION_SERVER } from 'next/constants.js';
+import { withSentryConfig } from '@sentry/nextjs';
 
 const distDir = 'nextjs';
 const baseConfig = {
   reactStrictMode: true,
   distDir: distDir,
   eslint: {
-    dirs: ['components', 'lib', 'pages', 'reducers'], // TODO add "scripts"
+    dirs: ["components", "lib", "pages", "reducers"], // TODO add "scripts"
   },
   poweredByHeader: false,
   productionBrowserSourceMaps: true,
@@ -23,11 +24,26 @@ const baseConfig = {
       ],
     ],
   },
+  sentry: {
+    hideSourceMaps: false,
+  },
+};
+
+const sentryWebpackPluginOptions = {
+  // Additional config options for the Sentry Webpack plugin. Keep in mind that
+  // the following options are set automatically, and overriding them is not
+  // recommended:
+  //   release, url, org, project, authToken, configFile, stripPrefix,
+  //   urlPrefix, include, ignore
+
+  silent: true, // Suppresses all logs
+  // For all available options, see:
+  // https://github.com/getsentry/sentry-webpack-plugin#options.
 };
 
 export default async (phase) => {
   if (phase === PHASE_PRODUCTION_SERVER) {
-    return baseConfig;
+    return withSentryConfig(baseConfig, sentryWebpackPluginOptions);
   }
 
   const bundleAnalyzer = await import('@next/bundle-analyzer');
@@ -36,10 +52,15 @@ export default async (phase) => {
     enabled: process.env.ANALYZE === 'true',
   });
 
-  return withBundleAnalyzer({
-    ...baseConfig,
-    env: {
-      FIREBASE_PROJECT_ID: 'mdcrosshare',
-    },
-  });
+  return withBundleAnalyzer(
+    withSentryConfig(
+      {
+        ...baseConfig,
+        env: {
+          FIREBASE_PROJECT_ID: 'mdcrosshare',
+        },
+      },
+      sentryWebpackPluginOptions
+    )
+  );
 };

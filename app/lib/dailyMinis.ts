@@ -1,4 +1,6 @@
 import { getDocs, limit, query, where } from 'firebase/firestore';
+import { Option, isSome, none, some } from 'fp-ts/Option';
+import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   DBPuzzleT,
@@ -16,33 +18,33 @@ export function setMiniForDate(pds: string, id: string) {
   sessionStorage.setItem(key, id);
 }
 
-export async function getMiniIdForDate(d: Date): Promise<string | null> {
+export async function getMiniIdForDate(d: Date): Promise<Option<string>> {
   const key = 'dmid-' + prettifyDateString(getDateString(d));
   const fromStorage = sessionStorage.getItem(key);
   if (fromStorage) {
-    return fromStorage;
+    return some(fromStorage);
   }
   const existing = dailyMiniIdsByDate.get(key);
   if (existing) {
-    return existing;
+    return some(existing);
   }
   if (existing === null) {
-    return null;
+    return none;
   }
   const puz = await getMiniForDate(d, true);
-  if (puz === null) {
+  if (!isSome(puz)) {
     dailyMiniIdsByDate.set(key, null);
-    return null;
+    return none;
   }
-  dailyMiniIdsByDate.set(key, puz.id);
-  sessionStorage.setItem(key, puz.id);
-  return puz.id;
+  dailyMiniIdsByDate.set(key, puz.value.id);
+  sessionStorage.setItem(key, puz.value.id);
+  return some(puz.value.id);
 }
 
 export async function getMiniForDate(
   d: Date,
   allowMissing?: boolean
-): Promise<(DBPuzzleT & { id: string }) | null> {
+): Promise<Option<DBPuzzleT & { id: string }>> {
   const dbres = await getDocs(
     query(
       getCollection('c'),
@@ -56,13 +58,13 @@ export async function getMiniForDate(
     if (!allowMissing) {
       console.error('no dm for date ', d);
     }
-    return null;
+    return none;
   }
   const validationResult = DBPuzzleV.decode(doc.data());
-  if (validationResult._tag === 'Right') {
-    return { ...validationResult.right, id: doc.id };
+  if (isRight(validationResult)) {
+    return some({ ...validationResult.right, id: doc.id });
   }
   console.error('invalid puzzle ', doc.id);
   console.error(PathReporter.report(validationResult).join(','));
-  return null;
+  return none;
 }

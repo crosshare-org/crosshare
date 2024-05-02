@@ -1,5 +1,6 @@
 import useEventListener from '@use-it/event-listener';
 import type { User } from 'firebase/auth';
+import { isSome } from 'fp-ts/lib/Option';
 import {
   Dispatch,
   MouseEvent,
@@ -839,13 +840,13 @@ const GridMode = ({
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
       const mkey = fromKeyboardEvent(e);
-      if (mkey !== null) {
+      if (isSome(mkey)) {
         e.preventDefault();
-        if (mkey.k === KeyK.Enter && !state.isEnteringRebus) {
+        if (mkey.value.k === KeyK.Enter && !state.isEnteringRebus) {
           reRunAutofill();
           return;
         }
-        if (mkey.k === KeyK.Exclamation) {
+        if (mkey.value.k === KeyK.Exclamation) {
           const entry = getMostConstrainedEntry();
           if (entry !== null) {
             const ca: ClickedEntryAction = {
@@ -856,15 +857,15 @@ const GridMode = ({
           }
           return;
         }
-        if (mkey.k === KeyK.Undo) {
+        if (mkey.value.k === KeyK.Undo) {
           dispatch({ type: 'UNDO' });
           return;
         }
-        if (mkey.k === KeyK.Redo) {
+        if (mkey.value.k === KeyK.Redo) {
           dispatch({ type: 'REDO' });
           return;
         }
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey };
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);
       }
     },
@@ -1057,8 +1058,8 @@ const GridMode = ({
   const keyboardHandler = useCallback(
     (key: string) => {
       const mkey = fromKeyString(key);
-      if (mkey !== null) {
-        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey };
+      if (isSome(mkey)) {
+        const kpa: KeypressAction = { type: 'KEYPRESS', key: mkey.value };
         dispatch(kpa);
       }
     },

@@ -1,3 +1,4 @@
+import { either } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 
 export class Timestamp {
@@ -47,15 +48,11 @@ const validateTimestamp: t.Validate<unknown, Timestamp> = (i, c) => {
   if (isTimestamp(i)) {
     return t.success(new Timestamp(i.toMillis()));
   }
-  const res = t
-    .type({ seconds: t.number, nanoseconds: t.number })
-    .validate(i, c);
-  if (res._tag === 'Right') {
-    return t.success(
-      new Timestamp(res.right.seconds * 1000 + res.right.nanoseconds / 1000)
-    );
-  }
-  return t.failure(i, c);
+  return either.chain(
+    t.type({ seconds: t.number, nanoseconds: t.number }).validate(i, c),
+    (obj) =>
+      t.success(new Timestamp(obj.seconds * 1000 + obj.nanoseconds / 1000))
+  );
 };
 
 export const timestamp = new t.Type<Timestamp, Timestamp, unknown>(

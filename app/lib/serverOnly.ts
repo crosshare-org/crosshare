@@ -6,6 +6,8 @@ import {
   getFirestore,
 } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
+import { isRight } from 'fp-ts/lib/Either';
+import { isSome } from 'fp-ts/lib/Option';
 import type { Root } from 'hast';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { GetServerSideProps } from 'next';
@@ -251,7 +253,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   }
 
   const validationResult = DBPuzzleV.decode(dbres.data());
-  if (validationResult._tag === 'Right') {
+  if (isRight(validationResult)) {
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
     const fromDB = puzzleFromDB(validationResult.right);
     const grid = addClues(
@@ -330,11 +332,11 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     if (tryMiniDate <= today) {
       tryMiniDate = addDays(tryMiniDate, -1);
       const puzzle = await getMiniForDate(tryMiniDate);
-      if (puzzle !== null) {
+      if (isSome(puzzle)) {
         nextPuzzle = {
-          puzzleId: puzzle.id,
+          puzzleId: puzzle.value.id,
           linkText: 'the previous daily mini crossword',
-          puzzleTitle: puzzle.t,
+          puzzleTitle: puzzle.value.t,
         };
       }
     }
@@ -342,11 +344,11 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
 
   if (!nextPuzzle) {
     const puzzle = await getMiniForDate(today);
-    if (puzzle !== null) {
+    if (isSome(puzzle)) {
       nextPuzzle = {
-        puzzleId: puzzle.id,
+        puzzleId: puzzle.value.id,
         linkText: "today's daily mini crossword",
-        puzzleTitle: puzzle.t,
+        puzzleTitle: puzzle.value.t,
       };
     }
   }

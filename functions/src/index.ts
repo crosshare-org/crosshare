@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import { PathReporter } from 'io-ts/lib/PathReporter';
+import { isRight } from 'fp-ts/lib/Either';
 
 import { runAnalytics } from '../../app/lib/analytics';
 import { queueEmails } from './queueEmails';
@@ -39,7 +40,7 @@ export const autoModerator = functions.pubsub
     console.log('running automoderator');
     const settingsDoc = await getCollection('settings').doc('settings').get();
     const result = AdminSettingsV.decode(settingsDoc.data());
-    if (result._tag !== 'Right') {
+    if (!isRight(result)) {
       console.error(PathReporter.report(result).join(','));
       throw new Error('Malformed admin settings');
     }
@@ -121,7 +122,7 @@ export const analytics = functions.pubsub
     const data = value.data();
     if (data) {
       const result = CronStatusV.decode(data);
-      if (result._tag !== 'Right') {
+      if (!isRight(result)) {
         console.error(PathReporter.report(result).join(','));
         throw new Error('Malformed cron_status');
       }

@@ -1,6 +1,6 @@
 import { updateProfile } from 'firebase/auth';
 import { query, where } from 'firebase/firestore';
-import type { Either, Right } from 'fp-ts/lib/Either';
+import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -13,9 +13,6 @@ import { NotificationT, NotificationV } from './notificationTypes';
 import { AccountPrefsV } from './prefs';
 import { parseUserInfo } from './userinfo';
 import { logAsyncErrors } from './utils';
-
-const isRight = <A>(ma: Either<unknown, A>): ma is Right<A> =>
-  ma._tag === 'Right';
 
 export function useAuth(): AuthContextValue {
   const [isAdmin, setIsAdmin] = useState(false);

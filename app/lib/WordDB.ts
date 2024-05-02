@@ -1,3 +1,4 @@
+import { isRight } from 'fp-ts/lib/Either';
 import { get, set } from 'idb-keyval';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -69,7 +70,7 @@ export const useWordDB = (
           console.log('loaded');
           if (validate) {
             const validationResult = WordDBV.decode(db);
-            if (validationResult._tag === 'Right') {
+            if (isRight(validationResult)) {
               console.log('validated');
               wordDB = validationResult.right;
               dbStatus = DBStatus.present;
@@ -147,7 +148,7 @@ export const rawBuild = (wordlist: [string, number][]): WordDBT => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateAndSet = async (dled: any): Promise<void> => {
   const validationResult = WordDBV.decode(dled);
-  if (validationResult._tag === 'Right') {
+  if (isRight(validationResult)) {
     console.log('validated');
     wordDB = validationResult.right;
     await set(STORAGE_KEY, wordDB);

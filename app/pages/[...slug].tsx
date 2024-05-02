@@ -1,3 +1,4 @@
+import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -32,7 +33,7 @@ const getFollowerIds = async (userId: string) => {
   }
 
   const validationResult = FollowersV.decode(followersRes.data());
-  if (validationResult._tag !== 'Right') {
+  if (!isRight(validationResult)) {
     console.error('could not decode followers for', userId);
     console.error(PathReporter.report(validationResult).join(','));
     return [];
@@ -53,7 +54,7 @@ const getFollowingIds = async (userId: string) => {
   }
 
   const validationResult = AccountPrefsV.decode(prefsRes.data());
-  if (validationResult._tag !== 'Right') {
+  if (!isRight(validationResult)) {
     console.error('could not decode prefs for', userId);
     console.error(PathReporter.report(validationResult).join(','));
     return [];

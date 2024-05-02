@@ -2,6 +2,7 @@
 
 It lives here so we can test it. */
 import { Timestamp as FBTimestamp } from 'firebase-admin/firestore';
+import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   ConstructorStatsForPuzzleT,
@@ -49,7 +50,7 @@ export async function runAnalytics(
       return null;
     }
     const dbpuzzle = DBPuzzleV.decode(puzzleRes.data());
-    if (dbpuzzle._tag !== 'Right') {
+    if (!isRight(dbpuzzle)) {
       console.error(PathReporter.report(dbpuzzle).join(','));
       throw new Error('Malformed puzzle: ' + puzzleId);
     }
@@ -68,7 +69,7 @@ export async function runAnalytics(
       const psvalue = await getCollection('s').doc(puzzleId).get();
       if (psvalue.exists) {
         const result = PuzzleStatsV.decode(psvalue.data());
-        if (result._tag !== 'Right') {
+        if (!isRight(result)) {
           console.error(PathReporter.report(result).join(','));
           throw new Error('Malformed puzzle stats');
         }
@@ -112,7 +113,7 @@ export async function runAnalytics(
 
   for (const doc of value.docs) {
     const validationResult = LegacyPlayV.decode(doc.data());
-    if (validationResult._tag !== 'Right') {
+    if (!isRight(validationResult)) {
       console.error(PathReporter.report(validationResult).join(','));
       throw new Error('Malformed play');
     }
@@ -162,7 +163,7 @@ export async function runAnalytics(
       const dsvalue = await getCollection('ds').doc(dateString).get();
       if (dsvalue.exists) {
         const result = DailyStatsV.decode(dsvalue.data());
-        if (result._tag !== 'Right') {
+        if (!isRight(result)) {
           console.error(PathReporter.report(result).join(','));
           throw new Error('Malformed daily stats');
         }
@@ -205,7 +206,7 @@ export async function runAnalytics(
   console.log('Now updating meta stats for ' + metaSubmissions.size + ' plays');
   for (const doc of metaSubmissions.docs) {
     const validationResult = LegacyPlayV.decode(doc.data());
-    if (validationResult._tag !== 'Right') {
+    if (!isRight(validationResult)) {
       console.error(PathReporter.report(validationResult).join(','));
       throw new Error('Malformed play');
     }
