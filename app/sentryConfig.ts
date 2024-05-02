@@ -4,7 +4,6 @@ export const config = {
   dsn:
     SENTRY_DSN ||
     'https://aef749dfcec64668bf922b8fbe4c0b41@o117398.ingest.sentry.io/5192748',
-  tracesSampleRate: 0.05,
   ignoreErrors: [
     'ResizeObserver loop completed with undelivered notifications',
     'ResizeObserver loop limit exceeded',
