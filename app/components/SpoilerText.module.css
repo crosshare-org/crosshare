@@ -5,6 +5,6 @@
   background-color: var(--text);
 }
 
-.spoiler * {
+.spoiler[data-hidden='true'] * {
   visibility: hidden;
 }
