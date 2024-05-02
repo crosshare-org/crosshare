@@ -92,7 +92,7 @@
 
 /* stylelint-disable-next-line media-feature-name-no-unknown */
 @media (small-and-up) {
-  .key {
+  .key[data-only-on-tablet='true'] {
     display: flex;
   }
 
