@@ -16,6 +16,7 @@ import { ToolTipText } from './ToolTipText';
 
 export const FollowButton = ({
   page,
+  className,
   ...props
 }: {
   page: ConstructorPageBase;
@@ -79,7 +80,7 @@ export const FollowButton = ({
           ''
         )}
         <Button
-          className={styles.btn}
+          className={clsx(styles.btn, className)}
           hollow
           disabled={!isMounted || authCtx.loading}
           onClick={(e) => {
@@ -96,7 +97,7 @@ export const FollowButton = ({
     return (
       <>
         <Button
-          className={styles.btn}
+          className={clsx(styles.btn, className)}
           hollow
           disabled
           text={
@@ -118,7 +119,7 @@ export const FollowButton = ({
     return (
       <>
         <Button
-          className={clsx(styles.btn, styles.hoverError)}
+          className={clsx(styles.btn, styles.hoverError, className)}
           onClick={logAsyncErrors(async (e) => {
             e.stopPropagation();
             await Promise.all([
@@ -145,7 +146,7 @@ export const FollowButton = ({
   }
   return (
     <Button
-      className={styles.btn}
+      className={clsx(styles.btn, className)}
       hollow
       onClick={(e) => {
         e.stopPropagation();
