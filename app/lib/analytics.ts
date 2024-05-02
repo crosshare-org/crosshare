@@ -2,7 +2,6 @@
 
 It lives here so we can test it. */
 import { Timestamp as FBTimestamp } from 'firebase-admin/firestore';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   ConstructorStatsForPuzzleT,
   DBPuzzleT,
@@ -16,6 +15,7 @@ import {
   getDateString,
 } from './dbtypes';
 import { getCollection, toFirestore } from './firebaseAdminWrapper';
+import { PathReporter } from './pathReporter';
 import { Timestamp } from './timestamp';
 import { isMetaSolution } from './utils';
 

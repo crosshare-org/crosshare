@@ -1,9 +1,9 @@
 import type { User } from 'firebase/auth';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { PlayWithoutUserT, PlayWithoutUserV } from '../lib/dbtypes';
 import { getDocRef } from '../lib/firebaseWrapper';
+import { PathReporter } from '../lib/pathReporter';
 import { cachePlay, getPlayFromCache } from '../lib/plays';
 import { AccountPrefsT } from '../lib/prefs';
 import { PuzzlePageProps, PuzzlePageResultProps } from '../lib/serverOnly';

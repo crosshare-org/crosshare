@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { PathReporter } from 'io-ts/lib/PathReporter';
+import { PathReporter } from './pathReporter';
 
 export function fromLocalStorage<A>(
   key: string,

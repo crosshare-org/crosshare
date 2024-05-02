@@ -1,5 +1,4 @@
 import * as functions from 'firebase-functions';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 
 import { runAnalytics } from '../../app/lib/analytics';
 import { queueEmails } from './queueEmails';
@@ -23,6 +22,7 @@ import {
   mapEachResult,
 } from '../../app/lib/firebaseAdminWrapper';
 import { Timestamp } from '../../app/lib/timestamp';
+import { PathReporter } from '../../app/lib/pathReporter';
 
 export const ratings = functions
   .runWith({ timeoutSeconds: 540, memory: '512MB' })

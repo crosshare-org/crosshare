@@ -2,9 +2,9 @@
 
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { DBPuzzleV } from '../lib/dbtypes';
 import { getAdminApp } from '../lib/firebaseAdminWrapper';
+import { PathReporter } from '../lib/pathReporter';
 
 if (process.argv.length !== 3) {
   throw Error(
@@ -31,6 +31,10 @@ async function generatePuzFile() {
   console.log(`email: ${user.email}`);
 }
 
-generatePuzFile().then(() => {
-  console.log('Done');
-});
+generatePuzFile()
+  .then(() => {
+    console.log('Done');
+  })
+  .catch((e: unknown) => {
+    console.error(e);
+  });

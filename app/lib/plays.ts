@@ -2,7 +2,6 @@ import equal from 'fast-deep-equal';
 import type { User } from 'firebase/auth';
 import { getDoc, setDoc } from 'firebase/firestore';
 import * as t from 'io-ts';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   LegacyPlayV,
   PlayT,
@@ -11,6 +10,7 @@ import {
   downloadOptionallyTimestamped,
 } from './dbtypes';
 import { getDocRef } from './firebaseWrapper';
+import { PathReporter } from './pathReporter';
 import { fromLocalStorage } from './storage';
 
 const PlayMapV = t.record(t.string, t.union([PlayWithoutUserV, t.null]));

@@ -1,4 +1,3 @@
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { GetServerSideProps } from 'next';
 import { StatsPage } from '../../../components/PuzzleStats';
 import {
@@ -7,6 +6,7 @@ import {
   PuzzleStatsViewT,
 } from '../../../lib/dbtypes';
 import { getCollection } from '../../../lib/firebaseAdminWrapper';
+import { PathReporter } from '../../../lib/pathReporter';
 import { PuzzleResult, puzzleFromDB } from '../../../lib/types';
 
 interface PageProps {

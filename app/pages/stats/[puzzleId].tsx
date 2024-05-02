@@ -1,4 +1,3 @@
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDocument } from 'react-firebase-hooks/firestore';
@@ -9,6 +8,7 @@ import { StatsPage } from '../../components/PuzzleStats';
 import { getFromSessionOrDB } from '../../lib/dbUtils';
 import { DBPuzzleV, PuzzleStatsT, PuzzleStatsV } from '../../lib/dbtypes';
 import { getDocRef } from '../../lib/firebaseWrapper';
+import { PathReporter } from '../../lib/pathReporter';
 import { withTranslation } from '../../lib/translation';
 import { PuzzleResult, puzzleFromDB } from '../../lib/types';
 import { logAsyncErrors, slugify } from '../../lib/utils';

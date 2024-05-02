@@ -1,9 +1,9 @@
 #!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
 
 import { getFirestore } from 'firebase-admin/firestore';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { DonationsListV } from '../lib/dbtypes';
 import { getAdminApp } from '../lib/firebaseAdminWrapper';
+import { PathReporter } from '../lib/pathReporter';
 
 if (process.argv.length !== 3) {
   throw Error(
@@ -36,6 +36,10 @@ async function getTotal() {
   console.log(`total: ${total}`);
 }
 
-getTotal().then(() => {
-  console.log('Done');
-});
+getTotal()
+  .then(() => {
+    console.log('Done');
+  })
+  .catch((e: unknown) => {
+    console.error(e);
+  });

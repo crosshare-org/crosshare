@@ -1,4 +1,3 @@
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
@@ -12,6 +11,7 @@ import { FollowersV } from '../lib/dbtypes';
 import { getCollection } from '../lib/firebaseAdminWrapper';
 import { markdownToHast } from '../lib/markdown/markdown';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles';
+import { PathReporter } from '../lib/pathReporter';
 import { isUserPatron } from '../lib/patron';
 import { AccountPrefsV } from '../lib/prefs';
 import { getStorageUrl, userIdToPage } from '../lib/serverOnly';

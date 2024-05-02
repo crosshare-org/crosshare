@@ -1,5 +1,4 @@
 import { getDocs, limit, query, where } from 'firebase/firestore';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   DBPuzzleT,
   DBPuzzleV,
@@ -7,6 +6,7 @@ import {
   prettifyDateString,
 } from './dbtypes';
 import { getCollection } from './firebaseWrapper';
+import { PathReporter } from './pathReporter';
 
 const dailyMiniIdsByDate = new Map<string, string | null>();
 

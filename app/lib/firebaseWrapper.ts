@@ -20,10 +20,10 @@ import {
 import { connectStorageEmulator, getStorage as gS } from 'firebase/storage';
 import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import cloneDeepWith from 'lodash/cloneDeepWith';
 import { firebaseConfig } from '../firebaseConfig';
 import { firebaseConfig as firebaseEmulatorConfig } from '../firebaseConfig.emulators';
+import { PathReporter } from './pathReporter';
 import { isTimestamp } from './timestamp';
 
 // Initialize Firebase

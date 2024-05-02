@@ -1,6 +1,6 @@
 import type { Root } from 'hast';
 import * as t from 'io-ts';
-import { PathReporter } from 'io-ts/lib/PathReporter';
+import { PathReporter } from './pathReporter';
 import { timestamp } from './timestamp';
 
 export const ConstructorPageV = t.intersection([

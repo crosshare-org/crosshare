@@ -1,8 +1,8 @@
 import { get, set } from 'idb-keyval';
 import * as t from 'io-ts';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { useEffect, useState } from 'react';
 import * as BA from './bitArray';
+import { PathReporter } from './pathReporter';
 import { logAsyncErrors } from './utils';
 
 const WordDBV = t.type({

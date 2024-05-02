@@ -1,10 +1,10 @@
 import { WhereFilterOp } from '@firebase/firestore-types';
 import { Timestamp as FBTimestamp, Query } from 'firebase-admin/firestore';
 import * as t from 'io-ts';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { LinkablePuzzle, toLinkablePuzzle } from '../components/PuzzleLink';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes';
 import { getCollection, mapEachResult } from './firebaseAdminWrapper';
+import { PathReporter } from './pathReporter';
 import { Timestamp, timestamp } from './timestamp';
 import { puzzleFromDB } from './types';
 

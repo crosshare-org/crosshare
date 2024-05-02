@@ -1,5 +1,4 @@
 import { Timestamp as FBTimestamp } from 'firebase-admin/firestore';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   CronStatusT,
   CronStatusV,
@@ -17,6 +16,7 @@ import {
   expectedOutcome,
   gFunc,
 } from './glickoUtil';
+import { PathReporter } from './pathReporter';
 import { AccountPrefsV } from './prefs';
 import { Timestamp } from './timestamp';
 import { notEmpty } from './utils';

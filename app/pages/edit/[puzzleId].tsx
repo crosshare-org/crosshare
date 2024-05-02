@@ -7,7 +7,6 @@ import {
   deleteField,
   updateDoc,
 } from 'firebase/firestore';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -36,6 +35,7 @@ import { DefaultTopBar } from '../../components/TopBar';
 import { DBPuzzleT, DBPuzzleV } from '../../lib/dbtypes';
 import { getDocRef } from '../../lib/firebaseWrapper';
 import { markdownToHast } from '../../lib/markdown/markdown';
+import { PathReporter } from '../../lib/pathReporter';
 import { COVER_PIC } from '../../lib/style';
 import { withTranslation } from '../../lib/translation';
 import {

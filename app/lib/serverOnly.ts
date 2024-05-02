@@ -7,7 +7,6 @@ import {
 } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import type { Root } from 'hast';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { GetServerSideProps } from 'next';
 import { NextPuzzleLink } from '../components/Puzzle';
 import {
@@ -27,6 +26,7 @@ import {
   validate as validateEmbedOptions,
 } from './embedOptions';
 import { markdownToHast } from './markdown/markdown';
+import { PathReporter } from './pathReporter';
 import { isUserPatron } from './patron';
 import {
   Comment,

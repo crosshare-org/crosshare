@@ -3,7 +3,6 @@
 import fs from 'fs';
 import util from 'util';
 import { getFirestore } from 'firebase-admin/firestore';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import {
   DBPuzzleT,
   DBPuzzleV,
@@ -11,6 +10,7 @@ import {
   getDateString,
 } from '../lib/dbtypes';
 import { getAdminApp } from '../lib/firebaseAdminWrapper';
+import { PathReporter } from '../lib/pathReporter';
 import { sizeTag } from '../lib/sizeTag';
 import { slugify } from '../lib/utils';
 

@@ -1,7 +1,6 @@
 import { updateProfile } from 'firebase/auth';
 import { query, where } from 'firebase/firestore';
 import type { Either, Right } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
@@ -10,6 +9,7 @@ import { ConstructorPageV } from './constructorPage';
 import { getAuth, getCollection, getDocRef } from './firebaseWrapper';
 import { getDisplayName } from './hooks';
 import { NotificationT, NotificationV } from './notificationTypes';
+import { PathReporter } from './pathReporter';
 import { AccountPrefsV } from './prefs';
 import { parseUserInfo } from './userinfo';
 import { logAsyncErrors } from './utils';

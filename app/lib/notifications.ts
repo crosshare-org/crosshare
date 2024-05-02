@@ -1,4 +1,3 @@
-import { PathReporter } from 'io-ts/lib/PathReporter';
 import { CommentWithRepliesT, DBPuzzleT, FollowersV } from './dbtypes';
 import { getCollection } from './firebaseAdminWrapper';
 import {
@@ -10,6 +9,7 @@ import {
   newPuzzleNotification,
   replyNotification,
 } from './notificationTypes';
+import { PathReporter } from './pathReporter';
 
 function checkComments(
   after: CommentWithRepliesT[],
