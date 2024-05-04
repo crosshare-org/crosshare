@@ -137,20 +137,6 @@ export function getWarningStats(state: BuilderState) {
   };
 }
 
-export function hasEnumerations(state: BuilderState): boolean {
-  let enums = 0;
-  let total = 0;
-  for (const clues of Object.values(state.clues)) {
-    for (const clue of clues) {
-      if (parseClueEnumeration(clue) != null) {
-        enums++;
-      }
-      total++;
-    }
-  }
-  return enums >= total / 2;
-}
-
 export function hasSelection<T extends GridInterfaceState>(state: T): boolean {
   return isBuilderState(state) && hasMultipleCells(state.selection);
 }

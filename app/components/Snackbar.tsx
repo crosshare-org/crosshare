@@ -163,23 +163,23 @@ export function useSnackbar() {
   const [snackbarTimeout, setSnackbarTimeout] = useState<ReturnType<
     typeof setTimeout
   > | null>(null);
-  function openSnackbar(message: string | ReactNode) {
+  function openSnackbar(message: string | ReactNode, duration = DURATION) {
     context.dispatch({ type: ActionTypes.ShowSnackbar, message });
     setSnackbarTimeout(
       setTimeout(() => {
         close();
-      }, DURATION)
+      }, duration)
     );
   }
 
-  function showSnackbar(message: string | ReactNode) {
+  function showSnackbar(message: string | ReactNode, duration?: number) {
     if (context.state.isOpen) {
       close();
       setTimeout(() => {
-        openSnackbar(message);
+        openSnackbar(message, duration);
       }, ANIMATION_DELAY);
     } else {
-      openSnackbar(message);
+      openSnackbar(message, duration);
     }
   }
 

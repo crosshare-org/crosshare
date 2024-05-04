@@ -28,9 +28,3 @@
 .alternate + .alternate::before {
   content: ', ';
 }
-
-.enumButtons {
-  display: flex;
-  gap: 0.5em;
-  align-items: center;
-}

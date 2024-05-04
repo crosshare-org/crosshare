@@ -21,7 +21,7 @@ import {
   BuilderState,
   DelAlternateAction,
   PublishAction,
-  RemoveEnumerationsAction,
+  RestoreCluesAction,
   SetBlogPostAction,
   SetClueAction,
   SetCommentsDisabledAction,
@@ -33,7 +33,6 @@ import {
   UpdateContestAction,
   getClueProps,
 } from '../reducers/builderReducer';
-import { hasEnumerations } from '../reducers/builderUtils';
 import { PuzzleAction } from '../reducers/commonActions';
 import { AlternateSolutionEditor } from './AlternateSolutionEditor';
 import { Button, ButtonAsLink } from './Buttons';
@@ -49,6 +48,7 @@ import {
 import { Markdown } from './Markdown';
 import { Overlay } from './Overlay';
 import { PublishOverlay } from './PublishOverlay';
+import { useSnackbar } from './Snackbar';
 import { TagEditor } from './TagEditor';
 import { TagList } from './TagList';
 import { ToolTipText } from './ToolTipText';
@@ -208,6 +208,8 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
   const [editingTags, setEditingTags] = useState(false);
   const privateUntil = state.isPrivateUntil?.toDate();
   const autoTags = autoTag(state);
+
+  const { showSnackbar } = useSnackbar();
 
   const cluedGrid = useMemo(() => {
     const clueProps = getClueProps(
@@ -907,26 +909,31 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
           </div>
           <div>
             <h3>Enumerations</h3>
-            <div className={styles.enumButtons}>
-              <Button
+            <div>
+              <ButtonAsLink
+                text="Add Enumerations"
                 onClick={() => {
                   props.dispatch({
                     type: 'ADDENUMERATIONS',
                   } as AddEnumerationsAction);
+                  showSnackbar(
+                    <>
+                      Enumerations added!&nbsp;&nbsp;
+                      <ButtonAsLink
+                        text="Undo"
+                        onClick={() => {
+                          props.dispatch({
+                            type: 'RESTORECLUES',
+                          } as RestoreCluesAction);
+                        }}
+                      />
+                    </>,
+                    8000
+                  );
                 }}
-                disabled={hasEnumerations(state)}
-                text="Add Enumerations"
-              />
-              <Button
-                onClick={() => {
-                  props.dispatch({
-                    type: 'REMOVEENUMERATIONS',
-                  } as RemoveEnumerationsAction);
-                }}
-                disabled={!hasEnumerations(state)}
-                text="Remove Enumerations"
               />
               <ToolTipText
+                className="marginLeft0-5em"
                 text={<FaInfoCircle />}
                 tooltip={
                   <>

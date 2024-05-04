@@ -72,6 +72,7 @@ export interface BuilderState extends GridInterfaceState {
   userTags: string[];
   undoHistory: BuilderGrid[];
   undoIndex: number;
+  cluesBackup: Record<string, string[]> | null;
 }
 
 function initialBuilderStateFromSaved(
@@ -225,6 +226,7 @@ export function initialBuilderState({
     userTags,
     undoHistory: [fromCells(initialGrid)],
     undoIndex: 0,
+    cluesBackup: null,
   });
 }
 
@@ -452,13 +454,13 @@ function isAddEnumerationsAction(
   return action.type === 'ADDENUMERATIONS';
 }
 
-export interface RemoveEnumerationsAction extends PuzzleAction {
-  type: 'REMOVEENUMERATIONS';
+export interface RestoreCluesAction extends PuzzleAction {
+  type: 'RESTORECLUES';
 }
-function isRemoveEnumerationsAction(
+function isRestoreCluesAction(
   action: PuzzleAction
-): action is RemoveEnumerationsAction {
-  return action.type === 'REMOVEENUMERATIONS';
+): action is RestoreCluesAction {
+  return action.type === 'RESTORECLUES';
 }
 
 function normalizeAnswer(answer: string): string {
@@ -691,20 +693,13 @@ function _builderReducer(
         parseClueEnumeration(clue) == null ? `${clue} (${answer.length})` : clue
       );
     }
-    return { ...state, clues };
+    return { ...state, clues, cluesBackup: { ...state.clues } };
   }
-  if (isRemoveEnumerationsAction(action)) {
-    const clues = { ...state.clues };
-    for (const [answer, answerClues] of Object.entries(clues)) {
-      clues[answer] = answerClues.map((clue) => {
-        const enumeration = parseClueEnumeration(clue);
-        if (enumeration != null) {
-          clue = clue.substring(0, clue.indexOf(enumeration)).trim();
-        }
-        return clue;
-      });
+  if (isRestoreCluesAction(action)) {
+    if (state.cluesBackup == null) {
+      return state;
     }
-    return { ...state, clues };
+    return { ...state, clues: { ...state.cluesBackup }, cluesBackup: null };
   }
   if (isClickedFillAction(action)) {
     const grid = gridWithEntrySet(state.grid, action.entryIndex, action.value);
