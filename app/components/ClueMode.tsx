@@ -16,10 +16,12 @@ import { isMetaSolution } from '../lib/utils';
 import { addClues } from '../lib/viewableGrid';
 import {
   AddAlternateAction,
+  AddEnumerationsAction,
   BuilderEntry,
   BuilderState,
   DelAlternateAction,
   PublishAction,
+  RemoveEnumerationsAction,
   SetBlogPostAction,
   SetClueAction,
   SetCommentsDisabledAction,
@@ -31,6 +33,7 @@ import {
   UpdateContestAction,
   getClueProps,
 } from '../reducers/builderReducer';
+import { hasEnumerations } from '../reducers/builderUtils';
 import { PuzzleAction } from '../reducers/commonActions';
 import { AlternateSolutionEditor } from './AlternateSolutionEditor';
 import { Button, ButtonAsLink } from './Buttons';
@@ -901,6 +904,48 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                 </>
               }
             />
+          </div>
+          <div>
+            <h3>Enumerations</h3>
+            <div className={styles.enumButtons}>
+              <Button
+                onClick={() => {
+                  props.dispatch({
+                    type: 'ADDENUMERATIONS',
+                  } as AddEnumerationsAction);
+                }}
+                disabled={hasEnumerations(state)}
+                text="Add Enumerations"
+              />
+              <Button
+                onClick={() => {
+                  props.dispatch({
+                    type: 'REMOVEENUMERATIONS',
+                  } as RemoveEnumerationsAction);
+                }}
+                disabled={!hasEnumerations(state)}
+                text="Remove Enumerations"
+              />
+              <ToolTipText
+                text={<FaInfoCircle />}
+                tooltip={
+                  <>
+                    <p>
+                      An enumeration is a section of a clue that indicates how
+                      long each word of the answer is. Enumerations usually
+                      appear in parentheses at the end of the clue, and
+                      sometimes include information about punctuation,
+                      abbreviation, and more.
+                    </p>
+                    <p>
+                      When enumerations are added automatically, they will
+                      assume each answer is one single word. Don&apos;t forget
+                      to update them if necessary before publishing!
+                    </p>
+                  </>
+                }
+              />
+            </div>
           </div>
           <div className="marginTop1em">
             <h3>Comments</h3>

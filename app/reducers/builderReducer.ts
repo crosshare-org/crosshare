@@ -2,6 +2,7 @@ import equal from 'fast-deep-equal';
 import { DBPuzzleT } from '../lib/dbtypes';
 import { getDocId } from '../lib/firebaseWrapper';
 import { gridWithEntrySet } from '../lib/gridBase';
+import { parseClueEnumeration } from '../lib/parse';
 import { GridSelection, emptySelection } from '../lib/selection';
 import { Timestamp } from '../lib/timestamp';
 import {
@@ -442,6 +443,24 @@ function isUpdateSelectionAction(
   return action.type === 'UPDATESELECTION';
 }
 
+export interface AddEnumerationsAction extends PuzzleAction {
+  type: 'ADDENUMERATIONS';
+}
+function isAddEnumerationsAction(
+  action: PuzzleAction
+): action is AddEnumerationsAction {
+  return action.type === 'ADDENUMERATIONS';
+}
+
+export interface RemoveEnumerationsAction extends PuzzleAction {
+  type: 'REMOVEENUMERATIONS';
+}
+function isRemoveEnumerationsAction(
+  action: PuzzleAction
+): action is RemoveEnumerationsAction {
+  return action.type === 'REMOVEENUMERATIONS';
+}
+
 function normalizeAnswer(answer: string): string {
   return answer.trim();
 }
@@ -664,6 +683,28 @@ function _builderReducer(
       ...state,
       alternates: state.alternates.filter((a) => !equal(a, action.alternate)),
     };
+  }
+  if (isAddEnumerationsAction(action)) {
+    const clues = { ...state.clues };
+    for (const [answer, answerClues] of Object.entries(clues)) {
+      clues[answer] = answerClues.map((clue) =>
+        parseClueEnumeration(clue) == null ? `${clue} (${answer.length})` : clue
+      );
+    }
+    return { ...state, clues };
+  }
+  if (isRemoveEnumerationsAction(action)) {
+    const clues = { ...state.clues };
+    for (const [answer, answerClues] of Object.entries(clues)) {
+      clues[answer] = answerClues.map((clue) => {
+        const enumeration = parseClueEnumeration(clue);
+        if (enumeration != null) {
+          clue = clue.substring(0, clue.indexOf(enumeration)).trim();
+        }
+        return clue;
+      });
+    }
+    return { ...state, clues };
   }
   if (isClickedFillAction(action)) {
     const grid = gridWithEntrySet(state.grid, action.entryIndex, action.value);
