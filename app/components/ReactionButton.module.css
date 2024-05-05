@@ -1,0 +1,10 @@
+.btn {
+  min-width: 4em;
+  margin-bottom: 0.25em;
+  padding: 0.2em;
+
+  font-size: 0.7em;
+  vertical-align: bottom;
+
+  box-shadow: none;
+}

@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 import type { Root } from 'hast';
-import { useContext } from 'react';
+import { ReactNode, useContext } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
 import { ConstructorPageWithMarkdown } from '../lib/constructorPage';
 import { GlickoScoreT } from '../lib/dbtypes';
@@ -32,6 +32,7 @@ export const PuzzleHeading = (props: {
   blogPost: Root | null;
   tags: string[];
   dailyMiniDate?: string;
+  likeButton?: ReactNode;
 }) => {
   const { isEmbed } = useContext(EmbedContext);
 
@@ -41,7 +42,16 @@ export const PuzzleHeading = (props: {
       <ProfilePicAndName
         {...props}
         bonusMargin={1}
-        topLine={props.title}
+        topLine={
+          props.likeButton !== undefined ? (
+            <>
+              <span className="marginRight1em">{props.title}</span>
+              {props.likeButton}
+            </>
+          ) : (
+            props.title
+          )
+        }
         byLine={
           <p className="overflowWrapBreakWord">
             <DifficultyBadge puzzleRating={props.rating} />

@@ -16,7 +16,7 @@ export function hasOwnProperty<
 }
 
 // io-ts enum support
-const fromEnum = <T extends string, TEnumValue extends string | number>(
+export const fromEnum = <T extends string, TEnumValue extends string | number>(
   enumName: string,
   theEnum: { [key in T]: TEnumValue }
 ): t.Type<TEnumValue> => {
@@ -201,6 +201,7 @@ export interface PuzzleT {
   userTags?: string[];
   autoTags?: string[];
   forcedTags?: string[];
+  likes: string[];
 }
 
 export interface PuzzleResult extends PuzzleT {
@@ -308,6 +309,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     userTags: dbPuzzle.tg_u || [],
     autoTags: dbPuzzle.tg_a || [],
     forcedTags: dbPuzzle.tg_f || [],
+    likes: dbPuzzle.lk || [],
   };
 }
 

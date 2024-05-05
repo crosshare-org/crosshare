@@ -199,5 +199,11 @@ service cloud.firestore {
     match /settings/tags {
       allow read: if true;
     }
+    match /reaction/{reactionId} {
+      allow write: if request.auth.uid != null
+        && request.auth.uid == request.resource.data.u
+        && reactionId == (request.resource.data.u + '-' + request.resource.data.k + '-' + request.resource.data.p);
+    }
+
   }
 }

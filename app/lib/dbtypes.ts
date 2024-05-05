@@ -234,6 +234,8 @@ const DBPuzzleOptionalV = t.partial({
   tg_i: t.array(t.string),
   /** disable comments? */
   no_cs: t.boolean,
+  /** likes (user ids) */
+  lk: t.array(t.string),
 });
 
 export const DBPuzzleV = t.intersection([

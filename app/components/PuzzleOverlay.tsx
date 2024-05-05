@@ -4,6 +4,7 @@ import type { User } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { Dispatch, ReactNode, useContext, useEffect, useState } from 'react';
 import { GoScreenFull } from 'react-icons/go';
+import { PuzzleReaction } from '../lib/reactions';
 import { Direction, PuzzleResultWithAugmentedComments } from '../lib/types';
 import {
   isMetaSolution,
@@ -23,6 +24,7 @@ import { Overlay } from './Overlay';
 import { NextPuzzleLink } from './Puzzle';
 import { PuzzleHeading } from './PuzzleHeading';
 import styles from './PuzzleOverlay.module.css';
+import { ReactionButton } from './ReactionButton';
 import { SharingButtons } from './SharingButtons';
 import { PastDistanceToNow } from './TimeDisplay';
 
@@ -191,6 +193,11 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         constructorPage={props.puzzle.constructorPage}
         constructorIsPatron={props.puzzle.constructorIsPatron}
         guestConstructor={props.puzzle.guestConstructor}
+        likeButton={
+          props.overlayType === OverlayType.Success ? (
+            <ReactionButton kind={PuzzleReaction.Like} puzzle={props.puzzle} />
+          ) : undefined
+        }
       />
       <div className="textAlignCenter">
         {props.overlayType === OverlayType.BeginPause ? (
