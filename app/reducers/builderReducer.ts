@@ -24,6 +24,7 @@ import {
   moveUp,
 } from '../lib/viewableGrid';
 import {
+  forEachCluedEntry,
   getWarningStats,
   hasSelection,
   postEdit,
@@ -486,21 +487,10 @@ export function getClueProps(
   const dc: string[] = [];
   const dn: number[] = [];
 
-  const wordCounts: Record<string, number> = {};
-
-  sortedEntries.forEach((entryidx) => {
-    const e = entries[entryidx];
-    if (!e) {
-      return;
-    }
+  forEachCluedEntry(sortedEntries, entries, clues, (e, clueString) => {
     if (requireComplete && !e.completedWord) {
       throw new Error('Publish unfinished grid');
     }
-    const word = e.completedWord ?? '';
-    const clueArray = clues[word] ?? [];
-    const idx = wordCounts[word] ?? 0;
-    wordCounts[word] = idx + 1;
-    const clueString = clueArray[idx] ?? '';
 
     if (requireComplete && !clueString) {
       throw new Error('Bad clue for ' + e.completedWord);
@@ -822,14 +812,14 @@ function _builderReducer(
           .join(', ')})`
       );
     }
-    if (stats.missingEnums) {
+    if (stats.missingEnums && stats.missingEnums.size > 0) {
       warnings.push(
         `Some clues are missing enumerations: (${Array.from(stats.missingEnums)
           .sort()
           .join(', ')})`
       );
     }
-    if (stats.wrongEnums) {
+    if (stats.wrongEnums && stats.wrongEnums.size > 0) {
       warnings.push(
         `Some clues have enumerations that don't match the answer length: (${Array.from(
           stats.wrongEnums

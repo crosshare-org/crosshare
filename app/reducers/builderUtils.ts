@@ -1,7 +1,7 @@
 import { entryWord, hasUnches } from '../lib/gridBase';
 import { parseClueEnumeration, parseClueReferences } from '../lib/parse';
 import { emptySelection, hasMultipleCells } from '../lib/selection';
-import { entryString } from '../lib/viewableGrid';
+import { ViewableEntry, entryString } from '../lib/viewableGrid';
 import type { BuilderState } from './builderReducer';
 import type { GridInterfaceState } from './gridReducer';
 
@@ -51,12 +51,41 @@ export function validateGrid(state: BuilderState) {
   };
 }
 
+export function forEachCluedEntry(
+  sortedEntries: BuilderState['grid']['sortedEntries'],
+  entries: BuilderState['grid']['entries'],
+  clues: BuilderState['clues'],
+  callback: (
+    entry: ViewableEntry,
+    clue: string,
+    word: string,
+    clueIndex: number
+  ) => void
+): void {
+  const wordCounts = new Map<string, number>();
+  for (const entryIndex of sortedEntries) {
+    const entry = entries[entryIndex];
+    if (!entry) {
+      continue;
+    }
+
+    const word = entry.completedWord ?? '';
+    const clueIndex = wordCounts.get(word) ?? 0;
+    wordCounts.set(word, clueIndex + 1);
+    const clueString = clues[word]?.[clueIndex] ?? '';
+    callback(entry, clueString, word, clueIndex);
+  }
+}
+
 export function getWarningStats(state: BuilderState) {
+  const { clues, grid } = state;
+  const { entries, sortedEntries } = grid;
+
   const shortWords = new Set<string>();
 
-  for (const [i, entry] of state.grid.entries.entries()) {
+  for (const [i, entry] of entries.entries()) {
     if (entry.cells.length <= 2) {
-      shortWords.add(entryWord(state.grid, i));
+      shortWords.add(entryWord(grid, i));
     }
   }
 
@@ -67,36 +96,41 @@ export function getWarningStats(state: BuilderState) {
   const digitsRegex = /(\d+)/g;
 
   const gridEntries = new Set<string>();
-  state.grid.entries.forEach((entry) => {
+  entries.forEach((entry) => {
     gridEntries.add(entryString(entry));
   });
 
-  for (const [word, clues] of Object.entries(state.clues)) {
-    for (const clue of clues) {
-      const refs = parseClueReferences(clue);
-      if (!refs.every((ref) => gridEntries.has(entryString(ref)))) {
-        unmatchedRefs.add(word);
-      }
+  let numValidClues = 0;
+  forEachCluedEntry(sortedEntries, entries, clues, (_entry, clue, word) => {
+    clue = clue.trim();
+    if (!clue) {
+      return;
+    }
+    numValidClues++;
 
-      const clueEnum = parseClueEnumeration(clue);
-      if (clueEnum == null) {
-        missingEnums.add(word);
-      } else {
-        const length = clueEnum.match(digitsRegex)?.reduce((sum, str) => {
-          const val = +str;
-          return isNaN(val) ? sum : sum + val;
-        }, 0);
-        if (length == null || length !== word.length) {
-          wrongEnums.add(word);
-        }
+    const refs = parseClueReferences(clue);
+    if (!refs.every((ref) => gridEntries.has(entryString(ref)))) {
+      unmatchedRefs.add(word);
+    }
+
+    const clueEnum = parseClueEnumeration(clue);
+    if (clueEnum == null) {
+      missingEnums.add(word);
+    } else {
+      const length = clueEnum.match(digitsRegex)?.reduce((sum, str) => {
+        const val = +str;
+        return isNaN(val) ? sum : sum + val;
+      }, 0);
+      if (length == null || length !== word.length) {
+        wrongEnums.add(word);
       }
     }
-  }
-  const enumsExpected = missingEnums.size < Object.keys(state.clues).length / 2;
+  });
+  const enumsExpected = missingEnums.size < numValidClues / 2;
 
   return {
     shortWords,
-    hasUnches: hasUnches(state.grid) && !state.userTags.includes('cryptic'),
+    hasUnches: hasUnches(grid) && !state.userTags.includes('cryptic'),
     unmatchedRefs,
     missingEnums: enumsExpected ? missingEnums : null,
     wrongEnums: enumsExpected ? wrongEnums : null,
