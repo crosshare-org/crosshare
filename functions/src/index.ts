@@ -23,6 +23,7 @@ import {
 } from '../../app/lib/firebaseAdminWrapper';
 import { Timestamp } from '../../app/lib/timestamp';
 import { PathReporter } from '../../app/lib/pathReporter';
+import { ReactionT, ReactionV } from '../../app/lib/reactions';
 
 export const ratings = functions
   .runWith({ timeoutSeconds: 540, memory: '512MB' })
@@ -101,10 +102,18 @@ export const autoModerator = functions.pubsub
     }
 
     console.log(
-      `done filtering, automoderating ${filtered.length} of them. Getting deletions`
+      `done filtering, automoderating ${filtered.length} of them. Getting reactions`
     );
 
-    await moderateComments(filtered, deletions);
+    const reactions: ReactionT[] = await mapEachResult(
+      getCollection('reaction'),
+      ReactionV,
+      (r) => r
+    );
+
+    console.log(`got ${reactions.length} reactions`);
+
+    await moderateComments(filtered, deletions, reactions);
 
     console.log('done');
     return;

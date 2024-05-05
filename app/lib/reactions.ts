@@ -19,7 +19,7 @@ export const ReactionV = t.type({
   s: t.boolean,
 });
 
-type ReactionT = t.TypeOf<typeof ReactionV>;
+export type ReactionT = t.TypeOf<typeof ReactionV>;
 
 const StorageV = t.record(t.string, t.boolean);
 
@@ -27,8 +27,8 @@ function storageKey(userId: string, kind: PuzzleReaction) {
   return `reaction:${userId}:${kind}`;
 }
 
-function firebaseKey(userId: string, kind: PuzzleReaction, puzzleId: string) {
-  return `${userId}-${kind}-${puzzleId}`;
+export function firebaseKey(reaction: ReactionT) {
+  return `${reaction.u}-${reaction.k}-${reaction.p}`;
 }
 
 export function savedReactions(
@@ -80,8 +80,5 @@ export async function setReaction(
     k: kind,
     s: set,
   };
-  return setDoc(
-    getDocRef('reaction', firebaseKey(userId, kind, puzzleId)),
-    reaction
-  );
+  return setDoc(getDocRef('reaction', firebaseKey(reaction)), reaction);
 }

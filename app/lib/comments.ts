@@ -7,6 +7,7 @@ import {
   DBPuzzleV,
 } from './dbtypes';
 import { getCollection, toFirestore } from './firebaseAdminWrapper';
+import { PuzzleReaction, ReactionT, firebaseKey } from './reactions';
 
 function findCommentById(
   comments: CommentWithRepliesT[],
@@ -28,7 +29,8 @@ function findCommentById(
 
 export async function moderateComments(
   commentsForModeration: CommentForModerationWithIdT[],
-  deletions: CommentDeletionWithIdT[]
+  deletions: CommentDeletionWithIdT[],
+  reactions: ReactionT[]
 ) {
   // Puzzles cache so we only load each once
   const puzzles: Record<string, DBPuzzleT> = {};
@@ -106,10 +108,28 @@ export async function moderateComments(
     await getCollection('deleteComment').doc(deletion.i).delete();
   }
 
+  // Now handle reactions
+  for (const reaction of reactions) {
+    const puzzle = await puzzleFromCache(reaction.p);
+    if (puzzle) {
+      const likes = puzzle.lk || [];
+      switch (reaction.k) {
+        case PuzzleReaction.Like:
+          if (reaction.s && !likes.includes(reaction.u)) {
+            likes.push(reaction.u);
+            puzzle.lk = likes;
+          } else if (!reaction.s && likes.includes(reaction.u)) {
+            puzzle.lk = likes.filter((uid) => uid !== reaction.u);
+          }
+      }
+    }
+    await getCollection('reaction').doc(firebaseKey(reaction)).delete();
+  }
+
   // Now we've merged and deleted, so update the puzzles:
   for (const [puzzleId, dbPuzzle] of Object.entries(puzzles)) {
     await getCollection('c')
       .doc(puzzleId)
-      .update(toFirestore({ cs: dbPuzzle.cs }));
+      .update(toFirestore({ cs: dbPuzzle.cs, lk: dbPuzzle.lk }));
   }
 }
