@@ -26,6 +26,11 @@ export const config = {
     'auth/popup-closed-by-user',
     'auth/network-request-failed',
     'auth/cancelled-popup-request',
+    'Connection to Indexed Database server lost.',
+    'Database deleted by request of the user',
+    '.getRestrictions is not a function',
+    'anyweb-to-anyweb-unprivileged-api-v1',
+    'auth/user-disabled',
   ],
   // Note: if you want to override the automatic release value, do not set a
   // `release` value here - use the environment variable `SENTRY_RELEASE`, so
