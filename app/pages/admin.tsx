@@ -135,6 +135,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
           </li>
         ))}
       </ul>
+      {props.likes.length > 0 ? <div>Likes: {props.likes.length}</div> : ''}
       <div className="marginBottom1em">
         <button
           // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
