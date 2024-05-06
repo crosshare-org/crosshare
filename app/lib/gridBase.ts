@@ -1,4 +1,4 @@
-import { Direction, PosAndDir, Position } from './types';
+import { BLOCK, Direction, EMPTY, PosAndDir, Position } from './types';
 
 export interface EntryBase {
   index: number;
@@ -264,7 +264,7 @@ export function entriesFromCells(
           if (cellVal === undefined || entry === undefined) {
             throw new Error('cellid oob');
           }
-          if (cellVal === '.') {
+          if (cellVal === BLOCK) {
             break;
           }
           entry[dir] = {
@@ -272,7 +272,7 @@ export function entriesFromCells(
             wordIndex: entryPattern.length,
             cellIndex: wordlen,
           };
-          if (cellVal === ' ') {
+          if (cellVal === EMPTY || cellVal === '') {
             isComplete = false;
           }
           entryCells.push({ row: yt, col: xt });

@@ -93,3 +93,16 @@ test('missing refs', () => {
     ]
   `);
 });
+
+test('basic publish errors', () => {
+  const state = getState(['a', 'b', 'c', ' ', ' ', ' ', 'd', 'e', 'f'], {
+    abc: 'test with good enum (3)',
+    def: 'test with bad enum (5)',
+  });
+  expect(builderReducer(state, publish).publishErrors).toMatchInlineSnapshot(`
+    [
+      "All squares in the grid must be filled in",
+      "Puzzle must have a title set",
+    ]
+  `);
+});

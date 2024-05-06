@@ -758,6 +758,7 @@ function _builderReducer(
     const missingClues = Object.entries(
       state.grid.entries
         .map((e) => e.completedWord ?? '')
+        .filter((e) => e)
         .reduce((counts: Record<string, number>, entry) => {
           counts[entry] = (counts[entry] ?? 0) + 1;
           return counts;
