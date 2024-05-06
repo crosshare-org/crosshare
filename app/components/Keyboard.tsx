@@ -62,6 +62,13 @@ const Key = (props: KeyProps) => {
         props.onKeypress(props.keyStroke);
         e.preventDefault();
       }}
+      onTouchStart={(e) => {
+        props.onKeypress(props.keyStroke);
+        e.preventDefault();
+      }}
+      onTouchEnd={(e) => {
+        e.preventDefault();
+      }}
     >
       {props.display !== undefined ? props.display : props.keyStroke}
     </button>
