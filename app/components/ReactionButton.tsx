@@ -101,7 +101,7 @@ export function ReactionButton(props: ReactionButtonProps) {
         className={styles.btn}
         onClick={onClick}
         hollow={!isSet}
-        disabled={!mounted || submitting}
+        disabled={!mounted || submitting || props.puzzle.authorId === user?.uid}
       >
         <Emoji kind={props.kind} /> {submitting ? '…' : count > 0 ? count : ''}
       </Button>

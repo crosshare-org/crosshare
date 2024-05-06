@@ -115,7 +115,11 @@ export async function moderateComments(
       const likes = puzzle.lk || [];
       switch (reaction.k) {
         case PuzzleReaction.Like:
-          if (reaction.s && !likes.includes(reaction.u)) {
+          if (
+            reaction.s &&
+            !likes.includes(reaction.u) &&
+            puzzle.a !== reaction.u
+          ) {
             likes.push(reaction.u);
             puzzle.lk = likes;
           } else if (!reaction.s && likes.includes(reaction.u)) {
