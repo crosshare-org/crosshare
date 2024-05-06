@@ -140,6 +140,7 @@ type BuilderProps = PartialBy<
     | 'moderated'
     | 'publishTime'
     | 'rating'
+    | 'likes'
   >,
   | 'clues'
   | 'title'
