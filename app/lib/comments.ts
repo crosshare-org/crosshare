@@ -134,6 +134,6 @@ export async function moderateComments(
   for (const [puzzleId, dbPuzzle] of Object.entries(puzzles)) {
     await getCollection('c')
       .doc(puzzleId)
-      .update(toFirestore({ cs: dbPuzzle.cs, lk: dbPuzzle.lk }));
+      .update(toFirestore({ cs: dbPuzzle.cs || [], lk: dbPuzzle.lk || [] }));
   }
 }
