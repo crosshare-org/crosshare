@@ -3,16 +3,16 @@
  */
 
 import {
+  RulesTestEnvironment,
   assertFails,
   assertSucceeds,
   initializeTestEnvironment,
-  RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
 import { addDoc, collection } from 'firebase/firestore';
-import { CommentWithRepliesT } from '../lib/dbtypes';
-import { Timestamp } from '../lib/timestamp';
-import { filterDeletedComments } from '../lib/serverOnly';
 import { cloneDeep } from 'lodash';
+import { CommentWithRepliesT } from '../lib/dbtypes';
+import { filterDeletedComments } from '../lib/serverOnly';
+import { Timestamp } from '../lib/timestamp';
 
 const projectId = 'demo-comments-testing';
 let testEnv: RulesTestEnvironment;

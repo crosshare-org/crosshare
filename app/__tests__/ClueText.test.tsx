@@ -1,7 +1,7 @@
-import { act, render } from '../lib/testingUtils';
-import { addClues, CluedGrid, fromCells } from '../lib/viewableGrid';
 import { ClueText } from '../components/ClueText';
 import { GridContext } from '../components/GridContext';
+import { act, render } from '../lib/testingUtils';
+import { CluedGrid, addClues, fromCells } from '../lib/viewableGrid';
 
 /*
 "What's a Grecian ___?" "About $25 a week!"
