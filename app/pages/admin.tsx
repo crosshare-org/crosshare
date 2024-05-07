@@ -368,7 +368,7 @@ export default requiresAdmin(() => {
               <Link href={`/crosswords/${cfm.pid}`}>puzzle</Link> {cfm.n}:
               <Markdown hast={markdownToHast({ text: cfm.c })} />
               <button
-                className="marginRight2em"
+                className="marginRight2em marginTop1em"
                 onClick={logAsyncErrors(async () => {
                   await updateDoc(getDocRef('cfm', cfm.i), {
                     approved: true,
@@ -381,7 +381,7 @@ export default requiresAdmin(() => {
                 Approve
               </button>
               <button
-                className="marginRight2em"
+                className="marginRight2em marginTop1em"
                 onClick={logAsyncErrors(async () => {
                   await updateDoc(getDocRef('cfm', cfm.i), {
                     rejected: true,
@@ -394,6 +394,7 @@ export default requiresAdmin(() => {
                 Reject
               </button>
               <button
+                className="marginTop1em"
                 onClick={logAsyncErrors(async () => {
                   await updateDoc(getDocRef('settings', 'settings'), {
                     noAuto: arrayUnion(cfm.a),
