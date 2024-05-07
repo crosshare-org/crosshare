@@ -334,6 +334,8 @@ export default requiresAdmin(() => {
                     onClick={logAsyncErrors(async () => {
                       await updateDoc(getDocRef('settings', 'settings'), {
                         noAuto: arrayUnion(rc.ca),
+                      }).then(() => {
+                        showSnackbar('no automod');
                       });
                     })}
                   >
@@ -379,6 +381,7 @@ export default requiresAdmin(() => {
                 Approve
               </button>
               <button
+                className="marginRight2em"
                 onClick={logAsyncErrors(async () => {
                   await updateDoc(getDocRef('cfm', cfm.i), {
                     rejected: true,
@@ -389,6 +392,17 @@ export default requiresAdmin(() => {
                 })}
               >
                 Reject
+              </button>
+              <button
+                onClick={logAsyncErrors(async () => {
+                  await updateDoc(getDocRef('settings', 'settings'), {
+                    noAuto: arrayUnion(cfm.a),
+                  }).then(() => {
+                    showSnackbar('no automod');
+                  });
+                })}
+              >
+                Set No Automod
               </button>
             </div>
           ))
