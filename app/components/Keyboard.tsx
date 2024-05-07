@@ -50,6 +50,7 @@ interface KeyProps {
   className?: string;
 }
 const Key = (props: KeyProps) => {
+  const touched = useRef(false);
   return (
     <button
       data-small-font={props.smallFont}
@@ -59,15 +60,16 @@ const Key = (props: KeyProps) => {
       data-not-on-tablet={props.notOnTablet}
       className={clsx(styles.key, props.className)}
       onClick={(e) => {
-        props.onKeypress(props.keyStroke);
         e.preventDefault();
+        if (touched.current) {
+          touched.current = false;
+        } else {
+          props.onKeypress(props.keyStroke);
+        }
       }}
-      onTouchStart={(e) => {
+      onTouchStart={() => {
+        touched.current = true;
         props.onKeypress(props.keyStroke);
-        e.preventDefault();
-      }}
-      onTouchEnd={(e) => {
-        e.preventDefault();
       }}
     >
       {props.display !== undefined ? props.display : props.keyStroke}
