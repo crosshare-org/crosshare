@@ -911,7 +911,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
             <h3>Enumerations</h3>
             <div>
               <ButtonAsLink
-                text="Add Enumerations"
+                text="Add enumerations"
                 onClick={() => {
                   props.dispatch({
                     type: 'ADDENUMERATIONS',
