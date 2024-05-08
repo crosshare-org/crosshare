@@ -14,11 +14,11 @@
   max-width: 30em;
   padding: 10px;
 
-  color: var(--white);
+  color: var(--text);
   text-align: center;
 
   visibility: visible;
-  background-color: var(--black);
+  background-color: var(--bg);
   border-radius: 5px;
 }
 

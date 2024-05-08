@@ -21,11 +21,11 @@
   min-height: 32px;
   padding: 0.5em;
 
-  color: var(--snackbar-text);
+  color: var(--text);
 
   visibility: hidden;
   opacity: 0;
-  background-color: var(--snackbar-bg);
+  background-color: var(--bg);
   border-radius: 3px;
   box-shadow: 0 0 3px 3px rgb(0 0 0 / 50%);
 

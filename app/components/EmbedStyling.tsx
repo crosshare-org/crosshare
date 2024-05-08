@@ -46,6 +46,7 @@ export function EmbedStyling(props: EmbedStylingProps) {
     }
   }
   const colorTheme = colorThemeString(props);
+  const reverseTheme = colorThemeString({ ...props, darkMode: !props.darkMode });
   return (
     <Head>
       <style
@@ -57,6 +58,7 @@ body {
   background-color: transparent !important;
 }
 html, body.light-mode, body.dark-mode {${colorTheme}}
+.reverse-theme {${reverseTheme}}
 `,
         }}
       />

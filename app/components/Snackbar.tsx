@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 import { ANIMATION_DELAY } from '../lib/style';
+import { clsx } from '../lib/utils';
 import styles from './Snackbar.module.css';
 
 enum ActionTypes {
@@ -60,7 +61,7 @@ export function Snackbar({
   isOpen: boolean;
 }) {
   return (
-    <div data-showing={message !== null && isOpen} className={styles.snackbar}>
+    <div data-showing={message !== null && isOpen} className={clsx(styles.snackbar, 'reverse-theme')}>
       {message}
     </div>
   );

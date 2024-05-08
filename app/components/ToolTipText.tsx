@@ -70,7 +70,7 @@ export const ToolTipText = (props: {
         <FloatingPortal>
           <span
             data-hidden={middlewareData.hide?.referenceHidden}
-            className={styles.tip}
+            className={clsx(styles.tip, 'reverse-theme')}
             ref={refs.setFloating}
             style={floatingStyles}
             {...getFloatingProps()}
@@ -78,7 +78,7 @@ export const ToolTipText = (props: {
             <FloatingArrow
               ref={arrowRef}
               context={context}
-              fill={'var(--black)'}
+              fill={'var(--bg)'}
             />
             {props.tooltip}
           </span>

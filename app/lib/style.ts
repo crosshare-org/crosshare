@@ -96,6 +96,7 @@ export const colorTheme = ({
     '--readable-primary': makeReadable(bg, p),
     '--blue': darkMode ? mix('blue', 'white', 0.5) : 'blue',
     '--green': darkMode ? mix('green', 'white', 0.5) : 'green',
+    '--black': darkMode ? '#eee' : 'black',
     '--onprimary': readableColor(p, darkMode),
     '--lighter': lighter,
     '--on-lighter': readableColor(lighter, darkMode),
@@ -122,7 +123,6 @@ export const colorTheme = ({
     '--logo-white': darkMode ? DARK_MODE_WHITE : 'white',
     '--default-text': darkMode ? '#777' : '#999',
     '--caption': '#6c757d',
-    '--black': darkMode ? '#eee' : 'black',
     '--verified-on-primary': makeReadable(p, verified),
     '--verified-on-lighter': makeReadable(lighter, verified),
     '--verified-on-bg': makeReadable(cellBG, verified),
@@ -139,7 +139,6 @@ export const colorTheme = ({
     '--conceal-text': darkMode ? 'white' : 'rgba(0, 0, 0, 0.7)',
     '--cell-bg': cellBG,
     '--cell-wall': 'black',
-    '--white': darkMode ? '#000' : 'white',
     '--key-bg': darkMode ? 'rgba(255, 255, 255, 0.15)' : 'white',
     '--key-ul': darkMode ? 'black' : '#b5b5b5',
     '--kb-bg': darkMode ? '#191919' : '#ececec',
@@ -147,8 +146,6 @@ export const colorTheme = ({
     '--text-input-bg': darkMode ? '#333' : '#f5f5f5',
     '--text-input-border': darkMode ? '#000' : '#777',
     '--text-input-border-disabled': darkMode ? '#333' : '#BBB',
-    '--snackbar-bg': darkMode ? '#ddd' : '#121212',
-    '--snackbar-text': darkMode ? 'black' : '#ddd',
     '--social-text': darkMode ? '#ddd' : '#fff',
   };
 };
