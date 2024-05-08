@@ -687,12 +687,31 @@ function _builderReducer(
     };
   }
   if (isAddEnumerationsAction(action)) {
+    // Deep copy clues
     const clues = { ...state.clues };
-    for (const [answer, answerClues] of Object.entries(clues)) {
-      clues[answer] = answerClues.map((clue) =>
-        parseClueEnumeration(clue) == null ? `${clue} (${answer.length})` : clue
-      );
+    for (const answer in clues) {
+      const answerClues = clues[answer];
+      if (answerClues != null) {
+        clues[answer] = answerClues.slice();
+      }
     }
+    // Modify only clues that have entries
+    forEachCluedEntry(
+      state.grid.sortedEntries,
+      state.grid.entries,
+      state.clues,
+      (_entry, clue, answer, clueIndex) => {
+        const answerClues = clues[answer];
+        if (
+          answerClues != null &&
+          answerClues.length > clueIndex &&
+          clue.trim().length > 0 &&
+          parseClueEnumeration(clue) == null
+        ) {
+          answerClues[clueIndex] = `${clue} (${answer.length})`;
+        }
+      }
+    );
     return { ...state, clues, cluesBackup: { ...state.clues } };
   }
   if (isRestoreCluesAction(action)) {
