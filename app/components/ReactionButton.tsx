@@ -1,5 +1,7 @@
 import { Plural } from '@lingui/macro';
+import { User } from 'firebase/auth';
 import {
+  Fragment,
   type ReactNode,
   useCallback,
   useContext,
@@ -82,10 +84,10 @@ function ToolTip(props: {
     <>
       Liked by{' '}
       {parts.map((val, idx) => (
-        <>
+        <Fragment key={idx}>
           {idx > 0 && idx < parts.length - 1 ? ',' : ''}
           {idx > 0 && idx === parts.length - 1 ? ' and' : ''} {val}
-        </>
+        </Fragment>
       ))}
     </>
   );
@@ -119,20 +121,29 @@ export function ReactionButton(props: ReactionButtonProps) {
     void toggle();
   }
 
-  const toggle = useCallback(async () => {
-    if (!user || user.isAnonymous) {
-      return Promise.resolve();
-    }
-    setSubmitting(true);
-    return setReaction(props.kind, !isSet, props.puzzle.id, user.uid)
-      .then(() => {
-        setSubmitting(false);
-        setIsSet(!isSet);
-      })
-      .catch((e: unknown) => {
-        console.error('error submitting reaction', e);
-      });
-  }, [isSet, props.kind, props.puzzle.id, user]);
+  const toggle = useCallback(
+    async (newUser?: User) => {
+      const userId =
+        newUser && !newUser.isAnonymous
+          ? newUser.uid
+          : user && !user.isAnonymous
+          ? user.uid
+          : null;
+      if (!userId) {
+        return Promise.resolve();
+      }
+      setSubmitting(true);
+      return setReaction(props.kind, !isSet, props.puzzle.id, userId)
+        .then(() => {
+          setSubmitting(false);
+          setIsSet(!isSet);
+        })
+        .catch((e: unknown) => {
+          console.error('error submitting reaction', e);
+        });
+    },
+    [isSet, props.kind, props.puzzle.id, user]
+  );
 
   const others = { ...savedReactions(props.kind, props.puzzle) };
   // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
@@ -155,9 +166,20 @@ export function ReactionButton(props: ReactionButtonProps) {
           <div className="textAlignCenter">
             <p>Login with Google to {props.kind} this puzzle</p>
             {mounted && user ? (
-              <GoogleLinkButton user={user} postSignIn={toggle} />
+              <GoogleLinkButton
+                user={user}
+                postSignIn={async (u) => {
+                  await toggle(u);
+                  setShowOverlay(false);
+                }}
+              />
             ) : (
-              <GoogleSignInButton postSignIn={toggle} />
+              <GoogleSignInButton
+                postSignIn={async (u) => {
+                  await toggle(u);
+                  setShowOverlay(false);
+                }}
+              />
             )}
           </div>
         </Overlay>
