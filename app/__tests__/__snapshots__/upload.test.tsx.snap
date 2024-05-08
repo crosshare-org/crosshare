@@ -27,8 +27,8 @@ exports[`upload a puzzle 1`] = `
   width: 100%;
   height: 100%;
   font-size: 21.333333333333332px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
   background: var(--primary);
 }
 
@@ -62,8 +62,8 @@ exports[`upload a puzzle 1`] = `
   width: 100%;
   height: 100%;
   font-size: 21.333333333333332px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
   background: var(--lighter);
 }
 
@@ -86,9 +86,9 @@ exports[`upload a puzzle 1`] = `
   width: 100%;
   height: 100%;
   font-size: 21.333333333333332px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  background: var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  background: black;
 }
 
 .emotion-29 {
@@ -100,8 +100,8 @@ exports[`upload a puzzle 1`] = `
   width: 100%;
   height: 100%;
   font-size: 21.333333333333332px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
   background: var(--cell-bg);
 }
 
@@ -114,9 +114,9 @@ exports[`upload a puzzle 1`] = `
   width: 100%;
   height: 100%;
   font-size: 21.333333333333332px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-right: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
   background: var(--cell-bg);
 }
 
@@ -129,10 +129,10 @@ exports[`upload a puzzle 1`] = `
   width: 100%;
   height: 100%;
   font-size: 21.333333333333332px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-right: 1px solid var(--cell-wall);
-  background: var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  background: black;
 }
 
 .emotion-950 {
@@ -144,9 +144,9 @@ exports[`upload a puzzle 1`] = `
   width: 100%;
   height: 100%;
   font-size: 21.333333333333332px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
   background: var(--cell-bg);
 }
 
@@ -159,10 +159,10 @@ exports[`upload a puzzle 1`] = `
   width: 100%;
   height: 100%;
   font-size: 21.333333333333332px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
-  background: var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  background: black;
 }
 
 .emotion-1014 {
@@ -174,10 +174,10 @@ exports[`upload a puzzle 1`] = `
   width: 100%;
   height: 100%;
   font-size: 21.333333333333332px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
-  border-right: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
   background: var(--cell-bg);
 }
 

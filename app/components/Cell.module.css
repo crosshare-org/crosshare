@@ -46,8 +46,8 @@
 .cellContainerActiveBlock {
   --current-cell-bg: repeating-linear-gradient(
     -45deg,
-    var(--cell-wall),
-    var(--cell-wall) 10px,
+    black,
+    black 10px,
     var(--primary) 10px,
     var(--primary) 20px
   );
@@ -56,15 +56,15 @@
 .cellContainerSelectedBlock {
   --current-cell-bg: repeating-linear-gradient(
     -45deg,
-    var(--cell-wall),
-    var(--cell-wall) 10px,
+    black,
+    black 10px,
     var(--selected-cell) 10px,
     var(--selected-cell) 20px
   );
 }
 
 .cellContainerBlock {
-  --current-cell-bg: var(--cell-wall);
+  --current-cell-bg: black;
 }
 
 .cellContainerShaded {
@@ -147,8 +147,8 @@
 
 .cellVisible {
   background: var(--current-cell-bg);
-  border-top: 1px solid var(--cell-wall);
-  border-left: 1px solid var(--cell-wall);
+  border-top: 1px solid black;
+  border-left: 1px solid black;
 }
 
 .eye {
@@ -187,19 +187,19 @@
 }
 
 .borderBottom {
-  border-bottom: 1px solid var(--cell-wall);
+  border-bottom: 1px solid black;
 }
 
 .barBottom {
-  border-bottom: 0.05em solid var(--cell-wall);
+  border-bottom: 0.05em solid black;
 }
 
 .borderRight {
-  border-right: 1px solid var(--cell-wall);
+  border-right: 1px solid black;
 }
 
 .barRight {
-  border-right: 0.05em solid var(--cell-wall);
+  border-right: 0.05em solid black;
 }
 
 .enteringRebus {

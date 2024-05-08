@@ -104,10 +104,10 @@
 .block {
   background: repeating-linear-gradient(
     -45deg,
-    var(--cell-wall),
-    var(--cell-wall) 10px,
+    black,
+    black 10px,
     var(--primary) 10px,
     var(--primary) 20px
   ) !important;
-  border: 1px solid var(--cell-wall);
+  border: 1px solid black;
 }

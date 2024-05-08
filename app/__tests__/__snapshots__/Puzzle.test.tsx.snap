@@ -27,8 +27,8 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
   background: var(--lighter);
 }
 
@@ -62,8 +62,8 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
   background: var(--primary);
 }
 
@@ -93,10 +93,10 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-right: 1px solid var(--cell-wall);
-  background: var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  background: black;
 }
 
 .emotion-24 {
@@ -108,8 +108,8 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
   background: var(--cell-bg);
 }
 
@@ -122,9 +122,9 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  background: var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  background: black;
 }
 
 .emotion-41 {
@@ -136,9 +136,9 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-right: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
   background: var(--cell-bg);
 }
 
@@ -151,10 +151,10 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
-  background: var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  background: black;
 }
 
 .emotion-95 {
@@ -166,9 +166,9 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
   background: var(--cell-bg);
 }
 
@@ -181,10 +181,10 @@ exports[`anonymous user progress should be cached in local storage and db 1`] = 
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
-  border-right: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
   background: var(--cell-bg);
 }
 
@@ -785,8 +785,8 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
   background: var(--lighter);
 }
 
@@ -820,8 +820,8 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
   background: var(--primary);
 }
 
@@ -851,10 +851,10 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-right: 1px solid var(--cell-wall);
-  background: var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  background: black;
 }
 
 .emotion-24 {
@@ -866,8 +866,8 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
   background: var(--cell-bg);
 }
 
@@ -880,9 +880,9 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  background: var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  background: black;
 }
 
 .emotion-41 {
@@ -894,9 +894,9 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-right: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
   background: var(--cell-bg);
 }
 
@@ -909,10 +909,10 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
-  background: var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  background: black;
 }
 
 .emotion-95 {
@@ -924,9 +924,9 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
   background: var(--cell-bg);
 }
 
@@ -939,10 +939,10 @@ exports[`nonuser progress should be cached in local storage but not db 1`] = `
   width: 100%;
   height: 100%;
   font-size: 64px;
-  border-left: 1px solid var(--cell-wall);
-  border-top: 1px solid var(--cell-wall);
-  border-bottom: 1px solid var(--cell-wall);
-  border-right: 1px solid var(--cell-wall);
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
   background: var(--cell-bg);
 }
 

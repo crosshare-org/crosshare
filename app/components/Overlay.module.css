@@ -13,7 +13,7 @@
   width: 100%;
   height: 100%;
 
-  background-color: var(--overlay-bg);
+  background-color: rgb(0 0 0 / 85%);
 }
 
 .overlay[data-hidden='true'] {

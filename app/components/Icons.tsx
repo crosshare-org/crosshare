@@ -582,7 +582,7 @@ export const Logo = (props: IconProps & { notificationCount: number }) => {
       </rect>
       {props.notificationCount ? (
         <>
-          <circle fill="var(--notification-bg)" cx="12" cy="4" r="4" />
+          <circle fill="#de30e7" cx="12" cy="4" r="4" />
           <text x="12" y="6" textAnchor="middle" fill="white" fontSize="6">
             {props.notificationCount}
           </text>
