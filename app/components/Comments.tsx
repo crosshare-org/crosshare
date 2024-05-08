@@ -296,11 +296,7 @@ const CommentWithReplies = (
         <div className={styles.actionButtons}>
           {actionButtons.map((btn, idx) => (
             <Fragment key={idx}>
-              {!!idx && (
-                <span className="marginLeft0-5em marginRight0-5em">
-                  &middot;
-                </span>
-              )}
+              {!!idx && <span className={styles.sep} />}
               {btn}
             </Fragment>
           ))}

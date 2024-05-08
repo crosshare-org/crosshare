@@ -56,6 +56,7 @@
 .actionButton {
   display: inline-flex;
   align-items: center;
+  line-height: 1em;
 }
 
 .actionButton:hover {
@@ -63,7 +64,8 @@
 }
 
 .actionButton svg {
-  margin-right: 0.5em;
+  margin-right: 0.3em;
+  font-size: 0.9em;
 }
 
 .actionButtons {
@@ -76,4 +78,8 @@
 
 .commentView:has(.commentView:hover) > .actionButtons {
   visibility: hidden;
+}
+
+.sep {
+  margin: 0 0.5em;
 }
