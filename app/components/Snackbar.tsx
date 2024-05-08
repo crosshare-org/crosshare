@@ -6,6 +6,7 @@ import React, {
   useContext,
   useEffect,
   useReducer,
+  useRef,
   useState,
 } from 'react';
 import { IoMdCloseCircleOutline } from 'react-icons/io';
@@ -164,16 +165,12 @@ const toastId = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 
 export function useSnackbar() {
   const context = useContext(SnackbarContext);
-  const [snackbarTimeout, setSnackbarTimeout] = useState<ReturnType<
-    typeof setTimeout
-  > | null>(null);
+  const snackbarTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   function openSnackbar(message: string | ReactNode, duration = DURATION) {
     context.dispatch({ type: ActionTypes.ShowSnackbar, message });
-    setSnackbarTimeout(
-      setTimeout(() => {
-        closeSnackbar();
-      }, duration)
-    );
+    snackbarTimeout.current = setTimeout(() => {
+      closeSnackbar();
+    }, duration);
   }
 
   function showSnackbar(message: string | ReactNode, duration?: number) {
@@ -188,9 +185,9 @@ export function useSnackbar() {
   }
 
   function closeSnackbar() {
-    if (snackbarTimeout) {
-      clearTimeout(snackbarTimeout);
-      setSnackbarTimeout(null);
+    if (snackbarTimeout.current) {
+      clearTimeout(snackbarTimeout.current);
+      snackbarTimeout.current = null;
     }
     context.dispatch({ type: ActionTypes.CloseSnackbar });
   }
