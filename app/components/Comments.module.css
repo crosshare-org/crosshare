@@ -48,3 +48,32 @@
 .publishDate {
   font-style: italic;
 }
+
+.commentView {
+  margin-top: 1em;
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+}
+
+.actionButton:hover {
+  text-decoration: underline;
+}
+
+.actionButton svg {
+  margin-right: 0.5em;
+}
+
+.actionButtons {
+  visibility: hidden;
+}
+
+.commentView:hover > .actionButtons {
+  visibility: visible;
+}
+
+.commentView:has(.commentView:hover) > .actionButtons {
+  visibility: hidden;
+}

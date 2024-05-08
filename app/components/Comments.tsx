@@ -11,6 +11,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { FaComment, FaFlag, FaTrash } from 'react-icons/fa';
 import { ConstructorPageT } from '../lib/constructorPage';
 import {
   CommentDeletionT,
@@ -119,7 +120,7 @@ interface CommentProps {
 }
 const CommentView = (props: CommentProps) => {
   return (
-    <div className="marginTop1em">
+    <div className={styles.commentView}>
       <div>
         <CommentFlair
           publishTime={Math.max(
@@ -142,6 +143,15 @@ const CommentView = (props: CommentProps) => {
     </div>
   );
 };
+
+function ActionButton(props: { icon: ReactNode; text: ReactNode }) {
+  return (
+    <span className={styles.actionButton}>
+      {props.icon}
+      {props.text}
+    </span>
+  );
+}
 
 const CommentWithReplies = (
   props: PartialBy<CommentFormProps, 'user'> & {
@@ -172,7 +182,7 @@ const CommentWithReplies = (
           onClick={() => {
             setShowingForm(true);
           }}
-          text={t`Reply`}
+          text={<ActionButton icon={<FaComment />} text={t`Reply`} />}
         />
       );
     }
@@ -182,7 +192,7 @@ const CommentWithReplies = (
           onClick={() => {
             setShowingDeleteOverlay(true);
           }}
-          text={'Delete'}
+          text={<ActionButton icon={<FaTrash />} text={t`Delete`} />}
         />
       );
     }
@@ -192,7 +202,7 @@ const CommentWithReplies = (
           onClick={() => {
             setShowingReportOverlay(true);
           }}
-          text={'Report'}
+          text={<ActionButton icon={<FaFlag />} text={t`Report`} />}
         />
       );
     }
@@ -283,10 +293,14 @@ const CommentWithReplies = (
           />
         </div>
       ) : (
-        <div>
+        <div className={styles.actionButtons}>
           {actionButtons.map((btn, idx) => (
             <Fragment key={idx}>
-              {!!idx && <> &middot; </>}
+              {!!idx && (
+                <span className="marginLeft0-5em marginRight0-5em">
+                  &middot;
+                </span>
+              )}
               {btn}
             </Fragment>
           ))}
