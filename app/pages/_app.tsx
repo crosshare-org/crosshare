@@ -20,6 +20,24 @@ import {
 import '../lib/style.css';
 import { useAuth } from '../lib/useAuth';
 
+const lightTheme = colorThemeString({
+  primary: PRIMARY,
+  link: LINK,
+  errorColor: ERROR_COLOR,
+  verifiedColor: VERIFIED_COLOR,
+  darkMode: false,
+  preservePrimary: false,
+});
+
+const darkTheme = colorThemeString({
+  primary: PRIMARY,
+  link: LINK,
+  errorColor: ERROR_COLOR,
+  verifiedColor: VERIFIED_COLOR,
+  darkMode: true,
+  preservePrimary: false,
+});
+
 export function reportWebVitals(metric: NextWebVitalsMetric) {
   console.log(metric);
   if (
@@ -178,34 +196,20 @@ export default function CrosshareApp({
           key="theme"
           dangerouslySetInnerHTML={{
             __html: `
-html, body.light-mode {
-  ${colorThemeString({
-    primary: PRIMARY,
-    link: LINK,
-    errorColor: ERROR_COLOR,
-    verifiedColor: VERIFIED_COLOR,
-    darkMode: false,
-    preservePrimary: false,
-  })}}
-@media (prefers-color-scheme: dark) {
-  html {${colorThemeString({
-    primary: PRIMARY,
-    link: LINK,
-    errorColor: ERROR_COLOR,
-    verifiedColor: VERIFIED_COLOR,
-    darkMode: true,
-    preservePrimary: false,
-  })}}
+html, body.light-mode, body.dark-mode .reverse-theme {
+  ${lightTheme}
 }
-body.dark-mode {
-  ${colorThemeString({
-    primary: PRIMARY,
-    link: LINK,
-    errorColor: ERROR_COLOR,
-    verifiedColor: VERIFIED_COLOR,
-    darkMode: true,
-    preservePrimary: false,
-  })}}
+.reverse-theme, body.dark-mode, body.light-mode .reverse-theme {
+  ${darkTheme}
+}
+@media (prefers-color-scheme: dark) {
+  html {
+    ${darkTheme}
+  }
+  .reverse-theme {
+    ${lightTheme}
+  }
+}
 `,
           }}
         />

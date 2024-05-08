@@ -16,10 +16,12 @@ import { isMetaSolution } from '../lib/utils';
 import { addClues } from '../lib/viewableGrid';
 import {
   AddAlternateAction,
+  AddEnumerationsAction,
   BuilderEntry,
   BuilderState,
   DelAlternateAction,
   PublishAction,
+  RestoreCluesAction,
   SetBlogPostAction,
   SetClueAction,
   SetCommentsDisabledAction,
@@ -46,6 +48,7 @@ import {
 import { Markdown } from './Markdown';
 import { Overlay } from './Overlay';
 import { PublishOverlay } from './PublishOverlay';
+import { useSnackbar } from './Snackbar';
 import { TagEditor } from './TagEditor';
 import { TagList } from './TagList';
 import { ToolTipText } from './ToolTipText';
@@ -205,6 +208,8 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
   const [editingTags, setEditingTags] = useState(false);
   const privateUntil = state.isPrivateUntil?.toDate();
   const autoTags = autoTag(state);
+
+  const { showSnackbar, closeSnackbar } = useSnackbar();
 
   const cluedGrid = useMemo(() => {
     const clueProps = getClueProps(
@@ -901,6 +906,54 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                 </>
               }
             />
+          </div>
+          <div>
+            <h3>Enumerations</h3>
+            <div>
+              <ButtonAsLink
+                text="Add enumerations"
+                onClick={() => {
+                  props.dispatch({
+                    type: 'ADDENUMERATIONS',
+                  } as AddEnumerationsAction);
+                  showSnackbar(
+                    <>
+                      Enumerations added!&nbsp;&nbsp;
+                      <ButtonAsLink
+                        text="Undo"
+                        onClick={() => {
+                          props.dispatch({
+                            type: 'RESTORECLUES',
+                          } as RestoreCluesAction);
+                          closeSnackbar();
+                        }}
+                      />
+                    </>,
+                    8000
+                  );
+                }}
+              />
+              <ToolTipText
+                className="marginLeft0-5em"
+                text={<FaInfoCircle />}
+                tooltip={
+                  <>
+                    <p>
+                      An enumeration is a section of a clue that indicates how
+                      long each word of the answer is. Enumerations usually
+                      appear in parentheses at the end of the clue, and
+                      sometimes include information about punctuation,
+                      abbreviation, and more.
+                    </p>
+                    <p>
+                      When enumerations are added automatically, they will
+                      assume each answer is one single word. Don&apos;t forget
+                      to update them if necessary before publishing!
+                    </p>
+                  </>
+                }
+              />
+            </div>
           </div>
           <div className="marginTop1em">
             <h3>Comments</h3>

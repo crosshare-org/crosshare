@@ -2,6 +2,7 @@ import equal from 'fast-deep-equal';
 import { DBPuzzleT } from '../lib/dbtypes';
 import { getDocId } from '../lib/firebaseWrapper';
 import { gridWithEntrySet } from '../lib/gridBase';
+import { parseClueEnumeration } from '../lib/parse';
 import { GridSelection, emptySelection } from '../lib/selection';
 import { Timestamp } from '../lib/timestamp';
 import {
@@ -71,6 +72,7 @@ export interface BuilderState extends GridInterfaceState {
   userTags: string[];
   undoHistory: BuilderGrid[];
   undoIndex: number;
+  cluesBackup: Record<string, string[]> | null;
 }
 
 function initialBuilderStateFromSaved(
@@ -224,6 +226,7 @@ export function initialBuilderState({
     userTags,
     undoHistory: [fromCells(initialGrid)],
     undoIndex: 0,
+    cluesBackup: null,
   });
 }
 
@@ -440,6 +443,24 @@ function isUpdateSelectionAction(
   action: PuzzleAction
 ): action is UpdateSelectionAction {
   return action.type === 'UPDATESELECTION';
+}
+
+export interface AddEnumerationsAction extends PuzzleAction {
+  type: 'ADDENUMERATIONS';
+}
+function isAddEnumerationsAction(
+  action: PuzzleAction
+): action is AddEnumerationsAction {
+  return action.type === 'ADDENUMERATIONS';
+}
+
+export interface RestoreCluesAction extends PuzzleAction {
+  type: 'RESTORECLUES';
+}
+function isRestoreCluesAction(
+  action: PuzzleAction
+): action is RestoreCluesAction {
+  return action.type === 'RESTORECLUES';
 }
 
 function normalizeAnswer(answer: string): string {
@@ -664,6 +685,40 @@ function _builderReducer(
       ...state,
       alternates: state.alternates.filter((a) => !equal(a, action.alternate)),
     };
+  }
+  if (isAddEnumerationsAction(action)) {
+    // Deep copy clues
+    const clues = { ...state.clues };
+    for (const answer in clues) {
+      const answerClues = clues[answer];
+      if (answerClues != null) {
+        clues[answer] = answerClues.slice();
+      }
+    }
+    // Modify only clues that have entries
+    forEachCluedEntry(
+      state.grid.sortedEntries,
+      state.grid.entries,
+      state.clues,
+      (_entry, clue, answer, clueIndex) => {
+        const answerClues = clues[answer];
+        if (
+          answerClues != null &&
+          answerClues.length > clueIndex &&
+          clue.trim().length > 0 &&
+          parseClueEnumeration(clue) == null
+        ) {
+          answerClues[clueIndex] = `${clue} (${answer.length})`;
+        }
+      }
+    );
+    return { ...state, clues, cluesBackup: { ...state.clues } };
+  }
+  if (isRestoreCluesAction(action)) {
+    if (state.cluesBackup == null) {
+      return state;
+    }
+    return { ...state, clues: { ...state.cluesBackup }, cluesBackup: null };
   }
   if (isClickedFillAction(action)) {
     const grid = gridWithEntrySet(state.grid, action.entryIndex, action.value);

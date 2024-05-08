@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 import { ANIMATION_DELAY } from '../lib/style';
+import { clsx } from '../lib/utils';
 import styles from './Snackbar.module.css';
 
 enum ActionTypes {
@@ -60,7 +61,10 @@ export function Snackbar({
   isOpen: boolean;
 }) {
   return (
-    <div data-showing={message !== null && isOpen} className={styles.snackbar}>
+    <div
+      data-showing={message !== null && isOpen}
+      className={clsx(styles.snackbar, 'reverse-theme')}
+    >
       {message}
     </div>
   );
@@ -163,27 +167,27 @@ export function useSnackbar() {
   const [snackbarTimeout, setSnackbarTimeout] = useState<ReturnType<
     typeof setTimeout
   > | null>(null);
-  function openSnackbar(message: string | ReactNode) {
+  function openSnackbar(message: string | ReactNode, duration = DURATION) {
     context.dispatch({ type: ActionTypes.ShowSnackbar, message });
     setSnackbarTimeout(
       setTimeout(() => {
-        close();
-      }, DURATION)
+        closeSnackbar();
+      }, duration)
     );
   }
 
-  function showSnackbar(message: string | ReactNode) {
+  function showSnackbar(message: string | ReactNode, duration?: number) {
     if (context.state.isOpen) {
-      close();
+      closeSnackbar();
       setTimeout(() => {
-        openSnackbar(message);
+        openSnackbar(message, duration);
       }, ANIMATION_DELAY);
     } else {
-      openSnackbar(message);
+      openSnackbar(message, duration);
     }
   }
 
-  function close() {
+  function closeSnackbar() {
     if (snackbarTimeout) {
       clearTimeout(snackbarTimeout);
       setSnackbarTimeout(null);
@@ -202,5 +206,5 @@ export function useSnackbar() {
     }
   }
 
-  return { showSnackbar, addToast };
+  return { showSnackbar, closeSnackbar, addToast };
 }
