@@ -61,7 +61,10 @@ export function Snackbar({
   isOpen: boolean;
 }) {
   return (
-    <div data-showing={message !== null && isOpen} className={clsx(styles.snackbar, 'reverse-theme')}>
+    <div
+      data-showing={message !== null && isOpen}
+      className={clsx(styles.snackbar, 'reverse-theme')}
+    >
       {message}
     </div>
   );
