@@ -7,6 +7,7 @@ import {
   hide,
   limitShift,
   offset,
+  safePolygon,
   shift,
   useClick,
   useDismiss,
@@ -43,7 +44,9 @@ export const ToolTipText = (props: {
   });
 
   const click = useClick(context);
-  const hover = useHover(context);
+  const hover = useHover(context, {
+    handleClose: safePolygon(),
+  });
   const dismiss = useDismiss(context);
 
   const { getReferenceProps, getFloatingProps } = useInteractions([

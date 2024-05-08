@@ -1,3 +1,4 @@
+import { Plural } from '@lingui/macro';
 import {
   type ReactNode,
   useCallback,
@@ -5,6 +6,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { ConstructorPageBase } from '../lib/constructorPage';
 import {
   PuzzleReaction,
   getReaction,
@@ -13,10 +15,13 @@ import {
 } from '../lib/reactions';
 import { ServerPuzzleResult } from '../lib/types';
 import { AuthContext } from './AuthContext';
-import { Button } from './Buttons';
+import { Button, ButtonAsLink } from './Buttons';
+import { ConstructorList } from './ConstructorList';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
+import { Link } from './Link';
 import { Overlay } from './Overlay';
 import styles from './ReactionButton.module.css';
+import { ToolTipText } from './ToolTipText';
 
 interface ReactionButtonProps {
   puzzle: ServerPuzzleResult;
@@ -30,9 +35,66 @@ function Emoji(props: { kind: PuzzleReaction }): ReactNode {
   }
 }
 
+function ToolTip(props: {
+  count: number;
+  numOthers: number;
+  otherUsers: (ConstructorPageBase & { isPatron: boolean })[];
+  showList: () => void;
+  isSet: boolean;
+}): ReactNode {
+  const numUsers = props.otherUsers.length;
+
+  if (props.count === 0) {
+    return 'No likes yet';
+  }
+
+  if (props.numOthers === 0) {
+    return 'You liked this';
+  }
+
+  if (!props.isSet && numUsers === 0) {
+    return `Liked by ${props.numOthers} user${props.numOthers > 1 ? 's' : ''}`;
+  }
+
+  const parts: ReactNode[] = [];
+  if (props.isSet) {
+    parts.push('you');
+  }
+  const linked = props.otherUsers.slice(0, 3).map((u, i) => (
+    <Link key={i} href={`/${u.i}`}>
+      {u.n}
+    </Link>
+  ));
+  parts.push(...linked);
+  const rest = props.numOthers - linked.length;
+  if (rest > 0) {
+    if (numUsers - linked.length > 0) {
+      parts.push(
+        <ButtonAsLink onClick={props.showList}>
+          {rest} other{rest > 1 ? 's' : ''}
+        </ButtonAsLink>
+      );
+    } else {
+      parts.push(`${rest} other${rest > 1 ? 's' : ''}`);
+    }
+  }
+  return (
+    <>
+      Liked by{' '}
+      {parts.map((val, idx) => (
+        <>
+          {idx > 0 && idx < parts.length - 1 ? ',' : ''}
+          {idx > 0 && idx === parts.length - 1 ? ' and' : ''} {val}
+        </>
+      ))}
+    </>
+  );
+}
+
 export function ReactionButton(props: ReactionButtonProps) {
   const { user, loading: loadingUser } = useContext(AuthContext);
 
+  const [showList, setShowList] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
   const [isSet, setIsSet] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -72,9 +134,14 @@ export function ReactionButton(props: ReactionButtonProps) {
       });
   }, [isSet, props.kind, props.puzzle.id, user]);
 
-  const existing = savedReactions(props.kind, props.puzzle);
-  const count =
-    existing.filter((uid) => uid !== user?.uid).length + (isSet ? 1 : 0);
+  const others = { ...savedReactions(props.kind, props.puzzle) };
+  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+  delete others[user?.uid || ''];
+  const numOthers = Object.keys(others).length;
+  const count = numOthers + (isSet ? 1 : 0);
+  const otherUsers = Object.values(others).filter(
+    (v): v is ConstructorPageBase & { isPatron: boolean } => v !== null
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   return (
@@ -97,14 +164,60 @@ export function ReactionButton(props: ReactionButtonProps) {
       ) : (
         ''
       )}
-      <Button
-        className={styles.btn}
-        onClick={onClick}
-        hollow={!isSet}
-        disabled={!mounted || submitting || props.puzzle.authorId === user?.uid}
-      >
-        <Emoji kind={props.kind} /> {submitting ? '…' : count > 0 ? count : ''}
-      </Button>
+      {showList ? (
+        <Overlay
+          closeCallback={() => {
+            setShowList(false);
+          }}
+        >
+          <div className="textAlignCenter">
+            <h2>{count} users like this</h2>
+            <h3>
+              <Plural
+                id="follower-blog-count"
+                value={otherUsers.length}
+                one="1 with a Crosshare blog:"
+                other="# with Crosshare blogs:"
+              />
+            </h3>
+
+            <ConstructorList
+              pages={otherUsers}
+              close={() => {
+                setShowList(false);
+              }}
+            />
+          </div>
+        </Overlay>
+      ) : (
+        ''
+      )}
+      <ToolTipText
+        text={
+          <Button
+            className={styles.btn}
+            onClick={onClick}
+            hollow={!isSet}
+            disabled={
+              !mounted || submitting || props.puzzle.authorId === user?.uid
+            }
+          >
+            <Emoji kind={props.kind} />{' '}
+            {submitting ? '…' : count > 0 ? count : ''}
+          </Button>
+        }
+        tooltip={
+          <ToolTip
+            isSet={isSet}
+            showList={() => {
+              setShowList(true);
+            }}
+            count={count}
+            numOthers={numOthers}
+            otherUsers={otherUsers}
+          />
+        }
+      />
     </>
   );
 }

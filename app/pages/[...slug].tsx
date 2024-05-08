@@ -14,7 +14,10 @@ import { paginatedPuzzles } from '../lib/paginatedPuzzles';
 import { PathReporter } from '../lib/pathReporter';
 import { isUserPatron } from '../lib/patron';
 import { AccountPrefsV } from '../lib/prefs';
-import { getStorageUrl, userIdToPage } from '../lib/serverOnly';
+import {
+  getStorageUrl,
+  userIdToConstructorPageWithPatron,
+} from '../lib/serverOnly';
 import { withTranslation } from '../lib/translation';
 
 interface ErrorProps {
@@ -66,15 +69,6 @@ const getFollowingIds = async (userId: string) => {
   return following;
 };
 
-async function followIdToInfo(id: string) {
-  const page = await userIdToPage(id);
-  if (!page) {
-    return null;
-  }
-  const isPatron = await isUserPatron(id);
-  return { ...page, isPatron };
-}
-
 const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
   if (!params || !Array.isArray(params.slug) || !params.slug[0]) {
     console.error('bad constructor page params');
@@ -113,12 +107,12 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
 
   const followerIds = await getFollowerIds(cp.u);
   const followers = (
-    await Promise.all(followerIds.map(followIdToInfo))
+    await Promise.all(followerIds.map(userIdToConstructorPageWithPatron))
   ).flatMap((a) => (a ? [a] : []));
 
   const followingIds = await getFollowingIds(cp.u);
   const following = (
-    await Promise.all(followingIds.map(followIdToInfo))
+    await Promise.all(followingIds.map(userIdToConstructorPageWithPatron))
   ).flatMap((a) => (a ? [a] : []));
 
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');

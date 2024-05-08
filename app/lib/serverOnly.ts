@@ -116,6 +116,17 @@ export async function userIdToPage(
   return usernameMap[userId] || null;
 }
 
+export async function userIdToConstructorPageWithPatron(
+  id: string
+): Promise<(ConstructorPageWithMarkdown & { isPatron: boolean }) | null> {
+  const page = await userIdToPage(id);
+  if (!page) {
+    return null;
+  }
+  const isPatron = await isUserPatron(id);
+  return { ...page, isPatron };
+}
+
 export async function getArticle(
   slug: string
 ): Promise<string | ArticleT | null> {
@@ -286,6 +297,20 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
       comments: await convertComments(fromDB.comments, clueMap),
       clueHasts: grid.entries.map((c) =>
         markdownToHast({ text: c.clue, clueMap, inline: true })
+      ),
+      likes: Object.fromEntries(
+        await Promise.all(
+          fromDB.likes.map(
+            async (
+              k: string
+            ): Promise<
+              [
+                string,
+                (ConstructorPageWithMarkdown & { isPatron: boolean }) | null
+              ]
+            > => [k, await userIdToConstructorPageWithPatron(k)]
+          )
+        )
       ),
     };
   } else {

@@ -1,6 +1,9 @@
 import type { Root } from 'hast';
 import * as t from 'io-ts';
-import { ConstructorPageWithMarkdown } from '../lib/constructorPage';
+import {
+  ConstructorPageBase,
+  ConstructorPageWithMarkdown,
+} from '../lib/constructorPage';
 import { CommentWithRepliesT, DBPuzzleT, GlickoScoreT } from '../lib/dbtypes';
 import type { WordDBT } from './WordDB';
 import { isTextInput } from './domUtils';
@@ -210,13 +213,17 @@ export interface PuzzleResult extends PuzzleT {
 
 // This is kind of a hack but it helps us to ensure we only query for constructorPages on server side
 export interface ServerPuzzleResult
-  extends Omit<PuzzleResult, 'comments' | 'constructorNotes' | 'blogPost'> {
+  extends Omit<
+    PuzzleResult,
+    'comments' | 'constructorNotes' | 'blogPost' | 'likes'
+  > {
   blogPost: Root | null;
   blogPostRaw: string | null;
   constructorNotes: Root | null;
   constructorPage: ConstructorPageWithMarkdown | null;
   constructorIsPatron: boolean;
   clueHasts: Root[];
+  likes: Record<string, (ConstructorPageBase & { isPatron: boolean }) | null>;
 }
 export interface PuzzleResultWithAugmentedComments extends ServerPuzzleResult {
   comments: Comment[];

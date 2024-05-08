@@ -1,0 +1,60 @@
+import { useRouter } from 'next/router';
+import { useCallback } from 'react';
+import { ConstructorPageBase } from '../lib/constructorPage';
+import { logAsyncErrors } from '../lib/utils';
+import styles from './ConstructorList.module.css';
+import { FollowButton } from './FollowButton';
+import { PatronIcon } from './Icons';
+
+export const ConstructorList = ({
+  pages,
+  close,
+}: {
+  pages: (ConstructorPageBase & { isPatron: boolean })[];
+  close: () => void;
+}) => {
+  return (
+    <ul className={styles.followersList}>
+      {pages.map((f) => (
+        <ConstructorListItem key={f.i} page={f} close={close} />
+      ))}
+    </ul>
+  );
+};
+
+const ConstructorListItem = ({
+  page,
+  close,
+}: {
+  page: ConstructorPageBase & { isPatron: boolean };
+  close: () => void;
+}) => {
+  const router = useRouter();
+
+  const click = useCallback(async () => {
+    close();
+    await router.push(`/${page.i}`);
+  }, [page.i, router, close]);
+
+  return (
+    <li>
+      <div
+        tabIndex={0}
+        role="button"
+        onClick={logAsyncErrors(click)}
+        onKeyPress={logAsyncErrors(click)}
+        className={styles.follower}
+      >
+        <div className="marginRight1em">
+          <div>
+            <b className={styles.pageName}>
+              {page.isPatron ? <PatronIcon /> : ''} {page.n}
+            </b>
+          </div>
+          <div>@{page.i}</div>
+        </div>
+        <FollowButton className={styles.followBtn} page={page} />
+      </div>
+    </li>
+  );
+};

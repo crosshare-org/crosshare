@@ -49,7 +49,7 @@ export function getReaction(
   const key = storageKey(userId, kind);
   const storage = fromLocalStorage(key, StorageV);
   const fromStorage = storage?.[puzzle.id];
-  const fromPuzzle = savedReactions(kind, puzzle).includes(userId);
+  const fromPuzzle = userId in savedReactions(kind, puzzle);
 
   if (fromStorage !== undefined) {
     if (fromStorage === fromPuzzle && storage) {

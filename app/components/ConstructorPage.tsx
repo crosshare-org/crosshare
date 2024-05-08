@@ -3,13 +3,14 @@ import { serverTimestamp, setDoc } from 'firebase/firestore';
 import type { Root } from 'hast';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { FormEvent, useCallback, useContext, useState } from 'react';
+import { FormEvent, useContext, useState } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
 import { ConstructorPageBase, ConstructorPageT } from '../lib/constructorPage';
 import { getDocRef } from '../lib/firebaseWrapper';
 import { logAsyncErrors } from '../lib/utils';
 import { AuthContext } from './AuthContext';
 import { ButtonAsLink } from './Buttons';
+import { ConstructorList } from './ConstructorList';
 import styles from './ConstructorPage.module.css';
 import { ConstructorStats } from './ConstructorStats';
 import { FollowButton } from './FollowButton';
@@ -203,59 +204,6 @@ export interface ConstructorPageProps {
   prevPage: number | null;
 }
 
-const FollowersList = ({
-  pages,
-  close,
-}: {
-  pages: (ConstructorPageBase & { isPatron: boolean })[];
-  close: () => void;
-}) => {
-  return (
-    <ul className={styles.followersList}>
-      {pages.map((f) => (
-        <FollowersListItem key={f.i} page={f} close={close} />
-      ))}
-    </ul>
-  );
-};
-
-const FollowersListItem = ({
-  page,
-  close,
-}: {
-  page: ConstructorPageBase & { isPatron: boolean };
-  close: () => void;
-}) => {
-  const router = useRouter();
-
-  const click = useCallback(async () => {
-    close();
-    await router.push(`/${page.i}`);
-  }, [page.i, router, close]);
-
-  return (
-    <li>
-      <div
-        tabIndex={0}
-        role="button"
-        onClick={logAsyncErrors(click)}
-        onKeyPress={logAsyncErrors(click)}
-        className={styles.follower}
-      >
-        <div className="marginRight1em">
-          <div>
-            <b className={styles.pageName}>
-              {page.isPatron ? <PatronIcon /> : ''} {page.n}
-            </b>
-          </div>
-          <div>@{page.i}</div>
-        </div>
-        <FollowButton className={styles.followBtn} page={page} />
-      </div>
-    </li>
-  );
-};
-
 export const ConstructorPage = (props: ConstructorPageProps) => {
   const { locale } = useRouter();
   const { isAdmin } = useContext(AuthContext);
@@ -384,7 +332,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                         <h2>
                           <Trans>{props.following.length} Following</Trans>
                         </h2>
-                        <FollowersList
+                        <ConstructorList
                           pages={props.following}
                           close={() => {
                             setShowOverlay(false);
@@ -409,7 +357,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                             other="# with Crosshare blogs:"
                           />
                         </h3>
-                        <FollowersList
+                        <ConstructorList
                           pages={props.followers}
                           close={() => {
                             setShowOverlay(false);

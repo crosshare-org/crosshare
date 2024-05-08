@@ -1,0 +1,35 @@
+.followersList {
+  width: 100%;
+  max-width: 40em;
+  margin: auto;
+  padding: 0;
+
+  text-align: left;
+  list-style-type: none;
+}
+
+.follower {
+  cursor: pointer;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+
+  padding: 1.5em 1em;
+}
+
+.follower:hover {
+  background-color: var(--secondary);
+}
+
+.pageName {
+  font-size: 1.1em;
+}
+
+.pageName:hover {
+  text-decoration: underline;
+}
+
+.followBtn {
+  margin-left: auto;
+}
