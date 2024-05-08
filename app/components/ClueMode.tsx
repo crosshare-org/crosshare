@@ -209,7 +209,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
   const privateUntil = state.isPrivateUntil?.toDate();
   const autoTags = autoTag(state);
 
-  const { showSnackbar } = useSnackbar();
+  const { showSnackbar, closeSnackbar } = useSnackbar();
 
   const cluedGrid = useMemo(() => {
     const clueProps = getClueProps(
@@ -925,6 +925,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                           props.dispatch({
                             type: 'RESTORECLUES',
                           } as RestoreCluesAction);
+                          closeSnackbar();
                         }}
                       />
                     </>,

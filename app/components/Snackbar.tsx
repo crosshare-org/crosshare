@@ -168,14 +168,14 @@ export function useSnackbar() {
     context.dispatch({ type: ActionTypes.ShowSnackbar, message });
     setSnackbarTimeout(
       setTimeout(() => {
-        close();
+        closeSnackbar();
       }, duration)
     );
   }
 
   function showSnackbar(message: string | ReactNode, duration?: number) {
     if (context.state.isOpen) {
-      close();
+      closeSnackbar();
       setTimeout(() => {
         openSnackbar(message, duration);
       }, ANIMATION_DELAY);
@@ -184,7 +184,7 @@ export function useSnackbar() {
     }
   }
 
-  function close() {
+  function closeSnackbar() {
     if (snackbarTimeout) {
       clearTimeout(snackbarTimeout);
       setSnackbarTimeout(null);
@@ -203,5 +203,5 @@ export function useSnackbar() {
     }
   }
 
-  return { showSnackbar, addToast };
+  return { showSnackbar, closeSnackbar, addToast };
 }
