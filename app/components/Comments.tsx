@@ -117,30 +117,34 @@ interface CommentProps {
   hasGuestConstructor: boolean;
   comment: CommentOrLocalComment;
   children?: ReactNode;
+  replies?: ReactNode;
 }
 const CommentView = (props: CommentProps) => {
   return (
-    <div className={styles.commentView}>
-      <div>
-        <CommentFlair
-          publishTime={Math.max(
-            props.comment.publishTime,
-            props.puzzlePublishTime
-          )}
-          displayName={props.comment.authorDisplayName}
-          username={props.comment.authorUsername}
-          userId={props.comment.authorId}
-          puzzleAuthorId={props.puzzleAuthorId}
-          hasGuestConstructor={props.hasGuestConstructor}
-          solveTime={props.comment.authorSolveTime}
-          didCheat={props.comment.authorCheated}
-          downsOnly={props.comment.authorSolvedDownsOnly}
-          isPatron={props.comment.authorIsPatron}
-        />
+    <>
+      <div className={styles.commentView}>
+        <div>
+          <CommentFlair
+            publishTime={Math.max(
+              props.comment.publishTime,
+              props.puzzlePublishTime
+            )}
+            displayName={props.comment.authorDisplayName}
+            username={props.comment.authorUsername}
+            userId={props.comment.authorId}
+            puzzleAuthorId={props.puzzleAuthorId}
+            hasGuestConstructor={props.hasGuestConstructor}
+            solveTime={props.comment.authorSolveTime}
+            didCheat={props.comment.authorCheated}
+            downsOnly={props.comment.authorSolvedDownsOnly}
+            isPatron={props.comment.authorIsPatron}
+          />
+        </div>
+        <Markdown hast={props.comment.commentHast} />
+        {props.children}
       </div>
-      <Markdown hast={props.comment.commentHast} />
-      {props.children}
-    </div>
+      {props.replies}
+    </>
   );
 };
 
@@ -237,6 +241,17 @@ const CommentWithReplies = (
       puzzlePublishTime={props.puzzlePublishTime}
       puzzleAuthorId={props.puzzleAuthorId}
       comment={props.comment}
+      replies={
+        replies ? (
+          <ul className={styles.repliesList}>
+            {replies.map((a, i) => (
+              <li key={i}>
+                <CommentWithReplies {...{ ...props, comment: a }} />
+              </li>
+            ))}
+          </ul>
+        ) : undefined
+      }
     >
       {showingDeleteOverlay ? (
         <Overlay
@@ -301,17 +316,6 @@ const CommentWithReplies = (
             </Fragment>
           ))}
         </div>
-      )}
-      {replies ? (
-        <ul className={styles.repliesList}>
-          {replies.map((a, i) => (
-            <li key={i}>
-              <CommentWithReplies {...{ ...props, comment: a }} />
-            </li>
-          ))}
-        </ul>
-      ) : (
-        ''
       )}
     </CommentView>
   );
