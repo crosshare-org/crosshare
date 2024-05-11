@@ -73,6 +73,7 @@
   font-size: 1.5em;
 }
 
-.topLine[data-has-cover='true'] {
+.topLine[data-has-cover='true'] > span {
   color: white;
+  mix-blend-mode: difference;
 }

@@ -312,7 +312,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
               ) : (
                 ''
               )}
-              {props.constructorData.n}
+              <span>{props.constructorData.n}</span>
             </>
           }
           byLine={

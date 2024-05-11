@@ -8,3 +8,7 @@
 
   box-shadow: none;
 }
+
+.tt {
+  mix-blend-mode: normal !important;
+}

@@ -215,6 +215,7 @@ export function ReactionButton(props: ReactionButtonProps) {
         ''
       )}
       <ToolTipText
+        className={styles.tt}
         text={
           <Button
             className={styles.btn}
