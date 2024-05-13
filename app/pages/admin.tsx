@@ -183,6 +183,7 @@ export default requiresAdmin(() => {
     query(
       getValidatedCollection('c', DBPuzzleWithIdV, 'id'),
       where('m', '==', false),
+      where('rfm', '==', true),
       where('pvu', '<=', Timestamp.now())
     )
   );

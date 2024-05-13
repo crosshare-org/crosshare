@@ -153,6 +153,24 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
+          "fieldPath": "m",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "rfm",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "pvu",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "c",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
           "fieldPath": "tg_i",
           "arrayConfig": "CONTAINS"
         },
