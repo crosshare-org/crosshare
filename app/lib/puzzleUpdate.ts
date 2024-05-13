@@ -149,9 +149,13 @@ async function updateTagsIfNeeded(puzzleId: string, dbpuz: DBPuzzleT) {
   }
 }
 
-/* Check if a puzzle is "ready for moderation". For right now this means it (a) has any (non-author) comments or (b) has any likes, or (c) was constructed by a patron. */
+/* Check if a puzzle is "ready for moderation".
+ *
+ * For right now this means it has comments enabled and (a) has any (non-author)
+ * comments or (b) has any likes, or (c) was constructed by a patron. */
 async function updateRfmIfNeeded(puzzleId: string, dbpuz: DBPuzzleT) {
-  if (dbpuz.rfm || dbpuz.m) {
+  // Don't set rfm if puzzle has comments disabled or is already moderated
+  if (dbpuz.no_cs || dbpuz.rfm || dbpuz.m) {
     return;
   }
   if (
