@@ -9,6 +9,7 @@ import {
   DBPuzzleV,
 } from '../lib/dbtypes';
 import { logAsyncErrors, slugify, timeString } from '../lib/utils';
+import style from './ConstructorStats.module.css';
 
 const usePuzzleDoc = (
   puzzleId: string | undefined
@@ -94,7 +95,7 @@ const PuzzleList = ({
   if (!matches.length) return <></>;
 
   return (
-    <>
+    <div className={style.section}>
       <h4>{title}:</h4>
       <ul className="listStyleTypeNone">
         {matches.map((v, i) => (
@@ -106,7 +107,7 @@ const PuzzleList = ({
           />
         ))}
       </ul>
-    </>
+    </div>
   );
 };
 
@@ -155,7 +156,7 @@ export const ConstructorStats = (props: { userId: string }) => {
       ) : loading ? (
         <p>Loading...</p>
       ) : stats ? (
-        <>
+        <div className={style.stats}>
           <p>
             <b>Total solves:</b>{' '}
             {Object.values(stats).reduce((a, b) => a + b.n, 0)}
@@ -237,7 +238,7 @@ export const ConstructorStats = (props: { userId: string }) => {
             valueDisplay={(a) => `${Math.round(a)}%`}
             sortDesc={false}
           />
-        </>
+        </div>
       ) : (
         <p>
           No stats yet - stats are updated hourly and won&apos;t be available
