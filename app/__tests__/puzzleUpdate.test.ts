@@ -368,6 +368,7 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
             "nanoseconds": 0,
             "seconds": 1604966400,
           },
+          "rfm": true,
           "t": "Raises, as young",
           "tg_a": [
             "mini",
@@ -464,6 +465,7 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
             "nanoseconds": 0,
             "seconds": 1604966400,
           },
+          "rfm": true,
           "t": "Raises, as young",
           "tg_a": [
             "mini",
@@ -637,6 +639,7 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
             "nanoseconds": 0,
             "seconds": 1604966400,
           },
+          "rfm": true,
           "t": "Raises, as young",
           "tg_a": [
             "mini",

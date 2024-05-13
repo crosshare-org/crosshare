@@ -7,6 +7,7 @@ import {
 } from './notificationTypes';
 import { notificationsForPuzzleChange } from './notifications';
 import { PathReporter } from './pathReporter';
+import { isUserPatron } from './patron';
 import { sizeTag } from './sizeTag';
 import { Timestamp } from './timestamp';
 import { buildTagIndex, eqSet } from './utils';
@@ -148,9 +149,23 @@ async function updateTagsIfNeeded(puzzleId: string, dbpuz: DBPuzzleT) {
   }
 }
 
+/* Check if a puzzle is "ready for moderation". For right now this means it (a) has any (non-author) comments or (b) has any likes, or (c) was constructed by a patron. */
+async function updateRfmIfNeeded(puzzleId: string, dbpuz: DBPuzzleT) {
+  if (dbpuz.rfm || dbpuz.m) {
+    return;
+  }
+  if (
+    dbpuz.cs?.filter((c) => c.a !== dbpuz.a).length ||
+    dbpuz.lk?.length ||
+    (await isUserPatron(dbpuz.a))
+  ) {
+    await getCollection('c').doc(puzzleId).update({ rfm: true });
+  }
+}
+
 export async function handlePuzzleUpdate(
-  beforeData: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-  afterData: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  beforeData: FirebaseFirestore.DocumentData | undefined,
+  afterData: FirebaseFirestore.DocumentData | undefined,
   puzzleId: string
 ): Promise<void> {
   const after = parsePuzzle(afterData);
@@ -206,4 +221,6 @@ export async function handlePuzzleUpdate(
     await getCollection('n').doc(notification.id).set(notification);
   }
   console.log(`Created ${notifications.length} notifications`);
+
+  await updateRfmIfNeeded(puzzleId, after);
 }
