@@ -1,4 +1,5 @@
 import {
+  MutableRefObject,
   type ReactNode,
   memo,
   useCallback,
@@ -48,9 +49,9 @@ interface KeyProps {
   onlyOnTablet?: boolean;
   notOnTablet?: boolean;
   className?: string;
+  touched: MutableRefObject<boolean>;
 }
-const Key = (props: KeyProps) => {
-  const touched = useRef(false);
+const Key = ({ touched, ...props }: KeyProps) => {
   return (
     <button
       data-small-font={props.smallFont}
@@ -130,29 +131,42 @@ export const Keyboard = memo(function Keyboard({
     [muted, keyboardHandler]
   );
 
+  const touched = useRef(false);
+
   if (props.showExtraKeyLayout) {
     return (
       <KeyRows toggleKeyboard={props.toggleKeyboard}>
         <KeyRow>
-          <Key keyStroke="1" onKeypress={keypress} />
-          <Key keyStroke="2" onKeypress={keypress} />
-          <Key keyStroke="3" onKeypress={keypress} />
-          <Key keyStroke="4" onKeypress={keypress} />
-          <Key keyStroke="5" onKeypress={keypress} />
-          <Key keyStroke="Ñ" onKeypress={keypress} />
+          <Key touched={touched} keyStroke="1" onKeypress={keypress} />
+          <Key touched={touched} keyStroke="2" onKeypress={keypress} />
+          <Key touched={touched} keyStroke="3" onKeypress={keypress} />
+          <Key touched={touched} keyStroke="4" onKeypress={keypress} />
+          <Key touched={touched} keyStroke="5" onKeypress={keypress} />
+          <Key touched={touched} keyStroke="Ñ" onKeypress={keypress} />
         </KeyRow>
         <KeyRow>
-          <Key keyStroke="6" onKeypress={keypress} />
-          <Key keyStroke="7" onKeypress={keypress} />
-          <Key keyStroke="8" onKeypress={keypress} />
-          <Key keyStroke="9" onKeypress={keypress} />
-          <Key keyStroke="0" onKeypress={keypress} />
-          <Key keyStroke="&" onKeypress={keypress} />
+          <Key touched={touched} keyStroke="6" onKeypress={keypress} />
+          <Key touched={touched} keyStroke="7" onKeypress={keypress} />
+          <Key touched={touched} keyStroke="8" onKeypress={keypress} />
+          <Key touched={touched} keyStroke="9" onKeypress={keypress} />
+          <Key touched={touched} keyStroke="0" onKeypress={keypress} />
+          <Key touched={touched} keyStroke="&" onKeypress={keypress} />
         </KeyRow>
         <KeyRow>
-          <Key keyStroke="{abc}" display="ABC" onKeypress={keypress} />
-          <Key keyStroke="{rebus}" display="Rebus" onKeypress={keypress} />
           <Key
+            touched={touched}
+            keyStroke="{abc}"
+            display="ABC"
+            onKeypress={keypress}
+          />
+          <Key
+            touched={touched}
+            keyStroke="{rebus}"
+            display="Rebus"
+            onKeypress={keypress}
+          />
+          <Key
+            touched={touched}
             keyStroke="{bksp}"
             display={<FaBackspace />}
             onKeypress={keypress}
@@ -164,17 +178,18 @@ export const Keyboard = memo(function Keyboard({
   return (
     <KeyRows toggleKeyboard={props.toggleKeyboard}>
       <KeyRow>
-        <Key keyStroke="Q" onKeypress={keypress} />
-        <Key keyStroke="W" onKeypress={keypress} />
-        <Key keyStroke="E" onKeypress={keypress} />
-        <Key keyStroke="R" onKeypress={keypress} />
-        <Key keyStroke="T" onKeypress={keypress} />
-        <Key keyStroke="Y" onKeypress={keypress} />
-        <Key keyStroke="U" onKeypress={keypress} />
-        <Key keyStroke="I" onKeypress={keypress} />
-        <Key keyStroke="O" onKeypress={keypress} />
-        <Key keyStroke="P" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="Q" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="W" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="E" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="R" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="T" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="Y" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="U" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="I" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="O" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="P" onKeypress={keypress} />
         <Key
+          touched={touched}
           onlyOnTablet
           keyStroke="{bksp}"
           display={<FaBackspace />}
@@ -183,23 +198,25 @@ export const Keyboard = memo(function Keyboard({
       </KeyRow>
       <KeyRow>
         <Key
+          touched={touched}
           onlyOnTablet={props.includeBlockKey}
           keyStroke="{prev}"
           smallSize={true}
           display={<FaAngleLeft />}
           onKeypress={keypress}
         />
-        <Key keyStroke="A" onKeypress={keypress} />
-        <Key keyStroke="S" onKeypress={keypress} />
-        <Key keyStroke="D" onKeypress={keypress} />
-        <Key keyStroke="F" onKeypress={keypress} />
-        <Key keyStroke="G" onKeypress={keypress} />
-        <Key keyStroke="H" onKeypress={keypress} />
-        <Key keyStroke="J" onKeypress={keypress} />
-        <Key keyStroke="K" onKeypress={keypress} />
-        <Key keyStroke="L" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="A" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="S" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="D" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="F" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="G" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="H" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="J" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="K" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="L" onKeypress={keypress} />
         {props.includeBlockKey ? (
           <Key
+            touched={touched}
             className={styles.block}
             keyStroke="{block}"
             display=" "
@@ -209,6 +226,7 @@ export const Keyboard = memo(function Keyboard({
           ''
         )}
         <Key
+          touched={touched}
           onlyOnTablet
           keyStroke="{dir}"
           smallSize={props.includeBlockKey}
@@ -216,6 +234,7 @@ export const Keyboard = memo(function Keyboard({
           onKeypress={keypress}
         />
         <Key
+          touched={touched}
           onlyOnTablet={props.includeBlockKey}
           keyStroke="{next}"
           smallSize={true}
@@ -225,12 +244,14 @@ export const Keyboard = memo(function Keyboard({
       </KeyRow>
       <KeyRow>
         <Key
+          touched={touched}
           onlyOnTablet
           keyStroke="{prevEntry}"
           display={<FaAngleDoubleLeft />}
           onKeypress={keypress}
         />
         <Key
+          touched={touched}
           notOnTablet
           keyStroke="{num}"
           smallFont={true}
@@ -238,32 +259,36 @@ export const Keyboard = memo(function Keyboard({
           display="More"
           onKeypress={keypress}
         />
-        <Key keyStroke="Z" onKeypress={keypress} />
-        <Key keyStroke="X" onKeypress={keypress} />
-        <Key keyStroke="C" onKeypress={keypress} />
-        <Key keyStroke="V" onKeypress={keypress} />
-        <Key keyStroke="B" onKeypress={keypress} />
-        <Key keyStroke="N" onKeypress={keypress} />
-        <Key keyStroke="M" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="Z" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="X" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="C" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="V" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="B" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="N" onKeypress={keypress} />
+        <Key touched={touched} keyStroke="M" onKeypress={keypress} />
         <Key
+          touched={touched}
           onlyOnTablet
           keyStroke="{num}"
           display="More"
           onKeypress={keypress}
         />
         <Key
+          touched={touched}
           onlyOnTablet
           keyStroke="{rebus}"
           display="Rebus"
           onKeypress={keypress}
         />
         <Key
+          touched={touched}
           onlyOnTablet
           keyStroke="{nextEntry}"
           display={<FaAngleDoubleRight />}
           onKeypress={keypress}
         />
         <Key
+          touched={touched}
           notOnTablet
           keyStroke="{bksp}"
           largeSize={true}
