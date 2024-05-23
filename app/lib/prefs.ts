@@ -6,6 +6,7 @@ export const UnsubscribeFlags = {
   comments: null, // comments on your puzzles or replies to your comments
   featured: null, // one of your puzzles is featured or set as daily mini
   newpuzzles: null, // one of your followed authors published a new puzzle
+  weekly: null, // weekly email
 };
 
 const AccountPrefsFlagsV = t.partial({
@@ -21,8 +22,9 @@ export type AccountPrefsFlagsT = t.TypeOf<typeof AccountPrefsFlagsV>;
 export const AccountPrefsV = t.intersection([
   AccountPrefsFlagsV,
   t.partial({
-    /** user id receiving the notification */
     unsubs: t.array(t.keyof(UnsubscribeFlags)),
+    /** we've gotten bounces / reports for this email so we no longer msg it */
+    bounced: t.boolean,
     following: t.array(t.string),
     rtg: GlickoScoreV,
     rtgs: t.array(GlickoScoreV),

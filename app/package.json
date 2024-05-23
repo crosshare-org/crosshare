@@ -34,14 +34,15 @@
   "engines": {
     "node": "18"
   },
- "resolutions": {
-  "@types/mime": "3.0.4"
+  "resolutions": {
+    "@types/mime": "3.0.4"
   },
   "resolutionsComments": {
     "@types/mime": "https://github.com/firebase/firebase-admin-node/issues/2512"
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.10",
+    "@google-cloud/secret-manager": "^5.6.0",
     "@juggle/resize-observer": "^3.4.0",
     "@lingui/format-po-gettext": "^4.7.2",
     "@lingui/react": "^4.7.2",
