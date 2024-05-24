@@ -4,7 +4,8 @@ import { GetServerSideProps } from 'next/types';
 import { FormEvent, useState } from 'react';
 import { ErrorPage } from '../components/ErrorPage';
 import { useSnackbar } from '../components/Snackbar';
-import { getCollection, getUser } from '../lib/firebaseAdminWrapper';
+import { getAddress } from '../lib/email';
+import { getCollection } from '../lib/firebaseAdminWrapper';
 import { PathReporter } from '../lib/pathReporter';
 import { AccountPrefsV, UnsubscribeFlags } from '../lib/prefs';
 import { SubscriptionParamsV, getSig } from '../lib/subscriptions';
@@ -24,18 +25,6 @@ interface ErrorProps {
 
 type PageProps = SuccessProps | ErrorProps;
 
-// TODO unify w/ functions/queueEmails.ts
-async function getEmail(userId: string): Promise<string | undefined> {
-  try {
-    const user = await getUser(userId);
-    return user.email;
-  } catch (e) {
-    console.log(e);
-    console.warn('error getting user ', userId);
-    return undefined;
-  }
-}
-
 export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   res,
   query,
@@ -54,7 +43,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     return { props: { error: 'Bad sig' } };
   }
 
-  const email = await getEmail(params.u);
+  const email = await getAddress(params.u);
   if (!email) {
     res.statusCode = 500;
     return { props: { error: 'Missing email' } };

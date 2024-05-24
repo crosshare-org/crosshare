@@ -41,6 +41,7 @@
     "@types/mime": "https://github.com/firebase/firebase-admin-node/issues/2512"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.583.0",
     "@floating-ui/react": "^0.26.10",
     "@google-cloud/secret-manager": "^5.6.0",
     "@juggle/resize-observer": "^3.4.0",

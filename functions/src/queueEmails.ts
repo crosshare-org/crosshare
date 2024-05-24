@@ -1,8 +1,4 @@
-import {
-  getAdminApp,
-  getUser,
-  mapEachResult,
-} from '../../app/lib/firebaseAdminWrapper';
+import { getAdminApp, mapEachResult } from '../../app/lib/firebaseAdminWrapper';
 import { Timestamp as AdminTimestamp } from 'firebase-admin/firestore';
 
 import {
@@ -19,25 +15,8 @@ import {
 } from '../../app/lib/notificationTypes';
 import SimpleMarkdown from 'simple-markdown';
 import { AccountPrefsV, AccountPrefsT } from '../../app/lib/prefs';
+import { EmailClient, getClient, sendEmail } from '../../app/lib/email';
 import { getFirestore } from 'firebase-admin/firestore';
-
-export async function sendEmail({
-  toAddress,
-  subject,
-  text,
-  html,
-}: {
-  toAddress: string;
-  subject: string;
-  text: string;
-  html: string;
-}) {
-  const db = getFirestore(getAdminApp());
-  return db.collection('mail').add({
-    to: [toAddress],
-    message: { subject, text, html },
-  });
-}
 
 const joinStringsWithAnd = (vals: Array<string>) => {
   const dedup = Array.from(new Set(vals)).sort();
@@ -69,18 +48,8 @@ function safeForHtml(str: string) {
   return str.replace(/[&<>]/g, replaceTag);
 }
 
-async function getEmail(userId: string): Promise<string | undefined> {
-  try {
-    const user = await getUser(userId);
-    return user.email;
-  } catch (e) {
-    console.log(e);
-    console.warn('error getting user ', userId);
-    return undefined;
-  }
-}
-
 async function queueEmailForUser(
+  client: EmailClient,
   userId: string,
   notifications: Array<NotificationT>
 ) {
@@ -96,12 +65,6 @@ async function queueEmailForUser(
         return;
       }
     }
-  }
-
-  const toAddress = await getEmail(userId);
-  if (!toAddress) {
-    console.warn('missing to address for ', userId);
-    return;
   }
 
   let markdown = '';
@@ -246,7 +209,8 @@ Crosshare notifications are sent at most once per day. To manage your notificati
   )})`;
 
   return sendEmail({
-    toAddress,
+    client,
+    userId,
     subject: subject || 'Crosshare Notifications',
     text: markdown,
     html: `<!DOCTYPE html>
@@ -283,12 +247,15 @@ export async function queueEmails() {
     },
     {}
   );
+  const client = await getClient();
   console.log('attempting to queue for ', Object.keys(unreadsByUserId).length);
-  return Promise.all(
-    Object.entries(unreadsByUserId).map((e) =>
-      queueEmailForUser(...e).then(() =>
-        Promise.all(e[1].map((n) => db.doc(`n/${n.id}`).update({ e: true })))
-      )
-    )
-  );
+  for (const userId in unreadsByUserId) {
+    const unreads = unreadsByUserId[userId];
+    if (!unreads) {
+      continue;
+    }
+    await queueEmailForUser(client, userId, unreads).then(() =>
+      Promise.all(unreads.map((n) => db.doc(`n/${n.id}`).update({ e: true })))
+    );
+  }
 }
