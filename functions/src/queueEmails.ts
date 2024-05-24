@@ -15,7 +15,12 @@ import {
 } from '../../app/lib/notificationTypes';
 import SimpleMarkdown from 'simple-markdown';
 import { AccountPrefsV, AccountPrefsT } from '../../app/lib/prefs';
-import { EmailClient, getClient, sendEmail } from '../../app/lib/email';
+import {
+  EmailClient,
+  RATE_LIMIT,
+  getClient,
+  sendEmail,
+} from '../../app/lib/email';
 import { getFirestore } from 'firebase-admin/firestore';
 
 const joinStringsWithAnd = (vals: Array<string>) => {
@@ -249,10 +254,24 @@ export async function queueEmails() {
   );
   const client = await getClient();
   console.log('attempting to queue for ', Object.keys(unreadsByUserId).length);
+  let count = 0;
+  let start = 0;
   for (const userId in unreadsByUserId) {
     const unreads = unreadsByUserId[userId];
     if (!unreads) {
       continue;
+    }
+    if (count == 0) {
+      // start the clock
+      start = Date.now();
+    }
+    count += 1;
+    if (count > RATE_LIMIT) {
+      const elapsed = Date.now() - start;
+      if (elapsed < 1000) {
+        await new Promise((resolve) => setTimeout(resolve, 1000 - elapsed));
+      }
+      count = 0;
     }
     await queueEmailForUser(client, userId, unreads).then(() =>
       Promise.all(unreads.map((n) => db.doc(`n/${n.id}`).update({ e: true })))

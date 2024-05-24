@@ -35,6 +35,8 @@ export async function getClient() {
 
 export type EmailClient = SESClient;
 
+export const RATE_LIMIT = 13;
+
 export async function sendEmail({
   client,
   userId,
