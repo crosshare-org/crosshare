@@ -170,7 +170,6 @@ const PuzzleListItem = (props: PuzzleResult) => {
 };
 
 export default requiresAdmin(() => {
-  const [uidToUnsub, setUidToUnsub] = useState('');
   const [donationEmail, setDonationEmail] = useState('');
   const [donationAmount, setDonationAmount] = useState('');
   const [donationReceivedAmount, setDonationReceivedAmount] = useState('');
@@ -465,36 +464,6 @@ export default requiresAdmin(() => {
         <h4 className="borderBottom1pxSolidBlack">Upcoming Minis</h4>
 
         <UpcomingMinisCalendar disableExisting={false} onChange={goToPuzzle} />
-        <h4 className="borderBottom1pxSolidBlack">Unsubscribe User</h4>
-        <form
-          onSubmit={logAsyncErrors(async (e: React.FormEvent) => {
-            e.preventDefault();
-            const toSubmit = uidToUnsub.trim();
-            setUidToUnsub('');
-            if (toSubmit) {
-              await setDoc(
-                getDocRef('prefs', uidToUnsub),
-                { unsubs: arrayUnion('all') },
-                { merge: true }
-              ).then(() => {
-                showSnackbar('Unsubscribed');
-              });
-            }
-          })}
-        >
-          <label>
-            Unsubscribe by user id:
-            <input
-              className="margin0-0-5em"
-              type="text"
-              value={uidToUnsub}
-              onChange={(e) => {
-                setUidToUnsub(e.target.value);
-              }}
-            />
-          </label>
-          <Button type="submit" text="Unsubscribe" />
-        </form>
         <h4 className="borderBottom1pxSolidBlack">Record Donation</h4>
         <form
           onSubmit={logAsyncErrors(async (e: React.FormEvent) => {
