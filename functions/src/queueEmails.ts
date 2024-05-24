@@ -92,7 +92,7 @@ async function queueEmailForUser(
     const validationResult = AccountPrefsV.decode(prefsRes.data());
     if (validationResult._tag === 'Right') {
       prefs = validationResult.right;
-      if (prefs.unsubs?.includes('all')) {
+      if (prefs.bounced || prefs.unsubs?.includes('all')) {
         return;
       }
     }
