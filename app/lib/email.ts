@@ -1,6 +1,10 @@
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2';
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
+import { toHtml } from 'hast-util-to-html';
 import { getUser } from './firebaseAdminWrapper';
+import { markdownToHast } from './markdown/markdown';
+import { UnsubscribeFlags } from './prefs';
+import { getSig } from './subscriptions';
 
 export async function getAddress(userId: string): Promise<string | undefined> {
   try {
@@ -27,28 +31,47 @@ export async function getClient() {
     throw new Error('Failed to load ses keys');
   }
 
-  return new SESClient({
+  return new SESv2Client({
     region: REGION,
     credentials: { accessKeyId, secretAccessKey },
   });
 }
 
-export type EmailClient = SESClient;
+export type EmailClient = SESv2Client;
 
 export const RATE_LIMIT = 13;
+
+export const emailLink = (campaign: string, linkTo: string) =>
+  `https://crosshare.org/${linkTo}#utm_source=crosshare&utm_medium=email&utm_campaign=${campaign}`;
+
+const tagsToReplace: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+};
+
+function replaceTag(tag: string) {
+  return tagsToReplace[tag] || tag;
+}
+
+function safeForHtml(str: string) {
+  return str.replace(/[&<>]/g, replaceTag);
+}
 
 export async function sendEmail({
   client,
   userId,
   subject,
-  text,
-  html,
+  markdown,
+  oneClickUnsubscribeTag,
+  campaign,
 }: {
-  client: SESClient;
+  client: EmailClient;
   userId: string;
   subject: string;
-  text: string;
-  html: string;
+  markdown: string;
+  oneClickUnsubscribeTag: keyof typeof UnsubscribeFlags;
+  campaign: string;
 }) {
   const toAddress = await getAddress(userId);
   if (!toAddress) {
@@ -56,16 +79,49 @@ export async function sendEmail({
     return;
   }
 
+  const sig = await getSig(userId);
+  const link = emailLink(campaign, `subscription?u=${userId}&s=${sig}`);
+  markdown =
+    markdown.trim() +
+    `\n\n---\n\n[Manage your Crosshare email preferences](${link})`;
+
   const message = new SendEmailCommand({
     Destination: { ToAddresses: [toAddress] },
-    Message: {
-      Body: {
-        Html: { Data: html },
-        Text: { Data: text },
+    Content: {
+      Simple: {
+        Body: {
+          Html: {
+            Data: `<!DOCTYPE html>
+          <html>
+          <head>
+          <meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
+          <title>${safeForHtml(subject || 'Crosshare Notifications')}</title>
+          </head>
+          <body>
+          ${toHtml(
+            markdownToHast({
+              text: markdown,
+            })
+          )}
+          </body>
+          </html>`,
+          },
+          Text: { Data: markdown },
+        },
+        Subject: { Data: subject },
+        Headers: [
+          {
+            Name: 'List-Unsubscribe',
+            Value: `<https://crosshare.org/api/subscription?u=${userId}&s=${sig}&f=${oneClickUnsubscribeTag}>`,
+          },
+          {
+            Name: 'List-Unsubscribe-Post',
+            Value: 'List-Unsubscribe=One-Click',
+          },
+        ],
       },
-      Subject: { Data: subject },
     },
-    Source: 'Mike from Crosshare <mike@crosshare.org>',
+    FromEmailAddress: 'Mike from Crosshare <mike@crosshare.org>',
   });
 
   return client.send(message);

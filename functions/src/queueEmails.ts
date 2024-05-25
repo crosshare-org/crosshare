@@ -13,11 +13,11 @@ import {
   isFeaturedNotification,
   FeaturedNotificationT,
 } from '../../app/lib/notificationTypes';
-import SimpleMarkdown from 'simple-markdown';
 import { AccountPrefsV, AccountPrefsT } from '../../app/lib/prefs';
 import {
   EmailClient,
   RATE_LIMIT,
+  emailLink,
   getClient,
   sendEmail,
 } from '../../app/lib/email';
@@ -34,24 +34,10 @@ const joinStringsWithAnd = (vals: Array<string>) => {
   }
 };
 
-const emailLink = (linkTo: string) =>
-  `https://crosshare.org/${linkTo}#utm_source=crosshare&utm_medium=email&utm_campaign=notifications`;
+const CAMPAIGN = 'notifications;';
 
-const puzzleLink = (puzzleId: string) => emailLink(`crosswords/${puzzleId}`);
-
-const tagsToReplace: Record<string, string> = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-};
-
-function replaceTag(tag: string) {
-  return tagsToReplace[tag] || tag;
-}
-
-function safeForHtml(str: string) {
-  return str.replace(/[&<>]/g, replaceTag);
-}
+const puzzleLink = (puzzleId: string) =>
+  emailLink(CAMPAIGN, `crosswords/${puzzleId}`);
 
 async function queueEmailForUser(
   client: EmailClient,
@@ -210,6 +196,7 @@ async function queueEmailForUser(
   markdown += `---
 
 Crosshare notifications are sent at most once per day. To manage your notification preferences visit [your Account page](${emailLink(
+    CAMPAIGN,
     'account'
   )})`;
 
@@ -217,17 +204,9 @@ Crosshare notifications are sent at most once per day. To manage your notificati
     client,
     userId,
     subject: subject || 'Crosshare Notifications',
-    text: markdown,
-    html: `<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
-<title>${safeForHtml(subject || 'Crosshare Notifications')}</title>
-</head>
-<body>
-${SimpleMarkdown.defaultHtmlOutput(SimpleMarkdown.defaultBlockParse(markdown))}
-</body>
-</html>`,
+    oneClickUnsubscribeTag: 'all',
+    campaign: CAMPAIGN,
+    markdown,
   }).then(() =>
     Promise.all(read.map((n) => db.doc(`n/${n.id}`).update({ r: true })))
   );

@@ -8,8 +8,9 @@ export async function sendTestEmail() {
     client,
     userId: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
     subject: 'Testing an email via SES',
-    text: '**Here** is the body',
-    html: '<b>Here</b> is the body',
+    markdown: '**Here** is the body',
+    oneClickUnsubscribeTag: 'all',
+    campaign: 'test',
   });
 }
 

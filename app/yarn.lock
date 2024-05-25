@@ -76,10 +76,10 @@
     "@aws-sdk/util-utf8-browser" "^3.0.0"
     tslib "^1.11.1"
 
-"@aws-sdk/client-ses@^3.583.0":
+"@aws-sdk/client-sesv2@^3.583.0":
   version "3.583.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-ses/-/client-ses-3.583.0.tgz#1b640162c4642a290fb8b2c10343093a6a1c4bd4"
-  integrity sha512-nFKtxafjTv63qrkg44pbn2tCsaSeZXX2bQRYrhY1vg7fyycUPIUnhwIm70c62pdeh0arbrAGJNGdmIKsVQCMfg==
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-sesv2/-/client-sesv2-3.583.0.tgz#65b39f7088bc20b840f248a6abf59bc6bdfcfa32"
+  integrity sha512-HcIGjQwauJRn33C0ThZ48YS5J9gX/YSzt8PP1dyK3nVV4L8zn19WrJZLK3XTi/iy+EgktQjugWguL6iPCtAzrA==
   dependencies:
     "@aws-crypto/sha256-browser" "3.0.0"
     "@aws-crypto/sha256-js" "3.0.0"
@@ -121,7 +121,6 @@
     "@smithy/util-middleware" "^3.0.0"
     "@smithy/util-retry" "^3.0.0"
     "@smithy/util-utf8" "^3.0.0"
-    "@smithy/util-waiter" "^3.0.0"
     tslib "^2.6.2"
 
 "@aws-sdk/client-sso-oidc@3.583.0":
@@ -2965,15 +2964,6 @@
   integrity sha512-rUeT12bxFnplYDe815GXbq/oixEGHfRFFtcTF3YdDi/JaENIM6aSYYLJydG83UNzLXeRI5K8abYd/8Sp/QM0kA==
   dependencies:
     "@smithy/util-buffer-from" "^3.0.0"
-    tslib "^2.6.2"
-
-"@smithy/util-waiter@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@smithy/util-waiter/-/util-waiter-3.0.0.tgz#26bcc5bbbf1de9360a7aeb3b3919926fc6afa2bc"
-  integrity sha512-+fEXJxGDLCoqRKVSmo0auGxaqbiCo+8oph+4auefYjaNxjOLKSY2MxVQfRzo65PaZv4fr+5lWg+au7vSuJJ/zw==
-  dependencies:
-    "@smithy/abort-controller" "^3.0.0"
-    "@smithy/types" "^3.0.0"
     tslib "^2.6.2"
 
 "@snyk/github-codeowners@1.1.0":
