@@ -33,7 +33,7 @@ test('filtering nested deleted comments', () => {
       n: 'Author 1',
       t: 0,
       ch: false,
-      p: Timestamp.fromDate(new Date(2022, 1, 1)),
+      p: Timestamp.fromMillis(Date.UTC(2022, 1, 1)),
       r: [
         {
           i: '2',
@@ -42,7 +42,7 @@ test('filtering nested deleted comments', () => {
           n: 'Author 2',
           t: 1,
           ch: false,
-          p: Timestamp.fromDate(new Date(2022, 1, 2)),
+          p: Timestamp.fromMillis(Date.UTC(2022, 1, 2)),
           deleted: true,
           r: [
             {
@@ -52,7 +52,7 @@ test('filtering nested deleted comments', () => {
               n: 'Author 3',
               t: 10,
               ch: false,
-              p: Timestamp.fromDate(new Date(2022, 1, 3)),
+              p: Timestamp.fromMillis(Date.UTC(2022, 1, 3)),
             },
           ],
         },
@@ -108,21 +108,21 @@ test('filtering nested deleted comments', () => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   comments[0]!.r![0]!.r![0]!.deleted = true;
   expect(filterDeletedComments(comments)).toMatchInlineSnapshot(`
-  [
-    {
-      "a": "authorid",
-      "c": "base text",
-      "ch": false,
-      "i": "1",
-      "n": "Author 1",
-      "p": {
-        "nanoseconds": 0,
-        "seconds": 1643673600,
+    [
+      {
+        "a": "authorid",
+        "c": "base text",
+        "ch": false,
+        "i": "1",
+        "n": "Author 1",
+        "p": {
+          "nanoseconds": 0,
+          "seconds": 1643673600,
+        },
+        "t": 0,
       },
-      "t": 0,
-    },
-  ]
-`);
+    ]
+  `);
 });
 
 test('filtering deleted comments', () => {
@@ -134,7 +134,7 @@ test('filtering deleted comments', () => {
       n: 'Author 1',
       t: 0,
       ch: false,
-      p: Timestamp.fromDate(new Date(2022, 1, 1)),
+      p: Timestamp.fromMillis(Date.UTC(2022, 1, 1)),
     },
     {
       i: '2',
@@ -143,7 +143,7 @@ test('filtering deleted comments', () => {
       n: 'Author 2',
       t: 1,
       ch: false,
-      p: Timestamp.fromDate(new Date(2022, 1, 2)),
+      p: Timestamp.fromMillis(Date.UTC(2022, 1, 2)),
       r: [
         {
           i: '3',
@@ -152,7 +152,7 @@ test('filtering deleted comments', () => {
           n: 'Author 3',
           t: 10,
           ch: false,
-          p: Timestamp.fromDate(new Date(2022, 1, 3)),
+          p: Timestamp.fromMillis(Date.UTC(2022, 1, 3)),
         },
       ],
     },
