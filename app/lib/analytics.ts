@@ -13,11 +13,11 @@ import {
   PuzzleStatsT,
   PuzzleStatsV,
   getDateString,
-} from './dbtypes';
-import { getCollection, toFirestore } from './firebaseAdminWrapper';
-import { PathReporter } from './pathReporter';
-import { Timestamp } from './timestamp';
-import { isMetaSolution } from './utils';
+} from './dbtypes.js';
+import { getCollection, toFirestore } from './firebaseAdminWrapper.js';
+import { PathReporter } from './pathReporter.js';
+import { Timestamp } from './timestamp.js';
+import { isMetaSolution } from './utils.js';
 
 export async function runAnalytics(
   startTimestamp: Timestamp,

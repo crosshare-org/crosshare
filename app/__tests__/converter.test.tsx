@@ -1,15 +1,14 @@
-import cases from 'jest-in-case';
 import fs from 'fs';
-import util from 'util';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
-import { importFile, exportFile } from '../lib/converter';
-import { PuzzleInProgressStrictT } from '../lib/types';
-import { DBPuzzleT } from '../lib/dbtypes';
-import { fromCells } from '../lib/viewableGrid';
-import { getClueProps } from '../reducers/reducer';
-import { Timestamp } from '../lib/timestamp';
+import util from 'util';
+import cases from 'jest-in-case';
+import { exportFile, importFile } from '../lib/converter.js';
+import { DBPuzzleT } from '../lib/dbtypes.js';
+import { Timestamp } from '../lib/timestamp.js';
+import { PuzzleInProgressStrictT } from '../lib/types.js';
+import { fromCells } from '../lib/viewableGrid.js';
+import { getClueProps } from '../reducers/reducer.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

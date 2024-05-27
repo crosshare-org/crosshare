@@ -1,10 +1,10 @@
 import equal from 'fast-deep-equal';
-import { DBPuzzleT } from '../lib/dbtypes';
-import { getDocId } from '../lib/firebaseWrapper';
-import { gridWithEntrySet } from '../lib/gridBase';
-import { parseClueEnumeration } from '../lib/parse';
-import { GridSelection, emptySelection } from '../lib/selection';
-import { Timestamp } from '../lib/timestamp';
+import { DBPuzzleT } from '../lib/dbtypes.js';
+import { getDocId } from '../lib/firebaseWrapper.js';
+import { gridWithEntrySet } from '../lib/gridBase.js';
+import { parseClueEnumeration } from '../lib/parse.js';
+import { GridSelection, emptySelection } from '../lib/selection.js';
+import { Timestamp } from '../lib/timestamp.js';
 import {
   Direction,
   EMPTY,
@@ -13,7 +13,7 @@ import {
   PrefillSquares,
   PuzzleInProgressT,
   Symmetry,
-} from '../lib/types';
+} from '../lib/types.js';
 import {
   ViewableEntry,
   ViewableGrid,
@@ -23,20 +23,20 @@ import {
   moveLeft,
   moveRight,
   moveUp,
-} from '../lib/viewableGrid';
+} from '../lib/viewableGrid.js';
 import {
   forEachCluedEntry,
   getWarningStats,
   hasSelection,
   postEdit,
   validateGrid,
-} from './builderUtils';
-import { PuzzleAction, isKeypressAction } from './commonActions';
+} from './builderUtils.js';
+import { PuzzleAction, isKeypressAction } from './commonActions.js';
 import {
   GridInterfaceState,
   closeRebus,
   gridInterfaceReducer,
-} from './gridReducer';
+} from './gridReducer.js';
 
 export type BuilderEntry = ViewableEntry;
 export type BuilderGrid = ViewableGrid<BuilderEntry>;

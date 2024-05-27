@@ -4,21 +4,21 @@ import { useEffect } from 'react';
 import {
   ConstructorPage,
   ConstructorPageProps,
-} from '../components/ConstructorPage';
-import { ErrorPage } from '../components/ErrorPage';
-import { validate } from '../lib/constructorPage';
-import { FollowersV } from '../lib/dbtypes';
-import { getCollection } from '../lib/firebaseAdminWrapper';
-import { markdownToHast } from '../lib/markdown/markdown';
-import { paginatedPuzzles } from '../lib/paginatedPuzzles';
-import { PathReporter } from '../lib/pathReporter';
-import { isUserPatron } from '../lib/patron';
-import { AccountPrefsV } from '../lib/prefs';
+} from '../components/ConstructorPage.js';
+import { ErrorPage } from '../components/ErrorPage.js';
+import { validate } from '../lib/constructorPage.js';
+import { FollowersV } from '../lib/dbtypes.js';
+import { getCollection } from '../lib/firebaseAdminWrapper.js';
+import { markdownToHast } from '../lib/markdown/markdown.js';
+import { paginatedPuzzles } from '../lib/paginatedPuzzles.js';
+import { PathReporter } from '../lib/pathReporter.js';
+import { isUserPatron } from '../lib/patron.js';
+import { AccountPrefsV } from '../lib/prefs.js';
 import {
   getStorageUrl,
   userIdToConstructorPageWithPatron,
-} from '../lib/serverOnly';
-import { withTranslation } from '../lib/translation';
+} from '../lib/serverOnly.js';
+import { withTranslation } from '../lib/translation.js';
 
 interface ErrorProps {
   error: string;

@@ -11,9 +11,9 @@ import {
   isIndexInBounds,
   posForIndex,
   valAt,
-} from './gridBase';
-import { parseClueReferences } from './parse';
-import { AccountPrefsFlagsT } from './prefs';
+} from './gridBase.js';
+import { parseClueReferences } from './parse.js';
+import { AccountPrefsFlagsT } from './prefs.js';
 import {
   BLOCK,
   ClueT,
@@ -24,7 +24,7 @@ import {
   Symmetry,
   directionString,
   isSamePosition,
-} from './types';
+} from './types.js';
 
 export interface ViewableEntry extends EntryBase {
   labelNumber: number;

@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { PathReporter } from './pathReporter';
+import { PathReporter } from './pathReporter.js';
 
 const ClueEntryV = t.type({
   /** clue index */

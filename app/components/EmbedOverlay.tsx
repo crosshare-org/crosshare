@@ -9,25 +9,25 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { EmbedOptionsT, validate } from '../lib/embedOptions';
-import { getDocRef } from '../lib/firebaseWrapper';
+import { EmbedOptionsT, validate } from '../lib/embedOptions.js';
+import { getDocRef } from '../lib/firebaseWrapper.js';
 import {
   ERROR_COLOR,
   LINK,
   PRIMARY,
   VERIFIED_COLOR,
   colorTheme,
-} from '../lib/style';
-import { Direction, ServerPuzzleResult } from '../lib/types';
-import { logAsyncErrors } from '../lib/utils';
-import { fromCells } from '../lib/viewableGrid';
-import { PuzzleAction } from '../reducers/commonActions';
-import { Button, ButtonAsLink } from './Buttons';
-import { CopyableInput } from './CopyableInput';
+} from '../lib/style.js';
+import { Direction, ServerPuzzleResult } from '../lib/types.js';
+import { logAsyncErrors } from '../lib/utils.js';
+import { fromCells } from '../lib/viewableGrid.js';
+import { PuzzleAction } from '../reducers/commonActions.js';
+import { Button, ButtonAsLink } from './Buttons.js';
+import { CopyableInput } from './CopyableInput.js';
 import styles from './EmbedOverlay.module.css';
-import { fontFace } from './EmbedStyling';
-import { GridView } from './Grid';
-import { Overlay } from './Overlay';
+import { fontFace } from './EmbedStyling.js';
+import { GridView } from './Grid.js';
+import { Overlay } from './Overlay.js';
 
 export const EmbedOverlay = ({
   dispatch,

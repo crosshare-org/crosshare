@@ -1,39 +1,39 @@
 import useEventListener from '@use-it/event-listener';
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { FaListOl, FaRegNewspaper } from 'react-icons/fa';
-import { entryAndCrossAtPosition } from '../lib/gridBase';
-import { useMatchMedia } from '../lib/hooks';
-import { markdownToHast } from '../lib/markdown/markdown';
-import { SMALL_AND_UP_RULES } from '../lib/style';
-import { Timestamp } from '../lib/timestamp';
+import { entryAndCrossAtPosition } from '../lib/gridBase.js';
+import { useMatchMedia } from '../lib/hooks.js';
+import { markdownToHast } from '../lib/markdown/markdown.js';
+import { SMALL_AND_UP_RULES } from '../lib/style.js';
+import { Timestamp } from '../lib/timestamp.js';
 import {
   Direction,
   PuzzleInProgressT,
   dbCluesToClueTArray,
   fromKeyboardEvent,
-} from '../lib/types';
-import { addClues } from '../lib/viewableGrid';
+} from '../lib/types.js';
+import { addClues } from '../lib/viewableGrid.js';
 import {
   BuilderState,
   PublishAction,
   builderReducer,
   getClueProps,
   initialBuilderState,
-} from '../reducers/builderReducer';
-import { KeypressAction } from '../reducers/commonActions';
-import { AuthProps } from './AuthHelpers';
-import { ClueList } from './ClueList';
-import { ClueMode } from './ClueMode';
-import { ConstructorNotes } from './ConstructorNotes';
-import { ContactLinks } from './ContactLinks';
-import { Emoji } from './Emoji';
-import { GridView } from './Grid';
-import { GridContext } from './GridContext';
-import { Overlay } from './Overlay';
-import { SquareAndCols } from './Page';
+} from '../reducers/builderReducer.js';
+import { KeypressAction } from '../reducers/commonActions.js';
+import { AuthProps } from './AuthHelpers.js';
+import { ClueList } from './ClueList.js';
+import { ClueMode } from './ClueMode.js';
+import { ConstructorNotes } from './ConstructorNotes.js';
+import { ContactLinks } from './ContactLinks.js';
+import { Emoji } from './Emoji.js';
+import { GridView } from './Grid.js';
+import { GridContext } from './GridContext.js';
+import { Overlay } from './Overlay.js';
+import { SquareAndCols } from './Page.js';
 import styles from './Preview.module.css';
-import { PublishOverlay } from './PublishOverlay';
-import { DefaultTopBar, TopBarLink } from './TopBar';
+import { PublishOverlay } from './PublishOverlay.js';
+import { DefaultTopBar, TopBarLink } from './TopBar.js';
 
 const initializeState = (
   props: PuzzleInProgressT & AuthProps

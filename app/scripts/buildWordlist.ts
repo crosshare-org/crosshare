@@ -3,7 +3,7 @@ export {};
 
 import fs from 'fs';
 import util from 'util';
-import { rawBuild } from '../lib/WordDB';
+import { rawBuild } from '../lib/WordDB.js';
 
 const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);

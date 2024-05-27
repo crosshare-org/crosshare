@@ -1,11 +1,11 @@
 import { Feed } from 'feed';
 import { toHtml } from 'hast-util-to-html';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { validate } from '../../../lib/constructorPage';
-import { getCollection } from '../../../lib/firebaseAdminWrapper';
-import { markdownToHast } from '../../../lib/markdown/markdown';
-import { paginatedPuzzles } from '../../../lib/paginatedPuzzles';
-import { slugify } from '../../../lib/utils';
+import { validate } from '../../../lib/constructorPage.js';
+import { getCollection } from '../../../lib/firebaseAdminWrapper.js';
+import { markdownToHast } from '../../../lib/markdown/markdown.js';
+import { paginatedPuzzles } from '../../../lib/paginatedPuzzles.js';
+import { slugify } from '../../../lib/utils.js';
 
 export default async function constructorFeed(
   req: NextApiRequest,

@@ -8,12 +8,12 @@ import {
   useState,
 } from 'react';
 import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
-import { usePolyfilledResizeObserver } from '../lib/hooks';
-import { KeyK } from '../lib/types';
-import { clsx } from '../lib/utils';
-import { KeypressAction } from '../reducers/commonActions';
-import { PasteAction } from '../reducers/gridReducer';
-import { EmbedContext } from './EmbedContext';
+import { usePolyfilledResizeObserver } from '../lib/hooks.js';
+import { KeyK } from '../lib/types.js';
+import { clsx } from '../lib/utils.js';
+import { KeypressAction } from '../reducers/commonActions.js';
+import { PasteAction } from '../reducers/gridReducer.js';
+import { EmbedContext } from './EmbedContext.js';
 import styles from './Page.module.css';
 
 interface TinyNavButtonProps {

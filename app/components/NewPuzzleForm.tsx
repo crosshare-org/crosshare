@@ -1,9 +1,9 @@
 import { Dispatch, FormEvent, useContext, useState } from 'react';
-import { PrefillSquares } from '../lib/types';
-import { STORAGE_KEY, clsx } from '../lib/utils';
-import { NewPuzzleAction } from '../reducers/builderReducer';
-import { AuthContext } from './AuthContext';
-import { PrefillIcon, PuzzleSizeIcon } from './Icons';
+import { PrefillSquares } from '../lib/types.js';
+import { STORAGE_KEY, clsx } from '../lib/utils.js';
+import { NewPuzzleAction } from '../reducers/builderReducer.js';
+import { AuthContext } from './AuthContext.js';
+import { PrefillIcon, PuzzleSizeIcon } from './Icons.js';
 import styles from './NewPuzzleForm.module.css';
 
 interface SizeSelectProps {

@@ -1,5 +1,5 @@
-import { Extension } from 'mdast-util-from-markdown';
-import { Handle, Parent } from 'mdast-util-from-markdown/lib';
+import { Parent } from 'mdast';
+import { Extension, Handle } from 'mdast-util-from-markdown';
 
 export interface Spoiler extends Parent {
   type: 'spoiler';

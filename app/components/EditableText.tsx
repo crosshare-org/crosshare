@@ -1,15 +1,15 @@
 import type { Root } from 'hast';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
-import { clsx, logAsyncErrors } from '../lib/utils';
-import { Button, ButtonAsLink } from './Buttons';
+import { clsx, logAsyncErrors } from '../lib/utils.js';
+import { Button, ButtonAsLink } from './Buttons.js';
 import styles from './EditableText.module.css';
 import {
   LengthLimitedInput,
   LengthLimitedTextarea,
   LengthView,
-} from './Inputs';
-import { Markdown } from './Markdown';
+} from './Inputs.js';
+import { Markdown } from './Markdown.js';
 
 const MarkdownPreview = dynamic(() =>
   import('./MarkdownPreview').then((mod) => mod.MarkdownPreview)

@@ -2,14 +2,14 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { GetServerSideProps } from 'next/types';
 import { FormEvent, useState } from 'react';
-import { ErrorPage } from '../components/ErrorPage';
-import { useSnackbar } from '../components/Snackbar';
-import { getAddress } from '../lib/email';
-import { getCollection } from '../lib/firebaseAdminWrapper';
-import { PathReporter } from '../lib/pathReporter';
-import { AccountPrefsV, UnsubscribeFlags } from '../lib/prefs';
-import { SubscriptionParamsV, getSig } from '../lib/subscriptions';
-import { logAsyncErrors } from '../lib/utils';
+import { ErrorPage } from '../components/ErrorPage.js';
+import { useSnackbar } from '../components/Snackbar.js';
+import { getAddress } from '../lib/email.js';
+import { getCollection } from '../lib/firebaseAdminWrapper.js';
+import { PathReporter } from '../lib/pathReporter.js';
+import { AccountPrefsV, UnsubscribeFlags } from '../lib/prefs.js';
+import { SubscriptionParamsV, getSig } from '../lib/subscriptions.js';
+import { logAsyncErrors } from '../lib/utils.js';
 
 interface SuccessProps {
   userId: string;

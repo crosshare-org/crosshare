@@ -1,13 +1,13 @@
 import { Dispatch, useEffect, useRef } from 'react';
-import { PuzzleResultWithAugmentedComments } from '../lib/types';
-import { PuzzleAction } from '../reducers/commonActions';
-import { ButtonReset } from './Buttons';
-import { FullscreenCSS } from './FullscreenCSS';
-import { Link } from './Link';
-import { Overlay } from './Overlay';
-import { SlateColorTheme } from './SlateColorTheme';
-import { SlateHeader, SlateLogo } from './SlateHeader';
-import { Illustration, Pause, Play } from './SlateIcons';
+import { PuzzleResultWithAugmentedComments } from '../lib/types.js';
+import { PuzzleAction } from '../reducers/commonActions.js';
+import { ButtonReset } from './Buttons.js';
+import { FullscreenCSS } from './FullscreenCSS.js';
+import { Link } from './Link.js';
+import { Overlay } from './Overlay.js';
+import { SlateColorTheme } from './SlateColorTheme.js';
+import { SlateHeader, SlateLogo } from './SlateHeader.js';
+import { Illustration, Pause, Play } from './SlateIcons.js';
 import styles from './SlateOverlays.module.css';
 
 const PoweredByLink = () => {

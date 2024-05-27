@@ -1,6 +1,6 @@
 import type { Root } from 'hast';
 import styles from './ConstructorNotes.module.css';
-import { Markdown } from './Markdown';
+import { Markdown } from './Markdown.js';
 
 export const ConstructorNotes = (props: {
   isContest?: boolean;

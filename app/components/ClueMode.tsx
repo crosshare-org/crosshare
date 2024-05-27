@@ -3,17 +3,17 @@ import type { User } from 'firebase/auth';
 import dynamic from 'next/dynamic';
 import { Dispatch, useMemo, useState } from 'react';
 import { FaInfoCircle, FaRegNewspaper } from 'react-icons/fa';
-import { markdownToHast } from '../lib/markdown/markdown';
-import { sizeTag } from '../lib/sizeTag';
-import { COVER_PIC } from '../lib/style';
-import { Timestamp } from '../lib/timestamp';
+import { markdownToHast } from '../lib/markdown/markdown.js';
+import { sizeTag } from '../lib/sizeTag.js';
+import { COVER_PIC } from '../lib/style.js';
+import { Timestamp } from '../lib/timestamp.js';
 import {
   dbCluesToClueTArray,
   directionString,
   removeClueSpecials,
-} from '../lib/types';
-import { isMetaSolution } from '../lib/utils';
-import { addClues } from '../lib/viewableGrid';
+} from '../lib/types.js';
+import { isMetaSolution } from '../lib/utils.js';
+import { addClues } from '../lib/viewableGrid.js';
 import {
   AddAlternateAction,
   AddEnumerationsAction,
@@ -32,27 +32,27 @@ import {
   SetTitleAction,
   UpdateContestAction,
   getClueProps,
-} from '../reducers/builderReducer';
-import { PuzzleAction } from '../reducers/commonActions';
-import { AlternateSolutionEditor } from './AlternateSolutionEditor';
-import { Button, ButtonAsLink } from './Buttons';
+} from '../reducers/builderReducer.js';
+import { PuzzleAction } from '../reducers/commonActions.js';
+import { AlternateSolutionEditor } from './AlternateSolutionEditor.js';
+import { Button, ButtonAsLink } from './Buttons.js';
 import styles from './ClueMode.module.css';
-import { DateTimePicker } from './DateTimePicker';
-import { GridContext } from './GridContext';
-import { SpinnerFinished } from './Icons';
+import { DateTimePicker } from './DateTimePicker.js';
+import { GridContext } from './GridContext.js';
+import { SpinnerFinished } from './Icons.js';
 import {
   LengthLimitedInput,
   LengthLimitedTextarea,
   LengthView,
-} from './Inputs';
-import { Markdown } from './Markdown';
-import { Overlay } from './Overlay';
-import { PublishOverlay } from './PublishOverlay';
-import { useSnackbar } from './Snackbar';
-import { TagEditor } from './TagEditor';
-import { TagList } from './TagList';
-import { ToolTipText } from './ToolTipText';
-import { TopBar, TopBarLink } from './TopBar';
+} from './Inputs.js';
+import { Markdown } from './Markdown.js';
+import { Overlay } from './Overlay.js';
+import { PublishOverlay } from './PublishOverlay.js';
+import { useSnackbar } from './Snackbar.js';
+import { TagEditor } from './TagEditor.js';
+import { TagList } from './TagList.js';
+import { ToolTipText } from './ToolTipText.js';
+import { TopBar, TopBarLink } from './TopBar.js';
 
 export const MAX_STRING_LENGTH = 2048;
 export const MAX_BLOG_LENGTH = 20000;

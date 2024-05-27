@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { ColorThemeProps, colorThemeString } from '../lib/style';
+import { ColorThemeProps, colorThemeString } from '../lib/style.js';
 
 export interface EmbedStylingProps extends ColorThemeProps {
   fontUrl?: string;

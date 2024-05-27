@@ -1,26 +1,30 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "ES6",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
     "skipLibCheck": true,
+    "esModuleInterop": true,
     "strict": true,
+    "downlevelIteration": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
-    "esModuleInterop": true,
     "jsx": "preserve",
-    "jsxImportSource": "@emotion/react",
-  },
+    "incremental": true,  },
   "include": [
     "src",
     "typings/**/*.ts"

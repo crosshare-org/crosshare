@@ -1,4 +1,4 @@
-import { Direction } from './types';
+import { Direction } from './types.js';
 
 export interface ClueReferenceData {
   direction: Direction;

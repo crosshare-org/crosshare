@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { ReactNode } from 'react';
-import { clsx } from '../lib/utils';
+import { clsx } from '../lib/utils.js';
 import styles from './Images.module.css';
 
 const ProfilePic = (props: { profilePicture: string; className?: string }) => {

@@ -1,5 +1,5 @@
 import cases from 'jest-in-case';
-import { parseClueReferences } from '../lib/parse';
+import { parseClueReferences } from '../lib/parse.js';
 
 cases(
   'parseClueReferences',

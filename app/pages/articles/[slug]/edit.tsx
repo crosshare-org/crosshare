@@ -4,20 +4,20 @@ import Head from 'next/head';
 import NextJSRouter, { useRouter } from 'next/router';
 import { useRef } from 'react';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
-import { requiresAdmin } from '../../../components/AuthHelpers';
-import { Button } from '../../../components/Buttons';
-import { EditableText } from '../../../components/EditableText';
-import { ErrorPage } from '../../../components/ErrorPage';
-import { useSnackbar } from '../../../components/Snackbar';
-import { DefaultTopBar } from '../../../components/TopBar';
-import { ArticleT, ArticleV } from '../../../lib/article';
+import { requiresAdmin } from '../../../components/AuthHelpers.js';
+import { Button } from '../../../components/Buttons.js';
+import { EditableText } from '../../../components/EditableText.js';
+import { ErrorPage } from '../../../components/ErrorPage.js';
+import { useSnackbar } from '../../../components/Snackbar.js';
+import { DefaultTopBar } from '../../../components/TopBar.js';
+import { ArticleT, ArticleV } from '../../../lib/article.js';
 import {
   getCollection,
   getDocRef,
   getValidatedCollection,
-} from '../../../lib/firebaseWrapper';
-import { markdownToHast } from '../../../lib/markdown/markdown';
-import { logAsyncErrors, slugify } from '../../../lib/utils';
+} from '../../../lib/firebaseWrapper.js';
+import { markdownToHast } from '../../../lib/markdown/markdown.js';
+import { logAsyncErrors, slugify } from '../../../lib/utils.js';
 
 export default requiresAdmin(() => {
   const router = useRouter();

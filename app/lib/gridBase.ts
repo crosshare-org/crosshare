@@ -1,4 +1,4 @@
-import { BLOCK, Direction, EMPTY, PosAndDir, Position } from './types';
+import { BLOCK, Direction, EMPTY, PosAndDir, Position } from './types.js';
 
 export interface EntryBase {
   index: number;

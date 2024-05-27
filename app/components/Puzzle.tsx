@@ -39,22 +39,25 @@ import {
 } from 'react-icons/fa';
 import { ImEmbed } from 'react-icons/im';
 import { IoMdStats } from 'react-icons/io';
-import { PlayWithoutUserT } from '../lib/dbtypes';
-import { isTextInput } from '../lib/domUtils';
-import { getDocRef, signInAnonymously } from '../lib/firebaseWrapper';
-import { entryAndCrossAtPosition, entryIndexAtPosition } from '../lib/gridBase';
+import { PlayWithoutUserT } from '../lib/dbtypes.js';
+import { isTextInput } from '../lib/domUtils.js';
+import { getDocRef, signInAnonymously } from '../lib/firebaseWrapper.js';
+import {
+  entryAndCrossAtPosition,
+  entryIndexAtPosition,
+} from '../lib/gridBase.js';
 import {
   useDarkModeControl,
   useIsExistingDarkMode,
   useMatchMedia,
   usePersistedBoolean,
-} from '../lib/hooks';
-import { removeSpoilers } from '../lib/markdown/markdown';
-import { isNewPuzzleNotification } from '../lib/notificationTypes';
-import { cachePlay, isDirty, writePlayToDB } from '../lib/plays';
-import { PuzzlePageResultProps } from '../lib/serverOnly';
-import { SMALL_AND_UP_RULES } from '../lib/style';
-import { Timestamp } from '../lib/timestamp';
+} from '../lib/hooks.js';
+import { removeSpoilers } from '../lib/markdown/markdown.js';
+import { isNewPuzzleNotification } from '../lib/notificationTypes.js';
+import { cachePlay, isDirty, writePlayToDB } from '../lib/plays.js';
+import { PuzzlePageResultProps } from '../lib/serverOnly.js';
+import { SMALL_AND_UP_RULES } from '../lib/style.js';
+import { Timestamp } from '../lib/timestamp.js';
 import {
   BLOCK,
   CheatUnit,
@@ -64,22 +67,22 @@ import {
   fromKeyString,
   fromKeyboardEvent,
   getClueText,
-} from '../lib/types';
+} from '../lib/types.js';
 import {
   isMetaSolution,
   logAsyncErrors,
   slugify,
   timeString,
-} from '../lib/utils';
+} from '../lib/utils.js';
 import {
   type CluedEntry,
   addClues,
   fromCells,
   getEntryToClueMap,
   getRefs,
-} from '../lib/viewableGrid';
-import { KeypressAction, PuzzleAction } from '../reducers/commonActions';
-import { PasteAction } from '../reducers/gridReducer';
+} from '../lib/viewableGrid.js';
+import { KeypressAction, PuzzleAction } from '../reducers/commonActions.js';
+import { PasteAction } from '../reducers/gridReducer.js';
 import {
   CheatAction,
   LoadPlayAction,
@@ -89,20 +92,20 @@ import {
   ToggleClueViewAction,
   advanceActiveToNonBlock,
   puzzleReducer,
-} from '../reducers/puzzleReducer';
-import { AuthContext } from './AuthContext';
-import { AuthPropsOptional } from './AuthHelpers';
-import { Button } from './Buttons';
-import { ClueList } from './ClueList';
-import { ClueText } from './ClueText';
-import { CrosshareAudioContext } from './CrosshareAudioContext';
-import { DownsOnlyContext } from './DownsOnlyContext';
-import { EmbedContext } from './EmbedContext';
-import { Emoji } from './Emoji';
-import { FullscreenCSS } from './FullscreenCSS';
-import { GridView } from './Grid';
-import { GridContext } from './GridContext';
-import { I18nTags } from './I18nTags';
+} from '../reducers/puzzleReducer.js';
+import { AuthContext } from './AuthContext.js';
+import { AuthPropsOptional } from './AuthHelpers.js';
+import { Button } from './Buttons.js';
+import { ClueList } from './ClueList.js';
+import { ClueText } from './ClueText.js';
+import { CrosshareAudioContext } from './CrosshareAudioContext.js';
+import { DownsOnlyContext } from './DownsOnlyContext.js';
+import { EmbedContext } from './EmbedContext.js';
+import { Emoji } from './Emoji.js';
+import { FullscreenCSS } from './FullscreenCSS.js';
+import { GridView } from './Grid.js';
+import { GridContext } from './GridContext.js';
+import { I18nTags } from './I18nTags.js';
 import {
   AutoCheck,
   CheckEntry,
@@ -114,18 +117,18 @@ import {
   RevealPuzzle,
   RevealSquare,
   SpinnerFinished,
-} from './Icons';
-import { Keyboard } from './Keyboard';
-import { Overlay } from './Overlay';
-import { SquareAndCols, TwoCol } from './Page';
+} from './Icons.js';
+import { Keyboard } from './Keyboard.js';
+import { Overlay } from './Overlay.js';
+import { SquareAndCols, TwoCol } from './Page.js';
 import styles from './Puzzle.module.css';
 import {
   OverlayType,
   PuzzleOverlay,
   PuzzleOverlayBaseProps,
-} from './PuzzleOverlay';
-import { SlateColorTheme } from './SlateColorTheme';
-import { SlateHeader } from './SlateHeader';
+} from './PuzzleOverlay.js';
+import { SlateColorTheme } from './SlateColorTheme.js';
+import { SlateHeader } from './SlateHeader.js';
 import {
   AutoCheckActive,
   Check,
@@ -136,10 +139,10 @@ import {
   Reveal,
   Stats,
   Timer,
-} from './SlateIcons';
-import { SlateBegin, SlatePause } from './SlateOverlays';
-import { useSnackbar } from './Snackbar';
-import { SolverPreferencesList } from './SolverPreferencesList';
+} from './SlateIcons.js';
+import { SlateBegin, SlatePause } from './SlateOverlays.js';
+import { useSnackbar } from './Snackbar.js';
+import { SolverPreferencesList } from './SolverPreferencesList.js';
 import {
   NestedDropDown,
   TopBar,
@@ -148,7 +151,7 @@ import {
   TopBarDropDownLinkA,
   TopBarDropDownLinkSimpleA,
   TopBarLink,
-} from './TopBar';
+} from './TopBar.js';
 
 const ModeratingOverlay = dynamic(
   () => import('./ModerateOverlay').then((mod) => mod.ModeratingOverlay),

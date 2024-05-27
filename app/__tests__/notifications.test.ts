@@ -3,22 +3,21 @@
  */
 
 import * as firebaseTesting from '@firebase/rules-unit-testing';
+import add from 'date-fns/add';
 import type firebase from 'firebase/compat/app';
-
-import { getMockedPuzzle } from '../lib/getMockedPuzzle';
-import { notificationsForPuzzleChange } from '../lib/notifications';
-import { NotificationT } from '../lib/notificationTypes';
-import { CommentWithRepliesT } from '../lib/dbtypes';
+import type firebaseAdminType from 'firebase-admin';
+import MockDate from 'mockdate';
+import { CommentWithRepliesT } from '../lib/dbtypes.js';
 import {
+  AdminTimestamp,
   TimestampClass,
   setAdminApp,
   setUserMap,
-  AdminTimestamp,
-} from '../lib/firebaseWrapper';
-import { queueEmails } from '../lib/serverOnly';
-import type firebaseAdminType from 'firebase-admin';
-import add from 'date-fns/add';
-import MockDate from 'mockdate';
+} from '../lib/firebaseWrapper.js';
+import { getMockedPuzzle } from '../lib/getMockedPuzzle.js';
+import { NotificationT } from '../lib/notificationTypes.js';
+import { notificationsForPuzzleChange } from '../lib/notifications.js';
+import { queueEmails } from '../lib/serverOnly.js';
 
 jest.mock('../lib/firebaseWrapper');
 

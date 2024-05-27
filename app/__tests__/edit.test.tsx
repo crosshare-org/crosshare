@@ -1,22 +1,22 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
-import { setApp, setAdminApp } from '../lib/firebaseWrapper';
-import type * as firebaseAdminType from 'firebase-admin';
-import {
-  getUser,
-  screen,
-  render,
-  fireEvent,
-  waitForElementToBeRemoved,
-} from '../lib/testingUtils';
-import { getMockedPuzzle } from '../lib/getMockedPuzzle';
-import { PuzzleLoader } from '../pages/edit/[puzzleId]';
 import type firebase from 'firebase/compat/app';
+import type * as firebaseAdminType from 'firebase-admin';
+import { setAdminApp, setApp } from '../lib/firebaseWrapper.js';
+import { getMockedPuzzle } from '../lib/getMockedPuzzle.js';
+import {
+  fireEvent,
+  getUser,
+  render,
+  screen,
+  waitForElementToBeRemoved,
+} from '../lib/testingUtils.js';
+import { PuzzleLoader } from '../pages/edit/[puzzleId].js';
 
 jest.mock(
   'next/link',
   () =>
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     ({ children }) =>
       children
 ); // https://github.com/vercel/next.js/issues/16864
@@ -172,8 +172,8 @@ async function checkSnapshot(puzzleId: string) {
   if (!resData) {
     throw new Error('botch');
   }
-  delete resData['p'];
-  delete resData['cs'][0]['p'];
+  delete resData.p;
+  delete resData.cs[0].p;
   expect(resData).toMatchSnapshot();
 }
 
@@ -300,7 +300,7 @@ test('security rules for puzzle edits', async () => {
   );
 
   // Succeeds updating clues
-  const downs = getMockedPuzzle()['dc'];
+  const downs = getMockedPuzzle().dc;
   downs[2] = 'My new clue here';
   await firebaseTesting.assertSucceeds(
     app.firestore().collection('c').doc(PUZZLEID).update({
@@ -341,7 +341,7 @@ test('security rules for puzzle edits', async () => {
   );
 
   // Fails for modifying grid
-  const grid = getMockedPuzzle()['g'];
+  const grid = getMockedPuzzle().g;
   grid[2] = 'M';
   await firebaseTesting.assertFails(
     app.firestore().collection('c').doc(PUZZLEID).update({

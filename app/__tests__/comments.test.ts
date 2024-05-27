@@ -10,9 +10,9 @@ import {
 } from '@firebase/rules-unit-testing';
 import { addDoc, collection } from 'firebase/firestore';
 import { cloneDeep } from 'lodash';
-import { CommentWithRepliesT } from '../lib/dbtypes';
-import { filterDeletedComments } from '../lib/serverOnly';
-import { Timestamp } from '../lib/timestamp';
+import { CommentWithRepliesT } from '../lib/dbtypes.js';
+import { filterDeletedComments } from '../lib/serverOnly.js';
+import { Timestamp } from '../lib/timestamp.js';
 
 const projectId = 'demo-comments-testing';
 let testEnv: RulesTestEnvironment;

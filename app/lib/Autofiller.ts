@@ -1,4 +1,4 @@
-import * as WordDB from './WordDB';
+import * as WordDB from './WordDB.js';
 import {
   AutofillGrid,
   fromTemplate,
@@ -6,9 +6,9 @@ import {
   minGridCost,
   numMatchesForEntry,
   stableSubsets,
-} from './autofillGrid';
-import * as BA from './bitArray';
-import { getCrosses, valAt } from './gridBase';
+} from './autofillGrid.js';
+import * as BA from './bitArray.js';
+import { getCrosses, valAt } from './gridBase.js';
 
 enum ResultTag {
   Recur,

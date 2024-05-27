@@ -1,27 +1,27 @@
-import React from 'react';
-import {
-  getByLabelText,
-  getUser,
-  cleanup,
-  render,
-  fireEvent,
-  RenderResult,
-  getProps,
-  act,
-  waitFor,
-} from '../lib/testingUtils';
-import BuilderPage from '../pages/construct';
-import { setApp } from '../lib/firebaseWrapper';
-import type firebaseAdminType from 'firebase-admin';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
-import type firebase from 'firebase/compat/app';
-import NextJSRouter from 'next/router';
-import PuzzlePage from '../pages/crosswords/[[...puzzleId]]';
-import { getPuzzlePageProps as getServerSideProps } from '../lib/serverOnly';
-import { PuzzleLoader as StatsPuzzleLoader } from '../pages/stats/[puzzleId]';
-import waitForExpect from 'wait-for-expect';
-import { getDateString, prettifyDateString } from '../lib/dbtypes';
 import { jest } from '@jest/globals';
+import type firebase from 'firebase/compat/app';
+import type firebaseAdminType from 'firebase-admin';
+import NextJSRouter from 'next/router';
+import React from 'react';
+import waitForExpect from 'wait-for-expect';
+import { getDateString, prettifyDateString } from '../lib/dbtypes.js';
+import { setApp } from '../lib/firebaseWrapper.js';
+import { getPuzzlePageProps as getServerSideProps } from '../lib/serverOnly.js';
+import {
+  RenderResult,
+  act,
+  cleanup,
+  fireEvent,
+  getByLabelText,
+  getProps,
+  getUser,
+  render,
+  waitFor,
+} from '../lib/testingUtils.js';
+import BuilderPage from '../pages/construct.js';
+import PuzzlePage from '../pages/crosswords/[[...puzzleId]].js';
+import { PuzzleLoader as StatsPuzzleLoader } from '../pages/stats/[puzzleId].js';
 
 /*jest.mock(
   'next/link',
@@ -100,7 +100,7 @@ test('puzzle in progress should be cached in local storage', async () => {
   sessionStorage.clear();
   localStorage.clear();
 
-  setApp(app as firebase.app.App);
+  setApp(app);
 
   let r = render(<BuilderPage />, { user: mike, displayName: 'Mike' });
   let launchButton = (await r.findAllByText('Launch Constructor'))[0];
@@ -151,7 +151,7 @@ async function publishPuzzle(
     .doc('donations')
     .set({ d: [] });
 
-  setApp(app as firebase.app.App);
+  setApp(app);
 
   const r = render(<BuilderPage />, { user: mike, displayName: 'Mike' });
   const launchButton = (await r.findAllByText('Launch Constructor'))[0];
@@ -231,7 +231,7 @@ test('moderate as daily mini', async () => {
   }
 
   // The puzzle should be visible to an admin w/ moderation links
-  setApp(adminUserApp as firebase.app.App);
+  setApp(adminUserApp);
   const r4 = render(<PuzzlePage {...props1} />, {
     user: miked,
     isAdmin: true,
@@ -242,14 +242,18 @@ test('moderate as daily mini', async () => {
   fireEvent.click(r4.getByText(/Moderate/i));
   await r4.findByText(/Schedule as Daily Mini/i);
   await waitFor(
-    () => expect(r4.getByTestId('today-button')).not.toBeDisabled(),
+    () => {
+      expect(r4.getByTestId('today-button')).not.toBeDisabled();
+    },
     {
       timeout: 5000,
     }
   );
   fireEvent.click(r4.getByTestId('today-button'));
   await waitFor(
-    () => expect(r4.getByText(/Schedule as Daily Mini/i)).not.toBeDisabled(),
+    () => {
+      expect(r4.getByText(/Schedule as Daily Mini/i)).not.toBeDisabled();
+    },
     {
       timeout: 5000,
     }
@@ -268,12 +272,12 @@ test('moderate as daily mini', async () => {
   }
   const ds = getDateString(new Date());
   expect(res.docs[0]?.id).toEqual(puzzleId);
-  expect(updated['m']).toEqual(true);
-  expect(updated['f']).toEqual(undefined);
-  expect(updated['p']).not.toEqual(null);
-  expect(updated['c']).toEqual('dailymini');
-  expect(updated['dmd']).toEqual(prettifyDateString(ds));
-  expect(updated['t']).toEqual('Our Title');
+  expect(updated.m).toEqual(true);
+  expect(updated.f).toEqual(undefined);
+  expect(updated.p).not.toEqual(null);
+  expect(updated.c).toEqual('dailymini');
+  expect(updated.dmd).toEqual(prettifyDateString(ds));
+  expect(updated.t).toEqual('Our Title');
 });
 
 test('publish as default', async () => {
@@ -293,14 +297,14 @@ test('publish as default', async () => {
     throw new Error();
   }
   const puzzleId = puzzles.docs[0]?.id;
-  expect(puzzle['m']).toEqual(false);
-  expect(puzzle['p']).not.toEqual(null);
-  expect(puzzle['c']).toEqual(null);
-  expect(puzzle['t']).toEqual('Our Title');
-  expect(puzzle['pvu']).toBeTruthy();
-  await waitForExpect(async () =>
-    expect(NextJSRouter.push).toHaveBeenCalledTimes(1)
-  );
+  expect(puzzle.m).toEqual(false);
+  expect(puzzle.p).not.toEqual(null);
+  expect(puzzle.c).toEqual(null);
+  expect(puzzle.t).toEqual('Our Title');
+  expect(puzzle.pvu).toBeTruthy();
+  await waitForExpect(async () => {
+    expect(NextJSRouter.push).toHaveBeenCalledTimes(1);
+  });
   expect(NextJSRouter.push).toHaveBeenCalledWith(
     `/crosswords/${puzzles.docs[0]?.id}/our-title`
   );
@@ -322,7 +326,7 @@ test('publish as default', async () => {
   cleanup();
 
   // The puzzle should be visible on the puzzle page, even to a rando
-  setApp(serverApp as firebase.app.App);
+  setApp(serverApp);
   const props1 = await getProps(
     await getServerSideProps({
       params: { puzzleId: [puzzleId, 'our-title'] },
@@ -333,7 +337,7 @@ test('publish as default', async () => {
   if (!props1) {
     throw new Error('bad props');
   }
-  setApp(randoApp as firebase.app.App);
+  setApp(randoApp);
 
   const r5 = render(<PuzzlePage {...props1} />, {
     user: rando,
@@ -352,7 +356,7 @@ test('publish as default', async () => {
   cleanup();
 
   // The puzzle should be visible to an admin w/ moderation links
-  setApp(adminUserApp as firebase.app.App);
+  setApp(adminUserApp);
   const r4 = render(<PuzzlePage {...props1} />, {
     user: miked,
     isAdmin: true,
@@ -377,11 +381,11 @@ test('publish as default', async () => {
     throw new Error();
   }
   expect(res.docs[0]?.id).toEqual(puzzleId);
-  expect(updated['m']).toEqual(true);
-  expect(updated['f']).toEqual(true);
-  expect(updated['p']).not.toEqual(null);
-  expect(updated['c']).toEqual(null);
-  expect(updated['t']).toEqual('Our Title');
+  expect(updated.m).toEqual(true);
+  expect(updated.f).toEqual(true);
+  expect(updated.p).not.toEqual(null);
+  expect(updated.c).toEqual(null);
+  expect(updated.t).toEqual('Our Title');
 });
 
 test('publish custom / non-rectangular size', async () => {
@@ -395,7 +399,7 @@ test('publish custom / non-rectangular size', async () => {
     .doc('donations')
     .set({ d: [] });
 
-  setApp(app as firebase.app.App);
+  setApp(app);
 
   const r = render(<BuilderPage />, { user: mike, displayName: 'Mike' });
   const launchButton = (await r.findAllByText('Launch Constructor'))[0];
@@ -459,17 +463,17 @@ test('publish custom / non-rectangular size', async () => {
     throw new Error();
   }
   const puzzleId = puzzles.docs[0]?.id;
-  expect(puzzle['m']).toEqual(false);
-  expect(puzzle['p']).not.toEqual(null);
-  expect(puzzle['c']).toEqual(null);
-  expect(puzzle['t']).toEqual('Our Title');
-  expect(puzzle['bp']).toEqual('Here is our new blog post');
-  expect(puzzle['pv']).toBeUndefined();
-  expect(puzzle['pvu']).toBeTruthy();
+  expect(puzzle.m).toEqual(false);
+  expect(puzzle.p).not.toEqual(null);
+  expect(puzzle.c).toEqual(null);
+  expect(puzzle.t).toEqual('Our Title');
+  expect(puzzle.bp).toEqual('Here is our new blog post');
+  expect(puzzle.pv).toBeUndefined();
+  expect(puzzle.pvu).toBeTruthy();
 
-  await waitForExpect(async () =>
-    expect(NextJSRouter.push).toHaveBeenCalledTimes(1)
-  );
+  await waitForExpect(async () => {
+    expect(NextJSRouter.push).toHaveBeenCalledTimes(1);
+  });
   expect(NextJSRouter.push).toHaveBeenCalledWith(
     `/crosswords/${puzzles.docs[0]?.id}/our-title`
   );
@@ -477,7 +481,7 @@ test('publish custom / non-rectangular size', async () => {
   cleanup();
 
   // The puzzle should be visible on the puzzle page, even to a rando
-  setApp(serverApp as firebase.app.App);
+  setApp(serverApp);
   const props1 = await getProps(
     await getServerSideProps({
       params: { puzzleId: [puzzleId, 'our-title'] },
@@ -488,7 +492,7 @@ test('publish custom / non-rectangular size', async () => {
   if (!props1) {
     throw new Error('bad props');
   }
-  setApp(randoApp as firebase.app.App);
+  setApp(randoApp);
   const r5 = render(<PuzzlePage {...props1} />, {
     user: rando,
     displayName: 'Mike',

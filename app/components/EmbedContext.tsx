@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { PRIMARY } from '../lib/style';
+import { PRIMARY } from '../lib/style.js';
 
 export enum EmbedColorMode {
   Default,

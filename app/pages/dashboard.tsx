@@ -1,19 +1,19 @@
 import { orderBy, query, where } from 'firebase/firestore';
 import Head from 'next/head';
 import { useCallback, useMemo } from 'react';
-import { AuthProps, requiresAuth } from '../components/AuthHelpers';
-import { ButtonAsLink } from '../components/Buttons';
-import { CreatePageForm } from '../components/ConstructorPage';
-import { ConstructorStats } from '../components/ConstructorStats';
-import { CreateShareSection } from '../components/CreateShareSection';
-import { Link } from '../components/Link';
-import { PuzzleResultLink } from '../components/PuzzleLink';
-import { DefaultTopBar } from '../components/TopBar';
-import { DBPuzzleT, DBPuzzleV } from '../lib/dbtypes';
-import { getCollection } from '../lib/firebaseWrapper';
-import { withStaticTranslation } from '../lib/translation';
-import { puzzleFromDB } from '../lib/types';
-import { usePaginatedQuery } from '../lib/usePagination';
+import { AuthProps, requiresAuth } from '../components/AuthHelpers.js';
+import { ButtonAsLink } from '../components/Buttons.js';
+import { CreatePageForm } from '../components/ConstructorPage.js';
+import { ConstructorStats } from '../components/ConstructorStats.js';
+import { CreateShareSection } from '../components/CreateShareSection.js';
+import { Link } from '../components/Link.js';
+import { PuzzleResultLink } from '../components/PuzzleLink.js';
+import { DefaultTopBar } from '../components/TopBar.js';
+import { DBPuzzleT, DBPuzzleV } from '../lib/dbtypes.js';
+import { getCollection } from '../lib/firebaseWrapper.js';
+import { withStaticTranslation } from '../lib/translation.js';
+import { puzzleFromDB } from '../lib/types.js';
+import { usePaginatedQuery } from '../lib/usePagination.js';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };

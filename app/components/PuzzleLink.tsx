@@ -1,22 +1,22 @@
 import { Trans } from '@lingui/macro';
 import type { Root } from 'hast';
 import { ReactNode, useContext, useEffect, useState } from 'react';
-import { DifficultyBadge } from '../components/DifficultyBadge';
-import { ConstructorPageBase } from '../lib/constructorPage';
-import { PlayWithoutUserT } from '../lib/dbtypes';
-import { markdownToHast } from '../lib/markdown/markdown';
-import { getPossiblyStalePlay } from '../lib/plays';
-import { PuzzleResult } from '../lib/types';
-import { clsx, logAsyncErrors, slugify, timeString } from '../lib/utils';
-import { AuthContext } from './AuthContext';
-import { Emoji } from './Emoji';
-import { FollowButton } from './FollowButton';
-import { PatronIcon, PuzzleSizeIcon } from './Icons';
-import { Link } from './Link';
-import { Markdown } from './Markdown';
+import { DifficultyBadge } from '../components/DifficultyBadge.js';
+import { ConstructorPageBase } from '../lib/constructorPage.js';
+import { PlayWithoutUserT } from '../lib/dbtypes.js';
+import { markdownToHast } from '../lib/markdown/markdown.js';
+import { getPossiblyStalePlay } from '../lib/plays.js';
+import { PuzzleResult } from '../lib/types.js';
+import { clsx, logAsyncErrors, slugify, timeString } from '../lib/utils.js';
+import { AuthContext } from './AuthContext.js';
+import { Emoji } from './Emoji.js';
+import { FollowButton } from './FollowButton.js';
+import { PatronIcon, PuzzleSizeIcon } from './Icons.js';
+import { Link } from './Link.js';
+import { Markdown } from './Markdown.js';
 import styles from './PuzzleLink.module.css';
-import { TagList } from './TagList';
-import { DistanceToNow, PastDistanceToNow } from './TimeDisplay';
+import { TagList } from './TagList.js';
+import { DistanceToNow, PastDistanceToNow } from './TimeDisplay.js';
 
 const PuzzleLink = (props: {
   fullWidth?: boolean;

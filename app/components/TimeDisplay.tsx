@@ -3,7 +3,7 @@ import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { Locale, es, it } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { ToolTipText } from './ToolTipText';
+import { ToolTipText } from './ToolTipText.js';
 
 const localeMap: Record<string, Locale> = { es, it, pseudo: es };
 

@@ -1,8 +1,8 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import { FaEye, FaSlash } from 'react-icons/fa';
-import { usePolyfilledResizeObserver } from '../lib/hooks';
-import { Position } from '../lib/types';
-import { clsx } from '../lib/utils';
+import { usePolyfilledResizeObserver } from '../lib/hooks.js';
+import { Position } from '../lib/types.js';
+import { clsx } from '../lib/utils.js';
 import styles from './Cell.module.css';
 
 interface CellProps {

@@ -1,5 +1,10 @@
-import { cellIndex, clampInBounds, isInBounds, valAt } from '../lib/gridBase';
-import { forEachPosition, getSelectionCells } from '../lib/selection';
+import {
+  cellIndex,
+  clampInBounds,
+  isInBounds,
+  valAt,
+} from '../lib/gridBase.js';
+import { forEachPosition, getSelectionCells } from '../lib/selection.js';
 import {
   ALLOWABLE_GRID_CHARS,
   BLOCK,
@@ -11,7 +16,7 @@ import {
   Position,
   ROW_DELIMITER,
   Symmetry,
-} from '../lib/types';
+} from '../lib/types.js';
 import {
   ViewableEntry,
   ViewableGrid,
@@ -28,17 +33,17 @@ import {
   moveUp,
   nextCell,
   retreatPosition,
-} from '../lib/viewableGrid';
-import type { BuilderState } from './builderReducer';
+} from '../lib/viewableGrid.js';
+import type { BuilderState } from './builderReducer.js';
 import {
   postEdit as builderPostEdit,
   clearSelection,
   hasSelection,
   isBuilderState,
-} from './builderUtils';
-import { PuzzleAction, isKeypressAction } from './commonActions';
-import type { PuzzleState } from './puzzleReducer';
-import { isPuzzleState, postEdit as puzzlePostEdit } from './puzzleUtils';
+} from './builderUtils.js';
+import { PuzzleAction, isKeypressAction } from './commonActions.js';
+import type { PuzzleState } from './puzzleReducer.js';
+import { isPuzzleState, postEdit as puzzlePostEdit } from './puzzleUtils.js';
 
 export interface GridInterfaceState {
   type: string;

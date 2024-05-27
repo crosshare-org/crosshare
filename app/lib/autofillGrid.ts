@@ -1,5 +1,5 @@
-import { matchingBitmap, minCost, numMatches, updateBitmap } from './WordDB';
-import * as BA from './bitArray';
+import { matchingBitmap, minCost, numMatches, updateBitmap } from './WordDB.js';
+import * as BA from './bitArray.js';
 import {
   EntryBase,
   EntryWithPattern,
@@ -8,7 +8,7 @@ import {
   getCrosses,
   setVal,
   valAt,
-} from './gridBase';
+} from './gridBase.js';
 
 interface AutofillEntry extends EntryBase {
   length: number; // Length in chars - might be different than cells.length due to rebus

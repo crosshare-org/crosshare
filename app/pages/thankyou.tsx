@@ -1,7 +1,7 @@
 import Head from 'next/head';
-import { Emoji } from '../components/Emoji';
-import { DefaultTopBar } from '../components/TopBar';
-import { withStaticTranslation } from '../lib/translation';
+import { Emoji } from '../components/Emoji.js';
+import { DefaultTopBar } from '../components/TopBar.js';
+import { withStaticTranslation } from '../lib/translation.js';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };

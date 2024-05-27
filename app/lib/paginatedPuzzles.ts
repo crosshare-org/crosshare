@@ -1,12 +1,12 @@
 import { WhereFilterOp } from '@firebase/firestore-types';
 import { Timestamp as FBTimestamp, Query } from 'firebase-admin/firestore';
 import * as t from 'io-ts';
-import { LinkablePuzzle, toLinkablePuzzle } from '../components/PuzzleLink';
-import { DBPuzzleT, DBPuzzleV } from './dbtypes';
-import { getCollection, mapEachResult } from './firebaseAdminWrapper';
-import { PathReporter } from './pathReporter';
-import { Timestamp, timestamp } from './timestamp';
-import { puzzleFromDB } from './types';
+import { LinkablePuzzle, toLinkablePuzzle } from '../components/PuzzleLink.js';
+import { DBPuzzleT, DBPuzzleV } from './dbtypes.js';
+import { getCollection, mapEachResult } from './firebaseAdminWrapper.js';
+import { PathReporter } from './pathReporter.js';
+import { Timestamp, timestamp } from './timestamp.js';
+import { puzzleFromDB } from './types.js';
 
 const NewPuzzleIndexV = t.type({
   /** Array of timestamps when each page begins. Off by 1 so page 1 is element 0 (page 0 always begins at current time). */

@@ -15,28 +15,31 @@ import {
   FaVolumeUp,
   FaWindowClose,
 } from 'react-icons/fa';
-import { isTextInput } from '../lib/domUtils';
-import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
+import { isTextInput } from '../lib/domUtils.js';
+import {
+  usePersistedBoolean,
+  usePolyfilledResizeObserver,
+} from '../lib/hooks.js';
 import {
   Direction,
   KeyK,
   fromKeyString,
   fromKeyboardEvent,
-} from '../lib/types';
-import { logAsyncErrors } from '../lib/utils';
-import { fromCells } from '../lib/viewableGrid';
-import { KeypressAction } from '../reducers/commonActions';
-import { PasteAction, gridInterfaceReducer } from '../reducers/gridReducer';
+} from '../lib/types.js';
+import { logAsyncErrors } from '../lib/utils.js';
+import { fromCells } from '../lib/viewableGrid.js';
+import { KeypressAction } from '../reducers/commonActions.js';
+import { PasteAction, gridInterfaceReducer } from '../reducers/gridReducer.js';
 import styles from './AlternateSolutionEditor.module.css';
-import { GridView } from './Grid';
-import { EscapeKey, Rebus } from './Icons';
-import { Keyboard } from './Keyboard';
+import { GridView } from './Grid.js';
+import { EscapeKey, Rebus } from './Icons.js';
+import { Keyboard } from './Keyboard.js';
 import {
   TopBar,
   TopBarDropDown,
   TopBarDropDownLink,
   TopBarLink,
-} from './TopBar';
+} from './TopBar.js';
 
 export function AlternateSolutionEditor(props: {
   grid: string[];

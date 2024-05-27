@@ -1,17 +1,17 @@
 import type { User } from 'firebase/auth';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { PlayWithoutUserT, PlayWithoutUserV } from '../lib/dbtypes';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { PathReporter } from '../lib/pathReporter';
-import { cachePlay, getPlayFromCache } from '../lib/plays';
-import { AccountPrefsT } from '../lib/prefs';
-import { PuzzlePageProps, PuzzlePageResultProps } from '../lib/serverOnly';
-import { isMetaSolution } from '../lib/utils';
-import { AuthContext } from './AuthContext';
-import { ErrorPage } from './ErrorPage';
-import { Link } from './Link';
-import { Puzzle } from './Puzzle';
+import { PlayWithoutUserT, PlayWithoutUserV } from '../lib/dbtypes.js';
+import { getDocRef } from '../lib/firebaseWrapper.js';
+import { PathReporter } from '../lib/pathReporter.js';
+import { cachePlay, getPlayFromCache } from '../lib/plays.js';
+import { AccountPrefsT } from '../lib/prefs.js';
+import { PuzzlePageProps, PuzzlePageResultProps } from '../lib/serverOnly.js';
+import { isMetaSolution } from '../lib/utils.js';
+import { AuthContext } from './AuthContext.js';
+import { ErrorPage } from './ErrorPage.js';
+import { Link } from './Link.js';
+import { Puzzle } from './Puzzle.js';
 
 export function PuzzlePage(props: PuzzlePageProps) {
   if ('error' in props) {

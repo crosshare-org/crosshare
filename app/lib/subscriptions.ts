@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 import * as t from 'io-ts';
-import { UnsubscribeFlags } from './prefs';
+import { UnsubscribeFlags } from './prefs.js';
 
 export const SubscriptionParamsV = t.type({
   /** signature */

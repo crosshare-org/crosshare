@@ -1,4 +1,4 @@
-import { useSnackbar } from './Snackbar';
+import { useSnackbar } from './Snackbar.js';
 
 export function CopyableInput({ text }: { text: string }) {
   const { showSnackbar } = useSnackbar();

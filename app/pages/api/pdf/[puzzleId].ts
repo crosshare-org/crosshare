@@ -1,19 +1,19 @@
 import { jsPDF } from 'jspdf';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getPuzzle } from '../../../lib/puzzleCache';
-import { userIdToPage } from '../../../lib/serverOnly';
+import { getPuzzle } from '../../../lib/puzzleCache.js';
+import { userIdToPage } from '../../../lib/serverOnly.js';
 import {
   Direction,
   PuzzleT,
   getClueText,
   puzzleFromDB,
-} from '../../../lib/types';
+} from '../../../lib/types.js';
 import {
   ViewableEntry,
   ViewableGrid,
   addClues,
   fromCells,
-} from '../../../lib/viewableGrid';
+} from '../../../lib/viewableGrid.js';
 
 function layoutPDFClues(
   doc: jsPDF,

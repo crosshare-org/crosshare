@@ -4,29 +4,29 @@ import type { User } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { Dispatch, ReactNode, useContext, useEffect, useState } from 'react';
 import { GoScreenFull } from 'react-icons/go';
-import { PuzzleReaction } from '../lib/reactions';
-import { Direction, PuzzleResultWithAugmentedComments } from '../lib/types';
+import { PuzzleReaction } from '../lib/reactions.js';
+import { Direction, PuzzleResultWithAugmentedComments } from '../lib/types.js';
 import {
   isMetaSolution,
   logAsyncErrors,
   slugify,
   timeString,
-} from '../lib/utils';
-import { PuzzleAction } from '../reducers/commonActions';
-import { AuthContext } from './AuthContext';
-import { Button, ButtonAsLink } from './Buttons';
-import { Comments } from './Comments';
-import { EmbedColorMode, EmbedContext } from './EmbedContext';
-import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
-import { Link } from './Link';
-import { MetaSubmission } from './MetaSubmission';
-import { Overlay } from './Overlay';
-import { NextPuzzleLink } from './Puzzle';
-import { PuzzleHeading } from './PuzzleHeading';
+} from '../lib/utils.js';
+import { PuzzleAction } from '../reducers/commonActions.js';
+import { AuthContext } from './AuthContext.js';
+import { Button, ButtonAsLink } from './Buttons.js';
+import { Comments } from './Comments.js';
+import { EmbedColorMode, EmbedContext } from './EmbedContext.js';
+import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons.js';
+import { Link } from './Link.js';
+import { MetaSubmission } from './MetaSubmission.js';
+import { Overlay } from './Overlay.js';
+import { NextPuzzleLink } from './Puzzle.js';
+import { PuzzleHeading } from './PuzzleHeading.js';
 import styles from './PuzzleOverlay.module.css';
-import { ReactionButton } from './ReactionButton';
-import { SharingButtons } from './SharingButtons';
-import { PastDistanceToNow } from './TimeDisplay';
+import { ReactionButton } from './ReactionButton.js';
+import { SharingButtons } from './SharingButtons.js';
+import { PastDistanceToNow } from './TimeDisplay.js';
 
 const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {

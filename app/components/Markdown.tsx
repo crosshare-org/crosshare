@@ -2,10 +2,10 @@ import type { Root } from 'hast';
 import * as prod from 'react/jsx-runtime';
 import rehypeReact, { Components } from 'rehype-react';
 import { unified } from 'unified';
-import { ClueReferenceData } from '../lib/parse';
-import { ClueReference } from './ClueReference';
-import { ShowRefsContext } from './ShowRefsContext';
-import { SpoilerText } from './SpoilerText';
+import { ClueReferenceData } from '../lib/parse.js';
+import { ClueReference } from './ClueReference.js';
+import { ShowRefsContext } from './ShowRefsContext.js';
+import { SpoilerText } from './SpoilerText.js';
 const production = { Fragment: prod.Fragment, jsx: prod.jsx, jsxs: prod.jsxs };
 
 export const Markdown = (props: {

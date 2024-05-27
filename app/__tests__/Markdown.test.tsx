@@ -1,9 +1,9 @@
-import { GridContext } from '../components/GridContext';
-import { Markdown } from '../components/Markdown';
-import { markdownToHast, removeSpoilers } from '../lib/markdown/markdown';
-import { render, waitFor } from '../lib/testingUtils';
-import { Direction } from '../lib/types';
-import { CluedGrid, addClues, fromCells } from '../lib/viewableGrid';
+import { GridContext } from '../components/GridContext.js';
+import { Markdown } from '../components/Markdown.js';
+import { markdownToHast, removeSpoilers } from '../lib/markdown/markdown.js';
+import { render, waitFor } from '../lib/testingUtils.js';
+import { Direction } from '../lib/types.js';
+import { CluedGrid, addClues, fromCells } from '../lib/viewableGrid.js';
 
 test('remove spoilers', () => {
   expect(removeSpoilers('Testing **something bold**')).toMatch(

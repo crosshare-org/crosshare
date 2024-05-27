@@ -2,22 +2,22 @@ import { Trans, t } from '@lingui/macro';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { ErrorPage } from '../../components/ErrorPage';
-import { I18nTags } from '../../components/I18nTags';
-import { Link } from '../../components/Link';
+import { ErrorPage } from '../../components/ErrorPage.js';
+import { I18nTags } from '../../components/I18nTags.js';
+import { Link } from '../../components/Link.js';
 import {
   LinkablePuzzle,
   PuzzleResultLink,
   toLinkablePuzzle,
-} from '../../components/PuzzleLink';
-import { DefaultTopBar } from '../../components/TopBar';
-import { ConstructorPageBase } from '../../lib/constructorPage';
-import { getMiniForDate } from '../../lib/dailyMinis';
-import { isUserPatron } from '../../lib/patron';
-import { userIdToPage } from '../../lib/serverOnly';
-import { withTranslation } from '../../lib/translation';
-import { puzzleFromDB } from '../../lib/types';
-import { notEmpty } from '../../lib/utils';
+} from '../../components/PuzzleLink.js';
+import { DefaultTopBar } from '../../components/TopBar.js';
+import { ConstructorPageBase } from '../../lib/constructorPage.js';
+import { getMiniForDate } from '../../lib/dailyMinis.js';
+import { isUserPatron } from '../../lib/patron.js';
+import { userIdToPage } from '../../lib/serverOnly.js';
+import { withTranslation } from '../../lib/translation.js';
+import { puzzleFromDB } from '../../lib/types.js';
+import { notEmpty } from '../../lib/utils.js';
 
 export interface DailyMiniProps {
   puzzles: [number, LinkablePuzzle, ConstructorPageBase | null, boolean][];

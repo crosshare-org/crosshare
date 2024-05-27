@@ -1,6 +1,6 @@
 #!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
 
-import { getClient, sendEmail } from '../lib/email';
+import { getClient, sendEmail } from '../lib/email.js';
 
 export async function sendTestEmail() {
   const client = await getClient();

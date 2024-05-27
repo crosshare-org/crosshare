@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { GlickoScoreV } from './dbtypes';
+import { GlickoScoreV } from './dbtypes.js';
 
 export const UnsubscribeFlags = {
   all: null, // unsubscribe from all notification emails

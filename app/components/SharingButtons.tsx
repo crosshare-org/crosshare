@@ -7,7 +7,7 @@ import {
   FaTwitter,
 } from 'react-icons/fa';
 import styles from './SharingButtons.module.css';
-import { useSnackbar } from './Snackbar';
+import { useSnackbar } from './Snackbar.js';
 
 enum Network {
   Facebook,

@@ -1,9 +1,9 @@
 import NextLink from 'next/link';
 import { ReactNode, useContext } from 'react';
-import { clsx } from '../lib/utils';
+import { clsx } from '../lib/utils.js';
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from './Buttons.module.css'; // TODO refactor Link/Button components so we aren't importing the same CSS module in both (which next.js recommends against)
-import { EmbedContext } from './EmbedContext';
+import { EmbedContext } from './EmbedContext.js';
 
 interface LinkProps {
   href: string;

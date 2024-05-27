@@ -1,6 +1,6 @@
 import levelup, { LevelUp } from 'levelup';
 import rocksdb from 'rocksdb';
-import { ClueListT, parseClueList } from './ginsbergCommon';
+import { ClueListT, parseClueList } from './ginsbergCommon.js';
 
 export const CLUEDB = './cluedb';
 

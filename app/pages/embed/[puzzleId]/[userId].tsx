@@ -1,14 +1,14 @@
 import { GetServerSideProps } from 'next';
-import { EmbedContext } from '../../../components/EmbedContext';
-import { EmbedStyling } from '../../../components/EmbedStyling';
-import { PuzzlePage } from '../../../components/PuzzlePage';
-import { useEmbedOptions } from '../../../lib/hooks';
+import { EmbedContext } from '../../../components/EmbedContext.js';
+import { EmbedStyling } from '../../../components/EmbedStyling.js';
+import { PuzzlePage } from '../../../components/PuzzlePage.js';
+import { useEmbedOptions } from '../../../lib/hooks.js';
 import {
   PuzzlePageProps,
   getEmbedProps,
   getPuzzlePageProps,
-} from '../../../lib/serverOnly';
-import { withTranslation } from '../../../lib/translation';
+} from '../../../lib/serverOnly.js';
+import { withTranslation } from '../../../lib/translation.js';
 
 const gssp: GetServerSideProps<PuzzlePageProps> = async ({
   params,

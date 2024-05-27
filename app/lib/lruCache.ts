@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { fromLocalStorage } from './storage';
+import { fromLocalStorage } from './storage.js';
 
 export class LruCache<T> {
   private values: Map<string, T> = new Map<string, T>();

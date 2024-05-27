@@ -1,16 +1,16 @@
 import * as t from 'io-ts';
 import { useEffect, useState } from 'react';
-import { getFromSessionOrDB } from '../lib/dbUtils';
+import { getFromSessionOrDB } from '../lib/dbUtils.js';
 import {
   TAG_LENGTH_LIMIT,
   TAG_LENGTH_MIN,
   eqSet,
   normalizeTag,
-} from '../lib/utils';
-import { Button } from './Buttons';
-import { LengthView } from './Inputs';
-import { useSnackbar } from './Snackbar';
-import { TagList } from './TagList';
+} from '../lib/utils.js';
+import { Button } from './Buttons.js';
+import { LengthView } from './Inputs.js';
+import { useSnackbar } from './Snackbar.js';
+import { TagList } from './TagList.js';
 
 interface TagEditorBaseProps {
   save: (newTags: string[]) => Promise<void>;

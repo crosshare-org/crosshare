@@ -3,16 +3,16 @@ import type { User } from 'firebase/auth';
 import { arrayRemove, arrayUnion, setDoc } from 'firebase/firestore';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
-import { ConstructorPageBase } from '../lib/constructorPage';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { clsx, logAsyncErrors } from '../lib/utils';
-import { AuthContext } from './AuthContext';
-import { Button } from './Buttons';
+import { ConstructorPageBase } from '../lib/constructorPage.js';
+import { getDocRef } from '../lib/firebaseWrapper.js';
+import { clsx, logAsyncErrors } from '../lib/utils.js';
+import { AuthContext } from './AuthContext.js';
+import { Button } from './Buttons.js';
 import styles from './FollowButton.module.css';
-import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
-import { Overlay } from './Overlay';
-import { useSnackbar } from './Snackbar';
-import { ToolTipText } from './ToolTipText';
+import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons.js';
+import { Overlay } from './Overlay.js';
+import { useSnackbar } from './Snackbar.js';
+import { ToolTipText } from './ToolTipText.js';
 
 export const FollowButton = ({
   page,

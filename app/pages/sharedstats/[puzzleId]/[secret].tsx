@@ -1,13 +1,13 @@
 import { GetServerSideProps } from 'next';
-import { StatsPage } from '../../../components/PuzzleStats';
+import { StatsPage } from '../../../components/PuzzleStats.js';
 import {
   DBPuzzleV,
   PuzzleStatsV,
   PuzzleStatsViewT,
-} from '../../../lib/dbtypes';
-import { getCollection } from '../../../lib/firebaseAdminWrapper';
-import { PathReporter } from '../../../lib/pathReporter';
-import { PuzzleResult, puzzleFromDB } from '../../../lib/types';
+} from '../../../lib/dbtypes.js';
+import { getCollection } from '../../../lib/firebaseAdminWrapper.js';
+import { PathReporter } from '../../../lib/pathReporter.js';
+import { PuzzleResult, puzzleFromDB } from '../../../lib/types.js';
 
 interface PageProps {
   puzzle: Omit<PuzzleResult, 'comments'>;

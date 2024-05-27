@@ -1,20 +1,19 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
-
-import { setApp, setAdminApp } from '../lib/firebaseWrapper';
-import { getUser, render, cleanup, fireEvent } from '../lib/testingUtils';
-import { getMockedPuzzle } from '../lib/getMockedPuzzle';
-import { AccountPage } from '../pages/account';
 import waitForExpect from 'wait-for-expect';
+import { setAdminApp, setApp } from '../lib/firebaseWrapper.js';
+import { getMockedPuzzle } from '../lib/getMockedPuzzle.js';
+import { cleanup, fireEvent, getUser, render } from '../lib/testingUtils.js';
+import { AccountPage } from '../pages/account.js';
 jest.mock('../lib/firebaseWrapper');
 import type firebase from 'firebase/compat/app';
-import { userIdToPage } from '../lib/serverOnly';
+import { userIdToPage } from '../lib/serverOnly.js';
 import firebaseAdmin from 'firebase-admin';
 
 jest.mock(
   'next/link',
   () =>
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     ({ children }) =>
       children
 ); // https://github.com/vercel/next.js/issues/16864
@@ -85,13 +84,13 @@ test('create constructor page', async () => {
   fireEvent.click(r.getByText('Create', { exact: true }));
   await r.findByText('Created successfully!', undefined, { timeout: 3000 });
 
-  await waitForExpect(async () =>
+  await waitForExpect(async () => {
     expect(
       (
         await adminApp.firestore().collection('cp').doc('therealmiked').get()
       ).data()?.u
-    ).toEqual('mikeuserid')
-  );
+    ).toEqual('mikeuserid');
+  });
 
   cleanup();
 

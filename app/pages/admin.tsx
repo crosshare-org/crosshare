@@ -17,17 +17,17 @@ import {
   useCollectionData,
   useDocumentDataOnce,
 } from 'react-firebase-hooks/firestore';
-import { requiresAdmin } from '../components/AuthHelpers';
-import { Button } from '../components/Buttons';
-import { ConstructorNotes } from '../components/ConstructorNotes';
-import { Link } from '../components/Link';
-import { Markdown } from '../components/Markdown';
-import { CommentReportV } from '../components/ReportOverlay';
-import { useSnackbar } from '../components/Snackbar';
-import { TagList } from '../components/TagList';
-import { DefaultTopBar } from '../components/TopBar';
-import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar';
-import { ConstructorPageWithIdV } from '../lib/constructorPage';
+import { requiresAdmin } from '../components/AuthHelpers.js';
+import { Button } from '../components/Buttons.js';
+import { ConstructorNotes } from '../components/ConstructorNotes.js';
+import { Link } from '../components/Link.js';
+import { Markdown } from '../components/Markdown.js';
+import { CommentReportV } from '../components/ReportOverlay.js';
+import { useSnackbar } from '../components/Snackbar.js';
+import { TagList } from '../components/TagList.js';
+import { DefaultTopBar } from '../components/TopBar.js';
+import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar.js';
+import { ConstructorPageWithIdV } from '../lib/constructorPage.js';
 import {
   CommentDeletionT,
   CommentForModerationWithIdV,
@@ -36,19 +36,19 @@ import {
   DailyStatsV,
   DonationsListV,
   getDateString,
-} from '../lib/dbtypes';
+} from '../lib/dbtypes.js';
 import {
   getCollection,
   getDocRef,
   getValidatedCollection,
-} from '../lib/firebaseWrapper';
-import { hasUnches } from '../lib/gridBase';
-import { markdownToHast } from '../lib/markdown/markdown';
-import { checkSpam } from '../lib/spam';
-import { withStaticTranslation } from '../lib/translation';
-import { PuzzleResult, puzzleFromDB } from '../lib/types';
-import { logAsyncErrors, slugify } from '../lib/utils';
-import { fromCells, getClueMap } from '../lib/viewableGrid';
+} from '../lib/firebaseWrapper.js';
+import { hasUnches } from '../lib/gridBase.js';
+import { markdownToHast } from '../lib/markdown/markdown.js';
+import { checkSpam } from '../lib/spam.js';
+import { withStaticTranslation } from '../lib/translation.js';
+import { PuzzleResult, puzzleFromDB } from '../lib/types.js';
+import { logAsyncErrors, slugify } from '../lib/utils.js';
+import { fromCells, getClueMap } from '../lib/viewableGrid.js';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };

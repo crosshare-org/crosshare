@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/no-unresolved
 import type { User } from 'firebase/auth';
 import { ReactNode, useContext } from 'react';
-import { ConstructorPageT } from '../lib/constructorPage';
-import { AccountPrefsT } from '../lib/prefs';
-import { AuthContext, AuthContextValue } from './AuthContext';
-import { ErrorPage } from './ErrorPage';
-import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons'; //todo
-import { TopBar } from './TopBar'; //todo
+import { ConstructorPageT } from '../lib/constructorPage.js';
+import { AccountPrefsT } from '../lib/prefs.js';
+import { AuthContext, AuthContextValue } from './AuthContext.js';
+import { ErrorPage } from './ErrorPage.js';
+import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons.js'; //todo
+import { TopBar } from './TopBar.js'; //todo
 
 export interface AuthProps {
   isAdmin: boolean;

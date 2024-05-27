@@ -6,8 +6,8 @@ import {
   GlickoScoreT,
   LegacyPlayT,
   LegacyPlayV,
-} from './dbtypes';
-import { getCollection } from './firebaseAdminWrapper';
+} from './dbtypes.js';
+import { getCollection } from './firebaseAdminWrapper.js';
 import {
   INITIAL_RATING,
   INITIAL_RD,
@@ -15,11 +15,11 @@ import {
   Q_SQ,
   expectedOutcome,
   gFunc,
-} from './glickoUtil';
-import { PathReporter } from './pathReporter';
-import { AccountPrefsV } from './prefs';
-import { Timestamp } from './timestamp';
-import { notEmpty } from './utils';
+} from './glickoUtil.js';
+import { PathReporter } from './pathReporter.js';
+import { AccountPrefsV } from './prefs.js';
+import { Timestamp } from './timestamp.js';
+import { notEmpty } from './utils.js';
 
 const MAX_RD = 350;
 const PLAYER_MIN_RD = 30;

@@ -3,12 +3,15 @@ import { parseToRgba } from 'color2k';
 import type { User } from 'firebase/auth';
 import { RefObject, useCallback, useEffect, useState } from 'react';
 import useResizeObserver from 'use-resize-observer';
-import { EmbedColorMode, EmbedContextValue } from '../components/EmbedContext';
-import { EmbedStylingProps } from '../components/EmbedStyling';
-import { ConstructorPageT } from './constructorPage';
-import { EmbedOptionsT } from './embedOptions';
-import { ERROR_COLOR, LINK, PRIMARY, VERIFIED_COLOR } from './style';
-import { logAsyncErrors } from './utils';
+import {
+  EmbedColorMode,
+  EmbedContextValue,
+} from '../components/EmbedContext.js';
+import { EmbedStylingProps } from '../components/EmbedStyling.js';
+import { ConstructorPageT } from './constructorPage.js';
+import { EmbedOptionsT } from './embedOptions.js';
+import { ERROR_COLOR, LINK, PRIMARY, VERIFIED_COLOR } from './style.js';
+import { logAsyncErrors } from './utils.js';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {

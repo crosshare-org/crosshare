@@ -12,40 +12,40 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useMemo, useRef, useState } from 'react';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { AlternateSolutionEditor } from '../../components/AlternateSolutionEditor';
-import { AuthProps, requiresAuth } from '../../components/AuthHelpers';
-import { Button, ButtonAsLink } from '../../components/Buttons';
+import { AlternateSolutionEditor } from '../../components/AlternateSolutionEditor.js';
+import { AuthProps, requiresAuth } from '../../components/AuthHelpers.js';
+import { Button, ButtonAsLink } from '../../components/Buttons.js';
 import {
   MAX_BLOG_LENGTH,
   MAX_META_SUBMISSION_LENGTH,
   MAX_STRING_LENGTH,
-} from '../../components/ClueMode';
-import { ContactLinks } from '../../components/ContactLinks';
-import { DateTimePicker } from '../../components/DateTimePicker';
-import { EditableText } from '../../components/EditableText';
-import { ErrorPage } from '../../components/ErrorPage';
-import { GridContext } from '../../components/GridContext';
-import { LengthLimitedInput, LengthView } from '../../components/Inputs';
-import { Markdown } from '../../components/Markdown';
-import { Overlay } from '../../components/Overlay';
-import { useSnackbar } from '../../components/Snackbar';
-import { TagEditor } from '../../components/TagEditor';
-import { TagList } from '../../components/TagList';
-import { DefaultTopBar } from '../../components/TopBar';
-import { DBPuzzleT, DBPuzzleV } from '../../lib/dbtypes';
-import { getDocRef } from '../../lib/firebaseWrapper';
-import { markdownToHast } from '../../lib/markdown/markdown';
-import { PathReporter } from '../../lib/pathReporter';
-import { COVER_PIC } from '../../lib/style';
-import { withTranslation } from '../../lib/translation';
+} from '../../components/ClueMode.js';
+import { ContactLinks } from '../../components/ContactLinks.js';
+import { DateTimePicker } from '../../components/DateTimePicker.js';
+import { EditableText } from '../../components/EditableText.js';
+import { ErrorPage } from '../../components/ErrorPage.js';
+import { GridContext } from '../../components/GridContext.js';
+import { LengthLimitedInput, LengthView } from '../../components/Inputs.js';
+import { Markdown } from '../../components/Markdown.js';
+import { Overlay } from '../../components/Overlay.js';
+import { useSnackbar } from '../../components/Snackbar.js';
+import { TagEditor } from '../../components/TagEditor.js';
+import { TagList } from '../../components/TagList.js';
+import { DefaultTopBar } from '../../components/TopBar.js';
+import { DBPuzzleT, DBPuzzleV } from '../../lib/dbtypes.js';
+import { getDocRef } from '../../lib/firebaseWrapper.js';
+import { markdownToHast } from '../../lib/markdown/markdown.js';
+import { PathReporter } from '../../lib/pathReporter.js';
+import { COVER_PIC } from '../../lib/style.js';
+import { withTranslation } from '../../lib/translation.js';
 import {
   Direction,
   PuzzleResult,
   puzzleFromDB,
   removeClueSpecials,
-} from '../../lib/types';
-import { clsx, isMetaSolution, logAsyncErrors } from '../../lib/utils';
-import { CluedEntry, addClues, fromCells } from '../../lib/viewableGrid';
+} from '../../lib/types.js';
+import { clsx, isMetaSolution, logAsyncErrors } from '../../lib/utils.js';
+import { CluedEntry, addClues, fromCells } from '../../lib/viewableGrid.js';
 import styles from './editPuzzle.module.css';
 
 export const getServerSideProps = withTranslation(() => {

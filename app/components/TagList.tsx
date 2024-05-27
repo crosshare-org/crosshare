@@ -1,5 +1,5 @@
-import { clsx } from '../lib/utils';
-import { Tag, TagPropsBase } from './Tag';
+import { clsx } from '../lib/utils.js';
+import { Tag, TagPropsBase } from './Tag.js';
 import styles from './TagList.module.css';
 
 interface TagListProps extends TagPropsBase {

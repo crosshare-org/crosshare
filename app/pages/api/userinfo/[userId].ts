@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { isUserPatron } from '../../../lib/patron';
-import { UserInfoT } from '../../../lib/userinfo';
+import { isUserPatron } from '../../../lib/patron.js';
+import { UserInfoT } from '../../../lib/userinfo.js';
 
 export default async function userinfo(
   req: NextApiRequest,

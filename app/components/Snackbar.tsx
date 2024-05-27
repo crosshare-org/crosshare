@@ -10,8 +10,8 @@ import React, {
   useState,
 } from 'react';
 import { IoMdCloseCircleOutline } from 'react-icons/io';
-import { ANIMATION_DELAY } from '../lib/style';
-import { clsx } from '../lib/utils';
+import { ANIMATION_DELAY } from '../lib/style.js';
+import { clsx } from '../lib/utils.js';
 import styles from './Snackbar.module.css';
 
 enum ActionTypes {

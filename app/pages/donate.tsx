@@ -1,15 +1,15 @@
 import { differenceInDays } from 'date-fns';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { Button } from '../components/Buttons';
-import { ContactLinks } from '../components/ContactLinks';
-import { PatronIcon } from '../components/Icons';
-import { DefaultTopBar } from '../components/TopBar';
-import { DonationsListV, donationsByEmail } from '../lib/dbtypes';
-import { getCollection } from '../lib/firebaseAdminWrapper';
-import { PathReporter } from '../lib/pathReporter';
-import { withTranslation } from '../lib/translation';
-import { clsx } from '../lib/utils';
+import { Button } from '../components/Buttons.js';
+import { ContactLinks } from '../components/ContactLinks.js';
+import { PatronIcon } from '../components/Icons.js';
+import { DefaultTopBar } from '../components/TopBar.js';
+import { DonationsListV, donationsByEmail } from '../lib/dbtypes.js';
+import { getCollection } from '../lib/firebaseAdminWrapper.js';
+import { PathReporter } from '../lib/pathReporter.js';
+import { withTranslation } from '../lib/translation.js';
+import { clsx } from '../lib/utils.js';
 import styles from './donate.module.css';
 
 interface DonateProps {

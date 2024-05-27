@@ -1,5 +1,5 @@
-import { CommentWithRepliesT, DBPuzzleT, FollowersV } from './dbtypes';
-import { getCollection } from './firebaseAdminWrapper';
+import { CommentWithRepliesT, DBPuzzleT, FollowersV } from './dbtypes.js';
+import { getCollection } from './firebaseAdminWrapper.js';
 import {
   NewPuzzleNotificationT,
   NotificationT,
@@ -8,8 +8,8 @@ import {
   featuredNotification,
   newPuzzleNotification,
   replyNotification,
-} from './notificationTypes';
-import { PathReporter } from './pathReporter';
+} from './notificationTypes.js';
+import { PathReporter } from './pathReporter.js';
 
 function checkComments(
   after: CommentWithRepliesT[],

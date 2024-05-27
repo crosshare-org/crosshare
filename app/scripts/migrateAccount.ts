@@ -2,14 +2,14 @@
 
 import { getAuth } from 'firebase-admin/auth';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
-import { ConstructorPageV } from '../lib/constructorPage';
+import { ConstructorPageV } from '../lib/constructorPage.js';
 import {
   ConstructorStatsV,
   DBPuzzleV,
   FollowersV,
   PuzzleStatsV,
-} from '../lib/dbtypes';
-import { getAdminApp } from '../lib/firebaseAdminWrapper';
+} from '../lib/dbtypes.js';
+import { getAdminApp } from '../lib/firebaseAdminWrapper.js';
 
 if (process.argv.length !== 4) {
   throw Error(

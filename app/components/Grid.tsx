@@ -3,21 +3,21 @@ import {
   cellIndex,
   entryIndexAtPosition,
   getEntryCells,
-} from '../lib/gridBase';
+} from '../lib/gridBase.js';
 import {
   GridSelection,
   getSelectionCells,
   hasMultipleCells,
-} from '../lib/selection';
-import { BLOCK, PosAndDir, Position, Symmetry } from '../lib/types';
-import { ViewableEntry, ViewableGrid, flipped } from '../lib/viewableGrid';
+} from '../lib/selection.js';
+import { BLOCK, PosAndDir, Position, Symmetry } from '../lib/types.js';
+import { ViewableEntry, ViewableGrid, flipped } from '../lib/viewableGrid.js';
 import {
   StartSelectionAction,
   UpdateSelectionAction,
-} from '../reducers/builderReducer';
-import { PuzzleAction } from '../reducers/commonActions';
-import { SetActivePositionAction } from '../reducers/gridReducer';
-import { Cell } from './Cell';
+} from '../reducers/builderReducer.js';
+import { PuzzleAction } from '../reducers/commonActions.js';
+import { SetActivePositionAction } from '../reducers/gridReducer.js';
+import { Cell } from './Cell.js';
 
 interface GridViewProps {
   grid: ViewableGrid<ViewableEntry>;

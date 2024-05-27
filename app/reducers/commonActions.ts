@@ -1,4 +1,4 @@
-import { Key } from '../lib/types';
+import { Key } from '../lib/types.js';
 
 export interface PuzzleAction {
   type: string;

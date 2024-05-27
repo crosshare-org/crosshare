@@ -1,9 +1,9 @@
-import { cellIndex, entryAtPosition, valAt } from '../lib/gridBase';
-import { BLOCK, CheatUnit, Position, Symmetry } from '../lib/types';
-import { checkGrid } from '../lib/utils';
-import { gridWithNewChar } from '../lib/viewableGrid';
-import type { GridInterfaceState } from './gridReducer';
-import type { PuzzleState } from './puzzleReducer';
+import { cellIndex, entryAtPosition, valAt } from '../lib/gridBase.js';
+import { BLOCK, CheatUnit, Position, Symmetry } from '../lib/types.js';
+import { checkGrid } from '../lib/utils.js';
+import { gridWithNewChar } from '../lib/viewableGrid.js';
+import type { GridInterfaceState } from './gridReducer.js';
+import type { PuzzleState } from './puzzleReducer.js';
 
 export function isPuzzleState(state: GridInterfaceState): state is PuzzleState {
   return state.type === 'puzzle';

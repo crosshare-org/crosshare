@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { LruCache } from '../lib/lruCache';
+import { LruCache } from '../lib/lruCache.js';
 
 test('lru cache base', () => {
   localStorage.clear();

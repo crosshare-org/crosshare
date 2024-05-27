@@ -1,9 +1,9 @@
 import { get, set } from 'idb-keyval';
 import * as t from 'io-ts';
 import { useEffect, useState } from 'react';
-import * as BA from './bitArray';
-import { PathReporter } from './pathReporter';
-import { logAsyncErrors } from './utils';
+import * as BA from './bitArray.js';
+import { PathReporter } from './pathReporter.js';
+import { logAsyncErrors } from './utils.js';
 
 const WordDBV = t.type({
   words: t.record(t.string, t.array(t.tuple([t.string, t.number]))),

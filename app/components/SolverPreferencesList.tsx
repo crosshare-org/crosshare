@@ -1,8 +1,8 @@
 import { setDoc } from 'firebase/firestore';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { AccountPrefsFlagsT, AccountPrefsT } from '../lib/prefs';
-import { logAsyncErrors } from '../lib/utils';
-import { useSnackbar } from './Snackbar';
+import { getDocRef } from '../lib/firebaseWrapper.js';
+import { AccountPrefsFlagsT, AccountPrefsT } from '../lib/prefs.js';
+import { logAsyncErrors } from '../lib/utils.js';
+import { useSnackbar } from './Snackbar.js';
 
 interface PrefSettingProps {
   prefs: AccountPrefsT | undefined;

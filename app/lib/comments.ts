@@ -1,13 +1,13 @@
-import { getFromDB } from './dbUtils';
+import { getFromDB } from './dbUtils.js';
 import {
   CommentDeletionWithIdT,
   CommentForModerationWithIdT,
   CommentWithRepliesT,
   DBPuzzleT,
   DBPuzzleV,
-} from './dbtypes';
-import { getCollection, toFirestore } from './firebaseAdminWrapper';
-import { PuzzleReaction, ReactionT, firebaseKey } from './reactions';
+} from './dbtypes.js';
+import { getCollection, toFirestore } from './firebaseAdminWrapper.js';
+import { PuzzleReaction, ReactionT, firebaseKey } from './reactions.js';
 
 function findCommentById(
   comments: CommentWithRepliesT[],

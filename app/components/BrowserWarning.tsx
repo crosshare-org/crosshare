@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { browserRegex } from '../lib/supportedBrowsers';
-import { useSnackbar } from './Snackbar';
+import { browserRegex } from '../lib/supportedBrowsers.js';
+import { useSnackbar } from './Snackbar.js';
 
 export function BrowserWarning() {
   const { showSnackbar } = useSnackbar();

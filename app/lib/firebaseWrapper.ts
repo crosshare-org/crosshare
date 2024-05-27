@@ -18,13 +18,12 @@ import {
   getFirestore,
 } from 'firebase/firestore';
 import { connectStorageEmulator, getStorage as gS } from 'firebase/storage';
-import { isRight } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
-import cloneDeepWith from 'lodash/cloneDeepWith';
-import { firebaseConfig } from '../firebaseConfig';
-import { firebaseConfig as firebaseEmulatorConfig } from '../firebaseConfig.emulators';
-import { PathReporter } from './pathReporter';
-import { isTimestamp } from './timestamp';
+import cloneDeepWith from 'lodash/cloneDeepWith.js';
+import { firebaseConfig as firebaseEmulatorConfig } from '../firebaseConfig.emulators.js';
+import { firebaseConfig } from '../firebaseConfig.js';
+import { PathReporter } from './pathReporter.js';
+import { isTimestamp } from './timestamp.js';
 
 // Initialize Firebase
 let App: FirebaseApp;
@@ -94,7 +93,7 @@ export function getValidatedCollection<V>(
       }
 
       const validationResult = validator.decode(data);
-      if (isRight(validationResult)) {
+      if (validationResult._tag === 'Right') {
         return validationResult.right;
       } else {
         console.error(`bad doc: ${collectionName}/${s.id}`);

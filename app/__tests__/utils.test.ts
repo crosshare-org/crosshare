@@ -1,12 +1,11 @@
 import cases from 'jest-in-case';
-
 import {
   buildTagIndex,
   checkGrid,
   fnv1a,
   isMetaSolution,
   slugify,
-} from '../lib/utils';
+} from '../lib/utils.js';
 
 cases(
   'fnv1a hash function',

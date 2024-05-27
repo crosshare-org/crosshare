@@ -3,10 +3,14 @@ import * as t from 'io-ts';
 import {
   ConstructorPageBase,
   ConstructorPageWithMarkdown,
-} from '../lib/constructorPage';
-import { CommentWithRepliesT, DBPuzzleT, GlickoScoreT } from '../lib/dbtypes';
-import type { WordDBT } from './WordDB';
-import { isTextInput } from './domUtils';
+} from '../lib/constructorPage.js';
+import {
+  CommentWithRepliesT,
+  DBPuzzleT,
+  GlickoScoreT,
+} from '../lib/dbtypes.js';
+import type { WordDBT } from './WordDB.js';
+import { isTextInput } from './domUtils.js';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

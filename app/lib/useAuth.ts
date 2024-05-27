@@ -1,18 +1,18 @@
 import { updateProfile } from 'firebase/auth';
 import { query, where } from 'firebase/firestore';
-import type { Either, Right } from 'fp-ts/lib/Either';
+import type { Either, Right } from 'fp-ts/Either';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
-import { AuthContextValue } from '../components/AuthContext';
-import { ConstructorPageV } from './constructorPage';
-import { getAuth, getCollection, getDocRef } from './firebaseWrapper';
-import { getDisplayName } from './hooks';
-import { NotificationT, NotificationV } from './notificationTypes';
-import { PathReporter } from './pathReporter';
-import { AccountPrefsV } from './prefs';
-import { parseUserInfo } from './userinfo';
-import { logAsyncErrors } from './utils';
+import { AuthContextValue } from '../components/AuthContext.js';
+import { ConstructorPageV } from './constructorPage.js';
+import { getAuth, getCollection, getDocRef } from './firebaseWrapper.js';
+import { getDisplayName } from './hooks.js';
+import { NotificationT, NotificationV } from './notificationTypes.js';
+import { PathReporter } from './pathReporter.js';
+import { AccountPrefsV } from './prefs.js';
+import { parseUserInfo } from './userinfo.js';
+import { logAsyncErrors } from './utils.js';
 
 const isRight = <A>(ma: Either<unknown, A>): ma is Right<A> =>
   ma._tag === 'Right';

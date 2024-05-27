@@ -1,9 +1,9 @@
 import { type Root } from 'hast';
 import Image from 'next/image';
-import { clsx } from '../lib/utils';
+import { clsx } from '../lib/utils.js';
 import slateLogoDark from '../public/slate/Logo-Dark.png';
 import slateLogo from '../public/slate/Logo.png';
-import { Markdown } from './Markdown';
+import { Markdown } from './Markdown.js';
 import styles from './SlateHeader.module.css';
 
 interface SlateHeaderProps {

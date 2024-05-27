@@ -4,10 +4,10 @@ import { RenderOptions, RenderResult, render } from '@testing-library/react';
 import type { User } from 'firebase/auth';
 import { GetServerSidePropsResult } from 'next';
 import { ComponentType, ReactElement, ReactNode } from 'react';
-import { AuthContext } from '../components/AuthContext';
-import { SnackbarProvider } from '../components/Snackbar';
-import { messages as messagesEn } from '../locales/en/messages';
-import { hasOwnProperty } from './types';
+import { AuthContext } from '../components/AuthContext.js';
+import { SnackbarProvider } from '../components/Snackbar.js';
+import { messages as messagesEn } from '../locales/en/messages.js';
+import { hasOwnProperty } from './types.js';
 
 export const getUser = (uid: string, isAnonymous: boolean) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment

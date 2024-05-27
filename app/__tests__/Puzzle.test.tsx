@@ -1,42 +1,42 @@
-import React from 'react';
-import {
-  anonymousUser,
-  cleanup,
-  render,
-  fireEvent,
-  act,
-} from '../lib/testingUtils';
-import waitForExpect from 'wait-for-expect';
-import { Puzzle } from '../components/Puzzle';
-import {
-  hasOwnProperty,
-  PuzzleResultWithAugmentedComments,
-} from '../lib/types';
-import { PlayT } from '../lib/dbtypes';
-import * as plays from '../lib/plays';
-import PuzzlePage from '../pages/crosswords/[[...puzzleId]]';
-import * as firebaseWrapper from '../lib/firebaseWrapper';
-import type firebaseAdminType from 'firebase-admin';
-import {
-  setApp,
-  setUpForSignInAnonymously,
-  AdminTimestamp,
-  setAdminApp,
-} from '../lib/firebaseWrapper';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
 import type firebase from 'firebase/compat/app';
-import { getMockedPuzzle } from '../lib/getMockedPuzzle';
+import type firebaseAdminType from 'firebase-admin';
+import React from 'react';
+import waitForExpect from 'wait-for-expect';
+import { Puzzle } from '../components/Puzzle.js';
+import { PlayT } from '../lib/dbtypes.js';
+import * as firebaseWrapper from '../lib/firebaseWrapper.js';
 import {
-  getPuzzlePageProps,
+  AdminTimestamp,
+  setAdminApp,
+  setApp,
+  setUpForSignInAnonymously,
+} from '../lib/firebaseWrapper.js';
+import { getMockedPuzzle } from '../lib/getMockedPuzzle.js';
+import * as plays from '../lib/plays.js';
+import {
   PageErrorProps,
   PuzzlePageProps,
-} from '../lib/serverOnly';
+  getPuzzlePageProps,
+} from '../lib/serverOnly.js';
+import {
+  act,
+  anonymousUser,
+  cleanup,
+  fireEvent,
+  render,
+} from '../lib/testingUtils.js';
+import {
+  PuzzleResultWithAugmentedComments,
+  hasOwnProperty,
+} from '../lib/types.js';
+import PuzzlePage from '../pages/crosswords/[[...puzzleId]].js';
 
 jest.mock(
   'next/link',
   () =>
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     ({ children }) =>
       children
 ); // https://github.com/vercel/next.js/issues/16864
@@ -409,9 +409,9 @@ test('anonymous user progress should be cached in local storage and db', async (
   expect((await admin.firestore().collection('p').get()).size).toEqual(0);
   fireEvent.click(await findByTitle(/Pause Game/i));
   cleanup();
-  await waitForExpect(async () =>
-    expect((await admin.firestore().collection('p').get()).size).toEqual(1)
-  );
+  await waitForExpect(async () => {
+    expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  });
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
   // Now try again!
@@ -583,9 +583,9 @@ test('user finishing a puzzle causes write to db', async () => {
   await act(() => Promise.resolve());
 
   // We've already written to the db when the puzzle was completed
-  await waitForExpect(async () =>
-    expect((await admin.firestore().collection('p').get()).size).toEqual(1)
-  );
+  await waitForExpect(async () => {
+    expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  });
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
 
   cleanup();
@@ -644,9 +644,9 @@ test('nonuser finishing a puzzle should cause creation of anonymous user and wri
   await act(() => Promise.resolve());
 
   // We've already written to the db when the puzzle was completed
-  await waitForExpect(async () =>
-    expect((await admin.firestore().collection('p').get()).size).toEqual(1)
-  );
+  await waitForExpect(async () => {
+    expect((await admin.firestore().collection('p').get()).size).toEqual(1);
+  });
   expect(plays.writePlayToDB).toHaveBeenCalledTimes(1);
   expect(firebaseWrapper.signInAnonymously).toHaveBeenCalledTimes(1);
 

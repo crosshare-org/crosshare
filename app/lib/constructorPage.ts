@@ -1,7 +1,7 @@
 import type { Root } from 'hast';
 import * as t from 'io-ts';
-import { PathReporter } from './pathReporter';
-import { timestamp } from './timestamp';
+import { PathReporter } from './pathReporter.js';
+import { timestamp } from './timestamp.js';
 
 export const ConstructorPageV = t.intersection([
   t.type({

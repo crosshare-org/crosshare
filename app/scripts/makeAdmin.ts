@@ -1,7 +1,7 @@
 #!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
 
 import { getAuth } from 'firebase-admin/auth';
-import { getAdminApp } from '../lib/firebaseAdminWrapper';
+import { getAdminApp } from '../lib/firebaseAdminWrapper.js';
 
 const adminApp = getAdminApp();
 const auth = getAuth(adminApp);

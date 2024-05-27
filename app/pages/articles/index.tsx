@@ -2,17 +2,17 @@ import { Timestamp, addDoc } from 'firebase/firestore';
 import Head from 'next/head';
 import { useRef } from 'react';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
-import { requiresAdmin } from '../../components/AuthHelpers';
-import { Button } from '../../components/Buttons';
-import { Link } from '../../components/Link';
-import { useSnackbar } from '../../components/Snackbar';
-import { DefaultTopBar } from '../../components/TopBar';
-import { ArticleT, ArticleV } from '../../lib/article';
+import { requiresAdmin } from '../../components/AuthHelpers.js';
+import { Button } from '../../components/Buttons.js';
+import { Link } from '../../components/Link.js';
+import { useSnackbar } from '../../components/Snackbar.js';
+import { DefaultTopBar } from '../../components/TopBar.js';
+import { ArticleT, ArticleV } from '../../lib/article.js';
 import {
   getCollection,
   getValidatedCollection,
-} from '../../lib/firebaseWrapper';
-import { logAsyncErrors } from '../../lib/utils';
+} from '../../lib/firebaseWrapper.js';
+import { logAsyncErrors } from '../../lib/utils.js';
 
 const ArticleListItem = (props: ArticleT | null) => {
   if (!props) {

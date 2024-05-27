@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from '../components/Link';
-import { getFromSessionOrDB } from '../lib/dbUtils';
+import { Link } from '../components/Link.js';
+import { getFromSessionOrDB } from '../lib/dbUtils.js';
 import {
   ConstructorStatsForPuzzleT,
   ConstructorStatsT,
   ConstructorStatsV,
   DBPuzzleT,
   DBPuzzleV,
-} from '../lib/dbtypes';
-import { logAsyncErrors, slugify, timeString } from '../lib/utils';
+} from '../lib/dbtypes.js';
+import { logAsyncErrors, slugify, timeString } from '../lib/utils.js';
 import style from './ConstructorStats.module.css';
 
 const usePuzzleDoc = (

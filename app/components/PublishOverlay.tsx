@@ -2,13 +2,13 @@ import { lightFormat } from 'date-fns/lightFormat';
 import { serverTimestamp, setDoc } from 'firebase/firestore';
 import NextJSRouter from 'next/router';
 import { FormEvent, ReactNode, useCallback, useState } from 'react';
-import { DBPuzzleT } from '../lib/dbtypes';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { STORAGE_KEY, slugify } from '../lib/utils';
-import { Button, ButtonAsLink } from './Buttons';
-import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
-import { Emoji } from './Emoji';
-import { Overlay } from './Overlay';
+import { DBPuzzleT } from '../lib/dbtypes.js';
+import { getDocRef } from '../lib/firebaseWrapper.js';
+import { STORAGE_KEY, slugify } from '../lib/utils.js';
+import { Button, ButtonAsLink } from './Buttons.js';
+import { DisplayNameForm, useDisplayName } from './DisplayNameForm.js';
+import { Emoji } from './Emoji.js';
+import { Overlay } from './Overlay.js';
 
 export function PublishOverlay(props: {
   id: string;

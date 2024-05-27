@@ -1,7 +1,7 @@
 import { captureUnderscoreErrorException } from '@sentry/nextjs';
 import { NextPageContext } from 'next';
 import NextErrorComponent from 'next/error';
-import { ErrorPage } from '../components/ErrorPage';
+import { ErrorPage } from '../components/ErrorPage.js';
 
 const LocalStorageErrorPage = () => (
   <ErrorPage title="Couldn't Store Data">

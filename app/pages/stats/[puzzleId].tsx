@@ -1,17 +1,17 @@
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { AuthProps, requiresAuth } from '../../components/AuthHelpers';
-import { ErrorPage } from '../../components/ErrorPage';
-import { Link } from '../../components/Link';
-import { StatsPage } from '../../components/PuzzleStats';
-import { getFromSessionOrDB } from '../../lib/dbUtils';
-import { DBPuzzleV, PuzzleStatsT, PuzzleStatsV } from '../../lib/dbtypes';
-import { getDocRef } from '../../lib/firebaseWrapper';
-import { PathReporter } from '../../lib/pathReporter';
-import { withTranslation } from '../../lib/translation';
-import { PuzzleResult, puzzleFromDB } from '../../lib/types';
-import { logAsyncErrors, slugify } from '../../lib/utils';
+import { AuthProps, requiresAuth } from '../../components/AuthHelpers.js';
+import { ErrorPage } from '../../components/ErrorPage.js';
+import { Link } from '../../components/Link.js';
+import { StatsPage } from '../../components/PuzzleStats.js';
+import { getFromSessionOrDB } from '../../lib/dbUtils.js';
+import { DBPuzzleV, PuzzleStatsT, PuzzleStatsV } from '../../lib/dbtypes.js';
+import { getDocRef } from '../../lib/firebaseWrapper.js';
+import { PathReporter } from '../../lib/pathReporter.js';
+import { withTranslation } from '../../lib/translation.js';
+import { PuzzleResult, puzzleFromDB } from '../../lib/types.js';
+import { logAsyncErrors, slugify } from '../../lib/utils.js';
 
 export const getServerSideProps = withTranslation(() => {
   return Promise.resolve({ props: {} });

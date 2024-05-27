@@ -1,4 +1,7 @@
-import { getAdminApp, mapEachResult } from '../../app/lib/firebaseAdminWrapper';
+import {
+  getAdminApp,
+  mapEachResult,
+} from '../../app/lib/firebaseAdminWrapper.js';
 import { Timestamp as AdminTimestamp } from 'firebase-admin/firestore';
 
 import {
@@ -12,15 +15,15 @@ import {
   isNewPuzzleNotification,
   isFeaturedNotification,
   FeaturedNotificationT,
-} from '../../app/lib/notificationTypes';
-import { AccountPrefsV, AccountPrefsT } from '../../app/lib/prefs';
+} from '../../app/lib/notificationTypes.js';
+import { AccountPrefsV, AccountPrefsT } from '../../app/lib/prefs.js';
 import {
   EmailClient,
   RATE_LIMIT,
   emailLink,
   getClient,
   sendEmail,
-} from '../../app/lib/email';
+} from '../../app/lib/email.js';
 import { getFirestore } from 'firebase-admin/firestore';
 
 const joinStringsWithAnd = (vals: Array<string>) => {

@@ -3,7 +3,7 @@ import { micromark } from 'micromark';
 import {
   spoilersHtml,
   spoilersSyntax,
-} from '../lib/markdown/micromark-extension-spoilers';
+} from '../lib/markdown/micromark-extension-spoilers.js';
 
 cases(
   'test spoilers syntax',

@@ -1,7 +1,7 @@
 #!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
 
 import { getFirestore } from 'firebase-admin/firestore';
-import { getAdminApp } from '../lib/firebaseAdminWrapper';
+import { getAdminApp } from '../lib/firebaseAdminWrapper.js';
 export {};
 
 if (process.argv.length !== 2) {

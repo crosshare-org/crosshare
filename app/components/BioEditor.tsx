@@ -1,13 +1,13 @@
 import { deleteField, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { FormEvent, useState } from 'react';
-import { ConstructorPageT } from '../lib/constructorPage';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { markdownToHast } from '../lib/markdown/markdown';
+import { ConstructorPageT } from '../lib/constructorPage.js';
+import { getDocRef } from '../lib/firebaseWrapper.js';
+import { markdownToHast } from '../lib/markdown/markdown.js';
 import styles from './BioEditor.module.css';
-import { Button } from './Buttons';
-import { LengthLimitedInput, LengthView } from './Inputs';
-import { Markdown } from './Markdown';
-import { Overlay } from './Overlay';
+import { Button } from './Buttons.js';
+import { LengthLimitedInput, LengthView } from './Inputs.js';
+import { Markdown } from './Markdown.js';
+import { Overlay } from './Overlay.js';
 
 interface BioEditorProps {
   constructorPage: ConstructorPageT;

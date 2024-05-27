@@ -2,9 +2,9 @@ import { Element, Text } from 'hast';
 import { Plugin } from 'unified';
 import { Node } from 'unist';
 import { is } from 'unist-util-is';
-import { Direction } from '../../lib/types';
-import { ClueReferenceData } from '../parse';
-import { flatMap } from './utils';
+import { Direction } from '../../lib/types.js';
+import { ClueReferenceData } from '../parse.js';
+import { flatMap } from './utils.js';
 
 interface EntryReferencerOptions {
   clueMap: Map<string, [number, Direction, string]>;

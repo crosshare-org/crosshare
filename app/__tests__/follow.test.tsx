@@ -3,9 +3,9 @@
  */
 
 import * as firebaseTesting from '@firebase/rules-unit-testing';
-import { setAdminApp, FieldValue } from '../lib/firebaseWrapper';
-import type * as firebaseAdminType from 'firebase-admin';
 import type firebase from 'firebase/compat/app';
+import type * as firebaseAdminType from 'firebase-admin';
+import { FieldValue, setAdminApp } from '../lib/firebaseWrapper.js';
 
 jest.mock('../lib/firebaseWrapper');
 

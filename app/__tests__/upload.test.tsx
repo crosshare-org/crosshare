@@ -1,25 +1,24 @@
-import React from 'react';
 import fs from 'fs';
-import util from 'util';
 import path from 'path';
-import type firebaseAdminType from 'firebase-admin';
-
-import {
-  getUser,
-  cleanup,
-  render,
-  fireEvent,
-  getProps,
-  getByLabelText,
-} from '../lib/testingUtils';
-import UploadPage from '../pages/upload';
-import { setApp, setAdminApp } from '../lib/firebaseWrapper';
+import util from 'util';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
-import NextJSRouter from 'next/router';
-import PuzzlePage from '../pages/crosswords/[[...puzzleId]]';
-import { getPuzzlePageProps as getServerSideProps } from '../lib/serverOnly';
-import waitForExpect from 'wait-for-expect';
 import type firebase from 'firebase/compat/app';
+import type firebaseAdminType from 'firebase-admin';
+import NextJSRouter from 'next/router';
+import React from 'react';
+import waitForExpect from 'wait-for-expect';
+import { setAdminApp, setApp } from '../lib/firebaseWrapper.js';
+import { getPuzzlePageProps as getServerSideProps } from '../lib/serverOnly.js';
+import {
+  cleanup,
+  fireEvent,
+  getByLabelText,
+  getProps,
+  getUser,
+  render,
+} from '../lib/testingUtils.js';
+import PuzzlePage from '../pages/crosswords/[[...puzzleId]].js';
+import UploadPage from '../pages/upload.js';
 
 const readFile = util.promisify(fs.readFile);
 
@@ -31,7 +30,7 @@ jest.mock(
   'next/link',
   () =>
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     ({ children }) =>
       children
 ); // https://github.com/vercel/next.js/issues/16864
@@ -96,7 +95,7 @@ test('cannot upload if not logged in', async () => {
     .doc('donations')
     .set({ d: [] });
 
-  setApp(serverApp as firebase.app.App);
+  setApp(serverApp);
 
   const r = render(<UploadPage />, {});
 
@@ -119,7 +118,7 @@ test('upload a puzzle', async () => {
     .doc('donations')
     .set({ d: [] });
 
-  setApp(app as firebase.app.App);
+  setApp(app);
 
   const r = render(<UploadPage />, { user: mike, displayName: 'Mike' });
 
@@ -145,13 +144,13 @@ test('upload a puzzle', async () => {
   }
   const puzzle = puzzles.docs[0].data();
   const puzzleId = puzzles.docs[0].id;
-  expect(puzzle['m']).toEqual(false);
-  expect(puzzle['p']).not.toEqual(null);
-  expect(puzzle['c']).toEqual(null);
-  expect(puzzle['t']).toEqual('AV Club xword, 6 22 11');
-  await waitForExpect(async () =>
-    expect(NextJSRouter.push).toHaveBeenCalledTimes(1)
-  );
+  expect(puzzle.m).toEqual(false);
+  expect(puzzle.p).not.toEqual(null);
+  expect(puzzle.c).toEqual(null);
+  expect(puzzle.t).toEqual('AV Club xword, 6 22 11');
+  await waitForExpect(async () => {
+    expect(NextJSRouter.push).toHaveBeenCalledTimes(1);
+  });
   expect(NextJSRouter.push).toHaveBeenCalledWith(
     '/crosswords/' + puzzles.docs[0].id + '/av-club-xword-6-22-11'
   );
@@ -159,7 +158,7 @@ test('upload a puzzle', async () => {
   cleanup();
 
   // The puzzle should be visible on the puzzle page, even to a rando
-  setApp(serverApp as firebase.app.App);
+  setApp(serverApp);
   const props1 = await getProps(
     await getServerSideProps({
       params: { puzzleId: [puzzleId, 'av-club-xword-6-22-11'] },
@@ -170,7 +169,7 @@ test('upload a puzzle', async () => {
   if (!props1) {
     throw new Error('bad props');
   }
-  setApp(randoApp as firebase.app.App);
+  setApp(randoApp);
   const r5 = render(<PuzzlePage {...props1} />, { user: rando });
   expect(
     await r5.findByText('Begin Puzzle', undefined, { timeout: 3000 })
@@ -194,7 +193,7 @@ test('upload after editing', async () => {
     .doc('donations')
     .set({ d: [] });
 
-  setApp(app as firebase.app.App);
+  setApp(app);
 
   const r = render(<UploadPage />, { user: mike, displayName: 'Mike' });
 
@@ -236,9 +235,9 @@ test('upload after editing', async () => {
   if (!resData) {
     throw new Error('botch');
   }
-  delete resData['p'];
+  delete resData.p;
   expect(resData.pvu).toBeTruthy();
-  delete resData['pvu'];
+  delete resData.pvu;
   expect(resData).toMatchSnapshot();
 });
 
@@ -253,7 +252,7 @@ test('upload a puzzle with duplicate entries', async () => {
     .doc('donations')
     .set({ d: [] });
 
-  setApp(app as firebase.app.App);
+  setApp(app);
 
   const r = render(<UploadPage />, { user: mike, displayName: 'Mike' });
 
@@ -306,15 +305,15 @@ test('upload a puzzle with duplicate entries', async () => {
   if (!resData) {
     throw new Error('botch');
   }
-  delete resData['p'];
+  delete resData.p;
   expect(resData.pvu).toBeTruthy();
-  delete resData['pvu'];
+  delete resData.pvu;
   expect(resData).toMatchSnapshot();
 
   cleanup();
 
   // The puzzle should be visible on the puzzle page, even to a rando
-  setApp(serverApp as firebase.app.App);
+  setApp(serverApp);
   const props1 = await getProps(
     await getServerSideProps({
       params: {
@@ -327,7 +326,7 @@ test('upload a puzzle with duplicate entries', async () => {
   if (!props1) {
     throw new Error('bad props');
   }
-  setApp(randoApp as firebase.app.App);
+  setApp(randoApp);
   const r5 = render(<PuzzlePage {...props1} />, { user: rando });
   expect(
     await r5.findByText('Begin Puzzle', undefined, { timeout: 3000 })

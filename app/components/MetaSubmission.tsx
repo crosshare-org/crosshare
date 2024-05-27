@@ -1,19 +1,19 @@
 import { formatDistanceToNow } from 'date-fns';
 import type { User } from 'firebase/auth';
 import { Dispatch, FormEvent, useContext, useState } from 'react';
-import { isMetaSolution } from '../lib/utils';
+import { isMetaSolution } from '../lib/utils.js';
 import {
   ContestRevealAction,
   ContestSubmitAction,
-} from '../reducers/puzzleReducer';
-import { AuthContext } from './AuthContext';
-import { Button, ButtonAsLink } from './Buttons';
-import { MAX_META_SUBMISSION_LENGTH } from './ClueMode';
-import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
-import { Emoji } from './Emoji';
-import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
-import { LengthLimitedInput, LengthView } from './Inputs';
-import { useSnackbar } from './Snackbar';
+} from '../reducers/puzzleReducer.js';
+import { AuthContext } from './AuthContext.js';
+import { Button, ButtonAsLink } from './Buttons.js';
+import { MAX_META_SUBMISSION_LENGTH } from './ClueMode.js';
+import { DisplayNameForm, useDisplayName } from './DisplayNameForm.js';
+import { Emoji } from './Emoji.js';
+import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons.js';
+import { LengthLimitedInput, LengthView } from './Inputs.js';
+import { useSnackbar } from './Snackbar.js';
 
 const MetaSubmissionForm = (props: {
   user: User;

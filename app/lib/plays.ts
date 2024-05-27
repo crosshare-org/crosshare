@@ -8,10 +8,10 @@ import {
   PlayWithoutUserT,
   PlayWithoutUserV,
   downloadOptionallyTimestamped,
-} from './dbtypes';
-import { getDocRef } from './firebaseWrapper';
-import { PathReporter } from './pathReporter';
-import { fromLocalStorage } from './storage';
+} from './dbtypes.js';
+import { getDocRef } from './firebaseWrapper.js';
+import { PathReporter } from './pathReporter.js';
+import { fromLocalStorage } from './storage.js';
 
 const PlayMapV = t.record(t.string, t.union([PlayWithoutUserV, t.null]));
 export type PlayMapT = t.TypeOf<typeof PlayMapV>;

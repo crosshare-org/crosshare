@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
-import { ConstructorPageBase } from '../lib/constructorPage';
-import { logAsyncErrors } from '../lib/utils';
+import { ConstructorPageBase } from '../lib/constructorPage.js';
+import { logAsyncErrors } from '../lib/utils.js';
 import styles from './ConstructorList.module.css';
-import { FollowButton } from './FollowButton';
-import { PatronIcon } from './Icons';
+import { FollowButton } from './FollowButton.js';
+import { PatronIcon } from './Icons.js';
 
 export const ConstructorList = ({
   pages,

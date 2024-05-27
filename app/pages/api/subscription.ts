@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getCollection } from '../../lib/firebaseAdminWrapper';
-import { PathReporter } from '../../lib/pathReporter';
-import { UnsubscribeFlags } from '../../lib/prefs';
-import { SubscriptionParamsV, getSig } from '../../lib/subscriptions';
+import { getCollection } from '../../lib/firebaseAdminWrapper.js';
+import { PathReporter } from '../../lib/pathReporter.js';
+import { UnsubscribeFlags } from '../../lib/prefs.js';
+import { SubscriptionParamsV, getSig } from '../../lib/subscriptions.js';
 
 export default async function subscription(
   req: NextApiRequest,

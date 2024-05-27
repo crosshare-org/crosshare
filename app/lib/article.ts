@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
-import { PathReporter } from './pathReporter';
-import { timestamp } from './timestamp';
+import { PathReporter } from './pathReporter.js';
+import { timestamp } from './timestamp.js';
 
 export const ArticleV = t.type({
   /** slug */

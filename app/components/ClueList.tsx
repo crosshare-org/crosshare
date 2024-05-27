@@ -7,13 +7,13 @@ import {
   memo,
   useRef,
 } from 'react';
-import { EntryBase, GridBase, valAt } from '../lib/gridBase';
-import { Position, directionString } from '../lib/types';
-import { CluedEntry } from '../lib/viewableGrid';
-import { PuzzleAction } from '../reducers/commonActions';
-import { ClickedEntryAction } from '../reducers/gridReducer';
+import { EntryBase, GridBase, valAt } from '../lib/gridBase.js';
+import { Position, directionString } from '../lib/types.js';
+import { CluedEntry } from '../lib/viewableGrid.js';
+import { PuzzleAction } from '../reducers/commonActions.js';
+import { ClickedEntryAction } from '../reducers/gridReducer.js';
 import styles from './ClueList.module.css';
-import { ClueText } from './ClueText';
+import { ClueText } from './ClueText.js';
 
 interface ClueListItemProps {
   dimCompleted: boolean;

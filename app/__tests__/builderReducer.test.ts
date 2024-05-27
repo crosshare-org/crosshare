@@ -2,12 +2,12 @@
  * @jest-environment node
  */
 
-import { Timestamp } from '../lib/timestamp';
+import { Timestamp } from '../lib/timestamp.js';
 import {
   PublishAction,
   builderReducer,
   initialBuilderState,
-} from '../reducers/builderReducer';
+} from '../reducers/builderReducer.js';
 
 function getState(
   grid: string[],

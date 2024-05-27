@@ -1,1 +1,4 @@
 **/locales/**
+
+app/lib/spam.ts
+lib/spam.ts

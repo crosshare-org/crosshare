@@ -32,7 +32,7 @@
     "test": "NODE_OPTIONS='--experimental-vm-modules' npx jest --watch"
   },
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "resolutions": {
     "@types/mime": "3.0.4"
@@ -103,7 +103,7 @@
     "@lingui/macro": "^4.7.2",
     "@modern-dev/jsbn": "^1.2.5",
     "@next/bundle-analyzer": "^14.1.4",
-    "@playwright/test": "1.42.1",
+    "@playwright/test": "1.44.1",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.2",
     "@types/hast": "^3.0.4",

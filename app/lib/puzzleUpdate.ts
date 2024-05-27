@@ -1,16 +1,16 @@
-import { DBPuzzleT, DBPuzzleV } from './dbtypes';
-import { getCollection, toFirestore } from './firebaseAdminWrapper';
+import { DBPuzzleT, DBPuzzleV } from './dbtypes.js';
+import { getCollection, toFirestore } from './firebaseAdminWrapper.js';
 import {
   NotificationT,
   NotificationV,
   isNewPuzzleNotification,
-} from './notificationTypes';
-import { notificationsForPuzzleChange } from './notifications';
-import { PathReporter } from './pathReporter';
-import { isUserPatron } from './patron';
-import { sizeTag } from './sizeTag';
-import { Timestamp } from './timestamp';
-import { buildTagIndex, eqSet } from './utils';
+} from './notificationTypes.js';
+import { notificationsForPuzzleChange } from './notifications.js';
+import { PathReporter } from './pathReporter.js';
+import { isUserPatron } from './patron.js';
+import { sizeTag } from './sizeTag.js';
+import { Timestamp } from './timestamp.js';
+import { buildTagIndex, eqSet } from './utils.js';
 
 async function deleteNotifications(
   puzzleId: string,

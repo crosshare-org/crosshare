@@ -1,8 +1,8 @@
 import { getDoc } from 'firebase/firestore';
-import { DBPuzzleT, DBPuzzleV } from './dbtypes';
-import { getDocRef } from './firebaseWrapper';
-import { LruCache } from './lruCache';
-import { PathReporter } from './pathReporter';
+import { DBPuzzleT, DBPuzzleV } from './dbtypes.js';
+import { getDocRef } from './firebaseWrapper.js';
+import { LruCache } from './lruCache.js';
+import { PathReporter } from './pathReporter.js';
 
 const cache =
   typeof window === 'undefined'

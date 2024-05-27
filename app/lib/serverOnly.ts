@@ -8,34 +8,34 @@ import {
 import { getStorage } from 'firebase-admin/storage';
 import type { Root } from 'hast';
 import { GetServerSideProps } from 'next';
-import { NextPuzzleLink } from '../components/Puzzle';
+import { NextPuzzleLink } from '../components/Puzzle.js';
 import {
   getAdminApp,
   getCollection,
   mapEachResult,
-} from '../lib/firebaseAdminWrapper';
-import { ArticleT, validate } from './article';
+} from '../lib/firebaseAdminWrapper.js';
+import { ArticleT, validate } from './article.js';
 import {
   ConstructorPageV,
   ConstructorPageWithMarkdown,
-} from './constructorPage';
-import { getMiniForDate } from './dailyMinis';
-import { CommentWithRepliesT, DBPuzzleV } from './dbtypes';
+} from './constructorPage.js';
+import { getMiniForDate } from './dailyMinis.js';
+import { CommentWithRepliesT, DBPuzzleV } from './dbtypes.js';
 import {
   EmbedOptionsT,
   validate as validateEmbedOptions,
-} from './embedOptions';
-import { markdownToHast } from './markdown/markdown';
-import { PathReporter } from './pathReporter';
-import { isUserPatron } from './patron';
+} from './embedOptions.js';
+import { markdownToHast } from './markdown/markdown.js';
+import { PathReporter } from './pathReporter.js';
+import { isUserPatron } from './patron.js';
 import {
   Comment,
   Direction,
   PuzzleResultWithAugmentedComments,
   puzzleFromDB,
-} from './types';
-import { slugify } from './utils';
-import { addClues, fromCells, getEntryToClueMap } from './viewableGrid';
+} from './types.js';
+import { slugify } from './utils.js';
+import { addClues, fromCells, getEntryToClueMap } from './viewableGrid.js';
 
 export async function getStorageUrl(
   storageKey: string

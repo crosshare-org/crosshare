@@ -1,4 +1,4 @@
-import { Root } from 'mdast-util-from-markdown/lib';
+import { type Root } from 'mdast';
 import { Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
 

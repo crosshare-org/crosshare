@@ -1,8 +1,8 @@
 import cases from 'jest-in-case';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { removePosition } from 'unist-util-remove-position';
-import { fromMarkdownExtension } from '../lib/markdown/mdast-util-spoilers';
-import { spoilersSyntax } from '../lib/markdown/micromark-extension-spoilers';
+import { fromMarkdownExtension } from '../lib/markdown/mdast-util-spoilers.js';
+import { spoilersSyntax } from '../lib/markdown/micromark-extension-spoilers.js';
 
 cases(
   'test spoilers syntax',

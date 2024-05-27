@@ -15,8 +15,8 @@ import {
   FaAngleRight,
   FaBackspace,
 } from 'react-icons/fa';
-import { clsx } from '../lib/utils';
-import { CrosshareAudioContext } from './CrosshareAudioContext';
+import { clsx } from '../lib/utils.js';
+import { CrosshareAudioContext } from './CrosshareAudioContext.js';
 import styles from './Keyboard.module.css';
 
 interface KeyRowsProps {

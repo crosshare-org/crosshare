@@ -5,24 +5,27 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { FormEvent, useContext, useState } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
-import { ConstructorPageBase, ConstructorPageT } from '../lib/constructorPage';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { logAsyncErrors } from '../lib/utils';
-import { AuthContext } from './AuthContext';
-import { ButtonAsLink } from './Buttons';
-import { ConstructorList } from './ConstructorList';
+import {
+  ConstructorPageBase,
+  ConstructorPageT,
+} from '../lib/constructorPage.js';
+import { getDocRef } from '../lib/firebaseWrapper.js';
+import { logAsyncErrors } from '../lib/utils.js';
+import { AuthContext } from './AuthContext.js';
+import { ButtonAsLink } from './Buttons.js';
+import { ConstructorList } from './ConstructorList.js';
 import styles from './ConstructorPage.module.css';
-import { ConstructorStats } from './ConstructorStats';
-import { FollowButton } from './FollowButton';
-import { I18nTags } from './I18nTags';
-import { PatronIcon } from './Icons';
-import { CoverPic, ProfilePicAndName } from './Images';
-import { Link, LinkButtonSimpleA } from './Link';
-import { Markdown } from './Markdown';
-import { Overlay } from './Overlay';
-import { LinkablePuzzle, PuzzleResultLink } from './PuzzleLink';
-import { ToolTipText } from './ToolTipText';
-import { DefaultTopBar } from './TopBar';
+import { ConstructorStats } from './ConstructorStats.js';
+import { FollowButton } from './FollowButton.js';
+import { I18nTags } from './I18nTags.js';
+import { PatronIcon } from './Icons.js';
+import { CoverPic, ProfilePicAndName } from './Images.js';
+import { Link, LinkButtonSimpleA } from './Link.js';
+import { Markdown } from './Markdown.js';
+import { Overlay } from './Overlay.js';
+import { LinkablePuzzle, PuzzleResultLink } from './PuzzleLink.js';
+import { ToolTipText } from './ToolTipText.js';
+import { DefaultTopBar } from './TopBar.js';
 
 const BANNED_USERNAMES = {
   api: 1,

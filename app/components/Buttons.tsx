@@ -1,5 +1,5 @@
 import { MouseEvent, ReactNode } from 'react';
-import { clsx } from '../lib/utils';
+import { clsx } from '../lib/utils.js';
 import styles from './Buttons.module.css';
 
 interface ButtonCommonProps {

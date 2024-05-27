@@ -2,13 +2,13 @@ import { Trans, t } from '@lingui/macro';
 import type { User } from 'firebase/auth';
 import { deleteDoc, orderBy, query, where } from 'firebase/firestore';
 import { useCallback, useMemo } from 'react';
-import { ButtonAsLink } from '../components/Buttons';
-import { PuzzleResultLink } from '../components/PuzzleLink';
-import { LegacyPlayT, LegacyPlayV } from '../lib/dbtypes';
-import { getCollection, getDocRef } from '../lib/firebaseWrapper';
-import { getPuzzle } from '../lib/puzzleCache';
-import { puzzleFromDB } from '../lib/types';
-import { usePaginatedQuery } from '../lib/usePagination';
+import { ButtonAsLink } from '../components/Buttons.js';
+import { PuzzleResultLink } from '../components/PuzzleLink.js';
+import { LegacyPlayT, LegacyPlayV } from '../lib/dbtypes.js';
+import { getCollection, getDocRef } from '../lib/firebaseWrapper.js';
+import { getPuzzle } from '../lib/puzzleCache.js';
+import { puzzleFromDB } from '../lib/types.js';
+import { usePaginatedQuery } from '../lib/usePagination.js';
 
 export function UnfinishedPuzzleList({ user }: { user: User | undefined }) {
   const unfinishedQuery = useMemo(

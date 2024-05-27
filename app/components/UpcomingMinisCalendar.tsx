@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { getMiniIdForDate } from '../lib/dailyMinis';
-import { logAsyncErrors } from '../lib/utils';
-import { ButtonReset } from './Buttons';
+import { getMiniIdForDate } from '../lib/dailyMinis.js';
+import { logAsyncErrors } from '../lib/utils.js';
+import { ButtonReset } from './Buttons.js';
 import styles from './UpcomingMinisCalendar.module.css';
 
 const daysToDisplay = 42;

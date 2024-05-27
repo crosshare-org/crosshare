@@ -6,7 +6,7 @@ const baseConfig = {
   reactStrictMode: true,
   distDir: distDir,
   eslint: {
-    dirs: ["components", "lib", "pages", "reducers"], // TODO add "scripts"
+    dirs: ['components', 'lib', 'pages', 'reducers'], // TODO add "scripts"
   },
   poweredByHeader: false,
   productionBrowserSourceMaps: true,
@@ -39,6 +39,10 @@ const baseConfig = {
         __SENTRY_EXCLUDE_REPLAY_WORKER__: true,
       })
     );
+
+    config.resolve.extensionAlias = {
+      '.js': ['.ts', '.tsx', '.js'],
+    };
 
     // return the modified config
     return config;

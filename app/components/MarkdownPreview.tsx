@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { markdownToHast } from '../lib/markdown/markdown';
-import { ButtonAsLink } from './Buttons';
-import { Markdown } from './Markdown';
-import { Overlay } from './Overlay';
+import { markdownToHast } from '../lib/markdown/markdown.js';
+import { ButtonAsLink } from './Buttons.js';
+import { Markdown } from './Markdown.js';
+import { Overlay } from './Overlay.js';
 
 interface MarkdownPreviewProps {
   markdown: string | null;

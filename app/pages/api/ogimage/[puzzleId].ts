@@ -1,9 +1,12 @@
 import { Image, PNGStream, createCanvas, loadImage } from 'canvas';
 import { getStorage } from 'firebase-admin/storage';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { DBPuzzleT, DBPuzzleV } from '../../../lib/dbtypes';
-import { getAdminApp, getCollection } from '../../../lib/firebaseAdminWrapper';
-import { PathReporter } from '../../../lib/pathReporter';
+import { DBPuzzleT, DBPuzzleV } from '../../../lib/dbtypes.js';
+import {
+  getAdminApp,
+  getCollection,
+} from '../../../lib/firebaseAdminWrapper.js';
+import { PathReporter } from '../../../lib/pathReporter.js';
 
 async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
   console.log('Generating png for ' + puzzle.t);

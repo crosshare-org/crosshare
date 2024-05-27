@@ -1,13 +1,13 @@
 import type { Root } from 'hast';
 import Head from 'next/head';
-import { ArticleT } from '../lib/article';
-import { ArticlePageProps } from '../lib/serverOnly';
+import { ArticleT } from '../lib/article.js';
+import { ArticlePageProps } from '../lib/serverOnly.js';
 import styles from './ArticlePage.module.css';
-import { ContactLinks } from './ContactLinks';
-import { ErrorPage } from './ErrorPage';
-import { Link } from './Link';
-import { Markdown } from './Markdown';
-import { DefaultTopBar } from './TopBar';
+import { ContactLinks } from './ContactLinks.js';
+import { ErrorPage } from './ErrorPage.js';
+import { Link } from './Link.js';
+import { Markdown } from './Markdown.js';
+import { DefaultTopBar } from './TopBar.js';
 
 export function ArticlePage(props: ArticlePageProps) {
   if ('error' in props) {

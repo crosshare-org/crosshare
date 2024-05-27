@@ -1,5 +1,5 @@
-import { ErrorPage } from '../components/ErrorPage';
-import { Link } from '../components/Link';
+import { ErrorPage } from '../components/ErrorPage.js';
+import { Link } from '../components/Link.js';
 
 export default function Custom404Page() {
   return (

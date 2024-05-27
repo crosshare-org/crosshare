@@ -4,9 +4,9 @@ import {
   DBPuzzleV,
   getDateString,
   prettifyDateString,
-} from './dbtypes';
-import { getCollection } from './firebaseWrapper';
-import { PathReporter } from './pathReporter';
+} from './dbtypes.js';
+import { getCollection } from './firebaseWrapper.js';
+import { PathReporter } from './pathReporter.js';
 
 const dailyMiniIdsByDate = new Map<string, string | null>();
 

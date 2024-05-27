@@ -1,4 +1,4 @@
-import { build, matchingWords, matchingBitmap } from '../lib/WordDB';
+import { build, matchingBitmap, matchingWords } from '../lib/WordDB.js';
 
 test('build word db', async () => {
   await build('TEST;50\n\rBEST;60\n\rTESTER;50');

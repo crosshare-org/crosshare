@@ -1,8 +1,8 @@
 import { setDoc } from 'firebase/firestore';
 import * as t from 'io-ts';
-import { getDocRef } from './firebaseWrapper';
-import { fromLocalStorage } from './storage';
-import { ServerPuzzleResult, fromEnum } from './types';
+import { getDocRef } from './firebaseWrapper.js';
+import { fromLocalStorage } from './storage.js';
+import { ServerPuzzleResult, fromEnum } from './types.js';
 
 export enum PuzzleReaction {
   Like = 'like',

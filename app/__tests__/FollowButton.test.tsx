@@ -1,25 +1,23 @@
 import * as firebaseTesting from '@firebase/rules-unit-testing';
-
-import { setApp } from '../lib/firebaseWrapper';
+import { setApp } from '../lib/firebaseWrapper.js';
 import {
   fireEvent,
-  render,
   getUser,
+  render,
   renderWithSnackbar,
-} from '../lib/testingUtils';
-import { FollowButton } from '../components/FollowButton';
+} from '../lib/testingUtils.js';
+import { FollowButton } from '../components/FollowButton.js';
 jest.mock('../lib/firebaseWrapper');
 import type firebase from 'firebase/compat/app';
 import type firebaseAdminType from 'firebase-admin';
-
-import { ConstructorPageT } from '../lib/constructorPage';
+import { ConstructorPageT } from '../lib/constructorPage.js';
 
 const projectId = 'followtests';
 let adminApp: firebaseAdminType.app.App;
 
 beforeAll(() => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // @ts-expect-error
   adminApp = firebaseTesting.initializeAdminApp({ projectId });
 });
 

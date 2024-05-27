@@ -1,6 +1,6 @@
 import Head from 'next/head';
-import { DefaultTopBar } from '../components/TopBar';
-import { withStaticTranslation } from '../lib/translation';
+import { DefaultTopBar } from '../components/TopBar.js';
+import { withStaticTranslation } from '../lib/translation.js';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };

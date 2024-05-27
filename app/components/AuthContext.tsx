@@ -1,8 +1,8 @@
 import { User } from 'firebase/auth';
 import { createContext } from 'react';
-import { ConstructorPageT } from '../lib/constructorPage';
-import { NotificationT } from '../lib/notificationTypes';
-import { AccountPrefsT } from '../lib/prefs';
+import { ConstructorPageT } from '../lib/constructorPage.js';
+import { NotificationT } from '../lib/notificationTypes.js';
+import { AccountPrefsT } from '../lib/prefs.js';
 
 export interface AuthContextValue {
   user?: User;

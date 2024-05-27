@@ -1,5 +1,5 @@
-import { Autofiller } from './Autofiller';
-import { setDb } from './WordDB';
+import { Autofiller } from './Autofiller.js';
+import { setDb } from './WordDB.js';
 import {
   AutofillCompleteMessage,
   AutofillResultMessage,
@@ -7,7 +7,7 @@ import {
   isAutofillMessage,
   isCancelAutofillMessage,
   isLoadDBMessage,
-} from './types';
+} from './types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
 const ctx: Worker = self as any;

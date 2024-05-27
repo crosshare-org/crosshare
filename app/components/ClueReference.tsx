@@ -1,10 +1,10 @@
 import { useContext } from 'react';
-import { valAt } from '../lib/gridBase';
-import { Direction, directionString, getClueText } from '../lib/types';
-import { DownsOnlyContext } from './DownsOnlyContext';
-import { GridContext } from './GridContext';
-import { ShowRefsContext } from './ShowRefsContext';
-import { ToolTipText } from './ToolTipText';
+import { valAt } from '../lib/gridBase.js';
+import { Direction, directionString, getClueText } from '../lib/types.js';
+import { DownsOnlyContext } from './DownsOnlyContext.js';
+import { GridContext } from './GridContext.js';
+import { ShowRefsContext } from './ShowRefsContext.js';
+import { ToolTipText } from './ToolTipText.js';
 
 interface ClueReferenceProps {
   direction: Direction;

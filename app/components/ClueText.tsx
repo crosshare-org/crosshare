@@ -1,9 +1,9 @@
 import type { Root } from 'hast';
 import { useContext } from 'react';
-import { Direction, getClueText } from '../lib/types';
-import { CluedEntry } from '../lib/viewableGrid';
-import { DownsOnlyContext } from './DownsOnlyContext';
-import { Markdown } from './Markdown';
+import { Direction, getClueText } from '../lib/types.js';
+import { CluedEntry } from '../lib/viewableGrid.js';
+import { DownsOnlyContext } from './DownsOnlyContext.js';
+import { Markdown } from './Markdown.js';
 
 interface ClueTextProps {
   entry: CluedEntry;

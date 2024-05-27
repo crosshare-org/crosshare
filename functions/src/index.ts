@@ -1,11 +1,11 @@
 import * as functions from 'firebase-functions';
 
-import { runAnalytics } from '../../app/lib/analytics';
-import { queueEmails } from './queueEmails';
-import { handlePuzzleUpdate } from '../../app/lib/puzzleUpdate';
-import { doGlicko } from '../../app/lib/glicko';
-import { moderateComments } from '../../app/lib/comments';
-import { checkSpam } from '../../app/lib/spam';
+import { runAnalytics } from '../../app/lib/analytics.js';
+import { queueEmails } from './queueEmails.js';
+import { handlePuzzleUpdate } from '../../app/lib/puzzleUpdate.js';
+import { doGlicko } from '../../app/lib/glicko.js';
+import { moderateComments } from '../../app/lib/comments.js';
+import { checkSpam } from '../../app/lib/spam.js';
 
 import {
   CronStatusV,
@@ -15,15 +15,17 @@ import {
   CommentForModerationWithIdT,
   CommentDeletionV,
   CommentDeletionWithIdT,
-} from '../../app/lib/dbtypes';
+} from '../../app/lib/dbtypes.js';
 
 import {
   getCollection,
   mapEachResult,
-} from '../../app/lib/firebaseAdminWrapper';
-import { Timestamp } from '../../app/lib/timestamp';
-import { PathReporter } from '../../app/lib/pathReporter';
-import { ReactionT, ReactionV } from '../../app/lib/reactions';
+} from '../../app/lib/firebaseAdminWrapper.js';
+import { Timestamp } from '../../app/lib/timestamp.js';
+import { PathReporter } from '../../app/lib/pathReporter.js';
+import { ReactionT, ReactionV } from '../../app/lib/reactions.js';
+import { getClient, sendEmail } from '../../app/lib/email.js';
+import firestore from '@google-cloud/firestore';
 
 export const ratings = functions
   .runWith({ timeoutSeconds: 540, memory: '512MB' })
@@ -142,8 +144,6 @@ export const analytics = functions.pubsub
     return getCollection('cron_status').doc('hourlyanalytics').set(status);
   });
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const firestore = require('@google-cloud/firestore');
 const client = new firestore.v1.FirestoreAdminClient();
 
 export const scheduledFirestoreExport = functions.pubsub
@@ -187,6 +187,22 @@ export const scheduledFirestoreExport = functions.pubsub
           throw new Error('Export operation failed');
         })
     );
+  });
+
+export const sendTestEmail = functions.pubsub
+  .schedule('0 0 1 1 *')
+  .onRun(async () => {
+    const client = await getClient();
+    console.log('sending test');
+    await sendEmail({
+      client,
+      userId: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
+      subject: 'Testing an email via SES',
+      markdown: '**Here** is the body',
+      oneClickUnsubscribeTag: 'all',
+      campaign: 'test',
+    });
+    console.log('done');
   });
 
 export const notificationsSend = functions

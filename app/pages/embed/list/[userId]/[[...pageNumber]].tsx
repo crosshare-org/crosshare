@@ -2,19 +2,19 @@ import { GetServerSideProps } from 'next';
 import {
   EmbedColorMode,
   EmbedContext,
-} from '../../../../components/EmbedContext';
-import { EmbedStyling } from '../../../../components/EmbedStyling';
-import { ErrorPage } from '../../../../components/ErrorPage';
-import { Link } from '../../../../components/Link';
+} from '../../../../components/EmbedContext.js';
+import { EmbedStyling } from '../../../../components/EmbedStyling.js';
+import { ErrorPage } from '../../../../components/ErrorPage.js';
+import { Link } from '../../../../components/Link.js';
 import {
   LinkablePuzzle,
   PuzzleResultLink,
-} from '../../../../components/PuzzleLink';
-import { EmbedOptionsT } from '../../../../lib/embedOptions';
-import { useEmbedOptions } from '../../../../lib/hooks';
-import { paginatedPuzzles } from '../../../../lib/paginatedPuzzles';
-import { PageErrorProps, getEmbedProps } from '../../../../lib/serverOnly';
-import { withTranslation } from '../../../../lib/translation';
+} from '../../../../components/PuzzleLink.js';
+import { EmbedOptionsT } from '../../../../lib/embedOptions.js';
+import { useEmbedOptions } from '../../../../lib/hooks.js';
+import { paginatedPuzzles } from '../../../../lib/paginatedPuzzles.js';
+import { PageErrorProps, getEmbedProps } from '../../../../lib/serverOnly.js';
+import { withTranslation } from '../../../../lib/translation.js';
 import styles from './pageNumber.module.css';
 
 interface PageProps {

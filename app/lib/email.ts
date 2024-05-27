@@ -1,10 +1,10 @@
 import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2';
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 import { toHtml } from 'hast-util-to-html';
-import { getUser } from './firebaseAdminWrapper';
-import { markdownToHast } from './markdown/markdown';
-import { UnsubscribeFlags } from './prefs';
-import { getSig } from './subscriptions';
+import { getUser } from './firebaseAdminWrapper.js';
+import { markdownToHast } from './markdown/markdown.js';
+import { UnsubscribeFlags } from './prefs.js';
+import { getSig } from './subscriptions.js';
 
 export async function getAddress(userId: string): Promise<string | undefined> {
   try {
@@ -82,8 +82,7 @@ export async function sendEmail({
   const sig = await getSig(userId);
   const link = emailLink(campaign, `subscription?u=${userId}&s=${sig}`);
   markdown =
-    markdown.trim() +
-    `\n\n---\n\n[Manage your Crosshare email preferences](${link})`;
+    markdown.trim() + `\n\n---\n\n[Unsubscribe / Manage Preferences](${link})`;
 
   const message = new SendEmailCommand({
     Destination: { ToAddresses: [toAddress] },

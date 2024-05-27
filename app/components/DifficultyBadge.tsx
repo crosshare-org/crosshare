@@ -1,10 +1,10 @@
 import { useContext, useState } from 'react';
-import { GlickoScoreT } from '../lib/dbtypes';
-import { twoPlayerExpectation } from '../lib/glickoUtil';
-import { AuthContext } from './AuthContext';
-import { GoogleButton } from './GoogleButtons';
-import { Link } from './Link';
-import { Overlay } from './Overlay';
+import { GlickoScoreT } from '../lib/dbtypes.js';
+import { twoPlayerExpectation } from '../lib/glickoUtil.js';
+import { AuthContext } from './AuthContext.js';
+import { GoogleButton } from './GoogleButtons.js';
+import { Link } from './Link.js';
+import { Overlay } from './Overlay.js';
 
 export const DifficultyBadge = (props: {
   puzzleRating: GlickoScoreT | null;

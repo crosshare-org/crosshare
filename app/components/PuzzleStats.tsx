@@ -6,35 +6,43 @@ import { useCallback, useMemo, useReducer, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { ColumnProps, Table } from 'react-fluid-table';
 import { FaShareSquare } from 'react-icons/fa';
-import { MetaSubmissionForStatsViewT, PuzzleStatsViewT } from '../lib/dbtypes';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { entryAndCrossAtPosition } from '../lib/gridBase';
-import { useMatchMedia } from '../lib/hooks';
-import { markdownToHast } from '../lib/markdown/markdown';
-import { SMALL_AND_UP_RULES } from '../lib/style';
-import { Direction, PuzzleResult, fromKeyboardEvent } from '../lib/types';
-import { clsx, isMetaSolution, logAsyncErrors, timeString } from '../lib/utils';
+import {
+  MetaSubmissionForStatsViewT,
+  PuzzleStatsViewT,
+} from '../lib/dbtypes.js';
+import { getDocRef } from '../lib/firebaseWrapper.js';
+import { entryAndCrossAtPosition } from '../lib/gridBase.js';
+import { useMatchMedia } from '../lib/hooks.js';
+import { markdownToHast } from '../lib/markdown/markdown.js';
+import { SMALL_AND_UP_RULES } from '../lib/style.js';
+import { Direction, PuzzleResult, fromKeyboardEvent } from '../lib/types.js';
+import {
+  clsx,
+  isMetaSolution,
+  logAsyncErrors,
+  timeString,
+} from '../lib/utils.js';
 import {
   fromCells,
   getClueMap,
   getCluedAcrossAndDown,
-} from '../lib/viewableGrid';
+} from '../lib/viewableGrid.js';
 import {
   BuilderState,
   builderReducer,
   initialBuilderState,
-} from '../reducers/builderReducer';
-import { KeypressAction } from '../reducers/commonActions';
-import { ButtonAsLink } from './Buttons';
-import { ClueList } from './ClueList';
-import { CopyableInput } from './CopyableInput';
-import { Emoji } from './Emoji';
-import { GridView } from './Grid';
-import { Overlay } from './Overlay';
-import { SquareAndCols } from './Page';
+} from '../reducers/builderReducer.js';
+import { KeypressAction } from '../reducers/commonActions.js';
+import { ButtonAsLink } from './Buttons.js';
+import { ClueList } from './ClueList.js';
+import { CopyableInput } from './CopyableInput.js';
+import { Emoji } from './Emoji.js';
+import { GridView } from './Grid.js';
+import { Overlay } from './Overlay.js';
+import { SquareAndCols } from './Page.js';
 import styles from './PuzzleStats.module.css';
-import { useSnackbar } from './Snackbar';
-import { DefaultTopBar, TopBarLink } from './TopBar';
+import { useSnackbar } from './Snackbar.js';
+import { DefaultTopBar, TopBarLink } from './TopBar.js';
 
 export enum StatsMode {
   AverageTime,

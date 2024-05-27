@@ -1,9 +1,9 @@
-import { entryWord, hasUnches } from '../lib/gridBase';
-import { parseClueEnumeration, parseClueReferences } from '../lib/parse';
-import { emptySelection, hasMultipleCells } from '../lib/selection';
-import { ViewableEntry, entryString } from '../lib/viewableGrid';
-import type { BuilderState } from './builderReducer';
-import type { GridInterfaceState } from './gridReducer';
+import { entryWord, hasUnches } from '../lib/gridBase.js';
+import { parseClueEnumeration, parseClueReferences } from '../lib/parse.js';
+import { emptySelection, hasMultipleCells } from '../lib/selection.js';
+import { ViewableEntry, entryString } from '../lib/viewableGrid.js';
+import type { BuilderState } from './builderReducer.js';
+import type { GridInterfaceState } from './gridReducer.js';
 
 export function isBuilderState(
   state: GridInterfaceState

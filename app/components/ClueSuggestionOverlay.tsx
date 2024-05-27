@@ -2,10 +2,10 @@ import orderBy from 'lodash/orderBy';
 import { useEffect, useMemo, useState } from 'react';
 import { Table } from 'react-fluid-table';
 import { FaCheck } from 'react-icons/fa';
-import { ClueEntryT, ClueListT, parseClueList } from '../lib/ginsbergCommon';
-import { logAsyncErrors } from '../lib/utils';
+import { ClueEntryT, ClueListT, parseClueList } from '../lib/ginsbergCommon.js';
+import { logAsyncErrors } from '../lib/utils.js';
 import styles from './ClueSuggestionOverlay.module.css';
-import { Overlay } from './Overlay';
+import { Overlay } from './Overlay.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const NYTIcon = ({ row }: { row: any }) => {

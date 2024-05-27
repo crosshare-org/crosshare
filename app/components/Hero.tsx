@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import styles from './Hero.module.css';
-import { Logo } from './Icons';
-import { Link } from './Link';
+import { Logo } from './Icons.js';
+import { Link } from './Link.js';
 
 export function Hero(props: { text: string; children?: ReactNode }) {
   return (

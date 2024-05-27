@@ -7,11 +7,11 @@ import {
 } from 'firebase/auth';
 import type { AuthError, User, UserCredential } from 'firebase/auth';
 import { query, where } from 'firebase/firestore';
-import { getValidatedAndDelete, setInCache } from '../lib/dbUtils';
-import { LegacyPlayV } from '../lib/dbtypes';
-import { getAuth, getCollection } from '../lib/firebaseWrapper';
-import { event } from '../lib/gtag';
-import { ButtonAsLink } from './Buttons';
+import { getValidatedAndDelete, setInCache } from '../lib/dbUtils.js';
+import { LegacyPlayV } from '../lib/dbtypes.js';
+import { getAuth, getCollection } from '../lib/firebaseWrapper.js';
+import { event } from '../lib/gtag.js';
+import { ButtonAsLink } from './Buttons.js';
 
 interface GoogleButtonProps {
   postSignIn?: (user: User) => Promise<void>;

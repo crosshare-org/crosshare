@@ -1,12 +1,12 @@
-import { entriesFromCells } from '../lib/gridBase';
-import { markdownToHast } from '../lib/markdown/markdown';
+import { entriesFromCells } from '../lib/gridBase.js';
+import { markdownToHast } from '../lib/markdown/markdown.js';
 import {
   CluedGrid,
   addClues,
   fromCells,
   getEntryToClueMap,
   getRefs,
-} from '../lib/viewableGrid';
+} from '../lib/viewableGrid.js';
 
 test('test entriesFromCells', () => {
   expect(entriesFromCells(2, 2, ['A', 'B', 'C', 'D'], new Set(), new Set()))

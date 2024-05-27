@@ -2,11 +2,9 @@
 
 import fs from 'fs';
 import util from 'util';
-
 import { rimraf } from 'rimraf';
-
-import { ClueListT } from '../lib/ginsbergCommon';
-import { CLUEDB, getDB } from '../lib/ginsberg';
+import { CLUEDB, getDB } from '../lib/ginsberg.js';
+import { ClueListT } from '../lib/ginsbergCommon.js';
 
 const readFile = util.promisify(fs.readFile);
 
@@ -50,20 +48,20 @@ const build = async (cluedata: Buffer): Promise<void> => {
 
   const numWords = readInt();
   console.log(`${numWords} words`);
-  const words: Array<string> = [];
+  const words: string[] = [];
   for (let i = 0; i < numWords; i += 1) {
     words.push(readLenStr());
   }
   console.log('beginning and end', words[0], words[words.length - 1]);
 
-  const clues: Array<string> = [];
-  const clueClues: Array<Array<number>> = [];
+  const clues: string[] = [];
+  const clueClues: number[][] = [];
   const numClues = readInt();
   console.log(`${numClues} clues`);
   for (let i = 0; i < numClues; i += 1) {
     clues.push(readLenStr());
     const numTraps = readInt();
-    const traps: Array<number> = [];
+    const traps: number[] = [];
     for (let j = 0; j < numTraps; j += 1) {
       traps.push(readInt());
     }
@@ -80,7 +78,7 @@ const build = async (cluedata: Buffer): Promise<void> => {
     clueIndex: number;
   }
 
-  function entriesToDBFormat(word: string, e: Array<ClueEntry>): ClueListT {
+  function entriesToDBFormat(word: string, e: ClueEntry[]): ClueListT {
     return e.reduce((acc: ClueListT, entry: ClueEntry) => {
       const existing = acc.find((existing) => existing.i === entry.clueIndex);
       if (existing) {
@@ -94,7 +92,7 @@ const build = async (cluedata: Buffer): Promise<void> => {
           return acc;
         }
         const traps = (clueClues[entry.clueIndex] || []).reduce(
-          (acc: Array<string>, n: number) => {
+          (acc: string[], n: number) => {
             const trapWord = words[n >> 1];
             if (
               trapWord &&
@@ -121,7 +119,7 @@ const build = async (cluedata: Buffer): Promise<void> => {
     }, []);
   }
 
-  let entries: Array<ClueEntry> = [];
+  let entries: ClueEntry[] = [];
   let currentWordIndex = 0;
 
   await rimraf(CLUEDB);

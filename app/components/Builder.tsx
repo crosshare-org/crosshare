@@ -34,18 +34,21 @@ import {
 import { IoMdStats } from 'react-icons/io';
 import { MdRefresh } from 'react-icons/md';
 import { FixedSizeList as List } from 'react-window';
-import * as WordDB from '../lib/WordDB';
+import * as WordDB from '../lib/WordDB.js';
 import {
   addAutofillFieldsToEntry,
   numMatchesForEntry,
-} from '../lib/autofillGrid';
-import * as BA from '../lib/bitArray';
-import { ExportProps, exportFile, importFile } from '../lib/converter';
-import { isTextInput } from '../lib/domUtils';
-import { entryAndCrossAtPosition, getCrosses, valAt } from '../lib/gridBase';
-import { usePersistedBoolean, usePolyfilledResizeObserver } from '../lib/hooks';
-import { fromLocalStorage } from '../lib/storage';
-import { Timestamp } from '../lib/timestamp';
+} from '../lib/autofillGrid.js';
+import * as BA from '../lib/bitArray.js';
+import { ExportProps, exportFile, importFile } from '../lib/converter.js';
+import { isTextInput } from '../lib/domUtils.js';
+import { entryAndCrossAtPosition, getCrosses, valAt } from '../lib/gridBase.js';
+import {
+  usePersistedBoolean,
+  usePolyfilledResizeObserver,
+} from '../lib/hooks.js';
+import { fromLocalStorage } from '../lib/storage.js';
+import { Timestamp } from '../lib/timestamp.js';
 import {
   AutofillMessage,
   CancelAutofillMessage,
@@ -63,10 +66,10 @@ import {
   fromKeyboardEvent,
   isAutofillCompleteMessage,
   isAutofillResultMessage,
-} from '../lib/types';
-import { STORAGE_KEY, eqSet } from '../lib/utils';
-import { ViewableEntry } from '../lib/viewableGrid';
-import { getAutofillWorker } from '../lib/workerLoader';
+} from '../lib/types.js';
+import { STORAGE_KEY, eqSet } from '../lib/utils.js';
+import { ViewableEntry } from '../lib/viewableGrid.js';
+import { getAutofillWorker } from '../lib/workerLoader.js';
 import {
   BuilderGrid,
   BuilderState,
@@ -79,22 +82,22 @@ import {
   builderReducer,
   getClueProps,
   initialBuilderState,
-} from '../reducers/builderReducer';
-import { KeypressAction, PuzzleAction } from '../reducers/commonActions';
+} from '../reducers/builderReducer.js';
+import { KeypressAction, PuzzleAction } from '../reducers/commonActions.js';
 import {
   ClickedEntryAction,
   CopyAction,
   CutAction,
   PasteAction,
-} from '../reducers/gridReducer';
-import { AuthProps } from './AuthHelpers';
+} from '../reducers/gridReducer.js';
+import { AuthProps } from './AuthHelpers.js';
 import styles from './Builder.module.css';
-import { ButtonReset } from './Buttons';
-import { ClueMode } from './ClueMode';
-import { ContactLinks } from './ContactLinks';
-import { FullscreenCSS } from './FullscreenCSS';
-import { GridView } from './Grid';
-import { Histogram } from './Histogram';
+import { ButtonReset } from './Buttons.js';
+import { ClueMode } from './ClueMode.js';
+import { ContactLinks } from './ContactLinks.js';
+import { FullscreenCSS } from './FullscreenCSS.js';
+import { GridView } from './Grid.js';
+import { Histogram } from './Histogram.js';
 import {
   BacktickKey,
   CommaKey,
@@ -113,13 +116,13 @@ import {
   SymmetryNone,
   SymmetryRotational,
   SymmetryVertical,
-} from './Icons';
-import { Keyboard } from './Keyboard';
-import { NewPuzzleForm } from './NewPuzzleForm';
-import { Overlay } from './Overlay';
-import { SquareAndCols } from './Page';
-import { PublishOverlay } from './PublishOverlay';
-import { Snackbar, useSnackbar } from './Snackbar';
+} from './Icons.js';
+import { Keyboard } from './Keyboard.js';
+import { NewPuzzleForm } from './NewPuzzleForm.js';
+import { Overlay } from './Overlay.js';
+import { SquareAndCols } from './Page.js';
+import { PublishOverlay } from './PublishOverlay.js';
+import { Snackbar, useSnackbar } from './Snackbar.js';
 import {
   DefaultTopBar,
   NestedDropDown,
@@ -128,7 +131,7 @@ import {
   TopBarDropDownLink,
   TopBarDropDownLinkA,
   TopBarLink,
-} from './TopBar';
+} from './TopBar.js';
 
 type BuilderProps = PartialBy<
   Omit<

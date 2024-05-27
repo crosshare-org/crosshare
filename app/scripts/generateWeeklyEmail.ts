@@ -8,11 +8,11 @@ import {
   DBPuzzleV,
   DailyStatsV,
   getDateString,
-} from '../lib/dbtypes';
-import { getAdminApp } from '../lib/firebaseAdminWrapper';
-import { PathReporter } from '../lib/pathReporter';
-import { sizeTag } from '../lib/sizeTag';
-import { slugify } from '../lib/utils';
+} from '../lib/dbtypes.js';
+import { getAdminApp } from '../lib/firebaseAdminWrapper.js';
+import { PathReporter } from '../lib/pathReporter.js';
+import { sizeTag } from '../lib/sizeTag.js';
+import { slugify } from '../lib/utils.js';
 
 if (process.argv.length !== 2) {
   throw Error(

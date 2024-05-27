@@ -16,7 +16,7 @@ import {
   useInteractions,
 } from '@floating-ui/react';
 import { ReactNode, useRef, useState } from 'react';
-import { clsx } from '../lib/utils';
+import { clsx } from '../lib/utils.js';
 import styles from './ToolTipText.module.css';
 
 export const ToolTipText = (props: {

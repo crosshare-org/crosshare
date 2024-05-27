@@ -12,31 +12,31 @@ import {
   useState,
 } from 'react';
 import { FaComment, FaFlag, FaTrash } from 'react-icons/fa';
-import { ConstructorPageT } from '../lib/constructorPage';
+import { ConstructorPageT } from '../lib/constructorPage.js';
 import {
   CommentDeletionT,
   CommentForModerationT,
   CommentForModerationWithIdT,
   CommentForModerationWithIdV,
-} from '../lib/dbtypes';
-import { getCollection, getDocRef } from '../lib/firebaseWrapper';
-import { arrayFromLocalStorage } from '../lib/storage';
-import { Timestamp } from '../lib/timestamp';
-import { Comment, Direction, PartialBy } from '../lib/types';
-import { logAsyncErrors, timeString } from '../lib/utils';
-import { AuthContext } from './AuthContext';
-import { Button, ButtonAsLink } from './Buttons';
+} from '../lib/dbtypes.js';
+import { getCollection, getDocRef } from '../lib/firebaseWrapper.js';
+import { arrayFromLocalStorage } from '../lib/storage.js';
+import { Timestamp } from '../lib/timestamp.js';
+import { Comment, Direction, PartialBy } from '../lib/types.js';
+import { logAsyncErrors, timeString } from '../lib/utils.js';
+import { AuthContext } from './AuthContext.js';
+import { Button, ButtonAsLink } from './Buttons.js';
 import styles from './Comments.module.css';
-import { DisplayNameForm, useDisplayName } from './DisplayNameForm';
-import { Emoji } from './Emoji';
-import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
-import { PatronIcon } from './Icons';
-import { LengthLimitedTextarea, LengthView } from './Inputs';
-import { Link } from './Link';
-import { Markdown } from './Markdown';
-import { Overlay } from './Overlay';
-import { ReportOverlay } from './ReportOverlay';
-import { PastDistanceToNow } from './TimeDisplay';
+import { DisplayNameForm, useDisplayName } from './DisplayNameForm.js';
+import { Emoji } from './Emoji.js';
+import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons.js';
+import { PatronIcon } from './Icons.js';
+import { LengthLimitedTextarea, LengthView } from './Inputs.js';
+import { Link } from './Link.js';
+import { Markdown } from './Markdown.js';
+import { Overlay } from './Overlay.js';
+import { ReportOverlay } from './ReportOverlay.js';
+import { PastDistanceToNow } from './TimeDisplay.js';
 
 export const COMMENT_LENGTH_LIMIT = 2048;
 

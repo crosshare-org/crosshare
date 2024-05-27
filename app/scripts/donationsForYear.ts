@@ -1,9 +1,9 @@
 #!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
 
 import { getFirestore } from 'firebase-admin/firestore';
-import { DonationsListV } from '../lib/dbtypes';
-import { getAdminApp } from '../lib/firebaseAdminWrapper';
-import { PathReporter } from '../lib/pathReporter';
+import { DonationsListV } from '../lib/dbtypes.js';
+import { getAdminApp } from '../lib/firebaseAdminWrapper.js';
+import { PathReporter } from '../lib/pathReporter.js';
 
 if (process.argv.length !== 3) {
   throw Error(

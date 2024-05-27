@@ -11,24 +11,27 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useEffect, useMemo, useState } from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
-import { AuthProps, requiresAuth } from '../components/AuthHelpers';
-import { BioEditor } from '../components/BioEditor';
-import { Button } from '../components/Buttons';
-import { CreatePageForm } from '../components/ConstructorPage';
-import { DisplayNameForm, useDisplayName } from '../components/DisplayNameForm';
-import { Link } from '../components/Link';
-import { useSnackbar } from '../components/Snackbar';
+import { AuthProps, requiresAuth } from '../components/AuthHelpers.js';
+import { BioEditor } from '../components/BioEditor.js';
+import { Button } from '../components/Buttons.js';
+import { CreatePageForm } from '../components/ConstructorPage.js';
+import {
+  DisplayNameForm,
+  useDisplayName,
+} from '../components/DisplayNameForm.js';
+import { Link } from '../components/Link.js';
+import { useSnackbar } from '../components/Snackbar.js';
 import {
   PrefSetting,
   SolverPreferencesList,
-} from '../components/SolverPreferencesList';
-import { DefaultTopBar } from '../components/TopBar';
-import { getAuth, getCollection, getDocRef } from '../lib/firebaseWrapper';
-import { useDarkModeControl, usePersistedBoolean } from '../lib/hooks';
-import { AccountPrefsT, UnsubscribeFlags } from '../lib/prefs';
-import { COVER_PIC, PROFILE_PIC } from '../lib/style';
-import { withStaticTranslation } from '../lib/translation';
-import { logAsyncErrors } from '../lib/utils';
+} from '../components/SolverPreferencesList.js';
+import { DefaultTopBar } from '../components/TopBar.js';
+import { getAuth, getCollection, getDocRef } from '../lib/firebaseWrapper.js';
+import { useDarkModeControl, usePersistedBoolean } from '../lib/hooks.js';
+import { AccountPrefsT, UnsubscribeFlags } from '../lib/prefs.js';
+import { COVER_PIC, PROFILE_PIC } from '../lib/style.js';
+import { withStaticTranslation } from '../lib/translation.js';
+import { logAsyncErrors } from '../lib/utils.js';
 import styles from './account.module.css';
 
 const ImageCropper = dynamic(

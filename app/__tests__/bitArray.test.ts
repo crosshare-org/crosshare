@@ -1,6 +1,6 @@
 import { BigInteger } from '@modern-dev/jsbn';
 import cases from 'jest-in-case';
-import * as BA from '../lib/bitArray';
+import * as BA from '../lib/bitArray.js';
 
 const B32 = '0123456789abcdefghijklmnopqrstuv';
 function randomB32() {

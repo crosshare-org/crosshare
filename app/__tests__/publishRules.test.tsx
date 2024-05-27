@@ -1,7 +1,7 @@
-import { DBPuzzleT } from '../lib/dbtypes';
 import * as firebaseTesting from '@firebase/rules-unit-testing';
-import { TimestampClass } from '../lib/firebaseWrapper';
-import { getMockedPuzzle } from '../lib/getMockedPuzzle';
+import { DBPuzzleT } from '../lib/dbtypes.js';
+import { TimestampClass } from '../lib/firebaseWrapper.js';
+import { getMockedPuzzle } from '../lib/getMockedPuzzle.js';
 
 jest.mock('../lib/firebaseWrapper');
 

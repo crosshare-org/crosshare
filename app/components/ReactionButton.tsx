@@ -8,22 +8,22 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { ConstructorPageBase } from '../lib/constructorPage';
+import { ConstructorPageBase } from '../lib/constructorPage.js';
 import {
   PuzzleReaction,
   getReaction,
   savedReactions,
   setReaction,
-} from '../lib/reactions';
-import { ServerPuzzleResult } from '../lib/types';
-import { AuthContext } from './AuthContext';
-import { Button, ButtonAsLink } from './Buttons';
-import { ConstructorList } from './ConstructorList';
-import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
-import { Link } from './Link';
-import { Overlay } from './Overlay';
+} from '../lib/reactions.js';
+import { ServerPuzzleResult } from '../lib/types.js';
+import { AuthContext } from './AuthContext.js';
+import { Button, ButtonAsLink } from './Buttons.js';
+import { ConstructorList } from './ConstructorList.js';
+import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons.js';
+import { Link } from './Link.js';
+import { Overlay } from './Overlay.js';
 import styles from './ReactionButton.module.css';
-import { ToolTipText } from './ToolTipText';
+import { ToolTipText } from './ToolTipText.js';
 
 interface ReactionButtonProps {
   puzzle: ServerPuzzleResult;

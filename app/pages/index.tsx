@@ -3,29 +3,29 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
-import { AuthContext } from '../components/AuthContext';
-import { ContactLinks } from '../components/ContactLinks';
-import { CreateShareSection } from '../components/CreateShareSection';
-import { I18nTags } from '../components/I18nTags';
-import { PatronIcon } from '../components/Icons';
-import { Link } from '../components/Link';
+import { AuthContext } from '../components/AuthContext.js';
+import { ContactLinks } from '../components/ContactLinks.js';
+import { CreateShareSection } from '../components/CreateShareSection.js';
+import { I18nTags } from '../components/I18nTags.js';
+import { PatronIcon } from '../components/Icons.js';
+import { Link } from '../components/Link.js';
 import {
   LinkablePuzzle,
   PuzzleResultLink,
   toLinkablePuzzle,
-} from '../components/PuzzleLink';
-import { DefaultTopBar } from '../components/TopBar';
-import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList';
-import { ArticleT, validate } from '../lib/article';
-import { ConstructorPageBase } from '../lib/constructorPage';
-import { getMiniForDate } from '../lib/dailyMinis';
-import { getCollection } from '../lib/firebaseAdminWrapper';
-import { paginatedPuzzles } from '../lib/paginatedPuzzles';
-import { isUserPatron } from '../lib/patron';
-import { userIdToPage } from '../lib/serverOnly';
-import { withTranslation } from '../lib/translation';
-import { puzzleFromDB } from '../lib/types';
-import { PAGE_SIZE } from './featured/[pageNumber]';
+} from '../components/PuzzleLink.js';
+import { DefaultTopBar } from '../components/TopBar.js';
+import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList.js';
+import { ArticleT, validate } from '../lib/article.js';
+import { ConstructorPageBase } from '../lib/constructorPage.js';
+import { getMiniForDate } from '../lib/dailyMinis.js';
+import { getCollection } from '../lib/firebaseAdminWrapper.js';
+import { paginatedPuzzles } from '../lib/paginatedPuzzles.js';
+import { isUserPatron } from '../lib/patron.js';
+import { userIdToPage } from '../lib/serverOnly.js';
+import { withTranslation } from '../lib/translation.js';
+import { puzzleFromDB } from '../lib/types.js';
+import { PAGE_SIZE } from './featured/[pageNumber].js';
 import styles from './index.module.css';
 
 type HomepagePuz = LinkablePuzzle & {

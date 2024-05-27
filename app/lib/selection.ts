@@ -1,4 +1,4 @@
-import { Position, isSamePosition } from './types';
+import { Position, isSamePosition } from './types.js';
 
 export interface GridSelection {
   start: Position;

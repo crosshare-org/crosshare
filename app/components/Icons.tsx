@@ -1,7 +1,7 @@
 import { FaCheck, FaEye } from 'react-icons/fa';
-import { CheatUnit, PrefillSquares, Symmetry } from '../lib/types';
-import { clsx } from '../lib/utils';
-import { Link } from './Link';
+import { CheatUnit, PrefillSquares, Symmetry } from '../lib/types.js';
+import { clsx } from '../lib/utils.js';
+import { Link } from './Link.js';
 
 const Square = (props: {
   cx: number;

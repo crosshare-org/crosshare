@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.39.0-jammy as dev
+FROM mcr.microsoft.com/playwright:v1.44.1-jammy as dev
 RUN mkdir /src
 WORKDIR /src
 COPY app/package.json app/yarn.lock app/lingui.config.ts ./
@@ -15,7 +15,7 @@ RUN firebase setup:emulators:pubsub
 ARG COMMIT=dev
 ENV NEXT_PUBLIC_COMMIT_HASH $COMMIT
 
-FROM node:18-slim as builder
+FROM node:20-slim as builder
 RUN mkdir /src
 WORKDIR /src
 COPY app/package.json app/yarn.lock ./
@@ -32,7 +32,7 @@ RUN yarn install --production --ignore-scripts --prefer-offline
 ARG COMMIT
 RUN test -n "$COMMIT"
 
-FROM gcr.io/distroless/nodejs18-debian11 as prod
+FROM gcr.io/distroless/nodejs20-debian12 as prod
 ARG COMMIT
 ENV NEXT_PUBLIC_COMMIT_HASH=$COMMIT NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app

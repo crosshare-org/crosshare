@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 import { FaCloudUploadAlt, FaHammer } from 'react-icons/fa';
-import { Link } from '../components/Link';
+import { Link } from '../components/Link.js';
 import styles from './CreateShareSection.module.css';
 
 export function CreateShareSection(props: { halfWidth: boolean }) {

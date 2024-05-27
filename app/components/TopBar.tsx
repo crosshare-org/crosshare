@@ -19,16 +19,16 @@ import {
   FaUserLock,
 } from 'react-icons/fa';
 import { IoMdCloseCircleOutline } from 'react-icons/io';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { NotificationT } from '../lib/notificationTypes';
-import { ANIMATION_DELAY, HEADER_HEIGHT } from '../lib/style';
-import { logAsyncErrors, slugify } from '../lib/utils';
-import { AuthContext } from './AuthContext';
-import { ButtonAsLink, ButtonReset } from './Buttons';
-import { EmbedContext } from './EmbedContext';
-import { Logo } from './Icons';
-import { Link } from './Link';
-import { Overlay } from './Overlay';
+import { getDocRef } from '../lib/firebaseWrapper.js';
+import { NotificationT } from '../lib/notificationTypes.js';
+import { ANIMATION_DELAY, HEADER_HEIGHT } from '../lib/style.js';
+import { logAsyncErrors, slugify } from '../lib/utils.js';
+import { AuthContext } from './AuthContext.js';
+import { ButtonAsLink, ButtonReset } from './Buttons.js';
+import { EmbedContext } from './EmbedContext.js';
+import { Logo } from './Icons.js';
+import { Link } from './Link.js';
+import { Overlay } from './Overlay.js';
 import styles from './TopBar.module.css';
 
 export const TopBarDropDown = (props: {

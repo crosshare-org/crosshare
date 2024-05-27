@@ -1,6 +1,6 @@
 #!/usr/bin/env -S npx ts-node-script
 
-import { getDB, getClues } from '../lib/ginsberg';
+import { getClues, getDB } from '../lib/ginsberg.js';
 
 if (process.argv.length !== 3) {
   throw Error(

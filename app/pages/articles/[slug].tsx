@@ -1,6 +1,6 @@
-import { ArticlePage } from '../../components/ArticlePage';
-import { getArticlePageProps } from '../../lib/serverOnly';
-import { withTranslation } from '../../lib/translation';
+import { ArticlePage } from '../../components/ArticlePage.js';
+import { getArticlePageProps } from '../../lib/serverOnly.js';
+import { withTranslation } from '../../lib/translation.js';
 
 export const getServerSideProps = withTranslation(getArticlePageProps);
 

@@ -1,8 +1,8 @@
 import { getAuth } from 'firebase-admin/auth';
-import { ConstructorPageV } from './constructorPage';
-import { DonationsListV, donationsByEmail } from './dbtypes';
-import { getAdminApp, getCollection } from './firebaseAdminWrapper';
-import { PathReporter } from './pathReporter';
+import { ConstructorPageV } from './constructorPage.js';
+import { DonationsListV, donationsByEmail } from './dbtypes.js';
+import { getAdminApp, getCollection } from './firebaseAdminWrapper.js';
+import { PathReporter } from './pathReporter.js';
 
 let patronList: string[] | null = null;
 let lastUpdated: number | null = null;

@@ -1,6 +1,6 @@
-import { PlayWithoutUserT } from '../lib/dbtypes';
-import { AccountPrefsFlagsT } from '../lib/prefs';
-import { CheatUnit, Direction, KeyK } from '../lib/types';
+import { PlayWithoutUserT } from '../lib/dbtypes.js';
+import { AccountPrefsFlagsT } from '../lib/prefs.js';
+import { CheatUnit, Direction, KeyK } from '../lib/types.js';
 import {
   CluedGrid,
   advanceTo,
@@ -11,10 +11,10 @@ import {
   moveToEntryInActiveDirection,
   moveUp,
   nextNonBlock,
-} from '../lib/viewableGrid';
-import { PuzzleAction, isKeypressAction } from './commonActions';
-import { GridInterfaceState, gridInterfaceReducer } from './gridReducer';
-import { cheat, getCurrentTime } from './puzzleUtils';
+} from '../lib/viewableGrid.js';
+import { PuzzleAction, isKeypressAction } from './commonActions.js';
+import { GridInterfaceState, gridInterfaceReducer } from './gridReducer.js';
+import { cheat, getCurrentTime } from './puzzleUtils.js';
 
 export interface PuzzleState extends GridInterfaceState {
   type: 'puzzle';

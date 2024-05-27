@@ -3,7 +3,7 @@ import { parse } from 'twemoji-parser';
 import { Plugin } from 'unified';
 import { Node } from 'unist';
 import { is } from 'unist-util-is';
-import { flatMap } from './utils';
+import { flatMap } from './utils.js';
 
 export const twemojify: Plugin = () => {
   return (tree) => {

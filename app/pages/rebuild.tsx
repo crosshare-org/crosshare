@@ -1,6 +1,6 @@
 import Head from 'next/head';
-import { requiresAuth } from '../components/AuthHelpers';
-import { DBLoader } from '../components/DBLoader';
+import { requiresAuth } from '../components/AuthHelpers.js';
+import { DBLoader } from '../components/DBLoader.js';
 
 export const RebuildPage = () => {
   return (

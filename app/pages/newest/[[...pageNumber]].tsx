@@ -2,16 +2,19 @@ import { Trans, t } from '@lingui/macro';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { ErrorPage } from '../../components/ErrorPage';
-import { I18nTags } from '../../components/I18nTags';
-import { Link } from '../../components/Link';
-import { LinkablePuzzle, PuzzleResultLink } from '../../components/PuzzleLink';
-import { DefaultTopBar } from '../../components/TopBar';
-import { ConstructorPageBase } from '../../lib/constructorPage';
-import { paginatedPuzzles } from '../../lib/paginatedPuzzles';
-import { isUserPatron } from '../../lib/patron';
-import { userIdToPage } from '../../lib/serverOnly';
-import { withTranslation } from '../../lib/translation';
+import { ErrorPage } from '../../components/ErrorPage.js';
+import { I18nTags } from '../../components/I18nTags.js';
+import { Link } from '../../components/Link.js';
+import {
+  LinkablePuzzle,
+  PuzzleResultLink,
+} from '../../components/PuzzleLink.js';
+import { DefaultTopBar } from '../../components/TopBar.js';
+import { ConstructorPageBase } from '../../lib/constructorPage.js';
+import { paginatedPuzzles } from '../../lib/paginatedPuzzles.js';
+import { isUserPatron } from '../../lib/patron.js';
+import { userIdToPage } from '../../lib/serverOnly.js';
+import { withTranslation } from '../../lib/translation.js';
 import styles from './newestPage.module.css';
 
 interface NewestPageProps {

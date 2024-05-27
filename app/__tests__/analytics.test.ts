@@ -3,11 +3,11 @@
  */
 
 import { initializeTestEnvironment } from '@firebase/rules-unit-testing';
-import { PlayT, LegacyPlayT, DBPuzzleT } from '../lib/dbtypes';
-import { runAnalytics } from '../lib/analytics';
-import { initializeApp } from 'firebase-admin/app';
 import { beforeAll, beforeEach } from '@jest/globals';
-import { Timestamp } from '../lib/timestamp';
+import { initializeApp } from 'firebase-admin/app';
+import { runAnalytics } from '../lib/analytics.js';
+import { DBPuzzleT, LegacyPlayT, PlayT } from '../lib/dbtypes.js';
+import { Timestamp } from '../lib/timestamp.js';
 
 let play1: PlayT;
 let play2: LegacyPlayT;

@@ -12,17 +12,17 @@ import {
 import { IoMdPhonePortrait, IoMdResize } from 'react-icons/io';
 import { MdMoneyOff } from 'react-icons/md';
 import { RiPagesLine } from 'react-icons/ri';
-import { AuthContext } from '../components/AuthContext';
-import { renderLoginButtonIfNeeded } from '../components/AuthHelpers';
-import { BigQuote } from '../components/BigQuote';
-import { ContactLinks } from '../components/ContactLinks';
-import { FeatureList, FeatureListItem } from '../components/FeatureList';
-import { Hero } from '../components/Hero';
-import { Link, LinkButton } from '../components/Link';
-import { Preview } from '../components/Preview';
-import { importFile } from '../lib/converter';
-import { withStaticTranslation } from '../lib/translation';
-import { PuzzleInProgressT } from '../lib/types';
+import { AuthContext } from '../components/AuthContext.js';
+import { renderLoginButtonIfNeeded } from '../components/AuthHelpers.js';
+import { BigQuote } from '../components/BigQuote.js';
+import { ContactLinks } from '../components/ContactLinks.js';
+import { FeatureList, FeatureListItem } from '../components/FeatureList.js';
+import { Hero } from '../components/Hero.js';
+import { Link, LinkButton } from '../components/Link.js';
+import { Preview } from '../components/Preview.js';
+import { importFile } from '../lib/converter.js';
+import { withStaticTranslation } from '../lib/translation.js';
+import { PuzzleInProgressT } from '../lib/types.js';
 import styles from './upload.module.css';
 
 export const getStaticProps = withStaticTranslation(() => {

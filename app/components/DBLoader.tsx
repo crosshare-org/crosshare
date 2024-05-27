@@ -1,10 +1,10 @@
 import { getDownloadURL, ref } from 'firebase/storage';
 import { useState } from 'react';
-import * as WordDB from '../lib/WordDB';
-import { useWordDB } from '../lib/WordDB';
-import { getStorage } from '../lib/firebaseWrapper';
-import { Button } from './Buttons';
-import { DefaultTopBar } from './TopBar';
+import * as WordDB from '../lib/WordDB.js';
+import { useWordDB } from '../lib/WordDB.js';
+import { getStorage } from '../lib/firebaseWrapper.js';
+import { Button } from './Buttons.js';
+import { DefaultTopBar } from './TopBar.js';
 
 export const LoadButton = (props: {
   buttonText: string;

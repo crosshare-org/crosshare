@@ -1,8 +1,8 @@
 import { darken, lighten, mix } from 'color2k';
 import Head from 'next/head';
 import { useContext } from 'react';
-import { styleObjectToString } from '../lib/style';
-import { EmbedColorMode, EmbedContext } from './EmbedContext';
+import { styleObjectToString } from '../lib/style.js';
+import { EmbedColorMode, EmbedContext } from './EmbedContext.js';
 
 export const SlateColorTheme = () => {
   const { isSlate, colorMode, primaryColor, preservePrimary } =

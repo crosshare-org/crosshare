@@ -1,9 +1,9 @@
 import { Query, deleteDoc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import * as t from 'io-ts';
-import { downloadTimestamped } from './dbtypes';
-import { getDocRef } from './firebaseWrapper';
-import { PathReporter } from './pathReporter';
-import { Timestamp } from './timestamp';
+import { downloadTimestamped } from './dbtypes.js';
+import { getDocRef } from './firebaseWrapper.js';
+import { PathReporter } from './pathReporter.js';
+import { Timestamp } from './timestamp.js';
 
 interface CacheSetOptionsRequired<A> {
   collection: string;

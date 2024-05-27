@@ -13,19 +13,19 @@ import {
 } from 'react-icons/fa';
 import { IoMdPhonePortrait, IoMdResize } from 'react-icons/io';
 import { MdMoneyOff } from 'react-icons/md';
-import { AuthContext } from '../components/AuthContext';
-import { renderLoginButtonIfNeeded } from '../components/AuthHelpers';
-import { BigQuote } from '../components/BigQuote';
-import { Builder } from '../components/Builder';
-import { Button } from '../components/Buttons';
-import { ContactLinks } from '../components/ContactLinks';
-import { LoadButton } from '../components/DBLoader';
-import { Emoji } from '../components/Emoji';
-import { FeatureList, FeatureListItem } from '../components/FeatureList';
-import { Hero } from '../components/Hero';
-import { Link } from '../components/Link';
-import { useWordDB } from '../lib/WordDB';
-import { withStaticTranslation } from '../lib/translation';
+import { AuthContext } from '../components/AuthContext.js';
+import { renderLoginButtonIfNeeded } from '../components/AuthHelpers.js';
+import { BigQuote } from '../components/BigQuote.js';
+import { Builder } from '../components/Builder.js';
+import { Button } from '../components/Buttons.js';
+import { ContactLinks } from '../components/ContactLinks.js';
+import { LoadButton } from '../components/DBLoader.js';
+import { Emoji } from '../components/Emoji.js';
+import { FeatureList, FeatureListItem } from '../components/FeatureList.js';
+import { Hero } from '../components/Hero.js';
+import { Link } from '../components/Link.js';
+import { useWordDB } from '../lib/WordDB.js';
+import { withStaticTranslation } from '../lib/translation.js';
 import styles from './construct.module.css';
 
 export const getStaticProps = withStaticTranslation(() => {

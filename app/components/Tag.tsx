@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
-import { fnv1a } from '../lib/utils';
-import { ButtonReset } from './Buttons';
-import { Link } from './Link';
+import { fnv1a } from '../lib/utils.js';
+import { ButtonReset } from './Buttons.js';
+import { Link } from './Link.js';
 import styles from './Tag.module.css';
 
 export interface TagPropsBase {

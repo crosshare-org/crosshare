@@ -1,6 +1,6 @@
 import { Root } from 'hast';
 import { Options as TruncateOptions, truncate } from 'hast-util-truncate';
-import { Nodes } from 'mdast-util-from-markdown/lib';
+import { Nodes } from 'mdast';
 import { Handler } from 'mdast-util-to-hast';
 import rehypeExternalLinks from 'rehype-external-links';
 import remarkDirective from 'remark-directive';
@@ -9,15 +9,15 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import remarkStringify from 'remark-stringify';
 import { PluggableList, unified } from 'unified';
-import { Direction } from '../types';
-import { clueReferencer } from './clueReferencer';
-import { entryReferencer } from './entryReferencer';
-import { inlineOnly } from './inlineOnly';
-import { mentionsAndTags } from './mentionsAndTags';
-import { remarkNoRefs } from './noRefs';
-import { remarkSpoilers } from './spoilers';
-import { twemojify } from './twemojify';
-import unusedDirectives from './unusedDirectives';
+import { Direction } from '../types.js';
+import { clueReferencer } from './clueReferencer.js';
+import { entryReferencer } from './entryReferencer.js';
+import { inlineOnly } from './inlineOnly.js';
+import { mentionsAndTags } from './mentionsAndTags.js';
+import { remarkNoRefs } from './noRefs.js';
+import { remarkSpoilers } from './spoilers.js';
+import { twemojify } from './twemojify.js';
+import unusedDirectives from './unusedDirectives.js';
 
 function rehypeTruncate(options: TruncateOptions) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return

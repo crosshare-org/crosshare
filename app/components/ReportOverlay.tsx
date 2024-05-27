@@ -1,19 +1,19 @@
 import { setDoc } from 'firebase/firestore';
 import * as t from 'io-ts';
 import { FormEvent, useContext, useState } from 'react';
-import { getDocRef } from '../lib/firebaseWrapper';
-import { Timestamp, timestamp } from '../lib/timestamp';
-import { Comment } from '../lib/types';
-import { logAsyncErrors } from '../lib/utils';
-import { AuthContext } from './AuthContext';
-import { Button } from './Buttons';
-import { COMMENT_LENGTH_LIMIT } from './Comments';
-import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
-import { LengthLimitedTextarea, LengthView } from './Inputs';
-import { Markdown } from './Markdown';
-import { Overlay } from './Overlay';
+import { getDocRef } from '../lib/firebaseWrapper.js';
+import { Timestamp, timestamp } from '../lib/timestamp.js';
+import { Comment } from '../lib/types.js';
+import { logAsyncErrors } from '../lib/utils.js';
+import { AuthContext } from './AuthContext.js';
+import { Button } from './Buttons.js';
+import { COMMENT_LENGTH_LIMIT } from './Comments.js';
+import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons.js';
+import { LengthLimitedTextarea, LengthView } from './Inputs.js';
+import { Markdown } from './Markdown.js';
+import { Overlay } from './Overlay.js';
 import styles from './ReportOverlay.module.css';
-import { useSnackbar } from './Snackbar';
+import { useSnackbar } from './Snackbar.js';
 
 export const CommentReportV = t.intersection([
   t.type({

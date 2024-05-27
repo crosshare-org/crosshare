@@ -3,21 +3,24 @@ import type { Root } from 'hast';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { ErrorPage } from '../../components/ErrorPage';
-import { I18nTags } from '../../components/I18nTags';
-import { Link } from '../../components/Link';
-import { Markdown } from '../../components/Markdown';
-import { LinkablePuzzle, PuzzleResultLink } from '../../components/PuzzleLink';
-import { TagList } from '../../components/TagList';
-import { DefaultTopBar } from '../../components/TopBar';
-import { ArticleT } from '../../lib/article';
-import { ConstructorPageBase } from '../../lib/constructorPage';
-import { markdownToHast } from '../../lib/markdown/markdown';
-import { paginatedPuzzles } from '../../lib/paginatedPuzzles';
-import { isUserPatron } from '../../lib/patron';
-import { getArticle, userIdToPage } from '../../lib/serverOnly';
-import { withTranslation } from '../../lib/translation';
-import { normalizeTag } from '../../lib/utils';
+import { ErrorPage } from '../../components/ErrorPage.js';
+import { I18nTags } from '../../components/I18nTags.js';
+import { Link } from '../../components/Link.js';
+import { Markdown } from '../../components/Markdown.js';
+import {
+  LinkablePuzzle,
+  PuzzleResultLink,
+} from '../../components/PuzzleLink.js';
+import { TagList } from '../../components/TagList.js';
+import { DefaultTopBar } from '../../components/TopBar.js';
+import { ArticleT } from '../../lib/article.js';
+import { ConstructorPageBase } from '../../lib/constructorPage.js';
+import { markdownToHast } from '../../lib/markdown/markdown.js';
+import { paginatedPuzzles } from '../../lib/paginatedPuzzles.js';
+import { isUserPatron } from '../../lib/patron.js';
+import { getArticle, userIdToPage } from '../../lib/serverOnly.js';
+import { withTranslation } from '../../lib/translation.js';
+import { normalizeTag } from '../../lib/utils.js';
 import styles from './tagPage.module.css';
 
 interface TagPageProps {

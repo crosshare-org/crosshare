@@ -9,10 +9,10 @@ import {
 } from 'react';
 import ReactImageCrop, { Crop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
-import { getStorage } from '../lib/firebaseWrapper';
-import { Button } from './Buttons';
-import { Overlay } from './Overlay';
-import { useSnackbar } from './Snackbar';
+import { getStorage } from '../lib/firebaseWrapper.js';
+import { Button } from './Buttons.js';
+import { Overlay } from './Overlay.js';
+import { useSnackbar } from './Snackbar.js';
 
 function downsample(
   image: HTMLImageElement,

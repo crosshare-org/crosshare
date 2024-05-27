@@ -10,8 +10,8 @@ import {
 } from 'firebase/firestore';
 import * as t from 'io-ts';
 import { useEffect, useState } from 'react';
-import { PathReporter } from './pathReporter';
-import { logAsyncErrors } from './utils';
+import { PathReporter } from './pathReporter.js';
+import { logAsyncErrors } from './utils.js';
 
 export function usePaginatedQuery<A, N>(
   query: Query | undefined,
