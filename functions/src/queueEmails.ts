@@ -37,7 +37,7 @@ const joinStringsWithAnd = (vals: Array<string>) => {
   }
 };
 
-const CAMPAIGN = 'notifications;';
+const CAMPAIGN = 'notifications';
 
 const puzzleLink = (puzzleId: string) =>
   emailLink(CAMPAIGN, `crosswords/${puzzleId}`);
