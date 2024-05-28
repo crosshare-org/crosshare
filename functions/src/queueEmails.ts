@@ -196,13 +196,6 @@ async function queueEmailForUser(
     return;
   }
 
-  markdown += `---
-
-Crosshare notifications are sent at most once per day. To manage your notification preferences visit [your Account page](${emailLink(
-    CAMPAIGN,
-    'account'
-  )})`;
-
   return sendEmail({
     client,
     userId,
