@@ -28,6 +28,7 @@ async function getTotal() {
   }
   const donations = validationResult.right;
   let total = 0;
+  console.log(`last: ${donations.d[donations.d.length - 1]?.e}`);
   for (const donation of donations.d) {
     if (donation.d.toDate().getFullYear() === year) {
       total += donation.r;
