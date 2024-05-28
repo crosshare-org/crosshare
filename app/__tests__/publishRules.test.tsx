@@ -1,124 +1,93 @@
-import * as firebaseTesting from '@firebase/rules-unit-testing';
+/**
+ * @jest-environment node
+ */
+
+import {
+  RulesTestEnvironment,
+  assertFails,
+  assertSucceeds,
+  initializeTestEnvironment,
+} from '@firebase/rules-unit-testing';
+import { Timestamp, addDoc, collection } from 'firebase/firestore';
 import { DBPuzzleT } from '../lib/dbtypes.js';
-import { TimestampClass } from '../lib/firebaseWrapper.js';
+import { convertTimestamps } from '../lib/firebaseWrapper.js';
 import { getMockedPuzzle } from '../lib/getMockedPuzzle.js';
 
-jest.mock('../lib/firebaseWrapper');
+const withComments: DBPuzzleT = convertTimestamps(
+  getMockedPuzzle({})
+) as DBPuzzleT;
 
-const withComments: DBPuzzleT = getMockedPuzzle({}, TimestampClass);
+const puzzle: DBPuzzleT = convertTimestamps(
+  getMockedPuzzle({ cs: [] })
+) as DBPuzzleT;
 
-const puzzle = getMockedPuzzle({ cs: [] }, TimestampClass);
+const projectId = 'demo-publish-testing';
+let testEnv: RulesTestEnvironment;
+
+beforeAll(async () => {
+  testEnv = await initializeTestEnvironment({
+    projectId,
+    firestore: { host: 'localhost', port: 8080 },
+  });
+});
+
+test('security rules should allow publishing if correct', async () => {
+  const firestore = testEnv
+    .authenticatedContext('fSEwJorvqOMK5UhNMHa4mu48izl1')
+    .firestore();
+
+  await assertSucceeds(addDoc(collection(firestore, 'c'), puzzle));
+});
 
 test('security rules should not allow publishing with restricted fields set', async () => {
-  const app = firebaseTesting.initializeTestApp({
-    projectId: 'mdcrosshare',
-    auth: {
-      uid: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
-      firebase: {
-        sign_in_provider: 'google.com',
-      },
-    },
-  });
+  const firestore = testEnv
+    .authenticatedContext('fSEwJorvqOMK5UhNMHa4mu48izl1')
+    .firestore();
 
-  await firebaseTesting.assertFails(
-    app.firestore().collection('c').add(withComments)
+  await assertFails(addDoc(collection(firestore, 'c'), withComments));
+  await assertFails(addDoc(collection(firestore, 'c'), { ...puzzle, m: true }));
+  await assertFails(
+    addDoc(collection(firestore, 'c'), { ...puzzle, c: 'dailymini' })
   );
-  await firebaseTesting.assertFails(
-    app
-      .firestore()
-      .collection('c')
-      .add({ ...puzzle, m: true })
-  );
-  await firebaseTesting.assertFails(
-    app
-      .firestore()
-      .collection('c')
-      .add({ ...puzzle, c: 'dailymini' })
-  );
-  await firebaseTesting.assertFails(
-    app
-      .firestore()
-      .collection('c')
-      .add({ ...puzzle, p: null })
-  );
+  await assertFails(addDoc(collection(firestore, 'c'), { ...puzzle, p: null }));
   const future = new Date();
   future.setHours(future.getHours() + 1);
-  await firebaseTesting.assertFails(
-    app
-      .firestore()
-      .collection('c')
-      .add({ ...puzzle, p: TimestampClass.fromDate(future) })
+  await assertFails(
+    addDoc(collection(firestore, 'c'), {
+      ...puzzle,
+      p: Timestamp.fromDate(future),
+    })
   );
-  await firebaseTesting.assertSucceeds(
-    app.firestore().collection('c').add(puzzle)
-  );
-  await firebaseTesting.assertFails(
-    app
-      .firestore()
-      .collection('c')
-      .add({ ...puzzle, f: true })
-  );
-  await firebaseTesting.assertFails(
-    app
-      .firestore()
-      .collection('c')
-      .add({ ...puzzle, g: puzzle.g.slice(0, 24) })
+  await assertFails(addDoc(collection(firestore, 'c'), { ...puzzle, f: true }));
+  await assertFails(
+    addDoc(collection(firestore, 'c'), { ...puzzle, g: puzzle.g.slice(0, 24) })
   );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { cs, ...withoutComments } = withComments;
-  await firebaseTesting.assertSucceeds(
-    app.firestore().collection('c').add(withoutComments)
+  await assertSucceeds(addDoc(collection(firestore, 'c'), withoutComments));
+  await assertFails(
+    addDoc(collection(firestore, 'c'), { ...puzzle, p: null, c: 'dailymini' })
   );
-  await firebaseTesting.assertFails(
-    app
-      .firestore()
-      .collection('c')
-      .add({ ...puzzle, p: null, c: 'dailymini' })
-  );
-  app.delete();
 });
 
 test('security rules should not allow publishing if fake author-id', async () => {
-  const app = firebaseTesting.initializeTestApp({
-    projectId: 'mdcrosshare',
-    auth: {
-      uid: 'mike',
-      firebase: {
-        sign_in_provider: 'google.com',
-      },
-    },
-  });
+  const firestore = testEnv.authenticatedContext('mike').firestore();
 
-  await firebaseTesting.assertFails(
-    app.firestore().collection('c').add(puzzle)
-  );
-  app.delete();
+  await assertFails(addDoc(collection(firestore, 'c'), puzzle));
 });
 
 test('security rules should not allow publishing if anonymous', async () => {
-  const app = firebaseTesting.initializeTestApp({
-    projectId: 'mdcrosshare',
-    auth: {
-      uid: 'mike',
-      firebase: {
-        sign_in_provider: 'anonymous',
-      },
-    },
-  });
+  const firestore = testEnv
+    .authenticatedContext('mike', {
+      firebase: { sign_in_provider: 'anonymous' },
+    })
+    .firestore();
 
-  await firebaseTesting.assertFails(
-    app.firestore().collection('c').add(puzzle)
-  );
-  app.delete();
+  await assertFails(addDoc(collection(firestore, 'c'), puzzle));
 });
 
 test('security rules should not allow publishing if non-user', async () => {
-  const app = firebaseTesting.initializeTestApp({
-    projectId: 'mdcrosshare',
-  });
+  const firestore = testEnv.unauthenticatedContext().firestore();
 
-  await firebaseTesting.assertFails(
-    app.firestore().collection('c').add(puzzle)
-  );
-  app.delete();
+  await assertFails(addDoc(collection(firestore, 'c'), puzzle));
 });
