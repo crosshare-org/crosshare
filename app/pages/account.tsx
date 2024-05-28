@@ -62,7 +62,11 @@ const UnsubSetting = (props: UnsubSettingProps) => {
         className="marginRight1em"
         type="checkbox"
         disabled={!props.neverDisable && unsubbedAll}
-        checked={props.invert ? unsubbed : !unsubbed && !unsubbedAll}
+        checked={
+          props.invert
+            ? unsubbed
+            : !unsubbed && (props.neverDisable || !unsubbedAll)
+        }
         onChange={logAsyncErrors(async (e) => {
           await setDoc(
             getDocRef('prefs', props.userId),
@@ -131,6 +135,19 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
           is displayed next to any comments you make or puzzles you create.
         </p>
         <DisplayNameForm />
+        <h3>Newsletter</h3>
+        <p>Email me (to {user.email}, at most once per week):</p>
+        <ul className="listStyleTypeNone">
+          <li>
+            <UnsubSetting
+              prefs={prefs}
+              userId={user.uid}
+              flag="weekly"
+              neverDisable
+              text="A write up of the most popular puzzles in the previous week along with any Crosshare announcements"
+            />
+          </li>
+        </ul>
         <h3>Notification Settings</h3>
         <p>Email me (to {user.email}, at most once per day) when:</p>
         <ul className="listStyleTypeNone">
