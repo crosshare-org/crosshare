@@ -62,6 +62,21 @@ test('security rules should not allow publishing with restricted fields set', as
   await assertFails(
     addDoc(collection(firestore, 'c'), { ...puzzle, g: puzzle.g.slice(0, 24) })
   );
+
+  const newGrid = [...puzzle.g];
+  newGrid[0] = '.';
+  await assertSucceeds(
+    addDoc(collection(firestore, 'c'), { ...puzzle, g: newGrid })
+  );
+  newGrid[0] = 'Ñ';
+  await assertSucceeds(
+    addDoc(collection(firestore, 'c'), { ...puzzle, g: newGrid })
+  );
+  newGrid[0] = '?';
+  await assertFails(
+    addDoc(collection(firestore, 'c'), { ...puzzle, g: newGrid })
+  );
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { cs, ...withoutComments } = withComments;
   await assertSucceeds(addDoc(collection(firestore, 'c'), withoutComments));

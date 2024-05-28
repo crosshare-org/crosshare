@@ -18,6 +18,7 @@ service cloud.firestore {
     }
     function validCrossword() {
       return (request.resource.data.g.size() == (request.resource.data.w * request.resource.data.h))
+        && (request.resource.data.g.join('').matches('^[ .A-Za-z0-9Ññ&]*$'))
         && (request.resource.data.ac.size() == request.resource.data.an.size())
         && (request.resource.data.dc.size() == request.resource.data.dn.size());
     }
