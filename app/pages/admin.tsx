@@ -4,7 +4,6 @@ import {
   arrayUnion,
   deleteField,
   doc,
-  getDocs,
   query,
   setDoc,
   updateDoc,
@@ -216,11 +215,6 @@ export default requiresAdmin(() => {
     forModerationCollection.current
   );
 
-  const mailCollection = useRef(
-    query(getCollection('mail'), where('delivery.error', '!=', null))
-  );
-  const [mailErrors] = useCollectionData(mailCollection.current);
-
   const reportedCommentsCollection = useRef(
     query(getValidatedCollection('cr', CommentReportV), where('h', '==', false))
   );
@@ -247,20 +241,6 @@ export default requiresAdmin(() => {
     return crosswordId;
   }
 
-  async function retryMail(e: FormEvent) {
-    e.preventDefault();
-    await getDocs(
-      query(getCollection('mail'), where('delivery.error', '!=', null))
-    ).then(async (r) => {
-      await Promise.all(
-        r.docs.map(async (s) => {
-          console.log('retrying', s.id);
-          await updateDoc(s.ref, { 'delivery.state': 'RETRY' });
-        })
-      );
-    });
-  }
-
   async function moderatePages(e: FormEvent) {
     e.preventDefault();
     if (pagesForModeration) {
@@ -278,14 +258,6 @@ export default requiresAdmin(() => {
       </Head>
       <DefaultTopBar />
       <div className="margin1em">
-        {mailErrors?.length ? (
-          <div>
-            <h4>There are {mailErrors.length} mail errors!</h4>
-            <Button onClick={logAsyncErrors(retryMail)} text="Retry send" />
-          </div>
-        ) : (
-          ''
-        )}
         {reportedComments?.length ? (
           <>
             <h4 className="borderBottom1pxSolidBlack">Reported Comments:</h4>
