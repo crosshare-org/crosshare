@@ -1,15 +1,12 @@
 #!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
 
 import { promises as fs } from 'fs';
+import rehypeStringify from 'rehype-stringify';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
-import rehypeStringify from 'rehype-stringify';
-
-import { unified } from 'unified';
-
-import { Plugin } from 'unified';
-import { visit } from 'unist-util-visit';
+import { Plugin, unified } from 'unified';
 import { Node } from 'unist';
+import { visit } from 'unist-util-visit';
 import type { Visitor } from 'unist-util-visit';
 
 type LinkNode = {
@@ -27,7 +24,9 @@ const linksForEmail: Plugin = () => {
     url.searchParams.set('utm_campaign', 'weekly');
     node.url = url.toString();
   };
-  return (tree) => visit(tree, 'link', visitor);
+  return (tree) => {
+    visit(tree, 'link', visitor);
+  };
 };
 
 if (process.argv.length !== 2) {

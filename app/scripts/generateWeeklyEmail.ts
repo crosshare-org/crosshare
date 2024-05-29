@@ -1,8 +1,8 @@
 #!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
 
-import fs from 'fs';
-import util from 'util';
-import { getFirestore } from 'firebase-admin/firestore';
+import { lightFormat } from 'date-fns/lightFormat';
+import { Timestamp, getFirestore } from 'firebase-admin/firestore';
+import { ArticleT } from '../lib/article.js';
 import {
   DBPuzzleT,
   DBPuzzleV,
@@ -19,9 +19,6 @@ if (process.argv.length !== 2) {
     'Invalid use of generateWeeklyEmail. Usage: ./scripts/generateWeeklyEmail.ts'
   );
 }
-
-const writeFile = util.promisify(fs.writeFile);
-
 const db = getFirestore(getAdminApp());
 
 function sumOnto(
@@ -142,11 +139,7 @@ async function topPuzzlesForWeek(): Promise<
           return undefined;
         })();
         return [
-          'https://crosshare.org/crosswords/' +
-            p.id +
-            '/' +
-            slugify(p.t) +
-            '#utm_source=mailchimp&utm_medium=email&utm_campaign=weekly',
+          'https://crosshare.org/crosswords/' + p.id + '/' + slugify(p.t),
           `${p.t} by ${p.n}`,
           category,
           `/crosswords/${p.id}/${slugify(p.t)}`,
@@ -165,9 +158,7 @@ async function topPuzzlesForWeek(): Promise<
 async function generateWeeklyEmail() {
   const topPuzzles = await topPuzzlesForWeek();
 
-  let md = `This week's email is written by [YOUR NAME](/YOUR_CROSSHARE_USERNAME). CAN ADD A ONE SENTENCE BIO HERE OR NOT - UP TO YOU.
-
-`;
+  let md = '';
 
   for (const [cat, name, count] of [
     [Category.Full, 'full-size puzzles', 2],
@@ -178,29 +169,32 @@ async function generateWeeklyEmail() {
   ] as const) {
     const puzzles = topPuzzles[cat];
     if (puzzles.length) {
-      console.log(`<strong>Top ${name} this week:</strong><br /><br />`);
-      puzzles.slice(0, count * 2).forEach(([link, text]) => {
-        console.log('<a href="' + link + '">' + text + '</a> - <br /><br />');
-      });
-      console.log('\n\n');
       md += `**Top ${name} this week:**
 
-    ${puzzles
-      .slice(0, count * 2)
-      .map(([_, text, mdLink]) => `[${text}](${mdLink}) - `)
-      .join('\n\n')}
+${puzzles
+  .slice(0, count * 2)
+  .map(([_, text, mdLink]) => `[${text}](${mdLink}) - `)
+  .join('\n\n')}
 
 `;
     }
   }
 
-  md += `ONE SENTENCE SIGN OFF / SIGNATURE`;
-  writeFile('email.txt', md)
-    .then(() => {
-      console.log('wrote md');
+  const slug = `weekly-email-${lightFormat(new Date(), 'yyyy-MM-dd')}`;
+  const article: ArticleT = {
+    s: slug,
+    c: md,
+    t: "This week's most popular crosswords",
+    f: false,
+  };
+  return db
+    .collection('a')
+    .add({
+      ...article,
+      ua: Timestamp.now(),
     })
-    .catch((e: unknown) => {
-      console.error(e);
+    .then(() => {
+      console.log(`https://crosshare.org/articles/${slug}/edit`);
     });
 }
 
