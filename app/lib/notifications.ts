@@ -1,5 +1,6 @@
+import { Timestamp } from 'firebase-admin/firestore';
 import { CommentWithRepliesT, DBPuzzleT, FollowersV } from './dbtypes.js';
-import { getCollection } from './firebaseAdminWrapper.js';
+import { firestore, getCollection } from './firebaseAdminWrapper.js';
 import {
   NewPuzzleNotificationT,
   NotificationT,
@@ -97,4 +98,46 @@ export async function notificationsForPuzzleChange(
   }
 
   return notifications;
+}
+
+export async function cleanNotifications() {
+  const today = new Date();
+  const cleanOlder = new Date(new Date().setDate(today.getDate() - 20));
+  const db = firestore();
+  const collectionRef = db
+    .collection('n')
+    .where('t', '<', Timestamp.fromDate(cleanOlder));
+  const query = collectionRef.limit(500);
+
+  return new Promise((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/use-unknown-in-catch-callback-variable
+    deleteQueryBatch(db, query, resolve).catch(reject);
+  });
+}
+
+async function deleteQueryBatch(
+  db: FirebaseFirestore.Firestore,
+  query: FirebaseFirestore.Query,
+  resolve: (value: unknown) => void
+) {
+  const snapshot = await query.get();
+
+  const batchSize = snapshot.size;
+  if (batchSize === 0) {
+    // When there are no documents left, we are done
+    resolve(0);
+    return;
+  }
+
+  // Delete documents in a batch
+  const batch = db.batch();
+  snapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref);
+  });
+  console.log('deleting batch');
+  await batch.commit();
+
+  // Recurse on the next process tick, to avoid
+  // exploding the stack.
+  process.nextTick(() => deleteQueryBatch(db, query, resolve));
 }

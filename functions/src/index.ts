@@ -24,8 +24,8 @@ import {
 import { Timestamp } from '../../app/lib/timestamp.js';
 import { PathReporter } from '../../app/lib/pathReporter.js';
 import { ReactionT, ReactionV } from '../../app/lib/reactions.js';
-import { getClient, sendEmail } from '../../app/lib/email.js';
 import firestore from '@google-cloud/firestore';
+import { cleanNotifications } from '../../app/lib/notifications.js';
 
 export const ratings = functions
   .runWith({ timeoutSeconds: 540, memory: '512MB' })
@@ -189,29 +189,15 @@ export const scheduledFirestoreExport = functions.pubsub
     );
   });
 
-export const sendTestEmail = functions.pubsub
-  .schedule('0 0 1 1 *')
-  .onRun(async () => {
-    const client = await getClient();
-    console.log('sending test');
-    await sendEmail({
-      client,
-      userId: 'fSEwJorvqOMK5UhNMHa4mu48izl1',
-      subject: 'Testing an email via SES',
-      markdown: '**Here** is the body',
-      oneClickUnsubscribeTag: 'all',
-      campaign: 'test',
-    });
-    console.log('done');
-  });
-
 export const notificationsSend = functions
   .runWith({ timeoutSeconds: 540 })
   .pubsub.schedule('every day 16:00')
   .onRun(async () => {
     console.log('queuing emails');
     await queueEmails();
-    console.log('queued');
+    console.log('done, cleaning old');
+    await cleanNotifications();
+    console.log('done');
   });
 
 export const puzzleUpdate = functions.firestore
