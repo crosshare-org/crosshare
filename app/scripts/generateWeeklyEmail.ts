@@ -189,7 +189,8 @@ ${puzzles
   };
   return db
     .collection('a')
-    .add({
+    .doc(slug)
+    .set({
       ...article,
       ua: Timestamp.now(),
     })

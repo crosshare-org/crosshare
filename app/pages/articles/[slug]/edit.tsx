@@ -1,7 +1,7 @@
-import { Timestamp, addDoc, query, updateDoc, where } from 'firebase/firestore';
+import { Timestamp, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import * as t from 'io-ts';
 import Head from 'next/head';
-import NextJSRouter, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { useRef } from 'react';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { requiresAdmin } from '../../../components/AuthHelpers.js';
@@ -12,12 +12,11 @@ import { useSnackbar } from '../../../components/Snackbar.js';
 import { DefaultTopBar } from '../../../components/TopBar.js';
 import { ArticleT, ArticleV } from '../../../lib/article.js';
 import {
-  getCollection,
   getDocRef,
   getValidatedCollection,
 } from '../../../lib/firebaseWrapper.js';
 import { markdownToHast } from '../../../lib/markdown/markdown.js';
-import { logAsyncErrors, slugify } from '../../../lib/utils.js';
+import { logAsyncErrors } from '../../../lib/utils.js';
 
 export default requiresAdmin(() => {
   const router = useRouter();
@@ -74,7 +73,7 @@ const ArticleLoader = ({ slug }: { slug: string }) => {
               c: 'article content',
               f: false,
             };
-            await addDoc(getCollection('a'), {
+            await setDoc(getDocRef('a', slug), {
               ...newArticle,
               ua: Timestamp.now(),
             }).then(() => {
@@ -108,23 +107,6 @@ const ArticleEditor = ({
           Note: changes may take up to an hour to appear on the site - we cache
           pages to keep Crosshare fast!
         </p>
-        <h3>Slug</h3>
-        <EditableText
-          title="Slug"
-          className="marginBottom1em"
-          text={article.s}
-          hast={markdownToHast({ text: article.s })}
-          maxLength={100}
-          handleSubmit={async (newSlug) => {
-            const slug = slugify(newSlug, 100, true);
-            await updateDoc(getDocRef('a', articleId), {
-              s: slug,
-              ua: Timestamp.now(),
-            }).then(async () => {
-              await NextJSRouter.push(`/articles/${slug}/edit`);
-            });
-          }}
-        />
         <h3>Title</h3>
         <EditableText
           title="Title"
