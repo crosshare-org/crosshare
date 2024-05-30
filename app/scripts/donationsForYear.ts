@@ -1,4 +1,4 @@
-#!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
+#!/usr/bin/env -S npx tsx
 
 import { getFirestore } from 'firebase-admin/firestore';
 import { DonationsListV } from '../lib/dbtypes.js';

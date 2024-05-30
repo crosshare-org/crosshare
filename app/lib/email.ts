@@ -65,6 +65,7 @@ export async function sendEmail({
   markdown,
   oneClickUnsubscribeTag,
   campaign,
+  footerText,
 }: {
   client: EmailClient;
   userId: string;
@@ -72,6 +73,7 @@ export async function sendEmail({
   markdown: string;
   oneClickUnsubscribeTag: keyof typeof UnsubscribeFlags;
   campaign: string;
+  footerText?: string;
 }) {
   const toAddress = await getAddress(userId);
   if (!toAddress) {
@@ -82,7 +84,10 @@ export async function sendEmail({
   const sig = await getSig(userId);
   const link = emailLink(campaign, `subscription?u=${userId}&s=${sig}`);
   markdown =
-    markdown.trim() + `\n\n---\n\n[Unsubscribe / Manage Preferences](${link})`;
+    markdown.trim() +
+    `\n\n\n\n---\n\n[Click here to unsubscribe / manage your preferences](${link})${
+      footerText ? '. ' + footerText : ''
+    }`;
 
   const message = new SendEmailCommand({
     Destination: { ToAddresses: [toAddress] },

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S npx ts-node-script
+#!/usr/bin/env -S npx tsx
 
 import { getClues, getDB } from '../lib/ginsberg.js';
 
@@ -14,7 +14,11 @@ if (!word) {
 }
 
 const db = getDB(true);
-getClues(db, word).then(async (c) => {
-  console.log(JSON.stringify(c, null, 2));
-  await db.close();
-});
+getClues(db, word)
+  .then(async (c) => {
+    console.log(JSON.stringify(c, null, 2));
+    await db.close();
+  })
+  .catch((e: unknown) => {
+    console.error(e);
+  });

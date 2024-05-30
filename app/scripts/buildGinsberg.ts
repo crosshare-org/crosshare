@@ -1,4 +1,4 @@
-#!/usr/bin/env -S npx ts-node-script
+#!/usr/bin/env -S npx tsx
 
 import fs from 'fs';
 import util from 'util';
@@ -159,8 +159,12 @@ const build = async (cluedata: Buffer): Promise<void> => {
 };
 
 console.log(`opening ${cluedataFilename}`);
-readFile(cluedataFilename).then((binary) => {
-  build(binary).then(() => {
-    console.log('done');
+readFile(cluedataFilename)
+  .then((binary) => {
+    return build(binary).then(() => {
+      console.log('done');
+    });
+  })
+  .catch((e: unknown) => {
+    console.error(e);
   });
-});

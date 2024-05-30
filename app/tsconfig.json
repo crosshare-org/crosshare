@@ -1,16 +1,7 @@
 {
-  "ts-node": {
-    "compilerOptions": {
-      "types": ["node"]
-    }
-  },
   "compilerOptions": {
     "target": "ES6",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -29,15 +20,8 @@
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "jsx": "preserve",
-    "incremental": true,
+    "incremental": true
   },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "index.d.ts",
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "exclude": ["node_modules"],
+  "include": ["index.d.ts", "next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

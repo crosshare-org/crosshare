@@ -1,4 +1,4 @@
-#!/usr/bin/env -S npx ts-node-script
+#!/usr/bin/env -S npx tsx
 
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';

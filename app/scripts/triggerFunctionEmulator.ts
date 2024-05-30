@@ -1,4 +1,4 @@
-#!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm' npx ts-node-script
+#!/usr/bin/env -S npx tsx
 
 import { PubSub } from '@google-cloud/pubsub';
 

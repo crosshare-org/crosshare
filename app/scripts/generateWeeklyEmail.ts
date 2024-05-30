@@ -1,4 +1,4 @@
-#!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
+#!/usr/bin/env -S npx tsx
 
 import { lightFormat } from 'date-fns/lightFormat';
 import { Timestamp, getFirestore } from 'firebase-admin/firestore';

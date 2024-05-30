@@ -1,4 +1,4 @@
-#!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
+#!/usr/bin/env -S npx tsx
 
 import { getAuth } from 'firebase-admin/auth';
 import { getAdminApp } from '../lib/firebaseAdminWrapper.js';
@@ -8,7 +8,7 @@ const auth = getAuth(adminApp);
 
 async function grantAdminRole(userEmail: string): Promise<void> {
   const user = await auth.getUserByEmail(userEmail);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
   if (user.customClaims && (user.customClaims as any).admin === true) {
     return;
   }
@@ -29,7 +29,7 @@ grantAdminRole(email)
     console.log(`User ${email} has been given admin role`);
     process.exit(0);
   })
-  .catch((err) => {
-    console.log('Failed to grant user admin role: ' + err);
+  .catch((err: unknown) => {
+    console.error('Failed to grant user admin role: ', err);
     process.exit(1);
   });

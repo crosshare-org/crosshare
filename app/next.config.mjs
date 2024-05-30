@@ -6,7 +6,7 @@ const baseConfig = {
   reactStrictMode: true,
   distDir: distDir,
   eslint: {
-    dirs: ['components', 'lib', 'pages', 'reducers'], // TODO add "scripts"
+    dirs: ['components', 'lib', 'pages', 'reducers', 'scripts'],
   },
   poweredByHeader: false,
   productionBrowserSourceMaps: true,

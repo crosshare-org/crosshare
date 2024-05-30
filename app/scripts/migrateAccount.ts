@@ -1,4 +1,4 @@
-#!/usr/bin/env -S NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' npx ts-node-script
+#!/usr/bin/env -S npx tsx
 
 import { getAuth } from 'firebase-admin/auth';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
@@ -143,6 +143,6 @@ migrateAccount()
   .then(() => {
     console.log('Migrated');
   })
-  .catch((e) => {
+  .catch((e: unknown) => {
     console.error('migration failed', e);
   });
