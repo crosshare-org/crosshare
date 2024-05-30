@@ -12,7 +12,7 @@ import { Node } from 'unist';
 import { visit } from 'unist-util-visit';
 import type { Visitor } from 'unist-util-visit';
 import { validate } from '../lib/article';
-import { EmailClient, RATE_LIMIT, getClient, sendEmail } from '../lib/email';
+import { RATE_LIMIT, getClient, sendEmail } from '../lib/email';
 import { firestore } from '../lib/firebaseAdminWrapper';
 import { AccountPrefsT, AccountPrefsV } from '../lib/prefs';
 
@@ -46,38 +46,6 @@ if (process.argv.length !== 3) {
 }
 const arg = process.argv[2];
 
-async function sendForUser(
-  db: FirebaseFirestore.Firestore,
-  client: EmailClient,
-  userId: string,
-  subject: string,
-  markdown: string
-) {
-  const prefsRes = await db.doc(`prefs/${userId}`).get();
-  let prefs: AccountPrefsT | null = null;
-  if (prefsRes.exists) {
-    const validationResult = AccountPrefsV.decode(prefsRes.data());
-    if (validationResult._tag === 'Right') {
-      prefs = validationResult.right;
-      if (prefs.bounced || prefs.unsubs?.includes('weekly')) {
-        return false;
-      }
-    }
-  }
-  await sendEmail({
-    client,
-    userId,
-    subject,
-    markdown,
-    oneClickUnsubscribeTag: 'weekly',
-    campaign: 'weekly',
-    footerText:
-      'For info about how these puzzles are selected [click here](https://crosshare.org/articles/weekly-email).',
-  });
-  console.log(userId);
-  return true;
-}
-
 async function sendWeeklyEmail() {
   const db = firestore();
   const todayslug = `weekly-email-${lightFormat(new Date(), 'yyyy-MM-dd')}`;
@@ -101,10 +69,10 @@ async function sendWeeklyEmail() {
   );
   const client = await getClient();
 
-  let count = 0;
   let start = 0;
   let sawUID = false;
   let numSent = 0;
+  let promises: Promise<void>[] = [];
 
   return readFile('accounts.csv')
     .then(async (binary) => {
@@ -133,24 +101,48 @@ async function sendWeeklyEmail() {
             continue;
           }
         }
-        const sent = await sendForUser(db, client, uid, article.t, md);
-        if (!sent) {
-          continue;
+
+        const prefsRes = await db.doc(`prefs/${uid}`).get();
+        let prefs: AccountPrefsT | null = null;
+        if (prefsRes.exists) {
+          const validationResult = AccountPrefsV.decode(prefsRes.data());
+          if (validationResult._tag === 'Right') {
+            prefs = validationResult.right;
+            if (prefs.bounced || prefs.unsubs?.includes('weekly')) {
+              continue;
+            }
+          }
         }
-        numSent += 1;
-        if (count == 0) {
+
+        if (promises.length === 0) {
           // start the clock
           start = Date.now();
         }
-        count += 1;
-        if (count > RATE_LIMIT) {
+        numSent += 1;
+        promises.push(
+          sendEmail({
+            client,
+            userId: uid,
+            subject: article.t,
+            markdown: md,
+            oneClickUnsubscribeTag: 'weekly',
+            campaign: 'weekly',
+            footerText:
+              'For info about how these puzzles are selected [click here](https://crosshare.org/articles/weekly-email).',
+          }).then(() => {
+            console.log(uid);
+          })
+        );
+        if (promises.length > RATE_LIMIT) {
+          await Promise.all(promises);
+          promises = [];
           const elapsed = Date.now() - start;
           if (elapsed < 1000) {
             await new Promise((resolve) => setTimeout(resolve, 1000 - elapsed));
           }
-          count = 0;
         }
       }
+      await Promise.all(promises);
       console.log('sent', numSent);
     })
     .catch((e: unknown) => {
