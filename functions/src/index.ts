@@ -190,7 +190,7 @@ export const scheduledFirestoreExport = functions.pubsub
   });
 
 export const notificationsSend = functions
-  .runWith({ timeoutSeconds: 540 })
+  .runWith({ timeoutSeconds: 540, memory: '512MB' })
   .pubsub.schedule('every day 16:00')
   .onRun(async () => {
     console.log('queuing emails');
