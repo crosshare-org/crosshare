@@ -156,6 +156,12 @@ async function topPuzzlesForWeek(): Promise<
 }
 
 async function generateWeeklyEmail() {
+  const slug = `weekly-email-${lightFormat(new Date(), 'yyyy-MM-dd')}`;
+
+  if ((await db.collection('a').doc(slug).get()).exists) {
+    throw new Error('weekly email already exists for date');
+  }
+
   const topPuzzles = await topPuzzlesForWeek();
 
   let md = '';
@@ -180,7 +186,6 @@ ${puzzles
     }
   }
 
-  const slug = `weekly-email-${lightFormat(new Date(), 'yyyy-MM-dd')}`;
   const article: ArticleT = {
     s: slug,
     c: md,
