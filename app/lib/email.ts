@@ -66,16 +66,18 @@ export async function sendEmail({
   oneClickUnsubscribeTag,
   campaign,
   footerText,
+  email,
 }: {
   client: EmailClient;
   userId: string;
+  email?: string;
   subject: string;
   markdown: string;
   oneClickUnsubscribeTag: keyof typeof UnsubscribeFlags;
   campaign: string;
   footerText?: string;
 }) {
-  const toAddress = await getAddress(userId);
+  const toAddress = email || (await getAddress(userId));
   if (!toAddress) {
     console.warn('missing to address for ', userId);
     return;

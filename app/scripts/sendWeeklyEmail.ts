@@ -122,6 +122,7 @@ async function sendWeeklyEmail() {
         promises.push(
           sendEmail({
             client,
+            email: r[1],
             userId: uid,
             subject: article.t,
             markdown: md,
@@ -129,8 +130,8 @@ async function sendWeeklyEmail() {
             campaign: 'weekly',
             footerText:
               'For info about how these puzzles are selected [click here](https://crosshare.org/articles/weekly-email).',
-          }).then(() => {
-            console.log(uid);
+          }).then((x) => {
+            console.log(`${uid} - ${r[1]} - ${x?.MessageId}`);
           })
         );
         if (promises.length > RATE_LIMIT) {
