@@ -1,4 +1,5 @@
 import { Trans, t } from '@lingui/macro';
+import type { Root } from 'hast';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -7,8 +8,8 @@ import { AuthContext } from '../components/AuthContext.js';
 import { ContactLinks } from '../components/ContactLinks.js';
 import { CreateShareSection } from '../components/CreateShareSection.js';
 import { I18nTags } from '../components/I18nTags.js';
-import { PatronIcon } from '../components/Icons.js';
 import { Link } from '../components/Link.js';
+import { Markdown } from '../components/Markdown.js';
 import {
   LinkablePuzzle,
   PuzzleResultLink,
@@ -20,6 +21,7 @@ import { ArticleT, validate } from '../lib/article.js';
 import { ConstructorPageBase } from '../lib/constructorPage.js';
 import { getMiniForDate } from '../lib/dailyMinis.js';
 import { getCollection } from '../lib/firebaseAdminWrapper.js';
+import { markdownToHast } from '../lib/markdown/markdown.js';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles.js';
 import { isUserPatron } from '../lib/patron.js';
 import { userIdToPage } from '../lib/serverOnly.js';
@@ -37,12 +39,20 @@ interface HomePageProps {
   dailymini: HomepagePuz | null;
   featured: HomepagePuz[];
   articles: ArticleT[];
-  showCampaignForYear: number | null;
+  announcement: (ArticleT & { hast: Root }) | null;
 }
 
 const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
   const today = new Date();
   const todaysMini = await getMiniForDate(today);
+
+  const announcement = await getCollection('a')
+    .doc('announcement')
+    .get()
+    .then((res) => {
+      const a = validate(res.data());
+      return a?.f ? { ...a, hast: markdownToHast({ text: a.c }) } : null;
+    });
 
   const unfilteredArticles = await getCollection('a')
     .where('f', '==', true)
@@ -54,9 +64,6 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
   const articles: ArticleT[] = unfilteredArticles.filter((i): i is ArticleT => {
     return i !== null;
   });
-
-  const showCampaignForYear =
-    today.getUTCMonth() === 11 ? today.getUTCFullYear() + 1 : null;
 
   const [puzzlesWithoutConstructor] = await paginatedPuzzles(
     0,
@@ -83,11 +90,11 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
       constructorIsPatron: await isUserPatron(todaysMini.a),
     };
     return {
-      props: { dailymini: dm, featured, articles, showCampaignForYear },
+      props: { announcement, dailymini: dm, featured, articles },
     };
   }
   return {
-    props: { dailymini: null, featured, articles, showCampaignForYear },
+    props: { announcement, dailymini: null, featured, articles },
   };
 };
 
@@ -102,10 +109,10 @@ const ArticleListItem = (props: ArticleT) => {
 };
 
 export default function HomePage({
+  announcement,
   dailymini,
   featured,
   articles,
-  showCampaignForYear,
 }: HomePageProps) {
   const today = new Date();
   const router = useRouter();
@@ -122,37 +129,15 @@ export default function HomePage({
       <DefaultTopBar />
 
       <div className="margin1em">
-        {showCampaignForYear ? (
-          showCampaignForYear <= 2024 ? (
-            <Link className={styles.campaign} href="/donate">
-              <div>
-                <h3>
-                  <span className="colorError">Thank you!</span>
-                </h3>
-                Thanks to the generous support of all of our patrons,
-                Crosshare&apos;s {showCampaignForYear - 1} fundraising campaign
-                was a success. Here&apos;s to a crossword-filled{' '}
-                {showCampaignForYear}!
-              </div>
-            </Link>
-          ) : (
-            <Link className={styles.campaign} href="/donate">
-              <h3>
-                <span className="colorError">Read this</span> - we need your
-                help!
-              </h3>
-              <div>
-                As Crosshare continues to grow (and add new features) I need
-                help to pay for the ongoing costs of running the site. This
-                holiday season / new year, I&apos;m hoping to reach $100/month
-                in new recurring donations to keep the site going through{' '}
-                {showCampaignForYear} and beyond. Please consider contributing
-                whatever you are able. All monthly contributors get a patron
-                icon - <PatronIcon /> - so we all know who to thank for making
-                the site possible!
-              </div>
-            </Link>
-          )
+        {announcement ? (
+          <div className={styles.campaign}>
+            <h3>
+              <span className="colorError">{announcement.t}</span>
+            </h3>
+            <div>
+              <Markdown hast={announcement.hast} />
+            </div>
+          </div>
         ) : (
           ''
         )}
