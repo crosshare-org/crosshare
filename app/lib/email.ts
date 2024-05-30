@@ -85,7 +85,7 @@ export async function sendEmail({
   const link = emailLink(campaign, `subscription?u=${userId}&s=${sig}`);
   markdown =
     markdown.trim() +
-    `\n\n\n\n---\n\n[Click here to unsubscribe / manage your preferences](${link})${
+    `\n\n\n\n---\n\nTo unsubscribe or manage your preferences [click here](${link})${
       footerText ? '. ' + footerText : ''
     }`;
 

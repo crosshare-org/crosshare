@@ -12,7 +12,7 @@ import { Node } from 'unist';
 import { visit } from 'unist-util-visit';
 import type { Visitor } from 'unist-util-visit';
 import { validate } from '../lib/article';
-import { EmailClient, RATE_LIMIT, getClient } from '../lib/email';
+import { EmailClient, RATE_LIMIT, getClient, sendEmail } from '../lib/email';
 import { firestore } from '../lib/firebaseAdminWrapper';
 import { AccountPrefsT, AccountPrefsV } from '../lib/prefs';
 
@@ -49,9 +49,9 @@ const arg = process.argv[2];
 async function sendForUser(
   db: FirebaseFirestore.Firestore,
   client: EmailClient,
-  userId: string
-  //  subject: string,
-  //  markdown: string
+  userId: string,
+  subject: string,
+  markdown: string
 ) {
   const prefsRes = await db.doc(`prefs/${userId}`).get();
   let prefs: AccountPrefsT | null = null;
@@ -64,15 +64,16 @@ async function sendForUser(
       }
     }
   }
-  /*await sendEmail({
+  await sendEmail({
     client,
     userId,
     subject,
     markdown,
     oneClickUnsubscribeTag: 'weekly',
     campaign: 'weekly',
-    footerText: 'For info about how these puzzles are selected [click here](https://crosshare.org/articles/weekly-email).'
-  });*/
+    footerText:
+      'For info about how these puzzles are selected [click here](https://crosshare.org/articles/weekly-email).',
+  });
   console.log(userId);
   return true;
 }
@@ -98,7 +99,6 @@ async function sendWeeklyEmail() {
       .use(remarkStringify)
       .process(article.c)
   );
-  console.log(md);
   const client = await getClient();
 
   let count = 0;
@@ -108,56 +108,50 @@ async function sendWeeklyEmail() {
 
   return readFile('accounts.csv')
     .then(async (binary) => {
-      const csv: string[][] = parse(binary, {
-        quote: null,
-        escape: null,
-        relax_column_count: true,
-      }) as string[][];
-      await Promise.all(
-        csv
-          .filter((r: string[]) => r[1])
-          .map(async (r: string[]) => {
-            const uid = r[0];
-            if (!uid) {
-              return;
-            }
-            if (arg === 'test') {
-              if (uid !== 'fSEwJorvqOMK5UhNMHa4mu48izl1') {
-                return;
-              }
-            } else if (arg !== 'start') {
-              if (arg === uid) {
-                sawUID = true;
-                return;
-              }
-              if (!sawUID) {
-                return;
-              }
-            }
-            const sent = await sendForUser(db, client, uid /*, article.t, md*/);
-            if (!sent) {
-              return;
-            }
-            numSent += 1;
-            if (count == 0) {
-              // start the clock
-              start = Date.now();
-            }
-            count += 1;
-            if (count > RATE_LIMIT) {
-              const elapsed = Date.now() - start;
-              if (elapsed < 1000) {
-                await new Promise((resolve) =>
-                  setTimeout(resolve, 1000 - elapsed)
-                );
-              }
-              count = 0;
-            }
-          })
-      ).catch((e: unknown) => {
-        console.error(e);
-      });
-      console.log('sent ', numSent);
+      const csv: string[][] = (
+        parse(binary, {
+          quote: null,
+          escape: null,
+          relax_column_count: true,
+        }) as string[][]
+      ).filter((r: string[]) => r[1]); // Don't bother for users w/ no email address
+      for (const r of csv) {
+        const uid = r[0];
+        if (!uid) {
+          continue;
+        }
+        if (arg === 'test') {
+          if (uid !== 'fSEwJorvqOMK5UhNMHa4mu48izl1') {
+            continue;
+          }
+        } else if (arg !== 'start') {
+          if (arg === uid) {
+            sawUID = true;
+            continue;
+          }
+          if (!sawUID) {
+            continue;
+          }
+        }
+        const sent = await sendForUser(db, client, uid, article.t, md);
+        if (!sent) {
+          continue;
+        }
+        numSent += 1;
+        if (count == 0) {
+          // start the clock
+          start = Date.now();
+        }
+        count += 1;
+        if (count > RATE_LIMIT) {
+          const elapsed = Date.now() - start;
+          if (elapsed < 1000) {
+            await new Promise((resolve) => setTimeout(resolve, 1000 - elapsed));
+          }
+          count = 0;
+        }
+      }
+      console.log('sent', numSent);
     })
     .catch((e: unknown) => {
       console.error(e);
