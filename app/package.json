@@ -87,6 +87,7 @@
     "remark-stringify": "^11.0.0",
     "rocksdb": "^5.2.1",
     "sharp": "^0.33.3",
+    "ts-node": "^10.9.2",
     "twemoji-parser": "^14.0.0",
     "unified": "^11.0.4",
     "unist-util-is": "^6.0.0",
