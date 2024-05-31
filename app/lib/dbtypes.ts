@@ -272,10 +272,18 @@ export const DBPuzzleWithIdV = t.intersection([
 
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
 
-export const AdminSettingsV = t.type({
-  automoderate: t.boolean,
-  noAuto: t.array(t.string),
-});
+export const AdminSettingsV = t.intersection([
+  t.type({
+    /** Turn off automoderator - this is probably unneeded at this point. */
+    automoderate: t.boolean,
+    /** User ids that are ineligible for auto moderation. */
+    noAuto: t.array(t.string),
+  }),
+  t.partial({
+    /** User ids who are tagged as moderators for cryptic puzzles. */
+    crypticMods: t.array(t.string),
+  }),
+]);
 
 const PlayBaseV = t.intersection([
   t.type({

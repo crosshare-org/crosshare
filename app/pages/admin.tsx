@@ -27,7 +27,9 @@ import { TagList } from '../components/TagList.js';
 import { DefaultTopBar } from '../components/TopBar.js';
 import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar.js';
 import { ConstructorPageWithIdV } from '../lib/constructorPage.js';
+import { getFromSessionOrDB } from '../lib/dbUtils.js';
 import {
+  AdminSettingsV,
   CommentDeletionT,
   CommentForModerationWithIdV,
   DBPuzzleWithIdV,
@@ -59,7 +61,12 @@ function paypalConvert(input: string): string {
   return (donated - fee).toFixed(2);
 }
 
-const PuzzleListItem = (props: PuzzleResult) => {
+function intersect(a: string[], b: string[]): string[] {
+  const setB = new Set(b);
+  return [...new Set(a)].filter((x) => setB.has(x));
+}
+
+const PuzzleListItem = (props: PuzzleResult & { crypticMods: string[] }) => {
   async function markAsModerated(featured: boolean) {
     const update = { m: true, c: null, f: featured };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -99,6 +106,7 @@ const PuzzleListItem = (props: PuzzleResult) => {
       </div>
     );
   });
+  const modLikes = intersect(props.crypticMods, props.likes);
   return (
     <li key={props.id} className="marginBottom2em">
       <Link href={`/crosswords/${props.id}/${slugify(props.title)}`}>
@@ -135,6 +143,11 @@ const PuzzleListItem = (props: PuzzleResult) => {
         ))}
       </ul>
       {props.likes.length > 0 ? <div>Likes: {props.likes.length}</div> : ''}
+      {modLikes.length > 0 ? (
+        <div>Cryptic Mod Likes: {modLikes.length}</div>
+      ) : (
+        ''
+      )}
       <div className="marginBottom1em">
         <button
           // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
@@ -226,6 +239,23 @@ export default requiresAdmin(() => {
     doc(getValidatedCollection('donations', DonationsListV), 'donations')
   );
   const [donations] = useDocumentDataOnce(donationsCollection.current);
+
+  const [crypticMods, setCrypticMods] = useState<string[]>([]);
+
+  getFromSessionOrDB({
+    collection: 'settings',
+    docId: 'settings',
+    validator: AdminSettingsV,
+    ttl: 1 * 60 * 60 * 1000,
+  })
+    .then((x) => {
+      if (x) {
+        setCrypticMods(x.crypticMods ?? []);
+      }
+    })
+    .catch((e: unknown) => {
+      console.error('failed to get settings', e);
+    });
 
   const goToPuzzle = useCallback((_date: Date, puzzle: string | null) => {
     if (puzzle) {
@@ -405,7 +435,11 @@ export default requiresAdmin(() => {
           <div>No puzzles are currently awaiting moderation.</div>
         ) : (
           <>
-            <ul>{unmoderated.map(PuzzleListItem)}</ul>
+            <ul>
+              {unmoderated.map((um) => (
+                <PuzzleListItem {...um} key={um.id} crypticMods={crypticMods} />
+              ))}
+            </ul>
           </>
         )}
         {stats ? (
