@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { isUserPatron } from '../../../lib/patron.js';
+import { isUserMod, isUserPatron } from '../../../lib/patron.js';
 import { UserInfoT } from '../../../lib/userinfo.js';
 
 export default async function userinfo(
@@ -12,7 +12,8 @@ export default async function userinfo(
     return;
   }
   const isPatron = await isUserPatron(userId);
-  const ui: UserInfoT = { isPatron };
+  const isMod = await isUserMod(userId);
+  const ui: UserInfoT = { isPatron, isMod };
   res.setHeader('X-Robots-Tag', 'noindex');
   res.setHeader('Cache-Control', 'public, max-age=172800, s-maxage=172800');
   res.writeHead(200, { 'Content-Type': 'application/json' });

@@ -156,6 +156,7 @@ export function useAuth(): AuthContextValue {
   );
 
   const [isPatron, setIsPatron] = useState(false);
+  const [isMod, setIsMod] = useState(false);
   useEffect(() => {
     if (!user) {
       return;
@@ -170,7 +171,9 @@ export function useAuth(): AuthContextValue {
         });
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (!didCancel && res) {
-        setIsPatron(parseUserInfo(res).isPatron);
+        const ui = parseUserInfo(res);
+        setIsPatron(ui.isPatron);
+        setIsMod(ui.isPatron);
       }
     }
     logAsyncErrors(getUserInfo)();
@@ -182,6 +185,7 @@ export function useAuth(): AuthContextValue {
   return {
     user: user || undefined,
     isPatron,
+    isMod,
     isAdmin,
     constructorPage,
     notifications,

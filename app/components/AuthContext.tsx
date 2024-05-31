@@ -9,6 +9,7 @@ export interface AuthContextValue {
   notifications?: NotificationT[];
   isAdmin: boolean;
   isPatron: boolean;
+  isMod: boolean;
   loading: boolean;
   error?: string;
   constructorPage?: ConstructorPageT;
@@ -21,6 +22,7 @@ export const AuthContext = createContext<AuthContextValue>({
   user: undefined,
   isAdmin: false,
   isPatron: false,
+  isMod: false,
   loading: false,
   error: 'using default context',
   constructorPage: undefined,

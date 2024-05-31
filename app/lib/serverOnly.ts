@@ -27,7 +27,7 @@ import {
 } from './embedOptions.js';
 import { markdownToHast } from './markdown/markdown.js';
 import { PathReporter } from './pathReporter.js';
-import { isUserPatron } from './patron.js';
+import { isUserMod, isUserPatron } from './patron.js';
 import {
   Comment,
   Direction,
@@ -216,6 +216,7 @@ async function convertComments(
         replies: await convertComments(c.r || [], clueMap),
         ...(c.un && { authorUsername: c.un }),
         authorIsPatron: await isUserPatron(c.a),
+        authorIsMod: await isUserMod(c.a),
         ...(c.deleted && { deleted: true }),
         ...(c.removed && { removed: true }),
       };
@@ -294,6 +295,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
         : null,
       constructorPage: await userIdToPage(validationResult.right.a),
       constructorIsPatron: await isUserPatron(validationResult.right.a),
+      constructorIsMod: await isUserMod(validationResult.right.a),
       comments: await convertComments(fromDB.comments, clueMap),
       clueHasts: grid.entries.map((c) =>
         markdownToHast({ text: c.clue, clueMap, inline: true })

@@ -143,7 +143,7 @@ const PuzzleListItem = (props: PuzzleResult & { crypticMods: string[] }) => {
         ))}
       </ul>
       {props.likes.length > 0 ? <div>Likes: {props.likes.length}</div> : ''}
-      {modLikes.length > 0 ? (
+      {props.userTags?.includes('cryptic') && modLikes.length > 0 ? (
         <div>Cryptic Mod Likes: {modLikes.length}</div>
       ) : (
         ''

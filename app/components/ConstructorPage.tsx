@@ -18,7 +18,7 @@ import styles from './ConstructorPage.module.css';
 import { ConstructorStats } from './ConstructorStats.js';
 import { FollowButton } from './FollowButton.js';
 import { I18nTags } from './I18nTags.js';
-import { PatronIcon } from './Icons.js';
+import { ModIcon, PatronIcon } from './Icons.js';
 import { CoverPic, ProfilePicAndName } from './Images.js';
 import { Link, LinkButtonSimpleA } from './Link.js';
 import { Markdown } from './Markdown.js';
@@ -196,6 +196,7 @@ export interface ConstructorPageProps {
   constructorData: ConstructorPageT;
   bioHast: Root;
   isPatron: boolean;
+  isMod: boolean;
   followCount: number;
   followers: (ConstructorPageBase & { isPatron: boolean })[];
   following: (ConstructorPageBase & { isPatron: boolean })[];
@@ -315,6 +316,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
               ) : (
                 ''
               )}
+              {props.isMod ? <ModIcon className={styles.patronicon} /> : ''}
               <span>{props.constructorData.n}</span>
             </>
           }

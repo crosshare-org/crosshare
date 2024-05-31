@@ -1,4 +1,5 @@
 import { FaCheck, FaEye } from 'react-icons/fa';
+import { FaShieldHeart } from 'react-icons/fa6';
 import { CheatUnit, PrefillSquares, Symmetry } from '../lib/types.js';
 import { clsx } from '../lib/utils.js';
 import { Link } from './Link.js';
@@ -494,6 +495,16 @@ const BlankLogo = () => {
       <path d="M1 14h3v1H1zm11 0h3v1h-3z" />
       <path d="M4 15h8v1H4z" />
     </>
+  );
+};
+
+export const ModIcon = (props: { className?: string }) => {
+  return (
+    <Link title="Crosshare Moderator" href="/articles/moderation">
+      <FaShieldHeart
+        className={clsx(props.className, 'verticalAlignTextTop', 'colorText')}
+      />
+    </Link>
   );
 };
 

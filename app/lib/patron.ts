@@ -1,6 +1,6 @@
 import { getAuth } from 'firebase-admin/auth';
 import { ConstructorPageV } from './constructorPage.js';
-import { DonationsListV, donationsByEmail } from './dbtypes.js';
+import { AdminSettingsV, DonationsListV, donationsByEmail } from './dbtypes.js';
 import { getAdminApp, getCollection } from './firebaseAdminWrapper.js';
 import { PathReporter } from './pathReporter.js';
 
@@ -71,4 +71,33 @@ export const isUserPatron = async (userId: string) => {
     patronList = await getPatronListOnce();
   }
   return patronList.includes(userId) || false;
+};
+
+let modsList: string[] | null = null;
+let modsLastUpdated: number | null = null;
+
+async function getModsListOnce() {
+  const res = await getCollection('settings').doc('settings').get();
+  const val = AdminSettingsV.decode(res.data());
+  if (val._tag === 'Right') {
+    modsLastUpdated = Date.now();
+    return val.right.crypticMods ?? [];
+  } else {
+    const error = `Malformed settings doc`;
+    console.log(error);
+    console.error(PathReporter.report(val).join(','));
+    throw new Error(error);
+  }
+}
+
+export const isUserMod = async (userId: string) => {
+  if (
+    modsList === null ||
+    !modsLastUpdated ||
+    Date.now() - modsLastUpdated > 60 * 60 * 1000
+  ) {
+    modsList = await getModsListOnce();
+  }
+
+  return modsList.includes(userId) || false;
 };

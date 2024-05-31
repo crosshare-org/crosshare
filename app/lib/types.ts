@@ -169,6 +169,7 @@ export interface Comment {
   id: string;
   replies?: Comment[];
   authorIsPatron: boolean;
+  authorIsMod: boolean;
   /** has the comment been deleted/removed (might still be in thread if there were replies) */
   deleted?: boolean;
   removed?: boolean;
@@ -226,6 +227,7 @@ export interface ServerPuzzleResult
   constructorNotes: Root | null;
   constructorPage: ConstructorPageWithMarkdown | null;
   constructorIsPatron: boolean;
+  constructorIsMod: boolean;
   clueHasts: Root[];
   likes: Record<string, (ConstructorPageBase & { isPatron: boolean }) | null>;
 }

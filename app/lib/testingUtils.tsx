@@ -40,6 +40,7 @@ const WithAllProviders: (
           value={{
             user: undefined,
             isAdmin: false,
+            isMod: false,
             isPatron: false,
             loading: false,
             error: undefined,

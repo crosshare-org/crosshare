@@ -12,7 +12,7 @@ import { getCollection } from '../lib/firebaseAdminWrapper.js';
 import { markdownToHast } from '../lib/markdown/markdown.js';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles.js';
 import { PathReporter } from '../lib/pathReporter.js';
-import { isUserPatron } from '../lib/patron.js';
+import { isUserMod, isUserPatron } from '../lib/patron.js';
 import { AccountPrefsV } from '../lib/prefs.js';
 import {
   getStorageUrl,
@@ -104,6 +104,7 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
   const [puzzles, hasNext] = await paginatedPuzzles(page, PAGE_SIZE, 'a', cp.u);
 
   const isPatron = await isUserPatron(cp.u);
+  const isMod = await isUserMod(cp.u);
 
   const followerIds = await getFollowerIds(cp.u);
   const followers = (
@@ -124,6 +125,7 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
       constructorData: cp,
       bioHast: markdownToHast({ text: cp.b }),
       isPatron,
+      isMod,
       profilePicture,
       coverPicture,
       puzzles,

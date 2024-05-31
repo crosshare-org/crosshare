@@ -30,7 +30,7 @@ import styles from './Comments.module.css';
 import { DisplayNameForm, useDisplayName } from './DisplayNameForm.js';
 import { Emoji } from './Emoji.js';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons.js';
-import { PatronIcon } from './Icons.js';
+import { ModIcon, PatronIcon } from './Icons.js';
 import { LengthLimitedTextarea, LengthView } from './Inputs.js';
 import { Link } from './Link.js';
 import { Markdown } from './Markdown.js';
@@ -138,6 +138,7 @@ const CommentView = (props: CommentProps) => {
             didCheat={props.comment.authorCheated}
             downsOnly={props.comment.authorSolvedDownsOnly}
             isPatron={props.comment.authorIsPatron}
+            isMod={props.comment.authorIsMod}
           />
         </div>
         <Markdown hast={props.comment.commentHast} />
@@ -354,6 +355,7 @@ interface CommentFlairProps {
   downsOnly: boolean;
   displayName: string;
   isPatron: boolean;
+  isMod: boolean;
   userId: string;
   username?: string;
   puzzleAuthorId: string;
@@ -365,6 +367,7 @@ const CommentFlair = (props: CommentFlairProps) => {
   return (
     <>
       {props.isPatron ? <PatronIcon linkIt={true} /> : ''}
+      {props.isMod ? <ModIcon /> : ''}
       <i>
         {' '}
         <CommentAuthor
@@ -411,6 +414,7 @@ const CommentFlair = (props: CommentFlairProps) => {
 interface CommentFormProps {
   username?: string;
   isPatron: boolean;
+  isMod: boolean;
   puzzlePublishTime: number;
   puzzleAuthorId: string;
   hasGuestConstructor: boolean;
@@ -480,6 +484,7 @@ const CommentForm = ({
         authorSolvedDownsOnly: comment.do || false,
         publishTime: comment.p.toMillis(),
         authorIsPatron: props.isPatron,
+        authorIsMod: props.isMod,
         replyTo: comment.rt,
       });
 
@@ -563,6 +568,7 @@ const CommentForm = ({
               hasGuestConstructor={props.hasGuestConstructor}
               username={props.username}
               isPatron={props.isPatron}
+              isMod={props.isMod}
               displayName={displayName}
               userId={props.user.uid}
               puzzleAuthorId={props.puzzleAuthorId}
@@ -761,6 +767,7 @@ export const Comments = ({
               authorSolvedDownsOnly: c.do || false,
               publishTime: c.p.toMillis(),
               authorIsPatron: authContext.isPatron,
+              authorIsMod: authContext.isMod,
               replyTo: c.rt,
             };
             mergeComment(localComment);
@@ -799,6 +806,7 @@ export const Comments = ({
     props.clueMap,
     comments,
     authContext.isPatron,
+    authContext.isMod,
     submittedComments,
     submittedDeletes,
   ]);
@@ -840,6 +848,7 @@ export const Comments = ({
           username={authContext.constructorPage?.i}
           user={authContext.user}
           isPatron={authContext.isPatron}
+          isMod={authContext.isMod}
           onSubmit={(newComment) => {
             setSubmittedComments([...submittedComments, newComment]);
           }}
@@ -853,6 +862,7 @@ export const Comments = ({
               user={authContext.user}
               constructorPage={authContext.constructorPage}
               isPatron={authContext.isPatron}
+              isMod={authContext.isMod}
               comment={a}
               onSubmit={(newComment) => {
                 setSubmittedComments([...submittedComments, newComment]);

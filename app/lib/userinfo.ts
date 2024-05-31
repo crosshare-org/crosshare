@@ -3,6 +3,7 @@ import { PathReporter } from './pathReporter.js';
 
 const UserInfoV = t.type({
   isPatron: t.boolean,
+  isMod: t.boolean,
 });
 export type UserInfoT = t.TypeOf<typeof UserInfoV>;
 

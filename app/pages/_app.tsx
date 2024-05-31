@@ -73,6 +73,7 @@ export default function CrosshareApp({
       loading: true,
       isAdmin: false,
       isPatron: false,
+      isMod: false,
       notifications: [],
     };
   }
