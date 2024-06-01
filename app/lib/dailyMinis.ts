@@ -29,7 +29,7 @@ export async function getMiniIdForDate(d: Date): Promise<string | null> {
   if (existing === null) {
     return null;
   }
-  const puz = await getMiniForDate(d, true);
+  const puz = await getMiniForDate(d);
   if (puz === null) {
     dailyMiniIdsByDate.set(key, null);
     return null;
@@ -39,9 +39,10 @@ export async function getMiniIdForDate(d: Date): Promise<string | null> {
   return puz.id;
 }
 
-export async function getMiniForDate(
-  d: Date,
-  allowMissing?: boolean
+/* This gets used client side for loading minis to show in the UpcomingMinisCalendar component.
+ * The similarly named function in serverOnly.ts should only be used server side. */
+async function getMiniForDate(
+  d: Date
 ): Promise<(DBPuzzleT & { id: string }) | null> {
   const dbres = await getDocs(
     query(
@@ -53,9 +54,6 @@ export async function getMiniForDate(
 
   const doc = dbres.docs[0];
   if (!doc) {
-    if (!allowMissing) {
-      console.error('no dm for date ', d);
-    }
     return null;
   }
   const validationResult = DBPuzzleV.decode(doc.data());

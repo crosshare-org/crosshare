@@ -238,6 +238,8 @@ const DBPuzzleOptionalV = t.partial({
   lk: t.array(t.string),
   /** ready for moderation (has necessary likes/comments/etc) */
   rfm: t.boolean,
+  /** pack id */
+  pk: t.string,
 });
 
 export const DBPuzzleV = t.intersection([

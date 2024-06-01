@@ -19,8 +19,13 @@ import {
   ConstructorPageV,
   ConstructorPageWithMarkdown,
 } from './constructorPage.js';
-import { getMiniForDate } from './dailyMinis.js';
-import { CommentWithRepliesT, DBPuzzleV } from './dbtypes.js';
+import {
+  CommentWithRepliesT,
+  DBPuzzleT,
+  DBPuzzleV,
+  getDateString,
+  prettifyDateString,
+} from './dbtypes.js';
 import {
   EmbedOptionsT,
   validate as validateEmbedOptions,
@@ -414,3 +419,27 @@ export const getEmbedProps = async ({
   }
   return embedOptions;
 };
+
+/* Get a daily mini using the firebase-admin library.
+ * The similarly named function in dailyMinis.ts gets used client-side only.  */
+export async function getMiniForDate(
+  d: Date
+): Promise<(DBPuzzleT & { id: string }) | null> {
+  const dbres = await getCollection('c')
+    .where('dmd', '==', prettifyDateString(getDateString(d)))
+    .limit(1)
+    .get();
+
+  const doc = dbres.docs[0];
+  if (!doc) {
+    console.error('no dm for date ', d);
+    return null;
+  }
+  const validationResult = DBPuzzleV.decode(doc.data());
+  if (validationResult._tag === 'Right') {
+    return { ...validationResult.right, id: doc.id };
+  }
+  console.error('invalid puzzle ', doc.id);
+  console.error(PathReporter.report(validationResult).join(','));
+  return null;
+}

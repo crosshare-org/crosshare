@@ -28,6 +28,8 @@ export const AccountPrefsV = t.intersection([
     following: t.array(t.string),
     rtg: GlickoScoreV,
     rtgs: t.array(GlickoScoreV),
+    /** Packs the user owns */
+    packs: t.array(t.string),
   }),
 ]);
 export type AccountPrefsT = t.TypeOf<typeof AccountPrefsV>;

@@ -56,15 +56,27 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow write: if isAdmin();
     }
-    match /mail/{messageId} {
-      allow read: if isAdmin();
+    match /packs/{packId} {
+      allow get: if isAdmin() || isAuthor();
       allow write: if isAdmin();
     }
     match /c/{crosswordId} {
-      allow get: if true;
+      // admin and constructor can always get
+      allow get: if isAdmin() || isAuthor();
+      // anybody with an id can get a non-pack puz
+      allow get: if !resource.data.keys().hasAny(["pk"]);
+      // pack owner can get a pack puz
+      allow get: if request.auth.uid == get(/databases/$(database)/documents/packs/$(resource.data.pk)).data.a;
+      // anybody who has been granted access to a pack can get a pack puz
+      allow get: if resource.data.pk in get(/databases/$(database)/documents/prefs/$(request.auth.uid)).data.packs;
 
-      allow list: if isAdmin() || isAuthor();
-      allow list: if request.query.limit <= 30;
+      // to support moderation queue on admin page
+      allow list: if isAdmin();
+      // to support puzzle list on dashboard
+      allow list: if isAuthor() && request.query.limit <= 20;
+      // to support pack owner listing puzzles that have been added to the pack
+      allow list: if resource.data.keys().hasAny(['pk'])
+         && request.auth.uid == get(/databases/$(database)/documents/packs/$(resource.data.pk)).data.a;
 
       allow update: if isAdmin();
 
@@ -106,7 +118,9 @@ service cloud.firestore {
     }
     match /prefs/{userId} {
       allow read: if request.auth.uid == userId;
-      allow write: if isAdmin() || request.auth.uid == userId;
+      allow write: if isAdmin()
+      allow write: if request.auth.uid == userId &&
+        !request.resource.data.keys().hasAny(["packs"]);
     }
     match /cs/{userId} {
       allow read: if request.auth.uid == userId || isAdmin();
@@ -149,10 +163,6 @@ service cloud.firestore {
     }
     match /ds/{dateString} {
       allow read: if isAdmin();
-    }
-    match /categories/{category} {
-      allow get: if true;
-      allow write: if isAdmin();
     }
     match /cfm/{commentId} {
       allow write: if isAdmin();

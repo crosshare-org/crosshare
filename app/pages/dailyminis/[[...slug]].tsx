@@ -12,9 +12,8 @@ import {
 } from '../../components/PuzzleLink.js';
 import { DefaultTopBar } from '../../components/TopBar.js';
 import { ConstructorPageBase } from '../../lib/constructorPage.js';
-import { getMiniForDate } from '../../lib/dailyMinis.js';
 import { isUserPatron } from '../../lib/patron.js';
-import { userIdToPage } from '../../lib/serverOnly.js';
+import { getMiniForDate, userIdToPage } from '../../lib/serverOnly.js';
 import { withTranslation } from '../../lib/translation.js';
 import { puzzleFromDB } from '../../lib/types.js';
 import { notEmpty } from '../../lib/utils.js';
