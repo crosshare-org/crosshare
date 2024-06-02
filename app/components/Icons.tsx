@@ -1,5 +1,4 @@
-import { FaCheck, FaEye } from 'react-icons/fa';
-import { FaShieldHeart } from 'react-icons/fa6';
+import { FaCheck, FaEye, FaShieldAlt } from 'react-icons/fa';
 import { CheatUnit, PrefillSquares, Symmetry } from '../lib/types.js';
 import { clsx } from '../lib/utils.js';
 import { Link } from './Link.js';
@@ -501,7 +500,7 @@ const BlankLogo = () => {
 export const ModIcon = (props: { className?: string }) => {
   return (
     <Link title="Crosshare Moderator" href="/articles/moderation">
-      <FaShieldHeart
+      <FaShieldAlt
         className={clsx(props.className, 'verticalAlignTextTop', 'colorText')}
       />
     </Link>
