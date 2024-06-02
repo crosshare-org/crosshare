@@ -330,6 +330,13 @@ export default async function pdf(req: NextApiRequest, res: NextApiResponse) {
     return;
   }
   const fromDB = puzzleFromDB(puzzle);
+  if (puzzle.pk) {
+    res
+      .status(403)
+      .json({ statusCode: 403, message: 'no pdfs for pack puzzles' });
+    return;
+  }
+
   const constructorUsername = await getConstructor(fromDB.authorId);
   res.setHeader('X-Robots-Tag', 'noindex');
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');

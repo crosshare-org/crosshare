@@ -13,6 +13,12 @@ export default async function puz(req: NextApiRequest, res: NextApiResponse) {
     res.status(404).json({ statusCode: 404, message: 'failed to get puzzle' });
     return;
   }
+  if (puzzle.pk) {
+    res
+      .status(403)
+      .json({ statusCode: 403, message: 'no .puz for pack puzzles' });
+    return;
+  }
   if (puzzle.vb?.length ?? puzzle.hb?.length) {
     res.status(400).json({
       statusCode: 400,
