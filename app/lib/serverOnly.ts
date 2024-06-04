@@ -1,6 +1,7 @@
 import { ParsedUrlQuery } from 'querystring';
 import { addDays } from 'date-fns';
 import type firebaseAdminType from 'firebase-admin';
+import { getAuth } from 'firebase-admin/auth';
 import {
   Timestamp as AdminTimestamp,
   getFirestore,
@@ -31,8 +32,10 @@ import {
   validate as validateEmbedOptions,
 } from './embedOptions.js';
 import { markdownToHast } from './markdown/markdown.js';
+import { PackV } from './pack.js';
 import { PathReporter } from './pathReporter.js';
 import { isUserMod, isUserPatron } from './patron.js';
+import { AccountPrefsV } from './prefs.js';
 import {
   Comment,
   Direction,
@@ -237,15 +240,86 @@ export interface PuzzlePageResultProps {
   embedOptions?: EmbedOptionsT;
 }
 
-export type PuzzlePageProps = PuzzlePageResultProps | PageErrorProps;
+export type PuzzlePageProps =
+  | PuzzlePageResultProps
+  | PageErrorProps
+  | { packId: string };
+
+async function getPrefs(
+  db: firebaseAdminType.firestore.Firestore,
+  uid: string
+) {
+  const dbres = await db.collection('prefs').doc(uid).get();
+  if (!dbres.exists) {
+    return null;
+  }
+
+  const validationResult = AccountPrefsV.decode(dbres.data());
+  if (validationResult._tag !== 'Right') {
+    console.error(
+      'error decoding prefs',
+      uid,
+      PathReporter.report(validationResult).join(',')
+    );
+    return null;
+  }
+  return validationResult.right;
+}
+
+async function getPack(
+  db: firebaseAdminType.firestore.Firestore,
+  packId: string
+) {
+  const dbres = await db.collection('packs').doc(packId).get();
+  if (!dbres.exists) {
+    return null;
+  }
+
+  const validationResult = PackV.decode(dbres.data());
+  if (validationResult._tag !== 'Right') {
+    console.error(
+      'error decoding pack',
+      packId,
+      PathReporter.report(validationResult).join(',')
+    );
+    return null;
+  }
+  return validationResult.right;
+}
+
+async function hasPackAccess(
+  db: firebaseAdminType.firestore.Firestore,
+  token: string,
+  packId: string
+) {
+  const claims = await getAuth(getAdminApp()).verifyIdToken(token);
+
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  if (claims.admin) {
+    return true;
+  }
+
+  const uid = claims.uid;
+  const prefs = await getPrefs(db, uid);
+  if (prefs?.packs?.includes(packId)) {
+    return true;
+  }
+
+  const pack = await getPack(db, packId);
+  if (pack?.a.includes(uid)) {
+    return true;
+  }
+
+  return false;
+}
 
 export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   res,
   params,
   locale,
+  query,
 }) => {
   const db = getFirestore(getAdminApp());
-  let puzzle: PuzzleResultWithAugmentedComments;
   let puzzleId = params?.puzzleId;
   let titleSlug = '';
   if (Array.isArray(puzzleId)) {
@@ -268,62 +342,85 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   }
 
   const validationResult = DBPuzzleV.decode(dbres.data());
-  if (validationResult._tag === 'Right') {
-    res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-    const fromDB = puzzleFromDB(validationResult.right);
-    const grid = addClues(
-      fromCells({
-        mapper: (e) => e,
-        width: fromDB.size.cols,
-        height: fromDB.size.rows,
-        cells: fromDB.grid,
-        allowBlockEditing: true,
-        highlighted: new Set(fromDB.highlighted),
-        highlight: fromDB.highlight,
-        vBars: new Set(fromDB.vBars),
-        hBars: new Set(fromDB.hBars),
-        hidden: new Set(fromDB.hidden),
-      }),
-      fromDB.clues,
-      (c: string) => markdownToHast({ text: c, inline: true })
-    );
-    const clueMap = getEntryToClueMap(grid, fromDB.grid);
-    puzzle = {
-      ...fromDB,
-      id: dbres.id,
-      blogPostRaw: fromDB.blogPost,
-      blogPost: fromDB.blogPost
-        ? markdownToHast({ text: fromDB.blogPost })
-        : null,
-      constructorNotes: fromDB.constructorNotes
-        ? markdownToHast({ text: fromDB.constructorNotes, inline: true })
-        : null,
-      constructorPage: await userIdToPage(validationResult.right.a),
-      constructorIsPatron: await isUserPatron(validationResult.right.a),
-      constructorIsMod: await isUserMod(validationResult.right.a),
-      comments: await convertComments(fromDB.comments, clueMap),
-      clueHasts: grid.entries.map((c) =>
-        markdownToHast({ text: c.clue, clueMap, inline: true })
-      ),
-      likes: Object.fromEntries(
-        await Promise.all(
-          fromDB.likes.map(
-            async (
-              k: string
-            ): Promise<
-              [
-                string,
-                (ConstructorPageWithMarkdown & { isPatron: boolean }) | null
-              ]
-            > => [k, await userIdToConstructorPageWithPatron(k)]
-          )
-        )
-      ),
-    };
-  } else {
+  if (validationResult._tag !== 'Right') {
     console.error(PathReporter.report(validationResult).join(','));
     return { props: { error: 'invalid puzzle' } };
   }
+
+  if (validationResult.right.pk) {
+    const token = query.token;
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (!token || Array.isArray(token)) {
+      return { props: { packId: validationResult.right.pk } };
+    }
+    try {
+      if (!(await hasPackAccess(db, token, validationResult.right.pk))) {
+        return {
+          redirect: {
+            destination: `/${
+              locale && locale !== 'en' ? locale + '/' : ''
+            }packs/${validationResult.right.pk}`,
+            permanent: false,
+          },
+        };
+      }
+    } catch (error) {
+      return { props: { packId: validationResult.right.pk } };
+    }
+  }
+
+  res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
+
+  const fromDB = puzzleFromDB(validationResult.right);
+  const grid = addClues(
+    fromCells({
+      mapper: (e) => e,
+      width: fromDB.size.cols,
+      height: fromDB.size.rows,
+      cells: fromDB.grid,
+      allowBlockEditing: true,
+      highlighted: new Set(fromDB.highlighted),
+      highlight: fromDB.highlight,
+      vBars: new Set(fromDB.vBars),
+      hBars: new Set(fromDB.hBars),
+      hidden: new Set(fromDB.hidden),
+    }),
+    fromDB.clues,
+    (c: string) => markdownToHast({ text: c, inline: true })
+  );
+  const clueMap = getEntryToClueMap(grid, fromDB.grid);
+  const puzzle: PuzzleResultWithAugmentedComments = {
+    ...fromDB,
+    id: dbres.id,
+    blogPostRaw: fromDB.blogPost,
+    blogPost: fromDB.blogPost
+      ? markdownToHast({ text: fromDB.blogPost })
+      : null,
+    constructorNotes: fromDB.constructorNotes
+      ? markdownToHast({ text: fromDB.constructorNotes, inline: true })
+      : null,
+    constructorPage: await userIdToPage(validationResult.right.a),
+    constructorIsPatron: await isUserPatron(validationResult.right.a),
+    constructorIsMod: await isUserMod(validationResult.right.a),
+    comments: await convertComments(fromDB.comments, clueMap),
+    clueHasts: grid.entries.map((c) =>
+      markdownToHast({ text: c.clue, clueMap, inline: true })
+    ),
+    likes: Object.fromEntries(
+      await Promise.all(
+        fromDB.likes.map(
+          async (
+            k: string
+          ): Promise<
+            [
+              string,
+              (ConstructorPageWithMarkdown & { isPatron: boolean }) | null
+            ]
+          > => [k, await userIdToConstructorPageWithPatron(k)]
+        )
+      )
+    ),
+  };
 
   // If the title slug is missing or not correct we need to redirect
   const correctSlug = slugify(puzzle.title);

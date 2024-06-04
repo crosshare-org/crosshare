@@ -210,6 +210,7 @@ export interface PuzzleT {
   autoTags?: string[];
   forcedTags?: string[];
   likes: string[];
+  packId: string | null;
 }
 
 export interface PuzzleResult extends PuzzleT {
@@ -323,6 +324,7 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     autoTags: dbPuzzle.tg_a || [],
     forcedTags: dbPuzzle.tg_f || [],
     likes: dbPuzzle.lk || [],
+    packId: dbPuzzle.pk || null,
   };
 }
 

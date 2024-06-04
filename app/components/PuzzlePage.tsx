@@ -1,4 +1,5 @@
 import type { User } from 'firebase/auth';
+import { useRouter } from 'next/router.js';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { PlayWithoutUserT, PlayWithoutUserV } from '../lib/dbtypes.js';
@@ -9,6 +10,7 @@ import { AccountPrefsT } from '../lib/prefs.js';
 import { PuzzlePageProps, PuzzlePageResultProps } from '../lib/serverOnly.js';
 import { isMetaSolution } from '../lib/utils.js';
 import { AuthContext } from './AuthContext.js';
+import { AuthProps, requiresAuth } from './AuthHelpers.js';
 import { ErrorPage } from './ErrorPage.js';
 import { Link } from './Link.js';
 import { Puzzle } from './Puzzle.js';
@@ -25,8 +27,25 @@ export function PuzzlePage(props: PuzzlePageProps) {
       </ErrorPage>
     );
   }
+  if ('packId' in props) {
+    return <AddAuthToken key={props.packId} />;
+  }
   return <CachePlayLoader key={props.puzzle.id} {...props} />;
 }
+
+const AddAuthToken = requiresAuth(({ user }: AuthProps) => {
+  const router = useRouter();
+  useEffect(() => {
+    async function redirect() {
+      console.log('getting new token');
+      await router.replace({
+        query: { ...router.query, token: await user.getIdToken() },
+      });
+    }
+    void redirect();
+  }, [router, user]);
+  return <div></div>;
+});
 
 const CachePlayLoader = (props: PuzzlePageResultProps) => {
   const { user, isAdmin, prefs, loading, error } = useContext(AuthContext);
