@@ -49,7 +49,10 @@ beforeAll(async () => {
       .collection('prefs')
       .doc('buyer')
       .set({ packs: ['irving'] });
-    await firestore.collection('packs').doc('irving').set({ a: 'packowner' });
+    await firestore
+      .collection('packs')
+      .doc('irving')
+      .set({ a: ['packowner'] });
   });
 });
 

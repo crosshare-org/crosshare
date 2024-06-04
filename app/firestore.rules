@@ -66,7 +66,7 @@ service cloud.firestore {
       // anybody with an id can get a non-pack puz
       allow get: if !resource.data.keys().hasAny(["pk"]);
       // pack owner can get a pack puz
-      allow get: if request.auth.uid == get(/databases/$(database)/documents/packs/$(resource.data.pk)).data.a;
+      allow get: if request.auth.uid in get(/databases/$(database)/documents/packs/$(resource.data.pk)).data.a;
       // anybody who has been granted access to a pack can get a pack puz
       allow get: if resource.data.pk in get(/databases/$(database)/documents/prefs/$(request.auth.uid)).data.packs;
 
@@ -76,7 +76,7 @@ service cloud.firestore {
       allow list: if isAuthor() && request.query.limit <= 20;
       // to support pack owner listing puzzles that have been added to the pack
       allow list: if resource.data.keys().hasAny(['pk'])
-         && request.auth.uid == get(/databases/$(database)/documents/packs/$(resource.data.pk)).data.a;
+         && request.auth.uid in get(/databases/$(database)/documents/packs/$(resource.data.pk)).data.a;
 
       allow update: if isAdmin();
 
