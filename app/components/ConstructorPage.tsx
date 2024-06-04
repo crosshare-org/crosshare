@@ -51,6 +51,7 @@ const BANNED_USERNAMES = {
   word: 1,
   entry: 1,
   grid: 1,
+  grids: 1,
   wordlist: 1,
   upload: 1,
   ios: 1,
@@ -85,6 +86,8 @@ const BANNED_USERNAMES = {
   newest: 1,
   stats: 1,
   dashboard: 1,
+  pack: 1,
+  packs: 1,
 };
 
 export const CreatePageForm = (props: { className?: string }) => {
