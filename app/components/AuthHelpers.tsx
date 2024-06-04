@@ -87,8 +87,12 @@ function renderLoginIfNeeded({
 }
 
 /* Ensure we have a non-anonymous user, upgrading an anonymous user if we have one. */
-export function requiresAuth<T>(WrappedComponent: React.ComponentType<T>) {
-  return function AuthRequired(props: T): ReactNode {
+export function requiresAuth<T extends AuthPropsOptional>(
+  WrappedComponent: React.ComponentType<T>
+) {
+  return function AuthRequired(
+    props: Omit<T, keyof AuthPropsOptional>
+  ): ReactNode {
     const ctx = useContext(AuthContext);
     const login = renderLoginIfNeeded(ctx);
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
@@ -97,7 +101,7 @@ export function requiresAuth<T>(WrappedComponent: React.ComponentType<T>) {
     }
     return (
       <WrappedComponent
-        {...props}
+        {...(props as T)}
         isAdmin={ctx.isAdmin}
         user={ctx.user}
         constructorPage={ctx.constructorPage}
