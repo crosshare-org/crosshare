@@ -173,7 +173,7 @@ export function useAuth(): AuthContextValue {
       if (!didCancel && res) {
         const ui = parseUserInfo(res);
         setIsPatron(ui.isPatron);
-        setIsMod(ui.isPatron);
+        setIsMod(ui.isMod);
       }
     }
     logAsyncErrors(getUserInfo)();
