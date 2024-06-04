@@ -16,6 +16,7 @@ import {
   useMemo,
   useReducer,
   useRef,
+  useState,
 } from 'react';
 import {
   FaCheck,
@@ -746,6 +747,11 @@ export const Puzzle = ({
     return getRefs(state.grid);
   }, [state.grid]);
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, [setMounted]);
+
   const scrollToCross = useMatchMedia(SMALL_AND_UP_RULES);
 
   const overlayBaseProps: PuzzleOverlayBaseProps = {
@@ -1049,7 +1055,7 @@ export const Puzzle = ({
                   setToggleKeyboard(!toggleKeyboard);
                 }}
               />
-              {props.isAdmin ? (
+              {mounted && props.isAdmin ? (
                 <>
                   <TopBarDropDownLink
                     icon={<FaGlasses />}
@@ -1067,7 +1073,8 @@ export const Puzzle = ({
               ) : (
                 ''
               )}
-              {props.isAdmin || props.user?.uid === puzzle.authorId ? (
+              {mounted &&
+              (props.isAdmin || props.user?.uid === puzzle.authorId) ? (
                 <>
                   <TopBarDropDownLinkA
                     href={`/stats/${puzzle.id}`}
@@ -1121,7 +1128,7 @@ export const Puzzle = ({
                       }}
                     />
                   ) : null}
-                  {user !== undefined ? (
+                  {mounted && user !== undefined ? (
                     <NestedDropDown
                       closeParent={closeDropdown}
                       icon={<FaCog />}
@@ -1168,6 +1175,7 @@ export const Puzzle = ({
       props.user,
       props.prefs,
       user,
+      mounted,
       puzzle,
       setMuted,
       state.success,
