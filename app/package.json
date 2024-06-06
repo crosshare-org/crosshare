@@ -123,6 +123,7 @@
     "@typescript-eslint/eslint-plugin": "^7.5.0",
     "@typescript-eslint/parser": "^7.7.0",
     "browserslist-useragent-regexp": "^4.1.1",
+    "cmd-ts": "^0.13.0",
     "csv": "^6.3.8",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.1.4",
