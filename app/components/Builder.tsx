@@ -144,6 +144,7 @@ type BuilderProps = PartialBy<
     | 'publishTime'
     | 'rating'
     | 'likes'
+    | 'packId'
   >,
   | 'clues'
   | 'title'
