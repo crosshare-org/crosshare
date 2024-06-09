@@ -49,6 +49,9 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
     .doc('announcement')
     .get()
     .then((res) => {
+      if (!res.exists) {
+        return null;
+      }
       const a = validate(res.data());
       return a?.f ? { ...a, hast: markdownToHast({ text: a.c }) } : null;
     });
