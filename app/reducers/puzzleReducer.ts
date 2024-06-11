@@ -1,6 +1,6 @@
 import { PlayWithoutUserT } from '../lib/dbtypes.js';
 import { AccountPrefsFlagsT } from '../lib/prefs.js';
-import { CheatUnit, Direction, KeyK } from '../lib/types.js';
+import { CheatUnit, Direction, KeyK, NonEmptyArray } from '../lib/types.js';
 import {
   CluedGrid,
   advanceTo,
@@ -22,6 +22,7 @@ export interface PuzzleState extends GridInterfaceState {
   prefs?: AccountPrefsFlagsT;
   answers: string[];
   alternateSolutions: [number, string][][];
+  solutions: NonEmptyArray<string[]>;
   verifiedCells: Set<number>;
   revealedCells: Set<number>;
   wrongCells: Set<number>;
@@ -243,7 +244,7 @@ export function puzzleReducer(
         success: true,
         ranSuccessEffects: true,
         ranMetaSubmitEffects: true,
-        grid: { ...state.grid, cells: state.answers },
+        grid: { ...state.grid, cells: state.solutions[0] },
       };
     }
     const play = action.play;

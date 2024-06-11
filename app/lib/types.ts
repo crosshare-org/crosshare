@@ -14,6 +14,7 @@ import { isTextInput } from './domUtils.js';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+export type NonEmptyArray<T> = [T, ...T[]];
 
 export function hasOwnProperty<
   X extends Record<string, unknown>,

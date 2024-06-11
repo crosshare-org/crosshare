@@ -1,5 +1,11 @@
 import { cellIndex, entryAtPosition, valAt } from '../lib/gridBase.js';
-import { BLOCK, CheatUnit, Position, Symmetry } from '../lib/types.js';
+import {
+  BLOCK,
+  CheatUnit,
+  NonEmptyArray,
+  Position,
+  Symmetry,
+} from '../lib/types.js';
 import { checkGrid } from '../lib/utils.js';
 import { gridWithNewChar } from '../lib/viewableGrid.js';
 import type { GridInterfaceState } from './gridReducer.js';
@@ -9,20 +15,66 @@ export function isPuzzleState(state: GridInterfaceState): state is PuzzleState {
   return state.type === 'puzzle';
 }
 
-function cheatCells(
+export type CheatablePuzzleState = Pick<
+  PuzzleState,
+  | 'verifiedCells'
+  | 'revealedCells'
+  | 'wrongCells'
+  | 'grid'
+  | 'solutions'
+  | 'cellsIterationCount'
+  | 'cellsUpdatedAt'
+  | 'cellsEverMarkedWrong'
+  | 'active'
+  | 'bankedSeconds'
+  | 'currentTimeWindowStart'
+  | 'filled'
+  | 'success'
+  | 'dismissedKeepTrying'
+>;
+
+function discrepancies(grid: string[], soln: string[]): number {
+  let count = 0;
+  for (let i = 0; i < grid.length; i += 1) {
+    if (grid[i] !== soln[i]) {
+      count += 1;
+    }
+  }
+  return count;
+}
+
+export function closestAlt(
+  grid: string[],
+  solutions: NonEmptyArray<string[]>
+): string[] {
+  const [head, ...rest] = solutions;
+  let closest = head;
+  let discrep = discrepancies(grid, closest);
+  for (const other of rest) {
+    const newDiscrep = discrepancies(grid, other);
+    if (newDiscrep < discrep) {
+      discrep = newDiscrep;
+      closest = other;
+    }
+  }
+  return closest;
+}
+
+function cheatCells<T extends CheatablePuzzleState>(
   elapsed: number,
-  state: PuzzleState,
+  state: T,
   cellsToCheck: Position[],
   isReveal: boolean
-) {
+): T {
   const revealedCells = new Set(state.revealedCells);
   const verifiedCells = new Set(state.verifiedCells);
   const wrongCells = new Set(state.wrongCells);
   let grid = state.grid;
+  const answers = closestAlt(state.grid.cells, state.solutions);
 
   for (const cell of cellsToCheck) {
     const ci = cellIndex(state.grid, cell);
-    const shouldBe = state.answers[ci];
+    const shouldBe = answers[ci];
     if (shouldBe === undefined) {
       throw new Error('oob');
     }
@@ -32,6 +84,7 @@ function cheatCells(
     const currentVal = valAt(state.grid, cell);
     if (shouldBe === currentVal) {
       verifiedCells.add(ci);
+      wrongCells.delete(ci);
     } else if (isReveal) {
       revealedCells.add(ci);
       wrongCells.delete(ci);
@@ -40,7 +93,9 @@ function cheatCells(
       state.cellsUpdatedAt[ci] = elapsed;
       state.cellsIterationCount[ci] += 1;
     } else if (currentVal.trim()) {
+      revealedCells.delete(ci);
       wrongCells.add(ci);
+      verifiedCells.delete(ci);
       state.cellsEverMarkedWrong.add(ci);
     }
   }
@@ -53,11 +108,11 @@ function cheatCells(
   });
 }
 
-export function cheat(
-  state: PuzzleState,
+export function cheat<T extends CheatablePuzzleState>(
+  state: T,
   cheatUnit: CheatUnit,
   isReveal: boolean
-) {
+): T {
   const elapsed = getCurrentTime(state);
   let cellsToCheck: Position[] = [];
   if (cheatUnit === CheatUnit.Square) {
@@ -81,12 +136,8 @@ export function cheat(
   return { ...newState, didCheat: true };
 }
 
-export function checkComplete(state: PuzzleState) {
-  const [filled, success] = checkGrid(
-    state.grid.cells,
-    state.answers,
-    state.alternateSolutions
-  );
+export function checkComplete<T extends CheatablePuzzleState>(state: T): T {
+  const [filled, success] = checkGrid(state.grid.cells, state.solutions);
   if (filled !== state.filled || success !== state.success) {
     let currentTimeWindowStart = state.currentTimeWindowStart;
     let dismissedKeepTrying = state.dismissedKeepTrying;
@@ -117,7 +168,9 @@ export function postEdit(state: PuzzleState, cellIndex: number): PuzzleState {
   return checkComplete(state);
 }
 
-export function getCurrentTime(state: PuzzleState) {
+export function getCurrentTime<
+  T extends Pick<PuzzleState, 'bankedSeconds' | 'currentTimeWindowStart'>
+>(state: T): number {
   if (state.currentTimeWindowStart === 0) {
     return state.bankedSeconds;
   }

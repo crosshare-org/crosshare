@@ -19,6 +19,7 @@ import {
   ClueT,
   Direction,
   EMPTY,
+  NonEmptyArray,
   PosAndDir,
   Position,
   Symmetry,
@@ -739,13 +740,20 @@ function cluesByDirection(rawClues: ClueT[]) {
  * We use this for comment clue tooltips. */
 export function getEntryToClueMap(
   grid: CluedGrid,
-  answers: string[]
+  solutions: NonEmptyArray<string[]>
 ): Map<string, [number, Direction, string]> {
-  const asList: [string, [number, Direction, string]][] = grid.entries.map(
+  const asList: [string, [number, Direction, string]][] = grid.entries.flatMap(
     (e) => {
+      const words = new Set(
+        solutions.map((answers) =>
+          e.cells.map((p) => answers[cellIndex(grid, p)]).join('')
+        )
+      );
       return [
-        e.cells.map((p) => answers[cellIndex(grid, p)]).join(''),
-        [e.labelNumber, e.direction, e.clue],
+        ...[...words].map((word): [string, [number, Direction, string]] => [
+          word,
+          [e.labelNumber, e.direction, e.clue],
+        ]),
       ];
     }
   );

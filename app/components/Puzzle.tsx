@@ -70,6 +70,7 @@ import {
   getClueText,
 } from '../lib/types.js';
 import {
+  allSolutions,
   isMetaSolution,
   logAsyncErrors,
   slugify,
@@ -271,6 +272,7 @@ export const Puzzle = ({
       showExtraKeyLayout: false,
       answers: puzzle.grid,
       alternateSolutions: puzzle.alternateSolutions,
+      solutions: allSolutions(puzzle.grid, puzzle.alternateSolutions),
       verifiedCells: new Set<number>(play ? play.vc : []),
       wrongCells: new Set<number>(play ? play.wc : []),
       revealedCells: new Set<number>(play ? play.rc : []),
@@ -737,8 +739,8 @@ export const Puzzle = ({
   /* `clueMap` is a map from ENTRYWORD => '5D: This is the clue' - we use this
    *    for comment clue tooltips. */
   const clueMap = useMemo(() => {
-    return getEntryToClueMap(state.grid, state.answers);
-  }, [state.grid, state.answers]);
+    return getEntryToClueMap(state.grid, state.solutions);
+  }, [state.grid, state.solutions]);
 
   /* `refs` is a set of referenced entry indexes for each entry in the grid - we use this
    * for grid highlights when an entry is selected.

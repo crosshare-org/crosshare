@@ -1,5 +1,6 @@
 import cases from 'jest-in-case';
 import {
+  allSolutions,
   buildTagIndex,
   checkGrid,
   fnv1a,
@@ -290,7 +291,9 @@ cases(
 cases(
   'checkGrid',
   (opts) => {
-    expect(checkGrid(opts.grid, opts.answers, opts.alts)).toEqual(opts.res);
+    expect(checkGrid(opts.grid, allSolutions(opts.answers, opts.alts))).toEqual(
+      opts.res
+    );
   },
   [
     { grid: [], answers: [], alts: [], res: [true, true] },

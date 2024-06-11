@@ -1,3 +1,5 @@
+import { NonEmptyArray } from './types';
+
 export const STORAGE_KEY = 'puzzleInProgress';
 
 export const slugify = (
@@ -108,43 +110,64 @@ export function isMetaSolution(
   return false;
 }
 
+export function allSolutions(
+  answer: string[],
+  alts: [index: number, value: string][][]
+): NonEmptyArray<string[]> {
+  const combos: NonEmptyArray<[index: number, value: string][]> = [[]];
+
+  for (const alt of alts) {
+    for (const combo of [...combos]) {
+      let compatible = true;
+      for (const cell of alt) {
+        const existing = combo.find(([idx]) => idx === cell[0]);
+        if (existing !== undefined && existing[1] !== cell[1]) {
+          compatible = false;
+          break;
+        }
+      }
+      if (compatible) {
+        const newCombo = [...combo, ...alt];
+        const uniq = [...new Map(newCombo.map((v) => [v[0], v])).values()];
+        combos.push(uniq);
+      }
+    }
+  }
+
+  function comboToSoln(alt: [index: number, value: string][]) {
+    const solution = [...answer];
+    for (const [k, r] of alt) {
+      solution[k] = r;
+    }
+    return solution;
+  }
+
+  const [head, ...rest] = combos;
+  return [comboToSoln(head), ...rest.map(comboToSoln)];
+}
+
 export function checkGrid(
   grid: string[],
-  answers: string[],
-  alts: [index: number, value: string][][]
+  solutions: NonEmptyArray<string[]>
 ): [filled: boolean, success: boolean] {
   for (const cell of grid) {
     if (cell.trim() === '') {
       return [false, false];
     }
   }
-  for (const [i, cell] of grid.entries()) {
-    if (answers.length && cell !== answers[i]) {
-      let success = false;
-      // This cell is wrong, but see if any alternate solutions that have it are satisfied
-      for (const alt of alts) {
-        let containsOurs = false;
-        let satisfied = true;
-        for (const [idx, val] of alt) {
-          if (idx === i) {
-            containsOurs = true;
-          }
-          if (val !== grid[idx]) {
-            satisfied = false;
-          }
-        }
-        if (satisfied && containsOurs) {
-          success = true;
-          break;
-        }
-      }
-      if (!success) {
-        return [true, false];
+  for (const solution of solutions) {
+    let success = true;
+    for (const [i, cell] of grid.entries()) {
+      if (cell !== solution[i]) {
+        success = false;
+        break;
       }
     }
+    if (success) {
+      return [true, true];
+    }
   }
-
-  return [true, true];
+  return [true, false];
 }
 
 export function notEmpty<TValue>(

@@ -249,7 +249,7 @@ test('test getEntryToClueMap', () => {
     (c: string) => markdownToHast({ text: c, inline: true })
   );
 
-  const res = getEntryToClueMap(cluedGrid, answers);
+  const res = getEntryToClueMap(cluedGrid, [answers]);
   expect(res).toMatchSnapshot();
 });
 

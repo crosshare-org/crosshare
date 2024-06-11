@@ -42,7 +42,7 @@ import {
   PuzzleResultWithAugmentedComments,
   puzzleFromDB,
 } from './types.js';
-import { slugify } from './utils.js';
+import { allSolutions, slugify } from './utils.js';
 import { addClues, fromCells, getEntryToClueMap } from './viewableGrid.js';
 
 export async function getStorageUrl(
@@ -388,7 +388,10 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     fromDB.clues,
     (c: string) => markdownToHast({ text: c, inline: true })
   );
-  const clueMap = getEntryToClueMap(grid, fromDB.grid);
+  const clueMap = getEntryToClueMap(
+    grid,
+    allSolutions(fromDB.grid, fromDB.alternateSolutions)
+  );
   const puzzle: PuzzleResultWithAugmentedComments = {
     ...fromDB,
     id: dbres.id,
