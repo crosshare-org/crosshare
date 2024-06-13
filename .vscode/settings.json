@@ -6,5 +6,7 @@
   },
   "eslint.workingDirectories": [
     { "directory": "./app", "changeProcessCWD": true }
-  ]
+  ],
+  "typescript.preferences.importModuleSpecifier": "shortest",
+  "javascript.preferences.importModuleSpecifierEnding": "js"
 }
