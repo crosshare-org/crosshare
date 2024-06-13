@@ -107,6 +107,7 @@ export async function sendEmail({
           ${toHtml(
             markdownToHast({
               text: markdown,
+              leaveEmoji: true,
             })
           )}
           </body>

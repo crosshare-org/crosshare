@@ -211,6 +211,24 @@ test('emoji rendering', () => {
       </div>
     </div>
   `);
+
+  r = render(
+    <Markdown
+      hast={markdownToHast({ text: 'abc 😂 def', leaveEmoji: true })}
+    />,
+    {}
+  );
+  expect(r.container).toMatchInlineSnapshot(`
+    <div>
+      <div>
+        <div
+          class="paragraph"
+        >
+          abc 😂 def
+        </div>
+      </div>
+    </div>
+  `);
 });
 
 test('spoiler text rendering', () => {

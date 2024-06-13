@@ -45,6 +45,7 @@ export function markdownToHast(props: {
   clueMap?: Map<string, [number, Direction, string]>;
   preview?: number;
   inline?: boolean;
+  leaveEmoji?: boolean;
 }): Root {
   let allowRefs = true;
   if (props.text.startsWith('!@')) {
@@ -52,7 +53,6 @@ export function markdownToHast(props: {
   }
   const text = props.text.replace(/[^\s\S]/g, '').replace(/^![@#]/, '');
   const rehypePlugins: PluggableList = [
-    twemojify,
     [
       rehypeExternalLinks,
       {
@@ -62,6 +62,9 @@ export function markdownToHast(props: {
       },
     ],
   ];
+  if (!props.leaveEmoji) {
+    rehypePlugins.push(twemojify);
+  }
   if (props.preview) {
     rehypePlugins.push([
       rehypeTruncate,
