@@ -37,7 +37,6 @@ const AddAuthToken = requiresAuth(({ user }: AuthProps) => {
   const router = useRouter();
   useEffect(() => {
     async function redirect() {
-      console.log('getting new token');
       await router.replace({
         query: { ...router.query, token: await user.getIdToken() },
       });
