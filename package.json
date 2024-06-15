@@ -1,0 +1,32 @@
+{
+  "name": "crosshare",
+  "description": "A free, ad-free, and open-source place to create, share and solve crossword puzzles",
+  "version": "0.0.0",
+  "private": true,
+  "author": "Mike D",
+  "license": "AGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crosshare-org/crosshare"
+  },
+  "resolutions": {
+    "@types/mime": "3.0.4"
+  },
+  "resolutionsComments": {
+    "@types/mime": "https://github.com/firebase/firebase-admin-node/issues/2512"
+  },
+  "scripts": {
+    "type:check": "turbo run type:check",
+    "build": "turbo run build",
+    "clean": "turbo run clean",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "format": "prettier --write .",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "packageManager": "pnpm@9.3.0+sha512.ee7b93e0c2bd11409c6424f92b866f31d3ea1bef5fbe47d3c7500cdc3c9668833d2e55681ad66df5b640c61fa9dc25d546efa54d76d7f8bf54b13614ac293631",
+  "devDependencies": {
+    "turbo": "^2.0.3"
+  }
+}

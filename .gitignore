@@ -141,3 +141,5 @@ temp/
 .env.local
 
 .swc
+
+.turbo

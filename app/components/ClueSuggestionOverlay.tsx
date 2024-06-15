@@ -134,7 +134,7 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
             onSort={onSort}
             sortColumn={'f'}
             sortDirection={'DESC'}
-            onRowClick={(_e, data) => {
+            onRowClick={(data) => {
               const clicked = displayList[data.index];
               if (clicked) {
                 props.select(clicked.c);

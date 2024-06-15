@@ -1,7 +1,6 @@
 {
-  "name": "crosshare-next",
-  "version": "0.1",
-  "description": "Crosshare ported to next.js",
+  "name": "@crosshare/web",
+  "version": "0.0.0",
   "author": "Mike D",
   "private": true,
   "type": "module",
@@ -34,17 +33,13 @@
   "engines": {
     "node": "20"
   },
-  "resolutions": {
-    "@types/mime": "3.0.4"
-  },
-  "resolutionsComments": {
-    "@types/mime": "https://github.com/firebase/firebase-admin-node/issues/2512"
-  },
   "dependencies": {
     "@aws-sdk/client-sesv2": "^3.583.0",
+    "@firebase/firestore-types": "^3.0.2",
     "@floating-ui/react": "^0.26.10",
     "@google-cloud/secret-manager": "^5.6.0",
     "@juggle/resize-observer": "^3.4.0",
+    "@lingui/core": "^4.11.1",
     "@lingui/format-po-gettext": "^4.7.2",
     "@lingui/react": "^4.7.2",
     "@lingui/swc-plugin": "^4.0.6",
@@ -66,7 +61,12 @@
     "jspdf": "^2.5.1",
     "levelup": "^5.1.1",
     "lodash": "^4.17.21",
+    "mdast-util-directive": "^3.0.0",
     "mdast-util-find-and-replace": "^3.0.1",
+    "micromark-util-chunked": "^2.0.0",
+    "micromark-util-classify-character": "^2.0.0",
+    "micromark-util-resolve-all": "^2.0.0",
+    "micromark-util-types": "^2.0.0",
     "next": "^14.1.4",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
@@ -100,6 +100,7 @@
   "devDependencies": {
     "@firebase/rules-unit-testing": "^3.0.2",
     "@google-cloud/pubsub": "^4.3.3",
+    "@jest/globals": "^29.7.0",
     "@lingui/cli": "^4.7.2",
     "@lingui/macro": "^4.7.2",
     "@modern-dev/jsbn": "^1.2.5",
@@ -112,6 +113,7 @@
     "@types/jest-in-case": "^1.0.9",
     "@types/levelup": "^5.1.5",
     "@types/lodash": "^4.17.0",
+    "@types/mdast": "^4.0.4",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.74",
     "@types/react-csv": "^1.1.10",
@@ -125,12 +127,14 @@
     "browserslist-useragent-regexp": "^4.1.1",
     "cmd-ts": "^0.13.0",
     "csv": "^6.3.8",
+    "csv-parse": "^5.5.6",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.1.4",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-css-modules": "^2.12.0",
     "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-lingui": "^0.3.0",
     "eslint-plugin-redos": "^4.4.5",
     "firebase-tools": "^13.6.0",
