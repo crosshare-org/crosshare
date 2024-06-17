@@ -20,8 +20,8 @@
     "@emotion/react": "^11.11.4",
     "@google-cloud/firestore": "^7.7.0",
     "@google-cloud/secret-manager": "^5.6.0",
-    "@types/lodash": "^4.17.4",
-    "@types/mime": "4.0.0",
+    "twemoji-parser": "^14.0.0",
+    "remark-rehype": "^11.1.0",
     "date-fns": "^3.6.0",
     "firebase": "^10.12.1",
     "firebase-admin": "^12.1.1",
@@ -35,9 +35,7 @@
     "mdast-util-from-markdown": "^2.0.0",
     "rehype-external-links": "^3.0.0",
     "remark-directive": "^3.0.0",
-    "remark-gfm": "^4.0.0",
-    "remark-rehype": "^11.1.0",
-    "twemoji-parser": "^14.0.0"
+    "remark-gfm": "^4.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
@@ -46,7 +44,9 @@
     "eslint": "^8.57.0",
     "firebase-functions-test": "^3.2.0",
     "firebase-tools": "^13.10.1",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "@types/lodash": "^4.17.4",
+    "@types/mime": "4.0.0"
   },
   "private": true
 }

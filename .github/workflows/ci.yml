@@ -8,23 +8,23 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: '20'
-        cache: 'yarn'
-        cache-dependency-path: 'app/yarn.lock'
+        cache: 'pnpm'
+        cache-dependency-path: 'pnpm-lock.yaml'
     - name: Install modules
       working-directory: ./app
-      run: yarn install --frozen-lockfile
+      run: pnpm install --frozen-lockfile
     - name: Build i18n files
       working-directory: ./app
-      run: yarn compileI18n
+      run: pnpm compileI18n
     - name: Copy dummy fb config
       working-directory: ./app
       run: cp ./firebaseConfig.emulators.ts ./firebaseConfig.ts
     - name: Lint
       working-directory: ./app
-      run: yarn lint
+      run: pnpm lint
     - name: Check formatting
       working-directory: ./app
-      run: yarn checkFormat
+      run: pnpm checkFormat
     - name: Run tests
       working-directory: ./app
       run: |
