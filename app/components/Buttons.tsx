@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode } from 'react';
+import { CSSProperties, MouseEvent, ReactNode } from 'react';
 import { clsx } from '../lib/utils.js';
 import styles from './Buttons.module.css';
 
@@ -7,6 +7,7 @@ interface ButtonCommonProps {
   disabled?: boolean;
   className?: string;
   hoverText?: string;
+  style?: CSSProperties;
 }
 interface ButtonTextProps extends ButtonCommonProps {
   text: ReactNode;

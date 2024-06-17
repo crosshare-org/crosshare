@@ -83,8 +83,8 @@ class GlickoRound {
       result === Result.Win
         ? Result.Loss
         : result === Result.Loss
-        ? Result.Win
-        : Result.Tie;
+          ? Result.Win
+          : Result.Tie;
 
     let matchesForPlayer = this.playerMatches.get(playerId);
     if (!matchesForPlayer) {

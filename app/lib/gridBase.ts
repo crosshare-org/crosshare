@@ -308,7 +308,7 @@ export function entriesFromCells(
  */
 export function gridWithEntrySet<
   Entry extends EntryBase,
-  Grid extends GridBase<Entry>
+  Grid extends GridBase<Entry>,
 >(grid: Grid, entryIndex: number, word: string): Grid {
   const newGrid: Grid = {
     ...grid,

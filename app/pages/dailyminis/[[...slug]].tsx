@@ -115,8 +115,8 @@ async function propsForDailyMini(
     ...(month === 0 && year > 2020
       ? { olderLink: `${year - 1}/12` }
       : year > 2020 || month >= 4
-      ? { olderLink: `${year}/${month}` }
-      : null),
+        ? { olderLink: `${year}/${month}` }
+        : null),
   };
 }
 

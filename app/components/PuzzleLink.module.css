@@ -62,7 +62,11 @@
 
   font-size: 0.6em;
   text-align: center;
-  text-shadow: 2px 0 0 white, -2px 0 0 white, 0 2px 0 white, 0 -2px 0 white;
+  text-shadow:
+    2px 0 0 white,
+    -2px 0 0 white,
+    0 2px 0 white,
+    0 -2px 0 white;
 }
 
 .taglist {

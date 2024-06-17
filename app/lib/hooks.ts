@@ -80,7 +80,7 @@ const darkClass = 'dark-mode';
 const lightClass = 'light-mode';
 export function useDarkModeControl(): [
   DarkModePreference,
-  (preference: DarkModePreference) => void
+  (preference: DarkModePreference) => void,
 ] {
   const [pref, setPref] = useState<DarkModePreference>(null);
 

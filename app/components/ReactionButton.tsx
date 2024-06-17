@@ -127,8 +127,8 @@ export function ReactionButton(props: ReactionButtonProps) {
         newUser && !newUser.isAnonymous
           ? newUser.uid
           : user && !user.isAnonymous
-          ? user.uid
-          : null;
+            ? user.uid
+            : null;
       if (!userId) {
         return Promise.resolve();
       }

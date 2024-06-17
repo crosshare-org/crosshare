@@ -588,8 +588,8 @@ const PuzzleEditor = ({
                 pvu: isPrivate
                   ? deleteField()
                   : isPrivateUntil
-                  ? Timestamp.fromMillis(isPrivateUntil)
-                  : Timestamp.now(),
+                    ? Timestamp.fromMillis(isPrivateUntil)
+                    : Timestamp.now(),
               }).then(() => {
                 showSnackbar(
                   'Privacy settings updated - it may take up to an hour for updates to be visible on the site.'

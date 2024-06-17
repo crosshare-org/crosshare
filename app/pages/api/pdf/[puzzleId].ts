@@ -167,8 +167,8 @@ function layoutPDFGrid(
         puzzle.grid[square] === '.'
           ? '#555'
           : highlighted && puzzle.highlight === 'shade'
-          ? '#DDD'
-          : 'white'
+            ? '#DDD'
+            : 'white'
       );
       if (!hidden) {
         doc.rect(

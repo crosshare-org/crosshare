@@ -14,9 +14,11 @@ export const COVER_PIC: [number, number] = [1200, 400];
 export const ANIMATION_DELAY = 250;
 export const HEADER_HEIGHT = 35;
 const SMALL_BREAKPOINT = 576;
+const LARGE_BREAKPOINT = 992;
 // ^
 
 export const SMALL_AND_UP_RULES = '(min-width: ' + SMALL_BREAKPOINT + 'px)';
+export const LARGE_AND_UP_RULES = '(min-width: ' + LARGE_BREAKPOINT + 'px)';
 
 export const PRIMARY = '#eb984e';
 export const LINK = '#2874a6';

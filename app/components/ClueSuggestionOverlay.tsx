@@ -1,16 +1,12 @@
-import orderBy from 'lodash/orderBy';
 import { useEffect, useMemo, useState } from 'react';
-import { Table } from 'react-fluid-table';
 import { FaCheck } from 'react-icons/fa';
 import { ClueEntryT, ClueListT, parseClueList } from '../lib/ginsbergCommon.js';
 import { logAsyncErrors } from '../lib/utils.js';
-import styles from './ClueSuggestionOverlay.module.css';
 import { Overlay } from './Overlay.js';
+import { ColumnSpec, Table } from './Table.js';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const NYTIcon = ({ row }: { row: any }) => {
-  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unsafe-member-access
-  if (row?.n) {
+const NYTIcon = (row: ClueEntryT) => {
+  if (row.n) {
     return <FaCheck />;
   }
   return <></>;
@@ -22,9 +18,7 @@ const ExternalSites: [string, string][] = [
 ];
 
 const Weekday = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Difficulty = ({ row }: { row: any }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+const Difficulty = (row: ClueEntryT) => {
   return <>{Weekday[Math.round(row.d)] || '-'}</>;
 };
 
@@ -39,17 +33,17 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
   const [onlyNYT, setOnlyNYT] = useState(false);
   const loading = clueList === null && !error;
 
-  const onSort = (col: string | null, dir: string | null) => {
-    if (!clueList || !col || !dir) {
+  const onSort = (col: keyof ClueEntryT, dir: 1 | -1) => {
+    if (!clueList) {
       return;
     }
-    setClueList(
-      orderBy(
-        clueList,
-        [col as keyof ClueEntryT],
-        [dir.toLowerCase() === 'asc' ? 'asc' : 'desc']
-      )
-    );
+    const newCL = [...clueList];
+    newCL.sort((x, y) => {
+      if (x[col] < y[col]) return dir;
+      if (x[col] > y[col]) return -dir;
+      return 0;
+    });
+    setClueList(newCL);
   };
 
   const displayList = useMemo(
@@ -69,13 +63,10 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
         });
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (!didCancel && res) {
-        const clues = orderBy(
-          parseClueList(res).map((c) => {
-            return { ...c, d: c.d / c.f - 1 };
-          }),
-          ['f'],
-          ['desc']
-        );
+        const clues = parseClueList(res).map((c) => {
+          return { ...c, d: c.d / c.f - 1 };
+        });
+        clues.sort((x, y) => y.f - x.f);
         const nytOnly = clues.filter((c) => c.n);
         if (nytOnly.length > 5) {
           setOnlyNYT(true);
@@ -88,7 +79,7 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
       didCancel = true;
     };
   }, [props.word]);
-  const columns = [
+  const columns: ColumnSpec<ClueEntryT>[] = [
     { key: 'c', header: 'Clue', sortable: false },
     { key: 'y', header: 'Last Seen', sortable: true, width: 110 },
     { key: 'f', header: 'Uses', sortable: true, width: 70 },
@@ -128,19 +119,12 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
             </label>
           </div>
           <Table
-            data={displayList}
             columns={columns}
-            tableHeight={400}
             onSort={onSort}
-            sortColumn={'f'}
-            sortDirection={'DESC'}
-            onRowClick={(data) => {
-              const clicked = displayList[data.index];
-              if (clicked) {
-                props.select(clicked.c);
-              }
+            data={displayList}
+            onRowClick={(clicked) => {
+              props.select(clicked.c);
             }}
-            className={styles.table}
           />
           <h3 className="marginTop1em">External Sources</h3>
           <ul>

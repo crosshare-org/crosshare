@@ -1,10 +1,8 @@
 import useEventListener from '@use-it/event-listener';
 import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
-import orderBy from 'lodash/orderBy';
 import Head from 'next/head';
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { CSVLink } from 'react-csv';
-import { ColumnProps, Table } from 'react-fluid-table';
 import { FaShareSquare } from 'react-icons/fa';
 import {
   MetaSubmissionForStatsViewT,
@@ -42,6 +40,7 @@ import { Overlay } from './Overlay.js';
 import { SquareAndCols } from './Page.js';
 import styles from './PuzzleStats.module.css';
 import { useSnackbar } from './Snackbar.js';
+import { ColumnSpec, Table } from './Table.js';
 import { DefaultTopBar, TopBarLink } from './TopBar.js';
 
 export enum StatsMode {
@@ -76,26 +75,26 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
     return <p>No submissions yet - data is updated once per hour.</p>;
   }
 
-  const onSort = (col: string | null, dir: string | null) => {
-    if (!col || !dir) {
-      return;
-    }
-    setSubs(
-      orderBy(
-        subs,
-        [col as keyof (typeof subs)[number]],
-        [dir.toLowerCase() === 'asc' ? 'asc' : 'desc']
-      )
-    );
+  const onSort = (col: keyof TableData, dir: 1 | -1) => {
+    const newSubs = [...subs];
+    newSubs.sort((x, y) => {
+      const xcol = x[col]?.toString().trim().toLocaleLowerCase() || '',
+        ycol = y[col]?.toString().trim().toLocaleLowerCase() || '';
+      if (xcol < ycol) return dir;
+      if (xcol > ycol) return -dir;
+      return 0;
+    });
+    console.log(newSubs);
+    setSubs(newSubs);
   };
 
-  const columns: ColumnProps<TableData>[] = [
+  const columns: ColumnSpec<TableData>[] = [
     { key: 'n', header: 'Submitter', sortable: true },
     {
       key: 's',
       header: 'Submission',
       sortable: true,
-      content: ({ row }) => {
+      content: (row) => {
         const isSolution = isMetaSolution(
           row.s,
           props.puzzle.contestAnswers ?? []
@@ -189,14 +188,7 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
         </CSVLink>
       </p>
       <div className="margin1em">
-        <Table
-          className={styles.metaTable}
-          data={subs}
-          columns={columns}
-          onSort={onSort}
-          sortColumn={'t'}
-          sortDirection={'ASC'}
-        />
+        <Table data={subs} columns={columns} onSort={onSort} />
       </div>
     </>
   );

@@ -161,8 +161,8 @@ export const Cell = memo(function Cell(props: CellProps) {
                 props.isVerified
                   ? styles.contentsVerified
                   : filledValue
-                  ? styles.contentsFilled
-                  : null
+                    ? styles.contentsFilled
+                    : null
               )}
             >
               {props.isWrong ? (

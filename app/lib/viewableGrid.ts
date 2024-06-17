@@ -439,7 +439,7 @@ export function advanceTo<Entry extends ViewableEntry>(
 
 export function gridWithNewChar<
   Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>
+  Grid extends ViewableGrid<Entry>,
 >(grid: Grid, pos: Position, char: string, sym: Symmetry): Grid {
   const index = pos.row * grid.width + pos.col;
   const cells = [...grid.cells];
@@ -464,7 +464,7 @@ export function gridWithNewChar<
 
 export function flipped<
   Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>
+  Grid extends ViewableGrid<Entry>,
 >(grid: Grid, pos: Position, sym: Symmetry): number | null {
   switch (sym) {
     case Symmetry.None:
@@ -488,7 +488,7 @@ export function flipped<
 
 function flippedBar<
   Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>
+  Grid extends ViewableGrid<Entry>,
 >(
   grid: Grid,
   pos: PosAndDir,
@@ -549,7 +549,7 @@ function removeExtraneousBars<
     cells: string[];
     vBars: Set<number>;
     hBars: Set<number>;
-  }
+  },
 >(g: I): I {
   const vBars = new Set(g.vBars);
   const hBars = new Set(g.hBars);
@@ -581,7 +581,7 @@ function removeExtraneousBars<
 
 export function gridWithHiddenToggled<
   Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>
+  Grid extends ViewableGrid<Entry>,
 >(grid: Grid, pos: Position, sym: Symmetry): Grid {
   const index = pos.row * grid.width + pos.col;
   const wasHidden = grid.hidden.has(index);
@@ -610,7 +610,7 @@ export function gridWithHiddenToggled<
 
 export function gridWithBlockToggled<
   Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>
+  Grid extends ViewableGrid<Entry>,
 >(grid: Grid, pos: Position, sym: Symmetry): Grid {
   let char = BLOCK;
   if (valAt(grid, pos) === BLOCK) {
@@ -633,7 +633,7 @@ export function gridWithBlockToggled<
 
 export function gridWithBarToggled<
   Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>
+  Grid extends ViewableGrid<Entry>,
 >(grid: Grid, pos: PosAndDir, sym: Symmetry): Grid {
   const index = pos.row * grid.width + pos.col;
   const [flippedVBar, flippedHBar] = flippedBar(grid, pos, sym);
@@ -694,7 +694,7 @@ export function getCluedAcrossAndDown<Entry extends ViewableEntry>(
 
 export function getClueMap<
   Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>
+  Grid extends ViewableGrid<Entry>,
 >(grid: Grid, rawClues: ClueT[]): Record<string, string[]> {
   const result: Record<string, string[]> = {};
   const clues = cluesByDirection(rawClues);
@@ -825,7 +825,7 @@ export function getRefs(grid: CluedGrid): Set<number>[] {
 
 export function addClues<
   Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>
+  Grid extends ViewableGrid<Entry>,
 >(
   grid: Grid,
   rawClues: ClueT[],
@@ -869,7 +869,7 @@ export function addClues<
 
 export function fromCells<
   Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>
+  Grid extends ViewableGrid<Entry>,
 >(
   input: Omit<
     Grid,

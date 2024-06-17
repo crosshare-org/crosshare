@@ -134,9 +134,6 @@ importers:
       react-firebase-hooks:
         specifier: 5.1.1
         version: 5.1.1(firebase@10.10.0)(react@18.3.1)
-      react-fluid-table:
-        specifier: ^0.5.1
-        version: 0.5.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-icons:
         specifier: ^5.0.1
         version: 5.2.1(react@18.3.1)
@@ -6304,13 +6301,6 @@ packages:
       firebase: '>= 9.0.0'
       react: '>= 16.8.0'
 
-  react-fluid-table@0.5.5:
-    resolution: {integrity: sha512-UHjbeFkESHZVLq1NH6pmcmZ25PnpYGsplhj9sV3H3avC1oOs25zG49aZR0diwimBZFRXPcAisgpenQhkpAC4gA==}
-    engines: {node: '>=8', npm: '>=5'}
-    peerDependencies:
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-
   react-icons@5.2.1:
     resolution: {integrity: sha512-zdbW5GstTzXaVKvGSyTaBalt7HSfuK5ovrzlpyiWHAFXndXTdd/1hdDHI4xBM1Mn7YriT6aqESucFl9kEXzrdw==}
     peerDependencies:
@@ -6329,12 +6319,6 @@ packages:
 
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
-
-  react-resize-detector@11.0.1:
-    resolution: {integrity: sha512-1Tdgu6Ou3vI3RQD+o2/kTvDibb4NRe7Oh83hIjNNEXb6WKKCQT99VQlh3Xlbdq2HtkUoFEMrgMMKkYI83YbD7Q==}
-    peerDependencies:
-      react: ^18.0.0
-      react-dom: ^18.0.0
 
   react-window@1.8.10:
     resolution: {integrity: sha512-Y0Cx+dnU6NLa5/EvoHukUD0BklJ8qITCtVEPY1C/nL8wwoZ0b5aEw8Ff1dOVHw7fCzMt55XfJDd8S8W8LCaUCg==}
@@ -15436,13 +15420,6 @@ snapshots:
       firebase: 10.10.0
       react: 18.3.1
 
-  react-fluid-table@0.5.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-resize-detector: 11.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-window: 1.8.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-
   react-icons@5.2.1(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -15456,12 +15433,6 @@ snapshots:
   react-is@17.0.2: {}
 
   react-is@18.3.1: {}
-
-  react-resize-detector@11.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      lodash: 4.17.21
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
 
   react-window@1.8.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:

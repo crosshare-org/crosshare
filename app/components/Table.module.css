@@ -1,0 +1,52 @@
+@value small-and-up from '../lib/definitions.module.css';
+@value large-and-up from '../lib/definitions.module.css';
+
+.table {
+  background-color: var(--overlay-inner) !important;
+}
+
+.row {
+  overflow: scroll;
+  display: flex;
+  height: 75px;
+}
+
+.rowClick {
+  cursor: pointer;
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (small-and-up) {
+  .row {
+    height: 50px;
+  }
+}
+
+/* stylelint-disable-next-line media-feature-name-no-unknown */
+@media (large-and-up) {
+  .row {
+    height: 35px;
+  }
+}
+
+.row:hover {
+  background-color: var(--secondary);
+}
+
+.headerContent {
+  font-weight: bold;
+  text-align: left;
+}
+
+.content {
+  margin: auto;
+  text-align: left;
+}
+
+.content:first-of-type {
+  padding-left: 0.5em;
+}
+
+.content:last-of-type {
+  padding-right: 0.5em;
+}

@@ -169,7 +169,7 @@ export function postEdit(state: PuzzleState, cellIndex: number): PuzzleState {
 }
 
 export function getCurrentTime<
-  T extends Pick<PuzzleState, 'bankedSeconds' | 'currentTimeWindowStart'>
+  T extends Pick<PuzzleState, 'bankedSeconds' | 'currentTimeWindowStart'>,
 >(state: T): number {
   if (state.currentTimeWindowStart === 0) {
     return state.bankedSeconds;

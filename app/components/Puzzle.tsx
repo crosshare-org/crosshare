@@ -1332,13 +1332,13 @@ export const Puzzle = ({
                         isSlate
                           ? 'Show Stats'
                           : puzzle.contestAnswers?.length
-                          ? !isMetaSolution(
-                              state.contestSubmission,
-                              puzzle.contestAnswers
-                            ) && !state.contestRevealed
-                            ? t`Contest Prompt / Submission`
-                            : t`Comments / Leaderboard`
-                          : t`Show Comments`
+                            ? !isMetaSolution(
+                                state.contestSubmission,
+                                puzzle.contestAnswers
+                              ) && !state.contestRevealed
+                              ? t`Contest Prompt / Submission`
+                              : t`Comments / Leaderboard`
+                            : t`Show Comments`
                       }
                       onClick={() => {
                         window.parent.postMessage(

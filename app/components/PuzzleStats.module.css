@@ -1,12 +1,5 @@
 @value small-and-up from '../lib/definitions.module.css';
 
-.metaTable :global(.cell) {
-  overflow: hidden;
-  display: block !important;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .page {
   display: flex;
   flex-direction: column;

@@ -31,7 +31,7 @@ const testCases: [
   number,
   string,
   string,
-  number[]
+  number[],
 ][] = [];
 for (let i = 0; i < 1000; i += 1) {
   const a = randomB32();

@@ -417,7 +417,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
           ): Promise<
             [
               string,
-              (ConstructorPageWithMarkdown & { isPatron: boolean }) | null
+              (ConstructorPageWithMarkdown & { isPatron: boolean }) | null,
             ]
           > => [k, await userIdToConstructorPageWithPatron(k)]
         )
