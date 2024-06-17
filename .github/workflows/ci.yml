@@ -8,8 +8,7 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: '20'
-        cache: 'pnpm'
-        cache-dependency-path: 'pnpm-lock.yaml'
+    - uses: pnpm/action-setup@v4
     - name: Install modules
       working-directory: ./app
       run: pnpm install --frozen-lockfile
