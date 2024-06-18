@@ -32,15 +32,15 @@ Crosshare is currently deployed on node 20 - on Fedora it's:
 $ sudo dnf install nodejs20
 ```
 
-We use `yarn` for package management:
+We use `pnpm` for package management:
 ```shell
-$ sudo npm install --global yarn
+$ corepack enable pnpm
 ```
 
 Install dependencies:
 ```shell
 $ cd app
-$ yarn
+$ pnpm install
 ```
 
 ### Now you can run crosshare locally
@@ -58,12 +58,12 @@ $ npx firebase deploy --only firestore
 
 Compile the i18n definitions:
 ```shell
-$ yarn compileI18n
+$ pnpm compileI18n
 ```
 
 Then start the server:
 ```shell
-$ yarn dev
+$ pnpm dev
 ```
 
 You should now be able to view Crosshare locally at http://localhost:3000

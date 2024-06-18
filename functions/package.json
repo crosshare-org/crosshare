@@ -1,14 +1,14 @@
 {
   "name": "functions",
   "scripts": {
-    "lint": "yarn eslint .",
+    "lint": "pnpm eslint .",
     "build": "tsc",
     "watchForEmulators": "NEXT_PUBLIC_USE_EMULATORS=1 tsc -w",
-    "serve": "npm run build && firebase emulators:start --only functions",
-    "shell": "npm run build && firebase functions:shell",
-    "start": "npm run shell",
-    "deploy": "npx firebase deploy --only functions:analytics",
-    "logs": "npx firebase functions:log"
+    "serve": "pnpm run build && firebase emulators:start --only functions",
+    "shell": "pnpm run build && firebase functions:shell",
+    "start": "pnpm run shell",
+    "deploy": "firebase deploy --only functions:analytics",
+    "logs": "firebase functions:log"
   },
   "engines": {
     "node": "20"
