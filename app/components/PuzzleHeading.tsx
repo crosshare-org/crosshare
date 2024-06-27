@@ -49,7 +49,7 @@ export const PuzzleHeading = (props: {
               {props.likeButton}
             </>
           ) : (
-            props.title
+            <span>{props.title}</span>
           )
         }
         byLine={
