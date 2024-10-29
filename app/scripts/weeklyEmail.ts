@@ -111,7 +111,7 @@ async function topPuzzlesForWeek(): Promise<
   return Promise.all(
     Object.entries(totalC)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 150)
+      .slice(0, 250)
       .map(async ([id]): Promise<(DBPuzzleT & { id: string }) | null> => {
         const dbres = await db.collection('c').doc(id).get();
         if (!dbres.exists) {
@@ -140,6 +140,10 @@ async function topPuzzlesForWeek(): Promise<
         }
         // Don't include puzzles with comments disabled
         if (p.no_cs) {
+          return false;
+        }
+        // Filter a couple of media accts
+        if (p.a === 'ira2BUejBHgWTBVlQdOqVPtIaSB2') {
           return false;
         }
         return true;
