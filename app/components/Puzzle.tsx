@@ -378,6 +378,7 @@ export const Puzzle = ({
   function prodPause() {
     if (
       process.env.NODE_ENV !== 'development' &&
+      document.hidden &&
       !props.prefs?.dontPauseOnLostFocus
     ) {
       window.parent.postMessage(
@@ -391,7 +392,7 @@ export const Puzzle = ({
       writePlayToDBIfNeeded();
     }
   }
-  useEventListener('blur', prodPause);
+  useEventListener('visibilitychange', prodPause);
 
   const [muted, setMuted] = usePersistedBoolean('muted', true);
   const [color, setColorPref] = useDarkModeControl();
