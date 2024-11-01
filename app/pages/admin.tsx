@@ -11,7 +11,7 @@ import {
 } from 'firebase/firestore';
 import Head from 'next/head';
 import NextJSRouter from 'next/router';
-import { FormEvent, useCallback, useRef, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import {
   useCollectionData,
   useDocumentDataOnce,
@@ -242,20 +242,22 @@ export default requiresAdmin(() => {
 
   const [crypticMods, setCrypticMods] = useState<string[]>([]);
 
-  getFromSessionOrDB({
-    collection: 'settings',
-    docId: 'settings',
-    validator: AdminSettingsV,
-    ttl: 1 * 60 * 60 * 1000,
-  })
-    .then((x) => {
-      if (x) {
-        setCrypticMods(x.crypticMods ?? []);
-      }
+  useEffect(() => {
+    getFromSessionOrDB({
+      collection: 'settings',
+      docId: 'settings',
+      validator: AdminSettingsV,
+      ttl: 1 * 60 * 60 * 1000,
     })
-    .catch((e: unknown) => {
-      console.error('failed to get settings', e);
-    });
+      .then((x) => {
+        if (x) {
+          setCrypticMods(x.crypticMods ?? []);
+        }
+      })
+      .catch((e: unknown) => {
+        console.error('failed to get settings', e);
+      });
+  }, []);
 
   const goToPuzzle = useCallback((_date: Date, puzzle: string | null) => {
     if (puzzle) {
@@ -498,12 +500,14 @@ export default requiresAdmin(() => {
               setDonationName('');
               setDonationPage('');
               setDonationUserId('');
+              document.getElementById('donationEmail')?.focus();
             });
           })}
         >
           <label>
             Email
             <input
+              id="donationEmail"
               className="margin0-0-5em"
               type="text"
               value={donationEmail}
