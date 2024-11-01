@@ -12,7 +12,6 @@
 !app/sentry.server.config.ts
 !app/sentry.properties
 !app/package.json
-!app/yarn.lock
 !app/firebase.json
 !app/firestore.rules
 !app/tsconfig.json
@@ -31,7 +30,7 @@
 !app/lib
 !app/components
 !app/cluedb
-!pnpm.lock
+!app/pnpm-lock.yaml
 
 # Explicitly ignore mocks directories
 **/__mocks__

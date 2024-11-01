@@ -1,11 +1,15 @@
 FROM mcr.microsoft.com/playwright:v1.44.1-jammy as dev
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 RUN mkdir /src
 WORKDIR /src
-COPY app/package.json app/yarn.lock app/lingui.config.ts ./
+COPY app/package.json app/pnpm-lock.yaml app/lingui.config.ts ./
 RUN apt-get update && apt-get install -y --no-install-recommends openjdk-11-jre-headless curl build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
-RUN yarn --frozen-lockfile
+RUN corepack use pnpm
+RUN pnpm i --frozen-lockfile
 ENV PATH=$PATH:/src/node_modules/.bin NEXT_TELEMETRY_DISABLED=1
-RUN yarn compileI18n
+RUN pnpm compileI18n
 RUN npm i -g firebase-tools
 RUN firebase --version
 RUN firebase setup:emulators:firestore
@@ -16,19 +20,22 @@ ARG COMMIT=dev
 ENV NEXT_PUBLIC_COMMIT_HASH $COMMIT
 
 FROM node:20-slim as builder
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 RUN mkdir /src
 WORKDIR /src
-COPY app/package.json app/yarn.lock ./
-RUN yarn --frozen-lockfile
+COPY app/package.json app/pnpm-lock.yaml ./
+RUN pnpm i --frozen-lockfile
 ENV PATH=$PATH:/src/node_modules/.bin NEXT_TELEMETRY_DISABLED=1
 COPY . .
 WORKDIR /src/app
-RUN yarn compileI18n
+RUN pnpm compileI18n
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libuuid1
-RUN yarn predeploy
+RUN pnpm predeploy
 RUN rm -rf nextjs/cache
 WORKDIR /src
-RUN yarn install --production --ignore-scripts --prefer-offline
+RUN pnpm i --prod --ignore-scripts --offline --frozen-lockfile
 ARG COMMIT
 RUN test -n "$COMMIT"
 

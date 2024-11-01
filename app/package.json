@@ -42,7 +42,7 @@
     "@lingui/core": "^4.11.1",
     "@lingui/format-po-gettext": "^4.7.2",
     "@lingui/react": "^4.7.2",
-    "@lingui/swc-plugin": "^4.0.6",
+    "@lingui/swc-plugin": "^4.0.8",
     "@sentry/nextjs": "^7.109.0",
     "@use-it/event-listener": "^0.1.7",
     "canvas": "^2.11.2",
@@ -155,5 +155,6 @@
     "typescript": "^5.4.5",
     "unist-util-remove-position": "^5.0.0",
     "wait-for-expect": "^3.0.2"
-  }
+  },
+  "packageManager": "pnpm@9.3.0+sha512.ee7b93e0c2bd11409c6424f92b866f31d3ea1bef5fbe47d3c7500cdc3c9668833d2e55681ad66df5b640c61fa9dc25d546efa54d76d7f8bf54b13614ac293631"
 }
