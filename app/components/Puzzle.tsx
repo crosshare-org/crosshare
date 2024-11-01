@@ -375,12 +375,8 @@ export const Puzzle = ({
   }, [state.currentTimeWindowStart, dispatch]);
 
   // Pause when page goes out of focus
-  function prodPause() {
-    if (
-      process.env.NODE_ENV !== 'development' &&
-      document.hidden &&
-      !props.prefs?.dontPauseOnLostFocus
-    ) {
+  function autoPause() {
+    if (document.hidden && !props.prefs?.dontPauseOnLostFocus) {
       window.parent.postMessage(
         {
           type: 'pause',
@@ -392,7 +388,7 @@ export const Puzzle = ({
       writePlayToDBIfNeeded();
     }
   }
-  useEventListener('visibilitychange', prodPause);
+  useEventListener('visibilitychange', autoPause);
 
   const [muted, setMuted] = usePersistedBoolean('muted', true);
   const [color, setColorPref] = useDarkModeControl();
