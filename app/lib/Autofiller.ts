@@ -294,18 +294,18 @@ export class Autofiller {
               candidateLetter
             );
             if (BA.isZero(newBitmap)) {
-              failingLetters[i] += word[j];
+              failingLetters[i] += candidateLetter;
               failFast = true;
               break;
             }
             const newCost =
               baseCost - cross.minCost + WordDB.minCost(crossLength, newBitmap);
             if (costToBeat !== null && newCost > costToBeat) {
-              failingLetters[i] += word[j];
+              failingLetters[i] += candidateLetter;
               failFast = true;
               break;
             }
-            succeedingLetters[i] += word[j];
+            succeedingLetters[i] += candidateLetter;
           }
         }
         if (failFast) {

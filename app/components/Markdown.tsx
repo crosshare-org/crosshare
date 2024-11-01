@@ -56,8 +56,6 @@ export const Markdown = (props: {
   };
 
   const reactContent = unified()
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     .use(rehypeReact, {
       ...production,
       passNode: true,

@@ -51,6 +51,7 @@ export function fromString(input: string, base: 32 | 64): BitArray {
     if (mod === 0) {
       nums[usedInts++] = x;
     } else {
+      // @ts-expect-error
       nums[usedInts - 1] |= x << (mod * bitsPerChar);
     }
   }
@@ -73,6 +74,7 @@ export function setBit(ba: BitArray, index: number) {
   for (let i = ba.length; i < numIndex + 1; i += 1) {
     ba.push(0);
   }
+  // @ts-expect-error
   ba[numIndex] |= 1 << rem;
 }
 

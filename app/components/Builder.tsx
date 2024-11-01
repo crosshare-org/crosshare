@@ -1022,7 +1022,8 @@ const GridMode = ({
 
     state.grid.entries.forEach((e) => {
       totalLength += e.cells.length;
-      lengthHistogram[e.cells.length - 2] += 1;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
+      lengthHistogram[e.cells.length - 2]! += 1;
     });
     const numEntries = state.grid.entries.length;
     const averageLength = totalLength / numEntries;
@@ -1038,7 +1039,8 @@ const GridMode = ({
       } else {
         const index = lettersHistogramNames.indexOf(s);
         if (index !== -1) {
-          lettersHistogram[index] += 1;
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
+          lettersHistogram[index]! += 1;
         }
       }
     });

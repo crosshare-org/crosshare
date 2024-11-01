@@ -91,7 +91,8 @@ function cheatCells<T extends CheatablePuzzleState>(
       verifiedCells.add(ci);
       grid = gridWithNewChar(grid, cell, shouldBe, Symmetry.None);
       state.cellsUpdatedAt[ci] = elapsed;
-      state.cellsIterationCount[ci] += 1;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
+      state.cellsIterationCount[ci]! += 1;
     } else if (currentVal.trim()) {
       revealedCells.delete(ci);
       wrongCells.add(ci);

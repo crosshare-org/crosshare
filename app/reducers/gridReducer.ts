@@ -134,7 +134,8 @@ function enterCharAt<T extends GridInterfaceState>(
     if (isPuzzleState(state)) {
       const elapsed = getCurrentTime(state);
       state.cellsUpdatedAt[ci] = elapsed;
-      state.cellsIterationCount[ci] += 1;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
+      state.cellsIterationCount[ci]! += 1;
     }
     let grid = state.grid;
     if (char === BLOCK) {
