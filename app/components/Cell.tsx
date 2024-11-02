@@ -77,7 +77,7 @@ export const Cell = memo(function Cell(props: CellProps) {
 
   const filledValue =
     props.active && props.isEnteringRebus
-      ? props.rebusValue ?? ''
+      ? (props.rebusValue ?? '')
       : props.value.trim();
   const value =
     props.active && props.isEnteringRebus
