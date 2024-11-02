@@ -274,6 +274,14 @@ export const BioEditor = (props: BioEditorProps) => {
       </p>
       {props.constructorPage.pp && props.constructorPage.pt ? (
         <>
+          <p>
+            Your tip button is enabled! Note that Paypal recently started
+            requiring additional verification for some accounts. If your tip
+            button is giving an error message try visiting{' '}
+            <a href="https://www.paypal.com/donate/buttons/manage">this page</a>{' '}
+            while logged in to your Paypal account to find the
+            approval/verification form that you need to fill out.
+          </p>
           <Button
             className="marginRight1-5em"
             onClick={() => {
