@@ -520,8 +520,39 @@ export const DonationsListV = t.type({
 });
 export type DonationsListT = t.TypeOf<typeof DonationsListV>;
 
-export const donationsByEmail = (donations: DonationsListT) => {
-  const res = donations.d.reduce(
+export const donationsByEmail = (
+  donations: DonationsListT
+): Map<
+  string,
+  {
+    name: string | null;
+    page: string | null;
+    total: number;
+    date: Date;
+    userId?: string;
+  }
+> => {
+  const res: Map<
+    string,
+    {
+      name: string | null;
+      page: string | null;
+      total: number;
+      date: Date;
+      userId?: string;
+    }
+  > = donations.d.reduce<
+    Map<
+      string,
+      {
+        name: string | null;
+        page: string | null;
+        total: number;
+        date: Date;
+        userId?: string;
+      }
+    >
+  >(
     (
       acc: Map<
         string,
