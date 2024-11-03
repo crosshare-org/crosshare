@@ -6,6 +6,7 @@ settings:
 
 overrides:
   '@types/mime': 3.0.4
+  mdast-util-gfm-autolink-literal: 2.0.0
 
 importers:
 
