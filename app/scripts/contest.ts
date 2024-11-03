@@ -76,7 +76,7 @@ const winner = command({
       c: '',
       t: `Midi contest for ${Intl.DateTimeFormat('en', {
         month: 'long',
-      }).format(new Date(args.month))} ${args.year} - ${args.theme}`,
+      }).format(new Date(0, args.month - 1))} ${args.year} - ${args.theme}`,
       f: false,
     };
     if (articleDoc.exists) {
@@ -135,7 +135,7 @@ const theme = command({
       c: `This month's contest theme is **${args.theme}**. Join us on [Discord](https://discord.gg/8Tu67jB4F3) for details on how to enter.`,
       t: `Midi contest for ${Intl.DateTimeFormat('en', {
         month: 'long',
-      }).format(new Date(args.month))} ${args.year} - ${args.theme}`,
+      }).format(new Date(0, args.month - 1))} ${args.year} - ${args.theme}`,
       f: false,
     };
     await articleDoc.ref.set({ ...article, ua: Timestamp.now() });
