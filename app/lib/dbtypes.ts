@@ -284,6 +284,8 @@ export const AdminSettingsV = t.intersection([
   t.partial({
     /** User ids who are tagged as moderators for cryptic puzzles. */
     crypticMods: t.array(t.string),
+    announcement: t.type({ title: t.string, body: t.string }),
+    homepageText: t.string,
   }),
 ]);
 

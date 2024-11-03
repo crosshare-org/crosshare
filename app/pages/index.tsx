@@ -19,6 +19,7 @@ import { DefaultTopBar } from '../components/TopBar.js';
 import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList.js';
 import { ArticleT, validate } from '../lib/article.js';
 import { ConstructorPageBase } from '../lib/constructorPage.js';
+import { AdminSettingsV } from '../lib/dbtypes.js';
 import { getCollection } from '../lib/firebaseAdminWrapper.js';
 import { markdownToHast } from '../lib/markdown/markdown.js';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles.js';
@@ -38,22 +39,41 @@ interface HomePageProps {
   dailymini: HomepagePuz | null;
   featured: HomepagePuz[];
   articles: ArticleT[];
-  announcement: (ArticleT & { hast: Root }) | null;
+  announcement: { title: string; body: Root } | null;
+  homepageText: Root | null;
 }
 
 const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
   const today = new Date();
   const todaysMini = await getMiniForDate(today);
 
-  const announcement = await getCollection('a')
-    .doc('announcement')
+  const [announcement, homepageText]: [
+    { title: string; body: Root } | null,
+    Root | null,
+  ] = await getCollection('settings')
+    .doc('settings')
     .get()
     .then((res) => {
       if (!res.exists) {
-        return null;
+        return [null, null];
       }
-      const a = validate(res.data());
-      return a?.f ? { ...a, hast: markdownToHast({ text: a.c }) } : null;
+      const a = AdminSettingsV.decode(res.data());
+      if (a._tag === 'Right') {
+        return [
+          a.right.announcement
+            ? {
+                ...a.right.announcement,
+                body: markdownToHast({ text: a.right.announcement.body }),
+              }
+            : null,
+          a.right.homepageText
+            ? markdownToHast({ text: a.right.homepageText })
+            : null,
+        ];
+      } else {
+        console.error('malformed settings doc');
+        return [null, null];
+      }
     });
 
   const unfilteredArticles = await getCollection('a')
@@ -62,7 +82,6 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
     .then((articlesResult) => {
       return articlesResult.docs.map((d) => validate(d.data()));
     });
-
   const articles: ArticleT[] = unfilteredArticles.filter((i): i is ArticleT => {
     return i !== null;
   });
@@ -92,11 +111,11 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
       constructorIsPatron: await isUserPatron(todaysMini.a),
     };
     return {
-      props: { announcement, dailymini: dm, featured, articles },
+      props: { announcement, homepageText, dailymini: dm, featured, articles },
     };
   }
   return {
-    props: { announcement, dailymini: null, featured, articles },
+    props: { announcement, homepageText, dailymini: null, featured, articles },
   };
 };
 
@@ -112,6 +131,7 @@ const ArticleListItem = (props: ArticleT) => {
 
 export default function HomePage({
   announcement,
+  homepageText,
   dailymini,
   featured,
   articles,
@@ -134,29 +154,37 @@ export default function HomePage({
         {announcement ? (
           <div className={styles.campaign}>
             <h3>
-              <span className="colorError">{announcement.t}</span>
+              <span className="colorError">{announcement.title}</span>
             </h3>
             <div>
-              <Markdown hast={announcement.hast} />
+              <Markdown hast={announcement.body} />
             </div>
           </div>
         ) : (
           ''
         )}
-        <p className="marginBottom1em">
-          <Trans>
-            Crosshare is a <b>free</b>, <b>ad-free</b>, and{' '}
-            <a href="https://github.com/crosshare-org/crosshare">open-source</a>{' '}
-            place to create, share and solve crossword puzzles.
-          </Trans>
-        </p>
-        <p>
-          <Trans>
-            If you&apos;re enjoying Crosshare please consider{' '}
-            <Link href="/donate">donating</Link> to support its continuing
-            development.
-          </Trans>
-        </p>
+        {homepageText && router.locale === 'en' ? (
+          <Markdown hast={homepageText} />
+        ) : (
+          <>
+            <p className="marginBottom1em">
+              <Trans>
+                Crosshare is a <b>free</b>, <b>ad-free</b>, and{' '}
+                <a href="https://github.com/crosshare-org/crosshare">
+                  open-source
+                </a>{' '}
+                place to create, share and solve crossword puzzles.
+              </Trans>
+            </p>
+            <p>
+              <Trans>
+                If you&apos;re enjoying Crosshare please consider{' '}
+                <Link href="/donate">donating</Link> to support its continuing
+                development.
+              </Trans>
+            </p>
+          </>
+        )}
         <div className={styles.top}>
           {dailymini ? (
             <div className="flex50">
