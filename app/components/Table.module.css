@@ -6,7 +6,7 @@
 }
 
 .row {
-  overflow: scroll;
+  overflow: hidden;
   display: flex;
   height: 75px;
 }
