@@ -8,5 +8,6 @@
     { "directory": "./app", "changeProcessCWD": true }
   ],
   "typescript.preferences.importModuleSpecifier": "shortest",
-  "javascript.preferences.importModuleSpecifierEnding": "js"
+  "javascript.preferences.importModuleSpecifierEnding": "js",
+  "remote.localPortHost": "allInterfaces"
 }

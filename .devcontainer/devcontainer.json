@@ -1,0 +1,11 @@
+{
+  "dockerFile": "Dockerfile",
+  "forwardPorts": [
+    3000, 9199, 9099, 9005, 9000, 8085, 8080, 5001, 5000, 4500, 4000, 9150
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": ["lfs.vscode-emacs-friendly", "esbenp.prettier-vscode"]
+    }
+  }
+}
