@@ -31,6 +31,7 @@
 !app/components
 !app/cluedb
 !app/pnpm-lock.yaml
+!app/pnpm-workspace.yaml
 
 # Explicitly ignore mocks directories
 **/__mocks__
