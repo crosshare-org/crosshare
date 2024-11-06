@@ -28,7 +28,8 @@
     "predeploy": "tsc && pnpm clean && next build",
     "prodDeploy": "npx firebase deploy --only hosting:prod",
     "stagingDeploy": "npx firebase deploy --only hosting:staging",
-    "test": "NODE_OPTIONS='--experimental-vm-modules' npx jest --watch"
+    "test": "NODE_OPTIONS='--experimental-vm-modules' npx jest --watch",
+    "emulate": "NEXT_PUBLIC_USE_EMULATORS=1 METADATA_SERVER_DETECTION=none GCE_METADATA_HOST=0.0.0.0 FIRESTORE_EMULATOR_HOST=\"127.0.0.1:8080\" GCLOUD_PROJECT=\"demo-crosshare\" firebase emulators:exec --import=./emulator-data --only auth,firestore --project demo-crosshare --ui 'npx next dev'"
   },
   "engines": {
     "node": "20"
@@ -42,7 +43,7 @@
     "@lingui/core": "^4.11.1",
     "@lingui/format-po-gettext": "^4.7.2",
     "@lingui/react": "^4.7.2",
-    "@lingui/swc-plugin": "^4.0.8",
+    "@lingui/swc-plugin": "4.0.8",
     "@sentry/nextjs": "^7.109.0",
     "@use-it/event-listener": "^0.1.7",
     "canvas": "^2.11.2",
