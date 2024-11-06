@@ -11,7 +11,13 @@ import {
 } from 'firebase/firestore';
 import Head from 'next/head';
 import NextJSRouter from 'next/router';
-import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   useCollectionData,
   useDocumentDataOnce,
@@ -188,6 +194,7 @@ export default requiresAdmin(() => {
   const [donationName, setDonationName] = useState('');
   const [donationPage, setDonationPage] = useState('');
   const [donationUserId, setDonationUserId] = useState('');
+  const [newHomepageText, setNewHomepageText] = useState<string>('');
   const { showSnackbar } = useSnackbar();
 
   const puzzleCollection = useRef(
@@ -472,6 +479,46 @@ export default requiresAdmin(() => {
         <h4 className="borderBottom1pxSolidBlack">Upcoming Minis</h4>
 
         <UpcomingMinisCalendar disableExisting={false} onChange={goToPuzzle} />
+        <h4 className="borderBottom1pxSolidBlack">Homepage Text</h4>
+        <form
+          onSubmit={logAsyncErrors(async (e: React.FormEvent) => {
+            e.preventDefault();
+            if (!newHomepageText.trim()) {
+              await updateDoc(getDocRef('settings', 'settings'), {
+                homepageText: deleteField(),
+              }).then(() => {
+                showSnackbar('reset homepage text');
+              });
+            } else {
+              await updateDoc(getDocRef('settings', 'settings'), {
+                homepageText: newHomepageText.trim(),
+              }).then(() => {
+                showSnackbar('updated homepage text');
+              });
+            }
+          })}
+        >
+          <textarea
+            className="width100"
+            value={newHomepageText}
+            onChange={(e) => {
+              setNewHomepageText(e.target.value);
+            }}
+          />
+          {newHomepageText ? (
+            <div className="margin1em0">
+              <h5>Live Preview:</h5>
+              <Markdown hast={markdownToHast({ text: newHomepageText })} />
+            </div>
+          ) : (
+            ''
+          )}
+          <Button
+            type="submit"
+            text="Update Homepage Text"
+            className="margin1em0"
+          />
+        </form>
         <h4 className="borderBottom1pxSolidBlack">Record Donation</h4>
         <form
           onSubmit={logAsyncErrors(async (e: React.FormEvent) => {
