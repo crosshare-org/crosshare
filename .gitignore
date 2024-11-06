@@ -143,3 +143,5 @@ temp/
 .swc
 
 .turbo
+
+.pnpm-store/
