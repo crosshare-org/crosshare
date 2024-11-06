@@ -164,7 +164,7 @@ export default function HomePage({
           ''
         )}
         {homepageText && router.locale === 'en' ? (
-          <Markdown hast={homepageText} />
+          <Markdown hast={homepageText} className="marginBottom1em" />
         ) : (
           <>
             <p className="marginBottom1em">
