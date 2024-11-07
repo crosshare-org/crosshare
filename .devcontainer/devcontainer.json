@@ -5,7 +5,11 @@
   ],
   "customizations": {
     "vscode": {
-      "extensions": ["lfs.vscode-emacs-friendly", "esbenp.prettier-vscode"]
+      "extensions": [
+        "lfs.vscode-emacs-friendly",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker"
+      ]
     }
   }
 }
