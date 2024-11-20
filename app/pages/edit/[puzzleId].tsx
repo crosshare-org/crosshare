@@ -44,7 +44,12 @@ import {
   puzzleFromDB,
   removeClueSpecials,
 } from '../../lib/types.js';
-import { clsx, isMetaSolution, logAsyncErrors } from '../../lib/utils.js';
+import {
+  allSolutions,
+  clsx,
+  isMetaSolution,
+  logAsyncErrors,
+} from '../../lib/utils.js';
 import { CluedEntry, addClues, fromCells } from '../../lib/viewableGrid.js';
 import styles from './editPuzzle.module.css';
 
@@ -314,11 +319,25 @@ const PuzzleEditor = ({
       <>
         <AlternateSolutionEditor
           grid={puzzle.grid}
-          save={async (alt) =>
-            updateDoc(getDocRef('c', puzzle.id), {
+          save={async (alt) => {
+            if (
+              allSolutions(puzzle.grid, [
+                ...puzzle.alternateSolutions,
+                Object.entries(alt).map(
+                  (e) => [Number(e[0]), e[1]] as [number, string]
+                ),
+              ])[1]
+            ) {
+              showSnackbar(
+                'Could not add alternate - too many possible solutions specified!'
+              );
+              return Promise.resolve();
+            }
+
+            return updateDoc(getDocRef('c', puzzle.id), {
               alts: arrayUnion(alt),
-            })
-          }
+            });
+          }}
           cancel={() => {
             setAddingAlternate(false);
           }}

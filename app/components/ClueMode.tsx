@@ -12,7 +12,7 @@ import {
   directionString,
   removeClueSpecials,
 } from '../lib/types.js';
-import { isMetaSolution } from '../lib/utils.js';
+import { allSolutions, isMetaSolution } from '../lib/utils.js';
 import { addClues } from '../lib/viewableGrid.js';
 import {
   AddAlternateAction,
@@ -263,6 +263,21 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
         <AlternateSolutionEditor
           grid={state.grid.cells}
           save={(alt) => {
+            if (
+              allSolutions(
+                state.grid.cells,
+                [...state.alternates, alt].map((alt) => {
+                  return Object.entries(alt).map(
+                    (e) => [Number(e[0]), e[1]] as [number, string]
+                  );
+                })
+              )[1]
+            ) {
+              showSnackbar(
+                'Could not add alternate - too many possible solutions specified!'
+              );
+              return Promise.resolve();
+            }
             const act: AddAlternateAction = {
               type: 'ADDALT',
               alternate: alt,

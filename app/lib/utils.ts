@@ -110,11 +110,18 @@ export function isMetaSolution(
   return false;
 }
 
+const MAX_SOLUTIONS = 200;
+/* Given the answer key and alts return an array of all possible solutions.
+ *
+ * When alts are non-overlapping the number of possible solutions can explode.
+ * We cap the number of possibilities and return a flag indicating if we reached
+ * the cap. The UI can use that flag to warn / disable adding more alts. */
 export function allSolutions(
   answer: string[],
   alts: [index: number, value: string][][]
-): NonEmptyArray<string[]> {
+): [NonEmptyArray<string[]>, boolean] {
   const combos: NonEmptyArray<[index: number, value: string][]> = [[]];
+  let reachedLimit = false;
 
   for (const alt of alts) {
     for (const combo of [...combos]) {
@@ -130,7 +137,14 @@ export function allSolutions(
         const newCombo = [...combo, ...alt];
         const uniq = [...new Map(newCombo.map((v) => [v[0], v])).values()];
         combos.push(uniq);
+        if (combos.length >= MAX_SOLUTIONS) {
+          reachedLimit = true;
+          break;
+        }
       }
+    }
+    if (reachedLimit) {
+      break;
     }
   }
 
@@ -143,7 +157,7 @@ export function allSolutions(
   }
 
   const [head, ...rest] = combos;
-  return [comboToSoln(head), ...rest.map(comboToSoln)];
+  return [[comboToSoln(head), ...rest.map(comboToSoln)], reachedLimit];
 }
 
 export function checkGrid(

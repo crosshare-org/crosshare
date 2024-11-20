@@ -390,7 +390,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   );
   const clueMap = getEntryToClueMap(
     grid,
-    allSolutions(fromDB.grid, fromDB.alternateSolutions)
+    allSolutions(fromDB.grid, fromDB.alternateSolutions)[0]
   );
   const puzzle: PuzzleResultWithAugmentedComments = {
     ...fromDB,

@@ -27,7 +27,7 @@ test('check closest alt', () => {
           ],
           [[0, 'A']],
         ]
-      )
+      )[0]
     )
   ).toMatchInlineSnapshot(`
     [
@@ -49,7 +49,7 @@ test('check closest alt', () => {
           ],
           [[0, 'A']],
         ]
-      )
+      )[0]
     )
   ).toMatchInlineSnapshot(`
     [
@@ -74,7 +74,7 @@ test('check closest alt', () => {
             [1, 'B'],
           ],
         ]
-      )
+      )[0]
     )
   ).toMatchInlineSnapshot(`
     [
@@ -99,7 +99,7 @@ test('check closest alt', () => {
             [1, 'G'],
           ],
         ]
-      )
+      )[0]
     )
   ).toMatchInlineSnapshot(`
     [
@@ -138,7 +138,7 @@ test('check without alt', () => {
     revealedCells: new Set(),
     wrongCells: new Set(),
     grid,
-    solutions: allSolutions(dbpuz.g, []),
+    solutions: allSolutions(dbpuz.g, [])[0],
     cellsIterationCount: [],
     cellsEverMarkedWrong: new Set(),
     cellsUpdatedAt: [],
@@ -187,7 +187,7 @@ test('check with alt', () => {
     revealedCells: new Set(),
     wrongCells: new Set(),
     grid,
-    solutions: allSolutions(dbpuz.g, [[[0, 'M']]]),
+    solutions: allSolutions(dbpuz.g, [[[0, 'M']]])[0],
     cellsIterationCount: [],
     cellsEverMarkedWrong: new Set(),
     cellsUpdatedAt: [],
