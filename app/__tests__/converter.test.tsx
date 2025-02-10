@@ -8,7 +8,7 @@ import { DBPuzzleT } from '../lib/dbtypes.js';
 import { Timestamp } from '../lib/timestamp.js';
 import { PuzzleInProgressStrictT } from '../lib/types.js';
 import { fromCells } from '../lib/viewableGrid.js';
-import { getClueProps } from '../reducers/reducer.js';
+import { getClueProps } from '../reducers/builderReducer.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -118,11 +118,13 @@ cases(
     if (!loaded) {
       throw new Error('BAD');
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const simplifiedClues = Object.fromEntries(
       Object.entries(loaded.clues).map(([entry, clues]) =>
         clues.length === 1 && clues[0] ? [entry, clues[0]] : [entry, clues]
       )
     );
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     expect({ ...loaded, clues: simplifiedClues }).toMatchSnapshot();
   },
   CASES
