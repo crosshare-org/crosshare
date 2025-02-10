@@ -88,6 +88,11 @@
           "source": "/pending/:id",
           "destination": "/crosswords/:id",
           "type": 301
+        },
+        {
+          "source": "**/crosswords/*/*/**",
+          "destination": "/",
+          "type": 301
         }
       ]
     },
@@ -151,6 +156,11 @@
         {
           "source": "/categories/dailymini",
           "destination": "/dailyminis",
+          "type": 301
+        },
+        {
+          "source": "**/crosswords/*/*/**",
+          "destination": "/",
           "type": 301
         }
       ]
