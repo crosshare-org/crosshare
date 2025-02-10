@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`test .puz import 2016-1-5-JosephCrosswords 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ALIST": "Celeb roster",
     "ALLEN": "Patriot Ethan",
     "ATONE": "Make amends",
@@ -54,7 +54,7 @@ Object {
     "VICTORYLAPS": "Winner's celebratory circuit",
     "VICTORYSIGN": "Churchill trademark",
   },
-  "grid": Array [
+  "grid": [
     "H",
     "A",
     "U",
@@ -201,7 +201,7 @@ Object {
   ],
   "height": 13,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "Joseph Crosswords, Jan 5, 2016",
   "width": 11,
@@ -209,8 +209,8 @@ Object {
 `;
 
 exports[`test .puz import 2016-1-5-ShefferCrosswords 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "AAS": "TV remote batteries",
     "ADES": "Lime coolers",
     "AIDES": "Helpers",
@@ -278,7 +278,7 @@ Object {
     "YAPS": "Talks on and on",
     "YELLS": "Hollers",
   },
-  "grid": Array [
+  "grid": [
     "E",
     "L",
     "B",
@@ -451,7 +451,7 @@ Object {
   ],
   "height": 13,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "Sheffer Crosswords, Jan 5, 2016",
   "width": 13,
@@ -459,18 +459,18 @@ Object {
 `;
 
 exports[`test .puz import 2016-1-5-USAToday 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ACE": "Royal flush card",
     "ACNE": "Facial breakout",
     "ADD": "Word heard in math class",
     "ADO": "Commotion",
     "AGE": "Historic time",
     "AIDE": "Candy striper, e.g.",
-    "ALEE": "\\"Hard ___!\\" (ship command)",
+    "ALEE": ""Hard ___!" (ship command)",
     "APACE": "At a good clip",
-    "ASAP": "\\"I need it now!\\" initials",
-    "ASTOR": "Mary of \\"The Maltese Falcon\\"",
+    "ASAP": ""I need it now!" initials",
+    "ASTOR": "Mary of "The Maltese Falcon"",
     "BEDSIDE": "Alarm clock's place",
     "BOAR": "Tusked pig",
     "BONED": "___ up on (studied)",
@@ -481,9 +481,9 @@ Object {
     "DOME": "Round roof",
     "DONEE": "Heart recipient, e.g.",
     "EDIT": "Abridge",
-    "EGGED": "Provoked (with \\"on\\")",
+    "EGGED": "Provoked (with "on")",
     "EPODE": "Form of lyric poem",
-    "FORTH": "With \\"with,\\" pronto",
+    "FORTH": "With "with," pronto",
     "FUNK": "Dejected mood",
     "HANDEDOVER": "Ceded",
     "IDEA": "Matter for the gray matter",
@@ -497,7 +497,7 @@ Object {
     "NEO": "Keanu's role in three films",
     "NOVA": "Pulsating 64-Across",
     "ONCE": "Way less than thrice",
-    "OOH": "\\"Aah!\\" accompaniment",
+    "OOH": ""Aah!" accompaniment",
     "ORCA": "Killer whale of film",
     "PINTS": "Ale measures",
     "PITAS": "Bread pockets",
@@ -527,7 +527,7 @@ Object {
     "TACO": "Meat-filled tortilla",
     "TALK": "Radio format",
     "TARO": "Tropical starch",
-    "TEAR": "Raze (with \\"down\\")",
+    "TEAR": "Raze (with "down")",
     "TEENIER": "More petite",
     "TEHEE": "Little giggle",
     "TICKER": "Heart, slangily",
@@ -540,7 +540,7 @@ Object {
     "URNS": "Coffeehouse items",
     "UTAH": "Where Bountiful is",
   },
-  "grid": Array [
+  "grid": [
     "R",
     "E",
     "H",
@@ -769,7 +769,7 @@ Object {
   ],
   "height": 15,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "MOVE ON",
   "width": 15,
@@ -777,8 +777,8 @@ Object {
 `;
 
 exports[`test .puz import 2016-1-5-UniversalCrossword 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ABETS": "Assists in a crime",
     "ABLE": "Having sufficient skill",
     "ACHE": "Feel sore",
@@ -786,14 +786,14 @@ Object {
     "ADO": "Rapid bustling movement",
     "ALEE": "Downwind, nautically",
     "ALLY": "Country friendly to yours",
-    "ALSO": "\\"And another thing ...\\"",
+    "ALSO": ""And another thing ..."",
     "ASH": "Baseball bat material",
     "ATLAS": "Book with maps",
     "AWING": "On ___ and a prayer",
     "BEYS": "Onetime Turkish governors",
     "BOA": "Long scarf",
     "CATENAS": "Chains of connected ideas or passages",
-    "CIAO": "\\"See you, signore\\"",
+    "CIAO": ""See you, signore"",
     "COIF": "Salon work",
     "COMIC": "Laughable",
     "CUBE": "Die",
@@ -807,9 +807,9 @@ Object {
     "EONS": "Ages upon ages",
     "ERA": "Time span",
     "ESSAY": "English-class assignment",
-    "FAB": "\\"Incredible!\\" to Beatle fans",
+    "FAB": ""Incredible!" to Beatle fans",
     "FULLEXPLANATION": "Complete account",
-    "GENE": "Hackman of \\"Hoosiers\\"",
+    "GENE": "Hackman of "Hoosiers"",
     "GINS": "Cotton-pickin' contraptions",
     "HALFTHEDISTANCE": "Radius, to diameter",
     "HARD": "Type of candy or cider",
@@ -832,7 +832,7 @@ Object {
     "ORCS": "Middle-Earth menaces",
     "PANE": "Window square",
     "PARE": "Strip a fruit",
-    "ROY": "Scheider of \\"Jaws\\"",
+    "ROY": "Scheider of "Jaws"",
     "SCREAM": "Roller coaster reaction",
     "SEROW": "Asian goatlike animal",
     "SHOWY": "Grandiose or flashy",
@@ -856,7 +856,7 @@ Object {
     "TRESTLES": "Railroad bridges",
     "TSAR": "Bygone despot",
   },
-  "grid": Array [
+  "grid": [
     "A",
     "L",
     "S",
@@ -1085,7 +1085,7 @@ Object {
   ],
   "height": 15,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "GET YOUR FILL",
   "width": 15,
@@ -1093,13 +1093,13 @@ Object {
 `;
 
 exports[`test .puz import 2016-1-31-LosAngelesTimes 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "AARE": "Rhein tributary",
     "ACTSTHEPART": "Does as expected",
     "AFRO": "Hendrix hairdo",
-    "ALFALFAS": "\\"__ Aunt\\": Little Rascals short",
-    "ALONSO": "King in \\"The Tempest\\"",
+    "ALFALFAS": ""__ Aunt": Little Rascals short",
+    "ALONSO": "King in "The Tempest"",
     "ANY": "Undefined number",
     "APED": "Mimicked",
     "ARES": "Olympic hawk",
@@ -1109,7 +1109,7 @@ Object {
     "ARRAS": "Polonius hid behind one",
     "ARTDIRECTOR": "Production design team member",
     "ASEC": "Time to hang on?",
-    "ASLAN": "\\"The Lord of the whole wood,\\" per Mr. Beaver",
+    "ASLAN": ""The Lord of the whole wood," per Mr. Beaver",
     "ATATILT": "Leaning",
     "ATRA": "Razor brand",
     "AVIS": "Alamo competitor",
@@ -1132,9 +1132,9 @@ Object {
     "DOCTORATE": "High degree",
     "DOE": "Forest female",
     "DRAFTS": "They may be rough",
-    "ELAL": "Hebrew for \\"skyward\\"",
+    "ELAL": "Hebrew for "skyward"",
     "EMMA": "Mr. Knightley's wife, in the novel of the same name",
-    "ERDRICH": "Louise __, National Book Award winner for \\"The Round House\\"",
+    "ERDRICH": "Louise __, National Book Award winner for "The Round House"",
     "ETC": "List-limiting letters",
     "EVERANDANON": "Occasionally",
     "EWE": "Farm girl",
@@ -1151,13 +1151,13 @@ Object {
     "HIHO": "Greeting from Kermit",
     "IER": "Suffix with front",
     "IFN": "Dogpatch conditional",
-    "IFSO": "\\"Assuming that's true ... \\"",
+    "IFSO": ""Assuming that's true ... "",
     "INBETA": "Still being tested, as software",
     "INCA": "Empire with provinces called suyu",
     "IRENE": "Actress Ryan",
     "IRS": "It receives many returns: Abbr.",
-    "IRWINSHAW": "\\"The Young Lions\\" novelist",
-    "ISNO": "\\"There __ darkness but ignorance\\": \\"Twelfth Night\\"",
+    "IRWINSHAW": ""The Young Lions" novelist",
+    "ISNO": ""There __ darkness but ignorance": "Twelfth Night"",
     "KIR": "Cassis aperitif",
     "LETSAT": "Sics on",
     "LEX": "Superman nemesis Luthor",
@@ -1165,7 +1165,7 @@ Object {
     "LILA": "Country singer McCann",
     "LIMOS": "Rides to the prom",
     "MARES": "Farm girls",
-    "MASTEROF": "With \\"a,\\" eminently skilled at, as disguise",
+    "MASTEROF": "With "a," eminently skilled at, as disguise",
     "MED": "__ center",
     "MOHR": "Comic Jay",
     "NANA": "Gram",
@@ -1173,18 +1173,18 @@ Object {
     "NEAR": "Close",
     "NFL": "32-team gp.",
     "NRA": "Food service trade org.",
-    "NYET": "\\"My eye!\\" in Minsk",
+    "NYET": ""My eye!" in Minsk",
     "OAT": "Meal opener",
     "OFFCENTER": "Misaligned ... or, literally, a perfectly aligned aspect of seven answers in this puzzle",
     "OFTEN": "Quite a bit",
     "OHSO": "Extremely",
     "OHYEAH": "Common rejoinder in one-upmanship",
     "OILER": "NFL Titan, before 1999",
-    "OLAN": "\\"The Good Earth\\" wife",
+    "OLAN": ""The Good Earth" wife",
     "ONE": "Teen's opening number?",
     "OPIE": "Andy's son",
     "ORCAS": "Black-and-white swimmers",
-    "ORNOT": "\\"But I could be wrong\\"",
+    "ORNOT": ""But I could be wrong"",
     "ORO": "Granada gold",
     "OSTRACISM": "Exclusion",
     "OTAY": "Our Gang assent",
@@ -1210,10 +1210,10 @@ Object {
     "SMA": "Wee",
     "SMIRNOFFVODKA": "Red Label spirits",
     "SNIDE": "Not nice at all",
-    "SOHOWAREYOU": "\\"But enough about me\\" follower",
+    "SOHOWAREYOU": ""But enough about me" follower",
     "SOR": "49-Down counterpart: Abbr.",
     "SPARETIRE": "External Jeep attachment",
-    "STAMOS": "\\"Full House\\" actor",
+    "STAMOS": ""Full House" actor",
     "STE": "Fr. holy woman",
     "SWAT": "Crisis team acronym",
     "SWEATSHIRTS": "Resort area souvenirs",
@@ -1238,7 +1238,7 @@ Object {
     "WAR": "Major conflict",
     "WVA": "Mountain State: Abbr.",
   },
-  "grid": Array [
+  "grid": [
     "A",
     "S",
     "E",
@@ -1683,16 +1683,16 @@ Object {
   ],
   "height": 21,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
-  "title": "LA Times, Sun, Jan 31, 2016 - \\"Misaligned\\"",
+  "title": "LA Times, Sun, Jan 31, 2016 - "Misaligned"",
   "width": 21,
 }
 `;
 
 exports[`test .puz import 2016-1-31-Newsday 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ABLY": "With proficiency",
     "ABOW": "Take __ (acknowledge applause)",
     "ACMES": "Ultimate heights",
@@ -1834,7 +1834,7 @@ Object {
     "ZEROG": "Space-shot state, for short",
     "ZOOEY": "Actress Deschanel",
   },
-  "grid": Array [
+  "grid": [
     "S",
     "I",
     "N",
@@ -2279,7 +2279,7 @@ Object {
   ],
   "height": 21,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "REENACTMENTS: Real-people Oscar roles",
   "width": 21,
@@ -2287,17 +2287,17 @@ Object {
 `;
 
 exports[`test .puz import FamilyCrossword 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ADE": "Citrus beverage suffix",
     "AER": "Prefix indicating oxygen or gas",
-    "AGO": "\\"A long time ___ in a galaxy...\\"",
+    "AGO": ""A long time ___ in a galaxy..."",
     "ALBERT": "*January 9 sibling",
     "ALERTLY": "In a mentally perceptive way",
     "ALF": "Furry E.T. in an 80s show",
     "ALICE": "*July 1 sibling",
     "AND": "Chutes-Ladders link",
-    "ANDONLY": "\\"If ___ if...\\" (2 wds)",
+    "ANDONLY": ""If ___ if..." (2 wds)",
     "ANDRE": "Tennis player Agassi",
     "ANN": "Raggedy or Barbara",
     "AOE": "Game attack hitting multiple targets (abbr.)",
@@ -2364,9 +2364,9 @@ Object {
     "WES": "Director Anderson",
     "WET": "Like fresh paint",
     "WILLIAM": "*September 24 sibling",
-    "YES": "Response other than \\"Go Fish\\"?",
+    "YES": "Response other than "Go Fish"?",
   },
-  "grid": Array [
+  "grid": [
     "F",
     "R",
     "A",
@@ -2595,7 +2595,7 @@ Object {
   ],
   "height": 15,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "Family",
   "width": 15,
@@ -2603,30 +2603,30 @@ Object {
 `;
 
 exports[`test .puz import Feb0308_oddnumbering 1`] = `
-Object {
-  "clues": Object {
-    "AANDE": "\\"Biography\\" network",
+{
+  "clues": {
+    "AANDE": ""Biography" network",
     "ACC": "Blue Devils' and Tigers' org.",
-    "AGOGO": "Disco term meaning \\"galore\\"",
+    "AGOGO": "Disco term meaning "galore"",
     "AILEY": "Dancer Alvin",
     "ALETA": "Prince Valiant's wife",
-    "ALLA": "\\"Enough!\\"",
+    "ALLA": ""Enough!"",
     "ALREADY": "-",
     "AMARYLLIS": "Flower also called a naked lady",
     "ANE": "Hydrocarbon suffix",
-    "ARTURO": "Hero of Bellini's \\"I Puritani\\"",
-    "ATLANTA": "Setting for \\"Driving Miss Daisy\\"",
+    "ARTURO": "Hero of Bellini's "I Puritani"",
+    "ATLANTA": "Setting for "Driving Miss Daisy"",
     "AUK": "Arctic diver",
     "AWAIT": "Anticipate",
     "CAKES": "-",
-    "CARRIE": "___ Bradshaw, \\"Sex and the City\\" role",
+    "CARRIE": "___ Bradshaw, "Sex and the City" role",
     "CIMOC": "-",
     "CIR": "Geom. figure",
     "CLAN": "Family",
     "CLEANSE": "Deterge",
     "COOL": "Collected",
     "COURTESAN": "Mistress",
-    "DAY": "Word before and after \\"after\\"",
+    "DAY": "Word before and after "after"",
     "DEADON": "Totally accurate",
     "DEEPS": "-",
     "DELI": "Hero maker",
@@ -2635,8 +2635,8 @@ Object {
     "DINE": "Feast",
     "DLEIF": "-",
     "DOONE": "Literature's Lorna",
-    "EARHART": "Subject of the book \\"Last Flight\\"",
-    "EASEONT": "Popular song from Broadway's \\"The Wiz\\"",
+    "EARHART": "Subject of the book "Last Flight"",
+    "EASEONT": "Popular song from Broadway's "The Wiz"",
     "EDASNER": "Mary Tyler Moore co-star",
     "EHUD": "Israeli P.M. Olmert",
     "ELEONORA": "Autobiographical short story by Edgar Allan Poe",
@@ -2655,10 +2655,10 @@ Object {
     "GREMLIN": "Imp",
     "HANSOM": "Two-wheeled covered carriage",
     "HARDLOOK": "Careful consideration",
-    "HELLO": "\\"___, gorgeous!\\" (Fanny Brice's comment to herself when looking in the mirror)",
+    "HELLO": ""___, gorgeous!" (Fanny Brice's comment to herself when looking in the mirror)",
     "HTTP": "U.R.L. lead-in",
     "IDEAS": "They may be funny or bright",
-    "IMNO": "\\"___ Angel,\\" 1933 film",
+    "IMNO": ""___ Angel," 1933 film",
     "INLAY": "Dental filling",
     "JEER": "Raspberry",
     "JOININ": "Become part of",
@@ -2707,7 +2707,7 @@ Object {
     "SAILS": "Breezes (through)",
     "SALES": "Business position",
     "SALINES": "Contact lens solutions",
-    "SATIE": "\\"Socrate\\" composer",
+    "SATIE": ""Socrate" composer",
     "SEE": "Call, or call on",
     "SELMA": "Civil rights march site, 1965",
     "SETTINGS": "Establishing a business",
@@ -2732,10 +2732,10 @@ Object {
     "TEEF": "-",
     "THEROAD": "-",
     "TIECLIPS": "Men's fashion accessories",
-    "TIS": "Third word of \\"America\\"",
-    "TOES": "The \\"ten\\" in \\"hang ten\\"",
+    "TIS": "Third word of "America"",
+    "TOES": "The "ten" in "hang ten"",
     "TOILETS": "Facilities",
-    "TOMEI": "Marisa of \\"What Women Want\\"",
+    "TOMEI": "Marisa of "What Women Want"",
     "TRIAD": "Wynken, Blynken and Nod, e.g.",
     "TWOF": "Bad dancer's handicap",
     "TWOHEADS": "They're better than one",
@@ -2746,7 +2746,7 @@ Object {
     "WING": "-",
     "XMEN": "Magneto's adversaries, in comic books",
   },
-  "grid": Array [
+  "grid": [
     ".",
     "L",
     "O",
@@ -3191,7 +3191,7 @@ Object {
   ],
   "height": 21,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "NY Times, Sun, Feb 03, 2008  JUST FOLLOW DIRECTIONS",
   "width": 21,
@@ -3199,14 +3199,14 @@ Object {
 `;
 
 exports[`test .puz import Its_All_Wrong 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ACAI": "Trendy berry (4)",
-    "ACCEDE": "Accept, with \\"to\\" (6)",
+    "ACCEDE": "Accept, with "to" (6)",
     "ACE": "Exceptional aviator (3)",
     "ALE": "The A of IPA (3)",
     "AMAZE": "Astound (5)",
-    "AMERICA": "Actress Ferrera of \\"Superstore\\" (7)",
+    "AMERICA": "Actress Ferrera of "Superstore" (7)",
     "APE": "Imitate (3)",
     "ART": "Word after clip or high (3)",
     "ASTRAL": "___  projection (fantasy/sci-fi super power, or a term in esotericism) (6)",
@@ -3229,7 +3229,7 @@ Object {
     "MISSTEPS": "Errors (8)",
     "MIXERS": "Club soda and ginger ale, sometimes (6)",
     "MUTATE": "Metamorphose (6)",
-    "NOW": "\\"Immediately!\\" (3)",
+    "NOW": ""Immediately!" (3)",
     "PACESETTER": "See 33-Down (10)",
     "PEARSHAPED": "(Gone) wonky, like this puzzle! (4-6)",
     "PIG": "Babe or Wilbur (3)",
@@ -3239,13 +3239,13 @@ Object {
     "REVOLUTIONIZED": "Fundamentally transformed (14)",
     "RIDE": "First American woman in space (third overall, after Tereshkova and Savitskaya) (4)",
     "RUNON": "A sentence where you end the sentence  and the next sentence gloms on and it just keeps going (like this one). (3-2)",
-    "SARAH": "\\"The Paying Guests\\" author Waters (5)",
+    "SARAH": ""The Paying Guests" author Waters (5)",
     "SAVER": "One whose inclination is to invest (5)",
     "SMITTEN": "Head over heals (7)",
     "STYLIZES": "Puts some spin on, in a way (8)",
     "STYX": "River crossed by Charon (4)",
     "TACOS": "Folded food (5)",
-    "TAO": "\\"The ___ of Pooh\\" (book by Benjamin Hoff) (3)",
+    "TAO": ""The ___ of Pooh" (book by Benjamin Hoff) (3)",
     "TOFU": "Protein source for a vegan (4)",
     "TOOTH": "Canine or molar (5)",
     "TOTES": "Some NPR giveaways (5)",
@@ -3254,7 +3254,7 @@ Object {
     "UNO": "Popular card game or a word said during it (3)",
     "ZITS": "Stereotypical teenage woes (I'm not sure why we as a society refuse to acknowledge that adults can still suffer from these, but I'm here to confirm that they can) (4)",
   },
-  "grid": Array [
+  "grid": [
     ".",
     ".",
     ".",
@@ -3497,7 +3497,7 @@ Object {
     ".",
   ],
   "height": 16,
-  "hidden": Array [
+  "hidden": [
     0,
     1,
     2,
@@ -3587,7 +3587,7 @@ Object {
     239,
   ],
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": "Hopefully it's not actually all wrong. Anyway, this is a test of Crosshare's new feature for unusual grid shapes.",
   "title": "It's All Wrong!",
   "width": 15,
@@ -3595,9 +3595,9 @@ Object {
 `;
 
 exports[`test .puz import av110622 1`] = `
-Object {
-  "clues": Object {
-    "AHH": "\\"That feels amazing ...\\"",
+{
+  "clues": {
+    "AHH": ""That feels amazing ..."",
     "ANEW": "From the top",
     "APPLE": "iCloud company",
     "ARMHOLE": "Top opening",
@@ -3611,7 +3611,7 @@ Object {
     "DOG": "Precinct animal",
     "EEN": "Day's end, to a poet",
     "ELAINE": "Jerry's fictional ex",
-    "ELISA": "Actress Donovan of \\"Clueless\\"",
+    "ELISA": "Actress Donovan of "Clueless"",
     "EMMET": "Irish revolutionary Robert",
     "ENEMY": "The FBI, to the mob",
     "EON": "A billion years",
@@ -3621,13 +3621,13 @@ Object {
     "HELLSKITTEN": "Cute animal fawned over by murderers, whoremongers, idolaters, and liars?",
     "HEX": "Bad spell",
     "HOJOS": "Erstwhile roadside eateries, familiarly",
-    "ICET": "\\"Fin\\" Tutuola portrayer on \\"Law & Order: SVU\\"",
+    "ICET": ""Fin" Tutuola portrayer on "Law & Order: SVU"",
     "IHOP": "Chain with sausage links",
     "IRK": "Piss off",
-    "ISAN": "\\"This ___ outrage!\\"",
-    "ISAW": "\\"___ the best minds of my generation ...\\"",
+    "ISAN": ""This ___ outrage!"",
+    "ISAW": ""___ the best minds of my generation ..."",
     "KOTEX": "Big name in pads",
-    "LAME": "Palinesque prefix before \\"stream\\"",
+    "LAME": "Palinesque prefix before "stream"",
     "LAT": "Delt neighbor",
     "LBS": "Mass units: Abbr.",
     "LEIA": "'70s-'80s princess",
@@ -3646,8 +3646,8 @@ Object {
     "PLEA": "Result of some court bargaining",
     "PSAS": "Non-commercial TV spots",
     "QBS": "Valuable fantasy football picks, for short",
-    "QUIT": "\\"That's really annoying!\\"",
-    "RIGGS": "Gibson's \\"Lethal Weapon\\" role",
+    "QUIT": ""That's really annoying!"",
+    "RIGGS": "Gibson's "Lethal Weapon" role",
     "RUNS": "Some charity events",
     "RUSE": "It's a trick",
     "SAGET": "Foul-mouthed comedian Bob",
@@ -3667,8 +3667,8 @@ Object {
     "TRAM": "Theme park transportation",
     "TREKS": "Cannondale alternatives",
     "TRENCHES": "Foxholes",
-    "TRINA": "MC with \\"Still da Baddest\\"",
-    "TROI": "Commander Deanna on \\"Star Trek: The Next Generation\\"",
+    "TRINA": "MC with "Still da Baddest"",
+    "TROI": "Commander Deanna on "Star Trek: The Next Generation"",
     "UAW": "Org. in 2008 negotiations with GM",
     "USSR": "Cold War letters",
     "UTIL": "Monopoly purchase: Abbr.",
@@ -3676,7 +3676,7 @@ Object {
     "VINO": "Trattoria beverage",
     "XXO": "Tic-tac-toe loser",
   },
-  "grid": Array [
+  "grid": [
     "S",
     "A",
     "T",
@@ -3905,7 +3905,7 @@ Object {
   ],
   "height": 15,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "AV Club xword, 6 22 11",
   "width": 15,
@@ -3913,8 +3913,8 @@ Object {
 `;
 
 exports[`test .puz import cs080904 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ACCT": "Money in the bank (abbr.)",
     "ACED": "Passed easily",
     "ACLU": "Censorship-fighting org.",
@@ -3924,7 +3924,7 @@ Object {
     "ALE": "Bath suds?",
     "AMEBA": "Microscope slide creature",
     "AMEN": "Cry from the pews",
-    "AMESS": "\\"Don't make ___\\" (Mom's admonition)",
+    "AMESS": ""Don't make ___" (Mom's admonition)",
     "AMOCO": "British Petroleum acquisition of 1998",
     "AMPERES": "Electrical units",
     "ANKARA": "Capital due north of Cyprus",
@@ -3943,7 +3943,7 @@ Object {
     "COSMICDUST": "Nebula composition",
     "CRASHDIVE": "Submarine's evasive maneuver",
     "CREPES": "Blini cousins",
-    "CULP": "\\"PT 109\\" actor Robert",
+    "CULP": ""PT 109" actor Robert",
     "CUR": "Four-footed lowlife",
     "CYRANO": "Rostand's long-nosed lover",
     "DADDYO": "Title used by hepcats",
@@ -3957,9 +3957,9 @@ Object {
     "FORMAL": "Starchy",
     "FRETS": "Bars on necks",
     "HDTV": "Den luxury, briefly",
-    "HERE": "\\"Present\\"",
-    "IBM": "Co. known as \\"Big Blue\\"",
-    "ICK": "\\"Bleah!\\"",
+    "HERE": ""Present"",
+    "IBM": "Co. known as "Big Blue"",
+    "ICK": ""Bleah!"",
     "IDES": "Mid-month day",
     "IDLE": "Unfounded, as gossip",
     "ITASCA": "Source of the Mississippi",
@@ -3968,13 +3968,13 @@ Object {
     "LIED": "Was inventive, and then some",
     "LII": "Nero's 52",
     "LLAMA": "Andean wool source",
-    "LOOK": "\\"Check this out!\\"",
+    "LOOK": ""Check this out!"",
     "LOVE": "Torch song topic",
     "LYES": "Soapmaking solutions",
     "MARE": "Mule's mother",
     "MEDDLER": "Yenta",
-    "MEIN": "\\"Don't Fence ___\\"",
-    "NEAL": "Patricia of \\"The Fountainhead\\"",
+    "MEIN": ""Don't Fence ___"",
+    "NEAL": "Patricia of "The Fountainhead"",
     "NOM": "René, par exemple",
     "NRA": "Gp. on the range?",
     "ONCUE": "As expected",
@@ -3994,7 +3994,7 @@ Object {
     "UPSET": "Win unexpectedly",
     "VOCAL": "Apt to opine",
   },
-  "grid": Array [
+  "grid": [
     "T",
     "A",
     "P",
@@ -4223,24 +4223,24 @@ Object {
   ],
   "height": 15,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
-  "title": "September 4, 2008 - \\"CD Collection\\"",
+  "title": "September 4, 2008 - "CD Collection"",
   "width": 15,
 }
 `;
 
 exports[`test .puz import hobbyistspam 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ABATE": "Peter out",
     "ABDOMINAL": "Like some six-packs",
     "ADEN": "Port near the Red Sea",
     "ADUE": "Together, in music",
     "AGATE": "Striped quartz",
-    "ALDA": "Tony nominee for \\"Glengarry Glen Ross\\"",
+    "ALDA": "Tony nominee for "Glengarry Glen Ross"",
     "ANAIS": "First name in erotica",
-    "ANDSO": "\\"Thus ...\\"",
+    "ANDSO": ""Thus ..."",
     "ANET": "Without ___ (riskily)",
     "ANIL": "Dye plant",
     "ANTS": "Hill dwellers",
@@ -4257,7 +4257,7 @@ Object {
     "EBON": "Like some keys",
     "EDUCT": "Extracted chemical",
     "EDYS": "Competitor of Ben & Jerry's",
-    "ELAINEMAY": "\\"Ishtar\\" director",
+    "ELAINEMAY": ""Ishtar" director",
     "ERICH": "Filmmaker Von Stroheim",
     "ESA": "That, to Tomás",
     "ESTEE": "Popular women's fragrance",
@@ -4271,9 +4271,9 @@ Object {
     "HOLLYWOOD": "With 12-Down, locale of the 4-Down",
     "ICER": "Bakery employee",
     "IRENE": "Adler who outwitted Sherlock Holmes",
-    "ITSO": "\\"Wishing won't make ___\\"",
+    "ITSO": ""Wishing won't make ___"",
     "LABS": "They might be chocolate",
-    "LARA": "___ Flynn Boyle of \\"Twin Peaks\\"",
+    "LARA": "___ Flynn Boyle of "Twin Peaks"",
     "LASH": "Punishment unit",
     "LEAD": "Detective's need",
     "LIE": "Interrogator's discovery",
@@ -4281,7 +4281,7 @@ Object {
     "LOSANGELES": "City where 32- and 12-Down is found",
     "LOSTARTS": "Illumination of manuscripts, and others",
     "MER": "View from Marseille",
-    "MILAN": "Home of \\"The Last Supper\\"",
+    "MILAN": "Home of "The Last Supper"",
     "MUSTARD": "Yellow squirt?",
     "NEA": "Cultural org.",
     "NOSE": "It may be wrinkled",
@@ -4299,18 +4299,18 @@ Object {
     "ROTE": "You might give a speech by this",
     "SARS": "Headline-making illness of 2002-03",
     "SEEN": "Spotted",
-    "SHES": "Elvis Presley's \\"___ Not You\\"",
+    "SHES": "Elvis Presley's "___ Not You"",
     "SLAM": "Dis",
     "SNEER": "Vile smile",
     "TASTE": "It's often unaccounted for",
     "TOMA": "Tony Musante TV series",
     "TWEE": "___ pop, music genre since the 1980s",
     "VAMPIREBAT": "Nocturnal bloodsucker",
-    "VERA": "Lynn who sang \\"We'll Meet Again\\"",
+    "VERA": "Lynn who sang "We'll Meet Again"",
     "WALKOFFAME": "Theme of this puzzle",
-    "WAR": "\\"That mad game the world so loves to play,\\" to Jonathan Swift",
+    "WAR": ""That mad game the world so loves to play," to Jonathan Swift",
   },
-  "grid": Array [
+  "grid": [
     "G",
     "R",
     "E",
@@ -4539,7 +4539,7 @@ Object {
   ],
   "height": 15,
   "highlight": "circle",
-  "highlighted": Array [
+  "highlighted": [
     7,
     47,
     56,
@@ -4553,8 +4553,8 @@ Object {
 `;
 
 exports[`test .puz import incognito 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ABASE": "Demean",
     "ALE": "Stout alternative ",
     "AMIGO": "Friend",
@@ -4630,7 +4630,7 @@ Object {
     "YARDAGE": "Passing stat",
     "YETI": "Cryptozoology topic",
   },
-  "grid": Array [
+  "grid": [
     "C",
     "Y",
     "B",
@@ -4859,7 +4859,7 @@ Object {
   ],
   "height": 15,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "Incognito (final)",
   "width": 15,
@@ -4867,8 +4867,8 @@ Object {
 `;
 
 exports[`test .puz import nyt_partlyfilled 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "AESOP": "Fable writer",
     "ALE": "Schooner fill",
     "ALONE": "Unaccompanied",
@@ -4877,9 +4877,9 @@ Object {
     "ATOP": "Perched on",
     "BOT": "Droid",
     "CIRC": "No. on which a magazine's ad rates are based",
-    "CITY": "The \\"C\\" in N.Y.C.",
+    "CITY": "The "C" in N.Y.C.",
     "COD": "Fish after which a cape is named",
-    "COMIC": "\\"Luann\\" or \\"Blondie\\"",
+    "COMIC": ""Luann" or "Blondie"",
     "COO": "Pigeon's sound",
     "DIO": "God, in Italy",
     "EARL": "___ of Sandwich",
@@ -4892,11 +4892,11 @@ Object {
     "EPOCH": "Geologic time unit",
     "ETE": "French summer",
     "EXPOS": "Bygone Montreal ball club",
-    "FESS": "Admit (to), with \\"up\\"",
+    "FESS": "Admit (to), with "up"",
     "FLAG": "Stars and Stripes, e.g.",
     "FOCI": "Places where lines meet",
     "FRO": "Black power hairdo, for short",
-    "GLADTO": "\\"My pleasure\\"",
+    "GLADTO": ""My pleasure"",
     "GLIB": "Talking maybe a little too fast",
     "GOTON": "Mounted, as a horse",
     "INHALF": "Divided 50/50",
@@ -4925,14 +4925,14 @@ Object {
     "RAMP": "Interstate entrance or exit",
     "ROW": "Column's counterpart",
     "SADSONG": "Dirge",
-    "SAGA": "\\"Roots,\\" for one",
+    "SAGA": ""Roots," for one",
     "SALUT": "French greeting",
     "SEA": "Bounding main",
     "SHAH": "Deposed Iranian",
     "SITONTHEFENCE": "Be undecided",
     "SOAP": "Suds maker",
     "SPADE": "Black card",
-    "SPEAKOFTHEDEVIL": "\\"Here he is now!\\"",
+    "SPEAKOFTHEDEVIL": ""Here he is now!"",
     "STAYTHECOURSE": "Persist to completion",
     "TEAS": "Twinings selections",
     "TELEX": "Old message system",
@@ -4948,7 +4948,7 @@ Object {
     "YOGA": "Quiet exercise",
     "YORE": "Knight time?",
   },
-  "grid": Array [
+  "grid": [
     "F",
     "L",
     "A",
@@ -5177,7 +5177,7 @@ Object {
   ],
   "height": 15,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "NY Times, Mon, Mar 10, 2008",
   "width": 15,
@@ -5185,16 +5185,16 @@ Object {
 `;
 
 exports[`test .puz import nyt_rebus_with_notes_and_shape 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ABATE": "Peter out",
     "ABDOMINAL": "Like some six-packs",
     "ADEN": "Port near the Red Sea",
     "ADUE": "Together, in music",
     "AGATE": "Striped quartz",
-    "ALDA": "Tony nominee for \\"Glengarry Glen Ross\\"",
+    "ALDA": "Tony nominee for "Glengarry Glen Ross"",
     "ANAIS": "First name in erotica",
-    "ANDSO": "\\"Thus ...\\"",
+    "ANDSO": ""Thus ..."",
     "ANET": "Without ___ (riskily)",
     "ANIL": "Dye plant",
     "ANTS": "Hill dwellers",
@@ -5211,7 +5211,7 @@ Object {
     "EBON": "Like some keys",
     "EDUCT": "Extracted chemical",
     "EDYS": "Competitor of Ben & Jerry's",
-    "ELAINEMAY": "\\"Ishtar\\" director",
+    "ELAINEMAY": ""Ishtar" director",
     "ERICH": "Filmmaker Von Stroheim",
     "ESA": "That, to Tomás",
     "ESTEE": "Popular women's fragrance",
@@ -5225,9 +5225,9 @@ Object {
     "HOLLYWOOD": "With 12-Down, locale of the 4-Down",
     "ICER": "Bakery employee",
     "IRENE": "Adler who outwitted Sherlock Holmes",
-    "ITSO": "\\"Wishing won't make ___\\"",
+    "ITSO": ""Wishing won't make ___"",
     "LABS": "They might be chocolate",
-    "LARA": "___ Flynn Boyle of \\"Twin Peaks\\"",
+    "LARA": "___ Flynn Boyle of "Twin Peaks"",
     "LASH": "Punishment unit",
     "LEAD": "Detective's need",
     "LIE": "Interrogator's discovery",
@@ -5235,7 +5235,7 @@ Object {
     "LOSANGELES": "City where 32- and 12-Down is found",
     "LOSTARTS": "Illumination of manuscripts, and others",
     "MER": "View from Marseille",
-    "MILAN": "Home of \\"The Last Supper\\"",
+    "MILAN": "Home of "The Last Supper"",
     "MUSTARD": "Yellow squirt?",
     "NEA": "Cultural org.",
     "NOSE": "It may be wrinkled",
@@ -5253,18 +5253,18 @@ Object {
     "ROTE": "You might give a speech by this",
     "SARS": "Headline-making illness of 2002-03",
     "SEEN": "Spotted",
-    "SHES": "Elvis Presley's \\"___ Not You\\"",
+    "SHES": "Elvis Presley's "___ Not You"",
     "SLAM": "Dis",
     "SNEER": "Vile smile",
     "TASTE": "It's often unaccounted for",
     "TOMA": "Tony Musante TV series",
     "TWEE": "___ pop, music genre since the 1980s",
     "VAMPIREBAT": "Nocturnal bloodsucker",
-    "VERA": "Lynn who sang \\"We'll Meet Again\\"",
+    "VERA": "Lynn who sang "We'll Meet Again"",
     "WALKOFFAME": "Theme of this puzzle",
-    "WAR": "\\"That mad game the world so loves to play,\\" to Jonathan Swift",
+    "WAR": ""That mad game the world so loves to play," to Jonathan Swift",
   },
-  "grid": Array [
+  "grid": [
     "G",
     "R",
     "E",
@@ -5493,7 +5493,7 @@ Object {
   ],
   "height": 15,
   "highlight": "circle",
-  "highlighted": Array [
+  "highlighted": [
     7,
     47,
     56,
@@ -5508,8 +5508,8 @@ All the daily crosswords this week, Monday through Saturday, have been contribut
 `;
 
 exports[`test .puz import nyt_with_shape 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ACCEPT": "Honor",
     "ACU": "Prefix with pressure",
     "ALONE": "Single-handedly",
@@ -5526,7 +5526,7 @@ Object {
     "BLING": "Gaudy jewelry, in slang",
     "BOXER": "Ring figure",
     "BRAVA": "La Scala cheer",
-    "BRR": "\\"It's c-c-c-cold!\\"",
+    "BRR": ""It's c-c-c-cold!"",
     "BTEAM": "Second string",
     "CHINESEMUSTARD": "Egg roll topping, perhaps",
     "COE": "Iowa college",
@@ -5537,8 +5537,8 @@ Object {
     "DID": "Impersonated",
     "DOLLOP": "Spoonful, say",
     "DOONE": "Blackmore's Lorna",
-    "DUANEEDDY": "\\"Forty Miles of Bad Road\\" guitarist",
-    "DUEL": "Climactic scene in \\"Hamlet\\"",
+    "DUANEEDDY": ""Forty Miles of Bad Road" guitarist",
+    "DUEL": "Climactic scene in "Hamlet"",
     "EDICT": "___ of Nantes, 1598",
     "ELM": "___ beetle",
     "ENTIRE": "Unabridged",
@@ -5551,7 +5551,7 @@ Object {
     "GLOOM": "Depression",
     "GUYFAWKESNIGHT": "November 5, in Britain",
     "HAIFA": "Port near Nazareth",
-    "HAST": "\\"And ___ thou slain the Jabberwock?\\": Carroll",
+    "HAST": ""And ___ thou slain the Jabberwock?": Carroll",
     "HTS": "Abbr. after Cleveland or Brooklyn",
     "ICY": "Standoffish",
     "IDA": "Sun Valley locale: Abbr.",
@@ -5559,27 +5559,27 @@ Object {
     "INTEL": "Purveyor of chips",
     "ISOLA": "Capri, e.g., to a Capriote",
     "ITE": "Resident: Suffix",
-    "ITHE": "Spillane's \\"___ Jury\\"",
+    "ITHE": "Spillane's "___ Jury"",
     "JAPES": "Mocks",
     "JUST": "Fair",
     "KIM": "Kipling novel",
     "LAMBDA": "Leader of Lesbos?",
     "LAS": "Part of U.N.L.V.",
-    "LAURA": "\\"La Gioconda\\" mezzo-soprano",
+    "LAURA": ""La Gioconda" mezzo-soprano",
     "LGS": "Some offensive linemen: Abbr.",
     "LIMAOHIO": "City 70 miles SSW of Toledo",
     "MACRO": "Prefix with economics",
     "MAXI": "Start of something big?",
-    "MDI": "Year that Michelangelo began work on \\"David\\"",
+    "MDI": "Year that Michelangelo began work on "David"",
     "MIR": "Humans last lived there in 2000",
     "MNOP": "Alphabet quartet",
     "MOB": "Treat like a hero, maybe",
-    "NARY": "Quaint \\"not\\"",
+    "NARY": "Quaint "not"",
     "NEAR": "Within striking distance",
     "NEE": "Once known as",
     "NET": "Invoice amount",
     "NONET": "Large chamber group",
-    "NOUSE": "\\"Don't even bother\\"",
+    "NOUSE": ""Don't even bother"",
     "OBOLS": "Ancient Greek coins",
     "OBTAIN": "Procure",
     "OBVERT": "Flip over",
@@ -5587,15 +5587,15 @@ Object {
     "OMNI": "Magazine founded by Bob Guccione",
     "ONSITE": "Not remote",
     "OPERE": "___ citato",
-    "OSCARS": "Annual Sunday event, with \\"the\\"",
+    "OSCARS": "Annual Sunday event, with "the"",
     "OSTEND": "Belgian city with an 1854 manifesto",
     "OTTOS": "Four Holy Roman emperors",
-    "OTWAY": "\\"Venice Preserved\\" dramatist Thomas",
+    "OTWAY": ""Venice Preserved" dramatist Thomas",
     "OVEN": "Pizza place",
     "OYER": "Open court hearing",
-    "PASHA": "\\"Doctor Zhivago\\" role",
+    "PASHA": ""Doctor Zhivago" role",
     "PATHOS": "Feeling evoked in drama",
-    "PAW": "Kitten \\"mitten\\"",
+    "PAW": "Kitten "mitten"",
     "PLOW": "Pickup attachment",
     "PRET": "___-à-porter",
     "PREZ": "Bossman or bosswoman",
@@ -5632,7 +5632,7 @@ Object {
     "SQUIRT": "Pipsqueak",
     "STERNS": "Rudder locations",
     "STYRENE": "Foamcore component",
-    "SUMOS": "\\"Super Duper ___\\" (anime series)",
+    "SUMOS": ""Super Duper ___" (anime series)",
     "TOETOTOE": "In direct opposition",
     "TREATY": "It may be bilateral",
     "TSETSES": "Flies over the Equator",
@@ -5645,7 +5645,7 @@ Object {
     "YANKEE": "___ Stadium, opened in 1923",
     "ZEN": "___ state",
   },
-  "grid": Array [
+  "grid": [
     "S",
     "A",
     "I",
@@ -6090,7 +6090,7 @@ Object {
   ],
   "height": 21,
   "highlight": "circle",
-  "highlighted": Array [
+  "highlighted": [
     48,
     51,
     52,
@@ -6133,20 +6133,20 @@ Object {
 `;
 
 exports[`test .puz import puz_131202banks 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ACRE": "God's Little ___",
     "AGE": "Cate Blanchett stars in Elizabeth: The Golden ___",
-    "AINT": "\\"___ Misbehavin'\\"",
+    "AINT": ""___ Misbehavin'"",
     "AIR": "15 Across had a recurring role on The Fresh Prince of Bel-___",
-    "ALL": "John Legend's \\"___ of Me\\"",
-    "AMA": "\\"I ___ Rock\\" by Simon & Garfunkel",
+    "ALL": "John Legend's "___ of Me"",
+    "AMA": ""I ___ Rock" by Simon & Garfunkel",
     "ANA": "Actress ___ Ortiz",
     "ARI": "Actress Graynor",
     "ARTS": "Pepper and Tatum of jazz",
     "ASAS": "Butterfield and Hutchinson",
     "ASH": "Cosmetician Mary Kay",
-    "ASKED": "Celine Deon's \\"If You ___ Me To\\"",
+    "ASKED": "Celine Deon's "If You ___ Me To"",
     "ATALE": "___ of Two Cities (2 wds.)",
     "AWRY": "Cockeyed",
     "AYN": "Author ___ Rand",
@@ -6172,7 +6172,7 @@ Object {
     "LED": "___ Zeppelin",
     "LEE": "Halloween: Resurrection with Jamie ___ Curtis and 15 Across",
     "LEO": "MGM lion",
-    "LIE": "The Rolling Stones' \\"Don't ___ to Me\\"",
+    "LIE": "The Rolling Stones' "Don't ___ to Me"",
     "LIT": "Illuminated",
     "LIV": "Disney Channel's ___ and Maddie",
     "LOU": "Dobbs or Ferrigno",
@@ -6181,7 +6181,7 @@ Object {
     "MAJOR": "Mary McDonnell stars in ___ Crimes",
     "MAO": "___ Tse-tung",
     "MAYA": "Angelou or Rudolph",
-    "MEIN": "\\"Don't Fence ___\\" (2 wds.)",
+    "MEIN": ""Don't Fence ___" (2 wds.)",
     "MODEL": "15 Across emcees America's Next Top ___",
     "NIN": "Diarist Ana•s ___",
     "OLD": "___ Dogs with John Travolta",
@@ -6194,7 +6194,7 @@ Object {
     "RIO": "Blame It on ___",
     "RUN": "Midnight ___",
     "SARAH": "___ Michelle Gellar",
-    "SAYS": "Bon Jovi's \\"Who ___ You Can't Go Home\\"",
+    "SAYS": "Bon Jovi's "Who ___ You Can't Go Home"",
     "SHEB": "Actor ___ Wooley",
     "SIB": "Their brother David, to Patricia and Rosanna Arquette, e.g.",
     "SNOW": "___ White and the Huntsman",
@@ -6206,7 +6206,7 @@ Object {
     "WAY": "Steve Carell stars in The ___ Way Back",
     "WEB": "___ Therapy with Lisa Kudrow",
   },
-  "grid": Array [
+  "grid": [
     "A",
     "M",
     "A",
@@ -6379,7 +6379,7 @@ Object {
   ],
   "height": 13,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "Fierce & Fabulous",
   "width": 13,
@@ -6387,10 +6387,10 @@ Object {
 `;
 
 exports[`test .puz import qvxdupes 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "DDDDD": "Memetic adjective for some fruit",
-    "DUPES": Array [
+    "DUPES": [
       "Marks",
       "Three Stooges, e.g.",
       "Fall guys",
@@ -6402,7 +6402,7 @@ Object {
     "SSSSS": "There's two of 'em in this clue",
     "UUUUU": "Practice",
   },
-  "grid": Array [
+  "grid": [
     "D",
     "U",
     "P",
@@ -6431,7 +6431,7 @@ Object {
   ],
   "height": 5,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "Chain of Fools (Monday Mini #11)",
   "width": 5,
@@ -6439,14 +6439,14 @@ Object {
 `;
 
 exports[`test .puz import version-1.2-puzzle 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ERE": "Until",
     "PIE": "One step short of a pier",
     "SUMP": "Pumps your basement",
-    "SUPER": "I'm ___, thanks for asking\\\\!",
+    "SUPER": "I'm ___, thanks for asking\\!",
   },
-  "grid": Array [
+  "grid": [
     ".",
     "S",
     ".",
@@ -6470,7 +6470,7 @@ Object {
   ],
   "height": 4,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "Reference PUZ File",
   "width": 5,
@@ -6478,14 +6478,14 @@ Object {
 `;
 
 exports[`test .puz import version-1.2-puzzle-with-notes 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ERE": "Until",
     "PIE": "One step short of a pier",
     "SUMP": "Pumps your basement",
-    "SUPER": "I'm ___, thanks for asking\\\\!",
+    "SUPER": "I'm ___, thanks for asking\\!",
   },
-  "grid": Array [
+  "grid": [
     ".",
     "S",
     ".",
@@ -6509,7 +6509,7 @@ Object {
   ],
   "height": 4,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": "This is a test note for this version 1.2 puzzle",
   "title": "Reference PUZ File",
   "width": 5,
@@ -6517,8 +6517,8 @@ Object {
 `;
 
 exports[`test .puz import washpost 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ABUT": "Touch",
     "AEGIS": "Protection",
     "AERIE": "Eagle's nest",
@@ -6527,7 +6527,7 @@ Object {
     "ARTS": "Part of NEA",
     "AVATAR": "On-line game character",
     "AXE": "Paul Bunyan's tool",
-    "AXIOM": "\\"There's no such thing as a free lunch,\\" e.g.",
+    "AXIOM": ""There's no such thing as a free lunch," e.g.",
     "BLEEP": "Censor",
     "CARVE": "Cut, as a turkey",
     "COQAUVIN": "French chicken dish",
@@ -6551,12 +6551,12 @@ Object {
     "IDLE": "On strike",
     "IOWA": "Big Ten school",
     "IRANI": "Shiraz citizen",
-    "JEFE": "Boss, usually following \\"El\\"",
+    "JEFE": "Boss, usually following "El"",
     "JIM": "Former NFL quarterback Kelly or Harbaugh",
     "KTEL": "Record company name now licensed to an on-line pharmaceutical company",
     "LAMB": "Mary's pet",
     "LAPSE": "Fall into disuse",
-    "LBJ": "\\"All the way with ___\\" (political slogan)",
+    "LBJ": ""All the way with ___" (political slogan)",
     "LOFT": "Hit high in the air",
     "MAJOR": "Very important",
     "MARK": "Simplified signature",
@@ -6598,7 +6598,7 @@ Object {
     "TUNERS": "Signal receivers",
     "VET": "Doggy doc",
   },
-  "grid": Array [
+  "grid": [
     "L",
     "A",
     "M",
@@ -6827,24 +6827,24 @@ Object {
   ],
   "height": 15,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
-  "title": "December 6, 2005 - \\"Split Pea Soup\\"",
+  "title": "December 6, 2005 - "Split Pea Soup"",
   "width": 15,
 }
 `;
 
 exports[`test .puz import wsj110624 1`] = `
-Object {
-  "clues": Object {
+{
+  "clues": {
     "ABALONE": "Conch cousin",
     "AGOG": "Waiting with bated breath",
-    "AGUILERA": "Christina of \\"The Voice\\"",
-    "AHOME": "\\"Oh, give me ___...\\"",
+    "AGUILERA": "Christina of "The Voice"",
+    "AHOME": ""Oh, give me ___..."",
     "AIL": "Have something",
     "ALIKES": "Look-___ (twins)",
     "ALOE": "Soap additive",
-    "AMISH": "\\"Witness\\" group",
+    "AMISH": ""Witness" group",
     "ANISETTE": "Ouzo relative",
     "APTER": "More fitting",
     "ARK": "Gopher wood craft",
@@ -6867,7 +6867,7 @@ Object {
     "CENTRE": "Middle of Manchester",
     "CHEMICAL": "Dow product",
     "CLASE": "Spanish teacher's group",
-    "COEN": "Name in the \\"True Grit\\" credits",
+    "COEN": "Name in the "True Grit" credits",
     "COPTS": "Egyptian Christians",
     "COPY": "Text",
     "COVALENT": "Like some bonds",
@@ -6902,18 +6902,18 @@ Object {
     "INASTIR": "Agitated",
     "INON": "Advised about",
     "IPO": "Wall St. event",
-    "IRAE": "\\"Dies ___\\"",
-    "IRONS": "\\"The Borgias\\" star",
+    "IRAE": ""Dies ___"",
+    "IRONS": ""The Borgias" star",
     "IRV": "Hip-hop producer Gotti",
     "ITSA": "Start of a baby announcement",
     "JAILER": "Bar tender?",
     "JINX": "Hex",
     "KLEIN": "Designer Calvin",
-    "LEOG": "\\"Topper\\" star Carroll",
-    "LIU": "Lucy of \\"Kill Bill\\"",
+    "LEOG": ""Topper" star Carroll",
+    "LIU": "Lucy of "Kill Bill"",
     "LONER": "Hardly the gregarious sort",
     "LONGDRIVE": "Good news for a golfer, bad news for a commuter",
-    "LORNE": "Michaels of \\"SNL\\"",
+    "LORNE": "Michaels of "SNL"",
     "LOSINGAFEWPOUNDS": "Good news for a dieter, bad news for a London gambler",
     "LOWINFLATION": "Good news for those on fixed incomes, bad news for bike tires",
     "MERE": "Insignificant",
@@ -6925,11 +6925,11 @@ Object {
     "NINES": "Baseball teams",
     "NOD": "Silent say-so",
     "NOWI": "Start of a bedtime prayer",
-    "OBOEPART": "The duck, in \\"Peter and the Wolf\\"",
+    "OBOEPART": "The duck, in "Peter and the Wolf"",
     "OBTAINED": "Got",
     "ONE": "Half and half",
     "ONYXES": "Banded stones",
-    "ORSINO": "He says \\"If music be the food of love, play on\\"",
+    "ORSINO": "He says "If music be the food of love, play on"",
     "PEER": "Equal",
     "PENA": "Clinton cabinet member Federico",
     "POSSE": "Oater chasers",
@@ -6955,7 +6955,7 @@ Object {
     "SIS": "Spanish ayes",
     "SITBACK": "Take no action",
     "SKI": "Go downhill",
-    "SLIMES": "Attacks a la \\"Ghostbusters\\"",
+    "SLIMES": "Attacks a la "Ghostbusters"",
     "SOLAR": "Like some panels",
     "SONY": "99-Across maker",
     "SORER": "Twice as annoyed",
@@ -6976,7 +6976,7 @@ Object {
     "WISED": "Smartened (up)",
     "WONTON": "Cantonese kreplach",
   },
-  "grid": Array [
+  "grid": [
     "D",
     "O",
     "G",
@@ -7421,7 +7421,7 @@ Object {
   ],
   "height": 21,
   "highlight": "circle",
-  "highlighted": Array [],
+  "highlighted": [],
   "notes": null,
   "title": "June 24, 2011 - Good News, Bad News",
   "width": 21,
