@@ -1,4 +1,5 @@
-import { Dispatch, useEffect, useRef } from 'react';
+import useEventListener from '@use-it/event-listener';
+import { Dispatch, useCallback, useEffect, useRef } from 'react';
 import { PuzzleResultWithAugmentedComments } from '../lib/types.js';
 import { PuzzleAction } from '../reducers/commonActions.js';
 import { ButtonReset } from './Buttons.js';
@@ -29,11 +30,39 @@ const SlateOverlayHeader = () => {
   );
 };
 
+interface Message {
+  type: string;
+}
+
 export const SlatePause = ({
   dispatch,
 }: {
   dispatch: Dispatch<PuzzleAction>;
 }) => {
+  useEffect(() => {
+    window.parent.postMessage(
+      {
+        type: 'ready',
+      },
+      '*'
+    );
+  }, []);
+
+  // TODO share this w/ Begin overlay below
+  const handleMessage = useCallback(
+    (e: MessageEvent) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const message: Message = e.data;
+
+      if (message.type === 'start') {
+        window.parent.postMessage({ type: 'resume' }, '*');
+        dispatch({ type: 'RESUMEACTION' });
+      }
+    },
+    [dispatch]
+  );
+  useEventListener('message', handleMessage);
+
   return (
     <Overlay innerPadding="3em 0 0 0">
       <SlateOverlayHeader />
@@ -67,6 +96,32 @@ export const SlateBegin = ({
       );
     }
   });
+  useEffect(() => {
+    if (containerRef.current && !loadingPlayState) {
+      window.parent.postMessage(
+        {
+          type: 'ready',
+        },
+        '*'
+      );
+    }
+  }, [loadingPlayState]);
+
+  // TODO share this w/ Pause overlay above
+  const handleMessage = useCallback(
+    (e: MessageEvent) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const message: Message = e.data;
+
+      if (message.type === 'start') {
+        window.parent.postMessage({ type: 'resume' }, '*');
+        dispatch({ type: 'RESUMEACTION' });
+      }
+    },
+    [dispatch]
+  );
+  useEventListener('message', handleMessage);
+
   return (
     <>
       <FullscreenCSS />
