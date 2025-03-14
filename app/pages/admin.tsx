@@ -207,7 +207,7 @@ export default requiresAdmin(() => {
   );
   const [dbUnmoderated] = useCollectionData(puzzleCollection.current);
   const unmoderated: PuzzleResult[] = (dbUnmoderated ?? [])
-    .map((x) => ({ ...puzzleFromDB(x), id: x.id }))
+    .map((x) => ({ ...puzzleFromDB(x, x.id), id: x.id }))
     .sort((a, b) => (a.isPrivateUntil ?? 0) - (b.isPrivateUntil ?? 0));
 
   const now = new Date();

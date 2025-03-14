@@ -1,3 +1,4 @@
+import sha256 from 'fast-sha256';
 import { NonEmptyArray } from './types';
 
 export const STORAGE_KEY = 'puzzleInProgress';
@@ -94,16 +95,33 @@ function normalize(n: string) {
   return n.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
+export function metaSolutionDigest(soln: string, puzzleId: string): string {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(puzzleId + normalize(soln));
+  const hashArray = Array.from(sha256(data));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
 export function isMetaSolution(
   submission: string | undefined,
-  solutions: string[]
+  solutions: string[],
+  solutionDigests: string[],
+  puzzleId: string
 ) {
   if (submission === undefined) {
     return false;
   }
+
   const normalized = normalize(submission);
   for (const solution of solutions) {
     if (normalize(solution) === normalized) {
+      return true;
+    }
+  }
+
+  const submittedDigest = metaSolutionDigest(submission, puzzleId);
+  for (const digest of solutionDigests) {
+    if (submittedDigest === digest) {
       return true;
     }
   }

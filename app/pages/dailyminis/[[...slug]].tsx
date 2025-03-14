@@ -74,7 +74,7 @@ async function puzzlesListForMonth(
           if (dbpuzzle === null) {
             return null;
           }
-          const puzzle = puzzleFromDB(dbpuzzle);
+          const puzzle = puzzleFromDB(dbpuzzle, dbpuzzle.id);
           const cp = await userIdToPage(dbpuzzle.a);
           const isPatron = await isUserPatron(dbpuzzle.a);
           return [

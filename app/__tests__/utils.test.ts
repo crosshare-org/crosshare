@@ -30,13 +30,38 @@ cases(
 );
 
 test('isMetaSolution', () => {
-  expect(isMetaSolution('foo', ['FOO'])).toBeTruthy();
-  expect(isMetaSolution(' fo  o ', ['FOO'])).toBeTruthy();
-  expect(isMetaSolution('foo!', ['FO  O'])).toBeTruthy();
-  expect(isMetaSolution('f@o-o!', ['F[OO]'])).toBeTruthy();
+  expect(isMetaSolution('foo', ['FOO'], [], '')).toBeTruthy();
+  expect(isMetaSolution(' fo  o ', ['FOO'], [], '')).toBeTruthy();
+  expect(isMetaSolution('foo!', ['FO  O'], [], '')).toBeTruthy();
+  expect(isMetaSolution('f@o-o!', ['F[OO]'], [], '')).toBeTruthy();
 
-  expect(isMetaSolution('bar', ['FOO'])).not.toBeTruthy();
-  expect(isMetaSolution('bar!', ['FOO', 'b a r'])).toBeTruthy();
+  expect(isMetaSolution('bar', ['FOO'], [], '')).not.toBeTruthy();
+  expect(isMetaSolution('bar!', ['FOO', 'b a r'], [], '')).toBeTruthy();
+
+  expect(
+    isMetaSolution(
+      'bam!',
+      [],
+      ['c8f8b724728a6d6684106e5e64e94ce811c9965d19dd44dd073cf86cf43bc238'],
+      'bar'
+    )
+  ).not.toBeTruthy();
+  expect(
+    isMetaSolution(
+      'baz!',
+      [],
+      ['c8f8b724728a6d6684106e5e64e94ce811c9965d19dd44dd073cf86cf43bc238'],
+      'bam'
+    )
+  ).not.toBeTruthy();
+  expect(
+    isMetaSolution(
+      'baz!',
+      [],
+      ['c8f8b724728a6d6684106e5e64e94ce811c9965d19dd44dd073cf86cf43bc238'],
+      'bar'
+    )
+  ).toBeTruthy();
 });
 
 cases(

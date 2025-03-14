@@ -329,7 +329,7 @@ export default async function pdf(req: NextApiRequest, res: NextApiResponse) {
     res.status(404).json({ statusCode: 404, message: 'failed to get puzzle' });
     return;
   }
-  const fromDB = puzzleFromDB(puzzle);
+  const fromDB = puzzleFromDB(puzzle, puzzleId);
   if (puzzle.pk) {
     res
       .status(403)

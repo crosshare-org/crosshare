@@ -30,7 +30,7 @@ export function UnfinishedPuzzleList({ user }: { user: User | undefined }) {
       await deleteDoc(getDocRef('p', `${puzzleId}-${play.u}`));
       return undefined;
     } else {
-      return { ...puzzleFromDB(puzzle), id: puzzleId };
+      return { ...puzzleFromDB(puzzle, puzzleId), id: puzzleId };
     }
   }, []);
   const {

@@ -11,6 +11,7 @@ import {
 } from '../lib/dbtypes.js';
 import type { WordDBT } from './WordDB.js';
 import { isTextInput } from './domUtils.js';
+import { isMetaSolution, metaSolutionDigest } from './utils.js';
 
 export type Optionalize<T extends K, K> = Omit<T, keyof K>;
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -200,9 +201,11 @@ export interface PuzzleT {
   blogPost: string | null;
   isPrivate: boolean | number;
   isPrivateUntil: number | null;
-  contestAnswers: string[] | null;
+  isContest: boolean;
+  contestAnswers: string[];
+  contestAnswerDigests: string[];
   contestHasPrize: boolean;
-  contestSubmissions: { n: string; t: number; s: string }[] | null;
+  contestWinningSubmissions: { n: string; t: number }[];
   contestRevealDelay: number | null;
   rating: GlickoScoreT | null;
   alternateSolutions: [number, string][][];
@@ -274,7 +277,11 @@ export function dbCluesToClueTArray(
   return clues;
 }
 
-export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
+export function puzzleFromDB(
+  dbPuzzle: DBPuzzleT,
+  puzzleId: string,
+  includeMetaSolutions = false
+): PuzzleT {
   const clues = dbCluesToClueTArray(
     dbPuzzle.ac,
     dbPuzzle.an,
@@ -282,6 +289,26 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
     dbPuzzle.dn,
     dbPuzzle.cx
   );
+
+  let contestAnswers: string[] = [];
+  let contestAnswerDigests: string[] = [];
+  let isContest = false;
+  if (dbPuzzle.ct_ans?.length) {
+    isContest = true;
+    const revealDelay = dbPuzzle.ct_rv_dl;
+    const includeAnswers =
+      includeMetaSolutions ||
+      !revealDelay ||
+      new Date() >= new Date(dbPuzzle.p.toMillis() + revealDelay);
+    if (includeAnswers) {
+      contestAnswers = dbPuzzle.ct_ans;
+    } else {
+      contestAnswerDigests = dbPuzzle.ct_ans.map((a) =>
+        metaSolutionDigest(a, puzzleId)
+      );
+    }
+  }
+
   return {
     authorId: dbPuzzle.a,
     authorName: dbPuzzle.n,
@@ -309,11 +336,16 @@ export function puzzleFromDB(dbPuzzle: DBPuzzleT): PuzzleT {
         ? dbPuzzle.pv
         : dbPuzzle.pv?.toMillis() || false,
     isPrivateUntil: dbPuzzle.pvu ? dbPuzzle.pvu.toMillis() : null,
-    contestAnswers: dbPuzzle.ct_ans || null,
+    isContest,
+    contestAnswers,
+    contestAnswerDigests,
     contestHasPrize: dbPuzzle.ct_prz || false,
-    contestSubmissions:
-      dbPuzzle.ct_subs?.map((w) => ({ n: w.n, t: w.t.toMillis(), s: w.s })) ||
-      null,
+    contestWinningSubmissions:
+      dbPuzzle.ct_subs
+        ?.filter((w) =>
+          isMetaSolution(w.s, dbPuzzle.ct_ans || [], [], puzzleId)
+        )
+        .map((w) => ({ n: w.n, t: w.t.toMillis() })) || [],
     contestRevealDelay: dbPuzzle.ct_rv_dl || null,
     rating: dbPuzzle.rtg || null,
     alternateSolutions:

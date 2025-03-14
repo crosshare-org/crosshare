@@ -81,13 +81,6 @@ interface BeginPauseProps extends PuzzleOverlayBaseProps {
 export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
   const authContext = useContext(AuthContext);
   const { isEmbed, colorMode } = useContext(EmbedContext);
-  const contestAnswers = props.puzzle.contestAnswers;
-  const isContest = contestAnswers ? contestAnswers.length > 0 : false;
-  const winningSubmissions =
-    contestAnswers &&
-    props.puzzle.contestSubmissions?.filter((sub) =>
-      isMetaSolution(sub.s, contestAnswers)
-    );
 
   const [showFullscreen, setShowFullscreen] = useState(false);
   const router = useRouter();
@@ -185,7 +178,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         showTip={props.overlayType === OverlayType.Success}
         coverImage={props.coverImage}
         blogPost={props.puzzle.blogPost}
-        isContest={isContest}
+        isContest={props.puzzle.isContest}
         constructorNotes={props.puzzle.constructorNotes}
         profilePic={props.profilePicture}
         title={props.puzzle.title}
@@ -231,7 +224,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                 ) : (
                   ''
                 )}
-                {isContest ? (
+                {props.puzzle.isContest ? (
                   <p className="marginTop1em">
                     <Trans>
                       This is a contest/meta puzzle. To submit your answer,
@@ -281,7 +274,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                     ? ''
                     : `Comments posted below will be visible to anyone who finishes
                   solving the puzzle
-                  ${isContest ? ' and submits a solution to the meta' : ''}.`}
+                  ${props.puzzle.isContest ? ' and submits a solution to the meta' : ''}.`}
                 </p>
               </>
             ) : (
@@ -306,9 +299,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           </>
         )}
       </div>
-      {props.overlayType === OverlayType.Success &&
-      isContest &&
-      props.puzzle.contestAnswers ? (
+      {props.overlayType === OverlayType.Success && props.puzzle.isContest ? (
         <MetaSubmission
           hasPrize={!!props.contestHasPrize}
           contestSubmission={props.contestSubmission}
@@ -320,6 +311,8 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           }
           dispatch={props.dispatch}
           solutions={props.puzzle.contestAnswers}
+          solutionDigests={props.puzzle.contestAnswerDigests}
+          puzzleId={props.puzzle.id}
           isAuthor={props.user?.uid === props.puzzle.authorId}
         />
       ) : (
@@ -328,26 +321,28 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
       <div
         style={{
           ...((props.overlayType === OverlayType.BeginPause ||
-            (isContest &&
+            (props.puzzle.isContest &&
               !props.contestRevealed &&
               !isMetaSolution(
                 props.contestSubmission,
-                props.puzzle.contestAnswers ?? []
+                props.puzzle.contestAnswers,
+                props.puzzle.contestAnswerDigests,
+                props.puzzle.id
               ) &&
               props.user?.uid !== props.puzzle.authorId)) && {
             display: 'none',
           }),
         }}
       >
-        {isContest && props.puzzle.contestAnswers ? (
+        {props.puzzle.isContest ? (
           <>
             <div className="marginTop1em">
               <h4 className="borderBottom1pxSolidBlack">
                 <Trans>Leaderboard (updated hourly)</Trans>
               </h4>
-              {winningSubmissions?.length ? (
+              {props.puzzle.contestWinningSubmissions.length ? (
                 <ul className={styles.leaderboard}>
-                  {winningSubmissions
+                  {props.puzzle.contestWinningSubmissions
                     .sort((w1, w2) => w1.t - w2.t)
                     .map((w, i) => (
                       <li className={styles.leaderboardEntry} key={i}>

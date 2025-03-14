@@ -104,7 +104,7 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
     res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
     const dm: HomepagePuz = {
       ...toLinkablePuzzle({
-        ...puzzleFromDB(todaysMini),
+        ...puzzleFromDB(todaysMini, todaysMini.id),
         id: todaysMini.id,
       }),
       constructorPage: await userIdToPage(todaysMini.a),

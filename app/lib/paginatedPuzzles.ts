@@ -86,7 +86,7 @@ export async function paginatedPuzzles(
   return [
     results
       .slice(0, pageSize)
-      .map((x) => toLinkablePuzzle({ ...puzzleFromDB(x), id: x.id })),
+      .map((x) => toLinkablePuzzle({ ...puzzleFromDB(x, x.id), id: x.id })),
     hasMore,
   ];
 }

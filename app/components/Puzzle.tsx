@@ -440,7 +440,7 @@ export const Puzzle = ({
       if (!state.loadedPlayState) {
         return;
       }
-      if (puzzle.contestAnswers?.length) {
+      if (puzzle.isContest) {
         // For a meta we need to have run both to skip
         if (state.ranSuccessEffects && state.ranMetaSubmitEffects) {
           return;
@@ -467,12 +467,12 @@ export const Puzzle = ({
         });
     },
     [
-      puzzle.id,
-      puzzle.contestAnswers,
-      props.user,
-      state.ranMetaSubmitEffects,
-      state.ranSuccessEffects,
       state.loadedPlayState,
+      state.ranSuccessEffects,
+      state.ranMetaSubmitEffects,
+      puzzle.isContest,
+      puzzle.id,
+      props.user,
     ]
   );
 
@@ -509,7 +509,7 @@ export const Puzzle = ({
             state.contestSubmitTime !== undefined
               ? Timestamp.fromMillis(state.contestSubmitTime)
               : undefined,
-          ct_n: state.contestDisplayName,
+          ...(state.contestDisplayName && { ct_n: state.contestDisplayName }),
         }),
         ...(state.contestSubmission && {
           ct_sub: state.contestSubmission,
@@ -518,7 +518,7 @@ export const Puzzle = ({
             state.contestSubmitTime !== undefined
               ? Timestamp.fromMillis(state.contestSubmitTime)
               : undefined,
-          ct_n: state.contestDisplayName,
+          ...(state.contestDisplayName && { ct_n: state.contestDisplayName }),
           ...(state.contestEmail && {
             ct_em: state.contestEmail,
           }),
@@ -1328,10 +1328,12 @@ export const Puzzle = ({
                       text={
                         isSlate
                           ? 'Show Stats'
-                          : puzzle.contestAnswers?.length
+                          : puzzle.isContest
                             ? !isMetaSolution(
                                 state.contestSubmission,
-                                puzzle.contestAnswers
+                                puzzle.contestAnswers,
+                                puzzle.contestAnswerDigests,
+                                puzzle.id
                               ) && !state.contestRevealed
                               ? t`Contest Prompt / Submission`
                               : t`Comments / Leaderboard`

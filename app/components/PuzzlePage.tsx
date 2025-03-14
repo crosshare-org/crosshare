@@ -71,10 +71,15 @@ const CachePlayLoader = (props: PuzzlePageResultProps) => {
     const cachedPlay = getPlayFromCache(user, props.puzzle.id);
     // Contest puzzles aren't done until they have a finished grid
     // AND a correct submission or a reveal
-    const done = props.puzzle.contestAnswers?.length
+    const done = props.puzzle.isContest
       ? cachedPlay?.f &&
         (cachedPlay.ct_rv ||
-          isMetaSolution(cachedPlay.ct_sub, props.puzzle.contestAnswers))
+          isMetaSolution(
+            cachedPlay.ct_sub,
+            props.puzzle.contestAnswers,
+            props.puzzle.contestAnswerDigests,
+            props.puzzle.id
+          ))
       : cachedPlay?.f;
     if (done || !user || props.puzzle.authorId === user.uid) {
       console.log('using cached play');

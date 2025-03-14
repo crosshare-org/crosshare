@@ -124,7 +124,10 @@ export const PuzzleLoader = ({
     );
   }
 
-  const nicePuzzle: PuzzleResult = { ...puzzleFromDB(puzzle), id: puzzleId };
+  const nicePuzzle: PuzzleResult = {
+    ...puzzleFromDB(puzzle, puzzleId, true),
+    id: puzzleId,
+  };
 
   if (!auth.isAdmin && auth.user.uid !== nicePuzzle.authorId) {
     return (
@@ -636,7 +639,7 @@ const PuzzleEditor = ({
           </p>
           {puzzle.constructorNotes ? (
             <>
-              {puzzle.contestAnswers?.length ? (
+              {puzzle.isContest ? (
                 <>
                   <p>Contest mode is on for this puzzle. Solutions:</p>
                   <ul>
@@ -676,8 +679,7 @@ const PuzzleEditor = ({
                 hast={false}
                 maxLength={MAX_META_SUBMISSION_LENGTH}
                 hasError={(sol) =>
-                  puzzle.contestAnswers &&
-                  isMetaSolution(sol, puzzle.contestAnswers)
+                  isMetaSolution(sol, puzzle.contestAnswers, [], puzzle.id)
                     ? 'Duplicate solution!'
                     : ''
                 }
@@ -687,7 +689,7 @@ const PuzzleEditor = ({
                   })
                 }
               />
-              {puzzle.contestAnswers?.length ? (
+              {puzzle.contestAnswers.length ? (
                 <>
                   {puzzle.contestHasPrize ? (
                     <>

@@ -97,7 +97,9 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
       content: (row) => {
         const isSolution = isMetaSolution(
           row.s,
-          props.puzzle.contestAnswers ?? []
+          props.puzzle.contestAnswers,
+          [],
+          props.puzzle.id
         );
         return (
           <>
@@ -168,7 +170,12 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
             ...s,
             r: s.rv ? 'Yes' : 'No',
             p: (s.gs ?? []).length.toString(),
-            c: isMetaSolution(s.s, props.puzzle.contestAnswers ?? [])
+            c: isMetaSolution(
+              s.s,
+              props.puzzle.contestAnswers,
+              [],
+              props.puzzle.id
+            )
               ? 'true'
               : 'false',
           }))}
@@ -347,7 +354,7 @@ export const StatsPage = ({
 }) => {
   const [mode, setMode] = useState(StatsMode.AverageTime);
   const [dropped, setDropped] = useState(false);
-  const isMeta = (puzzle.contestAnswers?.length ?? 0) > 0;
+  const isMeta = puzzle.isContest;
 
   return (
     <>
@@ -415,7 +422,12 @@ export const StatsPage = ({
                     <div>
                       Correct contest submissions:{' '}
                       {stats.ct_subs?.filter((sub) =>
-                        isMetaSolution(sub.s, puzzle.contestAnswers ?? [])
+                        isMetaSolution(
+                          sub.s,
+                          puzzle.contestAnswers,
+                          [],
+                          puzzle.id
+                        )
                       ).length ?? 0}
                     </div>
                     <div>

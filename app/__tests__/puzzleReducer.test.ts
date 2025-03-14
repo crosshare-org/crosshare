@@ -112,7 +112,7 @@ test('check closest alt', () => {
 
 test('check without alt', () => {
   const dbpuz = getMockedPuzzle();
-  const fromDB = puzzleFromDB(dbpuz);
+  const fromDB = puzzleFromDB(dbpuz, 'puzId');
   const ourGrid = fromDB.grid.map((s): string => (s === BLOCK ? BLOCK : ' '));
   ourGrid[0] = 'M';
   ourGrid[1] = 'A';
@@ -161,7 +161,7 @@ test('check without alt', () => {
 
 test('check with alt', () => {
   const dbpuz = getMockedPuzzle();
-  const fromDB = puzzleFromDB(dbpuz);
+  const fromDB = puzzleFromDB(dbpuz, 'puzId');
   const ourGrid = fromDB.grid.map((s): string => (s === BLOCK ? BLOCK : ' '));
   ourGrid[0] = 'M';
   ourGrid[1] = 'A';

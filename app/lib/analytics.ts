@@ -302,7 +302,7 @@ export async function runAnalytics(
       }
       puzzleStatsForConstructor.ct_sub_n = puzzleStats.ct_subs.length;
       puzzleStatsForConstructor.ct_sub_c = puzzleStats.ct_subs.filter((sub) =>
-        isMetaSolution(sub.s, solutions)
+        isMetaSolution(sub.s, solutions, [], crosswordId)
       ).length;
     }
     await getCollection('cs')

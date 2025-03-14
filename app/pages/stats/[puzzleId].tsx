@@ -81,7 +81,10 @@ export const PuzzleLoader = ({
     );
   }
 
-  const nicePuzzle: PuzzleResult = { ...puzzleFromDB(puzzle), id: puzzleId };
+  const nicePuzzle: PuzzleResult = {
+    ...puzzleFromDB(puzzle, puzzleId, true),
+    id: puzzleId,
+  };
 
   if (!auth.isAdmin && auth.user.uid !== nicePuzzle.authorId) {
     return (

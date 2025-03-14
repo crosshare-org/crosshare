@@ -48,7 +48,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { comments, ...puzzle } = {
-    ...puzzleFromDB(validationResult.right),
+    ...puzzleFromDB(validationResult.right, dbres.id, true),
     id: dbres.id,
   };
 

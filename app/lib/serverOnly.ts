@@ -371,7 +371,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
 
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
 
-  const fromDB = puzzleFromDB(validationResult.right);
+  const fromDB = puzzleFromDB(validationResult.right, puzzleId);
   const grid = addClues(
     fromCells({
       mapper: (e) => e,

@@ -21,6 +21,8 @@ const MetaSubmissionForm = (props: {
   hasPrize: boolean;
   dispatch: Dispatch<ContestSubmitAction | ContestRevealAction>;
   solutions: string[];
+  puzzleId: string;
+  solutionDigests: string[];
 }) => {
   const [submission, setSubmission] = useState('');
   const displayName = useDisplayName();
@@ -41,7 +43,14 @@ const MetaSubmissionForm = (props: {
         enteringForPrize &&
         props.user.email && { email: props.user.email }),
     });
-    if (isMetaSolution(submission, props.solutions)) {
+    if (
+      isMetaSolution(
+        submission,
+        props.solutions,
+        props.solutionDigests,
+        props.puzzleId
+      )
+    ) {
       addToast('🚀 Solved a meta puzzle!');
     }
     setSubmission('');
@@ -158,6 +167,8 @@ export const MetaSubmission = (props: {
   dispatch: Dispatch<ContestSubmitAction | ContestRevealAction>;
   solutions: string[];
   isAuthor: boolean;
+  solutionDigests: string[];
+  puzzleId: string;
 }) => {
   const authContext = useContext(AuthContext);
   if (!authContext.user || authContext.user.isAnonymous) {
@@ -179,17 +190,20 @@ export const MetaSubmission = (props: {
     );
   }
 
-  const isComplete =
-    props.contestRevealed ||
-    isMetaSolution(props.contestSubmission, props.solutions) ||
-    props.isAuthor;
+  const isSolved = isMetaSolution(
+    props.contestSubmission,
+    props.solutions,
+    props.solutionDigests,
+    props.puzzleId
+  );
+  const isComplete = props.contestRevealed || isSolved || props.isAuthor;
 
   return (
     <div className="marginTop1em">
       <h4 className="borderBottom1pxSolidBlack">Contest</h4>
 
       {props.contestSubmission ? (
-        isMetaSolution(props.contestSubmission, props.solutions) ? (
+        isSolved ? (
           <p>
             Your submission (<strong>{props.contestSubmission}</strong>) is
             correct!

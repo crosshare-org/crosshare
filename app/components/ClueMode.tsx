@@ -231,7 +231,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
 
   const contestAnswerError =
     state.contestAnswers &&
-    isMetaSolution(contestAnswerInProg, state.contestAnswers)
+    isMetaSolution(contestAnswerInProg, state.contestAnswers, [], '')
       ? 'Duplicate solution!'
       : '';
 
