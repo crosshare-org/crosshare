@@ -296,10 +296,11 @@ export function puzzleFromDB(
   if (dbPuzzle.ct_ans?.length) {
     isContest = true;
     const revealDelay = dbPuzzle.ct_rv_dl;
+    const publishTime = dbPuzzle.pvu ?? dbPuzzle.p;
     const includeAnswers =
       includeMetaSolutions ||
       !revealDelay ||
-      new Date() >= new Date(dbPuzzle.p.toMillis() + revealDelay);
+      new Date() >= new Date(publishTime.toMillis() + revealDelay);
     if (includeAnswers) {
       contestAnswers = dbPuzzle.ct_ans;
     } else {
