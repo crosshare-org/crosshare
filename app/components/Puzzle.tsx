@@ -509,7 +509,7 @@ export const Puzzle = ({
             state.contestSubmitTime !== undefined
               ? Timestamp.fromMillis(state.contestSubmitTime)
               : undefined,
-          ...(state.contestDisplayName && { ct_n: state.contestDisplayName }),
+          ct_n: state.contestDisplayName,
         }),
         ...(state.contestSubmission && {
           ct_sub: state.contestSubmission,
@@ -518,7 +518,7 @@ export const Puzzle = ({
             state.contestSubmitTime !== undefined
               ? Timestamp.fromMillis(state.contestSubmitTime)
               : undefined,
-          ...(state.contestDisplayName && { ct_n: state.contestDisplayName }),
+          ct_n: state.contestDisplayName,
           ...(state.contestEmail && {
             ct_em: state.contestEmail,
           }),
