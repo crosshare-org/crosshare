@@ -29,9 +29,11 @@ const MetaSubmissionForm = (props: {
   const [editingDisplayName, setEditingDisplayName] = useState(false);
   const [enteringForPrize, setEnteringForPrize] = useState(false);
   const { addToast } = useSnackbar();
-  const disabled = props.revealDisabledUntil
+
+  const disabledUntilNotReached = props.revealDisabledUntil
     ? new Date() < props.revealDisabledUntil
     : false;
+  const disabled = props.solutions.length === 0 || disabledUntilNotReached;
 
   function submitMeta(event: FormEvent) {
     event.preventDefault();
@@ -144,7 +146,7 @@ const MetaSubmissionForm = (props: {
           disabled={disabled}
           text="Give Up / Reveal"
         />
-        {disabled && props.revealDisabledUntil ? (
+        {disabledUntilNotReached && props.revealDisabledUntil ? (
           <span>
             Reveal will be available{' '}
             {formatDistanceToNow(props.revealDisabledUntil, {
