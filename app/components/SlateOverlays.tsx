@@ -43,6 +43,7 @@ export const SlatePause = ({
     window.parent.postMessage(
       {
         type: 'ready',
+        inProgress: true,
       },
       '*'
     );
@@ -101,6 +102,7 @@ export const SlateBegin = ({
       window.parent.postMessage(
         {
           type: 'ready',
+          inProgress: false,
         },
         '*'
       );
