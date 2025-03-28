@@ -82,7 +82,7 @@ const PuzzleLink = (props: {
   return (
     <div
       data-completed={authored || play?.f}
-      data-started={Boolean(play)}
+      data-started={Boolean(play && play.t >= 1)}
       data-showing-blog={props.showingBlog}
       data-full-width={props.fullWidth}
       className={styles.link}

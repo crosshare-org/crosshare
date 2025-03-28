@@ -436,7 +436,11 @@ export const Puzzle = ({
 
   const writePlayToDBIfNeeded = useCallback(
     (user?: User) => {
-      console.log('doing write play');
+      console.log('checking play for write');
+      if (state.displaySeconds < 1) {
+        // Skip puzzles that haven't been started
+        return;
+      }
       if (!state.loadedPlayState) {
         return;
       }
@@ -470,6 +474,7 @@ export const Puzzle = ({
       state.loadedPlayState,
       state.ranSuccessEffects,
       state.ranMetaSubmitEffects,
+      state.displaySeconds,
       puzzle.isContest,
       puzzle.id,
       props.user,
