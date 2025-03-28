@@ -385,6 +385,7 @@ export const Puzzle = ({
         '*'
       );
       dispatch({ type: 'PAUSEACTION' });
+      cachePlayForUser(props.user);
       writePlayToDBIfNeeded();
     }
   }
@@ -563,6 +564,7 @@ export const Puzzle = ({
   const router = useRouter();
   useEffect(() => {
     const listener = () => {
+      cachePlayForUser(props.user);
       writePlayToDBIfNeeded();
     };
     window.addEventListener('beforeunload', listener);
@@ -572,7 +574,7 @@ export const Puzzle = ({
       window.removeEventListener('beforeunload', listener);
       router.events.off('routeChangeStart', listener);
     };
-  }, [writePlayToDBIfNeeded, router]);
+  }, [writePlayToDBIfNeeded, router, cachePlayForUser, props.user]);
 
   const { addToast } = useSnackbar();
 
@@ -1291,6 +1293,7 @@ export const Puzzle = ({
                             '*'
                           );
                           dispatch({ type: 'PAUSEACTION' });
+                          cachePlayForUser(props.user);
                           writePlayToDBIfNeeded();
                         }}
                         keepText={!isSlate}
