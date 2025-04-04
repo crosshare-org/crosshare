@@ -79,10 +79,13 @@ const PuzzleLink = (props: {
           props.fromEmbedPage
         }${props.addQueryString ? '&' + props.addQueryString : ''}`
       : `/crosswords/${props.id}/${slugify(props.puzzleTitle)}`;
+
+  const completed = authored || play?.f;
+  const started = Boolean(play && play.t !== 0);
   return (
     <div
-      data-completed={authored || play?.f}
-      data-started={Boolean(play && play.t !== 0)}
+      data-completed={completed}
+      data-started={started}
       data-showing-blog={props.showingBlog}
       data-full-width={props.fullWidth}
       className={styles.link}
@@ -94,7 +97,7 @@ const PuzzleLink = (props: {
       >
         <div className="positionRelative">
           <PuzzleSizeIcon width={props.width} height={props.height} />
-          {authored || (play && play.f) ? (
+          {completed ? (
             <div className={styles.emoji}>
               {authored ? (
                 <Emoji title="Authored Puzzle" symbol="🖋️" />
@@ -117,7 +120,7 @@ const PuzzleLink = (props: {
         >
           <h3 className="marginBottom0">
             {props.title}{' '}
-            {!authored && play ? (
+            {!authored && play?.t ? (
               play.f ? (
                 <i>({timeString(play.t, false)})</i>
               ) : (
