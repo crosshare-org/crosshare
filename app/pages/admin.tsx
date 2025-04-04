@@ -30,6 +30,7 @@ import { Markdown } from '../components/Markdown.js';
 import { CommentReportV } from '../components/ReportOverlay.js';
 import { useSnackbar } from '../components/Snackbar.js';
 import { TagList } from '../components/TagList.js';
+import { PastDistanceToNow } from '../components/TimeDisplay.js';
 import { DefaultTopBar } from '../components/TopBar.js';
 import { UpcomingMinisCalendar } from '../components/UpcomingMinisCalendar.js';
 import { ConstructorPageWithIdV } from '../lib/constructorPage.js';
@@ -113,12 +114,15 @@ const PuzzleListItem = (props: PuzzleResult & { crypticMods: string[] }) => {
     );
   });
   const modLikes = intersect(props.crypticMods, props.likes);
+  const publishDate = props.isPrivateUntil
+    ? new Date(props.isPrivateUntil)
+    : new Date(props.publishTime);
   return (
     <li key={props.id} className="marginBottom2em">
       <Link href={`/crosswords/${props.id}/${slugify(props.title)}`}>
         {props.title}
       </Link>{' '}
-      by {props.authorName}
+      by {props.authorName} - <PastDistanceToNow date={publishDate} />
       <TagList tags={(props.userTags ?? []).concat(props.autoTags ?? [])} />
       {props.constructorNotes ? (
         <div className="textAlignCenter overflowWrapBreakWord">
