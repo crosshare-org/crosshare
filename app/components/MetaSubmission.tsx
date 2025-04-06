@@ -1,6 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 import type { User } from 'firebase/auth';
-import { Dispatch, FormEvent, useContext, useState } from 'react';
+import { Dispatch, FormEvent, useContext, useEffect, useState } from 'react';
 import { isMetaSolution } from '../lib/utils.js';
 import {
   ContestRevealAction,
@@ -13,6 +13,7 @@ import { DisplayNameForm, useDisplayName } from './DisplayNameForm.js';
 import { Emoji } from './Emoji.js';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons.js';
 import { LengthLimitedInput, LengthView } from './Inputs.js';
+import { RevealOverlay } from './RevealOverlay.js';
 import { useSnackbar } from './Snackbar.js';
 
 const MetaSubmissionForm = (props: {
@@ -29,11 +30,9 @@ const MetaSubmissionForm = (props: {
   const [editingDisplayName, setEditingDisplayName] = useState(false);
   const [enteringForPrize, setEnteringForPrize] = useState(false);
   const { addToast } = useSnackbar();
-
-  const disabledUntilNotReached = props.revealDisabledUntil
+  const disabled = props.revealDisabledUntil
     ? new Date() < props.revealDisabledUntil
     : false;
-  const disabled = props.solutions.length === 0 || disabledUntilNotReached;
 
   function submitMeta(event: FormEvent) {
     event.preventDefault();
@@ -146,7 +145,7 @@ const MetaSubmissionForm = (props: {
           disabled={disabled}
           text="Give Up / Reveal"
         />
-        {disabledUntilNotReached && props.revealDisabledUntil ? (
+        {disabled && props.revealDisabledUntil ? (
           <span>
             Reveal will be available{' '}
             {formatDistanceToNow(props.revealDisabledUntil, {
@@ -172,6 +171,19 @@ export const MetaSubmission = (props: {
   solutionDigests: string[];
   puzzleId: string;
 }) => {
+  const [showingRevealOverlay, setShowingRevealOverlay] = useState(false);
+  const [wasntRevealed, setWasntRevealed] = useState(false);
+  const displayName = useDisplayName();
+  useEffect(() => {
+    if (!props.contestRevealed) {
+      setWasntRevealed(true);
+    }
+    if (props.contestRevealed && wasntRevealed) {
+      setWasntRevealed(false);
+      setShowingRevealOverlay(true);
+    }
+  }, [props.contestRevealed, wasntRevealed]);
+
   const authContext = useContext(AuthContext);
   if (!authContext.user || authContext.user.isAnonymous) {
     return (
@@ -221,23 +233,19 @@ export const MetaSubmission = (props: {
       )}
 
       {props.contestRevealed || props.isAuthor ? (
-        props.solutions.length === 1 ? (
-          <p>
-            The solution is: <strong>{props.solutions[0]}</strong>
-          </p>
-        ) : (
-          <p>
-            The solutions are:{' '}
-            {props.solutions.map((s, i) => [
-              i > 0 && ', ',
-              <strong key={i}>{s}</strong>,
-            ])}
-          </p>
-        )
+        <p>
+          You {props.isAuthor ? 'constructed' : 'revealed'} this puzzle:{' '}
+          <ButtonAsLink
+            onClick={() => {
+              setShowingRevealOverlay(true);
+            }}
+          >
+            show solutions
+          </ButtonAsLink>
+        </p>
       ) : (
         ''
       )}
-
       {!isComplete ? (
         <>
           <p>
@@ -246,6 +254,17 @@ export const MetaSubmission = (props: {
           </p>
           <MetaSubmissionForm user={authContext.user} {...props} />
         </>
+      ) : (
+        ''
+      )}
+      {showingRevealOverlay ? (
+        <RevealOverlay
+          displayName={displayName || 'Anonymous Crossharer'}
+          puzzleId={props.puzzleId}
+          close={() => {
+            setShowingRevealOverlay(false);
+          }}
+        />
       ) : (
         ''
       )}

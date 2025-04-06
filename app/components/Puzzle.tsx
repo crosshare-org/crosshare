@@ -294,6 +294,7 @@ export const Puzzle = ({
         play.ct_rv && {
           contestRevealed: true,
           contestSubmitTime: play.ct_t?.toMillis(),
+          contestDisplayName: play.ct_n,
         }),
       ...(play &&
         play.ct_sub && {

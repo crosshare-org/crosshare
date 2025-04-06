@@ -295,13 +295,7 @@ export function puzzleFromDB(
   let isContest = false;
   if (dbPuzzle.ct_ans?.length) {
     isContest = true;
-    const revealDelay = dbPuzzle.ct_rv_dl;
-    const publishTime = dbPuzzle.pvu ?? dbPuzzle.p;
-    const includeAnswers =
-      includeMetaSolutions ||
-      !revealDelay ||
-      new Date() >= new Date(publishTime.toMillis() + revealDelay);
-    if (includeAnswers) {
+    if (includeMetaSolutions) {
       contestAnswers = dbPuzzle.ct_ans;
     } else {
       contestAnswerDigests = dbPuzzle.ct_ans.map((a) =>

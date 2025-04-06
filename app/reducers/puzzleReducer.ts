@@ -285,6 +285,7 @@ export function puzzleReducer(
       cellsEverMarkedWrong: new Set<number>(play.we),
       ...(play.ct_rv && {
         contestRevealed: true,
+        contestDisplayName: play.ct_n,
         contestSubmitTime: play.ct_t?.toMillis(),
       }),
       ...(play.ct_sub && {
