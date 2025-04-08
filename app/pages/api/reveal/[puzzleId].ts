@@ -64,6 +64,7 @@ export default async function reveal(
     Timestamp.now().toMillis() < publishDate + puzzle.ct_rv_dl
   ) {
     res.status(403).json({ statusCode: 403, message: 'reveal disabled' });
+    return;
   }
 
   await getCollection('p').doc(`${puzzleId}-${uid}`).update({
