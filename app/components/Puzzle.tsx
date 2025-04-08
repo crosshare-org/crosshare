@@ -1255,7 +1255,7 @@ export const Puzzle = ({
         <SlateColorTheme />
         <div data-slate={isSlate} className={styles.wrapper}>
           <div className={styles.headerWrap}>
-            {isSlate ? (
+            {isSlate && !('removeHeader' in router.query) ? (
               <SlateHeader
                 title={puzzle.title}
                 author={puzzle.guestConstructor || puzzle.authorName}
