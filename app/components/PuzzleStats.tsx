@@ -58,16 +58,19 @@ interface MetaSubmissionListProps {
 interface TableData extends MetaSubmissionForStatsViewT {
   d: string;
   r: string;
-  p: string;
+  p: string[];
 }
 
 const MetaSubmissionList = (props: MetaSubmissionListProps) => {
+  const [showingPreviousGuesses, setShowingPreviousGuesses] = useState<
+    string[]
+  >([]);
   const { showSnackbar } = useSnackbar();
   const [subs, setSubs] = useState(
     props.stats.ct_subs?.map((n) => ({
       d: (typeof n.t === 'number' ? new Date(n.t) : n.t.toDate()).toISOString(),
       r: n.rv ? 'Yes' : 'No',
-      p: (n.gs ?? []).length.toString(),
+      p: n.gs ?? [],
       ...n,
     }))
   );
@@ -78,6 +81,11 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
   const onSort = (col: keyof TableData, dir: 1 | -1) => {
     const newSubs = [...subs];
     newSubs.sort((x, y) => {
+      if (col === 'p') {
+        if (x.p.length < y.p.length) return dir;
+        if (y.p.length < x.p.length) return -dir;
+        return 0;
+      }
       const xcol = x[col]?.toString().trim().toLocaleLowerCase() || '',
         ycol = y[col]?.toString().trim().toLocaleLowerCase() || '';
       if (xcol < ycol) return dir;
@@ -151,6 +159,20 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
       key: 'p',
       header: '# of Prior Submissions',
       sortable: true,
+      content: (row) => {
+        if (row.p.length === 0) {
+          return <span>0</span>;
+        }
+        return (
+          <ButtonAsLink
+            onClick={() => {
+              setShowingPreviousGuesses(row.p);
+            }}
+          >
+            {row.p.length}
+          </ButtonAsLink>
+        );
+      },
     },
     {
       key: 'r',
@@ -164,6 +186,21 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
 
   return (
     <>
+      {showingPreviousGuesses.length > 0 ? (
+        <Overlay
+          closeCallback={() => {
+            setShowingPreviousGuesses([]);
+          }}
+        >
+          <ul>
+            {showingPreviousGuesses.map((g) => {
+              return <li key={g}>{g}</li>;
+            })}
+          </ul>
+        </Overlay>
+      ) : (
+        <></>
+      )}
       <p className="margin1em">
         <CSVLink
           data={subs.map((s) => ({
