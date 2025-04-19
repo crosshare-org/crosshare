@@ -45,6 +45,7 @@ export const BLOCK = '.';
 export const EMPTY = ' ';
 export const CELL_DELIMITER = ',';
 export const ROW_DELIMITER = '\n';
+export const ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
 
 export enum Symmetry {
   Rotational,

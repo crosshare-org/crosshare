@@ -8,6 +8,7 @@ import { sizeTag } from '../lib/sizeTag.js';
 import { COVER_PIC } from '../lib/style.js';
 import { Timestamp } from '../lib/timestamp.js';
 import {
+  ONE_WEEK,
   dbCluesToClueTArray,
   directionString,
   removeClueSpecials,
@@ -695,9 +696,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                     onChange={(e) => {
                       const spa: UpdateContestAction = {
                         type: 'CONTEST',
-                        revealDelay: e.target.checked
-                          ? 1000 * 60 * 60 * 24 * 7
-                          : null,
+                        revealDelay: e.target.checked ? ONE_WEEK : null,
                       };
                       props.dispatch(spa);
                     }}

@@ -8,6 +8,7 @@ import { SMALL_AND_UP_RULES } from '../lib/style.js';
 import { Timestamp } from '../lib/timestamp.js';
 import {
   Direction,
+  ONE_WEEK,
   PuzzleInProgressT,
   dbCluesToClueTArray,
   fromKeyboardEvent,
@@ -61,7 +62,7 @@ const initializeState = (
     isPrivateUntil: null,
     contestAnswers: null,
     contestHasPrize: false,
-    contestRevealDelay: null,
+    contestRevealDelay: ONE_WEEK,
     alternates: null,
     userTags: [],
   });
