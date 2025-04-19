@@ -104,7 +104,7 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
         return (
           <>
             {isSolution ? <Emoji symbol="✅" /> : <Emoji symbol="❌" />} {row.s}{' '}
-            {!isSolution ? (
+            {!isSolution && row.s.trim().length > 0 ? (
               <>
                 (
                 <ButtonAsLink
