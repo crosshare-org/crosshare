@@ -40,6 +40,7 @@ import { COVER_PIC } from '../../lib/style.js';
 import { withTranslation } from '../../lib/translation.js';
 import {
   Direction,
+  ONE_WEEK,
   PuzzleResult,
   puzzleFromDB,
   removeClueSpecials,
@@ -691,6 +692,33 @@ const PuzzleEditor = ({
               />
               {puzzle.contestAnswers.length ? (
                 <>
+                  <div>
+                    <label>
+                      <input
+                        className="marginRight1em"
+                        type="checkbox"
+                        checked={
+                          puzzle.contestRevealDelay
+                            ? puzzle.contestRevealDelay > 0
+                            : false
+                        }
+                        onChange={logAsyncErrors(async () => {
+                          if (puzzle.contestRevealDelay) {
+                            await updateDoc(getDocRef('c', puzzle.id), {
+                              ct_rv_dl: deleteField(),
+                            });
+                          } else {
+                            await updateDoc(getDocRef('c', puzzle.id), {
+                              ct_rv_dl: ONE_WEEK,
+                            });
+                          }
+                        })}
+                      />{' '}
+                      Delay one week (from the date the puzzle becomes public)
+                      before allowing solvers to reveal the meta solution
+                    </label>
+                  </div>
+
                   {puzzle.contestHasPrize ? (
                     <>
                       <p>

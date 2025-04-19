@@ -701,7 +701,8 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                       props.dispatch(spa);
                     }}
                   />{' '}
-                  Delay one week from publish date before allowing reveals
+                  Delay one week (from the date the puzzle becomes public)
+                  before allowing solvers to reveal the meta solution
                 </label>
               </div>
 
