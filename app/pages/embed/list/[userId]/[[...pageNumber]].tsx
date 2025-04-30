@@ -4,7 +4,6 @@ import {
   EmbedContext,
 } from '../../../../components/EmbedContext.js';
 import { EmbedStyling } from '../../../../components/EmbedStyling.js';
-import { ErrorPage } from '../../../../components/ErrorPage.js';
 import { Link } from '../../../../components/Link.js';
 import {
   LinkablePuzzle,
@@ -13,7 +12,7 @@ import {
 import { EmbedOptionsT } from '../../../../lib/embedOptions.js';
 import { useEmbedOptions } from '../../../../lib/hooks.js';
 import { paginatedPuzzles } from '../../../../lib/paginatedPuzzles.js';
-import { PageErrorProps, getEmbedProps } from '../../../../lib/serverOnly.js';
+import { getEmbedProps } from '../../../../lib/serverOnly.js';
 import { withTranslation } from '../../../../lib/translation.js';
 import styles from './pageNumber.module.css';
 
@@ -26,13 +25,10 @@ interface PageProps {
   embedOptions?: EmbedOptionsT;
 }
 
-const gssp: GetServerSideProps<PageProps | PageErrorProps> = async ({
-  params,
-  query,
-}) => {
+const gssp: GetServerSideProps<PageProps> = async ({ params, query }) => {
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!params?.userId || Array.isArray(params.userId)) {
-    return { props: { error: 'No userId supplied' } };
+    return { notFound: true };
   }
 
   const pn = params.pageNumber;
@@ -42,10 +38,10 @@ const gssp: GetServerSideProps<PageProps | PageErrorProps> = async ({
   } else if (Array.isArray(pn) && pn.length === 1 && pn[0]) {
     page = parseInt(pn[0]);
     if (page.toString() !== pn[0] || page < 0) {
-      return { props: { error: 'Bad page number' } };
+      return { notFound: true };
     }
   } else {
-    return { props: { error: 'Bad page number' } };
+    return { notFound: true };
   }
 
   const [puzzles, hasNext] = await paginatedPuzzles(
@@ -72,22 +68,10 @@ const gssp: GetServerSideProps<PageProps | PageErrorProps> = async ({
 
 export const getServerSideProps = withTranslation(gssp);
 
-export default function ThemedPage(props: PageProps | PageErrorProps) {
+export default function ThemedPage(props: PageProps) {
   const [embedStyleProps, embedContext] = useEmbedOptions(
     ('embedOptions' in props && props.embedOptions) || undefined
   );
-
-  if ('error' in props) {
-    return (
-      <ErrorPage title="Error loading list">
-        <p>We&apos;re sorry, there was an error.</p>
-        <p>{props.error}</p>
-        <p>
-          Try the <Link href="/">homepage</Link>.
-        </p>
-      </ErrorPage>
-    );
-  }
 
   let colorModeQuery = '';
   if (embedContext.colorMode !== EmbedColorMode.Default) {
