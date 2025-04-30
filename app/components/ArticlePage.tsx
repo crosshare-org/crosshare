@@ -4,25 +4,10 @@ import { ArticleT } from '../lib/article.js';
 import { ArticlePageProps } from '../lib/serverOnly.js';
 import styles from './ArticlePage.module.css';
 import { ContactLinks } from './ContactLinks.js';
-import { ErrorPage } from './ErrorPage.js';
-import { Link } from './Link.js';
 import { Markdown } from './Markdown.js';
 import { DefaultTopBar } from './TopBar.js';
 
 export function ArticlePage(props: ArticlePageProps) {
-  if ('error' in props) {
-    return (
-      <ErrorPage title="Article Not Found">
-        <p>
-          We&apos;re sorry, we couldn&apos;t find the article you requested.
-        </p>
-        <p>{props.error}</p>
-        <p>
-          Try the <Link href="/">homepage</Link>.
-        </p>
-      </ErrorPage>
-    );
-  }
   return <Article key={props.s} {...props} />;
 }
 
