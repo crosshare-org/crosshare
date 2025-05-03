@@ -152,7 +152,9 @@ export default class CrosshareDocument extends Document {
             }}
           />
           {/* Global Site Tag (gtag.js) - Google Analytics */}
-          {process.env.NEXT_PUBLIC_USE_EMULATORS ? '' :
+          {process.env.NEXT_PUBLIC_USE_EMULATORS ? (
+            ''
+          ) : (
             <>
               <script
                 async
@@ -170,7 +172,9 @@ export default class CrosshareDocument extends Document {
   });
 `,
                 }}
-              /></>}
+              />
+            </>
+          )}
         </Head>
         <body>
           <script
