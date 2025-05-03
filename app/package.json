@@ -29,7 +29,7 @@
     "prodDeploy": "npx firebase deploy --only hosting:prod",
     "stagingDeploy": "npx firebase deploy --only hosting:staging",
     "test": "NODE_OPTIONS='--experimental-vm-modules' npx jest --watch",
-    "emulatorAndTests": "firebase emulators:exec --only firestore --project demo-crosshare 'NODE_OPTIONS='--experimental-vm-modules'  npx jest --watch'",
+    "emulatorAndTest": "firebase emulators:exec --only firestore --project demo-crosshare 'NODE_OPTIONS='--experimental-vm-modules'  npx jest --watch'",
     "emulate": "NEXT_PUBLIC_USE_EMULATORS=1 METADATA_SERVER_DETECTION=none GCE_METADATA_HOST=0.0.0.0 FIRESTORE_EMULATOR_HOST=\"127.0.0.1:8080\" GCLOUD_PROJECT=\"demo-crosshare\" firebase emulators:exec --import=./emulator-data --only auth,firestore,storage --project demo-crosshare --ui 'npx next dev'"
   },
   "engines": {
