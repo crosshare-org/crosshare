@@ -152,13 +152,15 @@ export default class CrosshareDocument extends Document {
             }}
           />
           {/* Global Site Tag (gtag.js) - Google Analytics */}
-          <script
-            async
-            src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-          />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
+          {process.env.NEXT_PUBLIC_USE_EMULATORS ? '' :
+            <>
+              <script
+                async
+                src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+              />
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: `
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -167,8 +169,8 @@ export default class CrosshareDocument extends Document {
     cookie_flags: 'SameSite=None;Secure',
   });
 `,
-            }}
-          />
+                }}
+              /></>}
         </Head>
         <body>
           <script
