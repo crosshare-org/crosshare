@@ -10,4 +10,4 @@ RUN firebase setup:emulators:firestore
 RUN firebase setup:emulators:storage
 RUN firebase setup:emulators:ui
 RUN firebase setup:emulators:pubsub
-ENV NEXT_PUBLIC_COMMIT_HASH $COMMIT
+ENV NEXT_PUBLIC_COMMIT_HASH=dev
