@@ -20,7 +20,9 @@ We use a [devcontainer](https://containers.dev/) based workflow. These instructi
 
 ### Getting started
 
-After checking out the codebase open the directory in VS Code. You should see a message giving you the option to "Reopen in Container" - go ahead and do that. It might take a little while to build the container if it's your first time using it. Open a terminal in VS Code with ctrl-` and run the following commands:
+Follow the instructions [here](https://code.visualstudio.com/docs/devcontainers/containers#_installation) to make sure your VS Code instance is ready to use devcontainers.
+
+Then, after checking out the Crosshare codebase open the directory in VS Code. You should see a message giving you the option to "Reopen in Container" - go ahead and do that. It might take a little while to build the container if it's your first time using it. Open a terminal in VS Code with ctrl-` and run the following commands:
 
 ```
 # cd app
