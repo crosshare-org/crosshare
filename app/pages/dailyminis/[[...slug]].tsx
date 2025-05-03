@@ -2,7 +2,6 @@ import { Trans, t } from '@lingui/macro';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { ErrorPage } from '../../components/ErrorPage.js';
 import { I18nTags } from '../../components/I18nTags.js';
 import { Link } from '../../components/Link.js';
 import {
@@ -25,10 +24,7 @@ export interface DailyMiniProps {
   olderLink?: string;
   newerLink?: string;
 }
-interface ErrorProps {
-  error: string;
-}
-type PageProps = DailyMiniProps | ErrorProps;
+type PageProps = DailyMiniProps;
 
 const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
   const slug = params?.slug;
@@ -43,14 +39,13 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
     year = parseInt(slug[0]);
     month = parseInt(slug[1]) - 1;
   } else {
-    console.error('bad daily mini params');
-    res.statusCode = 404;
-    return { props: { error: 'Bad params' } };
+    return { notFound: true };
   }
   const props = await propsForDailyMini(year, month);
-  if (!('error' in props)) {
-    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=7200');
+  if (!props) {
+    return { notFound: true };
   }
+  res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=7200');
   return { props: props };
 };
 
@@ -91,7 +86,7 @@ async function puzzlesListForMonth(
 async function propsForDailyMini(
   year: number,
   month: number
-): Promise<PageProps> {
+): Promise<PageProps | null> {
   const today = new Date();
 
   let lastDay = new Date(year, month + 1, 0).getUTCDate();
@@ -100,7 +95,7 @@ async function propsForDailyMini(
   }
   const puzzles = await puzzlesListForMonth(year, month, lastDay);
   if (!puzzles.length) {
-    return { error: 'No minis for that month' };
+    return null;
   }
   return {
     year: year,
@@ -125,16 +120,6 @@ export default function DailyMiniPage(props: PageProps) {
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const loc = locale || 'en';
 
-  if ('error' in props) {
-    return (
-      <ErrorPage title="Error loading minis">
-        <p>We&apos;re sorry, there was an error: {props.error}</p>
-        <p>
-          Try the <Link href="/">homepage</Link>.
-        </p>
-      </ErrorPage>
-    );
-  }
   const description = t({
     message: `Crosshare features a free daily mini crossword every day of the week.
   These puzzles are a great way to give your brain a bite-sized challenge, and to

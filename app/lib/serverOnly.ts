@@ -148,27 +148,22 @@ export async function getArticle(
   return validate(dbres.docs[0]?.data());
 }
 
-export interface PageErrorProps {
-  error: string;
-}
-
-export type ArticlePageProps = PageErrorProps | (ArticleT & { hast: Root });
+export type ArticlePageProps = ArticleT & { hast: Root };
 
 export const getArticlePageProps: GetServerSideProps<
   ArticlePageProps
-> = async ({ res, params }): Promise<{ props: ArticlePageProps }> => {
+> = async ({ res, params }) => {
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!params?.slug || Array.isArray(params.slug)) {
-    res.statusCode = 404;
-    return { props: { error: 'bad article params' } };
+    return { notFound: true };
   }
   const article = await getArticle(params.slug);
   if (typeof article === 'string') {
-    return { props: { error: article } };
+    return { notFound: true };
   }
   if (!article) {
     res.statusCode = 404;
-    return { props: { error: 'article doesnt exist' } };
+    return { notFound: true };
   }
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
   return { props: { ...article, hast: markdownToHast({ text: article.c }) } };
@@ -240,10 +235,7 @@ export interface PuzzlePageResultProps {
   embedOptions?: EmbedOptionsT;
 }
 
-export type PuzzlePageProps =
-  | PuzzlePageResultProps
-  | PageErrorProps
-  | { packId: string };
+export type PuzzlePageProps = PuzzlePageResultProps | { packId: string };
 
 async function getPrefs(
   db: firebaseAdminType.firestore.Firestore,
@@ -327,24 +319,17 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     puzzleId = puzzleId[0];
   }
   if (!puzzleId) {
-    res.statusCode = 404;
-    return { props: { error: 'missing puzzleId' } };
+    return { notFound: true };
   }
-  let dbres;
-  try {
-    dbres = await db.collection('c').doc(puzzleId).get();
-  } catch {
-    return { props: { error: 'error getting puzzle' } };
-  }
+  const dbres = await db.collection('c').doc(puzzleId).get();
   if (!dbres.exists) {
-    res.statusCode = 404;
-    return { props: { error: 'puzzle doesnt exist' } };
+    return { notFound: true };
   }
 
   const validationResult = DBPuzzleV.decode(dbres.data());
   if (validationResult._tag !== 'Right') {
     console.error(PathReporter.report(validationResult).join(','));
-    return { props: { error: 'invalid puzzle' } };
+    throw new Error(`invalid puzzle ${puzzleId}`);
   }
 
   if (validationResult.right.pk) {

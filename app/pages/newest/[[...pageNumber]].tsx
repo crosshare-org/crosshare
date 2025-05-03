@@ -2,7 +2,6 @@ import { Trans, t } from '@lingui/macro';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { ErrorPage } from '../../components/ErrorPage.js';
 import { I18nTags } from '../../components/I18nTags.js';
 import { Link } from '../../components/Link.js';
 import {
@@ -17,7 +16,7 @@ import { userIdToPage } from '../../lib/serverOnly.js';
 import { withTranslation } from '../../lib/translation.js';
 import styles from './newestPage.module.css';
 
-interface NewestPageProps {
+interface PageProps {
   puzzles: (LinkablePuzzle & {
     constructorPage: ConstructorPageBase | null;
     constructorIsPatron: boolean;
@@ -26,10 +25,6 @@ interface NewestPageProps {
   currentPage: number;
   prevPage: number | null;
 }
-interface ErrorProps {
-  error: string;
-}
-type PageProps = NewestPageProps | ErrorProps;
 
 export const PAGE_SIZE = 20;
 
@@ -41,10 +36,10 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
   } else if (Array.isArray(pn) && pn.length === 1 && pn[0]) {
     page = parseInt(pn[0]);
     if (page.toString() !== pn[0] || page <= 0 || page >= 10) {
-      return { props: { error: 'Bad page number' } };
+      return { notFound: true };
     }
   } else {
-    return { props: { error: 'Bad page number' } };
+    return { notFound: true };
   }
 
   const [puzzlesWithoutConstructor, hasNext] = await paginatedPuzzles(
@@ -75,15 +70,6 @@ export default function NewestPageHandler(props: PageProps) {
   const { locale } = useRouter();
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const loc = locale || 'en';
-
-  if ('error' in props) {
-    return (
-      <ErrorPage title="Something Went Wrong">
-        <p>Sorry! Something went wrong while loading that page.</p>
-        {props.error ? <p>{props.error}</p> : ''}
-      </ErrorPage>
-    );
-  }
 
   const page = props.currentPage;
   const title =

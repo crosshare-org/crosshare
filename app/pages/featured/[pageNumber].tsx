@@ -2,7 +2,6 @@ import { Trans, t } from '@lingui/macro';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { ErrorPage } from '../../components/ErrorPage.js';
 import { I18nTags } from '../../components/I18nTags.js';
 import { Link } from '../../components/Link.js';
 import {
@@ -26,22 +25,19 @@ interface FeaturedPageProps {
   currentPage: number;
   prevPage: number | null;
 }
-interface ErrorProps {
-  error: string;
-}
-type PageProps = FeaturedPageProps | ErrorProps;
+type PageProps = FeaturedPageProps;
 
 export const PAGE_SIZE = 20;
 
 const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!params?.pageNumber || Array.isArray(params.pageNumber)) {
-    return { props: { error: 'Bad params' } };
+    return { notFound: true };
   }
 
   const page = parseInt(params.pageNumber);
   if (page < 1 || page.toString() !== params.pageNumber || page >= 10) {
-    return { props: { error: 'Bad page number' } };
+    return { notFound: true };
   }
   const [puzzlesWithoutConstructor, hasNext] = await paginatedPuzzles(
     page,
@@ -73,15 +69,6 @@ export default function FeaturedPageHandler(props: PageProps) {
   const { locale } = useRouter();
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const loc = locale || 'en';
-
-  if ('error' in props) {
-    return (
-      <ErrorPage title="Something Went Wrong">
-        <p>Sorry! Something went wrong while loading that page.</p>
-        {props.error ? <p>{props.error}</p> : ''}
-      </ErrorPage>
-    );
-  }
 
   const currentPageNumber = props.currentPage;
   const title = t`Featured Puzzles | Page ${currentPageNumber} | Crosshare`;

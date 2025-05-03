@@ -11,22 +11,9 @@ import { PuzzlePageProps, PuzzlePageResultProps } from '../lib/serverOnly.js';
 import { isMetaSolution } from '../lib/utils.js';
 import { AuthContext } from './AuthContext.js';
 import { AuthProps, requiresAuth } from './AuthHelpers.js';
-import { ErrorPage } from './ErrorPage.js';
-import { Link } from './Link.js';
 import { Puzzle } from './Puzzle.js';
 
 export function PuzzlePage(props: PuzzlePageProps) {
-  if ('error' in props) {
-    return (
-      <ErrorPage title="Puzzle Not Found">
-        <p>We&apos;re sorry, we couldn&apos;t find the puzzle you requested.</p>
-        <p>{props.error}</p>
-        <p>
-          Try the <Link href="/">homepage</Link>.
-        </p>
-      </ErrorPage>
-    );
-  }
   if ('packId' in props) {
     return <AddAuthToken key={props.packId} />;
   }
