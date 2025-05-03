@@ -22,18 +22,20 @@ We use a [devcontainer](https://containers.dev/) based workflow. These instructi
 
 After checking out the codebase open the directory in VS Code. You should see a message giving you the option to "Reopen in Container" - go ahead and do that. It might take a little while to build the container if it's your first time using it. Open a terminal in VS Code with ctrl-` and run the following commands:
 
-> $ cd app
-> $ pnpm install
+```
+# cd app
+# pnpm install
+```
 
 Since it's your first time using pnpm you should get prompted that corepack will install it. Hit 'Y' and wait for all of the dependencies to install. Now run the following three commands:
 
-> $ cp firebaseConfig.emulators.ts firebaseConfig.ts
-> $ pnpm compileI18n
-> $ pnpm emulate
+```
+# cp firebaseConfig.emulators.ts firebaseConfig.ts
+# pnpm compileI18n
+# pnpm emulate
+```
 
-The last command will bring up the firebase emulators and then start Crosshare. When everything is running you should see:
->  ✓ Ready
-at the bottom of your terminal. Now the site should be visible at http://localhost:3000 and the emulator admin at http://localhost:4000
+The last command will bring up the firebase emulators and then start Crosshare. When everything is running you should see `✓ Ready` at the bottom of your terminal. Now the site should be visible at http://localhost:3000 and the emulator admin at http://localhost:4000
 
 ### Demo data
 
@@ -41,7 +43,9 @@ The emulators will start with some demo data. We try to keep the demo dataset sm
 
 If you need to alter the demo data to expand what's available please do so. While the dev server is running make any changes you need, either through the user interface itself or through the emulator admin. Then in a new terminal run:
 
-> $ firebase emulators:export --force --project demo-crosshare emulator-data
+```
+# firebase emulators:export --force --project demo-crosshare emulator-data
+```
 
 If you feel your change to the demo data will be generally useful please feel free to include it in your PR with a description of what has been changed.
 
@@ -49,17 +53,23 @@ If you feel your change to the demo data will be generally useful please feel fr
 
 While the emulators are running use the following command (in a second terminal) to start the test runner:
 
-> $ pnpm test
+```
+# pnpm test
+```
 
 Once it's started you can hit `a` to run all of the tests. Alternatively, if the emulators aren't already running you can use:
 
-> $ pnpm emulatorAndTest
+```
+# pnpm emulatorAndTest
+```
 
 That'll start just the firestore emulator (the only one needed for tests) and then launch the test runner.
 
 There are also playwright tests that can be run (while the app is running), but YMMV with these:
 
-> $ pnpm playwright test
+```
+# pnpm playwright test
+```
 
 ## Credits
 
