@@ -19,7 +19,7 @@ import { DefaultTopBar } from '../components/TopBar.js';
 import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList.js';
 import { ArticleT, validate } from '../lib/article.js';
 import { ConstructorPageBase } from '../lib/constructorPage.js';
-import { AdminSettingsV } from '../lib/dbtypes.js';
+import { AdminSettingsV, DBPuzzleT } from '../lib/dbtypes.js';
 import { getCollection } from '../lib/firebaseAdminWrapper.js';
 import { markdownToHast } from '../lib/markdown/markdown.js';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles.js';
@@ -37,6 +37,7 @@ type HomepagePuz = LinkablePuzzle & {
 
 interface HomePageProps {
   dailymini: HomepagePuz | null;
+  throwbackMini: HomepagePuz | null;
   featured: HomepagePuz[];
   articles: ArticleT[];
   announcement: { title: string; body: Root } | null;
@@ -46,6 +47,8 @@ interface HomePageProps {
 const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
   const today = new Date();
   const todaysMini = await getMiniForDate(today);
+  today.setUTCFullYear(today.getUTCFullYear() - 5);
+  const throwback = await getMiniForDate(today);
 
   const [announcement, homepageText]: [
     { title: string; body: Root } | null,
@@ -100,22 +103,37 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
     }))
   );
 
-  if (todaysMini !== null) {
-    res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-    const dm: HomepagePuz = {
-      ...toLinkablePuzzle({
-        ...puzzleFromDB(todaysMini, todaysMini.id),
-        id: todaysMini.id,
-      }),
-      constructorPage: await userIdToPage(todaysMini.a),
-      constructorIsPatron: await isUserPatron(todaysMini.a),
-    };
+  async function convertMini(
+    mini: DBPuzzleT & { id: string }
+  ): Promise<HomepagePuz> {
     return {
-      props: { announcement, homepageText, dailymini: dm, featured, articles },
+      ...toLinkablePuzzle({
+        ...puzzleFromDB(mini, mini.id),
+        id: mini.id,
+      }),
+      constructorPage: await userIdToPage(mini.a),
+      constructorIsPatron: await isUserPatron(mini.a),
     };
   }
+
+  let dailymini: HomepagePuz | null = null;
+  let throwbackMini: HomepagePuz | null = null;
+  if (todaysMini !== null) {
+    res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
+    dailymini = await convertMini(todaysMini);
+  }
+  if (throwback !== null) {
+    throwbackMini = await convertMini(throwback);
+  }
   return {
-    props: { announcement, homepageText, dailymini: null, featured, articles },
+    props: {
+      announcement,
+      homepageText,
+      dailymini,
+      throwbackMini,
+      featured,
+      articles,
+    },
   };
 };
 
@@ -133,6 +151,7 @@ export default function HomePage({
   announcement,
   homepageText,
   dailymini,
+  throwbackMini,
   featured,
   articles,
 }: HomePageProps) {
@@ -200,6 +219,24 @@ export default function HomePage({
                 title={t`Today's daily mini crossword`}
                 filterTags={[]}
               />
+              {throwbackMini ? (
+                <>
+                  <h3>
+                    Throwback Daily Mini (from {today.getFullYear() - 5}):
+                  </h3>
+                  <PuzzleResultLink
+                    fullWidth
+                    puzzle={throwbackMini}
+                    showAuthor={true}
+                    constructorPage={throwbackMini.constructorPage}
+                    constructorIsPatron={throwbackMini.constructorIsPatron}
+                    filterTags={[]}
+                    compact={true}
+                  />
+                </>
+              ) : (
+                ''
+              )}
               <p>
                 <Link
                   href={`/dailyminis/${today.getUTCFullYear()}/${

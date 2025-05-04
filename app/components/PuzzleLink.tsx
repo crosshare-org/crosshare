@@ -34,6 +34,7 @@ const PuzzleLink = (props: {
   noTargetBlank?: boolean;
   fromEmbedPage?: number;
   addQueryString?: string;
+  compact?: boolean;
 }) => {
   const { user } = useContext(AuthContext);
   const [play, setPlay] = useState<PlayWithoutUserT | null>(null);
@@ -90,56 +91,83 @@ const PuzzleLink = (props: {
       data-full-width={props.fullWidth}
       className={styles.link}
     >
-      <Link
-        noTargetBlank={props.noTargetBlank}
-        className={clsx(styles.linkColor, styles.icon)}
-        href={url}
-      >
-        <div className="positionRelative">
-          <PuzzleSizeIcon width={props.width} height={props.height} />
-          {completed ? (
-            <div className={styles.emoji}>
-              {authored ? (
-                <Emoji title="Authored Puzzle" symbol="🖋️" />
-              ) : play && play.ch ? (
-                <Emoji title="Used helpers" symbol="😏" />
-              ) : (
-                <Emoji title="Solved without helpers" symbol="🤓" />
-              )}
-            </div>
-          ) : (
-            ''
-          )}
-        </div>
-      </Link>
+      {props.compact ? (
+        ''
+      ) : (
+        <Link
+          noTargetBlank={props.noTargetBlank}
+          className={clsx(styles.linkColor, styles.icon)}
+          href={url}
+        >
+          <div className="positionRelative">
+            <PuzzleSizeIcon width={props.width} height={props.height} />
+            {completed ? (
+              <div className={styles.emoji}>
+                {authored ? (
+                  <Emoji title="Authored Puzzle" symbol="🖋️" />
+                ) : play && play.ch ? (
+                  <Emoji title="Used helpers" symbol="😏" />
+                ) : (
+                  <Emoji title="Solved without helpers" symbol="🤓" />
+                )}
+              </div>
+            ) : (
+              ''
+            )}
+          </div>
+        </Link>
+      )}
       <div className="flex1">
         <Link
           noTargetBlank={props.noTargetBlank}
           className={styles.linkColor}
           href={url}
         >
-          <h3 className="marginBottom0">
-            {props.title}{' '}
-            {!authored && play?.t ? (
-              play.f ? (
-                <i>({timeString(play.t, false)})</i>
+          {props.compact ? (
+            <span className="marginBottom0">
+              {props.title}{' '}
+              {!authored && play?.t ? (
+                play.f ? (
+                  <i>({timeString(play.t, false)})</i>
+                ) : (
+                  <i>
+                    (<Trans>unfinished</Trans>)
+                  </i>
+                )
               ) : (
-                <i>
-                  (<Trans>unfinished</Trans>)
-                </i>
-              )
-            ) : (
-              ''
-            )}
-          </h3>
-          {props.subTitle ? (
-            <h4 className="marginBottom0">{props.subTitle}</h4>
+                ''
+              )}
+            </span>
           ) : (
-            ''
+            <>
+              <h3 className="marginBottom0">
+                {props.title}{' '}
+                {!authored && play?.t ? (
+                  play.f ? (
+                    <i>({timeString(play.t, false)})</i>
+                  ) : (
+                    <i>
+                      (<Trans>unfinished</Trans>)
+                    </i>
+                  )
+                ) : (
+                  ''
+                )}
+              </h3>
+              {props.subTitle ? (
+                <h4 className="marginBottom0">{props.subTitle}</h4>
+              ) : (
+                ''
+              )}
+            </>
           )}
         </Link>
-        {props.children}
-        {filteredTags.length ? (
+        {props.compact ? (
+          <>&middot; {props.children}</>
+        ) : (
+          <p>{props.children}</p>
+        )}
+        {!props.compact && filteredTags.length ? (
           <TagList className={styles.taglist} tags={filteredTags} link />
         ) : (
           ''
@@ -286,6 +314,7 @@ export const PuzzleResultLink = ({
   noTargetBlank?: boolean;
   fromEmbedPage?: number;
   addQueryString?: string;
+  compact?: boolean;
 }) => {
   const difficulty = <DifficultyBadge puzzleRating={puzzle.rating} />;
   const authorLink = (
@@ -329,40 +358,40 @@ export const PuzzleResultLink = ({
   let contents: ReactNode = difficulty;
   if (showDate && showAuthor) {
     contents = (
-      <p>
+      <>
         {difficulty} · {authorLink} · {date}
-      </p>
+      </>
     );
   } else if (puzzle.guestConstructor && showDate) {
     contents = (
-      <p>
+      <>
         {difficulty} ·{' '}
         <Trans comment="The variable is the guest constructor's name">
           By guest constructor {puzzle.guestConstructor}
         </Trans>{' '}
         · {date}
-      </p>
+      </>
     );
   } else if (showDate) {
     contents = (
-      <p>
+      <>
         {difficulty} · {date}
-      </p>
+      </>
     );
   } else if (showAuthor) {
     contents = (
-      <p>
+      <>
         {difficulty} · {authorLink}
-      </p>
+      </>
     );
   } else if (puzzle.guestConstructor) {
     contents = (
-      <p>
+      <>
         {difficulty} ·{' '}
         <Trans comment="The variable is the guest constructor's name">
           By guest constructor {puzzle.guestConstructor}
         </Trans>
-      </p>
+      </>
     );
   }
   return (
@@ -378,10 +407,10 @@ export const PuzzleResultLink = ({
         title={title ?? puzzle.title}
         subTitle={title ? puzzle.title : undefined}
         tags={(puzzle.userTags ?? []).concat(puzzle.autoTags ?? [])}
-        filterTags={props.filterTags}
         noTargetBlank={noTargetBlank}
         fromEmbedPage={fromEmbedPage}
         addQueryString={addQueryString}
+        {...props}
       >
         {contents}
       </PuzzleLink>
