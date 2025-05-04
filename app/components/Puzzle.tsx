@@ -1221,231 +1221,233 @@ export const Puzzle = ({
   return (
     <>
       <GridContext.Provider value={state.grid}>
-        <FullscreenCSS />
-        <Head>
-          <title>{`${puzzle.title} | Crosshare crossword puzzle`}</title>
-          <I18nTags
-            locale={locale}
-            canonicalPath={`/crosswords/${puzzle.id}/${slugify(puzzle.title)}`}
-          />
-          <meta key="og:title" property="og:title" content={puzzle.title} />
-          <meta
-            key="og:description"
-            property="og:description"
-            content={description}
-          />
-          <meta
-            key="og:image"
-            property="og:image"
-            content={'https://crosshare.org/api/ogimage/' + puzzle.id}
-          />
-          <meta key="og:image:width" property="og:image:width" content="1200" />
-          <meta
-            key="og:image:height"
-            property="og:image:height"
-            content="630"
-          />
-          <meta
-            key="og:image:alt"
-            property="og:image:alt"
-            content="An image of the puzzle grid"
-          />
-          <meta key="description" name="description" content={description} />
-        </Head>
-        <SlateColorTheme />
-        <div data-slate={isSlate} className={styles.wrapper}>
-          <div className={styles.headerWrap}>
-            {isSlate && !('removeHeader' in router.query) ? (
-              <SlateHeader
-                title={puzzle.title}
-                author={puzzle.guestConstructor || puzzle.authorName}
-              />
-            ) : (
-              ''
-            )}
-            <TopBar title={puzzle.title}>
-              {!loadingPlayState ? (
-                !state.success ? (
-                  <>
-                    <div className={styles.topBarInner}>
-                      {isSlate ? (
-                        <span className="colorText verticalAlignMiddle">
-                          <Timer className={styles.slateTimeIcon} />
-                          <strong className={styles.slateTime}>
-                            {timeString(state.displaySeconds, true)}
-                          </strong>
-                        </span>
-                      ) : (
-                        ''
-                      )}
+        <DownsOnlyContext.Provider value={state.downsOnly && !state.success}>
+          <FullscreenCSS />
+          <Head>
+            <title>{`${puzzle.title} | Crosshare crossword puzzle`}</title>
+            <I18nTags
+              locale={locale}
+              canonicalPath={`/crosswords/${puzzle.id}/${slugify(puzzle.title)}`}
+            />
+            <meta key="og:title" property="og:title" content={puzzle.title} />
+            <meta
+              key="og:description"
+              property="og:description"
+              content={description}
+            />
+            <meta
+              key="og:image"
+              property="og:image"
+              content={'https://crosshare.org/api/ogimage/' + puzzle.id}
+            />
+            <meta
+              key="og:image:width"
+              property="og:image:width"
+              content="1200"
+            />
+            <meta
+              key="og:image:height"
+              property="og:image:height"
+              content="630"
+            />
+            <meta
+              key="og:image:alt"
+              property="og:image:alt"
+              content="An image of the puzzle grid"
+            />
+            <meta key="description" name="description" content={description} />
+          </Head>
+          <SlateColorTheme />
+          <div data-slate={isSlate} className={styles.wrapper}>
+            <div className={styles.headerWrap}>
+              {isSlate && !('removeHeader' in router.query) ? (
+                <SlateHeader
+                  title={puzzle.title}
+                  author={puzzle.guestConstructor || puzzle.authorName}
+                />
+              ) : (
+                ''
+              )}
+              <TopBar title={puzzle.title}>
+                {!loadingPlayState ? (
+                  !state.success ? (
+                    <>
+                      <div className={styles.topBarInner}>
+                        {isSlate ? (
+                          <span className="colorText verticalAlignMiddle">
+                            <Timer className={styles.slateTimeIcon} />
+                            <strong className={styles.slateTime}>
+                              {timeString(state.displaySeconds, true)}
+                            </strong>
+                          </span>
+                        ) : (
+                          ''
+                        )}
+                        <TopBarLink
+                          icon={isSlate ? <Pause /> : <FaPause />}
+                          hoverText={t`Pause Game`}
+                          text={
+                            isSlate
+                              ? 'Pause'
+                              : timeString(state.displaySeconds, true)
+                          }
+                          onClick={() => {
+                            window.parent.postMessage(
+                              {
+                                type: 'pause',
+                                elapsed: state.displaySeconds,
+                              },
+                              '*'
+                            );
+                            dispatch({ type: 'PAUSEACTION' });
+                            cachePlayForUser(props.user);
+                            writePlayToDBIfNeeded();
+                          }}
+                          keepText={!isSlate}
+                        />
+                      </div>
+                      {isSlate ? <SlateButtonMargin /> : ''}
                       <TopBarLink
-                        icon={isSlate ? <Pause /> : <FaPause />}
-                        hoverText={t`Pause Game`}
+                        icon={
+                          state.clueView ? (
+                            isSlate ? (
+                              <Grid />
+                            ) : (
+                              <SpinnerFinished />
+                            )
+                          ) : isSlate ? (
+                            <Clues />
+                          ) : (
+                            <FaListOl />
+                          )
+                        }
+                        text={state.clueView ? t`Grid` : t`Clues`}
+                        onClick={() => {
+                          const a: ToggleClueViewAction = {
+                            type: 'TOGGLECLUEVIEW',
+                          };
+                          dispatch(a);
+                        }}
+                      />
+                      {isSlate ? <SlateButtonMargin /> : ''}
+                      {checkRevealMenus}
+                      {isSlate ? <SlateButtonMargin /> : ''}
+                      {moreMenu}
+                    </>
+                  ) : (
+                    <>
+                      <div className={styles.topBarInner} />
+
+                      <TopBarLink
+                        icon={isSlate ? <Stats /> : <FaComment />}
                         text={
                           isSlate
-                            ? 'Pause'
-                            : timeString(state.displaySeconds, true)
+                            ? 'Show Stats'
+                            : puzzle.isContest
+                              ? !isMetaSolution(
+                                  state.contestSubmission,
+                                  puzzle.contestAnswers,
+                                  puzzle.contestAnswerDigests,
+                                  puzzle.id
+                                ) && !state.contestRevealed
+                                ? t`Contest Prompt / Submission`
+                                : t`Comments / Leaderboard`
+                              : t`Show Comments`
                         }
                         onClick={() => {
                           window.parent.postMessage(
                             {
-                              type: 'pause',
-                              elapsed: state.displaySeconds,
+                              type: 'show-completion-modal',
                             },
                             '*'
                           );
-                          dispatch({ type: 'PAUSEACTION' });
-                          cachePlayForUser(props.user);
-                          writePlayToDBIfNeeded();
+
+                          dispatch({ type: 'UNDISMISSSUCCESS' });
                         }}
-                        keepText={!isSlate}
                       />
-                    </div>
-                    {isSlate ? <SlateButtonMargin /> : ''}
-                    <TopBarLink
-                      icon={
-                        state.clueView ? (
-                          isSlate ? (
-                            <Grid />
-                          ) : (
-                            <SpinnerFinished />
-                          )
-                        ) : isSlate ? (
-                          <Clues />
-                        ) : (
-                          <FaListOl />
-                        )
-                      }
-                      text={state.clueView ? t`Grid` : t`Clues`}
-                      onClick={() => {
-                        const a: ToggleClueViewAction = {
-                          type: 'TOGGLECLUEVIEW',
-                        };
-                        dispatch(a);
-                      }}
-                    />
-                    {isSlate ? <SlateButtonMargin /> : ''}
-                    {checkRevealMenus}
-                    {isSlate ? <SlateButtonMargin /> : ''}
-                    {moreMenu}
-                  </>
+                      {isSlate ? <SlateButtonMargin /> : ''}
+                      {moreMenu}
+                    </>
+                  )
                 ) : (
                   <>
                     <div className={styles.topBarInner} />
-
-                    <TopBarLink
-                      icon={isSlate ? <Stats /> : <FaComment />}
-                      text={
-                        isSlate
-                          ? 'Show Stats'
-                          : puzzle.isContest
-                            ? !isMetaSolution(
-                                state.contestSubmission,
-                                puzzle.contestAnswers,
-                                puzzle.contestAnswerDigests,
-                                puzzle.id
-                              ) && !state.contestRevealed
-                              ? t`Contest Prompt / Submission`
-                              : t`Comments / Leaderboard`
-                            : t`Show Comments`
-                      }
-                      onClick={() => {
-                        window.parent.postMessage(
-                          {
-                            type: 'show-completion-modal',
-                          },
-                          '*'
-                        );
-
-                        dispatch({ type: 'UNDISMISSSUCCESS' });
-                      }}
-                    />
-                    {isSlate ? <SlateButtonMargin /> : ''}
                     {moreMenu}
                   </>
-                )
-              ) : (
-                <>
-                  <div className={styles.topBarInner} />
-                  {moreMenu}
-                </>
-              )}
-            </TopBar>
-          </div>
-          {state.filled && !state.success && !state.dismissedKeepTrying ? (
-            <KeepTryingOverlay dispatch={dispatch} />
-          ) : (
-            ''
-          )}
-          {state.success && !state.dismissedSuccess && !isSlate ? (
-            <PuzzleOverlay
-              {...overlayBaseProps}
-              overlayType={OverlayType.Success}
-              contestSubmission={state.contestSubmission}
-              contestHasPrize={puzzle.contestHasPrize}
-              contestRevealed={state.contestRevealed}
-              contestRevealDelay={puzzle.contestRevealDelay}
-              shareButtonText={puzzle.constructorPage?.st}
-            />
-          ) : (
-            ''
-          )}
-          {state.moderating ? (
-            <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />
-          ) : (
-            ''
-          )}
-          {state.showingEmbedOverlay && props.user ? (
-            <EmbedOverlay
-              user={props.user}
-              puzzle={puzzle}
-              dispatch={dispatch}
-            />
-          ) : (
-            ''
-          )}
-          {state.currentTimeWindowStart === 0 &&
-          !state.success &&
-          !(state.filled && !state.dismissedKeepTrying) ? (
-            state.bankedSeconds === 0 ? (
-              <PuzzleOverlay
-                {...overlayBaseProps}
-                overlayType={OverlayType.BeginPause}
-                dismissMessage={t`Begin Puzzle`}
-                message={t`Ready to get started?`}
-                loadingPlayState={loadingPlayState || !state.loadedPlayState}
-              />
-            ) : isSlate ? (
-              <SlatePause dispatch={dispatch} />
+                )}
+              </TopBar>
+            </div>
+            {state.filled && !state.success && !state.dismissedKeepTrying ? (
+              <KeepTryingOverlay dispatch={dispatch} />
             ) : (
+              ''
+            )}
+            {state.success && !state.dismissedSuccess && !isSlate ? (
               <PuzzleOverlay
                 {...overlayBaseProps}
-                overlayType={OverlayType.BeginPause}
-                dismissMessage={t`Resume`}
-                message={t`Your puzzle is paused`}
-                loadingPlayState={loadingPlayState || !state.loadedPlayState}
+                overlayType={OverlayType.Success}
+                contestSubmission={state.contestSubmission}
+                contestHasPrize={puzzle.contestHasPrize}
+                contestRevealed={state.contestRevealed}
+                contestRevealDelay={puzzle.contestRevealDelay}
+                shareButtonText={puzzle.constructorPage?.st}
               />
-            )
-          ) : (
-            ''
-          )}
-          <div tabIndex={0} role={'textbox'} className={styles.puzzleWrap}>
-            <DownsOnlyContext.Provider
-              value={state.downsOnly && !state.success}
-            >
+            ) : (
+              ''
+            )}
+            {state.moderating ? (
+              <ModeratingOverlay puzzle={puzzle} dispatch={dispatch} />
+            ) : (
+              ''
+            )}
+            {state.showingEmbedOverlay && props.user ? (
+              <EmbedOverlay
+                user={props.user}
+                puzzle={puzzle}
+                dispatch={dispatch}
+              />
+            ) : (
+              ''
+            )}
+            {state.currentTimeWindowStart === 0 &&
+            !state.success &&
+            !(state.filled && !state.dismissedKeepTrying) ? (
+              state.bankedSeconds === 0 ? (
+                <PuzzleOverlay
+                  {...overlayBaseProps}
+                  overlayType={OverlayType.BeginPause}
+                  dismissMessage={t`Begin Puzzle`}
+                  message={t`Ready to get started?`}
+                  loadingPlayState={loadingPlayState || !state.loadedPlayState}
+                />
+              ) : isSlate ? (
+                <SlatePause dispatch={dispatch} />
+              ) : (
+                <PuzzleOverlay
+                  {...overlayBaseProps}
+                  overlayType={OverlayType.BeginPause}
+                  dismissMessage={t`Resume`}
+                  message={t`Your puzzle is paused`}
+                  loadingPlayState={loadingPlayState || !state.loadedPlayState}
+                />
+              )
+            ) : (
+              ''
+            )}
+            <div tabIndex={0} role={'textbox'} className={styles.puzzleWrap}>
               {puzzleView}
-            </DownsOnlyContext.Provider>
+            </div>
+            <div className="flexNone width100">
+              <Keyboard
+                toggleKeyboard={toggleKeyboard}
+                keyboardHandler={keyboardHandler}
+                muted={muted}
+                showExtraKeyLayout={state.showExtraKeyLayout}
+                includeBlockKey={false}
+              />
+            </div>
           </div>
-          <div className="flexNone width100">
-            <Keyboard
-              toggleKeyboard={toggleKeyboard}
-              keyboardHandler={keyboardHandler}
-              muted={muted}
-              showExtraKeyLayout={state.showExtraKeyLayout}
-              includeBlockKey={false}
-            />
-          </div>
-        </div>
+        </DownsOnlyContext.Provider>
       </GridContext.Provider>
     </>
   );
