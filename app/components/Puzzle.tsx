@@ -262,8 +262,9 @@ export const Puzzle = ({
           vBars: new Set(puzzle.vBars),
           hBars: new Set(puzzle.hBars),
           allowBlockEditing: false,
-          highlighted: new Set(puzzle.highlighted),
-          highlight: puzzle.highlight,
+          cellStyles: new Map<string, Set<number>>(
+            Object.entries(puzzle.cellStyles).map(([k, v]) => [k, new Set(v)])
+          ),
           hidden: new Set(puzzle.hidden),
         }),
         puzzle.clues,

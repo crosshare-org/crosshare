@@ -194,8 +194,7 @@ export interface PuzzleT {
   vBars: number[];
   hBars: number[];
   hidden: number[];
-  highlighted: number[];
-  highlight: 'circle' | 'shade';
+  cellStyles: Record<string, number[]>;
   comments: CommentWithRepliesT[];
   commentsDisabled: boolean;
   constructorNotes: string | null;
@@ -305,6 +304,19 @@ export function puzzleFromDB(
     }
   }
 
+  const cellStyles = dbPuzzle.sty || {};
+  if (dbPuzzle.hs) {
+    if (dbPuzzle.s) {
+      cellStyles.shade = Array.from(
+        new Set([...(cellStyles.shade || []), ...dbPuzzle.hs])
+      );
+    } else {
+      cellStyles.circle = Array.from(
+        new Set([...(cellStyles.circle || []), ...dbPuzzle.hs])
+      );
+    }
+  }
+
   return {
     authorId: dbPuzzle.a,
     authorName: dbPuzzle.n,
@@ -321,8 +333,7 @@ export function puzzleFromDB(
     vBars: dbPuzzle.vb || [],
     hBars: dbPuzzle.hb || [],
     hidden: dbPuzzle.hdn || [],
-    highlighted: dbPuzzle.hs || [],
-    highlight: dbPuzzle.s ? 'shade' : 'circle',
+    cellStyles,
     comments: dbPuzzle.cs || [],
     commentsDisabled: dbPuzzle.no_cs || false,
     constructorNotes: dbPuzzle.cn || null,
@@ -362,10 +373,7 @@ const PuzzleInProgressBaseV = t.intersection([
     width: t.number,
     height: t.number,
     grid: t.array(t.string),
-    highlighted: t.array(t.number),
-    highlight: t.keyof({ circle: null, shade: null }),
     title: t.union([t.string, t.null]),
-
     notes: t.union([t.string, t.null]),
   }),
   t.partial({
@@ -399,6 +407,13 @@ export const PuzzleInProgressV = t.intersection([
       t.record(t.string, t.array(t.string)),
     ]),
   }),
+  t.partial({
+    /* New format for circles / shading */
+    cellStyles: t.record(t.string, t.array(t.number)),
+    /* This is the legacy way of supporting circles / shading */
+    highlighted: t.array(t.number),
+    highlight: t.keyof({ circle: null, shade: null }),
+  }),
 ]);
 export type PuzzleInProgressT = t.TypeOf<typeof PuzzleInProgressV>;
 
@@ -407,6 +422,9 @@ export const PuzzleInProgressStrictV = t.intersection([
   t.type({
     /** Clues are a map from ENTRY => Array of clues for that entry */
     clues: t.record(t.string, t.array(t.string)),
+  }),
+  t.partial({
+    cellStyles: t.record(t.string, t.array(t.number)),
   }),
 ]);
 export type PuzzleInProgressStrictT = t.TypeOf<typeof PuzzleInProgressStrictV>;

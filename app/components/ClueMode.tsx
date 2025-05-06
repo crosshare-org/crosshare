@@ -291,8 +291,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
           }}
           width={state.grid.width}
           height={state.grid.height}
-          highlight={state.grid.highlight}
-          highlighted={state.grid.highlighted}
+          cellStyles={state.grid.cellStyles}
           hidden={state.grid.hidden}
           vBars={state.grid.vBars}
           hBars={state.grid.hBars}

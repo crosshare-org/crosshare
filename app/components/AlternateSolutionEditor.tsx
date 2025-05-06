@@ -48,8 +48,7 @@ export function AlternateSolutionEditor(props: {
   vBars: Set<number>;
   hBars: Set<number>;
   hidden: Set<number>;
-  highlighted: Set<number>;
-  highlight: 'circle' | 'shade';
+  cellStyles: Map<string, Set<number>>;
   cancel: () => void;
   save: (alt: Record<number, string>) => Promise<void>;
 }) {
@@ -61,8 +60,7 @@ export function AlternateSolutionEditor(props: {
     vBars: props.vBars,
     hBars: props.hBars,
     allowBlockEditing: false,
-    highlighted: props.highlighted,
-    highlight: props.highlight,
+    cellStyles: props.cellStyles,
     hidden: props.hidden,
   });
 

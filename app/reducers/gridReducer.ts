@@ -318,13 +318,22 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
     if (key.k === KeyK.Backtick && isBuilderState(state)) {
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
-        if (state.grid.highlighted.has(ci)) {
-          state.grid.highlighted.delete(ci);
+        const newState = {
+          ...state,
+          grid: { ...state.grid, cellStyles: new Map(state.grid.cellStyles) },
+        };
+        const highlights = new Set(
+          newState.grid.cellStyles.get(state.highlight)
+        );
+        if (highlights.has(ci)) {
+          highlights.delete(ci);
         } else {
-          state.grid.highlighted.add(ci);
+          highlights.add(ci);
         }
+        newState.grid.cellStyles.set(state.highlight, highlights);
+        return newState;
       }
-      return { ...state };
+      return state;
     }
     if (state.isEnteringRebus) {
       if (key.k === KeyK.AllowedCharacter) {

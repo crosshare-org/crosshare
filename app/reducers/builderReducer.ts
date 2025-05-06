@@ -73,6 +73,7 @@ export interface BuilderState extends GridInterfaceState {
   undoHistory: BuilderGrid[];
   undoIndex: number;
   cluesBackup: Record<string, string[]> | null;
+  highlight: string;
 }
 
 function initialBuilderStateFromSaved(
@@ -86,9 +87,11 @@ function initialBuilderStateFromSaved(
     grid: saved?.grid ?? state.grid.cells,
     vBars: saved?.vBars ?? Array.from(state.grid.vBars.values()),
     hBars: saved?.hBars ?? Array.from(state.grid.hBars.values()),
-    highlighted:
-      saved?.highlighted ?? Array.from(state.grid.highlighted.values()),
-    highlight: saved?.highlight ?? state.grid.highlight,
+    cellStyles:
+      saved?.cellStyles ??
+      Object.fromEntries(
+        state.grid.cellStyles.entries().map(([k, v]) => [k, Array.from(v)])
+      ),
     hidden: saved?.hidden ?? Array.from(state.grid.hidden),
     // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     title: saved?.title || state.title,
@@ -120,8 +123,7 @@ export function initialBuilderState({
   vBars,
   hBars,
   hidden,
-  highlighted,
-  highlight,
+  cellStyles,
   title,
   notes,
   clues,
@@ -147,8 +149,7 @@ export function initialBuilderState({
   vBars: number[];
   hBars: number[];
   hidden: number[];
-  highlighted: number[];
-  highlight: 'circle' | 'shade';
+  cellStyles: Record<string, number[]>;
   blogPost: string | null;
   guestConstructor: string | null;
   commentsDisabled?: boolean;
@@ -167,14 +168,17 @@ export function initialBuilderState({
   userTags: string[];
   symmetry?: Symmetry;
 }) {
+  const styles = new Map<string, Set<number>>();
+  Object.entries(cellStyles).forEach(([name, cells]) => {
+    styles.set(name, new Set(cells));
+  });
   const initialGrid = fromCells({
     mapper: (e) => e,
     width: width,
     height: height,
     cells: grid,
     allowBlockEditing: true,
-    highlighted: new Set(highlighted),
-    highlight: highlight,
+    cellStyles: styles,
     vBars: new Set(vBars),
     hBars: new Set(hBars),
     hidden: new Set(hidden),
@@ -194,6 +198,7 @@ export function initialBuilderState({
     showExtraKeyLayout: false,
     isEnteringRebus: false,
     rebusValue: '',
+    highlight: 'circle',
     gridIsComplete: false,
     repeats: new Set<string>(),
     hasNoShortWords: false,
@@ -613,7 +618,7 @@ function _builderReducer(
     return { ...state, symmetry: action.symmetry };
   }
   if (isSetHighlightAction(action)) {
-    state.grid.highlight = action.highlight;
+    state.highlight = action.highlight;
   }
   if (isSetClueAction(action)) {
     const newVal = state.clues[action.word] ?? [];
@@ -773,8 +778,7 @@ function _builderReducer(
       blogPost: null,
       guestConstructor: null,
       commentsDisabled: action.commentsDisabled,
-      highlight: 'circle',
-      highlighted: [],
+      cellStyles: {},
       clues: {},
       authorId: state.authorId,
       authorName: state.authorName,
@@ -934,11 +938,10 @@ function _builderReducer(
           }),
         }),
     };
-    if (state.grid.highlighted.size) {
-      puzzle.hs = Array.from(state.grid.highlighted);
-      if (state.grid.highlight === 'shade') {
-        puzzle.s = true;
-      }
+    if (state.grid.cellStyles.size) {
+      puzzle.sty = Object.fromEntries(
+        state.grid.cellStyles.entries().map(([k, v]) => [k, Array.from(v)])
+      );
     }
     return { ...state, toPublish: puzzle, publishWarnings: warnings };
   }

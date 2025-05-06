@@ -364,8 +364,9 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
       height: fromDB.size.rows,
       cells: fromDB.grid,
       allowBlockEditing: true,
-      highlighted: new Set(fromDB.highlighted),
-      highlight: fromDB.highlight,
+      cellStyles: new Map<string, Set<number>>(
+        Object.entries(fromDB.cellStyles).map(([k, v]) => [k, new Set(v)])
+      ),
       vBars: new Set(fromDB.vBars),
       hBars: new Set(fromDB.hBars),
       hidden: new Set(fromDB.hidden),

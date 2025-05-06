@@ -188,16 +188,18 @@ export const FollowersV = t.partial({
 const DBPuzzleOptionalV = t.partial({
   /** array of alternate solutions */
   alts: t.array(t.record(t.string, t.string)),
-  /** highlighted cell indexes */
+  /** DEPRECATED highlighted cell indexes */
   hs: t.array(t.number),
+  /** DEPRECATED use shade instead of circle for highlight? */
+  s: t.boolean,
+  /** styles */
+  sty: t.record(t.string, t.array(t.number)),
   /** hidden cell indexes */
   hdn: t.array(t.number),
   /** vertical bar indexes */
   vb: t.array(t.number),
   /** horizontal bar indexes */
   hb: t.array(t.number),
-  /** use shade instead of circle for highlight? */
-  s: t.boolean,
   /** comments */
   cs: t.array(CommentWithRepliesV),
   /** is this puzzle featured (should appear on homepage) */

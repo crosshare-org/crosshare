@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { DBPuzzleT } from './dbtypes.js';
 import {
   ALLOWABLE_GRID_CHARS,
   BLOCK,
@@ -217,11 +218,10 @@ class PuzReader {
       width: w,
       height: h,
       allowBlockEditing: false,
-      highlighted: new Set<number>(),
+      cellStyles: new Map<string, Set<number>>(),
       hidden: new Set(hidden),
       vBars: new Set<number>(),
       hBars: new Set<number>(),
-      highlight: 'circle',
       mapper: (e) => e,
     });
 
@@ -232,41 +232,41 @@ class PuzReader {
       title,
       notes,
       clues: getClueMap(viewableGrid, clues),
-      highlighted: this.highlighted,
+      cellStyles: { circle: this.highlighted },
       ...(hidden.length && { hidden }),
-      highlight: 'circle',
     };
   }
 }
 
-export interface ExportProps {
+export type ExportProps = Pick<
+  DBPuzzleT,
   /** grid width / columns */
-  w: number;
+  | 'w'
   /** grid height / rows */
-  h: number;
+  | 'h'
   /** across clue strings */
-  ac: string[];
+  | 'ac'
   /** across clue display numbers */
-  an: number[];
+  | 'an'
   /** down clue strings */
-  dc: string[];
+  | 'dc'
   /** down clue display numbers */
-  dn: number[];
+  | 'dn'
   /** grid (solution) */
-  g: string[];
+  | 'g'
   /** author's display name */
-  n: string;
+  | 'n'
   /** title */
-  t: string;
-  /** highlighted cell indexes */
-  hs?: number[];
+  | 't'
+  /** circles/shading */
+  | 'sty'
   /** constructor notes */
-  cn?: string;
+  | 'cn'
   /** guest constructor */
-  gc?: string;
+  | 'gc'
   /** hidden cells */
-  hdn?: number[];
-}
+  | 'hdn'
+>;
 
 class PuzWriter {
   public buf: number[];
@@ -529,8 +529,11 @@ class PuzWriter {
       this.addRtbl(rtbl);
     }
 
-    if (puzzle.hs) {
-      this.addGext(puzzle.hs, puzzle.w * puzzle.h);
+    if (puzzle.sty) {
+      const highlights = Array.from(new Set(Object.values(puzzle.sty).flat()));
+      if (highlights.length > 0) {
+        this.addGext(highlights, puzzle.w * puzzle.h);
+      }
     }
     return new Uint8Array(this.buf);
   }

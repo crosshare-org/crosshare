@@ -280,8 +280,9 @@ const PuzzleEditor = ({
         height: puzzle.size.rows,
         cells: puzzle.grid,
         allowBlockEditing: false,
-        highlighted: new Set(puzzle.highlighted),
-        highlight: puzzle.highlight,
+        cellStyles: new Map<string, Set<number>>(
+          Object.entries(puzzle.cellStyles).map(([k, v]) => [k, new Set(v)])
+        ),
         vBars: new Set(puzzle.vBars),
         hBars: new Set(puzzle.hBars),
         hidden: new Set(puzzle.hidden),
@@ -347,8 +348,11 @@ const PuzzleEditor = ({
           }}
           width={puzzle.size.cols}
           height={puzzle.size.rows}
-          highlight={puzzle.highlight}
-          highlighted={new Set(puzzle.highlighted)}
+          cellStyles={
+            new Map<string, Set<number>>(
+              Object.entries(puzzle.cellStyles).map(([k, v]) => [k, new Set(v)])
+            )
+          }
           vBars={new Set(puzzle.vBars)}
           hBars={new Set(puzzle.hBars)}
           hidden={new Set(puzzle.hidden)}
