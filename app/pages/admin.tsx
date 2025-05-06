@@ -98,8 +98,7 @@ const PuzzleListItem = (props: PuzzleResult & { crypticMods: string[] }) => {
     vBars: new Set(props.vBars),
     hBars: new Set(props.hBars),
     allowBlockEditing: false,
-    highlighted: new Set(props.highlighted),
-    highlight: props.highlight,
+    cellStyles: new Map<string, Set<number>>(),
     hidden: new Set(props.hidden),
   });
   const puzHasUnches = hasUnches(grid);

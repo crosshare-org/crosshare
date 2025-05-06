@@ -41,9 +41,8 @@ export interface ViewableGrid<Entry extends ViewableEntry>
   sortedEntries: number[];
   cellLabels: Map<number, number>;
   allowBlockEditing: boolean;
-  highlighted: Set<number>;
+  cellStyles: Map<string, Set<number>>;
   hidden: Set<number>;
-  highlight: 'circle' | 'shade';
   mapper(entry: ViewableEntry): Entry;
 }
 
@@ -922,7 +921,7 @@ export function gridEqual(
     equal(a?.cells, b?.cells) &&
     equal(a?.vBars, b?.vBars) &&
     equal(a?.hBars, b?.hBars) &&
-    equal(a?.highlighted, b?.highlighted) &&
+    equal(a?.cellStyles, b?.cellStyles) &&
     equal(a?.hidden, b?.hidden)
   );
 }

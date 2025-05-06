@@ -159,16 +159,13 @@ function layoutPDFGrid(
   for (let i = 0; i < puzzle.size.rows; i++) {
     for (let j = 0; j < puzzle.size.cols; j++) {
       const square = i * puzzle.size.cols + j;
-      const highlighted = puzzle.highlighted.includes(square);
+      const circled = puzzle.cellStyles.circle?.includes(square);
+      const shaded = puzzle.cellStyles.shade?.includes(square);
       const hidden = puzzle.hidden.includes(square);
       const barRight = puzzle.vBars.includes(square);
       const barBottom = puzzle.hBars.includes(square);
       doc.setFillColor(
-        puzzle.grid[square] === '.'
-          ? '#555'
-          : highlighted && puzzle.highlight === 'shade'
-            ? '#DDD'
-            : 'white'
+        puzzle.grid[square] === '.' ? '#555' : shaded ? '#DDD' : 'white'
       );
       if (!hidden) {
         doc.rect(
@@ -199,7 +196,7 @@ function layoutPDFGrid(
         );
         doc.setLineWidth(format.lineWidth);
       }
-      if (highlighted && puzzle.highlight === 'circle') {
+      if (circled) {
         doc.circle(
           format.gridOrigin.x + (j + 0.5) * format.squareSize,
           format.gridOrigin.y + (i + 0.5) * format.squareSize,
@@ -299,8 +296,9 @@ function getPdf(
     height: puzzle.size.rows,
     cells: puzzle.grid,
     allowBlockEditing: false,
-    highlighted: new Set(puzzle.highlighted),
-    highlight: puzzle.highlight,
+    cellStyles: new Map<string, Set<number>>(
+      Object.entries(puzzle.cellStyles).map(([k, v]) => [k, new Set(v)])
+    ),
     vBars: new Set(puzzle.vBars),
     hBars: new Set(puzzle.hBars),
     hidden: new Set(puzzle.hidden),

@@ -251,8 +251,7 @@ const initializeState = (props: PuzzleStatsProps): BuilderState => {
     hBars: new Set(props.puzzle.hBars),
     hidden: new Set(props.puzzle.hidden),
     allowBlockEditing: false,
-    highlighted: new Set<number>(),
-    highlight: 'circle',
+    cellStyles: new Map<string, Set<number>>(),
     mapper: (e) => e,
   });
 
@@ -261,11 +260,10 @@ const initializeState = (props: PuzzleStatsProps): BuilderState => {
     width: props.puzzle.size.cols,
     height: props.puzzle.size.rows,
     grid: props.puzzle.grid,
-    highlighted: props.puzzle.highlighted,
+    cellStyles: props.puzzle.cellStyles,
     hidden: props.puzzle.hidden,
     vBars: props.puzzle.vBars,
     hBars: props.puzzle.hBars,
-    highlight: props.puzzle.highlight,
     title: props.puzzle.title,
     notes: props.puzzle.constructorNotes,
     clues: getClueMap(viewableGrid, props.puzzle.clues),

@@ -162,11 +162,10 @@ type BuilderProps = PartialBy<
   | 'commentsDisabled'
   | 'isPrivate'
   | 'isPrivateUntil'
-  | 'highlighted'
+  | 'cellStyles'
   | 'vBars'
   | 'hBars'
   | 'hidden'
-  | 'highlight'
   | 'userTags'
 >;
 
@@ -257,8 +256,7 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     vBars: saved?.vBars ?? props.vBars ?? [],
     hBars: saved?.hBars ?? props.hBars ?? [],
     hidden: saved?.hidden ?? props.hidden ?? [],
-    highlighted: saved?.highlighted ?? props.highlighted ?? [],
-    highlight: saved?.highlight ?? props.highlight ?? 'circle',
+    cellStyles: saved?.cellStyles ?? props.cellStyles ?? {},
     title: saved?.title ?? props.title ?? null,
     notes: saved?.notes ?? props.constructorNotes ?? null,
     clues: saved?.clues ?? {},
@@ -520,8 +518,9 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       vBars: Array.from(state.grid.vBars),
       hBars: Array.from(state.grid.hBars),
       hidden: Array.from(state.grid.hidden),
-      highlight: state.grid.highlight,
-      highlighted: Array.from(state.grid.highlighted),
+      cellStyles: Object.fromEntries(
+        state.grid.cellStyles.entries().map(([k, v]) => [k, Array.from(v)])
+      ),
       clues: state.clues,
       title: state.title,
       notes: state.notes,
@@ -541,8 +540,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
     state.grid.cells,
     state.grid.width,
     state.grid.height,
-    state.grid.highlight,
-    state.grid.highlighted,
+    state.grid.cellStyles,
     state.grid.hidden,
     state.title,
     state.notes,
@@ -800,7 +798,11 @@ const PuzDownloadOverlay = (props: {
           n={props.state.authorName}
           // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           t={props.state.title || 'Crosshare puzzle'}
-          hs={Array.from(props.state.grid.highlighted)}
+          sty={Object.fromEntries(
+            props.state.grid.cellStyles
+              .entries()
+              .map(([k, v]) => [k, Array.from(v)])
+          )}
           hdn={Array.from(props.state.grid.hidden)}
           cn={props.state.notes ?? undefined}
           gc={props.state.guestConstructor ?? undefined}
@@ -1369,7 +1371,7 @@ const GridMode = ({
               />
               <TopBarDropDownLink
                 icon={
-                  state.grid.highlight === 'circle' ? (
+                  state.highlight === 'circle' ? (
                     <FaRegCircle />
                   ) : (
                     <FaFillDrip />
@@ -1387,14 +1389,14 @@ const GridMode = ({
               />
               <TopBarDropDownLink
                 icon={
-                  state.grid.highlight === 'circle' ? (
+                  state.highlight === 'circle' ? (
                     <FaFillDrip />
                   ) : (
                     <FaRegCircle />
                   )
                 }
                 text={
-                  state.grid.highlight === 'circle'
+                  state.highlight === 'circle'
                     ? 'Use Shade for Highlights'
                     : 'Use Circle for Highlights'
                 }
@@ -1402,7 +1404,7 @@ const GridMode = ({
                   const a: SetHighlightAction = {
                     type: 'SETHIGHLIGHT',
                     highlight:
-                      state.grid.highlight === 'circle' ? 'shade' : 'circle',
+                      state.highlight === 'circle' ? 'shade' : 'circle',
                   };
                   dispatch(a);
                 }}
@@ -1466,7 +1468,7 @@ const GridMode = ({
     props.isAdmin,
     setClueMode,
     setMuted,
-    state.grid.highlight,
+    state.highlight,
     state.grid.width,
     state.grid.height,
     state.gridIsComplete,

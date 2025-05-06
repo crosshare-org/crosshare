@@ -22,7 +22,7 @@ interface CellProps {
   refedCell: boolean;
   selected: boolean;
   isSelecting: boolean;
-  highlight: 'circle' | 'shade' | undefined;
+  styles: string[];
   value: string;
   number: string;
   row: number;
@@ -172,12 +172,12 @@ export const Cell = memo(function Cell(props: CellProps) {
               ) : (
                 ''
               )}
-              {props.highlight === 'circle' ? (
+              {props.styles.includes('circle') ? (
                 <div className={styles.circle} />
               ) : (
                 ''
               )}
-              {props.highlight === 'shade' ? (
+              {props.styles.includes('shade') ? (
                 <div className={styles.shade} />
               ) : (
                 ''

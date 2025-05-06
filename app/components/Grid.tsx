@@ -146,7 +146,6 @@ export const GridView = ({
         ? flipped(grid, active, props.symmetry)
         : null;
     const isOpposite = !isActive && symmetricalCell === idx;
-
     cells.push(
       <Cell
         barRight={grid.vBars.has(idx)}
@@ -179,7 +178,9 @@ export const GridView = ({
         isVerified={props.verifiedCells?.has(idx) || showAsVerified}
         isWrong={props.wrongCells?.has(idx)}
         wasRevealed={props.revealedCells?.has(idx)}
-        highlight={grid.highlighted.has(idx) ? grid.highlight : undefined}
+        styles={Array.from(grid.cellStyles.entries())
+          .filter(([_style, cells]) => cells.has(idx))
+          .map(([style, _cells]) => style)}
         cellColor={props.cellColors?.[idx]}
       />
     );
