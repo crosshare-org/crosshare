@@ -1,5 +1,5 @@
-import sha256 from 'fast-sha256';
-import { NonEmptyArray } from './types';
+import { hash } from 'fast-sha256';
+import { NonEmptyArray } from './types.js';
 
 export const STORAGE_KEY = 'puzzleInProgress';
 
@@ -98,7 +98,7 @@ function normalize(n: string) {
 export function metaSolutionDigest(soln: string, puzzleId: string): string {
   const encoder = new TextEncoder();
   const data = encoder.encode(puzzleId + normalize(soln));
-  const hashArray = Array.from(sha256(data));
+  const hashArray = Array.from(hash(data));
   return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 

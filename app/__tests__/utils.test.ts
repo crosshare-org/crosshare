@@ -1,4 +1,5 @@
 import cases from 'jest-in-case';
+import { checkSpam } from '../lib/spam.js';
 import {
   allSolutions,
   buildTagIndex,
@@ -28,6 +29,11 @@ cases(
     { name: 'foobar', hash: 0xbf9cf968 },
   ]
 );
+
+test('spam check', () => {
+  expect(checkSpam('here are the parses: xxx')).toBeFalsy();
+  expect(checkSpam('here are the arses: xxx')).toBeTruthy();
+});
 
 test('isMetaSolution', () => {
   expect(isMetaSolution('foo', ['FOO'], [], '')).toBeTruthy();
