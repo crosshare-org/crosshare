@@ -451,6 +451,7 @@ export enum KeyK {
   Delete,
   Escape,
   Backtick,
+  Tilde,
   Dot,
   Comma,
   Exclamation,
@@ -531,6 +532,8 @@ export function fromKeyboardEvent(event: {
         return KeyK.Escape;
       case '`':
         return KeyK.Backtick;
+      case '~':
+        return KeyK.Tilde;
       case '.':
         return KeyK.Dot;
       case ',':

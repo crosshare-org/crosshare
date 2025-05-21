@@ -77,7 +77,6 @@ import {
   ClickedFillAction,
   ImportPuzAction,
   PublishAction,
-  SetHighlightAction,
   SetShowDownloadLink,
   SymmetryAction,
   builderReducer,
@@ -117,6 +116,7 @@ import {
   SymmetryNone,
   SymmetryRotational,
   SymmetryVertical,
+  TildeKey,
 } from './Icons.js';
 import { Keyboard } from './Keyboard.js';
 import { NewPuzzleForm } from './NewPuzzleForm.js';
@@ -1370,14 +1370,8 @@ const GridMode = ({
                 }}
               />
               <TopBarDropDownLink
-                icon={
-                  state.highlight === 'circle' ? (
-                    <FaRegCircle />
-                  ) : (
-                    <FaFillDrip />
-                  )
-                }
-                text="Toggle Square Highlight"
+                icon={<FaRegCircle />}
+                text="Toggle Circle Highlight"
                 shortcutHint={<BacktickKey />}
                 onClick={() => {
                   const a: KeypressAction = {
@@ -1388,23 +1382,13 @@ const GridMode = ({
                 }}
               />
               <TopBarDropDownLink
-                icon={
-                  state.highlight === 'circle' ? (
-                    <FaFillDrip />
-                  ) : (
-                    <FaRegCircle />
-                  )
-                }
-                text={
-                  state.highlight === 'circle'
-                    ? 'Use Shade for Highlights'
-                    : 'Use Circle for Highlights'
-                }
+                icon={<FaFillDrip />}
+                text="Toggle Shade Highlight"
+                shortcutHint={<TildeKey />}
                 onClick={() => {
-                  const a: SetHighlightAction = {
-                    type: 'SETHIGHLIGHT',
-                    highlight:
-                      state.highlight === 'circle' ? 'shade' : 'circle',
+                  const a: KeypressAction = {
+                    type: 'KEYPRESS',
+                    key: { k: KeyK.Tilde },
                   };
                   dispatch(a);
                 }}
