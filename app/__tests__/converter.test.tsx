@@ -34,8 +34,9 @@ function toDBPuzzle(pip: PuzzleInProgressStrictT): DBPuzzleT {
     cells: pip.grid,
     allowBlockEditing: false,
     hidden: new Set(pip.hidden),
-    highlighted: new Set(pip.highlighted),
-    highlight: pip.highlight,
+    cellStyles: new Map<string, Set<number>>(
+      Object.entries(pip.cellStyles || {}).map(([k, v]) => [k, new Set(v)])
+    ),
     hBars: new Set(pip.hBars || []),
     vBars: new Set(pip.vBars || []),
   });
@@ -54,11 +55,10 @@ function toDBPuzzle(pip: PuzzleInProgressStrictT): DBPuzzleT {
     ...getClueProps(grid.sortedEntries, grid.entries, pip.clues, true),
     ...(pip.notes && { cn: pip.notes }),
   };
-  if (pip.highlighted.length) {
-    puzzle.hs = Array.from(pip.highlighted);
-    if (pip.highlight === 'shade') {
-      puzzle.s = true;
-    }
+  if (pip.cellStyles) {
+    puzzle.sty = Object.fromEntries(
+      Object.entries(pip.cellStyles).map(([k, v]) => [k, Array.from(v)])
+    );
   }
   return puzzle;
 }

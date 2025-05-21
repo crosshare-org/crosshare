@@ -318,13 +318,38 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
     if (key.k === KeyK.Backtick && isBuilderState(state)) {
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
-        if (state.grid.highlighted.has(ci)) {
-          state.grid.highlighted.delete(ci);
+        const newState = {
+          ...state,
+          grid: { ...state.grid, cellStyles: new Map(state.grid.cellStyles) },
+        };
+        const highlights = new Set(newState.grid.cellStyles.get('circle'));
+        if (highlights.has(ci)) {
+          highlights.delete(ci);
         } else {
-          state.grid.highlighted.add(ci);
+          highlights.add(ci);
         }
+        newState.grid.cellStyles.set('circle', highlights);
+        return newState;
       }
-      return { ...state };
+      return state;
+    }
+    if (key.k === KeyK.Tilde && isBuilderState(state)) {
+      const ci = cellIndex(state.grid, state.active);
+      if (state.isEditable(ci)) {
+        const newState = {
+          ...state,
+          grid: { ...state.grid, cellStyles: new Map(state.grid.cellStyles) },
+        };
+        const highlights = new Set(newState.grid.cellStyles.get('shade'));
+        if (highlights.has(ci)) {
+          highlights.delete(ci);
+        } else {
+          highlights.add(ci);
+        }
+        newState.grid.cellStyles.set('shade', highlights);
+        return newState;
+      }
+      return state;
     }
     if (state.isEnteringRebus) {
       if (key.k === KeyK.AllowedCharacter) {

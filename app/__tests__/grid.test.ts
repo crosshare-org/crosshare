@@ -231,11 +231,10 @@ test('test getEntryToClueMap', () => {
     cells: answers,
     allowBlockEditing: false,
     hidden: new Set<number>(),
-    highlighted: new Set<number>(),
     vBars: new Set<number>(),
     hBars: new Set<number>(),
-    highlight: 'circle',
     mapper: (x) => x,
+    cellStyles: new Map<string, Set<number>>(),
   });
 
   const cluedGrid: CluedGrid = addClues(
@@ -263,8 +262,7 @@ test('test getClueRefs for puzzle without any', () => {
     hBars: new Set<number>(),
     hidden: new Set<number>(),
     allowBlockEditing: false,
-    highlighted: new Set<number>(),
-    highlight: 'circle',
+    cellStyles: new Map<string, Set<number>>(),
     mapper: (x) => x,
   });
 
@@ -292,8 +290,7 @@ test('test getClueRefs for puzzle with refs', () => {
     hBars: new Set<number>(),
     hidden: new Set<number>(),
     allowBlockEditing: false,
-    highlighted: new Set<number>(),
-    highlight: 'circle',
+    cellStyles: new Map<string, Set<number>>(),
     mapper: (x) => x,
   });
 
@@ -328,8 +325,7 @@ test('test getClueRefs for puzzle with starred clues', () => {
     vBars: new Set<number>(),
     hBars: new Set<number>(),
     allowBlockEditing: false,
-    highlighted: new Set<number>(),
-    highlight: 'circle',
+    cellStyles: new Map<string, Set<number>>(),
     hidden: new Set<number>(),
     mapper: (x) => x,
   });
@@ -371,8 +367,7 @@ test('test getClueRefs for 35-downs', () => {
     hBars: new Set<number>(),
     allowBlockEditing: false,
     hidden: new Set<number>(),
-    highlighted: new Set<number>(),
-    highlight: 'circle',
+    cellStyles: new Map<string, Set<number>>(),
     mapper: (x) => x,
   });
 
@@ -412,8 +407,7 @@ test('test getClueRefs for 35-downs with !@', () => {
     vBars: new Set<number>(),
     hBars: new Set<number>(),
     allowBlockEditing: false,
-    highlighted: new Set<number>(),
-    highlight: 'circle',
+    cellStyles: new Map<string, Set<number>>(),
     hidden: new Set<number>(),
     mapper: (x) => x,
   });

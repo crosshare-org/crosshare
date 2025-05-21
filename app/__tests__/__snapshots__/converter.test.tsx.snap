@@ -2,6 +2,9 @@
 
 exports[`test .puz import 2016-1-5-JosephCrosswords 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "ALIST": "Celeb roster",
     "ALLEN": "Patriot Ethan",
@@ -200,8 +203,6 @@ exports[`test .puz import 2016-1-5-JosephCrosswords 1`] = `
     "Y",
   ],
   "height": 13,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "Joseph Crosswords, Jan 5, 2016",
   "width": 11,
@@ -210,6 +211,9 @@ exports[`test .puz import 2016-1-5-JosephCrosswords 1`] = `
 
 exports[`test .puz import 2016-1-5-ShefferCrosswords 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "AAS": "TV remote batteries",
     "ADES": "Lime coolers",
@@ -450,8 +454,6 @@ exports[`test .puz import 2016-1-5-ShefferCrosswords 1`] = `
     "E",
   ],
   "height": 13,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "Sheffer Crosswords, Jan 5, 2016",
   "width": 13,
@@ -460,6 +462,9 @@ exports[`test .puz import 2016-1-5-ShefferCrosswords 1`] = `
 
 exports[`test .puz import 2016-1-5-USAToday 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "ACE": "Royal flush card",
     "ACNE": "Facial breakout",
@@ -768,8 +773,6 @@ exports[`test .puz import 2016-1-5-USAToday 1`] = `
     "E",
   ],
   "height": 15,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "MOVE ON",
   "width": 15,
@@ -778,6 +781,9 @@ exports[`test .puz import 2016-1-5-USAToday 1`] = `
 
 exports[`test .puz import 2016-1-5-UniversalCrossword 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "ABETS": "Assists in a crime",
     "ABLE": "Having sufficient skill",
@@ -1084,8 +1090,6 @@ exports[`test .puz import 2016-1-5-UniversalCrossword 1`] = `
     "S",
   ],
   "height": 15,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "GET YOUR FILL",
   "width": 15,
@@ -1094,6 +1098,9 @@ exports[`test .puz import 2016-1-5-UniversalCrossword 1`] = `
 
 exports[`test .puz import 2016-1-31-LosAngelesTimes 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "AARE": "Rhein tributary",
     "ACTSTHEPART": "Does as expected",
@@ -1682,8 +1689,6 @@ exports[`test .puz import 2016-1-31-LosAngelesTimes 1`] = `
     "S",
   ],
   "height": 21,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "LA Times, Sun, Jan 31, 2016 - "Misaligned"",
   "width": 21,
@@ -1692,6 +1697,9 @@ exports[`test .puz import 2016-1-31-LosAngelesTimes 1`] = `
 
 exports[`test .puz import 2016-1-31-Newsday 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "ABLY": "With proficiency",
     "ABOW": "Take __ (acknowledge applause)",
@@ -2278,8 +2286,6 @@ exports[`test .puz import 2016-1-31-Newsday 1`] = `
     "P",
   ],
   "height": 21,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "REENACTMENTS: Real-people Oscar roles",
   "width": 21,
@@ -2288,6 +2294,9 @@ exports[`test .puz import 2016-1-31-Newsday 1`] = `
 
 exports[`test .puz import FamilyCrossword 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "ADE": "Citrus beverage suffix",
     "AER": "Prefix indicating oxygen or gas",
@@ -2594,8 +2603,6 @@ exports[`test .puz import FamilyCrossword 1`] = `
     "G",
   ],
   "height": 15,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "Family",
   "width": 15,
@@ -2604,6 +2611,9 @@ exports[`test .puz import FamilyCrossword 1`] = `
 
 exports[`test .puz import Feb0308_oddnumbering 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "AANDE": ""Biography" network",
     "ACC": "Blue Devils' and Tigers' org.",
@@ -3190,8 +3200,6 @@ exports[`test .puz import Feb0308_oddnumbering 1`] = `
     ".",
   ],
   "height": 21,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "NY Times, Sun, Feb 03, 2008  JUST FOLLOW DIRECTIONS",
   "width": 21,
@@ -3200,6 +3208,9 @@ exports[`test .puz import Feb0308_oddnumbering 1`] = `
 
 exports[`test .puz import Its_All_Wrong 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "ACAI": "Trendy berry (4)",
     "ACCEDE": "Accept, with "to" (6)",
@@ -3586,8 +3597,6 @@ exports[`test .puz import Its_All_Wrong 1`] = `
     238,
     239,
   ],
-  "highlight": "circle",
-  "highlighted": [],
   "notes": "Hopefully it's not actually all wrong. Anyway, this is a test of Crosshare's new feature for unusual grid shapes.",
   "title": "It's All Wrong!",
   "width": 15,
@@ -3596,6 +3605,9 @@ exports[`test .puz import Its_All_Wrong 1`] = `
 
 exports[`test .puz import av110622 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "AHH": ""That feels amazing ..."",
     "ANEW": "From the top",
@@ -3904,8 +3916,6 @@ exports[`test .puz import av110622 1`] = `
     "T",
   ],
   "height": 15,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "AV Club xword, 6 22 11",
   "width": 15,
@@ -3914,6 +3924,9 @@ exports[`test .puz import av110622 1`] = `
 
 exports[`test .puz import cs080904 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "ACCT": "Money in the bank (abbr.)",
     "ACED": "Passed easily",
@@ -4222,8 +4235,6 @@ exports[`test .puz import cs080904 1`] = `
     "S",
   ],
   "height": 15,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "September 4, 2008 - "CD Collection"",
   "width": 15,
@@ -4232,6 +4243,15 @@ exports[`test .puz import cs080904 1`] = `
 
 exports[`test .puz import hobbyistspam 1`] = `
 {
+  "cellStyles": {
+    "circle": [
+      7,
+      47,
+      56,
+      168,
+      177,
+    ],
+  },
   "clues": {
     "ABATE": "Peter out",
     "ABDOMINAL": "Like some six-packs",
@@ -4538,14 +4558,6 @@ exports[`test .puz import hobbyistspam 1`] = `
     "N",
   ],
   "height": 15,
-  "highlight": "circle",
-  "highlighted": [
-    7,
-    47,
-    56,
-    168,
-    177,
-  ],
   "notes": null,
   "title": "NY Times, Thu, Sep 11, 2008  When this puzzle is done, connect the circled letters in alphabetical order, and then back to the start, to reveal something seen on the 32-Down 4-Down.",
   "width": 15,
@@ -4554,6 +4566,9 @@ exports[`test .puz import hobbyistspam 1`] = `
 
 exports[`test .puz import incognito 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "ABASE": "Demean",
     "ALE": "Stout alternative ",
@@ -4858,8 +4873,6 @@ exports[`test .puz import incognito 1`] = `
     "S",
   ],
   "height": 15,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "Incognito (final)",
   "width": 15,
@@ -4868,6 +4881,9 @@ exports[`test .puz import incognito 1`] = `
 
 exports[`test .puz import nyt_partlyfilled 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "AESOP": "Fable writer",
     "ALE": "Schooner fill",
@@ -5176,8 +5192,6 @@ exports[`test .puz import nyt_partlyfilled 1`] = `
     "W",
   ],
   "height": 15,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "NY Times, Mon, Mar 10, 2008",
   "width": 15,
@@ -5186,6 +5200,15 @@ exports[`test .puz import nyt_partlyfilled 1`] = `
 
 exports[`test .puz import nyt_rebus_with_notes_and_shape 1`] = `
 {
+  "cellStyles": {
+    "circle": [
+      7,
+      47,
+      56,
+      168,
+      177,
+    ],
+  },
   "clues": {
     "ABATE": "Peter out",
     "ABDOMINAL": "Like some six-packs",
@@ -5492,14 +5515,6 @@ exports[`test .puz import nyt_rebus_with_notes_and_shape 1`] = `
     "N",
   ],
   "height": 15,
-  "highlight": "circle",
-  "highlighted": [
-    7,
-    47,
-    56,
-    168,
-    177,
-  ],
   "notes": "TEEN PUZZLEMAKER WEEK
 All the daily crosswords this week, Monday through Saturday, have been contributed by puzzlemakers under the age of 20. Today's crossword is by Caleb Madison, 15, of New York City. He is a sophomore at Bard High School in Manhattan. This is his fourth puzzle for The Times.",
   "title": "NY Times, Thu, Sep 11, 2008  When this puzzle is done, connect the circled letters in alphabetical order, and then back to the start, to reveal something seen on the 32-Down 4-Down.",
@@ -5509,6 +5524,44 @@ All the daily crosswords this week, Monday through Saturday, have been contribut
 
 exports[`test .puz import nyt_with_shape 1`] = `
 {
+  "cellStyles": {
+    "circle": [
+      48,
+      51,
+      52,
+      53,
+      54,
+      55,
+      88,
+      96,
+      97,
+      100,
+      149,
+      154,
+      158,
+      160,
+      210,
+      220,
+      222,
+      229,
+      279,
+      281,
+      282,
+      283,
+      288,
+      290,
+      336,
+      337,
+      341,
+      347,
+      351,
+      385,
+      386,
+      389,
+      390,
+      394,
+    ],
+  },
   "clues": {
     "ACCEPT": "Honor",
     "ACU": "Prefix with pressure",
@@ -6089,43 +6142,6 @@ exports[`test .puz import nyt_with_shape 1`] = `
     "D",
   ],
   "height": 21,
-  "highlight": "circle",
-  "highlighted": [
-    48,
-    51,
-    52,
-    53,
-    54,
-    55,
-    88,
-    96,
-    97,
-    100,
-    149,
-    154,
-    158,
-    160,
-    210,
-    220,
-    222,
-    229,
-    279,
-    281,
-    282,
-    283,
-    288,
-    290,
-    336,
-    337,
-    341,
-    347,
-    351,
-    385,
-    386,
-    389,
-    390,
-    394,
-  ],
   "notes": null,
   "title": "NY Times, Sun, Jul 20, 2008  ACROSS THE BOARD",
   "width": 21,
@@ -6134,6 +6150,9 @@ exports[`test .puz import nyt_with_shape 1`] = `
 
 exports[`test .puz import qvxdupes 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "DDDDD": "Memetic adjective for some fruit",
     "DUPES": [
@@ -6176,8 +6195,6 @@ exports[`test .puz import qvxdupes 1`] = `
     "S",
   ],
   "height": 5,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "Chain of Fools (Monday Mini #11)",
   "width": 5,
@@ -6186,6 +6203,9 @@ exports[`test .puz import qvxdupes 1`] = `
 
 exports[`test .puz import version-1.2-puzzle 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "ERE": "Until",
     "PIE": "One step short of a pier",
@@ -6215,8 +6235,6 @@ exports[`test .puz import version-1.2-puzzle 1`] = `
     ".",
   ],
   "height": 4,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "Reference PUZ File",
   "width": 5,
@@ -6225,6 +6243,9 @@ exports[`test .puz import version-1.2-puzzle 1`] = `
 
 exports[`test .puz import version-1.2-puzzle-with-notes 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "ERE": "Until",
     "PIE": "One step short of a pier",
@@ -6254,8 +6275,6 @@ exports[`test .puz import version-1.2-puzzle-with-notes 1`] = `
     ".",
   ],
   "height": 4,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": "This is a test note for this version 1.2 puzzle",
   "title": "Reference PUZ File",
   "width": 5,
@@ -6264,6 +6283,9 @@ exports[`test .puz import version-1.2-puzzle-with-notes 1`] = `
 
 exports[`test .puz import washpost 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "ABUT": "Touch",
     "AEGIS": "Protection",
@@ -6572,8 +6594,6 @@ exports[`test .puz import washpost 1`] = `
     "P",
   ],
   "height": 15,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "December 6, 2005 - "Split Pea Soup"",
   "width": 15,
@@ -6582,6 +6602,9 @@ exports[`test .puz import washpost 1`] = `
 
 exports[`test .puz import wsj110624 1`] = `
 {
+  "cellStyles": {
+    "circle": [],
+  },
   "clues": {
     "ABALONE": "Conch cousin",
     "AGOG": "Waiting with bated breath",
@@ -7166,8 +7189,6 @@ exports[`test .puz import wsj110624 1`] = `
     "D",
   ],
   "height": 21,
-  "highlight": "circle",
-  "highlighted": [],
   "notes": null,
   "title": "June 24, 2011 - Good News, Bad News",
   "width": 21,
