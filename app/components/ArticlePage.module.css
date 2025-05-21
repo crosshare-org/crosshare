@@ -2,7 +2,7 @@
 @value max-width from '../lib/definitions.module.css';
 
 .page {
-  margin: 2em 1em;
+  padding: 2em 1em;
 }
 
 /* stylelint-disable-next-line media-feature-name-no-unknown */
@@ -10,7 +10,7 @@
   .page {
     /* stylelint-disable-next-line declaration-property-value-no-unknown */
     max-width: max-width;
-    margin: 2em auto;
+    margin: auto;
   }
 }
 

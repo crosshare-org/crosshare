@@ -1,9 +1,8 @@
-import type { Root } from 'hast';
 import Head from 'next/head';
-import { ArticleT } from '../lib/article.js';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { ArticlePageProps } from '../lib/serverOnly.js';
 import styles from './ArticlePage.module.css';
-import { ContactLinks } from './ContactLinks.js';
 import { Markdown } from './Markdown.js';
 import { DefaultTopBar } from './TopBar.js';
 
@@ -11,7 +10,9 @@ export function ArticlePage(props: ArticlePageProps) {
   return <Article key={props.s} {...props} />;
 }
 
-function Article(props: ArticleT & { hast: Root }) {
+function Article(props: ArticlePageProps) {
+  const { locale } = useRouter();
+  const loc = locale || 'en';
   return (
     <>
       <Head>
@@ -21,21 +22,51 @@ function Article(props: ArticleT & { hast: Root }) {
           rel="canonical"
           href={'https://crosshare.org/article/' + props.s}
         />
+        {props.prevSlug ? (
+          <link
+            rel="prev"
+            href={`https://crosshare.org${
+              loc == 'en' ? '' : '/' + loc
+            }/articles/${props.prevSlug}`}
+          />
+        ) : (
+          ''
+        )}
+        {props.nextSlug ? (
+          <link
+            rel="next"
+            href={`https://crosshare.org${
+              loc == 'en' ? '' : '/' + loc
+            }/articles/${props.nextSlug}`}
+          />
+        ) : (
+          ''
+        )}
       </Head>
       <DefaultTopBar />
       <div className={styles.page}>
         <Markdown className={styles.markdown} hast={props.hast} />
-        <p>
-          This article is part of a series of posts designed to teach visitors
-          about crosswords in general as well as some Crosshare specific
-          features. If you have any questions or suggestions for this or other
-          articles please contact us via <ContactLinks />.
-        </p>
-        <p>
-          We&apos;re seeking volunteers to help expand and edit this
-          knowledgebase so it becomes more useful for constructors and solvers.
-          If you&apos;re interested please reach out!
-        </p>
+        {props.prevSlug || props.nextSlug ? (
+          <p className="textAlignCenter paddingBottom1em">
+            {props.prevSlug ? (
+              <Link
+                className="marginRight1em"
+                href={'/articles/' + props.prevSlug}
+              >
+                Previous
+              </Link>
+            ) : (
+              ''
+            )}
+            {props.nextSlug ? (
+              <Link href={'/articles/' + props.nextSlug}>Next</Link>
+            ) : (
+              ''
+            )}
+          </p>
+        ) : (
+          ''
+        )}
       </div>
     </>
   );

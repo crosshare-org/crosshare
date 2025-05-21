@@ -155,7 +155,7 @@ export default function DailyMiniPage(props: PageProps) {
         />
         {props.olderLink ? (
           <link
-            rel="next"
+            rel="prev"
             href={`https://crosshare.org${
               loc == 'en' ? '' : '/' + loc
             }/dailyminis/${props.olderLink}`}

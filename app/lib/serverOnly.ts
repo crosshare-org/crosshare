@@ -148,7 +148,51 @@ export async function getArticle(
   return validate(dbres.docs[0]?.data());
 }
 
-export type ArticlePageProps = ArticleT & { hast: Root };
+async function getPreviousArticle(
+  slug: string
+): Promise<string | ArticleT | null> {
+  const db = getFirestore(getAdminApp());
+  let dbres;
+  try {
+    dbres = await db
+      .collection('a')
+      .where('s', '<', slug)
+      .orderBy('s', 'desc')
+      .limit(1)
+      .get();
+  } catch {
+    return 'error getting article';
+  }
+  return validate(dbres.docs[0]?.data());
+}
+
+async function getNextArticle(slug: string): Promise<string | ArticleT | null> {
+  const db = getFirestore(getAdminApp());
+  let dbres;
+  try {
+    dbres = await db
+      .collection('a')
+      .where('s', '>', slug)
+      .orderBy('s', 'asc')
+      .limit(1)
+      .get();
+  } catch {
+    return 'error getting article';
+  }
+  return validate(dbres.docs[0]?.data());
+}
+
+export type ArticlePageProps = ArticleT & {
+  hast: Root;
+  nextSlug?: string;
+  prevSlug?: string;
+};
+
+function maxWeeklyEmailArticle() {
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() - 3);
+  return `weekly-email-${maxDate.toISOString().split('T')[0]}`;
+}
 
 export const getArticlePageProps: GetServerSideProps<
   ArticlePageProps
@@ -166,7 +210,34 @@ export const getArticlePageProps: GetServerSideProps<
     return { notFound: true };
   }
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-  return { props: { ...article, hast: markdownToHast({ text: article.c }) } };
+  const prevNext: { nextSlug?: string; prevSlug?: string } = {};
+  if (params.slug.startsWith('weekly-email-')) {
+    const prev = await getPreviousArticle(params.slug);
+    if (
+      prev !== null &&
+      typeof prev !== 'string' &&
+      prev.s.startsWith('weekly-email-')
+    ) {
+      prevNext.prevSlug = prev.s;
+    }
+
+    const next = await getNextArticle(params.slug);
+    if (
+      next !== null &&
+      typeof next !== 'string' &&
+      next.s.startsWith('weekly-email-') &&
+      next.s < maxWeeklyEmailArticle()
+    ) {
+      prevNext.nextSlug = next.s;
+    }
+  }
+  return {
+    props: {
+      ...article,
+      hast: markdownToHast({ text: article.c }),
+      ...prevNext,
+    },
+  };
 };
 
 // TODO this is identical to the function in `Comments.tsx` but operates on a different format of Comment - unify if possible
