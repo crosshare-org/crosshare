@@ -24,7 +24,12 @@ import { getCollection } from '../lib/firebaseAdminWrapper.js';
 import { markdownToHast } from '../lib/markdown/markdown.js';
 import { paginatedPuzzles } from '../lib/paginatedPuzzles.js';
 import { isUserPatron } from '../lib/patron.js';
-import { getMiniForDate, userIdToPage } from '../lib/serverOnly.js';
+import {
+  getMiniForDate,
+  getPreviousArticle,
+  maxWeeklyEmailArticle,
+  userIdToPage,
+} from '../lib/serverOnly.js';
 import { withTranslation } from '../lib/translation.js';
 import { puzzleFromDB } from '../lib/types.js';
 import { PAGE_SIZE } from './featured/[pageNumber].js';
@@ -38,6 +43,7 @@ type HomepagePuz = LinkablePuzzle & {
 interface HomePageProps {
   dailymini: HomepagePuz | null;
   throwbackMini: HomepagePuz | null;
+  lastEmailSlug: string | null;
   featured: HomepagePuz[];
   articles: ArticleT[];
   announcement: { title: string; body: Root } | null;
@@ -49,6 +55,11 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
   const todaysMini = await getMiniForDate(today);
   today.setUTCFullYear(today.getUTCFullYear() - 5);
   const throwback = await getMiniForDate(today);
+  const lastEmailRes = await getPreviousArticle(maxWeeklyEmailArticle());
+  const lastEmailSlug =
+    lastEmailRes !== null && typeof lastEmailRes !== 'string'
+      ? lastEmailRes.s
+      : null;
 
   const [announcement, homepageText]: [
     { title: string; body: Root } | null,
@@ -131,6 +142,7 @@ const gssp: GetServerSideProps<HomePageProps> = async ({ res }) => {
       homepageText,
       dailymini,
       throwbackMini,
+      lastEmailSlug,
       featured,
       articles,
     },
@@ -152,6 +164,7 @@ export default function HomePage({
   homepageText,
   dailymini,
   throwbackMini,
+  lastEmailSlug,
   featured,
   articles,
 }: HomePageProps) {
@@ -281,6 +294,21 @@ export default function HomePage({
         </p>
         <hr className="margin2em0" />
         <UnfinishedPuzzleList user={user} />
+        <hr className="margin2em0" />
+        <h4>Weekly Email</h4>
+        <p>
+          We send a once-weekly email with a recap of the most popular puzzles
+          of the week. To subscribe, visit{' '}
+          <a href="/account">your account page</a>.{' '}
+          {lastEmailSlug !== null ? (
+            <>
+              You can read our most recent weekly email{' '}
+              <a href={`/articles/${lastEmailSlug}`}>here</a>.
+            </>
+          ) : (
+            ''
+          )}
+        </p>
         <h4 className="marginTop2em">
           <Trans>Frequently asked questions and information</Trans>
         </h4>

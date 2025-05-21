@@ -148,7 +148,7 @@ export async function getArticle(
   return validate(dbres.docs[0]?.data());
 }
 
-async function getPreviousArticle(
+export async function getPreviousArticle(
   slug: string
 ): Promise<string | ArticleT | null> {
   const db = getFirestore(getAdminApp());
@@ -188,7 +188,7 @@ export type ArticlePageProps = ArticleT & {
   prevSlug?: string;
 };
 
-function maxWeeklyEmailArticle() {
+export function maxWeeklyEmailArticle() {
   const maxDate = new Date();
   maxDate.setDate(maxDate.getDate() - 3);
   return `weekly-email-${maxDate.toISOString().split('T')[0]}`;
