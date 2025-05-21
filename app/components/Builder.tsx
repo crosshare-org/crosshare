@@ -1452,7 +1452,6 @@ const GridMode = ({
     props.isAdmin,
     setClueMode,
     setMuted,
-    state.highlight,
     state.grid.width,
     state.grid.height,
     state.gridIsComplete,

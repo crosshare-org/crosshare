@@ -299,11 +299,11 @@ export default function HomePage({
         <p>
           We send a once-weekly email with a recap of the most popular puzzles
           of the week. To subscribe, visit{' '}
-          <a href="/account">your account page</a>.{' '}
+          <Link href="/account">your account page</Link>.{' '}
           {lastEmailSlug !== null ? (
             <>
               You can read our most recent weekly email{' '}
-              <a href={`/articles/${lastEmailSlug}`}>here</a>.
+              <Link href={`/articles/${lastEmailSlug}`}>here</Link>.
             </>
           ) : (
             ''
