@@ -90,7 +90,10 @@ function initialBuilderStateFromSaved(
     cellStyles:
       saved?.cellStyles ??
       Object.fromEntries(
-        state.grid.cellStyles.entries().map(([k, v]) => [k, Array.from(v)])
+        Array.from(state.grid.cellStyles.entries()).map(([k, v]) => [
+          k,
+          Array.from(v),
+        ])
       ),
     hidden: saved?.hidden ?? Array.from(state.grid.hidden),
     // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
@@ -940,7 +943,10 @@ function _builderReducer(
     };
     if (state.grid.cellStyles.size) {
       puzzle.sty = Object.fromEntries(
-        state.grid.cellStyles.entries().map(([k, v]) => [k, Array.from(v)])
+        Array.from(state.grid.cellStyles.entries()).map(([k, v]) => [
+          k,
+          Array.from(v),
+        ])
       );
     }
     return { ...state, toPublish: puzzle, publishWarnings: warnings };

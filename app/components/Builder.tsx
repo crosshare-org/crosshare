@@ -519,7 +519,10 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
       hBars: Array.from(state.grid.hBars),
       hidden: Array.from(state.grid.hidden),
       cellStyles: Object.fromEntries(
-        state.grid.cellStyles.entries().map(([k, v]) => [k, Array.from(v)])
+        Array.from(state.grid.cellStyles.entries()).map(([k, v]) => [
+          k,
+          Array.from(v),
+        ])
       ),
       clues: state.clues,
       title: state.title,
