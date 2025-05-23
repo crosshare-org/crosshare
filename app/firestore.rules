@@ -16,11 +16,37 @@ service cloud.firestore {
     function authorSetCorrectly() {
       return request.auth.uid != null && request.auth.uid == request.resource.data.a;
     }
+    function noDupes(array) {
+      return array.toSet().size() == array.size();
+    }
+    function styles() {
+      return request.resource.data.get('sty', {});
+    }
+    function styCount() {
+      return styles().size();
+    }
+    function styAt(index) {
+      return styles().values()[index];
+    }
+    function validStyle(index) {
+      return styAt(index).size() < request.resource.data.g.size() && noDupes(styAt(index));
+    }
     function validCrossword() {
       return (request.resource.data.g.size() == (request.resource.data.w * request.resource.data.h))
         && (request.resource.data.g.join('').matches('^[ .A-Za-z0-9Ññ&]*$'))
         && (request.resource.data.ac.size() == request.resource.data.an.size())
-        && (request.resource.data.dc.size() == request.resource.data.dn.size());
+        && (request.resource.data.dc.size() == request.resource.data.dn.size())
+        && (styCount() < 1 || validStyle(0))
+        && (styCount() < 2 || validStyle(1))
+        && (styCount() < 3 || validStyle(2))
+        && (styCount() < 4 || validStyle(3))
+        && (styCount() < 5 || validStyle(4))
+        && (styCount() < 6 || validStyle(5))
+        && (styCount() < 7 || validStyle(6))
+        && (styCount() < 8 || validStyle(7))
+        && (styCount() < 9 || validStyle(8))
+        && (styCount() < 10 || validStyle(9))
+        && styCount() < 11;
     }
     function arrayChangedByOnly(a, b, c) {
       let aSet = a.toSet();
