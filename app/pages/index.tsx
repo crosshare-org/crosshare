@@ -292,8 +292,14 @@ export default function HomePage({
             <Trans>Previous featured puzzles</Trans> &rarr;
           </Link>
         </p>
-        <hr className="margin2em0" />
-        <UnfinishedPuzzleList user={user} />
+        {user && !user.isAnonymous ? (
+          <>
+            <hr className="margin2em0" />
+            <UnfinishedPuzzleList user={user} />
+          </>
+        ) : (
+          ''
+        )}
         <hr className="margin2em0" />
         <h4>Weekly Email</h4>
         <p>
