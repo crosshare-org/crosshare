@@ -54,12 +54,12 @@ async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
   const circles = new Set(puzzle.sty?.circle ?? []);
   const shade = new Set(puzzle.sty?.shade ?? []);
   ctx.lineWidth = 2;
-  ctx.beginPath();
   for (let i = 0; i < puzzle.g.length; i += 1) {
     const col = i % puzzle.w;
     const row = Math.floor(i / puzzle.w);
 
     if (circles.has(i)) {
+      ctx.beginPath();
       ctx.arc(
         300 + (col + 0.5) * widthDivision + xOffset,
         15 + (row + 0.5) * heightDivision + yOffset,
@@ -67,6 +67,7 @@ async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
         0,
         2 * Math.PI
       );
+      ctx.stroke();
     }
     if (shade.has(i)) {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
@@ -92,7 +93,6 @@ async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
     }
     ctx.globalAlpha = 1;
   }
-  ctx.stroke();
 
   const vBars = new Set(puzzle.vb ?? []);
   const hBars = new Set(puzzle.hb ?? []);
