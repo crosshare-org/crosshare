@@ -13,12 +13,14 @@ import {
 import { CgSidebarRight } from 'react-icons/cg';
 import {
   FaEllipsisH,
+  FaEraser,
   FaEyeSlash,
   FaFileImport,
   FaFillDrip,
   FaHammer,
   FaKeyboard,
   FaListOl,
+  FaPalette,
   FaRegCheckCircle,
   FaRegCircle,
   FaRegFile,
@@ -48,6 +50,7 @@ import {
   usePolyfilledResizeObserver,
 } from '../lib/hooks.js';
 import { fromLocalStorage } from '../lib/storage.js';
+import { PRIMARY } from '../lib/style.js';
 import { Timestamp } from '../lib/timestamp.js';
 import {
   AutofillMessage,
@@ -74,11 +77,14 @@ import { getAutofillWorker } from '../lib/workerLoader.js';
 import {
   BuilderGrid,
   BuilderState,
+  ClearHighlightAction,
   ClickedFillAction,
   ImportPuzAction,
   PublishAction,
   SetShowDownloadLink,
   SymmetryAction,
+  ToggleHighlightAction,
+  UseHighlightAction,
   builderReducer,
   getClueProps,
   initialBuilderState,
@@ -92,8 +98,9 @@ import {
 } from '../reducers/gridReducer.js';
 import { AuthProps } from './AuthHelpers.js';
 import styles from './Builder.module.css';
-import { ButtonReset } from './Buttons.js';
+import { Button, ButtonReset } from './Buttons.js';
 import { ClueMode } from './ClueMode.js';
+import { ColorPicker } from './ColorPicker.js';
 import { ContactLinks } from './ContactLinks.js';
 import { FullscreenCSS } from './FullscreenCSS.js';
 import { GridView } from './Grid.js';
@@ -565,6 +572,7 @@ export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
   }, [runAutofill]);
 
   const [clueMode, setClueMode] = useState(false);
+
   if (firstLaunch) {
     return (
       <>
@@ -802,9 +810,10 @@ const PuzDownloadOverlay = (props: {
           // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           t={props.state.title || 'Crosshare puzzle'}
           sty={Object.fromEntries(
-            props.state.grid.cellStyles
-              .entries()
-              .map(([k, v]) => [k, Array.from(v)])
+            Array.from(props.state.grid.cellStyles.entries()).map(([k, v]) => [
+              k,
+              Array.from(v),
+            ])
           )}
           hdn={Array.from(props.state.grid.hidden)}
           cn={props.state.notes ?? undefined}
@@ -847,7 +856,15 @@ const GridMode = ({
     'keyboard',
     false
   );
+  const [pickingHighlightColor, setPickingHighlightColor] = useState(false);
+  const [highlightColor, setHighlightColor] = useState(PRIMARY);
   const { showSnackbar } = useSnackbar();
+
+  const usedHighlightColors = useMemo(() => {
+    return Array.from(state.grid.cellStyles.keys()).filter(
+      (c) => !['circle', 'shade'].includes(c)
+    );
+  }, [state.grid.cellStyles]);
 
   const physicalKeyboardHandler = useCallback(
     (e: KeyboardEvent) => {
@@ -1396,6 +1413,41 @@ const GridMode = ({
                   dispatch(a);
                 }}
               />
+              {usedHighlightColors.map((highlight) => (
+                <TopBarDropDownLink
+                  key={highlight}
+                  icon={<FaSquare color={highlight} />}
+                  text="Toggle Highlight Color"
+                  onClick={() => {
+                    const a: ToggleHighlightAction = {
+                      type: 'TOGGLEHIGHLIGHT',
+                      highlight,
+                    };
+                    dispatch(a);
+                  }}
+                />
+              ))}
+              {usedHighlightColors.length < 8 ? (
+                <TopBarDropDownLink
+                  icon={<FaPalette />}
+                  text="Use Custom Highlight Color"
+                  onClick={() => {
+                    setPickingHighlightColor(true);
+                  }}
+                />
+              ) : (
+                ''
+              )}
+              <TopBarDropDownLink
+                icon={<FaEraser />}
+                text="Clear Highlights for Selection"
+                onClick={() => {
+                  const a: ClearHighlightAction = {
+                    type: 'CLEARHIGHLIGHT',
+                  };
+                  dispatch(a);
+                }}
+              />
               {muted ? (
                 <TopBarDropDownLink
                   icon={<FaVolumeUp />}
@@ -1447,26 +1499,34 @@ const GridMode = ({
       </>
     );
   }, [
-    getMostConstrainedEntry,
     props.autofillEnabled,
     props.autofillInProgress,
     props.autofilledGrid.length,
-    stats,
     props.isAdmin,
+    toggleAutofillEnabled,
+    getMostConstrainedEntry,
+    dispatch,
+    reRunAutofill,
     setClueMode,
-    setMuted,
-    state.grid.width,
-    state.grid.height,
+    state.symmetry,
     state.gridIsComplete,
     state.hasNoShortWords,
     state.repeats,
-    state.symmetry,
-    toggleAutofillEnabled,
-    reRunAutofill,
-    dispatch,
+    state.grid.width,
+    state.grid.height,
+    usedHighlightColors,
     muted,
-    toggleKeyboard,
+    stats.numEntries,
+    stats.averageLength,
+    stats.numBlocks,
+    stats.numTotal,
+    stats.lengthHistogram,
+    stats.lengthHistogramNames,
+    stats.lettersHistogram,
+    stats.lettersHistogramNames,
+    setMuted,
     setToggleKeyboard,
+    toggleKeyboard,
   ]);
 
   return (
@@ -1484,6 +1544,36 @@ const GridMode = ({
         <div className="flexNone">
           <TopBar>{topBarChildren}</TopBar>
         </div>
+        {pickingHighlightColor ? (
+          <Overlay
+            closeCallback={() => {
+              setPickingHighlightColor(false);
+            }}
+          >
+            <ColorPicker
+              initial={highlightColor}
+              swatchBase={PRIMARY}
+              onChange={(c) => {
+                setHighlightColor(c);
+              }}
+              hideCustom={true}
+            />
+            <Button
+              className="marginTop1em"
+              onClick={() => {
+                const a: UseHighlightAction = {
+                  type: 'USEHIGHLIGHT',
+                  highlight: highlightColor,
+                };
+                dispatch(a);
+                setPickingHighlightColor(false);
+              }}
+              text={'Set Highlight'}
+            />
+          </Overlay>
+        ) : (
+          ''
+        )}
         {state.showDownloadLink ? (
           <PuzDownloadOverlay
             state={state}

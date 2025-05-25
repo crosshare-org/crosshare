@@ -315,42 +315,6 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
     if (key.k === KeyK.NumLayout || key.k === KeyK.AbcLayout) {
       return { ...state, showExtraKeyLayout: !state.showExtraKeyLayout };
     }
-    if (key.k === KeyK.Backtick && isBuilderState(state)) {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        const newState = {
-          ...state,
-          grid: { ...state.grid, cellStyles: new Map(state.grid.cellStyles) },
-        };
-        const highlights = new Set(newState.grid.cellStyles.get('circle'));
-        if (highlights.has(ci)) {
-          highlights.delete(ci);
-        } else {
-          highlights.add(ci);
-        }
-        newState.grid.cellStyles.set('circle', highlights);
-        return newState;
-      }
-      return state;
-    }
-    if (key.k === KeyK.Tilde && isBuilderState(state)) {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        const newState = {
-          ...state,
-          grid: { ...state.grid, cellStyles: new Map(state.grid.cellStyles) },
-        };
-        const highlights = new Set(newState.grid.cellStyles.get('shade'));
-        if (highlights.has(ci)) {
-          highlights.delete(ci);
-        } else {
-          highlights.add(ci);
-        }
-        newState.grid.cellStyles.set('shade', highlights);
-        return newState;
-      }
-      return state;
-    }
     if (state.isEnteringRebus) {
       if (key.k === KeyK.AllowedCharacter) {
         return { ...state, rebusValue: state.rebusValue + key.c.toUpperCase() };

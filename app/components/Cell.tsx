@@ -1,3 +1,4 @@
+import { mix, transparentize } from 'color2k';
 import { memo, useEffect, useRef, useState } from 'react';
 import { FaEye, FaSlash } from 'react-icons/fa';
 import { usePolyfilledResizeObserver } from '../lib/hooks.js';
@@ -35,6 +36,19 @@ interface CellProps {
   wasRevealed: boolean | undefined;
   cellColor?: number;
   isOpposite: boolean;
+}
+
+function mixColors(colors: string[]) {
+  return colors.reduce<[string | null, number]>(
+    (prev: [string | null, number], curr) => {
+      if (prev[0] === null) return [curr, 2] as [string | null, number];
+      return [mix(prev[0], curr, 1.0 / prev[1]), prev[1] + 1] as [
+        string | null,
+        number,
+      ];
+    },
+    [null, 1]
+  )[0];
 }
 
 export const Cell = memo(function Cell(props: CellProps) {
@@ -94,6 +108,11 @@ export const Cell = memo(function Cell(props: CellProps) {
       boxShadow = styles.statsEntry;
     }
   }
+
+  // Our constructor only allows one color at a time but the data model supports multiple - just mix them if present
+  const highlightColor = mixColors(
+    props.styles.filter((c) => !['circle', 'shade'].includes(c))
+  );
 
   return (
     <div
@@ -179,6 +198,16 @@ export const Cell = memo(function Cell(props: CellProps) {
               )}
               {props.styles.includes('shade') ? (
                 <div className={styles.shade} />
+              ) : (
+                ''
+              )}
+              {highlightColor ? (
+                <div
+                  className={styles.shade}
+                  style={{
+                    backgroundColor: transparentize(highlightColor, 0.7),
+                  }}
+                />
               ) : (
                 ''
               )}

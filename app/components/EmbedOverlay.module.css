@@ -14,30 +14,6 @@
   font-family: CrossharePreview;
 }
 
-.swatch {
-  cursor: pointer;
-
-  display: inline-block;
-
-  width: 1em;
-  height: 1em;
-  margin: 0.25em;
-
-  border-radius: 0.25em;
-}
-
-.swatch:hover {
-  width: 1.25em;
-  height: 1.25em;
-  margin: 0.125em;
-}
-
-.swatch[data-selected='true'] {
-  width: 1.5em;
-  height: 1.5em;
-  margin: 0;
-}
-
 .darkModeText {
   color: var(--autofill);
 }

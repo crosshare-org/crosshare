@@ -1,9 +1,14 @@
 import equal from 'fast-deep-equal';
+import { cloneDeepWith } from 'lodash';
 import { DBPuzzleT } from '../lib/dbtypes.js';
 import { getDocId } from '../lib/firebaseWrapper.js';
-import { gridWithEntrySet } from '../lib/gridBase.js';
+import { cellIndex, gridWithEntrySet } from '../lib/gridBase.js';
 import { parseClueEnumeration } from '../lib/parse.js';
-import { GridSelection, emptySelection } from '../lib/selection.js';
+import {
+  GridSelection,
+  emptySelection,
+  getSelectionCells,
+} from '../lib/selection.js';
 import { Timestamp } from '../lib/timestamp.js';
 import {
   Direction,
@@ -73,7 +78,6 @@ export interface BuilderState extends GridInterfaceState {
   undoHistory: BuilderGrid[];
   undoIndex: number;
   cluesBackup: Record<string, string[]> | null;
-  highlight: string;
 }
 
 function initialBuilderStateFromSaved(
@@ -201,7 +205,6 @@ export function initialBuilderState({
     showExtraKeyLayout: false,
     isEnteringRebus: false,
     rebusValue: '',
-    highlight: 'circle',
     gridIsComplete: false,
     repeats: new Set<string>(),
     hasNoShortWords: false,
@@ -376,16 +379,6 @@ function isDelAlternateAction(
   return action.type === 'DELALT';
 }
 
-export interface SetHighlightAction extends PuzzleAction {
-  type: 'SETHIGHLIGHT';
-  highlight: 'circle' | 'shade';
-}
-function isSetHighlightAction(
-  action: PuzzleAction
-): action is SetHighlightAction {
-  return action.type === 'SETHIGHLIGHT';
-}
-
 export interface ClickedFillAction extends PuzzleAction {
   type: 'CLICKEDFILL';
   entryIndex: number;
@@ -471,6 +464,35 @@ function isRestoreCluesAction(
   return action.type === 'RESTORECLUES';
 }
 
+export interface ToggleHighlightAction extends PuzzleAction {
+  type: 'TOGGLEHIGHLIGHT';
+  highlight: string;
+}
+function isToggleHighlightAction(
+  action: PuzzleAction
+): action is ToggleHighlightAction {
+  return action.type === 'TOGGLEHIGHLIGHT';
+}
+
+export interface UseHighlightAction extends PuzzleAction {
+  type: 'USEHIGHLIGHT';
+  highlight: string;
+}
+function isUseHighlightAction(
+  action: PuzzleAction
+): action is UseHighlightAction {
+  return action.type === 'USEHIGHLIGHT';
+}
+
+export interface ClearHighlightAction extends PuzzleAction {
+  type: 'CLEARHIGHLIGHT';
+}
+function isClearHighlightAction(
+  action: PuzzleAction
+): action is ClearHighlightAction {
+  return action.type === 'CLEARHIGHLIGHT';
+}
+
 function normalizeAnswer(answer: string): string {
   return answer.trim();
 }
@@ -535,6 +557,77 @@ export function getClueProps(
   return { ac, an, dc, dn };
 }
 
+function selectedCells(state: BuilderState) {
+  return new Set(
+    [state.active, ...getSelectionCells(state.selection)].map((p) =>
+      cellIndex(state.grid, p)
+    )
+  );
+}
+
+function clonedCellStyles(state: BuilderState) {
+  return {
+    ...state,
+    grid: { ...state.grid, cellStyles: cloneDeepWith(state.grid.cellStyles) },
+  };
+}
+
+function clearHighlights(
+  state: BuilderState,
+  toClear: Set<number>,
+  stylesToKeep: string[]
+): BuilderState {
+  for (const styleType of state.grid.cellStyles.keys()) {
+    if (stylesToKeep.includes(styleType)) continue;
+    const cells = state.grid.cellStyles.get(styleType);
+    if (cells === undefined) continue;
+    const newCells = cells.difference(toClear);
+    if (newCells.size > 0) state.grid.cellStyles.set(styleType, newCells);
+    else state.grid.cellStyles.delete(styleType);
+  }
+  return state;
+}
+
+function toggleHighlight(
+  startState: BuilderState,
+  highlight: string
+): BuilderState {
+  let state = clonedCellStyles(startState);
+  const toToggle = selectedCells(state);
+
+  const current = new Set(state.grid.cellStyles.get(highlight));
+  let newCells: Set<number>;
+  if (toToggle.difference(current).size === 0) {
+    // All the selected cells are highlighted, this operation is an unhighlight
+    newCells = current.difference(toToggle);
+  } else {
+    // At least one cell isn't highlighted yet, this operation is a highlight
+    if (!['circle', 'shade'].includes(highlight))
+      state = clearHighlights(state, toToggle, ['circle', 'shade', highlight]); // Clear any other colors
+    newCells = current.union(toToggle);
+  }
+  if (newCells.size > 0) state.grid.cellStyles.set(highlight, newCells);
+  else state.grid.cellStyles.delete(highlight);
+  return state;
+}
+
+function addHighlight(
+  startState: BuilderState,
+  highlight: string
+): BuilderState {
+  let state = clonedCellStyles(startState);
+  const toToggle = selectedCells(state);
+
+  if (!['circle', 'shade'].includes(highlight))
+    state = clearHighlights(state, toToggle, ['circle', 'shade', highlight]); // Clear any other colors
+  const current = new Set(state.grid.cellStyles.get(highlight));
+  const newCells = current.union(toToggle);
+
+  if (newCells.size > 0) state.grid.cellStyles.set(highlight, newCells);
+  else state.grid.cellStyles.delete(highlight);
+  return state;
+}
+
 function _builderReducer(
   state: BuilderState,
   action: PuzzleAction
@@ -589,6 +682,10 @@ function _builderReducer(
           end: moveDown(state.grid, end),
         },
       };
+    } else if (key.k === KeyK.Backtick) {
+      return toggleHighlight(state, 'circle');
+    } else if (key.k === KeyK.Tilde) {
+      return toggleHighlight(state, 'shade');
     }
     return state;
   }
@@ -619,9 +716,6 @@ function _builderReducer(
       return state;
     }
     return { ...state, symmetry: action.symmetry };
-  }
-  if (isSetHighlightAction(action)) {
-    state.highlight = action.highlight;
   }
   if (isSetClueAction(action)) {
     const newVal = state.clues[action.word] ?? [];
@@ -721,6 +815,17 @@ function _builderReducer(
       }
     );
     return { ...state, clues, cluesBackup: { ...state.clues } };
+  }
+  if (isToggleHighlightAction(action)) {
+    return toggleHighlight(state, action.highlight);
+  }
+  if (isUseHighlightAction(action)) {
+    return addHighlight(state, action.highlight);
+  }
+  if (isClearHighlightAction(action)) {
+    const newState = clonedCellStyles(state);
+    const toClear = selectedCells(newState);
+    return clearHighlights(newState, toClear, []);
   }
   if (isRestoreCluesAction(action)) {
     if (state.cluesBackup == null) {

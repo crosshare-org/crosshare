@@ -51,6 +51,49 @@ async function getPng(puzzle: DBPuzzleT): Promise<PNGStream> {
     }
   }
 
+  const circles = new Set(puzzle.sty?.circle ?? []);
+  const shade = new Set(puzzle.sty?.shade ?? []);
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let i = 0; i < puzzle.g.length; i += 1) {
+    const col = i % puzzle.w;
+    const row = Math.floor(i / puzzle.w);
+
+    if (circles.has(i)) {
+      ctx.arc(
+        300 + (col + 0.5) * widthDivision + xOffset,
+        15 + (row + 0.5) * heightDivision + yOffset,
+        Math.max(widthDivision, heightDivision) / 2,
+        0,
+        2 * Math.PI
+      );
+    }
+    if (shade.has(i)) {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+      ctx.fillRect(
+        300 + col * widthDivision + xOffset,
+        15 + row * heightDivision + yOffset,
+        widthDivision,
+        heightDivision
+      );
+    }
+    ctx.globalAlpha = 0.3;
+    for (const [styleType, cells] of Object.entries(puzzle.sty || {})) {
+      if (['circle', 'shade'].includes(styleType)) continue;
+      if (cells.includes(i)) {
+        ctx.fillStyle = styleType;
+        ctx.fillRect(
+          300 + col * widthDivision + xOffset,
+          15 + row * heightDivision + yOffset,
+          widthDivision,
+          heightDivision
+        );
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+  ctx.stroke();
+
   const vBars = new Set(puzzle.vb ?? []);
   const hBars = new Set(puzzle.hb ?? []);
   // Grid squares
