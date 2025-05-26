@@ -260,7 +260,7 @@ const initializeState = (props: PuzzleStatsProps): BuilderState => {
     width: props.puzzle.size.cols,
     height: props.puzzle.size.rows,
     grid: props.puzzle.grid,
-    cellStyles: props.puzzle.cellStyles,
+    cellStyles: {},
     hidden: props.puzzle.hidden,
     vBars: props.puzzle.vBars,
     hBars: props.puzzle.hBars,
