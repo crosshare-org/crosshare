@@ -21,9 +21,7 @@ import {
   ViewableEntry,
   ViewableGrid,
   advancePosition,
-  gridWithBarToggled,
   gridWithBlockToggled,
-  gridWithHiddenToggled,
   gridWithNewChar,
   moveDown,
   moveLeft,
@@ -442,34 +440,6 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           dir: Direction.Down,
         },
       };
-    } else if (
-      (key.k === KeyK.Dot || key.k === KeyK.Block) &&
-      state.grid.allowBlockEditing
-    ) {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-        const grid = gridWithBlockToggled(state.grid, state.active, symmetry);
-        state = clearSelection(state);
-        return {
-          ...postEdit({ ...state, grid }, ci),
-          wasEntryClick: false,
-          active: nextCell(state.grid, state.active),
-        };
-      }
-      return state;
-    } else if (key.k === KeyK.Comma && state.grid.allowBlockEditing) {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-        const grid = gridWithBarToggled(state.grid, state.active, symmetry);
-        state = clearSelection(state);
-        return {
-          ...postEdit({ ...state, grid }, ci),
-          wasEntryClick: false,
-        };
-      }
-      return state;
     } else if (key.k === KeyK.AllowedCharacter) {
       const char = key.c.toUpperCase();
       state = enterText(state, char);
@@ -533,17 +503,6 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         wasEntryClick: false,
         active: nextCell(state.grid, state.active),
       };
-    } else if (key.k === KeyK.Octothorp && state.type === 'builder') {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
-        const grid = gridWithHiddenToggled(state.grid, state.active, symmetry);
-        return {
-          ...postEdit({ ...state, grid }, ci),
-          wasEntryClick: false,
-        };
-      }
-      return state;
     }
   }
   return state;

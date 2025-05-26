@@ -24,12 +24,17 @@ import {
   ViewableGrid,
   fromCells,
   gridEqual,
+  gridWithBarToggled,
+  gridWithBlockToggled,
+  gridWithHiddenToggled,
   moveDown,
   moveLeft,
   moveRight,
   moveUp,
+  nextCell,
 } from '../lib/viewableGrid.js';
 import {
+  clearSelection,
   forEachCluedEntry,
   getWarningStats,
   hasSelection,
@@ -686,6 +691,51 @@ function _builderReducer(
       return toggleHighlight(state, 'circle');
     } else if (key.k === KeyK.Tilde) {
       return toggleHighlight(state, 'shade');
+    } else if (key.k === KeyK.Octothorp) {
+      const ci = cellIndex(state.grid, state.active);
+      if (state.isEditable(ci)) {
+        const grid = gridWithHiddenToggled(
+          state.grid,
+          state.active,
+          state.symmetry
+        );
+        return {
+          ...postEdit({ ...state, grid }, ci),
+          wasEntryClick: false,
+        };
+      }
+      return state;
+    } else if (key.k === KeyK.Dot || key.k === KeyK.Block) {
+      const ci = cellIndex(state.grid, state.active);
+      if (state.isEditable(ci)) {
+        const grid = gridWithBlockToggled(
+          state.grid,
+          state.active,
+          state.symmetry
+        );
+        state = clearSelection(state);
+        return {
+          ...postEdit({ ...state, grid }, ci),
+          wasEntryClick: false,
+          active: nextCell(state.grid, state.active),
+        };
+      }
+      return state;
+    } else if (key.k === KeyK.Comma) {
+      const ci = cellIndex(state.grid, state.active);
+      if (state.isEditable(ci)) {
+        const grid = gridWithBarToggled(
+          state.grid,
+          state.active,
+          state.symmetry
+        );
+        state = clearSelection(state);
+        return {
+          ...postEdit({ ...state, grid }, ci),
+          wasEntryClick: false,
+        };
+      }
+      return state;
     }
     return state;
   }
