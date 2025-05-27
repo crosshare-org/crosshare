@@ -257,7 +257,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         .map((s) =>
           s
             .split('')
-            .filter((x) => x.match(ALLOWABLE_GRID_CHARS) || x === BLOCK)
+            .filter((x) => x.match(ALLOWABLE_GRID_CHARS) !== null || x === BLOCK)
             .join('')
             .toUpperCase()
         )

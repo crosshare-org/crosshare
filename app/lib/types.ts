@@ -27,7 +27,7 @@ export function hasOwnProperty<
 // io-ts enum support
 export const fromEnum = <T extends string, TEnumValue extends string | number>(
   enumName: string,
-  theEnum: { [key in T]: TEnumValue }
+  theEnum: Record<T, TEnumValue>
 ): t.Type<TEnumValue> => {
   const isEnumValue = (input: unknown): input is TEnumValue =>
     Object.values(theEnum).includes(input);
@@ -571,7 +571,7 @@ export function fromKeyboardEvent(event: {
   if (basicKey !== null) {
     return { k: basicKey };
   }
-  if (event.key.match(ALLOWABLE_GRID_CHARS)) {
+  if (ALLOWABLE_GRID_CHARS.exec(event.key)) {
     return { k: KeyK.AllowedCharacter, c: event.key };
   }
   return null;

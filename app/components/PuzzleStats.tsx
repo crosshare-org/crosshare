@@ -86,7 +86,9 @@ const MetaSubmissionList = (props: MetaSubmissionListProps) => {
         if (y.p.length < x.p.length) return -dir;
         return 0;
       }
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
       const xcol = x[col]?.toString().trim().toLocaleLowerCase() || '',
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
         ycol = y[col]?.toString().trim().toLocaleLowerCase() || '';
       if (xcol < ycol) return dir;
       if (xcol > ycol) return -dir;

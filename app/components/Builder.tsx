@@ -964,11 +964,11 @@ const GridMode = ({
       ).join('');
       entryMatches = entryMatches.filter(([word]) => {
         const l = word[entryActiveIndex];
-        return l && validLetters.includes(l);
+        return l ? validLetters.includes(l) : false;
       });
       crossMatches = crossMatches.filter(([word]) => {
         const l = word[crossActiveIndex];
-        return l && validLetters.includes(l);
+        return l ? validLetters.includes(l) : false;
       });
     }
 

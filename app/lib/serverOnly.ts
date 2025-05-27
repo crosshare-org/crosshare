@@ -268,7 +268,7 @@ export function filterDeletedComments(
         };
       }
     })
-    .filter((x) => x.r?.length || !x.deleted); // Remove any childless deleted comments
+    .filter((x) => (x.r !== undefined && x.r.length > 0) || !x.deleted); // Remove any childless deleted comments
 }
 
 async function convertComments(
@@ -420,7 +420,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
           },
         };
       }
-    } catch (error) {
+    } catch {
       return { props: { packId: validationResult.right.pk } };
     }
   }

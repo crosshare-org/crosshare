@@ -57,7 +57,7 @@ export function entryString(entry: {
   return `${entry.labelNumber}${directionString(entry.direction)}`;
 }
 
-function getSortedEntries<Entry extends EntryBase>(entries: Entry[]) {
+function getSortedEntries(entries: EntryBase[]) {
   return [...entries]
     .sort((a, b) => {
       if (a.direction !== b.direction) {
@@ -463,8 +463,7 @@ export function gridWithNewChar<
 
 export function flipped<
   Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>,
->(grid: Grid, pos: Position, sym: Symmetry): number | null {
+>(grid: ViewableGrid<Entry>, pos: Position, sym: Symmetry): number | null {
   switch (sym) {
     case Symmetry.None:
       return null;
@@ -487,9 +486,8 @@ export function flipped<
 
 function flippedBar<
   Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>,
 >(
-  grid: Grid,
+  grid: ViewableGrid<Entry>,
   pos: PosAndDir,
   sym: Symmetry
 ): [vBar: number | null, hBar: number | null] {
@@ -676,9 +674,9 @@ export function gridWithBarToggled<
   return fromCells(removeExtraneousBars({ ...grid, vBars, hBars }));
 }
 
-export function getCluedAcrossAndDown<Entry extends ViewableEntry>(
+export function getCluedAcrossAndDown(
   clueMap: Record<string, string[]>,
-  entries: Entry[],
+  entries: ViewableEntry[],
   sortedEntries: number[],
   markdownToHast: (text: string) => Root
 ): [CluedEntry[], CluedEntry[]] {
@@ -704,8 +702,7 @@ export function getCluedAcrossAndDown<Entry extends ViewableEntry>(
 
 export function getClueMap<
   Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>,
->(grid: Grid, rawClues: ClueT[]): Record<string, string[]> {
+>(grid: ViewableGrid<Entry>, rawClues: ClueT[]): Record<string, string[]> {
   const result: Record<string, string[]> = {};
   const clues = cluesByDirection(rawClues);
 
@@ -835,9 +832,8 @@ export function getRefs(grid: CluedGrid): Set<number>[] {
 
 export function addClues<
   Entry extends ViewableEntry,
-  Grid extends ViewableGrid<Entry>,
 >(
-  grid: Grid,
+  grid: ViewableGrid<Entry>,
   rawClues: ClueT[],
   clueHasts: Root[] | ((c: string) => Root)
 ): CluedGrid {

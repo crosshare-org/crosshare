@@ -17,7 +17,7 @@ const Swatch = (props: SwatchProps) => {
       tabIndex={0}
       className={styles.swatch}
       onClick={props.select}
-      onKeyPress={props.select}
+      onKeyDown={props.select}
     />
   );
 };

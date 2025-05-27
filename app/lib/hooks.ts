@@ -26,17 +26,17 @@ export function useMatchMedia(query: string) {
     // note 1: safari currently doesn't support add/removeEventListener so we use add/removeListener
     // note 2: add/removeListener are maybe marked as deprecated, but that could be wrong
     //         see https://github.com/microsoft/TypeScript/issues/32210
-    mediaQueryList.addListener(onChange);
+    mediaQueryList.addEventListener('change', onChange);
     return () => {
-      mediaQueryList.removeListener(onChange);
+      mediaQueryList.removeEventListener('change', onChange);
     };
   }, [query]);
 
   return matches;
 }
 
-export const useSize = <T extends React.RefObject<HTMLDivElement | null>>(
-  target: T
+export const useSize = (
+  target: React.RefObject<HTMLDivElement | null>
 ) => {
   const [size, setSize] = useState<DOMRect>(new DOMRect(0, 0, 0, 0));
 
