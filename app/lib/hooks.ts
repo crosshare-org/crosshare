@@ -1,8 +1,7 @@
 import useEventListener from '@use-it/event-listener';
 import { parseToRgba } from 'color2k';
 import type { User } from 'firebase/auth';
-import { RefObject, useCallback, useEffect, useState } from 'react';
-import useResizeObserver from 'use-resize-observer';
+import { useCallback, useEffect, useState } from 'react';
 import {
   EmbedColorMode,
   EmbedContextValue,
@@ -11,7 +10,6 @@ import { EmbedStylingProps } from '../components/EmbedStyling.js';
 import { ConstructorPageT } from './constructorPage.js';
 import { EmbedOptionsT } from './embedOptions.js';
 import { ERROR_COLOR, LINK, PRIMARY, VERIFIED_COLOR } from './style.js';
-import { logAsyncErrors } from './utils.js';
 
 // pass a query like `(min-width: 768px)`
 export function useMatchMedia(query: string) {
@@ -37,35 +35,44 @@ export function useMatchMedia(query: string) {
   return matches;
 }
 
-export function usePolyfilledResizeObserver(ref: RefObject<HTMLElement>) {
-  const [hasResizeObserver, setHasResizeObserver] = useState(false);
-  useEffect(() => {
-    let didCancel = false;
+export const useSize = <T extends React.RefObject<HTMLDivElement | null>>(
+  target: T
+) => {
+  const [size, setSize] = useState<DOMRect>(new DOMRect(0, 0, 0, 0));
 
-    const loadRO = async () => {
-      if (hasResizeObserver) {
-        return;
+  const updateSize = useCallback(() => {
+    if (target.current) {
+      const size = target.current.getBoundingClientRect();
+
+      setSize(size);
+    }
+  }, [target]);
+
+  useEffect(() => {
+    const { current } = target;
+
+    updateSize();
+
+    const observer = new ResizeObserver((entries) => {
+      if (entries.length > 0) {
+        updateSize();
       }
-      if ('ResizeObserver' in window) {
-        setHasResizeObserver(true);
-      } else {
-        // Loads polyfill asynchronously, only if required.
-        return import('@juggle/resize-observer').then((module) => {
-          window.ResizeObserver =
-            module.ResizeObserver as unknown as typeof ResizeObserver;
-          if (!didCancel) {
-            setHasResizeObserver(true);
-          }
-        });
-      }
-    };
-    logAsyncErrors(loadRO)();
+    });
+
+    if (current) {
+      observer.observe(current);
+    }
+
     return () => {
-      didCancel = true;
+      if (current) {
+        observer.unobserve(current);
+      }
+      observer.disconnect();
     };
-  }, [hasResizeObserver]);
-  return useResizeObserver({ ref: hasResizeObserver ? ref : null });
-}
+  }, [target, updateSize]);
+
+  return size;
+};
 
 /*
   This hook is used to determine if the browser is in dark mode

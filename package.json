@@ -9,12 +9,6 @@
     "type": "git",
     "url": "https://github.com/crosshare-org/crosshare"
   },
-  "resolutions": {
-    "@types/mime": "3.0.4"
-  },
-  "resolutionsComments": {
-    "@types/mime": "https://github.com/firebase/firebase-admin-node/issues/2512"
-  },
   "scripts": {
     "type:check": "turbo run type:check",
     "build": "turbo run build",
@@ -27,7 +21,7 @@
   },
   "packageManager": "pnpm@9.3.0+sha512.ee7b93e0c2bd11409c6424f92b866f31d3ea1bef5fbe47d3c7500cdc3c9668833d2e55681ad66df5b640c61fa9dc25d546efa54d76d7f8bf54b13614ac293631",
   "devDependencies": {
-    "turbo": "^2.0.3"
+    "turbo": "^2.5.3"
   },
   "pnpm": {
     "overrides": {

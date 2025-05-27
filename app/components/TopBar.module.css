@@ -200,7 +200,8 @@
 
 @media (prefers-color-scheme: dark) {
   .header[data-pride='true'] {
-    background: linear-gradient(rgb(0 0 0 / 50%), rgb(0 0 0 / 50%)),
+    background:
+      linear-gradient(rgb(0 0 0 / 50%), rgb(0 0 0 / 50%)),
       linear-gradient(
         to right,
         indianred,
@@ -213,7 +214,8 @@
   }
 
   .header[data-tgdr='true'] {
-    background: linear-gradient(rgb(0 0 0 / 50%), rgb(0 0 0 / 50%)),
+    background:
+      linear-gradient(rgb(0 0 0 / 50%), rgb(0 0 0 / 50%)),
       linear-gradient(
         to right,
         #50dfe4 0% 15%,

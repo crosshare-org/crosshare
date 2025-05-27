@@ -45,10 +45,7 @@ import * as BA from '../lib/bitArray.js';
 import { ExportProps, exportFile, importFile } from '../lib/converter.js';
 import { isTextInput } from '../lib/domUtils.js';
 import { entryAndCrossAtPosition, getCrosses, valAt } from '../lib/gridBase.js';
-import {
-  usePersistedBoolean,
-  usePolyfilledResizeObserver,
-} from '../lib/hooks.js';
+import { usePersistedBoolean, useSize } from '../lib/hooks.js';
 import { fromLocalStorage } from '../lib/storage.js';
 import { PRIMARY } from '../lib/style.js';
 import { Timestamp } from '../lib/timestamp.js';
@@ -210,7 +207,7 @@ interface PotentialFillListProps {
 const PotentialFillList = (props: PotentialFillListProps) => {
   const listRef = useRef<List>(null);
   const listParent = useRef<HTMLDivElement>(null);
-  const { height = 320 } = usePolyfilledResizeObserver(listParent);
+  const { height = 320 } = useSize(listParent);
   useEffect(() => {
     if (listRef.current !== null) {
       listRef.current.scrollToItem(0);

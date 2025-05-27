@@ -17,6 +17,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
+    "noImplicitThis": true,
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "jsx": "preserve",

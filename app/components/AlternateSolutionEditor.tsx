@@ -16,10 +16,7 @@ import {
   FaWindowClose,
 } from 'react-icons/fa';
 import { isTextInput } from '../lib/domUtils.js';
-import {
-  usePersistedBoolean,
-  usePolyfilledResizeObserver,
-} from '../lib/hooks.js';
+import { usePersistedBoolean, useSize } from '../lib/hooks.js';
 import {
   Direction,
   KeyK,
@@ -96,7 +93,7 @@ export function AlternateSolutionEditor(props: {
   useEventListener('keydown', physicalKeyboardHandler);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const { width: cqw, height: cqh } = usePolyfilledResizeObserver(containerRef);
+  const { width: cqw, height: cqh } = useSize(containerRef);
   const [useCQ, setUseCQ] = useState(true);
   useEffect(() => {
     if (!('container' in document.documentElement.style)) {

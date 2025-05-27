@@ -12,8 +12,9 @@
   height: keyboard-height;
   padding: 4px;
 
-  font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue',
-    Helvetica, Arial, 'Lucida Grande', sans-serif;
+  font-family:
+    HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica,
+    Arial, 'Lucida Grande', sans-serif;
 
   background: var(--kb-bg);
   border-radius: 5px;

@@ -88,6 +88,7 @@ import { PasteAction } from '../reducers/gridReducer.js';
 import {
   CheatAction,
   LoadPlayAction,
+  PuzzleState,
   RanMetaSubmitEffectsAction,
   RanSuccessEffectsAction,
   ToggleAutocheckAction,
@@ -244,79 +245,79 @@ export const Puzzle = ({
   ...props
 }: PuzzleProps & AuthPropsOptional) => {
   const { isSlate } = useContext(EmbedContext);
-
+  const initialState: PuzzleState = {
+    type: 'puzzle',
+    wasEntryClick: false,
+    active: { col: 0, row: 0, dir: Direction.Across },
+    grid: addClues(
+      fromCells({
+        mapper: (e) => e,
+        width: puzzle.size.cols,
+        height: puzzle.size.rows,
+        cells: play
+          ? play.g
+          : puzzle.grid.map((s) => (s === BLOCK ? BLOCK : ' ')),
+        vBars: new Set(puzzle.vBars),
+        hBars: new Set(puzzle.hBars),
+        allowBlockEditing: false,
+        cellStyles: new Map<string, Set<number>>(
+          Object.entries(puzzle.cellStyles).map(([k, v]) => [k, new Set(v)])
+        ),
+        hidden: new Set(puzzle.hidden),
+      }),
+      puzzle.clues,
+      puzzle.clueHasts
+    ),
+    showExtraKeyLayout: false,
+    answers: puzzle.grid,
+    alternateSolutions: puzzle.alternateSolutions,
+    solutions: allSolutions(puzzle.grid, puzzle.alternateSolutions)[0],
+    verifiedCells: new Set<number>(play ? play.vc : []),
+    wrongCells: new Set<number>(play ? play.wc : []),
+    revealedCells: new Set<number>(play ? play.rc : []),
+    downsOnly: play?.do ?? false,
+    isEnteringRebus: false,
+    rebusValue: '',
+    success: play ? play.f : false,
+    ranSuccessEffects: play ? play.f : false,
+    filled: false,
+    autocheck: false,
+    dismissedKeepTrying: false,
+    dismissedSuccess: false,
+    moderating: false,
+    showingEmbedOverlay: false,
+    displaySeconds: play ? play.t : 0,
+    bankedSeconds: play ? play.t : 0,
+    ranMetaSubmitEffects: false,
+    ...(play &&
+      play.ct_rv && {
+        contestRevealed: true,
+        contestSubmitTime: play.ct_t?.toMillis(),
+        contestDisplayName: play.ct_n,
+      }),
+    ...(play &&
+      play.ct_sub && {
+        ranMetaSubmitEffects: true,
+        contestPriorSubmissions: play.ct_pr_subs,
+        contestDisplayName: play.ct_n,
+        contestSubmission: play.ct_sub,
+        contestEmail: play.ct_em,
+        contestSubmitTime: play.ct_t?.toMillis(),
+      }),
+    currentTimeWindowStart: 0,
+    didCheat: play ? play.ch : false,
+    clueView: false,
+    cellsUpdatedAt: play ? play.ct : puzzle.grid.map(() => 0),
+    cellsIterationCount: play ? play.uc : puzzle.grid.map(() => 0),
+    cellsEverMarkedWrong: new Set<number>(play ? play.we : []),
+    loadedPlayState: !loadingPlayState,
+    isEditable(cellIndex) {
+      return !this.verifiedCells.has(cellIndex) && !this.success;
+    },
+  };
   const [state, dispatch] = useReducer(
     puzzleReducer,
-    {
-      type: 'puzzle',
-      wasEntryClick: false,
-      active: { col: 0, row: 0, dir: Direction.Across },
-      grid: addClues(
-        fromCells({
-          mapper: (e) => e,
-          width: puzzle.size.cols,
-          height: puzzle.size.rows,
-          cells: play
-            ? play.g
-            : puzzle.grid.map((s) => (s === BLOCK ? BLOCK : ' ')),
-          vBars: new Set(puzzle.vBars),
-          hBars: new Set(puzzle.hBars),
-          allowBlockEditing: false,
-          cellStyles: new Map<string, Set<number>>(
-            Object.entries(puzzle.cellStyles).map(([k, v]) => [k, new Set(v)])
-          ),
-          hidden: new Set(puzzle.hidden),
-        }),
-        puzzle.clues,
-        puzzle.clueHasts
-      ),
-      showExtraKeyLayout: false,
-      answers: puzzle.grid,
-      alternateSolutions: puzzle.alternateSolutions,
-      solutions: allSolutions(puzzle.grid, puzzle.alternateSolutions)[0],
-      verifiedCells: new Set<number>(play ? play.vc : []),
-      wrongCells: new Set<number>(play ? play.wc : []),
-      revealedCells: new Set<number>(play ? play.rc : []),
-      downsOnly: play?.do ?? false,
-      isEnteringRebus: false,
-      rebusValue: '',
-      success: play ? play.f : false,
-      ranSuccessEffects: play ? play.f : false,
-      filled: false,
-      autocheck: false,
-      dismissedKeepTrying: false,
-      dismissedSuccess: false,
-      moderating: false,
-      showingEmbedOverlay: false,
-      displaySeconds: play ? play.t : 0,
-      bankedSeconds: play ? play.t : 0,
-      ranMetaSubmitEffects: false,
-      ...(play &&
-        play.ct_rv && {
-          contestRevealed: true,
-          contestSubmitTime: play.ct_t?.toMillis(),
-          contestDisplayName: play.ct_n,
-        }),
-      ...(play &&
-        play.ct_sub && {
-          ranMetaSubmitEffects: true,
-          contestPriorSubmissions: play.ct_pr_subs,
-          contestDisplayName: play.ct_n,
-          contestSubmission: play.ct_sub,
-          contestEmail: play.ct_em,
-          contestSubmitTime: play.ct_t?.toMillis(),
-        }),
-      currentTimeWindowStart: 0,
-      didCheat: play ? play.ch : false,
-      clueView: false,
-      cellsUpdatedAt: play ? play.ct : puzzle.grid.map(() => 0),
-      cellsIterationCount: play ? play.uc : puzzle.grid.map(() => 0),
-      cellsEverMarkedWrong: new Set<number>(play ? play.we : []),
-      loadedPlayState: !loadingPlayState,
-      isEditable(cellIndex) {
-        return !this.verifiedCells.has(cellIndex) && !this.success;
-      },
-    },
+    initialState,
     advanceActiveToNonBlock
   );
 
