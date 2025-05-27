@@ -18,6 +18,7 @@ import {
   Symmetry,
 } from '../lib/types.js';
 import {
+  ToggleSetting,
   ViewableEntry,
   ViewableGrid,
   advancePosition,
@@ -138,7 +139,7 @@ function enterCharAt<T extends GridInterfaceState>(
     let grid = state.grid;
     if (char === BLOCK) {
       if (valAt(grid, pos) !== BLOCK && grid.allowBlockEditing) {
-        grid = gridWithBlockToggled(grid, pos, symmetry);
+        grid = gridWithBlockToggled(grid, pos, symmetry, ToggleSetting.Toggle);
       }
     } else {
       grid = gridWithNewChar(grid, pos, char || EMPTY, symmetry);

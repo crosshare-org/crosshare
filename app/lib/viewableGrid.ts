@@ -578,12 +578,20 @@ function removeExtraneousBars<
   return { ...g, hBars, vBars };
 }
 
+export const enum ToggleSetting {
+  On = 1,
+  Off,
+  Toggle,
+}
+
 export function gridWithHiddenToggled<
   Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>,
->(grid: Grid, pos: Position, sym: Symmetry): Grid {
+>(grid: Grid, pos: Position, sym: Symmetry, toggle: ToggleSetting): Grid {
   const index = pos.row * grid.width + pos.col;
-  const wasHidden = grid.hidden.has(index);
+  const wasHidden =
+    toggle === ToggleSetting.Off ||
+    (toggle === ToggleSetting.Toggle && grid.hidden.has(index));
   const cells = [...grid.cells];
   const hidden = new Set(grid.hidden);
 
@@ -610,9 +618,12 @@ export function gridWithHiddenToggled<
 export function gridWithBlockToggled<
   Entry extends ViewableEntry,
   Grid extends ViewableGrid<Entry>,
->(grid: Grid, pos: Position, sym: Symmetry): Grid {
+>(grid: Grid, pos: Position, sym: Symmetry, toggle: ToggleSetting): Grid {
   let char = BLOCK;
-  if (valAt(grid, pos) === BLOCK) {
+  if (
+    toggle === ToggleSetting.Off ||
+    (toggle === ToggleSetting.Toggle && valAt(grid, pos) === BLOCK)
+  ) {
     char = ' ';
   }
   const index = pos.row * grid.width + pos.col;

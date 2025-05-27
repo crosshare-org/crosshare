@@ -2,7 +2,7 @@ import equal from 'fast-deep-equal';
 import { cloneDeepWith } from 'lodash';
 import { DBPuzzleT } from '../lib/dbtypes.js';
 import { getDocId } from '../lib/firebaseWrapper.js';
-import { cellIndex, gridWithEntrySet } from '../lib/gridBase.js';
+import { cellIndex, gridWithEntrySet, posForIndex } from '../lib/gridBase.js';
 import { parseClueEnumeration } from '../lib/parse.js';
 import {
   GridSelection,
@@ -11,6 +11,7 @@ import {
 } from '../lib/selection.js';
 import { Timestamp } from '../lib/timestamp.js';
 import {
+  BLOCK,
   Direction,
   EMPTY,
   KeyK,
@@ -20,6 +21,7 @@ import {
   Symmetry,
 } from '../lib/types.js';
 import {
+  ToggleSetting,
   ViewableEntry,
   ViewableGrid,
   fromCells,
@@ -38,7 +40,6 @@ import {
   forEachCluedEntry,
   getWarningStats,
   hasSelection,
-  postEdit,
   validateGrid,
 } from './builderUtils.js';
 import { PuzzleAction, isKeypressAction } from './commonActions.js';
@@ -692,35 +693,51 @@ function _builderReducer(
     } else if (key.k === KeyK.Tilde) {
       return toggleHighlight(state, 'shade');
     } else if (key.k === KeyK.Octothorp) {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        const grid = gridWithHiddenToggled(
-          state.grid,
-          state.active,
-          state.symmetry
-        );
-        return {
-          ...postEdit({ ...state, grid }, ci),
-          wasEntryClick: false,
-        };
+      const cells = selectedCells(state);
+      let grid = state.grid;
+      const op =
+        cells.difference(grid.hidden).size === 0
+          ? ToggleSetting.Off
+          : ToggleSetting.On;
+      for (const ci of cells) {
+        if (state.isEditable(ci)) {
+          grid = gridWithHiddenToggled(
+            grid,
+            posForIndex(grid, ci),
+            state.symmetry,
+            op
+          );
+        }
       }
-      return state;
+      return {
+        ...validateGrid({ ...clearSelection(state), grid }),
+        wasEntryClick: false,
+      };
     } else if (key.k === KeyK.Dot || key.k === KeyK.Block) {
-      const ci = cellIndex(state.grid, state.active);
-      if (state.isEditable(ci)) {
-        const grid = gridWithBlockToggled(
-          state.grid,
-          state.active,
-          state.symmetry
-        );
-        state = clearSelection(state);
-        return {
-          ...postEdit({ ...state, grid }, ci),
-          wasEntryClick: false,
-          active: nextCell(state.grid, state.active),
-        };
+      const cells = selectedCells(state);
+      let grid = state.grid;
+      let op = ToggleSetting.Off;
+      for (const ci of cells) {
+        if (grid.cells[ci] !== BLOCK) {
+          op = ToggleSetting.On;
+          break;
+        }
       }
-      return state;
+      for (const ci of cells) {
+        if (state.isEditable(ci)) {
+          grid = gridWithBlockToggled(
+            grid,
+            posForIndex(grid, ci),
+            state.symmetry,
+            op
+          );
+        }
+      }
+      return {
+        ...validateGrid({ ...clearSelection(state), grid }),
+        wasEntryClick: false,
+        active: nextCell(state.grid, state.active),
+      };
     } else if (key.k === KeyK.Comma) {
       const ci = cellIndex(state.grid, state.active);
       if (state.isEditable(ci)) {
@@ -731,7 +748,7 @@ function _builderReducer(
         );
         state = clearSelection(state);
         return {
-          ...postEdit({ ...state, grid }, ci),
+          ...validateGrid({ ...state, grid }),
           wasEntryClick: false,
         };
       }
@@ -885,8 +902,7 @@ function _builderReducer(
   }
   if (isClickedFillAction(action)) {
     const grid = gridWithEntrySet(state.grid, action.entryIndex, action.value);
-    state = postEdit({ ...state, grid }, 0);
-    return state;
+    return validateGrid({ ...state, grid });
   }
   if (action.type === 'CLEARPUBLISHERRORS') {
     return { ...state, publishErrors: [], publishWarnings: [] };
