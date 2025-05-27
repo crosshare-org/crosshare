@@ -137,7 +137,7 @@ export function getWarningStats(state: BuilderState) {
   };
 }
 
-export function hasSelection<T extends GridInterfaceState>(state: T): boolean {
+export function hasSelection(state: GridInterfaceState): boolean {
   return isBuilderState(state) && hasMultipleCells(state.selection);
 }
 

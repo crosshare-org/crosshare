@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from "@lingui/react/macro";
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { Locale, es, it } from 'date-fns/locale';
 import { useRouter } from 'next/router';

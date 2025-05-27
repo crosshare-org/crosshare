@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from "@lingui/react/macro";
 import type { Root } from 'hast';
 import { ReactNode, useContext, useEffect, useState } from 'react';
 import { DifficultyBadge } from '../components/DifficultyBadge.js';

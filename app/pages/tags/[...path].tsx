@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import type { Root } from 'hast';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';

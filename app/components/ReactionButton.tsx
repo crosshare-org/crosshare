@@ -1,4 +1,4 @@
-import { Plural } from '@lingui/macro';
+import { Plural } from "@lingui/react/macro";
 import { User } from 'firebase/auth';
 import {
   Fragment,

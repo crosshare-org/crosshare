@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import type { User } from 'firebase/auth';
 import { useRouter } from 'next/router';

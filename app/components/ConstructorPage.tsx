@@ -1,4 +1,5 @@
-import { Plural, Trans, t } from '@lingui/macro';
+import { t } from "@lingui/core/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { serverTimestamp, setDoc } from 'firebase/firestore';
 import type { Root } from 'hast';
 import Head from 'next/head';

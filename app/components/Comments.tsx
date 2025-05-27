@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import type { User } from 'firebase/auth';
 import { addDoc, updateDoc } from 'firebase/firestore';
 import type { Root } from 'hast';

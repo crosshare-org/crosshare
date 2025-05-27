@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from "@lingui/core/macro";
 import type { User } from 'firebase/auth';
 import { arrayRemove, arrayUnion, setDoc } from 'firebase/firestore';
 import { useCallback, useContext, useEffect, useState } from 'react';
