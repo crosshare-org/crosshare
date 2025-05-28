@@ -25,32 +25,42 @@ export default tseslint.config(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       importPluginFlatConfigs.typescript,
     ],
-    rules: {'import/order': [
+    rules: {
+      'import/order': [
         'error',
         {
           'newlines-between': 'never',
           alphabetize: { order: 'asc' },
           warnOnUnassignedImports: true,
         },
-      ],}
+      ],
+      'import/no-anonymous-default-export': 'warn',
+    },
   },
   pluginLingui.configs['flat/recommended'],
   ...compat.config({
-    plugins: ['css-modules', 'react'],
+    plugins: ['css-modules', 'react', 'react-hooks'],
     extends: [
-    'plugin:css-modules/recommended',
+      'plugin:react/recommended',
+      'plugin:react-hooks/recommended',
+      'plugin:css-modules/recommended',
       'plugin:redos/recommended',
       'plugin:@next/next/core-web-vitals',
       'prettier',
     ],
   }),
   jsxA11y.flatConfigs.recommended,
-{"settings": {
-    "import/resolver": {
-      "typescript": true,
-      "node": true,
+  {
+    settings: {
+      'import/resolver': {
+        typescript: true,
+        node: true,
+      },
+      react: {
+        version: 'detect',
+      },
     },
-  }},
+  },
   {
     languageOptions: {
       parserOptions: {
@@ -86,6 +96,19 @@ export default tseslint.config(
       'linebreak-style': ['error', 'unix'],
       semi: ['error', 'always'],
       'react/no-unused-prop-types': 2,
+      'react/react-in-jsx-scope': 'off',
+      'jsx-a11y/alt-text': [
+        'warn',
+        {
+          elements: ['img'],
+          img: ['Image'],
+        },
+      ],
+      'jsx-a11y/aria-props': 'warn',
+      'jsx-a11y/aria-proptypes': 'warn',
+      'jsx-a11y/aria-unsupported-elements': 'warn',
+      'jsx-a11y/role-has-required-aria-props': 'warn',
+      'jsx-a11y/role-supports-aria-props': 'warn',
       '@typescript-eslint/strict-boolean-expressions': [
         'error',
         {

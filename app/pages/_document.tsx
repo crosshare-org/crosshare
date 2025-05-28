@@ -2,7 +2,7 @@ import Document, { Head, Html, Main, NextScript } from 'next/document';
 import { GA_TRACKING_ID } from '../lib/gtag.js';
 
 export default class CrosshareDocument extends Document {
-  render(): JSX.Element {
+  render(): React.JSX.Element {
     return (
       <Html>
         <Head>
