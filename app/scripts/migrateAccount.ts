@@ -84,7 +84,7 @@ async function migrateAccount() {
   if (cp) {
     console.log(`move cp ${cp.i}`);
     await db.collection('cp').doc(cp.id).update({ u: toUser.uid });
-
+  }
     // merge constructor stats
     const oldCS = await db
       .collection('cs')
@@ -103,6 +103,7 @@ async function migrateAccount() {
       await db.collection('cs').doc(toUser.uid).set(oldCS, { merge: true });
     }
 
+    console.log('migrating followers');
     // move followers
     const followers = await db
       .collection('followers')
@@ -120,7 +121,7 @@ async function migrateAccount() {
       await db
         .collection('followers')
         .doc(toUser.uid)
-        .set({ f: FieldValue.arrayUnion(followers.f) }, { merge: true });
+        .set({ f: FieldValue.arrayUnion(...followers.f) }, { merge: true });
       console.log(`moving ${followers.f.length} followers`);
       for (const follower of followers.f) {
         await db
@@ -135,7 +136,6 @@ async function migrateAccount() {
           .doc(follower)
           .update({ following: FieldValue.arrayRemove(fromUser.uid) });
       }
-    }
   }
 }
 
