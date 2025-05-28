@@ -101,6 +101,7 @@
     "prop-types": "Needed by react-csv and apparently not specified. Breaks sharedstats when missing"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.27.0",
     "@firebase/rules-unit-testing": "^4.0.1",
     "@google-cloud/pubsub": "^5.0.0",
