@@ -1,10 +1,10 @@
+import { Nodes } from 'mdast';
 import { Replace, findAndReplace } from 'mdast-util-find-and-replace';
 import { Plugin } from 'unified';
 
 export const mentionsAndTags: Plugin = () => {
-  return (tree) => {
+  return (tree: Nodes) => {
     findAndReplace(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       tree,
       [
         [/(^|\s)@([a-z]\w+)\b/gi, replaceMention],

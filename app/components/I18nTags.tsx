@@ -1,7 +1,7 @@
 export const I18nTags = (props: {
   locale: string;
   canonicalPath: string;
-}): JSX.Element => {
+}): React.JSX.Element => {
   const localePart = props.locale == 'en' ? '' : `/${props.locale}`;
   return (
     <>

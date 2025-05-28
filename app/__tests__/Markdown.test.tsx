@@ -385,12 +385,11 @@ test('clueMap rendering', async () => {
     height: 2,
     cells: answers,
     allowBlockEditing: false,
-    highlighted: new Set<number>(),
     vBars: new Set<number>(),
     hBars: new Set<number>(),
     hidden: new Set<number>(),
-    highlight: 'circle',
     mapper: (x) => x,
+    cellStyles: new Map(),
   });
   const clueMap = new Map<string, [number, Direction, string]>([
     ['BAM', [2, 1, 'here is the clue?']],

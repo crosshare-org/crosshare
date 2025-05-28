@@ -10,7 +10,7 @@ export interface ColumnSpec<T> {
   key: keyof T;
   header: string;
   sortable: boolean;
-  content?: (row: T) => JSX.Element;
+  content?: (row: T) => React.JSX.Element;
   width?: number;
 }
 

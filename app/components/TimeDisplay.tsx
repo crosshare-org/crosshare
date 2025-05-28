@@ -7,14 +7,14 @@ import { ToolTipText } from './ToolTipText.js';
 
 const localeMap: Record<string, Locale> = { es, it, pseudo: es };
 
-export const PastDistanceToNow = (props: { date: Date }): JSX.Element => {
+export const PastDistanceToNow = (props: { date: Date }): React.JSX.Element => {
   return <DistanceToNow isPast={true} {...props} />;
 };
 
 export const DistanceToNow = (props: {
   date: Date;
   isPast?: boolean;
-}): JSX.Element => {
+}): React.JSX.Element => {
   const { locale } = useRouter();
 
   const [hydrated, setHydrated] = useState(false);

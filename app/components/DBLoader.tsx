@@ -10,7 +10,7 @@ export const LoadButton = (props: {
   buttonText: string;
   onClick?: () => void;
   onComplete: () => void;
-}): JSX.Element => {
+}): React.JSX.Element => {
   const [dlInProgress, setDlInProgress] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
   const [error, setError] = useState('');
@@ -67,7 +67,7 @@ export const LoadButton = (props: {
   );
 };
 
-export const DBLoader = (): JSX.Element => {
+export const DBLoader = (): React.JSX.Element => {
   const [ready, error, loading, setLoaded] = useWordDB();
 
   if (loading) {

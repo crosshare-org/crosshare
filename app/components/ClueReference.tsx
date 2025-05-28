@@ -11,7 +11,7 @@ interface ClueReferenceProps {
   labelNumber: number;
   text: string;
 }
-export const ClueReference = (props: ClueReferenceProps): JSX.Element => {
+export const ClueReference = (props: ClueReferenceProps): React.JSX.Element => {
   const grid = useContext(GridContext);
   const showRefs = useContext(ShowRefsContext);
   const downsOnly = useContext(DownsOnlyContext);

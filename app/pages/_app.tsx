@@ -64,7 +64,7 @@ export default function CrosshareApp({
   Component,
   pageProps,
   err,
-}: AppProps & { err: Error }): JSX.Element {
+}: AppProps & { err: Error }): React.JSX.Element {
   let authStatus = useAuth();
   const [loading, setLoading] = useState(false);
 
