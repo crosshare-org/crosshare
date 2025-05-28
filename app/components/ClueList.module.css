@@ -40,7 +40,6 @@
   align-items: center;
 
   width: 100%;
-
   border-left: 1em solid transparent;
 }
 
@@ -83,12 +82,11 @@
   display: inline-block;
 
   min-width: 1em;
+  border: 1px solid transparent;
 
   font-weight: bold;
   color: var(--text);
   text-align: center;
-
-  border: 1px solid transparent;
 }
 
 .clueModeCell[data-active-cell='true'] {
@@ -111,6 +109,7 @@
 
   height: 1.5em;
   padding-left: 0.5em;
+  border-bottom: 1px solid var(--autofill);
 
   font-weight: bold;
   color: var(--readable-primary);
@@ -118,7 +117,6 @@
   letter-spacing: 1.36px;
 
   background-color: var(--bg);
-  border-bottom: 1px solid var(--autofill);
 }
 
 .list {

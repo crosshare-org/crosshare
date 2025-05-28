@@ -265,7 +265,6 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     notes: saved?.notes ?? props.constructorNotes ?? null,
     clues: saved?.clues ?? {},
     authorId: props.user.uid,
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     authorName: props.user.displayName || 'Anonymous',
     editable: true,
     isPrivate: saved?.isPrivate ?? false,
@@ -355,7 +354,7 @@ const ImportPuzForm = (props: { dispatch: Dispatch<ImportPuzAction> }) => {
   );
 };
 
-export const Builder = (props: BuilderProps & AuthProps): JSX.Element => {
+export const Builder = (props: BuilderProps & AuthProps): React.JSX.Element => {
   const [firstLaunch, setFirstLaunch] = useState(false);
 
   useEffect(() => {
@@ -804,7 +803,6 @@ const PuzDownloadOverlay = (props: {
           h={props.state.grid.height}
           g={props.state.grid.cells}
           n={props.state.authorName}
-          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           t={props.state.title || 'Crosshare puzzle'}
           sty={Object.fromEntries(
             Array.from(props.state.grid.cellStyles.entries()).map(([k, v]) => [
@@ -1044,7 +1042,7 @@ const GridMode = ({
 
     state.grid.entries.forEach((e) => {
       totalLength += e.cells.length;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       lengthHistogram[e.cells.length - 2]! += 1;
     });
     const numEntries = state.grid.entries.length;
@@ -1061,7 +1059,7 @@ const GridMode = ({
       } else {
         const index = lettersHistogramNames.indexOf(s);
         if (index !== -1) {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           lettersHistogram[index]! += 1;
         }
       }

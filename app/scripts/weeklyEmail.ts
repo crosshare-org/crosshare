@@ -43,7 +43,7 @@ const linksForEmail: Plugin = () => {
     url.searchParams.set('utm_campaign', 'weekly');
     node.url = url.toString();
   };
-  return (tree) => {
+  return (tree: Node) => {
     visit(tree, 'link', visitor);
   };
 };
@@ -261,9 +261,7 @@ async function sendWeeklyEmail(test: boolean, from: string | undefined) {
   }
   const md = String(
     await unified()
-      .use(remarkParse)
-      .use(linksForEmail)
-      .use(remarkStringify)
+      .use([remarkParse, linksForEmail, remarkStringify])
       .process(article.c)
   );
   const client = await getClient();

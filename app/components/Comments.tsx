@@ -1,5 +1,5 @@
-import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import type { User } from 'firebase/auth';
 import { addDoc, updateDoc } from 'firebase/firestore';
 import type { Root } from 'hast';
@@ -109,7 +109,9 @@ function filterDeletedComments<T extends CommentOrLocalComment>(
         };
       }
     })
-    .filter((x) => (isComment(x) && x.replies?.length) || !x.deleted);
+    .filter(
+      (x) => (isComment(x) && x.replies && x.replies.length > 0) || !x.deleted
+    );
 }
 
 interface CommentProps {
@@ -649,7 +651,7 @@ function findCommentById(
 export const Comments = ({
   comments,
   ...props
-}: CommentsProps): JSX.Element => {
+}: CommentsProps): React.JSX.Element => {
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);

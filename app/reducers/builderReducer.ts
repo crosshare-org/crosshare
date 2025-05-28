@@ -106,9 +106,9 @@ function initialBuilderStateFromSaved(
         ])
       ),
     hidden: saved?.hidden ?? Array.from(state.grid.hidden),
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+
     title: saved?.title || state.title,
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+
     notes: saved?.notes || state.notes,
     clues: saved?.clues ?? {},
     authorId: state.authorId,
@@ -197,7 +197,6 @@ export function initialBuilderState({
     hidden: new Set(hidden),
   });
   return validateGrid({
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     id: id || getDocId('c'),
     type: 'builder',
     title,
@@ -1068,7 +1067,6 @@ function _builderReducer(
     }
 
     const puzzle: DBPuzzleT = {
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       t: state.title || 'Anonymous',
       a: state.authorId,
       n: state.authorName,
@@ -1088,7 +1086,6 @@ function _builderReducer(
         state.clues,
         true
       ),
-      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       ...(state.alternates.length && { alts: state.alternates }),
       ...(state.notes && { cn: state.notes }),
       ...(state.blogPost && { bp: state.blogPost }),

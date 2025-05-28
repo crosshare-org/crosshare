@@ -284,7 +284,7 @@ const initializeState = (props: PuzzleStatsProps): BuilderState => {
   });
 };
 
-const PuzzleStats = (props: PuzzleStatsProps): JSX.Element => {
+const PuzzleStats = (props: PuzzleStatsProps): React.JSX.Element => {
   const [state, dispatch] = useReducer(builderReducer, props, initializeState);
 
   const physicalKeyboardHandler = useCallback(

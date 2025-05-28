@@ -1,5 +1,5 @@
-import { t } from "@lingui/core/macro";
-import { Plural, Trans } from "@lingui/react/macro";
+import { t } from '@lingui/core/macro';
+import { Plural, Trans } from '@lingui/react/macro';
 import { serverTimestamp, setDoc } from 'firebase/firestore';
 import type { Root } from 'hast';
 import Head from 'next/head';
@@ -99,7 +99,7 @@ export const CreatePageForm = (props: { className?: string }) => {
   const [created, setCreated] = useState(false);
 
   function sanitize(input: string): string {
-    const res = input.match(/^([a-zA-Z]\w*)/);
+    const res = /^([a-zA-Z]\w*)/.exec(input);
     return res?.[0] || '';
   }
 
@@ -235,6 +235,8 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
   const paypalEmail = props.constructorData.pp;
   const paypalText = props.constructorData.pt;
   const loc = locale || 'en';
+  const followingLength = props.following.length;
+  const constructorName = props.constructorData.n;
 
   return (
     <>
@@ -339,7 +341,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                     {overlayIsFollowing ? (
                       <>
                         <h2>
-                          <Trans>{props.following.length} Following</Trans>
+                          <Trans>{followingLength} Following</Trans>
                         </h2>
                         <ConstructorList
                           pages={props.following}
@@ -381,12 +383,12 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
               )}
               <p>
                 <ButtonAsLink
-                  disabled={props.following.length === 0}
+                  disabled={followingLength === 0}
                   onClick={() => {
                     setShowOverlay(true);
                     setOverlayIsFollowing(true);
                   }}
-                  text={<Trans>{props.following.length} Following</Trans>}
+                  text={<Trans>{followingLength} Following</Trans>}
                 />
                 {' · '}
                 <ButtonAsLink
@@ -423,7 +425,7 @@ export const ConstructorPage = (props: ConstructorPageProps) => {
                   paypalText
                 )}&currency_code=USD&source=url`}
                 text={t({
-                  message: `Tip ${props.constructorData.n}`,
+                  message: `Tip ${constructorName}`,
                   comment:
                     'The variable is the name of the user who will recieve the $ tip',
                 })}

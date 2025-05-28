@@ -52,12 +52,12 @@
   width: 100%;
   margin: 0;
   padding: 0.5em;
+  border: none;
 
   color: var(--text);
   text-decoration: none;
 
   background-color: transparent;
-  border: none;
 }
 
 .dropdownLink:hover,
@@ -97,6 +97,7 @@
 
   margin: 0;
   padding: 0 0.45em;
+  border: none;
 
   font-variant-numeric: tabular-nums;
   color: var(--onprimary);
@@ -105,17 +106,16 @@
   white-space: nowrap;
 
   background-color: transparent;
-  border: none;
 }
 
 .topBarLink[data-slate='true'] {
   padding: 0 0.45rem;
+  border: 1px solid var(--slate-button-border);
+  border-radius: 3px;
 
   color: var(--slate-button-text);
 
   background-color: var(--slate-button-bg);
-  border: 1px solid var(--slate-button-border);
-  border-radius: 3px;
 }
 
 .topBarLink:hover,
@@ -138,6 +138,7 @@
   height: 100%;
   margin: 0;
   padding: 0 0.45em;
+  border: none;
 
   color: var(--onprimary);
   text-decoration: none;
@@ -145,7 +146,6 @@
   white-space: nowrap;
 
   background-color: transparent;
-  border: none;
 }
 
 .topBarLinkA[data-disabled='true'] {
@@ -287,10 +287,10 @@
 
   width: calc(100vw - 10px);
   max-width: 30em;
-
-  background-color: var(--overlay-inner);
   border: 1px solid var(--text-input-border);
   border-radius: 5px;
+
+  background-color: var(--overlay-inner);
   box-shadow: 0 0 5px 5px rgb(0 0 0 / 50%);
 }
 
@@ -321,11 +321,10 @@
 .notificationsHeader {
   margin: 0.5em 0 0;
   padding-left: 1em;
+  border-bottom: 1px solid var(--text-input-border);
 
   font-size: 1em;
   font-weight: bold;
-
-  border-bottom: 1px solid var(--text-input-border);
 }
 
 .notificationsList {

@@ -170,7 +170,6 @@ const votes = command({
         DBPuzzleV,
         async (dbpuzz, docId) => {
           const statsRes = await db.collection('s').doc(docId).get();
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           return {
             ...dbpuzz,
             id: docId,

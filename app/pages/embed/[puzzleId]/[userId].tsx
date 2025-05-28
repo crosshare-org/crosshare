@@ -30,7 +30,6 @@ export const getServerSideProps = withTranslation(gssp);
 
 export default function ThemedPage(props: PuzzlePageProps) {
   const [embedStyleProps, embedContext] = useEmbedOptions(
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     ('embedOptions' in props && props.embedOptions) || undefined
   );
 

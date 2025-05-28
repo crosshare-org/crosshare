@@ -22,6 +22,6 @@
 .text {
   margin: 1em 0;
   padding: 1em;
-  background-color: var(--secondary);
   border-radius: 0.5em;
+  background-color: var(--secondary);
 }

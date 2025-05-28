@@ -67,9 +67,9 @@
 
 .wrapper[data-slate='true'] {
   overflow: hidden;
-  background-color: var(--bg);
   border: 1px solid var(--slate-container-border);
   border-radius: 4px;
+  background-color: var(--bg);
 }
 
 .headerWrap {

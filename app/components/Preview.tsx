@@ -67,7 +67,9 @@ const initializeState = (
   });
 };
 
-export const Preview = (props: PuzzleInProgressT & AuthProps): JSX.Element => {
+export const Preview = (
+  props: PuzzleInProgressT & AuthProps
+): React.JSX.Element => {
   const [state, dispatch] = useReducer(builderReducer, props, initializeState);
   const [dismissedIntro, setDismissedIntro] = useState(false);
 

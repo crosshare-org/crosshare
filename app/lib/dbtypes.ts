@@ -349,6 +349,7 @@ export const LegacyPlayV = t.intersection([
 ]);
 export type LegacyPlayT = t.TypeOf<typeof LegacyPlayV>;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const PlayV = t.intersection([
   PlayBaseV,
   t.type({
@@ -391,7 +392,7 @@ export function getDateString(pd: Date): string {
 function parseDateString(
   dateString: string
 ): [year: number, month: number, day: number] {
-  const groups = dateString.match(/^(\d+)-(\d+)-(\d+)$/);
+  const groups = /^(\d+)-(\d+)-(\d+)$/.exec(dateString);
   if (!groups) {
     throw new Error('Bad date string: ' + dateString);
   }
@@ -573,13 +574,12 @@ export const donationsByEmail = (
       const prev = acc.get(val.e);
       if (prev) {
         acc.set(val.e, {
-          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           name: val.n || prev.name,
-          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+
           page: val.p || prev.page,
           total: val.a + prev.total,
           date: val.d.toDate() < prev.date ? prev.date : val.d.toDate(),
-          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+
           ...((val.u || prev.userId) && { userId: val.u || prev.userId }),
         });
       } else {

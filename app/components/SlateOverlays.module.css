@@ -28,13 +28,13 @@
 
   /* stylelint-disable-next-line declaration-property-value-no-unknown */
   padding: slate-padding-small 0 0;
+  border: 1px solid var(--slate-container-border);
+  border-radius: 4px;
 
   color: var(--slate-subtitle);
   text-align: center;
 
   background-color: var(--bg);
-  border: 1px solid var(--slate-container-border);
-  border-radius: 4px;
 }
 
 .poweredBy {

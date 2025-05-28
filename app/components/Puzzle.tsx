@@ -1,5 +1,5 @@
-import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import useEventListener from '@use-it/event-listener';
 import type { User } from 'firebase/auth';
 import { updateDoc } from 'firebase/firestore';
@@ -1202,7 +1202,6 @@ export const Puzzle = ({
     ? removeSpoilers(puzzle.blogPostRaw).slice(0, 160) + '...'
     : removeSpoilers(puzzle.clues.map(getClueText).slice(0, 10).join('; '));
 
-  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const locale = router.locale || 'en';
 
   if (

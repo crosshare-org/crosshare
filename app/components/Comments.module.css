@@ -20,29 +20,29 @@
 
 .constructorTag {
   padding: 0.1em 0.2em;
+  border-radius: 5px;
 
   font-size: 0.75em;
   color: var(--onprimary);
 
   background-color: var(--primary);
-  border-radius: 5px;
 }
 
 .solveTime {
   padding: 0.1em 0.2em;
+  border-radius: 5px;
 
   font-size: 0.75em;
   color: white;
 
   background-color: #6c757d;
-  border-radius: 5px;
 }
 
 .preview {
   margin-top: 1em;
   padding: 1em;
-  background-color: var(--secondary);
   border-radius: 0.5em;
+  background-color: var(--secondary);
 }
 
 .publishDate {

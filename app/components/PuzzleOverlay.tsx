@@ -1,5 +1,5 @@
-import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import type { User } from 'firebase/auth';
 import { useRouter } from 'next/router';
@@ -104,7 +104,6 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
   if (!authContext.loading) {
     if (authContext.user?.email) {
       const displayNameOrEmail =
-        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         authContext.user.displayName || authContext.user.email;
       loginButton = t`Logged in as ${displayNameOrEmail}`;
     } else if (authContext.user) {

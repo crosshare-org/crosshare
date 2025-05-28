@@ -110,7 +110,6 @@ export async function cleanNotifications() {
   const query = collectionRef.limit(500);
 
   return new Promise((resolve, reject) => {
-    // eslint-disable-next-line @typescript-eslint/use-unknown-in-catch-callback-variable
     deleteQueryBatch(db, query, resolve).catch(reject);
   });
 }

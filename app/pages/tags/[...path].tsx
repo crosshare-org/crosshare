@@ -1,5 +1,5 @@
-import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import type { Root } from 'hast';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -110,7 +110,6 @@ export const getServerSideProps = withTranslation(gssp);
 
 export default function TagPageHandler(props: PageProps) {
   const { locale } = useRouter();
-  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const loc = locale || 'en';
 
   if ('error' in props) {
@@ -198,7 +197,6 @@ export default function TagPageHandler(props: PageProps) {
             filterTags={props.tags}
           />
         ))}
-        {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
         {props.nextPage || props.prevPage !== null ? (
           <p className="textAlignCenter">
             {props.prevPage !== null ? (

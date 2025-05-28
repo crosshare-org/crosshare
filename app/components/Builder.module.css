@@ -29,10 +29,9 @@
 
   height: 1.5em;
   padding-left: 0.5em;
+  border-bottom: 1px solid #aaa;
 
   font-weight: bold;
-
-  border-bottom: 1px solid #aaa;
 }
 
 .listParent {

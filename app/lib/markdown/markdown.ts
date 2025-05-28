@@ -25,17 +25,20 @@ function rehypeTruncate(options: TruncateOptions) {
 }
 
 export function removeSpoilers(text: string): string {
-  const processor = unified()
-    .use(remarkParse)
-    .use(remarkSpoilers)
-    .use(remarkStringify, {
-      handlers: {
-        spoiler: () => {
-          return '[spoiler]';
+  const processor = unified().use([
+    remarkParse,
+    remarkSpoilers,
+    [
+      remarkStringify,
+      {
+        handlers: {
+          spoiler: () => {
+            return '[spoiler]';
+          },
         },
       },
-    });
-
+    ],
+  ]);
   return String(processor.processSync(text));
 }
 
@@ -90,22 +93,28 @@ export function markdownToHast(props: {
     },
   };
 
-  const processor = unified()
-    .use(remarkParse)
-    .use(remarkDirective)
-    .use(remarkSpoilers)
-    .use(remarkGfm)
-    .use(mentionsAndTags)
-    .use(remarkNoRefs)
-    .use(unusedDirectives)
-    .use(remarkRehype, {
-      handlers: handlers,
-    })
-    .use(rehypePlugins);
+  const processor = unified().use([
+    remarkParse,
+    remarkGfm,
+    remarkDirective,
+    remarkSpoilers,
+    remarkGfm,
+    mentionsAndTags,
+    remarkNoRefs,
+    unusedDirectives,
+    [
+      remarkRehype,
+      {
+        handlers: handlers,
+      },
+    ],
+    ...rehypePlugins,
+  ]);
 
   if (props.inline) {
     processor.use(inlineOnly);
   }
 
-  return processor.runSync(processor.parse(text));
+  // TODO not sure how to best avoid this type cast
+  return processor.runSync(processor.parse(text)) as Root;
 }

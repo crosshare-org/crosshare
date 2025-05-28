@@ -106,7 +106,7 @@ function SharingButton({ network, path, text }: SharingButtonProps) {
               function () {
                 showSnackbar('Copied to clipboard');
               },
-              function (err) {
+              function (err: unknown) {
                 console.error('Could not copy text: ', err);
               }
             );

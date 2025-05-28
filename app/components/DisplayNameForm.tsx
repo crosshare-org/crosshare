@@ -1,4 +1,4 @@
-import { t } from "@lingui/core/macro";
+import { t } from '@lingui/core/macro';
 import { serverTimestamp, updateDoc } from 'firebase/firestore';
 import { useContext, useState } from 'react';
 import { getDocRef } from '../lib/firebaseWrapper.js';

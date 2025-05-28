@@ -1,7 +1,7 @@
 import { mix, transparentize } from 'color2k';
 import { memo, useEffect, useRef, useState } from 'react';
 import { FaEye, FaSlash } from 'react-icons/fa';
-import { usePolyfilledResizeObserver } from '../lib/hooks.js';
+import { useSize } from '../lib/hooks.js';
 import { Position } from '../lib/types.js';
 import { clsx } from '../lib/utils.js';
 import styles from './Cell.module.css';
@@ -53,7 +53,7 @@ function mixColors(colors: string[]) {
 
 export const Cell = memo(function Cell(props: CellProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const { width: cqw } = usePolyfilledResizeObserver(containerRef);
+  const { width: cqw } = useSize(containerRef);
   const [useCQ, setUseCQ] = useState(true);
   useEffect(() => {
     // Can't use container query on chrome until this is fixed - https://issues.chromium.org/issues/331221743

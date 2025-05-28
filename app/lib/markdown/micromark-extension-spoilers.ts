@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { splice } from 'micromark-util-chunked';
 import { classifyCharacter } from 'micromark-util-classify-character';
 import { resolveAll } from 'micromark-util-resolve-all';
@@ -108,7 +106,6 @@ export const spoilersSyntax = function (): Extension {
                 nextEvents.length,
                 0,
                 resolveAll(
-                  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
                   context.parser.constructs.insideSpan.null ?? [],
                   events.slice(open + 1, index),
                   context

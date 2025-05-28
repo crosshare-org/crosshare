@@ -5,12 +5,11 @@
 
   margin-bottom: 1em;
   padding: 1em;
+  border: 1px solid var(--error);
+  border-radius: 0.5em;
 
   color: var(--text);
   text-decoration: none;
-
-  border: 1px solid var(--error);
-  border-radius: 0.5em;
 }
 
 .campaign:hover {

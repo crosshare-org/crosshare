@@ -13,13 +13,13 @@
 
   max-width: 30em;
   padding: 10px;
+  border-radius: 5px;
 
   color: var(--text);
   text-align: center;
 
   visibility: visible;
   background-color: var(--bg);
-  border-radius: 5px;
 }
 
 .tip[data-hidden='true'] {

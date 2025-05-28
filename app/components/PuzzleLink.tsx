@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/react/macro";
+import { Trans } from '@lingui/react/macro';
 import type { Root } from 'hast';
 import { ReactNode, useContext, useEffect, useState } from 'react';
 import { DifficultyBadge } from '../components/DifficultyBadge.js';
@@ -333,6 +333,7 @@ export const PuzzleResultLink = ({
       Published <PastDistanceToNow date={publishDate} />
     </Trans>
   );
+  const guestConstructor = puzzle.guestConstructor;
   if (props.showPrivateStatus) {
     if (puzzle.isPrivate !== false) {
       date = (
@@ -367,7 +368,7 @@ export const PuzzleResultLink = ({
       <>
         {difficulty} ·{' '}
         <Trans comment="The variable is the guest constructor's name">
-          By guest constructor {puzzle.guestConstructor}
+          By guest constructor {guestConstructor}
         </Trans>{' '}
         · {date}
       </>
@@ -389,7 +390,7 @@ export const PuzzleResultLink = ({
       <>
         {difficulty} ·{' '}
         <Trans comment="The variable is the guest constructor's name">
-          By guest constructor {puzzle.guestConstructor}
+          By guest constructor {guestConstructor}
         </Trans>
       </>
     );

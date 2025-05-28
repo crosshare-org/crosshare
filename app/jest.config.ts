@@ -32,14 +32,12 @@ const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/setupTestsAfterEnv.ts'],
   roots: ['<rootDir>/__tests__'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
-  prettierPath: require.resolve('prettier-2'),
   moduleNameMapper: {
     '^(\\.\\.?\\/.+)\\.js$': '$1',
   },
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-// eslint-disable-next-line import/no-anonymous-default-export
 export default async () => {
   const jestConfig = await createJestConfig(customJestConfig)();
   return jestConfig;

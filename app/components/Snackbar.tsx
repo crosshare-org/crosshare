@@ -108,7 +108,7 @@ function Toast({ id, message }: { id: number; message: string }) {
         data-showing={message && !closing}
         className={styles.toastInner}
         onClick={close}
-        onKeyPress={close}
+        onKeyDown={close}
       >
         <IoMdCloseCircleOutline className="floatRight" />
         {message}

@@ -42,7 +42,7 @@ const ConstructorListItem = ({
         tabIndex={0}
         role="button"
         onClick={logAsyncErrors(click)}
-        onKeyPress={logAsyncErrors(click)}
+        onKeyDown={logAsyncErrors(click)}
         className={styles.follower}
       >
         <div className="marginRight1em">

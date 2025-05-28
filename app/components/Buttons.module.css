@@ -2,6 +2,7 @@
   cursor: pointer;
 
   padding: 0;
+  border: none;
 
   font-family: inherit;
   font-weight: normal;
@@ -9,7 +10,6 @@
   text-decoration: none;
 
   background-color: transparent;
-  border: none;
 }
 
 .reset:disabled {
@@ -49,15 +49,15 @@
   margin: 2px 0;
   padding: 0.5em 1em;
 
+  /* invisible border (will be colored on hover/focus) */
+  border: solid 1px transparent;
+  border-radius: 4px;
+
   line-height: 1.1;
   color: var(--onlink);
   text-align: center;
 
   background-color: var(--link);
-
-  /* invisible border (will be colored on hover/focus) */
-  border: solid 1px transparent;
-  border-radius: 4px;
   box-shadow: 0 3px 5px rgb(0 0 0 / 50%);
 }
 
@@ -67,15 +67,15 @@
 }
 
 .btn[data-hollow='true'] {
+  border-color: var(--link);
   color: var(--link);
   background-color: transparent;
-  border-color: var(--link);
 }
 
 .btn:disabled {
+  border-color: var(--default-text);
   color: var(--default-text);
   background-color: transparent;
-  border-color: var(--default-text);
 }
 
 .btn:enabled:active {
@@ -95,8 +95,8 @@
   }
 
   .btn:hover:disabled {
+    border-color: var(--default-text);
     color: var(--default-text);
     background-color: transparent;
-    border-color: var(--default-text);
   }
 }

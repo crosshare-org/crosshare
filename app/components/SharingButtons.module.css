@@ -1,12 +1,12 @@
 .link {
   margin: 1em 0.2em 0;
   padding: 0.2em 0.5em;
+  border-radius: 0.3em;
 
   color: #fff;
   white-space: nowrap;
 
   background-color: var(--share-link-bg);
-  border-radius: 0.3em;
 }
 
 .link:hover,

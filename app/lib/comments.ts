@@ -114,6 +114,7 @@ export async function moderateComments(
     if (puzzle) {
       const likes = puzzle.lk || [];
       switch (reaction.k) {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         case PuzzleReaction.Like:
           if (
             reaction.s &&

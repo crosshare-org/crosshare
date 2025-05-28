@@ -6,7 +6,7 @@ import { parseClueReferences } from '../parse.js';
 import { flatMap } from './utils.js';
 
 export const clueReferencer: Plugin = () => {
-  return (tree) => {
+  return (tree: Node) => {
     flatMap(tree, (node: Node): Node[] => {
       if (
         !is(node, (n): n is Text => {

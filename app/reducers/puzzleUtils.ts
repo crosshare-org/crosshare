@@ -91,7 +91,7 @@ function cheatCells<T extends CheatablePuzzleState>(
       verifiedCells.add(ci);
       grid = gridWithNewChar(grid, cell, shouldBe, Symmetry.None);
       state.cellsUpdatedAt[ci] = elapsed;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       state.cellsIterationCount[ci]! += 1;
     } else if (currentVal.trim()) {
       revealedCells.delete(ci);
@@ -169,9 +169,9 @@ export function postEdit(state: PuzzleState, cellIndex: number): PuzzleState {
   return checkComplete(state);
 }
 
-export function getCurrentTime<
-  T extends Pick<PuzzleState, 'bankedSeconds' | 'currentTimeWindowStart'>,
->(state: T): number {
+export function getCurrentTime(
+  state: Pick<PuzzleState, 'bankedSeconds' | 'currentTimeWindowStart'>
+): number {
   if (state.currentTimeWindowStart === 0) {
     return state.bankedSeconds;
   }

@@ -71,7 +71,7 @@ export const DifficultyBadge = (props: {
         onClick={() => {
           setShowingExplainer(true);
         }}
-        onKeyPress={() => {
+        onKeyDown={() => {
           setShowingExplainer(true);
         }}
         role={'button'}

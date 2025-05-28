@@ -61,11 +61,9 @@ export const PuzzleLoader = ({
     }
   }, [doc]);
 
-  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   if (error || puzzleDecodeError) {
     return (
       <ErrorPage title="Something Went Wrong">
-        {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
         <p>{error?.message || puzzleDecodeError}</p>
       </ErrorPage>
     );

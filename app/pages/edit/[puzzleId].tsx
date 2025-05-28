@@ -105,11 +105,9 @@ export const PuzzleLoader = ({
     }
   }, [doc]);
 
-  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   if (error || puzzleDecodeError) {
     return (
       <ErrorPage title="Something Went Wrong">
-        {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
         <p>{error?.message || puzzleDecodeError}</p>
       </ErrorPage>
     );
@@ -543,8 +541,7 @@ const PuzzleEditor = ({
                         (puzzle.isPrivateUntil &&
                           puzzle.isPrivateUntil > Date.now())
                         ? true
-                        : // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-                          puzzle.isPrivateUntil || puzzle.publishTime
+                        : puzzle.isPrivateUntil || puzzle.publishTime
                     );
                     setIsPrivateUntil(null);
                   }

@@ -44,7 +44,7 @@ const makeReadable = (background: string, color: string) => {
   } else {
     modify = lighten;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, no-constant-condition
+
   for (let i = 0; i < 10; i += 1) {
     if (!hasBadContrast(color, 'aa', background)) {
       return color;

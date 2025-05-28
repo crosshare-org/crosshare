@@ -133,7 +133,7 @@ function enterCharAt<T extends GridInterfaceState>(
     if (isPuzzleState(state)) {
       const elapsed = getCurrentTime(state);
       state.cellsUpdatedAt[ci] = elapsed;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       state.cellsIterationCount[ci]! += 1;
     }
     let grid = state.grid;
@@ -257,7 +257,9 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         .map((s) =>
           s
             .split('')
-            .filter((x) => x.match(ALLOWABLE_GRID_CHARS) !== null || x === BLOCK)
+            .filter(
+              (x) => x.match(ALLOWABLE_GRID_CHARS) !== null || x === BLOCK
+            )
             .join('')
             .toUpperCase()
         )

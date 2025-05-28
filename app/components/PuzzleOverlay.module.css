@@ -11,13 +11,13 @@
   width: 1em;
   height: 1em;
   padding: 0;
+  border: none;
 
   font-size: 2em;
   color: var(--text);
   vertical-align: text-top;
 
   background: transparent;
-  border: none;
 }
 
 .fullscreen[data-has-cover='true'] {

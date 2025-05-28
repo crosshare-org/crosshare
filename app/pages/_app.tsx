@@ -117,9 +117,9 @@ export default function CrosshareApp({
     firstRender.current = false;
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, @typescript-eslint/no-unsafe-member-access
     if (pageProps.translation) {
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       i18n.load(locale || 'en', pageProps.translation);
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+
       i18n.activate(locale || 'en');
     } else {
       i18n.activate('en');

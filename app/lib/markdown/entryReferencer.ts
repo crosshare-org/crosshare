@@ -13,13 +13,13 @@ interface EntryReferencerOptions {
 export const entryReferencer: Plugin<[EntryReferencerOptions]> = (options) => {
   if (options.clueMap.size === 0) {
     console.log('No clues? Skipping entryReferencer');
-    return (tree) => tree;
+    return (tree: Node) => tree;
   }
   const regex = new RegExp(
     '\\b(' + Array.from(options.clueMap.keys()).join('|') + ')\\b',
     'g'
   );
-  return (tree) => {
+  return (tree: Node) => {
     flatMap(tree, (node: Node): Node[] => {
       if (
         !is(node, (n): n is Text => {

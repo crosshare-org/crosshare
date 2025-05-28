@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import type { User } from 'firebase/auth';
 import { ReactNode, useContext } from 'react';
 import { ConstructorPageT } from '../lib/constructorPage.js';

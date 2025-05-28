@@ -36,6 +36,7 @@ export function savedReactions(
   puzzle: ServerPuzzleResult
 ) {
   switch (kind) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     case PuzzleReaction.Like:
       return puzzle.likes;
   }

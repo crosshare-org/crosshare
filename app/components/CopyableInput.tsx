@@ -19,7 +19,7 @@ export function CopyableInput({ text }: { text: string }) {
             function () {
               showSnackbar('Copied to clipboard');
             },
-            function (err) {
+            function (err: unknown) {
               console.error('Could not copy text: ', err);
             }
           );

@@ -1,11 +1,11 @@
 .tag {
   padding: 0.2em 0.5em;
+  border-radius: 5px;
 
   color: var(--text);
   white-space: nowrap;
 
   background-color: hsl(var(--hue) 30% var(--tag-l));
-  border-radius: 5px;
 }
 
 .tag[data-has-hover='true']:hover {

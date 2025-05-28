@@ -6,7 +6,7 @@ import { is } from 'unist-util-is';
 import { flatMap } from './utils.js';
 
 export const twemojify: Plugin = () => {
-  return (tree) => {
+  return (tree: Node) => {
     flatMap(tree, (node: Node) => {
       if (
         !is(node, (n): n is Text => {

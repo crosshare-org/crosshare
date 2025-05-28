@@ -85,57 +85,54 @@ async function migrateAccount() {
     console.log(`move cp ${cp.i}`);
     await db.collection('cp').doc(cp.id).update({ u: toUser.uid });
   }
-    // merge constructor stats
-    const oldCS = await db
-      .collection('cs')
-      .doc(fromUser.uid)
-      .get()
-      .then((snap) => {
-        const validationResult = ConstructorStatsV.decode(snap.data());
-        if (validationResult._tag !== 'Right') {
-          console.log('INVALID', snap.id);
-          return null;
-        }
-        return validationResult.right;
-      });
-    if (oldCS) {
-      console.log(`merge CS`);
-      await db.collection('cs').doc(toUser.uid).set(oldCS, { merge: true });
-    }
-
-    console.log('migrating followers');
-    // move followers
-    const followers = await db
-      .collection('followers')
-      .doc(fromUser.uid)
-      .get()
-      .then((snap) => {
-        const validationResult = FollowersV.decode(snap.data());
-        if (validationResult._tag !== 'Right') {
-          console.log('INVALID', snap.id);
-          return null;
-        }
-        return validationResult.right;
-      });
-    if (followers?.f?.length) {
-      await db
-        .collection('followers')
-        .doc(toUser.uid)
-        .set({ f: FieldValue.arrayUnion(...followers.f) }, { merge: true });
-      console.log(`moving ${followers.f.length} followers`);
-      for (const follower of followers.f) {
-        await db
-          .collection('prefs')
-          .doc(follower)
-          .set(
-            { following: FieldValue.arrayUnion(toUser.uid) },
-            { merge: true }
-          );
-        await db
-          .collection('prefs')
-          .doc(follower)
-          .update({ following: FieldValue.arrayRemove(fromUser.uid) });
+  // merge constructor stats
+  const oldCS = await db
+    .collection('cs')
+    .doc(fromUser.uid)
+    .get()
+    .then((snap) => {
+      const validationResult = ConstructorStatsV.decode(snap.data());
+      if (validationResult._tag !== 'Right') {
+        console.log('INVALID', snap.id);
+        return null;
       }
+      return validationResult.right;
+    });
+  if (oldCS) {
+    console.log(`merge CS`);
+    await db.collection('cs').doc(toUser.uid).set(oldCS, { merge: true });
+  }
+
+  console.log('migrating followers');
+  // move followers
+  const followers = await db
+    .collection('followers')
+    .doc(fromUser.uid)
+    .get()
+    .then((snap) => {
+      const validationResult = FollowersV.decode(snap.data());
+      if (validationResult._tag !== 'Right') {
+        console.log('INVALID', snap.id);
+        return null;
+      }
+      return validationResult.right;
+    });
+  if (followers?.f?.length) {
+    await db
+      .collection('followers')
+      .doc(toUser.uid)
+      .set({ f: FieldValue.arrayUnion(...followers.f) }, { merge: true });
+    console.log(`moving ${followers.f.length} followers`);
+    for (const follower of followers.f) {
+      await db
+        .collection('prefs')
+        .doc(follower)
+        .set({ following: FieldValue.arrayUnion(toUser.uid) }, { merge: true });
+      await db
+        .collection('prefs')
+        .doc(follower)
+        .update({ following: FieldValue.arrayRemove(fromUser.uid) });
+    }
   }
 }
 

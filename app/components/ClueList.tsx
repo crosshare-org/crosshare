@@ -31,7 +31,7 @@ interface ClueListItemProps {
   showEntry: boolean;
   grid: GridBase<EntryBase>;
   scrollToCross: boolean;
-  listRef: RefObject<HTMLDivElement>;
+  listRef: RefObject<HTMLDivElement | null>;
 }
 
 const ClueListItem = memo(function ClueListItem({
@@ -82,7 +82,7 @@ const ClueListItem = memo(function ClueListItem({
         role="button"
         tabIndex={0}
         onClick={click}
-        onKeyPress={click}
+        onKeyDown={click}
       >
         <div className={styles.outer}>
           <div className={styles.label}>
@@ -109,8 +109,7 @@ const ClueListItem = memo(function ClueListItem({
                       className={styles.clueModeCell}
                     >
                       {props.isEnteringRebus && isActiveCell
-                        ? // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-                          props.rebusValue || '|'
+                        ? props.rebusValue || '|'
                         : valAt(props.grid, a).trim() || '-'}
                     </span>
                   );
@@ -144,7 +143,7 @@ interface ClueListProps {
   scrollToCross: boolean;
 }
 
-export const ClueList = (props: ClueListProps): JSX.Element => {
+export const ClueList = (props: ClueListProps): React.JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
   const clues = props.entries.map((entry) => {
     const isActive = props.current === entry.index;

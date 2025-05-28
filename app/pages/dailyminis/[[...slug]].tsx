@@ -1,5 +1,5 @@
-import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -118,7 +118,6 @@ async function propsForDailyMini(
 
 export default function DailyMiniPage(props: PageProps) {
   const { locale } = useRouter();
-  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const loc = locale || 'en';
 
   const description = t({

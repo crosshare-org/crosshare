@@ -1,5 +1,5 @@
-import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { updateDoc } from 'firebase/firestore';
 import {
   ReactNode,
@@ -191,7 +191,6 @@ export const TopBarLink = (props: TopBarLinkProps) => {
   const { isSlate } = useContext(EmbedContext);
   return (
     <button
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       title={props.hoverText || props.text}
       data-slate={isSlate}
       className={styles.topBarLink}
@@ -213,7 +212,6 @@ const TopBarLinkA = (props: TopBarLinkAProps) => {
     <Link
       data-disabled={props.disabled}
       href={props.href}
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       title={props.hoverText || props.text}
       className={styles.topBarLinkA}
       onClick={props.onClick}
@@ -356,7 +354,7 @@ const NotificationLink = ({
   notification: n,
 }: {
   notification: NotificationT;
-}): JSX.Element => {
+}): React.JSX.Element => {
   const [closing, setClosing] = useState(false);
 
   const close = useCallback(() => {
@@ -371,7 +369,7 @@ const NotificationLink = ({
     );
   }, [n.id]);
 
-  let link: JSX.Element;
+  let link: React.JSX.Element;
   switch (n.k) {
     case 'comment':
       link = (
@@ -426,7 +424,7 @@ const NotificationLink = ({
         role="button"
         tabIndex={0}
         onClick={close}
-        onKeyPress={close}
+        onKeyDown={close}
         className="paddingLeft1em cursorPointer"
       >
         <IoMdCloseCircleOutline />

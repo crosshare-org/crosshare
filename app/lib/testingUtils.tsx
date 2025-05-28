@@ -12,7 +12,7 @@ import { hasOwnProperty } from './types.js';
 export const getUser = (uid: string, isAnonymous: boolean) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
   const u = { uid, isAnonymous } as any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   u.updateProfile = (_profile: { displayName?: string }) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     u.displayName = _profile.displayName;

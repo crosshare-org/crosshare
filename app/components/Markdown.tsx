@@ -1,4 +1,4 @@
-import type { Root } from 'hast';
+import type { Element, Root } from 'hast';
 import * as prod from 'react/jsx-runtime';
 import rehypeReact, { Components } from 'rehype-react';
 import { unified } from 'unified';
@@ -24,7 +24,12 @@ export const Markdown = (props: {
         </div>
       );
     },
-    span: ({ node, children, className, ...props }) => {
+    span: ({
+      node,
+      children,
+      className,
+      ...props
+    }: React.JSX.IntrinsicElements['span'] & { node?: Element }) => {
       const ref = node?.data as
         | (ClueReferenceData & { text: string })
         | undefined;
@@ -56,11 +61,16 @@ export const Markdown = (props: {
   };
 
   const reactContent = unified()
-    .use(rehypeReact, {
-      ...production,
-      passNode: true,
-      components,
-    })
+    .use([
+      [
+        rehypeReact,
+        {
+          ...production,
+          passNode: true,
+          components,
+        },
+      ],
+    ])
     .stringify(hast);
   const rendered = (
     <ShowRefsContext.Provider value={!props.noRefs}>

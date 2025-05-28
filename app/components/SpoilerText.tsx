@@ -23,7 +23,7 @@ export const SpoilerText = ({ children }: { children: ReactNode }) => {
   return (
     <span
       onClick={doReveal}
-      onKeyPress={doReveal}
+      onKeyDown={doReveal}
       role="button"
       tabIndex={0}
       data-hidden={!revealed}

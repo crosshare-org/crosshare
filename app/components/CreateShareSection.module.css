@@ -8,9 +8,9 @@
   width: 100%;
   margin-bottom: 1em;
   padding: 1em;
+  border-radius: 0.5em;
 
   background-color: var(--link-light-bg);
-  border-radius: 0.5em;
 }
 
 .button:hover {

@@ -1,6 +1,6 @@
 import {
-  MutableRefObject,
   type ReactNode,
+  RefObject,
   memo,
   useCallback,
   useContext,
@@ -49,7 +49,7 @@ interface KeyProps {
   onlyOnTablet?: boolean;
   notOnTablet?: boolean;
   className?: string;
-  touched: MutableRefObject<boolean>;
+  touched: RefObject<boolean>;
 }
 const Key = ({ touched, ...props }: KeyProps) => {
   return (

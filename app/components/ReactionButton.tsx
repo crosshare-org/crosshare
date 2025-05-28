@@ -1,4 +1,4 @@
-import { Plural } from "@lingui/react/macro";
+import { Plural } from '@lingui/react/macro';
 import { User } from 'firebase/auth';
 import {
   Fragment,
@@ -32,6 +32,7 @@ interface ReactionButtonProps {
 
 function Emoji(props: { kind: PuzzleReaction }): ReactNode {
   switch (props.kind) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     case PuzzleReaction.Like:
       return '👍';
   }
@@ -154,7 +155,6 @@ export function ReactionButton(props: ReactionButtonProps) {
     (v): v is ConstructorPageBase & { isPatron: boolean } => v !== null
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   return (
     <>
       {showOverlay ? (

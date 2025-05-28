@@ -35,7 +35,6 @@ export function overrideFirestore(f: FirebaseFirestore.Firestore | null) {
   OVERRIDE_FIRESTORE = f;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/strict-boolean-expressions
 export const firestore = () =>
   OVERRIDE_FIRESTORE || getFirestore(getAdminApp());
 

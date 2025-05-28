@@ -1,5 +1,5 @@
-import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import type { User } from 'firebase/auth';
 import { deleteDoc, orderBy, query, where } from 'firebase/firestore';
 import { useCallback, useMemo } from 'react';

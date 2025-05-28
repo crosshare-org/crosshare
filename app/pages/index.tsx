@@ -1,5 +1,5 @@
-import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import type { Root } from 'hast';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -177,7 +177,6 @@ export default function HomePage({
     <>
       <Head>
         <title>{title}</title>
-        {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
         <I18nTags locale={router.locale || 'en'} canonicalPath="/" />
       </Head>
 

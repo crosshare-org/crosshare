@@ -4,8 +4,8 @@ import { Plugin } from 'unified';
 export const mentionsAndTags: Plugin = () => {
   return (tree) => {
     findAndReplace(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-      tree as any,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      tree,
       [
         [/(^|\s)@([a-z]\w+)\b/gi, replaceMention],
         [/(^|\s)#([a-z][a-z0-9-]{2,})\b/gi, replaceTag],

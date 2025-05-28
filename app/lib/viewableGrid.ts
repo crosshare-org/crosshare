@@ -461,9 +461,11 @@ export function gridWithNewChar<
   return fromCells({ ...grid, cells, hidden });
 }
 
-export function flipped<
-  Entry extends ViewableEntry,
->(grid: ViewableGrid<Entry>, pos: Position, sym: Symmetry): number | null {
+export function flipped<Entry extends ViewableEntry>(
+  grid: ViewableGrid<Entry>,
+  pos: Position,
+  sym: Symmetry
+): number | null {
   switch (sym) {
     case Symmetry.None:
       return null;
@@ -484,9 +486,7 @@ export function flipped<
   }
 }
 
-function flippedBar<
-  Entry extends ViewableEntry,
->(
+function flippedBar<Entry extends ViewableEntry>(
   grid: ViewableGrid<Entry>,
   pos: PosAndDir,
   sym: Symmetry
@@ -700,9 +700,10 @@ export function getCluedAcrossAndDown(
   ];
 }
 
-export function getClueMap<
-  Entry extends ViewableEntry,
->(grid: ViewableGrid<Entry>, rawClues: ClueT[]): Record<string, string[]> {
+export function getClueMap<Entry extends ViewableEntry>(
+  grid: ViewableGrid<Entry>,
+  rawClues: ClueT[]
+): Record<string, string[]> {
   const result: Record<string, string[]> = {};
   const clues = cluesByDirection(rawClues);
 
@@ -830,9 +831,7 @@ export function getRefs(grid: CluedGrid): Set<number>[] {
   return refsList;
 }
 
-export function addClues<
-  Entry extends ViewableEntry,
->(
+export function addClues<Entry extends ViewableEntry>(
   grid: ViewableGrid<Entry>,
   rawClues: ClueT[],
   clueHasts: Root[] | ((c: string) => Root)

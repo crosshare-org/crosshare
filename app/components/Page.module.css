@@ -13,12 +13,12 @@
   justify-content: center;
 
   width: 2em;
+  border: none;
 
   color: var(--text);
   text-align: center;
 
   background: none;
-  border: none;
 }
 
 .clueArea {

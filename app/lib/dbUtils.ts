@@ -39,6 +39,7 @@ export async function setInCache<A>({
   const sessionKey = localDocId
     ? collection + '/' + localDocId
     : collection + '/' + docId;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const TimestampedV = downloadTimestamped(validator);
   const forLS: t.TypeOf<typeof TimestampedV> = {
     downloadedAt: Timestamp.now(),

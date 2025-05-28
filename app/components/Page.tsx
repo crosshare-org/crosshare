@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
-import { usePolyfilledResizeObserver } from '../lib/hooks.js';
+import { useSize } from '../lib/hooks.js';
 import { KeyK } from '../lib/types.js';
 import { clsx } from '../lib/utils.js';
 import { KeypressAction } from '../reducers/commonActions.js';
@@ -53,7 +53,7 @@ interface SquareAndColsProps {
 }
 export const SquareAndCols = (props: SquareAndColsProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const { width: cqw, height: cqh } = usePolyfilledResizeObserver(containerRef);
+  const { width: cqw, height: cqh } = useSize(containerRef);
   const [useCQ, setUseCQ] = useState(true);
   const { isSlate } = useContext(EmbedContext);
   useEffect(() => {

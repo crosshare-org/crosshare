@@ -20,13 +20,13 @@
   max-width: calc(100vw - 2em);
   min-height: 32px;
   padding: 0.5em;
+  border-radius: 3px;
 
   color: var(--text);
 
   visibility: hidden;
   opacity: 0;
   background-color: var(--bg);
-  border-radius: 3px;
   box-shadow: 0 0 3px 3px rgb(0 0 0 / 50%);
 
   /* stylelint-disable-next-line declaration-property-value-no-unknown */
