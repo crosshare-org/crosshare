@@ -1,7 +1,7 @@
 import { formatter } from '@lingui/format-po-gettext';
 
 const config = {
-  locales: ['en', 'es', 'it', 'fr', 'pseudo'],
+  locales: ['en', 'es', 'it', 'fr', 'id', 'pseudo'],
   sourceLocale: 'en',
   pseudoLocale: 'pseudo',
   fallbackLocales: {

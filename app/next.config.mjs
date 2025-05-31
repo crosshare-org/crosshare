@@ -11,7 +11,7 @@ const baseConfig = {
   poweredByHeader: false,
   productionBrowserSourceMaps: true,
   i18n: {
-    locales: ['en', 'es', 'it', 'fr', 'pseudo'],
+    locales: ['en', 'es', 'it', 'fr', 'id', 'pseudo'],
     defaultLocale: 'en',
   },
   experimental: {
