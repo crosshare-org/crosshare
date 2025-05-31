@@ -24,13 +24,12 @@ const baseConfig = {
       ],
     ],
   },
-  sentry: {
-    hideSourceMaps: false,
-  },
 
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/tree-shaking/
   webpack: (config, { webpack }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     config.plugins.push(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       new webpack.DefinePlugin({
         __SENTRY_DEBUG__: false,
         __SENTRY_TRACING__: false,
@@ -40,25 +39,21 @@ const baseConfig = {
       })
     );
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     config.resolve.extensionAlias = {
       '.js': ['.ts', '.tsx', '.js'],
     };
 
-    // return the modified config
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return config;
   },
 };
 
 const sentryWebpackPluginOptions = {
-  // Additional config options for the Sentry Webpack plugin. Keep in mind that
-  // the following options are set automatically, and overriding them is not
-  // recommended:
-  //   release, url, org, project, authToken, configFile, stripPrefix,
-  //   urlPrefix, include, ignore
-
-  silent: true, // Suppresses all logs
-  // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options.
+  org: "m-d",
+  project: "crosshare",
+  silent: true,
+  disableLogger: true,
 };
 
 export default async (phase) => {
@@ -69,6 +64,7 @@ export default async (phase) => {
   const bundleAnalyzer = await import('@next/bundle-analyzer');
 
   const withBundleAnalyzer = bundleAnalyzer.default({
+    // eslint-disable-next-line no-undef
     enabled: process.env.ANALYZE === 'true',
   });
 
