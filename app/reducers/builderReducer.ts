@@ -1032,9 +1032,7 @@ function _builderReducer(
       );
     }
     if (stats.hasUnches) {
-      warnings.push(
-        'Some letters are unchecked and the puzzle is not tagged as cryptic'
-      );
+      warnings.push('UNCHES'); // A bit of a hack but PublishWarningsList handles rendering this one
     }
     if (stats.unmatchedRefs.size > 0) {
       warnings.push(

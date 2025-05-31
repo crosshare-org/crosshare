@@ -9,6 +9,7 @@ import { Button, ButtonAsLink } from './Buttons.js';
 import { DisplayNameForm, useDisplayName } from './DisplayNameForm.js';
 import { Emoji } from './Emoji.js';
 import { Overlay } from './Overlay.js';
+import { PublishWarningsList } from './PublishWarningsList.js';
 
 export function PublishOverlay(props: {
   id: string;
@@ -121,11 +122,7 @@ export function PublishOverlay(props: {
         {props.warnings.length ? (
           <>
             <p className="colorError">Warnings:</p>
-            <ul>
-              {props.warnings.map((s, i) => (
-                <li key={i}>{s}</li>
-              ))}
-            </ul>
+            <PublishWarningsList warnings={props.warnings} />
           </>
         ) : (
           ''
