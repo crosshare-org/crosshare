@@ -13,7 +13,7 @@ WORKDIR /usr/src/app
 RUN pnpm compileI18n
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libuuid1
 RUN pnpm predeploy
-RUN pnpm deploy --filter=web --prod /prod
+RUN pnpm deploy --legacy --filter=web --prod /prod
 ARG COMMIT
 RUN test -n "$COMMIT"
 

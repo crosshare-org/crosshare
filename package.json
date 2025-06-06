@@ -24,8 +24,12 @@
     "turbo": "^2.5.3"
   },
   "pnpm": {
-    "overrides": {
-      "mdast-util-gfm-autolink-literal": "2.0.0"
-    }
+    "onlyBuiltDependencies": [
+      "canvas",
+      "core-js",
+      "protobufjs",
+      "rocksdb",
+      "sharp"
+    ]
   }
 }

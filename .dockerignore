@@ -7,7 +7,8 @@
 !app/.eslintrc.json
 !app/.sentryclirc
 !app/sentryConfig.ts
-!app/sentry.client.config.ts
+!app/instrumentation.ts
+!app/instrumentation-client.ts
 !app/sentry.edge.config.ts
 !app/sentry.server.config.ts
 !app/sentry.properties
