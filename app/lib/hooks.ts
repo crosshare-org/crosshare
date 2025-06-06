@@ -36,7 +36,10 @@ export function useMatchMedia(query: string) {
 }
 
 export const useSize = (target: React.RefObject<HTMLDivElement | null>) => {
-  const [size, setSize] = useState<DOMRect>(new DOMRect(0, 0, 0, 0));
+  const [size, setSize] = useState<{ width: number; height: number }>({
+    width: 0,
+    height: 0,
+  });
 
   const updateSize = useCallback(() => {
     if (target.current) {
