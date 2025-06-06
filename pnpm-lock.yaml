@@ -122,6 +122,9 @@ importers:
       micromark-util-types:
         specifier: ^2.0.2
         version: 2.0.2
+      mnemonist:
+        specifier: ^0.40.3
+        version: 0.40.3
       next:
         specifier: ^15.3.2
         version: 15.3.2(@babel/core@7.27.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(babel-plugin-macros@3.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -6649,6 +6652,9 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  mnemonist@0.40.3:
+    resolution: {integrity: sha512-Vjyr90sJ23CKKH/qPAgUKicw/v6pRoamxIEDFOF8uSgFME7DqPRpHgRTejWVjkdGg5dXj0/NyxZHZ9bcjH+2uQ==}
+
   mockdate@3.0.5:
     resolution: {integrity: sha512-iniQP4rj1FhBdBYS/+eQv7j1tadJ9lJtdzgOpvsOHng/GbcDh2Fhdeq+ZRldrPYdXvCyfFUmFeEwEGXZB5I/AQ==}
 
@@ -6865,6 +6871,9 @@ packages:
   object.values@1.2.1:
     resolution: {integrity: sha512-gXah6aZrcUxjWg2zR2MwouP2eHlCBzdV4pygudehaKXSGW4v2AsRQUK+lwwXhii6KFZcunEnmSUoYp5CXibxtA==}
     engines: {node: '>= 0.4'}
+
+  obliterator@2.0.5:
+    resolution: {integrity: sha512-42CPE9AhahZRsMNslczq0ctAEtqk8Eka26QofnqC346BZdHDySk3LWka23LI7ULIw11NmltpiLagIq8gBozxTw==}
 
   on-finished@2.3.0:
     resolution: {integrity: sha512-ikqdkGAAyf/X/gPhXGvfgAytDZtDbr+bkNUJ0N9h5MI/dmdgCs3l6hoHrcUv41sRKew3jIwrp4qQDXiK99Utww==}
@@ -16937,6 +16946,10 @@ snapshots:
   mkdirp@3.0.1:
     optional: true
 
+  mnemonist@0.40.3:
+    dependencies:
+      obliterator: 2.0.5
+
   mockdate@3.0.5: {}
 
   module-details-from-path@1.0.4: {}
@@ -17154,6 +17167,8 @@ snapshots:
       call-bound: 1.0.4
       define-properties: 1.2.1
       es-object-atoms: 1.1.1
+
+  obliterator@2.0.5: {}
 
   on-finished@2.3.0:
     dependencies:

@@ -72,6 +72,7 @@
     "micromark-util-classify-character": "^2.0.1",
     "micromark-util-resolve-all": "^2.0.1",
     "micromark-util-types": "^2.0.2",
+    "mnemonist": "^0.40.3",
     "next": "^15.3.2",
     "prop-types": "^15.8.1",
     "react": "^19.1.0",
