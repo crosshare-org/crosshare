@@ -94,7 +94,6 @@ User-agent: Diffbot
 User-agent: Doubao AI
 User-agent: DuckAssistBot
 User-agent: FacebookBot
-User-agent: FacebookExternalHit
 User-agent: Factset
 User-agent: Falcon
 User-agent: Firecrawl

@@ -52,7 +52,7 @@ const aibs4 = new RegExp(
   'i'
 );
 const aibs5 = new RegExp(
-  '(DataProvider|DeepAI|DeepL|DeepMind|DeepSeek|Diffbot|Doubao\ AI|DuckAssistBot|FacebookBot|FacebookExternalHit|Factset|Falcon|Firecrawl|Flyriver|Frase\ AI|FriendlyCrawler|Gemini|Gemma|GenAI|Genspark)',
+  '(DataProvider|DeepAI|DeepL|DeepMind|DeepSeek|Diffbot|Doubao\ AI|DuckAssistBot|FacebookBot|Factset|Falcon|Firecrawl|Flyriver|Frase\ AI|FriendlyCrawler|Gemini|Gemma|GenAI|Genspark)',
   'i'
 );
 const aibs6 = new RegExp(
