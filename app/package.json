@@ -66,7 +66,7 @@
     "lodash": "^4.17.21",
     "mdast-util-directive": "^3.1.0",
     "mdast-util-find-and-replace": "^3.0.2",
-    "mdast-util-gfm-autolink-literal": "2.0.1",
+    "mdast-util-gfm-autolink-literal": "2.0.0",
     "micromark": "^4.0.2",
     "micromark-util-chunked": "^2.0.1",
     "micromark-util-classify-character": "^2.0.1",

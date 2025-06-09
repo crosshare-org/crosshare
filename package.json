@@ -31,5 +31,8 @@
       "rocksdb",
       "sharp"
     ]
+  },
+  "overrides": {
+    "mdast-util-gfm-autolink-literal": "2.0.0"
   }
 }
