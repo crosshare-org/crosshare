@@ -285,7 +285,17 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                 {props.shareButtonText ? (
                   <SharingButtons
                     text={props.shareButtonText
-                      .replace('{title}', props.puzzle.title.slice(0, 40))
+                      .replace(
+                        '{title}',
+                        props.puzzle.title
+                          // Strip emojis
+                          .replace(
+                            /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+                            ''
+                          )
+                          .slice(0, 40)
+                          .trim()
+                      )
                       .replace('{time}', timeString(props.solveTime, false))}
                     path={`/crosswords/${props.puzzle.id}/${slugify(
                       props.puzzle.title
