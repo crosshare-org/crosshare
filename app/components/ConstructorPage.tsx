@@ -13,7 +13,7 @@ import {
 import { getDocRef } from '../lib/firebaseWrapper.js';
 import { logAsyncErrors } from '../lib/utils.js';
 import { AuthContext } from './AuthContext.js';
-import { ButtonAsLink } from './Buttons.js';
+import { Button, ButtonAsLink } from './Buttons.js';
 import { ConstructorList } from './ConstructorList.js';
 import styles from './ConstructorPage.module.css';
 import { ConstructorStats } from './ConstructorStats.js';
@@ -178,10 +178,10 @@ export const CreatePageForm = (props: { className?: string }) => {
           </p>
         </label>
         <p>
-          <input
+          <Button
             type="submit"
             disabled={isInvalid(username) || submitting}
-            value="Create"
+            text="Create"
           />
           {showError ? (
             <span className="colorError marginLeft1em">

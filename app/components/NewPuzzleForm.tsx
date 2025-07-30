@@ -3,6 +3,7 @@ import { PrefillSquares } from '../lib/types.js';
 import { STORAGE_KEY, clsx } from '../lib/utils.js';
 import { NewPuzzleAction } from '../reducers/builderReducer.js';
 import { AuthContext } from './AuthContext.js';
+import { Button } from './Buttons.js';
 import { PrefillIcon, PuzzleSizeIcon } from './Icons.js';
 import styles from './NewPuzzleForm.module.css';
 
@@ -18,56 +19,54 @@ interface SizeSelectProps {
 
 const SizeSelectInput = (props: SizeSelectProps) => {
   return (
-    <div className="fontSize1-5em">
-      <label>
-        <input
-          className="marginRight1em"
-          type="radio"
-          name="size"
-          value={props.label}
-          checked={props.current === props.label}
-          onChange={(e) => {
-            if (e.currentTarget.value !== props.label) return;
-            props.setCols(props.cols || 0);
-            props.setRows(props.rows || 0);
-            props.setCurrent(props.label);
-          }}
+    <label className={clsx(styles.selectLabel, 'fontSize1-5em')}>
+      <input
+        className="marginRight1em"
+        type="radio"
+        name="size"
+        value={props.label}
+        checked={props.current === props.label}
+        onChange={(e) => {
+          if (e.currentTarget.value !== props.label) return;
+          props.setCols(props.cols || 0);
+          props.setRows(props.rows || 0);
+          props.setCurrent(props.label);
+        }}
+      />
+      <span className={styles.icon}>
+        <PuzzleSizeIcon
+          width={props.cols || undefined}
+          height={props.rows || undefined}
         />
-        <span className={styles.icon}>
-          <PuzzleSizeIcon
-            width={props.cols || undefined}
-            height={props.rows || undefined}
+      </span>
+      {props.label}
+      {props.label === 'Custom' && props.current === props.label ? (
+        <>
+          <input
+            type="text"
+            className={clsx(styles.sizeInput, 'marginLeft1em')}
+            value={props.cols || ''}
+            placeholder="Columns"
+            onChange={(e) => {
+              props.setCols(parseInt(e.target.value));
+            }}
           />
-        </span>
-        {props.label}
-        {props.label === 'Custom' && props.current === props.label ? (
-          <>
-            <input
-              type="text"
-              className={clsx(styles.sizeInput, 'marginLeft1em')}
-              value={props.cols || ''}
-              placeholder="Columns"
-              onChange={(e) => {
-                props.setCols(parseInt(e.target.value));
-              }}
-            />
-            <span className="marginLeft0-5em marginRight0-5em">x</span>
-            <input
-              type="text"
-              className={styles.sizeInput}
-              width="3em"
-              value={props.rows || ''}
-              placeholder="Rows"
-              onChange={(e) => {
-                props.setRows(parseInt(e.target.value));
-              }}
-            />
-          </>
-        ) : (
-          ''
-        )}
-      </label>
-    </div>
+          <span className="marginLeft0-5em marginRight0-5em">x</span>
+          <input
+            type="text"
+            className={styles.sizeInput}
+            width="3em"
+            value={props.rows || ''}
+            placeholder="Rows"
+            onChange={(e) => {
+              props.setRows(parseInt(e.target.value));
+            }}
+          />
+        </>
+      ) : (
+        ''
+      )}
+    </label>
   );
 };
 
@@ -92,26 +91,24 @@ const labelForPrefill = (p: PrefillSquares) => {
 
 const PrefillSelectInput = (props: PrefillSelectProps) => {
   return (
-    <div className="fontSize1-5em">
-      <label>
-        <input
-          className="marginRight1em"
-          type="radio"
-          name="prefill"
-          value={props.option}
-          checked={props.current === props.option}
-          onChange={(e) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-            if (parseInt(e.currentTarget.value) !== props.option) return;
-            props.setCurrent(props.option);
-          }}
-        />
-        <span className={styles.icon}>
-          <PrefillIcon type={props.option} />
-        </span>
-        {labelForPrefill(props.option)}
-      </label>
-    </div>
+    <label className={clsx(styles.selectLabel, 'fontSize1-5em')}>
+      <input
+        className="marginRight1em"
+        type="radio"
+        name="prefill"
+        value={props.option}
+        checked={props.current === props.option}
+        onChange={(e) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+          if (parseInt(e.currentTarget.value) !== props.option) return;
+          props.setCurrent(props.option);
+        }}
+      />
+      <span className={styles.icon}>
+        <PrefillIcon type={props.option} />
+      </span>
+      {labelForPrefill(props.option)}
+    </label>
   );
 };
 
@@ -264,9 +261,9 @@ export function NewPuzzleForm(props: {
           </div>
         </div>
 
-        <input
+        <Button
           type="submit"
-          value="Create New Puzzle"
+          text="Create New Puzzle"
           disabled={current === 'Custom' && errorMsg !== ''}
         />
       </form>

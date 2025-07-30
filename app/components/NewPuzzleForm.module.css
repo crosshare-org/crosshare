@@ -1,7 +1,17 @@
+.selectLabel {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5em;
+}
+
+.selectLabel:last-child {
+  margin-bottom: 0.5em;
+}
+
 .icon {
+  display: inline-flex;
   margin-right: 0.3em;
   font-size: 2em;
-  vertical-align: top !important;
 }
 
 .sizeInput {

@@ -437,7 +437,7 @@ export default requiresAdmin(() => {
                 <Markdown hast={markdownToHast({ text: cp.b })} />
               </div>
             ))}
-            <input type="submit" value="Mark as moderated" />
+            <Button type="submit" text="Mark as moderated" />
           </form>
         )}
         <h4 className="marginTop2em borderBottom1pxSolidBlack">

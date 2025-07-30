@@ -51,61 +51,65 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
       <DefaultTopBar dashboardSelected />
       <div className="margin1em">
         <CreateShareSection halfWidth={false} />
+        <hr className="margin2em0" />
         <ConstructorStats userId={user.uid} />
         {authoredPuzzles.length ? (
-          <div>
-            <h2>Recent Puzzles</h2>
-            {constructorPage ? (
-              <>
-                <p>
-                  Your public puzzles are published on your blog:{' '}
-                  <Link href={'/' + constructorPage.i}>
-                    https://crosshare.org/{constructorPage.i}
-                  </Link>
-                </p>
-                <p>
-                  Go to the <Link href="/account">account page</Link> to change
-                  your blog settings.
-                </p>
-              </>
-            ) : (
-              <></>
-            )}
-            <CreatePageForm
-              className={constructorPage ? 'displayNone' : 'displayBlock'}
-            />
-            {authoredPuzzles.map((puzzle) => (
-              <PuzzleResultLink
-                key={puzzle.id}
-                puzzle={{ ...puzzle, blogPostPreview: null }}
-                showAuthor={false}
-                showDate={true}
-                showPrivateStatus={true}
-                constructorPage={null}
-                constructorIsPatron={false}
-                filterTags={[]}
+          <>
+            <hr className="margin2em0" />
+            <div>
+              <h2>Recent Puzzles</h2>
+              {constructorPage ? (
+                <>
+                  <p>
+                    Your public puzzles are published on your blog:{' '}
+                    <Link href={'/' + constructorPage.i}>
+                      https://crosshare.org/{constructorPage.i}
+                    </Link>
+                  </p>
+                  <p>
+                    Go to the <Link href="/account">account page</Link> to
+                    change your blog settings.
+                  </p>
+                </>
+              ) : (
+                <></>
+              )}
+              <CreatePageForm
+                className={constructorPage ? 'displayNone' : 'displayBlock'}
               />
-            ))}
-            {loadingAuthored ? (
-              <p>Loading...</p>
-            ) : (
-              <>
-                {hasPreviousAuthored && (
-                  <ButtonAsLink
-                    onClick={loadPreviousAuthored}
-                    text="&larr; Newer puzzles"
-                  />
-                )}
-                {hasPreviousAuthored && hasMoreAuthored && <>&nbsp;|&nbsp;</>}
-                {hasMoreAuthored && (
-                  <ButtonAsLink
-                    onClick={loadMoreAuthored}
-                    text="Older puzzles &rarr;"
-                  />
-                )}
-              </>
-            )}
-          </div>
+              {authoredPuzzles.map((puzzle) => (
+                <PuzzleResultLink
+                  key={puzzle.id}
+                  puzzle={{ ...puzzle, blogPostPreview: null }}
+                  showAuthor={false}
+                  showDate={true}
+                  showPrivateStatus={true}
+                  constructorPage={null}
+                  constructorIsPatron={false}
+                  filterTags={[]}
+                />
+              ))}
+              {loadingAuthored ? (
+                <p>Loading...</p>
+              ) : (
+                <>
+                  {hasPreviousAuthored && (
+                    <ButtonAsLink
+                      onClick={loadPreviousAuthored}
+                      text="&larr; Newer puzzles"
+                    />
+                  )}
+                  {hasPreviousAuthored && hasMoreAuthored && <>&nbsp;|&nbsp;</>}
+                  {hasMoreAuthored && (
+                    <ButtonAsLink
+                      onClick={loadMoreAuthored}
+                      text="Older puzzles &rarr;"
+                    />
+                  )}
+                </>
+              )}
+            </div>
+          </>
         ) : (
           <p>
             Crosshare makes it super simple to create and share crossword
