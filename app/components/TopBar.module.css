@@ -69,20 +69,18 @@
 
 .linkContentsIcon {
   font-size: calc(header-height - 10px);
-  vertical-align: baseline;
+  display: inline-flex;
 }
 
 .linkContentsIcon[data-slate='true'] {
   display: inline-block;
   font-size: 15px;
-  vertical-align: middle;
 }
 
 .linkContentsText {
   display: none;
   margin-left: 5px;
   font-size: calc(header-height - 20px);
-  vertical-align: middle;
 }
 
 .linkContentsText[data-keep-text='true'] {
@@ -92,8 +90,10 @@
 .topBarLink {
   cursor: pointer;
 
+  display: inline-flex;
+  align-items: center;
+
   overflow: hidden;
-  display: inline;
 
   margin: 0;
   padding: 0 0.45em;
@@ -132,6 +132,9 @@
 .topBarLinkA {
   pointer-events: auto;
   cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
 
   overflow: hidden;
 

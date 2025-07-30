@@ -51,8 +51,10 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
       <DefaultTopBar dashboardSelected />
       <div className="margin1em">
         <CreateShareSection halfWidth={false} />
+        <hr className="margin2em0" />
         <ConstructorStats userId={user.uid} />
-        {authoredPuzzles.length ? (
+        {authoredPuzzles.length ? (<>
+          <hr className="margin2em0" />
           <div>
             <h2>Recent Puzzles</h2>
             {constructorPage ? (
@@ -106,7 +108,7 @@ export const DashboardPage = ({ user, constructorPage }: AuthProps) => {
               </>
             )}
           </div>
-        ) : (
+        </>) : (
           <p>
             Crosshare makes it super simple to create and share crossword
             puzzles &mdash; use one of the buttons above to get started!

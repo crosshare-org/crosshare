@@ -15,9 +15,9 @@ export function CreateShareSection(props: { halfWidth: boolean }) {
           <div className="flex1">
             <Trans>
               <h4>Create a new puzzle</h4>
-              <p className={styles.subtext}>
+              <div className={styles.subtext}>
                 Build a crossword puzzle with the Crosshare constructor
-              </p>
+              </div>
             </Trans>
           </div>
         </Link>
@@ -26,9 +26,9 @@ export function CreateShareSection(props: { halfWidth: boolean }) {
           <div className="flex1">
             <Trans>
               <h4>Upload a .puz file</h4>
-              <p className={styles.subtext}>
+              <div className={styles.subtext}>
                 Get a Crosshare link to share with solvers
-              </p>
+              </div>
             </Trans>
           </div>
         </Link>

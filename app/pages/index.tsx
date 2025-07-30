@@ -250,7 +250,7 @@ export default function HomePage({
               ) : (
                 ''
               )}
-              <p>
+              <div>
                 <Link
                   href={`/dailyminis/${today.getUTCFullYear()}/${
                     today.getUTCMonth() + 1
@@ -258,7 +258,7 @@ export default function HomePage({
                 >
                   <Trans>Previous daily minis</Trans> &rarr;
                 </Link>
-              </p>
+              </div>
             </div>
           ) : (
             ''
