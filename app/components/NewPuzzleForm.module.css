@@ -9,9 +9,9 @@
 }
 
 .icon {
+  display: inline-flex;
   margin-right: 0.3em;
   font-size: 2em;
-  display: inline-flex;
 }
 
 .sizeInput {

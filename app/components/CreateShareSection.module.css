@@ -3,9 +3,10 @@
 
 .button {
   display: flex;
+  flex: 1 1 0;
   align-items: flex-start;
 
-  flex: 1 1 0;
+
   padding: 1em;
   border-radius: 0.5em;
 
@@ -19,8 +20,8 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   gap: 1em;
+  justify-content: space-between;
 }
 
 /* stylelint-disable-next-line media-feature-name-no-unknown */

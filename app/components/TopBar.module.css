@@ -68,8 +68,8 @@
 }
 
 .linkContentsIcon {
-  font-size: calc(header-height - 10px);
   display: inline-flex;
+  font-size: calc(header-height - 10px);
 }
 
 .linkContentsIcon[data-slate='true'] {
@@ -90,10 +90,9 @@
 .topBarLink {
   cursor: pointer;
 
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
-
-  overflow: hidden;
 
   margin: 0;
   padding: 0 0.45em;
@@ -133,10 +132,9 @@
   pointer-events: auto;
   cursor: pointer;
 
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
-
-  overflow: hidden;
 
   height: 100%;
   margin: 0;
