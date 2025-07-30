@@ -3,8 +3,8 @@ import { PrefillSquares } from '../lib/types.js';
 import { STORAGE_KEY, clsx } from '../lib/utils.js';
 import { NewPuzzleAction } from '../reducers/builderReducer.js';
 import { AuthContext } from './AuthContext.js';
-import { PrefillIcon, PuzzleSizeIcon } from './Icons.js';
 import {Button} from './Buttons.js';
+import { PrefillIcon, PuzzleSizeIcon } from './Icons.js';
 import styles from './NewPuzzleForm.module.css';
 
 interface SizeSelectProps {
