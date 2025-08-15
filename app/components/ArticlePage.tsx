@@ -13,6 +13,13 @@ export function ArticlePage(props: ArticlePageProps) {
 function Article(props: ArticlePageProps) {
   const { locale } = useRouter();
   const loc = locale || 'en';
+
+  const weeklySlug = props.s.match(/weekly-email-([0-9]+)/);
+  let weeklyYear = new Date().getFullYear();
+  if (weeklySlug && weeklySlug[1]) {
+    weeklyYear = parseInt(weeklySlug[1]);
+  }
+
   return (
     <>
       <Head>
@@ -50,7 +57,7 @@ function Article(props: ArticlePageProps) {
           <p className="textAlignCenter paddingBottom1em">
             {props.prevSlug ? (
               <Link
-                className="marginRight1em"
+                className={props.nextSlug ? "marginRight1em" : ""}
                 href={'/articles/' + props.prevSlug}
               >
                 Previous
@@ -63,6 +70,10 @@ function Article(props: ArticlePageProps) {
             ) : (
               ''
             )}
+            {/* It's not clear if only weekly emails have prevSlug and nextSlug.
+              * They're the only articles where this link makes sense. Hmm */}
+            <br/>
+            <Link href={`/weekly/${weeklyYear}`}>More from {weeklyYear}</Link>
           </p>
         ) : (
           ''
