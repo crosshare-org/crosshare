@@ -1,16 +1,19 @@
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import { DefaultTopBar } from '../../components/TopBar.js';
-import { GetServerSideProps } from "next";
-import { getWeeklyEmailsFromYear } from "../../lib/serverOnly";
-import Link from "next/link";
 import { ArticleT } from '../../lib/article.js';
+import { getWeeklyEmailsFromYear } from '../../lib/serverOnly';
 
 interface WeeklyEmailProps {
-  articles: ArticleT[],
-  year: string,
+  articles: ArticleT[];
+  year: string;
 }
 
-export const getServerSideProps: GetServerSideProps<WeeklyEmailProps> = async ({ res, params }) => {
+export const getServerSideProps: GetServerSideProps<WeeklyEmailProps> = async ({
+  res,
+  params,
+}) => {
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!params?.year || Array.isArray(params.year)) {
     return { notFound: true };
@@ -18,7 +21,7 @@ export const getServerSideProps: GetServerSideProps<WeeklyEmailProps> = async ({
 
   let articles: ArticleT[] = [];
 
-  let yearStr = params.year;
+  const yearStr = params.year;
   try {
     const year = parseInt(params.year);
     const articlesFromYear = await getWeeklyEmailsFromYear(year);
@@ -32,16 +35,19 @@ export const getServerSideProps: GetServerSideProps<WeeklyEmailProps> = async ({
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
 
   return {
-    props: { articles, year: yearStr }
+    props: { articles, year: yearStr },
   };
 };
 
 export default function WeeklyEmails(props: WeeklyEmailProps) {
-  let articleList = [];
+  const articleList = [];
   for (const article of props.articles) {
-    const published = article.s.match(/weekly-email-([0-9]+)-([0-9]+)-([0-9]+)/);
-    if (!published || !published[1] || !published[2] || !published[3]) {
-      console.error("Weekly article slug didn't follow expected format", article.s);
+    const published = /weekly-email-([0-9]+)-([0-9]+)-([0-9]+)/.exec(article.s);
+    if (!published?.[1] || !published[2] || !published[3]) {
+      console.error(
+        "Weekly article slug didn't follow expected format",
+        article.s
+      );
       continue;
     }
 
@@ -51,22 +57,24 @@ export default function WeeklyEmails(props: WeeklyEmailProps) {
       parseInt(published[3])
     );
     const creation = creationDate.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "long",
-      day: "numeric"
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
 
-    articleList.push(<li key={creationDate.getTime()}>
-      <Link href={`/articles/${article.s}`}>
-        {creation}: {article.t}
-      </Link>
-    </li>)
+    articleList.push(
+      <li key={creationDate.getTime()}>
+        <Link href={`/articles/${article.s}`}>
+          {creation}: {article.t}
+        </Link>
+      </li>
+    );
   }
 
-  let year = parseInt(props.year);
-  let thisYear = new Date().getFullYear();
-  let lastYear = year - 1;
-  let nextYear = year + 1;
+  const year = parseInt(props.year);
+  const thisYear = new Date().getFullYear();
+  const lastYear = year - 1;
+  const nextYear = year + 1;
 
   return (
     <>

@@ -148,13 +148,16 @@ export async function getArticle(
   return validate(dbres.docs[0]?.data());
 }
 
-export async function getWeeklyEmailsFromYear(year: number): Promise<ArticleT[] | string> {
+export async function getWeeklyEmailsFromYear(
+  year: number
+): Promise<ArticleT[] | string> {
   const db = getFirestore(getAdminApp());
   let dbres;
   try {
     // Assumes weekly email articles' slugs always start with weekly-email-year
     // https://stackoverflow.com/a/56815787/18270160
-    dbres = await db.collection('a')
+    dbres = await db
+      .collection('a')
       .where('s', '>=', `weekly-email-${year}`)
       .where('s', '<=', `weekly-email-${year}\uf8ff`)
       .orderBy('s', 'desc')
@@ -163,7 +166,7 @@ export async function getWeeklyEmailsFromYear(year: number): Promise<ArticleT[] 
     return 'Error getting articles from ' + year;
   }
 
-  let articles: ArticleT[] = [];
+  const articles: ArticleT[] = [];
   for (const doc of dbres.docs) {
     const validated = validate(doc.data());
     if (validated) {
