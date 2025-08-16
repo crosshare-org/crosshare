@@ -4,16 +4,14 @@ import Link from 'next/link';
 import { DefaultTopBar } from '../../components/TopBar.js';
 import { ArticleT } from '../../lib/article.js';
 import { getWeeklyEmailsFromYear } from '../../lib/serverOnly';
+import { withTranslation } from '../../lib/translation.js';
 
-interface WeeklyEmailProps {
+interface YearsEmailProps {
   articles: ArticleT[];
   year: string;
 }
 
-export const getServerSideProps: GetServerSideProps<WeeklyEmailProps> = async ({
-  res,
-  params,
-}) => {
+const gssp: GetServerSideProps<YearsEmailProps> = async ({ res, params }) => {
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!params?.year || Array.isArray(params.year)) {
     return { notFound: true };
@@ -39,7 +37,9 @@ export const getServerSideProps: GetServerSideProps<WeeklyEmailProps> = async ({
   };
 };
 
-export default function WeeklyEmails(props: WeeklyEmailProps) {
+export const getServerSideProps = withTranslation(gssp);
+
+export default function WeeklyEmails(props: YearsEmailProps) {
   const articleList = [];
   for (const article of props.articles) {
     const published = /weekly-email-([0-9]+)-([0-9]+)-([0-9]+)/.exec(article.s);
