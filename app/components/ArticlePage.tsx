@@ -64,10 +64,16 @@ function Article(props: ArticlePageProps) {
             ) : (
               ''
             )}
-            <br />
-            <Link href={`/weekly/${props.weeklyYear}`}>
-              More from {props.weeklyYear}
-            </Link>
+            {props.weeklyYear ? (
+              <>
+                <br />
+                <Link href={`/weekly/${props.weeklyYear}`}>
+                  More from {props.weeklyYear}
+                </Link>
+              </>
+            ) : (
+              ''
+            )}
           </p>
         ) : (
           ''
