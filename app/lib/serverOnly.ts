@@ -148,6 +148,34 @@ export async function getArticle(
   return validate(dbres.docs[0]?.data());
 }
 
+export async function getWeeklyEmailsFromYear(
+  year: number
+): Promise<ArticleT[] | string> {
+  const db = getFirestore(getAdminApp());
+  let dbres;
+  try {
+    // Assumes weekly email articles' slugs always start with weekly-email-year
+    // https://stackoverflow.com/a/56815787/18270160
+    dbres = await db
+      .collection('a')
+      .where('s', '>=', `weekly-email-${year}`)
+      .where('s', '<=', `weekly-email-${year}\uf8ff`)
+      .orderBy('s', 'desc')
+      .get();
+  } catch {
+    return 'Error getting articles from ' + year;
+  }
+
+  const articles: ArticleT[] = [];
+  for (const doc of dbres.docs) {
+    const validated = validate(doc.data());
+    if (validated) {
+      articles.push(validated);
+    }
+  }
+  return articles;
+}
+
 export async function getPreviousArticle(
   slug: string
 ): Promise<string | ArticleT | null> {
@@ -182,11 +210,16 @@ async function getNextArticle(slug: string): Promise<string | ArticleT | null> {
   return validate(dbres.docs[0]?.data());
 }
 
-export type ArticlePageProps = ArticleT & {
-  hast: Root;
+export interface WeeklyEmailPageProps {
+  weeklyYear?: number;
   nextSlug?: string;
   prevSlug?: string;
-};
+}
+
+export type ArticlePageProps = ArticleT &
+  WeeklyEmailPageProps & {
+    hast: Root;
+  };
 
 export function maxWeeklyEmailArticle() {
   const maxDate = new Date();
@@ -210,7 +243,8 @@ export const getArticlePageProps: GetServerSideProps<
     return { notFound: true };
   }
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
-  const prevNext: { nextSlug?: string; prevSlug?: string } = {};
+
+  const weeklyEmailProps: WeeklyEmailPageProps = {};
   if (params.slug.startsWith('weekly-email-')) {
     const prev = await getPreviousArticle(params.slug);
     if (
@@ -218,7 +252,7 @@ export const getArticlePageProps: GetServerSideProps<
       typeof prev !== 'string' &&
       prev.s.startsWith('weekly-email-')
     ) {
-      prevNext.prevSlug = prev.s;
+      weeklyEmailProps.prevSlug = prev.s;
     }
 
     const next = await getNextArticle(params.slug);
@@ -228,14 +262,20 @@ export const getArticlePageProps: GetServerSideProps<
       next.s.startsWith('weekly-email-') &&
       next.s < maxWeeklyEmailArticle()
     ) {
-      prevNext.nextSlug = next.s;
+      weeklyEmailProps.nextSlug = next.s;
+    }
+
+    const yearFromSlug = /weekly-email-([0-9]+)/.exec(params.slug);
+    if (yearFromSlug?.[1]) {
+      weeklyEmailProps.weeklyYear = parseInt(yearFromSlug[1]);
     }
   }
+
   return {
     props: {
       ...article,
+      ...weeklyEmailProps,
       hast: markdownToHast({ text: article.c }),
-      ...prevNext,
     },
   };
 };

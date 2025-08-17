@@ -13,6 +13,7 @@ export function ArticlePage(props: ArticlePageProps) {
 function Article(props: ArticlePageProps) {
   const { locale } = useRouter();
   const loc = locale || 'en';
+
   return (
     <>
       <Head>
@@ -50,7 +51,7 @@ function Article(props: ArticlePageProps) {
           <p className="textAlignCenter paddingBottom1em">
             {props.prevSlug ? (
               <Link
-                className="marginRight1em"
+                className={props.nextSlug ? 'marginRight1em' : ''}
                 href={'/articles/' + props.prevSlug}
               >
                 Previous
@@ -60,6 +61,16 @@ function Article(props: ArticlePageProps) {
             )}
             {props.nextSlug ? (
               <Link href={'/articles/' + props.nextSlug}>Next</Link>
+            ) : (
+              ''
+            )}
+            {props.weeklyYear ? (
+              <>
+                <br />
+                <Link href={`/weekly/${props.weeklyYear}`}>
+                  More from {props.weeklyYear}
+                </Link>
+              </>
             ) : (
               ''
             )}
