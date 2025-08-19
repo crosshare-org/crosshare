@@ -19,7 +19,10 @@ const gssp: GetServerSideProps<YearsEmailProps> = async ({ res, params }) => {
 
   let articles: ArticleT[] = [];
 
-  const yearStr = params.year;
+  const year = parseInt(params.year);
+  if (year < 2024 || Number.isNaN(year) || year > 2040) {
+    return { notFound: true };
+  }
   try {
     const year = parseInt(params.year);
     const articlesFromYear = await getWeeklyEmailsFromYear(year);
@@ -33,7 +36,7 @@ const gssp: GetServerSideProps<YearsEmailProps> = async ({ res, params }) => {
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
 
   return {
-    props: { articles, year: yearStr },
+    props: { articles, year: year.toString() },
   };
 };
 
@@ -88,11 +91,15 @@ export default function WeeklyEmails(props: YearsEmailProps) {
         <ul>{articleList}</ul>
       </div>
       <div className="textAlignCenter paddingBottom1em">
-        <Link href={`/weekly/${lastYear}`}>← {lastYear}</Link>
+        {year > 2024 ? (
+          <Link href={`/weekly/${lastYear}`}>← {lastYear}</Link>
+        ) : (
+          ''
+        )}
         {year < thisYear ? (
           <>
             {' '}
-            {year} <Link href={`/weekly/${nextYear}`}>{nextYear} →</Link>
+            <Link href={`/weekly/${nextYear}`}>{nextYear} →</Link>
           </>
         ) : (
           ''
