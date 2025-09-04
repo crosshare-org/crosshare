@@ -2,7 +2,16 @@
 
 import fs from 'node:fs';
 import util from 'node:util';
-import { command, option, optional, run, string, subcommands } from 'cmd-ts';
+import {
+  boolean,
+  command,
+  flag,
+  option,
+  optional,
+  run,
+  string,
+  subcommands,
+} from 'cmd-ts';
 import { parse } from 'csv-parse/sync';
 import { lightFormat } from 'date-fns/lightFormat';
 import { Timestamp, getFirestore } from 'firebase-admin/firestore';
@@ -143,7 +152,10 @@ async function topPuzzlesForWeek(): Promise<
           return false;
         }
         // Filter a couple of media accts
-        if (p.a === 'ira2BUejBHgWTBVlQdOqVPtIaSB2') {
+        if (
+          p.a === 'ira2BUejBHgWTBVlQdOqVPtIaSB2' ||
+          p.a === 'gqbcFQiAggNTtMOFbvBKBPHXp7F2'
+        ) {
           return false;
         }
         return true;
@@ -188,10 +200,10 @@ async function topPuzzlesForWeek(): Promise<
   });
 }
 
-async function generateWeeklyEmail() {
+async function generateWeeklyEmail(force: boolean) {
   const slug = `weekly-email-${lightFormat(new Date(), 'yyyy-MM-dd')}`;
 
-  if ((await db.collection('a').doc(slug).get()).exists) {
+  if ((await db.collection('a').doc(slug).get()).exists && !force) {
     throw new Error('weekly email already exists for date');
   }
 
@@ -239,9 +251,16 @@ ${puzzles
 
 const generate = command({
   name: 'generate',
-  args: {},
-  handler: async () => {
-    await generateWeeklyEmail();
+  args: {
+    force: flag({
+      type: boolean,
+      long: 'force',
+      short: 'f',
+      description: 'generate a new email even if one already exists for date',
+    }),
+  },
+  handler: async ({ force }) => {
+    await generateWeeklyEmail(force);
   },
 });
 
