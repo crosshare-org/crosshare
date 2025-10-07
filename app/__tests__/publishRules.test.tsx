@@ -72,6 +72,18 @@ test('security rules should not allow publishing with restricted fields set', as
   await assertSucceeds(
     addDoc(collection(firestore, 'c'), { ...puzzle, g: newGrid })
   );
+  newGrid[0] = 'ä';
+  await assertSucceeds(
+    addDoc(collection(firestore, 'c'), { ...puzzle, g: newGrid })
+  );
+  newGrid[0] = '/';
+  await assertSucceeds(
+    addDoc(collection(firestore, 'c'), { ...puzzle, g: newGrid })
+  );
+  newGrid[0] = '\\';
+  await assertSucceeds(
+    addDoc(collection(firestore, 'c'), { ...puzzle, g: newGrid })
+  );
   newGrid[0] = '?';
   await assertFails(
     addDoc(collection(firestore, 'c'), { ...puzzle, g: newGrid })
