@@ -12,6 +12,10 @@
   flex: 50% !important;
 }
 
+.flexGrow1 {
+  flex-grow: 1 !important;
+}
+
 .floatRight {
   float: right !important;
 }

@@ -1274,41 +1274,47 @@ export const Puzzle = ({
                 {!loadingPlayState ? (
                   !state.success ? (
                     <>
-                      <div className={styles.topBarInner}>
-                        {isSlate ? (
-                          <span className="colorText verticalAlignMiddle">
-                            <Timer className={styles.slateTimeIcon} />
-                            <strong className={styles.slateTime}>
-                              {timeString(state.displaySeconds, true)}
-                            </strong>
-                          </span>
-                        ) : (
-                          ''
-                        )}
-                        <TopBarLink
-                          icon={isSlate ? <Pause /> : <FaPause />}
-                          hoverText={t`Pause Game`}
-                          text={
-                            isSlate
-                              ? 'Pause'
-                              : timeString(state.displaySeconds, true)
-                          }
-                          onClick={() => {
-                            window.parent.postMessage(
-                              {
-                                type: 'pause',
-                                elapsed: state.displaySeconds,
-                              },
-                              '*'
-                            );
-                            dispatch({ type: 'PAUSEACTION' });
-                            cachePlayForUser(props.user);
-                            writePlayToDBIfNeeded();
-                          }}
-                          keepText={!isSlate}
-                        />
-                      </div>
-                      {isSlate ? <SlateButtonMargin /> : ''}
+                      {isSlate ? (
+                        <span className="colorText verticalAlignMiddle">
+                          <Timer className={styles.slateTimeIcon} />
+                          <strong className={styles.slateTime}>
+                            {timeString(state.displaySeconds, true)}
+                          </strong>
+                        </span>
+                      ) : (
+                        ''
+                      )}
+                      <TopBarLink
+                        icon={isSlate ? <Pause /> : <FaPause />}
+                        hoverText={t`Pause Game`}
+                        text={
+                          isSlate
+                            ? 'Pause'
+                            : timeString(state.displaySeconds, true)
+                        }
+                        onClick={() => {
+                          window.parent.postMessage(
+                            {
+                              type: 'pause',
+                              elapsed: state.displaySeconds,
+                            },
+                            '*'
+                          );
+                          dispatch({ type: 'PAUSEACTION' });
+                          cachePlayForUser(props.user);
+                          writePlayToDBIfNeeded();
+                        }}
+                        keepText={!isSlate}
+                      />
+
+                      {isSlate ? (
+                        <>
+                          <div className="flexGrow1" />
+                          <SlateButtonMargin />
+                        </>
+                      ) : (
+                        ''
+                      )}
                       <TopBarLink
                         icon={
                           state.clueView ? (
@@ -1338,8 +1344,7 @@ export const Puzzle = ({
                     </>
                   ) : (
                     <>
-                      <div className={styles.topBarInner} />
-
+                      {isSlate ? <div className="flexGrow1" /> : ''}
                       <TopBarLink
                         icon={isSlate ? <Stats /> : <FaComment />}
                         text={
@@ -1373,7 +1378,7 @@ export const Puzzle = ({
                   )
                 ) : (
                   <>
-                    <div className={styles.topBarInner} />
+                    {isSlate ? <div className="flexGrow1" /> : ''}
                     {moreMenu}
                   </>
                 )}

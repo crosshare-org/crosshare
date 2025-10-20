@@ -81,10 +81,6 @@
   padding: slate-padding-small slate-padding-small 0;
 }
 
-.wrapper[data-slate='true'] .topBarInner {
-  flex-grow: 1;
-}
-
 .slateTimeIcon {
   margin-right: 0.5rem;
   font-size: 20px;
