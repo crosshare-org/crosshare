@@ -451,6 +451,13 @@ function isUpdateSelectionAction(
   return action.type === 'UPDATESELECTION';
 }
 
+export interface ClearFillAction extends PuzzleAction {
+  type: 'CLEARFILL';
+}
+function isClearFillAction(action: PuzzleAction): action is ClearFillAction {
+  return action.type === 'CLEARFILL';
+}
+
 export interface AddEnumerationsAction extends PuzzleAction {
   type: 'ADDENUMERATIONS';
 }
@@ -1133,6 +1140,18 @@ function _builderReducer(
     const grid = state.undoHistory[undoIndex];
     return grid == null ? state : { ...state, grid, undoIndex };
   }
+
+  if (isClearFillAction(action)) {
+    const newCells = state.grid.cells.map((cell) =>
+      cell === BLOCK ? BLOCK : EMPTY
+    );
+    const grid = fromCells({
+      ...state.grid,
+      cells: newCells,
+    });
+    return validateGrid({ ...state, grid });
+  }
+
   return state;
 }
 
