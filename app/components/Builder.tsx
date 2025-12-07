@@ -1436,6 +1436,13 @@ const GridMode = ({
               )}
               <TopBarDropDownLink
                 icon={<FaEraser />}
+                text="Clear Fill"
+                onClick={() => {
+                  dispatch({ type: 'CLEARFILL' });
+                }}
+              />
+              <TopBarDropDownLink
+                icon={<FaEraser />}
                 text="Clear Highlights for Selection"
                 onClick={() => {
                   const a: ClearHighlightAction = {
