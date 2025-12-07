@@ -454,9 +454,7 @@ function isUpdateSelectionAction(
 export interface ClearFillAction extends PuzzleAction {
   type: 'CLEARFILL';
 }
-function isClearFillAction(
-  action: PuzzleAction
-): action is ClearFillAction {
+function isClearFillAction(action: PuzzleAction): action is ClearFillAction {
   return action.type === 'CLEARFILL';
 }
 
@@ -1144,7 +1142,7 @@ function _builderReducer(
   }
 
   if (isClearFillAction(action)) {
-    const newCells = state.grid.cells.map((cell) => 
+    const newCells = state.grid.cells.map((cell) =>
       cell === BLOCK ? BLOCK : EMPTY
     );
     const grid = fromCells({
@@ -1153,7 +1151,7 @@ function _builderReducer(
     });
     return validateGrid({ ...state, grid });
   }
-  
+
   return state;
 }
 
