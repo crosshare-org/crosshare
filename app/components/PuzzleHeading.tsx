@@ -86,7 +86,7 @@ export const PuzzleHeading = (props: {
       />
       <TagList className={styles.taglist} tags={props.tags} link />
       {props.constructorNotes ? (
-        <div className="textAlignCenter overflowWrapBreakWord">
+        <div className="textAlignCenter overflowWrapBreakWord smallHeadings">
           <ConstructorNotes
             isContest={props.isContest}
             notes={props.constructorNotes}
@@ -96,14 +96,14 @@ export const PuzzleHeading = (props: {
         ''
       )}
       {props.blogPost ? (
-        <div className="margin1em0 overflowWrapBreakWord">
+        <div className="margin1em0 overflowWrapBreakWord smallHeadings">
           <Markdown className="textAlignLeft" hast={props.blogPost} />
         </div>
       ) : (
         ''
       )}
       {props.constructorPage?.sig ? (
-        <div className="margin1em0 overflowWrapBreakWord">
+        <div className="margin1em0 overflowWrapBreakWord smallHeadings">
           <Markdown
             inline={true}
             className="textAlignLeft"

@@ -223,3 +223,15 @@
 .overflowWrapBreakWord {
   overflow-wrap: break-word !important;
 }
+
+.smallHeadings h1 {
+  font-size: 112%;
+}
+
+.smallHeadings h2 {
+  font-size: 108%;
+}
+
+.smallHeadings h3 {
+  font-size: 104%;
+}
