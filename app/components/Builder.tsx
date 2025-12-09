@@ -33,6 +33,7 @@ import {
   FaVolumeMute,
   FaVolumeUp,
 } from 'react-icons/fa';
+import { GiBroom } from 'react-icons/gi';
 import { IoMdStats } from 'react-icons/io';
 import { MdRefresh } from 'react-icons/md';
 import { FixedSizeList as List } from 'react-window';
@@ -1434,6 +1435,13 @@ const GridMode = ({
               ) : (
                 ''
               )}
+              <TopBarDropDownLink
+                icon={<GiBroom />}
+                text="Clear Fill"
+                onClick={() => {
+                  dispatch({ type: 'CLEARFILL' });
+                }}
+              />
               <TopBarDropDownLink
                 icon={<FaEraser />}
                 text="Clear Highlights for Selection"
