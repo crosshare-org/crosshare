@@ -7,12 +7,14 @@ import { PathReporter } from '../lib/pathReporter.js';
 
 const donationsCollection = getCollection('donations');
 
+const validFields = ['username', 'userid'];
+
 const edit = command({
   name: 'edit',
   args: {
     email: positional({ type: string, displayName: 'email' }),
     field: positional({
-      type: oneOf(['username']),
+      type: oneOf(validFields),
       displayName: 'field to update',
     }),
     value: positional({
@@ -33,7 +35,7 @@ const edit = command({
     }
     const donations = validationResult.right;
 
-    if (args.field !== 'username') {
+    if (!validFields.includes(args.field)) {
       console.error('unimplemented!');
       return;
     }
@@ -42,7 +44,11 @@ const edit = command({
     for (let i = donations.d.length - 1; i >= 0; i -= 1) {
       const o = donations.d[i];
       if (o && o.e.trim().toLowerCase() === args.email.trim().toLowerCase()) {
-        o.p = args.value.trim();
+        if (args.field === 'username') {
+          o.p = args.value.trim();
+        } else if (args.field === 'userid') {
+          o.u = args.value.trim();
+        }
         console.log(o);
         success = true;
         break;
