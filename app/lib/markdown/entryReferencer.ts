@@ -16,7 +16,9 @@ export const entryReferencer: Plugin<[EntryReferencerOptions]> = (options) => {
     return (tree: Node) => tree;
   }
   const regex = new RegExp(
-    '\\b(' + Array.from(options.clueMap.keys()).join('|') + ')\\b',
+    '\\b(' +
+      Array.from(options.clueMap.keys()).join('|').replaceAll('\\', '\\\\') +
+      ')\\b',
     'g'
   );
   return (tree: Node) => {
