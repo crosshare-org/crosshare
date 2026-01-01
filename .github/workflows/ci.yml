@@ -8,6 +8,9 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: '20'
+    - uses: actions/setup-java@v5
+      with:
+        java-version: '21'
     - uses: pnpm/action-setup@v4
     - name: Install modules
       working-directory: ./app
