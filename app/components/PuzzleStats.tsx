@@ -468,8 +468,7 @@ export const StatsPage = ({
                       ).length ?? 0}
                     </div>
                     <div>
-                      Total contest submissions:
-                      {stats.ct_subs?.length ?? 0}
+                      Total contest submissions: {stats.ct_subs?.length ?? 0}
                     </div>
                   </div>
                 ) : (
