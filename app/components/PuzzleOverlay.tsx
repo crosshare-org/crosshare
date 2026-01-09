@@ -273,8 +273,7 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
                   {props.puzzle.commentsDisabled
                     ? ''
                     : `Comments posted below will be visible to anyone who finishes
-                  solving the puzzle
-                  ${props.puzzle.isContest ? ' and submits a solution to the meta' : ''}.`}
+                  solving the puzzle${props.puzzle.isContest ? ' and submits a solution to the meta' : ''}.`}
                 </p>
               </>
             ) : (
