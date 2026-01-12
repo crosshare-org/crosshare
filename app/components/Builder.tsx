@@ -540,6 +540,12 @@ export const Builder = (props: BuilderProps & AuthProps): React.JSX.Element => {
       alternates: state.alternates,
       userTags: state.userTags,
       symmetry: state.symmetry,
+      contestAnswers: state.isContestPuzzle
+        ? (state.contestAnswers ?? undefined)
+        : undefined,
+      contestHasPrize: state.isContestPuzzle
+        ? state.contestHasPrize
+        : undefined,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(inProgress));
   }, [
@@ -562,6 +568,9 @@ export const Builder = (props: BuilderProps & AuthProps): React.JSX.Element => {
     state.grid.hBars,
     state.userTags,
     state.symmetry,
+    state.isContestPuzzle,
+    state.contestAnswers,
+    state.contestHasPrize,
   ]);
 
   const reRunAutofill = useCallback(() => {
