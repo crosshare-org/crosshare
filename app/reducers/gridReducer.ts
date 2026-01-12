@@ -181,17 +181,17 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
     if (clickedEntry === undefined) {
       throw new Error('oob');
     }
+    state = closeRebus(state);
+    state = clearSelection(state);
     for (const cell of clickedEntry.cells) {
       if (valAt(state.grid, cell) === EMPTY) {
         return {
-          ...closeRebus(state),
+          ...state,
           wasEntryClick: true,
           active: { ...cell, dir: clickedEntry.direction },
         };
       }
     }
-    state = closeRebus(state);
-    state = clearSelection(state);
     return {
       ...state,
       wasEntryClick: true,

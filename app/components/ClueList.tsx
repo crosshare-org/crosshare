@@ -1,12 +1,5 @@
 import type { Root } from 'hast';
-import {
-  Dispatch,
-  KeyboardEvent,
-  MouseEvent,
-  RefObject,
-  memo,
-  useRef,
-} from 'react';
+import { Dispatch, MouseEvent, RefObject, memo, useRef } from 'react';
 import { EntryBase, GridBase, valAt } from '../lib/gridBase.js';
 import { Position, directionString } from '../lib/types.js';
 import { CluedEntry } from '../lib/viewableGrid.js';
@@ -49,7 +42,7 @@ const ClueListItem = memo(function ClueListItem({
         ref.current.offsetTop - props.listRef.current.offsetTop;
     }
   }
-  function click(e: MouseEvent | KeyboardEvent) {
+  function click(e: MouseEvent) {
     if ((e.target as HTMLElement).tagName.toLowerCase() === 'a') {
       return;
     }
@@ -77,12 +70,12 @@ const ClueListItem = memo(function ClueListItem({
       ref={ref}
       key={props.entry.index}
     >
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
       <div
         className="outlineNone width100"
         role="button"
         tabIndex={0}
         onClick={click}
-        onKeyDown={click}
       >
         <div className={styles.outer}>
           <div className={styles.label}>
