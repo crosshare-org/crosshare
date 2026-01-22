@@ -9,6 +9,42 @@ const donationsCollection = getCollection('donations');
 
 const validFields = ['username', 'userid'];
 
+const print = command({
+  name: 'print',
+  args: {
+    email: positional({ type: string, displayName: 'email' }),
+  },
+  handler: async (args) => {
+    const dbres = await donationsCollection.doc(`donations`).get();
+    if (!dbres.exists) {
+      console.error('no donations doc');
+      return;
+    }
+    const validationResult = DonationsListV.decode(dbres.data());
+    if (validationResult._tag !== 'Right') {
+      console.error(PathReporter.report(validationResult).join(','));
+      return;
+    }
+    const donations = validationResult.right;
+
+    let success = false;
+    for (let i = donations.d.length - 1; i >= 0; i -= 1) {
+      const o = donations.d[i];
+      if (o && o.e.trim().toLowerCase() === args.email.trim().toLowerCase()) {
+        console.log(o);
+        console.log(o.d.toDate());
+        success = true;
+        break;
+      }
+    }
+
+    if (!success) {
+      console.error('email not found in donors list');
+      return;
+    }
+  },
+});
+
 const edit = command({
   name: 'edit',
   args: {
@@ -67,7 +103,7 @@ const edit = command({
 
 const cmd = subcommands({
   name: 'donations',
-  cmds: { edit },
+  cmds: { edit, print },
 });
 
 void run(cmd, process.argv.slice(2));
