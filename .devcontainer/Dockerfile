@@ -11,4 +11,5 @@ RUN firebase setup:emulators:firestore
 RUN firebase setup:emulators:storage
 RUN firebase setup:emulators:ui
 RUN firebase setup:emulators:pubsub
+RUN apt-get install -y --no-install-recommends tmux
 ENV NEXT_PUBLIC_COMMIT_HASH=dev
