@@ -53,6 +53,7 @@ msgstr "<0>email</0> or <1>discord</1>"
 msgid "<0>Upload a .puz file</0><1>Get a Crosshare link to share with solvers</1>"
 msgstr ""
 
+#: components/TopBarChildren.tsx:548
 #: components/TopBar.tsx:469
 msgid "Account"
 msgstr "Akun"
@@ -87,7 +88,7 @@ msgstr "Periksa otomatis"
 msgid "Autochecking"
 msgstr "Otomatis memeriksa"
 
-#: components/Puzzle.tsx:1421
+#: components/Puzzle.tsx:1426
 msgid "Begin Puzzle"
 msgstr "Mulai TTS"
 
@@ -137,7 +138,7 @@ msgstr "Periksa Kata"
 msgid "Checking for previous play data..."
 msgstr "Memeriksa data bermain sebelumnya..."
 
-#: components/Puzzle.tsx:1326
+#: components/Puzzle.tsx:1332
 msgid "Clues"
 msgstr "Soal"
 
@@ -149,7 +150,7 @@ msgstr "berkomentar sebagai"
 msgid "Comments"
 msgstr "Komentar"
 
-#: components/Puzzle.tsx:1356
+#: components/Puzzle.tsx:1361
 msgid "Comments / Leaderboard"
 msgstr "Komentar / Peringkat"
 
@@ -165,7 +166,7 @@ msgstr "pembuat"
 msgid "Constructor Dashboard"
 msgstr "Dasbor Pembuat TTS"
 
-#: components/Puzzle.tsx:1355
+#: components/Puzzle.tsx:1360
 msgid "Contest Prompt / Submission"
 msgstr ""
 
@@ -270,6 +271,10 @@ msgstr "Featured Puzzles | Page {currentPageNumber} | Crosshare"
 msgid "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
 msgstr "TTS pilihan adalah teka-teki silang yang dipilih oleh Crosshare dan kami rasa unik, menyenangkan, dan dibuat dengan apik. Selamat mengisi!"
 
+#: components/TopBarChildren.tsx:170
+msgid "File"
+msgstr ""
+
 #: components/FollowButton.tsx:90
 #: components/FollowButton.tsx:105
 #: components/FollowButton.tsx:155
@@ -284,9 +289,13 @@ msgstr "Mengikuti"
 msgid "Frequently asked questions and information"
 msgstr "Pertanyaan dan informasi yang sering ditanya"
 
-#: components/Puzzle.tsx:1326
+#: components/Puzzle.tsx:1332
 msgid "Grid"
 msgstr "Kotak"
+
+#: components/TopBarChildren.tsx:221
+msgid "Grid Tools"
+msgstr ""
 
 #: components/TopBar.tsx:107
 msgid "hotkey"
@@ -309,7 +318,7 @@ msgstr "baru saja"
 msgid "Keep Trying"
 msgstr "Coba Lagi"
 
-#: components/PuzzleOverlay.tsx:341
+#: components/PuzzleOverlay.tsx:350
 msgid "Leaderboard (updated hourly)"
 msgstr "Papan Peringkat (diperbarui setiap jam)"
 
@@ -372,7 +381,7 @@ msgstr "TTS Terbaru"
 msgid "No longer following {constructorName}"
 msgstr "No longer following {constructorName}"
 
-#: components/PuzzleOverlay.tsx:356
+#: components/PuzzleOverlay.tsx:365
 msgid "Nobody is on the leaderboard yet"
 msgstr "Belum ada siapapun di papan peringkat ini"
 
@@ -391,7 +400,7 @@ msgstr "TTS yang Lebih Lama"
 msgid "Older unfinished solves"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:425
+#: components/PuzzleOverlay.tsx:434
 msgid "Open on crosshare.org"
 msgstr "Buka di crosshare.org"
 
@@ -400,11 +409,11 @@ msgstr "Buka di crosshare.org"
 msgid "Page {page}"
 msgstr "Hal. {page}"
 
-#: components/Puzzle.tsx:1290
+#: components/Puzzle.tsx:1289
 msgid "Pause Game"
 msgstr "Jeda Permainan"
 
-#: components/PuzzleOverlay.tsx:417
+#: components/PuzzleOverlay.tsx:426
 msgid "Powered by crosshare.org"
 msgstr "Dipersembahkan oleh crosshare.org"
 
@@ -450,7 +459,7 @@ msgstr "penerbit"
 msgid "Puzzles tagged"
 msgstr ""
 
-#: components/Puzzle.tsx:1422
+#: components/Puzzle.tsx:1427
 msgid "Ready to get started?"
 msgstr "Siap untuk mulai?"
 
@@ -462,7 +471,7 @@ msgstr "Balas"
 msgid "Report"
 msgstr "Report"
 
-#: components/Puzzle.tsx:1431
+#: components/Puzzle.tsx:1436
 msgid "Resume"
 msgstr "Lanjutkan"
 
@@ -491,7 +500,7 @@ msgstr "Simpan"
 msgid "Set your display name:"
 msgstr "Atur nama tampilan Anda:"
 
-#: components/Puzzle.tsx:1357
+#: components/Puzzle.tsx:1362
 msgid "Show Comments"
 msgstr "Tampilkan Komentar"
 
@@ -574,6 +583,10 @@ msgstr "Perbarui nama tampilan:"
 msgid "View all puzzles"
 msgstr "Lihat semua TTS"
 
+#: components/TopBarChildren.tsx:456
+msgid "View/Settings"
+msgstr ""
+
 #: components/PuzzleOverlay.tsx:215
 msgid "You are currently solving downs-only:"
 msgstr "Anda saat ini mengisi hanya Menurun saja:"
@@ -590,6 +603,6 @@ msgstr "You'll be notified when {constructorName} posts a new puzzle"
 msgid "You've completed the puzzle, but there are one or more mistakes."
 msgstr "Anda sudah menyelesaikan TTS, tetapi masih ada setidaknya satu jawaban salah."
 
-#: components/Puzzle.tsx:1432
+#: components/Puzzle.tsx:1437
 msgid "Your puzzle is paused"
 msgstr "TTS Anda sedang dijeda"

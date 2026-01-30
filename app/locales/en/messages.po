@@ -60,6 +60,7 @@ msgstr "<0>email</0> or <1>discord</1>"
 msgid "<0>Upload a .puz file</0><1>Get a Crosshare link to share with solvers</1>"
 msgstr ""
 
+#: components/TopBarChildren.tsx:548
 #: components/TopBar.tsx:469
 msgid "Account"
 msgstr ""
@@ -94,7 +95,7 @@ msgstr ""
 msgid "Autochecking"
 msgstr ""
 
-#: components/Puzzle.tsx:1421
+#: components/Puzzle.tsx:1426
 msgid "Begin Puzzle"
 msgstr ""
 
@@ -151,7 +152,7 @@ msgstr ""
 msgid "Checking for previous play data..."
 msgstr ""
 
-#: components/Puzzle.tsx:1326
+#: components/Puzzle.tsx:1332
 msgid "Clues"
 msgstr ""
 
@@ -163,7 +164,7 @@ msgstr ""
 msgid "Comments"
 msgstr ""
 
-#: components/Puzzle.tsx:1356
+#: components/Puzzle.tsx:1361
 msgid "Comments / Leaderboard"
 msgstr ""
 
@@ -179,7 +180,7 @@ msgstr ""
 msgid "Constructor Dashboard"
 msgstr ""
 
-#: components/Puzzle.tsx:1355
+#: components/Puzzle.tsx:1360
 msgid "Contest Prompt / Submission"
 msgstr ""
 
@@ -294,6 +295,10 @@ msgstr "Featured Puzzles | Page {currentPageNumber} | Crosshare"
 msgid "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
 msgstr ""
 
+#: components/TopBarChildren.tsx:170
+msgid "File"
+msgstr "File"
+
 #: components/FollowButton.tsx:90
 #: components/FollowButton.tsx:105
 #: components/FollowButton.tsx:155
@@ -308,9 +313,13 @@ msgstr ""
 msgid "Frequently asked questions and information"
 msgstr ""
 
-#: components/Puzzle.tsx:1326
+#: components/Puzzle.tsx:1332
 msgid "Grid"
 msgstr ""
+
+#: components/TopBarChildren.tsx:221
+msgid "Grid Tools"
+msgstr "Grid Tools"
 
 #: components/TopBar.tsx:107
 msgid "hotkey"
@@ -333,7 +342,7 @@ msgstr ""
 msgid "Keep Trying"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:341
+#: components/PuzzleOverlay.tsx:350
 msgid "Leaderboard (updated hourly)"
 msgstr ""
 
@@ -396,7 +405,7 @@ msgstr ""
 msgid "No longer following {constructorName}"
 msgstr "No longer following {constructorName}"
 
-#: components/PuzzleOverlay.tsx:356
+#: components/PuzzleOverlay.tsx:365
 msgid "Nobody is on the leaderboard yet"
 msgstr ""
 
@@ -415,7 +424,7 @@ msgstr ""
 msgid "Older unfinished solves"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:425
+#: components/PuzzleOverlay.tsx:434
 msgid "Open on crosshare.org"
 msgstr ""
 
@@ -424,11 +433,11 @@ msgstr ""
 msgid "Page {page}"
 msgstr ""
 
-#: components/Puzzle.tsx:1290
+#: components/Puzzle.tsx:1289
 msgid "Pause Game"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:417
+#: components/PuzzleOverlay.tsx:426
 msgid "Powered by crosshare.org"
 msgstr ""
 
@@ -474,7 +483,7 @@ msgstr ""
 msgid "Puzzles tagged"
 msgstr ""
 
-#: components/Puzzle.tsx:1422
+#: components/Puzzle.tsx:1427
 msgid "Ready to get started?"
 msgstr ""
 
@@ -486,7 +495,7 @@ msgstr ""
 msgid "Report"
 msgstr "Report"
 
-#: components/Puzzle.tsx:1431
+#: components/Puzzle.tsx:1436
 msgid "Resume"
 msgstr ""
 
@@ -515,7 +524,7 @@ msgstr ""
 msgid "Set your display name:"
 msgstr ""
 
-#: components/Puzzle.tsx:1357
+#: components/Puzzle.tsx:1362
 msgid "Show Comments"
 msgstr ""
 
@@ -603,6 +612,10 @@ msgstr ""
 msgid "View all puzzles"
 msgstr ""
 
+#: components/TopBarChildren.tsx:456
+msgid "View/Settings"
+msgstr "View/Settings"
+
 #: components/PuzzleOverlay.tsx:215
 msgid "You are currently solving downs-only:"
 msgstr ""
@@ -619,6 +632,6 @@ msgstr "You'll be notified when {constructorName} posts a new puzzle"
 msgid "You've completed the puzzle, but there are one or more mistakes."
 msgstr ""
 
-#: components/Puzzle.tsx:1432
+#: components/Puzzle.tsx:1437
 msgid "Your puzzle is paused"
 msgstr ""
