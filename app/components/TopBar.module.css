@@ -10,10 +10,8 @@
 }
 
 .dropdownLinkIcon {
-  display: inline-block;
-
-  width: 35%;
-  margin-right: 5%;
+  display: inline-flex;
+  align-items: center;
 
   font-size: calc(header-height - 10px);
   text-align: right;
@@ -21,9 +19,8 @@
 }
 
 .dropdownLinkText {
-  display: inline-block;
-
-  width: 60%;
+  display: flex;
+  align-items: center;
 
   font-size: calc(header-height - 20px);
   text-align: left;
@@ -36,18 +33,25 @@
 
 @media (hover: hover) and (pointer: fine) {
   .dropdownLinkShortcut {
-    display: inline;
+    display: flex;
+    align-items: center;
+    padding-left: 0.25rem;
   }
 }
 
 .shortcutHint {
+  display: inline-flex;
+  padding-right: 0.25rem;
+  padding-left: 0.25rem;
   font-size: calc(header-height - 10px);
 }
 
 .dropdownLink {
   cursor: pointer;
 
-  display: inline-block;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 
   width: 100%;
   margin: 0;
@@ -367,6 +371,17 @@
   color: var(--text);
   text-decoration: none;
   background-color: rgb(0 0 0 / 10%);
+}
+
+.topBarDropdownSectionHeader {
+  font-size: calc(header-height - 20px);
+  font-weight: bold;
+}
+
+.topBarMoreDropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 /* stylelint-disable-next-line media-feature-name-no-unknown */
