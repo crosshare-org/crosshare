@@ -166,42 +166,52 @@ const toastId = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 export function useSnackbar() {
   const context = useContext(SnackbarContext);
   const snackbarTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  function openSnackbar(message: string | ReactNode, duration = DURATION) {
-    context.dispatch({ type: ActionTypes.ShowSnackbar, message });
-    snackbarTimeout.current = setTimeout(() => {
-      closeSnackbar();
-    }, duration);
-  }
 
-  function showSnackbar(message: string | ReactNode, duration?: number) {
-    if (context.state.isOpen) {
-      closeSnackbar();
-      setTimeout(() => {
-        openSnackbar(message, duration);
-      }, ANIMATION_DELAY);
-    } else {
-      openSnackbar(message, duration);
-    }
-  }
-
-  function closeSnackbar() {
+  const closeSnackbar = useCallback(() => {
     if (snackbarTimeout.current) {
       clearTimeout(snackbarTimeout.current);
       snackbarTimeout.current = null;
     }
     context.dispatch({ type: ActionTypes.CloseSnackbar });
-  }
+  }, [context.dispatch]);
 
-  function addToast(message: string, delay = 0) {
-    const id = toastId();
-    if (delay) {
-      setTimeout(() => {
+  const openSnackbar = useCallback(
+    (message: string | ReactNode, duration = DURATION) => {
+      context.dispatch({ type: ActionTypes.ShowSnackbar, message });
+      snackbarTimeout.current = setTimeout(() => {
+        closeSnackbar();
+      }, duration);
+    },
+    [closeSnackbar, context.dispatch]
+  );
+
+  const showSnackbar = useCallback(
+    (message: string | ReactNode, duration?: number) => {
+      if (context.state.isOpen) {
+        closeSnackbar();
+        setTimeout(() => {
+          openSnackbar(message, duration);
+        }, ANIMATION_DELAY);
+      } else {
+        openSnackbar(message, duration);
+      }
+    },
+    [closeSnackbar, context.state.isOpen, openSnackbar]
+  );
+
+  const addToast = useCallback(
+    (message: string, delay = 0) => {
+      const id = toastId();
+      if (delay) {
+        setTimeout(() => {
+          context.dispatch({ type: ActionTypes.AddToast, id, message });
+        }, delay);
+      } else {
         context.dispatch({ type: ActionTypes.AddToast, id, message });
-      }, delay);
-    } else {
-      context.dispatch({ type: ActionTypes.AddToast, id, message });
-    }
-  }
+      }
+    },
+    [context.dispatch]
+  );
 
   return { showSnackbar, closeSnackbar, addToast };
 }
