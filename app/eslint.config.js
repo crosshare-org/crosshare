@@ -39,16 +39,27 @@ export default tseslint.config(
   },
   pluginLingui.configs['flat/recommended'],
   ...compat.config({
-    plugins: ['css-modules', 'react', 'react-hooks'],
+    plugins: ['css-modules', 'react', 'react-hooks', 'redos'],
     extends: [
       'plugin:react/recommended',
       'plugin:react-hooks/recommended',
       'plugin:css-modules/recommended',
       'plugin:redos/recommended',
-      'plugin:@next/next/core-web-vitals',
+      'plugin:@next/next/recommended',
       'prettier',
     ],
   }),
+  {
+    // Disabled these after upgrading eslint-plugin-react-hooks, they can be enabled in the future
+    rules: {
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/set-state-in-render': 'off',
+      'react-hooks/refs': 'off',
+      'react-hooks/purity': 'off',
+      'react-hooks/immutability': 'off',
+      'react-hooks/preserve-manual-memoization': 'off',
+    },
+  },
   jsxA11y.flatConfigs.recommended,
   {
     settings: {

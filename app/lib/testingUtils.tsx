@@ -24,7 +24,6 @@ export const getUser = (uid: string, isAnonymous: boolean) => {
 export const anonymousUser = getUser('anonymous-user-id', true);
 
 i18n.load({
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   en: messagesEn,
 });
 i18n.activate('en');

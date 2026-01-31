@@ -4,6 +4,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
   },
+  "eslint.useFlatConfig": true,
   "eslint.workingDirectories": [
     { "directory": "./app", "changeProcessCWD": true }
   ],
