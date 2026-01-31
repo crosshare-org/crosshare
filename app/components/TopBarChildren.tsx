@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { Dispatch, memo, useState } from 'react';
 import { CgSidebarRight } from 'react-icons/cg';
 import {
@@ -25,11 +26,9 @@ import {
 import { GiBroom } from 'react-icons/gi';
 import { IoMdStats } from 'react-icons/io';
 import { MdRefresh } from 'react-icons/md';
-import { Trans } from '@lingui/react/macro';
-
+import { importFile } from '../lib/converter.js';
 import { Timestamp } from '../lib/timestamp.js';
 import { KeyK, Symmetry } from '../lib/types.js';
-
 import {
   BuilderState,
   ClearHighlightAction,
@@ -41,9 +40,7 @@ import {
 } from '../reducers/builderReducer.js';
 import { KeypressAction, PuzzleAction } from '../reducers/commonActions.js';
 import { ClickedEntryAction } from '../reducers/gridReducer.js';
-import styles from './Builder.module.css';
-import topBarStyles from './TopBar.module.css';
-
+import { ContactLinks } from './ContactLinks.js';
 import { Histogram } from './Histogram.js';
 import {
   BacktickKey,
@@ -73,8 +70,7 @@ import {
   TopBarDropDownLinkA,
   TopBarLink,
 } from './TopBar.js';
-import { ContactLinks } from './ContactLinks.js';
-import { importFile } from '../lib/converter.js';
+import styles from './TopBarChildren.module.css';
 
 const ImportPuzForm = (props: { dispatch: Dispatch<ImportPuzAction> }) => {
   const [error, setError] = useState<string | null>(null);
@@ -147,15 +143,10 @@ const ImportPuzForm = (props: { dispatch: Dispatch<ImportPuzAction> }) => {
 };
 
 const TopBarDropdownSectionHeader = ({ children }: React.PropsWithChildren) => {
-  return (
-    <h2 className={topBarStyles.topBarDropdownSectionHeader}>{children}</h2>
-  );
+  return <h2 className={styles.topBarDropdownSectionHeader}>{children}</h2>;
 };
 
-interface TopBarDropdownSection {}
-const TopBarDropdownSection = ({
-  children,
-}: React.PropsWithChildren<TopBarDropdownSection>) => {
+const TopBarDropdownSection = ({ children }: React.PropsWithChildren) => {
   return <section>{children}</section>;
 };
 
@@ -612,7 +603,7 @@ const TopBarMoreDropdown = (props: TopBarMoreDropdownProps) => {
   return (
     <TopBarDropDown icon={<FaEllipsisH />} text="More">
       {(closeDropdown) => (
-        <div className={topBarStyles.topBarMoreDropdown}>
+        <div className={styles.topBarMoreDropdown}>
           <FileSection closeDropdown={closeDropdown} dispatch={dispatch} />
           <GridToolsSection
             closeDropdown={closeDropdown}

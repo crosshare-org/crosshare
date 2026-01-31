@@ -165,6 +165,7 @@ const toastId = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 
 export function useSnackbar() {
   const context = useContext(SnackbarContext);
+  const { dispatch } = context;
   const snackbarTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const closeSnackbar = useCallback(() => {
@@ -172,17 +173,17 @@ export function useSnackbar() {
       clearTimeout(snackbarTimeout.current);
       snackbarTimeout.current = null;
     }
-    context.dispatch({ type: ActionTypes.CloseSnackbar });
-  }, [context.dispatch]);
+    dispatch({ type: ActionTypes.CloseSnackbar });
+  }, [dispatch]);
 
   const openSnackbar = useCallback(
     (message: string | ReactNode, duration = DURATION) => {
-      context.dispatch({ type: ActionTypes.ShowSnackbar, message });
+      dispatch({ type: ActionTypes.ShowSnackbar, message });
       snackbarTimeout.current = setTimeout(() => {
         closeSnackbar();
       }, duration);
     },
-    [closeSnackbar, context.dispatch]
+    [closeSnackbar, dispatch]
   );
 
   const showSnackbar = useCallback(
@@ -204,13 +205,13 @@ export function useSnackbar() {
       const id = toastId();
       if (delay) {
         setTimeout(() => {
-          context.dispatch({ type: ActionTypes.AddToast, id, message });
+          dispatch({ type: ActionTypes.AddToast, id, message });
         }, delay);
       } else {
-        context.dispatch({ type: ActionTypes.AddToast, id, message });
+        dispatch({ type: ActionTypes.AddToast, id, message });
       }
     },
-    [context.dispatch]
+    [dispatch]
   );
 
   return { showSnackbar, closeSnackbar, addToast };

@@ -1,0 +1,21 @@
+.fileInput {
+  overflow: hidden;
+  max-width: 70vw;
+}
+
+.statsHeader {
+  margin-top: 1em;
+  text-align: center;
+  text-decoration: underline;
+}
+
+.topBarDropdownSectionHeader {
+  font-size: calc(header-height - 20px);
+  font-weight: bold;
+}
+
+.topBarMoreDropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

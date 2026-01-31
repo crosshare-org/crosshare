@@ -373,17 +373,6 @@
   background-color: rgb(0 0 0 / 10%);
 }
 
-.topBarDropdownSectionHeader {
-  font-size: calc(header-height - 20px);
-  font-weight: bold;
-}
-
-.topBarMoreDropdown {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
 /* stylelint-disable-next-line media-feature-name-no-unknown */
 @media (small-and-up) {
   .linkContentsIcon[data-slate='true'] {
