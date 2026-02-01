@@ -45,7 +45,7 @@ export default tseslint.config(
       'plugin:react-hooks/recommended',
       'plugin:css-modules/recommended',
       'plugin:redos/recommended',
-      'plugin:@next/next/recommended',
+      'plugin:@next/next/core-web-vitals',
       'prettier',
     ],
   }),
