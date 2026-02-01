@@ -27,6 +27,15 @@
   vertical-align: baseline;
 }
 
+.dropdownLinkContent {
+  display: flex;
+  gap: 1rem; /* Space between the icon and the text */
+
+  box-sizing: border-box;
+  width: var(--dropdown-col-width);
+  margin-left: 1rem; /* Indent the button content within each section */
+}
+
 .dropdownLinkShortcut {
   display: none;
 }
@@ -52,6 +61,7 @@
   display: flex;
   gap: 1rem;
   align-items: center;
+  justify-content: center;
 
   width: 100%;
   margin: 0;

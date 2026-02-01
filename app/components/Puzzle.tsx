@@ -1025,7 +1025,7 @@ export const Puzzle = ({
           text={t`More`}
         >
           {(closeDropdown) => (
-            <>
+            <div className={styles.topBarPuzzleMoreDropdown}>
               {!state.success ? (
                 <TopBarDropDownLink
                   icon={<Rebus />}
@@ -1175,7 +1175,7 @@ export const Puzzle = ({
                   />
                 </>
               )}
-            </>
+            </div>
           )}
         </TopBarDropDown>
       </>

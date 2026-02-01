@@ -10,16 +10,19 @@
 }
 
 .topBarDropdownSectionHeader {
+  width: var(--dropdown-col-width);
+  margin-right: auto;
+  margin-bottom: 0;
+  margin-left: auto;
+
   font-size: calc(header-height - 20px);
   font-weight: bold;
 }
 
 .topBarMoreDropdown {
+  --dropdown-col-width: 300px; /* Explicit width so that child content of each button is aligned */
+
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-
-  width: fit-content;
-  margin-right: auto;
-  margin-left: auto;
+  gap: 1rem; /* Spacing between each section */
 }

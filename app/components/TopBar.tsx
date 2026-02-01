@@ -97,7 +97,7 @@ interface TopBarDropDownLinkCommonProps {
 }
 const TopBarDropDownLinkContents = (props: TopBarDropDownLinkCommonProps) => {
   return (
-    <>
+    <div className={styles.dropdownLinkContent}>
       <div className={styles.dropdownLinkIcon}>{props.icon}</div>
       <div className={styles.dropdownLinkText}>
         {props.text}
@@ -111,7 +111,7 @@ const TopBarDropDownLinkContents = (props: TopBarDropDownLinkCommonProps) => {
           ''
         )}
       </div>
-    </>
+    </div>
   );
 };
 
