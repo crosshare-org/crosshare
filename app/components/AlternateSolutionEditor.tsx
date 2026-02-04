@@ -161,7 +161,7 @@ export function AlternateSolutionEditor(props: {
           text="Cancel"
           onClick={props.cancel}
         />
-        <TopBarDropDown icon={<FaEllipsisH />} text="More">
+        <TopBarDropDown icon={<FaEllipsisH />} text="More" contentWidth={240}>
           {() => (
             <>
               <TopBarDropDownLink
