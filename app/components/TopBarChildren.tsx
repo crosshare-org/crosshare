@@ -601,7 +601,7 @@ const TopBarMoreDropdown = (props: TopBarMoreDropdownProps) => {
     isAdmin,
   } = props;
   return (
-    <TopBarDropDown icon={<FaEllipsisH />} text="More">
+    <TopBarDropDown icon={<FaEllipsisH />} text="More" contentWidth={300}>
       {(closeDropdown) => (
         <div className={styles.topBarMoreDropdown}>
           <FileSection closeDropdown={closeDropdown} dispatch={dispatch} />
@@ -700,6 +700,7 @@ const TopBarChildren = (props: TopBarChildrenProps) => {
   return (
     <>
       <TopBarDropDown
+        contentWidth={340}
         icon={autofillIcon}
         text="Autofill"
         hoverText={autofillText}

@@ -29,11 +29,15 @@
 
 .dropdownLinkContent {
   display: flex;
-  gap: 1rem; /* Space between the icon and the text */
+
+  /* Space between the icon and the text */
+  gap: 1rem;
 
   box-sizing: border-box;
-  width: var(--dropdown-col-width);
-  margin-left: 1rem; /* Indent the button content within each section */
+  width: var(--dropdown-content-width, 300px);
+
+  /* Indent the button content within each section */
+  margin-left: 1rem;
 }
 
 .dropdownLinkShortcut {

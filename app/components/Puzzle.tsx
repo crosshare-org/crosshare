@@ -905,6 +905,7 @@ export const Puzzle = ({
         <TopBarDropDown
           icon={isSlate ? <Reveal /> : <FaEye />}
           text={t`Reveal`}
+          contentWidth={160}
         >
           {() => (
             <>
@@ -950,6 +951,7 @@ export const Puzzle = ({
         {isSlate ? <SlateButtonMargin /> : ''}
         {!state.autocheck ? (
           <TopBarDropDown
+            contentWidth={170}
             icon={isSlate ? <Check /> : <FaCheck />}
             text={t`Check`}
           >
@@ -1021,6 +1023,7 @@ export const Puzzle = ({
     () => (
       <>
         <TopBarDropDown
+          contentWidth={240}
           icon={isSlate ? <More /> : <FaEllipsisH />}
           text={t`More`}
         >

@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { updateDoc } from 'firebase/firestore';
 import {
+  CSSProperties,
   ReactNode,
   useCallback,
   useContext,
@@ -32,13 +33,20 @@ import { Link } from './Link.js';
 import { Overlay } from './Overlay.js';
 import styles from './TopBar.module.css';
 
-export const TopBarDropDown = (props: {
+interface TopBarDropdownProps {
   onClose?: () => void;
   text: string;
   icon: ReactNode;
   hoverText?: string;
   children: (close: () => void) => ReactNode;
-}) => {
+  /**
+   * The width of the inner button content in px; enables you to
+   * ensure the content within each button is aligned.
+   */
+  contentWidth: number;
+}
+
+export const TopBarDropDown = (props: TopBarDropdownProps) => {
   const [dropped, setDropped] = useState(false);
   const close = () => {
     props.onClose?.();
@@ -55,7 +63,15 @@ export const TopBarDropDown = (props: {
         hoverText={props.hoverText}
       />
       <Overlay onClick={close} closeCallback={close} hidden={!dropped}>
-        {props.children(close)}
+        <div
+          style={
+            {
+              ['--dropdown-content-width']: `${props.contentWidth}px`,
+            } as CSSProperties
+          }
+        >
+          {props.children(close)}
+        </div>
       </Overlay>
     </>
   );
