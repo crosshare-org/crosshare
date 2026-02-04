@@ -10,32 +10,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { CgSidebarRight } from 'react-icons/cg';
-import {
-  FaEllipsisH,
-  FaEraser,
-  FaEyeSlash,
-  FaFileImport,
-  FaFillDrip,
-  FaHammer,
-  FaKeyboard,
-  FaListOl,
-  FaPalette,
-  FaRegCheckCircle,
-  FaRegCircle,
-  FaRegFile,
-  FaRegNewspaper,
-  FaRegPlusSquare,
-  FaSignInAlt,
-  FaSquare,
-  FaUser,
-  FaUserLock,
-  FaVolumeMute,
-  FaVolumeUp,
-} from 'react-icons/fa';
-import { GiBroom } from 'react-icons/gi';
-import { IoMdStats } from 'react-icons/io';
-import { MdRefresh } from 'react-icons/md';
 import { FixedSizeList as List } from 'react-window';
 import * as WordDB from '../lib/WordDB.js';
 import {
@@ -43,13 +17,12 @@ import {
   numMatchesForEntry,
 } from '../lib/autofillGrid.js';
 import * as BA from '../lib/bitArray.js';
-import { ExportProps, exportFile, importFile } from '../lib/converter.js';
+import { ExportProps, exportFile } from '../lib/converter.js';
 import { isTextInput } from '../lib/domUtils.js';
 import { entryAndCrossAtPosition, getCrosses, valAt } from '../lib/gridBase.js';
 import { usePersistedBoolean, useSize } from '../lib/hooks.js';
 import { fromLocalStorage } from '../lib/storage.js';
 import { PRIMARY } from '../lib/style.js';
-import { Timestamp } from '../lib/timestamp.js';
 import {
   AutofillMessage,
   CancelAutofillMessage,
@@ -62,7 +35,6 @@ import {
   PuzzleInProgressT,
   PuzzleInProgressV,
   PuzzleT,
-  Symmetry,
   WorkerMessage,
   fromKeyString,
   fromKeyboardEvent,
@@ -75,13 +47,8 @@ import { getAutofillWorker } from '../lib/workerLoader.js';
 import {
   BuilderGrid,
   BuilderState,
-  ClearHighlightAction,
   ClickedFillAction,
-  ImportPuzAction,
-  PublishAction,
   SetShowDownloadLink,
-  SymmetryAction,
-  ToggleHighlightAction,
   UseHighlightAction,
   builderReducer,
   getClueProps,
@@ -99,30 +66,8 @@ import styles from './Builder.module.css';
 import { Button, ButtonReset } from './Buttons.js';
 import { ClueMode } from './ClueMode.js';
 import { ColorPicker } from './ColorPicker.js';
-import { ContactLinks } from './ContactLinks.js';
 import { FullscreenCSS } from './FullscreenCSS.js';
 import { GridView } from './Grid.js';
-import { Histogram } from './Histogram.js';
-import {
-  BacktickKey,
-  CommaKey,
-  EnterKey,
-  EscapeKey,
-  ExclamationKey,
-  KeyIcon,
-  PeriodKey,
-  Rebus,
-  SpinnerDisabled,
-  SpinnerFailed,
-  SpinnerFinished,
-  SpinnerWorking,
-  SymmetryHorizontal,
-  SymmetryIcon,
-  SymmetryNone,
-  SymmetryRotational,
-  SymmetryVertical,
-  TildeKey,
-} from './Icons.js';
 import { Keyboard } from './Keyboard.js';
 import { NewPuzzleForm } from './NewPuzzleForm.js';
 import { Overlay } from './Overlay.js';
@@ -130,15 +75,8 @@ import { SquareAndCols } from './Page.js';
 import { PublishErrorsOverlay } from './PublishErrorsOverlay.js';
 import { PublishOverlay } from './PublishOverlay.js';
 import { Snackbar, useSnackbar } from './Snackbar.js';
-import {
-  DefaultTopBar,
-  NestedDropDown,
-  TopBar,
-  TopBarDropDown,
-  TopBarDropDownLink,
-  TopBarDropDownLinkA,
-  TopBarLink,
-} from './TopBar.js';
+import { DefaultTopBar, TopBar } from './TopBar.js';
+import { MemoizedTopBarChildren } from './TopBarChildren.js';
 
 type BuilderProps = PartialBy<
   Omit<
@@ -284,76 +222,6 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     userTags: saved?.userTags ?? [],
     symmetry: saved?.symmetry,
   });
-};
-
-const ImportPuzForm = (props: { dispatch: Dispatch<ImportPuzAction> }) => {
-  const [error, setError] = useState<string | null>(null);
-
-  function handleFile(f: FileList | null) {
-    if (!f?.[0]) {
-      setError('No file selected');
-      return;
-    }
-    const fileReader = new FileReader();
-    fileReader.onloadend = () => {
-      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-      if (!fileReader.result) {
-        setError('No file result');
-      } else if (typeof fileReader.result === 'string') {
-        setError('Failed to read as binary');
-      } else {
-        try {
-          const puzzle = importFile(new Uint8Array(fileReader.result));
-          if (!puzzle) {
-            setError('Failed to parse file');
-          } else {
-            props.dispatch({
-              type: 'IMPORTPUZ',
-              puz: puzzle,
-            });
-          }
-        } catch (error) {
-          if (error instanceof Error) {
-            setError(error.message);
-          } else {
-            setError('Could not import file');
-          }
-          console.error(error);
-        }
-      }
-    };
-    fileReader.readAsArrayBuffer(f[0]);
-  }
-
-  return (
-    <>
-      {error ? (
-        <>
-          <p>Error: {error}</p>
-          <p>
-            If your puzzle isn&apos;t uploading correctly please get in touch
-            via <ContactLinks /> so we can help!
-          </p>
-        </>
-      ) : (
-        ''
-      )}
-      <label>
-        <p>
-          Select a .puz file to import - any existing progress on your current
-          construction will be overwritten!
-        </p>
-        <input
-          className={styles.fileInput}
-          type="file"
-          accept=".puz"
-          onChange={(e) => {
-            handleFile(e.target.files);
-          }}
-        />
-      </label>
-    </>
-  );
 };
 
 export const Builder = (props: BuilderProps & AuthProps): React.JSX.Element => {
@@ -1103,444 +971,24 @@ const GridMode = ({
     [dispatch]
   );
 
-  const topBarChildren = useMemo(() => {
-    let autofillIcon = <SpinnerDisabled />;
-    let autofillReverseIcon = <SpinnerWorking />;
-    let autofillReverseText = 'Enable Autofill';
-    let autofillText = 'Autofill disabled';
-    if (props.autofillEnabled) {
-      autofillReverseIcon = <SpinnerDisabled />;
-      autofillReverseText = 'Disable Autofill';
-      if (props.autofillInProgress) {
-        autofillIcon = <SpinnerWorking />;
-        autofillText = 'Autofill in progress';
-      } else if (props.autofilledGrid.length) {
-        autofillIcon = <SpinnerFinished />;
-        autofillText = 'Autofill complete';
-      } else {
-        autofillIcon = <SpinnerFailed />;
-        autofillText = "Couldn't autofill this grid";
-      }
-    }
-    return (
-      <>
-        <TopBarDropDown
-          icon={autofillIcon}
-          text="Autofill"
-          hoverText={autofillText}
-        >
-          {() => (
-            <>
-              <TopBarDropDownLink
-                icon={autofillReverseIcon}
-                text={autofillReverseText}
-                onClick={toggleAutofillEnabled}
-              />
-              <TopBarDropDownLink
-                icon={<FaSignInAlt />}
-                text="Jump to Most Constrained"
-                shortcutHint={<ExclamationKey />}
-                onClick={() => {
-                  const entry = getMostConstrainedEntry();
-                  if (entry !== null) {
-                    const ca: ClickedEntryAction = {
-                      type: 'CLICKEDENTRY',
-                      entryIndex: entry,
-                    };
-                    dispatch(ca);
-                  }
-                }}
-              />
-              <TopBarDropDownLink
-                icon={<MdRefresh />}
-                text="Rerun Autofiller"
-                shortcutHint={<EnterKey />}
-                onClick={() => {
-                  reRunAutofill();
-                }}
-              />
-            </>
-          )}
-        </TopBarDropDown>
-        <TopBarLink
-          icon={<FaListOl />}
-          text="Clues"
-          onClick={() => {
-            setClueMode(true);
-          }}
-        />
-        <TopBarLink
-          icon={<FaRegNewspaper />}
-          text="Publish"
-          onClick={() => {
-            const a: PublishAction = {
-              type: 'PUBLISH',
-              publishTimestamp: Timestamp.now(),
-            };
-            dispatch(a);
-          }}
-        />
-        <TopBarDropDown icon={<FaEllipsisH />} text="More">
-          {(closeDropdown) => (
-            <>
-              <NestedDropDown
-                closeParent={closeDropdown}
-                icon={<FaRegPlusSquare />}
-                text="New Puzzle"
-              >
-                {() => <NewPuzzleForm dispatch={dispatch} />}
-              </NestedDropDown>
-              <NestedDropDown
-                closeParent={closeDropdown}
-                icon={<FaFileImport />}
-                text="Import .puz File"
-              >
-                {() => <ImportPuzForm dispatch={dispatch} />}
-              </NestedDropDown>
-              <TopBarDropDownLink
-                icon={<FaRegFile />}
-                text="Export .puz File"
-                onClick={() => {
-                  const a: SetShowDownloadLink = {
-                    type: 'SETSHOWDOWNLOAD',
-                    value: true,
-                  };
-                  dispatch(a);
-                }}
-              />
-              <NestedDropDown
-                closeParent={closeDropdown}
-                icon={<IoMdStats />}
-                text="Stats"
-              >
-                {() => (
-                  <>
-                    <h2>Grid</h2>
-                    <div>
-                      {state.gridIsComplete ? (
-                        <FaRegCheckCircle />
-                      ) : (
-                        <FaRegCircle />
-                      )}{' '}
-                      All cells should be filled
-                    </div>
-                    <div>
-                      {state.hasNoShortWords ? (
-                        <FaRegCheckCircle />
-                      ) : (
-                        <FaRegCircle />
-                      )}{' '}
-                      All words should be at least three letters
-                    </div>
-                    <div>
-                      {state.repeats.size > 0 ? (
-                        <>
-                          <FaRegCircle /> (
-                          {Array.from(state.repeats).sort().join(', ')})
-                        </>
-                      ) : (
-                        <FaRegCheckCircle />
-                      )}{' '}
-                      No words should be repeated
-                    </div>
-                    <h2 className="marginTop1-5em">Fill</h2>
-                    <div>Number of words: {stats.numEntries}</div>
-                    <div>
-                      Mean word length: {stats.averageLength.toPrecision(3)}
-                    </div>
-                    <div>
-                      Number of blocks: {stats.numBlocks} (
-                      {((100 * stats.numBlocks) / stats.numTotal).toFixed(1)}%)
-                    </div>
-                    <div className={styles.statsHeader}>Word Lengths</div>
-                    <Histogram
-                      data={stats.lengthHistogram}
-                      names={stats.lengthHistogramNames}
-                    />
-                    <div className={styles.statsHeader}>Letter Counts</div>
-                    <Histogram
-                      data={stats.lettersHistogram}
-                      names={stats.lettersHistogramNames}
-                    />
-                  </>
-                )}
-              </NestedDropDown>
-              <NestedDropDown
-                closeParent={closeDropdown}
-                icon={<SymmetryIcon type={state.symmetry} />}
-                text="Change Symmetry"
-              >
-                {() => (
-                  <>
-                    <TopBarDropDownLink
-                      icon={<SymmetryRotational />}
-                      text="Use Rotational Symmetry"
-                      onClick={() => {
-                        const a: SymmetryAction = {
-                          type: 'CHANGESYMMETRY',
-                          symmetry: Symmetry.Rotational,
-                        };
-                        dispatch(a);
-                      }}
-                    />
-                    <TopBarDropDownLink
-                      icon={<SymmetryHorizontal />}
-                      text="Use Horizontal Symmetry"
-                      onClick={() => {
-                        const a: SymmetryAction = {
-                          type: 'CHANGESYMMETRY',
-                          symmetry: Symmetry.Horizontal,
-                        };
-                        dispatch(a);
-                      }}
-                    />
-                    <TopBarDropDownLink
-                      icon={<SymmetryVertical />}
-                      text="Use Vertical Symmetry"
-                      onClick={() => {
-                        const a: SymmetryAction = {
-                          type: 'CHANGESYMMETRY',
-                          symmetry: Symmetry.Vertical,
-                        };
-                        dispatch(a);
-                      }}
-                    />
-                    <TopBarDropDownLink
-                      icon={<SymmetryNone />}
-                      text="Use No Symmetry"
-                      onClick={() => {
-                        const a: SymmetryAction = {
-                          type: 'CHANGESYMMETRY',
-                          symmetry: Symmetry.None,
-                        };
-                        dispatch(a);
-                      }}
-                    />
-                    {state.grid.width === state.grid.height ? (
-                      <>
-                        <TopBarDropDownLink
-                          icon={<SymmetryIcon type={Symmetry.DiagonalNESW} />}
-                          text="Use NE/SW Diagonal Symmetry"
-                          onClick={() => {
-                            const a: SymmetryAction = {
-                              type: 'CHANGESYMMETRY',
-                              symmetry: Symmetry.DiagonalNESW,
-                            };
-                            dispatch(a);
-                          }}
-                        />
-                        <TopBarDropDownLink
-                          icon={<SymmetryIcon type={Symmetry.DiagonalNWSE} />}
-                          text="Use NW/SE Diagonal Symmetry"
-                          onClick={() => {
-                            const a: SymmetryAction = {
-                              type: 'CHANGESYMMETRY',
-                              symmetry: Symmetry.DiagonalNWSE,
-                            };
-                            dispatch(a);
-                          }}
-                        />
-                      </>
-                    ) : (
-                      ''
-                    )}
-                  </>
-                )}
-              </NestedDropDown>
-              <TopBarDropDownLink
-                icon={<FaSquare />}
-                text="Toggle Block"
-                shortcutHint={<PeriodKey />}
-                onClick={() => {
-                  const a: KeypressAction = {
-                    type: 'KEYPRESS',
-                    key: { k: KeyK.Dot },
-                  };
-                  dispatch(a);
-                }}
-              />
-              <TopBarDropDownLink
-                icon={<CgSidebarRight />}
-                text="Toggle Bar"
-                shortcutHint={<CommaKey />}
-                onClick={() => {
-                  const a: KeypressAction = {
-                    type: 'KEYPRESS',
-                    key: { k: KeyK.Comma },
-                  };
-                  dispatch(a);
-                }}
-              />
-              <TopBarDropDownLink
-                icon={<FaEyeSlash />}
-                text="Toggle Cell Visibility"
-                shortcutHint={<KeyIcon text="#" />}
-                onClick={() => {
-                  const a: KeypressAction = {
-                    type: 'KEYPRESS',
-                    key: { k: KeyK.Octothorp },
-                  };
-                  dispatch(a);
-                }}
-              />
-              <TopBarDropDownLink
-                icon={<Rebus />}
-                text="Enter Rebus"
-                shortcutHint={<EscapeKey />}
-                onClick={() => {
-                  const a: KeypressAction = {
-                    type: 'KEYPRESS',
-                    key: { k: KeyK.Escape },
-                  };
-                  dispatch(a);
-                }}
-              />
-              <TopBarDropDownLink
-                icon={<FaRegCircle />}
-                text="Toggle Circle Highlight"
-                shortcutHint={<BacktickKey />}
-                onClick={() => {
-                  const a: KeypressAction = {
-                    type: 'KEYPRESS',
-                    key: { k: KeyK.Backtick },
-                  };
-                  dispatch(a);
-                }}
-              />
-              <TopBarDropDownLink
-                icon={<FaFillDrip />}
-                text="Toggle Shade Highlight"
-                shortcutHint={<TildeKey />}
-                onClick={() => {
-                  const a: KeypressAction = {
-                    type: 'KEYPRESS',
-                    key: { k: KeyK.Tilde },
-                  };
-                  dispatch(a);
-                }}
-              />
-              {usedHighlightColors.map((highlight) => (
-                <TopBarDropDownLink
-                  key={highlight}
-                  icon={<FaSquare color={highlight} />}
-                  text="Toggle Highlight Color"
-                  onClick={() => {
-                    const a: ToggleHighlightAction = {
-                      type: 'TOGGLEHIGHLIGHT',
-                      highlight,
-                    };
-                    dispatch(a);
-                  }}
-                />
-              ))}
-              {usedHighlightColors.length < 8 ? (
-                <TopBarDropDownLink
-                  icon={<FaPalette />}
-                  text="Use Custom Highlight Color"
-                  onClick={() => {
-                    setPickingHighlightColor(true);
-                  }}
-                />
-              ) : (
-                ''
-              )}
-              <TopBarDropDownLink
-                icon={<GiBroom />}
-                text="Clear Fill"
-                onClick={() => {
-                  dispatch({ type: 'CLEARFILL' });
-                }}
-              />
-              <TopBarDropDownLink
-                icon={<FaEraser />}
-                text="Clear Highlights for Selection"
-                onClick={() => {
-                  const a: ClearHighlightAction = {
-                    type: 'CLEARHIGHLIGHT',
-                  };
-                  dispatch(a);
-                }}
-              />
-              {muted ? (
-                <TopBarDropDownLink
-                  icon={<FaVolumeUp />}
-                  text="Unmute"
-                  onClick={() => {
-                    setMuted(false);
-                  }}
-                />
-              ) : (
-                <TopBarDropDownLink
-                  icon={<FaVolumeMute />}
-                  text="Mute"
-                  onClick={() => {
-                    setMuted(true);
-                  }}
-                />
-              )}
-              <TopBarDropDownLink
-                icon={<FaKeyboard />}
-                text="Toggle Keyboard"
-                onClick={() => {
-                  setToggleKeyboard(!toggleKeyboard);
-                }}
-              />
-              {props.isAdmin ? (
-                <>
-                  <TopBarDropDownLinkA
-                    href="/admin"
-                    icon={<FaUserLock />}
-                    text="Admin"
-                  />
-                </>
-              ) : (
-                ''
-              )}
-              <TopBarDropDownLinkA
-                href="/dashboard"
-                icon={<FaHammer />}
-                text="Constructor Dashboard"
-              />
-              <TopBarDropDownLinkA
-                href="/account"
-                icon={<FaUser />}
-                text="Account"
-              />
-            </>
-          )}
-        </TopBarDropDown>
-      </>
-    );
-  }, [
-    props.autofillEnabled,
-    props.autofillInProgress,
-    props.autofilledGrid.length,
-    props.isAdmin,
-    toggleAutofillEnabled,
-    getMostConstrainedEntry,
-    dispatch,
-    reRunAutofill,
-    setClueMode,
-    state.symmetry,
-    state.gridIsComplete,
-    state.hasNoShortWords,
-    state.repeats,
-    state.grid.width,
-    state.grid.height,
-    usedHighlightColors,
-    muted,
-    stats.numEntries,
-    stats.averageLength,
-    stats.numBlocks,
-    stats.numTotal,
-    stats.lengthHistogram,
-    stats.lengthHistogramNames,
-    stats.lettersHistogram,
-    stats.lettersHistogramNames,
-    setMuted,
-    setToggleKeyboard,
-    toggleKeyboard,
-  ]);
+  const builderStateForTopBar = useMemo(
+    () => ({
+      symmetry: state.symmetry,
+      gridIsComplete: state.gridIsComplete,
+      hasNoShortWords: state.hasNoShortWords,
+      repeats: state.repeats,
+      gridWidth: state.grid.width,
+      gridHeight: state.grid.height,
+    }),
+    [
+      state.symmetry,
+      state.gridIsComplete,
+      state.hasNoShortWords,
+      state.repeats,
+      state.grid.width,
+      state.grid.height,
+    ]
+  );
 
   return (
     <>
@@ -1555,7 +1003,27 @@ const GridMode = ({
       )}
       <div className={styles.page}>
         <div className="flexNone">
-          <TopBar>{topBarChildren}</TopBar>
+          <TopBar>
+            <MemoizedTopBarChildren
+              autofillEnabled={autofillEnabled}
+              autofillInProgress={props.autofillInProgress}
+              autofilledGridLength={props.autofilledGrid.length}
+              isAdmin={props.isAdmin}
+              toggleAutofillEnabled={toggleAutofillEnabled}
+              getMostConstrainedEntry={getMostConstrainedEntry}
+              dispatch={dispatch}
+              reRunAutofill={reRunAutofill}
+              setClueMode={setClueMode}
+              builderState={builderStateForTopBar}
+              stats={stats}
+              usedHighlightColors={usedHighlightColors}
+              setPickingHighlightColor={setPickingHighlightColor}
+              muted={muted}
+              setMuted={setMuted}
+              toggleKeyboard={toggleKeyboard}
+              setToggleKeyboard={setToggleKeyboard}
+            />
+          </TopBar>
         </div>
         {pickingHighlightColor ? (
           <Overlay

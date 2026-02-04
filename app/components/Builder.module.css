@@ -57,19 +57,8 @@
   font-weight: normal;
 }
 
-.fileInput {
-  overflow: hidden;
-  max-width: 70vw;
-}
-
 .newPuzzleWrapper {
   margin: 1em 2em;
-}
-
-.statsHeader {
-  margin-top: 1em;
-  text-align: center;
-  text-decoration: underline;
 }
 
 .page {

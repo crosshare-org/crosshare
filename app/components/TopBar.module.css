@@ -10,10 +10,8 @@
 }
 
 .dropdownLinkIcon {
-  display: inline-block;
-
-  width: 35%;
-  margin-right: 5%;
+  display: inline-flex;
+  align-items: center;
 
   font-size: calc(header-height - 10px);
   text-align: right;
@@ -21,13 +19,25 @@
 }
 
 .dropdownLinkText {
-  display: inline-block;
-
-  width: 60%;
+  display: flex;
+  align-items: center;
 
   font-size: calc(header-height - 20px);
   text-align: left;
   vertical-align: baseline;
+}
+
+.dropdownLinkContent {
+  display: flex;
+
+  /* Space between the icon and the text */
+  gap: 1rem;
+
+  box-sizing: border-box;
+  width: var(--dropdown-content-width, 300px);
+
+  /* Indent the button content within each section */
+  margin-left: 1rem;
 }
 
 .dropdownLinkShortcut {
@@ -36,18 +46,26 @@
 
 @media (hover: hover) and (pointer: fine) {
   .dropdownLinkShortcut {
-    display: inline;
+    display: flex;
+    align-items: center;
+    padding-left: 0.25rem;
   }
 }
 
 .shortcutHint {
+  display: inline-flex;
+  padding-right: 0.25rem;
+  padding-left: 0.25rem;
   font-size: calc(header-height - 10px);
 }
 
 .dropdownLink {
   cursor: pointer;
 
-  display: inline-block;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
 
   width: 100%;
   margin: 0;

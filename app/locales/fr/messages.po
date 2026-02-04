@@ -55,6 +55,7 @@ msgstr "<0>email</0> or <1>discord</1>"
 msgid "<0>Upload a .puz file</0><1>Get a Crosshare link to share with solvers</1>"
 msgstr ""
 
+#: components/TopBarChildren.tsx:548
 #: components/TopBar.tsx:469
 msgid "Account"
 msgstr "Compter"
@@ -89,7 +90,7 @@ msgstr "Autocheck"
 msgid "Autochecking"
 msgstr "Vérifie"
 
-#: components/Puzzle.tsx:1421
+#: components/Puzzle.tsx:1426
 msgid "Begin Puzzle"
 msgstr "Commencer le Puzzle"
 
@@ -139,7 +140,7 @@ msgstr "Vérifier le Mot"
 msgid "Checking for previous play data..."
 msgstr "Trouver pour données de jouer précédentes..."
 
-#: components/Puzzle.tsx:1326
+#: components/Puzzle.tsx:1332
 msgid "Clues"
 msgstr "Les Indices"
 
@@ -151,7 +152,7 @@ msgstr "commentant en tant que"
 msgid "Comments"
 msgstr "Les Commentaires"
 
-#: components/Puzzle.tsx:1356
+#: components/Puzzle.tsx:1361
 msgid "Comments / Leaderboard"
 msgstr "Les Commentaires / Le Classement"
 
@@ -167,7 +168,7 @@ msgstr ""
 msgid "Constructor Dashboard"
 msgstr "Tableau le Bord de Créateur"
 
-#: components/Puzzle.tsx:1355
+#: components/Puzzle.tsx:1360
 msgid "Contest Prompt / Submission"
 msgstr "Prompt de Concours / Présentation"
 
@@ -272,6 +273,10 @@ msgstr "Featured Puzzles | Page {currentPageNumber} | Crosshare"
 msgid "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
 msgstr ""
 
+#: components/TopBarChildren.tsx:170
+msgid "File"
+msgstr ""
+
 #: components/FollowButton.tsx:90
 #: components/FollowButton.tsx:105
 #: components/FollowButton.tsx:155
@@ -286,9 +291,13 @@ msgstr "Suivant"
 msgid "Frequently asked questions and information"
 msgstr ""
 
-#: components/Puzzle.tsx:1326
+#: components/Puzzle.tsx:1332
 msgid "Grid"
 msgstr "Grille"
+
+#: components/TopBarChildren.tsx:221
+msgid "Grid Tools"
+msgstr ""
 
 #: components/TopBar.tsx:107
 msgid "hotkey"
@@ -311,7 +320,7 @@ msgstr "tout à l'heure"
 msgid "Keep Trying"
 msgstr "Continuer d'Essayer"
 
-#: components/PuzzleOverlay.tsx:341
+#: components/PuzzleOverlay.tsx:350
 msgid "Leaderboard (updated hourly)"
 msgstr "Le Classement (mis à jour toutes les heures)"
 
@@ -374,7 +383,7 @@ msgstr "Puzzles le plus récentes"
 msgid "No longer following {constructorName}"
 msgstr "Ne plus suivant {constructorName}"
 
-#: components/PuzzleOverlay.tsx:356
+#: components/PuzzleOverlay.tsx:365
 msgid "Nobody is on the leaderboard yet"
 msgstr "En ce moment, le classement est vide"
 
@@ -393,7 +402,7 @@ msgstr "Vieux Puzzles"
 msgid "Older unfinished solves"
 msgstr "Vieilles tentatives inachevé"
 
-#: components/PuzzleOverlay.tsx:425
+#: components/PuzzleOverlay.tsx:434
 msgid "Open on crosshare.org"
 msgstr "Ouvrier sur crosshare.org"
 
@@ -402,11 +411,11 @@ msgstr "Ouvrier sur crosshare.org"
 msgid "Page {page}"
 msgstr "Page {page}"
 
-#: components/Puzzle.tsx:1290
+#: components/Puzzle.tsx:1289
 msgid "Pause Game"
 msgstr "Arrêter le Jeu"
 
-#: components/PuzzleOverlay.tsx:417
+#: components/PuzzleOverlay.tsx:426
 msgid "Powered by crosshare.org"
 msgstr "Géré par crosshare.org"
 
@@ -452,7 +461,7 @@ msgstr "éditeur"
 msgid "Puzzles tagged"
 msgstr ""
 
-#: components/Puzzle.tsx:1422
+#: components/Puzzle.tsx:1427
 msgid "Ready to get started?"
 msgstr "Prêt à partir?"
 
@@ -464,7 +473,7 @@ msgstr "Répondre"
 msgid "Report"
 msgstr "Report"
 
-#: components/Puzzle.tsx:1431
+#: components/Puzzle.tsx:1436
 msgid "Resume"
 msgstr "Reprise"
 
@@ -493,7 +502,7 @@ msgstr "Enregistrer vos progrés"
 msgid "Set your display name:"
 msgstr "Choisir votre nom affiché:"
 
-#: components/Puzzle.tsx:1357
+#: components/Puzzle.tsx:1362
 msgid "Show Comments"
 msgstr "Montrer les Commentaires"
 
@@ -576,6 +585,10 @@ msgstr "Mettre à jour votre nom affiché:"
 msgid "View all puzzles"
 msgstr "Voir tous les puzzles"
 
+#: components/TopBarChildren.tsx:456
+msgid "View/Settings"
+msgstr ""
+
 #: components/PuzzleOverlay.tsx:215
 msgid "You are currently solving downs-only:"
 msgstr "Vous résoudre actuellement seulement verticales:"
@@ -592,6 +605,6 @@ msgstr "Vous serez averti quand {constructorName} publiera un nouveau puzzle"
 msgid "You've completed the puzzle, but there are one or more mistakes."
 msgstr "Vous avez fini le puzzle, mais il y a quelques erreurs."
 
-#: components/Puzzle.tsx:1432
+#: components/Puzzle.tsx:1437
 msgid "Your puzzle is paused"
 msgstr "Votre puzzle est arrêté"

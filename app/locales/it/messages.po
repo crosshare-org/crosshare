@@ -55,6 +55,7 @@ msgstr "<0>email</0> or <1>discord</1>"
 msgid "<0>Upload a .puz file</0><1>Get a Crosshare link to share with solvers</1>"
 msgstr "<0>Carica un file .puz</0> <1>Ottieni un link Crosshare da condividere con i risolutori</1>"
 
+#: components/TopBarChildren.tsx:548
 #: components/TopBar.tsx:469
 msgid "Account"
 msgstr "Account"
@@ -89,7 +90,7 @@ msgstr "Controllo automatico"
 msgid "Autochecking"
 msgstr "Controllo automatico in corso"
 
-#: components/Puzzle.tsx:1421
+#: components/Puzzle.tsx:1426
 msgid "Begin Puzzle"
 msgstr "Inizia il Cruciverba"
 
@@ -139,7 +140,7 @@ msgstr "Controlla la Parola"
 msgid "Checking for previous play data..."
 msgstr "Controllo se esistono file di gioco salvati..."
 
-#: components/Puzzle.tsx:1326
+#: components/Puzzle.tsx:1332
 msgid "Clues"
 msgstr "Definizioni"
 
@@ -151,7 +152,7 @@ msgstr "stai commentando come"
 msgid "Comments"
 msgstr "Commenti"
 
-#: components/Puzzle.tsx:1356
+#: components/Puzzle.tsx:1361
 msgid "Comments / Leaderboard"
 msgstr "Commenti / Classifica"
 
@@ -167,7 +168,7 @@ msgstr "costruttore"
 msgid "Constructor Dashboard"
 msgstr "Pannello di Controllo del Costruttore"
 
-#: components/Puzzle.tsx:1355
+#: components/Puzzle.tsx:1360
 msgid "Contest Prompt / Submission"
 msgstr "Inserisci e invia la risposta al contest"
 
@@ -265,6 +266,10 @@ msgstr "Cruciverba in Evidenza | Pagina {currentPageNumber} | Crosshare"
 msgid "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
 msgstr "I cruciverba in evidenza sono schemi selezionati da Crosshare che abbiamo trovato particolarmente divertenti e ben costruiti. Divertiti!"
 
+#: components/TopBarChildren.tsx:170
+msgid "File"
+msgstr ""
+
 #: components/FollowButton.tsx:90
 #: components/FollowButton.tsx:105
 #: components/FollowButton.tsx:155
@@ -279,9 +284,13 @@ msgstr "Segui già"
 msgid "Frequently asked questions and information"
 msgstr "Domande frequenti e informazioni"
 
-#: components/Puzzle.tsx:1326
+#: components/Puzzle.tsx:1332
 msgid "Grid"
 msgstr "Griglia"
+
+#: components/TopBarChildren.tsx:221
+msgid "Grid Tools"
+msgstr ""
 
 #: components/TopBar.tsx:107
 msgid "hotkey"
@@ -304,7 +313,7 @@ msgstr "ora"
 msgid "Keep Trying"
 msgstr "Riprova"
 
-#: components/PuzzleOverlay.tsx:341
+#: components/PuzzleOverlay.tsx:350
 msgid "Leaderboard (updated hourly)"
 msgstr "Classifica (aggiornata ogni ora)"
 
@@ -367,7 +376,7 @@ msgstr "Cruciverba più Recenti"
 msgid "No longer following {constructorName}"
 msgstr "Non segui più {constructorName}"
 
-#: components/PuzzleOverlay.tsx:356
+#: components/PuzzleOverlay.tsx:365
 msgid "Nobody is on the leaderboard yet"
 msgstr "La classifica è vuota per ora."
 
@@ -386,7 +395,7 @@ msgstr "Cruciverba Più Vecchi"
 msgid "Older unfinished solves"
 msgstr "Altri tentativi non completati"
 
-#: components/PuzzleOverlay.tsx:425
+#: components/PuzzleOverlay.tsx:434
 msgid "Open on crosshare.org"
 msgstr "Apri su crosshare.org"
 
@@ -395,11 +404,11 @@ msgstr "Apri su crosshare.org"
 msgid "Page {page}"
 msgstr "Pagina {page}"
 
-#: components/Puzzle.tsx:1290
+#: components/Puzzle.tsx:1289
 msgid "Pause Game"
 msgstr "Metti in pausa il gioco"
 
-#: components/PuzzleOverlay.tsx:417
+#: components/PuzzleOverlay.tsx:426
 msgid "Powered by crosshare.org"
 msgstr "Realizzato da crosshare.org"
 
@@ -445,7 +454,7 @@ msgstr "editore"
 msgid "Puzzles tagged"
 msgstr ""
 
-#: components/Puzzle.tsx:1422
+#: components/Puzzle.tsx:1427
 msgid "Ready to get started?"
 msgstr "Pronto per iniziare?"
 
@@ -457,7 +466,7 @@ msgstr "Rispondi"
 msgid "Report"
 msgstr "Report"
 
-#: components/Puzzle.tsx:1431
+#: components/Puzzle.tsx:1436
 msgid "Resume"
 msgstr "Riprendi"
 
@@ -486,7 +495,7 @@ msgstr "Salva"
 msgid "Set your display name:"
 msgstr "Imposta il tuo nome:"
 
-#: components/Puzzle.tsx:1357
+#: components/Puzzle.tsx:1362
 msgid "Show Comments"
 msgstr "Mostra i Commenti"
 
@@ -569,6 +578,10 @@ msgstr "Aggiorna il tuo nome:"
 msgid "View all puzzles"
 msgstr "Vedi tutti i cruciverba"
 
+#: components/TopBarChildren.tsx:456
+msgid "View/Settings"
+msgstr ""
+
 #: components/PuzzleOverlay.tsx:215
 msgid "You are currently solving downs-only:"
 msgstr "Al momento stai risolvendo con solo le verticali:"
@@ -585,6 +598,6 @@ msgstr "Sarai notificatio quando {constructorName} carica un nuovo cruciverba"
 msgid "You've completed the puzzle, but there are one or more mistakes."
 msgstr "Hai completato il cruciverba, ma c'è almeno un errore."
 
-#: components/Puzzle.tsx:1432
+#: components/Puzzle.tsx:1437
 msgid "Your puzzle is paused"
 msgstr "Il tuo cruciverba è in pausa"
