@@ -8,7 +8,7 @@ export interface ClueReferenceData {
 }
 
 const re =
-  /(^|\s|\/|\()(?<numSection>(,? ?(and)? ?\b\d{1,3}-? ?){1,7})(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
+  /(^|\s|\/|\()(?<numSection>(,? ?(and|or)? ?\b\d{1,3}-? ?){1,7})(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
 
 export const parseClueReferences = (text: string): ClueReferenceData[] => {
   const refs: ClueReferenceData[] = [];

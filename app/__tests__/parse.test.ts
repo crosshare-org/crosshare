@@ -80,5 +80,41 @@ cases(
         },
       ],
     },
+
+    {
+      name: '1, 2,3,4-, or 5-across should work too',
+      result: [
+        {
+          direction: 0,
+          labelNumber: 1,
+          start: 0,
+          end: 1,
+        },
+        {
+          direction: 0,
+          labelNumber: 2,
+          start: 3,
+          end: 4,
+        },
+        {
+          direction: 0,
+          labelNumber: 3,
+          start: 5,
+          end: 6,
+        },
+        {
+          direction: 0,
+          labelNumber: 4,
+          start: 7,
+          end: 8,
+        },
+        {
+          direction: 0,
+          labelNumber: 5,
+          start: 14,
+          end: 22,
+        },
+      ],
+    },
   ]
 );
