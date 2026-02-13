@@ -14,9 +14,9 @@ import { FollowButton } from './FollowButton.js';
 import { PatronIcon, PuzzleSizeIcon } from './Icons.js';
 import { Link } from './Link.js';
 import { Markdown } from './Markdown.js';
+import { PublishDate } from './PublishDate.js';
 import styles from './PuzzleLink.module.css';
 import { TagList } from './TagList.js';
-import { DistanceToNow, PastDistanceToNow } from './TimeDisplay.js';
 
 const PuzzleLink = (props: {
   fullWidth?: boolean;
@@ -325,37 +325,16 @@ export const PuzzleResultLink = ({
       isPatron={constructorIsPatron}
     />
   );
-  const publishDate = puzzle.isPrivateUntil
-    ? new Date(puzzle.isPrivateUntil)
-    : new Date(puzzle.publishTime);
-  let date = (
-    <Trans comment="The variable is a timestamp like '4 days ago' or 'hace 4 dias'">
-      Published <PastDistanceToNow date={publishDate} />
-    </Trans>
+  const date = (
+    <PublishDate
+      useErrorColor
+      showPrivateStatus={!!props.showPrivateStatus}
+      isPrivate={puzzle.isPrivate}
+      isPrivateUntil={puzzle.isPrivateUntil}
+      publishTime={puzzle.publishTime}
+    />
   );
   const guestConstructor = puzzle.guestConstructor;
-  if (props.showPrivateStatus) {
-    if (puzzle.isPrivate !== false) {
-      date = (
-        <span className="colorError">
-          <Trans comment="The variable is a timestamp like '4 days ago' or 'hace 4 dias'">
-            Published privately <PastDistanceToNow date={publishDate} />
-          </Trans>
-        </span>
-      );
-    } else if (
-      puzzle.isPrivateUntil &&
-      new Date(puzzle.isPrivateUntil) > new Date()
-    ) {
-      date = (
-        <span className="colorError">
-          <Trans comment="The variable is a timestamp like 'in 4 days' or 'en 4 dias'">
-            Private, going public <DistanceToNow date={publishDate} />
-          </Trans>
-        </span>
-      );
-    }
-  }
   let contents: ReactNode = difficulty;
   if (showDate && showAuthor) {
     contents = (

@@ -175,6 +175,8 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
         tags={(props.puzzle.userTags ?? []).concat(props.puzzle.autoTags ?? [])}
         rating={props.puzzle.rating}
         publishTime={props.publishTime}
+        isPrivate={props.puzzle.isPrivate}
+        isPrivateUntil={props.puzzle.isPrivateUntil}
         showTip={props.overlayType === OverlayType.Success}
         coverImage={props.coverImage}
         blogPost={props.puzzle.blogPost}

@@ -10,15 +10,17 @@ import { EmbedContext } from './EmbedContext.js';
 import { ProfilePicAndName } from './Images.js';
 import { LinkButtonSimpleA } from './Link.js';
 import { Markdown } from './Markdown.js';
+import { PublishDate } from './PublishDate.js';
 import styles from './PuzzleHeading.module.css';
 import { AuthorLink } from './PuzzleLink.js';
 import { TagList } from './TagList.js';
-import { PastDistanceToNow } from './TimeDisplay.js';
 import { ToolTipText } from './ToolTipText.js';
 
 export const PuzzleHeading = (props: {
   rating: GlickoScoreT | null;
   publishTime: number;
+  isPrivate: number | boolean;
+  isPrivateUntil: number | null;
   showTip: boolean;
   isContest: boolean;
   constructorNotes: Root | null;
@@ -36,7 +38,6 @@ export const PuzzleHeading = (props: {
 }) => {
   const { isEmbed } = useContext(EmbedContext);
 
-  const publishDate = new Date(props.publishTime);
   return (
     <>
       <ProfilePicAndName
@@ -68,9 +69,13 @@ export const PuzzleHeading = (props: {
             ) : (
               <>
                 {' · '}
-                <Trans comment="The variable is a timestamp like '4 days ago' or 'hace 4 dias'">
-                  Published <PastDistanceToNow date={publishDate} />
-                </Trans>
+                <PublishDate
+                  useErrorColor={false}
+                  showPrivateStatus
+                  isPrivate={props.isPrivate}
+                  isPrivateUntil={props.isPrivateUntil}
+                  publishTime={props.publishTime}
+                />
               </>
             )}
             {props.dailyMiniDate ? (
