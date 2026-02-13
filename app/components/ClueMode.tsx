@@ -388,10 +388,9 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
           {props.notes !== null ? (
             <>
               <h3>Note:</h3>
-              <LengthLimitedInput
-                type="text"
-                className="width100"
-                placeholder="Add a note"
+              <LengthLimitedTextarea
+                className="width100 displayBlock"
+                placeholder="Your note (markdown format)"
                 value={props.notes}
                 maxLength={MAX_STRING_LENGTH}
                 updateValue={(s: string) => {
@@ -410,6 +409,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                 />
               </div>
               <p>
+                <MarkdownPreview markdown={props.notes} />
                 <ButtonAsLink
                   text="Remove note"
                   onClick={() => {

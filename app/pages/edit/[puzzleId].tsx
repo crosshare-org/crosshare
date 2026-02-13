@@ -431,6 +431,7 @@ const PuzzleEditor = ({
             need a short explainer of the theme or how the puzzle works
           </p>
           <EditableText
+            textarea={true}
             title="Constructor Note"
             deletable={true}
             className="marginBottom1em"
