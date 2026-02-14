@@ -643,7 +643,7 @@ const PuzDownloadLink = (props: ExportProps) => {
       },
       false
     );
-    reader.readAsDataURL(new Blob([data]));
+    reader.readAsDataURL(new Blob([data as BlobPart]));
   }, [props]);
   if (error) {
     return <>{error}</>;
