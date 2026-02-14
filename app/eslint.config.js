@@ -8,6 +8,8 @@ import pluginLingui from 'eslint-plugin-lingui';
 // @ts-expect-error
 import { flatConfigs as importPluginFlatConfigs } from 'eslint-plugin-import';
 import { FlatCompat } from '@eslint/eslintrc';
+import configPrettier from "eslint-config-prettier/flat";
+import pluginReact from 'eslint-plugin-react';
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,
@@ -17,6 +19,8 @@ export default tseslint.config(
   eslint.configs.recommended,
   tseslint.configs.strictTypeChecked,
   tseslint.configs.stylisticTypeChecked,
+  ...pluginReact.configs.flat.recommended ? [pluginReact.configs.flat.recommended] : [],
+  ...pluginReact.configs.flat['jsx-runtime'] ? [pluginReact.configs.flat['jsx-runtime']] : [],
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -39,14 +43,12 @@ export default tseslint.config(
   },
   pluginLingui.configs['flat/recommended'],
   ...compat.config({
-    plugins: ['css-modules', 'react', 'react-hooks', 'redos'],
+    plugins: ['css-modules', 'react-hooks', 'redos'],
     extends: [
-      'plugin:react/recommended',
       'plugin:react-hooks/recommended',
       'plugin:css-modules/recommended',
       'plugin:redos/recommended',
       'plugin:@next/next/core-web-vitals',
-      'prettier',
     ],
   }),
   {
@@ -156,5 +158,6 @@ export default tseslint.config(
         },
       ],
     },
-  }
+  },
+  configPrettier
 );
