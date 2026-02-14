@@ -3,13 +3,15 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
-import pluginLingui from 'eslint-plugin-lingui';
+import lingui from 'eslint-plugin-lingui';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { flatConfigs as importPluginFlatConfigs } from 'eslint-plugin-import';
 import { FlatCompat } from '@eslint/eslintrc';
-import configPrettier from "eslint-config-prettier/flat";
-import pluginReact from 'eslint-plugin-react';
+import configPrettier from 'eslint-config-prettier/flat';
+import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
+import redos from 'eslint-plugin-redos';
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,
@@ -19,8 +21,20 @@ export default tseslint.config(
   eslint.configs.recommended,
   tseslint.configs.strictTypeChecked,
   tseslint.configs.stylisticTypeChecked,
-  ...pluginReact.configs.flat.recommended ? [pluginReact.configs.flat.recommended] : [],
-  ...pluginReact.configs.flat['jsx-runtime'] ? [pluginReact.configs.flat['jsx-runtime']] : [],
+  ...(react.configs.flat.recommended ? [react.configs.flat.recommended] : []),
+  ...(react.configs.flat['jsx-runtime']
+    ? [react.configs.flat['jsx-runtime']]
+    : []),
+  reactHooks.configs.flat.recommended,
+  {
+    plugins: {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      redos,
+    },
+    rules: {
+      'redos/no-vulnerable': ['error', { cache: true }],
+    },
+  },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -41,13 +55,11 @@ export default tseslint.config(
       'import/no-anonymous-default-export': 'warn',
     },
   },
-  pluginLingui.configs['flat/recommended'],
+  lingui.configs['flat/recommended'],
   ...compat.config({
-    plugins: ['css-modules', 'react-hooks', 'redos'],
+    plugins: ['css-modules'],
     extends: [
-      'plugin:react-hooks/recommended',
       'plugin:css-modules/recommended',
-      'plugin:redos/recommended',
       'plugin:@next/next/core-web-vitals',
     ],
   }),
