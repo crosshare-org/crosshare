@@ -80,7 +80,7 @@ const aibs11 = new RegExp(
   'i'
 );
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const browser = request.headers.get('user-agent');
   if (
     !browser ||

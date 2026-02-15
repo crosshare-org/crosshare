@@ -36,8 +36,9 @@ export interface CluedEntry extends ViewableEntry {
   clueHast: Root;
 }
 
-export interface ViewableGrid<Entry extends ViewableEntry>
-  extends GridBase<Entry> {
+export interface ViewableGrid<
+  Entry extends ViewableEntry,
+> extends GridBase<Entry> {
   sortedEntries: number[];
   cellLabels: Map<number, number>;
   allowBlockEditing: boolean;

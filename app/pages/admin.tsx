@@ -12,7 +12,7 @@ import {
 import Head from 'next/head';
 import NextJSRouter from 'next/router';
 import React, {
-  FormEvent,
+  SyntheticEvent,
   useCallback,
   useEffect,
   useRef,
@@ -283,7 +283,7 @@ export default requiresAdmin(() => {
     return crosswordId;
   }
 
-  async function moderatePages(e: FormEvent) {
+  async function moderatePages(e: SyntheticEvent) {
     e.preventDefault();
     if (pagesForModeration) {
       for (const cp of pagesForModeration) {
@@ -484,7 +484,7 @@ export default requiresAdmin(() => {
         <UpcomingMinisCalendar disableExisting={false} onChange={goToPuzzle} />
         <h4 className="borderBottom1pxSolidBlack">Homepage Text</h4>
         <form
-          onSubmit={logAsyncErrors(async (e: React.FormEvent) => {
+          onSubmit={logAsyncErrors(async (e: React.SyntheticEvent) => {
             e.preventDefault();
             if (!newHomepageText.trim()) {
               await updateDoc(getDocRef('settings', 'settings'), {
@@ -524,7 +524,7 @@ export default requiresAdmin(() => {
         </form>
         <h4 className="borderBottom1pxSolidBlack">Record Donation</h4>
         <form
-          onSubmit={logAsyncErrors(async (e: React.FormEvent) => {
+          onSubmit={logAsyncErrors(async (e: React.SyntheticEvent) => {
             e.preventDefault();
             if (!donationEmail.trim()) {
               return;

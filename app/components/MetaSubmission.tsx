@@ -1,6 +1,12 @@
 import { formatDistanceToNow } from 'date-fns';
 import type { User } from 'firebase/auth';
-import { Dispatch, FormEvent, useContext, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  SyntheticEvent,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { isMetaSolution } from '../lib/utils.js';
 import {
   ContestRevealAction,
@@ -34,7 +40,7 @@ const MetaSubmissionForm = (props: {
     ? new Date() < props.revealDisabledUntil
     : false;
 
-  function submitMeta(event: FormEvent) {
+  function submitMeta(event: SyntheticEvent) {
     event.preventDefault();
     props.dispatch({
       type: 'CONTESTSUBMIT',

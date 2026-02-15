@@ -5,14 +5,25 @@ const distDir = 'nextjs';
 const baseConfig = {
   reactStrictMode: true,
   distDir: distDir,
-  eslint: {
-    dirs: ['components', 'lib', 'pages', 'reducers', 'scripts'],
-  },
   poweredByHeader: false,
   productionBrowserSourceMaps: true,
   i18n: {
     locales: ['en', 'es', 'it', 'fr', 'id', 'pseudo'],
     defaultLocale: 'en',
+  },
+  turbopack: {
+    rules: {
+      '*.ts': [
+        {
+          loaders: ['./import-rewrite-loader.cjs'],
+        },
+      ],
+      '*.tsx': [
+        {
+          loaders: ['./import-rewrite-loader.cjs'],
+        },
+      ],
+    },
   },
   experimental: {
     swcPlugins: [
@@ -50,8 +61,8 @@ const baseConfig = {
 };
 
 const sentryWebpackPluginOptions = {
-  org: "m-d",
-  project: "crosshare",
+  org: 'm-d',
+  project: 'crosshare',
   silent: true,
   disableLogger: true,
 };

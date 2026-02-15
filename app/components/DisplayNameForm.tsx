@@ -35,7 +35,7 @@ export const DisplayNameForm = ({ onCancel }: DisplayNameFormProps) => {
     return <>Must be logged in</>;
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     setSubmitting(true);
     e.preventDefault();
     const toSubmit = newDisplayName?.trim();

@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "supportedBrowsers": "echo \"export const browserRegex = $(browserslist-useragent-regexp --allowHigherVersions);\" > lib/supportedBrowsers.ts",
-    "lint": "npx next lint && npx stylelint \"**/*.css\"",
+    "lint": "npx eslint components lib pages reducers scripts && npx stylelint \"**/*.css\"",
     "knip": "npx knip",
     "format": "npx prettier \"../**/*\\.(ts(x)?|module\\.css)\" --write",
     "checkFormat": "npx prettier \"../**/*\\.(ts(x)?|module\\.css)\" --check",
@@ -44,8 +44,8 @@
     "@lingui/core": "^5.3.2",
     "@lingui/format-po-gettext": "^5.3.2",
     "@lingui/react": "^5.3.2",
-    "@lingui/swc-plugin": "5.5.2",
-    "@sentry/nextjs": "^9.23.0",
+    "@lingui/swc-plugin": "5.11.0",
+    "@sentry/nextjs": "^10.38.0",
     "@use-it/event-listener": "^0.1.7",
     "canvas": "^3.1.0",
     "color2k": "^2.0.3",
@@ -73,11 +73,11 @@
     "micromark-util-resolve-all": "^2.0.1",
     "micromark-util-types": "^2.0.2",
     "mnemonist": "^0.40.3",
-    "next": "^15.3.6",
+    "next": "16.1.6",
     "prop-types": "^15.8.1",
-    "react": "^19.1.0",
+    "react": "19.2.4",
     "react-csv": "^2.2.2",
-    "react-dom": "^19.1.0",
+    "react-dom": "19.2.4",
     "react-firebase-hooks": "5.1.1",
     "react-icons": "^5.5.0",
     "react-image-crop": "^11.0.10",
@@ -102,7 +102,7 @@
     "prop-types": "Needed by react-csv and apparently not specified. Breaks sharedstats when missing"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.27.0",
     "@firebase/rules-unit-testing": "^4.0.1",
     "@google-cloud/pubsub": "^5.0.0",
@@ -110,8 +110,8 @@
     "@lingui/cli": "^5.3.2",
     "@lingui/macro": "^5.3.2",
     "@modern-dev/jsbn": "^1.2.5",
-    "@next/bundle-analyzer": "^15.3.2",
-    "@next/eslint-plugin-next": "^15.3.3",
+    "@next/bundle-analyzer": "16.1.6",
+    "@next/eslint-plugin-next": "16.1.6",
     "@playwright/test": "1.52.0",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^16.3.0",
@@ -123,9 +123,9 @@
     "@types/lodash": "^4.17.17",
     "@types/mdast": "^4.0.4",
     "@types/node": "^22.15.24",
-    "@types/react": "^19.1.6",
+    "@types/react": "19.2.14",
     "@types/react-csv": "^1.1.10",
-    "@types/react-dom": "^19.1.5",
+    "@types/react-dom": "19.2.3",
     "@types/react-window": "^1.8.8",
     "@types/rocksdb": "^3.0.5",
     "@types/twemoji-parser": "^13.1.4",
@@ -135,6 +135,7 @@
     "csv": "^6.3.11",
     "csv-parse": "^5.6.0",
     "eslint": "^9.27.0",
+    "eslint-config-next": "16.1.6",
     "eslint-config-prettier": "^10.1.5",
     "eslint-import-resolver-typescript": "^4.4.1",
     "eslint-plugin-css-modules": "^2.12.0",
@@ -170,5 +171,11 @@
     "public",
     "locales",
     "nextjs"
-  ]
+  ],
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.2.14",
+      "@types/react-dom": "19.2.3"
+    }
+  }
 }

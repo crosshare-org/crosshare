@@ -4,8 +4,8 @@ import { ConstructorPageT } from '../lib/constructorPage.js';
 import { AccountPrefsT } from '../lib/prefs.js';
 import { AuthContext, AuthContextValue } from './AuthContext.js';
 import { ErrorPage } from './ErrorPage.js';
-import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons.js'; //todo
-import { TopBar } from './TopBar.js'; //todo
+import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons.js';
+import { TopBar } from './TopBar.js';
 
 export interface AuthProps {
   isAdmin: boolean;

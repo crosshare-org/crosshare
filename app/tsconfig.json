@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2018",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -20,9 +24,18 @@
     "noImplicitThis": true,
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true
   },
-  "exclude": ["node_modules"],
-  "include": ["index.d.ts", "next-env.d.ts", "**/*.ts", "**/*.tsx", "eslint.config.js", "next.config.mjs"]
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "index.d.ts",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "eslint.config.js",
+    "next.config.mjs"
+  ]
 }

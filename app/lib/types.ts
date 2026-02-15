@@ -222,11 +222,10 @@ export interface PuzzleResult extends PuzzleT {
 }
 
 // This is kind of a hack but it helps us to ensure we only query for constructorPages on server side
-export interface ServerPuzzleResult
-  extends Omit<
-    PuzzleResult,
-    'comments' | 'constructorNotes' | 'blogPost' | 'likes'
-  > {
+export interface ServerPuzzleResult extends Omit<
+  PuzzleResult,
+  'comments' | 'constructorNotes' | 'blogPost' | 'likes'
+> {
   blogPost: Root | null;
   blogPostRaw: string | null;
   constructorNotes: Root | null;

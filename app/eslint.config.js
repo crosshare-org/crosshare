@@ -4,20 +4,23 @@ import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import lingui from 'eslint-plugin-lingui';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import { flatConfigs as importPluginFlatConfigs } from 'eslint-plugin-import';
 import { FlatCompat } from '@eslint/eslintrc';
 import configPrettier from 'eslint-config-prettier/flat';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import redos from 'eslint-plugin-redos';
+import nextPlugin from '@next/eslint-plugin-next';
+import { defineConfig } from 'eslint/config';
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,
 });
 
-export default tseslint.config(
+export default defineConfig(
+  {
+    ignores: ['import-rewrite-loader.cjs'],
+  },
   eslint.configs.recommended,
   tseslint.configs.strictTypeChecked,
   tseslint.configs.stylisticTypeChecked,
@@ -26,6 +29,15 @@ export default tseslint.config(
     ? [react.configs.flat['jsx-runtime']]
     : []),
   reactHooks.configs.flat.recommended,
+  {
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    plugins: {
+      '@next/next': nextPlugin,
+    },
+    rules: {
+      ...nextPlugin.configs['core-web-vitals'].rules,
+    },
+  },
   {
     plugins: {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -38,9 +50,7 @@ export default tseslint.config(
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       importPluginFlatConfigs.recommended,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       importPluginFlatConfigs.typescript,
     ],
     rules: {
@@ -58,10 +68,7 @@ export default tseslint.config(
   lingui.configs['flat/recommended'],
   ...compat.config({
     plugins: ['css-modules'],
-    extends: [
-      'plugin:css-modules/recommended',
-      'plugin:@next/next/core-web-vitals',
-    ],
+    extends: ['plugin:css-modules/recommended'],
   }),
   {
     // Disabled these after upgrading eslint-plugin-react-hooks, they can be enabled in the future

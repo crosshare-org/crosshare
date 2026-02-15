@@ -4,7 +4,7 @@ import { serverTimestamp, setDoc } from 'firebase/firestore';
 import type { Root } from 'hast';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { FormEvent, useContext, useState } from 'react';
+import { SyntheticEvent, useContext, useState } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
 import {
   ConstructorPageBase,
@@ -110,7 +110,7 @@ export const CreatePageForm = (props: { className?: string }) => {
     return false;
   }
 
-  async function createPage(event: FormEvent) {
+  async function createPage(event: SyntheticEvent) {
     event.preventDefault();
     const user = ctx.user;
     if (!user) {

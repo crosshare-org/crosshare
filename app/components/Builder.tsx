@@ -147,7 +147,7 @@ interface PotentialFillListProps {
 const PotentialFillList = (props: PotentialFillListProps) => {
   const listRef = useRef<List>(null);
   const listParent = useRef<HTMLDivElement>(null);
-  const { height = 320 } = useSize(listParent);
+  const { height } = useSize(listParent);
   useEffect(() => {
     if (listRef.current !== null) {
       listRef.current.scrollToItem(0);

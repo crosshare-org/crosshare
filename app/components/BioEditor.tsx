@@ -1,5 +1,5 @@
 import { deleteField, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { FormEvent, useState } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import { ConstructorPageT } from '../lib/constructorPage.js';
 import { getDocRef } from '../lib/firebaseWrapper.js';
 import { markdownToHast } from '../lib/markdown/markdown.js';
@@ -102,7 +102,7 @@ export const BioEditor = (props: BioEditorProps) => {
       });
   }
 
-  function submitPaypalInfo(event: FormEvent) {
+  function submitPaypalInfo(event: SyntheticEvent) {
     event.preventDefault();
     if (
       !paypalText.trim() ||
@@ -129,7 +129,7 @@ export const BioEditor = (props: BioEditorProps) => {
       });
   }
 
-  function submitEdit(event: FormEvent) {
+  function submitEdit(event: SyntheticEvent) {
     event.preventDefault();
     const textToSubmit = bioText.trim();
     console.log('Submitting bio');
@@ -147,7 +147,7 @@ export const BioEditor = (props: BioEditorProps) => {
       });
   }
 
-  function submitSigEdit(event: FormEvent) {
+  function submitSigEdit(event: SyntheticEvent) {
     event.preventDefault();
     const textToSubmit = sigText.trim();
     if (!textToSubmit) {
@@ -168,7 +168,7 @@ export const BioEditor = (props: BioEditorProps) => {
       });
   }
 
-  function submitShareButtonsEdit(event: FormEvent) {
+  function submitShareButtonsEdit(event: SyntheticEvent) {
     event.preventDefault();
     const textToSubmit = shareButtonsText.trim();
     if (!textToSubmit) {

@@ -5,9 +5,9 @@ import { addDoc, updateDoc } from 'firebase/firestore';
 import type { Root } from 'hast';
 import * as iot from 'io-ts';
 import {
-  FormEvent,
   Fragment,
   ReactNode,
+  SyntheticEvent,
   useContext,
   useEffect,
   useState,
@@ -216,7 +216,7 @@ const CommentWithReplies = (
     }
   }
 
-  async function deleteComment(event: FormEvent) {
+  async function deleteComment(event: SyntheticEvent) {
     event.preventDefault();
     if (deleting) {
       return;
@@ -446,7 +446,7 @@ const CommentForm = ({
   const [editingDisplayName, setEditingDisplayName] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  async function submitComment(event: FormEvent) {
+  async function submitComment(event: SyntheticEvent) {
     event.preventDefault();
     const textToSubmit = commentText.trim();
     if (!textToSubmit) {

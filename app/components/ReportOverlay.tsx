@@ -1,6 +1,6 @@
 import { setDoc } from 'firebase/firestore';
 import * as t from 'io-ts';
-import { FormEvent, useContext, useState } from 'react';
+import { SyntheticEvent, useContext, useState } from 'react';
 import { getDocRef } from '../lib/firebaseWrapper.js';
 import { Timestamp, timestamp } from '../lib/timestamp.js';
 import { Comment } from '../lib/types.js';
@@ -54,7 +54,7 @@ export const ReportOverlay = (props: {
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  async function submitReport(event: FormEvent) {
+  async function submitReport(event: SyntheticEvent) {
     event.preventDefault();
     setSubmitting(true);
 

@@ -1,7 +1,7 @@
 import { lightFormat } from 'date-fns/lightFormat';
 import { serverTimestamp, setDoc } from 'firebase/firestore';
 import NextJSRouter from 'next/router';
-import { FormEvent, ReactNode, useCallback, useState } from 'react';
+import { ReactNode, SyntheticEvent, useCallback, useState } from 'react';
 import { DBPuzzleT } from '../lib/dbtypes.js';
 import { getDocRef } from '../lib/firebaseWrapper.js';
 import { STORAGE_KEY, slugify } from '../lib/utils.js';
@@ -23,7 +23,7 @@ export function PublishOverlay(props: {
   const displayName = useDisplayName();
 
   const doPublish = useCallback(
-    (event: FormEvent) => {
+    (event: SyntheticEvent) => {
       event.preventDefault();
 
       if (inProgress || done) {

@@ -92,9 +92,7 @@ const ClueListItem = memo(function ClueListItem({
               <div>
                 {props.entry.cells.map((a) => {
                   const isActiveCell =
-                    props.active &&
-                    a.row === props.active.row &&
-                    a.col === props.active.col;
+                    a.row === props.active?.row && a.col === props.active.col;
                   return (
                     <span
                       key={a.col + '-' + a.row}

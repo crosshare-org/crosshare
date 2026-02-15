@@ -89,7 +89,7 @@ export async function moderateComments(
     const puzzle = await puzzleFromCache(deletion.pid);
     if (puzzle && puzzle.cs?.length) {
       const comment = findCommentById(puzzle.cs, deletion.cid);
-      if (comment && comment.a === deletion.a) {
+      if (comment?.a === deletion.a) {
         comment.deleted = true;
         if (deletion.removed) {
           comment.removed = true;

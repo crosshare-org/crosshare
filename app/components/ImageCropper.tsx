@@ -178,7 +178,7 @@ export function ImageCropper(props: {
       const reader = new FileReader();
       reader.addEventListener('load', () => {
         if (typeof reader.result === 'string') {
-          setUpImg(reader.result.toString());
+          setUpImg(reader.result);
         }
       });
       reader.readAsDataURL(e.target.files[0]);

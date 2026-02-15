@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { GetServerSideProps } from 'next/types';
-import { FormEvent, useState } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import { ErrorPage } from '../components/ErrorPage.js';
 import { useSnackbar } from '../components/Snackbar.js';
 import { getAddress } from '../lib/email.js';
@@ -92,7 +92,7 @@ function Success(props: SuccessProps) {
   const [submitting, setSubmitting] = useState(false);
   const { showSnackbar } = useSnackbar();
 
-  async function submitForm(e: FormEvent<HTMLFormElement>) {
+  async function submitForm(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     await postUpdate(unsubs).then(() => {
       showSnackbar('Updated preferences');

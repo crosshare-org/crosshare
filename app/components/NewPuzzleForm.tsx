@@ -1,4 +1,4 @@
-import { Dispatch, FormEvent, useContext, useState } from 'react';
+import { Dispatch, SyntheticEvent, useContext, useState } from 'react';
 import { PrefillSquares } from '../lib/types.js';
 import { STORAGE_KEY, clsx } from '../lib/utils.js';
 import { NewPuzzleAction } from '../reducers/builderReducer.js';
@@ -134,7 +134,7 @@ export function NewPuzzleForm(props: {
     errorMsg = 'Cannot have more than 25 rows or columns';
   }
 
-  function startPuzzle(event: FormEvent) {
+  function startPuzzle(event: SyntheticEvent) {
     event.preventDefault();
 
     // Clear current puzzle

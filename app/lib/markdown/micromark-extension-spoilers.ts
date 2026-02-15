@@ -57,8 +57,7 @@ export const spoilersSyntax = function (): Extension {
         const event = events[index];
         // Find a token that can close.
         if (
-          event &&
-          event[0] === 'enter' &&
+          event?.[0] === 'enter' &&
           event[1].type === spoilerType &&
           event[1]._close
         ) {
@@ -69,8 +68,7 @@ export const spoilersSyntax = function (): Extension {
             const event_open = events[open];
             // Find a token that can open the closer.
             if (
-              event_open &&
-              event_open[0] === 'exit' &&
+              event_open?.[0] === 'exit' &&
               event_open[1].type === spoilerType &&
               event_open[1]._open &&
               // If the sizes are the same:

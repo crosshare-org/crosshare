@@ -47,7 +47,7 @@ export const EditableText = (
     return (
       <form
         className={clsx(props.className, styles.form)}
-        onSubmit={logAsyncErrors(async (e: React.FormEvent) => {
+        onSubmit={logAsyncErrors(async (e: React.SyntheticEvent) => {
           e.preventDefault();
           const toSubmit = value.trim();
           if (toSubmit.length === 0) {

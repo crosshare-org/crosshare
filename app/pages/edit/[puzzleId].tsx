@@ -156,7 +156,7 @@ const ClueRow = (props: {
     throw new Error("shouldn't ever get here");
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     const toSubmit = value.trim();
     if (toSubmit.length === 0) {
