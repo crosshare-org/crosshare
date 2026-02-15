@@ -1,4 +1,5 @@
 ### Custom ###
+cache/**
 nextjs/**
 cluedb/**
 locales/_build/

@@ -61,7 +61,7 @@ export const Link = ({ href, children, noTargetBlank, ...rest }: LinkProps) => {
     );
   }
   return (
-    <NextLink href={href} {...rest}>
+    <NextLink href={href} prefetch={false} {...rest}>
       {children}
     </NextLink>
   );

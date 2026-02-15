@@ -18,5 +18,4 @@
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "css.lint.unknownAtRules": "ignore"
 }

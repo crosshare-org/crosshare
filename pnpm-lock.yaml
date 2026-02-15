@@ -10,7 +10,7 @@ importers:
     devDependencies:
       turbo:
         specifier: ^2.5.3
-        version: 2.8.8
+        version: 2.8.9
 
   app:
     dependencies:
@@ -122,9 +122,6 @@ importers:
       micromark-util-types:
         specifier: ^2.0.2
         version: 2.0.2
-      mnemonist:
-        specifier: ^0.40.3
-        version: 0.40.3
       next:
         specifier: 16.1.6
         version: 16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -313,7 +310,7 @@ importers:
         specifier: ^2.29.1
         version: 2.32.0(@typescript-eslint/parser@8.55.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@4.4.4)(eslint@9.39.2(jiti@2.6.1))
       eslint-plugin-jsx-a11y:
-        specifier: ^6.8.0
+        specifier: ^6.10.2
         version: 6.10.2(eslint@9.39.2(jiti@2.6.1))
       eslint-plugin-lingui:
         specifier: ^0.10.1
@@ -3940,8 +3937,8 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axe-core@4.10.3:
-    resolution: {integrity: sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==}
+  axe-core@4.11.1:
+    resolution: {integrity: sha512-BASOg+YwO2C+346x3LZOeoovTIoTrRqEsqMa6fmfAV0P+U9mFr9NsyOEpiYvFjbc64NMrSswhV50WdXzdb/Z5A==}
     engines: {node: '>=4'}
 
   axobject-query@4.1.0:
@@ -4805,6 +4802,10 @@ packages:
 
   es-abstract@1.24.0:
     resolution: {integrity: sha512-WSzPgsdLtTcQwm4CROfS5ju2Wa1QQcVeT37jFjYzdFz1r9ahadC8B8/a4qxJxM+09F18iumCdRmlr96ZYkQvEg==}
+    engines: {node: '>= 0.4'}
+
+  es-abstract@1.24.1:
+    resolution: {integrity: sha512-zHXBLhP+QehSSbsS9Pt23Gg964240DPd6QCf8WpkqEXxQ7fhdZzYsocOr5u7apWonsS5EjZDmTF+/slGMyasvw==}
     engines: {node: '>= 0.4'}
 
   es-define-property@1.0.1:
@@ -6917,9 +6918,6 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  mnemonist@0.40.3:
-    resolution: {integrity: sha512-Vjyr90sJ23CKKH/qPAgUKicw/v6pRoamxIEDFOF8uSgFME7DqPRpHgRTejWVjkdGg5dXj0/NyxZHZ9bcjH+2uQ==}
-
   mockdate@3.0.5:
     resolution: {integrity: sha512-iniQP4rj1FhBdBYS/+eQv7j1tadJ9lJtdzgOpvsOHng/GbcDh2Fhdeq+ZRldrPYdXvCyfFUmFeEwEGXZB5I/AQ==}
 
@@ -7140,9 +7138,6 @@ packages:
   object.values@1.2.1:
     resolution: {integrity: sha512-gXah6aZrcUxjWg2zR2MwouP2eHlCBzdV4pygudehaKXSGW4v2AsRQUK+lwwXhii6KFZcunEnmSUoYp5CXibxtA==}
     engines: {node: '>= 0.4'}
-
-  obliterator@2.0.5:
-    resolution: {integrity: sha512-42CPE9AhahZRsMNslczq0ctAEtqk8Eka26QofnqC346BZdHDySk3LWka23LI7ULIw11NmltpiLagIq8gBozxTw==}
 
   observable-fns@0.6.1:
     resolution: {integrity: sha512-9gRK4+sRWzeN6AOewNBTLXir7Zl/i3GB6Yl26gK4flxz8BXVpD3kt8amREmWNb0mxYOGDotvE5a4N+PtGGKdkg==}
@@ -8527,38 +8522,38 @@ packages:
   tunnel-agent@0.6.0:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
 
-  turbo-darwin-64@2.8.8:
-    resolution: {integrity: sha512-7R/XRAleyNB8nIJuenRpS7EnmCM/kYFgcG1rW3F5DF57Nl4WyBO3DzxqwooRheuoXDD1UsJvDse0yRufgxjClA==}
+  turbo-darwin-64@2.8.9:
+    resolution: {integrity: sha512-KnCw1ZI9KTnEAhdI9avZrnZ/z4wsM++flMA1w8s8PKOqi5daGpFV36qoPafg4S8TmYMe52JPWEoFr0L+lQ5JIw==}
     cpu: [x64]
     os: [darwin]
 
-  turbo-darwin-arm64@2.8.8:
-    resolution: {integrity: sha512-whpveO0w/dMcgQ0zFrzqK76mG2W+RBQ/pKIpW+sEvNr+T4UcYd2gZpfV2euehJLvdeFErWgW74dIt/MFfkG1bA==}
+  turbo-darwin-arm64@2.8.9:
+    resolution: {integrity: sha512-CbD5Y2NKJKBXTOZ7z7Cc7vGlFPZkYjApA7ri9lH4iFwKV1X7MoZswh9gyRLetXYWImVX1BqIvP8KftulJg/wIA==}
     cpu: [arm64]
     os: [darwin]
 
-  turbo-linux-64@2.8.8:
-    resolution: {integrity: sha512-BISkcKk+5/Dh11q+YhdQIGONXmdlQ6LY0iQ+GBIK7QOBAJyJFKmKvUeAeMdWGXOa3sImz2oZ6u2StyR+0Y/VVA==}
+  turbo-linux-64@2.8.9:
+    resolution: {integrity: sha512-OXC9HdCtsHvyH+5KUoH8ds+p5WU13vdif0OPbsFzZca4cUXMwKA3HWwUuCgQetk0iAE4cscXpi/t8A263n3VTg==}
     cpu: [x64]
     os: [linux]
 
-  turbo-linux-arm64@2.8.8:
-    resolution: {integrity: sha512-B+DQWWtM3O+AexFF4aYucT0MvvnQOW4n5y9LA5h3Zc3Lpj10yl9K4dEBzJvMVQ2jTkCRNAvA8q9G3EjqmGmGGA==}
+  turbo-linux-arm64@2.8.9:
+    resolution: {integrity: sha512-yI5n8jNXiFA6+CxnXG0gO7h5ZF1+19K8uO3/kXPQmyl37AdiA7ehKJQOvf9OPAnmkGDHcF2HSCPltabERNRmug==}
     cpu: [arm64]
     os: [linux]
 
-  turbo-windows-64@2.8.8:
-    resolution: {integrity: sha512-KP5TRVrmVnrxDyvERvQq7VXu+h5AiEiBwyr90YsRuYy/Z5zLz8hrNZXejTyUR17xmnuI+RbUSxrQlfmPnxiW1A==}
+  turbo-windows-64@2.8.9:
+    resolution: {integrity: sha512-/OztzeGftJAg258M/9vK2ZCkUKUzqrWXJIikiD2pm8TlqHcIYUmepDbyZSDfOiUjMy6NzrLFahpNLnY7b5vNgg==}
     cpu: [x64]
     os: [win32]
 
-  turbo-windows-arm64@2.8.8:
-    resolution: {integrity: sha512-X45sTOksR8iidk+PZUXpNcfEkOhGCTS2p2J8nSUExr1v7u3T4FixwplzliuWmG7QTPGJapAwItzHbi+d/9ckNQ==}
+  turbo-windows-arm64@2.8.9:
+    resolution: {integrity: sha512-xZ2VTwVTjIqpFZKN4UBxDHCPM3oJ2J5cpRzCBSmRpJ/Pn33wpiYjs+9FB2E03svKaD04/lSSLlEUej0UYsugfg==}
     cpu: [arm64]
     os: [win32]
 
-  turbo@2.8.8:
-    resolution: {integrity: sha512-wP+axjWAKzYfZ7bghuggVST9bX4j5cn3NPMU9NPQqtwaUKL9n9JOnWWBIc9gdrEma1aViYR73EoPjDEpVq+liQ==}
+  turbo@2.8.9:
+    resolution: {integrity: sha512-G+Mq8VVQAlpz/0HTsxiNNk/xywaHGl+dk1oiBREgOEVCCDjXInDlONWUn5srRnC9s5tdHTFD1bx1N19eR4hI+g==}
     hasBin: true
 
   twemoji-parser@14.0.0:
@@ -8861,6 +8856,10 @@ packages:
 
   which-typed-array@1.1.19:
     resolution: {integrity: sha512-rEvr90Bck4WZt9HHFC4DJMsjvu7x+r6bImz0/BrbWb7A2djJ8hnZMrWnHo9F8ssv0OMErasDhftrfROTyqSDrw==}
+    engines: {node: '>= 0.4'}
+
+  which-typed-array@1.1.20:
+    resolution: {integrity: sha512-LYfpUkmqwl0h9A2HL09Mms427Q1RZWuOHsukfVcKRq9q95iQxdw0ix1JQrqbcDR9PH1QDwf5Qo8OZb5lksZ8Xg==}
     engines: {node: '>= 0.4'}
 
   which@1.3.1:
@@ -13323,7 +13322,7 @@ snapshots:
       call-bind: 1.0.8
       call-bound: 1.0.4
       define-properties: 1.2.1
-      es-abstract: 1.24.0
+      es-abstract: 1.24.1
       es-object-atoms: 1.1.1
       get-intrinsic: 1.3.0
       is-string: 1.1.1
@@ -13361,7 +13360,7 @@ snapshots:
     dependencies:
       call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.24.0
+      es-abstract: 1.24.1
       es-shim-unscopables: 1.1.0
 
   array.prototype.tosorted@1.1.4:
@@ -13411,7 +13410,7 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axe-core@4.10.3: {}
+  axe-core@4.11.1: {}
 
   axobject-query@4.1.0: {}
 
@@ -13459,7 +13458,7 @@ snapshots:
 
   babel-plugin-macros@3.1.0:
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.6
       cosmiconfig: 7.1.0
       resolve: 1.22.10
 
@@ -14382,6 +14381,63 @@ snapshots:
       unbox-primitive: 1.1.0
       which-typed-array: 1.1.19
 
+  es-abstract@1.24.1:
+    dependencies:
+      array-buffer-byte-length: 1.0.2
+      arraybuffer.prototype.slice: 1.0.4
+      available-typed-arrays: 1.0.7
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      data-view-buffer: 1.0.2
+      data-view-byte-length: 1.0.2
+      data-view-byte-offset: 1.0.1
+      es-define-property: 1.0.1
+      es-errors: 1.3.0
+      es-object-atoms: 1.1.1
+      es-set-tostringtag: 2.1.0
+      es-to-primitive: 1.3.0
+      function.prototype.name: 1.1.8
+      get-intrinsic: 1.3.0
+      get-proto: 1.0.1
+      get-symbol-description: 1.1.0
+      globalthis: 1.0.4
+      gopd: 1.2.0
+      has-property-descriptors: 1.0.2
+      has-proto: 1.2.0
+      has-symbols: 1.1.0
+      hasown: 2.0.2
+      internal-slot: 1.1.0
+      is-array-buffer: 3.0.5
+      is-callable: 1.2.7
+      is-data-view: 1.0.2
+      is-negative-zero: 2.0.3
+      is-regex: 1.2.1
+      is-set: 2.0.3
+      is-shared-array-buffer: 1.0.4
+      is-string: 1.1.1
+      is-typed-array: 1.1.15
+      is-weakref: 1.1.1
+      math-intrinsics: 1.1.0
+      object-inspect: 1.13.4
+      object-keys: 1.1.1
+      object.assign: 4.1.7
+      own-keys: 1.0.1
+      regexp.prototype.flags: 1.5.4
+      safe-array-concat: 1.1.3
+      safe-push-apply: 1.0.0
+      safe-regex-test: 1.1.0
+      set-proto: 1.0.0
+      stop-iteration-iterator: 1.1.0
+      string.prototype.trim: 1.2.10
+      string.prototype.trimend: 1.0.9
+      string.prototype.trimstart: 1.0.8
+      typed-array-buffer: 1.0.3
+      typed-array-byte-length: 1.0.3
+      typed-array-byte-offset: 1.0.4
+      typed-array-length: 1.0.7
+      unbox-primitive: 1.1.0
+      which-typed-array: 1.1.20
+
   es-define-property@1.0.1: {}
 
   es-errors@1.3.0: {}
@@ -14666,7 +14722,7 @@ snapshots:
       array-includes: 3.1.9
       array.prototype.flatmap: 1.3.3
       ast-types-flow: 0.0.8
-      axe-core: 4.10.3
+      axe-core: 4.11.1
       axobject-query: 4.1.0
       damerau-levenshtein: 1.0.8
       emoji-regex: 9.2.2
@@ -17681,10 +17737,6 @@ snapshots:
 
   mkdirp@1.0.4: {}
 
-  mnemonist@0.40.3:
-    dependencies:
-      obliterator: 2.0.5
-
   mockdate@3.0.5: {}
 
   module-details-from-path@1.0.4: {}
@@ -17891,7 +17943,7 @@ snapshots:
     dependencies:
       call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.24.0
+      es-abstract: 1.24.1
       es-object-atoms: 1.1.1
 
   object.groupby@1.0.3:
@@ -17906,8 +17958,6 @@ snapshots:
       call-bound: 1.0.4
       define-properties: 1.2.1
       es-object-atoms: 1.1.1
-
-  obliterator@2.0.5: {}
 
   observable-fns@0.6.1: {}
 
@@ -19145,7 +19195,7 @@ snapshots:
     dependencies:
       call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.24.0
+      es-abstract: 1.24.1
 
   string.prototype.matchall@4.0.12:
     dependencies:
@@ -19649,32 +19699,32 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  turbo-darwin-64@2.8.8:
+  turbo-darwin-64@2.8.9:
     optional: true
 
-  turbo-darwin-arm64@2.8.8:
+  turbo-darwin-arm64@2.8.9:
     optional: true
 
-  turbo-linux-64@2.8.8:
+  turbo-linux-64@2.8.9:
     optional: true
 
-  turbo-linux-arm64@2.8.8:
+  turbo-linux-arm64@2.8.9:
     optional: true
 
-  turbo-windows-64@2.8.8:
+  turbo-windows-64@2.8.9:
     optional: true
 
-  turbo-windows-arm64@2.8.8:
+  turbo-windows-arm64@2.8.9:
     optional: true
 
-  turbo@2.8.8:
+  turbo@2.8.9:
     optionalDependencies:
-      turbo-darwin-64: 2.8.8
-      turbo-darwin-arm64: 2.8.8
-      turbo-linux-64: 2.8.8
-      turbo-linux-arm64: 2.8.8
-      turbo-windows-64: 2.8.8
-      turbo-windows-arm64: 2.8.8
+      turbo-darwin-64: 2.8.9
+      turbo-darwin-arm64: 2.8.9
+      turbo-linux-64: 2.8.9
+      turbo-linux-arm64: 2.8.9
+      turbo-windows-64: 2.8.9
+      turbo-windows-arm64: 2.8.9
 
   twemoji-parser@14.0.0: {}
 
@@ -20079,6 +20129,16 @@ snapshots:
       is-weakset: 2.0.4
 
   which-typed-array@1.1.19:
+    dependencies:
+      available-typed-arrays: 1.0.7
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      for-each: 0.3.5
+      get-proto: 1.0.1
+      gopd: 1.2.0
+      has-tostringtag: 1.0.2
+
+  which-typed-array@1.1.20:
     dependencies:
       available-typed-arrays: 1.0.7
       call-bind: 1.0.8

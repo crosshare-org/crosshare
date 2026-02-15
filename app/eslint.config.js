@@ -81,6 +81,8 @@ export default defineConfig(
       'react-hooks/preserve-manual-memoization': 'off',
     },
   },
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   jsxA11y.flatConfigs.recommended,
   {
     settings: {
