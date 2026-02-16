@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ArticlePageProps } from '../lib/serverOnly.js';
-import styles from './ArticlePage.module.css';
+import styles from './ArticlePage.module.scss';
 import { Markdown } from './Markdown.js';
 import { DefaultTopBar } from './TopBar.js';
 

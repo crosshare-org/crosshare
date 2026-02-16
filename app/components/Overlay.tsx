@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 import { EmbedContext } from './EmbedContext.js';
 import { CoverPic } from './Images.js';
-import styles from './Overlay.module.css';
+import styles from './Overlay.module.scss';
 
 export const Overlay = (props: {
   coverImage?: string | null;

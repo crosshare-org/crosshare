@@ -1,0 +1,27 @@
+@use '../lib/definitions' as *;
+
+.baseurl {
+  margin-right: 0.15em;
+  font-weight: bold;
+}
+
+.header {
+  margin: 2em 1em;
+}
+
+@media ($huge-and-up) {
+  .header {
+    max-width: $max-width;
+    margin: 2em auto;
+  }
+}
+
+.patronicon {
+  margin-right: 0.3em;
+}
+
+.byline {
+  margin-bottom: 0.25em;
+  font-size: 1em;
+  font-weight: normal;
+}

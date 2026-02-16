@@ -1,4 +1,4 @@
-@value small-and-up from '../lib/definitions.module.css';
+@use '../lib/definitions' as *;
 
 .link {
   display: inline-flex;
@@ -11,8 +11,7 @@
   margin-bottom: 0;
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (small-and-up) {
+@media ($small-and-up) {
   .link {
     width: 50%;
   }

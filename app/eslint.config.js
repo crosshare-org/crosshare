@@ -82,7 +82,7 @@ export default defineConfig(
     },
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
+  // @ts-ignore
   jsxA11y.flatConfigs.recommended,
   {
     settings: {

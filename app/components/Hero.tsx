@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import styles from './Hero.module.css';
+import styles from './Hero.module.scss';
 import { Logo } from './Icons.js';
 import { Link } from './Link.js';
 

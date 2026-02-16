@@ -1,0 +1,23 @@
+@use '../../lib/definitions' as *;
+
+.page {
+  margin: 1em;
+}
+
+@media ($huge-and-up) {
+  .page {
+    max-width: $max-width;
+    margin: 1em auto;
+  }
+}
+
+.head {
+  margin-bottom: 1em;
+  font-size: 1.4em;
+}
+
+.taglist {
+  display: inline-flex;
+  margin: 0 0 0 0.5em;
+  font-weight: normal;
+}

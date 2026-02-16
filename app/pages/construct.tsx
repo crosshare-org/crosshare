@@ -26,7 +26,7 @@ import { Hero } from '../components/Hero.js';
 import { Link } from '../components/Link.js';
 import { useWordDB } from '../lib/WordDB.js';
 import { withStaticTranslation } from '../lib/translation.js';
-import styles from './construct.module.css';
+import styles from './construct.module.scss';
 
 export const getStaticProps = withStaticTranslation(() => {
   return { props: {} };

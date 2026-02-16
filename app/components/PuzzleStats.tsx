@@ -38,7 +38,7 @@ import { Emoji } from './Emoji.js';
 import { GridView } from './Grid.js';
 import { Overlay } from './Overlay.js';
 import { SquareAndCols } from './Page.js';
-import styles from './PuzzleStats.module.css';
+import styles from './PuzzleStats.module.scss';
 import { useSnackbar } from './Snackbar.js';
 import { ColumnSpec, Table } from './Table.js';
 import { DefaultTopBar, TopBarLink } from './TopBar.js';

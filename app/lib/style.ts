@@ -10,7 +10,7 @@ import {
 export const PROFILE_PIC: [number, number] = [200, 200];
 export const COVER_PIC: [number, number] = [1200, 400];
 
-// make any changes in concert w/ definitions.module.css
+// make any changes in concert w/ _definitions.scss
 export const ANIMATION_DELAY = 250;
 export const HEADER_HEIGHT = 35;
 const SMALL_BREAKPOINT = 576;

@@ -1,5 +1,4 @@
-@value small-and-up from '../lib/definitions.module.css';
-@value large-and-up from '../lib/definitions.module.css';
+@use '../lib/definitions' as *;
 
 .button {
   display: flex;
@@ -23,8 +22,7 @@
   justify-content: space-between;
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (small-and-up) {
+@media ($small-and-up) {
   .wrapper[data-half-width='true'] .button {
     width: 100%;
   }
@@ -38,8 +36,7 @@
   }
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (large-and-up) {
+@media ($large-and-up) {
   .wrapper[data-half-width='true'] {
     flex-direction: row;
   }

@@ -1,4 +1,4 @@
-@value small-and-up from '../lib/definitions.module.css';
+@use '../lib/definitions' as *;
 
 .patronHeader {
   flex-shrink: 0;
@@ -58,8 +58,7 @@
   text-align: right;
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (small-and-up) {
+@media ($small-and-up) {
   .patronHeader {
     font-size: 5em;
   }

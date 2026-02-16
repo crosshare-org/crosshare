@@ -15,7 +15,7 @@ import { paginatedPuzzles } from '../../lib/paginatedPuzzles.js';
 import { isUserPatron } from '../../lib/patron.js';
 import { userIdToPage } from '../../lib/serverOnly.js';
 import { withTranslation } from '../../lib/translation.js';
-import styles from './featuredPage.module.css';
+import styles from './featuredPage.module.scss';
 
 interface FeaturedPageProps {
   puzzles: (LinkablePuzzle & {

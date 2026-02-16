@@ -22,7 +22,7 @@ import { isUserPatron } from '../../lib/patron.js';
 import { getArticle, userIdToPage } from '../../lib/serverOnly.js';
 import { withTranslation } from '../../lib/translation.js';
 import { normalizeTag } from '../../lib/utils.js';
-import styles from './tagPage.module.css';
+import styles from './tagPage.module.scss';
 
 interface TagPageProps {
   tags: string[];

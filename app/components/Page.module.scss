@@ -1,10 +1,4 @@
-@value slate-padding-small from '../lib/definitions.module.css';
-@value slate-padding-med from '../lib/definitions.module.css';
-@value slate-padding-large from '../lib/definitions.module.css';
-@value small-and-up from '../lib/definitions.module.css';
-@value large-and-up from '../lib/definitions.module.css';
-@value square-header-height from '../lib/definitions.module.css';
-@value tiny-col-min-height from '../lib/definitions.module.css';
+@use '../lib/definitions' as *;
 
 .tinyNav {
   display: flex;
@@ -29,7 +23,7 @@
 
   width: 100vw;
   /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  height: tiny-col-min-height;
+  height: $tiny-col-min-height;
 
   background-color: var(--lighter);
 }
@@ -70,25 +64,26 @@
   overflow: hidden;
   display: none;
   /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  height: square-header-height;
+  height: $square-header-height;
 }
 
 .grid {
   width: min(
     100cqw,
-    100cqh * var(--aspect-ratio) - tiny-col-min-height * var(--aspect-ratio)
+    100cqh * var(--aspect-ratio) - $tiny-col-min-height * var(--aspect-ratio)
   );
-  height: min(100cqh - tiny-col-min-height, 100cqw / var(--aspect-ratio));
+  height: min(100cqh - $tiny-col-min-height, 100cqw / var(--aspect-ratio));
   margin: auto;
 }
 
 .grid[data-no-cq='true'] {
   width: min(
     var(--cqw),
-    var(--cqh) * var(--aspect-ratio) - tiny-col-min-height * var(--aspect-ratio)
+    var(--cqh) * var(--aspect-ratio) - $tiny-col-min-height *
+      var(--aspect-ratio)
   );
   height: min(
-    var(--cqh) - tiny-col-min-height,
+    var(--cqh) - $tiny-col-min-height,
     var(--cqw) / var(--aspect-ratio)
   );
 }
@@ -114,8 +109,7 @@
   display: block;
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (small-and-up) {
+@media ($small-and-up) {
   .clueCol {
     scrollbar-width: none;
     overflow-y: scroll;
@@ -126,19 +120,19 @@
   .grid {
     width: min(
       66cqw,
-      100cqh * var(--aspect-ratio) - square-header-height * var(--aspect-ratio)
+      100cqh * var(--aspect-ratio) - $square-header-height * var(--aspect-ratio)
     );
-    height: min(100cqh - square-header-height, 66cqw / var(--aspect-ratio));
+    height: min(100cqh - $square-header-height, 66cqw / var(--aspect-ratio));
   }
 
   .grid[data-no-cq='true'] {
     width: min(
       0.66 * var(--cqw),
-      var(--cqh) * var(--aspect-ratio) - square-header-height *
+      var(--cqh) * var(--aspect-ratio) - $square-header-height *
         var(--aspect-ratio)
     );
     height: min(
-      var(--cqh) - square-header-height,
+      var(--cqh) - $square-header-height,
       0.66 * var(--cqw) / var(--aspect-ratio)
     );
   }
@@ -166,7 +160,7 @@
   }
 
   .clueArea[data-slate='true'] {
-    width: calc(34vw - 2 * slate-padding-med);
+    width: calc(34vw - 2 * $slate-padding-med);
   }
 
   .twoCol {
@@ -189,8 +183,7 @@
   }
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (large-and-up) {
+@media ($large-and-up) {
   .clueCol {
     width: 50%;
     height: 100%;
@@ -203,19 +196,19 @@
   .grid {
     width: min(
       50cqw,
-      100cqh * var(--aspect-ratio) - square-header-height * var(--aspect-ratio)
+      100cqh * var(--aspect-ratio) - $square-header-height * var(--aspect-ratio)
     );
-    height: min(100cqh - square-header-height, 50cqw / var(--aspect-ratio));
+    height: min(100cqh - $square-header-height, 50cqw / var(--aspect-ratio));
   }
 
   .grid[data-no-cq='true'] {
     width: min(
       0.5 * var(--cqw),
-      var(--cqh) * var(--aspect-ratio) - square-header-height *
+      var(--cqh) * var(--aspect-ratio) - $square-header-height *
         var(--aspect-ratio)
     );
     height: min(
-      var(--cqh) - square-header-height,
+      var(--cqh) - $square-header-height,
       0.5 * var(--cqw) / var(--aspect-ratio)
     );
   }
@@ -229,6 +222,6 @@
   }
 
   .clueArea[data-slate='true'] {
-    width: calc(50vw - 2 * slate-padding-large);
+    width: calc(50vw - 2 * $slate-padding-large);
   }
 }

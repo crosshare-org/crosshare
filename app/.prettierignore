@@ -1,4 +1,4 @@
 **/locales/**
-
+next-env.d.ts
 app/lib/spam.ts
 lib/spam.ts

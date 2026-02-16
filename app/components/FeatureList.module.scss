@@ -1,0 +1,30 @@
+@use '../lib/definitions' as *;
+
+.featureList {
+  columns: 3 300px;
+  column-gap: 1em;
+  margin: 1em;
+}
+
+@media ($huge-and-up) {
+  .featureList {
+    max-width: $max-width;
+    margin: 1em auto;
+  }
+}
+
+.item {
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 1em;
+}
+
+.itemBody {
+  display: flex;
+  align-items: flex-start;
+}
+
+.icon {
+  margin-right: 0.5em;
+  font-size: 200%;
+}

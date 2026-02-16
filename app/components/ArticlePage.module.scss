@@ -1,0 +1,20 @@
+@use '../lib/definitions' as *;
+
+.page {
+  padding: 2em 1em;
+}
+
+@media ($huge-and-up) {
+  .page {
+    max-width: $max-width;
+    margin: auto;
+  }
+}
+
+.markdown {
+  margin-bottom: 2em;
+}
+
+.markdown h2 {
+  margin-top: 1em;
+}

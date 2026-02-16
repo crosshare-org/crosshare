@@ -34,7 +34,7 @@ import {
 import { withTranslation } from '../lib/translation.js';
 import { puzzleFromDB } from '../lib/types.js';
 import { PAGE_SIZE } from './featured/[pageNumber].js';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 
 type HomepagePuz = LinkablePuzzle & {
   constructorPage: ConstructorPageBase | null;

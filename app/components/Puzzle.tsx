@@ -125,7 +125,7 @@ import {
 import { Keyboard } from './Keyboard.js';
 import { Overlay } from './Overlay.js';
 import { SquareAndCols, TwoCol } from './Page.js';
-import styles from './Puzzle.module.css';
+import styles from './Puzzle.module.scss';
 import {
   OverlayType,
   PuzzleOverlay,

@@ -9,7 +9,7 @@ import {
   DBPuzzleV,
 } from '../lib/dbtypes.js';
 import { logAsyncErrors, slugify, timeString } from '../lib/utils.js';
-import style from './ConstructorStats.module.css';
+import style from './ConstructorStats.module.scss';
 
 const usePuzzleDoc = (
   puzzleId: string | undefined

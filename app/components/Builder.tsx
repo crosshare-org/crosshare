@@ -62,7 +62,7 @@ import {
   PasteAction,
 } from '../reducers/gridReducer.js';
 import { AuthProps } from './AuthHelpers.js';
-import styles from './Builder.module.css';
+import styles from './Builder.module.scss';
 import { Button, ButtonReset } from './Buttons.js';
 import { ClueMode } from './ClueMode.js';
 import { ColorPicker } from './ColorPicker.js';

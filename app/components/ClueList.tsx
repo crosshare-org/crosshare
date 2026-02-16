@@ -5,7 +5,7 @@ import { Position, directionString } from '../lib/types.js';
 import { CluedEntry } from '../lib/viewableGrid.js';
 import { PuzzleAction } from '../reducers/commonActions.js';
 import { ClickedEntryAction } from '../reducers/gridReducer.js';
-import styles from './ClueList.module.css';
+import styles from './ClueList.module.scss';
 import { ClueText } from './ClueText.js';
 
 interface ClueListItemProps {

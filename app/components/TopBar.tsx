@@ -31,7 +31,7 @@ import { EmbedContext } from './EmbedContext.js';
 import { Logo } from './Icons.js';
 import { Link } from './Link.js';
 import { Overlay } from './Overlay.js';
-import styles from './TopBar.module.css';
+import styles from './TopBar.module.scss';
 
 interface TopBarDropdownProps {
   onClose?: () => void;

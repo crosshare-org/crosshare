@@ -9,7 +9,7 @@ import { Overlay } from './Overlay.js';
 import { SlateColorTheme } from './SlateColorTheme.js';
 import { SlateHeader, SlateLogo } from './SlateHeader.js';
 import { Illustration, Pause, Play } from './SlateIcons.js';
-import styles from './SlateOverlays.module.css';
+import styles from './SlateOverlays.module.scss';
 
 const PoweredByLink = () => {
   return (

@@ -70,7 +70,7 @@ import {
   TopBarDropDownLinkA,
   TopBarLink,
 } from './TopBar.js';
-import styles from './TopBarChildren.module.css';
+import styles from './TopBarChildren.module.scss';
 
 const ImportPuzForm = (props: { dispatch: Dispatch<ImportPuzAction> }) => {
   const [error, setError] = useState<string | null>(null);

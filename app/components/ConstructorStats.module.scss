@@ -1,0 +1,28 @@
+@use '../lib/definitions' as *;
+
+.stats {
+  column-count: 1;
+  margin-bottom: -1em;
+}
+
+@media ($small-and-up) {
+  .stats {
+    column-count: 2;
+  }
+}
+
+@media ($large-and-up) {
+  .stats {
+    column-count: 3;
+  }
+}
+
+@media ($huge-and-up) {
+  .stats {
+    column-count: 4;
+  }
+}
+
+.section {
+  break-inside: avoid-column;
+}

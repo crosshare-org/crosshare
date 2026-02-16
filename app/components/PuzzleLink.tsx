@@ -15,7 +15,7 @@ import { PatronIcon, PuzzleSizeIcon } from './Icons.js';
 import { Link } from './Link.js';
 import { Markdown } from './Markdown.js';
 import { PublishDate } from './PublishDate.js';
-import styles from './PuzzleLink.module.css';
+import styles from './PuzzleLink.module.scss';
 import { TagList } from './TagList.js';
 
 const PuzzleLink = (props: {

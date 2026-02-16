@@ -1,4 +1,4 @@
-@value small-and-up from '../lib/definitions.module.css';
+@use '../lib/definitions' as *;
 
 .fillItem {
   align-items: center;
@@ -38,8 +38,7 @@
   height: 100%;
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (small-and-up) {
+@media ($small-and-up) {
   .fillListWrapper {
     display: block;
   }

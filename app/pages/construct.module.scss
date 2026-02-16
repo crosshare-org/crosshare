@@ -1,5 +1,4 @@
-@value small-and-up from '../lib/definitions.module.css';
-@value large-and-up from '../lib/definitions.module.css';
+@use '../lib/definitions' as *;
 
 .launch {
   margin-top: 0.75em;
@@ -33,15 +32,13 @@
   width: 100%;
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (small-and-up) {
+@media ($small-and-up) {
   .heroWrap {
     min-height: 175px;
   }
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (large-and-up) {
+@media ($large-and-up) {
   .heroWrap {
     min-height: 125px;
   }

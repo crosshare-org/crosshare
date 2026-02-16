@@ -14,7 +14,7 @@ import { clsx } from '../lib/utils.js';
 import { KeypressAction } from '../reducers/commonActions.js';
 import { PasteAction } from '../reducers/gridReducer.js';
 import { EmbedContext } from './EmbedContext.js';
-import styles from './Page.module.css';
+import styles from './Page.module.scss';
 
 interface TinyNavButtonProps {
   isLeft?: boolean;

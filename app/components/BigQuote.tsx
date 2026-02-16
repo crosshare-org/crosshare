@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import styles from './BigQuote.module.css';
+import styles from './BigQuote.module.scss';
 
 export function BigQuote(props: { quote: string; attribution: ReactNode }) {
   return (

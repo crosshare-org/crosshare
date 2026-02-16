@@ -1,5 +1,4 @@
-@value keyboard-height from '../lib/definitions.module.css';
-@value small-and-up from '../lib/definitions.module.css';
+@use '../lib/definitions' as *;
 
 .keyRows {
   user-select: none;
@@ -9,7 +8,7 @@
 
   width: 100%;
   /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  height: keyboard-height;
+  height: $keyboard-height;
   padding: 4px;
   border-radius: 5px;
 
@@ -91,8 +90,7 @@
   background: var(--key-bg-click);
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (small-and-up) {
+@media ($small-and-up) {
   .key[data-only-on-tablet='true'] {
     display: flex;
   }

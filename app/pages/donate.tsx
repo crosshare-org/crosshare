@@ -10,7 +10,7 @@ import { getCollection } from '../lib/firebaseAdminWrapper.js';
 import { PathReporter } from '../lib/pathReporter.js';
 import { withTranslation } from '../lib/translation.js';
 import { clsx } from '../lib/utils.js';
-import styles from './donate.module.css';
+import styles from './donate.module.scss';
 
 interface DonateProps {
   donors: {

@@ -15,7 +15,7 @@ import { logAsyncErrors } from '../lib/utils.js';
 import { AuthContext } from './AuthContext.js';
 import { Button, ButtonAsLink } from './Buttons.js';
 import { ConstructorList } from './ConstructorList.js';
-import styles from './ConstructorPage.module.css';
+import styles from './ConstructorPage.module.scss';
 import { ConstructorStats } from './ConstructorStats.js';
 import { FollowButton } from './FollowButton.js';
 import { I18nTags } from './I18nTags.js';

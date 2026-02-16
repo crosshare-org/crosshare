@@ -1,5 +1,4 @@
-@value small-and-up from '../lib/definitions.module.css';
-@value large-and-up from '../lib/definitions.module.css';
+@use '../lib/definitions' as *;
 
 .profilePicWrapper {
   position: relative;
@@ -30,8 +29,7 @@
   margin-right: 1em;
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (small-and-up) {
+@media ($small-and-up) {
   .profilePicImage,
   .profilePicWrapper {
     width: 100px;
@@ -47,8 +45,7 @@
   }
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (large-and-up) {
+@media ($large-and-up) {
   .coverPic {
     height: 300px;
   }

@@ -1,5 +1,4 @@
-@value small-and-up from '../lib/definitions.module.css';
-@value animation-delay from '../lib/definitions.module.css';
+@use '../lib/definitions' as *;
 
 @keyframes slidein {
   0% {
@@ -30,7 +29,7 @@
   box-shadow: 0 0 3px 3px rgb(0 0 0 / 50%);
 
   /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  transition: all animation-delay ease-in-out 0s;
+  transition: all $animation-delay ease-in-out 0s;
 }
 
 .snackbar[data-showing='true'] {
@@ -41,7 +40,7 @@
 .toast {
   max-height: 500px;
   /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  transition: all animation-delay ease-in-out 0s;
+  transition: all $animation-delay ease-in-out 0s;
 }
 
 .toast[data-closed='true'] {
@@ -61,7 +60,7 @@
   box-shadow: 0 0 3px 3px rgb(0 0 0 / 50%);
 
   /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  transition: all animation-delay ease-in-out 0s;
+  transition: all $animation-delay ease-in-out 0s;
   animation: slidein 0.3s ease-in-out;
 }
 
@@ -85,8 +84,7 @@
   display: none;
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (small-and-up) {
+@media ($small-and-up) {
   .toast + .toast {
     margin-top: 1em;
   }

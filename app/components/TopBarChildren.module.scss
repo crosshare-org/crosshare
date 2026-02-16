@@ -1,3 +1,5 @@
+@use '../lib/definitions' as *;
+
 .fileInput {
   overflow: hidden;
   max-width: 70vw;
@@ -15,7 +17,7 @@
   margin-bottom: 0;
   margin-left: auto;
 
-  font-size: calc(header-height - 20px);
+  font-size: calc($header-height - 20px);
   font-weight: bold;
 }
 

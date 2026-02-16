@@ -1,8 +1,4 @@
-@value slate-padding-small from '../lib/definitions.module.css';
-@value slate-padding-med from '../lib/definitions.module.css';
-@value slate-padding-large from '../lib/definitions.module.css';
-@value small-and-up from '../lib/definitions.module.css';
-@value large-and-up from '../lib/definitions.module.css';
+@use '../lib/definitions' as *;
 
 .bigButton {
   width: 100%;
@@ -27,7 +23,7 @@
   overflow: hidden;
 
   /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  padding: slate-padding-small 0 0;
+  padding: $slate-padding-small 0 0;
   border: 1px solid var(--slate-container-border);
   border-radius: 4px;
 
@@ -99,18 +95,14 @@
   vertical-align: middle;
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (small-and-up) {
+@media ($small-and-up) {
   .beginContainer {
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    padding: slate-padding-med 0 0;
+    padding: $slate-padding-med 0 0;
   }
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (large-and-up) {
+@media ($large-and-up) {
   .beginContainer {
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    padding: slate-padding-large 0 0;
+    padding: $slate-padding-large 0 0;
   }
 }

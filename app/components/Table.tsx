@@ -4,7 +4,7 @@ import { useMatchMedia } from '../lib/hooks';
 import { LARGE_AND_UP_RULES, SMALL_AND_UP_RULES } from '../lib/style';
 import { clsx } from '../lib/utils';
 import { ButtonReset } from './Buttons';
-import styles from './Table.module.css';
+import styles from './Table.module.scss';
 
 export interface ColumnSpec<T> {
   key: keyof T;

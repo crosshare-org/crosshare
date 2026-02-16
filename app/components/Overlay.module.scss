@@ -1,4 +1,4 @@
-@value small-and-up from '../lib/definitions.module.css';
+@use '../lib/definitions' as *;
 
 .overlay {
   position: fixed;
@@ -38,8 +38,7 @@
   border-radius: 7px;
 }
 
-/* stylelint-disable-next-line media-feature-name-no-unknown */
-@media (small-and-up) {
+@media ($small-and-up) {
   .inner {
     width: 90%;
     margin: 2em auto;

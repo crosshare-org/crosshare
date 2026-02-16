@@ -12,7 +12,7 @@ import {
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 import { ANIMATION_DELAY } from '../lib/style.js';
 import { clsx } from '../lib/utils.js';
-import styles from './Snackbar.module.css';
+import styles from './Snackbar.module.scss';
 
 enum ActionTypes {
   ShowSnackbar,

@@ -17,7 +17,7 @@ import {
 } from 'react-icons/fa';
 import { clsx } from '../lib/utils.js';
 import { CrosshareAudioContext } from './CrosshareAudioContext.js';
-import styles from './Keyboard.module.css';
+import styles from './Keyboard.module.scss';
 
 interface KeyRowsProps {
   children: ReactNode;
