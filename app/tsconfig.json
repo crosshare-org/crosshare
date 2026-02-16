@@ -28,7 +28,8 @@
     "incremental": true
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "nextjs"
   ],
   "include": [
     "index.d.ts",

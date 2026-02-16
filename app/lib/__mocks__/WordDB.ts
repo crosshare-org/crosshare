@@ -2,7 +2,7 @@
 export {};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-const WordDB: any = jest.genMockFromModule('../WordDB');
+const WordDB: any = jest.createMockFromModule('../WordDB');
 
 WordDB.useWordDB = () => {
   return [

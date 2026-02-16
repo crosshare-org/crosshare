@@ -292,13 +292,11 @@ async function sendWeeklyEmail(test: boolean, from: string | undefined) {
 
   return readFile('accounts.csv')
     .then(async (binary) => {
-      const csv: string[][] = (
-        parse(binary, {
-          quote: null,
-          escape: null,
-          relax_column_count: true,
-        }) as string[][]
-      ).filter((r: string[]) => r[1]); // Don't bother for users w/ no email address
+      const csv: string[][] = parse(binary, {
+        quote: null,
+        escape: null,
+        relax_column_count: true,
+      }).filter((r: string[]) => r[1]); // Don't bother for users w/ no email address
       for (const r of csv) {
         const uid = r[0];
         if (!uid) {
