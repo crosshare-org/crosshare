@@ -197,6 +197,7 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
           "ua": {
             "nanoseconds": 0,
             "seconds": 1604965200,
+            "type": "firestore/timestamp/1.0",
           },
           "uc": [],
           "vc": [],
@@ -242,6 +243,7 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
           "ua": {
             "nanoseconds": 0,
             "seconds": 1604965200,
+            "type": "firestore/timestamp/1.0",
           },
           "uc": [
             5,
@@ -310,6 +312,7 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
               "p": {
                 "nanoseconds": 0,
                 "seconds": 1604966400,
+                "type": "firestore/timestamp/1.0",
               },
               "t": 36.009,
             },
@@ -363,10 +366,12 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
           "p": {
             "nanoseconds": 0,
             "seconds": 1604966400,
+            "type": "firestore/timestamp/1.0",
           },
           "pvu": {
             "nanoseconds": 0,
             "seconds": 1604966400,
+            "type": "firestore/timestamp/1.0",
           },
           "rfm": true,
           "t": "Raises, as young",
@@ -408,6 +413,7 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
               "p": {
                 "nanoseconds": 0,
                 "seconds": 1604966400,
+                "type": "firestore/timestamp/1.0",
               },
               "t": 36.009,
             },
@@ -460,10 +466,12 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
           "p": {
             "nanoseconds": 0,
             "seconds": 1604966400,
+            "type": "firestore/timestamp/1.0",
           },
           "pvu": {
             "nanoseconds": 0,
             "seconds": 1604966400,
+            "type": "firestore/timestamp/1.0",
           },
           "rfm": true,
           "t": "Raises, as young",
@@ -540,6 +548,7 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
           "ua": {
             "nanoseconds": 0,
             "seconds": 1604965200,
+            "type": "firestore/timestamp/1.0",
           },
           "uc": [],
           "vc": [],
@@ -582,6 +591,7 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
               "p": {
                 "nanoseconds": 0,
                 "seconds": 1604966400,
+                "type": "firestore/timestamp/1.0",
               },
               "t": 36.009,
             },
@@ -634,10 +644,12 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
           "p": {
             "nanoseconds": 0,
             "seconds": 1604966400,
+            "type": "firestore/timestamp/1.0",
           },
           "pvu": {
             "nanoseconds": 0,
             "seconds": 1604966400,
+            "type": "firestore/timestamp/1.0",
           },
           "rfm": true,
           "t": "Raises, as young",
@@ -1272,6 +1284,7 @@ test('should update indexes when a private puzzle is marked private until', asyn
           "t": {
             "nanoseconds": 0,
             "seconds": 1604966400,
+            "type": "firestore/timestamp/1.0",
           },
           "u": "dummyuserid",
         },
@@ -1303,6 +1316,7 @@ test('should update indexes when a private puzzle is marked private until', asyn
           "t": {
             "nanoseconds": 0,
             "seconds": 1607644800,
+            "type": "firestore/timestamp/1.0",
           },
           "u": "dummyuserid",
         },
