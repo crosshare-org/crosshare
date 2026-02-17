@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { FixedSizeList as List } from 'react-window';
+import { List, type RowComponentProps, useListRef } from 'react-window';
 import * as WordDB from '../lib/WordDB.js';
 import {
   addAutofillFieldsToEntry,
@@ -20,7 +20,7 @@ import * as BA from '../lib/bitArray.js';
 import { ExportProps, exportFile } from '../lib/converter.js';
 import { isTextInput } from '../lib/domUtils.js';
 import { entryAndCrossAtPosition, getCrosses, valAt } from '../lib/gridBase.js';
-import { usePersistedBoolean, useSize } from '../lib/hooks.js';
+import { usePersistedBoolean } from '../lib/hooks.js';
 import { fromLocalStorage } from '../lib/storage.js';
 import { PRIMARY } from '../lib/style.js';
 import {
@@ -136,6 +136,32 @@ const PotentialFillItem = (props: PotentialFillItemProps) => {
   );
 };
 
+function PotentialFillRow({
+  index,
+  style,
+  values,
+  ...props
+}: RowComponentProps<{
+  entryIndex: number;
+  dispatch: Dispatch<ClickedFillAction>;
+  values: [string, number][];
+}>) {
+  const value = values[index];
+  if (value === undefined) {
+    return null;
+  }
+  return (
+    <div style={style}>
+      <PotentialFillItem
+        key={index}
+        entryIndex={props.entryIndex}
+        dispatch={props.dispatch}
+        value={value}
+      />
+    </div>
+  );
+}
+
 interface PotentialFillListProps {
   header: string;
   entryLength: number;
@@ -145,14 +171,16 @@ interface PotentialFillListProps {
   dispatch: Dispatch<ClickedFillAction>;
 }
 const PotentialFillList = (props: PotentialFillListProps) => {
-  const listRef = useRef<List>(null);
+  const listRef = useListRef(null);
   const listParent = useRef<HTMLDivElement>(null);
-  const { height } = useSize(listParent);
   useEffect(() => {
-    if (listRef.current !== null) {
-      listRef.current.scrollToItem(0);
-    }
-  }, [props.entryIndex, props.values]);
+    const list = listRef.current;
+    list?.scrollToRow({
+      align: 'start',
+      behavior: 'instant',
+      index: 0,
+    });
+  }, [listRef, props.entryIndex, props.values]);
   return (
     <div className={styles.fillListWrapper} data-selected={props.selected}>
       <div className={styles.fillListHeader}>
@@ -161,29 +189,16 @@ const PotentialFillList = (props: PotentialFillListProps) => {
       </div>
       <div ref={listParent} className={styles.listParent}>
         <List
-          ref={listRef}
-          height={height}
-          itemCount={props.values.length}
-          itemSize={35}
-          width="100%"
-        >
-          {({ index, style }) => {
-            const value = props.values[index];
-            if (value === undefined) {
-              return null;
-            }
-            return (
-              <div style={style}>
-                <PotentialFillItem
-                  key={index}
-                  entryIndex={props.entryIndex}
-                  dispatch={props.dispatch}
-                  value={value}
-                />
-              </div>
-            );
+          rowComponent={PotentialFillRow}
+          rowProps={{
+            entryIndex: props.entryIndex,
+            dispatch: props.dispatch,
+            values: props.values,
           }}
-        </List>
+          listRef={listRef}
+          rowCount={props.values.length}
+          rowHeight={35}
+        />
       </div>
     </div>
   );

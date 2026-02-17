@@ -1,5 +1,5 @@
 import { ReactNode, useState } from 'react';
-import { FixedSizeList } from 'react-window';
+import { List, type RowComponentProps } from 'react-window';
 import { useMatchMedia } from '../lib/hooks';
 import { LARGE_AND_UP_RULES, SMALL_AND_UP_RULES } from '../lib/style';
 import { clsx } from '../lib/utils';
@@ -74,6 +74,65 @@ function Header<T>({
   );
 }
 
+function RowComponent<T>({
+  index,
+  style,
+  data,
+  onRowClick,
+  columns,
+}: RowComponentProps<{
+  columns: ColumnSpec<T>[];
+  data: T[];
+  onRowClick?: (row: T) => void;
+}>) {
+  const value = data[index];
+  if (value === undefined) {
+    return null;
+  }
+  return (
+    <div
+      className={clsx(styles.row, onRowClick ? styles.rowClick : '')}
+      style={style}
+      onClick={
+        onRowClick
+          ? () => {
+              onRowClick(value);
+            }
+          : undefined
+      }
+      onKeyDown={
+        onRowClick
+          ? () => {
+              onRowClick(value);
+            }
+          : undefined
+      }
+      role={onRowClick ? 'button' : 'listitem'}
+      tabIndex={0}
+    >
+      {columns.map((col, i) => {
+        return (
+          <div
+            key={i}
+            className={styles.content}
+            style={
+              col.width
+                ? {
+                    width: col.width,
+                  }
+                : { flex: 1 }
+            }
+          >
+            {col.content
+              ? col.content(value)
+              : String(value ? value[col.key] : 'error')}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function Data<T>({
   columns,
   data,
@@ -89,61 +148,12 @@ function Data<T>({
   const size = largeAndUp ? 35 : smallAndUp ? 50 : 75;
 
   return (
-    <FixedSizeList
-      height={400}
-      itemCount={data.length}
-      itemSize={size}
-      width="100%"
-    >
-      {({ index, style }) => {
-        const value = data[index];
-        if (value === undefined) {
-          return null;
-        }
-        return (
-          <div
-            className={clsx(styles.row, onRowClick ? styles.rowClick : '')}
-            style={style}
-            onClick={
-              onRowClick
-                ? () => {
-                    onRowClick(value);
-                  }
-                : undefined
-            }
-            onKeyDown={
-              onRowClick
-                ? () => {
-                    onRowClick(value);
-                  }
-                : undefined
-            }
-            role={onRowClick ? 'button' : 'listitem'}
-            tabIndex={0}
-          >
-            {columns.map((col, i) => {
-              return (
-                <div
-                  key={i}
-                  className={styles.content}
-                  style={
-                    col.width
-                      ? {
-                          width: col.width,
-                        }
-                      : { flex: 1 }
-                  }
-                >
-                  {col.content
-                    ? col.content(value)
-                    : String(value ? value[col.key] : 'error')}
-                </div>
-              );
-            })}
-          </div>
-        );
-      }}
-    </FixedSizeList>
+    <List
+      rowComponent={RowComponent}
+      rowProps={{ columns, data, onRowClick }}
+      rowCount={data.length}
+      rowHeight={size}
+    />
   );
 }
 

@@ -10,5 +10,12 @@
     "../functions/src/*.ts!",
     "!**/__mocks__/**",
     "!lingui.config.ts"
+  ],
+  "ignoreDependencies": [
+    "@lingui/swc-plugin",
+    "eslint-import-resolver-typescript",
+    "eslint-plugin-css-modules",
+    "browserslist-useragent-regexp",
+    "sharp"
   ]
 }
