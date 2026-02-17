@@ -1,4 +1,5 @@
 ### Custom ###
+next-env.d.ts
 cache/**
 nextjs/**
 cluedb/**
