@@ -24,7 +24,8 @@
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "jsx": "preserve",
-    "incremental": true,  },
+    "incremental": true,
+  },
   "include": [
     "src",
     "typings/**/*.ts",
