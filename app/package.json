@@ -108,7 +108,6 @@
     "@jest/globals": "catalog:",
     "@lingui/cli": "catalog:",
     "@modern-dev/jsbn": "catalog:",
-    "@next/bundle-analyzer": "catalog:",
     "@next/eslint-plugin-next": "catalog:",
     "@playwright/test": "catalog:",
     "@testing-library/jest-dom": "catalog:",
