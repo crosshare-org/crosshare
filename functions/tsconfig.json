@@ -27,6 +27,7 @@
     "incremental": true,  },
   "include": [
     "src",
-    "typings/**/*.ts"
+    "typings/**/*.ts",
+    "eslint.config.js"
   ]
 }

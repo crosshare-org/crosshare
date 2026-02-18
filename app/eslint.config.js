@@ -14,7 +14,7 @@ import nextPlugin from '@next/eslint-plugin-next';
 import { defineConfig } from 'eslint/config';
 
 const compat = new FlatCompat({
-  baseDirectory: import.meta.dirname,
+  baseDirectory: '/workspaces/crosshare/app',
 });
 
 export default defineConfig(
@@ -40,7 +40,8 @@ export default defineConfig(
   },
   {
     plugins: {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       redos,
     },
     rules: {
@@ -99,7 +100,7 @@ export default defineConfig(
     languageOptions: {
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+        tsconfigRootDir: '/workspaces/crosshare/app',
       },
     },
   },

@@ -1,33 +1,31 @@
+import firestore from '@google-cloud/firestore';
 import * as functions from 'firebase-functions/v1';
-
 import { runAnalytics } from '../../app/lib/analytics.js';
-import { queueEmails } from './queueEmails.js';
-import { handlePuzzleUpdate } from '../../app/lib/puzzleUpdate.js';
-import { doGlicko } from '../../app/lib/glicko.js';
 import { moderateComments } from '../../app/lib/comments.js';
-import { checkSpam } from '../../app/lib/spam.js';
-
 import {
-  CronStatusV,
-  CronStatusT,
-  CommentForModerationV,
   AdminSettingsV,
-  CommentForModerationWithIdT,
   CommentDeletionV,
   CommentDeletionWithIdT,
+  CommentForModerationV,
+  CommentForModerationWithIdT,
+  CronStatusT,
+  CronStatusV,
 } from '../../app/lib/dbtypes.js';
-
 import {
   getCollection,
   mapEachResult,
 } from '../../app/lib/firebaseAdminWrapper.js';
-import { Timestamp } from '../../app/lib/timestamp.js';
-import { PathReporter } from '../../app/lib/pathReporter.js';
-import { ReactionT, ReactionV } from '../../app/lib/reactions.js';
-import firestore from '@google-cloud/firestore';
+import { doGlicko } from '../../app/lib/glicko.js';
 import { cleanNotifications } from '../../app/lib/notifications.js';
+import { PathReporter } from '../../app/lib/pathReporter.js';
+import { handlePuzzleUpdate } from '../../app/lib/puzzleUpdate.js';
+import { ReactionT, ReactionV } from '../../app/lib/reactions.js';
+import { checkSpam } from '../../app/lib/spam.js';
+import { Timestamp } from '../../app/lib/timestamp.js';
+import { queueEmails } from './queueEmails.js';
 
 export const ratings = functions
+  // eslint-disable-next-line import/namespace
   .runWith({ timeoutSeconds: 540, memory: '512MB' })
   .pubsub.schedule('every day 00:05')
   .timeZone('UTC')
@@ -129,15 +127,13 @@ export const analytics = functions.pubsub
     const value = await getCollection('cron_status')
       .doc('hourlyanalytics')
       .get();
-    const data = value.data();
-    if (data) {
-      const result = CronStatusV.decode(data);
-      if (result._tag !== 'Right') {
-        console.error(PathReporter.report(result).join(','));
-        throw new Error('Malformed cron_status');
-      }
-      startTimestamp = result.right.ranAt;
+    const result = CronStatusV.decode(value.data());
+    if (result._tag !== 'Right') {
+      console.error(PathReporter.report(result).join(','));
+      throw new Error('Malformed cron_status');
     }
+    startTimestamp = result.right.ranAt;
+
     await runAnalytics(startTimestamp, endTimestamp);
     const status: CronStatusT = { ranAt: endTimestamp };
     console.log('Done, logging analytics timestamp');
@@ -148,48 +144,45 @@ const client = new firestore.v1.FirestoreAdminClient();
 
 export const scheduledFirestoreExport = functions.pubsub
   .schedule('every day 00:00')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   .onRun((_context) => {
     const projectId =
       process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT || 'mdcrosshare';
     const databaseName = client.databasePath(projectId, '(default)');
 
-    return (
-      client
-        .exportDocuments({
-          name: databaseName,
-          outputUriPrefix: 'gs://crosshare-backups',
-          // Leave collectionIds empty to export all collections
-          // or set to a list of collection IDs to export,
-          // collectionIds: ['users', 'posts']
-          collectionIds: [
-            'a', // articles
-            'c', // puzzles
-            'cp', // blogs
-            'cs', // constructor stats
-            'donations',
-            'ds', // daily stats
-            'em', // embed settings
-            'followers',
-            'prefs',
-            's', // puzzle stats
-            'settings',
-          ],
-        })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .then((responses: any) => {
-          const response = responses[0];
-          console.log(`Operation Name: ${response['name']}`);
-        })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .catch((err: any) => {
-          console.error(err);
-          throw new Error('Export operation failed');
-        })
-    );
+    return client
+      .exportDocuments({
+        name: databaseName,
+        outputUriPrefix: 'gs://crosshare-backups',
+        // Leave collectionIds empty to export all collections
+        // or set to a list of collection IDs to export,
+        // collectionIds: ['users', 'posts']
+        collectionIds: [
+          'a', // articles
+          'c', // puzzles
+          'cp', // blogs
+          'cs', // constructor stats
+          'donations',
+          'ds', // daily stats
+          'em', // embed settings
+          'followers',
+          'prefs',
+          's', // puzzle stats
+          'settings',
+        ],
+      })
+      .then((responses) => {
+        const response = responses[0];
+        console.log(`Operation Name: ${response.name}`);
+      })
+      .catch((err: unknown) => {
+        console.error(err);
+        throw new Error('Export operation failed');
+      });
   });
 
 export const notificationsSend = functions
+  // eslint-disable-next-line import/namespace
   .runWith({ timeoutSeconds: 540, memory: '512MB' })
   .pubsub.schedule('every day 16:00')
   .onRun(async () => {

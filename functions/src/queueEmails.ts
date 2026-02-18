@@ -1,22 +1,7 @@
 import {
-  getAdminApp,
-  mapEachResult,
-} from '../../app/lib/firebaseAdminWrapper.js';
-import { Timestamp as AdminTimestamp } from 'firebase-admin/firestore';
-
-import {
-  NotificationV,
-  NotificationT,
-  CommentNotificationT,
-  isCommentNotification,
-  isReplyNotification,
-  ReplyNotificationT,
-  NewPuzzleNotificationT,
-  isNewPuzzleNotification,
-  isFeaturedNotification,
-  FeaturedNotificationT,
-} from '../../app/lib/notificationTypes.js';
-import { AccountPrefsV, AccountPrefsT } from '../../app/lib/prefs.js';
+  Timestamp as AdminTimestamp,
+  getFirestore,
+} from 'firebase-admin/firestore';
 import {
   EmailClient,
   RATE_LIMIT,
@@ -24,16 +9,32 @@ import {
   getClient,
   sendEmail,
 } from '../../app/lib/email.js';
-import { getFirestore } from 'firebase-admin/firestore';
+import {
+  getAdminApp,
+  mapEachResult,
+} from '../../app/lib/firebaseAdminWrapper.js';
+import {
+  CommentNotificationT,
+  FeaturedNotificationT,
+  NewPuzzleNotificationT,
+  NotificationT,
+  NotificationV,
+  ReplyNotificationT,
+  isCommentNotification,
+  isFeaturedNotification,
+  isNewPuzzleNotification,
+  isReplyNotification,
+} from '../../app/lib/notificationTypes.js';
+import { AccountPrefsT, AccountPrefsV } from '../../app/lib/prefs.js';
 
-const joinStringsWithAnd = (vals: Array<string>) => {
+const joinStringsWithAnd = (vals: string[]) => {
   const dedup = Array.from(new Set(vals)).sort();
   if (dedup.length === 1) {
     return dedup[0];
   } else if (dedup.length === 2) {
     return `${dedup[0]} and ${dedup[1]}`;
   } else {
-    return dedup.slice(0, -1).join(', ') + ' and ' + dedup.slice(-1);
+    return dedup.slice(0, -1).join(', ') + ' and ' + dedup[dedup.length - 1];
   }
 };
 
@@ -45,7 +46,7 @@ const puzzleLink = (puzzleId: string) =>
 async function queueEmailForUser(
   client: EmailClient,
   userId: string,
-  notifications: Array<NotificationT>
+  notifications: NotificationT[]
 ) {
   const db = getFirestore(getAdminApp());
   const sorted = notifications.sort((n1, n2) => n1.id.localeCompare(n2.id));
@@ -63,17 +64,14 @@ async function queueEmailForUser(
 
   let markdown = '';
   let subject: string | null = null;
-  const read: Array<NotificationT> = [];
+  const read: NotificationT[] = [];
 
   if (!prefs?.unsubs?.includes('comments')) {
-    const comments: Array<CommentNotificationT> = sorted.filter(
+    const comments: CommentNotificationT[] = sorted.filter(
       isCommentNotification
     );
     const commentsByPuzzle = comments.reduce(
-      (
-        rv: Record<string, Array<CommentNotificationT>>,
-        x: CommentNotificationT
-      ) => {
+      (rv: Record<string, CommentNotificationT[]>, x: CommentNotificationT) => {
         (rv[x.p] = rv[x.p] || []).push(x);
         return rv;
       },
@@ -107,13 +105,9 @@ async function queueEmailForUser(
       markdown += '\n\n';
     }
 
-    const replies: Array<ReplyNotificationT> =
-      sorted.filter(isReplyNotification);
+    const replies: ReplyNotificationT[] = sorted.filter(isReplyNotification);
     const repliesByPuzzle = replies.reduce(
-      (
-        rv: Record<string, Array<ReplyNotificationT>>,
-        x: ReplyNotificationT
-      ) => {
+      (rv: Record<string, ReplyNotificationT[]>, x: ReplyNotificationT) => {
         (rv[x.p] = rv[x.p] || []).push(x);
         return rv;
       },
@@ -151,7 +145,7 @@ async function queueEmailForUser(
   }
 
   if (!prefs?.unsubs?.includes('newpuzzles')) {
-    const nps: Array<NewPuzzleNotificationT> = sorted.filter(
+    const nps: NewPuzzleNotificationT[] = sorted.filter(
       isNewPuzzleNotification
     );
     if (nps.length) {
@@ -173,9 +167,7 @@ async function queueEmailForUser(
   }
 
   if (!prefs?.unsubs?.includes('featured')) {
-    const fs: Array<FeaturedNotificationT> = sorted.filter(
-      isFeaturedNotification
-    );
+    const fs: FeaturedNotificationT[] = sorted.filter(isFeaturedNotification);
     if (fs.length) {
       const plural = fs.length > 1 ? 's' : '';
       if (!subject) {
@@ -221,7 +213,7 @@ export async function queueEmails() {
   );
   console.log('unread: ', unread.length);
   const unreadsByUserId = unread.reduce(
-    (rv: Record<string, Array<NotificationT>>, x: NotificationT) => {
+    (rv: Record<string, NotificationT[]>, x: NotificationT) => {
       (rv[x.u] = rv[x.u] || []).push(x);
       return rv;
     },
