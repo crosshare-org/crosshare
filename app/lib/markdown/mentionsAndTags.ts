@@ -1,11 +1,11 @@
-import { Nodes } from 'mdast';
+import { Node, Nodes } from 'mdast';
 import { Replace, findAndReplace } from 'mdast-util-find-and-replace';
 import { Plugin } from 'unified';
 
 export const mentionsAndTags: Plugin = () => {
-  return (tree: Nodes) => {
+  return (tree: Node) => {
     findAndReplace(
-      tree,
+      tree as Nodes,
       [
         [/(^|\s)@([a-z]\w+)\b/gi, replaceMention],
         [/(^|\s)#([a-z][a-z0-9-]{2,})\b/gi, replaceTag],

@@ -1,10 +1,10 @@
-import { type Root } from 'mdast';
+import { type Node, type Root } from 'mdast';
 import { Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
 
 export const remarkNoRefs: Plugin = () => {
-  return (tree: Root) => {
-    visit(tree, { type: 'textDirective' }, (node) => {
+  return (tree: Node) => {
+    visit(tree as Root, { type: 'textDirective' }, (node) => {
       if (node.type !== 'textDirective' || node.name !== 'no-refs') {
         return;
       }
