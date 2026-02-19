@@ -14,7 +14,7 @@ import nextPlugin from '@next/eslint-plugin-next';
 import { defineConfig } from 'eslint/config';
 
 const compat = new FlatCompat({
-  baseDirectory: '/workspaces/crosshare/app',
+  baseDirectory: import.meta.dirname,
 });
 
 export default defineConfig(
@@ -100,7 +100,7 @@ export default defineConfig(
     languageOptions: {
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: '/workspaces/crosshare/app',
+        tsconfigRootDir: import.meta.dirname,
       },
     },
   },

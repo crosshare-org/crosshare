@@ -18,6 +18,7 @@
     "knip": "npx knip",
     "format": "npx prettier \"../**/*\\.(ts(x)?|module\\.css)\" --write",
     "checkFormat": "npx prettier \"../**/*\\.(ts(x)?|module\\.css)\" --check",
+    "typecheck": "npx tsc",
     "clean": "rimraf nextjs/",
     "dev": "GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json next dev",
     "analyze": "ANALYZE=true next build",

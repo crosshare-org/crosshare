@@ -24,6 +24,9 @@ jobs:
       - name: Copy dummy fb config
         working-directory: ./app
         run: cp ./firebaseConfig.emulators.ts ./firebaseConfig.ts
+      - name: Typecheck
+        working-directory: ./app
+        run: pnpm typecheck
       - name: Lint
         working-directory: ./app
         run: pnpm lint
@@ -35,3 +38,12 @@ jobs:
         run: |
           npm install -g firebase-tools
           firebase emulators:exec --only firestore --project demo-crosshare 'NODE_OPTIONS='--experimental-vm-modules'  npx jest --ci'
+      - name: Functions lint
+        working-directory: ./functions
+        run: pnpm lint
+      - name: Functions check formatting
+        working-directory: ./functions
+        run: pnpm checkFormat
+      - name: Functions build
+        working-directory: ./functions
+        run: pnpm build
