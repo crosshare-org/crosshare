@@ -373,7 +373,6 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
             "seconds": 1604966400,
             "type": "firestore/timestamp/1.0",
           },
-          "rfm": true,
           "t": "Raises, as young",
           "tg_a": [
             "mini",
@@ -473,7 +472,6 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
             "seconds": 1604966400,
             "type": "firestore/timestamp/1.0",
           },
-          "rfm": true,
           "t": "Raises, as young",
           "tg_a": [
             "mini",
@@ -651,7 +649,6 @@ test('should remove from notifications, plays and puzzle itself when a puzzle is
             "seconds": 1604966400,
             "type": "firestore/timestamp/1.0",
           },
-          "rfm": true,
           "t": "Raises, as young",
           "tg_a": [
             "mini",
