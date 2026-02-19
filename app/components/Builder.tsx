@@ -174,13 +174,14 @@ const PotentialFillList = (props: PotentialFillListProps) => {
   const listRef = useListRef(null);
   const listParent = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    if (props.values.length === 0) return;
     const list = listRef.current;
     list?.scrollToRow({
       align: 'start',
       behavior: 'instant',
       index: 0,
     });
-  }, [listRef, props.entryIndex, props.values]);
+  }, [listRef, props.values.length]);
   return (
     <div className={styles.fillListWrapper} data-selected={props.selected}>
       <div className={styles.fillListHeader}>
