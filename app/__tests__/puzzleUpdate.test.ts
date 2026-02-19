@@ -1415,7 +1415,6 @@ test('should update indexes when a private until puzzle is marked private', asyn
     `);
 
     // mark as private
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const updated = {
       ...puzzleWithComments,
       pv: true,
