@@ -1,0 +1,6 @@
+{
+  "functions": {
+    "predeploy": ["npm run lint", "npm run build", "npm run isolate"],
+    "source": "isolate"
+  }
+}

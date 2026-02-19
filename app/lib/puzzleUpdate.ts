@@ -149,13 +149,23 @@ async function updateTagsIfNeeded(puzzleId: string, dbpuz: DBPuzzleT) {
   }
 }
 
+const RFM_TIME_LIMIT = 1000 * 60 * 60 * 36;
 /* Check if a puzzle is "ready for moderation".
  *
- * For right now this means it has comments enabled and (a) has any (non-author)
- * comments or (b) has any likes, or (c) was constructed by a patron. */
+ * For right now this means it has comments enabled, was published in the last
+ * 36hrs, and (a) has any (non-author) comments or (b) has any likes, or
+ * (c) was constructed by a patron. */
 async function updateRfmIfNeeded(puzzleId: string, dbpuz: DBPuzzleT) {
   // Don't set rfm if puzzle has comments disabled or is already moderated
   if (dbpuz.no_cs || dbpuz.rfm || dbpuz.m) {
+    return;
+  }
+  // Don't set for private puzzles
+  if (dbpuz.pv !== false && dbpuz.pv !== undefined) {
+    return;
+  }
+  // Don't set if it's been public for longer than 36 hrs already
+  if (Timestamp.now().toMillis() > dbpuz.pvu.toMillis() + RFM_TIME_LIMIT) {
     return;
   }
   if (
