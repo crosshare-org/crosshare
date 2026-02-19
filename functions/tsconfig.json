@@ -25,6 +25,7 @@
     "noUncheckedIndexedAccess": true,
     "jsx": "preserve",
     "incremental": true,
+    "allowJs": true
   },
   "include": [
     "src",

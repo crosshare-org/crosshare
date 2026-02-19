@@ -16,8 +16,7 @@ export default defineConfig(
   tseslint.configs.stylisticTypeChecked,
   {
     plugins: {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       redos,
     },
     rules: {
@@ -57,7 +56,7 @@ export default defineConfig(
         projectService: {
           allowDefaultProject: ['*.ts', 'eslint.config.js'],
         },
-        tsconfigRootDir: '/workspaces/crosshare/functions',
+        tsconfigRootDir: import.meta.dirname,
       },
     },
   },

@@ -36,6 +36,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "next.config.mjs"
+    "next.config.mjs",
+    "eslint.config.js"
   ]
 }
