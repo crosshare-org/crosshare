@@ -1,4 +1,3 @@
-import { PHASE_PRODUCTION_SERVER } from 'next/constants.js';
 import { withSentryConfig } from '@sentry/nextjs';
 
 const distDir = 'nextjs';
@@ -38,24 +37,11 @@ const baseConfig = {
   },
 };
 
-const sentryWebpackPluginOptions = {
+export default withSentryConfig(baseConfig, {
   org: 'm-d',
   project: 'crosshare',
-  silent: true,
-};
-
-export default (phase) => {
-  if (phase === PHASE_PRODUCTION_SERVER) {
-    return withSentryConfig(baseConfig, sentryWebpackPluginOptions);
-  }
-
-  return withSentryConfig(
-    {
-      ...baseConfig,
-      env: {
-        FIREBASE_PROJECT_ID: 'mdcrosshare',
-      },
-    },
-    sentryWebpackPluginOptions
-  );
-};
+  // eslint-disable-next-line no-undef
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  telemetry: false,
+  widenClientFileUpload: true,
+});

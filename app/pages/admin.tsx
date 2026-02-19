@@ -480,7 +480,6 @@ export default requiresAdmin(() => {
           ''
         )}
         <h4 className="borderBottom1pxSolidBlack">Upcoming Minis</h4>
-
         <UpcomingMinisCalendar disableExisting={false} onChange={goToPuzzle} />
         <h4 className="borderBottom1pxSolidBlack">Homepage Text</h4>
         <form
@@ -639,6 +638,14 @@ export default requiresAdmin(() => {
         ) : (
           ''
         )}
+        <button
+          type="button"
+          onClick={() => {
+            throw new Error('Sentry Test Error');
+          }}
+        >
+          Test Sentry Error
+        </button>
       </div>
     </>
   );
