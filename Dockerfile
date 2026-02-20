@@ -5,8 +5,8 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
     corepack enable pnpm && pnpm install --frozen-lockfile
 ENV NODE_ENV=production PATH=$PATH:/app/node_modules/.bin NEXT_TELEMETRY_DISABLED=1
 WORKDIR /src/app
-RUN pnpm compileI18n
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libuuid1
+RUN pnpm compileI18n
 RUN pnpm predeploy
 
 FROM gcr.io/distroless/nodejs20-debian12 AS prod
