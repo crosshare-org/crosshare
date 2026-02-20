@@ -34,6 +34,7 @@ export const config = {
     'auth/user-disabled',
     "Can't find variable: cordova",
     'cordova is not defined',
+    'Invalid call to runtime.sendMessage(). Tab not found.',
   ],
   // Note: if you want to override the automatic release value, do not set a
   // `release` value here - use the environment variable `SENTRY_RELEASE`, so
