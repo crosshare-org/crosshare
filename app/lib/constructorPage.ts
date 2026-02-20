@@ -52,6 +52,9 @@ export function validate(
   cp: unknown,
   username: string
 ): ConstructorPageT | null {
+  if (cp == null) {
+    return null;
+  }
   const validationResult = ConstructorPageV.decode(cp);
   if (validationResult._tag === 'Right') {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

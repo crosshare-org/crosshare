@@ -2,24 +2,17 @@ import { ParsedUrlQuery } from 'querystring';
 import { addDays } from 'date-fns';
 import type firebaseAdminType from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
-import {
-  Timestamp as AdminTimestamp,
-  getFirestore,
-} from 'firebase-admin/firestore';
+import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import type { Root } from 'hast';
 import { GetServerSideProps } from 'next';
 import { NextPuzzleLink } from '../components/Puzzle.js';
 import {
-  getAdminApp,
-  getCollection,
-  mapEachResult,
-} from '../lib/firebaseAdminWrapper.js';
-import { ArticleT, validate } from './article.js';
-import {
-  ConstructorPageV,
   ConstructorPageWithMarkdown,
-} from './constructorPage.js';
+  validate as validateCP,
+} from '../lib/constructorPage.js';
+import { getAdminApp, getCollection } from '../lib/firebaseAdminWrapper.js';
+import { ArticleT, validate } from './article.js';
 import {
   CommentWithRepliesT,
   DBPuzzleT,
@@ -69,59 +62,47 @@ export async function getStorageUrl(
   return null;
 }
 
-const usernameMap: Record<string, ConstructorPageWithMarkdown> = {};
-let usernamesUpdated: number | null = null;
-const usernamesTTL = 1000 * 60 * 10;
+const usernameMap: Record<
+  string,
+  [number, ConstructorPageWithMarkdown | null]
+> = {};
+const usernamesTTL = 1000 * 60 * 30;
 
-const updateUsernameMap = async (): Promise<void> => {
+const updateUsernameMap = async (
+  userid: string
+): Promise<ConstructorPageWithMarkdown | null> => {
+  console.log('updating username map', userid);
   const now = Date.now();
-  console.log('updating username map');
   const db = getFirestore(getAdminApp());
-  let query: firebaseAdminType.firestore.Query = db.collection('cp');
-  if (usernamesUpdated) {
-    query = query.where('t', '>=', AdminTimestamp.fromMillis(usernamesUpdated));
-  }
+  let dbres;
   try {
-    await mapEachResult(query, ConstructorPageV, (cp, docId) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { t, ...partial } = cp;
-      const { sig, ...res } = {
-        ...partial,
-        id: docId,
-        b: markdownToHast({ text: partial.b }),
-      };
-      usernameMap[cp.u] = {
-        ...res,
-        ...(sig !== undefined && { sig: markdownToHast({ text: sig }) }),
-      };
-    });
-    usernamesUpdated = now;
-  } catch (e) {
-    console.error('error updating constructor pages');
-    console.error(e);
+    dbres = await db.collection('cp').where('u', '==', userid).limit(1).get();
+  } catch {
+    throw new Error(`error getting cp for ${userid}`);
   }
-};
-
-let updateUsernameMapPromise: Promise<void> | null = null;
-const updateUsernameMapOnce = () => {
-  if (!updateUsernameMapPromise) {
-    updateUsernameMapPromise = updateUsernameMap().finally(() => {
-      updateUsernameMapPromise = null;
-    });
+  const cp = validateCP(dbres.docs[0]?.data(), dbres.docs[0]?.id || '');
+  if (!cp) {
+    usernameMap[userid] = [now, null];
+    return null;
   }
-  return updateUsernameMapPromise;
+  const { sig, ...rest } = {
+    ...cp,
+    b: markdownToHast({ text: cp.b }),
+  };
+  const ret = {
+    ...rest,
+    ...(sig !== undefined && { sig: markdownToHast({ text: sig }) }),
+  };
+  usernameMap[userid] = [now, ret];
+  return ret;
 };
 
 export async function userIdToPage(
   userId: string
 ): Promise<ConstructorPageWithMarkdown | null> {
-  if (
-    usernamesUpdated === null ||
-    Date.now() - usernamesUpdated > usernamesTTL
-  ) {
-    await updateUsernameMapOnce();
-  }
-  return usernameMap[userId] || null;
+  const existing = usernameMap[userId];
+  if (existing && Date.now() - existing[0] < usernamesTTL) return existing[1];
+  return updateUsernameMap(userId);
 }
 
 export async function userIdToConstructorPageWithPatron(
