@@ -190,6 +190,8 @@ const PuzzleListItem = (props: PuzzleResult & { crypticMods: string[] }) => {
   );
 };
 
+const MODERATION_OFFSET = 1000 * 60 * 60 * 8;
+
 export default requiresAdmin(() => {
   const [donationEmail, setDonationEmail] = useState('');
   const [donationAmount, setDonationAmount] = useState('');
@@ -205,7 +207,11 @@ export default requiresAdmin(() => {
       getValidatedCollection('c', DBPuzzleWithIdV, 'id'),
       where('m', '==', false),
       where('rfm', '==', true),
-      where('pvu', '<=', Timestamp.now())
+      where(
+        'pvu',
+        '<=',
+        Timestamp.fromMillis(Timestamp.now().toMillis() - MODERATION_OFFSET)
+      )
     )
   );
   const [dbUnmoderated] = useCollectionData(puzzleCollection.current);
