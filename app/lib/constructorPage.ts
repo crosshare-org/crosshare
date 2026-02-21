@@ -78,6 +78,7 @@ const BarebonesCacheV = t.record(
     n: t.string,
   })
 );
+export type BarebonesCacheT = t.TypeOf<typeof BarebonesCacheV>;
 
 export function validateCache(
   data: unknown
