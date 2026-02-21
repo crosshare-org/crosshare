@@ -1,7 +1,9 @@
 import firestore from '@google-cloud/firestore';
+import { FieldValue } from 'firebase-admin/firestore';
 import * as functions from 'firebase-functions/v1';
 import { runAnalytics } from '../../app/lib/analytics.js';
 import { moderateComments } from '../../app/lib/comments.js';
+import { validate } from '../../app/lib/constructorPage.js';
 import {
   AdminSettingsV,
   CommentDeletionV,
@@ -203,4 +205,45 @@ export const puzzleUpdate = functions.firestore
     const newValue = change.after.data();
     const previousValue = change.before.data();
     await handlePuzzleUpdate(previousValue, newValue, change.after.id);
+  });
+
+export const constructorPageUpdate = functions.firestore
+  .document('cp/{pageId}')
+  .onWrite(async (change, context) => {
+    if (!change.after.exists) {
+      const previousValue = validate(
+        change.before.data(),
+        context.params.pageId
+      );
+      if (!previousValue) {
+        console.error(
+          'Deleting constructor page but no valid prev value',
+          context.params.pageId
+        );
+        return;
+      }
+      console.log(`Deleted page ${context.params.pageId}, removing from cache`);
+      await getCollection('cache')
+        .doc('barebonesConstructorPages')
+        .update({ [previousValue.u]: FieldValue.delete() });
+      return;
+    } else {
+      const newValue = validate(change.after.data(), context.params.pageId);
+      if (!newValue) {
+        console.error(
+          'Updating constructor page but no valid new value',
+          context.params.pageId
+        );
+        return;
+      }
+      console.log(
+        `Constructor page ${context.params.pageId} written, updating barebones cache`
+      );
+      await getCollection('cache')
+        .doc('barebonesConstructorPages')
+        .set(
+          { [newValue.u]: { i: newValue.i, n: newValue.n } },
+          { merge: true }
+        );
+    }
   });
