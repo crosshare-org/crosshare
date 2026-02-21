@@ -11,6 +11,7 @@ import {
   ConstructorPageBarebones,
   ConstructorPageWithMarkdown,
   validate as validateCP,
+  validateCache,
 } from '../lib/constructorPage.js';
 import { getAdminApp, getCollection } from '../lib/firebaseAdminWrapper.js';
 import { ArticleT, validate } from './article.js';
@@ -68,6 +69,7 @@ const userIdToPageMap: Record<
   [number, ConstructorPageWithMarkdown | null]
 > = {};
 const userIdToPageTTL = 1000 * 60 * 60;
+
 const updateUserIdToPage = async (
   userid: string
 ): Promise<ConstructorPageWithMarkdown | null> => {
@@ -106,13 +108,45 @@ async function userIdToFullPage(
   return updateUserIdToPage(userId);
 }
 
+let barebonesCache: Record<string, ConstructorPageBarebones> = {};
+const barebonesCacheTTL = 1000 * 60 * 60;
+let barebonesCacheUpdated = 0;
+
+const updateBarebonesCache = async (): Promise<void> => {
+  console.log('updating barebones cache');
+  const db = getFirestore(getAdminApp());
+  let dbres;
+  try {
+    dbres = await db.collection('cache').doc('barebonesConstructorPages').get();
+  } catch {
+    throw new Error(`error getting constructor page cache`);
+  }
+  const cache = validateCache(dbres.data());
+  if (!cache) {
+    console.error('invalid barebones cache document');
+    return undefined;
+  }
+  barebonesCache = cache;
+  barebonesCacheUpdated = Date.now();
+};
+
+let updateCachePromise: Promise<void> | null = null;
+const updateBarebonesCacheOnce = () => {
+  if (!updateCachePromise) {
+    updateCachePromise = updateBarebonesCache().finally(() => {
+      updateCachePromise = null;
+    });
+  }
+  return updateCachePromise;
+};
+
 export async function userIdToPage(
   userId: string
 ): Promise<ConstructorPageBarebones | null> {
-  const existing = userIdToPageMap[userId];
-  if (existing && Date.now() - existing[0] < userIdToPageTTL)
-    return existing[1];
-  return updateUserIdToPage(userId);
+  if (Date.now() - barebonesCacheUpdated > barebonesCacheTTL)
+    await updateBarebonesCacheOnce();
+
+  return barebonesCache[userId] || null;
 }
 
 export async function userIdToConstructorPageWithPatron(

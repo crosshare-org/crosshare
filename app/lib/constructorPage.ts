@@ -40,16 +40,6 @@ export interface ConstructorPageT extends Omit<
   id: string;
 }
 
-// Omit any markdown fields
-
-export type ConstructorPageBase = Omit<ConstructorPageT, 'sig' | 'b'>;
-export interface ConstructorPageWithMarkdown extends ConstructorPageBase {
-  b: Root;
-  sig?: Root;
-}
-
-export type ConstructorPageBarebones = Pick<ConstructorPageT, 'i' | 'n' | 'u'>;
-
 export function validate(
   cp: unknown,
   username: string
@@ -62,6 +52,48 @@ export function validate(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { t, ...partial } = validationResult.right;
     return { ...partial, id: username };
+  } else {
+    console.error(PathReporter.report(validationResult).join(','));
+    return null;
+  }
+}
+
+// Omit any markdown fields
+
+export type ConstructorPageBase = Omit<ConstructorPageT, 'sig' | 'b'>;
+export interface ConstructorPageWithMarkdown extends ConstructorPageBase {
+  b: Root;
+  sig?: Root;
+}
+
+export type ConstructorPageBarebones = Pick<ConstructorPageT, 'i' | 'n' | 'u'>;
+
+const BarebonesCacheV = t.record(
+  /** user id */
+  t.string,
+  t.type({
+    /** username (w/ desired capitalization) */
+    i: t.string,
+    /** display name */
+    n: t.string,
+  })
+);
+
+export function validateCache(
+  data: unknown
+): Record<string, ConstructorPageBarebones> | null {
+  const validationResult = BarebonesCacheV.decode(data);
+  if (validationResult._tag === 'Right') {
+    const entries = Object.entries(validationResult.right).map(
+      ([u, cp]): [string, ConstructorPageBarebones] => [
+        u,
+        {
+          ...cp,
+          u,
+        },
+      ]
+    );
+    return Object.fromEntries(entries);
   } else {
     console.error(PathReporter.report(validationResult).join(','));
     return null;
