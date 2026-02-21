@@ -10,7 +10,7 @@ import {
   PuzzleResultLink,
 } from '../../components/PuzzleLink.js';
 import { DefaultTopBar } from '../../components/TopBar.js';
-import { ConstructorPageBase } from '../../lib/constructorPage.js';
+import { ConstructorPageBarebones } from '../../lib/constructorPage.js';
 import { paginatedPuzzles } from '../../lib/paginatedPuzzles.js';
 import { isUserPatron } from '../../lib/patron.js';
 import { userIdToPage } from '../../lib/serverOnly.js';
@@ -19,7 +19,7 @@ import styles from './newestPage.module.scss';
 
 interface PageProps {
   puzzles: (LinkablePuzzle & {
-    constructorPage: ConstructorPageBase | null;
+    constructorPage: ConstructorPageBarebones | null;
     constructorIsPatron: boolean;
   })[];
   nextPage: number | null;

@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { SyntheticEvent, useContext, useState } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
 import {
-  ConstructorPageBase,
+  ConstructorPageBarebones,
   ConstructorPageT,
 } from '../lib/constructorPage.js';
 import { getDocRef } from '../lib/firebaseWrapper.js';
@@ -202,8 +202,8 @@ export interface ConstructorPageProps {
   isPatron: boolean;
   isMod: boolean;
   followCount: number;
-  followers: (ConstructorPageBase & { isPatron: boolean })[];
-  following: (ConstructorPageBase & { isPatron: boolean })[];
+  followers: (ConstructorPageBarebones & { isPatron: boolean })[];
+  following: (ConstructorPageBarebones & { isPatron: boolean })[];
   profilePicture: string | null;
   coverPicture: string | null;
   puzzles: LinkablePuzzle[];

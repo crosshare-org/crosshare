@@ -11,7 +11,7 @@ import {
   toLinkablePuzzle,
 } from '../../components/PuzzleLink.js';
 import { DefaultTopBar } from '../../components/TopBar.js';
-import { ConstructorPageBase } from '../../lib/constructorPage.js';
+import { ConstructorPageBarebones } from '../../lib/constructorPage.js';
 import { isUserPatron } from '../../lib/patron.js';
 import { getMiniForDate, userIdToPage } from '../../lib/serverOnly.js';
 import { withTranslation } from '../../lib/translation.js';
@@ -19,7 +19,7 @@ import { puzzleFromDB } from '../../lib/types.js';
 import { notEmpty } from '../../lib/utils.js';
 
 export interface DailyMiniProps {
-  puzzles: [number, LinkablePuzzle, ConstructorPageBase | null, boolean][];
+  puzzles: [number, LinkablePuzzle, ConstructorPageBarebones | null, boolean][];
   year: number;
   month: number;
   olderLink?: string;
@@ -56,7 +56,9 @@ async function puzzlesListForMonth(
   year: number,
   month: number,
   maxDay: number
-): Promise<[number, LinkablePuzzle, ConstructorPageBase | null, boolean][]> {
+): Promise<
+  [number, LinkablePuzzle, ConstructorPageBarebones | null, boolean][]
+> {
   return Promise.all(
     [...Array(maxDay).keys()]
       .reverse()
@@ -64,7 +66,8 @@ async function puzzlesListForMonth(
         async (
           day
         ): Promise<
-          [number, LinkablePuzzle, ConstructorPageBase | null, boolean] | null
+          | [number, LinkablePuzzle, ConstructorPageBarebones | null, boolean]
+          | null
         > => {
           const dbpuzzle = await getMiniForDate(new Date(year, month, day + 1));
           if (dbpuzzle === null) {

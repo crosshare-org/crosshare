@@ -3,7 +3,7 @@ import type { User } from 'firebase/auth';
 import { arrayRemove, arrayUnion, setDoc } from 'firebase/firestore';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
-import { ConstructorPageBase } from '../lib/constructorPage.js';
+import { ConstructorPageBarebones } from '../lib/constructorPage.js';
 import { getDocRef } from '../lib/firebaseWrapper.js';
 import { clsx, logAsyncErrors } from '../lib/utils.js';
 import { AuthContext } from './AuthContext.js';
@@ -19,7 +19,7 @@ export const FollowButton = ({
   className,
   ...props
 }: {
-  page: ConstructorPageBase;
+  page: ConstructorPageBarebones;
   className?: string;
 }) => {
   const [isMounted, setIsMounted] = useState(false);

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
-import { ConstructorPageBase } from '../lib/constructorPage.js';
+import { ConstructorPageBarebones } from '../lib/constructorPage.js';
 import { logAsyncErrors } from '../lib/utils.js';
 import styles from './ConstructorList.module.css';
 import { FollowButton } from './FollowButton.js';
@@ -10,7 +10,7 @@ export const ConstructorList = ({
   pages,
   close,
 }: {
-  pages: (ConstructorPageBase & { isPatron: boolean })[];
+  pages: (ConstructorPageBarebones & { isPatron: boolean })[];
   close: () => void;
 }) => {
   return (
@@ -26,7 +26,7 @@ const ConstructorListItem = ({
   page,
   close,
 }: {
-  page: ConstructorPageBase & { isPatron: boolean };
+  page: ConstructorPageBarebones & { isPatron: boolean };
   close: () => void;
 }) => {
   const router = useRouter();

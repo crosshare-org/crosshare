@@ -8,6 +8,7 @@ import type { Root } from 'hast';
 import { GetServerSideProps } from 'next';
 import { NextPuzzleLink } from '../components/Puzzle.js';
 import {
+  ConstructorPageBarebones,
   ConstructorPageWithMarkdown,
   validate as validateCP,
 } from '../lib/constructorPage.js';
@@ -97,7 +98,7 @@ const updateUsernameMap = async (
   return ret;
 };
 
-export async function userIdToPage(
+async function userIdToFullPage(
   userId: string
 ): Promise<ConstructorPageWithMarkdown | null> {
   const existing = usernameMap[userId];
@@ -105,9 +106,17 @@ export async function userIdToPage(
   return updateUsernameMap(userId);
 }
 
+export async function userIdToPage(
+  userId: string
+): Promise<ConstructorPageBarebones | null> {
+  const existing = usernameMap[userId];
+  if (existing && Date.now() - existing[0] < usernamesTTL) return existing[1];
+  return updateUsernameMap(userId);
+}
+
 export async function userIdToConstructorPageWithPatron(
   id: string
-): Promise<(ConstructorPageWithMarkdown & { isPatron: boolean }) | null> {
+): Promise<(ConstructorPageBarebones & { isPatron: boolean }) | null> {
   const page = await userIdToPage(id);
   if (!page) {
     return null;
@@ -480,7 +489,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     constructorNotes: fromDB.constructorNotes
       ? markdownToHast({ text: fromDB.constructorNotes, inline: true })
       : null,
-    constructorPage: await userIdToPage(validationResult.right.a),
+    constructorPage: await userIdToFullPage(validationResult.right.a),
     constructorIsPatron: await isUserPatron(validationResult.right.a),
     constructorIsMod: await isUserMod(validationResult.right.a),
     comments: await convertComments(fromDB.comments, clueMap),
@@ -493,10 +502,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
           async (
             k: string
           ): Promise<
-            [
-              string,
-              (ConstructorPageWithMarkdown & { isPatron: boolean }) | null,
-            ]
+            [string, (ConstructorPageBarebones & { isPatron: boolean }) | null]
           > => [k, await userIdToConstructorPageWithPatron(k)]
         )
       )

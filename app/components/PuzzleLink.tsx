@@ -2,7 +2,7 @@ import { Trans } from '@lingui/react/macro';
 import type { Root } from 'hast';
 import { ReactNode, useContext, useEffect, useState } from 'react';
 import { DifficultyBadge } from '../components/DifficultyBadge.js';
-import { ConstructorPageBase } from '../lib/constructorPage.js';
+import { ConstructorPageBarebones } from '../lib/constructorPage.js';
 import { PlayWithoutUserT } from '../lib/dbtypes.js';
 import { markdownToHast } from '../lib/markdown/markdown.js';
 import { getPossiblyStalePlay } from '../lib/plays.js';
@@ -185,7 +185,7 @@ export const AuthorLink = ({
   isPatron,
 }: {
   authorName: string;
-  constructorPage: ConstructorPageBase | null;
+  constructorPage: ConstructorPageBarebones | null;
   guestConstructor: string | null;
   showFollowButton?: boolean;
   isPatron: boolean;
@@ -193,7 +193,7 @@ export const AuthorLink = ({
   let link: ReactNode = authorName;
   let followButton: ReactNode = <></>;
   if (constructorPage) {
-    const username = constructorPage.i || constructorPage.id;
+    const username = constructorPage.i;
     link = <Link href={'/' + username}>{constructorPage.n}</Link>;
   }
   if (constructorPage && showFollowButton) {
@@ -308,7 +308,7 @@ export const PuzzleResultLink = ({
   showPrivateStatus?: boolean;
   showAuthor: boolean;
   title?: string;
-  constructorPage?: ConstructorPageBase | null;
+  constructorPage?: ConstructorPageBarebones | null;
   constructorIsPatron: boolean;
   filterTags: string[];
   noTargetBlank?: boolean;

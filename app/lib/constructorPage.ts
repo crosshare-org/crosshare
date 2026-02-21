@@ -48,6 +48,8 @@ export interface ConstructorPageWithMarkdown extends ConstructorPageBase {
   sig?: Root;
 }
 
+export type ConstructorPageBarebones = Pick<ConstructorPageT, 'i' | 'n' | 'u'>;
+
 export function validate(
   cp: unknown,
   username: string

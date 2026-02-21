@@ -19,7 +19,7 @@ import {
 import { DefaultTopBar } from '../components/TopBar.js';
 import { UnfinishedPuzzleList } from '../components/UnfinishedPuzzleList.js';
 import { ArticleT, validate } from '../lib/article.js';
-import { ConstructorPageBase } from '../lib/constructorPage.js';
+import { ConstructorPageBarebones } from '../lib/constructorPage.js';
 import { AdminSettingsV, DBPuzzleT } from '../lib/dbtypes.js';
 import { getCollection } from '../lib/firebaseAdminWrapper.js';
 import { markdownToHast } from '../lib/markdown/markdown.js';
@@ -37,7 +37,7 @@ import { PAGE_SIZE } from './featured/[pageNumber].js';
 import styles from './index.module.scss';
 
 type HomepagePuz = LinkablePuzzle & {
-  constructorPage: ConstructorPageBase | null;
+  constructorPage: ConstructorPageBarebones | null;
   constructorIsPatron: boolean;
 };
 

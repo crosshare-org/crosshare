@@ -1,7 +1,7 @@
 import type { Root } from 'hast';
 import * as t from 'io-ts';
 import {
-  ConstructorPageBase,
+  ConstructorPageBarebones,
   ConstructorPageWithMarkdown,
 } from '../lib/constructorPage.js';
 import {
@@ -233,7 +233,10 @@ export interface ServerPuzzleResult extends Omit<
   constructorIsPatron: boolean;
   constructorIsMod: boolean;
   clueHasts: Root[];
-  likes: Record<string, (ConstructorPageBase & { isPatron: boolean }) | null>;
+  likes: Record<
+    string,
+    (ConstructorPageBarebones & { isPatron: boolean }) | null
+  >;
 }
 export interface PuzzleResultWithAugmentedComments extends ServerPuzzleResult {
   comments: Comment[];

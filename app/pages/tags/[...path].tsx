@@ -15,7 +15,7 @@ import {
 import { TagList } from '../../components/TagList.js';
 import { DefaultTopBar } from '../../components/TopBar.js';
 import { ArticleT } from '../../lib/article.js';
-import { ConstructorPageBase } from '../../lib/constructorPage.js';
+import { ConstructorPageBarebones } from '../../lib/constructorPage.js';
 import { markdownToHast } from '../../lib/markdown/markdown.js';
 import { paginatedPuzzles } from '../../lib/paginatedPuzzles.js';
 import { isUserPatron } from '../../lib/patron.js';
@@ -28,7 +28,7 @@ interface TagPageProps {
   tags: string[];
   article: (ArticleT & { hast: Root }) | null;
   puzzles: (LinkablePuzzle & {
-    constructorPage: ConstructorPageBase | null;
+    constructorPage: ConstructorPageBarebones | null;
     constructorIsPatron: boolean;
   })[];
   nextPage: number | null;
