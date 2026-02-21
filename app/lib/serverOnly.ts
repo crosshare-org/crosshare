@@ -639,13 +639,31 @@ export const getEmbedProps = async ({
   return embedOptions;
 };
 
+const dailyMiniCache: Record<
+  string,
+  [number, (DBPuzzleT & { id: string }) | null]
+> = {};
+const dailyMiniCacheTTL = 1000 * 60 * 60 * 12;
+
 /* Get a daily mini using the firebase-admin library.
  * The similarly named function in dailyMinis.ts gets used client-side only.  */
 export async function getMiniForDate(
   d: Date
 ): Promise<(DBPuzzleT & { id: string }) | null> {
+  const dateString = getDateString(d);
+  const cached = dailyMiniCache[dateString];
+  if (cached && Date.now() - cached[0] < dailyMiniCacheTTL) return cached[1];
+  const result = await getMiniForDateFromDB(dateString);
+  dailyMiniCache[dateString] = [Date.now(), result];
+  return result;
+}
+
+export async function getMiniForDateFromDB(
+  d: string
+): Promise<(DBPuzzleT & { id: string }) | null> {
+  console.log('getting daily mini', d);
   const dbres = await getCollection('c')
-    .where('dmd', '==', prettifyDateString(getDateString(d)))
+    .where('dmd', '==', prettifyDateString(d))
     .limit(1)
     .get();
 
