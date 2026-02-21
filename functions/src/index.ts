@@ -152,6 +152,11 @@ export const scheduledFirestoreExport = functions.pubsub
       process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT || 'mdcrosshare';
     const databaseName = client.databasePath(projectId, '(default)');
 
+    // The prefs collection is overwhelmingly the largest mostly due to
+    // generating a record for every anonymous solver as part of the glicko
+    // process. Only save it weekly to cut back on costs.
+    const savePrefs = new Date().getDay() === 5;
+
     return client
       .exportDocuments({
         name: databaseName,
@@ -168,7 +173,7 @@ export const scheduledFirestoreExport = functions.pubsub
           'ds', // daily stats
           'em', // embed settings
           'followers',
-          'prefs',
+          ...(savePrefs ? ['prefs'] : []),
           's', // puzzle stats
           'settings',
         ],
