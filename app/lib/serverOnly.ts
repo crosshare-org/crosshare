@@ -63,13 +63,12 @@ export async function getStorageUrl(
   return null;
 }
 
-const usernameMap: Record<
+const userIdToPageMap: Record<
   string,
   [number, ConstructorPageWithMarkdown | null]
 > = {};
-const usernamesTTL = 1000 * 60 * 30;
-
-const updateUsernameMap = async (
+const userIdToPageTTL = 1000 * 60 * 60;
+const updateUserIdToPage = async (
   userid: string
 ): Promise<ConstructorPageWithMarkdown | null> => {
   console.log('updating username map', userid);
@@ -83,7 +82,7 @@ const updateUsernameMap = async (
   }
   const cp = validateCP(dbres.docs[0]?.data(), dbres.docs[0]?.id || '');
   if (!cp) {
-    usernameMap[userid] = [now, null];
+    userIdToPageMap[userid] = [now, null];
     return null;
   }
   const { sig, ...rest } = {
@@ -94,24 +93,26 @@ const updateUsernameMap = async (
     ...rest,
     ...(sig !== undefined && { sig: markdownToHast({ text: sig }) }),
   };
-  usernameMap[userid] = [now, ret];
+  userIdToPageMap[userid] = [now, ret];
   return ret;
 };
 
 async function userIdToFullPage(
   userId: string
 ): Promise<ConstructorPageWithMarkdown | null> {
-  const existing = usernameMap[userId];
-  if (existing && Date.now() - existing[0] < usernamesTTL) return existing[1];
-  return updateUsernameMap(userId);
+  const existing = userIdToPageMap[userId];
+  if (existing && Date.now() - existing[0] < userIdToPageTTL)
+    return existing[1];
+  return updateUserIdToPage(userId);
 }
 
 export async function userIdToPage(
   userId: string
 ): Promise<ConstructorPageBarebones | null> {
-  const existing = usernameMap[userId];
-  if (existing && Date.now() - existing[0] < usernamesTTL) return existing[1];
-  return updateUsernameMap(userId);
+  const existing = userIdToPageMap[userId];
+  if (existing && Date.now() - existing[0] < userIdToPageTTL)
+    return existing[1];
+  return updateUserIdToPage(userId);
 }
 
 export async function userIdToConstructorPageWithPatron(
