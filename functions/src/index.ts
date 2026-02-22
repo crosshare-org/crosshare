@@ -254,28 +254,31 @@ export const constructorPageUpdate = functions.firestore
   });
 
 export const userDeletion = functions.auth.user().onDelete(async (user) => {
-  console.log('deleting puzzles for', user.email, user.uid);
-  await Promise.all(
-    (await getCollection('c').where('a', '==', user.uid).get()).docs.map(
-      (doc) => doc.ref.update({ del: true })
-    )
-  );
+  // Only non anonymous users have these
+  if (user.email) {
+    console.log('deleting puzzles for', user.email, user.uid);
+    await Promise.all(
+      (await getCollection('c').where('a', '==', user.uid).get()).docs.map(
+        (doc) => doc.ref.update({ del: true })
+      )
+    );
 
-  console.log('deleting cp for', user.email, user.uid);
-  await getCollection('cp')
-    .where('u', '==', user.uid)
-    .limit(1)
-    .get()
-    .then((r) => r.docs[0]?.ref.delete());
+    console.log('deleting cp for', user.email, user.uid);
+    await getCollection('cp')
+      .where('u', '==', user.uid)
+      .limit(1)
+      .get()
+      .then((r) => r.docs[0]?.ref.delete());
 
-  console.log('deleting cs for', user.email, user.uid);
-  await getCollection('cs').doc(user.uid).delete();
+    console.log('deleting cs for', user.email, user.uid);
+    await getCollection('cs').doc(user.uid).delete();
 
-  console.log('deleting em for', user.email, user.uid);
-  await getCollection('em').doc(user.uid).delete();
+    console.log('deleting em for', user.email, user.uid);
+    await getCollection('em').doc(user.uid).delete();
 
-  console.log('deleting followers for', user.email, user.uid);
-  await getCollection('followers').doc(user.uid).delete();
+    console.log('deleting followers for', user.email, user.uid);
+    await getCollection('followers').doc(user.uid).delete();
+  }
 
   console.log('deleting prefs for', user.email, user.uid);
   await getCollection('prefs').doc(user.uid).delete();
