@@ -1,3 +1,4 @@
+import { FieldValue } from 'firebase-admin/firestore';
 import { DBPuzzleT, DBPuzzleV } from './dbtypes.js';
 import { getCollection, toFirestore } from './firebaseAdminWrapper.js';
 import {
@@ -78,6 +79,14 @@ async function deletePuzzle(puzzleId: string, dbpuz: DBPuzzleT) {
         })
       );
     });
+
+  console.log('deleting stats');
+  await getCollection('s').doc(puzzleId).delete();
+
+  console.log('deleting from constructor stats');
+  await getCollection('cs')
+    .doc(dbpuz.a)
+    .update({ [puzzleId]: FieldValue.delete() });
 
   console.log('deleting puzzle');
   await getCollection('c').doc(puzzleId).delete();
