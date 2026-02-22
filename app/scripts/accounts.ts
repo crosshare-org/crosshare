@@ -55,21 +55,12 @@ const clean = command({
         if (count % 100 === 0) {
           console.log(count, uid);
         }
-        await auth
-          .getUser(uid)
-          .then(async (userRecord) => {
-            if (userRecord.email) {
-              console.error('user has email', uid);
-            } else {
-              await auth.deleteUser(uid);
-            }
-          })
-          .catch((error: unknown) => {
-            const err = error instanceof FirebaseAuthError;
-            if (err && error.code !== 'auth/user-not-found') {
-              console.log('Error fetching user data:', error);
-            }
-          });
+        await auth.deleteUser(uid).catch((error: unknown) => {
+          const err = error instanceof FirebaseAuthError;
+          if (!err || error.code !== 'auth/user-not-found') {
+            throw error;
+          }
+        });
       }
 
       console.log('skipped', skip);

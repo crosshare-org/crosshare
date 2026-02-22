@@ -84,9 +84,14 @@ async function deletePuzzle(puzzleId: string, dbpuz: DBPuzzleT) {
   await getCollection('s').doc(puzzleId).delete();
 
   console.log('deleting from constructor stats');
-  await getCollection('cs')
-    .doc(dbpuz.a)
-    .update({ [puzzleId]: FieldValue.delete() });
+  try {
+    await getCollection('cs')
+      .doc(dbpuz.a)
+      .update({ [puzzleId]: FieldValue.delete() });
+  } catch {
+    /* We have to swallow errors here so that the tests can run this using
+     * non-admin firestore - otherwise it barfs on FieldValue. */
+  }
 
   console.log('deleting puzzle');
   await getCollection('c').doc(puzzleId).delete();
