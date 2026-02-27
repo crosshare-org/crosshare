@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { exportFile } from '../../../lib/converter.js';
-import { getPuzzle } from '../../../lib/puzzleCache.js';
+import { getPuzzle } from '../../../lib/serverOnly.js';
 
 export default async function puz(req: NextApiRequest, res: NextApiResponse) {
   const { puzzleId } = req.query;

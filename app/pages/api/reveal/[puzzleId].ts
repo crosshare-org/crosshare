@@ -8,7 +8,7 @@ import {
   getCollection,
 } from '../../../lib/firebaseAdminWrapper.js';
 import { PathReporter } from '../../../lib/pathReporter.js';
-import { getPuzzle } from '../../../lib/puzzleCache.js';
+import { getPuzzle } from '../../../lib/serverOnly.js';
 
 const ParamsV = t.type({
   puzzleId: t.string,

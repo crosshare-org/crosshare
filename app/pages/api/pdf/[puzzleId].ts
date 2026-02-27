@@ -1,7 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getPuzzle } from '../../../lib/puzzleCache.js';
-import { userIdToPage } from '../../../lib/serverOnly.js';
+import { getPuzzle, userIdToPage } from '../../../lib/serverOnly.js';
 import {
   Direction,
   PuzzleT,

@@ -275,6 +275,7 @@ export const DBPuzzleWithIdV = t.intersection([
 ]);
 
 export type DBPuzzleT = t.TypeOf<typeof DBPuzzleV>;
+export type DBPuzzleWithIdT = t.TypeOf<typeof DBPuzzleWithIdV>;
 
 export const AdminSettingsV = t.intersection([
   t.type({

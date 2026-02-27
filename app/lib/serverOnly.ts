@@ -19,6 +19,7 @@ import {
   CommentWithRepliesT,
   DBPuzzleT,
   DBPuzzleV,
+  DBPuzzleWithIdT,
   getDateString,
   prettifyDateString,
 } from './dbtypes.js';
@@ -441,6 +442,23 @@ async function hasPackAccess(
   return false;
 }
 
+export async function getPuzzle(
+  puzzleId: string
+): Promise<DBPuzzleWithIdT | null> {
+  const db = getFirestore(getAdminApp());
+  const dbres = await db.collection('c').doc(puzzleId).get();
+  if (!dbres.exists) {
+    return null;
+  }
+
+  const validationResult = DBPuzzleV.decode(dbres.data());
+  if (validationResult._tag !== 'Right') {
+    console.error(PathReporter.report(validationResult).join(','));
+    throw new Error(`invalid puzzle ${puzzleId}`);
+  }
+  return { ...validationResult.right, id: dbres.id };
+}
+
 export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   res,
   params,
@@ -457,42 +475,36 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   if (!puzzleId) {
     return { notFound: true };
   }
-  const dbres = await db.collection('c').doc(puzzleId).get();
-  if (!dbres.exists) {
+  const dbpuz = await getPuzzle(puzzleId);
+  if (!dbpuz) {
     return { notFound: true };
   }
 
-  const validationResult = DBPuzzleV.decode(dbres.data());
-  if (validationResult._tag !== 'Right') {
-    console.error(PathReporter.report(validationResult).join(','));
-    throw new Error(`invalid puzzle ${puzzleId}`);
-  }
-
-  if (validationResult.right.pk) {
+  if (dbpuz.pk) {
     const token = query.token;
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (!token || Array.isArray(token)) {
-      return { props: { packId: validationResult.right.pk } };
+      return { props: { packId: dbpuz.pk } };
     }
     try {
-      if (!(await hasPackAccess(db, token, validationResult.right.pk))) {
+      if (!(await hasPackAccess(db, token, dbpuz.pk))) {
         return {
           redirect: {
             destination: `/${
               locale && locale !== 'en' ? locale + '/' : ''
-            }packs/${validationResult.right.pk}`,
+            }packs/${dbpuz.pk}`,
             permanent: false,
           },
         };
       }
     } catch {
-      return { props: { packId: validationResult.right.pk } };
+      return { props: { packId: dbpuz.pk } };
     }
   }
 
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
 
-  const fromDB = puzzleFromDB(validationResult.right, puzzleId);
+  const fromDB = puzzleFromDB(dbpuz, puzzleId);
   const grid = addClues(
     fromCells({
       mapper: (e) => e,
@@ -516,7 +528,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   );
   const puzzle: PuzzleResultWithAugmentedComments = {
     ...fromDB,
-    id: dbres.id,
+    id: dbpuz.id,
     blogPostRaw: fromDB.blogPost,
     blogPost: fromDB.blogPost
       ? markdownToHast({ text: fromDB.blogPost })
@@ -524,9 +536,9 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
     constructorNotes: fromDB.constructorNotes
       ? markdownToHast({ text: fromDB.constructorNotes, inline: true })
       : null,
-    constructorPage: await userIdToFullPage(validationResult.right.a),
-    constructorIsPatron: await isUserPatron(validationResult.right.a),
-    constructorIsMod: await isUserMod(validationResult.right.a),
+    constructorPage: await userIdToFullPage(dbpuz.a),
+    constructorIsPatron: await isUserPatron(dbpuz.a),
+    constructorIsMod: await isUserMod(dbpuz.a),
     comments: await convertComments(fromDB.comments, clueMap),
     clueHasts: grid.entries.map((c) =>
       markdownToHast({ text: c.clue, clueMap, inline: true })
@@ -572,9 +584,9 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   let nextPuzzle: NextPuzzleLink | null = null;
   const today = new Date();
 
-  if (validationResult.right.dmd) {
+  if (dbpuz.dmd) {
     // this puzzle is a daily mini, see if we show a previous instead of today's
-    const dt = new Date(validationResult.right.dmd);
+    const dt = new Date(dbpuz.dmd);
     let tryMiniDate = new Date(
       dt.valueOf() - dt.getTimezoneOffset() * 60 * 1000
     );
