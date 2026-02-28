@@ -66,7 +66,7 @@
     "eslint-plugin-redos": "catalog:",
     "firebase-functions-test": "catalog:",
     "firebase-tools": "catalog:",
-    "isolate-package": "^1.27.0",
+    "isolate-package": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:"

@@ -7,8 +7,8 @@ RUN npm cache clean -f
 RUN npm install -g n
 RUN n 20 # node version 20
 RUN npm install -g corepack@latest
-RUN corepack use pnpm@latest-10
-RUN pnpm install -g firebase-tools@v15.1.0
+RUN corepack use pnpm@10.30.3
+RUN pnpm install -g firebase-tools@v15.8.0
 RUN firebase --version
 RUN firebase setup:emulators:firestore
 RUN firebase setup:emulators:storage
