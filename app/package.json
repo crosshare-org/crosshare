@@ -14,7 +14,8 @@
   ],
   "scripts": {
     "supportedBrowsers": "echo \"export const browserRegex = $(browserslist-useragent-regexp --allowHigherVersions);\" > lib/supportedBrowsers.ts",
-    "lint": "npx eslint components lib pages reducers scripts && npx stylelint \"**/*.(css|scss)\"",
+    "stylelint": "npx stylelint \"**/*.(css|scss)\"",
+    "lint": "npx eslint components lib pages reducers scripts && pnpm stylelint",
     "knip": "npx knip",
     "format": "npx prettier \"../**/*\\.(ts(x)?|module\\.s?css)\" --write",
     "checkFormat": "npx prettier \"../**/*\\.(ts(x)?|module\\.s?css)\" --check",
