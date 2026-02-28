@@ -4,17 +4,16 @@ import fs from 'node:fs';
 import util from 'node:util';
 import { command, option, optional, run, string, subcommands } from 'cmd-ts';
 import { parse } from 'csv-parse/sync';
-import { FirebaseAuthError, getAuth } from 'firebase-admin/auth';
-import { getAdminApp } from '../lib/firebaseAdminWrapper';
+import { getCollection } from '../lib/firebaseAdminWrapper';
 
 const readFile = util.promisify(fs.readFile);
-
 const cutoff = 1000 * 60 * 60 * 24 * 31;
-const auth = getAuth(getAdminApp());
+const cleanCollection = getCollection('toClean');
 
-const clean = command({
-  name: 'clean',
-  description: 'remove old anonymous accounts',
+const queue = command({
+  name: 'queue',
+  description:
+    'queue old anonymous accounts to be cleaned - be sure to run with a newly export accounts.csv',
   args: {
     from: option({ type: optional(string), long: 'from' }),
   },
@@ -22,6 +21,8 @@ const clean = command({
     let count = 0;
     let skip = 0;
     let sawUID = false;
+    let toUpload: string[] = [];
+
     return readFile('accounts.csv').then(async (binary) => {
       const csv: string[][] = parse(binary, {
         quote: null,
@@ -52,26 +53,25 @@ const clean = command({
           continue;
         }
         count += 1;
-        if (count % 100 === 0) {
-          console.log(count, uid);
+        toUpload.push(uid);
+
+        if (count % 1000 === 0) {
+          console.log('uploading', count, uid);
+          await cleanCollection.add({ uids: toUpload });
+          toUpload = [];
+          console.log('done');
         }
-        await auth.deleteUser(uid).catch((error: unknown) => {
-          const err = error instanceof FirebaseAuthError;
-          if (!err || error.code !== 'auth/user-not-found') {
-            throw error;
-          }
-        });
       }
 
       console.log('skipped', skip);
-      console.log('deleted', count);
+      console.log('queued to clean', count);
     });
   },
 });
 
 const cmd = subcommands({
   name: 'accounts',
-  cmds: { clean },
+  cmds: { queue },
 });
 
 void run(cmd, process.argv.slice(2));
