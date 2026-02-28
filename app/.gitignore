@@ -3,6 +3,7 @@ next-env.d.ts
 cache/**
 nextjs/**
 cluedb/**
+cluedb.bak/**
 locales/_build/
 locales/**/*.js
 locales/**/*.ts

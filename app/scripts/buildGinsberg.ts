@@ -123,7 +123,7 @@ const build = async (cluedata: Buffer): Promise<void> => {
   let currentWordIndex = 0;
 
   await rimraf(CLUEDB);
-  const db = getDB(false);
+  const db = getDB();
 
   while (offset < cluedata.length) {
     const wordIndex = readInt();

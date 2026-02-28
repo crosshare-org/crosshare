@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getClues, getDB } from '../../../lib/ginsberg.js';
 
-const db = getDB(true);
+const db = getDB();
 
 export default async function clues(req: NextApiRequest, res: NextApiResponse) {
   const { word } = req.query;

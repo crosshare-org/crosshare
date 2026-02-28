@@ -1,19 +1,19 @@
-import levelup, { LevelUp } from 'levelup';
-import rocksdb from 'rocksdb';
+import { ClassicLevel } from 'classic-level';
 import { ClueListT, parseClueList } from './ginsbergCommon.js';
 
 export const CLUEDB = './cluedb';
 
-export const getDB = (readOnly: boolean) => {
-  return levelup(rocksdb(CLUEDB), { readOnly: readOnly });
+export const getDB = () => {
+  return new ClassicLevel(CLUEDB);
 };
 
 export const getClues = async (
-  db: LevelUp,
+  db: ClassicLevel,
   word: string
 ): Promise<ClueListT> => {
   try {
-    return parseClueList(JSON.parse((await db.get(word)) as string));
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return parseClueList(JSON.parse((await db.get(word))!));
   } catch {
     return [];
   }
