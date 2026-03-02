@@ -297,29 +297,32 @@ export const cleanUpAccounts = functions
   .runWith({ timeoutSeconds: 540 })
   .pubsub.schedule('every day 02:00')
   .onRun(async (_context) => {
+    const startTime = performance.now();
     const cleanCollection = getCollection('toClean');
     const prefs = getCollection('prefs');
     const plays = getCollection('p');
-
     const auth = getAuth();
-    const res = await cleanCollection.limit(1).get();
-    const uids = (res.docs[0]?.data() as { uids: string[] }).uids;
     let deleteCount = 0;
 
-    for (const uid of uids) {
-      await prefs.doc(uid).delete();
-      deleteCount += 1;
+    while (deleteCount < 15000 && performance.now() - startTime < 300000) {
+      const res = await cleanCollection.limit(1).get();
+      const uids = (res.docs[0]?.data() as { uids: string[] }).uids;
 
-      await Promise.all(
-        (await plays.where('u', '==', uid).get()).docs.map((doc) => {
-          deleteCount += 1;
-          return doc.ref.delete();
-        })
-      );
+      for (const uid of uids) {
+        await prefs.doc(uid).delete();
+        deleteCount += 1;
+
+        await Promise.all(
+          (await plays.where('u', '==', uid).get()).docs.map((doc) => {
+            deleteCount += 1;
+            return doc.ref.delete();
+          })
+        );
+      }
+
+      console.log('firestore delete ops: ', deleteCount);
+      await auth.deleteUsers(uids);
+      console.log('removed users');
+      await res.docs[0]?.ref.delete();
     }
-
-    console.log('firestore delete ops: ', deleteCount);
-    await auth.deleteUsers(uids);
-    console.log('removed users');
-    await res.docs[0]?.ref.delete();
   });
