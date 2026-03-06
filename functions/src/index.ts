@@ -283,13 +283,6 @@ export const userDeletion = functions.auth.user().onDelete(async (user) => {
 
   console.log('deleting prefs for', user.email, user.uid);
   await getCollection('prefs').doc(user.uid).delete();
-
-  console.log('deleting plays for', user.email, user.uid);
-  await Promise.all(
-    (await getCollection('p').where('u', '==', user.uid).get()).docs.map(
-      (doc) => doc.ref.delete()
-    )
-  );
 });
 
 export const cleanUpAccounts = functions
@@ -300,7 +293,7 @@ export const cleanUpAccounts = functions
     const startTime = performance.now();
     const cleanCollection = getCollection('toClean');
     const prefs = getCollection('prefs');
-    const plays = getCollection('p');
+
     const auth = getAuth();
     let deleteCount = 0;
 
@@ -311,15 +304,7 @@ export const cleanUpAccounts = functions
       for (const uid of uids) {
         await prefs.doc(uid).delete();
         deleteCount += 1;
-
-        await Promise.all(
-          (await plays.where('u', '==', uid).get()).docs.map((doc) => {
-            deleteCount += 1;
-            return doc.ref.delete();
-          })
-        );
       }
-
       console.log('firestore delete ops: ', deleteCount);
       await auth.deleteUsers(uids);
       console.log('removed users');
