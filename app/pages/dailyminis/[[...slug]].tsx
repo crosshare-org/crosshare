@@ -31,15 +31,26 @@ const gssp: GetServerSideProps<PageProps> = async ({ res, params }) => {
   const slug = params?.slug;
   let year: number;
   let month: number;
+  const today = new Date();
+  const thisYear = today.getUTCFullYear();
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!slug) {
-    const today = new Date();
-    year = today.getUTCFullYear();
+    year = thisYear;
     month = today.getUTCMonth();
   } else if (Array.isArray(slug) && slug.length === 2 && slug[0] && slug[1]) {
     year = parseInt(slug[0]);
     month = parseInt(slug[1]) - 1;
   } else {
+    return { notFound: true };
+  }
+  if (
+    Number.isNaN(year) ||
+    Number.isNaN(month) ||
+    year < 2020 ||
+    year > thisYear ||
+    month < 0 ||
+    month >= 12
+  ) {
     return { notFound: true };
   }
   const props = await propsForDailyMini(year, month);
