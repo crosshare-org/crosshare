@@ -470,6 +470,7 @@ export const DefaultTopBar = ({
       )}
       {ctxt.user?.email ? (
         <TopBarLinkA
+          key="dashboard"
           disabled={dashboardSelected}
           href="/dashboard"
           icon={<FaHammer />}
@@ -479,6 +480,7 @@ export const DefaultTopBar = ({
         ''
       )}
       <TopBarLinkA
+        key="account"
         disabled={accountSelected}
         href="/account"
         icon={<FaUser />}
