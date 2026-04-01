@@ -126,3 +126,5 @@ catalogMode: strict
 cleanupUnusedCatalogs: true
 
 resolutionMode: lowest-direct
+
+minimumReleaseAge: 14400
