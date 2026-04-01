@@ -11,6 +11,7 @@
 !app/instrumentation.ts
 !app/instrumentation-client.ts
 !app/middleware.ts
+!app/proxy.ts
 !app/sentry.edge.config.ts
 !app/sentry.server.config.ts
 !app/sentry.properties

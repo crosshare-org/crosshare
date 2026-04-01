@@ -1,5 +1,7 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
+DisallowAITraining: /
+Content-Usage: ai=n
 Disallow: /
 
 User-agent: bingbot
@@ -9,6 +11,8 @@ User-agent: Twitterbot
 User-agent: DuckDuckBot
 User-agent: Discordbot
 Allow: /
+DisallowAITraining: /
+Content-Usage: ai=n
 Disallow: /admin
 Disallow: /account
 Disallow: /dashboard
