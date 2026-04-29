@@ -1,8 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
 import { type Root } from 'hast';
-import Image from 'next/image';
 import { clsx } from '../lib/utils.js';
-import slateLogoDark from '../public/slate/Logo-Dark.png';
-import slateLogo from '../public/slate/Logo.png';
 import { Markdown } from './Markdown.js';
 import styles from './SlateHeader.module.css';
 
@@ -15,15 +13,13 @@ interface SlateHeaderProps {
 export const SlateLogo = (props: { className?: string }) => {
   return (
     <div className={clsx(props.className, styles.logoWrap)}>
-      <Image
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        src={slateLogoDark}
+      <img
+        src={'/slate/Logo-Dark.png'}
         alt="Slate Crosswords"
         className={styles.logoDark}
       />
-      <Image
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        src={slateLogo}
+      <img
+        src={'/slate/Logo.png'}
         alt="Slate Crosswords"
         className={styles.logoLight}
       />
