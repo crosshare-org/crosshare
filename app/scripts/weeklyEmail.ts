@@ -165,11 +165,11 @@ async function topPuzzlesForWeek(): Promise<
           throw new Error('impossible');
         }
         const category = (() => {
-          if (p.ct_ans?.length) {
-            return Category.Meta;
-          }
           if (p.tg_u?.find((s) => s === 'cryptic')) {
             return Category.Cryptic;
+          }
+          if (p.ct_ans?.length) {
+            return Category.Meta;
           }
           const size = sizeTag(p.w * p.h - (p.hdn?.length || 0));
           if (size === 'mini') {
