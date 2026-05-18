@@ -1142,7 +1142,7 @@ export const Puzzle = ({
                       }}
                     />
                   ) : null}
-                  {mounted && user !== undefined ? (
+                  {mounted && user !== undefined && !user.isAnonymous ? (
                     <NestedDropDown
                       closeParent={closeDropdown}
                       icon={<FaCog />}
