@@ -122,11 +122,15 @@ export const autoModerator = functions.pubsub
     return;
   });
 
-export const analytics = functions.pubsub
-  .schedule('every 1 hours')
+const MAX_ANALYTICS_MILLIS = 1000 * 60 * 60 * 3;
+
+export const analytics = functions
+  // eslint-disable-next-line import/namespace
+  .runWith({ timeoutSeconds: 540, memory: '512MB' })
+  .pubsub.schedule('every 1 hours')
   .onRun(async (_context) => {
     let startTimestamp = Timestamp.fromDate(new Date(2020, 0));
-    const endTimestamp = Timestamp.now();
+    let endTimestamp = Timestamp.now();
     const value = await getCollection('cron_status')
       .doc('hourlyanalytics')
       .get();
@@ -136,6 +140,14 @@ export const analytics = functions.pubsub
       throw new Error('Malformed cron_status');
     }
     startTimestamp = result.right.ranAt;
+    if (
+      endTimestamp.toMillis() - startTimestamp.toMillis() >
+      MAX_ANALYTICS_MILLIS
+    ) {
+      endTimestamp = Timestamp.fromMillis(
+        startTimestamp.toMillis() + MAX_ANALYTICS_MILLIS
+      );
+    }
 
     await runAnalytics(startTimestamp, endTimestamp);
     const status: CronStatusT = { ranAt: endTimestamp };
