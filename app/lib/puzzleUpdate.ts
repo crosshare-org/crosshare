@@ -238,6 +238,16 @@ export async function handlePuzzleUpdate(
         });
       }
     }
+
+    // title changed: keep existing notification puzzle names in sync
+    if (after.t !== before.t) {
+      await updateNotifications(puzzleId, (n) => {
+        if (n.pn !== after.t) {
+          return { pn: after.t };
+        }
+        return null;
+      });
+    }
   }
 
   const notifications = await notificationsForPuzzleChange(
