@@ -9,6 +9,7 @@ import {
   builderReducer,
   initialBuilderState,
 } from '../reducers/builderReducer.js';
+import { KeypressAction } from '../reducers/commonActions.js';
 
 function getState(
   grid: string[],
@@ -47,6 +48,11 @@ const publish: PublishAction = {
   publishTimestamp: Timestamp.now(),
 };
 
+const keypress = (key: KeyK): KeypressAction => ({
+  type: 'KEYPRESS',
+  key: { k: key },
+});
+
 test('home and end move to barred entry boundaries', () => {
   const state = getState(
     ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'],
@@ -54,21 +60,32 @@ test('home and end move to barred entry boundaries', () => {
     { vBars: [1], hBars: [3] }
   );
 
-  const across = { ...state, active: { row: 0, col: 1, dir: Direction.Across } };
-  expect(
-    builderReducer(across, { type: 'KEYPRESS', key: { k: KeyK.Home } }).active
-  ).toEqual({ row: 0, col: 0, dir: Direction.Across });
-  expect(
-    builderReducer(across, { type: 'KEYPRESS', key: { k: KeyK.End } }).active
-  ).toEqual({ row: 0, col: 1, dir: Direction.Across });
+  const across = {
+    ...state,
+    active: { row: 0, col: 1, dir: Direction.Across },
+  };
+  expect(builderReducer(across, keypress(KeyK.Home)).active).toEqual({
+    row: 0,
+    col: 0,
+    dir: Direction.Across,
+  });
+  expect(builderReducer(across, keypress(KeyK.End)).active).toEqual({
+    row: 0,
+    col: 1,
+    dir: Direction.Across,
+  });
 
   const down = { ...state, active: { row: 1, col: 0, dir: Direction.Down } };
-  expect(
-    builderReducer(down, { type: 'KEYPRESS', key: { k: KeyK.Home } }).active
-  ).toEqual({ row: 0, col: 0, dir: Direction.Down });
-  expect(
-    builderReducer(down, { type: 'KEYPRESS', key: { k: KeyK.End } }).active
-  ).toEqual({ row: 1, col: 0, dir: Direction.Down });
+  expect(builderReducer(down, keypress(KeyK.Home)).active).toEqual({
+    row: 0,
+    col: 0,
+    dir: Direction.Down,
+  });
+  expect(builderReducer(down, keypress(KeyK.End)).active).toEqual({
+    row: 1,
+    col: 0,
+    dir: Direction.Down,
+  });
 });
 
 test('home and end keyboard events are recognized', () => {
