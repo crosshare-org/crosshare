@@ -48,7 +48,9 @@ const publish: PublishAction = {
   publishTimestamp: Timestamp.now(),
 };
 
-const keypress = (key: KeyK): KeypressAction => ({
+const keypress = (
+  key: Exclude<KeyK, KeyK.AllowedCharacter>
+): KeypressAction => ({
   type: 'KEYPRESS',
   key: { k: key },
 });
