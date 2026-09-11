@@ -3,6 +3,7 @@
  */
 
 import { Timestamp } from '../lib/timestamp.js';
+import { Direction, KeyK, fromKeyString } from '../lib/types.js';
 import {
   PublishAction,
   builderReducer,
@@ -11,15 +12,16 @@ import {
 
 function getState(
   grid: string[],
-  clues: Record<string, string> | Record<string, string[]>
+  clues: Record<string, string> | Record<string, string[]>,
+  bars: { vBars?: number[]; hBars?: number[] } = {}
 ) {
   return initialBuilderState({
     id: 'foo',
     width: 3,
     height: 3,
     grid,
-    vBars: [],
-    hBars: [],
+    vBars: bars.vBars ?? [],
+    hBars: bars.hBars ?? [],
     hidden: [],
     cellStyles: {},
     blogPost: null,
@@ -44,6 +46,35 @@ const publish: PublishAction = {
   type: 'PUBLISH',
   publishTimestamp: Timestamp.now(),
 };
+
+test('home and end move to barred entry boundaries', () => {
+  const state = getState(
+    ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'],
+    {},
+    { vBars: [1], hBars: [3] }
+  );
+
+  const across = { ...state, active: { row: 0, col: 1, dir: Direction.Across } };
+  expect(
+    builderReducer(across, { type: 'KEYPRESS', key: { k: KeyK.Home } }).active
+  ).toEqual({ row: 0, col: 0, dir: Direction.Across });
+  expect(
+    builderReducer(across, { type: 'KEYPRESS', key: { k: KeyK.End } }).active
+  ).toEqual({ row: 0, col: 1, dir: Direction.Across });
+
+  const down = { ...state, active: { row: 1, col: 0, dir: Direction.Down } };
+  expect(
+    builderReducer(down, { type: 'KEYPRESS', key: { k: KeyK.Home } }).active
+  ).toEqual({ row: 0, col: 0, dir: Direction.Down });
+  expect(
+    builderReducer(down, { type: 'KEYPRESS', key: { k: KeyK.End } }).active
+  ).toEqual({ row: 1, col: 0, dir: Direction.Down });
+});
+
+test('home and end keyboard events are recognized', () => {
+  expect(fromKeyString('Home')).toEqual({ k: KeyK.Home });
+  expect(fromKeyString('End')).toEqual({ k: KeyK.End });
+});
 
 test('basic enum warnings', () => {
   const state = getState(['a', 'b', 'c', 'g', '', '', 'd', 'e', 'f'], {
