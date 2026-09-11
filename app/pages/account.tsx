@@ -261,7 +261,7 @@ export const AccountPage = ({ user, constructorPage, prefs }: AuthProps) => {
           <p>
             Start sharing your own puzzles by creating one with the{' '}
             <Link href="/construct">Crosshare constructor</Link> or{' '}
-            <Link href="/upload">uploading a .puz file.</Link>
+            <Link href="/upload">uploading a .puz or .ipuz file.</Link>
           </p>
         )}
         {constructorPage ? (

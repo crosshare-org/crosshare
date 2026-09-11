@@ -181,13 +181,13 @@ export function ConstructOrUploadPage({ isUpload }: { isUpload: boolean }) {
     heroContent = (
       <label>
         <p>
-          Select a .puz file to upload - you&apos;ll be able to review and edit
-          the puzzle before publishing
+          Select a .puz or .ipuz file to upload - you&apos;ll be able to review
+          and edit the puzzle before publishing
         </p>
         <input
           className={styles.fileInput}
           type="file"
-          accept=".puz"
+          accept=".puz,.ipuz,application/json"
           onChange={(e) => {
             handleFile(e.target.files);
           }}
@@ -211,7 +211,7 @@ export function ConstructOrUploadPage({ isUpload }: { isUpload: boolean }) {
   }
 
   const description = isUpload
-    ? 'Import your existing puzzle to share it on Crosshare. Get your .puz files playable on the web. Crosshare gives your solvers a first-class experience on any device, and gives you access to statistics about solves.'
+    ? 'Import your existing puzzle to share it on Crosshare. Get your .puz and .ipuz files playable on the web. Crosshare gives your solvers a first-class experience on any device, and gives you access to statistics about solves.'
     : `Build your own crossword puzzles for free with the Crosshare constructor.
     Autofill makes grid construction a breeze. Once you finish you can publish your
     puzzle to share with your friends or the world.`;
@@ -329,7 +329,7 @@ export function ConstructOrUploadPage({ isUpload }: { isUpload: boolean }) {
       <div className={styles.heroWrap}>
         {isUpload ? (
           <>
-            <h3>Don’t have a .puz file to upload?</h3>
+            <h3>Don’t have a .puz or .ipuz file to upload?</h3>
             <LinkButton
               className={clsx('marginBottom1em', styles.launch)}
               href="/construct"
@@ -447,7 +447,8 @@ export function ConstructOrUploadPage({ isUpload }: { isUpload: boolean }) {
           <h2 className="textAlignCenter">FAQ</h2>
           <h3>What if I have an existing puzzle I’d like to upload?</h3>
           <p>
-            Crosshare supports .puz uploading <Link href="/upload">here</Link>.
+            Crosshare supports .puz and .ipuz uploading{' '}
+            <Link href="/upload">here</Link>.
           </p>
           <h3>Does Crosshare support rebuses?</h3>
           <p>

@@ -126,13 +126,13 @@ const ImportPuzForm = (props: { dispatch: Dispatch<ImportPuzAction> }) => {
       )}
       <label>
         <p>
-          Select a .puz file to import - any existing progress on your current
-          construction will be overwritten!
+          Select a .puz or .ipuz file to import - any existing progress on your
+          current construction will be overwritten!
         </p>
         <input
           className={styles.fileInput}
           type="file"
-          accept=".puz"
+          accept=".puz,.ipuz,application/json"
           onChange={(e) => {
             handleFile(e.target.files);
           }}
@@ -170,13 +170,13 @@ const FileSection = ({ closeDropdown, dispatch }: FileSectionProps) => {
       <NestedDropDown
         closeParent={closeDropdown}
         icon={<FaFileImport />}
-        text="Import .puz File"
+        text="Import .puz / .ipuz File"
       >
         {() => <ImportPuzForm dispatch={dispatch} />}
       </NestedDropDown>
       <TopBarDropDownLink
         icon={<FaRegFile />}
-        text="Export .puz File"
+        text="Export Puzzle File"
         onClick={() => {
           const a: SetShowDownloadLink = {
             type: 'SETSHOWDOWNLOAD',

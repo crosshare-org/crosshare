@@ -7,7 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import util from 'util';
 import cases from 'jest-in-case';
-import { exportFile, importFile } from '../lib/converter.js';
+import { exportFile, exportIpuz, importFile } from '../lib/converter.js';
 import { DBPuzzleT } from '../lib/dbtypes.js';
 import { Timestamp } from '../lib/timestamp.js';
 import { PuzzleInProgressStrictT } from '../lib/types.js';
@@ -54,6 +54,8 @@ function toDBPuzzle(pip: PuzzleInProgressStrictT): DBPuzzleT {
     hdn: pip.hidden,
     ...getClueProps(grid.sortedEntries, grid.entries, pip.clues, true),
     ...(pip.notes && { cn: pip.notes }),
+    ...(pip.vBars?.length && { vb: pip.vBars }),
+    ...(pip.hBars?.length && { hb: pip.hBars }),
   };
   if (pip.cellStyles) {
     puzzle.sty = Object.fromEntries(
@@ -133,4 +135,99 @@ cases(
     expect({ ...loaded, clues: simplifiedClues }).toMatchSnapshot();
   },
   CASES
+);
+
+async function loadIpuz(name: string) {
+  const ipuz = await readFile(
+    path.resolve(__dirname, 'converter/ipuz/' + name + '.ipuz')
+  );
+  return importFile(ipuz);
+}
+
+const IPUZ_CASES = [{ name: 'spec-example' }, { name: 'barred-example' }];
+
+test('test error on ipuz copyright', () => {
+  const ipuz = new TextEncoder().encode(
+    JSON.stringify({
+      version: 'http://ipuz.org/v2',
+      kind: ['http://ipuz.org/crossword#1'],
+      title: 'Daily',
+      copyright: 'The New York Times',
+      dimensions: { width: 3, height: 3 },
+      puzzle: [
+        [1, 2, 3],
+        [4, 0, 5],
+        [6, 0, 0],
+      ],
+      solution: [
+        ['C', 'A', 'T'],
+        ['A', 'B', 'O'],
+        ['B', 'A', 'T'],
+      ],
+      clues: {
+        Across: [
+          [1, 'Pet'],
+          [4, 'Blood type'],
+          [6, 'Flying mammal'],
+        ],
+        Down: [
+          [1, 'Taxi'],
+          [2, 'Also'],
+          [3, 'Youngster'],
+        ],
+      },
+    })
+  );
+  expect(() => importFile(ipuz)).toThrow('Cannot import copyrighted puzzles');
+});
+
+test('test .ipuz import spec-example', async () => {
+  const loaded = await loadIpuz('spec-example');
+  expect(loaded).toEqual({
+    width: 3,
+    height: 3,
+    title: 'Spec Example',
+    notes: 'A tiny official-format puzzle',
+    grid: ['C', 'A', 'B', 'A', '.', 'E', 'T', 'O', 'E'],
+    clues: {
+      CAB: ['Taxi'],
+      TOE: ['Foot part'],
+      CAT: ['Feline'],
+      BEE: ['Buzzer'],
+    },
+    cellStyles: { circle: [1] },
+  });
+});
+
+test('test .ipuz import barred-example', async () => {
+  const loaded = await loadIpuz('barred-example');
+  expect(loaded).toEqual({
+    width: 2,
+    height: 2,
+    title: 'Barred Example',
+    notes: null,
+    grid: ['A', 'B', 'C', 'D'],
+    clues: {
+      AC: ['Account'],
+      BD: ['Bachelor of Divinity'],
+      CD: ['Compact disc'],
+    },
+    vBars: [0],
+  });
+});
+
+cases(
+  'test ipuz roundtrip',
+  async (opts) => {
+    const ipuz = await readFile(
+      path.resolve(__dirname, 'converter/ipuz/' + opts.name + '.ipuz')
+    );
+    const pip = importFile(ipuz);
+    if (!pip) {
+      throw new Error('failed to import');
+    }
+    const ourIpuz = exportIpuz(toDBPuzzle(pip));
+    expect(importFile(ourIpuz)).toEqual(pip);
+  },
+  IPUZ_CASES
 );

@@ -25,7 +25,7 @@ export function CreateShareSection(props: { halfWidth: boolean }) {
           <FaCloudUploadAlt className={styles.icon} />
           <div className="flex1">
             <Trans>
-              <h4>Upload a .puz file</h4>
+              <h4>Upload a .puz or .ipuz file</h4>
               <div className={styles.subtext}>
                 Get a Crosshare link to share with solvers
               </div>

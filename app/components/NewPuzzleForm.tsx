@@ -160,7 +160,7 @@ export function NewPuzzleForm(props: {
         <p className="colorError">
           WARNING: all progress on your current puzzle will be permanently lost.
           If you want to keep it, please publish the current puzzle or export a
-          .puz file first.
+          .puz / .ipuz file first.
         </p>
       )}
       <form onSubmit={startPuzzle}>
