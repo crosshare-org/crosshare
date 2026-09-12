@@ -472,6 +472,8 @@ export enum KeyK {
   Block,
   Undo,
   Redo,
+  Home,
+  End,
 }
 
 export const ALLOWABLE_GRID_CHARS = /^[A-Za-z0-9ÑÅÄÖñåäö&/\\]$/;
@@ -530,6 +532,10 @@ export function fromKeyboardEvent(event: {
         return KeyK.Backspace;
       case 'Delete':
         return KeyK.Delete;
+      case 'Home':
+        return KeyK.Home;
+      case 'End':
+        return KeyK.End;
       case 'Escape':
         return KeyK.Escape;
       case '`':
