@@ -7,7 +7,7 @@ import {
 } from './types.js';
 import { fromCells, getClueMap } from './viewableGrid.js';
 
-export type IpuzExportable = {
+export interface IpuzExportable {
   w: number;
   h: number;
   ac: string[];
@@ -23,38 +23,38 @@ export type IpuzExportable = {
   hdn?: number[];
   vb?: number[];
   hb?: number[];
-};
+}
 
 const MIN_DIM = 2;
 const MAX_DIM = 25;
 const DEFAULT_BLOCK = '#';
 const DEFAULT_EMPTY = 0;
 
-type IpuzStyle = {
+interface IpuzStyle {
   shapebg?: string;
   barred?: string;
   hidden?: boolean;
-};
+}
 
-type IpuzCellObject = {
+interface IpuzCellObject {
   cell?: unknown;
   value?: unknown;
   style?: IpuzStyle;
-};
+}
 
 type IpuzCell = string | number | null | IpuzCellObject;
 
-type IpuzClueObject = {
+interface IpuzClueObject {
   number?: string | number;
   label?: string | number;
   clue?: string;
   text?: string;
   explanation?: string;
-};
+}
 
 type IpuzClue = string | [string | number, string] | IpuzClueObject;
 
-type IpuzFile = {
+interface IpuzFile {
   version?: unknown;
   kind?: unknown;
   title?: unknown;
@@ -69,7 +69,7 @@ type IpuzFile = {
   puzzle?: unknown;
   solution?: unknown;
   clues?: unknown;
-};
+}
 
 function decodeUtf8(bytes: Uint8Array): string {
   let start = 0;
@@ -86,8 +86,19 @@ function decodeUtf8(bytes: Uint8Array): string {
 
 function unwrapIpuzJson(text: string): string {
   const trimmed = text.trim();
-  const jsonp = trimmed.match(/^ipuz\s*\(\s*([\s\S]*)\s*\)\s*;?\s*$/i);
-  return jsonp?.[1]?.trim() ?? trimmed;
+  const open = trimmed.indexOf('(');
+  const close = trimmed.lastIndexOf(')');
+  if (open === -1 || close <= open) {
+    return trimmed;
+  }
+  if (trimmed.slice(0, open).trim().toLowerCase() !== 'ipuz') {
+    return trimmed;
+  }
+  const suffix = trimmed.slice(close + 1).trim();
+  if (suffix !== '' && suffix !== ';') {
+    return trimmed;
+  }
+  return trimmed.slice(open + 1, close).trim();
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {
@@ -206,10 +217,13 @@ function normalizeSolutionLetter(raw: string): string {
     return EMPTY;
   }
   const upper = compact.toUpperCase();
-  if ([...upper].every((c) => ALLOWABLE_GRID_CHARS.test(c))) {
-    return upper;
+  for (let i = 0; i < upper.length; i++) {
+    const c = upper.charAt(i);
+    if (!ALLOWABLE_GRID_CHARS.test(c)) {
+      throw new Error(`Invalid character in grid: ${raw}`);
+    }
   }
-  throw new Error(`Invalid character in grid: ${raw}`);
+  return upper;
 }
 
 function gridLetterFromSolution(
@@ -251,6 +265,10 @@ function isPuzzleBlock(
   return isBlockValue(value, block);
 }
 
+function hasGridField(value: unknown): boolean {
+  return Boolean(value);
+}
+
 function requireGrid(
   value: unknown,
   width: number,
@@ -287,7 +305,7 @@ function parseClueNumber(clue: IpuzClue, fallback: number): number {
     const num = parseInt(String(clue[0]), 10);
     return Number.isFinite(num) ? num : fallback;
   }
-  if (typeof clue === 'object' && clue) {
+  if (typeof clue !== 'string') {
     const raw = clue.number ?? clue.label;
     if (raw !== undefined) {
       const num = parseInt(String(raw), 10);
@@ -304,7 +322,7 @@ function parseClueText(clue: IpuzClue): string {
     return clue;
   }
   if (Array.isArray(clue)) {
-    return clue[1] ?? '';
+    return clue[1];
   }
   return clue.clue ?? clue.text ?? '';
 }
@@ -370,10 +388,10 @@ export function importIpuzText(text: string): PuzzleInProgressStrictT {
 
   const block = blockChar(parsed);
   const empty = emptyMarker(parsed);
-  const puzzleGrid = parsed.puzzle
+  const puzzleGrid = hasGridField(parsed.puzzle)
     ? requireGrid(parsed.puzzle, width, height, 'puzzle')
     : null;
-  const solutionGrid = parsed.solution
+  const solutionGrid = hasGridField(parsed.solution)
     ? requireGrid(parsed.solution, width, height, 'solution')
     : null;
   if (!puzzleGrid && !solutionGrid) {

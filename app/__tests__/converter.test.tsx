@@ -216,6 +216,47 @@ test('test .ipuz import barred-example', async () => {
   });
 });
 
+function tinyIpuz(overrides: Record<string, unknown> = {}) {
+  return {
+    version: 'http://ipuz.org/v2',
+    kind: ['http://ipuz.org/crossword#1'],
+    title: 'Wrapped',
+    dimensions: { width: 2, height: 2 },
+    puzzle: [
+      [1, 2],
+      [3, 0],
+    ],
+    solution: [
+      ['A', 'B'],
+      ['C', 'D'],
+    ],
+    clues: {
+      Across: [
+        [1, 'AB'],
+        [3, 'CD'],
+      ],
+      Down: [
+        [1, 'AC'],
+        [2, 'BD'],
+      ],
+    },
+    ...overrides,
+  };
+}
+
+test('test ipuz JSONP unwrap', () => {
+  const inner = JSON.stringify(tinyIpuz());
+  for (const wrapped of [
+    `ipuz(${inner});`,
+    `IPUZ( ${inner} )`,
+    `ipuz\n(${inner})\n;`,
+  ]) {
+    const pip = importFile(new TextEncoder().encode(wrapped));
+    expect(pip?.title).toBe('Wrapped');
+    expect(pip?.grid).toEqual(['A', 'B', 'C', 'D']);
+  }
+});
+
 cases(
   'test ipuz roundtrip',
   async (opts) => {
