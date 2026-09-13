@@ -25,7 +25,7 @@
   "dependencies": {
     "@aws-sdk/client-sesv2": "catalog:",
     "@google-cloud/firestore": "catalog:",
-    "@google-cloud/functions-framework": "^5.0.2",
+    "@google-cloud/functions-framework": "catalog:",
     "@google-cloud/secret-manager": "catalog:",
     "date-fns": "catalog:",
     "fast-sha256": "catalog:",
