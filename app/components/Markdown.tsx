@@ -31,8 +31,7 @@ export const Markdown = (props: {
       ...props
     }: React.JSX.IntrinsicElements['span'] & { node?: Element }) => {
       const ref = node?.data as
-        | (ClueReferenceData & { text: string })
-        | undefined;
+        (ClueReferenceData & { text: string }) | undefined;
       if (className === 'clueref' && ref !== undefined) {
         return (
           <ClueReference
