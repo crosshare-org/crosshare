@@ -1,0 +1,21 @@
+{
+  "version": "http://ipuz.org/v2",
+  "kind": ["http://ipuz.org/crossword#1"],
+  "title": "Barred Example",
+  "dimensions": { "width": 2, "height": 2 },
+  "puzzle": [
+    [1, { "cell": 2, "style": { "barred": "L" } }],
+    [3, 0]
+  ],
+  "solution": [
+    ["A", "B"],
+    ["C", "D"]
+  ],
+  "clues": {
+    "Across": [[3, "Compact disc"]],
+    "Down": [
+      [1, "Account"],
+      [2, "Bachelor of Divinity"]
+    ]
+  }
+}

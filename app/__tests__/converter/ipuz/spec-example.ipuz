@@ -1,0 +1,28 @@
+{
+  "version": "http://ipuz.org/v2",
+  "kind": ["http://ipuz.org/crossword#1"],
+  "title": "Spec Example",
+  "author": "Crosshare Tests",
+  "notes": "A tiny official-format puzzle",
+  "dimensions": { "width": 3, "height": 3 },
+  "puzzle": [
+    [1, { "cell": 0, "style": { "shapebg": "circle" } }, 2],
+    [0, "#", 0],
+    [3, 0, 0]
+  ],
+  "solution": [
+    ["C", "A", "B"],
+    ["A", "#", "E"],
+    ["T", "O", "E"]
+  ],
+  "clues": {
+    "Across": [
+      [1, "Taxi"],
+      [3, "Foot part"]
+    ],
+    "Down": [
+      [1, "Feline"],
+      [2, "Buzzer"]
+    ]
+  }
+}
