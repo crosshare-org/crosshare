@@ -1278,7 +1278,7 @@ export const Puzzle = ({
               ) : (
                 ''
               )}
-              <TopBar title={puzzle.title}>
+              <TopBar title={puzzle.title} showTitle={!isSlate && (state.currentTimeWindowStart !== 0 || state.success)}>
                 {!loadingPlayState ? (
                   !state.success ? (
                     <>

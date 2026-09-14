@@ -240,9 +240,11 @@ const TopBarLinkA = (props: TopBarLinkAProps) => {
 export const TopBar = ({
   children,
   title,
+  showTitle,
 }: {
   children?: ReactNode;
   title?: string;
+  showTitle?: boolean;
 }) => {
   const { notifications } = useContext(AuthContext);
   const { isEmbed } = useContext(EmbedContext);
@@ -324,6 +326,13 @@ export const TopBar = ({
                 />
                 <span className={styles.logoText}>CROSSHARE</span>
               </Link>
+            )}
+            {showTitle && !isEmbed && !isSlate ? (
+              <div title={title} className={styles.embedTitle}>
+                {title}
+              </div>
+            ) : (
+              ''
             )}
             <>{children}</>
           </div>
