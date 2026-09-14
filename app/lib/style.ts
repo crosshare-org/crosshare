@@ -128,6 +128,19 @@ export const colorTheme = ({
     '--verified-on-bg': makeReadable(cellBG, verified),
     '--verified-on-secondary': makeReadable(secondary, verified),
     '--verified-on-selected-cell': makeReadable(selectedCell, verified),
+    '--draft-on-primary': mix(readableColor(p, darkMode), p, 0.5),
+    '--draft-on-lighter': mix(readableColor(lighter, darkMode), lighter, 0.5),
+    '--draft-on-bg': mix(text, cellBG, 0.5),
+    '--draft-on-secondary': mix(
+      readableColor(secondary, darkMode),
+      secondary,
+      0.5
+    ),
+    '--draft-on-selected-cell': mix(
+      readableColor(selectedCell, darkMode),
+      selectedCell,
+      0.5
+    ),
     '--autofill': darkMode ? '#999' : '#bbb',
     '--shade-highlight': darkMode
       ? 'rgba(255, 255, 255, 0.2)'

@@ -20,6 +20,7 @@ export type CheatablePuzzleState = Pick<
   | 'verifiedCells'
   | 'revealedCells'
   | 'wrongCells'
+  | 'draftCells'
   | 'grid'
   | 'solutions'
   | 'cellsIterationCount'
@@ -69,6 +70,7 @@ function cheatCells<T extends CheatablePuzzleState>(
   const revealedCells = new Set(state.revealedCells);
   const verifiedCells = new Set(state.verifiedCells);
   const wrongCells = new Set(state.wrongCells);
+  const draftCells = new Set(state.draftCells);
   let grid = state.grid;
   const answers = closestAlt(state.grid.cells, state.solutions);
 
@@ -85,10 +87,12 @@ function cheatCells<T extends CheatablePuzzleState>(
     if (shouldBe === currentVal) {
       verifiedCells.add(ci);
       wrongCells.delete(ci);
+      draftCells.delete(ci);
     } else if (isReveal) {
       revealedCells.add(ci);
       wrongCells.delete(ci);
       verifiedCells.add(ci);
+      draftCells.delete(ci);
       grid = gridWithNewChar(grid, cell, shouldBe, Symmetry.None);
       state.cellsUpdatedAt[ci] = elapsed;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -106,6 +110,7 @@ function cheatCells<T extends CheatablePuzzleState>(
     wrongCells,
     revealedCells,
     verifiedCells,
+    draftCells,
   });
 }
 
@@ -156,6 +161,7 @@ export function checkComplete<T extends CheatablePuzzleState>(state: T): T {
       bankedSeconds,
       currentTimeWindowStart,
       dismissedKeepTrying,
+      ...(success && { draftCells: new Set<number>(), draftMode: false }),
     };
   }
   return state;

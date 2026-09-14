@@ -90,6 +90,11 @@
   background: var(--key-bg-click);
 }
 
+.key[data-active='true'] {
+  color: var(--onprimary);
+  background: var(--primary);
+}
+
 /* stylelint-disable-next-line media-query-no-invalid */
 @media ($small-and-up) {
   .key[data-only-on-tablet='true'] {

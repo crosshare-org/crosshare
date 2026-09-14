@@ -335,6 +335,8 @@ const PlayBaseV = t.intersection([
     ct_em: t.string,
     /** solved (or is solving) downs-only */
     do: t.boolean,
+    /** list of draft (non-final) cells */
+    dc: t.array(t.number),
   }),
 ]);
 

@@ -36,6 +36,7 @@
   --current-cell-bg: var(--cell-bg);
   --current-cell-text: var(--text);
   --current-cell-verified: var(--verified-on-bg);
+  --current-cell-draft: var(--draft-on-bg);
 
   position: relative;
   float: left;
@@ -75,24 +76,28 @@
   --current-cell-bg: var(--primary);
   --current-cell-text: var(--onprimary);
   --current-cell-verified: var(--verified-on-primary);
+  --current-cell-draft: var(--draft-on-primary);
 }
 
 .cellContainerSelected {
   --current-cell-bg: var(--selected-cell);
   --current-cell-text: var(--on-selected-cell);
   --current-cell-verified: var(--verified-on-selected-cell);
+  --current-cell-draft: var(--draft-on-selected-cell);
 }
 
 .cellContainerEntryCell {
   --current-cell-bg: var(--lighter);
   --current-cell-text: var(--on-lighter);
   --current-cell-verified: var(--verified-on-lighter);
+  --current-cell-draft: var(--draft-on-lighter);
 }
 
 .cellContainerRefed {
   --current-cell-bg: var(--secondary);
   --current-cell-text: var(--on-secondary);
   --current-cell-verified: var(--verified-on-secondary);
+  --current-cell-draft: var(--draft-on-secondary);
 }
 
 .cq {
@@ -184,6 +189,10 @@
 
 .contentsFilled {
   color: var(--current-cell-text);
+}
+
+.contentsDraft {
+  color: var(--current-cell-draft);
 }
 
 .borderBottom {

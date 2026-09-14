@@ -275,8 +275,20 @@ msgstr ""
 msgid "enable across clues"
 msgstr ""
 
-#: components/Puzzle.tsx:1032
+#: components/Puzzle.tsx:1045
 msgid "Enter Rebus"
+msgstr ""
+
+#: components/Puzzle.tsx:1058
+msgid "Draft Entry"
+msgstr ""
+
+#: components/Puzzle.tsx:1058
+msgid "Stop Draft Entry"
+msgstr ""
+
+#: components/Puzzle.tsx:1373
+msgid "Drafting"
 msgstr ""
 
 #: components/Comments.tsx:522

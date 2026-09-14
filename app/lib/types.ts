@@ -472,6 +472,7 @@ export enum KeyK {
   Block,
   Undo,
   Redo,
+  Draft,
 }
 
 export const ALLOWABLE_GRID_CHARS = /^[A-Za-z0-9ÑÅÄÖñåäö&/\\]$/;
@@ -565,6 +566,8 @@ export function fromKeyboardEvent(event: {
         return KeyK.Rebus;
       case '{block}':
         return KeyK.Block;
+      case '{draft}':
+        return KeyK.Draft;
       default:
         return null;
     }
