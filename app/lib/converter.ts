@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { DBPuzzleT } from './dbtypes.js';
+import { exportIpuzFile, importIpuz, isIpuz } from './ipuz.js';
 import {
   ALLOWABLE_GRID_CHARS,
   BLOCK,
@@ -266,6 +267,10 @@ export type ExportProps = Pick<
   | 'gc'
   /** hidden cells */
   | 'hdn'
+  /** vertical bars */
+  | 'vb'
+  /** horizontal bars */
+  | 'hb'
 >;
 
 class PuzWriter {
@@ -543,9 +548,16 @@ export function exportFile(puzzle: ExportProps): Uint8Array {
   return new PuzWriter().toPuz(puzzle);
 }
 
+export function exportIpuz(puzzle: ExportProps): Uint8Array {
+  return exportIpuzFile(puzzle);
+}
+
 export function importFile(bytes: Uint8Array): PuzzleInProgressStrictT | null {
   if (isPuz(bytes)) {
     return new PuzReader(bytes).toCrosshare();
+  }
+  if (isIpuz(bytes)) {
+    return importIpuz(bytes);
   }
   return null;
 }

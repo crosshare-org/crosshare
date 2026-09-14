@@ -1158,6 +1158,11 @@ export const Puzzle = ({
                       text={t`Download .puz File`}
                     />
                   )}
+                  <TopBarDropDownLinkSimpleA
+                    href={'/api/ipuz/' + puzzle.id}
+                    icon={<FaRegFile />}
+                    text={t`Download .ipuz File`}
+                  />
                   {!isEmbed ? (
                     <TopBarDropDownLink
                       icon={<FaMoon />}

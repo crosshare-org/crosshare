@@ -1,6 +1,7 @@
 import {
   cellIndex,
   clampInBounds,
+  entryAtPosition,
   isInBounds,
   valAt,
 } from '../lib/gridBase.js';
@@ -420,6 +421,24 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         ...state,
         wasEntryClick: false,
         active: moveToPrevEntry(state.grid, state.active),
+      };
+    } else if (key.k === KeyK.Home || key.k === KeyK.End) {
+      const [entry] = entryAtPosition(state.grid, state.active);
+      if (!entry) {
+        return state;
+      }
+      const cell =
+        key.k === KeyK.Home
+          ? entry.cells[0]
+          : entry.cells[entry.cells.length - 1];
+      if (!cell) {
+        return state;
+      }
+      state = clearSelection(state);
+      return {
+        ...state,
+        wasEntryClick: false,
+        active: { ...cell, dir: state.active.dir },
       };
     } else if (key.k === KeyK.ArrowRight) {
       state = clearSelection(state);

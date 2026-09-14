@@ -95,8 +95,8 @@ function initialBuilderStateFromSaved(
     width: saved?.width ?? state.grid.width,
     height: saved?.height ?? state.grid.height,
     grid: saved?.grid ?? state.grid.cells,
-    vBars: saved?.vBars ?? Array.from(state.grid.vBars.values()),
-    hBars: saved?.hBars ?? Array.from(state.grid.hBars.values()),
+    vBars: saved?.vBars ?? [],
+    hBars: saved?.hBars ?? [],
     cellStyles:
       saved?.cellStyles ??
       Object.fromEntries(
@@ -105,7 +105,7 @@ function initialBuilderStateFromSaved(
           Array.from(v),
         ])
       ),
-    hidden: saved?.hidden ?? Array.from(state.grid.hidden),
+    hidden: saved?.hidden ?? [],
 
     title: saved?.title || state.title,
 

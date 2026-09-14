@@ -17,7 +17,7 @@ import {
   numMatchesForEntry,
 } from '../lib/autofillGrid.js';
 import * as BA from '../lib/bitArray.js';
-import { ExportProps, exportFile } from '../lib/converter.js';
+import { ExportProps, exportFile, exportIpuz } from '../lib/converter.js';
 import { isTextInput } from '../lib/domUtils.js';
 import { entryAndCrossAtPosition, getCrosses, valAt } from '../lib/gridBase.js';
 import { usePersistedBoolean } from '../lib/hooks.js';
@@ -630,11 +630,12 @@ const potentialFill = (
   });
 };
 
-const PuzDownloadLink = (props: ExportProps) => {
+const FileDownloadLink = (props: ExportProps & { format: 'puz' | 'ipuz' }) => {
   const [dataURI, setDataURI] = useState('');
   const [error, setError] = useState('');
   useEffect(() => {
-    const data = exportFile(props);
+    const data =
+      props.format === 'ipuz' ? exportIpuz(props) : exportFile(props);
     const reader = new FileReader();
     reader.addEventListener(
       'load',
@@ -656,8 +657,8 @@ const PuzDownloadLink = (props: ExportProps) => {
     return <>Generating file...</>;
   }
   return (
-    <a href={dataURI} download={props.t + '.puz'}>
-      Download
+    <a href={dataURI} download={props.t + '.' + props.format}>
+      Download .{props.format}
     </a>
   );
 };
@@ -666,44 +667,46 @@ const PuzDownloadOverlay = (props: {
   state: BuilderState;
   cancel: () => void;
 }) => {
-  if (props.state.grid.vBars.size || props.state.grid.hBars.size) {
-    return (
-      <Overlay closeCallback={props.cancel}>
-        <h2>Export unsupported</h2>
-        <p>
-          Barred grids currently cannot be exported (.puz does not support
-          bars).
-        </p>
-      </Overlay>
-    );
-  }
+  const exportProps: ExportProps = {
+    w: props.state.grid.width,
+    h: props.state.grid.height,
+    g: props.state.grid.cells,
+    n: props.state.authorName,
+    t: props.state.title || 'Crosshare puzzle',
+    sty: Object.fromEntries(
+      Array.from(props.state.grid.cellStyles.entries()).map(([k, v]) => [
+        k,
+        Array.from(v),
+      ])
+    ),
+    hdn: Array.from(props.state.grid.hidden),
+    cn: props.state.notes ?? undefined,
+    gc: props.state.guestConstructor ?? undefined,
+    vb: Array.from(props.state.grid.vBars),
+    hb: Array.from(props.state.grid.hBars),
+    ...getClueProps(
+      props.state.grid.sortedEntries,
+      props.state.grid.entries,
+      props.state.clues,
+      false
+    ),
+  };
+  const hasBars = props.state.grid.vBars.size || props.state.grid.hBars.size;
   return (
     <Overlay closeCallback={props.cancel}>
-      <h2>Exporting .puz</h2>
+      <h2>Export puzzle</h2>
       <p>
-        <PuzDownloadLink
-          w={props.state.grid.width}
-          h={props.state.grid.height}
-          g={props.state.grid.cells}
-          n={props.state.authorName}
-          t={props.state.title || 'Crosshare puzzle'}
-          sty={Object.fromEntries(
-            Array.from(props.state.grid.cellStyles.entries()).map(([k, v]) => [
-              k,
-              Array.from(v),
-            ])
-          )}
-          hdn={Array.from(props.state.grid.hidden)}
-          cn={props.state.notes ?? undefined}
-          gc={props.state.guestConstructor ?? undefined}
-          {...getClueProps(
-            props.state.grid.sortedEntries,
-            props.state.grid.entries,
-            props.state.clues,
-            false
-          )}
-        />
+        <FileDownloadLink {...exportProps} format="ipuz" />
       </p>
+      {hasBars ? (
+        <p>
+          Barred grids cannot be exported as .puz (.puz does not support bars).
+        </p>
+      ) : (
+        <p>
+          <FileDownloadLink {...exportProps} format="puz" />
+        </p>
+      )}
     </Overlay>
   );
 };
