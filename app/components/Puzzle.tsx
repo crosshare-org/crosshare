@@ -296,15 +296,14 @@ export const Puzzle = ({
         contestSubmitTime: play.ct_t?.toMillis(),
         contestDisplayName: play.ct_n,
       }),
-    ...(play &&
-      play.ct_sub && {
-        ranMetaSubmitEffects: true,
-        contestPriorSubmissions: play.ct_pr_subs,
-        contestDisplayName: play.ct_n,
-        contestSubmission: play.ct_sub,
-        contestEmail: play.ct_em,
-        contestSubmitTime: play.ct_t?.toMillis(),
-      }),
+    ...(play?.ct_sub && {
+      ranMetaSubmitEffects: true,
+      contestPriorSubmissions: play.ct_pr_subs,
+      contestDisplayName: play.ct_n,
+      contestSubmission: play.ct_sub,
+      contestEmail: play.ct_em,
+      contestSubmitTime: play.ct_t?.toMillis(),
+    }),
     currentTimeWindowStart: 0,
     didCheat: play ? play.ch : false,
     clueView: false,

@@ -64,7 +64,7 @@ function downsample(
   for (let j = 0; j < height; j++) {
     for (let i = 0; i < width; i++) {
       const x2 = (i + j * width) * 4;
-      let weight = 0;
+      let weight: number;
       let weights = 0;
       let weights_alpha = 0;
       let gx_r = 0;

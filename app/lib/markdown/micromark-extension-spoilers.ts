@@ -150,7 +150,6 @@ export const spoilersSyntax = function (): Extension {
     let size = 0;
 
     const more: State = function (code) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const before = classifyCharacter(previous);
 
       if (code === PIPE) {
@@ -163,7 +162,6 @@ export const spoilersSyntax = function (): Extension {
 
       if (size < 2) return nok(code);
       const token = effects.exit('spoilerSequenceTemporary');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const after = classifyCharacter(code);
       token._open = Boolean(before); // before is whitespace or punctuation
       token._close = Boolean(after); // after is whitespace or punctuation
@@ -188,7 +186,6 @@ export const spoilersSyntax = function (): Extension {
 
   const tokenizeRedditOpen: Tokenizer = function (effects, ok, nok) {
     const previous = this.previous;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const before = classifyCharacter(previous);
     const events = this.events;
 
@@ -234,7 +231,6 @@ export const spoilersSyntax = function (): Extension {
 
     const finalize: State = function (code) {
       const token = effects.exit('redditSequenceTemporary');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const after = classifyCharacter(code);
       token._open = false;
       token._close = Boolean(after);

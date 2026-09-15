@@ -1,0 +1,13 @@
+diff --git a/build/core/index.js b/build/core/index.js
+index 8ac31c16d3f3b0a4f331e562d70ab9290b0c7cda..2d9107599e8c21130a69f03f0cdef49ab162f158 100755
+--- a/build/core/index.js
++++ b/build/core/index.js
+@@ -25,7 +25,7 @@ function dashesCamelCase(str) {
+ }
+ var getFilePath = exports.getFilePath = function getFilePath(context, styleFilePath) {
+   var settings = context.settings['css-modules'];
+-  var dirName = _path["default"].dirname(context.getFilename());
++  var dirName = _path["default"].dirname(typeof context.getFilename === 'function' ? context.getFilename() : context.filename);
+   var basePath = settings && settings.basePath ? settings.basePath : '';
+   return styleFilePath.startsWith('.') ? _path["default"].resolve(dirName, styleFilePath) : _path["default"].resolve(basePath, styleFilePath);
+ };

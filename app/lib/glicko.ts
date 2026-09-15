@@ -329,7 +329,6 @@ class CrosshareGlickoRound extends GlickoRound {
 
 export async function doGlicko() {
   const runBegin = new Date().getTime();
-  let startTimestamp: Timestamp | null = null;
   const endTimestamp = Timestamp.now();
   const value = await getCollection('cron_status').doc('ratings').get();
   const result = CronStatusV.decode(value.data());
@@ -337,16 +336,15 @@ export async function doGlicko() {
     console.error(PathReporter.report(result).join(','));
     throw new Error('Malformed cron_status');
   }
-  startTimestamp = result.right.ranAt;
+  const startTimestamp = result.right.ranAt;
 
   console.log('start', startTimestamp);
   console.log('end', endTimestamp);
 
-  let startRound = Math.floor(1586895805 / (60 * 60 * 24));
-
-  let readFromCacheOnly = true;
-  startRound = Math.floor(startTimestamp.toMillis() / (1000 * 60 * 60 * 24));
-  readFromCacheOnly = false;
+  const startRound = Math.floor(
+    startTimestamp.toMillis() / (1000 * 60 * 60 * 24)
+  );
+  const readFromCacheOnly = false;
 
   const endRound = Math.floor(endTimestamp.toMillis() / (1000 * 60 * 60 * 24));
 

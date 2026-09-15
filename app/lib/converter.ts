@@ -428,7 +428,6 @@ class PuzWriter {
     if (len) {
       cksum = this.checksumRegion(ix, len + 1, cksum);
     }
-    ix += len + 1;
     return cksum;
   }
 

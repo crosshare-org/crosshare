@@ -1,8 +1,7 @@
 import { ParsedUrlQuery } from 'querystring';
 import { addDays } from 'date-fns';
-import type firebaseAdminType from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
-import { getFirestore } from 'firebase-admin/firestore';
+import { type Firestore, getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import type { Root } from 'hast';
 import { GetServerSideProps } from 'next';
@@ -374,10 +373,7 @@ export interface PuzzlePageResultProps {
 
 export type PuzzlePageProps = PuzzlePageResultProps | { packId: string };
 
-async function getPrefs(
-  db: firebaseAdminType.firestore.Firestore,
-  uid: string
-) {
+async function getPrefs(db: Firestore, uid: string) {
   const dbres = await db.collection('prefs').doc(uid).get();
   if (!dbres.exists) {
     return null;
@@ -395,10 +391,7 @@ async function getPrefs(
   return validationResult.right;
 }
 
-async function getPack(
-  db: firebaseAdminType.firestore.Firestore,
-  packId: string
-) {
+async function getPack(db: Firestore, packId: string) {
   const dbres = await db.collection('packs').doc(packId).get();
   if (!dbres.exists) {
     return null;
@@ -416,11 +409,7 @@ async function getPack(
   return validationResult.right;
 }
 
-async function hasPackAccess(
-  db: firebaseAdminType.firestore.Firestore,
-  token: string,
-  packId: string
-) {
+async function hasPackAccess(db: Firestore, token: string, packId: string) {
   const claims = await getAuth(getAdminApp()).verifyIdToken(token);
 
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
@@ -571,13 +560,12 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
   }
 
   let profilePicture: string | null = null;
-  let coverImage: string | null = null;
   if (puzzle.constructorPage?.u) {
     profilePicture = await getStorageUrl(
       `users/${puzzle.constructorPage.u}/profile.jpg`
     );
   }
-  coverImage = await getStorageUrl(
+  const coverImage = await getStorageUrl(
     `users/${puzzle.authorId}/${puzzle.id}/cover.jpg`
   );
 

@@ -10,6 +10,9 @@ if (
   localStorage.clear();
 }
 
+// Workaround for jest error importing es module
+jest.mock('jose', () => ({}));
+
 // We need to add this mock since JSDOM doesn't support matchMedia
 if (typeof window !== 'undefined') {
   Object.defineProperty(window, 'matchMedia', {

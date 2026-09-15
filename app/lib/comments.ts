@@ -87,7 +87,7 @@ export async function moderateComments(
   // Now handle deletions
   for (const deletion of deletions) {
     const puzzle = await puzzleFromCache(deletion.pid);
-    if (puzzle && puzzle.cs?.length) {
+    if (puzzle?.cs?.length) {
       const comment = findCommentById(puzzle.cs, deletion.cid);
       if (comment?.a === deletion.a) {
         comment.deleted = true;

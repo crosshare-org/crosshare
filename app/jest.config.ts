@@ -6,8 +6,6 @@ const createJestConfig = nextJest({
   dir: './',
 });
 
-//const esModules = ['@firebase'];
-
 /** @type {import('jest').Config} */
 const customJestConfig = {
   testPathIgnorePatterns: ['<rootDir>/pages', '<rootDir>/nextjs'],

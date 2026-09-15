@@ -30,7 +30,7 @@ const print = command({
     let success = false;
     for (let i = donations.d.length - 1; i >= 0; i -= 1) {
       const o = donations.d[i];
-      if (o && o.e.trim().toLowerCase() === args.email.trim().toLowerCase()) {
+      if (o?.e.trim().toLowerCase() === args.email.trim().toLowerCase()) {
         console.log(o);
         console.log(o.d.toDate());
         success = true;
@@ -133,7 +133,7 @@ const edit = command({
     let success = false;
     for (let i = donations.d.length - 1; i >= 0; i -= 1) {
       const o = donations.d[i];
-      if (o && o.e.trim().toLowerCase() === args.email.trim().toLowerCase()) {
+      if (o?.e.trim().toLowerCase() === args.email.trim().toLowerCase()) {
         if (args.field === 'username') {
           o.p = args.value.trim();
         } else if (args.field === 'userid') {
