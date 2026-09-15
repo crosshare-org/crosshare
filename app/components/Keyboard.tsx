@@ -49,6 +49,7 @@ interface KeyProps {
   onlyOnTablet?: boolean;
   notOnTablet?: boolean;
   className?: string;
+  active?: boolean;
   touched: RefObject<boolean>;
 }
 const Key = ({ touched, ...props }: KeyProps) => {
@@ -59,6 +60,7 @@ const Key = ({ touched, ...props }: KeyProps) => {
       data-large-size={props.largeSize}
       data-only-on-tablet={props.onlyOnTablet}
       data-not-on-tablet={props.notOnTablet}
+      data-active={props.active}
       className={clsx(styles.key, props.className)}
       onClick={(e) => {
         e.preventDefault();
@@ -84,6 +86,8 @@ interface KeyboardProps {
   showExtraKeyLayout: boolean;
   includeBlockKey: boolean;
   toggleKeyboard: boolean;
+  showDraftKey?: boolean;
+  draftMode?: boolean;
 }
 export const Keyboard = memo(function Keyboard({
   muted,
@@ -164,6 +168,17 @@ export const Keyboard = memo(function Keyboard({
             display="ABC"
             onKeypress={keypress}
           />
+          {props.showDraftKey ? (
+            <Key
+              touched={touched}
+              keyStroke="{draft}"
+              display="Draft"
+              active={props.draftMode}
+              onKeypress={keypress}
+            />
+          ) : (
+            ''
+          )}
           <Key
             touched={touched}
             keyStroke="{rebus}"
@@ -285,6 +300,18 @@ export const Keyboard = memo(function Keyboard({
           display="Rebus"
           onKeypress={keypress}
         />
+        {props.showDraftKey ? (
+          <Key
+            touched={touched}
+            onlyOnTablet
+            keyStroke="{draft}"
+            display="Draft"
+            active={props.draftMode}
+            onKeypress={keypress}
+          />
+        ) : (
+          ''
+        )}
         <Key
           touched={touched}
           onlyOnTablet

@@ -26,6 +26,7 @@ interface GridViewProps {
   dispatch: Dispatch<PuzzleAction>;
   revealedCells?: Set<number>;
   verifiedCells?: Set<number>;
+  draftCells?: Set<number>;
   isEnteringRebus?: boolean;
   rebusValue?: string;
   wrongCells?: Set<number>;
@@ -176,6 +177,7 @@ export const GridView = ({
         isBlock={cellValue === BLOCK}
         isOpposite={isOpposite}
         isVerified={props.verifiedCells?.has(idx) || showAsVerified}
+        isDraft={props.draftCells?.has(idx)}
         isWrong={props.wrongCells?.has(idx)}
         wasRevealed={props.revealedCells?.has(idx)}
         styles={Array.from(grid.cellStyles.entries())

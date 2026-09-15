@@ -94,6 +94,10 @@
   text-align: center;
 }
 
+.clueModeCell[data-draft='true'] {
+  color: var(--draft-on-bg);
+}
+
 .clueModeCell[data-active-cell='true'] {
   border: 1px solid var(--black);
 }

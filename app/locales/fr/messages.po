@@ -257,6 +257,18 @@ msgstr "activer les indices horizontalement"
 msgid "Enter Rebus"
 msgstr "Insérer Rebus"
 
+#: components/Puzzle.tsx:1058
+msgid "Draft Entry"
+msgstr "Saisie brouillon"
+
+#: components/Puzzle.tsx:1058
+msgid "Stop Draft Entry"
+msgstr "Arrêter la saisie brouillon"
+
+#: components/Puzzle.tsx:1373
+msgid "Drafting"
+msgstr "Brouillon"
+
 #: components/Comments.tsx:522
 msgid "Enter your reply"
 msgstr "Insérer votre réponse"

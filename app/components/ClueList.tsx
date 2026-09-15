@@ -1,6 +1,6 @@
 import type { Root } from 'hast';
 import { Dispatch, MouseEvent, RefObject, memo, useRef } from 'react';
-import { EntryBase, GridBase, valAt } from '../lib/gridBase.js';
+import { EntryBase, GridBase, cellIndex, valAt } from '../lib/gridBase.js';
 import { Position, directionString } from '../lib/types.js';
 import { CluedEntry } from '../lib/viewableGrid.js';
 import { PuzzleAction } from '../reducers/commonActions.js';
@@ -25,6 +25,7 @@ interface ClueListItemProps {
   grid: GridBase<EntryBase>;
   scrollToCross: boolean;
   listRef: RefObject<HTMLDivElement | null>;
+  draftCells?: Set<number>;
 }
 
 const ClueListItem = memo(function ClueListItem({
@@ -97,6 +98,9 @@ const ClueListItem = memo(function ClueListItem({
                     <span
                       key={a.col + '-' + a.row}
                       data-active-cell={isActiveCell}
+                      data-draft={props.draftCells?.has(
+                        cellIndex(props.grid, a)
+                      )}
                       className={styles.clueModeCell}
                     >
                       {props.isEnteringRebus && isActiveCell
@@ -132,6 +136,7 @@ interface ClueListProps {
   rebusValue?: string;
   grid: GridBase<EntryBase>;
   scrollToCross: boolean;
+  draftCells?: Set<number>;
 }
 
 export const ClueList = (props: ClueListProps): React.JSX.Element => {
@@ -161,6 +166,7 @@ export const ClueList = (props: ClueListProps): React.JSX.Element => {
         active={
           props.showEntries && (isActive || isCross) ? props.active : null
         }
+        draftCells={props.draftCells}
       />
     );
   });
