@@ -1,4 +1,5 @@
 FROM node:20-slim AS builder
+RUN apt-get update && apt-get install -y python3
 COPY . /src
 WORKDIR /src
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \

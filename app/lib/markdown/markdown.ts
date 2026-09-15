@@ -83,7 +83,7 @@ export function markdownToHast(props: {
 
   const handlers: Record<string, Handler> = {
     spoiler: (state, node: Nodes) => {
-      const props = { className: 'spoiler' };
+      const props = { className: ['spoiler'] };
       return {
         type: 'element',
         tagName: 'span',

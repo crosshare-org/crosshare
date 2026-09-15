@@ -14,7 +14,7 @@ catalog:
   '@google-cloud/pubsub': ^6.0.1
   '@google-cloud/secret-manager': ^7.0.0
   '@jest/globals': 30.5.1
-  '@lingui/cli': ^6.6.0
+  '@lingui/cli': 5.9.2
   '@lingui/core': ^6.6.0
   '@lingui/format-po-gettext': ^6.6.0
   '@lingui/react': ^6.6.0

@@ -36,6 +36,7 @@
 !app/components
 !app/cluedb
 !app/.env.local
+!patches
 !package.json
 !pnpm-lock.yaml
 !pnpm-workspace.yaml
