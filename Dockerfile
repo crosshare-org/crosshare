@@ -1,4 +1,4 @@
-FROM node:20-slim AS builder
+FROM node:22-slim AS builder
 RUN apt-get update && apt-get install -y python3
 COPY . /src
 WORKDIR /src
@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
 RUN pnpm compileI18n
 RUN pnpm predeploy
 
-FROM gcr.io/distroless/nodejs20-debian12 AS prod
+FROM gcr.io/distroless/nodejs22-debian13 AS prod
 WORKDIR /app
 ARG COMMIT
 ENV NEXT_PUBLIC_COMMIT_HASH=$COMMIT NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=8080 HOSTNAME="0.0.0.0"
