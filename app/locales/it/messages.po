@@ -252,6 +252,18 @@ msgstr "abilita le definizioni orizzontali"
 msgid "Enter Rebus"
 msgstr "Inserisci Rebus"
 
+#: components/Puzzle.tsx
+msgid "Draft Entry"
+msgstr "Inserimento bozza"
+
+#: components/Puzzle.tsx
+msgid "Stop Draft Entry"
+msgstr "Interrompi inserimento bozza"
+
+#: components/Puzzle.tsx
+msgid "Drafting"
+msgstr "Bozza"
+
 #: components/Comments.tsx
 msgid "Enter your reply"
 msgstr "Inserisci la tua risposta"

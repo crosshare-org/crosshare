@@ -32,6 +32,7 @@ import {
   FaListOl,
   FaMoon,
   FaPause,
+  FaPencilAlt,
   FaPrint,
   FaRegFile,
   FaUser,
@@ -116,6 +117,7 @@ import {
   CheckPuzzle,
   CheckSquare,
   EscapeKey,
+  PeriodKey,
   Rebus,
   RevealEntry,
   RevealPuzzle,
@@ -276,6 +278,8 @@ export const Puzzle = ({
     verifiedCells: new Set<number>(play ? play.vc : []),
     wrongCells: new Set<number>(play ? play.wc : []),
     revealedCells: new Set<number>(play ? play.rc : []),
+    draftCells: new Set<number>(play?.dc ?? []),
+    draftMode: false,
     downsOnly: play?.do ?? false,
     isEnteringRebus: false,
     rebusValue: '',
@@ -509,6 +513,7 @@ export const Puzzle = ({
         wc: Array.from(state.wrongCells),
         we: Array.from(state.cellsEverMarkedWrong),
         rc: Array.from(state.revealedCells),
+        dc: Array.from(state.draftCells),
         t: playTime,
         ch: state.didCheat,
         do: state.downsOnly,
@@ -549,6 +554,7 @@ export const Puzzle = ({
       state.success,
       state.verifiedCells,
       state.wrongCells,
+      state.draftCells,
       puzzle.title,
       state.bankedSeconds,
       state.currentTimeWindowStart,
@@ -808,6 +814,8 @@ export const Puzzle = ({
             cross={cross?.index}
             scrollToCross={scrollToCross}
             dispatch={dispatch}
+            draftCells={state.draftCells}
+            draftMode={state.draftMode}
           />
         }
         right={
@@ -827,6 +835,8 @@ export const Puzzle = ({
             cross={cross?.index}
             scrollToCross={scrollToCross}
             dispatch={dispatch}
+            draftCells={state.draftCells}
+            draftMode={state.draftMode}
           />
         }
       />
@@ -848,6 +858,8 @@ export const Puzzle = ({
             dispatch={dispatch}
             revealedCells={state.revealedCells}
             verifiedCells={state.verifiedCells}
+            draftCells={state.draftCells}
+            draftMode={state.draftMode}
             wrongCells={state.wrongCells}
             showAlternates={state.success ? state.alternateSolutions : null}
             answers={state.answers}
@@ -1029,18 +1041,34 @@ export const Puzzle = ({
           {(closeDropdown) => (
             <div className={styles.topBarPuzzleMoreDropdown}>
               {!state.success ? (
-                <TopBarDropDownLink
-                  icon={<Rebus />}
-                  text={t`Enter Rebus`}
-                  shortcutHint={<EscapeKey />}
-                  onClick={() => {
-                    const kpa: KeypressAction = {
-                      type: 'KEYPRESS',
-                      key: { k: KeyK.Escape },
-                    };
-                    dispatch(kpa);
-                  }}
-                />
+                <>
+                  <TopBarDropDownLink
+                    icon={<Rebus />}
+                    text={t`Enter Rebus`}
+                    shortcutHint={<EscapeKey />}
+                    onClick={() => {
+                      const kpa: KeypressAction = {
+                        type: 'KEYPRESS',
+                        key: { k: KeyK.Escape },
+                      };
+                      dispatch(kpa);
+                    }}
+                  />
+                  <TopBarDropDownLink
+                    icon={<FaPencilAlt />}
+                    text={
+                      state.draftMode ? t`Stop Draft Entry` : t`Draft Entry`
+                    }
+                    shortcutHint={<PeriodKey />}
+                    onClick={() => {
+                      const kpa: KeypressAction = {
+                        type: 'KEYPRESS',
+                        key: { k: KeyK.Draft },
+                      };
+                      dispatch(kpa);
+                    }}
+                  />
+                </>
               ) : (
                 ''
               )}
@@ -1199,6 +1227,7 @@ export const Puzzle = ({
       puzzle,
       setMuted,
       state.success,
+      state.draftMode,
       toggleKeyboard,
       setToggleKeyboard,
       isEmbed,
@@ -1347,6 +1376,21 @@ export const Puzzle = ({
                         }}
                       />
                       {isSlate ? <SlateButtonMargin /> : ''}
+                      {state.draftMode && !isSlate ? (
+                        <TopBarLink
+                          icon={<FaPencilAlt />}
+                          text={t`Drafting`}
+                          onClick={() => {
+                            const kpa: KeypressAction = {
+                              type: 'KEYPRESS',
+                              key: { k: KeyK.Draft },
+                            };
+                            dispatch(kpa);
+                          }}
+                        />
+                      ) : (
+                        ''
+                      )}
                       {checkRevealMenus}
                       {isSlate ? <SlateButtonMargin /> : ''}
                       {moreMenu}
@@ -1460,6 +1504,8 @@ export const Puzzle = ({
                 muted={muted}
                 showExtraKeyLayout={state.showExtraKeyLayout}
                 includeBlockKey={false}
+                showDraftKey={true}
+                draftMode={state.draftMode}
               />
             </div>
           </div>

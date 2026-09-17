@@ -254,6 +254,18 @@ msgstr "activar pistas horizontales"
 msgid "Enter Rebus"
 msgstr "Ingresar jeroglífico"
 
+#: components/Puzzle.tsx
+msgid "Draft Entry"
+msgstr "Entrada en borrador"
+
+#: components/Puzzle.tsx
+msgid "Stop Draft Entry"
+msgstr "Dejar de usar borrador"
+
+#: components/Puzzle.tsx
+msgid "Drafting"
+msgstr "Borrador"
+
 #: components/Comments.tsx
 msgid "Enter your reply"
 msgstr "Ingresar tu respuesta"

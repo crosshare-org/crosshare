@@ -472,6 +472,7 @@ export enum KeyK {
   Block,
   Undo,
   Redo,
+  Draft,
   Home,
   End,
 }
@@ -571,6 +572,8 @@ export function fromKeyboardEvent(event: {
         return KeyK.Rebus;
       case '{block}':
         return KeyK.Block;
+      case '{draft}':
+        return KeyK.Draft;
       default:
         return null;
     }

@@ -256,6 +256,18 @@ msgstr "aktifkan soal mendatar"
 msgid "Enter Rebus"
 msgstr "Masukkan Ribas"
 
+#: components/Puzzle.tsx
+msgid "Draft Entry"
+msgstr "Entri draf"
+
+#: components/Puzzle.tsx
+msgid "Stop Draft Entry"
+msgstr "Hentikan entri draf"
+
+#: components/Puzzle.tsx
+msgid "Drafting"
+msgstr "Draf"
+
 #: components/Comments.tsx
 msgid "Enter your reply"
 msgstr "Masukkan balasan Anda"

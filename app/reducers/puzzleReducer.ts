@@ -26,6 +26,8 @@ export interface PuzzleState extends GridInterfaceState {
   verifiedCells: Set<number>;
   revealedCells: Set<number>;
   wrongCells: Set<number>;
+  draftCells: Set<number>;
+  draftMode: boolean;
   success: boolean;
   ranSuccessEffects: boolean;
   ranMetaSubmitEffects: boolean;
@@ -145,6 +147,12 @@ export function puzzleReducer(
   state = gridInterfaceReducer(state, action);
   if (isKeypressAction(action)) {
     const key = action.key;
+    if (
+      (key.k === KeyK.Draft || key.k === KeyK.Dot) &&
+      !state.isEnteringRebus
+    ) {
+      return { ...state, draftMode: !state.draftMode };
+    }
     if (key.k === KeyK.ShiftArrowRight) {
       return {
         ...state,
@@ -245,6 +253,8 @@ export function puzzleReducer(
         ranSuccessEffects: true,
         ranMetaSubmitEffects: true,
         grid: { ...state.grid, cells: state.solutions[0] },
+        draftCells: new Set<number>(),
+        draftMode: false,
       };
     }
     const play = action.play;
@@ -270,6 +280,7 @@ export function puzzleReducer(
       verifiedCells: new Set<number>(play.vc),
       wrongCells: new Set<number>(play.wc),
       revealedCells: new Set<number>(play.rc),
+      draftCells: new Set<number>(play.dc ?? []),
       success: play.f,
       ranSuccessEffects: play.f,
       downsOnly,

@@ -146,9 +146,38 @@ function enterCharAt<T extends GridInterfaceState>(
       grid = gridWithNewChar(grid, pos, char || EMPTY, symmetry);
     }
     state = clearSelection(state);
-    state = postEdit({ ...state, grid }, ci);
+    if (isPuzzleState(state)) {
+      const draftCells = new Set(state.draftCells);
+      if (!char.trim() || char === BLOCK) {
+        draftCells.delete(ci);
+      } else if (state.draftMode) {
+        draftCells.add(ci);
+      } else {
+        draftCells.delete(ci);
+      }
+      state = postEdit({ ...state, grid, draftCells }, ci);
+    } else {
+      state = postEdit({ ...state, grid }, ci);
+    }
   }
   return state;
+}
+
+function clearCharAt<T extends GridInterfaceState>(state: T, pos: Position): T {
+  const ci = cellIndex(state.grid, pos);
+  if (!state.isEditable(ci)) {
+    return state;
+  }
+  const symmetry = isBuilderState(state) ? state.symmetry : Symmetry.None;
+  const grid = gridWithNewChar(state.grid, pos, EMPTY, symmetry);
+  if (isPuzzleState(state)) {
+    const elapsed = getCurrentTime(state);
+    state.cellsUpdatedAt[ci] = elapsed;
+    const draftCells = new Set(state.draftCells);
+    draftCells.delete(ci);
+    return postEdit({ ...state, grid, draftCells }, ci);
+  }
+  return postEdit({ ...state, grid }, ci);
 }
 
 export function closeRebus<T extends GridInterfaceState>(state: T): T {
@@ -337,6 +366,8 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         };
       } else if (key.k === KeyK.Escape) {
         return { ...state, isEnteringRebus: false, rebusValue: '' };
+      } else if (key.k === KeyK.Draft || key.k === KeyK.Dot) {
+        return state;
       }
       return closeRebus(state);
     }
@@ -480,18 +511,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           ? getSelectionCells(state.selection)
           : [state.active];
       for (const position of positions) {
-        const ci = cellIndex(state.grid, position);
-        if (state.isEditable(ci)) {
-          const symmetry = isBuilderState(state)
-            ? state.symmetry
-            : Symmetry.None;
-          if (isPuzzleState(state)) {
-            const elapsed = getCurrentTime(state);
-            state.cellsUpdatedAt[ci] = elapsed;
-          }
-          const grid = gridWithNewChar(state.grid, position, EMPTY, symmetry);
-          state = postEdit({ ...state, grid }, ci);
-        }
+        state = clearCharAt(state, position);
       }
       state = clearSelection(state);
       return {
@@ -505,18 +525,7 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
           ? getSelectionCells(state.selection)
           : [state.active];
       for (const position of positions) {
-        const ci = cellIndex(state.grid, position);
-        if (state.isEditable(ci)) {
-          const symmetry = isBuilderState(state)
-            ? state.symmetry
-            : Symmetry.None;
-          if (isPuzzleState(state)) {
-            const elapsed = getCurrentTime(state);
-            state.cellsUpdatedAt[ci] = elapsed;
-          }
-          const grid = gridWithNewChar(state.grid, position, EMPTY, symmetry);
-          state = postEdit({ ...state, grid }, ci);
-        }
+        state = clearCharAt(state, position);
       }
       state = clearSelection(state);
       return {

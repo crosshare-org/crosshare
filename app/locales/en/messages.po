@@ -277,6 +277,18 @@ msgstr ""
 msgid "Enter Rebus"
 msgstr ""
 
+#: components/Puzzle.tsx
+msgid "Draft Entry"
+msgstr ""
+
+#: components/Puzzle.tsx
+msgid "Stop Draft Entry"
+msgstr ""
+
+#: components/Puzzle.tsx
+msgid "Drafting"
+msgstr ""
+
 #: components/Comments.tsx
 msgid "Enter your reply"
 msgstr ""

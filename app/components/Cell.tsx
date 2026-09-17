@@ -33,6 +33,7 @@ interface CellProps {
   onMouseEnter: (pos: Position) => void;
   isVerified: boolean | undefined;
   isWrong: boolean | undefined;
+  isDraft: boolean | undefined;
   wasRevealed: boolean | undefined;
   cellColor?: number;
   isOpposite: boolean;
@@ -179,9 +180,11 @@ export const Cell = memo(function Cell(props: CellProps) {
                 styles.contents,
                 props.isVerified
                   ? styles.contentsVerified
-                  : filledValue
-                    ? styles.contentsFilled
-                    : null
+                  : props.isDraft && filledValue
+                    ? styles.contentsDraft
+                    : filledValue
+                      ? styles.contentsFilled
+                      : null
               )}
             >
               {props.isWrong ? (
