@@ -17,12 +17,10 @@ import { allSolutions, isMetaSolution } from '../lib/utils.js';
 import { addClues } from '../lib/viewableGrid.js';
 import {
   AddAlternateAction,
-  AddEnumerationsAction,
   BuilderEntry,
   BuilderState,
   DelAlternateAction,
   PublishAction,
-  RestoreCluesAction,
   SetBlogPostAction,
   SetClueAction,
   SetCommentsDisabledAction,
@@ -902,7 +900,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                 onClick={() => {
                   props.dispatch({
                     type: 'ADDENUMERATIONS',
-                  } as AddEnumerationsAction);
+                  });
                   showSnackbar(
                     <>
                       Enumerations added!&nbsp;&nbsp;
@@ -911,7 +909,7 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
                         onClick={() => {
                           props.dispatch({
                             type: 'RESTORECLUES',
-                          } as RestoreCluesAction);
+                          });
                           closeSnackbar();
                         }}
                       />

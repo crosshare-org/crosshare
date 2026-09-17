@@ -1,7 +1,8 @@
-import { withSentryConfig } from '@sentry/nextjs';
+import { withSentryConfig } from '@sentry/nextjs/config';
 
 const distDir = 'nextjs';
 const baseConfig = {
+  allowedDevOrigins: ['md.local'],
   output: 'standalone',
   reactStrictMode: true,
   distDir: distDir,

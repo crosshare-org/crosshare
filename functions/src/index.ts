@@ -129,6 +129,7 @@ export const analytics = functions
   .runWith({ timeoutSeconds: 540, memory: '512MB' })
   .pubsub.schedule('every 1 hours')
   .onRun(async (_context) => {
+    // eslint-disable-next-line no-useless-assignment
     let startTimestamp = Timestamp.fromDate(new Date(2020, 0));
     let endTimestamp = Timestamp.now();
     const value = await getCollection('cron_status')
@@ -155,6 +156,7 @@ export const analytics = functions
     return getCollection('cron_status').doc('hourlyanalytics').set(status);
   });
 
+// eslint-disable-next-line @typescript-eslint/no-deprecated
 const client = new firestore.v1.FirestoreAdminClient();
 
 export const scheduledFirestoreExport = functions.pubsub

@@ -149,7 +149,10 @@ class PuzReader {
       ) {
         grid.push(val);
       } else {
-        throw new Error(`Invalid character in grid at position ${i}`);
+        console.log(
+          `using blank for invalid char at grid position ${i}: ${val}`
+        );
+        grid.push(EMPTY);
       }
     }
 
@@ -425,7 +428,6 @@ class PuzWriter {
     if (len) {
       cksum = this.checksumRegion(ix, len + 1, cksum);
     }
-    ix += len + 1;
     return cksum;
   }
 

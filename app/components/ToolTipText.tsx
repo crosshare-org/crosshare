@@ -60,7 +60,7 @@ export const ToolTipText = (props: {
       <span
         data-is-string={typeof props.text === 'string'}
         className={clsx(props.className, styles.text)}
-        ref={refs.setReference}
+        ref={refs.setReference.bind(refs)}
         {...getReferenceProps({
           onClick: (e) => {
             e.stopPropagation();
@@ -74,7 +74,7 @@ export const ToolTipText = (props: {
           <span
             data-hidden={middlewareData.hide?.referenceHidden}
             className={clsx(styles.tip, 'reverse-theme')}
-            ref={refs.setFloating}
+            ref={refs.setFloating.bind(refs)}
             style={floatingStyles}
             {...getFloatingProps()}
           >

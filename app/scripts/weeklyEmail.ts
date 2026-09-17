@@ -31,7 +31,7 @@ import {
 import { RATE_LIMIT, getClient, sendEmail } from '../lib/email';
 import { firestore, getAdminApp } from '../lib/firebaseAdminWrapper';
 import { PathReporter } from '../lib/pathReporter.js';
-import { AccountPrefsT, AccountPrefsV } from '../lib/prefs';
+import { AccountPrefsV } from '../lib/prefs';
 import { sizeTag } from '../lib/sizeTag.js';
 import { slugify } from '../lib/utils.js';
 
@@ -317,11 +317,10 @@ async function sendWeeklyEmail(test: boolean, from: string | undefined) {
         }
 
         const prefsRes = await db.doc(`prefs/${uid}`).get();
-        let prefs: AccountPrefsT | null = null;
         if (prefsRes.exists) {
           const validationResult = AccountPrefsV.decode(prefsRes.data());
           if (validationResult._tag === 'Right') {
-            prefs = validationResult.right;
+            const prefs = validationResult.right;
             if (prefs.bounced || prefs.unsubs?.includes('weekly')) {
               continue;
             }

@@ -55,7 +55,9 @@ export const SuggestOverlay = (props: SuggestOverlayProps) => {
     let didCancel = false;
     async function getClues() {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const res = await (await fetch(`/api/clues/${props.word}`))
+      const res = await (
+        await fetch(`/api/clues/${props.word}`)
+      )
         .json()
         .catch((e: unknown) => {
           console.log(e);

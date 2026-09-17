@@ -6,7 +6,6 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import util from 'util';
-import cases from 'jest-in-case';
 import { exportFile, exportIpuz, importFile } from '../lib/converter.js';
 import { DBPuzzleT } from '../lib/dbtypes.js';
 import { Timestamp } from '../lib/timestamp.js';
@@ -101,41 +100,33 @@ const CASES = [
   { name: 'Its_All_Wrong' },
 ];
 
-cases(
-  'test roundtrip',
-  async (opts) => {
-    const puz = await readFile(
-      path.resolve(__dirname, 'converter/puz/' + opts.name + '.puz')
-    );
-    const pip = importFile(puz);
-    if (!pip) {
-      throw new Error('failed to import');
-    }
-    const ourPuz = exportFile(toDBPuzzle(pip));
-    expect(importFile(ourPuz)).toEqual(pip);
-    expect(ourPuz).toMatchSnapshot();
-  },
-  CASES
-);
+test.each(CASES)('test roundtrip %o', async (opts) => {
+  const puz = await readFile(
+    path.resolve(__dirname, 'converter/puz/' + opts.name + '.puz')
+  );
+  const pip = importFile(puz);
+  if (!pip) {
+    throw new Error('failed to import');
+  }
+  const ourPuz = exportFile(toDBPuzzle(pip));
+  expect(importFile(ourPuz)).toEqual(pip);
+  expect(ourPuz).toMatchSnapshot();
+});
 
-cases(
-  'test .puz import',
-  async (opts) => {
-    const loaded = await loadPuz(opts.name);
-    if (!loaded) {
-      throw new Error('BAD');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const simplifiedClues = Object.fromEntries(
-      Object.entries(loaded.clues).map(([entry, clues]) =>
-        clues.length === 1 && clues[0] ? [entry, clues[0]] : [entry, clues]
-      )
-    );
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    expect({ ...loaded, clues: simplifiedClues }).toMatchSnapshot();
-  },
-  CASES
-);
+test.each(CASES)('test .puz import %o', async (opts) => {
+  const loaded = await loadPuz(opts.name);
+  if (!loaded) {
+    throw new Error('BAD');
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const simplifiedClues = Object.fromEntries(
+    Object.entries(loaded.clues).map(([entry, clues]) =>
+      clues.length === 1 && clues[0] ? [entry, clues[0]] : [entry, clues]
+    )
+  );
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  expect({ ...loaded, clues: simplifiedClues }).toMatchSnapshot();
+});
 
 async function loadIpuz(name: string) {
   const ipuz = await readFile(
@@ -257,18 +248,14 @@ test('test ipuz JSONP unwrap', () => {
   }
 });
 
-cases(
-  'test ipuz roundtrip',
-  async (opts) => {
-    const ipuz = await readFile(
-      path.resolve(__dirname, 'converter/ipuz/' + opts.name + '.ipuz')
-    );
-    const pip = importFile(ipuz);
-    if (!pip) {
-      throw new Error('failed to import');
-    }
-    const ourIpuz = exportIpuz(toDBPuzzle(pip));
-    expect(importFile(ourIpuz)).toEqual(pip);
-  },
-  IPUZ_CASES
-);
+test.each(IPUZ_CASES)('test ipuz roundtrip %o', async (opts) => {
+  const ipuz = await readFile(
+    path.resolve(__dirname, 'converter/ipuz/' + opts.name + '.ipuz')
+  );
+  const pip = importFile(ipuz);
+  if (!pip) {
+    throw new Error('failed to import');
+  }
+  const ourIpuz = exportIpuz(toDBPuzzle(pip));
+  expect(importFile(ourIpuz)).toEqual(pip);
+});

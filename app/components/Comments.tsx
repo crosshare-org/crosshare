@@ -83,12 +83,10 @@ function filterDeletedComments<T extends CommentOrLocalComment>(
   comments: T[]
 ): T[] {
   return comments
-    .map(
-      (c: T): T => ({
-        ...c,
-        replies: filterDeletedComments((isComment(c) && c.replies) || []),
-      })
-    )
+    .map((c: T): T => ({
+      ...c,
+      replies: filterDeletedComments((isComment(c) && c.replies) || []),
+    }))
     .map((c) => {
       if (isComment(c) && !c.replies?.length) {
         delete c.replies;

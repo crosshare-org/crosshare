@@ -55,12 +55,7 @@ import {
   initialBuilderState,
 } from '../reducers/builderReducer.js';
 import { KeypressAction, PuzzleAction } from '../reducers/commonActions.js';
-import {
-  ClickedEntryAction,
-  CopyAction,
-  CutAction,
-  PasteAction,
-} from '../reducers/gridReducer.js';
+import { ClickedEntryAction, PasteAction } from '../reducers/gridReducer.js';
 import { AuthProps } from './AuthHelpers.js';
 import styles from './Builder.module.scss';
 import { Button, ButtonReset } from './Buttons.js';
@@ -788,7 +783,7 @@ const GridMode = ({
       if (isTextInput(e.target)) {
         return;
       }
-      dispatch({ type: 'COPY' } as CopyAction);
+      dispatch({ type: 'COPY' });
       e.preventDefault();
     },
     [dispatch]
@@ -800,7 +795,7 @@ const GridMode = ({
       if (isTextInput(e.target)) {
         return;
       }
-      dispatch({ type: 'CUT' } as CutAction);
+      dispatch({ type: 'CUT' });
       e.preventDefault();
     },
     [dispatch]

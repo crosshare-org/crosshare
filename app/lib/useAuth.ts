@@ -164,7 +164,9 @@ export function useAuth(): AuthContextValue {
     let didCancel = false;
     async function getUserInfo() {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const res = await (await fetch(`/api/userinfo/${user?.uid}`))
+      const res = await (
+        await fetch(`/api/userinfo/${user?.uid}`)
+      )
         .json()
         .catch((e: unknown) => {
           console.log(e);

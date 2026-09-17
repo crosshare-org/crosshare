@@ -40,6 +40,9 @@
       "mdast-util-gfm-autolink-literal": "2.0.0",
       "@types/react": "19.2.14",
       "@types/react-dom": "19.2.3"
+    },
+    "patchedDependencies": {
+      "eslint-plugin-css-modules": "patches/eslint-plugin-css-modules.patch"
     }
   }
 }

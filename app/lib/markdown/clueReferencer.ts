@@ -36,7 +36,7 @@ export const clueReferencer: Plugin = () => {
           tagName: 'span',
           data: { ...ref, text },
           properties: {
-            className: 'clueref',
+            className: ['clueref'],
           },
           children: [{ type: 'text', value: text }],
         } as Element);

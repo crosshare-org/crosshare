@@ -5,7 +5,7 @@ RUN corepack enable
 RUN apt-get update && apt-get install -y --no-install-recommends openjdk-21-jre-headless curl build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 RUN npm cache clean -f
 RUN npm install -g n
-RUN n 20 # node version 20
+RUN n 22 # node version 22
 RUN npm install -g corepack@latest
 RUN corepack use pnpm@10.30.3
 RUN pnpm install -g firebase-tools@v15.8.0

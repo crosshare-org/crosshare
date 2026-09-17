@@ -35,7 +35,7 @@
     "emulate": "NEXT_PUBLIC_USE_EMULATORS=1 METADATA_SERVER_DETECTION=none GCE_METADATA_HOST=0.0.0.0 FIRESTORE_EMULATOR_HOST=\"127.0.0.1:8080\" GCLOUD_PROJECT=\"demo-crosshare\" firebase emulators:exec --import=./emulator-data --only auth,firestore,storage --project demo-crosshare --ui 'npx next dev'"
   },
   "engines": {
-    "node": "20"
+    "node": "22"
   },
   "dependencies": {
     "@aws-sdk/client-sesv2": "catalog:",
@@ -116,13 +116,12 @@
     "@types/eslint-plugin-jsx-a11y": "catalog:",
     "@types/hast": "catalog:",
     "@types/jest": "catalog:",
-    "@types/jest-in-case": "catalog:",
     "@types/lodash": "catalog:",
     "@types/mdast": "catalog:",
     "@types/node": "catalog:",
-    "@types/react": "19.2.14",
+    "@types/react": "catalog:",
     "@types/react-csv": "catalog:",
-    "@types/react-dom": "19.2.3",
+    "@types/react-dom": "catalog:",
     "@types/twemoji-parser": "catalog:",
     "@types/unist": "catalog:",
     "browserslist-useragent-regexp": "catalog:",
@@ -143,7 +142,6 @@
     "firebase-tools": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "jest-in-case": "catalog:",
     "knip": "catalog:",
     "mdast-util-from-markdown": "catalog:",
     "mdast-util-to-hast": "catalog:",

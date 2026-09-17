@@ -3,77 +3,78 @@ packages:
   - functions
 
 catalog:
-  '@aws-sdk/client-sesv2': ^3.1000.0
-  '@eslint/eslintrc': ^3.3.4
-  '@eslint/js': ^9.39.2
-  '@firebase/firestore-types': ^3.0.3
-  '@firebase/rules-unit-testing': ^5.0.0
-  '@floating-ui/react': ^0.27.9
-  '@google-cloud/firestore': ^8.3.0
-  '@google-cloud/pubsub': ^5.3.0
-  '@google-cloud/secret-manager': ^6.0.1
-  '@jest/globals': 30.2.0
-  '@lingui/cli': ^5.9.2
-  '@lingui/core': ^5.9.2
-  '@lingui/format-po-gettext': ^5.9.2
-  '@lingui/react': ^5.9.2
-  '@lingui/swc-plugin': 5.11.0
+  '@aws-sdk/client-sesv2': ^3.1125.0
+  '@eslint/eslintrc': ^3.3.7
+  '@eslint/js': ^10.0.1
+  '@firebase/firestore-types': ^3.0.5
+  '@firebase/rules-unit-testing': ^5.0.2
+  '@floating-ui/react': ^0.27.20
+  '@google-cloud/firestore': ^9.0.1
+  '@google-cloud/functions-framework': ^5.0.5
+  '@google-cloud/pubsub': ^6.0.1
+  '@google-cloud/secret-manager': ^7.0.0
+  '@jest/globals': 30.5.1
+  '@lingui/cli': 6.6.0
+  '@lingui/core': ^6.6.0
+  '@lingui/format-po-gettext': ^6.6.0
+  '@lingui/react': ^6.6.0
+  '@lingui/swc-plugin': 6.6.0
   '@modern-dev/jsbn': ^1.2.5
-  '@next/eslint-plugin-next': 16.1.6
-  '@playwright/test': 1.58.2
-  '@sentry/nextjs': ^10.40.0
-  '@testing-library/jest-dom': ^6.4.2
-  '@testing-library/react': ^16.3.0
+  '@next/eslint-plugin-next': 16.3.4
+  '@playwright/test': 1.62.1
+  '@sentry/nextjs': ^10.73.0
+  '@testing-library/jest-dom': ^7.0.1
+  '@testing-library/react': ^16.3.3
   '@types/eslint-plugin-jsx-a11y': ^6.10.0
-  '@types/hast': ^3.0.4
+  '@types/hast': ^3.0.5
   '@types/jest': ^30.0.0
-  '@types/jest-in-case': ^1.0.9
-  '@types/lodash': ^4.17.24
+  '@types/lodash': ^4.17.25
   '@types/mdast': ^4.0.4
-  '@types/node': ^25.3.2
+  '@types/node': ^26.4.1
+  '@types/react': 19.2.18
   '@types/react-csv': ^1.1.10
+  '@types/react-dom': 19.2.7
   '@types/twemoji-parser': ^13.1.4
   '@types/unist': ^3.0.2
   '@use-it/event-listener': ^0.1.7
-  browserslist-useragent-regexp: ^4.1.1
-  canvas: ^3.1.0
+  browserslist-useragent-regexp: ^4.1.4
+  canvas: ^3.2.3
   cmd-ts: ^0.15.0
-  color2k: ^2.0.3
-  csv: ^6.3.11
-  csv-parse: ^6.1.0
-  date-fns: ^4.1.0
-  eslint: ^9.27.0
-  eslint-config-next: 16.1.6
+  color2k: ^2.0.4
+  csv: ^6.6.3
+  csv-parse: ^7.0.2
+  date-fns: ^4.4.0
+  eslint: ^10.9.1
+  eslint-config-next: 16.3.4
   eslint-config-prettier: ^10.1.8
-  eslint-import-resolver-typescript: ^4.4.4
+  eslint-import-resolver-typescript: ^4.4.5
   eslint-plugin-css-modules: ^2.12.0
   eslint-plugin-import: ^2.32.0
   eslint-plugin-jsx-a11y: ^6.10.2
-  eslint-plugin-lingui: ^0.11.0
+  eslint-plugin-lingui: ^0.14.0
   eslint-plugin-react: ^7.37.5
-  eslint-plugin-react-hooks: ^7.0.1
+  eslint-plugin-react-hooks: ^7.1.1
   eslint-plugin-redos: ^4.5.0
   fast-deep-equal: ^3.1.3
   fast-sha256: ^1.3.0
-  feed: ^5.1.0
-  firebase: ^12.10.0
-  firebase-admin: ^13.7.0
-  firebase-functions: ^7.0.6
-  firebase-functions-test: ^3.4.1
-  firebase-tools: ^15.8.0
+  feed: ^6.0.0
+  firebase: ^12.18.0
+  firebase-admin: ^14.3.0
+  firebase-functions: ^7.3.2
+  firebase-functions-test: ^3.5.0
+  firebase-tools: ^15.29.0
   fp-ts: ^2.16.10
   hast-util-to-html: ^9.0.5
   hast-util-to-string: ^3.0.0
   hast-util-truncate: ^2.0.0
-  idb-keyval: 6.2.2
+  idb-keyval: 6.3.0
   io-ts: ^2.2.22
-  isolate-package: ^1.28.2
-  jest: ^30.2.0
-  jest-environment-jsdom: 30.2.0
-  jest-in-case: ^1.0.2
-  jspdf: ^4.2.0
-  knip: ^5.85.0
-  lodash: ^4.17.21
+  isolate-package: ^1.37.0
+  jest: ^30.5.1
+  jest-environment-jsdom: 30.5.1
+  jspdf: ^4.2.1
+  knip: ^6.34.0
+  lodash: ^4.18.1
   mdast-util-directive: ^3.1.0
   mdast-util-find-and-replace: ^3.0.2
   mdast-util-from-markdown: ^2.0.3
@@ -84,16 +85,16 @@ catalog:
   micromark-util-resolve-all: ^2.0.1
   micromark-util-types: ^2.0.2
   mockdate: ^3.0.5
-  next: 16.1.6
-  prettier: ^3.8.1
+  next: 16.3.4
+  prettier: ^3.9.6
   prop-types: ^15.8.1
-  react: 19.2.4
+  react: 19.2.8
   react-csv: ^2.2.2
-  react-dom: 19.2.4
+  react-dom: 19.2.8
   react-firebase-hooks: 5.1.1
-  react-icons: ^5.5.0
-  react-image-crop: ^11.0.10
-  react-window: ^2.2.7
+  react-icons: ^5.7.0
+  react-image-crop: ^11.1.2
+  react-window: ^2.3.0
   rehype-external-links: ^3.0.0
   rehype-react: ^8.0.0
   rehype-stringify: ^10.0.0
@@ -103,28 +104,28 @@ catalog:
   remark-rehype: ^11.1.2
   remark-stringify: ^11.0.0
   rimraf: ^6.0.1
-  sass: ^1.97.3
-  sharp: ^0.34.2
-  stylelint: ^17.4.0
-  stylelint-config-clean-order: ^8.0.1
+  sass: ^1.103.1
+  sharp: ^0.35.4
+  stylelint: ^17.14.1
+  stylelint-config-clean-order: ^10.0.0
   stylelint-config-css-modules: ^4.4.0
   stylelint-config-standard: ^40.0.0
   ts-node: ^10.9.2
-  tsx: ^4.19.4
-  turbo: ^2.8.12
+  tsx: ^4.23.13
+  turbo: ^2.10.12
   twemoji-parser: ^14.0.0
-  typescript: ^5.8.3
-  typescript-eslint: ^8.56.1
+  typescript: 6.0.3
+  typescript-eslint: ^8.69.0
   unified: ^11.0.4
   unist-util-is: ^6.0.0
   unist-util-remove-position: ^5.0.0
   unist-util-visit: ^5.0.0
-  update-browserslist-db: ^1.2.3
+  update-browserslist-db: ^1.3.2
 
 catalogMode: strict
 
 cleanupUnusedCatalogs: true
 
-resolutionMode: lowest-direct
-
 minimumReleaseAge: 14400
+
+resolutionMode: lowest-direct

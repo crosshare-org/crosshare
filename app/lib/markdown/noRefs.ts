@@ -11,7 +11,7 @@ export const remarkNoRefs: Plugin = () => {
       const data = node.data ?? (node.data = {});
       data.hName = 'span';
       const properties = data.hProperties ?? (data.hProperties = {});
-      properties.className = 'no-refs';
+      properties.className = ['no-refs'];
     });
   };
 };

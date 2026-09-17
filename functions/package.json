@@ -18,14 +18,14 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "20"
+    "node": "22"
   },
   "type": "module",
   "main": "lib/functions/src/index.js",
   "dependencies": {
     "@aws-sdk/client-sesv2": "catalog:",
     "@google-cloud/firestore": "catalog:",
-    "@google-cloud/functions-framework": "^5.0.2",
+    "@google-cloud/functions-framework": "catalog:",
     "@google-cloud/secret-manager": "catalog:",
     "date-fns": "catalog:",
     "fast-sha256": "catalog:",

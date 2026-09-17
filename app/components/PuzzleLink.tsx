@@ -105,7 +105,7 @@ const PuzzleLink = (props: {
               <div className={styles.emoji}>
                 {authored ? (
                   <Emoji title="Authored Puzzle" symbol="🖋️" />
-                ) : play && play.ch ? (
+                ) : play?.ch ? (
                   <Emoji title="Used helpers" symbol="😏" />
                 ) : (
                   <Emoji title="Solved without helpers" symbol="🤓" />

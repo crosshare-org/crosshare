@@ -1,5 +1,4 @@
-// prettier-ignore
-import spam from '../lib/spam.json' with { type: 'json' };
+const spam = (await import('../lib/spam.json', { with: { type: 'json' } })).default;
 
 export function checkSpam(input: string): boolean {
   const lower = input.toLowerCase();

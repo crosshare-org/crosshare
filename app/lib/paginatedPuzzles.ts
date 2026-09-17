@@ -77,7 +77,7 @@ export async function paginatedPuzzles(
 
   const lastPuz = results[pageSize];
   let hasMore = false;
-  if (lastPuz && lastPuz.pvu) {
+  if (lastPuz?.pvu) {
     hasMore = true;
     index.p[page] = lastPuz.pvu;
     await getCollection('in').doc(indexDocId).set(index);
