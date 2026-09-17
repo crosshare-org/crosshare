@@ -815,6 +815,7 @@ export const Puzzle = ({
             scrollToCross={scrollToCross}
             dispatch={dispatch}
             draftCells={state.draftCells}
+            draftMode={state.draftMode}
           />
         }
         right={
@@ -835,6 +836,7 @@ export const Puzzle = ({
             scrollToCross={scrollToCross}
             dispatch={dispatch}
             draftCells={state.draftCells}
+            draftMode={state.draftMode}
           />
         }
       />
@@ -857,6 +859,7 @@ export const Puzzle = ({
             revealedCells={state.revealedCells}
             verifiedCells={state.verifiedCells}
             draftCells={state.draftCells}
+            draftMode={state.draftMode}
             wrongCells={state.wrongCells}
             showAlternates={state.success ? state.alternateSolutions : null}
             answers={state.answers}

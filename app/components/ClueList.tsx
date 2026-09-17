@@ -26,6 +26,7 @@ interface ClueListItemProps {
   scrollToCross: boolean;
   listRef: RefObject<HTMLDivElement | null>;
   draftCells?: Set<number>;
+  draftMode?: boolean;
 }
 
 const ClueListItem = memo(function ClueListItem({
@@ -98,9 +99,11 @@ const ClueListItem = memo(function ClueListItem({
                     <span
                       key={a.col + '-' + a.row}
                       data-active-cell={isActiveCell}
-                      data-draft={props.draftCells?.has(
-                        cellIndex(props.grid, a)
-                      )}
+                      data-draft={
+                        props.isEnteringRebus && isActiveCell
+                          ? Boolean(props.draftMode)
+                          : props.draftCells?.has(cellIndex(props.grid, a))
+                      }
                       className={styles.clueModeCell}
                     >
                       {props.isEnteringRebus && isActiveCell
@@ -137,6 +140,7 @@ interface ClueListProps {
   grid: GridBase<EntryBase>;
   scrollToCross: boolean;
   draftCells?: Set<number>;
+  draftMode?: boolean;
 }
 
 export const ClueList = (props: ClueListProps): React.JSX.Element => {
@@ -167,6 +171,7 @@ export const ClueList = (props: ClueListProps): React.JSX.Element => {
           props.showEntries && (isActive || isCross) ? props.active : null
         }
         draftCells={props.draftCells}
+        draftMode={props.draftMode}
       />
     );
   });

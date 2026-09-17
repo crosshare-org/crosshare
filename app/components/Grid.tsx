@@ -27,6 +27,7 @@ interface GridViewProps {
   revealedCells?: Set<number>;
   verifiedCells?: Set<number>;
   draftCells?: Set<number>;
+  draftMode?: boolean;
   isEnteringRebus?: boolean;
   rebusValue?: string;
   wrongCells?: Set<number>;
@@ -177,7 +178,11 @@ export const GridView = ({
         isBlock={cellValue === BLOCK}
         isOpposite={isOpposite}
         isVerified={props.verifiedCells?.has(idx) || showAsVerified}
-        isDraft={props.draftCells?.has(idx)}
+        isDraft={
+          props.isEnteringRebus && isActive
+            ? Boolean(props.draftMode)
+            : props.draftCells?.has(idx)
+        }
         isWrong={props.wrongCells?.has(idx)}
         wasRevealed={props.revealedCells?.has(idx)}
         styles={Array.from(grid.cellStyles.entries())
