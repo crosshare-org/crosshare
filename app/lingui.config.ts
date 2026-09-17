@@ -14,7 +14,7 @@ const config = {
       exclude: ['**/node_modules/**'],
     },
   ],
-  format: formatter(),
+  format: formatter({ lineNumbers: false }),
   compileNamespace: 'ts',
 };
 

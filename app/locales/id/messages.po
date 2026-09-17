@@ -13,15 +13,14 @@ msgstr ""
 "Last-Translator: \n"
 "Language-Team: \n"
 
-#: components/Comments.tsx:525
+#: components/Comments.tsx
 msgid "(please be nice!):"
 msgstr "(berikan komentar yang baik!):"
 
 #. js-lingui-explicit-id
 #. placeholder {0}: props.followCount
 #. js-lingui:pluralize_on=0
-#: components/ConstructorPage.tsx:356
-#: components/ConstructorPage.tsx:401
+#: components/ConstructorPage.tsx
 msgid "follower-count"
 msgid_plural "follower-count_plural"
 msgstr[0] "# Pengikut"
@@ -30,174 +29,173 @@ msgstr[0] "# Pengikut"
 #. placeholder {0}: otherUsers.length
 #. placeholder {0}: props.followers.length
 #. js-lingui:pluralize_on=0
-#: components/ReactionButton.tsx:198
-#: components/ConstructorPage.tsx:364
+#: components/ConstructorPage.tsx
+#: components/ReactionButton.tsx
 msgid "follower-blog-count"
 msgid_plural "follower-blog-count_plural"
 msgstr[0] "# dengan blog Crosshare"
 
-#: components/ConstructorPage.tsx:344
-#: components/ConstructorPage.tsx:391
+#: components/ConstructorPage.tsx
 msgid "{followingLength} Following"
 msgstr "{followingLength} Following"
 
-#: components/CreateShareSection.tsx:16
+#: components/CreateShareSection.tsx
 msgid "<0>Create a new puzzle</0><1>Build a crossword puzzle with the Crosshare constructor</1>"
 msgstr ""
 
-#: components/ContactLinks.tsx:6
+#: components/ContactLinks.tsx
 msgid "<0>email</0> or <1>discord</1>"
 msgstr "<0>email</0> or <1>discord</1>"
 
-#: components/CreateShareSection.tsx:27
-msgid "<0>Upload a .puz file</0><1>Get a Crosshare link to share with solvers</1>"
+#: components/CreateShareSection.tsx
+#~ msgid "<0>Upload a .puz file</0><1>Get a Crosshare link to share with solvers</1>"
+#~ msgstr ""
+
+#: components/CreateShareSection.tsx
+msgid "<0>Upload a .puz or .ipuz file</0><1>Get a Crosshare link to share with solvers</1>"
 msgstr ""
 
-#: components/TopBarChildren.tsx:548
-#: components/TopBar.tsx:469
+#: components/TopBar.tsx
+#: components/TopBarChildren.tsx
 msgid "Account"
 msgstr "Akun"
 
-#: components/Puzzle.tsx:1169
+#: components/Puzzle.tsx
 msgid "Account / Settings"
 msgstr "Akun / Pengaturan"
 
-#: components/Puzzle.tsx:806
-#: components/Puzzle.tsx:874
+#: components/Puzzle.tsx
 msgid "Across"
 msgstr "Mendatar"
 
-#: components/PuzzleHeading.tsx:133
-#: components/ConstructorPage.tsx:435
+#: components/ConstructorPage.tsx
+#: components/PuzzleHeading.tsx
 msgid "All donations go directly to the constructor via PayPal"
 msgstr "Semua donasi langsung diberikan kepada pembuat via PayPal"
 
-#: pages/newest/[[...pageNumber]].tsx:80
+#: pages/newest/[[...pageNumber]].tsx
 msgid "All of the latest public puzzles on Crosshare, as they are posted. Enjoy!"
 msgstr ""
 
-#: components/Puzzle.tsx:188
+#: components/Puzzle.tsx
 msgid "Almost there!"
 msgstr "Hampir selesai!"
 
-#: components/Puzzle.tsx:960
+#: components/Puzzle.tsx
 msgid "Autocheck"
 msgstr "Periksa otomatis"
 
-#: components/Puzzle.tsx:1007
+#: components/Puzzle.tsx
 msgid "Autochecking"
 msgstr "Otomatis memeriksa"
 
-#: components/Puzzle.tsx:1426
+#: components/Puzzle.tsx
 msgid "Begin Puzzle"
 msgstr "Mulai TTS"
 
 #. The variable is the name of the puzzle's constructor
-#: components/PuzzleLink.tsx:217
+#: components/PuzzleLink.tsx
 msgid "By {guestConstructor}"
 msgstr "Oleh {guestConstructor}"
 
 #. The variable is the name of the puzzle's constructor
-#: components/PuzzleLink.tsx:230
+#: components/PuzzleLink.tsx
 msgid "By {link}"
 msgstr "Oleh {link}"
 
 #. The variable is the guest constructor's name
 #. The variable is the guest constructor's name
-#: components/PuzzleLink.tsx:370
-#: components/PuzzleLink.tsx:392
+#: components/PuzzleLink.tsx
 msgid "By guest constructor {guestConstructor}"
 msgstr "Oleh pembuat tamu {guestConstructor}"
 
-#: components/DisplayNameForm.tsx:84
-#: components/Comments.tsx:564
+#: components/Comments.tsx
+#: components/DisplayNameForm.tsx
 msgid "Cancel"
 msgstr "Batalkan"
 
-#: components/Comments.tsx:587
+#: components/Comments.tsx
 msgid "change name"
 msgstr "ganti nama"
 
-#: components/Puzzle.tsx:954
+#: components/Puzzle.tsx
 msgid "Check"
 msgstr "Periksa"
 
-#: components/Puzzle.tsx:992
+#: components/Puzzle.tsx
 msgid "Check Puzzle"
 msgstr "Periksa TTS"
 
-#: components/Puzzle.tsx:970
+#: components/Puzzle.tsx
 msgid "Check Square"
 msgstr "Periksa Kotak"
 
-#: components/Puzzle.tsx:981
+#: components/Puzzle.tsx
 msgid "Check Word"
 msgstr "Periksa Kata"
 
-#: components/PuzzleOverlay.tsx:200
+#: components/PuzzleOverlay.tsx
 msgid "Checking for previous play data..."
 msgstr "Memeriksa data bermain sebelumnya..."
 
-#: components/Puzzle.tsx:1332
+#: components/Puzzle.tsx
 msgid "Clues"
 msgstr "Soal"
 
-#: components/Comments.tsx:569
+#: components/Comments.tsx
 msgid "commenting as"
 msgstr "berkomentar sebagai"
 
-#: components/Comments.tsx:835
+#: components/Comments.tsx
 msgid "Comments"
 msgstr "Komentar"
 
-#: components/Puzzle.tsx:1361
+#: components/Puzzle.tsx
 msgid "Comments / Leaderboard"
 msgstr "Komentar / Peringkat"
 
-#: components/Puzzle.tsx:1174
+#: components/Puzzle.tsx
 msgid "Construct a Puzzle"
 msgstr "Buat TTS"
 
-#: components/Comments.tsx:386
+#: components/Comments.tsx
 msgid "constructor"
 msgstr "pembuat"
 
-#: components/TopBar.tsx:460
+#: components/TopBar.tsx
 msgid "Constructor Dashboard"
 msgstr "Dasbor Pembuat TTS"
 
-#: components/Puzzle.tsx:1360
+#: components/Puzzle.tsx
 msgid "Contest Prompt / Submission"
 msgstr ""
 
-#: components/CreateShareSection.tsx:10
+#: components/CreateShareSection.tsx
 msgid "Create or Share a Puzzle"
 msgstr "Buat atau Bagikan TTS"
 
-#: pages/index.tsx:175
+#: pages/index.tsx
 msgid "Crosshare - Free Crossword Constructor and Daily Mini Crossword Puzzles"
 msgstr "Crosshare - Pembuat Teka-teki Silang Gratis dan TTS Mini Harian"
 
 #. the variable is a month and year like 'noviembre de 2021'
-#: pages/dailyminis/[[...slug]].tsx:180
+#: pages/dailyminis/[[...slug]].tsx
 msgid "Crosshare Daily Mini Puzzles for {date}"
 msgstr "TTS Mini Harian Crosshare untuk {date}"
 
-#: pages/featured/[pageNumber].tsx:124
+#: pages/featured/[pageNumber].tsx
 msgid "Crosshare Featured Puzzles"
 msgstr "TTS Pilihan Crosshare"
 
-#: pages/dailyminis/[[...slug]].tsx:123
-msgid ""
-"Crosshare features a free daily mini crossword every day of the week.\n"
+#: pages/dailyminis/[[...slug]].tsx
+msgid "Crosshare features a free daily mini crossword every day of the week.\n"
 "  These puzzles are a great way to give your brain a bite-sized challenge, and to\n"
 "  learn how crosswords work before taking on larger puzzles.\n"
 "\n"
 "  Mini puzzles are most often 5x5, but can be other sizes as well - sometimes\n"
 "  the weekend minis are a bit larger. Any small sized puzzle you publish publicly to Crosshare\n"
 "  will be eligible for selection as a daily mini!"
-msgstr ""
-"Crosshare features a free daily mini crossword every day of the week.\n"
+msgstr "Crosshare features a free daily mini crossword every day of the week.\n"
 "  These puzzles are a great way to give your brain a bite-sized challenge, and to\n"
 "  learn how crosswords work before taking on larger puzzles.\n"
 "\n"
@@ -205,404 +203,397 @@ msgstr ""
 "  the weekend minis are a bit larger. Any small sized puzzle you publish publicly to Crosshare\n"
 "  will be eligible for selection as a daily mini!"
 
-#: pages/index.tsx:203
+#: pages/index.tsx
 msgid "Crosshare is a <0>free</0>, <1>ad-free</1>, and <2>open-source</2> place to create, share and solve crossword puzzles."
 msgstr "Crosshare adalah tempat <0>gratis</0>, <1>bebas iklan</1>, dan <2>sumber terbuka</2> untuk membuat, berbagi, dan bermain teka-teki silang."
 
-#: pages/index.tsx:224
+#: pages/index.tsx
 msgid "Daily Mini"
 msgstr "Mini Harian"
 
-#: pages/dailyminis/[[...slug]].tsx:198
+#: pages/dailyminis/[[...slug]].tsx
 msgid "Daily Mini for {displayDate}"
 msgstr "Mini Harian untuk {displayDate}"
 
 #. The variable is a month and year like noviembre de 2021
-#: pages/dailyminis/[[...slug]].tsx:137
+#: pages/dailyminis/[[...slug]].tsx
 msgid "Daily Mini Puzzles for {date}"
 msgstr "TTS Mini Harian untuk {date}"
 
-#: components/Comments.tsx:203
+#: components/Comments.tsx
 msgid "Delete"
 msgstr "Delete"
 
-#: components/DisplayNameForm.tsx:55
+#: components/DisplayNameForm.tsx
 msgid "Display name updated"
 msgstr "Nama tampilan sudah diperbarui"
 
-#: components/Puzzle.tsx:825
-#: components/Puzzle.tsx:891
+#: components/Puzzle.tsx
 msgid "Down"
 msgstr "Menurun"
 
-#: components/Puzzle.tsx:1130
+#: components/Puzzle.tsx
+msgid "Download .ipuz File"
+msgstr "Unduh berkas .ipuz"
+
+#: components/Puzzle.tsx
 msgid "Download .puz File"
 msgstr "Unduh berkas .puz"
 
-#: components/Puzzle.tsx:1098
+#: components/Puzzle.tsx
 msgid "Edit"
 msgstr "Sunting"
 
-#: components/Puzzle.tsx:1103
+#: components/Puzzle.tsx
 msgid "Embed"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:220
+#: components/PuzzleOverlay.tsx
 msgid "enable across clues"
 msgstr "aktifkan soal mendatar"
 
-#: components/Puzzle.tsx:1032
+#: components/Puzzle.tsx
 msgid "Enter Rebus"
 msgstr "Masukkan Ribas"
 
-#: components/Comments.tsx:522
+#: components/Comments.tsx
 msgid "Enter your reply"
 msgstr "Masukkan balasan Anda"
 
-#: pages/index.tsx:272
+#: pages/index.tsx
 msgid "Featured Puzzles"
 msgstr "TTS Pilihan"
 
-#: pages/featured/[pageNumber].tsx:74
+#: pages/featured/[pageNumber].tsx
 msgid "Featured Puzzles | Page {currentPageNumber} | Crosshare"
 msgstr "Featured Puzzles | Page {currentPageNumber} | Crosshare"
 
-#: pages/featured/[pageNumber].tsx:75
+#: pages/featured/[pageNumber].tsx
 msgid "Featured puzzles are puzzles selected by Crosshare that we found to be particularly fun and well constructed. Enjoy!"
 msgstr "TTS pilihan adalah teka-teki silang yang dipilih oleh Crosshare dan kami rasa unik, menyenangkan, dan dibuat dengan apik. Selamat mengisi!"
 
-#: components/TopBarChildren.tsx:170
+#: components/TopBarChildren.tsx
 msgid "File"
 msgstr ""
 
-#: components/FollowButton.tsx:90
-#: components/FollowButton.tsx:105
-#: components/FollowButton.tsx:155
+#: components/FollowButton.tsx
 msgid "Follow"
 msgstr "Ikuti"
 
-#: components/FollowButton.tsx:140
+#: components/FollowButton.tsx
 msgid "Following"
 msgstr "Mengikuti"
 
-#: pages/index.tsx:319
+#: pages/index.tsx
 msgid "Frequently asked questions and information"
 msgstr "Pertanyaan dan informasi yang sering ditanya"
 
-#: components/Puzzle.tsx:1332
+#: components/Puzzle.tsx
 msgid "Grid"
 msgstr "Kotak"
 
-#: components/TopBarChildren.tsx:221
+#: components/TopBarChildren.tsx
 msgid "Grid Tools"
 msgstr ""
 
-#: components/TopBar.tsx:107
+#: components/TopBar.tsx
 msgid "hotkey"
 msgstr ""
 
 #. the variable is a translated version of 'email or twitter'
-#: pages/index.tsx:323
+#: pages/index.tsx
 msgid "If you have questions or suggestions please contact us via <0/>."
 msgstr "Jika Anda memiliki pertanyaan atau saran, hubungi kami via <0/>"
 
-#: pages/index.tsx:212
+#: pages/index.tsx
 msgid "If you're enjoying Crosshare please consider <0>donating</0> to support its continuing development."
 msgstr "Jika Anda menyukai Crosshare, <0>berdonasilah</0> untuk terus mendukung pengembangannya."
 
-#: components/TimeDisplay.tsx:34
+#: components/TimeDisplay.tsx
 msgid "just now"
 msgstr "baru saja"
 
-#: components/Puzzle.tsx:200
+#: components/Puzzle.tsx
 msgid "Keep Trying"
 msgstr "Coba Lagi"
 
-#: components/PuzzleOverlay.tsx:350
+#: components/PuzzleOverlay.tsx
 msgid "Leaderboard (updated hourly)"
 msgstr "Papan Peringkat (diperbarui setiap jam)"
 
-#: components/Comments.tsx:523
+#: components/Comments.tsx
 msgid "Leave a comment"
 msgstr "Tinggalkan komentar"
 
-#: components/Comments.tsx:595
+#: components/Comments.tsx
 msgid "Live Preview:"
 msgstr "Pratinjau Langsung:"
 
-#: components/UnfinishedPuzzleList.tsx:64
+#: components/UnfinishedPuzzleList.tsx
 msgid "Loading..."
 msgstr "Memuat..."
 
-#: components/PuzzleOverlay.tsx:108
+#: components/PuzzleOverlay.tsx
 msgid "Logged in as {displayNameOrEmail}"
 msgstr "Logged in as {displayNameOrEmail}"
 
-#: components/PuzzleOverlay.tsx:114
-#: components/PuzzleOverlay.tsx:122
+#: components/PuzzleOverlay.tsx
 msgid "Login (via Google)"
 msgstr "Masuk log (via Google)"
 
-#: components/PuzzleOverlay.tsx:103
+#: components/PuzzleOverlay.tsx
 msgid "Login (via Google) to save your puzzle progress/stats"
 msgstr "Masuk log (via Google) untuk menyimpan progres/statistik TTS Anda"
 
-#: components/Puzzle.tsx:1025
+#: components/Puzzle.tsx
 msgid "More"
 msgstr "Lebih"
 
-#: components/Puzzle.tsx:1056
+#: components/Puzzle.tsx
 msgid "Mute"
 msgstr "Senyap"
 
-#: pages/dailyminis/[[...slug]].tsx:209
+#: pages/dailyminis/[[...slug]].tsx
 msgid "Newer Minis"
 msgstr "Mini yang Lebih Baru"
 
-#: pages/tags/[...path].tsx:209
-#: pages/newest/[[...pageNumber]].tsx:144
-#: pages/featured/[pageNumber].tsx:142
-#: pages/featured/[pageNumber].tsx:152
-#: components/ConstructorPage.tsx:457
-#: components/ConstructorPage.tsx:467
+#: components/ConstructorPage.tsx
+#: pages/featured/[pageNumber].tsx
+#: pages/newest/[[...pageNumber]].tsx
+#: pages/tags/[...path].tsx
 msgid "Newer Puzzles"
 msgstr "TTS yang Lebih Baru"
 
-#: components/UnfinishedPuzzleList.tsx:71
+#: components/UnfinishedPuzzleList.tsx
 msgid "Newer unfinished solves"
 msgstr "Newer unfinished solves"
 
-#: pages/newest/[[...pageNumber]].tsx:77
-#: pages/newest/[[...pageNumber]].tsx:121
+#: pages/newest/[[...pageNumber]].tsx
 msgid "Newest Puzzles"
 msgstr "TTS Terbaru"
 
-#: components/FollowButton.tsx:137
+#: components/FollowButton.tsx
 msgid "No longer following {constructorName}"
 msgstr "No longer following {constructorName}"
 
-#: components/PuzzleOverlay.tsx:365
+#: components/PuzzleOverlay.tsx
 msgid "Nobody is on the leaderboard yet"
 msgstr "Belum ada siapapun di papan peringkat ini"
 
-#: pages/dailyminis/[[...slug]].tsx:216
+#: pages/dailyminis/[[...slug]].tsx
 msgid "Older Minis"
 msgstr "Mini yang Lebih Lama"
 
-#: pages/tags/[...path].tsx:216
-#: pages/newest/[[...pageNumber]].tsx:151
-#: pages/featured/[pageNumber].tsx:159
-#: components/ConstructorPage.tsx:474
+#: components/ConstructorPage.tsx
+#: pages/featured/[pageNumber].tsx
+#: pages/newest/[[...pageNumber]].tsx
+#: pages/tags/[...path].tsx
 msgid "Older Puzzles"
 msgstr "TTS yang Lebih Lama"
 
-#: components/UnfinishedPuzzleList.tsx:78
+#: components/UnfinishedPuzzleList.tsx
 msgid "Older unfinished solves"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:434
+#: components/PuzzleOverlay.tsx
 msgid "Open on crosshare.org"
 msgstr "Buka di crosshare.org"
 
-#: pages/tags/[...path].tsx:133
-#: pages/newest/[[...pageNumber]].tsx:78
+#: pages/newest/[[...pageNumber]].tsx
+#: pages/tags/[...path].tsx
 msgid "Page {page}"
 msgstr "Hal. {page}"
 
-#: components/Puzzle.tsx:1289
+#: components/Puzzle.tsx
 msgid "Pause Game"
 msgstr "Jeda Permainan"
 
-#: components/PuzzleOverlay.tsx:426
+#: components/PuzzleOverlay.tsx
 msgid "Powered by crosshare.org"
 msgstr "Dipersembahkan oleh crosshare.org"
 
-#: pages/index.tsx:259
+#: pages/index.tsx
 msgid "Previous daily minis"
 msgstr "Mini harian sebelumnya"
 
-#: pages/index.tsx:292
+#: pages/index.tsx
 msgid "Previous featured puzzles"
 msgstr "TTS pilihan sebelumnya"
 
-#: components/Puzzle.tsx:1122
+#: components/Puzzle.tsx
 msgid "Print Puzzle"
 msgstr "Cetak TTS"
 
 #. The variable is a timestamp like 'in 4 days' or 'en 4 dias'
-#: components/PuzzleLink.tsx:352
+#: components/PublishDate.tsx
 msgid "Private, going public <0/>"
 msgstr "Privat, akan terbit <0/>"
 
 #. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
-#. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
-#: components/PuzzleLink.tsx:332
-#: components/PuzzleHeading.tsx:71
+#: components/PublishDate.tsx
 msgid "Published <0/>"
 msgstr "Diterbitkan <0/>"
 
 #. The variable is the name of the user who published the puzzle
-#: components/PuzzleLink.tsx:221
+#: components/PuzzleLink.tsx
 msgid "Published by {link}"
 msgstr "Diterbitkan oleh {link}"
 
 #. The variable is a timestamp like '4 days ago' or 'hace 4 dias'
-#: components/PuzzleLink.tsx:341
+#: components/PublishDate.tsx
 msgid "Published privately <0/>"
 msgstr "Diterbitkan secara privat <0/>"
 
-#: components/Comments.tsx:384
+#: components/Comments.tsx
 msgid "publisher"
 msgstr "penerbit"
 
-#: pages/tags/[...path].tsx:181
+#: pages/tags/[...path].tsx
 msgid "Puzzles tagged"
 msgstr ""
 
-#: components/Puzzle.tsx:1427
+#: components/Puzzle.tsx
 msgid "Ready to get started?"
 msgstr "Siap untuk mulai?"
 
-#: components/Comments.tsx:193
+#: components/Comments.tsx
 msgid "Reply"
 msgstr "Balas"
 
-#: components/Comments.tsx:213
+#: components/Comments.tsx
 msgid "Report"
 msgstr "Report"
 
-#: components/Puzzle.tsx:1436
+#: components/Puzzle.tsx
 msgid "Resume"
 msgstr "Lanjutkan"
 
-#: components/Puzzle.tsx:907
+#: components/Puzzle.tsx
 msgid "Reveal"
 msgstr "Buka"
 
-#: components/Puzzle.tsx:937
+#: components/Puzzle.tsx
 msgid "Reveal Puzzle"
 msgstr "Buka Seluruh TTS"
 
-#: components/Puzzle.tsx:913
+#: components/Puzzle.tsx
 msgid "Reveal Square"
 msgstr "Buka Kotak"
 
-#: components/Puzzle.tsx:925
+#: components/Puzzle.tsx
 msgid "Reveal Word"
 msgstr "Buka Kata"
 
-#: components/DisplayNameForm.tsx:76
-#: components/Comments.tsx:556
+#: components/Comments.tsx
+#: components/DisplayNameForm.tsx
 msgid "Save"
 msgstr "Simpan"
 
-#: components/DisplayNameForm.tsx:64
+#: components/DisplayNameForm.tsx
 msgid "Set your display name:"
 msgstr "Atur nama tampilan Anda:"
 
-#: components/Puzzle.tsx:1362
+#: components/Puzzle.tsx
 msgid "Show Comments"
 msgstr "Tampilkan Komentar"
 
-#: components/Comments.tsx:840
+#: components/Comments.tsx
 msgid "Sign in with google to leave a comment of your own:"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:134
+#: components/PuzzleOverlay.tsx
 msgid "Solved <0>downs-only</0> in"
 msgstr "Selesai <0>Menurun saja</0> dalam"
 
-#: components/PuzzleOverlay.tsx:140
+#: components/PuzzleOverlay.tsx
 msgid "Solved <0>without check/reveal</0> in"
 msgstr "Selesai <0>tanpa periksa/buka</0> dalam"
 
-#: components/PuzzleOverlay.tsx:130
+#: components/PuzzleOverlay.tsx
 msgid "Solved in"
 msgstr "Selesai dalam"
 
-#: components/Puzzle.tsx:1093
+#: components/Puzzle.tsx
 msgid "Stats"
 msgstr "Statistik"
 
-#: pages/tags/[...path].tsx:130
+#: pages/tags/[...path].tsx
 msgid "Tagged Puzzles"
 msgstr ""
 
-#: pages/tags/[...path].tsx:137
+#: pages/tags/[...path].tsx
 msgid "The latest public puzzles tagged with {displayTags}"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:229
+#: components/PuzzleOverlay.tsx
 msgid "This is a contest/meta puzzle. To submit your answer, first finish solving the grid (or reveal it if you get stuck or solved offline)."
 msgstr "Ini adalah TTS sayembara/meta. Untuk mengirimkan jawaban Anda, selesaikan dahulu TTS (atau buka jika Anda kebingungan atau menyelesaikan dalam mode luring)."
 
 #. The variable is the name of the user who will recieve the $ tip
-#: components/ConstructorPage.tsx:427
+#: components/ConstructorPage.tsx
 msgid "Tip {constructorName}"
 msgstr "Tip {constructorName}"
 
-#: components/PuzzleOverlay.tsx:116
-#: components/PuzzleOverlay.tsx:123
+#: components/PuzzleOverlay.tsx
 msgid "to save your puzzle progress/stats"
 msgstr "untuk menyimpan progres/statistik TTS Anda"
 
-#: pages/index.tsx:232
+#: pages/index.tsx
 msgid "Today's daily mini crossword"
 msgstr "TTS mini hari ini"
 
-#: components/Puzzle.tsx:1064
+#: components/Puzzle.tsx
 msgid "Toggle Keyboard"
 msgstr ""
 
-#: components/Puzzle.tsx:1136
+#: components/Puzzle.tsx
 msgid "Toggle Light/Dark Mode"
 msgstr "Ganti Mode Terang/Gelap"
 
-#: components/PuzzleLink.tsx:134
-#: components/PuzzleLink.tsx:150
+#: components/PuzzleLink.tsx
 msgid "unfinished"
 msgstr "belum selesai"
 
-#: components/UnfinishedPuzzleList.tsx:50
+#: components/UnfinishedPuzzleList.tsx
 msgid "Unfinished Solves"
 msgstr ""
 
-#: components/FollowButton.tsx:141
+#: components/FollowButton.tsx
 msgid "Unfollow"
 msgstr "Berhenti mengikuti"
 
-#: components/Puzzle.tsx:1048
+#: components/Puzzle.tsx
 msgid "Unmute"
 msgstr ""
 
-#: components/DisplayNameForm.tsx:64
+#: components/DisplayNameForm.tsx
 msgid "Update display name:"
 msgstr "Perbarui nama tampilan:"
 
-#: pages/index.tsx:276
+#: pages/index.tsx
 msgid "View all puzzles"
 msgstr "Lihat semua TTS"
 
-#: components/TopBarChildren.tsx:456
+#: components/TopBarChildren.tsx
 msgid "View/Settings"
 msgstr ""
 
-#: components/PuzzleOverlay.tsx:215
+#: components/PuzzleOverlay.tsx
 msgid "You are currently solving downs-only:"
 msgstr "Anda saat ini mengisi hanya Menurun saja:"
 
-#: components/FollowButton.tsx:109
+#: components/FollowButton.tsx
 msgid "You can't follow yourself!"
 msgstr "Anda tidak dapat mengikuti diri sendiri!"
 
-#: components/FollowButton.tsx:51
+#: components/FollowButton.tsx
 msgid "You'll be notified when {constructorName} posts a new puzzle"
 msgstr "You'll be notified when {constructorName} posts a new puzzle"
 
-#: components/Puzzle.tsx:191
+#: components/Puzzle.tsx
 msgid "You've completed the puzzle, but there are one or more mistakes."
 msgstr "Anda sudah menyelesaikan TTS, tetapi masih ada setidaknya satu jawaban salah."
 
-#: components/Puzzle.tsx:1437
+#: components/Puzzle.tsx
 msgid "Your puzzle is paused"
 msgstr "TTS Anda sedang dijeda"
