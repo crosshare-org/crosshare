@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`test .puz import 2016-1-5-JosephCrosswords 1`] = `
+exports[`test .puz import { name: '2016-1-5-JosephCrosswords' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -209,7 +209,7 @@ exports[`test .puz import 2016-1-5-JosephCrosswords 1`] = `
 }
 `;
 
-exports[`test .puz import 2016-1-5-ShefferCrosswords 1`] = `
+exports[`test .puz import { name: '2016-1-5-ShefferCrosswords' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -460,7 +460,7 @@ exports[`test .puz import 2016-1-5-ShefferCrosswords 1`] = `
 }
 `;
 
-exports[`test .puz import 2016-1-5-USAToday 1`] = `
+exports[`test .puz import { name: '2016-1-5-USAToday' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -779,7 +779,7 @@ exports[`test .puz import 2016-1-5-USAToday 1`] = `
 }
 `;
 
-exports[`test .puz import 2016-1-5-UniversalCrossword 1`] = `
+exports[`test .puz import { name: '2016-1-5-UniversalCrossword' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -1096,7 +1096,7 @@ exports[`test .puz import 2016-1-5-UniversalCrossword 1`] = `
 }
 `;
 
-exports[`test .puz import 2016-1-31-LosAngelesTimes 1`] = `
+exports[`test .puz import { name: '2016-1-31-LosAngelesTimes' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -1695,7 +1695,7 @@ exports[`test .puz import 2016-1-31-LosAngelesTimes 1`] = `
 }
 `;
 
-exports[`test .puz import 2016-1-31-Newsday 1`] = `
+exports[`test .puz import { name: '2016-1-31-Newsday' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -2292,7 +2292,7 @@ exports[`test .puz import 2016-1-31-Newsday 1`] = `
 }
 `;
 
-exports[`test .puz import FamilyCrossword 1`] = `
+exports[`test .puz import { name: 'FamilyCrossword' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -2609,7 +2609,7 @@ exports[`test .puz import FamilyCrossword 1`] = `
 }
 `;
 
-exports[`test .puz import Feb0308_oddnumbering 1`] = `
+exports[`test .puz import { name: 'Feb0308_oddnumbering' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -3206,7 +3206,7 @@ exports[`test .puz import Feb0308_oddnumbering 1`] = `
 }
 `;
 
-exports[`test .puz import Its_All_Wrong 1`] = `
+exports[`test .puz import { name: 'Its_All_Wrong' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -3603,7 +3603,7 @@ exports[`test .puz import Its_All_Wrong 1`] = `
 }
 `;
 
-exports[`test .puz import av110622 1`] = `
+exports[`test .puz import { name: 'av110622' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -3922,7 +3922,7 @@ exports[`test .puz import av110622 1`] = `
 }
 `;
 
-exports[`test .puz import cs080904 1`] = `
+exports[`test .puz import { name: 'cs080904' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -4241,7 +4241,7 @@ exports[`test .puz import cs080904 1`] = `
 }
 `;
 
-exports[`test .puz import hobbyistspam 1`] = `
+exports[`test .puz import { name: 'hobbyistspam' } 1`] = `
 {
   "cellStyles": {
     "circle": [
@@ -4564,7 +4564,7 @@ exports[`test .puz import hobbyistspam 1`] = `
 }
 `;
 
-exports[`test .puz import incognito 1`] = `
+exports[`test .puz import { name: 'incognito' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -4879,7 +4879,7 @@ exports[`test .puz import incognito 1`] = `
 }
 `;
 
-exports[`test .puz import nyt_partlyfilled 1`] = `
+exports[`test .puz import { name: 'nyt_partlyfilled' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -5198,7 +5198,7 @@ exports[`test .puz import nyt_partlyfilled 1`] = `
 }
 `;
 
-exports[`test .puz import nyt_rebus_with_notes_and_shape 1`] = `
+exports[`test .puz import { name: 'nyt_rebus_with_notes_and_shape' } 1`] = `
 {
   "cellStyles": {
     "circle": [
@@ -5522,7 +5522,7 @@ All the daily crosswords this week, Monday through Saturday, have been contribut
 }
 `;
 
-exports[`test .puz import nyt_with_shape 1`] = `
+exports[`test .puz import { name: 'nyt_with_shape' } 1`] = `
 {
   "cellStyles": {
     "circle": [
@@ -6148,7 +6148,7 @@ exports[`test .puz import nyt_with_shape 1`] = `
 }
 `;
 
-exports[`test .puz import qvxdupes 1`] = `
+exports[`test .puz import { name: 'qvxdupes' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -6201,7 +6201,7 @@ exports[`test .puz import qvxdupes 1`] = `
 }
 `;
 
-exports[`test .puz import version-1.2-puzzle 1`] = `
+exports[`test .puz import { name: 'version-1.2-puzzle' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -6241,7 +6241,7 @@ exports[`test .puz import version-1.2-puzzle 1`] = `
 }
 `;
 
-exports[`test .puz import version-1.2-puzzle-with-notes 1`] = `
+exports[`test .puz import { name: 'version-1.2-puzzle-with-notes' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -6281,7 +6281,7 @@ exports[`test .puz import version-1.2-puzzle-with-notes 1`] = `
 }
 `;
 
-exports[`test .puz import washpost 1`] = `
+exports[`test .puz import { name: 'washpost' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -6600,7 +6600,7 @@ exports[`test .puz import washpost 1`] = `
 }
 `;
 
-exports[`test .puz import wsj110624 1`] = `
+exports[`test .puz import { name: 'wsj110624' } 1`] = `
 {
   "cellStyles": {
     "circle": [],
@@ -7199,7 +7199,7 @@ exports[`test error on copyright 1`] = `"Cannot import copyrighted puzzles"`;
 
 exports[`test error on locked 1`] = `"Cannot import scrambled .puz files"`;
 
-exports[`test roundtrip 2016-1-5-JosephCrosswords 1`] = `
+exports[`test roundtrip { name: '2016-1-5-JosephCrosswords' } 1`] = `
 Uint8Array [
   27,
   72,
@@ -8345,7 +8345,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip 2016-1-5-ShefferCrosswords 1`] = `
+exports[`test roundtrip { name: '2016-1-5-ShefferCrosswords' } 1`] = `
 Uint8Array [
   145,
   156,
@@ -9783,7 +9783,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip 2016-1-5-USAToday 1`] = `
+exports[`test roundtrip { name: '2016-1-5-USAToday' } 1`] = `
 Uint8Array [
   91,
   134,
@@ -11847,7 +11847,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip 2016-1-5-UniversalCrossword 1`] = `
+exports[`test roundtrip { name: '2016-1-5-UniversalCrossword' } 1`] = `
 Uint8Array [
   79,
   109,
@@ -13817,7 +13817,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip 2016-1-31-LosAngelesTimes 1`] = `
+exports[`test roundtrip { name: '2016-1-31-LosAngelesTimes' } 1`] = `
 Uint8Array [
   34,
   223,
@@ -17616,7 +17616,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip 2016-1-31-Newsday 1`] = `
+exports[`test roundtrip { name: '2016-1-31-Newsday' } 1`] = `
 Uint8Array [
   58,
   88,
@@ -21214,7 +21214,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip FamilyCrossword 1`] = `
+exports[`test roundtrip { name: 'FamilyCrossword' } 1`] = `
 Uint8Array [
   33,
   129,
@@ -23510,7 +23510,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip Feb0308_oddnumbering 1`] = `
+exports[`test roundtrip { name: 'Feb0308_oddnumbering' } 1`] = `
 Uint8Array [
   117,
   251,
@@ -27202,7 +27202,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip Its_All_Wrong 1`] = `
+exports[`test roundtrip { name: 'Its_All_Wrong' } 1`] = `
 Uint8Array [
   153,
   161,
@@ -29639,7 +29639,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip av110622 1`] = `
+exports[`test roundtrip { name: 'av110622' } 1`] = `
 Uint8Array [
   206,
   64,
@@ -32169,7 +32169,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip cs080904 1`] = `
+exports[`test roundtrip { name: 'cs080904' } 1`] = `
 Uint8Array [
   120,
   145,
@@ -34321,7 +34321,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip hobbyistspam 1`] = `
+exports[`test roundtrip { name: 'hobbyistspam' } 1`] = `
 Uint8Array [
   93,
   12,
@@ -37268,7 +37268,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip incognito 1`] = `
+exports[`test roundtrip { name: 'incognito' } 1`] = `
 Uint8Array [
   236,
   54,
@@ -39303,7 +39303,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip nyt_partlyfilled 1`] = `
+exports[`test roundtrip { name: 'nyt_partlyfilled' } 1`] = `
 Uint8Array [
   111,
   106,
@@ -41422,7 +41422,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip nyt_rebus_with_notes_and_shape 1`] = `
+exports[`test roundtrip { name: 'nyt_rebus_with_notes_and_shape' } 1`] = `
 Uint8Array [
   82,
   148,
@@ -44668,7 +44668,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip nyt_with_shape 1`] = `
+exports[`test roundtrip { name: 'nyt_with_shape' } 1`] = `
 Uint8Array [
   200,
   98,
@@ -48875,7 +48875,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip qvxdupes 1`] = `
+exports[`test roundtrip { name: 'qvxdupes' } 1`] = `
 Uint8Array [
   145,
   112,
@@ -49249,7 +49249,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip version-1.2-puzzle 1`] = `
+exports[`test roundtrip { name: 'version-1.2-puzzle' } 1`] = `
 Uint8Array [
   7,
   212,
@@ -49525,7 +49525,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip version-1.2-puzzle-with-notes 1`] = `
+exports[`test roundtrip { name: 'version-1.2-puzzle-with-notes' } 1`] = `
 Uint8Array [
   253,
   195,
@@ -49851,7 +49851,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip washpost 1`] = `
+exports[`test roundtrip { name: 'washpost' } 1`] = `
 Uint8Array [
   187,
   225,
@@ -51859,7 +51859,7 @@ Uint8Array [
 ]
 `;
 
-exports[`test roundtrip wsj110624 1`] = `
+exports[`test roundtrip { name: 'wsj110624' } 1`] = `
 Uint8Array [
   20,
   105,
