@@ -148,6 +148,7 @@ export const TopBarDropDownLink = (props: TopBarDropDownLinkProps) => {
 
 interface TopBarDropDownLinkAProps extends TopBarDropDownLinkCommonProps {
   href: string;
+  download?: string;
 }
 export const TopBarDropDownLinkA = (props: TopBarDropDownLinkAProps) => {
   return (
@@ -165,6 +166,7 @@ export const TopBarDropDownLinkSimpleA = (props: TopBarDropDownLinkAProps) => {
       href={props.href}
       title={props.text}
       className={styles.dropdownLink}
+      {...(props.download && { download: props.download })}
     >
       <TopBarDropDownLinkContents {...props} />
     </a>

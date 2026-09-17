@@ -1130,12 +1130,14 @@ export const Puzzle = ({
                       href={'/api/puz/' + puzzle.id}
                       icon={<FaRegFile />}
                       text={t`Download .puz File`}
+                      download={`${puzzle.title.replace(/[^\w ]/g, '')}.puz`}
                     />
                   )}
                   <TopBarDropDownLinkSimpleA
                     href={'/api/ipuz/' + puzzle.id}
                     icon={<FaRegFile />}
                     text={t`Download .ipuz File`}
+                    download={`${puzzle.title.replace(/[^\w ]/g, '')}.ipuz`}
                   />
                   {!isEmbed ? (
                     <TopBarDropDownLink
