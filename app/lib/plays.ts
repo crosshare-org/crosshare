@@ -63,7 +63,8 @@ export async function getPossiblyStalePlay(
   puzzleId: string
 ): Promise<PlayWithoutUserT | null> {
   const cached = getPlayFromCache(user, puzzleId);
-  if (cached !== undefined && cached !== null) {
+  // null is a cached miss ("this user has no play"), not an empty cache.
+  if (cached !== undefined) {
     return cached;
   }
   if (!user) {
