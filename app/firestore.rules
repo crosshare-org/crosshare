@@ -29,7 +29,7 @@ service cloud.firestore {
       return styles().values()[index];
     }
     function validStyle(index) {
-      return styAt(index).size() < request.resource.data.g.size() && noDupes(styAt(index));
+      return styAt(index).size() <= request.resource.data.g.size() && noDupes(styAt(index));
     }
     function validCrossword() {
       return (request.resource.data.g.size() == (request.resource.data.w * request.resource.data.h))
