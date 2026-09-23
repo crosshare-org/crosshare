@@ -95,6 +95,16 @@ test('home and end keyboard events are recognized', () => {
   expect(fromKeyString('End')).toEqual({ k: KeyK.End });
 });
 
+test('short word warning', () => {
+  const state = getState(['H', 'I', '.', 'ELLO', '.', '.', '.', '.', '.'], {});
+  expect(builderReducer(state, publish).publishWarnings).toMatchInlineSnapshot(`
+    [
+      "Some words are only two letters long (HI)",
+      "UNCHES",
+    ]
+  `);
+});
+
 test('basic enum warnings', () => {
   const state = getState(['a', 'b', 'c', 'g', '', '', 'd', 'e', 'f'], {
     abc: 'test with good enum (3)',
