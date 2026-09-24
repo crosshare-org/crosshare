@@ -95,6 +95,13 @@ test('home and end keyboard events are recognized', () => {
   expect(fromKeyString('End')).toEqual({ k: KeyK.End });
 });
 
+/*
+H I █
+^ █ █
+█ █ █
+
+^ This square represents the rebus 'ELLO'.
+*/
 test('short word warning', () => {
   const state = getState(['H', 'I', '.', 'ELLO', '.', '.', '.', '.', '.'], {});
   expect(builderReducer(state, publish).publishWarnings).toMatchInlineSnapshot(`
