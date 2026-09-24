@@ -31,7 +31,7 @@ export function validateGrid(state: BuilderState) {
   }
 
   for (const [i, entry] of state.grid.entries.entries()) {
-    if (entry.cells.length <= 2) {
+    if (entry.completedWord && entry.completedWord.length <= 2) {
       hasNoShortWords = false;
     }
     for (let j = 0; j < state.grid.entries.length; j += 1) {
@@ -84,7 +84,7 @@ export function getWarningStats(state: BuilderState) {
   const shortWords = new Set<string>();
 
   for (const [i, entry] of entries.entries()) {
-    if (entry.cells.length <= 2) {
+    if (entry.completedWord && entry.completedWord.length <= 2) {
       shortWords.add(entryWord(grid, i));
     }
   }

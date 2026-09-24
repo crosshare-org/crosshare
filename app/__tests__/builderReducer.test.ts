@@ -95,6 +95,22 @@ test('home and end keyboard events are recognized', () => {
   expect(fromKeyString('End')).toEqual({ k: KeyK.End });
 });
 
+/*
+I D █
+I ^ █
+█ █ █
+
+^ This cell represents the rebus 'PAD'.
+*/
+test('short word warning', () => {
+  const state = getState(['I', 'D', '.', 'I', 'PAD', '.', '.', '.', '.'], {});
+  expect(builderReducer(state, publish).publishWarnings).toMatchInlineSnapshot(`
+    [
+      "Some words are only two letters long (ID, II)",
+    ]
+  `);
+});
+
 test('basic enum warnings', () => {
   const state = getState(['a', 'b', 'c', 'g', '', '', 'd', 'e', 'f'], {
     abc: 'test with good enum (3)',
