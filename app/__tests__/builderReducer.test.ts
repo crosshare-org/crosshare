@@ -96,18 +96,17 @@ test('home and end keyboard events are recognized', () => {
 });
 
 /*
-H I █
-^ █ █
+I D █
+I ^ █
 █ █ █
 
-^ This square represents the rebus 'ELLO'.
+^ This cell represents the rebus 'PAD'.
 */
 test('short word warning', () => {
-  const state = getState(['H', 'I', '.', 'ELLO', '.', '.', '.', '.', '.'], {});
+  const state = getState(['I', 'D', '.', 'I', 'PAD', '.', '.', '.', '.'], {});
   expect(builderReducer(state, publish).publishWarnings).toMatchInlineSnapshot(`
     [
-      "Some words are only two letters long (HI)",
-      "UNCHES",
+      "Some words are only two letters long (ID, II)",
     ]
   `);
 });
