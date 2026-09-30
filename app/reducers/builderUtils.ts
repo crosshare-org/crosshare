@@ -1,6 +1,7 @@
 import { entryWord, hasUnches } from '../lib/gridBase.js';
 import { parseClueEnumeration, parseClueReferences } from '../lib/parse.js';
 import { emptySelection, hasMultipleCells } from '../lib/selection.js';
+import { BLOCK } from '../lib/types.js';
 import { ViewableEntry, entryString } from '../lib/viewableGrid.js';
 import type { BuilderState } from './builderReducer.js';
 import type { GridInterfaceState } from './gridReducer.js';
@@ -128,8 +129,16 @@ export function getWarningStats(state: BuilderState) {
   });
   const enumsExpected = missingEnums.size < numValidClues / 2;
 
+  const hasIsolatedCells = grid.entriesByCell.some(
+    ([across, down], index) =>
+      grid.cells[index] !== BLOCK &&
+      across.entryIndex === null &&
+      down.entryIndex === null
+  );
+
   return {
     shortWords,
+    hasIsolatedCells,
     hasUnches: hasUnches(grid) && !state.userTags.includes('cryptic'),
     unmatchedRefs,
     missingEnums: enumsExpected ? missingEnums : null,
