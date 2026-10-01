@@ -112,10 +112,7 @@ test('short word warning', () => {
 });
 
 test('isolated cell warning', () => {
-  const state = getState(
-    ['.', '.', '.', '.', 'A', '.', '.', '.', '.'],
-    {}
-  );
+  const state = getState(['.', '.', '.', '.', 'A', '.', '.', '.', '.'], {});
   expect(builderReducer(state, publish).publishWarnings).toMatchInlineSnapshot(`
     [
       "Some cells are isolated and cannot be clued",
