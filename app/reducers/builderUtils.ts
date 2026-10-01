@@ -81,13 +81,25 @@ export function getWarningStats(state: BuilderState) {
   const { clues, grid } = state;
   const { entries, sortedEntries } = grid;
 
-  const shortWords = new Set<string>();
+ const shortWords = new Set<string>();
 
-  for (const [i, entry] of entries.entries()) {
-    if (entry.completedWord && entry.completedWord.length <= 2) {
-      shortWords.add(entryWord(grid, i));
-    }
+for (const [i, entry] of entries.entries()) {
+  if (entry.completedWord && entry.completedWord.length <= 2) {
+    shortWords.add(entryWord(grid, i));
   }
+}
+
+const isolatedCells = new Set<number>();
+
+for (const [i, cellEntries] of grid.entriesByCell.entries()) {
+  if (
+    grid.cells[i] !== '.' &&
+    cellEntries[0].entryIndex === null &&
+    cellEntries[1].entryIndex === null
+  ) {
+    isolatedCells.add(i);
+  }
+}
 
   const unmatchedRefs = new Set<string>();
   const missingEnums = new Set<string>();
@@ -128,13 +140,14 @@ export function getWarningStats(state: BuilderState) {
   });
   const enumsExpected = missingEnums.size < numValidClues / 2;
 
-  return {
-    shortWords,
-    hasUnches: hasUnches(grid) && !state.userTags.includes('cryptic'),
-    unmatchedRefs,
-    missingEnums: enumsExpected ? missingEnums : null,
-    wrongEnums: enumsExpected ? wrongEnums : null,
-  };
+ return {
+  shortWords,
+  isolatedCells,
+  hasUnches: hasUnches(grid) && !state.userTags.includes('cryptic'),
+  unmatchedRefs,
+  missingEnums: enumsExpected ? missingEnums : null,
+  wrongEnums: enumsExpected ? wrongEnums : null,
+};
 }
 
 export function hasSelection(state: GridInterfaceState): boolean {

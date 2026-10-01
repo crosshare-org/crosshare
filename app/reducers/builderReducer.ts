@@ -1037,6 +1037,9 @@ function _builderReducer(
           Array.from(stats.shortWords).sort().join(', ') +
           ')'
       );
+      if (stats.isolatedCells.size > 0) {
+  warnings.push('Some cells are not part of any word');
+}
     }
     if (stats.hasUnches) {
       warnings.push('UNCHES'); // A bit of a hack but PublishWarningsList handles rendering this one

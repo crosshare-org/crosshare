@@ -110,6 +110,18 @@ test('short word warning', () => {
     ]
   `);
 });
+test('isolated cell warning', () => {
+  const state = getState(
+    ['a', 'b', 'c', 'd', 'e', '.', 'f', '.', 'g'],
+    {}
+  );
+
+  expect(builderReducer(state, publish).publishWarnings).toMatchInlineSnapshot(`
+    [
+      "Some cells are not part of any word",
+    ]
+  `);
+});
 
 test('basic enum warnings', () => {
   const state = getState(['a', 'b', 'c', 'g', '', '', 'd', 'e', 'f'], {
