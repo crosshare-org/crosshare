@@ -477,7 +477,7 @@ export enum KeyK {
   End,
 }
 
-export const ALLOWABLE_GRID_CHARS = /^[A-Za-z0-9ÑÅÄÖñåäö&/\\]$/;
+export const ALLOWABLE_GRID_CHARS = /^[A-Za-z0-9ÑÅÄÖñåäö&/\\$]$/;
 
 export function fromKeyString(string: string): Key | null {
   return fromKeyboardEvent({ key: string });
