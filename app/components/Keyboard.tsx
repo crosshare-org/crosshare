@@ -160,6 +160,7 @@ export const Keyboard = memo(function Keyboard({
           <Key touched={touched} keyStroke="&" onKeypress={keypress} />
           <Key touched={touched} keyStroke="/" onKeypress={keypress} />
           <Key touched={touched} keyStroke="\" onKeypress={keypress} />
+          <Key touched={touched} keyStroke="$" onKeypress={keypress} />
         </KeyRow>
         <KeyRow>
           <Key
