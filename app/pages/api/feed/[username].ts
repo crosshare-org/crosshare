@@ -12,7 +12,7 @@ export default async function constructorFeed(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { username } = req.query;
+  const { username, format } = req.query;
   if (Array.isArray(username) || !username) {
     res.status(404).json({ statusCode: 404, message: 'bad params' });
     return;
@@ -123,8 +123,8 @@ export default async function constructorFeed(
       date: new Date(p.isPrivateUntil ?? p.publishTime),
       extensions: bylineAuthor,
       enclosure: {
-        url: `https://crosshare.org/api/puz/${p.id}`,
-        type: 'application/x-crossword',
+        url: format == 'puz' ? `https://crosshare.org/api/puz/${p.id}` : `https://crosshare.org/api/ipuz/${p.id}`,
+        type: format == 'puz' ? 'application/x-crossword' : 'application/ipuz+json',
       },
       description: p.blogPost
         ? toHtml(
