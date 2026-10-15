@@ -25,6 +25,6 @@ export default async function ipuz(req: NextApiRequest, res: NextApiResponse) {
     'Content-Disposition',
     'inline; filename="' + puzzle.t.replace(/[^\w ]/g, '') + '.ipuz"'
   );
-  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+  res.writeHead(200, { 'Content-Type': 'application/octet-stream' });
   res.end(Buffer.from(exportIpuz(puzzle)));
 }
