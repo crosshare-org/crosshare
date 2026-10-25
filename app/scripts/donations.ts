@@ -7,7 +7,7 @@ import { PathReporter } from '../lib/pathReporter.js';
 
 const donationsCollection = getCollection('donations');
 
-const validFields = ['username', 'userid'];
+const validFields = ['username', 'name', 'userid'];
 
 const print = command({
   name: 'print',
@@ -138,6 +138,8 @@ const edit = command({
           o.p = args.value.trim();
         } else if (args.field === 'userid') {
           o.u = args.value.trim();
+        } else if (args.field === 'name') {
+          o.n = args.value.trim();
         }
         console.log(o);
         success = true;
