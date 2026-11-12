@@ -31,6 +31,12 @@ interface CellProps {
   onClick: (pos: Position, shiftKey: boolean) => void;
   onMouseDown: (pos: Position) => void;
   onMouseEnter: (pos: Position) => void;
+  /* When set, touch-dragging across cells selects a region (builder only). */
+  touchSelection?: {
+    onTouchStart: (pos: Position) => void;
+    onTouchMove: (clientX: number, clientY: number) => void;
+    onTouchEnd: () => boolean;
+  };
   isVerified: boolean | undefined;
   isWrong: boolean | undefined;
   isDraft: boolean | undefined;
@@ -128,6 +134,8 @@ export const Cell = memo(function Cell(props: CellProps) {
       {/* eslint-disable-next-line */}
       <div
         aria-label={`cell${props.row}x${props.column}`}
+        data-row={props.row}
+        data-col={props.column}
         onClick={(evt) => {
           props.onClick({ row: props.row, col: props.column }, evt.shiftKey);
         }}
@@ -141,9 +149,34 @@ export const Cell = memo(function Cell(props: CellProps) {
             props.onMouseEnter({ row: props.row, col: props.column });
           }
         }}
+        onTouchStart={(evt) => {
+          if (props.touchSelection && evt.touches.length === 1) {
+            props.touchSelection.onTouchStart({
+              row: props.row,
+              col: props.column,
+            });
+          }
+        }}
+        onTouchMove={(evt) => {
+          const touch = evt.touches[0];
+          if (props.touchSelection && touch && evt.touches.length === 1) {
+            props.touchSelection.onTouchMove(touch.clientX, touch.clientY);
+          }
+        }}
+        onTouchEnd={(evt) => {
+          // If the touch was a drag-select, suppress the emulated click so it
+          // doesn't immediately clear the selection we just made.
+          if (props.touchSelection?.onTouchEnd()) {
+            evt.preventDefault();
+          }
+        }}
+        onTouchCancel={() => {
+          props.touchSelection?.onTouchEnd();
+        }}
         style={{ ...(!useCQ && { fontSize: `${cqw}px` }) }}
         className={clsx(
           styles.cell,
+          props.touchSelection && styles.touchSelectable,
           props.hidden && props.active && styles.cellHiddenActive,
           !props.hidden && styles.cellVisible,
           !props.hidden &&
