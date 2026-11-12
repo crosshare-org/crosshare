@@ -111,6 +111,15 @@ test('short word warning', () => {
   `);
 });
 
+test('isolated cell warning', () => {
+  const state = getState(['.', '.', '.', '.', 'A', '.', '.', '.', '.'], {});
+  expect(builderReducer(state, publish).publishWarnings).toMatchInlineSnapshot(`
+    [
+      "Some cells are isolated and cannot be clued",
+    ]
+  `);
+});
+
 test('basic enum warnings', () => {
   const state = getState(['a', 'b', 'c', 'g', '', '', 'd', 'e', 'f'], {
     abc: 'test with good enum (3)',

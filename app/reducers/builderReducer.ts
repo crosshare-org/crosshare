@@ -1041,6 +1041,9 @@ function _builderReducer(
     if (stats.hasUnches) {
       warnings.push('UNCHES'); // A bit of a hack but PublishWarningsList handles rendering this one
     }
+    if (stats.hasIsolatedCells) {
+      warnings.push('Some cells are isolated and cannot be clued');
+    }
     if (stats.unmatchedRefs.size > 0) {
       warnings.push(
         `Some clues reference entries that don't exist: (${Array.from(
