@@ -140,6 +140,11 @@
   font-size: 100cqw;
 }
 
+.touchSelectable {
+  /* Dragging on the grid selects a region instead of scrolling/zooming */
+  touch-action: none;
+}
+
 .cellHiddenActive {
   background: repeating-linear-gradient(
     -45deg,
