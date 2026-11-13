@@ -1,4 +1,12 @@
-import { Dispatch, ReactNode, useCallback, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   cellIndex,
   entryIndexAtPosition,
@@ -9,7 +17,13 @@ import {
   getSelectionCells,
   hasMultipleCells,
 } from '../lib/selection.js';
-import { BLOCK, PosAndDir, Position, Symmetry } from '../lib/types.js';
+import {
+  BLOCK,
+  PosAndDir,
+  Position,
+  Symmetry,
+  isSamePosition,
+} from '../lib/types.js';
 import { ViewableEntry, ViewableGrid, flipped } from '../lib/viewableGrid.js';
 import {
   StartSelectionAction,
@@ -105,6 +119,66 @@ export const GridView = ({
     [dispatch]
   );
 
+  // Touch-drag region selection (mobile equivalent of mouse-drag selection).
+  // Only enabled for grids that support selection (i.e. the builder).
+  const touchStartPos = useRef<Position | null>(null);
+  const touchLastPos = useRef<Position | null>(null);
+  const touchMoved = useRef(false);
+  const selectionEnabled = props.selection !== undefined;
+  const touchSelection = useMemo(() => {
+    if (!selectionEnabled) {
+      return undefined;
+    }
+    return {
+      onTouchStart: (pos: Position) => {
+        touchStartPos.current = pos;
+        touchLastPos.current = pos;
+        touchMoved.current = false;
+      },
+      onTouchMove: (clientX: number, clientY: number) => {
+        const start = touchStartPos.current;
+        const last = touchLastPos.current;
+        if (!start || !last) {
+          return;
+        }
+        const el = document
+          .elementFromPoint(clientX, clientY)
+          ?.closest<HTMLElement>('[data-row][data-col]');
+        if (!el) {
+          return;
+        }
+        const row = Number(el.dataset.row);
+        const col = Number(el.dataset.col);
+        if (Number.isNaN(row) || Number.isNaN(col)) {
+          return;
+        }
+        const pos = { row, col };
+        if (isSamePosition(pos, last)) {
+          return;
+        }
+        if (!touchMoved.current) {
+          touchMoved.current = true;
+          dispatch({
+            type: 'STARTSELECTION',
+            position: start,
+          } as StartSelectionAction);
+        }
+        touchLastPos.current = pos;
+        dispatch({
+          type: 'UPDATESELECTION',
+          position: pos,
+        } as UpdateSelectionAction);
+      },
+      onTouchEnd: () => {
+        const moved = touchMoved.current;
+        touchStartPos.current = null;
+        touchLastPos.current = null;
+        touchMoved.current = false;
+        return moved;
+      },
+    };
+  }, [selectionEnabled, dispatch]);
+
   let altToShow: string[] = [];
   if (props.answers && props.showAlternates?.length) {
     altToShow = [...props.answers];
@@ -174,6 +248,7 @@ export const GridView = ({
         onClick={onClick}
         onMouseDown={startSelection}
         onMouseEnter={updateSelection}
+        touchSelection={touchSelection}
         value={toDisplay}
         isBlock={cellValue === BLOCK}
         isOpposite={isOpposite}
