@@ -39,12 +39,16 @@ export default async function constructorFeed(
     return;
   }
 
-  const [puzzles] = await paginatedPuzzles(0, 10, 'a', cp.u);
+  let page = 0;
+  if (typeof req.query.page === 'string') {
+    page = Math.max(0, parseInt(req.query.page) || 0);
+  }
+  const [puzzles] = await paginatedPuzzles(page, 10, 'a', cp.u);
 
   const feed = new Feed({
     id: `https://crosshare.org/${cp.i}`,
     link: `https://crosshare.org/${cp.i}`,
-    feed: `https://crosshare.org/api/feed/${cp.i}`,
+    feed: `https://crosshare.org/api/feed/${cp.i}${page ? `?page=${page}` : ''}`,
     title: `${cp.n} (@${cp.i}) | Crosshare crossword puzzles`,
     copyright: `All rights reserved, ${cp.n} and Crosshare.org`,
     description: `The latest crossword puzzles from ${cp.n}`,
