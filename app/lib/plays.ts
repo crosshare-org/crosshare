@@ -100,6 +100,31 @@ export async function getPlayFromDB(
   }
 }
 
+/** The cache is saved far more often than the db, and the db write on page
+ * exit can be lost, so a play read from the db may be behind the cached one.
+ * Returns the fresher of the two, marking it dirty if the db needs it. */
+export function reconcilePlayFromDB(
+  user: User,
+  puzzleId: string,
+  dbPlay: PlayWithoutUserT | null
+): PlayWithoutUserT | null {
+  const cached = getPlayFromCache(user, puzzleId);
+  if (
+    !cached ||
+    (dbPlay && (dbPlay.f || dbPlay.ua.toMillis() >= cached.ua.toMillis()))
+  ) {
+    if (dbPlay) {
+      cachePlay(user, puzzleId, dbPlay, true);
+    }
+    return dbPlay;
+  }
+  // Same threshold as Puzzle: unstarted plays don't go to the db
+  if (cached.t >= 1 || cached.f) {
+    dirtyPlays.add(puzzleId + '-' + user.uid);
+  }
+  return cached;
+}
+
 export async function writePlayToDB(
   user: User,
   puzzleId: string

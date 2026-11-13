@@ -5,7 +5,12 @@ import { useDocument } from 'react-firebase-hooks/firestore';
 import { PlayWithoutUserT, PlayWithoutUserV } from '../lib/dbtypes.js';
 import { getDocRef } from '../lib/firebaseWrapper.js';
 import { PathReporter } from '../lib/pathReporter.js';
-import { cachePlay, getPlayFromCache } from '../lib/plays.js';
+import {
+  getPlayFromCache,
+  isDirty,
+  reconcilePlayFromDB,
+  writePlayToDB,
+} from '../lib/plays.js';
 import { AccountPrefsT } from '../lib/prefs.js';
 import { PuzzlePageProps, PuzzlePageResultProps } from '../lib/serverOnly.js';
 import { isMetaSolution } from '../lib/utils.js';
@@ -140,22 +145,35 @@ const DBPlayLoader = (
       return [undefined, undefined];
     }
     if (!doc.exists()) {
-      return [null, undefined];
+      return [
+        reconcilePlayFromDB(props.user, props.puzzle.id, null),
+        undefined,
+      ];
     }
     const validationResult = PlayWithoutUserV.decode(doc.data());
     if (validationResult._tag === 'Right') {
-      cachePlay(
-        props.user,
-        validationResult.right.c,
-        validationResult.right,
-        true
-      );
-      return [validationResult.right, undefined];
+      return [
+        reconcilePlayFromDB(
+          props.user,
+          props.puzzle.id,
+          validationResult.right
+        ),
+        undefined,
+      ];
     } else {
       console.log(PathReporter.report(validationResult).join(','));
       return [undefined, 'failed to decode play'];
     }
-  }, [doc, props.user]);
+  }, [doc, props.user, props.puzzle.id]);
+
+  // The cached play was ahead of the db, catch the db up now while we can
+  useEffect(() => {
+    if (play && isDirty(props.user, props.puzzle.id)) {
+      writePlayToDB(props.user, props.puzzle.id).catch((e: unknown) => {
+        console.error('Failed to write play: ', e);
+      });
+    }
+  }, [play, props.user, props.puzzle.id]);
 
   if (error) {
     return (
