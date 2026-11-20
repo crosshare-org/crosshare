@@ -427,6 +427,9 @@ const NotificationLink = ({
         <Link
           className={styles.notificationLinkInner}
           href={`/crosswords/${n.p}/${slugify(n.pn)}`}
+          onClick={logAsyncErrors(async () => {
+            await updateDoc(getDocRef('n', n.id), { r: true });
+          })}
         >
           <FaRegGrinStars className="marginRight0-5em" /> Crosshare is featuring
           your puzzle <u>{n.pn}</u>
