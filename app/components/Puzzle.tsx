@@ -56,7 +56,10 @@ import {
   usePersistedBoolean,
 } from '../lib/hooks.js';
 import { removeSpoilers } from '../lib/markdown/markdown.js';
-import { isNewPuzzleNotification } from '../lib/notificationTypes.js';
+import {
+  isFeaturedNotification,
+  isNewPuzzleNotification,
+} from '../lib/notificationTypes.js';
 import { cachePlay, isDirty, writePlayToDB } from '../lib/plays.js';
 import { PuzzlePageResultProps } from '../lib/serverOnly.js';
 import { SMALL_AND_UP_RULES } from '../lib/style.js';
@@ -335,7 +338,10 @@ export const Puzzle = ({
         // shouldn't be possible but be defensive
         continue;
       }
-      if (!isNewPuzzleNotification(notification)) {
+      if (
+        !isNewPuzzleNotification(notification) &&
+        !isFeaturedNotification(notification)
+      ) {
         continue;
       }
       if (notification.p === puzzle.id) {
