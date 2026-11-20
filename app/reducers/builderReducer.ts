@@ -1133,7 +1133,7 @@ function _builderReducer(
   if (isUndoAction(action)) {
     const undoIndex = Math.max(state.undoIndex - 1, 0);
     const grid = state.undoHistory[undoIndex];
-    return grid == null ? state : { ...state, grid, undoIndex };
+    return grid == null ? state : validateGrid({ ...state, grid, undoIndex });
   }
   if (isRedoAction(action)) {
     const undoIndex = Math.min(
@@ -1141,7 +1141,7 @@ function _builderReducer(
       state.undoHistory.length - 1
     );
     const grid = state.undoHistory[undoIndex];
-    return grid == null ? state : { ...state, grid, undoIndex };
+    return grid == null ? state : validateGrid({ ...state, grid, undoIndex });
   }
 
   if (isClearFillAction(action)) {
