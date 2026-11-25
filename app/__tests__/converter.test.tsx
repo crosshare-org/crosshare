@@ -135,7 +135,11 @@ async function loadIpuz(name: string) {
   return importFile(ipuz);
 }
 
-const IPUZ_CASES = [{ name: 'spec-example' }, { name: 'barred-example' }];
+const IPUZ_CASES = [
+  { name: 'spec-example' },
+  { name: 'barred-example' },
+  { name: 'styled-example' },
+];
 
 test('test error on ipuz copyright', () => {
   const ipuz = new TextEncoder().encode(
@@ -205,6 +209,45 @@ test('test .ipuz import barred-example', async () => {
     },
     vBars: [0],
   });
+});
+
+test('test .ipuz import styled-example', async () => {
+  const loaded = await loadIpuz('styled-example');
+  // highlight is shade; a hex color is that highlight color; palette
+  // numbers have no Crosshare equivalent
+  expect(loaded?.cellStyles).toEqual({
+    shade: [0, 5],
+    circle: [1],
+    '#eb984e': [3, 5],
+  });
+});
+
+test('test ipuz export writes shade and highlight colors', () => {
+  const ipuz = JSON.parse(
+    new TextDecoder().decode(
+      exportIpuz(
+        toDBPuzzle({
+          width: 2,
+          height: 2,
+          grid: ['A', 'B', 'C', 'D'],
+          title: 'Styles',
+          notes: null,
+          clues: { AB: ['ab'], CD: ['cd'], AC: ['ac'], BD: ['bd'] },
+          cellStyles: { shade: [0, 3], '#3498db': [1, 3], circle: [2] },
+        })
+      )
+    )
+  ) as { puzzle: unknown[][] };
+  expect(ipuz.puzzle).toEqual([
+    [
+      { cell: 1, style: { highlight: true } },
+      { cell: 2, style: { color: '3498db' } },
+    ],
+    [
+      { cell: 3, style: { shapebg: 'circle' } },
+      { cell: 0, style: { highlight: true, color: '3498db' } },
+    ],
+  ]);
 });
 
 function tinyIpuz(overrides: Record<string, unknown> = {}) {
