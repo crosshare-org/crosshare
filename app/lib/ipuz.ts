@@ -466,8 +466,7 @@ export function importIpuzText(text: string): PuzzleInProgressStrictT {
 
   const parsedClues = parseClues(parsed.clues);
   const diagonals = parsedClues.some(
-    (c) =>
-      c.dir === Direction.Diagonal || c.dir === Direction.DiagonalDownLeft
+    (c) => c.dir === Direction.Diagonal || c.dir === Direction.DiagonalDownLeft
   );
 
   const viewableGrid = fromCells({
@@ -653,11 +652,14 @@ export function exportIpuz(puzzle: IpuzExportable): string {
     Down: clueEntries(puzzle.dn, puzzle.dc),
   };
   if (puzzle.dg) {
-    const diagonalGroups: [Direction, string[] | undefined, number[] | undefined][] =
-      [
-        [Direction.Diagonal, puzzle.dac, puzzle.dan],
-        [Direction.DiagonalDownLeft, puzzle.dlc, puzzle.dln],
-      ];
+    const diagonalGroups: [
+      Direction,
+      string[] | undefined,
+      number[] | undefined,
+    ][] = [
+      [Direction.Diagonal, puzzle.dac, puzzle.dan],
+      [Direction.DiagonalDownLeft, puzzle.dlc, puzzle.dln],
+    ];
     for (const [dir, texts, nums] of diagonalGroups) {
       if (texts?.length && nums?.length) {
         clues[ipuzDirectionKey(dir)] = clueEntries(nums, texts);

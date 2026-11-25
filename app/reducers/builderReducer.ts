@@ -1083,8 +1083,7 @@ function _builderReducer(
           return true;
         }
         return !crosses.some(
-          (c) =>
-            c.entryIndex !== null && cluedEntryIndexes.has(c.entryIndex)
+          (c) => c.entryIndex !== null && cluedEntryIndexes.has(c.entryIndex)
         );
       });
       if (hasUncluedLetters) {

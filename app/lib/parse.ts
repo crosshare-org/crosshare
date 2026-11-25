@@ -29,11 +29,7 @@ function directionFromMatch(dirString: string): Direction {
   ) {
     return Direction.Diagonal;
   }
-  if (
-    d === '↙' ||
-    d === 'ddl' ||
-    d === 'diagonal down left'
-  ) {
+  if (d === '↙' || d === 'ddl' || d === 'diagonal down left') {
     return Direction.DiagonalDownLeft;
   }
   // down / downs / d

@@ -213,9 +213,7 @@ const GridToolsSection = ({
         <Trans>Grid Tools</Trans>
       </TopBarDropdownSectionHeader>
       <TopBarDropDownLink
-        icon={
-          builderState.diagonals ? <FaRegCheckCircle /> : <FaRegCircle />
-        }
+        icon={builderState.diagonals ? <FaRegCheckCircle /> : <FaRegCircle />}
         text={
           builderState.diagonals
             ? 'Disable Diagonal Clues'

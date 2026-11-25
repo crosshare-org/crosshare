@@ -69,10 +69,7 @@ function layoutPDFClues(
         : [
             { label: '', clue: '' },
             {
-              label:
-                dir === Direction.Down
-                  ? 'DOWN'
-                  : directionLabel(dir),
+              label: dir === Direction.Down ? 'DOWN' : directionLabel(dir),
               clue: '',
             },
           ];

@@ -25,11 +25,7 @@ import {
   logAsyncErrors,
   timeString,
 } from '../lib/utils.js';
-import {
-  fromCells,
-  getClueMap,
-  getCluedEntries,
-} from '../lib/viewableGrid.js';
+import { fromCells, getClueMap, getCluedEntries } from '../lib/viewableGrid.js';
 import {
   BuilderState,
   builderReducer,
