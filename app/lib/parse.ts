@@ -8,7 +8,37 @@ export interface ClueReferenceData {
 }
 
 const re =
-  /(^|\s|\/|\()(?<numSection>(,? ?(and|or)? ?\b\d{1,3}-? ?){1,7})(?<dir>a(cross(es)?)?|d(owns?)?)\b/gi;
+  /(^|\s|\/|\()(?<numSection>(,? ?(and|or)? ?\b\d{1,3}-? ?){1,7})(?<dir>[↘↙][\uFE0E\uFE0F]?|a(cross(es)?)?\b|diagonal(\s+down(\s+right|\s+left)?)?\b|ddl\b|dg\b|d(owns?)?\b)/gi;
+
+function directionFromMatch(dirString: string): Direction {
+  // Strip emoji/text variation selectors so ↘, ↘︎, and ↘️ all match.
+  const d = dirString
+    .toLowerCase()
+    .replace(/[\uFE0E\uFE0F]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (d.startsWith('a')) {
+    return Direction.Across;
+  }
+  if (
+    d === '↘' ||
+    d === 'dg' ||
+    d === 'diagonal' ||
+    d === 'diagonal down' ||
+    d === 'diagonal down right'
+  ) {
+    return Direction.Diagonal;
+  }
+  if (
+    d === '↙' ||
+    d === 'ddl' ||
+    d === 'diagonal down left'
+  ) {
+    return Direction.DiagonalDownLeft;
+  }
+  // down / downs / d
+  return Direction.Down;
+}
 
 export const parseClueReferences = (text: string): ClueReferenceData[] => {
   const refs: ClueReferenceData[] = [];
@@ -17,13 +47,11 @@ export const parseClueReferences = (text: string): ClueReferenceData[] => {
 
   while ((match = re.exec(text)) !== null) {
     const preLength = match[1]?.length ?? 0;
-    const dirString = match.groups?.dir?.toLowerCase();
+    const dirString = match.groups?.dir;
     if (!dirString) {
       throw new Error('missing dir string');
     }
-    const direction = dirString.startsWith('a')
-      ? Direction.Across
-      : Direction.Down;
+    const direction = directionFromMatch(dirString);
     const numSection = match.groups?.numSection;
     if (!numSection) {
       throw new Error('missing numSection');

@@ -40,6 +40,7 @@ import { COVER_PIC } from '../../lib/style.js';
 import { withTranslation } from '../../lib/translation.js';
 import {
   Direction,
+  directionString,
   ONE_WEEK,
   PuzzleResult,
   puzzleFromDB,
@@ -139,12 +140,24 @@ export const PuzzleLoader = ({
   return <PuzzleEditor key={puzzleId} puzzle={nicePuzzle} dbPuzzle={puzzle} />;
 };
 
+const clueFieldForDirection = (
+  dir: Direction
+): { texts: keyof DBPuzzleT; nums: keyof DBPuzzleT } => {
+  switch (dir) {
+    case Direction.Across:
+      return { texts: 'ac', nums: 'an' };
+    case Direction.Down:
+      return { texts: 'dc', nums: 'dn' };
+    case Direction.Diagonal:
+      return { texts: 'dac', nums: 'dan' };
+    case Direction.DiagonalDownLeft:
+      return { texts: 'dlc', nums: 'dln' };
+  }
+};
+
 const ClueRow = (props: {
   puzzleId: string;
-  ac: string[];
-  an: number[];
-  dc: string[];
-  dn: number[];
+  dbPuzzle: DBPuzzleT;
   entry: CluedEntry;
 }) => {
   const [editing, setEditing] = useState(false);
@@ -163,26 +176,17 @@ const ClueRow = (props: {
       return;
     }
     setSubmitting(true);
-    let update: Record<string, string[]>;
-    if (props.entry.direction === Direction.Across) {
-      update = {
-        ac: props.ac.map((v, i) => {
-          if (props.an[i] === props.entry.labelNumber) {
-            return toSubmit;
-          }
-          return v;
-        }),
-      };
-    } else {
-      update = {
-        dc: props.dc.map((v, i) => {
-          if (props.dn[i] === props.entry.labelNumber) {
-            return toSubmit;
-          }
-          return v;
-        }),
-      };
-    }
+    const { texts, nums } = clueFieldForDirection(props.entry.direction);
+    const textArr = (props.dbPuzzle[texts] as string[] | undefined) ?? [];
+    const numArr = (props.dbPuzzle[nums] as number[] | undefined) ?? [];
+    const update: Record<string, string[]> = {
+      [texts]: textArr.map((v, i) => {
+        if (numArr[i] === props.entry.labelNumber) {
+          return toSubmit;
+        }
+        return v;
+      }),
+    };
     await updateDoc(getDocRef('c', props.puzzleId), update).then(() => {
       setSubmitting(false);
       setEditing(false);
@@ -193,7 +197,7 @@ const ClueRow = (props: {
     <tr>
       <td className={styles.label}>
         {props.entry.labelNumber}
-        {props.entry.direction === Direction.Down ? 'D' : 'A'}
+        {directionString(props.entry.direction)}
       </td>
       <td className={styles.label}>
         <label className="marginBottom0" htmlFor={word + '-input'}>
@@ -284,6 +288,7 @@ const PuzzleEditor = ({
         vBars: new Set(puzzle.vBars),
         hBars: new Set(puzzle.hBars),
         hidden: new Set(puzzle.hidden),
+        diagonals: puzzle.diagonals,
       }),
       puzzle.clues,
       (c: string) => markdownToHast({ text: c, inline: true })
@@ -300,10 +305,7 @@ const PuzzleEditor = ({
         puzzleId={puzzle.id}
         key={e.completedWord ?? ''}
         entry={e}
-        ac={dbPuzzle.ac}
-        an={dbPuzzle.an}
-        dc={dbPuzzle.dc}
-        dn={dbPuzzle.dn}
+        dbPuzzle={dbPuzzle}
       />
     ));
   const [settingCoverPic, setSettingCoverPic] = useState(false);

@@ -34,6 +34,7 @@ import {
   ClearHighlightAction,
   ImportPuzAction,
   PublishAction,
+  SetDiagonalsAction,
   SetShowDownloadLink,
   SymmetryAction,
   ToggleHighlightAction,
@@ -194,7 +195,7 @@ interface GridToolsSectionProps {
   dispatch: React.Dispatch<PuzzleAction>;
   setPickingHighlightColor: (val: boolean) => void;
   usedHighlightColors: string[];
-  builderState: Pick<BuilderState, 'symmetry'> & {
+  builderState: Pick<BuilderState, 'symmetry' | 'diagonals'> & {
     gridWidth: BuilderState['grid']['width'];
     gridHeight: BuilderState['grid']['height'];
   };
@@ -211,6 +212,23 @@ const GridToolsSection = ({
       <TopBarDropdownSectionHeader>
         <Trans>Grid Tools</Trans>
       </TopBarDropdownSectionHeader>
+      <TopBarDropDownLink
+        icon={
+          builderState.diagonals ? <FaRegCheckCircle /> : <FaRegCircle />
+        }
+        text={
+          builderState.diagonals
+            ? 'Disable Diagonal Clues'
+            : 'Enable Diagonal Clues'
+        }
+        onClick={() => {
+          const a: SetDiagonalsAction = {
+            type: 'SETDIAGONALS',
+            diagonals: !builderState.diagonals,
+          };
+          dispatch(a);
+        }}
+      />
       <NestedDropDown
         closeParent={closeDropdown}
         icon={<SymmetryIcon type={builderState.symmetry} />}
@@ -562,7 +580,7 @@ const AccountSection = ({ isAdmin }: AccountSectionProps) => {
 interface TopBarMoreDropdownProps {
   builderState: Pick<
     BuilderState,
-    'symmetry' | 'gridIsComplete' | 'hasNoShortWords' | 'repeats'
+    'symmetry' | 'diagonals' | 'gridIsComplete' | 'hasNoShortWords' | 'repeats'
   > & {
     gridWidth: BuilderState['grid']['width'];
     gridHeight: BuilderState['grid']['height'];
@@ -640,7 +658,7 @@ interface TopBarChildrenProps {
   setClueMode: (val: boolean) => void;
   builderState: Pick<
     BuilderState,
-    'symmetry' | 'gridIsComplete' | 'hasNoShortWords' | 'repeats'
+    'symmetry' | 'diagonals' | 'gridIsComplete' | 'hasNoShortWords' | 'repeats'
   > & {
     gridWidth: BuilderState['grid']['width'];
     gridHeight: BuilderState['grid']['height'];

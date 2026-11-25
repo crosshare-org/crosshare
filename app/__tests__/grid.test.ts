@@ -1,5 +1,6 @@
-import { entriesFromCells } from '../lib/gridBase.js';
+import { entriesFromCells, nextDirectionAtPosition } from '../lib/gridBase.js';
 import { markdownToHast } from '../lib/markdown/markdown.js';
+import { Direction } from '../lib/types.js';
 import {
   CluedGrid,
   addClues,
@@ -7,6 +8,61 @@ import {
   getEntryToClueMap,
   getRefs,
 } from '../lib/viewableGrid.js';
+
+test('test entriesFromCells with diagonals', () => {
+  const [entries] = entriesFromCells(
+    2,
+    2,
+    ['A', 'B', 'C', 'D'],
+    new Set(),
+    new Set(),
+    true
+  );
+  const word = (dir: Direction) =>
+    entries
+      .filter((e) => e.direction === dir)
+      .map((e) => e.completedWord)
+      .sort();
+  expect(word(Direction.Across)).toEqual(['AB', 'CD']);
+  expect(word(Direction.Down)).toEqual(['AC', 'BD']);
+  expect(word(Direction.Diagonal)).toEqual(['AD']);
+  expect(word(Direction.DiagonalDownLeft)).toEqual(['BC']);
+});
+
+test('test nextDirectionAtPosition cycles including diagonals', () => {
+  const grid = fromCells({
+    width: 2,
+    height: 2,
+    cells: ['A', 'B', 'C', 'D'],
+    allowBlockEditing: false,
+    hidden: new Set<number>(),
+    vBars: new Set<number>(),
+    hBars: new Set<number>(),
+    mapper: (x) => x,
+    cellStyles: new Map(),
+    diagonals: true,
+  });
+  const pos = { row: 0, col: 0 };
+  expect(nextDirectionAtPosition(grid, pos, Direction.Across)).toBe(
+    Direction.Down
+  );
+  expect(nextDirectionAtPosition(grid, pos, Direction.Down)).toBe(
+    Direction.Diagonal
+  );
+  expect(nextDirectionAtPosition(grid, pos, Direction.Diagonal)).toBe(
+    Direction.Across
+  );
+  const posB = { row: 0, col: 1 };
+  expect(nextDirectionAtPosition(grid, posB, Direction.Across)).toBe(
+    Direction.Down
+  );
+  expect(nextDirectionAtPosition(grid, posB, Direction.Down)).toBe(
+    Direction.DiagonalDownLeft
+  );
+  expect(nextDirectionAtPosition(grid, posB, Direction.DiagonalDownLeft)).toBe(
+    Direction.Across
+  );
+});
 
 test('test entriesFromCells', () => {
   expect(entriesFromCells(2, 2, ['A', 'B', 'C', 'D'], new Set(), new Set()))
@@ -90,6 +146,16 @@ test('test entriesFromCells', () => {
             "entryIndex": 1,
             "wordIndex": 0,
           },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
+          },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
+          },
         ],
         [
           {
@@ -100,6 +166,16 @@ test('test entriesFromCells', () => {
           {
             "cellIndex": 0,
             "entryIndex": 2,
+            "wordIndex": 0,
+          },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
+          },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
             "wordIndex": 0,
           },
         ],
@@ -114,6 +190,16 @@ test('test entriesFromCells', () => {
             "entryIndex": 1,
             "wordIndex": 1,
           },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
+          },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
+          },
         ],
         [
           {
@@ -125,6 +211,16 @@ test('test entriesFromCells', () => {
             "cellIndex": 1,
             "entryIndex": 2,
             "wordIndex": 1,
+          },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
+          },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
           },
         ],
       ],
@@ -181,8 +277,28 @@ test('test entriesFromCells', () => {
             "entryIndex": 0,
             "wordIndex": 0,
           },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
+          },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
+          },
         ],
         [
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
+          },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
+          },
           {
             "cellIndex": 0,
             "entryIndex": null,
@@ -205,12 +321,32 @@ test('test entriesFromCells', () => {
             "entryIndex": 0,
             "wordIndex": 1,
           },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
+          },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
+          },
         ],
         [
           {
             "cellIndex": 1,
             "entryIndex": 1,
             "wordIndex": 1,
+          },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
+          },
+          {
+            "cellIndex": 0,
+            "entryIndex": null,
+            "wordIndex": 0,
           },
           {
             "cellIndex": 0,

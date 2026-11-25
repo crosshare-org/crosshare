@@ -3,6 +3,7 @@ import {
   clampInBounds,
   entryAtPosition,
   isInBounds,
+  nextDirectionAtPosition,
   valAt,
 } from '../lib/gridBase.js';
 import { forEachPosition, getSelectionCells } from '../lib/selection.js';
@@ -202,7 +203,11 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
       wasEntryClick: false,
       active: {
         ...state.active,
-        dir: (state.active.dir + 1) % 2,
+        dir: nextDirectionAtPosition(
+          state.grid,
+          state.active,
+          state.active.dir
+        ),
       },
     };
   }
@@ -383,7 +388,11 @@ export function gridInterfaceReducer<T extends GridInterfaceState>(
         wasEntryClick: false,
         active: {
           ...state.active,
-          dir: (state.active.dir + 1) % 2,
+          dir: nextDirectionAtPosition(
+            state.grid,
+            state.active,
+            state.active.dir
+          ),
         },
       };
     } else if (key.k === KeyK.Prev) {

@@ -2,8 +2,10 @@ import { jsPDF } from 'jspdf';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getPuzzle, userIdToPage } from '../../../lib/serverOnly.js';
 import {
+  ALL_DIRECTIONS,
   Direction,
   PuzzleT,
+  directionLabel,
   getClueText,
   puzzleFromDB,
 } from '../../../lib/types.js';
@@ -24,20 +26,6 @@ function layoutPDFClues(
   const clued = addClues(grid, puzzle.clues, (_c) => {
     return { type: 'root', children: [] };
   });
-  const acrossEntries = clued.entries.filter(
-    (e) => e.direction === Direction.Across
-  );
-  const acrossClues = acrossEntries.map((e) => ({
-    label: e.labelNumber.toString(),
-    clue: getClueText(e),
-  }));
-  const downEntries = clued.entries.filter(
-    (e) => e.direction === Direction.Down
-  );
-  const downClues = downEntries.map((e) => ({
-    label: e.labelNumber.toString(),
-    clue: getClueText(e),
-  }));
   function marginTop(x: number, addedPage: boolean) {
     if (
       addedPage ||
@@ -69,16 +57,31 @@ function layoutPDFClues(
       { label: '', clue: '' }
     );
   }
-  const acrossTitle = [{ label: 'ACROSS', clue: '' }];
-  const downTitle = [
-    { label: '', clue: '' },
-    { label: 'DOWN', clue: '' },
-  ];
-  const allClues = constructorNote
-    .concat(acrossTitle)
-    .concat(acrossClues)
-    .concat(downTitle)
-    .concat(downClues);
+  let allClues = constructorNote;
+  for (const dir of ALL_DIRECTIONS) {
+    const dirEntries = clued.entries.filter((e) => e.direction === dir);
+    if (dirEntries.length === 0) {
+      continue;
+    }
+    const title =
+      dir === Direction.Across
+        ? [{ label: 'ACROSS', clue: '' }]
+        : [
+            { label: '', clue: '' },
+            {
+              label:
+                dir === Direction.Down
+                  ? 'DOWN'
+                  : directionLabel(dir),
+              clue: '',
+            },
+          ];
+    const dirClues = dirEntries.map((e) => ({
+      label: e.labelNumber.toString(),
+      clue: getClueText(e),
+    }));
+    allClues = allClues.concat(title).concat(dirClues);
+  }
   for (const [idx, clue] of allClues.entries()) {
     // Position clue on page
     const width = clue.label
@@ -316,6 +319,7 @@ function getPdf(
     vBars: new Set(puzzle.vBars),
     hBars: new Set(puzzle.hBars),
     hidden: new Set(puzzle.hidden),
+    diagonals: puzzle.diagonals,
   });
 
   const pdf = new jsPDF('p', 'pt');

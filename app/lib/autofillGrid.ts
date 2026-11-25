@@ -240,5 +240,6 @@ export function fromTemplate(
     entries,
     vBars,
     hBars,
+    diagonals: false,
   };
 }

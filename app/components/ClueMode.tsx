@@ -221,7 +221,14 @@ export const ClueMode = ({ state, ...props }: ClueModeProps) => {
       clueProps.ac,
       clueProps.an,
       clueProps.dc,
-      clueProps.dn
+      clueProps.dn,
+      undefined,
+      {
+        dac: clueProps.dac,
+        dan: clueProps.dan,
+        dlc: clueProps.dlc,
+        dln: clueProps.dln,
+      }
     );
     return addClues(state.grid, clueArray, (c: string) =>
       markdownToHast({ text: c })

@@ -26,6 +26,13 @@ export default async function puz(req: NextApiRequest, res: NextApiResponse) {
     });
     return;
   }
+  if (puzzle.dg) {
+    res.status(400).json({
+      statusCode: 400,
+      message: '.puz is currently unsupported for diagonal clues',
+    });
+    return;
+  }
   res.setHeader('X-Robots-Tag', 'noindex');
   res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600');
   res.setHeader(

@@ -130,10 +130,10 @@ export function getWarningStats(state: BuilderState) {
   const enumsExpected = missingEnums.size < numValidClues / 2;
 
   const hasIsolatedCells = grid.entriesByCell.some(
-    ([across, down], index) =>
+    (crosses, index) =>
       grid.cells[index] !== BLOCK &&
-      across.entryIndex === null &&
-      down.entryIndex === null
+      crosses[0]?.entryIndex === null &&
+      crosses[1]?.entryIndex === null
   );
 
   return {
