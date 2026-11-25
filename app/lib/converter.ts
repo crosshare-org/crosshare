@@ -274,6 +274,13 @@ export type ExportProps = Pick<
   | 'vb'
   /** horizontal bars */
   | 'hb'
+  /** diagonals enabled */
+  | 'dg'
+  /** diagonal clue arrays */
+  | 'dac'
+  | 'dan'
+  | 'dlc'
+  | 'dln'
 >;
 
 class PuzWriter {

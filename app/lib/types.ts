@@ -72,10 +72,100 @@ export enum PrefillSquares {
 export enum Direction {
   Across,
   Down,
+  /** Top-left to bottom-right (↘) */
+  Diagonal,
+  /** Top-right to bottom-left (↙) */
+  DiagonalDownLeft,
 }
 
+/** Number of Direction enum values. */
+export const DIRECTION_COUNT = 4;
+
+export const ORTHOGONAL_DIRECTIONS: Direction[] = [
+  Direction.Across,
+  Direction.Down,
+];
+
+export const DIAGONAL_DIRECTIONS: Direction[] = [
+  Direction.Diagonal,
+  Direction.DiagonalDownLeft,
+];
+
+export const ALL_DIRECTIONS: Direction[] = [
+  ...ORTHOGONAL_DIRECTIONS,
+  ...DIAGONAL_DIRECTIONS,
+];
+
+export function enabledDirections(diagonals: boolean): Direction[] {
+  return diagonals ? ALL_DIRECTIONS : ORTHOGONAL_DIRECTIONS;
+}
+
+export function isDiagonalDirection(dir: Direction): boolean {
+  return dir >= Direction.Diagonal;
+}
+
+/**
+ * Diagonal arrows with text presentation (VS15 / U+FE0E) so platforms that
+ * otherwise swap them for emoji glyphs keep a consistent text style.
+ */
+const ARROW_SE = '\u2198\uFE0E'; // ↘
+const ARROW_SW = '\u2199\uFE0E'; // ↙
+
 export function directionString(dir: Direction): string {
-  return dir === Direction.Across ? 'A' : 'D';
+  switch (dir) {
+    case Direction.Across:
+      return 'A';
+    case Direction.Down:
+      return 'D';
+    case Direction.Diagonal:
+      return ARROW_SE;
+    case Direction.DiagonalDownLeft:
+      return ARROW_SW;
+  }
+}
+
+/** Display name for clue list headers. */
+export function directionLabel(dir: Direction): string {
+  switch (dir) {
+    case Direction.Across:
+      return 'Across';
+    case Direction.Down:
+      return 'Down';
+    case Direction.Diagonal:
+      return ARROW_SE;
+    case Direction.DiagonalDownLeft:
+      return ARROW_SW;
+  }
+}
+
+/** ipuz Direction keys (format-stable; not for UI). */
+export function ipuzDirectionKey(dir: Direction): string {
+  switch (dir) {
+    case Direction.Across:
+      return 'Across';
+    case Direction.Down:
+      return 'Down';
+    case Direction.Diagonal:
+      return 'Diagonal';
+    case Direction.DiagonalDownLeft:
+      return 'Diagonal Down Left';
+  }
+}
+
+export function directionIncrement(dir: Direction): {
+  row: number;
+  col: number;
+} {
+  switch (dir) {
+    case Direction.Across:
+      return { row: 0, col: 1 };
+    case Direction.Down:
+      return { row: 1, col: 0 };
+    case Direction.Diagonal:
+      return { row: 1, col: 1 };
+    case Direction.DiagonalDownLeft:
+      return { row: 1, col: -1 };
+  }
 }
 
 export interface WorkerMessage {
@@ -141,7 +231,7 @@ export function isSamePosition(a: Position, b: Position): boolean {
 
 export interface ClueT {
   num: number;
-  dir: 0 | 1;
+  dir: Direction;
   clue: string;
   explanation: string | null;
 }
@@ -215,6 +305,8 @@ export interface PuzzleT {
   forcedTags?: string[];
   likes: string[];
   packId: string | null;
+  /** When true, puzzle includes diagonal entries/clues. */
+  diagonals: boolean;
 }
 
 export interface PuzzleResult extends PuzzleT {
@@ -242,40 +334,52 @@ export interface PuzzleResultWithAugmentedComments extends ServerPuzzleResult {
   comments: Comment[];
 }
 
+export interface DiagonalClueArrays {
+  dac?: string[];
+  dan?: number[];
+  dlc?: string[];
+  dln?: number[];
+}
+
 export function dbCluesToClueTArray(
   ac: string[],
   an: number[],
   dc: string[],
   dn: number[],
-  cx?: Record<number, string>
+  cx?: Record<number, string>,
+  diagonals?: DiagonalClueArrays
 ): ClueT[] {
   const clues: ClueT[] = [];
-  for (const [i, clue] of ac.entries()) {
-    const explanation = cx?.[i] || null;
-    const num = an[i];
-    if (num === undefined) {
-      throw new Error('oob');
+  let offset = 0;
+
+  function pushDir(
+    dir: Direction,
+    texts: string[] | undefined,
+    nums: number[] | undefined
+  ) {
+    if (!texts || !nums) {
+      return;
     }
-    clues.push({
-      dir: Direction.Across,
-      clue,
-      num,
-      explanation,
-    });
-  }
-  for (const [i, clue] of dc.entries()) {
-    const explanation = cx?.[i + ac.length] || null;
-    const num = dn[i];
-    if (num === undefined) {
-      throw new Error('oob');
+    for (const [i, clue] of texts.entries()) {
+      const explanation = cx?.[offset + i] || null;
+      const num = nums[i];
+      if (num === undefined) {
+        throw new Error('oob');
+      }
+      clues.push({
+        dir,
+        clue,
+        num,
+        explanation,
+      });
     }
-    clues.push({
-      dir: Direction.Down,
-      clue,
-      num,
-      explanation,
-    });
+    offset += texts.length;
   }
+
+  pushDir(Direction.Across, ac, an);
+  pushDir(Direction.Down, dc, dn);
+  pushDir(Direction.Diagonal, diagonals?.dac, diagonals?.dan);
+  pushDir(Direction.DiagonalDownLeft, diagonals?.dlc, diagonals?.dln);
   return clues;
 }
 
@@ -289,7 +393,13 @@ export function puzzleFromDB(
     dbPuzzle.an,
     dbPuzzle.dc,
     dbPuzzle.dn,
-    dbPuzzle.cx
+    dbPuzzle.cx,
+    {
+      dac: dbPuzzle.dac,
+      dan: dbPuzzle.dan,
+      dlc: dbPuzzle.dlc,
+      dln: dbPuzzle.dln,
+    }
   );
 
   let contestAnswers: string[] = [];
@@ -367,6 +477,7 @@ export function puzzleFromDB(
     forcedTags: dbPuzzle.tg_f || [],
     likes: dbPuzzle.lk || [],
     packId: dbPuzzle.pk || null,
+    diagonals: dbPuzzle.dg === true,
   };
 }
 
@@ -395,6 +506,7 @@ const PuzzleInProgressBaseV = t.intersection([
     userTags: t.array(t.string),
     commentsDisabled: t.boolean,
     symmetry: fromEnum('Symmetry', Symmetry),
+    diagonals: t.boolean,
   }),
 ]);
 

@@ -2,8 +2,12 @@ import {
   ALLOWABLE_GRID_CHARS,
   BLOCK,
   ClueT,
+  Direction,
   EMPTY,
   PuzzleInProgressStrictT,
+  directionIncrement,
+  enabledDirections,
+  ipuzDirectionKey,
 } from './types.js';
 import { fromCells, getClueMap } from './viewableGrid.js';
 
@@ -23,6 +27,11 @@ export interface IpuzExportable {
   hdn?: number[];
   vb?: number[];
   hb?: number[];
+  dg?: boolean;
+  dac?: string[];
+  dan?: number[];
+  dlc?: string[];
+  dln?: number[];
 }
 
 const MIN_DIM = 2;
@@ -289,13 +298,20 @@ function requireGrid(
   });
 }
 
-function clueDirection(key: string): 0 | 1 | null {
-  const normalized = key.toLowerCase();
-  if (normalized === 'across' || normalized === 'a' || normalized === '0') {
-    return 0;
+function clueDirection(key: string): Direction | null {
+  // ipuz allows "Direction:Label" display overrides
+  const base = key.split(':')[0]?.trim().toLowerCase() ?? '';
+  if (base === 'across' || base === 'a' || base === '0') {
+    return Direction.Across;
   }
-  if (normalized === 'down' || normalized === 'd' || normalized === '1') {
-    return 1;
+  if (base === 'down' || base === 'd' || base === '1') {
+    return Direction.Down;
+  }
+  if (base === 'diagonal') {
+    return Direction.Diagonal;
+  }
+  if (base === 'diagonal down left') {
+    return Direction.DiagonalDownLeft;
   }
   return null;
 }
@@ -448,6 +464,11 @@ export function importIpuzText(text: string): PuzzleInProgressStrictT {
     }
   }
 
+  const parsedClues = parseClues(parsed.clues);
+  const diagonals = parsedClues.some(
+    (c) => c.dir === Direction.Diagonal || c.dir === Direction.DiagonalDownLeft
+  );
+
   const viewableGrid = fromCells({
     cells: grid,
     width,
@@ -458,6 +479,7 @@ export function importIpuzText(text: string): PuzzleInProgressStrictT {
     vBars: new Set(vBars),
     hBars: new Set(hBars),
     mapper: (e) => e,
+    diagonals,
   });
 
   const notes =
@@ -471,7 +493,8 @@ export function importIpuzText(text: string): PuzzleInProgressStrictT {
     grid,
     title: optionalString(parsed.title),
     notes,
-    clues: getClueMap(viewableGrid, parseClues(parsed.clues)),
+    clues: getClueMap(viewableGrid, parsedClues),
+    ...(diagonals && { diagonals: true }),
     ...(circled.length && { cellStyles: { circle: circled } }),
     ...(hidden.length && { hidden }),
     ...(vBars.length && { vBars: [...new Set(vBars)] }),
@@ -492,12 +515,17 @@ function clueEntries(
 function startNumberMap(puzzle: IpuzExportable): Map<number, number> {
   const starts = new Map<number, number>();
   const width = puzzle.w;
+  const height = puzzle.h;
   const grid = puzzle.g;
   const vBars = new Set(puzzle.vb ?? []);
   const hBars = new Set(puzzle.hb ?? []);
+  const diagonals = puzzle.dg === true;
 
   const isBlock = (i: number | undefined) =>
     i === undefined || grid[i] === BLOCK;
+
+  const inBounds = (row: number, col: number) =>
+    row >= 0 && row < height && col >= 0 && col < width;
 
   for (let i = 0; i < grid.length; i++) {
     if (isBlock(i)) {
@@ -505,18 +533,28 @@ function startNumberMap(puzzle: IpuzExportable): Map<number, number> {
     }
     const col = i % width;
     const row = Math.floor(i / width);
-    const startsAcross =
-      (col === 0 || isBlock(i - 1) || vBars.has(i - 1)) &&
-      col + 1 < width &&
-      !isBlock(i + 1) &&
-      !vBars.has(i);
-    const startsDown =
-      (row === 0 || isBlock(i - width) || hBars.has(i - width)) &&
-      row + 1 < puzzle.h &&
-      !isBlock(i + width) &&
-      !hBars.has(i);
-    if (startsAcross || startsDown) {
-      starts.set(i, 0);
+    for (const dir of enabledDirections(diagonals)) {
+      const { row: yincr, col: xincr } = directionIncrement(dir);
+      const prevRow = row - yincr;
+      const prevCol = col - xincr;
+      const nextRow = row + yincr;
+      const nextCol = col + xincr;
+      const useBars = dir === Direction.Across || dir === Direction.Down;
+      const iBars = dir === Direction.Across ? vBars : hBars;
+      const prevId = prevRow * width + prevCol;
+      const nextId = nextRow * width + nextCol;
+      const prevIsStart =
+        !inBounds(prevRow, prevCol) ||
+        isBlock(prevId) ||
+        (useBars && iBars.has(prevId));
+      const nextIsOpen =
+        inBounds(nextRow, nextCol) &&
+        !isBlock(nextId) &&
+        !(useBars && iBars.has(i));
+      if (prevIsStart && nextIsOpen) {
+        starts.set(i, 0);
+        break;
+      }
     }
   }
 
@@ -609,6 +647,26 @@ export function exportIpuz(puzzle: IpuzExportable): string {
     note = `Published by ${puzzle.n} on crosshare.org`;
   }
 
+  const clues: Record<string, { number: number; clue: string }[]> = {
+    Across: clueEntries(puzzle.an, puzzle.ac),
+    Down: clueEntries(puzzle.dn, puzzle.dc),
+  };
+  if (puzzle.dg) {
+    const diagonalGroups: [
+      Direction,
+      string[] | undefined,
+      number[] | undefined,
+    ][] = [
+      [Direction.Diagonal, puzzle.dac, puzzle.dan],
+      [Direction.DiagonalDownLeft, puzzle.dlc, puzzle.dln],
+    ];
+    for (const [dir, texts, nums] of diagonalGroups) {
+      if (texts?.length && nums?.length) {
+        clues[ipuzDirectionKey(dir)] = clueEntries(nums, texts);
+      }
+    }
+  }
+
   const ipuz = {
     version: 'http://ipuz.org/v2',
     kind: ['http://ipuz.org/crossword#1'],
@@ -619,10 +677,7 @@ export function exportIpuz(puzzle: IpuzExportable): string {
     dimensions: { width, height },
     puzzle: puzzleRows,
     solution: solutionRows,
-    clues: {
-      Across: clueEntries(puzzle.an, puzzle.ac),
-      Down: clueEntries(puzzle.dn, puzzle.dc),
-    },
+    clues,
   };
 
   return `${JSON.stringify(ipuz, null, 2)}\n`;

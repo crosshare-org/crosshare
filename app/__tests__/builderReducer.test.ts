@@ -180,3 +180,31 @@ test('basic publish errors', () => {
     ]
   `);
 });
+
+test('publish allows unclued entries when every letter is covered', () => {
+  // Only Across clues; every letter is still covered by an Across entry.
+  const state = {
+    ...getState(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'], {
+      ABC: 'row 1',
+      DEF: 'row 2',
+      GHI: 'row 3',
+    }),
+    title: 'Partial clues',
+  };
+  const result = builderReducer(state, publish);
+  expect(result.publishErrors).toEqual([]);
+  expect(result.toPublish?.ac).toEqual(['row 1', 'row 2', 'row 3']);
+  expect(result.toPublish?.dc).toEqual([]);
+});
+
+test('publish errors when some letters are not clued', () => {
+  const state = {
+    ...getState(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'], {
+      ABC: 'only the top row',
+    }),
+    title: 'Missing coverage',
+  };
+  expect(builderReducer(state, publish).publishErrors).toContain(
+    'Some letters are not clued'
+  );
+});

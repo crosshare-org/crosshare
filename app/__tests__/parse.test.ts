@@ -110,6 +110,52 @@ test.each([
       },
     ],
   },
+  {
+    name: 'See 1-Diagonal and 2DG and 3-Diagonal Down Left',
+    result: [
+      {
+        direction: 2,
+        labelNumber: 1,
+        start: 4,
+        end: 14,
+      },
+      {
+        direction: 2,
+        labelNumber: 2,
+        start: 19,
+        end: 22,
+      },
+      {
+        direction: 3,
+        labelNumber: 3,
+        start: 27,
+        end: 47,
+      },
+    ],
+  },
+  {
+    name: 'Also 1↘ and 2-Diagonal Down Right and 3↙',
+    result: [
+      {
+        direction: 2,
+        labelNumber: 1,
+        start: 5,
+        end: 7,
+      },
+      {
+        direction: 2,
+        labelNumber: 2,
+        start: 12,
+        end: 33,
+      },
+      {
+        direction: 3,
+        labelNumber: 3,
+        start: 38,
+        end: 40,
+      },
+    ],
+  },
 ])('parseClueReferences', (opts) => {
   expect(parseClueReferences(opts.name)).toEqual(opts.result);
 });

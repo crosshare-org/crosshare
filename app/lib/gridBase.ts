@@ -1,4 +1,14 @@
-import { BLOCK, Direction, EMPTY, PosAndDir, Position } from './types.js';
+import {
+  ALL_DIRECTIONS,
+  BLOCK,
+  DIRECTION_COUNT,
+  Direction,
+  EMPTY,
+  PosAndDir,
+  Position,
+  directionIncrement,
+  enabledDirections,
+} from './types.js';
 
 export interface EntryBase {
   index: number;
@@ -11,40 +21,53 @@ export interface EntryWithPattern extends EntryBase {
   pattern: string;
 }
 
-interface Cross {
+export interface Cross {
   entryIndex: number | null; // Entry index
   cellIndex: number; // Position of the crossing in the entry.cells array
   wordIndex: number; // Position of the crossing in the resultant string (could be different due to rebus)
+}
+
+export type EntriesByCell = Cross[];
+
+export function emptyCross(): Cross {
+  return { entryIndex: null, wordIndex: 0, cellIndex: 0 };
+}
+
+export function emptyEntriesByCell(): EntriesByCell {
+  return ALL_DIRECTIONS.map(() => emptyCross());
 }
 
 export interface GridBase<Entry extends EntryBase> {
   width: number;
   height: number;
   cells: string[];
-  entriesByCell: [Cross, Cross][];
+  /** Per-cell array indexed by Direction; unused dirs have entryIndex null. */
+  entriesByCell: EntriesByCell[];
   entries: Entry[];
   vBars: Set<number>;
   hBars: Set<number>;
+  /** When true, diagonal entries are computed alongside Across/Down. */
+  diagonals: boolean;
 }
 
 export function hasUnches<Entry extends EntryBase>(
   grid: GridBase<Entry>
 ): boolean {
   for (const crosses of grid.entriesByCell) {
-    if (crosses[0].entryIndex !== null && crosses[1].entryIndex === null) {
+    if (crosses[0]?.entryIndex !== null && crosses[1]?.entryIndex === null) {
       return true;
     }
-    if (crosses[0].entryIndex === null && crosses[1].entryIndex !== null) {
+    if (crosses[0]?.entryIndex === null && crosses[1]?.entryIndex !== null) {
       return true;
     }
   }
   return false;
 }
 
-function entriesByCell<Entry extends EntryBase>(
+function entriesByCellAt<Entry extends EntryBase>(
   grid: GridBase<Entry>,
   pos: Position
-): [Cross, Cross] {
+): EntriesByCell {
   const entries = grid.entriesByCell[pos.row * grid.width + pos.col];
   if (entries === undefined) {
     throw new Error('out of bounds in entriesByCell');
@@ -53,9 +76,10 @@ function entriesByCell<Entry extends EntryBase>(
 }
 
 /**
- * Given an entry, get the crossing entries.
+ * Given an entry, get the crossing Across/Down entries.
  *
  * Returns an array of (entry index, letter idx w/in that entry) of crosses.
+ * Checking pair remains Across↔Down even when diagonals are enabled.
  */
 export function getCrosses<Entry extends EntryBase>(
   grid: GridBase<Entry>,
@@ -65,7 +89,11 @@ export function getCrosses<Entry extends EntryBase>(
     entry.direction === Direction.Across ? Direction.Down : Direction.Across;
   const crosses: Cross[] = [];
   entry.cells.forEach((cellIndex) => {
-    crosses.push(entriesByCell(grid, cellIndex)[crossDir]);
+    const cross = entriesByCellAt(grid, cellIndex)[crossDir];
+    if (cross === undefined) {
+      throw new Error('cross oob');
+    }
+    crosses.push(cross);
   });
   return crosses;
 }
@@ -142,6 +170,10 @@ export function isInDirection(posA: PosAndDir, posB: Position): boolean {
       return posA.row === posB.row;
     case Direction.Down:
       return posA.col === posB.col;
+    case Direction.Diagonal:
+      return posA.row - posA.col === posB.row - posB.col;
+    case Direction.DiagonalDownLeft:
+      return posA.row + posA.col === posB.row + posB.col;
   }
 }
 
@@ -160,8 +192,11 @@ export function entryIndexAtPosition<Entry extends EntryBase>(
   grid: GridBase<Entry>,
   pos: PosAndDir
 ): number | null {
-  const entriesAtCell = entriesByCell(grid, pos);
+  const entriesAtCell = entriesByCellAt(grid, pos);
   const currentEntryIndex = entriesAtCell[pos.dir];
+  if (currentEntryIndex === undefined) {
+    throw new Error('dir oob');
+  }
   return currentEntryIndex.entryIndex;
 }
 
@@ -169,8 +204,11 @@ export function entryAtPosition<Entry extends EntryBase>(
   grid: GridBase<Entry>,
   pos: PosAndDir
 ): [Entry | null, number] {
-  const entriesAtCell = entriesByCell(grid, pos);
+  const entriesAtCell = entriesByCellAt(grid, pos);
   const currentEntryIndex = entriesAtCell[pos.dir];
+  if (currentEntryIndex === undefined) {
+    throw new Error('dir oob');
+  }
   if (currentEntryIndex.entryIndex === null) {
     return [null, 0];
   }
@@ -185,10 +223,14 @@ export function entryAndCrossAtPosition<Entry extends EntryBase>(
   grid: GridBase<Entry>,
   pos: PosAndDir
 ): [Entry | null, Entry | null] {
-  const entries = entriesByCell(grid, pos);
+  const entries = entriesByCellAt(grid, pos);
   const currentEntry = entries[pos.dir];
-  const currentCross =
-    entries[pos.dir === Direction.Across ? Direction.Down : Direction.Across];
+  const crossDir =
+    pos.dir === Direction.Across ? Direction.Down : Direction.Across;
+  const currentCross = entries[crossDir];
+  if (currentEntry === undefined || currentCross === undefined) {
+    throw new Error('dir oob');
+  }
   return [
     (currentEntry.entryIndex !== null &&
       grid.entries[currentEntry.entryIndex]) ||
@@ -197,6 +239,38 @@ export function entryAndCrossAtPosition<Entry extends EntryBase>(
       grid.entries[currentCross.entryIndex]) ||
       null,
   ];
+}
+
+/** Directions that have an entry at the given cell, in enum order. */
+export function directionsAtPosition<Entry extends EntryBase>(
+  grid: GridBase<Entry>,
+  pos: Position
+): Direction[] {
+  const entries = entriesByCellAt(grid, pos);
+  const dirs: Direction[] = [];
+  for (let dir = 0; dir < DIRECTION_COUNT; dir += 1) {
+    if (entries[dir]?.entryIndex !== null) {
+      dirs.push(dir);
+    }
+  }
+  return dirs;
+}
+
+/** Next direction at this cell after `current`, wrapping. */
+export function nextDirectionAtPosition<Entry extends EntryBase>(
+  grid: GridBase<Entry>,
+  pos: Position,
+  current: Direction
+): Direction {
+  const dirs = directionsAtPosition(grid, pos);
+  if (dirs.length === 0) {
+    return current;
+  }
+  const idx = dirs.indexOf(current);
+  if (idx === -1) {
+    return dirs[0] ?? current;
+  }
+  return dirs[(idx + 1) % dirs.length] ?? current;
 }
 
 export function getEntryCells<Entry extends EntryBase>(
@@ -216,36 +290,48 @@ export function entriesFromCells(
   height: number,
   cells: string[],
   vBars: Set<number>,
-  hBars: Set<number>
-): [EntryWithPattern[], [Cross, Cross][]] {
-  const entriesByCell: [Cross, Cross][] = [];
+  hBars: Set<number>,
+  diagonals = false
+): [EntryWithPattern[], EntriesByCell[]] {
+  const entriesByCell: EntriesByCell[] = [];
   cells.forEach(() => {
-    entriesByCell.push([
-      { entryIndex: null, wordIndex: 0, cellIndex: 0 },
-      { entryIndex: null, wordIndex: 0, cellIndex: 0 },
-    ]);
+    entriesByCell.push(emptyEntriesByCell());
   });
 
   const entries: EntryWithPattern[] = [];
+  const dirs = enabledDirections(diagonals);
 
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
       const i = x + y * width;
-      for (const dir of [Direction.Across, Direction.Down]) {
-        const xincr = dir === Direction.Across ? 1 : 0;
-        const yincr = dir === Direction.Down ? 1 : 0;
-        const iincr = xincr + yincr * width;
+      for (const dir of dirs) {
+        const { row: yincr, col: xincr } = directionIncrement(dir);
+        const prevX = x - xincr;
+        const prevY = y - yincr;
+        const nextX = x + xincr;
+        const nextY = y + yincr;
+        const useBars = dir === Direction.Across || dir === Direction.Down;
         const iBars = dir === Direction.Across ? vBars : hBars;
-        const isStartOfRow =
-          (dir === Direction.Across && x === 0) ||
-          (dir === Direction.Down && y === 0);
+
+        const prevInBounds =
+          prevX >= 0 && prevX < width && prevY >= 0 && prevY < height;
+        const nextInBounds =
+          nextX >= 0 && nextX < width && nextY >= 0 && nextY < height;
+
+        const prevCellId = prevY * width + prevX;
+        const nextCellId = nextY * width + nextX;
+
+        const prevIsBlockOrBar =
+          !prevInBounds ||
+          cells[prevCellId] === BLOCK ||
+          (useBars && iBars.has(prevCellId));
+
+        const currentHasBar = useBars && iBars.has(i);
+        const nextIsOpen =
+          nextInBounds && cells[nextCellId] !== BLOCK && !currentHasBar;
+
         const isStartOfEntry =
-          cells[i] !== '.' &&
-          (isStartOfRow || cells[i - iincr] === '.' || iBars.has(i - iincr)) &&
-          x + xincr < width &&
-          y + yincr < height &&
-          cells[i + iincr] !== '.' &&
-          !iBars.has(i);
+          cells[i] !== BLOCK && prevIsBlockOrBar && nextIsOpen;
 
         if (!isStartOfEntry) {
           continue;
@@ -257,7 +343,7 @@ export function entriesFromCells(
         let xt = x;
         let yt = y;
         let wordlen = 0;
-        while (xt < width && yt < height) {
+        while (xt >= 0 && xt < width && yt >= 0 && yt < height) {
           const cellId = yt * width + xt;
           const cellVal = cells[cellId];
           const entry = entriesByCell[cellId];
@@ -281,7 +367,7 @@ export function entriesFromCells(
           yt += yincr;
           wordlen += 1;
 
-          if (iBars.has(cellId)) {
+          if (useBars && iBars.has(cellId)) {
             break;
           }
         }

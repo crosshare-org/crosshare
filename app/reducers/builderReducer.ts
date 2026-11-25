@@ -84,6 +84,7 @@ export interface BuilderState extends GridInterfaceState {
   undoHistory: BuilderGrid[];
   undoIndex: number;
   cluesBackup: Record<string, string[]> | null;
+  diagonals: boolean;
 }
 
 function initialBuilderStateFromSaved(
@@ -125,6 +126,7 @@ function initialBuilderStateFromSaved(
     alternates: saved?.alternates ?? null,
     userTags: saved?.userTags ?? [],
     symmetry: saved?.symmetry,
+    diagonals: saved?.diagonals,
   });
 }
 
@@ -154,6 +156,7 @@ export function initialBuilderState({
   alternates,
   userTags,
   symmetry,
+  diagonals,
 }: {
   id: string | null;
   width: number;
@@ -180,11 +183,13 @@ export function initialBuilderState({
   alternates: Record<number, string>[] | null;
   userTags: string[];
   symmetry?: Symmetry;
+  diagonals?: boolean;
 }) {
   const styles = new Map<string, Set<number>>();
   Object.entries(cellStyles).forEach(([name, cells]) => {
     styles.set(name, new Set(cells));
   });
+  const useDiagonals = diagonals === true;
   const initialGrid = fromCells({
     mapper: (e) => e,
     width: width,
@@ -195,6 +200,7 @@ export function initialBuilderState({
     vBars: new Set(vBars),
     hBars: new Set(hBars),
     hidden: new Set(hidden),
+    diagonals: useDiagonals,
   });
   return validateGrid({
     id: id || getDocId('c'),
@@ -207,6 +213,7 @@ export function initialBuilderState({
     wasEntryClick: false,
     active: { col: 0, row: 0, dir: Direction.Across },
     grid: initialGrid,
+    diagonals: useDiagonals,
     showExtraKeyLayout: false,
     isEnteringRebus: false,
     rebusValue: '',
@@ -266,6 +273,16 @@ export interface SymmetryAction extends PuzzleAction {
 }
 function isSymmetryAction(action: PuzzleAction): action is SymmetryAction {
   return action.type === 'CHANGESYMMETRY';
+}
+
+export interface SetDiagonalsAction extends PuzzleAction {
+  type: 'SETDIAGONALS';
+  diagonals: boolean;
+}
+function isSetDiagonalsAction(
+  action: PuzzleAction
+): action is SetDiagonalsAction {
+  return action.type === 'SETDIAGONALS';
 }
 
 export interface SetClueAction extends PuzzleAction {
@@ -549,24 +566,58 @@ export function getClueProps(
   const an: number[] = [];
   const dc: string[] = [];
   const dn: number[] = [];
+  const dac: string[] = [];
+  const dan: number[] = [];
+  const dlc: string[] = [];
+  const dln: number[] = [];
 
   forEachCluedEntry(sortedEntries, entries, clues, (e, clueString) => {
+    if (requireComplete && !clueString.trim()) {
+      // Unclued entries are allowed so long as every letter is covered by
+      // some other clued entry (checked at publish time).
+      return;
+    }
     if (requireComplete && !e.completedWord) {
       throw new Error('Publish unfinished grid');
     }
-
-    if (requireComplete && !clueString) {
-      throw new Error('Bad clue for ' + e.completedWord);
-    }
-    if (e.direction === Direction.Across) {
-      ac.push(clueString);
-      an.push(e.labelNumber);
-    } else {
-      dc.push(clueString);
-      dn.push(e.labelNumber);
+    switch (e.direction) {
+      case Direction.Across:
+        ac.push(clueString);
+        an.push(e.labelNumber);
+        break;
+      case Direction.Down:
+        dc.push(clueString);
+        dn.push(e.labelNumber);
+        break;
+      case Direction.Diagonal:
+        dac.push(clueString);
+        dan.push(e.labelNumber);
+        break;
+      case Direction.DiagonalDownLeft:
+        dlc.push(clueString);
+        dln.push(e.labelNumber);
+        break;
     }
   });
-  return { ac, an, dc, dn };
+  const props: {
+    ac: string[];
+    an: number[];
+    dc: string[];
+    dn: number[];
+    dac?: string[];
+    dan?: number[];
+    dlc?: string[];
+    dln?: number[];
+  } = { ac, an, dc, dn };
+  if (dac.length) {
+    props.dac = dac;
+    props.dan = dan;
+  }
+  if (dlc.length) {
+    props.dlc = dlc;
+    props.dln = dln;
+  }
+  return props;
 }
 
 function selectedCells(state: BuilderState) {
@@ -790,6 +841,21 @@ function _builderReducer(
     }
     return { ...state, symmetry: action.symmetry };
   }
+  if (isSetDiagonalsAction(action)) {
+    const grid = fromCells({
+      ...state.grid,
+      diagonals: action.diagonals,
+    });
+    return validateGrid({
+      ...state,
+      diagonals: action.diagonals,
+      grid,
+      active: {
+        ...state.active,
+        dir: Direction.Across,
+      },
+    });
+  }
   if (isSetClueAction(action)) {
     const newVal = state.clues[action.word] ?? [];
     newVal[action.idx] = action.clue;
@@ -994,33 +1060,35 @@ function _builderReducer(
         );
       }
     }
-    const missingClues = Object.entries(
-      state.grid.entries
-        .map((e) => e.completedWord ?? '')
-        .filter((e) => e)
-        .reduce((counts: Record<string, number>, entry) => {
-          counts[entry] = (counts[entry] ?? 0) + 1;
-          return counts;
-        }, {})
-    )
-      .filter(([entry, count]) => {
-        const clues = state.clues[entry];
-        if (!clues) {
+    // Every letter must belong to at least one clued entry. Individual
+    // Across/Down/Diagonal entries may be left unclued.
+    if (state.gridIsComplete) {
+      const cluedEntryIndexes = new Set<number>();
+      forEachCluedEntry(
+        state.grid.sortedEntries,
+        state.grid.entries,
+        state.clues,
+        (entry, clueString) => {
+          if (clueString.trim()) {
+            cluedEntryIndexes.add(entry.index);
+          }
+        }
+      );
+      const hasUncluedLetters = state.grid.cells.some((cell, i) => {
+        if (cell === BLOCK || state.grid.hidden.has(i)) {
+          return false;
+        }
+        const crosses = state.grid.entriesByCell[i];
+        if (!crosses) {
           return true;
         }
-
-        // Only count clues at the front of the array that have content
-        let numCluesForEntry = clues.findIndex((c) => c.trim().length === 0);
-        if (numCluesForEntry === -1) {
-          numCluesForEntry = clues.length;
-        }
-        return numCluesForEntry < count;
-      })
-      .map(([entry]) => entry);
-    if (missingClues.length) {
-      errors.push(
-        'Some words are missing clues: ' + missingClues.sort().join(', ')
-      );
+        return !crosses.some(
+          (c) => c.entryIndex !== null && cluedEntryIndexes.has(c.entryIndex)
+        );
+      });
+      if (hasUncluedLetters) {
+        errors.push('Some letters are not clued');
+      }
     }
 
     if (state.repeats.size > 0) {
@@ -1088,6 +1156,7 @@ function _builderReducer(
       ...(state.grid.vBars.size && { vb: Array.from(state.grid.vBars) }),
       ...(state.grid.hBars.size && { hb: Array.from(state.grid.hBars) }),
       ...(state.grid.hidden.size && { hdn: Array.from(state.grid.hidden) }),
+      ...(state.diagonals && { dg: true }),
       ...getClueProps(
         state.grid.sortedEntries,
         state.grid.entries,

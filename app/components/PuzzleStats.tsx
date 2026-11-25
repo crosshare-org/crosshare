@@ -13,18 +13,19 @@ import { entryAndCrossAtPosition } from '../lib/gridBase.js';
 import { useMatchMedia } from '../lib/hooks.js';
 import { markdownToHast } from '../lib/markdown/markdown.js';
 import { SMALL_AND_UP_RULES } from '../lib/style.js';
-import { Direction, PuzzleResult, fromKeyboardEvent } from '../lib/types.js';
+import {
+  Direction,
+  PuzzleResult,
+  directionLabel,
+  fromKeyboardEvent,
+} from '../lib/types.js';
 import {
   clsx,
   isMetaSolution,
   logAsyncErrors,
   timeString,
 } from '../lib/utils.js';
-import {
-  fromCells,
-  getClueMap,
-  getCluedAcrossAndDown,
-} from '../lib/viewableGrid.js';
+import { fromCells, getClueMap, getCluedEntries } from '../lib/viewableGrid.js';
 import {
   BuilderState,
   builderReducer,
@@ -253,6 +254,7 @@ const initializeState = (props: PuzzleStatsProps): BuilderState => {
     allowBlockEditing: false,
     cellStyles: new Map<string, Set<number>>(),
     mapper: (e) => e,
+    diagonals: props.puzzle.diagonals,
   });
 
   return initialBuilderState({
@@ -279,6 +281,7 @@ const initializeState = (props: PuzzleStatsProps): BuilderState => {
     contestRevealDelay: props.puzzle.contestRevealDelay,
     alternates: null,
     userTags: [],
+    diagonals: props.puzzle.diagonals,
   });
 };
 
@@ -306,14 +309,24 @@ const PuzzleStats = (props: PuzzleStatsProps): React.JSX.Element => {
     }
   }
 
-  const [acrossEntries, downEntries] = useMemo(() => {
-    return getCluedAcrossAndDown(
+  const cluedEntries = useMemo(() => {
+    return getCluedEntries(
       state.clues,
       state.grid.entries,
       state.grid.sortedEntries,
       (c: string) => markdownToHast({ text: c })
     );
   }, [state.grid.entries, state.grid.sortedEntries, state.clues]);
+
+  const entriesByDirection = useMemo(() => {
+    const map = new Map<Direction, typeof cluedEntries>();
+    for (const e of cluedEntries) {
+      const list = map.get(e.direction) ?? [];
+      list.push(e);
+      map.set(e.direction, list);
+    }
+    return map;
+  }, [cluedEntries]);
 
   const normalizedColors = useMemo(() => {
     const data =
@@ -326,9 +339,41 @@ const PuzzleStats = (props: PuzzleStatsProps): React.JSX.Element => {
 
   const scrollToCross = useMatchMedia(SMALL_AND_UP_RULES);
 
+  const leftDirs: Direction[] = [Direction.Across, Direction.Diagonal];
+  const rightDirs: Direction[] = [Direction.Down, Direction.DiagonalDownLeft];
+  const leftIsActive =
+    state.active.dir === Direction.Across ||
+    state.active.dir === Direction.Diagonal;
+
+  const renderClueLists = (dirs: Direction[]) =>
+    dirs.flatMap((dir) => {
+      const entries = entriesByDirection.get(dir) ?? [];
+      if (entries.length === 0) {
+        return [];
+      }
+      return [
+        <ClueList
+          key={dir}
+          wasEntryClick={state.wasEntryClick}
+          dimCompleted={false}
+          active={state.active}
+          grid={state.grid}
+          showEntries={false}
+          conceal={false}
+          header={directionLabel(dir)}
+          entries={entries}
+          current={entry?.index}
+          refed={new Set()}
+          cross={cross?.index}
+          scrollToCross={scrollToCross}
+          dispatch={dispatch}
+        />,
+      ];
+    });
+
   return (
     <SquareAndCols
-      leftIsActive={state.active.dir === Direction.Across}
+      leftIsActive={leftIsActive}
       aspectRatio={state.grid.width / state.grid.height}
       dispatch={dispatch}
       square={
@@ -340,40 +385,8 @@ const PuzzleStats = (props: PuzzleStatsProps): React.JSX.Element => {
           allowBlockEditing={true}
         />
       }
-      left={
-        <ClueList
-          wasEntryClick={state.wasEntryClick}
-          dimCompleted={false}
-          active={state.active}
-          grid={state.grid}
-          showEntries={false}
-          conceal={false}
-          header="Across"
-          entries={acrossEntries}
-          current={entry?.index}
-          refed={new Set()}
-          cross={cross?.index}
-          scrollToCross={scrollToCross}
-          dispatch={dispatch}
-        />
-      }
-      right={
-        <ClueList
-          wasEntryClick={state.wasEntryClick}
-          dimCompleted={false}
-          active={state.active}
-          grid={state.grid}
-          showEntries={false}
-          conceal={false}
-          header="Down"
-          entries={downEntries}
-          current={entry?.index}
-          refed={new Set()}
-          cross={cross?.index}
-          scrollToCross={scrollToCross}
-          dispatch={dispatch}
-        />
-      }
+      left={<>{renderClueLists(leftDirs)}</>}
+      right={<>{renderClueLists(rightDirs)}</>}
     />
   );
 };

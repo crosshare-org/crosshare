@@ -5,6 +5,7 @@ import {
   EntryBase,
   GridBase,
   cellIndex,
+  emptyCross,
   entriesFromCells,
   entryAtPosition,
   isInDirection,
@@ -15,6 +16,7 @@ import {
 import { parseClueReferences } from './parse.js';
 import { AccountPrefsFlagsT } from './prefs.js';
 import {
+  ALL_DIRECTIONS,
   BLOCK,
   ClueT,
   Direction,
@@ -675,14 +677,14 @@ export function gridWithBarToggled<
   return fromCells(removeExtraneousBars({ ...grid, vBars, hBars }));
 }
 
-export function getCluedAcrossAndDown(
+export function getCluedEntries(
   clueMap: Record<string, string[]>,
   entries: ViewableEntry[],
   sortedEntries: number[],
   markdownToHast: (text: string) => Root
-): [CluedEntry[], CluedEntry[]] {
+): CluedEntry[] {
   const wordCounts: Record<string, number> = {};
-  const cluedEntries = sortedEntries.map((entryidx) => {
+  return sortedEntries.map((entryidx) => {
     const e = entries[entryidx];
     if (!e) {
       throw new Error('Bad clue idx');
@@ -695,6 +697,20 @@ export function getCluedAcrossAndDown(
 
     return { ...e, clue: clueString, clueHast: markdownToHast(clueString) };
   });
+}
+
+export function getCluedAcrossAndDown(
+  clueMap: Record<string, string[]>,
+  entries: ViewableEntry[],
+  sortedEntries: number[],
+  markdownToHast: (text: string) => Root
+): [CluedEntry[], CluedEntry[]] {
+  const cluedEntries = getCluedEntries(
+    clueMap,
+    entries,
+    sortedEntries,
+    markdownToHast
+  );
   return [
     cluedEntries.filter((e) => e.direction === Direction.Across),
     cluedEntries.filter((e) => e.direction === Direction.Down),
@@ -733,7 +749,7 @@ export function getClueMap<Entry extends ViewableEntry>(
 }
 
 function cluesByDirection(rawClues: ClueT[]) {
-  const clues = [new Map<number, string>(), new Map<number, string>()];
+  const clues = ALL_DIRECTIONS.map(() => new Map<number, string>());
   for (const clue of rawClues) {
     const cluesByDir = clues[clue.dir];
     if (cluesByDir === undefined) {
@@ -838,6 +854,50 @@ export function addClues<Entry extends ViewableEntry>(
   clueHasts: Root[] | ((c: string) => Root)
 ): CluedGrid {
   const clues = cluesByDirection(rawClues);
+  const oldToNew = new Map<number, number>();
+  const entries: CluedEntry[] = [];
+
+  for (const entry of grid.entries) {
+    const cluesByDir = clues[entry.direction];
+    if (cluesByDir === undefined) {
+      throw new Error('oob');
+    }
+    const clue = cluesByDir.get(entry.labelNumber);
+    // Entries without a published clue are omitted (partial cluing).
+    if (clue === undefined) {
+      continue;
+    }
+    // clueHasts arrays are built in filtered/clued order (same walk as here),
+    // not geometric entry.index order.
+    const clueHast = Array.isArray(clueHasts)
+      ? clueHasts[entries.length]
+      : clueHasts(clue);
+    if (clueHast === undefined) {
+      throw new Error(
+        "Can't find hast for " + entry.labelNumber + ' ' + entry.direction
+      );
+    }
+    oldToNew.set(entry.index, entries.length);
+    entries.push({
+      ...entry,
+      index: entries.length,
+      clue,
+      clueHast,
+    });
+  }
+
+  const entriesByCell = grid.entriesByCell.map((crosses) =>
+    crosses.map((cross) => {
+      if (cross.entryIndex === null) {
+        return cross;
+      }
+      const newIndex = oldToNew.get(cross.entryIndex);
+      if (newIndex === undefined) {
+        return emptyCross();
+      }
+      return { ...cross, entryIndex: newIndex };
+    })
+  );
 
   function mapper(e: Entry): CluedEntry {
     const cluesByDir = clues[e.direction];
@@ -850,25 +910,34 @@ export function addClues<Entry extends ViewableEntry>(
         "Can't find clue for " + e.labelNumber + ' ' + e.direction
       );
     }
+    const newIndex = oldToNew.get(e.index);
+    if (newIndex === undefined) {
+      throw new Error(
+        "Can't find clued entry for " + e.labelNumber + ' ' + e.direction
+      );
+    }
     const clueHast = Array.isArray(clueHasts)
-      ? clueHasts[e.index]
+      ? clueHasts[newIndex]
       : clueHasts(clue);
     if (clueHast === undefined) {
       throw new Error(
         "Can't find hast for " + e.labelNumber + ' ' + e.direction
       );
     }
-    return { ...e, clue, clueHast };
+    return {
+      ...e,
+      index: newIndex,
+      clue,
+      clueHast,
+    };
   }
 
-  const entries: CluedEntry[] = [];
-  for (const entry of grid.entries) {
-    entries.push(mapper(entry));
-  }
   return {
     ...grid,
     mapper: (e) => mapper(grid.mapper(e)),
     clues: rawClues,
+    entriesByCell,
+    sortedEntries: getSortedEntries(entries),
     entries,
   };
 }
@@ -879,15 +948,17 @@ export function fromCells<
 >(
   input: Omit<
     Grid,
-    'entries' | 'entriesByCell' | 'sortedEntries' | 'cellLabels'
-  >
+    'entries' | 'entriesByCell' | 'sortedEntries' | 'cellLabels' | 'diagonals'
+  > & { diagonals?: boolean }
 ): Grid {
+  const diagonals = input.diagonals ?? false;
   const [baseEntries, entriesByCell] = entriesFromCells(
     input.width,
     input.height,
     input.cells,
     input.vBars,
-    input.hBars
+    input.hBars,
+    diagonals
   );
 
   const cellLabels = new Map<number, number>();
@@ -913,6 +984,7 @@ export function fromCells<
   }
   return {
     ...input,
+    diagonals,
     sortedEntries: getSortedEntries(entries),
     entriesByCell,
     entries,

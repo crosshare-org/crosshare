@@ -218,6 +218,7 @@ const initializeState = (props: BuilderProps & AuthProps): BuilderState => {
     alternates: saved?.alternates ?? null,
     userTags: saved?.userTags ?? [],
     symmetry: saved?.symmetry,
+    diagonals: saved?.diagonals,
   });
 };
 
@@ -407,6 +408,7 @@ export const Builder = (
       alternates: state.alternates,
       userTags: state.userTags,
       symmetry: state.symmetry,
+      diagonals: state.diagonals,
       contestAnswers: state.isContestPuzzle
         ? (state.contestAnswers ?? undefined)
         : undefined,
@@ -435,6 +437,7 @@ export const Builder = (
     state.grid.hBars,
     state.userTags,
     state.symmetry,
+    state.diagonals,
     state.isContestPuzzle,
     state.contestAnswers,
     state.contestHasPrize,
@@ -679,6 +682,7 @@ const PuzDownloadOverlay = (props: {
     gc: props.state.guestConstructor ?? undefined,
     vb: Array.from(props.state.grid.vBars),
     hb: Array.from(props.state.grid.hBars),
+    ...(props.state.diagonals && { dg: true }),
     ...getClueProps(
       props.state.grid.sortedEntries,
       props.state.grid.entries,
@@ -687,6 +691,7 @@ const PuzDownloadOverlay = (props: {
     ),
   };
   const hasBars = props.state.grid.vBars.size || props.state.grid.hBars.size;
+  const hasDiagonals = props.state.diagonals;
   return (
     <Overlay closeCallback={props.cancel}>
       <h2>Export puzzle</h2>
@@ -696,6 +701,11 @@ const PuzDownloadOverlay = (props: {
       {hasBars ? (
         <p>
           Barred grids cannot be exported as .puz (.puz does not support bars).
+        </p>
+      ) : hasDiagonals ? (
+        <p>
+          Puzzles with diagonal clues cannot be exported as .puz (.puz does not
+          support diagonals).
         </p>
       ) : (
         <p>
@@ -976,6 +986,7 @@ const GridMode = ({
   const builderStateForTopBar = useMemo(
     () => ({
       symmetry: state.symmetry,
+      diagonals: state.diagonals,
       gridIsComplete: state.gridIsComplete,
       hasNoShortWords: state.hasNoShortWords,
       repeats: state.repeats,
@@ -984,6 +995,7 @@ const GridMode = ({
     }),
     [
       state.symmetry,
+      state.diagonals,
       state.gridIsComplete,
       state.hasNoShortWords,
       state.repeats,

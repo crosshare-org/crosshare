@@ -212,8 +212,18 @@ const DBPuzzleOptionalV = t.partial({
   gc: t.string,
   /** daily mini date */
   dmd: t.string,
-  /** clue explanations (key is index into ac + dc) */
+  /** clue explanations (key is index into ac + dc + diagonal clue arrays) */
   cx: t.record(t.number, t.string),
+  /** diagonals enabled */
+  dg: t.boolean,
+  /** diagonal (↘) clue strings */
+  dac: t.array(t.string),
+  /** diagonal (↘) clue display numbers */
+  dan: t.array(t.number),
+  /** diagonal down left (↙) clue strings */
+  dlc: t.array(t.string),
+  /** diagonal down left (↙) clue display numbers */
+  dln: t.array(t.number),
   /** puzzle is marked for deletion */
   del: t.boolean,
   /** if present, this is a contest puzzle! these are the contest answers */

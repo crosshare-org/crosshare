@@ -66,6 +66,7 @@ import {
   CheatUnit,
   Direction,
   KeyK,
+  directionLabel,
   directionString,
   fromKeyString,
   fromKeyboardEvent,
@@ -267,6 +268,7 @@ export const Puzzle = ({
           Object.entries(puzzle.cellStyles).map(([k, v]) => [k, new Set(v)])
         ),
         hidden: new Set(puzzle.hidden),
+        diagonals: puzzle.diagonals,
       }),
       puzzle.clues,
       puzzle.clueHasts
@@ -737,15 +739,14 @@ export const Puzzle = ({
     [dispatch]
   );
 
-  const { acrossEntries, downEntries } = useMemo(() => {
-    return {
-      acrossEntries: state.grid.entries.filter(
-        (e) => e.direction === Direction.Across
-      ),
-      downEntries: state.grid.entries.filter(
-        (e) => e.direction === Direction.Down
-      ),
-    };
+  const entriesByDirection = useMemo(() => {
+    const map = new Map<Direction, typeof state.grid.entries>();
+    for (const e of state.grid.entries) {
+      const list = map.get(e.direction) ?? [];
+      list.push(e);
+      map.set(e.direction, list);
+    }
+    return map;
   }, [state.grid.entries]);
 
   const { isEmbed } = useContext(EmbedContext);
@@ -794,58 +795,67 @@ export const Puzzle = ({
   }
 
   const shouldConceal = state.currentTimeWindowStart === 0 && !state.success;
+
+  const renderClueLists = (
+    dirs: Direction[],
+    showEntries: boolean,
+    includeSharedProps: boolean
+  ) =>
+    dirs.flatMap((dir) => {
+      const entries = entriesByDirection.get(dir) ?? [];
+      if (entries.length === 0) {
+        return [];
+      }
+      const header =
+        dir === Direction.Across
+          ? t`Across`
+          : dir === Direction.Down
+            ? t`Down`
+            : directionLabel(dir);
+      return [
+        <ClueList
+          key={dir}
+          isEnteringRebus={
+            includeSharedProps ? state.isEnteringRebus : undefined
+          }
+          rebusValue={includeSharedProps ? state.rebusValue : undefined}
+          wasEntryClick={state.wasEntryClick}
+          refed={refed}
+          dimCompleted={true}
+          active={state.active}
+          grid={state.grid}
+          showEntries={showEntries}
+          conceal={shouldConceal}
+          header={header}
+          entries={entries}
+          current={entry?.index}
+          cross={cross?.index}
+          scrollToCross={scrollToCross}
+          dispatch={dispatch}
+          draftCells={includeSharedProps ? state.draftCells : undefined}
+          draftMode={includeSharedProps ? state.draftMode : undefined}
+        />,
+      ];
+    });
+
+  const leftDirs: Direction[] = [Direction.Across, Direction.Diagonal];
+  const rightDirs: Direction[] = [Direction.Down, Direction.DiagonalDownLeft];
+  const leftIsActive =
+    state.active.dir === Direction.Across ||
+    state.active.dir === Direction.Diagonal;
+
   if (state.clueView) {
     puzzleView = (
       <TwoCol
-        left={
-          <ClueList
-            isEnteringRebus={state.isEnteringRebus}
-            rebusValue={state.rebusValue}
-            wasEntryClick={state.wasEntryClick}
-            refed={refed}
-            dimCompleted={true}
-            active={state.active}
-            grid={state.grid}
-            showEntries={true}
-            conceal={shouldConceal}
-            header={t`Across`}
-            entries={acrossEntries}
-            current={entry?.index}
-            cross={cross?.index}
-            scrollToCross={scrollToCross}
-            dispatch={dispatch}
-            draftCells={state.draftCells}
-            draftMode={state.draftMode}
-          />
-        }
-        right={
-          <ClueList
-            isEnteringRebus={state.isEnteringRebus}
-            rebusValue={state.rebusValue}
-            wasEntryClick={state.wasEntryClick}
-            refed={refed}
-            dimCompleted={true}
-            active={state.active}
-            grid={state.grid}
-            showEntries={true}
-            conceal={shouldConceal}
-            header={t`Down`}
-            entries={downEntries}
-            current={entry?.index}
-            cross={cross?.index}
-            scrollToCross={scrollToCross}
-            dispatch={dispatch}
-            draftCells={state.draftCells}
-            draftMode={state.draftMode}
-          />
-        }
+        left={<>{renderClueLists(leftDirs, true, true)}</>}
+        right={<>{renderClueLists(rightDirs, true, true)}</>}
       />
     );
   } else {
     const hast = entry && puzzle.clueHasts[entry.index];
     puzzleView = (
       <SquareAndCols
-        leftIsActive={state.active.dir === Direction.Across}
+        leftIsActive={leftIsActive}
         dispatch={dispatch}
         aspectRatio={state.grid.width / state.grid.height}
         square={
@@ -872,40 +882,8 @@ export const Puzzle = ({
             shouldConceal={shouldConceal}
           />
         }
-        left={
-          <ClueList
-            wasEntryClick={state.wasEntryClick}
-            scrollToCross={scrollToCross}
-            refed={refed}
-            dimCompleted={true}
-            active={state.active}
-            grid={state.grid}
-            showEntries={false}
-            conceal={shouldConceal}
-            header={t`Across`}
-            entries={acrossEntries}
-            current={entry?.index}
-            cross={cross?.index}
-            dispatch={dispatch}
-          />
-        }
-        right={
-          <ClueList
-            wasEntryClick={state.wasEntryClick}
-            scrollToCross={scrollToCross}
-            refed={refed}
-            dimCompleted={true}
-            active={state.active}
-            grid={state.grid}
-            showEntries={false}
-            conceal={shouldConceal}
-            header={t`Down`}
-            entries={downEntries}
-            current={entry?.index}
-            cross={cross?.index}
-            dispatch={dispatch}
-          />
-        }
+        left={<>{renderClueLists(leftDirs, false, false)}</>}
+        right={<>{renderClueLists(rightDirs, false, false)}</>}
       />
     );
   }

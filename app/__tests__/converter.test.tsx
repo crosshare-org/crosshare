@@ -38,6 +38,7 @@ function toDBPuzzle(pip: PuzzleInProgressStrictT): DBPuzzleT {
     ),
     hBars: new Set(pip.hBars || []),
     vBars: new Set(pip.vBars || []),
+    diagonals: pip.diagonals === true,
   });
   const puzzle: DBPuzzleT = {
     t: pip.title || 'Anonymous',
@@ -51,6 +52,7 @@ function toDBPuzzle(pip: PuzzleInProgressStrictT): DBPuzzleT {
     g: pip.grid,
     pv: true,
     hdn: pip.hidden,
+    ...(pip.diagonals && { dg: true }),
     ...getClueProps(grid.sortedEntries, grid.entries, pip.clues, true),
     ...(pip.notes && { cn: pip.notes }),
     ...(pip.vBars?.length && { vb: pip.vBars }),
@@ -135,7 +137,11 @@ async function loadIpuz(name: string) {
   return importFile(ipuz);
 }
 
-const IPUZ_CASES = [{ name: 'spec-example' }, { name: 'barred-example' }];
+const IPUZ_CASES = [
+  { name: 'spec-example' },
+  { name: 'barred-example' },
+  { name: 'diagonal-example' },
+];
 
 test('test error on ipuz copyright', () => {
   const ipuz = new TextEncoder().encode(
@@ -204,6 +210,26 @@ test('test .ipuz import barred-example', async () => {
       CD: ['Compact disc'],
     },
     vBars: [0],
+  });
+});
+
+test('test .ipuz import diagonal-example', async () => {
+  const loaded = await loadIpuz('diagonal-example');
+  expect(loaded).toEqual({
+    width: 2,
+    height: 2,
+    title: 'Diagonal Example',
+    notes: null,
+    grid: ['A', 'B', 'C', 'D'],
+    diagonals: true,
+    clues: {
+      AB: ['AB clue'],
+      CD: ['CD clue'],
+      AC: ['AC clue'],
+      BD: ['BD clue'],
+      AD: ['AD diagonal'],
+      BC: ['BC diagonal down left'],
+    },
   });
 });
 

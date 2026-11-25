@@ -1,0 +1,26 @@
+{
+  "version": "http://ipuz.org/v2",
+  "kind": ["http://ipuz.org/crossword#1"],
+  "title": "Diagonal Example",
+  "dimensions": { "width": 2, "height": 2 },
+  "puzzle": [
+    [1, 2],
+    [3, 4]
+  ],
+  "solution": [
+    ["A", "B"],
+    ["C", "D"]
+  ],
+  "clues": {
+    "Across": [
+      [1, "AB clue"],
+      [3, "CD clue"]
+    ],
+    "Down": [
+      [1, "AC clue"],
+      [2, "BD clue"]
+    ],
+    "Diagonal": [[1, "AD diagonal"]],
+    "Diagonal Down Left": [[2, "BC diagonal down left"]]
+  }
+}

@@ -507,6 +507,7 @@ export const getPuzzlePageProps: GetServerSideProps<PuzzlePageProps> = async ({
       vBars: new Set(fromDB.vBars),
       hBars: new Set(fromDB.hBars),
       hidden: new Set(fromDB.hidden),
+      diagonals: fromDB.diagonals,
     }),
     fromDB.clues,
     (c: string) => markdownToHast({ text: c, inline: true })

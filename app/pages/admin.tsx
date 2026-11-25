@@ -100,6 +100,7 @@ const PuzzleListItem = (props: PuzzleResult & { crypticMods: string[] }) => {
     allowBlockEditing: false,
     cellStyles: new Map<string, Set<number>>(),
     hidden: new Set(props.hidden),
+    diagonals: props.diagonals,
   });
   const puzHasUnches = hasUnches(grid);
   const clueMap = getClueMap(grid, props.clues);
