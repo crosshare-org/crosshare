@@ -8,7 +8,7 @@ export interface ClueReferenceData {
 }
 
 const re =
-  /(^|\s|\/|\()(?<numSection>(,? ?(and|or)? ?\b\d{1,3}-? ?){1,7})(?<dir>[↘↙][\uFE0E\uFE0F]?|a(cross(es)?)?\b|diagonal(\s+down(\s+right|\s+left)?)?\b|ddl\b|dg\b|d(owns?)?\b)/gi;
+  /(^|\s|\/|\()(?<numSection>(,? ?(and|or)? ?\b\d{1,3}-? ?){1,7})(?<dir>[↘↙][\uFE0E\uFE0F]?|(?:a(?:cross(?:es)?)?|diagonal down right|diagonal down left|diagonal down|diagonal|ddl|dg|d(?:owns?)?)\b)/gi;
 
 function directionFromMatch(dirString: string): Direction {
   // Strip emoji/text variation selectors so ↘, ↘︎, and ↘️ all match.

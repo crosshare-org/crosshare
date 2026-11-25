@@ -40,9 +40,9 @@ import { COVER_PIC } from '../../lib/style.js';
 import { withTranslation } from '../../lib/translation.js';
 import {
   Direction,
-  directionString,
   ONE_WEEK,
   PuzzleResult,
+  directionString,
   puzzleFromDB,
   removeClueSpecials,
 } from '../../lib/types.js';

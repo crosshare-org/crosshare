@@ -1,13 +1,13 @@
 import {
   ALL_DIRECTIONS,
   BLOCK,
-  Direction,
   DIRECTION_COUNT,
-  directionIncrement,
+  Direction,
   EMPTY,
-  enabledDirections,
   PosAndDir,
   Position,
+  directionIncrement,
+  enabledDirections,
 } from './types.js';
 
 export interface EntryBase {

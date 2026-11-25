@@ -334,12 +334,12 @@ export interface PuzzleResultWithAugmentedComments extends ServerPuzzleResult {
   comments: Comment[];
 }
 
-export type DiagonalClueArrays = {
+export interface DiagonalClueArrays {
   dac?: string[];
   dan?: number[];
   dlc?: string[];
   dln?: number[];
-};
+}
 
 export function dbCluesToClueTArray(
   ac: string[],
