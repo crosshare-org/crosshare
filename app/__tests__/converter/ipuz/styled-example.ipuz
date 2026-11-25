@@ -1,0 +1,27 @@
+{
+  "version": "http://ipuz.org/v2",
+  "kind": ["http://ipuz.org/crossword#1"],
+  "title": "Styled Example",
+  "author": "Crosshare Tests",
+  "dimensions": { "width": 3, "height": 3 },
+  "puzzle": [
+    [{ "cell": 1, "style": { "highlight": true } }, { "cell": 0, "style": { "shapebg": "circle" } }, 2],
+    [{ "cell": 0, "style": { "color": "EB984E" } }, "#", { "cell": 0, "style": { "color": "eb984e", "highlight": true } }],
+    [3, { "cell": 0, "style": { "color": "3" } }, { "cell": 0, "style": { "color": 4 } }]
+  ],
+  "solution": [
+    ["C", "A", "B"],
+    ["A", "#", "E"],
+    ["T", "O", "E"]
+  ],
+  "clues": {
+    "Across": [
+      [1, "Taxi"],
+      [3, "Foot part"]
+    ],
+    "Down": [
+      [1, "Feline"],
+      [2, "Buzzer"]
+    ]
+  }
+}

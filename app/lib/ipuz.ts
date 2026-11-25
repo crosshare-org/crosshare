@@ -32,6 +32,8 @@ const DEFAULT_EMPTY = 0;
 
 interface IpuzStyle {
   shapebg?: string;
+  highlight?: boolean;
+  color?: string | number;
   barred?: string;
   hidden?: boolean;
 }
@@ -209,6 +211,22 @@ function solutionCellValue(cell: IpuzCell | undefined): unknown {
 
 function cellStyle(cell: IpuzCell | undefined): IpuzStyle | undefined {
   return cellObject(cell)?.style;
+}
+
+// Crosshare keys a highlight color by its CSS hex ('#eb984e'); ipuz writes a
+// color as six hex digits with no '#'. Numbered colors (a palette index) and
+// other forms have no Crosshare equivalent and are skipped.
+function highlightFromIpuzColor(color: unknown): string | null {
+  if (typeof color !== 'string') {
+    return null;
+  }
+  const hex = color.trim().replace(/^#/, '').toLowerCase();
+  return /^[0-9a-f]{6}$/.test(hex) ? `#${hex}` : null;
+}
+
+function ipuzColorFromHighlight(style: string): string | null {
+  const hex = style.replace(/^#/, '').toLowerCase();
+  return /^[0-9a-f]{6}$/.test(hex) ? hex : null;
 }
 
 function normalizeSolutionLetter(raw: string): string {
@@ -400,7 +418,10 @@ export function importIpuzText(text: string): PuzzleInProgressStrictT {
 
   const grid: string[] = [];
   const hidden: number[] = [];
-  const circled: number[] = [];
+  const styled: Record<string, number[]> = {};
+  const addStyle = (name: string, i: number) => {
+    (styled[name] ??= []).push(i);
+  };
   const vBars: number[] = [];
   const hBars: number[] = [];
 
@@ -430,7 +451,14 @@ export function importIpuzText(text: string): PuzzleInProgressStrictT {
         hidden.push(i);
       }
       if (style?.shapebg?.toLowerCase() === 'circle') {
-        circled.push(i);
+        addStyle('circle', i);
+      }
+      if (style?.highlight) {
+        addStyle('shade', i);
+      }
+      const highlight = highlightFromIpuzColor(style?.color);
+      if (highlight) {
+        addStyle(highlight, i);
       }
       const barred = style?.barred?.toUpperCase() ?? '';
       if (barred.includes('R')) {
@@ -472,7 +500,7 @@ export function importIpuzText(text: string): PuzzleInProgressStrictT {
     title: optionalString(parsed.title),
     notes,
     clues: getClueMap(viewableGrid, parseClues(parsed.clues)),
-    ...(circled.length && { cellStyles: { circle: circled } }),
+    ...(Object.keys(styled).length && { cellStyles: styled }),
     ...(hidden.length && { hidden }),
     ...(vBars.length && { vBars: [...new Set(vBars)] }),
     ...(hBars.length && { hBars: [...new Set(hBars)] }),
@@ -559,11 +587,23 @@ export function exportIpuz(puzzle: IpuzExportable): string {
   const vBars = new Set(puzzle.vb ?? []);
   const hBars = new Set(puzzle.hb ?? []);
   const hidden = new Set(puzzle.hdn ?? []);
-  const circled = new Set(
-    Object.entries(puzzle.sty ?? {})
-      .filter(([style]) => style === 'circle')
-      .flatMap(([, cells]) => cells)
-  );
+  const styles = Object.entries(puzzle.sty ?? {});
+  const cellsWith = (name: string) =>
+    new Set(styles.filter(([s]) => s === name).flatMap(([, cells]) => cells));
+  const circled = cellsWith('circle');
+  const shaded = cellsWith('shade');
+  // ipuz has one color per cell; the builder sets one highlight at a time.
+  const colors = new Map<number, string>();
+  for (const [name, cells] of styles) {
+    const color = ipuzColorFromHighlight(name);
+    if (color) {
+      for (const i of cells) {
+        if (!colors.has(i)) {
+          colors.set(i, color);
+        }
+      }
+    }
+  }
   const starts = startNumberMap(puzzle);
 
   const puzzleRows: IpuzCell[][] = [];
@@ -584,6 +624,13 @@ export function exportIpuz(puzzle: IpuzExportable): string {
       const style: IpuzStyle = {};
       if (circled.has(i)) {
         style.shapebg = 'circle';
+      }
+      if (shaded.has(i)) {
+        style.highlight = true;
+      }
+      const color = colors.get(i);
+      if (color) {
+        style.color = color;
       }
       const barred = barredStyle(i, width, vBars, hBars);
       if (barred) {
