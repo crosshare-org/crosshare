@@ -606,14 +606,5 @@ export const donationsByEmail = (
     total: 100,
     date: new Date(),
   });
-  if (process.env.NODE_ENV !== 'development') {
-    // manually add to account for annualized donation
-    res.set('slate@example.com', {
-      name: 'Slate Crosswords',
-      page: 'slate',
-      total: 100,
-      date: new Date(),
-    });
-  }
   return res;
 };
