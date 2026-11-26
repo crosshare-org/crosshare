@@ -237,6 +237,36 @@ const SlateButtonMargin = () => {
   return <div className={styles.slateButtonMargin}></div>;
 };
 
+interface ClueViewToggleProps {
+  clueView: boolean;
+  isSlate: boolean;
+  onToggle: () => void;
+}
+
+export const ClueViewToggle = ({
+  clueView,
+  isSlate,
+  onToggle,
+}: ClueViewToggleProps) => (
+  <TopBarLink
+    icon={
+      clueView ? (
+        isSlate ? (
+          <Grid />
+        ) : (
+          <SpinnerFinished />
+        )
+      ) : isSlate ? (
+        <Clues />
+      ) : (
+        <FaListOl />
+      )
+    }
+    text={clueView ? t`Grid` : t`Clues`}
+    onClick={onToggle}
+  />
+);
+
 interface PuzzleProps extends PuzzlePageResultProps {
   play: PlayWithoutUserT | null;
   loadingPlayState: boolean;
@@ -1353,22 +1383,10 @@ export const Puzzle = ({
                       ) : (
                         ''
                       )}
-                      <TopBarLink
-                        icon={
-                          state.clueView ? (
-                            isSlate ? (
-                              <Grid />
-                            ) : (
-                              <SpinnerFinished />
-                            )
-                          ) : isSlate ? (
-                            <Clues />
-                          ) : (
-                            <FaListOl />
-                          )
-                        }
-                        text={state.clueView ? t`Grid` : t`Clues`}
-                        onClick={() => {
+                      <ClueViewToggle
+                        clueView={state.clueView}
+                        isSlate={isSlate}
+                        onToggle={() => {
                           const a: ToggleClueViewAction = {
                             type: 'TOGGLECLUEVIEW',
                           };
@@ -1423,6 +1441,13 @@ export const Puzzle = ({
                           );
 
                           dispatch({ type: 'UNDISMISSSUCCESS' });
+                        }}
+                      />
+                      <ClueViewToggle
+                        clueView={state.clueView}
+                        isSlate={isSlate}
+                        onToggle={() => {
+                          dispatch({ type: 'TOGGLECLUEVIEW' });
                         }}
                       />
                       {isSlate ? <SlateButtonMargin /> : ''}
